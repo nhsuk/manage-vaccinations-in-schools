@@ -4,11 +4,13 @@ This is a service used within the NHS for managing and recording school-aged vac
 
 ## Environments
 
-| Name                                                                                         | `RAILS_ENV`                                       |
-| -------------------------------------------------------------------------------------------- | ------------------------------------------------- |
-| [Production](https://github.com/nhsuk/manage-vaccinations-in-schools/deployments/production) | [`production`](config/environments/production.rb) |
-| [Test](https://github.com/nhsuk/manage-vaccinations-in-schools/deployments/test)             | [`staging`](config/environments/staging.rb)       |
-| [Training](https://github.com/nhsuk/manage-vaccinations-in-schools/deployments/training)     | [`staging`](config/environments/staging.rb)       |
+| Name                                                                                               | `RAILS_ENV`                                       |
+| -------------------------------------------------------------------------------------------------- | ------------------------------------------------- |
+| [Production](https://github.com/nhsuk/manage-vaccinations-in-schools/deployments/production)       | [`production`](config/environments/production.rb) |
+| [Test](https://github.com/nhsuk/manage-vaccinations-in-schools/deployments/test)                   | [`staging`](config/environments/staging.rb)       |
+| [Training](https://github.com/nhsuk/manage-vaccinations-in-schools/deployments/training)           | [`staging`](config/environments/staging.rb)       |
+| [Accessibility](https://github.com/nhsuk/manage-vaccinations-in-schools/deployments/accessibility) | [`staging`](config/environments/staging.rb)       |
+| [Pentest](https://github.com/nhsuk/manage-vaccinations-in-schools/deployments/pentest)             | [`staging`](config/environments/staging.rb)       |
 
 ## Development
 
