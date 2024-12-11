@@ -50,6 +50,7 @@ class Organisation < ApplicationRecord
   validates :name, presence: true, uniqueness: true
   validates :ods_code, presence: true, uniqueness: true
   validates :phone, presence: true, phone: true
+  validates :privacy_policy_url, presence: true
 
   def year_groups
     programmes.flat_map(&:year_groups).uniq.sort

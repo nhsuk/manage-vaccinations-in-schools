@@ -4,6 +4,7 @@ organisation:
   phone: "03003112233"
   ods_code: Y90128
   careplus_venue_code: SMOKE
+  privacy_policy_url: https://example.com/privacy
 
 programmes: [hpv]
 
