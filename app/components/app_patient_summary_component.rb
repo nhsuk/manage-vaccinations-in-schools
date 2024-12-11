@@ -1,19 +1,13 @@
 # frozen_string_literal: true
 
 class AppPatientSummaryComponent < ViewComponent::Base
-  def initialize(
-    patient,
-    show_parent_or_guardians: false,
-    change_links: {},
-    highlight: true
-  )
+  def initialize(patient, show_parent_or_guardians: false, change_links: {})
     super
 
     @patient = patient
 
     @show_parent_or_guardians = show_parent_or_guardians
     @change_links = change_links
-    @highlight = highlight
   end
 
   def call
@@ -171,8 +165,6 @@ class AppPatientSummaryComponent < ViewComponent::Base
   end
 
   def highlight_if(value, condition)
-    return value unless @highlight && condition
-
-    tag.span value, class: "app-highlight"
+    condition ? tag.span(value, class: "app-highlight") : value
   end
 end
