@@ -15,6 +15,7 @@ $govuk-assets-path: "/";
 @import "govuk-frontend/dist/govuk/components/notification-banner/index";
 @import "govuk-frontend/dist/govuk/components/pagination/index";
 @import "govuk-frontend/dist/govuk/components/panel/index";
+@import "govuk-frontend/dist/govuk/components/warning-text/index";
 
 // Configure and import NHS.UK Frontend
 $nhsuk-fonts-path: "/";
@@ -65,6 +66,7 @@ $color_app-dark-orange: color.scale(
 @import "tag";
 @import "typography";
 @import "utilities";
+@import "warning_text";
 
 // Fix checkbox check sizing
 .nhsuk-checkboxes__label::after {
