@@ -77,7 +77,7 @@ describe "Delete vaccination record" do
     and_an_administered_vaccination_record_exists
 
     when_i_sign_in_as_a_superuser
-    and_i_go_to_a_patient_for_the_programme_that_is_vaccinated
+    and_i_go_to_a_patient_that_is_vaccinated_via_all_children
     and_i_click_on_delete_vaccination_record
     then_i_see_the_delete_vaccination_page
 
@@ -161,8 +161,8 @@ describe "Delete vaccination record" do
     click_link @patient.full_name
   end
 
-  def and_i_go_to_a_patient_for_the_programme_that_is_vaccinated
-    visit patients_programme_path(@programme)
+  def and_i_go_to_a_patient_that_is_vaccinated_via_all_children
+    visit patients_path
     click_link @patient.full_name
     click_link "Gardasil 9 (HPV)"
   end

@@ -23,6 +23,7 @@ describe AppSessionPatientTableComponent do
       params:,
       patient_sessions:,
       section:,
+      programme:,
       year_groups: session.year_groups
     )
   end
@@ -133,6 +134,71 @@ describe AppSessionPatientTableComponent do
         href: "/session/patient/"
       )
     end
+  end
+
+  describe "without a section or tab in the params" do
+    let(:section) { :patients }
+    let(:params) { { session_slug: session.slug } }
+
+    shared_examples "guesses the path" do |status, section, tab|
+      context "for #{status}" do
+        let(:patient_sessions) do
+          create_list(:patient_session, 1, status, session:, programme:)
+        end
+
+        it "guesses the path" do
+          expect(component).to receive(:session_patient_path).with(
+            anything,
+            anything,
+            section:,
+            tab:
+          )
+          rendered
+        end
+      end
+    end
+
+    include_examples "guesses the path",
+                     :added_to_session,
+                     "consents",
+                     "no-consent"
+    include_examples "guesses the path", :consent_refused, "consents", "refused"
+    include_examples "guesses the path",
+                     :consent_conflicting,
+                     "consents",
+                     "conflicts"
+    include_examples "guesses the path",
+                     :consent_given_triage_needed,
+                     "triage",
+                     "needed"
+    include_examples "guesses the path",
+                     :triaged_kept_in_triage,
+                     "triage",
+                     "needed"
+    include_examples "guesses the path",
+                     :consent_given_triage_not_needed,
+                     "vaccinations",
+                     "vaccinate"
+    include_examples "guesses the path",
+                     :triaged_ready_to_vaccinate,
+                     "vaccinations",
+                     "vaccinate"
+    include_examples "guesses the path",
+                     :delay_vaccination,
+                     "vaccinations",
+                     "vaccinate"
+    include_examples "guesses the path",
+                     :triaged_do_not_vaccinate,
+                     "vaccinations",
+                     "could-not"
+    include_examples "guesses the path",
+                     :unable_to_vaccinate,
+                     "vaccinations",
+                     "could-not"
+    include_examples "guesses the path",
+                     :vaccinated,
+                     "vaccinations",
+                     "vaccinated"
   end
 
   describe "columns parameter" do

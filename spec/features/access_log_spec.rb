@@ -4,27 +4,27 @@ describe "Access log" do
   before { given_i_am_signed_in }
 
   scenario "View patient" do
-    when_i_go_to_the_programme
+    when_i_go_to_the_children
     and_i_go_to_a_patient
     then_i_am_recorded_in_the_access_log(controller: "patients")
   end
 
   scenario "View patient's activity log" do
-    when_i_go_to_the_programme
+    when_i_go_to_the_children
     and_i_go_to_a_patient
     and_i_click_on_activity_log
     then_i_am_recorded_in_the_access_log_twice(controller: "patients")
   end
 
   scenario "View patient in a session" do
-    when_i_go_to_the_programme
-    and_i_go_to_a_patient_in_a_session
+    when_i_go_to_the_session
+    and_i_go_to_a_patient
     then_i_am_recorded_in_the_access_log(controller: "patient_sessions")
   end
 
   scenario "View patient's activity log in a session" do
-    when_i_go_to_the_programme
-    and_i_go_to_a_patient_in_a_session
+    when_i_go_to_the_session
+    and_i_go_to_a_patient
     and_i_click_on_activity_log
     then_i_am_recorded_in_the_access_log_twice(controller: "patient_sessions")
   end
@@ -48,23 +48,23 @@ describe "Access log" do
     sign_in @user
   end
 
-  def when_i_go_to_the_programme
+  def when_i_go_to_the_children
+    visit dashboard_path
+    click_on "Children", match: :first
+  end
+
+  def when_i_go_to_the_session
     visit dashboard_path
     click_on "Programmes", match: :first
     click_on "HPV"
-  end
 
-  def and_i_go_to_a_patient
-    within(".app-secondary-navigation") { click_on "Children" }
-
-    click_on @patient.full_name
-  end
-
-  def and_i_go_to_a_patient_in_a_session
     within(".app-secondary-navigation") { click_on "Sessions" }
 
     click_on @session.location.name
     click_on "Record vaccinations"
+  end
+
+  def and_i_go_to_a_patient
     click_on @patient.full_name
   end
 
