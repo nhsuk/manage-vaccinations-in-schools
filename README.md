@@ -30,22 +30,22 @@ versions of the above.
 ### Application architecture
 
 We keep track of architecture decisions in [Architecture Decision Records
-(ADRs)](/adr/).
+(ADRs)](adr).
 
 We use `rladr` to generate the boilerplate for new records:
 
-```bash
+```shell
 bin/bundle exec rladr new title
 ```
 
 ### Development toolchain
 
-#### mise
+#### Mise
 
 This project uses `mise`. Use the following to set up (replace `brew` and
 package names depending on your platform):
 
-```sh
+```shell
 # Dependencies for ruby
 brew install libyaml
 
@@ -70,31 +70,31 @@ brew install yarn
 Then to install the required tools (or update, following a change to
 `.tool-versions`):
 
-```
+```shell
 mise install
 ```
 
 After installing Postgres via `mise`, run the database in the background, and
 connect to it to create a user:
 
-```sh
-$ pg_ctl start
-$ psql -U postgres -c "CREATE USER $(whoami); ALTER USER $(whoami) WITH SUPERUSER;"
+```shell
+pg_ctl start
+psql -U postgres -c "CREATE USER $(whoami); ALTER USER $(whoami) WITH SUPERUSER;"
 ```
 
 ### Local development
 
 To run the project locally:
 
-```bash
-$ bin/setup
+```shell
+bin/setup
 ```
 
 ### Linting
 
 To run the linters:
 
-```bash
+```shell
 bin/lint
 ```
 
@@ -106,7 +106,7 @@ editor](https://github.com/castwide/solargraph#using-solargraph), and then run
 this command to index your local bundle (re-run if/when we install new
 dependencies and you want completion):
 
-```sh
+```shell
 bin/bundle exec yard gems
 ```
 
@@ -123,7 +123,7 @@ The script `bin/db` is included to start up PostgreSQL for setups that don't use
 system-started services. Note that this is meant to be a handy script to manage
 PostgreSQL, not run a console like `rails db` does.
 
-```
+```shell
 $ bin/db
 pg_ctl: no server running
 $ bin/db start
@@ -141,7 +141,7 @@ determine postgres's installation directory and setting up logging accordingly.
 This application comes with a `Procfile.dev` for use with `foreman` in
 development environments. Use the script `bin/dev` to run it:
 
-```bash
+```shell
 $ bin/dev
 13:07:31 web.1  | started with pid 73965
 13:07:31 css.1  | started with pid 73966
@@ -159,34 +159,34 @@ Alternatively, you can install `tmux` and
 [`overmind`](https://github.com/DarthSim/overmind#connecting-to-a-process) which
 is compatible with our `Procfile.dev`:
 
-```bash
-$ overmind start -f Procfile.dev
-$ overmind connect web
+```shell
+overmind start -f Procfile.dev
+overmind connect web
 ```
 
 ### Testing
 
 To run the Rails tests:
 
-```bash
+```shell
 bin/bundle exec rspec
 ```
 
 To run the JS unit tests:
 
-```bash
+```shell
 yarn test
 ```
 
-To run the Playwright end to end tests use:
+To run the Playwright end-to-end tests use:
 
-```bash
+```shell
 yarn test:e2e
 ```
 
 To [generate tests interactively by clicking in a live browser](https://playwright.dev/docs/codegen):
 
-```bash
+```shell
 yarn playwright codegen http://localhost:4000
 ```
 
@@ -194,7 +194,7 @@ yarn playwright codegen http://localhost:4000
 
 Install [artillery](https://www.artillery.io):
 
-```bash
+```shell
 yarn global add artillery
 ```
 
@@ -203,7 +203,7 @@ and used infrequently.
 
 To run the load tests:
 
-```bash
+```shell
 USERNAME=username PASSWORD=password SESSION=slug artillery run tests/load.yml --target=http://test.mavistesting.com
 ```
 
@@ -215,7 +215,7 @@ You can generate an example programme with a few sessions in development by visi
 
 You can add a new user to an environment using the `users:create` rake task:
 
-```
+```shell
 rails users:create['user@example.com','password123','John Doe',1]
 ```
 
@@ -232,8 +232,8 @@ The previews are defined in `spec/components/previews`.
 This app can be deployed to AWS using AWS Copilot. Once authenticated, you can
 run:
 
-```sh
-$ bin/deploy test
+```shell
+bin/deploy test
 ```
 
 See [docs/aws-copilot.md](docs/aws-copilot.md) for more information.
@@ -246,7 +246,7 @@ logged to `STDOUT`.
 If you want to use Notify, you'll need to set up a test API key, and then set
 up a `config/settings/development.local.yml` file:
 
-```yml
+```yaml
 govuk_notify:
   enabled: true
   test_key: YOUR_KEY_HERE
@@ -272,9 +272,8 @@ Guidance Discovery page]
 (https://digital.nhs.uk/services/care-identity-service/applications-and-services/cis2-authentication/guidance-for-developers/detailed-guidance/discovery)
 (note: the dev env is being deprecated and will be removed):
 
-```sh
-$ curl -s https://am.nhsint.auth-ptl.cis2.spineservices.nhs.uk/openam/oauth2/realms/root/realms/NHSIdentity/realms/Healthcare/.well-known/openid-configuration | jq .issuer
-"https://am.nhsint.auth-ptl.cis2.spineservices.nhs.uk:443/openam/oauth2/realms/root/realms/NHSIdentity/realms/Healthcare"
+```shell
+curl -s https://am.nhsint.auth-ptl.cis2.spineservices.nhs.uk/openam/oauth2/realms/root/realms/NHSIdentity/realms/Healthcare/.well-known/openid-configuration | jq .issuer "https://am.nhsint.auth-ptl.cis2.spineservices.nhs.uk:443/openam/oauth2/realms/root/realms/NHSIdentity/realms/Healthcare"
 ```
 
 Clients in the INT environment can be configured via CIS2 Connection Manager,
@@ -284,7 +283,7 @@ CIS2, these are configured via the Connection Manager.
 
 To configure Mavis, put non-secret configuration into Settings:
 
-```yml
+```yaml
 cis2:
   enabled: true
   issuer: https://am.nhsint.auth-ptl.cis2.spineservices.nhs.uk/openam/oauth2/realms/root/realms/NHSIdentity/realms/Healthcareopenam/oauth2/realms/root/realms/oidc"
@@ -294,7 +293,7 @@ And once you have your client secrets, either via the Connection Manager or from
 NHS support, put the `client_id` and `secret`/`private_key` into the Rails
 credentials file for the environment you are configuring.
 
-```yml
+```yaml
 cis2:
   client_id: # Client ID, as provided by NHS
   secret: # Client secret, as provided by NHS
