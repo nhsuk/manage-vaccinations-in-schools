@@ -55,7 +55,14 @@ describe "Child record imports duplicates" do
       organisation: @organisation,
       programme: @programme
     )
-    @location = create(:school, urn: "123456", organisation: @organisation)
+    @school = create(:school, urn: "123456", organisation: @organisation)
+    @session =
+      create(
+        :session,
+        organisation: @organisation,
+        location: @school,
+        programme: @programme
+      )
   end
 
   def and_an_existing_patient_record_exists
@@ -87,9 +94,10 @@ describe "Child record imports duplicates" do
         address_line_2: "",
         address_town: "London",
         address_postcode: "SW11 1AA",
-        school: @location,
+        school: @school,
         organisation: @organisation
       )
+
     @third_patient =
       create(
         :patient,
@@ -102,8 +110,9 @@ describe "Child record imports duplicates" do
         address_line_2: "",
         address_town: "London",
         address_postcode: "SW1A 1AA",
-        school: @location,
-        organisation: @organisation
+        school: @school,
+        organisation: @organisation,
+        session: @session
       )
   end
 
@@ -199,15 +208,20 @@ describe "Child record imports duplicates" do
 
   def and_a_new_patient_record_should_be_created
     expect(Patient.count).to eq(4)
+
     patient = Patient.last
     expect(patient.given_name).to eq("Mark")
     expect(patient.family_name).to eq("Doe")
     expect(patient.pending_changes).to eq({})
-    expect(patient.school).to eq(@location)
+    expect(patient.school).to eq(@school)
     expect(patient.date_of_birth).to eq(Date.new(2010, 1, 3))
     expect(patient.gender_code).to eq("male")
     expect(patient.address_postcode).to eq("SW1A 1AA")
     expect(patient.nhs_number).to be_nil
+    expect(patient.sessions.count).to eq(1)
+
+    session = patient.sessions.first
+    expect(session).to eq(@session)
   end
 
   def when_i_review_the_third_duplicate_record

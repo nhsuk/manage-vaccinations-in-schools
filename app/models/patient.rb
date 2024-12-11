@@ -329,6 +329,25 @@ class Patient < ApplicationRecord
     end
   end
 
+  def dup_for_pending_changes
+    dup.tap do |new_patient|
+      new_patient.nhs_number = nil
+
+      upcoming_sessions.each do |session|
+        new_patient.patient_sessions.build(session:)
+      end
+
+      school_moves.each do |school_move|
+        new_patient.school_moves.build(
+          home_educated: school_move.home_educated,
+          source: school_move.source,
+          organisation_id: school_move.organisation_id,
+          school_id: school_move.school_id
+        )
+      end
+    end
+  end
+
   def self.from_consent_form(consent_form)
     cohort =
       Cohort.find_or_create_by!(
@@ -383,9 +402,5 @@ class Patient < ApplicationRecord
     patient_sessions.where(session: upcoming_sessions).find_each(
       &:destroy_if_safe!
     )
-  end
-
-  def dup_for_pending_changes
-    dup.tap { |record| record.nhs_number = nil }
   end
 end
