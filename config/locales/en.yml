@@ -375,7 +375,7 @@ en:
       school_move:
         sources:
           class_list_import: Class list
-          cohort_import: Cohort record
+          cohort_import: Cohort
           parental_consent_form: Consent response
       triage:
         statuses:
