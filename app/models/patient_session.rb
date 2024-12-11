@@ -95,7 +95,7 @@ class PatientSession < ApplicationRecord
   def latest_consents
     @latest_consents ||=
       consents
-        .select(&:not_invalidated?)
+        .reject(&:invalidated?)
         .select { _1.response_given? || _1.response_refused? }
         .group_by(&:name)
         .map { |_, consents| consents.max_by(&:created_at) }
@@ -106,7 +106,7 @@ class PatientSession < ApplicationRecord
   end
 
   def latest_triage
-    @latest_triage ||= triages.not_invalidated.max_by(&:updated_at)
+    @latest_triage ||= triages.reject(&:invalidated?).max_by(&:updated_at)
   end
 
   def latest_vaccination_record
