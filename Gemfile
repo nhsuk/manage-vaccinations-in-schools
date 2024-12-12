@@ -84,7 +84,6 @@ group :development do
   gem "hotwire-livereload"
   gem "mechanize"
   gem "prettier_print", require: false
-  gem "rails-erd"
   gem "rladr"
   gem "rubocop-govuk", require: false
   gem "rufo", require: false
