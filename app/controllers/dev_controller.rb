@@ -37,6 +37,7 @@ class DevController < ApplicationController
       patient_sessions = PatientSession.where(session: sessions)
       GillickAssessment.where(patient_session: patient_sessions).destroy_all
       VaccinationRecord.where(patient_session: patient_sessions).destroy_all
+      PreScreening.where(patient_session: patient_sessions).destroy_all
       patient_sessions.destroy_all
 
       sessions.destroy_all
