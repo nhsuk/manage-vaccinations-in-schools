@@ -67,12 +67,21 @@ class SchoolMove < ApplicationRecord
 
   def school_session
     @school_session ||=
-      if (org = school&.organisation).present?
+      if (org = school&.organisation).present? && !already_vaccinated?
         org.sessions.upcoming.find_by(location: school)
       end
   end
 
   private
+
+  def already_vaccinated?
+    # TODO: Need to update this to support multiple programmes.
+    # Likely behaviour we'll want is that the patient should move to the
+    # session if they haven't been vaccinated for any programmes that session
+    # administers. What happens if the patient needs a Flu vaccine but the new
+    # session doesn't administer flu? Move to community clinic and the school?
+    patient.patient_sessions.any?(&:vaccinated?)
+  end
 
   def update_patient!
     patient.update!(school:, home_educated:, cohort:)
@@ -97,6 +106,8 @@ class SchoolMove < ApplicationRecord
   end
 
   def find_replacement_session(move_to_school: nil)
+    return nil if already_vaccinated?
+
     if from_clinic?
       (move_to_school && school_session) ||
         (school&.organisation || organisation)&.generic_clinic_session
