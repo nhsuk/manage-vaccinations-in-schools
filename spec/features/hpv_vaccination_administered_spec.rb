@@ -102,7 +102,7 @@ describe "HPV vaccination" do
 
     # vaccination
     find_all(".nhsuk-fieldset")[4].choose "Yes"
-    choose "Left arm"
+    choose "Left arm (upper position)"
     click_button "Continue"
   end
 
@@ -154,7 +154,7 @@ describe "HPV vaccination" do
 
   def and_i_select_the_delivery
     choose "Intramuscular"
-    choose "Left arm"
+    choose "Left arm (upper position)"
     click_on "Continue"
   end
 

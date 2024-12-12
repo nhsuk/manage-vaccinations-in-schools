@@ -185,8 +185,6 @@ class Reports::CareplusExporter
   # URA: Upper Right Arm
   def coded_site(site)
     {
-      left_arm: "LA",
-      right_arm: "RA",
       left_arm_upper_position: "ULA",
       left_arm_lower_position: "LLIF",
       right_arm_upper_position: "URA",

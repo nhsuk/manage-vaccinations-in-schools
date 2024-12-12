@@ -64,7 +64,7 @@ describe "HPV vaccination" do
 
   def and_i_choose_that_the_patient_is_ready_to_vaccinate
     find_all(".nhsuk-fieldset")[4].choose "Yes"
-    choose "Left arm"
+    choose "Left arm (upper position)"
     click_button "Continue"
   end
 
