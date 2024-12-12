@@ -72,8 +72,9 @@ describe Reports::ProgrammeVaccinationsExporter do
           REASON_NOT_VACCINATED
           LOCAL_PATIENT_ID
           SNOMED_PROCEDURE_CODE
-          RECORD_STATUS
-          RECORD_DATE_TIME
+          REASON_FOR_INCLUSION
+          RECORD_CREATED
+          RECORD_UPDATED
         ]
       )
     end
@@ -141,8 +142,9 @@ describe Reports::ProgrammeVaccinationsExporter do
               "PERSON_SURNAME" => patient.family_name,
               "PROGRAMME_NAME" => "HPV",
               "REASON_NOT_VACCINATED" => "",
-              "RECORD_DATE_TIME" => Time.current.iso8601,
-              "RECORD_STATUS" => "created",
+              "RECORD_CREATED" => Time.current.iso8601,
+              "RECORD_UPDATED" => "",
+              "REASON_FOR_INCLUSION" => "new",
               "ROUTE_OF_VACCINATION" => "intramuscular",
               "SCHOOL_NAME" => location.name,
               "SCHOOL_URN" => location.urn,
@@ -194,7 +196,9 @@ describe Reports::ProgrammeVaccinationsExporter do
         end
 
         it "includes the information" do
-          expect(rows.first.to_hash).to include("RECORD_STATUS" => "updated")
+          expect(rows.first.to_hash).to include(
+            "REASON_FOR_INCLUSION" => "updated"
+          )
         end
       end
     end
@@ -259,8 +263,9 @@ describe Reports::ProgrammeVaccinationsExporter do
               "PERSON_SURNAME" => patient.family_name,
               "PROGRAMME_NAME" => "HPV",
               "REASON_NOT_VACCINATED" => "",
-              "RECORD_DATE_TIME" => Time.current.iso8601,
-              "RECORD_STATUS" => "created",
+              "RECORD_CREATED" => Time.current.iso8601,
+              "RECORD_UPDATED" => "",
+              "REASON_FOR_INCLUSION" => "new",
               "ROUTE_OF_VACCINATION" => "intramuscular",
               "SCHOOL_NAME" => "",
               "SCHOOL_URN" => "888888",

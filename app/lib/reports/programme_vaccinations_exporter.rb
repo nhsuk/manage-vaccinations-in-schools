@@ -74,8 +74,9 @@ class Reports::ProgrammeVaccinationsExporter
       REASON_NOT_VACCINATED
       LOCAL_PATIENT_ID
       SNOMED_PROCEDURE_CODE
-      RECORD_STATUS
-      RECORD_DATE_TIME
+      REASON_FOR_INCLUSION
+      RECORD_CREATED
+      RECORD_UPDATED
     ]
   end
 
@@ -182,8 +183,9 @@ class Reports::ProgrammeVaccinationsExporter
       reason_not_vaccinated(vaccination_record:),
       patient.id,
       programme.snomed_procedure_code,
-      record_status(vaccination_record:),
-      record_date_time(vaccination_record:)
+      reason_for_inclusion(vaccination_record:),
+      record_created_at(vaccination_record:),
+      record_updated_at(vaccination_record:)
     ]
   end
 
@@ -200,38 +202,21 @@ class Reports::ProgrammeVaccinationsExporter
     end
   end
 
-  def record_status(vaccination_record:)
-    created_at = vaccination_record.created_at
-    updated_at = vaccination_record.updated_at
-
-    return "created" if created_at == updated_at
-
-    if start_date.nil? && end_date.nil?
-      "updated"
-    elsif start_date.present? && end_date.present?
-      if updated_at >= start_date && updated_at <= end_date
-        "updated"
-      else
-        "created"
-      end
-    elsif start_date.present?
-      if updated_at >= start_date
-        "updated"
-      else
-        "created"
-      end
-    elsif updated_at <= end_date # end_date.present?
-      "updated"
-    else
-      "created"
+  def reason_for_inclusion(vaccination_record:)
+    if start_date.present? && vaccination_record.created_at < start_date
+      return "updated"
     end
+
+    "new"
   end
 
-  def record_date_time(vaccination_record:)
-    if record_status(vaccination_record:) == "created"
-      vaccination_record.created_at.iso8601
-    else
-      vaccination_record.updated_at.iso8601
-    end
+  def record_created_at(vaccination_record:)
+    vaccination_record.created_at.iso8601
+  end
+
+  def record_updated_at(vaccination_record:)
+    return "" if vaccination_record.created_at == vaccination_record.updated_at
+
+    vaccination_record.updated_at.iso8601
   end
 end
