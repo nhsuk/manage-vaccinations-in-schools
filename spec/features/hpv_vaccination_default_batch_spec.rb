@@ -64,7 +64,7 @@ describe "HPV vaccination" do
 
     # vaccination
     find_all(".nhsuk-fieldset")[4].choose "Yes"
-    choose "Left arm"
+    choose "Left arm (upper position)"
     click_button "Continue"
 
     choose @batch.name
@@ -96,7 +96,7 @@ describe "HPV vaccination" do
 
     # vaccination
     find_all(".nhsuk-fieldset")[4].choose "Yes"
-    choose "Left arm"
+    choose "Left arm (upper position)"
     click_button "Continue"
   end
 

@@ -102,8 +102,6 @@ class VaccinationRecord < ApplicationRecord
        }
   enum :delivery_site,
        {
-         left_arm: 0,
-         right_arm: 1,
          left_arm_upper_position: 2,
          left_arm_lower_position: 3,
          right_arm_upper_position: 4,

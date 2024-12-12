@@ -479,7 +479,7 @@ describe "Edit vaccination record" do
 
   def and_i_choose_a_delivery_method_and_site
     choose "Intramuscular"
-    choose "Left arm"
+    choose "Left arm (upper position)"
     click_on "Continue"
   end
 

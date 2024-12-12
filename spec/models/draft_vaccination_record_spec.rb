@@ -22,7 +22,7 @@ describe DraftVaccinationRecord do
       performed_at: Time.zone.local(2024, 11, 1, 12),
       batch_id: batch.id,
       delivery_method: "intramuscular",
-      delivery_site: "left_arm",
+      delivery_site: "left_arm_upper_position",
       dose_sequence: 1,
       notes: "Some notes.",
       outcome: "administered",
