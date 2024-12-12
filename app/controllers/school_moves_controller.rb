@@ -9,6 +9,7 @@ class SchoolMovesController < ApplicationController
   layout "full"
 
   def index
+    raise "a sentry error"
     @pagy, @school_moves = pagy(policy_scope(SchoolMove).order(:updated_at))
   end
 
