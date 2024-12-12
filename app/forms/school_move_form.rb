@@ -14,7 +14,7 @@ class SchoolMoveForm
             inclusion: {
               in: [true, false]
             },
-            if: :show_move_to_school?
+            if: -> { show_move_to_school? && action == "confirm" }
 
   def save
     return false unless valid?
