@@ -17,6 +17,9 @@ gem "stimulus-rails"
 gem "thruster", require: false
 gem "turbo-rails"
 
+# Load before sentry-ruby to avoid race condition
+gem "stackprof"
+
 # 3rd party gems
 gem "activerecord-import"
 gem "activerecord-session_store"
