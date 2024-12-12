@@ -311,6 +311,12 @@ unless Settings.cis2.enabled
     urn: "142181"
   )
 
+  # Barn End Centre - used by automated tests
+  attach_specific_school_to_organisation_if_present(
+    organisation:,
+    urn: "118239"
+  )
+
   Audited
     .audit_class
     .as_user(user) do
