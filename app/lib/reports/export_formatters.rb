@@ -89,13 +89,7 @@ module Reports::ExportFormatters
   end
 
   def route_of_vaccination(vaccination_record:)
-    if vaccination_record.delivery_site_nose?
-      "nasal_spray"
-    elsif vaccination_record.delivery_site.present?
-      "intramuscular"
-    else
-      ""
-    end
+    vaccination_record.delivery_method || ""
   end
 
   def dose_sequence(vaccination_record:)
