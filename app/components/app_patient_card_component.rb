@@ -7,15 +7,21 @@ class AppPatientCardComponent < ViewComponent::Base
       
       <% if Flipper.enabled?(:release_1_2) %>
         <% if @patient.date_of_death.present? %>
-          <%= govuk_warning_text(text: "Record updated with child’s date of death") %>
+          <%= render AppNoticeStatusComponent.new(
+            text: "Record updated with child’s date of death"
+          ) %>
         <% end %>
         
         <% if @patient.invalidated? %>
-          <%= govuk_warning_text(text: "Record flagged as invalid") %>
+          <%= render AppNoticeStatusComponent.new(
+            text: "Record flagged as invalid"
+          ) %>
         <% end %>
         
         <% if @patient.restricted? %>
-          <%= govuk_warning_text(text: "Record flagged as sensitive") %>
+          <%= render AppNoticeStatusComponent.new(
+            text: "Record flagged as sensitive"
+          ) %>
         <% end %>
       <% end %>
 
