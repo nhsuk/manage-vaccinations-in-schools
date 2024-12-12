@@ -1,16 +1,16 @@
 # frozen_string_literal: true
 
-describe AppCardComponent, type: :component do
-  subject { page }
-
+describe AppCardComponent do
   context "with a title" do
-    before { render_inline(described_class.new) { _1.with_heading { "Test" } } }
+    subject(:rendered) do
+      render_inline(described_class.new) { _1.with_heading { "Test" } }
+    end
 
     it { should have_css("h2.nhsuk-heading-m", text: "Test") }
   end
 
   context "with a description" do
-    before do
+    subject(:rendered) do
       render_inline(described_class.new) { _1.with_description { "Test" } }
     end
 
@@ -18,7 +18,7 @@ describe AppCardComponent, type: :component do
   end
 
   context "with a link" do
-    before do
+    subject(:rendered) do
       render_inline(described_class.new(link_to: "foo")) do
         _1.with_heading { "Test" }
       end
@@ -29,14 +29,14 @@ describe AppCardComponent, type: :component do
   end
 
   context "with a colour" do
-    before { render_inline(described_class.new(colour: "red")) }
+    subject(:rendered) { render_inline(described_class.new(colour: "red")) }
 
     it { should have_css(".nhsuk-card--feature") }
     it { should have_css(".app-card--red") }
   end
 
   context "when secondary" do
-    before { render_inline(described_class.new(secondary: true)) }
+    subject(:rendered) { render_inline(described_class.new(secondary: true)) }
 
     it { should have_css(".nhsuk-card--secondary") }
   end

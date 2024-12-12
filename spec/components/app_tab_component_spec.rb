@@ -2,8 +2,8 @@
 
 require "govuk_helper"
 
-describe AppTabComponent, type: :component do
-  subject! do
+describe AppTabComponent do
+  subject!(:rendered) do
     render_inline(described_class.new(**kwargs)) do |component|
       tabs.each { |label, content| component.with_tab(label:) { content } }
     end
@@ -22,8 +22,6 @@ describe AppTabComponent, type: :component do
   end
 
   let(:kwargs) { { title: } }
-
-  let(:html) { Nokogiri.parse(rendered_content) }
 
   specify "renders h2 element with right class and title" do
     expect(rendered_content).to have_tag(component_css_class_matcher) do
@@ -118,6 +116,8 @@ describe AppTabComponent, type: :component do
   end
 
   specify "tabs are associated with the right panels" do
+    html = Nokogiri.parse(rendered_content)
+
     tab_link_hrefs =
       html.css("a.nhsuk-tabs__tab").map { |tab| tab[:href].tr("#", "") }
     panel_ids = html.css("div.nhsuk-tabs__panel").map { |panel| panel[:id] }

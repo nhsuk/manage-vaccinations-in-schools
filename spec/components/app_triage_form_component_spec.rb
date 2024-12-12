@@ -12,12 +12,10 @@ describe AppTriageFormComponent do
   it { should have_css(".app-fieldset__legend--reset") }
 
   describe "triage instance variable" do
-    subject { component.instance_variable_get(:@triage) }
+    subject(:triage) { component.instance_variable_get(:@triage) }
 
     context "patient_session has no existing triage" do
-      it "creates a new Triage object" do
-        expect(subject).to be_a Triage
-      end
+      it { should be_a(Triage) }
     end
 
     context "patient_session has existing triage" do

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe AppImportStatusComponent, type: :component do
+describe AppImportStatusComponent do
   subject(:rendered) { render_inline(component) }
 
   let(:component) { described_class.new(import:, break_tag:) }

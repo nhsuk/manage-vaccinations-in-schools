@@ -9,6 +9,7 @@ describe AppOutcomeBannerComponent do
   let(:triage_nurse_name) do
     patient_session.latest_triage.performed_by.full_name
   end
+  let(:location_name) { patient_session.session.location.name }
   let(:patient_name) { patient_session.patient.full_name }
 
   prepend_before do
@@ -21,12 +22,7 @@ describe AppOutcomeBannerComponent do
     it { should have_css(".app-card--red") }
     it { should have_css(".nhsuk-card__heading", text: "Could not vaccinate") }
     it { should have_text("Alya Merton has already had the vaccine") }
-
-    it do
-      expect(subject).to have_text(
-        "Location\n#{patient_session.session.location.name}"
-      )
-    end
+    it { should have_text("Location\n#{location_name}") }
   end
 
   context "triaged, not possible to vaccinate" do

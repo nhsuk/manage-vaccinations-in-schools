@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe AppImportFormatDetailsComponent, type: :component do
+describe AppImportFormatDetailsComponent do
   let(:programme) { create(:programme, :hpv) }
 
   it "renders the correct summary text for ClassImport" do

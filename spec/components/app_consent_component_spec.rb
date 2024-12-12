@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe AppConsentComponent, type: :component do
+describe AppConsentComponent do
   subject(:rendered) { render_inline(component) }
 
   let(:component) do
@@ -41,7 +41,7 @@ describe AppConsentComponent, type: :component do
     it { should have_css("table tr", text: /#{relation}/) }
 
     it "displays the response" do
-      expect(subject).to have_css("table tr", text: /Consent refused/)
+      expect(rendered).to have_css("table tr", text: /Consent refused/)
     end
 
     it { should_not have_css("details", text: "Responses to health questions") }

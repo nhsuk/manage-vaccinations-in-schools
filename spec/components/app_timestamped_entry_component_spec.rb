@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 
-describe AppTimestampedEntryComponent, type: :component do
-  subject { page }
-
-  before { render_inline(component) }
+describe AppTimestampedEntryComponent do
+  subject(:rendered) { render_inline(component) }
 
   context "with text and a timestamp" do
     let(:component) do
