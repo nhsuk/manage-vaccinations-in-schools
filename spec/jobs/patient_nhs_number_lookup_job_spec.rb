@@ -3,6 +3,8 @@
 describe PatientNHSNumberLookupJob do
   subject(:perform_now) { described_class.perform_now(patient) }
 
+  let(:programme) { create(:programme) }
+
   before { create(:gp_practice, ods_code: "H81109") }
 
   context "with an NHS number already" do
@@ -34,6 +36,14 @@ describe PatientNHSNumberLookupJob do
       )
     end
 
+    context "without a match" do
+      let(:response_file) { "pds/search-patients-no-results-response.json" }
+
+      it "doesn't change the NHS number" do
+        expect { perform_now }.not_to change(patient, :nhs_number)
+      end
+    end
+
     context "with a match" do
       let(:response_file) { "pds/search-patients-response.json" }
 
@@ -52,20 +62,11 @@ describe PatientNHSNumberLookupJob do
       end
     end
 
-    context "without a match" do
-      let(:response_file) { "pds/search-patients-no-results-response.json" }
-
-      it "doesn't change the NHS number" do
-        expect { perform_now }.not_to change(patient, :nhs_number)
-      end
-    end
-
     context "with a match and the patient already exists" do
       let(:response_file) { "pds/search-patients-response.json" }
 
       let!(:existing_patient) { create(:patient, nhs_number: "9449306168") }
 
-      let(:programme) { create(:programme) }
       let(:patient_session) { create(:patient_session, patient:, programme:) }
       let(:gillick_assessment) do
         create(:gillick_assessment, :competent, patient_session:)
@@ -135,6 +136,8 @@ describe PatientNHSNumberLookupJob do
   end
 
   context "with an NHS number already but invalidated" do
+    let(:organisation) { create(:organisation, programmes: [programme]) }
+
     let(:patient) do
       create(
         :patient,
@@ -143,7 +146,8 @@ describe PatientNHSNumberLookupJob do
         family_name: "Smith",
         date_of_birth: Date.new(2014, 2, 18),
         address_postcode: "SW11 1AA",
-        invalidated_at: Time.current
+        invalidated_at: Time.current,
+        organisation:
       )
     end
 

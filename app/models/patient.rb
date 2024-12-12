@@ -296,7 +296,10 @@ class Patient < ApplicationRecord
 
       # If we've got a response from DPS we know the patient is valid,
       # otherwise PDS will return a 404 status.
-      self.invalidated_at = nil
+      if invalidated?
+        self.invalidated_at = nil
+        add_to_upcoming_sessions
+      end
 
       if pds_patient.restricted
         self.restricted_at = Time.current unless restricted?
@@ -405,5 +408,18 @@ class Patient < ApplicationRecord
     patient_sessions.where(session: upcoming_sessions).find_each(
       &:destroy_if_safe!
     )
+  end
+
+  def add_to_upcoming_sessions
+    school_move =
+      if school
+        SchoolMove.new(patient: self, school:)
+      elsif (organisation = cohort&.organisation)
+        SchoolMove.new(patient: self, home_educated:, organisation:)
+      end
+
+    return if school_move.nil?
+
+    school_move.confirm!
   end
 end
