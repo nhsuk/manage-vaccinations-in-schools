@@ -616,6 +616,7 @@ GEM
       activesupport
       solargraph
     splunk-sdk-ruby (1.0.5)
+    stackprof (0.2.26)
     stimulus-rails (1.3.4)
       railties (>= 6.0.0)
     stringio (3.1.2)
@@ -770,6 +771,7 @@ DEPENDENCIES
   solargraph
   solargraph-rails
   splunk-sdk-ruby
+  stackprof
   stimulus-rails
   syntax_tree
   syntax_tree-haml
