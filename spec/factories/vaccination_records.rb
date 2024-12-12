@@ -44,7 +44,12 @@
 FactoryBot.define do
   factory :vaccination_record do
     transient do
-      session { association :session, programme: }
+      organisation do
+        programme.organisations.first ||
+          association(:organisation, programmes: [programme])
+      end
+
+      session { association :session, programme:, organisation: }
       patient do
         association :patient,
                     school: session.location.school? ? session.location : nil
@@ -64,12 +69,7 @@ FactoryBot.define do
     delivery_method { "intramuscular" }
     vaccine { programme.vaccines.active.first }
     batch do
-      if vaccine
-        association :batch,
-                    organisation: patient_session.organisation,
-                    vaccine:,
-                    strategy: :create
-      end
+      association :batch, organisation:, vaccine:, strategy: :create if vaccine
     end
 
     performed_by
