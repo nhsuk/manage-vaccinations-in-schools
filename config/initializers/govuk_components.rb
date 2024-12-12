@@ -5,7 +5,6 @@ Govuk::Components.configure do |config|
   config.brand_overrides = {
     "GovukComponent::NotificationBannerComponent" => "govuk",
     "GovukComponent::PaginationComponent" => "govuk",
-    "GovukComponent::PanelComponent" => "govuk",
-    "GovukComponent::WarningTextComponent" => "govuk"
+    "GovukComponent::PanelComponent" => "govuk"
   }
 end
