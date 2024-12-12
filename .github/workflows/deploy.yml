@@ -28,7 +28,7 @@ jobs:
         environment: >-
           ${{ fromJSON(github.event_name == 'workflow_dispatch'
               && format('["{0}"]', inputs.environment)
-              || '["test", "training"]') }}
+              || '["qa", "test", "training"]') }}
     uses: ./.github/workflows/_deploy-template.yml
     with:
       environment: ${{ matrix.environment }}
