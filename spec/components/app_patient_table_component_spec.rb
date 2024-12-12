@@ -3,7 +3,7 @@
 describe AppPatientTableComponent do
   subject(:rendered) { render_inline(component) }
 
-  let(:component) { described_class.new(patients, count:) }
+  let(:component) { described_class.new(patients, current_user:, count:) }
 
   let(:patients) do
     [
@@ -26,6 +26,8 @@ describe AppPatientTableComponent do
       )
     ] + create_list(:patient, 8)
   end
+
+  let(:current_user) { create(:nurse) }
 
   let(:count) { 10 }
 
@@ -59,5 +61,18 @@ describe AppPatientTableComponent do
 
   it "doesn't show postcode of restricted patients" do
     expect(rendered).not_to have_text("SW1B 1AA")
+  end
+
+  it "renders links" do
+    expect(rendered).to have_link("John Smith")
+  end
+
+  context "with a patient not in the cohort" do
+    before { patients.first.update!(cohort_id: nil) }
+
+    it "doesn't render a link" do
+      expect(rendered).not_to have_link("John Smith")
+      expect(rendered).to have_content("Child has moved out of the area")
+    end
   end
 end

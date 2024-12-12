@@ -18,7 +18,16 @@
         <% body.with_row do |row| %>
           <% row.with_cell do %>
             <span class="nhsuk-table-responsive__heading">Full name</span>
-            <%= link_to patient.full_name, patient_path(patient) %>
+
+            <% if can_link_to?(patient) %>
+              <%= link_to patient.full_name, patient_path(patient) %>
+            <% else %>
+              <%= patient.full_name %>
+              <br />
+              <span class="nhsuk-u-secondary-text-color">
+                Child has moved out of the area
+              </span>
+            <% end %>
           <% end %>
 
           <% row.with_cell do %>
