@@ -47,20 +47,6 @@ secrets:
     from_cfn: ${COPILOT_APPLICATION_NAME}-${COPILOT_ENVIRONMENT_NAME}-dbAuroraSecret
 
 environments:
-  accessibility:
-    http:
-      alias:
-        - "accessibility.mavistesting.com"
-    deployments:
-      rolling: recreate # Disables blue-green deployment for speed
-    variables:
-      RAILS_ENV: staging
-      SENTRY_ENVIRONMENT: accessibility
-      MAVIS__HOST: "accessibility.mavistesting.com"
-      MAVIS__GIVE_OR_REFUSE_CONSENT_HOST: "accessibility.mavistesting.com"
-      MAVIS__CIS2__ENABLED: false
-      MAVIS__PDS__PERFORM_JOBS: false
-      MAVIS__SPLUNK__ENABLED: false
   pentest:
     http:
       alias:
@@ -72,6 +58,20 @@ environments:
       SENTRY_ENVIRONMENT: pentest
       MAVIS__HOST: "pentest.mavistesting.com"
       MAVIS__GIVE_OR_REFUSE_CONSENT_HOST: "pentest.mavistesting.com"
+      MAVIS__CIS2__ENABLED: false
+      MAVIS__PDS__PERFORM_JOBS: false
+      MAVIS__SPLUNK__ENABLED: false
+  qa:
+    http:
+      alias:
+        - "qa.mavistesting.com"
+    deployments:
+      rolling: recreate # Disables blue-green deployment for speed
+    variables:
+      RAILS_ENV: staging
+      SENTRY_ENVIRONMENT: qa
+      MAVIS__HOST: "qa.mavistesting.com"
+      MAVIS__GIVE_OR_REFUSE_CONSENT_HOST: "qa.mavistesting.com"
       MAVIS__CIS2__ENABLED: false
       MAVIS__PDS__PERFORM_JOBS: false
       MAVIS__SPLUNK__ENABLED: false
