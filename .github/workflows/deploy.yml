@@ -14,9 +14,9 @@ on:
         required: true
         type: choice
         options:
-          - accessibility
-          - pentest
+          - qa
           - test
+          - preview
           - training
           - production
 

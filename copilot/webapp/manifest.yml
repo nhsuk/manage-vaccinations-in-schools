@@ -47,17 +47,17 @@ secrets:
     from_cfn: ${COPILOT_APPLICATION_NAME}-${COPILOT_ENVIRONMENT_NAME}-dbAuroraSecret
 
 environments:
-  pentest:
+  preview:
     http:
       alias:
-        - "pentest.mavistesting.com"
+        - "preview.mavistesting.com"
     deployments:
       rolling: recreate # Disables blue-green deployment for speed
     variables:
       RAILS_ENV: staging
-      SENTRY_ENVIRONMENT: pentest
-      MAVIS__HOST: "pentest.mavistesting.com"
-      MAVIS__GIVE_OR_REFUSE_CONSENT_HOST: "pentest.mavistesting.com"
+      SENTRY_ENVIRONMENT: preview
+      MAVIS__HOST: "preview.mavistesting.com"
+      MAVIS__GIVE_OR_REFUSE_CONSENT_HOST: "preview.mavistesting.com"
       MAVIS__CIS2__ENABLED: false
       MAVIS__PDS__PERFORM_JOBS: false
       MAVIS__SPLUNK__ENABLED: false
