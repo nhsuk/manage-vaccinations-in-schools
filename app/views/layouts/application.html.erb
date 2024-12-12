@@ -16,6 +16,13 @@
     <%= turbo_refreshes_with method: :morph, scroll: :preserve  %>
     <%= yield :head %>
     <%= hotwire_livereload_tags if Rails.env.development? %>
+
+    <% if Rails.env.staging? %>
+      <%# Include Sentry SDK to enable session replay in staging envs %>
+      <%= javascript_include_tag "https://js.sentry-cdn.com/f022e362b50c1914d59f03f2193d1eff.min.js",
+                                 crossorigin: "anonymous",
+                                 defer: true %>
+    <% end %>
   </head>
 
   <body class="nhsuk-template__body<%= ' app-signed-in' if current_user.present? %>">
