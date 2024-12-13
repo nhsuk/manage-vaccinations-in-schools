@@ -1,0 +1,27 @@
+organisation:
+  name: # Unique name of the organisation
+  email: # Contact email address
+  phone: # Contact phone number
+  ods_code: # Unique ODS code
+  careplus_venue_code: # Venue code used in CarePlus exports
+  privacy_policy_url: # Optional privacy policy URL
+  reply_to_id: # Optional GOV.UK Notify Reply-To UUID
+
+programmes: [] # A list of programmes, currently only hpv is valid
+
+teams:
+  team1: # Identifier to link team with school and links below, not used in app
+    name: # Name of the team
+    email: # Contact email address
+    phone: # Contact phone number
+
+schools:
+  team1: [] # URNs managed by a particular team
+
+clinics:
+  team1:
+    - name: # Name of the clinic
+      address_line_1: # First line of the address
+      address_town: # Town of the address
+      address_postcode: # Postcode of the address
+      ods_code: # Unique ODS code
