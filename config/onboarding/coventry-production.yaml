@@ -2,15 +2,15 @@ organisation:
   name: Coventry and Warwickshire Partnership NHS Trust
   email: # Contact email address
   phone: # Contact phone number
-  ods_code: # Unique ODS code
-  careplus_venue_code: # Venue code used in CarePlus exports
-  privacy_policy_url: # Optional privacy policy URL
-  reply_to_id: # Optional GOV.UK Notify Reply-To UUID
+  ods_code: RYG
+  careplus_venue_code: CWPTSI
+  privacy_policy_url: https://www.covwarkpt.nhs.uk/download.cfm?ver=8286
+  reply_to_id: ddc407a3-dda9-4183-be83-1309562c95b1
 
 programmes: [hpv]
 
 teams:
-  coventry: # Identifier to link team with school and links below, not used in app
+  coventry:
     name: Coventry School-Aged Immunisation Service
     email: Bewise.Immunise@covwarkpt.nhs.uk
     phone: # Contact phone number
