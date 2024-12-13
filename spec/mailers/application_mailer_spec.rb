@@ -34,5 +34,24 @@ describe ApplicationMailer do
 
       it { should eq(reply_to_id) }
     end
+
+    context "when the team has a reply_to_id" do
+      let(:reply_to_id) { SecureRandom.uuid }
+
+      let(:team) { create(:team, organisation:, reply_to_id:) }
+
+      it { should eq(reply_to_id) }
+    end
+
+    context "when the team and the organisation has a reply_to_id" do
+      let(:reply_to_id) { SecureRandom.uuid }
+
+      let(:organisation) do
+        create(:organisation, programmes:, reply_to_id: SecureRandom.uuid)
+      end
+      let(:team) { create(:team, organisation:, reply_to_id:) }
+
+      it { should eq(reply_to_id) }
+    end
   end
 end

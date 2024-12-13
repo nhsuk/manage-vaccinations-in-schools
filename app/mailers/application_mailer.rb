@@ -56,6 +56,12 @@ class ApplicationMailer < Mail::Notify::Mailer
   end
 
   def reply_to_id
+    team =
+      session&.team || patient_session&.team || consent_form&.team ||
+        vaccination_record&.team
+
+    return team.reply_to_id if team&.reply_to_id
+
     organisation =
       session&.organisation || patient_session&.organisation ||
         consent_form&.organisation || consent&.organisation ||
