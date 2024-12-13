@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 describe PatientTabsConcern do
-  subject { Class.new { include PatientTabsConcern }.new }
+  subject(:controller) { Class.new { include PatientTabsConcern }.new }
 
   let(:programme) { create(:programme) }
   let(:session) { create(:session, programme:) }
@@ -64,7 +64,7 @@ describe PatientTabsConcern do
   describe "#group_patient_sessions_by_conditions" do
     it "groups patient sessions by conditions" do
       result =
-        subject.group_patient_sessions_by_conditions(
+        controller.group_patient_sessions_by_conditions(
           patient_sessions,
           section: :consents
         )
@@ -91,7 +91,7 @@ describe PatientTabsConcern do
     context "some of the groups are empty" do
       it "returns an empty array for all the empty groups" do
         result =
-          subject.group_patient_sessions_by_conditions(
+          controller.group_patient_sessions_by_conditions(
             [consent_given_triage_not_needed],
             section: :consents
           )
@@ -112,7 +112,7 @@ describe PatientTabsConcern do
     context "triage section" do
       it "groups patient sessions by triage states" do
         result =
-          subject.group_patient_sessions_by_state(
+          controller.group_patient_sessions_by_state(
             patient_sessions,
             section: :triage
           )
@@ -139,7 +139,7 @@ describe PatientTabsConcern do
     context "vaccinations section" do
       it "groups patient sessions by vaccination states" do
         result =
-          subject.group_patient_sessions_by_state(
+          controller.group_patient_sessions_by_state(
             patient_sessions,
             section: :vaccinations
           )
@@ -168,7 +168,7 @@ describe PatientTabsConcern do
 
       it "returns an empty array for all the empty groups" do
         result =
-          subject.group_patient_sessions_by_state(
+          controller.group_patient_sessions_by_state(
             [patient_session],
             section: :triage
           )
@@ -200,7 +200,7 @@ describe PatientTabsConcern do
         consent_refused: [refuser_patient_session]
       }
 
-      result = subject.count_patient_sessions(patient_sessions)
+      result = controller.count_patient_sessions(patient_sessions)
 
       expect(result).to eq(
         { no_consent: 2, consent_given: 0, consent_refused: 1 }

@@ -1,129 +1,156 @@
 # frozen_string_literal: true
 
 describe ConsolidatedHealthAnswers do
-  it "returns a questionnaire from one responder in the order it was given, including notes" do
-    subject.add_answer(
-      responder: "Mum",
-      question: "First question?",
-      answer: "No"
-    )
-    subject.add_answer(
-      responder: "Mum",
-      question: "Second question?",
-      answer: "No"
-    )
-    subject.add_answer(
-      responder: "Mum",
-      question: "Third question?",
-      answer: "Yes",
-      notes: "Notes"
-    )
+  subject(:to_h) { consolidated_health_answers.to_h }
 
-    expect(subject.to_h).to eq(
-      {
-        "First question?" => [{ responder: "Mum", answer: "No", notes: nil }],
-        "Second question?" => [{ responder: "Mum", answer: "No", notes: nil }],
-        "Third question?" => [
-          { responder: "Mum", answer: "Yes", notes: "Notes" }
-        ]
-      }
-    )
+  let(:consolidated_health_answers) { described_class.new }
+
+  context "with one responder in the order it was given, including notes" do
+    before do
+      consolidated_health_answers.add_answer(
+        responder: "Mum",
+        question: "First question?",
+        answer: "No"
+      )
+      consolidated_health_answers.add_answer(
+        responder: "Mum",
+        question: "Second question?",
+        answer: "No"
+      )
+      consolidated_health_answers.add_answer(
+        responder: "Mum",
+        question: "Third question?",
+        answer: "Yes",
+        notes: "Notes"
+      )
+    end
+
+    it do
+      expect(to_h).to eq(
+        {
+          "First question?" => [{ responder: "Mum", answer: "No", notes: nil }],
+          "Second question?" => [
+            { responder: "Mum", answer: "No", notes: nil }
+          ],
+          "Third question?" => [
+            { responder: "Mum", answer: "Yes", notes: "Notes" }
+          ]
+        }
+      )
+    end
   end
 
-  it "groups answers from multiple responders to the same question" do
-    subject.add_answer(
-      responder: "Mum",
-      question: "First question?",
-      answer: "No"
-    )
-    subject.add_answer(
-      responder: "Dad",
-      question: "First question?",
-      answer: "Yes",
-      notes: "Notes"
-    )
+  context "with multiple responders to the same question" do
+    before do
+      consolidated_health_answers.add_answer(
+        responder: "Mum",
+        question: "First question?",
+        answer: "No"
+      )
+      consolidated_health_answers.add_answer(
+        responder: "Dad",
+        question: "First question?",
+        answer: "Yes",
+        notes: "Notes"
+      )
+    end
 
-    expect(subject.to_h).to eq(
-      {
-        "First question?" => [
-          { responder: "Mum", answer: "No", notes: nil },
-          { responder: "Dad", answer: "Yes", notes: "Notes" }
-        ]
-      }
-    )
+    it do
+      expect(to_h).to eq(
+        {
+          "First question?" => [
+            { responder: "Mum", answer: "No", notes: nil },
+            { responder: "Dad", answer: "Yes", notes: "Notes" }
+          ]
+        }
+      )
+    end
   end
 
-  it "consolidates answers to the same question" do
-    subject.add_answer(
-      responder: "Mum",
-      question: "First question?",
-      answer: "No"
-    )
-    subject.add_answer(
-      responder: "Dad",
-      question: "First question?",
-      answer: "No"
-    )
+  context "with same answers to the same question" do
+    before do
+      consolidated_health_answers.add_answer(
+        responder: "Mum",
+        question: "First question?",
+        answer: "No"
+      )
+      consolidated_health_answers.add_answer(
+        responder: "Dad",
+        question: "First question?",
+        answer: "No"
+      )
+    end
 
-    expect(subject.to_h).to eq(
-      { "First question?" => [{ responder: "All", answer: "No", notes: nil }] }
-    )
+    it do
+      expect(to_h).to eq(
+        {
+          "First question?" => [{ responder: "All", answer: "No", notes: nil }]
+        }
+      )
+    end
   end
 
-  it "correctly handles several responses from the same parent (or two same-sex parents)" do
-    subject.add_answer(
-      responder: "Mum",
-      question: "First question?",
-      answer: "Yes",
-      notes: "Notes"
-    )
+  context "with several responses from the same parent (or two same-sex parents)" do
+    before do
+      consolidated_health_answers.add_answer(
+        responder: "Mum",
+        question: "First question?",
+        answer: "Yes",
+        notes: "Notes"
+      )
 
-    subject.add_answer(
-      responder: "Mum",
-      question: "First question?",
-      answer: "Yes",
-      notes: "Different notes"
-    )
+      consolidated_health_answers.add_answer(
+        responder: "Mum",
+        question: "First question?",
+        answer: "Yes",
+        notes: "Different notes"
+      )
+    end
 
-    expect(subject.to_h).to eq(
-      {
-        "First question?" => [
-          { responder: "Mum", answer: "Yes", notes: "Notes" },
-          { responder: "Mum", answer: "Yes", notes: "Different notes" }
-        ]
-      }
-    )
+    it do
+      expect(to_h).to eq(
+        {
+          "First question?" => [
+            { responder: "Mum", answer: "Yes", notes: "Notes" },
+            { responder: "Mum", answer: "Yes", notes: "Different notes" }
+          ]
+        }
+      )
+    end
   end
 
-  it "handles consent forms with variable numbers of questions, when some questions branch" do
-    subject.add_answer(
-      responder: "Mum",
-      question: "First question?",
-      answer: "Yes"
-    )
-    subject.add_answer(
-      responder: "Mum",
-      question: "Second question?",
-      answer: "Yes",
-      notes: "Notes"
-    )
+  context "with consent forms with variable numbers of questions, when some questions branch" do
+    before do
+      consolidated_health_answers.add_answer(
+        responder: "Mum",
+        question: "First question?",
+        answer: "Yes"
+      )
+      consolidated_health_answers.add_answer(
+        responder: "Mum",
+        question: "Second question?",
+        answer: "Yes",
+        notes: "Notes"
+      )
+      consolidated_health_answers.add_answer(
+        responder: "Dad",
+        question: "First question?",
+        answer: "No"
+      )
+    end
 
-    subject.add_answer(
-      responder: "Dad",
-      question: "First question?",
-      answer: "No"
-    )
-
-    expect(subject.to_h).to eq(
-      {
-        "First question?" => [
-          { responder: "Mum", answer: "Yes", notes: nil },
-          { responder: "Dad", answer: "No", notes: nil }
-        ],
-        "Second question?" => [
-          { responder: "Mum", answer: "Yes", notes: "Notes" }
-        ]
-      }
-    )
+    it do
+      expect(to_h).to eq(
+        {
+          "First question?" => [
+            { responder: "Mum", answer: "Yes", notes: nil },
+            { responder: "Dad", answer: "No", notes: nil }
+          ],
+          "Second question?" => [
+            { responder: "Mum", answer: "Yes", notes: "Notes" }
+          ]
+        }
+      )
+    end
   end
 end

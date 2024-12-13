@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 describe NHS::CIS2 do
-  describe "jwks_fetcher" do
+  describe "#jwks_fetcher" do
     subject { described_class.send(:jwks_fetcher).call({}) }
 
     let(:jwks_uri) { "http://localhost:4000/jwks" }
@@ -28,20 +28,20 @@ describe NHS::CIS2 do
         allow(Rails.cache).to receive(:fetch).with(
           "cis2:jwks"
         ).and_call_original
-      end
 
-      it "fetches the jwks" do
         allow(JWT::JWK::Set).to receive(:new).and_return(
           [{ kid: "key1", use: "sig" }, kid: "key2", use: "enc"]
         )
-
-        expect(subject).to eq [{ kid: "key1", use: "sig" }]
       end
+
+      it { should eq [{ kid: "key1", use: "sig" }] }
     end
   end
 
-  describe "openid_configuration" do
-    subject { described_class.send(:openid_configuration) }
+  describe "#openid_configuration" do
+    subject(:openid_configuration) do
+      described_class.send(:openid_configuration)
+    end
 
     let(:config_uri) do
       "http://localhost:4000/test/oidc/.well-known/openid-configuration"
@@ -67,7 +67,7 @@ describe NHS::CIS2 do
         expires_in: 1.day
       ).and_call_original
 
-      subject
+      openid_configuration
 
       expect(Rails.cache).to have_received(:fetch)
     end
