@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require "govuk_helper"
-
 describe AppTabComponent do
+  include RSpecHtmlMatchers
+
   subject!(:rendered) do
     render_inline(described_class.new(**kwargs)) do |component|
       tabs.each { |label, content| component.with_tab(label:) { content } }
@@ -24,7 +24,7 @@ describe AppTabComponent do
   let(:kwargs) { { title: } }
 
   specify "renders h2 element with right class and title" do
-    expect(rendered_content).to have_tag(component_css_class_matcher) do
+    expect(rendered_content).to have_tag("div") do
       with_tag("h2", with: { class: "nhsuk-tabs__title" }, text: title)
     end
   end
@@ -134,7 +134,7 @@ describe AppTabComponent do
         "div",
         with: {
           id: custom_id,
-          class: component_css_class
+          class: "nhsuk-tabs"
         }
       )
     end
