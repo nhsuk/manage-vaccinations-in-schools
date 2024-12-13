@@ -17,7 +17,9 @@ describe "Verbal consent" do
     organisation =
       create(:organisation, :with_one_nurse, programmes: [programme])
     @session = create(:session, organisation:, programme:)
-    @patient = create(:patient, session: @session)
+
+    @parent = create(:parent)
+    @patient = create(:patient, session: @session, parents: [@parent])
 
     sign_in organisation.users.first
   end

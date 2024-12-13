@@ -61,15 +61,9 @@ describe "Invalidate consent" do
   end
 
   def and_consent_has_been_given
-    @parent = @patient.parents.first
     @consent =
-      create(
-        :consent,
-        :given,
-        patient: @patient,
-        parent: @parent,
-        programme: @programme
-      )
+      create(:consent, :given, patient: @patient, programme: @programme)
+    @parent = @consent.parent
   end
 
   def and_triaged_as_safe_to_vaccinate

@@ -23,15 +23,16 @@ describe VaccinationMailerConcern do
 
     let(:programme) { create(:programme) }
     let(:session) { create(:session, programme:) }
-    let(:consent) { create(:consent, :given, programme:) }
-    let(:patient) { create(:patient, consents: [consent]) }
-    let(:parent) { consent.parent || patient.parents.first }
+    let(:parent) { create(:parent) }
+    let(:patient) { create(:patient, parents: [parent]) }
     let(:patient_session) { create(:patient_session, session:, patient:) }
     let(:vaccination_record) do
       create(:vaccination_record, programme:, patient_session:)
     end
 
     context "when the vaccination has taken place" do
+      before { create(:consent, :given, patient:, programme:) }
+
       it "sends an email" do
         expect { send_vaccination_confirmation }.to have_enqueued_mail(
           VaccinationMailer,
@@ -54,6 +55,8 @@ describe VaccinationMailerConcern do
     end
 
     context "when the vaccination hasn't taken place" do
+      before { create(:consent, :given, patient:, programme:) }
+
       let(:vaccination_record) do
         create(
           :vaccination_record,
@@ -90,8 +93,15 @@ describe VaccinationMailerConcern do
       end
 
       context "when child wants parents to be notified" do
-        let(:consent) do
-          create(:consent, :given, :self_consent, :notify_parents, programme:)
+        before do
+          create(
+            :consent,
+            :given,
+            :self_consent,
+            :notify_parents,
+            patient:,
+            programme:
+          )
         end
 
         it "sends an email" do
@@ -116,7 +126,7 @@ describe VaccinationMailerConcern do
       end
 
       context "when child doesn't want a parent to be notified" do
-        let(:consent) { create(:consent, :given, :self_consent, programme:) }
+        before { create(:consent, :given, :self_consent, patient:, programme:) }
 
         it "doesn't send an email" do
           expect { send_vaccination_confirmation }.not_to have_enqueued_mail

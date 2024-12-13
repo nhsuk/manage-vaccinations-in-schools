@@ -571,11 +571,9 @@ describe Patient do
   end
 
   describe "#destroy_childless_parents" do
-    let(:patient) { create(:patient, parents: []) }
-    let(:parent) { create(:parent) }
-
     context "when parent has only one child" do
-      before { create(:parent_relationship, parent:, patient:) }
+      let(:parent) { create(:parent) }
+      let!(:patient) { create(:patient, parents: [parent]) }
 
       it "destroys the parent when the patient is destroyed" do
         expect { patient.destroy }.to change(Parent, :count).by(-1)
@@ -583,12 +581,10 @@ describe Patient do
     end
 
     context "when parent has multiple children" do
-      let(:sibling) { create(:patient) }
+      let(:parent) { create(:parent) }
+      let!(:patient) { create(:patient, parents: [parent]) }
 
-      before do
-        create(:parent_relationship, parent:, patient:)
-        create(:parent_relationship, parent:, patient: sibling)
-      end
+      before { create(:patient, parents: [parent]) }
 
       it "does not destroy the parent when one patient is destroyed" do
         expect { patient.destroy }.not_to change(Parent, :count)
@@ -596,12 +592,7 @@ describe Patient do
     end
 
     context "when patient has multiple parents" do
-      let(:other_parent) { create(:parent) }
-
-      before do
-        create(:parent_relationship, parent:, patient:)
-        create(:parent_relationship, parent: other_parent, patient:)
-      end
+      let!(:patient) { create(:patient, parents: create_list(:parent, 2)) }
 
       it "destroys only the childless parents" do
         expect { patient.destroy }.to change(Parent, :count).by(-2)
