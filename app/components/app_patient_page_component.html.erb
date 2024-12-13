@@ -10,10 +10,7 @@
      render AppSimpleStatusBannerComponent.new(patient_session:)
    end %>
 
-<%= render AppCardComponent.new do |c| %>
-  <% c.with_heading { "Child details" } %>
-  <%= render AppPatientSummaryComponent.new(patient, show_parent_or_guardians: true) %>
-<% end %>
+<%= render AppPatientCardComponent.new(patient) %>
 
 <% if display_gillick_assessment_card? %>
   <%= render AppCardComponent.new do |c| %>

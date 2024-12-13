@@ -46,7 +46,8 @@ class ConsentFormsController < ApplicationController
   end
 
   def new_patient
-    @patient = Patient.from_consent_form(@consent_form)
+    @patient =
+      Patient.from_consent_form(@consent_form).tap(&:clear_changes_information)
 
     render layout: "two_thirds"
   end

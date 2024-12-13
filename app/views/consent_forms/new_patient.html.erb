@@ -10,12 +10,7 @@
   <%= page_title %>
 <% end %>
 
-<%= render AppCardComponent.new do |c| %>
-  <% c.with_heading { "Child record" } %>
-  <%= render AppPatientSummaryComponent.new(@patient,
-                                            show_parent_or_guardians: true,
-                                            highlight: false) %>
-<% end %>
+<%= render AppPatientCardComponent.new(@patient) %>
 
 <%= render AppCardComponent.new do |c|
       c.with_heading { "Consent response" }
