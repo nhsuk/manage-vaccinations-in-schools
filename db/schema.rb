@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2024_12_12_145341) do
+ActiveRecord::Schema[8.0].define(version: 2024_12_13_102755) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -826,6 +826,8 @@ ActiveRecord::Schema[8.0].define(version: 2024_12_12_145341) do
   add_foreign_key "organisation_programmes", "programmes"
   add_foreign_key "parent_relationships", "parents"
   add_foreign_key "parent_relationships", "patients"
+  add_foreign_key "patient_sessions", "patients"
+  add_foreign_key "patient_sessions", "sessions"
   add_foreign_key "patients", "cohorts"
   add_foreign_key "patients", "locations", column: "gp_practice_id"
   add_foreign_key "patients", "locations", column: "school_id"
