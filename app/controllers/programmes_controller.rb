@@ -36,11 +36,11 @@ class ProgrammesController < ApplicationController
         .eager_load(:location)
         .preload(
           :session_dates,
-          patient_sessions: %i[
-            consents
-            gillick_assessments
-            triages
-            vaccination_records
+          patient_sessions: [
+            :gillick_assessments,
+            :triages,
+            :vaccination_records,
+            { consents: :parent }
           ]
         )
         .order("locations.name")

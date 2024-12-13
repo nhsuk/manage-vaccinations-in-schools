@@ -41,7 +41,7 @@ class PatientSession < ApplicationRecord
   has_many :vaccination_records, -> { kept }
 
   # TODO: Only fetch consents and triages for the relevant programme.
-  has_many :consents, -> { eager_load(:parent) }, through: :patient
+  has_many :consents, through: :patient
   has_many :triages, through: :patient
 
   has_many :session_notifications,
@@ -69,11 +69,11 @@ class PatientSession < ApplicationRecord
   scope :preload_for_state,
         -> do
           preload(
-            :consents,
             :gillick_assessments,
             :triages,
             :vaccination_records,
-            :session_attendances
+            :session_attendances,
+            consents: :parent
           )
         end
 

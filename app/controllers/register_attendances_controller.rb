@@ -46,7 +46,7 @@ class RegisterAttendancesController < ApplicationController
         :patient,
         :vaccination_records,
         :triages,
-        :consents,
+        consents: :parent,
         session: :session_dates,
         session_attendances: :session_date
       )
