@@ -83,11 +83,7 @@ class User < ApplicationRecord
 
   def selected_organisation
     @selected_organisation ||=
-      if Settings.cis2.enabled
-        Organisation.find_by(ods_code: cis2_info.dig("selected_org", "code"))
-      else
-        organisations.first
-      end
+      Organisation.find_by(ods_code: cis2_info.dig("selected_org", "code"))
   end
 
   def requires_email_and_password?

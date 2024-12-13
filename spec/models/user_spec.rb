@@ -41,13 +41,6 @@ describe User do
   describe "#selected_organisation" do
     subject(:selected_organisation) { user.selected_organisation }
 
-    context "cis2 is disabled", cis2: :disabled do
-      let(:organisation) { build(:organisation) }
-      let(:user) { build(:user, organisation:) }
-
-      it { should eq(organisation) }
-    end
-
     context "cis2 is enabled", cis2: :enabled do
       let(:organisation) { create(:organisation) }
       let(:user) { create(:user, organisation:) }
