@@ -164,10 +164,10 @@ class DraftConsentsController < ApplicationController
 
   def set_parent_options
     @parent_options =
-      (@patient.parents + @patient_session.consents.filter_map(&:parent))
-        .compact
-        .uniq
-        .sort_by(&:label)
+      (
+        @patient.parent_relationships +
+          @patient_session.consents.filter_map(&:parent_relationship)
+      ).compact.uniq.sort_by(&:label)
   end
 
   def set_back_link_path

@@ -32,11 +32,25 @@ class AppCompareConsentFormAndPatientComponent < ViewComponent::Base
       consent_form.school == patient.school
   end
 
-  def consent_form_parent
-    Parent.new(
-      full_name: consent_form.parent_full_name,
-      email: consent_form.parent_email,
-      phone: consent_form.parent_phone
+  def consent_form_patient
+    parent =
+      Parent.new(
+        full_name: consent_form.parent_full_name,
+        email: consent_form.parent_email,
+        phone: consent_form.parent_phone
+      )
+
+    parent_relationship =
+      ParentRelationship.new(
+        parent:,
+        type: consent_form.parent_relationship_type,
+        other_name: consent_form.parent_relationship_other_name
+      )
+
+    Patient.new(
+      school: consent_form.school,
+      home_educated: consent_form.home_educated,
+      parent_relationships: [parent_relationship]
     )
   end
 

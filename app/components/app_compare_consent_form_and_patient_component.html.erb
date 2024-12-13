@@ -44,7 +44,7 @@
 
       <%= body.with_row do |row| %>
         <%= row.with_cell(text: "Parent", header: true) %>
-        <%= row.with_cell(text: helpers.format_parent(consent_form_parent, patient:)) %>
+        <%= row.with_cell(text: helpers.patient_parents(consent_form_patient)) %>
         <%= row.with_cell(text: helpers.patient_parents(patient)) %>
       <% end %>
     <% end %>

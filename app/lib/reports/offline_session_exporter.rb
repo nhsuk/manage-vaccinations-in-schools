@@ -123,7 +123,7 @@ class Reports::OfflineSessionExporter
       .patient_sessions
       .eager_load(patient: %i[cohort school])
       .preload(
-        consents: [:patient, { parent: :parent_relationships }],
+        consents: [:parent, { patient: :parent_relationships }],
         gillick_assessments: :performed_by,
         triages: :performed_by,
         vaccination_records: %i[batch performed_by_user vaccine]

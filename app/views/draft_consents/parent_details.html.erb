@@ -3,7 +3,7 @@
 <% end %>
 
 <% page_title = if @parent.persisted?
-       "Details for #{@parent.label_to(patient: @patient)}"
+       "Details for #{@draft_consent.parent_relationship.label_with_parent}"
      else
        "Details for parent or guardian"
      end %>

@@ -92,19 +92,6 @@ class Parent < ApplicationRecord
     [email, phone].compact_blank.join(" / ")
   end
 
-  def label_to(patient:)
-    relationship = relationship_to(patient:)
-    if relationship && !relationship.unknown?
-      "#{label} (#{relationship.label})"
-    else
-      label
-    end
-  end
-
-  def relationship_to(patient:)
-    parent_relationships.find { _1.patient_id == patient.id }
-  end
-
   def contact_method_description
     if contact_method_other?
       "Other – #{contact_method_other_details}"

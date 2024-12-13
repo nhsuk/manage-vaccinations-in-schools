@@ -93,9 +93,9 @@ class Reports::ProgrammeVaccinationsExporter
           :programme,
           :vaccine,
           patient_session: {
-            patient: %i[cohort gp_practice school],
-            consents: [:patient, { parent: :parent_relationships }],
+            consents: [:parent, { patient: :parent_relationships }],
             gillick_assessments: :performed_by,
+            patient: %i[cohort gp_practice school],
             triages: :performed_by
           }
         )

@@ -93,7 +93,7 @@ class PatientsController < ApplicationController
           consents: %i[consent_form parent patient recorded_by],
           gillick_assessments: :performed_by,
           notify_log_entries: :sent_by,
-          parents: %i[parent_relationships],
+          parent_relationships: :parent,
           patient_sessions: %i[location session_attendances],
           pre_screenings: :performed_by,
           triages: :performed_by,

@@ -3,7 +3,7 @@
 describe AppHealthQuestionsComponent do
   subject(:rendered) { render_inline(component) }
 
-  let(:component) { described_class.new(consents:) }
+  let(:component) { described_class.new(consents: consents.map(&:reload)) }
 
   context "with one consent" do
     let(:consents) do

@@ -76,7 +76,16 @@ describe AppPatientSummaryComponent do
 
   context "when showing parents or guardians" do
     let(:component) do
-      described_class.new(patient, show_parent_or_guardians: true)
+      described_class.new(patient.reload, show_parent_or_guardians: true)
+    end
+
+    before do
+      create(
+        :parent_relationship,
+        :father,
+        patient:,
+        parent: build(:parent, full_name: "Mark Doe")
+      )
     end
 
     it { should have_content("Parent or guardian") }

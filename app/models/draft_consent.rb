@@ -188,7 +188,7 @@ class DraftConsent
   def parent=(value)
     self.parent_id = value&.id
 
-    parent_relationship = value&.relationship_to(patient:)
+    parent_relationship = value&.parent_relationships&.find_by(patient_id:)
 
     self.parent_email = patient.restricted? ? "" : value&.email
     self.parent_full_name = value&.full_name
@@ -287,7 +287,7 @@ class DraftConsent
   end
 
   def parent_relationship
-    parent&.relationship_to(patient:)
+    parent&.parent_relationships&.find { _1.patient_id == patient_id }
   end
 
   def who_responded

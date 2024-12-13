@@ -79,14 +79,14 @@ class VaccinationRecordsController < ApplicationController
               :cohort,
               :gp_practice,
               :school,
-              { parents: :parent_relationships }
+              { parent_relationships: :parent }
             ]
           },
           patient: [
             :cohort,
             :gp_practice,
             :school,
-            { parents: :parent_relationships }
+            { parent_relationships: :parent }
           ],
           session: %i[session_dates],
           vaccine: :programme

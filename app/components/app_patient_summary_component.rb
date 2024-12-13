@@ -67,10 +67,10 @@ class AppPatientSummaryComponent < ViewComponent::Base
         end
       end
       if @show_parent_or_guardians && !@patient.restricted? &&
-           @patient.parents.present?
+           @patient.parent_relationships.present?
         summary_list.with_row do |row|
           row.with_key do
-            "Parent or guardian".pluralize(@patient.parents.count)
+            "Parent or guardian".pluralize(@patient.parent_relationships.count)
           end
           row.with_value { format_parent_or_guardians }
         end
@@ -144,23 +144,7 @@ class AppPatientSummaryComponent < ViewComponent::Base
   end
 
   def format_parent_or_guardians
-    tag.ul(class: "nhsuk-list") do
-      safe_join(
-        @patient.parents.map do |parent|
-          tag.li do
-            [
-              parent.label_to(patient: @patient),
-              if (email = parent.email).present?
-                tag.span(email, class: "nhsuk-u-secondary-text-color")
-              end,
-              if (phone = parent.phone).present?
-                tag.span(phone, class: "nhsuk-u-secondary-text-color")
-              end
-            ].compact.join(tag.br).html_safe
-          end
-        end
-      )
-    end
+    helpers.patient_parents(@patient)
   end
 
   def highlight_if(value, condition)

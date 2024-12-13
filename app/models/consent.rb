@@ -126,7 +126,7 @@ class Consent < ApplicationRecord
   end
 
   def parent_relationship
-    parent&.relationship_to(patient:)
+    patient.parent_relationships.find { _1.parent_id == parent_id }
   end
 
   def who_responded

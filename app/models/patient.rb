@@ -249,10 +249,6 @@ class Patient < ApplicationRecord
     results
   end
 
-  def relationship_to(parent:)
-    parent_relationships.find { _1.parent == parent }
-  end
-
   def has_consent?(programme)
     consents.any? { _1.programme_id == programme.id }
   end
