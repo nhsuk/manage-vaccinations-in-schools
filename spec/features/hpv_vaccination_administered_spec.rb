@@ -46,6 +46,9 @@ describe "HPV vaccination" do
     then_i_see_the_record_vaccinations_page
     and_a_success_message
 
+    when_i_go_back
+    and_i_save_changes
+
     when_i_go_to_the_patient
     then_i_see_that_the_status_is_vaccinated
     and_i_see_the_vaccination_details
@@ -180,6 +183,14 @@ describe "HPV vaccination" do
     )
   end
 
+  def when_i_go_back
+    visit draft_vaccination_record_path("confirm")
+  end
+
+  def and_i_save_changes
+    click_button "Save changes"
+  end
+
   def when_i_go_to_the_patient
     click_link @patient.full_name
   end
@@ -189,7 +200,7 @@ describe "HPV vaccination" do
   end
 
   def and_i_see_the_vaccination_details
-    expect(page).to have_content("Vaccination details")
+    expect(page).to have_content("Vaccination details").once
   end
 
   def when_vaccination_confirmations_are_sent

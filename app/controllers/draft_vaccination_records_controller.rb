@@ -97,6 +97,10 @@ class DraftVaccinationRecordsController < ApplicationController
 
     send_vaccination_confirmation(@vaccination_record) if should_notify_parents
 
+    # In case the user navigates back to try and edit the newly created
+    # vaccination record.
+    @draft_vaccination_record.update!(editing_id: @vaccination_record.id)
+
     heading =
       if @vaccination_record.administered?
         t("vaccinations.flash.given")
@@ -122,10 +126,10 @@ class DraftVaccinationRecordsController < ApplicationController
   end
 
   def finish_wizard_path
-    if @draft_vaccination_record.editing?
-      programme_vaccination_record_path(@programme, @vaccination_record)
-    else
+    if @session.today?
       session_vaccinations_path(@session)
+    else
+      programme_vaccination_record_path(@programme, @vaccination_record)
     end
   end
 
