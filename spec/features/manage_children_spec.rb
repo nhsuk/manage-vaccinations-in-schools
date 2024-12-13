@@ -69,18 +69,34 @@ describe "Manage children" do
     then_i_see_permission_denied
   end
 
-  scenario "Viewing important notices as a superuser" do
+  scenario "Viewing deceased patient notices as a superuser" do
     when_i_go_to_the_dashboard_as_a_superuser
     and_i_click_on_notices
     then_i_see_no_notices
 
     when_a_deceased_patient_exists
-    and_an_invalid_patient_exists
-    and_a_restricted_patient_exists
     and_i_click_on_notices
     then_i_see_the_notice_of_date_of_death
-    and_i_see_the_notice_of_invalid
-    and_i_see_the_notice_of_sensitive
+  end
+
+  scenario "Viewing invalidated patient notices as a superuser" do
+    when_i_go_to_the_dashboard_as_a_superuser
+    and_i_click_on_notices
+    then_i_see_no_notices
+
+    when_an_invalidated_patient_exists
+    and_i_click_on_notices
+    then_i_see_the_notice_of_invalid
+  end
+
+  scenario "Viewing restricted patient notices as a superuser" do
+    when_i_go_to_the_dashboard_as_a_superuser
+    and_i_click_on_notices
+    then_i_see_no_notices
+
+    when_a_restricted_patient_exists
+    and_i_click_on_notices
+    then_i_see_the_notice_of_sensitive
   end
 
   def given_my_organisation_exists
@@ -121,12 +137,12 @@ describe "Manage children" do
     @deceased_patient = create(:patient, :deceased, organisation: @organisation)
   end
 
-  def and_an_invalid_patient_exists
+  def when_an_invalidated_patient_exists
     @invalidated_patient =
       create(:patient, :invalidated, organisation: @organisation)
   end
 
-  def and_a_restricted_patient_exists
+  def when_a_restricted_patient_exists
     @restricted_patient =
       create(:patient, :restricted, organisation: @organisation)
   end
@@ -267,12 +283,12 @@ describe "Manage children" do
     expect(page).to have_content("Record updated with child’s date of death")
   end
 
-  def and_i_see_the_notice_of_invalid
+  def then_i_see_the_notice_of_invalid
     expect(page).to have_content(@invalidated_patient.full_name)
     expect(page).to have_content("Record flagged as invalid")
   end
 
-  def and_i_see_the_notice_of_sensitive
+  def then_i_see_the_notice_of_sensitive
     expect(page).to have_content(@restricted_patient.full_name)
     expect(page).to have_content("Record flagged as sensitive")
   end
