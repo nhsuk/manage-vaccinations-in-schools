@@ -15,6 +15,11 @@
 #  index_patient_sessions_on_patient_id_and_session_id  (patient_id,session_id) UNIQUE
 #  index_patient_sessions_on_session_id_and_patient_id  (session_id,patient_id) UNIQUE
 #
+# Foreign Keys
+#
+#  fk_rails_...  (patient_id => patients.id)
+#  fk_rails_...  (session_id => sessions.id)
+#
 FactoryBot.define do
   factory :patient_session do
     transient do
