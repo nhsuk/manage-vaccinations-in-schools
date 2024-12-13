@@ -28,10 +28,10 @@
   <%= render AppConsentPatientSummaryComponent.new(@consent) %>
 <% end %>
 
-<% if @consent.parent.present? %>
+<% if (parent_relationship = @consent.parent_relationship).present? %>
   <%= render AppCardComponent.new do |card| %>
     <% card.with_heading { "Parent or guardian" } %>
-    <%= render AppParentSummaryComponent.new(@consent.parent, @consent.parent_relationship) %>
+    <%= render AppParentSummaryComponent.new(parent_relationship:) %>
   <% end %>
 <% end %>
 

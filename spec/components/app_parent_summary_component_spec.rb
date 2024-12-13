@@ -3,14 +3,13 @@
 describe AppParentSummaryComponent do
   subject(:rendered) { render_inline(component) }
 
-  let(:component) { described_class.new(parent, relationship, change_links:) }
+  let(:component) { described_class.new(parent_relationship:) }
 
   let(:parent) { create(:parent, full_name: "John Smith") }
   let(:patient) { create(:patient) }
-  let(:relationship) do
+  let(:parent_relationship) do
     create(:parent_relationship, :father, parent:, patient:)
   end
-  let(:change_links) { {} }
 
   it { should have_content("Name") }
   it { should have_content("John Smith") }
@@ -42,6 +41,8 @@ describe AppParentSummaryComponent do
   it { should_not have_content("Change") }
 
   context "with change links" do
+    let(:component) { described_class.new(parent_relationship:, change_links:) }
+
     let(:change_links) do
       {
         name: "/name",
