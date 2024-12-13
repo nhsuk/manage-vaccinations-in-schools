@@ -124,11 +124,11 @@ describe ConsentForm do
         before { travel_to(Date.new(2022, 1, 1)) }
 
         it "has the correct error message" do
-          subject.date_of_birth = 2.years.ago.to_date
-          subject.valid?(:update)
+          consent_form.date_of_birth = 2.years.ago.to_date
+          consent_form.valid?(:update)
           # the date formatting below relies on the
           # custom interpolation from I18n::CustomInterpolation
-          expect(subject.errors[:date_of_birth]).to contain_exactly(
+          expect(consent_form.errors[:date_of_birth]).to contain_exactly(
             "The child cannot be younger than 3. Enter a date before 1 January 2019."
           )
         end
@@ -138,11 +138,11 @@ describe ConsentForm do
         before { travel_to(Date.new(2022, 1, 1)) }
 
         it "has the correct error message" do
-          subject.date_of_birth = 23.years.ago.to_date
-          subject.valid?(:update)
+          consent_form.date_of_birth = 23.years.ago.to_date
+          consent_form.valid?(:update)
           # the date formatting below relies on the
           # custom interpolation from I18n::CustomInterpolation
-          expect(subject.errors[:date_of_birth]).to contain_exactly(
+          expect(consent_form.errors[:date_of_birth]).to contain_exactly(
             "The child cannot be older than 22. Enter a date after 1 January 2000."
           )
         end
@@ -231,9 +231,9 @@ describe ConsentForm do
       it { should validate_presence_of(:address_postcode).on(:update) }
 
       it do
-        expect(subject).not_to allow_value("invalid").for(:address_postcode).on(
-          :update
-        )
+        expect(consent_form).not_to allow_value("invalid").for(
+          :address_postcode
+        ).on(:update)
       end
     end
 

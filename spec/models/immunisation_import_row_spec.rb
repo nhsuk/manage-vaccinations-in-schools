@@ -606,7 +606,7 @@ describe ImmunisationImportRow do
 
       it "does not stage any changes as vaccs history data is potentially out of date" do
         create(:patient, nhs_number:, address_postcode: "CB1 1AA")
-        expect(subject.pending_changes).to be_empty
+        expect(patient.pending_changes).to be_empty
       end
     end
 

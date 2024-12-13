@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 describe PatientSortingConcern do
-  subject { klass.new(params) }
+  subject(:controller) { klass.new(params) }
 
   let(:klass) do
     Class.new do
@@ -73,7 +73,7 @@ describe PatientSortingConcern do
       let(:params) { { sort: "name", direction: "asc" } }
 
       it "sorts patient sessions by name in ascending order" do
-        subject.sort_patients!(patient_sessions)
+        controller.sort_patients!(patient_sessions)
         expect(patient_sessions.map(&:patient).map(&:given_name)).to eq(
           %w[Alex Blair Casey]
         )
@@ -84,7 +84,7 @@ describe PatientSortingConcern do
       let(:params) { { sort: "dob", direction: "desc" } }
 
       it "sorts patient sessions by date of birth in descending order" do
-        subject.sort_patients!(patient_sessions)
+        controller.sort_patients!(patient_sessions)
         expect(patient_sessions.map(&:patient).map(&:given_name)).to eq(
           %w[Alex Blair Casey]
         )
@@ -95,7 +95,7 @@ describe PatientSortingConcern do
       let(:params) { { sort: "outcome", direction: "desc" } }
 
       it "sorts patient sessions by state in descending order" do
-        subject.sort_patients!(patient_sessions)
+        controller.sort_patients!(patient_sessions)
         expect(patient_sessions.map(&:status)).to eq(
           %w[vaccinated delay_vaccination added_to_session]
         )
@@ -106,7 +106,7 @@ describe PatientSortingConcern do
       let(:params) { { sort: "postcode", direction: "desc" } }
 
       it "sorts patient sessions by name in ascending order" do
-        subject.sort_patients!(patient_sessions)
+        controller.sort_patients!(patient_sessions)
         expect(patient_sessions.map(&:patient).map(&:given_name)).to eq(
           %w[Casey Blair Alex]
         )
@@ -117,7 +117,7 @@ describe PatientSortingConcern do
       let(:params) { {} }
 
       it "does not change the order of patient sessions" do
-        subject.sort_patients!(patient_sessions)
+        controller.sort_patients!(patient_sessions)
         expect(patient_sessions.map(&:patient).map(&:given_name)).to eq(
           %w[Alex Blair Casey]
         )
@@ -130,7 +130,7 @@ describe PatientSortingConcern do
       let(:params) { { name: "Alex" } }
 
       it "filters patient sessions by patient name" do
-        subject.filter_patients!(patient_sessions)
+        controller.filter_patients!(patient_sessions)
         expect(patient_sessions.size).to eq(1)
         expect(patient_sessions.first.patient.given_name).to eq("Alex")
       end
@@ -140,7 +140,7 @@ describe PatientSortingConcern do
       let(:params) { { postcode: "SW2A" } }
 
       it "filters patient sessions by date of birth" do
-        subject.filter_patients!(patient_sessions)
+        controller.filter_patients!(patient_sessions)
         expect(patient_sessions.size).to eq(1)
         expect(patient_sessions.first.patient.given_name).to eq("Blair")
       end
@@ -150,7 +150,7 @@ describe PatientSortingConcern do
       let(:params) { { year_groups: %w[9] } }
 
       it "filters patient sessions by date of birth" do
-        subject.filter_patients!(patient_sessions)
+        controller.filter_patients!(patient_sessions)
         expect(patient_sessions.size).to eq(1)
         expect(patient_sessions.first.patient.given_name).to eq("Blair")
       end
@@ -160,7 +160,7 @@ describe PatientSortingConcern do
       let(:params) { { name: "Alex", year_groups: %w[8] } }
 
       it "filters patient sessions by both name and date of birth" do
-        subject.filter_patients!(patient_sessions)
+        controller.filter_patients!(patient_sessions)
         expect(patient_sessions.size).to eq(1)
         expect(patient_sessions.first.patient.given_name).to eq("Alex")
       end
@@ -170,7 +170,7 @@ describe PatientSortingConcern do
       let(:params) { {} }
 
       it "does not filter patient sessions" do
-        subject.filter_patients!(patient_sessions)
+        controller.filter_patients!(patient_sessions)
         expect(patient_sessions.size).to eq(3)
       end
     end

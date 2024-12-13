@@ -64,7 +64,7 @@ describe Batch do
     end
 
     it do
-      expect(subject).to validate_uniqueness_of(:expiry).scoped_to(
+      expect(batch).to validate_uniqueness_of(:expiry).scoped_to(
         :organisation_id,
         :name,
         :vaccine_id

@@ -6,14 +6,14 @@ class Dummy
 end
 
 describe WizardStepConcern do
-  describe ".wizard_step" do
+  describe "#wizard_step" do
     subject { Dummy.new.wizard_step }
 
     it { should be_nil }
   end
 
-  describe "on_wizard_step" do
-    subject { Dummy.new }
+  describe "#on_wizard_step" do
+    subject(:dummy) { Dummy.new }
 
     before do
       Dummy.class_eval do
@@ -40,55 +40,55 @@ describe WizardStepConcern do
     it { should be_valid }
 
     context "when no step is set" do
-      before { subject.valid?(:update) }
+      before { dummy.valid?(:update) }
 
       it "runs all required validations" do
-        expect(subject.errors).not_to be_empty
-        expect(subject.errors[:foo]).to include("can't be blank")
-        expect(subject.errors[:bar]).to be_empty
-        expect(subject.errors[:qux]).to include("can't be blank")
+        expect(dummy.errors).not_to be_empty
+        expect(dummy.errors[:foo]).to include("can't be blank")
+        expect(dummy.errors[:bar]).to be_empty
+        expect(dummy.errors[:qux]).to include("can't be blank")
       end
     end
 
     context "when updating on the first step" do
       before do
-        subject.wizard_step = :first_step
-        subject.valid?(:update)
+        dummy.wizard_step = :first_step
+        dummy.valid?(:update)
       end
 
       it "runs only first step validations" do
-        expect(subject.errors).not_to be_empty
-        expect(subject.errors[:foo]).to include("can't be blank")
-        expect(subject.errors[:bar]).to be_empty
-        expect(subject.errors[:qux]).to be_empty
+        expect(dummy.errors).not_to be_empty
+        expect(dummy.errors[:foo]).to include("can't be blank")
+        expect(dummy.errors[:bar]).to be_empty
+        expect(dummy.errors[:qux]).to be_empty
       end
     end
 
     context "when updating on the optional step" do
       before do
-        subject.wizard_step = :optional_step
-        subject.valid?(:update)
+        dummy.wizard_step = :optional_step
+        dummy.valid?(:update)
       end
 
       it "runs first and optional step validations" do
-        expect(subject.errors).not_to be_empty
-        expect(subject.errors[:foo]).to include("can't be blank")
-        expect(subject.errors[:bar]).to include("can't be blank")
-        expect(subject.errors[:qux]).to be_empty
+        expect(dummy.errors).not_to be_empty
+        expect(dummy.errors[:foo]).to include("can't be blank")
+        expect(dummy.errors[:bar]).to include("can't be blank")
+        expect(dummy.errors[:qux]).to be_empty
       end
     end
 
     context "when updating on the last step" do
       before do
-        subject.wizard_step = :last_step
-        subject.valid?(:update)
+        dummy.wizard_step = :last_step
+        dummy.valid?(:update)
       end
 
       it "runs first and last step validations" do
-        expect(subject.errors).not_to be_empty
-        expect(subject.errors[:foo]).to include("can't be blank")
-        expect(subject.errors[:bar]).to be_empty
-        expect(subject.errors[:qux]).to include("can't be blank")
+        expect(dummy.errors).not_to be_empty
+        expect(dummy.errors[:foo]).to include("can't be blank")
+        expect(dummy.errors[:bar]).to be_empty
+        expect(dummy.errors[:qux]).to include("can't be blank")
       end
     end
   end
