@@ -155,6 +155,7 @@
 
   <% if @patients.present? %>
     <%= render AppPatientTableComponent.new(@patients,
+                                            current_user:,
                                             count: @pagy.count) %>
   <% end %>
 

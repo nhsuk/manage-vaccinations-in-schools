@@ -5,9 +5,10 @@ class SchoolMovePolicy < ApplicationPolicy
     def resolve
       organisation = user.selected_organisation
 
-      scope.where(school: organisation.schools).or(
-        scope.where(patient: Patient.in_organisation(organisation))
-      )
+      scope
+        .where(school: organisation.schools)
+        .or(scope.where(organisation:))
+        .or(scope.where(patient: Patient.in_organisation(organisation)))
     end
   end
 end
