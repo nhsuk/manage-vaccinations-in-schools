@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 
-describe AppConsentStatusComponent, type: :component do
-  subject { page }
-
-  before { render_inline(component) }
+describe AppConsentStatusComponent do
+  subject(:rendered) { render_inline(component) }
 
   let(:component) { described_class.new(patient_session:) }
   let(:patient_session) { create(:patient_session) }
@@ -26,7 +24,7 @@ describe AppConsentStatusComponent, type: :component do
     let(:patient_session) { create(:patient_session, :consent_conflicting) }
 
     it do
-      expect(subject).to have_css(
+      expect(rendered).to have_css(
         "p.app-status--dark-orange",
         text: "Conflicting consent"
       )

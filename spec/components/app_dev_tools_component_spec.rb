@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe AppDevToolsComponent, type: :component do
+describe AppDevToolsComponent do
   subject(:rendered) { render_inline(component) { body } }
 
   let(:consent) do

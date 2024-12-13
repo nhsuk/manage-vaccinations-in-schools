@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe AppSimpleStatusBannerComponent, type: :component do
+describe AppSimpleStatusBannerComponent do
   subject(:rendered) { render_inline(component) }
 
   before do
@@ -76,7 +76,7 @@ describe AppSimpleStatusBannerComponent, type: :component do
     it { should have_css(".nhsuk-card__heading", text: "Safe to vaccinate") }
 
     it do
-      expect(subject).to have_text(
+      expect(rendered).to have_text(
         "#{triage_nurse_name} decided that #{patient_name} is safe to vaccinate"
       )
     end
@@ -91,7 +91,7 @@ describe AppSimpleStatusBannerComponent, type: :component do
     it { should have_css(".nhsuk-card__heading", text: "Could not vaccinate") }
 
     it do
-      expect(subject).to have_text(
+      expect(rendered).to have_text(
         "#{triage_nurse_name} decided that #{patient_name} should not be vaccinated"
       )
     end
@@ -106,7 +106,7 @@ describe AppSimpleStatusBannerComponent, type: :component do
     it { should have_css(".nhsuk-card__heading", text: "Could not vaccinate") }
 
     it do
-      expect(subject).to have_text(
+      expect(rendered).to have_text(
         "#{vaccination_nurse_name} decided that #{patient_name}’s vaccination should be delayed"
       )
     end

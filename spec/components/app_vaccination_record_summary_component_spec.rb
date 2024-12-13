@@ -103,7 +103,7 @@ describe AppVaccinationRecordSummaryComponent do
 
   describe "dose volume row" do
     it do
-      expect(subject).to have_css(
+      expect(rendered).to have_css(
         ".nhsuk-summary-list__row",
         text: "Dose volume\n0.5 ml"
       )
@@ -116,7 +116,7 @@ describe AppVaccinationRecordSummaryComponent do
       let(:other_batch) { nil }
 
       it do
-        expect(subject).not_to have_css(
+        expect(rendered).not_to have_css(
           ".nhsuk-summary-list__row",
           text: "Dose volume"
         )
@@ -129,7 +129,7 @@ describe AppVaccinationRecordSummaryComponent do
       before { vaccination_record.dose_sequence = 2 }
 
       it do
-        expect(subject).to have_css(
+        expect(rendered).to have_css(
           ".nhsuk-summary-list__row",
           text: "Dose number\nSecond"
         )
@@ -140,7 +140,7 @@ describe AppVaccinationRecordSummaryComponent do
       let(:programme) { create(:programme, :flu) }
 
       it do
-        expect(subject).not_to have_css(
+        expect(rendered).not_to have_css(
           ".nhsuk-summary-list__row",
           text: "Dose number"
         )

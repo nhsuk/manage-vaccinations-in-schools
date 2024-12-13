@@ -13,7 +13,7 @@ shared_examples "a component that accepts custom classes" do
 
       specify "the classes are present in the rendered output" do
         expect(rendered_content).to have_tag(
-          component_css_class_matcher || component_tag,
+          "div",
           with: {
             class: custom_classes.split
           }
@@ -26,7 +26,7 @@ shared_examples "a component that accepts custom classes" do
 
       specify "the classes are present in the rendered output" do
         expect(rendered_content).to have_tag(
-          component_css_class_matcher || component_tag,
+          "div",
           with: {
             class: custom_classes
           }

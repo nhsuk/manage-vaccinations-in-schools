@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe AppFlashMessageComponent, type: :component do
+describe AppFlashMessageComponent do
   subject(:rendered) { render_inline(component) }
 
   let(:component) { described_class.new(flash:) }

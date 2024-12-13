@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 
-describe AppHealthQuestionsComponent, type: :component do
-  subject { page }
-
-  before { render_inline(component) }
+describe AppHealthQuestionsComponent do
+  subject(:rendered) { render_inline(component) }
 
   let(:component) { described_class.new(consents:) }
 
@@ -29,7 +27,7 @@ describe AppHealthQuestionsComponent, type: :component do
     it { should have_content(/First question\?\s*Mum responded: No/) }
 
     it do
-      expect(subject).to have_content(
+      expect(rendered).to have_content(
         /Second question\?\s*Mum responded: Yes:\s*Notes/
       )
     end
@@ -69,7 +67,7 @@ describe AppHealthQuestionsComponent, type: :component do
     it { should have_content(/First question\?\s*All responded: No/) }
 
     it do
-      expect(subject).to have_content(
+      expect(rendered).to have_content(
         /Second question\?\s*Mum responded: No\s*Dad responded: Yes:\s*Notes/
       )
     end

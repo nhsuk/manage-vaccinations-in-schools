@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 describe AppConsentFormSummaryComponent do
-  subject { page }
+  subject(:rendered) { render_inline(component) }
 
   let(:component) do
     described_class.new(
@@ -22,8 +22,6 @@ describe AppConsentFormSummaryComponent do
     )
   end
 
-  before { render_inline(component) }
-
   it { should have_text("Jane Smith") }
   it { should have_text("Mum") }
   it { should have_text("07987654321") }
@@ -32,8 +30,8 @@ describe AppConsentFormSummaryComponent do
   it { should have_text("1 March 2024 at 2:23pm") }
 
   it do
-    expect(subject).to have_text(
-      "Refusal reasonAlready vaccinated\nVaccinated at the GP"
+    expect(rendered).to have_text(
+      "Refusal reason\nAlready vaccinated\nVaccinated at the GP"
     )
   end
 
@@ -71,7 +69,7 @@ describe AppConsentFormSummaryComponent do
     end
 
     it { should have_text("Jane Smith") }
-    it { should have_text("Refusal reasonPersonal choice") }
+    it { should have_text("Refusal reason\nPersonal choice") }
   end
 
   context "with multiple responses" do

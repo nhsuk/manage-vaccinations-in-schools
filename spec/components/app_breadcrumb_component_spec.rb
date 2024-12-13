@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 
-describe AppBreadcrumbComponent, type: :component do
-  subject { page }
-
-  before { render_inline(component) }
+describe AppBreadcrumbComponent do
+  subject(:rendered) { render_inline(component) }
 
   let(:component) { described_class.new(items:, classes:, attributes:) }
 
@@ -22,7 +20,7 @@ describe AppBreadcrumbComponent, type: :component do
   it { should have_css("nav.additional-class") }
 
   it "renders a back link on narrow viewports" do
-    expect(page).to have_link(
+    expect(rendered).to have_link(
       "Previous page",
       href: "/previous-page",
       class: "nhsuk-breadcrumb__backlink"
