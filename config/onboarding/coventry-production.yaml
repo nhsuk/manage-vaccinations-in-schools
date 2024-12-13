@@ -1,5 +1,5 @@
 organisation:
-  name: # Unique name of the organisation
+  name: Coventry and Warwickshire Partnership NHS Trust
   email: # Contact email address
   phone: # Contact phone number
   ods_code: # Unique ODS code
@@ -7,11 +7,11 @@ organisation:
   privacy_policy_url: # Optional privacy policy URL
   reply_to_id: # Optional GOV.UK Notify Reply-To UUID
 
-programmes: [] # A list of programmes, currently only hpv is valid
+programmes: [hpv]
 
 teams:
   team1: # Identifier to link team with school and links below, not used in app
-    name: # Name of the team
+    name: Coventry and Warwickshire Partnership NHS Trust
     email: # Contact email address
     phone: # Contact phone number
 
