@@ -15,77 +15,44 @@ class ApplicationMailer < Mail::Notify::Mailer
     )
   end
 
-  def consent
-    @consent ||= params[:consent]
-  end
-
-  def consent_form
-    @consent_form ||= params[:consent_form]
-  end
-
-  def vaccination_record
-    @vaccination_record ||= params[:vaccination_record]
-  end
-
-  def patient_session
-    @patient_session ||= params[:patient_session]
-  end
-
-  def patient
-    @patient ||= params[:patient]
-  end
-
-  def parent
-    @parent ||= params[:parent]
-  end
-
-  def programme
-    @programme ||= params[:programme]
-  end
-
-  def session
-    @session ||= params[:session]
-  end
-
-  def sent_by
-    @sent_by ||= params[:sent_by]
-  end
-
   def to
-    consent_form&.parent_email || consent&.parent&.email || parent.email
+    parameters.consent_form&.parent_email || parameters.parent.email
   end
 
   def reply_to_id
-    organisation =
-      session&.organisation || patient_session&.organisation ||
-        consent_form&.organisation || consent&.organisation ||
-        vaccination_record&.organisation
+    parameters.organisation.reply_to_id
+  end
 
-    organisation.reply_to_id
+  def parameters
+    @parameters ||=
+      GovukNotifyParameters.new(
+        **params.slice(
+          :consent,
+          :consent_form,
+          :parent,
+          :patient,
+          :patient_session,
+          :programme,
+          :session,
+          :vaccination_record
+        )
+      )
   end
 
   def personalisation
-    GovukNotifyPersonalisation.call(
-      consent:,
-      consent_form:,
-      parent:,
-      patient:,
-      patient_session:,
-      programme:,
-      session:,
-      vaccination_record:
-    )
+    GovukNotifyPersonalisation.call(parameters)
   end
 
   def attach_data_for_notify_log_entry
     # https://stackoverflow.com/a/28004917
 
-    patient_id = (patient || consent&.patient || patient_session&.patient)&.id
-    consent_form_id = consent_form&.id
+    patient_id = parameters.patient&.id
+    consent_form_id = parameters.consent_form&.id
+    sent_by_user_id = params[:sent_by]&.id
 
     message.instance_variable_set(:@consent_form_id, consent_form_id)
     message.instance_variable_set(:@patient_id, patient_id)
-    message.instance_variable_set(:@sent_by_user_id, sent_by&.id)
+    message.instance_variable_set(:@sent_by_user_id, sent_by_user_id)
 
     message.class.send(:attr_reader, :consent_form_id)
     message.class.send(:attr_reader, :patient_id)

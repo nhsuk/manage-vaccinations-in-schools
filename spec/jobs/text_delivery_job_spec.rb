@@ -47,7 +47,10 @@ describe TextDeliveryJob do
     let(:vaccination_record) { nil }
 
     it "generates personalisation" do
-      expect(GovukNotifyPersonalisation).to receive(:call).with(
+      parameters =
+        instance_double(GovukNotifyParameters, consent_form:, parent:, patient:)
+
+      allow(GovukNotifyParameters).to receive(:new).with(
         session:,
         consent:,
         consent_form:,
@@ -56,7 +59,10 @@ describe TextDeliveryJob do
         patient_session:,
         programme:,
         vaccination_record:
-      )
+      ).and_return(parameters)
+
+      expect(GovukNotifyPersonalisation).to receive(:call).with(parameters)
+
       perform_now
     end
 

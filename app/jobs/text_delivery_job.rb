@@ -18,21 +18,23 @@ class TextDeliveryJob < ApplicationJob
     template_id = GOVUK_NOTIFY_TEXT_TEMPLATES[template_name.to_sym]
     raise UnknownTemplate if template_id.nil?
 
-    phone_number =
-      consent_form&.parent_phone || consent&.parent&.phone || parent&.phone
-    return if phone_number.nil?
-
-    personalisation =
-      GovukNotifyPersonalisation.call(
-        session:,
+    parameters =
+      GovukNotifyParameters.new(
         consent:,
         consent_form:,
         parent:,
         patient:,
         patient_session:,
         programme:,
+        session:,
         vaccination_record:
       )
+
+    phone_number =
+      parameters.consent_form&.parent_phone || parameters.parent&.phone
+    return if phone_number.nil?
+
+    personalisation = GovukNotifyPersonalisation.call(parameters)
 
     if self.class.send_via_notify?
       self.class.client.send_sms(phone_number:, template_id:, personalisation:)
@@ -42,11 +44,9 @@ class TextDeliveryJob < ApplicationJob
       Rails.logger.info "Sending text message to #{phone_number} with template #{template_id}"
     end
 
-    patient ||= consent&.patient || patient_session&.patient
-
     NotifyLogEntry.create!(
       consent_form:,
-      patient:,
+      patient: parameters.patient,
       recipient: phone_number,
       sent_by:,
       template_id:,

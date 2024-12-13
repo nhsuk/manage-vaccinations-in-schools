@@ -1,8 +1,10 @@
 # frozen_string_literal: true
 
 describe GovukNotifyPersonalisation do
-  subject(:personalisation) do
-    described_class.call(
+  subject(:personalisation) { described_class.call(parameters) }
+
+  let(:parameters) do
+    GovukNotifyParameters.new(
       patient:,
       session:,
       consent:,

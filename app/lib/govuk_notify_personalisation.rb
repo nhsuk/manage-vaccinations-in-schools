@@ -3,8 +3,8 @@
 class GovukNotifyPersonalisation
   include Rails.application.routes.url_helpers
 
-  def initialize(...)
-    @parameters = GovukNotifyParameters.new(...)
+  def initialize(parameters)
+    @parameters = parameters
   end
 
   def call
