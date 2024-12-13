@@ -11,6 +11,7 @@
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
 #  organisation_id :bigint           not null
+#  reply_to_id     :uuid
 #
 # Indexes
 #
