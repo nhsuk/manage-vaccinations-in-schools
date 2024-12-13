@@ -4,7 +4,7 @@ organisation:
   phone: # Contact phone number
   ods_code: RYG
   careplus_venue_code: CWPTSI
-  privacy_policy_url: https://www.covwarkpt.nhs.uk/download.cfm?ver=8286
+  privacy_policy_url: https://www.covwarkpt.nhs.uk/privacy
   reply_to_id: ddc407a3-dda9-4183-be83-1309562c95b1
 
 programmes: [hpv]
