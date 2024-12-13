@@ -4,8 +4,8 @@ describe PatientMerger do
   describe "#call" do
     subject(:call) do
       described_class.call(
-        to_keep: patient_to_keep,
-        to_destroy: patient_to_destroy
+        to_keep: patient_to_keep.reload,
+        to_destroy: patient_to_destroy.reload
       )
     end
 

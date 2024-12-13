@@ -16,7 +16,9 @@ describe "Verbal consent" do
       create(:organisation, :with_one_nurse, programmes: [programme])
 
     @session = create(:session, organisation:, programme:)
-    @patient = create(:patient, session: @session)
+
+    @parent = create(:parent)
+    @patient = create(:patient, session: @session, parents: [@parent])
 
     sign_in organisation.users.first
   end
@@ -27,7 +29,7 @@ describe "Verbal consent" do
     click_button "Get consent"
 
     # Who are you trying to get consent from?
-    choose @patient.parents.first.full_name
+    choose @parent.full_name
     click_button "Continue"
 
     # Details for parent or guardian: leave existing contact details
@@ -66,9 +68,6 @@ describe "Verbal consent" do
   end
 
   def then_an_email_is_sent_to_the_parent_that_vaccination_will_happen
-    expect_email_to(
-      @patient.parents.first.email,
-      :triage_vaccination_will_happen
-    )
+    expect_email_to(@parent.email, :triage_vaccination_will_happen)
   end
 end

@@ -55,7 +55,7 @@ FactoryBot.define do
 
   factory :patient do
     transient do
-      parents { [create(:parent, family_name:)] }
+      parents { [] }
       performed_by { association(:user) }
       programme { session&.programmes&.first }
       session { nil }
@@ -109,6 +109,12 @@ FactoryBot.define do
     address_town { Faker::Address.city }
     address_postcode { Faker::Address.uk_postcode }
 
+    parent_relationships do
+      parents.map do |parent|
+        association(:parent_relationship, patient: instance, parent:)
+      end
+    end
+
     after(:create) do |patient, evaluator|
       if evaluator.session
         patient_session =
@@ -119,10 +125,6 @@ FactoryBot.define do
         if evaluator.in_attendance
           create(:session_attendance, :present, patient_session:)
         end
-      end
-
-      evaluator.parents.each do |parent|
-        create(:parent_relationship, parent:, patient:)
       end
     end
 

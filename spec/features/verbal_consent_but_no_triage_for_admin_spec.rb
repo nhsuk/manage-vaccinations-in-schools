@@ -15,7 +15,9 @@ describe "Verbal consent recorded by admin" do
     organisation =
       create(:organisation, :with_one_admin, programmes: [programme])
     @session = create(:session, organisation:, programme:)
-    @patient = create(:patient, session: @session)
+
+    @parent = create(:parent)
+    @patient = create(:patient, session: @session, parents: [@parent])
 
     sign_in organisation.users.first, role: :admin_staff
   end
@@ -26,7 +28,7 @@ describe "Verbal consent recorded by admin" do
     click_button "Get consent"
 
     # Who are you trying to get consent from?
-    choose @patient.parents.first.full_name
+    choose @parent.full_name
     click_button "Continue"
 
     # Details for parent or guardian: leave prepopulated details
@@ -65,6 +67,6 @@ describe "Verbal consent recorded by admin" do
   end
 
   def then_an_email_is_sent_to_the_parent_about_triage
-    expect_email_to(@patient.parents.first.email, :consent_confirmation_triage)
+    expect_email_to(@parent.email, :consent_confirmation_triage)
   end
 end

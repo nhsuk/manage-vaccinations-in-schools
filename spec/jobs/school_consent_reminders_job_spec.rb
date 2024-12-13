@@ -12,6 +12,7 @@ describe SchoolConsentRemindersJob do
       :patient,
       :consent_request_sent,
       :initial_consent_reminder_sent,
+      parents:,
       programme:
     )
   end

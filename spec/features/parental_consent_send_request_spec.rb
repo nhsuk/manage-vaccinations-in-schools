@@ -35,8 +35,9 @@ describe "Parental consent" do
         location:,
         date: Date.current + 2.days
       )
-    @patient = create(:patient, session: @session)
-    @parent = @patient.parents.first
+
+    @parent = create(:parent)
+    @patient = create(:patient, session: @session, parents: [@parent])
   end
 
   def and_i_am_signed_in

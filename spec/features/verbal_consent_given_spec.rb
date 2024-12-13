@@ -16,13 +16,9 @@ describe "Verbal consent" do
     organisation =
       create(:organisation, :with_one_nurse, programmes: [programme])
     @session = create(:session, organisation:, programme:)
-    @patient = create(:patient, session: @session)
 
-    create(
-      :parent_relationship,
-      patient: @patient,
-      parent: build(:parent, full_name: nil)
-    )
+    @parent = create(:parent)
+    @patient = create(:patient, session: @session, parents: [@parent])
 
     sign_in organisation.users.first
   end
@@ -38,14 +34,12 @@ describe "Verbal consent" do
       "Choose who you are trying to get consent from"
     )
 
-    parent = @patient.parents.first
-
-    choose "#{parent.full_name} (#{parent.relationship_to(patient: @patient).label})"
+    choose "#{@parent.full_name} (#{@parent.relationship_to(patient: @patient).label})"
     click_button "Continue"
 
     # Details for parent or guardian
     expect(page).to have_content(
-      "Details for #{parent.full_name} (#{parent.relationship_to(patient: @patient).label})"
+      "Details for #{@parent.full_name} (#{@parent.relationship_to(patient: @patient).label})"
     )
     # don't change any details
     click_button "Continue"
@@ -84,10 +78,9 @@ describe "Verbal consent" do
   end
 
   def and_i_can_see_the_consent_response_details
-    parent = @patient.parents.first
-    click_link parent.full_name
+    click_link @parent.full_name
 
-    expect(page).to have_content("Consent response from #{parent.full_name}")
+    expect(page).to have_content("Consent response from #{@parent.full_name}")
     expect(page).to have_content(
       ["Response date", Time.zone.today.to_fs(:long)].join
     )
@@ -100,25 +93,25 @@ describe "Verbal consent" do
     )
     expect(page).to have_content(["School", @patient.school.name].join)
 
-    expect(page).to have_content(["Name", parent.full_name].join)
+    expect(page).to have_content(["Name", @parent.full_name].join)
     expect(page).to have_content(
-      ["Relationship", parent.relationship_to(patient: @patient).label].join
+      ["Relationship", @parent.relationship_to(patient: @patient).label].join
     )
-    expect(page).to have_content(["Email address", parent.email].join)
-    expect(page).to have_content(["Phone number", parent.phone].join)
+    expect(page).to have_content(["Email address", @parent.email].join)
+    expect(page).to have_content(["Phone number", @parent.phone].join)
 
     expect(page).to have_content("Answers to health questions")
     expect(page).to have_content(
-      "#{parent.relationship_to(patient: @patient).label} responded: No",
+      "#{@parent.relationship_to(patient: @patient).label} responded: No",
       count: 4
     )
   end
 
   def then_an_email_is_sent_to_the_parent_confirming_their_consent
-    expect_email_to(@patient.parents.first.email, :consent_confirmation_given)
+    expect_email_to(@parent.email, :consent_confirmation_given)
   end
 
   def and_a_text_is_sent_to_the_parent_confirming_their_consent
-    expect_text_to(@patient.parents.first.phone, :consent_confirmation_given)
+    expect_text_to(@parent.phone, :consent_confirmation_given)
   end
 end

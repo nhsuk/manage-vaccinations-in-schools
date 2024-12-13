@@ -57,7 +57,10 @@ FactoryBot.define do
     end
 
     patient
-    parent { patient.parents.first }
+    parent do
+      patient.parents.first ||
+        association(:parent_relationship, patient:).parent
+    end
 
     response { "given" }
     route { "website" }

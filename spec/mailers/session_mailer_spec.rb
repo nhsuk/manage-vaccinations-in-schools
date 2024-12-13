@@ -12,11 +12,13 @@ describe SessionMailer do
     end
 
     let(:programme) { create(:programme) }
-    let(:patient) { create(:patient, preferred_given_name: "Joey") }
+    let(:parent) { create(:parent) }
+    let(:patient) do
+      create(:patient, preferred_given_name: "Joey", parents: [parent])
+    end
     let(:session) { create(:session, programme:, patients: [patient]) }
-    let(:parent) { patient.parents.first }
 
-    it { should have_attributes(to: [patient.parents.first.email]) }
+    it { should have_attributes(to: [parent.email]) }
 
     describe "personalisation" do
       subject(:personalisation) do
@@ -58,16 +60,17 @@ describe SessionMailer do
         organisation:
       )
     end
+    let(:parent) { create(:parent) }
     let(:patient) do
       create(
         :patient,
         given_name: "John",
         family_name: "Smith",
-        preferred_given_name: "Joey"
+        preferred_given_name: "Joey",
+        parents: [parent]
       )
     end
     let(:session) { create(:session, organisation:, programme:, team:) }
-    let(:parent) { patient.parents.first }
     let(:patient_session) { create(:patient_session, patient:, session:) }
 
     it { should have_attributes(to: [parent.email]) }
@@ -108,16 +111,17 @@ describe SessionMailer do
         organisation:
       )
     end
+    let(:parent) { create(:parent) }
     let(:patient) do
       create(
         :patient,
         given_name: "John",
         family_name: "Smith",
-        preferred_given_name: "Joey"
+        preferred_given_name: "Joey",
+        parents: [parent]
       )
     end
     let(:session) { create(:session, organisation:, programme:, team:) }
-    let(:parent) { patient.parents.first }
     let(:patient_session) { create(:patient_session, patient:, session:) }
 
     it { should have_attributes(to: [parent.email]) }

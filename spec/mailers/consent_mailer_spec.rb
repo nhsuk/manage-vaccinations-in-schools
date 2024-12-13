@@ -69,8 +69,8 @@ describe ConsentMailer do
       ).school_request
     end
 
-    let(:patient) { create(:patient) }
-    let(:parent) { patient.parents.first }
+    let(:parent) { create(:parent) }
+    let(:patient) { create(:patient, parents: [parent]) }
     let(:programme) { create(:programme) }
     let(:date) { Date.current }
     let(:session) { create(:session, date:, patients: [patient], programme:) }
@@ -107,8 +107,8 @@ describe ConsentMailer do
       ).clinic_request
     end
 
-    let(:patient) { create(:patient) }
-    let(:parent) { patient.parents.first }
+    let(:parent) { create(:parent) }
+    let(:patient) { create(:patient, parents: [parent]) }
     let(:programme) { create(:programme) }
     let(:date) { Date.current }
     let(:session) { create(:session, date:, patients: [patient], programme:) }
@@ -141,8 +141,8 @@ describe ConsentMailer do
       ).school_initial_reminder
     end
 
-    let(:patient) { create(:patient) }
-    let(:parent) { patient.parents.first }
+    let(:parent) { create(:parent) }
+    let(:patient) { create(:patient, parents: [parent]) }
     let(:programme) { create(:programme) }
     let(:date) { Date.current }
     let(:session) { create(:session, date:, patients: [patient], programme:) }
@@ -179,8 +179,8 @@ describe ConsentMailer do
       ).school_subsequent_reminder
     end
 
-    let(:patient) { create(:patient) }
-    let(:parent) { patient.parents.first }
+    let(:parent) { create(:parent) }
+    let(:patient) { create(:patient, parents: [parent]) }
     let(:programme) { create(:programme) }
     let(:date) { Date.current }
     let(:session) { create(:session, date:, patients: [patient], programme:) }
