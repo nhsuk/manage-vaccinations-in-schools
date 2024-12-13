@@ -11,7 +11,7 @@ organisation:
   phone: # Contact phone number
   ods_code: # Unique ODS code
   careplus_venue_code: # Venue code used in CarePlus exports
-  privacy_policy_url: # Optional privacy policy URL
+  privacy_policy_url: # URL of a privacy policy sent to parents
   reply_to_id: # Optional GOV.UK Notify Reply-To UUID
 
 programmes: [] # A list of programmes, currently only hpv is valid

@@ -13,7 +13,7 @@
 #  name                          :text             not null
 #  ods_code                      :string           not null
 #  phone                         :string
-#  privacy_policy_url            :string
+#  privacy_policy_url            :string           not null
 #  created_at                    :datetime         not null
 #  updated_at                    :datetime         not null
 #  reply_to_id                   :uuid
@@ -50,6 +50,7 @@ class Organisation < ApplicationRecord
   validates :name, presence: true, uniqueness: true
   validates :ods_code, presence: true, uniqueness: true
   validates :phone, presence: true, phone: true
+  validates :privacy_policy_url, presence: true
 
   def year_groups
     programmes.flat_map(&:year_groups).uniq.sort

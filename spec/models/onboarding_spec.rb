@@ -65,6 +65,7 @@ describe Onboarding do
           "organisation.name": ["can't be blank"],
           "organisation.ods_code": ["can't be blank"],
           "organisation.phone": ["can't be blank", "is invalid"],
+          "organisation.privacy_policy_url": ["can't be blank"],
           "school.0.team": ["can't be blank"],
           "school.1.team": ["can't be blank"],
           "team.email": ["can't be blank"],

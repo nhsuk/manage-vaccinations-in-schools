@@ -13,7 +13,7 @@
 #  name                          :text             not null
 #  ods_code                      :string           not null
 #  phone                         :string
-#  privacy_policy_url            :string
+#  privacy_policy_url            :string           not null
 #  created_at                    :datetime         not null
 #  updated_at                    :datetime         not null
 #  reply_to_id                   :uuid
@@ -32,6 +32,7 @@ describe Organisation do
     it { should validate_presence_of(:name) }
     it { should validate_presence_of(:ods_code) }
     it { should validate_presence_of(:phone) }
+    it { should validate_presence_of(:privacy_policy_url) }
 
     it { should validate_uniqueness_of(:name) }
     it { should validate_uniqueness_of(:ods_code).ignoring_case_sensitivity }
