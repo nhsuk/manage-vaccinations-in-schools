@@ -17,8 +17,12 @@ http:
 # Configuration for your containers and service.
 image:
   # Docker build arguments. For additional overrides: https://aws.github.io/copilot-cli/docs/manifest/lb-web-service/#image-build
-  build: Dockerfile
-  # Port exposed through your container to route traffic to it.
+  build:
+    dockerfile: Dockerfile
+    cache_from:
+      - 393416225559.dkr.ecr.eu-west-2.amazonaws.com/mavis/webapp:latest
+    args:
+      BUILDKIT_INLINE_CACHE: 1
   port: 4000
 
 platform: linux/x86_64
@@ -102,6 +106,10 @@ environments:
       MAVIS__PDS__PERFORM_JOBS: false
       MAVIS__SPLUNK__ENABLED: false
   production:
+    image:
+      build:
+        cache_from:
+          - 820242920762.dkr.ecr.eu-west-2.amazonaws.com/mavis/webapp:latest
     http:
       alias:
         - "www.manage-vaccinations-in-schools.nhs.uk"
