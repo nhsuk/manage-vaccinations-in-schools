@@ -293,7 +293,8 @@ describe ClassImport do
           given_name: "Jimmy",
           family_name: "Smith",
           date_of_birth: Date.new(2010, 1, 2),
-          nhs_number: nil
+          nhs_number: nil,
+          parents: []
         )
       end
 
@@ -313,7 +314,10 @@ describe ClassImport do
 
         it "doesn't create an additional patient" do
           expect { process! }.to change(Parent, :count).by(4)
-          expect(parent.relationship_to(patient:)).to be_father
+
+          parent_relationship = patient.reload.parent_relationships.first
+          expect(parent_relationship.parent).to eq(parent)
+          expect(parent_relationship).to be_father
         end
       end
     end
