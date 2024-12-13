@@ -4,7 +4,8 @@ organisation:
   phone: 07700 900815
   ods_code: EXAMPLE
   careplus_venue_code: EXAMPLE
-  privacy_policy_url: https://example.com/privacy
+  privacy_notice_url: https://example.com/privacy-notice
+  privacy_policy_url: https://example.com/privacy-policy
 
 programmes: [hpv]
 
