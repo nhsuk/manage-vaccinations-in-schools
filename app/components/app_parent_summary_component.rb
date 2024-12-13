@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
 class AppParentSummaryComponent < ViewComponent::Base
-  def initialize(parent, relationship, change_links: {})
+  def initialize(parent_relationship:, change_links: {})
     super
 
-    @parent = parent
-    @relationship = relationship
-    @patient = relationship.patient
+    @parent_relationship = parent_relationship
+    @parent = parent_relationship.parent
+    @patient = parent_relationship.patient
     @change_links = change_links
   end
 
@@ -29,7 +29,7 @@ class AppParentSummaryComponent < ViewComponent::Base
 
       summary_list.with_row do |row|
         row.with_key { "Relationship" }
-        row.with_value { @relationship.label }
+        row.with_value { @parent_relationship.label }
         if (href = @change_links[:relationship])
           row.with_action(
             text: "Change",
