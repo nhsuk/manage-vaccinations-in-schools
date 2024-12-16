@@ -1,7 +1,7 @@
 organisation:
   name: Coventry and Warwickshire Partnership NHS Trust
   email: Bewise.Immunise@covwarkpt.nhs.uk
-  phone: 024 76 961422
+  phone: "02476961422"
   ods_code: RYG
   careplus_venue_code: CWPTSI
   privacy_policy_url: https://www.covwarkpt.nhs.uk/privacy
@@ -13,19 +13,19 @@ teams:
   coventry:
     name: Coventry School-Aged Immunisation Service
     email: Bewise.Immunise@covwarkpt.nhs.uk
-    phone: 02476 961422
+    phone: "02476961422"
   north_warwickshire:
     name: North Warwickshire School-Aged Immunisation Service
     email: NorthImms@covwarkpt.nhs.uk
-    phone: 02476 321550
+    phone: "02476321550"
   south_warwickshire:
     name: South Warwickshire School-Aged Immunisation Service
     email: SouthImms@covwarkpt.nhs.uk
-    phone: 01926 353899
+    phone: "01926353899"
   clinics:
     name: Coventry and Warwickshire Partnership NHS Trust
     email: Bewise.Immunise@covwarkpt.nhs.uk
-    phone: 02476 961422
+    phone: "02476961422"
 
 schools:
   coventry:
