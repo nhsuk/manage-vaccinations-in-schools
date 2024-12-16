@@ -108,7 +108,7 @@ class PatientSession < ApplicationRecord
   end
 
   def latest_gillick_assessment
-    @latest_gillick_assessment = gillick_assessments.max_by(&:updated_at)
+    @latest_gillick_assessment ||= gillick_assessments.max_by(&:updated_at)
   end
 
   def latest_triage
