@@ -26,6 +26,9 @@ module NHS::PDS
   class PatientNotFound < StandardError
   end
 
+  class TooManyMatches < StandardError
+  end
+
   class << self
     def get_patient(nhs_number)
       NHS::API.connection.get(
@@ -54,10 +57,17 @@ module NHS::PDS
         raise "Unrecognised attributes: #{missing_attrs.join(", ")}"
       end
 
-      NHS::API.connection.get(
-        "personal-demographics/FHIR/R4/Patient",
-        attributes
-      )
+      response =
+        NHS::API.connection.get(
+          "personal-demographics/FHIR/R4/Patient",
+          attributes
+        )
+
+      if is_error?(response, "TOO_MANY_MATCHES")
+        raise TooManyMatches
+      else
+        response
+      end
     rescue Faraday::BadRequestError => e
       add_sentry_breadcrumb(e)
       raise
@@ -75,10 +85,17 @@ module NHS::PDS
       Sentry.add_breadcrumb(crumb)
     end
 
-    def is_error?(error, code)
-      response = JSON.parse(error.response_body)
+    def is_error?(error_or_response, code)
+      response =
+        if error_or_response.is_a?(Faraday::ClientError)
+          JSON.parse(error_or_response.response_body)
+        elsif error_or_response.is_a?(Faraday::Response)
+          error_or_response.body
+        end
 
-      response["issue"].any? do |issue|
+      return false if (issues = response["issue"]).blank?
+
+      issues.any? do |issue|
         issue["details"]["coding"].any? { |coding| coding["code"] == code }
       end
     end
