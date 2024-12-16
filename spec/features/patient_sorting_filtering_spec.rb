@@ -34,7 +34,7 @@ describe "Patient sorting and filtering" do
     then_i_see_patients_with_year_group_10
   end
 
-  scenario "Users can sort and filter patients with JS", type: :system do
+  scenario "Users can sort and filter patients with JS", :js do
     given_that_i_am_signed_in
     when_i_visit_the_consents_page
     then_i_see_patients_ordered_by_name_asc
