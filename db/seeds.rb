@@ -347,4 +347,5 @@ create_school_moves(organisation)
 
 UnscheduledSessionsFactory.new.call
 
-Rake::Task["schools:smoke_test"].execute
+Rake::Task["gp_practices:smoke"].execute
+Rake::Task["schools:smoke"].execute
