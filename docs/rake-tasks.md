@@ -41,6 +41,10 @@ Creates a GP practice location suitable for smoke testing in production.
 
 This adds a school or schools to the list of schools that a particular organisation manages.
 
+### `schools:smoke`
+
+Creates a school location suitable for smoke testing in production.
+
 ## Teams
 
 ### `teams:create[ods_code,name,email,phone]`
