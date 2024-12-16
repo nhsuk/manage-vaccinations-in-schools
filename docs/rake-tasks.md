@@ -25,6 +25,12 @@ If none of the arguments are provided (`rake clinics:create`), the user will be 
 
 This creates a new clinic location and attaches it to a organisation.
 
+## GP Practices
+
+### `gp_practices:smoke`
+
+Creates a GP practice location suitable for smoke testing in production.
+
 ## Schools
 
 ### `schools:add_to_organisation[ods_code,team_name,urn,...]`
