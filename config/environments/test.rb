@@ -58,4 +58,8 @@ Rails.application.configure do
 
   # Set up GoodJob for inline execution in test mode
   config.good_job.execution_mode = :inline
+
+  # Enable strict loading to catch N+1 problems.
+  config.active_record.strict_loading_by_default = true
+  config.active_record.strict_loading_mode = :n_plus_one_only
 end
