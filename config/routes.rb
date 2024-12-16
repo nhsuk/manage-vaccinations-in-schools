@@ -352,6 +352,8 @@ Rails.application.routes.draw do
     get "organisation-not-found", controller: :errors
     get "workgroup-not-found", controller: :errors
     get "role-not-found", controller: :errors
+
+    resource :organisations, only: %i[new create]
   end
 
   scope via: :all do

@@ -87,7 +87,7 @@ module AuthenticationConcern
     end
 
     def set_user_cis2_info
-      return unless Settings.cis2.enabled && current_user
+      return unless current_user
 
       current_user.cis2_info = session["cis2_info"]
     end
