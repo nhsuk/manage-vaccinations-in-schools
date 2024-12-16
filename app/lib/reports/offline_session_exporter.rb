@@ -129,7 +129,6 @@ class Reports::OfflineSessionExporter
         vaccination_records: %i[batch performed_by_user vaccine]
       )
       .order_by_name
-      .strict_loading
   end
 
   def rows(patient_session:)

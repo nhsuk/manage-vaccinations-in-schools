@@ -25,7 +25,6 @@ class VaccinationsController < ApplicationController
         .preload_for_status
         .eager_load(patient: :cohort)
         .order_by_name
-        .strict_loading
 
     grouped_patient_sessions =
       group_patient_sessions_by_state(

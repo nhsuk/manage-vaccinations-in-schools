@@ -20,7 +20,6 @@ class ConsentsController < ApplicationController
         .preload(consents: %i[parent patient])
         .eager_load(patient: :cohort)
         .order_by_name
-        .strict_loading
 
     tab_patient_sessions =
       group_patient_sessions_by_conditions(

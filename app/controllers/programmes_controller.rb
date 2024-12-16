@@ -44,7 +44,6 @@ class ProgrammesController < ApplicationController
           ]
         )
         .order("locations.name")
-        .strict_loading
   end
 
   def patients
@@ -60,7 +59,6 @@ class ProgrammesController < ApplicationController
         .eager_load(:session, patient: :cohort)
         .preload_for_status
         .order_by_name
-        .strict_loading
         .to_a
 
     sort_and_filter_patients!(patient_sessions)
@@ -70,7 +68,6 @@ class ProgrammesController < ApplicationController
   private
 
   def set_programme
-    @programme =
-      policy_scope(Programme).strict_loading.find_by!(type: params[:type])
+    @programme = policy_scope(Programme).find_by!(type: params[:type])
   end
 end

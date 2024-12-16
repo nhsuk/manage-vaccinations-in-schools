@@ -80,7 +80,6 @@ class Reports::CareplusExporter
         )
         .where.not(vaccination_records: { id: nil })
         .merge(VaccinationRecord.administered)
-        .strict_loading
 
     if start_date.present?
       scope =
@@ -108,7 +107,7 @@ class Reports::CareplusExporter
         )
     end
 
-    scope.strict_loading
+    scope
   end
 
   def rows(patient_session:)

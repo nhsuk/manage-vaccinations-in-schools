@@ -31,7 +31,6 @@ class AppImportsTableComponent < ViewComponent::Base
       .left_outer_joins(:patients)
       .includes(:session, :uploaded_by)
       .group("class_imports.id")
-      .strict_loading
   end
 
   def cohort_import_records
@@ -41,7 +40,6 @@ class AppImportsTableComponent < ViewComponent::Base
       .left_outer_joins(:patients)
       .includes(:uploaded_by)
       .group("cohort_imports.id")
-      .strict_loading
   end
 
   def immunisation_import_records
@@ -54,7 +52,6 @@ class AppImportsTableComponent < ViewComponent::Base
       .left_outer_joins(:vaccination_records)
       .includes(:uploaded_by)
       .group("immunisation_imports.id")
-      .strict_loading
   end
 
   def path(programme, import)

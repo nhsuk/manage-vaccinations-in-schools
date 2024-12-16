@@ -93,7 +93,6 @@ class VaccinationRecordsController < ApplicationController
         )
         .where(programme:)
         .order(:performed_at)
-        .strict_loading
   end
 
   def dps_export

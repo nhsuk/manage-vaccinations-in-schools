@@ -126,7 +126,7 @@ class Reports::ProgrammeVaccinationsExporter
         )
     end
 
-    scope.strict_loading
+    scope
   end
 
   def row(vaccination_record:)
