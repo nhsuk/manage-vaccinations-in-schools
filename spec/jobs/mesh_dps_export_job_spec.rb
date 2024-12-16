@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe MESHDPSExportJob, type: :job do # rubocop:disable RSpec/SpecFilePathFormat
+describe MESHDPSExportJob do # rubocop:disable RSpec/SpecFilePathFormat
   before { allow(MESH).to receive(:send_file).and_return(response_double) }
 
   after { Flipper.disable(:mesh_jobs) }
