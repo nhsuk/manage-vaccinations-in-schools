@@ -22,7 +22,7 @@ class VaccinationsController < ApplicationController
     all_patient_sessions =
       @session
         .patient_sessions
-        .preload_for_state
+        .preload_for_status
         .eager_load(patient: :cohort)
         .order_by_name
         .strict_loading

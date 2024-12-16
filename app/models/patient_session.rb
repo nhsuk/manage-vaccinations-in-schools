@@ -66,7 +66,7 @@ class PatientSession < ApplicationRecord
           )
         end
 
-  scope :preload_for_state,
+  scope :preload_for_status,
         -> do
           preload(
             :gillick_assessments,

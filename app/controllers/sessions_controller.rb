@@ -38,7 +38,7 @@ class SessionsController < ApplicationController
     respond_to do |format|
       format.html do
         patient_sessions =
-          @session.patient_sessions.preload_for_state.strict_loading
+          @session.patient_sessions.preload_for_status.strict_loading
 
         @stats = PatientSessionStats.new(patient_sessions)
 
