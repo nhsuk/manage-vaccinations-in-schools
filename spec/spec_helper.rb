@@ -121,8 +121,10 @@ Capybara.register_driver(:cuprite_custom) do |app|
     process_timeout: 30
   )
 end
-Capybara.javascript_driver = :cuprite_custom
+
 Capybara.asset_host = "http://localhost:4000"
+Capybara.javascript_driver = :cuprite_custom
+Capybara.server = :puma, { Silent: true }
 
 ActiveJob::Base.queue_adapter = :test
 
@@ -202,12 +204,8 @@ RSpec.configure do |config|
   # arbitrary gems may also be filtered via:
   # config.filter_gems_from_backtrace("gem name")
 
-  config.before(:each, type: :system) do
-    WebMock.disable!
-    driven_by(:cuprite_custom)
-  end
-
-  config.after(:each, type: :system) { WebMock.enable! }
+  config.before(:each, :js) { WebMock.allow_net_connect! }
+  config.after(:each, :js) { WebMock.disable_net_connect! }
 
   config.before do
     ActionMailer::Base.deliveries.clear
@@ -218,7 +216,6 @@ RSpec.configure do |config|
   config.include ActiveSupport::Testing::TimeHelpers
   config.include Capybara::RSpecMatchers, type: :component
   config.include Devise::Test::IntegrationHelpers, type: :feature
-  config.include Devise::Test::IntegrationHelpers, type: :system
   config.include CIS2AuthHelper, type: :feature
   config.include PDSHelper, type: :feature
   config.include EmailExpectations, type: :feature
