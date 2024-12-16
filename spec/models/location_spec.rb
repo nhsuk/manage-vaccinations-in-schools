@@ -51,13 +51,21 @@ describe Location do
     it { should validate_presence_of(:name) }
 
     context "with a community clinic" do
-      subject(:location) { build(:community_clinic, ods_code: "abc") }
+      subject(:location) { build(:community_clinic, organisation:) }
+
+      let(:organisation) { create(:organisation) }
 
       it { should_not validate_presence_of(:gias_establishment_number) }
       it { should_not validate_presence_of(:gias_local_authority_code) }
 
       it { should_not validate_presence_of(:ods_code) }
       it { should validate_uniqueness_of(:ods_code).ignoring_case_sensitivity }
+
+      it do
+        expect(location).to validate_exclusion_of(:ods_code).in_array(
+          [organisation.ods_code]
+        )
+      end
 
       it { should_not validate_presence_of(:urn) }
       it { should validate_uniqueness_of(:urn) }
@@ -71,12 +79,12 @@ describe Location do
       it { should_not validate_presence_of(:gias_establishment_number) }
       it { should_not validate_presence_of(:gias_local_authority_code) }
 
-      it { should validate_presence_of(:ods_code) }
+      it { should_not validate_presence_of(:ods_code) }
       it { should validate_uniqueness_of(:ods_code).ignoring_case_sensitivity }
 
       it do
-        expect(location).to validate_comparison_of(:ods_code).is_equal_to(
-          organisation.ods_code
+        expect(location).to validate_inclusion_of(:ods_code).in_array(
+          [organisation.ods_code]
         )
       end
 
