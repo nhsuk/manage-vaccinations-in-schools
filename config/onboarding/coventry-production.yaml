@@ -13,7 +13,7 @@ teams:
   coventry:
     name: Coventry School-Aged Immunisation Service
     email: Bewise.Immunise@covwarkpt.nhs.uk
-    phone: 024 76 961422
+    phone: 02476 961422
   north_warwickshire:
     name: North Warwickshire School-Aged Immunisation Service
     email: NorthImms@covwarkpt.nhs.uk
@@ -22,6 +22,10 @@ teams:
     name: South Warwickshire School-Aged Immunisation Service
     email: SouthImms@covwarkpt.nhs.uk
     phone: 01926 353899
+  clinics:
+    name: Coventry and Warwickshire Partnership NHS Trust
+    email: Bewise.Immunise@covwarkpt.nhs.uk
+    phone: 02476 961422
 
 schools:
   coventry:
@@ -112,9 +116,35 @@ schools:
     - 145486
 
 clinics:
-  team1:
-    - name: # Name of the clinic
-      address_line_1: # First line of the address
-      address_town: # Town of the address
-      address_postcode: # Postcode of the address
-      ods_code: # Unique ODS code
+  clinics:
+    - name: Jepson House
+      address_line_1: 4 Manor Court Avenue
+      address_town: Nuneaton
+      address_postcode: CV11 5HX
+      ods_code: RRM11
+    - name: Boughton Leigh Children’s Centre
+      address_line_1: Wetherell Way
+      address_line_2: Brownsover
+      address_town: Rugby
+      address_postcode: CV21 1LT
+      ods_code: EE125603
+    - name: Woodloes House
+      address_line_1: Woodloes Avenue South
+      address_town: Warwick
+      address_postcode: CV34 5XN
+      ods_code: RYG81
+    - name: Alcester Children and Family Centre
+      address_line_1: Fields Park Drive
+      address_town: Alcester
+      address_postcode: B49 6QR
+      ods_code: RJC89
+    - name: City Of Coventry Health Centre
+      address_line_1: 2 Stoney Stanton Road
+      address_town: Coventry
+      address_postcode: CV1 4FS
+      ods_code: RKB36
+    - name: Central Library
+      address_line_1: Smithford Way
+      address_town: Coventry
+      address_postcode: CV1 1FY
+      ods_code: RYG
