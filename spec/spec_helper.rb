@@ -175,6 +175,14 @@ RSpec.configure do |config|
 
   config.filter_run_excluding :local_users
 
+  if ENV["CI"].blank?
+    begin
+      Ferrum::Browser.new
+    rescue Ferrum::BinaryNotFoundError
+      config.filter_run_excluding :js
+    end
+  end
+
   config.infer_spec_type_from_file_location!
 
   config.define_derived_metadata(file_path: %r{/spec/components/}) do |metadata|
