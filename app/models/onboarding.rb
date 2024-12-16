@@ -34,7 +34,9 @@ class Onboarding
       config
         .fetch(:users, [])
         .map do |user_config|
-          User.new(**user_config, organisations: [organisation])
+          User
+            .find_or_initialize_by(email: user_config[:email])
+            .tap { |user| user.assign_attributes(user_config) }
         end
 
     @schools =
@@ -79,6 +81,7 @@ class Onboarding
     ActiveRecord::Base.transaction do
       models.each(&:save!)
       organisation.generic_clinic
+      @users.each { |user| user.organisations << organisation }
       UnscheduledSessionsFactory.new.call
     end
   end
