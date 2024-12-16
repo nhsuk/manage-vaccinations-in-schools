@@ -1,0 +1,168 @@
+organisation:
+  name: Coventry and Warwickshire Partnership NHS Trust
+  email: Bewise.Immunise@covwarkpt.nhs.uk
+  phone: "02476961422"
+  ods_code: RYG
+  careplus_venue_code: CWPTSI
+  privacy_policy_url: https://www.covwarkpt.nhs.uk/privacy
+  reply_to_id: ddc407a3-dda9-4183-be83-1309562c95b1
+
+programmes: [hpv]
+
+teams:
+  coventry:
+    name: Coventry School-Aged Immunisation Service
+    email: Bewise.Immunise@covwarkpt.nhs.uk
+    phone: "02476961422"
+  north_warwickshire:
+    name: North Warwickshire School-Aged Immunisation Service
+    email: NorthImms@covwarkpt.nhs.uk
+    phone: "02476321550"
+  south_warwickshire:
+    name: South Warwickshire School-Aged Immunisation Service
+    email: SouthImms@covwarkpt.nhs.uk
+    phone: "01926353899"
+  clinics:
+    name: Coventry and Warwickshire Partnership NHS Trust
+    email: Bewise.Immunise@covwarkpt.nhs.uk
+    phone: "02476961422"
+
+schools:
+  coventry:
+    - 103747
+    - 103750
+    - 103751
+    - 103760
+    - 131574
+    - 134970
+    - 135335
+    - 136126
+    - 137209
+    - 137225
+    - 137272
+    - 138023
+    - 139292
+    - 140248
+    - 140366
+    - 140958
+    - 140961
+    - 141104
+    - 141376
+    - 141939
+    - 141992
+    - 142339
+    - 142960
+    - 145179
+    - 146436
+    - 147346
+    - 149424
+    - 150498
+    - 150652
+  north_warwickshire:
+    - 125764
+    - 125773
+    - 125777
+    - 125790
+    - 125794
+    - 134464
+    - 136459
+    - 136587
+    - 136595
+    - 137079
+    - 137767
+    - 137771
+    - 137781
+    - 139469
+    - 139936
+    - 139937
+    - 140354
+    - 140371
+    - 140654
+    - 141008
+    - 141277
+    - 141836
+    - 142881
+    - 143707
+    - 144764
+    - 145019
+    - 145200
+    - 145224
+    - 145575
+    - 146171
+    - 148051
+    - 148243
+    - 148398
+    - 148554
+    - 148828
+    - 149577
+    - 149580
+    - 149717
+    - 150453
+    - 150454
+  south_warwickshire:
+    - 125774
+    - 125775
+    - 125781
+    - 125787
+    - 125788
+    - 125805
+    - 136510
+    - 136622
+    - 136786
+    - 136907
+    - 136963
+    - 136991
+    - 137172
+    - 137235
+    - 137236
+    - 137302
+    - 137766
+    - 137770
+    - 138767
+    - 142202
+    - 143634
+    - 143905
+    - 144633
+    - 145470
+    - 145486
+    - 146697
+    - 147345
+    - 147432
+    - 148032
+    - 148362
+    - 148429
+    - 148732
+
+clinics:
+  clinics:
+    - name: Jepson House
+      address_line_1: 4 Manor Court Avenue
+      address_town: Nuneaton
+      address_postcode: CV11 5HX
+      ods_code: RRM11
+    - name: Boughton Leigh Children’s Centre
+      address_line_1: Wetherell Way
+      address_line_2: Brownsover
+      address_town: Rugby
+      address_postcode: CV21 1LT
+      ods_code: EE125603
+    - name: Woodloes House
+      address_line_1: Woodloes Avenue South
+      address_town: Warwick
+      address_postcode: CV34 5XN
+      ods_code: RYG81
+    - name: Alcester Children and Family Centre
+      address_line_1: Fields Park Drive
+      address_town: Alcester
+      address_postcode: B49 6QR
+      ods_code: RJC89
+    - name: City Of Coventry Health Centre
+      address_line_1: 2 Stoney Stanton Road
+      address_town: Coventry
+      address_postcode: CV1 4FS
+      ods_code: RKB36
+    - name: Central Library
+      address_line_1: Smithford Way
+      address_town: Coventry
+      address_postcode: CV1 1FY
+      ods_code: RYG99CL
