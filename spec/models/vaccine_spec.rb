@@ -30,7 +30,7 @@
 #  fk_rails_...  (programme_id => programmes.id)
 #
 
-describe Vaccine, type: :model do
+describe Vaccine do
   describe "validation" do
     it { should validate_inclusion_of(:method).in_array(%w[injection nasal]) }
   end

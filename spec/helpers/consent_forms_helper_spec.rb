@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe ConsentFormsHelper, type: :helper do
+describe ConsentFormsHelper do
   include ActionView::Helpers
 
   before do

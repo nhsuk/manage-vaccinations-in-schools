@@ -171,31 +171,17 @@ RSpec.configure do |config|
   # You can uncomment this line to turn off ActiveRecord support entirely.
   # config.use_active_record = false
 
-  # RSpec Rails can automatically mix in different behaviours to your tests
-  # based on their file location, for example enabling you to call `get` and
-  # `post` in specs under `spec/controllers`.
-  #
-  # You can disable this behaviour by removing the line below, and instead
-  # explicitly tag your specs with their type, e.g.:
-  #
-  #     describe UsersController, type: :controller do
-  #       # ...
-  #     end
-  #
-  # The different available types are documented in the features, such as in
-  # https://relishapp.com/rspec/rspec-rails/docs
-
   config.filter_run_excluding :local_users
 
-  config.define_derived_metadata(
-    file_path: Regexp.new("/spec/components/")
-  ) { |metadata| metadata[:type] = :component }
-
-  config.define_derived_metadata(
-    file_path: Regexp.new("/spec/forms/")
-  ) { |metadata| metadata[:type] = :model }
-
   config.infer_spec_type_from_file_location!
+
+  config.define_derived_metadata(file_path: %r{/spec/components/}) do |metadata|
+    metadata[:type] ||= :component
+  end
+
+  config.define_derived_metadata(file_path: %r{/spec/forms/}) do |metadata|
+    metadata[:type] ||= :model
+  end
 
   # Filter lines from Rails gems in backtraces.
   config.filter_rails_from_backtrace!
