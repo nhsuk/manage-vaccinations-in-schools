@@ -97,8 +97,6 @@ class Consent < ApplicationRecord
             presence: true,
             unless: -> { via_self_consent? || via_website? }
 
-  delegate :restricted?, to: :patient
-
   def name
     via_self_consent? ? patient.full_name : parent.label
   end
