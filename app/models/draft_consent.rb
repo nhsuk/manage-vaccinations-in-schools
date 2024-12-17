@@ -282,8 +282,6 @@ class DraftConsent
     false
   end
 
-  delegate :restricted?, to: :patient
-
   def consent_form
     nil
   end
