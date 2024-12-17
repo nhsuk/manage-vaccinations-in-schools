@@ -85,18 +85,16 @@ class PatientsController < ApplicationController
   def set_patient
     @patient =
       policy_scope(Patient).includes(
+        :gillick_assessments,
         :gp_practice,
+        :pre_screenings,
         :school,
-        :session_attendances,
+        :triages,
         cohort: :organisation,
-        consents: %i[consent_form parent patient recorded_by],
-        gillick_assessments: :performed_by,
-        notify_log_entries: :sent_by,
+        consents: %i[parent patient],
         parent_relationships: :parent,
         patient_sessions: %i[location session_attendances],
-        pre_screenings: :performed_by,
-        triages: :performed_by,
-        vaccination_records: [:performed_by_user, { vaccine: :programme }]
+        vaccination_records: [{ vaccine: :programme }]
       ).find(params[:id])
   end
 
