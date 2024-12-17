@@ -260,6 +260,7 @@ describe "Edit vaccination record" do
     @session =
       create(
         :session,
+        :completed,
         organisation: @organisation,
         programme: @programme,
         location:
