@@ -89,6 +89,7 @@ class PatientsController < ApplicationController
         .includes(
           :gp_practice,
           :school,
+          :session_attendances,
           cohort: :organisation,
           consents: %i[consent_form parent patient recorded_by],
           gillick_assessments: :performed_by,

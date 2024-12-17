@@ -81,6 +81,7 @@ class Patient < ApplicationRecord
   has_many :pre_screenings,
            -> { order(:created_at) },
            through: :patient_sessions
+  has_many :session_attendances, through: :patient_sessions
   has_many :sessions, through: :patient_sessions
   has_many :vaccination_records, through: :patient_sessions
 
@@ -107,7 +108,7 @@ class Patient < ApplicationRecord
 
   scope :unvaccinated_for,
         ->(programmes:) do
-          reject do |patient|
+          includes(:vaccination_records).reject do |patient|
             programmes.all? { |programme| patient.vaccinated?(programme) }
           end
         end
@@ -401,9 +402,10 @@ class Patient < ApplicationRecord
   end
 
   def clear_upcoming_sessions
-    patient_sessions.where(session: upcoming_sessions).find_each(
-      &:destroy_if_safe!
-    )
+    patient_sessions
+      .includes(:session_attendances)
+      .where(session: upcoming_sessions)
+      .find_each(&:destroy_if_safe!)
   end
 
   def add_to_upcoming_sessions
