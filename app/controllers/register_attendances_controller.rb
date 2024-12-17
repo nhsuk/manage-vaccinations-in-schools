@@ -44,7 +44,15 @@ class RegisterAttendancesController < ApplicationController
     @patient_sessions =
       @session
         .patient_sessions
-        .includes(:session_attendances, session: :session_dates)
+        .strict_loading
+        .includes(
+          :patient,
+          :vaccination_records,
+          :triages,
+          :consents,
+          session: :session_dates,
+          session_attendances: :session_date
+        )
         .select { _1.todays_attendance&.attending.nil? }
   end
 
