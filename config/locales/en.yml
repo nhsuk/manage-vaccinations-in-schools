@@ -432,6 +432,11 @@ en:
               empty: Choose a CSV file with at least one record
               invalid: Choose a CSV file in the correct format
               missing_headers: "The file is missing the following headers: %{missing_headers}"
+        consent:
+          attributes:
+            notes:
+              blank: Enter notes
+              too_long: Enter notes that are less than %{count} characters long
         consent_form:
           attributes:
             address_line_1:
