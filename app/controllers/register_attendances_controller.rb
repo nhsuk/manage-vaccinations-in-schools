@@ -4,9 +4,9 @@ class RegisterAttendancesController < ApplicationController
   include PatientSortingConcern
 
   before_action :set_session, only: %i[index create]
+  before_action :set_session_date
   before_action :set_patient_sessions, only: :index
   before_action :set_patient, only: :create
-  before_action :set_session_date, only: :create
   before_action :set_patient_session, only: :create
 
   layout "full"
@@ -41,19 +41,21 @@ class RegisterAttendancesController < ApplicationController
   end
 
   def set_patient_sessions
+    ps =
+      @session.patient_sessions.strict_loading.includes(
+        :patient,
+        :vaccination_records,
+        :triages,
+        :consents,
+        session: :session_dates,
+        session_attendances: :session_date
+      )
+
     @patient_sessions =
-      @session
-        .patient_sessions
-        .strict_loading
-        .includes(
-          :patient,
-          :vaccination_records,
-          :triages,
-          :consents,
-          session: :session_dates,
-          session_attendances: :session_date
-        )
-        .select { _1.todays_attendance&.attending.nil? }
+      ps
+        .where
+        .missing(:session_attendances)
+        .or(ps.where.not(session_attendances: { session_date: @session_date }))
   end
 
   def set_patient
