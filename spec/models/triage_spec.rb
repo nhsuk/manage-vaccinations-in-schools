@@ -73,14 +73,11 @@ describe Triage do
       let(:status) { :delay_vaccination }
 
       it "adds the patient to the generic clinic" do
-        expect { process! }.to change(
-          triage.patient.upcoming_sessions,
-          :count
-        ).by(1)
+        upcoming_sessions = triage.patient.upcoming_sessions.includes(:location)
 
-        expect(
-          triage.patient.upcoming_sessions.last.location
-        ).to be_generic_clinic
+        expect { process! }.to change(upcoming_sessions, :count).by(1)
+
+        expect(upcoming_sessions.last.location).to be_generic_clinic
       end
     end
   end

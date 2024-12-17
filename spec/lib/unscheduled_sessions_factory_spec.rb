@@ -13,7 +13,7 @@ describe UnscheduledSessionsFactory do
       it "creates missing unscheduled sessions" do
         expect { call }.to change(organisation.sessions, :count).by(1)
 
-        session = organisation.sessions.first
+        session = organisation.sessions.includes(:location, :programmes).first
         expect(session.location).to eq(location)
         expect(session.programmes).to eq([programme])
       end
@@ -25,7 +25,7 @@ describe UnscheduledSessionsFactory do
       it "creates missing unscheduled sessions" do
         expect { call }.to change(organisation.sessions, :count).by(1)
 
-        session = organisation.sessions.first
+        session = organisation.sessions.includes(:location, :programmes).first
         expect(session.location).to eq(location)
         expect(session.programmes).to eq([programme])
       end

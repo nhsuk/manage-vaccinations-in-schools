@@ -28,11 +28,11 @@ describe Onboarding do
       expect(organisation.careplus_venue_code).to eq("EXAMPLE")
       expect(organisation.programmes).to contain_exactly(programme)
 
-      team1 = organisation.teams.find_by!(name: "Team 1")
+      team1 = organisation.teams.includes(:schools).find_by!(name: "Team 1")
       expect(team1.email).to eq("team-1@trust.nhs.uk")
       expect(team1.phone).to eq("07700 900816")
 
-      team2 = organisation.teams.find_by!(name: "Team 2")
+      team2 = organisation.teams.includes(:schools).find_by!(name: "Team 2")
       expect(team2.email).to eq("team-2@trust.nhs.uk")
       expect(team2.phone).to eq("07700 900817")
 

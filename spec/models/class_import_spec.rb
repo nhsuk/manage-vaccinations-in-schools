@@ -316,7 +316,7 @@ describe ClassImport do
           expect { process! }.to change(Parent, :count).by(4)
 
           parent_relationship = patient.reload.parent_relationships.first
-          expect(parent_relationship.parent).to eq(parent)
+          expect(parent_relationship.parent_id).to eq(parent.id)
           expect(parent_relationship).to be_father
         end
       end
@@ -351,7 +351,7 @@ describe ClassImport do
         )
 
         school_move = patient.school_moves.first
-        expect(school_move.school).to eq(session.location)
+        expect(school_move.school_id).to eq(session.location_id)
       end
 
       it "doesn't stage school changes" do
