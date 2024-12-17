@@ -87,7 +87,6 @@ class PatientsController < ApplicationController
       policy_scope(Patient).includes(
         :gillick_assessments,
         :gp_practice,
-        :pre_screenings,
         :school,
         :triages,
         cohort: :organisation,
