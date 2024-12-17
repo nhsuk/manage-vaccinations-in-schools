@@ -33,7 +33,7 @@ def create_student(school, year_group, organisation)
       school:,
       date_of_birth: date_of_birth_for_year(2024, year_group),
       organisation:,
-      home_educated: school.nil? ? [true, false].sample : false
+      home_educated: school.nil? ? [true, false].sample : nil
     )
     .tap do |student|
       parents = FactoryBot.create_list(:parent, rand(1..2))
