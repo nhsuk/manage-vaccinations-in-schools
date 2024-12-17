@@ -202,6 +202,7 @@ class DraftConsent
     PatientSessionPolicy::Scope
       .new(@current_user, PatientSession)
       .resolve
+      .preload_for_status
       .find_by(id: patient_session_id)
   end
 
@@ -287,7 +288,10 @@ class DraftConsent
   end
 
   def parent_relationship
-    parent&.parent_relationships&.find { _1.patient_id == patient_id }
+    parent
+      &.parent_relationships
+      &.find { _1.patient_id == patient_id }
+      .tap { _1&.patient = patient } # acts as preload
   end
 
   def who_responded

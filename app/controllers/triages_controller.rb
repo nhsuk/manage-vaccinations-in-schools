@@ -72,7 +72,11 @@ class TriagesController < ApplicationController
   end
 
   def set_patient
-    @patient = @session.patients.find_by(id: params[:patient_id])
+    @patient =
+      @session
+        .patients
+        .includes(:consents, :school, parent_relationships: :parent)
+        .find_by(id: params[:patient_id])
   end
 
   def set_patient_session

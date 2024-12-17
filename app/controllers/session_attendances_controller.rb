@@ -74,9 +74,10 @@ class SessionAttendancesController < ApplicationController
 
   def set_session_attendance
     @session_attendance =
-      authorize @patient_session.session_attendances.find_or_initialize_by(
-                  session_date: @session_date
-                )
+      authorize @patient_session
+                  .session_attendances
+                  .includes(:session_date)
+                  .find_or_initialize_by(session_date: @session_date)
   end
 
   def session_attendance_params

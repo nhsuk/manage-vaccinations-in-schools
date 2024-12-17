@@ -42,7 +42,12 @@ feature "Verbal consent" do
   end
 
   def when_i_record_the_consent_given_for_that_child_from_the_same_parent
-    @refusing_parent = @session.patient_sessions.first.consents.first.parent
+    patient_session =
+      PatientSession.includes(consents: :parent).find_by(
+        session: @session,
+        patient: @child
+      )
+    @refusing_parent = patient_session.consents.first.parent
 
     visit "/dashboard"
     click_on "Programmes", match: :first

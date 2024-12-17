@@ -68,11 +68,19 @@ class SchoolMove < ApplicationRecord
   def school_session
     @school_session ||=
       if (org = school&.organisation).present? && !already_vaccinated?
-        org.sessions.upcoming.find_by(location: school)
+        org
+          .sessions
+          .includes(:location, :session_dates)
+          .upcoming
+          .find_by(location: school)
       end
   end
 
   private
+
+  def patient_sessions
+    @patient_sessions ||= patient.patient_sessions.preload_for_status
+  end
 
   def already_vaccinated?
     # TODO: Need to update this to support multiple programmes.
@@ -80,7 +88,7 @@ class SchoolMove < ApplicationRecord
     # session if they haven't been vaccinated for any programmes that session
     # administers. What happens if the patient needs a Flu vaccine but the new
     # session doesn't administer flu? Move to community clinic and the school?
-    patient.patient_sessions.any?(&:vaccinated?)
+    patient_sessions.any?(&:vaccinated?)
   end
 
   def update_patient!
@@ -90,7 +98,7 @@ class SchoolMove < ApplicationRecord
   def update_sessions!(move_to_school: nil)
     session = find_replacement_session(move_to_school:)
 
-    patient.patient_sessions.find_each(&:destroy_if_safe!)
+    patient_sessions.find_each(&:destroy_if_safe!)
 
     # Patient is moving to a school not managed by an organisation.
     # All we can do here is remove them from the cohort.

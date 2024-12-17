@@ -59,6 +59,7 @@ class PatientsController < ApplicationController
       if cohort_id.nil?
         @patient
           .patient_sessions
+          .includes(:session_attendances)
           .where(session: old_cohort.organisation.sessions)
           .find_each(&:destroy_if_safe!)
       end

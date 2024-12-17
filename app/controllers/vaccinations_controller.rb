@@ -138,7 +138,17 @@ class VaccinationsController < ApplicationController
   end
 
   def set_patient_session
-    @patient_session = @patient.patient_sessions.find_by!(session: @session)
+    @patient_session =
+      @patient
+        .patient_sessions
+        .includes(
+          patient: {
+            parent_relationships: :parent
+          },
+          session: :programmes
+        )
+        .preload_for_status
+        .find_by!(session: @session)
   end
 
   def set_section_and_tab

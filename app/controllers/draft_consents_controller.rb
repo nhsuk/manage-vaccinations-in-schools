@@ -55,7 +55,11 @@ class DraftConsentsController < ApplicationController
     @draft_consent.write_to!(@consent, triage: @triage)
 
     ActiveRecord::Base.transaction do
-      @triage&.save! if @draft_consent.response_given?
+      if @triage
+        @triage.save! if @draft_consent.response_given?
+        @patient_session.reload
+      end
+
       @consent.parent&.save!
       @consent.save!
     end
@@ -165,7 +169,7 @@ class DraftConsentsController < ApplicationController
   def set_parent_options
     @parent_options =
       (
-        @patient.parent_relationships +
+        @patient.parent_relationships.includes(:parent) +
           @patient_session.consents.filter_map(&:parent_relationship)
       ).compact.uniq.sort_by(&:label)
   end

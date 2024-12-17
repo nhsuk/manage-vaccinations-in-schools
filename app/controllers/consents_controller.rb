@@ -5,8 +5,8 @@ class ConsentsController < ApplicationController
   include PatientSortingConcern
 
   before_action :set_session
-  before_action :set_patient, except: :index
   before_action :set_patient_session, except: :index
+  before_action :set_patient, except: :index
   before_action :set_consent, except: %i[index create send_request]
   before_action :ensure_can_withdraw, only: %i[edit_withdraw update_withdraw]
   before_action :ensure_can_invalidate,
@@ -122,21 +122,31 @@ class ConsentsController < ApplicationController
 
   def set_session
     @session =
-      policy_scope(Session).includes(:location, :organisation).find_by!(
-        slug: params[:session_slug]
+      policy_scope(Session).includes(
+        :location,
+        :organisation,
+        :programmes
+      ).find_by!(slug: params[:session_slug])
+  end
+
+  def set_patient_session
+    @patient_session =
+      policy_scope(PatientSession).find_by!(
+        session: @session,
+        patient_id: params[:patient_id]
       )
   end
 
   def set_patient
-    @patient = @session.patients.find(params[:patient_id])
-  end
-
-  def set_patient_session
-    @patient_session = @patient.patient_sessions.find_by!(session: @session)
+    @patient = @patient_session.patient
   end
 
   def set_consent
-    @consent = Consent.where(programme: @session.programmes).find(params[:id])
+    @consent =
+      @patient_session
+        .consents
+        .includes(:consent_form, :parent, patient: :parent_relationships)
+        .find(params[:id])
   end
 
   def ensure_can_withdraw

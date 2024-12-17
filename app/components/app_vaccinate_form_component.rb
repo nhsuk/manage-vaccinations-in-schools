@@ -37,7 +37,7 @@ class AppVaccinateFormComponent < ViewComponent::Base
   # injectable vaccines.
 
   def programme
-    patient_session.programmes.first
+    session.programmes.first
   end
 
   def vaccine

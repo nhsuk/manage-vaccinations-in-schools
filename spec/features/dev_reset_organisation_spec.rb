@@ -40,12 +40,11 @@ describe "Dev endpoint to reset a organisation" do
     attach_file("cohort_import[csv]", "spec/fixtures/cohort_import/valid.csv")
     click_on "Continue"
 
-    @patients = @organisation.cohorts.flat_map(&:patients)
+    @patients =
+      @organisation.cohorts.includes(patients: :parents).flat_map(&:patients)
 
     expect(@patients.size).to eq(3)
-    expect(
-      @organisation.cohorts.flat_map(&:patients).flat_map(&:parents).size
-    ).to eq(3)
+    expect(@patients.flat_map(&:parents).size).to eq(3)
   end
 
   def and_vaccination_records_have_been_imported

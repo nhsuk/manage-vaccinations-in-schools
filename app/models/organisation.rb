@@ -77,10 +77,10 @@ class Organisation < ApplicationRecord
     academic_year = Date.current.academic_year
     location = generic_clinic
 
-    sessions.create_with(programmes:).find_or_create_by!(
-      academic_year:,
-      location:
-    )
+    sessions
+      .includes(:location, :programmes, :session_dates)
+      .create_with(programmes:)
+      .find_or_create_by!(academic_year:, location:)
   end
 
   def weeks_before_consent_reminders

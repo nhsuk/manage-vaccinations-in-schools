@@ -122,7 +122,9 @@ class PatientSession < ApplicationRecord
   def todays_attendance
     @todays_attendance ||=
       if (session_date = session.session_dates.find(&:today?))
-        session_attendances.find_or_initialize_by(session_date:)
+        session_attendances.eager_load(:session_date).find_or_initialize_by(
+          session_date:
+        )
       end
   end
 

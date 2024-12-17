@@ -16,12 +16,15 @@ class AppSimpleStatusBannerComponent < ViewComponent::Base
   end
 
   def most_recent_vaccination
-    @most_recent_vaccination ||=
-      @patient_session.vaccination_records.order(:created_at).last
+    @most_recent_vaccination ||= @patient_session.latest_vaccination_record
   end
 
   def who_refused
-    @patient_session.consents.response_refused.map(&:who_responded).last
+    @patient_session
+      .consents
+      .select(&:response_refused?)
+      .map(&:who_responded)
+      .last
   end
 
   def full_name
