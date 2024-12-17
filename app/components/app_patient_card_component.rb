@@ -5,24 +5,22 @@ class AppPatientCardComponent < ViewComponent::Base
     <%= render AppCardComponent.new do |card| %>
       <% card.with_heading { "Child record" } %>
       
-      <% if Flipper.enabled?(:"v1.2.0") %>
-        <% if @patient.date_of_death.present? %>
-          <%= render AppNoticeStatusComponent.new(
-            text: "Record updated with child’s date of death"
-          ) %>
-        <% end %>
-        
-        <% if @patient.invalidated? %>
-          <%= render AppNoticeStatusComponent.new(
-            text: "Record flagged as invalid"
-          ) %>
-        <% end %>
-        
-        <% if @patient.restricted? %>
-          <%= render AppNoticeStatusComponent.new(
-            text: "Record flagged as sensitive"
-          ) %>
-        <% end %>
+      <% if @patient.date_of_death.present? %>
+        <%= render AppNoticeStatusComponent.new(
+          text: "Record updated with child’s date of death"
+        ) %>
+      <% end %>
+      
+      <% if @patient.invalidated? %>
+        <%= render AppNoticeStatusComponent.new(
+          text: "Record flagged as invalid"
+        ) %>
+      <% end %>
+      
+      <% if @patient.restricted? %>
+        <%= render AppNoticeStatusComponent.new(
+          text: "Record flagged as sensitive"
+        ) %>
       <% end %>
 
       <%= render AppPatientSummaryComponent.new(
