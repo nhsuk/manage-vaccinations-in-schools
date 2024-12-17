@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 describe AppPatientCardComponent do
-  subject(:rendered) { render_inline(component) }
+  subject { render_inline(component) }
 
   let(:component) { described_class.new(patient) }
 
@@ -16,49 +16,18 @@ describe AppPatientCardComponent do
   context "with a deceased patient" do
     let(:patient) { create(:patient, :deceased) }
 
-    context "with feature flag enabled" do
-      before { Flipper.enable(:"v1.2.0") }
-      after { Flipper.enable(:"v1.2.0") }
-
-      it { should have_content("Record updated with child’s date of death") }
-    end
-
-    context "without feature flag enabled" do
-      it do
-        expect(rendered).not_to have_content(
-          "Record updated with child’s date of death"
-        )
-      end
-    end
+    it { should have_content("Record updated with child’s date of death") }
   end
 
   context "with an invalidated patient" do
     let(:patient) { create(:patient, :invalidated) }
 
-    context "with feature flag enabled" do
-      before { Flipper.enable(:"v1.2.0") }
-      after { Flipper.enable(:"v1.2.0") }
-
-      it { should have_content("Record flagged as invalid") }
-    end
-
-    context "without feature flag enabled" do
-      it { should_not have_content("Record flagged as invalid") }
-    end
+    it { should have_content("Record flagged as invalid") }
   end
 
   context "with a restricted patient" do
     let(:patient) { create(:patient, :restricted) }
 
-    context "with feature flag enabled" do
-      before { Flipper.enable(:"v1.2.0") }
-      after { Flipper.enable(:"v1.2.0") }
-
-      it { should have_content("Record flagged as sensitive") }
-    end
-
-    context "without feature flag enabled" do
-      it { should_not have_content("Record flagged as sensitive") }
-    end
+    it { should have_content("Record flagged as sensitive") }
   end
 end
