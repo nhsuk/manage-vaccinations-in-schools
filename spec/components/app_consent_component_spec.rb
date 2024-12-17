@@ -10,6 +10,8 @@ describe AppConsentComponent do
   let(:consent) { patient_session.consents.first }
   let(:relation) { consent.parent_relationship.label }
 
+  before { patient_session.strict_loading!(false) }
+
   context "consent is not present" do
     let(:patient_session) { create(:patient_session) }
 

@@ -7,6 +7,8 @@ describe AppSessionPatientTableComponent do
     allow(component).to receive(:session_patient_path).and_return(
       "/session/patient/"
     )
+
+    patient_sessions.each { _1.strict_loading!(false) }
   end
 
   let(:section) { :consent }

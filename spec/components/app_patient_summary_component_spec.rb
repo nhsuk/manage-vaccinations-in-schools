@@ -32,7 +32,10 @@ describe AppPatientSummaryComponent do
     )
   end
 
-  before { create(:parent_relationship, :father, parent:, patient:) }
+  before do
+    create(:parent_relationship, :father, parent:, patient:)
+    patient.strict_loading!(false)
+  end
 
   it { should have_content("NHS number") }
   it { should have_content("123\u00A0\u200D456\u00A0\u200D7890") }

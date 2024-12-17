@@ -12,6 +12,8 @@ describe AppOutcomeBannerComponent do
   let(:location_name) { patient_session.session.location.name }
   let(:patient_name) { patient_session.patient.full_name }
 
+  before { patient_session.strict_loading!(false) }
+
   prepend_before do
     patient_session.patient.update!(given_name: "Alya", family_name: "Merton")
   end

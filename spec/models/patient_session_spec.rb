@@ -136,6 +136,8 @@ describe PatientSession do
 
     let(:patient_session) { create(:patient_session, programme:, patient:) }
 
+    before { patient_session.strict_loading!(false) }
+
     context "multiple consent given responses from different parents" do
       let(:parents) { create_list(:parent, 2) }
       let(:consents) do

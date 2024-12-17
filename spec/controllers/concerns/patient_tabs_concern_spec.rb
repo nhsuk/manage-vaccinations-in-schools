@@ -61,6 +61,8 @@ describe PatientTabsConcern do
     ]
   end
 
+  before { patient_sessions.each { _1.strict_loading!(false) } }
+
   describe "#group_patient_sessions_by_conditions" do
     it "groups patient sessions by conditions" do
       result =

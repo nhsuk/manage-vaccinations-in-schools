@@ -51,6 +51,8 @@ describe SessionNotification do
     let(:consent) { create(:consent, :given, patient:, programme:) }
     let(:current_user) { create(:user) }
 
+    before { patient_session.strict_loading!(false) }
+
     context "with a school reminder" do
       let(:type) { :school_reminder }
 

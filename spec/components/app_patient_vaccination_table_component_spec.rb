@@ -7,6 +7,8 @@ describe AppPatientVaccinationTableComponent do
 
   let(:patient) { create(:patient) }
 
+  before { patient.strict_loading!(false) }
+
   context "without a vaccination record" do
     let(:sessions) { [] }
 
