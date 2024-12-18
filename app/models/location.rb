@@ -62,7 +62,6 @@ class Location < ApplicationRecord
   validates :urn, uniqueness: true, allow_nil: true
 
   with_options if: :clinic? do
-    validates :ods_code, presence: true
     validates :team, presence: true
   end
 
