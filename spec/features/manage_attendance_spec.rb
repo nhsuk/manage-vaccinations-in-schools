@@ -94,7 +94,12 @@ describe "Manage attendance" do
   end
 
   def when_i_go_to_a_patient
-    click_link @session.reload.patients.last.full_name
+    click_link PatientSession
+                 .where
+                 .missing(:session_attendances)
+                 .find_by(session: @session)
+                 .patient
+                 .full_name
   end
 
   def then_the_patient_is_not_registered_yet
