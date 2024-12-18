@@ -50,12 +50,9 @@ schools:
     - 145051
     - 146369
 
-# !IMPORTANT! The ODS codes of these clinics are not correct.
-
 clinics:
   generic:
     - name: North Cambridgeshire Hospital
       address_line_1: Churchill Road
       address_town: Wisbech
       address_postcode: PE13 3AB
-      ods_code: PE133AB2
