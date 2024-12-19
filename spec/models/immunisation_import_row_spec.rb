@@ -605,17 +605,17 @@ describe ImmunisationImportRow do
       end
     end
 
-    describe "#cohort" do
-      subject(:cohort) { patient.cohort }
+    describe "#organisation" do
+      subject(:cohort) { patient.organisation }
 
       let(:data) { valid_data }
 
       it { should be_nil }
 
-      context "with an existing patient in a cohort" do
-        let(:patient) { create(:patient, nhs_number:, cohort: create(:cohort)) }
+      context "with an existing patient in the cohort" do
+        let(:patient) { create(:patient, nhs_number:) }
 
-        it { should eq(patient.cohort) }
+        it { should eq(patient.organisation) }
       end
     end
   end
