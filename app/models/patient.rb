@@ -55,7 +55,6 @@ class Patient < ApplicationRecord
   include Invalidatable
   include PendingChangesConcern
   include Schoolable
-  include YearGroupConcern
 
   audited
 
@@ -141,6 +140,8 @@ class Patient < ApplicationRecord
         end
 
   validates :given_name, :family_name, :date_of_birth, presence: true
+
+  validates :birth_academic_year, comparison: { greater_than_or_equal_to: 1990 }
 
   validates :nhs_number,
             uniqueness: true,
@@ -234,6 +235,14 @@ class Patient < ApplicationRecord
     end
 
     results
+  end
+
+  def year_group
+    birth_academic_year.to_year_group
+  end
+
+  def year_group_changed?
+    birth_academic_year_changed?
   end
 
   def has_consent?(programme)
