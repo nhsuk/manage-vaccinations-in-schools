@@ -298,6 +298,10 @@ class ImmunisationImportRow
     parse_date("PERSON_DOB")
   end
 
+  def patient_birth_academic_year
+    patient_date_of_birth&.academic_year
+  end
+
   def patient_gender_code
     gender_code = @data["PERSON_GENDER_CODE"] || @data["PERSON_GENDER"]
     gender_code&.strip&.downcase&.gsub(" ", "_")
@@ -555,6 +559,7 @@ class ImmunisationImportRow
     {
       address_postcode: patient_postcode,
       date_of_birth: patient_date_of_birth,
+      birth_academic_year: patient_birth_academic_year,
       family_name: patient_last_name,
       given_name: patient_first_name,
       gender_code: patient_gender_code,

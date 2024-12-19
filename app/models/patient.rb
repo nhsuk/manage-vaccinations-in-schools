@@ -154,6 +154,8 @@ class Patient < ApplicationRecord
 
   validates :given_name, :family_name, :date_of_birth, presence: true
 
+  validates :birth_academic_year, comparison: { greater_than_or_equal_to: 1990 }
+
   validates :nhs_number,
             uniqueness: true,
             format: {
@@ -350,9 +352,11 @@ class Patient < ApplicationRecord
   end
 
   def self.from_consent_form(consent_form)
+    birth_academic_year = consent_form.date_of_birth.academic_year
+
     cohort =
       Cohort.find_or_create_by!(
-        birth_academic_year: consent_form.date_of_birth.academic_year,
+        birth_academic_year:,
         organisation: consent_form.organisation
       )
 
@@ -361,6 +365,7 @@ class Patient < ApplicationRecord
       address_line_2: consent_form.address_line_2,
       address_postcode: consent_form.address_postcode,
       address_town: consent_form.address_town,
+      birth_academic_year:,
       date_of_birth: consent_form.date_of_birth,
       family_name: consent_form.family_name,
       given_name: consent_form.given_name,
