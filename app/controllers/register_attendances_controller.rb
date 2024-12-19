@@ -56,6 +56,7 @@ class RegisterAttendancesController < ApplicationController
         .where
         .missing(:session_attendances)
         .or(ps.where.not(session_attendances: { session_date: @session_date }))
+        .to_a
   end
 
   def set_patient
