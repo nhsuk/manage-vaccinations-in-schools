@@ -118,7 +118,6 @@ describe ClassImportRow do
 
     it do
       expect(patient).to have_attributes(
-        cohort: nil,
         date_of_birth: Date.new(2010, 1, 1),
         gender_code: "not_known",
         home_educated: false,

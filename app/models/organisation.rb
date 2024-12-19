@@ -29,7 +29,6 @@ class Organisation < ApplicationRecord
 
   has_many :batches
   has_many :cohort_imports
-  has_many :cohorts
   has_many :consent_forms
   has_many :consents
   has_many :locations

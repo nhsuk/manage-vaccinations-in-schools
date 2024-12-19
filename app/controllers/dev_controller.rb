@@ -56,7 +56,6 @@ class DevController < ApplicationController
 
       patients.includes(:parents).destroy_all
 
-      Cohort.where(organisation:).destroy_all
       Batch.where(organisation:).destroy_all
 
       UnscheduledSessionsFactory.new.call

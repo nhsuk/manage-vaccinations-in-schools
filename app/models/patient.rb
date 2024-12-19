@@ -62,7 +62,6 @@ class Patient < ApplicationRecord
 
   audited
 
-  belongs_to :cohort, optional: true
   belongs_to :gp_practice, class_name: "Location", optional: true
   belongs_to :organisation, optional: true
 
@@ -354,24 +353,18 @@ class Patient < ApplicationRecord
   end
 
   def self.from_consent_form(consent_form)
-    birth_academic_year = consent_form.date_of_birth.academic_year
-    organisation = consent_form.organisation
-
-    cohort = Cohort.find_or_create_by!(birth_academic_year:, organisation:)
-
     new(
       address_line_1: consent_form.address_line_1,
       address_line_2: consent_form.address_line_2,
       address_postcode: consent_form.address_postcode,
       address_town: consent_form.address_town,
-      birth_academic_year:,
-      cohort:,
+      birth_academic_year: consent_form.date_of_birth.academic_year,
       date_of_birth: consent_form.date_of_birth,
       family_name: consent_form.family_name,
       given_name: consent_form.given_name,
       home_educated: consent_form.home_educated,
       nhs_number: consent_form.nhs_number,
-      organisation:,
+      organisation: consent_form.organisation,
       preferred_family_name: consent_form.preferred_family_name,
       preferred_given_name: consent_form.preferred_given_name,
       school: consent_form.school
