@@ -357,9 +357,10 @@ describe ClassImport do
       it "doesn't stage school changes" do
         expect { process! }.not_to change(patient, :pending_changes)
         expect(patient.pending_changes.keys).not_to include(
-          :school_id,
           :cohort_id,
-          :home_educated
+          :home_educated,
+          :organisation_id,
+          :school_id
         )
       end
     end
