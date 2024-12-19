@@ -18,7 +18,7 @@ class TriagesController < ApplicationController
       @session
         .patient_sessions
         .preload_for_status
-        .eager_load(patient: :cohort)
+        .eager_load(:patient)
         .order_by_name
 
     @current_tab = TAB_PATHS[:triage][params[:tab]]

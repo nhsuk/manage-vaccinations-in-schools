@@ -25,12 +25,7 @@ class PatientSessionsController < ApplicationController
         :session,
         :session_attendances,
         consents: %i[parent],
-        patient: [
-          :cohort,
-          :gp_practice,
-          :school,
-          { parent_relationships: :parent }
-        ],
+        patient: [:gp_practice, :school, { parent_relationships: :parent }],
         triages: :performed_by,
         vaccination_records: {
           vaccine: :programme
