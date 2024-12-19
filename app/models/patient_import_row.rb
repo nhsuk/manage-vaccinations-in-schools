@@ -2,6 +2,7 @@
 
 class PatientImportRow
   include ActiveModel::Model
+  include YearGroupConcern
 
   validates :date_of_birth, presence: true
   validates :existing_patients, length: { maximum: 1 }
@@ -13,11 +14,7 @@ class PatientImportRow
               in: Patient.gender_codes.keys,
               allow_nil: true
             }
-  validates :year_group,
-            inclusion: {
-              in: :year_groups
-            },
-            if: -> { date_of_birth.present? }
+  validates :year_group, inclusion: { in: :year_groups }, allow_nil: true
 
   validates :parent_1_email, notify_safe_email: { allow_blank: true }
   validates :parent_1_phone, phone: { allow_blank: true }
@@ -233,8 +230,6 @@ class PatientImportRow
   attr_reader :organisation, :year_groups
 
   private
-
-  delegate :year_group, to: :date_of_birth, allow_nil: true
 
   def parent_1_exists?
     [parent_1_name, parent_1_email, parent_1_phone].any?(&:present?)

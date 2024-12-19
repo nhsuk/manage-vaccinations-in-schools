@@ -55,6 +55,7 @@ class Patient < ApplicationRecord
   include Invalidatable
   include PendingChangesConcern
   include Schoolable
+  include YearGroupConcern
 
   audited
 
@@ -154,8 +155,6 @@ class Patient < ApplicationRecord
 
   validates :given_name, :family_name, :date_of_birth, presence: true
 
-  validates :birth_academic_year, comparison: { greater_than_or_equal_to: 1990 }
-
   validates :nhs_number,
             uniqueness: true,
             format: {
@@ -178,8 +177,6 @@ class Patient < ApplicationRecord
   normalizes :nhs_number, with: -> { _1.blank? ? nil : _1.gsub(/\s/, "") }
 
   before_destroy :destroy_childless_parents
-
-  delegate :year_group, to: :cohort
 
   def self.match_existing(
     nhs_number:,
@@ -253,8 +250,6 @@ class Patient < ApplicationRecord
   def relationship_to(parent:)
     parent_relationships.find { _1.parent == parent }
   end
-
-  delegate :year_group, to: :date_of_birth
 
   def has_consent?(programme)
     consents.any? { _1.programme_id == programme.id }
