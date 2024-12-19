@@ -4,12 +4,7 @@ module YearGroupConcern
   extend ActiveSupport::Concern
 
   def year_group
-    return nil if birth_academic_year.nil?
-
-    # Children normally start school the September after their 4th birthday.
-    # https://www.gov.uk/schools-admissions/school-starting-age
-
-    Date.current.academic_year - (birth_academic_year + 5)
+    birth_academic_year&.to_year_group
   end
 
   def year_group_changed?
