@@ -49,18 +49,18 @@ class PatientsController < ApplicationController
   end
 
   def update
-    old_cohort = @patient.cohort
+    old_organisation = @patient.organisation
 
-    cohort_id = params.dig(:patient, :cohort_id).presence
+    organisation_id = params.dig(:patient, :organisation_id).presence
 
     ActiveRecord::Base.transaction do
-      @patient.update!(cohort_id:)
+      @patient.update!(organisation_id:)
 
-      if cohort_id.nil?
+      if organisation_id.nil?
         @patient
           .patient_sessions
           .includes(:session_attendances)
-          .where(session: old_cohort.organisation.sessions)
+          .where(session: old_organisation.sessions)
           .find_each(&:destroy_if_safe!)
       end
     end
@@ -76,8 +76,7 @@ class PatientsController < ApplicationController
 
     redirect_to path,
                 flash: {
-                  success:
-                    "#{@patient.full_name} removed from #{helpers.format_year_group(old_cohort.year_group)} cohort"
+                  success: "#{@patient.full_name} removed from cohort"
                 }
   end
 
@@ -88,9 +87,9 @@ class PatientsController < ApplicationController
       policy_scope(Patient).includes(
         :gillick_assessments,
         :gp_practice,
+        :organisation,
         :school,
         :triages,
-        cohort: :organisation,
         consents: %i[parent patient],
         parent_relationships: :parent,
         patient_sessions: %i[location session_attendances],
