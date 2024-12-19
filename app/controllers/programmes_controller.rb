@@ -50,7 +50,7 @@ class ProgrammesController < ApplicationController
     patient_sessions =
       PatientSession
         .where(patient: patients, session: sessions)
-        .eager_load(:session, patient: :cohort)
+        .eager_load(:session, :patient)
         .preload_for_status
         .order_by_name
         .to_a
