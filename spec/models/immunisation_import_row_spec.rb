@@ -251,17 +251,6 @@ describe ImmunisationImportRow do
       end
     end
 
-    context "when date of birth is outside the programme year group" do
-      let(:data) { { "PERSON_DOB" => "19900101" } }
-
-      it "has errors" do
-        expect(immunisation_import_row).to be_invalid
-        expect(
-          immunisation_import_row.errors[:patient_date_of_birth]
-        ).to contain_exactly("is not part of this programme")
-      end
-    end
-
     context "with more than two matching patients" do
       let(:data) do
         {

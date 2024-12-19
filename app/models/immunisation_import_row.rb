@@ -62,7 +62,6 @@ class ImmunisationImportRow
                   patient_nhs_number.blank?
               end
             }
-  validate :date_of_birth_in_a_valid_year_group
 
   validates :date_of_vaccination,
             comparison: {
@@ -496,14 +495,6 @@ class ImmunisationImportRow
       end
 
     parsed_times.first
-  end
-
-  def date_of_birth_in_a_valid_year_group
-    return if patient_date_of_birth.nil?
-
-    unless @programme.year_groups.include?(patient_date_of_birth.year_group)
-      errors.add(:patient_date_of_birth, :inclusion)
-    end
   end
 
   def delivery_site_appropriate_for_vaccine
