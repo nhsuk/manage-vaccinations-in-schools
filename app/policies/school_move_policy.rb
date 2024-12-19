@@ -9,7 +9,7 @@ class SchoolMovePolicy < ApplicationPolicy
       scope
         .where(school: organisation.schools)
         .or(scope.where(organisation:))
-        .or(scope.where(patient: Patient.in_organisation(organisation)))
+        .or(scope.where(patient: organisation.patients))
     end
   end
 end

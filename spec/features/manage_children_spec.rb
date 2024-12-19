@@ -123,7 +123,7 @@ describe "Manage children" do
         :patient,
         given_name: "Jane",
         family_name: "Doe",
-        cohort: @organisation.cohorts.first
+        organisation: @organisation
       )
   end
 

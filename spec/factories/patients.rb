@@ -69,7 +69,7 @@ FactoryBot.define do
     end
 
     organisation do
-      session&.organisation ||
+      session&.organisation || school&.organisation ||
         association(:organisation, programmes: [programme].compact)
     end
     cohort { Cohort.find_or_create_by!(birth_academic_year:, organisation:) }
