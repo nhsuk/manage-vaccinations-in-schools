@@ -93,7 +93,7 @@ describe "Dev endpoint to reset a organisation" do
   def then_all_associated_data_is_deleted_when_i_reset_the_organisation
     expect { visit "/reset/r1l" }.to(
       change(Cohort, :count)
-        .by(-1)
+        .by(-2)
         .and(change(CohortImport, :count).by(-1))
         .and(change(ImmunisationImport, :count).by(-1))
         .and(change(NotifyLogEntry, :count).by(-3))

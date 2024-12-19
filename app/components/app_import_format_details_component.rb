@@ -151,6 +151,18 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
           "#{tag.strong("Required")}, must use #{tag.i("DD/MM/YYYY")} or #{tag.i("YYYY-MM-DD")} format"
       },
       {
+        name: "CHILD_YEAR_GROUP",
+        notes:
+          "Optional, numeric, the child’s year group, for example #{tag.i("8")}. If present, and " \
+            "when the child’s date of birth would place them in a different year, this value can " \
+            "be used to override the cohort the child will be placed in."
+      },
+      {
+        name: "CHILD_REGISTRATION",
+        notes:
+          "Optional, the child’s registration group, for example #{tag.i("8T5")}"
+      },
+      {
         name: "CHILD_NHS_NUMBER",
         notes: "Optional, must be 10 digits and numeric"
       },
@@ -162,11 +174,7 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
       },
       { name: "CHILD_ADDRESS_LINE_1", notes: "Optional" },
       { name: "CHILD_ADDRESS_LINE_2", notes: "Optional" },
-      { name: "CHILD_TOWN", notes: "Optional" },
-      {
-        name: "CHILD_REGISTRATION",
-        notes: "Optional, the child’s year group, for example #{tag.i("8T5")}"
-      }
+      { name: "CHILD_TOWN", notes: "Optional" }
     ]
   end
 

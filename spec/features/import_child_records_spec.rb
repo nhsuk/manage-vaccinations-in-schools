@@ -120,8 +120,8 @@ describe "Import child records" do
   end
 
   def then_i_should_see_the_cohorts
-    expect(page).to have_content("Year 8\n3 children")
-    expect(page).to have_content("Year 9\nNo children")
+    expect(page).to have_content("Year 8\n2 children")
+    expect(page).to have_content("Year 9\n1 child")
     expect(page).to have_content("Year 10\nNo children")
     expect(page).to have_content("Year 11\nNo children")
   end
@@ -131,11 +131,11 @@ describe "Import child records" do
   end
 
   def then_i_should_see_the_children
-    expect(page).to have_content("3 children")
+    expect(page).to have_content("2 children")
     expect(page).to have_content("Full nameNHS numberDate of birthPostcode")
     expect(page).to have_content("Full name Jimmy Smith")
-    expect(page).to have_content(/NHS number.*123.*456.*7890/)
-    expect(page).to have_content("Date of birth 1 January 2010")
+    expect(page).to have_content(/NHS number.*123.*456.*7891/)
+    expect(page).to have_content("Date of birth 2 January 2010")
     expect(page).to have_content("Postcode SW1A 1AA")
   end
 

@@ -6,6 +6,7 @@ en:
         address_line_2: <code>CHILD_ADDRESS_LINE_2</code>
         address_postcode: <code>CHILD_POSTCODE</code>
         address_town: <code>CHILD_TOWN</code>
+        birth_academic_year: <code>CHILD_YEAR_GROUP</code>
         date_of_birth: <code>CHILD_DATE_OF_BIRTH</code>
         first_name: <code>CHILD_FIRST_NAME</code>
         gender_code: <code>CHILD_GENDER</code>
@@ -26,6 +27,7 @@ en:
         address_line_2: <code>CHILD_ADDRESS_LINE_2</code>
         address_postcode: <code>CHILD_POSTCODE</code>
         address_town: <code>CHILD_TOWN</code>
+        birth_academic_year: <code>CHILD_YEAR_GROUP</code>
         date_of_birth: <code>CHILD_DATE_OF_BIRTH</code>
         first_name: <code>CHILD_FIRST_NAME</code>
         gender_code: <code>CHILD_GENDER</code>

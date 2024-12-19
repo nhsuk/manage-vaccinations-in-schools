@@ -168,7 +168,15 @@ class PatientImportRow
   end
 
   def birth_academic_year
-    date_of_birth&.academic_year
+    if (year_group = @data["CHILD_YEAR_GROUP"]).present?
+      begin
+        Date.current.academic_year - Integer(year_group) - 5
+      rescue ArgumentError, TypeError
+        nil
+      end
+    else
+      date_of_birth&.academic_year
+    end
   end
 
   def registration

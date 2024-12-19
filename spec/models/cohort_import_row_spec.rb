@@ -5,6 +5,8 @@ describe CohortImportRow do
     described_class.new(data:, organisation:, programme:)
   end
 
+  let(:today) { Date.new(2024, 12, 1) }
+
   let(:programme) { create(:programme) }
   let(:organisation) { create(:organisation, programmes: [programme]) }
 
@@ -136,7 +138,7 @@ describe CohortImportRow do
   end
 
   describe "#to_patient" do
-    subject(:patient) { cohort_import_row.to_patient }
+    subject(:patient) { travel_to(today) { cohort_import_row.to_patient } }
 
     let(:data) { valid_data }
 
@@ -145,11 +147,19 @@ describe CohortImportRow do
     it do
       expect(patient).to have_attributes(
         cohort: nil,
+        date_of_birth: Date.new(2010, 1, 1),
         gender_code: "male",
         home_educated: false,
         registration: "8AB",
-        school: nil
+        school: nil,
+        year_group: 10
       )
+    end
+
+    context "with a specific year group provided" do
+      let(:data) { valid_data.merge("CHILD_YEAR_GROUP" => "11") }
+
+      it { should have_attributes(year_group: 11) }
     end
 
     context "when gender is not provided" do
