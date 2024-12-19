@@ -27,14 +27,12 @@
 #  updated_from_pds_at       :datetime
 #  created_at                :datetime         not null
 #  updated_at                :datetime         not null
-#  cohort_id                 :bigint
 #  gp_practice_id            :bigint
 #  organisation_id           :bigint
 #  school_id                 :bigint
 #
 # Indexes
 #
-#  index_patients_on_cohort_id            (cohort_id)
 #  index_patients_on_family_name_trigram  (family_name) USING gin
 #  index_patients_on_given_name_trigram   (given_name) USING gin
 #  index_patients_on_gp_practice_id       (gp_practice_id)
@@ -46,7 +44,6 @@
 #
 # Foreign Keys
 #
-#  fk_rails_...  (cohort_id => cohorts.id)
 #  fk_rails_...  (gp_practice_id => locations.id)
 #  fk_rails_...  (organisation_id => organisations.id)
 #  fk_rails_...  (school_id => locations.id)
