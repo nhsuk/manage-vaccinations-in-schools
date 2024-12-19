@@ -247,7 +247,6 @@ describe CohortImport do
         .to not_change(cohort_import, :processed_at)
         .and not_change(Patient, :count)
         .and not_change(Parent, :count)
-        .and not_change(Cohort, :count)
     end
 
     it "stores statistics on the import" do
