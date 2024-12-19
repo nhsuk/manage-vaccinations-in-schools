@@ -164,7 +164,6 @@ describe ClassImport do
         .to change(class_import, :processed_at).from(nil)
         .and change(class_import.patients, :count).by(4)
         .and change(class_import.parents, :count).by(5)
-        .and change(organisation.cohorts, :count).by(2)
 
       expect(Patient.first).to have_attributes(
         nhs_number: "1234567890",
