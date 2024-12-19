@@ -72,7 +72,11 @@ FactoryBot.define do
       session&.organisation || school&.organisation ||
         association(:organisation, programmes: [programme].compact)
     end
-    cohort { Cohort.find_or_create_by!(birth_academic_year:, organisation:) }
+    cohort do
+      if organisation
+        Cohort.find_or_create_by!(birth_academic_year:, organisation:)
+      end
+    end
 
     nhs_number do
       # Prevents duplicate NHS numbers by sequencing and appending a check
