@@ -39,6 +39,9 @@ describe PatientMerger do
     let(:patient_session) do
       create(:patient_session, session:, patient: patient_to_destroy)
     end
+    let(:school_move) do
+      create(:school_move, :to_school, patient: patient_to_destroy)
+    end
     let(:session_notification) do
       create(
         :session_notification,
@@ -94,6 +97,12 @@ describe PatientMerger do
 
     it "moves patient sessions" do
       expect { call }.to change { patient_session.reload.patient }.to(
+        patient_to_keep
+      )
+    end
+
+    it "moves school moves" do
+      expect { call }.to change { school_move.reload.patient }.to(
         patient_to_keep
       )
     end
