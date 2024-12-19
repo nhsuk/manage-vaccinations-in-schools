@@ -101,7 +101,7 @@ class SchoolMove < ApplicationRecord
 
   def cohort
     (school&.organisation || organisation)&.cohorts&.find_or_create_by!(
-      birth_academic_year: patient.date_of_birth.academic_year
+      birth_academic_year: patient.birth_academic_year
     )
   end
 
