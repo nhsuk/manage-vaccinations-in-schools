@@ -94,7 +94,6 @@ class SchoolMove < ApplicationRecord
 
   def update_patient!
     patient.update!(
-      cohort:,
       home_educated:,
       organisation: school&.organisation || organisation,
       school:
@@ -120,12 +119,6 @@ class SchoolMove < ApplicationRecord
       patient:,
       school:,
       user:
-    )
-  end
-
-  def cohort
-    (school&.organisation || organisation)&.cohorts&.find_or_create_by!(
-      birth_academic_year: patient.birth_academic_year
     )
   end
 
