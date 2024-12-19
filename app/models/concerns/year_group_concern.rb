@@ -15,4 +15,8 @@ module YearGroupConcern
 
     Date.new(birth_academic_year, 9, 1).year_group
   end
+
+  def year_group_changed?
+    birth_academic_year_changed?
+  end
 end
