@@ -120,11 +120,6 @@ class Patient < ApplicationRecord
           end
         end
 
-  scope :in_pending_cohorts,
-        ->(cohorts) do
-          where("pending_changes->>'cohort_id' IN (?)", cohorts.pluck(:id))
-        end
-
   scope :with_pending_changes, -> { where.not(pending_changes: {}) }
 
   scope :search_by_name,
@@ -144,21 +139,6 @@ class Patient < ApplicationRecord
               query:
             )
           end
-        end
-
-  scope :in_organisation,
-        ->(organisation) do
-          cohort_ids = organisation.cohorts.ids
-          school_ids = organisation.schools.ids
-
-          school_moves =
-            SchoolMove.where(school_id: school_ids).or(
-              SchoolMove.where(organisation:)
-            )
-
-          where(cohort_id: cohort_ids).or(where(school_id: school_ids)).or(
-            where(school_moves.for_patient.arel.exists)
-          )
         end
 
   validates :given_name, :family_name, :date_of_birth, presence: true
