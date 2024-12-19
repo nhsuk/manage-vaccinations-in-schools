@@ -12,7 +12,6 @@ describe PendingChangesConcern do
   let(:model) do
     model_class.create!(
       address_postcode: "",
-      cohort_id: create(:cohort).id,
       date_of_birth: Date.current,
       birth_academic_year: 2000,
       given_name: "John",

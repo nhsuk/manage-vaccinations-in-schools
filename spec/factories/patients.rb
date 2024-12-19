@@ -63,15 +63,15 @@ FactoryBot.define do
       performed_by { association(:user) }
       programme { session&.programmes&.first }
       session { nil }
-      organisation do
-        session&.organisation ||
-          association(:organisation, programmes: [programme].compact)
-      end
       year_group { nil }
       location_name { nil }
       in_attendance { false }
     end
 
+    organisation do
+      session&.organisation ||
+        association(:organisation, programmes: [programme].compact)
+    end
     cohort { Cohort.find_or_create_by!(birth_academic_year:, organisation:) }
 
     nhs_number do
