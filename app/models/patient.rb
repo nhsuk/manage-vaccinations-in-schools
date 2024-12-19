@@ -120,6 +120,11 @@ class Patient < ApplicationRecord
           end
         end
 
+  scope :in_programme,
+        ->(programme) do
+          where(birth_academic_year: programme.birth_academic_years)
+        end
+
   scope :with_pending_changes, -> { where.not(pending_changes: {}) }
 
   scope :search_by_name,

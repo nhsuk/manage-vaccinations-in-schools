@@ -28,7 +28,7 @@
 
           <% row.with_cell do %>
             <span class="nhsuk-table-responsive__heading">Children</span>
-            <%= policy_scope(Patient).where(cohort: policy_scope(Cohort).for_year_groups(programme.year_groups)).count %>
+            <%= policy_scope(Patient).in_programme(programme).count %>
           <% end %>
 
           <% row.with_cell do %>
