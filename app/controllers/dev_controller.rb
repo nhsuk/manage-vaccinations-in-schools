@@ -70,7 +70,21 @@ class DevController < ApplicationController
     session = Session.find(params[:session_id])
     programme = session.programmes.first
 
-    consent_form = FactoryBot.build(:consent_form, :draft, programme:, session:)
+    attributes =
+      if ActiveModel::Type::Boolean.new.cast(params[:parent_phone])
+        {}
+      else
+        { parent_phone: nil }
+      end
+
+    consent_form =
+      FactoryBot.build(
+        :consent_form,
+        :draft,
+        programme:,
+        session:,
+        **attributes
+      )
 
     vaccine = programme.vaccines.first
     consent_form.health_answers = vaccine.health_questions.to_health_answers
