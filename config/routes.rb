@@ -278,7 +278,10 @@ Rails.application.routes.draw do
       defaults section: "attendances" do
         get "/",
             as: "attendances",
-            to: redirect("/sessions/%{session_slug}/attendances/unregistered")
+            to:
+              redirect(
+                "/sessions/%{session_slug}/attendances/unregistered?sort=name&direction=asc"
+              )
 
         get ":tab",
             controller: "register_attendances",
