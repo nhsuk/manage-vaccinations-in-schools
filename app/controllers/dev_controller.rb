@@ -66,26 +66,43 @@ class DevController < ApplicationController
 
   def random_consent_form
     Faker::Config.locale = "en-GB"
-    @session = Session.find(params[:session_id])
-    programme = @session.programmes.first
-    @vaccine = programme.vaccines.first
-    @consent_form =
-      FactoryBot.build(:consent_form, :draft, programme:, session: @session)
-    @consent_form.health_answers = @vaccine.health_questions.to_health_answers
-    @consent_form.save!
-    @consent_form.each_health_answer do |health_answer|
+
+    session = Session.find(params[:session_id])
+    programme = session.programmes.first
+
+    attributes =
+      if ActiveModel::Type::Boolean.new.cast(params[:parent_phone])
+        {}
+      else
+        { parent_phone: nil }
+      end
+
+    consent_form =
+      FactoryBot.build(
+        :consent_form,
+        :draft,
+        programme:,
+        session:,
+        **attributes
+      )
+
+    vaccine = programme.vaccines.first
+    consent_form.health_answers = vaccine.health_questions.to_health_answers
+    consent_form.save!
+
+    consent_form.each_health_answer do |health_answer|
       health_answer.response = "no"
     end
-    @consent_form.save!
-    session[:consent_form_id] = @consent_form.id
-    redirect_to confirm_parent_interface_consent_form_path(@consent_form)
+    consent_form.save!
+
+    request.session[:consent_form_id] = consent_form.id
+    redirect_to confirm_parent_interface_consent_form_path(consent_form)
   end
 
   private
 
   def ensure_dev_env_or_dev_tools_enabled
-    unless Rails.env.development? || Rails.env.test? ||
-             Flipper.enabled?(:dev_tools)
+    unless Rails.env.local? || Flipper.enabled?(:dev_tools)
       raise "Not in development environment"
     end
   end

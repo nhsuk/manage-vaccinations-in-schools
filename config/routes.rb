@@ -59,15 +59,12 @@ Rails.application.routes.draw do
     end
   mount flipper_app, at: "/flipper"
 
-  if Rails.env.development? || Rails.env.test?
+  unless Rails.env.production?
     get "/reset", to: "dev#reset"
-    get "/random_consent_form", to: "dev#random_consent_form"
-  end
-
-  constraints -> { Flipper.enabled?(:dev_tools) } do
     get "/reset/:organisation_ods_code",
         to: "dev#reset_organisation",
         as: :reset_organisation
+    get "/random-consent-form", to: "dev#random_consent_form"
   end
 
   get "/csrf", to: "csrf#new"

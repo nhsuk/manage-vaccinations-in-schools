@@ -77,14 +77,19 @@ FactoryBot.define do
     parent_full_name { "#{Faker::Name.first_name} #{family_name}" }
     parent_phone { "07700 900#{rand(0..999).to_s.rjust(3, "0")}" }
     parent_phone_receive_updates { parent_phone.present? }
+
+    parent_relationship_type { ParentRelationship.types.keys.sample }
     parent_relationship_other_name do
       parent_relationship_type == "other" ? "Other" : nil
     end
-    parent_relationship_type { ParentRelationship.types.keys.sample }
-    parent_contact_method_type { Parent.contact_method_types.keys.sample }
+
+    parent_contact_method_type do
+      Parent.contact_method_types.keys.sample if parent_phone.present?
+    end
     parent_contact_method_other_details do
       parent_contact_method_type == "other" ? "Other details." : nil
     end
+
     parental_responsibility { "yes" }
 
     programme { session.programmes.first }

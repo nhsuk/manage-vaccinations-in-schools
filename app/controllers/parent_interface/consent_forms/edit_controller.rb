@@ -35,11 +35,17 @@ module ParentInterface
         model.assign_attributes(update_params)
       end
 
-      if current_step == :parent &&
-           @consent_form.parental_responsibility == "no"
-        redirect_to cannot_consent_responsibility_parent_interface_consent_form_path(
-                      @consent_form
-                    ) and return
+      if current_step == :parent
+        if @consent_form.parental_responsibility == "no"
+          redirect_to cannot_consent_responsibility_parent_interface_consent_form_path(
+                        @consent_form
+                      ) and return
+        end
+
+        if skip_to_confirm? && @consent_form.parent_phone_changed? &&
+             @consent_form.parent_phone.present?
+          jump_to("contact-method", skip_to_confirm: true)
+        end
       end
 
       set_steps # The wizard_steps can change after certain attrs change
@@ -161,6 +167,8 @@ module ParentInterface
 
     def skip_to_confirm_or_next_health_question
       if skip_to_confirm?
+        return if @skip_to.present? # already going somewhere else
+
         if is_health_question_step? && next_health_answer_missing_response?
           jump_to "health-question", question_number: next_health_question
         else

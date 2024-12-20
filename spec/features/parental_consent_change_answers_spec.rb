@@ -68,6 +68,18 @@ RSpec.feature "Parental consent change answers" do
     then_i_see_the_first_health_question
   end
 
+  scenario "Add phone number before submitting" do
+    when_i_go_to_a_prefilled_consent_form(with_phone: false)
+    then_i_see_the_consent_form_confirmation_page
+
+    when_i_change_my_phone_number
+    and_i_choose_my_phone_contact_method
+    then_i_see_the_consent_form_confirmation_page
+
+    when_i_click_the_confirm_button
+    then_i_see_the_given_confirmation_page
+  end
+
   def given_a_flu_programme_is_underway
     programme = create(:programme, :flu)
     @organisation =
@@ -85,8 +97,8 @@ RSpec.feature "Parental consent change answers" do
     @child = create(:patient, session: @session)
   end
 
-  def when_i_go_to_a_prefilled_consent_form
-    visit "/random_consent_form?session_id=#{@session.id}"
+  def when_i_go_to_a_prefilled_consent_form(with_phone: true)
+    visit "/random-consent-form?session_id=#{@session.id}&parent_phone=#{with_phone}"
   end
 
   def then_i_see_the_consent_form_confirmation_page
@@ -249,6 +261,12 @@ RSpec.feature "Parental consent change answers" do
     )
   end
 
+  def then_i_see_the_given_confirmation_page
+    expect(page).to have_content(
+      "will get their nasal flu vaccination at school"
+    )
+  end
+
   def then_i_see_the_injection_confirmation_page
     expect(page).to have_content(
       "Your child will not get a nasal flu vaccination at school"
@@ -271,5 +289,17 @@ RSpec.feature "Parental consent change answers" do
 
   def then_i_see_the_first_health_question
     expect(page).to have_content("Has your child been diagnosed with asthma?")
+  end
+
+  def when_i_change_my_phone_number
+    click_on "Change your phone"
+    choose "Mum"
+    fill_in "Phone number", with: "07700 900001"
+    click_on "Continue"
+  end
+
+  def and_i_choose_my_phone_contact_method
+    choose "I can only receive text messages"
+    click_on "Continue"
   end
 end
