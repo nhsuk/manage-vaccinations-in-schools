@@ -69,7 +69,7 @@
 <% if display_health_questions? %>
   <%= render AppCardComponent.new do |c| %>
     <% c.with_heading { "All answers to health questions" } %>
-    <%= render AppHealthQuestionsComponent.new(consents: patient_session.consents) %>
+    <%= render AppHealthQuestionsComponent.new(consents: patient_session.latest_consents) %>
   <% end %>
 <% end %>
 
