@@ -73,6 +73,7 @@ RSpec.feature "Parental consent change answers" do
     then_i_see_the_consent_form_confirmation_page
 
     when_i_change_my_phone_number
+    and_i_choose_my_phone_contact_method
     then_i_see_the_consent_form_confirmation_page
 
     when_i_click_the_confirm_button
@@ -294,6 +295,11 @@ RSpec.feature "Parental consent change answers" do
     click_on "Change your phone"
     choose "Mum"
     fill_in "Phone number", with: "07700 900001"
+    click_on "Continue"
+  end
+
+  def and_i_choose_my_phone_contact_method
+    choose "I can only receive text messages"
     click_on "Continue"
   end
 end
