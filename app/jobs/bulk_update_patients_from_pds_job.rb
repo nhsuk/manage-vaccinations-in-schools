@@ -8,6 +8,8 @@ class BulkUpdatePatientsFromPDSJob < ApplicationJob
   good_job_control_concurrency_with perform_limit: 1
 
   def perform
+    return unless Settings.pds.perform_jobs
+
     patients = Patient.with_nhs_number.not_invalidated.not_deceased
 
     GoodJob::Bulk.enqueue do
