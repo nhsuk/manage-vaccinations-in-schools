@@ -70,6 +70,35 @@ describe Consent do
     end
   end
 
+  describe "#responded_at" do
+    subject(:responded_at) { consent.responded_at }
+
+    context "with a consent form" do
+      let(:consent) do
+        build(
+          :consent,
+          created_at: Time.current,
+          consent_form:
+            build(:consent_form, recorded_at: Time.zone.local(2024, 12, 20, 12))
+        )
+      end
+
+      it { should eq(Time.zone.local(2024, 12, 20, 12)) }
+    end
+
+    context "without a consent form" do
+      let(:consent) do
+        build(
+          :consent,
+          created_at: Time.zone.local(2024, 12, 20, 12),
+          consent_form: nil
+        )
+      end
+
+      it { should eq(Time.zone.local(2024, 12, 20, 12)) }
+    end
+  end
+
   describe "#from_consent_form!" do
     describe "the created consent object" do
       subject(:consent) do

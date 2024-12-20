@@ -118,7 +118,7 @@ class Consent < ApplicationRecord
   end
 
   def responded_at
-    invalidated_at || withdrawn_at || created_at
+    invalidated_at || withdrawn_at || consent_form&.recorded_at || created_at
   end
 
   def triage_needed?
