@@ -86,7 +86,7 @@ RSpec.feature "Parental consent change answers" do
   end
 
   def when_i_go_to_a_prefilled_consent_form
-    visit "/random_consent_form?session_id=#{@session.id}"
+    visit "/random-consent-form?session_id=#{@session.id}"
   end
 
   def then_i_see_the_consent_form_confirmation_page
