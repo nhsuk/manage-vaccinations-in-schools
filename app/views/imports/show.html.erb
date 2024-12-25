@@ -53,6 +53,13 @@
           } %>
     <% end %>
 
+    <% if @session %>
+      <%= summary_list.with_row do |row| %>
+        <%= row.with_key { "School" } %>
+        <%= row.with_value { link_to @session.location.name, session_path(@session) } %>
+      <% end %>
+    <% end %>
+
     <% if import.exact_duplicate_record_count.present? %>
       <%= summary_list.with_row do |row| %>
         <%= row.with_key { "Omitted records" } %>
