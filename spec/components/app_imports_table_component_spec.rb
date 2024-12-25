@@ -98,5 +98,6 @@ describe AppImportsTableComponent do
     expect(rendered).to have_css(".nhsuk-table__cell", text: "Jennifer Smith")
     expect(rendered).to have_css(".nhsuk-table__cell", text: "Jack Smith")
     expect(rendered).to have_css(".nhsuk-table__cell", text: "1")
+    expect(rendered).to have_content("Test School")
   end
 end
