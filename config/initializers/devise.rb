@@ -276,7 +276,7 @@ Devise.setup do |config|
     redirect_uri =
       begin
         host =
-          if Rails.env.development?
+          if Rails.env.local?
             "http://localhost:4000"
           elsif Settings.is_review
             "https://#{ENV["HEROKU_APP_NAME"]}.herokuapp.com"

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-return unless Rails.env.development?
+return unless Rails.env.local?
 
 module ActionDispatch
   class FileHandler

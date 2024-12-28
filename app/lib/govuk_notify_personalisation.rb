@@ -130,7 +130,7 @@ class GovukNotifyPersonalisation
   end
 
   def host
-    if Rails.env.development? || Rails.env.test?
+    if Rails.env.local?
       "http://localhost:4000"
     else
       "https://#{Settings.give_or_refuse_consent_host}"
