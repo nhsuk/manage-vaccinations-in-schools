@@ -81,8 +81,7 @@ class SessionAttendancesController < ApplicationController
 
   def session_attendance_params
     params
-      .require(:session_attendance)
+      .expect(session_attendance: :attending)
       .tap { |p| p[:attending] = nil if p[:attending] == "not_registered" }
-      .permit(:attending)
   end
 end

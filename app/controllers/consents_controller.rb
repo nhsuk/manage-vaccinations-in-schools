@@ -157,13 +157,13 @@ class ConsentsController < ApplicationController
   end
 
   def withdraw_params
-    params
-      .require(:consent)
-      .permit(:reason_for_refusal, :notes)
-      .merge(response: "refused", withdrawn_at: Time.current)
+    params.expect(consent: %i[reason_for_refusal notes]).merge(
+      response: "refused",
+      withdrawn_at: Time.current
+    )
   end
 
   def invalidate_params
-    params.require(:consent).permit(:notes).merge(invalidated_at: Time.current)
+    params.expect(consent: :notes).merge(invalidated_at: Time.current)
   end
 end

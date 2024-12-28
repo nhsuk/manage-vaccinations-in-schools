@@ -63,7 +63,7 @@ class Sessions::EditController < ApplicationController
   end
 
   def send_consent_requests_at_params
-    params.require(:session).permit(:send_consent_requests_at)
+    params.expect(session: :send_consent_requests_at)
   end
 
   def send_invitations_at_validator
@@ -76,10 +76,10 @@ class Sessions::EditController < ApplicationController
   end
 
   def send_invitations_at_params
-    params.require(:session).permit(:send_invitations_at)
+    params.expect(session: :send_invitations_at)
   end
 
   def weeks_before_consent_reminders_params
-    params.require(:session).permit(:weeks_before_consent_reminders)
+    params.expect(session: :weeks_before_consent_reminders)
   end
 end

@@ -50,16 +50,15 @@ class GillickAssessmentsController < ApplicationController
   end
 
   def gillick_assessment_params
-    params
-      .require(:gillick_assessment)
-      .permit(
-        :knows_consequences,
-        :knows_delivery,
-        :knows_disease,
-        :knows_side_effects,
-        :knows_vaccination,
-        :notes
-      )
-      .merge(performed_by: current_user)
+    params.expect(
+      gillick_assessment: %i[
+        knows_consequences
+        knows_delivery
+        knows_disease
+        knows_side_effects
+        knows_vaccination
+        notes
+      ]
+    ).merge(performed_by: current_user)
   end
 end

@@ -45,8 +45,10 @@ class SessionDatesController < ApplicationController
   end
 
   def session_params
-    params.require(:session).permit(
-      session_dates_attributes: %i[id value _destroy]
+    params.expect(
+      session: {
+        session_dates_attributes: [%i[id value _destroy]]
+      }
     )
   end
 
