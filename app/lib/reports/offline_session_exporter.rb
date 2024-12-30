@@ -10,8 +10,12 @@ class Reports::OfflineSessionExporter
   end
 
   def call
+    # stree-ignore
     Axlsx::Package
-      .new { |package| add_vaccinations_sheet(package) }
+      .new { |package|
+        add_vaccinations_sheet(package)
+        add_performing_professionals_sheet(package)
+      }
       .to_stream
       .read
   end
@@ -48,6 +52,19 @@ class Reports::OfflineSessionExporter
         pane.y_split = 1
         pane.x_split = 2
         pane.active_pane = :bottom_right
+      end
+    end
+  end
+
+  def add_performing_professionals_sheet(package)
+    package.use_shared_strings = true
+
+    workbook = package.workbook
+    workbook.add_worksheet(name: "Performing Professionals") do |sheet|
+      sheet.add_row(%w[EMAIL])
+
+      performing_professional_email_values.each do |email|
+        sheet.add_row([email])
       end
     end
   end
@@ -216,7 +233,7 @@ class Reports::OfflineSessionExporter
     )
     row[:performing_professional_email] = Cell.new(
       vaccination_record.performed_by_user&.email,
-      allowed_values: performing_professional_email_values
+      allowed_formula: "=#{performing_professionals_range}"
     )
     row[:batch_number] = Cell.new(
       batch&.name,
@@ -252,7 +269,7 @@ class Reports::OfflineSessionExporter
       allowed_values: vaccine_values_for_programme(programme)
     )
     row[:performing_professional_email] = Cell.new(
-      allowed_values: performing_professional_email_values
+      allowed_formula: "=#{performing_professionals_range}"
     )
     row[:batch_number] = Cell.new(
       allowed_values: batch_values_for_programme(programme)
@@ -296,6 +313,11 @@ class Reports::OfflineSessionExporter
         .joins(:organisations)
         .where(organisations: organisation)
         .pluck(:email)
+  end
+
+  def performing_professionals_range
+    count = performing_professional_email_values.count
+    "='Performing Professionals'!$A2:$A#{count + 1}"
   end
 
   def clinic_name_values
@@ -353,23 +375,35 @@ class Reports::OfflineSessionExporter
   end
 
   class Cell
-    attr_reader :value, :type, :style, :allowed_values
+    attr_reader :value, :type, :style, :allowed_values, :allowed_formula
 
-    def initialize(value = "", type: nil, style: {}, allowed_values: [])
+    def initialize(
+      value = "",
+      type: nil,
+      style: {},
+      allowed_values: [],
+      allowed_formula: nil
+    )
       @value = value
       @type = type || Cell.default_type_for(value)
       @style = Cell.default_style_for(@type).merge(style)
       @allowed_values = allowed_values
+      @allowed_formula = allowed_formula
     end
 
     ALPHABET = %w[A B C D E F G H I J K L M N O P Q R S T U V W X Y Z].freeze
     CELL_COLUMNS = ALPHABET + ALPHABET.product(ALPHABET).map { _1 + _2 }
 
     def add_data_validation_to(sheet:, column_index:, row_index:)
-      return if allowed_values.blank?
+      return if allowed_values.blank? && allowed_formula.blank?
 
       cell = "#{CELL_COLUMNS[column_index]}#{row_index + 1}"
-      formula1 = "\"#{allowed_values.join(", ")}\""
+      formula1 =
+        if allowed_values.present?
+          "\"#{allowed_values.join(", ")}\""
+        elsif allowed_formula.present?
+          allowed_formula
+        end
 
       sheet.add_data_validation(
         cell,
