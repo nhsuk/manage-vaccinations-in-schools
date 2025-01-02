@@ -193,7 +193,8 @@ describe "Patient sorting and filtering" do
   end
 
   def when_i_filter_by_dob
-    fill_in "Date of birth", with: "2011"
+    alex = Patient.find_by(given_name: "Alex")
+    fill_in "Date of birth", with: alex.date_of_birth.year
   end
 
   def then_i_see_patients_with_dob

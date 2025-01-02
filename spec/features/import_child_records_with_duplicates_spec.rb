@@ -1,6 +1,13 @@
 # frozen_string_literal: true
 
 describe "Child record imports duplicates" do
+  around do |example|
+    # to ensure the age calculation stays correct
+    travel_to Time.zone.local(2024, 12, 1) do
+      example.run
+    end
+  end
+
   scenario "User reviews and selects between duplicate records" do
     given_i_am_signed_in
     and_an_hpv_programme_is_underway
