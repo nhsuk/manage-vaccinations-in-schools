@@ -60,7 +60,12 @@ class Reports::OfflineSessionExporter
     package.use_shared_strings = true
 
     workbook = package.workbook
-    workbook.add_worksheet(name: "Performing Professionals") do |sheet|
+    workbook.add_worksheet(
+      name: "Performing Professionals",
+      state: :hidden
+    ) do |sheet|
+      sheet.sheet_protection
+
       sheet.add_row(%w[EMAIL])
 
       performing_professional_email_values.each do |email|
