@@ -3,7 +3,10 @@
 class ConsentFormPolicy < ApplicationPolicy
   class Scope < ApplicationPolicy::Scope
     def resolve
-      scope.where(organisation: user.selected_organisation)
+      organisation = user.selected_organisation
+      return scope.none if organisation.nil?
+
+      scope.where(organisation:)
     end
   end
 end
