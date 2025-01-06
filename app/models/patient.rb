@@ -106,6 +106,8 @@ class Patient < ApplicationRecord
   scope :not_restricted, -> { where(restricted_at: nil) }
   scope :restricted, -> { where.not(restricted_at: nil) }
 
+  scope :with_notice, -> { deceased.or(restricted).or(invalidated) }
+
   scope :unvaccinated_for,
         ->(programmes:) do
           includes(:vaccination_records).reject do |patient|

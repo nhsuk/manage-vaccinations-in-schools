@@ -43,11 +43,28 @@
         <%= render AppHeaderNavigationItemComponent.new(t("sessions.index.title"), sessions_path, request_path: request.path) %>
         <%= render AppHeaderNavigationItemComponent.new(t("patients.index.title"), patients_path, request_path: request.path) %>
         <%= render AppHeaderNavigationItemComponent.new(t("vaccines.index.title"), vaccines_path, request_path: request.path) %>
-        <%= render AppHeaderNavigationItemComponent.new(t("consent_forms.index.title_short"), consent_forms_path, request_path: request.path) %>
-        <%= render AppHeaderNavigationItemComponent.new(t("school_moves.index.title"), school_moves_path, request_path: request.path) %>
+
+        <%= render AppHeaderNavigationItemComponent.new(
+          t("consent_forms.index.title_short"),
+          consent_forms_path,
+          request_path: request.path,
+          count: policy_scope(ConsentForm).unmatched.recorded.count
+        ) %>
+
+        <%= render AppHeaderNavigationItemComponent.new(
+          t("school_moves.index.title"),
+          school_moves_path,
+          request_path: request.path,
+          count: policy_scope(SchoolMove).count
+        ) %>
 
         <% if policy(:notices).index? %>
-          <%= render AppHeaderNavigationItemComponent.new(t("notices.index.title_short"), notices_path, request_path: request.path) %>
+          <%= render AppHeaderNavigationItemComponent.new(
+            t("notices.index.title_short"),
+            notices_path,
+            request_path: request.path,
+            count: policy_scope(Patient).with_notice.count
+          ) %>
         <% end %>
 
         <%= render AppHeaderNavigationItemComponent.new(t("organisations.show.title"), organisation_path, request_path: request.path) %>

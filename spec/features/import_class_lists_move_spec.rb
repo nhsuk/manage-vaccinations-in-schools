@@ -106,6 +106,7 @@ describe "Import class lists - Moving patients" do
   end
 
   def then_i_should_see_the_school_moves
+    expect(page).to have_content("School moves (4)")
     expect(page).to have_content("4 school moves")
   end
 
