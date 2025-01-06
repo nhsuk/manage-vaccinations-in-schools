@@ -105,6 +105,7 @@ group :test do
       branch: "main"
   gem "capybara-screenshot"
   gem "cuprite"
+  gem "its"
   gem "rspec"
   gem "rspec-html-matchers"
   gem "rubyXL"
