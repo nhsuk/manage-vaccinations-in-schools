@@ -15,7 +15,6 @@
 
     <%= turbo_refreshes_with method: :morph, scroll: :preserve  %>
     <%= yield :head %>
-    <%= hotwire_livereload_tags if Rails.env.development? %>
   </head>
 
   <body class="nhsuk-template__body<%= ' app-signed-in' if current_user.present? %>">
