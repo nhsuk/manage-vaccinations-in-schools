@@ -1,0 +1,29 @@
+name: Deploy main
+run-name: >-
+  ${{ github.event_name == 'workflow_dispatch'
+      && format('Copilot ({0})', inputs.environment)
+      || 'Copilot (preview)' }}
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Deployment environment
+        required: true
+        type: choice
+        options: [preview, training, production]
+
+jobs:
+  Deploy:
+    strategy:
+      fail-fast: false
+      matrix:
+        environment: >-
+          ${{ fromJSON(github.event_name == 'workflow_dispatch'
+              && format('["{0}"]', inputs.environment)
+              || '["preview"]') }}
+    uses: ./.github/workflows/_deploy-template.yml
+    with:
+      environment: ${{ matrix.environment }}
