@@ -21,7 +21,7 @@ class AppOutcomeBannerComponent < ViewComponent::Base
 
   def rows
     data =
-      if @patient_session.vaccinated?
+      if vaccination_record&.administered?
         [
           ["Vaccine", vaccine_summary],
           ["Site", vaccination_record.human_enum_name(:delivery_site)],
@@ -47,7 +47,15 @@ class AppOutcomeBannerComponent < ViewComponent::Base
   end
 
   def vaccination_record
-    @vaccination_record ||= @patient_session.latest_vaccination_record
+    @vaccination_record ||=
+      if @patient_session.vaccinated?
+        @patient_session
+          .vaccination_records
+          .select(&:administered?)
+          .max_by(&:created_at)
+      else
+        @patient_session.latest_vaccination_record
+      end
   end
 
   def triage
