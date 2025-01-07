@@ -85,16 +85,26 @@ class Reports::CareplusExporter
     if start_date.present?
       scope =
         scope.where(
-          "vaccination_records.performed_at >= ?",
+          "vaccination_records.created_at >= ?",
           start_date.beginning_of_day
+        ).or(
+          scope.where(
+            "vaccination_records.updated_at >= ?",
+            start_date.beginning_of_day
+          )
         )
     end
 
     if end_date.present?
       scope =
         scope.where(
-          "vaccination_records.performed_at <= ?",
+          "vaccination_records.created_at <= ?",
           end_date.end_of_day
+        ).or(
+          scope.where(
+            "vaccination_records.updated_at <= ?",
+            end_date.end_of_day
+          )
         )
     end
 

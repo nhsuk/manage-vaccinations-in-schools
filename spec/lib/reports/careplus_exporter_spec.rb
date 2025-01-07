@@ -137,6 +137,8 @@ describe Reports::CareplusExporter do
       :vaccination_record,
       programme:,
       patient_session:,
+      created_at: 2.months.ago,
+      updated_at: 2.months.ago,
       performed_at: 2.months.ago
     )
 
@@ -148,6 +150,20 @@ describe Reports::CareplusExporter do
     create(:vaccination_record, :not_administered, programme:, patient_session:)
 
     expect(data_rows.first).to be_nil
+  end
+
+  it "includes vaccination records updated within the date range" do
+    patient_session = create(:patient_session, session:)
+    create(
+      :vaccination_record,
+      programme:,
+      patient_session:,
+      created_at: 2.months.ago,
+      updated_at: 1.day.ago,
+      performed_at: 2.months.ago
+    )
+
+    expect(data_rows.first).not_to be_nil
   end
 
   context "with a session in a different organisation" do
