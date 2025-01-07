@@ -11,9 +11,12 @@ module I18n
       values[:count] = values[:count].to_fs(:long) if values[:count].is_a?(Date)
 
       # Convert any ISO-8859-1 values
-      values[:value] = values[:value].encode("UTF-8") if values[:value].is_a?(
-        String
-      )
+      values[:value] = values[:value].encode(
+        "UTF-8",
+        invalid: :replace,
+        undef: :replace,
+        replace: "?"
+      ) if values[:value].is_a?(String)
 
       # Call the original interpolate method with modified values
       super(locale, string, values)
