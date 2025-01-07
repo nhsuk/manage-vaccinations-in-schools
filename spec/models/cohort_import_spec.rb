@@ -144,7 +144,7 @@ describe CohortImport do
       end
     end
 
-    describe "with a file using ISO-8859-1 encoding" do
+    describe "with a valid file using ISO-8859-1 encoding" do
       let(:file) { "valid_iso_8859_1_encoding.csv" }
 
       let(:location) do
@@ -154,6 +154,18 @@ describe CohortImport do
       it "is valid" do
         expect(cohort_import).to be_valid
         expect(cohort_import.rows.count).to eq(16)
+      end
+
+      it "detected the encoding" do
+        expect(cohort_import.detect_encoding).to eq("ISO-8859-1")
+      end
+    end
+
+    describe "with an invalid file using ISO-8859-1 encoding" do
+      let(:file) { "invalid_iso_8859_1_encoding.csv" }
+
+      it "is invalid" do
+        expect(cohort_import).to be_invalid
       end
 
       it "detected the encoding" do
