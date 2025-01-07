@@ -1,24 +1,19 @@
-name: Deploy
+name: Deploy next
 run-name: >-
   ${{ github.event_name == 'workflow_dispatch'
       && format('Copilot ({0})', inputs.environment)
-      || 'Copilot (All staging environments)' }}
+      || 'Copilot (qa and test)' }}
 
 on:
   push:
-    branches: [main]
+    branches: [next]
   workflow_dispatch:
     inputs:
       environment:
-        description: "Deployment environment"
+        description: Deployment environment
         required: true
         type: choice
-        options:
-          - qa
-          - test
-          - preview
-          - training
-          - production
+        options: [qa, test]
 
 jobs:
   Deploy:
