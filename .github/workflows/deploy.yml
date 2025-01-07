@@ -32,7 +32,3 @@ jobs:
     uses: ./.github/workflows/_deploy-template.yml
     with:
       environment: ${{ matrix.environment }}
-      aws-account-id: >-
-        ${{ matrix.environment == 'production'
-          && 'arn:aws:iam::820242920762:role/GitHubActionsRole'
-          || 'arn:aws:iam::393416225559:role/GitHubActionsRole' }}

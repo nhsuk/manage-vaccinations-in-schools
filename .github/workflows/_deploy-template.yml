@@ -6,9 +6,6 @@ on:
       environment:
         required: true
         type: string
-      aws-account-id:
-        required: true
-        type: string
 
 jobs:
   copilot:
@@ -33,7 +30,9 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: ${{ inputs.aws-account-id }}
+          role-to-assume: ${{ inputs.environment == 'production'
+            && 'arn:aws:iam::820242920762:role/GitHubActionsRole'
+            || 'arn:aws:iam::393416225559:role/GitHubActionsRole' }}
           aws-region: eu-west-2
 
       - name: Install and Verify AWS Copilot
