@@ -31,7 +31,12 @@ describe PatientSortingConcern do
     )
   end
   let(:casey) do
-    create(:patient, given_name: "Casey", year_group: 10, address_postcode: nil)
+    create(
+      :patient,
+      given_name: "Casey",
+      year_group: 10,
+      address_postcode: "SW3A 1AA"
+    )
   end
 
   let(:programme) { create(:programme) }
@@ -103,7 +108,7 @@ describe PatientSortingConcern do
       it "sorts patient sessions by name in ascending order" do
         controller.sort_patients!(patient_sessions)
         expect(patient_sessions.map(&:patient).map(&:given_name)).to eq(
-          %w[Blair Alex Casey]
+          %w[Casey Blair Alex]
         )
       end
     end

@@ -28,11 +28,7 @@ module PatientSortingConcern
     when "status"
       obj.try(:status) || "not_in_session"
     when "postcode"
-      if obj.respond_to?(:address_postcode)
-        obj.address_postcode
-      else
-        obj.patient.address_postcode
-      end || ""
+      obj.try(:address_postcode) || obj.patient.address_postcode
     when "year_group"
       [
         obj.try(:year_group) || obj.patient.year_group || "",
@@ -56,13 +52,8 @@ module PatientSortingConcern
     end
 
     if (postcode = params[:postcode]).present?
-      patients_or_patient_sessions.select! do |obj|
-        value =
-          if obj.respond_to?(:address_postcode)
-            obj.address_postcode
-          else
-            obj.patient.address_postcode
-          end
+      patients_or_patient_sessions.select! do
+        value = _1.try(:address_postcode) || _1.patient.address_postcode
         value&.downcase&.include?(postcode.downcase)
       end
     end
