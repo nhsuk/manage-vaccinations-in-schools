@@ -62,7 +62,6 @@ class ImmunisationImportRow
                   patient_nhs_number.blank?
               end
             }
-  validate :date_of_birth_in_a_valid_year_group
 
   validates :date_of_vaccination,
             comparison: {
@@ -298,6 +297,10 @@ class ImmunisationImportRow
     parse_date("PERSON_DOB")
   end
 
+  def patient_birth_academic_year
+    patient_date_of_birth&.academic_year
+  end
+
   def patient_gender_code
     gender_code = @data["PERSON_GENDER_CODE"] || @data["PERSON_GENDER"]
     gender_code&.strip&.downcase&.gsub(" ", "_")
@@ -494,14 +497,6 @@ class ImmunisationImportRow
     parsed_times.first
   end
 
-  def date_of_birth_in_a_valid_year_group
-    return if patient_date_of_birth.nil?
-
-    unless @programme.year_groups.include?(patient_date_of_birth.year_group)
-      errors.add(:patient_date_of_birth, :inclusion)
-    end
-  end
-
   def delivery_site_appropriate_for_vaccine
     return if vaccine.nil? || delivery_site.nil?
     return unless outcome_in_this_academic_year?
@@ -555,6 +550,7 @@ class ImmunisationImportRow
     {
       address_postcode: patient_postcode,
       date_of_birth: patient_date_of_birth,
+      birth_academic_year: patient_birth_academic_year,
       family_name: patient_last_name,
       given_name: patient_first_name,
       gender_code: patient_gender_code,

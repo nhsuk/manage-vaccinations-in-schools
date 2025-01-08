@@ -170,7 +170,7 @@ describe "Parental consent create patient" do
     expect(page).to have_content(@child.full_name)
     click_on @child.full_name
     expect(page).to have_content("#{@child.full_name} is ready for the nurse")
-    expect(Patient.last.cohort.birth_academic_year).to eq(
+    expect(Patient.last.birth_academic_year).to eq(
       @child.date_of_birth.academic_year
     )
   end

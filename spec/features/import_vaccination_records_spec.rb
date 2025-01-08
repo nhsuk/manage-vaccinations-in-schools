@@ -107,10 +107,8 @@ describe "Immunisation imports" do
       "How to format your CSV for vaccination records"
     )
     expect(page).to have_content("Row 1")
-
     expect(page).to have_content("VACCINATED:")
     expect(page).to have_content("ORGANISATION_CODE:")
-    expect(page).to have_content("PERSON_DOB:")
     expect(page).to have_content("CARE_SETTING:")
 
     expect(page).to have_content("Row 2")

@@ -3,6 +3,8 @@
 describe ClassImportRow do
   subject(:class_import_row) { described_class.new(data:, session:) }
 
+  let(:today) { Date.new(2024, 12, 1) }
+
   let(:programme) { create(:programme) }
   let(:organisation) { create(:organisation, programmes: [programme]) }
   let(:school) { create(:school, organisation:) }
@@ -50,10 +52,13 @@ describe ClassImportRow do
 
       it "is invalid" do
         expect(class_import_row).to be_invalid
-        expect(class_import_row.errors.size).to eq(1)
+        expect(class_import_row.errors.size).to eq(2)
         expect(class_import_row.errors[:date_of_birth]).to contain_exactly(
           "is required but missing"
         )
+        expect(
+          class_import_row.errors[:birth_academic_year]
+        ).to contain_exactly("is required but missing")
       end
     end
   end
@@ -108,7 +113,7 @@ describe ClassImportRow do
   end
 
   describe "#to_patient" do
-    subject(:patient) { class_import_row.to_patient }
+    subject(:patient) { travel_to(today) { class_import_row.to_patient } }
 
     let(:data) { valid_data }
 
@@ -117,11 +122,19 @@ describe ClassImportRow do
     it do
       expect(patient).to have_attributes(
         cohort: nil,
+        date_of_birth: Date.new(2010, 1, 1),
         gender_code: "not_known",
         home_educated: false,
         registration: "8AB",
-        school: nil
+        school: nil,
+        year_group: 10
       )
+    end
+
+    context "with a specific year group provided" do
+      let(:data) { valid_data.merge("CHILD_YEAR_GROUP" => "11") }
+
+      it { should have_attributes(year_group: 11) }
     end
 
     context "with an existing patient" do

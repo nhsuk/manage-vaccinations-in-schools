@@ -9,6 +9,7 @@
 #  address_line_2            :string
 #  address_postcode          :string
 #  address_town              :string
+#  birth_academic_year       :integer          not null
 #  date_of_birth             :date             not null
 #  date_of_death             :date
 #  date_of_death_recorded_at :datetime
@@ -54,6 +55,7 @@ class Patient < ApplicationRecord
   include Invalidatable
   include PendingChangesConcern
   include Schoolable
+  include YearGroupConcern
 
   audited
 
@@ -176,8 +178,6 @@ class Patient < ApplicationRecord
 
   before_destroy :destroy_childless_parents
 
-  delegate :year_group, to: :cohort
-
   def self.match_existing(
     nhs_number:,
     given_name:,
@@ -250,8 +250,6 @@ class Patient < ApplicationRecord
   def relationship_to(parent:)
     parent_relationships.find { _1.parent == parent }
   end
-
-  delegate :year_group, to: :date_of_birth
 
   def has_consent?(programme)
     consents.any? { _1.programme_id == programme.id }
@@ -349,9 +347,11 @@ class Patient < ApplicationRecord
   end
 
   def self.from_consent_form(consent_form)
+    birth_academic_year = consent_form.date_of_birth.academic_year
+
     cohort =
       Cohort.find_or_create_by!(
-        birth_academic_year: consent_form.date_of_birth.academic_year,
+        birth_academic_year:,
         organisation: consent_form.organisation
       )
 
@@ -360,6 +360,7 @@ class Patient < ApplicationRecord
       address_line_2: consent_form.address_line_2,
       address_postcode: consent_form.address_postcode,
       address_town: consent_form.address_town,
+      birth_academic_year:,
       date_of_birth: consent_form.date_of_birth,
       family_name: consent_form.family_name,
       given_name: consent_form.given_name,

@@ -2,6 +2,7 @@
 
 class PatientImportRow
   include ActiveModel::Model
+  include YearGroupConcern
 
   validates :date_of_birth, presence: true
   validates :existing_patients, length: { maximum: 1 }
@@ -13,11 +14,7 @@ class PatientImportRow
               in: Patient.gender_codes.keys,
               allow_nil: true
             }
-  validates :year_group,
-            inclusion: {
-              in: :year_groups
-            },
-            if: -> { date_of_birth.present? }
+  validates :year_group, inclusion: { in: :year_groups }, allow_nil: true
 
   validates :parent_1_email, notify_safe_email: { allow_blank: true }
   validates :parent_1_phone, phone: { allow_blank: true }
@@ -41,6 +38,7 @@ class PatientImportRow
       address_line_2:,
       address_postcode:,
       address_town:,
+      birth_academic_year:,
       date_of_birth:,
       family_name: last_name,
       gender_code:,
@@ -169,6 +167,18 @@ class PatientImportRow
     nil
   end
 
+  def birth_academic_year
+    if (year_group = @data["CHILD_YEAR_GROUP"]).present?
+      begin
+        Date.current.academic_year - Integer(year_group) - 5
+      rescue ArgumentError, TypeError
+        nil
+      end
+    else
+      date_of_birth&.academic_year
+    end
+  end
+
   def registration
     @data["CHILD_REGISTRATION"]&.strip.presence
   end
@@ -228,16 +238,6 @@ class PatientImportRow
   attr_reader :organisation, :year_groups
 
   private
-
-  delegate :year_group, to: :date_of_birth, allow_nil: true
-
-  def cohort
-    @cohort ||=
-      Cohort.find_or_create_by!(
-        birth_academic_year: date_of_birth.academic_year,
-        organisation:
-      )
-  end
 
   def parent_1_exists?
     [parent_1_name, parent_1_email, parent_1_phone].any?(&:present?)

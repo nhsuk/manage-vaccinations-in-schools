@@ -164,11 +164,7 @@ describe ClassImport do
         .to change(class_import, :processed_at).from(nil)
         .and change(class_import.patients, :count).by(4)
         .and change(class_import.parents, :count).by(5)
-        .and change(organisation.cohorts, :count).by(1)
-
-      cohort = Cohort.first
-      expect(cohort.birth_academic_year).to eq(2009)
-      expect(cohort.patients.pluck(:id)).to match_array(Patient.pluck(:id))
+        .and change(organisation.cohorts, :count).by(2)
 
       expect(Patient.first).to have_attributes(
         nhs_number: "1234567890",
@@ -177,7 +173,8 @@ describe ClassImport do
         school: location,
         address_line_1: "10 Downing Street",
         address_town: "London",
-        address_postcode: "SW1A 1AA"
+        address_postcode: "SW1A 1AA",
+        year_group: 9
       )
 
       expect(Patient.first.parents.count).to eq(1)
@@ -195,7 +192,8 @@ describe ClassImport do
         school: location,
         address_line_1: "10 Downing Street",
         address_town: "London",
-        address_postcode: "SW1A 1AA"
+        address_postcode: "SW1A 1AA",
+        year_group: 10
       )
 
       expect(Patient.second.parents.count).to eq(1)
@@ -215,7 +213,8 @@ describe ClassImport do
         school: location,
         address_line_1: "11 Downing Street",
         address_town: "London",
-        address_postcode: "SW1A 1AA"
+        address_postcode: "SW1A 1AA",
+        year_group: 10
       )
 
       expect(Patient.third.parents.count).to eq(2)
@@ -242,7 +241,8 @@ describe ClassImport do
         school: location,
         address_line_1: nil,
         address_town: nil,
-        address_postcode: nil
+        address_postcode: nil,
+        year_group: 10
       )
 
       expect(Patient.fourth.parents).not_to be_empty

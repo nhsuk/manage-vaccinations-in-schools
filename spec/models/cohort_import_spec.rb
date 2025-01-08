@@ -185,11 +185,7 @@ describe CohortImport do
         .to change(cohort_import, :processed_at).from(nil)
         .and change(cohort_import.patients, :count).by(3)
         .and change(cohort_import.parents, :count).by(3)
-        .and change(organisation.cohorts, :count).by(1)
-
-      cohort = Cohort.first
-      expect(cohort.birth_academic_year).to eq(2009)
-      expect(cohort.patients.pluck(:id)).to match_array(Patient.pluck(:id))
+        .and change(organisation.cohorts, :count).by(2)
 
       expect(Patient.first).to have_attributes(
         nhs_number: "1234567890",

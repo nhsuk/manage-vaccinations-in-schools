@@ -9,6 +9,7 @@
 #  address_line_2            :string
 #  address_postcode          :string
 #  address_town              :string
+#  birth_academic_year       :integer          not null
 #  date_of_birth             :date             not null
 #  date_of_death             :date
 #  date_of_death_recorded_at :datetime
@@ -68,12 +69,7 @@ FactoryBot.define do
       in_attendance { false }
     end
 
-    cohort do
-      Cohort.find_or_create_by!(
-        birth_academic_year: date_of_birth.academic_year,
-        organisation:
-      )
-    end
+    cohort { Cohort.find_or_create_by!(birth_academic_year:, organisation:) }
 
     nhs_number do
       # Prevents duplicate NHS numbers by sequencing and appending a check
@@ -89,6 +85,7 @@ FactoryBot.define do
 
     given_name { Faker::Name.first_name }
     family_name { Faker::Name.last_name }
+
     date_of_birth do
       if year_group
         academic_year_start = Date.new(Date.current.academic_year, 9, 1)
@@ -99,13 +96,11 @@ FactoryBot.define do
         Faker::Date.birthday(min_age: 7, max_age: 16)
       end
     end
+    birth_academic_year { date_of_birth.academic_year }
+    registration { Faker::Alphanumeric.alpha(number: 2).upcase }
 
     school { session.location if session&.location&.school? }
     home_educated { school.present? ? nil : false }
-
-    registration do
-      "#{date_of_birth.year_group}#{Faker::Alphanumeric.alpha(number: 2)}"
-    end
 
     address_line_1 { Faker::Address.street_address }
     address_line_2 { Faker::Address.secondary_address }

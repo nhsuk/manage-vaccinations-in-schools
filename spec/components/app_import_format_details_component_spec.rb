@@ -37,8 +37,9 @@ describe AppImportFormatDetailsComponent do
     expect(page).to have_content("CHILD_FIRST_NAME")
     expect(page).to have_content("CHILD_LAST_NAME")
     expect(page).to have_content("CHILD_DATE_OF_BIRTH")
-    expect(page).to have_content("CHILD_POSTCODE")
+    expect(page).to have_content("CHILD_YEAR_GROUP")
     expect(page).to have_content("CHILD_REGISTRATION")
+    expect(page).to have_content("CHILD_POSTCODE")
     expect(page).to have_content("PARENT_1_EMAIL")
     expect(page).to have_content("PARENT_1_PHONE")
   end
@@ -49,9 +50,10 @@ describe AppImportFormatDetailsComponent do
     expect(page).to have_content("CHILD_FIRST_NAME")
     expect(page).to have_content("CHILD_LAST_NAME")
     expect(page).to have_content("CHILD_DATE_OF_BIRTH")
-    expect(page).to have_content("CHILD_SCHOOL_URN")
-    expect(page).to have_content("CHILD_POSTCODE")
+    expect(page).to have_content("CHILD_YEAR_GROUP")
     expect(page).to have_content("CHILD_REGISTRATION")
+    expect(page).to have_content("CHILD_POSTCODE")
+    expect(page).to have_content("CHILD_SCHOOL_URN")
     expect(page).to have_content("PARENT_1_NAME")
     expect(page).to have_content("PARENT_2_NAME")
   end

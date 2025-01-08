@@ -6,6 +6,7 @@ en:
         address_line_2: <code>CHILD_ADDRESS_LINE_2</code>
         address_postcode: <code>CHILD_POSTCODE</code>
         address_town: <code>CHILD_TOWN</code>
+        birth_academic_year: <code>CHILD_YEAR_GROUP</code>
         date_of_birth: <code>CHILD_DATE_OF_BIRTH</code>
         first_name: <code>CHILD_FIRST_NAME</code>
         gender_code: <code>CHILD_GENDER</code>
@@ -26,6 +27,7 @@ en:
         address_line_2: <code>CHILD_ADDRESS_LINE_2</code>
         address_postcode: <code>CHILD_POSTCODE</code>
         address_town: <code>CHILD_TOWN</code>
+        birth_academic_year: <code>CHILD_YEAR_GROUP</code>
         date_of_birth: <code>CHILD_DATE_OF_BIRTH</code>
         first_name: <code>CHILD_FIRST_NAME</code>
         gender_code: <code>CHILD_GENDER</code>
@@ -75,8 +77,11 @@ en:
             address_postcode:
               blank: is required but missing
               invalid_postcode: ‘%{value}’ should be a postcode, like SW1A 1AA
+            birth_academic_year:
+              blank: is required but missing
             date_of_birth:
               blank: is required but missing
+              invalid: ‘%{value}’ should be formatted as YYYY-MM-DD
             existing_patients:
               too_long: Two or more possible patients match the patient first name, last name, date of birth or postcode.
             first_name:
@@ -115,6 +120,8 @@ en:
             address_postcode:
               blank: is required but missing
               invalid_postcode: ‘%{value}’ should be a postcode, like SW1A 1AA
+            birth_academic_year:
+              blank: is required but missing
             date_of_birth:
               blank: is required but missing
               invalid: ‘%{value}’ should be formatted as YYYY-MM-DD

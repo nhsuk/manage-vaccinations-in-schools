@@ -9,6 +9,7 @@
 #  address_line_2            :string
 #  address_postcode          :string
 #  address_town              :string
+#  birth_academic_year       :integer          not null
 #  date_of_birth             :date             not null
 #  date_of_death             :date
 #  date_of_death_recorded_at :datetime
