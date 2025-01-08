@@ -114,6 +114,18 @@ describe ConsentNotification do
                 sent_by: current_user
               )
       end
+
+      context "when parent doesn't want to receive updates by text" do
+        let(:parent) { parents.first }
+
+        before { parent.update!(phone_receive_updates: false) }
+
+        it "still enqueues a text" do
+          expect { create_and_send! }.to have_enqueued_text(
+            :consent_school_request
+          ).with(parent:, patient:, programme:, session:, sent_by: current_user)
+        end
+      end
     end
 
     context "with a request and a clinic location" do
@@ -172,6 +184,18 @@ describe ConsentNotification do
                 sent_by: current_user
               )
       end
+
+      context "when parent doesn't want to receive updates by text" do
+        let(:parent) { parents.first }
+
+        before { parent.update!(phone_receive_updates: false) }
+
+        it "still enqueues a text" do
+          expect { create_and_send! }.to have_enqueued_text(
+            :consent_clinic_request
+          ).with(parent:, patient:, programme:, session:, sent_by: current_user)
+        end
+      end
     end
 
     context "with an initial reminder" do
@@ -228,6 +252,18 @@ describe ConsentNotification do
                 session:,
                 sent_by: current_user
               )
+      end
+
+      context "when parent doesn't want to receive updates by text" do
+        let(:parent) { parents.first }
+
+        before { parent.update!(phone_receive_updates: false) }
+
+        it "still enqueues a text" do
+          expect { create_and_send! }.to have_enqueued_text(
+            :consent_school_reminder
+          ).with(parent:, patient:, programme:, session:, sent_by: current_user)
+        end
       end
     end
 
@@ -288,6 +324,18 @@ describe ConsentNotification do
                 session:,
                 sent_by: current_user
               )
+      end
+
+      context "when parent doesn't want to receive updates by text" do
+        let(:parent) { parents.first }
+
+        before { parent.update!(phone_receive_updates: false) }
+
+        it "still enqueues a text" do
+          expect { create_and_send! }.to have_enqueued_text(
+            :consent_school_reminder
+          ).with(parent:, patient:, programme:, session:, sent_by: current_user)
+        end
       end
     end
   end

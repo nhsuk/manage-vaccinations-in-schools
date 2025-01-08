@@ -86,6 +86,11 @@ class SessionNotification < ApplicationRecord
             .deliver_later
         end
 
+        unless consent.parent.phone.present? &&
+                 consent.parent.phone_receive_updates
+          next
+        end
+
         TextDeliveryJob.perform_later(
           :session_school_reminder,
           consent:,
@@ -101,6 +106,8 @@ class SessionNotification < ApplicationRecord
             .send(type)
             .deliver_later
         end
+
+        next if parent.phone.blank?
 
         TextDeliveryJob.perform_later(
           :"session_#{type}",

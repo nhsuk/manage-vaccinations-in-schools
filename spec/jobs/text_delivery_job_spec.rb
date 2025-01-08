@@ -82,31 +82,6 @@ describe TextDeliveryJob do
       expect(notify_log_entry.sent_by).to eq(sent_by)
     end
 
-    context "when the parent doesn't want to receive updates" do
-      let(:parent) { create(:parent, phone_receive_updates: false) }
-
-      it "doesn't send a text" do
-        expect(notifications_client).not_to receive(:send_sms)
-        perform_now
-      end
-    end
-
-    context "when the consent's parent doesn't want to receive updates" do
-      let(:parent) { nil }
-      let(:consent) do
-        create(
-          :consent,
-          parent: create(:parent, phone_receive_updates: false),
-          programme:
-        )
-      end
-
-      it "doesn't send a text" do
-        expect(notifications_client).not_to receive(:send_sms)
-        perform_now
-      end
-    end
-
     context "when the parent doesn't have a phone number" do
       let(:parent) { create(:parent, phone: nil) }
 
@@ -142,22 +117,6 @@ describe TextDeliveryJob do
           GOVUK_NOTIFY_TEXT_TEMPLATES[template_name]
         )
         expect(notify_log_entry.consent_form).to eq(consent_form)
-      end
-
-      context "when the parent doesn't want to receive updates" do
-        let(:consent_form) do
-          create(
-            :consent_form,
-            programme:,
-            session:,
-            parent_phone_receive_updates: false
-          )
-        end
-
-        it "doesn't send a text" do
-          expect(notifications_client).not_to receive(:send_sms)
-          perform_now
-        end
       end
 
       context "when the parent doesn't have a phone number" do
