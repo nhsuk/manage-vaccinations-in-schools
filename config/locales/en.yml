@@ -263,7 +263,7 @@ en:
               equal_to: Enter an organisation code that matches the current organisation.
             patient_date_of_birth:
               blank: Enter a date of birth in the correct format.
-              inclusion: is not part of this programme
+              less_than: Enter a date of birth in the past.
             patient_first_name:
               blank: Enter a first name.
             patient_gender_code:

@@ -248,6 +248,9 @@ describe ImmunisationImportRow do
 
       it "has errors" do
         expect(immunisation_import_row).to be_invalid
+        expect(immunisation_import_row.errors[:patient_date_of_birth]).to eq(
+          ["Enter a date of birth in the past."]
+        )
       end
     end
 
