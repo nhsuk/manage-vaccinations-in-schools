@@ -16,8 +16,7 @@ class ApplicationController < ActionController::Base
   before_action :set_privacy_policy_url
   before_action :authenticate_basic
 
-  after_action :verify_policy_scoped,
-               if: -> { Rails.env.development? || Rails.env.test? }
+  after_action :verify_policy_scoped, if: -> { Rails.env.local? }
 
   class UnprocessableEntity < StandardError
   end

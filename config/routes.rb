@@ -2,7 +2,7 @@
 
 Rails.application.routes.draw do
   # Redirect www subdomain to root in production envs
-  unless Rails.env.development? || Rails.env.test?
+  unless Rails.env.local?
     match "(*any)",
           to: redirect(subdomain: ""),
           via: :all,
