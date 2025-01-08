@@ -52,13 +52,10 @@ describe ClassImportRow do
 
       it "is invalid" do
         expect(class_import_row).to be_invalid
-        expect(class_import_row.errors.size).to eq(2)
+        expect(class_import_row.errors.size).to eq(1)
         expect(class_import_row.errors[:date_of_birth]).to contain_exactly(
           "is required but missing"
         )
-        expect(
-          class_import_row.errors[:birth_academic_year]
-        ).to contain_exactly("is required but missing")
       end
     end
   end

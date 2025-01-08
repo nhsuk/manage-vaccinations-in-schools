@@ -5,6 +5,11 @@ class PatientImportRow
   include YearGroupConcern
 
   validates :date_of_birth, presence: true
+  validates :birth_academic_year,
+            comparison: {
+              greater_than_or_equal_to: 1990
+            },
+            if: :date_of_birth
   validates :existing_patients, length: { maximum: 1 }
   validates :first_name, presence: true
   validates :last_name, presence: true
