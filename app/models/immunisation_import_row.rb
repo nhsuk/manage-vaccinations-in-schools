@@ -50,7 +50,11 @@ class ImmunisationImportRow
   validates :patient_nhs_number, length: { is: 10 }, allow_blank: true
   validates :patient_first_name, presence: true
   validates :patient_last_name, presence: true
-  validates :patient_date_of_birth, presence: true
+  validates :patient_date_of_birth,
+            presence: true,
+            comparison: {
+              less_than: -> { Date.current }
+            }
   validates :patient_gender_code, inclusion: { in: Patient.gender_codes.keys }
   validates :patient_postcode,
             postcode: {
