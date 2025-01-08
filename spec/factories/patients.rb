@@ -91,7 +91,10 @@ FactoryBot.define do
     family_name { Faker::Name.last_name }
     date_of_birth do
       if year_group
-        Faker::Date.birthday(min_age: year_group + 5, max_age: year_group + 5)
+        academic_year_start = Date.new(Date.current.academic_year, 9, 1)
+        start_date = academic_year_start - (5 + year_group).years
+        end_date = start_date + 1.year - 1.day
+        Faker::Date.between(from: end_date, to: start_date)
       else
         Faker::Date.birthday(min_age: 7, max_age: 16)
       end
