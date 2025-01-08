@@ -166,6 +166,8 @@ class Patient < ApplicationRecord
 
   validate :gp_practice_is_correct_type
 
+  validates :birth_academic_year, comparison: { greater_than_or_equal_to: 1990 }
+
   encrypts :preferred_family_name,
            :preferred_given_name,
            :address_postcode,

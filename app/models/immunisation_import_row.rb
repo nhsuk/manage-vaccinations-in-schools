@@ -51,7 +51,6 @@ class ImmunisationImportRow
   validates :patient_first_name, presence: true
   validates :patient_last_name, presence: true
   validates :patient_date_of_birth,
-            presence: true,
             comparison: {
               less_than: -> { Date.current }
             }

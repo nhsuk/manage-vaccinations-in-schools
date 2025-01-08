@@ -35,4 +35,6 @@ class Cohort < ApplicationRecord
 
           where(birth_academic_year: birth_academic_years)
         end
+
+  validates :birth_academic_year, comparison: { greater_than_or_equal_to: 1990 }
 end

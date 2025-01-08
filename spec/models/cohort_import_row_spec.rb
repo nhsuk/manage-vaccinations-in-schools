@@ -70,13 +70,10 @@ describe CohortImportRow do
 
       it "is invalid" do
         expect(cohort_import_row).to be_invalid
-        expect(cohort_import_row.errors.size).to eq(2)
+        expect(cohort_import_row.errors.size).to eq(1)
         expect(cohort_import_row.errors[:date_of_birth]).to contain_exactly(
           "is required but missing"
         )
-        expect(
-          cohort_import_row.errors[:birth_academic_year]
-        ).to contain_exactly("is required but missing")
       end
     end
   end

@@ -22,6 +22,7 @@ en:
         parent_2_relationship: <code>PARENT_2_RELATIONSHIP</code>
         preferred_family_name: <code>CHILD_PREFERRED_LAST_NAME</code>
         preferred_given_name: <code>CHILD_PREFERRED_FIRST_NAME</code>
+        year_group: <code>CHILD_YEAR_GROUP</code>
       cohort_import_row:
         address_line_1: <code>CHILD_ADDRESS_LINE_1</code>
         address_line_2: <code>CHILD_ADDRESS_LINE_2</code>
@@ -44,6 +45,7 @@ en:
         preferred_family_name: <code>CHILD_PREFERRED_LAST_NAME</code>
         preferred_given_name: <code>CHILD_PREFERRED_FIRST_NAME</code>
         school_urn: <code>CHILD_SCHOOL_URN</code>
+        year_group: <code>CHILD_YEAR_GROUP</code>
       immunisation_import_row:
         administered: <code>VACCINATED</code>
         batch_expiry_date: <code>BATCH_EXPIRY_DATE</code>

@@ -85,6 +85,9 @@ describe ImmunisationImportRow do
         expect(immunisation_import_row.errors[:organisation_code]).to eq(
           ["Enter an organisation code that matches the current organisation."]
         )
+        expect(immunisation_import_row.errors[:patient_date_of_birth]).to eq(
+          ["Enter a date of birth in the correct format."]
+        )
         expect(immunisation_import_row.errors[:patient_gender_code]).to eq(
           ["Enter a gender or gender code."]
         )
