@@ -10,10 +10,13 @@ module ConsentFormMailerConcern
       mailer.confirmation_injection.deliver_later
     elsif consent_form.consent_refused?
       mailer.confirmation_refused.deliver_later
-      TextDeliveryJob.perform_later(
-        :consent_confirmation_refused,
-        consent_form:
-      )
+
+      if consent_form.parent_phone_receive_updates
+        TextDeliveryJob.perform_later(
+          :consent_confirmation_refused,
+          consent_form:
+        )
+      end
     elsif consent_form.needs_triage?
       mailer.confirmation_triage.deliver_later
     elsif consent_form.actual_upcoming_session ==
@@ -22,7 +25,13 @@ module ConsentFormMailerConcern
       mailer.confirmation_clinic.deliver_later
     else
       mailer.confirmation_given.deliver_later
-      TextDeliveryJob.perform_later(:consent_confirmation_given, consent_form:)
+
+      if consent_form.parent_phone_receive_updates
+        TextDeliveryJob.perform_later(
+          :consent_confirmation_given,
+          consent_form:
+        )
+      end
     end
   end
 end

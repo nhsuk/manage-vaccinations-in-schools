@@ -23,7 +23,9 @@ module VaccinationMailerConcern
         VaccinationMailer.with(params).public_send(mailer_action).deliver_later
       end
 
-      TextDeliveryJob.perform_later(text_template_name, **params)
+      if parent.phone.present? && parent.phone_receive_updates
+        TextDeliveryJob.perform_later(text_template_name, **params)
+      end
     end
   end
 

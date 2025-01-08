@@ -85,6 +85,14 @@ describe SessionNotification do
           :session_school_reminder
         ).with(consent:, patient_session:, sent_by: current_user)
       end
+
+      context "when parent doesn't want to receive updates by text" do
+        before { parents.each { _1.update!(phone_receive_updates: false) } }
+
+        it "doesn't enqueues a text" do
+          expect { create_and_send! }.not_to have_enqueued_text
+        end
+      end
     end
 
     context "with an initial clinic invitation" do
@@ -137,6 +145,18 @@ describe SessionNotification do
                 sent_by: current_user
               )
       end
+
+      context "when parent doesn't want to receive updates by text" do
+        let(:parent) { parents.first }
+
+        before { parent.update!(phone_receive_updates: false) }
+
+        it "still enqueues a text" do
+          expect { create_and_send! }.to have_enqueued_text(
+            :session_clinic_initial_invitation
+          ).with(parent:, patient_session:, sent_by: current_user)
+        end
+      end
     end
 
     context "with a subsequent clinic invitation" do
@@ -188,6 +208,18 @@ describe SessionNotification do
                 patient_session:,
                 sent_by: current_user
               )
+      end
+
+      context "when parent doesn't want to receive updates by text" do
+        let(:parent) { parents.first }
+
+        before { parent.update!(phone_receive_updates: false) }
+
+        it "still enqueues a text" do
+          expect { create_and_send! }.to have_enqueued_text(
+            :session_clinic_subsequent_invitation
+          ).with(parent:, patient_session:, sent_by: current_user)
+        end
       end
     end
   end

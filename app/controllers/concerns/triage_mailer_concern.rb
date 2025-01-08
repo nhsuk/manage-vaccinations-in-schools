@@ -22,10 +22,16 @@ module TriageMailerConcern
       ConsentMailer.with(params).confirmation_triage.deliver_later
     elsif consent.response_refused?
       ConsentMailer.with(params).confirmation_refused.deliver_later
-      TextDeliveryJob.perform_later(:consent_confirmation_refused, **params)
+
+      if consent.parent.phone_receive_updates
+        TextDeliveryJob.perform_later(:consent_confirmation_refused, **params)
+      end
     elsif consent.response_given?
       ConsentMailer.with(params).confirmation_given.deliver_later
-      TextDeliveryJob.perform_later(:consent_confirmation_given, **params)
+
+      if consent.parent.phone_receive_updates
+        TextDeliveryJob.perform_later(:consent_confirmation_given, **params)
+      end
     end
   end
 

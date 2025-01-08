@@ -22,12 +22,6 @@ class TextDeliveryJob < ApplicationJob
       consent_form&.parent_phone || consent&.parent&.phone || parent&.phone
     return if phone_number.nil?
 
-    unless consent_form&.parent_phone_receive_updates ||
-             consent&.parent&.phone_receive_updates ||
-             parent&.phone_receive_updates
-      return
-    end
-
     personalisation =
       GovukNotifyPersonalisation.call(
         session:,
