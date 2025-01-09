@@ -145,7 +145,7 @@ class Consent < ApplicationRecord
     reasons
   end
 
-  def self.from_consent_form!(consent_form, patient:)
+  def self.from_consent_form!(consent_form, patient:, current_user:)
     ActiveRecord::Base.transaction do
       parent =
         consent_form.find_or_create_parent_with_relationship_to!(patient:)
@@ -160,7 +160,8 @@ class Consent < ApplicationRecord
         notes: consent_form.reason_notes.presence || "",
         response: consent_form.response,
         route: "website",
-        health_answers: consent_form.health_answers
+        health_answers: consent_form.health_answers,
+        recorded_by: current_user
       )
     end
   end

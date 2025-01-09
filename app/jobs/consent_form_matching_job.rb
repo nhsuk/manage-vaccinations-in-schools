@@ -53,7 +53,7 @@ class ConsentFormMatchingJob < ApplicationJob
     return false unless patient
 
     patient.update_from_pds!(pds_patient)
-    @consent_form.match_with_patient!(patient)
+    @consent_form.match_with_patient!(patient, current_user: nil)
   end
 
   def session_patients
@@ -83,6 +83,6 @@ class ConsentFormMatchingJob < ApplicationJob
       end
     end
 
-    @consent_form.match_with_patient!(patient)
+    @consent_form.match_with_patient!(patient, current_user: nil)
   end
 end

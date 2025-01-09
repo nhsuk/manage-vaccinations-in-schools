@@ -102,11 +102,20 @@ describe Consent do
   describe "#from_consent_form!" do
     describe "the created consent object" do
       subject(:consent) do
-        described_class.from_consent_form!(consent_form, patient:)
+        described_class.from_consent_form!(
+          consent_form,
+          patient:,
+          current_user:
+        )
       end
 
       let(:consent_form) { create(:consent_form, :recorded, reason_notes: nil) }
       let(:patient) { create(:patient) }
+      let(:current_user) { create(:user) }
+
+      it "sets who matched the consent" do
+        expect(consent.recorded_by).to eq(current_user)
+      end
 
       it "copies over attributes from consent_form" do
         expect(consent).to(

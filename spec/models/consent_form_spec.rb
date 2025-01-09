@@ -707,7 +707,9 @@ describe ConsentForm do
   end
 
   describe "#match_with_patient!" do
-    subject(:match_with_patient!) { consent_form.match_with_patient!(patient) }
+    subject(:match_with_patient!) do
+      consent_form.match_with_patient!(patient, current_user:)
+    end
 
     let(:programme) { create(:programme) }
     let(:organisation) { create(:organisation, programmes: [programme]) }
@@ -716,6 +718,7 @@ describe ConsentForm do
     let(:location) { school }
     let(:session) { create(:session, organisation:, programme:, location:) }
     let(:patient) { create(:patient, school:, session:) }
+    let(:current_user) { create(:user) }
 
     let(:notify_log_entry) do
       create(:notify_log_entry, :email, consent_form:, patient: nil)

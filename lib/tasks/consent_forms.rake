@@ -50,7 +50,7 @@ namespace :consent_forms do
             date_of_birth: patient.date_of_birth,
             address_postcode: patient.address_postcode
           )
-        consent_form.match_with_patient!(patient)
+        consent_form.match_with_patient!(patient, current_user: nil)
       end
 
     # 50% given
@@ -67,7 +67,7 @@ namespace :consent_forms do
             date_of_birth: patient.date_of_birth,
             address_postcode: patient.address_postcode
           )
-        consent_form.match_with_patient!(patient)
+        consent_form.match_with_patient!(patient, current_user: nil)
       end
 
     # 20% given with health questions
@@ -85,7 +85,7 @@ namespace :consent_forms do
             date_of_birth: patient.date_of_birth,
             address_postcode: patient.address_postcode
           )
-        consent_form.match_with_patient!(patient)
+        consent_form.match_with_patient!(patient, current_user: nil)
       end
 
     # 10% given with health answers branching
@@ -103,7 +103,7 @@ namespace :consent_forms do
             date_of_birth: patient.date_of_birth,
             address_postcode: patient.address_postcode
           )
-        consent_form.match_with_patient!(patient)
+        consent_form.match_with_patient!(patient, current_user: nil)
       end
 
     puts "Successfully generated consent forms"
