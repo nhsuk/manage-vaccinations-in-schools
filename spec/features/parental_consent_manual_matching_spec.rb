@@ -17,6 +17,9 @@ describe "Parental consent manual matching" do
     when_i_link_the_response_with_the_record
     and_i_click_on_the_patient
     then_the_parent_consent_is_shown
+
+    when_i_click_on_the_activity_log
+    then_i_see_the_consent_was_matched_manually
   end
 
   def given_the_app_is_setup
@@ -77,5 +80,15 @@ describe "Parental consent manual matching" do
 
   def then_the_parent_consent_is_shown
     expect(page).to have_content(@consent_form.parent_full_name)
+  end
+
+  def when_i_click_on_the_activity_log
+    click_on "Activity log"
+  end
+
+  def then_i_see_the_consent_was_matched_manually
+    expect(page).to have_content(
+      "Consent response manually matched with child record"
+    )
   end
 end

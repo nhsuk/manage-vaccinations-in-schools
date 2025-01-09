@@ -62,42 +62,49 @@ class AppActivityLogComponent < ViewComponent::Base
 
   def consent_events
     consents.flat_map do |consent|
-      if consent.invalidated?
-        [
-          {
-            title:
-              "Consent #{consent.response} by #{consent.name} (#{consent.who_responded})",
-            at: consent.created_at,
-            by: consent.recorded_by
-          },
-          {
-            title: "Consent from #{consent.name} invalidated",
-            at: consent.invalidated_at
-          }
-        ]
-      elsif consent.withdrawn?
-        [
-          {
-            title:
-              "Consent given by #{consent.name} (#{consent.who_responded})",
-            at: consent.created_at,
-            by: consent.recorded_by
-          },
-          {
-            title: "Consent from #{consent.name} withdrawn",
-            at: consent.withdrawn_at
-          }
-        ]
+      events = []
+
+      original_response = consent.withdrawn? ? "given" : consent.response
+
+      events << if (consent_form = consent.consent_form)
+        {
+          title: "Consent #{original_response}",
+          at: consent_form.recorded_at,
+          by:
+            "#{consent_form.parent_full_name} (#{consent_form.parent_relationship_label})"
+        }
       else
-        [
-          {
-            title:
-              "Consent #{consent.response} by #{consent.name} (#{consent.who_responded})",
-            at: consent.created_at,
-            by: consent.recorded_by
-          }
-        ]
+        {
+          title:
+            "Consent #{original_response} by #{consent.name} (#{consent.who_responded})",
+          at: consent.created_at,
+          by: consent.recorded_by
+        }
       end
+
+      if consent.matched_manually?
+        events << {
+          title: "Consent response manually matched with child record",
+          at: consent.created_at,
+          by: consent.recorded_by
+        }
+      end
+
+      if consent.invalidated?
+        events << {
+          title: "Consent from #{consent.name} invalidated",
+          at: consent.invalidated_at
+        }
+      end
+
+      if consent.withdrawn?
+        events << {
+          title: "Consent from #{consent.name} withdrawn",
+          at: consent.withdrawn_at
+        }
+      end
+
+      events
     end
   end
 

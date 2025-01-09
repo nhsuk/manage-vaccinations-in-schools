@@ -137,6 +137,10 @@ class Consent < ApplicationRecord
     health_answers.any? { |question| question.response&.downcase == "yes" }
   end
 
+  def matched_manually?
+    !consent_form.nil? && !recorded_by_user_id.nil?
+  end
+
   def reasons_triage_needed
     reasons = []
     if health_answers_require_follow_up?
