@@ -93,6 +93,20 @@ git push --tags origin release
 
 ## Development
 
+### Branching workflow
+
+We follow the patterns and conventions in [GitHub
+Flow](https://docs.github.com/en/get-started/using-github/github-flow).
+
+Try to only put related changes into a single PR and keep them as small and as focused
+as is reasonable. If you start shaving yaks consider putting these changes into
+a separate PR. Likewise if you find the change you're making is quite large, you
+can spread it across multiple PRs, even if functionality is only partly
+complete any one of them.
+
+Include a link to the Trello card in a relevant commit message and in the PR
+description.
+
 ### Prerequisites
 
 This project depends on:
