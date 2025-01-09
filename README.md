@@ -13,6 +13,84 @@ This is a service used within the NHS for managing and recording school-aged vac
 | [Training](https://github.com/nhsuk/manage-vaccinations-in-schools/deployments/training)     | [training.manage-vaccinations-in-schools.nhs.uk](https://training.manage-vaccinations-in-schools.nhs.uk) | External training            | ❌                  | `release` branch               | manual     | [`staging`](config/environments/staging.rb)       |
 | [Production](https://github.com/nhsuk/manage-vaccinations-in-schools/deployments/production) | [www.manage-vaccinations-in-schools.nhs.uk](https://www.manage-vaccinations-in-schools.nhs.uk)           | Live service                 | ✅                  | `release` branch               | manual     | [`production`](config/environments/production.rb) |
 
+## Release Cycle
+
+Our default branch for making changes is `main`: new features and non-urgent
+bug fixes should merged into here.
+
+The `release` branch tracks `main` and reflects what is in production. Hot fixes
+(emergency fixes that aren't going through the release cycle) should be merged
+into this branch before then going into `main`.
+
+Releasing basically follows these steps:
+
+1. Create a release candidate by tagging `main` (e.g. `v1.0.0-rc1`)
+2. Create a release in GitHub and add information about the changes. Update the
+   assurance statement.
+3. Create a release by fast-forwarding or resetting `release` to the release
+   candidate, and creating a tag (e.g. `v1.0.0`)
+
+Details below.
+
+### Pre-release and testing
+
+Changes merged into `main` are deployed to the `qa` and `test` environments for
+testing. When there is a large batch of PRs to merge at once, after a
+merge-freeze for example, only merge a few at a time to try to make it easier to
+trace any issues that arise during testing.
+
+### Release candidate
+
+Once all the necessary changes are merged and have been tested, create a
+release candidate by creating a tag on the `main` branch. e.g. `v1.0.0-rc1`.
+
+Create a [release in GitHub](https://github.com/nhsuk/manage-vaccinations-in-schools/releases/)
+using this tag, or if one has been created for this version already update the
+tag in it. The assurance statement will also need to be updated with the tag URL
+(if the tag changes, e.g. to `-rc2`, this will need to be updated).
+
+At this point the changes in the release will go through the NHS assurance
+processes, and possibly through external testing and assurance. If required it
+can be deployed to the `preview` or `training` environements.
+
+### Releasing
+
+When we are ready to release, update the `release` branch and deploy it to
+production. If there have been no hot-fixes since the last release then this is
+a simple fast-forward merge that has to be done on your localhost (see below for
+how to manage non-fast-forwardable situations):
+
+```shell
+git checkout release
+git pull origin release
+
+# Check that release can be fast-forwarded to the release candidate
+git merge-base --is-ancestor release v1.0.0-rc1 && echo "safe to ff-merge"
+
+git merge --ff-only v1.0.0-rc1
+git tag v1.0.0
+git push --tags origin release
+```
+
+Once this is done, you can deploy `release` to production.
+
+#### When `release` and `main` have diverged
+
+There are cases when `release` won't be fast-forwardable to the release
+candidate on `main`. This will happen when a fix has been applied to the
+`release` branch that circumvented the normal release cycle (AKA hot-fix, see
+below).
+
+In these cases the `release` branch will need to be reset to `main`.
+
+```sh
+git checkout release
+git pull origin release
+git reset --hard main
+git tag v2.0.0
+git push --tags origin release
+```
+
 ## Development
 
 ### Prerequisites
