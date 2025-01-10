@@ -194,7 +194,7 @@ describe "Patient sorting and filtering" do
 
   def when_i_filter_by_dob
     alex = Patient.find_by(given_name: "Alex")
-    fill_in "Date of birth", with: alex.date_of_birth.year
+    fill_in "Date of birth", with: alex.date_of_birth.strftime("%d/%m/%Y")
   end
 
   def then_i_see_patients_with_dob

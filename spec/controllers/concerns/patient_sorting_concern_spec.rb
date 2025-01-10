@@ -106,6 +106,17 @@ describe PatientSortingConcern do
           %w[Blair Alex Casey]
         )
       end
+
+      context "when a patient is restricted" do
+        before { blair.update!(restricted_at: Time.current) }
+
+        it "they are treated as though they have no postcode" do
+          controller.sort_patients!(patient_sessions)
+          expect(patient_sessions.map(&:patient).map(&:given_name)).to eq(
+            %w[Alex Casey Blair]
+          )
+        end
+      end
     end
 
     context "when sort parameter is missing" do
@@ -138,6 +149,15 @@ describe PatientSortingConcern do
         controller.filter_patients!(patient_sessions)
         expect(patient_sessions.size).to eq(1)
         expect(patient_sessions.first.patient.given_name).to eq("Blair")
+      end
+
+      context "when a patient is restricted" do
+        before { blair.update!(restricted_at: Time.current) }
+
+        it "excludes the patient from the result" do
+          controller.filter_patients!(patient_sessions)
+          expect(patient_sessions.size).to eq(0)
+        end
       end
     end
 
