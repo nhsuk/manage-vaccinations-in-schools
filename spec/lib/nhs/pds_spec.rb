@@ -82,33 +82,61 @@ describe NHS::PDS do
   end
 
   describe "#search_patients" do
-    before do
-      stub_request(
-        :get,
-        "https://sandbox.api.service.nhs.uk/personal-demographics/FHIR/R4/Patient"
-      ).with(
-        query: {
-          birthdate: "eq1939-01-09",
-          family: "Lawman",
-          gender: "female"
-        }
-      ).to_return(
-        body: file_fixture("pds/search-patients-response.json"),
-        headers: {
-          "Content-Type" => "application/fhir+json"
-        }
+    subject(:search_patients) do
+      described_class.search_patients(
+        family: "Lawman",
+        gender: "female",
+        birthdate: "eq1939-01-09"
       )
     end
 
-    it "sends a GET request to with the provided attributes" do
-      response =
-        described_class.search_patients(
-          family: "Lawman",
-          gender: "female",
-          birthdate: "eq1939-01-09"
+    context "with a successful response" do
+      before do
+        stub_request(
+          :get,
+          "https://sandbox.api.service.nhs.uk/personal-demographics/FHIR/R4/Patient"
+        ).with(
+          query: {
+            birthdate: "eq1939-01-09",
+            family: "Lawman",
+            gender: "female"
+          }
+        ).to_return(
+          body: file_fixture("pds/search-patients-response.json"),
+          headers: {
+            "Content-Type" => "application/fhir+json"
+          }
         )
+      end
 
-      expect(response.body).to include("total" => 1)
+      it "sends a GET request to with the provided attributes" do
+        response = search_patients
+        expect(response.body).to include("total" => 1)
+      end
+    end
+
+    context "with a too many matches response" do
+      before do
+        stub_request(
+          :get,
+          "https://sandbox.api.service.nhs.uk/personal-demographics/FHIR/R4/Patient"
+        ).with(
+          query: {
+            birthdate: "eq1939-01-09",
+            family: "Lawman",
+            gender: "female"
+          }
+        ).to_return(
+          body: file_fixture("pds/too-many-matches.json"),
+          headers: {
+            "Content-Type" => "application/fhir+json"
+          }
+        )
+      end
+
+      it "raises an error" do
+        expect { search_patients }.to raise_error(NHS::PDS::TooManyMatches)
+      end
     end
 
     it "raises an error if an unrecognised attribute is provided" do
