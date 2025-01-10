@@ -81,13 +81,14 @@ candidate on `main`. This will happen when a fix has been applied to the
 `release` branch that circumvented the normal release cycle (AKA hot-fix, see
 below).
 
-In these cases the `release` branch will need to be reset to `main`.
+In these cases the `release` branch will need to be reset to the latest release
+candidate.
 
 ```sh
 git checkout release
 git pull origin release
-git reset --hard main
-git tag v2.0.0
+git reset --hard v1.0.0-rc1
+git tag v1.0.0
 git push --tags origin release
 ```
 
