@@ -95,7 +95,7 @@ class TriagesController < ApplicationController
   end
 
   def triage_params
-    params.require(:triage).permit(:status, :notes)
+    params.expect(triage: %i[status notes])
   end
 
   def redirect_path

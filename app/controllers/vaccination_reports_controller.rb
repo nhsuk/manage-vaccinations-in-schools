@@ -59,9 +59,8 @@ class VaccinationReportsController < ApplicationController
   end
 
   def update_params
-    params
-      .require(:vaccination_report)
-      .permit(:date_from, :date_to, :file_format)
-      .merge(wizard_step: current_step)
+    params.expect(vaccination_report: %i[date_from date_to file_format]).merge(
+      wizard_step: current_step
+    )
   end
 end

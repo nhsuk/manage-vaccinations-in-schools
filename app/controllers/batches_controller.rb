@@ -89,12 +89,7 @@ class BatchesController < ApplicationController
   end
 
   def batch_params
-    params.require(:batch).permit(
-      :name,
-      :"expiry(3i)",
-      :"expiry(2i)",
-      :"expiry(1i)"
-    )
+    params.expect(batch: %i[name expiry(3i) expiry(2i) expiry(1i)])
   end
 
   def expiry_validator

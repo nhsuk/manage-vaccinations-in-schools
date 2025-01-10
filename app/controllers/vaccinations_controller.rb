@@ -107,18 +107,20 @@ class VaccinationsController < ApplicationController
   private
 
   def vaccinate_form_params
-    params.require(:vaccinate_form).permit(
-      :administered,
-      :delivery_method,
-      :delivery_site,
-      :dose_sequence,
-      :feeling_well,
-      :knows_vaccination,
-      :no_allergies,
-      :not_already_had,
-      :pre_screening_notes,
-      :programme_id,
-      :vaccine_id
+    params.expect(
+      vaccinate_form: %i[
+        administered
+        delivery_method
+        delivery_site
+        dose_sequence
+        feeling_well
+        knows_vaccination
+        no_allergies
+        not_already_had
+        pre_screening_notes
+        programme_id
+        vaccine_id
+      ]
     )
   end
 

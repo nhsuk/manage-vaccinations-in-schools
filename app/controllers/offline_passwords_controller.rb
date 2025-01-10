@@ -21,6 +21,6 @@ class OfflinePasswordsController < ApplicationController
   private
 
   def password_params
-    params.require(:offline_password).permit(:password, :password_confirmation)
+    params.expect(offline_password: %i[password password_confirmation])
   end
 end
