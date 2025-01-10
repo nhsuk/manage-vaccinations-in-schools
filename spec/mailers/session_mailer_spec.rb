@@ -35,6 +35,7 @@ describe SessionMailer do
           :parent_full_name,
           :short_patient_name,
           :short_patient_name_apos,
+          :subsequent_session_dates_offered_message,
           :team_email,
           :team_name,
           :team_phone,

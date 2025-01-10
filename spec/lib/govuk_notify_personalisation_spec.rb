@@ -64,6 +64,7 @@ describe GovukNotifyPersonalisation do
         programme_name: "HPV",
         short_patient_name: "John",
         short_patient_name_apos: "John’s",
+        subsequent_session_dates_offered_message: "",
         team_email: "organisation@example.com",
         team_name: "Organisation",
         team_phone: "01234 567890",
