@@ -32,6 +32,8 @@ module NHS::PDS
         "personal-demographics/FHIR/R4/Patient/#{nhs_number}"
       )
     rescue Faraday::BadRequestError => e
+      add_sentry_breadcrumb(e)
+
       if is_error?(e, "INVALID_RESOURCE_ID")
         raise InvalidNHSNumber, nhs_number
       else
@@ -56,9 +58,22 @@ module NHS::PDS
         "personal-demographics/FHIR/R4/Patient",
         attributes
       )
+    rescue Faraday::BadRequestError => e
+      add_sentry_breadcrumb(e)
+      raise
     end
 
     private
+
+    def add_sentry_breadcrumb(error)
+      crumb =
+        Sentry::Breadcrumb.new(
+          category: "http.response",
+          data: error.response,
+          level: "error"
+        )
+      Sentry.add_breadcrumb(crumb)
+    end
 
     def is_error?(error, code)
       response = JSON.parse(error.response_body)
