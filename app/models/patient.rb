@@ -338,7 +338,7 @@ class Patient < ApplicationRecord
     school_move =
       if school
         SchoolMove.new(patient: self, school:)
-      elsif (organisation = cohort&.organisation)
+      elsif organisation
         SchoolMove.new(patient: self, home_educated:, organisation:)
       end
 
