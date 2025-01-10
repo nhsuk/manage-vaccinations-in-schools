@@ -4,16 +4,121 @@ This is a service used within the NHS for managing and recording school-aged vac
 
 ## Environments
 
-| Name                                                                                         | URL                                                                                                      | Purpose                      | Care Identity login | Code    | `RAILS_ENV`                                       |
-| -------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- | ---------------------------- | ------------------- | ------- | ------------------------------------------------- |
-| [Heroku](https://github.com/nhsuk/manage-vaccinations-in-schools/deployments/heroku)         | mavis-pr-xxxx.herokuapp.com                                                                              | PR review apps               | ❌                  | latest  | [`staging`](config/environments/staging.rb)       |
-| [Test](https://github.com/nhsuk/manage-vaccinations-in-schools/deployments/test)             | [test.mavistesting.com](https://test.mavistesting.com)                                                   | Internal testing (manual)    | ✅                  | latest  | [`staging`](config/environments/staging.rb)       |
-| [QA](https://github.com/nhsuk/manage-vaccinations-in-schools/deployments/qa)                 | [qa.mavistesting.com](https://qa.mavistesting.com)                                                       | Internal testing (automated) | ❌                  | latest  | [`staging`](config/environments/staging.rb)       |
-| [Preview](https://github.com/nhsuk/manage-vaccinations-in-schools/deployments/Preview)       | [preview.mavistesting.com](https://preview.mavistesting.com)                                             | External testing             | ❌                  | release | [`staging`](config/environments/staging.rb)       |
-| [Training](https://github.com/nhsuk/manage-vaccinations-in-schools/deployments/training)     | [training.manage-vaccinations-in-schools.nhs.uk](https://training.manage-vaccinations-in-schools.nhs.uk) | External training            | ❌                  | release | [`staging`](config/environments/staging.rb)       |
-| [Production](https://github.com/nhsuk/manage-vaccinations-in-schools/deployments/production) | [www.manage-vaccinations-in-schools.nhs.uk](https://www.manage-vaccinations-in-schools.nhs.uk)           | Live service                 | ✅                  | release | [`production`](config/environments/production.rb) |
+| Name                                                                                         | URL                                                                                                      | Purpose                      | Care Identity login | Code                           | Deployment | `RAILS_ENV`                                       |
+| -------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- | ---------------------------- | ------------------- | ------------------------------ | ---------- | ------------------------------------------------- |
+| [Heroku](https://github.com/nhsuk/manage-vaccinations-in-schools/deployments/heroku)         | mavis-pr-xxxx.herokuapp.com                                                                              | PR review apps               | ❌                  | pull request branch            | automated  | [`staging`](config/environments/staging.rb)       |
+| [Test](https://github.com/nhsuk/manage-vaccinations-in-schools/deployments/test)             | [test.mavistesting.com](https://test.mavistesting.com)                                                   | Internal testing (manual)    | ✅                  | `main` branch (latest)         | automated  | [`staging`](config/environments/staging.rb)       |
+| [QA](https://github.com/nhsuk/manage-vaccinations-in-schools/deployments/qa)                 | [qa.mavistesting.com](https://qa.mavistesting.com)                                                       | Internal testing (automated) | ❌                  | `main` branch (latest)         | automated  | [`staging`](config/environments/staging.rb)       |
+| [Previetww](https://github.com/nhsuk/manage-vaccinations-in-schools/deployments/Preview)     | [preview.mavistesting.com](https://preview.mavistesting.com)                                             | External testing             | ❌                  | `release` or release candidate | manual     | [`staging`](config/environments/staging.rb)       |
+| [Training](https://github.com/nhsuk/manage-vaccinations-in-schools/deployments/training)     | [training.manage-vaccinations-in-schools.nhs.uk](https://training.manage-vaccinations-in-schools.nhs.uk) | External training            | ❌                  | `release` branch               | manual     | [`staging`](config/environments/staging.rb)       |
+| [Production](https://github.com/nhsuk/manage-vaccinations-in-schools/deployments/production) | [www.manage-vaccinations-in-schools.nhs.uk](https://www.manage-vaccinations-in-schools.nhs.uk)           | Live service                 | ✅                  | `release` branch               | manual     | [`production`](config/environments/production.rb) |
+
+## Release Cycle
+
+Our default branch for making changes is `main`: new features and non-urgent
+bug fixes should merged into here.
+
+The `release` branch tracks `main` and reflects what is in production. Hot fixes
+(emergency fixes that aren't going through the release cycle) should be merged
+into this branch before then going into `main`.
+
+Releasing basically follows these steps:
+
+1. Create a release candidate by tagging `main` (e.g. `v1.0.0-rc1`)
+2. Create a release in GitHub and add information about the changes. Update the
+   assurance statement.
+3. Create a release by fast-forwarding or resetting `release` to the release
+   candidate, and creating a tag (e.g. `v1.0.0`)
+
+Details below.
+
+### Pre-release and testing
+
+Changes merged into `main` are deployed to the `qa` and `test` environments for
+testing. When there is a large batch of PRs to merge at once, after a
+merge-freeze for example, only merge a few at a time to try to make it easier to
+trace any issues that arise during testing.
+
+### Release candidate
+
+Once all the necessary changes are merged and have been tested, create a
+release candidate by creating a tag on the `main` branch. e.g. `v1.0.0-rc1`.
+
+Create a [release in GitHub](https://github.com/nhsuk/manage-vaccinations-in-schools/releases/)
+using this tag, or if one has been created for this version already update the
+tag in it. The assurance statement will also need to be updated with the tag URL
+(if the tag changes, e.g. to `-rc2`, this will need to be updated).
+
+At this point the changes in the release will go through the NHS assurance
+processes, and possibly through external testing and assurance. If required it
+can be deployed to the `preview` or `training` environements.
+
+### Releasing
+
+When we are ready to release, update the `release` branch and deploy it to
+production. If there have been no hot-fixes since the last release then this is
+a simple fast-forward merge that has to be done on your localhost (see below for
+how to manage non-fast-forwardable situations):
+
+```shell
+git checkout release
+git pull origin release
+
+# Check that release can be fast-forwarded to the release candidate
+git merge-base --is-ancestor release v1.0.0-rc1 && echo "safe to ff-merge"
+
+git merge --ff-only v1.0.0-rc1
+git tag v1.0.0
+git push --tags origin release
+```
+
+Once this is done, you can deploy `release` to production.
+
+#### When `release` and `main` have diverged
+
+There are cases when `release` won't be fast-forwardable to the release
+candidate on `main`. This will happen when a fix has been applied to the
+`release` branch that circumvented the normal release cycle (AKA hot-fix, see
+below).
+
+In these cases the `release` branch will need to be reset to the latest release
+candidate.
+
+```sh
+git checkout release
+git pull origin release
+git reset --hard v1.0.0-rc1
+git tag v1.0.0
+git push --tags origin release
+```
+
+### Hot-fixes
+
+Hot-fixes are emergency fixes made to the current release that don't go through
+the release cycle. These fixes should still go through the pull-request process,
+but to the `release` branch. Once these are merged in, the commits will need to
+be applied to `main` via cherry-picking and a PR.
+
+Generally, at this point the histories of the `release` and `main` branches will
+have diverged and it will not be possible to fast-forward the `release` branch
+when releasing. It will have to be reset to the latest release candidate as
+previously described.
 
 ## Development
+
+### Branching workflow
+
+We follow the patterns and conventions in [GitHub
+Flow](https://docs.github.com/en/get-started/using-github/github-flow).
+
+Try to only put related changes into a single PR and keep them as small and as focused
+as is reasonable. If you start shaving yaks consider putting these changes into
+a separate PR. Likewise if you find the change you're making is quite large, you
+can spread it across multiple PRs, even if functionality is only partly
+complete any one of them.
+
+Include a link to the Trello card in a relevant commit message and in the PR
+description.
 
 ### Prerequisites
 
