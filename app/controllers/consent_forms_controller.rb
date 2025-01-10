@@ -26,7 +26,7 @@ class ConsentFormsController < ApplicationController
   end
 
   def update_match
-    @consent_form.match_with_patient!(@patient)
+    @consent_form.match_with_patient!(@patient, current_user:)
 
     session = @patient.upcoming_sessions.first || @consent_form.original_session
 

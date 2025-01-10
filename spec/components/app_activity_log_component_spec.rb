@@ -235,6 +235,43 @@ describe AppActivityLogComponent do
                      date: "30 May 2024 at 12:00pm"
   end
 
+  describe "manually matched consent" do
+    before do
+      consent_form =
+        create(
+          :consent_form,
+          programme:,
+          session:,
+          recorded_at: Time.zone.local(2024, 5, 30, 12),
+          parent_full_name: "Jane Doe",
+          parent_relationship_type: "mother"
+        )
+
+      create(
+        :consent,
+        :given,
+        :invalidated,
+        programme:,
+        patient:,
+        parent: mum,
+        consent_form:,
+        recorded_by: user,
+        created_at: Time.zone.local(2024, 5, 30, 13)
+      )
+    end
+
+    include_examples "card",
+                     title: "Consent given",
+                     date: "30 May 2024 at 12:00pm",
+                     by: "Jane Doe (Mum)"
+
+    include_examples "card",
+                     title:
+                       "Consent response manually matched with child record",
+                     date: "30 May 2024 at 1:00pm",
+                     by: "Nurse Joy"
+  end
+
   describe "withdrawn consent" do
     before do
       create(
@@ -281,7 +318,7 @@ describe AppActivityLogComponent do
                      date: "30 May 2024 at 12:00pm"
   end
 
-  describe "Gillick assessments" do
+  describe "gillick assessments" do
     let(:programme) { create(:programme) }
     let(:patient_session) { create(:patient_session, patient:, programme:) }
 
@@ -318,7 +355,7 @@ describe AppActivityLogComponent do
                      by: "Nurse Joy"
   end
 
-  describe "Pre-screenings" do
+  describe "pre-screenings" do
     let(:programme) { create(:programme) }
     let(:patient_session) { create(:patient_session, patient:, programme:) }
 

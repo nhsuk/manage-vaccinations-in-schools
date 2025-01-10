@@ -177,6 +177,13 @@ describe "Parental consent" do
     expect(page).to have_content(["School", "Pilot School"].join)
 
     click_on "Back to #{@child.full_name}"
+
+    click_on "Activity log"
+    expect(page).to have_content("Consent given")
+    expect(page).not_to have_content(
+      "Consent response manually matched with child record"
+    )
+
     click_on "Back to consents page"
   end
 

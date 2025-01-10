@@ -373,7 +373,7 @@ class ConsentForm < ApplicationRecord
     ).label
   end
 
-  def match_with_patient!(patient)
+  def match_with_patient!(patient, current_user:)
     ActiveRecord::Base.transaction do
       notify_log_entries.update_all(patient_id: patient.id)
 
@@ -395,7 +395,7 @@ class ConsentForm < ApplicationRecord
         school_move.update!(source: :parental_consent_form)
       end
 
-      Consent.from_consent_form!(self, patient:)
+      Consent.from_consent_form!(self, patient:, current_user:)
     end
   end
 
