@@ -6,7 +6,6 @@ class GovukNotifyPersonalisation
   def initialize(
     consent: nil,
     consent_form: nil,
-    parent: nil,
     patient: nil,
     patient_session: nil,
     programme: nil,
@@ -17,7 +16,6 @@ class GovukNotifyPersonalisation
 
     @consent = consent
     @consent_form = consent_form
-    @parent = parent || consent&.parent
     @patient = patient || consent&.patient || patient_session&.patient
     @programme =
       programme || vaccination_record&.programme || consent_form&.programme ||
@@ -51,7 +49,6 @@ class GovukNotifyPersonalisation
       organisation_privacy_policy_url:,
       outcome_administered:,
       outcome_not_administered:,
-      parent_full_name:,
       programme_name:,
       reason_did_not_vaccinate:,
       reason_for_refusal:,
@@ -78,7 +75,6 @@ class GovukNotifyPersonalisation
 
   attr_reader :consent,
               :consent_form,
-              :parent,
               :patient,
               :programme,
               :session,
@@ -171,10 +167,6 @@ class GovukNotifyPersonalisation
   def outcome_not_administered
     return if vaccination_record.nil?
     vaccination_record.not_administered? ? "yes" : "no"
-  end
-
-  def parent_full_name
-    consent_form&.parent_full_name || parent&.full_name
   end
 
   def programme_name

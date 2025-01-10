@@ -51,7 +51,6 @@ describe TextDeliveryJob do
         session:,
         consent:,
         consent_form:,
-        parent:,
         patient:,
         patient_session:,
         programme:,

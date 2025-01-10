@@ -68,7 +68,6 @@ class ApplicationMailer < Mail::Notify::Mailer
     GovukNotifyPersonalisation.call(
       consent:,
       consent_form:,
-      parent:,
       patient:,
       patient_session:,
       programme:,

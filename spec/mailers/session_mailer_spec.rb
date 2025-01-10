@@ -32,7 +32,6 @@ describe SessionMailer do
           :next_session_date,
           :next_session_dates,
           :next_session_dates_or,
-          :parent_full_name,
           :short_patient_name,
           :short_patient_name_apos,
           :subsequent_session_dates_offered_message,
