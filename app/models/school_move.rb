@@ -53,7 +53,7 @@ class SchoolMove < ApplicationRecord
     ActiveRecord::Base.transaction do
       update_patient!
       update_sessions!(move_to_school:)
-      SchoolMove.where(patient:).destroy_all
+      SchoolMove.where(patient:).destroy_all if persisted?
     end
   end
 

@@ -429,6 +429,31 @@ describe Patient do
         update_from_pds!
       end
     end
+
+    context "when the patient is currently invalidated" do
+      let(:patient) do
+        create(:patient, :invalidated, school:, nhs_number: "0123456789")
+      end
+
+      let(:programme) { create(:programme) }
+      let(:organisation) { create(:organisation, programmes: [programme]) }
+      let(:school) { create(:school, organisation:) }
+      let(:session) do
+        create(:session, location: school, organisation:, programme:)
+      end
+
+      it "marks the patient as not invalidated" do
+        expect { update_from_pds! }.to change(patient, :invalidated?).from(
+          true
+        ).to(false)
+      end
+
+      it "adds the patient to upcoming sessions" do
+        expect(session.patients).not_to include(patient)
+        update_from_pds!
+        expect(session.reload.patients).to include(patient)
+      end
+    end
   end
 
   describe "#invalidate!" do
