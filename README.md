@@ -92,6 +92,18 @@ git tag v1.0.0
 git push --tags origin release
 ```
 
+### Hot-fixes
+
+Hot-fixes are emergency fixes made to the current release that don't go through
+the release cycle. These fixes should still go through the pull-request process,
+but to the `release` branch. Once these are merged in, the commits will need to
+be applied to `main` via cherry-picking and a PR.
+
+Generally, at this point the histories of the `release` and `main` branches will
+have diverged and it will not be possible to fast-forward the `release` branch
+when releasing. It will have to be reset to the latest release candidate as
+previously described.
+
 ## Development
 
 ### Branching workflow
