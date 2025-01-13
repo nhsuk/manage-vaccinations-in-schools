@@ -34,18 +34,32 @@ class TextDeliveryJob < ApplicationJob
         vaccination_record:
       )
 
-    if self.class.send_via_notify?
-      self.class.client.send_sms(phone_number:, template_id:, personalisation:)
-    elsif self.class.send_via_test?
-      self.class.deliveries << { phone_number:, template_id:, personalisation: }
-    else
-      Rails.logger.info "Sending text message to #{phone_number} with template #{template_id}"
-    end
+    delivery_id =
+      if self.class.send_via_notify?
+        response =
+          self.class.client.send_sms(
+            phone_number:,
+            template_id:,
+            personalisation:
+          )
+        response.id
+      elsif self.class.send_via_test?
+        self.class.deliveries << {
+          phone_number:,
+          template_id:,
+          personalisation:
+        }
+        SecureRandom.uuid
+      else
+        Rails.logger.info "Sending text message to #{phone_number} with template #{template_id}"
+        nil
+      end
 
     patient ||= consent&.patient || patient_session&.patient
 
     NotifyLogEntry.create!(
       consent_form:,
+      delivery_id:,
       patient:,
       recipient: phone_number,
       sent_by:,
