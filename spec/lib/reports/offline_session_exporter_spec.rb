@@ -12,6 +12,21 @@ describe Reports::OfflineSessionExporter do
     rows.compact
   end
 
+  def validation_formula(worksheet:, column_name:, row: 1)
+    column = worksheet[0].cells.find_index { _1.value == column_name.upcase }
+
+    # stree-ignore
+    worksheet
+      .data_validations
+      .find { |validation|
+        validation.sqref.any? do
+          _1.col_range.include?(column) && _1.row_range.include?(row)
+        end
+      }
+      .formula1
+      .expression
+  end
+
   subject(:call) { described_class.call(session) }
 
   let(:programme) { create(:programme, :hpv) }
@@ -291,6 +306,56 @@ describe Reports::OfflineSessionExporter do
         end
       end
     end
+
+    describe "cell validations" do
+      subject(:worksheet) do
+        workbook = RubyXL::Parser.parse_buffer(call)
+        workbook.worksheets[0]
+      end
+
+      before do
+        # Without a patient no validation will be setup.
+        create(:patient, session:)
+      end
+
+      describe "performing professional email" do
+        subject(:validation) do
+          create(:user, organisation:, email: "vaccinator@example.com")
+          validation_formula(
+            worksheet:,
+            column_name: "performing_professional_email"
+          )
+        end
+
+        it { should eq "=='Performing Professionals'!$A2:$A2" }
+      end
+    end
+
+    describe "performing professionals sheet" do
+      subject(:worksheet) do
+        workbook = RubyXL::Parser.parse_buffer(call)
+        workbook.worksheets.find { _1.sheet_name == "Performing Professionals" }
+      end
+
+      let!(:vaccinators) { create_list(:user, 2, organisation:) }
+
+      before do
+        create(:patient, session:)
+        create(
+          :user,
+          organisation: create(:organisation),
+          email: "vaccinator.other@example.com"
+        )
+      end
+
+      it "lists all the organisation users' emails" do
+        emails = worksheet[1..].map { _1.cells.first.value }
+        expect(emails).to eq vaccinators.map(&:email)
+      end
+
+      its(:state) { should eq "hidden" }
+      its(:sheet_protection) { should be_present }
+    end
   end
 
   context "a clinic session" do
@@ -484,6 +549,53 @@ describe Reports::OfflineSessionExporter do
           )
         end
       end
+    end
+
+    describe "cell validations" do
+      subject(:workbook) { RubyXL::Parser.parse_buffer(call) }
+
+      before do
+        create(:patient, session:)
+        create(:user, organisation:, email: "vaccinator@example.com")
+      end
+
+      describe "performing professional email" do
+        subject do
+          worksheet = workbook.worksheets[0]
+          validation_formula(
+            worksheet:,
+            column_name: "performing_professional_email"
+          )
+        end
+
+        it { should eq "=='Performing Professionals'!$A2:$A2" }
+      end
+    end
+
+    describe "performing professionals sheet" do
+      subject(:worksheet) do
+        workbook = RubyXL::Parser.parse_buffer(call)
+        workbook.worksheets.find { _1.sheet_name == "Performing Professionals" }
+      end
+
+      let!(:vaccinators) { create_list(:user, 2, organisation:) }
+
+      before do
+        create(:patient, session:)
+        create(
+          :user,
+          organisation: create(:organisation),
+          email: "vaccinator.other@example.com"
+        )
+      end
+
+      it "lists all the organisation users' emails" do
+        emails = worksheet[1..].map { _1.cells.first.value }
+        expect(emails).to eq vaccinators.map(&:email)
+      end
+
+      its(:state) { should eq "hidden" }
+      its(:sheet_protection) { should be_present }
     end
   end
 end

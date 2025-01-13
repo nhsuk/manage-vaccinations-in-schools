@@ -14,7 +14,10 @@ class Reports::OfflineSessionExporter
     Axlsx::Package
       .new { |package|
         add_vaccinations_sheet(package)
-        add_performing_professionals_sheet(package)
+        add_reference_sheet package,
+                            name: "Performing Professionals",
+                            values_name: "EMAIL",
+                            values: performing_professional_email_values
       }
       .to_stream
       .read
@@ -56,20 +59,17 @@ class Reports::OfflineSessionExporter
     end
   end
 
-  def add_performing_professionals_sheet(package)
+  def add_reference_sheet(package, name:, values_name:, values:)
     package.use_shared_strings = true
 
     workbook = package.workbook
-    workbook.add_worksheet(
-      name: "Performing Professionals",
-      state: :hidden
-    ) do |sheet|
+    workbook.add_worksheet(name:, state: :hidden) do |sheet|
       sheet.sheet_protection
 
-      sheet.add_row(%w[EMAIL])
+      sheet.add_row([values_name])
 
-      performing_professional_email_values.each do |email|
-        sheet.add_row([email])
+      values.each do |value|
+        sheet.add_row([value])
       end
     end
   end
