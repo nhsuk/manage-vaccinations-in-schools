@@ -3,6 +3,8 @@
 class NotifyDeliveryJob < ApplicationJob
   queue_as { Rails.configuration.action_mailer.deliver_later_queue_name }
 
+  retry_on Notifications::Client::ServerError, wait: :polynomially_longer
+
   def self.client
     @client ||=
       Notifications::Client.new(
