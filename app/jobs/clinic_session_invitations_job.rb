@@ -19,7 +19,6 @@ class ClinicSessionInvitationsJob < ApplicationJob
         .preload(:session_dates)
         .joins(:location)
         .merge(Location.clinic)
-        .strict_loading
 
     sessions.each do |session|
       session_date = session.today_or_future_dates.first

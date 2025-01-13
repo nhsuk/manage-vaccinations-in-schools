@@ -14,7 +14,6 @@ class SchoolConsentRemindersJob < ApplicationJob
         .preload(:session_dates)
         .eager_load(:location)
         .merge(Location.school)
-        .strict_loading
 
     sessions.each do |session|
       next unless session.open_for_consent?

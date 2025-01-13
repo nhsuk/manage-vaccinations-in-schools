@@ -20,7 +20,6 @@ class SchoolSessionRemindersJob < ApplicationJob
         .merge(Location.school)
         .merge(Session.has_date(date))
         .notification_not_sent(date)
-        .strict_loading
 
     patient_sessions.each do |patient_session|
       next unless should_send_notification?(patient_session:)

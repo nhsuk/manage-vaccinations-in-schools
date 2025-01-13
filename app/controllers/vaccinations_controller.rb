@@ -22,10 +22,9 @@ class VaccinationsController < ApplicationController
     all_patient_sessions =
       @session
         .patient_sessions
-        .preload_for_state
+        .preload_for_status
         .eager_load(patient: :cohort)
         .order_by_name
-        .strict_loading
 
     grouped_patient_sessions =
       group_patient_sessions_by_state(
@@ -139,7 +138,17 @@ class VaccinationsController < ApplicationController
   end
 
   def set_patient_session
-    @patient_session = @patient.patient_sessions.find_by!(session: @session)
+    @patient_session =
+      @patient
+        .patient_sessions
+        .includes(
+          patient: {
+            parent_relationships: :parent
+          },
+          session: :programmes
+        )
+        .preload_for_status
+        .find_by!(session: @session)
   end
 
   def set_section_and_tab

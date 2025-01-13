@@ -43,12 +43,6 @@ module PatientsHelper
   end
 
   def patient_parents(patient)
-    tag.ul(class: "nhsuk-list") do
-      safe_join(
-        patient.parents.map do |parent|
-          tag.li { format_parent(parent, patient:) }
-        end
-      )
-    end
+    format_parents_with_relationships(patient.parent_relationships)
   end
 end

@@ -79,21 +79,20 @@ class VaccinationRecordsController < ApplicationController
               :cohort,
               :gp_practice,
               :school,
-              { parents: :parent_relationships }
+              { parent_relationships: :parent }
             ]
           },
           patient: [
             :cohort,
             :gp_practice,
             :school,
-            { parents: :parent_relationships }
+            { parent_relationships: :parent }
           ],
           session: %i[session_dates],
           vaccine: :programme
         )
         .where(programme:)
         .order(:performed_at)
-        .strict_loading
   end
 
   def dps_export

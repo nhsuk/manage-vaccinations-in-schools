@@ -15,6 +15,7 @@ class VaccinationConfirmationsJob < ApplicationJob
     academic_year = Date.current.academic_year
 
     VaccinationRecord
+      .includes(patient_session: { consents: :parent })
       .kept
       .where("created_at >= ?", since)
       .where(confirmation_sent_at: nil)

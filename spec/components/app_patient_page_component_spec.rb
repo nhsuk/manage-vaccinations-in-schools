@@ -10,6 +10,8 @@ describe AppPatientPageComponent do
     ).and_return("/session/patient/triage/new")
     # rubocop:enable RSpec/AnyInstance
     stub_authorization(allowed: true)
+
+    patient_session.strict_loading!(false)
   end
 
   let(:programme) { create(:programme, :hpv) }

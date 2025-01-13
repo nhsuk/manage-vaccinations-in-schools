@@ -98,15 +98,21 @@ FactoryBot.define do
 
     trait :from_mum do
       parent do
-        patient.parent_relationships.find(&:mother?)&.parent ||
-          create(:parent_relationship, :mother, patient:).parent
+        patient
+          .parent_relationships
+          .eager_load(:parent)
+          .find(&:mother?)
+          &.parent || create(:parent_relationship, :mother, patient:).parent
       end
     end
 
     trait :from_dad do
       parent do
-        patient.parent_relationships.find(&:father?)&.parent ||
-          create(:parent_relationship, :father, patient:).parent
+        patient
+          .parent_relationships
+          .eager_load(:parent)
+          .find(&:father?)
+          &.parent || create(:parent_relationship, :father, patient:).parent
       end
     end
 

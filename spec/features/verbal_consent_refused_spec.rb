@@ -64,7 +64,7 @@ describe "Verbal consent" do
   def and_the_patients_status_is_consent_refused
     click_link @patient.full_name
 
-    relation = @parent.relationship_to(patient: @patient).label
+    relation = @patient.parent_relationships.first.label
     expect(page).to have_content("Consent refused")
     expect(page).to have_content("#{relation} refused to give consent.")
   end
@@ -73,7 +73,7 @@ describe "Verbal consent" do
     click_link @parent.full_name
 
     expect(page).to have_content(
-      ["Response date", Time.zone.today.to_fs(:long)].join
+      ["Response date", Date.current.to_fs(:long)].join
     )
     expect(page).to have_content(["Decision", "Consent refused"].join)
     expect(page).to have_content(["Response method", "By phone"].join)
@@ -90,7 +90,7 @@ describe "Verbal consent" do
 
     expect(page).to have_content(["Name", @parent.full_name].join)
     expect(page).to have_content(
-      ["Relationship", @parent.relationship_to(patient: @patient).label].join
+      ["Relationship", @patient.parent_relationships.first.label].join
     )
     expect(page).to have_content(["Email address", @parent.email].join)
     expect(page).to have_content(["Phone number", @parent.phone].join)

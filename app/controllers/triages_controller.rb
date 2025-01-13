@@ -17,10 +17,9 @@ class TriagesController < ApplicationController
     all_patient_sessions =
       @session
         .patient_sessions
-        .preload_for_state
+        .preload_for_status
         .eager_load(patient: :cohort)
         .order_by_name
-        .strict_loading
 
     @current_tab = TAB_PATHS[:triage][params[:tab]]
     tab_patient_sessions =
@@ -73,7 +72,11 @@ class TriagesController < ApplicationController
   end
 
   def set_patient
-    @patient = @session.patients.find_by(id: params[:patient_id])
+    @patient =
+      @session
+        .patients
+        .includes(:consents, :school, parent_relationships: :parent)
+        .find_by(id: params[:patient_id])
   end
 
   def set_patient_session

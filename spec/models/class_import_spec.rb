@@ -293,7 +293,8 @@ describe ClassImport do
           given_name: "Jimmy",
           family_name: "Smith",
           date_of_birth: Date.new(2010, 1, 2),
-          nhs_number: nil
+          nhs_number: nil,
+          parents: []
         )
       end
 
@@ -313,7 +314,10 @@ describe ClassImport do
 
         it "doesn't create an additional patient" do
           expect { process! }.to change(Parent, :count).by(4)
-          expect(parent.relationship_to(patient:)).to be_father
+
+          parent_relationship = patient.reload.parent_relationships.first
+          expect(parent_relationship.parent_id).to eq(parent.id)
+          expect(parent_relationship).to be_father
         end
       end
     end
@@ -347,7 +351,7 @@ describe ClassImport do
         )
 
         school_move = patient.school_moves.first
-        expect(school_move.school).to eq(session.location)
+        expect(school_move.school_id).to eq(session.location_id)
       end
 
       it "doesn't stage school changes" do

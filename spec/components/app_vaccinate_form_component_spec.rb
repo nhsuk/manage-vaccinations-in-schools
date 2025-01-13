@@ -29,6 +29,8 @@ describe AppVaccinateFormComponent do
     )
   end
 
+  before { patient_session.strict_loading!(false) }
+
   it { should have_css(".nhsuk-card") }
 
   it "has the correct heading" do

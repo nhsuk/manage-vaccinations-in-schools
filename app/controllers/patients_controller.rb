@@ -40,7 +40,6 @@ class PatientsController < ApplicationController
         .joins(:patients)
         .where(patients: @patient)
         .includes(:location)
-        .strict_loading
   end
 
   def log
@@ -60,6 +59,7 @@ class PatientsController < ApplicationController
       if cohort_id.nil?
         @patient
           .patient_sessions
+          .includes(:session_attendances)
           .where(session: old_cohort.organisation.sessions)
           .find_each(&:destroy_if_safe!)
       end
@@ -85,22 +85,17 @@ class PatientsController < ApplicationController
 
   def set_patient
     @patient =
-      policy_scope(Patient)
-        .includes(
-          :gp_practice,
-          :school,
-          cohort: :organisation,
-          consents: %i[consent_form parent patient recorded_by],
-          gillick_assessments: :performed_by,
-          notify_log_entries: :sent_by,
-          parents: %i[parent_relationships],
-          patient_sessions: %i[location session_attendances],
-          pre_screenings: :performed_by,
-          triages: :performed_by,
-          vaccination_records: [:performed_by_user, { vaccine: :programme }]
-        )
-        .strict_loading
-        .find(params[:id])
+      policy_scope(Patient).includes(
+        :gillick_assessments,
+        :gp_practice,
+        :school,
+        :triages,
+        cohort: :organisation,
+        consents: %i[parent patient],
+        parent_relationships: :parent,
+        patient_sessions: %i[location session_attendances],
+        vaccination_records: [{ vaccine: :programme }]
+      ).find(params[:id])
   end
 
   def record_access_log_entry

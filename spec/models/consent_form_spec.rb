@@ -731,7 +731,7 @@ describe ConsentForm do
         ).by(1)
 
         school_move = patient.school_moves.first
-        expect(school_move.school).to eq(new_school)
+        expect(school_move.school_id).to eq(new_school.id)
       end
     end
 

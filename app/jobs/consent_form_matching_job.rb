@@ -49,7 +49,8 @@ class ConsentFormMatchingJob < ApplicationJob
   def match_with_exact_nhs_number
     return false unless pds_patient
 
-    patient = Patient.find_by(nhs_number: pds_patient.nhs_number)
+    patient =
+      Patient.includes(:school).find_by(nhs_number: pds_patient.nhs_number)
     return false unless patient
 
     patient.update_from_pds!(pds_patient)
@@ -58,14 +59,16 @@ class ConsentFormMatchingJob < ApplicationJob
 
   def session_patients
     @session_patients ||=
-      @consent_form.original_session.patients.match_existing(
-        nhs_number: nil,
-        **query
-      )
+      @consent_form
+        .original_session
+        .patients
+        .includes(:school)
+        .match_existing(nhs_number: nil, **query)
   end
 
   def matching_patients
-    @matching_patients ||= Patient.match_existing(nhs_number: nil, **query)
+    @matching_patients ||=
+      Patient.includes(:school).match_existing(nhs_number: nil, **query)
   end
 
   def update_consent_form_nhs_number

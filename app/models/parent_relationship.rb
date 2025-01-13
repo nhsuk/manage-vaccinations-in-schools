@@ -53,4 +53,8 @@ class ParentRelationship < ApplicationRecord
   def label
     (other? ? other_name : human_enum_name(:type)).capitalize
   end
+
+  def label_with_parent
+    unknown? ? parent.label : "#{parent.label} (#{label})"
+  end
 end

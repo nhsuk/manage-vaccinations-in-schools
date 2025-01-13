@@ -232,7 +232,7 @@ def create_patients(organisation)
 end
 
 def create_imports(user, organisation)
-  programme = organisation.programmes.find_by(type: "hpv")
+  programme = organisation.programmes.includes(:sessions).find_by(type: "hpv")
 
   %i[pending invalid processed].each do |status|
     FactoryBot.create(

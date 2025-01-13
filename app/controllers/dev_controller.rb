@@ -67,7 +67,7 @@ class DevController < ApplicationController
   def random_consent_form
     Faker::Config.locale = "en-GB"
 
-    session = Session.find(params[:session_id])
+    session = Session.includes(programmes: :vaccines).find(params[:session_id])
     programme = session.programmes.first
 
     attributes =

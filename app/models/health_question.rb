@@ -45,8 +45,15 @@ class HealthQuestion < ApplicationRecord
   end
 
   def self.last_health_question
+    questions_by_id = all.group_by(&:id).transform_values(&:first)
+
     question = first_health_question
-    question = question.next_question until question.next_question.nil?
+
+    question =
+      questions_by_id.fetch(
+        question.next_question_id
+      ) until question.next_question_id.nil?
+
     question
   end
 
@@ -60,13 +67,25 @@ class HealthQuestion < ApplicationRecord
 
   # Turn the health questions into an array ordered by follow_up_questions and
   # next_questions.
-  def remaining_questions(ary = nil)
+  def remaining_questions(ary = nil, questions_by_id = nil)
     ary ||= []
+    questions_by_id ||=
+      HealthQuestion.where(vaccine:).group_by(&:id).transform_values(&:first)
+
     ary << self
 
-    follow_up_question.remaining_questions(ary) if follow_up_question.present?
-    if next_question.present? && !next_question.in?(ary)
-      next_question.remaining_questions(ary)
+    if follow_up_question_id.present?
+      questions_by_id[follow_up_question_id].remaining_questions(
+        ary,
+        questions_by_id
+      )
+    end
+
+    if next_question_id.present? && ary.none? { _1.id == next_question_id }
+      questions_by_id[next_question_id].remaining_questions(
+        ary,
+        questions_by_id
+      )
     end
 
     ary

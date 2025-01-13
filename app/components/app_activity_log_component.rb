@@ -27,19 +27,36 @@ class AppActivityLogComponent < ViewComponent::Base
     @patient_sessions =
       patient_session ? [patient_session] : patient.patient_sessions
 
-    @consents = (patient || patient_session).consents
-    @gillick_assessments = (patient || patient_session).gillick_assessments
-    @pre_screenings = (patient || patient_session).pre_screenings
-    @triages = (patient || patient_session).triages
+    @consents =
+      (patient || patient_session).consents.includes(
+        :consent_form,
+        :parent,
+        :recorded_by,
+        patient: :parent_relationships
+      )
+    @gillick_assessments =
+      (patient || patient_session).gillick_assessments.includes(:performed_by)
+    @notify_log_entries = @patient.notify_log_entries.includes(:sent_by)
+    @pre_screenings =
+      (patient || patient_session).pre_screenings.includes(:performed_by)
+    @session_attendances =
+      (patient || patient_session).session_attendances.includes(:location)
+    @triages = (patient || patient_session).triages.includes(:performed_by)
     @vaccination_records =
-      (patient || patient_session).vaccination_records.with_discarded
+      (patient || patient_session).vaccination_records.with_discarded.includes(
+        :performed_by_user,
+        :programme,
+        :vaccine
+      )
   end
 
   attr_reader :patient,
               :patient_sessions,
               :consents,
               :gillick_assessments,
+              :notify_log_entries,
               :pre_screenings,
+              :session_attendances,
               :triages,
               :vaccination_records
 
@@ -130,7 +147,7 @@ class AppActivityLogComponent < ViewComponent::Base
   end
 
   def notify_events
-    patient.notify_log_entries.map do
+    notify_log_entries.map do
       {
         title: "#{_1.title} sent",
         body: patient.restricted? ? "" : _1.recipient,
@@ -203,13 +220,19 @@ class AppActivityLogComponent < ViewComponent::Base
   end
 
   def attendance_events
-    patient_sessions
-      .flat_map(&:session_attendances)
-      .map do
-        title = (_1.attending? ? "Attended session" : "Absent from session")
-        title += " at #{_1.patient_session.location.name}"
+    session_attendances.map do |session_attendance|
+      title =
+        (
+          if session_attendance.attending?
+            "Attended session"
+          else
+            "Absent from session"
+          end
+        )
 
-        { title:, at: _1.created_at }
-      end
+      title += " at #{session_attendance.location.name}"
+
+      { title:, at: session_attendance.created_at }
+    end
   end
 end

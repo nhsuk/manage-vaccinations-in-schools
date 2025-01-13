@@ -61,6 +61,8 @@ describe PatientTabsConcern do
     ]
   end
 
+  before { patient_sessions.each { _1.strict_loading!(false) } }
+
   describe "#group_patient_sessions_by_conditions" do
     it "groups patient sessions by conditions" do
       result =
@@ -164,12 +166,14 @@ describe PatientTabsConcern do
     end
 
     context "some of the groups are empty" do
-      let(:patient_session) { create(:patient_session, :consent_refused) }
+      let(:patient_sessions) do
+        create_list(:patient_session, 1, :consent_refused)
+      end
 
       it "returns an empty array for all the empty groups" do
         result =
           controller.group_patient_sessions_by_state(
-            [patient_session],
+            patient_sessions,
             section: :triage
           )
 
@@ -177,7 +181,7 @@ describe PatientTabsConcern do
           {
             needs_triage: [],
             triage_complete: [],
-            no_triage_needed: [patient_session]
+            no_triage_needed: patient_sessions
           }.with_indifferent_access
         )
       end

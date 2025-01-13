@@ -9,6 +9,8 @@ describe AppTriageNotesComponent do
   let(:patient_session) { create(:patient_session, programme:) }
   let(:patient) { patient_session.patient }
 
+  before { patient_session.strict_loading!(false) }
+
   context "triage notes are not present" do
     it "does not render" do
       expect(component.render?).to be(false)

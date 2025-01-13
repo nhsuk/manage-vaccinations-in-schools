@@ -6,6 +6,8 @@ describe AppConsentStatusComponent do
   let(:component) { described_class.new(patient_session:) }
   let(:patient_session) { create(:patient_session) }
 
+  before { patient_session.strict_loading!(false) }
+
   context "when consent is given" do
     let(:patient_session) do
       create(:patient_session, :consent_given_triage_needed)

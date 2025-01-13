@@ -45,7 +45,6 @@ class DPSExport < ApplicationRecord
             :vaccine
           )
           .order(:performed_at)
-          .strict_loading
           .find_each { csv << DPSExportRow.new(_1).to_a }
       end
   end

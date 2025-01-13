@@ -48,7 +48,6 @@ class ImportIssuesController < ApplicationController
           patient: %i[cohort gp_practice school],
           vaccine: :programme
         )
-        .strict_loading
 
     @patients =
       policy_scope(Patient)
@@ -56,7 +55,6 @@ class ImportIssuesController < ApplicationController
         .distinct
         .eager_load(:cohort, :gp_practice, :school)
         .preload(:school_moves, :upcoming_sessions)
-        .strict_loading
 
     @import_issues =
       (@vaccination_records + @patients).uniq do |record|

@@ -41,7 +41,7 @@ class PatientSession < ApplicationRecord
   has_many :vaccination_records, -> { kept }
 
   # TODO: Only fetch consents and triages for the relevant programme.
-  has_many :consents, -> { eager_load(:parent) }, through: :patient
+  has_many :consents, through: :patient
   has_many :triages, through: :patient
 
   has_many :session_notifications,
@@ -66,14 +66,14 @@ class PatientSession < ApplicationRecord
           )
         end
 
-  scope :preload_for_state,
+  scope :preload_for_status,
         -> do
           preload(
-            :consents,
             :gillick_assessments,
             :triages,
             :vaccination_records,
-            :session_attendances
+            :session_attendances,
+            consents: :parent
           )
         end
 
@@ -108,7 +108,7 @@ class PatientSession < ApplicationRecord
   end
 
   def latest_gillick_assessment
-    @latest_gillick_assessment = gillick_assessments.max_by(&:updated_at)
+    @latest_gillick_assessment ||= gillick_assessments.max_by(&:updated_at)
   end
 
   def latest_triage
@@ -122,7 +122,9 @@ class PatientSession < ApplicationRecord
   def todays_attendance
     @todays_attendance ||=
       if (session_date = session.session_dates.find(&:today?))
-        session_attendances.find_or_initialize_by(session_date:)
+        session_attendances.eager_load(:session_date).find_or_initialize_by(
+          session_date:
+        )
       end
   end
 

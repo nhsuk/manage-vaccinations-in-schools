@@ -11,6 +11,9 @@ describe VaccinationMailerConcern do
         @current_user = current_user
       end
     end
+
+    vaccination_record.strict_loading!(false)
+    vaccination_record.patient_session.strict_loading!(false)
   end
 
   let(:sample) { SampleClass.new(current_user:) }

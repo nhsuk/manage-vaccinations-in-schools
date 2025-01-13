@@ -29,21 +29,25 @@ class AppTriageNotesComponent < ViewComponent::Base
   end
 
   def triage_events
-    @patient_session.triages.map do |triage|
-      {
-        title: "Triaged decision: #{triage.human_enum_name(:status)}",
-        body: triage.notes,
-        at: triage.created_at,
-        by: triage.performed_by,
-        invalidated: triage.invalidated?
-      }
-    end
+    @patient_session
+      .triages
+      .includes(:performed_by)
+      .map do |triage|
+        {
+          title: "Triaged decision: #{triage.human_enum_name(:status)}",
+          body: triage.notes,
+          at: triage.created_at,
+          by: triage.performed_by,
+          invalidated: triage.invalidated?
+        }
+      end
   end
 
   def pre_screening_events
     @patient_session
       .pre_screenings
       .where.not(notes: "")
+      .includes(:performed_by)
       .map do |pre_screening|
         {
           title: "Completed pre-screening checks",

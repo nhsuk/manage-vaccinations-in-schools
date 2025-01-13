@@ -121,6 +121,7 @@ class DraftVaccinationRecord
     PatientSessionPolicy::Scope
       .new(@current_user, PatientSession)
       .resolve
+      .preload_for_status
       .find_by(id: patient_session_id)
   end
 
@@ -153,6 +154,7 @@ class DraftVaccinationRecord
     VaccinationRecordPolicy::Scope
       .new(@current_user, VaccinationRecord)
       .resolve
+      .includes(patient_session: { consents: :parent })
       .find_by(id: editing_id)
   end
 

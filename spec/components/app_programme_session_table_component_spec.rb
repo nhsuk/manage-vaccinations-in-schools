@@ -6,13 +6,9 @@ describe AppProgrammeSessionTableComponent do
   let(:component) { described_class.new(sessions) }
 
   let(:programme) { create(:programme) }
-
   let(:location) { create(:school, name: "Waterloo Road") }
-
   let(:session) { create(:session, programme:, location:) }
-
   let(:sessions) { [session] + create_list(:session, 2, programme:) }
-
   let(:patient_session) { create(:patient_session, session:) }
 
   before do
@@ -20,6 +16,8 @@ describe AppProgrammeSessionTableComponent do
 
     create(:consent, :given, programme:, patient: patient_session.patient)
     create(:vaccination_record, programme:, patient_session:)
+
+    sessions.each { _1.strict_loading!(false) }
   end
 
   it { should have_content("3 sessions") }

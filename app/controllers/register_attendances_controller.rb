@@ -42,11 +42,11 @@ class RegisterAttendancesController < ApplicationController
 
   def set_patient_sessions
     ps =
-      @session.patient_sessions.strict_loading.includes(
+      @session.patient_sessions.preload_for_status.includes(
         :patient,
         :vaccination_records,
         :triages,
-        :consents,
+        consents: :parent,
         session: :session_dates,
         session_attendances: :session_date
       )

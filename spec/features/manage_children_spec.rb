@@ -5,6 +5,7 @@ describe "Manage children" do
 
   scenario "Viewing children" do
     given_patients_exist
+    and_the_patient_is_vaccinated
 
     when_i_click_on_children
     then_i_see_the_children
@@ -115,7 +116,6 @@ describe "Manage children" do
         family_name: "Smith",
         school:
       )
-    create(:vaccination_record, patient: @patient, programme: @programme)
     create_list(:patient, 9, organisation: @organisation, school:)
 
     @existing_patient =
@@ -125,6 +125,10 @@ describe "Manage children" do
         family_name: "Doe",
         cohort: @organisation.cohorts.first
       )
+  end
+
+  def and_the_patient_is_vaccinated
+    create(:vaccination_record, patient: @patient, programme: @programme)
   end
 
   def and_the_patient_belongs_to_a_session

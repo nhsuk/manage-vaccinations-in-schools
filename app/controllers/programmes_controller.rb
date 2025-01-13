@@ -36,15 +36,14 @@ class ProgrammesController < ApplicationController
         .eager_load(:location)
         .preload(
           :session_dates,
-          patient_sessions: %i[
-            consents
-            gillick_assessments
-            triages
-            vaccination_records
+          patient_sessions: [
+            :gillick_assessments,
+            :triages,
+            :vaccination_records,
+            { consents: :parent }
           ]
         )
         .order("locations.name")
-        .strict_loading
   end
 
   def patients
@@ -58,9 +57,8 @@ class ProgrammesController < ApplicationController
       PatientSession
         .where(patient: patients, session: sessions)
         .eager_load(:session, patient: :cohort)
-        .preload_for_state
+        .preload_for_status
         .order_by_name
-        .strict_loading
         .to_a
 
     sort_and_filter_patients!(patient_sessions)
@@ -70,7 +68,6 @@ class ProgrammesController < ApplicationController
   private
 
   def set_programme
-    @programme =
-      policy_scope(Programme).strict_loading.find_by!(type: params[:type])
+    @programme = policy_scope(Programme).find_by!(type: params[:type])
   end
 end

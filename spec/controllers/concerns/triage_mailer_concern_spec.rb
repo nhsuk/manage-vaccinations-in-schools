@@ -11,6 +11,8 @@ describe TriageMailerConcern do
         @current_user = current_user
       end
     end
+
+    patient_session.strict_loading!(false)
   end
 
   let(:sample) { SampleClass.new(current_user:) }

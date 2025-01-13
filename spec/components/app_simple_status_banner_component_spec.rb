@@ -8,6 +8,8 @@ describe AppSimpleStatusBannerComponent do
       "/session/patient/triage/new"
     )
     stub_authorization(allowed: true)
+
+    patient_session.strict_loading!(false)
   end
 
   let(:user) { create :user }
