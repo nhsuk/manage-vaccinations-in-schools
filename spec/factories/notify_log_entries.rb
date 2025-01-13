@@ -9,9 +9,10 @@
 #  type            :integer          not null
 #  created_at      :datetime         not null
 #  consent_form_id :bigint
+#  delivery_id     :uuid
 #  patient_id      :bigint
 #  sent_by_user_id :bigint
-#  template_id     :string           not null
+#  template_id     :uuid             not null
 #
 # Indexes
 #
@@ -29,6 +30,8 @@ FactoryBot.define do
   factory :notify_log_entry do
     patient
     consent_form
+
+    delivery_id { SecureRandom.uuid }
 
     trait :email do
       type { "email" }
