@@ -40,13 +40,8 @@ class Parent < ApplicationRecord
   encrypts :email, :full_name, :phone, deterministic: true
   encrypts :contact_method_other_details
 
-  normalizes :phone,
-             with: ->(phone) do
-               Phonelib
-                 .parse(phone)
-                 .then { |p| p.country == "GB" ? p.national : p.international }
-             end
-  normalizes :email, with: -> { _1.blank? ? nil : _1.to_s.downcase.strip }
+  normalizes :email, with: EmailAddressNormaliser.new
+  normalizes :phone, with: PhoneNumberNormaliser.new
 
   validates :phone,
             presence: {

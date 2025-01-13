@@ -307,6 +307,9 @@ describe ConsentForm do
   it { should normalize(:family_name).from(" Smith ").to("Smith") }
   it { should normalize(:address_postcode).from(" SW111AA ").to("SW11 1AA") }
 
+  it_behaves_like "a model with a normalised email address", :parent_email
+  it_behaves_like "a model with a normalised phone number", :parent_phone
+
   describe "#full_name" do
     it "returns the full name as a string" do
       consent_form =
@@ -655,54 +658,6 @@ describe ConsentForm do
     it "summarises the consent form when consent is refused" do
       consent_form = build(:consent_form, response: "refused")
       expect(consent_form.summary_with_route).to eq("Consent refused (online)")
-    end
-  end
-
-  describe "#parent_phone=" do
-    subject(:normalised_parent_phone) do
-      build(:consent_form, parent_phone: phone).parent_phone
-    end
-
-    context "with non-numeric characters" do
-      let(:phone) { "01234 567890" }
-
-      it { should eq("01234567890") }
-    end
-
-    context "when nil" do
-      let(:phone) { nil }
-
-      it { should be_nil }
-    end
-
-    context "when blank" do
-      let(:phone) { "" }
-
-      it { should be_nil }
-    end
-  end
-
-  describe "#parent_email=" do
-    subject(:normalised_parent_email) do
-      build(:consent_form, parent_email: email).parent_email
-    end
-
-    context "with whitespace and capitalised letters" do
-      let(:email) { "  joHn@doe.com " }
-
-      it { should eq("john@doe.com") }
-    end
-
-    context "when nil" do
-      let(:email) { nil }
-
-      it { should be_nil }
-    end
-
-    context "when blank" do
-      let(:email) { "" }
-
-      it { should be_nil }
     end
   end
 

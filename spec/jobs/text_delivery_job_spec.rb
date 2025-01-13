@@ -100,7 +100,7 @@ describe TextDeliveryJob do
 
       it "sends a text using GOV.UK Notify" do
         expect(notifications_client).to receive(:send_sms).with(
-          phone_number: "01234567890",
+          phone_number: "01234 567890",
           template_id: GOVUK_NOTIFY_TEXT_TEMPLATES[template_name],
           personalisation: an_instance_of(Hash)
         )
@@ -112,7 +112,7 @@ describe TextDeliveryJob do
 
         notify_log_entry = NotifyLogEntry.last
         expect(notify_log_entry).to be_sms
-        expect(notify_log_entry.recipient).to eq("01234567890")
+        expect(notify_log_entry.recipient).to eq("01234 567890")
         expect(notify_log_entry.template_id).to eq(
           GOVUK_NOTIFY_TEXT_TEMPLATES[template_name]
         )

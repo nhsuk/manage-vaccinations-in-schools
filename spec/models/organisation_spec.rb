@@ -40,6 +40,9 @@ describe Organisation do
 
   it { should normalize(:ods_code).from(" r1a ").to("R1A") }
 
+  it_behaves_like "a model with a normalised email address"
+  it_behaves_like "a model with a normalised phone number"
+
   describe "#community_clinics" do
     let(:clinic_locations) { create_list(:community_clinic, 3, organisation:) }
 
