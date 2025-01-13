@@ -131,10 +131,9 @@ class ConsentForm < ApplicationRecord
 
   normalizes :given_name, with: -> { _1.strip }
   normalizes :family_name, with: -> { _1.strip }
-  normalizes :parent_phone,
-             with: -> { _1.blank? ? nil : _1.to_s.gsub(/\s/, "") }
-  normalizes :parent_email,
-             with: -> { _1.blank? ? nil : _1.to_s.downcase.strip }
+
+  normalizes :parent_email, with: EmailAddressNormaliser.new
+  normalizes :parent_phone, with: PhoneNumberNormaliser.new
 
   validates :programme, inclusion: { in: -> { _1.organisation.programmes } }
 

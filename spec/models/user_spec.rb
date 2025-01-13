@@ -31,6 +31,8 @@
 describe User do
   subject(:user) { build(:user) }
 
+  it_behaves_like "a model with a normalised email address"
+
   describe "validations" do
     it { should validate_presence_of(:given_name) }
     it { should validate_presence_of(:family_name) }

@@ -25,6 +25,9 @@
 describe Team do
   subject(:team) { build(:team) }
 
+  it_behaves_like "a model with a normalised email address"
+  it_behaves_like "a model with a normalised phone number"
+
   describe "validations" do
     it { should validate_presence_of(:name) }
     it { should validate_presence_of(:email) }

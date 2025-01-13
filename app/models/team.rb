@@ -29,6 +29,9 @@ class Team < ApplicationRecord
   has_many :community_clinics, -> { community_clinic }, class_name: "Location"
   has_many :schools, -> { school }, class_name: "Location"
 
+  normalizes :email, with: EmailAddressNormaliser.new
+  normalizes :phone, with: PhoneNumberNormaliser.new
+
   validates :name, presence: true, uniqueness: { scope: :organisation }
   validates :email, notify_safe_email: true
   validates :phone, presence: true, phone: true

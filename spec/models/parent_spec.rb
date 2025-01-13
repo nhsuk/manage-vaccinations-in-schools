@@ -32,13 +32,8 @@ describe Parent do
     end
   end
 
-  it { should normalize(:email).from("  joHn@doe.com ").to("john@doe.com") }
-  it { should normalize(:email).from("").to(nil) }
-
-  it { should normalize(:phone).from(" 01234 567890 ").to("01234 567890") }
-  it { should normalize(:phone).from("1234567890").to("01234 567890") } # leading zero lost by Excel, say
-  it { should normalize(:phone).from("+35361234567").to("+353 61 234 567") }
-  it { should normalize(:phone).from("").to(nil) }
+  it_behaves_like "a model with a normalised email address"
+  it_behaves_like "a model with a normalised phone number"
 
   describe "#contactable?" do
     subject(:contactable?) { parent.contactable? }

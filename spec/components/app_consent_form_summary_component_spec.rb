@@ -8,7 +8,7 @@ describe AppConsentFormSummaryComponent do
       name: "Jane Smith",
       relationship: "Mum",
       contact: {
-        phone: "07987654321",
+        phone: "07987 654321",
         email: "jane@example.com"
       },
       response: {
@@ -24,7 +24,7 @@ describe AppConsentFormSummaryComponent do
 
   it { should have_text("Jane Smith") }
   it { should have_text("Mum") }
-  it { should have_text("07987654321") }
+  it { should have_text("07987 654321") }
   it { should have_text("jane@example.com") }
   it { should have_text("Consent refused (online)") }
   it { should have_text("1 March 2024 at 2:23pm") }

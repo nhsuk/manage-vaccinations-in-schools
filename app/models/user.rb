@@ -45,6 +45,8 @@ class User < ApplicationRecord
   encrypts :email, deterministic: true
   encrypts :family_name, :given_name
 
+  normalizes :email, with: EmailAddressNormaliser.new
+
   validates :family_name, :given_name, presence: true, length: { maximum: 255 }
 
   validates :email,

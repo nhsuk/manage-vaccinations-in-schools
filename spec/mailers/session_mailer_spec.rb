@@ -57,7 +57,7 @@ describe SessionMailer do
         :team,
         name: "SAIS organisation",
         email: "sais@example.com",
-        phone: "07987654321",
+        phone: "07987 654321",
         organisation:
       )
     end
@@ -89,7 +89,7 @@ describe SessionMailer do
 
       it { should include(team_name: "SAIS organisation") }
       it { should include(team_email: "sais@example.com") }
-      it { should include(team_phone: "07987654321") }
+      it { should include(team_phone: "07987 654321") }
     end
   end
 
@@ -108,7 +108,7 @@ describe SessionMailer do
         :team,
         name: "SAIS organisation",
         email: "sais@example.com",
-        phone: "07987654321",
+        phone: "07987 654321",
         organisation:
       )
     end
@@ -140,7 +140,7 @@ describe SessionMailer do
 
       it { should include(team_name: "SAIS organisation") }
       it { should include(team_email: "sais@example.com") }
-      it { should include(team_phone: "07987654321") }
+      it { should include(team_phone: "07987 654321") }
     end
   end
 end
