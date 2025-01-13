@@ -27,7 +27,6 @@ class TextDeliveryJob < ApplicationJob
         session:,
         consent:,
         consent_form:,
-        parent:,
         patient:,
         patient_session:,
         programme:,

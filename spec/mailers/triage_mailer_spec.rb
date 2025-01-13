@@ -47,7 +47,15 @@ describe TriageMailer do
         mail.message.header["personalisation"].unparsed_value
       end
 
-      it { should include(parent_full_name: consent.parent.full_name) }
+      it do
+        expect(personalisation).to include(
+          :full_and_preferred_patient_name,
+          :short_patient_name,
+          :team_name,
+          :team_email,
+          :team_phone
+        )
+      end
     end
   end
 
@@ -66,7 +74,15 @@ describe TriageMailer do
         mail.message.header["personalisation"].unparsed_value
       end
 
-      it { should include(parent_full_name: consent.parent.full_name) }
+      it do
+        expect(personalisation).to include(
+          :full_and_preferred_patient_name,
+          :short_patient_name,
+          :team_name,
+          :team_email,
+          :team_phone
+        )
+      end
     end
   end
 end

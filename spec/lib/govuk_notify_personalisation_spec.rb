@@ -7,7 +7,6 @@ describe GovukNotifyPersonalisation do
       session:,
       consent:,
       consent_form:,
-      parent:,
       programme:,
       vaccination_record:
     )
@@ -44,7 +43,6 @@ describe GovukNotifyPersonalisation do
   end
   let(:consent) { nil }
   let(:consent_form) { nil }
-  let(:parent) { nil }
   let(:vaccination_record) { nil }
 
   it do
@@ -165,12 +163,6 @@ describe GovukNotifyPersonalisation do
 
       it { should include(location_name: "Waterloo Road") }
     end
-  end
-
-  context "with a parent" do
-    let(:parent) { create(:parent, full_name: "John Smith") }
-
-    it { should include(parent_full_name: "John Smith") }
   end
 
   context "with a vaccination record" do
