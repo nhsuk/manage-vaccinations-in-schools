@@ -8,16 +8,22 @@ describe TextDeliveryJob do
 
   after(:all) { Rails.configuration.action_mailer.delivery_method = :test }
 
+  let(:response) do
+    instance_double(
+      Notifications::Client::ResponseNotification,
+      id: SecureRandom.uuid
+    )
+  end
+  let(:notifications_client) { instance_double(Notifications::Client) }
+
   before do
     allow(Notifications::Client).to receive(:new).with("abc").and_return(
       notifications_client
     )
-    allow(notifications_client).to receive(:send_sms)
+    allow(notifications_client).to receive(:send_sms).and_return(response)
   end
 
   after { described_class.instance_variable_set("@client", nil) }
-
-  let(:notifications_client) { instance_double(Notifications::Client) }
 
   describe "#perform_now" do
     subject(:perform_now) do
@@ -73,6 +79,7 @@ describe TextDeliveryJob do
 
       notify_log_entry = NotifyLogEntry.last
       expect(notify_log_entry).to be_sms
+      expect(notify_log_entry.delivery_id).to eq(response.id)
       expect(notify_log_entry.recipient).to eq("01234 567890")
       expect(notify_log_entry.template_id).to eq(
         GOVUK_NOTIFY_TEXT_TEMPLATES[template_name]
@@ -111,6 +118,7 @@ describe TextDeliveryJob do
 
         notify_log_entry = NotifyLogEntry.last
         expect(notify_log_entry).to be_sms
+        expect(notify_log_entry.delivery_id).to eq(response.id)
         expect(notify_log_entry.recipient).to eq("01234 567890")
         expect(notify_log_entry.template_id).to eq(
           GOVUK_NOTIFY_TEXT_TEMPLATES[template_name]
