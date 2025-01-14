@@ -36,13 +36,14 @@ describe Reports::OfflineSessionExporter do
   let(:session) { create(:session, location:, organisation:, programme:) }
 
   context "a school session" do
+    subject(:workbook) { RubyXL::Parser.parse_buffer(call) }
+
     let(:location) { create(:school, team:) }
 
     it { should_not be_blank }
 
     describe "headers" do
       subject(:headers) do
-        workbook = RubyXL::Parser.parse_buffer(call)
         sheet = workbook.worksheets[0]
         sheet[0].cells.map(&:value)
       end
@@ -92,10 +93,7 @@ describe Reports::OfflineSessionExporter do
     end
 
     describe "rows" do
-      subject(:rows) do
-        workbook = RubyXL::Parser.parse_buffer(call)
-        worksheet_to_hashes(workbook.worksheets[0])
-      end
+      subject(:rows) { worksheet_to_hashes(workbook.worksheets[0]) }
 
       let(:performed_at) { Time.zone.local(2024, 1, 1, 12, 5, 20) }
       let(:batch) { create(:batch, vaccine: programme.vaccines.active.first) }
@@ -308,10 +306,7 @@ describe Reports::OfflineSessionExporter do
     end
 
     describe "cell validations" do
-      subject(:worksheet) do
-        workbook = RubyXL::Parser.parse_buffer(call)
-        workbook.worksheets[0]
-      end
+      subject(:worksheet) { workbook.worksheets[0] }
 
       before do
         # Without a patient no validation will be setup.
@@ -333,7 +328,6 @@ describe Reports::OfflineSessionExporter do
 
     describe "performing professionals sheet" do
       subject(:worksheet) do
-        workbook = RubyXL::Parser.parse_buffer(call)
         workbook.worksheets.find { _1.sheet_name == "Performing Professionals" }
       end
 
@@ -359,13 +353,14 @@ describe Reports::OfflineSessionExporter do
   end
 
   context "a clinic session" do
+    subject(:workbook) { RubyXL::Parser.parse_buffer(call) }
+
     let(:location) { create(:generic_clinic, team:) }
 
     it { should_not be_blank }
 
     describe "headers" do
       subject(:headers) do
-        workbook = RubyXL::Parser.parse_buffer(call)
         sheet = workbook.worksheets[0]
         sheet[0].cells.map(&:value)
       end
@@ -416,10 +411,7 @@ describe Reports::OfflineSessionExporter do
     end
 
     describe "rows" do
-      subject(:rows) do
-        workbook = RubyXL::Parser.parse_buffer(call)
-        worksheet_to_hashes(workbook.worksheets[0])
-      end
+      subject(:rows) { worksheet_to_hashes(workbook.worksheets[0]) }
 
       it { should be_empty }
 
@@ -552,7 +544,7 @@ describe Reports::OfflineSessionExporter do
     end
 
     describe "cell validations" do
-      subject(:workbook) { RubyXL::Parser.parse_buffer(call) }
+      subject(:worksheet) { workbook.worksheets[0] }
 
       before do
         create(:patient, session:)
@@ -560,7 +552,7 @@ describe Reports::OfflineSessionExporter do
       end
 
       describe "performing professional email" do
-        subject do
+        subject(:validation) do
           worksheet = workbook.worksheets[0]
           validation_formula(
             worksheet:,
@@ -574,7 +566,6 @@ describe Reports::OfflineSessionExporter do
 
     describe "performing professionals sheet" do
       subject(:worksheet) do
-        workbook = RubyXL::Parser.parse_buffer(call)
         workbook.worksheets.find { _1.sheet_name == "Performing Professionals" }
       end
 
