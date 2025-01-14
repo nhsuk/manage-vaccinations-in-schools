@@ -237,7 +237,7 @@ class Reports::OfflineSessionExporter
     )
     row[:performing_professional_email] = Cell.new(
       vaccination_record.performed_by_user&.email,
-      allowed_formula: "=#{performing_professionals_range}"
+      allowed_formula: performing_professionals_range
     )
     row[:batch_number] = Cell.new(
       batch&.name,
@@ -273,7 +273,7 @@ class Reports::OfflineSessionExporter
       allowed_values: vaccine_values_for_programme(programme)
     )
     row[:performing_professional_email] = Cell.new(
-      allowed_formula: "=#{performing_professionals_range}"
+      allowed_formula: performing_professionals_range
     )
     row[:batch_number] = Cell.new(
       allowed_values: batch_values_for_programme(programme)
@@ -321,7 +321,7 @@ class Reports::OfflineSessionExporter
 
   def performing_professionals_range
     count = performing_professional_email_values.count
-    "='Performing Professionals'!$A2:$A#{count + 1}"
+    "'Performing Professionals'!$A2:$A#{count + 1}"
   end
 
   def clinic_name_values
@@ -406,7 +406,7 @@ class Reports::OfflineSessionExporter
         if allowed_values.present?
           "\"#{allowed_values.join(", ")}\""
         elsif allowed_formula.present?
-          allowed_formula
+          "=#{allowed_formula}"
         end
 
       sheet.add_data_validation(

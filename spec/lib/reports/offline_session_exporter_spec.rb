@@ -322,7 +322,7 @@ describe Reports::OfflineSessionExporter do
           )
         end
 
-        it { should eq "=='Performing Professionals'!$A2:$A2" }
+        it { should eq "='Performing Professionals'!$A2:$A2" }
       end
     end
 
@@ -560,7 +560,7 @@ describe Reports::OfflineSessionExporter do
           )
         end
 
-        it { should eq "=='Performing Professionals'!$A2:$A2" }
+        it { should eq "='Performing Professionals'!$A2:$A2" }
       end
     end
 
