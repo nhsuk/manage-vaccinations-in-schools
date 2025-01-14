@@ -51,7 +51,7 @@ describe "Parental consent manual matching" do
 
   def then_i_am_on_the_unmatched_responses_page
     expect(page).to have_content("Unmatched consent responses")
-    expect(page).to have_content("1 consent response")
+    expect(page).to have_content("1 unmatched consent response")
   end
 
   def when_i_choose_a_consent_response
