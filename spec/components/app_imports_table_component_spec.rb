@@ -7,6 +7,8 @@ describe AppImportsTableComponent do
 
   let(:organisation) { create(:organisation) }
   let(:programme) { create(:programme) }
+  let(:school) { create(:school, organisation:, name: "Test School") }
+  let(:session) { create(:session, programme:, location: school) }
 
   before do
     cohort_imports =
@@ -52,12 +54,21 @@ describe AppImportsTableComponent do
         immunisation_imports: [immunisation_import]
       )
     end
+
+    create(
+      :class_import,
+      :processed,
+      organisation:,
+      created_at: Date.new(2020, 1, 1),
+      uploaded_by: create(:user, given_name: "Jack", family_name: "Smith"),
+      session:
+    )
   end
 
   it "renders a heading tab" do
     expect(rendered).to have_css(
       ".nhsuk-table__heading-tab",
-      text: "10 imports"
+      text: "11 imports"
     )
   end
 
@@ -71,7 +82,7 @@ describe AppImportsTableComponent do
   it "renders the rows" do
     expect(rendered).to have_css(
       ".nhsuk-table__body .nhsuk-table__row",
-      count: 10
+      count: 11
     )
     expect(rendered).to have_css(
       ".nhsuk-table__cell",
@@ -82,8 +93,11 @@ describe AppImportsTableComponent do
       ".nhsuk-table__cell",
       text: "Vaccination record"
     )
+    expect(rendered).to have_css(".nhsuk-table__cell", text: "Class list")
     expect(rendered).to have_css(".nhsuk-table__cell", text: "John Smith")
     expect(rendered).to have_css(".nhsuk-table__cell", text: "Jennifer Smith")
+    expect(rendered).to have_css(".nhsuk-table__cell", text: "Jack Smith")
     expect(rendered).to have_css(".nhsuk-table__cell", text: "1")
+    expect(rendered).to have_content("Test School")
   end
 end
