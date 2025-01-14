@@ -151,7 +151,9 @@ describe "Parental consent create patient" do
   end
 
   def and_the_unmatched_consent_responses_page_is_empty
-    expect(page).to have_content("0 consent responses")
+    expect(page).to have_content(
+      "There are currently no unmatched consent responses."
+    )
   end
 
   def when_they_check_triage
