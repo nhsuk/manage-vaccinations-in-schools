@@ -91,7 +91,7 @@ class SessionNotification < ApplicationRecord
           next
         end
 
-        TextDeliveryJob.perform_later(
+        SMSDeliveryJob.perform_later(
           :session_school_reminder,
           consent:,
           patient_session:,
@@ -109,7 +109,7 @@ class SessionNotification < ApplicationRecord
 
         next if parent.phone.blank?
 
-        TextDeliveryJob.perform_later(
+        SMSDeliveryJob.perform_later(
           :"session_#{type}",
           parent:,
           patient_session:,

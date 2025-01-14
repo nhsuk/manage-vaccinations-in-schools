@@ -125,7 +125,7 @@ describe "HPV vaccination" do
   end
 
   def and_a_text_is_sent_saying_the_vaccination_didnt_happen
-    expect_text_to(
+    expect_sms_to(
       @patient.consents.last.parent.phone,
       :vaccination_confirmation_not_administered
     )

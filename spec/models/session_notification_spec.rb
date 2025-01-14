@@ -83,7 +83,7 @@ describe SessionNotification do
       end
 
       it "enqueues a text per parent" do
-        expect { create_and_send! }.to have_enqueued_text(
+        expect { create_and_send! }.to have_delivered_sms(
           :session_school_reminder
         ).with(consent:, patient_session:, sent_by: current_user)
       end
@@ -92,7 +92,7 @@ describe SessionNotification do
         before { parents.each { _1.update!(phone_receive_updates: false) } }
 
         it "doesn't enqueues a text" do
-          expect { create_and_send! }.not_to have_enqueued_text
+          expect { create_and_send! }.not_to have_delivered_sms
         end
       end
     end
@@ -135,13 +135,13 @@ describe SessionNotification do
       end
 
       it "enqueues a text per parent" do
-        expect { create_and_send! }.to have_enqueued_text(
+        expect { create_and_send! }.to have_delivered_sms(
           :session_clinic_initial_invitation
         ).with(
           parent: parents.first,
           patient_session:,
           sent_by: current_user
-        ).and have_enqueued_text(:session_clinic_initial_invitation).with(
+        ).and have_delivered_sms(:session_clinic_initial_invitation).with(
                 parent: parents.second,
                 patient_session:,
                 sent_by: current_user
@@ -154,7 +154,7 @@ describe SessionNotification do
         before { parent.update!(phone_receive_updates: false) }
 
         it "still enqueues a text" do
-          expect { create_and_send! }.to have_enqueued_text(
+          expect { create_and_send! }.to have_delivered_sms(
             :session_clinic_initial_invitation
           ).with(parent:, patient_session:, sent_by: current_user)
         end
@@ -199,13 +199,13 @@ describe SessionNotification do
       end
 
       it "enqueues a text per parent" do
-        expect { create_and_send! }.to have_enqueued_text(
+        expect { create_and_send! }.to have_delivered_sms(
           :session_clinic_subsequent_invitation
         ).with(
           parent: parents.first,
           patient_session:,
           sent_by: current_user
-        ).and have_enqueued_text(:session_clinic_subsequent_invitation).with(
+        ).and have_delivered_sms(:session_clinic_subsequent_invitation).with(
                 parent: parents.second,
                 patient_session:,
                 sent_by: current_user
@@ -218,7 +218,7 @@ describe SessionNotification do
         before { parent.update!(phone_receive_updates: false) }
 
         it "still enqueues a text" do
-          expect { create_and_send! }.to have_enqueued_text(
+          expect { create_and_send! }.to have_delivered_sms(
             :session_clinic_subsequent_invitation
           ).with(parent:, patient_session:, sent_by: current_user)
         end

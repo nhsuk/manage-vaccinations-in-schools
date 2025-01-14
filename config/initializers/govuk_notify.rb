@@ -22,7 +22,7 @@ GOVUK_NOTIFY_EMAIL_TEMPLATES = {
   vaccination_deleted: "1caf1459-abc9-4944-b8c0-deba906ea005"
 }.freeze
 
-GOVUK_NOTIFY_TEXT_TEMPLATES = {
+GOVUK_NOTIFY_SMS_TEMPLATES = {
   consent_clinic_request: "03a0d572-ca5b-417e-87c3-838872a9eabc",
   consent_confirmation_given: "25473aa7-2d7c-4d1d-b0c6-2ac492f737c3",
   consent_confirmation_refused: "eb34f3ab-0c58-4e56-b6b1-2c179270dfc3",

@@ -85,6 +85,6 @@ describe "Verbal consent" do
   end
 
   def and_i_a_text_is_sent_to_the_parent_confirming_their_consent
-    expect_text_to("07987 654321", :consent_confirmation_given)
+    expect_sms_to("07987 654321", :consent_confirmation_given)
   end
 end

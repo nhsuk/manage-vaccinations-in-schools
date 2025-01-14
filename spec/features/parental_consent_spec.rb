@@ -136,7 +136,7 @@ describe "Parental consent" do
   end
 
   def and_i_get_a_confirmation_text
-    expect_text_to("07123 456789", :consent_confirmation_given)
+    expect_sms_to("07123 456789", :consent_confirmation_given)
   end
 
   def when_the_nurse_checks_the_consent_responses

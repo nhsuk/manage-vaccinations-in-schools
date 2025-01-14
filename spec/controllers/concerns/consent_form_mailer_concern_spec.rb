@@ -18,7 +18,7 @@ describe ConsentFormMailerConcern do
     end
 
     it "sends a consent given text" do
-      expect { send_consent_form_confirmation }.to have_enqueued_text(
+      expect { send_consent_form_confirmation }.to have_delivered_sms(
         :consent_confirmation_given
       ).with(consent_form:)
     end
@@ -34,7 +34,7 @@ describe ConsentFormMailerConcern do
       end
 
       it "doesn't send a text" do
-        expect { send_consent_form_confirmation }.not_to have_enqueued_text
+        expect { send_consent_form_confirmation }.not_to have_delivered_sms
       end
     end
 
@@ -49,7 +49,7 @@ describe ConsentFormMailerConcern do
       end
 
       it "sends a consent refused text" do
-        expect { send_consent_form_confirmation }.to have_enqueued_text(
+        expect { send_consent_form_confirmation }.to have_delivered_sms(
           :consent_confirmation_refused
         ).with(consent_form:)
       end
@@ -66,7 +66,7 @@ describe ConsentFormMailerConcern do
       end
 
       it "doesn't send a text" do
-        expect { send_consent_form_confirmation }.not_to have_enqueued_text
+        expect { send_consent_form_confirmation }.not_to have_delivered_sms
       end
     end
 
@@ -92,7 +92,7 @@ describe ConsentFormMailerConcern do
       end
 
       it "doesn't send a text" do
-        expect { send_consent_form_confirmation }.not_to have_enqueued_text
+        expect { send_consent_form_confirmation }.not_to have_delivered_sms
       end
     end
   end

@@ -98,7 +98,7 @@ describe ConsentNotification do
       end
 
       it "enqueues a text per parent" do
-        expect { create_and_send! }.to have_enqueued_text(
+        expect { create_and_send! }.to have_delivered_sms(
           :consent_school_request
         ).with(
           parent: parents.first,
@@ -106,7 +106,7 @@ describe ConsentNotification do
           programme:,
           session:,
           sent_by: current_user
-        ).and have_enqueued_text(:consent_school_request).with(
+        ).and have_delivered_sms(:consent_school_request).with(
                 parent: parents.second,
                 patient:,
                 programme:,
@@ -121,7 +121,7 @@ describe ConsentNotification do
         before { parent.update!(phone_receive_updates: false) }
 
         it "still enqueues a text" do
-          expect { create_and_send! }.to have_enqueued_text(
+          expect { create_and_send! }.to have_delivered_sms(
             :consent_school_request
           ).with(parent:, patient:, programme:, session:, sent_by: current_user)
         end
@@ -168,7 +168,7 @@ describe ConsentNotification do
       end
 
       it "enqueues a text per parent" do
-        expect { create_and_send! }.to have_enqueued_text(
+        expect { create_and_send! }.to have_delivered_sms(
           :consent_clinic_request
         ).with(
           parent: parents.first,
@@ -176,7 +176,7 @@ describe ConsentNotification do
           programme:,
           session:,
           sent_by: current_user
-        ).and have_enqueued_text(:consent_clinic_request).with(
+        ).and have_delivered_sms(:consent_clinic_request).with(
                 parent: parents.second,
                 patient:,
                 programme:,
@@ -191,7 +191,7 @@ describe ConsentNotification do
         before { parent.update!(phone_receive_updates: false) }
 
         it "still enqueues a text" do
-          expect { create_and_send! }.to have_enqueued_text(
+          expect { create_and_send! }.to have_delivered_sms(
             :consent_clinic_request
           ).with(parent:, patient:, programme:, session:, sent_by: current_user)
         end
@@ -237,7 +237,7 @@ describe ConsentNotification do
       end
 
       it "enqueues a text per parent" do
-        expect { create_and_send! }.to have_enqueued_text(
+        expect { create_and_send! }.to have_delivered_sms(
           :consent_school_reminder
         ).with(
           parent: parents.first,
@@ -245,7 +245,7 @@ describe ConsentNotification do
           programme:,
           session:,
           sent_by: current_user
-        ).and have_enqueued_text(:consent_school_reminder).with(
+        ).and have_delivered_sms(:consent_school_reminder).with(
                 parent: parents.second,
                 patient:,
                 programme:,
@@ -260,7 +260,7 @@ describe ConsentNotification do
         before { parent.update!(phone_receive_updates: false) }
 
         it "still enqueues a text" do
-          expect { create_and_send! }.to have_enqueued_text(
+          expect { create_and_send! }.to have_delivered_sms(
             :consent_school_reminder
           ).with(parent:, patient:, programme:, session:, sent_by: current_user)
         end
@@ -309,7 +309,7 @@ describe ConsentNotification do
       end
 
       it "enqueues a text per parent" do
-        expect { create_and_send! }.to have_enqueued_text(
+        expect { create_and_send! }.to have_delivered_sms(
           :consent_school_reminder
         ).with(
           parent: parents.first,
@@ -317,7 +317,7 @@ describe ConsentNotification do
           programme:,
           session:,
           sent_by: current_user
-        ).and have_enqueued_text(:consent_school_reminder).with(
+        ).and have_delivered_sms(:consent_school_reminder).with(
                 parent: parents.second,
                 patient:,
                 programme:,
@@ -332,7 +332,7 @@ describe ConsentNotification do
         before { parent.update!(phone_receive_updates: false) }
 
         it "still enqueues a text" do
-          expect { create_and_send! }.to have_enqueued_text(
+          expect { create_and_send! }.to have_delivered_sms(
             :consent_school_reminder
           ).with(parent:, patient:, programme:, session:, sent_by: current_user)
         end

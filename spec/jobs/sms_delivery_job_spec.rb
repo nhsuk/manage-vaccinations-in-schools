@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe TextDeliveryJob do
+describe SMSDeliveryJob do
   before(:all) do
     Rails.configuration.action_mailer.delivery_method = :notify
     Rails.configuration.action_mailer.notify_settings = { api_key: "abc" }
@@ -41,7 +41,7 @@ describe TextDeliveryJob do
       )
     end
 
-    let(:template_name) { GOVUK_NOTIFY_TEXT_TEMPLATES.keys.first }
+    let(:template_name) { GOVUK_NOTIFY_SMS_TEMPLATES.keys.first }
     let(:programme) { create(:programme) }
     let(:session) { create(:session, programme:) }
     let(:parent) { create(:parent, phone: "01234 567890") }
@@ -68,7 +68,7 @@ describe TextDeliveryJob do
     it "sends a text using GOV.UK Notify" do
       expect(notifications_client).to receive(:send_sms).with(
         phone_number: "01234 567890",
-        template_id: GOVUK_NOTIFY_TEXT_TEMPLATES[template_name],
+        template_id: GOVUK_NOTIFY_SMS_TEMPLATES[template_name],
         personalisation: an_instance_of(Hash)
       )
       perform_now
@@ -82,7 +82,7 @@ describe TextDeliveryJob do
       expect(notify_log_entry.delivery_id).to eq(response.id)
       expect(notify_log_entry.recipient).to eq("01234 567890")
       expect(notify_log_entry.template_id).to eq(
-        GOVUK_NOTIFY_TEXT_TEMPLATES[template_name]
+        GOVUK_NOTIFY_SMS_TEMPLATES[template_name]
       )
       expect(notify_log_entry.patient).to eq(patient)
       expect(notify_log_entry.sent_by).to eq(sent_by)
@@ -107,7 +107,7 @@ describe TextDeliveryJob do
       it "sends a text using GOV.UK Notify" do
         expect(notifications_client).to receive(:send_sms).with(
           phone_number: "01234 567890",
-          template_id: GOVUK_NOTIFY_TEXT_TEMPLATES[template_name],
+          template_id: GOVUK_NOTIFY_SMS_TEMPLATES[template_name],
           personalisation: an_instance_of(Hash)
         )
         perform_now
@@ -121,7 +121,7 @@ describe TextDeliveryJob do
         expect(notify_log_entry.delivery_id).to eq(response.id)
         expect(notify_log_entry.recipient).to eq("01234 567890")
         expect(notify_log_entry.template_id).to eq(
-          GOVUK_NOTIFY_TEXT_TEMPLATES[template_name]
+          GOVUK_NOTIFY_SMS_TEMPLATES[template_name]
         )
         expect(notify_log_entry.consent_form).to eq(consent_form)
       end
@@ -141,7 +141,7 @@ describe TextDeliveryJob do
 
   describe "#perform_later" do
     subject(:perform_later) do
-      described_class.perform_later(GOVUK_NOTIFY_TEXT_TEMPLATES.keys.first)
+      described_class.perform_later(GOVUK_NOTIFY_SMS_TEMPLATES.keys.first)
     end
 
     it "uses the mailer queue" do

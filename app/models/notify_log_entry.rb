@@ -52,7 +52,7 @@ class NotifyLogEntry < ApplicationRecord
     if email?
       GOVUK_NOTIFY_EMAIL_TEMPLATES.key(template_id)
     elsif sms?
-      GOVUK_NOTIFY_TEXT_TEMPLATES.key(template_id)
+      GOVUK_NOTIFY_SMS_TEMPLATES.key(template_id)
     end
   end
 end

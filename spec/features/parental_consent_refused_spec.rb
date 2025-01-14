@@ -121,7 +121,7 @@ describe "Parental consent" do
   end
 
   def and_i_receive_a_text_confirming_that_my_child_wont_be_vaccinated
-    expect_text_to "07123 456789", :consent_confirmation_refused
+    expect_sms_to "07123 456789", :consent_confirmation_refused
   end
 
   def when_the_nurse_checks_the_consent_responses

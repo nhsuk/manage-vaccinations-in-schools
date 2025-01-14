@@ -39,7 +39,7 @@ describe TriageMailerConcern do
       end
 
       it "doesn't send a text message" do
-        expect { send_triage_confirmation }.not_to have_enqueued_text
+        expect { send_triage_confirmation }.not_to have_delivered_sms
       end
     end
 
@@ -56,7 +56,7 @@ describe TriageMailerConcern do
       end
 
       it "doesn't send a text message" do
-        expect { send_triage_confirmation }.not_to have_enqueued_text
+        expect { send_triage_confirmation }.not_to have_delivered_sms
       end
     end
 
@@ -71,7 +71,7 @@ describe TriageMailerConcern do
       end
 
       it "doesn't send a text message" do
-        expect { send_triage_confirmation }.not_to have_enqueued_text
+        expect { send_triage_confirmation }.not_to have_delivered_sms
       end
     end
 
@@ -88,7 +88,7 @@ describe TriageMailerConcern do
       end
 
       it "sends a text message" do
-        expect { send_triage_confirmation }.to have_enqueued_text(
+        expect { send_triage_confirmation }.to have_delivered_sms(
           :consent_confirmation_given
         ).with(consent:, session:, sent_by: current_user)
       end
@@ -107,7 +107,7 @@ describe TriageMailerConcern do
       end
 
       it "doesn't send a text message" do
-        expect { send_triage_confirmation }.not_to have_enqueued_text
+        expect { send_triage_confirmation }.not_to have_delivered_sms
       end
     end
 
@@ -119,7 +119,7 @@ describe TriageMailerConcern do
       end
 
       it "doesn't send a text message" do
-        expect { send_triage_confirmation }.not_to have_enqueued_text
+        expect { send_triage_confirmation }.not_to have_delivered_sms
       end
     end
 
@@ -140,7 +140,7 @@ describe TriageMailerConcern do
       end
 
       it "doesn't send a text message" do
-        expect { send_triage_confirmation }.not_to have_enqueued_text
+        expect { send_triage_confirmation }.not_to have_delivered_sms
       end
     end
 
@@ -155,7 +155,7 @@ describe TriageMailerConcern do
       end
 
       it "sends a text message" do
-        expect { send_triage_confirmation }.to have_enqueued_text(
+        expect { send_triage_confirmation }.to have_delivered_sms(
           :consent_confirmation_refused
         ).with(consent:, session:, sent_by: current_user)
       end
@@ -170,7 +170,7 @@ describe TriageMailerConcern do
       end
 
       it "doesn't send a text message" do
-        expect { send_triage_confirmation }.not_to have_enqueued_text
+        expect { send_triage_confirmation }.not_to have_delivered_sms
       end
     end
 
@@ -183,7 +183,7 @@ describe TriageMailerConcern do
       end
 
       it "doesn't send a text message" do
-        expect { send_triage_confirmation }.not_to have_enqueued_text
+        expect { send_triage_confirmation }.not_to have_delivered_sms
       end
     end
 
@@ -196,7 +196,7 @@ describe TriageMailerConcern do
       end
 
       it "doesn't send a text message" do
-        expect { send_triage_confirmation }.not_to have_enqueued_text
+        expect { send_triage_confirmation }.not_to have_delivered_sms
       end
     end
   end

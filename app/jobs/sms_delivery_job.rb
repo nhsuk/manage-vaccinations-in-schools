@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class TextDeliveryJob < NotifyDeliveryJob
+class SMSDeliveryJob < NotifyDeliveryJob
   def perform(
     template_name,
     consent: nil,
@@ -13,7 +13,7 @@ class TextDeliveryJob < NotifyDeliveryJob
     session: nil,
     vaccination_record: nil
   )
-    template_id = GOVUK_NOTIFY_TEXT_TEMPLATES[template_name.to_sym]
+    template_id = GOVUK_NOTIFY_SMS_TEMPLATES[template_name.to_sym]
     raise UnknownTemplate if template_id.nil?
 
     phone_number =
@@ -40,7 +40,7 @@ class TextDeliveryJob < NotifyDeliveryJob
         self.class.deliveries << args
         SecureRandom.uuid
       else
-        Rails.logger.info "Sending text message to #{phone_number} with template #{template_id}"
+        Rails.logger.info "Sending SMS to #{phone_number} with template #{template_id}"
         nil
       end
 

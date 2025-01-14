@@ -100,7 +100,7 @@ feature "Verbal consent" do
   end
 
   def and_a_text_is_sent_to_the_parent_confirming_their_consent
-    expect_text_to(@refusing_parent.phone, :consent_confirmation_given)
+    expect_sms_to(@refusing_parent.phone, :consent_confirmation_given)
   end
 
   def and_the_child_is_shown_as_having_consent_given
