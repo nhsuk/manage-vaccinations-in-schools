@@ -17,6 +17,7 @@
 #  health_answers                      :jsonb            not null
 #  invalidated_at                      :datetime
 #  nhs_number                          :string
+#  notes                               :text             default(""), not null
 #  parent_contact_method_other_details :string
 #  parent_contact_method_type          :string
 #  parent_email                        :string
