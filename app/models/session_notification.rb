@@ -79,42 +79,20 @@ class SessionNotification < ApplicationRecord
 
     if type == :school_reminder
       contacts.each do |consent|
-        if consent.parent.email.present?
-          SessionMailer
-            .with(consent:, patient_session:, sent_by: current_user)
-            .school_reminder
-            .deliver_later
-        end
+        params = { consent:, patient_session:, sent_by: current_user }
 
-        unless consent.parent.phone.present? &&
-                 consent.parent.phone_receive_updates
-          next
-        end
+        EmailDeliveryJob.perform_later(:session_school_reminder, **params)
 
-        SMSDeliveryJob.perform_later(
-          :session_school_reminder,
-          consent:,
-          patient_session:,
-          sent_by: current_user
-        )
+        next unless consent.parent.phone_receive_updates
+
+        SMSDeliveryJob.perform_later(:session_school_reminder, **params)
       end
     else
       contacts.each do |parent|
-        if parent.email.present?
-          SessionMailer
-            .with(parent:, patient_session:, sent_by: current_user)
-            .send(type)
-            .deliver_later
-        end
+        params = { parent:, patient_session:, sent_by: current_user }
 
-        next if parent.phone.blank?
-
-        SMSDeliveryJob.perform_later(
-          :"session_#{type}",
-          parent:,
-          patient_session:,
-          sent_by: current_user
-        )
+        EmailDeliveryJob.perform_later(:"session_#{type}", **params)
+        SMSDeliveryJob.perform_later(:"session_#{type}", **params)
       end
     end
   end

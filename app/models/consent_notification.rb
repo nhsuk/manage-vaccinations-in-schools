@@ -69,24 +69,25 @@ class ConsentNotification < ApplicationRecord
 
     is_school = session.location.school?
 
-    mailer_action = (is_school ? :"school_#{type}" : :"clinic_#{type}")
+    mail_template =
+      :"consent_#{(is_school ? :"school_#{type}" : :"clinic_#{type}")}"
 
     text_template =
       if type == :request
-        :"consent_#{mailer_action}"
+        mail_template
       elsif is_school
         :consent_school_reminder
       end
 
     parents.each do |parent|
-      unless parent.email.nil?
-        ConsentMailer
-          .with(parent:, patient:, programme:, session:, sent_by: current_user)
-          .send(mailer_action)
-          .deliver_later
-      end
-
-      next if parent.phone.nil?
+      EmailDeliveryJob.perform_later(
+        mail_template,
+        parent:,
+        patient:,
+        programme:,
+        session:,
+        sent_by: current_user
+      )
 
       SMSDeliveryJob.perform_later(
         text_template,

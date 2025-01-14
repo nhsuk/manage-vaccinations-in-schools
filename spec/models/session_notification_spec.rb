@@ -69,17 +69,9 @@ describe SessionNotification do
       end
 
       it "enqueues an email per parent who gave consent" do
-        expect { create_and_send! }.to have_enqueued_mail(
-          SessionMailer,
-          :school_reminder
-        ).with(
-          params: {
-            consent:,
-            patient_session:,
-            sent_by: current_user
-          },
-          args: []
-        )
+        expect { create_and_send! }.to have_delivered_email(
+          :session_school_reminder
+        ).with(consent:, patient_session:, sent_by: current_user)
       end
 
       it "enqueues a text per parent" do
@@ -111,26 +103,16 @@ describe SessionNotification do
       end
 
       it "enqueues an email per parent" do
-        expect { create_and_send! }.to have_enqueued_mail(
-          SessionMailer,
-          :clinic_initial_invitation
+        expect { create_and_send! }.to have_delivered_email(
+          :session_clinic_initial_invitation
         ).with(
-          params: {
-            parent: parents.first,
-            patient_session:,
-            sent_by: current_user
-          },
-          args: []
-        ).and have_enqueued_mail(
-                SessionMailer,
-                :clinic_initial_invitation
-              ).with(
-                params: {
-                  parent: parents.second,
-                  patient_session:,
-                  sent_by: current_user
-                },
-                args: []
+          parent: parents.first,
+          patient_session:,
+          sent_by: current_user
+        ).and have_delivered_email(:session_clinic_initial_invitation).with(
+                parent: parents.second,
+                patient_session:,
+                sent_by: current_user
               )
       end
 
@@ -175,26 +157,16 @@ describe SessionNotification do
       end
 
       it "enqueues an email per parent" do
-        expect { create_and_send! }.to have_enqueued_mail(
-          SessionMailer,
-          :clinic_subsequent_invitation
+        expect { create_and_send! }.to have_delivered_email(
+          :session_clinic_subsequent_invitation
         ).with(
-          params: {
-            parent: parents.first,
-            patient_session:,
-            sent_by: current_user
-          },
-          args: []
-        ).and have_enqueued_mail(
-                SessionMailer,
-                :clinic_subsequent_invitation
-              ).with(
-                params: {
-                  parent: parents.second,
-                  patient_session:,
-                  sent_by: current_user
-                },
-                args: []
+          parent: parents.first,
+          patient_session:,
+          sent_by: current_user
+        ).and have_delivered_email(:session_clinic_subsequent_invitation).with(
+                parent: parents.second,
+                patient_session:,
+                sent_by: current_user
               )
       end
 

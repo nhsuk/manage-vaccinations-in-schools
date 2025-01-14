@@ -7,24 +7,20 @@ module VaccinationMailerConcern
     parents = parents_for_vaccination_mailer(vaccination_record)
     return if parents.empty?
 
-    mailer_action =
+    template_name =
       if vaccination_record.administered?
-        :confirmation_administered
+        :vaccination_confirmation_administered
       else
-        :confirmation_not_administered
+        :vaccination_confirmation_not_administered
       end
-
-    text_template_name = :"vaccination_#{mailer_action}"
 
     parents.each do |parent|
       params = { parent:, vaccination_record:, sent_by: try(:current_user) }
 
-      if parent.email.present?
-        VaccinationMailer.with(params).public_send(mailer_action).deliver_later
-      end
+      EmailDeliveryJob.perform_later(template_name, **params)
 
-      if parent.phone.present? && parent.phone_receive_updates
-        SMSDeliveryJob.perform_later(text_template_name, **params)
+      if parent.phone_receive_updates
+        SMSDeliveryJob.perform_later(template_name, **params)
       end
     end
   end
@@ -33,12 +29,15 @@ module VaccinationMailerConcern
     parents = parents_for_vaccination_mailer(vaccination_record)
     return if parents.empty?
 
-    parents.each do |parent|
-      params = { parent:, vaccination_record:, sent_by: try(:current_user) }
+    sent_by = try(:current_user)
 
-      if parent.email.present?
-        VaccinationMailer.with(params).deleted.deliver_later
-      end
+    parents.each do |parent|
+      EmailDeliveryJob.perform_later(
+        :vaccination_deleted,
+        parent:,
+        vaccination_record:,
+        sent_by:
+      )
     end
   end
 

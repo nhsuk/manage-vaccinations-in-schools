@@ -13,21 +13,21 @@ module TriageMailerConcern
     params = { consent:, session:, sent_by: current_user }
 
     if vaccination_will_happen?(patient_session, consent)
-      TriageMailer.with(params).vaccination_will_happen.deliver_later
+      EmailDeliveryJob.perform_later(:triage_vaccination_will_happen, **params)
     elsif vaccination_wont_happen?(patient_session, consent)
-      TriageMailer.with(params).vaccination_wont_happen.deliver_later
+      EmailDeliveryJob.perform_later(:triage_vaccination_wont_happen, **params)
     elsif vaccination_at_clinic?(patient_session, consent)
-      TriageMailer.with(params).vaccination_at_clinic.deliver_later
+      EmailDeliveryJob.perform_later(:triage_vaccination_at_clinic, **params)
     elsif consent.triage_needed?
-      ConsentMailer.with(params).confirmation_triage.deliver_later
+      EmailDeliveryJob.perform_later(:consent_confirmation_triage, **params)
     elsif consent.response_refused?
-      ConsentMailer.with(params).confirmation_refused.deliver_later
+      EmailDeliveryJob.perform_later(:consent_confirmation_refused, **params)
 
       if consent.parent.phone_receive_updates
         SMSDeliveryJob.perform_later(:consent_confirmation_refused, **params)
       end
     elsif consent.response_given?
-      ConsentMailer.with(params).confirmation_given.deliver_later
+      EmailDeliveryJob.perform_later(:consent_confirmation_given, **params)
 
       if consent.parent.phone_receive_updates
         SMSDeliveryJob.perform_later(:consent_confirmation_given, **params)

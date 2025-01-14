@@ -220,7 +220,7 @@ describe "Delete vaccination record" do
   end
 
   def and_the_parent_doesnt_receives_an_email
-    expect(sent_emails).to be_empty
+    expect(email_deliveries).to be_empty
   end
 
   def then_i_cant_click_on_delete_vaccination_record

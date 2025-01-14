@@ -489,7 +489,7 @@ describe "Edit vaccination record" do
   end
 
   def then_the_parent_doesnt_receive_an_email
-    expect(sent_emails).to be_empty
+    expect(email_deliveries).to be_empty
   end
 
   alias_method :and_the_parent_doesnt_receive_an_email,

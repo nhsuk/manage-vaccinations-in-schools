@@ -11,10 +11,9 @@ describe ConsentFormMailerConcern do
     end
 
     it "sends a confirmation email" do
-      expect { send_consent_form_confirmation }.to have_enqueued_mail(
-        ConsentMailer,
-        :confirmation_given
-      ).with(params: { consent_form: }, args: [])
+      expect { send_consent_form_confirmation }.to have_delivered_email(
+        :consent_confirmation_given
+      ).with(consent_form:)
     end
 
     it "sends a consent given text" do
@@ -27,10 +26,9 @@ describe ConsentFormMailerConcern do
       before { consent_form.contact_injection = true }
 
       it "sends an injection confirmation email" do
-        expect { send_consent_form_confirmation }.to have_enqueued_mail(
-          ConsentMailer,
-          :confirmation_injection
-        ).with(params: { consent_form: }, args: [])
+        expect { send_consent_form_confirmation }.to have_delivered_email(
+          :consent_confirmation_injection
+        ).with(consent_form:)
       end
 
       it "doesn't send a text" do
@@ -42,10 +40,9 @@ describe ConsentFormMailerConcern do
       before { consent_form.response = :refused }
 
       it "sends an confirmation refused email" do
-        expect { send_consent_form_confirmation }.to have_enqueued_mail(
-          ConsentMailer,
-          :confirmation_refused
-        ).with(params: { consent_form: }, args: [])
+        expect { send_consent_form_confirmation }.to have_delivered_email(
+          :consent_confirmation_refused
+        ).with(consent_form:)
       end
 
       it "sends a consent refused text" do
@@ -59,10 +56,9 @@ describe ConsentFormMailerConcern do
       before { consent_form.health_answers.last.response = "yes" }
 
       it "sends an confirmation needs triage email" do
-        expect { send_consent_form_confirmation }.to have_enqueued_mail(
-          ConsentMailer,
-          :confirmation_triage
-        ).with(params: { consent_form: }, args: [])
+        expect { send_consent_form_confirmation }.to have_delivered_email(
+          :consent_confirmation_triage
+        ).with(consent_form:)
       end
 
       it "doesn't send a text" do
@@ -85,10 +81,9 @@ describe ConsentFormMailerConcern do
       end
 
       it "sends an confirmation needs triage email" do
-        expect { send_consent_form_confirmation }.to have_enqueued_mail(
-          ConsentMailer,
-          :confirmation_clinic
-        ).with(params: { consent_form: }, args: [])
+        expect { send_consent_form_confirmation }.to have_delivered_email(
+          :consent_confirmation_clinic
+        ).with(consent_form:)
       end
 
       it "doesn't send a text" do
