@@ -24,10 +24,14 @@
                 row.with_cell(text: consent_form.parent_full_name)
                 row.with_cell do
                   tag.ul(class: "app-action-list") do
-                    match_link = link_to("Match with record", consent_form)
                     create_link = link_to("Create record", patient_consent_form_path(consent_form))
+                    invalidate_link = link_to("Mark as invalid", invalidate_consent_form_path(consent_form))
+                    match_link = link_to("Match with record", consent_form)
         
-                    links = [tag.li(class: "app-action-list__item") { match_link }]
+                    links = [
+                      tag.li(class: "app-action-list__item") { match_link },
+                      tag.li(class: "app-action-list__item") { invalidate_link },
+                    ]
         
                     if consent_form.nhs_number.present?
                       links << tag.li(class: "app-action-list__item") { create_link }

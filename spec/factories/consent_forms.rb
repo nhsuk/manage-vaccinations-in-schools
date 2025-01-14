@@ -111,6 +111,10 @@ FactoryBot.define do
       ]
     end
 
+    trait :invalidated do
+      invalidated_at { Time.current }
+    end
+
     trait :refused do
       response { :refused }
       reason { :personal_choice }

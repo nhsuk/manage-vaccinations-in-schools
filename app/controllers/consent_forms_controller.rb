@@ -45,6 +45,24 @@ class ConsentFormsController < ApplicationController
     redirect_to action: :index
   end
 
+  def edit_invalidate
+    render :invalidate, layout: "two_thirds"
+  end
+
+  def update_invalidate
+    @consent_form.assign_attributes(invalidate_params)
+
+    if @consent_form.save
+      redirect_to consent_forms_path,
+                  flash: {
+                    success:
+                      "Consent response from #{@consent_form.parent_full_name} marked as invalid"
+                  }
+    else
+      render :invalidate, layout: "two_thirds", status: :unprocessable_entity
+    end
+  end
+
   def new_patient
     @patient =
       Patient.from_consent_form(@consent_form).tap(&:clear_changes_information)
@@ -81,7 +99,7 @@ class ConsentFormsController < ApplicationController
   private
 
   def consent_form_scope
-    policy_scope(ConsentForm).unmatched.recorded
+    policy_scope(ConsentForm).unmatched.recorded.not_invalidated
   end
 
   def set_consent_form
@@ -90,5 +108,9 @@ class ConsentFormsController < ApplicationController
 
   def set_patient
     @patient = policy_scope(Patient).find(params[:patient_id])
+  end
+
+  def invalidate_params
+    params.expect(consent_form: :notes).merge(invalidated_at: Time.current)
   end
 end

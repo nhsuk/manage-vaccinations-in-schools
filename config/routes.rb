@@ -93,6 +93,9 @@ Rails.application.routes.draw do
       get "match/:patient_id", action: :edit_match, as: :match
       post "match/:patient_id", action: :update_match
 
+      get "invalidate", action: :edit_invalidate
+      post "invalidate", action: :update_invalidate
+
       get "patient", action: :new_patient
       post "patient", action: :create_patient
     end
