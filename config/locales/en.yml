@@ -729,6 +729,7 @@ en:
   notices:
     index:
       title: Important notices
+      title_short: Notices
       no_results: There are currently no important notices.
   mailers:
     consent_form_mailer:

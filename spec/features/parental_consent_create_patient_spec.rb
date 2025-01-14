@@ -120,6 +120,7 @@ describe "Parental consent create patient" do
     sign_in @organisation.users.first
     visit "/dashboard"
 
+    expect(page).to have_content("Responses (1)")
     click_on "Responses", match: :first
   end
 

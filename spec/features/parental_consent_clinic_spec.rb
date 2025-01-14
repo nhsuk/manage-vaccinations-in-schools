@@ -277,6 +277,7 @@ describe "Parental consent school" do
   end
 
   def then_the_nurse_should_see_one_move
+    expect(page).to have_content("School moves (1)")
     expect(page).to have_content("1 school move")
   end
 

@@ -85,7 +85,9 @@ class User < ApplicationRecord
 
   def selected_organisation
     @selected_organisation ||=
-      Organisation.find_by(ods_code: cis2_info.dig("selected_org", "code"))
+      if cis2_info.present?
+        Organisation.find_by(ods_code: cis2_info.dig("selected_org", "code"))
+      end
   end
 
   def requires_email_and_password?

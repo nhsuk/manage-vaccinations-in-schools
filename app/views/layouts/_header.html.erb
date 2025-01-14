@@ -39,58 +39,36 @@
   <% if @show_navigation %>
     <nav class="nhsuk-navigation" role="navigation" aria-label="Primary navigation">
       <ul class="nhsuk-header__navigation-list nhsuk-header__navigation-list--left-aligned">
-        <li class="nhsuk-header__navigation-item">
-          <%= link_to t("programmes.index.title"), programmes_path,
-                      class: "nhsuk-header__navigation-link",
-                      aria: { current: request.path.start_with?(programmes_path) ?
-                        "true" : nil } %>
-        </li>
-        <li class="nhsuk-header__navigation-item">
-          <%= link_to t("sessions.index.title"), sessions_path,
-                      class: "nhsuk-header__navigation-link",
-                      aria: { current: request.path.start_with?(sessions_path) ?
-                        "true" : nil } %>
-        </li>
-        <li class="nhsuk-header__navigation-item">
-          <%= link_to t("patients.index.title"), patients_path,
-                      class: "nhsuk-header__navigation-link",
-                      aria: { current: request.path.start_with?(patients_path) ?
-                        "true" : nil } %>
-        </li>
-        <li class="nhsuk-header__navigation-item app-header__navigation-item--divider">
-          <%= link_to t("vaccines.index.title"), vaccines_path,
-                      class: "nhsuk-header__navigation-link",
-                      aria: { current: request.path.start_with?(vaccines_path) ?
-                        "true" : nil } %>
-        </li>
-        <li class="nhsuk-header__navigation-item app-header__navigation-item--divider">
-          <%= link_to t("consent_forms.index.title_short"), consent_forms_path,
-                      class: "nhsuk-header__navigation-link",
-                      aria: { current: request.path.start_with?(consent_forms_path) ?
-                        "true" : nil } %>
-        </li>
-        <li class="nhsuk-header__navigation-item app-header__navigation-item--divider">
-          <%= link_to t("school_moves.index.title"), school_moves_path,
-                      class: "nhsuk-header__navigation-link",
-                      aria: { current: request.path.start_with?(school_moves_path) ?
-                        "true" : nil } %>
-        </li>
+        <%= render AppHeaderNavigationItemComponent.new(t("programmes.index.title"), programmes_path, request_path: request.path) %>
+        <%= render AppHeaderNavigationItemComponent.new(t("sessions.index.title"), sessions_path, request_path: request.path) %>
+        <%= render AppHeaderNavigationItemComponent.new(t("patients.index.title"), patients_path, request_path: request.path) %>
+        <%= render AppHeaderNavigationItemComponent.new(t("vaccines.index.title"), vaccines_path, request_path: request.path) %>
+
+        <%= render AppHeaderNavigationItemComponent.new(
+          t("consent_forms.index.title_short"),
+          consent_forms_path,
+          request_path: request.path,
+          count: policy_scope(ConsentForm).unmatched.recorded.count
+        ) %>
+
+        <%= render AppHeaderNavigationItemComponent.new(
+          t("school_moves.index.title"),
+          school_moves_path,
+          request_path: request.path,
+          count: policy_scope(SchoolMove).count
+        ) %>
 
         <% if policy(:notices).index? %>
-          <li class="nhsuk-header__navigation-item app-header__navigation-item--divider">
-            <%= link_to "Notices", notices_path,
-                        class: "nhsuk-header__navigation-link",
-                        aria: { current: request.path.start_with?(notices_path) ?
-                          "true" : nil } %>
-          </li>
+          <%= render AppHeaderNavigationItemComponent.new(
+            t("notices.index.title_short"),
+            notices_path,
+            request_path: request.path,
+            count: policy_scope(Patient).with_notice.count
+          ) %>
         <% end %>
 
-        <li class="nhsuk-header__navigation-item app-header__navigation-item--divider">
-          <%= link_to t("organisations.show.title"), organisation_path,
-                      class: "nhsuk-header__navigation-link",
-                      aria: { current: request.path.start_with?(organisation_path) ?
-                        "true" : nil } %>
-        </li>
+        <%= render AppHeaderNavigationItemComponent.new(t("organisations.show.title"), organisation_path, request_path: request.path) %>
+
         <li class="nhsuk-mobile-menu-container">
           <button class="nhsuk-header__menu-toggle nhsuk-header__navigation-link" id="toggle-menu" aria-expanded="false">
             <span class="nhsuk-u-visually-hidden">Browse</span>
