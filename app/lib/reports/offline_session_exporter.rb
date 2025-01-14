@@ -18,6 +18,7 @@ class Reports::OfflineSessionExporter
                             name: "Performing Professionals",
                             values_name: "EMAIL",
                             values: performing_professional_email_values
+        add_batch_numbers_sheets(package)
       }
       .to_stream
       .read
@@ -68,9 +69,18 @@ class Reports::OfflineSessionExporter
 
       sheet.add_row([values_name])
 
-      values.each do |value|
-        sheet.add_row([value])
-      end
+      values.each { |value| sheet.add_row([value]) }
+    end
+  end
+
+  def add_batch_numbers_sheets(package)
+    package.use_shared_strings = true
+
+    session.programmes.map do |programme|
+      add_reference_sheet package,
+                          name: "#{programme.type} Batch Numbers",
+                          values_name: "NUMBER",
+                          values: batch_values_for_programme(programme)
     end
   end
 
@@ -241,8 +251,7 @@ class Reports::OfflineSessionExporter
     )
     row[:batch_number] = Cell.new(
       batch&.name,
-      allowed_values:
-        batch_values_for_programme(programme, existing_batch: batch)
+      allowed_formula: batch_numbers_range_for_programme(programme)
     )
     row[:batch_expiry_date] = batch&.expiry
     row[:anatomical_site] = Cell.new(
@@ -276,7 +285,7 @@ class Reports::OfflineSessionExporter
       allowed_formula: performing_professionals_range
     )
     row[:batch_number] = Cell.new(
-      allowed_values: batch_values_for_programme(programme)
+      allowed_formula: batch_numbers_range_for_programme(programme)
     )
     row[:batch_expiry_date] = Cell.new(type: :date)
     row[:anatomical_site] = Cell.new(
@@ -322,6 +331,11 @@ class Reports::OfflineSessionExporter
   def performing_professionals_range
     count = performing_professional_email_values.count
     "'Performing Professionals'!$A2:$A#{count + 1}"
+  end
+
+  def batch_numbers_range_for_programme(programme)
+    count = batch_values_for_programme(programme).count
+    "'#{programme.type} Batch Numbers'!$A2:$A#{count + 1}"
   end
 
   def clinic_name_values

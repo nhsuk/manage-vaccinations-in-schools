@@ -324,6 +324,20 @@ describe Reports::OfflineSessionExporter do
 
         it { should eq "='Performing Professionals'!$A2:$A2" }
       end
+
+      describe "batch number" do
+        subject(:validation) do
+          create(
+            :batch,
+            name: "BATCH12345",
+            vaccine: programme.vaccines.active.first,
+            organisation:
+          )
+          validation_formula(worksheet:, column_name: "batch_number")
+        end
+
+        it { should eq "='hpv Batch Numbers'!$A2:$A2" }
+      end
     end
 
     describe "performing professionals sheet" do
@@ -345,6 +359,34 @@ describe Reports::OfflineSessionExporter do
       it "lists all the organisation users' emails" do
         emails = worksheet[1..].map { _1.cells.first.value }
         expect(emails).to eq vaccinators.map(&:email)
+      end
+
+      its(:state) { should eq "hidden" }
+      its(:sheet_protection) { should be_present }
+    end
+
+    describe "batch numbers sheet" do
+      subject(:worksheet) do
+        workbook.worksheets.find { _1.sheet_name == "hpv Batch Numbers" }
+      end
+
+      let!(:batches) do
+        create_list(
+          :batch,
+          2,
+          vaccine: programme.vaccines.active.first,
+          organisation:
+        )
+      end
+
+      before do
+        create(:patient, session:)
+        create(:batch, name: "OTHERBATCH", vaccine: create(:vaccine, :flu))
+      end
+
+      it "lists all the batch numbers for the programme" do
+        batch_numbers = worksheet[1..].map { _1.cells.first.value }
+        expect(batch_numbers).to eq batches.map(&:name)
       end
 
       its(:state) { should eq "hidden" }
@@ -562,6 +604,20 @@ describe Reports::OfflineSessionExporter do
 
         it { should eq "='Performing Professionals'!$A2:$A2" }
       end
+
+      describe "batch number" do
+        subject(:validation) do
+          create(
+            :batch,
+            name: "BATCH12345",
+            vaccine: programme.vaccines.active.first,
+            organisation:
+          )
+          validation_formula(worksheet:, column_name: "batch_number")
+        end
+
+        it { should eq "='hpv Batch Numbers'!$A2:$A2" }
+      end
     end
 
     describe "performing professionals sheet" do
@@ -583,6 +639,34 @@ describe Reports::OfflineSessionExporter do
       it "lists all the organisation users' emails" do
         emails = worksheet[1..].map { _1.cells.first.value }
         expect(emails).to eq vaccinators.map(&:email)
+      end
+
+      its(:state) { should eq "hidden" }
+      its(:sheet_protection) { should be_present }
+    end
+
+    describe "batch numbers sheet" do
+      subject(:worksheet) do
+        workbook.worksheets.find { _1.sheet_name == "hpv Batch Numbers" }
+      end
+
+      let!(:batches) do
+        create_list(
+          :batch,
+          2,
+          vaccine: programme.vaccines.active.first,
+          organisation:
+        )
+      end
+
+      before do
+        create(:patient, session:)
+        create(:batch, name: "OTHERBATCH", vaccine: create(:vaccine, :flu))
+      end
+
+      it "lists all the batch numbers for the programme" do
+        batch_numbers = worksheet[1..].map { _1.cells.first.value }
+        expect(batch_numbers).to eq batches.map(&:name)
       end
 
       its(:state) { should eq "hidden" }
