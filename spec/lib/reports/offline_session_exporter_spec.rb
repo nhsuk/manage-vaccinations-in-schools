@@ -13,14 +13,14 @@ describe Reports::OfflineSessionExporter do
   end
 
   def validation_formula(worksheet:, column_name:, row: 1)
-    column = worksheet[0].cells.find_index { _1.value == column_name.upcase }
+    column = worksheet[0].cells.find_index { it.value == column_name.upcase }
 
     # stree-ignore
     worksheet
       .data_validations
       .find { |validation|
         validation.sqref.any? do
-          _1.col_range.include?(column) && _1.row_range.include?(row)
+          it.col_range.include?(column) && it.row_range.include?(row)
         end
       }
       .formula1
@@ -342,7 +342,7 @@ describe Reports::OfflineSessionExporter do
 
     describe "performing professionals sheet" do
       subject(:worksheet) do
-        workbook.worksheets.find { _1.sheet_name == "Performing Professionals" }
+        workbook.worksheets.find { it.sheet_name == "Performing Professionals" }
       end
 
       let!(:vaccinators) { create_list(:user, 2, organisation:) }
@@ -357,7 +357,7 @@ describe Reports::OfflineSessionExporter do
       end
 
       it "lists all the organisation users' emails" do
-        emails = worksheet[1..].map { _1.cells.first.value }
+        emails = worksheet[1..].map { it.cells.first.value }
         expect(emails).to include(*vaccinators.map(&:email))
       end
 
@@ -367,7 +367,7 @@ describe Reports::OfflineSessionExporter do
 
     describe "batch numbers sheet" do
       subject(:worksheet) do
-        workbook.worksheets.find { _1.sheet_name == "hpv Batch Numbers" }
+        workbook.worksheets.find { it.sheet_name == "hpv Batch Numbers" }
       end
 
       let!(:batches) do
@@ -385,7 +385,7 @@ describe Reports::OfflineSessionExporter do
       end
 
       it "lists all the batch numbers for the programme" do
-        batch_numbers = worksheet[1..].map { _1.cells.first.value }
+        batch_numbers = worksheet[1..].map { it.cells.first.value }
         expect(batch_numbers).to include(*batches.map(&:name))
       end
 
@@ -622,7 +622,7 @@ describe Reports::OfflineSessionExporter do
 
     describe "performing professionals sheet" do
       subject(:worksheet) do
-        workbook.worksheets.find { _1.sheet_name == "Performing Professionals" }
+        workbook.worksheets.find { it.sheet_name == "Performing Professionals" }
       end
 
       let!(:vaccinators) { create_list(:user, 2, organisation:) }
@@ -637,7 +637,7 @@ describe Reports::OfflineSessionExporter do
       end
 
       it "lists all the organisation users' emails" do
-        emails = worksheet[1..].map { _1.cells.first.value }
+        emails = worksheet[1..].map { it.cells.first.value }
         expect(emails).to eq vaccinators.map(&:email)
       end
 
@@ -647,7 +647,7 @@ describe Reports::OfflineSessionExporter do
 
     describe "batch numbers sheet" do
       subject(:worksheet) do
-        workbook.worksheets.find { _1.sheet_name == "hpv Batch Numbers" }
+        workbook.worksheets.find { it.sheet_name == "hpv Batch Numbers" }
       end
 
       let!(:batches) do
@@ -665,7 +665,7 @@ describe Reports::OfflineSessionExporter do
       end
 
       it "lists all the batch numbers for the programme" do
-        batch_numbers = worksheet[1..].map { _1.cells.first.value }
+        batch_numbers = worksheet[1..].map { it.cells.first.value }
         expect(batch_numbers).to eq batches.map(&:name)
       end
 
