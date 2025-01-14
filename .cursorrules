@@ -1,0 +1,40 @@
+# Manage vaccinations in schools
+
+Write the complete code for every step. Do not get lazy. Write everything that
+is needed.
+
+Your goal is to completely finish whatever the user asks for.
+
+This is a Ruby on Rails project that implements a monolithic server-rendered
+application that allows nurses to record and manage vaccination sessions.
+
+Notable gems are:
+
+- `govuk-components` and `govuk_design_system_formbuilder` for reusable
+  components
+- `view_component` for other components
+- `devise` for auth
+- `rspec` for testing
+- `good_job` for background jobs
+- `turbo-rails` and `stimulus-rails` for small bits of client-side
+  interactivity
+
+All but the most trivial bits of functionality should be accompanied by test
+coverage.
+
+## Peculiarities
+
+It's an NHS project but it uses a custom stylesheet to override the GOV.UK
+Design System styles. It uses the `brand` options for the component gems to make
+them look like NHS components instead of GOV.UK ones.
+
+## Conventions
+
+- All components should be prefixed with `App` and suffixed with `Component`
+- Tests can start with `describe` instead of `Rspec.describe`
+- Tests don't need `require "rails_helper"` at the top
+- Don't write controller specs, focus on feature specs and follow the
+  conventions of others in `spec/features`
+- Call `super` to initialize state of the parent class in new components
+- Write `# frozen_string_literal: true` at the top of every new file
+- Omit hash values when the key matches the variable name (Ruby 3.1 feature)
