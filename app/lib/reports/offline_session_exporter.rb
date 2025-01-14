@@ -13,6 +13,8 @@ class Reports::OfflineSessionExporter
     # stree-ignore
     Axlsx::Package
       .new { |package|
+        package.use_shared_strings = true
+
         add_vaccinations_sheet(package)
         add_reference_sheet package,
                             name: "Performing Professionals",
@@ -37,8 +39,6 @@ class Reports::OfflineSessionExporter
   delegate :location, :organisation, to: :session
 
   def add_vaccinations_sheet(package)
-    package.use_shared_strings = true
-
     workbook = package.workbook
 
     cached_styles = CachedStyles.new(workbook)
@@ -61,8 +61,6 @@ class Reports::OfflineSessionExporter
   end
 
   def add_reference_sheet(package, name:, values_name:, values:)
-    package.use_shared_strings = true
-
     workbook = package.workbook
     workbook.add_worksheet(name:, state: :hidden) do |sheet|
       sheet.sheet_protection
@@ -74,8 +72,6 @@ class Reports::OfflineSessionExporter
   end
 
   def add_batch_numbers_sheets(package)
-    package.use_shared_strings = true
-
     session.programmes.map do |programme|
       add_reference_sheet package,
                           name: "#{programme.type} Batch Numbers",
