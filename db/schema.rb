@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_01_13_142937) do
+ActiveRecord::Schema[8.0].define(version: 2025_01_14_113856) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -198,6 +198,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_13_142937) do
     t.string "preferred_family_name"
     t.integer "education_setting"
     t.string "nhs_number"
+    t.datetime "invalidated_at"
     t.index ["consent_id"], name: "index_consent_forms_on_consent_id"
     t.index ["location_id"], name: "index_consent_forms_on_location_id"
     t.index ["nhs_number"], name: "index_consent_forms_on_nhs_number"
