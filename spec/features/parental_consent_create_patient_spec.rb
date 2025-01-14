@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
 describe "Parental consent create patient" do
-  scenario "Nurse creates a patient from a consent response" do
-    stub_pds_search_to_return_a_patient
+  before { given_the_app_is_setup }
 
-    given_the_app_is_setup
+  scenario "Consent form matches an NHS number" do
+    stub_pds_search_to_return_a_patient
 
     when_i_go_to_the_consent_form
     when_i_fill_in_my_childs_name_and_birthday
@@ -13,9 +13,35 @@ describe "Parental consent create patient" do
     and_i_answer_no_to_all_the_medical_questions
     and_i_submit_the_consent_form
     then_i_see_the_consent_confirmation_page
+    and_i_wait_for_background_jobs_to_complete
 
-    when_i_wait_for_background_jobs_to_complete
-    and_the_nurse_checks_the_unmatched_consent_responses
+    when_the_nurse_checks_the_unmatched_consent_responses
+    then_they_see_the_consent_form
+
+    when_the_nurse_clicks_create_record
+    then_they_see_the_new_patient_page
+
+    when_the_nurse_submits_the_new_patient
+    then_the_patient_and_associated_records_are_created
+    and_the_unmatched_consent_responses_page_is_empty
+
+    when_they_check_triage
+    then_the_patient_should_be_ready_to_vaccinate
+  end
+
+  scenario "Consent form doesn't match an NHS number" do
+    stub_pds_search_to_return_no_patients
+
+    when_i_go_to_the_consent_form
+    when_i_fill_in_my_childs_name_and_birthday
+
+    when_i_give_consent
+    and_i_answer_no_to_all_the_medical_questions
+    and_i_submit_the_consent_form
+    then_i_see_the_consent_confirmation_page
+    and_i_wait_for_background_jobs_to_complete
+
+    when_the_nurse_checks_the_unmatched_consent_responses
     then_they_see_the_consent_form
 
     when_the_nurse_clicks_create_record
@@ -35,7 +61,6 @@ describe "Parental consent create patient" do
       create(:organisation, :with_one_nurse, programmes: [@programme])
     location =
       create(:school, name: "Pilot School", organisation: @organisation)
-    @gp_practice = create(:gp_practice, ods_code: "H81109")
     @session =
       create(
         :session,
@@ -112,11 +137,11 @@ describe "Parental consent create patient" do
     )
   end
 
-  def when_i_wait_for_background_jobs_to_complete
+  def and_i_wait_for_background_jobs_to_complete
     perform_enqueued_jobs
   end
 
-  def and_the_nurse_checks_the_unmatched_consent_responses
+  def when_the_nurse_checks_the_unmatched_consent_responses
     sign_in @organisation.users.first
     visit "/dashboard"
 
@@ -147,7 +172,7 @@ describe "Parental consent create patient" do
     expect(Patient.count).to eq(1)
     expect(Patient.last.consents.count).to eq(1)
     expect(Patient.last.parents.count).to eq(1)
-    expect(Patient.last.gp_practice).to eq(@gp_practice)
+    expect(Patient.last.sessions).to contain_exactly(@session)
   end
 
   def and_the_unmatched_consent_responses_page_is_empty

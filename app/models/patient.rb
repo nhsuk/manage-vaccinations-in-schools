@@ -297,7 +297,7 @@ class Patient < ApplicationRecord
       # otherwise PDS will return a 404 status.
       if invalidated?
         self.invalidated_at = nil
-        add_to_upcoming_sessions
+        add_to_upcoming_sessions!
       end
 
       if pds_patient.restricted
@@ -348,6 +348,19 @@ class Patient < ApplicationRecord
         )
       end
     end
+  end
+
+  def add_to_upcoming_sessions!
+    school_move =
+      if school
+        SchoolMove.new(patient: self, school:)
+      elsif (organisation = cohort&.organisation)
+        SchoolMove.new(patient: self, home_educated:, organisation:)
+      end
+
+    return if school_move.nil?
+
+    school_move.confirm!
   end
 
   def self.from_consent_form(consent_form)
@@ -408,18 +421,5 @@ class Patient < ApplicationRecord
       .includes(:session_attendances)
       .where(session: upcoming_sessions)
       .find_each(&:destroy_if_safe!)
-  end
-
-  def add_to_upcoming_sessions
-    school_move =
-      if school
-        SchoolMove.new(patient: self, school:)
-      elsif (organisation = cohort&.organisation)
-        SchoolMove.new(patient: self, home_educated:, organisation:)
-      end
-
-    return if school_move.nil?
-
-    school_move.confirm!
   end
 end
