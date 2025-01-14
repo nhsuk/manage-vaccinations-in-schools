@@ -42,7 +42,6 @@
         <%= render AppHeaderNavigationItemComponent.new(t("programmes.index.title"), programmes_path, request_path: request.path) %>
         <%= render AppHeaderNavigationItemComponent.new(t("sessions.index.title"), sessions_path, request_path: request.path) %>
         <%= render AppHeaderNavigationItemComponent.new(t("patients.index.title"), patients_path, request_path: request.path) %>
-        <%= render AppHeaderNavigationItemComponent.new(t("vaccines.index.title"), vaccines_path, request_path: request.path) %>
 
         <%= render AppHeaderNavigationItemComponent.new(
           t("consent_forms.index.title_short"),
@@ -66,6 +65,8 @@
             count: policy_scope(Patient).with_notice.count
           ) %>
         <% end %>
+
+        <%= render AppHeaderNavigationItemComponent.new(t("vaccines.index.title"), vaccines_path, request_path: request.path) %>
 
         <%= render AppHeaderNavigationItemComponent.new(t("organisations.show.title"), organisation_path, request_path: request.path) %>
 
