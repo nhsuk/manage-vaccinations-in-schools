@@ -25,15 +25,14 @@
 #  fk_rails_...  (vaccine_id => vaccines.id)
 #
 class Batch < ApplicationRecord
+  include Archivable
+
   audited
 
   belongs_to :organisation
   belongs_to :vaccine
 
   scope :order_by_name_and_expiration, -> { order(expiry: :asc, name: :asc) }
-
-  scope :archived, -> { where.not(archived_at: nil) }
-  scope :not_archived, -> { where(archived_at: nil) }
 
   scope :expired, -> { where("expiry <= ?", Time.current) }
   scope :not_expired, -> { where("expiry > ?", Time.current) }
@@ -56,12 +55,4 @@ class Batch < ApplicationRecord
               less_than: -> { Date.current + 15.years }
             },
             unless: :archived?
-
-  def archived?
-    archived_at != nil
-  end
-
-  def archive!
-    update!(archived_at: Time.current) unless archived?
-  end
 end
