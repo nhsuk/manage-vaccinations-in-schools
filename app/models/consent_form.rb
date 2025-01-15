@@ -63,8 +63,8 @@
 class ConsentForm < ApplicationRecord
   include AddressConcern
   include AgeConcern
+  include Archivable
   include FullNameConcern
-  include Invalidatable
   include WizardStepConcern
 
   before_save :reset_unused_fields
@@ -172,7 +172,7 @@ class ConsentForm < ApplicationRecord
 
   validates :reason_notes, length: { maximum: 1000 }
 
-  validates :notes, presence: { if: :invalidated? }, length: { maximum: 1000 }
+  validates :notes, presence: { if: :archived? }, length: { maximum: 1000 }
 
   normalizes :nhs_number, with: -> { _1.blank? ? nil : _1.gsub(/\s/, "") }
 

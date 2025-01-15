@@ -29,12 +29,12 @@ describe "Parental consent manual matching" do
     then_i_am_on_the_unmatched_responses_page
     and_i_see_one_response
 
-    when_i_choose_to_mark_the_response_as_invalid
+    when_i_choose_to_archive_the_response
     then_i_fill_in_the_notes
-    and_i_mark_the_response_as_invalid
+    and_i_archive_the_response
 
     then_i_am_on_the_unmatched_responses_page
-    and_i_see_the_marked_as_invalid_message
+    and_i_see_the_archived_message
     and_i_see_no_responses
   end
 
@@ -117,22 +117,20 @@ describe "Parental consent manual matching" do
     )
   end
 
-  def when_i_choose_to_mark_the_response_as_invalid
-    click_on "Mark as invalid"
+  def when_i_choose_to_archive_the_response
+    click_on "Archive"
   end
 
   def then_i_fill_in_the_notes
     fill_in "Notes", with: "Some notes."
   end
 
-  def and_i_mark_the_response_as_invalid
-    click_on "Mark as invalid"
+  def and_i_archive_the_response
+    click_on "Archive response"
   end
 
-  def and_i_see_the_marked_as_invalid_message
-    expect(page).to have_content(
-      "Consent response from John Smith marked as invalid"
-    )
+  def and_i_see_the_archived_message
+    expect(page).to have_content("Consent response from John Smith archived")
   end
 
   def and_i_see_no_responses

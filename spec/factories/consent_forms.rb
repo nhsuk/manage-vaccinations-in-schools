@@ -111,8 +111,8 @@ FactoryBot.define do
       ]
     end
 
-    trait :invalidated do
-      invalidated_at { Time.current }
+    trait :archived do
+      archived_at { Time.current }
     end
 
     trait :refused do
