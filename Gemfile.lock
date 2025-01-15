@@ -340,13 +340,6 @@ GEM
       net-imap
       net-pop
       net-smtp
-    mail-notify (2.0.0)
-      actionmailer (>= 5.2.8.1)
-      actionpack (>= 5.2.8.1)
-      actionview (>= 5.2.8.1)
-      activesupport (>= 5.2.8.1)
-      notifications-ruby-client (~> 6.0)
-      rack (>= 2.1.4.1)
     marcel (1.0.4)
     matrix (0.4.2)
     mechanize (2.14.0)
@@ -747,7 +740,6 @@ DEPENDENCIES
   jsbundling-rails
   jsonb_accessor
   jwt
-  mail-notify
   mechanize
   notifications-ruby-client
   okcomputer
