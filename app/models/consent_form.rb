@@ -15,7 +15,9 @@
 #  family_name                         :text
 #  given_name                          :text
 #  health_answers                      :jsonb            not null
+#  invalidated_at                      :datetime
 #  nhs_number                          :string
+#  notes                               :text             default(""), not null
 #  parent_contact_method_other_details :string
 #  parent_contact_method_type          :string
 #  parent_email                        :string
@@ -62,6 +64,7 @@ class ConsentForm < ApplicationRecord
   include AddressConcern
   include AgeConcern
   include FullNameConcern
+  include Invalidatable
   include WizardStepConcern
 
   before_save :reset_unused_fields
@@ -168,6 +171,8 @@ class ConsentForm < ApplicationRecord
             if: :parent_relationship_other?
 
   validates :reason_notes, length: { maximum: 1000 }
+
+  validates :notes, presence: { if: :invalidated? }, length: { maximum: 1000 }
 
   normalizes :nhs_number, with: -> { _1.blank? ? nil : _1.gsub(/\s/, "") }
 

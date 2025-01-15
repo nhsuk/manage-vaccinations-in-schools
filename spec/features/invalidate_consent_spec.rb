@@ -108,6 +108,9 @@ describe "Invalidate consent" do
 
   def then_i_see_the_consent_has_been_invalidated
     expect(page).to have_content("Invalid")
+    expect(page).to have_content(
+      "Consent response from #{@parent.full_name} marked as invalid"
+    )
   end
 
   def and_i_cant_mark_as_invalid

@@ -481,6 +481,9 @@ en:
             given_name:
               blank: Enter a first name
               too_long: Enter a first name that is less than 300 characters long
+            notes:
+              blank: Enter notes
+              too_long: Enter notes that are less than %{count} characters long
             parent_contact_method_type:
               inclusion: Choose a contact method
             parent_contact_method_other_details:

@@ -1,19 +1,19 @@
 <% content_for :before_main do %>
-  <%= render AppBacklinkComponent.new(session_patient_consent_path, name: "consent page") %>
+  <%= render AppBacklinkComponent.new(consent_form_path, name: "consent page") %>
 <% end %>
 
-<%= form_with model: @consent, url: invalidate_session_patient_consent_path, method: :post do |f| %>
+<%= form_with model: @consent_form, url: invalidate_consent_form_path, method: :post do |f| %>
   <%= f.govuk_error_summary %>
 
   <% page_title = "Mark response as invalid" %>
   <%= h1 page_title: do %>
     <span class="nhsuk-caption-l nhsuk-u-margin-top-2">
-      Consent response from <%= @consent.name %>
+      Consent response from <%= @consent_form.parent_full_name %>
     </span>
     <%= page_title %>
   <% end %>
 
-  <p class="nhsuk-body">This operation cannot be undone.</p>
+  <p class="nhsuk-body">The unmatched response will be hidden. This operation cannot be undone.</p>
 
   <%= f.govuk_text_area :notes, label: { text: "Notes", size: "m" } %>
 

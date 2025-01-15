@@ -1,12 +1,13 @@
 # frozen_string_literal: true
 
 describe "Parental consent manual matching" do
-  scenario "Consent isn't matched automatically so nurse matches it manually" do
-    given_the_app_is_setup
+  before { given_the_app_is_setup }
 
+  scenario "Consent isn't matched automatically so nurse matches it manually" do
     when_i_go_to_the_dashboard
     and_i_click_on_unmatched_consent_responses
     then_i_am_on_the_unmatched_responses_page
+    and_i_see_one_response
 
     when_i_choose_a_consent_response
     then_i_am_on_the_consent_matching_page
@@ -20,6 +21,21 @@ describe "Parental consent manual matching" do
 
     when_i_click_on_the_activity_log
     then_i_see_the_consent_was_matched_manually
+  end
+
+  scenario "Consent is marked as invalid" do
+    when_i_go_to_the_dashboard
+    and_i_click_on_unmatched_consent_responses
+    then_i_am_on_the_unmatched_responses_page
+    and_i_see_one_response
+
+    when_i_choose_to_mark_the_response_as_invalid
+    then_i_fill_in_the_notes
+    and_i_mark_the_response_as_invalid
+
+    then_i_am_on_the_unmatched_responses_page
+    and_i_see_the_marked_as_invalid_message
+    and_i_see_no_responses
   end
 
   def given_the_app_is_setup
@@ -36,7 +52,13 @@ describe "Parental consent manual matching" do
         programme: @programme
       )
     @consent_form =
-      create(:consent_form, :recorded, programme: @programme, session: @session)
+      create(
+        :consent_form,
+        :recorded,
+        programme: @programme,
+        session: @session,
+        parent_full_name: "John Smith"
+      )
     @patient = create(:patient, session: @session)
   end
 
@@ -51,6 +73,9 @@ describe "Parental consent manual matching" do
 
   def then_i_am_on_the_unmatched_responses_page
     expect(page).to have_content("Unmatched consent responses")
+  end
+
+  def and_i_see_one_response
     expect(page).to have_content("1 unmatched consent response")
   end
 
@@ -89,6 +114,30 @@ describe "Parental consent manual matching" do
   def then_i_see_the_consent_was_matched_manually
     expect(page).to have_content(
       "Consent response manually matched with child record"
+    )
+  end
+
+  def when_i_choose_to_mark_the_response_as_invalid
+    click_on "Mark as invalid"
+  end
+
+  def then_i_fill_in_the_notes
+    fill_in "Notes", with: "Some notes."
+  end
+
+  def and_i_mark_the_response_as_invalid
+    click_on "Mark as invalid"
+  end
+
+  def and_i_see_the_marked_as_invalid_message
+    expect(page).to have_content(
+      "Consent response from John Smith marked as invalid"
+    )
+  end
+
+  def and_i_see_no_responses
+    expect(page).to have_content(
+      "There are currently no unmatched consent responses."
     )
   end
 end

@@ -112,7 +112,11 @@ class ConsentsController < ApplicationController
         @patient_session.triages.invalidate_all
       end
 
-      redirect_to session_patient_consent_path
+      redirect_to session_patient_consent_path,
+                  flash: {
+                    success:
+                      "Consent response from #{@consent.name} marked as invalid"
+                  }
     else
       render :invalidate, status: :unprocessable_entity
     end
