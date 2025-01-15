@@ -45,21 +45,21 @@ class ConsentFormsController < ApplicationController
     redirect_to action: :index
   end
 
-  def edit_invalidate
-    render :invalidate, layout: "two_thirds"
+  def edit_archive
+    render :archive, layout: "two_thirds"
   end
 
-  def update_invalidate
-    @consent_form.assign_attributes(invalidate_params)
+  def update_archive
+    @consent_form.assign_attributes(archive_params)
 
     if @consent_form.save
       redirect_to consent_forms_path,
                   flash: {
                     success:
-                      "Consent response from #{@consent_form.parent_full_name} marked as invalid"
+                      "Consent response from #{@consent_form.parent_full_name} archived"
                   }
     else
-      render :invalidate, layout: "two_thirds", status: :unprocessable_entity
+      render :archive, layout: "two_thirds", status: :unprocessable_entity
     end
   end
 
@@ -99,7 +99,7 @@ class ConsentFormsController < ApplicationController
   private
 
   def consent_form_scope
-    policy_scope(ConsentForm).unmatched.recorded.not_invalidated
+    policy_scope(ConsentForm).unmatched.recorded.not_archived
   end
 
   def set_consent_form
@@ -110,7 +110,7 @@ class ConsentFormsController < ApplicationController
     @patient = policy_scope(Patient).find(params[:patient_id])
   end
 
-  def invalidate_params
-    params.expect(consent_form: :notes).merge(invalidated_at: Time.current)
+  def archive_params
+    params.expect(consent_form: :notes).merge(archived_at: Time.current)
   end
 end

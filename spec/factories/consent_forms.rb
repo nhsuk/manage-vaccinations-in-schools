@@ -9,13 +9,13 @@
 #  address_line_2                      :string
 #  address_postcode                    :string
 #  address_town                        :string
+#  archived_at                         :datetime
 #  contact_injection                   :boolean
 #  date_of_birth                       :date
 #  education_setting                   :integer
 #  family_name                         :text
 #  given_name                          :text
 #  health_answers                      :jsonb            not null
-#  invalidated_at                      :datetime
 #  nhs_number                          :string
 #  notes                               :text             default(""), not null
 #  parent_contact_method_other_details :string
@@ -111,8 +111,8 @@ FactoryBot.define do
       ]
     end
 
-    trait :invalidated do
-      invalidated_at { Time.current }
+    trait :archived do
+      archived_at { Time.current }
     end
 
     trait :refused do

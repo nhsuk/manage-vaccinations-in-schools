@@ -47,7 +47,7 @@
           t("consent_forms.index.title_short"),
           consent_forms_path,
           request_path: request.path,
-          count: policy_scope(ConsentForm).unmatched.recorded.not_invalidated.count
+          count: policy_scope(ConsentForm).unmatched.recorded.not_archived.count
         ) %>
 
         <%= render AppHeaderNavigationItemComponent.new(
