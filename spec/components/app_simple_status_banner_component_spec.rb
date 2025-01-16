@@ -73,11 +73,11 @@ describe AppSimpleStatusBannerComponent do
     end
 
     it { should have_css(".app-card--purple") }
-    it { should have_css(".nhsuk-card__heading", text: "Safe to vaccinate") }
+    it { should have_css(".nhsuk-card__heading", text: "Ready for nurse") }
 
     it do
       expect(rendered).to have_text(
-        "#{triage_nurse_name} decided that #{patient_name} is safe to vaccinate"
+        "#{triage_nurse_name} decided that #{patient_name} is ready for the nurse"
       )
     end
 
