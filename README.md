@@ -16,11 +16,11 @@ This is a service used within the NHS for managing and recording school-aged vac
 ## Release Cycle
 
 Our default branch for making changes is `main`: new features and non-urgent
-bug fixes should merged into here.
+bug fixes should be merged into here.
 
-The `release` branch tracks `main` and reflects what is in production. Hot fixes
-(emergency fixes that aren't going through the release cycle) should be merged
-into this branch before then going into `main`.
+The `release` branch is a reference to what is in production at any point in
+time. It usually tracks `main` but can also point to hotfix branches as
+necessary.
 
 Releasing basically follows these steps:
 
@@ -94,14 +94,16 @@ git push --tags origin release
 
 ### Hot-fixes
 
-Hot-fixes are emergency fixes made to the current release that don't go through
-the release cycle. These fixes should still go through the pull-request process,
-but to the `release` branch. Once these are merged in, the commits will need to
-be applied to `main` via cherry-picking and a PR.
+Hot-fixes are emergency fixes made to the current release that bypass changes
+that are in `main`. These fixes should still go through the pull-request
+process, but to a version-specific branch, e.g. `v1.1.1-hotfixes`. Once these
+are merged in, the commits will need to be applied to `main`, e.g. via
+cherry-picking, and `release` should be fast-forwarded/reset to the latest code
+released.
 
-Generally, at this point the histories of the `release` and `main` branches will
-have diverged and it will not be possible to fast-forward the `release` branch
-when releasing. It will have to be reset to the latest release candidate as
+At this point the histories of the `release` and `main` branches will have
+diverged and it will not be possible to fast-forward the `release` branch when
+releasing. It will have to be reset to the latest release candidate as
 previously described.
 
 ## Development
