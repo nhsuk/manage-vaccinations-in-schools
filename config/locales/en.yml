@@ -652,7 +652,7 @@ en:
   consent_forms:
     index:
       title: Unmatched consent responses
-      title_short: Responses
+      title_short: Unmatched responses
     confirm:
       consent_card_title:
         flu: Consent for the flu vaccination

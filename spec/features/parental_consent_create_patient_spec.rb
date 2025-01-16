@@ -120,8 +120,8 @@ describe "Parental consent create patient" do
     sign_in @organisation.users.first
     visit "/dashboard"
 
-    expect(page).to have_content("Responses (1)")
-    click_on "Responses", match: :first
+    expect(page).to have_content("Unmatched responses (1)")
+    click_on "Unmatched responses"
   end
 
   def then_they_see_the_consent_form
