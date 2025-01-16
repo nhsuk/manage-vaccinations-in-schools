@@ -275,6 +275,8 @@ FactoryBot.define do
     end
 
     trait :triage_ready_to_vaccinate do
+      consent_given_triage_needed
+
       triages do
         [
           association(

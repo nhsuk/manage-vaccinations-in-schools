@@ -56,9 +56,12 @@ class DraftConsentsController < ApplicationController
 
     ActiveRecord::Base.transaction do
       @triage&.save! if @draft_consent.response_given?
+
       @consent.parent&.save!
       @consent.save!
     end
+
+    set_patient_session # reload with new consents
 
     send_triage_confirmation(@patient_session, @consent)
 

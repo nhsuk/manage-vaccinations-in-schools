@@ -30,7 +30,7 @@ module PatientSessionStatusConcern
           "unable_to_vaccinate"
         elsif triage_keep_in_triage?
           "triaged_kept_in_triage"
-        elsif triage_ready_to_vaccinate?
+        elsif consent_given? && triage_ready_to_vaccinate?
           "triaged_ready_to_vaccinate"
         elsif triage_do_not_vaccinate?
           "triaged_do_not_vaccinate"
