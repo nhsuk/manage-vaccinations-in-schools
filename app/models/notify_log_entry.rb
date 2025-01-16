@@ -5,6 +5,7 @@
 # Table name: notify_log_entries
 #
 #  id              :bigint           not null, primary key
+#  delivery_status :integer          default("sending"), not null
 #  recipient       :string           not null
 #  type            :integer          not null
 #  created_at      :datetime         not null
@@ -35,6 +36,14 @@ class NotifyLogEntry < ApplicationRecord
   belongs_to :patient, optional: true
 
   enum :type, { email: 0, sms: 1 }, validate: true
+  enum :delivery_status,
+       {
+         sending: 0,
+         delivered: 1,
+         permanent_failure: 2,
+         temporary_failure: 3,
+         technical_failure: 4
+       }
 
   validates :template_id, presence: true
   validates :recipient, presence: true
