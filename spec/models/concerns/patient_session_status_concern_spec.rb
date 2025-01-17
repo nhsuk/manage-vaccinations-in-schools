@@ -65,7 +65,7 @@ describe PatientSessionStatusConcern do
 
     include_examples "it supports the status",
                      :triaged_ready_to_vaccinate,
-                     conditions: [:triage_ready_to_vaccinate]
+                     conditions: %i[consent_given triage_ready_to_vaccinate]
 
     include_examples "it supports the status",
                      :triaged_do_not_vaccinate,
