@@ -5,6 +5,7 @@
 # Table name: notify_log_entries
 #
 #  id              :bigint           not null, primary key
+#  delivery_status :integer          default("sending"), not null
 #  recipient       :string           not null
 #  type            :integer          not null
 #  created_at      :datetime         not null

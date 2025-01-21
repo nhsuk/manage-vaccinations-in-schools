@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_01_15_123804) do
+ActiveRecord::Schema[8.0].define(version: 2025_01_16_090241) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -471,6 +471,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_15_123804) do
     t.bigint "patient_id"
     t.bigint "sent_by_user_id"
     t.uuid "delivery_id"
+    t.integer "delivery_status", default: 0, null: false
     t.index ["consent_form_id"], name: "index_notify_log_entries_on_consent_form_id"
     t.index ["patient_id"], name: "index_notify_log_entries_on_patient_id"
     t.index ["sent_by_user_id"], name: "index_notify_log_entries_on_sent_by_user_id"
