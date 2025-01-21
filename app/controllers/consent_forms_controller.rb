@@ -71,26 +71,21 @@ class ConsentFormsController < ApplicationController
   end
 
   def create_patient
-    @patient = Patient.from_consent_form(@consent_form)
+    patient = Patient.from_consent_form(@consent_form)
 
     ActiveRecord::Base.transaction do
-      @patient.save!
-
-      SchoolMove.new(
-        patient: @patient,
-        school: @patient.school,
-        home_educated: @patient.home_educated,
-        organisation:
-          @patient.school.present? ? nil : @consent_form.organisation
-      ).confirm!
-
-      # This should now match because the patient with the same NHS number
-      # exists. We need to perform_now to make sure the record is matched and
-      # the consent form disappears from the index page
-      ConsentFormMatchingJob.perform_now(@consent_form)
+      patient.save!
+      patient.add_to_upcoming_sessions!
+      @consent_form.match_with_patient!(patient, current_user:)
     end
 
-    flash[:success] = "#{@patient.full_name}’s record created from a consent \
+    if patient.nhs_number.nil?
+      PatientNHSNumberLookupJob.perform_later(patient)
+    else
+      PatientUpdateFromPDSJob.perform_later(patient)
+    end
+
+    flash[:success] = "#{patient.full_name}’s record created from a consent \
                        response from #{@consent_form.parent_full_name}"
 
     redirect_to action: :index
