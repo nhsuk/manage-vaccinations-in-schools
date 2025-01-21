@@ -24,6 +24,7 @@ govuk_notify:
   test_key: <%= Rails.application.credentials.govuk_notify&.test_key %>
   team_key: <%= Rails.application.credentials.govuk_notify&.team_key %>
   live_key: <%= Rails.application.credentials.govuk_notify&.live_key %>
+  callback_bearer_token: <%= Rails.application.credentials.govuk_notify&.callback_bearer_token %>
 
 mesh:
   base_url: "https://msg.intspineservices.nhs.uk"

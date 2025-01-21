@@ -18,6 +18,7 @@
 # Indexes
 #
 #  index_notify_log_entries_on_consent_form_id  (consent_form_id)
+#  index_notify_log_entries_on_delivery_id      (delivery_id)
 #  index_notify_log_entries_on_patient_id       (patient_id)
 #  index_notify_log_entries_on_sent_by_user_id  (sent_by_user_id)
 #
