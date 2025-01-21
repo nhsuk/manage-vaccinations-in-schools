@@ -24,11 +24,13 @@ class Parent < ApplicationRecord
   before_save :reset_unused_fields
 
   has_many :consents
+  has_many :notify_log_entries, dependent: :nullify
   has_many :parent_relationships
-  has_many :patients, through: :parent_relationships
 
   has_and_belongs_to_many :class_imports
   has_and_belongs_to_many :cohort_imports
+
+  has_many :patients, through: :parent_relationships
 
   enum :contact_method_type,
        { any: "any", other: "other", text: "text", voice: "voice" },
