@@ -27,7 +27,7 @@ clinics:
   team_1:
     - name: 10 Downing Street
       address_postcode: SW1A 1AA
-      ods_code: SW1A10
+      # ods_code intentionally not provided
   team_2:
     - name: 11 Downing Street
       address_postcode: SW1A 1AA

@@ -41,7 +41,7 @@ describe Onboarding do
       expect(team1.schools).to contain_exactly(school1, school2)
       expect(team2.schools).to contain_exactly(school3, school4)
 
-      clinic1 = team1.community_clinics.find_by!(ods_code: "SW1A10")
+      clinic1 = team1.community_clinics.find_by!(ods_code: nil)
       expect(clinic1.name).to eq("10 Downing Street")
       expect(clinic1.address_postcode).to eq("SW1A 1AA")
 

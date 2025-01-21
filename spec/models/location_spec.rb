@@ -56,7 +56,7 @@ describe Location do
       it { should_not validate_presence_of(:gias_establishment_number) }
       it { should_not validate_presence_of(:gias_local_authority_code) }
 
-      it { should validate_presence_of(:ods_code) }
+      it { should_not validate_presence_of(:ods_code) }
       it { should validate_uniqueness_of(:ods_code).ignoring_case_sensitivity }
 
       it { should_not validate_presence_of(:urn) }

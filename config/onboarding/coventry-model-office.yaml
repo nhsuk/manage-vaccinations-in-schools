@@ -122,32 +122,25 @@ schools:
     - 125781
     - 145486
 
-# !IMPORTANT! The ODS codes of these clinics are not correct.
-
 clinics:
   generic:
     - name: Jepson House
       address_line_1: 4 Manor Court Avenue
       address_town: Nuneaton
       address_postcode: CV11 5HX
-      ods_code: CV115HX
     - name: Locke House
       address_line_1: The Railings Woodside Park
       address_town: Rugby
       address_postcode: CV21 2AW
-      ods_code: CV212AW
     - name: Woodloes House
       address_line_1: Woodloes Avenue South
       address_town: Warwick
       address_postcode: CV34 5XN
-      ods_code: CV345XN
     - name: Alcester Clinic
       address_line_1: Fields Park Drive
       address_town: Warwickshire
       address_postcode: B49 6QR
-      ods_code: B496QR
     - name: City Of Coventry Health Centre
       address_line_1: 2 Stoney Stanton Road
       address_town: Coventry
       address_postcode: CV1 4FS
-      ods_code: CV14FS
