@@ -28,6 +28,8 @@
 #  fk_rails_...  (school_id => locations.id)
 #
 class SchoolMove < ApplicationRecord
+  audited associated_with: :patient
+
   include Schoolable
 
   belongs_to :patient
