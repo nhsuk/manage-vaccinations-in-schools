@@ -16,8 +16,9 @@ class SMSDeliveryJob < NotifyDeliveryJob
     template_id = GOVUK_NOTIFY_SMS_TEMPLATES[template_name.to_sym]
     raise UnknownTemplate if template_id.nil?
 
-    phone_number =
-      consent_form&.parent_phone || consent&.parent&.phone || parent&.phone
+    parent ||= consent&.parent
+
+    phone_number = consent_form&.parent_phone || parent&.phone
     return if phone_number.nil?
 
     personalisation =
@@ -49,6 +50,7 @@ class SMSDeliveryJob < NotifyDeliveryJob
     NotifyLogEntry.create!(
       consent_form:,
       delivery_id:,
+      parent:,
       patient:,
       recipient: phone_number,
       sent_by:,

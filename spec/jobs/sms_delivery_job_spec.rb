@@ -84,6 +84,7 @@ describe SMSDeliveryJob do
       expect(notify_log_entry.template_id).to eq(
         GOVUK_NOTIFY_SMS_TEMPLATES[template_name]
       )
+      expect(notify_log_entry.parent).to eq(parent)
       expect(notify_log_entry.patient).to eq(patient)
       expect(notify_log_entry.sent_by).to eq(sent_by)
     end
