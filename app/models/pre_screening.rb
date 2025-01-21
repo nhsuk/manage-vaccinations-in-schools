@@ -33,6 +33,8 @@ class PreScreening < ApplicationRecord
              class_name: "User",
              foreign_key: :performed_by_user_id
 
+  has_one :patient, through: :patient_session
+
   encrypts :notes
 
   validates :knows_vaccination,

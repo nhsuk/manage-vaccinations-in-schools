@@ -44,6 +44,9 @@ class PatientMerger
           patient_session.gillick_assessments.update_all(
             patient_session_id: existing_patient_session.id
           )
+          patient_session.pre_screenings.update_all(
+            patient_session_id: existing_patient_session.id
+          )
           patient_session.vaccination_records.update_all(
             patient_session_id: existing_patient_session.id
           )
