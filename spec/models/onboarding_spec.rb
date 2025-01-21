@@ -31,10 +31,12 @@ describe Onboarding do
       team1 = organisation.teams.includes(:schools).find_by!(name: "Team 1")
       expect(team1.email).to eq("team-1@trust.nhs.uk")
       expect(team1.phone).to eq("07700 900816")
+      expect(team1.reply_to_id).to eq("24af66c3-d6bd-4b9f-8067-3844f49e08d0")
 
       team2 = organisation.teams.includes(:schools).find_by!(name: "Team 2")
       expect(team2.email).to eq("team-2@trust.nhs.uk")
       expect(team2.phone).to eq("07700 900817")
+      expect(team2.reply_to_id).to be_nil
 
       expect(team1.schools).to contain_exactly(school1, school2)
       expect(team2.schools).to contain_exactly(school3, school4)

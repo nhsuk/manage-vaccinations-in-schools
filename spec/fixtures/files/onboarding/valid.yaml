@@ -13,6 +13,7 @@ teams:
     name: Team 1
     email: team-1@trust.nhs.uk
     phone: 07700 900816
+    reply_to_id: 24af66c3-d6bd-4b9f-8067-3844f49e08d0
   team_2:
     name: Team 2
     email: team-2@trust.nhs.uk

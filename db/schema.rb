@@ -679,6 +679,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_15_123804) do
     t.string "phone", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.uuid "reply_to_id"
     t.index ["organisation_id", "name"], name: "index_teams_on_organisation_id_and_name", unique: true
     t.index ["organisation_id"], name: "index_teams_on_organisation_id"
   end

@@ -21,6 +21,7 @@ teams:
     name: # Name of the team
     email: # Contact email address
     phone: # Contact phone number
+    reply_to_id: # Optional GOV.UK Notify Reply-To UUID
 
 schools:
   team1: [] # URNs managed by a particular team
