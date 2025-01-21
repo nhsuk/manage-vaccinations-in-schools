@@ -202,7 +202,7 @@ RSpec.configure do |config|
   config.after(:each, :js) { WebMock.disable_net_connect! }
 
   config.before do
-    ActionMailer::Base.deliveries.clear
+    EmailDeliveryJob.deliveries.clear
     SMSDeliveryJob.deliveries.clear
   end
 

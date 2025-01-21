@@ -35,6 +35,7 @@ Rails/UnknownEnv:
 
 RSpec/BeforeAfterAll:
   Exclude:
+    - spec/jobs/email_delivery_job_spec.rb
     - spec/jobs/sms_delivery_job_spec.rb
 
 RSpec/ContextWording:

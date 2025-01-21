@@ -37,17 +37,9 @@ describe VaccinationMailerConcern do
       before { create(:consent, :given, patient:, programme:) }
 
       it "sends an email" do
-        expect { send_vaccination_confirmation }.to have_enqueued_mail(
-          VaccinationMailer,
-          :confirmation_administered
-        ).with(
-          params: {
-            parent:,
-            vaccination_record:,
-            sent_by: current_user
-          },
-          args: []
-        )
+        expect { send_vaccination_confirmation }.to have_delivered_email(
+          :vaccination_confirmation_administered
+        ).with(parent:, vaccination_record:, sent_by: current_user)
       end
 
       it "sends a text message" do
@@ -70,17 +62,9 @@ describe VaccinationMailerConcern do
       end
 
       it "sends an email" do
-        expect { send_vaccination_confirmation }.to have_enqueued_mail(
-          VaccinationMailer,
-          :confirmation_not_administered
-        ).with(
-          params: {
-            parent:,
-            vaccination_record:,
-            sent_by: current_user
-          },
-          args: []
-        )
+        expect { send_vaccination_confirmation }.to have_delivered_email(
+          :vaccination_confirmation_not_administered
+        ).with(parent:, vaccination_record:, sent_by: current_user)
       end
 
       it "sends a text message" do
@@ -108,17 +92,9 @@ describe VaccinationMailerConcern do
         end
 
         it "sends an email" do
-          expect { send_vaccination_confirmation }.to have_enqueued_mail(
-            VaccinationMailer,
-            :confirmation_administered
-          ).with(
-            params: {
-              parent:,
-              vaccination_record:,
-              sent_by: current_user
-            },
-            args: []
-          )
+          expect { send_vaccination_confirmation }.to have_delivered_email(
+            :vaccination_confirmation_administered
+          ).with(parent:, vaccination_record:, sent_by: current_user)
         end
 
         it "sends a text message" do
@@ -132,7 +108,7 @@ describe VaccinationMailerConcern do
         before { create(:consent, :given, :self_consent, patient:, programme:) }
 
         it "doesn't send an email" do
-          expect { send_vaccination_confirmation }.not_to have_enqueued_mail
+          expect { send_vaccination_confirmation }.not_to have_delivered_email
         end
 
         it "doesn't send a text message" do
@@ -145,7 +121,7 @@ describe VaccinationMailerConcern do
       let(:patient) { create(:patient, :deceased) }
 
       it "doesn't send an email" do
-        expect { send_vaccination_confirmation }.not_to have_enqueued_email
+        expect { send_vaccination_confirmation }.not_to have_delivered_email
       end
 
       it "doesn't send a text message" do
@@ -157,7 +133,7 @@ describe VaccinationMailerConcern do
       let(:patient) { create(:patient, :invalidated) }
 
       it "doesn't send an email" do
-        expect { send_vaccination_confirmation }.not_to have_enqueued_email
+        expect { send_vaccination_confirmation }.not_to have_delivered_email
       end
 
       it "doesn't send a text message" do
@@ -169,7 +145,7 @@ describe VaccinationMailerConcern do
       let(:patient) { create(:patient, :restricted) }
 
       it "doesn't send an email" do
-        expect { send_vaccination_confirmation }.not_to have_enqueued_email
+        expect { send_vaccination_confirmation }.not_to have_delivered_email
       end
 
       it "doesn't send a text message" do

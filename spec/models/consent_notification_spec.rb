@@ -73,27 +73,20 @@ describe ConsentNotification do
       end
 
       it "enqueues an email per parent" do
-        expect { create_and_send! }.to have_enqueued_mail(
-          ConsentMailer,
-          :school_request
+        expect { create_and_send! }.to have_delivered_email(
+          :consent_school_request
         ).with(
-          params: {
-            parent: parents.first,
-            patient:,
-            programme:,
-            session:,
-            sent_by: current_user
-          },
-          args: []
-        ).and have_enqueued_mail(ConsentMailer, :school_request).with(
-                params: {
-                  parent: parents.second,
-                  patient:,
-                  programme:,
-                  session:,
-                  sent_by: current_user
-                },
-                args: []
+          parent: parents.first,
+          patient:,
+          programme:,
+          session:,
+          sent_by: current_user
+        ).and have_delivered_email(:consent_school_request).with(
+                parent: parents.second,
+                patient:,
+                programme:,
+                session:,
+                sent_by: current_user
               )
       end
 
@@ -143,27 +136,20 @@ describe ConsentNotification do
       end
 
       it "enqueues an email per parent" do
-        expect { create_and_send! }.to have_enqueued_mail(
-          ConsentMailer,
-          :clinic_request
+        expect { create_and_send! }.to have_delivered_email(
+          :consent_clinic_request
         ).with(
-          params: {
-            parent: parents.first,
-            patient:,
-            programme:,
-            session:,
-            sent_by: current_user
-          },
-          args: []
-        ).and have_enqueued_mail(ConsentMailer, :clinic_request).with(
-                params: {
-                  parent: parents.second,
-                  patient:,
-                  programme:,
-                  session:,
-                  sent_by: current_user
-                },
-                args: []
+          parent: parents.first,
+          patient:,
+          programme:,
+          session:,
+          sent_by: current_user
+        ).and have_delivered_email(:consent_clinic_request).with(
+                parent: parents.second,
+                patient:,
+                programme:,
+                session:,
+                sent_by: current_user
               )
       end
 
@@ -212,27 +198,20 @@ describe ConsentNotification do
       end
 
       it "enqueues an email per parent" do
-        expect { create_and_send! }.to have_enqueued_mail(
-          ConsentMailer,
-          :school_initial_reminder
+        expect { create_and_send! }.to have_delivered_email(
+          :consent_school_initial_reminder
         ).with(
-          params: {
-            parent: parents.first,
-            patient:,
-            programme:,
-            session:,
-            sent_by: current_user
-          },
-          args: []
-        ).and have_enqueued_mail(ConsentMailer, :school_initial_reminder).with(
-                params: {
-                  parent: parents.second,
-                  patient:,
-                  programme:,
-                  session:,
-                  sent_by: current_user
-                },
-                args: []
+          parent: parents.first,
+          patient:,
+          programme:,
+          session:,
+          sent_by: current_user
+        ).and have_delivered_email(:consent_school_initial_reminder).with(
+                parent: parents.second,
+                patient:,
+                programme:,
+                session:,
+                sent_by: current_user
               )
       end
 
@@ -281,30 +260,20 @@ describe ConsentNotification do
       end
 
       it "enqueues an email per parent" do
-        expect { create_and_send! }.to have_enqueued_mail(
-          ConsentMailer,
-          :school_subsequent_reminder
+        expect { create_and_send! }.to have_delivered_email(
+          :consent_school_subsequent_reminder
         ).with(
-          params: {
-            parent: parents.first,
-            patient:,
-            programme:,
-            session:,
-            sent_by: current_user
-          },
-          args: []
-        ).and have_enqueued_mail(
-                ConsentMailer,
-                :school_subsequent_reminder
-              ).with(
-                params: {
-                  parent: parents.second,
-                  patient:,
-                  programme:,
-                  session:,
-                  sent_by: current_user
-                },
-                args: []
+          parent: parents.first,
+          patient:,
+          programme:,
+          session:,
+          sent_by: current_user
+        ).and have_delivered_email(:consent_school_subsequent_reminder).with(
+                parent: parents.second,
+                patient:,
+                programme:,
+                session:,
+                sent_by: current_user
               )
       end
 

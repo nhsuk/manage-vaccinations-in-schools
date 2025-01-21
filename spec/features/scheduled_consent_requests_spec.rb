@@ -109,7 +109,7 @@ describe "Scheduled consent requests" do
   def then_no_consent_requests_have_been_sent
     SchoolConsentRequestsJob.perform_now
 
-    expect(sent_emails).to be_empty
+    expect(email_deliveries).to be_empty
     expect(sms_deliveries).to be_empty
   end
 

@@ -4,12 +4,16 @@ module ConsentFormMailerConcern
   extend ActiveSupport::Concern
 
   def send_consent_form_confirmation(consent_form)
-    mailer = ConsentMailer.with(consent_form:)
-
     if consent_form.contact_injection?
-      mailer.confirmation_injection.deliver_later
+      EmailDeliveryJob.perform_later(
+        :consent_confirmation_injection,
+        consent_form:
+      )
     elsif consent_form.consent_refused?
-      mailer.confirmation_refused.deliver_later
+      EmailDeliveryJob.perform_later(
+        :consent_confirmation_refused,
+        consent_form:
+      )
 
       if consent_form.parent_phone_receive_updates
         SMSDeliveryJob.perform_later(
@@ -18,13 +22,19 @@ module ConsentFormMailerConcern
         )
       end
     elsif consent_form.needs_triage?
-      mailer.confirmation_triage.deliver_later
+      EmailDeliveryJob.perform_later(
+        :consent_confirmation_triage,
+        consent_form:
+      )
     elsif consent_form.actual_upcoming_session ==
           consent_form.organisation.generic_clinic_session ||
           consent_form.actual_upcoming_session&.completed?
-      mailer.confirmation_clinic.deliver_later
+      EmailDeliveryJob.perform_later(
+        :consent_confirmation_clinic,
+        consent_form:
+      )
     else
-      mailer.confirmation_given.deliver_later
+      EmailDeliveryJob.perform_later(:consent_confirmation_given, consent_form:)
 
       if consent_form.parent_phone_receive_updates
         SMSDeliveryJob.perform_later(:consent_confirmation_given, consent_form:)
