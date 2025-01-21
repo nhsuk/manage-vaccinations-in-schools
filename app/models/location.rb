@@ -65,8 +65,12 @@ class Location < ApplicationRecord
     validates :team, presence: true
   end
 
+  with_options if: :community_clinic? do
+    validates :ods_code, exclusion: { in: :organisation_ods_code }
+  end
+
   with_options if: :generic_clinic? do
-    validates :ods_code, comparison: { equal_to: :organisation_ods_code }
+    validates :ods_code, inclusion: { in: :organisation_ods_code }
   end
 
   with_options if: :gp_practice? do
@@ -92,6 +96,6 @@ class Location < ApplicationRecord
   private
 
   def organisation_ods_code
-    team&.organisation&.ods_code
+    [team&.organisation&.ods_code]
   end
 end
