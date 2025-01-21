@@ -13,8 +13,14 @@ class Reports::OfflineSessionExporter
     # stree-ignore
     Axlsx::Package
       .new { |package|
+        package.use_shared_strings = true
+
         add_vaccinations_sheet(package)
-        add_performing_professionals_sheet(package)
+        add_reference_sheet package,
+                            name: "Performing Professionals",
+                            values_name: "EMAIL",
+                            values: performing_professional_email_values
+        add_batch_numbers_sheets(package)
       }
       .to_stream
       .read
@@ -33,8 +39,6 @@ class Reports::OfflineSessionExporter
   delegate :location, :organisation, to: :session
 
   def add_vaccinations_sheet(package)
-    package.use_shared_strings = true
-
     workbook = package.workbook
 
     cached_styles = CachedStyles.new(workbook)
@@ -56,21 +60,23 @@ class Reports::OfflineSessionExporter
     end
   end
 
-  def add_performing_professionals_sheet(package)
-    package.use_shared_strings = true
-
+  def add_reference_sheet(package, name:, values_name:, values:)
     workbook = package.workbook
-    workbook.add_worksheet(
-      name: "Performing Professionals",
-      state: :hidden
-    ) do |sheet|
+    workbook.add_worksheet(name:, state: :hidden) do |sheet|
       sheet.sheet_protection
 
-      sheet.add_row(%w[EMAIL])
+      sheet.add_row([values_name])
 
-      performing_professional_email_values.each do |email|
-        sheet.add_row([email])
-      end
+      values.each { |value| sheet.add_row([value]) }
+    end
+  end
+
+  def add_batch_numbers_sheets(package)
+    session.programmes.map do |programme|
+      add_reference_sheet package,
+                          name: "#{programme.type} Batch Numbers",
+                          values_name: "NUMBER",
+                          values: batch_values_for_programme(programme)
     end
   end
 
@@ -237,12 +243,11 @@ class Reports::OfflineSessionExporter
     )
     row[:performing_professional_email] = Cell.new(
       vaccination_record.performed_by_user&.email,
-      allowed_formula: "=#{performing_professionals_range}"
+      allowed_formula: performing_professionals_range
     )
     row[:batch_number] = Cell.new(
       batch&.name,
-      allowed_values:
-        batch_values_for_programme(programme, existing_batch: batch)
+      allowed_formula: batch_numbers_range_for_programme(programme)
     )
     row[:batch_expiry_date] = batch&.expiry
     row[:anatomical_site] = Cell.new(
@@ -273,10 +278,10 @@ class Reports::OfflineSessionExporter
       allowed_values: vaccine_values_for_programme(programme)
     )
     row[:performing_professional_email] = Cell.new(
-      allowed_formula: "=#{performing_professionals_range}"
+      allowed_formula: performing_professionals_range
     )
     row[:batch_number] = Cell.new(
-      allowed_values: batch_values_for_programme(programme)
+      allowed_formula: batch_numbers_range_for_programme(programme)
     )
     row[:batch_expiry_date] = Cell.new(type: :date)
     row[:anatomical_site] = Cell.new(
@@ -321,7 +326,12 @@ class Reports::OfflineSessionExporter
 
   def performing_professionals_range
     count = performing_professional_email_values.count
-    "='Performing Professionals'!$A2:$A#{count + 1}"
+    "'Performing Professionals'!$A2:$A#{count + 1}"
+  end
+
+  def batch_numbers_range_for_programme(programme)
+    count = batch_values_for_programme(programme).count
+    "'#{programme.type} Batch Numbers'!$A2:$A#{count + 1}"
   end
 
   def clinic_name_values
@@ -406,7 +416,7 @@ class Reports::OfflineSessionExporter
         if allowed_values.present?
           "\"#{allowed_values.join(", ")}\""
         elsif allowed_formula.present?
-          allowed_formula
+          "=#{allowed_formula}"
         end
 
       sheet.add_data_validation(

@@ -12,6 +12,21 @@ describe Reports::OfflineSessionExporter do
     rows.compact
   end
 
+  def validation_formula(worksheet:, column_name:, row: 1)
+    column = worksheet[0].cells.find_index { it.value == column_name.upcase }
+
+    # stree-ignore
+    worksheet
+      .data_validations
+      .find { |validation|
+        validation.sqref.any? do
+          it.col_range.include?(column) && it.row_range.include?(row)
+        end
+      }
+      .formula1
+      .expression
+  end
+
   subject(:call) { described_class.call(session) }
 
   let(:programme) { create(:programme, :hpv) }
@@ -21,13 +36,14 @@ describe Reports::OfflineSessionExporter do
   let(:session) { create(:session, location:, organisation:, programme:) }
 
   context "a school session" do
+    subject(:workbook) { RubyXL::Parser.parse_buffer(call) }
+
     let(:location) { create(:school, team:) }
 
     it { should_not be_blank }
 
     describe "headers" do
       subject(:headers) do
-        workbook = RubyXL::Parser.parse_buffer(call)
         sheet = workbook.worksheets[0]
         sheet[0].cells.map(&:value)
       end
@@ -77,10 +93,7 @@ describe Reports::OfflineSessionExporter do
     end
 
     describe "rows" do
-      subject(:rows) do
-        workbook = RubyXL::Parser.parse_buffer(call)
-        worksheet_to_hashes(workbook.worksheets[0])
-      end
+      subject(:rows) { worksheet_to_hashes(workbook.worksheets[0]) }
 
       let(:performed_at) { Time.zone.local(2024, 1, 1, 12, 5, 20) }
       let(:batch) { create(:batch, vaccine: programme.vaccines.active.first) }
@@ -291,16 +304,105 @@ describe Reports::OfflineSessionExporter do
         end
       end
     end
+
+    describe "cell validations" do
+      subject(:worksheet) { workbook.worksheets[0] }
+
+      before do
+        # Without a patient no validation will be setup.
+        create(:patient, session:)
+      end
+
+      describe "performing professional email" do
+        subject(:validation) do
+          create(:user, organisation:, email: "vaccinator@example.com")
+          validation_formula(
+            worksheet:,
+            column_name: "performing_professional_email"
+          )
+        end
+
+        it { should eq "='Performing Professionals'!$A2:$A2" }
+      end
+
+      describe "batch number" do
+        subject(:validation) do
+          create(
+            :batch,
+            name: "BATCH12345",
+            vaccine: programme.vaccines.active.first,
+            organisation:
+          )
+          validation_formula(worksheet:, column_name: "batch_number")
+        end
+
+        it { should eq "='hpv Batch Numbers'!$A2:$A2" }
+      end
+    end
+
+    describe "performing professionals sheet" do
+      subject(:worksheet) do
+        workbook.worksheets.find { it.sheet_name == "Performing Professionals" }
+      end
+
+      let!(:vaccinators) { create_list(:user, 2, organisation:) }
+
+      before do
+        create(:patient, session:)
+        create(
+          :user,
+          organisation: create(:organisation),
+          email: "vaccinator.other@example.com"
+        )
+      end
+
+      it "lists all the organisation users' emails" do
+        emails = worksheet[1..].map { it.cells.first.value }
+        expect(emails).to include(*vaccinators.map(&:email))
+      end
+
+      its(:state) { should eq "hidden" }
+      its(:sheet_protection) { should be_present }
+    end
+
+    describe "batch numbers sheet" do
+      subject(:worksheet) do
+        workbook.worksheets.find { it.sheet_name == "hpv Batch Numbers" }
+      end
+
+      let!(:batches) do
+        create_list(
+          :batch,
+          2,
+          vaccine: programme.vaccines.active.first,
+          organisation:
+        )
+      end
+
+      before do
+        create(:patient, session:)
+        create(:batch, name: "OTHERBATCH", vaccine: create(:vaccine, :flu))
+      end
+
+      it "lists all the batch numbers for the programme" do
+        batch_numbers = worksheet[1..].map { it.cells.first.value }
+        expect(batch_numbers).to include(*batches.map(&:name))
+      end
+
+      its(:state) { should eq "hidden" }
+      its(:sheet_protection) { should be_present }
+    end
   end
 
   context "a clinic session" do
+    subject(:workbook) { RubyXL::Parser.parse_buffer(call) }
+
     let(:location) { create(:generic_clinic, team:) }
 
     it { should_not be_blank }
 
     describe "headers" do
       subject(:headers) do
-        workbook = RubyXL::Parser.parse_buffer(call)
         sheet = workbook.worksheets[0]
         sheet[0].cells.map(&:value)
       end
@@ -351,10 +453,7 @@ describe Reports::OfflineSessionExporter do
     end
 
     describe "rows" do
-      subject(:rows) do
-        workbook = RubyXL::Parser.parse_buffer(call)
-        worksheet_to_hashes(workbook.worksheets[0])
-      end
+      subject(:rows) { worksheet_to_hashes(workbook.worksheets[0]) }
 
       it { should be_empty }
 
@@ -484,6 +583,94 @@ describe Reports::OfflineSessionExporter do
           )
         end
       end
+    end
+
+    describe "cell validations" do
+      subject(:worksheet) { workbook.worksheets[0] }
+
+      before do
+        create(:patient, session:)
+        create(:user, organisation:, email: "vaccinator@example.com")
+      end
+
+      describe "performing professional email" do
+        subject(:validation) do
+          worksheet = workbook.worksheets[0]
+          validation_formula(
+            worksheet:,
+            column_name: "performing_professional_email"
+          )
+        end
+
+        it { should eq "='Performing Professionals'!$A2:$A2" }
+      end
+
+      describe "batch number" do
+        subject(:validation) do
+          create(
+            :batch,
+            name: "BATCH12345",
+            vaccine: programme.vaccines.active.first,
+            organisation:
+          )
+          validation_formula(worksheet:, column_name: "batch_number")
+        end
+
+        it { should eq "='hpv Batch Numbers'!$A2:$A2" }
+      end
+    end
+
+    describe "performing professionals sheet" do
+      subject(:worksheet) do
+        workbook.worksheets.find { it.sheet_name == "Performing Professionals" }
+      end
+
+      let!(:vaccinators) { create_list(:user, 2, organisation:) }
+
+      before do
+        create(:patient, session:)
+        create(
+          :user,
+          organisation: create(:organisation),
+          email: "vaccinator.other@example.com"
+        )
+      end
+
+      it "lists all the organisation users' emails" do
+        emails = worksheet[1..].map { it.cells.first.value }
+        expect(emails).to eq vaccinators.map(&:email)
+      end
+
+      its(:state) { should eq "hidden" }
+      its(:sheet_protection) { should be_present }
+    end
+
+    describe "batch numbers sheet" do
+      subject(:worksheet) do
+        workbook.worksheets.find { it.sheet_name == "hpv Batch Numbers" }
+      end
+
+      let!(:batches) do
+        create_list(
+          :batch,
+          2,
+          vaccine: programme.vaccines.active.first,
+          organisation:
+        )
+      end
+
+      before do
+        create(:patient, session:)
+        create(:batch, name: "OTHERBATCH", vaccine: create(:vaccine, :flu))
+      end
+
+      it "lists all the batch numbers for the programme" do
+        batch_numbers = worksheet[1..].map { it.cells.first.value }
+        expect(batch_numbers).to eq batches.map(&:name)
+      end
+
+      its(:state) { should eq "hidden" }
+      its(:sheet_protection) { should be_present }
     end
   end
 end
