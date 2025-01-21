@@ -13,6 +13,7 @@
 #  name                          :text             not null
 #  ods_code                      :string           not null
 #  phone                         :string
+#  privacy_notice_url            :string           not null
 #  privacy_policy_url            :string           not null
 #  created_at                    :datetime         not null
 #  updated_at                    :datetime         not null
@@ -32,7 +33,8 @@ FactoryBot.define do
     phone { "01234 567890" }
     ods_code { "U#{identifier}" }
     careplus_venue_code { identifier.to_s }
-    privacy_policy_url { "https://example.com/privacy" }
+    privacy_notice_url { "https://example.com/privacy-notice" }
+    privacy_policy_url { "https://example.com/privacy-policy" }
 
     trait :with_one_nurse do
       users { [create(:user, :nurse, organisation: instance)] }

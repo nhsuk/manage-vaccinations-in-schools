@@ -503,6 +503,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_15_123804) do
     t.integer "days_before_consent_reminders", default: 7, null: false
     t.integer "days_before_invitations", default: 21, null: false
     t.string "careplus_venue_code", null: false
+    t.string "privacy_notice_url", null: false
     t.index ["name"], name: "index_organisations_on_name", unique: true
     t.index ["ods_code"], name: "index_organisations_on_ods_code", unique: true
   end
