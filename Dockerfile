@@ -64,6 +64,9 @@ RUN SECRET_KEY_BASE_DUMMY=1 \
 # Remove node modules to reduce image size
 RUN rm -rf node_modules
 
+# Create a public/sha file to help identify which commit is deployed
+RUN git rev-parse HEAD > public/sha
+
 # Final stage for app image
 FROM base
 
