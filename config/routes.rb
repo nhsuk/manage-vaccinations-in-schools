@@ -113,6 +113,8 @@ Rails.application.routes.draw do
 
   resources :notices, only: :index
 
+  resources :notifications, only: :create
+
   resources :patients, only: %i[index show edit update] do
     post "", action: :index, on: :collection
 

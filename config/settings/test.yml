@@ -7,6 +7,9 @@ cis2:
   issuer: "http://localhost:4000/test/oidc"
   client_id: "31337.apps.national"
 
+govuk_notify:
+  callback_bearer_token: test-bearer-token
+
 mesh:
   base_url: https://localhost:8700
   disable_ssl_verification: true
