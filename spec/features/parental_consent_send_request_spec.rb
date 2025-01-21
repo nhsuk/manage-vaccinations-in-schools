@@ -73,7 +73,7 @@ describe "Parental consent" do
   end
 
   def and_a_text_is_sent_to_the_parent
-    expect_text_to(@parent.phone, :consent_clinic_request)
+    expect_sms_to(@parent.phone, :consent_clinic_request)
   end
 
   def and_an_activity_log_entry_is_visible_for_the_email

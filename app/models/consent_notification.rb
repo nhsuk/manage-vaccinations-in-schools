@@ -88,7 +88,7 @@ class ConsentNotification < ApplicationRecord
 
       next if parent.phone.nil?
 
-      TextDeliveryJob.perform_later(
+      SMSDeliveryJob.perform_later(
         text_template,
         parent:,
         patient:,

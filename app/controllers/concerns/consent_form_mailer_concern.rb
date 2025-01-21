@@ -12,7 +12,7 @@ module ConsentFormMailerConcern
       mailer.confirmation_refused.deliver_later
 
       if consent_form.parent_phone_receive_updates
-        TextDeliveryJob.perform_later(
+        SMSDeliveryJob.perform_later(
           :consent_confirmation_refused,
           consent_form:
         )
@@ -27,10 +27,7 @@ module ConsentFormMailerConcern
       mailer.confirmation_given.deliver_later
 
       if consent_form.parent_phone_receive_updates
-        TextDeliveryJob.perform_later(
-          :consent_confirmation_given,
-          consent_form:
-        )
+        SMSDeliveryJob.perform_later(:consent_confirmation_given, consent_form:)
       end
     end
   end

@@ -103,6 +103,6 @@ describe "Verbal consent" do
   end
 
   def and_a_text_is_sent_to_the_parent_confirming_the_refusal
-    expect_text_to @parent.phone, :consent_confirmation_refused
+    expect_sms_to @parent.phone, :consent_confirmation_refused
   end
 end

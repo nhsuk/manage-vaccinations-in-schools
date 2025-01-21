@@ -24,7 +24,7 @@ module VaccinationMailerConcern
       end
 
       if parent.phone.present? && parent.phone_receive_updates
-        TextDeliveryJob.perform_later(text_template_name, **params)
+        SMSDeliveryJob.perform_later(text_template_name, **params)
       end
     end
   end

@@ -42,7 +42,7 @@ FactoryBot.define do
     trait :sms do
       type { "sms" }
       recipient { Faker::PhoneNumber.phone_number }
-      template_id { GOVUK_NOTIFY_TEXT_TEMPLATES.values.sample }
+      template_id { GOVUK_NOTIFY_SMS_TEMPLATES.values.sample }
     end
   end
 end

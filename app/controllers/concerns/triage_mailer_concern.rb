@@ -24,13 +24,13 @@ module TriageMailerConcern
       ConsentMailer.with(params).confirmation_refused.deliver_later
 
       if consent.parent.phone_receive_updates
-        TextDeliveryJob.perform_later(:consent_confirmation_refused, **params)
+        SMSDeliveryJob.perform_later(:consent_confirmation_refused, **params)
       end
     elsif consent.response_given?
       ConsentMailer.with(params).confirmation_given.deliver_later
 
       if consent.parent.phone_receive_updates
-        TextDeliveryJob.perform_later(:consent_confirmation_given, **params)
+        SMSDeliveryJob.perform_later(:consent_confirmation_given, **params)
       end
     end
   end

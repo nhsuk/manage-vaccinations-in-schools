@@ -203,7 +203,7 @@ RSpec.configure do |config|
 
   config.before do
     ActionMailer::Base.deliveries.clear
-    TextDeliveryJob.deliveries.clear
+    SMSDeliveryJob.deliveries.clear
   end
 
   config.include ActiveJob::TestHelper, type: :feature
@@ -214,7 +214,7 @@ RSpec.configure do |config|
   config.include PDSHelper, type: :feature
   config.include EmailExpectations, type: :feature
   config.include FactoryBot::Syntax::Methods
-  config.include TextExpectations, type: :feature
+  config.include SMSExpectations, type: :feature
   config.include ViewComponent::TestHelpers, type: :component
   config.include AuthorisationHelper
 end

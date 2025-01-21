@@ -110,7 +110,7 @@ describe "Scheduled consent requests" do
     SchoolConsentRequestsJob.perform_now
 
     expect(sent_emails).to be_empty
-    expect(sent_texts).to be_empty
+    expect(sms_deliveries).to be_empty
   end
 
   def then_all_four_parents_received_consent_requests
@@ -121,9 +121,9 @@ describe "Scheduled consent requests" do
     expect_email_to("parent1.child2@example.com", :consent_school_request, :any)
     expect_email_to("parent2.child2@example.com", :consent_school_request, :any)
 
-    expect_text_to("07700 900000", :consent_school_request, :any)
-    expect_text_to("07700 900001", :consent_school_request, :any)
-    expect_text_to("07700 900002", :consent_school_request, :any)
-    expect_text_to("07700 900003", :consent_school_request, :any)
+    expect_sms_to("07700 900000", :consent_school_request, :any)
+    expect_sms_to("07700 900001", :consent_school_request, :any)
+    expect_sms_to("07700 900002", :consent_school_request, :any)
+    expect_sms_to("07700 900003", :consent_school_request, :any)
   end
 end

@@ -51,7 +51,7 @@ describe VaccinationMailerConcern do
       end
 
       it "sends a text message" do
-        expect { send_vaccination_confirmation }.to have_enqueued_text(
+        expect { send_vaccination_confirmation }.to have_delivered_sms(
           :vaccination_confirmation_administered
         ).with(parent:, vaccination_record:, sent_by: current_user)
       end
@@ -84,7 +84,7 @@ describe VaccinationMailerConcern do
       end
 
       it "sends a text message" do
-        expect { send_vaccination_confirmation }.to have_enqueued_text(
+        expect { send_vaccination_confirmation }.to have_delivered_sms(
           :vaccination_confirmation_not_administered
         ).with(parent:, vaccination_record:, sent_by: current_user)
       end
@@ -122,7 +122,7 @@ describe VaccinationMailerConcern do
         end
 
         it "sends a text message" do
-          expect { send_vaccination_confirmation }.to have_enqueued_text(
+          expect { send_vaccination_confirmation }.to have_delivered_sms(
             :vaccination_confirmation_administered
           ).with(parent:, vaccination_record:, sent_by: current_user)
         end
@@ -136,7 +136,7 @@ describe VaccinationMailerConcern do
         end
 
         it "doesn't send a text message" do
-          expect { send_vaccination_confirmation }.not_to have_enqueued_text
+          expect { send_vaccination_confirmation }.not_to have_delivered_sms
         end
       end
     end
@@ -149,7 +149,7 @@ describe VaccinationMailerConcern do
       end
 
       it "doesn't send a text message" do
-        expect { send_vaccination_confirmation }.not_to have_enqueued_text
+        expect { send_vaccination_confirmation }.not_to have_delivered_sms
       end
     end
 
@@ -161,7 +161,7 @@ describe VaccinationMailerConcern do
       end
 
       it "doesn't send a text message" do
-        expect { send_vaccination_confirmation }.not_to have_enqueued_text
+        expect { send_vaccination_confirmation }.not_to have_delivered_sms
       end
     end
 
@@ -173,7 +173,7 @@ describe VaccinationMailerConcern do
       end
 
       it "doesn't send a text message" do
-        expect { send_vaccination_confirmation }.not_to have_enqueued_text
+        expect { send_vaccination_confirmation }.not_to have_delivered_sms
       end
     end
   end

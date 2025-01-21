@@ -297,13 +297,13 @@ describe "HPV vaccination" do
   end
 
   def and_a_text_is_sent_to_the_parent_confirming_the_vaccination
-    expect_text_to(
+    expect_sms_to(
       @vaccinated_patient.consents.last.parent.phone,
       :vaccination_confirmation_administered,
       :any
     )
 
-    expect_text_to(
+    expect_sms_to(
       @unvaccinated_patient.consents.last.parent.phone,
       :vaccination_confirmation_not_administered,
       :any
