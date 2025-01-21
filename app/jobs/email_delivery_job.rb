@@ -16,8 +16,9 @@ class EmailDeliveryJob < NotifyDeliveryJob
     template_id = GOVUK_NOTIFY_EMAIL_TEMPLATES[template_name.to_sym]
     raise UnknownTemplate if template_id.nil?
 
-    email_address =
-      consent_form&.parent_email || consent&.parent&.email || parent&.email
+    parent ||= consent&.parent
+
+    email_address = consent_form&.parent_email || parent&.email
     return if email_address.nil?
 
     organisation =
@@ -59,6 +60,7 @@ class EmailDeliveryJob < NotifyDeliveryJob
     NotifyLogEntry.create!(
       consent_form:,
       delivery_id:,
+      parent:,
       patient:,
       recipient: email_address,
       sent_by:,

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_01_16_093944) do
+ActiveRecord::Schema[8.0].define(version: 2025_01_21_112644) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -471,9 +471,11 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_16_093944) do
     t.bigint "patient_id"
     t.bigint "sent_by_user_id"
     t.uuid "delivery_id"
+    t.bigint "parent_id"
     t.integer "delivery_status", default: 0, null: false
     t.index ["consent_form_id"], name: "index_notify_log_entries_on_consent_form_id"
     t.index ["delivery_id"], name: "index_notify_log_entries_on_delivery_id"
+    t.index ["parent_id"], name: "index_notify_log_entries_on_parent_id"
     t.index ["patient_id"], name: "index_notify_log_entries_on_patient_id"
     t.index ["sent_by_user_id"], name: "index_notify_log_entries_on_sent_by_user_id"
   end
@@ -829,6 +831,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_16_093944) do
   add_foreign_key "immunisation_imports_vaccination_records", "vaccination_records"
   add_foreign_key "locations", "teams"
   add_foreign_key "notify_log_entries", "consent_forms"
+  add_foreign_key "notify_log_entries", "parents", on_delete: :nullify
   add_foreign_key "notify_log_entries", "patients"
   add_foreign_key "notify_log_entries", "users", column: "sent_by_user_id"
   add_foreign_key "organisation_programmes", "organisations"

@@ -11,6 +11,7 @@
 #  created_at      :datetime         not null
 #  consent_form_id :bigint
 #  delivery_id     :uuid
+#  parent_id       :bigint
 #  patient_id      :bigint
 #  sent_by_user_id :bigint
 #  template_id     :uuid             not null
@@ -19,12 +20,14 @@
 #
 #  index_notify_log_entries_on_consent_form_id  (consent_form_id)
 #  index_notify_log_entries_on_delivery_id      (delivery_id)
+#  index_notify_log_entries_on_parent_id        (parent_id)
 #  index_notify_log_entries_on_patient_id       (patient_id)
 #  index_notify_log_entries_on_sent_by_user_id  (sent_by_user_id)
 #
 # Foreign Keys
 #
 #  fk_rails_...  (consent_form_id => consent_forms.id)
+#  fk_rails_...  (parent_id => parents.id) ON DELETE => nullify
 #  fk_rails_...  (patient_id => patients.id)
 #  fk_rails_...  (sent_by_user_id => users.id)
 #
@@ -35,6 +38,7 @@ class NotifyLogEntry < ApplicationRecord
 
   belongs_to :consent_form, optional: true
   belongs_to :patient, optional: true
+  belongs_to :parent, optional: true
 
   enum :type, { email: 0, sms: 1 }, validate: true
   enum :delivery_status,
