@@ -51,10 +51,11 @@ class SchoolMove < ApplicationRecord
               unless: -> { school.nil? }
             }
 
-  def confirm!(move_to_school: nil)
+  def confirm!(user: nil, move_to_school: nil)
     ActiveRecord::Base.transaction do
       update_patient!
       update_sessions!(move_to_school:)
+      create_log_entry!(user:, move_to_school:)
       SchoolMove.where(patient:).destroy_all if persisted?
     end
   end
@@ -107,6 +108,16 @@ class SchoolMove < ApplicationRecord
     return if session.nil?
 
     PatientSession.find_or_create_by!(patient:, session:)
+  end
+
+  def create_log_entry!(user:, move_to_school:)
+    SchoolMoveLogEntry.create!(
+      home_educated:,
+      move_to_school:,
+      patient:,
+      school:,
+      user:
+    )
   end
 
   def cohort
