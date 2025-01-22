@@ -49,13 +49,30 @@ describe SchoolMove do
   end
 
   describe "#confirm!" do
-    subject(:confirm!) { school_move.confirm!(move_to_school:) }
+    subject(:confirm!) { school_move.confirm!(user:, move_to_school:) }
 
+    let(:user) { create(:user) }
     let(:move_to_school) { nil }
 
     let(:programme) { create(:programme) }
     let(:organisation) { create(:organisation, programmes: [programme]) }
     let(:generic_clinic_session) { organisation.generic_clinic_session }
+
+    shared_examples "creates a log entry" do
+      it "creates a log entry" do
+        expect { confirm! }.to change(
+          patient.school_move_log_entries,
+          :count
+        ).by(1)
+
+        expect(SchoolMoveLogEntry.last).to have_attributes(
+          move_to_school:,
+          school: school_move.school,
+          home_educated: school_move.home_educated,
+          user:
+        )
+      end
+    end
 
     shared_examples "sets the patient school" do
       it "sets the patient school" do
@@ -175,6 +192,7 @@ describe SchoolMove do
           )
         end
 
+        include_examples "creates a log entry"
         include_examples "sets the patient cohort"
         include_examples "sets the patient school"
         include_examples "adds the patient to the new school session"
@@ -197,6 +215,7 @@ describe SchoolMove do
           )
         end
 
+        include_examples "creates a log entry"
         include_examples "sets the patient cohort"
         include_examples "sets the patient school"
         include_examples "adds the patient to the new school session"
@@ -213,6 +232,7 @@ describe SchoolMove do
           create(:session, :closed, location: school, organisation:, programme:)
         end
 
+        include_examples "creates a log entry"
         include_examples "sets the patient cohort"
         include_examples "sets the patient school"
         include_examples "adds the patient to the community clinics"
@@ -224,6 +244,7 @@ describe SchoolMove do
           create(:school_move, :to_home_educated, organisation:, patient:)
         end
 
+        include_examples "creates a log entry"
         include_examples "sets the patient cohort"
         include_examples "sets the patient to home-schooled"
         include_examples "adds the patient to the community clinics"
@@ -252,6 +273,7 @@ describe SchoolMove do
             )
           end
 
+          include_examples "creates a log entry"
           include_examples "sets the patient school"
           include_examples "keeps the patient cohort"
           include_examples "removes the patient from the old school session"
@@ -275,6 +297,7 @@ describe SchoolMove do
             )
           end
 
+          include_examples "creates a log entry"
           include_examples "sets the patient school"
           include_examples "keeps the patient cohort"
           include_examples "removes the patient from the old school session"
@@ -298,6 +321,7 @@ describe SchoolMove do
             )
           end
 
+          include_examples "creates a log entry"
           include_examples "sets the patient school"
           include_examples "keeps the patient cohort"
           include_examples "removes the patient from the old school session"
@@ -310,6 +334,7 @@ describe SchoolMove do
             create(:school_move, :to_home_educated, organisation:, patient:)
           end
 
+          include_examples "creates a log entry"
           include_examples "sets the patient to home-schooled"
           include_examples "keeps the patient cohort"
           include_examples "removes the patient from the old school session"
@@ -336,6 +361,7 @@ describe SchoolMove do
             )
           end
 
+          include_examples "creates a log entry"
           include_examples "sets the patient school"
           include_examples "changes the patient cohort"
           include_examples "removes the patient from the old school session"
@@ -360,6 +386,7 @@ describe SchoolMove do
             new_organisation.generic_clinic_session
           end
 
+          include_examples "creates a log entry"
           include_examples "sets the patient to home-schooled"
           include_examples "changes the patient cohort"
           include_examples "removes the patient from the old school session"
@@ -393,6 +420,7 @@ describe SchoolMove do
             )
           end
 
+          include_examples "creates a log entry"
           include_examples "sets the patient school"
           include_examples "keeps the patient cohort"
           include_examples "keeps the patient in the old school session"
@@ -415,6 +443,7 @@ describe SchoolMove do
             )
           end
 
+          include_examples "creates a log entry"
           include_examples "sets the patient school"
           include_examples "keeps the patient cohort"
           include_examples "keeps the patient in the old school session"
@@ -437,6 +466,7 @@ describe SchoolMove do
             )
           end
 
+          include_examples "creates a log entry"
           include_examples "sets the patient school"
           include_examples "keeps the patient cohort"
           include_examples "keeps the patient in the old school session"
@@ -448,6 +478,7 @@ describe SchoolMove do
             create(:school_move, :to_home_educated, organisation:, patient:)
           end
 
+          include_examples "creates a log entry"
           include_examples "sets the patient to home-schooled"
           include_examples "keeps the patient cohort"
           include_examples "keeps the patient in the old school session"
@@ -473,6 +504,7 @@ describe SchoolMove do
             )
           end
 
+          include_examples "creates a log entry"
           include_examples "sets the patient school"
           include_examples "changes the patient cohort"
           include_examples "keeps the patient in the old school session"
@@ -496,6 +528,7 @@ describe SchoolMove do
             new_organisation.generic_clinic_session
           end
 
+          include_examples "creates a log entry"
           include_examples "sets the patient to home-schooled"
           include_examples "changes the patient cohort"
           include_examples "keeps the patient in the old school session"
@@ -526,6 +559,7 @@ describe SchoolMove do
             )
           end
 
+          include_examples "creates a log entry"
           include_examples "sets the patient school"
           include_examples "keeps the patient cohort"
           include_examples "keeps the patient in the community clinics"
@@ -555,6 +589,7 @@ describe SchoolMove do
             )
           end
 
+          include_examples "creates a log entry"
           include_examples "sets the patient school"
           include_examples "keeps the patient cohort"
           include_examples "keeps the patient in the community clinics"
@@ -584,6 +619,7 @@ describe SchoolMove do
             )
           end
 
+          include_examples "creates a log entry"
           include_examples "sets the patient school"
           include_examples "keeps the patient cohort"
           include_examples "keeps the patient in the community clinics"
@@ -605,6 +641,7 @@ describe SchoolMove do
             expect { confirm! }.not_to(change { patient.reload.home_educated })
           end
 
+          include_examples "creates a log entry"
           include_examples "keeps the patient cohort"
           include_examples "keeps the patient in the community clinics"
           include_examples "destroys the school move"
@@ -629,6 +666,7 @@ describe SchoolMove do
             )
           end
 
+          include_examples "creates a log entry"
           include_examples "sets the patient school"
           include_examples "changes the patient cohort"
           include_examples "removes the patient from the community clinics"
@@ -663,6 +701,7 @@ describe SchoolMove do
             expect { confirm! }.not_to(change { patient.reload.home_educated })
           end
 
+          include_examples "creates a log entry"
           include_examples "changes the patient cohort"
           include_examples "adds the patient to the community clinics"
           include_examples "destroys the school move"
@@ -695,6 +734,7 @@ describe SchoolMove do
             )
           end
 
+          include_examples "creates a log entry"
           include_examples "sets the patient school"
           include_examples "keeps the patient cohort"
           include_examples "keeps the patient in the community clinics"
@@ -717,6 +757,7 @@ describe SchoolMove do
             )
           end
 
+          include_examples "creates a log entry"
           include_examples "sets the patient school"
           include_examples "keeps the patient cohort"
           include_examples "keeps the patient in the community clinics"
@@ -739,6 +780,7 @@ describe SchoolMove do
             )
           end
 
+          include_examples "creates a log entry"
           include_examples "sets the patient school"
           include_examples "keeps the patient cohort"
           include_examples "keeps the patient in the community clinics"
@@ -778,6 +820,7 @@ describe SchoolMove do
             )
           end
 
+          include_examples "creates a log entry"
           include_examples "sets the patient school"
           include_examples "changes the patient cohort"
           include_examples "keeps the patient in the community clinics"
@@ -809,6 +852,7 @@ describe SchoolMove do
             expect { confirm! }.not_to(change { patient.reload.home_educated })
           end
 
+          include_examples "creates a log entry"
           include_examples "changes the patient cohort"
           include_examples "keeps the patient in the community clinics"
           include_examples "destroys the school move"
@@ -838,6 +882,7 @@ describe SchoolMove do
             )
           end
 
+          include_examples "creates a log entry"
           include_examples "sets the patient school"
           include_examples "keeps the patient in the community clinics"
           include_examples "destroys the school move"
@@ -845,6 +890,7 @@ describe SchoolMove do
           context "when the user asks to move the patient to the new school" do
             let(:move_to_school) { true }
 
+            include_examples "creates a log entry"
             include_examples "removes the patient from the community clinics"
             include_examples "adds the patient to the new school session"
           end
@@ -866,6 +912,7 @@ describe SchoolMove do
             )
           end
 
+          include_examples "creates a log entry"
           include_examples "sets the patient school"
           include_examples "keeps the patient in the community clinics"
           include_examples "destroys the school move"
@@ -873,6 +920,7 @@ describe SchoolMove do
           context "when the user asks to move the patient to the new school" do
             let(:move_to_school) { true }
 
+            include_examples "creates a log entry"
             include_examples "removes the patient from the community clinics"
             include_examples "adds the patient to the new school session"
           end
@@ -894,6 +942,7 @@ describe SchoolMove do
             )
           end
 
+          include_examples "creates a log entry"
           include_examples "sets the patient school"
           include_examples "keeps the patient in the community clinics"
           include_examples "destroys the school move"
@@ -901,6 +950,7 @@ describe SchoolMove do
           context "when the user asks to move the patient to the new school" do
             let(:move_to_school) { true }
 
+            include_examples "creates a log entry"
             include_examples "keeps the patient in the community clinics"
           end
         end
@@ -910,6 +960,7 @@ describe SchoolMove do
             create(:school_move, :to_home_educated, organisation:, patient:)
           end
 
+          include_examples "creates a log entry"
           include_examples "sets the patient to home-schooled"
           include_examples "keeps the patient in the community clinics"
           include_examples "destroys the school move"
@@ -934,6 +985,7 @@ describe SchoolMove do
             )
           end
 
+          include_examples "creates a log entry"
           include_examples "sets the patient school"
           include_examples "changes the patient cohort"
           include_examples "removes the patient from the community clinics"
@@ -964,6 +1016,7 @@ describe SchoolMove do
             new_organisation.generic_clinic_session
           end
 
+          include_examples "creates a log entry"
           include_examples "sets the patient to home-schooled"
           include_examples "changes the patient cohort"
           include_examples "adds the patient to the community clinics"
@@ -997,6 +1050,7 @@ describe SchoolMove do
             )
           end
 
+          include_examples "creates a log entry"
           include_examples "sets the patient school"
           include_examples "keeps the patient in the community clinics"
           include_examples "destroys the school move"
@@ -1018,6 +1072,7 @@ describe SchoolMove do
             )
           end
 
+          include_examples "creates a log entry"
           include_examples "sets the patient school"
           include_examples "keeps the patient in the community clinics"
           include_examples "destroys the school move"
@@ -1039,6 +1094,7 @@ describe SchoolMove do
             )
           end
 
+          include_examples "creates a log entry"
           include_examples "sets the patient school"
           include_examples "keeps the patient in the community clinics"
           include_examples "destroys the school move"
@@ -1049,6 +1105,7 @@ describe SchoolMove do
             create(:school_move, :to_home_educated, organisation:, patient:)
           end
 
+          include_examples "creates a log entry"
           include_examples "sets the patient to home-schooled"
           include_examples "keeps the patient in the community clinics"
           include_examples "destroys the school move"
@@ -1073,6 +1130,7 @@ describe SchoolMove do
             )
           end
 
+          include_examples "creates a log entry"
           include_examples "sets the patient school"
           include_examples "changes the patient cohort"
           include_examples "keeps the patient in the community clinics"
@@ -1100,6 +1158,7 @@ describe SchoolMove do
             create(:organisation, programmes: [programme])
           end
 
+          include_examples "creates a log entry"
           include_examples "sets the patient to home-schooled"
           include_examples "changes the patient cohort"
           include_examples "keeps the patient in the community clinics"
@@ -1129,6 +1188,10 @@ describe SchoolMove do
         expect { school_move.reload }.to raise_error(
           ActiveRecord::RecordNotFound
         )
+      end
+
+      it "doesn't create a log entry" do
+        expect { ignore! }.not_to change(SchoolMoveLogEntry, :count)
       end
     end
 
