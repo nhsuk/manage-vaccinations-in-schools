@@ -8,7 +8,7 @@ end
 Faker::Config.locale = "en-GB"
 
 def set_feature_flags
-  %i[dev_tools mesh_jobs cis2].each do |feature_flag|
+  %i[dev_tools mesh_jobs cis2 systm_one_export].each do |feature_flag|
     Flipper.add(feature_flag) unless Flipper.exist?(feature_flag)
   end
 end
