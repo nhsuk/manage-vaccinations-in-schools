@@ -82,6 +82,19 @@ describe EmailDeliveryJob do
       perform_now
     end
 
+    context "without a reply-to id" do
+      let(:organisation) { create(:organisation, programmes: [programme]) }
+
+      it "sends a text using GOV.UK Notify" do
+        expect(notifications_client).to receive(:send_email).with(
+          email_address: "test@example.com",
+          personalisation: an_instance_of(Hash),
+          template_id: GOVUK_NOTIFY_EMAIL_TEMPLATES[template_name]
+        )
+        perform_now
+      end
+    end
+
     it "creates a log entry" do
       expect { perform_now }.to change(NotifyLogEntry, :count).by(1)
 
@@ -126,6 +139,19 @@ describe EmailDeliveryJob do
           template_id: GOVUK_NOTIFY_EMAIL_TEMPLATES[template_name]
         )
         perform_now
+      end
+
+      context "without a reply-to id" do
+        let(:organisation) { create(:organisation, programmes: [programme]) }
+
+        it "sends a text using GOV.UK Notify" do
+          expect(notifications_client).to receive(:send_email).with(
+            email_address: "test@example.com",
+            personalisation: an_instance_of(Hash),
+            template_id: GOVUK_NOTIFY_EMAIL_TEMPLATES[template_name]
+          )
+          perform_now
+        end
       end
 
       it "creates a log entry" do

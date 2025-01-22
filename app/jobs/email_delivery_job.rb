@@ -21,11 +21,6 @@ class EmailDeliveryJob < NotifyDeliveryJob
     email_address = consent_form&.parent_email || parent&.email
     return if email_address.nil?
 
-    organisation =
-      session&.organisation || patient_session&.organisation ||
-        consent_form&.organisation || consent&.organisation ||
-        vaccination_record&.organisation
-
     personalisation =
       GovukNotifyPersonalisation.call(
         session:,
@@ -37,12 +32,20 @@ class EmailDeliveryJob < NotifyDeliveryJob
         vaccination_record:
       )
 
-    args = {
-      email_address:,
-      email_reply_to_id: organisation.reply_to_id,
-      personalisation:,
-      template_id:
-    }
+    args = { email_address:, personalisation:, template_id: }
+
+    if (
+         email_reply_to_id =
+           reply_to_id(
+             consent:,
+             consent_form:,
+             patient_session:,
+             session:,
+             vaccination_record:
+           )
+       )
+      args[:email_reply_to_id] = email_reply_to_id
+    end
 
     delivery_id =
       if self.class.send_via_notify?
@@ -67,5 +70,26 @@ class EmailDeliveryJob < NotifyDeliveryJob
       template_id:,
       type: :email
     )
+  end
+
+  def reply_to_id(
+    consent:,
+    consent_form:,
+    patient_session:,
+    session:,
+    vaccination_record:
+  )
+    team =
+      session&.team || patient_session&.team || consent_form&.team ||
+        vaccination_record&.team
+
+    return team.reply_to_id if team&.reply_to_id
+
+    organisation =
+      session&.organisation || patient_session&.organisation ||
+        consent_form&.organisation || consent&.organisation ||
+        vaccination_record&.organisation
+
+    organisation.reply_to_id
   end
 end
