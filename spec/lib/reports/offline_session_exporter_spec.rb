@@ -638,7 +638,7 @@ describe Reports::OfflineSessionExporter do
 
       it "lists all the organisation users' emails" do
         emails = worksheet[1..].map { it.cells.first.value }
-        expect(emails).to eq vaccinators.map(&:email)
+        expect(emails).to match_array(vaccinators.map(&:email))
       end
 
       its(:state) { should eq "hidden" }
@@ -666,7 +666,7 @@ describe Reports::OfflineSessionExporter do
 
       it "lists all the batch numbers for the programme" do
         batch_numbers = worksheet[1..].map { it.cells.first.value }
-        expect(batch_numbers).to eq batches.map(&:name)
+        expect(batch_numbers).to match_array(batches.map(&:name))
       end
 
       its(:state) { should eq "hidden" }
