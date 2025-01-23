@@ -43,6 +43,9 @@ jobs:
           mv /tmp/copilot /usr/local/bin/copilot
           copilot --version
 
+      - name: Create SHA file
+        run: git rev-parse HEAD > public/sha
+
       - name: Deploy the application using AWS Copilot
         run: |
           copilot svc deploy --name webapp --env ${{ inputs.environment }}
