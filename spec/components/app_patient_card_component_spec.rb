@@ -7,7 +7,7 @@ describe AppPatientCardComponent do
 
   let(:patient) { create(:patient) }
 
-  it { should have_content("Child record") }
+  it { should have_content("Child") }
 
   it { should have_content("Full name") }
   it { should have_content("Date of birth") }
