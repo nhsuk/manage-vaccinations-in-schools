@@ -31,7 +31,7 @@
 <% if (parent_relationship = @consent.parent_relationship).present? %>
   <%= render AppCardComponent.new do |card| %>
     <% card.with_heading { "Parent or guardian" } %>
-    <%= render AppParentSummaryComponent.new(parent_relationship:) %>
+    <%= render AppParentSummaryComponent.new(parent_relationship:, show_name_and_relationship: true) %>
   <% end %>
 <% end %>
 
