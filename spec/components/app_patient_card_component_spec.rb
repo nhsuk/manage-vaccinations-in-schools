@@ -3,7 +3,11 @@
 describe AppPatientCardComponent do
   subject { render_inline(component) }
 
-  let(:component) { described_class.new(patient) }
+  let(:component) do
+    described_class.new(
+      Patient.includes(parent_relationships: :parent).find(patient.id)
+    )
+  end
 
   let(:patient) { create(:patient) }
 
@@ -29,5 +33,23 @@ describe AppPatientCardComponent do
     let(:patient) { create(:patient, :restricted) }
 
     it { should have_content("Record flagged as sensitive") }
+
+    context "with parents" do
+      let(:parent) { create(:parent, full_name: "Jenny Smith") }
+
+      before { create(:parent_relationship, :mother, patient:, parent:) }
+
+      it { should_not have_content("Jenny Smith") }
+      it { should_not have_content("Mum") }
+    end
+  end
+
+  context "with parents" do
+    let(:parent) { create(:parent, full_name: "Jenny Smith") }
+
+    before { create(:parent_relationship, :mother, patient:, parent:) }
+
+    it { should have_content("Jenny Smith") }
+    it { should have_content("Mum") }
   end
 end
