@@ -1,12 +1,11 @@
 # frozen_string_literal: true
 
 class AppPatientSummaryComponent < ViewComponent::Base
-  def initialize(patient, change_links: {}, show_parent_or_guardians: false)
+  def initialize(patient, change_links: {})
     super
 
     @patient = patient
     @change_links = change_links
-    @show_parent_or_guardians = show_parent_or_guardians
   end
 
   def call
@@ -64,15 +63,6 @@ class AppPatientSummaryComponent < ViewComponent::Base
         summary_list.with_row do |row|
           row.with_key { "GP surgery" }
           row.with_value { gp_practice.name }
-        end
-      end
-      if @show_parent_or_guardians && !@patient.restricted? &&
-           @patient.parent_relationships.present?
-        summary_list.with_row do |row|
-          row.with_key do
-            "Parent or guardian".pluralize(@patient.parent_relationships.count)
-          end
-          row.with_value { format_parent_or_guardians }
         end
       end
     end
@@ -141,10 +131,6 @@ class AppPatientSummaryComponent < ViewComponent::Base
       helpers.patient_year_group(@patient),
       @patient.year_group_changed? || @patient.registration_changed?
     )
-  end
-
-  def format_parent_or_guardians
-    helpers.patient_parents(@patient)
   end
 
   def highlight_if(value, condition)

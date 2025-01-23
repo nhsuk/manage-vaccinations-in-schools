@@ -77,31 +77,6 @@ describe AppPatientSummaryComponent do
     it { should have_content("Waterloo GP") }
   end
 
-  context "when showing parents or guardians" do
-    let(:component) do
-      described_class.new(patient.reload, show_parent_or_guardians: true)
-    end
-
-    before do
-      create(
-        :parent_relationship,
-        :father,
-        patient:,
-        parent: build(:parent, full_name: "Mark Doe")
-      )
-    end
-
-    it { should have_content("Parent or guardian") }
-    it { should have_content("Mark Doe (Dad)") }
-
-    context "when the patient is restricted" do
-      let(:restricted) { true }
-
-      it { should_not have_content("Parent or guardian") }
-      it { should_not have_content("Mark Doe (Dad)") }
-    end
-  end
-
   it { should_not have_css(".app-highlight") }
 
   context "with pending changes" do
