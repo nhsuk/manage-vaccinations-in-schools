@@ -431,21 +431,9 @@ roll-over.
 
 See the [Rake tasks documentation](docs/rake-tasks.md) for more information.
 
-## Taking the service offline
+## Operations tasks
 
-To quickly take the service offline (for client users) there is a `basic_auth` feature flag which can be added and enabled. In production the credentials for this are secret and therefore this acts as a quick way of preventing users from accessing the service.
-
-### From the UI
-
-1. Visit https://manage-vaccinations-in-schools.nhs.uk/flipper
-2. Add the `basic_auth` feature flag if it doesn't exist already
-3. Enable the `basic_auth` feature flag
-
-### From a Rails console
-
-```ruby
-Flipper.enable(:basic_auth)
-```
+See the [Ops tasks documentation](docs/ops-tasks.md) for more information.
 
 ## MESH Connection
 
