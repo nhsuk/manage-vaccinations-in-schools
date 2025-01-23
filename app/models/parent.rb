@@ -102,10 +102,23 @@ class Parent < ApplicationRecord
     end
   end
 
+  def email_delivery_status
+    most_recent_notify_log_entry(:email, recipient: email)&.delivery_status
+  end
+
+  def sms_delivery_status
+    most_recent_notify_log_entry(:sms, recipient: phone)&.delivery_status
+  end
+
   private
 
   def reset_unused_fields
     self.contact_method_type = nil if phone.blank?
     self.contact_method_other_details = nil unless contact_method_other?
+  end
+
+  def most_recent_notify_log_entry(type, recipient:)
+    return nil if recipient.blank?
+    notify_log_entries.order(created_at: :desc).find_by(type:, recipient:)
   end
 end
