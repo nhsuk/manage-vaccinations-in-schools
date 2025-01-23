@@ -53,7 +53,7 @@ class NotifyLogEntry < ApplicationRecord
   validates :template_id, presence: true
   validates :recipient, presence: true
 
-  encrypts :recipient
+  encrypts :recipient, deterministic: true
 
   def title
     template_name&.to_s&.humanize.presence ||
