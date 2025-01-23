@@ -15,18 +15,22 @@ teams:
     name: Coventry School-Aged Immunisation Service
     email: Bewise.Immunise@covwarkpt.nhs.uk
     phone: "02476961422"
+    reply_to_id: ddc407a3-dda9-4183-be83-1309562c95b1
   north_warwickshire:
     name: North Warwickshire School-Aged Immunisation Service
     email: NorthImms@covwarkpt.nhs.uk
     phone: "02476321550"
+    reply_to_id: 71e2eb07-977f-4131-9c3d-cac9bb37d4a4
   south_warwickshire:
     name: South Warwickshire School-Aged Immunisation Service
     email: SouthImms@covwarkpt.nhs.uk
     phone: "01926353899"
+    reply_to_id: 97df0412-7e29-4810-8368-71d3106061b3
   clinics:
     name: Coventry and Warwickshire Partnership NHS Trust
     email: Bewise.Immunise@covwarkpt.nhs.uk
     phone: "02476961422"
+    reply_to_id: ddc407a3-dda9-4183-be83-1309562c95b1
 
 schools:
   coventry:
