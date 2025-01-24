@@ -139,6 +139,7 @@ describe ClassImportRow do
         create(
           :patient,
           address_postcode: "SW1A 1AA",
+          date_of_birth: Date.new(2010, 1, 1),
           family_name: "Smith",
           gender_code: "male",
           given_name: "Jimmy",
@@ -153,6 +154,28 @@ describe ClassImportRow do
       it "overwrites registration" do
         expect(patient.registration).to eq("8AB")
         expect(patient.pending_changes).not_to have_key("registration")
+      end
+
+      it "doesn't stage the address for changing" do
+        expect(patient.pending_changes).not_to have_key("address_line_1")
+        expect(patient.pending_changes).not_to have_key("address_line_2")
+        expect(patient.pending_changes).not_to have_key("address_town")
+        expect(patient.pending_changes).not_to have_key("address_postcode")
+      end
+
+      context "with a different postcode" do
+        before { existing_patient.update!(address_postcode: "SW1A 1AB") }
+
+        it "stages the entire address for changing" do
+          expect(patient.pending_changes).to match(
+            a_hash_including(
+              "address_line_1" => nil,
+              "address_line_2" => nil,
+              "address_town" => nil,
+              "address_postcode" => "SW1A 1AA"
+            )
+          )
+        end
       end
     end
   end
