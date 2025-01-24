@@ -11,7 +11,10 @@ class Patients::EditController < ApplicationController
     @patient.nhs_number = nhs_number
     redirect_to edit_patient_path(@patient) and return unless @patient.changed?
 
-    @existing_patient = policy_scope(Patient).find_by(nhs_number:)
+    @existing_patient =
+      policy_scope(Patient).includes(parent_relationships: :parent).find_by(
+        nhs_number:
+      )
 
     if @existing_patient
       render :nhs_number_merge
@@ -33,7 +36,10 @@ class Patients::EditController < ApplicationController
   private
 
   def set_patient
-    @patient = policy_scope(Patient).find(params[:id])
+    @patient =
+      policy_scope(Patient).includes(parent_relationships: :parent).find(
+        params[:id]
+      )
   end
 
   def nhs_number
