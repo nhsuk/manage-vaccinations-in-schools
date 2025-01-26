@@ -131,6 +131,75 @@ describe PatientSession do
     end
   end
 
+  describe "#consent_given?" do
+    subject(:consent_given?) do
+      described_class
+        .includes(consents: :parent)
+        .find(patient_session.id)
+        .consent_given?
+    end
+
+    let(:patient) { patient_session.patient }
+
+    context "with no consent" do
+      it { should be(false) }
+    end
+
+    context "with parental consent given" do
+      before { create(:consent, :given, patient:, programme:) }
+
+      it { should be(true) }
+    end
+
+    context "with parental consent refused" do
+      before { create(:consent, :refused, patient:, programme:) }
+
+      it { should be(false) }
+    end
+
+    context "with conflicting consent" do
+      before do
+        create(:consent, :given, patient:, programme:)
+        create(
+          :consent,
+          :refused,
+          patient:,
+          programme:,
+          parent: create(:parent)
+        )
+      end
+
+      it { should be(false) }
+    end
+
+    context "with self-consent" do
+      before { create(:consent, :self_consent, :given, patient:, programme:) }
+
+      it { should be(true) }
+
+      context "and refused parental consent" do
+        before { create(:consent, :refused, patient:, programme:) }
+
+        it { should be(true) }
+      end
+
+      context "and conflicting parental consent" do
+        before do
+          create(:consent, :refused, patient:, programme:)
+          create(
+            :consent,
+            :given,
+            patient:,
+            programme:,
+            parent: create(:parent)
+          )
+        end
+
+        it { should be(true) }
+      end
+    end
+  end
+
   describe "#latest_consents" do
     subject(:latest_consents) { patient_session.latest_consents }
 
