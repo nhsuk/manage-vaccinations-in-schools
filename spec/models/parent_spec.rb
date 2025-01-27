@@ -151,10 +151,6 @@ describe Parent do
   describe "#email_delivery_status" do
     subject(:email_delivery_status) { parent.email_delivery_status }
 
-    before do
-      skip "https://github.com/nhsuk/manage-vaccinations-in-schools/pull/2887"
-    end
-
     let(:parent) { create(:parent) }
 
     it { should be_nil }
@@ -225,10 +221,6 @@ describe Parent do
 
   describe "#sms_delivery_status" do
     subject(:sms_delivery_status) { parent.sms_delivery_status }
-
-    before do
-      skip "https://github.com/nhsuk/manage-vaccinations-in-schools/pull/2887"
-    end
 
     let(:parent) { create(:parent) }
 
