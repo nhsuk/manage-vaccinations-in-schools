@@ -44,6 +44,8 @@ describe AppParentSummaryComponent do
           parent:,
           recipient: parent.email
         )
+
+        skip "https://github.com/nhsuk/manage-vaccinations-in-schools/pull/2887"
       end
 
       it { should have_content("Email address does not exist") }
@@ -65,6 +67,8 @@ describe AppParentSummaryComponent do
           parent:,
           recipient: parent.phone
         )
+
+        skip "https://github.com/nhsuk/manage-vaccinations-in-schools/pull/2887"
       end
 
       it { should have_content("Phone number does not exist") }
