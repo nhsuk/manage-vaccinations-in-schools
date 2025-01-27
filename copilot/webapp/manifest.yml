@@ -66,6 +66,7 @@ environments:
       MAVIS__PDS__PERFORM_JOBS: false
       MAVIS__SPLUNK__ENABLED: false
   qa:
+    count: 3
     http:
       alias:
         - "qa.mavistesting.com"
@@ -80,6 +81,7 @@ environments:
       MAVIS__PDS__PERFORM_JOBS: false
       MAVIS__SPLUNK__ENABLED: false
   test:
+    count: 3
     http:
       alias:
         - "test.mavistesting.com"
