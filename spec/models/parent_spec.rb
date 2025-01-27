@@ -148,6 +148,148 @@ describe Parent do
     end
   end
 
+  describe "#email_delivery_status" do
+    subject(:email_delivery_status) { parent.email_delivery_status }
+
+    let(:parent) { create(:parent) }
+
+    it { should be_nil }
+
+    context "with a delivered notify log entry" do
+      before do
+        create(
+          :notify_log_entry,
+          :email,
+          :delivered,
+          parent:,
+          recipient: parent.email
+        )
+      end
+
+      it { should eq("delivered") }
+    end
+
+    context "with a failed notify log entry" do
+      before do
+        create(
+          :notify_log_entry,
+          :email,
+          :permanent_failure,
+          parent:,
+          recipient: parent.email
+        )
+      end
+
+      it { should eq("permanent_failure") }
+    end
+
+    context "with an old email address" do
+      before do
+        create(
+          :notify_log_entry,
+          :email,
+          :temporary_failure,
+          parent:,
+          recipient: "old@example.com"
+        )
+      end
+
+      it { should be_nil }
+    end
+
+    context "with multiple log entries" do
+      before do
+        create(
+          :notify_log_entry,
+          :email,
+          :temporary_failure,
+          parent:,
+          recipient: parent.email
+        )
+        create(
+          :notify_log_entry,
+          :email,
+          :delivered,
+          parent:,
+          recipient: parent.email
+        )
+      end
+
+      it { should eq("delivered") }
+    end
+  end
+
+  describe "#sms_delivery_status" do
+    subject(:sms_delivery_status) { parent.sms_delivery_status }
+
+    let(:parent) { create(:parent) }
+
+    it { should be_nil }
+
+    context "with a delivered notify log entry" do
+      before do
+        create(
+          :notify_log_entry,
+          :sms,
+          :delivered,
+          parent:,
+          recipient: parent.phone
+        )
+      end
+
+      it { should eq("delivered") }
+    end
+
+    context "with a failed notify log entry" do
+      before do
+        create(
+          :notify_log_entry,
+          :sms,
+          :permanent_failure,
+          parent:,
+          recipient: parent.phone
+        )
+      end
+
+      it { should eq("permanent_failure") }
+    end
+
+    context "with an old email address" do
+      before do
+        create(
+          :notify_log_entry,
+          :sms,
+          :temporary_failure,
+          parent:,
+          recipient: "03003112233"
+        )
+      end
+
+      it { should be_nil }
+    end
+
+    context "with multiple log entries" do
+      before do
+        create(
+          :notify_log_entry,
+          :sms,
+          :temporary_failure,
+          parent:,
+          recipient: parent.phone
+        )
+        create(
+          :notify_log_entry,
+          :sms,
+          :delivered,
+          parent:,
+          recipient: parent.phone
+        )
+      end
+
+      it { should eq("delivered") }
+    end
+  end
+
   describe "#reset_unused_fields" do
     it "resets contact method fields when phone number is removed" do
       subject =

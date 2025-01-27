@@ -56,7 +56,7 @@ class AppParentSummaryComponent < ViewComponent::Base
         summary_list.with_row do |row|
           row.with_key { "Email address" }
           if @parent.email.present?
-            row.with_value { @parent.email }
+            row.with_value { email_address }
             if (href = @change_links[:email])
               row.with_action(
                 text: "Change",
@@ -74,7 +74,7 @@ class AppParentSummaryComponent < ViewComponent::Base
         summary_list.with_row do |row|
           row.with_key { "Phone number" }
           if @parent.phone.present?
-            row.with_value { @parent.phone }
+            row.with_value { phone_number }
             if (href = @change_links[:phone])
               row.with_action(
                 text: "Change",
@@ -104,5 +104,53 @@ class AppParentSummaryComponent < ViewComponent::Base
         end
       end
     end
+  end
+
+  private
+
+  def email_address
+    delivery_status = @parent.email_delivery_status
+
+    elements = [
+      tag.p(@parent.email, class: "nhsuk-body nhsuk-u-margin-0"),
+      if delivery_status == "permanent_failure"
+        render AppStatusComponent.new(
+                 text: "Email address does not exist",
+                 colour: "red",
+                 small: true
+               )
+      elsif delivery_status == "temporary_failure"
+        render AppStatusComponent.new(
+                 text: "Inbox not accepting messages right now",
+                 colour: "red",
+                 small: true
+               )
+      end
+    ].compact
+
+    safe_join(elements)
+  end
+
+  def phone_number
+    delivery_status = @parent.sms_delivery_status
+
+    elements = [
+      tag.p(@parent.phone, class: "nhsuk-body nhsuk-u-margin-0"),
+      if delivery_status == "permanent_failure"
+        render AppStatusComponent.new(
+                 text: "Phone number does not exist",
+                 colour: "red",
+                 small: true
+               )
+      elsif delivery_status == "temporary_failure"
+        render AppStatusComponent.new(
+                 text: "Inbox not accepting messages right now",
+                 colour: "red",
+                 small: true
+               )
+      end
+    ].compact
+
+    safe_join(elements)
   end
 end

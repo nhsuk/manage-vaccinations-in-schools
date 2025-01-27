@@ -6,19 +6,19 @@ class AppPatientCardComponent < ViewComponent::Base
       <% card.with_heading { "Child" } %>
       
       <% if @patient.date_of_death.present? %>
-        <%= render AppNoticeStatusComponent.new(
+        <%= render AppStatusComponent.new(
           text: "Record updated with child’s date of death"
         ) %>
       <% end %>
       
       <% if @patient.invalidated? %>
-        <%= render AppNoticeStatusComponent.new(
+        <%= render AppStatusComponent.new(
           text: "Record flagged as invalid"
         ) %>
       <% end %>
       
       <% if @patient.restricted? %>
-        <%= render AppNoticeStatusComponent.new(
+        <%= render AppStatusComponent.new(
           text: "Record flagged as sensitive"
         ) %>
       <% end %>

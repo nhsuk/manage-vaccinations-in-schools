@@ -34,6 +34,20 @@ describe AppParentSummaryComponent do
 
     it { should have_content("Email address") }
     it { should have_content("test@example.com") }
+
+    context "with a delivery failure" do
+      before do
+        create(
+          :notify_log_entry,
+          :email,
+          :permanent_failure,
+          parent:,
+          recipient: parent.email
+        )
+      end
+
+      it { should have_content("Email address does not exist") }
+    end
   end
 
   context "with a phone number" do
@@ -41,6 +55,20 @@ describe AppParentSummaryComponent do
 
     it { should have_content("Phone number") }
     it { should have_content("07987 654321") }
+
+    context "with a delivery failure" do
+      before do
+        create(
+          :notify_log_entry,
+          :sms,
+          :permanent_failure,
+          parent:,
+          recipient: parent.phone
+        )
+      end
+
+      it { should have_content("Phone number does not exist") }
+    end
   end
 
   context "when the patient is restricted" do
