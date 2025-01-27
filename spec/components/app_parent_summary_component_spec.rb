@@ -11,11 +11,23 @@ describe AppParentSummaryComponent do
     create(:parent_relationship, :father, parent:, patient:)
   end
 
-  it { should have_content("Name") }
-  it { should have_content("John Smith") }
+  it { should_not have_content("Name") }
+  it { should_not have_content("Relationship") }
 
-  it { should have_content("Relationship") }
-  it { should have_content("Dad") }
+  context "when showing name and relationship" do
+    let(:component) do
+      described_class.new(
+        parent_relationship:,
+        show_name_and_relationship: true
+      )
+    end
+
+    it { should have_content("Name") }
+    it { should have_content("John Smith") }
+
+    it { should have_content("Relationship") }
+    it { should have_content("Dad") }
+  end
 
   context "with an email address" do
     let(:parent) { create(:parent, email: "test@example.com") }
@@ -41,7 +53,13 @@ describe AppParentSummaryComponent do
   it { should_not have_content("Change") }
 
   context "with change links" do
-    let(:component) { described_class.new(parent_relationship:, change_links:) }
+    let(:component) do
+      described_class.new(
+        parent_relationship:,
+        change_links:,
+        show_name_and_relationship: true
+      )
+    end
 
     let(:change_links) do
       {

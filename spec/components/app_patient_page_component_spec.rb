@@ -36,7 +36,7 @@ describe AppPatientPageComponent do
       )
     end
 
-    it { should have_css(".nhsuk-card__heading", text: "Child record") }
+    it { should have_css(".nhsuk-card__heading", text: "Child") }
     it { should have_css(".nhsuk-card__heading", text: "Consent") }
     it { should_not have_css(".nhsuk-card__heading", text: "Triage notes") }
 
@@ -79,7 +79,7 @@ describe AppPatientPageComponent do
       )
     end
 
-    it { should have_css(".nhsuk-card__heading", text: "Child record") }
+    it { should have_css(".nhsuk-card__heading", text: "Child") }
     it { should have_css(".nhsuk-card__heading", text: "Consent") }
     it { should have_css(".nhsuk-card__heading", text: "Triage notes") }
 

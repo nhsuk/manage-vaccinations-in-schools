@@ -3,7 +3,7 @@
 class AppPatientCardComponent < ViewComponent::Base
   erb_template <<-ERB
     <%= render AppCardComponent.new do |card| %>
-      <% card.with_heading { "Child record" } %>
+      <% card.with_heading { "Child" } %>
       
       <% if @patient.date_of_death.present? %>
         <%= render AppNoticeStatusComponent.new(
@@ -23,10 +23,17 @@ class AppPatientCardComponent < ViewComponent::Base
         ) %>
       <% end %>
 
-      <%= render AppPatientSummaryComponent.new(
-               patient,
-               show_parent_or_guardians: true
-             ) %>
+      <%= render AppPatientSummaryComponent.new(patient) %>
+
+      <% unless patient.restricted? %>
+        <% parent_relationships.each do |parent_relationship| %>
+          <h3 class="nhsuk-heading-s nhsuk-u-margin-bottom-2">
+            <%= parent_relationship.label_with_parent %>
+          </h3>
+  
+          <%= render AppParentSummaryComponent.new(parent_relationship:) %>
+        <% end %>
+      <% end %>
 
       <%= content %>
     <% end %>
@@ -41,4 +48,6 @@ class AppPatientCardComponent < ViewComponent::Base
   private
 
   attr_reader :patient
+
+  delegate :parent_relationships, to: :patient
 end
