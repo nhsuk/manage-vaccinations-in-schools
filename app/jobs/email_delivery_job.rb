@@ -65,6 +65,7 @@ class EmailDeliveryJob < NotifyDeliveryJob
       delivery_id:,
       parent:,
       patient:,
+      recipient: email_address,
       recipient_deterministic: email_address,
       sent_by:,
       template_id:,
