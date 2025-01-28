@@ -18,7 +18,19 @@ class PatientMerger
       patient_to_destroy.notify_log_entries.update_all(
         patient_id: patient_to_keep.id
       )
-      patient_to_destroy.school_moves.update_all(patient_id: patient_to_keep.id)
+
+      patient_to_destroy.school_moves.find_each do |school_move|
+        if patient_to_keep.school_moves.exists?(
+             home_educated: school_move.home_educated,
+             organisation_id: school_move.organisation_id,
+             school_id: school_move.school_id
+           )
+          school_move.destroy!
+        else
+          school_move.update!(patient: patient_to_keep)
+        end
+      end
+
       patient_to_destroy.session_notifications.update_all(
         patient_id: patient_to_keep.id
       )
