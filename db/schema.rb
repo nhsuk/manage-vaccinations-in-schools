@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_01_27_133639) do
+ActiveRecord::Schema[8.0].define(version: 2025_01_28_100040) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -465,7 +465,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_27_133639) do
   create_table "notify_log_entries", force: :cascade do |t|
     t.integer "type", null: false
     t.uuid "template_id", null: false
-    t.string "recipient", null: false
+    t.string "recipient"
     t.datetime "created_at", null: false
     t.bigint "consent_form_id"
     t.bigint "patient_id"
