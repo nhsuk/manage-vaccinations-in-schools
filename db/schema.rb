@@ -462,6 +462,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_10_092331) do
     t.bigint "parent_id"
     t.integer "delivery_status", default: 0, null: false
     t.string "recipient_deterministic"
+    t.string "recipient"
     t.index ["consent_form_id"], name: "index_notify_log_entries_on_consent_form_id"
     t.index ["delivery_id"], name: "index_notify_log_entries_on_delivery_id"
     t.index ["parent_id"], name: "index_notify_log_entries_on_parent_id"
