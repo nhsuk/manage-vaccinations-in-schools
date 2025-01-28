@@ -29,11 +29,11 @@ class Organisation < ApplicationRecord
 
   has_many :batches
   has_many :cohort_imports
-  has_many :cohorts
   has_many :consent_forms
   has_many :consents
   has_many :locations
   has_many :organisation_programmes
+  has_many :patients
   has_many :sessions
   has_many :teams
 

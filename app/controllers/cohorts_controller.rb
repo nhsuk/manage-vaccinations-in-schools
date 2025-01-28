@@ -8,27 +8,30 @@ class CohortsController < ApplicationController
   layout "full"
 
   def index
-    year_groups = @programme.year_groups
+    birth_academic_years = @programme.birth_academic_years
 
-    cohorts =
-      policy_scope(Cohort)
-        .select("cohorts.*", "COUNT(patients.id) AS patient_count")
-        .for_year_groups(year_groups)
-        .left_outer_joins(:patients)
-        .group("cohorts.id")
-        .index_by(&:year_group)
+    @patient_count_by_birth_academic_year =
+      policy_scope(Patient)
+        .where(birth_academic_year: birth_academic_years)
+        .group(:birth_academic_year)
+        .count
 
-    year_groups.each do |year_group|
-      cohorts[year_group] ||= OpenStruct.new(year_group:, patient_count: 0)
+    birth_academic_years.each do |birth_academic_year|
+      @patient_count_by_birth_academic_year[birth_academic_year] ||= 0
     end
-
-    @cohorts = cohorts.sort.map { _2 }
   end
 
   def show
-    @cohort = policy_scope(Cohort).find(params[:id])
-    @pagy, @patients =
-      pagy(@cohort.patients.not_deceased.includes(:school).order_by_name)
+    @birth_academic_year = Integer(params[:id])
+
+    patients =
+      policy_scope(Patient)
+        .where(birth_academic_year: @birth_academic_year)
+        .not_deceased
+        .includes(:school)
+        .order_by_name
+
+    @pagy, @patients = pagy(patients)
   end
 
   private

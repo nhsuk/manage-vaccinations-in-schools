@@ -49,6 +49,10 @@ class Programme < ApplicationRecord
     YEAR_GROUPS_BY_TYPE.fetch(type)
   end
 
+  def birth_academic_years
+    year_groups.map(&:to_birth_academic_year)
+  end
+
   def to_param
     type
   end

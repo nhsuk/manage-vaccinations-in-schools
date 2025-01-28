@@ -260,7 +260,7 @@ def create_imports(user, organisation)
 end
 
 def create_school_moves(organisation)
-  patients = Patient.in_organisation(organisation).sample(10)
+  patients = Patient.where(organisation:).sample(10)
 
   patients.each do |patient|
     if [true, false].sample

@@ -41,8 +41,6 @@ class SchoolMove < ApplicationRecord
        prefix: true,
        validate: true
 
-  scope :for_patient, -> { where("patient_id = patients.id") }
-
   validates :organisation,
             presence: {
               if: -> { school.nil? }
@@ -94,7 +92,11 @@ class SchoolMove < ApplicationRecord
   end
 
   def update_patient!
-    patient.update!(school:, home_educated:, cohort:)
+    patient.update!(
+      home_educated:,
+      organisation: school&.organisation || organisation,
+      school:
+    )
   end
 
   def update_sessions!(move_to_school: nil)
@@ -107,12 +109,6 @@ class SchoolMove < ApplicationRecord
     return if session.nil?
 
     PatientSession.find_or_create_by!(patient:, session:)
-  end
-
-  def cohort
-    (school&.organisation || organisation)&.cohorts&.find_or_create_by!(
-      birth_academic_year: patient.birth_academic_year
-    )
   end
 
   def find_replacement_session(move_to_school: nil)
