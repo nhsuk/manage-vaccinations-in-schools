@@ -6,7 +6,7 @@
 #
 #  id                      :bigint           not null, primary key
 #  delivery_status         :integer          default("sending"), not null
-#  recipient               :string
+#  recipient               :string           not null
 #  recipient_deterministic :string
 #  type                    :integer          not null
 #  created_at              :datetime         not null
