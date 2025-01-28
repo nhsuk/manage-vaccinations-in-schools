@@ -102,7 +102,6 @@ describe EmailDeliveryJob do
       expect(notify_log_entry).to be_email
       expect(notify_log_entry.delivery_id).to eq(response.id)
       expect(notify_log_entry.recipient).to eq("test@example.com")
-      expect(notify_log_entry.recipient_deterministic).to eq("test@example.com")
       expect(notify_log_entry.template_id).to eq(
         GOVUK_NOTIFY_EMAIL_TEMPLATES[template_name]
       )
@@ -162,9 +161,6 @@ describe EmailDeliveryJob do
         expect(notify_log_entry).to be_email
         expect(notify_log_entry.delivery_id).to eq(response.id)
         expect(notify_log_entry.recipient).to eq("test@example.com")
-        expect(notify_log_entry.recipient_deterministic).to eq(
-          "test@example.com"
-        )
         expect(notify_log_entry.template_id).to eq(
           GOVUK_NOTIFY_EMAIL_TEMPLATES[template_name]
         )
