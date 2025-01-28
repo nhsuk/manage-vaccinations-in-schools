@@ -107,6 +107,10 @@ class PatientSession < ApplicationRecord
         .map { |_, consents| consents.max_by(&:created_at) }
   end
 
+  def latest_self_consents
+    @latest_self_consents ||= latest_consents.select(&:via_self_consent?)
+  end
+
   def latest_gillick_assessment
     @latest_gillick_assessment ||= gillick_assessments.max_by(&:updated_at)
   end

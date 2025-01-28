@@ -57,17 +57,28 @@ describe PatientSessionStats do
 
         create(:consent_form, :recorded, programme:, session:, consent_id: nil) # => unmatched response
         create(:consent_form, :draft, programme:, session:, consent_id: nil) # => still draft, should not be counted
+
+        create(:patient_session, :consent_conflicting, programme:, session:) # conflicting consent
+
+        gillick_patient =
+          create(
+            :patient_session,
+            :consent_conflicting,
+            programme:,
+            session:
+          ).patient
+        create(:consent, :self_consent, patient: gillick_patient, programme:) # conflicting consent with gillick
       end
 
       it "returns a hash of session stats" do
         expect(to_h).to eq(
-          could_not_vaccinate: 1,
+          could_not_vaccinate: 2,
           needing_triage: 2,
-          not_registered: 6,
-          vaccinate: 2,
+          not_registered: 8,
+          vaccinate: 3,
           vaccinated: 0,
-          with_conflicting_consent: 0,
-          with_consent_given: 4,
+          with_conflicting_consent: 1,
+          with_consent_given: 5,
           with_consent_refused: 1,
           without_a_response: 1
         )
