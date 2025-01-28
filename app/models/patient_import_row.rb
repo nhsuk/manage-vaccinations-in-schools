@@ -2,7 +2,6 @@
 
 class PatientImportRow
   include ActiveModel::Model
-  include YearGroupConcern
 
   validates :date_of_birth, presence: true
   validates :birth_academic_year,
@@ -188,6 +187,10 @@ class PatientImportRow
     else
       date_of_birth&.academic_year
     end
+  end
+
+  def year_group
+    birth_academic_year&.to_year_group
   end
 
   def registration
