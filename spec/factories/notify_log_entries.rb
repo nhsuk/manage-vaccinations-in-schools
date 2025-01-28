@@ -48,8 +48,6 @@ FactoryBot.define do
       template_id { GOVUK_NOTIFY_SMS_TEMPLATES.values.sample }
     end
 
-    recipient_deterministic { recipient }
-
     delivery_id { SecureRandom.uuid }
     traits_for_enum :delivery_status
   end

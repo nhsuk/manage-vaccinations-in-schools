@@ -36,6 +36,7 @@ class NotifyLogEntry < ApplicationRecord
   include Sendable
 
   self.inheritance_column = nil
+  self.ignored_columns = ["recipient_deterministic"]
 
   belongs_to :consent_form, optional: true
   belongs_to :patient, optional: true
@@ -51,11 +52,10 @@ class NotifyLogEntry < ApplicationRecord
          technical_failure: 4
        }
 
-  validates :recipient_deterministic, presence: true
+  validates :recipient, presence: true
   validates :template_id, presence: true
 
   encrypts :recipient, deterministic: true
-  encrypts :recipient_deterministic, deterministic: true
 
   def title
     template_name&.to_s&.humanize.presence ||
