@@ -81,7 +81,9 @@ namespace :schools do
       # Some URLs from the GIAS CSV are missing the protocol.
       process_url = ->(url) do
         return nil if url.blank?
-        url.start_with?("http://", "https://") ? url : "https://#{url}"
+
+        # Some school URLs don't start with http:// and https://
+        url = url.start_with?("http://", "https://") ? url : "https://#{url}"
 
         # Legh Vale school has a URL of http:www.leghvale.st-helens.sch.uk
         # which is not a valid URL.
