@@ -102,6 +102,7 @@ class ApplicationMailer < Mail::Notify::Mailer
       NotifyLogEntry.create!(
         consent_form_id: mail.consent_form_id,
         patient_id: mail.patient_id,
+        recipient:,
         recipient_deterministic: recipient,
         sent_by_user_id: mail.sent_by_user_id,
         template_id: mail.template_id,
