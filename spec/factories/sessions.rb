@@ -34,7 +34,7 @@ FactoryBot.define do
       team { association(:team, organisation:) }
     end
 
-    sequence(:slug, &:to_s)
+    sequence(:slug) { |n| "session-#{n}" }
 
     academic_year { (date || Date.current).academic_year }
     programmes { [programme] }
