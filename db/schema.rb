@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_01_21_112644) do
+ActiveRecord::Schema[8.0].define(version: 2025_01_27_133639) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -473,6 +473,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_21_112644) do
     t.uuid "delivery_id"
     t.bigint "parent_id"
     t.integer "delivery_status", default: 0, null: false
+    t.string "recipient_deterministic"
     t.index ["consent_form_id"], name: "index_notify_log_entries_on_consent_form_id"
     t.index ["delivery_id"], name: "index_notify_log_entries_on_delivery_id"
     t.index ["parent_id"], name: "index_notify_log_entries_on_parent_id"
