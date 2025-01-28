@@ -55,7 +55,6 @@ class SMSDeliveryJob < NotifyDeliveryJob
       patient: personalisation.patient,
       programme_ids: personalisation.programmes.map(&:id),
       recipient: phone_number,
-      recipient_deterministic: phone_number,
       sent_by:,
       template_id:,
       type: :sms

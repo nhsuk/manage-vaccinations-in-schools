@@ -161,8 +161,7 @@ class AppActivityLogComponent < ViewComponent::Base
     notify_log_entries.map do |notify_log_entry|
       {
         title: "#{notify_log_entry.title} sent",
-        body:
-          patient.restricted? ? "" : notify_log_entry.recipient_deterministic,
+        body: patient.restricted? ? "" : notify_log_entry.recipient,
         at: notify_log_entry.created_at,
         by: notify_log_entry.sent_by,
         programmes: programmes_for(notify_log_entry)
