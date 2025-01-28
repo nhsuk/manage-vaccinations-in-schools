@@ -46,6 +46,7 @@ class DevController < ApplicationController
 
       SchoolMove.where(patient: patients).destroy_all
       SchoolMove.where(organisation:).destroy_all
+      SchoolMoveLogEntry.where(patient: patients).destroy_all
       AccessLogEntry.where(patient: patients).destroy_all
       NotifyLogEntry.where(patient: patients).destroy_all
 
