@@ -2,7 +2,7 @@ allow_dev_phone_numbers: true
 disallow_database_seeding: false
 
 govuk_notify:
-  mode: team
+  mode: test
 
 nhs_api:
   base_url: "https://int.api.service.nhs.uk"
