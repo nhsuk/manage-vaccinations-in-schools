@@ -53,7 +53,6 @@ class SMSDeliveryJob < NotifyDeliveryJob
       parent:,
       patient:,
       recipient: phone_number,
-      recipient_deterministic: phone_number,
       sent_by:,
       template_id:,
       type: :sms

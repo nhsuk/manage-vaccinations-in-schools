@@ -6,7 +6,7 @@
 #
 #  id                      :bigint           not null, primary key
 #  delivery_status         :integer          default("sending"), not null
-#  recipient               :string
+#  recipient               :string           not null
 #  recipient_deterministic :string
 #  type                    :integer          not null
 #  created_at              :datetime         not null
@@ -47,8 +47,6 @@ FactoryBot.define do
       recipient { Faker::PhoneNumber.phone_number }
       template_id { GOVUK_NOTIFY_SMS_TEMPLATES.values.sample }
     end
-
-    recipient_deterministic { recipient }
 
     delivery_id { SecureRandom.uuid }
     traits_for_enum :delivery_status
