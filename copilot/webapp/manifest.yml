@@ -106,6 +106,7 @@ environments:
       MAVIS__PDS__PERFORM_JOBS: false
       MAVIS__SPLUNK__ENABLED: false
   production:
+    count: 3
     image:
       build:
         cache_from:
