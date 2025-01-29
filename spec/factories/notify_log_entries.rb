@@ -34,8 +34,6 @@
 #
 FactoryBot.define do
   factory :notify_log_entry do
-    transient { recipient { nil } }
-
     patient
 
     trait :email do
