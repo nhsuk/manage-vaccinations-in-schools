@@ -6,19 +6,13 @@ describe PatientPolicy do
 
     let(:organisation) { create(:organisation) }
     let(:another_organisation) { create(:organisation) }
-    let(:cohort) { create(:cohort, organisation:) }
-    let(:cohort_for_another_organisation) do
-      create(:cohort, organisation: another_organisation)
-    end
     let(:school) { create(:school, organisation:) }
     let(:user) { create(:user, organisation:) }
 
-    let(:patient_in_school) { create(:patient, school:) }
-    let(:patient_in_cohort) { create(:patient, cohort:) }
+    let(:patient_in_organisation) { create(:patient, organisation:) }
     let(:patient_not_in_organisation) { create(:patient) }
 
-    it { should include(patient_in_school) }
-    it { should include(patient_in_cohort) }
+    it { should include(patient_in_organisation) }
     it { should_not include(patient_not_in_organisation) }
 
     context "when the patient not in the org but pending joining the cohort" do

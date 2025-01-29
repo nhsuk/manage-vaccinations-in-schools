@@ -127,7 +127,7 @@ class Reports::OfflineSessionExporter
   def patient_sessions
     session
       .patient_sessions
-      .eager_load(patient: %i[cohort school])
+      .eager_load(patient: :school)
       .preload(
         consents: [:parent, { patient: :parent_relationships }],
         gillick_assessments: :performed_by,
