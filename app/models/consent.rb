@@ -130,7 +130,11 @@ class Consent < ApplicationRecord
   end
 
   def who_responded
-    via_self_consent? ? "Child (Gillick competent)" : parent_relationship.label
+    if via_self_consent?
+      "Child (Gillick competent)"
+    else
+      (parent_relationship || parent).label
+    end
   end
 
   def health_answers_require_follow_up?
