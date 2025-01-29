@@ -4,7 +4,7 @@ class SchoolMoveForm
   include ActiveModel::Model
   include ActiveModel::Attributes
 
-  attr_accessor :school_move
+  attr_accessor :current_user, :school_move
 
   attribute :action, :string
   attribute :move_to_school, :boolean
@@ -21,7 +21,7 @@ class SchoolMoveForm
 
     case action
     when "confirm"
-      @school_move.confirm!(move_to_school:)
+      @school_move.confirm!(user: current_user, move_to_school:)
     when "ignore"
       @school_move.ignore!
     end
