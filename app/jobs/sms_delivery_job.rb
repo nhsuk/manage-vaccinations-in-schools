@@ -32,7 +32,11 @@ class SMSDeliveryJob < NotifyDeliveryJob
         vaccination_record:
       )
 
-    args = { personalisation:, phone_number:, template_id: }
+    args = {
+      personalisation:,
+      phone_number: phone_number.gsub(/\s+/, ""),
+      template_id:
+    }
 
     delivery_id =
       if self.class.send_via_notify?
