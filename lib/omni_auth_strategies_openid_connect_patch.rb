@@ -6,9 +6,11 @@ module OmniAuthStrategiesOpenIDConnectPatch
 
     token_request_params = {
       scope: (options.scope if options.send_scope_to_token_endpoint),
-      client_auth_method: options.client_auth_method,
-      client_assertion: generate_client_assertion
+      client_auth_method: options.client_auth_method
     }
+    if client_options.key?(:private_key)
+      token_request_params[:client_assertion] = generate_client_assertion
+    end
 
     token_request_params[:code_verifier] = params["code_verifier"] ||
       session.delete("omniauth.pkce.verifier") if options.pkce
