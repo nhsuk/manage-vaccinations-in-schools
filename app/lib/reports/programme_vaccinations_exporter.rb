@@ -58,6 +58,7 @@ class Reports::ProgrammeVaccinationsExporter
       GILLICK_ASSESSMENT_DATE
       GILLICK_ASSESSED_BY
       GILLICK_ASSESSMENT_NOTES
+      GILLICK_NOTIFY_PARENTS
       VACCINATED
       DATE_OF_VACCINATION
       TIME_OF_VACCINATION
@@ -167,6 +168,7 @@ class Reports::ProgrammeVaccinationsExporter
       gillick_assessment&.updated_at&.to_date&.iso8601 || "",
       gillick_assessment&.performed_by&.full_name || "",
       gillick_assessment&.notes || "",
+      gillick_notify_parents(gillick_assessment:, consents:),
       vaccinated(vaccination_record:),
       vaccination_record.performed_at.to_date.iso8601,
       vaccination_record.performed_at.strftime("%H:%M:%S"),
@@ -199,6 +201,16 @@ class Reports::ProgrammeVaccinationsExporter
       "02" # Number present but not traced
     else
       "03" # Trace required
+    end
+  end
+
+  def gillick_notify_parents(gillick_assessment:, consents:)
+    return "" if gillick_assessment.nil?
+
+    if (consent = consents.find(&:via_self_consent?))
+      consent.notify_parents ? "Y" : "N"
+    else
+      ""
     end
   end
 

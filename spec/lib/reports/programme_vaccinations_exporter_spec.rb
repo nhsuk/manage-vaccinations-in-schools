@@ -56,6 +56,7 @@ describe Reports::ProgrammeVaccinationsExporter do
           GILLICK_ASSESSMENT_DATE
           GILLICK_ASSESSED_BY
           GILLICK_ASSESSMENT_NOTES
+          GILLICK_NOTIFY_PARENTS
           VACCINATED
           DATE_OF_VACCINATION
           TIME_OF_VACCINATION
@@ -129,6 +130,7 @@ describe Reports::ProgrammeVaccinationsExporter do
               "GILLICK_ASSESSED_BY" => "",
               "GILLICK_ASSESSMENT_DATE" => "",
               "GILLICK_ASSESSMENT_NOTES" => "",
+              "GILLICK_NOTIFY_PARENTS" => "",
               "GILLICK_STATUS" => "",
               "GP_NAME" => "",
               "GP_ORGANISATION_CODE" => "",
@@ -256,6 +258,7 @@ describe Reports::ProgrammeVaccinationsExporter do
               "GILLICK_ASSESSED_BY" => "",
               "GILLICK_ASSESSMENT_DATE" => "",
               "GILLICK_ASSESSMENT_NOTES" => "",
+              "GILLICK_NOTIFY_PARENTS" => "",
               "GILLICK_STATUS" => "",
               "GP_NAME" => "",
               "GP_ORGANISATION_CODE" => "",
@@ -386,6 +389,7 @@ describe Reports::ProgrammeVaccinationsExporter do
       let(:patient_session) do
         create(:patient_session, :vaccinated, programme:, session:)
       end
+      let(:patient) { patient_session.patient }
 
       before do
         performed_by = create(:user, given_name: "Test", family_name: "Nurse")
@@ -404,8 +408,41 @@ describe Reports::ProgrammeVaccinationsExporter do
           "GILLICK_ASSESSED_BY" => "Test Nurse",
           "GILLICK_ASSESSMENT_DATE" => "2024-01-01",
           "GILLICK_ASSESSMENT_NOTES" => "Assessed as Gillick competent",
+          "GILLICK_NOTIFY_PARENTS" => "",
           "GILLICK_STATUS" => "Gillick competent"
         )
+      end
+
+      context "when child doesn't want parents to be informed" do
+        before do
+          create(
+            :consent,
+            :self_consent,
+            patient:,
+            programme:,
+            notify_parents: false
+          )
+        end
+
+        it "includes the information" do
+          expect(rows.first.to_hash).to include("GILLICK_NOTIFY_PARENTS" => "N")
+        end
+      end
+
+      context "when child wants parents to be informed" do
+        before do
+          create(
+            :consent,
+            :self_consent,
+            patient:,
+            programme:,
+            notify_parents: true
+          )
+        end
+
+        it "includes the information" do
+          expect(rows.first.to_hash).to include("GILLICK_NOTIFY_PARENTS" => "Y")
+        end
       end
     end
 
