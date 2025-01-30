@@ -19,10 +19,12 @@ module AuthenticationConcern
           redirect_to start_path
         end
       elsif cis2_session?
-        if !selected_cis2_org_is_registered?
-          redirect_to users_organisation_not_found_path
+        if !selected_cis2_workgroup_is_valid?
+          redirect_to users_workgroup_not_found_path
         elsif !selected_cis2_role_is_valid?
           redirect_to users_role_not_found_path
+        elsif !selected_cis2_org_is_registered?
+          redirect_to users_organisation_not_found_path
         end
       end
     end
@@ -38,8 +40,8 @@ module AuthenticationConcern
     end
 
     def selected_cis2_workgroup_is_valid?
-      selected_cis2_nrbac_role.key?("workgroups") &&
-        CIS2_WORKGROUP.in?(selected_cis2_nrbac_role["workgroups"])
+      workgroups = session.dig("cis2_info", "selected_role", "workgroups")
+      workgroups.present? && CIS2_WORKGROUP.in?(workgroups)
     end
 
     def valid_cis2_roles
