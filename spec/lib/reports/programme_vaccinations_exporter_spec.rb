@@ -91,7 +91,13 @@ describe Reports::ProgrammeVaccinationsExporter do
       context "with a vaccinated patient" do
         let(:patient) { create(:patient, year_group: 8) }
         let(:patient_session) { create(:patient_session, patient:, session:) }
-        let(:batch) { create(:batch, vaccine: programme.vaccines.active.first) }
+        let(:batch) do
+          create(
+            :batch,
+            expiry: Date.new(2025, 12, 1),
+            vaccine: programme.vaccines.active.first
+          )
+        end
         let(:performed_at) { Time.zone.local(2024, 1, 1, 12, 5, 20) }
 
         before do
@@ -112,13 +118,13 @@ describe Reports::ProgrammeVaccinationsExporter do
           expect(rows.first.to_hash).to eq(
             {
               "ANATOMICAL_SITE" => "left upper arm",
-              "BATCH_EXPIRY_DATE" => batch.expiry.strftime("%Y%m%d"),
+              "BATCH_EXPIRY_DATE" => "2025-12-01",
               "BATCH_NUMBER" => batch.name,
               "CARE_SETTING" => "1",
               "CLINIC_NAME" => "",
               "CONSENT_DETAILS" => "",
               "CONSENT_STATUS" => "",
-              "DATE_OF_VACCINATION" => "20240101",
+              "DATE_OF_VACCINATION" => "2024-01-01",
               "DOSE_SEQUENCE" => "1",
               "GILLICK_ASSESSED_BY" => "",
               "GILLICK_ASSESSMENT_DATE" => "",
@@ -136,7 +142,7 @@ describe Reports::ProgrammeVaccinationsExporter do
               "PERFORMING_PROFESSIONAL_SURNAME" => "Test",
               "PERSON_ADDRESS_LINE_1" => patient.address_line_1,
               "PERSON_DATE_OF_BIRTH" =>
-                patient.date_of_birth.strftime("%Y%m%d"),
+                patient.date_of_birth.strftime("%Y-%m-%d"),
               "PERSON_DATE_OF_DEATH" => "",
               "PERSON_FORENAME" => patient.given_name,
               "PERSON_GENDER_CODE" => "Not known",
@@ -213,7 +219,13 @@ describe Reports::ProgrammeVaccinationsExporter do
       context "with a vaccinated patient" do
         let(:patient) { create(:patient, year_group: 8) }
         let(:patient_session) { create(:patient_session, patient:, session:) }
-        let(:batch) { create(:batch, vaccine: programme.vaccines.active.first) }
+        let(:batch) do
+          create(
+            :batch,
+            expiry: Date.new(2025, 12, 1),
+            vaccine: programme.vaccines.active.first
+          )
+        end
         let(:performed_at) { Time.zone.local(2024, 1, 1, 12, 5, 20) }
 
         before do
@@ -233,13 +245,13 @@ describe Reports::ProgrammeVaccinationsExporter do
           expect(rows.first.to_hash).to eq(
             {
               "ANATOMICAL_SITE" => "left upper arm",
-              "BATCH_EXPIRY_DATE" => batch.expiry.strftime("%Y%m%d"),
+              "BATCH_EXPIRY_DATE" => "2025-12-01",
               "BATCH_NUMBER" => batch.name,
               "CARE_SETTING" => "2",
               "CLINIC_NAME" => "A Clinic",
               "CONSENT_DETAILS" => "",
               "CONSENT_STATUS" => "",
-              "DATE_OF_VACCINATION" => "20240101",
+              "DATE_OF_VACCINATION" => "2024-01-01",
               "DOSE_SEQUENCE" => "1",
               "GILLICK_ASSESSED_BY" => "",
               "GILLICK_ASSESSMENT_DATE" => "",
@@ -257,7 +269,7 @@ describe Reports::ProgrammeVaccinationsExporter do
               "PERFORMING_PROFESSIONAL_SURNAME" => "Test",
               "PERSON_ADDRESS_LINE_1" => patient.address_line_1,
               "PERSON_DATE_OF_BIRTH" =>
-                patient.date_of_birth.strftime("%Y%m%d"),
+                patient.date_of_birth.strftime("%Y-%m-%d"),
               "PERSON_DATE_OF_DEATH" => "",
               "PERSON_FORENAME" => patient.given_name,
               "PERSON_GENDER_CODE" => "Not known",
@@ -302,7 +314,7 @@ describe Reports::ProgrammeVaccinationsExporter do
 
       it "includes the information" do
         expect(rows.first.to_hash).to include(
-          "PERSON_DATE_OF_DEATH" => "20100101"
+          "PERSON_DATE_OF_DEATH" => "2010-01-01"
         )
       end
     end
@@ -390,7 +402,7 @@ describe Reports::ProgrammeVaccinationsExporter do
       it "includes the information" do
         expect(rows.first.to_hash).to include(
           "GILLICK_ASSESSED_BY" => "Test Nurse",
-          "GILLICK_ASSESSMENT_DATE" => "20240101",
+          "GILLICK_ASSESSMENT_DATE" => "2024-01-01",
           "GILLICK_ASSESSMENT_NOTES" => "Assessed as Gillick competent",
           "GILLICK_STATUS" => "Gillick competent"
         )
@@ -416,7 +428,7 @@ describe Reports::ProgrammeVaccinationsExporter do
       it "includes the information" do
         expect(rows.first.to_hash).to include(
           "TRIAGED_BY" => "Test Nurse",
-          "TRIAGE_DATE" => Date.current.strftime("%Y%m%d"),
+          "TRIAGE_DATE" => Date.current.strftime("%Y-%m-%d"),
           "TRIAGE_NOTES" => "Okay to vaccinate",
           "TRIAGE_STATUS" => "Ready to vaccinate"
         )
