@@ -63,6 +63,8 @@ class VaccinationsController < ApplicationController
     if @vaccinate_form.save(draft_vaccination_record:)
       steps = draft_vaccination_record.wizard_steps
 
+      steps.delete(:notes) # this is on the confirmation page
+
       steps.delete(:date_and_time)
       steps.delete(:outcome) if draft_vaccination_record.administered?
       if draft_vaccination_record.delivery_method.present? &&

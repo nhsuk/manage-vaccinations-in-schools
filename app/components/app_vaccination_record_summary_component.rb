@@ -185,6 +185,16 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
 
           if @vaccination_record.notes.present?
             row.with_value { notes_value }
+
+            if (href = @change_links[:notes])
+              row.with_action(
+                text: "Change",
+                href:,
+                visually_hidden_text: "site"
+              )
+            end
+          elsif (href = @change_links[:notes])
+            row.with_value { link_to "Add notes", href }
           else
             row.with_value { "Not provided" }
           end
