@@ -100,6 +100,8 @@ describe Reports::ProgrammeVaccinationsExporter do
             batch:,
             patient_session:,
             performed_at:,
+            created_at: performed_at,
+            updated_at: performed_at,
             programme:,
             performed_by: user
           )
@@ -142,7 +144,7 @@ describe Reports::ProgrammeVaccinationsExporter do
               "PERSON_SURNAME" => patient.family_name,
               "PROGRAMME_NAME" => "HPV",
               "REASON_NOT_VACCINATED" => "",
-              "RECORD_CREATED" => Time.current.iso8601,
+              "RECORD_CREATED" => "2024-01-01T12:05:20+00:00",
               "RECORD_UPDATED" => "",
               "REASON_FOR_INCLUSION" => "new",
               "ROUTE_OF_VACCINATION" => "intramuscular",
