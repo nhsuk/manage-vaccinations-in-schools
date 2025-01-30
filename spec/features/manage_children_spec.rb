@@ -61,6 +61,24 @@ describe "Manage children" do
     and_the_patient_is_no_longer_invalidated
   end
 
+  scenario "Removing an NHS number" do
+    given_patients_exist
+
+    when_i_click_on_children
+    and_i_click_on_a_child
+    then_i_see_the_child
+
+    when_i_click_on_edit_child_record
+    then_i_see_the_edit_child_record_page
+
+    when_i_click_on_change_nhs_number
+    then_i_see_the_edit_nhs_number_page
+
+    when_i_enter_a_blank_nhs_number
+    then_i_see_the_edit_child_record_page
+    and_i_see_the_blank_nhs_number
+  end
+
   scenario "Removing a child from a cohort" do
     given_patients_exist
     and_the_patient_belongs_to_a_session
@@ -149,6 +167,8 @@ describe "Manage children" do
         given_name: "John",
         family_name: "Smith"
       )
+
+    create(:patient, organisation: @organisation, nhs_number: nil)
   end
 
   def and_the_patient_is_vaccinated
@@ -230,6 +250,11 @@ describe "Manage children" do
     click_on "Continue"
   end
 
+  def when_i_enter_a_blank_nhs_number
+    fill_in "What is the child’s NHS number?", with: ""
+    click_on "Continue"
+  end
+
   def and_i_enter_an_existing_nhs_number
     fill_in "What is the child’s NHS number?",
             with: @existing_patient.nhs_number
@@ -242,6 +267,10 @@ describe "Manage children" do
 
   def and_the_patient_is_no_longer_invalidated
     expect(@patient.reload).not_to be_invalidated
+  end
+
+  def and_i_see_the_blank_nhs_number
+    expect(page).to have_content("NHS numberNot provided")
   end
 
   def then_i_see_the_merge_record_page

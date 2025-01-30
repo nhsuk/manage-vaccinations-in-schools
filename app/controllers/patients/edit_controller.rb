@@ -8,13 +8,16 @@ class Patients::EditController < ApplicationController
   end
 
   def update_nhs_number
-    @patient.nhs_number = nhs_number
+    @patient.nhs_number = nhs_number.presence
+
     redirect_to edit_patient_path(@patient) and return unless @patient.changed?
 
     @existing_patient =
-      policy_scope(Patient).includes(parent_relationships: :parent).find_by(
-        nhs_number:
-      )
+      if nhs_number.present?
+        policy_scope(Patient).includes(parent_relationships: :parent).find_by(
+          nhs_number:
+        )
+      end
 
     render :nhs_number_merge and return if @existing_patient
 
