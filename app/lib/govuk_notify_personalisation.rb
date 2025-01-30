@@ -50,6 +50,7 @@ class GovukNotifyPersonalisation
       organisation_privacy_policy_url:,
       outcome_administered:,
       outcome_not_administered:,
+      patient_date_of_birth:,
       programme_name:,
       reason_did_not_vaccinate:,
       reason_for_refusal:,
@@ -172,6 +173,10 @@ class GovukNotifyPersonalisation
   def outcome_not_administered
     return if vaccination_record.nil?
     vaccination_record.not_administered? ? "yes" : "no"
+  end
+
+  def patient_date_of_birth
+    patient&.date_of_birth&.to_fs(:long)
   end
 
   def programme_name
