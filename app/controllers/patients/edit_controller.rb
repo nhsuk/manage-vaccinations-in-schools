@@ -16,9 +16,13 @@ class Patients::EditController < ApplicationController
         nhs_number:
       )
 
-    if @existing_patient
-      render :nhs_number_merge
-    elsif @patient.save
+    render :nhs_number_merge and return if @existing_patient
+
+    @patient.invalidated_at = nil
+
+    if @patient.save
+      PatientUpdateFromPDSJob.perform_later(@patient)
+
       redirect_to edit_patient_path(@patient)
     else
       render :nhs_number, status: :unprocessable_entity
