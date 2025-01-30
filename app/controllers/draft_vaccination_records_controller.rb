@@ -136,10 +136,11 @@ class DraftVaccinationRecordsController < ApplicationController
   def update_params
     permitted_attributes = {
       batch: %i[batch_id],
-      confirm: %i[notes],
+      confirm: @draft_vaccination_record.editing? ? [] : %i[notes],
       date_and_time: %i[performed_at],
       delivery: %i[delivery_site delivery_method],
       location: %i[location_name],
+      notes: %i[notes],
       outcome: %i[outcome],
       vaccine: %i[vaccine_id]
     }.fetch(current_step)
