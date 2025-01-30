@@ -263,7 +263,12 @@ describe AppVaccinationRecordSummaryComponent do
     context "when the notes are not present" do
       let(:notes) { nil }
 
-      it { should_not have_css(".nhsuk-summary-list__row", text: "Notes") }
+      it do
+        expect(rendered).to have_css(
+          ".nhsuk-summary-list__row",
+          text: "Notes\nNot provided"
+        )
+      end
     end
   end
 

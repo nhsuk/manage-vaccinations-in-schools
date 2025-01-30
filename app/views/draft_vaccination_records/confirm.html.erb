@@ -24,6 +24,8 @@
      vaccine: wizard_path("vaccine"),
    } %>
 
+<% show_notes = @draft_vaccination_record.editing? %>
+
 <% if @draft_vaccination_record.administered? %>
   <%= render AppCardComponent.new do |card| %>
     <% card.with_heading { "Vaccination details" } %>
@@ -31,7 +33,7 @@
           @draft_vaccination_record,
           current_user:,
           change_links:,
-          show_notes: false,
+          show_notes:,
         ) %>
   <% end %>
 <% else %>
@@ -40,7 +42,7 @@
           @draft_vaccination_record,
           current_user:,
           change_links:,
-          show_notes: false,
+          show_notes:,
         ) %>
   <% end %>
 <% end %>
