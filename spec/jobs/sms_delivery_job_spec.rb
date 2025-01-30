@@ -67,7 +67,7 @@ describe SMSDeliveryJob do
 
     it "sends a text using GOV.UK Notify" do
       expect(notifications_client).to receive(:send_sms).with(
-        phone_number: "01234 567890",
+        phone_number: "01234567890",
         template_id: GOVUK_NOTIFY_SMS_TEMPLATES[template_name],
         personalisation: an_instance_of(Hash)
       )
@@ -108,7 +108,7 @@ describe SMSDeliveryJob do
 
       it "sends a text using GOV.UK Notify" do
         expect(notifications_client).to receive(:send_sms).with(
-          phone_number: "01234 567890",
+          phone_number: "01234567890",
           template_id: GOVUK_NOTIFY_SMS_TEMPLATES[template_name],
           personalisation: an_instance_of(Hash)
         )
