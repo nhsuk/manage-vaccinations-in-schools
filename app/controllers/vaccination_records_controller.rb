@@ -72,7 +72,6 @@ class VaccinationRecordsController < ApplicationController
           :location,
           :performed_by_user,
           :programme,
-          # TODO: avoid duplicate here by using one or the other everywhere
           patient_session: {
             consents: :parent,
             patient: [
@@ -82,12 +81,6 @@ class VaccinationRecordsController < ApplicationController
               { parent_relationships: :parent }
             ]
           },
-          patient: [
-            :cohort,
-            :gp_practice,
-            :school,
-            { parent_relationships: :parent }
-          ],
           session: %i[session_dates],
           vaccine: :programme
         )
@@ -101,7 +94,7 @@ class VaccinationRecordsController < ApplicationController
 
   def set_vaccination_record
     @vaccination_record = vaccination_records.find(params[:id])
-    @patient = @vaccination_record.patient
+    @patient = @vaccination_record.patient_session.patient
     @session = @vaccination_record.session
   end
 
