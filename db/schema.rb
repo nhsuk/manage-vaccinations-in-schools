@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_01_27_133639) do
+ActiveRecord::Schema[8.0].define(version: 2025_01_31_153531) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -618,12 +618,12 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_27_133639) do
   end
 
   create_table "school_move_log_entries", force: :cascade do |t|
-    t.bigint "patient_id", null: false
-    t.bigint "user_id"
-    t.bigint "school_id"
     t.boolean "home_educated"
     t.boolean "move_to_school"
     t.datetime "created_at", null: false
+    t.bigint "school_id"
+    t.bigint "user_id"
+    t.bigint "patient_id", null: false
     t.index ["patient_id"], name: "index_school_move_log_entries_on_patient_id"
     t.index ["school_id"], name: "index_school_move_log_entries_on_school_id"
     t.index ["user_id"], name: "index_school_move_log_entries_on_user_id"
@@ -860,9 +860,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_27_133639) do
   add_foreign_key "pre_screenings", "users", column: "performed_by_user_id"
   add_foreign_key "programmes_sessions", "programmes"
   add_foreign_key "programmes_sessions", "sessions"
-  add_foreign_key "school_move_log_entries", "locations", column: "school_id"
-  add_foreign_key "school_move_log_entries", "patients"
-  add_foreign_key "school_move_log_entries", "users"
   add_foreign_key "school_moves", "locations", column: "school_id"
   add_foreign_key "school_moves", "organisations"
   add_foreign_key "school_moves", "patients"
