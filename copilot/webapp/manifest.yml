@@ -121,3 +121,17 @@ environments:
       SENTRY_ENVIRONMENT: production
       MAVIS__HOST: "www.manage-vaccinations-in-schools.nhs.uk"
       MAVIS__GIVE_OR_REFUSE_CONSENT_HOST: "www.give-or-refuse-consent-for-vaccinations.nhs.uk"
+  copilotmigration:
+    http:
+      alias:
+        - "copilotmigration.mavistesting.com"
+    deployments:
+      rolling: recreate # Disables blue-green deployment for speed
+    variables:
+      RAILS_ENV: staging
+      SENTRY_ENVIRONMENT: copilotmigration
+      MAVIS__HOST: "copilotmigration.mavistesting.com"
+      MAVIS__GIVE_OR_REFUSE_CONSENT_HOST: "copilotmigration.mavistesting.com"
+      MAVIS__CIS2__ENABLED: false
+      MAVIS__PDS__PERFORM_JOBS: false
+      MAVIS__SPLUNK__ENABLED: false
