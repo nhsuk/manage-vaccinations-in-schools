@@ -45,6 +45,9 @@ describe PatientMerger do
     let(:school_move) do
       create(:school_move, :to_school, patient: patient_to_destroy)
     end
+    let(:school_move_log_entry) do
+      create(:school_move_log_entry, patient: patient_to_destroy)
+    end
     let(:duplicate_school_move) do
       create(:school_move, patient: patient_to_keep, school: school_move.school)
     end
@@ -115,6 +118,12 @@ describe PatientMerger do
 
     it "moves school moves" do
       expect { call }.to change { school_move.reload.patient }.to(
+        patient_to_keep
+      )
+    end
+
+    it "moves school move log entries" do
+      expect { call }.to change { school_move_log_entry.reload.patient }.to(
         patient_to_keep
       )
     end
