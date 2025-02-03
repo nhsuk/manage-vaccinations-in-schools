@@ -7,7 +7,7 @@
     "accessible-autocomplete": "^3.0.1",
     "esbuild": "^0.24.2",
     "govuk-frontend": "^5.8.0",
-    "idb": "^8.0.1",
+    "idb": "^8.0.2",
     "nhsuk-frontend": "^9.1.0",
     "sass": "^1.83.4",
     "stimulus": "^3.2.2",
