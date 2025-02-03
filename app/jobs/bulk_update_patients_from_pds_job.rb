@@ -25,7 +25,7 @@ class BulkUpdatePatientsFromPDSJob < ApplicationJob
 
           PatientUpdateFromPDSJob.set(
             priority: 50,
-            wait: 0.21 * index
+            wait: 0.5 * index
           ).perform_later(patient)
         end
     end
