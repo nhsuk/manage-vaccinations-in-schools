@@ -16,11 +16,11 @@ module NHSAPIConcurrencyConcern
     # there’s more instances where more than 5 requests are attempted.
     retry_on GoodJob::ActiveJobExtensions::Concurrency::ConcurrencyExceededError,
              attempts: :unlimited,
-             wait: ->(_) { rand(0.5..5) }
+             wait: ->(executions) { (executions * 5) + rand(0.5..5) }
 
     retry_on Faraday::TooManyRequestsError,
              attempts: :unlimited,
-             wait: ->(_) { rand(0.5..5) }
+             wait: ->(executions) { (executions * 5) + rand(0.5..5) }
 
     retry_on Faraday::ServerError, wait: :polynomially_longer
   end
