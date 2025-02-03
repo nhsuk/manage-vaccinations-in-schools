@@ -18,6 +18,12 @@
 #  index_school_move_log_entries_on_school_id   (school_id)
 #  index_school_move_log_entries_on_user_id     (user_id)
 #
+# Foreign Keys
+#
+#  fk_rails_...  (patient_id => patients.id)
+#  fk_rails_...  (school_id => locations.id)
+#  fk_rails_...  (user_id => users.id)
+#
 FactoryBot.define do
   factory :school_move_log_entry do
     patient

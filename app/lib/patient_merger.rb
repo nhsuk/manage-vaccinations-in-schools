@@ -31,6 +31,10 @@ class PatientMerger
         end
       end
 
+      patient_to_destroy.school_move_log_entries.update_all(
+        patient_id: patient_to_keep.id
+      )
+
       patient_to_destroy.session_notifications.update_all(
         patient_id: patient_to_keep.id
       )
