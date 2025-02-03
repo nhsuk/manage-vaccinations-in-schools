@@ -23,7 +23,7 @@
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.10.1",
-    "@playwright/test": "^1.50.0",
+    "@playwright/test": "^1.50.1",
     "@prettier/plugin-ruby": "^4.0.4",
     "@types/jest": "^29.5.14",
     "esbuild-jest": "^0.5.0",
