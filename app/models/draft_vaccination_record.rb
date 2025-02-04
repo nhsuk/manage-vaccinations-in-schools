@@ -33,6 +33,7 @@ class DraftVaccinationRecord
 
   def wizard_steps
     [
+      :notes,
       :date_and_time,
       :outcome,
       (:delivery if administered?),
