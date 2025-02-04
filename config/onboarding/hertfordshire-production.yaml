@@ -1,0 +1,38 @@
+organisation:
+  name: Norfolk, Suffolk and Cambridgeshire and Peterborough Community and School Age Immunisation Service
+  email: hct.csaiscambspb@nhs.net
+  phone: 0300 555 5055
+  ods_code: RY4
+  careplus_venue_code: UNUSED
+  privacy_notice_url: https://www.hct.nhs.uk/privacy
+  privacy_policy_url: https://www.hct.nhs.uk/privacy
+
+programmes: [hpv]
+
+teams:
+  generic:
+    name: Norfolk, Suffolk and Cambridgeshire and Peterborough Community and School Age Immunisation Service
+    email: hct.csaiscambspb@nhs.net
+    phone: 0300 555 5055
+
+schools:
+  generic:
+    - 110907
+    - 110910
+    - 135263
+    - 135980
+    - 136266
+    - 136398
+    - 136580
+    - 137082
+    - 138053
+    - 139082
+    - 142902
+    - 145051
+
+clinics:
+  generic:
+    - name: North Cambridgeshire Hospital
+      address_line_1: Churchill Road
+      address_town: Wisbech
+      address_postcode: PE13 3AB
