@@ -90,6 +90,7 @@ environments:
       SENTRY_ENVIRONMENT: test
       MAVIS__HOST: "test.mavistesting.com"
       MAVIS__GIVE_OR_REFUSE_CONSENT_HOST: "test.mavistesting.com"
+      GOOD_JOB_MAX_THREADS: 1
   training:
     http:
       alias:
