@@ -26,7 +26,10 @@ class Patients::EditController < ApplicationController
   end
 
   def update_nhs_number_merge
-    @existing_patient = policy_scope(Patient).find_by!(nhs_number:)
+    @existing_patient =
+      policy_scope(Patient).includes(parent_relationships: :parent).find_by!(
+        nhs_number:
+      )
 
     PatientMerger.call(to_keep: @existing_patient, to_destroy: @patient)
 

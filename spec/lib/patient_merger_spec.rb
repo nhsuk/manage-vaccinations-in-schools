@@ -3,11 +3,25 @@
 describe PatientMerger do
   describe "#call" do
     subject(:call) do
-      described_class.call(
-        to_keep: patient_to_keep.reload,
-        to_destroy: patient_to_destroy.reload
-      )
+      # Intentionally call this method as we would in a controller because
+      # we were finding bugs when called like this but not on its own.
+      Audited
+        .audit_class
+        .as_user(user) do
+          described_class.call(
+            to_keep:
+              Patient.includes(parent_relationships: :parent).find(
+                patient_to_keep.id
+              ),
+            to_destroy:
+              Patient.includes(parent_relationships: :parent).find(
+                patient_to_destroy.id
+              )
+          )
+        end
     end
+
+    let(:user) { create(:user) }
 
     let(:programme) { create(:programme) }
     let(:session) { create(:session, programme:) }
