@@ -95,7 +95,7 @@ class PatientMerger
       patient_to_destroy.cohort_imports.clear
       patient_to_destroy.immunisation_imports.clear
 
-      patient_to_destroy.destroy!
+      patient_to_destroy.reload.destroy!
     end
   end
 
