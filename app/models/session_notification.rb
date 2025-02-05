@@ -54,11 +54,13 @@ class SessionNotification < ApplicationRecord
     patient = patient_session.patient
     session = patient_session.session
 
+    programme = session.programmes.first # TODO: handle multiple programmes
+
     contacts =
       if type == :school_reminder
-        patient_session.latest_consents.select do
-          _1.response_given? && _1.parent&.contactable?
-        end
+        patient_session
+          .latest_consents(programme:)
+          .select { _1.response_given? && _1.parent&.contactable? }
       else
         patient.parents.select(&:contactable?)
       end

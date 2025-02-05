@@ -48,7 +48,10 @@ class TriagesController < ApplicationController
     if @triage.save(context: :consent)
       @triage.process!
 
-      @patient.consents.each { send_triage_confirmation(@patient_session, _1) }
+      @patient_session
+        .reload
+        .latest_consents(programme: @triage.programme)
+        .each { send_triage_confirmation(@patient_session, it) }
 
       flash[:success] = {
         heading: "Triage outcome updated for",
@@ -80,7 +83,8 @@ class TriagesController < ApplicationController
   end
 
   def set_patient_session
-    @patient_session = @patient.patient_sessions.find_by!(session: @session)
+    @patient_session =
+      @patient.patient_sessions.preload_for_status.find_by!(session: @session)
   end
 
   def set_triage

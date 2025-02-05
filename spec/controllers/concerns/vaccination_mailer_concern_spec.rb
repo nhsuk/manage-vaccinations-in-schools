@@ -14,6 +14,7 @@ describe VaccinationMailerConcern do
 
     vaccination_record.strict_loading!(false)
     vaccination_record.patient_session.strict_loading!(false)
+    vaccination_record.patient_session.patient.strict_loading!(false)
   end
 
   let(:sample) { SampleClass.new(current_user:) }

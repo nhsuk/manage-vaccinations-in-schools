@@ -69,14 +69,14 @@
 <% if display_health_questions? %>
   <%= render AppCardComponent.new do |c| %>
     <% c.with_heading { "All answers to health questions" } %>
-    <%= render AppHealthQuestionsComponent.new(consents: patient_session.latest_consents) %>
+    <%= render AppHealthQuestionsComponent.new(consents: patient_session.latest_consents(programme:)) %>
   <% end %>
 <% end %>
 
-<% if patient_session.triages.any? %>
+<% if patient_session.triages(programme:).any? %>
   <%= render AppCardComponent.new do |c| %>
     <% c.with_heading { "Triage notes" } %>
-    <%= render AppTriageNotesComponent.new(patient_session:) %>
+    <%= render AppTriageNotesComponent.new(patient_session:, programme:) %>
   <% end %>
 <% end %>
 

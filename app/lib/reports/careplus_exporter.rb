@@ -75,8 +75,7 @@ class Reports::CareplusExporter
         .includes(
           :location,
           :vaccination_records,
-          consents: %i[parent patient],
-          patient: :school
+          patient: [:school, { consents: %i[parent patient] }]
         )
         .where.not(vaccination_records: { id: nil })
         .merge(VaccinationRecord.administered)
@@ -122,6 +121,7 @@ class Reports::CareplusExporter
 
   def existing_row(patient:, patient_session:, vaccination_records:)
     first_vaccination = vaccination_records.first
+    programme = first_vaccination.programme
 
     [
       patient.nhs_number,
@@ -129,7 +129,7 @@ class Reports::CareplusExporter
       patient.given_name,
       patient.date_of_birth.strftime("%d/%m/%Y"),
       patient.address_line_1,
-      patient_session.latest_consents.first&.name || "",
+      patient_session.latest_consents(programme:).first&.name || "",
       99, # Ethnicity, 99 is "Not known"
       first_vaccination.performed_at.strftime("%d/%m/%Y"),
       first_vaccination.performed_at.strftime("%H:%M"),

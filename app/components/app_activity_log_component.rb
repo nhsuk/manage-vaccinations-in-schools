@@ -27,13 +27,18 @@ class AppActivityLogComponent < ViewComponent::Base
     @patient_sessions =
       patient_session ? [patient_session] : patient.patient_sessions
 
+    programme = patient_session&.programmes&.first # TODO: handle multiple programmes
+
     @consents =
-      (patient || patient_session).consents.includes(
-        :consent_form,
-        :parent,
-        :recorded_by,
-        patient: :parent_relationships
-      )
+      @patient
+        .consents
+        .includes(
+          :consent_form,
+          :parent,
+          :recorded_by,
+          patient: :parent_relationships
+        )
+        .tap { it.where(programme:) if programme }
     @gillick_assessments =
       (patient || patient_session).gillick_assessments.includes(:performed_by)
     @notify_log_entries = @patient.notify_log_entries.includes(:sent_by)
@@ -41,7 +46,11 @@ class AppActivityLogComponent < ViewComponent::Base
       (patient || patient_session).pre_screenings.includes(:performed_by)
     @session_attendances =
       (patient || patient_session).session_attendances.includes(:location)
-    @triages = (patient || patient_session).triages.includes(:performed_by)
+    @triages =
+      @patient
+        .triages
+        .includes(:performed_by)
+        .tap { it.where(programme:) if programme }
     @vaccination_records =
       (patient || patient_session).vaccination_records.with_discarded.includes(
         :performed_by_user,

@@ -30,6 +30,7 @@ describe AppActivityLogComponent do
   before do
     create(:parent_relationship, :mother, parent: mum, patient:)
     create(:parent_relationship, :father, parent: dad, patient:)
+    patient.reload
 
     patient_session.strict_loading!(false)
     patient_session.patient.strict_loading!(false)

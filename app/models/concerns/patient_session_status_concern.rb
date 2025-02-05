@@ -54,38 +54,54 @@ module PatientSessionStatusConcern
     def consent_given?
       return false if no_consent?
 
-      if (self_consents = latest_consents.select(&:via_self_consent?)).present?
+      programme = programmes.first # TODO: handle multiple programmes
+
+      if (
+           self_consents =
+             latest_consents(programme:).select(&:via_self_consent?)
+         ).present?
         self_consents.all?(&:response_given?)
       else
-        latest_consents.all?(&:response_given?)
+        latest_consents(programme:).all?(&:response_given?)
       end
     end
 
     def consent_refused?
       return false if no_consent?
 
-      latest_consents.all?(&:response_refused?)
+      programme = programmes.first # TODO: handle multiple programmes
+
+      latest_consents(programme:).all?(&:response_refused?)
     end
 
     def consent_conflicts?
       return false if no_consent?
 
-      if (self_consents = latest_consents.select(&:via_self_consent?)).present?
+      programme = programmes.first # TODO: handle multiple programmes
+
+      if (
+           self_consents =
+             latest_consents(programme:).select(&:via_self_consent?)
+         ).present?
         self_consents.any?(&:response_refused?) &&
           self_consents.any?(&:response_given?)
       else
-        latest_consents.any?(&:response_refused?) &&
-          latest_consents.any?(&:response_given?)
+        latest_consents(programme:).any?(&:response_refused?) &&
+          latest_consents(programme:).any?(&:response_given?)
       end
     end
 
     def no_consent?
-      consents.empty? ||
-        consents.all? { _1.response_not_provided? || _1.invalidated? }
+      programme = programmes.first # TODO: handle multiple programmes
+      consents(programme:).empty? ||
+        consents(programme:).all? do
+          _1.response_not_provided? || _1.invalidated?
+        end
     end
 
     def triage_needed?
-      latest_consents.any?(&:triage_needed?)
+      programme = programmes.first # TODO: handle multiple programmes
+      latest_consents(programme:).any?(&:triage_needed?)
     end
 
     def triage_not_needed?
@@ -93,19 +109,23 @@ module PatientSessionStatusConcern
     end
 
     def triage_ready_to_vaccinate?
-      latest_triage&.ready_to_vaccinate?
+      programme = programmes.first # TODO: handle multiple programmes
+      latest_triage(programme:)&.ready_to_vaccinate?
     end
 
     def triage_keep_in_triage?
-      latest_triage&.needs_follow_up?
+      programme = programmes.first # TODO: handle multiple programmes
+      latest_triage(programme:)&.needs_follow_up?
     end
 
     def triage_do_not_vaccinate?
-      latest_triage&.do_not_vaccinate?
+      programme = programmes.first # TODO: handle multiple programmes
+      latest_triage(programme:)&.do_not_vaccinate?
     end
 
     def triage_delay_vaccination?
-      latest_triage&.delay_vaccination?
+      programme = programmes.first # TODO: handle multiple programmes
+      latest_triage(programme:)&.delay_vaccination?
     end
 
     def vaccination_administered?
@@ -117,7 +137,11 @@ module PatientSessionStatusConcern
     end
 
     def vaccination_can_be_delayed?
-      if (vaccination_record = vaccination_records.last)
+      programme_id = programmes.first.id # TODO: handle multiple programmes
+      if (
+           vaccination_record =
+             vaccination_records.select { it.programme_id == programme_id }.last
+         )
         vaccination_record.not_administered? &&
           vaccination_record.retryable_reason?
       end

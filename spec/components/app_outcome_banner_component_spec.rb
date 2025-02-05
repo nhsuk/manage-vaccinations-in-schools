@@ -86,8 +86,9 @@ describe AppOutcomeBannerComponent do
       create(:patient_session, :triaged_do_not_vaccinate, user:)
     end
     let(:vaccination_record) { patient_session.vaccination_records.first }
+    let(:programme) { patient_session.programmes.first }
     let(:location) { patient_session.session.location }
-    let(:triage) { patient_session.triages.first }
+    let(:triage) { patient_session.triages(programme:).first }
     let(:date) { triage.created_at.to_date.to_fs(:long) }
 
     it { should have_css(".app-card--red") }
@@ -106,7 +107,10 @@ describe AppOutcomeBannerComponent do
       let(:date) { Time.zone.now - 2.days }
       let(:patient_session) do
         create(:patient_session, :triaged_do_not_vaccinate).tap do |ps|
-          ps.triages.first.update!(created_at: date)
+          ps
+            .triages(programme: ps.programmes.first)
+            .first
+            .update!(created_at: date)
         end
       end
 

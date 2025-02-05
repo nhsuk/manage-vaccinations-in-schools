@@ -50,12 +50,13 @@ class AppOutcomeBannerComponent < ViewComponent::Base
     @vaccination_record ||=
       @patient_session
         .vaccination_records
+        .select { it.programme_id == programme.id }
         .tap { it.select(&:administered?) if @patient_session.vaccinated? }
         .last
   end
 
   def triage
-    @triage ||= @patient_session.latest_triage
+    @triage ||= @patient_session.latest_triage(programme:)
   end
 
   def show_location?
@@ -121,5 +122,9 @@ class AppOutcomeBannerComponent < ViewComponent::Base
 
   def colour
     I18n.t("patient_session_statuses.#{status}.colour")
+  end
+
+  def programme
+    @patient_session.programmes.first # TODO: handle multiple programmes
   end
 end

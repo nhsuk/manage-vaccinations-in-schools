@@ -94,10 +94,15 @@ class Reports::ProgrammeVaccinationsExporter
           :programme,
           :vaccine,
           patient_session: {
-            consents: [:parent, { patient: :parent_relationships }],
-            gillick_assessments: :performed_by,
-            patient: %i[gp_practice school],
-            triages: :performed_by
+            patient: [
+              :gp_practice,
+              :school,
+              {
+                consents: [:parent, { patient: :parent_relationships }],
+                triages: :performed_by
+              }
+            ],
+            gillick_assessments: :performed_by
           }
         )
 
@@ -132,12 +137,13 @@ class Reports::ProgrammeVaccinationsExporter
 
   def row(vaccination_record:)
     patient_session = vaccination_record.patient_session
-    consents = patient_session.latest_consents
     gillick_assessment = patient_session.gillick_assessments.last
     patient = patient_session.patient
-    triage = patient_session.latest_triage
     location = vaccination_record.location
     programme = vaccination_record.programme
+
+    consents = patient_session.latest_consents(programme:)
+    triage = patient_session.latest_triage(programme:)
 
     [
       organisation.ods_code,

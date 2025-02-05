@@ -36,7 +36,7 @@ describe PatientSession do
   end
 
   describe "#triages" do
-    subject(:triages) { patient_session.triages }
+    subject(:triages) { patient_session.triages(programme:) }
 
     let(:patient) { patient_session.patient }
     let(:later_triage) { create(:triage, programme:, patient:) }
@@ -48,7 +48,7 @@ describe PatientSession do
   end
 
   describe "#latest_triage" do
-    subject(:latest_triage) { patient_session.latest_triage }
+    subject(:latest_triage) { patient_session.latest_triage(programme:) }
 
     let(:patient) { patient_session.patient }
     let(:later_triage) do
@@ -129,7 +129,7 @@ describe PatientSession do
   describe "#consent_given?" do
     subject(:consent_given?) do
       described_class
-        .includes(consents: :parent)
+        .includes(patient: { consents: :parent })
         .find(patient_session.id)
         .consent_given?
     end
@@ -196,7 +196,7 @@ describe PatientSession do
   end
 
   describe "#latest_consents" do
-    subject(:latest_consents) { patient_session.latest_consents }
+    subject(:latest_consents) { patient_session.latest_consents(programme:) }
 
     let(:patient_session) { create(:patient_session, programme:, patient:) }
 
