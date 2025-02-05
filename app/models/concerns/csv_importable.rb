@@ -172,12 +172,10 @@ module CSVImportable
         # should reduce the risk of this.
 
         if patient.nhs_number.nil?
-          PatientNHSNumberLookupJob.set(wait: 0.5 * index).perform_later(
-            patient
-          )
+          PatientNHSNumberLookupJob.set(wait: 2 * index).perform_later(patient)
         else
           PatientUpdateFromPDSJob.set(
-            wait: 0.5 * index,
+            wait: 2 * index,
             queue: :imports
           ).perform_later(patient)
         end
