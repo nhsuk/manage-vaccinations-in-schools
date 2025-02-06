@@ -30,9 +30,10 @@ describe PatientSession do
   it { should have_many(:gillick_assessments).order(:created_at) }
 
   it do
-    expect(patient_session).to have_many(:vaccination_records).conditions(
-      discarded_at: nil
-    ).order(:created_at)
+    expect(patient_session).to have_many(:vaccination_records)
+      .through(:patient)
+      .conditions(discarded_at: nil, session_id: patient_session.session_id)
+      .order(:created_at)
   end
 
   describe "#triages" do

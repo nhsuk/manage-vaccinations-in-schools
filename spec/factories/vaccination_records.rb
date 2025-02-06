@@ -51,26 +51,22 @@ FactoryBot.define do
         programme.organisations.first ||
           association(:organisation, programmes: [programme])
       end
-
-      session { association :session, programme:, organisation: }
-      patient do
-        association :patient,
-                    school: session.location.school? ? session.location : nil
+      vaccine do
+        programme.vaccines.active.first || association(:vaccine, programme:)
       end
     end
 
     programme
-    patient_session do
-      association :patient_session,
-                  programme:,
-                  patient:,
-                  session:,
-                  strategy: :create
+
+    session { association :session, programme:, organisation: }
+    patient do
+      association :patient,
+                  school: session.location.school? ? session.location : nil
     end
 
     delivery_site { "left_arm_upper_position" }
     delivery_method { "intramuscular" }
-    vaccine { programme.vaccines.active.first }
+
     batch do
       association :batch, organisation:, vaccine:, strategy: :create if vaccine
     end

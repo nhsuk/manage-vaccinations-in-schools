@@ -75,6 +75,7 @@ class Patient < ApplicationRecord
   has_many :school_moves
   has_many :session_notifications
   has_many :triages
+  has_many :vaccination_records, -> { kept }
 
   has_many :parents, through: :parent_relationships
   has_many :gillick_assessments,
@@ -85,7 +86,6 @@ class Patient < ApplicationRecord
            through: :patient_sessions
   has_many :session_attendances, through: :patient_sessions
   has_many :sessions, through: :patient_sessions
-  has_many :vaccination_records, through: :patient_sessions
 
   has_many :upcoming_sessions,
            -> { upcoming },

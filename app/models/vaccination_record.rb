@@ -49,7 +49,7 @@ class VaccinationRecord < ApplicationRecord
   include PendingChangesConcern
   include VaccinationRecordPerformedByConcern
 
-  audited associated_with: :patient_session
+  audited associated_with: :patient
 
   DELIVERY_SITE_SNOMED_CODES_AND_TERMS = {
     left_thigh: ["61396006", "Structure of left thigh (body structure)"],
@@ -74,15 +74,15 @@ class VaccinationRecord < ApplicationRecord
   }.with_indifferent_access
 
   belongs_to :batch, optional: true
-  belongs_to :patient_session
   belongs_to :performed_by_user, class_name: "User", optional: true
   belongs_to :programme
 
   has_and_belongs_to_many :dps_exports
   has_and_belongs_to_many :immunisation_imports
 
-  has_one :patient, through: :patient_session
-  has_one :session, through: :patient_session
+  belongs_to :patient
+  belongs_to :session, optional: true
+
   has_one :location, through: :session
   has_one :organisation, through: :session
   has_one :team, through: :session
@@ -132,8 +132,6 @@ class VaccinationRecord < ApplicationRecord
        validate: true
 
   encrypts :notes
-
-  validates :programme, inclusion: { in: -> { _1.patient_session.programmes } }
 
   validates :notes, length: { maximum: 1000 }
 

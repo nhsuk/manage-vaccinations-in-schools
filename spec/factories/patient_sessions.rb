@@ -185,7 +185,8 @@ FactoryBot.define do
         create(
           :vaccination_record,
           :not_administered,
-          patient_session:,
+          patient: patient_session.patient,
+          session: patient_session.session,
           programme: evaluator.programme,
           performed_by: evaluator.user,
           location_name: evaluator.location_name,
@@ -224,7 +225,8 @@ FactoryBot.define do
         create(
           :vaccination_record,
           :not_administered,
-          patient_session:,
+          patient: patient_session.patient,
+          session: patient_session.session,
           programme: evaluator.programme,
           performed_by: evaluator.user,
           location_name: evaluator.location_name,
@@ -249,7 +251,8 @@ FactoryBot.define do
         create(
           :vaccination_record,
           :not_administered,
-          patient_session:,
+          patient: patient_session.patient,
+          session: patient_session.session,
           programme: evaluator.programme,
           performed_by: evaluator.user,
           outcome: :already_had
@@ -273,7 +276,8 @@ FactoryBot.define do
       after(:create) do |patient_session, evaluator|
         create(
           :vaccination_record,
-          patient_session:,
+          patient: patient_session.patient,
+          session: patient_session.session,
           programme: evaluator.programme,
           performed_by: evaluator.user,
           location_name: evaluator.location_name

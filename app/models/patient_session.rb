@@ -38,8 +38,10 @@ class PatientSession < ApplicationRecord
 
   has_many :gillick_assessments, -> { order(:created_at) }
   has_many :pre_screenings, -> { order(:created_at) }
-  has_many :vaccination_records, -> { kept.order(:created_at) }
 
+  has_many :vaccination_records,
+           -> { kept.where(session_id: _1.session_id).order(:created_at) },
+           through: :patient
   has_many :session_notifications,
            -> { where(session_id: _1.session_id) },
            through: :patient
