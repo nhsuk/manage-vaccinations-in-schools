@@ -133,7 +133,7 @@ class Reports::ProgrammeVaccinationsExporter
   def row(vaccination_record:)
     patient_session = vaccination_record.patient_session
     consents = patient_session.latest_consents
-    gillick_assessment = patient_session.latest_gillick_assessment
+    gillick_assessment = patient_session.gillick_assessments.last
     patient = patient_session.patient
     triage = patient_session.latest_triage
     location = vaccination_record.location

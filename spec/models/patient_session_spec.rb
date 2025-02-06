@@ -27,6 +27,8 @@ describe PatientSession do
 
   let(:programme) { create(:programme) }
 
+  it { should have_many(:gillick_assessments).order(:created_at) }
+
   it do
     expect(patient_session).to have_many(:vaccination_records).conditions(
       discarded_at: nil
@@ -248,27 +250,6 @@ describe PatientSession do
         expect(latest_consents).not_to include(invalidated_consent)
       end
     end
-  end
-
-  describe "#latest_gillick_assessment" do
-    subject(:latest_gillick_assessment) do
-      patient_session.latest_gillick_assessment
-    end
-
-    let(:later_gillick_assessment) do
-      create(:gillick_assessment, :competent, patient_session:)
-    end
-
-    before do
-      create(
-        :gillick_assessment,
-        :not_competent,
-        patient_session:,
-        created_at: 1.day.ago
-      )
-    end
-
-    it { should eq(later_gillick_assessment) }
   end
 
   describe "#safe_to_destroy?" do

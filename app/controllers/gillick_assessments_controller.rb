@@ -45,7 +45,7 @@ class GillickAssessmentsController < ApplicationController
 
   def set_gillick_assessment
     @gillick_assessment =
-      authorize @patient_session.latest_gillick_assessment&.dup ||
+      authorize @patient_session.gillick_assessments.last&.dup ||
                   @patient_session.gillick_assessments.build
   end
 

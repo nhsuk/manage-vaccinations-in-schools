@@ -30,14 +30,11 @@ class AppPatientPageComponent < ViewComponent::Base
   end
 
   def display_gillick_assessment_card?
-    gillick_assessment_can_be_recorded? || gillick_assessment_recorded?
+    patient_session.gillick_assessments.present? ||
+      gillick_assessment_can_be_recorded?
   end
 
   def gillick_assessment_can_be_recorded?
     patient_session.session.today? && helpers.policy(GillickAssessment).new?
-  end
-
-  def gillick_assessment_recorded?
-    patient_session.latest_gillick_assessment.present?
   end
 end

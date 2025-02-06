@@ -83,7 +83,10 @@ class PatientSession < ApplicationRecord
         end
 
   delegate :send_notifications?, to: :patient
-  delegate :gillick_competent?, to: :latest_gillick_assessment, allow_nil: true
+
+  def gillick_competent?
+    gillick_assessments.last&.gillick_competent? || false
+  end
 
   def able_to_vaccinate?
     !unable_to_vaccinate?
@@ -109,10 +112,6 @@ class PatientSession < ApplicationRecord
 
   def latest_self_consents
     @latest_self_consents ||= latest_consents.select(&:via_self_consent?)
-  end
-
-  def latest_gillick_assessment
-    @latest_gillick_assessment ||= gillick_assessments.max_by(&:updated_at)
   end
 
   def latest_triage
