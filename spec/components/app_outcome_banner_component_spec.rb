@@ -67,7 +67,8 @@ describe AppOutcomeBannerComponent do
       let(:date) { Time.zone.now - 2.days }
       let(:patient_session) do
         create(:patient_session, :vaccinated).tap do |ps|
-          ps.vaccination_records.first.update(performed_at: date)
+          ps.strict_loading!(false)
+          ps.vaccination_records.first.update!(performed_at: date)
         end
       end
 

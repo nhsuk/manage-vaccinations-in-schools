@@ -396,13 +396,7 @@ describe SchoolMove do
       end
 
       context "and already vaccinated" do
-        before do
-          create(
-            :vaccination_record,
-            programme:,
-            patient_session: patient.patient_sessions.first
-          )
-        end
+        before { create(:vaccination_record, programme:, patient:, session:) }
 
         context "to a school with a scheduled session" do
           let(:school_move) do
@@ -713,7 +707,8 @@ describe SchoolMove do
           create(
             :vaccination_record,
             programme:,
-            patient_session: patient.patient_sessions.first,
+            patient:,
+            session: generic_clinic_session,
             location_name: "A clinic"
           )
         end
@@ -1029,7 +1024,8 @@ describe SchoolMove do
           create(
             :vaccination_record,
             programme:,
-            patient_session: patient.patient_sessions.first,
+            patient:,
+            session: generic_clinic_session,
             location_name: "A clinic"
           )
         end
