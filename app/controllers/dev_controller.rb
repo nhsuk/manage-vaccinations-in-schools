@@ -33,10 +33,10 @@ class DevController < ApplicationController
       SessionDate.where(session: sessions).destroy_all
       ConsentNotification.where(session: sessions).destroy_all
       SessionNotification.where(session: sessions).destroy_all
+      VaccinationRecord.where(session: sessions).destroy_all
 
       patient_sessions = PatientSession.where(session: sessions)
       GillickAssessment.where(patient_session: patient_sessions).destroy_all
-      VaccinationRecord.where(patient_session: patient_sessions).destroy_all
       PreScreening.where(patient_session: patient_sessions).destroy_all
       patient_sessions.destroy_all
 
@@ -49,6 +49,7 @@ class DevController < ApplicationController
       SchoolMoveLogEntry.where(patient: patients).destroy_all
       AccessLogEntry.where(patient: patients).destroy_all
       NotifyLogEntry.where(patient: patients).destroy_all
+      VaccinationRecord.where(patient: patients).destroy_all
 
       ConsentForm.where(organisation:).destroy_all
       Consent.where(organisation:).destroy_all
