@@ -74,8 +74,11 @@ class Reports::CareplusExporter
         .patient_sessions
         .includes(
           :location,
-          :vaccination_records,
-          patient: [:school, { consents: %i[parent patient] }]
+          patient: [
+            :school,
+            :vaccination_records,
+            { consents: %i[parent patient] }
+          ]
         )
         .where.not(vaccination_records: { id: nil })
         .merge(VaccinationRecord.administered)
