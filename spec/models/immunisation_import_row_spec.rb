@@ -758,22 +758,6 @@ describe ImmunisationImportRow do
     end
   end
 
-  describe "#patient_session" do
-    subject(:patient_session) { immunisation_import_row.patient_session }
-
-    context "without data" do
-      let(:data) { {} }
-
-      it { should be_nil }
-    end
-
-    context "with valid data" do
-      let(:data) { valid_data }
-
-      it { should_not be_nil }
-    end
-  end
-
   describe "#location_name" do
     subject(:location_name) { immunisation_import_row.location_name }
 

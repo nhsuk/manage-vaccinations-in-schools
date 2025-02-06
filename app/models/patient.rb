@@ -397,7 +397,11 @@ class Patient < ApplicationRecord
 
   def clear_upcoming_sessions
     patient_sessions
-      .includes(:session_attendances)
+      .includes(
+        :gillick_assessments,
+        :session_attendances,
+        :vaccination_records
+      )
       .where(session: upcoming_sessions)
       .find_each(&:destroy_if_safe!)
   end

@@ -80,7 +80,6 @@ class ImmunisationImport < ApplicationRecord
     @vaccination_records_batch ||= Set.new
     @batches_batch ||= Set.new
     @patients_batch ||= Set.new
-    @patient_sessions_batch ||= Set.new
     @sessions_batch ||= Set.new
 
     @vaccination_records_batch.add(vaccination_record)
@@ -88,7 +87,6 @@ class ImmunisationImport < ApplicationRecord
       @batches_batch.add(vaccination_record.batch)
     end
     @patients_batch.add(vaccination_record.patient)
-    @patient_sessions_batch.add(vaccination_record.patient_session)
     @sessions_batch.add(vaccination_record.session)
 
     count_column_to_increment
@@ -107,7 +105,6 @@ class ImmunisationImport < ApplicationRecord
       [:vaccination_records, vaccination_records],
       [:batches, @batches_batch],
       [:patients, @patients_batch],
-      [:patient_sessions, @patient_sessions_batch],
       [:sessions, @sessions_batch]
     ].each do |association, collection|
       link_records_by_type(association, collection)

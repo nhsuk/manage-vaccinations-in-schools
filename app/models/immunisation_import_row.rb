@@ -120,12 +120,13 @@ class ImmunisationImportRow
       dose_sequence:,
       location_name:,
       outcome:,
-      patient_session:,
+      patient:,
       performed_at:,
       performed_by_family_name:,
       performed_by_given_name:,
       performed_by_user:,
-      programme: @programme
+      programme: @programme,
+      session:
     }
 
     vaccination_record =
@@ -179,12 +180,6 @@ class ImmunisationImportRow
 
           session.session_dates.find_or_create_by!(value: date_of_vaccination)
         end
-  end
-
-  def patient_session
-    return unless valid?
-
-    @patient_session ||= PatientSession.find_or_create_by!(patient:, session:)
   end
 
   def location_name
