@@ -54,8 +54,8 @@ module PatientSessionStatusConcern
     def consent_given?
       return false if no_consent?
 
-      if latest_self_consents.present?
-        latest_self_consents.all?(&:response_given?)
+      if (self_consents = latest_consents.select(&:via_self_consent?)).present?
+        self_consents.all?(&:response_given?)
       else
         latest_consents.all?(&:response_given?)
       end
@@ -70,9 +70,9 @@ module PatientSessionStatusConcern
     def consent_conflicts?
       return false if no_consent?
 
-      if latest_self_consents.present?
-        latest_self_consents.any?(&:response_refused?) &&
-          latest_self_consents.any?(&:response_given?)
+      if (self_consents = latest_consents.select(&:via_self_consent?)).present?
+        self_consents.any?(&:response_refused?) &&
+          self_consents.any?(&:response_given?)
       else
         latest_consents.any?(&:response_refused?) &&
           latest_consents.any?(&:response_given?)

@@ -110,10 +110,6 @@ class PatientSession < ApplicationRecord
         .map { |_, consents| consents.max_by(&:created_at) }
   end
 
-  def latest_self_consents
-    @latest_self_consents ||= latest_consents.select(&:via_self_consent?)
-  end
-
   def latest_triage
     @latest_triage ||= triages.reject(&:invalidated?).max_by(&:updated_at)
   end
