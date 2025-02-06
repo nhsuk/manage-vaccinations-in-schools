@@ -13,7 +13,7 @@ class AppSimpleStatusBannerComponent < ViewComponent::Base
 
   def who_refused
     @patient_session
-      .consents
+      .latest_consents
       .select(&:response_refused?)
       .map(&:who_responded)
       .last
@@ -24,12 +24,10 @@ class AppSimpleStatusBannerComponent < ViewComponent::Base
   end
 
   def nurse
-    most_recent_event = [
-      @patient_session.latest_triage,
-      @patient_session.vaccination_records.last
-    ].compact.max_by(&:created_at)
-
-    most_recent_event&.performed_by&.full_name
+    (@patient_session.triages + @patient_session.vaccination_records)
+      .max_by(&:updated_at)
+      &.performed_by
+      &.full_name
   end
 
   def heading
