@@ -5,6 +5,7 @@ describe "Manage children" do
 
   scenario "Viewing children" do
     given_patients_exist
+    and_the_patient_belongs_to_a_session
     and_the_patient_is_vaccinated
 
     when_i_click_on_children

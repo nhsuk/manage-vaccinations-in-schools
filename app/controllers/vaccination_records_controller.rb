@@ -72,13 +72,11 @@ class VaccinationRecordsController < ApplicationController
           :location,
           :performed_by_user,
           :programme,
-          patient_session: {
-            patient: [
-              :gp_practice,
-              :school,
-              { consents: :parent, parent_relationships: :parent }
-            ]
-          },
+          patient: [
+            :gp_practice,
+            :school,
+            { consents: :parent, parent_relationships: :parent }
+          ],
           session: %i[session_dates],
           vaccine: :programme
         )
@@ -92,7 +90,7 @@ class VaccinationRecordsController < ApplicationController
 
   def set_vaccination_record
     @vaccination_record = vaccination_records.find(params[:id])
-    @patient = @vaccination_record.patient_session.patient
+    @patient = @vaccination_record.patient
     @session = @vaccination_record.session
   end
 

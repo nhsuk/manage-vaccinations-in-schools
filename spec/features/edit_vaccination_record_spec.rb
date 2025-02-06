@@ -276,6 +276,7 @@ describe "Edit vaccination record" do
         :consent_given_triage_not_needed,
         given_name: "John",
         family_name: "Smith",
+        organisation: @organisation,
         programme: @programme
       )
 
@@ -288,7 +289,8 @@ describe "Edit vaccination record" do
       create(
         :vaccination_record,
         batch: @original_batch,
-        patient_session: @patient_session,
+        patient: @patient,
+        session: @session,
         programme: @programme
       )
   end
@@ -298,7 +300,8 @@ describe "Edit vaccination record" do
       create(
         :vaccination_record,
         batch: @original_batch,
-        patient_session: @patient_session,
+        patient: @patient,
+        session: @session,
         performed_by_family_name: "Joy",
         performed_by_given_name: "Nurse",
         performed_by_user: nil,
@@ -312,7 +315,8 @@ describe "Edit vaccination record" do
         :vaccination_record,
         :not_administered,
         batch: @original_batch,
-        patient_session: @patient_session,
+        patient: @patient,
+        session: @session,
         programme: @programme
       )
   end
