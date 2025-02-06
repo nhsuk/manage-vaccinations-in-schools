@@ -39,6 +39,9 @@ class PatientMerger
         patient_id: patient_to_keep.id
       )
       patient_to_destroy.triages.update_all(patient_id: patient_to_keep.id)
+      patient_to_destroy.vaccination_records.update_all(
+        patient_id: patient_to_keep.id
+      )
 
       patient_to_destroy.parent_relationships.find_each do |relationship|
         if patient_to_keep.parent_relationships.exists?(
@@ -61,9 +64,6 @@ class PatientMerger
             patient_session_id: existing_patient_session.id
           )
           patient_session.pre_screenings.update_all(
-            patient_session_id: existing_patient_session.id
-          )
-          patient_session.vaccination_records.update_all(
             patient_session_id: existing_patient_session.id
           )
         else
