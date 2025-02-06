@@ -23,21 +23,14 @@
 #
 
 describe PatientSession do
+  subject(:patient_session) { create(:patient_session, programme:) }
+
   let(:programme) { create(:programme) }
-  let(:patient_session) { create(:patient_session, programme:) }
 
-  describe "#vaccination_records" do
-    subject(:vaccination_records) { patient_session.vaccination_records }
-
-    let(:kept_vaccination_record) do
-      create(:vaccination_record, patient_session:, programme:)
-    end
-    let(:discarded_vaccination_record) do
-      create(:vaccination_record, :discarded, patient_session:, programme:)
-    end
-
-    it { should include(kept_vaccination_record) }
-    it { should_not include(discarded_vaccination_record) }
+  it do
+    expect(patient_session).to have_many(:vaccination_records).conditions(
+      discarded_at: nil
+    ).order(:created_at)
   end
 
   describe "#triages" do
@@ -276,28 +269,6 @@ describe PatientSession do
     end
 
     it { should eq(later_gillick_assessment) }
-  end
-
-  describe "#latest_vaccination_record" do
-    subject(:latest_vaccination_record) do
-      patient_session.latest_vaccination_record
-    end
-
-    let(:patient_session) { create(:patient_session, programme:) }
-    let(:later_vaccination_record) do
-      create(:vaccination_record, programme:, patient_session:)
-    end
-
-    before do
-      create(
-        :vaccination_record,
-        programme:,
-        patient_session:,
-        created_at: 1.day.ago
-      )
-    end
-
-    it { should eq(later_vaccination_record) }
   end
 
   describe "#safe_to_destroy?" do

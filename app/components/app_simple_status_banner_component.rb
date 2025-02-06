@@ -11,14 +11,6 @@ class AppSimpleStatusBannerComponent < ViewComponent::Base
 
   private
 
-  def most_recent_triage
-    @most_recent_triage ||= @patient_session.latest_triage
-  end
-
-  def most_recent_vaccination
-    @most_recent_vaccination ||= @patient_session.latest_vaccination_record
-  end
-
   def who_refused
     @patient_session
       .consents
@@ -33,8 +25,8 @@ class AppSimpleStatusBannerComponent < ViewComponent::Base
 
   def nurse
     most_recent_event = [
-      most_recent_triage,
-      most_recent_vaccination
+      @patient_session.latest_triage,
+      @patient_session.vaccination_records.last
     ].compact.max_by(&:created_at)
 
     most_recent_event&.performed_by&.full_name

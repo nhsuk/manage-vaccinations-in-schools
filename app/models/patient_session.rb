@@ -38,7 +38,7 @@ class PatientSession < ApplicationRecord
 
   has_many :gillick_assessments, -> { order(:created_at) }
   has_many :pre_screenings, -> { order(:created_at) }
-  has_many :vaccination_records, -> { kept }
+  has_many :vaccination_records, -> { kept.order(:created_at) }
 
   # TODO: Only fetch consents and triages for the relevant programme.
   has_many :consents, through: :patient
@@ -117,10 +117,6 @@ class PatientSession < ApplicationRecord
 
   def latest_triage
     @latest_triage ||= triages.reject(&:invalidated?).max_by(&:updated_at)
-  end
-
-  def latest_vaccination_record
-    @latest_vaccination_record ||= vaccination_records.max_by(&:created_at)
   end
 
   def todays_attendance

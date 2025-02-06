@@ -48,14 +48,10 @@ class AppOutcomeBannerComponent < ViewComponent::Base
 
   def vaccination_record
     @vaccination_record ||=
-      if @patient_session.vaccinated?
-        @patient_session
-          .vaccination_records
-          .select(&:administered?)
-          .max_by(&:created_at)
-      else
-        @patient_session.latest_vaccination_record
-      end
+      @patient_session
+        .vaccination_records
+        .tap { it.select(&:administered?) if @patient_session.vaccinated? }
+        .last
   end
 
   def triage
