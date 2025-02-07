@@ -36,8 +36,6 @@ class ImmunisationImportRow
             },
             if: :vaccine
 
-  validates :organisation_code, comparison: { equal_to: :ods_code }
-
   SCHOOL_URN_HOME_EDUCATED = "999999"
   SCHOOL_URN_UNKNOWN = "888888"
 
@@ -64,6 +62,13 @@ class ImmunisationImportRow
                 @data["PERSON_POSTCODE"]&.strip.present? ||
                   patient_nhs_number.blank?
               end
+            }
+
+  validates :performed_ods_code,
+            presence: true,
+            comparison: {
+              equal_to: :organisation_ods_code,
+              if: :outcome_in_this_academic_year?
             }
 
   validates :date_of_vaccination,
@@ -125,6 +130,7 @@ class ImmunisationImportRow
       performed_by_family_name:,
       performed_by_given_name:,
       performed_by_user:,
+      performed_ods_code:,
       programme: @programme,
       session:
     }
@@ -275,10 +281,6 @@ class ImmunisationImportRow
     end
   end
 
-  def organisation_code
-    @data["ORGANISATION_CODE"]&.strip&.upcase
-  end
-
   def vaccine_given
     @data["VACCINE_GIVEN"]&.strip
   end
@@ -312,6 +314,10 @@ class ImmunisationImportRow
 
   def patient_nhs_number
     @data["NHS_NUMBER"]&.gsub(/\s/, "")&.presence
+  end
+
+  def performed_ods_code
+    @data["ORGANISATION_CODE"]&.strip&.upcase
   end
 
   def school_name
@@ -369,8 +375,6 @@ class ImmunisationImportRow
 
   private
 
-  delegate :ods_code, to: :organisation
-
   def performed_at
     return nil if date_of_vaccination.nil?
 
@@ -421,6 +425,10 @@ class ImmunisationImportRow
         organisation:,
         vaccine:
       )
+  end
+
+  def organisation_ods_code
+    organisation.ods_code
   end
 
   def valid_given_vaccines

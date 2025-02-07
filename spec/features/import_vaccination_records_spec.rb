@@ -108,7 +108,6 @@ describe "Immunisation imports" do
     )
     expect(page).to have_content("Row 2")
     expect(page).to have_content("VACCINATED:")
-    expect(page).to have_content("ORGANISATION_CODE:")
     expect(page).to have_content("CARE_SETTING:")
 
     expect(page).to have_content("Row 2")

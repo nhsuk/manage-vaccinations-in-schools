@@ -62,8 +62,8 @@ describe ImmunisationImportRow do
         expect(immunisation_import_row.errors[:administered]).to include(
           /You need to record whether the child was vaccinated or not/
         )
-        expect(immunisation_import_row.errors[:organisation_code]).to include(
-          "Enter an organisation code that matches the current organisation."
+        expect(immunisation_import_row.errors[:performed_ods_code]).to include(
+          "Enter an organisation code."
         )
       end
     end
@@ -82,9 +82,6 @@ describe ImmunisationImportRow do
         expect(immunisation_import_row.errors[:delivery_site]).to eq(
           ["Enter an anatomical site."]
         )
-        expect(immunisation_import_row.errors[:organisation_code]).to eq(
-          ["Enter an organisation code that matches the current organisation."]
-        )
         expect(immunisation_import_row.errors[:patient_date_of_birth]).to eq(
           ["Enter a date of birth in the correct format."]
         )
@@ -93,6 +90,9 @@ describe ImmunisationImportRow do
         )
         expect(immunisation_import_row.errors[:patient_postcode]).to eq(
           ["Enter a valid postcode, such as SW1A 1AA"]
+        )
+        expect(immunisation_import_row.errors[:performed_ods_code]).to eq(
+          ["Enter an organisation code."]
         )
       end
 
@@ -103,17 +103,6 @@ describe ImmunisationImportRow do
           expect(immunisation_import_row).to be_invalid
           expect(immunisation_import_row.errors[:patient_postcode]).to be_empty
         end
-      end
-    end
-
-    context "with an invalid organisation code" do
-      let(:data) { { "ORGANISATION_CODE" => "this is too long" } }
-
-      it "has errors" do
-        expect(immunisation_import_row).to be_invalid
-        expect(immunisation_import_row.errors[:organisation_code]).to eq(
-          ["Enter an organisation code that matches the current organisation."]
-        )
       end
     end
 
@@ -1175,22 +1164,6 @@ describe ImmunisationImportRow do
     end
   end
 
-  describe "#organisation_code" do
-    subject(:organisation_code) { immunisation_import_row.organisation_code }
-
-    context "without a value" do
-      let(:data) { {} }
-
-      it { should be_nil }
-    end
-
-    context "with a value" do
-      let(:data) { { "ORGANISATION_CODE" => "abc" } }
-
-      it { should eq("ABC") }
-    end
-  end
-
   describe "#patient_date_of_birth" do
     subject(:patient_date_of_birth) do
       immunisation_import_row.patient_date_of_birth
@@ -1293,6 +1266,22 @@ describe ImmunisationImportRow do
       let(:data) { { "PERSON_POSTCODE" => "sw11aa" } }
 
       it { should eq("SW1 1AA") }
+    end
+  end
+
+  describe "#performed_ods_code" do
+    subject(:performed_ods_code) { immunisation_import_row.performed_ods_code }
+
+    context "without a value" do
+      let(:data) { {} }
+
+      it { should be_nil }
+    end
+
+    context "with a value" do
+      let(:data) { { "ORGANISATION_CODE" => "abc" } }
+
+      it { should eq("ABC") }
     end
   end
 

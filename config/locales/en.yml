@@ -55,7 +55,6 @@ en:
         date_of_vaccination: <code>DATE_OF_VACCINATION</code>
         delivery_site: <code>ANATOMICAL_SITE</code>
         dose_sequence: <code>DOSE_SEQUENCE</code>
-        organisation_code: <code>ORGANISATION_CODE</code>
         patient_date_of_birth: <code>PERSON_DOB</code>
         patient_first_name: <code>PERSON_FORENAME</code>
         patient_gender_code: <code>PERSON_GENDER_CODE</code>/<code>PERSON_GENDER</code>
@@ -65,6 +64,7 @@ en:
         performed_by_family_name: <code>PERFORMING_PROFESSIONAL_SURNAME</code>
         performed_by_given_name: <code>PERFORMING_PROFESSIONAL_FORENAME</code>
         performed_by_user: <code>PERFORMING_PROFESSIONAL_EMAIL</code>
+        performed_ods_code: <code>ORGANISATION_CODE</code>
         reason: <code>REASON_NOT_VACCINATED</code>
         school_name: <code>SCHOOL_NAME</code>
         school_urn: <code>SCHOOL_URN</code>
@@ -260,9 +260,6 @@ en:
               blank: The dose sequence number cannot be greater than 3. Enter a dose sequence number, for example, 1, 2 or 3.
             existing_patients:
               too_long: Two or more possible patients match the patient first name, last name, date of birth or postcode.
-            organisation_code:
-              blank: Enter an organisation code that matches the current organisation.
-              equal_to: Enter an organisation code that matches the current organisation.
             patient_date_of_birth:
               blank: Enter a date of birth in the correct format.
               less_than: Enter a date of birth in the past.
@@ -284,6 +281,9 @@ en:
               blank: Enter a first name
             performed_by_family_name:
               blank: Enter a last name
+            performed_ods_code:
+              blank: Enter an organisation code.
+              equal_to: Enter an organisation code that matches the current organisation.
             reason:
               blank: Enter a valid reason
             school_name:
