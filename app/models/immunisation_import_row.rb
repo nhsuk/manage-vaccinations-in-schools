@@ -173,23 +173,18 @@ class ImmunisationImportRow
   end
 
   def session
-    return unless valid?
+    return if date_of_vaccination.nil? || location.nil?
 
     @session ||=
-      Session
-        .create_with(programmes: [@programme])
-        .find_or_create_by!(organisation:, location:, academic_year:)
-        .tap do |session|
-          unless session.programmes.include?(@programme)
-            session.programmes << @programme
-          end
-
-          session.session_dates.find_or_create_by!(value: date_of_vaccination)
-        end
+      Session.has_date(date_of_vaccination).find_by(
+        organisation:,
+        location:,
+        academic_year:
+      )
   end
 
   def location_name
-    return unless location&.generic_clinic?
+    return unless session.nil? || location&.generic_clinic?
 
     if school_urn == SCHOOL_URN_UNKNOWN &&
          (
@@ -513,16 +508,10 @@ class ImmunisationImportRow
   end
 
   def session_date_exists
-    return if date_of_vaccination.nil? || location.nil?
+    return if date_of_vaccination.nil?
     return unless outcome_in_this_academic_year?
 
-    unless Session.has_date(date_of_vaccination).exists?(
-             organisation:,
-             location:,
-             academic_year:
-           )
-      errors.add(:date_of_vaccination, :inclusion)
-    end
+    errors.add(:date_of_vaccination, :inclusion) if session.nil?
   end
 
   def uuid_exists

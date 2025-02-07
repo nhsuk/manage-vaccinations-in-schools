@@ -51,7 +51,7 @@ describe ImmunisationImportRow do
   end
   let(:valid_data) { valid_flu_data }
 
-  before { create(:school, urn: "123456") }
+  let!(:location) { create(:school, urn: "123456") }
 
   describe "validations" do
     context "with an empty row" do
@@ -618,131 +618,142 @@ describe ImmunisationImportRow do
       it { should be_nil }
     end
 
-    context "with valid data" do
+    context "in a previous academic year" do
       let(:data) { valid_data }
 
-      it { should_not be_nil }
+      it { should be_nil }
     end
 
-    context "with a school" do
-      let(:data) { valid_data }
+    context "in a current academic year" do
+      let(:date_of_vaccination) { Date.new(Date.current.academic_year, 9, 1) }
 
-      it "sets the location to the patient's school" do
-        expect(session.location).to be_school
-      end
-    end
+      context "when at school" do
+        let(:school_session) do
+          create(
+            :session,
+            location:,
+            date: date_of_vaccination,
+            organisation:,
+            programme:
+          )
+        end
 
-    context "current academic year, home educated and community care setting" do
-      let(:clinic) do
-        create(:community_clinic, name: "A Clinic", organisation:)
-      end
-      let(:session_date) do
-        create(
-          :session_date,
-          value: "#{Date.current.academic_year}0901",
-          session: organisation.generic_clinic_session
-        )
-      end
+        let(:data) do
+          valid_data.merge(
+            "DATE_OF_VACCINATION" => date_of_vaccination.strftime("%Y%m%d")
+          )
+        end
 
-      let(:data) do
-        valid_data.merge(
-          "SCHOOL_URN" => "999999",
-          "SCHOOL_NAME" => "",
-          "CARE_SETTING" => "2",
-          "CLINIC_NAME" => clinic.name,
-          "DATE_OF_VACCINATION" => session_date.value.strftime("%Y%m%d"),
-          "PERFORMING_PROFESSIONAL_EMAIL" => vaccinator.email
-        )
+        it { should eq(school_session) }
       end
 
-      it "sets the location to the clinic" do
-        expect(session.location).to eq(organisation.generic_clinic)
-      end
-    end
+      context "when home educated and community care setting" do
+        let(:clinic) do
+          create(:community_clinic, name: "A Clinic", organisation:)
+        end
 
-    context "previous academic year, home educated and community care setting" do
-      let(:data) do
-        valid_data.merge(
-          "SCHOOL_URN" => "999999",
-          "SCHOOL_NAME" => "",
-          "CARE_SETTING" => "2",
-          "DATE_OF_VACCINATION" => "20220101"
-        )
-      end
+        let(:data) do
+          valid_data.merge(
+            "SCHOOL_URN" => "999999",
+            "SCHOOL_NAME" => "",
+            "CARE_SETTING" => "2",
+            "CLINIC_NAME" => clinic.name,
+            "DATE_OF_VACCINATION" => date_of_vaccination.strftime("%Y%m%d"),
+            "PERFORMING_PROFESSIONAL_EMAIL" => vaccinator.email
+          )
+        end
 
-      it "sets the location to the generic clinic" do
-        expect(session.location).to be_generic_clinic
-        expect(session.location).to have_attributes(
-          organisation:,
-          ods_code: organisation.ods_code
-        )
-      end
-    end
+        before do
+          create(
+            :session_date,
+            value: date_of_vaccination,
+            session: organisation.generic_clinic_session
+          )
+        end
 
-    context "when home educated and unknown care setting" do
-      let(:data) do
-        valid_data.merge("SCHOOL_URN" => "999999", "SCHOOL_NAME" => "")
+        it { should eq(organisation.generic_clinic_session) }
       end
 
-      it "sets the location to the generic clinic" do
-        expect(session.location).to be_generic_clinic
-        expect(session.location).to have_attributes(
-          organisation:,
-          ods_code: organisation.ods_code
-        )
-      end
-    end
+      context "when home educated and unknown care setting" do
+        let(:data) do
+          valid_data.merge(
+            "SCHOOL_URN" => "999999",
+            "SCHOOL_NAME" => "",
+            "DATE_OF_VACCINATION" => date_of_vaccination.strftime("%Y%m%d")
+          )
+        end
 
-    context "with an unknown school and school care setting" do
-      let(:data) do
-        valid_data.merge(
-          "SCHOOL_URN" => "888888",
-          "SCHOOL_NAME" => "Waterloo Road",
-          "CARE_SETTING" => "1"
-        )
-      end
+        before do
+          create(
+            :session_date,
+            value: date_of_vaccination,
+            session: organisation.generic_clinic_session
+          )
+        end
 
-      it "sets the location to the generic clinic" do
-        expect(session.location).to be_generic_clinic
-        expect(session.location).to have_attributes(
-          organisation:,
-          ods_code: organisation.ods_code
-        )
-      end
-    end
-
-    context "with an unknown school and community care setting" do
-      let(:data) do
-        valid_data.merge(
-          "SCHOOL_URN" => "888888",
-          "SCHOOL_NAME" => "Waterloo Road",
-          "CARE_SETTING" => "2"
-        )
+        it { should eq(organisation.generic_clinic_session) }
       end
 
-      it "sets the location to the generic clinic" do
-        expect(session.location).to be_generic_clinic
-        expect(session.location).to have_attributes(
-          organisation:,
-          ods_code: organisation.ods_code
-        )
-      end
-    end
+      context "with an unknown school and school care setting" do
+        let(:data) do
+          valid_data.merge(
+            "SCHOOL_URN" => "888888",
+            "SCHOOL_NAME" => "Waterloo Road",
+            "CARE_SETTING" => "1",
+            "DATE_OF_VACCINATION" => date_of_vaccination.strftime("%Y%m%d")
+          )
+        end
 
-    context "with an unknown school and unknown case setting" do
-      let(:data) do
-        valid_data.merge(
-          "SCHOOL_URN" => "888888",
-          "SCHOOL_NAME" => "Waterloo Road"
-        )
+        before do
+          create(
+            :session_date,
+            value: date_of_vaccination,
+            session: organisation.generic_clinic_session
+          )
+        end
+
+        it { should eq(organisation.generic_clinic_session) }
       end
 
-      it "sets the location to the generic clinic" do
-        expect(session.location).to be_generic_clinic
-        expect(session.location).to have_attributes(
-          organisation:,
-          ods_code: organisation.ods_code
-        )
+      context "with an unknown school and community care setting" do
+        let(:data) do
+          valid_data.merge(
+            "SCHOOL_URN" => "888888",
+            "SCHOOL_NAME" => "Waterloo Road",
+            "CARE_SETTING" => "2",
+            "DATE_OF_VACCINATION" => date_of_vaccination.strftime("%Y%m%d")
+          )
+        end
+
+        before do
+          create(
+            :session_date,
+            value: date_of_vaccination,
+            session: organisation.generic_clinic_session
+          )
+        end
+
+        it { should eq(organisation.generic_clinic_session) }
+      end
+
+      context "with an unknown school and unknown case setting" do
+        let(:data) do
+          valid_data.merge(
+            "SCHOOL_URN" => "888888",
+            "SCHOOL_NAME" => "Waterloo Road",
+            "DATE_OF_VACCINATION" => date_of_vaccination.strftime("%Y%m%d")
+          )
+        end
+
+        before do
+          create(
+            :session_date,
+            value: date_of_vaccination,
+            session: organisation.generic_clinic_session
+          )
+        end
+
+        it { should eq(organisation.generic_clinic_session) }
       end
     end
   end
@@ -756,8 +767,18 @@ describe ImmunisationImportRow do
       it { should eq("Unknown") }
     end
 
-    context "with a school" do
+    context "with a school session that exists" do
       let(:data) { valid_data }
+
+      before do
+        create(
+          :session,
+          organisation:,
+          location:,
+          date: Date.new(2024, 1, 1),
+          programme:
+        )
+      end
 
       it { should be_nil }
     end

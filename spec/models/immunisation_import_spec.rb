@@ -139,7 +139,6 @@ describe ImmunisationImport do
           .to change(immunisation_import, :processed_at).from(nil)
           .and change(immunisation_import.vaccination_records, :count).by(11)
           .and change(immunisation_import.patients, :count).by(11)
-          .and change(immunisation_import.sessions, :count).by(3)
           .and change(immunisation_import.batches, :count).by(4)
 
         # Second import should not duplicate the vaccination records if they're
@@ -150,7 +149,6 @@ describe ImmunisationImport do
           .to not_change(immunisation_import, :processed_at)
           .and not_change(VaccinationRecord, :count)
           .and not_change(Patient, :count)
-          .and not_change(Session, :count)
           .and not_change(PatientSession, :count)
           .and not_change(Batch, :count)
       end
@@ -200,7 +198,6 @@ describe ImmunisationImport do
           .to change(immunisation_import, :processed_at).from(nil)
           .and change(immunisation_import.vaccination_records, :count).by(11)
           .and change(immunisation_import.patients, :count).by(10)
-          .and change(immunisation_import.sessions, :count).by(5)
           .and change(immunisation_import.batches, :count).by(9)
 
         # Second import should not duplicate the vaccination records if they're
@@ -211,7 +208,6 @@ describe ImmunisationImport do
           .to not_change(immunisation_import, :processed_at)
           .and not_change(VaccinationRecord, :count)
           .and not_change(Patient, :count)
-          .and not_change(Session, :count)
           .and not_change(PatientSession, :count)
           .and not_change(Batch, :count)
       end
@@ -235,15 +231,6 @@ describe ImmunisationImport do
 
         process!
         expect(immunisation_import.exact_duplicate_record_count).to eq(11)
-      end
-
-      it "creates a new session for each date" do
-        process!
-
-        expect(immunisation_import.sessions.count).to eq(5)
-
-        session = immunisation_import.sessions.includes(:session_dates).first
-        expect(session.dates).to contain_exactly(Date.new(2024, 5, 14))
       end
 
       it "enqueues jobs to look up missing NHS numbers" do

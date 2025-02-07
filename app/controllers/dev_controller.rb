@@ -57,7 +57,9 @@ class DevController < ApplicationController
 
       patients.includes(:parents).destroy_all
 
-      Batch.where(organisation:).destroy_all
+      batches = Batch.where(organisation:)
+      VaccinationRecord.where(batch: batches).destroy_all
+      batches.destroy_all
 
       UnscheduledSessionsFactory.new.call
     end
