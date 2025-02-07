@@ -55,6 +55,7 @@ class VaccinateForm
     draft_vaccination_record.patient_id = patient_session.patient_id
     draft_vaccination_record.performed_at = Time.current
     draft_vaccination_record.performed_by_user = current_user
+    draft_vaccination_record.performed_ods_code = organisation.ods_code
     draft_vaccination_record.programme_id = programme_id
     draft_vaccination_record.session_id = patient_session.session_id
     draft_vaccination_record.vaccine_id = vaccine_id
@@ -63,6 +64,8 @@ class VaccinateForm
   end
 
   private
+
+  delegate :organisation, to: :patient_session
 
   def pre_screening
     @pre_screening ||=
