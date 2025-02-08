@@ -120,7 +120,8 @@ describe ImmunisationImport do
 
       it "is invalid" do
         expect(immunisation_import).to be_invalid
-        expect(immunisation_import.errors).to include(:row_1)
+        expect(immunisation_import.errors).not_to include(:row_1) # Header row
+        expect(immunisation_import.errors).to include(:row_2, :row_3)
       end
     end
   end
