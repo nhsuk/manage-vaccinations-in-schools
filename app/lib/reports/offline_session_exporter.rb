@@ -179,9 +179,9 @@ class Reports::OfflineSessionExporter
   end
 
   def add_patient_cells(row, patient_session:, programme:)
-    gillick_assessment = patient_session.gillick_assessments.last
     patient = patient_session.patient
 
+    gillick_assessment = patient_session.gillick_assessment(programme:)
     consents = patient_session.latest_consents(programme:)
     triage = patient_session.latest_triage(programme:)
 

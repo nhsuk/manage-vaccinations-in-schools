@@ -33,6 +33,8 @@ class GillickAssessment < ApplicationRecord
   audited
 
   belongs_to :patient_session
+  belongs_to :programme
+
   belongs_to :performed_by,
              class_name: "User",
              foreign_key: :performed_by_user_id

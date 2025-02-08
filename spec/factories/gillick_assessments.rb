@@ -32,6 +32,8 @@
 FactoryBot.define do
   factory :gillick_assessment do
     patient_session
+    programme { patient_session.session.programmes.first }
+
     performed_by
 
     trait :not_competent do

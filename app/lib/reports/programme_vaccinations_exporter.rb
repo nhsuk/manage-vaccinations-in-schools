@@ -152,7 +152,7 @@ class Reports::ProgrammeVaccinationsExporter
       patient_sessions.find { it.patient == patient && it.session == session }
 
     consents = patient_session&.latest_consents(programme:) || []
-    gillick_assessment = patient_session&.gillick_assessments&.last
+    gillick_assessment = patient_session&.gillick_assessment(programme:)
     triage = patient_session&.latest_triage(programme:)
 
     [
