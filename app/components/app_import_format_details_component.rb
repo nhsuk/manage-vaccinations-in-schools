@@ -114,7 +114,7 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
       {
         name: "VACCINE_GIVEN",
         notes:
-          "Required if #{tag.code("VACCINATED")} is #{tag.i("Y")}, must be " +
+          "#{tag.strong("Required")}, must be " +
             @programme
               .vaccines
               .pluck(:nivs_name)
