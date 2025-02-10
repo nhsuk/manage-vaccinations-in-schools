@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_02_08_145823) do
+ActiveRecord::Schema[8.0].define(version: 2025_02_10_091908) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -403,7 +403,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_08_145823) do
     t.bigint "uploaded_by_user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "programme_id", null: false
     t.datetime "processed_at"
     t.integer "new_record_count"
     t.integer "exact_duplicate_record_count"
@@ -415,7 +414,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_08_145823) do
     t.jsonb "serialized_errors"
     t.integer "rows_count"
     t.index ["organisation_id"], name: "index_immunisation_imports_on_organisation_id"
-    t.index ["programme_id"], name: "index_immunisation_imports_on_programme_id"
     t.index ["uploaded_by_user_id"], name: "index_immunisation_imports_on_uploaded_by_user_id"
   end
 
@@ -840,7 +838,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_08_145823) do
   add_foreign_key "health_questions", "health_questions", column: "next_question_id"
   add_foreign_key "health_questions", "vaccines"
   add_foreign_key "immunisation_imports", "organisations"
-  add_foreign_key "immunisation_imports", "programmes"
   add_foreign_key "immunisation_imports", "users", column: "uploaded_by_user_id"
   add_foreign_key "immunisation_imports_patient_sessions", "immunisation_imports"
   add_foreign_key "immunisation_imports_patient_sessions", "patient_sessions"

@@ -31,6 +31,7 @@ class Organisation < ApplicationRecord
   has_many :cohort_imports
   has_many :consent_forms
   has_many :consents
+  has_many :immunisation_records
   has_many :locations
   has_many :organisation_programmes
   has_many :patients
