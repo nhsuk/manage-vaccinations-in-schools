@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_02_10_091908) do
+ActiveRecord::Schema[8.0].define(version: 2025_02_10_092331) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -129,10 +129,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_10_091908) do
     t.bigint "organisation_id", null: false
     t.integer "status", default: 0, null: false
     t.jsonb "serialized_errors"
-    t.bigint "programme_id", null: false
     t.integer "rows_count"
     t.index ["organisation_id"], name: "index_cohort_imports_on_organisation_id"
-    t.index ["programme_id"], name: "index_cohort_imports_on_programme_id"
     t.index ["uploaded_by_user_id"], name: "index_cohort_imports_on_uploaded_by_user_id"
   end
 
@@ -807,7 +805,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_10_091908) do
   add_foreign_key "class_imports_patients", "class_imports"
   add_foreign_key "class_imports_patients", "patients"
   add_foreign_key "cohort_imports", "organisations"
-  add_foreign_key "cohort_imports", "programmes"
   add_foreign_key "cohort_imports", "users", column: "uploaded_by_user_id"
   add_foreign_key "cohort_imports_parent_relationships", "cohort_imports"
   add_foreign_key "cohort_imports_parent_relationships", "parent_relationships"
