@@ -11,7 +11,7 @@
 
 <%= render AppProgrammeNavigationComponent.new(@programme, organisation: current_user.selected_organisation, active: :vaccination_records) %>
 
-<%= govuk_button_link_to "Import vaccination records", new_programme_immunisation_import_path, class: "app-button--secondary nhsuk-u-margin-bottom-0" %>
+<%= govuk_button_link_to "Import vaccination records", new_immunisation_import_path, class: "app-button--secondary nhsuk-u-margin-bottom-0" %>
 
 <%= render AppVaccinationRecordTableComponent.new(@vaccination_records, count: @pagy.count) %>
 

@@ -33,7 +33,7 @@
 
 describe ImmunisationImport do
   subject(:immunisation_import) do
-    create(:immunisation_import, organisation:, programme:, csv:, uploaded_by:)
+    create(:immunisation_import, organisation:, csv:, uploaded_by:)
   end
 
   before do
@@ -158,13 +158,7 @@ describe ImmunisationImport do
       end
 
       it "ignores and counts duplicate records" do
-        create(
-          :immunisation_import,
-          programme:,
-          csv:,
-          organisation:,
-          uploaded_by:
-        ).process!
+        create(:immunisation_import, csv:, organisation:, uploaded_by:).process!
         csv.rewind
 
         process!
@@ -217,13 +211,7 @@ describe ImmunisationImport do
       end
 
       it "ignores and counts duplicate records" do
-        create(
-          :immunisation_import,
-          programme:,
-          csv:,
-          organisation:,
-          uploaded_by:
-        ).process!
+        create(:immunisation_import, csv:, organisation:, uploaded_by:).process!
         csv.rewind
 
         process!

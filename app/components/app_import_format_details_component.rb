@@ -1,14 +1,15 @@
 # frozen_string_literal: true
 
 class AppImportFormatDetailsComponent < ViewComponent::Base
-  def initialize(import:, programme: nil)
+  def initialize(import:)
     super
 
     @import = import
-    @programme = programme
   end
 
   private
+
+  delegate :organisation, to: :@import
 
   def summary_text
     case @import
@@ -115,7 +116,7 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
         name: "VACCINE_GIVEN",
         notes:
           "#{tag.strong("Required")}, must be " +
-            @programme
+            organisation
               .vaccines
               .pluck(:nivs_name)
               .map { tag.i(_1) }
@@ -244,8 +245,6 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
   end
 
   def dose_sequence
-    return [] unless @programme.hpv?
-
     [
       {
         name: "DOSE_SEQUENCE",

@@ -88,6 +88,8 @@ Rails.application.routes.draw do
     end
   end
 
+  resources :cohort_imports, path: "cohort-imports", except: %i[index destroy]
+
   resources :consent_forms, path: "consent-forms", only: %i[index show] do
     member do
       get "match/:patient_id", action: :edit_match, as: :match
@@ -110,6 +112,17 @@ Rails.application.routes.draw do
            path: "draft-vaccination-report/:id" do
     get "download", on: :member
   end
+
+  resources :immunisation_imports,
+            path: "immunisation-imports",
+            except: %i[index destroy]
+
+  resources :import_issues, path: "import-issues", only: %i[index] do
+    get ":type", action: :show, on: :member, as: ""
+    patch ":type", action: :update, on: :member
+  end
+
+  resources :imports, only: %i[index new create]
 
   resources :notices, only: :index
 
@@ -139,20 +152,7 @@ Rails.application.routes.draw do
       get "patients"
     end
 
-    resources :cohort_imports, path: "cohort-imports", except: %i[index destroy]
-
     resources :cohorts, only: %i[index show]
-
-    resources :immunisation_imports,
-              path: "immunisation-imports",
-              except: %i[index destroy]
-
-    resources :import_issues, path: "import-issues", only: %i[index] do
-      get ":type", action: :show, on: :member, as: ""
-      patch ":type", action: :update, on: :member
-    end
-
-    resources :imports, only: %i[index new create]
 
     resources :vaccination_records,
               path: "vaccination-records",

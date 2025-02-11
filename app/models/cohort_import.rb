@@ -43,7 +43,7 @@ class CohortImport < PatientImport
   end
 
   def parse_row(data)
-    CohortImportRow.new(data:, organisation:, programme:)
+    CohortImportRow.new(data:, organisation:)
   end
 
   def postprocess_rows!

@@ -6,8 +6,11 @@ class ClassImportsController < ApplicationController
   before_action :set_session
   before_action :set_class_import, only: %i[show update]
 
+  skip_after_action :verify_policy_scoped, only: %i[new create]
+
   def new
-    @class_import = ClassImport.new
+    @class_import =
+      ClassImport.new(organisation: current_user.selected_organisation)
   end
 
   def create
@@ -28,10 +31,7 @@ class ClassImportsController < ApplicationController
 
     if @class_import.slow?
       ProcessImportJob.perform_later(@class_import)
-      redirect_to programme_imports_path(@session.programmes.first),
-                  flash: {
-                    success: "Import processing started"
-                  }
+      redirect_to imports_path, flash: { success: "Import processing started" }
     else
       ProcessImportJob.perform_now(@class_import)
       redirect_to session_class_import_path(@session, @class_import)

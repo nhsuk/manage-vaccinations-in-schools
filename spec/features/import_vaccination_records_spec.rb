@@ -108,7 +108,6 @@ describe "Immunisation imports" do
     )
     expect(page).to have_content("Row 2")
     expect(page).to have_content("VACCINATED:")
-    expect(page).to have_content("CARE_SETTING:")
 
     expect(page).to have_content("Row 2")
     expect(page).to have_content("BATCH_EXPIRY_DATE:")
@@ -159,7 +158,6 @@ describe "Immunisation imports" do
   def then_i_should_see_the_upload
     expect(page).to have_content("Imported on")
     expect(page).to have_content("Imported byTest User")
-    expect(page).to have_content("ProgrammeHPV")
   end
 
   def when_i_click_on_a_vaccination_record

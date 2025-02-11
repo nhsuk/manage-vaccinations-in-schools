@@ -20,6 +20,7 @@ class ImmunisationImportRow
   end
 
   validates :vaccine_given, inclusion: { in: :valid_given_vaccines }
+  validates :programme, presence: true
 
   validates :batch_expiry_date,
             comparison: {
@@ -110,10 +111,9 @@ class ImmunisationImportRow
 
   attr_reader :organisation
 
-  def initialize(data:, organisation:, programme:)
+  def initialize(data:, organisation:)
     @data = data
     @organisation = organisation
-    @programme = programme
   end
 
   def to_vaccination_record
@@ -131,7 +131,7 @@ class ImmunisationImportRow
       performed_by_given_name:,
       performed_by_user:,
       performed_ods_code:,
-      programme: @programme,
+      programme:,
       session:
     }
 
@@ -405,10 +405,14 @@ class ImmunisationImportRow
   end
 
   def vaccine
-    return unless administered
-
-    @vaccine ||= @programme.vaccines.find_by(nivs_name: vaccine_given)
+    @vaccine ||=
+      organisation
+        .vaccines
+        .includes(:programme)
+        .find_by(nivs_name: vaccine_given)
   end
+
+  delegate :programme, to: :vaccine, allow_nil: true
 
   def batch
     return unless valid? && administered
@@ -427,7 +431,7 @@ class ImmunisationImportRow
   end
 
   def valid_given_vaccines
-    @programme.vaccines.pluck(:nivs_name)
+    organisation.vaccines.pluck(:nivs_name)
   end
 
   def maximum_dose_sequence
@@ -443,7 +447,7 @@ class ImmunisationImportRow
   end
 
   def requires_care_setting?
-    @programme.hpv?
+    programme&.hpv?
   end
 
   def performed_by_details_present_where_required
@@ -455,7 +459,7 @@ class ImmunisationImportRow
 
       if email_field_populated
         errors.add(:performed_by_user, :blank) if performed_by_user.nil?
-      elsif @programme.flu? # no validation required for HPV
+      elsif programme&.flu? # no validation required for HPV
         if performed_by_given_name.blank?
           errors.add(:performed_by_given_name, :blank)
         end

@@ -3,10 +3,10 @@
 describe AppImportsTableComponent do
   subject(:rendered) { render_inline(component) }
 
-  let(:component) { described_class.new(organisation:, programme:) }
+  let(:component) { described_class.new(organisation:) }
 
-  let(:organisation) { create(:organisation) }
   let(:programme) { create(:programme) }
+  let(:organisation) { create(:organisation, programmes: [programme]) }
   let(:school) { create(:school, organisation:, name: "Test School") }
   let(:session) { create(:session, programme:, location: school) }
 
@@ -17,12 +17,11 @@ describe AppImportsTableComponent do
           :cohort_import,
           :processed,
           organisation:,
-          programme:,
           created_at: Date.new(2020, 1, 1),
           uploaded_by:
             create(:user, given_name: "Jennifer", family_name: "Smith")
         )
-      ] + create_list(:cohort_import, 4, :processed, organisation:, programme:)
+      ] + create_list(:cohort_import, 4, :processed, organisation:)
 
     cohort_imports.each do |cohort_import|
       create(:patient, cohort_imports: [cohort_import])
@@ -34,22 +33,15 @@ describe AppImportsTableComponent do
           :immunisation_import,
           :processed,
           organisation:,
-          programme:,
           created_at: Date.new(2020, 1, 1),
           uploaded_by: create(:user, given_name: "John", family_name: "Smith")
         )
-      ] +
-        create_list(
-          :immunisation_import,
-          4,
-          :processed,
-          organisation:,
-          programme:
-        )
+      ] + create_list(:immunisation_import, 4, :processed, organisation:)
 
     immunisation_imports.each do |immunisation_import|
       create(
         :vaccination_record,
+        organisation:,
         programme:,
         immunisation_imports: [immunisation_import]
       )

@@ -31,9 +31,7 @@
 #  fk_rails_...  (uploaded_by_user_id => users.id)
 #
 describe CohortImport do
-  subject(:cohort_import) do
-    create(:cohort_import, csv:, programme:, organisation:)
-  end
+  subject(:cohort_import) { create(:cohort_import, csv:, organisation:) }
 
   let(:programme) { create(:programme) }
   let(:organisation) { create(:organisation, programmes: [programme]) }
@@ -261,7 +259,7 @@ describe CohortImport do
     end
 
     it "ignores and counts duplicate records" do
-      create(:cohort_import, csv:, organisation:, programme:).process!
+      create(:cohort_import, csv:, organisation:).process!
       csv.rewind
 
       process!

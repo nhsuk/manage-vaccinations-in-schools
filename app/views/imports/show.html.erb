@@ -1,17 +1,16 @@
 <% content_for :before_main do %>
-  <% if @programme %>
+  <% if @session %>
     <%= render AppBreadcrumbComponent.new(
           items: [
-            { text: t("programmes.index.title"), href: programmes_path },
-            { text: @programme.name, href: programme_path(@programme) },
-            { text: t("imports.index.title"), href: programme_imports_path(@programme) },
+            { text: t("sessions.index.title"), href: sessions_path },
+            { text: @session.location.name, href: session_path(@session) },
           ],
         ) %>
   <% else %>
     <%= render AppBreadcrumbComponent.new(
           items: [
-            { text: t("sessions.index.title"), href: sessions_path },
-            { text: @session.location.name, href: session_path(@session) },
+            { text: t("programmes.index.title"), href: programmes_path },
+            { text: t("imports.index.title"), href: imports_path },
           ],
         ) %>
   <% end %>
@@ -35,13 +34,6 @@
     <%= summary_list.with_row do |row| %>
       <%= row.with_key { "Imported by" } %>
       <%= row.with_value { import.uploaded_by.full_name } %>
-    <% end %>
-
-    <% if @programme %>
-      <%= summary_list.with_row do |row| %>
-        <%= row.with_key { "Programme" } %>
-        <%= row.with_value { @programme.name } %>
-      <% end %>
     <% end %>
 
     <%= summary_list.with_row do |row| %>
@@ -91,8 +83,7 @@
       When fixing these errors, note that the header does not count as a row.
     </p>
 
-    <%= render AppImportFormatDetailsComponent.new(import:,
-                                                   programme: @programme) %>
+    <%= render AppImportFormatDetailsComponent.new(import:) %>
   <% end %>
 <% end %>
 
@@ -136,10 +127,7 @@
 
               <% row.with_cell do %>
                 <span class="nhsuk-table-responsive__heading">Actions</span>
-                <%= link_to programme_import_issue_path(
-                      # TODO: ClassImports don't have a programme, and
-                      # the import issues controller needs a programme.
-                      @programme || @session.programmes.first,
+                <%= link_to import_issue_path(
                       record,
                       type: record.is_a?(VaccinationRecord) ?
                         "vaccination-record" :

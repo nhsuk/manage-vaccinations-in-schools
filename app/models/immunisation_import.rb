@@ -63,7 +63,7 @@ class ImmunisationImport < ApplicationRecord
   end
 
   def parse_row(data)
-    ImmunisationImportRow.new(data:, organisation:, programme:)
+    ImmunisationImportRow.new(data:, organisation:)
   end
 
   def process_row(row)
@@ -120,14 +120,15 @@ class ImmunisationImport < ApplicationRecord
   def postprocess_rows!
     # Remove patients from upcoming sessions who have already been vaccinated.
 
-    already_vaccinated_patients =
-      patients
-        .includes(:vaccination_records)
-        .select { _1.vaccinated?(programme) }
+    rows.each do |row|
+      patient = row.patient
 
-    PatientSession.where(
-      session: organisation.sessions.upcoming,
-      patient: already_vaccinated_patients
-    ).find_each(&:destroy_if_safe!)
+      next unless patient.vaccinated?(row.programme)
+      patient
+        .patient_sessions
+        .includes(:session_attendances)
+        .where(session: organisation.sessions.upcoming)
+        .find_each(&:destroy_if_safe!)
+    end
   end
 end

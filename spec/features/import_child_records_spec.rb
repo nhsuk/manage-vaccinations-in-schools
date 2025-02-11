@@ -107,7 +107,6 @@ describe "Import child records" do
   def then_i_should_see_the_upload
     expect(page).to have_content("Imported on")
     expect(page).to have_content("Imported byTest User")
-    expect(page).to have_content("ProgrammeHPV")
   end
 
   def when_i_click_on_the_imports_tab
