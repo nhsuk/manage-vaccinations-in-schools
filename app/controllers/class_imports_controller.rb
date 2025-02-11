@@ -3,7 +3,7 @@
 class ClassImportsController < ApplicationController
   include Pagy::Backend
 
-  before_action :set_session, only: %i[new create]
+  before_action :set_draft_class_import, only: %i[new create]
   before_action :set_class_import, only: %i[show update]
 
   skip_after_action :verify_policy_scoped, only: %i[new create]
@@ -19,7 +19,7 @@ class ClassImportsController < ApplicationController
         session: @session,
         organisation: current_user.selected_organisation,
         uploaded_by: current_user,
-        year_groups: @session.year_groups,
+        year_groups: @draft_class_import.year_groups,
         **class_import_params
       )
 
@@ -61,8 +61,10 @@ class ClassImportsController < ApplicationController
 
   private
 
-  def set_session
-    @session = policy_scope(Session).upcoming.find(params[:session_id])
+  def set_draft_class_import
+    @draft_class_import =
+      DraftClassImport.new(request_session: session, current_user:)
+    @session = @draft_class_import.session
   end
 
   def set_class_import

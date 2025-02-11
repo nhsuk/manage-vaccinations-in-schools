@@ -105,10 +105,19 @@ Rails.application.routes.draw do
     end
   end
 
+  resource :draft_class_import,
+           only: :new,
+           path: "draft-class-import/:session_slug"
+  resource :draft_class_import,
+           only: %i[show update],
+           path: "draft-class-import/:id"
+
   resource :draft_consent, only: %i[show update], path: "draft-consent/:id"
+
   resource :draft_vaccination_record,
            only: %i[show update],
            path: "draft-vaccination-record/:id"
+
   resource :vaccination_report,
            only: %i[show update],
            path: "draft-vaccination-report/:id" do
