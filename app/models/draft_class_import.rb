@@ -9,13 +9,18 @@ class DraftClassImport
   end
 
   attribute :session_id, :integer
+  attribute :year_groups, array: true, default: []
+
+  def wizard_steps
+    %i[session year_groups]
+  end
 
   on_wizard_step :session, exact: true do
     validates :session_id, presence: true
   end
 
-  def wizard_steps
-    %i[session]
+  on_wizard_step :year_groups, exact: true do
+    validates :year_groups, presence: true
   end
 
   def session

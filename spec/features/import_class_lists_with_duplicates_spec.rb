@@ -10,6 +10,7 @@ describe "Class list imports duplicates" do
 
     when_i_visit_a_session_page_for_the_hpv_programme
     and_i_start_adding_children_to_the_session
+    and_i_select_the_year_groups
     and_i_upload_a_file_with_duplicate_records
     then_i_should_see_the_import_page_with_duplicate_records
 
@@ -121,6 +122,14 @@ describe "Class list imports duplicates" do
 
   def and_i_start_adding_children_to_the_session
     click_on "Import class list records"
+  end
+
+  def and_i_select_the_year_groups
+    check "Year 8"
+    check "Year 9"
+    check "Year 10"
+    check "Year 11"
+    click_on "Continue"
   end
 
   def and_i_upload_a_file_with_duplicate_records

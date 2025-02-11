@@ -244,7 +244,7 @@ def create_imports(user, organisation)
       :class_import,
       status,
       organisation:,
-      session: organisation.sessions.first,
+      session: organisation.sessions.includes(:programmes).first,
       uploaded_by: user
     )
   end
