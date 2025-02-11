@@ -13,7 +13,7 @@ class RateTestJob < ApplicationJob
   # appears to trigger more race conditions in the job performing code, meaning
   # there’s more instances where more than 5 requests are attempted.
   retry_on GoodJob::ActiveJobExtensions::Concurrency::ConcurrencyExceededError,
-           attempts: 1, # :unlimited,
+           attempts: :unlimited,
            wait: ->(_) { rand(0.5..5) }
 
   retry_on Faraday::TooManyRequestsError,
