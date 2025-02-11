@@ -48,12 +48,18 @@ class ClassImport < PatientImport
     ClassImportRow.new(data:, session:, year_groups:)
   end
 
+  def birth_academic_years
+    year_groups.map(&:to_birth_academic_year)
+  end
+
   def postprocess_rows!
     return if session.closed?
 
     # Remove patients already in the session but not in the class list.
 
-    unknown_patients = session.patients - patients
+    unknown_patients =
+      session.patients.where(birth_academic_year: birth_academic_years) -
+        patients
 
     school_moves =
       unknown_patients.map do |patient|
