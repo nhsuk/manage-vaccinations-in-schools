@@ -1,17 +1,8 @@
-<% content_for :page_title, "#{@programme.name} – Import issues" %>
+<%= h1 t("imports.index.title"), size: "xl" %>
 
-<% content_for :before_main do %>
-  <%= render AppBreadcrumbComponent.new(
-        items: [
-          { text: t("programmes.index.title"), href: programmes_path },
-          { text: @programme.name, href: programme_path(@programme) },
-        ],
-      ) %>
-<% end %>
+<%= govuk_button_link_to "Import records", new_import_path, class: "app-button--secondary" %>
 
-<h1 class="nhsuk-heading-l"><%= @programme.name %></h1>
-
-<%= render AppProgrammeNavigationComponent.new(@programme, organisation: current_user.selected_organisation, active: :import_issues) %>
+<%= render AppImportsNavigationComponent.new(active: :issues) %>
 
 <% if @import_issues.any? %>
   <div class="nhsuk-table__panel-with-heading-tab">
@@ -50,7 +41,7 @@
 
             <% row.with_cell do %>
               <span class="nhsuk-table-responsive__heading">Actions</span>
-              <%= link_to import_issue_path(
+              <%= link_to imports_issue_path(
                     import_issue,
                     type: import_issue.is_a?(VaccinationRecord) ?
                       "vaccination-record" :

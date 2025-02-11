@@ -728,15 +728,11 @@ en:
   hosting_environment: This is a %{name} environment. Do not use it to make clinical decisions.
   imports:
     index:
-      title: Imports
-  import_issues:
-    index:
-      title: Import issues
-  notices:
-    index:
-      title: Important notices
-      title_short: Notices
-      no_results: There are currently no important notices.
+      title: Import records
+      title_short: Import
+    notices:
+      index:
+        no_results: There are currently no important notices.
   mailers:
     consent_form_mailer:
       reasons_for_refusal:
