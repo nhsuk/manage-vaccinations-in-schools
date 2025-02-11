@@ -1,13 +1,10 @@
 # frozen_string_literal: true
 
 class AppProgrammeNavigationComponent < ViewComponent::Base
-  attr_reader :programme, :organisation, :active
-
-  def initialize(programme, organisation:, active:)
+  def initialize(programme, active:)
     super
 
     @programme = programme
-    @organisation = organisation
     @active = active
   end
 
@@ -42,41 +39,10 @@ class AppProgrammeNavigationComponent < ViewComponent::Base
         text: I18n.t("vaccination_records.index.title"),
         selected: active == :vaccination_records
       )
-
-      nav.with_item(
-        href: imports_path,
-        text: I18n.t("imports.index.title"),
-        selected: active == :imports
-      )
-
-      nav.with_item(
-        href: import_issues_path,
-        text: import_issues_text,
-        selected: active == :import_issues
-      )
     end
   end
 
   private
 
-  def import_issues_text
-    vaccination_records_with_issues =
-      helpers
-        .policy_scope(VaccinationRecord)
-        .where(programme:)
-        .with_pending_changes
-        .distinct
-
-    patients_with_issues = helpers.policy_scope(Patient).with_pending_changes
-
-    unique_import_issues =
-      (vaccination_records_with_issues + patients_with_issues).uniq do |record|
-        record.is_a?(VaccinationRecord) ? record.patient : record
-      end
-
-    base_text = I18n.t("import_issues.index.title")
-    count = unique_import_issues.count
-
-    safe_join([base_text, " ", render(AppCountComponent.new(count:))])
-  end
+  attr_reader :programme, :active
 end

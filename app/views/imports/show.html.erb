@@ -1,19 +1,9 @@
 <% content_for :before_main do %>
-  <% if @session %>
-    <%= render AppBreadcrumbComponent.new(
-          items: [
-            { text: t("sessions.index.title"), href: sessions_path },
-            { text: @session.location.name, href: session_path(@session) },
-          ],
-        ) %>
-  <% else %>
-    <%= render AppBreadcrumbComponent.new(
-          items: [
-            { text: t("programmes.index.title"), href: programmes_path },
-            { text: t("imports.index.title"), href: imports_path },
-          ],
-        ) %>
-  <% end %>
+  <%= render AppBreadcrumbComponent.new(
+        items: [
+          { text: t("imports.index.title"), href: imports_path },
+        ],
+      ) %>
 <% end %>
 
 <%= h1 "Import (#{import.created_at.to_fs(:long)})" %>
@@ -126,7 +116,7 @@
 
               <% row.with_cell do %>
                 <span class="nhsuk-table-responsive__heading">Actions</span>
-                <%= link_to import_issue_path(
+                <%= link_to imports_issue_path(
                       record,
                       type: record.is_a?(VaccinationRecord) ?
                         "vaccination-record" :
