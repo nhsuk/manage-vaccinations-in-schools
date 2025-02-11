@@ -15,6 +15,7 @@
 #  rows_count                   :integer
 #  serialized_errors            :json
 #  status                       :integer          default("pending_import"), not null
+#  year_groups                  :integer          default([]), not null, is an Array
 #  created_at                   :datetime         not null
 #  updated_at                   :datetime         not null
 #  organisation_id              :bigint           not null
@@ -44,7 +45,7 @@ class ClassImport < PatientImport
   private
 
   def parse_row(data)
-    ClassImportRow.new(data:, session:)
+    ClassImportRow.new(data:, session:, year_groups:)
   end
 
   def postprocess_rows!
