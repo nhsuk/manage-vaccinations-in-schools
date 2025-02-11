@@ -32,10 +32,8 @@ class RateTestJob < ApplicationJob
 
   queue_as :test
 
-  def perform(id:, batch:, wait: 0.1..0.5)
-    patient = Patient.all.sample
-    Patient.where(nhs_number: patient.nhs_number).count
-    Patient.where(address_postcode: patient.address_postcode).count
+  def perform(batch:, wait: 0.1..0.5, db_load: 1)
+    db_load.times { Patient.all.includes(:parents).sample }
     if wait.is_a? Range
       sleep(rand(wait))
     else
