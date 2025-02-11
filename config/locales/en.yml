@@ -165,6 +165,8 @@ en:
           attributes:
             session_id:
               blank: Choose which school this class list for
+            year_groups:
+              blank: Choose which year groups you want to import class list records for
         draft_consent:
           attributes:
             new_or_existing_contact:
@@ -921,3 +923,4 @@ en:
     vaccine: vaccine
     when: when
     who: who
+    year_groups: year-groups
