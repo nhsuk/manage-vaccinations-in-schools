@@ -30,7 +30,7 @@
 
   <% if @session.open? && @session.location.school? %>
     <li class="app-action-list__item">
-      <%= govuk_link_to "Import class list", new_session_class_import_path(@session) %>
+      <%= govuk_link_to "Import class list", new_class_import_path(session_id: @session.id) %>
     </li>
   <% end %>
 </ul>
