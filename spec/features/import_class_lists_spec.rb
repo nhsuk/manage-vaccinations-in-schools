@@ -160,6 +160,12 @@ describe "Import class lists" do
 
   def when_i_go_back_to_the_upload_page
     click_on "Back"
+
+    # TODO: test flow via "Import records" radio selection
+    click_on "Sessions", match: :first
+    click_on "Unscheduled"
+    click_on "Waterloo Road"
+
     click_on "Import class list"
   end
 
