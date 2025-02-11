@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
 describe ClassImportRow do
-  subject(:class_import_row) { described_class.new(data:, session:) }
+  subject(:class_import_row) do
+    described_class.new(data:, session:, year_groups: session.year_groups)
+  end
 
   let(:today) { Date.new(2024, 12, 1) }
 

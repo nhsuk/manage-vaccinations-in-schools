@@ -15,6 +15,7 @@
 #  rows_count                   :integer
 #  serialized_errors            :json
 #  status                       :integer          default("pending_import"), not null
+#  year_groups                  :integer          default([]), not null, is an Array
 #  created_at                   :datetime         not null
 #  updated_at                   :datetime         not null
 #  organisation_id              :bigint           not null
