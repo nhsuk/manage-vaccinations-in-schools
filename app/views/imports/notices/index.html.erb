@@ -1,7 +1,11 @@
-<%= h1 t("notices.index.title"), size: "xl" %>
+<%= h1 t("imports.index.title"), size: "xl" %>
+
+<%= govuk_button_link_to "Import records", new_import_path, class: "app-button--secondary" %>
+
+<%= render AppImportsNavigationComponent.new(active: :notices) %>
 
 <% if @deceased_patients.any? || @invalidated_patients.any? || @restricted_patients.any? %>
   <%= render AppNoticesTableComponent.new(deceased_patients: @deceased_patients, invalidated_patients: @invalidated_patients, restricted_patients: @restricted_patients) %>
 <% else %>
-  <p class="nhsuk-body"><%= t("notices.index.no_results") %></p>
+  <p class="nhsuk-body"><%= t(".no_results") %></p>
 <% end %>
