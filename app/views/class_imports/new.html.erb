@@ -7,8 +7,10 @@
 
 <% content_for :page_title, title %>
 
-<%= form_with model: @class_import, url: session_class_imports_path do |f| %>
+<%= form_with model: @class_import, url: class_imports_path do |f| %>
   <%= f.govuk_error_summary %>
+
+  <%= hidden_field_tag :session_id, @session.id %>
 
   <%= f.govuk_file_field :csv,
                          caption: { text: @session.location.name, size: "l" },
