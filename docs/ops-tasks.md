@@ -134,3 +134,16 @@ parent.consents
 # Check with the original request to see if this is appropriate.
 parent.destroy
 ```
+
+## Move a patient from a school session to a community clinic
+
+This can be done manually, and doesn't need a `SchoolMove`:
+
+```rb
+# Check if the patient session in question is safe to be destroyed.
+patient.patient_sessions.first.safe_to_destroy?
+
+patient.patient_sessions.first.destroy
+
+patient.sessions << clinic_session
+```
