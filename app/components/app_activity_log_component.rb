@@ -27,39 +27,40 @@ class AppActivityLogComponent < ViewComponent::Base
     @patient_sessions =
       patient_session ? [patient_session] : patient.patient_sessions
 
-    programme = patient_session&.programmes&.first # TODO: handle multiple programmes
-
     @consents =
-      @patient
-        .consents
-        .includes(
-          :consent_form,
-          :parent,
-          :recorded_by,
-          patient: :parent_relationships
-        )
-        .tap { it.where(programme:) if programme }
+      @patient.consents.includes(
+        :consent_form,
+        :parent,
+        :recorded_by,
+        patient: :parent_relationships
+      )
+
     @gillick_assessments =
-      (patient || patient_session)
-        .gillick_assessments
-        .tap { it.where(programme:) if programme }
-        .includes(:performed_by)
+      (patient || patient_session).gillick_assessments.includes(:performed_by)
+
     @notify_log_entries = @patient.notify_log_entries.includes(:sent_by)
+
     @pre_screenings =
       (patient || patient_session).pre_screenings.includes(:performed_by)
+
     @session_attendances =
       (patient || patient_session).session_attendances.includes(:location)
-    @triages =
-      @patient
-        .triages
-        .includes(:performed_by)
-        .tap { it.where(programme:) if programme }
+
+    @triages = @patient.triages.includes(:performed_by)
+
     @vaccination_records =
       (patient || patient_session).vaccination_records.with_discarded.includes(
         :performed_by_user,
         :programme,
         :vaccine
       )
+
+    if (programme = patient_session&.programmes&.first) # TODO: handle multiple programmes
+      @consents = @consents.where(programme:)
+      @gillick_assessments = @gillick_assessments.where(programme:)
+      @triages = @triages.where(programme:)
+      @vaccination_records = @vaccination_records.where(programme:)
+    end
   end
 
   attr_reader :patient,
