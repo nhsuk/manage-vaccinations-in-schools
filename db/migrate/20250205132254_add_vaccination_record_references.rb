@@ -11,7 +11,7 @@ class AddVaccinationRecordReferences < ActiveRecord::Migration[8.0]
     VaccinationRecord.find_each do |vaccination_record|
       patient_session =
         PatientSession.find(vaccination_record.patient_session_id)
-      vaccination_record.update!(
+      vaccination_record.update_columns(
         patient_id: patient_session.patient_id,
         session_id: patient_session.session_id
       )
@@ -35,7 +35,7 @@ class AddVaccinationRecordReferences < ActiveRecord::Migration[8.0]
           patient_id: vaccination_record.patient_id,
           session_id: vaccination_record.session_id
         )
-      vaccination_record.update!(patient_session_id: patient_session.id)
+      vaccination_record.update_column(:patient_session_id, patient_session.id)
     end
 
     change_table :vaccination_records, bulk: true do |t|
