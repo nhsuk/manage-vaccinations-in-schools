@@ -34,7 +34,7 @@ describe "Parental consent" do
 
   def then_i_see_the_start_page
     expect(page).to have_content(
-      "Give or refuse consent for an HPV vaccination"
+      "Give or refuse consent for vaccinations"
     )
   end
 

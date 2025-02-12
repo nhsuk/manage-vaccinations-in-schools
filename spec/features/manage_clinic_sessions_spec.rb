@@ -187,7 +187,7 @@ describe "Manage clinic sessions" do
 
   def then_they_can_give_consent
     expect(page).to have_content(
-      "Give or refuse consent for an HPV vaccination"
+      "Give or refuse consent for vaccinations"
     )
   end
 
