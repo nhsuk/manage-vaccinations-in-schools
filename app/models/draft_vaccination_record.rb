@@ -23,6 +23,7 @@ class DraftVaccinationRecord
   attribute :performed_by_family_name, :string
   attribute :performed_by_given_name, :string
   attribute :performed_by_user_id, :integer
+  attribute :performed_ods_code, :string
   attribute :programme_id, :integer
   attribute :vaccine_id, :integer
 

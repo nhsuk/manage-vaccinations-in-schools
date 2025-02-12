@@ -764,6 +764,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_08_145823) do
     t.datetime "confirmation_sent_at"
     t.bigint "patient_id"
     t.bigint "session_id"
+    t.string "performed_ods_code", null: false
     t.index ["batch_id"], name: "index_vaccination_records_on_batch_id"
     t.index ["discarded_at"], name: "index_vaccination_records_on_discarded_at"
     t.index ["patient_id"], name: "index_vaccination_records_on_patient_id"

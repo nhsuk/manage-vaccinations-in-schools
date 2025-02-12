@@ -144,6 +144,7 @@ class VaccinationsController < ApplicationController
       @patient
         .patient_sessions
         .includes(
+          :organisation,
           patient: {
             parent_relationships: :parent
           },
