@@ -11,17 +11,9 @@ class AppSimpleStatusBannerComponent < ViewComponent::Base
 
   private
 
-  def most_recent_triage
-    @most_recent_triage ||= @patient_session.latest_triage
-  end
-
-  def most_recent_vaccination
-    @most_recent_vaccination ||= @patient_session.latest_vaccination_record
-  end
-
   def who_refused
     @patient_session
-      .consents
+      .latest_consents(programme:)
       .select(&:response_refused?)
       .map(&:who_responded)
       .last
@@ -32,12 +24,12 @@ class AppSimpleStatusBannerComponent < ViewComponent::Base
   end
 
   def nurse
-    most_recent_event = [
-      most_recent_triage,
-      most_recent_vaccination
-    ].compact.max_by(&:created_at)
-
-    most_recent_event&.performed_by&.full_name
+    (
+      @patient_session.triages(programme:) +
+        @patient_session.vaccination_records.select do
+          it.programme_id == programme.id
+        end
+    ).max_by(&:updated_at)&.performed_by&.full_name
   end
 
   def heading
@@ -46,5 +38,9 @@ class AppSimpleStatusBannerComponent < ViewComponent::Base
 
   def colour
     I18n.t("patient_session_statuses.#{status}.colour")
+  end
+
+  def programme
+    @patient_session.programmes.first # TODO: handle multiple programmes
   end
 end

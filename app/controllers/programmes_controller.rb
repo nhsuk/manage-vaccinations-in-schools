@@ -35,9 +35,8 @@ class ProgrammesController < ApplicationController
           :session_dates,
           patient_sessions: [
             :gillick_assessments,
-            :triages,
             :vaccination_records,
-            { consents: :parent }
+            { patient: [:triages, { consents: :parent }] }
           ]
         )
         .order("locations.name")

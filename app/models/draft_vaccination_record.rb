@@ -155,7 +155,7 @@ class DraftVaccinationRecord
     VaccinationRecordPolicy::Scope
       .new(@current_user, VaccinationRecord)
       .resolve
-      .includes(patient_session: { consents: :parent })
+      .includes(patient_session: { patient: { consents: :parent } })
       .find_by(id: editing_id)
   end
 

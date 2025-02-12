@@ -23,25 +23,20 @@
 #
 
 describe PatientSession do
+  subject(:patient_session) { create(:patient_session, programme:) }
+
   let(:programme) { create(:programme) }
-  let(:patient_session) { create(:patient_session, programme:) }
 
-  describe "#vaccination_records" do
-    subject(:vaccination_records) { patient_session.vaccination_records }
+  it { should have_many(:gillick_assessments).order(:created_at) }
 
-    let(:kept_vaccination_record) do
-      create(:vaccination_record, patient_session:, programme:)
-    end
-    let(:discarded_vaccination_record) do
-      create(:vaccination_record, :discarded, patient_session:, programme:)
-    end
-
-    it { should include(kept_vaccination_record) }
-    it { should_not include(discarded_vaccination_record) }
+  it do
+    expect(patient_session).to have_many(:vaccination_records).conditions(
+      discarded_at: nil
+    ).order(:created_at)
   end
 
   describe "#triages" do
-    subject(:triages) { patient_session.triages }
+    subject(:triages) { patient_session.triages(programme:) }
 
     let(:patient) { patient_session.patient }
     let(:later_triage) { create(:triage, programme:, patient:) }
@@ -53,7 +48,7 @@ describe PatientSession do
   end
 
   describe "#latest_triage" do
-    subject(:latest_triage) { patient_session.latest_triage }
+    subject(:latest_triage) { patient_session.latest_triage(programme:) }
 
     let(:patient) { patient_session.patient }
     let(:later_triage) do
@@ -134,7 +129,7 @@ describe PatientSession do
   describe "#consent_given?" do
     subject(:consent_given?) do
       described_class
-        .includes(consents: :parent)
+        .includes(patient: { consents: :parent })
         .find(patient_session.id)
         .consent_given?
     end
@@ -201,7 +196,7 @@ describe PatientSession do
   end
 
   describe "#latest_consents" do
-    subject(:latest_consents) { patient_session.latest_consents }
+    subject(:latest_consents) { patient_session.latest_consents(programme:) }
 
     let(:patient_session) { create(:patient_session, programme:, patient:) }
 
@@ -255,49 +250,6 @@ describe PatientSession do
         expect(latest_consents).not_to include(invalidated_consent)
       end
     end
-  end
-
-  describe "#latest_gillick_assessment" do
-    subject(:latest_gillick_assessment) do
-      patient_session.latest_gillick_assessment
-    end
-
-    let(:later_gillick_assessment) do
-      create(:gillick_assessment, :competent, patient_session:)
-    end
-
-    before do
-      create(
-        :gillick_assessment,
-        :not_competent,
-        patient_session:,
-        created_at: 1.day.ago
-      )
-    end
-
-    it { should eq(later_gillick_assessment) }
-  end
-
-  describe "#latest_vaccination_record" do
-    subject(:latest_vaccination_record) do
-      patient_session.latest_vaccination_record
-    end
-
-    let(:patient_session) { create(:patient_session, programme:) }
-    let(:later_vaccination_record) do
-      create(:vaccination_record, programme:, patient_session:)
-    end
-
-    before do
-      create(
-        :vaccination_record,
-        programme:,
-        patient_session:,
-        created_at: 1.day.ago
-      )
-    end
-
-    it { should eq(later_vaccination_record) }
   end
 
   describe "#safe_to_destroy?" do

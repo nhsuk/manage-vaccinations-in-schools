@@ -10,10 +10,9 @@ class ClinicSessionInvitationsJob < ApplicationJob
         .includes(
           :programmes,
           patient_sessions: [
-            :consents,
             :session_notifications,
             :vaccination_records,
-            { patient: :parents }
+            { patient: %i[consents parents] }
           ]
         )
         .preload(:session_dates)

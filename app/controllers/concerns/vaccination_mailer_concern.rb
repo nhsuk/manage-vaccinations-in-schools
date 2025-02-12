@@ -43,11 +43,12 @@ module VaccinationMailerConcern
 
   def parents_for_vaccination_mailer(vaccination_record)
     patient_session = vaccination_record.patient_session
+    programme = vaccination_record.programme
     patient = patient_session.patient
 
     return [] unless patient.send_notifications?
 
-    consents = patient_session.latest_consents
+    consents = patient_session.latest_consents(programme:)
 
     parents =
       if consents.any?(&:via_self_consent?)

@@ -129,9 +129,12 @@ class Reports::OfflineSessionExporter
       .patient_sessions
       .eager_load(patient: :school)
       .preload(
-        consents: [:parent, { patient: :parent_relationships }],
+        :programmes,
+        patient: {
+          consents: [:parent, { patient: :parent_relationships }],
+          triages: :performed_by
+        },
         gillick_assessments: :performed_by,
-        triages: :performed_by,
         vaccination_records: %i[batch performed_by_user vaccine]
       )
       .order_by_name
@@ -160,25 +163,27 @@ class Reports::OfflineSessionExporter
     if vaccination_records.any?
       vaccination_records.map do |vaccination_record|
         Row.new(columns, style: row_style) do |row|
-          add_patient_cells(row, patient_session:)
+          programme = vaccination_record.programme
+          add_patient_cells(row, patient_session:, programme:)
           add_existing_row_cells(row, vaccination_record:)
         end
       end
     else
       session.programmes.map do |programme|
         Row.new(columns, style: row_style) do |row|
-          add_patient_cells(row, patient_session:)
+          add_patient_cells(row, patient_session:, programme:)
           add_new_row_cells(row, programme:)
         end
       end
     end
   end
 
-  def add_patient_cells(row, patient_session:)
-    consents = patient_session.latest_consents
-    gillick_assessment = patient_session.latest_gillick_assessment
+  def add_patient_cells(row, patient_session:, programme:)
+    gillick_assessment = patient_session.gillick_assessments.last
     patient = patient_session.patient
-    triage = patient_session.latest_triage
+
+    consents = patient_session.latest_consents(programme:)
+    triage = patient_session.latest_triage(programme:)
 
     row[:organisation_code] = organisation.ods_code
     row[:school_urn] = school_urn(location:, patient:)

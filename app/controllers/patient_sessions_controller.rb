@@ -22,11 +22,18 @@ class PatientSessionsController < ApplicationController
       policy_scope(PatientSession).includes(
         :gillick_assessments,
         :location,
+        :programmes,
         :session,
         :session_attendances,
-        consents: %i[parent],
-        patient: [:gp_practice, :school, { parent_relationships: :parent }],
-        triages: :performed_by,
+        patient: [
+          :gp_practice,
+          :school,
+          {
+            consents: %i[parent],
+            parent_relationships: :parent,
+            triages: :performed_by
+          }
+        ],
         vaccination_records: {
           vaccine: :programme
         }
