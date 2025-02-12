@@ -76,5 +76,15 @@ FactoryBot.define do
       flu
       vaccines { [association(:vaccine, :fluenz_tetra, programme: instance)] }
     end
+
+    trait :menacwy do
+      type { "menacwy" }
+      vaccines { [association(:vaccine, :menquadfi, programme: instance)] }
+    end
+
+    trait :td_ipv do
+      type { "td_ipv" }
+      vaccines { [association(:vaccine, :revaxis, programme: instance)] }
+    end
   end
 end
