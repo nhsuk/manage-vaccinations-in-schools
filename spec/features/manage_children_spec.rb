@@ -42,6 +42,25 @@ describe "Manage children" do
     then_i_see_the_merged_edit_child_record_page
   end
 
+  scenario "Adding an NHS number to an invalidated patient" do
+    given_an_invalidated_patient_exists
+
+    when_i_click_on_children
+    and_i_click_on_a_child
+    then_i_see_the_child
+
+    when_i_click_on_edit_child_record
+    then_i_see_the_edit_child_record_page
+
+    when_i_click_on_change_nhs_number
+    then_i_see_the_edit_nhs_number_page
+
+    when_i_enter_an_nhs_number
+    then_i_see_the_edit_child_record_page
+    and_i_see_the_nhs_number
+    and_the_patient_is_no_longer_invalidated
+  end
+
   scenario "Removing a child from a cohort" do
     given_patients_exist
     and_the_patient_belongs_to_a_session
@@ -118,6 +137,17 @@ describe "Manage children" do
         given_name: "Jane",
         family_name: "Doe",
         organisation: @organisation
+      )
+  end
+
+  def given_an_invalidated_patient_exists
+    @patient =
+      create(
+        :patient,
+        :invalidated,
+        organisation: @organisation,
+        given_name: "John",
+        family_name: "Smith"
       )
   end
 
@@ -208,6 +238,10 @@ describe "Manage children" do
 
   def and_i_see_the_nhs_number
     expect(page).to have_content("123 ‍456 ‍7890")
+  end
+
+  def and_the_patient_is_no_longer_invalidated
+    expect(@patient.reload).not_to be_invalidated
   end
 
   def then_i_see_the_merge_record_page
