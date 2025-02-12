@@ -4,6 +4,7 @@
 .env
 .env.local
 .envrc
+venv
 .idea
 .vscode
 config/master.key
