@@ -713,9 +713,7 @@ en:
           - >-
             The number of doses you need depends on your age and how well your
             immune system works. Young people usually only need 1 dose.
-      title:
-        flu: Give or refuse consent for a flu vaccination
-        hpv: Give or refuse consent for an HPV vaccination
+      title: Give or refuse consent for vaccinations
   dashboard:
     index:
       notices:
