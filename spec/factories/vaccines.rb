@@ -95,6 +95,14 @@ FactoryBot.define do
       end
     end
 
+    trait :menacwy do
+      type { "menacwy" }
+    end
+
+    trait :td_ipv do
+      type { "td_ipv" }
+    end
+
     all_data = YAML.load_file(Rails.root.join("config/vaccines.yml"))
 
     all_data.each do |key, data|
