@@ -44,7 +44,7 @@ in the `app` directory to select which environment/state-file you want.
 
 ### Pre-commit
 We will use pre-commit to format and lint the files. 
-* For linting, install `tflint` as described [here](https://github.com/terraform-linters/tflint?tab=readme-ov-file#installation).
+* Linting is done with `tflint` (installed with mise)
 * To install pre-commit ensure you have pip installed and create a venv and activate it
 ```bash
 python3 -m venv venv
