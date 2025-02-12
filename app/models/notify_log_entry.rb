@@ -6,7 +6,7 @@
 #
 #  id                      :bigint           not null, primary key
 #  delivery_status         :integer          default("sending"), not null
-#  recipient               :string           not null
+#  recipient               :string
 #  recipient_deterministic :string
 #  type                    :integer          not null
 #  created_at              :datetime         not null
@@ -36,6 +36,7 @@ class NotifyLogEntry < ApplicationRecord
   include Sendable
 
   self.inheritance_column = nil
+  self.ignored_columns = ["recipient"]
 
   belongs_to :consent_form, optional: true
   belongs_to :patient, optional: true
@@ -51,10 +52,9 @@ class NotifyLogEntry < ApplicationRecord
          technical_failure: 4
        }
 
+  validates :recipient_deterministic, presence: true
   validates :template_id, presence: true
-  validates :recipient, presence: true
 
-  encrypts :recipient
   encrypts :recipient_deterministic, deterministic: true
 
   def title
