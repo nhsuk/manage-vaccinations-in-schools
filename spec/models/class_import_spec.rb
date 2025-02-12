@@ -38,7 +38,7 @@ describe ClassImport do
     create(:class_import, csv:, session:, organisation:)
   end
 
-  let(:programme) { create(:programme) }
+  let(:programme) { create(:programme, :hpv) }
   let(:organisation) { create(:organisation, programmes: [programme]) }
   let(:location) { create(:school, organisation:) }
   let(:session) { create(:session, location:, programme:, organisation:) }
