@@ -120,7 +120,7 @@ describe "Class list imports duplicates" do
   end
 
   def and_i_start_adding_children_to_the_session
-    click_on "Import class list"
+    click_on "Import class list records"
   end
 
   def and_i_upload_a_file_with_duplicate_records

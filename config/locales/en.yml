@@ -163,6 +163,10 @@ en:
               inclusion: The school URN is not recognised. If you’ve checked the URN, and you believe it’s valid, contact our support organisation.
             year_group:
               inclusion: is not part of this programme
+        draft_class_import:
+          attributes:
+            session_id:
+              blank: Choose which school this class list for
         draft_consent:
           attributes:
             new_or_existing_contact:
@@ -906,6 +910,7 @@ en:
     reason_notes: reason-notes
     route: route
     school: school
+    session: session
     timeline: timeline
     triage: triage
     vaccine: vaccine
