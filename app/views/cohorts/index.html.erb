@@ -11,7 +11,7 @@
 
 <%= render AppProgrammeNavigationComponent.new(@programme, organisation: current_user.selected_organisation, active: :cohorts) %>
 
-<%= govuk_button_link_to "Import child records", new_programme_cohort_import_path(@programme), class: "app-button--secondary" %>
+<%= govuk_button_link_to "Import child records", new_cohort_import_path, class: "app-button--secondary" %>
 
 <ul class="nhsuk-grid-row nhsuk-card-group">
   <% @patient_count_by_birth_academic_year.each do |birth_academic_year, patient_count| %>

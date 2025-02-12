@@ -232,28 +232,19 @@ def create_patients(organisation)
 end
 
 def create_imports(user, organisation)
-  programme = organisation.programmes.includes(:sessions).find_by(type: "hpv")
-
   %i[pending invalid processed].each do |status|
-    FactoryBot.create(
-      :cohort_import,
-      status,
-      organisation:,
-      programme:,
-      uploaded_by: user
-    )
+    FactoryBot.create(:cohort_import, status, organisation:, uploaded_by: user)
     FactoryBot.create(
       :immunisation_import,
       status,
       organisation:,
-      programme:,
       uploaded_by: user
     )
     FactoryBot.create(
       :class_import,
       status,
       organisation:,
-      session: programme.sessions.first,
+      session: organisation.sessions.first,
       uploaded_by: user
     )
   end

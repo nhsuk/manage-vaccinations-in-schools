@@ -1,28 +1,20 @@
 <% content_for :before_main do %>
-  <%= render AppBacklinkComponent.new(programme_vaccination_records_path(@programme), name: "vaccinations") %>
+  <%= render AppBacklinkComponent.new(new_import_path, name: "import") %>
 <% end %>
 
 <% title = "Import vaccination records" %>
-<% hint = if @programme.hpv?
-       "These will go to NHS England. Make sure the CSV you upload has the same format as your usual reporting template."
-     elsif @programme.flu?
-       "These will go to NHS England and GPs. Make sure the CSV you upload has the same format as your usual reporting template."
-     else
-       "Make sure the CSV you upload has the same format as your usual reporting template."
-     end %>
+<% hint = "Make sure the CSV you upload has the same format as your usual reporting template." %>
 
 <% content_for :page_title, title %>
 
-<%= form_with model: @immunisation_import, url: programme_immunisation_imports_path do |f| %>
+<%= form_with model: @immunisation_import, url: immunisation_imports_path do |f| %>
   <%= f.govuk_error_summary %>
 
   <%= f.govuk_file_field :csv,
-                         caption: { text: @programme.name, size: "l" },
                          label: { text: title, tag: "h1", size: "l" },
                          hint: { text: hint } %>
 
-  <%= render AppImportFormatDetailsComponent.new(import: @immunisation_import,
-                                                 programme: @programme) %>
+  <%= render AppImportFormatDetailsComponent.new(import: @immunisation_import) %>
 
   <%= f.govuk_submit %>
 <% end %>

@@ -18,25 +18,20 @@
 #  created_at                   :datetime         not null
 #  updated_at                   :datetime         not null
 #  organisation_id              :bigint           not null
-#  programme_id                 :bigint           not null
 #  uploaded_by_user_id          :bigint           not null
 #
 # Indexes
 #
 #  index_immunisation_imports_on_organisation_id      (organisation_id)
-#  index_immunisation_imports_on_programme_id         (programme_id)
 #  index_immunisation_imports_on_uploaded_by_user_id  (uploaded_by_user_id)
 #
 # Foreign Keys
 #
 #  fk_rails_...  (organisation_id => organisations.id)
-#  fk_rails_...  (programme_id => programmes.id)
 #  fk_rails_...  (uploaded_by_user_id => users.id)
 #
 class ImmunisationImport < ApplicationRecord
   include CSVImportable
-
-  belongs_to :programme
 
   has_and_belongs_to_many :batches
   has_and_belongs_to_many :patient_sessions
@@ -68,7 +63,7 @@ class ImmunisationImport < ApplicationRecord
   end
 
   def parse_row(data)
-    ImmunisationImportRow.new(data:, organisation:, programme:)
+    ImmunisationImportRow.new(data:, organisation:)
   end
 
   def process_row(row)
@@ -125,14 +120,15 @@ class ImmunisationImport < ApplicationRecord
   def postprocess_rows!
     # Remove patients from upcoming sessions who have already been vaccinated.
 
-    already_vaccinated_patients =
-      patients
-        .includes(:vaccination_records)
-        .select { _1.vaccinated?(programme) }
+    rows.each do |row|
+      patient = row.patient
 
-    PatientSession.where(
-      session: organisation.sessions.upcoming,
-      patient: already_vaccinated_patients
-    ).find_each(&:destroy_if_safe!)
+      next unless patient.vaccinated?(row.programme)
+      patient
+        .patient_sessions
+        .includes(:session_attendances)
+        .where(session: organisation.sessions.upcoming)
+        .find_each(&:destroy_if_safe!)
+    end
   end
 end

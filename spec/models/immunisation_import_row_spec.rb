@@ -2,7 +2,7 @@
 
 describe ImmunisationImportRow do
   subject(:immunisation_import_row) do
-    described_class.new(data:, organisation:, programme:)
+    described_class.new(data:, organisation:)
   end
 
   let(:programme) { create(:programme, :flu) }

@@ -18,25 +18,20 @@
 #  created_at                   :datetime         not null
 #  updated_at                   :datetime         not null
 #  organisation_id              :bigint           not null
-#  programme_id                 :bigint           not null
 #  uploaded_by_user_id          :bigint           not null
 #
 # Indexes
 #
 #  index_cohort_imports_on_organisation_id      (organisation_id)
-#  index_cohort_imports_on_programme_id         (programme_id)
 #  index_cohort_imports_on_uploaded_by_user_id  (uploaded_by_user_id)
 #
 # Foreign Keys
 #
 #  fk_rails_...  (organisation_id => organisations.id)
-#  fk_rails_...  (programme_id => programmes.id)
 #  fk_rails_...  (uploaded_by_user_id => users.id)
 #
 describe CohortImport do
-  subject(:cohort_import) do
-    create(:cohort_import, csv:, programme:, organisation:)
-  end
+  subject(:cohort_import) { create(:cohort_import, csv:, organisation:) }
 
   let(:programme) { create(:programme) }
   let(:organisation) { create(:organisation, programmes: [programme]) }
@@ -264,7 +259,7 @@ describe CohortImport do
     end
 
     it "ignores and counts duplicate records" do
-      create(:cohort_import, csv:, organisation:, programme:).process!
+      create(:cohort_import, csv:, organisation:).process!
       csv.rewind
 
       process!
