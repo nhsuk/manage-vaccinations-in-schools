@@ -10,7 +10,6 @@ class ImmunisationImportRow
     validates :batch_number, presence: true
     validates :delivery_site, presence: true
     validates :reason, absence: true
-    validates :vaccine_given, inclusion: { in: :valid_given_vaccines }
   end
 
   with_options unless: :administered do
@@ -18,8 +17,9 @@ class ImmunisationImportRow
     validates :batch_number, absence: true
     validates :delivery_site, absence: true
     validates :reason, presence: true
-    validates :vaccine_given, absence: true
   end
+
+  validates :vaccine_given, inclusion: { in: :valid_given_vaccines }
 
   validates :batch_expiry_date,
             comparison: {
