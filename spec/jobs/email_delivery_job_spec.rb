@@ -2,11 +2,11 @@
 
 describe EmailDeliveryJob do
   before(:all) do
-    Rails.configuration.action_mailer.delivery_method = :notify
-    Rails.configuration.action_mailer.notify_settings = { api_key: "abc" }
+    Settings.govuk_notify.enabled = true
+    Settings.govuk_notify.test_key = "abc"
   end
 
-  after(:all) { Rails.configuration.action_mailer.delivery_method = :test }
+  after(:all) { Settings.govuk_notify.enabled = false }
 
   let(:response) do
     instance_double(
