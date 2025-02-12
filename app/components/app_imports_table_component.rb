@@ -65,7 +65,7 @@ class AppImportsTableComponent < ViewComponent::Base
 
   def record_type(import)
     if import.is_a?(ClassImport)
-      "Class list"
+      "Class list records"
     elsif import.is_a?(CohortImport)
       "Child records"
     else
