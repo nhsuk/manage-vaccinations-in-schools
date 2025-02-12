@@ -659,9 +659,13 @@ en:
       consent_card_title:
         flu: Consent for the flu vaccination
         hpv: Consent for the HPV vaccination
+        menacwy: Consent for the MenACWY and Td/IPV vaccinations
+        td_ipv: Consent for the MenACWY and Td/IPV vaccinations
       i_agree:
         flu: Yes, I agree to them having a nasal flu vaccination
         hpv: Yes, I agree
+        menacwy: Yes, I agree to them having both vaccinations
+        td_ipv: Yes, I agree to them having both vaccinations
     confirmation_agreed:
       title:
         flu: " %{full_name} will get their nasal flu vaccination at school"
@@ -681,12 +685,18 @@ en:
       hint:
         flu: The nasal flu spray contains gelatine which comes from pigs.
         hpv: ""
+        menacwy: ""
+        td_ipv: ""
       i_agree:
         flu: Yes, I agree to them having a nasal vaccine
         hpv: Yes, I agree
+        menacwy: Yes, I agree to them having both vaccinations
+        td_ipv: Yes, I agree to them having both vaccinations
       title:
         flu: Do you agree to them having a nasal flu vaccination?
         hpv: Do you agree to them having the HPV vaccination?
+        menacwy: Do you agree to your child having the MenACWY and Td/IPV vaccinations?
+        td_ipv: Do you agree to your child having the MenACWY and Td/IPV vaccinations?
     reason_notes:
       title:
         already_vaccinated: Where did your child get their vaccination?
