@@ -34,7 +34,6 @@ describe EmailDeliveryJob do
         consent_form:,
         parent:,
         patient:,
-        patient_session:,
         programme:,
         sent_by:,
         vaccination_record:
@@ -55,7 +54,6 @@ describe EmailDeliveryJob do
     let(:consent) { nil }
     let(:consent_form) { nil }
     let(:patient) { create(:patient) }
-    let(:patient_session) { nil }
     let(:sent_by) { create(:user) }
     let(:vaccination_record) { nil }
 
@@ -65,7 +63,6 @@ describe EmailDeliveryJob do
         consent:,
         consent_form:,
         patient:,
-        patient_session:,
         programme:,
         vaccination_record:
       )

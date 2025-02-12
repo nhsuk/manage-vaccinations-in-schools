@@ -21,25 +21,28 @@
 #  created_at               :datetime         not null
 #  updated_at               :datetime         not null
 #  batch_id                 :bigint
-#  patient_session_id       :bigint           not null
+#  patient_id               :bigint
 #  performed_by_user_id     :bigint
 #  programme_id             :bigint           not null
+#  session_id               :bigint
 #
 # Indexes
 #
 #  index_vaccination_records_on_batch_id              (batch_id)
 #  index_vaccination_records_on_discarded_at          (discarded_at)
-#  index_vaccination_records_on_patient_session_id    (patient_session_id)
+#  index_vaccination_records_on_patient_id            (patient_id)
 #  index_vaccination_records_on_performed_by_user_id  (performed_by_user_id)
 #  index_vaccination_records_on_programme_id          (programme_id)
+#  index_vaccination_records_on_session_id            (session_id)
 #  index_vaccination_records_on_uuid                  (uuid) UNIQUE
 #
 # Foreign Keys
 #
 #  fk_rails_...  (batch_id => batches.id)
-#  fk_rails_...  (patient_session_id => patient_sessions.id)
+#  fk_rails_...  (patient_id => patients.id)
 #  fk_rails_...  (performed_by_user_id => users.id)
 #  fk_rails_...  (programme_id => programmes.id)
+#  fk_rails_...  (session_id => sessions.id)
 #
 FactoryBot.define do
   factory :vaccination_record do
@@ -48,26 +51,21 @@ FactoryBot.define do
         programme.organisations.first ||
           association(:organisation, programmes: [programme])
       end
-
-      session { association :session, programme:, organisation: }
-      patient do
-        association :patient,
-                    school: session.location.school? ? session.location : nil
+      vaccine do
+        programme.vaccines.active.first || association(:vaccine, programme:)
       end
     end
 
     programme
-    patient_session do
-      association :patient_session,
-                  programme:,
-                  patient:,
-                  session:,
-                  strategy: :create
+
+    patient do
+      association :patient,
+                  school: session&.location&.school? ? session.location : nil
     end
 
     delivery_site { "left_arm_upper_position" }
     delivery_method { "intramuscular" }
-    vaccine { programme.vaccines.active.first }
+
     batch do
       association :batch, organisation:, vaccine:, strategy: :create if vaccine
     end

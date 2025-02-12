@@ -58,7 +58,7 @@ describe SchoolSessionRemindersJob do
     end
 
     context "when already vaccinated" do
-      before { create(:vaccination_record, patient_session:, programme:) }
+      before { create(:vaccination_record, patient:, programme:) }
 
       it "doesn't send any notifications" do
         expect(SessionNotification).not_to receive(:create_and_send!)

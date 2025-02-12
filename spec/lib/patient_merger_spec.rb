@@ -74,7 +74,12 @@ describe PatientMerger do
     end
     let(:triage) { create(:triage, patient: patient_to_destroy, programme:) }
     let(:vaccination_record) do
-      create(:vaccination_record, patient_session:, programme:)
+      create(
+        :vaccination_record,
+        patient: patient_to_destroy,
+        session:,
+        programme:
+      )
     end
 
     it "destroys one of the patients" do

@@ -7,7 +7,6 @@ class EmailDeliveryJob < NotifyDeliveryJob
     consent_form: nil,
     parent: nil,
     patient: nil,
-    patient_session: nil,
     programme: nil,
     sent_by: nil,
     session: nil,
@@ -27,7 +26,6 @@ class EmailDeliveryJob < NotifyDeliveryJob
         consent:,
         consent_form:,
         patient:,
-        patient_session:,
         programme:,
         vaccination_record:
       )
@@ -36,13 +34,7 @@ class EmailDeliveryJob < NotifyDeliveryJob
 
     if (
          email_reply_to_id =
-           reply_to_id(
-             consent:,
-             consent_form:,
-             patient_session:,
-             session:,
-             vaccination_record:
-           )
+           reply_to_id(consent:, consent_form:, session:, vaccination_record:)
        )
       args[:email_reply_to_id] = email_reply_to_id
     end
@@ -58,7 +50,7 @@ class EmailDeliveryJob < NotifyDeliveryJob
         nil
       end
 
-    patient ||= consent&.patient || patient_session&.patient
+    patient ||= consent&.patient
 
     NotifyLogEntry.create!(
       consent_form:,
@@ -72,23 +64,14 @@ class EmailDeliveryJob < NotifyDeliveryJob
     )
   end
 
-  def reply_to_id(
-    consent:,
-    consent_form:,
-    patient_session:,
-    session:,
-    vaccination_record:
-  )
-    team =
-      session&.team || patient_session&.team || consent_form&.team ||
-        vaccination_record&.team
+  def reply_to_id(consent:, consent_form:, session:, vaccination_record:)
+    team = session&.team || consent_form&.team || vaccination_record&.team
 
     return team.reply_to_id if team&.reply_to_id
 
     organisation =
-      session&.organisation || patient_session&.organisation ||
-        consent_form&.organisation || consent&.organisation ||
-        vaccination_record&.organisation
+      session&.organisation || consent_form&.organisation ||
+        consent&.organisation || vaccination_record&.organisation
 
     organisation.reply_to_id
   end

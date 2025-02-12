@@ -90,8 +90,7 @@ describe Reports::ProgrammeVaccinationsExporter do
       it { should be_empty }
 
       context "with a vaccinated patient" do
-        let(:patient) { create(:patient, year_group: 8) }
-        let(:patient_session) { create(:patient_session, patient:, session:) }
+        let(:patient) { create(:patient, year_group: 8, session:) }
         let(:batch) do
           create(
             :batch,
@@ -105,7 +104,8 @@ describe Reports::ProgrammeVaccinationsExporter do
           create(
             :vaccination_record,
             batch:,
-            patient_session:,
+            patient:,
+            session:,
             performed_at:,
             created_at: performed_at,
             updated_at: performed_at,
@@ -173,13 +173,14 @@ describe Reports::ProgrammeVaccinationsExporter do
       end
 
       context "with a vaccinated patient outside the date range" do
-        let(:patient_session) { create(:patient_session, session:) }
+        let(:patient) { create(:patient_session, session:).patient }
         let(:start_date) { Date.current }
 
         before do
           create(
             :vaccination_record,
-            patient_session:,
+            patient:,
+            session:,
             created_at: 1.day.ago,
             updated_at: 1.day.ago,
             programme:,
@@ -191,13 +192,14 @@ describe Reports::ProgrammeVaccinationsExporter do
       end
 
       context "with a vaccinated patient that was updated in the date range" do
-        let(:patient_session) { create(:patient_session, session:) }
+        let(:patient) { create(:patient_session, session:).patient }
         let(:start_date) { 1.day.ago }
 
         before do
           create(
             :vaccination_record,
-            patient_session:,
+            patient:,
+            session:,
             created_at: 10.days.ago,
             updated_at: Time.current,
             programme:,
@@ -219,8 +221,7 @@ describe Reports::ProgrammeVaccinationsExporter do
       it { should be_empty }
 
       context "with a vaccinated patient" do
-        let(:patient) { create(:patient, year_group: 8) }
-        let(:patient_session) { create(:patient_session, patient:, session:) }
+        let(:patient) { create(:patient, year_group: 8, session:) }
         let(:batch) do
           create(
             :batch,
@@ -235,7 +236,8 @@ describe Reports::ProgrammeVaccinationsExporter do
             :vaccination_record,
             performed_at:,
             batch:,
-            patient_session:,
+            patient:,
+            session:,
             programme:,
             location_name: "A Clinic",
             performed_by: user

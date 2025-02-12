@@ -44,7 +44,6 @@ class RegisterAttendancesController < ApplicationController
     ps =
       @session.patient_sessions.preload_for_status.includes(
         :patient,
-        :vaccination_records,
         session: :session_dates,
         session_attendances: :session_date
       )

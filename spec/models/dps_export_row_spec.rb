@@ -14,7 +14,6 @@ describe DPSExportRow do
     create(:patient, date_of_birth: Date.new(2012, 12, 29), school:)
   end
   let(:session) { create(:session, organisation:, programme:, location:) }
-  let(:patient_session) { create(:patient_session, patient:, session:) }
   let(:performed_by) { create(:user, family_name: "Doe", given_name: "Jane") }
   let(:performed_by_given_name) { nil }
   let(:performed_by_family_name) { nil }
@@ -29,11 +28,12 @@ describe DPSExportRow do
       delivery_site: :left_arm_upper_position,
       dose_sequence: 1,
       location_name:,
-      patient_session:,
+      patient:,
       performed_at: Time.zone.local(2024, 6, 12, 11, 28, 31),
       performed_by:,
       performed_by_given_name:,
       performed_by_family_name:,
+      session:,
       uuid: "ea4860a5-6d97-4f31-b640-f5c50f43bfd2",
       vaccine:
     )

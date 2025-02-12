@@ -42,7 +42,6 @@ class ImportIssuesController < ApplicationController
         .includes(
           :batch,
           :location,
-          :patient_session,
           :performed_by_user,
           session: :location,
           patient: %i[gp_practice school],

@@ -93,17 +93,7 @@ class Reports::ProgrammeVaccinationsExporter
           :performed_by_user,
           :programme,
           :vaccine,
-          patient_session: {
-            patient: [
-              :gp_practice,
-              :school,
-              {
-                consents: [:parent, { patient: :parent_relationships }],
-                triages: :performed_by
-              }
-            ],
-            gillick_assessments: :performed_by
-          }
+          patient: %i[gp_practice school]
         )
 
     if start_date.present?
@@ -135,15 +125,35 @@ class Reports::ProgrammeVaccinationsExporter
     scope
   end
 
-  def row(vaccination_record:)
-    patient_session = vaccination_record.patient_session
-    gillick_assessment = patient_session.gillick_assessments.last
-    patient = patient_session.patient
-    location = vaccination_record.location
-    programme = vaccination_record.programme
+  def patient_sessions
+    @patient_sessions ||=
+      PatientSession
+        .preload_for_status
+        .includes(
+          gillick_assessments: :performed_by,
+          patient: {
+            consents: [:parent, { patient: :parent_relationships }],
+            triages: :performed_by
+          }
+        )
+        .where(
+          patient_id: vaccination_records.map(&:patient_id),
+          session_id: vaccination_records.map(&:session_id)
+        )
+  end
 
-    consents = patient_session.latest_consents(programme:)
-    triage = patient_session.latest_triage(programme:)
+  def row(vaccination_record:)
+    location = vaccination_record.location
+    patient = vaccination_record.patient
+    programme = vaccination_record.programme
+    session = vaccination_record.session
+
+    patient_session =
+      patient_sessions.find { it.patient == patient && it.session == session }
+
+    consents = patient_session&.latest_consents(programme:) || []
+    gillick_assessment = patient_session&.gillick_assessments&.last
+    triage = patient_session&.latest_triage(programme:)
 
     [
       organisation.ods_code,
@@ -163,7 +173,7 @@ class Reports::ProgrammeVaccinationsExporter
       nhs_number_status_code(patient:),
       patient.gp_practice&.ods_code || "",
       patient.gp_practice&.name || "",
-      consent_status(patient_session:),
+      patient_session ? consent_status(patient_session:) : "",
       consent_details(consents:),
       health_question_answers(consents:),
       triage&.status&.humanize || "",

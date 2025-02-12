@@ -35,11 +35,13 @@ class Session < ApplicationRecord
   has_many :patient_sessions
   has_many :session_dates, -> { order(:value) }
   has_many :session_notifications
+  has_many :vaccination_records
 
   has_and_belongs_to_many :immunisation_imports
   has_and_belongs_to_many :programmes
 
   has_one :team, through: :location
+  has_many :gillick_assessments, through: :patient_sessions
   has_many :patients, through: :patient_sessions
   has_many :vaccines, through: :programmes
 

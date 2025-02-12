@@ -89,7 +89,9 @@ class DPSExportRow
   end
 
   def site_code
-    organisation.ods_code
+    # FIXME: If the vaccination record isn't attached to a session we don't have an organisation.
+    # https://trello.com/c/TxFJbYnh/1428-import-vaccinations-administered-by-someone-other-than-the-specific-sais-team-primary-source-false
+    organisation&.ods_code
   end
 
   def site_code_type_uri
@@ -186,10 +188,12 @@ class DPSExportRow
   end
 
   def location_code
-    location.urn.presence || location.ods_code
+    location&.urn.presence || location&.ods_code
   end
 
   def location_code_type_uri
+    return nil if location.nil?
+
     if location.urn.present?
       "https://fhir.hl7.org.uk/Id/urn-school-number"
     else

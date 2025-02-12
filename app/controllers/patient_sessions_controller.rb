@@ -19,30 +19,27 @@ class PatientSessionsController < ApplicationController
 
   def set_patient_session
     @patient_session =
-      policy_scope(PatientSession).includes(
-        :gillick_assessments,
-        :location,
-        :programmes,
-        :session,
-        :session_attendances,
-        patient: [
-          :gp_practice,
-          :school,
-          {
+      policy_scope(PatientSession)
+        .eager_load(:location, :session, patient: %i[gp_practice school])
+        .preload(
+          :gillick_assessments,
+          :programmes,
+          :session_attendances,
+          patient: {
             consents: %i[parent],
             parent_relationships: :parent,
             triages: :performed_by
+          },
+          vaccination_records: {
+            vaccine: :programme
           }
-        ],
-        vaccination_records: {
-          vaccine: :programme
-        }
-      ).find_by!(
-        session: {
-          slug: params[:session_slug]
-        },
-        patient_id: params.fetch(:id, params[:patient_id])
-      )
+        )
+        .find_by!(
+          session: {
+            slug: params[:session_slug]
+          },
+          patient_id: params.fetch(:id, params[:patient_id])
+        )
   end
 
   def set_session

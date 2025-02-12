@@ -75,6 +75,7 @@ class Patient < ApplicationRecord
   has_many :school_moves
   has_many :session_notifications
   has_many :triages
+  has_many :vaccination_records, -> { kept }
 
   has_many :parents, through: :parent_relationships
   has_many :gillick_assessments,
@@ -85,7 +86,6 @@ class Patient < ApplicationRecord
            through: :patient_sessions
   has_many :session_attendances, through: :patient_sessions
   has_many :sessions, through: :patient_sessions
-  has_many :vaccination_records, through: :patient_sessions
 
   has_many :upcoming_sessions,
            -> { upcoming },
@@ -397,7 +397,11 @@ class Patient < ApplicationRecord
 
   def clear_upcoming_sessions
     patient_sessions
-      .includes(:session_attendances)
+      .includes(
+        :gillick_assessments,
+        :session_attendances,
+        :vaccination_records
+      )
       .where(session: upcoming_sessions)
       .find_each(&:destroy_if_safe!)
   end
