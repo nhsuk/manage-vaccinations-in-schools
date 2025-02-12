@@ -1,9 +1,13 @@
 <%= h1 t("consent_forms.start.title") %>
 
-<% t("consent_forms.start.paragraphs.#{@programme.type}").each do |paragraph| %>
-  <p class="nhsuk-u-margin-bottom-6">
-    <%= paragraph %>
-  </p>
+<% @session.programmes.each do |programme| %>
+  <h2 class="nhsuk-heading-m">
+    <%= t("consent_forms.start.vaccines.#{programme.type}.title") %>
+  </h2>
+
+  <% t("consent_forms.start.vaccines.#{programme.type}.description").each do %>
+    <p><%= it %></p>
+  <% end %>
 <% end %>
 
 <%= form_with url: url_for(action: :create) do |f| %>
