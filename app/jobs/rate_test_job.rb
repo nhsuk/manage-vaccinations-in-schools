@@ -12,7 +12,7 @@ class RateTestJob < ApplicationJob
   # there’s more instances where more than 5 requests are attempted.
   retry_on GoodJob::ActiveJobExtensions::Concurrency::ConcurrencyExceededError,
            attempts: :unlimited,
-           wait: ->(_) { rand(0.5..5) }
+           wait: ->(_) { rand(0.01..0.4) }
 
   around_perform do |job, block|
     result = block.call
