@@ -700,19 +700,36 @@ en:
         personal_choice: Tell us why you don’t agree
         will_be_vaccinated_elsewhere: Where will your child get their vaccination?
     start:
-      paragraphs:
+      vaccines:
         flu:
-          - >-
-            The vaccination helps to protect children against flu. It also
-            protects others who are vulnerable to flu, such as babies and older
-            people.
+          title: Flu
+          description:
+            - >-
+              The vaccination helps to protect children against flu. It also
+              protects others who are vulnerable to flu, such as babies and
+              older people.
         hpv:
-          - >-
-            The HPV vaccine helps to prevent HPV related cancers from developing
-            in boys and girls.
-          - >-
-            The number of doses you need depends on your age and how well your
-            immune system works. Young people usually only need 1 dose.
+          title: HPV
+          description:
+            - >-
+              The HPV vaccine helps to prevent HPV related cancers from
+              developing in boys and girls.
+            - >-
+              The number of doses you need depends on your age and how well your
+              immune system works. Young people usually only need 1 dose.
+        menacwy:
+          title: MenACWY
+          description:
+            - >-
+              The MenACWY vaccine helps protect against meningitis and sepsis.
+              It is recommended for all teenagers. Most people only need one
+              dose of the vaccine.
+        td_ipv:
+          title: Td/IPV (3-in-1 teenage booster)
+          description:
+            - >-
+              The Td/IPV vaccine (also called the 3-in-1 teenage booster) helps
+              protect against tetanus, diphtheria and polio.
       title: Give or refuse consent for vaccinations
   dashboard:
     index:
