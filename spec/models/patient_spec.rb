@@ -57,12 +57,12 @@ describe Patient do
     describe "#order_by_name" do
       subject(:scope) { described_class.order_by_name }
 
-      let(:patient_a) { create(:patient, given_name: "Adam") }
+      let(:patient_a) { create(:patient, family_name: "Adams") }
       let(:patient_b) do
-        create(:patient, given_name: "claire", family_name: "Jones")
+        create(:patient, given_name: "christine", family_name: "Jones")
       end
       let(:patient_c) do
-        create(:patient, given_name: "claire", family_name: "smith")
+        create(:patient, given_name: "claire", family_name: "Jones")
       end
 
       it { should eq([patient_a, patient_b, patient_c]) }
