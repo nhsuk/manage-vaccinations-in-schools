@@ -97,10 +97,18 @@ FactoryBot.define do
 
     trait :menacwy do
       type { "menacwy" }
+
+      after(:create) do |vaccine|
+        create(:health_question, :severe_allergies, vaccine:)
+      end
     end
 
     trait :td_ipv do
       type { "td_ipv" }
+
+      after(:create) do |vaccine|
+        create(:health_question, :severe_reaction, vaccine:)
+      end
     end
 
     all_data = YAML.load_file(Rails.root.join("config/vaccines.yml"))
