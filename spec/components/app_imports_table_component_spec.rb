@@ -66,8 +66,8 @@ describe AppImportsTableComponent do
 
   it "renders the headers" do
     expect(rendered).to have_css(".nhsuk-table__header", text: "Imported on")
-    expect(rendered).to have_css(".nhsuk-table__header", text: "Imported by")
-    expect(rendered).to have_css(".nhsuk-table__header", text: "Import type")
+    expect(rendered).to have_css(".nhsuk-table__header", text: "Type")
+    expect(rendered).to have_css(".nhsuk-table__header", text: "Status")
     expect(rendered).to have_css(".nhsuk-table__header", text: "Records")
   end
 
@@ -86,9 +86,7 @@ describe AppImportsTableComponent do
       text: "Vaccination record"
     )
     expect(rendered).to have_css(".nhsuk-table__cell", text: "Class list")
-    expect(rendered).to have_css(".nhsuk-table__cell", text: "John Smith")
-    expect(rendered).to have_css(".nhsuk-table__cell", text: "Jennifer Smith")
-    expect(rendered).to have_css(".nhsuk-table__cell", text: "Jack Smith")
+    expect(rendered).to have_css(".nhsuk-table__cell", text: "Completed")
     expect(rendered).to have_css(".nhsuk-table__cell", text: "1")
     expect(rendered).to have_content("Test School")
   end
