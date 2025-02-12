@@ -1,5 +1,5 @@
 <% content_for :before_main do %>
-  <%= render AppBacklinkComponent.new(session_path(@session), name: @session.location.name) %>
+  <%= render AppBacklinkComponent.new(draft_class_import_path("session")) %>
 <% end %>
 
 <% title = "Import class list" %>
@@ -9,8 +9,6 @@
 
 <%= form_with model: @class_import, url: class_imports_path do |f| %>
   <%= f.govuk_error_summary %>
-
-  <%= hidden_field_tag :session_id, @session.id %>
 
   <%= f.govuk_file_field :csv,
                          caption: { text: @session.location.name, size: "l" },
