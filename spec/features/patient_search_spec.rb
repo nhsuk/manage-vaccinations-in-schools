@@ -27,11 +27,8 @@ describe "Patient search" do
   end
 
   def given_that_i_am_signed_in
-    @organisation = create(:organisation, :with_one_nurse)
-    @user = @organisation.users.first
-    cohort = create(:cohort, organisation: @organisation)
+    organisation = create(:organisation, :with_one_nurse)
 
-    # Create test patients with various names
     [
       %w[Aaron Smith],
       %w[Aardvark Jones],
@@ -39,18 +36,18 @@ describe "Patient search" do
       %w[Cassidy Wilson],
       %w[Bob Taylor]
     ].each do |(given_name, family_name)|
-      create(:patient, given_name:, family_name:, cohort:)
+      create(:patient, given_name:, family_name:, organisation:)
     end
 
     create(
       :patient,
       given_name: "Salvor",
       family_name: "Hardin",
-      cohort:,
+      organisation:,
       nhs_number: nil
     )
 
-    sign_in @user
+    sign_in organisation.users.first
   end
 
   def when_i_visit_the_patients_page

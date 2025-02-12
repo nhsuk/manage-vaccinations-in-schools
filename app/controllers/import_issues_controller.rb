@@ -45,7 +45,7 @@ class ImportIssuesController < ApplicationController
           :patient_session,
           :performed_by_user,
           session: :location,
-          patient: %i[cohort gp_practice school],
+          patient: %i[gp_practice school],
           vaccine: :programme
         )
 
@@ -53,7 +53,7 @@ class ImportIssuesController < ApplicationController
       policy_scope(Patient)
         .with_pending_changes
         .distinct
-        .eager_load(:cohort, :gp_practice, :school)
+        .eager_load(:gp_practice, :school)
         .preload(:school_moves, :upcoming_sessions)
 
     @import_issues =

@@ -42,7 +42,7 @@ class DevController < ApplicationController
 
       sessions.destroy_all
 
-      patients = Patient.joins(:cohort).where(cohorts: { organisation: })
+      patients = organisation.patients
 
       SchoolMove.where(patient: patients).destroy_all
       SchoolMove.where(organisation:).destroy_all
@@ -54,9 +54,8 @@ class DevController < ApplicationController
       Consent.where(organisation:).destroy_all
       Triage.where(organisation:).destroy_all
 
-      patients.destroy_all
+      patients.includes(:parents).destroy_all
 
-      Cohort.where(organisation:).destroy_all
       Batch.where(organisation:).destroy_all
 
       UnscheduledSessionsFactory.new.call

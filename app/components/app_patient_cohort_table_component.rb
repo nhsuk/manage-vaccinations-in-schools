@@ -11,5 +11,5 @@ class AppPatientCohortTableComponent < ViewComponent::Base
 
   attr_reader :patient
 
-  delegate :cohort, to: :patient
+  delegate :organisation, :year_group, to: :patient
 end

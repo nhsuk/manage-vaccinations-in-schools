@@ -52,14 +52,8 @@ describe "Manage children" do
     and_i_see_the_cohort
 
     when_i_click_on_remove_from_cohort
-    then_i_see_the_child
-    and_i_see_a_removed_from_cohort_message
-    and_no_longer_see_the_cohort
-
-    when_i_click_on_children
-    and_i_click_on_a_child_who_is_only_in_the_cohort
-    when_i_click_on_remove_from_cohort
     then_i_see_the_children
+    and_i_see_a_removed_from_cohort_message
   end
 
   scenario "Viewing important notices" do
@@ -123,7 +117,7 @@ describe "Manage children" do
         :patient,
         given_name: "Jane",
         family_name: "Doe",
-        cohort: @organisation.cohorts.first
+        organisation: @organisation
       )
   end
 
@@ -240,12 +234,7 @@ describe "Manage children" do
   end
 
   def and_i_see_a_removed_from_cohort_message
-    expect(page).to have_content(/removed from Year ([0-9]+) cohort/)
-  end
-
-  def and_no_longer_see_the_cohort
-    expect(page).to have_content("No cohorts")
-    expect(page).to have_content("No sessions")
+    expect(page).to have_content("removed from cohort")
   end
 
   def when_i_go_to_the_dashboard
@@ -298,9 +287,5 @@ describe "Manage children" do
     expect(page).to have_content("Notices (1)")
     expect(page).to have_content(@restricted_patient.full_name)
     expect(page).to have_content("Record flagged as sensitive")
-  end
-
-  def and_i_click_on_a_child_who_is_only_in_the_cohort
-    click_on "Jane Doe"
   end
 end

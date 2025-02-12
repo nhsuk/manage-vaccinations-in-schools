@@ -580,6 +580,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_01_201237) do
     t.datetime "updated_from_pds_at"
     t.bigint "gp_practice_id"
     t.integer "birth_academic_year", null: false
+    t.bigint "organisation_id"
     t.index ["cohort_id"], name: "index_patients_on_cohort_id"
     t.index ["family_name", "given_name"], name: "index_patients_on_names_family_first"
     t.index ["family_name"], name: "index_patients_on_family_name_trigram", opclass: :gin_trgm_ops, using: :gin
@@ -587,6 +588,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_01_201237) do
     t.index ["given_name"], name: "index_patients_on_given_name_trigram", opclass: :gin_trgm_ops, using: :gin
     t.index ["gp_practice_id"], name: "index_patients_on_gp_practice_id"
     t.index ["nhs_number"], name: "index_patients_on_nhs_number", unique: true
+    t.index ["organisation_id"], name: "index_patients_on_organisation_id"
     t.index ["school_id"], name: "index_patients_on_school_id"
   end
 
@@ -856,6 +858,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_01_201237) do
   add_foreign_key "patients", "cohorts"
   add_foreign_key "patients", "locations", column: "gp_practice_id"
   add_foreign_key "patients", "locations", column: "school_id"
+  add_foreign_key "patients", "organisations"
   add_foreign_key "pre_screenings", "patient_sessions"
   add_foreign_key "pre_screenings", "users", column: "performed_by_user_id"
   add_foreign_key "programmes_sessions", "programmes"

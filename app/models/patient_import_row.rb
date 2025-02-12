@@ -181,7 +181,7 @@ class PatientImportRow
   def birth_academic_year
     if (year_group = @data["CHILD_YEAR_GROUP"]).present?
       begin
-        Date.current.academic_year - Integer(year_group) - 5
+        Integer(year_group).to_birth_academic_year
       rescue ArgumentError, TypeError
         nil
       end
