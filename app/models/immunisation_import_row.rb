@@ -20,7 +20,6 @@ class ImmunisationImportRow
   end
 
   validates :vaccine_given, inclusion: { in: :valid_given_vaccines }
-  validates :programme, presence: true
 
   validates :batch_expiry_date,
             comparison: {
