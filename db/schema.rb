@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_02_05_132254) do
+ActiveRecord::Schema[8.0].define(version: 2025_02_08_145823) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -290,8 +290,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_05_132254) do
     t.boolean "knows_consequences", null: false
     t.boolean "knows_delivery", null: false
     t.boolean "knows_side_effects", null: false
+    t.bigint "programme_id", null: false
     t.index ["patient_session_id"], name: "index_gillick_assessments_on_patient_session_id"
     t.index ["performed_by_user_id"], name: "index_gillick_assessments_on_performed_by_user_id"
+    t.index ["programme_id"], name: "index_gillick_assessments_on_programme_id"
   end
 
   create_table "good_job_batches", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -831,6 +833,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_05_132254) do
   add_foreign_key "consents", "users", column: "recorded_by_user_id"
   add_foreign_key "dps_exports", "programmes"
   add_foreign_key "gillick_assessments", "patient_sessions"
+  add_foreign_key "gillick_assessments", "programmes"
   add_foreign_key "gillick_assessments", "users", column: "performed_by_user_id"
   add_foreign_key "health_questions", "health_questions", column: "follow_up_question_id"
   add_foreign_key "health_questions", "health_questions", column: "next_question_id"

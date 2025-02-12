@@ -40,7 +40,10 @@ class AppActivityLogComponent < ViewComponent::Base
         )
         .tap { it.where(programme:) if programme }
     @gillick_assessments =
-      (patient || patient_session).gillick_assessments.includes(:performed_by)
+      (patient || patient_session)
+        .gillick_assessments
+        .tap { it.where(programme:) if programme }
+        .includes(:performed_by)
     @notify_log_entries = @patient.notify_log_entries.includes(:sent_by)
     @pre_screenings =
       (patient || patient_session).pre_screenings.includes(:performed_by)

@@ -82,10 +82,6 @@ class PatientSession < ApplicationRecord
 
   delegate :send_notifications?, to: :patient
 
-  def gillick_competent?
-    gillick_assessments.last&.gillick_competent? || false
-  end
-
   def able_to_vaccinate?
     !unable_to_vaccinate?
   end
@@ -105,6 +101,10 @@ class PatientSession < ApplicationRecord
 
   def latest_consents(programme:)
     latest_consents_by_programme.fetch(programme.id, [])
+  end
+
+  def gillick_assessment(programme:)
+    gillick_assessments.select { it.programme_id == programme.id }.last
   end
 
   def triages(programme:)
