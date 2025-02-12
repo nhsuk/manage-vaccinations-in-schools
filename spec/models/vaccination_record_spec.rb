@@ -50,7 +50,16 @@ describe VaccinationRecord do
   subject(:vaccination_record) { build(:vaccination_record) }
 
   describe "validations" do
-    it { should validate_absence_of(:location_name) }
+    context "for a school session" do
+      subject(:vaccination_record) do
+        build(:vaccination_record, programme:, session:)
+      end
+
+      let(:programme) { create(:programme) }
+      let(:session) { create(:session, programme: programme) }
+
+      it { should validate_absence_of(:location_name) }
+    end
 
     context "for a generic clinic" do
       subject(:vaccination_record) do

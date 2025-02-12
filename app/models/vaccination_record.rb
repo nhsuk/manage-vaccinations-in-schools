@@ -196,7 +196,7 @@ class VaccinationRecord < ApplicationRecord
   private
 
   def requires_location_name?
-    location&.generic_clinic?
+    session.nil? || location&.generic_clinic?
   end
 
   def maximum_dose_sequence

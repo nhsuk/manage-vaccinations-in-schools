@@ -81,6 +81,8 @@ FactoryBot.define do
     dose_sequence { 1 }
     uuid { SecureRandom.uuid }
 
+    location_name { "Unknown" if session.nil? }
+
     trait :not_administered do
       delivery_site { nil }
       delivery_method { nil }
