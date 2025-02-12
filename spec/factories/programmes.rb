@@ -15,7 +15,7 @@
 #
 FactoryBot.define do
   factory :programme do
-    type { %w[flu hpv].sample }
+    type { Programme.types.keys.sample }
     vaccines { [association(:vaccine, programme: instance)] }
 
     trait :hpv do

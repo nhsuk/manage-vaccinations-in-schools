@@ -381,6 +381,8 @@ en:
         types:
           flu: Flu
           hpv: HPV
+          menacwy: MenACWY
+          td_ipv: Td/IPV
       school_move:
         sources:
           class_list_import: Class list
