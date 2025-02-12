@@ -124,9 +124,10 @@ class ImmunisationImport < ApplicationRecord
       patient = row.patient
 
       next unless patient.vaccinated?(row.programme)
+
       patient
         .patient_sessions
-        .includes(:session_attendances)
+        .includes(:programmes, :session_attendances)
         .where(session: organisation.sessions.upcoming)
         .find_each(&:destroy_if_safe!)
     end

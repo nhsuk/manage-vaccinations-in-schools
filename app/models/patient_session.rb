@@ -39,9 +39,6 @@ class PatientSession < ApplicationRecord
   has_many :gillick_assessments, -> { order(:created_at) }
   has_many :pre_screenings, -> { order(:created_at) }
 
-  has_many :vaccination_records,
-           -> { kept.where(session_id: _1.session_id).order(:created_at) },
-           through: :patient
   has_many :session_notifications,
            -> { where(session_id: _1.session_id) },
            through: :patient
@@ -70,8 +67,7 @@ class PatientSession < ApplicationRecord
             :gillick_assessments,
             :programmes,
             :session_attendances,
-            :vaccination_records,
-            patient: [:triages, { consents: :parent }]
+            patient: [:triages, { consents: :parent }, :vaccination_records]
           )
         end
 
@@ -87,8 +83,14 @@ class PatientSession < ApplicationRecord
   end
 
   def safe_to_destroy?
-    vaccination_records.empty? && gillick_assessments.empty? &&
-      session_attendances.none?(&:attending?)
+    any_vaccination_records =
+      programmes.any? do |programme|
+        vaccination_records(programme:, for_session: true).present?
+      end
+
+    return false if any_vaccination_records
+
+    gillick_assessments.empty? && session_attendances.none?(&:attending?)
   end
 
   def destroy_if_safe!
@@ -115,12 +117,28 @@ class PatientSession < ApplicationRecord
     latest_triage_by_programme[programme.id]
   end
 
+  def vaccination_records(programme:, for_session: false)
+    vaccination_records_for_programme =
+      patient.vaccination_records.select { it.programme_id == programme.id }
+
+    # Normally we would want to show all vaccination records for a patient regardless of
+    # the session they were vaccinated in. However, there are some cases where it may be
+    # necessary to show only vaccination records for this particular session.
+
+    if for_session
+      vaccination_records_for_programme.select { it.session_id == session_id }
+    else
+      vaccination_records_for_programme
+    end
+  end
+
   def todays_attendance
     @todays_attendance ||=
       if (session_date = session.session_dates.find(&:today?))
-        session_attendances.eager_load(:session_date).find_or_initialize_by(
-          session_date:
-        )
+        session_attendances.eager_load(
+          :patient,
+          :session_date
+        ).find_or_initialize_by(session_date:)
       end
   end
 

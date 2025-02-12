@@ -26,9 +26,7 @@ class AppSimpleStatusBannerComponent < ViewComponent::Base
   def nurse
     (
       @patient_session.triages(programme:) +
-        @patient_session.vaccination_records.select do
-          it.programme_id == programme.id
-        end
+        @patient_session.vaccination_records(programme:)
     ).max_by(&:updated_at)&.performed_by&.full_name
   end
 

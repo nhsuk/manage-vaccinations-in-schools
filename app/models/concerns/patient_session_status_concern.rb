@@ -129,19 +129,18 @@ module PatientSessionStatusConcern
     end
 
     def vaccination_administered?
-      vaccination_records.any?(&:administered?)
+      programme = programmes.first # TODO: handle multiple programmes
+      vaccination_records(programme:).any?(&:administered?)
     end
 
     def vaccination_not_administered?
-      vaccination_records.any?(&:not_administered?)
+      programme = programmes.first # TODO: handle multiple programmes
+      vaccination_records(programme:).any?(&:not_administered?)
     end
 
     def vaccination_can_be_delayed?
-      programme_id = programmes.first.id # TODO: handle multiple programmes
-      if (
-           vaccination_record =
-             vaccination_records.select { it.programme_id == programme_id }.last
-         )
+      programme = programmes.first # TODO: handle multiple programmes
+      if (vaccination_record = vaccination_records(programme:).last)
         vaccination_record.not_administered? &&
           vaccination_record.retryable_reason?
       end

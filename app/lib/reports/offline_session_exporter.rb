@@ -132,18 +132,15 @@ class Reports::OfflineSessionExporter
         :programmes,
         patient: {
           consents: [:parent, { patient: :parent_relationships }],
-          triages: :performed_by
+          triages: :performed_by,
+          vaccination_records: %i[batch performed_by_user vaccine]
         },
-        gillick_assessments: :performed_by,
-        vaccination_records: %i[batch performed_by_user vaccine]
+        gillick_assessments: :performed_by
       )
       .order_by_name
   end
 
   def rows(patient_session:)
-    vaccination_records =
-      patient_session.vaccination_records.order(:performed_at)
-
     bg_color =
       if patient_session.consent_refused?
         "F7D4D1"
@@ -160,20 +157,24 @@ class Reports::OfflineSessionExporter
       }
     }
 
-    if vaccination_records.any?
-      vaccination_records.map do |vaccination_record|
-        Row.new(columns, style: row_style) do |row|
-          programme = vaccination_record.programme
-          add_patient_cells(row, patient_session:, programme:)
-          add_existing_row_cells(row, vaccination_record:)
+    session.programmes.flat_map do |programme|
+      vaccination_records =
+        patient_session.vaccination_records(programme:, for_session: true)
+
+      if vaccination_records.any?
+        vaccination_records.map do |vaccination_record|
+          Row.new(columns, style: row_style) do |row|
+            add_patient_cells(row, patient_session:, programme:)
+            add_existing_row_cells(row, vaccination_record:)
+          end
         end
-      end
-    else
-      session.programmes.map do |programme|
-        Row.new(columns, style: row_style) do |row|
-          add_patient_cells(row, patient_session:, programme:)
-          add_new_row_cells(row, programme:)
-        end
+      else
+        [
+          Row.new(columns, style: row_style) do |row|
+            add_patient_cells(row, patient_session:, programme:)
+            add_new_row_cells(row, programme:)
+          end
+        ]
       end
     end
   end

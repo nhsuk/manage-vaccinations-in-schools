@@ -11,10 +11,10 @@ class SessionAttendancePolicy < ApplicationPolicy
 
   private
 
-  delegate :patient_session, :session_date, to: :record
+  delegate :patient, :session_date, to: :record
 
   def was_seen_by_nurse?
-    patient_session
+    patient
       .vaccination_records
       .where(performed_at: session_date.value.all_day)
       .exists?

@@ -67,15 +67,15 @@ class Patient < ApplicationRecord
 
   has_many :access_log_entries
   has_many :consent_notifications
-  has_many :consents
+  has_many :consents, -> { order(:created_at) }
   has_many :notify_log_entries
   has_many :parent_relationships
   has_many :patient_sessions
   has_many :school_move_log_entries
   has_many :school_moves
   has_many :session_notifications
-  has_many :triages
-  has_many :vaccination_records, -> { kept }
+  has_many :triages, -> { order(:created_at) }
+  has_many :vaccination_records, -> { kept.order(:performed_at) }
 
   has_many :parents, through: :parent_relationships
   has_many :gillick_assessments,
@@ -398,9 +398,10 @@ class Patient < ApplicationRecord
   def clear_upcoming_sessions
     patient_sessions
       .includes(
+        :programmes,
         :gillick_assessments,
         :session_attendances,
-        :vaccination_records
+        patient: :vaccination_records
       )
       .where(session: upcoming_sessions)
       .find_each(&:destroy_if_safe!)

@@ -49,7 +49,7 @@ class AppActivityLogComponent < ViewComponent::Base
     @triages = @patient.triages.includes(:performed_by)
 
     @vaccination_records =
-      (patient || patient_session).vaccination_records.with_discarded.includes(
+      @patient.vaccination_records.with_discarded.includes(
         :performed_by_user,
         :programme,
         :vaccine

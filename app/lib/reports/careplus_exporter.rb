@@ -74,6 +74,7 @@ class Reports::CareplusExporter
         .patient_sessions
         .includes(
           :location,
+          :programmes,
           patient: [
             :school,
             :vaccination_records,
@@ -114,11 +115,17 @@ class Reports::CareplusExporter
 
   def rows(patient_session:)
     patient = patient_session.patient
-    vaccination_records =
-      patient_session.vaccination_records.administered.order(:performed_at)
 
-    if vaccination_records.any?
-      [existing_row(patient:, patient_session:, vaccination_records:)]
+    patient_session.programmes.filter_map do |programme|
+      vaccination_records =
+        patient_session.vaccination_records(
+          programme:,
+          for_session: true
+        ).select(&:administered?)
+
+      if vaccination_records.any?
+        existing_row(patient:, patient_session:, vaccination_records:)
+      end
     end
   end
 
