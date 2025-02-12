@@ -3,8 +3,6 @@
 class RateTestJob < ApplicationJob
   include GoodJob::ActiveJobExtensions::Concurrency
 
-  # around_perform :perform_with_counter
-
   good_job_control_concurrency_with perform_throttle: [5, 1.second],
                                     key: :nhs_api
 
@@ -15,12 +13,6 @@ class RateTestJob < ApplicationJob
   retry_on GoodJob::ActiveJobExtensions::Concurrency::ConcurrencyExceededError,
            attempts: :unlimited,
            wait: ->(_) { rand(0.5..5) }
-
-  retry_on Faraday::TooManyRequestsError,
-           attempts: 2, # :unlimited,
-           wait: ->(_) { rand(0.5..5) }
-
-  retry_on Faraday::ServerError, wait: :polynomially_longer
 
   around_perform do |job, block|
     result = block.call
