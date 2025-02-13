@@ -3,6 +3,45 @@
 describe VaccinationRecordPolicy do
   subject(:policy) { described_class.new(user, vaccination_record) }
 
+  describe "update?" do
+    subject(:update?) { policy.update? }
+
+    let(:programme) { create(:programme) }
+    let(:organisation) { create(:organisation, programmes: [programme]) }
+
+    let(:vaccination_record) { create(:vaccination_record, programme:) }
+
+    context "with an admin" do
+      let(:user) { build(:admin, organisations: [organisation]) }
+
+      it { should be(false) }
+
+      context "when vaccination record is managed by the organisation" do
+        let(:session) { create(:session, organisation:, programme:) }
+        let(:vaccination_record) do
+          create(:vaccination_record, organisation:, programme:, session:)
+        end
+
+        it { should be(false) }
+      end
+    end
+
+    context "with a nurse" do
+      let(:user) { build(:nurse, organisations: [organisation]) }
+
+      it { should be(false) }
+
+      context "when vaccination record is managed by the organisation" do
+        let(:session) { create(:session, organisation:, programme:) }
+        let(:vaccination_record) do
+          create(:vaccination_record, organisation:, programme:, session:)
+        end
+
+        it { should be(true) }
+      end
+    end
+  end
+
   describe "destroy?" do
     subject(:destroy?) { policy.destroy? }
 
