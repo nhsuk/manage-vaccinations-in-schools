@@ -716,6 +716,13 @@ en:
       title:
         flu: Give or refuse consent for a flu vaccination
         hpv: Give or refuse consent for an HPV vaccination
+  dashboard:
+    index:
+      notices:
+        header: Important notices
+        description:
+          one: "%{count} important notice needs attention"
+          other: "%{count} important notices need attention"
   draft_consents:
     agree:
       title:
