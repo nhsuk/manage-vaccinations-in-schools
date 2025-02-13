@@ -184,5 +184,22 @@ describe PatientMerger do
         )
       end
     end
+
+    it "doesn't change the cohort" do
+      expect { call }.not_to(change { patient_to_keep.reload.organisation })
+    end
+
+    context "if the patient to keep is not in the cohort" do
+      let(:organisation) { create(:organisation) }
+
+      let(:patient_to_keep) { create(:patient, organisation: nil) }
+      let(:patient_to_destroy) { create(:patient, organisation:) }
+
+      it "adds the patient back in to the cohort" do
+        expect { call }.to change { patient_to_keep.reload.organisation }.to(
+          organisation
+        )
+      end
+    end
   end
 end

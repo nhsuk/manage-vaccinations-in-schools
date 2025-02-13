@@ -95,6 +95,13 @@ class PatientMerger
       patient_to_destroy.cohort_imports.clear
       patient_to_destroy.immunisation_imports.clear
 
+      # Add patient back to the cohort if the patient to destroy was in the cohort.
+      if patient_to_keep.organisation_id.nil?
+        patient_to_keep.update!(
+          organisation_id: patient_to_destroy.organisation_id
+        )
+      end
+
       patient_to_destroy.reload.destroy!
     end
   end
