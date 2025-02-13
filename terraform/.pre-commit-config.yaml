@@ -1,0 +1,14 @@
+repos:
+  - repo: local
+    hooks:
+      - id: terraform-fmt
+        name: terraform fmt
+        entry: terraform fmt -recursive .
+        language: system
+        files: \.(tf|tfvars|tftest\.hcl)$
+#        stages: [prepare-commit-msg]
+      - id: tflint
+        name: terraform linting
+        entry: ./hooks/lint.sh
+        language: script
+        files: \.tf$
