@@ -50,7 +50,7 @@ class EmailDeliveryJob < NotifyDeliveryJob
         nil
       end
 
-    patient ||= consent&.patient
+    patient ||= consent&.patient || vaccination_record&.patient
 
     NotifyLogEntry.create!(
       consent_form:,
