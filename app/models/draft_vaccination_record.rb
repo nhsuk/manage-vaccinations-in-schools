@@ -121,10 +121,7 @@ class DraftVaccinationRecord
   end
 
   def patient
-    PatientPolicy::Scope
-      .new(@current_user, Patient)
-      .resolve
-      .find_by(id: patient_id)
+    Patient.find_by(id: patient_id)
   end
 
   def patient=(value)
