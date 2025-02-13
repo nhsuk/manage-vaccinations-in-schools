@@ -1,0 +1,57 @@
+repos:
+  - repo: https://github.com/antonbabenko/pre-commit-terraform
+    rev: v1.97.3
+    hooks:
+      - id: terraform_fmt
+        files: \.(tf|tfvars|hcl)$
+      - id: terraform_tflint
+        stages: [manual]
+        args:
+          - --args=--config=__GIT_WORKING_DIR__/terraform/.tflint.hcl
+        files: \.tf$
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+        exclude: ^copilot/
+      - id: check-json
+      - id: check-added-large-files # Default is fail on files larger than 500kB
+      - id: mixed-line-ending
+        args: [--fix=lf] # Ensure all line endings are LF
+  - repo: https://github.com/shellcheck-py/shellcheck-py
+    rev: v0.10.0.1
+    hooks:
+      - id: shellcheck
+        stages: [manual]
+  - repo: local
+    hooks:
+      - id: prettier
+        name: Prettier
+        entry: |
+          yarn add --immutable --immutable-cache --check-cache
+          yarn prettier --check --ignore-unknown '**/*'
+        language: system
+        pass_filenames: false
+        stages: [manual]
+      - id: rubocop
+        name: Rubocop
+        entry: |
+          yarn add --immutable --immutable-cache --check-cache
+          bin/bundle exec rubocop
+        language: system
+        types: [ruby]
+        stages: [manual]
+      - id: rufo
+        name: Rufo
+        entry: bin/bundle exec rufo --check app
+        language: system
+        files: ^app/
+        stages: [manual]
+      - id: brakeman
+        name: Brakeman
+        entry: bin/bundle exec brakeman
+        language: system
+        always_run: true
+        stages: [manual]
