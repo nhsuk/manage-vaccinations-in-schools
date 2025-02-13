@@ -58,27 +58,35 @@ class Reports::ProgrammeVaccinationsExporter
       GILLICK_ASSESSMENT_DATE
       GILLICK_ASSESSED_BY
       GILLICK_ASSESSMENT_NOTES
-      GILLICK_NOTIFY_PARENTS
-      VACCINATED
-      DATE_OF_VACCINATION
-      TIME_OF_VACCINATION
-      PROGRAMME_NAME
-      VACCINE_GIVEN
-      PERFORMING_PROFESSIONAL_EMAIL
-      PERFORMING_PROFESSIONAL_FORENAME
-      PERFORMING_PROFESSIONAL_SURNAME
-      BATCH_NUMBER
-      BATCH_EXPIRY_DATE
-      ANATOMICAL_SITE
-      ROUTE_OF_VACCINATION
-      DOSE_SEQUENCE
-      REASON_NOT_VACCINATED
-      LOCAL_PATIENT_ID
-      SNOMED_PROCEDURE_CODE
-      REASON_FOR_INCLUSION
-      RECORD_CREATED
-      RECORD_UPDATED
-    ]
+    ] +
+      (
+        if Flipper.enabled?(:report_gillick_notify_parents)
+          %w[GILLICK_NOTIFY_PARENTS]
+        else
+          []
+        end
+      ) +
+      %w[
+        VACCINATED
+        DATE_OF_VACCINATION
+        TIME_OF_VACCINATION
+        PROGRAMME_NAME
+        VACCINE_GIVEN
+        PERFORMING_PROFESSIONAL_EMAIL
+        PERFORMING_PROFESSIONAL_FORENAME
+        PERFORMING_PROFESSIONAL_SURNAME
+        BATCH_NUMBER
+        BATCH_EXPIRY_DATE
+        ANATOMICAL_SITE
+        ROUTE_OF_VACCINATION
+        DOSE_SEQUENCE
+        REASON_NOT_VACCINATED
+        LOCAL_PATIENT_ID
+        SNOMED_PROCEDURE_CODE
+        REASON_FOR_INCLUSION
+        RECORD_CREATED
+        RECORD_UPDATED
+      ]
   end
 
   def vaccination_records
@@ -183,28 +191,36 @@ class Reports::ProgrammeVaccinationsExporter
       gillick_status(gillick_assessment:),
       gillick_assessment&.updated_at&.to_date&.iso8601 || "",
       gillick_assessment&.performed_by&.full_name || "",
-      gillick_assessment&.notes || "",
-      gillick_notify_parents(gillick_assessment:, consents:),
-      vaccinated(vaccination_record:),
-      vaccination_record.performed_at.to_date.iso8601,
-      vaccination_record.performed_at.strftime("%H:%M:%S"),
-      programme.name,
-      vaccination_record.vaccine&.nivs_name || "",
-      vaccination_record.performed_by_user&.email || "",
-      vaccination_record.performed_by&.given_name || "",
-      vaccination_record.performed_by&.family_name || "",
-      vaccination_record.batch&.name || "",
-      vaccination_record.batch&.expiry&.iso8601 || "",
-      anatomical_site(vaccination_record:),
-      route_of_vaccination(vaccination_record:),
-      dose_sequence(vaccination_record:),
-      reason_not_vaccinated(vaccination_record:),
-      patient.id,
-      programme.snomed_procedure_code,
-      reason_for_inclusion(vaccination_record:),
-      record_created_at(vaccination_record:),
-      record_updated_at(vaccination_record:)
-    ]
+      gillick_assessment&.notes || ""
+    ] +
+      (
+        if Flipper.enabled?(:report_gillick_notify_parents)
+          [gillick_notify_parents(gillick_assessment:, consents:)]
+        else
+          []
+        end
+      ) +
+      [
+        vaccinated(vaccination_record:),
+        vaccination_record.performed_at.to_date.iso8601,
+        vaccination_record.performed_at.strftime("%H:%M:%S"),
+        programme.name,
+        vaccination_record.vaccine&.nivs_name || "",
+        vaccination_record.performed_by_user&.email || "",
+        vaccination_record.performed_by&.given_name || "",
+        vaccination_record.performed_by&.family_name || "",
+        vaccination_record.batch&.name || "",
+        vaccination_record.batch&.expiry&.iso8601 || "",
+        anatomical_site(vaccination_record:),
+        route_of_vaccination(vaccination_record:),
+        dose_sequence(vaccination_record:),
+        reason_not_vaccinated(vaccination_record:),
+        patient.id,
+        programme.snomed_procedure_code,
+        reason_for_inclusion(vaccination_record:),
+        record_created_at(vaccination_record:),
+        record_updated_at(vaccination_record:)
+      ]
   end
 
   def nhs_number_status_code(patient:)
