@@ -65,7 +65,9 @@ class ImmunisationImportRow
             }
 
   validates :performed_ods_code,
-            presence: true,
+            presence: {
+              unless: :outcome_in_this_academic_year?
+            },
             comparison: {
               equal_to: :organisation_ods_code,
               if: :outcome_in_this_academic_year?

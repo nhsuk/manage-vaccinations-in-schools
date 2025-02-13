@@ -289,6 +289,19 @@ describe ImmunisationImportRow do
       end
     end
 
+    context "vaccination in this academic year and no organisation provided" do
+      let(:data) do
+        { "DATE_OF_VACCINATION" => "#{Date.current.academic_year}0901" }
+      end
+
+      it "has errors" do
+        expect(immunisation_import_row).to be_invalid
+        expect(immunisation_import_row.errors[:performed_ods_code]).to eq(
+          ["Enter an organisation code."]
+        )
+      end
+    end
+
     context "vaccination in this academic year, no vaccinator details provided" do
       let(:data) do
         valid_data.except(
