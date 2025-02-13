@@ -20,4 +20,3 @@ VPC endpoints are a way to enable resources to communicate with other AWS servic
 
 ## CodeDeploy
 CodeDeploy is used to manage the app deployments without downtime. For more information about the deployment process see [deployment-process.md](./deployment-process.md)
-

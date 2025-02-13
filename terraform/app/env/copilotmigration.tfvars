@@ -1,6 +1,5 @@
 environment_string = "copilotmigration"
 enable_autoscaling = false
-image_tag          = "latest"
 docker_image       = "mavis/webapp"
 
 resource_name = {

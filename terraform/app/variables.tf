@@ -106,14 +106,14 @@ variable "docker_image" {
   description = "The docker name for the essential container in the task definition."
 }
 
-variable "image_tag" {
+variable "image_digest" {
   type        = string
   description = "The docker image tag for the essential container in the task definition."
 }
 
 locals {
   container_name = "${var.container_name}-${var.environment_string}"
-  docker_image   = var.docker_image == "<CHANGE_ME>" ? "mavis-${var.environment_string}" : var.docker_image
+  docker_image   = var.docker_image == "<CHANGE_ME>" ? "mavis/webapp" : var.docker_image
   is_production  = var.environment_string == "production"
   dev_task_envs = [
     {
