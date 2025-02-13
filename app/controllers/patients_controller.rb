@@ -59,7 +59,7 @@ class PatientsController < ApplicationController
       if organisation_id.nil?
         @patient
           .patient_sessions
-          .includes(:session_attendances)
+          .includes(:programmes, :session_attendances)
           .where(session: old_organisation.sessions)
           .find_each(&:destroy_if_safe!)
       end

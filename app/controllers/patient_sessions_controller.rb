@@ -28,10 +28,10 @@ class PatientSessionsController < ApplicationController
           patient: {
             consents: %i[parent],
             parent_relationships: :parent,
-            triages: :performed_by
-          },
-          vaccination_records: {
-            vaccine: :programme
+            triages: :performed_by,
+            vaccination_records: {
+              vaccine: :programme
+            }
           }
         )
         .find_by!(

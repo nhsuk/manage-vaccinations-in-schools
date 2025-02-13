@@ -49,9 +49,8 @@ class AppOutcomeBannerComponent < ViewComponent::Base
   def vaccination_record
     @vaccination_record ||=
       @patient_session
-        .vaccination_records
-        .select { it.programme_id == programme.id }
-        .tap { it.select(&:administered?) if @patient_session.vaccinated? }
+        .vaccination_records(programme:)
+        .then { @patient_session.vaccinated? ? it.select(&:administered?) : it }
         .last
   end
 

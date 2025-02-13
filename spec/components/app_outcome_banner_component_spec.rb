@@ -5,14 +5,15 @@ describe AppOutcomeBannerComponent do
 
   let(:user) { create(:user) }
   let(:patient_session) { create(:patient_session) }
-  let(:component) { described_class.new(patient_session:, current_user: user) }
-  let(:triage_nurse_name) do
-    patient_session.latest_triage.performed_by.full_name
+  let(:component) do
+    described_class.new(
+      patient_session:
+        PatientSession.preload_for_status.find(patient_session.id),
+      current_user: user
+    )
   end
   let(:location_name) { patient_session.session.location.name }
   let(:patient_name) { patient_session.patient.full_name }
-
-  before { patient_session.strict_loading!(false) }
 
   prepend_before do
     patient_session.patient.update!(given_name: "Alya", family_name: "Merton")
@@ -48,7 +49,9 @@ describe AppOutcomeBannerComponent do
   context "state is vaccinated" do
     let(:programme) { create(:programme, :hpv) }
     let(:patient_session) { create(:patient_session, :vaccinated, programme:) }
-    let(:vaccination_record) { patient_session.vaccination_records.first }
+    let(:vaccination_record) do
+      patient_session.vaccination_records(programme:).first
+    end
     let(:vaccine) { programme.vaccines.first }
     let(:location) { patient_session.session.location }
     let(:batch) { vaccine.batches.first }
@@ -66,9 +69,9 @@ describe AppOutcomeBannerComponent do
     context "vaccination was not administered today" do
       let(:date) { Time.zone.now - 2.days }
       let(:patient_session) do
-        create(:patient_session, :vaccinated).tap do |ps|
+        create(:patient_session, :vaccinated, programme:).tap do |ps|
           ps.strict_loading!(false)
-          ps.vaccination_records.first.update!(performed_at: date)
+          ps.vaccination_records(programme:).first.update!(performed_at: date)
         end
       end
 

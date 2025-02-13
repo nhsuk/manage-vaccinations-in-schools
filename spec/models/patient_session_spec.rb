@@ -29,13 +29,6 @@ describe PatientSession do
 
   it { should have_many(:gillick_assessments).order(:created_at) }
 
-  it do
-    expect(patient_session).to have_many(:vaccination_records)
-      .through(:patient)
-      .conditions(discarded_at: nil, session_id: patient_session.session_id)
-      .order(:created_at)
-  end
-
   describe "#triages" do
     subject(:triages) { patient_session.triages(programme:) }
 
@@ -82,6 +75,20 @@ describe PatientSession do
     end
 
     it { should eq(later_triage) }
+  end
+
+  describe "#vaccination_records" do
+    subject(:vaccination_records) do
+      patient_session.vaccination_records(programme:)
+    end
+
+    let(:patient) { patient_session.patient }
+    let(:later_record) { create(:vaccination_record, programme:, patient:) }
+    let(:earlier_record) do
+      create(:vaccination_record, programme:, patient:, performed_at: 1.day.ago)
+    end
+
+    it { should eq([earlier_record, later_record]) }
   end
 
   describe "#no_consent?" do

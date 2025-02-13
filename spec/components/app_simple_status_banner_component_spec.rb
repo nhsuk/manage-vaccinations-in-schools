@@ -10,6 +10,7 @@ describe AppSimpleStatusBannerComponent do
     stub_authorization(allowed: true)
 
     patient_session.strict_loading!(false)
+    patient_session.patient.strict_loading!(false)
   end
 
   let(:user) { create(:user) }
@@ -22,7 +23,7 @@ describe AppSimpleStatusBannerComponent do
     patient_session.triages(programme:).last.performed_by.full_name
   end
   let(:vaccination_nurse_name) do
-    patient_session.vaccination_records.last.performed_by.full_name
+    patient_session.vaccination_records(programme:).last.performed_by.full_name
   end
   let(:patient_name) { patient_session.patient.full_name }
 

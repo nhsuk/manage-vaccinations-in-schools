@@ -35,7 +35,7 @@ class Session < ApplicationRecord
   has_many :patient_sessions
   has_many :session_dates, -> { order(:value) }
   has_many :session_notifications
-  has_many :vaccination_records
+  has_many :vaccination_records, -> { kept }
 
   has_and_belongs_to_many :immunisation_imports
   has_and_belongs_to_many :programmes
