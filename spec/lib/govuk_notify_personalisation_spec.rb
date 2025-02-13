@@ -28,7 +28,8 @@ describe GovukNotifyPersonalisation do
       :patient,
       given_name: "John",
       family_name: "Smith",
-      date_of_birth: Date.current - 13.years
+      date_of_birth: Date.new(2012, 2, 1),
+      year_group: 8
     )
   end
   let(:location) { create(:school, name: "Hogwarts") }
@@ -60,7 +61,7 @@ describe GovukNotifyPersonalisation do
         not_catch_up: "yes",
         organisation_privacy_notice_url: "https://example.com/privacy-notice",
         organisation_privacy_policy_url: "https://example.com/privacy-policy",
-        patient_date_of_birth: "30 January 2012",
+        patient_date_of_birth: "1 February 2012",
         programme_name: "HPV",
         short_patient_name: "John",
         short_patient_name_apos: "John’s",

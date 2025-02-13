@@ -1,0 +1,18 @@
+<% content_for :before_main do %>
+  <%= render AppBacklinkComponent.new(@back_link_path) %>
+<% end %>
+
+<% content_for :page_title, "Notes" %>
+
+<%= form_with model: @draft_vaccination_record, url: wizard_path, method: :put do |f| %>
+  <%= f.govuk_error_summary %>
+
+  <%= f.govuk_text_area :notes,
+                        caption: { text: @patient.full_name, size: "l" },
+                        label: { text: "Notes", tag: "h1", size: "l" },
+                        hint: { text: "For example, if the child had a reaction to the vaccine" } %>
+
+  <div class="nhsuk-u-margin-top-6">
+    <%= f.govuk_submit "Continue" %>
+  </div>
+<% end %>
