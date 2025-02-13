@@ -6,5 +6,7 @@ class DashboardController < ApplicationController
   layout "full"
 
   def index
+    @important_notices =
+      (policy_scope(Patient).with_notice.count if policy(:notices).index?)
   end
 end

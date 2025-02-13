@@ -1,5 +1,11 @@
 <%= h1 "#{@service_name} (Mavis)", size: "xl" %>
 
+<% if (count = @important_notices) %>
+  <%= render AppWarningCalloutComponent.new(heading: "Important notices") do %>
+    <p><%= link_to t(".notices.description", count:), imports_notices_path %></p>
+  <% end %>
+<% end %>
+
 <ul class="nhsuk-grid-row nhsuk-card-group">
   <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
     <%= render AppCardComponent.new(link_to: programmes_path) do |card| %>
