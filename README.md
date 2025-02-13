@@ -160,6 +160,9 @@ brew install libyaml
 # Dependencies for postgres
 brew install gcc readline zlib curl ossp-uuid icu4c pkg-config
 
+# Install pre-commit tool
+brew install pre-commit
+
 # Env vars for postgres
 export OPENSSL_PATH=$(brew --prefix openssl)
 export CMAKE_PREFIX_PATH=$(brew --prefix icu4c)
@@ -167,7 +170,23 @@ export PATH="$OPENSSL_PATH/bin:$CMAKE_PREFIX_PATH/bin:$PATH"
 export LDFLAGS="-L$OPENSSL_PATH/lib $LDFLAGS"
 export CPPFLAGS="-I$OPENSSL_PATH/include $CPPFLAGS"
 export PKG_CONFIG_PATH="$CMAKE_PREFIX_PATH/lib/pkgconfig"
+```
 
+For ubuntu run
+```shell
+apt install curl libyaml-dev libreadline-dev zlib1g-dev \
+libssl-dev libicu-dev cmake pkg-config uuid-dev flex bison \
+pre-commit
+
+export OPENSSL_PATH="/usr"
+export CMAKE_PREFIX_PATH="/usr"
+export PATH="$OPENSSL_PATH/bin:$CMAKE_PREFIX_PATH/bin:$PATH"
+export LDFLAGS="-L$OPENSSL_PATH/lib $LDFLAGS"
+export CPPFLAGS="-I$OPENSSL_PATH/include $CPPFLAGS"
+export PKG_CONFIG_PATH="$CMAKE_PREFIX_PATH/lib/pkgconfig"
+```
+
+```shell
 # Version manager
 brew install mise
 
@@ -180,6 +199,11 @@ Then to install the required tools (or update, following a change to
 
 ```shell
 mise install
+mise exec python -- pip install pre-commit
+```
+Next ensure you have the pre-commit hook installed by running
+```shell
+pre-commit install
 ```
 
 After installing Postgres via `mise`, run the database in the background, and
