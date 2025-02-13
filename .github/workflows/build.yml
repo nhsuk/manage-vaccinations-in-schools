@@ -23,6 +23,9 @@ jobs:
   Push-image:
     runs-on: ubuntu-latest
     needs: Build
+    permissions:
+      id-token: write
+      contents: read
     strategy:
       matrix:
         aws-role: [
