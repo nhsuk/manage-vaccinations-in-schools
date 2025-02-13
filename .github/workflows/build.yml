@@ -1,7 +1,7 @@
 name: Build Artifact
 on:
   push:
-    branches: [main]
+#    branches: [main]
   workflow_dispatch:
 jobs:
   Build:
@@ -26,8 +26,8 @@ jobs:
     strategy:
       matrix:
         aws-role: [
-#          arn:aws:iam::820242920762:role/GitHubActionsRole,
-           arn:aws:iam::393416225559:role/GitHubActionsRole]
+#          'arn:aws:iam::820242920762:role/GitHubActionsRole',
+           'arn:aws:iam::393416225559:role/GitHubActionsRole']
     steps:
       - name: Download Docker image
         uses: actions/download-artifact@v4
@@ -44,7 +44,7 @@ jobs:
       - name: Load Docker image
         run: |
           docker load -i ${{ runner.temp }}/image.tar
-      - name : Tag Docker image
+      - name: Tag Docker image
         run: |
           docker tag mavis:latest "${{ steps.login-ecr.outputs.registry }}/mavis/webapp":"${{ github.sha }}" .
       - name: Push Docker image
