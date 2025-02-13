@@ -1,0 +1,61 @@
+name: Promote docker image to production
+
+on:
+  workflow_dispatch:
+    inputs:
+      soure-repository:
+        description: "Source repository"
+        required: true
+        type: choice
+        options:
+          - mavis-qa
+          - mavis-test
+          - mavis-preview
+          - mavis-training
+          - mavis-poc
+          - mavis-copilotmigration
+      image-digest:
+        description: "Non-production image digest"
+        required: true
+        type: string
+      target-tag:
+        description: "Production image tag"
+        required: true
+        type: string
+
+jobs:
+  transfer-image:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Configure NON-PROD AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: arn:aws:iam::393416225559:role/GitHubActionsRole
+          aws-region: eu-west-2
+      - name: Login to non-prod ECR
+        uses: aws-actions/amazon-ecr-login@v2
+      - name: Set non-prod shell variables
+        run: |
+          echo "ENV=${{ github.event.inputs.soure-repository }}" >> $GITHUB_ENV
+          echo "REGION=eu-west-2" >> $GITHUB_ENV
+          echo "DIGEST={${{ github.event.inputs.image-digest }}" >> $GITHUB_ENV
+          echo "repositoryURI=${{ steps.login-ecr.outputs.registry }}/${{ inputs.environment }}">> $GITHUB_ENV
+      - name: Pull Docker image by digest
+        run: |
+          docker pull "$sourceRepositoryURI"@"$DIGEST"
+      - name: Configure PRODUCTION AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::820242920762:role/GitHubActionsRole
+          aws-region: eu-west-2
+      - name: Login to prod ECR
+        uses: aws-actions/amazon-ecr-login@v2
+      - name: Set prod shell variables
+        run: |
+          echo "ENV=production" >> $GITHUB_ENV
+          echo "TAG=${{ github.event.inputs.target-tag }}" >> $GITHUB_ENV
+          echo "repositoryURI=${{ steps.login-ecr.outputs.registry }}/mavis-production">> $GITHUB_ENV
+      - name: Tag and push Docker image to production ECR
+        run: |
+          docker tag "$sourceRepositoryURI"@"$DIGEST" "$targetRepositoryURI":${{ inputs.target-tag }}
+          docker push "$targetRepositoryURI":${{ inputs.target-tag }}

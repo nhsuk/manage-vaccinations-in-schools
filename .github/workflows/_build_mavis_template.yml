@@ -1,0 +1,58 @@
+name: Build Template
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+      aws-account-id:
+        required: true
+        type: string
+      region:
+        required: false
+        type: string
+      tag:
+        required: false
+        type: string
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ inputs.aws-account-id }}
+          aws-region: eu-west-2
+      - name: Login to ECR
+        uses: aws-actions/amazon-ecr-login@v2
+      - name: Set shell variables
+        run: |
+          echo "ENV=${{ inputs.environment }}" >> $GITHUB_ENV
+          echo "REGION=eu-west-2" >> $GITHUB_ENV
+          echo "TAG=${${{ inputs.tag }}:-latest}" >> $GITHUB_ENV
+          echo "repositoryURI=${{ steps.login-ecr.outputs.registry }}/mavis-${{ inputs.environment }}">> $GITHUB_ENV
+      - name : Build and tag Docker image
+        run: |
+          docker build -t "mavis-$ENV" .
+          docker tag "mavis-$ENV":latest "$repositoryURI":"$TAG"
+          docker tag "mavis-$ENV":latest "$repositoryURI":${{ github.sha }}
+      - name: Push Docker image
+        run: |
+          docker push "$repositoryURI":"$TAG"
+          docker push "$repositoryURI":${{ github.sha }}
+      - name: Create digest artifact
+        run: |
+          docker pull "$repositoryURI":${{ github.sha }}
+          DOCKER_DIGEST=$(docker inspect --format='{{index .RepoDigests 0}}' "$repositoryURI":${{ github.sha }})
+          DIGEST=${DOCKER_DIGEST#*@}
+          echo "Image digest $DIGEST"
+          echo "DIGEST=$DIGEST" >> digest-artifact.txt
+      - name: Upload digest artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: digest-artifact
+          path: 'digest-artifact.txt'
