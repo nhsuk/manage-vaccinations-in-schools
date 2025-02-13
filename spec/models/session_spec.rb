@@ -232,6 +232,43 @@ describe Session do
     end
   end
 
+  describe "#close!" do
+    subject(:close!) { session.close! }
+
+    let(:programme) { create(:programme) }
+    let(:organisation) { create(:organisation, programmes: [programme]) }
+    let(:session) { create(:session, :completed, organisation:, programme:) }
+
+    context "with a vaccinated patient" do
+      let(:patient) { create(:patient, :vaccinated, programme:, session:) }
+
+      it "doesn't add the patient to the clinic" do
+        expect { close! }.not_to(change { patient.reload.sessions.count })
+        expect(patient.sessions).to contain_exactly(session)
+      end
+    end
+
+    context "with an unvaccinated patient" do
+      let(:patient) { create(:patient, session:) }
+
+      it "adds the patient to the clinic" do
+        expect { close! }.to(change { patient.reload.sessions.count })
+        expect(patient.sessions).to include(organisation.generic_clinic_session)
+      end
+    end
+
+    context "with an unvaccinated patient and consent refused" do
+      let(:patient) { create(:patient, session:) }
+
+      before { create(:consent, :refused, patient:, programme:) }
+
+      it "doesn't add the patient to the clinic" do
+        expect { close! }.not_to(change { patient.reload.sessions.count })
+        expect(patient.sessions).to contain_exactly(session)
+      end
+    end
+  end
+
   describe "#open_for_consent?" do
     subject(:open_for_consent?) { session.open_for_consent? }
 
