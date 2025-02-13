@@ -38,8 +38,10 @@ resource "aws_iam_role" "code_deploy" {
 }
 
 resource "aws_iam_role" "vpc_flowlogs" {
-  name               = "vpcFlowLogsRole-${var.environment_string}"
-  assume_role_policy = templatefile("templates/iam_assume_role.json.tpl", { service_name = "vpc-flow-logs.amazonaws.com" })
+  name = "vpcFlowLogsRole-${var.environment_string}"
+  assume_role_policy = templatefile("templates/iam_assume_role.json.tpl", {
+    service_name = "vpc-flow-logs.amazonaws.com"
+  })
 }
 
 ################################# IAM Role/Policy Attachments #################################

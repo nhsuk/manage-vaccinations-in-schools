@@ -9,7 +9,8 @@ variable "environment_string" {
   description = "String literal for the environment"
 
   validation {
-    condition     = contains(["poc", "copilotmigration", "qa", "test", "training", "preview", "production"], var.environment_string)
+    condition = contains([
+    "poc", "copilotmigration", "qa", "test", "training", "preview", "production"], var.environment_string)
     error_message = "Valid values for environment_string: mock, test."
   }
 }

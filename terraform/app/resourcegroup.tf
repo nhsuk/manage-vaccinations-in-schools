@@ -4,10 +4,12 @@ resource "aws_resourcegroups_group" "production" {
   resource_query {
     query = jsonencode({
       ResourceTypeFilters = ["AWS::AllSupported"]
-      TagFilters = [{
-        Key    = "Environment"
-        Values = [var.environment_string]
-      }]
+      TagFilters = [
+        {
+          Key    = "Environment"
+          Values = [var.environment_string]
+        }
+      ]
     })
   }
 }
