@@ -57,3 +57,20 @@ jobs:
         with:
           bundler-cache: true
       - run: bin/bundle exec brakeman
+
+  terraform:
+    name: Terraform
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.10.5
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Install pre-commit
+        run: pip install pre-commit
+      - name: Run pre-commit
+        run: pre-commit run
