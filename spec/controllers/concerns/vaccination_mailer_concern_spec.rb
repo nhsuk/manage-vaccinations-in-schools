@@ -13,7 +13,7 @@ describe VaccinationMailerConcern do
     end
 
     vaccination_record.strict_loading!(false)
-    vaccination_record.patient_session.strict_loading!(false)
+    vaccination_record.patient.strict_loading!(false)
   end
 
   let(:sample) { SampleClass.new(current_user:) }
@@ -27,10 +27,9 @@ describe VaccinationMailerConcern do
     let(:programme) { create(:programme) }
     let(:session) { create(:session, programme:) }
     let(:parent) { create(:parent) }
-    let(:patient) { create(:patient, parents: [parent]) }
-    let(:patient_session) { create(:patient_session, session:, patient:) }
+    let(:patient) { create(:patient, parents: [parent], session:) }
     let(:vaccination_record) do
-      create(:vaccination_record, programme:, patient_session:)
+      create(:vaccination_record, programme:, patient:, session:)
     end
 
     context "when the vaccination has taken place" do
@@ -57,7 +56,8 @@ describe VaccinationMailerConcern do
           :vaccination_record,
           :not_administered,
           programme:,
-          patient_session:
+          patient:,
+          session:
         )
       end
 
@@ -76,7 +76,7 @@ describe VaccinationMailerConcern do
 
     context "when the consent was done through gillick assessment" do
       let(:vaccination_record) do
-        create(:vaccination_record, programme:, patient_session:)
+        create(:vaccination_record, programme:, patient:, session:)
       end
 
       context "when child wants parents to be notified" do

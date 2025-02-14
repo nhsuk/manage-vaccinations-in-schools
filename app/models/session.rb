@@ -35,11 +35,13 @@ class Session < ApplicationRecord
   has_many :patient_sessions
   has_many :session_dates, -> { order(:value) }
   has_many :session_notifications
+  has_many :vaccination_records, -> { kept }
 
   has_and_belongs_to_many :immunisation_imports
   has_and_belongs_to_many :programmes
 
   has_one :team, through: :location
+  has_many :gillick_assessments, through: :patient_sessions
   has_many :patients, through: :patient_sessions
   has_many :vaccines, through: :programmes
 
@@ -180,8 +182,21 @@ class Session < ApplicationRecord
       [other.dates.first, other.location.type, other.location.name]
   end
 
-  def unvaccinated_patients
-    patients.unvaccinated_for(programmes:)
+  def patients_to_move_to_clinic
+    # TODO: handle multiple programmes
+
+    @patients_to_move_to_clinic ||=
+      begin
+        patient_ids_with_consent_refused =
+          patient_sessions
+            .preload_for_status
+            .select(&:consent_refused?)
+            .map(&:patient_id)
+
+        patients
+          .where.not(id: patient_ids_with_consent_refused)
+          .unvaccinated_for(programmes:)
+      end
   end
 
   def close!
@@ -193,13 +208,13 @@ class Session < ApplicationRecord
 
       PatientSession.import!(
         %i[patient_id session_id],
-        unvaccinated_patients.map { [_1.id, generic_clinic_session_id] },
+        patients_to_move_to_clinic.map { [_1.id, generic_clinic_session_id] },
         on_duplicate_key_ignore: true
       )
 
       self_consents =
         Consent.via_self_consent.where(
-          patient: unvaccinated_patients,
+          patient: patients_to_move_to_clinic,
           organisation:,
           programme: programmes
         )

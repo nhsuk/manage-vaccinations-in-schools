@@ -107,7 +107,6 @@ describe "Import child records" do
   def then_i_should_see_the_upload
     expect(page).to have_content("Imported on")
     expect(page).to have_content("Imported byTest User")
-    expect(page).to have_content("ProgrammeHPV")
   end
 
   def when_i_click_on_the_imports_tab
@@ -177,7 +176,7 @@ describe "Import child records" do
 
   def then_i_should_the_errors_page_with_invalid_fields
     expect(page).to have_content("How to format your CSV for child records")
-    expect(page).to have_content("Row 1")
+    expect(page).to have_content("Row 2")
   end
 
   def when_it_is_a_litte_bit_later

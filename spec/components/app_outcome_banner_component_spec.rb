@@ -5,14 +5,15 @@ describe AppOutcomeBannerComponent do
 
   let(:user) { create(:user) }
   let(:patient_session) { create(:patient_session) }
-  let(:component) { described_class.new(patient_session:, current_user: user) }
-  let(:triage_nurse_name) do
-    patient_session.latest_triage.performed_by.full_name
+  let(:component) do
+    described_class.new(
+      patient_session:
+        PatientSession.preload_for_status.find(patient_session.id),
+      current_user: user
+    )
   end
   let(:location_name) { patient_session.session.location.name }
   let(:patient_name) { patient_session.patient.full_name }
-
-  before { patient_session.strict_loading!(false) }
 
   prepend_before do
     patient_session.patient.update!(given_name: "Alya", family_name: "Merton")
@@ -48,7 +49,9 @@ describe AppOutcomeBannerComponent do
   context "state is vaccinated" do
     let(:programme) { create(:programme, :hpv) }
     let(:patient_session) { create(:patient_session, :vaccinated, programme:) }
-    let(:vaccination_record) { patient_session.vaccination_records.first }
+    let(:vaccination_record) do
+      patient_session.vaccination_records(programme:).first
+    end
     let(:vaccine) { programme.vaccines.first }
     let(:location) { patient_session.session.location }
     let(:batch) { vaccine.batches.first }
@@ -66,8 +69,9 @@ describe AppOutcomeBannerComponent do
     context "vaccination was not administered today" do
       let(:date) { Time.zone.now - 2.days }
       let(:patient_session) do
-        create(:patient_session, :vaccinated).tap do |ps|
-          ps.vaccination_records.first.update(performed_at: date)
+        create(:patient_session, :vaccinated, programme:).tap do |ps|
+          ps.strict_loading!(false)
+          ps.vaccination_records(programme:).first.update!(performed_at: date)
         end
       end
 
@@ -86,8 +90,9 @@ describe AppOutcomeBannerComponent do
       create(:patient_session, :triaged_do_not_vaccinate, user:)
     end
     let(:vaccination_record) { patient_session.vaccination_records.first }
+    let(:programme) { patient_session.programmes.first }
     let(:location) { patient_session.session.location }
-    let(:triage) { patient_session.triages.first }
+    let(:triage) { patient_session.triages(programme:).first }
     let(:date) { triage.created_at.to_date.to_fs(:long) }
 
     it { should have_css(".app-card--red") }
@@ -106,7 +111,10 @@ describe AppOutcomeBannerComponent do
       let(:date) { Time.zone.now - 2.days }
       let(:patient_session) do
         create(:patient_session, :triaged_do_not_vaccinate).tap do |ps|
-          ps.triages.first.update!(created_at: date)
+          ps
+            .triages(programme: ps.programmes.first)
+            .first
+            .update!(created_at: date)
         end
       end
 

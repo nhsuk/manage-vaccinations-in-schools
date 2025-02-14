@@ -59,6 +59,7 @@ describe "Triage" do
       patient: @patient,
       programme: @programme
     )
+
     @patient.reload # Make sure both consents are accessible
   end
 

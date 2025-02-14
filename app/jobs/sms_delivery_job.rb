@@ -7,7 +7,6 @@ class SMSDeliveryJob < NotifyDeliveryJob
     consent_form: nil,
     parent: nil,
     patient: nil,
-    patient_session: nil,
     programme: nil,
     sent_by: nil,
     session: nil,
@@ -27,7 +26,6 @@ class SMSDeliveryJob < NotifyDeliveryJob
         consent:,
         consent_form:,
         patient:,
-        patient_session:,
         programme:,
         vaccination_record:
       )
@@ -45,14 +43,13 @@ class SMSDeliveryJob < NotifyDeliveryJob
         nil
       end
 
-    patient ||= consent&.patient || patient_session&.patient
+    patient ||= consent&.patient || vaccination_record&.patient
 
     NotifyLogEntry.create!(
       consent_form:,
       delivery_id:,
       parent:,
       patient:,
-      recipient: phone_number,
       recipient_deterministic: phone_number,
       sent_by:,
       template_id:,

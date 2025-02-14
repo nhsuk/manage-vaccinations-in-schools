@@ -161,12 +161,15 @@ describe Reports::OfflineSessionExporter do
       end
 
       context "with a vaccinated patient" do
+        before { create(:patient_session, patient:, session:) }
+
         let!(:vaccination_record) do
           create(
             :vaccination_record,
             performed_at:,
             batch:,
-            patient_session:,
+            patient:,
+            session:,
             programme:,
             performed_by: user,
             notes: "Some notes."
@@ -245,11 +248,14 @@ describe Reports::OfflineSessionExporter do
       end
 
       context "with a patient who couldn't be vaccinated" do
+        before { create(:patient_session, patient:, session:) }
+
         let!(:vaccination_record) do
           create(
             :vaccination_record,
             :not_administered,
-            patient_session:,
+            patient:,
+            session:,
             programme:,
             performed_at:,
             performed_by: user,
@@ -513,22 +519,23 @@ describe Reports::OfflineSessionExporter do
             school: create(:school, urn: "123456", name: "Waterloo Road")
           )
         end
-        let(:patient_session) { create(:patient_session, patient:, session:) }
         let(:batch) { create(:batch, vaccine: programme.vaccines.active.first) }
         let(:performed_at) { Time.zone.local(2024, 1, 1, 12, 5, 20) }
-
         let!(:vaccination_record) do
           create(
             :vaccination_record,
             performed_at:,
             batch:,
-            patient_session:,
+            patient:,
+            session:,
             programme:,
             location_name: "A Clinic",
             performed_by: user,
             notes: "Some notes."
           )
         end
+
+        before { create(:patient_session, patient:, session:) }
 
         it "adds a row to fill in" do
           expect(rows.count).to eq(1)

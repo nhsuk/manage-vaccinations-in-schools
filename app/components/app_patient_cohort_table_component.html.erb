@@ -1,4 +1,4 @@
-<% if cohort %>
+<% if organisation %>
   <%= govuk_table(html_attributes: {
                     class: "nhsuk-table-responsive",
                   }) do |table| %>
@@ -13,12 +13,12 @@
       <% body.with_row do |row| %>
         <% row.with_cell do %>
           <span class="nhsuk-table-responsive__heading">Name</span>
-          <%= helpers.format_year_group(cohort.year_group) %>
+          <%= helpers.format_year_group(year_group) %>
         <% end %>
         <% row.with_cell do %>
           <span class="nhsuk-table-responsive__heading">Actions</span>
           <%= form_with model: @patient, builder: GOVUKDesignSystemFormBuilder::FormBuilder do |f| %>
-            <%= f.hidden_field :cohort_id, value: "" %>
+            <%= f.hidden_field :organisation_id, value: "" %>
             <%= f.govuk_submit "Remove from cohort", class: "app-button--secondary-warning app-button--small" %>
           <% end %>
         <% end %>

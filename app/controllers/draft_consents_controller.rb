@@ -169,7 +169,9 @@ class DraftConsentsController < ApplicationController
     @parent_options =
       (
         @patient.parent_relationships.includes(:parent) +
-          @patient_session.consents.filter_map(&:parent_relationship)
+          @patient_session.consents(programme: @programme).filter_map(
+            &:parent_relationship
+          )
       ).compact.uniq.sort_by(&:label)
   end
 

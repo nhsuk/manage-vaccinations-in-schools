@@ -116,7 +116,8 @@ describe "Immunisation imports duplicates" do
         delivery_method: :nasal_spray,
         delivery_site: :nose,
         dose_sequence: 1,
-        patient_session: @patient_session,
+        patient: @already_vaccinated_patient,
+        session: @session,
         vaccine: @vaccine,
         performed_by_user: nil
       )
@@ -131,7 +132,8 @@ describe "Immunisation imports duplicates" do
         delivery_method: :nasal_spray,
         delivery_site: :left_arm_upper_position,
         dose_sequence: 1,
-        patient_session: @third_patient_session,
+        patient: @third_patient,
+        session: @session,
         vaccine: @other_vaccine,
         performed_by_user: nil
       )

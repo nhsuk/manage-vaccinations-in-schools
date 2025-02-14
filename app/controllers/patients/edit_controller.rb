@@ -8,17 +8,17 @@ class Patients::EditController < ApplicationController
   end
 
   def update_nhs_number
-    @patient.nhs_number = nhs_number
+    @patient.nhs_number = nhs_number.presence
+
     redirect_to edit_patient_path(@patient) and return unless @patient.changed?
 
-    @existing_patient =
-      policy_scope(Patient).includes(parent_relationships: :parent).find_by(
-        nhs_number:
-      )
+    render :nhs_number_merge and return if existing_patient
 
-    if @existing_patient
-      render :nhs_number_merge
-    elsif @patient.save
+    @patient.invalidated_at = nil
+
+    if @patient.save
+      PatientUpdateFromPDSJob.perform_later(@patient)
+
       redirect_to edit_patient_path(@patient)
     else
       render :nhs_number, status: :unprocessable_entity
@@ -26,14 +26,9 @@ class Patients::EditController < ApplicationController
   end
 
   def update_nhs_number_merge
-    @existing_patient =
-      policy_scope(Patient).includes(parent_relationships: :parent).find_by!(
-        nhs_number:
-      )
+    PatientMerger.call(to_keep: existing_patient, to_destroy: @patient)
 
-    PatientMerger.call(to_keep: @existing_patient, to_destroy: @patient)
-
-    redirect_to edit_patient_path(@existing_patient)
+    redirect_to edit_patient_path(existing_patient)
   end
 
   private
@@ -43,6 +38,16 @@ class Patients::EditController < ApplicationController
       policy_scope(Patient).includes(parent_relationships: :parent).find(
         params[:id]
       )
+  end
+
+  def existing_patient
+    @existing_patient ||=
+      if nhs_number.present?
+        policy_scope(Patient)
+          .or(Patient.where(organisation: nil))
+          .includes(parent_relationships: :parent)
+          .find_by(nhs_number:)
+      end
   end
 
   def nhs_number

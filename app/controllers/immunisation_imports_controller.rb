@@ -3,17 +3,18 @@
 class ImmunisationImportsController < ApplicationController
   include Pagy::Backend
 
-  before_action :set_programme
   before_action :set_immunisation_import, only: %i[show update]
 
+  skip_after_action :verify_policy_scoped, only: %i[new create]
+
   def new
-    @immunisation_import = ImmunisationImport.new
+    @immunisation_import =
+      ImmunisationImport.new(organisation: current_user.selected_organisation)
   end
 
   def create
     @immunisation_import =
       ImmunisationImport.new(
-        programme: @programme,
         organisation: current_user.selected_organisation,
         uploaded_by: current_user,
         **immunisation_import_params
@@ -28,16 +29,10 @@ class ImmunisationImportsController < ApplicationController
 
     if @immunisation_import.slow?
       ProcessImportJob.perform_later(@immunisation_import)
-      redirect_to programme_imports_path(@programme),
-                  flash: {
-                    success: "Import processing started"
-                  }
+      redirect_to imports_path, flash: { success: "Import processing started" }
     else
       ProcessImportJob.perform_now(@immunisation_import)
-      redirect_to programme_immunisation_import_path(
-                    @programme,
-                    @immunisation_import
-                  )
+      redirect_to immunisation_import_path(@immunisation_import)
     end
   end
 
@@ -68,23 +63,13 @@ class ImmunisationImportsController < ApplicationController
   def update
     @immunisation_import.process!
 
-    redirect_to programme_immunisation_import_path(
-                  @programme,
-                  @immunisation_import
-                )
+    redirect_to immunisation_import_path(@immunisation_import)
   end
 
   private
 
-  def set_programme
-    @programme = policy_scope(Programme).find_by!(type: params[:programme_type])
-  end
-
   def set_immunisation_import
-    @immunisation_import =
-      policy_scope(ImmunisationImport).where(programme: @programme).find(
-        params[:id]
-      )
+    @immunisation_import = policy_scope(ImmunisationImport).find(params[:id])
   end
 
   def immunisation_import_params

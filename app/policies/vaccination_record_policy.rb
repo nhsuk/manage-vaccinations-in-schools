@@ -25,8 +25,17 @@ class VaccinationRecordPolicy < ApplicationPolicy
     def resolve
       scope
         .kept
-        .joins(:session)
-        .where(session: { organisation: user.selected_organisation })
+        .where(patient: PatientPolicy::Scope.new(user, Patient).resolve)
+        .or(
+          scope.kept.where(
+            session: SessionPolicy::Scope.new(user, Session).resolve
+          )
+        )
+        .or(
+          scope.kept.where(
+            performed_ods_code: user.selected_organisation.ods_code
+          )
+        )
     end
   end
 end

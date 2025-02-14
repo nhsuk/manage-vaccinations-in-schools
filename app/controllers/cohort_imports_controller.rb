@@ -3,17 +3,18 @@
 class CohortImportsController < ApplicationController
   include Pagy::Backend
 
-  before_action :set_programme
   before_action :set_cohort_import, only: %i[show update]
 
+  skip_after_action :verify_policy_scoped, only: %i[new create]
+
   def new
-    @cohort_import = CohortImport.new
+    @cohort_import =
+      CohortImport.new(organisation: current_user.selected_organisation)
   end
 
   def create
     @cohort_import =
       CohortImport.new(
-        programme: @programme,
         organisation: current_user.selected_organisation,
         uploaded_by: current_user,
         **cohort_import_params
@@ -28,13 +29,10 @@ class CohortImportsController < ApplicationController
 
     if @cohort_import.slow?
       ProcessImportJob.perform_later(@cohort_import)
-      redirect_to programme_imports_path(@programme),
-                  flash: {
-                    success: "Import processing started"
-                  }
+      redirect_to imports_path, flash: { success: "Import processing started" }
     else
       ProcessImportJob.perform_now(@cohort_import)
-      redirect_to programme_cohort_import_path(@programme, @cohort_import)
+      redirect_to cohort_import_path(@cohort_import)
     end
   end
 
@@ -55,14 +53,10 @@ class CohortImportsController < ApplicationController
   def update
     @cohort_import.process!
 
-    redirect_to programme_cohort_import_path(@programme, @cohort_import)
+    redirect_to cohort_import_path(@cohort_import)
   end
 
   private
-
-  def set_programme
-    @programme = policy_scope(Programme).find_by!(type: params[:programme_type])
-  end
 
   def set_cohort_import
     @cohort_import = policy_scope(CohortImport).find(params[:id])

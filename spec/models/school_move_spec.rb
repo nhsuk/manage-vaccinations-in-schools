@@ -90,21 +90,21 @@ describe SchoolMove do
 
     shared_examples "sets the patient cohort" do
       it "sets the patient cohort" do
-        expect { confirm! }.to change(patient, :cohort).from(nil)
-        expect(patient.cohort.organisation).to eq(organisation)
+        expect { confirm! }.to change(patient, :organisation).from(nil)
+        expect(patient.organisation).to eq(organisation)
       end
     end
 
     shared_examples "keeps the patient cohort" do
       it "keeps the patient cohort" do
-        expect { confirm! }.not_to change(patient, :cohort)
+        expect { confirm! }.not_to change(patient, :organisation)
       end
     end
 
     shared_examples "changes the patient cohort" do
       it "changes the patient cohort" do
-        expect { confirm! }.to change(patient, :cohort)
-        expect(patient.cohort.organisation).to eq(new_organisation)
+        expect { confirm! }.to change(patient, :organisation)
+        expect(patient.organisation).to eq(new_organisation)
       end
     end
 
@@ -174,7 +174,7 @@ describe SchoolMove do
     end
 
     context "with a patient in no sessions" do
-      let(:patient) { create(:patient, cohort: nil) }
+      let(:patient) { create(:patient, organisation: nil) }
 
       context "to a school with a scheduled session" do
         let(:school_move) do
@@ -396,13 +396,7 @@ describe SchoolMove do
       end
 
       context "and already vaccinated" do
-        before do
-          create(
-            :vaccination_record,
-            programme:,
-            patient_session: patient.patient_sessions.first
-          )
-        end
+        before { create(:vaccination_record, programme:, patient:, session:) }
 
         context "to a school with a scheduled session" do
           let(:school_move) do
@@ -713,7 +707,8 @@ describe SchoolMove do
           create(
             :vaccination_record,
             programme:,
-            patient_session: patient.patient_sessions.first,
+            patient:,
+            session: generic_clinic_session,
             location_name: "A clinic"
           )
         end
@@ -1029,7 +1024,8 @@ describe SchoolMove do
           create(
             :vaccination_record,
             programme:,
-            patient_session: patient.patient_sessions.first,
+            patient:,
+            session: generic_clinic_session,
             location_name: "A clinic"
           )
         end
