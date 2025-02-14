@@ -1,8 +1,5 @@
-name: Deploy
-run-name: >-
-  ${{ github.event_name == 'workflow_dispatch'
-      && format('Copilot ({0})', inputs.environment)
-      || 'Copilot (All staging environments)' }}
+name: Deploy Mavis
+run-name: Deploy Mavis on ${{ inputs.environment }}
 
 on:
   workflow_dispatch:
