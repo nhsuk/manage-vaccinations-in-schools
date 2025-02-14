@@ -1,0 +1,23 @@
+# The manifest for the "copilotmigration" environment.
+# Read the full specification for the "Environment" type at:
+#  https://aws.github.io/copilot-cli/docs/manifest/environment/
+
+# Your environment name will be used in naming your resources like VPC, cluster, etc.
+name: copilotmigration
+type: Environment
+
+network:
+  vpc:
+    flow_logs: on
+
+# Configure the load balancers in your environment, once created.
+http:
+  public:
+    certificates:
+      [
+        arn:aws:acm:eu-west-2:393416225559:certificate/85fce9e2-d196-491b-931e-a51c73cbaa31,
+      ]
+
+# Configure observability for your environment resources.
+observability:
+  container_insights: false
