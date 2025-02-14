@@ -22,13 +22,15 @@ class DraftVaccinationRecordsController < ApplicationController
   after_action :verify_authorized
 
   def show
-    authorize VaccinationRecord, :edit?
+    authorize @vaccination_record,
+              @vaccination_record.new_record? ? :new? : :edit?
 
     render_wizard
   end
 
   def update
-    authorize VaccinationRecord
+    authorize @vaccination_record,
+              @vaccination_record.new_record? ? :create? : :update?
 
     @draft_vaccination_record.assign_attributes(update_params)
 
