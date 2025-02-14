@@ -73,7 +73,7 @@ class PatientSession < ApplicationRecord
 
   scope :order_by_name,
         -> do
-          order("LOWER(patients.given_name)", "LOWER(patients.family_name)")
+          order("LOWER(patients.family_name)", "LOWER(patients.given_name)")
         end
 
   delegate :send_notifications?, to: :patient
