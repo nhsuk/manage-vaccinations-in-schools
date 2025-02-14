@@ -87,6 +87,7 @@ jobs:
   DeployUpdate:
     runs-on: ubuntu-latest
     needs: PlanUpdate
+    environment: ${{ inputs.environment }}
     steps:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
