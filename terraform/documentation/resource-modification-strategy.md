@@ -20,7 +20,7 @@ then switch the listener over to the newly created target group. Luckily this ca
 2. Update the Terraform configuration of the non-listener-attached target group (e.g. `group-2`) and run
    `terraform apply`
 3. Do a CodeDeploy deployment to switch the listener forwarding rule to the newly created target group
-    1. After this point `group-1` will no longer attached to the service
+   1. After this point `group-1` will no longer attached to the service
 4. Update the Terraform configuration of the remaining target group (e.g. `group-1`) and run `terraform apply`
 
 At the end of these steps the system will be in the desired configuration
@@ -39,13 +39,13 @@ cause a downtime which can easily be avoided by following the below steps.
 For simplicity lets call the existing service `service-a` and the new modified service `service-b`
 
 1. Update the terraform configuration:
-    1. Create a `service-b` with the new configurations but identical loadbalancer configuration
-    2. Duplicate the existing autoscaling configuration and attached it to `service-b`
-    3. Update the CodeDeploy deployment group to be linked to the `service-b`
+   1. Create a `service-b` with the new configurations but identical loadbalancer configuration
+   2. Duplicate the existing autoscaling configuration and attached it to `service-b`
+   3. Update the CodeDeploy deployment group to be linked to the `service-b`
 2. Run `terraform apply` to deploy the new service and update the CodeDeploy configuration
-    1. This service is not yet accessible by users, as the LB listener is still pointing to `group-1`
+   1. This service is not yet accessible by users, as the LB listener is still pointing to `group-1`
 3. Run a CodeDeploy deployment
-    1. After this stage all traffic will be going to `service-b` and `service-a` will be completely disconnected
+   1. After this stage all traffic will be going to `service-b` and `service-a` will be completely disconnected
 4. Remove `service-a` and the attached autoscaling configuration from the configuration and run `terraform apply`
 
 At the end of these steps a new service will be running with the updated configuration without any downtime

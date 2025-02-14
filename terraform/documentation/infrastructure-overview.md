@@ -21,9 +21,9 @@ The service uses an Aurora Serverless RDS Database. It can be accessed only from
 Since the ECS Service runs in a private subnet, it can't communicate to other AWS services outside the VPC by default.
 This is required for
 
-* Fetching the docker image from ECR
-* Sending logs to CloudWatch
-* Setting up secure shell access from a local machine with AWS SystemsManager
+- Fetching the docker image from ECR
+- Sending logs to CloudWatch
+- Setting up secure shell access from a local machine with AWS SystemsManager
 
 VPC endpoints are a way to enable resources to communicate with other AWS services without requiring a public IP. For
 each of the use cases, there is a dedicated VPC endpoint which is configured by the

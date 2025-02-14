@@ -13,7 +13,10 @@ network:
 # Configure the load balancers in your environment, once created.
 http:
   public:
-    certificates: [arn:aws:acm:eu-west-2:393416225559:certificate/85fce9e2-d196-491b-931e-a51c73cbaa31]
+    certificates:
+      [
+        arn:aws:acm:eu-west-2:393416225559:certificate/85fce9e2-d196-491b-931e-a51c73cbaa31,
+      ]
 
 # Configure observability for your environment resources.
 observability:

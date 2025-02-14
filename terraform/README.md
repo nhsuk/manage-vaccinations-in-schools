@@ -36,9 +36,9 @@ export AWS_PROFILE=default
 
 This repo contains 2 folders with terraform configuration.
 
-* The `bootstrap` folder stores the AWS resources required for remote state management of the app infrastructure.
+- The `bootstrap` folder stores the AWS resources required for remote state management of the app infrastructure.
   For that purpose, it just contains an S3 bucket and a DynamoDB.
-* The `app` folder contains the actual infrastructure config for the app.
+- The `app` folder contains the actual infrastructure config for the app.
 
 To set up everything from scratch, run `./bootstrap.sh <ENV_NAME>` first in the `scripts` folder and follow the
 instructions from the output.
@@ -61,8 +61,8 @@ in the `app` directory to select which environment/state-file you want.
 
 We will use pre-commit to format and lint the files.
 
-* Linting is done with `tflint` (installed with mise)
-* To install pre-commit ensure you have pip installed and create a venv and activate it
+- Linting is done with `tflint` (installed with mise)
+- To install pre-commit ensure you have pip installed and create a venv and activate it
 
 ```bash
 python3 -m venv venv

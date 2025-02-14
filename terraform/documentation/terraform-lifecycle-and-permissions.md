@@ -17,8 +17,8 @@ Currently, the configurations which should be managed by CodeDeploy, and which a
 configuration are:
 
 1. The task_definition variable in the aws_ecs_service resrouce
-    1. If you change the associated aws_ecs_task_definition the service will remain as-is but a new appspec.yaml
-       is created. This file is used for CodeDeploy and will record the new configuration that should be rolled out
+   1. If you change the associated aws_ecs_task_definition the service will remain as-is but a new appspec.yaml
+      is created. This file is used for CodeDeploy and will record the new configuration that should be rolled out
 
 **IMPORTANT:**
 
@@ -47,8 +47,9 @@ ref. [documentation](https://developer.hashicorp.com/terraform/language/meta-arg
 Instead, to control this on an environment-specific basis one could use environment-scoped permissions. For example,
 in Production the terraform deployment pipeline should not have delete permissions on any resources which are modified
 by CodeDeploy. This means
-* ECS clusters/services
-* Loadbalancer configuration
+
+- ECS clusters/services
+- Loadbalancer configuration
 
 Other resources, such as security groups, can normally not be deleted because Terraform does not have
 information about which states are attached.
