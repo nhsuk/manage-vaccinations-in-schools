@@ -16,3 +16,7 @@ dns_certificate_arn   = ""
 rails_master_key_path = "/copilot/mavis/copilotmigration/secrets/RAILS_MASTER_KEY"
 
 rails_env = "staging"
+
+splunk_enabled = true
+cis2_enabled   = true
+pds_enabled    = true

@@ -110,6 +110,23 @@ variable "image_digest" {
   type        = string
   description = "The docker image tag for the essential container in the task definition."
 }
+variable "cis2_enabled" {
+  type        = bool
+  default     = false
+  description = "Boolean toggle to determine whether the CIS2 feature should be enabled."
+}
+
+variable "pds_enabled" {
+  type        = bool
+  default     = false
+  description = "Boolean toggle to determine whether the PDS feature should be enabled."
+}
+
+variable "splunk_enabled" {
+  type        = bool
+  default     = false
+  description = "Boolean toggle to determine whether the Splunk feature should be enabled."
+}
 
 locals {
   container_name = "${var.container_name}-${var.environment_string}"
@@ -144,15 +161,15 @@ locals {
     },
     {
       name  = "MAVIS__CIS2__ENABLED"
-      value = "true"
+      value = var.cis2_enabled
     },
     {
       name  = "MAVIS__PDS__PERFORM_JOBS"
-      value = "true"
+      value = var.pds_enabled
     },
     {
       name  = "MAVIS__SPLUNK__ENABLED"
-      value = "true"
+      value = var.splunk_enabled
     }
   ])
   task_secrets = [
