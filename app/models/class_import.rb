@@ -15,6 +15,7 @@
 #  rows_count                   :integer
 #  serialized_errors            :json
 #  status                       :integer          default("pending_import"), not null
+#  year_groups                  :integer          default([]), not null, is an Array
 #  created_at                   :datetime         not null
 #  updated_at                   :datetime         not null
 #  organisation_id              :bigint           not null
@@ -44,7 +45,11 @@ class ClassImport < PatientImport
   private
 
   def parse_row(data)
-    ClassImportRow.new(data:, session:)
+    ClassImportRow.new(data:, session:, year_groups:)
+  end
+
+  def birth_academic_years
+    year_groups.map(&:to_birth_academic_year)
   end
 
   def postprocess_rows!
@@ -52,7 +57,9 @@ class ClassImport < PatientImport
 
     # Remove patients already in the session but not in the class list.
 
-    unknown_patients = session.patients - patients
+    unknown_patients =
+      session.patients.where(birth_academic_year: birth_academic_years) -
+        patients
 
     school_moves =
       unknown_patients.map do |patient|

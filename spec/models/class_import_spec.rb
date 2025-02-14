@@ -15,6 +15,7 @@
 #  rows_count                   :integer
 #  serialized_errors            :json
 #  status                       :integer          default("pending_import"), not null
+#  year_groups                  :integer          default([]), not null, is an Array
 #  created_at                   :datetime         not null
 #  updated_at                   :datetime         not null
 #  organisation_id              :bigint           not null
@@ -385,7 +386,7 @@ describe ClassImport do
     end
 
     context "with an existing patient not in the class list" do
-      let!(:existing_patient) { create(:patient, session:) }
+      let!(:existing_patient) { create(:patient, session:, year_group: 8) }
 
       it "proposes a school move for the child" do
         expect(existing_patient.school_moves).to be_empty
@@ -406,6 +407,14 @@ describe ClassImport do
           patient: existing_patient,
           organisation:
         )
+
+        expect { process! }.not_to(
+          change { existing_patient.reload.school_moves.count }
+        )
+      end
+
+      it "doesn't propose a move if the patient is in a different year group" do
+        existing_patient.update!(birth_academic_year: 7.to_birth_academic_year)
 
         expect { process! }.not_to(
           change { existing_patient.reload.school_moves.count }

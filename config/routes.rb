@@ -88,6 +88,8 @@ Rails.application.routes.draw do
     end
   end
 
+  resources :class_imports, path: "class-imports", except: %i[index destroy]
+
   resources :cohort_imports, path: "cohort-imports", except: %i[index destroy]
 
   resources :consent_forms, path: "consent-forms", only: %i[index show] do
@@ -103,10 +105,19 @@ Rails.application.routes.draw do
     end
   end
 
+  resource :draft_class_import,
+           only: :new,
+           path: "draft-class-import/:session_slug"
+  resource :draft_class_import,
+           only: %i[show update],
+           path: "draft-class-import/:id"
+
   resource :draft_consent, only: %i[show update], path: "draft-consent/:id"
+
   resource :draft_vaccination_record,
            only: %i[show update],
            path: "draft-vaccination-record/:id"
+
   resource :vaccination_report,
            only: %i[show update],
            path: "draft-vaccination-report/:id" do
@@ -218,8 +229,6 @@ Rails.application.routes.draw do
         post "setup-offline", to: "offline_passwords#create"
       end
     end
-
-    resources :class_imports, path: "class-imports", except: %i[index destroy]
 
     resource :dates, controller: "session_dates", only: %i[show update]
   end

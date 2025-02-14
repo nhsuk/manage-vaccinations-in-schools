@@ -163,6 +163,10 @@ en:
               inclusion: The school URN is not recognised. If you’ve checked the URN, and you believe it’s valid, contact our support organisation.
             year_group:
               inclusion: is not part of this programme
+        draft_class_import:
+          attributes:
+            year_groups:
+              blank: Choose which year groups you want to import class list records for
         draft_consent:
           attributes:
             new_or_existing_contact:
@@ -915,3 +919,4 @@ en:
     vaccine: vaccine
     when: when
     who: who
+    year_groups: year-groups
