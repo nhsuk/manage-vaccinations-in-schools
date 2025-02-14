@@ -57,6 +57,18 @@ resource "aws_s3_bucket" "code_deploy_bucket" {
   force_destroy = true
 }
 
+
+data "aws_s3_bucket" "logs" {
+  bucket = "nhse-mavis-logs-${var.environment_string}"
+}
+
+resource "aws_s3_bucket_logging" "example" {
+  bucket = aws_s3_bucket.code_deploy_bucket.id
+
+  target_bucket = data.aws_s3_bucket.logs.id
+  target_prefix = "codedeploy-log/"
+}
+
 resource "aws_s3_bucket_versioning" "code_deploy_bucket_versioning" {
   bucket = aws_s3_bucket.code_deploy_bucket.id
   versioning_configuration {

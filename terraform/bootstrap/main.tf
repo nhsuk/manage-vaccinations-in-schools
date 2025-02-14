@@ -85,7 +85,7 @@ resource "aws_s3_bucket_logging" "example" {
   bucket = aws_s3_bucket.s3_bucket_backend.id
 
   target_bucket = aws_s3_bucket.logs.id
-  target_prefix = "log/"
+  target_prefix = "backend-log/"
 }
 
 # Set up a logging bucket
