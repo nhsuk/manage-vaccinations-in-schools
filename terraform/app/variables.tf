@@ -175,6 +175,12 @@ variable "db_secret_arn" {
   description = "The ARN of the secret containing the DB credentials."
 }
 
+variable "backup_retention_period" {
+  type = number
+  default = 7
+  description = "The number of days to retain backups for the RDS cluster."
+}
+
 ########## ESC/Scaling Configuration ##########
 variable "enable_autoscaling" {
   type        = bool

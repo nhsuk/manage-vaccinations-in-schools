@@ -53,6 +53,7 @@ resource "aws_rds_cluster" "aurora_cluster" {
   master_username             = "postgres"
   manage_master_user_password = var.db_secret_arn == ""
   storage_encrypted           = true
+  backup_retention_period     = var.backup_retention_period
   skip_final_snapshot         = !local.is_production
   db_subnet_group_name        = aws_db_subnet_group.aurora_subnet_group.name
   vpc_security_group_ids      = [aws_security_group.rds_security_group.id]

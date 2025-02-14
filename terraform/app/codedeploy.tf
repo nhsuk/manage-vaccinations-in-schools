@@ -64,6 +64,33 @@ resource "aws_s3_bucket_versioning" "code_deploy_bucket_versioning" {
   }
 }
 
+resource "aws_s3_bucket_policy" "block_http" {
+  bucket = aws_s3_bucket.code_deploy_bucket.id
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Id      = "block-http-policy"
+    Statement = [
+      {
+        Sid       = "HTTPSOnly"
+        Effect    = "Deny"
+        Principal = {
+          "AWS": "*"
+        }
+        Action    = "s3:*"
+        Resource = [
+          aws_s3_bucket.code_deploy_bucket.arn,
+          "${aws_s3_bucket.code_deploy_bucket.arn}/*",
+        ]
+        Condition = {
+          Bool = {
+            "aws:SecureTransport" = "false"
+          }
+        }
+      },
+    ]
+  })
+}
+
 resource "aws_s3_bucket_public_access_block" "s3_bucket_access" {
   bucket                  = aws_s3_bucket.code_deploy_bucket.bucket
   block_public_acls       = true
