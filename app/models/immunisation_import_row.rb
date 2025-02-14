@@ -166,6 +166,12 @@ class ImmunisationImportRow
     vaccination_record
   end
 
+  def to_patient_session
+    return if patient.nil? || session.nil?
+
+    PatientSession.new(patient:, session:)
+  end
+
   def patient
     return unless valid?
 

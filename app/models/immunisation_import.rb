@@ -75,12 +75,17 @@ class ImmunisationImport < ApplicationRecord
     @vaccination_records_batch ||= Set.new
     @batches_batch ||= Set.new
     @patients_batch ||= Set.new
+    @patient_sessions_batch ||= Set.new
 
     @vaccination_records_batch.add(vaccination_record)
     if vaccination_record.administered?
       @batches_batch.add(vaccination_record.batch)
     end
     @patients_batch.add(vaccination_record.patient)
+
+    if (patient_session = row.to_patient_session)
+      @patient_sessions_batch.add(patient_session)
+    end
 
     count_column_to_increment
   end
@@ -91,13 +96,16 @@ class ImmunisationImport < ApplicationRecord
     # We need to convert the batch to an array as `import` modifies the
     # objects to add IDs to any new records.
     vaccination_records = @vaccination_records_batch.to_a
+    patient_sessions = @patient_sessions_batch.to_a
 
     VaccinationRecord.import(vaccination_records, on_duplicate_key_update: :all)
+    PatientSession.import(patient_sessions, on_duplicate_key_ignore: :all)
 
     [
       [:vaccination_records, vaccination_records],
       [:batches, @batches_batch],
-      [:patients, @patients_batch]
+      [:patients, @patients_batch],
+      [:patient_sessions, patient_sessions.select { it.id.present? }]
     ].each do |association, collection|
       link_records_by_type(association, collection)
       collection.clear
