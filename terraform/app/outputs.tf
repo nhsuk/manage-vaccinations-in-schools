@@ -22,3 +22,13 @@ output "codedeploy_deployment_group_name" {
   description = "The name of the CodeDeploy deployment group"
   value = aws_codedeploy_deployment_group.blue_green_deployment_group.deployment_group_name
 }
+
+output "mavis_cluster_name" {
+  description = "The name of the ECS cluster"
+  value       = aws_ecs_cluster.cluster.name
+}
+
+output "mavis_service_name" {
+  description = "The name of the ECS service"
+  value       = aws_ecs_service.service.name
+}
