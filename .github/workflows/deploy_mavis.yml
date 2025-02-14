@@ -25,6 +25,7 @@ env:
   aws-role: ${{ inputs.environment == 'production'
     && 'arn:aws:iam::820242920762:role/GitHubActionsRole'
     || 'arn:aws:iam::393416225559:role/GitHubActionsRole' }}
+  tf-dir: terraform/app
 
 jobs:
   GetImageDigest:
@@ -71,7 +72,7 @@ jobs:
       - name: Update the task definition
         run: |
           source digest.env
-          cd terraform/app
+          cd ${{ env.tf-dir }}
           terraform init -backend-config="env/${{ inputs.environment }}-backend.hcl"
           terrafom plan -var="image_digest=$DIGEST" -target=aws_ecs_task_definition.task_definition \
           -target=aws_s3_object.appspec_object -var-file="env/${{ inputs.environment }}.tfvars" \
@@ -105,7 +106,7 @@ jobs:
           terraform_version: 1.10.5
       - name: Apply the changes
         run: |
-          cd terraform/app
+          cd ${{ env.tf-dir }}
           terraform apply ${{ runner.temp }}/tfplan
           echo "s3_bucket=$(terraform output -raw s3_bucket)" >> $GITHUB_ENV
           echo "s3_key=$(terraform output -raw s3_key)" >> $GITHUB_ENV
