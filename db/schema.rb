@@ -152,15 +152,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_10_092331) do
     t.index ["cohort_import_id", "patient_id"], name: "idx_on_cohort_import_id_patient_id_7864d1a8b0", unique: true
   end
 
-  create_table "cohorts", force: :cascade do |t|
-    t.bigint "organisation_id", null: false
-    t.integer "birth_academic_year", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["organisation_id", "birth_academic_year"], name: "index_cohorts_on_organisation_id_and_birth_academic_year", unique: true
-    t.index ["organisation_id"], name: "index_cohorts_on_organisation_id"
-  end
-
   create_table "consent_forms", force: :cascade do |t|
     t.datetime "recorded_at"
     t.datetime "created_at", null: false
@@ -567,7 +558,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_10_092331) do
     t.integer "gender_code", default: 0, null: false
     t.boolean "home_educated"
     t.jsonb "pending_changes", default: {}, null: false
-    t.bigint "cohort_id"
     t.string "registration"
     t.date "date_of_death"
     t.datetime "date_of_death_recorded_at"
@@ -579,7 +569,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_10_092331) do
     t.bigint "gp_practice_id"
     t.integer "birth_academic_year", null: false
     t.bigint "organisation_id"
-    t.index ["cohort_id"], name: "index_patients_on_cohort_id"
     t.index ["family_name", "given_name"], name: "index_patients_on_names_family_first"
     t.index ["family_name"], name: "index_patients_on_family_name_trigram", opclass: :gin_trgm_ops, using: :gin
     t.index ["given_name", "family_name"], name: "index_patients_on_names_given_first"
@@ -812,7 +801,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_10_092331) do
   add_foreign_key "cohort_imports_parents", "parents"
   add_foreign_key "cohort_imports_patients", "cohort_imports"
   add_foreign_key "cohort_imports_patients", "patients"
-  add_foreign_key "cohorts", "organisations"
   add_foreign_key "consent_forms", "consents"
   add_foreign_key "consent_forms", "locations"
   add_foreign_key "consent_forms", "locations", column: "school_id"
@@ -855,7 +843,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_10_092331) do
   add_foreign_key "parent_relationships", "patients"
   add_foreign_key "patient_sessions", "patients"
   add_foreign_key "patient_sessions", "sessions"
-  add_foreign_key "patients", "cohorts"
   add_foreign_key "patients", "locations", column: "gp_practice_id"
   add_foreign_key "patients", "locations", column: "school_id"
   add_foreign_key "patients", "organisations"
