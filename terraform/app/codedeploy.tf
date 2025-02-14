@@ -1,12 +1,12 @@
-resource "aws_codedeploy_app" "example" {
+resource "aws_codedeploy_app" "mavis" {
   compute_platform = "ECS"
-  name             = "blue-green-codedeploy-${var.environment_string}"
+  name             = "mavis-${var.environment_string}"
 }
 
 resource "aws_codedeploy_deployment_group" "blue_green_deployment_group" {
-  app_name               = aws_codedeploy_app.example.name
+  app_name               = aws_codedeploy_app.mavis.name
   deployment_config_name = "CodeDeployDefault.ECSAllAtOnce"
-  deployment_group_name  = "codedeploy-group-${var.environment_string}"
+  deployment_group_name  = "blue-green-group-${var.environment_string}"
   service_role_arn       = aws_iam_role.code_deploy.arn
 
   auto_rollback_configuration {
