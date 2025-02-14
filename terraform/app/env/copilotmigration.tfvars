@@ -17,6 +17,6 @@ rails_master_key_path = "/copilot/mavis/copilotmigration/secrets/RAILS_MASTER_KE
 
 rails_env = "staging"
 
-splunk_enabled = true
-cis2_enabled   = true
-pds_enabled    = true
+splunk_enabled = "true"
+cis2_enabled   = "true"
+pds_enabled    = "true"

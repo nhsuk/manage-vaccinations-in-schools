@@ -145,6 +145,23 @@ variable "splunk_enabled" {
   description = "Boolean toggle to determine whether the Splunk feature should be enabled."
   nullable    = false
 }
+variable "cis2_enabled" {
+  type        = bool
+  default     = false
+  description = "Boolean toggle to determine whether the CIS2 feature should be enabled."
+}
+
+variable "pds_enabled" {
+  type        = bool
+  default     = false
+  description = "Boolean toggle to determine whether the PDS feature should be enabled."
+}
+
+variable "splunk_enabled" {
+  type        = bool
+  default     = false
+  description = "Boolean toggle to determine whether the Splunk feature should be enabled."
+}
 
 locals {
   container_name = "${var.container_name}-${var.environment}"
