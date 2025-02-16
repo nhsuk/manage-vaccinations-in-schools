@@ -137,6 +137,7 @@ describe ImmunisationImport do
           .and change(immunisation_import.vaccination_records, :count).by(11)
           .and change(immunisation_import.patients, :count).by(11)
           .and change(immunisation_import.batches, :count).by(4)
+          .and not_change(immunisation_import.patient_sessions, :count)
 
         # Second import should not duplicate the vaccination records if they're
         # identical.
@@ -177,6 +178,23 @@ describe ImmunisationImport do
           .times
           .on_queue(:imports)
       end
+
+      it "adds patients to the session if it exists" do
+        # must match a session in valid_flu.csv
+        location = Location.school.find_by!(urn: "120026")
+        create(
+          :session,
+          location:,
+          organisation:,
+          programme:,
+          date: Date.new(2024, 5, 14)
+        )
+
+        expect { process! }.to change(
+          immunisation_import.patient_sessions,
+          :count
+        ).by(8)
+      end
     end
 
     context "with valid HPV rows" do
@@ -190,6 +208,7 @@ describe ImmunisationImport do
           .and change(immunisation_import.vaccination_records, :count).by(11)
           .and change(immunisation_import.patients, :count).by(10)
           .and change(immunisation_import.batches, :count).by(9)
+          .and not_change(immunisation_import.patient_sessions, :count)
 
         # Second import should not duplicate the vaccination records if they're
         # identical.
@@ -229,6 +248,23 @@ describe ImmunisationImport do
           .exactly(9)
           .times
           .on_queue(:imports)
+      end
+
+      it "adds patients to the session if it exists" do
+        # must match a session in valid_hpv.csv
+        location = Location.school.find_by!(urn: "110158")
+        create(
+          :session,
+          location:,
+          organisation:,
+          programme:,
+          date: Date.new(2024, 5, 14)
+        )
+
+        expect { process! }.to change(
+          immunisation_import.patient_sessions,
+          :count
+        ).by(6)
       end
     end
 
