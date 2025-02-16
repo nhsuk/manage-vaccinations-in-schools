@@ -5,6 +5,7 @@ describe "Manage children" do
 
   scenario "Viewing children" do
     given_patients_exist
+    and_the_patient_belongs_to_a_session
     and_the_patient_is_vaccinated
 
     when_i_click_on_children
@@ -42,6 +43,43 @@ describe "Manage children" do
     then_i_see_the_merged_edit_child_record_page
   end
 
+  scenario "Adding an NHS number to an invalidated patient" do
+    given_an_invalidated_patient_exists
+
+    when_i_click_on_children
+    and_i_click_on_a_child
+    then_i_see_the_child
+
+    when_i_click_on_edit_child_record
+    then_i_see_the_edit_child_record_page
+
+    when_i_click_on_change_nhs_number
+    then_i_see_the_edit_nhs_number_page
+
+    when_i_enter_an_nhs_number
+    then_i_see_the_edit_child_record_page
+    and_i_see_the_nhs_number
+    and_the_patient_is_no_longer_invalidated
+  end
+
+  scenario "Removing an NHS number" do
+    given_patients_exist
+
+    when_i_click_on_children
+    and_i_click_on_a_child
+    then_i_see_the_child
+
+    when_i_click_on_edit_child_record
+    then_i_see_the_edit_child_record_page
+
+    when_i_click_on_change_nhs_number
+    then_i_see_the_edit_nhs_number_page
+
+    when_i_enter_a_blank_nhs_number
+    then_i_see_the_edit_child_record_page
+    and_i_see_the_blank_nhs_number
+  end
+
   scenario "Removing a child from a cohort" do
     given_patients_exist
     and_the_patient_belongs_to_a_session
@@ -52,14 +90,8 @@ describe "Manage children" do
     and_i_see_the_cohort
 
     when_i_click_on_remove_from_cohort
-    then_i_see_the_child
-    and_i_see_a_removed_from_cohort_message
-    and_no_longer_see_the_cohort
-
-    when_i_click_on_children
-    and_i_click_on_a_child_who_is_only_in_the_cohort
-    when_i_click_on_remove_from_cohort
     then_i_see_the_children
+    and_i_see_a_removed_from_cohort_message
   end
 
   scenario "Viewing important notices" do
@@ -123,8 +155,21 @@ describe "Manage children" do
         :patient,
         given_name: "Jane",
         family_name: "Doe",
-        cohort: @organisation.cohorts.first
+        organisation: @organisation
       )
+  end
+
+  def given_an_invalidated_patient_exists
+    @patient =
+      create(
+        :patient,
+        :invalidated,
+        organisation: @organisation,
+        given_name: "John",
+        family_name: "Smith"
+      )
+
+    create(:patient, organisation: @organisation, nhs_number: nil)
   end
 
   def and_the_patient_is_vaccinated
@@ -206,6 +251,11 @@ describe "Manage children" do
     click_on "Continue"
   end
 
+  def when_i_enter_a_blank_nhs_number
+    fill_in "What is the child’s NHS number?", with: ""
+    click_on "Continue"
+  end
+
   def and_i_enter_an_existing_nhs_number
     fill_in "What is the child’s NHS number?",
             with: @existing_patient.nhs_number
@@ -214,6 +264,14 @@ describe "Manage children" do
 
   def and_i_see_the_nhs_number
     expect(page).to have_content("123 ‍456 ‍7890")
+  end
+
+  def and_the_patient_is_no_longer_invalidated
+    expect(@patient.reload).not_to be_invalidated
+  end
+
+  def and_i_see_the_blank_nhs_number
+    expect(page).to have_content("NHS numberNot provided")
   end
 
   def then_i_see_the_merge_record_page
@@ -240,12 +298,7 @@ describe "Manage children" do
   end
 
   def and_i_see_a_removed_from_cohort_message
-    expect(page).to have_content(/removed from Year ([0-9]+) cohort/)
-  end
-
-  def and_no_longer_see_the_cohort
-    expect(page).to have_content("No cohorts")
-    expect(page).to have_content("No sessions")
+    expect(page).to have_content("removed from cohort")
   end
 
   def when_i_go_to_the_dashboard
@@ -298,9 +351,5 @@ describe "Manage children" do
     expect(page).to have_content("Notices (1)")
     expect(page).to have_content(@restricted_patient.full_name)
     expect(page).to have_content("Record flagged as sensitive")
-  end
-
-  def and_i_click_on_a_child_who_is_only_in_the_cohort
-    click_on "Jane Doe"
   end
 end

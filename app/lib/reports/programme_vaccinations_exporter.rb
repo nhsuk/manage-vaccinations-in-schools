@@ -58,26 +58,35 @@ class Reports::ProgrammeVaccinationsExporter
       GILLICK_ASSESSMENT_DATE
       GILLICK_ASSESSED_BY
       GILLICK_ASSESSMENT_NOTES
-      VACCINATED
-      DATE_OF_VACCINATION
-      TIME_OF_VACCINATION
-      PROGRAMME_NAME
-      VACCINE_GIVEN
-      PERFORMING_PROFESSIONAL_EMAIL
-      PERFORMING_PROFESSIONAL_FORENAME
-      PERFORMING_PROFESSIONAL_SURNAME
-      BATCH_NUMBER
-      BATCH_EXPIRY_DATE
-      ANATOMICAL_SITE
-      ROUTE_OF_VACCINATION
-      DOSE_SEQUENCE
-      REASON_NOT_VACCINATED
-      LOCAL_PATIENT_ID
-      SNOMED_PROCEDURE_CODE
-      REASON_FOR_INCLUSION
-      RECORD_CREATED
-      RECORD_UPDATED
-    ]
+    ] +
+      (
+        if Flipper.enabled?(:report_gillick_notify_parents)
+          %w[GILLICK_NOTIFY_PARENTS]
+        else
+          []
+        end
+      ) +
+      %w[
+        VACCINATED
+        DATE_OF_VACCINATION
+        TIME_OF_VACCINATION
+        PROGRAMME_NAME
+        VACCINE_GIVEN
+        PERFORMING_PROFESSIONAL_EMAIL
+        PERFORMING_PROFESSIONAL_FORENAME
+        PERFORMING_PROFESSIONAL_SURNAME
+        BATCH_NUMBER
+        BATCH_EXPIRY_DATE
+        ANATOMICAL_SITE
+        ROUTE_OF_VACCINATION
+        DOSE_SEQUENCE
+        REASON_NOT_VACCINATED
+        LOCAL_PATIENT_ID
+        SNOMED_PROCEDURE_CODE
+        REASON_FOR_INCLUSION
+        RECORD_CREATED
+        RECORD_UPDATED
+      ]
   end
 
   def vaccination_records
@@ -92,12 +101,7 @@ class Reports::ProgrammeVaccinationsExporter
           :performed_by_user,
           :programme,
           :vaccine,
-          patient_session: {
-            consents: [:parent, { patient: :parent_relationships }],
-            gillick_assessments: :performed_by,
-            patient: %i[cohort gp_practice school],
-            triages: :performed_by
-          }
+          patient: %i[gp_practice school]
         )
 
     if start_date.present?
@@ -129,14 +133,35 @@ class Reports::ProgrammeVaccinationsExporter
     scope
   end
 
+  def patient_sessions
+    @patient_sessions ||=
+      PatientSession
+        .preload_for_status
+        .includes(
+          gillick_assessments: :performed_by,
+          patient: {
+            consents: [:parent, { patient: :parent_relationships }],
+            triages: :performed_by
+          }
+        )
+        .where(
+          patient_id: vaccination_records.map(&:patient_id),
+          session_id: vaccination_records.map(&:session_id)
+        )
+  end
+
   def row(vaccination_record:)
-    patient_session = vaccination_record.patient_session
-    consents = patient_session.latest_consents
-    gillick_assessment = patient_session.latest_gillick_assessment
-    patient = patient_session.patient
-    triage = patient_session.latest_triage
     location = vaccination_record.location
+    patient = vaccination_record.patient
     programme = vaccination_record.programme
+    session = vaccination_record.session
+
+    patient_session =
+      patient_sessions.find { it.patient == patient && it.session == session }
+
+    consents = patient_session&.latest_consents(programme:) || []
+    gillick_assessment = patient_session&.gillick_assessment(programme:)
+    triage = patient_session&.latest_triage(programme:)
 
     [
       organisation.ods_code,
@@ -146,8 +171,8 @@ class Reports::ProgrammeVaccinationsExporter
       clinic_name(location:, vaccination_record:),
       patient.given_name,
       patient.family_name,
-      patient.date_of_birth.strftime("%Y%m%d"),
-      patient.date_of_death&.strftime("%Y%m%d") || "",
+      patient.date_of_birth.iso8601,
+      patient.date_of_death&.iso8601 || "",
       patient.year_group || "",
       patient.gender_code.humanize,
       patient.restricted? ? "" : patient.address_line_1,
@@ -156,37 +181,46 @@ class Reports::ProgrammeVaccinationsExporter
       nhs_number_status_code(patient:),
       patient.gp_practice&.ods_code || "",
       patient.gp_practice&.name || "",
-      consent_status(patient_session:),
+      patient_session ? consent_status(patient_session:) : "",
       consent_details(consents:),
       health_question_answers(consents:),
       triage&.status&.humanize || "",
       triage&.performed_by&.full_name || "",
-      triage&.updated_at&.strftime("%Y%m%d") || "",
+      triage&.updated_at&.to_date&.iso8601 || "",
       triage&.notes || "",
       gillick_status(gillick_assessment:),
-      gillick_assessment&.updated_at&.strftime("%Y%m%d") || "",
+      gillick_assessment&.updated_at&.to_date&.iso8601 || "",
       gillick_assessment&.performed_by&.full_name || "",
-      gillick_assessment&.notes || "",
-      vaccinated(vaccination_record:),
-      vaccination_record.performed_at.strftime("%Y%m%d"),
-      vaccination_record.performed_at.strftime("%H:%M:%S"),
-      programme.name,
-      vaccination_record.vaccine&.nivs_name || "",
-      vaccination_record.performed_by_user&.email || "",
-      vaccination_record.performed_by&.given_name || "",
-      vaccination_record.performed_by&.family_name || "",
-      vaccination_record.batch&.name || "",
-      vaccination_record.batch&.expiry&.strftime("%Y%m%d") || "",
-      anatomical_site(vaccination_record:),
-      route_of_vaccination(vaccination_record:),
-      dose_sequence(vaccination_record:),
-      reason_not_vaccinated(vaccination_record:),
-      patient.id,
-      programme.snomed_procedure_code,
-      reason_for_inclusion(vaccination_record:),
-      record_created_at(vaccination_record:),
-      record_updated_at(vaccination_record:)
-    ]
+      gillick_assessment&.notes || ""
+    ] +
+      (
+        if Flipper.enabled?(:report_gillick_notify_parents)
+          [gillick_notify_parents(gillick_assessment:, consents:)]
+        else
+          []
+        end
+      ) +
+      [
+        vaccinated(vaccination_record:),
+        vaccination_record.performed_at.to_date.iso8601,
+        vaccination_record.performed_at.strftime("%H:%M:%S"),
+        programme.name,
+        vaccination_record.vaccine&.nivs_name || "",
+        vaccination_record.performed_by_user&.email || "",
+        vaccination_record.performed_by&.given_name || "",
+        vaccination_record.performed_by&.family_name || "",
+        vaccination_record.batch&.name || "",
+        vaccination_record.batch&.expiry&.iso8601 || "",
+        anatomical_site(vaccination_record:),
+        route_of_vaccination(vaccination_record:),
+        dose_sequence(vaccination_record:),
+        reason_not_vaccinated(vaccination_record:),
+        patient.id,
+        programme.snomed_procedure_code,
+        reason_for_inclusion(vaccination_record:),
+        record_created_at(vaccination_record:),
+        record_updated_at(vaccination_record:)
+      ]
   end
 
   def nhs_number_status_code(patient:)
@@ -199,6 +233,16 @@ class Reports::ProgrammeVaccinationsExporter
       "02" # Number present but not traced
     else
       "03" # Trace required
+    end
+  end
+
+  def gillick_notify_parents(gillick_assessment:, consents:)
+    return "" if gillick_assessment.nil?
+
+    if (consent = consents.find(&:via_self_consent?))
+      consent.notify_parents ? "Y" : "N"
+    else
+      ""
     end
   end
 

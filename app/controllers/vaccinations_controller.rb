@@ -23,7 +23,7 @@ class VaccinationsController < ApplicationController
       @session
         .patient_sessions
         .preload_for_status
-        .eager_load(patient: :cohort)
+        .eager_load(:patient)
         .order_by_name
 
     grouped_patient_sessions =
@@ -144,6 +144,7 @@ class VaccinationsController < ApplicationController
       @patient
         .patient_sessions
         .includes(
+          :organisation,
           patient: {
             parent_relationships: :parent
           },

@@ -9,13 +9,13 @@ describe AppProgrammeSessionTableComponent do
   let(:location) { create(:school, name: "Waterloo Road") }
   let(:session) { create(:session, programme:, location:) }
   let(:sessions) { [session] + create_list(:session, 2, programme:) }
-  let(:patient_session) { create(:patient_session, session:) }
+  let(:patient) { create(:patient, session:) }
 
   before do
     create_list(:patient_session, 4, session:)
 
-    create(:consent, :given, programme:, patient: patient_session.patient)
-    create(:vaccination_record, programme:, patient_session:)
+    create(:consent, :given, programme:, patient:)
+    create(:vaccination_record, programme:, patient:, session:)
 
     sessions.each { _1.strict_loading!(false) }
   end

@@ -231,7 +231,9 @@ module CSVImportable
     rows.each.with_index do |row, index|
       next if row.errors.empty?
 
-      errors.add("row_#{index + 1}".to_sym, row.errors.full_messages)
+      # The first row is the header and the index is 0-based, so we add two
+      # to match what the user sees in the spreadsheet
+      errors.add("row_#{index + 2}".to_sym, row.errors.full_messages)
     end
   end
 

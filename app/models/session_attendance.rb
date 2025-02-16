@@ -27,5 +27,6 @@ class SessionAttendance < ApplicationRecord
   belongs_to :session_date
 
   has_one :session, through: :patient_session
+  has_one :patient, through: :patient_session
   has_one :location, through: :session
 end

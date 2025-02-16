@@ -17,8 +17,8 @@ class ConsentsController < ApplicationController
       @session
         .patient_sessions
         .preload_for_status
-        .preload(consents: %i[parent patient])
-        .eager_load(patient: :cohort)
+        .preload(patient: { consents: %i[parent patient] })
+        .eager_load(:patient)
         .order_by_name
 
     tab_patient_sessions =
@@ -90,7 +90,10 @@ class ConsentsController < ApplicationController
     if @consent.valid?
       ActiveRecord::Base.transaction do
         @consent.save!
-        @patient_session.triages.invalidate_all
+        @patient
+          .triages
+          .where(programme_id: @consent.programme_id)
+          .invalidate_all
       end
 
       redirect_to session_patient_consent_path
@@ -109,7 +112,10 @@ class ConsentsController < ApplicationController
     if @consent.valid?
       ActiveRecord::Base.transaction do
         @consent.save!
-        @patient_session.triages.invalidate_all
+        @patient
+          .triages
+          .where(programme_id: @consent.programme_id)
+          .invalidate_all
       end
 
       redirect_to session_patient_consent_path,
@@ -147,7 +153,7 @@ class ConsentsController < ApplicationController
 
   def set_consent
     @consent =
-      @patient_session
+      @patient
         .consents
         .includes(:consent_form, :parent, patient: :parent_relationships)
         .find(params[:id])

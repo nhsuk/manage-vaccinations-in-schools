@@ -2,22 +2,23 @@
 
 describe AppImportFormatDetailsComponent do
   let(:programme) { create(:programme, :hpv) }
+  let(:organisation) { create(:organisation, programmes: [programme]) }
 
   it "renders the correct summary text for ClassImport" do
-    import = ClassImport.new
+    import = ClassImport.new(organisation:)
     render_inline(described_class.new(import:))
     expect(page).to have_content("How to format your CSV for class lists")
   end
 
   it "renders the correct summary text for CohortImport" do
-    import = CohortImport.new
+    import = CohortImport.new(organisation:)
     render_inline(described_class.new(import:))
     expect(page).to have_content("How to format your CSV for child records")
   end
 
   it "renders the correct summary text for ImmunisationImport" do
-    import = ImmunisationImport.new(programme:)
-    render_inline(described_class.new(import:, programme:))
+    import = ImmunisationImport.new(organisation:)
+    render_inline(described_class.new(import:))
     expect(page).to have_content(
       "How to format your CSV for vaccination records"
     )
@@ -32,7 +33,7 @@ describe AppImportFormatDetailsComponent do
   end
 
   it "renders the correct columns for ClassImport" do
-    import = ClassImport.new
+    import = ClassImport.new(organisation:)
     render_inline(described_class.new(import:))
     expect(page).to have_content("CHILD_FIRST_NAME")
     expect(page).to have_content("CHILD_LAST_NAME")
@@ -45,7 +46,7 @@ describe AppImportFormatDetailsComponent do
   end
 
   it "renders the correct columns for CohortImport" do
-    import = CohortImport.new
+    import = CohortImport.new(organisation:)
     render_inline(described_class.new(import:))
     expect(page).to have_content("CHILD_FIRST_NAME")
     expect(page).to have_content("CHILD_LAST_NAME")
@@ -59,8 +60,8 @@ describe AppImportFormatDetailsComponent do
   end
 
   it "renders the correct columns for ImmunisationImport" do
-    import = ImmunisationImport.new(programme:)
-    render_inline(described_class.new(import:, programme:))
+    import = ImmunisationImport.new(organisation:)
+    render_inline(described_class.new(import:))
     expect(page).to have_content("ORGANISATION_CODE")
     expect(page).to have_content("SCHOOL_URN")
     expect(page).to have_content("PERSON_FORENAME")
@@ -69,18 +70,5 @@ describe AppImportFormatDetailsComponent do
     expect(page).to have_content("VACCINE_GIVEN")
     expect(page).to have_content("CARE_SETTING")
     expect(page).to have_content("CLINIC_NAME")
-  end
-
-  it "includes HPV-specific columns for HPV programmes" do
-    import = ImmunisationImport.new(programme:)
-    render_inline(described_class.new(import:, programme:))
-    expect(page).to have_content("DOSE_SEQUENCE")
-  end
-
-  it "does not include HPV-specific columns for non-HPV programmes" do
-    programme = create(:programme, :flu)
-    import = ImmunisationImport.new(programme:)
-    render_inline(described_class.new(import:, programme:))
-    expect(page).not_to have_content("DOSE_SEQUENCE")
   end
 end

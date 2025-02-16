@@ -9,6 +9,8 @@ cis2:
 
 govuk_notify:
   callback_bearer_token: test-bearer-token
+  enabled: false
+  mode: test
 
 mesh:
   base_url: https://localhost:8700

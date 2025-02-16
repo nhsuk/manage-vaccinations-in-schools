@@ -17,36 +17,40 @@
 #  performed_at             :datetime         not null
 #  performed_by_family_name :string
 #  performed_by_given_name  :string
+#  performed_ods_code       :string           not null
 #  uuid                     :uuid             not null
 #  created_at               :datetime         not null
 #  updated_at               :datetime         not null
 #  batch_id                 :bigint
-#  patient_session_id       :bigint           not null
+#  patient_id               :bigint
 #  performed_by_user_id     :bigint
 #  programme_id             :bigint           not null
+#  session_id               :bigint
 #
 # Indexes
 #
 #  index_vaccination_records_on_batch_id              (batch_id)
 #  index_vaccination_records_on_discarded_at          (discarded_at)
-#  index_vaccination_records_on_patient_session_id    (patient_session_id)
+#  index_vaccination_records_on_patient_id            (patient_id)
 #  index_vaccination_records_on_performed_by_user_id  (performed_by_user_id)
 #  index_vaccination_records_on_programme_id          (programme_id)
+#  index_vaccination_records_on_session_id            (session_id)
 #  index_vaccination_records_on_uuid                  (uuid) UNIQUE
 #
 # Foreign Keys
 #
 #  fk_rails_...  (batch_id => batches.id)
-#  fk_rails_...  (patient_session_id => patient_sessions.id)
+#  fk_rails_...  (patient_id => patients.id)
 #  fk_rails_...  (performed_by_user_id => users.id)
 #  fk_rails_...  (programme_id => programmes.id)
+#  fk_rails_...  (session_id => sessions.id)
 #
 class VaccinationRecord < ApplicationRecord
   include Discard::Model
   include PendingChangesConcern
   include VaccinationRecordPerformedByConcern
 
-  audited associated_with: :patient_session
+  audited associated_with: :patient
 
   DELIVERY_SITE_SNOMED_CODES_AND_TERMS = {
     left_thigh: ["61396006", "Structure of left thigh (body structure)"],
@@ -71,15 +75,15 @@ class VaccinationRecord < ApplicationRecord
   }.with_indifferent_access
 
   belongs_to :batch, optional: true
-  belongs_to :patient_session
   belongs_to :performed_by_user, class_name: "User", optional: true
   belongs_to :programme
 
   has_and_belongs_to_many :dps_exports
   has_and_belongs_to_many :immunisation_imports
 
-  has_one :patient, through: :patient_session
-  has_one :session, through: :patient_session
+  belongs_to :patient
+  belongs_to :session, optional: true
+
   has_one :location, through: :session
   has_one :organisation, through: :session
   has_one :team, through: :session
@@ -129,8 +133,6 @@ class VaccinationRecord < ApplicationRecord
        validate: true
 
   encrypts :notes
-
-  validates :programme, inclusion: { in: -> { _1.patient_session.programmes } }
 
   validates :notes, length: { maximum: 1000 }
 
@@ -194,7 +196,7 @@ class VaccinationRecord < ApplicationRecord
   private
 
   def requires_location_name?
-    location&.generic_clinic?
+    session.nil? || location&.generic_clinic?
   end
 
   def maximum_dose_sequence

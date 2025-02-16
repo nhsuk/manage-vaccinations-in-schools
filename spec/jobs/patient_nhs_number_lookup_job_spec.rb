@@ -73,7 +73,12 @@ describe PatientNHSNumberLookupJob do
       end
       let(:triage) { create(:triage, patient:, programme:) }
       let(:vaccination_record) do
-        create(:vaccination_record, patient_session:, programme:)
+        create(
+          :vaccination_record,
+          patient:,
+          session: patient_session.session,
+          programme:
+        )
       end
 
       context "when the existing patient is not already in the session" do

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_02_01_201237) do
+ActiveRecord::Schema[8.0].define(version: 2025_02_10_092331) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -129,10 +129,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_01_201237) do
     t.bigint "organisation_id", null: false
     t.integer "status", default: 0, null: false
     t.jsonb "serialized_errors"
-    t.bigint "programme_id", null: false
     t.integer "rows_count"
     t.index ["organisation_id"], name: "index_cohort_imports_on_organisation_id"
-    t.index ["programme_id"], name: "index_cohort_imports_on_programme_id"
     t.index ["uploaded_by_user_id"], name: "index_cohort_imports_on_uploaded_by_user_id"
   end
 
@@ -290,8 +288,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_01_201237) do
     t.boolean "knows_consequences", null: false
     t.boolean "knows_delivery", null: false
     t.boolean "knows_side_effects", null: false
+    t.bigint "programme_id", null: false
     t.index ["patient_session_id"], name: "index_gillick_assessments_on_patient_session_id"
     t.index ["performed_by_user_id"], name: "index_gillick_assessments_on_performed_by_user_id"
+    t.index ["programme_id"], name: "index_gillick_assessments_on_programme_id"
   end
 
   create_table "good_job_batches", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -401,7 +401,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_01_201237) do
     t.bigint "uploaded_by_user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "programme_id", null: false
     t.datetime "processed_at"
     t.integer "new_record_count"
     t.integer "exact_duplicate_record_count"
@@ -413,7 +412,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_01_201237) do
     t.jsonb "serialized_errors"
     t.integer "rows_count"
     t.index ["organisation_id"], name: "index_immunisation_imports_on_organisation_id"
-    t.index ["programme_id"], name: "index_immunisation_imports_on_programme_id"
     t.index ["uploaded_by_user_id"], name: "index_immunisation_imports_on_uploaded_by_user_id"
   end
 
@@ -465,7 +463,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_01_201237) do
   create_table "notify_log_entries", force: :cascade do |t|
     t.integer "type", null: false
     t.uuid "template_id", null: false
-    t.string "recipient", null: false
+    t.string "recipient"
     t.datetime "created_at", null: false
     t.bigint "consent_form_id"
     t.bigint "patient_id"
@@ -580,6 +578,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_01_201237) do
     t.datetime "updated_from_pds_at"
     t.bigint "gp_practice_id"
     t.integer "birth_academic_year", null: false
+    t.bigint "organisation_id"
     t.index ["cohort_id"], name: "index_patients_on_cohort_id"
     t.index ["family_name", "given_name"], name: "index_patients_on_names_family_first"
     t.index ["family_name"], name: "index_patients_on_family_name_trigram", opclass: :gin_trgm_ops, using: :gin
@@ -587,6 +586,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_01_201237) do
     t.index ["given_name"], name: "index_patients_on_given_name_trigram", opclass: :gin_trgm_ops, using: :gin
     t.index ["gp_practice_id"], name: "index_patients_on_gp_practice_id"
     t.index ["nhs_number"], name: "index_patients_on_nhs_number", unique: true
+    t.index ["organisation_id"], name: "index_patients_on_organisation_id"
     t.index ["school_id"], name: "index_patients_on_school_id"
   end
 
@@ -740,7 +740,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_01_201237) do
   end
 
   create_table "vaccination_records", force: :cascade do |t|
-    t.bigint "patient_session_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "delivery_site"
@@ -759,11 +758,15 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_01_201237) do
     t.string "location_name"
     t.datetime "discarded_at"
     t.datetime "confirmation_sent_at"
+    t.bigint "patient_id"
+    t.bigint "session_id"
+    t.string "performed_ods_code", null: false
     t.index ["batch_id"], name: "index_vaccination_records_on_batch_id"
     t.index ["discarded_at"], name: "index_vaccination_records_on_discarded_at"
-    t.index ["patient_session_id"], name: "index_vaccination_records_on_patient_session_id"
+    t.index ["patient_id"], name: "index_vaccination_records_on_patient_id"
     t.index ["performed_by_user_id"], name: "index_vaccination_records_on_performed_by_user_id"
     t.index ["programme_id"], name: "index_vaccination_records_on_programme_id"
+    t.index ["session_id"], name: "index_vaccination_records_on_session_id"
     t.index ["uuid"], name: "index_vaccination_records_on_uuid", unique: true
   end
 
@@ -802,7 +805,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_01_201237) do
   add_foreign_key "class_imports_patients", "class_imports"
   add_foreign_key "class_imports_patients", "patients"
   add_foreign_key "cohort_imports", "organisations"
-  add_foreign_key "cohort_imports", "programmes"
   add_foreign_key "cohort_imports", "users", column: "uploaded_by_user_id"
   add_foreign_key "cohort_imports_parent_relationships", "cohort_imports"
   add_foreign_key "cohort_imports_parent_relationships", "parent_relationships"
@@ -827,12 +829,12 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_01_201237) do
   add_foreign_key "consents", "users", column: "recorded_by_user_id"
   add_foreign_key "dps_exports", "programmes"
   add_foreign_key "gillick_assessments", "patient_sessions"
+  add_foreign_key "gillick_assessments", "programmes"
   add_foreign_key "gillick_assessments", "users", column: "performed_by_user_id"
   add_foreign_key "health_questions", "health_questions", column: "follow_up_question_id"
   add_foreign_key "health_questions", "health_questions", column: "next_question_id"
   add_foreign_key "health_questions", "vaccines"
   add_foreign_key "immunisation_imports", "organisations"
-  add_foreign_key "immunisation_imports", "programmes"
   add_foreign_key "immunisation_imports", "users", column: "uploaded_by_user_id"
   add_foreign_key "immunisation_imports_patient_sessions", "immunisation_imports"
   add_foreign_key "immunisation_imports_patient_sessions", "patient_sessions"
@@ -856,6 +858,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_01_201237) do
   add_foreign_key "patients", "cohorts"
   add_foreign_key "patients", "locations", column: "gp_practice_id"
   add_foreign_key "patients", "locations", column: "school_id"
+  add_foreign_key "patients", "organisations"
   add_foreign_key "pre_screenings", "patient_sessions"
   add_foreign_key "pre_screenings", "users", column: "performed_by_user_id"
   add_foreign_key "programmes_sessions", "programmes"
@@ -879,8 +882,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_01_201237) do
   add_foreign_key "triage", "programmes"
   add_foreign_key "triage", "users", column: "performed_by_user_id"
   add_foreign_key "vaccination_records", "batches"
-  add_foreign_key "vaccination_records", "patient_sessions"
+  add_foreign_key "vaccination_records", "patients"
   add_foreign_key "vaccination_records", "programmes"
+  add_foreign_key "vaccination_records", "sessions"
   add_foreign_key "vaccination_records", "users", column: "performed_by_user_id"
   add_foreign_key "vaccines", "programmes"
 end

@@ -78,6 +78,13 @@ describe Reports::ProgrammeVaccinationsExporter do
         ]
       )
     end
+
+    context "when Gillick notify parents is enabled" do
+      before { Flipper.enable(:report_gillick_notify_parents) }
+      after { Flipper.disable(:report_gillick_notify_parents) }
+
+      it { should include("GILLICK_NOTIFY_PARENTS") }
+    end
   end
 
   describe "rows" do
@@ -89,16 +96,22 @@ describe Reports::ProgrammeVaccinationsExporter do
       it { should be_empty }
 
       context "with a vaccinated patient" do
-        let(:patient) { create(:patient, year_group: 8) }
-        let(:patient_session) { create(:patient_session, patient:, session:) }
-        let(:batch) { create(:batch, vaccine: programme.vaccines.active.first) }
+        let(:patient) { create(:patient, year_group: 8, session:) }
+        let(:batch) do
+          create(
+            :batch,
+            expiry: Date.new(2025, 12, 1),
+            vaccine: programme.vaccines.active.first
+          )
+        end
         let(:performed_at) { Time.zone.local(2024, 1, 1, 12, 5, 20) }
 
         before do
           create(
             :vaccination_record,
             batch:,
-            patient_session:,
+            patient:,
+            session:,
             performed_at:,
             created_at: performed_at,
             updated_at: performed_at,
@@ -112,13 +125,13 @@ describe Reports::ProgrammeVaccinationsExporter do
           expect(rows.first.to_hash).to eq(
             {
               "ANATOMICAL_SITE" => "left upper arm",
-              "BATCH_EXPIRY_DATE" => batch.expiry.strftime("%Y%m%d"),
+              "BATCH_EXPIRY_DATE" => "2025-12-01",
               "BATCH_NUMBER" => batch.name,
               "CARE_SETTING" => "1",
               "CLINIC_NAME" => "",
               "CONSENT_DETAILS" => "",
               "CONSENT_STATUS" => "",
-              "DATE_OF_VACCINATION" => "20240101",
+              "DATE_OF_VACCINATION" => "2024-01-01",
               "DOSE_SEQUENCE" => "1",
               "GILLICK_ASSESSED_BY" => "",
               "GILLICK_ASSESSMENT_DATE" => "",
@@ -136,7 +149,7 @@ describe Reports::ProgrammeVaccinationsExporter do
               "PERFORMING_PROFESSIONAL_SURNAME" => "Test",
               "PERSON_ADDRESS_LINE_1" => patient.address_line_1,
               "PERSON_DATE_OF_BIRTH" =>
-                patient.date_of_birth.strftime("%Y%m%d"),
+                patient.date_of_birth.strftime("%Y-%m-%d"),
               "PERSON_DATE_OF_DEATH" => "",
               "PERSON_FORENAME" => patient.given_name,
               "PERSON_GENDER_CODE" => "Not known",
@@ -165,13 +178,14 @@ describe Reports::ProgrammeVaccinationsExporter do
       end
 
       context "with a vaccinated patient outside the date range" do
-        let(:patient_session) { create(:patient_session, session:) }
+        let(:patient) { create(:patient_session, session:).patient }
         let(:start_date) { Date.current }
 
         before do
           create(
             :vaccination_record,
-            patient_session:,
+            patient:,
+            session:,
             created_at: 1.day.ago,
             updated_at: 1.day.ago,
             programme:,
@@ -183,13 +197,14 @@ describe Reports::ProgrammeVaccinationsExporter do
       end
 
       context "with a vaccinated patient that was updated in the date range" do
-        let(:patient_session) { create(:patient_session, session:) }
+        let(:patient) { create(:patient_session, session:).patient }
         let(:start_date) { 1.day.ago }
 
         before do
           create(
             :vaccination_record,
-            patient_session:,
+            patient:,
+            session:,
             created_at: 10.days.ago,
             updated_at: Time.current,
             programme:,
@@ -211,9 +226,14 @@ describe Reports::ProgrammeVaccinationsExporter do
       it { should be_empty }
 
       context "with a vaccinated patient" do
-        let(:patient) { create(:patient, year_group: 8) }
-        let(:patient_session) { create(:patient_session, patient:, session:) }
-        let(:batch) { create(:batch, vaccine: programme.vaccines.active.first) }
+        let(:patient) { create(:patient, year_group: 8, session:) }
+        let(:batch) do
+          create(
+            :batch,
+            expiry: Date.new(2025, 12, 1),
+            vaccine: programme.vaccines.active.first
+          )
+        end
         let(:performed_at) { Time.zone.local(2024, 1, 1, 12, 5, 20) }
 
         before do
@@ -221,7 +241,8 @@ describe Reports::ProgrammeVaccinationsExporter do
             :vaccination_record,
             performed_at:,
             batch:,
-            patient_session:,
+            patient:,
+            session:,
             programme:,
             location_name: "A Clinic",
             performed_by: user
@@ -233,13 +254,13 @@ describe Reports::ProgrammeVaccinationsExporter do
           expect(rows.first.to_hash).to eq(
             {
               "ANATOMICAL_SITE" => "left upper arm",
-              "BATCH_EXPIRY_DATE" => batch.expiry.strftime("%Y%m%d"),
+              "BATCH_EXPIRY_DATE" => "2025-12-01",
               "BATCH_NUMBER" => batch.name,
               "CARE_SETTING" => "2",
               "CLINIC_NAME" => "A Clinic",
               "CONSENT_DETAILS" => "",
               "CONSENT_STATUS" => "",
-              "DATE_OF_VACCINATION" => "20240101",
+              "DATE_OF_VACCINATION" => "2024-01-01",
               "DOSE_SEQUENCE" => "1",
               "GILLICK_ASSESSED_BY" => "",
               "GILLICK_ASSESSMENT_DATE" => "",
@@ -257,7 +278,7 @@ describe Reports::ProgrammeVaccinationsExporter do
               "PERFORMING_PROFESSIONAL_SURNAME" => "Test",
               "PERSON_ADDRESS_LINE_1" => patient.address_line_1,
               "PERSON_DATE_OF_BIRTH" =>
-                patient.date_of_birth.strftime("%Y%m%d"),
+                patient.date_of_birth.strftime("%Y-%m-%d"),
               "PERSON_DATE_OF_DEATH" => "",
               "PERSON_FORENAME" => patient.given_name,
               "PERSON_GENDER_CODE" => "Not known",
@@ -302,7 +323,7 @@ describe Reports::ProgrammeVaccinationsExporter do
 
       it "includes the information" do
         expect(rows.first.to_hash).to include(
-          "PERSON_DATE_OF_DEATH" => "20100101"
+          "PERSON_DATE_OF_DEATH" => "2010-01-01"
         )
       end
     end
@@ -374,6 +395,7 @@ describe Reports::ProgrammeVaccinationsExporter do
       let(:patient_session) do
         create(:patient_session, :vaccinated, programme:, session:)
       end
+      let(:patient) { patient_session.patient }
 
       before do
         performed_by = create(:user, given_name: "Test", family_name: "Nurse")
@@ -385,15 +407,52 @@ describe Reports::ProgrammeVaccinationsExporter do
           performed_by:,
           updated_at:
         )
+
+        Flipper.enable(:report_gillick_notify_parents)
       end
+
+      after { Flipper.disable(:report_gillick_notify_parents) }
 
       it "includes the information" do
         expect(rows.first.to_hash).to include(
           "GILLICK_ASSESSED_BY" => "Test Nurse",
-          "GILLICK_ASSESSMENT_DATE" => "20240101",
+          "GILLICK_ASSESSMENT_DATE" => "2024-01-01",
           "GILLICK_ASSESSMENT_NOTES" => "Assessed as Gillick competent",
+          "GILLICK_NOTIFY_PARENTS" => "",
           "GILLICK_STATUS" => "Gillick competent"
         )
+      end
+
+      context "when child doesn't want parents to be informed" do
+        before do
+          create(
+            :consent,
+            :self_consent,
+            patient:,
+            programme:,
+            notify_parents: false
+          )
+        end
+
+        it "includes the information" do
+          expect(rows.first.to_hash).to include("GILLICK_NOTIFY_PARENTS" => "N")
+        end
+      end
+
+      context "when child wants parents to be informed" do
+        before do
+          create(
+            :consent,
+            :self_consent,
+            patient:,
+            programme:,
+            notify_parents: true
+          )
+        end
+
+        it "includes the information" do
+          expect(rows.first.to_hash).to include("GILLICK_NOTIFY_PARENTS" => "Y")
+        end
       end
     end
 
@@ -416,7 +475,7 @@ describe Reports::ProgrammeVaccinationsExporter do
       it "includes the information" do
         expect(rows.first.to_hash).to include(
           "TRIAGED_BY" => "Test Nurse",
-          "TRIAGE_DATE" => Date.current.strftime("%Y%m%d"),
+          "TRIAGE_DATE" => Date.current.strftime("%Y-%m-%d"),
           "TRIAGE_NOTES" => "Okay to vaccinate",
           "TRIAGE_STATUS" => "Ready to vaccinate"
         )

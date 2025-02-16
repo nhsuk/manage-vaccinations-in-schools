@@ -74,7 +74,12 @@ describe PatientMerger do
     end
     let(:triage) { create(:triage, patient: patient_to_destroy, programme:) }
     let(:vaccination_record) do
-      create(:vaccination_record, patient_session:, programme:)
+      create(
+        :vaccination_record,
+        patient: patient_to_destroy,
+        session:,
+        programme:
+      )
     end
 
     it "destroys one of the patients" do
@@ -176,6 +181,23 @@ describe PatientMerger do
         expect { call }.to change(ParentRelationship, :count).by(-1)
         expect { parent_relationship.reload }.to raise_error(
           ActiveRecord::RecordNotFound
+        )
+      end
+    end
+
+    it "doesn't change the cohort" do
+      expect { call }.not_to(change { patient_to_keep.reload.organisation })
+    end
+
+    context "if the patient to keep is not in the cohort" do
+      let(:organisation) { create(:organisation) }
+
+      let(:patient_to_keep) { create(:patient, organisation: nil) }
+      let(:patient_to_destroy) { create(:patient, organisation:) }
+
+      it "adds the patient back in to the cohort" do
+        expect { call }.to change { patient_to_keep.reload.organisation }.to(
+          organisation
         )
       end
     end

@@ -65,8 +65,15 @@ class Vaccine < ApplicationRecord
     end
   end
 
+  MAXIMUM_DOSE_SEQUENCE_BY_TYPE = {
+    "flu" => 1,
+    "hpv" => 3,
+    "menacwy" => 1,
+    "td_ipv" => 1
+  }.freeze
+
   def maximum_dose_sequence
-    { "flu" => 1, "hpv" => 3 }.fetch(programme.type)
+    MAXIMUM_DOSE_SEQUENCE_BY_TYPE.fetch(programme.type)
   end
 
   def seasonal?

@@ -2,11 +2,11 @@
 
 describe SMSDeliveryJob do
   before(:all) do
-    Rails.configuration.action_mailer.delivery_method = :notify
-    Rails.configuration.action_mailer.notify_settings = { api_key: "abc" }
+    Settings.govuk_notify.enabled = true
+    Settings.govuk_notify.test_key = "abc"
   end
 
-  after(:all) { Rails.configuration.action_mailer.delivery_method = :test }
+  after(:all) { Settings.govuk_notify.enabled = false }
 
   let(:response) do
     instance_double(
@@ -34,7 +34,6 @@ describe SMSDeliveryJob do
         consent_form:,
         parent:,
         patient:,
-        patient_session:,
         programme:,
         sent_by:,
         vaccination_record:
@@ -48,7 +47,6 @@ describe SMSDeliveryJob do
     let(:consent) { nil }
     let(:consent_form) { nil }
     let(:patient) { create(:patient) }
-    let(:patient_session) { nil }
     let(:sent_by) { create(:user) }
     let(:vaccination_record) { nil }
 
@@ -58,7 +56,6 @@ describe SMSDeliveryJob do
         consent:,
         consent_form:,
         patient:,
-        patient_session:,
         programme:,
         vaccination_record:
       )
@@ -80,7 +77,6 @@ describe SMSDeliveryJob do
       notify_log_entry = NotifyLogEntry.last
       expect(notify_log_entry).to be_sms
       expect(notify_log_entry.delivery_id).to eq(response.id)
-      expect(notify_log_entry.recipient).to eq("01234 567890")
       expect(notify_log_entry.recipient_deterministic).to eq("01234 567890")
       expect(notify_log_entry.template_id).to eq(
         GOVUK_NOTIFY_SMS_TEMPLATES[template_name]
@@ -121,7 +117,6 @@ describe SMSDeliveryJob do
         notify_log_entry = NotifyLogEntry.last
         expect(notify_log_entry).to be_sms
         expect(notify_log_entry.delivery_id).to eq(response.id)
-        expect(notify_log_entry.recipient).to eq("01234 567890")
         expect(notify_log_entry.recipient_deterministic).to eq("01234 567890")
         expect(notify_log_entry.template_id).to eq(
           GOVUK_NOTIFY_SMS_TEMPLATES[template_name]

@@ -11,17 +11,18 @@ class AppTriageNotesComponent < ViewComponent::Base
     <% end %>
   ERB
 
-  def initialize(patient_session:)
+  def initialize(patient_session:, programme:)
     super
 
     @patient_session = patient_session
+    @programme = programme
   end
 
   def render?
     events.present?
   end
 
-  private
+  delegate :patient, :session, to: :@patient_session
 
   def events
     @events ||=
@@ -29,8 +30,9 @@ class AppTriageNotesComponent < ViewComponent::Base
   end
 
   def triage_events
-    @patient_session
+    patient
       .triages
+      .where(programme: @programme)
       .includes(:performed_by)
       .map do |triage|
         {

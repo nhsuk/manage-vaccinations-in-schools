@@ -25,19 +25,20 @@ class AppPatientPageComponent < ViewComponent::Base
 
   delegate :patient, :session, to: :patient_session
 
+  def programme
+    patient_session.programmes.first # TODO: handle multiple programmes
+  end
+
   def display_health_questions?
-    patient_session.consents.any?(&:response_given?)
+    patient_session.latest_consents(programme:).any?(&:response_given?)
   end
 
   def display_gillick_assessment_card?
-    gillick_assessment_can_be_recorded? || gillick_assessment_recorded?
+    patient_session.gillick_assessment(programme:) ||
+      gillick_assessment_can_be_recorded?
   end
 
   def gillick_assessment_can_be_recorded?
     patient_session.session.today? && helpers.policy(GillickAssessment).new?
-  end
-
-  def gillick_assessment_recorded?
-    patient_session.latest_gillick_assessment.present?
   end
 end

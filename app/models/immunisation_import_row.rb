@@ -10,7 +10,6 @@ class ImmunisationImportRow
     validates :batch_number, presence: true
     validates :delivery_site, presence: true
     validates :reason, absence: true
-    validates :vaccine_given, inclusion: { in: :valid_given_vaccines }
   end
 
   with_options unless: :administered do
@@ -18,8 +17,9 @@ class ImmunisationImportRow
     validates :batch_number, absence: true
     validates :delivery_site, absence: true
     validates :reason, presence: true
-    validates :vaccine_given, absence: true
   end
+
+  validates :vaccine_given, inclusion: { in: :valid_given_vaccines }
 
   validates :batch_expiry_date,
             comparison: {
@@ -35,8 +35,6 @@ class ImmunisationImportRow
               less_than_or_equal_to: :maximum_dose_sequence
             },
             if: :vaccine
-
-  validates :organisation_code, comparison: { equal_to: :ods_code }
 
   SCHOOL_URN_HOME_EDUCATED = "999999"
   SCHOOL_URN_UNKNOWN = "888888"
@@ -64,6 +62,15 @@ class ImmunisationImportRow
                 @data["PERSON_POSTCODE"]&.strip.present? ||
                   patient_nhs_number.blank?
               end
+            }
+
+  validates :performed_ods_code,
+            presence: {
+              unless: :outcome_in_this_academic_year?
+            },
+            comparison: {
+              equal_to: :organisation_ods_code,
+              if: :outcome_in_this_academic_year?
             }
 
   validates :date_of_vaccination,
@@ -105,10 +112,9 @@ class ImmunisationImportRow
 
   attr_reader :organisation
 
-  def initialize(data:, organisation:, programme:)
+  def initialize(data:, organisation:)
     @data = data
     @organisation = organisation
-    @programme = programme
   end
 
   def to_vaccination_record
@@ -120,12 +126,14 @@ class ImmunisationImportRow
       dose_sequence:,
       location_name:,
       outcome:,
-      patient_session:,
+      patient:,
       performed_at:,
       performed_by_family_name:,
       performed_by_given_name:,
       performed_by_user:,
-      programme: @programme
+      performed_ods_code:,
+      programme:,
+      session:
     }
 
     vaccination_record =
@@ -158,6 +166,12 @@ class ImmunisationImportRow
     vaccination_record
   end
 
+  def to_patient_session
+    return if patient.nil? || session.nil?
+
+    PatientSession.new(patient:, session:)
+  end
+
   def patient
     return unless valid?
 
@@ -166,29 +180,18 @@ class ImmunisationImportRow
   end
 
   def session
-    return unless valid?
+    return if date_of_vaccination.nil? || location.nil?
 
     @session ||=
-      Session
-        .create_with(programmes: [@programme])
-        .find_or_create_by!(organisation:, location:, academic_year:)
-        .tap do |session|
-          unless session.programmes.include?(@programme)
-            session.programmes << @programme
-          end
-
-          session.session_dates.find_or_create_by!(value: date_of_vaccination)
-        end
-  end
-
-  def patient_session
-    return unless valid?
-
-    @patient_session ||= PatientSession.find_or_create_by!(patient:, session:)
+      Session.has_date(date_of_vaccination).find_by(
+        organisation:,
+        location:,
+        academic_year:
+      )
   end
 
   def location_name
-    return unless location&.generic_clinic?
+    return unless session.nil? || location&.generic_clinic?
 
     if school_urn == SCHOOL_URN_UNKNOWN &&
          (
@@ -280,10 +283,6 @@ class ImmunisationImportRow
     end
   end
 
-  def organisation_code
-    @data["ORGANISATION_CODE"]&.strip&.upcase
-  end
-
   def vaccine_given
     @data["VACCINE_GIVEN"]&.strip
   end
@@ -317,6 +316,10 @@ class ImmunisationImportRow
 
   def patient_nhs_number
     @data["NHS_NUMBER"]&.gsub(/\s/, "")&.presence
+  end
+
+  def performed_ods_code
+    @data["ORGANISATION_CODE"]&.strip&.upcase
   end
 
   def school_name
@@ -374,8 +377,6 @@ class ImmunisationImportRow
 
   private
 
-  delegate :ods_code, to: :organisation
-
   def performed_at
     return nil if date_of_vaccination.nil?
 
@@ -411,10 +412,14 @@ class ImmunisationImportRow
   end
 
   def vaccine
-    return unless administered
-
-    @vaccine ||= @programme.vaccines.find_by(nivs_name: vaccine_given)
+    @vaccine ||=
+      organisation
+        .vaccines
+        .includes(:programme)
+        .find_by(nivs_name: vaccine_given)
   end
+
+  delegate :programme, to: :vaccine, allow_nil: true
 
   def batch
     return unless valid? && administered
@@ -428,8 +433,12 @@ class ImmunisationImportRow
       )
   end
 
+  def organisation_ods_code
+    organisation.ods_code
+  end
+
   def valid_given_vaccines
-    @programme.vaccines.pluck(:nivs_name)
+    organisation.vaccines.pluck(:nivs_name)
   end
 
   def maximum_dose_sequence
@@ -445,7 +454,7 @@ class ImmunisationImportRow
   end
 
   def requires_care_setting?
-    @programme.hpv?
+    programme&.hpv?
   end
 
   def performed_by_details_present_where_required
@@ -457,7 +466,7 @@ class ImmunisationImportRow
 
       if email_field_populated
         errors.add(:performed_by_user, :blank) if performed_by_user.nil?
-      elsif @programme.flu? # no validation required for HPV
+      elsif programme&.flu? # no validation required for HPV
         if performed_by_given_name.blank?
           errors.add(:performed_by_given_name, :blank)
         end
@@ -510,16 +519,10 @@ class ImmunisationImportRow
   end
 
   def session_date_exists
-    return if date_of_vaccination.nil? || location.nil?
+    return if date_of_vaccination.nil?
     return unless outcome_in_this_academic_year?
 
-    unless Session.has_date(date_of_vaccination).exists?(
-             organisation:,
-             location:,
-             academic_year:
-           )
-      errors.add(:date_of_vaccination, :inclusion)
-    end
+    errors.add(:date_of_vaccination, :inclusion) if session.nil?
   end
 
   def uuid_exists

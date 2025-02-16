@@ -44,9 +44,6 @@ class RegisterAttendancesController < ApplicationController
     ps =
       @session.patient_sessions.preload_for_status.includes(
         :patient,
-        :vaccination_records,
-        :triages,
-        consents: :parent,
         session: :session_dates,
         session_attendances: :session_date
       )
@@ -68,6 +65,7 @@ class RegisterAttendancesController < ApplicationController
   end
 
   def set_patient_session
-    @patient_session = @patient.patient_sessions.find_by!(session: @session)
+    @patient_session =
+      @patient.patient_sessions.preload_for_status.find_by!(session: @session)
   end
 end

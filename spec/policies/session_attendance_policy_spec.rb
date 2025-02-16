@@ -8,7 +8,8 @@ describe SessionAttendancePolicy do
   let(:programme) { create(:programme) }
   let(:organisation) { create(:organisation, programmes: [programme]) }
   let(:session) { create(:session, organisation:, programme:) }
-  let(:patient_session) { create(:patient_session, session:) }
+  let(:patient) { create(:patient) }
+  let(:patient_session) { create(:patient_session, patient:, session:) }
 
   shared_examples "allow if not yet seen by nurse" do
     context "with a new session attendance" do
@@ -23,7 +24,8 @@ describe SessionAttendancePolicy do
       before do
         create(
           :vaccination_record,
-          patient_session:,
+          patient:,
+          session:,
           programme:,
           performed_at: Time.current
         )
@@ -38,7 +40,8 @@ describe SessionAttendancePolicy do
       before do
         create(
           :vaccination_record,
-          patient_session:,
+          patient:,
+          session:,
           programme:,
           performed_at: Time.zone.yesterday
         )

@@ -14,8 +14,13 @@ class AppConsentComponent < ViewComponent::Base
   delegate :patient, to: :patient_session
   delegate :session, to: :patient_session
 
+  def programme
+    patient_session.programmes.first # TODO: handle multiple programmes
+  end
+
   def consents
-    @consents ||= patient_session.consents.sort_by(&:created_at).reverse
+    @consents ||=
+      patient_session.consents(programme:).sort_by(&:created_at).reverse
   end
 
   def latest_consent_request

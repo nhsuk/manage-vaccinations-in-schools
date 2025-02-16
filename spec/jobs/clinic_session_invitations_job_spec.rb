@@ -60,7 +60,8 @@ describe ClinicSessionInvitationsJob do
       before do
         create(
           :vaccination_record,
-          patient_session:,
+          patient:,
+          session:,
           programme:,
           location_name: "A clinic."
         )

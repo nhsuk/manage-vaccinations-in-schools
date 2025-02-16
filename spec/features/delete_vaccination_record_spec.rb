@@ -134,7 +134,8 @@ describe "Delete vaccination record" do
       create(
         :vaccination_record,
         programme: @programme,
-        patient_session: @patient_session,
+        patient: @patient,
+        session: @session,
         batch:
       )
   end

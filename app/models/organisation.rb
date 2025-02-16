@@ -29,11 +29,12 @@ class Organisation < ApplicationRecord
 
   has_many :batches
   has_many :cohort_imports
-  has_many :cohorts
   has_many :consent_forms
   has_many :consents
+  has_many :immunisation_records
   has_many :locations
   has_many :organisation_programmes
+  has_many :patients
   has_many :sessions
   has_many :teams
 
@@ -42,7 +43,7 @@ class Organisation < ApplicationRecord
   has_many :patient_sessions, through: :sessions
   has_many :programmes, through: :organisation_programmes
   has_many :schools, through: :teams
-  has_many :vaccination_records, through: :patient_sessions
+  has_many :vaccines, through: :programmes
 
   has_and_belongs_to_many :users
 

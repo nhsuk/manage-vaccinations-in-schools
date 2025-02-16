@@ -3,7 +3,7 @@
 describe AppTriageNotesComponent do
   subject(:rendered) { render_inline(component) }
 
-  let(:component) { described_class.new(patient_session:) }
+  let(:component) { described_class.new(patient_session:, programme:) }
 
   let(:programme) { create(:programme) }
   let(:patient_session) { create(:patient_session, programme:) }
