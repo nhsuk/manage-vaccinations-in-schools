@@ -22,7 +22,7 @@
           <% row.with_cell do %>
             <span class="nhsuk-table-responsive__heading">Imported on</span>
             <%= govuk_link_to import.created_at.to_fs(:long),
-                              path(programme, import) %>
+                              path(import) %>
           <% end %>
           <% row.with_cell do %>
             <span class="nhsuk-table-responsive__heading">Imported by</span>

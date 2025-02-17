@@ -18,25 +18,20 @@
 #  created_at                   :datetime         not null
 #  updated_at                   :datetime         not null
 #  organisation_id              :bigint           not null
-#  programme_id                 :bigint           not null
 #  uploaded_by_user_id          :bigint           not null
 #
 # Indexes
 #
 #  index_cohort_imports_on_organisation_id      (organisation_id)
-#  index_cohort_imports_on_programme_id         (programme_id)
 #  index_cohort_imports_on_uploaded_by_user_id  (uploaded_by_user_id)
 #
 # Foreign Keys
 #
 #  fk_rails_...  (organisation_id => organisations.id)
-#  fk_rails_...  (programme_id => programmes.id)
 #  fk_rails_...  (uploaded_by_user_id => users.id)
 #
 class CohortImport < PatientImport
   include CSVImportable
-
-  belongs_to :programme
 
   has_and_belongs_to_many :parent_relationships
   has_and_belongs_to_many :parents
@@ -48,7 +43,7 @@ class CohortImport < PatientImport
   end
 
   def parse_row(data)
-    CohortImportRow.new(data:, organisation:, programme:)
+    CohortImportRow.new(data:, organisation:)
   end
 
   def postprocess_rows!

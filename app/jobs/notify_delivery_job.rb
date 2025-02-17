@@ -1,14 +1,16 @@
 # frozen_string_literal: true
 
+require "notifications/client"
+
 class NotifyDeliveryJob < ApplicationJob
-  queue_as { Rails.configuration.action_mailer.deliver_later_queue_name }
+  queue_as :mailer
 
   retry_on Notifications::Client::ServerError, wait: :polynomially_longer
 
   def self.client
     @client ||=
       Notifications::Client.new(
-        Rails.configuration.action_mailer.notify_settings[:api_key]
+        Settings.govuk_notify["#{Settings.govuk_notify.mode}_key"]
       )
   end
 
@@ -17,11 +19,11 @@ class NotifyDeliveryJob < ApplicationJob
   end
 
   def self.send_via_notify?
-    Rails.configuration.action_mailer.delivery_method == :notify
+    Settings.govuk_notify&.enabled
   end
 
   def self.send_via_test?
-    Rails.configuration.action_mailer.delivery_method == :test
+    Rails.env.test?
   end
 
   class UnknownTemplate < StandardError

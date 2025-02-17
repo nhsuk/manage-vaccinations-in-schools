@@ -25,6 +25,6 @@ FactoryBot.define do
 
     organisation
 
-    birth_academic_year { Date.current.academic_year - year_group - 5 }
+    birth_academic_year { year_group.to_birth_academic_year }
   end
 end

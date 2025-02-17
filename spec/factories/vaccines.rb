@@ -31,7 +31,7 @@
 #
 FactoryBot.define do
   factory :vaccine do
-    transient { type { %w[flu hpv].sample } }
+    transient { type { Programme.types.keys.sample } }
 
     programme { association :programme, type: }
 

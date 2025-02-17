@@ -50,8 +50,7 @@
 
             <% row.with_cell do %>
               <span class="nhsuk-table-responsive__heading">Actions</span>
-              <%= link_to programme_import_issue_path(
-                    @programme,
+              <%= link_to import_issue_path(
                     import_issue,
                     type: import_issue.is_a?(VaccinationRecord) ?
                       "vaccination-record" :

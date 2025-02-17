@@ -15,7 +15,7 @@
 <% if display_gillick_assessment_card? %>
   <%= render AppCardComponent.new do |c| %>
     <% c.with_heading { "Gillick assessment" } %>
-    <% if (gillick_assessment = patient_session.latest_gillick_assessment) %>
+    <% if (gillick_assessment = patient_session.gillick_assessment(programme:)) %>
       <% if gillick_assessment.gillick_competent? %>
         <p class="app-status app-status--aqua-green">
           <svg class="nhsuk-icon nhsuk-icon__tick" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
@@ -69,14 +69,14 @@
 <% if display_health_questions? %>
   <%= render AppCardComponent.new do |c| %>
     <% c.with_heading { "All answers to health questions" } %>
-    <%= render AppHealthQuestionsComponent.new(consents: patient_session.latest_consents) %>
+    <%= render AppHealthQuestionsComponent.new(consents: patient_session.latest_consents(programme:)) %>
   <% end %>
 <% end %>
 
-<% if patient_session.triages.any? %>
+<% if patient_session.triages(programme:).any? %>
   <%= render AppCardComponent.new do |c| %>
     <% c.with_heading { "Triage notes" } %>
-    <%= render AppTriageNotesComponent.new(patient_session:) %>
+    <%= render AppTriageNotesComponent.new(patient_session:, programme:) %>
   <% end %>
 <% end %>
 
@@ -97,7 +97,7 @@
   <% end %>
 <% end %>
 
-<% patient_session.vaccination_records.each do |vaccination_record| %>
+<% patient_session.vaccination_records(programme:).each do |vaccination_record| %>
   <%= render AppCardComponent.new do |c| %>
     <% c.with_heading { "Vaccination details" } %>
     <%= render AppVaccinationRecordSummaryComponent.new(vaccination_record, current_user:) %>

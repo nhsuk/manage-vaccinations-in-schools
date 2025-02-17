@@ -66,7 +66,8 @@ class SessionsController < ApplicationController
   end
 
   def edit_close
-    @unvaccinated_patients_count = @session.unvaccinated_patients.length
+    @patients_to_move_to_clinic_count =
+      @session.patients_to_move_to_clinic.length
 
     render :close
   end

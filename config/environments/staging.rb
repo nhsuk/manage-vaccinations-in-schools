@@ -20,8 +20,4 @@ Rails.application.configure do
       description: "Track the status of DPS exports"
     }
   )
-
-  config.action_mailer.notify_settings = {
-    api_key: Settings.govuk_notify["#{Settings.govuk_notify.mode}_key"]
-  }
 end

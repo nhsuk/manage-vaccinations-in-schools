@@ -29,6 +29,7 @@
 #  updated_at                :datetime         not null
 #  cohort_id                 :bigint
 #  gp_practice_id            :bigint
+#  organisation_id           :bigint
 #  school_id                 :bigint
 #
 # Indexes
@@ -40,12 +41,14 @@
 #  index_patients_on_names_family_first   (family_name,given_name)
 #  index_patients_on_names_given_first    (given_name,family_name)
 #  index_patients_on_nhs_number           (nhs_number) UNIQUE
+#  index_patients_on_organisation_id      (organisation_id)
 #  index_patients_on_school_id            (school_id)
 #
 # Foreign Keys
 #
 #  fk_rails_...  (cohort_id => cohorts.id)
 #  fk_rails_...  (gp_practice_id => locations.id)
+#  fk_rails_...  (organisation_id => organisations.id)
 #  fk_rails_...  (school_id => locations.id)
 #
 class Patient < ApplicationRecord
@@ -59,21 +62,20 @@ class Patient < ApplicationRecord
 
   audited
 
-  belongs_to :cohort, optional: true
   belongs_to :gp_practice, class_name: "Location", optional: true
+  belongs_to :organisation, optional: true
 
   has_many :access_log_entries
   has_many :consent_notifications
-  has_many :consents
+  has_many :consents, -> { order(:created_at) }
   has_many :notify_log_entries
   has_many :parent_relationships
   has_many :patient_sessions
   has_many :school_move_log_entries
   has_many :school_moves
   has_many :session_notifications
-  has_many :triages
-
-  has_one :latest_triage, -> { order(created_at: :desc) }, class_name: "Triage"
+  has_many :triages, -> { order(:created_at) }
+  has_many :vaccination_records, -> { kept.order(:performed_at) }
 
   has_many :parents, through: :parent_relationships
   has_many :gillick_assessments,
@@ -84,7 +86,6 @@ class Patient < ApplicationRecord
            through: :patient_sessions
   has_many :session_attendances, through: :patient_sessions
   has_many :sessions, through: :patient_sessions
-  has_many :vaccination_records, through: :patient_sessions
 
   has_many :upcoming_sessions,
            -> { upcoming },
@@ -116,9 +117,9 @@ class Patient < ApplicationRecord
           end
         end
 
-  scope :in_pending_cohorts,
-        ->(cohorts) do
-          where("pending_changes->>'cohort_id' IN (?)", cohorts.pluck(:id))
+  scope :in_programme,
+        ->(programme) do
+          where(birth_academic_year: programme.birth_academic_years)
         end
 
   scope :with_pending_changes, -> { where.not(pending_changes: {}) }
@@ -140,21 +141,6 @@ class Patient < ApplicationRecord
               query:
             )
           end
-        end
-
-  scope :in_organisation,
-        ->(organisation) do
-          cohort_ids = organisation.cohorts.ids
-          school_ids = organisation.schools.ids
-
-          school_moves =
-            SchoolMove.where(school_id: school_ids).or(
-              SchoolMove.where(organisation:)
-            )
-
-          where(cohort_id: cohort_ids).or(where(school_id: school_ids)).or(
-            where(school_moves.for_patient.arel.exists)
-          )
         end
 
   validates :given_name, :family_name, :date_of_birth, presence: true
@@ -355,7 +341,7 @@ class Patient < ApplicationRecord
     school_move =
       if school
         SchoolMove.new(patient: self, school:)
-      elsif (organisation = cohort&.organisation)
+      elsif organisation
         SchoolMove.new(patient: self, home_educated:, organisation:)
       end
 
@@ -365,29 +351,21 @@ class Patient < ApplicationRecord
   end
 
   def self.from_consent_form(consent_form)
-    birth_academic_year = consent_form.date_of_birth.academic_year
-
-    cohort =
-      Cohort.find_or_create_by!(
-        birth_academic_year:,
-        organisation: consent_form.organisation
-      )
-
     new(
       address_line_1: consent_form.address_line_1,
       address_line_2: consent_form.address_line_2,
       address_postcode: consent_form.address_postcode,
       address_town: consent_form.address_town,
-      birth_academic_year:,
+      birth_academic_year: consent_form.date_of_birth.academic_year,
       date_of_birth: consent_form.date_of_birth,
       family_name: consent_form.family_name,
       given_name: consent_form.given_name,
+      home_educated: consent_form.home_educated,
       nhs_number: consent_form.nhs_number,
+      organisation: consent_form.organisation,
       preferred_family_name: consent_form.preferred_family_name,
       preferred_given_name: consent_form.preferred_given_name,
-      school: consent_form.school,
-      home_educated: consent_form.home_educated,
-      cohort:
+      school: consent_form.school
     )
   end
 
@@ -419,7 +397,12 @@ class Patient < ApplicationRecord
 
   def clear_upcoming_sessions
     patient_sessions
-      .includes(:session_attendances)
+      .includes(
+        :programmes,
+        :gillick_assessments,
+        :session_attendances,
+        patient: :vaccination_records
+      )
       .where(session: upcoming_sessions)
       .find_each(&:destroy_if_safe!)
   end

@@ -11,14 +11,14 @@
 
 <%= render AppProgrammeNavigationComponent.new(@programme, organisation: current_user.selected_organisation, active: :cohorts) %>
 
-<%= govuk_button_link_to "Import child records", new_programme_cohort_import_path(@programme), class: "app-button--secondary" %>
+<%= govuk_button_link_to "Import child records", new_cohort_import_path, class: "app-button--secondary" %>
 
 <ul class="nhsuk-grid-row nhsuk-card-group">
-  <% @cohorts.each do |cohort| %>
+  <% @patient_count_by_birth_academic_year.each do |birth_academic_year, patient_count| %>
     <li class="nhsuk-grid-column-one-quarter nhsuk-card-group__item">
-      <%= render AppCardComponent.new(link_to: cohort.patient_count > 0 ? programme_cohort_path(@programme, cohort) : nil) do |card| %>
-        <% card.with_heading { format_year_group(cohort.year_group) } %>
-        <% card.with_description { t("children", count: cohort.patient_count) } %>
+      <%= render AppCardComponent.new(link_to: patient_count > 0 ? programme_cohort_path(@programme, birth_academic_year) : nil) do |card| %>
+        <% card.with_heading { format_year_group(birth_academic_year.to_year_group) } %>
+        <% card.with_description { t("children", count: patient_count) } %>
       <% end %>
     </li>
   <% end %>

@@ -38,7 +38,7 @@ describe ClassImport do
     create(:class_import, csv:, session:, organisation:)
   end
 
-  let(:programme) { create(:programme) }
+  let(:programme) { create(:programme, :hpv) }
   let(:organisation) { create(:organisation, programmes: [programme]) }
   let(:location) { create(:school, organisation:) }
   let(:session) { create(:session, location:, programme:, organisation:) }
@@ -164,7 +164,6 @@ describe ClassImport do
         .to change(class_import, :processed_at).from(nil)
         .and change(class_import.patients, :count).by(4)
         .and change(class_import.parents, :count).by(5)
-        .and change(organisation.cohorts, :count).by(2)
 
       expect(Patient.first).to have_attributes(
         nhs_number: "1234567890",
@@ -357,9 +356,10 @@ describe ClassImport do
       it "doesn't stage school changes" do
         expect { process! }.not_to change(patient, :pending_changes)
         expect(patient.pending_changes.keys).not_to include(
-          :school_id,
           :cohort_id,
-          :home_educated
+          :home_educated,
+          :organisation_id,
+          :school_id
         )
       end
     end

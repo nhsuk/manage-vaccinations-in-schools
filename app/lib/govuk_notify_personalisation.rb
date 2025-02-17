@@ -7,29 +7,23 @@ class GovukNotifyPersonalisation
     consent: nil,
     consent_form: nil,
     patient: nil,
-    patient_session: nil,
     programme: nil,
     session: nil,
     vaccination_record: nil
   )
-    patient_session ||= vaccination_record&.patient_session
-
     @consent = consent
     @consent_form = consent_form
-    @patient = patient || consent&.patient || patient_session&.patient
+    @patient = patient || consent&.patient || vaccination_record&.patient
     @programme =
       programme || vaccination_record&.programme || consent_form&.programme ||
         consent&.programme
     @session =
       session || consent_form&.actual_upcoming_session ||
-        consent_form&.original_session || patient_session&.session
+        consent_form&.original_session || vaccination_record&.session
     @organisation =
-      session&.organisation || patient_session&.organisation ||
-        consent_form&.organisation || consent&.organisation ||
-        vaccination_record&.organisation
-    @team =
-      session&.team || patient_session&.team || consent_form&.team ||
-        vaccination_record&.team
+      session&.organisation || consent_form&.organisation ||
+        consent&.organisation || vaccination_record&.organisation
+    @team = session&.team || consent_form&.team || vaccination_record&.team
     @vaccination_record = vaccination_record
   end
 

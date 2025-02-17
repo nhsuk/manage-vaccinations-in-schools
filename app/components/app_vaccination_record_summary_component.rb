@@ -255,10 +255,14 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
   end
 
   def location_value
-    if @vaccination_record.location.generic_clinic?
-      @vaccination_record.location_name
+    if (location = @vaccination_record.location)
+      if location.generic_clinic?
+        @vaccination_record.location_name
+      else
+        location.name
+      end
     else
-      @vaccination_record.location.name
+      "Unknown"
     end
   end
 

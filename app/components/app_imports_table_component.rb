@@ -1,11 +1,10 @@
 # frozen_string_literal: true
 
 class AppImportsTableComponent < ViewComponent::Base
-  def initialize(organisation:, programme:)
+  def initialize(organisation:)
     super
 
     @organisation = organisation
-    @programme = programme
   end
 
   def render?
@@ -14,7 +13,7 @@ class AppImportsTableComponent < ViewComponent::Base
 
   private
 
-  attr_reader :organisation, :programme
+  attr_reader :organisation
 
   def imports
     @imports ||=
@@ -27,7 +26,7 @@ class AppImportsTableComponent < ViewComponent::Base
   def class_import_records
     ClassImport
       .select("class_imports.*", "COUNT(patients.id) AS record_count")
-      .where(organisation:, session: programme.sessions)
+      .where(organisation:)
       .left_outer_joins(:patients)
       .includes(:uploaded_by, session: :location)
       .group("class_imports.id")
@@ -36,7 +35,7 @@ class AppImportsTableComponent < ViewComponent::Base
   def cohort_import_records
     CohortImport
       .select("cohort_imports.*", "COUNT(patients.id) AS record_count")
-      .where(organisation:, programme:)
+      .where(organisation:)
       .left_outer_joins(:patients)
       .includes(:uploaded_by)
       .group("cohort_imports.id")
@@ -48,19 +47,19 @@ class AppImportsTableComponent < ViewComponent::Base
         "immunisation_imports.*",
         "COUNT(vaccination_records.id) AS record_count"
       )
-      .where(organisation:, programme:)
+      .where(organisation:)
       .left_outer_joins(:vaccination_records)
       .includes(:uploaded_by)
       .group("immunisation_imports.id")
   end
 
-  def path(programme, import)
+  def path(import)
     if import.is_a?(ClassImport)
       session_class_import_path(import.session, import)
     elsif import.is_a?(CohortImport)
-      programme_cohort_import_path(programme, import)
+      cohort_import_path(import)
     else
-      programme_immunisation_import_path(programme, import)
+      immunisation_import_path(import)
     end
   end
 

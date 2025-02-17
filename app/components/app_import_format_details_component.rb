@@ -1,14 +1,15 @@
 # frozen_string_literal: true
 
 class AppImportFormatDetailsComponent < ViewComponent::Base
-  def initialize(import:, programme: nil)
+  def initialize(import:)
     super
 
     @import = import
-    @programme = programme
   end
 
   private
+
+  delegate :organisation, to: :@import
 
   def summary_text
     case @import
@@ -86,7 +87,9 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
       { name: "PERSON_SURNAME", notes: tag.strong("Required") },
       {
         name: "PERSON_DOB",
-        notes: "#{tag.strong("Required")}, must use #{tag.i("YYYYMMDD")} format"
+        notes:
+          "#{tag.strong("Required")}, must use either #{tag.i("YYYYMMDD")} or " \
+            "#{tag.i("DD/MM/YYYY")} format"
       },
       {
         name: "PERSON_GENDER_CODE",
@@ -101,7 +104,9 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
       },
       {
         name: "DATE_OF_VACCINATION",
-        notes: "#{tag.strong("Required")}, must use #{tag.i("YYYYMMDD")} format"
+        notes:
+          "#{tag.strong("Required")}, must use either #{tag.i("YYYYMMDD")} or " \
+            "#{tag.i("DD/MM/YYYY")} format"
       },
       {
         name: "TIME_OF_VACCINATION",
@@ -110,8 +115,8 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
       {
         name: "VACCINE_GIVEN",
         notes:
-          "Required if #{tag.code("VACCINATED")} is #{tag.i("Y")}, must be " +
-            @programme
+          "#{tag.strong("Required")}, must be " +
+            organisation
               .vaccines
               .pluck(:nivs_name)
               .map { tag.i(_1) }
@@ -127,7 +132,8 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
       {
         name: "BATCH_EXPIRY_DATE",
         notes:
-          "Required if #{tag.code("VACCINATED")} is #{tag.i("Y")}, must use #{tag.i("YYYYMMDD")} format"
+          "Required if #{tag.code("VACCINATED")} is #{tag.i("Y")}, must use " \
+            "either #{tag.i("YYYYMMDD")} or #{tag.i("DD/MM/YYYY")} format"
       },
       {
         name: "VACCINATED",
@@ -239,8 +245,6 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
   end
 
   def dose_sequence
-    return [] unless @programme.hpv?
-
     [
       {
         name: "DOSE_SEQUENCE",

@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
 class ImportsController < ApplicationController
-  before_action :set_organisation, :set_programme
+  before_action :set_organisation
+
+  skip_after_action :verify_policy_scoped
 
   def index
     render layout: "full"
@@ -13,11 +15,11 @@ class ImportsController < ApplicationController
   def create
     redirect_to(
       if params[:type] == "vaccinations"
-        new_programme_immunisation_import_path(@programme)
+        new_immunisation_import_path
       elsif params[:type] == "children"
-        new_programme_cohort_import_path(@programme)
+        new_cohort_import_path
       else
-        new_programme_import_path(@programme)
+        new_import_path
       end
     )
   end
@@ -26,9 +28,5 @@ class ImportsController < ApplicationController
 
   def set_organisation
     @organisation = current_user.selected_organisation
-  end
-
-  def set_programme
-    @programme = policy_scope(Programme).find_by!(type: params[:programme_type])
   end
 end

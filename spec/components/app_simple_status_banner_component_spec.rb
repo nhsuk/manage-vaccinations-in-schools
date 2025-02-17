@@ -10,16 +10,20 @@ describe AppSimpleStatusBannerComponent do
     stub_authorization(allowed: true)
 
     patient_session.strict_loading!(false)
+    patient_session.patient.strict_loading!(false)
   end
 
-  let(:user) { create :user }
-  let(:patient_session) { create :patient_session, user: }
+  let(:user) { create(:user) }
+  let(:programme) { create(:programme) }
+  let(:patient_session) { create(:patient_session, programme:, user:) }
+
   let(:component) { described_class.new(patient_session:) }
+
   let(:triage_nurse_name) do
-    patient_session.latest_triage.performed_by.full_name
+    patient_session.triages(programme:).last.performed_by.full_name
   end
   let(:vaccination_nurse_name) do
-    patient_session.vaccination_records.last.performed_by.full_name
+    patient_session.vaccination_records(programme:).last.performed_by.full_name
   end
   let(:patient_name) { patient_session.patient.full_name }
 
@@ -28,14 +32,16 @@ describe AppSimpleStatusBannerComponent do
   end
 
   context "state is added_to_session" do
-    let(:patient_session) { create :patient_session, :added_to_session }
+    let(:patient_session) do
+      create(:patient_session, :added_to_session, programme:)
+    end
 
     it { should have_css(".app-card--blue") }
   end
 
   context "state is consent_given_triage_not_needed" do
     let(:patient_session) do
-      create :patient_session, :consent_given_triage_not_needed
+      create(:patient_session, :consent_given_triage_not_needed, programme:)
     end
 
     it { should have_css(".app-card--aqua-green") }
@@ -45,7 +51,7 @@ describe AppSimpleStatusBannerComponent do
 
   context "state is consent_given_triage_needed" do
     let(:patient_session) do
-      create :patient_session, :consent_given_triage_needed
+      create(:patient_session, :consent_given_triage_needed, programme:)
     end
 
     it { should have_css(".app-card--blue") }
@@ -54,7 +60,9 @@ describe AppSimpleStatusBannerComponent do
   end
 
   context "state is consent_refused" do
-    let(:patient_session) { create :patient_session, :consent_refused }
+    let(:patient_session) do
+      create(:patient_session, :consent_refused, programme:)
+    end
 
     it { should have_css(".app-card--red") }
     it { should have_css(".nhsuk-card__heading", text: "Consent refused") }
@@ -62,7 +70,9 @@ describe AppSimpleStatusBannerComponent do
   end
 
   context "state is triaged_kept_in_triage" do
-    let(:patient_session) { create :patient_session, :triaged_kept_in_triage }
+    let(:patient_session) do
+      create(:patient_session, :triaged_kept_in_triage, programme:)
+    end
 
     it { should have_css(".app-card--blue") }
     it { should have_css(".nhsuk-card__heading", text: "Needs triage") }
@@ -71,7 +81,7 @@ describe AppSimpleStatusBannerComponent do
 
   context "state is triaged_ready_to_vaccinate" do
     let(:patient_session) do
-      create :patient_session, :triaged_ready_to_vaccinate
+      create(:patient_session, :triaged_ready_to_vaccinate, programme:)
     end
 
     it { should have_css(".app-card--purple") }
@@ -87,7 +97,9 @@ describe AppSimpleStatusBannerComponent do
   end
 
   context "state is triaged_do_not_vaccinate" do
-    let(:patient_session) { create :patient_session, :triaged_do_not_vaccinate }
+    let(:patient_session) do
+      create(:patient_session, :triaged_do_not_vaccinate, programme:)
+    end
 
     it { should have_css(".app-card--red") }
     it { should have_css(".nhsuk-card__heading", text: "Could not vaccinate") }
@@ -102,7 +114,9 @@ describe AppSimpleStatusBannerComponent do
   end
 
   context "state is delay_vaccination" do
-    let(:patient_session) { create :patient_session, :delay_vaccination }
+    let(:patient_session) do
+      create(:patient_session, :delay_vaccination, programme:)
+    end
 
     it { should have_css(".app-card--red") }
     it { should have_css(".nhsuk-card__heading", text: "Could not vaccinate") }

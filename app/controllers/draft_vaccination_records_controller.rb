@@ -7,7 +7,6 @@ class DraftVaccinationRecordsController < ApplicationController
   skip_after_action :verify_policy_scoped
 
   before_action :set_draft_vaccination_record
-  before_action :set_patient_session
   before_action :set_patient
   before_action :set_session
   before_action :set_programme
@@ -156,16 +155,12 @@ class DraftVaccinationRecordsController < ApplicationController
       DraftVaccinationRecord.new(request_session: session, current_user:)
   end
 
-  def set_patient_session
-    @patient_session = @draft_vaccination_record.patient_session
-  end
-
   def set_patient
-    @patient = @patient_session.patient
+    @patient = @draft_vaccination_record.patient
   end
 
   def set_session
-    @session = @patient_session.session
+    @session = @draft_vaccination_record.session
   end
 
   def set_programme

@@ -113,3 +113,37 @@ To quickly take the service offline (for client users) there is a `basic_auth` f
 ```ruby
 Flipper.enable(:basic_auth)
 ```
+
+## Removing parent from a patient
+
+```rb
+patient = Patient.find(_)
+
+# Find the parent you need to remove from the patient.
+patient.parents.pluck(:id, :full_name, :email, :phone)
+parent = patient.parents.find(_)
+
+# Remove the parent relationship
+patient.parent_relationships.find_by(parent:).destroy
+
+# Check that the parent has other patients or any consents linked to them
+parent.patients
+parent.consents
+
+# If the parent doesn't have any more patients or consents they can removed.
+# Check with the original request to see if this is appropriate.
+parent.destroy
+```
+
+## Move a patient from a school session to a community clinic
+
+This can be done manually, and doesn't need a `SchoolMove`:
+
+```rb
+# Check if the patient session in question is safe to be destroyed.
+patient.patient_sessions.first.safe_to_destroy?
+
+patient.patient_sessions.first.destroy
+
+patient.sessions << clinic_session
+```

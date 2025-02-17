@@ -72,21 +72,10 @@ class VaccinationRecordsController < ApplicationController
           :location,
           :performed_by_user,
           :programme,
-          # TODO: avoid duplicate here by using one or the other everywhere
-          patient_session: {
-            consents: :parent,
-            patient: [
-              :cohort,
-              :gp_practice,
-              :school,
-              { parent_relationships: :parent }
-            ]
-          },
           patient: [
-            :cohort,
             :gp_practice,
             :school,
-            { parent_relationships: :parent }
+            { consents: :parent, parent_relationships: :parent }
           ],
           session: %i[session_dates],
           vaccine: :programme

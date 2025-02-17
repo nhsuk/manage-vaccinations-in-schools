@@ -44,13 +44,13 @@ class AppProgrammeNavigationComponent < ViewComponent::Base
       )
 
       nav.with_item(
-        href: programme_imports_path(programme),
+        href: imports_path,
         text: I18n.t("imports.index.title"),
         selected: active == :imports
       )
 
       nav.with_item(
-        href: programme_import_issues_path(programme),
+        href: import_issues_path,
         text: import_issues_text,
         selected: active == :import_issues
       )

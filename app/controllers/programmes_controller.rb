@@ -15,10 +15,7 @@ class ProgrammesController < ApplicationController
   end
 
   def show
-    patients =
-      policy_scope(Patient).where(
-        cohort: policy_scope(Cohort).for_year_groups(@programme.year_groups)
-      )
+    patients = policy_scope(Patient).in_programme(@programme)
 
     @patients_count = patients.count
     @vaccinations_count = policy_scope(VaccinationRecord).count
@@ -38,25 +35,20 @@ class ProgrammesController < ApplicationController
           :session_dates,
           patient_sessions: [
             :gillick_assessments,
-            :triages,
-            :vaccination_records,
-            { consents: :parent }
+            { patient: [:triages, :vaccination_records, { consents: :parent }] }
           ]
         )
         .order("locations.name")
   end
 
   def patients
-    cohorts = policy_scope(Cohort).for_year_groups(@programme.year_groups)
-
-    patients = policy_scope(Patient).where(cohort: cohorts).not_deceased
-
+    patients = policy_scope(Patient).in_programme(@programme).not_deceased
     sessions = policy_scope(Session).has_programme(@programme)
 
     patient_sessions =
       PatientSession
         .where(patient: patients, session: sessions)
-        .eager_load(:session, patient: :cohort)
+        .eager_load(:session, :patient)
         .preload_for_status
         .order_by_name
         .to_a

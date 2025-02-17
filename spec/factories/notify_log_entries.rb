@@ -6,7 +6,6 @@
 #
 #  id                      :bigint           not null, primary key
 #  delivery_status         :integer          default("sending"), not null
-#  recipient               :string           not null
 #  recipient_deterministic :string
 #  type                    :integer          not null
 #  created_at              :datetime         not null
@@ -34,6 +33,8 @@
 #
 FactoryBot.define do
   factory :notify_log_entry do
+    transient { recipient { nil } }
+
     patient
 
     trait :email do

@@ -13,7 +13,6 @@ describe AppVaccinationRecordSummaryComponent do
   let(:organisation) { create(:organisation, programmes: [programme]) }
   let(:session) { create(:session, programme:, location:, organisation:) }
   let(:patient) { create(:patient) }
-  let(:patient_session) { create(:patient_session, session:, patient:) }
   let(:vaccine) { programme.vaccines.first }
   let(:batch) do
     create(:batch, name: "ABC", expiry: Date.new(2026, 1, 1), vaccine:)
@@ -32,7 +31,8 @@ describe AppVaccinationRecordSummaryComponent do
       outcome:,
       batch:,
       vaccine:,
-      patient_session:,
+      patient:,
+      session:,
       delivery_method: :intramuscular,
       delivery_site: :left_arm_upper_position,
       notes:,

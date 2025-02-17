@@ -16,7 +16,7 @@
                                                active: :patients) %>
 
 <%= govuk_button_link_to "Import child records",
-                         new_programme_cohort_import_path(@programme),
+                         new_cohort_import_path,
                          class: "app-button--secondary" %>
 
 <%= render AppSessionPatientTableComponent.new(

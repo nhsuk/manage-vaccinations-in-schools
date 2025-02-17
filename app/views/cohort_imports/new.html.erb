@@ -1,5 +1,5 @@
 <% content_for :before_main do %>
-  <%= render AppBacklinkComponent.new(programme_cohorts_path(@programme), name: @programme.name) %>
+  <%= render AppBacklinkComponent.new(new_import_path, name: "import") %>
 <% end %>
 
 <% title = "Import child records" %>
@@ -7,11 +7,10 @@
 
 <% content_for :page_title, title %>
 
-<%= form_with model: @cohort_import, url: programme_cohort_imports_path do |f| %>
+<%= form_with model: @cohort_import, url: cohort_imports_path do |f| %>
   <%= f.govuk_error_summary %>
 
   <%= f.govuk_file_field :csv,
-                         caption: { text: @programme.name, size: "l" },
                          label: { text: title, tag: "h1", size: "l" },
                          hint: { text: hint } %>
 
