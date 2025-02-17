@@ -57,9 +57,17 @@ class ProgrammesController < ApplicationController
     @pagy, @patient_sessions = pagy_array(patient_sessions)
   end
 
+  def consent_form
+    send_file(
+      "public/consent_forms/#{@programme.type}.pdf",
+      filename: "#{@programme.name} Consent Form.pdf",
+      disposition: "attachment"
+    )
+  end
+
   private
 
   def set_programme
-    @programme = policy_scope(Programme).find_by!(type: params[:type])
+    @programme = authorize policy_scope(Programme).find_by!(type: params[:type])
   end
 end

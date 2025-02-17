@@ -163,6 +163,8 @@ Rails.application.routes.draw do
     member do
       get "sessions"
       get "patients"
+
+      get "consent-form", action: "consent_form"
     end
 
     resources :cohorts, only: %i[index show]
@@ -198,8 +200,6 @@ Rails.application.routes.draw do
     member do
       get "close", action: "edit_close"
       post "close", action: "update_close"
-
-      get "consent-form", action: "consent_form"
 
       get "edit/send-consent-requests-at",
           controller: "sessions/edit",
