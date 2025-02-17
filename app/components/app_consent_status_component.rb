@@ -11,10 +11,11 @@ class AppConsentStatusComponent < ViewComponent::Base
     end
   end
 
-  def initialize(patient_session:)
+  def initialize(patient_session:, programme:)
     super
 
     @patient_session = patient_session
+    @programme = programme
   end
 
   private

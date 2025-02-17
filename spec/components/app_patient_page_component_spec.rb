@@ -20,6 +20,7 @@ describe AppPatientPageComponent do
   let(:component) do
     described_class.new(
       patient_session:,
+      programme:,
       section: "triage",
       tab: "needed",
       triage: nil

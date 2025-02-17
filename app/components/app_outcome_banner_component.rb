@@ -3,10 +3,11 @@
 class AppOutcomeBannerComponent < ViewComponent::Base
   delegate :status, to: :@patient_session
 
-  def initialize(patient_session:, current_user: nil)
+  def initialize(patient_session:, programme:, current_user: nil)
     super
 
     @patient_session = patient_session
+    @programme = programme
     @current_user = current_user
   end
 
@@ -18,6 +19,8 @@ class AppOutcomeBannerComponent < ViewComponent::Base
   end
 
   private
+
+  attr_reader :programme
 
   def rows
     data =
@@ -121,9 +124,5 @@ class AppOutcomeBannerComponent < ViewComponent::Base
 
   def colour
     I18n.t("patient_session_statuses.#{status}.colour")
-  end
-
-  def programme
-    @patient_session.programmes.first # TODO: handle multiple programmes
   end
 end

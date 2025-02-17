@@ -17,7 +17,7 @@ describe AppSimpleStatusBannerComponent do
   let(:programme) { create(:programme) }
   let(:patient_session) { create(:patient_session, programme:, user:) }
 
-  let(:component) { described_class.new(patient_session:) }
+  let(:component) { described_class.new(patient_session:, programme:) }
 
   let(:triage_nurse_name) do
     patient_session.triages(programme:).last.performed_by.full_name
