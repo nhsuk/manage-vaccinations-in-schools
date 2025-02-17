@@ -43,7 +43,7 @@ This repo contains 2 folders with terraform configuration.
 To set up everything from scratch, run `./bootstrap.sh <ENV_NAME>` first in the `scripts` folder and follow the
 instructions from the output.
 
-If this environment is not yet included in the allowed values of variable "environment_string"
+If this environment is not yet included in the allowed values of variable "environment"
 in [variables.tf](app%2Fvariables.tf)
 this must be updated.
 
@@ -56,30 +56,6 @@ terraform init -backend-config=env/<config-file>
 ```
 
 in the `app` directory to select which environment/state-file you want.
-
-### Pre-commit
-
-We will use pre-commit to format and lint the files.
-
-- Linting is done with `tflint` (installed with mise)
-- To install pre-commit ensure you have pip installed and create a venv and activate it
-
-```bash
-python3 -m venv venv
-source venv/bin/activate
-```
-
-now install pre-commit
-
-```bash
-pip install pre-commit
-```
-
-and finally activate pre-commit
-
-```bash
-pre-commit install
-```
 
 ## Shell Access
 

@@ -10,7 +10,7 @@ resource "aws_appautoscaling_target" "ecs_target" {
 
 resource "aws_appautoscaling_policy" "ecs_cpu" {
   count              = var.enable_autoscaling ? 1 : 0
-  name               = "ecs-cpu-scaling-${var.environment_string}"
+  name               = "ecs-cpu-scaling-${var.environment}"
   policy_type        = "TargetTrackingScaling"
   resource_id        = aws_appautoscaling_target.ecs_target[0].resource_id
   scalable_dimension = aws_appautoscaling_target.ecs_target[0].scalable_dimension

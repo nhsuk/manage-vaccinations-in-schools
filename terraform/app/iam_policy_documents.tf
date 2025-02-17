@@ -58,7 +58,7 @@ data "aws_iam_policy_document" "ecs_secrets_access" {
     sid     = "dbSecretSid"
     actions = ["secretsmanager:GetSecretValue"]
     resources = [
-      var.db_secret_arn == "" ? aws_rds_cluster.aurora_cluster.master_user_secret[0].secret_arn : var.db_secret_arn
+      var.db_secret_arn == null ? aws_rds_cluster.aurora_cluster.master_user_secret[0].secret_arn : var.db_secret_arn
     ]
     effect = "Allow"
   }

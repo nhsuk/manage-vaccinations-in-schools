@@ -1,12 +1,12 @@
 resource "aws_codedeploy_app" "example" {
   compute_platform = "ECS"
-  name             = "blue-green-codedeploy-${var.environment_string}"
+  name             = "blue-green-codedeploy-${var.environment}"
 }
 
 resource "aws_codedeploy_deployment_group" "blue_green_deployment_group" {
   app_name               = aws_codedeploy_app.example.name
   deployment_config_name = "CodeDeployDefault.ECSAllAtOnce"
-  deployment_group_name  = "codedeploy-group-${var.environment_string}"
+  deployment_group_name  = "codedeploy-group-${var.environment}"
   service_role_arn       = aws_iam_role.code_deploy.arn
 
   auto_rollback_configuration {
@@ -53,13 +53,13 @@ resource "aws_codedeploy_deployment_group" "blue_green_deployment_group" {
 }
 
 resource "aws_s3_bucket" "code_deploy_bucket" {
-  bucket        = "appspec-bucket-${var.environment_string}"
+  bucket        = "appspec-bucket-${var.environment}"
   force_destroy = true
 }
 
 
 data "aws_s3_bucket" "logs" {
-  bucket = "nhse-mavis-logs-${var.environment_string}"
+  bucket = "nhse-mavis-logs-${var.environment}"
 }
 
 resource "aws_s3_bucket_logging" "example" {

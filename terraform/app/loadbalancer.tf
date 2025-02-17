@@ -62,7 +62,7 @@ resource "aws_lb" "app_lb" {
   internal           = false
   load_balancer_type = "application"
   access_logs {
-    bucket = "nhse-mavis-logs-${var.environment_string}"
+    bucket = "nhse-mavis-logs-${var.environment}"
     prefix = "lb-access-logs"
     enabled = true
   }
@@ -71,7 +71,7 @@ resource "aws_lb" "app_lb" {
 }
 
 resource "aws_lb_target_group" "blue" {
-  name        = "mavis-blue-${var.environment_string}"
+  name        = "mavis-blue-${var.environment}"
   port        = 4000
   protocol    = "HTTP"
   vpc_id      = aws_vpc.application_vpc.id
@@ -89,7 +89,7 @@ resource "aws_lb_target_group" "blue" {
 }
 
 resource "aws_lb_target_group" "green" {
-  name        = "mavis-green-${var.environment_string}"
+  name        = "mavis-green-${var.environment}"
   port        = 4000
   protocol    = "HTTP"
   vpc_id      = aws_vpc.application_vpc.id
@@ -125,7 +125,7 @@ resource "aws_lb_listener" "app_listener_https" {
   load_balancer_arn = aws_lb.app_lb.arn
   port              = "443"
   protocol          = "HTTPS"
-  certificate_arn   = var.dns_certificate_arn == "" ? module.dns_route53[0].certificate_arn : var.dns_certificate_arn
+  certificate_arn   = var.dns_certificate_arn == null ? module.dns_route53[0].certificate_arn : var.dns_certificate_arn
 
   default_action {
     type             = "forward"
@@ -140,10 +140,10 @@ resource "aws_lb_listener" "app_listener_https" {
 }
 
 module "dns_route53" {
-  count              = var.dns_certificate_arn == "" ? 1 : 0
+  count              = var.dns_certificate_arn == null ? 1 : 0
   source             = "./modules/dns"
   dns_name           = aws_lb.app_lb.dns_name
   zone_id            = aws_lb.app_lb.zone_id
   domain_name        = var.domain_name
-  domain_name_prefix = var.environment_string
+  domain_name_prefix = var.environment
 }

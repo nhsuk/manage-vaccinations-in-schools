@@ -40,7 +40,7 @@ resource "aws_db_subnet_group" "aurora_subnet_group" {
   description = "Group of private subnets for Aurora Serverless v2 cluster."
   subnet_ids  = [aws_subnet.private_subnet_a.id, aws_subnet.private_subnet_b.id]
   tags = {
-    Name = "aurora-subnet-group-${var.environment_string}"
+    Name = "aurora-subnet-group-${var.environment}"
   }
 }
 
@@ -51,7 +51,7 @@ resource "aws_rds_cluster" "aurora_cluster" {
   engine_version              = "14.9"
   database_name               = "manage_vaccinations"
   master_username             = "postgres"
-  manage_master_user_password = var.db_secret_arn == ""
+  manage_master_user_password = var.db_secret_arn == null
   storage_encrypted           = true
   backup_retention_period     = var.backup_retention_period
   skip_final_snapshot         = !local.is_production

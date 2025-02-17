@@ -16,7 +16,7 @@ variable "retain_logs" {
   description = "Whether to retain logs for the VPC endpoint"
 }
 
-variable "environment_string" {
+variable "environment" {
   type        = string
   description = "String literal for the environment"
   nullable    = false

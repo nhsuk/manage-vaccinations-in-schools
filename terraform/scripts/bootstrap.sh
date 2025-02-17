@@ -13,7 +13,7 @@ EOF
 }
 
 execute_and_verify_plan () {
-  terraform plan -var="environment_string=$ENV" -out=$TERRAFORM_PLAN > $TERRAFORM_PLAN_READABLE
+  terraform plan -var="environment=$ENV" -out=$TERRAFORM_PLAN > $TERRAFORM_PLAN_READABLE
   NO_CHANGES="$(grep -n 'Your infrastructure matches the configuration' $TERRAFORM_PLAN_READABLE)"
   if [ -n "$NO_CHANGES" ]; then
     echo "No terraform changes detected"
@@ -57,9 +57,9 @@ check_partial_apply () {
     echo "Resources thus far created by terraform apply:"
     terraform state list
     echo "The terraform apply can be continued after fixing your configuration by running:"
-    echo "\`terraform apply -var=\"environment_string=$ENV\`\""
+    echo "\`terraform apply -var=\"environment=$ENV\`\""
     echo "If you wish to delete the generated resources run:"
-    echo "\`terraform destroy -var=\"environment_string=$ENV\`\""
+    echo "\`terraform destroy -var=\"environment=$ENV\`\""
   fi
 }
 
@@ -93,10 +93,10 @@ region         = "$REGION"
 dynamodb_table = "mavis-state-lock-$ENV"
 EOF
   cat << EOF > "$ENV.tfvars" || { echo "Failed environment variables file creation"; exit 1; }
-environment_string = "$ENV"
-db_secret_arn = "CHANGE_ME"
+environment = "$ENV"
 rails_master_key_path = "CHANGE_ME"
-dns_certificate_arn = ""
+db_secret_arn = null
+db_secret_arn = null
 resource_name = {
   dbsubnet_group     = "mavis-$ENV-rds-subnet"
   db_cluster         = "mavis-$ENV-rds-cluster"

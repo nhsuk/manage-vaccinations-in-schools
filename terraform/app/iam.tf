@@ -1,21 +1,21 @@
 ################################# IAM Policies #################################
 resource "aws_iam_policy" "ecs_secret_access_policy" {
-  name   = "ecs-secret-access-policy-${var.environment_string}"
+  name   = "ecs-secret-access-policy-${var.environment}"
   policy = data.aws_iam_policy_document.ecs_secrets_access.json
 }
 
 resource "aws_iam_policy" "shell_access_policy" {
-  name   = "ECSFargateAllowExecuteCommand-${var.environment_string}"
+  name   = "ECSFargateAllowExecuteCommand-${var.environment}"
   policy = data.aws_iam_policy_document.shell_access.json
 }
 
 resource "aws_iam_policy" "codedeploy_restricted" {
-  name   = "codedeploy-restricted-${var.environment_string}"
+  name   = "codedeploy-restricted-${var.environment}"
   policy = data.aws_iam_policy_document.codedeploy.json
 }
 
 resource "aws_iam_policy" "vpc_flowlogs" {
-  name   = "vpc-flowlogs-${var.environment_string}"
+  name   = "vpc-flowlogs-${var.environment}"
   policy = data.aws_iam_policy_document.vpc_flowlogs.json
 }
 
@@ -23,22 +23,22 @@ resource "aws_iam_policy" "vpc_flowlogs" {
 
 
 resource "aws_iam_role" "ecs_task_execution_role" {
-  name               = "ecsTaskExecutionRole-${var.environment_string}"
+  name               = "ecsTaskExecutionRole-${var.environment}"
   assume_role_policy = templatefile("templates/iam_assume_role.json.tpl", { service_name = "ecs-tasks.amazonaws.com" })
 }
 
 resource "aws_iam_role" "ecs_task_role" {
-  name               = "ecsTaskRole-${var.environment_string}"
+  name               = "ecsTaskRole-${var.environment}"
   assume_role_policy = templatefile("templates/iam_assume_role.json.tpl", { service_name = "ecs-tasks.amazonaws.com" })
 }
 
 resource "aws_iam_role" "code_deploy" {
-  name               = "codeDeployRole-${var.environment_string}"
+  name               = "codeDeployRole-${var.environment}"
   assume_role_policy = templatefile("templates/iam_assume_role.json.tpl", { service_name = "codedeploy.amazonaws.com" })
 }
 
 resource "aws_iam_role" "vpc_flowlogs" {
-  name = "vpcFlowLogsRole-${var.environment_string}"
+  name = "vpcFlowLogsRole-${var.environment}"
   assume_role_policy = templatefile("templates/iam_assume_role.json.tpl", {
     service_name = "vpc-flow-logs.amazonaws.com"
   })

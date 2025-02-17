@@ -38,7 +38,7 @@ resource "aws_security_group_rule" "ecs_nat_egress" {
 }
 
 resource "aws_ecs_cluster" "cluster" {
-  name = "mavis-${var.environment_string}"
+  name = "mavis-${var.environment}"
 
   setting {
     name  = "containerInsights"
@@ -47,7 +47,7 @@ resource "aws_ecs_cluster" "cluster" {
 }
 
 resource "aws_ecs_service" "service" {
-  name                              = "mavis-${var.environment_string}"
+  name                              = "mavis-${var.environment}"
   cluster                           = aws_ecs_cluster.cluster.id
   task_definition                   = aws_ecs_task_definition.task_definition.arn
   desired_count                     = var.minimum_replicas
@@ -79,7 +79,7 @@ resource "aws_ecs_service" "service" {
 }
 
 resource "aws_ecs_task_definition" "task_definition" {
-  family                   = "task-definition-${var.environment_string}"
+  family                   = "task-definition-${var.environment}"
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
   cpu                      = 1024
@@ -90,7 +90,7 @@ resource "aws_ecs_task_definition" "task_definition" {
     {
       name = local.container_name
       # TODO: Either ensure the repository is immutable or pull the image using its sha256 digest instead of tag
-      image     = "${var.account_id}.dkr.ecr.eu-west-2.amazonaws.com/${local.docker_image}:${var.image_tag}"
+      image     = "${var.account_id}.dkr.ecr.eu-west-2.amazonaws.com/${var.docker_image}:${var.image_tag}"
       essential = true
       portMappings = [
         {
@@ -98,14 +98,14 @@ resource "aws_ecs_task_definition" "task_definition" {
           hostPort      = 4000
         }
       ]
-      environment = var.rails_env == "development" ? local.dev_task_envs : local.task_envs
+      environment = local.task_envs
       secrets     = local.task_secrets
       logConfiguration = {
         logDriver = "awslogs"
         options = {
           awslogs-group         = aws_cloudwatch_log_group.ecs_log_group.name
           awslogs-region        = var.region
-          awslogs-stream-prefix = "${var.environment_string}-logs"
+          awslogs-stream-prefix = "${var.environment}-logs"
         }
       }
       healthCheck = {

@@ -12,7 +12,7 @@ resource "aws_cloudwatch_log_group" "vpc_log_group" {
 }
 
 resource "aws_cloudwatch_log_group" "ecs_log_group" {
-  name              = "mavis-${var.environment_string}-ecs"
+  name              = "mavis-${var.environment}-ecs"
   retention_in_days = var.ecs_log_retention_days
   skip_destroy      = local.is_production
 }

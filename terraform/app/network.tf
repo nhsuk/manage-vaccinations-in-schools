@@ -2,7 +2,7 @@ resource "aws_vpc" "application_vpc" {
   cidr_block           = "10.0.0.0/16"
   enable_dns_hostnames = true
   tags = {
-    Name = "vpc-${var.environment_string}"
+    Name = "vpc-${var.environment}"
   }
 }
 
@@ -11,7 +11,7 @@ resource "aws_subnet" "public_subnet_a" {
   cidr_block        = "10.0.0.0/24"
   availability_zone = "eu-west-2a"
   tags = {
-    Name = "public-subnet-${var.environment_string}-a"
+    Name = "public-subnet-${var.environment}-a"
   }
 }
 
@@ -21,7 +21,7 @@ resource "aws_subnet" "public_subnet_b" {
   cidr_block        = "10.0.1.0/24"
   availability_zone = "eu-west-2b"
   tags = {
-    Name = "public-subnet-${var.environment_string}-b"
+    Name = "public-subnet-${var.environment}-b"
   }
 }
 
@@ -30,7 +30,7 @@ resource "aws_subnet" "private_subnet_a" {
   cidr_block        = "10.0.2.0/24"
   availability_zone = "eu-west-2a"
   tags = {
-    Name = "private-subnet-${var.environment_string}-a"
+    Name = "private-subnet-${var.environment}-a"
   }
 }
 
@@ -39,7 +39,7 @@ resource "aws_subnet" "private_subnet_b" {
   cidr_block        = "10.0.3.0/24"
   availability_zone = "eu-west-2b"
   tags = {
-    Name = "private-subnet-${var.environment_string}-b"
+    Name = "private-subnet-${var.environment}-b"
   }
 }
 
@@ -48,14 +48,14 @@ resource "aws_subnet" "nat_subnet_a" {
   cidr_block        = "10.0.4.0/24"
   availability_zone = "eu-west-2a"
   tags = {
-    Name = "nat-subnet-${var.environment_string}-a"
+    Name = "nat-subnet-${var.environment}-a"
   }
 }
 
 resource "aws_internet_gateway" "internet_gateway" {
   vpc_id = aws_vpc.application_vpc.id
   tags = {
-    Name = "igw-${var.environment_string}"
+    Name = "igw-${var.environment}"
   }
 }
 
@@ -64,14 +64,14 @@ resource "aws_internet_gateway" "internet_gateway" {
 resource "aws_route_table" "public_route_table" {
   vpc_id = aws_vpc.application_vpc.id
   tags = {
-    Name = "public-rt-${var.environment_string}"
+    Name = "public-rt-${var.environment}"
   }
 }
 
 resource "aws_route_table" "private_route_table" {
   vpc_id = aws_vpc.application_vpc.id
   tags = {
-    Name = "private-rt-${var.environment_string}"
+    Name = "private-rt-${var.environment}"
   }
 }
 
@@ -141,7 +141,7 @@ module "firewall" {
   vpc_id                 = aws_vpc.application_vpc.id
   firewall_subnet_cidr   = var.firewall_subnet_cidr
   retain_logs            = local.is_production
-  environment_string     = var.environment_string
+  environment     = var.environment
   nat_gateway_id         = aws_nat_gateway.nat_gateway.id
   private_route_table_id = aws_route_table.private_route_table.id
   log_retention_days     = var.firewall_log_retention_days

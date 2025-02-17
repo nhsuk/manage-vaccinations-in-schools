@@ -1,5 +1,5 @@
 resource "aws_resourcegroups_group" "production" {
-  name = "mavis-resources-${var.environment_string}"
+  name = "mavis-resources-${var.environment}"
 
   resource_query {
     query = jsonencode({
@@ -7,7 +7,7 @@ resource "aws_resourcegroups_group" "production" {
       TagFilters = [
         {
           Key    = "Environment"
-          Values = [var.environment_string]
+          Values = [var.environment]
         }
       ]
     })

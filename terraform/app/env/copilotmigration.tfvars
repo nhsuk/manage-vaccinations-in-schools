@@ -1,4 +1,6 @@
-environment_string = "copilotmigration"
+environment = "copilotmigration"
+db_secret_arn       = null
+dns_certificate_arn = null
 enable_autoscaling = false
 image_tag          = "latest"
 docker_image       = "mavis/webapp"
@@ -12,8 +14,4 @@ resource_name = {
   cloudwatch_vpc_log_group = "mavis-copilotmigration-FlowLogs"
 }
 
-db_secret_arn         = ""
-dns_certificate_arn   = ""
 rails_master_key_path = "/copilot/mavis/copilotmigration/secrets/RAILS_MASTER_KEY"
-
-rails_env = "staging"

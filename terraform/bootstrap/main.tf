@@ -11,14 +11,14 @@ provider "aws" {
   region = "eu-west-2"
   default_tags {
     tags = {
-      Environment = var.environment_string
+      Environment = var.environment
     }
   }
 }
 
 #### S3 bucket to store the terraform state
 resource "aws_s3_bucket" "s3_bucket_backend" {
-  bucket = "nhse-mavis-terraform-state-${var.environment_string}"
+  bucket = "nhse-mavis-terraform-state-${var.environment}"
 }
 
 resource "aws_s3_bucket_ownership_controls" "s3_bucket_acl_ownership" {
@@ -90,7 +90,7 @@ resource "aws_s3_bucket_logging" "backend_bucket_logging" {
 
 ##### Set up a logging bucket
 resource "aws_s3_bucket" "logs" {
-  bucket = "nhse-mavis-logs-${var.environment_string}"
+  bucket = "nhse-mavis-logs-${var.environment}"
 }
 
 resource "aws_s3_bucket_versioning" "log_bucket_version" {
@@ -155,7 +155,7 @@ resource "aws_s3_bucket_policy" "logs" {
 }
 
 resource "aws_dynamodb_table" "dynamodb_lock_table" {
-  name         = "mavis-state-lock-${var.environment_string}"
+  name         = "mavis-state-lock-${var.environment}"
   hash_key     = "LockID"
   billing_mode = "PAY_PER_REQUEST"
 
@@ -170,11 +170,11 @@ resource "aws_dynamodb_table" "dynamodb_lock_table" {
 }
 
 resource "aws_ecr_repository" "ecr_repository" {
-  name = "mavis-${var.environment_string}"
+  name = "mavis-${var.environment}"
 }
 
 
-variable "environment_string" {
+variable "environment" {
   type        = string
   description = "String literal for the environment"
 }
