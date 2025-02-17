@@ -30,7 +30,7 @@ class AppSimpleStatusBannerComponent < ViewComponent::Base
   delegate :patient, :session, to: :patient_session
 
   def status
-    @status ||= @patient_session.status(programme:)
+    @status ||= patient_session.status(programme:)
   end
 
   def colour

@@ -93,7 +93,7 @@ describe "Import class lists" do
 
   def then_i_should_see_the_patients
     expect(page).to have_content("Full nameNHS numberDate of birthPostcode")
-    expect(page).to have_content("Jimmy Smith")
+    expect(page).to have_content("SMITH, Jimmy")
     expect(page).to have_content(/NHS number.*123.*456.*7890/)
     expect(page).to have_content("Date of birth 1 January 2010")
     expect(page).to have_content("Postcode SW1A 1AA")
@@ -106,7 +106,7 @@ describe "Import class lists" do
 
   def then_i_should_see_the_upload
     expect(page).to have_content("Imported on")
-    expect(page).to have_content("Imported byTest User")
+    expect(page).to have_content("Imported byUSER, Test")
     expect(page).to have_content(
       "Year groupsYear 8, Year 9, Year 10, and Year 11"
     )
@@ -129,7 +129,7 @@ describe "Import class lists" do
   def then_i_should_see_the_children
     expect(page).to have_content("4 children")
     expect(page).to have_content("Full nameNHS numberDate of birthPostcode")
-    expect(page).to have_content("Full name Jimmy Smith")
+    expect(page).to have_content("Full name SMITH, Jimmy")
     expect(page).to have_content(/NHS number.*123.*456.*7890/)
     expect(page).to have_content("Date of birth 1 January 2010")
     expect(page).to have_content("Postcode SW1A 1AA")

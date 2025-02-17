@@ -50,7 +50,7 @@ describe AppPatientTableComponent do
       ".nhsuk-table__body .nhsuk-table__row",
       count: 10
     )
-    expect(rendered).to have_css(".nhsuk-table__cell", text: "John Smith")
+    expect(rendered).to have_css(".nhsuk-table__cell", text: "SMITH, John")
     expect(rendered).to have_css(
       ".nhsuk-table__cell",
       text: "999\u00A0\u200D999\u00A0\u200D9999"
@@ -64,14 +64,14 @@ describe AppPatientTableComponent do
   end
 
   it "renders links" do
-    expect(rendered).to have_link("John Smith")
+    expect(rendered).to have_link("SMITH, John")
   end
 
   context "with a patient not in the cohort" do
     before { patients.first.update!(organisation: nil) }
 
     it "doesn't render a link" do
-      expect(rendered).not_to have_link("John Smith")
+      expect(rendered).not_to have_link("SMITH, John")
       expect(rendered).to have_content("Child has moved out of the area")
     end
   end

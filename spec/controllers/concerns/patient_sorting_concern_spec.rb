@@ -17,7 +17,7 @@ describe PatientSortingConcern do
   let(:alex) do
     create(
       :patient,
-      given_name: "Alex",
+      family_name: "Alex",
       year_group: 8,
       address_postcode: "SW1A 1AA"
     )
@@ -25,13 +25,18 @@ describe PatientSortingConcern do
   let(:blair) do
     create(
       :patient,
-      given_name: "Blair",
+      family_name: "Blair",
       year_group: 9,
       address_postcode: "SW2A 1AA"
     )
   end
   let(:casey) do
-    create(:patient, given_name: "Casey", year_group: 10, address_postcode: nil)
+    create(
+      :patient,
+      family_name: "Casey",
+      year_group: 10,
+      address_postcode: nil
+    )
   end
 
   let(:programme) { create(:programme) }
@@ -51,7 +56,7 @@ describe PatientSortingConcern do
 
       it "sorts patient sessions by name in ascending order" do
         controller.sort_patients!(patient_sessions, programme:)
-        expect(patient_sessions.map(&:patient).map(&:given_name)).to eq(
+        expect(patient_sessions.map(&:patient).map(&:family_name)).to eq(
           %w[Alex Blair Casey]
         )
       end
@@ -62,7 +67,7 @@ describe PatientSortingConcern do
 
       it "sorts patient sessions by date of birth in descending order" do
         controller.sort_patients!(patient_sessions, programme:)
-        expect(patient_sessions.map(&:patient).map(&:given_name)).to eq(
+        expect(patient_sessions.map(&:patient).map(&:family_name)).to eq(
           %w[Alex Blair Casey]
         )
       end
@@ -84,7 +89,7 @@ describe PatientSortingConcern do
 
       it "sorts patient sessions by name in ascending order" do
         controller.sort_patients!(patient_sessions, programme:)
-        expect(patient_sessions.map(&:patient).map(&:given_name)).to eq(
+        expect(patient_sessions.map(&:patient).map(&:family_name)).to eq(
           %w[Blair Alex Casey]
         )
       end
@@ -94,7 +99,7 @@ describe PatientSortingConcern do
 
         it "they are treated as though they have no postcode" do
           controller.sort_patients!(patient_sessions, programme:)
-          expect(patient_sessions.map(&:patient).map(&:given_name)).to eq(
+          expect(patient_sessions.map(&:patient).map(&:family_name)).to eq(
             %w[Alex Casey Blair]
           )
         end
@@ -106,7 +111,7 @@ describe PatientSortingConcern do
 
       it "does not change the order of patient sessions" do
         controller.sort_patients!(patient_sessions, programme:)
-        expect(patient_sessions.map(&:patient).map(&:given_name)).to eq(
+        expect(patient_sessions.map(&:patient).map(&:family_name)).to eq(
           %w[Alex Blair Casey]
         )
       end
@@ -120,7 +125,7 @@ describe PatientSortingConcern do
       it "filters patient sessions by patient name" do
         controller.filter_patients!(patient_sessions, programme:)
         expect(patient_sessions.size).to eq(1)
-        expect(patient_sessions.first.patient.given_name).to eq("Alex")
+        expect(patient_sessions.first.patient.family_name).to eq("Alex")
       end
     end
 
@@ -130,7 +135,7 @@ describe PatientSortingConcern do
       it "filters patient sessions by date of birth" do
         controller.filter_patients!(patient_sessions, programme:)
         expect(patient_sessions.size).to eq(1)
-        expect(patient_sessions.first.patient.given_name).to eq("Blair")
+        expect(patient_sessions.first.patient.family_name).to eq("Blair")
       end
 
       context "when a patient is restricted" do
@@ -149,7 +154,7 @@ describe PatientSortingConcern do
       it "filters patient sessions by date of birth" do
         controller.filter_patients!(patient_sessions, programme:)
         expect(patient_sessions.size).to eq(1)
-        expect(patient_sessions.first.patient.given_name).to eq("Blair")
+        expect(patient_sessions.first.patient.family_name).to eq("Blair")
       end
     end
 
@@ -159,7 +164,7 @@ describe PatientSortingConcern do
       it "filters patient sessions by both name and date of birth" do
         controller.filter_patients!(patient_sessions, programme:)
         expect(patient_sessions.size).to eq(1)
-        expect(patient_sessions.first.patient.given_name).to eq("Alex")
+        expect(patient_sessions.first.patient.family_name).to eq("Alex")
       end
     end
 

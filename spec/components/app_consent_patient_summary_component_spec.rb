@@ -31,7 +31,7 @@ describe AppConsentPatientSummaryComponent do
     end
 
     it { should have_content("Full name") }
-    it { should have_content("John Doe") }
+    it { should have_content("DOE, John") }
 
     it { should have_content("Date of birth") }
     it { should have_content("1 January 2000") }
@@ -57,7 +57,7 @@ describe AppConsentPatientSummaryComponent do
     end
 
     it { should have_content("Full name") }
-    it { should have_content("John Doe") }
+    it { should have_content("DOE, John") }
 
     it { should have_content("Date of birth") }
     it { should have_content("1 January 2000") }
