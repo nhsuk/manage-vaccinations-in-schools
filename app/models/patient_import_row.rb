@@ -4,11 +4,6 @@ class PatientImportRow
   include ActiveModel::Model
 
   validates :date_of_birth, presence: true
-  validates :birth_academic_year,
-            comparison: {
-              greater_than_or_equal_to: 1990
-            },
-            if: :date_of_birth
   validates :existing_patients, length: { maximum: 1 }
   validates :first_name, presence: true
   validates :last_name, presence: true
@@ -18,7 +13,7 @@ class PatientImportRow
               in: Patient.gender_codes.keys,
               allow_nil: true
             }
-  validates :year_group, inclusion: { in: :year_groups }, allow_nil: true
+  validates :year_group, inclusion: { in: :year_groups }, if: :date_of_birth
 
   validates :parent_1_email, notify_safe_email: { allow_blank: true }
   validates :parent_1_phone, phone: { allow_blank: true }
