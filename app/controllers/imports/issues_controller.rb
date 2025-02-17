@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class ImportIssuesController < ApplicationController
+class Imports::IssuesController < ApplicationController
   before_action :set_import_issues
   before_action :set_record, only: %i[show update]
   before_action :set_vaccination_record, only: %i[show update]
@@ -10,7 +10,6 @@ class ImportIssuesController < ApplicationController
   layout "full"
 
   def index
-    @programme = policy_scope(Programme).first # TODO: handle multiple programmes
   end
 
   def show
@@ -18,7 +17,7 @@ class ImportIssuesController < ApplicationController
 
   def update
     if @form.save
-      redirect_to import_issues_path, flash: { success: "Record updated" }
+      redirect_to imports_issues_path, flash: { success: "Record updated" }
     else
       render :show, status: :unprocessable_entity and return
     end

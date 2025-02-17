@@ -11,9 +11,7 @@
 
 <h1 class="nhsuk-heading-l"><%= @programme.name %></h1>
 
-<%= render AppProgrammeNavigationComponent.new(@programme,
-                                               organisation: current_user.selected_organisation,
-                                               active: :patients) %>
+<%= render AppProgrammeNavigationComponent.new(@programme, active: :patients) %>
 
 <%= govuk_button_link_to "Import child records",
                          new_cohort_import_path,

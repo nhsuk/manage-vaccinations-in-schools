@@ -67,7 +67,7 @@ describe "Import class lists" do
   end
 
   def and_i_start_adding_children_to_the_session
-    click_on "Import class list"
+    click_on "Import class list records"
   end
 
   def then_i_should_see_the_import_page
@@ -160,7 +160,13 @@ describe "Import class lists" do
 
   def when_i_go_back_to_the_upload_page
     click_on "Back"
-    click_on "Import class list"
+
+    click_on "Import records"
+    choose "Class list records"
+    click_on "Continue"
+
+    select "Waterloo Road"
+    click_on "Continue"
   end
 
   def then_i_should_see_the_imports_page_with_the_processing_flash

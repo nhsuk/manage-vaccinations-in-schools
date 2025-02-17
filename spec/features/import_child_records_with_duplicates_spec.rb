@@ -46,7 +46,7 @@ describe "Child record imports duplicates" do
     and_the_third_record_should_be_persisted
     and_a_new_patient_record_should_be_created
 
-    when_i_go_to_the_programme
+    when_i_go_to_the_import_page
     then_i_should_see_no_import_issues_with_the_count
   end
 
@@ -244,8 +244,8 @@ describe "Child record imports duplicates" do
     expect(page).to have_content("Year groupYear 7 (")
   end
 
-  def when_i_go_to_the_programme
-    click_link "HPV"
+  def when_i_go_to_the_import_page
+    click_link "Import", match: :first
   end
 
   def then_i_should_see_import_issues_with_the_count
@@ -256,13 +256,5 @@ describe "Child record imports duplicates" do
   def then_i_should_see_no_import_issues_with_the_count
     expect(page).to have_link("Import issues")
     expect(page).to have_selector(".app-count", text: "( 0 )")
-  end
-
-  def when_i_go_to_import_issues
-    click_link "Import issues"
-  end
-
-  def then_i_should_see_that_a_record_needs_review
-    expect(page).to have_content("1 imported record needs review")
   end
 end

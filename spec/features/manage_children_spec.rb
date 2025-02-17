@@ -95,7 +95,7 @@ describe "Manage children" do
   end
 
   scenario "Viewing important notices" do
-    when_i_go_to_the_dashboard
+    when_i_go_to_the_imports_page
     then_i_cannot_see_notices
 
     when_i_go_to_the_notices_page
@@ -103,7 +103,7 @@ describe "Manage children" do
   end
 
   scenario "Viewing deceased patient notices as a superuser" do
-    when_i_go_to_the_dashboard_as_a_superuser
+    when_i_go_to_the_imports_page_as_a_superuser
     and_i_click_on_notices
     then_i_see_no_notices
 
@@ -113,7 +113,7 @@ describe "Manage children" do
   end
 
   scenario "Viewing invalidated patient notices as a superuser" do
-    when_i_go_to_the_dashboard_as_a_superuser
+    when_i_go_to_the_imports_page_as_a_superuser
     and_i_click_on_notices
     then_i_see_no_notices
 
@@ -123,7 +123,7 @@ describe "Manage children" do
   end
 
   scenario "Viewing restricted patient notices as a superuser" do
-    when_i_go_to_the_dashboard_as_a_superuser
+    when_i_go_to_the_imports_page_as_a_superuser
     and_i_click_on_notices
     then_i_see_no_notices
 
@@ -307,10 +307,16 @@ describe "Manage children" do
     visit "/dashboard"
   end
 
-  def when_i_go_to_the_dashboard_as_a_superuser
+  def when_i_go_to_the_imports_page
+    sign_in @organisation.users.first
+
+    visit "/imports"
+  end
+
+  def when_i_go_to_the_imports_page_as_a_superuser
     sign_in @organisation.users.first, superuser: true
 
-    visit "/dashboard"
+    visit "/imports"
   end
 
   def then_i_cannot_see_notices
@@ -318,7 +324,7 @@ describe "Manage children" do
   end
 
   def when_i_go_to_the_notices_page
-    visit "/notices"
+    visit "/imports/notices"
   end
 
   def then_i_see_permission_denied
@@ -326,7 +332,7 @@ describe "Manage children" do
   end
 
   def when_i_click_on_notices
-    click_on "Notices"
+    click_on "Important notices"
   end
 
   alias_method :and_i_click_on_notices, :when_i_click_on_notices
@@ -336,19 +342,19 @@ describe "Manage children" do
   end
 
   def then_i_see_the_notice_of_date_of_death
-    expect(page).to have_content("Notices (1)")
+    expect(page).to have_content("Important notices ( 1 )")
     expect(page).to have_content(@deceased_patient.full_name)
     expect(page).to have_content("Record updated with child’s date of death")
   end
 
   def then_i_see_the_notice_of_invalid
-    expect(page).to have_content("Notices (1)")
+    expect(page).to have_content("Important notices ( 1 )")
     expect(page).to have_content(@invalidated_patient.full_name)
     expect(page).to have_content("Record flagged as invalid")
   end
 
   def then_i_see_the_notice_of_sensitive
-    expect(page).to have_content("Notices (1)")
+    expect(page).to have_content("Important notices ( 1 )")
     expect(page).to have_content(@restricted_patient.full_name)
     expect(page).to have_content("Record flagged as sensitive")
   end

@@ -1,5 +1,11 @@
 <%= h1 "#{@service_name} (Mavis)", size: "xl" %>
 
+<% if (count = @important_notices) %>
+  <%= render AppWarningCalloutComponent.new(heading: "Important notices") do %>
+    <p><%= link_to t(".notices.description", count:), imports_notices_path %></p>
+  <% end %>
+<% end %>
+
 <ul class="nhsuk-grid-row nhsuk-card-group">
   <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
     <%= render AppCardComponent.new(link_to: programmes_path) do |card| %>
@@ -40,13 +46,6 @@
 
 <ul class="nhsuk-grid-row nhsuk-card-group">
   <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
-    <%= render AppCardComponent.new(link_to: vaccines_path, secondary: true) do |card| %>
-      <% card.with_heading { t("vaccines.index.title") } %>
-      <% card.with_description { "Add and edit vaccine batches" } %>
-    <% end %>
-  </li>
-
-  <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
     <%= render AppCardComponent.new(link_to: consent_forms_path, secondary: true) do |card| %>
       <% card.with_heading { t("consent_forms.index.title") } %>
       <% card.with_description { "Review incoming consent responses that can’t be automatically matched" } %>
@@ -60,14 +59,19 @@
     <% end %>
   </li>
 
-  <% if policy(:notices).index? %>
-    <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
-      <%= render AppCardComponent.new(link_to: notices_path, secondary: true) do |card| %>
-        <% card.with_heading { t("notices.index.title") } %>
-        <% card.with_description { "View notices about important updates to patient records" } %>
-      <% end %>
-    </li>
-  <% end %>
+  <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
+    <%= render AppCardComponent.new(link_to: imports_path, secondary: true) do |card| %>
+      <% card.with_heading { t("imports.index.title") } %>
+      <% card.with_description { "Import child, cohort and vaccination records and see important notices" } %>
+    <% end %>
+  </li>
+
+  <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
+    <%= render AppCardComponent.new(link_to: vaccines_path, secondary: true) do |card| %>
+      <% card.with_heading { t("vaccines.index.title") } %>
+      <% card.with_description { "Add and edit vaccine batches" } %>
+    <% end %>
+  </li>
 
   <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
     <%= render AppCardComponent.new(link_to: organisation_path, secondary: true) do |card| %>
