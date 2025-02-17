@@ -38,4 +38,4 @@ aws ecs execute-command --region $REGION \
         --cluster "$1" \
         --task "$task_id" \
         --container "$container_name" \
-        --command "/bin/sh" --interactive
+        --command "/bin/bash" --interactive
