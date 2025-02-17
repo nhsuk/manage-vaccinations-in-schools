@@ -37,12 +37,15 @@ class AppConsentConfirmationComponent < ViewComponent::Base
 
   private
 
-  delegate :full_name,
-           :chosen_programmes,
+  delegate :chosen_programmes,
            :not_chosen_programmes,
            :response,
            :parent_email,
            to: :@consent_form
+
+  def full_name
+    @consent_form.full_name(context: :parents)
+  end
 
   def panel_text
     case response

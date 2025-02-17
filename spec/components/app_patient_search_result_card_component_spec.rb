@@ -18,7 +18,7 @@ describe AppPatientSearchResultCardComponent do
 
   let(:link_to) { "/patient" }
 
-  it { should have_link("Hari Seldon", href: "/patient") }
+  it { should have_link("SELDON, Hari", href: "/patient") }
   it { should have_text("1 January 2000") }
   it { should have_text("SW11 1AA") }
   it { should have_text("Streeling University") }

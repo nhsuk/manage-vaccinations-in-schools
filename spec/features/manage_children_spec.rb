@@ -208,14 +208,14 @@ describe "Manage children" do
   end
 
   def when_i_click_on_a_child
-    click_on "John Smith"
+    click_on "SMITH, John"
   end
 
   alias_method :and_i_click_on_a_child, :when_i_click_on_a_child
 
   def then_i_see_the_child
     expect(page).to have_title("JS")
-    expect(page).to have_content("John Smith")
+    expect(page).to have_content("SMITH, John")
     expect(page).to have_content("Cohorts")
     expect(page).to have_content("Sessions")
   end
@@ -235,7 +235,7 @@ describe "Manage children" do
 
   def then_i_see_the_edit_child_record_page
     expect(page).to have_title("Edit child record")
-    expect(page).to have_content("John Smith")
+    expect(page).to have_content("SMITH, John")
     expect(page).to have_content("Record details")
   end
 
@@ -276,7 +276,7 @@ describe "Manage children" do
 
   def then_i_see_the_merge_record_page
     expect(page).to have_content("Do you want to merge this record?")
-    expect(page).to have_content("Jane Doe")
+    expect(page).to have_content("DOE, Jane")
   end
 
   def when_i_click_on_merge_records
@@ -285,7 +285,7 @@ describe "Manage children" do
 
   def then_i_see_the_merged_edit_child_record_page
     expect(page).to have_title("Edit child record")
-    expect(page).to have_content("Jane Doe")
+    expect(page).to have_content("DOE, Jane")
   end
 
   def and_i_see_the_cohort

@@ -22,7 +22,7 @@ describe AppPatientSessionSearchResultCardComponent do
 
   let(:context) { :consent }
 
-  it { should have_link("Hari Seldon", href: "/patient-session") }
+  it { should have_link("SELDON, Hari", href: "/patient-session") }
   it { should have_text("1 January 2000") }
   it { should have_text("Status") }
 end
