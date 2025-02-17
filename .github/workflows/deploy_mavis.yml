@@ -41,7 +41,13 @@ jobs:
       - name: Login to ECR
         uses: aws-actions/amazon-ecr-login@v2
       - name: pull docker image
-        run: docker pull ${{ steps.login-ecr.outputs.registry }}:${{ inputs.image_tag || github.sha }}
+        run: |
+          if [ -z "${{ inputs.image_tag }}" && "${{ inputs.environment }}" -eq "production" ]; then
+            echo "No image tag provided for production deployment, aborting."
+            exit 1
+          else
+            docker pull ${{ steps.login-ecr.outputs.registry }}:${{ inputs.image_tag || github.sha }}
+          fi
       - name: Get image digest
         run: |
           DOCKER_DIGEST=$(docker inspect --format='{{index .RepoDigests 0}}' mavis:latest)
