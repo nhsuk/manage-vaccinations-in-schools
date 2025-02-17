@@ -18,25 +18,22 @@
 #  created_at                   :datetime         not null
 #  updated_at                   :datetime         not null
 #  organisation_id              :bigint           not null
-#  programme_id                 :bigint           not null
 #  uploaded_by_user_id          :bigint           not null
 #
 # Indexes
 #
 #  index_immunisation_imports_on_organisation_id      (organisation_id)
-#  index_immunisation_imports_on_programme_id         (programme_id)
 #  index_immunisation_imports_on_uploaded_by_user_id  (uploaded_by_user_id)
 #
 # Foreign Keys
 #
 #  fk_rails_...  (organisation_id => organisations.id)
-#  fk_rails_...  (programme_id => programmes.id)
 #  fk_rails_...  (uploaded_by_user_id => users.id)
 #
 
 describe ImmunisationImport do
   subject(:immunisation_import) do
-    create(:immunisation_import, organisation:, programme:, csv:, uploaded_by:)
+    create(:immunisation_import, organisation:, csv:, uploaded_by:)
   end
 
   before do
@@ -120,7 +117,8 @@ describe ImmunisationImport do
 
       it "is invalid" do
         expect(immunisation_import).to be_invalid
-        expect(immunisation_import.errors).to include(:row_1)
+        expect(immunisation_import.errors).not_to include(:row_1) # Header row
+        expect(immunisation_import.errors).to include(:row_2, :row_3)
       end
     end
   end
@@ -138,9 +136,8 @@ describe ImmunisationImport do
           .to change(immunisation_import, :processed_at).from(nil)
           .and change(immunisation_import.vaccination_records, :count).by(11)
           .and change(immunisation_import.patients, :count).by(11)
-          .and change(immunisation_import.sessions, :count).by(3)
-          .and change(immunisation_import.patient_sessions, :count).by(11)
           .and change(immunisation_import.batches, :count).by(4)
+          .and not_change(immunisation_import.patient_sessions, :count)
 
         # Second import should not duplicate the vaccination records if they're
         # identical.
@@ -150,7 +147,6 @@ describe ImmunisationImport do
           .to not_change(immunisation_import, :processed_at)
           .and not_change(VaccinationRecord, :count)
           .and not_change(Patient, :count)
-          .and not_change(Session, :count)
           .and not_change(PatientSession, :count)
           .and not_change(Batch, :count)
       end
@@ -163,13 +159,7 @@ describe ImmunisationImport do
       end
 
       it "ignores and counts duplicate records" do
-        create(
-          :immunisation_import,
-          programme:,
-          csv:,
-          organisation:,
-          uploaded_by:
-        ).process!
+        create(:immunisation_import, csv:, organisation:, uploaded_by:).process!
         csv.rewind
 
         process!
@@ -188,6 +178,23 @@ describe ImmunisationImport do
           .times
           .on_queue(:imports)
       end
+
+      it "adds patients to the session if it exists" do
+        # must match a session in valid_flu.csv
+        location = Location.school.find_by!(urn: "120026")
+        create(
+          :session,
+          location:,
+          organisation:,
+          programme:,
+          date: Date.new(2024, 5, 14)
+        )
+
+        expect { process! }.to change(
+          immunisation_import.patient_sessions,
+          :count
+        ).by(8)
+      end
     end
 
     context "with valid HPV rows" do
@@ -200,9 +207,8 @@ describe ImmunisationImport do
           .to change(immunisation_import, :processed_at).from(nil)
           .and change(immunisation_import.vaccination_records, :count).by(11)
           .and change(immunisation_import.patients, :count).by(10)
-          .and change(immunisation_import.sessions, :count).by(5)
-          .and change(immunisation_import.patient_sessions, :count).by(11)
           .and change(immunisation_import.batches, :count).by(9)
+          .and not_change(immunisation_import.patient_sessions, :count)
 
         # Second import should not duplicate the vaccination records if they're
         # identical.
@@ -212,7 +218,6 @@ describe ImmunisationImport do
           .to not_change(immunisation_import, :processed_at)
           .and not_change(VaccinationRecord, :count)
           .and not_change(Patient, :count)
-          .and not_change(Session, :count)
           .and not_change(PatientSession, :count)
           .and not_change(Batch, :count)
       end
@@ -225,26 +230,11 @@ describe ImmunisationImport do
       end
 
       it "ignores and counts duplicate records" do
-        create(
-          :immunisation_import,
-          programme:,
-          csv:,
-          organisation:,
-          uploaded_by:
-        ).process!
+        create(:immunisation_import, csv:, organisation:, uploaded_by:).process!
         csv.rewind
 
         process!
         expect(immunisation_import.exact_duplicate_record_count).to eq(11)
-      end
-
-      it "creates a new session for each date" do
-        process!
-
-        expect(immunisation_import.sessions.count).to eq(5)
-
-        session = immunisation_import.sessions.includes(:session_dates).first
-        expect(session.dates).to contain_exactly(Date.new(2024, 5, 14))
       end
 
       it "enqueues jobs to look up missing NHS numbers" do
@@ -258,6 +248,23 @@ describe ImmunisationImport do
           .exactly(9)
           .times
           .on_queue(:imports)
+      end
+
+      it "adds patients to the session if it exists" do
+        # must match a session in valid_hpv.csv
+        location = Location.school.find_by!(urn: "110158")
+        create(
+          :session,
+          location:,
+          organisation:,
+          programme:,
+          date: Date.new(2024, 5, 14)
+        )
+
+        expect { process! }.to change(
+          immunisation_import.patient_sessions,
+          :count
+        ).by(6)
       end
     end
 

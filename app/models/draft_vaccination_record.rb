@@ -17,11 +17,13 @@ class DraftVaccinationRecord
   attribute :location_name, :string
   attribute :notes, :string
   attribute :outcome, :string
-  attribute :patient_session_id, :integer
+  attribute :patient_id, :integer
+  attribute :session_id, :integer
   attribute :performed_at, :datetime
   attribute :performed_by_family_name, :string
   attribute :performed_by_given_name, :string
   attribute :performed_by_user_id, :integer
+  attribute :performed_ods_code, :string
   attribute :programme_id, :integer
   attribute :vaccine_id, :integer
 
@@ -33,6 +35,7 @@ class DraftVaccinationRecord
 
   def wizard_steps
     [
+      :notes,
       :date_and_time,
       :outcome,
       (:delivery if administered?),
@@ -117,19 +120,15 @@ class DraftVaccinationRecord
     vaccine.dose_volume_ml * 1 if vaccine.present?
   end
 
-  def patient_session
-    PatientSessionPolicy::Scope
-      .new(@current_user, PatientSession)
-      .resolve
-      .preload_for_status
-      .find_by(id: patient_session_id)
+  def patient
+    Patient.find_by(id: patient_id)
   end
 
-  def patient_session=(value)
-    self.patient_session_id = value.id
+  def patient=(value)
+    self.patient_id = value.id
   end
 
-  delegate :location, :patient, :session, to: :patient_session, allow_nil: true
+  delegate :location, to: :session, allow_nil: true
 
   def performed_by_user
     User.find_by(id: performed_by_user_id)
@@ -150,11 +149,22 @@ class DraftVaccinationRecord
     self.programme_id = value.id
   end
 
+  def session
+    SessionPolicy::Scope
+      .new(@current_user, Session)
+      .resolve
+      .find_by(id: session_id)
+  end
+
+  def session=(value)
+    self.session_id = value.id
+  end
+
   def vaccination_record
     VaccinationRecordPolicy::Scope
       .new(@current_user, VaccinationRecord)
       .resolve
-      .includes(patient_session: { consents: :parent })
+      .includes(patient: { consents: :parent })
       .find_by(id: editing_id)
   end
 

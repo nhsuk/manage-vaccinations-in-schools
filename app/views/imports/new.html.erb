@@ -2,10 +2,10 @@
 <% content_for :page_title, title %>
 
 <% content_for :before_main do %>
-  <%= render AppBacklinkComponent.new(programme_imports_path, name: "imports") %>
+  <%= render AppBacklinkComponent.new(imports_path, name: "imports") %>
 <% end %>
 
-<%= form_with(url: programme_imports_path) do |f| %>
+<%= form_with(url: imports_path) do |f| %>
   <%= f.govuk_radio_buttons_fieldset(:type, legend: { text: title, tag: "h1", size: "l" }) do %>
     <%= f.govuk_radio_button(
           :type, :children,

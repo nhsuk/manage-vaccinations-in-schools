@@ -9,12 +9,12 @@
 
 <p class="nhsuk-body">All sessions for this school have been completed.</p>
 
-<% if @unvaccinated_patients_count > 0 %>
+<% if @patients_to_move_to_clinic_count > 0 %>
   <p class="nhsuk-body">When you close this session, the following children will be invited to community clinics:</p>
 
   <ul class="nhsuk-list nhsuk-list--bullet">
     <li>
-      <%= t("children", count: @unvaccinated_patients_count) %> who could not be vaccinated
+      <%= t("children", count: @patients_to_move_to_clinic_count) %> who could not be vaccinated
     </li>
   </ul>
 <% end %>

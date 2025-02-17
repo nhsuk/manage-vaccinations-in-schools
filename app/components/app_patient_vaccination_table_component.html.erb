@@ -24,8 +24,11 @@
           <% end %>
           <% row.with_cell do %>
             <span class="nhsuk-table-responsive__heading">Location</span>
-            <% location = vaccination_record.location %>
-            <%= ([location.name] + location.address_parts).join(", ") %>
+            <% if (location = vaccination_record.location) %>
+              <%= ([location.name] + location.address_parts).join(", ") %>
+            <% else %>
+              Unknown
+            <% end %>
           <% end %>
         <% end %>
       <% end %>

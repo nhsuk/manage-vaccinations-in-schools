@@ -30,6 +30,7 @@ describe AppActivityLogComponent do
   before do
     create(:parent_relationship, :mother, parent: mum, patient:)
     create(:parent_relationship, :father, parent: dad, patient:)
+    patient.reload
 
     patient_session.strict_loading!(false)
     patient_session.patient.strict_loading!(false)
@@ -88,7 +89,8 @@ describe AppActivityLogComponent do
       create(
         :vaccination_record,
         programme:,
-        patient_session:,
+        patient:,
+        session:,
         performed_at: Time.zone.parse("2024-05-31 12:00"),
         performed_by: user,
         notes: "Some notes"
@@ -97,7 +99,8 @@ describe AppActivityLogComponent do
       create(
         :vaccination_record,
         programme:,
-        patient_session:,
+        patient:,
+        session:,
         performed_at: Time.zone.parse("2024-05-31 13:00"),
         performed_by: nil,
         notes: "Some notes",
@@ -182,7 +185,8 @@ describe AppActivityLogComponent do
         :vaccination_record,
         :not_administered,
         programme:,
-        patient_session:,
+        patient:,
+        session:,
         performed_at: Time.zone.local(2024, 5, 31, 13),
         performed_by: user,
         notes: "Some notes.",
@@ -203,7 +207,8 @@ describe AppActivityLogComponent do
         :vaccination_record,
         :discarded,
         programme:,
-        patient_session:,
+        patient:,
+        session:,
         performed_at: Time.zone.local(2024, 5, 31, 13),
         discarded_at: Time.zone.local(2024, 5, 31, 14),
         performed_by: user

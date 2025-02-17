@@ -31,10 +31,17 @@ class PatientMerger
         end
       end
 
+      patient_to_destroy.school_move_log_entries.update_all(
+        patient_id: patient_to_keep.id
+      )
+
       patient_to_destroy.session_notifications.update_all(
         patient_id: patient_to_keep.id
       )
       patient_to_destroy.triages.update_all(patient_id: patient_to_keep.id)
+      patient_to_destroy.vaccination_records.update_all(
+        patient_id: patient_to_keep.id
+      )
 
       patient_to_destroy.parent_relationships.find_each do |relationship|
         if patient_to_keep.parent_relationships.exists?(
@@ -57,9 +64,6 @@ class PatientMerger
             patient_session_id: existing_patient_session.id
           )
           patient_session.pre_screenings.update_all(
-            patient_session_id: existing_patient_session.id
-          )
-          patient_session.vaccination_records.update_all(
             patient_session_id: existing_patient_session.id
           )
         else
@@ -91,7 +95,14 @@ class PatientMerger
       patient_to_destroy.cohort_imports.clear
       patient_to_destroy.immunisation_imports.clear
 
-      patient_to_destroy.destroy!
+      # Add patient back to the cohort if the patient to destroy was in the cohort.
+      if patient_to_keep.organisation_id.nil?
+        patient_to_keep.update!(
+          organisation_id: patient_to_destroy.organisation_id
+        )
+      end
+
+      patient_to_destroy.reload.destroy!
     end
   end
 

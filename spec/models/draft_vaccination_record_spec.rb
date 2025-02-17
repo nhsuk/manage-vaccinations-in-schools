@@ -12,8 +12,9 @@ describe DraftVaccinationRecord do
   let(:request_session) { {} }
   let(:current_user) { organisation.users.first }
 
-  let(:patient_session) { create(:patient_session, programme:) }
   let(:programme) { create(:programme, :hpv) }
+  let(:session) { create(:session, programme:) }
+  let(:patient) { create(:patient, session:) }
   let(:vaccine) { programme.vaccines.first }
   let(:batch) { create(:batch, vaccine:) }
 
@@ -26,8 +27,9 @@ describe DraftVaccinationRecord do
       dose_sequence: 1,
       notes: "Some notes.",
       outcome: "administered",
-      patient_session_id: patient_session.id,
+      patient_id: patient.id,
       programme_id: programme.id,
+      session_id: session.id,
       vaccine_id: vaccine.id
     }
   end
@@ -35,8 +37,9 @@ describe DraftVaccinationRecord do
   let(:valid_not_administered_attributes) do
     {
       notes: "Some notes.",
-      patient_session_id: patient_session.id,
+      patient_id: patient.id,
       programme_id: programme.id,
+      session_id: session.id,
       outcome: "unwell"
     }
   end

@@ -17,36 +17,49 @@
 #  performed_at             :datetime         not null
 #  performed_by_family_name :string
 #  performed_by_given_name  :string
+#  performed_ods_code       :string           not null
 #  uuid                     :uuid             not null
 #  created_at               :datetime         not null
 #  updated_at               :datetime         not null
 #  batch_id                 :bigint
-#  patient_session_id       :bigint           not null
+#  patient_id               :bigint
 #  performed_by_user_id     :bigint
 #  programme_id             :bigint           not null
+#  session_id               :bigint
 #
 # Indexes
 #
 #  index_vaccination_records_on_batch_id              (batch_id)
 #  index_vaccination_records_on_discarded_at          (discarded_at)
-#  index_vaccination_records_on_patient_session_id    (patient_session_id)
+#  index_vaccination_records_on_patient_id            (patient_id)
 #  index_vaccination_records_on_performed_by_user_id  (performed_by_user_id)
 #  index_vaccination_records_on_programme_id          (programme_id)
+#  index_vaccination_records_on_session_id            (session_id)
 #  index_vaccination_records_on_uuid                  (uuid) UNIQUE
 #
 # Foreign Keys
 #
 #  fk_rails_...  (batch_id => batches.id)
-#  fk_rails_...  (patient_session_id => patient_sessions.id)
+#  fk_rails_...  (patient_id => patients.id)
 #  fk_rails_...  (performed_by_user_id => users.id)
 #  fk_rails_...  (programme_id => programmes.id)
+#  fk_rails_...  (session_id => sessions.id)
 #
 
 describe VaccinationRecord do
   subject(:vaccination_record) { build(:vaccination_record) }
 
   describe "validations" do
-    it { should validate_absence_of(:location_name) }
+    context "for a school session" do
+      subject(:vaccination_record) do
+        build(:vaccination_record, programme:, session:)
+      end
+
+      let(:programme) { create(:programme) }
+      let(:session) { create(:session, programme: programme) }
+
+      it { should validate_absence_of(:location_name) }
+    end
 
     context "for a generic clinic" do
       subject(:vaccination_record) do

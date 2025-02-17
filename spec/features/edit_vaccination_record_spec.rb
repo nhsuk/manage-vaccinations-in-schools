@@ -42,6 +42,10 @@ describe "Edit vaccination record" do
     then_i_see_the_edit_vaccination_record_page
     and_i_should_see_the_updated_batch
 
+    when_i_click_change_notes
+    and_i_enter_some_notes
+    then_i_see_the_edit_vaccination_record_page
+
     when_i_click_on_save_changes
     then_the_parent_doesnt_receive_an_email
   end
@@ -272,6 +276,7 @@ describe "Edit vaccination record" do
         :consent_given_triage_not_needed,
         given_name: "John",
         family_name: "Smith",
+        organisation: @organisation,
         programme: @programme
       )
 
@@ -284,7 +289,8 @@ describe "Edit vaccination record" do
       create(
         :vaccination_record,
         batch: @original_batch,
-        patient_session: @patient_session,
+        patient: @patient,
+        session: @session,
         programme: @programme
       )
   end
@@ -294,7 +300,8 @@ describe "Edit vaccination record" do
       create(
         :vaccination_record,
         batch: @original_batch,
-        patient_session: @patient_session,
+        patient: @patient,
+        session: @session,
         performed_by_family_name: "Joy",
         performed_by_given_name: "Nurse",
         performed_by_user: nil,
@@ -308,7 +315,8 @@ describe "Edit vaccination record" do
         :vaccination_record,
         :not_administered,
         batch: @original_batch,
-        patient_session: @patient_session,
+        patient: @patient,
+        session: @session,
         programme: @programme
       )
   end
@@ -441,6 +449,15 @@ describe "Edit vaccination record" do
 
   def and_i_should_see_the_updated_batch
     expect(page).to have_content("Batch ID#{@replacement_batch.name}")
+  end
+
+  def when_i_click_change_notes
+    click_on "Add notes"
+  end
+
+  def and_i_enter_some_notes
+    fill_in "Notes", with: "Some notes."
+    click_on "Continue"
   end
 
   def when_i_click_on_change_outcome

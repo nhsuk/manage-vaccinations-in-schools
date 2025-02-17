@@ -203,6 +203,7 @@ describe "HPV vaccination" do
     )
     row_for_unvaccinated_patient["TIME_OF_VACCINATION"] = "10:01"
     row_for_unvaccinated_patient["VACCINATED"] = "N"
+    row_for_unvaccinated_patient["VACCINE_GIVEN"] = "Gardasil9"
     row_for_unvaccinated_patient["REASON_NOT_VACCINATED"] = "did not attend"
     row_for_unvaccinated_patient["NOTES"] = "Some notes."
     row_for_unvaccinated_patient[

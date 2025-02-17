@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/citizensadvice/capybara_accessible_selectors
-  revision: c380ba737866cc44d286b33c09b694d8feb0b45a
+  revision: a55fca198e43a3c81981ae46412c678a57f4f2f5
   branch: main
   specs:
     capybara_accessible_selectors (0.11.0)
@@ -116,17 +116,18 @@ GEM
     ast (2.4.2)
     attr_required (1.0.2)
     aws-eventstream (1.3.0)
-    aws-partitions (1.1043.0)
+    aws-partitions (1.1049.0)
     aws-sdk-accessanalyzer (1.65.0)
       aws-sdk-core (~> 3, >= 3.216.0)
       aws-sigv4 (~> 1.5)
-    aws-sdk-core (3.217.0)
+    aws-sdk-core (3.218.1)
       aws-eventstream (~> 1, >= 1.3.0)
       aws-partitions (~> 1, >= 1.992.0)
       aws-sigv4 (~> 1.9)
+      base64
       jmespath (~> 1, >= 1.6.1)
-    aws-sdk-ec2 (1.495.0)
-      aws-sdk-core (~> 3, >= 3.210.0)
+    aws-sdk-ec2 (1.503.0)
+      aws-sdk-core (~> 3, >= 3.216.0)
       aws-sigv4 (~> 1.5)
     aws-sdk-ecr (1.92.0)
       aws-sdk-core (~> 3, >= 3.216.0)
@@ -137,8 +138,8 @@ GEM
     aws-sdk-kms (1.97.0)
       aws-sdk-core (~> 3, >= 3.216.0)
       aws-sigv4 (~> 1.5)
-    aws-sdk-rds (1.264.0)
-      aws-sdk-core (~> 3, >= 3.210.0)
+    aws-sdk-rds (1.269.0)
+      aws-sdk-core (~> 3, >= 3.216.0)
       aws-sigv4 (~> 1.5)
     aws-sdk-s3 (1.178.0)
       aws-sdk-core (~> 3, >= 3.216.0)
@@ -258,7 +259,7 @@ GEM
       raabro (~> 1.4)
     globalid (1.2.1)
       activesupport (>= 6.1)
-    good_job (4.7.0)
+    good_job (4.8.2)
       activejob (>= 6.1.0)
       activerecord (>= 6.1.0)
       concurrent-ruby (>= 1.3.1)
@@ -281,7 +282,7 @@ GEM
       temple (>= 0.8.2)
       thor
       tilt
-    hashdiff (1.1.1)
+    hashdiff (1.1.2)
     hashie (5.0.0)
     hotwire-livereload (2.0.0)
       actioncable (>= 7.0.0)
@@ -295,7 +296,8 @@ GEM
     i18n (1.14.7)
       concurrent-ruby (~> 1.0)
     io-console (0.8.0)
-    irb (1.14.3)
+    irb (1.15.1)
+      pp (>= 0.6.0)
       rdoc (>= 4.0.0)
       reline (>= 0.4.2)
     its (0.2.0)
@@ -338,13 +340,6 @@ GEM
       net-imap
       net-pop
       net-smtp
-    mail-notify (2.0.0)
-      actionmailer (>= 5.2.8.1)
-      actionpack (>= 5.2.8.1)
-      actionview (>= 5.2.8.1)
-      activesupport (>= 5.2.8.1)
-      notifications-ruby-client (~> 6.0)
-      rack (>= 2.1.4.1)
     marcel (1.0.4)
     matrix (0.4.2)
     mechanize (2.14.0)
@@ -374,7 +369,7 @@ GEM
     net-http-digest_auth (1.4.1)
     net-http-persistent (4.0.5)
       connection_pool (~> 2.2)
-    net-imap (0.5.2)
+    net-imap (0.5.6)
       date
       net-protocol
     net-pop (0.1.2)
@@ -423,8 +418,11 @@ GEM
       ast (~> 2.4.1)
       racc
     pg (1.5.9)
-    phonelib (0.10.3)
+    phonelib (0.10.4)
+    pp (0.6.2)
+      prettyprint
     prettier_print (1.2.1)
+    prettyprint (0.2.0)
     propshaft (1.1.0)
       actionpack (>= 7.0.0)
       activesupport (>= 7.0.0)
@@ -439,13 +437,13 @@ GEM
       date
       stringio
     public_suffix (6.0.1)
-    puma (6.5.0)
+    puma (6.6.0)
       nio4r (~> 2.0)
     pundit (2.4.0)
       activesupport (>= 3.0.0)
     raabro (1.4.0)
     racc (1.8.1)
-    rack (3.1.8)
+    rack (3.1.9)
     rack-oauth2 (2.2.1)
       activesupport
       attr_required
@@ -514,7 +512,7 @@ GEM
       railties (>= 5.2)
     reverse_markdown (2.1.1)
       nokogiri
-    rexml (3.3.9)
+    rexml (3.4.0)
     rladr (1.2.0)
     rspec (3.13.0)
       rspec-core (~> 3.13.0)
@@ -587,7 +585,7 @@ GEM
     sentry-rails (5.22.0)
       railties (>= 5.0)
       sentry-ruby (~> 5.22.0)
-    sentry-ruby (5.22.0)
+    sentry-ruby (5.22.3)
       bigdecimal
       concurrent-ruby (~> 1.0, >= 1.0.2)
     shoulda-matchers (6.4.0)
@@ -618,7 +616,7 @@ GEM
       activesupport
       solargraph
     splunk-sdk-ruby (1.0.5)
-    stackprof (0.2.26)
+    stackprof (0.2.27)
     stimulus-rails (1.3.4)
       railties (>= 6.0.0)
     stringio (3.1.2)
@@ -672,7 +670,7 @@ GEM
       activesupport
       faraday (~> 2.0)
       faraday-follow_redirects
-    webmock (3.24.0)
+    webmock (3.25.0)
       addressable (>= 2.8.0)
       crack (>= 0.3.2)
       hashdiff (>= 0.4.0, < 2.0.0)
@@ -742,7 +740,6 @@ DEPENDENCIES
   jsbundling-rails
   jsonb_accessor
   jwt
-  mail-notify
   mechanize
   notifications-ruby-client
   okcomputer

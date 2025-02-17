@@ -3,14 +3,14 @@ resource "aws_subnet" "this" {
   vpc_id     = var.vpc_id
   cidr_block = var.firewall_subnet_cidr
   tags = {
-    Name = "firewall-subnet-${var.environment_string}"
+    Name = "firewall-subnet-${var.environment}"
   }
 }
 
 resource "aws_route_table" "this" {
   vpc_id = var.vpc_id
   tags = {
-    Name = "firewall-rt-${var.environment_string}"
+    Name = "firewall-rt-${var.environment}"
   }
 }
 resource "aws_route_table_association" "this" {
@@ -68,7 +68,7 @@ EOF
 }
 
 resource "aws_networkfirewall_firewall_policy" "this" {
-  name = "${var.environment_string}-firewall-policy"
+  name = "${var.environment}-firewall-policy"
   firewall_policy {
     stateless_default_actions          = ["aws:forward_to_sfe"]
     stateless_fragment_default_actions = ["aws:forward_to_sfe"]
@@ -84,7 +84,7 @@ resource "aws_networkfirewall_firewall_policy" "this" {
 }
 
 resource "aws_networkfirewall_firewall" "this" {
-  name                = "firewall-${var.environment_string}"
+  name                = "firewall-${var.environment}"
   firewall_policy_arn = aws_networkfirewall_firewall_policy.this.arn
   vpc_id              = var.vpc_id
   subnet_mapping {
@@ -94,7 +94,7 @@ resource "aws_networkfirewall_firewall" "this" {
 
 ############## LOGGING ################
 resource "aws_cloudwatch_log_group" "this" {
-  name              = "mavis-${var.environment_string}-firewall"
+  name              = "mavis-${var.environment}-firewall"
   retention_in_days = var.log_retention_days
   skip_destroy      = var.retain_logs
 }

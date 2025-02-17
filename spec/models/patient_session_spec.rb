@@ -23,25 +23,14 @@
 #
 
 describe PatientSession do
+  subject(:patient_session) { create(:patient_session, programme:) }
+
   let(:programme) { create(:programme) }
-  let(:patient_session) { create(:patient_session, programme:) }
 
-  describe "#vaccination_records" do
-    subject(:vaccination_records) { patient_session.vaccination_records }
-
-    let(:kept_vaccination_record) do
-      create(:vaccination_record, patient_session:, programme:)
-    end
-    let(:discarded_vaccination_record) do
-      create(:vaccination_record, :discarded, patient_session:, programme:)
-    end
-
-    it { should include(kept_vaccination_record) }
-    it { should_not include(discarded_vaccination_record) }
-  end
+  it { should have_many(:gillick_assessments).order(:created_at) }
 
   describe "#triages" do
-    subject(:triages) { patient_session.triages }
+    subject(:triages) { patient_session.triages(programme:) }
 
     let(:patient) { patient_session.patient }
     let(:later_triage) { create(:triage, programme:, patient:) }
@@ -53,7 +42,7 @@ describe PatientSession do
   end
 
   describe "#latest_triage" do
-    subject(:latest_triage) { patient_session.latest_triage }
+    subject(:latest_triage) { patient_session.latest_triage(programme:) }
 
     let(:patient) { patient_session.patient }
     let(:later_triage) do
@@ -86,6 +75,20 @@ describe PatientSession do
     end
 
     it { should eq(later_triage) }
+  end
+
+  describe "#vaccination_records" do
+    subject(:vaccination_records) do
+      patient_session.vaccination_records(programme:)
+    end
+
+    let(:patient) { patient_session.patient }
+    let(:later_record) { create(:vaccination_record, programme:, patient:) }
+    let(:earlier_record) do
+      create(:vaccination_record, programme:, patient:, performed_at: 1.day.ago)
+    end
+
+    it { should eq([earlier_record, later_record]) }
   end
 
   describe "#no_consent?" do
@@ -134,7 +137,7 @@ describe PatientSession do
   describe "#consent_given?" do
     subject(:consent_given?) do
       described_class
-        .includes(consents: :parent)
+        .includes(patient: { consents: :parent })
         .find(patient_session.id)
         .consent_given?
     end
@@ -201,7 +204,7 @@ describe PatientSession do
   end
 
   describe "#latest_consents" do
-    subject(:latest_consents) { patient_session.latest_consents }
+    subject(:latest_consents) { patient_session.latest_consents(programme:) }
 
     let(:patient_session) { create(:patient_session, programme:, patient:) }
 
@@ -257,53 +260,12 @@ describe PatientSession do
     end
   end
 
-  describe "#latest_gillick_assessment" do
-    subject(:latest_gillick_assessment) do
-      patient_session.latest_gillick_assessment
-    end
-
-    let(:later_gillick_assessment) do
-      create(:gillick_assessment, :competent, patient_session:)
-    end
-
-    before do
-      create(
-        :gillick_assessment,
-        :not_competent,
-        patient_session:,
-        created_at: 1.day.ago
-      )
-    end
-
-    it { should eq(later_gillick_assessment) }
-  end
-
-  describe "#latest_vaccination_record" do
-    subject(:latest_vaccination_record) do
-      patient_session.latest_vaccination_record
-    end
-
-    let(:patient_session) { create(:patient_session, programme:) }
-    let(:later_vaccination_record) do
-      create(:vaccination_record, programme:, patient_session:)
-    end
-
-    before do
-      create(
-        :vaccination_record,
-        programme:,
-        patient_session:,
-        created_at: 1.day.ago
-      )
-    end
-
-    it { should eq(later_vaccination_record) }
-  end
-
   describe "#safe_to_destroy?" do
     subject(:safe_to_destroy?) { patient_session.safe_to_destroy? }
 
     let(:patient_session) { create(:patient_session, programme:) }
+    let(:patient) { patient_session.patient }
+    let(:session) { patient_session.session }
 
     context "when safe to destroy" do
       it { should be true }
@@ -316,7 +278,7 @@ describe PatientSession do
 
     context "when unsafe to destroy" do
       it "is unsafe with vaccination records" do
-        create(:vaccination_record, programme:, patient_session:)
+        create(:vaccination_record, programme:, patient:, session:)
         expect(safe_to_destroy?).to be false
       end
 
@@ -332,7 +294,7 @@ describe PatientSession do
 
       it "is unsafe with mixed conditions" do
         create(:session_attendance, :absent, patient_session:)
-        create(:vaccination_record, programme:, patient_session:)
+        create(:vaccination_record, programme:, patient:, session:)
         expect(safe_to_destroy?).to be false
       end
     end

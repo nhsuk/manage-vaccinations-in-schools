@@ -53,8 +53,20 @@ resource "aws_codedeploy_deployment_group" "blue_green_deployment_group" {
 }
 
 resource "aws_s3_bucket" "code_deploy_bucket" {
-  bucket        = "appspec-bucket-${var.environment_string}"
+  bucket        = "appspec-bucket-${var.environment}"
   force_destroy = true
+}
+
+
+data "aws_s3_bucket" "logs" {
+  bucket = "nhse-mavis-logs-${var.environment}"
+}
+
+resource "aws_s3_bucket_logging" "example" {
+  bucket = aws_s3_bucket.code_deploy_bucket.id
+
+  target_bucket = data.aws_s3_bucket.logs.id
+  target_prefix = "codedeploy-log/"
 }
 
 resource "aws_s3_bucket_versioning" "code_deploy_bucket_versioning" {
@@ -62,6 +74,41 @@ resource "aws_s3_bucket_versioning" "code_deploy_bucket_versioning" {
   versioning_configuration {
     status = "Enabled"
   }
+}
+
+resource "aws_s3_bucket_policy" "block_http" {
+  bucket = aws_s3_bucket.code_deploy_bucket.id
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Id      = "block-http-policy"
+    Statement = [
+      {
+        Sid       = "HTTPSOnly"
+        Effect    = "Deny"
+        Principal = {
+          "AWS": "*"
+        }
+        Action    = "s3:*"
+        Resource = [
+          aws_s3_bucket.code_deploy_bucket.arn,
+          "${aws_s3_bucket.code_deploy_bucket.arn}/*",
+        ]
+        Condition = {
+          Bool = {
+            "aws:SecureTransport" = "false"
+          }
+        }
+      },
+    ]
+  })
+}
+
+resource "aws_s3_bucket_public_access_block" "s3_bucket_access" {
+  bucket                  = aws_s3_bucket.code_deploy_bucket.bucket
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
 }
 
 resource "aws_s3_object" "appspec_object" {

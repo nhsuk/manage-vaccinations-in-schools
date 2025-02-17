@@ -38,11 +38,6 @@ class PatientSession < ApplicationRecord
 
   has_many :gillick_assessments, -> { order(:created_at) }
   has_many :pre_screenings, -> { order(:created_at) }
-  has_many :vaccination_records, -> { kept }
-
-  # TODO: Only fetch consents and triages for the relevant programme.
-  has_many :consents, through: :patient
-  has_many :triages, through: :patient
 
   has_many :session_notifications,
            -> { where(session_id: _1.session_id) },
@@ -70,69 +65,107 @@ class PatientSession < ApplicationRecord
         -> do
           preload(
             :gillick_assessments,
-            :triages,
-            :vaccination_records,
+            :programmes,
             :session_attendances,
-            consents: :parent
+            patient: [:triages, { consents: :parent }, :vaccination_records]
           )
         end
 
   scope :order_by_name,
         -> do
-          order("LOWER(patients.given_name)", "LOWER(patients.family_name)")
+          order("LOWER(patients.family_name)", "LOWER(patients.given_name)")
         end
 
   delegate :send_notifications?, to: :patient
-  delegate :gillick_competent?, to: :latest_gillick_assessment, allow_nil: true
 
   def able_to_vaccinate?
     !unable_to_vaccinate?
   end
 
   def safe_to_destroy?
-    vaccination_records.empty? && gillick_assessments.empty? &&
-      session_attendances.none?(&:attending?)
+    any_vaccination_records =
+      programmes.any? do |programme|
+        vaccination_records(programme:, for_session: true).present?
+      end
+
+    return false if any_vaccination_records
+
+    gillick_assessments.empty? && session_attendances.none?(&:attending?)
   end
 
   def destroy_if_safe!
     destroy! if safe_to_destroy?
   end
 
-  def latest_consents
-    @latest_consents ||=
-      consents
-        .reject(&:invalidated?)
-        .select { _1.response_given? || _1.response_refused? }
-        .group_by(&:name)
-        .map { |_, consents| consents.max_by(&:created_at) }
+  def consents(programme:)
+    patient.consents.select { it.programme_id == programme.id }
   end
 
-  def latest_self_consents
-    @latest_self_consents ||= latest_consents.select(&:via_self_consent?)
+  def latest_consents(programme:)
+    latest_consents_by_programme.fetch(programme.id, [])
   end
 
-  def latest_gillick_assessment
-    @latest_gillick_assessment ||= gillick_assessments.max_by(&:updated_at)
+  def gillick_assessment(programme:)
+    gillick_assessments.select { it.programme_id == programme.id }.last
   end
 
-  def latest_triage
-    @latest_triage ||= triages.reject(&:invalidated?).max_by(&:updated_at)
+  def triages(programme:)
+    patient.triages.select { it.programme_id == programme.id }
   end
 
-  def latest_vaccination_record
-    @latest_vaccination_record ||= vaccination_records.max_by(&:created_at)
+  def latest_triage(programme:)
+    latest_triage_by_programme[programme.id]
+  end
+
+  def vaccination_records(programme:, for_session: false)
+    vaccination_records_for_programme =
+      patient.vaccination_records.select { it.programme_id == programme.id }
+
+    # Normally we would want to show all vaccination records for a patient regardless of
+    # the session they were vaccinated in. However, there are some cases where it may be
+    # necessary to show only vaccination records for this particular session.
+
+    if for_session
+      vaccination_records_for_programme.select { it.session_id == session_id }
+    else
+      vaccination_records_for_programme
+    end
   end
 
   def todays_attendance
     @todays_attendance ||=
       if (session_date = session.session_dates.find(&:today?))
-        session_attendances.eager_load(:session_date).find_or_initialize_by(
-          session_date:
-        )
+        session_attendances.eager_load(
+          :patient,
+          :session_date
+        ).find_or_initialize_by(session_date:)
       end
   end
 
   def attending_today?
     todays_attendance&.attending?
+  end
+
+  private
+
+  def latest_consents_by_programme
+    @latest_consents_by_programme ||=
+      patient
+        .consents
+        .reject(&:invalidated?)
+        .select { it.response_given? || it.response_refused? }
+        .group_by(&:programme_id)
+        .transform_values do |consents|
+          consents.group_by(&:name).map { it.second.max_by(&:created_at) }
+        end
+  end
+
+  def latest_triage_by_programme
+    @latest_triage_by_programme ||=
+      patient
+        .triages
+        .reject(&:invalidated?)
+        .group_by(&:programme_id)
+        .transform_values { it.max_by(&:created_at) }
   end
 end

@@ -60,7 +60,8 @@ describe "Download vaccination reports" do
     create(
       :vaccination_record,
       programme: @programme,
-      patient_session: @patient_session,
+      patient: @patient,
+      session: @session,
       batch:
     )
   end

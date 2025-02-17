@@ -23,7 +23,7 @@ class VaccinationsController < ApplicationController
       @session
         .patient_sessions
         .preload_for_status
-        .eager_load(patient: :cohort)
+        .eager_load(:patient)
         .order_by_name
 
     grouped_patient_sessions =
@@ -62,6 +62,8 @@ class VaccinationsController < ApplicationController
 
     if @vaccinate_form.save(draft_vaccination_record:)
       steps = draft_vaccination_record.wizard_steps
+
+      steps.delete(:notes) # this is on the confirmation page
 
       steps.delete(:date_and_time)
       steps.delete(:outcome) if draft_vaccination_record.administered?
@@ -142,6 +144,7 @@ class VaccinationsController < ApplicationController
       @patient
         .patient_sessions
         .includes(
+          :organisation,
           patient: {
             parent_relationships: :parent
           },

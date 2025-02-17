@@ -76,7 +76,8 @@ describe Reports::CareplusExporter do
       create(
         :vaccination_record,
         programme:,
-        patient_session:,
+        patient: patient_session.patient,
+        session: patient_session.session,
         performed_at: 2.weeks.ago
       )
 
@@ -107,17 +108,19 @@ describe Reports::CareplusExporter do
     let(:location) { create(:generic_clinic, organisation:) }
 
     it "includes clinic location details" do
-      patient_session =
-        create(
-          :patient_session,
-          :consent_given_triage_not_needed,
-          programme:,
-          session:
-        )
+      patient = create(:patient)
+      create(
+        :patient_session,
+        :consent_given_triage_not_needed,
+        programme:,
+        patient:,
+        session:
+      )
       create(
         :vaccination_record,
         programme:,
-        patient_session:,
+        patient:,
+        session:,
         location_name: "A clinic"
       )
 
@@ -132,11 +135,13 @@ describe Reports::CareplusExporter do
   end
 
   it "excludes vaccination records outside the date range" do
-    patient_session = create(:patient_session, session:)
+    patient = create(:patient_session, session:).patient
+
     create(
       :vaccination_record,
       programme:,
-      patient_session:,
+      patient:,
+      session:,
       created_at: 2.months.ago,
       updated_at: 2.months.ago,
       performed_at: 2.months.ago
@@ -146,18 +151,27 @@ describe Reports::CareplusExporter do
   end
 
   it "excludes not administered vaccination records" do
-    patient_session = create(:patient_session, session:)
-    create(:vaccination_record, :not_administered, programme:, patient_session:)
+    patient = create(:patient_session, session:).patient
+
+    create(
+      :vaccination_record,
+      :not_administered,
+      programme:,
+      patient:,
+      session:
+    )
 
     expect(data_rows.first).to be_nil
   end
 
   it "includes vaccination records updated within the date range" do
-    patient_session = create(:patient_session, session:)
+    patient = create(:patient_session, session:).patient
+
     create(
       :vaccination_record,
       programme:,
-      patient_session:,
+      patient:,
+      session:,
       created_at: 2.months.ago,
       updated_at: 1.day.ago,
       performed_at: 2.months.ago
@@ -170,8 +184,7 @@ describe Reports::CareplusExporter do
     let(:session) { create(:session, programme:, location:) }
 
     it "excludes the vaccination record" do
-      patient_session = create(:patient_session, session:)
-      create(:vaccination_record, programme:, patient_session:)
+      create(:vaccination_record, programme:, session:)
 
       expect(data_rows.first).to be_nil
     end

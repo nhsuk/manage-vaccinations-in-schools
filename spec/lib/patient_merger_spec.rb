@@ -3,11 +3,25 @@
 describe PatientMerger do
   describe "#call" do
     subject(:call) do
-      described_class.call(
-        to_keep: patient_to_keep.reload,
-        to_destroy: patient_to_destroy.reload
-      )
+      # Intentionally call this method as we would in a controller because
+      # we were finding bugs when called like this but not on its own.
+      Audited
+        .audit_class
+        .as_user(user) do
+          described_class.call(
+            to_keep:
+              Patient.includes(parent_relationships: :parent).find(
+                patient_to_keep.id
+              ),
+            to_destroy:
+              Patient.includes(parent_relationships: :parent).find(
+                patient_to_destroy.id
+              )
+          )
+        end
     end
+
+    let(:user) { create(:user) }
 
     let(:programme) { create(:programme) }
     let(:session) { create(:session, programme:) }
@@ -45,6 +59,9 @@ describe PatientMerger do
     let(:school_move) do
       create(:school_move, :to_school, patient: patient_to_destroy)
     end
+    let(:school_move_log_entry) do
+      create(:school_move_log_entry, patient: patient_to_destroy)
+    end
     let(:duplicate_school_move) do
       create(:school_move, patient: patient_to_keep, school: school_move.school)
     end
@@ -57,7 +74,12 @@ describe PatientMerger do
     end
     let(:triage) { create(:triage, patient: patient_to_destroy, programme:) }
     let(:vaccination_record) do
-      create(:vaccination_record, patient_session:, programme:)
+      create(
+        :vaccination_record,
+        patient: patient_to_destroy,
+        session:,
+        programme:
+      )
     end
 
     it "destroys one of the patients" do
@@ -119,6 +141,12 @@ describe PatientMerger do
       )
     end
 
+    it "moves school move log entries" do
+      expect { call }.to change { school_move_log_entry.reload.patient }.to(
+        patient_to_keep
+      )
+    end
+
     it "deletes duplicate school moves" do
       expect { call }.not_to change(duplicate_school_move, :patient)
       expect { school_move.reload }.to raise_error(ActiveRecord::RecordNotFound)
@@ -153,6 +181,23 @@ describe PatientMerger do
         expect { call }.to change(ParentRelationship, :count).by(-1)
         expect { parent_relationship.reload }.to raise_error(
           ActiveRecord::RecordNotFound
+        )
+      end
+    end
+
+    it "doesn't change the cohort" do
+      expect { call }.not_to(change { patient_to_keep.reload.organisation })
+    end
+
+    context "if the patient to keep is not in the cohort" do
+      let(:organisation) { create(:organisation) }
+
+      let(:patient_to_keep) { create(:patient, organisation: nil) }
+      let(:patient_to_destroy) { create(:patient, organisation:) }
+
+      it "adds the patient back in to the cohort" do
+        expect { call }.to change { patient_to_keep.reload.organisation }.to(
+          organisation
         )
       end
     end

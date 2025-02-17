@@ -28,10 +28,10 @@ class Cohort < ApplicationRecord
 
   scope :for_year_groups,
         ->(year_groups, academic_year: nil) do
-          academic_year ||= Date.current.academic_year
-
           birth_academic_years =
-            year_groups.map { |year_group| academic_year - year_group - 5 }
+            year_groups.map do |year_group|
+              year_group.to_birth_academic_year(academic_year:)
+            end
 
           where(birth_academic_year: birth_academic_years)
         end

@@ -28,26 +28,39 @@ class AppActivityLogComponent < ViewComponent::Base
       patient_session ? [patient_session] : patient.patient_sessions
 
     @consents =
-      (patient || patient_session).consents.includes(
+      @patient.consents.includes(
         :consent_form,
         :parent,
         :recorded_by,
         patient: :parent_relationships
       )
+
     @gillick_assessments =
       (patient || patient_session).gillick_assessments.includes(:performed_by)
+
     @notify_log_entries = @patient.notify_log_entries.includes(:sent_by)
+
     @pre_screenings =
       (patient || patient_session).pre_screenings.includes(:performed_by)
+
     @session_attendances =
       (patient || patient_session).session_attendances.includes(:location)
-    @triages = (patient || patient_session).triages.includes(:performed_by)
+
+    @triages = @patient.triages.includes(:performed_by)
+
     @vaccination_records =
-      (patient || patient_session).vaccination_records.with_discarded.includes(
+      @patient.vaccination_records.with_discarded.includes(
         :performed_by_user,
         :programme,
         :vaccine
       )
+
+    if (programme = patient_session&.programmes&.first) # TODO: handle multiple programmes
+      @consents = @consents.where(programme:)
+      @gillick_assessments = @gillick_assessments.where(programme:)
+      @triages = @triages.where(programme:)
+      @vaccination_records = @vaccination_records.where(programme:)
+    end
   end
 
   attr_reader :patient,
@@ -150,7 +163,7 @@ class AppActivityLogComponent < ViewComponent::Base
     notify_log_entries.map do
       {
         title: "#{_1.title} sent",
-        body: patient.restricted? ? "" : _1.recipient,
+        body: patient.restricted? ? "" : _1.recipient_deterministic,
         at: _1.created_at,
         by: _1.sent_by
       }

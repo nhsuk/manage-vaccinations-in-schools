@@ -5,7 +5,7 @@ module FullNameConcern
 
   included do
     scope :order_by_name,
-          -> { order("LOWER(given_name)", "LOWER(family_name)") }
+          -> { order("LOWER(family_name)", "LOWER(given_name)") }
   end
 
   def full_name

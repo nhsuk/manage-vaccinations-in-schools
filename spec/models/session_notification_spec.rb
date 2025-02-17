@@ -51,7 +51,7 @@ describe SessionNotification do
     let(:consent) { create(:consent, :given, patient:, programme:) }
     let(:current_user) { create(:user) }
 
-    before { patient_session.strict_loading!(false) }
+    before { patient_session.patient.strict_loading!(false) }
 
     context "with a school reminder" do
       let(:type) { :school_reminder }
@@ -71,13 +71,13 @@ describe SessionNotification do
       it "enqueues an email per parent who gave consent" do
         expect { create_and_send! }.to have_delivered_email(
           :session_school_reminder
-        ).with(consent:, patient_session:, sent_by: current_user)
+        ).with(consent:, session:, sent_by: current_user)
       end
 
       it "enqueues a text per parent" do
         expect { create_and_send! }.to have_delivered_sms(
           :session_school_reminder
-        ).with(consent:, patient_session:, sent_by: current_user)
+        ).with(consent:, session:, sent_by: current_user)
       end
 
       context "when parent doesn't want to receive updates by text" do
@@ -107,11 +107,13 @@ describe SessionNotification do
           :session_clinic_initial_invitation
         ).with(
           parent: parents.first,
-          patient_session:,
+          patient:,
+          session:,
           sent_by: current_user
         ).and have_delivered_email(:session_clinic_initial_invitation).with(
                 parent: parents.second,
-                patient_session:,
+                patient:,
+                session:,
                 sent_by: current_user
               )
       end
@@ -121,11 +123,13 @@ describe SessionNotification do
           :session_clinic_initial_invitation
         ).with(
           parent: parents.first,
-          patient_session:,
+          patient:,
+          session:,
           sent_by: current_user
         ).and have_delivered_sms(:session_clinic_initial_invitation).with(
                 parent: parents.second,
-                patient_session:,
+                patient:,
+                session:,
                 sent_by: current_user
               )
       end
@@ -138,7 +142,7 @@ describe SessionNotification do
         it "still enqueues a text" do
           expect { create_and_send! }.to have_delivered_sms(
             :session_clinic_initial_invitation
-          ).with(parent:, patient_session:, sent_by: current_user)
+          ).with(parent:, patient:, session:, sent_by: current_user)
         end
       end
     end
@@ -161,11 +165,13 @@ describe SessionNotification do
           :session_clinic_subsequent_invitation
         ).with(
           parent: parents.first,
-          patient_session:,
+          patient:,
+          session:,
           sent_by: current_user
         ).and have_delivered_email(:session_clinic_subsequent_invitation).with(
                 parent: parents.second,
-                patient_session:,
+                patient:,
+                session:,
                 sent_by: current_user
               )
       end
@@ -175,11 +181,13 @@ describe SessionNotification do
           :session_clinic_subsequent_invitation
         ).with(
           parent: parents.first,
-          patient_session:,
+          patient:,
+          session:,
           sent_by: current_user
         ).and have_delivered_sms(:session_clinic_subsequent_invitation).with(
                 parent: parents.second,
-                patient_session:,
+                patient:,
+                session:,
                 sent_by: current_user
               )
       end
@@ -192,7 +200,7 @@ describe SessionNotification do
         it "still enqueues a text" do
           expect { create_and_send! }.to have_delivered_sms(
             :session_clinic_subsequent_invitation
-          ).with(parent:, patient_session:, sent_by: current_user)
+          ).with(parent:, patient:, session:, sent_by: current_user)
         end
       end
     end

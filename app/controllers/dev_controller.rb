@@ -33,31 +33,37 @@ class DevController < ApplicationController
       SessionDate.where(session: sessions).destroy_all
       ConsentNotification.where(session: sessions).destroy_all
       SessionNotification.where(session: sessions).destroy_all
+      VaccinationRecord.where(session: sessions).destroy_all
 
       patient_sessions = PatientSession.where(session: sessions)
       GillickAssessment.where(patient_session: patient_sessions).destroy_all
-      VaccinationRecord.where(patient_session: patient_sessions).destroy_all
       PreScreening.where(patient_session: patient_sessions).destroy_all
       patient_sessions.destroy_all
 
       sessions.destroy_all
 
-      patients = Patient.joins(:cohort).where(cohorts: { organisation: })
+      patients = organisation.patients
 
       SchoolMove.where(patient: patients).destroy_all
       SchoolMove.where(organisation:).destroy_all
       SchoolMoveLogEntry.where(patient: patients).destroy_all
       AccessLogEntry.where(patient: patients).destroy_all
       NotifyLogEntry.where(patient: patients).destroy_all
+      VaccinationRecord.where(patient: patients).destroy_all
 
       ConsentForm.where(organisation:).destroy_all
       Consent.where(organisation:).destroy_all
       Triage.where(organisation:).destroy_all
 
-      patients.destroy_all
+      patients.includes(:parents).destroy_all
 
-      Cohort.where(organisation:).destroy_all
-      Batch.where(organisation:).destroy_all
+      batches = Batch.where(organisation:)
+      VaccinationRecord.where(batch: batches).destroy_all
+      batches.destroy_all
+
+      VaccinationRecord.where(
+        performed_ods_code: organisation.ods_code
+      ).destroy_all
 
       UnscheduledSessionsFactory.new.call
     end

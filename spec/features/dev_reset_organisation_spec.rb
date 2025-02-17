@@ -40,8 +40,7 @@ describe "Dev endpoint to reset a organisation" do
     attach_file("cohort_import[csv]", "spec/fixtures/cohort_import/valid.csv")
     click_on "Continue"
 
-    @patients =
-      @organisation.cohorts.includes(patients: :parents).flat_map(&:patients)
+    @patients = @organisation.patients.includes(:parents)
 
     expect(@patients.size).to eq(3)
     expect(@patients.flat_map(&:parents).size).to eq(3)
@@ -91,15 +90,13 @@ describe "Dev endpoint to reset a organisation" do
 
   def then_all_associated_data_is_deleted_when_i_reset_the_organisation
     expect { visit "/reset/r1l" }.to(
-      change(Cohort, :count)
-        .by(-2)
-        .and(change(CohortImport, :count).by(-1))
+      change(CohortImport, :count)
+        .by(-1)
         .and(change(ImmunisationImport, :count).by(-1))
         .and(change(NotifyLogEntry, :count).by(-3))
         .and(change(Parent, :count).by(-4))
         .and(change(Patient, :count).by(-3))
-        .and(change(PatientSession, :count).by(-14))
-        .and(change(Session, :count).by(-5))
+        .and(change(PatientSession, :count).by(-3))
         .and(change(VaccinationRecord, :count).by(-11))
     )
   end

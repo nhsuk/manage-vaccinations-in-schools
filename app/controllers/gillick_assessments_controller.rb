@@ -4,6 +4,7 @@ class GillickAssessmentsController < ApplicationController
   before_action :set_patient
   before_action :set_session
   before_action :set_patient_session
+  before_action :set_programme
   before_action :set_is_first_assessment
   before_action :set_gillick_assessment
 
@@ -28,25 +29,37 @@ class GillickAssessmentsController < ApplicationController
   end
 
   def set_session
-    @session = policy_scope(Session).find_by!(slug: params[:session_slug])
+    @session =
+      policy_scope(Session).includes(:programmes).find_by!(
+        slug: params[:session_slug]
+      )
   end
 
   def set_patient_session
     @patient_session =
-      policy_scope(PatientSession).find_by!(
+      policy_scope(PatientSession).includes(:gillick_assessments).find_by!(
         session: @session,
         patient: @patient
       )
   end
 
+  def set_programme
+    @programme = @session.programmes.first # TODO: handle multiple programmes
+  end
+
   def set_is_first_assessment
-    @is_first_assessment = @patient_session.gillick_assessments.empty?
+    @is_first_assessment =
+      @patient_session.gillick_assessment(programme: @programme).nil?
   end
 
   def set_gillick_assessment
     @gillick_assessment =
-      authorize @patient_session.latest_gillick_assessment&.dup ||
-                  @patient_session.gillick_assessments.build
+      authorize @patient_session.gillick_assessment(
+                  programme: @programme
+                )&.dup ||
+                  @patient_session.gillick_assessments.build(
+                    programme: @programme
+                  )
   end
 
   def gillick_assessment_params

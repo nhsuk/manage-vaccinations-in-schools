@@ -77,27 +77,6 @@ Rails.application.configure do
   # Replace the default in-process and non-durable queuing backend for Active Job.
   # config.active_job.queue_adapter = :resque
 
-  # Ignore bad email addresses and do not raise email delivery errors.
-  # Set this to true and configure the email server for immediate delivery to raise delivery errors.
-  # config.action_mailer.raise_delivery_errors = false
-
-  # Set host to be used by links generated in mailer templates.
-  config.action_mailer.default_url_options = {
-    host:
-      if Settings.is_review
-        "#{ENV["HEROKU_APP_NAME"]}.herokuapp.com"
-      else
-        Settings.host
-      end,
-    protocol: "https"
-  }
-
-  # Configure GOV.UK Notify.
-  config.action_mailer.delivery_method = :notify
-  config.action_mailer.notify_settings = {
-    api_key: Settings.govuk_notify.live_key
-  }
-
   # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
   # the I18n.default_locale when a translation cannot be found).
   config.i18n.fallbacks = true
@@ -119,7 +98,7 @@ Rails.application.configure do
   config.good_job.enable_cron = true
   config.good_job.cron = {
     bulk_update_patients_from_pds: {
-      cron: "every day at 00:00 and 8:00 and 12:00 and 18:00",
+      cron: "every day at 6:00 and 18:00",
       class: "BulkUpdatePatientsFromPDSJob",
       description: "Keep patient details up to date with PDS."
     },

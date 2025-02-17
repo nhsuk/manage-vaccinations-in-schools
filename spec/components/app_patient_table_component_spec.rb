@@ -68,7 +68,7 @@ describe AppPatientTableComponent do
   end
 
   context "with a patient not in the cohort" do
-    before { patients.first.update!(cohort_id: nil) }
+    before { patients.first.update!(organisation: nil) }
 
     it "doesn't render a link" do
       expect(rendered).not_to have_link("John Smith")

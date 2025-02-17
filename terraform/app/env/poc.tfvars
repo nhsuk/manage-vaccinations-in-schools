@@ -1,6 +1,6 @@
-environment_string  = "poc"
-db_secret_arn       = ""
-dns_certificate_arn = ""
+environment  = "poc"
+db_secret_arn       = null
+dns_certificate_arn = null
 resource_name = {
   dbsubnet_group           = "mavis-poc-rds-subnet"
   db_cluster               = "mavis-poc-rds-cluster"

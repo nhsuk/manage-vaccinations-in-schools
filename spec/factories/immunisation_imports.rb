@@ -18,25 +18,21 @@
 #  created_at                   :datetime         not null
 #  updated_at                   :datetime         not null
 #  organisation_id              :bigint           not null
-#  programme_id                 :bigint           not null
 #  uploaded_by_user_id          :bigint           not null
 #
 # Indexes
 #
 #  index_immunisation_imports_on_organisation_id      (organisation_id)
-#  index_immunisation_imports_on_programme_id         (programme_id)
 #  index_immunisation_imports_on_uploaded_by_user_id  (uploaded_by_user_id)
 #
 # Foreign Keys
 #
 #  fk_rails_...  (organisation_id => organisations.id)
-#  fk_rails_...  (programme_id => programmes.id)
 #  fk_rails_...  (uploaded_by_user_id => users.id)
 #
 FactoryBot.define do
   factory :immunisation_import do
     organisation
-    programme
     uploaded_by
 
     csv_data { "my,csv\n" }

@@ -54,11 +54,13 @@ class SessionNotification < ApplicationRecord
     patient = patient_session.patient
     session = patient_session.session
 
+    programme = session.programmes.first # TODO: handle multiple programmes
+
     contacts =
       if type == :school_reminder
-        patient_session.latest_consents.select do
-          _1.response_given? && _1.parent&.contactable?
-        end
+        patient_session
+          .latest_consents(programme:)
+          .select { _1.response_given? && _1.parent&.contactable? }
       else
         patient.parents.select(&:contactable?)
       end
@@ -79,7 +81,7 @@ class SessionNotification < ApplicationRecord
 
     if type == :school_reminder
       contacts.each do |consent|
-        params = { consent:, patient_session:, sent_by: current_user }
+        params = { consent:, session:, sent_by: current_user }
 
         EmailDeliveryJob.perform_later(:session_school_reminder, **params)
 
@@ -89,7 +91,7 @@ class SessionNotification < ApplicationRecord
       end
     else
       contacts.each do |parent|
-        params = { parent:, patient_session:, sent_by: current_user }
+        params = { parent:, patient:, session:, sent_by: current_user }
 
         EmailDeliveryJob.perform_later(:"session_#{type}", **params)
         SMSDeliveryJob.perform_later(:"session_#{type}", **params)

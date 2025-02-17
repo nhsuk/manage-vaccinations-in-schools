@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class ImportIssuesController < ApplicationController
-  before_action :set_programme
   before_action :set_import_issues
   before_action :set_record, only: %i[show update]
   before_action :set_vaccination_record, only: %i[show update]
@@ -11,6 +10,7 @@ class ImportIssuesController < ApplicationController
   layout "full"
 
   def index
+    @programme = policy_scope(Programme).first # TODO: handle multiple programmes
   end
 
   def show
@@ -18,10 +18,7 @@ class ImportIssuesController < ApplicationController
 
   def update
     if @form.save
-      redirect_to programme_import_issues_path(@programme),
-                  flash: {
-                    success: "Record updated"
-                  }
+      redirect_to import_issues_path, flash: { success: "Record updated" }
     else
       render :show, status: :unprocessable_entity and return
     end
@@ -29,31 +26,22 @@ class ImportIssuesController < ApplicationController
 
   private
 
-  def set_programme
-    @programme = policy_scope(Programme).find_by!(type: params[:programme_type])
-  end
-
   def set_import_issues
     @vaccination_records =
-      policy_scope(VaccinationRecord)
-        .where(programme: @programme)
-        .with_pending_changes
-        .distinct
-        .includes(
-          :batch,
-          :location,
-          :patient_session,
-          :performed_by_user,
-          session: :location,
-          patient: %i[cohort gp_practice school],
-          vaccine: :programme
-        )
+      policy_scope(VaccinationRecord).with_pending_changes.distinct.includes(
+        :batch,
+        :location,
+        :performed_by_user,
+        session: :location,
+        patient: %i[gp_practice school],
+        vaccine: :programme
+      )
 
     @patients =
       policy_scope(Patient)
         .with_pending_changes
         .distinct
-        .eager_load(:cohort, :gp_practice, :school)
+        .eager_load(:gp_practice, :school)
         .preload(:school_moves, :upcoming_sessions)
 
     @import_issues =
