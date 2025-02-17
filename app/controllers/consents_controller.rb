@@ -22,9 +22,12 @@ class ConsentsController < ApplicationController
         .eager_load(:patient)
         .order_by_name
 
+    @programme = @session.programmes.first # TODO: handle multiple programmes
+
     tab_patient_sessions =
       group_patient_sessions_by_conditions(
         all_patient_sessions,
+        programme: @programme,
         section: :consents
       )
 
@@ -55,17 +58,17 @@ class ConsentsController < ApplicationController
   end
 
   def send_request
-    return unless @patient_session.no_consent?
+    programme = @session.programmes.first # TODO: handle multiple programmes
 
-    @session.programmes.each do |programme|
-      ConsentNotification.create_and_send!(
-        patient: @patient,
-        programme:,
-        session: @session,
-        type: :request,
-        current_user:
-      )
-    end
+    return unless @patient_session.no_consent?(programme:)
+
+    ConsentNotification.create_and_send!(
+      patient: @patient,
+      programme:,
+      session: @session,
+      type: :request,
+      current_user:
+    )
 
     redirect_to session_patient_path(
                   @session,

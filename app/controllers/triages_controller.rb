@@ -22,9 +22,15 @@ class TriagesController < ApplicationController
         .eager_load(:patient)
         .order_by_name
 
+    programme = @session.programmes.first # TODO: handle multiple programmes
+
     @current_tab = TAB_PATHS[:triage][params[:tab]]
     tab_patient_sessions =
-      group_patient_sessions_by_state(all_patient_sessions, section: :triage)
+      group_patient_sessions_by_state(
+        all_patient_sessions,
+        programme,
+        section: :triage
+      )
     @tab_counts = count_patient_sessions(tab_patient_sessions)
     @patient_sessions = tab_patient_sessions[@current_tab] || []
 

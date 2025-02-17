@@ -1,7 +1,7 @@
-<%= if patient_session.status.in? %w[
-                                   vaccinated
-                                   unable_to_vaccinate
-                                 ]
+<%= if patient_session.status(programme:).in? %w[
+                                               vaccinated
+                                               unable_to_vaccinate
+                                             ]
      render AppOutcomeBannerComponent.new(
        patient_session:,
        programme:,
@@ -81,7 +81,7 @@
   <% end %>
 <% end %>
 
-<% if helpers.policy(Triage).create? && patient_session.next_step == :triage && patient_session.session.open? %>
+<% if helpers.policy(Triage).create? && patient_session.next_step(programme:) == :triage && patient_session.session.open? %>
   <%= render AppCardComponent.new do %>
     <%= render AppTriageFormComponent.new(
           patient_session:,

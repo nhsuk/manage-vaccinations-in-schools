@@ -339,13 +339,13 @@ describe ImmunisationImport do
       let(:patient) { create(:patient, nhs_number: "7420180008", session:) }
 
       it "removes the patient from the upcoming session" do
-        expect(patient.vaccinated?(programme)).to be(false)
+        expect(patient.vaccinated?(programme:)).to be(false)
         expect(patient.upcoming_sessions).to contain_exactly(session)
 
         process!
 
         expect(patient.reload.upcoming_sessions).to be_empty
-        expect(patient.vaccinated?(programme)).to be(true)
+        expect(patient.vaccinated?(programme:)).to be(true)
       end
     end
   end

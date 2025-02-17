@@ -12,7 +12,9 @@ describe PatientSessionStatusConcern do
   end
 
   describe "#status" do
-    subject { fake_instance.status }
+    subject { fake_instance.status(programme:) }
+
+    let(:programme) { create(:programme) }
 
     shared_examples "it supports the status" do |status, conditions:|
       conditions_list = conditions.to_sentence

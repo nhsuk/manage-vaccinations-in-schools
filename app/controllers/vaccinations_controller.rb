@@ -27,9 +27,12 @@ class VaccinationsController < ApplicationController
         .eager_load(:patient)
         .order_by_name
 
+    programme = @session.programmes.first # TODO: handle multiple programmes
+
     grouped_patient_sessions =
       group_patient_sessions_by_state(
         all_patient_sessions,
+        programme,
         section: :vaccinations
       )
 

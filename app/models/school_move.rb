@@ -89,7 +89,16 @@ class SchoolMove < ApplicationRecord
     # session if they haven't been vaccinated for any programmes that session
     # administers. What happens if the patient needs a Flu vaccine but the new
     # session doesn't administer flu? Move to community clinic and the school?
-    patient_sessions.any?(&:vaccinated?)
+
+    org = school&.organisation || organisation
+
+    # TODO: What happens if the school they're moving to doesn't have an organisation?
+    # We don't know which programmes that organisation administers.
+    return false if org.nil?
+
+    org.programmes.all? do |programme|
+      patient_sessions.any? { it.vaccinated?(programme:) }
+    end
   end
 
   def update_patient!

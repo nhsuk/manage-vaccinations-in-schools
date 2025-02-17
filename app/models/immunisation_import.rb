@@ -131,7 +131,7 @@ class ImmunisationImport < ApplicationRecord
     rows.each do |row|
       patient = row.patient
 
-      next unless patient.vaccinated?(row.programme)
+      next unless patient.vaccinated?(programme: row.programme)
 
       patient
         .patient_sessions

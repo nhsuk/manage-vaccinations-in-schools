@@ -11,4 +11,4 @@
 
 <%= render AppProgrammeNavigationComponent.new(@programme, active: :sessions) %>
 
-<%= render AppProgrammeSessionTableComponent.new(@sessions) %>
+<%= render AppProgrammeSessionTableComponent.new(@sessions, programme: @programme) %>
