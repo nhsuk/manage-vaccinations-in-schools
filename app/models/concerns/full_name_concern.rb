@@ -8,19 +8,16 @@ module FullNameConcern
           -> { order("LOWER(family_name)", "LOWER(given_name)") }
   end
 
-  def full_name
-    [given_name, family_name].join(" ")
+  def full_name(context: :internal)
+    FullNameFormatter.call(self, context:)
   end
 
   def has_preferred_name?
     preferred_given_name.present? || preferred_family_name.present?
   end
 
-  def preferred_full_name
-    [
-      preferred_given_name.presence || given_name,
-      preferred_family_name.presence || family_name
-    ].join(" ")
+  def preferred_full_name(context: :internal)
+    FullNameFormatter.call(self, context:, parts_prefix: :preferred)
   end
 
   def preferred_full_name_changed?

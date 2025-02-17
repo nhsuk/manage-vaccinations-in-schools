@@ -136,7 +136,7 @@ describe "Class list imports duplicates" do
   end
 
   def when_i_review_the_first_duplicate_record
-    click_on "Review Jimmy Smith"
+    click_on "Review SMITH, Jimmy"
   end
 
   def then_i_should_see_the_first_duplicate_record
@@ -178,13 +178,13 @@ describe "Class list imports duplicates" do
   end
 
   def when_i_review_the_second_duplicate_record
-    click_on "Review Sarah Jones"
+    click_on "Review JONES, Sarah"
   end
 
   def then_i_should_see_the_second_duplicate_record
     expect(page).to have_content("This record needs reviewing")
-    expect(page).to have_content("Full nameSara Jones")
-    expect(page).to have_content("Full nameSarah Jones")
+    expect(page).to have_content("Full nameJONES, Sara")
+    expect(page).to have_content("Full nameJONES, Sarah")
   end
 
   def and_the_second_record_should_not_be_updated
@@ -194,12 +194,12 @@ describe "Class list imports duplicates" do
   end
 
   def when_i_review_the_third_duplicate_record
-    click_on "Review Jenny Block"
+    click_on "Review BLOCK, Jenny"
   end
 
   def then_i_should_see_the_third_duplicate_record
     expect(page).to have_content("This record needs reviewing")
-    expect(page).to have_content("Full nameJenny Block")
+    expect(page).to have_content("Full nameBLOCK, Jenny")
   end
 
   def and_the_third_record_should_not_be_updated

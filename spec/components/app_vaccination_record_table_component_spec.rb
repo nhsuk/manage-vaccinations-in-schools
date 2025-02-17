@@ -64,8 +64,8 @@ describe AppVaccinationRecordTableComponent do
       ".nhsuk-table__body .nhsuk-table__row",
       count: 10
     )
-    expect(rendered).to have_css(".nhsuk-table__cell", text: "John Smith")
-    expect(rendered).to have_link("John Smith")
+    expect(rendered).to have_css(".nhsuk-table__cell", text: "SMITH, John")
+    expect(rendered).to have_link("SMITH, John")
     expect(rendered).to have_css(
       ".nhsuk-table__cell",
       text: "999\u00A0\u200D999\u00A0\u200D9999"

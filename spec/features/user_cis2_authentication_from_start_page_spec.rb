@@ -57,7 +57,7 @@ describe "User CIS2 authentication", :cis2 do
   end
 
   def and_i_am_logged_in
-    expect(page).to have_content "Nurse Test"
+    expect(page).to have_content("TEST, Nurse")
     expect(page).to have_button "Log out"
   end
 
@@ -74,8 +74,8 @@ describe "User CIS2 authentication", :cis2 do
   end
 
   def and_i_am_logged_out
-    expect(page).not_to have_content "Nurse Test"
-    expect(page).not_to have_button "Log out"
+    expect(page).not_to have_content("TEST, Nurse")
+    expect(page).not_to have_button("Log out")
   end
 
   def when_i_go_to_the_sessions_page

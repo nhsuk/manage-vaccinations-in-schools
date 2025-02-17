@@ -7,9 +7,11 @@ class AppSimpleStatusBannerComponent < ViewComponent::Base
     @patient_session = patient_session
   end
 
-  delegate :status, to: :@patient_session
+  delegate :patient, :status, to: :@patient_session
 
   private
+
+  delegate :full_name, to: :patient
 
   def who_refused
     @patient_session
@@ -17,10 +19,6 @@ class AppSimpleStatusBannerComponent < ViewComponent::Base
       .select(&:response_refused?)
       .map(&:who_responded)
       .last
-  end
-
-  def full_name
-    @patient_session.patient.full_name
   end
 
   def nurse

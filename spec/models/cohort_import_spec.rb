@@ -184,7 +184,8 @@ describe CohortImport do
       expect(Patient.first).to have_attributes(
         nhs_number: "1234567890",
         date_of_birth: Date.new(2010, 1, 1),
-        full_name: "Jennifer Clarke",
+        given_name: "Jennifer",
+        family_name: "Clarke",
         school: location,
         address_line_1: "10 Downing Street",
         address_town: "London",
@@ -196,7 +197,8 @@ describe CohortImport do
       expect(Patient.second).to have_attributes(
         nhs_number: "1234567891",
         date_of_birth: Date.new(2010, 1, 2),
-        full_name: "Jimmy Smith",
+        given_name: "Jimmy",
+        family_name: "Smith",
         school: location,
         address_line_1: "10 Downing Street",
         address_town: "London",
@@ -216,7 +218,8 @@ describe CohortImport do
       expect(Patient.third).to have_attributes(
         nhs_number: nil,
         date_of_birth: Date.new(2010, 1, 3),
-        full_name: "Mark Doe",
+        given_name: "Mark",
+        family_name: "Doe",
         school: location,
         address_line_1: "11 Downing Street",
         address_town: "London",

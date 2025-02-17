@@ -55,12 +55,12 @@ describe "Patient search" do
   end
 
   def then_i_see_all_patients
-    expect(page).to have_content "Aaron Smith"
-    expect(page).to have_content "Aardvark Jones"
-    expect(page).to have_content "Casey Brown"
-    expect(page).to have_content "Cassidy Wilson"
-    expect(page).to have_content "Bob Taylor"
-    expect(page).to have_content "Salvor Hardin"
+    expect(page).to have_content("SMITH, Aaron")
+    expect(page).to have_content("JONES, Aardvark")
+    expect(page).to have_content("BROWN, Casey")
+    expect(page).to have_content("WILSON, Cassidy")
+    expect(page).to have_content("TAYLOR, Bob")
+    expect(page).to have_content("HARDIN, Salvor")
   end
 
   def when_i_search_for_cas
@@ -70,12 +70,12 @@ describe "Patient search" do
   end
 
   def then_i_see_patients_matching_cas
-    expect(page).to have_content "Casey Brown"
-    expect(page).to have_content "Cassidy Wilson"
-    expect(page).not_to have_content "Aaron Smith"
-    expect(page).not_to have_content "Aardvark Jones"
-    expect(page).not_to have_content "Bob Taylor"
-    expect(page).not_to have_content "Salvor Hardin"
+    expect(page).to have_content("BROWN, Casey")
+    expect(page).to have_content("WILSON, Cassidy")
+    expect(page).not_to have_content("SMITH, Aaron")
+    expect(page).not_to have_content("JONES, Aardvark")
+    expect(page).not_to have_content("TAYLOR, Bob")
+    expect(page).not_to have_content("HARDIN, Salvor")
   end
 
   def and_i_see_the_search_count
@@ -93,12 +93,12 @@ describe "Patient search" do
   end
 
   def then_i_see_patients_starting_with_a
-    expect(page).to have_content "Aaron Smith"
-    expect(page).to have_content "Aardvark Jones"
-    expect(page).not_to have_content "Bob Taylor"
-    expect(page).not_to have_content "Casey Brown"
-    expect(page).not_to have_content "Cassidy Wilson"
-    expect(page).not_to have_content "Salvor Hardin"
+    expect(page).to have_content("SMITH, Aaron")
+    expect(page).to have_content("JONES, Aardvark")
+    expect(page).not_to have_content("TAYLOR, Bob")
+    expect(page).not_to have_content("BROWN, Casey")
+    expect(page).not_to have_content("WILSON, Cassidy")
+    expect(page).not_to have_content("HARDIN, Salvor")
   end
 
   def when_i_search_for_aa
@@ -107,12 +107,12 @@ describe "Patient search" do
   end
 
   def then_i_see_patients_starting_with_aa
-    expect(page).to have_content "Aaron Smith"
-    expect(page).to have_content "Aardvark Jones"
-    expect(page).not_to have_content "Bob Taylor"
-    expect(page).not_to have_content "Casey Brown"
-    expect(page).not_to have_content "Cassidy Wilson"
-    expect(page).not_to have_content "Salvor Hardin"
+    expect(page).to have_content("SMITH, Aaron")
+    expect(page).to have_content("JONES, Aardvark")
+    expect(page).not_to have_content("TAYLOR, Bob")
+    expect(page).not_to have_content("BROWN, Casey")
+    expect(page).not_to have_content("WILSON, Cassidy")
+    expect(page).not_to have_content("HARDIN, Salvor")
   end
 
   def when_i_search_for_patients_without_nhs_numbers
@@ -122,11 +122,11 @@ describe "Patient search" do
   end
 
   def then_i_see_patients_without_nhs_numbers
-    expect(page).not_to have_content "Aaron Smith"
-    expect(page).not_to have_content "Aardvark Jones"
-    expect(page).not_to have_content "Bob Taylor"
-    expect(page).not_to have_content "Casey Brown"
-    expect(page).not_to have_content "Cassidy Wilson"
-    expect(page).to have_content "Salvor Hardin"
+    expect(page).not_to have_content("SMITH, Aaron")
+    expect(page).not_to have_content("JONES, Aardvark")
+    expect(page).not_to have_content("TAYLOR, Bob")
+    expect(page).not_to have_content("BROWN, Casey")
+    expect(page).not_to have_content("WILSON, Cassidy")
+    expect(page).to have_content("HARDIN, Salvor")
   end
 end

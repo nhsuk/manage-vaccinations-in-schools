@@ -93,7 +93,7 @@ describe "Import child records" do
 
   def then_i_should_see_the_patients
     expect(page).to have_content("Full nameNHS numberDate of birthPostcode")
-    expect(page).to have_content("Jimmy Smith")
+    expect(page).to have_content("SMITH, Jimmy")
     expect(page).to have_content(/NHS number.*123.*456.*7890/)
     expect(page).to have_content("Date of birth 1 January 2010")
     expect(page).to have_content("Postcode SW1A 1AA")
@@ -106,7 +106,7 @@ describe "Import child records" do
 
   def then_i_should_see_the_upload
     expect(page).to have_content("Imported on")
-    expect(page).to have_content("Imported byTest User")
+    expect(page).to have_content("Imported byUSER, Test")
   end
 
   def when_i_click_on_the_imports_tab
@@ -132,7 +132,7 @@ describe "Import child records" do
   def then_i_should_see_the_children
     expect(page).to have_content("2 children")
     expect(page).to have_content("Full nameNHS numberDate of birthPostcode")
-    expect(page).to have_content("Full name Jimmy Smith")
+    expect(page).to have_content("Full name SMITH, Jimmy")
     expect(page).to have_content(/NHS number.*123.*456.*7891/)
     expect(page).to have_content("Date of birth 2 January 2010")
     expect(page).to have_content("Postcode SW1A 1AA")

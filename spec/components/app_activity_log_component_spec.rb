@@ -141,7 +141,7 @@ describe AppActivityLogComponent do
                      title: "Vaccinated with Gardasil 9 (HPV)",
                      date: "31 May 2024 at 12:00pm",
                      notes: "Some notes",
-                     by: "Nurse Joy"
+                     by: "JOY, Nurse"
 
     include_examples "card",
                      title: "Vaccinated with Gardasil (HPV)",
@@ -151,13 +151,13 @@ describe AppActivityLogComponent do
     include_examples "card",
                      title: "Triaged decision: Safe to vaccinate",
                      date: "30 May 2024 at 2:30pm",
-                     by: "Nurse Joy"
+                     by: "JOY, Nurse"
 
     include_examples "card",
                      title: "Triaged decision: Keep in triage",
                      date: "30 May 2024 at 2:00pm",
                      notes: "Some notes",
-                     by: "Nurse Joy"
+                     by: "JOY, Nurse"
 
     include_examples "card",
                      title: "Consent refused by John Doe (Dad)",
@@ -166,7 +166,7 @@ describe AppActivityLogComponent do
     include_examples "card",
                      title: "Consent given by Jane Doe (Mum)",
                      date: "30 May 2024 at 12:00pm",
-                     by: "Nurse Joy"
+                     by: "JOY, Nurse"
 
     include_examples "card",
                      title: "Added to session at Hogwarts",
@@ -176,7 +176,7 @@ describe AppActivityLogComponent do
                      title: "Consent school request sent",
                      date: "10 May 2024 at 12:00am",
                      notes: "test@example.com",
-                     by: "Nurse Joy"
+                     by: "JOY, Nurse"
   end
 
   describe "vaccination not administered" do
@@ -198,7 +198,7 @@ describe AppActivityLogComponent do
                      title: "HPV vaccination not given: Unwell",
                      date: "31 May 2024 at 1:00pm",
                      notes: "Some notes.",
-                     by: "Nurse Joy"
+                     by: "JOY, Nurse"
   end
 
   describe "discarded vaccination" do
@@ -218,7 +218,7 @@ describe AppActivityLogComponent do
     include_examples "card",
                      title: "Vaccinated with Gardasil 9 (HPV)",
                      date: "31 May 2024 at 1:00pm",
-                     by: "Nurse Joy"
+                     by: "JOY, Nurse"
 
     include_examples "card",
                      title: "HPV vaccination record deleted",
@@ -239,7 +239,7 @@ describe AppActivityLogComponent do
 
     include_examples "card",
                      title:
-                       "Consent given by Sarah Doe (Child (Gillick competent))",
+                       "Consent given by DOE, Sarah (Child (Gillick competent))",
                      date: "30 May 2024 at 12:00pm"
   end
 
@@ -277,7 +277,7 @@ describe AppActivityLogComponent do
                      title:
                        "Consent response manually matched with child record",
                      date: "30 May 2024 at 1:00pm",
-                     by: "Nurse Joy"
+                     by: "JOY, Nurse"
   end
 
   describe "withdrawn consent" do
@@ -353,14 +353,14 @@ describe AppActivityLogComponent do
                      title: "Completed Gillick assessment as Gillick competent",
                      notes: "First notes",
                      date: "1 June 2024 at 12:00pm",
-                     by: "Nurse Joy"
+                     by: "JOY, Nurse"
 
     include_examples "card",
                      title:
                        "Updated Gillick assessment as not Gillick competent",
                      notes: "Second notes",
                      date: "1 June 2024 at 1:00pm",
-                     by: "Nurse Joy"
+                     by: "JOY, Nurse"
   end
 
   describe "pre-screenings" do
@@ -382,6 +382,6 @@ describe AppActivityLogComponent do
                      title: "Completed pre-screening checks",
                      notes: "Some notes",
                      date: "1 June 2024 at 12:00pm",
-                     by: "Nurse Joy"
+                     by: "JOY, Nurse"
   end
 end

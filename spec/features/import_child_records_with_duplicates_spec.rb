@@ -166,7 +166,7 @@ describe "Child record imports duplicates" do
   end
 
   def when_i_review_the_first_duplicate_record
-    click_on "Review Jennifer Clarke"
+    click_on "Review CLARKE, Jennifer"
   end
 
   def then_i_should_see_the_first_duplicate_record
@@ -178,8 +178,8 @@ describe "Child record imports duplicates" do
 
   def then_i_should_see_the_second_duplicate_record
     expect(page).to have_content("This record needs reviewing")
-    expect(page).to have_content("Full nameJames Smith")
-    expect(page).to have_content("Full nameJimmy Smith")
+    expect(page).to have_content("Full nameSMITH, James")
+    expect(page).to have_content("Full nameSMITH, Jimmy")
     expect(page).to have_content("Address10 Downing StreetLondonSW11 1AA")
     expect(page).to have_content("Address10 Downing StreetLondonSW1A 1AA")
   end
@@ -189,7 +189,7 @@ describe "Child record imports duplicates" do
   end
 
   def when_i_review_the_second_duplicate_record
-    click_on "Review James Smith"
+    click_on "Review SMITH, James"
   end
 
   def and_the_first_duplicate_record_should_be_persisted
@@ -232,12 +232,12 @@ describe "Child record imports duplicates" do
   end
 
   def when_i_review_the_third_duplicate_record
-    click_on "Review Mark Doe"
+    click_on "Review DOE, Mark"
   end
 
   def then_i_should_see_the_third_duplicate_record
     expect(page).to have_content("This record needs reviewing")
-    expect(page).to have_content("Full nameMark Doe")
+    expect(page).to have_content("Full nameDOE, Mark")
     expect(page).to have_content("Date of birth3 January 2010 (aged 14)")
     expect(page).to have_content("Date of birth3 March 2013 (aged 11)")
     expect(page).to have_content("Year groupYear 10 (")

@@ -62,8 +62,9 @@ FactoryBot.define do
     sequence(:email) { |n| "nurse-#{n}@example.com" }
     fallback_role { :nurse }
 
-    sequence(:family_name) { |n| "User #{n}" }
     given_name { "Test" }
+    family_name { "User" }
+
     organisations { [organisation] }
 
     # Don't set a password as this interferes with CIS2.
