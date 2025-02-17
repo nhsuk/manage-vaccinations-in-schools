@@ -1,0 +1,61 @@
+name: Build Mavis image
+on:
+  workflow_run:
+    workflows: [Test]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+jobs:
+  Build:
+    if: ${{ github.event_name == 'workflow_dispatch' ||
+      github.event.workflow_run.event == 'push' &&
+      github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Build Docker image
+        run: |
+          docker build -t "mavis:latest" .
+      - name: Save Docker image
+        run: |
+          docker save -o image.tar mavis:latest
+      - name: Upload Docker image
+        uses: actions/upload-artifact@v4
+        with:
+          name: image
+          path: image.tar
+  Push-image:
+    runs-on: ubuntu-latest
+    needs: Build
+    permissions:
+      id-token: write
+    strategy:
+      matrix:
+        aws-role:
+          [
+            "arn:aws:iam::820242920762:role/GitHubActionsRole",
+            "arn:aws:iam::393416225559:role/GitHubActionsRole",
+          ]
+    steps:
+      - name: Download Docker image
+        uses: actions/download-artifact@v4
+        with:
+          name: image
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ matrix.aws-role }}
+          aws-region: eu-west-2
+      - name: Login to ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+      - name: Load Docker image
+        run: |
+          docker load -i image.tar
+      - name: Tag Docker image
+        run: |
+          docker tag mavis:latest "${{ steps.login-ecr.outputs.registry }}/mavis/webapp":"${{ github.sha }}"
+      - name: Push Docker image
+        run: |
+          docker push "${{ steps.login-ecr.outputs.registry }}/mavis/webapp":"${{ github.sha }}"
