@@ -2,7 +2,7 @@
 
 class PatientSessionsController < ApplicationController
   before_action :set_patient_session
-  before_action :set_programme
+  before_action :set_programme, only: :show
   before_action :set_session
   before_action :set_patient
   before_action :set_section_and_tab
@@ -44,7 +44,8 @@ class PatientSessionsController < ApplicationController
   end
 
   def set_programme
-    @programme = @patient_session.programmes.first # TODO: handle multiple programmes
+    @programme =
+      @patient_session.programmes.find_by!(type: params[:programme_type])
   end
 
   def set_session

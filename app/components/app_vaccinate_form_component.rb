@@ -23,9 +23,10 @@ class AppVaccinateFormComponent < ViewComponent::Base
   delegate :patient, :session, to: :patient_session
 
   def url
-    session_patient_vaccinations_path(
+    session_patient_programme_vaccinations_path(
       session,
       patient,
+      programme,
       section: @section,
       tab: @tab
     )

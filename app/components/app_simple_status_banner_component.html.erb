@@ -6,10 +6,7 @@
                       triaged_ready_to_vaccinate
                       triaged_do_not_vaccinate]) && helpers.policy(Triage).edit? %>
     <p>
-      <%= link_to "Update triage outcome", new_session_patient_triages_path(
-            session_id: @patient_session.session.id,
-            patient_id: @patient_session.patient.id,
-          ) %>
+      <%= link_to "Update triage outcome", new_session_patient_programme_triages_path(session, patient, programme) %>
     </p>
   <% end %>
 <% end %>

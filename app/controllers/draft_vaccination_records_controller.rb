@@ -112,9 +112,10 @@ class DraftVaccinationRecordsController < ApplicationController
     tab = @vaccination_record.administered? ? "vaccinated" : "could-not"
 
     heading_link_href =
-      session_patient_path(
+      session_patient_programme_path(
         @session,
-        id: @patient.id,
+        @patient,
+        @programme,
         section: "vaccinations",
         tab:
       )
@@ -207,9 +208,10 @@ class DraftVaccinationRecordsController < ApplicationController
           wizard_path("confirm")
         end
       elsif current_step == @draft_vaccination_record.wizard_steps.first
-        session_patient_path(
+        session_patient_programme_path(
           @session,
           @patient,
+          @programme,
           section: "vaccinations",
           tab: "vaccinate"
         )

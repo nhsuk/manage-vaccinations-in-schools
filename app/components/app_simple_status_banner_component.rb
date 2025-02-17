@@ -14,10 +14,12 @@ class AppSimpleStatusBannerComponent < ViewComponent::Base
 
   private
 
-  attr_reader :programme
+  attr_reader :patient_session, :programme
+
+  delegate :patient, :session, to: :patient_session
 
   def who_refused
-    @patient_session
+    patient_session
       .latest_consents(programme:)
       .select(&:response_refused?)
       .map(&:who_responded)
@@ -25,13 +27,13 @@ class AppSimpleStatusBannerComponent < ViewComponent::Base
   end
 
   def full_name
-    @patient_session.patient.full_name
+    patient_session.patient.full_name
   end
 
   def nurse
     (
-      @patient_session.triages(programme:) +
-        @patient_session.vaccination_records(programme:)
+      patient_session.triages(programme:) +
+        patient_session.vaccination_records(programme:)
     ).max_by(&:updated_at)&.performed_by&.full_name
   end
 

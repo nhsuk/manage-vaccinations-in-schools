@@ -315,31 +315,32 @@ Rails.application.routes.draw do
     end
 
     scope ":tab" do
-      resources :patient_sessions,
-                path: "patients",
-                as: :patient,
-                only: %i[show] do
+      resources :patient_sessions, path: "patients", as: :patient, only: [] do
         get "log"
-
-        resources :consents, only: %i[index create show] do
-          post "send-request", on: :collection, action: :send_request
-
-          member do
-            get "withdraw", action: :edit_withdraw
-            post "withdraw", action: :update_withdraw
-
-            get "invalidate", action: :edit_invalidate
-            post "invalidate", action: :update_invalidate
-          end
-        end
-
-        resource :gillick_assessment, path: "gillick", only: %i[edit update]
-        resource :triages, only: %i[new create]
-        resource :vaccinations, only: %i[create]
 
         resource :attendance,
                  controller: "session_attendances",
                  only: %i[edit update]
+
+        resources :programmes, path: "", param: :type, only: [] do
+          get "", as: "", action: :show, controller: :patient_sessions
+
+          resources :consents, only: %i[index create show] do
+            post "send-request", on: :collection, action: :send_request
+
+            member do
+              get "withdraw", action: :edit_withdraw
+              post "withdraw", action: :update_withdraw
+
+              get "invalidate", action: :edit_invalidate
+              post "invalidate", action: :update_invalidate
+            end
+          end
+
+          resource :gillick_assessment, path: "gillick", only: %i[edit update]
+          resource :triages, only: %i[new create]
+          resource :vaccinations, only: %i[create]
+        end
       end
     end
 

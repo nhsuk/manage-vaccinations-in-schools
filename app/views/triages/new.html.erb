@@ -1,5 +1,5 @@
 <% content_for :before_main do %>
-  <%= render AppBacklinkComponent.new(session_patient_path(id: @patient.id), name: @patient.full_name) %>
+  <%= render AppBacklinkComponent.new(session_patient_programme_path(patient_id: @patient.id), name: @patient.full_name) %>
 <% end %>
 
 <%= h1 page_title: "Update triage outcome" do %>
@@ -10,9 +10,10 @@
 <%= render AppTriageFormComponent.new(
       patient_session: @patient_session,
       programme: @programme,
-      url: session_patient_triages_path(
+      url: session_patient_programme_triages_path(
         @session,
         @patient,
+        @programme,
         @triage,
         section: @section,
         tab: @tab,
