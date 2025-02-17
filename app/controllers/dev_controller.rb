@@ -61,6 +61,10 @@ class DevController < ApplicationController
       VaccinationRecord.where(batch: batches).destroy_all
       batches.destroy_all
 
+      VaccinationRecord.where(
+        performed_ods_code: organisation.ods_code
+      ).destroy_all
+
       UnscheduledSessionsFactory.new.call
     end
 
