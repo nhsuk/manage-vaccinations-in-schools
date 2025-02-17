@@ -1,5 +1,5 @@
-name: Deploy Mavis
-run-name: Deploy Mavis on ${{ inputs.environment }}
+name: TF Deploy Mavis
+run-name: TF Deploy Mavis on ${{ inputs.environment }}
 
 on:
   workflow_dispatch:

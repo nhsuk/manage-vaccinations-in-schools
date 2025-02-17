@@ -1,5 +1,5 @@
-name: Deploy Infrastructure with Terraform
-run-name: Deploy AWS infrastructure for ${{ inputs.environment }}
+name: TF Deploy Infrastructure with Terraform
+run-name: TF Deploy AWS infrastructure for ${{ inputs.environment }}
 
 on:
   workflow_dispatch:
