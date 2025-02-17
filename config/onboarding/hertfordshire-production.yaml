@@ -6,6 +6,7 @@ organisation:
   careplus_venue_code: UNUSED
   privacy_notice_url: https://www.hct.nhs.uk/privacy
   privacy_policy_url: https://www.hct.nhs.uk/privacy
+  reply_to_id: b4086797-8971-41c1-a70d-d40a70f37add
 
 programmes: [hpv]
 
@@ -14,6 +15,7 @@ teams:
     name: Norfolk, Suffolk and Cambridgeshire and Peterborough Community and School Age Immunisation Service
     email: hct.csaiscambspb@nhs.net
     phone: 0300 555 5055
+    reply_to_id: b4086797-8971-41c1-a70d-d40a70f37add
 
 schools:
   generic:
