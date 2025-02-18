@@ -191,8 +191,7 @@ locals {
   task_secrets = [
     {
       name      = var.db_secret_arn == null ? "DB_CREDENTIALS" : "DB_SECRET"
-      valueFrom = var.db_secret_arn == null ? aws_rds_cluster.aurora_cluster.master_user_secret[0].secret_arn :
-        var.db_secret_arn
+      valueFrom = var.db_secret_arn == null ? aws_rds_cluster.aurora_cluster.master_user_secret[0].secret_arn : var.db_secret_arn
     },
     {
       name      = "RAILS_MASTER_KEY"
