@@ -32,17 +32,7 @@
   </ul>
 <% end %>
 
-<%= render AppSecondaryNavigationComponent.new do |nav|
-      nav.with_item(
-        href: session_patient_programme_path(patient_id: @patient.id),
-        text: "Child record",
-        selected: true,
-      )
-      nav.with_item(
-        href: session_patient_log_path(patient_id: @patient.id),
-        text: "Activity log",
-      )
-    end %>
+<%= render "patient_sessions/secondary_navigation" %>
 
 <%= render AppPatientPageComponent.new(
       patient_session: @patient_session,
