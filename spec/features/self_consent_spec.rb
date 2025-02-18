@@ -116,7 +116,7 @@ describe "Self-consent" do
     expect(page).to have_content(
       "Completed Gillick assessment as not Gillick competent"
     )
-    click_on "Child record"
+    click_on "HPV"
   end
 
   def when_the_nurse_edits_the_assessment_the_child_as_gillick_competent
@@ -170,7 +170,7 @@ describe "Self-consent" do
     expect(page).to have_content(
       "Updated Gillick assessment as Gillick competent"
     )
-    click_on "Child record"
+    click_on "HPV"
   end
 
   def and_the_child_can_give_their_own_consent_that_the_nurse_records

@@ -325,11 +325,10 @@ class ConsentForm < ApplicationRecord
 
   def original_session
     @original_session ||=
-      Session.has_programme(programme).find_by(
-        academic_year:,
-        location:,
-        organisation:
-      )
+      Session
+        .has_programme(programme)
+        .includes(:programmes)
+        .find_by(academic_year:, location:, organisation:)
   end
 
   def find_or_create_parent_with_relationship_to!(patient:)

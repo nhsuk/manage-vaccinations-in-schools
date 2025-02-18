@@ -1,5 +1,5 @@
 <% content_for :before_main do %>
-  <%= render AppBacklinkComponent.new(session_patient_path(id: @patient.id), name: @patient.full_name) %>
+  <%= render AppBacklinkComponent.new(session_patient_programme_path(id: @patient.id), name: @patient.full_name) %>
 <% end %>
 
 <% page_title = @is_first_assessment ? "Assess Gillick competence" : "Edit Gillick competence" %>
@@ -18,7 +18,7 @@
   </p>
 <% end %>
 
-<%= form_with model: @gillick_assessment, url: session_patient_gillick_assessment_path, method: :put do |f| %>
+<%= form_with model: @gillick_assessment, url: session_patient_programme_gillick_assessment_path, method: :put do |f| %>
   <% content_for(:before_content) { f.govuk_error_summary } %>
 
   <% options = [OpenStruct.new(value: true, label: "Yes"), OpenStruct.new(value: false, label: "No")] %>

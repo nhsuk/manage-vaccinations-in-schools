@@ -40,9 +40,10 @@
       <% if helpers.policy(gillick_assessment).edit? %>
         <p class="nhsuk-body">
           <%= govuk_button_link_to "Edit Gillick competence",
-                                   edit_session_patient_gillick_assessment_path(
+                                   edit_session_patient_programme_gillick_assessment_path(
                                      session,
                                      patient,
+                                     programme,
                                      section: @section,
                                      tab: @tab,
                                    ), class: "app-button--secondary nhsuk-u-margin-bottom-0" %>
@@ -51,9 +52,10 @@
     <% elsif gillick_assessment_can_be_recorded? %>
       <p class="nhsuk-body">
         <%= govuk_button_link_to "Assess Gillick competence",
-                                 edit_session_patient_gillick_assessment_path(
+                                 edit_session_patient_programme_gillick_assessment_path(
                                    session,
                                    patient,
+                                   programme,
                                    section: @section,
                                    tab: @tab,
                                  ), class: "app-button--secondary nhsuk-u-margin-bottom-0" %>
@@ -86,9 +88,10 @@
     <%= render AppTriageFormComponent.new(
           patient_session:,
           programme:,
-          url: session_patient_triages_path(
+          url: session_patient_programme_triages_path(
             session,
             patient,
+            programme,
             @triage,
             section: @section,
             tab: @tab,
@@ -113,7 +116,11 @@
 
       <% if helpers.policy(vaccination_record).destroy? %>
         <%= govuk_link_to "Delete vaccination record",
-                          destroy_programme_vaccination_record_path(programme, vaccination_record, return_to: session_patient_path(id: patient.id)) %>
+                          destroy_programme_vaccination_record_path(
+                            programme,
+                            vaccination_record,
+                            return_to: session_patient_programme_path(patient_id: patient.id),
+                          ) %>
       <% end %>
     </div>
   <% end %>

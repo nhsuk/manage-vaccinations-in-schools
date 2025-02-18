@@ -75,7 +75,7 @@ class AppSessionPatientTableComponent < ViewComponent::Base
       helpers.patient_year_group(patient)
     when :reason
       patient_session
-        .consents(programme: @programme)
+        .consents(programme:)
         .map { |c| c.human_enum_name(:reason_for_refusal) }
         .uniq
         .join("<br />")
@@ -150,7 +150,13 @@ class AppSessionPatientTableComponent < ViewComponent::Base
 
     govuk_link_to(
       patient.full_name,
-      session_patient_path(session, patient, section:, tab:)
+      session_patient_programme_path(
+        session,
+        patient,
+        @programme,
+        section:,
+        tab:
+      )
     )
   end
 

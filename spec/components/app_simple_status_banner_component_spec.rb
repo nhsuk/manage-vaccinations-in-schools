@@ -4,9 +4,9 @@ describe AppSimpleStatusBannerComponent do
   subject(:rendered) { render_inline(component) }
 
   before do
-    allow(component).to receive(:new_session_patient_triages_path).and_return(
-      "/session/patient/triage/new"
-    )
+    allow(component).to receive(
+      :new_session_patient_programme_triages_path
+    ).and_return("/session/patient/triage/new")
     stub_authorization(allowed: true)
 
     patient_session.strict_loading!(false)

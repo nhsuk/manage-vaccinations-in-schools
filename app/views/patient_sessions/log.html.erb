@@ -10,9 +10,6 @@
   <%= @patient.full_name %>
 <% end %>
 
-<%= render AppSecondaryNavigationComponent.new do |nav|
-      nav.with_item(href: session_patient_path(id: @patient.id), text: "Child record")
-      nav.with_item(href: session_patient_log_path, text: "Activity log", selected: true)
-    end %>
+<%= render "patient_sessions/secondary_navigation" %>
 
-<%= render AppActivityLogComponent.new(patient_session: @patient_session, programme: @programme) %>
+<%= render AppActivityLogComponent.new(patient_session: @patient_session) %>

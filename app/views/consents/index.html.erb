@@ -25,7 +25,7 @@
       columns: @current_tab == :consent_refused ? %i[name year_group reason] : %i[name year_group],
       params:,
       patient_sessions: @patient_sessions,
-      programme: @programme,
+      programme: @session.programmes.first,
       section: :consents,
       year_groups: @session.year_groups,
     ) %>

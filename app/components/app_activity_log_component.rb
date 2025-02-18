@@ -14,7 +14,7 @@ class AppActivityLogComponent < ViewComponent::Base
     <% end %>
   ERB
 
-  def initialize(patient: nil, patient_session: nil, programme: nil)
+  def initialize(patient: nil, patient_session: nil)
     super
 
     if patient.nil? && patient_session.nil?
@@ -54,13 +54,6 @@ class AppActivityLogComponent < ViewComponent::Base
         :programme,
         :vaccine
       )
-
-    if programme
-      @consents = @consents.where(programme:)
-      @gillick_assessments = @gillick_assessments.where(programme:)
-      @triages = @triages.where(programme:)
-      @vaccination_records = @vaccination_records.where(programme:)
-    end
   end
 
   attr_reader :patient,

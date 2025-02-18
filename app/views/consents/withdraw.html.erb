@@ -1,8 +1,8 @@
 <% content_for :before_main do %>
-  <%= render AppBacklinkComponent.new(session_patient_consent_path, name: "consent page") %>
+  <%= render AppBacklinkComponent.new(session_patient_programme_consent_path, name: "consent page") %>
 <% end %>
 
-<%= form_with model: @consent, url: withdraw_session_patient_consent_path, method: :post do |f| %>
+<%= form_with model: @consent, url: withdraw_session_patient_programme_consent_path, method: :post do |f| %>
   <%= f.govuk_error_summary %>
 
   <% page_title = "Withdraw consent" %>

@@ -34,9 +34,10 @@ class ConsentFormsController < ApplicationController
       heading: "Consent matched for",
       heading_link_text: @patient.full_name,
       heading_link_href:
-        session_patient_path(
+        session_patient_programme_path(
           session,
-          id: @patient.id,
+          @patient,
+          session.programmes.first,
           section: "triage",
           tab: "given"
         )
@@ -102,7 +103,10 @@ class ConsentFormsController < ApplicationController
   end
 
   def set_patient
-    @patient = policy_scope(Patient).find(params[:patient_id])
+    @patient =
+      policy_scope(Patient).includes(upcoming_sessions: :programmes).find(
+        params[:patient_id]
+      )
   end
 
   def archive_params

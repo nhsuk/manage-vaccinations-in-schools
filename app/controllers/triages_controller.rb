@@ -63,7 +63,8 @@ class TriagesController < ApplicationController
       flash[:success] = {
         heading: "Triage outcome updated for",
         heading_link_text: @patient.full_name,
-        heading_link_href: session_patient_path(@session, id: @patient.id)
+        heading_link_href:
+          session_patient_programme_path(patient_id: @patient.id)
       }
 
       redirect_to redirect_path
@@ -95,7 +96,8 @@ class TriagesController < ApplicationController
   end
 
   def set_programme
-    @programme = @patient_session.programmes.first # TODO: handle multiple programmes
+    @programme =
+      @patient_session.programmes.find_by!(type: params[:programme_type])
   end
 
   def set_triage

@@ -58,21 +58,20 @@ class ConsentsController < ApplicationController
   end
 
   def send_request
-    programme = @session.programmes.first # TODO: handle multiple programmes
-
-    return unless @patient_session.no_consent?(programme:)
+    return unless @patient_session.no_consent?(programme: @programme)
 
     ConsentNotification.create_and_send!(
       patient: @patient,
-      programme:,
+      programme: @programme,
       session: @session,
       type: :request,
       current_user:
     )
 
-    redirect_to session_patient_path(
+    redirect_to session_patient_programme_path(
                   @session,
                   @patient,
+                  @programme,
                   section: params[:section],
                   tab: params[:tab]
                 ),
@@ -100,7 +99,7 @@ class ConsentsController < ApplicationController
           .invalidate_all
       end
 
-      redirect_to session_patient_consent_path
+      redirect_to session_patient_programme_consent_path
     else
       render :withdraw, status: :unprocessable_entity
     end
@@ -122,7 +121,7 @@ class ConsentsController < ApplicationController
           .invalidate_all
       end
 
-      redirect_to session_patient_consent_path,
+      redirect_to session_patient_programme_consent_path,
                   flash: {
                     success:
                       "Consent response from #{@consent.name} marked as invalid"
@@ -136,15 +135,13 @@ class ConsentsController < ApplicationController
 
   def set_session
     @session =
-      policy_scope(Session).includes(
-        :location,
-        :organisation,
-        :programmes
-      ).find_by!(slug: params[:session_slug])
+      policy_scope(Session).includes(:location, :organisation).find_by!(
+        slug: params[:session_slug]
+      )
   end
 
   def set_programme
-    @programme = @session.programmes.first # TODO: handle multiple programmes
+    @programme = @session.programmes.find_by!(type: params[:programme_type])
   end
 
   def set_patient_session

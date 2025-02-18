@@ -4,7 +4,7 @@ describe AppSessionPatientTableComponent do
   subject(:rendered) { render_inline(component) }
 
   before do
-    allow(component).to receive(:session_patient_path).and_return(
+    allow(component).to receive(:session_patient_programme_path).and_return(
       "/session/patient/"
     )
 
@@ -158,7 +158,8 @@ describe AppSessionPatientTableComponent do
         end
 
         it "guesses the path" do
-          expect(component).to receive(:session_patient_path).with(
+          expect(component).to receive(:session_patient_programme_path).with(
+            anything,
             anything,
             anything,
             section:,
