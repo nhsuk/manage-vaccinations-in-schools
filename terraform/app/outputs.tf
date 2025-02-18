@@ -4,7 +4,7 @@ output "s3_uri" {
 }
 
 output "s3_bucket" {
-  description = "The name of the S3 bucket"
+  description = "The name of the S3 bucket that stores the appspec.yaml for CodeDeploy"
   value       = aws_s3_bucket.code_deploy_bucket.bucket
 }
 

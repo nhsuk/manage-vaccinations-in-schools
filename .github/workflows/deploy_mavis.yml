@@ -111,6 +111,7 @@ jobs:
       - name: Apply the changes
         run: |
           cd ${{ env.tf-dir }}
+          terraform init -backend-config="env/${{ inputs.environment }}-backend.hcl"
           terraform apply ${{ runner.temp }}/tfplan
           echo "s3_bucket=$(terraform output -raw s3_bucket)" >> $GITHUB_ENV
           echo "s3_key=$(terraform output -raw s3_key)" >> $GITHUB_ENV
