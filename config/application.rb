@@ -40,7 +40,9 @@ module ManageVaccinations
       host = db_config["host"]
       port = db_config["port"]
       dbname = db_config["dbname"]
-      ENV["DATABASE_URL"] = "postgres://#{username}:#{password}@#{host}:#{port}/#{dbname}"
+      ENV[
+        "DATABASE_URL"
+      ] = "postgres://#{username}:#{password}@#{host}:#{port}/#{dbname}"
     elsif ENV["DB_CREDENTIALS"].present?
       db_config = JSON.parse(ENV["DB_CREDENTIALS"])
       username = CGI.escape(db_config["username"])
@@ -48,7 +50,9 @@ module ManageVaccinations
       host = CGI.escape(ENV["DB_HOST"])
       dbname = CGI.escape(db_config["DB_NAME"])
       port = 5432
-      ENV["DATABASE_URL"] = "postgres://#{username}:#{password}@#{host}:#{port}/#{dbname}"
+      ENV[
+        "DATABASE_URL"
+      ] = "postgres://#{username}:#{password}@#{host}:#{port}/#{dbname}"
     end
 
     config.middleware.use Rack::Deflater

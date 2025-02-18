@@ -15,7 +15,7 @@ on:
           - test
           - preview
           - training
-          - production
+#          - production
 
 env:
   aws-role: ${{ inputs.environment == 'production'
