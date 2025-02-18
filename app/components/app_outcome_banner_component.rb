@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 class AppOutcomeBannerComponent < ViewComponent::Base
-  delegate :status, to: :@patient_session
-
   def initialize(patient_session:, programme:, current_user: nil)
     super
 
@@ -16,6 +14,10 @@ class AppOutcomeBannerComponent < ViewComponent::Base
       c.with_heading { heading }
       govuk_summary_list(rows:)
     end
+  end
+
+  def status
+    @status ||= @patient_session.status(programme:)
   end
 
   private
@@ -51,10 +53,14 @@ class AppOutcomeBannerComponent < ViewComponent::Base
 
   def vaccination_record
     @vaccination_record ||=
-      @patient_session
-        .vaccination_records(programme:)
-        .then { @patient_session.vaccinated? ? it.select(&:administered?) : it }
-        .last
+      begin
+        vaccination_records = @patient_session.vaccination_records(programme:)
+        if @patient_session.vaccinated?(programme:)
+          vaccination_records.select(&:administered?).last
+        else
+          vaccination_records.last
+        end
+      end
   end
 
   def triage
@@ -78,7 +84,7 @@ class AppOutcomeBannerComponent < ViewComponent::Base
       if vaccination_record&.not_administered?
         "patient_session_statuses.unable_to_vaccinate.banner_explanation.#{vaccination_record.outcome}"
       else
-        "patient_session_statuses.unable_to_vaccinate.banner_explanation.#{@patient_session.status}"
+        "patient_session_statuses.unable_to_vaccinate.banner_explanation.#{status}"
       end
     I18n.t(key, full_name: @patient_session.patient.full_name)
   end

@@ -20,9 +20,16 @@ class ClinicSessionInvitationsJob < ApplicationJob
 
     sessions.each do |session|
       session_date = session.today_or_future_dates.first
+      programmes = session.programmes
 
       session.patient_sessions.each do |patient_session|
-        next unless should_send_notification?(patient_session:, session_date:)
+        unless should_send_notification?(
+                 patient_session:,
+                 programmes:,
+                 session_date:
+               )
+          next
+        end
 
         type =
           if patient_session.session_notifications.any?
@@ -40,10 +47,15 @@ class ClinicSessionInvitationsJob < ApplicationJob
     end
   end
 
-  def should_send_notification?(patient_session:, session_date:)
+  def should_send_notification?(patient_session:, programmes:, session_date:)
     return false unless patient_session.send_notifications?
 
-    return false if patient_session.vaccination_administered?
+    all_vaccinated =
+      programmes.all? do |programme|
+        patient_session.vaccination_administered?(programme:)
+      end
+
+    return false if all_vaccinated
 
     already_sent_notification =
       patient_session.session_notifications.any? do
@@ -52,7 +64,12 @@ class ClinicSessionInvitationsJob < ApplicationJob
 
     return false if already_sent_notification
 
-    return false if patient_session.consent_refused?
+    all_consent_refused =
+      programmes.all? do |programme|
+        patient_session.consent_refused?(programme:)
+      end
+
+    return false if all_consent_refused
 
     true
   end

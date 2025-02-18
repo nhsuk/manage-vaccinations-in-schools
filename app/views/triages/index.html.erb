@@ -25,6 +25,7 @@
       columns: %i[name year_group],
       params:,
       patient_sessions: @patient_sessions,
+      programme: @session.programmes.first,
       section: :triage,
       year_groups: @session.year_groups,
     ) %>

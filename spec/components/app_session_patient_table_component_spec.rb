@@ -84,6 +84,7 @@ describe AppSessionPatientTableComponent do
     let(:component) do
       described_class.new(
         patient_sessions:,
+        programme:,
         section: :matching,
         consent_form:
           create(
@@ -103,7 +104,9 @@ describe AppSessionPatientTableComponent do
   context "when passing in patients" do
     let(:patients) { patient_sessions.map(&:patient) }
 
-    let(:component) { described_class.new(params:, patients:, section:) }
+    let(:component) do
+      described_class.new(params:, patients:, programme:, section:)
+    end
 
     it { should have_css(".nhsuk-table") }
     it { should have_css(".nhsuk-table__head") }
@@ -120,7 +123,13 @@ describe AppSessionPatientTableComponent do
     let(:patients) { patient_sessions.map(&:patient) + [create(:patient)] }
 
     let(:component) do
-      described_class.new(params:, patients:, patient_sessions:, section:)
+      described_class.new(
+        params:,
+        patients:,
+        patient_sessions:,
+        programme:,
+        section:
+      )
     end
 
     it { should have_css(".nhsuk-table__body .nhsuk-table__row", count: 3) }
@@ -206,7 +215,7 @@ describe AppSessionPatientTableComponent do
   describe "columns parameter" do
     context "is not set" do
       let(:component) do
-        described_class.new(patient_sessions:, section:, params:)
+        described_class.new(patient_sessions:, programme:, section:, params:)
       end
 
       it { should have_column("Full name") }

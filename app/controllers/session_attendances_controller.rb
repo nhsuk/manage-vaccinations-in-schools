@@ -26,7 +26,9 @@ class SessionAttendancesController < ApplicationController
       name = @patient.full_name
 
       flash[:info] = if @session_attendance.attending?
-        t("attendance_flash.#{@patient_session.status}", name:)
+        programme = @patient_session.programmes.first # TODO: handle multiple programmes
+        status = @patient_session.status(programme:)
+        t("attendance_flash.#{status}", name:)
       elsif @session_attendance.attending.nil?
         t("attendance_flash.not_registered", name:)
       else
@@ -45,7 +47,7 @@ class SessionAttendancesController < ApplicationController
     @patient_session =
       policy_scope(PatientSession)
         .eager_load(:patient, :session)
-        .preload(patient: %i[consents triages vaccination_records])
+        .preload(:programmes, patient: %i[consents triages vaccination_records])
         .find_by!(
           session: {
             slug: params.fetch(:session_slug)

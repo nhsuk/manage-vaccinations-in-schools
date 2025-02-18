@@ -41,6 +41,7 @@
         %i[name year_group status],
       params:,
       patient_sessions: @patient_sessions,
+      programme: @session.programmes.first,
       section: :vaccinations,
       year_groups: @session.year_groups,
     ) %>

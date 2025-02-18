@@ -39,7 +39,8 @@ class SessionsController < ApplicationController
       format.html do
         patient_sessions = @session.patient_sessions.preload_for_status
 
-        @stats = PatientSessionStats.new(patient_sessions)
+        programme = @session.programmes.first # TODO: handle multiple programmes
+        @stats = PatientSessionStats.new(patient_sessions, programme:)
 
         render layout: "full"
       end

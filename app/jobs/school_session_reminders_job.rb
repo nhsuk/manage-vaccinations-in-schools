@@ -10,6 +10,7 @@ class SchoolSessionRemindersJob < ApplicationJob
       PatientSession
         .includes(
           :gillick_assessments,
+          :programmes,
           patient: [
             :parents,
             :triages,
@@ -37,9 +38,18 @@ class SchoolSessionRemindersJob < ApplicationJob
   def should_send_notification?(patient_session:)
     return false unless patient_session.send_notifications?
 
-    return false if patient_session.vaccination_administered?
+    programmes = patient_session.programmes
 
-    patient_session.consent_given_triage_not_needed? ||
-      patient_session.triaged_ready_to_vaccinate?
+    all_vaccinated =
+      programmes.all? do |programme|
+        patient_session.vaccination_administered?(programme:)
+      end
+
+    return false if all_vaccinated
+
+    programmes.any? do |programme|
+      patient_session.consent_given_triage_not_needed?(programme:) ||
+        patient_session.triaged_ready_to_vaccinate?(programme:)
+    end
   end
 end

@@ -8,7 +8,9 @@ class AppSimpleStatusBannerComponent < ViewComponent::Base
     @programme = programme
   end
 
-  delegate :status, to: :@patient_session
+  def status
+    @status ||= @patient_session.status(programme:)
+  end
 
   private
 

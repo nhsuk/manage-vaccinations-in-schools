@@ -183,19 +183,22 @@ class Session < ApplicationRecord
   end
 
   def patients_to_move_to_clinic
-    # TODO: handle multiple programmes
-
     @patients_to_move_to_clinic ||=
       begin
         patient_ids_with_consent_refused =
-          patient_sessions
-            .preload_for_status
-            .select(&:consent_refused?)
-            .map(&:patient_id)
+          programmes.flat_map do |programme|
+            patient_sessions
+              .preload_for_status
+              .select { it.consent_refused?(programme:) }
+              .map(&:patient_id)
+          end
 
         patients
           .where.not(id: patient_ids_with_consent_refused)
-          .unvaccinated_for(programmes:)
+          .includes(:vaccination_records)
+          .reject do |patient|
+            programmes.all? { |programme| patient.vaccinated?(programme:) }
+          end
       end
   end
 

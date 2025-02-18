@@ -91,7 +91,7 @@ describe PatientSortingConcern do
 
       it "sorts patient sessions by state in descending order" do
         controller.sort_patients!(patient_sessions)
-        expect(patient_sessions.map(&:status)).to eq(
+        expect(patient_sessions.map { it.status(programme:) }).to eq(
           %w[vaccinated delay_vaccination added_to_session]
         )
       end

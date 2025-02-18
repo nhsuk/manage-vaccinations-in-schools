@@ -106,13 +106,6 @@ class Patient < ApplicationRecord
 
   scope :with_notice, -> { deceased.or(restricted).or(invalidated) }
 
-  scope :unvaccinated_for,
-        ->(programmes:) do
-          includes(:vaccination_records).reject do |patient|
-            programmes.all? { |programme| patient.vaccinated?(programme) }
-          end
-        end
-
   scope :in_programme,
         ->(programme) do
           where(birth_academic_year: programme.birth_academic_years)
@@ -253,7 +246,7 @@ class Patient < ApplicationRecord
     super.merge("full_name" => full_name, "age" => age)
   end
 
-  def vaccinated?(programme)
+  def vaccinated?(programme:)
     # TODO: This logic doesn't work for vaccinations that require multiple doses.
 
     vaccination_records.any? do

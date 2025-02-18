@@ -68,6 +68,7 @@ describe PatientTabsConcern do
       result =
         controller.group_patient_sessions_by_conditions(
           patient_sessions,
+          programme:,
           section: :consents
         )
 
@@ -95,6 +96,7 @@ describe PatientTabsConcern do
         result =
           controller.group_patient_sessions_by_conditions(
             [consent_given_triage_not_needed],
+            programme:,
             section: :consents
           )
 
@@ -116,6 +118,7 @@ describe PatientTabsConcern do
         result =
           controller.group_patient_sessions_by_state(
             patient_sessions,
+            programme,
             section: :triage
           )
 
@@ -143,6 +146,7 @@ describe PatientTabsConcern do
         result =
           controller.group_patient_sessions_by_state(
             patient_sessions,
+            programme,
             section: :vaccinations
           )
 
@@ -167,13 +171,14 @@ describe PatientTabsConcern do
 
     context "some of the groups are empty" do
       let(:patient_sessions) do
-        create_list(:patient_session, 1, :consent_refused)
+        create_list(:patient_session, 1, :consent_refused, programme:)
       end
 
       it "returns an empty array for all the empty groups" do
         result =
           controller.group_patient_sessions_by_state(
             patient_sessions,
+            programme,
             section: :triage
           )
 

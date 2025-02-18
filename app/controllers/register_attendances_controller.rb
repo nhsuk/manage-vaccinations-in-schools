@@ -26,7 +26,9 @@ class RegisterAttendancesController < ApplicationController
     name = @patient.full_name
 
     flash[:info] = if session_attendance.attending?
-      t("attendance_flash.#{@patient_session.status}", name:)
+      programme = @patient_session.programmes.first # TODO: handle multiple programmes
+      status = @patient_session.status(programme:)
+      t("attendance_flash.#{status}", name:)
     else
       t("attendance_flash.absent", name:)
     end
