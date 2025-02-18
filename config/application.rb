@@ -46,7 +46,7 @@ module ManageVaccinations
       username = CGI.escape(db_config["username"])
       password = CGI.escape(db_config["password"])
       host = CGI.escape(ENV["DB_HOST"])
-      dbname = CGI.escape(db_config["dbname"])
+      dbname = CGI.escape(db_config["DB_NAME"])
       port = 5432
       ENV["DATABASE_URL"] = "postgres://#{username}:#{password}@#{host}:#{port}/#{dbname}"
     end
