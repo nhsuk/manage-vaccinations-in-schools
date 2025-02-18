@@ -25,6 +25,11 @@ describe "Manage school sessions" do
     when_i_choose_the_dates
     then_i_see_the_confirmation_page
 
+    when_i_click_on_change_programmes
+    then_i_see_the_change_programmes_page
+    and_i_change_the_programmes
+    and_i_confirm
+
     when_i_click_on_change_consent_requests
     then_i_see_the_change_consent_requests_page
     and_i_change_consent_requests_date
@@ -183,6 +188,18 @@ describe "Manage school sessions" do
 
   def then_i_see_the_confirmation_page
     expect(page).to have_content("Edit session")
+  end
+
+  def when_i_click_on_change_programmes
+    click_on "Change programmes"
+  end
+
+  def then_i_see_the_change_programmes_page
+    expect(page).to have_content("Which programmes is this session part of?")
+  end
+
+  def and_i_change_the_programmes
+    check "HPV"
   end
 
   def when_i_click_on_change_consent_requests

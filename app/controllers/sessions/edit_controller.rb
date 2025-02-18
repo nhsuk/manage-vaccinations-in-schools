@@ -3,6 +3,18 @@
 class Sessions::EditController < ApplicationController
   before_action :set_session
 
+  def edit_programmes
+    render :programmes
+  end
+
+  def update_programmes
+    if @session.can_change_programmes? && @session.update(programmes_params)
+      redirect_to edit_session_path(@session)
+    else
+      render :programmes, status: :unprocessable_entity
+    end
+  end
+
   def edit_send_consent_requests_at
     render :send_consent_requests_at
   end
@@ -51,6 +63,10 @@ class Sessions::EditController < ApplicationController
 
   def set_session
     @session = policy_scope(Session).find_by!(slug: params[:slug])
+  end
+
+  def programmes_params
+    params.expect(session: { programme_ids: [] })
   end
 
   def send_consent_requests_at_validator

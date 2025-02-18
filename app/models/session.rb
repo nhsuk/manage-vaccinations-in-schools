@@ -122,8 +122,7 @@ class Session < ApplicationRecord
                 location.generic_clinic?
             end
 
-  validates :programmes, presence: true
-  validate :programmes_part_of_organisation
+  validates :programme_ids, presence: true
 
   before_create :set_slug
 
@@ -171,6 +170,10 @@ class Session < ApplicationRecord
 
   def future_dates
     dates.select(&:future?)
+  end
+
+  def can_change_programmes?
+    open? && dates.all?(&:future?)
   end
 
   def can_change_notification_dates?
@@ -284,14 +287,6 @@ class Session < ApplicationRecord
 
   def set_slug
     self.slug = SecureRandom.alphanumeric(10) if slug.nil?
-  end
-
-  def programmes_part_of_organisation
-    return if programmes.empty?
-
-    unless programmes.all? { organisation.programmes.include?(_1) }
-      errors.add(:programmes, :inclusion)
-    end
   end
 
   def earliest_date

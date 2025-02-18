@@ -201,6 +201,13 @@ Rails.application.routes.draw do
       get "close", action: "edit_close"
       post "close", action: "update_close"
 
+      get "edit/programmes",
+          controller: "sessions/edit",
+          action: "edit_programmes"
+      put "edit/programmes",
+          controller: "sessions/edit",
+          action: "update_programmes"
+
       get "edit/send-consent-requests-at",
           controller: "sessions/edit",
           action: "edit_send_consent_requests_at"
