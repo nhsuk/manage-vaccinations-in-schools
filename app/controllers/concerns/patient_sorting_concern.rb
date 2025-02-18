@@ -26,7 +26,9 @@ module PatientSortingConcern
     when "name"
       obj.try(:full_name) || obj.patient.full_name
     when "status"
-      obj.try(:status) || "not_in_session"
+      # TODO: handle multiple programmes
+      obj.try(:status, programme: policy_scope(Programme).first) ||
+        "not_in_session"
     when "postcode"
       patient = obj.is_a?(Patient) ? obj : obj.patient
 
@@ -79,7 +81,10 @@ module PatientSortingConcern
 
     if (statuses = params[:status]).present?
       patients_or_patient_sessions.select! do
-        value = _1.try(:status) || "not_in_session"
+        # TODO: handle multiple programmes
+        value =
+          _1.try(:status, programme: policy_scope(Programme).first) ||
+            "not_in_session"
         t("patient_session_statuses.#{value}.banner_title").in?(statuses)
       end
     end
