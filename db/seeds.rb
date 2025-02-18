@@ -34,13 +34,16 @@ def import_schools
   end
 end
 
-def create_organisation(ods_code:)
+def create_organisation(ods_code:, programme_types: %w[hpv menacwy td_ipv])
   organisation =
     Organisation.find_by(ods_code:) ||
       FactoryBot.create(:organisation, :with_generic_clinic, ods_code:)
 
-  programme = Programme.find_by(type: "hpv")
-  FactoryBot.create(:organisation_programme, organisation:, programme:)
+  programme_types
+    .map { Programme.find_by!(type: it) }
+    .each do |programme|
+      FactoryBot.create(:organisation_programme, organisation:, programme:)
+    end
 
   organisation
 end

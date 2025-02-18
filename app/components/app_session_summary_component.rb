@@ -39,6 +39,12 @@ class AppSessionSummaryComponent < ViewComponent::Base
           end
         end
       end
+      if consent_form_downloads
+        summary_list.with_row do |row|
+          row.with_key { "Consent forms" }
+          row.with_value { consent_form_downloads }
+        end
+      end
       summary_list.with_row do |row|
         row.with_key { "Children" }
         row.with_value { children }
@@ -79,6 +85,23 @@ class AppSessionSummaryComponent < ViewComponent::Base
         @session,
         @session.programmes.first
       )
+    end
+  end
+
+  def consent_form_downloads
+    if @session.open?
+      tag.ul(class: "nhsuk-list") do
+        safe_join(
+          @session.programmes.map do
+            tag.li(
+              link_to(
+                "Download #{it.name} consent form (PDF)",
+                consent_form_programme_path(it)
+              )
+            )
+          end
+        )
+      end
     end
   end
 
