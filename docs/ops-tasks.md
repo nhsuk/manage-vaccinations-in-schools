@@ -25,14 +25,14 @@ session.patients.update_all(
 session.patient_sessions.destroy_all
 ```
 
-## Move patient from community clinic to session
+## Add a patient from community clinic to school session
 
-We've had patients who have somehow ended up in a community clinic instead of a session, even though they are associated with the correct school. This command will assign them to the session at their school:
+We've had patients who have somehow ended up in only the community clinic instead of a session, even though they are associated with the correct school. This command will assign them to the session at their school:
 
 ```rb
 patient = Patient.find(...)
 
-SchoolMove.new(patient:, school: patient.school).confirm!(move_to_school: true)
+SchoolMove.new(patient:, school: patient.school).confirm!
 ```
 
 ## Add a location to an organisation and add patients to the session

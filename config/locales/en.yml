@@ -309,8 +309,6 @@ en:
           attributes:
             action:
               inclusion: Choose whether to update the child’s record with this new information
-            move_to_school:
-              inclusion: Choose whether to move the child to the upcoming school session
         vaccinate_form:
           attributes:
             delivery_site:

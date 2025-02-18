@@ -21,8 +21,7 @@ class SchoolMovesController < ApplicationController
       SchoolMoveForm.new(
         current_user:,
         school_move: @school_move,
-        action: params.dig(:school_move_form, :action),
-        move_to_school: params.dig(:school_move_form, :move_to_school)
+        action: params.dig(:school_move_form, :action)
       )
 
     if @form.save
