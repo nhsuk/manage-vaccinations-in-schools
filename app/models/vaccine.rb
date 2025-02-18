@@ -92,8 +92,10 @@ class Vaccine < ApplicationRecord
   end
 
   AVAILABLE_DELIVERY_METHODS_BY_TYPE = {
+    "flu" => %w[nasal_spray],
     "hpv" => %w[intramuscular subcutaneous],
-    "flu" => %w[nasal_spray]
+    "td_ipv" => %w[intramuscular subcutaneous],
+    "menacwy" => %w[intramuscular subcutaneous]
   }.freeze
 
   def available_delivery_methods
