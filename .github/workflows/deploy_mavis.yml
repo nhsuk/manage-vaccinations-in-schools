@@ -15,7 +15,7 @@ on:
           - test
           - preview
           - training
-#          - production
+      #          - production
       image_tag:
         description: "Docker image tag"
         required: false
