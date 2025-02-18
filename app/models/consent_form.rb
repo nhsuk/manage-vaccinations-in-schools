@@ -324,11 +324,20 @@ class ConsentForm < ApplicationRecord
   end
 
   def original_session
+    # The session that the consent form was filled out for.
     @original_session ||=
       Session
         .has_programme(programme)
         .includes(:programmes)
         .find_by(academic_year:, location:, organisation:)
+  end
+
+  def actual_upcoming_session
+    # The session that the patient is expected to be seen in.
+    @actual_upcoming_session ||=
+      (location_is_clinic? && original_session) ||
+        (school && school.sessions.includes(:session_dates).upcoming.first) ||
+        organisation.generic_clinic_session
   end
 
   def find_or_create_parent_with_relationship_to!(patient:)
@@ -406,24 +415,6 @@ class ConsentForm < ApplicationRecord
     return nil if education_setting_school?
 
     education_setting_home?
-  end
-
-  def actual_upcoming_session
-    # HACK: Remove this method once we're only sending emails after the nurse
-    # has confirmed the school move, at the moment we're assuming the move
-    # will be confirmed and the patient will be left in the community clinic.
-
-    patient = Patient.new
-
-    school_move =
-      if school
-        SchoolMove.new(patient:, school:)
-      else
-        SchoolMove.new(patient:, home_educated:, organisation:)
-      end
-
-    # Intentionally using a private method, as this is a hack.
-    school_move.send(:find_replacement_session, move_to_school: false)
   end
 
   private

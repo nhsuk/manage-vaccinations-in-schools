@@ -126,6 +126,8 @@ class Session < ApplicationRecord
 
   before_create :set_slug
 
+  delegate :clinic?, to: :location
+
   def to_param
     slug
   end
