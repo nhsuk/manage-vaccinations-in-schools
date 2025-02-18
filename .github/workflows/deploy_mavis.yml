@@ -42,12 +42,7 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v2
       - name: pull docker image
         run: |
-          if [ -z "${{ inputs.image_tag }}" && "${{ inputs.environment }}" -eq "production" ]; then
-            echo "No image tag provided for production deployment, aborting."
-            exit 1
-          else
-            docker pull ${{ steps.login-ecr.outputs.registry }}:${{ inputs.image_tag || github.sha }}
-          fi
+          docker pull ${{ steps.login-ecr.outputs.registry }}:${{ inputs.image_tag || github.sha }}
       - name: Get image digest
         run: |
           DOCKER_DIGEST=$(docker inspect --format='{{index .RepoDigests 0}}' mavis:latest)
@@ -132,7 +127,7 @@ jobs:
           | jq -r '.deploymentId')
           echo "Deployment started: $deployment_id"
           echo "deployment_id=$deployment_id" >> $GITHUB_ENV
-      - name: Wait 30 minutes for deployment to complete
+      - name: Wait up to 30 minutes for deployment to complete
         run: |
           aws deploy wait deployment-successful --deployment-id $deployment_id
           echo "Deployment successful"

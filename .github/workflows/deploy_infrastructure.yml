@@ -131,4 +131,5 @@ jobs:
           terraform_version: 1.10.5
       - name: Apply the changes
         run: |
+          terraform init -backend-config="env/${{ inputs.environment }}-backend.hcl"
           terraform apply ${{ runner.temp }}/tfplan

@@ -122,7 +122,7 @@ variable "docker_image" {
 
 variable "image_digest" {
   type        = string
-  description = "The docker image tag for the essential container in the task definition."
+  description = "The docker image digest for the essential container in the task definition."
   nullable    = false
 }
 variable "cis2_enabled" {

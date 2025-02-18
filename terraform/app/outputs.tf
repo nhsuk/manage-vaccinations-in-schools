@@ -9,7 +9,7 @@ output "s3_bucket" {
 }
 
 output "s3_key" {
-  description = "The key of the S3 object"
+  description = "The key of the S3 CodeDeploy appspec object"
   value = aws_s3_object.appspec_object.key
 }
 

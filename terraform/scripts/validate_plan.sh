@@ -25,7 +25,6 @@ down_time_if_destroyed=(
 "aws_ecs_cluster\.cluster"
 "aws_ecs_service\.service"
 "aws_security_group\.ecs_service_sg"
-"aws_s3_bucket_public_access_block\.s3_bucket_access"
 )
 
 if [ "$#" -ne 1 ]; then
