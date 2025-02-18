@@ -145,23 +145,6 @@ variable "splunk_enabled" {
   description = "Boolean toggle to determine whether the Splunk feature should be enabled."
   nullable    = false
 }
-variable "cis2_enabled" {
-  type        = bool
-  default     = false
-  description = "Boolean toggle to determine whether the CIS2 feature should be enabled."
-}
-
-variable "pds_enabled" {
-  type        = bool
-  default     = false
-  description = "Boolean toggle to determine whether the PDS feature should be enabled."
-}
-
-variable "splunk_enabled" {
-  type        = bool
-  default     = false
-  description = "Boolean toggle to determine whether the Splunk feature should be enabled."
-}
 
 locals {
   container_name = "${var.container_name}-${var.environment}"
@@ -208,7 +191,8 @@ locals {
   task_secrets = [
     {
       name      = var.db_secret_arn == null ? "DB_CREDENTIALS" : "DB_SECRET"
-      valueFrom = var.db_secret_arn == null ? aws_rds_cluster.aurora_cluster.master_user_secret[0].secret_arn : var.db_secret_arn
+      valueFrom = var.db_secret_arn == null ? aws_rds_cluster.aurora_cluster.master_user_secret[0].secret_arn :
+        var.db_secret_arn
     },
     {
       name      = "RAILS_MASTER_KEY"
