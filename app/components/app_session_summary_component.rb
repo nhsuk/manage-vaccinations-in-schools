@@ -17,7 +17,9 @@ class AppSessionSummaryComponent < ViewComponent::Base
       end
       summary_list.with_row do |row|
         row.with_key { "Programmes" }
-        row.with_value { programmes }
+        row.with_value do
+          render AppProgrammeTagsComponent.new(@session.programmes)
+        end
       end
       summary_list.with_row do |row|
         row.with_key { "Session dates" }
@@ -50,12 +52,6 @@ class AppSessionSummaryComponent < ViewComponent::Base
 
   def type
     @session.location.clinic? ? "Community clinic" : "School session"
-  end
-
-  def programmes
-    tag.ul(class: "nhsuk-list") do
-      safe_join(@session.programmes.map { tag.li(_1.name) })
-    end
   end
 
   def dates
