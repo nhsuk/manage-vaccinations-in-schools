@@ -8,6 +8,7 @@ class TriagesController < ApplicationController
   before_action :set_session, only: %i[index create new]
   before_action :set_patient, only: %i[create new]
   before_action :set_patient_session, only: %i[create new]
+  before_action :set_programme, only: %i[create new]
   before_action :set_triage, only: %i[create new]
   before_action :set_section_and_tab, only: %i[create new]
 
@@ -87,11 +88,15 @@ class TriagesController < ApplicationController
       @patient.patient_sessions.preload_for_status.find_by!(session: @session)
   end
 
+  def set_programme
+    @programme = @patient_session.programmes.first # TODO: handle multiple programmes
+  end
+
   def set_triage
     @triage =
       Triage.new(
         patient: @patient,
-        programme: @session.programmes.first, # TODO: handle multiple programmes
+        programme: @programme,
         organisation: @session.organisation
       )
   end

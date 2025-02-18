@@ -9,6 +9,7 @@ class VaccinationsController < ApplicationController
   before_action :set_session
   before_action :set_patient, only: :create
   before_action :set_patient_session, only: :create
+  before_action :set_programme, only: :create
   before_action :set_section_and_tab, only: :create
 
   before_action :set_batches, only: %i[index create batch update_batch]
@@ -127,7 +128,7 @@ class VaccinationsController < ApplicationController
 
   def set_session
     @session =
-      policy_scope(Session).includes(:location).find_by!(
+      policy_scope(Session).includes(:location, :programmes).find_by!(
         slug: params[:session_slug] || params[:slug]
       )
   end
@@ -152,6 +153,10 @@ class VaccinationsController < ApplicationController
         )
         .preload_for_status
         .find_by!(session: @session)
+  end
+
+  def set_programme
+    @programme = @session.programmes.first # TODO: handle multiple programmes
   end
 
   def set_section_and_tab

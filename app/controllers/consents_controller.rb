@@ -5,6 +5,7 @@ class ConsentsController < ApplicationController
   include PatientSortingConcern
 
   before_action :set_session
+  before_action :set_programme, except: :index
   before_action :set_patient_session, except: :index
   before_action :set_patient, except: :index
   before_action :set_consent, except: %i[index create send_request]
@@ -139,6 +140,10 @@ class ConsentsController < ApplicationController
       ).find_by!(slug: params[:session_slug])
   end
 
+  def set_programme
+    @programme = @session.programmes.first # TODO: handle multiple programmes
+  end
+
   def set_patient_session
     @patient_session =
       policy_scope(PatientSession).find_by!(
@@ -170,7 +175,7 @@ class ConsentsController < ApplicationController
   def create_params
     {
       patient_session: @patient_session,
-      programme: @session.programmes.first, # TODO: handle multiple programmes
+      programme: @programme,
       recorded_by: current_user
     }
   end

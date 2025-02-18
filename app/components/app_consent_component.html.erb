@@ -1,4 +1,4 @@
-<%= render AppConsentStatusComponent.new(patient_session:) %>
+<%= render AppConsentStatusComponent.new(patient_session:, programme:) %>
 
 <% if patient_session.no_consent? %>
   <% if latest_consent_request %>

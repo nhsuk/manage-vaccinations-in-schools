@@ -1,15 +1,18 @@
 # frozen_string_literal: true
 
 class AppSimpleStatusBannerComponent < ViewComponent::Base
-  def initialize(patient_session:)
+  def initialize(patient_session:, programme:)
     super
 
     @patient_session = patient_session
+    @programme = programme
   end
 
   delegate :status, to: :@patient_session
 
   private
+
+  attr_reader :programme
 
   def who_refused
     @patient_session
@@ -36,9 +39,5 @@ class AppSimpleStatusBannerComponent < ViewComponent::Base
 
   def colour
     I18n.t("patient_session_statuses.#{status}.colour")
-  end
-
-  def programme
-    @patient_session.programmes.first # TODO: handle multiple programmes
   end
 end
