@@ -76,7 +76,20 @@ class ConsentFormsController < ApplicationController
 
     ActiveRecord::Base.transaction do
       patient.save!
-      patient.add_to_upcoming_sessions!
+
+      school_move =
+        if (school = @consent_form.school)
+          SchoolMove.new(patient:, school:)
+        else
+          SchoolMove.new(
+            patient:,
+            home_educated: @consent_form.home_educated,
+            organisation: @consent_form.organisation
+          )
+        end
+
+      school_move.confirm!
+
       @consent_form.match_with_patient!(patient, current_user:)
     end
 

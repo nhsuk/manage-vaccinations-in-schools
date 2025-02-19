@@ -330,19 +330,6 @@ class Patient < ApplicationRecord
     end
   end
 
-  def add_to_upcoming_sessions!
-    school_move =
-      if school
-        SchoolMove.new(patient: self, school:)
-      elsif organisation
-        SchoolMove.new(patient: self, home_educated:, organisation:)
-      end
-
-    return if school_move.nil?
-
-    school_move.confirm!
-  end
-
   def self.from_consent_form(consent_form)
     new(
       address_line_1: consent_form.address_line_1,
