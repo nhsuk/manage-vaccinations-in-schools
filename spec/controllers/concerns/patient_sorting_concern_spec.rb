@@ -68,7 +68,7 @@ describe PatientSortingConcern do
       let(:params) { { sort: "name", direction: "asc" } }
 
       it "sorts patient sessions by name in ascending order" do
-        controller.sort_patients!(patient_sessions)
+        controller.sort_patients!(patient_sessions, programme:)
         expect(patient_sessions.map(&:patient).map(&:given_name)).to eq(
           %w[Alex Blair Casey]
         )
@@ -79,7 +79,7 @@ describe PatientSortingConcern do
       let(:params) { { sort: "dob", direction: "desc" } }
 
       it "sorts patient sessions by date of birth in descending order" do
-        controller.sort_patients!(patient_sessions)
+        controller.sort_patients!(patient_sessions, programme:)
         expect(patient_sessions.map(&:patient).map(&:given_name)).to eq(
           %w[Alex Blair Casey]
         )
@@ -90,7 +90,7 @@ describe PatientSortingConcern do
       let(:params) { { sort: "outcome", direction: "desc" } }
 
       it "sorts patient sessions by state in descending order" do
-        controller.sort_patients!(patient_sessions)
+        controller.sort_patients!(patient_sessions, programme:)
         expect(patient_sessions.map { it.status(programme:) }).to eq(
           %w[vaccinated delay_vaccination added_to_session]
         )
@@ -101,7 +101,7 @@ describe PatientSortingConcern do
       let(:params) { { sort: "postcode", direction: "desc" } }
 
       it "sorts patient sessions by name in ascending order" do
-        controller.sort_patients!(patient_sessions)
+        controller.sort_patients!(patient_sessions, programme:)
         expect(patient_sessions.map(&:patient).map(&:given_name)).to eq(
           %w[Blair Alex Casey]
         )
@@ -111,7 +111,7 @@ describe PatientSortingConcern do
         before { blair.update!(restricted_at: Time.current) }
 
         it "they are treated as though they have no postcode" do
-          controller.sort_patients!(patient_sessions)
+          controller.sort_patients!(patient_sessions, programme:)
           expect(patient_sessions.map(&:patient).map(&:given_name)).to eq(
             %w[Alex Casey Blair]
           )
@@ -123,7 +123,7 @@ describe PatientSortingConcern do
       let(:params) { {} }
 
       it "does not change the order of patient sessions" do
-        controller.sort_patients!(patient_sessions)
+        controller.sort_patients!(patient_sessions, programme:)
         expect(patient_sessions.map(&:patient).map(&:given_name)).to eq(
           %w[Alex Blair Casey]
         )
@@ -136,7 +136,7 @@ describe PatientSortingConcern do
       let(:params) { { name: "Alex" } }
 
       it "filters patient sessions by patient name" do
-        controller.filter_patients!(patient_sessions)
+        controller.filter_patients!(patient_sessions, programme:)
         expect(patient_sessions.size).to eq(1)
         expect(patient_sessions.first.patient.given_name).to eq("Alex")
       end
@@ -146,7 +146,7 @@ describe PatientSortingConcern do
       let(:params) { { postcode: "SW2A" } }
 
       it "filters patient sessions by date of birth" do
-        controller.filter_patients!(patient_sessions)
+        controller.filter_patients!(patient_sessions, programme:)
         expect(patient_sessions.size).to eq(1)
         expect(patient_sessions.first.patient.given_name).to eq("Blair")
       end
@@ -155,7 +155,7 @@ describe PatientSortingConcern do
         before { blair.update!(restricted_at: Time.current) }
 
         it "excludes the patient from the result" do
-          controller.filter_patients!(patient_sessions)
+          controller.filter_patients!(patient_sessions, programme:)
           expect(patient_sessions.size).to eq(0)
         end
       end
@@ -165,7 +165,7 @@ describe PatientSortingConcern do
       let(:params) { { year_groups: %w[9] } }
 
       it "filters patient sessions by date of birth" do
-        controller.filter_patients!(patient_sessions)
+        controller.filter_patients!(patient_sessions, programme:)
         expect(patient_sessions.size).to eq(1)
         expect(patient_sessions.first.patient.given_name).to eq("Blair")
       end
@@ -175,7 +175,7 @@ describe PatientSortingConcern do
       let(:params) { { name: "Alex", year_groups: %w[8] } }
 
       it "filters patient sessions by both name and date of birth" do
-        controller.filter_patients!(patient_sessions)
+        controller.filter_patients!(patient_sessions, programme:)
         expect(patient_sessions.size).to eq(1)
         expect(patient_sessions.first.patient.given_name).to eq("Alex")
       end
@@ -185,7 +185,7 @@ describe PatientSortingConcern do
       let(:params) { {} }
 
       it "does not filter patient sessions" do
-        controller.filter_patients!(patient_sessions)
+        controller.filter_patients!(patient_sessions, programme:)
         expect(patient_sessions.size).to eq(3)
       end
     end

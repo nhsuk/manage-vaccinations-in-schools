@@ -3,13 +3,13 @@
 class AppSessionPatientTableComponent < ViewComponent::Base
   def initialize(
     section:,
-    programme:,
     caption: nil,
     columns: %i[name year_group],
     consent_form: nil,
     params: {},
     patient_sessions: nil,
     patients: nil,
+    programme: nil,
     year_groups: nil
   )
     super
@@ -36,7 +36,7 @@ class AppSessionPatientTableComponent < ViewComponent::Base
     @params = params
     @programme = programme
     @section = section
-    @year_groups = year_groups || @programme.year_groups || []
+    @year_groups = year_groups || programme&.year_groups || []
   end
 
   private
@@ -115,6 +115,7 @@ class AppSessionPatientTableComponent < ViewComponent::Base
     tab = params[:tab]
 
     session = patient_session.session
+    programme = @programme || session.programmes.first
 
     # TODO: Remove this once "Record session outcomes" exists.
     # We have to guess the section and tab if it's not provided, this
@@ -153,7 +154,7 @@ class AppSessionPatientTableComponent < ViewComponent::Base
       session_patient_programme_path(
         session,
         patient,
-        @programme,
+        programme,
         section:,
         tab:
       )

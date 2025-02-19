@@ -10,6 +10,8 @@
 
 <%= h1 "Record vaccinations" %>
 
+<%= render AppProgrammeSelectionFormComponent.new(@session.programmes, active: @programme) %>
+
 <% if @todays_batch.present? %>
   <%= govuk_inset_text html_attributes: { class: "nhsuk-u-margin-top-2 nhsuk-u-margin-bottom-4" } do %>
     <span class="nhsuk-visually-hidden">Information: </span>
@@ -41,7 +43,6 @@
         %i[name year_group status],
       params:,
       patient_sessions: @patient_sessions,
-      programme: @session.programmes.first,
+      programme: @programme,
       section: :vaccinations,
-      year_groups: @session.year_groups,
     ) %>

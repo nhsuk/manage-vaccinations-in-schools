@@ -10,6 +10,8 @@
 
 <%= h1 page_title, page_title: %>
 
+<%= render AppProgrammeSelectionFormComponent.new(@session.programmes, active: @programme) %>
+
 <%= render AppSecondaryNavigationComponent.new do |nav| %>
   <% TAB_PATHS[:triage].each do |tab, state| %>
     <% nav.with_item(selected: @current_tab == state,
@@ -25,7 +27,6 @@
       columns: %i[name year_group],
       params:,
       patient_sessions: @patient_sessions,
-      programme: @session.programmes.first,
+      programme: @programme,
       section: :triage,
-      year_groups: @session.year_groups,
     ) %>

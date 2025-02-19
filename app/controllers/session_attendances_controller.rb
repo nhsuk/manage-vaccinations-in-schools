@@ -25,11 +25,8 @@ class SessionAttendancesController < ApplicationController
     if success
       name = @patient.full_name
 
-      programme = @patient_session.programmes.first # TODO: handle multiple programmes
-
       flash[:info] = if @session_attendance.attending?
-        status = @patient_session.status(programme:)
-        t("attendance_flash.#{status}", name:)
+        t("attendance_flash.present", name:)
       elsif @session_attendance.attending.nil?
         t("attendance_flash.not_registered", name:)
       else
@@ -38,7 +35,7 @@ class SessionAttendancesController < ApplicationController
 
       redirect_to session_patient_programme_path(
                     patient_id: @patient.id,
-                    programme_type: programme.type
+                    programme_type: @patient_session.programmes.first.type
                   )
     else
       render :edit, status: :unprocessable_entity

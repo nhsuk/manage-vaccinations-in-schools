@@ -5,10 +5,10 @@ class TriagesController < ApplicationController
   include PatientTabsConcern
   include PatientSortingConcern
 
-  before_action :set_session, only: %i[index create new]
+  before_action :set_session
+  before_action :set_programme
   before_action :set_patient, only: %i[create new]
   before_action :set_patient_session, only: %i[create new]
-  before_action :set_programme, only: %i[create new]
   before_action :set_triage, only: %i[create new]
   before_action :set_section_and_tab, only: %i[create new]
 
@@ -22,19 +22,17 @@ class TriagesController < ApplicationController
         .eager_load(:patient)
         .order_by_name
 
-    programme = @session.programmes.first # TODO: handle multiple programmes
-
     @current_tab = TAB_PATHS[:triage][params[:tab]]
     tab_patient_sessions =
       group_patient_sessions_by_state(
         all_patient_sessions,
-        programme,
+        @programme,
         section: :triage
       )
     @tab_counts = count_patient_sessions(tab_patient_sessions)
     @patient_sessions = tab_patient_sessions[@current_tab] || []
 
-    sort_and_filter_patients!(@patient_sessions)
+    sort_and_filter_patients!(@patient_sessions, programme: @programme)
 
     session[:current_section] = "triage"
 
@@ -77,9 +75,15 @@ class TriagesController < ApplicationController
 
   def set_session
     @session =
-      policy_scope(Session).includes(:location).find_by!(
+      policy_scope(Session).includes(:location, :programmes).find_by!(
         slug: params[:session_slug] || params[:slug]
       )
+  end
+
+  def set_programme
+    @programme =
+      @session.programmes.find_by(type: params[:programme_type]) ||
+        @session.programmes.first
   end
 
   def set_patient
@@ -93,11 +97,6 @@ class TriagesController < ApplicationController
   def set_patient_session
     @patient_session =
       @patient.patient_sessions.preload_for_status.find_by!(session: @session)
-  end
-
-  def set_programme
-    @programme =
-      @patient_session.programmes.find_by!(type: params[:programme_type])
   end
 
   def set_triage
