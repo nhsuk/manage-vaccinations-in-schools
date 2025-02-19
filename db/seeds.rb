@@ -296,6 +296,44 @@ def create_school_moves(organisation)
   end
 end
 
+def create_organisation_sessions(user, organisation)
+  # HPV-only sessions
+  create_session(user, organisation, programme_types: ["hpv"], completed: false)
+  create_session(user, organisation, programme_types: ["hpv"], completed: true)
+
+  # MenACWY and Td/IPV combined sessions
+  create_session(
+    user,
+    organisation,
+    programme_types: %w[menacwy td_ipv],
+    completed: false,
+    year_groups: [8, 9, 10]
+  )
+  create_session(
+    user,
+    organisation,
+    programme_types: %w[menacwy td_ipv],
+    completed: true,
+    year_groups: [8, 9, 10]
+  )
+
+  # All three vaccines combined
+  create_session(
+    user,
+    organisation,
+    programme_types: %w[menacwy td_ipv hpv],
+    completed: false,
+    year_groups: [8, 9, 10]
+  )
+  create_session(
+    user,
+    organisation,
+    programme_types: %w[menacwy td_ipv hpv],
+    completed: true,
+    year_groups: [8, 9, 10]
+  )
+end
+
 set_feature_flags
 
 seed_vaccines
@@ -335,46 +373,7 @@ unless Settings.cis2.enabled
   Audited
     .audit_class
     .as_user(user) do
-      create_session(
-        user,
-        organisation,
-        programme_types: ["hpv"],
-        completed: false
-      )
-      create_session(
-        user,
-        organisation,
-        programme_types: ["hpv"],
-        completed: true
-      )
-      create_session(
-        user,
-        organisation,
-        programme_types: %w[menacwy td_ipv],
-        completed: false,
-        year_groups: [8, 9, 10]
-      )
-      create_session(
-        user,
-        organisation,
-        programme_types: %w[menacwy td_ipv],
-        completed: true,
-        year_groups: [8, 9, 10]
-      )
-      create_session(
-        user,
-        organisation,
-        programme_types: %w[menacwy td_ipv hpv],
-        completed: false,
-        year_groups: [8, 9, 10]
-      )
-      create_session(
-        user,
-        organisation,
-        programme_types: %w[menacwy td_ipv hpv],
-        completed: true,
-        year_groups: [8, 9, 10]
-      )
+      create_organisation_sessions(user, organisation)
       setup_clinic(user, organisation)
     end
   create_patients(organisation)
@@ -390,48 +389,7 @@ attach_sample_of_schools_to(organisation)
 
 Audited
   .audit_class
-  .as_user(user) do
-    create_session(
-      user,
-      organisation,
-      programme_types: ["hpv"],
-      completed: false
-    )
-    create_session(
-      user,
-      organisation,
-      programme_types: ["hpv"],
-      completed: true
-    )
-    create_session(
-      user,
-      organisation,
-      programme_types: %w[menacwy td_ipv],
-      completed: false,
-      year_groups: [8, 9, 10]
-    )
-    create_session(
-      user,
-      organisation,
-      programme_types: %w[menacwy td_ipv],
-      completed: true,
-      year_groups: [8, 9, 10]
-    )
-    create_session(
-      user,
-      organisation,
-      programme_types: %w[menacwy td_ipv hpv],
-      completed: false,
-      year_groups: [8, 9, 10]
-    )
-    create_session(
-      user,
-      organisation,
-      programme_types: %w[menacwy td_ipv hpv],
-      completed: true,
-      year_groups: [8, 9, 10]
-    )
-  end
+  .as_user(user) { create_organisation_sessions(user, organisation) }
 create_patients(organisation)
 create_imports(user, organisation)
 create_school_moves(organisation)
