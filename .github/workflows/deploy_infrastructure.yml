@@ -18,22 +18,22 @@ on:
 #          - production
 
 env:
-  aws-role: ${{ inputs.environment == 'production'
+  aws_role: ${{ inputs.environment == 'production'
     && 'arn:aws:iam::820242920762:role/GitHubActionsRole'
     || 'arn:aws:iam::393416225559:role/GitHubActionsRole' }}
-  tf_dir: ./terraform/app
+  tf_dir: terraform/app
 
 jobs:
   TerraformPlan:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ${{ env.tf-dir }}
+        working-directory: ${{ env.tf_dir }}
     steps:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: ${{ env.aws-role }}
+          role-to-assume: ${{ env.aws_role }}
           aws-region: eu-west-2
       - name: Install terraform
         uses: hashicorp/setup-terraform@v3
@@ -86,12 +86,12 @@ jobs:
     environment: ${{ inputs.environment }}
     defaults:
       run:
-        working-directory: ${{ env.tf-dir }}
+        working-directory: ${{ env.tf_dir }}
     steps:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: ${{ env.aws-role }}
+          role-to-assume: ${{ env.aws_role }}
           aws-region: eu-west-2
       - name: Download artifact
         uses: actions/download-artifact@v4
