@@ -254,8 +254,8 @@ en:
               inclusion: Enter a clinic name
             date_of_vaccination:
               blank: Enter a date in the correct format
-              greater_than_or_equal_to: The vaccination date is outside the programme. Enter a date after the programme started.
-              less_than_or_equal_to: The vaccination date is outside the programme. Enter a date before today.
+              greater_than: The vaccination date is before the date of birth
+              less_than_or_equal_to: The vaccination date is in the future
               inclusion: Enter a date for a current session
             delivery_site:
               blank: Enter an anatomical site.

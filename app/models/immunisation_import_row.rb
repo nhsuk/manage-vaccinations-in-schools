@@ -75,8 +75,9 @@ class ImmunisationImportRow
 
   validates :date_of_vaccination,
             comparison: {
-              greater_than_or_equal_to: Date.new(2021, 9, 1),
-              less_than_or_equal_to: -> { Date.current }
+              greater_than: :patient_date_of_birth,
+              less_than_or_equal_to: -> { Date.current },
+              if: :patient_date_of_birth
             }
   validates :time_of_vaccination,
             presence: {
