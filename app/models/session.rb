@@ -122,8 +122,7 @@ class Session < ApplicationRecord
                 location.generic_clinic?
             end
 
-  validates :programmes, presence: true
-  validate :programmes_part_of_organisation
+  validates :programme_ids, presence: true
 
   before_create :set_slug
 
@@ -173,6 +172,10 @@ class Session < ApplicationRecord
     dates.select(&:future?)
   end
 
+  def can_change_programmes?
+    open? && dates.all?(&:future?)
+  end
+
   def can_change_notification_dates?
     consent_notifications.empty? && session_notifications.empty?
   end
@@ -207,14 +210,6 @@ class Session < ApplicationRecord
     return unless completed?
 
     ActiveRecord::Base.transaction do
-      generic_clinic_session_id = organisation.generic_clinic_session.id
-
-      PatientSession.import!(
-        %i[patient_id session_id],
-        patients_to_move_to_clinic.map { [_1.id, generic_clinic_session_id] },
-        on_duplicate_key_ignore: true
-      )
-
       self_consents =
         Consent.via_self_consent.where(
           patient: patients_to_move_to_clinic,
@@ -284,14 +279,6 @@ class Session < ApplicationRecord
 
   def set_slug
     self.slug = SecureRandom.alphanumeric(10) if slug.nil?
-  end
-
-  def programmes_part_of_organisation
-    return if programmes.empty?
-
-    unless programmes.all? { organisation.programmes.include?(_1) }
-      errors.add(:programmes, :inclusion)
-    end
   end
 
   def earliest_date

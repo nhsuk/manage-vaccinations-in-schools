@@ -25,6 +25,11 @@ describe "Manage school sessions" do
     when_i_choose_the_dates
     then_i_see_the_confirmation_page
 
+    when_i_click_on_change_programmes
+    then_i_see_the_change_programmes_page
+    and_i_change_the_programmes
+    and_i_confirm
+
     when_i_click_on_change_consent_requests
     then_i_see_the_change_consent_requests_page
     and_i_change_consent_requests_date
@@ -42,7 +47,7 @@ describe "Manage school sessions" do
     then_i_see_no_sessions
 
     when_i_go_to_unscheduled_sessions
-    then_i_see_no_sessions
+    then_i_see_the_organisation_clinic
 
     when_i_go_to_scheduled_sessions
     then_i_see_the_school
@@ -86,7 +91,7 @@ describe "Manage school sessions" do
         programmes: [@programme]
       )
     @location = create(:school, :secondary, organisation: @organisation)
-    session =
+    @session =
       create(
         :session,
         :unscheduled,
@@ -94,7 +99,13 @@ describe "Manage school sessions" do
         organisation: @organisation,
         programme: @programme
       )
-    @patient = create(:patient, year_group: 8, session:)
+    @patient = create(:patient, year_group: 8, session: @session)
+
+    create(
+      :patient_session,
+      patient: @patient,
+      session: @organisation.generic_clinic_session
+    )
   end
 
   def when_i_go_to_todays_sessions_as_a_nurse
@@ -185,6 +196,18 @@ describe "Manage school sessions" do
     expect(page).to have_content("Edit session")
   end
 
+  def when_i_click_on_change_programmes
+    click_on "Change programmes"
+  end
+
+  def then_i_see_the_change_programmes_page
+    expect(page).to have_content("Which programmes is this session part of?")
+  end
+
+  def and_i_change_the_programmes
+    check "HPV"
+  end
+
   def when_i_click_on_change_consent_requests
     click_on "Change consent requests"
   end
@@ -228,7 +251,7 @@ describe "Manage school sessions" do
   end
 
   def when_the_parent_visits_the_consent_form
-    visit start_parent_interface_consent_forms_path(Session.last, @programme)
+    visit start_parent_interface_consent_forms_path(@session, @programme)
   end
 
   def then_they_can_give_consent
@@ -242,7 +265,7 @@ describe "Manage school sessions" do
   end
 
   def then_they_can_no_longer_give_consent
-    visit start_parent_interface_consent_forms_path(Session.last, @programme)
+    visit start_parent_interface_consent_forms_path(@session, @programme)
     expect(page).to have_content("The deadline for responding has passed")
   end
 
