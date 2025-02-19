@@ -114,7 +114,7 @@ def create_session(
   programmes.each do |programme|
     FactoryBot.create_list(
       :batch,
-      4,
+      3,
       organisation:,
       vaccine: programme.vaccines.active.first
     )
@@ -142,7 +142,7 @@ def create_session(
       patients_without_consent =
         FactoryBot.create_list(
           :patient_session,
-          3,
+          2,
           programme:,
           session:,
           user:,
@@ -161,18 +161,16 @@ def create_session(
       end
 
       # Add extra consent forms with a successful NHS number lookup
-      2.times do
-        temporary_patient = FactoryBot.build(:patient, organisation:)
-        FactoryBot.create(
-          :consent_form,
-          :recorded,
-          programme:,
-          given_name: temporary_patient.given_name,
-          family_name: temporary_patient.family_name,
-          nhs_number: temporary_patient.nhs_number,
-          session:
-        )
-      end
+      temporary_patient = FactoryBot.build(:patient, organisation:)
+      FactoryBot.create(
+        :consent_form,
+        :recorded,
+        programme:,
+        given_name: temporary_patient.given_name,
+        family_name: temporary_patient.family_name,
+        nhs_number: temporary_patient.nhs_number,
+        session:
+      )
 
       %i[
         consent_given_triage_not_needed
@@ -186,7 +184,7 @@ def create_session(
       ].each do |trait|
         FactoryBot.create_list(
           :patient_session,
-          2,
+          1,
           trait,
           programme:,
           session:,
@@ -243,7 +241,7 @@ end
 
 def create_patients(organisation)
   organisation.schools.each do |school|
-    FactoryBot.create_list(:patient, 5, organisation:, school:)
+    FactoryBot.create_list(:patient, 4, organisation:, school:)
   end
 end
 
@@ -305,13 +303,6 @@ def create_organisation_sessions(user, organisation)
     completed: false,
     year_groups: [8, 9, 10]
   )
-  create_session(
-    user,
-    organisation,
-    programmes: [menacwy, td_ipv],
-    completed: true,
-    year_groups: [8, 9, 10]
-  )
 
   # All three vaccines combined
   create_session(
@@ -319,13 +310,6 @@ def create_organisation_sessions(user, organisation)
     organisation,
     programmes: [menacwy, td_ipv, hpv],
     completed: false,
-    year_groups: [8, 9, 10]
-  )
-  create_session(
-    user,
-    organisation,
-    programmes: [menacwy, td_ipv, hpv],
-    completed: true,
     year_groups: [8, 9, 10]
   )
 end
