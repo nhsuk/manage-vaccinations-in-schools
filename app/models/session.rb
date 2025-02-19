@@ -210,20 +210,13 @@ class Session < ApplicationRecord
     return unless completed?
 
     ActiveRecord::Base.transaction do
-      self_consents =
-        Consent.via_self_consent.where(
-          patient: patients_to_move_to_clinic,
-          organisation:,
-          programme: programmes
-        )
+      generic_clinic_session_id = organisation.generic_clinic_session.id
 
-      self_consents.invalidate_all
-
-      Triage.where(
-        patient: self_consents.map(&:patient),
-        organisation:,
-        programme: programmes
-      ).invalidate_all
+      PatientSession.import!(
+        %i[patient_id session_id],
+        patients_to_move_to_clinic.map { [_1.id, generic_clinic_session_id] },
+        on_duplicate_key_ignore: true
+      )
 
       update!(closed_at: Time.current)
     end
