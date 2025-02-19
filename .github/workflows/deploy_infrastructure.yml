@@ -21,10 +21,10 @@ env:
   aws-role: ${{ inputs.environment == 'production'
     && 'arn:aws:iam::820242920762:role/GitHubActionsRole'
     || 'arn:aws:iam::393416225559:role/GitHubActionsRole' }}
-  tf_dir: terraform/app
+  tf_dir: ./terraform/app
 
 jobs:
-  GetDeployedDigest:
+  TerraformPlan:
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -65,37 +65,10 @@ jobs:
           --query "services[0].taskDefinition" --output text)
           MAVIS_IMAGE=$(aws ecs describe-task-definition --task-definition $TASK_DEFINITION_ARN \
           --query "taskDefinition.containerDefinitions[0].image" --output text)
-          echo "DIGEST=${MAVIS_IMAGE#*@}" >> ${{ runner.temp }}/env_file
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: env_file
-          path: ${{ runner.temp }}/env_file
-  TerraformPlan:
-    runs-on: ubuntu-latest
-    needs: GetDeployedDigest
-    defaults:
-      run:
-        working-directory: ${{ env.tf-dir }}
-    steps:
-      - name: Upload artifact
-        uses: actions/download-artifact@v2
-        with:
-          name: env_file
-          path: ${{ runner.temp }}/env_file
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: ${{ env.aws-role }}
-          aws-region: eu-west-2
-      - name: Install terraform
-        uses: hashicorp/setup-terraform@v3
-        with:
-          terraform_version: 1.10.5
+          echo "DIGEST=${MAVIS_IMAGE#*@}"
       - name: Terraform Plan
         id: plan
         run: |
-          source ${{ runner.temp }}/env_file
           terraform init -backend-config="env/${{ inputs.environment }}-backend.hcl"
           terraform plan -var="image_digest=$DIGEST" -var-file="env/${{ inputs.environment }}.tfvars" \
           -out ${{ runner.temp }}/tfplan
