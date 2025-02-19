@@ -84,6 +84,18 @@ describe Vaccine do
 
       it { should eq(3) }
     end
+
+    context "with a MenACWY vaccine" do
+      let(:vaccine) { build(:vaccine, :menacwy) }
+
+      it { should eq(1) }
+    end
+
+    context "with an Td/IPV vaccine" do
+      let(:vaccine) { build(:vaccine, :td_ipv) }
+
+      it { should eq(5) }
+    end
   end
 
   describe "#seasonal?" do
