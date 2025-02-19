@@ -90,7 +90,7 @@ class SchoolMove < ApplicationRecord
         org
           .sessions
           .includes(:location, :session_dates)
-          .upcoming
+          .for_current_academic_year
           .find_by(location: school)
       end
   end

@@ -87,19 +87,17 @@ class AppSessionSummaryComponent < ViewComponent::Base
   end
 
   def consent_form_downloads
-    if @session.open?
-      tag.ul(class: "nhsuk-list") do
-        safe_join(
-          @session.programmes.map do
-            tag.li(
-              link_to(
-                "Download #{it.name} consent form (PDF)",
-                consent_form_programme_path(it)
-              )
+    tag.ul(class: "nhsuk-list") do
+      safe_join(
+        @session.programmes.map do
+          tag.li(
+            link_to(
+              "Download #{it.name} consent form (PDF)",
+              consent_form_programme_path(it)
             )
-          end
-        )
-      end
+          )
+        end
+      )
     end
   end
 

@@ -64,15 +64,5 @@ describe SessionsHelper do
         )
       end
     end
-
-    context "when closed" do
-      let(:session) { create(:session, :closed) }
-
-      it do
-        expect(session_status_tag).to eq(
-          "<strong class=\"nhsuk-tag nhsuk-tag--red\">Closed</strong>"
-        )
-      end
-    end
   end
 end

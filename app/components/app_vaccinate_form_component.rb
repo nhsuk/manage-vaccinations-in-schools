@@ -12,7 +12,7 @@ class AppVaccinateFormComponent < ViewComponent::Base
   end
 
   def render?
-    patient_session.next_step(programme:) == :vaccinate && session.open? &&
+    patient_session.next_step(programme:) == :vaccinate &&
       (patient_session.attending_today? || false)
   end
 

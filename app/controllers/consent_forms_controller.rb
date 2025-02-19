@@ -28,7 +28,9 @@ class ConsentFormsController < ApplicationController
   def update_match
     @consent_form.match_with_patient!(@patient, current_user:)
 
-    session = @patient.upcoming_sessions.first || @consent_form.original_session
+    session =
+      @patient.sessions_for_current_academic_year.first ||
+        @consent_form.original_session
 
     flash[:success] = {
       heading: "Consent matched for",
@@ -117,9 +119,9 @@ class ConsentFormsController < ApplicationController
 
   def set_patient
     @patient =
-      policy_scope(Patient).includes(upcoming_sessions: :programmes).find(
-        params[:patient_id]
-      )
+      policy_scope(Patient).includes(
+        sessions_for_current_academic_year: :programmes
+      ).find(params[:patient_id])
   end
 
   def archive_params

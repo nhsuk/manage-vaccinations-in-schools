@@ -7,7 +7,6 @@
       nav.with_item(href: unscheduled_sessions_path, text: "Unscheduled", selected: true)
       nav.with_item(href: scheduled_sessions_path, text: "Scheduled")
       nav.with_item(href: completed_sessions_path, text: "Completed")
-      nav.with_item(href: closed_sessions_path, text: "Closed")
     end %>
 
 <% if @sessions.empty? %>

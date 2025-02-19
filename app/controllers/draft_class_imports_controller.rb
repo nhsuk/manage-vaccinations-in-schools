@@ -51,7 +51,7 @@ class DraftClassImportsController < ApplicationController
     @session_options =
       policy_scope(Session)
         .includes(:location)
-        .upcoming
+        .for_current_academic_year
         .where(location: { type: :school })
   end
 

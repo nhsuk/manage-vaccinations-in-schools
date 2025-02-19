@@ -83,8 +83,8 @@ class Patient < ApplicationRecord
   has_many :session_attendances, through: :patient_sessions
   has_many :sessions, through: :patient_sessions
 
-  has_many :upcoming_sessions,
-           -> { upcoming },
+  has_many :sessions_for_current_academic_year,
+           -> { for_current_academic_year },
            through: :patient_sessions,
            source: :session
 
@@ -267,7 +267,7 @@ class Patient < ApplicationRecord
       self.date_of_death = pds_patient.date_of_death
 
       if date_of_death_changed?
-        clear_upcoming_sessions! unless date_of_death.nil?
+        clear_sessions_for_current_academic_year! unless date_of_death.nil?
         self.date_of_death_recorded_at = Time.current
       end
 
@@ -307,7 +307,7 @@ class Patient < ApplicationRecord
     dup.tap do |new_patient|
       new_patient.nhs_number = nil
 
-      upcoming_sessions.each do |session|
+      sessions_for_current_academic_year.each do |session|
         new_patient.patient_sessions.build(session:)
       end
 
@@ -367,7 +367,7 @@ class Patient < ApplicationRecord
     end
   end
 
-  def clear_upcoming_sessions!
+  def clear_sessions_for_current_academic_year!
     patient_sessions
       .includes(
         :programmes,
@@ -375,7 +375,7 @@ class Patient < ApplicationRecord
         :session_attendances,
         patient: :vaccination_records
       )
-      .where(session: upcoming_sessions)
+      .where(session: sessions_for_current_academic_year)
       .find_each(&:destroy_if_safe!)
   end
 end

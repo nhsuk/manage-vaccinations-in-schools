@@ -332,12 +332,18 @@ class ConsentForm < ApplicationRecord
         .find_by(academic_year:, location:, organisation:)
   end
 
-  def actual_upcoming_session
+  def actual_session
     # The session that the patient is expected to be seen in.
-    @actual_upcoming_session ||=
+    @actual_session ||=
       (location_is_clinic? && original_session) ||
-        (school && school.sessions.includes(:session_dates).upcoming.first) ||
-        organisation.generic_clinic_session
+        (
+          school &&
+            school
+              .sessions
+              .includes(:session_dates)
+              .for_current_academic_year
+              .first
+        ) || organisation.generic_clinic_session
   end
 
   def find_or_create_parent_with_relationship_to!(patient:)

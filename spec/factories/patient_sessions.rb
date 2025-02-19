@@ -289,10 +289,6 @@ FactoryBot.define do
       session { association :session, :today, programme: }
     end
 
-    trait :session_closed do
-      session { association :session, :closed, programme: }
-    end
-
     trait :not_gillick_competent do
       after(:create) do |patient_session, _evaluator|
         create(:gillick_assessment, :not_competent, patient_session:)

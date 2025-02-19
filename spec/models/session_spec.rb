@@ -36,14 +36,8 @@ describe Session do
     let(:today_session) { create(:session, :today, programme:) }
     let(:unscheduled_session) { create(:session, :unscheduled, programme:) }
 
-    describe "#today" do
-      subject(:scope) { described_class.today }
-
-      it { should contain_exactly(today_session) }
-    end
-
-    describe "#upcoming" do
-      subject(:scope) { described_class.upcoming }
+    describe "#for_current_academic_year" do
+      subject(:scope) { described_class.for_current_academic_year }
 
       it do
         expect(scope).to contain_exactly(
@@ -52,6 +46,12 @@ describe Session do
           scheduled_session
         )
       end
+    end
+
+    describe "#today" do
+      subject(:scope) { described_class.today }
+
+      it { should contain_exactly(today_session) }
     end
 
     describe "#unscheduled" do
@@ -86,40 +86,6 @@ describe Session do
 
         it { should_not include(completed_session) }
       end
-    end
-
-    describe "#closed" do
-      subject(:scope) { described_class.closed }
-
-      it { should contain_exactly(closed_session) }
-    end
-  end
-
-  describe "#open?" do
-    subject(:open?) { session.open? }
-
-    let(:session) { build(:session) }
-
-    it { should be(true) }
-
-    context "with a closed session" do
-      let(:session) { build(:session, :closed) }
-
-      it { should be(false) }
-    end
-  end
-
-  describe "#closed?" do
-    subject(:closed?) { session.closed? }
-
-    let(:session) { build(:session) }
-
-    it { should be(false) }
-
-    context "with a closed session" do
-      let(:session) { build(:session, :closed) }
-
-      it { should be(true) }
     end
   end
 

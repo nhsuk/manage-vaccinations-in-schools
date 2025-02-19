@@ -64,15 +64,6 @@ describe "Manage school sessions" do
     when_i_go_to_todays_sessions_as_a_nurse
     and_i_go_to_completed_sessions
     then_i_see_the_school
-    and_i_click_on_the_school
-
-    when_i_click_on_close_session
-    then_i_see_the_close_session_page
-
-    when_i_close_the_session
-    then_i_see_the_close_confirmation
-    and_i_cant_edit_the_session
-    and_i_go_back_to_sessions
 
     when_i_go_to_unscheduled_sessions
     then_i_see_the_organisation_clinic
@@ -272,33 +263,6 @@ describe "Manage school sessions" do
 
   def then_i_see_the_school
     expect(page).to have_content(@location.name)
-  end
-
-  def and_i_click_on_the_school
-    click_on @location.name
-  end
-
-  def when_i_click_on_close_session
-    click_on "Close session"
-  end
-
-  def then_i_see_the_close_session_page
-    expect(page).to have_content("Close session")
-    expect(page).to have_content("1 child who could not be vaccinated")
-  end
-
-  alias_method :when_i_close_the_session, :when_i_click_on_close_session
-
-  def then_i_see_the_close_confirmation
-    expect(page).to have_content("Session closed.")
-  end
-
-  def and_i_cant_edit_the_session
-    expect(page).not_to have_content("Edit session")
-  end
-
-  def and_i_go_back_to_sessions
-    click_on "Sessions", match: :first
   end
 
   def then_i_see_the_organisation_clinic

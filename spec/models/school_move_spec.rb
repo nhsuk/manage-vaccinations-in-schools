@@ -218,23 +218,6 @@ describe SchoolMove do
         include_examples "destroys the school move"
       end
 
-      context "to a school with a closed session" do
-        let(:school_move) do
-          create(:school_move, :to_school, patient:, school:)
-        end
-
-        let(:school) { create(:school, organisation:) }
-        let(:new_session) do
-          create(:session, :closed, location: school, organisation:, programme:)
-        end
-
-        include_examples "creates a log entry"
-        include_examples "sets the patient cohort"
-        include_examples "sets the patient school"
-        include_examples "adds the patient to the community clinics"
-        include_examples "destroys the school move"
-      end
-
       context "to home-schooled" do
         let(:school_move) do
           create(:school_move, :to_home_educated, organisation:, patient:)
@@ -298,30 +281,6 @@ describe SchoolMove do
           include_examples "keeps the patient cohort"
           include_examples "removes the patient from the old school session"
           include_examples "adds the patient to the new school session"
-          include_examples "destroys the school move"
-        end
-
-        context "to a school with a closed session" do
-          let(:school_move) do
-            create(:school_move, :to_school, patient:, school:)
-          end
-
-          let(:school) { create(:school, organisation:) }
-          let(:new_session) do
-            create(
-              :session,
-              :closed,
-              location: school,
-              organisation:,
-              programme:
-            )
-          end
-
-          include_examples "creates a log entry"
-          include_examples "sets the patient school"
-          include_examples "keeps the patient cohort"
-          include_examples "removes the patient from the old school session"
-          include_examples "adds the patient to the community clinics"
           include_examples "destroys the school move"
         end
 
@@ -427,29 +386,6 @@ describe SchoolMove do
             create(
               :session,
               :completed,
-              location: school,
-              organisation:,
-              programme:
-            )
-          end
-
-          include_examples "creates a log entry"
-          include_examples "sets the patient school"
-          include_examples "keeps the patient cohort"
-          include_examples "keeps the patient in the old school session"
-          include_examples "destroys the school move"
-        end
-
-        context "to a school with a closed session" do
-          let(:school_move) do
-            create(:school_move, :to_school, patient:, school:)
-          end
-
-          let(:school) { create(:school, organisation:) }
-          let(:new_session) do
-            create(
-              :session,
-              :closed,
               location: school,
               organisation:,
               programme:
@@ -581,29 +517,6 @@ describe SchoolMove do
           include_examples "destroys the school move"
         end
 
-        context "to a school with a closed session" do
-          let(:school_move) do
-            create(:school_move, :to_school, patient:, school:)
-          end
-
-          let(:school) { create(:school, organisation:) }
-          let!(:new_session) do # rubocop:disable RSpec/LetSetup
-            create(
-              :session,
-              :closed,
-              location: school,
-              organisation:,
-              programme:
-            )
-          end
-
-          include_examples "creates a log entry"
-          include_examples "sets the patient school"
-          include_examples "keeps the patient cohort"
-          include_examples "keeps the patient in the community clinics"
-          include_examples "destroys the school move"
-        end
-
         context "to home-schooled" do
           let(:school_move) do
             create(:school_move, :to_home_educated, organisation:, patient:)
@@ -724,29 +637,6 @@ describe SchoolMove do
             create(
               :session,
               :completed,
-              location: school,
-              organisation:,
-              programme:
-            )
-          end
-
-          include_examples "creates a log entry"
-          include_examples "sets the patient school"
-          include_examples "keeps the patient cohort"
-          include_examples "keeps the patient in the community clinics"
-          include_examples "destroys the school move"
-        end
-
-        context "to a school with a closed session" do
-          let(:school_move) do
-            create(:school_move, :to_school, patient:, school:)
-          end
-
-          let(:school) { create(:school, organisation:) }
-          let!(:new_session) do # rubocop:disable RSpec/LetSetup
-            create(
-              :session,
-              :closed,
               location: school,
               organisation:,
               programme:
@@ -885,28 +775,6 @@ describe SchoolMove do
           include_examples "destroys the school move"
         end
 
-        context "to a school with a closed session" do
-          let(:school_move) do
-            create(:school_move, :to_school, patient:, school:)
-          end
-
-          let(:school) { create(:school, organisation:) }
-          let(:new_session) do
-            create(
-              :session,
-              :closed,
-              location: school,
-              organisation:,
-              programme:
-            )
-          end
-
-          include_examples "creates a log entry"
-          include_examples "sets the patient school"
-          include_examples "keeps the patient in the community clinics"
-          include_examples "destroys the school move"
-        end
-
         context "to home-schooled" do
           let(:school_move) do
             create(:school_move, :to_home_educated, organisation:, patient:)
@@ -1019,28 +887,6 @@ describe SchoolMove do
             create(
               :session,
               :completed,
-              location: school,
-              organisation:,
-              programme:
-            )
-          end
-
-          include_examples "creates a log entry"
-          include_examples "sets the patient school"
-          include_examples "keeps the patient in the community clinics"
-          include_examples "destroys the school move"
-        end
-
-        context "to a school with a closed session" do
-          let(:school_move) do
-            create(:school_move, :to_school, patient:, school:)
-          end
-
-          let(:school) { create(:school, organisation:) }
-          let(:new_session) do
-            create(
-              :session,
-              :closed,
               location: school,
               organisation:,
               programme:

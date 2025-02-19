@@ -18,7 +18,7 @@ class GovukNotifyPersonalisation
       programme || vaccination_record&.programme || consent_form&.programme ||
         consent&.programme
     @session =
-      session || consent_form&.actual_upcoming_session ||
+      session || consent_form&.actual_session ||
         consent_form&.original_session || vaccination_record&.session
     @organisation =
       session&.organisation || consent_form&.organisation ||
