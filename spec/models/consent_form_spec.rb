@@ -316,7 +316,7 @@ describe ConsentForm do
     it "returns the full name as a string" do
       consent_form =
         build(:consent_form, given_name: "John", family_name: "Doe")
-      expect(consent_form.full_name).to eq("John Doe")
+      expect(consent_form.full_name).to eq("DOE, John")
     end
   end
 

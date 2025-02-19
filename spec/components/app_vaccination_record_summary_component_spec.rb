@@ -204,10 +204,17 @@ describe AppVaccinationRecordSummaryComponent do
 
   describe "vaccinator row" do
     context "when the user is present" do
+      let(:vaccination_record) do
+        create(
+          :vaccination_record,
+          performed_by: create(:user, given_name: "Test", family_name: "Nurse")
+        )
+      end
+
       it do
         expect(rendered).to have_css(
           ".nhsuk-summary-list__row",
-          text: "Vaccinator\nTest User"
+          text: "Vaccinator\nNURSE, Test"
         )
       end
     end
@@ -218,14 +225,14 @@ describe AppVaccinationRecordSummaryComponent do
           :vaccination_record,
           performed_by: nil,
           performed_by_given_name: "Test",
-          performed_by_family_name: "User"
+          performed_by_family_name: "Nurse"
         )
       end
 
       it do
         expect(rendered).to have_css(
           ".nhsuk-summary-list__row",
-          text: "Vaccinator\nTest User"
+          text: "Vaccinator\nNURSE, Test"
         )
       end
     end

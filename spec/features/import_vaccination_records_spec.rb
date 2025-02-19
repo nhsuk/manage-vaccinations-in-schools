@@ -138,7 +138,7 @@ describe "Immunisation imports" do
     expect(page).to have_content(
       "Full nameNHS numberDate of birthVaccination date"
     )
-    expect(page).to have_content("Full name Chyna Pickle")
+    expect(page).to have_content("Full name PICKLE, Chyna")
     expect(page).to have_content(/NHS number.*742.*018.*0008/)
     expect(page).to have_content("Date of birth 12 September 2010")
     expect(page).to have_content("Vaccination date 14 May 2024")
@@ -157,11 +157,11 @@ describe "Immunisation imports" do
 
   def then_i_should_see_the_upload
     expect(page).to have_content("Imported on")
-    expect(page).to have_content("Imported byTest User")
+    expect(page).to have_content("Imported byUSER, Test")
   end
 
   def when_i_click_on_a_vaccination_record
-    click_on "Chyna Pickle"
+    click_on "PICKLE, Chyna"
   end
 
   def when_i_click_on_cohorts
@@ -182,9 +182,9 @@ describe "Immunisation imports" do
   end
 
   def then_i_should_see_the_vaccination_record
-    expect(page).to have_content("Chyna Pickle")
+    expect(page).to have_content("PICKLE, Chyna")
     expect(page).to have_content("Child")
-    expect(page).to have_content("Full nameChyna Pickle")
+    expect(page).to have_content("Full namePICKLE, Chyna")
     expect(page).to have_content("Vaccination details")
     expect(page).to have_content("OutcomeVaccinated")
   end

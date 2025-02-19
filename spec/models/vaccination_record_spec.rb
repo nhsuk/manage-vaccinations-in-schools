@@ -131,7 +131,7 @@ describe VaccinationRecord do
 
       it do
         expect(performed_by).to have_attributes(
-          full_name: "John Smith",
+          full_name: "SMITH, John",
           given_name: "John",
           family_name: "Smith"
         )

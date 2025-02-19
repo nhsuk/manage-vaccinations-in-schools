@@ -114,10 +114,10 @@ class GovukNotifyPersonalisation
     patient_or_consent_form = consent_form || patient
 
     if patient_or_consent_form.has_preferred_name?
-      patient_or_consent_form.full_name +
-        " (known as #{patient_or_consent_form.preferred_full_name})"
+      patient_or_consent_form.full_name(context: :parents) +
+        " (known as #{patient_or_consent_form.preferred_full_name(context: :parents)})"
     else
-      patient_or_consent_form.full_name
+      patient_or_consent_form.full_name(context: :parents)
     end
   end
 

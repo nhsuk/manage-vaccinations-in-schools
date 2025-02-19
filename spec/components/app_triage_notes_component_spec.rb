@@ -39,7 +39,7 @@ describe AppTriageNotesComponent do
     it { should have_css("h3", text: "Triaged decision: Safe to vaccinate") }
     it { should have_css("p", text: "Some notes") }
     it { should have_css("p", text: "4 December 2023 at 10:04am") }
-    it { should have_css("p", text: "Joe Gear") }
+    it { should have_css("p", text: "GEAR, Joe") }
     it { should_not have_css("hr") }
   end
 
@@ -83,7 +83,7 @@ describe AppTriageNotesComponent do
     it { should have_css("h3", text: "Completed pre-screening checks") }
     it { should have_css("p", text: "Some notes") }
     it { should have_css("p", text: "4 December 2023 at 10:04am") }
-    it { should have_css("p", text: "Joe Gear") }
+    it { should have_css("p", text: "GEAR, Joe") }
     it { should_not have_css("hr") }
   end
 end

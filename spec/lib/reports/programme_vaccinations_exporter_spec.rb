@@ -415,7 +415,7 @@ describe Reports::ProgrammeVaccinationsExporter do
 
       it "includes the information" do
         expect(rows.first.to_hash).to include(
-          "GILLICK_ASSESSED_BY" => "Test Nurse",
+          "GILLICK_ASSESSED_BY" => "NURSE, Test",
           "GILLICK_ASSESSMENT_DATE" => "2024-01-01",
           "GILLICK_ASSESSMENT_NOTES" => "Assessed as Gillick competent",
           "GILLICK_NOTIFY_PARENTS" => "",
@@ -474,7 +474,7 @@ describe Reports::ProgrammeVaccinationsExporter do
 
       it "includes the information" do
         expect(rows.first.to_hash).to include(
-          "TRIAGED_BY" => "Test Nurse",
+          "TRIAGED_BY" => "NURSE, Test",
           "TRIAGE_DATE" => Date.current.strftime("%Y-%m-%d"),
           "TRIAGE_NOTES" => "Okay to vaccinate",
           "TRIAGE_STATUS" => "Ready to vaccinate"
