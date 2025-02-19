@@ -15,6 +15,7 @@ require "action_text/engine"
 require "action_view/railtie"
 require "action_cable/engine"
 require "rails/test_unit/railtie"
+require "cgi"
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
@@ -39,6 +40,18 @@ module ManageVaccinations
       host = db_config["host"]
       port = db_config["port"]
       dbname = db_config["dbname"]
+      ENV[
+        "DATABASE_URL"
+      ] = "postgres://#{username}:#{password}@#{host}:#{port}/#{dbname}"
+    elsif ENV["DB_CREDENTIALS"].present?
+      # for environment which uses RDS aurora managed credentials only the the username
+      # and password is automatically set. The environment variable is then DB_CREDENTIALS
+      db_config = JSON.parse(ENV["DB_CREDENTIALS"])
+      username = CGI.escape(db_config["username"])
+      password = CGI.escape(db_config["password"])
+      host = CGI.escape(ENV["DB_HOST"])
+      dbname = CGI.escape(db_config["DB_NAME"])
+      port = ENV.fetch("DB_PORT", 5432)
       ENV[
         "DATABASE_URL"
       ] = "postgres://#{username}:#{password}@#{host}:#{port}/#{dbname}"
