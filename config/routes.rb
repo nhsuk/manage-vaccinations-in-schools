@@ -249,7 +249,8 @@ Rails.application.routes.draw do
             as: "consents",
             to:
               redirect(
-                "/sessions/%{session_slug}/consents/#{TAB_PATHS[:consents].keys.first}"
+                path:
+                  "/sessions/%{session_slug}/consents/#{TAB_PATHS[:consents].keys.first}"
               )
 
         get ":tab",
@@ -266,7 +267,8 @@ Rails.application.routes.draw do
             as: "triage",
             to:
               redirect(
-                "/sessions/%{session_slug}/triage/#{TAB_PATHS[:triage].keys.first}"
+                path:
+                  "/sessions/%{session_slug}/triage/#{TAB_PATHS[:triage].keys.first}"
               )
 
         get ":tab",
@@ -283,7 +285,8 @@ Rails.application.routes.draw do
             as: "vaccinations",
             to:
               redirect(
-                "/sessions/%{session_slug}/vaccinations/#{TAB_PATHS[:vaccinations].keys.first}"
+                path:
+                  "/sessions/%{session_slug}/vaccinations/#{TAB_PATHS[:vaccinations].keys.first}"
               )
 
         get "batch", to: "vaccinations#batch"
