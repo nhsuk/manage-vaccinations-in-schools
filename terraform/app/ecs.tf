@@ -89,8 +89,7 @@ resource "aws_ecs_task_definition" "task_definition" {
   container_definitions = jsonencode([
     {
       name = local.container_name
-      # TODO: Either ensure the repository is immutable or pull the image using its sha256 digest instead of tag
-      image     = "${var.account_id}.dkr.ecr.eu-west-2.amazonaws.com/${var.docker_image}:${var.image_tag}"
+      image     = "${var.account_id}.dkr.ecr.eu-west-2.amazonaws.com/${var.docker_image}@${var.image_digest}"
       essential = true
       portMappings = [
         {

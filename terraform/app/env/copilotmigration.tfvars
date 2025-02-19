@@ -2,7 +2,6 @@ environment = "copilotmigration"
 db_secret_arn       = null
 dns_certificate_arn = null
 enable_autoscaling = false
-image_tag          = "latest"
 docker_image       = "mavis/webapp"
 
 resource_name = {
@@ -15,3 +14,9 @@ resource_name = {
 }
 
 rails_master_key_path = "/copilot/mavis/copilotmigration/secrets/RAILS_MASTER_KEY"
+
+rails_env = "staging"
+
+splunk_enabled = "true"
+cis2_enabled   = "true"
+pds_enabled    = "true"
