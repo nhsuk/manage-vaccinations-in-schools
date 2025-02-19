@@ -81,8 +81,9 @@ jobs:
         working-directory: ${{ env.tf_dir }}
         run: |
           if [ -z "$DIGEST" ]; then
-            echo "No existing image digest found. Running terraform plan without image_digest."
-            terraform plan -var-file="env/${{ inputs.environment }}.tfvars" -out ${{ runner.temp }}/tfplan
+            echo "No existing image digest found. Running terraform plan with dummy image_digest."
+            terraform plan -var="image_digest=dummy_digest" -var-file="env/${{ inputs.environment }}.tfvars" \
+            -out ${{ runner.temp }}/tfplan
           else
             echo "Running terraform plan with image_digest=$DIGEST"
             terraform plan -var="image_digest=$DIGEST" -var-file="env/${{ inputs.environment }}.tfvars" \
