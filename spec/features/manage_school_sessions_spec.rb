@@ -99,6 +99,7 @@ describe "Manage school sessions" do
         organisation: @organisation,
         programme: @programme
       )
+
     @patient = create(:patient, year_group: 8, session: @session)
 
     create(

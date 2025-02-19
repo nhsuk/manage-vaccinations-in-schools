@@ -211,17 +211,7 @@ class Session < ApplicationRecord
     return if closed?
     return unless completed?
 
-    ActiveRecord::Base.transaction do
-      generic_clinic_session_id = organisation.generic_clinic_session.id
-
-      PatientSession.import!(
-        %i[patient_id session_id],
-        patients_to_move_to_clinic.map { [_1.id, generic_clinic_session_id] },
-        on_duplicate_key_ignore: true
-      )
-
-      update!(closed_at: Time.current)
-    end
+    update!(closed_at: Time.current)
   end
 
   def set_notification_dates
