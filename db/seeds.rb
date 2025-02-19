@@ -92,17 +92,18 @@ def attach_specific_school_to_organisation_if_present(organisation:, urn:)
 end
 
 def get_location_for_session(organisation, programmes)
+  year_groups = programmes.flat_map(&:year_groups).uniq
   loop do
     location =
       organisation
         .locations
-        .for_year_groups(programmes.flat_map(&:year_groups).uniq)
+        .for_year_groups(year_groups)
         .sample ||
         FactoryBot.create(
           :location,
           :school,
           organisation:,
-          year_groups: programmes.flat_map(&:year_groups).uniq
+          year_groups:
         )
 
     return location unless organisation.sessions.exists?(location:)
@@ -117,7 +118,7 @@ def create_session(
   year_groups: nil
 )
   programmes = programme_types.map { |type| Programme.find_by!(type:) }
-  year_groups ||= programmes.first.year_groups
+  year_groups ||= programmes.flat_map(&:year_groups).uniq
 
   programmes.each do |programme|
     FactoryBot.create_list(
