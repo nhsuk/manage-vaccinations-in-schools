@@ -275,16 +275,13 @@ class Patient < ApplicationRecord
       self.date_of_death = pds_patient.date_of_death
 
       if date_of_death_changed?
-        clear_upcoming_sessions unless date_of_death.nil?
+        clear_upcoming_sessions! unless date_of_death.nil?
         self.date_of_death_recorded_at = Time.current
       end
 
       # If we've got a response from DPS we know the patient is valid,
       # otherwise PDS will return a 404 status.
-      if invalidated?
-        self.invalidated_at = nil
-        add_to_upcoming_sessions!
-      end
+      self.invalidated_at = nil if invalidated?
 
       if pds_patient.restricted
         self.restricted_at = Time.current unless restricted?
@@ -311,10 +308,7 @@ class Patient < ApplicationRecord
   def invalidate!
     return if invalidated?
 
-    ActiveRecord::Base.transaction do
-      clear_upcoming_sessions
-      update!(invalidated_at: Time.current)
-    end
+    update!(invalidated_at: Time.current)
   end
 
   def dup_for_pending_changes
@@ -394,7 +388,7 @@ class Patient < ApplicationRecord
     end
   end
 
-  def clear_upcoming_sessions
+  def clear_upcoming_sessions!
     patient_sessions
       .includes(
         :programmes,
