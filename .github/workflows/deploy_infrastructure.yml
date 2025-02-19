@@ -1,0 +1,135 @@
+name: TF Deploy Infrastructure with Terraform
+run-name: TF Deploy AWS infrastructure for ${{ inputs.environment }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Deployment environment"
+        required: true
+        type: choice
+        options:
+          - qa
+          - poc
+          - copilotmigration
+          - test
+          - preview
+          - training
+#          - production
+
+env:
+  aws-role: ${{ inputs.environment == 'production'
+    && 'arn:aws:iam::820242920762:role/GitHubActionsRole'
+    || 'arn:aws:iam::393416225559:role/GitHubActionsRole' }}
+  tf_dir: terraform/app
+
+jobs:
+  GetDeployedDigest:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ env.tf-dir }}
+    steps:
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ env.aws-role }}
+          aws-region: eu-west-2
+      - name: Install terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.10.5
+      - name: Install AWS Cli
+        run: |
+          sudo snap install --classic aws-cli
+      - name: Initialize backend
+        run: |
+          terraform init -backend-config="env/${{ inputs.environment }}-backend.hcl"
+          echo "application=$(terraform output -raw codedeploy_application_name)" >> $GITHUB_ENV
+          echo "application_group=$(terraform output -raw codedeploy_deployment_group_name)" >> $GITHUB_ENV
+          echo "CLUSTER_NAME=$(terraform output -raw mavis_cluster_name)" >> $GITHUB_ENV
+          echo "SERVICE_NAME=$(terraform output -raw mavis_service_name)" >> $GITHUB_ENV
+      - name: Check if any deployments are running
+        run: |
+          running_deployment=$(aws deploy list-deployments --application-name blue-green-codedeploy-poc \
+          --deployment-group-name codedeploy-group-poc --include-only-statuses InProgress \
+          --query 'deployments[0]' --output text)
+          if [ "$running_deployment" -ne "none" ]; then
+            echo "A mavis deployment for ${{ inputs.environment }} is currently running: $running_deployment"
+            echo "Aborting infrastructure deployment"
+            exit 1
+          fi
+      - name: Get image Digest
+        run: |
+          TASK_DEFINITION_ARN=$(aws ecs describe-services --cluster $CLUSTER_NAME --services $SERVICE_NAME \
+          --query "services[0].taskDefinition" --output text)
+          MAVIS_IMAGE=$(aws ecs describe-task-definition --task-definition $TASK_DEFINITION_ARN \
+          --query "taskDefinition.containerDefinitions[0].image" --output text)
+          echo "DIGEST=${MAVIS_IMAGE#*@}" >> ${{ runner.temp }}/env_file
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: env_file
+          path: ${{ runner.temp }}/env_file
+  TerraformPlan:
+    runs-on: ubuntu-latest
+    needs: GetDeployedDigest
+    defaults:
+      run:
+        working-directory: ${{ env.tf-dir }}
+    steps:
+      - name: Upload artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: env_file
+          path: ${{ runner.temp }}/env_file
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ env.aws-role }}
+          aws-region: eu-west-2
+      - name: Install terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.10.5
+      - name: Terraform Plan
+        id: plan
+        run: |
+          source ${{ runner.temp }}/env_file
+          terraform init -backend-config="env/${{ inputs.environment }}-backend.hcl"
+          terraform plan -var="image_digest=$DIGEST" -var-file="env/${{ inputs.environment }}.tfvars" \
+          -out ${{ runner.temp }}/tfplan
+      - name: Validate the changes
+        run: |
+          ./terraform/validate_plan.sh ${{ steps.plan.outputs.stdout }}
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: tfplan
+          path: ${{ runner.temp }}/tfplan
+  ApplyUpdate:
+    runs-on: ubuntu-latest
+    needs: TerraformPlan
+    environment: ${{ inputs.environment }}
+    defaults:
+      run:
+        working-directory: ${{ env.tf-dir }}
+    steps:
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ env.aws-role }}
+          aws-region: eu-west-2
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: tfplan
+          path: ${{ runner.temp }}/tfplan
+      - name: Install terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.10.5
+      - name: Apply the changes
+        run: |
+          terraform init -backend-config="env/${{ inputs.environment }}-backend.hcl"
+          terraform apply ${{ runner.temp }}/tfplan

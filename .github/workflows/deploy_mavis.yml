@@ -1,0 +1,134 @@
+name: TF Deploy Mavis
+run-name: TF Deploy Mavis on ${{ inputs.environment }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Deployment environment"
+        required: true
+        type: choice
+        options:
+          - qa
+          - poc
+          - copilotmigration
+          - test
+          - preview
+          - training
+      #          - production
+      image_tag:
+        description: "Docker image tag"
+        required: false
+        type: string
+
+env:
+  aws-role: ${{ inputs.environment == 'production'
+    && 'arn:aws:iam::820242920762:role/GitHubActionsRole'
+    || 'arn:aws:iam::393416225559:role/GitHubActionsRole' }}
+  tf-dir: terraform/app
+
+jobs:
+  GetImageDigest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ env.aws-role }}
+          aws-region: eu-west-2
+      - name: Login to ECR
+        uses: aws-actions/amazon-ecr-login@v2
+      - name: pull docker image
+        run: |
+          docker pull ${{ steps.login-ecr.outputs.registry }}:${{ inputs.image_tag || github.sha }}
+      - name: Get image digest
+        run: |
+          DOCKER_DIGEST=$(docker inspect --format='{{index .RepoDigests 0}}' mavis:latest)
+          DIGEST=${DOCKER_DIGEST#*@}
+          echo "DIGEST=$DIGEST" >> digest.env
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: digest
+          path: "digest.env"
+  PlanUpdate:
+    runs-on: ubuntu-latest
+    needs: GetImageDigest
+    defaults:
+      run:
+        working-directory: ${{ env.tf-dir }}
+    steps:
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ env.aws-role }}
+          aws-region: eu-west-2
+      - name: Download artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: digest
+      - name: Install terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.10.5
+      - name: Update the task definition
+        id: plan
+        run: |
+          source digest.env
+          terraform init -backend-config="env/${{ inputs.environment }}-backend.hcl"
+          terrafom plan -var="image_digest=$DIGEST" -target=aws_ecs_task_definition.task_definition \
+          -target=aws_s3_object.appspec_object -var-file="env/${{ inputs.environment }}.tfvars" \
+          -out=${{ runner.temp }}/tfplan
+      - name: Validate the changes
+        run: |
+          ./../scripts/tf_task_definition_check.sh ${{ steps.plan.outputs.stdout }}
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: tfplan
+          path: ${{ runner.temp }}/tfplan
+  DeployUpdate:
+    runs-on: ubuntu-latest
+    needs: PlanUpdate
+    environment: ${{ inputs.environment }}
+    steps:
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ env.aws-role }}
+          aws-region: eu-west-2
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: tfplan
+          path: ${{ runner.temp }}/tfplan
+      - name: Install terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.10.5
+      - name: Apply the changes
+        run: |
+          cd ${{ env.tf-dir }}
+          terraform init -backend-config="env/${{ inputs.environment }}-backend.hcl"
+          terraform apply ${{ runner.temp }}/tfplan
+          echo "s3_bucket=$(terraform output -raw s3_bucket)" >> $GITHUB_ENV
+          echo "s3_key=$(terraform output -raw s3_key)" >> $GITHUB_ENV
+          echo "application=$(terraform output -raw codedeploy_application_name)" >> $GITHUB_ENV
+          echo "application_group=$(terraform output -raw codedeploy_deployment_group_name)" >> $GITHUB_ENV
+      - name: Install AWS CLI
+        run: |
+          sudo snap install --classic aws-cli
+      - name: Trigger CodeDeploy deployment
+        run: |
+          deployment_id=$(aws deploy create-deployment \
+          --application-name $application --deployment-group-name $application_group \
+          --s3-location bucket=appspec-bucket-poc,key=appspec.yaml,bundleType=yaml \
+          | jq -r '.deploymentId')
+          echo "Deployment started: $deployment_id"
+          echo "deployment_id=$deployment_id" >> $GITHUB_ENV
+      - name: Wait up to 30 minutes for deployment to complete
+        run: |
+          aws deploy wait deployment-successful --deployment-id $deployment_id
+          echo "Deployment successful"
