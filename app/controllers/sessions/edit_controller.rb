@@ -8,7 +8,7 @@ class Sessions::EditController < ApplicationController
   end
 
   def update_programmes
-    if @session.can_change_programmes? && @session.update(programmes_params)
+    if @session.update(programmes_params)
       redirect_to edit_session_path(@session)
     else
       render :programmes, status: :unprocessable_entity

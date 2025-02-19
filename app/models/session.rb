@@ -174,10 +174,6 @@ class Session < ApplicationRecord
     dates.select(&:future?)
   end
 
-  def can_change_programmes?
-    open? && dates.all?(&:future?)
-  end
-
   def can_change_notification_dates?
     consent_notifications.empty? && session_notifications.empty?
   end
