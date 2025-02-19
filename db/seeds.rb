@@ -95,16 +95,8 @@ def get_location_for_session(organisation, programmes)
   year_groups = programmes.flat_map(&:year_groups).uniq
   loop do
     location =
-      organisation
-        .locations
-        .for_year_groups(year_groups)
-        .sample ||
-        FactoryBot.create(
-          :location,
-          :school,
-          organisation:,
-          year_groups:
-        )
+      organisation.locations.for_year_groups(year_groups).sample ||
+        FactoryBot.create(:location, :school, organisation:, year_groups:)
 
     return location unless organisation.sessions.exists?(location:)
   end
@@ -113,11 +105,10 @@ end
 def create_session(
   user,
   organisation,
-  programme_types: ["hpv"],
+  programmes:,
   completed: false,
   year_groups: nil
 )
-  programmes = programme_types.map { |type| Programme.find_by!(type:) }
   year_groups ||= programmes.flat_map(&:year_groups).uniq
 
   programmes.each do |programme|
@@ -298,22 +289,26 @@ def create_school_moves(organisation)
 end
 
 def create_organisation_sessions(user, organisation)
+  hpv = Programme.find_by!(type: "hpv")
+  menacwy = Programme.find_by!(type: "menacwy")
+  td_ipv = Programme.find_by!(type: "td_ipv")
+
   # HPV-only sessions
-  create_session(user, organisation, programme_types: ["hpv"], completed: false)
-  create_session(user, organisation, programme_types: ["hpv"], completed: true)
+  create_session(user, organisation, programmes: [hpv], completed: false)
+  create_session(user, organisation, programmes: [hpv], completed: true)
 
   # MenACWY and Td/IPV combined sessions
   create_session(
     user,
     organisation,
-    programme_types: %w[menacwy td_ipv],
+    programmes: [menacwy, td_ipv],
     completed: false,
     year_groups: [8, 9, 10]
   )
   create_session(
     user,
     organisation,
-    programme_types: %w[menacwy td_ipv],
+    programmes: [menacwy, td_ipv],
     completed: true,
     year_groups: [8, 9, 10]
   )
@@ -322,14 +317,14 @@ def create_organisation_sessions(user, organisation)
   create_session(
     user,
     organisation,
-    programme_types: %w[menacwy td_ipv hpv],
+    programmes: [menacwy, td_ipv, hpv],
     completed: false,
     year_groups: [8, 9, 10]
   )
   create_session(
     user,
     organisation,
-    programme_types: %w[menacwy td_ipv hpv],
+    programmes: [menacwy, td_ipv, hpv],
     completed: true,
     year_groups: [8, 9, 10]
   )
