@@ -1,5 +1,16 @@
 # frozen_string_literal: true
 
+# Use this module to send out additional consent reminders for Hertfordshire's
+# sessions. The schedule is hardcoded into this module, which can be changed
+# later. Use this module like so:
+#
+#   organisation = Organisation.find_by(ods_code: "RY4")
+#   session = organisation.sessions.find(___)
+#   HertsConsentReminders.send_consent_reminders(session)
+#
+# `filter_patients_to_send_consents` can also be used to test which patients
+# will be sent notifications.
+
 module HertsConsentReminders
   REMINDERS_BEFORE_SESSION_DAYS = [14, 7, 3].freeze
 
