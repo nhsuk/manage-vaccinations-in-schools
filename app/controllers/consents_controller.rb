@@ -5,7 +5,7 @@ class ConsentsController < ApplicationController
   include PatientSortingConcern
 
   before_action :set_session
-  before_action :set_programme, except: :index
+  before_action :set_programme
   before_action :set_patient_session, except: :index
   before_action :set_patient, except: :index
   before_action :set_consent, except: %i[index create send_request]
@@ -22,8 +22,6 @@ class ConsentsController < ApplicationController
         .eager_load(:patient)
         .order_by_name
 
-    @programme = @session.programmes.first # TODO: handle multiple programmes
-
     tab_patient_sessions =
       group_patient_sessions_by_conditions(
         all_patient_sessions,
@@ -35,7 +33,7 @@ class ConsentsController < ApplicationController
     @tab_counts = count_patient_sessions(tab_patient_sessions)
     @patient_sessions = tab_patient_sessions[@current_tab] || []
 
-    sort_and_filter_patients!(@patient_sessions)
+    sort_and_filter_patients!(@patient_sessions, programme: @programme)
 
     session[:current_section] = "consents"
 
@@ -135,13 +133,17 @@ class ConsentsController < ApplicationController
 
   def set_session
     @session =
-      policy_scope(Session).includes(:location, :organisation).find_by!(
-        slug: params[:session_slug]
-      )
+      policy_scope(Session).includes(
+        :location,
+        :organisation,
+        :programmes
+      ).find_by!(slug: params[:session_slug])
   end
 
   def set_programme
-    @programme = @session.programmes.find_by!(type: params[:programme_type])
+    @programme =
+      @session.programmes.find_by(type: params[:programme_type]) ||
+        @session.programmes.first
   end
 
   def set_patient_session
