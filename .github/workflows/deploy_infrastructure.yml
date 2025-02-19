@@ -47,21 +47,29 @@ jobs:
         working-directory: ${{ env.tf_dir }}
         run: |
           terraform init -backend-config="env/${{ inputs.environment }}-backend.hcl"
-          echo "application=$(terraform output -raw codedeploy_application_name)" >> $GITHUB_ENV
-          echo "application_group=$(terraform output -raw codedeploy_deployment_group_name)" >> $GITHUB_ENV
-          echo "CLUSTER_NAME=$(terraform output -raw mavis_cluster_name)" >> $GITHUB_ENV
-          echo "SERVICE_NAME=$(terraform output -raw mavis_service_name)" >> $GITHUB_ENV
+          APPLICATION=$(terraform output -raw codedeploy_application_name)
+          APPLICATION_GROUP=$(terraform output -raw codedeploy_deployment_group_name)
+          CLUSTER_NAME=$(terraform output -raw mavis_cluster_name)
+          SERVICE_NAME=$(terraform output -raw mavis_service_name)
+          if [ "$(terraform state list | wc -l)" -eq 0 ]; then
+            echo "No existing state found. Skipping deployment check."
+            STATE_EXISTS=false
+          else
+            STATE_EXISTS=true
+          fi
       - name: Check if any deployments are running
+        if: ${{ env.STATE_EXISTS }}
         run: |
-          running_deployment=$(aws deploy list-deployments --application-name blue-green-codedeploy-poc \
-          --deployment-group-name codedeploy-group-poc --include-only-statuses InProgress \
+          running_deployment=$(aws deploy list-deployments --application-name $APPLICATION_NAME \
+          --deployment-group-name $APPLICATION_GROUP --include-only-statuses InProgress \
           --query 'deployments[0]' --output text)
           if [ "$running_deployment" -ne "none" ]; then
             echo "A mavis deployment for ${{ inputs.environment }} is currently running: $running_deployment"
             echo "Aborting infrastructure deployment"
             exit 1
           fi
-      - name: Get image Digest
+      - name: Get currently deployed image digest
+        if: ${{ env.STATE_EXISTS }}
         run: |
           TASK_DEFINITION_ARN=$(aws ecs describe-services --cluster $CLUSTER_NAME --services $SERVICE_NAME \
           --query "services[0].taskDefinition" --output text)
@@ -72,8 +80,14 @@ jobs:
         id: plan
         working-directory: ${{ env.tf_dir }}
         run: |
-          terraform plan -var="image_digest=$DIGEST" -var-file="env/${{ inputs.environment }}.tfvars" \
-          -out ${{ runner.temp }}/tfplan
+          if [ -z "$DIGEST" ]; then
+            echo "No existing image digest found. Running terraform plan without image_digest."
+            terraform plan -var-file="env/${{ inputs.environment }}.tfvars" -out ${{ runner.temp }}/tfplan
+          else
+            echo "Running terraform plan with image_digest=$DIGEST"
+            terraform plan -var="image_digest=$DIGEST" -var-file="env/${{ inputs.environment }}.tfvars" \
+            -out ${{ runner.temp }}/tfplan
+          fi
       - name: Validate the changes
         run: |
           ./terraform/scripts/validate_plan.sh ${{ steps.plan.outputs.stdout }}
