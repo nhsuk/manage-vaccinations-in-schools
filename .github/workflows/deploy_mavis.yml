@@ -41,7 +41,8 @@ jobs:
       - name: Login to ECR
         uses: aws-actions/amazon-ecr-login@v2
       - name: pull docker image
-        run: docker pull ${{ steps.login-ecr.outputs.registry }}:${{ image_tag || github.sha }}
+        run: |
+          docker pull ${{ steps.login-ecr.outputs.registry }}:${{ inputs.image_tag || github.sha }}
       - name: Get image digest
         run: |
           DOCKER_DIGEST=$(docker inspect --format='{{index .RepoDigests 0}}' mavis:latest)
