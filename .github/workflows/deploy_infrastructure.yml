@@ -1,5 +1,5 @@
-name: TF Deploy Infrastructure with Terraform
-run-name: TF Deploy AWS infrastructure for ${{ inputs.environment }}
+name: Deploy Infrastructure with Terraform
+run-name: Deploy AWS infrastructure for ${{ inputs.environment }}
 
 on:
   workflow_dispatch:
@@ -26,9 +26,9 @@ env:
 jobs:
   TerraformPlan:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ${{ env.tf_dir }}
+#    defaults:
+#      run:
+#        working-directory: ${{ env.tf_dir }}
     permissions:
       id-token: write
     steps:
@@ -71,7 +71,6 @@ jobs:
       - name: Terraform Plan
         id: plan
         run: |
-          terraform init -backend-config="env/${{ inputs.environment }}-backend.hcl"
           terraform plan -var="image_digest=$DIGEST" -var-file="env/${{ inputs.environment }}.tfvars" \
           -out ${{ runner.temp }}/tfplan
       - name: Validate the changes
