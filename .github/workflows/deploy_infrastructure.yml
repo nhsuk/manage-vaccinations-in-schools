@@ -29,6 +29,8 @@ jobs:
     defaults:
       run:
         working-directory: ${{ env.tf_dir }}
+    permissions:
+      id-token: write
     steps:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -87,6 +89,8 @@ jobs:
     defaults:
       run:
         working-directory: ${{ env.tf_dir }}
+    permissions:
+      id-token: write
     steps:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
