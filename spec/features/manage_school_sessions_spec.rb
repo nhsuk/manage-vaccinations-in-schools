@@ -47,7 +47,7 @@ describe "Manage school sessions" do
     then_i_see_no_sessions
 
     when_i_go_to_unscheduled_sessions
-    then_i_see_no_sessions
+    then_i_see_the_organisation_clinic
 
     when_i_go_to_scheduled_sessions
     then_i_see_the_school
@@ -91,7 +91,7 @@ describe "Manage school sessions" do
         programmes: [@programme]
       )
     @location = create(:school, :secondary, organisation: @organisation)
-    session =
+    @session =
       create(
         :session,
         :unscheduled,
@@ -99,7 +99,13 @@ describe "Manage school sessions" do
         organisation: @organisation,
         programme: @programme
       )
-    @patient = create(:patient, year_group: 8, session:)
+    @patient = create(:patient, year_group: 8, session: @session)
+
+    create(
+      :patient_session,
+      patient: @patient,
+      session: @organisation.generic_clinic_session
+    )
   end
 
   def when_i_go_to_todays_sessions_as_a_nurse
@@ -245,7 +251,7 @@ describe "Manage school sessions" do
   end
 
   def when_the_parent_visits_the_consent_form
-    visit start_parent_interface_consent_forms_path(Session.last, @programme)
+    visit start_parent_interface_consent_forms_path(@session, @programme)
   end
 
   def then_they_can_give_consent
@@ -259,7 +265,7 @@ describe "Manage school sessions" do
   end
 
   def then_they_can_no_longer_give_consent
-    visit start_parent_interface_consent_forms_path(Session.last, @programme)
+    visit start_parent_interface_consent_forms_path(@session, @programme)
     expect(page).to have_content("The deadline for responding has passed")
   end
 
