@@ -123,6 +123,7 @@ module PatientSessionStatusConcern
     end
 
     def vaccination_administered?(programme:)
+      # TODO: This logic doesn't work for vaccinations that require multiple doses.
       vaccination_records(programme:).any?(&:administered?)
     end
 
