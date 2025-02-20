@@ -3,7 +3,11 @@
 class PatientSessionStats
   def initialize(patient_sessions, programme:, keys: nil)
     @patient_sessions =
-      patient_sessions.sort_by(&:created_at).reverse.uniq(&:patient_id)
+      patient_sessions
+        .sort_by(&:created_at)
+        .reverse
+        .uniq(&:patient_id)
+        .select { it.patient.eligible_for?(programme:) }
     @programme = programme
     @keys =
       keys ||
