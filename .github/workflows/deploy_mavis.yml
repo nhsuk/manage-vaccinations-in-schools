@@ -62,7 +62,7 @@ jobs:
         working-directory: ${{ env.tf-dir }}
         run: |
           terraform init -backend-config="env/${{ inputs.environment }}-backend.hcl"
-          terrafom plan -var="image_digest=$DIGEST" -target=aws_ecs_task_definition.task_definition \
+          terraform plan -var="image_digest=$DIGEST" -target=aws_ecs_task_definition.task_definition \
           -target=aws_s3_object.appspec_object -var-file="env/${{ inputs.environment }}.tfvars" \
           -out=${{ runner.temp }}/tfplan
       - name: Validate the changes
