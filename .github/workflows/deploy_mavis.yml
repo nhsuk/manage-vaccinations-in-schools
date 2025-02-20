@@ -64,10 +64,9 @@ jobs:
           terraform init -backend-config="env/${{ inputs.environment }}-backend.hcl"
           terraform plan -var="image_digest=$DIGEST" -target=aws_ecs_task_definition.task_definition \
           -target=aws_s3_object.appspec_object -var-file="env/${{ inputs.environment }}.tfvars" \
-          -out=${{ runner.temp }}/tfplan
+          -out=${{ runner.temp }}/tfplan | tee tf_stdout
       - name: Validate the changes
         run: |
-          echo ${{ steps.plan.outputs.stdout }} > tf_stdout
           ./terraform/scripts/check_task_definition.sh tf_stdout
       - name: Upload artifact
         uses: actions/upload-artifact@v4
