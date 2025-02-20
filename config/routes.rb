@@ -190,6 +190,11 @@ Rails.application.routes.draw do
   resources :school_moves, path: "school-moves", only: %i[index show update]
 
   resources :sessions, only: %i[edit index show], param: :slug do
+    resource :invite_to_clinic,
+             path: "invite-to-clinic",
+             only: %i[edit update],
+             controller: "sessions/invite_to_clinic"
+
     collection do
       get "completed"
       get "scheduled"

@@ -1,0 +1,32 @@
+<% content_for :before_main do %>
+  <%= render AppBacklinkComponent.new(session_path(@session), name: @session.location.name) %>
+<% end %>
+
+<% title = @initial_invitations ? "Invite parents to book a clinic appointment" : "Remind parents to book a clinic appointment" %>
+
+<%= h1 title do %>
+  <span class="nhsuk-caption-l"><%= @session.location.name %></span>
+  <%= title %>
+<% end %>
+
+<% if @initial_invitations %>
+  <p>This school session has been completed.</p>
+
+  <% if @invitations_to_send == 1 %>
+    <p>There is <%= @invitations_to_send %> child currently without clinic appointments. You can send invitations to their parents to book an appointment.</p>
+  <% else %>
+    <p>There are <%= @invitations_to_send %> children currently without clinic appointments. You can send invitations to their parents to book an appointment.</p>
+  <% end %>
+<% else %>
+  <% if @invitations_to_send == 1 %>
+    <p>This will send booking reminders to the parents of <%= @invitations_to_send %> child who has not yet been sent a reminder.</p>
+  <% else %>
+    <p>This will send booking reminders to the parents of <%= @invitations_to_send %> children who have not yet been sent a reminder.</p>
+  <% end %>
+<% end %>
+
+<p>The next clinic is on <%= @generic_clinic_session.next_date.to_fs(:long) %>.</p>
+
+<%= form_with url: session_invite_to_clinic_path(@session), method: :put do |f| %>
+  <%= f.govuk_submit @initial_invitations ? "Send clinic invitations" : "Send booking reminders" %>
+<% end %>

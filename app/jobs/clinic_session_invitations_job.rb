@@ -12,7 +12,11 @@ class ClinicSessionInvitationsJob < ApplicationJob
         # We're only inviting patients who don't have a school.
         # Patients who have a school are sent invitations manually by the
         # nurse when they're finished at a school.
-        SendClinicInitialInvitationsJob.perform_now(session, school: nil)
+        SendClinicInitialInvitationsJob.perform_now(
+          session,
+          school: nil,
+          programme_ids: session.programmes.pluck(:id)
+        )
       end
   end
 end
