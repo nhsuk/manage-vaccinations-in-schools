@@ -30,4 +30,3 @@ else
   exit 1
 fi
 echo "Basic checks passed, only task definition and S3 bucket changes observed."
-return 0
