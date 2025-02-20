@@ -48,7 +48,9 @@ jobs:
         run: |
           terraform init -backend-config="env/${{ inputs.environment }}-backend.hcl"
           APPLICATION_NAME=$(terraform output -raw codedeploy_application_name)
+          echo "Application Name: $APPLICATION_NAME"
           APPLICATION_GROUP=$(terraform output -raw codedeploy_deployment_group_name)
+          echo "Deployment Group Name: $APPLICATION_GROUP"
           running_deployment=$(aws deploy list-deployments --application-name $APPLICATION_NAME \
               --deployment-group-name $APPLICATION_GROUP --include-only-statuses InProgress \
               --query 'deployments[0]' --output text)
