@@ -91,97 +91,108 @@ def attach_specific_school_to_organisation_if_present(organisation:, urn:)
   Location.where(urn:).update_all(team_id: organisation.generic_team.id)
 end
 
-def get_location_for_session(organisation, programme)
+def get_location_for_session(organisation, programmes)
+  year_groups = programmes.flat_map(&:year_groups).uniq
   loop do
     location =
-      organisation.locations.for_year_groups(programme.year_groups).sample ||
-        FactoryBot.create(
-          :location,
-          :school,
-          organisation:,
-          year_groups: programme.year_groups
-        )
+      organisation.locations.for_year_groups(year_groups).sample ||
+        FactoryBot.create(:location, :school, organisation:, year_groups:)
 
     return location unless organisation.sessions.exists?(location:)
   end
 end
 
-def create_session(user, organisation, completed:)
-  programme = Programme.find_by(type: "hpv")
+def create_session(
+  user,
+  organisation,
+  programmes:,
+  completed: false,
+  year_groups: nil
+)
+  year_groups ||= programmes.flat_map(&:year_groups).uniq
 
-  FactoryBot.create_list(
-    :batch,
-    4,
-    organisation:,
-    vaccine: programme.vaccines.active.first
-  )
+  programmes.each do |programme|
+    FactoryBot.create_list(
+      :batch,
+      3,
+      organisation:,
+      vaccine: programme.vaccines.active.first
+    )
+  end
 
-  location = get_location_for_session(organisation, programme)
-
+  location = get_location_for_session(organisation, programmes)
   date = completed ? 1.week.ago.to_date : Date.current
 
   session =
-    FactoryBot.create(:session, date:, organisation:, programme:, location:)
+    FactoryBot.create(
+      :session,
+      date:,
+      organisation:,
+      programme: programmes.first,
+      location:
+    )
+
+  programmes[1..].each { |programme| session.programmes << programme }
 
   session.session_dates.create!(value: date - 1.day)
   session.session_dates.create!(value: date + 1.day)
 
-  year_group = 8
+  programmes.each do |programme|
+    year_groups.each do |year_group|
+      patients_without_consent =
+        FactoryBot.create_list(
+          :patient_session,
+          2,
+          programme:,
+          session:,
+          user:,
+          year_group:
+        )
+      unmatched_patients = patients_without_consent.sample(2).map(&:patient)
+      unmatched_patients.each do |patient|
+        FactoryBot.create(
+          :consent_form,
+          :recorded,
+          programme:,
+          given_name: patient.given_name,
+          family_name: patient.family_name,
+          session:
+        )
+      end
 
-  patients_without_consent =
-    FactoryBot.create_list(
-      :patient_session,
-      4,
-      programme:,
-      session:,
-      user:,
-      year_group:
-    )
-  unmatched_patients = patients_without_consent.sample(2).map(&:patient)
-  unmatched_patients.each do |patient|
-    FactoryBot.create(
-      :consent_form,
-      :recorded,
-      programme:,
-      given_name: patient.given_name,
-      family_name: patient.family_name,
-      session:
-    )
-  end
+      # Add extra consent forms with a successful NHS number lookup
+      temporary_patient = FactoryBot.build(:patient, organisation:)
+      FactoryBot.create(
+        :consent_form,
+        :recorded,
+        programme:,
+        given_name: temporary_patient.given_name,
+        family_name: temporary_patient.family_name,
+        nhs_number: temporary_patient.nhs_number,
+        session:
+      )
 
-  # Add extra consent forms with a successful NHS number lookup
-  2.times do
-    temporary_patient = FactoryBot.build(:patient, organisation:)
-    FactoryBot.create(
-      :consent_form,
-      :recorded,
-      programme:,
-      given_name: temporary_patient.given_name,
-      family_name: temporary_patient.family_name,
-      nhs_number: temporary_patient.nhs_number,
-      session:
-    )
-  end
-
-  %i[
-    consent_given_triage_not_needed
-    consent_given_triage_needed
-    triaged_ready_to_vaccinate
-    consent_refused
-    consent_conflicting
-    vaccinated
-    delay_vaccination
-    unable_to_vaccinate
-  ].each do |trait|
-    FactoryBot.create_list(
-      :patient_session,
-      3,
-      trait,
-      programme:,
-      session:,
-      user:,
-      year_group:
-    )
+      %i[
+        consent_given_triage_not_needed
+        consent_given_triage_needed
+        triaged_ready_to_vaccinate
+        consent_refused
+        consent_conflicting
+        vaccinated
+        delay_vaccination
+        unable_to_vaccinate
+      ].each do |trait|
+        FactoryBot.create_list(
+          :patient_session,
+          1,
+          trait,
+          programme:,
+          session:,
+          user:,
+          year_group:
+        )
+      end
+    end
   end
 end
 
@@ -199,7 +210,7 @@ def setup_clinic(user, organisation)
 
   FactoryBot.create_list(
     :patient_session,
-    4,
+    3,
     programme:,
     session: clinic_session,
     user:,
@@ -230,7 +241,7 @@ end
 
 def create_patients(organisation)
   organisation.schools.each do |school|
-    FactoryBot.create_list(:patient, 5, organisation:, school:)
+    FactoryBot.create_list(:patient, 4, organisation:, school:)
   end
 end
 
@@ -275,6 +286,34 @@ def create_school_moves(organisation)
   end
 end
 
+def create_organisation_sessions(user, organisation)
+  hpv = Programme.find_by!(type: "hpv")
+  menacwy = Programme.find_by!(type: "menacwy")
+  td_ipv = Programme.find_by!(type: "td_ipv")
+
+  # HPV-only sessions
+  create_session(user, organisation, programmes: [hpv], completed: false)
+  create_session(user, organisation, programmes: [hpv], completed: true)
+
+  # MenACWY and Td/IPV combined sessions
+  create_session(
+    user,
+    organisation,
+    programmes: [menacwy, td_ipv],
+    completed: false,
+    year_groups: [8, 9, 10]
+  )
+
+  # All three vaccines combined
+  create_session(
+    user,
+    organisation,
+    programmes: [menacwy, td_ipv, hpv],
+    completed: false,
+    year_groups: [8, 9, 10]
+  )
+end
+
 set_feature_flags
 
 seed_vaccines
@@ -314,8 +353,7 @@ unless Settings.cis2.enabled
   Audited
     .audit_class
     .as_user(user) do
-      create_session(user, organisation, completed: false)
-      create_session(user, organisation, completed: true)
+      create_organisation_sessions(user, organisation)
       setup_clinic(user, organisation)
     end
   create_patients(organisation)
@@ -331,10 +369,7 @@ attach_sample_of_schools_to(organisation)
 
 Audited
   .audit_class
-  .as_user(user) do
-    create_session(user, organisation, completed: false)
-    create_session(user, organisation, completed: true)
-  end
+  .as_user(user) { create_organisation_sessions(user, organisation) }
 create_patients(organisation)
 create_imports(user, organisation)
 create_school_moves(organisation)
