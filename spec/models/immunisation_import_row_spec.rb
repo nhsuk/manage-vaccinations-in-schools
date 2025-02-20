@@ -1211,6 +1211,14 @@ describe ImmunisationImportRow do
 
       it { should eq(1) }
     end
+
+    %w[1P 2P 3P 1B 2B].each_with_index do |value, index|
+      context "with a special value of #{value}" do
+        let(:data) { { "DOSE_SEQUENCE" => value } }
+
+        it { should eq(index + 1) }
+      end
+    end
   end
 
   describe "#patient_date_of_birth" do
