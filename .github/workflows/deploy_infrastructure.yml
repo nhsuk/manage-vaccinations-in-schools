@@ -74,10 +74,10 @@ jobs:
         working-directory: ${{ env.tf_dir }}
         run: |
             terraform plan -var="image_digest=$DIGEST" -var-file="env/${{ inputs.environment }}.tfvars" \
-            -out ${{ runner.temp }}/tfplan
+            -out ${{ runner.temp }}/tfplan | tee ${{ runner.temp }}/tf_stdout
       - name: Validate the changes
         run: |
-          ./terraform/scripts/validate_plan.sh ${{ runner.temp }}/tfplan
+          ./terraform/scripts/validate_plan.sh ${{ runner.temp }}/tf_stdout
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
@@ -101,7 +101,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: tfplan
-          path: ${{ runner.temp }}/tfplan
+          path: ${{ runner.temp }}
       - name: Install terraform
         uses: hashicorp/setup-terraform@v3
         with:
