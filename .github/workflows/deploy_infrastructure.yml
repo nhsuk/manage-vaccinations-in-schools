@@ -47,7 +47,7 @@ jobs:
         working-directory: ${{ env.tf_dir }}
         run: |
           terraform init -backend-config="env/${{ inputs.environment }}-backend.hcl"
-          APPLICATION=$(terraform output -raw codedeploy_application_name)
+          APPLICATION_NAME=$(terraform output -raw codedeploy_application_name)
           APPLICATION_GROUP=$(terraform output -raw codedeploy_deployment_group_name)
           running_deployment=$(aws deploy list-deployments --application-name $APPLICATION_NAME \
               --deployment-group-name $APPLICATION_GROUP --include-only-statuses InProgress \
