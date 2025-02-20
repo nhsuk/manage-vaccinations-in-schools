@@ -134,7 +134,7 @@ class GovukNotifyPersonalisation
   end
 
   def next_session_date
-    session.today_or_future_dates.first&.to_fs(:short_day_of_week)
+    session.next_date&.to_fs(:short_day_of_week)
   end
 
   def next_session_dates

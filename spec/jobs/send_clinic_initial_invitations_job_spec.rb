@@ -1,7 +1,13 @@
 # frozen_string_literal: true
 
 describe SendClinicInitialInvitationsJob do
-  subject(:perform_now) { described_class.perform_now(session, school: nil) }
+  subject(:perform_now) do
+    described_class.perform_now(
+      session,
+      school: nil,
+      programme_ids: [programme.id]
+    )
+  end
 
   let(:programme) { create(:programme) }
   let(:organisation) { create(:organisation, programmes: [programme]) }

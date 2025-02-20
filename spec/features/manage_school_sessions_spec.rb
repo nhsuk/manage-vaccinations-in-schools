@@ -46,9 +46,6 @@ describe "Manage school sessions" do
     when_i_go_to_todays_sessions_as_a_nurse
     then_i_see_no_sessions
 
-    when_i_go_to_unscheduled_sessions
-    then_i_see_the_organisation_clinic
-
     when_i_go_to_scheduled_sessions
     then_i_see_the_school
 
@@ -65,11 +62,14 @@ describe "Manage school sessions" do
     and_i_go_to_completed_sessions
     then_i_see_the_school
 
-    when_i_go_to_unscheduled_sessions
-    then_i_see_the_organisation_clinic
+    when_i_click_on_the_school
+    and_i_click_on_send_invitations
+    then_i_see_the_send_invitations_page
 
-    when_i_click_on_the_organisation_clinic
-    then_i_see_a_child_in_the_cohort
+    when_i_click_on_send_invitations
+    then_i_see_the_invitation_confirmation
+    then_i_see_the_school
+    and_the_parent_receives_an_invitation
   end
 
   def given_my_organisation_is_running_an_hpv_vaccination_programme
@@ -91,7 +91,14 @@ describe "Manage school sessions" do
         programme: @programme
       )
 
-    @patient = create(:patient, year_group: 8, session: @session)
+    @parent = create(:parent)
+
+    @patient =
+      create(:patient, year_group: 8, session: @session, parents: [@parent])
+
+    @organisation.generic_clinic_session.session_dates.create!(
+      value: 1.month.from_now.to_date
+    )
 
     create(
       :patient_session,
@@ -133,6 +140,10 @@ describe "Manage school sessions" do
     expect(page).to have_content(@location.urn)
     expect(page).to have_content("No sessions scheduled")
     expect(page).to have_content("Schedule sessions")
+  end
+
+  def and_i_see_a_child_in_the_cohort
+    expect(page).to have_content("1 child in this session")
   end
 
   def when_i_click_on_schedule_sessions
@@ -263,25 +274,26 @@ describe "Manage school sessions" do
     expect(page).to have_content(@location.name)
   end
 
-  def then_i_see_the_organisation_clinic
-    expect(page).to have_content("Community clinics")
+  def when_i_click_on_send_invitations
+    click_on "Send clinic invitations"
   end
 
-  alias_method :and_i_see_the_organisation_clinic,
-               :then_i_see_the_organisation_clinic
-
-  def when_i_click_on_the_organisation_clinic
-    click_on "Community clinics"
+  def then_i_see_the_send_invitations_page
+    expect(page).to have_content("Invite parents to book a clinic appointment")
+    expect(page).to have_content(
+      "There is 1 child currently without clinic appointments."
+    )
   end
 
-  def then_i_see_no_children_in_the_cohort
-    expect(page).to have_content("Children\n0")
+  alias_method :and_i_click_on_send_invitations,
+               :when_i_click_on_send_invitations
+
+  def then_i_see_the_invitation_confirmation
+    expect(page).to have_content("Clinic invitations sent for 1 child")
   end
 
-  def then_i_see_a_child_in_the_cohort
-    expect(page).to have_content("1 child in this session")
+  def and_the_parent_receives_an_invitation
+    perform_enqueued_jobs
+    expect_email_to @parent.email, :session_clinic_initial_invitation
   end
-
-  alias_method :and_i_see_a_child_in_the_cohort,
-               :then_i_see_a_child_in_the_cohort
 end

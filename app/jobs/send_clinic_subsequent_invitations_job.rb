@@ -8,26 +8,30 @@ class SendClinicSubsequentInvitationsJob < ApplicationJob
   def perform(session)
     raise InvalidLocation unless session.clinic?
 
-    session_date = session.today_or_future_dates.first
+    session_date = session.next_date
     raise NoSessionDates if session_date.nil?
 
-    programmes = session.programmes
+    patient_sessions(session, session_date:).each do |patient_session|
+      send_notification(patient_session:, session_date:)
+    end
+  end
 
-    patient_sessions =
-      session
-        .patient_sessions
-        .eager_load(:patient)
-        .preload(
-          :session_notifications,
-          patient: %i[consents parents vaccination_records]
-        )
+  def patient_sessions(session, session_date:)
+    programmes = session.programmes
 
     # We only send subsequent invitations (reminders) to patients who
     # have already received an invitation.
-    patient_sessions
+
+    session
+      .patient_sessions
+      .eager_load(:patient)
+      .preload(
+        :session_notifications,
+        patient: %i[consents parents vaccination_records]
+      )
       .select { it.session_notifications.any? }
-      .each do |patient_session|
-        send_notification(patient_session:, programmes:, session_date:)
+      .select do |patient_session|
+        should_send_notification?(patient_session:, programmes:, session_date:)
       end
   end
 end

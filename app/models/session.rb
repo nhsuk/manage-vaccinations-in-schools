@@ -127,7 +127,7 @@ class Session < ApplicationRecord
 
   before_create :set_slug
 
-  delegate :clinic?, to: :location
+  delegate :clinic?, :school?, to: :location
 
   def to_param
     slug
@@ -167,8 +167,20 @@ class Session < ApplicationRecord
     dates.select(&:future?)
   end
 
+  def next_date
+    today_or_future_dates.first
+  end
+
   def can_change_notification_dates?
     consent_notifications.empty? && session_notifications.empty?
+  end
+
+  def can_send_clinic_invitations?
+    if clinic?
+      next_date && !completed?
+    else
+      completed? && organisation.generic_clinic_session.next_date
+    end
   end
 
   def <=>(other)

@@ -27,6 +27,16 @@
       <%= govuk_link_to "Import class list records", new_draft_class_import_path(@session) %>
     </li>
   <% end %>
+
+  <% if @session.clinic? && @session.can_send_clinic_invitations? %>
+    <li class="app-action-list__item">
+      <%= govuk_link_to "Send booking reminders", edit_session_invite_to_clinic_path(@session) %>
+    </li>
+  <% elsif @session.school? && @session.can_send_clinic_invitations? %>
+    <li class="app-action-list__item">
+      <%= govuk_link_to "Send clinic invitations", edit_session_invite_to_clinic_path(@session) %>
+    </li>
+  <% end %>
 </ul>
 
 <div class="nhsuk-grid-row">
