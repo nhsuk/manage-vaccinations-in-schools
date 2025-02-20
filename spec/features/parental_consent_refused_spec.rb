@@ -86,7 +86,7 @@ describe "Parental consent" do
     click_on "Continue"
 
     expect(page).to have_content("About you")
-    fill_in "Your name", with: "Jane #{@child.family_name}"
+    fill_in "Full name", with: "Jane #{@child.family_name}"
     choose "Mum" # Your relationship to the child
     fill_in "Email address", with: "jane@example.com"
     fill_in "Phone number", with: "07123456789"

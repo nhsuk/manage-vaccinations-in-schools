@@ -56,7 +56,7 @@ describe "Parental consent" do
     click_button "Continue"
 
     # About you
-    fill_in "Your name", with: "Jane #{@child.family_name}"
+    fill_in "Full name", with: "Jane #{@child.family_name}"
     choose "Mum"
     fill_in "Email address", with: "jane@example.com"
     click_button "Continue"
