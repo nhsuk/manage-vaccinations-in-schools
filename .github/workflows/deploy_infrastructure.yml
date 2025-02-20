@@ -1,4 +1,4 @@
-name: Deploy Infrastructure with Terraform
+name: TF Deploy Infrastructure with Terraform
 run-name: Deploy AWS infrastructure for ${{ inputs.environment }}
 
 on:
