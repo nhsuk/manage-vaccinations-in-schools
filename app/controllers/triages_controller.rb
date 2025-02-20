@@ -118,11 +118,15 @@ class TriagesController < ApplicationController
 
   def redirect_path
     if session[:current_section] == "vaccinations"
-      session_vaccinations_path(@session)
+      session_vaccinations_path(@session, programme_type: @programme)
     elsif session[:current_section] == "consents"
-      session_consents_tab_path(@session, tab: params[:tab])
+      session_consents_tab_path(
+        @session,
+        tab: params[:tab],
+        programme_type: @programme
+      )
     else # if current_section is triage or anything else
-      session_triage_path(@session)
+      session_triage_path(@session, programme_type: @programme)
     end
   end
 end

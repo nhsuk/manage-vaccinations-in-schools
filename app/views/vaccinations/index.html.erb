@@ -29,7 +29,7 @@
 <%= render AppSecondaryNavigationComponent.new do |nav| %>
   <% TAB_PATHS[:vaccinations].each do |tab, state| %>
     <% nav.with_item(selected: @current_tab == state,
-                     href: session_vaccinations_tab_path(@session, tab:)) do %>
+                     href: session_vaccinations_tab_path(@session, tab:, programme_type: @programme)) do %>
       <%= t("patients_table.#{state}.label") %>
       <%= render AppCountComponent.new(count: @tab_counts[state]) %>
     <% end %>
