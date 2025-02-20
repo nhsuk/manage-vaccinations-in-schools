@@ -69,7 +69,7 @@ class Vaccine < ApplicationRecord
     "flu" => 1,
     "hpv" => 3,
     "menacwy" => 1,
-    "td_ipv" => 1
+    "td_ipv" => 5
   }.freeze
 
   def maximum_dose_sequence
