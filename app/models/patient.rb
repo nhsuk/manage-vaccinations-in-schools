@@ -238,6 +238,10 @@ class Patient < ApplicationRecord
     birth_academic_year_changed?
   end
 
+  def eligible_for?(programme:)
+    year_group.in?(programme.year_groups)
+  end
+
   def has_consent?(programme)
     consents.any? { _1.programme_id == programme.id }
   end

@@ -20,6 +20,7 @@ class ConsentsController < ApplicationController
         .preload_for_status
         .preload(patient: { consents: %i[parent patient] })
         .eager_load(:patient)
+        .merge(Patient.in_programme(@programme))
         .order_by_name
 
     tab_patient_sessions =

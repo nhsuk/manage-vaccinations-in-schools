@@ -69,7 +69,7 @@ describe "Parental consent create patient" do
         programme: @programme,
         location:
       )
-    @child = build(:patient) # NB: Build, not create, so we don't persist to DB
+    @child = build(:patient, year_group: 8) # NB: Build, not create, so we don't persist to DB
   end
 
   def when_i_go_to_the_consent_form

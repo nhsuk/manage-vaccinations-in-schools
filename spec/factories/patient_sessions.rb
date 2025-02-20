@@ -27,7 +27,7 @@ FactoryBot.define do
       programme { association :programme }
       organisation { session.organisation }
       user { association :user, organisation: }
-      year_group { nil }
+      year_group { session.programmes.first&.year_groups&.first }
       school { session.location.school? ? session.location : nil }
       home_educated { school.present? ? nil : false }
       location_name do

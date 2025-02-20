@@ -25,6 +25,7 @@ class VaccinationsController < ApplicationController
         .patient_sessions
         .preload_for_status
         .eager_load(:patient)
+        .merge(Patient.in_programme(@programme))
         .order_by_name
 
     grouped_patient_sessions =

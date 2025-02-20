@@ -60,7 +60,7 @@ FactoryBot.define do
       performed_by { association(:user) }
       programme { session&.programmes&.first }
       session { nil }
-      year_group { nil }
+      year_group { programme&.year_groups&.first }
       location_name { nil }
       in_attendance { false }
     end

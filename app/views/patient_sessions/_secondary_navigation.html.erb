@@ -1,10 +1,12 @@
 <%= render AppSecondaryNavigationComponent.new do |nav|
      @session.programmes.each do |programme|
-       nav.with_item(
-         href: session_patient_programme_path(patient_id: @patient.id, programme_type: programme.type),
-         text: programme.name,
-         selected: @programme == programme,
-       )
+       if @patient.eligible_for?(programme:)
+         nav.with_item(
+           href: session_patient_programme_path(patient_id: @patient.id, programme_type: programme.type),
+           text: programme.name,
+           selected: @programme == programme,
+         )
+       end
      end
      nav.with_item(
        href: session_patient_log_path(patient_id: @patient.id),
