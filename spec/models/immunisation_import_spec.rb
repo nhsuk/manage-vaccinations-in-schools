@@ -330,23 +330,5 @@ describe ImmunisationImport do
         expect(existing_patient.reload.pending_changes).to be_empty
       end
     end
-
-    context "with an existing patient in an upcoming session" do
-      let(:programme) { create(:programme, :flu_all_vaccines) }
-      let(:file) { "valid_flu.csv" }
-
-      let(:session) { create(:session, :scheduled, organisation:, programme:) }
-      let(:patient) { create(:patient, nhs_number: "7420180008", session:) }
-
-      it "removes the patient from the upcoming session" do
-        expect(patient.vaccinated?(programme:)).to be(false)
-        expect(patient.upcoming_sessions).to contain_exactly(session)
-
-        process!
-
-        expect(patient.reload.upcoming_sessions).to be_empty
-        expect(patient.vaccinated?(programme:)).to be(true)
-      end
-    end
   end
 end

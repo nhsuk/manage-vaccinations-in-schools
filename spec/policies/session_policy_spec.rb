@@ -18,12 +18,6 @@ describe SessionPolicy do
 
         it { should be(true) }
       end
-
-      context "with a closed session" do
-        let(:session) { create(:session, :closed) }
-
-        it { should be(false) }
-      end
     end
 
     context "with a nurse" do
@@ -40,12 +34,6 @@ describe SessionPolicy do
 
         it { should be(true) }
       end
-
-      context "with a closed session" do
-        let(:session) { create(:session, :closed) }
-
-        it { should be(false) }
-      end
     end
   end
 
@@ -59,64 +47,6 @@ describe SessionPolicy do
     subject(:update?) { policy.update? }
 
     include_examples "edit/update session"
-  end
-
-  shared_examples "close session" do
-    context "with an admin" do
-      let(:user) { create(:admin) }
-
-      context "with a scheduled session" do
-        let(:session) { create(:session, :scheduled) }
-
-        it { should be(false) }
-      end
-
-      context "with a closed session" do
-        let(:session) { create(:session, :closed) }
-
-        it { should be(false) }
-      end
-
-      context "with a completed session" do
-        let(:session) { create(:session, :completed) }
-
-        it { should be(true) }
-      end
-    end
-
-    context "with a nurse" do
-      let(:user) { create(:nurse) }
-
-      context "with a scheduled session" do
-        let(:session) { create(:session, :scheduled) }
-
-        it { should be(false) }
-      end
-
-      context "with a closed session" do
-        let(:session) { create(:session, :closed) }
-
-        it { should be(false) }
-      end
-
-      context "with a completed session" do
-        let(:session) { create(:session, :completed) }
-
-        it { should be(true) }
-      end
-    end
-  end
-
-  describe "#edit_close?" do
-    subject(:edit_close?) { policy.edit_close? }
-
-    include_examples "close session"
-  end
-
-  describe "#update_close?" do
-    subject(:update_close?) { policy.update_close? }
-
-    include_examples "close session"
   end
 
   describe "Scope#resolve" do

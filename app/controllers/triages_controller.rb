@@ -51,8 +51,6 @@ class TriagesController < ApplicationController
     authorize @triage
 
     if @triage.save(context: :consent)
-      @triage.process!
-
       @patient_session
         .reload
         .latest_consents(programme: @triage.programme)

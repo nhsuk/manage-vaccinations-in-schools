@@ -384,12 +384,6 @@ describe Patient do
           true
         ).to(false)
       end
-
-      it "adds the patient to upcoming sessions" do
-        expect(session.patients).not_to include(patient)
-        update_from_pds!
-        expect(session.reload.patients).to include(patient)
-      end
     end
   end
 
@@ -409,18 +403,6 @@ describe Patient do
         expect { invalidate! }.to change(patient, :invalidated_at).from(nil).to(
           Time.current
         )
-      end
-    end
-
-    context "when in an upcoming session" do
-      let(:session) { create(:session, :scheduled) }
-
-      before { create(:patient_session, patient:, session:) }
-
-      it "removes the patient from the session" do
-        expect(session.patients).to include(patient)
-        invalidate!
-        expect(session.patients).not_to include(patient)
       end
     end
   end

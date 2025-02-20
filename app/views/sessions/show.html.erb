@@ -18,13 +18,11 @@
     <%= session_status_tag(@session) %>
   </li>
 
-  <% if @session.open? %>
-    <li class="app-action-list__item">
-      <%= govuk_link_to "Record offline (Excel)", session_path(@session, format: :xlsx) %>
-    </li>
-  <% end %>
+  <li class="app-action-list__item">
+    <%= govuk_link_to "Record offline (Excel)", session_path(@session, format: :xlsx) %>
+  </li>
 
-  <% if @session.open? && @session.location.school? %>
+  <% unless @session.clinic? %>
     <li class="app-action-list__item">
       <%= govuk_link_to "Import class list records", new_draft_class_import_path(@session) %>
     </li>
@@ -103,10 +101,6 @@
 
     <% if policy(@session).edit? %>
       <%= govuk_button_link_to "Edit session", edit_session_path(@session), class: "app-button--secondary" %>
-    <% end %>
-
-    <% if policy(@session).edit_close? %>
-      <%= govuk_button_link_to "Close session", close_session_path(@session), class: "app-button--secondary" %>
     <% end %>
   </div>
 </div>

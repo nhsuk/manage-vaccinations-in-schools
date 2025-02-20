@@ -126,18 +126,6 @@ class ImmunisationImport < ApplicationRecord
   end
 
   def postprocess_rows!
-    # Remove patients from upcoming sessions who have already been vaccinated.
-
-    rows.each do |row|
-      patient = row.patient
-
-      next unless patient.vaccinated?(programme: row.programme)
-
-      patient
-        .patient_sessions
-        .includes(:programmes, :session_attendances)
-        .where(session: organisation.sessions.upcoming)
-        .find_each(&:destroy_if_safe!)
-    end
+    # Nothing to do.
   end
 end

@@ -191,16 +191,12 @@ Rails.application.routes.draw do
 
   resources :sessions, only: %i[edit index show], param: :slug do
     collection do
-      get "closed"
       get "completed"
       get "scheduled"
       get "unscheduled"
     end
 
     member do
-      get "close", action: "edit_close"
-      post "close", action: "update_close"
-
       get "edit/programmes",
           controller: "sessions/edit",
           action: "edit_programmes"

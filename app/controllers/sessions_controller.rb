@@ -1,8 +1,7 @@
 # frozen_string_literal: true
 
 class SessionsController < ApplicationController
-  before_action :set_session,
-                except: %i[index scheduled unscheduled completed closed]
+  before_action :set_session, except: %i[index scheduled unscheduled completed]
 
   def index
     @sessions = sessions_scope.today.sort
@@ -24,12 +23,6 @@ class SessionsController < ApplicationController
 
   def completed
     @sessions = sessions_scope.completed.sort
-
-    render layout: "full"
-  end
-
-  def closed
-    @sessions = sessions_scope.closed.sort
 
     render layout: "full"
   end
@@ -66,19 +59,6 @@ class SessionsController < ApplicationController
   end
 
   def edit
-  end
-
-  def edit_close
-    @patients_to_move_to_clinic_count =
-      @session.patients_to_move_to_clinic.length
-
-    render :close
-  end
-
-  def update_close
-    @session.close!
-
-    redirect_to session_path(@session), flash: { success: "Session closed." }
   end
 
   def make_in_progress

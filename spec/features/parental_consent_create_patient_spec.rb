@@ -172,7 +172,7 @@ describe "Parental consent create patient" do
     expect(Patient.count).to eq(1)
     expect(Patient.last.consents.count).to eq(1)
     expect(Patient.last.parents.count).to eq(1)
-    expect(Patient.last.sessions).to contain_exactly(@session)
+    expect(Patient.last.sessions).to include(@session)
   end
 
   def and_the_unmatched_consent_responses_page_is_empty

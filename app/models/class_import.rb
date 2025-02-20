@@ -53,8 +53,6 @@ class ClassImport < PatientImport
   end
 
   def postprocess_rows!
-    return if session.closed?
-
     # Remove patients already in the session but not in the class list.
 
     unknown_patients =

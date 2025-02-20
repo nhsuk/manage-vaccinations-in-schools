@@ -41,7 +41,7 @@ class Imports::IssuesController < ApplicationController
         .with_pending_changes
         .distinct
         .eager_load(:gp_practice, :school)
-        .preload(:school_moves, :upcoming_sessions)
+        .preload(:school_moves, :sessions_for_current_academic_year)
 
     @import_issues =
       (@vaccination_records + @patients).uniq do |record|

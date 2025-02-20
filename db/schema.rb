@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_02_11_092238) do
+ActiveRecord::Schema[8.0].define(version: 2025_02_19_100155) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -460,8 +460,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_11_092238) do
     t.bigint "patient_id"
     t.bigint "sent_by_user_id"
     t.uuid "delivery_id"
-    t.bigint "parent_id"
     t.integer "delivery_status", default: 0, null: false
+    t.bigint "parent_id"
     t.string "recipient_deterministic"
     t.string "recipient"
     t.index ["consent_form_id"], name: "index_notify_log_entries_on_consent_form_id"
@@ -673,7 +673,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_11_092238) do
     t.bigint "organisation_id", null: false
     t.integer "academic_year", null: false
     t.integer "days_before_consent_reminders"
-    t.datetime "closed_at"
     t.string "slug", null: false
     t.date "send_invitations_at"
     t.index ["organisation_id", "location_id", "academic_year"], name: "idx_on_organisation_id_location_id_academic_year_3496b72d0c", unique: true

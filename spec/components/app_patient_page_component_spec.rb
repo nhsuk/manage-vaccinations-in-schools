@@ -54,21 +54,6 @@ describe AppPatientPageComponent do
     end
   end
 
-  context "session closed, patient in triage" do
-    let(:patient_session) do
-      create(
-        :patient_session,
-        :consent_given_triage_needed,
-        :session_closed,
-        programme:
-      )
-    end
-
-    it { should_not have_content("Is it safe to vaccinate") }
-
-    it { should_not have_content("ready to vaccinate in this session?") }
-  end
-
   context "session in progress, patient ready to vaccinate" do
     let(:patient_session) do
       create(

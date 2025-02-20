@@ -309,8 +309,6 @@ en:
           attributes:
             action:
               inclusion: Choose whether to update the child’s record with this new information
-            move_to_school:
-              inclusion: Choose whether to move the child to the upcoming school session
         vaccinate_form:
           attributes:
             delivery_site:
@@ -839,11 +837,6 @@ en:
         zero: There are no sessions scheduled for today.
         one: 1 session today
         other: "%{count} sessions today"
-    closed:
-      table_heading:
-        zero: There are no locations with closed sessions.
-        one: 1 location with sessions closed
-        other: "%{count} locations with sessions closed"
     completed:
       table_heading:
         zero: There are no locations with all sessions completed.
