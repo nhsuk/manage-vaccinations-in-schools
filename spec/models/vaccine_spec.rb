@@ -68,6 +68,18 @@ describe Vaccine do
 
       it { should eq(%w[left_arm_upper_position right_arm_upper_position]) }
     end
+
+    context "with an MenACWY vaccine" do
+      let(:vaccine) { build(:vaccine, :menacwy) }
+
+      it { should eq(%w[left_arm_upper_position right_arm_upper_position]) }
+    end
+
+    context "with an Td/IPV vaccine" do
+      let(:vaccine) { build(:vaccine, :td_ipv) }
+
+      it { should eq(%w[left_arm_upper_position right_arm_upper_position]) }
+    end
   end
 
   describe "#maximum_dose_sequence" do

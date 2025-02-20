@@ -57,7 +57,7 @@ class Vaccine < ApplicationRecord
   end
 
   def common_delivery_sites
-    if programme.hpv?
+    if programme.hpv? || programme.menacwy? || programme.td_ipv?
       %w[left_arm_upper_position right_arm_upper_position]
     else
       raise NotImplementedError,
