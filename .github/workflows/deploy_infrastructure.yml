@@ -58,6 +58,7 @@ jobs:
             exit 1
           fi
       - name: Get currently deployed image digest
+        working-directory: ${{ env.tf_dir }}
         run: |
           DIGEST=$(terraform show -json | jq '.values.root_module.resources[] | select(.address == "aws_ecs_task_definition.task_definition").values.container_definitions' | grep -oP '(?<=mavis/webapp@)[^\\]+')
           echo "Currently deployed image digest: $DIGEST"
@@ -72,7 +73,6 @@ jobs:
         run: |
             terraform plan -var="image_digest=$DIGEST" -var-file="env/${{ inputs.environment }}.tfvars" \
             -out ${{ runner.temp }}/tfplan
-          fi
       - name: Validate the changes
         run: |
           ./terraform/scripts/validate_plan.sh ${{ runner.temp }}/tfplan
