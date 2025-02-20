@@ -247,9 +247,7 @@ describe "Manage school sessions" do
   end
 
   def then_they_can_give_consent
-    expect(page).to have_content(
-      "Give or refuse consent for an HPV vaccination"
-    )
+    expect(page).to have_content("Give or refuse consent for vaccinations")
   end
 
   def when_the_deadline_has_passed

@@ -1,44 +1,47 @@
 # frozen_string_literal: true
 
-describe "Parental consent school" do
-  scenario "Child attends a different school" do
-    given_an_hpv_programme_is_underway
+describe "Parental consent" do
+  scenario "Doubles programme" do
+    stub_pds_search_to_return_no_patients
+
+    given_a_menacwy_programme_is_underway
     when_i_go_to_the_consent_form
+    then_i_see_the_consent_form
+
     when_i_fill_in_my_childs_name_and_birthday
-
-    when_i_do_not_confirm_they_attend_the_pilot_school
-    then_i_see_a_page_asking_for_the_childs_school
-
-    when_i_click_continue
-    then_i_see_an_error
-
-    when_i_choose_a_school
-    then_i_see_the_parent_step
-
-    and_i_give_consent
+    when_i_give_consent
     and_i_answer_no_to_all_the_medical_questions
     then_i_can_check_my_answers
   end
 
-  def given_an_hpv_programme_is_underway
-    @programme = create(:programme, :hpv)
+  def given_a_menacwy_programme_is_underway
+    @programme1 = create(:programme, :menacwy)
+    @programme2 = create(:programme, :td_ipv)
     @organisation =
-      create(:organisation, :with_one_nurse, programmes: [@programme])
-    location =
-      create(:school, organisation: @organisation, name: "Pilot School")
+      create(
+        :organisation,
+        :with_one_nurse,
+        programmes: [@programme1, @programme2]
+      )
+    location = create(:school, name: "Pilot School")
     @session =
       create(
         :session,
         :scheduled,
-        organisation: @organisation,
-        programme: @programme,
+        programmes: [@programme1, @programme2],
         location:
       )
     @child = create(:patient, session: @session)
   end
 
   def when_i_go_to_the_consent_form
-    visit start_parent_interface_consent_forms_path(@session, @programme)
+    visit start_parent_interface_consent_forms_path(@session, @programme1)
+  end
+
+  def then_i_see_the_consent_form
+    expect(page).to have_heading("Give or refuse consent for vaccinations")
+    expect(page).to have_heading("MenACWY")
+    expect(page).to have_heading("Td/IPV")
   end
 
   def when_i_fill_in_my_childs_name_and_birthday
@@ -57,33 +60,10 @@ describe "Parental consent school" do
     click_on "Continue"
   end
 
-  def when_i_do_not_confirm_they_attend_the_pilot_school
-    choose "No, they go to a different school"
+  def when_i_give_consent
+    choose "Yes, they go to this school"
     click_on "Continue"
-  end
 
-  def then_i_see_a_page_asking_for_the_childs_school
-    expect(page).to have_heading("What school does your child go to?")
-  end
-
-  def when_i_click_continue
-    click_on "Continue"
-  end
-
-  def then_i_see_an_error
-    expect(page).to have_heading "There is a problem"
-  end
-
-  def when_i_choose_a_school
-    select "Home-schooled"
-    click_on "Continue"
-  end
-
-  def then_i_see_the_parent_step
-    expect(page).to have_heading "About you"
-  end
-
-  def and_i_give_consent
     expect(page).to have_content("About you")
     fill_in "Full name", with: "Jane #{@child.family_name}"
     choose "Mum" # Your relationship to the child
@@ -118,6 +98,5 @@ describe "Parental consent school" do
   def then_i_can_check_my_answers
     expect(page).to have_content("Check and confirm")
     expect(page).to have_content("Child’s name#{@child.full_name}")
-    expect(page).to have_content("SchoolHome-schooled")
   end
 end

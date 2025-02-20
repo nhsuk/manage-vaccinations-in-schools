@@ -7,6 +7,10 @@
 
   <%= h1 "Home address" %>
 
+  <p class="nhsuk-hint">
+    Give the child’s primary address. We use this to confirm their identity.
+  </p>
+
   <%= f.govuk_text_field :address_line_1,
                          label: { text: "Address line 1" },
                          autocomplete: "address-line1" %>
@@ -17,7 +21,8 @@
 
   <%= f.govuk_text_field :address_town,
                          label: { text: "Town or city" },
-                         autocomplete: "address-level2" %>
+                         autocomplete: "address-level2",
+                         class: "nhsuk-u-width-two-thirds" %>
 
   <%= f.govuk_text_field :address_postcode,
                          label: { text: "Postcode" },
