@@ -105,18 +105,30 @@ jobs:
           echo "s3_key=$(terraform output -raw s3_key)" >> $GITHUB_ENV
           echo "application=$(terraform output -raw codedeploy_application_name)" >> $GITHUB_ENV
           echo "application_group=$(terraform output -raw codedeploy_deployment_group_name)" >> $GITHUB_ENV
-      - name: Install AWS CLI
-        run: |
-          sudo snap install --classic aws-cli
-      - name: Trigger CodeDeploy deployment
-        run: |
-          deployment_id=$(aws deploy create-deployment \
-          --application-name $application --deployment-group-name $application_group \
-          --s3-location bucket=appspec-bucket-poc,key=appspec.yaml,bundleType=yaml \
-          | jq -r .deploymentId)
-          echo "Deployment started: $deployment_id"
-          echo "deployment_id=$deployment_id" >> $GITHUB_ENV
-      - name: Wait up to 30 minutes for deployment to complete
-        run: |
-          aws deploy wait deployment-successful --deployment-id $deployment_id
-          echo "Deployment successful"
+  TriggerCodeDeploy:
+    runs-on: ubuntu-latest
+    needs:   DeployUpdate
+    environment: ${{ inputs.environment }}
+    permissions:
+      id-token: write
+    steps:
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        role-to-assume: ${{ env.aws-role }}
+        aws-region: eu-west-2
+    - name: Install AWS CLI
+      run: |
+        sudo snap install --classic aws-cli
+    - name: Trigger CodeDeploy deployment
+      run: |
+        deployment_id=$(aws deploy create-deployment \
+        --application-name $application --deployment-group-name $application_group \
+        --s3-location bucket=appspec-bucket-poc,key=appspec.yaml,bundleType=yaml \
+        | jq -r .deploymentId)
+        echo "Deployment started: $deployment_id"
+        echo "deployment_id=$deployment_id" >> $GITHUB_ENV
+    - name: Wait up to 30 minutes for deployment to complete
+      run: |
+        aws deploy wait deployment-successful --deployment-id $deployment_id
+        echo "Deployment successful"
