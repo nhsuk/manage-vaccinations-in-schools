@@ -91,9 +91,7 @@ jobs:
           fi
       - name: Validate the changes
         run: |
-          pwd
-          echo ${{ steps.plan.outputs.stdout }}
-          ./terraform/scripts/validate_plan.sh ${{ steps.plan.outputs.stdout }}
+          ./terraform/scripts/validate_plan.sh ${{ runner.temp }}/tfplan
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
