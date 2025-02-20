@@ -43,24 +43,15 @@ jobs:
       - name: Install AWS Cli
         run: |
           sudo snap install --classic aws-cli
-      - name: Initialize backend
+      - name: Check if any deployments are running
         working-directory: ${{ env.tf_dir }}
         run: |
           terraform init -backend-config="env/${{ inputs.environment }}-backend.hcl"
           APPLICATION=$(terraform output -raw codedeploy_application_name)
           APPLICATION_GROUP=$(terraform output -raw codedeploy_deployment_group_name)
-          CLUSTER_NAME=$(terraform output -raw mavis_cluster_name)
-          SERVICE_NAME=$(terraform output -raw mavis_service_name)
-          if [[ -z "$APPLICATION" || -z "$APPLICATION_GROUP" || -z "$CLUSTER_NAME" || -z "SERVICE_NAME" ]]; then
-            echo "Expected data not found in existing state. This case is not yet supported by this worflow"
-            echo "Aborting infrastructure deployment"
-            exit 1
-          fi
-      - name: Check if any deployments are running
-        run: |
           running_deployment=$(aws deploy list-deployments --application-name $APPLICATION_NAME \
-          --deployment-group-name $APPLICATION_GROUP --include-only-statuses InProgress \
-          --query 'deployments[0]' --output text)
+              --deployment-group-name $APPLICATION_GROUP --include-only-statuses InProgress \
+              --query 'deployments[0]' --output text)
           if [ "$running_deployment" -ne "none" ]; then
             echo "A mavis deployment for ${{ inputs.environment }} is currently running: $running_deployment"
             echo "Aborting infrastructure deployment"
@@ -68,13 +59,10 @@ jobs:
           fi
       - name: Get currently deployed image digest
         run: |
-          TASK_DEFINITION_ARN=$(aws ecs describe-services --cluster $CLUSTER_NAME --services $SERVICE_NAME \
-          --query "services[0].taskDefinition" --output text)
-          MAVIS_IMAGE=$(aws ecs describe-task-definition --task-definition $TASK_DEFINITION_ARN \
-          --query "taskDefinition.containerDefinitions[0].image" --output text)
-          echo "DIGEST=${MAVIS_IMAGE#*@}"
+          DIGEST=$(terraform show -json | jq '.values.root_module.resources[] | select(.address == "aws_ecs_task_definition.task_definition").values.container_definitions) | grep -oP '(?<=mavis/webapp@)[^\\]+'
+          echo "Currently deployed image digest: $DIGEST"
           if [ -z "$DIGEST" ]; then
-            echo "No image digest found in the currently deployed task definition"
+            echo "Image digest not found in the currently deployed task definition"
             echo "Aborting infrastructure deployment"
             exit 1
           fi
