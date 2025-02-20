@@ -64,15 +64,20 @@ class Programme < ApplicationRecord
     year_groups.map(&:to_birth_academic_year)
   end
 
-  MAXIMUM_DOSE_SEQUENCES = {
+  DOSE_SEQUENCES = {
     "flu" => 1,
-    "hpv" => 3,
+    "hpv" => 1,
     "menacwy" => 1,
     "td_ipv" => 5
   }.freeze
 
+  def vaccinated_dose_sequence
+    DOSE_SEQUENCES.fetch(type)
+  end
+
   def maximum_dose_sequence
-    MAXIMUM_DOSE_SEQUENCES.fetch(type)
+    # HPV is given 3 times to patients with a weakened immune system.
+    hpv? ? 3 : vaccinated_dose_sequence
   end
 
   SNOMED_PROCEDURE_CODES = {
