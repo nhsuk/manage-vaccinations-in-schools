@@ -102,7 +102,7 @@ RSpec.feature "Parental consent change answers" do
   end
 
   def then_i_see_the_consent_form_confirmation_page
-    expect(page).to have_content("Check your answers and confirm")
+    expect(page).to have_content("Check and confirm")
   end
 
   def when_i_change_my_parental_relationship_to_other

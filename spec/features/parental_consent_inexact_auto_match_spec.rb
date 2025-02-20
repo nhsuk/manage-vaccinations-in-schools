@@ -75,7 +75,7 @@ describe "Parental consent given with an inexact automatic match" do
     fill_in "Postcode", with: "SW1A 1AA"
     click_on "Continue"
 
-    until page.has_content?("Check your answers and confirm")
+    until page.has_content?("Check and confirm")
       choose "No"
       click_on "Continue"
     end

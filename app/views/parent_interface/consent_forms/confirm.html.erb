@@ -14,7 +14,7 @@
      )
    end %>
 
-<%= h1 "Check your answers and confirm" %>
+<%= h1 "Check and confirm" %>
 
 <%= render AppCardComponent.new do |c| %>
   <% c.with_heading { t("consent_forms.confirm.consent_card_title.#{@consent_form.programme.type}") } %>

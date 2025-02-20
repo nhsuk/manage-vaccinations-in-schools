@@ -121,7 +121,7 @@ describe "Parental consent create patient" do
   end
 
   def and_i_answer_no_to_all_the_medical_questions
-    until page.has_content?("Check your answers and confirm")
+    until page.has_content?("Check and confirm")
       choose "No"
       click_on "Continue"
     end
