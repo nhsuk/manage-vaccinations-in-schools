@@ -22,13 +22,15 @@ class DraftVaccinationRecordsController < ApplicationController
   after_action :verify_authorized
 
   def show
-    authorize VaccinationRecord, :edit?
+    authorize @vaccination_record,
+              @vaccination_record.new_record? ? :new? : :edit?
 
     render_wizard
   end
 
   def update
-    authorize VaccinationRecord
+    authorize @vaccination_record,
+              @vaccination_record.new_record? ? :create? : :update?
 
     @draft_vaccination_record.assign_attributes(update_params)
 
@@ -110,9 +112,10 @@ class DraftVaccinationRecordsController < ApplicationController
     tab = @vaccination_record.administered? ? "vaccinated" : "could-not"
 
     heading_link_href =
-      session_patient_path(
+      session_patient_programme_path(
         @session,
-        id: @patient.id,
+        @patient,
+        @programme,
         section: "vaccinations",
         tab:
       )
@@ -126,7 +129,7 @@ class DraftVaccinationRecordsController < ApplicationController
 
   def finish_wizard_path
     if @session.today?
-      session_vaccinations_path(@session)
+      session_vaccinations_path(@session, programme_type: @programme)
     else
       programme_vaccination_record_path(@programme, @vaccination_record)
     end
@@ -205,9 +208,10 @@ class DraftVaccinationRecordsController < ApplicationController
           wizard_path("confirm")
         end
       elsif current_step == @draft_vaccination_record.wizard_steps.first
-        session_patient_path(
+        session_patient_programme_path(
           @session,
           @patient,
+          @programme,
           section: "vaccinations",
           tab: "vaccinate"
         )

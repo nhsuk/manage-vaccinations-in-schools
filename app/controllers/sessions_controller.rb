@@ -1,8 +1,7 @@
 # frozen_string_literal: true
 
 class SessionsController < ApplicationController
-  before_action :set_session,
-                except: %i[index scheduled unscheduled completed closed]
+  before_action :set_session, except: %i[index scheduled unscheduled completed]
 
   def index
     @sessions = sessions_scope.today.sort
@@ -28,18 +27,15 @@ class SessionsController < ApplicationController
     render layout: "full"
   end
 
-  def closed
-    @sessions = sessions_scope.closed.sort
-
-    render layout: "full"
-  end
-
   def show
     respond_to do |format|
       format.html do
         patient_sessions = @session.patient_sessions.preload_for_status
 
-        @stats = PatientSessionStats.new(patient_sessions)
+        @stats_by_programme =
+          @session.programmes.index_with do |programme|
+            PatientSessionStats.new(patient_sessions, programme:)
+          end
 
         render layout: "full"
       end
@@ -65,29 +61,6 @@ class SessionsController < ApplicationController
   def edit
   end
 
-  def edit_close
-    @patients_to_move_to_clinic_count =
-      @session.patients_to_move_to_clinic.length
-
-    render :close
-  end
-
-  def update_close
-    @session.close!
-
-    redirect_to session_path(@session), flash: { success: "Session closed." }
-  end
-
-  def consent_form
-    programme = @session.programmes.first # TODO: handle multiple programmes
-
-    send_file(
-      "public/consent_forms/#{programme.type}.pdf",
-      filename: "#{programme.name} Consent Form.pdf",
-      disposition: "attachment"
-    )
-  end
-
   def make_in_progress
     @session.session_dates.find_or_create_by!(value: Date.current)
 
@@ -95,8 +68,6 @@ class SessionsController < ApplicationController
   end
 
   private
-
-  delegate :organisation, to: :current_user
 
   def set_session
     @session = authorize sessions_scope.find_by!(slug: params[:slug])

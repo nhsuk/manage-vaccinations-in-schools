@@ -27,7 +27,7 @@ FactoryBot.define do
       programme { association :programme }
       organisation { session.organisation }
       user { association :user, organisation: }
-      year_group { nil }
+      year_group { session.programmes.first&.year_groups&.first }
       school { session.location.school? ? session.location : nil }
       home_educated { school.present? ? nil : false }
       location_name do
@@ -287,10 +287,6 @@ FactoryBot.define do
 
     trait :session_in_progress do
       session { association :session, :today, programme: }
-    end
-
-    trait :session_closed do
-      session { association :session, :closed, programme: }
     end
 
     trait :not_gillick_competent do

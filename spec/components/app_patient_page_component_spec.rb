@@ -6,7 +6,7 @@ describe AppPatientPageComponent do
   before do
     # rubocop:disable RSpec/AnyInstance
     allow_any_instance_of(AppSimpleStatusBannerComponent).to receive(
-      :new_session_patient_triages_path
+      :new_session_patient_programme_triages_path
     ).and_return("/session/patient/triage/new")
     # rubocop:enable RSpec/AnyInstance
     stub_authorization(allowed: true)
@@ -20,6 +20,7 @@ describe AppPatientPageComponent do
   let(:component) do
     described_class.new(
       patient_session:,
+      programme:,
       section: "triage",
       tab: "needed",
       triage: nil
@@ -51,21 +52,6 @@ describe AppPatientPageComponent do
 
       it { should_not have_content("Is it safe to vaccinate") }
     end
-  end
-
-  context "session closed, patient in triage" do
-    let(:patient_session) do
-      create(
-        :patient_session,
-        :consent_given_triage_needed,
-        :session_closed,
-        programme:
-      )
-    end
-
-    it { should_not have_content("Is it safe to vaccinate") }
-
-    it { should_not have_content("ready to vaccinate in this session?") }
   end
 
   context "session in progress, patient ready to vaccinate" do

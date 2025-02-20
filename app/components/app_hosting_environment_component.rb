@@ -18,14 +18,18 @@ class AppHostingEnvironmentComponent < ViewComponent::Base
 
   ENVIRONMENT_COLOR = {
     development: "white",
+    review: "purple",
     test: "red",
     qa: "orange",
-    preview: "yellow",
-    training: "purple"
+    preview: "yellow"
   }.freeze
 
+  def pull_request
+    ENV.fetch("HEROKU_PR_NUMBER", false)
+  end
+
   def title
-    environment.titleize
+    pull_request ? "PR #{pull_request}" : environment.titleize
   end
 
   def name
@@ -39,6 +43,6 @@ class AppHostingEnvironmentComponent < ViewComponent::Base
   end
 
   def environment
-    ENV.fetch("SENTRY_ENVIRONMENT", "development")
+    pull_request ? "review" : ENV.fetch("SENTRY_ENVIRONMENT", "development")
   end
 end

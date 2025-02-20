@@ -23,6 +23,7 @@ describe AppVaccinateFormComponent do
   let(:component) do
     described_class.new(
       patient_session:,
+      programme:,
       vaccinate_form: VaccinateForm.new,
       section: "vaccinate",
       tab: "needed"

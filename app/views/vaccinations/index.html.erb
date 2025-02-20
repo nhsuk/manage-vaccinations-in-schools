@@ -10,6 +10,8 @@
 
 <%= h1 "Record vaccinations" %>
 
+<%= render AppProgrammeSelectionFormComponent.new(@session.programmes, active: @programme) %>
+
 <% if @todays_batch.present? %>
   <%= govuk_inset_text html_attributes: { class: "nhsuk-u-margin-top-2 nhsuk-u-margin-bottom-4" } do %>
     <span class="nhsuk-visually-hidden">Information: </span>
@@ -27,7 +29,7 @@
 <%= render AppSecondaryNavigationComponent.new do |nav| %>
   <% TAB_PATHS[:vaccinations].each do |tab, state| %>
     <% nav.with_item(selected: @current_tab == state,
-                     href: session_vaccinations_tab_path(@session, tab:)) do %>
+                     href: session_vaccinations_tab_path(@session, tab:, programme_type: @programme)) do %>
       <%= t("patients_table.#{state}.label") %>
       <%= render AppCountComponent.new(count: @tab_counts[state]) %>
     <% end %>
@@ -41,6 +43,6 @@
         %i[name year_group status],
       params:,
       patient_sessions: @patient_sessions,
+      programme: @programme,
       section: :vaccinations,
-      year_groups: @session.year_groups,
     ) %>

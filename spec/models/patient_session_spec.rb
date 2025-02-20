@@ -92,7 +92,7 @@ describe PatientSession do
   end
 
   describe "#no_consent?" do
-    subject(:no_consent?) { patient_session.no_consent? }
+    subject(:no_consent?) { patient_session.no_consent?(programme:) }
 
     let(:patient) { patient_session.patient }
 
@@ -139,7 +139,7 @@ describe PatientSession do
       described_class
         .includes(patient: { consents: :parent })
         .find(patient_session.id)
-        .consent_given?
+        .consent_given?(programme:)
     end
 
     let(:patient) { patient_session.patient }

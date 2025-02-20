@@ -59,7 +59,7 @@ describe "Parental consent given with an inexact automatic match" do
     click_on "Continue"
 
     expect(page).to have_content("About you")
-    fill_in "Your name", with: "Jane #{@child.family_name}"
+    fill_in "Full name", with: "Jane #{@child.family_name}"
     choose "Mum" # Your relationship to the child
     fill_in "Email address", with: "jane@example.com"
     click_on "Continue"
@@ -75,7 +75,7 @@ describe "Parental consent given with an inexact automatic match" do
     fill_in "Postcode", with: "SW1A 1AA"
     click_on "Continue"
 
-    until page.has_content?("Check your answers and confirm")
+    until page.has_content?("Check and confirm")
       choose "No"
       click_on "Continue"
     end

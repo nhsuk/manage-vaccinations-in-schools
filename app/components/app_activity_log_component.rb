@@ -54,13 +54,6 @@ class AppActivityLogComponent < ViewComponent::Base
         :programme,
         :vaccine
       )
-
-    if (programme = patient_session&.programmes&.first) # TODO: handle multiple programmes
-      @consents = @consents.where(programme:)
-      @gillick_assessments = @gillick_assessments.where(programme:)
-      @triages = @triages.where(programme:)
-      @vaccination_records = @vaccination_records.where(programme:)
-    end
   end
 
   attr_reader :patient,

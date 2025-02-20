@@ -8,6 +8,7 @@ describe "Import class lists - Moving patients" do
 
     when_i_visit_a_session_page_for_the_hpv_programme
     and_i_start_adding_children_to_the_session
+    and_i_select_the_year_groups
     then_i_should_see_the_import_page
 
     when_i_upload_a_valid_file
@@ -15,6 +16,7 @@ describe "Import class lists - Moving patients" do
 
     when_i_visit_a_different_session_page_for_the_hpv_programme
     and_i_start_adding_children_to_the_session
+    and_i_select_the_year_groups
     and_i_upload_a_valid_file
     then_i_should_see_the_import_complete_page
 
@@ -78,7 +80,15 @@ describe "Import class lists - Moving patients" do
   end
 
   def and_i_start_adding_children_to_the_session
-    click_on "Import class list"
+    click_on "Import class list records"
+  end
+
+  def and_i_select_the_year_groups
+    check "Year 8"
+    check "Year 9"
+    check "Year 10"
+    check "Year 11"
+    click_on "Continue"
   end
 
   def then_i_should_see_the_import_page
@@ -92,7 +102,7 @@ describe "Import class lists - Moving patients" do
   alias_method :and_i_upload_a_valid_file, :when_i_upload_a_valid_file
 
   def when_i_go_to_the_upload_page
-    click_on "Import class list"
+    click_on "Import class list records"
   end
 
   def then_i_should_see_the_import_complete_page

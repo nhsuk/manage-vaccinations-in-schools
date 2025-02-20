@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
 class GillickAssessmentsController < ApplicationController
-  before_action :set_patient
   before_action :set_session
-  before_action :set_patient_session
   before_action :set_programme
+  before_action :set_patient
+  before_action :set_patient_session
   before_action :set_is_first_assessment
   before_action :set_gillick_assessment
 
@@ -16,7 +16,7 @@ class GillickAssessmentsController < ApplicationController
     @gillick_assessment.assign_attributes(gillick_assessment_params)
 
     if !@gillick_assessment.changed? || @gillick_assessment.save
-      redirect_to session_patient_path(id: @patient.id)
+      redirect_to session_patient_programme_path(patient_id: @patient.id)
     else
       render :edit, status: :unprocessable_entity
     end
@@ -24,15 +24,16 @@ class GillickAssessmentsController < ApplicationController
 
   private
 
-  def set_patient
-    @patient = policy_scope(Patient).find(params[:patient_id])
+  def set_session
+    @session = policy_scope(Session).find_by!(slug: params[:session_slug])
   end
 
-  def set_session
-    @session =
-      policy_scope(Session).includes(:programmes).find_by!(
-        slug: params[:session_slug]
-      )
+  def set_programme
+    @programme = @session.programmes.find_by!(type: params[:programme_type])
+  end
+
+  def set_patient
+    @patient = policy_scope(Patient).find(params[:patient_id])
   end
 
   def set_patient_session
@@ -41,10 +42,6 @@ class GillickAssessmentsController < ApplicationController
         session: @session,
         patient: @patient
       )
-  end
-
-  def set_programme
-    @programme = @session.programmes.first # TODO: handle multiple programmes
   end
 
   def set_is_first_assessment

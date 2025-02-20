@@ -3,10 +3,16 @@
 class AppPatientPageComponent < ViewComponent::Base
   include ApplicationHelper
 
-  attr_reader :patient_session, :current_user, :section, :tab, :vaccinate_form
+  attr_reader :current_user,
+              :patient_session,
+              :programme,
+              :section,
+              :tab,
+              :vaccinate_form
 
   def initialize(
     patient_session:,
+    programme:,
     section:,
     tab:,
     current_user: nil,
@@ -16,6 +22,7 @@ class AppPatientPageComponent < ViewComponent::Base
     super
 
     @patient_session = patient_session
+    @programme = programme
     @section = section
     @tab = tab
     @current_user = current_user
@@ -24,10 +31,6 @@ class AppPatientPageComponent < ViewComponent::Base
   end
 
   delegate :patient, :session, to: :patient_session
-
-  def programme
-    patient_session.programmes.first # TODO: handle multiple programmes
-  end
 
   def display_health_questions?
     patient_session.latest_consents(programme:).any?(&:response_given?)

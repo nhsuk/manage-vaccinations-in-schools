@@ -90,7 +90,6 @@ describe "Delete vaccination record" do
   scenario "User can't delete a record without superuser access" do
     given_an_hpv_programme_is_underway
     and_an_administered_vaccination_record_exists
-    and_the_session_has_closed
 
     when_i_sign_in
     and_i_go_to_a_patient_that_is_vaccinated_in_the_session
@@ -142,10 +141,6 @@ describe "Delete vaccination record" do
 
   def and_a_confirmation_email_has_been_sent
     @vaccination_record.update(confirmation_sent_at: Time.current)
-  end
-
-  def and_the_session_has_closed
-    @session.close!
   end
 
   def when_i_sign_in

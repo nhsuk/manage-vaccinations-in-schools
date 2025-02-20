@@ -1,23 +1,26 @@
 # frozen_string_literal: true
 
 class AppConsentStatusComponent < ViewComponent::Base
+  def initialize(patient_session:, programme:)
+    super
+
+    @patient_session = patient_session
+    @programme = programme
+  end
+
   def call
-    if @patient_session.consent_given?
+    if @patient_session.consent_given?(programme:)
       icon_tick "Consent given", "aqua-green"
-    elsif @patient_session.consent_refused?
+    elsif @patient_session.consent_refused?(programme:)
       icon_cross "Consent refused", "red"
-    elsif @patient_session.consent_conflicts?
+    elsif @patient_session.consent_conflicts?(programme:)
       icon_cross "Conflicting consent", "dark-orange"
     end
   end
 
-  def initialize(patient_session:)
-    super
-
-    @patient_session = patient_session
-  end
-
   private
+
+  attr_reader :programme
 
   def icon_tick(content, color)
     template = <<-ERB

@@ -69,7 +69,7 @@ describe "Parental consent create patient" do
         programme: @programme,
         location:
       )
-    @child = build(:patient) # NB: Build, not create, so we don't persist to DB
+    @child = build(:patient, year_group: 8) # NB: Build, not create, so we don't persist to DB
   end
 
   def when_i_go_to_the_consent_form
@@ -81,7 +81,7 @@ describe "Parental consent create patient" do
     click_on "Continue"
 
     expect(page).to have_content("About you")
-    fill_in "Your name", with: "Jane #{@child.family_name}"
+    fill_in "Full name", with: "Jane #{@child.family_name}"
     choose "Mum" # Your relationship to the child
     fill_in "Email address", with: "jane@example.com"
     fill_in "Phone number", with: "07123456789"
@@ -121,7 +121,7 @@ describe "Parental consent create patient" do
   end
 
   def and_i_answer_no_to_all_the_medical_questions
-    until page.has_content?("Check your answers and confirm")
+    until page.has_content?("Check and confirm")
       choose "No"
       click_on "Continue"
     end
@@ -172,7 +172,7 @@ describe "Parental consent create patient" do
     expect(Patient.count).to eq(1)
     expect(Patient.last.consents.count).to eq(1)
     expect(Patient.last.parents.count).to eq(1)
-    expect(Patient.last.sessions).to contain_exactly(@session)
+    expect(Patient.last.sessions).to include(@session)
   end
 
   def and_the_unmatched_consent_responses_page_is_empty

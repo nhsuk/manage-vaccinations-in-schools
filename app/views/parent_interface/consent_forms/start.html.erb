@@ -1,13 +1,31 @@
-<%= h1 t("consent_forms.start.title.#{@programme.type}") %>
+<%= h1 t("consent_forms.start.title"), size: "xl" %>
 
-<% t("consent_forms.start.paragraphs.#{@programme.type}").each do |paragraph| %>
-  <p class="nhsuk-u-margin-bottom-6">
-    <%= paragraph %>
-  </p>
+<% @session.programmes.each do |programme| %>
+  <h2 class="nhsuk-heading-m">
+    <%= t("consent_forms.start.vaccines.#{programme.type}.title") %>
+  </h2>
+
+  <% t("consent_forms.start.vaccines.#{programme.type}.description").each do %>
+    <p><%= _1 %></p>
+  <% end %>
 <% end %>
+
+<h2 class="nhsuk-heading-m">Give or refuse consent</h2>
 
 <%= form_with url: url_for(action: :create) do |f| %>
   <%= hidden_field_tag :session_slug, @session.slug %>
   <%= hidden_field_tag :programme_type, @programme.type %>
   <%= f.govuk_submit "Start now" %>
 <% end %>
+
+<h2 class="nhsuk-heading-m">Other ways to give consent</h2>
+
+<p>
+  The quickest way to give or refuse consent is online, using this service. This
+  will take less than 5 minutes.
+</p>
+
+<p>
+  If you cannot use the service, you can respond over the phone using the number
+  given in the consent request you got by email.
+</p>

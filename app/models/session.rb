@@ -6,7 +6,6 @@
 #
 #  id                            :bigint           not null, primary key
 #  academic_year                 :integer          not null
-#  closed_at                     :datetime
 #  days_before_consent_reminders :integer
 #  send_consent_requests_at      :date
 #  send_invitations_at           :date
@@ -58,12 +57,15 @@ class Session < ApplicationRecord
   scope :for_current_academic_year,
         -> { where(academic_year: Date.current.academic_year) }
 
-  scope :upcoming, -> { for_current_academic_year.where(closed_at: nil) }
   scope :unscheduled,
-        -> { upcoming.where.not(SessionDate.for_session.arel.exists) }
+        -> do
+          for_current_academic_year.where.not(
+            SessionDate.for_session.arel.exists
+          )
+        end
   scope :scheduled,
         -> do
-          upcoming.where(
+          for_current_academic_year.where(
             "? <= (?)",
             Date.current,
             SessionDate.for_session.select("MAX(value)")
@@ -71,13 +73,12 @@ class Session < ApplicationRecord
         end
   scope :completed,
         -> do
-          upcoming.where(
+          for_current_academic_year.where(
             "? > (?)",
             Date.current,
             SessionDate.for_session.select("MAX(value)")
           )
         end
-  scope :closed, -> { for_current_academic_year.where.not(closed_at: nil) }
 
   scope :send_consent_requests,
         -> { scheduled.where("? >= send_consent_requests_at", Date.current) }
@@ -122,17 +123,14 @@ class Session < ApplicationRecord
                 location.generic_clinic?
             end
 
-  validates :programmes, presence: true
-  validate :programmes_part_of_organisation
+  validates :programme_ids, presence: true
 
   before_create :set_slug
 
+  delegate :clinic?, :school?, to: :location
+
   def to_param
     slug
-  end
-
-  def open?
-    closed_at.nil?
   end
 
   def today?
@@ -153,10 +151,6 @@ class Session < ApplicationRecord
     Date.current > dates.min
   end
 
-  def closed?
-    closed_at != nil
-  end
-
   def year_groups
     programmes.flat_map(&:year_groups).uniq.sort
   end
@@ -173,62 +167,25 @@ class Session < ApplicationRecord
     dates.select(&:future?)
   end
 
+  def next_date
+    today_or_future_dates.first
+  end
+
   def can_change_notification_dates?
     consent_notifications.empty? && session_notifications.empty?
+  end
+
+  def can_send_clinic_invitations?
+    if clinic?
+      next_date && !completed?
+    else
+      completed? && organisation.generic_clinic_session.next_date
+    end
   end
 
   def <=>(other)
     [dates.first, location.type, location.name] <=>
       [other.dates.first, other.location.type, other.location.name]
-  end
-
-  def patients_to_move_to_clinic
-    # TODO: handle multiple programmes
-
-    @patients_to_move_to_clinic ||=
-      begin
-        patient_ids_with_consent_refused =
-          patient_sessions
-            .preload_for_status
-            .select(&:consent_refused?)
-            .map(&:patient_id)
-
-        patients
-          .where.not(id: patient_ids_with_consent_refused)
-          .unvaccinated_for(programmes:)
-      end
-  end
-
-  def close!
-    return if closed?
-    return unless completed?
-
-    ActiveRecord::Base.transaction do
-      generic_clinic_session_id = organisation.generic_clinic_session.id
-
-      PatientSession.import!(
-        %i[patient_id session_id],
-        patients_to_move_to_clinic.map { [_1.id, generic_clinic_session_id] },
-        on_duplicate_key_ignore: true
-      )
-
-      self_consents =
-        Consent.via_self_consent.where(
-          patient: patients_to_move_to_clinic,
-          organisation:,
-          programme: programmes
-        )
-
-      self_consents.invalidate_all
-
-      Triage.where(
-        patient: self_consents.map(&:patient),
-        organisation:,
-        programme: programmes
-      ).invalidate_all
-
-      update!(closed_at: Time.current)
-    end
   end
 
   def set_notification_dates
@@ -281,14 +238,6 @@ class Session < ApplicationRecord
 
   def set_slug
     self.slug = SecureRandom.alphanumeric(10) if slug.nil?
-  end
-
-  def programmes_part_of_organisation
-    return if programmes.empty?
-
-    unless programmes.all? { organisation.programmes.include?(_1) }
-      errors.add(:programmes, :inclusion)
-    end
   end
 
   def earliest_date

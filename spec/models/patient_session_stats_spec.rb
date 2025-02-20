@@ -3,7 +3,10 @@
 describe PatientSessionStats do
   describe "#to_h" do
     subject(:to_h) do
-      described_class.new(session.patient_sessions.preload_for_status).to_h
+      described_class.new(
+        session.patient_sessions.preload_for_status,
+        programme:
+      ).to_h
     end
 
     let(:programme) { create(:programme) }

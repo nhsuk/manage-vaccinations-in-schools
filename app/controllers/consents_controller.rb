@@ -5,6 +5,7 @@ class ConsentsController < ApplicationController
   include PatientSortingConcern
 
   before_action :set_session
+  before_action :set_programme
   before_action :set_patient_session, except: :index
   before_action :set_patient, except: :index
   before_action :set_consent, except: %i[index create send_request]
@@ -19,11 +20,13 @@ class ConsentsController < ApplicationController
         .preload_for_status
         .preload(patient: { consents: %i[parent patient] })
         .eager_load(:patient)
+        .merge(Patient.in_programme(@programme))
         .order_by_name
 
     tab_patient_sessions =
       group_patient_sessions_by_conditions(
         all_patient_sessions,
+        programme: @programme,
         section: :consents
       )
 
@@ -31,7 +34,7 @@ class ConsentsController < ApplicationController
     @tab_counts = count_patient_sessions(tab_patient_sessions)
     @patient_sessions = tab_patient_sessions[@current_tab] || []
 
-    sort_and_filter_patients!(@patient_sessions)
+    sort_and_filter_patients!(@patient_sessions, programme: @programme)
 
     session[:current_section] = "consents"
 
@@ -54,21 +57,20 @@ class ConsentsController < ApplicationController
   end
 
   def send_request
-    return unless @patient_session.no_consent?
+    return unless @patient_session.no_consent?(programme: @programme)
 
-    @session.programmes.each do |programme|
-      ConsentNotification.create_and_send!(
-        patient: @patient,
-        programme:,
-        session: @session,
-        type: :request,
-        current_user:
-      )
-    end
+    ConsentNotification.create_and_send!(
+      patient: @patient,
+      programme: @programme,
+      session: @session,
+      type: :request,
+      current_user:
+    )
 
-    redirect_to session_patient_path(
+    redirect_to session_patient_programme_path(
                   @session,
                   @patient,
+                  @programme,
                   section: params[:section],
                   tab: params[:tab]
                 ),
@@ -96,7 +98,7 @@ class ConsentsController < ApplicationController
           .invalidate_all
       end
 
-      redirect_to session_patient_consent_path
+      redirect_to session_patient_programme_consent_path
     else
       render :withdraw, status: :unprocessable_entity
     end
@@ -118,7 +120,7 @@ class ConsentsController < ApplicationController
           .invalidate_all
       end
 
-      redirect_to session_patient_consent_path,
+      redirect_to session_patient_programme_consent_path,
                   flash: {
                     success:
                       "Consent response from #{@consent.name} marked as invalid"
@@ -137,6 +139,12 @@ class ConsentsController < ApplicationController
         :organisation,
         :programmes
       ).find_by!(slug: params[:session_slug])
+  end
+
+  def set_programme
+    @programme =
+      @session.programmes.find_by(type: params[:programme_type]) ||
+        @session.programmes.first
   end
 
   def set_patient_session
@@ -170,7 +178,7 @@ class ConsentsController < ApplicationController
   def create_params
     {
       patient_session: @patient_session,
-      programme: @session.programmes.first, # TODO: handle multiple programmes
+      programme: @programme,
       recorded_by: current_user
     }
   end

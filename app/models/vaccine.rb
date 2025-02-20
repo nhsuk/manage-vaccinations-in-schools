@@ -57,7 +57,7 @@ class Vaccine < ApplicationRecord
   end
 
   def common_delivery_sites
-    if programme.hpv?
+    if programme.hpv? || programme.menacwy? || programme.td_ipv?
       %w[left_arm_upper_position right_arm_upper_position]
     else
       raise NotImplementedError,
@@ -69,7 +69,7 @@ class Vaccine < ApplicationRecord
     "flu" => 1,
     "hpv" => 3,
     "menacwy" => 1,
-    "td_ipv" => 1
+    "td_ipv" => 5
   }.freeze
 
   def maximum_dose_sequence
@@ -92,8 +92,10 @@ class Vaccine < ApplicationRecord
   end
 
   AVAILABLE_DELIVERY_METHODS_BY_TYPE = {
+    "flu" => %w[nasal_spray],
     "hpv" => %w[intramuscular subcutaneous],
-    "flu" => %w[nasal_spray]
+    "td_ipv" => %w[intramuscular subcutaneous],
+    "menacwy" => %w[intramuscular subcutaneous]
   }.freeze
 
   def available_delivery_methods

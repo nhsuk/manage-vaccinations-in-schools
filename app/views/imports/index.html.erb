@@ -1,27 +1,7 @@
-<% programme = current_user.selected_organisation.programmes.first # TODO: handle multiple programmes %>
+<%= h1 t(".title"), size: "xl" %>
 
-<%= content_for :page_title,
-                "#{programme.name} – #{t("imports.index.title")}" %>
+<%= govuk_button_link_to "Import records", new_import_path, class: "app-button--secondary" %>
 
-<% content_for :before_main do %>
-  <%= render AppBreadcrumbComponent.new(
-        items: [
-          { text: t("programmes.index.title"), href: programmes_path },
-          { text: programme.name, href: programme_path(programme) },
-        ],
-      ) %>
-<% end %>
-
-<h1 class="nhsuk-heading-l"><%= programme.name %></h1>
-
-<%= render AppProgrammeNavigationComponent.new(
-      programme,
-      organisation: current_user.selected_organisation,
-      active: :imports,
-    ) %>
-
-<%= govuk_button_link_to "Import records",
-                         new_import_path,
-                         class: "app-button--secondary nhsuk-u-margin-bottom-0" %>
+<%= render AppImportsNavigationComponent.new(active: :index) %>
 
 <%= render AppImportsTableComponent.new(organisation: @organisation) %>

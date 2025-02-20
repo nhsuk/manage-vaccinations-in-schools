@@ -40,22 +40,29 @@ module PatientTabsConcern
     }
   }.with_indifferent_access.freeze
 
-  def group_patient_sessions_by_conditions(all_patient_sessions, section:)
+  def group_patient_sessions_by_conditions(
+    all_patient_sessions,
+    programme:,
+    section:
+  )
     tab_conditions = TAB_CONDITIONS.fetch(section)
 
     all_patient_sessions
       .group_by do |patient_session| # rubocop:disable Style/BlockDelimiters
-        tab_conditions
-          .find { |_, conditions| conditions.any? { patient_session.send(_1) } }
-          &.first
+        conditions =
+          tab_conditions.find do |_, status|
+            status.any? { patient_session.send(it, programme:) }
+          end
+        conditions&.first
       end
-      .tap { |groups| tab_conditions.each_key { groups[_1] ||= [] } }
+      .tap { |groups| tab_conditions.each_key { groups[it] ||= [] } }
       .except(nil)
       .with_indifferent_access
   end
 
   def group_patient_sessions_by_state(
     all_patient_sessions,
+    programme,
     tab_states = nil,
     section: nil
   )
@@ -63,7 +70,9 @@ module PatientTabsConcern
 
     all_patient_sessions
       .group_by do |patient_session| # rubocop:disable Style/BlockDelimiters
-        tab_states.find { |_, states| patient_session.status.in? states }&.first
+        tab_states
+          .find { |_, states| patient_session.status(programme:).in?(states) }
+          &.first
       end
       .tap { |groups| tab_states.each_key { groups[_1] ||= [] } }
       .except(nil)

@@ -4,11 +4,13 @@ describe AppOutcomeBannerComponent do
   subject(:rendered) { render_inline(component) }
 
   let(:user) { create(:user) }
-  let(:patient_session) { create(:patient_session) }
+  let(:programme) { create(:programme, :hpv) }
+  let(:patient_session) { create(:patient_session, programme:) }
   let(:component) do
     described_class.new(
       patient_session:
         PatientSession.preload_for_status.find(patient_session.id),
+      programme:,
       current_user: user
     )
   end
@@ -20,7 +22,9 @@ describe AppOutcomeBannerComponent do
   end
 
   context "state is unable_to_vaccinate" do
-    let(:patient_session) { create(:patient_session, :unable_to_vaccinate) }
+    let(:patient_session) do
+      create(:patient_session, :unable_to_vaccinate, programme:)
+    end
 
     it { should have_css(".app-card--red") }
     it { should have_css(".nhsuk-card__heading", text: "Could not vaccinate") }
@@ -29,7 +33,9 @@ describe AppOutcomeBannerComponent do
   end
 
   context "triaged, not possible to vaccinate" do
-    let(:patient_session) { create(:patient_session, :unable_to_vaccinate) }
+    let(:patient_session) do
+      create(:patient_session, :unable_to_vaccinate, programme:)
+    end
 
     it { should have_css(".app-card--red") }
     it { should have_css(".nhsuk-card__heading", text: "Could not vaccinate") }
@@ -38,7 +44,11 @@ describe AppOutcomeBannerComponent do
 
   context "not triaged, not possible to vaccinate" do
     let(:patient_session) do
-      create(:patient_session, :unable_to_vaccinate_and_had_no_triage)
+      create(
+        :patient_session,
+        :unable_to_vaccinate_and_had_no_triage,
+        programme:
+      )
     end
 
     it { should have_css(".app-card--red") }
@@ -47,7 +57,6 @@ describe AppOutcomeBannerComponent do
   end
 
   context "state is vaccinated" do
-    let(:programme) { create(:programme, :hpv) }
     let(:patient_session) { create(:patient_session, :vaccinated, programme:) }
     let(:vaccination_record) do
       patient_session.vaccination_records(programme:).first
@@ -87,10 +96,9 @@ describe AppOutcomeBannerComponent do
 
   context "state is triaged_do_not_vaccinate" do
     let(:patient_session) do
-      create(:patient_session, :triaged_do_not_vaccinate, user:)
+      create(:patient_session, :triaged_do_not_vaccinate, programme:, user:)
     end
     let(:vaccination_record) { patient_session.vaccination_records.first }
-    let(:programme) { patient_session.programmes.first }
     let(:location) { patient_session.session.location }
     let(:triage) { patient_session.triages(programme:).first }
     let(:date) { triage.created_at.to_date.to_fs(:long) }
@@ -110,7 +118,11 @@ describe AppOutcomeBannerComponent do
     context "triage decision was not recorded today" do
       let(:date) { Time.zone.now - 2.days }
       let(:patient_session) do
-        create(:patient_session, :triaged_do_not_vaccinate).tap do |ps|
+        create(
+          :patient_session,
+          :triaged_do_not_vaccinate,
+          programme:
+        ).tap do |ps|
           ps
             .triages(programme: ps.programmes.first)
             .first

@@ -141,23 +141,23 @@ class Reports::OfflineSessionExporter
   end
 
   def rows(patient_session:)
-    bg_color =
-      if patient_session.consent_refused?
-        "F7D4D1"
-      elsif patient_session.consent_conflicts?
-        "FFDC8E"
-      end
-
-    row_style = {
-      strike: patient_session.patient.invalidated?,
-      bg_color:,
-      border: {
-        style: :thin,
-        color: "000000"
-      }
-    }
-
     session.programmes.flat_map do |programme|
+      bg_color =
+        if patient_session.consent_refused?(programme:)
+          "F7D4D1"
+        elsif patient_session.consent_conflicts?(programme:)
+          "FFDC8E"
+        end
+
+      row_style = {
+        strike: patient_session.patient.invalidated?,
+        bg_color:,
+        border: {
+          style: :thin,
+          color: "000000"
+        }
+      }
+
       vaccination_records =
         patient_session.vaccination_records(programme:, for_session: true)
 
@@ -209,7 +209,7 @@ class Reports::OfflineSessionExporter
       patient.address_postcode unless patient.restricted?
     )
     row[:nhs_number] = patient.nhs_number
-    row[:consent_status] = consent_status(patient_session:)
+    row[:consent_status] = consent_status(patient_session:, programme:)
     row[:consent_details] = consent_details(consents:)
     row[:health_question_answers] = Cell.new(
       health_question_answers(consents:),

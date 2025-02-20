@@ -18,7 +18,7 @@ class GovukNotifyPersonalisation
       programme || vaccination_record&.programme || consent_form&.programme ||
         consent&.programme
     @session =
-      session || consent_form&.actual_upcoming_session ||
+      session || consent_form&.actual_session ||
         consent_form&.original_session || vaccination_record&.session
     @organisation =
       session&.organisation || consent_form&.organisation ||
@@ -134,7 +134,7 @@ class GovukNotifyPersonalisation
   end
 
   def next_session_date
-    session.today_or_future_dates.first&.to_fs(:short_day_of_week)
+    session.next_date&.to_fs(:short_day_of_week)
   end
 
   def next_session_dates
