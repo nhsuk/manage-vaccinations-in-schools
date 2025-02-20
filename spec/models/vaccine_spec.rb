@@ -82,34 +82,6 @@ describe Vaccine do
     end
   end
 
-  describe "#maximum_dose_sequence" do
-    subject(:maximum_dose_sequence) { vaccine.maximum_dose_sequence }
-
-    context "with a Flu vaccine" do
-      let(:vaccine) { build(:vaccine, :flu) }
-
-      it { should eq(1) }
-    end
-
-    context "with an HPV vaccine" do
-      let(:vaccine) { build(:vaccine, :hpv) }
-
-      it { should eq(3) }
-    end
-
-    context "with a MenACWY vaccine" do
-      let(:vaccine) { build(:vaccine, :menacwy) }
-
-      it { should eq(1) }
-    end
-
-    context "with an Td/IPV vaccine" do
-      let(:vaccine) { build(:vaccine, :td_ipv) }
-
-      it { should eq(5) }
-    end
-  end
-
   describe "#seasonal?" do
     subject(:seasonal?) { vaccine.seasonal? }
 

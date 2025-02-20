@@ -41,6 +41,10 @@ class Programme < ApplicationRecord
        { flu: "flu", hpv: "hpv", menacwy: "menacwy", td_ipv: "td_ipv" },
        validate: true
 
+  def to_param
+    type
+  end
+
   def name
     human_enum_name(:type)
   end
@@ -60,8 +64,15 @@ class Programme < ApplicationRecord
     year_groups.map(&:to_birth_academic_year)
   end
 
-  def to_param
-    type
+  MAXIMUM_DOSE_SEQUENCES = {
+    "flu" => 1,
+    "hpv" => 3,
+    "menacwy" => 1,
+    "td_ipv" => 5
+  }.freeze
+
+  def maximum_dose_sequence
+    MAXIMUM_DOSE_SEQUENCES.fetch(type)
   end
 
   SNOMED_PROCEDURE_CODES = {
