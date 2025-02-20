@@ -237,6 +237,16 @@ def setup_clinic(user, organisation)
       year_group: 8
     )
   end
+
+  # All patients belong to the community clinic. This is normally
+  # handled by school moves, but here we need to do it manually.
+
+  PatientSession.import(
+    organisation.patients.map do
+      PatientSession.new(patient: it, session: clinic_session)
+    end,
+    on_duplicate_key_ignore: :all
+  )
 end
 
 def create_patients(organisation)
