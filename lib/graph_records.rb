@@ -1,10 +1,15 @@
 # frozen_string_literal: true
 
+# Spit out a Mermaid-style graph of records.
+#
+# Usage:
+#  graph = GraphRecords.new.graph(patients: [patient])
+#  puts graph
+#
 class GraphRecords
-  # @param parents [Array] Array of objects to focus on
-  # @param focus_config [Hash] Hash of class names to ids to focus on (make bold)
-  # @param node_order [Array] Array of class names in order to render nodes
-  # @param traversals_config [Hash] Hash of class names and arrays of associations to traverse
+  # @param focus_config [Hash] Hash of model names to ids to focus on (make bold)
+  # @param node_order [Array] Array of model names in order to render nodes
+  # @param traversals_config [Hash] Hash of model names to arrays of associations to traverse
   def initialize(
     focus_config: {},
     node_order: %i[class_import cohort_import patient consent parent],
@@ -15,6 +20,7 @@ class GraphRecords
     @traversals_config = traversals_config
   end
 
+  # @param objects [Hash] Hash of model name to ids to be graphed
   def graph(**objects)
     @nodes = Set.new
     @edges = Set.new

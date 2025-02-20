@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe GraphRecords do
   subject(:graph) { described_class.new.graph(patients: [patient]) }
 
