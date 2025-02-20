@@ -51,14 +51,12 @@ jobs:
           APPLICATION_GROUP=$(terraform output -raw codedeploy_deployment_group_name)
           CLUSTER_NAME=$(terraform output -raw mavis_cluster_name)
           SERVICE_NAME=$(terraform output -raw mavis_service_name)
-          if [ "$(terraform state list | wc -l)" -eq 0 ]; then
-            echo "No existing state found. Skipping deployment check."
-            STATE_EXISTS=false
-          else
-            STATE_EXISTS=true
+          if [[ -z "$APPLICATION" || -z "$APPLICATION_GROUP" || -z "$CLUSTER_NAME" || -z "SERVICE_NAME" ]]; then
+            echo "Expected data not found in existing state. This case is not yet supported by this worflow"
+            echo "Aborting infrastructure deployment"
+            exit 1
           fi
       - name: Check if any deployments are running
-        if: ${{ env.STATE_EXISTS }}
         run: |
           running_deployment=$(aws deploy list-deployments --application-name $APPLICATION_NAME \
           --deployment-group-name $APPLICATION_GROUP --include-only-statuses InProgress \
@@ -69,23 +67,21 @@ jobs:
             exit 1
           fi
       - name: Get currently deployed image digest
-        if: ${{ env.STATE_EXISTS }}
         run: |
           TASK_DEFINITION_ARN=$(aws ecs describe-services --cluster $CLUSTER_NAME --services $SERVICE_NAME \
           --query "services[0].taskDefinition" --output text)
           MAVIS_IMAGE=$(aws ecs describe-task-definition --task-definition $TASK_DEFINITION_ARN \
           --query "taskDefinition.containerDefinitions[0].image" --output text)
           echo "DIGEST=${MAVIS_IMAGE#*@}"
+          if [ -z "$DIGEST" ]; then
+            echo "No image digest found in the currently deployed task definition"
+            echo "Aborting infrastructure deployment"
+            exit 1
+          fi
       - name: Terraform Plan
         id: plan
         working-directory: ${{ env.tf_dir }}
         run: |
-          if [ -z "$DIGEST" ]; then
-            echo "No existing image digest found. Running terraform plan with dummy image_digest."
-            terraform plan -var="image_digest=dummy_digest" -var-file="env/${{ inputs.environment }}.tfvars" \
-            -out ${{ runner.temp }}/tfplan
-          else
-            echo "Running terraform plan with image_digest=$DIGEST"
             terraform plan -var="image_digest=$DIGEST" -var-file="env/${{ inputs.environment }}.tfvars" \
             -out ${{ runner.temp }}/tfplan
           fi
