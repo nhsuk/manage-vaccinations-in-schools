@@ -1,4 +1,4 @@
-name: TF Deploy Infrastructure with Terraform
+name: Deploy Infrastructure with Terraform
 run-name: Deploy AWS infrastructure for ${{ inputs.environment }}
 
 on:
@@ -59,7 +59,7 @@ jobs:
           fi
       - name: Get currently deployed image digest
         run: |
-          DIGEST=$(terraform show -json | jq '.values.root_module.resources[] | select(.address == "aws_ecs_task_definition.task_definition").values.container_definitions) | grep -oP '(?<=mavis/webapp@)[^\\]+'
+          DIGEST=$(terraform show -json | jq '.values.root_module.resources[] | select(.address == "aws_ecs_task_definition.task_definition").values.container_definitions' | grep -oP '(?<=mavis/webapp@)[^\\]+')
           echo "Currently deployed image digest: $DIGEST"
           if [ -z "$DIGEST" ]; then
             echo "Image digest not found in the currently deployed task definition"
