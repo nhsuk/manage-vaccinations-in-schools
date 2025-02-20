@@ -733,6 +733,9 @@ en:
             - >-
               The number of doses you need depends on your age and how well your
               immune system works. Young people usually only need 1 dose.
+            - >-
+              <a href="https://www.nhs.uk/conditions/vaccinations/hpv-human-papillomavirus-vaccine/">Find
+              out more about the HPV vaccine</a>
         menacwy:
           title: MenACWY
           description:
@@ -740,12 +743,24 @@ en:
               The MenACWY vaccine helps protect against meningitis and sepsis.
               It is recommended for all teenagers. Most people only need one
               dose of the vaccine.
+            - >-
+              <a href="https://www.nhs.uk/vaccinations/menacwy-vaccine/">Find
+              out more about the MenACWY vaccine</a>
         td_ipv:
           title: Td/IPV (3-in-1 teenage booster)
           description:
             - >-
               The Td/IPV vaccine (also called the 3-in-1 teenage booster) helps
               protect against tetanus, diphtheria and polio.
+            - >-
+              It boosts the protection provided by the
+              <a href="https://www.nhs.uk/vaccinations/6-in-1-vaccine/">6-in-1
+              vaccine</a> and
+              <a href="https://www.nhs.uk/vaccinations/4-in-1-preschool-booster-vaccine/">4-in-1
+              pre-school booster vaccine</a>.
+            - >-
+              <a href="https://www.nhs.uk/vaccinations/td-ipv-vaccine-3-in-1-teenage-booster/">Find
+              out more about the Td/IPV vaccine</a>
       title: Give or refuse consent for vaccinations
   dashboard:
     index:

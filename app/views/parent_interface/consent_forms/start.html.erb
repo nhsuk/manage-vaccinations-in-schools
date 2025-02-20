@@ -6,7 +6,7 @@
   </h2>
 
   <% t("consent_forms.start.vaccines.#{programme.type}.description").each do %>
-    <p><%= _1 %></p>
+    <p><%= _1.html_safe %></p>
   <% end %>
 <% end %>
 
