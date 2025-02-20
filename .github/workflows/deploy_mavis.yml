@@ -43,11 +43,15 @@ jobs:
       - name: Login to ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
-      - name: Get image digest
+      - name: pull docker image
         run: |
-          MANIFEST=$(docker manifest inspect \
-          ${{ steps.login-ecr.outputs.registry }}/mavis/webapp:${{ inputs.image_tag || github.sha }})
-          DIGEST=$(echo "$MANIFEST" | jq -r .config.digest)
+          DOCKER_IMAGE="${{ steps.login-ecr.outputs.registry }}/mavis/webapp:${{ inputs.image_tag || github.sha }}"
+          docker pull "$DOCKER_IMAGE"
+          echo "DOCKER_IMAGE=$DOCKER_IMAGE" >> $GITHUB_ENV
+      - name: Extract image digest
+        run: |
+          DOCKER_DIGEST=$(docker inspect --format='{{index .RepoDigests 0}}' "$DOCKER_IMAGE")
+          DIGEST="${DOCKER_DIGEST#*@}"
           echo "DIGEST=$DIGEST" >> $GITHUB_ENV
       - name: Install terraform
         uses: hashicorp/setup-terraform@v3
