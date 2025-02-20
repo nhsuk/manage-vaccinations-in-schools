@@ -1,4 +1,4 @@
-<%= render AppSecondaryNavigationComponent.new do |nav|
+<%= render AppSecondaryNavigationComponent.new(classes: "app-secondary-navigation--sticky") do |nav|
      @session.programmes.each do |programme|
        if @patient.eligible_for?(programme:)
          nav.with_item(
