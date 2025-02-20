@@ -28,8 +28,10 @@ env:
   tf-dir: terraform/app
 
 jobs:
-  GetImageDigest:
+  PlanUpdate:
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -40,50 +42,27 @@ jobs:
           aws-region: eu-west-2
       - name: Login to ECR
         uses: aws-actions/amazon-ecr-login@v2
-      - name: pull docker image
-        run: |
-          docker pull ${{ steps.login-ecr.outputs.registry }}:${{ inputs.image_tag || github.sha }}
       - name: Get image digest
         run: |
-          DOCKER_DIGEST=$(docker inspect --format='{{index .RepoDigests 0}}' mavis:latest)
-          DIGEST=${DOCKER_DIGEST#*@}
-          echo "DIGEST=$DIGEST" >> digest.env
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: digest
-          path: "digest.env"
-  PlanUpdate:
-    runs-on: ubuntu-latest
-    needs: GetImageDigest
-    defaults:
-      run:
-        working-directory: ${{ env.tf-dir }}
-    steps:
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: ${{ env.aws-role }}
-          aws-region: eu-west-2
-      - name: Download artifact
-        uses: actions/download-artifact@v2
-        with:
-          name: digest
+          MANIFEST=$(docker manifest inspect \ 
+          ${{ steps.login-ecr.outputs.registry }}:${{ inputs.image_tag || github.sha }})
+          DIGEST=$(echo "$MANIFEST" | jq -r .config.digest)
+          echo "DIGEST=$DIGEST" >> $GITHUB_ENV
       - name: Install terraform
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: 1.10.5
       - name: Update the task definition
         id: plan
+        working-directory: ${{ env.tf-dir }}
         run: |
-          source digest.env
           terraform init -backend-config="env/${{ inputs.environment }}-backend.hcl"
           terrafom plan -var="image_digest=$DIGEST" -target=aws_ecs_task_definition.task_definition \
           -target=aws_s3_object.appspec_object -var-file="env/${{ inputs.environment }}.tfvars" \
           -out=${{ runner.temp }}/tfplan
       - name: Validate the changes
         run: |
-          ./../scripts/tf_task_definition_check.sh ${{ steps.plan.outputs.stdout }}
+          ./terraform/scripts/check_task_definition.sh ${{ steps.plan.outputs.stdout }}
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
@@ -93,6 +72,8 @@ jobs:
     runs-on: ubuntu-latest
     needs: PlanUpdate
     environment: ${{ inputs.environment }}
+    permissions:
+      id-token: write
     steps:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -109,8 +90,8 @@ jobs:
         with:
           terraform_version: 1.10.5
       - name: Apply the changes
+        working-directory: ${{ env.tf-dir }}
         run: |
-          cd ${{ env.tf-dir }}
           terraform init -backend-config="env/${{ inputs.environment }}-backend.hcl"
           terraform apply ${{ runner.temp }}/tfplan
           echo "s3_bucket=$(terraform output -raw s3_bucket)" >> $GITHUB_ENV
@@ -125,7 +106,7 @@ jobs:
           deployment_id=$(aws deploy create-deployment \
           --application-name $application --deployment-group-name $application_group \
           --s3-location bucket=appspec-bucket-poc,key=appspec.yaml,bundleType=yaml \
-          | jq -r '.deploymentId')
+          | jq -r .deploymentId)
           echo "Deployment started: $deployment_id"
           echo "deployment_id=$deployment_id" >> $GITHUB_ENV
       - name: Wait up to 30 minutes for deployment to complete
