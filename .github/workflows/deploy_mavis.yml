@@ -41,11 +41,12 @@ jobs:
           role-to-assume: ${{ env.aws-role }}
           aws-region: eu-west-2
       - name: Login to ECR
+        id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
       - name: Get image digest
         run: |
           MANIFEST=$(docker manifest inspect \ 
-          ${{ steps.login-ecr.outputs.registry }}:${{ inputs.image_tag || github.sha }})
+          ${{ steps.login-ecr.outputs.registry }}/mavis/webapp:${{ inputs.image_tag || github.sha }})
           DIGEST=$(echo "$MANIFEST" | jq -r .config.digest)
           echo "DIGEST=$DIGEST" >> $GITHUB_ENV
       - name: Install terraform
