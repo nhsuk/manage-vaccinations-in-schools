@@ -58,7 +58,6 @@ class EmailDeliveryJob < NotifyDeliveryJob
       parent:,
       patient:,
       recipient: email_address,
-      recipient_deterministic: email_address,
       sent_by:,
       template_id:,
       type: :email
