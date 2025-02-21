@@ -23,7 +23,7 @@ describe AppParentSummaryComponent do
     end
 
     it { should have_content("Name") }
-    it { should have_content("John Smith") }
+    it { should have_content("SMITH, John") }
 
     it { should have_content("Relationship") }
     it { should have_content("Dad") }

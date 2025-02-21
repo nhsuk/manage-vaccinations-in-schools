@@ -18,10 +18,13 @@ module VaccinationRecordPerformedByConcern
       OpenStruct.new(
         given_name: performed_by_given_name,
         family_name: performed_by_family_name,
-        full_name: [
-          performed_by_given_name,
-          performed_by_family_name
-        ].compact_blank.join(" ")
+        full_name: -> do
+          FullNameFormatter.call(
+            self,
+            context: :internal,
+            parts_prefix: :performed_by
+          )
+        end
       )
     end
   end

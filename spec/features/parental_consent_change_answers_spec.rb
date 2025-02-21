@@ -161,7 +161,7 @@ RSpec.feature "Parental consent change answers" do
   end
 
   def then_i_see_the_updated_name
-    expect(page).to have_content("Joe Test")
+    expect(page).to have_content("TEST, Joe")
   end
 
   def when_i_click_on_the_change_link_of_the_first_answer
@@ -251,7 +251,7 @@ RSpec.feature "Parental consent change answers" do
     )
     expect(page).to have_content(
       "As you answered ‘yes’ to some of the health questions, " \
-        "we need to check the vaccination is suitable for Joe Test."
+        "we need to check the vaccination is suitable for TEST, Joe."
     )
   end
 

@@ -63,18 +63,18 @@ describe "Import child records" do
   def and_i_should_see_the_patients
     expect(page).to have_content("1000 children")
     expect(page).to have_content("Full nameNHS numberDate of birthPostcode")
-    expect(page).to have_content("Roxanna Mayer")
+    expect(page).to have_content("MAYER, Roxanna")
   end
 
   def and_i_should_see_the_patients_for_page_two
     expect(page).to have_content("1000 children")
     expect(page).to have_content("Full nameNHS numberDate of birthPostcode")
-    expect(page).to have_content("Elijah Christiansen")
+    expect(page).to have_content("CHRISTIANSEN, Elijah")
   end
 
   def then_i_should_see_the_upload
     expect(page).to have_content("Imported on")
-    expect(page).to have_content("Imported byTest User")
+    expect(page).to have_content("Imported byUSER, Test")
   end
 
   def then_i_should_see_the_imports_page_with_the_processing_flash

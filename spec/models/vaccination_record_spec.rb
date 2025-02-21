@@ -131,10 +131,10 @@ describe VaccinationRecord do
 
       it do
         expect(performed_by).to have_attributes(
-          full_name: "John Smith",
           given_name: "John",
           family_name: "Smith"
         )
+        expect(performed_by.full_name).to eq("SMITH, John")
       end
     end
 

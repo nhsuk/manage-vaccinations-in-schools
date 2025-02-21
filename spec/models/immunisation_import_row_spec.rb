@@ -1462,7 +1462,8 @@ describe ImmunisationImportRow do
 
     it "has a vaccinator" do
       expect(vaccination_record.performed_by).to have_attributes(
-        full_name: "John Smith"
+        given_name: "John",
+        family_name: "Smith"
       )
     end
 
