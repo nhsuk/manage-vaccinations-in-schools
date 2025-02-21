@@ -2,15 +2,11 @@
 
 describe SendClinicInitialInvitationsJob do
   subject(:perform_now) do
-    described_class.perform_now(
-      session,
-      school: nil,
-      programme_ids: [programme.id]
-    )
+    described_class.perform_now(session, school: nil, programmes:)
   end
 
-  let(:programme) { create(:programme) }
-  let(:organisation) { create(:organisation, programmes: [programme]) }
+  let(:programmes) { [create(:programme)] }
+  let(:organisation) { create(:organisation, programmes:) }
   let(:parents) { create_list(:parent, 2) }
   let(:patient) { create(:patient, parents:) }
   let(:location) { create(:generic_clinic, organisation:) }
@@ -18,7 +14,7 @@ describe SendClinicInitialInvitationsJob do
   let(:session) do
     create(
       :session,
-      programme:,
+      programmes:,
       date: 3.weeks.from_now.to_date,
       location:,
       organisation:
@@ -57,7 +53,7 @@ describe SendClinicInitialInvitationsJob do
         :vaccination_record,
         patient:,
         session:,
-        programme:,
+        programme: programmes.first,
         location_name: "A clinic."
       )
     end
@@ -70,7 +66,13 @@ describe SendClinicInitialInvitationsJob do
 
   context "when refused consent has been received" do
     before do
-      create(:consent, :refused, patient:, programme:, parent: parents.first)
+      create(
+        :consent,
+        :refused,
+        patient:,
+        programme: programmes.first,
+        parent: parents.first
+      )
     end
 
     it "doesn't send any notifications" do

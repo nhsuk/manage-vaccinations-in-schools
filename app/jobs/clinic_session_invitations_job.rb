@@ -6,6 +6,7 @@ class ClinicSessionInvitationsJob < ApplicationJob
   def perform
     Session
       .send_invitations
+      .includes(:programmes)
       .joins(:location)
       .merge(Location.clinic)
       .each do |session|
@@ -15,7 +16,7 @@ class ClinicSessionInvitationsJob < ApplicationJob
         SendClinicInitialInvitationsJob.perform_now(
           session,
           school: nil,
-          programme_ids: session.programmes.pluck(:id)
+          programmes: session.programmes
         )
       end
   end

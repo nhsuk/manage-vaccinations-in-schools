@@ -5,13 +5,11 @@ class SendClinicInitialInvitationsJob < ApplicationJob
 
   queue_as :notifications
 
-  def perform(session, school:, programme_ids:)
+  def perform(session, school:, programmes:)
     raise InvalidLocation unless session.clinic?
 
     session_date = session.next_date
     raise NoSessionDates if session_date.nil?
-
-    programmes = session.programmes.where(id: programme_ids)
 
     patient_sessions(
       session,

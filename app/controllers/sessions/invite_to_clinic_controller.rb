@@ -16,7 +16,7 @@ class Sessions::InviteToClinicController < ApplicationController
       SendClinicInitialInvitationsJob.perform_later(
         @generic_clinic_session,
         school: @session.location,
-        programme_ids: @session.programmes.map(&:id)
+        programmes: @session.programmes.to_a
       )
       flash[
         :success
@@ -34,7 +34,10 @@ class Sessions::InviteToClinicController < ApplicationController
   private
 
   def set_session
-    @session = authorize Session.find_by!(slug: params[:session_slug])
+    @session =
+      authorize Session.includes(:programmes).find_by!(
+                  slug: params[:session_slug]
+                )
 
     render status: :not_found unless @session.can_send_clinic_invitations?
   end
@@ -54,7 +57,7 @@ class Sessions::InviteToClinicController < ApplicationController
           .patient_sessions(
             @generic_clinic_session,
             school: @session.location,
-            programmes: @session.programmes,
+            programmes: @session.programmes.to_a,
             session_date:
           )
           .length
