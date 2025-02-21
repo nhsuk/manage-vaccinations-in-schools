@@ -63,6 +63,7 @@ jobs:
         working-directory: ${{ env.tf_dir }}
         run: |
           DIGEST=$(terraform show -json | jq '.values.root_module.resources[] | select(.address == "aws_ecs_task_definition.task_definition").values.container_definitions' | grep -oP '(?<=mavis/webapp@)[^\\]+')
+          echo "DIGEST=$DIGEST" >> $GITHUB_ENV
           echo "Currently deployed image digest: $DIGEST"
           if [ -z "$DIGEST" ]; then
             echo "Image digest not found in the currently deployed task definition"
