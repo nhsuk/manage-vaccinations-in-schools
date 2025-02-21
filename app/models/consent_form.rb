@@ -89,7 +89,7 @@ class ConsentForm < ApplicationRecord
   has_many :eligible_schools, through: :organisation, source: :schools
   has_many :vaccines, through: :programmes
 
-  enum :response, { given: 0, refused: 1 }, prefix: "consent"
+  enum :response, { given: 0, refused: 1, given_one: 2 }, prefix: "consent"
   enum :reason,
        {
          contains_gelatine: 0,
@@ -271,8 +271,8 @@ class ConsentForm < ApplicationRecord
       (:reason if consent_refused?),
       (:reason_notes if consent_refused? && reason_notes_must_be_provided?),
       (:injection if injection_offered_as_alternative?),
-      (:address if consent_given?),
-      (:health_question if consent_given?)
+      (:address if consent_given? || consent_given_one?),
+      (:health_question if consent_given? || consent_given_one?)
     ].compact
   end
 
