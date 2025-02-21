@@ -27,8 +27,8 @@ class ProgrammeGrouper
       :flu
     elsif programme.hpv?
       :hpv
-    elsif programme.td_ipv? || programme.menacwy?
-      :doubles # Td/IPV and MenACWY is administered together
+    elsif programme.doubles?
+      :doubles
     else
       raise "Unknown programme type #{programme.type}"
     end

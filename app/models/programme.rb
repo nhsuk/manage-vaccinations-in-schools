@@ -46,6 +46,10 @@ class Programme < ApplicationRecord
     type
   end
 
+  def doubles?
+    menacwy? || td_ipv?
+  end
+
   def name
     human_enum_name(:type)
   end
