@@ -38,7 +38,7 @@ describe PatientMerger do
         :consent_notification,
         :request,
         patient: patient_to_destroy,
-        programme:
+        session:
       )
     end
     let(:gillick_assessment) do

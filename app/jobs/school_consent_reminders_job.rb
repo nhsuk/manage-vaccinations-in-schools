@@ -27,7 +27,7 @@ class SchoolConsentRemindersJob < ApplicationJob
 
           ConsentNotification.create_and_send!(
             patient:,
-            programme:,
+            programmes: [programme],
             session:,
             type:
               sent_initial_reminder ? :subsequent_reminder : :initial_reminder

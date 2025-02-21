@@ -61,7 +61,7 @@ class ConsentsController < ApplicationController
 
     ConsentNotification.create_and_send!(
       patient: @patient,
-      programme: @programme,
+      programmes: [@programme],
       session: @session,
       type: :request,
       current_user:
