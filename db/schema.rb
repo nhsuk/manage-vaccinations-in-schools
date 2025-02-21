@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_02_19_100155) do
+ActiveRecord::Schema[8.0].define(version: 2025_02_21_080758) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -601,12 +601,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_19_100155) do
     t.index ["type"], name: "index_programmes_on_type", unique: true
   end
 
-  create_table "programmes_sessions", id: false, force: :cascade do |t|
-    t.bigint "session_id", null: false
-    t.bigint "programme_id", null: false
-    t.index ["session_id", "programme_id"], name: "index_programmes_sessions_on_session_id_and_programme_id", unique: true
-  end
-
   create_table "school_move_log_entries", force: :cascade do |t|
     t.bigint "patient_id", null: false
     t.bigint "user_id"
@@ -663,6 +657,14 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_19_100155) do
     t.index ["patient_id"], name: "index_session_notifications_on_patient_id"
     t.index ["sent_by_user_id"], name: "index_session_notifications_on_sent_by_user_id"
     t.index ["session_id"], name: "index_session_notifications_on_session_id"
+  end
+
+  create_table "session_programmes", force: :cascade do |t|
+    t.bigint "session_id", null: false
+    t.bigint "programme_id", null: false
+    t.index ["programme_id"], name: "index_session_programmes_on_programme_id"
+    t.index ["session_id", "programme_id"], name: "index_session_programmes_on_session_id_and_programme_id", unique: true
+    t.index ["session_id"], name: "index_session_programmes_on_session_id"
   end
 
   create_table "sessions", force: :cascade do |t|
@@ -848,8 +850,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_19_100155) do
   add_foreign_key "patients", "organisations"
   add_foreign_key "pre_screenings", "patient_sessions"
   add_foreign_key "pre_screenings", "users", column: "performed_by_user_id"
-  add_foreign_key "programmes_sessions", "programmes"
-  add_foreign_key "programmes_sessions", "sessions"
   add_foreign_key "school_move_log_entries", "locations", column: "school_id"
   add_foreign_key "school_move_log_entries", "patients"
   add_foreign_key "school_move_log_entries", "users"
@@ -862,6 +862,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_19_100155) do
   add_foreign_key "session_notifications", "patients"
   add_foreign_key "session_notifications", "sessions"
   add_foreign_key "session_notifications", "users", column: "sent_by_user_id"
+  add_foreign_key "session_programmes", "programmes"
+  add_foreign_key "session_programmes", "sessions"
   add_foreign_key "sessions", "organisations"
   add_foreign_key "teams", "organisations"
   add_foreign_key "triage", "organisations"

@@ -18,8 +18,6 @@ class Programme < ApplicationRecord
 
   audited
 
-  has_and_belongs_to_many :sessions
-
   has_many :consent_forms
   has_many :consent_notifications
   has_many :consents
@@ -27,10 +25,12 @@ class Programme < ApplicationRecord
   has_many :gillick_assessments
   has_many :immunisation_imports
   has_many :organisation_programmes
+  has_many :session_programmes
   has_many :triages
   has_many :vaccination_records, -> { kept }
   has_many :vaccines
 
+  has_many :sessions, through: :session_programmes
   has_many :patient_sessions, through: :sessions
   has_many :patients, through: :patient_sessions
   has_many :organisations, through: :organisation_programmes

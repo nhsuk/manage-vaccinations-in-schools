@@ -88,6 +88,23 @@ describe Session do
     end
   end
 
+  describe "#programmes" do
+    subject(:programmes) { session.reload.programmes }
+
+    let(:hpv_programme) { create(:programme, :hpv) }
+    let(:menacwy_programme) { create(:programme, :menacwy) }
+
+    let(:session) { create(:session, programme: menacwy_programme) }
+
+    before do
+      session.update!(programme_ids: [menacwy_programme.id, hpv_programme.id])
+    end
+
+    it "is ordered by name" do
+      expect(programmes).to eq([hpv_programme, menacwy_programme])
+    end
+  end
+
   describe "#today?" do
     subject(:today?) { session.today? }
 
