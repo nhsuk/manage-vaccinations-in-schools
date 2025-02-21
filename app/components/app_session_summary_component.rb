@@ -72,15 +72,20 @@ class AppSessionSummaryComponent < ViewComponent::Base
     if @session.open_for_consent?
       tag.ul(class: "nhsuk-list") do
         safe_join(
-          @session.programmes.map do
-            tag.li(
-              govuk_link_to(
-                "View #{it.name} parental consent form",
-                start_parent_interface_consent_forms_path(@session, it),
-                new_tab: true
+          ProgrammeGrouper
+            .call(@session.programmes)
+            .map do |programmes|
+              tag.li(
+                govuk_link_to(
+                  "View #{programmes.map(&:name).to_sentence} parental consent form",
+                  start_parent_interface_consent_forms_path(
+                    @session,
+                    programmes.map(&:to_param).join("-")
+                  ),
+                  new_tab: true
+                )
               )
-            )
-          end
+            end
         )
       end
     end
