@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_02_21_080758) do
+ActiveRecord::Schema[8.0].define(version: 2025_02_21_105126) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -153,6 +153,14 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_21_080758) do
     t.index ["cohort_import_id", "patient_id"], name: "idx_on_cohort_import_id_patient_id_7864d1a8b0", unique: true
   end
 
+  create_table "consent_form_programmes", force: :cascade do |t|
+    t.bigint "programme_id", null: false
+    t.bigint "consent_form_id", null: false
+    t.index ["consent_form_id"], name: "index_consent_form_programmes_on_consent_form_id"
+    t.index ["programme_id", "consent_form_id"], name: "idx_on_programme_id_consent_form_id_2113cb7f37", unique: true
+    t.index ["programme_id"], name: "index_consent_form_programmes_on_programme_id"
+  end
+
   create_table "consent_forms", force: :cascade do |t|
     t.datetime "recorded_at"
     t.datetime "created_at", null: false
@@ -179,7 +187,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_21_080758) do
     t.string "parent_relationship_other_name"
     t.string "parent_relationship_type"
     t.boolean "parent_phone_receive_updates", default: false, null: false
-    t.bigint "programme_id", null: false
     t.boolean "school_confirmed"
     t.bigint "location_id", null: false
     t.bigint "organisation_id", null: false
@@ -194,7 +201,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_21_080758) do
     t.index ["location_id"], name: "index_consent_forms_on_location_id"
     t.index ["nhs_number"], name: "index_consent_forms_on_nhs_number"
     t.index ["organisation_id"], name: "index_consent_forms_on_organisation_id"
-    t.index ["programme_id"], name: "index_consent_forms_on_programme_id"
     t.index ["school_id"], name: "index_consent_forms_on_school_id"
   end
 
@@ -803,11 +809,12 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_21_080758) do
   add_foreign_key "cohort_imports_parents", "parents"
   add_foreign_key "cohort_imports_patients", "cohort_imports"
   add_foreign_key "cohort_imports_patients", "patients"
+  add_foreign_key "consent_form_programmes", "consent_forms"
+  add_foreign_key "consent_form_programmes", "programmes"
   add_foreign_key "consent_forms", "consents"
   add_foreign_key "consent_forms", "locations"
   add_foreign_key "consent_forms", "locations", column: "school_id"
   add_foreign_key "consent_forms", "organisations"
-  add_foreign_key "consent_forms", "programmes"
   add_foreign_key "consent_notifications", "patients"
   add_foreign_key "consent_notifications", "programmes"
   add_foreign_key "consent_notifications", "sessions"

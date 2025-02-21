@@ -39,7 +39,6 @@
 #  consent_id                          :bigint
 #  location_id                         :bigint           not null
 #  organisation_id                     :bigint           not null
-#  programme_id                        :bigint           not null
 #  school_id                           :bigint
 #
 # Indexes
@@ -48,7 +47,6 @@
 #  index_consent_forms_on_location_id      (location_id)
 #  index_consent_forms_on_nhs_number       (nhs_number)
 #  index_consent_forms_on_organisation_id  (organisation_id)
-#  index_consent_forms_on_programme_id     (programme_id)
 #  index_consent_forms_on_school_id        (school_id)
 #
 # Foreign Keys
@@ -56,7 +54,6 @@
 #  fk_rails_...  (consent_id => consents.id)
 #  fk_rails_...  (location_id => locations.id)
 #  fk_rails_...  (organisation_id => organisations.id)
-#  fk_rails_...  (programme_id => programmes.id)
 #  fk_rails_...  (school_id => locations.id)
 #
 
@@ -70,7 +67,7 @@ describe ConsentForm do
         reason:,
         response:,
         session:,
-        programme:,
+        programmes:,
         use_preferred_name:,
         wizard_step:
       )
@@ -80,8 +77,8 @@ describe ConsentForm do
     let(:parent_phone_receive_updates) { false }
     let(:reason) { nil }
     let(:response) { nil }
-    let(:programme) { build(:programme) }
-    let(:session) { build(:session, programme:) }
+    let(:session) { create(:session) }
+    let(:programmes) { session.programmes }
     let(:use_preferred_name) { false }
     let(:wizard_step) { nil }
 
@@ -198,7 +195,7 @@ describe ConsentForm do
 
     context "when wizard_step is :injection" do
       # currently injection alternative only offered during flu programme
-      let(:programme) { build(:programme, :flu) }
+      let(:programmes) { [build(:programme, :flu)] }
 
       let(:response) { "refused" }
       let(:reason) { "contains_gelatine" }
@@ -328,7 +325,7 @@ describe ConsentForm do
     end
 
     context "for a flu programme, when patient refuses consent" do
-      let(:programme) { build(:programme, :flu) }
+      let(:programmes) { [build(:programme, :flu)] }
 
       it "offers an injection alternative if the child hasn't received vaccine elsewhere" do
         consent_form =
@@ -336,7 +333,7 @@ describe ConsentForm do
             :consent_form,
             response: "refused",
             reason: "contains_gelatine",
-            programme:
+            programmes:
           )
         expect(consent_form.wizard_steps).to include(:reason)
         expect(consent_form.wizard_steps).to include(:injection)
@@ -348,7 +345,7 @@ describe ConsentForm do
             :consent_form,
             response: "refused",
             reason: "already_vaccinated",
-            programme:
+            programmes:
           )
         expect(consent_form.wizard_steps).to include(:reason)
         expect(consent_form.wizard_steps).not_to include(:injection)
@@ -361,7 +358,7 @@ describe ConsentForm do
         consent_form =
           build(
             :consent_form,
-            programme: build(:programme, :hpv),
+            programmes: [build(:programme, :hpv)],
             response: "refused",
             reason: "medical_reasons"
           )
@@ -538,18 +535,33 @@ describe ConsentForm do
 
   describe "#gelatine_content_status_in_vaccines" do
     it "returns :maybe if the flu programme offers both injection and nasal vaccines" do
-      consent_form = build(:consent_form, programme: build(:programme, :flu))
+      consent_form =
+        create(
+          :consent_form,
+          session: create(:session, programme: create(:programme, :flu))
+        )
+      consent_form.strict_loading!(false)
       expect(consent_form.gelatine_content_status_in_vaccines).to eq(:maybe)
     end
 
     it "returns false if the flu programme only offers injection vaccines" do
       consent_form =
-        build(:consent_form, programme: build(:programme, :flu_nasal_only))
+        create(
+          :consent_form,
+          session:
+            create(:session, programme: create(:programme, :flu_nasal_only))
+        )
+      consent_form.strict_loading!(false)
       expect(consent_form.gelatine_content_status_in_vaccines).to be(true)
     end
 
     it "returns false for an HPV programme" do
-      consent_form = build(:consent_form, programme: build(:programme, :hpv))
+      consent_form =
+        create(
+          :consent_form,
+          session: create(:session, programme: create(:programme, :hpv))
+        )
+      consent_form.strict_loading!(false)
       expect(consent_form.gelatine_content_status_in_vaccines).to be(false)
     end
   end
@@ -559,11 +571,9 @@ describe ConsentForm do
     let(:session) { create(:session, programme:) }
     let(:consent) { create(:consent, programme:) }
     let(:unmatched_consent_form) do
-      create(:consent_form, consent: nil, programme:, session:)
+      create(:consent_form, consent: nil, session:)
     end
-    let(:matched_consent_form) do
-      create(:consent_form, consent:, programme:, session:)
-    end
+    let(:matched_consent_form) { create(:consent_form, consent:, session:) }
 
     it "returns unmatched consent forms" do
       expect(described_class.unmatched).to include unmatched_consent_form
@@ -576,11 +586,9 @@ describe ConsentForm do
     let(:session) { create(:session, programme:) }
     let(:consent) { create(:consent, programme:) }
     let(:recorded_consent_form) do
-      create(:consent_form, :recorded, programme:, consent:, session:)
+      create(:consent_form, :recorded, consent:, session:)
     end
-    let(:draft_consent_form) do
-      create(:consent_form, programme:, consent:, session:)
-    end
+    let(:draft_consent_form) { create(:consent_form, consent:, session:) }
 
     it "returns unmatched consent forms" do
       expect(described_class.recorded).to include recorded_consent_form
@@ -783,7 +791,6 @@ describe ConsentForm do
     consent_form =
       build(
         :consent_form,
-        programme:,
         preferred_given_name: "John",
         use_preferred_name: true,
         session:
@@ -794,7 +801,6 @@ describe ConsentForm do
     consent_form =
       build(
         :consent_form,
-        programme:,
         response: "refused",
         reason: "contains_gelatine",
         reason_notes: "I'm vegan",
@@ -804,7 +810,7 @@ describe ConsentForm do
     expect(consent_form.reason).to be_nil
     expect(consent_form.reason_notes).to be_nil
 
-    consent_form = build(:consent_form, programme:, session:)
+    consent_form = build(:consent_form, session:)
     consent_form.update!(response: "refused")
     expect(consent_form.address_line_1).to be_nil
     expect(consent_form.address_line_2).to be_nil

@@ -129,7 +129,6 @@ def create_session(
         FactoryBot.create(
           :consent_form,
           :recorded,
-          programme:,
           given_name: patient.given_name,
           family_name: patient.family_name,
           session:
@@ -141,7 +140,6 @@ def create_session(
       FactoryBot.create(
         :consent_form,
         :recorded,
-        programme:,
         given_name: temporary_patient.given_name,
         family_name: temporary_patient.family_name,
         nhs_number: temporary_patient.nhs_number,

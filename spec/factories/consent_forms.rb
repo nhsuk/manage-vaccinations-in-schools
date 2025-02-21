@@ -39,7 +39,6 @@
 #  consent_id                          :bigint
 #  location_id                         :bigint           not null
 #  organisation_id                     :bigint           not null
-#  programme_id                        :bigint           not null
 #  school_id                           :bigint
 #
 # Indexes
@@ -48,7 +47,6 @@
 #  index_consent_forms_on_location_id      (location_id)
 #  index_consent_forms_on_nhs_number       (nhs_number)
 #  index_consent_forms_on_organisation_id  (organisation_id)
-#  index_consent_forms_on_programme_id     (programme_id)
 #  index_consent_forms_on_school_id        (school_id)
 #
 # Foreign Keys
@@ -56,7 +54,6 @@
 #  fk_rails_...  (consent_id => consents.id)
 #  fk_rails_...  (location_id => locations.id)
 #  fk_rails_...  (organisation_id => organisations.id)
-#  fk_rails_...  (programme_id => programmes.id)
 #  fk_rails_...  (school_id => locations.id)
 #
 
@@ -94,7 +91,7 @@ FactoryBot.define do
 
     parental_responsibility { "yes" }
 
-    programme { session.programmes.first }
+    programmes { session.programmes }
     organisation { session.organisation }
 
     location { session.location }

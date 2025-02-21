@@ -12,9 +12,12 @@ module ParentInterface
     private
 
     def set_consent_form
-      @consent_form = ConsentForm.find(params[:consent_form_id] || params[:id])
+      @consent_form =
+        ConsentForm.includes(:programmes, :vaccines).find(
+          params[:consent_form_id] || params[:id]
+        )
       @organisation = @consent_form.organisation
-      @programme = @consent_form.programme
+      @programmes = @consent_form.programmes
       @session = @consent_form.original_session
       @team = @consent_form.team
     end
@@ -27,7 +30,7 @@ module ParentInterface
 
     def set_header_path
       @header_path =
-        start_parent_interface_consent_forms_path(@session, @programme)
+        start_parent_interface_consent_forms_path(@session, @programmes.first)
     end
 
     def set_service_name

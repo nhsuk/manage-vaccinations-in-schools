@@ -259,7 +259,6 @@ describe AppActivityLogComponent do
       consent_form =
         create(
           :consent_form,
-          programme:,
           session:,
           recorded_at: Time.zone.local(2024, 5, 30, 12),
           parent_full_name: "Jane Doe",

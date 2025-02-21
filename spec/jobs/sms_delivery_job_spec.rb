@@ -98,7 +98,7 @@ describe SMSDeliveryJob do
 
     context "with a consent form" do
       let(:consent_form) do
-        create(:consent_form, programme:, session:, parent_phone: "01234567890")
+        create(:consent_form, session:, parent_phone: "01234567890")
       end
       let(:parent) { nil }
       let(:patient) { nil }
@@ -128,7 +128,7 @@ describe SMSDeliveryJob do
 
       context "when the parent doesn't have a phone number" do
         let(:consent_form) do
-          create(:consent_form, programme:, session:, parent_phone: nil)
+          create(:consent_form, session:, parent_phone: nil)
         end
 
         it "doesn't send a text" do

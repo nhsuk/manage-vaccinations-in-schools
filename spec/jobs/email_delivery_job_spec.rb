@@ -119,12 +119,7 @@ describe EmailDeliveryJob do
 
     context "with a consent form" do
       let(:consent_form) do
-        create(
-          :consent_form,
-          programme:,
-          session:,
-          parent_email: "test@example.com"
-        )
+        create(:consent_form, session:, parent_email: "test@example.com")
       end
       let(:parent) { nil }
       let(:patient) { nil }
@@ -170,7 +165,7 @@ describe EmailDeliveryJob do
 
       context "when the parent doesn't have a phone number" do
         let(:consent_form) do
-          create(:consent_form, programme:, session:, parent_email: nil)
+          create(:consent_form, session:, parent_email: nil)
         end
 
         it "doesn't send a text" do

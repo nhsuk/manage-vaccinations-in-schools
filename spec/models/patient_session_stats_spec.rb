@@ -58,8 +58,8 @@ describe PatientSessionStats do
           session:
         ) # ready to vaccinate, consent given
 
-        create(:consent_form, :recorded, programme:, session:, consent_id: nil) # => unmatched response
-        create(:consent_form, :draft, programme:, session:, consent_id: nil) # => still draft, should not be counted
+        create(:consent_form, :recorded, session:, consent_id: nil) # => unmatched response
+        create(:consent_form, :draft, session:, consent_id: nil) # => still draft, should not be counted
 
         create(:patient_session, :consent_conflicting, programme:, session:) # conflicting consent
 
