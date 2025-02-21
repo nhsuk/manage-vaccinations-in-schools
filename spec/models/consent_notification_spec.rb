@@ -33,7 +33,7 @@ describe ConsentNotification do
       travel_to(today) do
         described_class.create_and_send!(
           patient:,
-          programme:,
+          programme: programmes.first,
           session:,
           type:,
           current_user:
@@ -45,14 +45,14 @@ describe ConsentNotification do
 
     let(:parents) { create_list(:parent, 2) }
     let(:patient) { create(:patient, parents:) }
-    let(:programme) { create(:programme) }
-    let(:organisation) { create(:organisation, programmes: [programme]) }
+    let(:programmes) { [create(:programme)] }
+    let(:organisation) { create(:organisation, programmes:) }
     let(:location) { create(:school, organisation:) }
     let(:session) do
       create(
         :session,
         location:,
-        programme:,
+        programme: programmes.first,
         patients: [patient],
         organisation:
       )
@@ -67,7 +67,7 @@ describe ConsentNotification do
 
         consent_notification = described_class.last
         expect(consent_notification).not_to be_reminder
-        expect(consent_notification.programme).to eq(programme)
+        expect(consent_notification.programme).to eq(programmes.first)
         expect(consent_notification.patient).to eq(patient)
         expect(consent_notification.sent_at).to be_today
       end
@@ -78,13 +78,13 @@ describe ConsentNotification do
         ).with(
           parent: parents.first,
           patient:,
-          programme:,
+          programmes:,
           session:,
           sent_by: current_user
         ).and have_delivered_email(:consent_school_request).with(
                 parent: parents.second,
                 patient:,
-                programme:,
+                programmes:,
                 session:,
                 sent_by: current_user
               )
@@ -96,13 +96,13 @@ describe ConsentNotification do
         ).with(
           parent: parents.first,
           patient:,
-          programme:,
+          programmes:,
           session:,
           sent_by: current_user
         ).and have_delivered_sms(:consent_school_request).with(
                 parent: parents.second,
                 patient:,
-                programme:,
+                programmes:,
                 session:,
                 sent_by: current_user
               )
@@ -116,7 +116,13 @@ describe ConsentNotification do
         it "still enqueues a text" do
           expect { create_and_send! }.to have_delivered_sms(
             :consent_school_request
-          ).with(parent:, patient:, programme:, session:, sent_by: current_user)
+          ).with(
+            parent:,
+            patient:,
+            programmes:,
+            session:,
+            sent_by: current_user
+          )
         end
       end
     end
@@ -130,7 +136,7 @@ describe ConsentNotification do
 
         consent_notification = described_class.last
         expect(consent_notification).not_to be_reminder
-        expect(consent_notification.programme).to eq(programme)
+        expect(consent_notification.programme).to eq(programmes.first)
         expect(consent_notification.patient).to eq(patient)
         expect(consent_notification.sent_at).to be_today
       end
@@ -141,13 +147,13 @@ describe ConsentNotification do
         ).with(
           parent: parents.first,
           patient:,
-          programme:,
+          programmes:,
           session:,
           sent_by: current_user
         ).and have_delivered_email(:consent_clinic_request).with(
                 parent: parents.second,
                 patient:,
-                programme:,
+                programmes:,
                 session:,
                 sent_by: current_user
               )
@@ -159,13 +165,13 @@ describe ConsentNotification do
         ).with(
           parent: parents.first,
           patient:,
-          programme:,
+          programmes:,
           session:,
           sent_by: current_user
         ).and have_delivered_sms(:consent_clinic_request).with(
                 parent: parents.second,
                 patient:,
-                programme:,
+                programmes:,
                 session:,
                 sent_by: current_user
               )
@@ -179,7 +185,13 @@ describe ConsentNotification do
         it "still enqueues a text" do
           expect { create_and_send! }.to have_delivered_sms(
             :consent_clinic_request
-          ).with(parent:, patient:, programme:, session:, sent_by: current_user)
+          ).with(
+            parent:,
+            patient:,
+            programmes:,
+            session:,
+            sent_by: current_user
+          )
         end
       end
     end
@@ -192,7 +204,7 @@ describe ConsentNotification do
 
         consent_notification = described_class.last
         expect(consent_notification).to be_reminder
-        expect(consent_notification.programme).to eq(programme)
+        expect(consent_notification.programme).to eq(programmes.first)
         expect(consent_notification.patient).to eq(patient)
         expect(consent_notification.sent_at).to be_today
       end
@@ -203,13 +215,13 @@ describe ConsentNotification do
         ).with(
           parent: parents.first,
           patient:,
-          programme:,
+          programmes:,
           session:,
           sent_by: current_user
         ).and have_delivered_email(:consent_school_initial_reminder).with(
                 parent: parents.second,
                 patient:,
-                programme:,
+                programmes:,
                 session:,
                 sent_by: current_user
               )
@@ -221,13 +233,13 @@ describe ConsentNotification do
         ).with(
           parent: parents.first,
           patient:,
-          programme:,
+          programmes:,
           session:,
           sent_by: current_user
         ).and have_delivered_sms(:consent_school_reminder).with(
                 parent: parents.second,
                 patient:,
-                programme:,
+                programmes:,
                 session:,
                 sent_by: current_user
               )
@@ -241,7 +253,13 @@ describe ConsentNotification do
         it "still enqueues a text" do
           expect { create_and_send! }.to have_delivered_sms(
             :consent_school_reminder
-          ).with(parent:, patient:, programme:, session:, sent_by: current_user)
+          ).with(
+            parent:,
+            patient:,
+            programmes:,
+            session:,
+            sent_by: current_user
+          )
         end
       end
     end
@@ -254,7 +272,7 @@ describe ConsentNotification do
 
         consent_notification = described_class.last
         expect(consent_notification).to be_reminder
-        expect(consent_notification.programme).to eq(programme)
+        expect(consent_notification.programme).to eq(programmes.first)
         expect(consent_notification.patient).to eq(patient)
         expect(consent_notification.sent_at).to be_today
       end
@@ -265,13 +283,13 @@ describe ConsentNotification do
         ).with(
           parent: parents.first,
           patient:,
-          programme:,
+          programmes:,
           session:,
           sent_by: current_user
         ).and have_delivered_email(:consent_school_subsequent_reminder).with(
                 parent: parents.second,
                 patient:,
-                programme:,
+                programmes:,
                 session:,
                 sent_by: current_user
               )
@@ -283,13 +301,13 @@ describe ConsentNotification do
         ).with(
           parent: parents.first,
           patient:,
-          programme:,
+          programmes:,
           session:,
           sent_by: current_user
         ).and have_delivered_sms(:consent_school_reminder).with(
                 parent: parents.second,
                 patient:,
-                programme:,
+                programmes:,
                 session:,
                 sent_by: current_user
               )
@@ -303,7 +321,13 @@ describe ConsentNotification do
         it "still enqueues a text" do
           expect { create_and_send! }.to have_delivered_sms(
             :consent_school_reminder
-          ).with(parent:, patient:, programme:, session:, sent_by: current_user)
+          ).with(
+            parent:,
+            patient:,
+            programmes:,
+            session:,
+            sent_by: current_user
+          )
         end
       end
     end

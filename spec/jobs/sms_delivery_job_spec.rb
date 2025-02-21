@@ -34,15 +34,15 @@ describe SMSDeliveryJob do
         consent_form:,
         parent:,
         patient:,
-        programme:,
+        programmes:,
         sent_by:,
         vaccination_record:
       )
     end
 
     let(:template_name) { GOVUK_NOTIFY_SMS_TEMPLATES.keys.first }
-    let(:programme) { create(:programme) }
-    let(:session) { create(:session, programme:) }
+    let(:programmes) { [create(:programme)] }
+    let(:session) { create(:session, programme: programmes.first) }
     let(:parent) { create(:parent, phone: "01234 567890") }
     let(:consent) { nil }
     let(:consent_form) { nil }
@@ -56,7 +56,7 @@ describe SMSDeliveryJob do
         consent:,
         consent_form:,
         patient:,
-        programme:,
+        programmes:,
         vaccination_record:
       )
       perform_now

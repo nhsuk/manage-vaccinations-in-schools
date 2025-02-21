@@ -35,7 +35,10 @@ describe "Parental consent" do
   end
 
   def when_i_go_to_the_consent_form
-    visit start_parent_interface_consent_forms_path(@session, @programme1)
+    visit start_parent_interface_consent_forms_path(
+            @session,
+            "#{@programme1.to_param}-#{@programme2.to_param}"
+          )
   end
 
   def then_i_see_the_consent_form

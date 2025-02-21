@@ -7,7 +7,7 @@ class SMSDeliveryJob < NotifyDeliveryJob
     consent_form: nil,
     parent: nil,
     patient: nil,
-    programme: nil,
+    programmes: [],
     sent_by: nil,
     session: nil,
     vaccination_record: nil
@@ -26,7 +26,7 @@ class SMSDeliveryJob < NotifyDeliveryJob
         consent:,
         consent_form:,
         patient:,
-        programme:,
+        programmes:,
         vaccination_record:
       )
 
