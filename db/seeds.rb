@@ -196,47 +196,12 @@ def create_session(
   end
 end
 
-def setup_clinic(user, organisation)
-  programme = Programme.find_by(type: "hpv")
+def setup_clinic(organisation)
   clinic_session = organisation.generic_clinic_session
 
-  # set up clinic locations
-  FactoryBot.create_list(:community_clinic, 3, organisation:)
-
-  # set up clinic dates
   clinic_session.session_dates.create!(value: Date.current)
   clinic_session.session_dates.create!(value: Date.current - 1.day)
   clinic_session.session_dates.create!(value: Date.current + 1.day)
-
-  FactoryBot.create_list(
-    :patient_session,
-    3,
-    programme:,
-    session: clinic_session,
-    user:,
-    year_group: 8
-  )
-
-  %i[
-    consent_given_triage_not_needed
-    consent_given_triage_needed
-    triaged_ready_to_vaccinate
-    consent_refused
-    consent_conflicting
-    vaccinated
-    delay_vaccination
-    unable_to_vaccinate
-  ].each do |trait|
-    FactoryBot.create_list(
-      :patient_session,
-      3,
-      trait,
-      programme:,
-      session: clinic_session,
-      user:,
-      year_group: 8
-    )
-  end
 
   # All patients belong to the community clinic. This is normally
   # handled by school moves, but here we need to do it manually.
@@ -362,10 +327,8 @@ unless Settings.cis2.enabled
 
   Audited
     .audit_class
-    .as_user(user) do
-      create_organisation_sessions(user, organisation)
-      setup_clinic(user, organisation)
-    end
+    .as_user(user) { create_organisation_sessions(user, organisation) }
+  setup_clinic(organisation)
   create_patients(organisation)
   create_imports(user, organisation)
   create_school_moves(organisation)
@@ -380,6 +343,7 @@ attach_sample_of_schools_to(organisation)
 Audited
   .audit_class
   .as_user(user) { create_organisation_sessions(user, organisation) }
+setup_clinic(organisation)
 create_patients(organisation)
 create_imports(user, organisation)
 create_school_moves(organisation)
