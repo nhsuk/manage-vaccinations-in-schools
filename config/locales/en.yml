@@ -688,11 +688,8 @@ en:
         menacwy: You’ve given consent for your child to get the MenACWY and Td/IPV vaccinations
         td_ipv: You’ve given consent for your child to get the MenACWY and Td/IPV vaccinations
     confirmation_refused:
-      title:
-        flu: Your child will not get a nasal flu vaccination at school
-        hpv: Your child will not get an HPV vaccination at school
-        menacwy: Your child will not get the MenACWY and Td/IPV vaccinations at school
-        td_ipv: Your child will not get the MenACWY and Td/IPV vaccinations at school
+      title: Refusal confirmed
+      text: You’ve told us that you do not want %{full_name} to get the vaccinations at school
     consent:
       hint:
         flu: The nasal flu spray contains gelatine which comes from pigs.

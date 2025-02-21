@@ -1,1 +1,11 @@
-<%= h1 t("consent_forms.confirmation_refused.title.#{@consent_form.programmes.first.type}") %>
+<%
+title = t("consent_forms.confirmation_refused.title")
+text = t(
+  "consent_forms.confirmation_refused.text",
+  full_name: @consent_form.full_name,
+)
+%>
+
+<% content_for :page_title, title %>
+
+<%= govuk_panel(title_text: title, text:) %>
