@@ -41,6 +41,10 @@ class Programme < ApplicationRecord
        { flu: "flu", hpv: "hpv", menacwy: "menacwy", td_ipv: "td_ipv" },
        validate: true
 
+  def to_param
+    type
+  end
+
   def name
     human_enum_name(:type)
   end
@@ -60,8 +64,20 @@ class Programme < ApplicationRecord
     year_groups.map(&:to_birth_academic_year)
   end
 
-  def to_param
-    type
+  DOSE_SEQUENCES = {
+    "flu" => 1,
+    "hpv" => 1,
+    "menacwy" => 1,
+    "td_ipv" => 5
+  }.freeze
+
+  def vaccinated_dose_sequence
+    DOSE_SEQUENCES.fetch(type)
+  end
+
+  def maximum_dose_sequence
+    # HPV is given 3 times to patients with a weakened immune system.
+    hpv? ? 3 : vaccinated_dose_sequence
   end
 
   SNOMED_PROCEDURE_CODES = {

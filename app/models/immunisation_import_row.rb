@@ -34,7 +34,7 @@ class ImmunisationImportRow
               greater_than_or_equal_to: 1,
               less_than_or_equal_to: :maximum_dose_sequence
             },
-            if: :vaccine
+            if: :programme
 
   SCHOOL_URN_HOME_EDUCATED = "999999"
   SCHOOL_URN_UNKNOWN = "888888"
@@ -281,7 +281,7 @@ class ImmunisationImportRow
   def dose_sequence
     value = @data["DOSE_SEQUENCE"]&.gsub(/\s/, "")&.presence&.upcase
 
-    if value.blank? && (!administered || vaccine&.maximum_dose_sequence == 1)
+    if value.blank? && (!administered || programme&.maximum_dose_sequence == 1)
       return 1
     end
 
@@ -452,9 +452,7 @@ class ImmunisationImportRow
     organisation.vaccines.pluck(:nivs_name)
   end
 
-  def maximum_dose_sequence
-    vaccine.maximum_dose_sequence
-  end
+  delegate :maximum_dose_sequence, to: :programme
 
   # TODO: we want tougher validation from the point of integration of Mavis
   # but permit looser validation in historical data
