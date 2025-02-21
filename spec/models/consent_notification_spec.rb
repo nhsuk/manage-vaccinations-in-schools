@@ -41,7 +41,7 @@ describe ConsentNotification do
 
     let(:parents) { create_list(:parent, 2) }
     let(:patient) { create(:patient, parents:) }
-    let(:programmes) { [create(:programme)] }
+    let(:programmes) { [create(:programme, :hpv)] }
     let(:organisation) { create(:organisation, programmes:) }
     let(:location) { create(:school, organisation:) }
     let(:session) do
@@ -70,20 +70,38 @@ describe ConsentNotification do
 
       it "enqueues an email per parent" do
         expect { create_and_send! }.to have_delivered_email(
-          :consent_school_request
+          :consent_school_request_hpv
         ).with(
           parent: parents.first,
           patient:,
           programmes:,
           session:,
           sent_by: current_user
-        ).and have_delivered_email(:consent_school_request).with(
+        ).and have_delivered_email(:consent_school_request_hpv).with(
                 parent: parents.second,
                 patient:,
                 programmes:,
                 session:,
                 sent_by: current_user
               )
+      end
+
+      context "with Td/IPV and MenACWY programmes" do
+        let(:programmes) do
+          [create(:programme, :menacwy), create(:programme, :td_ipv)]
+        end
+
+        it "enqueues an email per parent" do
+          expect { create_and_send! }.to have_delivered_email(
+            :consent_school_request_doubles
+          ).with(
+            parent: parents.first,
+            patient:,
+            programmes:,
+            session:,
+            sent_by: current_user
+          )
+        end
       end
 
       it "enqueues a text per parent" do
@@ -207,20 +225,38 @@ describe ConsentNotification do
 
       it "enqueues an email per parent" do
         expect { create_and_send! }.to have_delivered_email(
-          :consent_school_initial_reminder
+          :consent_school_initial_reminder_hpv
         ).with(
           parent: parents.first,
           patient:,
           programmes:,
           session:,
           sent_by: current_user
-        ).and have_delivered_email(:consent_school_initial_reminder).with(
+        ).and have_delivered_email(:consent_school_initial_reminder_hpv).with(
                 parent: parents.second,
                 patient:,
                 programmes:,
                 session:,
                 sent_by: current_user
               )
+      end
+
+      context "with Td/IPV and MenACWY programmes" do
+        let(:programmes) do
+          [create(:programme, :menacwy), create(:programme, :td_ipv)]
+        end
+
+        it "enqueues an email per parent" do
+          expect { create_and_send! }.to have_delivered_email(
+            :consent_school_initial_reminder_doubles
+          ).with(
+            parent: parents.first,
+            patient:,
+            programmes:,
+            session:,
+            sent_by: current_user
+          )
+        end
       end
 
       it "enqueues a text per parent" do
@@ -275,20 +311,40 @@ describe ConsentNotification do
 
       it "enqueues an email per parent" do
         expect { create_and_send! }.to have_delivered_email(
-          :consent_school_subsequent_reminder
+          :consent_school_subsequent_reminder_hpv
         ).with(
           parent: parents.first,
           patient:,
           programmes:,
           session:,
           sent_by: current_user
-        ).and have_delivered_email(:consent_school_subsequent_reminder).with(
+        ).and have_delivered_email(
+                :consent_school_subsequent_reminder_hpv
+              ).with(
                 parent: parents.second,
                 patient:,
                 programmes:,
                 session:,
                 sent_by: current_user
               )
+      end
+
+      context "with Td/IPV and MenACWY programmes" do
+        let(:programmes) do
+          [create(:programme, :menacwy), create(:programme, :td_ipv)]
+        end
+
+        it "enqueues an email per parent" do
+          expect { create_and_send! }.to have_delivered_email(
+            :consent_school_subsequent_reminder_doubles
+          ).with(
+            parent: parents.first,
+            patient:,
+            programmes:,
+            session:,
+            sent_by: current_user
+          )
+        end
       end
 
       it "enqueues a text per parent" do

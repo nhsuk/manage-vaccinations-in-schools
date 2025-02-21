@@ -74,7 +74,7 @@ class AppSessionSummaryComponent < ViewComponent::Base
         safe_join(
           ProgrammeGrouper
             .call(@session.programmes)
-            .map do |programmes|
+            .map do |_group, programmes|
               tag.li(
                 govuk_link_to(
                   "View #{programmes.map(&:name).to_sentence} parental consent form",

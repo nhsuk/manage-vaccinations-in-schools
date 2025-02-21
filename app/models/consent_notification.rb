@@ -73,12 +73,19 @@ class ConsentNotification < ApplicationRecord
 
     is_school = session.location.school?
 
+    template = :"consent_#{(is_school ? :"school_#{type}" : :"clinic_#{type}")}"
+
     mail_template =
-      :"consent_#{(is_school ? :"school_#{type}" : :"clinic_#{type}")}"
+      if is_school
+        group = ProgrammeGrouper.call(programmes).first.first
+        :"#{template}_#{group}"
+      else
+        template
+      end
 
     text_template =
       if type == :request
-        mail_template
+        template
       elsif is_school
         :consent_school_reminder
       end

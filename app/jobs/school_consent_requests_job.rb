@@ -24,7 +24,7 @@ class SchoolConsentRequestsJob < ApplicationJob
 
       ProgrammeGrouper
         .call(session.programmes)
-        .each do |programmes|
+        .each_value do |programmes|
           session.patients.each do |patient|
             next unless should_send_notification?(patient:, programmes:)
 

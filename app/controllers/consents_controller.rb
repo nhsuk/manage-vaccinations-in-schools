@@ -63,6 +63,7 @@ class ConsentsController < ApplicationController
     programmes =
       ProgrammeGrouper
         .call(@session.programmes)
+        .values
         .find { it.include?(@programme) }
 
     ConsentNotification.create_and_send!(

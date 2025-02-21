@@ -8,7 +8,8 @@ class ProgrammeGrouper
   def call
     programmes
       .group_by { programme_group(it) }
-      .map { it.second.sort_by(&:type) }
+      .transform_values { it.sort_by(&:type) }
+      .to_h
   end
 
   def self.call(*args, **kwargs)
