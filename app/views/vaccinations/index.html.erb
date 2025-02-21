@@ -35,7 +35,7 @@
 <% end %>
 
 <%= render AppSessionPatientTableComponent.new(
-      caption: t("patients_table.#{@current_tab}.caption", children: t("children", count: @patient_sessions.count)),
+      caption: t("patients_table.#{@current_tab}.caption", children: t("children", count: @pagy.count)),
       columns: @current_tab == :vaccinate ?
         %i[name year_group action] :
         %i[name year_group status],
@@ -45,3 +45,7 @@
       section: :vaccinations,
       session: @session,
     ) %>
+
+<div class="nhsuk-u-margin-top-6">
+  <%= govuk_pagination(pagy: @pagy) %>
+</div>

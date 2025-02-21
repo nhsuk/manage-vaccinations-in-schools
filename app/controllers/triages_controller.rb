@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
+require "pagy/extras/array"
+
 class TriagesController < ApplicationController
+  include Pagy::Backend
+
   include TriageMailerConcern
   include PatientTabsConcern
   include PatientSortingConcern
@@ -31,9 +35,10 @@ class TriagesController < ApplicationController
         section: :triage
       )
     @tab_counts = count_patient_sessions(tab_patient_sessions)
-    @patient_sessions = tab_patient_sessions[@current_tab] || []
+    patient_sessions = tab_patient_sessions[@current_tab] || []
 
-    sort_and_filter_patients!(@patient_sessions, programme: @programme)
+    sort_and_filter_patients!(patient_sessions, programme: @programme)
+    @pagy, @patient_sessions = pagy_array(patient_sessions)
 
     session[:current_section] = "triage"
 

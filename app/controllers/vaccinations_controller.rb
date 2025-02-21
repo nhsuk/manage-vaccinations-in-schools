@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
+require "pagy/extras/array"
+
 class VaccinationsController < ApplicationController
+  include Pagy::Backend
+
   include TodaysBatchConcern
   include VaccinationMailerConcern
   include PatientTabsConcern
@@ -37,9 +41,10 @@ class VaccinationsController < ApplicationController
 
     @current_tab = TAB_PATHS[:vaccinations][params[:tab]]
     @tab_counts = count_patient_sessions(grouped_patient_sessions)
-    @patient_sessions = grouped_patient_sessions.fetch(@current_tab, [])
+    patient_sessions = grouped_patient_sessions.fetch(@current_tab, [])
 
-    sort_and_filter_patients!(@patient_sessions, programme: @programme)
+    sort_and_filter_patients!(patient_sessions, programme: @programme)
+    @pagy, @patient_sessions = pagy_array(patient_sessions)
 
     session[:current_section] = "vaccinations"
 
