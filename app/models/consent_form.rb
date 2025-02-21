@@ -90,7 +90,7 @@ class ConsentForm < ApplicationRecord
   has_many :eligible_schools, through: :organisation, source: :schools
   has_many :vaccines, through: :programmes
 
-  enum :response, { given: 0, refused: 1 }, prefix: "consent"
+  enum :response, { given: 0, refused: 1, given_one: 2 }, prefix: "consent"
   enum :reason,
        {
          contains_gelatine: 0,
@@ -272,8 +272,8 @@ class ConsentForm < ApplicationRecord
       (:reason if consent_refused?),
       (:reason_notes if consent_refused? && reason_notes_must_be_provided?),
       (:injection if injection_offered_as_alternative?),
-      (:address if consent_given?),
-      (:health_question if consent_given?)
+      (:address if consent_given? || consent_given_one?),
+      (:health_question if consent_given? || consent_given_one?)
     ].compact
   end
 
@@ -506,7 +506,7 @@ class ConsentForm < ApplicationRecord
 
     self.parent_relationship_other_name = nil unless parent_relationship_other?
 
-    if consent_given?
+    if consent_given? || consent_given_one?
       self.contact_injection = nil
 
       self.reason = nil
@@ -530,6 +530,14 @@ class ConsentForm < ApplicationRecord
     return unless health_answers.empty?
 
     self.health_answers =
-      vaccines.active.flat_map { it.health_questions.to_health_answers }
+      chosen_vaccines.flat_map { it.health_questions.to_health_answers }
+  end
+
+  def chosen_vaccines
+    if chosen_vaccine.present?
+      programmes.find_by(type: chosen_vaccine).vaccines.active
+    else
+      vaccines.active
+    end
   end
 end

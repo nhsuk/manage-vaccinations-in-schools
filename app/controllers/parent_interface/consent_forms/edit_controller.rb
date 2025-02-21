@@ -92,7 +92,7 @@ module ParentInterface
           parent_contact_method_type
           parent_contact_method_other_details
         ],
-        consent: %i[response],
+        consent: %i[response chosen_vaccine],
         reason: %i[reason],
         reason_notes: %i[reason_notes],
         injection: %i[contact_injection],

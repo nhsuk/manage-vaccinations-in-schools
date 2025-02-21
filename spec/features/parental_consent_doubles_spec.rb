@@ -17,6 +17,22 @@ describe "Parental consent" do
     then_i_can_check_my_answers
   end
 
+  scenario "Doubles - consent given for one programme" do
+    stub_pds_search_to_return_no_patients
+
+    given_a_menacwy_programme_is_underway
+    when_i_go_to_the_consent_form
+    then_i_see_the_consent_form
+
+    when_i_fill_in_my_details
+    then_i_see_the_consent_page
+
+    when_i_give_consent_to_one_programme
+    and_i_fill_in_my_address
+    and_i_answer_no_to_all_the_medical_questions
+    then_i_can_check_my_answers
+  end
+
   def given_a_menacwy_programme_is_underway
     @programme1 = create(:programme, :menacwy)
     @programme2 = create(:programme, :td_ipv)
@@ -109,5 +125,13 @@ describe "Parental consent" do
 
   def then_i_see_the_consent_page
     expect(page).to have_heading("Do you agree")
+  end
+
+  def when_i_give_consent_to_one_programme
+    expect(page).to have_field("MenACWY", type: "radio")
+    expect(page).to have_field("Td/IPV", type: "radio")
+    choose "I agree to them having one of the vaccinations"
+    choose "MenACWY"
+    click_on "Continue"
   end
 end
