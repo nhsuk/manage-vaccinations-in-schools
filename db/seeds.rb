@@ -100,15 +100,7 @@ def create_session(
   date = completed ? 1.week.ago.to_date : Date.current
 
   session =
-    FactoryBot.create(
-      :session,
-      date:,
-      organisation:,
-      programme: programmes.first,
-      location:
-    )
-
-  programmes[1..].each { |programme| session.programmes << programme }
+    FactoryBot.create(:session, date:, organisation:, programmes:, location:)
 
   session.session_dates.create!(value: date - 1.day)
   session.session_dates.create!(value: date + 1.day)
