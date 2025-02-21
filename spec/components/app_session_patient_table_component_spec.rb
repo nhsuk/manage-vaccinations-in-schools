@@ -25,8 +25,8 @@ describe AppSessionPatientTableComponent do
       params:,
       patient_sessions:,
       section:,
-      programme: programmes.first,
-      year_groups: session.year_groups
+      session:,
+      programme: programmes.first
     )
   end
 
