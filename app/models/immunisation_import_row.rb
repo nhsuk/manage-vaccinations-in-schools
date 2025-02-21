@@ -270,12 +270,22 @@ class ImmunisationImportRow
     end
   end
 
-  def dose_sequence
-    return 1 unless administered
+  DOSE_SEQUENCES = {
+    "1P" => 1,
+    "2P" => 2,
+    "3P" => 3,
+    "1B" => 4,
+    "2B" => 5
+  }.freeze
 
-    if vaccine.maximum_dose_sequence == 1 && !@data.key?("DOSE_SEQUENCE")
+  def dose_sequence
+    value = @data["DOSE_SEQUENCE"]&.gsub(/\s/, "")&.presence&.upcase
+
+    if value.blank? && (!administered || vaccine&.maximum_dose_sequence == 1)
       return 1
     end
+
+    return DOSE_SEQUENCES[value] if DOSE_SEQUENCES.include?(value)
 
     begin
       Integer(@data["DOSE_SEQUENCE"])
