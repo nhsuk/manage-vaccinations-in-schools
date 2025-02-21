@@ -35,31 +35,13 @@ describe PatientSortingConcern do
   end
 
   let(:programme) { create(:programme) }
-  let(:session) { create(:session, programme:) }
+  let(:session) { create(:session, programmes: [programme]) }
 
   let(:patient_sessions) do
     [
-      create(
-        :patient_session,
-        :added_to_session,
-        patient: alex,
-        programme:,
-        session:
-      ),
-      create(
-        :patient_session,
-        :delay_vaccination,
-        patient: blair,
-        programme:,
-        session:
-      ),
-      create(
-        :patient_session,
-        :vaccinated,
-        patient: casey,
-        programme:,
-        session:
-      )
+      create(:patient_session, :added_to_session, patient: alex, session:),
+      create(:patient_session, :delay_vaccination, patient: blair, session:),
+      create(:patient_session, :vaccinated, patient: casey, session:)
     ]
   end
 

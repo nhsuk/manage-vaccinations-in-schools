@@ -36,7 +36,7 @@ describe "Triage" do
       create(
         :patient_session,
         :consent_given_triage_needed,
-        programme: @programme,
+        programmes: [@programme],
         session: @session
       ).patient
   end

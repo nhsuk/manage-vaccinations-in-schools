@@ -3,12 +3,13 @@
 describe AppTriageFormComponent do
   subject(:rendered) { render_inline(component) }
 
-  let(:programme) { create(:programme) }
-  let(:patient_session) { create(:patient_session, programme:) }
-  let(:patient) { patient_session.patient }
   let(:component) do
     described_class.new(patient_session:, programme:, url: "#")
   end
+
+  let(:programme) { create(:programme) }
+  let(:patient_session) { create(:patient_session, programmes: [programme]) }
+  let(:patient) { patient_session.patient }
 
   it { should have_text("Is it safe to vaccinate") }
   it { should have_css(".app-fieldset__legend--reset") }

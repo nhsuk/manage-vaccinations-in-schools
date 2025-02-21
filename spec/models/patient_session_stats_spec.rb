@@ -5,12 +5,12 @@ describe PatientSessionStats do
     subject(:to_h) do
       described_class.new(
         session.patient_sessions.preload_for_status,
-        programme:
+        programme: programmes.first
       ).to_h
     end
 
-    let(:programme) { create(:programme) }
-    let(:session) { create(:session, programme:) }
+    let(:programmes) { [create(:programme)] }
+    let(:session) { create(:session, programmes:) }
 
     it "returns a hash of session stats" do
       expect(to_h).to eq(
@@ -32,45 +32,50 @@ describe PatientSessionStats do
           create(
             :patient_session,
             :consent_refused,
-            programme:,
+            programmes:,
             session:
           ).patient # consent refused
-        create(:patient_session, :consent_refused, programme:, patient:) # duplicate is ignored
+        create(:patient_session, :consent_refused, programmes:, patient:) # duplicate is ignored
 
-        create(:patient_session, :added_to_session, programme:, session:) # without a response
+        create(:patient_session, :added_to_session, programmes:, session:) # without a response
         create(
           :patient_session,
           :consent_given_triage_needed,
-          programme:,
+          programmes:,
           session:
         ) # needing triage, consent given
-        create(:patient_session, :triaged_kept_in_triage, programme:, session:) # needing triage, consent given
+        create(:patient_session, :triaged_kept_in_triage, programmes:, session:) # needing triage, consent given
         create(
           :patient_session,
           :triaged_ready_to_vaccinate,
-          programme:,
+          programmes:,
           session:
         ) # ready to vaccinate, consent given
         create(
           :patient_session,
           :consent_given_triage_not_needed,
-          programme:,
+          programmes:,
           session:
         ) # ready to vaccinate, consent given
 
         create(:consent_form, :recorded, session:, consent_id: nil) # => unmatched response
         create(:consent_form, :draft, session:, consent_id: nil) # => still draft, should not be counted
 
-        create(:patient_session, :consent_conflicting, programme:, session:) # conflicting consent
+        create(:patient_session, :consent_conflicting, programmes:, session:) # conflicting consent
 
         gillick_patient =
           create(
             :patient_session,
             :consent_conflicting,
-            programme:,
+            programmes:,
             session:
           ).patient
-        create(:consent, :self_consent, patient: gillick_patient, programme:) # conflicting consent with gillick
+        create(
+          :consent,
+          :self_consent,
+          patient: gillick_patient,
+          programme: programmes.first
+        ) # conflicting consent with gillick
       end
 
       it "returns a hash of session stats" do

@@ -343,7 +343,9 @@ describe AppActivityLogComponent do
 
   describe "gillick assessments" do
     let(:programme) { create(:programme, :td_ipv) }
-    let(:patient_session) { create(:patient_session, patient:, programme:) }
+    let(:patient_session) do
+      create(:patient_session, patient:, programmes: [programme])
+    end
 
     before do
       create(
@@ -381,8 +383,9 @@ describe AppActivityLogComponent do
   end
 
   describe "pre-screenings" do
-    let(:programme) { create(:programme) }
-    let(:patient_session) { create(:patient_session, patient:, programme:) }
+    let(:patient_session) do
+      create(:patient_session, patient:, programmes: [programme])
+    end
 
     before do
       create(

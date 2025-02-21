@@ -8,22 +8,11 @@ describe SchoolConsentRequestsJob do
   let(:parents) { create_list(:parent, 2) }
 
   let(:patient_with_request_sent) do
-    create(
-      :patient,
-      :consent_request_sent,
-      :consent_request_sent,
-      programme: programmes.first
-    )
+    create(:patient, :consent_request_sent, :consent_request_sent, programmes:)
   end
-  let(:patient_not_sent_request) do
-    create(:patient, parents:, programme: programmes.first)
-  end
+  let(:patient_not_sent_request) { create(:patient, parents:, programmes:) }
   let(:patient_with_consent) do
-    create(
-      :patient,
-      :consent_given_triage_not_needed,
-      programme: programmes.first
-    )
+    create(:patient, :consent_given_triage_not_needed, programmes:)
   end
   let(:deceased_patient) { create(:patient, :deceased) }
   let(:invalid_patient) { create(:patient, :invalidated) }
@@ -41,9 +30,7 @@ describe SchoolConsentRequestsJob do
   end
 
   context "when session is unscheduled" do
-    let(:session) do
-      create(:session, :unscheduled, patients:, programme: programmes.first)
-    end
+    let(:session) { create(:session, :unscheduled, patients:, programmes:) }
 
     it "doesn't send any notifications" do
       expect(ConsentNotification).not_to receive(:create_and_send!)
@@ -56,7 +43,7 @@ describe SchoolConsentRequestsJob do
       create(
         :session,
         patients:,
-        programme: programmes.first,
+        programmes:,
         send_consent_requests_at: 2.days.from_now
       )
     end
@@ -72,7 +59,7 @@ describe SchoolConsentRequestsJob do
       create(
         :session,
         patients:,
-        programme: programmes.first,
+        programmes:,
         date: 3.weeks.from_now.to_date,
         send_consent_requests_at: Date.current
       )
@@ -95,7 +82,7 @@ describe SchoolConsentRequestsJob do
         create(
           :session,
           patients:,
-          programme: programmes.first,
+          programmes:,
           send_consent_requests_at: Date.current,
           organisation:
         )

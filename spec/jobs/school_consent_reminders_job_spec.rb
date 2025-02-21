@@ -13,26 +13,15 @@ describe SchoolConsentRemindersJob do
       :consent_request_sent,
       :initial_consent_reminder_sent,
       parents:,
-      programme: programmes.first
+      programmes:
     )
   end
   let(:patient_not_sent_reminder) do
-    create(
-      :patient,
-      :consent_request_sent,
-      parents:,
-      programme: programmes.first
-    )
+    create(:patient, :consent_request_sent, parents:, programmes:)
   end
-  let(:patient_not_sent_request) do
-    create(:patient, parents:, programme: programmes.first)
-  end
+  let(:patient_not_sent_request) { create(:patient, parents:, programmes:) }
   let(:patient_with_consent) do
-    create(
-      :patient,
-      :consent_given_triage_not_needed,
-      programme: programmes.first
-    )
+    create(:patient, :consent_given_triage_not_needed, programmes:)
   end
   let(:deceased_patient) { create(:patient, :deceased) }
   let(:invalid_patient) { create(:patient, :invalidated) }
@@ -63,7 +52,7 @@ describe SchoolConsentRemindersJob do
       days_before_consent_reminders: 7,
       location:,
       patients:,
-      programme: programmes.first,
+      programmes:,
       organisation:
     )
   end

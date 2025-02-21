@@ -6,19 +6,19 @@ describe AppConsentComponent do
   let(:component) do
     described_class.new(
       patient_session:,
-      programme:,
+      programme: programmes.first,
       section: "triage",
       tab: "needed"
     )
   end
 
-  let(:programme) { create(:programme) }
-  let(:consent) { patient_session.consents(programme:).first }
+  let(:programmes) { [create(:programme)] }
+  let(:consent) { patient_session.consents(programme: programmes.first).first }
 
   before { patient_session.reload.strict_loading!(false) }
 
   context "consent is not present" do
-    let(:patient_session) { create(:patient_session, programme:) }
+    let(:patient_session) { create(:patient_session, programmes:) }
 
     it { should_not have_css("p.app-status", text: "Consent (given|refused)") }
     it { should_not have_css("details", text: /Consent (given|refused) by/) }
@@ -28,19 +28,15 @@ describe AppConsentComponent do
   end
 
   context "consent is not present and session is not in progress" do
-    let(:patient_session) do
-      create(
-        :patient_session,
-        session: create(:session, :scheduled, programme:)
-      )
-    end
+    let(:session) { create(:session, :scheduled, programmes:) }
+    let(:patient_session) { create(:patient_session, session:, programmes:) }
 
     it { should_not have_css("button", text: "Assess Gillick competence") }
   end
 
   context "consent is refused" do
     let(:patient_session) do
-      create(:patient_session, :consent_refused, programme:)
+      create(:patient_session, :consent_refused, programmes:)
     end
 
     it { should have_css("p.app-status--red", text: "Consent refused") }
@@ -63,7 +59,7 @@ describe AppConsentComponent do
 
   context "consent is given" do
     let(:patient_session) do
-      create(:patient_session, :consent_given_triage_needed, programme:)
+      create(:patient_session, :consent_given_triage_needed, programmes:)
     end
 
     it { should have_css("p.app-status--aqua-green", text: "Consent given") }

@@ -12,8 +12,8 @@ describe AppSessionPatientTableComponent do
   end
 
   let(:section) { :consent }
-  let(:programme) { create(:programme) }
-  let(:session) { create(:session, programme:) }
+  let(:programmes) { [create(:programme)] }
+  let(:session) { create(:session, programmes:) }
   let(:patient_sessions) { create_list(:patient_session, 2, session:) }
   let(:columns) { %i[name year_group] }
   let(:params) { { session_slug: session.slug, section:, tab: :needed } }
@@ -25,7 +25,7 @@ describe AppSessionPatientTableComponent do
       params:,
       patient_sessions:,
       section:,
-      programme:,
+      programme: programmes.first,
       year_groups: session.year_groups
     )
   end
@@ -49,7 +49,7 @@ describe AppSessionPatientTableComponent do
       [
         create(
           :patient_session,
-          programme:,
+          programmes:,
           patient: create(:patient, preferred_given_name: "Bobby")
         )
       ]
@@ -65,7 +65,7 @@ describe AppSessionPatientTableComponent do
       [
         create(
           :patient_session,
-          programme:,
+          programmes:,
           patient: create(:patient, :restricted, address_postcode: "SW11 1AA")
         )
       ]
@@ -84,7 +84,7 @@ describe AppSessionPatientTableComponent do
     let(:component) do
       described_class.new(
         patient_sessions:,
-        programme:,
+        programme: programmes.first,
         section: :matching,
         consent_form:
           create(:consent_form, session: patient_sessions.first.session),
@@ -101,7 +101,12 @@ describe AppSessionPatientTableComponent do
     let(:patients) { patient_sessions.map(&:patient) }
 
     let(:component) do
-      described_class.new(params:, patients:, programme:, section:)
+      described_class.new(
+        params:,
+        patients:,
+        programme: programmes.first,
+        section:
+      )
     end
 
     it { should have_css(".nhsuk-table") }
@@ -123,7 +128,7 @@ describe AppSessionPatientTableComponent do
         params:,
         patients:,
         patient_sessions:,
-        programme:,
+        programme: programmes.first,
         section:
       )
     end
@@ -150,7 +155,7 @@ describe AppSessionPatientTableComponent do
     shared_examples "guesses the path" do |status, section, tab|
       context "for #{status}" do
         let(:patient_sessions) do
-          create_list(:patient_session, 1, status, session:, programme:)
+          create_list(:patient_session, 1, status, session:, programmes:)
         end
 
         it "guesses the path" do
@@ -212,7 +217,12 @@ describe AppSessionPatientTableComponent do
   describe "columns parameter" do
     context "is not set" do
       let(:component) do
-        described_class.new(patient_sessions:, programme:, section:, params:)
+        described_class.new(
+          patient_sessions:,
+          programme: programmes.first,
+          section:,
+          params:
+        )
       end
 
       it { should have_column("Full name") }

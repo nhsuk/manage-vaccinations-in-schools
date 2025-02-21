@@ -15,7 +15,9 @@ describe AppSimpleStatusBannerComponent do
 
   let(:user) { create(:user) }
   let(:programme) { create(:programme) }
-  let(:patient_session) { create(:patient_session, programme:, user:) }
+  let(:patient_session) do
+    create(:patient_session, programmes: [programme], user:)
+  end
 
   let(:component) { described_class.new(patient_session:, programme:) }
 
@@ -33,7 +35,7 @@ describe AppSimpleStatusBannerComponent do
 
   context "state is added_to_session" do
     let(:patient_session) do
-      create(:patient_session, :added_to_session, programme:)
+      create(:patient_session, :added_to_session, programmes: [programme])
     end
 
     it { should have_css(".app-card--blue") }
@@ -41,7 +43,11 @@ describe AppSimpleStatusBannerComponent do
 
   context "state is consent_given_triage_not_needed" do
     let(:patient_session) do
-      create(:patient_session, :consent_given_triage_not_needed, programme:)
+      create(
+        :patient_session,
+        :consent_given_triage_not_needed,
+        programmes: [programme]
+      )
     end
 
     it { should have_css(".app-card--aqua-green") }
@@ -51,7 +57,11 @@ describe AppSimpleStatusBannerComponent do
 
   context "state is consent_given_triage_needed" do
     let(:patient_session) do
-      create(:patient_session, :consent_given_triage_needed, programme:)
+      create(
+        :patient_session,
+        :consent_given_triage_needed,
+        programmes: [programme]
+      )
     end
 
     it { should have_css(".app-card--blue") }
@@ -61,7 +71,7 @@ describe AppSimpleStatusBannerComponent do
 
   context "state is consent_refused" do
     let(:patient_session) do
-      create(:patient_session, :consent_refused, programme:)
+      create(:patient_session, :consent_refused, programmes: [programme])
     end
 
     it { should have_css(".app-card--red") }
@@ -71,7 +81,7 @@ describe AppSimpleStatusBannerComponent do
 
   context "state is triaged_kept_in_triage" do
     let(:patient_session) do
-      create(:patient_session, :triaged_kept_in_triage, programme:)
+      create(:patient_session, :triaged_kept_in_triage, programmes: [programme])
     end
 
     it { should have_css(".app-card--blue") }
@@ -81,7 +91,11 @@ describe AppSimpleStatusBannerComponent do
 
   context "state is triaged_ready_to_vaccinate" do
     let(:patient_session) do
-      create(:patient_session, :triaged_ready_to_vaccinate, programme:)
+      create(
+        :patient_session,
+        :triaged_ready_to_vaccinate,
+        programmes: [programme]
+      )
     end
 
     it { should have_css(".app-card--purple") }
@@ -98,7 +112,11 @@ describe AppSimpleStatusBannerComponent do
 
   context "state is triaged_do_not_vaccinate" do
     let(:patient_session) do
-      create(:patient_session, :triaged_do_not_vaccinate, programme:)
+      create(
+        :patient_session,
+        :triaged_do_not_vaccinate,
+        programmes: [programme]
+      )
     end
 
     it { should have_css(".app-card--red") }
@@ -115,7 +133,7 @@ describe AppSimpleStatusBannerComponent do
 
   context "state is delay_vaccination" do
     let(:patient_session) do
-      create(:patient_session, :delay_vaccination, programme:)
+      create(:patient_session, :delay_vaccination, programmes: [programme])
     end
 
     it { should have_css(".app-card--red") }

@@ -3,14 +3,14 @@
 describe SchoolSessionRemindersJob do
   subject(:perform_now) { described_class.perform_now }
 
-  let(:programme) { create(:programme) }
+  let(:programmes) { [create(:programme)] }
   let(:parents) { create_list(:parent, 2) }
   let(:patient) do
-    create(:patient, :consent_given_triage_not_needed, parents:, programme:)
+    create(:patient, :consent_given_triage_not_needed, parents:, programmes:)
   end
 
   context "for an active session tomorrow" do
-    let!(:session) { create(:session, programme:, date: Date.tomorrow) }
+    let!(:session) { create(:session, programmes:, date: Date.tomorrow) }
     let(:patient_session) { create(:patient_session, patient:, session:) }
 
     it "sends a notification" do
@@ -24,7 +24,7 @@ describe SchoolSessionRemindersJob do
 
     context "when triaged for vaccination" do
       let(:patient) do
-        create(:patient, :triage_ready_to_vaccinate, parents:, programme:)
+        create(:patient, :triage_ready_to_vaccinate, parents:, programmes:)
       end
 
       it "sends a notification" do
@@ -58,7 +58,9 @@ describe SchoolSessionRemindersJob do
     end
 
     context "when already vaccinated" do
-      before { create(:vaccination_record, patient:, programme:) }
+      before do
+        create(:vaccination_record, patient:, programme: programmes.first)
+      end
 
       it "doesn't send any notifications" do
         expect(SessionNotification).not_to receive(:create_and_send!)
@@ -95,13 +97,13 @@ describe SchoolSessionRemindersJob do
   end
 
   context "for a generic clinic session tomorrow" do
-    let(:organisation) { create(:organisation, programmes: [programme]) }
+    let(:organisation) { create(:organisation, programmes:) }
     let(:location) { create(:generic_clinic, organisation:) }
 
     before do
       create(
         :session,
-        programme:,
+        programmes:,
         date: Date.tomorrow,
         patients: [patient],
         organisation:,
@@ -117,7 +119,7 @@ describe SchoolSessionRemindersJob do
 
   context "for a session today" do
     before do
-      create(:session, programme:, date: Time.zone.today, patients: [patient])
+      create(:session, programmes:, date: Time.zone.today, patients: [patient])
     end
 
     it "doesn't send any notifications" do
@@ -128,7 +130,7 @@ describe SchoolSessionRemindersJob do
 
   context "for a session yesterday" do
     before do
-      create(:session, programme:, date: Date.yesterday, patients: [patient])
+      create(:session, programmes:, date: Date.yesterday, patients: [patient])
     end
 
     it "doesn't send any notifications" do

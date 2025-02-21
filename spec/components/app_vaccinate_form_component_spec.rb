@@ -5,25 +5,25 @@ describe AppVaccinateFormComponent do
 
   let(:heading) { "A Heading" }
   let(:body) { "A Body" }
-  let(:programme) { create(:programme, :hpv) }
-  let(:session) { create(:session, :today, programme:) }
+  let(:programmes) { [create(:programme, :hpv)] }
+  let(:session) { create(:session, :today, programmes:) }
   let(:vaccine) { programme.vaccines.first }
   let(:patient) do
     create(
       :patient,
       :consent_given_triage_not_needed,
-      programme:,
+      programmes:,
       given_name: "Hari"
     )
   end
   let(:patient_session) do
-    create(:patient_session, :in_attendance, programme:, patient:, session:)
+    create(:patient_session, :in_attendance, programmes:, patient:, session:)
   end
 
   let(:component) do
     described_class.new(
       patient_session:,
-      programme:,
+      programme: programmes.first,
       vaccinate_form: VaccinateForm.new,
       section: "vaccinate",
       tab: "needed"
@@ -53,13 +53,13 @@ describe AppVaccinateFormComponent do
       end
 
       context "session is in progress" do
-        let(:session) { create(:session, :today, programme:) }
+        let(:session) { create(:session, :today, programmes:) }
 
         it { should be(false) }
       end
 
       context "session is in the future" do
-        let(:session) { create(:session, :scheduled, programme:) }
+        let(:session) { create(:session, :scheduled, programmes:) }
 
         it { should be(false) }
       end
@@ -71,13 +71,13 @@ describe AppVaccinateFormComponent do
       end
 
       context "session is progress" do
-        let(:session) { create(:session, :today, programme:) }
+        let(:session) { create(:session, :today, programmes:) }
 
         it { should be(true) }
       end
 
       context "session is in the future" do
-        let(:session) { create(:session, :scheduled, programme:) }
+        let(:session) { create(:session, :scheduled, programmes:) }
 
         it { should be(false) }
       end

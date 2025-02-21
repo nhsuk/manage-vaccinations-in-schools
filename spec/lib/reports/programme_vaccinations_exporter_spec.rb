@@ -317,7 +317,7 @@ describe Reports::ProgrammeVaccinationsExporter do
           :deceased,
           date_of_death: Date.new(2010, 1, 1),
           session:,
-          programme:
+          programmes: [programme]
         )
       end
 
@@ -337,7 +337,7 @@ describe Reports::ProgrammeVaccinationsExporter do
           :vaccinated,
           updated_from_pds_at: Time.current,
           session:,
-          programme:
+          programmes: [programme]
         )
       end
 
@@ -350,10 +350,16 @@ describe Reports::ProgrammeVaccinationsExporter do
       let(:gp_practice) do
         create(:gp_practice, name: "Practice", ods_code: "GP")
       end
-      let(:session) { create(:session, programme:, organisation:) }
+      let(:session) { create(:session, programmes: [programme], organisation:) }
 
       before do
-        create(:patient, :vaccinated, gp_practice:, session:, programme:)
+        create(
+          :patient,
+          :vaccinated,
+          gp_practice:,
+          session:,
+          programmes: [programme]
+        )
       end
 
       it "includes the information" do
@@ -366,7 +372,9 @@ describe Reports::ProgrammeVaccinationsExporter do
 
     context "with consent" do
       let(:session) { create(:session, programme:, organisation:) }
-      let(:patient) { create(:patient, :vaccinated, session:, programme:) }
+      let(:patient) do
+        create(:patient, :vaccinated, session:, programmes: [programme])
+      end
 
       before do
         parent = create(:parent, full_name: "John Smith")
@@ -393,7 +401,7 @@ describe Reports::ProgrammeVaccinationsExporter do
     context "with a gillick assessment" do
       let(:session) { create(:session, programme:, organisation:) }
       let(:patient_session) do
-        create(:patient_session, :vaccinated, programme:, session:)
+        create(:patient_session, :vaccinated, programmes: [programme], session:)
       end
       let(:patient) { patient_session.patient }
 
@@ -466,7 +474,7 @@ describe Reports::ProgrammeVaccinationsExporter do
         create(
           :patient_session,
           :vaccinated,
-          programme:,
+          programmes: [programme],
           session:,
           user: performed_by
         )

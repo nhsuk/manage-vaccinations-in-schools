@@ -14,13 +14,13 @@ describe AppPatientPageComponent do
     patient_session.strict_loading!(false)
   end
 
-  let(:programme) { create(:programme, :hpv) }
+  let(:programmes) { [create(:programme, :hpv)] }
   let(:vaccine) { programme.vaccines.first }
 
   let(:component) do
     described_class.new(
       patient_session:,
-      programme:,
+      programme: programmes.first,
       section: "triage",
       tab: "needed",
       triage: nil
@@ -33,7 +33,7 @@ describe AppPatientPageComponent do
         :patient_session,
         :consent_given_triage_needed,
         :session_in_progress,
-        programme:
+        programmes:
       )
     end
 
@@ -61,7 +61,7 @@ describe AppPatientPageComponent do
         :triaged_ready_to_vaccinate,
         :session_in_progress,
         :in_attendance,
-        programme:
+        programmes:
       )
     end
 
@@ -82,7 +82,7 @@ describe AppPatientPageComponent do
 
   context "session in progress, patient without consent, no Gillick assessment" do
     let(:patient_session) do
-      create(:patient_session, :session_in_progress, programme:)
+      create(:patient_session, :session_in_progress, programmes:)
     end
 
     context "nurse user" do
@@ -104,7 +104,7 @@ describe AppPatientPageComponent do
         :patient_session,
         :session_in_progress,
         :gillick_competent,
-        programme:
+        programmes:
       )
     end
 

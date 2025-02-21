@@ -28,19 +28,19 @@ describe "Manage batches" do
   end
 
   def given_my_organisation_is_running_an_hpv_vaccination_programme
-    @programme = create(:programme, :hpv_all_vaccines)
+    @programmes = [create(:programme, :hpv_all_vaccines)]
     @organisation =
-      create(:organisation, :with_one_nurse, programmes: [@programme])
+      create(:organisation, :with_one_nurse, programmes: @programmes)
   end
 
   def and_there_is_a_vaccination_session_today_with_one_patient_ready_to_vaccinate
     location = create(:school)
-    session = create(:session, :today, programme: @programme, location:)
+    session = create(:session, :today, programmes: @programmes, location:)
 
     create(
       :patient_session,
       :consent_given_triage_not_needed,
-      programme: @programme,
+      programmes: @programmes,
       session:
     )
 

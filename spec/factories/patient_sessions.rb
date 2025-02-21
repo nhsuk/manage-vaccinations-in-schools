@@ -24,10 +24,10 @@
 FactoryBot.define do
   factory :patient_session do
     transient do
-      programme { association :programme }
       organisation { session.organisation }
+      programmes { [association(:programme)] }
       user { association :user, organisation: }
-      year_group { session.programmes.first&.year_groups&.first }
+      year_group { session.programmes.flat_map(&:year_groups).sort.uniq.first }
       school { session.location.school? ? session.location : nil }
       home_educated { school.present? ? nil : false }
       location_name do
@@ -35,7 +35,8 @@ FactoryBot.define do
       end
     end
 
-    session { association :session, programme: }
+    session { association :session, programmes: }
+
     patient do
       association :patient, organisation:, school:, home_educated:, year_group:
     end
@@ -53,7 +54,7 @@ FactoryBot.define do
         association :patient,
                     :consent_given_triage_not_needed,
                     performed_by: user,
-                    programme:,
+                    programmes: session.programmes,
                     organisation:,
                     school:,
                     home_educated:,
@@ -66,7 +67,7 @@ FactoryBot.define do
         association :patient,
                     :consent_given_triage_needed,
                     performed_by: user,
-                    programme:,
+                    programmes: session.programmes,
                     organisation:,
                     school:,
                     home_educated:,
@@ -79,7 +80,7 @@ FactoryBot.define do
         association :patient,
                     :consent_refused,
                     performed_by: user,
-                    programme:,
+                    programmes: session.programmes,
                     organisation:,
                     school:,
                     home_educated:,
@@ -92,7 +93,7 @@ FactoryBot.define do
         association :patient,
                     :consent_refused_with_notes,
                     performed_by: user,
-                    programme:,
+                    programmes: session.programmes,
                     organisation:,
                     school:,
                     home_educated:,
@@ -105,7 +106,7 @@ FactoryBot.define do
         association :patient,
                     :consent_not_provided,
                     performed_by: user,
-                    programme:,
+                    programmes: session.programmes,
                     organisation:,
                     school:,
                     home_educated:,
@@ -118,7 +119,7 @@ FactoryBot.define do
         association :patient,
                     :consent_conflicting,
                     performed_by: user,
-                    programme:,
+                    programmes: session.programmes,
                     organisation:,
                     school:,
                     home_educated:,
@@ -132,7 +133,7 @@ FactoryBot.define do
                     :consent_given_triage_needed,
                     :triage_ready_to_vaccinate,
                     performed_by: user,
-                    programme:,
+                    programmes: session.programmes,
                     organisation:,
                     school:,
                     home_educated:,
@@ -146,7 +147,7 @@ FactoryBot.define do
                     :consent_given_triage_needed,
                     :triage_do_not_vaccinate,
                     performed_by: user,
-                    programme:,
+                    programmes: session.programmes,
                     organisation:,
                     school:,
                     home_educated:,
@@ -160,7 +161,7 @@ FactoryBot.define do
                     :consent_given_triage_needed,
                     :triage_needs_follow_up,
                     performed_by: user,
-                    programme:,
+                    programmes: session.programmes,
                     organisation:,
                     school:,
                     home_educated:,
@@ -174,7 +175,7 @@ FactoryBot.define do
                     :consent_given_triage_needed,
                     :triage_delay_vaccination,
                     performed_by: user,
-                    programme:,
+                    programmes: session.programmes,
                     organisation:,
                     school:,
                     home_educated:,
@@ -182,16 +183,18 @@ FactoryBot.define do
       end
 
       after(:create) do |patient_session, evaluator|
-        create(
-          :vaccination_record,
-          :not_administered,
-          patient: patient_session.patient,
-          session: patient_session.session,
-          programme: evaluator.programme,
-          performed_by: evaluator.user,
-          location_name: evaluator.location_name,
-          outcome: :absent_from_school
-        )
+        patient_session.session.programmes.each do |programme|
+          create(
+            :vaccination_record,
+            :not_administered,
+            patient: patient_session.patient,
+            session: patient_session.session,
+            programme:,
+            performed_by: evaluator.user,
+            location_name: evaluator.location_name,
+            outcome: :absent_from_school
+          )
+        end
       end
     end
 
@@ -200,7 +203,7 @@ FactoryBot.define do
         association :patient,
                     :consent_given_triage_not_needed,
                     performed_by: user,
-                    programme:,
+                    programmes: session.programmes,
                     organisation:,
                     school:,
                     home_educated:,
@@ -214,7 +217,7 @@ FactoryBot.define do
                     :consent_given_triage_needed,
                     :triage_ready_to_vaccinate,
                     performed_by: user,
-                    programme:,
+                    programmes: session.programmes,
                     organisation:,
                     school:,
                     home_educated:,
@@ -222,16 +225,18 @@ FactoryBot.define do
       end
 
       after(:create) do |patient_session, evaluator|
-        create(
-          :vaccination_record,
-          :not_administered,
-          patient: patient_session.patient,
-          session: patient_session.session,
-          programme: evaluator.programme,
-          performed_by: evaluator.user,
-          location_name: evaluator.location_name,
-          outcome: :already_had
-        )
+        patient_session.session.programmes.each do |programme|
+          create(
+            :vaccination_record,
+            :not_administered,
+            patient: patient_session.patient,
+            session: patient_session.session,
+            programme:,
+            performed_by: evaluator.user,
+            location_name: evaluator.location_name,
+            outcome: :already_had
+          )
+        end
       end
     end
 
@@ -240,7 +245,7 @@ FactoryBot.define do
         association :patient,
                     :consent_given_triage_not_needed,
                     performed_by: user,
-                    programme:,
+                    programmes: session.programmes,
                     organisation:,
                     school:,
                     home_educated:,
@@ -248,15 +253,17 @@ FactoryBot.define do
       end
 
       after(:create) do |patient_session, evaluator|
-        create(
-          :vaccination_record,
-          :not_administered,
-          patient: patient_session.patient,
-          session: patient_session.session,
-          programme: evaluator.programme,
-          performed_by: evaluator.user,
-          outcome: :already_had
-        )
+        patient_session.session.programmes.each do |programme|
+          create(
+            :vaccination_record,
+            :not_administered,
+            patient: patient_session.patient,
+            session: patient_session.session,
+            programme:,
+            performed_by: evaluator.user,
+            outcome: :already_had
+          )
+        end
       end
     end
 
@@ -266,7 +273,7 @@ FactoryBot.define do
                     :consent_given_triage_needed,
                     :triage_ready_to_vaccinate,
                     performed_by: user,
-                    programme:,
+                    programmes: session.programmes,
                     organisation:,
                     school:,
                     home_educated:,
@@ -274,30 +281,41 @@ FactoryBot.define do
       end
 
       after(:create) do |patient_session, evaluator|
-        create(
-          :vaccination_record,
-          patient: patient_session.patient,
-          session: patient_session.session,
-          programme: evaluator.programme,
-          performed_by: evaluator.user,
-          location_name: evaluator.location_name
-        )
+        patient_session.session.programmes.each do |programme|
+          create(
+            :vaccination_record,
+            patient: patient_session.patient,
+            session: patient_session.session,
+            programme:,
+            performed_by: evaluator.user,
+            location_name: evaluator.location_name
+          )
+        end
       end
     end
 
     trait :session_in_progress do
-      session { association :session, :today, programme: }
+      session { association :session, :today, programmes: }
     end
 
     trait :not_gillick_competent do
-      after(:create) do |patient_session, _evaluator|
-        create(:gillick_assessment, :not_competent, patient_session:)
+      after(:create) do |patient_session|
+        patient_session.session.programmes.each do |programme|
+          create(
+            :gillick_assessment,
+            :not_competent,
+            patient_session:,
+            programme:
+          )
+        end
       end
     end
 
     trait :gillick_competent do
-      after(:create) do |patient_session, _evaluator|
-        create(:gillick_assessment, :competent, patient_session:)
+      after(:create) do |patient_session|
+        patient_session.session.programmes.each do |programme|
+          create(:gillick_assessment, :competent, patient_session:, programme:)
+        end
       end
     end
   end

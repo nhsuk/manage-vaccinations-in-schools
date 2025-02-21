@@ -23,9 +23,10 @@
 #
 
 describe PatientSession do
-  subject(:patient_session) { create(:patient_session, programme:) }
+  subject(:patient_session) { create(:patient_session, session:) }
 
   let(:programme) { create(:programme) }
+  let(:session) { create(:session, programmes: [programme]) }
 
   it { should have_many(:gillick_assessments).order(:created_at) }
 
@@ -206,7 +207,9 @@ describe PatientSession do
   describe "#latest_consents" do
     subject(:latest_consents) { patient_session.latest_consents(programme:) }
 
-    let(:patient_session) { create(:patient_session, programme:, patient:) }
+    let(:patient_session) do
+      create(:patient_session, programmes: [programme], patient:)
+    end
 
     before { patient_session.strict_loading!(false) }
 
@@ -263,9 +266,8 @@ describe PatientSession do
   describe "#safe_to_destroy?" do
     subject(:safe_to_destroy?) { patient_session.safe_to_destroy? }
 
-    let(:patient_session) { create(:patient_session, programme:) }
+    let(:patient_session) { create(:patient_session, session:) }
     let(:patient) { patient_session.patient }
-    let(:session) { patient_session.session }
 
     context "when safe to destroy" do
       it { should be true }

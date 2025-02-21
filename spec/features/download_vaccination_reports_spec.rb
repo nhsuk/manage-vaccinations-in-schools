@@ -36,7 +36,7 @@ describe "Download vaccination reports" do
     @programme = create(:programme, :hpv, organisations: [@organisation])
 
     @session =
-      create(:session, organisation: @organisation, programme: @programme)
+      create(:session, organisation: @organisation, programmes: [@programme])
 
     @patient =
       create(
@@ -44,7 +44,7 @@ describe "Download vaccination reports" do
         :triage_ready_to_vaccinate,
         given_name: "John",
         family_name: "Smith",
-        programme: @programme,
+        programmes: [@programme],
         organisation: @organisation
       )
 
