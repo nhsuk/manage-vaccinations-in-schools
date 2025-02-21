@@ -6,9 +6,23 @@
                         turbo: "true",
                         turbo_action: "replace" },
                 builder: GOVUKDesignSystemFormBuilder::FormBuilder do |f| %>
-    <%= f.govuk_fieldset legend: { text: "Filter results", size: "s" } do %>
+    <%= f.govuk_fieldset legend: { class: "nhsuk-u-font-size-24", text: "Filter results" } do %>
+      <% if session %>
+        <%= f.govuk_radio_buttons_fieldset :programme_type, legend: { text: "Programme", size: "s" } do %>
+          <% session.programmes.each do %>
+            <%= f.govuk_radio_button :programme_type,
+                                     _1.type,
+                                     label: { text: _1.name },
+                                     checked: programme == _1,
+                                     "data-autosubmit-target": "field",
+                                     "data-action": "autosubmit#submit",
+                                     "data-turbo-permanent": "true" %>
+          <% end %>
+        <% end %>
+      <% end %>
+
       <% if @columns.include?(:name) %>
-        <%= f.govuk_text_field :name, label: { text: "Name" },
+        <%= f.govuk_text_field :name, label: { text: "Name", size: "s" },
                                       value: params[:name],
                                       autocomplete: "off",
                                       "data-autosubmit-target": "field",
@@ -17,7 +31,7 @@
       <% end %>
 
       <% if @columns.include?(:postcode) %>
-        <%= f.govuk_text_field :postcode, label: { text: "Postcode" },
+        <%= f.govuk_text_field :postcode, label: { text: "Postcode", size: "s" },
                                           value: params[:postcode],
                                           autocomplete: "off",
                                           "data-autosubmit-target": "field",
@@ -26,7 +40,7 @@
       <% end %>
 
       <% if @columns.include?(:dob) %>
-        <%= f.govuk_text_field :dob, label: { text: "Date of birth" },
+        <%= f.govuk_text_field :dob, label: { text: "Date of birth", size: "s" },
                                      hint: {
                                        text: "e.g. 2005 or 01/03/2014",
                                        class: "nhsuk-u-font-size-16",

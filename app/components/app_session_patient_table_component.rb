@@ -10,7 +10,7 @@ class AppSessionPatientTableComponent < ViewComponent::Base
     patient_sessions: nil,
     patients: nil,
     programme: nil,
-    year_groups: nil
+    session: nil
   )
     super
 
@@ -34,14 +34,15 @@ class AppSessionPatientTableComponent < ViewComponent::Base
     @columns = columns
     @consent_form = consent_form
     @params = params
-    @programme = programme
+    @programme = programme || session&.programmes&.first
     @section = section
-    @year_groups = year_groups || programme&.year_groups || []
+    @session = session
+    @year_groups = session&.year_groups || programme&.year_groups || []
   end
 
   private
 
-  attr_reader :params, :programme, :year_groups
+  attr_reader :params, :programme, :session, :year_groups
 
   def column_name(column)
     {
