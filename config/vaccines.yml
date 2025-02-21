@@ -101,12 +101,38 @@ gardasil_9:
 menquadfi:
   brand: MenQuadfi
   type: menacwy
+  discontinued: true
   method: injection
   manufacturer: Sanofi
   nivs_name: MenQuadfi
   dose_volume_ml: 0.5
   snomed_product_code: 39779611000001104
   snomed_product_term: MenQuadfi vaccine solution for injection 0.5ml vials (Sanofi) (product)
+
+menveo:
+  brand: Menveo
+  type: menacwy
+  discontinued: true
+  method: injection
+  manufacturer: GlaxoSmithKline
+  nivs_name: Menveo
+  dose_volume_ml: 0.5
+  snomed_product_code: 17188711000001105
+  snomed_product_term:
+    Menveo vaccine powder and solvent for solution for injection
+    0.5ml vials (Novartis Vaccines and Diagnostics Ltd) (product)
+
+nimenrix:
+  brand: Nimenrix
+  type: menacwy
+  method: injection
+  manufacturer: Pfizer
+  nivs_name: Nimenrix
+  dose_volume_ml: 0.5
+  snomed_product_code: 20517811000001104
+  snomed_product_term:
+    Nimenrix vaccine powder and solvent for solution for injection
+    0.5ml pre-filled syringes (GlaxoSmithKline UK Ltd) (product)
 
 quadrivalent_influenza:
   brand: Quadrivalent Influenza vaccine - QIVe
