@@ -78,7 +78,6 @@ describe SMSDeliveryJob do
       expect(notify_log_entry).to be_sms
       expect(notify_log_entry.delivery_id).to eq(response.id)
       expect(notify_log_entry.recipient).to eq("01234 567890")
-      expect(notify_log_entry.recipient_deterministic).to eq("01234 567890")
       expect(notify_log_entry.template_id).to eq(
         GOVUK_NOTIFY_SMS_TEMPLATES[template_name]
       )
@@ -119,7 +118,6 @@ describe SMSDeliveryJob do
         expect(notify_log_entry).to be_sms
         expect(notify_log_entry.delivery_id).to eq(response.id)
         expect(notify_log_entry.recipient).to eq("01234 567890")
-        expect(notify_log_entry.recipient_deterministic).to eq("01234 567890")
         expect(notify_log_entry.template_id).to eq(
           GOVUK_NOTIFY_SMS_TEMPLATES[template_name]
         )
