@@ -52,6 +52,10 @@ class Vaccine < ApplicationRecord
 
   delegate :first_health_question, to: :health_questions
 
+  def active?
+    !discontinued
+  end
+
   def contains_gelatine?
     programme.flu? && nasal?
   end

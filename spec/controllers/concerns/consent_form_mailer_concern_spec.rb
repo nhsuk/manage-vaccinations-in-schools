@@ -73,7 +73,6 @@ describe ConsentFormMailerConcern do
         create(
           :consent_form,
           organisation:,
-          programme:,
           school_confirmed: false,
           school: create(:school, organisation:),
           session: create(:session, organisation:, programme:)

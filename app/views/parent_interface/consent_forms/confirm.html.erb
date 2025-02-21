@@ -17,13 +17,13 @@
 <%= h1 "Check and confirm" %>
 
 <%= render AppCardComponent.new do |c| %>
-  <% c.with_heading { t("consent_forms.confirm.consent_card_title.#{@consent_form.programme.type}") } %>
+  <% c.with_heading { t("consent_forms.confirm.consent_card_title.#{@consent_form.programmes.first.type}") } %>
   <%= govuk_summary_list do |summary_list|
         summary_list.with_row do |row|
           row.with_key { "Do you agree?" }
           row.with_value {
             @consent_form.consent_given? ?
-              t("consent_forms.confirm.i_agree.#{@consent_form.programme.type}") :
+              t("consent_forms.confirm.i_agree.#{@consent_form.programmes.first.type}") :
               "No"
           }
           row.with_action(text: "Change",

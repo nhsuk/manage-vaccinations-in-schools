@@ -1,6 +1,6 @@
 <%= h1 t("consent_forms.start.title"), size: "xl" %>
 
-<% @session.programmes.each do |programme| %>
+<% @programmes.each do |programme| %>
   <h2 class="nhsuk-heading-m">
     <%= t("consent_forms.start.vaccines.#{programme.type}.title") %>
   </h2>
@@ -14,7 +14,9 @@
 
 <%= form_with url: url_for(action: :create) do |f| %>
   <%= hidden_field_tag :session_slug, @session.slug %>
-  <%= hidden_field_tag :programme_type, @programme.type %>
+  <% @programmes.each do |programme| %>
+    <%= hidden_field_tag :"programme_types[]", programme.type %>
+  <% end %>
   <%= f.govuk_submit "Start now" %>
 <% end %>
 

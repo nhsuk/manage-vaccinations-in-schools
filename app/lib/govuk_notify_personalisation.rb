@@ -15,8 +15,8 @@ class GovukNotifyPersonalisation
     @consent_form = consent_form
     @patient = patient || consent&.patient || vaccination_record&.patient
     @programme =
-      programme || vaccination_record&.programme || consent_form&.programme ||
-        consent&.programme
+      programme || vaccination_record&.programme ||
+        consent_form&.programmes&.first || consent&.programme
     @session =
       session || consent_form&.actual_session ||
         consent_form&.original_session || vaccination_record&.session
