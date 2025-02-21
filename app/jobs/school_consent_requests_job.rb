@@ -9,7 +9,11 @@ class SchoolConsentRequestsJob < ApplicationJob
         .send_consent_requests
         .includes(
           :programmes,
-          patients: %i[consents consent_notifications parents]
+          patients: [
+            :consents,
+            :parents,
+            { consent_notifications: :programmes }
+          ]
         )
         .preload(:session_dates)
         .eager_load(:location)
@@ -24,7 +28,7 @@ class SchoolConsentRequestsJob < ApplicationJob
 
           ConsentNotification.create_and_send!(
             patient:,
-            programme:,
+            programmes: [programme],
             session:,
             type: :request
           )
@@ -39,7 +43,7 @@ class SchoolConsentRequestsJob < ApplicationJob
     return false if patient.has_consent?(programme)
 
     patient.consent_notifications.none? do
-      _1.request? && _1.programme_id == programme.id
+      _1.request? && _1.programmes.include?(programme)
     end
   end
 end

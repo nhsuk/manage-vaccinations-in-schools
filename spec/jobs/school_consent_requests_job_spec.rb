@@ -3,16 +3,27 @@
 describe SchoolConsentRequestsJob do
   subject(:perform_now) { described_class.perform_now }
 
-  let(:programme) { create(:programme) }
+  let(:programmes) { [create(:programme)] }
 
   let(:parents) { create_list(:parent, 2) }
 
   let(:patient_with_request_sent) do
-    create(:patient, :consent_request_sent, :consent_request_sent, programme:)
+    create(
+      :patient,
+      :consent_request_sent,
+      :consent_request_sent,
+      programme: programmes.first
+    )
   end
-  let(:patient_not_sent_request) { create(:patient, parents:, programme:) }
+  let(:patient_not_sent_request) do
+    create(:patient, parents:, programme: programmes.first)
+  end
   let(:patient_with_consent) do
-    create(:patient, :consent_given_triage_not_needed, programme:)
+    create(
+      :patient,
+      :consent_given_triage_not_needed,
+      programme: programmes.first
+    )
   end
   let(:deceased_patient) { create(:patient, :deceased) }
   let(:invalid_patient) { create(:patient, :invalidated) }
@@ -30,7 +41,9 @@ describe SchoolConsentRequestsJob do
   end
 
   context "when session is unscheduled" do
-    let(:session) { create(:session, :unscheduled, patients:, programme:) }
+    let(:session) do
+      create(:session, :unscheduled, patients:, programme: programmes.first)
+    end
 
     it "doesn't send any notifications" do
       expect(ConsentNotification).not_to receive(:create_and_send!)
@@ -43,7 +56,7 @@ describe SchoolConsentRequestsJob do
       create(
         :session,
         patients:,
-        programme:,
+        programme: programmes.first,
         send_consent_requests_at: 2.days.from_now
       )
     end
@@ -59,7 +72,7 @@ describe SchoolConsentRequestsJob do
       create(
         :session,
         patients:,
-        programme:,
+        programme: programmes.first,
         date: 3.weeks.from_now.to_date,
         send_consent_requests_at: Date.current
       )
@@ -68,7 +81,7 @@ describe SchoolConsentRequestsJob do
     it "sends notifications to one patient" do
       expect(ConsentNotification).to receive(:create_and_send!).once.with(
         patient: patient_not_sent_request,
-        programme:,
+        programmes:,
         session:,
         type: :request
       )
@@ -76,13 +89,13 @@ describe SchoolConsentRequestsJob do
     end
 
     context "when location is a generic clinic" do
-      let(:organisation) { create(:organisation, programmes: [programme]) }
+      let(:organisation) { create(:organisation, programmes:) }
       let(:location) { create(:generic_clinic, organisation:) }
       let(:session) do
         create(
           :session,
           patients:,
-          programme:,
+          programme: programmes.first,
           send_consent_requests_at: Date.current,
           organisation:
         )

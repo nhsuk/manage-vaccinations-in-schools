@@ -153,7 +153,9 @@ FactoryBot.define do
           :consent_notification,
           :request,
           patient:,
-          programme: context.programme,
+          session:
+            context.session || create(:session, programme: context.programme),
+          programmes: [context.programme],
           sent_at: 1.week.ago
         )
       end
@@ -165,7 +167,9 @@ FactoryBot.define do
           :consent_notification,
           :initial_reminder,
           patient:,
-          programme: context.programme
+          session:
+            context.session || create(:session, programme: context.programme),
+          programmes: [context.programme]
         )
       end
     end
