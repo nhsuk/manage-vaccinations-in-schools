@@ -328,7 +328,7 @@ class ConsentForm < ApplicationRecord
     @original_session ||=
       Session
         .has_programme(programme)
-        .includes(:programmes)
+        .preload(:programmes)
         .find_by(academic_year:, location:, organisation:)
   end
 
