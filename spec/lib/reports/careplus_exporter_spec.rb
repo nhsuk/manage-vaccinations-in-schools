@@ -21,7 +21,9 @@ describe Reports::CareplusExporter do
       gias_establishment_number: 456
     )
   end
-  let(:session) { create(:session, organisation:, programme:, location:) }
+  let(:session) do
+    create(:session, organisation:, programmes: [programme], location:)
+  end
   let(:parsed_csv) { CSV.parse(csv) }
   let(:headers) { parsed_csv.first }
   let(:data_rows) { parsed_csv[1..] }
@@ -69,7 +71,7 @@ describe Reports::CareplusExporter do
       create(
         :patient_session,
         :consent_given_triage_not_needed,
-        programme:,
+        programmes: [programme],
         session:
       )
     vaccination_record =
@@ -112,7 +114,7 @@ describe Reports::CareplusExporter do
       create(
         :patient_session,
         :consent_given_triage_not_needed,
-        programme:,
+        programmes: [programme],
         patient:,
         session:
       )

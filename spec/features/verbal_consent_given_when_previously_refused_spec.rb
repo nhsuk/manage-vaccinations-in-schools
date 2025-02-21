@@ -32,7 +32,7 @@ feature "Verbal consent" do
       create(
         :patient_session,
         :consent_refused,
-        programme: @programme,
+        programmes: [@programme],
         session: @session
       ).patient
   end

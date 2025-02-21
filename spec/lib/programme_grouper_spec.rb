@@ -11,19 +11,19 @@ describe ProgrammeGrouper do
     context "with only HPV" do
       let(:programmes) { [hpv] }
 
-      it { should eq([[hpv]]) }
+      it { should eq({ hpv: [hpv] }) }
     end
 
     context "with Td/IPV and MenACWY" do
       let(:programmes) { [menacwy, td_ipv] }
 
-      it { should eq([[menacwy, td_ipv]]) }
+      it { should eq({ doubles: [menacwy, td_ipv] }) }
     end
 
     context "with HPV, Td/IPV and MenACWY" do
       let(:programmes) { [hpv, menacwy, td_ipv] }
 
-      it { should eq([[hpv], [menacwy, td_ipv]]) }
+      it { should eq({ hpv: [hpv], doubles: [menacwy, td_ipv] }) }
     end
   end
 end

@@ -111,7 +111,7 @@ describe AppActivityLogComponent do
       create(
         :notify_log_entry,
         :email,
-        template_id: GOVUK_NOTIFY_EMAIL_TEMPLATES[:consent_school_request],
+        template_id: GOVUK_NOTIFY_EMAIL_TEMPLATES[:consent_school_request_hpv],
         patient:,
         consent_form: nil,
         recipient: "test@example.com",
@@ -180,7 +180,7 @@ describe AppActivityLogComponent do
                      date: "29 May 2024 at 12:00pm"
 
     include_examples "card",
-                     title: "Consent school request sent",
+                     title: "Consent school request hpv sent",
                      date: "10 May 2024 at 12:00am",
                      notes: "test@example.com",
                      by: "Nurse Joy"
@@ -343,7 +343,9 @@ describe AppActivityLogComponent do
 
   describe "gillick assessments" do
     let(:programme) { create(:programme, :td_ipv) }
-    let(:patient_session) { create(:patient_session, patient:, programme:) }
+    let(:patient_session) do
+      create(:patient_session, patient:, programmes: [programme])
+    end
 
     before do
       create(
@@ -381,8 +383,9 @@ describe AppActivityLogComponent do
   end
 
   describe "pre-screenings" do
-    let(:programme) { create(:programme) }
-    let(:patient_session) { create(:patient_session, patient:, programme:) }
+    let(:patient_session) do
+      create(:patient_session, patient:, programmes: [programme])
+    end
 
     before do
       create(

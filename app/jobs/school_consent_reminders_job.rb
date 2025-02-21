@@ -18,41 +18,60 @@ class SchoolConsentRemindersJob < ApplicationJob
     sessions.each do |session|
       next unless session.open_for_consent?
 
-      session.programmes.each do |programme|
-        session.patients.each do |patient|
-          next unless should_send_notification?(patient:, programme:, session:)
+      ProgrammeGrouper
+        .call(session.programmes)
+        .each_value do |programmes|
+          session.patients.each do |patient|
+            unless should_send_notification?(patient:, programmes:, session:)
+              next
+            end
 
-          sent_initial_reminder =
-            patient.consent_notifications.any?(&:initial_reminder?)
+            sent_initial_reminder =
+              programmes.all? do |programme|
+                patient
+                  .consent_notifications
+                  .select { it.programmes.include?(programme) }
+                  .any?(&:initial_reminder?)
+              end
 
-          ConsentNotification.create_and_send!(
-            patient:,
-            programme:,
-            session:,
-            type:
-              sent_initial_reminder ? :subsequent_reminder : :initial_reminder
-          )
+            ConsentNotification.create_and_send!(
+              patient:,
+              programmes:,
+              session:,
+              type:
+                sent_initial_reminder ? :subsequent_reminder : :initial_reminder
+            )
+          end
         end
-      end
     end
   end
 
-  def should_send_notification?(patient:, programme:, session:)
+  def should_send_notification?(patient:, programmes:, session:)
     return false unless patient.send_notifications?
 
-    return false if patient.has_consent?(programme)
+    return false if programmes.all? { patient.has_consent?(it) }
 
-    return false if patient.consent_notifications.none?(&:request?)
+    programmes.any? do |programme|
+      no_requests =
+        patient.consent_notifications.none? do
+          it.request? && it.programmes.include?(programme)
+        end
 
-    date_index_to_send_reminder_for =
-      patient.consent_notifications.select(&:reminder?).length
+      next false if no_requests
 
-    return if date_index_to_send_reminder_for >= session.dates.length
+      date_index_to_send_reminder_for =
+        patient
+          .consent_notifications
+          .select { it.reminder? && it.programmes.include?(programme) }
+          .length
 
-    date_to_send_reminder_for = session.dates[date_index_to_send_reminder_for]
-    earliest_date_to_send_reminder =
-      date_to_send_reminder_for - session.days_before_consent_reminders.days
+      next false if date_index_to_send_reminder_for >= session.dates.length
 
-    Date.current >= earliest_date_to_send_reminder
+      date_to_send_reminder_for = session.dates[date_index_to_send_reminder_for]
+      earliest_date_to_send_reminder =
+        date_to_send_reminder_for - session.days_before_consent_reminders.days
+
+      Date.current >= earliest_date_to_send_reminder
+    end
   end
 end

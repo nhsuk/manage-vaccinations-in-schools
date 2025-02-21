@@ -111,7 +111,7 @@ def create_session(
         FactoryBot.create_list(
           :patient_session,
           2,
-          programme:,
+          programmes: [programme],
           session:,
           user:,
           year_group:
@@ -152,7 +152,7 @@ def create_session(
           :patient_session,
           1,
           trait,
-          programme:,
+          programmes: [programme],
           session:,
           user:,
           year_group:

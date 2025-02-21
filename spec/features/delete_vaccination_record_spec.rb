@@ -105,7 +105,7 @@ describe "Delete vaccination record" do
         :session,
         date: Date.yesterday,
         organisation: @organisation,
-        programme: @programme
+        programmes: [@programme]
       )
 
     @patient =
@@ -116,7 +116,7 @@ describe "Delete vaccination record" do
         given_name: "John",
         family_name: "Smith",
         year_group: 8,
-        programme: @programme,
+        programmes: [@programme],
         organisation: @organisation
       )
 

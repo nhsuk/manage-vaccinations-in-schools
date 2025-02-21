@@ -8,22 +8,18 @@
 #  sent_at         :datetime         not null
 #  type            :integer          not null
 #  patient_id      :bigint           not null
-#  programme_id    :bigint           not null
 #  sent_by_user_id :bigint
 #  session_id      :bigint           not null
 #
 # Indexes
 #
-#  index_consent_notifications_on_patient_id                   (patient_id)
-#  index_consent_notifications_on_patient_id_and_programme_id  (patient_id,programme_id)
-#  index_consent_notifications_on_programme_id                 (programme_id)
-#  index_consent_notifications_on_sent_by_user_id              (sent_by_user_id)
-#  index_consent_notifications_on_session_id                   (session_id)
+#  index_consent_notifications_on_patient_id       (patient_id)
+#  index_consent_notifications_on_sent_by_user_id  (sent_by_user_id)
+#  index_consent_notifications_on_session_id       (session_id)
 #
 # Foreign Keys
 #
 #  fk_rails_...  (patient_id => patients.id)
-#  fk_rails_...  (programme_id => programmes.id)
 #  fk_rails_...  (sent_by_user_id => users.id)
 #  fk_rails_...  (session_id => sessions.id)
 #
@@ -33,7 +29,7 @@ describe ConsentNotification do
       travel_to(today) do
         described_class.create_and_send!(
           patient:,
-          programme: programmes.first,
+          programmes:,
           session:,
           type:,
           current_user:
@@ -45,7 +41,7 @@ describe ConsentNotification do
 
     let(:parents) { create_list(:parent, 2) }
     let(:patient) { create(:patient, parents:) }
-    let(:programmes) { [create(:programme)] }
+    let(:programmes) { [create(:programme, :hpv)] }
     let(:organisation) { create(:organisation, programmes:) }
     let(:location) { create(:school, organisation:) }
     let(:session) do
@@ -67,27 +63,45 @@ describe ConsentNotification do
 
         consent_notification = described_class.last
         expect(consent_notification).not_to be_reminder
-        expect(consent_notification.programme).to eq(programmes.first)
+        expect(consent_notification.programmes).to eq(programmes)
         expect(consent_notification.patient).to eq(patient)
         expect(consent_notification.sent_at).to be_today
       end
 
       it "enqueues an email per parent" do
         expect { create_and_send! }.to have_delivered_email(
-          :consent_school_request
+          :consent_school_request_hpv
         ).with(
           parent: parents.first,
           patient:,
           programmes:,
           session:,
           sent_by: current_user
-        ).and have_delivered_email(:consent_school_request).with(
+        ).and have_delivered_email(:consent_school_request_hpv).with(
                 parent: parents.second,
                 patient:,
                 programmes:,
                 session:,
                 sent_by: current_user
               )
+      end
+
+      context "with Td/IPV and MenACWY programmes" do
+        let(:programmes) do
+          [create(:programme, :menacwy), create(:programme, :td_ipv)]
+        end
+
+        it "enqueues an email per parent" do
+          expect { create_and_send! }.to have_delivered_email(
+            :consent_school_request_doubles
+          ).with(
+            parent: parents.first,
+            patient:,
+            programmes:,
+            session:,
+            sent_by: current_user
+          )
+        end
       end
 
       it "enqueues a text per parent" do
@@ -136,7 +150,7 @@ describe ConsentNotification do
 
         consent_notification = described_class.last
         expect(consent_notification).not_to be_reminder
-        expect(consent_notification.programme).to eq(programmes.first)
+        expect(consent_notification.programmes).to eq(programmes)
         expect(consent_notification.patient).to eq(patient)
         expect(consent_notification.sent_at).to be_today
       end
@@ -204,27 +218,45 @@ describe ConsentNotification do
 
         consent_notification = described_class.last
         expect(consent_notification).to be_reminder
-        expect(consent_notification.programme).to eq(programmes.first)
+        expect(consent_notification.programmes).to eq(programmes)
         expect(consent_notification.patient).to eq(patient)
         expect(consent_notification.sent_at).to be_today
       end
 
       it "enqueues an email per parent" do
         expect { create_and_send! }.to have_delivered_email(
-          :consent_school_initial_reminder
+          :consent_school_initial_reminder_hpv
         ).with(
           parent: parents.first,
           patient:,
           programmes:,
           session:,
           sent_by: current_user
-        ).and have_delivered_email(:consent_school_initial_reminder).with(
+        ).and have_delivered_email(:consent_school_initial_reminder_hpv).with(
                 parent: parents.second,
                 patient:,
                 programmes:,
                 session:,
                 sent_by: current_user
               )
+      end
+
+      context "with Td/IPV and MenACWY programmes" do
+        let(:programmes) do
+          [create(:programme, :menacwy), create(:programme, :td_ipv)]
+        end
+
+        it "enqueues an email per parent" do
+          expect { create_and_send! }.to have_delivered_email(
+            :consent_school_initial_reminder_doubles
+          ).with(
+            parent: parents.first,
+            patient:,
+            programmes:,
+            session:,
+            sent_by: current_user
+          )
+        end
       end
 
       it "enqueues a text per parent" do
@@ -272,27 +304,47 @@ describe ConsentNotification do
 
         consent_notification = described_class.last
         expect(consent_notification).to be_reminder
-        expect(consent_notification.programme).to eq(programmes.first)
+        expect(consent_notification.programmes).to eq(programmes)
         expect(consent_notification.patient).to eq(patient)
         expect(consent_notification.sent_at).to be_today
       end
 
       it "enqueues an email per parent" do
         expect { create_and_send! }.to have_delivered_email(
-          :consent_school_subsequent_reminder
+          :consent_school_subsequent_reminder_hpv
         ).with(
           parent: parents.first,
           patient:,
           programmes:,
           session:,
           sent_by: current_user
-        ).and have_delivered_email(:consent_school_subsequent_reminder).with(
+        ).and have_delivered_email(
+                :consent_school_subsequent_reminder_hpv
+              ).with(
                 parent: parents.second,
                 patient:,
                 programmes:,
                 session:,
                 sent_by: current_user
               )
+      end
+
+      context "with Td/IPV and MenACWY programmes" do
+        let(:programmes) do
+          [create(:programme, :menacwy), create(:programme, :td_ipv)]
+        end
+
+        it "enqueues an email per parent" do
+          expect { create_and_send! }.to have_delivered_email(
+            :consent_school_subsequent_reminder_doubles
+          ).with(
+            parent: parents.first,
+            patient:,
+            programmes:,
+            session:,
+            sent_by: current_user
+          )
+        end
       end
 
       it "enqueues a text per parent" do

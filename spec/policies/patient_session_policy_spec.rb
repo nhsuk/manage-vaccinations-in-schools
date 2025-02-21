@@ -1,20 +1,19 @@
 # frozen_string_literal: true
 
 describe PatientSessionPolicy do
-  let(:programme) { create(:programme) }
+  let(:programmes) { [create(:programme)] }
 
-  let(:organisation) { create(:organisation, programmes: [programme]) }
+  let(:organisation) { create(:organisation, programmes:) }
   let(:user) { create(:user, organisation:) }
 
   let(:patient_session) do
     create(
       :patient_session,
-      programme:,
-      session: create(:session, organisation:, programme:)
+      session: create(:session, organisation:, programmes:)
     )
   end
   let(:another_organisations_patient_session) do
-    create(:patient_session, programme:)
+    create(:patient_session, programmes:)
   end
 
   describe "Scope#resolve" do

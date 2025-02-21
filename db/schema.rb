@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_02_21_105126) do
+ActiveRecord::Schema[8.0].define(version: 2025_02_21_155425) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -204,16 +204,21 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_21_105126) do
     t.index ["school_id"], name: "index_consent_forms_on_school_id"
   end
 
+  create_table "consent_notification_programmes", force: :cascade do |t|
+    t.bigint "programme_id", null: false
+    t.bigint "consent_notification_id", null: false
+    t.index ["consent_notification_id"], name: "idx_on_consent_notification_id_bde310472f"
+    t.index ["programme_id", "consent_notification_id"], name: "idx_on_programme_id_consent_notification_id_e185bde5f5", unique: true
+    t.index ["programme_id"], name: "index_consent_notification_programmes_on_programme_id"
+  end
+
   create_table "consent_notifications", force: :cascade do |t|
     t.bigint "patient_id", null: false
-    t.bigint "programme_id", null: false
     t.datetime "sent_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
     t.integer "type", null: false
     t.bigint "sent_by_user_id"
     t.bigint "session_id", null: false
-    t.index ["patient_id", "programme_id"], name: "index_consent_notifications_on_patient_id_and_programme_id"
     t.index ["patient_id"], name: "index_consent_notifications_on_patient_id"
-    t.index ["programme_id"], name: "index_consent_notifications_on_programme_id"
     t.index ["sent_by_user_id"], name: "index_consent_notifications_on_sent_by_user_id"
     t.index ["session_id"], name: "index_consent_notifications_on_session_id"
   end
@@ -815,8 +820,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_21_105126) do
   add_foreign_key "consent_forms", "locations"
   add_foreign_key "consent_forms", "locations", column: "school_id"
   add_foreign_key "consent_forms", "organisations"
+  add_foreign_key "consent_notification_programmes", "consent_notifications"
+  add_foreign_key "consent_notification_programmes", "programmes"
   add_foreign_key "consent_notifications", "patients"
-  add_foreign_key "consent_notifications", "programmes"
   add_foreign_key "consent_notifications", "sessions"
   add_foreign_key "consent_notifications", "users", column: "sent_by_user_id"
   add_foreign_key "consents", "organisations"

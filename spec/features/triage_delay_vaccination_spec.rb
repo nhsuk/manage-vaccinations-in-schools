@@ -23,15 +23,14 @@ describe "Triage" do
   end
 
   def given_a_programme_with_a_running_session
-    programme = create(:programme, :hpv)
-    @organisation =
-      create(:organisation, :with_one_nurse, programmes: [programme])
+    programmes = [create(:programme, :hpv)]
+    @organisation = create(:organisation, :with_one_nurse, programmes:)
     @school = create(:school)
     session =
       create(
         :session,
         organisation: @organisation,
-        programme:,
+        programmes:,
         location: @school,
         date: Time.zone.today
       )
@@ -40,7 +39,7 @@ describe "Triage" do
         :patient_session,
         :consent_given_triage_needed,
         :in_attendance,
-        programme:,
+        programmes:,
         session:
       ).patient
   end

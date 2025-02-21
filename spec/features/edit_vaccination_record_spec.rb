@@ -277,7 +277,7 @@ describe "Edit vaccination record" do
         given_name: "John",
         family_name: "Smith",
         organisation: @organisation,
-        programme: @programme
+        programmes: [@programme]
       )
 
     @patient_session =

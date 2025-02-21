@@ -6,7 +6,10 @@ class ProgrammeGrouper
   end
 
   def call
-    programmes.group_by { programme_group(it) }.map(&:second)
+    programmes
+      .group_by { programme_group(it) }
+      .transform_values { it.sort_by(&:type) }
+      .to_h
   end
 
   def self.call(*args, **kwargs)
@@ -20,10 +23,12 @@ class ProgrammeGrouper
   attr_reader :programmes
 
   def programme_group(programme)
-    if programme.hpv?
-      0
+    if programme.flu?
+      :flu
+    elsif programme.hpv?
+      :hpv
     elsif programme.td_ipv? || programme.menacwy?
-      1 # Td/IPV and MenACWY is administered together ("doubles")
+      :doubles # Td/IPV and MenACWY is administered together
     else
       raise "Unknown programme type #{programme.type}"
     end
