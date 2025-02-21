@@ -6,11 +6,10 @@ class AppSecondaryNavigationComponent < ViewComponent::Base
   def initialize(classes: nil, attributes: {})
     super
     classes = classes.join(" ") if classes.is_a? Array
-    @classes = "app-secondary-navigation nhsuk-u-margin-bottom-4#{classes.present? ? " #{classes}" : ""}"
-    @attributes = attributes.merge(
-      class: @classes,
-      "aria-label": "Secondary menu"
-    )
+    @classes =
+      "app-secondary-navigation nhsuk-u-margin-bottom-4#{classes.present? ? " #{classes}" : ""}"
+    @attributes =
+      attributes.merge(class: @classes, "aria-label": "Secondary menu")
   end
 
   class Item < ViewComponent::Base
