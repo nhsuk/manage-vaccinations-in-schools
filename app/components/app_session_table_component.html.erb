@@ -50,11 +50,7 @@
             <% row.with_cell do %>
               <span class="nhsuk-table-responsive__heading">Programmes</span>
 
-              <ul class="nhsuk-list">
-                <% session.programmes.each do |programme| %>
-                  <li><%= programme.name %></li>
-                <% end %>
-              </ul>
+              <%= render AppProgrammeTagsComponent.new(session.programmes) %>
             <% end %>
           <% end %>
 

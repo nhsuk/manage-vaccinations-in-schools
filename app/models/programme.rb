@@ -18,8 +18,6 @@ class Programme < ApplicationRecord
 
   audited
 
-  has_and_belongs_to_many :sessions
-
   has_many :consent_forms
   has_many :consent_notifications
   has_many :consents
@@ -27,10 +25,12 @@ class Programme < ApplicationRecord
   has_many :gillick_assessments
   has_many :immunisation_imports
   has_many :organisation_programmes
+  has_many :session_programmes
   has_many :triages
   has_many :vaccination_records, -> { kept }
   has_many :vaccines
 
+  has_many :sessions, through: :session_programmes
   has_many :patient_sessions, through: :sessions
   has_many :patients, through: :patient_sessions
   has_many :organisations, through: :organisation_programmes
@@ -40,6 +40,10 @@ class Programme < ApplicationRecord
   enum :type,
        { flu: "flu", hpv: "hpv", menacwy: "menacwy", td_ipv: "td_ipv" },
        validate: true
+
+  def to_param
+    type
+  end
 
   def name
     human_enum_name(:type)
@@ -60,8 +64,20 @@ class Programme < ApplicationRecord
     year_groups.map(&:to_birth_academic_year)
   end
 
-  def to_param
-    type
+  DOSE_SEQUENCES = {
+    "flu" => 1,
+    "hpv" => 1,
+    "menacwy" => 1,
+    "td_ipv" => 5
+  }.freeze
+
+  def vaccinated_dose_sequence
+    DOSE_SEQUENCES.fetch(type)
+  end
+
+  def maximum_dose_sequence
+    # HPV is given 3 times to patients with a weakened immune system.
+    hpv? ? 3 : vaccinated_dose_sequence
   end
 
   SNOMED_PROCEDURE_CODES = {

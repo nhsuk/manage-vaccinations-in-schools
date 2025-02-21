@@ -55,7 +55,6 @@ describe "Parental consent manual matching" do
       create(
         :consent_form,
         :recorded,
-        programme: @programme,
         session: @session,
         parent_full_name: "John Smith"
       )

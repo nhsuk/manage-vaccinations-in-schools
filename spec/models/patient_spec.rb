@@ -27,14 +27,12 @@
 #  updated_from_pds_at       :datetime
 #  created_at                :datetime         not null
 #  updated_at                :datetime         not null
-#  cohort_id                 :bigint
 #  gp_practice_id            :bigint
 #  organisation_id           :bigint
 #  school_id                 :bigint
 #
 # Indexes
 #
-#  index_patients_on_cohort_id            (cohort_id)
 #  index_patients_on_family_name_trigram  (family_name) USING gin
 #  index_patients_on_given_name_trigram   (given_name) USING gin
 #  index_patients_on_gp_practice_id       (gp_practice_id)
@@ -46,7 +44,6 @@
 #
 # Foreign Keys
 #
-#  fk_rails_...  (cohort_id => cohorts.id)
 #  fk_rails_...  (gp_practice_id => locations.id)
 #  fk_rails_...  (organisation_id => organisations.id)
 #  fk_rails_...  (school_id => locations.id)
@@ -387,12 +384,6 @@ describe Patient do
           true
         ).to(false)
       end
-
-      it "adds the patient to upcoming sessions" do
-        expect(session.patients).not_to include(patient)
-        update_from_pds!
-        expect(session.reload.patients).to include(patient)
-      end
     end
   end
 
@@ -412,18 +403,6 @@ describe Patient do
         expect { invalidate! }.to change(patient, :invalidated_at).from(nil).to(
           Time.current
         )
-      end
-    end
-
-    context "when in an upcoming session" do
-      let(:session) { create(:session, :scheduled) }
-
-      before { create(:patient_session, patient:, session:) }
-
-      it "removes the patient from the session" do
-        expect(session.patients).to include(patient)
-        invalidate!
-        expect(session.patients).not_to include(patient)
       end
     end
   end

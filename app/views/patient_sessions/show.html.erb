@@ -1,6 +1,6 @@
 <% content_for :before_main do %>
   <%= render AppBacklinkComponent.new(
-        session_section_tab_path(@session),
+        session_section_tab_path(@session, programme_type: @programme),
         name: "#{@section.pluralize} page",
       ) %>
 <% end %>
@@ -32,20 +32,11 @@
   </ul>
 <% end %>
 
-<%= render AppSecondaryNavigationComponent.new do |nav|
-      nav.with_item(
-        href: session_patient_path(id: @patient.id),
-        text: "Child record",
-        selected: true,
-      )
-      nav.with_item(
-        href: session_patient_log_path(patient_id: @patient.id),
-        text: "Activity log",
-      )
-    end %>
+<%= render "patient_sessions/secondary_navigation" %>
 
 <%= render AppPatientPageComponent.new(
       patient_session: @patient_session,
+      programme: @programme,
       vaccinate_form: @vaccinate_form,
       triage: @triage,
       section: @section,

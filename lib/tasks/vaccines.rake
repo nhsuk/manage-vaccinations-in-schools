@@ -28,27 +28,88 @@ namespace :vaccines do
 
       vaccine.save!
 
-      next if programme.flu? || vaccine.health_questions.exists?
+      next if vaccine.health_questions.exists?
 
+      if programme.hpv?
+        create_hpv_health_questions(vaccine)
+      elsif programme.menacwy?
+        create_menacwy_health_questions(vaccine)
+      elsif programme.td_ipv?
+        create_td_ipv_health_questions(vaccine)
+      end
+    end
+  end
+end
+
+def create_hpv_health_questions(vaccine)
+  vaccine.health_questions.create!(
+    title: "Does your child have any severe allergies?",
+    next_question:
       vaccine.health_questions.create!(
-        title: "Does your child have any severe allergies?",
+        title:
+          "Does your child have any medical conditions for which they receive treatment?",
         next_question:
           vaccine.health_questions.create!(
             title:
-              "Does your child have any medical conditions for which they receive treatment?",
+              "Has your child ever had a severe reaction to any medicines, including vaccines?",
             next_question:
               vaccine.health_questions.create!(
                 title:
-                  "Has your child ever had a severe reaction to any medicines, including vaccines?",
-                next_question:
-                  vaccine.health_questions.create!(
-                    title:
-                      "Does your child need extra support during vaccination sessions?",
-                    hint: "For example, they’re autistic, or extremely anxious"
-                  )
+                  "Does your child need extra support during vaccination sessions?",
+                hint: "For example, they’re autistic, or extremely anxious"
               )
           )
       )
-    end
-  end
+  )
+end
+
+def create_menacwy_health_questions(vaccine)
+  vaccine.health_questions.create!(
+    title:
+      "Does your child have a bleeding disorder or another medical condition they receive treatment for?",
+    next_question:
+      vaccine.health_questions.create!(
+        title:
+          "Has your child ever had a severe reaction to any medicines, including vaccines?",
+        next_question:
+          vaccine.health_questions.create!(
+            title:
+              "Has your child already had the teenage meningitis vaccination (MenACWY)?",
+            hint:
+              "This is different from the meningitis vaccines given to babies and young children. " \
+                "It’s usually given once in Year 9 or 10. Some children may have had it before travelling abroad.",
+            next_question:
+              vaccine.health_questions.create!(
+                title:
+                  "Does your child need extra support during vaccination sessions?",
+                hint: "For example, they’re autistic, or extremely anxious"
+              )
+          )
+      )
+  )
+end
+
+def create_td_ipv_health_questions(vaccine)
+  vaccine.health_questions.create!(
+    title:
+      "Does your child have a bleeding disorder or another medical condition they receive treatment for?",
+    next_question:
+      vaccine.health_questions.create!(
+        title:
+          "Has your child ever had a severe reaction to any medicines, including vaccines?",
+        next_question:
+          vaccine.health_questions.create!(
+            title:
+              "Has your child had a tetanus, diphtheria and polio vaccination in the last 5 years?",
+            hint:
+              "Most children will not have had this vaccination since their 4-in-1 pre-school booster",
+            next_question:
+              vaccine.health_questions.create!(
+                title:
+                  "Does your child need extra support during vaccination sessions?",
+                hint: "For example, they’re autistic, or extremely anxious"
+              )
+          )
+      )
+  )
 end

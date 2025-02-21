@@ -4,9 +4,9 @@ describe AppSimpleStatusBannerComponent do
   subject(:rendered) { render_inline(component) }
 
   before do
-    allow(component).to receive(:new_session_patient_triages_path).and_return(
-      "/session/patient/triage/new"
-    )
+    allow(component).to receive(
+      :new_session_patient_programme_triages_path
+    ).and_return("/session/patient/triage/new")
     stub_authorization(allowed: true)
 
     patient_session.strict_loading!(false)
@@ -17,7 +17,7 @@ describe AppSimpleStatusBannerComponent do
   let(:programme) { create(:programme) }
   let(:patient_session) { create(:patient_session, programme:, user:) }
 
-  let(:component) { described_class.new(patient_session:) }
+  let(:component) { described_class.new(patient_session:, programme:) }
 
   let(:triage_nurse_name) do
     patient_session.triages(programme:).last.performed_by.full_name

@@ -149,8 +149,7 @@ class VaccinationRecord < ApplicationRecord
             comparison: {
               greater_than_or_equal_to: 1,
               less_than_or_equal_to: :maximum_dose_sequence
-            },
-            if: :administered?
+            }
 
   validates :performed_at,
             comparison: {
@@ -199,7 +198,5 @@ class VaccinationRecord < ApplicationRecord
     session.nil? || location&.generic_clinic?
   end
 
-  def maximum_dose_sequence
-    vaccine.maximum_dose_sequence
-  end
+  delegate :maximum_dose_sequence, to: :programme
 end

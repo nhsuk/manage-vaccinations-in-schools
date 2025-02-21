@@ -1,4 +1,4 @@
-<% title = t("consent_forms.confirmation_agreed.title.#{@consent_form.programme.type}",
+<% title = t("consent_forms.confirmation_agreed.title.#{@consent_form.programmes.first.type}",
             full_name: @consent_form.full_name) %>
 
 <% content_for :page_title, title %>

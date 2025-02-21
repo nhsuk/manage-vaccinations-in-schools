@@ -15,6 +15,7 @@
 #  rows_count                   :integer
 #  serialized_errors            :json
 #  status                       :integer          default("pending_import"), not null
+#  year_groups                  :integer          default([]), not null, is an Array
 #  created_at                   :datetime         not null
 #  updated_at                   :datetime         not null
 #  organisation_id              :bigint           not null
@@ -38,6 +39,8 @@ FactoryBot.define do
     session
     organisation { session.organisation }
     uploaded_by
+
+    year_groups { session.year_groups }
 
     csv_data { "my,csv\n" }
     csv_filename { Faker::File.file_name(ext: "csv") }

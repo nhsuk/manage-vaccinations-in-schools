@@ -69,8 +69,7 @@ describe "Dev endpoint to reset a organisation" do
 
   def and_consent_exists
     @patients.each do |patient|
-      consent_form =
-        create(:consent_form, programme: @programme, session: Session.first)
+      consent_form = create(:consent_form, session: Session.first)
       parent =
         patient.parents.first || create(:parent_relationship, patient:).parent
       create(

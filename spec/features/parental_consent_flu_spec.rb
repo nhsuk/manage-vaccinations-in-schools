@@ -33,7 +33,7 @@ describe "Parental consent" do
   end
 
   def then_i_see_the_consent_form
-    expect(page).to have_content("Give or refuse consent for a flu vaccination")
+    expect(page).to have_content("Give or refuse consent for vaccinations")
   end
 
   def when_i_give_consent
@@ -56,7 +56,7 @@ describe "Parental consent" do
     click_button "Continue"
 
     # About you
-    fill_in "Your name", with: "Jane #{@child.family_name}"
+    fill_in "Full name", with: "Jane #{@child.family_name}"
     choose "Mum"
     fill_in "Email address", with: "jane@example.com"
     click_button "Continue"
@@ -84,7 +84,7 @@ describe "Parental consent" do
   end
 
   def then_i_see_the_confirmation_page
-    expect(page).to have_content("Check your answers")
+    expect(page).to have_content("Check and confirm")
   end
 
   def when_i_change_my_answer_to_the_first_health_question

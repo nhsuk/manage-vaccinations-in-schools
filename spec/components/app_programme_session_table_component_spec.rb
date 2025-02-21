@@ -3,7 +3,7 @@
 describe AppProgrammeSessionTableComponent do
   subject(:rendered) { render_inline(component) }
 
-  let(:component) { described_class.new(sessions) }
+  let(:component) { described_class.new(sessions, programme:) }
 
   let(:programme) { create(:programme) }
   let(:location) { create(:school, name: "Waterloo Road") }

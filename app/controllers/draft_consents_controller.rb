@@ -68,7 +68,13 @@ class DraftConsentsController < ApplicationController
     tab = @consent.response_given? ? "given" : "refused"
 
     heading_link_href =
-      session_patient_path(@session, id: @patient.id, section: "consents", tab:)
+      session_patient_programme_path(
+        @session,
+        @patient,
+        @programme,
+        section: "consents",
+        tab:
+      )
 
     flash[:success] = {
       heading: "Consent recorded for",
@@ -87,7 +93,7 @@ class DraftConsentsController < ApplicationController
   end
 
   def finish_wizard_path
-    session_consents_path(@session)
+    session_consents_path(@session, programme_type: @programme)
   end
 
   def update_params
@@ -180,9 +186,10 @@ class DraftConsentsController < ApplicationController
       if @draft_consent.editing?
         wizard_path("confirm")
       elsif current_step == @draft_consent.wizard_steps.first
-        session_patient_path(
+        session_patient_programme_path(
           @session,
           @patient,
+          @programme,
           section: "consents",
           tab: "no-consent"
         )

@@ -25,6 +25,15 @@ describe ClinicSessionInvitationsJob do
       perform_now
     end
 
+    context "when patient goes to a school" do
+      let(:patient) { create(:patient, parents:, school: create(:school)) }
+
+      it "doesn't send any notifications" do
+        expect(SessionNotification).not_to receive(:create_and_send!)
+        perform_now
+      end
+    end
+
     context "when already sent for that date" do
       before do
         create(
@@ -45,13 +54,9 @@ describe ClinicSessionInvitationsJob do
 
         let(:today) { date + 1.day }
 
-        it "sends a second notification" do
-          expect(SessionNotification).to receive(:create_and_send!).once.with(
-            patient_session:,
-            session_date: date + 1.week,
-            type: :clinic_subsequent_invitation
-          )
-          travel_to(today) { perform_now }
+        it "doesn't send any notifications" do
+          expect(SessionNotification).not_to receive(:create_and_send!)
+          perform_now
         end
       end
     end

@@ -8,6 +8,7 @@ describe "Import class lists" do
 
     when_i_visit_a_session_page_for_the_hpv_programme
     and_i_start_adding_children_to_the_session
+    and_i_select_the_year_groups
     then_i_should_see_the_import_page
 
     when_i_continue_without_uploading_a_file
@@ -30,6 +31,7 @@ describe "Import class lists" do
     then_i_should_the_errors_page_with_invalid_fields
 
     when_i_go_back_to_the_upload_page
+    and_i_select_the_year_groups
     and_i_upload_a_valid_file
     then_i_should_see_the_upload
     and_i_should_see_the_patients
@@ -67,7 +69,15 @@ describe "Import class lists" do
   end
 
   def and_i_start_adding_children_to_the_session
-    click_on "Import class list"
+    click_on "Import class list records"
+  end
+
+  def and_i_select_the_year_groups
+    check "Year 8"
+    check "Year 9"
+    check "Year 10"
+    check "Year 11"
+    click_on "Continue"
   end
 
   def then_i_should_see_the_import_page
@@ -95,6 +105,9 @@ describe "Import class lists" do
   def then_i_should_see_the_upload
     expect(page).to have_content("Imported on")
     expect(page).to have_content("Imported byTest User")
+    expect(page).to have_content(
+      "Year groupsYear 8, Year 9, Year 10, and Year 11"
+    )
   end
 
   def when_i_click_on_the_imports_tab
@@ -160,7 +173,13 @@ describe "Import class lists" do
 
   def when_i_go_back_to_the_upload_page
     click_on "Back"
-    click_on "Import class list"
+
+    click_on "Import records"
+    choose "Class list records"
+    click_on "Continue"
+
+    select "Waterloo Road"
+    click_on "Continue"
   end
 
   def then_i_should_see_the_imports_page_with_the_processing_flash

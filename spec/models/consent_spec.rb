@@ -106,7 +106,7 @@ describe Consent do
           consent_form,
           patient:,
           current_user:
-        )
+        ).first
       end
 
       let(:consent_form) { create(:consent_form, :recorded, reason_notes: nil) }
@@ -120,7 +120,7 @@ describe Consent do
       it "copies over attributes from consent_form" do
         expect(consent).to(
           have_attributes(
-            programme: consent_form.programme,
+            programme: consent_form.programmes.first,
             patient:,
             consent_form:,
             reason_for_refusal: consent_form.reason,

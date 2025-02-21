@@ -25,6 +25,11 @@ describe "Manage school sessions" do
     when_i_choose_the_dates
     then_i_see_the_confirmation_page
 
+    when_i_click_on_change_programmes
+    then_i_see_the_change_programmes_page
+    and_i_change_the_programmes
+    and_i_confirm
+
     when_i_click_on_change_consent_requests
     then_i_see_the_change_consent_requests_page
     and_i_change_consent_requests_date
@@ -39,9 +44,6 @@ describe "Manage school sessions" do
     then_i_should_see_the_session_details
 
     when_i_go_to_todays_sessions_as_a_nurse
-    then_i_see_no_sessions
-
-    when_i_go_to_unscheduled_sessions
     then_i_see_no_sessions
 
     when_i_go_to_scheduled_sessions
@@ -59,21 +61,15 @@ describe "Manage school sessions" do
     when_i_go_to_todays_sessions_as_a_nurse
     and_i_go_to_completed_sessions
     then_i_see_the_school
-    and_i_click_on_the_school
 
-    when_i_click_on_close_session
-    then_i_see_the_close_session_page
+    when_i_click_on_the_school
+    and_i_click_on_send_invitations
+    then_i_see_the_send_invitations_page
 
-    when_i_close_the_session
-    then_i_see_the_close_confirmation
-    and_i_cant_edit_the_session
-    and_i_go_back_to_sessions
-
-    when_i_go_to_unscheduled_sessions
-    then_i_see_the_organisation_clinic
-
-    when_i_click_on_the_organisation_clinic
-    then_i_see_a_child_in_the_cohort
+    when_i_click_on_send_invitations
+    then_i_see_the_invitation_confirmation
+    then_i_see_the_school
+    and_the_parent_receives_an_invitation
   end
 
   def given_my_organisation_is_running_an_hpv_vaccination_programme
@@ -86,7 +82,7 @@ describe "Manage school sessions" do
         programmes: [@programme]
       )
     @location = create(:school, :secondary, organisation: @organisation)
-    session =
+    @session =
       create(
         :session,
         :unscheduled,
@@ -94,7 +90,21 @@ describe "Manage school sessions" do
         organisation: @organisation,
         programme: @programme
       )
-    @patient = create(:patient, year_group: 8, session:)
+
+    @parent = create(:parent)
+
+    @patient =
+      create(:patient, year_group: 8, session: @session, parents: [@parent])
+
+    @organisation.generic_clinic_session.session_dates.create!(
+      value: 1.month.from_now.to_date
+    )
+
+    create(
+      :patient_session,
+      patient: @patient,
+      session: @organisation.generic_clinic_session
+    )
   end
 
   def when_i_go_to_todays_sessions_as_a_nurse
@@ -130,6 +140,10 @@ describe "Manage school sessions" do
     expect(page).to have_content(@location.urn)
     expect(page).to have_content("No sessions scheduled")
     expect(page).to have_content("Schedule sessions")
+  end
+
+  def and_i_see_a_child_in_the_cohort
+    expect(page).to have_content("1 child in this session")
   end
 
   def when_i_click_on_schedule_sessions
@@ -185,6 +199,18 @@ describe "Manage school sessions" do
     expect(page).to have_content("Edit session")
   end
 
+  def when_i_click_on_change_programmes
+    click_on "Change programmes"
+  end
+
+  def then_i_see_the_change_programmes_page
+    expect(page).to have_content("Which programmes is this session part of?")
+  end
+
+  def and_i_change_the_programmes
+    check "HPV"
+  end
+
   def when_i_click_on_change_consent_requests
     click_on "Change consent requests"
   end
@@ -228,13 +254,11 @@ describe "Manage school sessions" do
   end
 
   def when_the_parent_visits_the_consent_form
-    visit start_parent_interface_consent_forms_path(Session.last, @programme)
+    visit start_parent_interface_consent_forms_path(@session, @programme)
   end
 
   def then_they_can_give_consent
-    expect(page).to have_content(
-      "Give or refuse consent for an HPV vaccination"
-    )
+    expect(page).to have_content("Give or refuse consent for vaccinations")
   end
 
   def when_the_deadline_has_passed
@@ -242,7 +266,7 @@ describe "Manage school sessions" do
   end
 
   def then_they_can_no_longer_give_consent
-    visit start_parent_interface_consent_forms_path(Session.last, @programme)
+    visit start_parent_interface_consent_forms_path(@session, @programme)
     expect(page).to have_content("The deadline for responding has passed")
   end
 
@@ -250,52 +274,26 @@ describe "Manage school sessions" do
     expect(page).to have_content(@location.name)
   end
 
-  def and_i_click_on_the_school
-    click_on @location.name
+  def when_i_click_on_send_invitations
+    click_on "Send clinic invitations"
   end
 
-  def when_i_click_on_close_session
-    click_on "Close session"
+  def then_i_see_the_send_invitations_page
+    expect(page).to have_content("Invite parents to book a clinic appointment")
+    expect(page).to have_content(
+      "There is 1 child currently without clinic appointments."
+    )
   end
 
-  def then_i_see_the_close_session_page
-    expect(page).to have_content("Close session")
-    expect(page).to have_content("1 child who could not be vaccinated")
+  alias_method :and_i_click_on_send_invitations,
+               :when_i_click_on_send_invitations
+
+  def then_i_see_the_invitation_confirmation
+    expect(page).to have_content("Clinic invitations sent for 1 child")
   end
 
-  alias_method :when_i_close_the_session, :when_i_click_on_close_session
-
-  def then_i_see_the_close_confirmation
-    expect(page).to have_content("Session closed.")
+  def and_the_parent_receives_an_invitation
+    perform_enqueued_jobs
+    expect_email_to @parent.email, :session_clinic_initial_invitation
   end
-
-  def and_i_cant_edit_the_session
-    expect(page).not_to have_content("Edit session")
-  end
-
-  def and_i_go_back_to_sessions
-    click_on "Sessions", match: :first
-  end
-
-  def then_i_see_the_organisation_clinic
-    expect(page).to have_content("Community clinics")
-  end
-
-  alias_method :and_i_see_the_organisation_clinic,
-               :then_i_see_the_organisation_clinic
-
-  def when_i_click_on_the_organisation_clinic
-    click_on "Community clinics"
-  end
-
-  def then_i_see_no_children_in_the_cohort
-    expect(page).to have_content("Children\n0")
-  end
-
-  def then_i_see_a_child_in_the_cohort
-    expect(page).to have_content("1 child in this session")
-  end
-
-  alias_method :and_i_see_a_child_in_the_cohort,
-               :then_i_see_a_child_in_the_cohort
 end

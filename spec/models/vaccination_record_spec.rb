@@ -93,16 +93,6 @@ describe VaccinationRecord do
         )
       end
     end
-
-    context "when administered is false and dose_sequence is not 1" do
-      let(:vaccination_record) do
-        build(:vaccination_record, outcome: :refused, dose_sequence: 2)
-      end
-
-      it "is valid" do
-        expect(vaccination_record).to be_valid
-      end
-    end
   end
 
   describe "#performed_by" do

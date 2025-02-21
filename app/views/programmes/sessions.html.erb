@@ -9,6 +9,6 @@
 
 <h1 class="nhsuk-heading-l"><%= @programme.name %></h1>
 
-<%= render AppProgrammeNavigationComponent.new(@programme, organisation: current_user.selected_organisation, active: :sessions) %>
+<%= render AppProgrammeNavigationComponent.new(@programme, active: :sessions) %>
 
-<%= render AppProgrammeSessionTableComponent.new(@sessions) %>
+<%= render AppProgrammeSessionTableComponent.new(@sessions, programme: @programme) %>

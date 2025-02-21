@@ -84,7 +84,7 @@ class ConsentNotification < ApplicationRecord
         mail_template,
         parent:,
         patient:,
-        programme:,
+        programmes: [programme],
         session:,
         sent_by: current_user
       )
@@ -93,7 +93,7 @@ class ConsentNotification < ApplicationRecord
         text_template,
         parent:,
         patient:,
-        programme:,
+        programmes: [programme],
         session:,
         sent_by: current_user
       )

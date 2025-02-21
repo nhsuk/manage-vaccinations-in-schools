@@ -33,7 +33,8 @@ class Organisation < ApplicationRecord
   has_many :consents
   has_many :immunisation_records
   has_many :locations
-  has_many :organisation_programmes
+  has_many :organisation_programmes,
+           -> { joins(:programme).order(:"programmes.type") }
   has_many :patients
   has_many :sessions
   has_many :teams

@@ -7,29 +7,19 @@ class SchoolMoveForm
   attr_accessor :current_user, :school_move
 
   attribute :action, :string
-  attribute :move_to_school, :boolean
 
   validates :action, inclusion: { in: %w[confirm ignore] }
-  validates :move_to_school,
-            inclusion: {
-              in: [true, false]
-            },
-            if: -> { show_move_to_school? && action == "confirm" }
 
   def save
     return false unless valid?
 
     case action
     when "confirm"
-      @school_move.confirm!(user: current_user, move_to_school:)
+      @school_move.confirm!(user: current_user)
     when "ignore"
       @school_move.ignore!
     end
 
     true
-  end
-
-  def show_move_to_school?
-    school_move.from_clinic? && school_move.school_session.present?
   end
 end

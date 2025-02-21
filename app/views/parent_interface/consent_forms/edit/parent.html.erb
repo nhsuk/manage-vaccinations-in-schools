@@ -9,12 +9,12 @@
   <%= h1 "About you" %>
 
   <%= f.govuk_text_field :parent_full_name,
-                         label: { text: "Your name" },
+                         label: { text: "Full name" },
                          autocomplete: "name" %>
 
   <%= f.govuk_radio_buttons_fieldset(:parent_relationship_type,
                                      legend: { size: "s",
-                                               text: "Your relationship to the child" }) do %>
+                                               text: "Relationship to child" }) do %>
     <%= f.govuk_radio_button :parent_relationship_type, "mother",
                              label: { text: "Mum" }, link_errors: true %>
     <%= f.govuk_radio_button :parent_relationship_type, "father",
@@ -40,11 +40,12 @@
 
   <%= f.govuk_email_field :parent_email,
                           label: { text: "Email address" },
-                          autocomplete: "email" %>
+                          autocomplete: "email",
+                          hint: { text: "We will use this to send you confirmation messages" } %>
 
   <%= f.govuk_phone_field :parent_phone,
                           label: { text: "Phone number (optional)" },
-                          hint: { text: "Someone might call you about your child’s vaccination" },
+                          hint: { text: "Someone from the vaccinations team might call you if they have questions" },
                           autocomplete: "tel" %>
 
   <%= f.govuk_check_boxes_fieldset :parent_phone_receive_updates, multiple: false, legend: nil do %>

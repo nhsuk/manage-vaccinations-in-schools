@@ -56,12 +56,4 @@ class Triage < ApplicationRecord
   encrypts :notes
 
   validates :notes, length: { maximum: 1000 }
-
-  def process!
-    return unless delay_vaccination?
-
-    patient.patient_sessions.find_or_create_by!(
-      session: organisation.generic_clinic_session
-    )
-  end
 end

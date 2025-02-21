@@ -6,7 +6,6 @@
 #
 #  id                            :bigint           not null, primary key
 #  academic_year                 :integer          not null
-#  closed_at                     :datetime
 #  days_before_consent_reminders :integer
 #  send_consent_requests_at      :date
 #  send_invitations_at           :date
@@ -36,14 +35,8 @@ describe Session do
     let(:today_session) { create(:session, :today, programme:) }
     let(:unscheduled_session) { create(:session, :unscheduled, programme:) }
 
-    describe "#today" do
-      subject(:scope) { described_class.today }
-
-      it { should contain_exactly(today_session) }
-    end
-
-    describe "#upcoming" do
-      subject(:scope) { described_class.upcoming }
+    describe "#for_current_academic_year" do
+      subject(:scope) { described_class.for_current_academic_year }
 
       it do
         expect(scope).to contain_exactly(
@@ -52,6 +45,12 @@ describe Session do
           scheduled_session
         )
       end
+    end
+
+    describe "#today" do
+      subject(:scope) { described_class.today }
+
+      it { should contain_exactly(today_session) }
     end
 
     describe "#unscheduled" do
@@ -87,39 +86,22 @@ describe Session do
         it { should_not include(completed_session) }
       end
     end
-
-    describe "#closed" do
-      subject(:scope) { described_class.closed }
-
-      it { should contain_exactly(closed_session) }
-    end
   end
 
-  describe "#open?" do
-    subject(:open?) { session.open? }
+  describe "#programmes" do
+    subject(:programmes) { session.reload.programmes }
 
-    let(:session) { build(:session) }
+    let(:hpv_programme) { create(:programme, :hpv) }
+    let(:menacwy_programme) { create(:programme, :menacwy) }
 
-    it { should be(true) }
+    let(:session) { create(:session, programme: menacwy_programme) }
 
-    context "with a closed session" do
-      let(:session) { build(:session, :closed) }
-
-      it { should be(false) }
+    before do
+      session.update!(programme_ids: [menacwy_programme.id, hpv_programme.id])
     end
-  end
 
-  describe "#closed?" do
-    subject(:closed?) { session.closed? }
-
-    let(:session) { build(:session) }
-
-    it { should be(false) }
-
-    context "with a closed session" do
-      let(:session) { build(:session, :closed) }
-
-      it { should be(true) }
+    it "is ordered by name" do
+      expect(programmes).to eq([hpv_programme, menacwy_programme])
     end
   end
 
@@ -229,43 +211,6 @@ describe Session do
       before { session.session_dates.create!(value: date + 1.day) }
 
       it { should eq(Date.new(2020, 1, 2)) }
-    end
-  end
-
-  describe "#close!" do
-    subject(:close!) { session.close! }
-
-    let(:programme) { create(:programme) }
-    let(:organisation) { create(:organisation, programmes: [programme]) }
-    let(:session) { create(:session, :completed, organisation:, programme:) }
-
-    context "with a vaccinated patient" do
-      let(:patient) { create(:patient, :vaccinated, programme:, session:) }
-
-      it "doesn't add the patient to the clinic" do
-        expect { close! }.not_to(change { patient.reload.sessions.count })
-        expect(patient.sessions).to contain_exactly(session)
-      end
-    end
-
-    context "with an unvaccinated patient" do
-      let(:patient) { create(:patient, session:) }
-
-      it "adds the patient to the clinic" do
-        expect { close! }.to(change { patient.reload.sessions.count })
-        expect(patient.sessions).to include(organisation.generic_clinic_session)
-      end
-    end
-
-    context "with an unvaccinated patient and consent refused" do
-      let(:patient) { create(:patient, session:) }
-
-      before { create(:consent, :refused, patient:, programme:) }
-
-      it "doesn't add the patient to the clinic" do
-        expect { close! }.not_to(change { patient.reload.sessions.count })
-        expect(patient.sessions).to contain_exactly(session)
-      end
     end
   end
 

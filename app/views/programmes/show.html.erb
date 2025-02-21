@@ -8,7 +8,7 @@
 
 <h1 class="nhsuk-heading-l"><%= @programme.name %></h1>
 
-<%= render AppProgrammeNavigationComponent.new(@programme, organisation: current_user.selected_organisation, active: :overview) %>
+<%= render AppProgrammeNavigationComponent.new(@programme, active: :overview) %>
 
 <%= govuk_button_to "Download vaccination report", programme_vaccination_reports_path(@programme), class: "app-button--secondary nhsuk-u-margin-bottom-5" %>
 

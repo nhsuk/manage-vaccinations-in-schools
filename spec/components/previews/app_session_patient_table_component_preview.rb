@@ -34,7 +34,7 @@ class AppSessionPatientTableComponentPreview < ViewComponent::Preview
 
     session = patient_sessions.first.session
 
-    consent_form = create(:consent_form, programme:, session:)
+    consent_form = create(:consent_form, session:)
 
     render AppSessionPatientTableComponent.new(
              session:,

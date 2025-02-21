@@ -3,6 +3,7 @@
 class AppTriageFormComponent < ViewComponent::Base
   def initialize(
     patient_session:,
+    programme:,
     url:,
     method: :post,
     triage: nil,
@@ -11,6 +12,7 @@ class AppTriageFormComponent < ViewComponent::Base
     super
 
     @patient_session = patient_session
+    @programme = programme
     @triage =
       triage ||
         Triage.new.tap do |t|
@@ -25,9 +27,7 @@ class AppTriageFormComponent < ViewComponent::Base
 
   private
 
-  def programme
-    @patient_session.programmes.first # TODO: handle multiple programmes
-  end
+  attr_reader :programme
 
   def fieldset_options
     text = "Is it safe to vaccinate #{@patient_session.patient.given_name}?"

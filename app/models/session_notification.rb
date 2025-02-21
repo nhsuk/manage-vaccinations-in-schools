@@ -54,18 +54,22 @@ class SessionNotification < ApplicationRecord
     patient = patient_session.patient
     session = patient_session.session
 
-    programme = session.programmes.first # TODO: handle multiple programmes
-
-    contacts =
+    parents =
       if type == :school_reminder
-        patient_session
-          .latest_consents(programme:)
-          .select { _1.response_given? && _1.parent&.contactable? }
+        session.programmes.flat_map do |programme|
+          patient_session
+            .latest_consents(programme:)
+            .select(&:response_given?)
+            .filter_map(&:parent)
+        end
       else
         patient.parents.select(&:contactable?)
       end
 
-    return if contacts.empty?
+    parents.select!(&:contactable?)
+    parents.uniq!
+
+    return if parents.empty?
 
     # We create a record in the database first to avoid sending duplicate emails/texts.
     # If a problem occurs while the emails/texts are sent, they will be in the job
@@ -79,23 +83,14 @@ class SessionNotification < ApplicationRecord
       sent_by: current_user
     )
 
-    if type == :school_reminder
-      contacts.each do |consent|
-        params = { consent:, session:, sent_by: current_user }
+    parents.each do |parent|
+      params = { parent:, patient:, session:, sent_by: current_user }
 
-        EmailDeliveryJob.perform_later(:session_school_reminder, **params)
+      EmailDeliveryJob.perform_later(:"session_#{type}", **params)
 
-        next unless consent.parent.phone_receive_updates
+      next if type == :school_reminder && !parent.phone_receive_updates
 
-        SMSDeliveryJob.perform_later(:session_school_reminder, **params)
-      end
-    else
-      contacts.each do |parent|
-        params = { parent:, patient:, session:, sent_by: current_user }
-
-        EmailDeliveryJob.perform_later(:"session_#{type}", **params)
-        SMSDeliveryJob.perform_later(:"session_#{type}", **params)
-      end
+      SMSDeliveryJob.perform_later(:"session_#{type}", **params)
     end
   end
 end

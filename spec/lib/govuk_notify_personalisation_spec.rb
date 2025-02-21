@@ -7,19 +7,19 @@ describe GovukNotifyPersonalisation do
       session:,
       consent:,
       consent_form:,
-      programme:,
+      programmes:,
       vaccination_record:
     )
   end
 
-  let(:programme) { create(:programme, :hpv) }
+  let(:programmes) { [create(:programme, :hpv)] }
   let(:organisation) do
     create(
       :organisation,
       name: "Organisation",
       email: "organisation@example.com",
       phone: "01234 567890",
-      programmes: [programme]
+      programmes:
     )
   end
 
@@ -38,7 +38,7 @@ describe GovukNotifyPersonalisation do
       :session,
       location:,
       organisation:,
-      programme:,
+      programme: programmes.first,
       date: Date.new(2026, 1, 1)
     )
   end
@@ -116,7 +116,12 @@ describe GovukNotifyPersonalisation do
 
   context "with a consent" do
     let(:consent) do
-      create(:consent, :refused, programme:, created_at: Date.new(2024, 1, 1))
+      create(
+        :consent,
+        :refused,
+        programme: programmes.first,
+        created_at: Date.new(2024, 1, 1)
+      )
     end
 
     it do
@@ -156,13 +161,26 @@ describe GovukNotifyPersonalisation do
           :consent_form,
           :given,
           :recorded,
-          session: create(:session, location:, programme:, organisation:),
+          session:
+            create(
+              :session,
+              location:,
+              programme: programmes.first,
+              organisation:
+            ),
           school_confirmed: false,
           school:
         )
       end
 
-      before { create(:session, location: school, programme:, organisation:) }
+      before do
+        create(
+          :session,
+          location: school,
+          programme: programmes.first,
+          organisation:
+        )
+      end
 
       it { should include(location_name: "Waterloo Road") }
     end
@@ -173,7 +191,7 @@ describe GovukNotifyPersonalisation do
       create(
         :vaccination_record,
         :not_administered,
-        programme:,
+        programme: programmes.first,
         performed_at: Date.new(2024, 1, 1)
       )
     end

@@ -34,7 +34,7 @@ class ImmunisationImportRow
               greater_than_or_equal_to: 1,
               less_than_or_equal_to: :maximum_dose_sequence
             },
-            if: :vaccine
+            if: :programme
 
   SCHOOL_URN_HOME_EDUCATED = "999999"
   SCHOOL_URN_UNKNOWN = "888888"
@@ -75,8 +75,9 @@ class ImmunisationImportRow
 
   validates :date_of_vaccination,
             comparison: {
-              greater_than_or_equal_to: Date.new(2021, 9, 1),
-              less_than_or_equal_to: -> { Date.current }
+              greater_than: :patient_date_of_birth,
+              less_than_or_equal_to: -> { Date.current },
+              if: :patient_date_of_birth
             }
   validates :time_of_vaccination,
             presence: {
@@ -269,12 +270,22 @@ class ImmunisationImportRow
     end
   end
 
-  def dose_sequence
-    return 1 unless administered
+  DOSE_SEQUENCES = {
+    "1P" => 1,
+    "2P" => 2,
+    "3P" => 3,
+    "1B" => 4,
+    "2B" => 5
+  }.freeze
 
-    if vaccine.maximum_dose_sequence == 1 && !@data.key?("DOSE_SEQUENCE")
+  def dose_sequence
+    value = @data["DOSE_SEQUENCE"]&.gsub(/\s/, "")&.presence&.upcase
+
+    if value.blank? && (!administered || programme&.maximum_dose_sequence == 1)
       return 1
     end
+
+    return DOSE_SEQUENCES[value] if DOSE_SEQUENCES.include?(value)
 
     begin
       Integer(@data["DOSE_SEQUENCE"])
@@ -441,9 +452,7 @@ class ImmunisationImportRow
     organisation.vaccines.pluck(:nivs_name)
   end
 
-  def maximum_dose_sequence
-    vaccine.maximum_dose_sequence
-  end
+  delegate :maximum_dose_sequence, to: :programme
 
   # TODO: we want tougher validation from the point of integration of Mavis
   # but permit looser validation in historical data

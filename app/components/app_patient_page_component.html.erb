@@ -1,13 +1,14 @@
-<%= if patient_session.status.in? %w[
-                                   vaccinated
-                                   unable_to_vaccinate
-                                 ]
+<%= if patient_session.status(programme:).in? %w[
+                                               vaccinated
+                                               unable_to_vaccinate
+                                             ]
      render AppOutcomeBannerComponent.new(
        patient_session:,
+       programme:,
        current_user:,
      )
    else
-     render AppSimpleStatusBannerComponent.new(patient_session:)
+     render AppSimpleStatusBannerComponent.new(patient_session:, programme:)
    end %>
 
 <%= render AppPatientCardComponent.new(patient) %>
@@ -39,9 +40,10 @@
       <% if helpers.policy(gillick_assessment).edit? %>
         <p class="nhsuk-body">
           <%= govuk_button_link_to "Edit Gillick competence",
-                                   edit_session_patient_gillick_assessment_path(
+                                   edit_session_patient_programme_gillick_assessment_path(
                                      session,
                                      patient,
+                                     programme,
                                      section: @section,
                                      tab: @tab,
                                    ), class: "app-button--secondary nhsuk-u-margin-bottom-0" %>
@@ -50,9 +52,10 @@
     <% elsif gillick_assessment_can_be_recorded? %>
       <p class="nhsuk-body">
         <%= govuk_button_link_to "Assess Gillick competence",
-                                 edit_session_patient_gillick_assessment_path(
+                                 edit_session_patient_programme_gillick_assessment_path(
                                    session,
                                    patient,
+                                   programme,
                                    section: @section,
                                    tab: @tab,
                                  ), class: "app-button--secondary nhsuk-u-margin-bottom-0" %>
@@ -63,7 +66,7 @@
 
 <%= render AppCardComponent.new do |c| %>
   <% c.with_heading { "Consent" } %>
-  <%= render AppConsentComponent.new(patient_session:, section:, tab:) %>
+  <%= render AppConsentComponent.new(patient_session:, programme:, section:, tab:) %>
 <% end %>
 
 <% if display_health_questions? %>
@@ -80,13 +83,15 @@
   <% end %>
 <% end %>
 
-<% if helpers.policy(Triage).create? && patient_session.next_step == :triage && patient_session.session.open? %>
+<% if helpers.policy(Triage).create? && patient_session.next_step(programme:) == :triage %>
   <%= render AppCardComponent.new do %>
     <%= render AppTriageFormComponent.new(
           patient_session:,
-          url: session_patient_triages_path(
+          programme:,
+          url: session_patient_programme_triages_path(
             session,
             patient,
+            programme,
             @triage,
             section: @section,
             tab: @tab,
@@ -105,17 +110,28 @@
     <div class="app-button-group">
       <% if helpers.policy(vaccination_record).edit? %>
         <%= govuk_button_to "Edit vaccination record",
-                            programme_vaccination_record_path(vaccination_record.programme, vaccination_record),
+                            programme_vaccination_record_path(programme, vaccination_record),
                             method: :put, class: "app-button--secondary" %>
       <% end %>
 
       <% if helpers.policy(vaccination_record).destroy? %>
-        <%= govuk_link_to "Delete vaccination record", destroy_programme_vaccination_record_path(vaccination_record.programme, vaccination_record, return_to: session_patient_path(id: patient.id)) %>
+        <%= govuk_link_to "Delete vaccination record",
+                          destroy_programme_vaccination_record_path(
+                            programme,
+                            vaccination_record,
+                            return_to: session_patient_programme_path(patient_id: patient.id),
+                          ) %>
       <% end %>
     </div>
   <% end %>
 <% end %>
 
 <% if helpers.policy(VaccinationRecord).create? %>
-  <%= render AppVaccinateFormComponent.new(patient_session:, vaccinate_form:, section:, tab:) %>
+  <%= render AppVaccinateFormComponent.new(
+        patient_session:,
+        programme:,
+        vaccinate_form:,
+        section:,
+        tab:,
+      ) %>
 <% end %>

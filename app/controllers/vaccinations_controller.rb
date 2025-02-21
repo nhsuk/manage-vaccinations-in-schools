@@ -7,6 +7,7 @@ class VaccinationsController < ApplicationController
   include PatientSortingConcern
 
   before_action :set_session
+  before_action :set_programme
   before_action :set_patient, only: :create
   before_action :set_patient_session, only: :create
   before_action :set_section_and_tab, only: :create
@@ -24,11 +25,13 @@ class VaccinationsController < ApplicationController
         .patient_sessions
         .preload_for_status
         .eager_load(:patient)
+        .merge(Patient.in_programme(@programme))
         .order_by_name
 
     grouped_patient_sessions =
       group_patient_sessions_by_state(
         all_patient_sessions,
+        @programme,
         section: :vaccinations
       )
 
@@ -36,7 +39,7 @@ class VaccinationsController < ApplicationController
     @tab_counts = count_patient_sessions(grouped_patient_sessions)
     @patient_sessions = grouped_patient_sessions.fetch(@current_tab, [])
 
-    sort_and_filter_patients!(@patient_sessions)
+    sort_and_filter_patients!(@patient_sessions, programme: @programme)
 
     session[:current_section] = "vaccinations"
 
@@ -127,9 +130,15 @@ class VaccinationsController < ApplicationController
 
   def set_session
     @session =
-      policy_scope(Session).includes(:location).find_by!(
+      policy_scope(Session).includes(:location, :programmes).find_by!(
         slug: params[:session_slug] || params[:slug]
       )
+  end
+
+  def set_programme
+    @programme =
+      @session.programmes.find_by(type: params[:programme_type]) ||
+        @session.programmes.first
   end
 
   def set_patient

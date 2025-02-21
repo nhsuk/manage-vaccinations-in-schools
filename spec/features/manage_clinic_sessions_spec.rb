@@ -3,7 +3,7 @@
 describe "Manage clinic sessions" do
   around { |example| travel_to(Time.zone.local(2024, 2, 18)) { example.run } }
 
-  scenario "Adding dates to the session and closing consent" do
+  scenario "Adding dates to the session, sending reminders and closing consent" do
     given_my_organisation_is_running_an_hpv_vaccination_programme
 
     when_i_go_to_todays_sessions_as_a_nurse
@@ -41,7 +41,17 @@ describe "Manage clinic sessions" do
     when_i_go_to_scheduled_sessions
     then_i_see_the_community_clinic
 
-    when_i_go_to_completed_sessions
+    when_the_patient_has_been_invited
+    and_i_click_on_the_community_clinic
+    and_i_click_on_send_reminders
+    then_i_see_the_send_reminders_page
+
+    when_i_click_on_send_reminders
+    then_i_see_the_reminder_confirmation
+    and_the_parent_receives_a_reminder
+
+    when_i_go_to_todays_sessions_as_a_nurse
+    and_i_go_to_completed_sessions
     then_i_see_no_sessions
 
     when_the_parent_visits_the_consent_form
@@ -65,7 +75,12 @@ describe "Manage clinic sessions" do
         programmes: [@programme]
       )
 
-    @organisation.generic_clinic_session # ensure it exists
+    @session = @organisation.generic_clinic_session
+
+    @parent = create(:parent)
+
+    @patient =
+      create(:patient, year_group: 8, session: @session, parents: [@parent])
   end
 
   def when_i_go_to_todays_sessions_as_a_nurse
@@ -181,14 +196,52 @@ describe "Manage clinic sessions" do
     expect(page).to have_content("11 March 2024")
   end
 
+  def then_i_see_the_community_clinic
+    expect(page).to have_content("Community clinics")
+  end
+
+  def when_the_patient_has_been_invited
+    create(
+      :session_notification,
+      :clinic_initial_invitation,
+      patient: @patient,
+      session: @session,
+      session_date: Date.current
+    )
+  end
+
+  def and_i_click_on_the_community_clinic
+    click_on "Community clinics"
+  end
+
+  def when_i_click_on_send_reminders
+    click_on "Send booking reminders"
+  end
+
+  alias_method :and_i_click_on_send_reminders, :when_i_click_on_send_reminders
+
+  def then_i_see_the_send_reminders_page
+    expect(page).to have_content("Remind parents to book a clinic appointment")
+    expect(page).to have_content(
+      "This will send booking reminders to the parents of 1 child who has not yet been sent a reminder."
+    )
+  end
+
+  def then_i_see_the_reminder_confirmation
+    expect(page).to have_content("Booking reminders sent for 1 child")
+  end
+
+  def and_the_parent_receives_a_reminder
+    perform_enqueued_jobs
+    expect_email_to @parent.email, :session_clinic_subsequent_invitation
+  end
+
   def when_the_parent_visits_the_consent_form
     visit start_parent_interface_consent_forms_path(Session.last, @programme)
   end
 
   def then_they_can_give_consent
-    expect(page).to have_content(
-      "Give or refuse consent for an HPV vaccination"
-    )
+    expect(page).to have_content("Give or refuse consent for vaccinations")
   end
 
   def when_the_deadline_has_passed
@@ -198,9 +251,5 @@ describe "Manage clinic sessions" do
   def then_they_can_no_longer_give_consent
     visit start_parent_interface_consent_forms_path(Session.last, @programme)
     expect(page).to have_content("The deadline for responding has passed")
-  end
-
-  def then_i_see_the_community_clinic
-    expect(page).to have_content("Community clinics")
   end
 end

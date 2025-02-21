@@ -158,19 +158,21 @@ class Consent < ApplicationRecord
       parent =
         consent_form.find_or_create_parent_with_relationship_to!(patient:)
 
-      create!(
-        consent_form:,
-        organisation: consent_form.organisation,
-        programme: consent_form.programme,
-        patient:,
-        parent:,
-        reason_for_refusal: consent_form.reason,
-        notes: consent_form.reason_notes.presence || "",
-        response: consent_form.response,
-        route: "website",
-        health_answers: consent_form.health_answers,
-        recorded_by: current_user
-      )
+      consent_form.programmes.map do |programme|
+        create!(
+          consent_form:,
+          organisation: consent_form.organisation,
+          programme:,
+          patient:,
+          parent:,
+          reason_for_refusal: consent_form.reason,
+          notes: consent_form.reason_notes.presence || "",
+          response: consent_form.response,
+          route: "website",
+          health_answers: consent_form.health_answers,
+          recorded_by: current_user
+        )
+      end
     end
   end
 

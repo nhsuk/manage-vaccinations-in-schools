@@ -13,7 +13,8 @@
   <%= govuk_summary_list do |summary_list|
         summary_list.with_row do |row|
           row.with_key { "Programmes" }
-          row.with_value { safe_join(@session.programmes.map(&:name), tag.br) }
+          row.with_value { render AppProgrammeTagsComponent.new(@session.programmes) }
+          row.with_action(text: "Change", href: edit_programmes_session_path(@session), visually_hidden_text: "programmes")
         end
       
         summary_list.with_row do |row|

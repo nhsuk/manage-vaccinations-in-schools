@@ -6,7 +6,9 @@ describe AppTriageFormComponent do
   let(:programme) { create(:programme) }
   let(:patient_session) { create(:patient_session, programme:) }
   let(:patient) { patient_session.patient }
-  let(:component) { described_class.new(patient_session:, url: "#") }
+  let(:component) do
+    described_class.new(patient_session:, programme:, url: "#")
+  end
 
   it { should have_text("Is it safe to vaccinate") }
   it { should have_css(".app-fieldset__legend--reset") }
@@ -28,7 +30,7 @@ describe AppTriageFormComponent do
 
   describe "with a bold legend" do
     let(:component) do
-      described_class.new(patient_session:, url: "#", legend: :bold)
+      described_class.new(patient_session:, programme:, url: "#", legend: :bold)
     end
 
     it { should have_css("h2") }
@@ -37,7 +39,12 @@ describe AppTriageFormComponent do
 
   describe "with a hidden legend" do
     let(:component) do
-      described_class.new(patient_session:, url: "#", legend: :hidden)
+      described_class.new(
+        patient_session:,
+        programme:,
+        url: "#",
+        legend: :hidden
+      )
     end
 
     it { should have_css("legend.nhsuk-visually-hidden") }
@@ -45,7 +52,7 @@ describe AppTriageFormComponent do
 
   describe "with the put method" do
     let(:component) do
-      described_class.new(patient_session:, url: "#", method: :put)
+      described_class.new(patient_session:, programme:, url: "#", method: :put)
     end
 
     it { should have_text("Continue") }

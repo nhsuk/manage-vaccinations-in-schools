@@ -40,25 +40,7 @@
   <% content_for(:before_content) { f.govuk_error_summary } %>
 
   <%= f.govuk_radio_buttons_fieldset :action, legend: { text: "Update the child’s record with this new information?" } do %>
-    <%= f.govuk_radio_button :action, :confirm, label: { text: "Update record with new school" }, link_errors: true do %>
-      <% if @form.show_move_to_school? %>
-        <% hint = if @school_move.school_session.today_or_future_dates.count == 0
-               "There is an unscheduled session at #{@school_move.school_session.location.name}."
-             elsif @school_move.school_session.today_or_future_dates.count == 1
-               "There is an upcoming session at #{@school_move.school_session.location.name} on #{@school_move.school_session.today_or_future_dates.first.to_fs(:long)}."
-             else
-               "There are upcoming sessions at #{@school_move.school_session.location.name} on #{@school_move.school_session.today_or_future_dates.map { _1.to_fs(:long) }.to_sentence}."
-             end %>
-
-        <%= f.govuk_radio_buttons_fieldset :move_to_school,
-                                           legend: { text: "Move #{@patient.given_name} to the upcoming school session?", size: "s" },
-                                           hint: { text: hint } do %>
-          <%= f.govuk_radio_button :move_to_school, :false, label: { text: "No, keep them in the community clinic" }, link_errors: true %>
-          <%= f.govuk_radio_button :move_to_school, :true, label: { text: "Yes, move them to the upcoming school session" } %>
-        <% end %>
-      <% end %>
-    <% end %>
-
+    <%= f.govuk_radio_button :action, :confirm, label: { text: "Update record with new school" }, link_errors: true %>
     <%= f.govuk_radio_button :action, :ignore, label: { text: "Ignore new information" } %>
   <% end %>
 

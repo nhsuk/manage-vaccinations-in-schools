@@ -52,28 +52,21 @@ class Vaccine < ApplicationRecord
 
   delegate :first_health_question, to: :health_questions
 
+  def active?
+    !discontinued
+  end
+
   def contains_gelatine?
     programme.flu? && nasal?
   end
 
   def common_delivery_sites
-    if programme.hpv?
+    if programme.hpv? || programme.menacwy? || programme.td_ipv?
       %w[left_arm_upper_position right_arm_upper_position]
     else
       raise NotImplementedError,
             "Common delivery sites not implemented for #{programme.type} vaccines."
     end
-  end
-
-  MAXIMUM_DOSE_SEQUENCE_BY_TYPE = {
-    "flu" => 1,
-    "hpv" => 3,
-    "menacwy" => 1,
-    "td_ipv" => 1
-  }.freeze
-
-  def maximum_dose_sequence
-    MAXIMUM_DOSE_SEQUENCE_BY_TYPE.fetch(programme.type)
   end
 
   def seasonal?
@@ -92,8 +85,10 @@ class Vaccine < ApplicationRecord
   end
 
   AVAILABLE_DELIVERY_METHODS_BY_TYPE = {
+    "flu" => %w[nasal_spray],
     "hpv" => %w[intramuscular subcutaneous],
-    "flu" => %w[nasal_spray]
+    "td_ipv" => %w[intramuscular subcutaneous],
+    "menacwy" => %w[intramuscular subcutaneous]
   }.freeze
 
   def available_delivery_methods
