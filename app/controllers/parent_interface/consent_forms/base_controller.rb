@@ -30,7 +30,10 @@ module ParentInterface
 
     def set_header_path
       @header_path =
-        start_parent_interface_consent_forms_path(@session, @programmes.first)
+        start_parent_interface_consent_forms_path(
+          @session,
+          @programmes.map(&:to_param).join("-")
+        )
     end
 
     def set_service_name

@@ -53,7 +53,8 @@ module ParentInterface
     def set_session_and_programmes
       @session = Session.find_by!(slug: params[:session_slug])
       @organisation = @session.organisation
-      @programmes = @session.programmes # TODO: .where(type: params[:programme_type] || params[:programme_types])
+      @programmes =
+        @session.programmes.where(type: params[:programme_types].split("-"))
       @team = @session.team
     end
 

@@ -1,8 +1,5 @@
 <% content_for :before_main do %>
-  <%= render AppBacklinkComponent.new(
-        start_parent_interface_consent_forms_path(@session, @programmes.first),
-        name: "start consent page",
-      ) %>
+  <%= render AppBacklinkComponent.new(@header_path, name: "start consent page") %>
 <% end %>
 
 <%= h1 "What is your child’s name?" %>
