@@ -22,28 +22,32 @@ class SchoolConsentRequestsJob < ApplicationJob
     sessions.each do |session|
       next unless session.open_for_consent?
 
-      session.programmes.each do |programme|
-        session.patients.each do |patient|
-          next unless should_send_notification?(patient:, programme:)
+      ProgrammeGrouper
+        .call(session.programmes)
+        .each do |programmes|
+          session.patients.each do |patient|
+            next unless should_send_notification?(patient:, programmes:)
 
-          ConsentNotification.create_and_send!(
-            patient:,
-            programmes: [programme],
-            session:,
-            type: :request
-          )
+            ConsentNotification.create_and_send!(
+              patient:,
+              programmes:,
+              session:,
+              type: :request
+            )
+          end
         end
-      end
     end
   end
 
-  def should_send_notification?(patient:, programme:)
+  def should_send_notification?(patient:, programmes:)
     return false unless patient.send_notifications?
 
-    return false if patient.has_consent?(programme)
+    return false if programmes.all? { patient.has_consent?(it) }
 
-    patient.consent_notifications.none? do
-      _1.request? && _1.programmes.include?(programme)
+    programmes.any? do |programme|
+      patient.consent_notifications.none? do
+        it.request? && it.programmes.include?(programme)
+      end
     end
   end
 end

@@ -8,7 +8,7 @@ describe SchoolConsentRequestsJob do
   let(:parents) { create_list(:parent, 2) }
 
   let(:patient_with_request_sent) do
-    create(:patient, :consent_request_sent, :consent_request_sent, programmes:)
+    create(:patient, :consent_request_sent, programmes:)
   end
   let(:patient_not_sent_request) { create(:patient, parents:, programmes:) }
   let(:patient_with_consent) do
@@ -73,6 +73,22 @@ describe SchoolConsentRequestsJob do
         type: :request
       )
       perform_now
+    end
+
+    context "with Td/IPV and MenACWY" do
+      let(:programmes) do
+        [create(:programme, :menacwy), create(:programme, :td_ipv)]
+      end
+
+      it "sends one notification to one patient" do
+        expect(ConsentNotification).to receive(:create_and_send!).once.with(
+          patient: patient_not_sent_request,
+          programmes:,
+          session:,
+          type: :request
+        )
+        perform_now
+      end
     end
 
     context "when location is a generic clinic" do

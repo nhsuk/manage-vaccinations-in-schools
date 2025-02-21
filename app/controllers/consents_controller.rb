@@ -59,9 +59,15 @@ class ConsentsController < ApplicationController
   def send_request
     return unless @patient_session.no_consent?(programme: @programme)
 
+    # For programmes that are administered together we should send the consent request together.
+    programmes =
+      ProgrammeGrouper
+        .call(@session.programmes)
+        .find { it.include?(@programme) }
+
     ConsentNotification.create_and_send!(
       patient: @patient,
-      programmes: [@programme],
+      programmes:,
       session: @session,
       type: :request,
       current_user:
