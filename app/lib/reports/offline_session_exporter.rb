@@ -293,7 +293,7 @@ class Reports::OfflineSessionExporter
     row[:anatomical_site] = Cell.new(
       allowed_values: ImmunisationImportRow::DELIVERY_SITES.keys
     )
-    row[:dose_sequence] = 1 # TODO: revisit this for other programmes
+    row[:dose_sequence] = programme.vaccinated_dose_sequence
     row[:reason_not_vaccinated] = Cell.new(
       allowed_values: ImmunisationImportRow::REASONS.keys
     )
