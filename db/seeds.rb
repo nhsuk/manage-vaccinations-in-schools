@@ -17,21 +17,8 @@ def seed_vaccines
   Rake::Task["vaccines:seed"].execute
 end
 
-def import_gp_practices
-  if Settings.fast_reset
-    FactoryBot.create_list(:gp_practice, 30)
-  else
-    Rake::Task["gp_practices:import"].execute
-  end
-end
-
-def import_schools
-  if Settings.fast_reset
-    FactoryBot.create_list(:school, 30, :primary)
-    FactoryBot.create_list(:school, 30, :secondary)
-  else
-    Rake::Task["schools:import"].execute
-  end
+def create_gp_practices
+  FactoryBot.create_list(:gp_practice, 30)
 end
 
 def create_organisation(ods_code:, programme_types: %w[hpv menacwy td_ipv])
@@ -91,17 +78,6 @@ def attach_specific_school_to_organisation_if_present(organisation:, urn:)
   Location.where(urn:).update_all(team_id: organisation.generic_team.id)
 end
 
-def get_location_for_session(organisation, programmes)
-  year_groups = programmes.flat_map(&:year_groups).uniq
-  loop do
-    location =
-      organisation.locations.for_year_groups(year_groups).sample ||
-        FactoryBot.create(:location, :school, organisation:, year_groups:)
-
-    return location unless organisation.sessions.exists?(location:)
-  end
-end
-
 def create_session(
   user,
   organisation,
@@ -120,7 +96,7 @@ def create_session(
     )
   end
 
-  location = get_location_for_session(organisation, programmes)
+  location = FactoryBot.create(:school, organisation:, year_groups:)
   date = completed ? 1.week.ago.to_date : Date.current
 
   session =
@@ -292,8 +268,7 @@ end
 set_feature_flags
 
 seed_vaccines
-import_gp_practices
-import_schools
+create_gp_practices
 
 unless Settings.cis2.enabled
   # Don't create Nurse Joy's team on a CIS2 env, because password authentication

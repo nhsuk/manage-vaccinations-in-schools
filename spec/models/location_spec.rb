@@ -33,20 +33,6 @@
 #
 
 describe Location do
-  describe "scopes" do
-    describe "#for_year_groups" do
-      subject(:scope) { described_class.for_year_groups(year_groups) }
-
-      let(:year_groups) { [8, 9, 10, 11] }
-
-      let(:matching) { create(:school, :secondary) } # 7-11
-      let(:mismatch) { create(:school, :primary) } # 0-6
-
-      it { should include(matching) }
-      it { should_not include(mismatch) }
-    end
-  end
-
   describe "validations" do
     it { should validate_presence_of(:name) }
 
