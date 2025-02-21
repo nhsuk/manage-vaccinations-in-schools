@@ -34,22 +34,24 @@ describe EmailDeliveryJob do
         consent_form:,
         parent:,
         patient:,
-        programme:,
+        programmes:,
         sent_by:,
         vaccination_record:
       )
     end
 
     let(:template_name) { GOVUK_NOTIFY_EMAIL_TEMPLATES.keys.first }
-    let(:programme) { create(:programme) }
+    let(:programmes) { [create(:programme)] }
     let(:organisation) do
       create(
         :organisation,
         reply_to_id: "54bf1d28-8851-43f2-893d-1853f43a50cd",
-        programmes: [programme]
+        programmes:
       )
     end
-    let(:session) { create(:session, programme:, organisation:) }
+    let(:session) do
+      create(:session, programme: programmes.first, organisation:)
+    end
     let(:parent) { create(:parent, email: "test@example.com") }
     let(:consent) { nil }
     let(:consent_form) { nil }
@@ -63,7 +65,7 @@ describe EmailDeliveryJob do
         consent:,
         consent_form:,
         patient:,
-        programme:,
+        programmes:,
         vaccination_record:
       )
       perform_now
@@ -80,7 +82,7 @@ describe EmailDeliveryJob do
     end
 
     context "without a reply-to id" do
-      let(:organisation) { create(:organisation, programmes: [programme]) }
+      let(:organisation) { create(:organisation, programmes:) }
 
       it "sends a text using GOV.UK Notify" do
         expect(notifications_client).to receive(:send_email).with(
@@ -135,7 +137,7 @@ describe EmailDeliveryJob do
       end
 
       context "without a reply-to id" do
-        let(:organisation) { create(:organisation, programmes: [programme]) }
+        let(:organisation) { create(:organisation, programmes:) }
 
         it "sends a text using GOV.UK Notify" do
           expect(notifications_client).to receive(:send_email).with(
