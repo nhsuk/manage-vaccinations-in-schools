@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
+require "pagy/extras/array"
+
 class ConsentsController < ApplicationController
+  include Pagy::Backend
+
   include PatientTabsConcern
   include PatientSortingConcern
 
@@ -32,9 +36,10 @@ class ConsentsController < ApplicationController
 
     @current_tab = TAB_PATHS[:consents][params[:tab]]
     @tab_counts = count_patient_sessions(tab_patient_sessions)
-    @patient_sessions = tab_patient_sessions[@current_tab] || []
+    patient_sessions = tab_patient_sessions[@current_tab] || []
 
-    sort_and_filter_patients!(@patient_sessions, programme: @programme)
+    sort_and_filter_patients!(patient_sessions, programme: @programme)
+    @pagy, @patient_sessions = pagy_array(patient_sessions)
 
     session[:current_section] = "consents"
 

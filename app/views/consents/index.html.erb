@@ -21,7 +21,7 @@
 <% end %>
 
 <%= render AppSessionPatientTableComponent.new(
-      caption: t("patients_table.#{@current_tab}.caption", children: t("children", count: @patient_sessions.count)),
+      caption: t("patients_table.#{@current_tab}.caption", children: t("children", count: @pagy.count)),
       columns: @current_tab == :consent_refused ? %i[name year_group reason] : %i[name year_group],
       params:,
       patient_sessions: @patient_sessions,
@@ -29,3 +29,7 @@
       section: :consents,
       session: @session,
     ) %>
+
+<div class="nhsuk-u-margin-top-6">
+  <%= govuk_pagination(pagy: @pagy) %>
+</div>
