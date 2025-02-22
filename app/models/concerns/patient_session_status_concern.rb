@@ -123,10 +123,11 @@ module PatientSessionStatusConcern
     end
 
     def vaccination_administered?(programme:)
-      vaccination_records(programme:).any? do
-        it.administered? &&
-          it.dose_sequence >= programme.vaccinated_dose_sequence
-      end
+      VaccinatedCriteria.call(
+        programme,
+        patient:,
+        vaccination_records: vaccination_records(programme:)
+      )
     end
 
     def vaccination_not_administered?(programme:)
