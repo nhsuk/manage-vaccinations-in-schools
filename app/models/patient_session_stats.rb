@@ -7,7 +7,7 @@ class PatientSessionStats
         .sort_by(&:created_at)
         .reverse
         .uniq(&:patient_id)
-        .select { it.patient.eligible_for?(programme:) }
+        .select { it.programmes.include?(programme) }
     @programme = programme
     @keys =
       keys ||

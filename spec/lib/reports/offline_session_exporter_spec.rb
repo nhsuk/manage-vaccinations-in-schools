@@ -98,7 +98,7 @@ describe Reports::OfflineSessionExporter do
       let(:performed_at) { Time.zone.local(2024, 1, 1, 12, 5, 20) }
       let(:batch) { create(:batch, vaccine: programme.vaccines.active.first) }
       let(:patient_session) { create(:patient_session, patient:, session:) }
-      let(:patient) { create(:patient) }
+      let(:patient) { create(:patient, year_group: 8) }
 
       it { should be_empty }
 
@@ -516,6 +516,7 @@ describe Reports::OfflineSessionExporter do
         let(:patient) do
           create(
             :patient,
+            year_group: 8,
             school: create(:school, urn: "123456", name: "Waterloo Road")
           )
         end

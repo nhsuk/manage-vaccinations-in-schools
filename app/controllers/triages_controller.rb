@@ -10,15 +10,19 @@ class TriagesController < ApplicationController
   include PatientSortingConcern
 
   before_action :set_session
-  before_action :set_programme
   before_action :set_patient, only: %i[create new]
   before_action :set_patient_session, only: %i[create new]
+  before_action :set_programme, only: %i[create new]
   before_action :set_triage, only: %i[create new]
   before_action :set_section_and_tab, only: %i[create new]
 
   after_action :verify_authorized
 
   def index
+    @programme =
+      @session.programmes.find_by(type: params[:programme_type]) ||
+        @session.programmes.first
+
     all_patient_sessions =
       @session
         .patient_sessions
@@ -84,12 +88,6 @@ class TriagesController < ApplicationController
       )
   end
 
-  def set_programme
-    @programme =
-      @session.programmes.find_by(type: params[:programme_type]) ||
-        @session.programmes.first
-  end
-
   def set_patient
     @patient =
       @session
@@ -101,6 +99,13 @@ class TriagesController < ApplicationController
   def set_patient_session
     @patient_session =
       @patient.patient_sessions.preload_for_status.find_by!(session: @session)
+  end
+
+  def set_programme
+    @programme =
+      @patient_session.programmes.find { it.type == params[:programme_type] }
+
+    raise ActiveRecord::RecordNotFound if @programme.nil?
   end
 
   def set_triage

@@ -32,6 +32,12 @@ class ConsentFormsController < ApplicationController
       @patient.sessions_for_current_academic_year.first ||
         @consent_form.original_session
 
+    patient_session =
+      PatientSession.includes(session: :programmes).find_by!(
+        patient: @patient,
+        session:
+      )
+
     flash[:success] = {
       heading: "Consent matched for",
       heading_link_text: @patient.full_name,
@@ -39,7 +45,7 @@ class ConsentFormsController < ApplicationController
         session_patient_programme_path(
           session,
           @patient,
-          session.programmes.first,
+          patient_session.programmes.first,
           section: "triage",
           tab: "given"
         )

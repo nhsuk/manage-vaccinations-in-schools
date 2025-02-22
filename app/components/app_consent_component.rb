@@ -24,7 +24,7 @@ class AppConsentComponent < ViewComponent::Base
       patient
         .consent_notifications
         .request
-        .has_programme(session.programmes)
+        .has_programme(programme)
         .order(sent_at: :desc)
         .first
   end
