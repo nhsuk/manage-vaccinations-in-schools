@@ -41,11 +41,13 @@ describe SessionNotification do
     let(:today) { Date.new(2024, 1, 1) }
 
     let(:parents) { create_list(:parent, 2) }
-    let(:patient) { create(:patient, parents:) }
-    let(:programme) { create(:programme) }
+    let(:patient) { create(:patient, parents:, year_group: 10) }
+    let(:programme) { create(:programme, :td_ipv) }
     let(:organisation) { create(:organisation, programmes: [programme]) }
     let(:location) { create(:school, organisation:) }
-    let(:session) { create(:session, location:, programme:, organisation:) }
+    let(:session) do
+      create(:session, location:, programmes: [programme], organisation:)
+    end
     let(:session_date) { session.dates.min }
     let(:patient_session) { create(:patient_session, patient:, session:) }
     let(:current_user) { create(:user) }

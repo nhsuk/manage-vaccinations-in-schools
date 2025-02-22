@@ -91,6 +91,52 @@ describe SchoolConsentRequestsJob do
       end
     end
 
+    context "with HPV, Td/IPV and MenACWY" do
+      let(:hpv_programme) { create(:programme, :hpv) }
+      let(:menacwy_programme) { create(:programme, :menacwy) }
+      let(:td_ipv_programme) { create(:programme, :td_ipv) }
+
+      let(:programmes) { [hpv_programme, menacwy_programme, td_ipv_programme] }
+
+      context "when the patient is in Year 8" do
+        let(:patient_not_sent_request) do
+          create(:patient, year_group: 8, parents:, programmes:)
+        end
+
+        it "sends only one notification for HPV" do
+          expect(ConsentNotification).to receive(:create_and_send!).once.with(
+            patient: patient_not_sent_request,
+            programmes: [hpv_programme],
+            session:,
+            type: :request
+          )
+          perform_now
+        end
+      end
+
+      context "when the patient is in Year 9" do
+        let(:patient_not_sent_request) do
+          create(:patient, year_group: 9, parents:, programmes:)
+        end
+
+        it "sends two notifications for HPV, and MenACWY and Td/IPV" do
+          expect(ConsentNotification).to receive(:create_and_send!).with(
+            patient: patient_not_sent_request,
+            programmes: [hpv_programme],
+            session:,
+            type: :request
+          )
+          expect(ConsentNotification).to receive(:create_and_send!).with(
+            patient: patient_not_sent_request,
+            programmes: [menacwy_programme, td_ipv_programme],
+            session:,
+            type: :request
+          )
+          perform_now
+        end
+      end
+    end
+
     context "when location is a generic clinic" do
       let(:organisation) { create(:organisation, programmes:) }
       let(:location) { create(:generic_clinic, organisation:) }
