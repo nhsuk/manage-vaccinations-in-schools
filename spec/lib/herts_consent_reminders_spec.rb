@@ -10,7 +10,8 @@ describe HertsConsentReminders do
   describe ".send_consent_reminders" do
     before do
       allow(described_class).to receive(:filter_patients_to_send_consent).with(
-        session
+        session,
+        on_date: nil
       ).and_return([[patient, programme, :initial_reminder]])
 
       allow(ConsentNotification).to receive(:create_and_send!)
@@ -41,30 +42,36 @@ describe HertsConsentReminders do
       described_class.should_send_notification?(patient:, programme:, session:)
     end
 
+    let(:initial_reminder_sent_at) { 3.days.ago }
     let(:initial_reminder) do
       create(
         :consent_notification,
         :initial_reminder,
+        sent_at: initial_reminder_sent_at,
         patient:,
         programme:,
         session:
       )
     end
 
-    let(:subsequent_reminder1) do
+    let(:subsequent_reminder_sent_at) { 2.days.ago }
+    let(:subsequent_reminder) do
       create(
         :consent_notification,
         :subsequent_reminder,
+        sent_at: subsequent_reminder_sent_at,
         patient:,
         programme:,
         session:
       )
     end
 
+    let(:subsequent_reminder2_sent_at) { 1.day.ago }
     let(:subsequent_reminder2) do
       create(
         :consent_notification,
         :subsequent_reminder,
+        sent_at: subsequent_reminder2_sent_at,
         patient:,
         programme:,
         session:
@@ -93,68 +100,98 @@ describe HertsConsentReminders do
       it { should be false }
     end
 
-    context "15 days before the session" do
-      let(:session_date) { Time.zone.today + 15.days }
+    context "15 days before the session, no reminder sent" do
+      let(:session_date) { 15.days.from_now }
 
       it { should be false }
     end
 
-    context "14 days before the session" do
-      let(:session_date) { Time.zone.today + 14.days }
+    context "14 days before the session, no reminder sent" do
+      let(:session_date) { 14.days.from_now }
 
       it { should be true }
     end
 
-    context "14 days before the session, reminder sent" do
+    context "14 days before the session, initial reminder sent" do
       before { initial_reminder }
 
-      let(:session_date) { Time.zone.today + 14.days }
+      let(:session_date) { 14.days.from_now }
 
       it { should be false }
     end
 
-    context "8 days before the session, reminder sent" do
+    context "14 days before the session, initial reminder sent today" do
       before { initial_reminder }
 
-      let(:session_date) { Time.zone.today + 8.days }
+      let(:initial_reminder_sent_at) { Date.current }
+      let(:session_date) { 14.days.from_now }
 
       it { should be false }
     end
 
-    context "7 days before the session, reminder sent" do
-      before { initial_reminder }
-
-      let(:session_date) { Time.zone.today + 7.days }
+    context "8 days before the session, no reminder sent" do
+      let(:session_date) { 8.days.from_now }
 
       it { should be true }
     end
 
-    context "7 days before the session, 2 reminders sent" do
-      before do
-        initial_reminder
-        subsequent_reminder1
-      end
+    context "8 days before the session, initial reminder sent" do
+      before { initial_reminder }
 
-      let(:session_date) { Time.zone.today + 7.days }
+      let(:initial_reminder_sent_at) { 6.days.ago }
+      let(:session_date) { 8.days.from_now }
 
       it { should be false }
     end
 
-    context "4 days before the session, 2 reminder sent" do
-      before do
-        initial_reminder
-        subsequent_reminder1
-      end
+    context "7 days before the session, no reminders sent" do
+      let(:session_date) { 7.days.from_now }
 
-      let(:session_date) { Time.zone.today + 4.days }
+      it { should be true }
+    end
+
+    context "7 days before the session, initial reminder sent" do
+      before { initial_reminder }
+
+      let(:initial_reminder_sent_at) { 1.day.ago }
+      let(:session_date) { 7.days.from_now }
+
+      it { should be true }
+    end
+
+    context "7 days before the session, initial reminder sent today" do
+      before { initial_reminder }
+
+      let(:initial_reminder_sent_at) { Date.current }
+      let(:session_date) { 7.days.from_now }
 
       it { should be false }
+    end
+
+    context "7 days before the session, 2 reminders sent before today" do
+      before do
+        initial_reminder
+        subsequent_reminder
+      end
+
+      let(:session_date) { 7.days.from_now }
+
+      it { should be false }
+    end
+
+    context "6 days before the session, initial reminder sent yesterday" do
+      before { initial_reminder }
+
+      let(:initial_reminder_sent_at) { 1.day.ago }
+      let(:session_date) { 6.days.from_now }
+
+      it { should be true }
     end
 
     context "3 days before the session, 2 reminder sent" do
       before do
         initial_reminder
-        subsequent_reminder1
+        subsequent_reminder
       end
 
       let(:session_date) { Time.zone.today + 3.days }
@@ -165,11 +202,17 @@ describe HertsConsentReminders do
     context "3 days before the session, 3 reminder sent" do
       before do
         initial_reminder
-        subsequent_reminder1
+        subsequent_reminder
         subsequent_reminder2
       end
 
       let(:session_date) { Time.zone.today + 3.days }
+
+      it { should be false }
+    end
+
+    context "no session date" do
+      before { session.session_dates.destroy_all }
 
       it { should be false }
     end
@@ -197,7 +240,13 @@ describe HertsConsentReminders do
     end
 
     it "returns subsequent reminder type for later reminders" do
-      create(:consent_notification, :initial_reminder, patient:, programme:)
+      create(
+        :consent_notification,
+        :initial_reminder,
+        sent_at: 1.day.ago,
+        patient:,
+        programme:
+      )
 
       result = described_class.filter_patients_to_send_consent(session)
 
