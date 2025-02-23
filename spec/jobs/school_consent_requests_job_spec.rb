@@ -75,6 +75,17 @@ describe SchoolConsentRequestsJob do
       perform_now
     end
 
+    context "when triaged as do not vaccinate" do
+      let(:patient_not_sent_request) do
+        create(:patient, :triage_do_not_vaccinate, parents:, programmes:)
+      end
+
+      it "doesn't send any notifications" do
+        expect(ConsentNotification).not_to receive(:create_and_send!)
+        perform_now
+      end
+    end
+
     context "with Td/IPV and MenACWY" do
       let(:programmes) do
         [create(:programme, :menacwy), create(:programme, :td_ipv)]

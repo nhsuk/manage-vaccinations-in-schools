@@ -44,9 +44,13 @@ class SchoolConsentRequestsJob < ApplicationJob
   def should_send_notification?(patient_session:, programmes:)
     return false unless patient_session.send_notifications?
 
-    if programmes.all? { patient_session.consents(programme: it).any? }
-      return false
-    end
+    has_consent_or_triage =
+      programmes.all? do |programme|
+        patient_session.consents(programme:).any? ||
+          patient_session.triaged_do_not_vaccinate?(programme:)
+      end
+
+    return false if has_consent_or_triage
 
     patient = patient_session.patient
 
