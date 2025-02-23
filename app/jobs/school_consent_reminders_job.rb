@@ -24,11 +24,9 @@ class SchoolConsentRemindersJob < ApplicationJob
         ProgrammeGrouper
           .call(patient_session.programmes)
           .each_value do |programmes|
-            patient = patient_session.patient
+            next unless should_send_notification?(patient_session:, programmes:)
 
-            unless should_send_notification?(patient:, programmes:, session:)
-              next
-            end
+            patient = patient_session.patient
 
             sent_initial_reminder =
               programmes.all? do |programme|
@@ -50,10 +48,15 @@ class SchoolConsentRemindersJob < ApplicationJob
     end
   end
 
-  def should_send_notification?(patient:, programmes:, session:)
-    return false unless patient.send_notifications?
+  def should_send_notification?(patient_session:, programmes:)
+    return false unless patient_session.send_notifications?
 
-    return false if programmes.all? { patient.has_consent?(it) }
+    if programmes.all? { patient_session.consents(programme: it).any? }
+      return false
+    end
+
+    patient = patient_session.patient
+    session = patient_session.session
 
     programmes.any? do |programme|
       no_requests =

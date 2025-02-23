@@ -238,10 +238,6 @@ class Patient < ApplicationRecord
     birth_academic_year_changed?
   end
 
-  def has_consent?(programme)
-    consents.any? { _1.programme_id == programme.id }
-  end
-
   def as_json(options = {})
     super.merge("full_name" => full_name, "age" => age)
   end
