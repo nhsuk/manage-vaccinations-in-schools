@@ -279,6 +279,20 @@ FactoryBot.define do
       end
     end
 
+    trait :historical_vaccination_triage_needed do
+      vaccination_records do
+        programmes.map do |programme|
+          association(
+            :vaccination_record,
+            patient: instance,
+            performed_by:,
+            programme:,
+            dose_sequence: 1
+          )
+        end
+      end
+    end
+
     trait :triage_ready_to_vaccinate do
       consent_given_triage_needed
 
@@ -352,12 +366,18 @@ FactoryBot.define do
             association(
               :vaccination_record,
               patient: instance,
+              performed_by:,
               programme:,
               session:,
               location_name:
             )
           else
-            association(:vaccination_record, patient: instance, programme:)
+            association(
+              :vaccination_record,
+              patient: instance,
+              performed_by:,
+              programme:
+            )
           end
         end
       end

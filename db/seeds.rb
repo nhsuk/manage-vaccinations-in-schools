@@ -138,7 +138,7 @@ def create_session(
         session:
       )
 
-      %i[
+      traits = %i[
         consent_given_triage_not_needed
         consent_given_triage_needed
         triaged_ready_to_vaccinate
@@ -147,7 +147,13 @@ def create_session(
         vaccinated
         delay_vaccination
         unable_to_vaccinate
-      ].each do |trait|
+      ]
+
+      if programme.vaccinated_dose_sequence != 1
+        traits << :historical_vaccination_triage_needed
+      end
+
+      traits.each do |trait|
         FactoryBot.create_list(
           :patient_session,
           1,
