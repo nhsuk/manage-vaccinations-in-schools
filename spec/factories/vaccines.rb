@@ -101,12 +101,14 @@ FactoryBot.define do
       after(:create) do |vaccine|
         bleeding_disorder =
           create(:health_question, :bleeding_disorder, vaccine:)
+        severe_allergies = create(:health_question, :severe_allergies, vaccine:)
         severe_reaction = create(:health_question, :severe_reaction, vaccine:)
         menacwy_vaccination =
           create(:health_question, :menacwy_vaccination, vaccine:)
         extra_support = create(:health_question, :extra_support, vaccine:)
 
-        bleeding_disorder.update!(next_question: severe_reaction)
+        bleeding_disorder.update!(next_question: severe_allergies)
+        severe_allergies.update!(next_question: severe_reaction)
         severe_reaction.update!(next_question: menacwy_vaccination)
         menacwy_vaccination.update!(next_question: extra_support)
       end
@@ -118,12 +120,14 @@ FactoryBot.define do
       after(:create) do |vaccine|
         bleeding_disorder =
           create(:health_question, :bleeding_disorder, vaccine:)
+        severe_allergies = create(:health_question, :severe_allergies, vaccine:)
         severe_reaction = create(:health_question, :severe_reaction, vaccine:)
         td_ipv_vaccination =
           create(:health_question, :td_ipv_vaccination, vaccine:)
         extra_support = create(:health_question, :extra_support, vaccine:)
 
-        bleeding_disorder.update!(next_question: severe_reaction)
+        bleeding_disorder.update!(next_question: severe_allergies)
+        severe_allergies.update!(next_question: severe_reaction)
         severe_reaction.update!(next_question: td_ipv_vaccination)
         td_ipv_vaccination.update!(next_question: extra_support)
       end
