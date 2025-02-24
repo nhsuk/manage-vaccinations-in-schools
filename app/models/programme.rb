@@ -82,7 +82,8 @@ class Programme < ApplicationRecord
 
   def maximum_dose_sequence
     # HPV is given 3 times to patients with a weakened immune system.
-    hpv? ? 3 : vaccinated_dose_sequence
+    # MenACWY is sometimes given more frequently.
+    hpv? || menacwy? ? 3 : vaccinated_dose_sequence
   end
 
   IMPORT_NAMES = {

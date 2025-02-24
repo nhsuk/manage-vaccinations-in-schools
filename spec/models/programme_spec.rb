@@ -100,7 +100,7 @@ describe Programme do
     context "with a MenACWY programme" do
       let(:programme) { build(:programme, :menacwy) }
 
-      it { should eq(1) }
+      it { should eq(3) }
     end
 
     context "with an Td/IPV programme" do
