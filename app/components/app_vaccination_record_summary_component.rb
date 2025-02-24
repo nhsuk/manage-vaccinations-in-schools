@@ -14,9 +14,9 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
     @change_links = change_links
     @show_notes = show_notes
 
+    @batch = vaccination_record.batch
     @patient = vaccination_record.patient
     @vaccine = vaccination_record.vaccine
-    @batch = vaccination_record.batch
   end
 
   def call
@@ -37,6 +37,11 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
             visually_hidden_text: "outcome"
           )
         end
+      end
+
+      summary_list.with_row do |row|
+        row.with_key { "Programme" }
+        row.with_value { programme_value }
       end
 
       if @vaccination_record.administered?
@@ -212,11 +217,15 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
     )
   end
 
-  def vaccine_value
+  def programme_value
     highlight_if(
-      helpers.vaccine_heading(@vaccine),
-      @vaccination_record.vaccine_id_changed?
+      @vaccination_record.programme.name,
+      @vaccination_record.programme_id_changed?
     )
+  end
+
+  def vaccine_value
+    highlight_if(@vaccine.brand, @vaccination_record.vaccine_id_changed?)
   end
 
   def delivery_method_value
