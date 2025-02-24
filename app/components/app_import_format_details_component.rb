@@ -128,7 +128,7 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
       {
         name: "VACCINE_GIVEN",
         notes:
-          "#{tag.strong("Required")}, must be " +
+          "Optional, must be #{
             organisation
               .vaccines
               .pluck(:nivs_name)
@@ -137,15 +137,13 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
                 last_word_connector: ", or ",
                 two_words_connector: " or "
               )
+          }"
       },
-      {
-        name: "BATCH_NUMBER",
-        notes: "Required if #{tag.code("VACCINATED")} is #{tag.i("Y")}"
-      },
+      { name: "BATCH_NUMBER", notes: "Optional" },
       {
         name: "BATCH_EXPIRY_DATE",
         notes:
-          "Required if #{tag.code("VACCINATED")} is #{tag.i("Y")}, must use " \
+          "Optional, must use " \
             "either #{tag.i("YYYYMMDD")} or #{tag.i("DD/MM/YYYY")} format"
       },
       {
