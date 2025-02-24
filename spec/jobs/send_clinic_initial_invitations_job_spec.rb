@@ -5,10 +5,10 @@ describe SendClinicInitialInvitationsJob do
     described_class.perform_now(session, school: nil, programmes:)
   end
 
-  let(:programmes) { [create(:programme)] }
+  let(:programmes) { [create(:programme, :hpv)] }
   let(:organisation) { create(:organisation, programmes:) }
   let(:parents) { create_list(:parent, 2) }
-  let(:patient) { create(:patient, parents:) }
+  let(:patient) { create(:patient, parents:, year_group: 8) }
   let(:location) { create(:generic_clinic, organisation:) }
 
   let(:session) do

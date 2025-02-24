@@ -30,7 +30,8 @@ class SendClinicInitialInvitationsJob < ApplicationJob
       .eager_load(:patient)
       .preload(
         :session_notifications,
-        patient: %i[consents parents vaccination_records]
+        patient: %i[consents parents vaccination_records],
+        session: :programmes
       )
       .where(patient: { school: })
       .reject { it.session_notifications.any? }

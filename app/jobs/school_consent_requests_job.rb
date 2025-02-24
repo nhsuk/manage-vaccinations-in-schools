@@ -9,11 +9,13 @@ class SchoolConsentRequestsJob < ApplicationJob
         .send_consent_requests
         .includes(
           :programmes,
-          patients: [
-            :consents,
-            :parents,
-            { consent_notifications: :programmes }
-          ]
+          patient_sessions: {
+            patient: [
+              :consents,
+              :parents,
+              { consent_notifications: :programmes }
+            ]
+          }
         )
         .preload(:session_dates)
         .eager_load(:location)
@@ -22,10 +24,12 @@ class SchoolConsentRequestsJob < ApplicationJob
     sessions.each do |session|
       next unless session.open_for_consent?
 
-      ProgrammeGrouper
-        .call(session.programmes)
-        .each_value do |programmes|
-          session.patients.each do |patient|
+      session.patient_sessions.each do |patient_session|
+        ProgrammeGrouper
+          .call(patient_session.programmes)
+          .each_value do |programmes|
+            patient = patient_session.patient
+
             next unless should_send_notification?(patient:, programmes:)
 
             ConsentNotification.create_and_send!(
@@ -35,7 +39,7 @@ class SchoolConsentRequestsJob < ApplicationJob
               type: :request
             )
           end
-        end
+      end
     end
   end
 

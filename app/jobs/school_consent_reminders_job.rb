@@ -9,7 +9,9 @@ class SchoolConsentRemindersJob < ApplicationJob
         .send_consent_reminders
         .includes(
           :programmes,
-          patients: %i[consents consent_notifications parents]
+          patient_sessions: {
+            patient: %i[consents consent_notifications parents]
+          }
         )
         .preload(:session_dates)
         .eager_load(:location)
@@ -18,10 +20,12 @@ class SchoolConsentRemindersJob < ApplicationJob
     sessions.each do |session|
       next unless session.open_for_consent?
 
-      ProgrammeGrouper
-        .call(session.programmes)
-        .each_value do |programmes|
-          session.patients.each do |patient|
+      session.patient_sessions.each do |patient_session|
+        ProgrammeGrouper
+          .call(patient_session.programmes)
+          .each_value do |programmes|
+            patient = patient_session.patient
+
             unless should_send_notification?(patient:, programmes:, session:)
               next
             end
@@ -42,7 +46,7 @@ class SchoolConsentRemindersJob < ApplicationJob
                 sent_initial_reminder ? :subsequent_reminder : :initial_reminder
             )
           end
-        end
+      end
     end
   end
 
