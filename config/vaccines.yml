@@ -101,7 +101,6 @@ gardasil_9:
 menquadfi:
   brand: MenQuadfi
   type: menacwy
-  discontinued: true
   method: injection
   manufacturer: Sanofi
   nivs_name: MenQuadfi

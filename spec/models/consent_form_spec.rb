@@ -636,10 +636,6 @@ describe ConsentForm do
 
   it "combines health questions from multiple active vaccines" do
     programme1 = create(:programme, :menacwy)
-
-    # Menacwy vaccine is discontinued in yml, we need >1 active vaccines to test
-    programme1.vaccines.first.update!(discontinued: false)
-
     programme2 = create(:programme, :td_ipv)
     consent_form =
       create(
