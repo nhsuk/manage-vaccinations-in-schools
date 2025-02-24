@@ -14,7 +14,18 @@
 module HertsConsentReminders
   REMINDERS_BEFORE_SESSION_DAYS = [14, 7, 3].freeze
 
-  def self.send_consent_reminders(session)
+  def self.sessions_with_reminders_due(on_date: Date.current, ods_code: "RY4")
+    reminder_dates = REMINDERS_BEFORE_SESSION_DAYS.map { on_date + it }
+
+    Organisation
+      .find_by(ods_code:)
+      .sessions
+      .joins(:session_dates)
+      .strict_loading(false)
+      .where(session_dates: { value: reminder_dates })
+  end
+
+  def self.send_consent_reminders(session, on_date: Date.current)
     return unless session.open_for_consent?
 
     filter_patients_to_send_consent(
@@ -30,7 +41,7 @@ module HertsConsentReminders
     end
   end
 
-  def self.filter_patients_to_send_consent(session, on_date: nil)
+  def self.filter_patients_to_send_consent(session, on_date: Date.current)
     session.programmes.flat_map do |programme|
       session
         .patients
@@ -62,22 +73,20 @@ module HertsConsentReminders
     patient:,
     programme:,
     session:,
-    on_date: nil
+    on_date: Date.current
   )
     return false unless patient.send_notifications?
     return false if patient.has_consent?(programme)
     return false if patient.consent_notifications.none?(&:request?)
     return false if session.dates.empty?
 
-    last_sent =
-      patient.consent_notifications.select(&:reminder?).map(&:sent_at).max
+    last_sent = patient.consent_notifications.map(&:sent_at).max
     return false if last_sent&.to_date == Date.current
 
     reminders_sent = patient.consent_notifications.select(&:reminder?).length
     return false if reminders_sent >= REMINDERS_BEFORE_SESSION_DAYS.count
 
     next_reminder_date = next_reminder_for_session(session, reminders_sent)
-    on_date ||= Date.current
     on_date >= next_reminder_date
   end
 
@@ -85,8 +94,5 @@ module HertsConsentReminders
     session_date = session.dates.first
     reminder_dates = REMINDERS_BEFORE_SESSION_DAYS.map { session_date - it }
     reminder_dates[reminders_sent]
-  end
-
-    Date.current >= next_reminder_date
   end
 end
