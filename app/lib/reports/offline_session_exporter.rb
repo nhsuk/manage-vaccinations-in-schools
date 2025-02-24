@@ -109,7 +109,7 @@ class Reports::OfflineSessionExporter
         vaccinated
         date_of_vaccination
         time_of_vaccination
-        programme_name
+        programme
         vaccine_given
         performing_professional_email
         batch_number
@@ -242,7 +242,7 @@ class Reports::OfflineSessionExporter
     row[:time_of_vaccination] = vaccination_record.performed_at.strftime(
       "%H:%M:%S"
     )
-    row[:programme_name] = programme.name
+    row[:programme] = programme.import_names.first
     row[:vaccine_given] = Cell.new(
       vaccine&.nivs_name,
       allowed_values: vaccine_values_for_programme(programme)
@@ -279,7 +279,7 @@ class Reports::OfflineSessionExporter
   def add_new_row_cells(row, programme:)
     row[:vaccinated] = Cell.new(allowed_values: %w[Y N])
     row[:date_of_vaccination] = Cell.new(type: :date)
-    row[:programme_name] = programme.name
+    row[:programme] = programme.import_names.first
     row[:vaccine_given] = Cell.new(
       allowed_values: vaccine_values_for_programme(programme)
     )

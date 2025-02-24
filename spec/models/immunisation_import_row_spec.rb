@@ -35,6 +35,7 @@ describe ImmunisationImportRow do
   end
   let(:valid_flu_data) do
     valid_common_data.deep_dup.merge(
+      "PROGRAMME" => "Flu",
       "VACCINE_GIVEN" => "AstraZeneca Fluenz Tetra LAIV",
       "ANATOMICAL_SITE" => "nasal",
       "PERFORMING_PROFESSIONAL_FORENAME" => "John",
@@ -43,6 +44,7 @@ describe ImmunisationImportRow do
   end
   let(:valid_hpv_data) do
     valid_common_data.deep_dup.merge(
+      "PROGRAMME" => "HPV",
       "VACCINE_GIVEN" => "Gardasil9",
       "ANATOMICAL_SITE" => "Left Upper Arm",
       "DOSE_SEQUENCE" => "1",
@@ -64,6 +66,9 @@ describe ImmunisationImportRow do
         )
         expect(immunisation_import_row.errors[:performed_ods_code]).to include(
           "Enter an organisation code."
+        )
+        expect(immunisation_import_row.errors[:programme_name]).to include(
+          "is not included in the list"
         )
       end
     end
@@ -294,7 +299,7 @@ describe ImmunisationImportRow do
     context "with an invalid dose sequence" do
       let(:programme) { create(:programme, :hpv) }
 
-      let(:data) { { "VACCINE_GIVEN" => "Gardasil9", "DOSE_SEQUENCE" => "4" } }
+      let(:data) { { "PROGRAMME" => "HPV", "DOSE_SEQUENCE" => "4" } }
 
       it "has errors" do
         expect(immunisation_import_row).to be_invalid
@@ -448,6 +453,7 @@ describe ImmunisationImportRow do
         {
           "ANATOMICAL_SITE" => "left buttock",
           "VACCINATED" => "Y",
+          "PROGRAMME" => "Flu",
           "VACCINE_GIVEN" => "AstraZeneca Fluenz Tetra LAIV",
           "DATE_OF_VACCINATION" => "#{Date.current.academic_year}0901"
         }
@@ -479,6 +485,7 @@ describe ImmunisationImportRow do
           "PERSON_POSTCODE" => "SW1A 1AA",
           "PERSON_GENDER_CODE" => "Male",
           "DATE_OF_VACCINATION" => "20240101",
+          "PROGRAMME" => "Flu",
           "VACCINE_GIVEN" => "AstraZeneca Fluenz Tetra LAIV",
           "PERFORMING_PROFESSIONAL_FORENAME" => "John",
           "PERFORMING_PROFESSIONAL_SURNAME" => "Smith"
@@ -516,6 +523,7 @@ describe ImmunisationImportRow do
           "PERSON_POSTCODE" => "SW1A 1AA",
           "PERSON_GENDER_CODE" => "Male",
           "DATE_OF_VACCINATION" => "20240101",
+          "PROGRAMME" => "HPV",
           "VACCINE_GIVEN" => "Gardasil9",
           "DOSE_SEQUENCE" => "1",
           "CARE_SETTING" => "1"
