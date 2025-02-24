@@ -64,9 +64,6 @@ describe ImmunisationImportRow do
         expect(immunisation_import_row.errors[:administered]).to include(
           /You need to record whether the child was vaccinated or not/
         )
-        expect(immunisation_import_row.errors[:performed_ods_code]).to include(
-          "Enter an organisation code."
-        )
         expect(immunisation_import_row.errors[:programme_name]).to include(
           "is not included in the list"
         )
@@ -86,9 +83,6 @@ describe ImmunisationImportRow do
         )
         expect(immunisation_import_row.errors[:patient_postcode]).to eq(
           ["Enter a valid postcode, such as SW1A 1AA"]
-        )
-        expect(immunisation_import_row.errors[:performed_ods_code]).to eq(
-          ["Enter an organisation code."]
         )
       end
 
@@ -305,10 +299,10 @@ describe ImmunisationImportRow do
       end
     end
 
-    context "vaccination in this academic year and no organisation provided" do
-      let(:data) do
-        { "DATE_OF_VACCINATION" => "#{Date.current.academic_year}0901" }
-      end
+    context "vaccination in a session and no organisation provided" do
+      let(:data) { { "SESSION_ID" => session.id.to_s } }
+
+      let(:session) { create(:session, organisation:, programme:) }
 
       it "has errors" do
         expect(immunisation_import_row).to be_invalid
