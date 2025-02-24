@@ -78,9 +78,6 @@ describe ImmunisationImportRow do
 
       it "has errors" do
         expect(immunisation_import_row).to be_invalid
-        expect(immunisation_import_row.errors[:delivery_site]).to eq(
-          ["Enter an anatomical site."]
-        )
         expect(immunisation_import_row.errors[:patient_date_of_birth]).to eq(
           ["Enter a date of birth in the correct format."]
         )
@@ -498,6 +495,28 @@ describe ImmunisationImportRow do
         )
         expect(immunisation_import_row.errors[:batch_number]).to eq(
           ["Enter a batch number."]
+        )
+      end
+    end
+
+    context "vaccination in a session without a delivery site" do
+      let(:programme) { create(:programme, :flu) }
+
+      let(:data) do
+        {
+          "VACCINATED" => "Y",
+          "PROGRAMME" => "Flu",
+          "DATE_OF_VACCINATION" => "#{Date.current.academic_year}0901",
+          "SESSION_ID" => session.id.to_s
+        }
+      end
+
+      let(:session) { create(:session, organisation:, programme:) }
+
+      it "has errors" do
+        expect(immunisation_import_row).to be_invalid
+        expect(immunisation_import_row.errors[:delivery_site]).to eq(
+          ["Enter an anatomical site."]
         )
       end
     end
