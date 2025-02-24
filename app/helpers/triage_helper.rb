@@ -22,7 +22,11 @@ module TriageHelper
   end
 
   def in_tab_needs_triage?(patient_session)
-    patient_session.status.in? %w[consent_given_triage_needed]
+    patient_session.status.in? %w[
+                                 consent_given_triage_needed
+                                 historical_vaccination_triage_needed
+                                 triaged_kept_in_triage
+                               ]
   end
 
   def in_tab_triage_complete?(patient_session)

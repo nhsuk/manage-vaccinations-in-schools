@@ -28,12 +28,10 @@ class SchoolConsentRequestsJob < ApplicationJob
         ProgrammeGrouper
           .call(patient_session.programmes)
           .each_value do |programmes|
-            patient = patient_session.patient
-
-            next unless should_send_notification?(patient:, programmes:)
+            next unless should_send_notification?(patient_session:, programmes:)
 
             ConsentNotification.create_and_send!(
-              patient:,
+              patient: patient_session.patient,
               programmes:,
               session:,
               type: :request
@@ -43,10 +41,18 @@ class SchoolConsentRequestsJob < ApplicationJob
     end
   end
 
-  def should_send_notification?(patient:, programmes:)
-    return false unless patient.send_notifications?
+  def should_send_notification?(patient_session:, programmes:)
+    return false unless patient_session.send_notifications?
 
-    return false if programmes.all? { patient.has_consent?(it) }
+    has_consent_or_triage =
+      programmes.all? do |programme|
+        patient_session.consents(programme:).any? ||
+          patient_session.triaged_do_not_vaccinate?(programme:)
+      end
+
+    return false if has_consent_or_triage
+
+    patient = patient_session.patient
 
     programmes.any? do |programme|
       patient.consent_notifications.none? do

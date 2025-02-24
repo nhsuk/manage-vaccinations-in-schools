@@ -1,0 +1,115 @@
+# frozen_string_literal: true
+
+describe "Triage" do
+  scenario "nurse can triage after importing historical vaccinations" do
+    given_a_td_ipv_programme_with_a_session
+    and_i_am_signed_in_as_a_nurse
+
+    when_i_go_to_the_dashboard
+    and_i_upload_historical_vaccination_records
+    then_i_see_the_completed_upload
+
+    when_i_go_the_session
+    and_i_upload_the_class_list
+    then_i_see_the_completed_upload
+
+    when_i_go_the_session
+    then_i_see_one_patient_needing_triage
+
+    when_i_click_on_triage
+    and_i_click_on_the_patient
+    then_i_see_the_patient_needs_triage
+
+    when_i_mark_the_patient_as_not_safe_to_vaccinate
+    and_the_consent_requests_are_sent
+    then_the_parent_doesnt_receive_a_consent_request
+  end
+
+  def given_a_td_ipv_programme_with_a_session
+    programmes = [create(:programme, :td_ipv)]
+
+    organisation = create(:organisation, programmes:)
+    @user = create(:nurse, organisations: [organisation])
+
+    location = create(:school, :secondary, urn: 123_456, organisation:)
+
+    @session =
+      create(
+        :session,
+        date: 1.week.from_now.to_date,
+        organisation:,
+        programmes:,
+        location:
+      )
+  end
+
+  def and_i_am_signed_in_as_a_nurse
+    sign_in @user
+  end
+
+  def when_i_go_to_the_dashboard
+    visit dashboard_path
+  end
+
+  def and_i_upload_historical_vaccination_records
+    click_on "Import", match: :first
+    click_on "Import records"
+    choose "Vaccination records"
+    click_on "Continue"
+
+    attach_file(
+      "immunisation_import[csv]",
+      file_fixture("td_ipv/vaccination_records.csv")
+    )
+    click_on "Continue"
+  end
+
+  def then_i_see_the_completed_upload
+    expect(page).to have_content("Completed")
+  end
+
+  def when_i_go_the_session
+    click_on "Sessions"
+    click_on "Scheduled"
+    click_on @session.location.name
+  end
+
+  def and_i_upload_the_class_list
+    click_on "Import class list records"
+
+    check "Year 9"
+    click_on "Continue"
+
+    attach_file("class_import[csv]", file_fixture("td_ipv/class_list.csv"))
+    click_on "Continue"
+  end
+
+  def then_i_see_one_patient_needing_triage
+    expect(page).to have_content("1 child needing triage")
+  end
+
+  def when_i_click_on_triage
+    click_on "Triage health questions"
+  end
+
+  def and_i_click_on_the_patient
+    click_on "Chyna Pickle"
+  end
+
+  def then_i_see_the_patient_needs_triage
+    expect(page).to have_content("Needs triage")
+  end
+
+  def when_i_mark_the_patient_as_not_safe_to_vaccinate
+    choose "No, do not vaccinate"
+    click_on "Save triage"
+  end
+
+  def and_the_consent_requests_are_sent
+    SchoolConsentRequestsJob.perform_now
+  end
+
+  def then_the_parent_doesnt_receive_a_consent_request
+    expect(EmailDeliveryJob.deliveries).to be_empty
+  end
+end

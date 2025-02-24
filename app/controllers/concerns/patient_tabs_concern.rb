@@ -5,7 +5,11 @@ module PatientTabsConcern
 
   TAB_STATES = {
     triage: {
-      needs_triage: %w[consent_given_triage_needed triaged_kept_in_triage],
+      needs_triage: %w[
+        consent_given_triage_needed
+        historical_vaccination_triage_needed
+        triaged_kept_in_triage
+      ],
       triage_complete: %w[
         delay_vaccination
         triaged_do_not_vaccinate
