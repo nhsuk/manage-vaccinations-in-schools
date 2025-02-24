@@ -124,6 +124,7 @@ menveo:
 nimenrix:
   brand: Nimenrix
   type: menacwy
+  discontinued: true
   method: injection
   manufacturer: Pfizer
   nivs_name: Nimenrix
