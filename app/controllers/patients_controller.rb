@@ -7,7 +7,7 @@ class PatientsController < ApplicationController
   before_action :record_access_log_entry, only: %i[show log]
 
   def index
-    scope = policy_scope(Patient).not_deceased
+    scope = policy_scope(Patient).includes(:school).not_deceased
 
     if (@filter_name = params[:name]).present?
       @filter_name.strip!
