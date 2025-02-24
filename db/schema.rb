@@ -197,6 +197,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_24_200603) do
     t.string "nhs_number"
     t.datetime "archived_at"
     t.text "notes", default: "", null: false
+    t.string "chosen_vaccine"
     t.index ["consent_id"], name: "index_consent_forms_on_consent_id"
     t.index ["location_id"], name: "index_consent_forms_on_location_id"
     t.index ["nhs_number"], name: "index_consent_forms_on_nhs_number"
