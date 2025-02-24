@@ -29,12 +29,17 @@ class ImmunisationImportRow
             if: :batch_expiry_date
   validate :delivery_site_appropriate_for_vaccine,
            if: -> { administered && delivery_site.present? && vaccine.present? }
+
   validates :dose_sequence,
+            presence: {
+              if: -> { administered && offline_recording? }
+            },
             comparison: {
               greater_than_or_equal_to: 1,
-              less_than_or_equal_to: :maximum_dose_sequence
-            },
-            if: :maximum_dose_sequence
+              less_than_or_equal_to: :maximum_dose_sequence,
+              allow_nil: true,
+              if: :maximum_dose_sequence
+            }
 
   SCHOOL_URN_HOME_EDUCATED = "999999"
   SCHOOL_URN_UNKNOWN = "888888"
@@ -268,11 +273,23 @@ class ImmunisationImportRow
   end
 
   DOSE_SEQUENCES = {
-    "1P" => 1,
-    "2P" => 2,
-    "3P" => 3,
-    "1B" => 4,
-    "2B" => 5
+    "hpv" => {
+      "1P" => 1,
+      "2P" => 2,
+      "3P" => 3
+    },
+    "menacwy" => {
+      "1P" => 1,
+      "1B" => 2,
+      "2B" => 3
+    },
+    "td_ipv" => {
+      "1P" => 1,
+      "2P" => 2,
+      "3P" => 3,
+      "1B" => 4,
+      "2B" => 5
+    }
   }.freeze
 
   def dose_sequence
@@ -280,7 +297,9 @@ class ImmunisationImportRow
 
     return 1 if value.blank? && maximum_dose_sequence == 1
 
-    return DOSE_SEQUENCES[value] if DOSE_SEQUENCES.include?(value)
+    dose_sequences = DOSE_SEQUENCES[programme&.type]
+
+    return dose_sequences[value] if dose_sequences&.include?(value)
 
     begin
       Integer(@data["DOSE_SEQUENCE"])
