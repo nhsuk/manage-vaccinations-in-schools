@@ -218,15 +218,20 @@ describe ImmunisationImportRow do
 
       before { immunisation_import_row.valid? }
 
-      context "when importing for the current academic year" do
+      context "when importing for an existing session" do
         let(:data) do
-          { "DATE_OF_VACCINATION" => "#{Date.current.academic_year}0901" }
+          {
+            "DATE_OF_VACCINATION" => "#{Date.current.academic_year}0901",
+            "SESSION_ID" => session.id.to_s
+          }
         end
+
+        let(:session) { create(:session, organisation:, programme:) }
 
         it { should include(/current session/) }
       end
 
-      context "when importing for a different academic year" do
+      context "when importing without a session" do
         let(:data) { { "DATE_OF_VACCINATION" => "20220101" } }
 
         it { should be_empty }
@@ -322,7 +327,7 @@ describe ImmunisationImportRow do
       end
     end
 
-    context "vaccination in this academic year, no vaccinator details provided" do
+    context "vaccination in a session, no vaccinator details provided" do
       let(:data) do
         valid_data.except(
           "PERFORMING_PROFESSIONAL_EMAIL",
@@ -330,9 +335,12 @@ describe ImmunisationImportRow do
           "PERFORMING_PROFESSIONAL_SURNAME"
         ).merge(
           "DATE_OF_VACCINATION" => "#{Date.current.academic_year}0901",
-          "VACCINATED" => "Y"
+          "VACCINATED" => "Y",
+          "SESSION_ID" => session.id.to_s
         )
       end
+
+      let(:session) { create(:session, organisation:, programme:) }
 
       it "has errors" do
         expect(immunisation_import_row).to be_invalid
@@ -348,15 +356,18 @@ describe ImmunisationImportRow do
       end
     end
 
-    context "vaccination in this academic year, vaccinator email not provided but forename and surname are" do
+    context "vaccination in a session, vaccinator email not provided but forename and surname are" do
       let(:data) do
         valid_data.except("PERFORMING_PROFESSIONAL_EMAIL").merge(
           "PERFORMING_PROFESSIONAL_FORENAME" => "John",
           "PERFORMING_PROFESSIONAL_SURNAME" => "Smith",
           "DATE_OF_VACCINATION" => "#{Date.current.academic_year}0901",
-          "VACCINATED" => "Y"
+          "VACCINATED" => "Y",
+          "SESSION_ID" => session.id.to_s
         )
       end
+
+      let(:session) { create(:session, organisation:, programme:) }
 
       it "has errors" do
         expect(immunisation_import_row).to be_invalid
@@ -408,15 +419,17 @@ describe ImmunisationImportRow do
       it { should be_invalid }
     end
 
-    context "vaccination in this academic year, with a delivery site that is not appropriate for HPV" do
+    context "vaccination in a session, with a delivery site that is not appropriate for HPV" do
       let(:programme) { create(:programme, :hpv) }
+      let(:session) { create(:session, organisation:, programme:) }
 
       let(:data) do
         valid_hpv_data.merge(
           "ANATOMICAL_SITE" => "nasal",
           "VACCINATED" => "Y",
           "VACCINE_GIVEN" => "Gardasil9",
-          "DATE_OF_VACCINATION" => "#{Date.current.academic_year}0901"
+          "DATE_OF_VACCINATION" => "#{Date.current.academic_year}0901",
+          "SESSION_ID" => session.id.to_s
         )
       end
 
@@ -446,7 +459,7 @@ describe ImmunisationImportRow do
       end
     end
 
-    context "vaccination in this academic year, with a delivery site that is not appropriate for flu" do
+    context "vaccination in a session, with a delivery site that is not appropriate for flu" do
       let(:programme) { create(:programme, :flu) }
 
       let(:data) do
@@ -455,9 +468,12 @@ describe ImmunisationImportRow do
           "VACCINATED" => "Y",
           "PROGRAMME" => "Flu",
           "VACCINE_GIVEN" => "AstraZeneca Fluenz Tetra LAIV",
-          "DATE_OF_VACCINATION" => "#{Date.current.academic_year}0901"
+          "DATE_OF_VACCINATION" => "#{Date.current.academic_year}0901",
+          "SESSION_ID" => session.id.to_s
         }
       end
+
+      let(:session) { create(:session, organisation:, programme:) }
 
       it "has errors" do
         expect(immunisation_import_row).to be_invalid
@@ -645,155 +661,6 @@ describe ImmunisationImportRow do
     end
   end
 
-  describe "#session" do
-    subject(:session) { immunisation_import_row.session }
-
-    context "without data" do
-      let(:data) { {} }
-
-      it { should be_nil }
-    end
-
-    context "in a previous academic year" do
-      let(:data) { valid_data }
-
-      it { should be_nil }
-    end
-
-    context "in a current academic year" do
-      let(:date_of_vaccination) { Date.new(Date.current.academic_year, 9, 1) }
-
-      context "when at school" do
-        let(:school_session) do
-          create(
-            :session,
-            location:,
-            date: date_of_vaccination,
-            organisation:,
-            programme:
-          )
-        end
-
-        let(:data) do
-          valid_data.merge(
-            "DATE_OF_VACCINATION" => date_of_vaccination.strftime("%Y%m%d")
-          )
-        end
-
-        it { should eq(school_session) }
-      end
-
-      context "when home educated and community care setting" do
-        let(:clinic) do
-          create(:community_clinic, name: "A Clinic", organisation:)
-        end
-
-        let(:data) do
-          valid_data.merge(
-            "SCHOOL_URN" => "999999",
-            "SCHOOL_NAME" => "",
-            "CARE_SETTING" => "2",
-            "CLINIC_NAME" => clinic.name,
-            "DATE_OF_VACCINATION" => date_of_vaccination.strftime("%Y%m%d"),
-            "PERFORMING_PROFESSIONAL_EMAIL" => vaccinator.email
-          )
-        end
-
-        before do
-          create(
-            :session_date,
-            value: date_of_vaccination,
-            session: organisation.generic_clinic_session
-          )
-        end
-
-        it { should eq(organisation.generic_clinic_session) }
-      end
-
-      context "when home educated and unknown care setting" do
-        let(:data) do
-          valid_data.merge(
-            "SCHOOL_URN" => "999999",
-            "SCHOOL_NAME" => "",
-            "DATE_OF_VACCINATION" => date_of_vaccination.strftime("%Y%m%d")
-          )
-        end
-
-        before do
-          create(
-            :session_date,
-            value: date_of_vaccination,
-            session: organisation.generic_clinic_session
-          )
-        end
-
-        it { should eq(organisation.generic_clinic_session) }
-      end
-
-      context "with an unknown school and school care setting" do
-        let(:data) do
-          valid_data.merge(
-            "SCHOOL_URN" => "888888",
-            "SCHOOL_NAME" => "Waterloo Road",
-            "CARE_SETTING" => "1",
-            "DATE_OF_VACCINATION" => date_of_vaccination.strftime("%Y%m%d")
-          )
-        end
-
-        before do
-          create(
-            :session_date,
-            value: date_of_vaccination,
-            session: organisation.generic_clinic_session
-          )
-        end
-
-        it { should eq(organisation.generic_clinic_session) }
-      end
-
-      context "with an unknown school and community care setting" do
-        let(:data) do
-          valid_data.merge(
-            "SCHOOL_URN" => "888888",
-            "SCHOOL_NAME" => "Waterloo Road",
-            "CARE_SETTING" => "2",
-            "DATE_OF_VACCINATION" => date_of_vaccination.strftime("%Y%m%d")
-          )
-        end
-
-        before do
-          create(
-            :session_date,
-            value: date_of_vaccination,
-            session: organisation.generic_clinic_session
-          )
-        end
-
-        it { should eq(organisation.generic_clinic_session) }
-      end
-
-      context "with an unknown school and unknown case setting" do
-        let(:data) do
-          valid_data.merge(
-            "SCHOOL_URN" => "888888",
-            "SCHOOL_NAME" => "Waterloo Road",
-            "DATE_OF_VACCINATION" => date_of_vaccination.strftime("%Y%m%d")
-          )
-        end
-
-        before do
-          create(
-            :session_date,
-            value: date_of_vaccination,
-            session: organisation.generic_clinic_session
-          )
-        end
-
-        it { should eq(organisation.generic_clinic_session) }
-      end
-    end
-  end
-
   describe "#location_name" do
     subject(:location_name) { immunisation_import_row.location_name }
 
@@ -804,17 +671,14 @@ describe ImmunisationImportRow do
     end
 
     context "with a school session that exists" do
-      let(:data) { valid_data }
-
-      before do
-        create(
-          :session,
-          organisation:,
-          location:,
-          date: Date.new(2024, 1, 1),
-          programme:
+      let(:data) do
+        valid_data.merge(
+          "DATE_OF_VACCINATION" => session.dates.first.strftime("%Y%m%d"),
+          "SESSION_ID" => session.id.to_s
         )
       end
+
+      let(:session) { create(:session, organisation:, location:, programme:) }
 
       it { should be_nil }
     end

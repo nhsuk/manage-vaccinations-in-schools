@@ -118,6 +118,7 @@ class Reports::OfflineSessionExporter
         dose_sequence
         reason_not_vaccinated
         notes
+        session_id
         uuid
       ].tap do |values|
         values.insert(6, :clinic_name) if location.generic_clinic?
@@ -172,7 +173,7 @@ class Reports::OfflineSessionExporter
         [
           Row.new(columns, style: row_style) do |row|
             add_patient_cells(row, patient_session:, programme:)
-            add_new_row_cells(row, programme:)
+            add_new_row_cells(row, session: patient_session.session, programme:)
           end
         ]
       end
@@ -232,6 +233,7 @@ class Reports::OfflineSessionExporter
   def add_existing_row_cells(row, vaccination_record:)
     batch = vaccination_record.batch
     programme = vaccination_record.programme
+    session = vaccination_record.session
     vaccine = vaccination_record.vaccine
 
     row[:vaccinated] = Cell.new(
@@ -266,6 +268,7 @@ class Reports::OfflineSessionExporter
       allowed_values: ImmunisationImportRow::REASONS.keys
     )
     row[:notes] = vaccination_record.notes
+    row[:session_id] = session.id
     row[:uuid] = vaccination_record.uuid
 
     if location.generic_clinic?
@@ -276,7 +279,7 @@ class Reports::OfflineSessionExporter
     end
   end
 
-  def add_new_row_cells(row, programme:)
+  def add_new_row_cells(row, session:, programme:)
     row[:vaccinated] = Cell.new(allowed_values: %w[Y N])
     row[:date_of_vaccination] = Cell.new(type: :date)
     row[:programme] = programme.import_names.first
@@ -297,6 +300,8 @@ class Reports::OfflineSessionExporter
     row[:reason_not_vaccinated] = Cell.new(
       allowed_values: ImmunisationImportRow::REASONS.keys
     )
+
+    row[:session_id] = session.id
 
     if location.generic_clinic?
       row[:clinic_name] = Cell.new(allowed_values: clinic_name_values)
