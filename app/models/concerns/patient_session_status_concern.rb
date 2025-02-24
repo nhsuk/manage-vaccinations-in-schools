@@ -150,7 +150,8 @@ module PatientSessionStatusConcern
     end
 
     def next_step(programme:)
-      if consent_given_triage_needed?(programme:) ||
+      if added_to_session?(programme:) ||
+           consent_given_triage_needed?(programme:) ||
            historical_vaccination_triage_needed?(programme:) ||
            triaged_kept_in_triage?(programme:)
         :triage
