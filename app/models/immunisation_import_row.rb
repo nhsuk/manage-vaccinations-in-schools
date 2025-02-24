@@ -111,7 +111,6 @@ class ImmunisationImportRow
   validates :care_setting,
             inclusion: [CARE_SETTING_SCHOOL, CARE_SETTING_COMMUNITY],
             allow_nil: true
-  validates :care_setting, presence: true, if: :requires_care_setting?
   validates :clinic_name,
             inclusion: {
               if: -> do
@@ -505,10 +504,6 @@ class ImmunisationImportRow
 
   def offline_recording?
     session_id.present?
-  end
-
-  def requires_care_setting?
-    programme&.hpv?
   end
 
   def performed_by_details_present_where_required
