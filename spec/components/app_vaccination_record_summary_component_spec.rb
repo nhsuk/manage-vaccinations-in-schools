@@ -65,11 +65,20 @@ describe AppVaccinationRecordSummaryComponent do
     end
   end
 
+  describe "programme row" do
+    it do
+      expect(rendered).to have_css(
+        ".nhsuk-summary-list__row",
+        text: "Programme\nHPV"
+      )
+    end
+  end
+
   describe "vaccine row" do
     it do
       expect(rendered).to have_css(
         ".nhsuk-summary-list__row",
-        text: "Vaccine\nGardasil 9 (HPV)"
+        text: "Vaccine\nGardasil 9"
       )
     end
 
