@@ -150,7 +150,7 @@ def create_session(
       ]
 
       if programme.vaccinated_dose_sequence != 1
-        traits << :historical_vaccination_triage_needed
+        traits << :partially_vaccinated_triage_needed
       end
 
       traits.each do |trait|

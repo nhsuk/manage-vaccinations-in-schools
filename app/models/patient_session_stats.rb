@@ -53,7 +53,6 @@ class PatientSessionStats
       patient_session.no_consent?(programme:)
     when :needing_triage
       patient_session.consent_given_triage_needed?(programme:) ||
-        patient_session.historical_vaccination_triage_needed?(programme:) ||
         patient_session.triaged_kept_in_triage?(programme:)
     when :vaccinate
       patient_session.triaged_ready_to_vaccinate?(programme:) ||

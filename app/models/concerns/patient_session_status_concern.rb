@@ -10,7 +10,6 @@ module PatientSessionStatusConcern
       consent_given_triage_needed
       consent_refused
       consent_conflicts
-      historical_vaccination_triage_needed
       triaged_ready_to_vaccinate
       triaged_do_not_vaccinate
       triaged_kept_in_triage
@@ -47,8 +46,6 @@ module PatientSessionStatusConcern
         "consent_refused"
       elsif consent_conflicts?(programme:)
         "consent_conflicts"
-      elsif historical_vaccination?(programme:)
-        "historical_vaccination_triage_needed"
       else
         "added_to_session"
       end
@@ -101,8 +98,13 @@ module PatientSessionStatusConcern
         end
     end
 
-    def triage_needed?(programme:)
+    def consent_needs_triage?(programme:)
       latest_consents(programme:).any?(&:triage_needed?)
+    end
+
+    def triage_needed?(programme:)
+      consent_needs_triage?(programme:) ||
+        vaccination_partially_administered?(programme:)
     end
 
     def triage_not_needed?(programme:)
@@ -133,7 +135,7 @@ module PatientSessionStatusConcern
       )
     end
 
-    def historical_vaccination?(programme:)
+    def vaccination_partially_administered?(programme:)
       vaccination_records(programme:).any?(&:administered?) &&
         !vaccination_administered?(programme:)
     end
@@ -152,7 +154,6 @@ module PatientSessionStatusConcern
     def next_step(programme:)
       if added_to_session?(programme:) ||
            consent_given_triage_needed?(programme:) ||
-           historical_vaccination_triage_needed?(programme:) ||
            triaged_kept_in_triage?(programme:)
         :triage
       elsif consent_given_triage_not_needed?(programme:) ||

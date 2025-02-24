@@ -12,7 +12,9 @@ en:
       colour: blue
       text: Triage
       banner_title: Needs triage
-      banner_explanation: Responses to health questions need triage.
+      banner_explanation:
+        consent_needs_triage: Responses to health questions need triage.
+        vaccination_partially_administered: Incomplete vaccination history for %{programme_name}. Check if the child needs another dose.
     consent_given_triage_not_needed:
       colour: aqua-green
       text: Vaccinate
@@ -33,11 +35,6 @@ en:
       text: Delay vaccination to a later date
       banner_title: Could not vaccinate
       banner_explanation: "%{nurse} decided that %{full_name}’s vaccination should be delayed."
-    historical_vaccination_triage_needed:
-      colour: blue
-      text: Triage
-      banner_title: Needs triage
-      banner_explanation: Historical vaccination record needs triage.
     triaged_do_not_vaccinate:
       colour: red
       text: Do not vaccinate
