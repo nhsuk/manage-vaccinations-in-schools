@@ -117,7 +117,6 @@ describe "Immunisation imports duplicates" do
         delivery_site: :nose,
         dose_sequence: 1,
         patient: @already_vaccinated_patient,
-        session: @session,
         vaccine: @vaccine,
         performed_by_user: nil
       )
@@ -133,7 +132,6 @@ describe "Immunisation imports duplicates" do
         delivery_site: :left_arm_upper_position,
         dose_sequence: 1,
         patient: @third_patient,
-        session: @session,
         vaccine: @other_vaccine,
         performed_by_user: nil
       )

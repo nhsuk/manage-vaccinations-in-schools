@@ -86,6 +86,7 @@ describe Reports::OfflineSessionExporter do
             DOSE_SEQUENCE
             REASON_NOT_VACCINATED
             NOTES
+            SESSION_ID
             UUID
           ]
         )
@@ -135,6 +136,7 @@ describe Reports::OfflineSessionExporter do
               "REASON_NOT_VACCINATED" => "",
               "SCHOOL_NAME" => location.name,
               "SCHOOL_URN" => location.urn,
+              "SESSION_ID" => session.id,
               "TIME_OF_VACCINATION" => "",
               "TRIAGED_BY" => nil,
               "TRIAGE_DATE" => nil,
@@ -210,6 +212,7 @@ describe Reports::OfflineSessionExporter do
               "REASON_NOT_VACCINATED" => "",
               "SCHOOL_NAME" => location.name,
               "SCHOOL_URN" => location.urn,
+              "SESSION_ID" => session.id,
               "TIME_OF_VACCINATION" => "12:05:20",
               "TRIAGED_BY" => nil,
               "TRIAGE_DATE" => nil,
@@ -292,6 +295,7 @@ describe Reports::OfflineSessionExporter do
               "REASON_NOT_VACCINATED" => "unwell",
               "SCHOOL_NAME" => location.name,
               "SCHOOL_URN" => location.urn,
+              "SESSION_ID" => session.id,
               "TIME_OF_VACCINATION" => "12:05:20",
               "TRIAGED_BY" => nil,
               "TRIAGE_DATE" => nil,
@@ -452,6 +456,7 @@ describe Reports::OfflineSessionExporter do
             DOSE_SEQUENCE
             REASON_NOT_VACCINATED
             NOTES
+            SESSION_ID
             UUID
           ]
         )
@@ -497,6 +502,7 @@ describe Reports::OfflineSessionExporter do
               "REASON_NOT_VACCINATED" => "",
               "SCHOOL_NAME" => "",
               "SCHOOL_URN" => "888888",
+              "SESSION_ID" => session.id,
               "TIME_OF_VACCINATION" => "",
               "TRIAGED_BY" => nil,
               "TRIAGE_DATE" => nil,
@@ -573,6 +579,7 @@ describe Reports::OfflineSessionExporter do
               "REASON_NOT_VACCINATED" => "",
               "SCHOOL_NAME" => "Waterloo Road",
               "SCHOOL_URN" => "123456",
+              "SESSION_ID" => session.id,
               "TIME_OF_VACCINATION" => "12:05:20",
               "TRIAGED_BY" => nil,
               "TRIAGE_DATE" => nil,

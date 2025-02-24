@@ -66,14 +66,19 @@ class ImmunisationImportRow
 
   validates :performed_ods_code,
             presence: {
-              unless: :outcome_in_this_academic_year?
+              unless: :offline_recording?
             },
             comparison: {
               equal_to: :organisation_ods_code,
-              if: :outcome_in_this_academic_year?
+              if: :offline_recording?
             }
 
   validates :programme_name, inclusion: { in: :valid_programme_names }
+  validates :session_id,
+            inclusion: {
+              in: :valid_session_ids
+            },
+            if: :offline_recording?
 
   validates :date_of_vaccination,
             comparison: {
@@ -92,7 +97,7 @@ class ImmunisationImportRow
                   date_of_vaccination == Date.current
               end
             }
-  validate :session_date_exists
+  validate :date_matches_session
   validate :uuid_exists
 
   CARE_SETTING_SCHOOL = 1
@@ -105,8 +110,7 @@ class ImmunisationImportRow
   validates :clinic_name,
             inclusion: {
               if: -> do
-                outcome_in_this_academic_year? &&
-                  care_setting == CARE_SETTING_COMMUNITY
+                offline_recording? && care_setting == CARE_SETTING_COMMUNITY
               end,
               in: -> { _1.organisation.community_clinics.map(&:name) }
             }
@@ -182,17 +186,6 @@ class ImmunisationImportRow
 
     @patient ||=
       existing_patients.first || Patient.create!(new_patient_attributes)
-  end
-
-  def session
-    return if date_of_vaccination.nil? || location.nil?
-
-    @session ||=
-      Session.has_date(date_of_vaccination).find_by(
-        organisation:,
-        location:,
-        academic_year:
-      )
   end
 
   def location_name
@@ -339,6 +332,12 @@ class ImmunisationImportRow
     @data["PROGRAMME"]&.strip
   end
 
+  def session_id
+    Integer(@data["SESSION_ID"])
+  rescue ArgumentError, TypeError
+    nil
+  end
+
   def school_name
     @data["SCHOOL_NAME"]&.strip
   end
@@ -358,8 +357,6 @@ class ImmunisationImportRow
   def time_of_vaccination
     @time_of_vaccination ||= parse_time("TIME_OF_VACCINATION")
   end
-
-  delegate :academic_year, to: :date_of_vaccination
 
   def care_setting
     Integer(@data["CARE_SETTING"])
@@ -432,6 +429,17 @@ class ImmunisationImportRow
     @programme ||= programmes_by_name[programme_name]
   end
 
+  def session
+    @session ||=
+      if session_id.present?
+        organisation
+          .sessions
+          .for_current_academic_year
+          .includes(:session_dates)
+          .find(session_id)
+      end
+  end
+
   def vaccine
     @vaccine ||=
       organisation.vaccines.where(programme:).find_by(nivs_name: vaccine_given)
@@ -466,18 +474,18 @@ class ImmunisationImportRow
     programmes_by_name.keys
   end
 
+  def valid_session_ids
+    organisation.sessions.for_current_academic_year.pluck(:id)
+  end
+
   def valid_given_vaccines
     organisation.vaccines.pluck(:nivs_name)
   end
 
   delegate :maximum_dose_sequence, to: :programme, allow_nil: true
 
-  # TODO: we want tougher validation from the point of integration of Mavis
-  # but permit looser validation in historical data
-  # in the future, this check should change to apply from a specific point in time,
-  # not the current academic year
-  def outcome_in_this_academic_year?
-    date_of_vaccination.present? && academic_year == Date.current.academic_year
+  def offline_recording?
+    session_id.present?
   end
 
   def requires_care_setting?
@@ -485,7 +493,7 @@ class ImmunisationImportRow
   end
 
   def performed_by_details_present_where_required
-    if outcome_in_this_academic_year?
+    if offline_recording?
       errors.add(:performed_by_user, :blank) if performed_by_user.nil?
     else # previous academic years from here on
       email_field_populated =
@@ -537,19 +545,21 @@ class ImmunisationImportRow
   end
 
   def delivery_site_appropriate_for_vaccine
+    return unless offline_recording?
     return if vaccine.nil? || delivery_site.nil?
-    return unless outcome_in_this_academic_year?
 
     unless vaccine.available_delivery_sites.include?(delivery_site)
       errors.add(:delivery_site, :inclusion)
     end
   end
 
-  def session_date_exists
-    return if date_of_vaccination.nil?
-    return unless outcome_in_this_academic_year?
+  def date_matches_session
+    return unless offline_recording?
+    return if date_of_vaccination.nil? || session.nil?
 
-    errors.add(:date_of_vaccination, :inclusion) if session.nil?
+    unless session.dates.include?(date_of_vaccination)
+      errors.add(:date_of_vaccination, :inclusion)
+    end
   end
 
   def uuid_exists

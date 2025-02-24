@@ -178,23 +178,6 @@ describe ImmunisationImport do
           .times
           .on_queue(:imports)
       end
-
-      it "adds patients to the session if it exists" do
-        # must match a session in valid_flu.csv
-        location = Location.school.find_by!(urn: "120026")
-        create(
-          :session,
-          location:,
-          organisation:,
-          programme:,
-          date: Date.new(2024, 5, 14)
-        )
-
-        expect { process! }.to change(
-          immunisation_import.patient_sessions,
-          :count
-        ).by(8)
-      end
     end
 
     context "with valid HPV rows" do
@@ -248,23 +231,6 @@ describe ImmunisationImport do
           .exactly(9)
           .times
           .on_queue(:imports)
-      end
-
-      it "adds patients to the session if it exists" do
-        # must match a session in valid_hpv.csv
-        location = Location.school.find_by!(urn: "110158")
-        create(
-          :session,
-          location:,
-          organisation:,
-          programme:,
-          date: Date.new(2024, 5, 14)
-        )
-
-        expect { process! }.to change(
-          immunisation_import.patient_sessions,
-          :count
-        ).by(6)
       end
     end
 
