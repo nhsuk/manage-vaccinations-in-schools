@@ -1,11 +1,71 @@
 # frozen_string_literal: true
 
 describe HertsConsentReminders do
-  let(:session_date) { Time.zone.today + 13.days }
-  let(:session) { create(:session, programme:, dates: [session_date]) }
-  let(:programme) { create(:programme) }
+  let(:programme) { create(:programme, :hpv) }
+  let(:organisation) do
+    create(:organisation, ods_code: "RY4", programmes: [programme])
+  end
+  let(:session_date) { 13.days.from_now }
+  let(:session) do
+    create(:session, programme:, organisation:, dates: [session_date])
+  end
   let(:patient) { create(:patient, :consent_request_sent, session:) }
-  let(:consent_request) { create(:consent_notification, programme:, patient:) }
+  let(:consent_request) do
+    create(
+      :consent_notification,
+      :request,
+      sent_at: initial_reminder_sent_at,
+      patient:,
+      programme:,
+      session:
+    )
+  end
+
+  describe ".sessions_with_reminders_due" do
+    subject { described_class.sessions_reminders_due_on }
+
+    before { session }
+
+    context "session is 15 days away" do
+      let(:session_date) { 15.days.from_now }
+
+      it { should_not include(session) }
+    end
+
+    context "session is 14 days away" do
+      let(:session_date) { 14.days.from_now }
+
+      it { should include(session) }
+    end
+
+    context "session is 13 days away" do
+      let(:session_date) { 13.days.from_now }
+
+      it { should_not include(session) }
+    end
+
+    context "session is 7 days away" do
+      let(:session_date) { 7.days.from_now }
+
+      it { should include(session) }
+    end
+
+    context "session is 3 days away" do
+      let(:session_date) { 3.days.from_now }
+
+      it { should include(session) }
+    end
+
+    describe "specifying the date" do
+      subject do
+        described_class.sessions_reminders_due_on(on_date: Date.current + 1.day)
+      end
+
+      let(:session_date) { 15.days.from_now }
+
+      it { should include(session) }
+    end
+  end
 
   describe ".send_consent_reminders" do
     before do
@@ -194,7 +254,7 @@ describe HertsConsentReminders do
         subsequent_reminder
       end
 
-      let(:session_date) { Time.zone.today + 3.days }
+      let(:session_date) { 3.days.from_now }
 
       it { should be true }
     end
@@ -206,7 +266,7 @@ describe HertsConsentReminders do
         subsequent_reminder2
       end
 
-      let(:session_date) { Time.zone.today + 3.days }
+      let(:session_date) { 3.days.from_now }
 
       it { should be false }
     end
@@ -216,12 +276,48 @@ describe HertsConsentReminders do
 
       it { should be false }
     end
+
+    context "last request was sent today" do
+      before { consent_request.update!(sent_at: Date.current) }
+
+      it { should be false }
+    end
+
+    context "last request was sent yesterday" do
+      before { consent_request.update!(sent_at: 1.day.ago) }
+
+      it { should be true }
+    end
+
+    context "initial reminder was sent today" do
+      before { initial_reminder.update!(sent_at: Date.current) }
+
+      it { should be false }
+    end
+
+    context "initial reminder was sent yesterday" do
+      before { initial_reminder.update!(sent_at: 1.day.ago) }
+
+      it { should be false }
+    end
+
+    context "subsequent reminder was sent today" do
+      before { subsequent_reminder.update!(sent_at: Date.current) }
+
+      it { should be false }
+    end
+
+    context "subsequent reminder was sent yesterday" do
+      before { subsequent_reminder.update!(sent_at: 1.day.ago) }
+
+      it { should be false }
+    end
   end
 
   describe ".filter_patients_to_send_consent" do
     before { patient }
 
-    let(:session_date) { Time.zone.today + 7.days }
+    let(:session_date) { 7.days.from_now }
 
     it "skips patients who should not receive a reminder" do
       allow(described_class).to receive(:should_send_notification?).and_return(
