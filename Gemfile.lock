@@ -102,7 +102,7 @@ GEM
       public_suffix (>= 2.0.2, < 7.0)
     aes_key_wrap (1.1.0)
     amazing_print (1.7.2)
-    annotaterb (4.13.0)
+    annotaterb (4.14.0)
     asciidoctor (2.0.23)
     asciidoctor-diagram (2.3.1)
       asciidoctor (>= 1.5.7, < 3.x)
