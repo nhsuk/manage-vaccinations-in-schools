@@ -74,8 +74,8 @@ jobs:
         id: plan
         working-directory: ${{ env.tf_dir }}
         run: |
-            terraform plan -var="image_digest=$DIGEST" -var-file="env/${{ inputs.environment }}.tfvars" \
-            -out ${{ runner.temp }}/tfplan | tee ${{ runner.temp }}/tf_stdout
+          terraform plan -var="image_digest=$DIGEST" -var-file="env/${{ inputs.environment }}.tfvars" \
+          -out ${{ runner.temp }}/tfplan | tee ${{ runner.temp }}/tf_stdout
       - name: Validate the changes
         run: |
           ./terraform/scripts/validate_plan.sh ${{ runner.temp }}/tf_stdout

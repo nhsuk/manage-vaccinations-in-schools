@@ -177,9 +177,7 @@
         "ssm:GetParameter",
         "sts:GetCallerIdentity"
       ],
-      "Resource": [
-        "*"
-      ]
+      "Resource": ["*"]
     }
   ]
 }
