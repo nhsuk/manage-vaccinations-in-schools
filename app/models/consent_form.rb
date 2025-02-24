@@ -273,7 +273,9 @@ class ConsentForm < ApplicationRecord
       (:reason_notes if consent_refused? && reason_notes_must_be_provided?),
       (:injection if injection_offered_as_alternative?),
       (:address if consent_given? || consent_given_one?),
-      (:health_question if consent_given? || consent_given_one?)
+      (:health_question if consent_given? || consent_given_one?),
+      (:reason if consent_given_one?),
+      (:reason_notes if consent_given_one? && reason_notes_must_be_provided?)
     ].compact
   end
 

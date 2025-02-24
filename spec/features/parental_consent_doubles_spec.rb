@@ -13,7 +13,7 @@ describe "Parental consent" do
 
     when_i_give_consent_to_both_programmes
     and_i_fill_in_my_address
-    and_i_answer_no_to_all_the_medical_questions
+    and_i_answer_no_until_the_check_answers_page
     then_i_can_check_my_answers
   end
 
@@ -29,7 +29,8 @@ describe "Parental consent" do
 
     when_i_give_consent_to_one_programme
     and_i_fill_in_my_address
-    and_i_answer_no_to_all_the_medical_questions
+    and_i_answer_no_until_the_reason_for_refusal_page
+    and_i_give_a_reason_for_refusal
     then_i_can_check_my_answers
   end
 
@@ -111,8 +112,15 @@ describe "Parental consent" do
     click_on "Continue"
   end
 
-  def and_i_answer_no_to_all_the_medical_questions
+  def and_i_answer_no_until_the_check_answers_page
     until page.has_content?("Check and confirm")
+      choose "No"
+      click_on "Continue"
+    end
+  end
+
+  def and_i_answer_no_until_the_reason_for_refusal_page
+    until page.has_content?("Why are you refusing")
       choose "No"
       click_on "Continue"
     end
@@ -132,6 +140,11 @@ describe "Parental consent" do
     expect(page).to have_field("Td/IPV", type: "radio")
     choose "I agree to them having one of the vaccinations"
     choose "MenACWY"
+    click_on "Continue"
+  end
+
+  def and_i_give_a_reason_for_refusal
+    choose "Vaccine already received"
     click_on "Continue"
   end
 end
