@@ -87,6 +87,14 @@ describe GovukNotifyPersonalisation do
     it { should include(catch_up: "yes", not_catch_up: "no") }
   end
 
+  context "with multiple programmes" do
+    let(:programmes) do
+      [create(:programme, :menacwy), create(:programme, :td_ipv)]
+    end
+
+    it { should include(vaccination: "MenACWY and Td/IPV vaccinations") }
+  end
+
   context "with multiple dates" do
     before { session.session_dates.create!(value: Date.new(2026, 1, 2)) }
 

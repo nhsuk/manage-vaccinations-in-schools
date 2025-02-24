@@ -266,6 +266,9 @@ class GovukNotifyPersonalisation
   end
 
   def vaccination
-    "#{programme_name} vaccination"
+    [
+      programme_name,
+      programmes.count == 1 ? "vaccination" : "vaccinations"
+    ].join(" ")
   end
 end
