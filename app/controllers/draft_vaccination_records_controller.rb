@@ -35,12 +35,14 @@ class DraftVaccinationRecordsController < ApplicationController
     @draft_vaccination_record.assign_attributes(update_params)
 
     case current_step
-    when :confirm
-      handle_confirm
     when :date_and_time
       handle_date_and_time
+    when :outcome
+      handle_outcome
     when :batch
       update_default_batch_for_today
+    when :confirm
+      handle_confirm
     end
 
     if @draft_vaccination_record.editing? && current_step != :confirm
@@ -76,6 +78,11 @@ class DraftVaccinationRecordsController < ApplicationController
     if @draft_vaccination_record.performed_at.nil?
       @draft_vaccination_record.errors.add(:performed_at, :blank)
     end
+  end
+
+  def handle_outcome
+    # If not administered we can skip the remaining steps as they're not relevant.
+    jump_to("confirm") unless @draft_vaccination_record.administered?
   end
 
   def handle_confirm
