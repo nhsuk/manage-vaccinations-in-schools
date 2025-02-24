@@ -316,7 +316,7 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
   end
 
   def dose_number
-    return nil if @vaccine.nil? || @vaccine.seasonal?
+    return nil if @vaccine&.seasonal? || @vaccination_record.dose_sequence.nil?
 
     numbers_to_words = {
       1 => "First",

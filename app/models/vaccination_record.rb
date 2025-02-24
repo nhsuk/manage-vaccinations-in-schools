@@ -9,7 +9,7 @@
 #  delivery_method          :integer
 #  delivery_site            :integer
 #  discarded_at             :datetime
-#  dose_sequence            :integer          not null
+#  dose_sequence            :integer
 #  location_name            :string
 #  notes                    :text
 #  outcome                  :integer          not null
@@ -147,11 +147,11 @@ class VaccinationRecord < ApplicationRecord
               if: :requires_location_name?
             }
 
-  validates :dose_sequence, presence: true
   validates :dose_sequence,
             comparison: {
               greater_than_or_equal_to: 1,
-              less_than_or_equal_to: :maximum_dose_sequence
+              less_than_or_equal_to: :maximum_dose_sequence,
+              allow_nil: true
             }
 
   validates :performed_at,

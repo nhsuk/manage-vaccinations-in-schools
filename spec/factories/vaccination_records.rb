@@ -9,7 +9,7 @@
 #  delivery_method          :integer
 #  delivery_site            :integer
 #  discarded_at             :datetime
-#  dose_sequence            :integer          not null
+#  dose_sequence            :integer
 #  location_name            :string
 #  notes                    :text
 #  outcome                  :integer          not null
@@ -92,6 +92,7 @@ FactoryBot.define do
       delivery_method { nil }
       outcome { "not_well" }
       vaccine { nil }
+      dose_sequence { nil }
     end
 
     trait :performed_by_not_user do

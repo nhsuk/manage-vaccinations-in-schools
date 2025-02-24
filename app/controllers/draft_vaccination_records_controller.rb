@@ -83,6 +83,10 @@ class DraftVaccinationRecordsController < ApplicationController
   def handle_outcome
     # If not administered we can skip the remaining steps as they're not relevant.
     jump_to("confirm") unless @draft_vaccination_record.administered?
+
+    # TODO: Require the nurse to specify the dose sequence.
+    @draft_vaccination_record.dose_sequence ||=
+      1 if @draft_vaccination_record.administered?
   end
 
   def handle_confirm

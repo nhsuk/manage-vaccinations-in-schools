@@ -9,7 +9,7 @@
 #  delivery_method          :integer
 #  delivery_site            :integer
 #  discarded_at             :datetime
-#  dose_sequence            :integer          not null
+#  dose_sequence            :integer
 #  location_name            :string
 #  notes                    :text
 #  outcome                  :integer          not null
