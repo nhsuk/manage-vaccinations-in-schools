@@ -271,7 +271,7 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
         location.name
       end
     else
-      "Unknown"
+      @vaccination_record.location_name
     end
   end
 
