@@ -245,12 +245,21 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
   end
 
   def dose_sequence
+    special_values =
+      ImmunisationImportRow::DOSE_SEQUENCES.keys.map { tag.i(_1) }
+
+    special_values_sentence =
+      special_values.to_sentence(
+        last_word_connector: " or ",
+        two_words_connector: " or "
+      )
+
     [
       {
         name: "DOSE_SEQUENCE",
         notes:
           "Required if #{tag.code("VACCINATED")} is #{tag.i("Y")}, " \
-            "must be #{tag.i("1")}, #{tag.i("2")} or #{tag.i("3")}"
+            "must be a number or #{special_values_sentence}"
       }
     ]
   end

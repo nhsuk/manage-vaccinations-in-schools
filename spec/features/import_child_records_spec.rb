@@ -42,14 +42,14 @@ describe "Import child records" do
     when_i_click_on_the_cohort
     then_i_should_see_the_children
 
-    when_i_click_on_the_imports_tab
+    when_i_click_on_the_imports_page
     and_i_choose_to_import_child_records
     then_i_should_see_the_import_page
 
     travel_to 1.minute.from_now # to ensure the created_at is different for the import jobs
 
     when_i_upload_a_valid_file_with_changes
-    and_i_go_to_the_imports_page
+    and_i_go_to_the_import_page
     then_i_should_see_import_issues_with_the_count
   end
 
@@ -109,9 +109,8 @@ describe "Import child records" do
     expect(page).to have_content("Imported byTest User")
   end
 
-  def when_i_click_on_the_imports_tab
-    click_on "HPV"
-    click_on "Imports"
+  def when_i_click_on_the_imports_page
+    click_on "Import", match: :first
   end
 
   def then_i_should_see_the_import
@@ -218,8 +217,8 @@ describe "Import child records" do
     click_on "Continue"
   end
 
-  def and_i_go_to_the_imports_page
-    click_on "Imports"
+  def and_i_go_to_the_import_page
+    click_on "Import", match: :first
   end
 
   def then_i_should_see_import_issues_with_the_count

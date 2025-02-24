@@ -1,11 +1,16 @@
 # frozen_string_literal: true
 
+require "pagy/extras/array"
+
 class ConsentsController < ApplicationController
+  include Pagy::Backend
+
   include PatientTabsConcern
   include PatientSortingConcern
 
   before_action :set_session
   before_action :set_patient_session, except: :index
+  before_action :set_programme, except: :index
   before_action :set_patient, except: :index
   before_action :set_consent, except: %i[index create send_request]
   before_action :ensure_can_withdraw, only: %i[edit_withdraw update_withdraw]
@@ -13,25 +18,32 @@ class ConsentsController < ApplicationController
                 only: %i[edit_invalidate update_invalidate]
 
   def index
+    @programme =
+      @session.programmes.find_by(type: params[:programme_type]) ||
+        @session.programmes.first
+
     all_patient_sessions =
       @session
         .patient_sessions
         .preload_for_status
         .preload(patient: { consents: %i[parent patient] })
         .eager_load(:patient)
+        .merge(Patient.in_programme(@programme))
         .order_by_name
 
     tab_patient_sessions =
       group_patient_sessions_by_conditions(
         all_patient_sessions,
+        programme: @programme,
         section: :consents
       )
 
     @current_tab = TAB_PATHS[:consents][params[:tab]]
     @tab_counts = count_patient_sessions(tab_patient_sessions)
-    @patient_sessions = tab_patient_sessions[@current_tab] || []
+    patient_sessions = tab_patient_sessions[@current_tab] || []
 
-    sort_and_filter_patients!(@patient_sessions)
+    sort_and_filter_patients!(patient_sessions, programme: @programme)
+    @pagy, @patient_sessions = pagy_array(patient_sessions)
 
     session[:current_section] = "consents"
 
@@ -54,21 +66,27 @@ class ConsentsController < ApplicationController
   end
 
   def send_request
-    return unless @patient_session.no_consent?
+    return unless @patient_session.no_consent?(programme: @programme)
 
-    @session.programmes.each do |programme|
-      ConsentNotification.create_and_send!(
-        patient: @patient,
-        programme:,
-        session: @session,
-        type: :request,
-        current_user:
-      )
-    end
+    # For programmes that are administered together we should send the consent request together.
+    programmes =
+      ProgrammeGrouper
+        .call(@session.programmes)
+        .values
+        .find { it.include?(@programme) }
 
-    redirect_to session_patient_path(
+    ConsentNotification.create_and_send!(
+      patient: @patient,
+      programmes:,
+      session: @session,
+      type: :request,
+      current_user:
+    )
+
+    redirect_to session_patient_programme_path(
                   @session,
                   @patient,
+                  @programme,
                   section: params[:section],
                   tab: params[:tab]
                 ),
@@ -96,7 +114,7 @@ class ConsentsController < ApplicationController
           .invalidate_all
       end
 
-      redirect_to session_patient_consent_path
+      redirect_to session_patient_programme_consent_path
     else
       render :withdraw, status: :unprocessable_entity
     end
@@ -118,7 +136,7 @@ class ConsentsController < ApplicationController
           .invalidate_all
       end
 
-      redirect_to session_patient_consent_path,
+      redirect_to session_patient_programme_consent_path,
                   flash: {
                     success:
                       "Consent response from #{@consent.name} marked as invalid"
@@ -132,19 +150,24 @@ class ConsentsController < ApplicationController
 
   def set_session
     @session =
-      policy_scope(Session).includes(
-        :location,
-        :organisation,
-        :programmes
-      ).find_by!(slug: params[:session_slug])
+      policy_scope(Session).includes(:location, :organisation).find_by!(
+        slug: params[:session_slug]
+      )
   end
 
   def set_patient_session
     @patient_session =
-      policy_scope(PatientSession).find_by!(
+      policy_scope(PatientSession).includes(session: :programmes).find_by!(
         session: @session,
         patient_id: params[:patient_id]
       )
+  end
+
+  def set_programme
+    @programme =
+      @patient_session.programmes.find { it.type == params[:programme_type] }
+
+    raise ActiveRecord::RecordNotFound if @programme.nil?
   end
 
   def set_patient
@@ -170,7 +193,7 @@ class ConsentsController < ApplicationController
   def create_params
     {
       patient_session: @patient_session,
-      programme: @session.programmes.first, # TODO: handle multiple programmes
+      programme: @programme,
       recorded_by: current_user
     }
   end

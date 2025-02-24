@@ -3,46 +3,51 @@
 describe PatientTabsConcern do
   subject(:controller) { Class.new { include PatientTabsConcern }.new }
 
-  let(:programme) { create(:programme) }
-  let(:session) { create(:session, programme:) }
+  let(:programmes) { [create(:programme)] }
+  let(:session) { create(:session, programmes:) }
 
   let(:added_to_session) do
-    create(:patient_session, :added_to_session, programme:, session:)
+    create(:patient_session, :added_to_session, programmes:, session:)
   end
   let(:consent_conflicts) do
-    create(:patient_session, :consent_conflicting, programme:, session:)
+    create(:patient_session, :consent_conflicting, programmes:, session:)
   end
   let(:consent_given_triage_not_needed) do
     create(
       :patient_session,
       :consent_given_triage_not_needed,
-      programme:,
+      programmes:,
       session:
     )
   end
   let(:consent_given_triage_needed) do
-    create(:patient_session, :consent_given_triage_needed, programme:, session:)
+    create(
+      :patient_session,
+      :consent_given_triage_needed,
+      programmes:,
+      session:
+    )
   end
   let(:consent_refused) do
-    create(:patient_session, :consent_refused, programme:, session:)
+    create(:patient_session, :consent_refused, programmes:, session:)
   end
   let(:delay_vaccination) do
-    create(:patient_session, :delay_vaccination, programme:, session:)
+    create(:patient_session, :delay_vaccination, programmes:, session:)
   end
   let(:triaged_do_not_vaccinate) do
-    create(:patient_session, :triaged_do_not_vaccinate, programme:, session:)
+    create(:patient_session, :triaged_do_not_vaccinate, programmes:, session:)
   end
   let(:triaged_kept_in_triage) do
-    create(:patient_session, :triaged_kept_in_triage, programme:, session:)
+    create(:patient_session, :triaged_kept_in_triage, programmes:, session:)
   end
   let(:triaged_ready_to_vaccinate) do
-    create(:patient_session, :triaged_ready_to_vaccinate, programme:, session:)
+    create(:patient_session, :triaged_ready_to_vaccinate, programmes:, session:)
   end
   let(:unable_to_vaccinate) do
-    create(:patient_session, :unable_to_vaccinate, programme:, session:)
+    create(:patient_session, :unable_to_vaccinate, programmes:, session:)
   end
   let(:vaccinated) do
-    create(:patient_session, :vaccinated, programme:, session:)
+    create(:patient_session, :vaccinated, programmes:, session:)
   end
 
   let(:patient_sessions) do
@@ -68,6 +73,7 @@ describe PatientTabsConcern do
       result =
         controller.group_patient_sessions_by_conditions(
           patient_sessions,
+          programme: programmes.first,
           section: :consents
         )
 
@@ -95,6 +101,7 @@ describe PatientTabsConcern do
         result =
           controller.group_patient_sessions_by_conditions(
             [consent_given_triage_not_needed],
+            programme: programmes.first,
             section: :consents
           )
 
@@ -116,6 +123,7 @@ describe PatientTabsConcern do
         result =
           controller.group_patient_sessions_by_state(
             patient_sessions,
+            programmes.first,
             section: :triage
           )
 
@@ -143,6 +151,7 @@ describe PatientTabsConcern do
         result =
           controller.group_patient_sessions_by_state(
             patient_sessions,
+            programmes.first,
             section: :vaccinations
           )
 
@@ -167,13 +176,14 @@ describe PatientTabsConcern do
 
     context "some of the groups are empty" do
       let(:patient_sessions) do
-        create_list(:patient_session, 1, :consent_refused)
+        create_list(:patient_session, 1, :consent_refused, programmes:)
       end
 
       it "returns an empty array for all the empty groups" do
         result =
           controller.group_patient_sessions_by_state(
             patient_sessions,
+            programmes.first,
             section: :triage
           )
 
@@ -189,12 +199,12 @@ describe PatientTabsConcern do
   end
 
   describe "#count_patient_sessions" do
-    let(:session) { create(:session, programme:) }
+    let(:session) { create(:session, programmes:) }
     let(:no_consent_patient_sessions) do
-      create_list(:patient_session, 2, programme:, session:)
+      create_list(:patient_session, 2, programmes:, session:)
     end
     let(:refuser_patient_session) do
-      create(:patient_session, :consent_refused, programme:, session:)
+      create(:patient_session, :consent_refused, programmes:, session:)
     end
 
     it "counts patient session groups" do

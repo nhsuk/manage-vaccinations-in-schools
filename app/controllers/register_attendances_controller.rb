@@ -3,8 +3,9 @@
 class RegisterAttendancesController < ApplicationController
   include PatientSortingConcern
 
-  before_action :set_session, only: %i[index create]
+  before_action :set_session
   before_action :set_session_date
+  before_action :set_programme, only: :index
   before_action :set_patient_sessions, only: :index
   before_action :set_patient, only: :create
   before_action :set_patient_session, only: :create
@@ -12,7 +13,7 @@ class RegisterAttendancesController < ApplicationController
   layout "full"
 
   def index
-    sort_and_filter_patients!(@patient_sessions)
+    sort_and_filter_patients!(@patient_sessions, programme: @programme)
   end
 
   def create
@@ -26,7 +27,7 @@ class RegisterAttendancesController < ApplicationController
     name = @patient.full_name
 
     flash[:info] = if session_attendance.attending?
-      t("attendance_flash.#{@patient_session.status}", name:)
+      t("attendance_flash.present", name:)
     else
       t("attendance_flash.absent", name:)
     end
@@ -40,13 +41,24 @@ class RegisterAttendancesController < ApplicationController
     @session = policy_scope(Session).find_by!(slug: params[:session_slug])
   end
 
+  def set_session_date
+    @session_date = @session.session_dates.find_by!(value: Date.current)
+  end
+
+  def set_programme
+    @programme =
+      @session.programmes.find_by(type: params[:programme_type]) ||
+        @session.programmes.first
+  end
+
   def set_patient_sessions
     ps =
-      @session.patient_sessions.preload_for_status.includes(
-        :patient,
-        session: :session_dates,
-        session_attendances: :session_date
-      )
+      @session
+        .patient_sessions
+        .eager_load(:patient)
+        .preload_for_status
+        .includes(session: :session_dates, session_attendances: :session_date)
+        .merge(Patient.in_programme(@programme))
 
     @patient_sessions =
       ps
@@ -58,10 +70,6 @@ class RegisterAttendancesController < ApplicationController
 
   def set_patient
     @patient = @session.patients.find_by(id: params[:patient_id])
-  end
-
-  def set_session_date
-    @session_date = @session.session_dates.find_by!(value: Date.current)
   end
 
   def set_patient_session

@@ -9,7 +9,13 @@ class SchoolConsentRequestsJob < ApplicationJob
         .send_consent_requests
         .includes(
           :programmes,
-          patients: %i[consents consent_notifications parents]
+          patient_sessions: {
+            patient: [
+              :consents,
+              :parents,
+              { consent_notifications: :programmes }
+            ]
+          }
         )
         .preload(:session_dates)
         .eager_load(:location)
@@ -18,28 +24,40 @@ class SchoolConsentRequestsJob < ApplicationJob
     sessions.each do |session|
       next unless session.open_for_consent?
 
-      session.programmes.each do |programme|
-        session.patients.each do |patient|
-          next unless should_send_notification?(patient:, programme:)
+      session.patient_sessions.each do |patient_session|
+        ProgrammeGrouper
+          .call(patient_session.programmes)
+          .each_value do |programmes|
+            next unless should_send_notification?(patient_session:, programmes:)
 
-          ConsentNotification.create_and_send!(
-            patient:,
-            programme:,
-            session:,
-            type: :request
-          )
-        end
+            ConsentNotification.create_and_send!(
+              patient: patient_session.patient,
+              programmes:,
+              session:,
+              type: :request
+            )
+          end
       end
     end
   end
 
-  def should_send_notification?(patient:, programme:)
-    return false unless patient.send_notifications?
+  def should_send_notification?(patient_session:, programmes:)
+    return false unless patient_session.send_notifications?
 
-    return false if patient.has_consent?(programme)
+    has_consent_or_triage =
+      programmes.all? do |programme|
+        patient_session.consents(programme:).any? ||
+          patient_session.triaged_do_not_vaccinate?(programme:)
+      end
 
-    patient.consent_notifications.none? do
-      _1.request? && _1.programme_id == programme.id
+    return false if has_consent_or_triage
+
+    patient = patient_session.patient
+
+    programmes.any? do |programme|
+      patient.consent_notifications.none? do
+        it.request? && it.programmes.include?(programme)
+      end
     end
   end
 end

@@ -41,14 +41,15 @@ describe SessionNotification do
     let(:today) { Date.new(2024, 1, 1) }
 
     let(:parents) { create_list(:parent, 2) }
-    let(:patient) { create(:patient, parents:) }
-    let(:programme) { create(:programme) }
+    let(:patient) { create(:patient, parents:, year_group: 10) }
+    let(:programme) { create(:programme, :td_ipv) }
     let(:organisation) { create(:organisation, programmes: [programme]) }
     let(:location) { create(:school, organisation:) }
-    let(:session) { create(:session, location:, programme:, organisation:) }
+    let(:session) do
+      create(:session, location:, programmes: [programme], organisation:)
+    end
     let(:session_date) { session.dates.min }
     let(:patient_session) { create(:patient_session, patient:, session:) }
-    let(:consent) { create(:consent, :given, patient:, programme:) }
     let(:current_user) { create(:user) }
 
     before { patient_session.patient.strict_loading!(false) }
@@ -56,9 +57,11 @@ describe SessionNotification do
     context "with a school reminder" do
       let(:type) { :school_reminder }
 
-      it "creates a record" do
-        consent # ensure it exists
+      let(:parent) { parents.first }
 
+      before { create(:consent, :given, patient:, parent:, programme:) }
+
+      it "creates a record" do
         expect { create_and_send! }.to change(described_class, :count).by(1)
 
         session_notification = described_class.last
@@ -71,13 +74,13 @@ describe SessionNotification do
       it "enqueues an email per parent who gave consent" do
         expect { create_and_send! }.to have_delivered_email(
           :session_school_reminder
-        ).with(consent:, session:, sent_by: current_user)
+        ).with(parent:, patient:, session:, sent_by: current_user)
       end
 
       it "enqueues a text per parent" do
         expect { create_and_send! }.to have_delivered_sms(
           :session_school_reminder
-        ).with(consent:, session:, sent_by: current_user)
+        ).with(parent:, patient:, session:, sent_by: current_user)
       end
 
       context "when parent doesn't want to receive updates by text" do

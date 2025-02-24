@@ -70,3 +70,8 @@ $color_app-dark-orange: color.scale(
 .nhsuk-checkboxes__label::after {
   box-sizing: border-box;
 }
+
+// Ensure consistent margin for small fieldset legend
+.nhsuk-fieldset__legend--s {
+  margin-bottom: nhsuk-spacing(2);
+}

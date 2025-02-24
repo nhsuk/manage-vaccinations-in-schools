@@ -31,12 +31,16 @@ class AppActivityLogComponent < ViewComponent::Base
       @patient.consents.includes(
         :consent_form,
         :parent,
+        :programme,
         :recorded_by,
         patient: :parent_relationships
       )
 
     @gillick_assessments =
-      (patient || patient_session).gillick_assessments.includes(:performed_by)
+      (patient || patient_session).gillick_assessments.includes(
+        :performed_by,
+        :programme
+      )
 
     @notify_log_entries = @patient.notify_log_entries.includes(:sent_by)
 
@@ -46,7 +50,7 @@ class AppActivityLogComponent < ViewComponent::Base
     @session_attendances =
       (patient || patient_session).session_attendances.includes(:location)
 
-    @triages = @patient.triages.includes(:performed_by)
+    @triages = @patient.triages.includes(:performed_by, :programme)
 
     @vaccination_records =
       @patient.vaccination_records.with_discarded.includes(
@@ -54,13 +58,6 @@ class AppActivityLogComponent < ViewComponent::Base
         :programme,
         :vaccine
       )
-
-    if (programme = patient_session&.programmes&.first) # TODO: handle multiple programmes
-      @consents = @consents.where(programme:)
-      @gillick_assessments = @gillick_assessments.where(programme:)
-      @triages = @triages.where(programme:)
-      @vaccination_records = @vaccination_records.where(programme:)
-    end
   end
 
   attr_reader :patient,
@@ -101,14 +98,16 @@ class AppActivityLogComponent < ViewComponent::Base
           title: "Consent #{original_response}",
           at: consent_form.recorded_at,
           by:
-            "#{consent_form.parent_full_name} (#{consent_form.parent_relationship_label})"
+            "#{consent_form.parent_full_name} (#{consent_form.parent_relationship_label})",
+          programme: consent.programme
         }
       else
         {
           title:
             "Consent #{original_response} by #{consent.name} (#{consent.who_responded})",
           at: consent.created_at,
-          by: consent.recorded_by
+          by: consent.recorded_by,
+          programme: consent.programme
         }
       end
 
@@ -116,21 +115,24 @@ class AppActivityLogComponent < ViewComponent::Base
         events << {
           title: "Consent response manually matched with child record",
           at: consent.created_at,
-          by: consent.recorded_by
+          by: consent.recorded_by,
+          programme: consent.programme
         }
       end
 
       if consent.invalidated?
         events << {
           title: "Consent from #{consent.name} invalidated",
-          at: consent.invalidated_at
+          at: consent.invalidated_at,
+          programme: consent.programme
         }
       end
 
       if consent.withdrawn?
         events << {
           title: "Consent from #{consent.name} withdrawn",
-          at: consent.withdrawn_at
+          at: consent.withdrawn_at,
+          programme: consent.programme
         }
       end
 
@@ -154,18 +156,20 @@ class AppActivityLogComponent < ViewComponent::Base
         title: "#{action} Gillick assessment as #{outcome}",
         body: gillick_assessment.notes,
         at: gillick_assessment.created_at,
-        by: gillick_assessment.performed_by
+        by: gillick_assessment.performed_by,
+        programme: gillick_assessment.programme
       }
     end
   end
 
   def notify_events
-    notify_log_entries.map do
+    notify_log_entries.map do |notify_log_entry|
       {
-        title: "#{_1.title} sent",
-        body: patient.restricted? ? "" : _1.recipient_deterministic,
-        at: _1.created_at,
-        by: _1.sent_by
+        title: "#{notify_log_entry.title} sent",
+        body:
+          patient.restricted? ? "" : notify_log_entry.recipient_deterministic,
+        at: notify_log_entry.created_at,
+        by: notify_log_entry.sent_by
       }
     end
   end
@@ -193,12 +197,13 @@ class AppActivityLogComponent < ViewComponent::Base
   end
 
   def triage_events
-    triages.map do
+    triages.map do |triage|
       {
-        title: "Triaged decision: #{_1.human_enum_name(:status)}",
-        body: _1.notes,
-        at: _1.created_at,
-        by: _1.performed_by
+        title: "Triaged decision: #{triage.human_enum_name(:status)}",
+        body: triage.notes,
+        at: triage.created_at,
+        by: triage.performed_by,
+        programme: triage.programme
       }
     end
   end
@@ -216,7 +221,8 @@ class AppActivityLogComponent < ViewComponent::Base
         title:,
         body: vaccination_record.notes,
         at: vaccination_record.performed_at,
-        by: vaccination_record.performed_by
+        by: vaccination_record.performed_by,
+        programme: vaccination_record.programme
       }
 
       discarded =
@@ -224,7 +230,8 @@ class AppActivityLogComponent < ViewComponent::Base
           {
             title:
               "#{vaccination_record.programme.name} vaccination record deleted",
-            at: vaccination_record.discarded_at
+            at: vaccination_record.discarded_at,
+            programme: vaccination_record.programme
           }
         end
 

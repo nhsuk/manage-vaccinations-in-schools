@@ -67,7 +67,9 @@ describe PatientNHSNumberLookupJob do
 
       let!(:existing_patient) { create(:patient, nhs_number: "9449306168") }
 
-      let(:patient_session) { create(:patient_session, patient:, programme:) }
+      let(:patient_session) do
+        create(:patient_session, patient:, programmes: [programme])
+      end
       let(:gillick_assessment) do
         create(:gillick_assessment, :competent, patient_session:)
       end

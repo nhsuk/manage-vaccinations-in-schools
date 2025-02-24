@@ -8,22 +8,18 @@
 #  sent_at         :datetime         not null
 #  type            :integer          not null
 #  patient_id      :bigint           not null
-#  programme_id    :bigint           not null
 #  sent_by_user_id :bigint
 #  session_id      :bigint           not null
 #
 # Indexes
 #
-#  index_consent_notifications_on_patient_id                   (patient_id)
-#  index_consent_notifications_on_patient_id_and_programme_id  (patient_id,programme_id)
-#  index_consent_notifications_on_programme_id                 (programme_id)
-#  index_consent_notifications_on_sent_by_user_id              (sent_by_user_id)
-#  index_consent_notifications_on_session_id                   (session_id)
+#  index_consent_notifications_on_patient_id       (patient_id)
+#  index_consent_notifications_on_sent_by_user_id  (sent_by_user_id)
+#  index_consent_notifications_on_session_id       (session_id)
 #
 # Foreign Keys
 #
 #  fk_rails_...  (patient_id => patients.id)
-#  fk_rails_...  (programme_id => programmes.id)
 #  fk_rails_...  (sent_by_user_id => users.id)
 #  fk_rails_...  (session_id => sessions.id)
 #
@@ -33,12 +29,20 @@ class ConsentNotification < ApplicationRecord
   self.inheritance_column = :nil
 
   belongs_to :patient
-  belongs_to :programme
   belongs_to :session
+
+  has_many :consent_notification_programmes,
+           -> { joins(:programme).order(:"programmes.type") },
+           dependent: :destroy
+
+  has_many :programmes, through: :consent_notification_programmes
 
   enum :type,
        { request: 0, initial_reminder: 1, subsequent_reminder: 2 },
        validate: true
+
+  scope :has_programme,
+        ->(programme) { joins(:programmes).where(programmes: programme) }
 
   def reminder?
     initial_reminder? || subsequent_reminder?
@@ -46,7 +50,7 @@ class ConsentNotification < ApplicationRecord
 
   def self.create_and_send!(
     patient:,
-    programme:,
+    programmes:,
     session:,
     type:,
     current_user: nil
@@ -60,7 +64,7 @@ class ConsentNotification < ApplicationRecord
     # queue and restarted at a later date.
 
     ConsentNotification.create!(
-      programme:,
+      programmes:,
       patient:,
       session:,
       type:,
@@ -69,12 +73,19 @@ class ConsentNotification < ApplicationRecord
 
     is_school = session.location.school?
 
+    template = :"consent_#{(is_school ? :"school_#{type}" : :"clinic_#{type}")}"
+
     mail_template =
-      :"consent_#{(is_school ? :"school_#{type}" : :"clinic_#{type}")}"
+      if is_school
+        group = ProgrammeGrouper.call(programmes).first.first
+        :"#{template}_#{group}"
+      else
+        template
+      end
 
     text_template =
       if type == :request
-        mail_template
+        template
       elsif is_school
         :consent_school_reminder
       end
@@ -84,7 +95,7 @@ class ConsentNotification < ApplicationRecord
         mail_template,
         parent:,
         patient:,
-        programme:,
+        programmes:,
         session:,
         sent_by: current_user
       )
@@ -93,7 +104,7 @@ class ConsentNotification < ApplicationRecord
         text_template,
         parent:,
         patient:,
-        programme:,
+        programmes:,
         session:,
         sent_by: current_user
       )

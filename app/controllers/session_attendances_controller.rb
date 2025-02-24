@@ -26,14 +26,17 @@ class SessionAttendancesController < ApplicationController
       name = @patient.full_name
 
       flash[:info] = if @session_attendance.attending?
-        t("attendance_flash.#{@patient_session.status}", name:)
+        t("attendance_flash.present", name:)
       elsif @session_attendance.attending.nil?
         t("attendance_flash.not_registered", name:)
       else
         t("attendance_flash.absent", name:)
       end
 
-      redirect_to session_patient_path(id: @patient.id)
+      redirect_to session_patient_programme_path(
+                    patient_id: @patient.id,
+                    programme_type: @patient_session.programmes.first.type
+                  )
     else
       render :edit, status: :unprocessable_entity
     end
@@ -45,7 +48,10 @@ class SessionAttendancesController < ApplicationController
     @patient_session =
       policy_scope(PatientSession)
         .eager_load(:patient, :session)
-        .preload(patient: %i[consents triages vaccination_records])
+        .preload(
+          patient: %i[consents triages vaccination_records],
+          session: :programmes
+        )
         .find_by!(
           session: {
             slug: params.fetch(:session_slug)

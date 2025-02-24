@@ -14,9 +14,9 @@ module AgeConcern
   included do
     date_of_birth_field_for_age :date_of_birth
 
-    def age
+    def age(now: nil)
       date_of_birth_value = __send__(self.class.date_of_birth_field_for_age)
-      now = Time.zone.now.to_date
+      now ||= Time.current
 
       month_is_greater = now.month > date_of_birth_value.month
       month_matches = now.month == date_of_birth_value.month

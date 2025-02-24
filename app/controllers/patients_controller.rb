@@ -7,7 +7,7 @@ class PatientsController < ApplicationController
   before_action :record_access_log_entry, only: %i[show log]
 
   def index
-    scope = policy_scope(Patient).not_deceased
+    scope = policy_scope(Patient).includes(:school).not_deceased
 
     if (@filter_name = params[:name]).present?
       @filter_name.strip!
@@ -59,7 +59,7 @@ class PatientsController < ApplicationController
       if organisation_id.nil?
         @patient
           .patient_sessions
-          .includes(:programmes, :session_attendances)
+          .preload_for_status
           .where(session: old_organisation.sessions)
           .find_each(&:destroy_if_safe!)
       end

@@ -2,7 +2,7 @@
   <%= render AppBreadcrumbComponent.new(
         items: [
           { text: t("programmes.index.title"), href: programmes_path },
-          { text: "Import issues", href: import_issues_path },
+          { text: "Import issues", href: imports_issues_path },
         ],
       ) %>
 <% end %>
@@ -53,7 +53,7 @@
 
 <%= form_with(
       model: @form,
-      url: import_issue_path(@record, type: params[:type]),
+      url: imports_issue_path(@record, type: params[:type]),
       method: :patch,
       class: "nhsuk-u-width-one-half",
     ) do |f| %>

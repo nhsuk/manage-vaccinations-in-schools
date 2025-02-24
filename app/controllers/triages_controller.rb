@@ -1,33 +1,48 @@
 # frozen_string_literal: true
 
+require "pagy/extras/array"
+
 class TriagesController < ApplicationController
+  include Pagy::Backend
+
   include TriageMailerConcern
   include PatientTabsConcern
   include PatientSortingConcern
 
-  before_action :set_session, only: %i[index create new]
+  before_action :set_session
   before_action :set_patient, only: %i[create new]
   before_action :set_patient_session, only: %i[create new]
+  before_action :set_programme, only: %i[create new]
   before_action :set_triage, only: %i[create new]
   before_action :set_section_and_tab, only: %i[create new]
 
   after_action :verify_authorized
 
   def index
+    @programme =
+      @session.programmes.find_by(type: params[:programme_type]) ||
+        @session.programmes.first
+
     all_patient_sessions =
       @session
         .patient_sessions
         .preload_for_status
         .eager_load(:patient)
+        .merge(Patient.in_programme(@programme))
         .order_by_name
 
     @current_tab = TAB_PATHS[:triage][params[:tab]]
     tab_patient_sessions =
-      group_patient_sessions_by_state(all_patient_sessions, section: :triage)
+      group_patient_sessions_by_state(
+        all_patient_sessions,
+        @programme,
+        section: :triage
+      )
     @tab_counts = count_patient_sessions(tab_patient_sessions)
-    @patient_sessions = tab_patient_sessions[@current_tab] || []
+    patient_sessions = tab_patient_sessions[@current_tab] || []
 
-    sort_and_filter_patients!(@patient_sessions)
+    sort_and_filter_patients!(patient_sessions, programme: @programme)
+    @pagy, @patient_sessions = pagy_array(patient_sessions)
 
     session[:current_section] = "triage"
 
@@ -46,8 +61,6 @@ class TriagesController < ApplicationController
     authorize @triage
 
     if @triage.save(context: :consent)
-      @triage.process!
-
       @patient_session
         .reload
         .latest_consents(programme: @triage.programme)
@@ -56,7 +69,8 @@ class TriagesController < ApplicationController
       flash[:success] = {
         heading: "Triage outcome updated for",
         heading_link_text: @patient.full_name,
-        heading_link_href: session_patient_path(@session, id: @patient.id)
+        heading_link_href:
+          session_patient_programme_path(patient_id: @patient.id)
       }
 
       redirect_to redirect_path
@@ -69,7 +83,7 @@ class TriagesController < ApplicationController
 
   def set_session
     @session =
-      policy_scope(Session).includes(:location).find_by!(
+      policy_scope(Session).includes(:location, :programmes).find_by!(
         slug: params[:session_slug] || params[:slug]
       )
   end
@@ -87,11 +101,18 @@ class TriagesController < ApplicationController
       @patient.patient_sessions.preload_for_status.find_by!(session: @session)
   end
 
+  def set_programme
+    @programme =
+      @patient_session.programmes.find { it.type == params[:programme_type] }
+
+    raise ActiveRecord::RecordNotFound if @programme.nil?
+  end
+
   def set_triage
     @triage =
       Triage.new(
         patient: @patient,
-        programme: @session.programmes.first, # TODO: handle multiple programmes
+        programme: @programme,
         organisation: @session.organisation
       )
   end
@@ -107,11 +128,15 @@ class TriagesController < ApplicationController
 
   def redirect_path
     if session[:current_section] == "vaccinations"
-      session_vaccinations_path(@session)
+      session_vaccinations_path(@session, programme_type: @programme)
     elsif session[:current_section] == "consents"
-      session_consents_tab_path(@session, tab: params[:tab])
+      session_consents_tab_path(
+        @session,
+        tab: params[:tab],
+        programme_type: @programme
+      )
     else # if current_section is triage or anything else
-      session_triage_path(@session)
+      session_triage_path(@session, programme_type: @programme)
     end
   end
 end

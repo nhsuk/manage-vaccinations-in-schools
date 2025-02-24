@@ -31,65 +31,71 @@ FactoryBot.define do
     vaccine
     title { Faker::Lorem.question }
 
-    trait :for_hpv_vaccine do
-      vaccine { association :vaccine, :hpv }
-    end
-
-    trait :for_flu_vaccine do
-      vaccine { association :vaccine, :flu }
-    end
-
-    # HPV vaccine questions
     trait :severe_allergies do
-      for_hpv_vaccine
       title { "Does your child have any severe allergies?" }
     end
 
     trait :medical_conditions do
-      for_hpv_vaccine
       title do
         "Does your child have any medical conditions for which they receive treatment?"
       end
     end
 
     trait :severe_reaction do
-      for_hpv_vaccine
       title do
         "Has your child ever had a severe reaction to any medicines, including vaccines?"
       end
     end
 
     trait :extra_support do
-      for_hpv_vaccine
       title do
         "Does your child need extra support during vaccination sessions?"
       end
       hint { "For example, they’re autistic, or extremely anxious" }
     end
 
-    # Flu vaccine questions
+    trait :bleeding_disorder do
+      title do
+        "Does your child have a bleeding disorder or another medical condition they receive treatment for?"
+      end
+    end
+
+    trait :menacwy_vaccination do
+      title do
+        "Has your child already had the teenage meningitis vaccination (MenACWY)?"
+      end
+      hint do
+        "This is different from the meningitis vaccines given to babies and young children. " \
+          "It’s usually given once in Year 9 or 10. Some children may have had it before travelling abroad."
+      end
+    end
+
+    trait :td_ipv_vaccination do
+      title do
+        "Has your child had a tetanus, diphtheria and polio vaccination in the last 5 years?"
+      end
+      hint do
+        "Most children will not have had this vaccination since their 4-in-1 pre-school booster"
+      end
+    end
+
     trait :asthma do
-      for_flu_vaccine
       title { "Has your child been diagnosed with asthma?" }
     end
 
     trait :steroids do
-      for_flu_vaccine
       title { "Have they taken oral steroids in the last 2 weeks?" }
     end
 
     trait :intensive_care do
-      for_flu_vaccine
       title { "Have they been admitted to intensive care for their asthma?" }
     end
 
     trait :flu_vaccination do
-      for_flu_vaccine
       title { "Has your child had a flu vaccination in the last 5 months?" }
     end
 
     trait :immune_system do
-      for_flu_vaccine
       title do
         "Does your child have a disease or treatment that severely affects their immune system?"
       end
@@ -99,7 +105,6 @@ FactoryBot.define do
     end
 
     trait :household_immune_system do
-      for_flu_vaccine
       title do
         "Is anyone in your household currently having treatment that severely affects their immune system?"
       end
@@ -107,24 +112,20 @@ FactoryBot.define do
     end
 
     trait :egg_allergy do
-      for_flu_vaccine
       title do
         "Has your child ever been admitted to intensive care due to an allergic reaction to egg?"
       end
     end
 
     trait :allergies do
-      for_flu_vaccine
       title { "Does your child have any allergies to medication?" }
     end
 
     trait :reaction do
-      for_flu_vaccine
       title { "Has your child ever had a reaction to previous vaccinations?" }
     end
 
     trait :aspirin do
-      for_flu_vaccine
       title { "Does you child take regular aspirin?" }
       hint { "Also known as Salicylate therapy" }
     end

@@ -129,35 +129,35 @@ class Reports::OfflineSessionExporter
       .patient_sessions
       .eager_load(patient: :school)
       .preload(
-        :programmes,
         patient: {
           consents: [:parent, { patient: :parent_relationships }],
           triages: :performed_by,
           vaccination_records: %i[batch performed_by_user vaccine]
         },
+        session: :programmes,
         gillick_assessments: :performed_by
       )
       .order_by_name
   end
 
   def rows(patient_session:)
-    bg_color =
-      if patient_session.consent_refused?
-        "F7D4D1"
-      elsif patient_session.consent_conflicts?
-        "FFDC8E"
-      end
+    patient_session.programmes.flat_map do |programme|
+      bg_color =
+        if patient_session.consent_refused?(programme:)
+          "F7D4D1"
+        elsif patient_session.consent_conflicts?(programme:)
+          "FFDC8E"
+        end
 
-    row_style = {
-      strike: patient_session.patient.invalidated?,
-      bg_color:,
-      border: {
-        style: :thin,
-        color: "000000"
+      row_style = {
+        strike: patient_session.patient.invalidated?,
+        bg_color:,
+        border: {
+          style: :thin,
+          color: "000000"
+        }
       }
-    }
 
-    session.programmes.flat_map do |programme|
       vaccination_records =
         patient_session.vaccination_records(programme:, for_session: true)
 
@@ -209,7 +209,7 @@ class Reports::OfflineSessionExporter
       patient.address_postcode unless patient.restricted?
     )
     row[:nhs_number] = patient.nhs_number
-    row[:consent_status] = consent_status(patient_session:)
+    row[:consent_status] = consent_status(patient_session:, programme:)
     row[:consent_details] = consent_details(consents:)
     row[:health_question_answers] = Cell.new(
       health_question_answers(consents:),
@@ -293,7 +293,7 @@ class Reports::OfflineSessionExporter
     row[:anatomical_site] = Cell.new(
       allowed_values: ImmunisationImportRow::DELIVERY_SITES.keys
     )
-    row[:dose_sequence] = 1 # TODO: revisit this for other programmes
+    row[:dose_sequence] = programme.vaccinated_dose_sequence
     row[:reason_not_vaccinated] = Cell.new(
       allowed_values: ImmunisationImportRow::REASONS.keys
     )

@@ -17,7 +17,9 @@ class AppSessionSummaryComponent < ViewComponent::Base
       end
       summary_list.with_row do |row|
         row.with_key { "Programmes" }
-        row.with_value { programmes }
+        row.with_value do
+          render AppProgrammeTagsComponent.new(@session.programmes)
+        end
       end
       summary_list.with_row do |row|
         row.with_key { "Session dates" }
@@ -27,16 +29,16 @@ class AppSessionSummaryComponent < ViewComponent::Base
         row.with_key { "Consent period" }
         row.with_value { consent_period }
       end
-      if consent_link
+      if consent_form_links
         summary_list.with_row do |row|
-          row.with_key { "Consent link" }
-          row.with_value do
-            govuk_link_to(
-              "View parental consent form",
-              consent_link,
-              new_tab: true
-            )
-          end
+          row.with_key { "Consent links" }
+          row.with_value { consent_form_links }
+        end
+      end
+      if consent_form_downloads
+        summary_list.with_row do |row|
+          row.with_key { "Consent forms" }
+          row.with_value { consent_form_downloads }
         end
       end
       summary_list.with_row do |row|
@@ -50,12 +52,6 @@ class AppSessionSummaryComponent < ViewComponent::Base
 
   def type
     @session.location.clinic? ? "Community clinic" : "School session"
-  end
-
-  def programmes
-    tag.ul(class: "nhsuk-list") do
-      safe_join(@session.programmes.map { tag.li(_1.name) })
-    end
   end
 
   def dates
@@ -72,12 +68,40 @@ class AppSessionSummaryComponent < ViewComponent::Base
     helpers.session_consent_period(@session)
   end
 
-  def consent_link
+  def consent_form_links
     if @session.open_for_consent?
-      # TODO: handle multiple programmes
-      start_parent_interface_consent_forms_path(
-        @session,
-        @session.programmes.first
+      tag.ul(class: "nhsuk-list") do
+        safe_join(
+          ProgrammeGrouper
+            .call(@session.programmes)
+            .map do |_group, programmes|
+              tag.li(
+                govuk_link_to(
+                  "View #{programmes.map(&:name).to_sentence} parental consent form",
+                  start_parent_interface_consent_forms_path(
+                    @session,
+                    programmes.map(&:to_param).join("-")
+                  ),
+                  new_tab: true
+                )
+              )
+            end
+        )
+      end
+    end
+  end
+
+  def consent_form_downloads
+    tag.ul(class: "nhsuk-list") do
+      safe_join(
+        @session.programmes.map do
+          tag.li(
+            link_to(
+              "Download #{it.name} consent form (PDF)",
+              consent_form_programme_path(it)
+            )
+          )
+        end
       )
     end
   end

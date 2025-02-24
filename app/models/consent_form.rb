@@ -39,7 +39,6 @@
 #  consent_id                          :bigint
 #  location_id                         :bigint           not null
 #  organisation_id                     :bigint           not null
-#  programme_id                        :bigint           not null
 #  school_id                           :bigint
 #
 # Indexes
@@ -48,7 +47,6 @@
 #  index_consent_forms_on_location_id      (location_id)
 #  index_consent_forms_on_nhs_number       (nhs_number)
 #  index_consent_forms_on_organisation_id  (organisation_id)
-#  index_consent_forms_on_programme_id     (programme_id)
 #  index_consent_forms_on_school_id        (school_id)
 #
 # Foreign Keys
@@ -56,7 +54,6 @@
 #  fk_rails_...  (consent_id => consents.id)
 #  fk_rails_...  (location_id => locations.id)
 #  fk_rails_...  (organisation_id => organisations.id)
-#  fk_rails_...  (programme_id => programmes.id)
 #  fk_rails_...  (school_id => locations.id)
 #
 
@@ -78,14 +75,19 @@ class ConsentForm < ApplicationRecord
 
   belongs_to :consent, optional: true
   belongs_to :location
-  belongs_to :programme
   belongs_to :school, class_name: "Location", optional: true
   belongs_to :organisation
 
   has_many :notify_log_entries
+  has_many :consent_form_programmes,
+           -> { joins(:programme).order(:"programme.type") },
+           dependent: :destroy
 
   has_one :team, through: :location
+
+  has_many :programmes, through: :consent_form_programmes
   has_many :eligible_schools, through: :organisation, source: :schools
+  has_many :vaccines, through: :programmes
 
   enum :response, { given: 0, refused: 1 }, prefix: "consent"
   enum :reason,
@@ -137,8 +139,6 @@ class ConsentForm < ApplicationRecord
 
   normalizes :parent_email, with: EmailAddressNormaliser.new
   normalizes :parent_phone, with: PhoneNumberNormaliser.new
-
-  validates :programme, inclusion: { in: -> { _1.organisation.programmes } }
 
   validates :address_line_1,
             :address_line_2,
@@ -258,8 +258,6 @@ class ConsentForm < ApplicationRecord
     validate :health_answers_valid?
   end
 
-  delegate :vaccines, to: :programme
-
   def wizard_steps
     [
       :name,
@@ -324,12 +322,27 @@ class ConsentForm < ApplicationRecord
   end
 
   def original_session
+    # The session that the consent form was filled out for.
     @original_session ||=
-      Session.has_programme(programme).find_by(
-        academic_year:,
-        location:,
-        organisation:
-      )
+      Session
+        .joins(:programmes)
+        .where(programmes:)
+        .preload(:programmes)
+        .find_by(academic_year:, location:, organisation:)
+  end
+
+  def actual_session
+    # The session that the patient is expected to be seen in.
+    @actual_session ||=
+      (location_is_clinic? && original_session) ||
+        (
+          school &&
+            school
+              .sessions
+              .includes(:session_dates)
+              .for_current_academic_year
+              .first
+        ) || organisation.generic_clinic_session
   end
 
   def find_or_create_parent_with_relationship_to!(patient:)
@@ -399,7 +412,13 @@ class ConsentForm < ApplicationRecord
         school_move.update!(source: :parental_consent_form)
       end
 
-      Consent.from_consent_form!(self, patient:, current_user:)
+      Consent
+        .from_consent_form!(self, patient:, current_user:)
+        .each do |consent|
+          if consent.triage_needed?
+            patient.triages.where(programme: consent.programme).invalidate_all
+          end
+        end
     end
   end
 
@@ -407,24 +426,6 @@ class ConsentForm < ApplicationRecord
     return nil if education_setting_school?
 
     education_setting_home?
-  end
-
-  def actual_upcoming_session
-    # HACK: Remove this method once we're only sending emails after the nurse
-    # has confirmed the school move, at the moment we're assuming the move
-    # will be confirmed and the patient will be left in the community clinic.
-
-    patient = Patient.new
-
-    school_move =
-      if school
-        SchoolMove.new(patient:, school:)
-      else
-        SchoolMove.new(patient:, home_educated:, organisation:)
-      end
-
-    # Intentionally using a private method, as this is a hack.
-    school_move.send(:find_replacement_session, move_to_school: false)
   end
 
   private
@@ -439,7 +440,7 @@ class ConsentForm < ApplicationRecord
   end
 
   def injection_offered_as_alternative?
-    refused_and_not_had_it_already? && programme.flu?
+    refused_and_not_had_it_already? && programmes.any?(&:flu?)
     # checking for flu here is a simplification
     # the actual logic is: if the parent has refused a nasal vaccine AND the session is for a nasal vaccine
     # AND the SAIS organisation offers an alternative injection vaccine, then show the injection step
@@ -528,7 +529,7 @@ class ConsentForm < ApplicationRecord
     return unless health_answers.empty?
 
     # TODO: handle multiple active vaccines
-    vaccine = programme.vaccines.active.first
+    vaccine = vaccines.select(&:active?).first
 
     self.health_answers = vaccine.health_questions.to_health_answers
   end

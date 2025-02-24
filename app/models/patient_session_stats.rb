@@ -1,9 +1,14 @@
 # frozen_string_literal: true
 
 class PatientSessionStats
-  def initialize(patient_sessions, keys: nil)
+  def initialize(patient_sessions, programme:, keys: nil)
     @patient_sessions =
-      patient_sessions.sort_by(&:created_at).reverse.uniq(&:patient_id)
+      patient_sessions
+        .sort_by(&:created_at)
+        .reverse
+        .uniq(&:patient_id)
+        .select { it.programmes.include?(programme) }
+    @programme = programme
     @keys =
       keys ||
         %i[
@@ -27,6 +32,8 @@ class PatientSessionStats
 
   private
 
+  attr_reader :programme
+
   def statistics
     @statistics ||=
       @keys.index_with do |key|
@@ -37,26 +44,28 @@ class PatientSessionStats
   def include_in_statistics?(patient_session, key)
     case key
     when :with_consent_given
-      patient_session.consent_given?
+      patient_session.consent_given?(programme:)
     when :with_consent_refused
-      patient_session.consent_refused?
+      patient_session.consent_refused?(programme:)
     when :with_conflicting_consent
-      patient_session.consent_conflicts?
+      patient_session.consent_conflicts?(programme:)
     when :without_a_response
-      patient_session.no_consent?
+      patient_session.no_consent?(programme:)
     when :needing_triage
-      patient_session.consent_given_triage_needed? ||
-        patient_session.triaged_kept_in_triage?
+      patient_session.consent_given_triage_needed?(programme:) ||
+        patient_session.historical_vaccination_triage_needed?(programme:) ||
+        patient_session.triaged_kept_in_triage?(programme:)
     when :vaccinate
-      patient_session.triaged_ready_to_vaccinate? ||
-        patient_session.consent_given_triage_not_needed?
+      patient_session.triaged_ready_to_vaccinate?(programme:) ||
+        patient_session.consent_given_triage_not_needed?(programme:)
     when :vaccinated
-      patient_session.vaccinated?
+      patient_session.vaccinated?(programme:)
     when :could_not_vaccinate
-      patient_session.delay_vaccination? || patient_session.consent_refused? ||
-        patient_session.consent_conflicts? ||
-        patient_session.triaged_do_not_vaccinate? ||
-        patient_session.unable_to_vaccinate?
+      patient_session.delay_vaccination?(programme:) ||
+        patient_session.consent_refused?(programme:) ||
+        patient_session.consent_conflicts?(programme:) ||
+        patient_session.triaged_do_not_vaccinate?(programme:) ||
+        patient_session.unable_to_vaccinate?(programme:)
     when :not_registered
       patient_session.todays_attendance&.attending.nil?
     end

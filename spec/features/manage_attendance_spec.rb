@@ -41,9 +41,9 @@ describe "Manage attendance" do
   end
 
   def given_my_organisation_is_running_an_hpv_vaccination_programme
-    @programme = create(:programme, :hpv_all_vaccines)
+    @programmes = [create(:programme, :hpv_all_vaccines)]
     @organisation =
-      create(:organisation, :with_one_nurse, programmes: [@programme])
+      create(:organisation, :with_one_nurse, programmes: @programmes)
   end
 
   def and_there_is_a_vaccination_session_today_with_a_patient_ready_to_vaccinate
@@ -52,7 +52,7 @@ describe "Manage attendance" do
       create(
         :session,
         :today,
-        programme: @programme,
+        programmes: @programmes,
         organisation: @organisation,
         location:
       )
@@ -61,7 +61,7 @@ describe "Manage attendance" do
       :patient_session,
       3,
       :consent_given_triage_not_needed,
-      programme: @programme,
+      programmes: @programmes,
       session: @session
     )
   end

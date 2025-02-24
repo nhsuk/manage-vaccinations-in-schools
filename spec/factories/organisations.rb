@@ -45,7 +45,7 @@ FactoryBot.define do
     end
 
     trait :with_generic_clinic do
-      after(:create) do |organisation, _evaluator|
+      after(:create) do |organisation|
         create(:generic_clinic, team: organisation.generic_team)
       end
     end

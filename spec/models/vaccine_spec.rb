@@ -68,21 +68,17 @@ describe Vaccine do
 
       it { should eq(%w[left_arm_upper_position right_arm_upper_position]) }
     end
-  end
 
-  describe "#maximum_dose_sequence" do
-    subject(:maximum_dose_sequence) { vaccine.maximum_dose_sequence }
+    context "with an MenACWY vaccine" do
+      let(:vaccine) { build(:vaccine, :menacwy) }
 
-    context "with a Flu vaccine" do
-      let(:vaccine) { build(:vaccine, :flu) }
-
-      it { should eq(1) }
+      it { should eq(%w[left_arm_upper_position right_arm_upper_position]) }
     end
 
-    context "with an HPV vaccine" do
-      let(:vaccine) { build(:vaccine, :hpv) }
+    context "with an Td/IPV vaccine" do
+      let(:vaccine) { build(:vaccine, :td_ipv) }
 
-      it { should eq(3) }
+      it { should eq(%w[left_arm_upper_position right_arm_upper_position]) }
     end
   end
 
@@ -99,6 +95,34 @@ describe Vaccine do
       let(:vaccine) { build(:vaccine, :hpv) }
 
       it { should be(false) }
+    end
+  end
+
+  describe "#available_delivery_methods" do
+    subject(:available_delivery_methods) { vaccine.available_delivery_methods }
+
+    context "with a Flu vaccine" do
+      let(:vaccine) { build(:vaccine, :flu) }
+
+      it { should eq(%w[nasal_spray]) }
+    end
+
+    context "with an HPV vaccine" do
+      let(:vaccine) { build(:vaccine, :hpv) }
+
+      it { should eq(%w[intramuscular subcutaneous]) }
+    end
+
+    context "with an MenACWY vaccine" do
+      let(:vaccine) { build(:vaccine, :menacwy) }
+
+      it { should eq(%w[intramuscular subcutaneous]) }
+    end
+
+    context "with an Td/IPV vaccine" do
+      let(:vaccine) { build(:vaccine, :td_ipv) }
+
+      it { should eq(%w[intramuscular subcutaneous]) }
     end
   end
 end

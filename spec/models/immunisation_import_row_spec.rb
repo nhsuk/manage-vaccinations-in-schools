@@ -165,6 +165,21 @@ describe ImmunisationImportRow do
       end
     end
 
+    context "with a date of vaccination before the child was born" do
+      around { |example| freeze_time { example.run } }
+
+      let(:data) do
+        { "PERSON_DOB" => "20100101", "DATE_OF_VACCINATION" => "20090101" }
+      end
+
+      it "has an error" do
+        expect(immunisation_import_row).to be_invalid
+        expect(immunisation_import_row.errors[:date_of_vaccination]).to include(
+          "The vaccination date is before the date of birth"
+        )
+      end
+    end
+
     context "when vaccinated and a reason not given" do
       let(:data) do
         { "VACCINATED" => "Y", "REASON_NOT_VACCINATED" => "unwell" }
@@ -1195,6 +1210,14 @@ describe ImmunisationImportRow do
       let(:data) { { "VACCINE_GIVEN" => "Gardasil9", "DOSE_SEQUENCE" => "1" } }
 
       it { should eq(1) }
+    end
+
+    %w[1P 2P 3P 1B 2B].each_with_index do |value, index|
+      context "with a special value of #{value}" do
+        let(:data) { { "DOSE_SEQUENCE" => value } }
+
+        it { should eq(index + 1) }
+      end
     end
   end
 

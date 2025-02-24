@@ -6,7 +6,8 @@ describe AppTriageNotesComponent do
   let(:component) { described_class.new(patient_session:, programme:) }
 
   let(:programme) { create(:programme) }
-  let(:patient_session) { create(:patient_session, programme:) }
+  let(:session) { create(:session, programmes: [programme]) }
+  let(:patient_session) { create(:patient_session, session:) }
   let(:patient) { patient_session.patient }
 
   before { patient_session.strict_loading!(false) }

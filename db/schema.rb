@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_02_10_092331) do
+ActiveRecord::Schema[8.0].define(version: 2025_02_21_155425) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -92,6 +92,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_10_092331) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "rows_count"
+    t.integer "year_groups", default: [], null: false, array: true
     t.index ["organisation_id"], name: "index_class_imports_on_organisation_id"
     t.index ["session_id"], name: "index_class_imports_on_session_id"
     t.index ["uploaded_by_user_id"], name: "index_class_imports_on_uploaded_by_user_id"
@@ -152,13 +153,12 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_10_092331) do
     t.index ["cohort_import_id", "patient_id"], name: "idx_on_cohort_import_id_patient_id_7864d1a8b0", unique: true
   end
 
-  create_table "cohorts", force: :cascade do |t|
-    t.bigint "organisation_id", null: false
-    t.integer "birth_academic_year", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["organisation_id", "birth_academic_year"], name: "index_cohorts_on_organisation_id_and_birth_academic_year", unique: true
-    t.index ["organisation_id"], name: "index_cohorts_on_organisation_id"
+  create_table "consent_form_programmes", force: :cascade do |t|
+    t.bigint "programme_id", null: false
+    t.bigint "consent_form_id", null: false
+    t.index ["consent_form_id"], name: "index_consent_form_programmes_on_consent_form_id"
+    t.index ["programme_id", "consent_form_id"], name: "idx_on_programme_id_consent_form_id_2113cb7f37", unique: true
+    t.index ["programme_id"], name: "index_consent_form_programmes_on_programme_id"
   end
 
   create_table "consent_forms", force: :cascade do |t|
@@ -187,7 +187,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_10_092331) do
     t.string "parent_relationship_other_name"
     t.string "parent_relationship_type"
     t.boolean "parent_phone_receive_updates", default: false, null: false
-    t.bigint "programme_id", null: false
     t.boolean "school_confirmed"
     t.bigint "location_id", null: false
     t.bigint "organisation_id", null: false
@@ -202,20 +201,24 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_10_092331) do
     t.index ["location_id"], name: "index_consent_forms_on_location_id"
     t.index ["nhs_number"], name: "index_consent_forms_on_nhs_number"
     t.index ["organisation_id"], name: "index_consent_forms_on_organisation_id"
-    t.index ["programme_id"], name: "index_consent_forms_on_programme_id"
     t.index ["school_id"], name: "index_consent_forms_on_school_id"
+  end
+
+  create_table "consent_notification_programmes", force: :cascade do |t|
+    t.bigint "programme_id", null: false
+    t.bigint "consent_notification_id", null: false
+    t.index ["consent_notification_id"], name: "idx_on_consent_notification_id_bde310472f"
+    t.index ["programme_id", "consent_notification_id"], name: "idx_on_programme_id_consent_notification_id_e185bde5f5", unique: true
+    t.index ["programme_id"], name: "index_consent_notification_programmes_on_programme_id"
   end
 
   create_table "consent_notifications", force: :cascade do |t|
     t.bigint "patient_id", null: false
-    t.bigint "programme_id", null: false
     t.datetime "sent_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
     t.integer "type", null: false
     t.bigint "sent_by_user_id"
     t.bigint "session_id", null: false
-    t.index ["patient_id", "programme_id"], name: "index_consent_notifications_on_patient_id_and_programme_id"
     t.index ["patient_id"], name: "index_consent_notifications_on_patient_id"
-    t.index ["programme_id"], name: "index_consent_notifications_on_programme_id"
     t.index ["sent_by_user_id"], name: "index_consent_notifications_on_sent_by_user_id"
     t.index ["session_id"], name: "index_consent_notifications_on_session_id"
   end
@@ -463,15 +466,15 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_10_092331) do
   create_table "notify_log_entries", force: :cascade do |t|
     t.integer "type", null: false
     t.uuid "template_id", null: false
-    t.string "recipient"
     t.datetime "created_at", null: false
     t.bigint "consent_form_id"
     t.bigint "patient_id"
     t.bigint "sent_by_user_id"
     t.uuid "delivery_id"
-    t.bigint "parent_id"
     t.integer "delivery_status", default: 0, null: false
+    t.bigint "parent_id"
     t.string "recipient_deterministic"
+    t.string "recipient"
     t.index ["consent_form_id"], name: "index_notify_log_entries_on_consent_form_id"
     t.index ["delivery_id"], name: "index_notify_log_entries_on_delivery_id"
     t.index ["parent_id"], name: "index_notify_log_entries_on_parent_id"
@@ -567,7 +570,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_10_092331) do
     t.integer "gender_code", default: 0, null: false
     t.boolean "home_educated"
     t.jsonb "pending_changes", default: {}, null: false
-    t.bigint "cohort_id"
     t.string "registration"
     t.date "date_of_death"
     t.datetime "date_of_death_recorded_at"
@@ -579,7 +581,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_10_092331) do
     t.bigint "gp_practice_id"
     t.integer "birth_academic_year", null: false
     t.bigint "organisation_id"
-    t.index ["cohort_id"], name: "index_patients_on_cohort_id"
     t.index ["family_name", "given_name"], name: "index_patients_on_names_family_first"
     t.index ["family_name"], name: "index_patients_on_family_name_trigram", opclass: :gin_trgm_ops, using: :gin
     t.index ["given_name", "family_name"], name: "index_patients_on_names_given_first"
@@ -609,12 +610,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_10_092331) do
     t.datetime "updated_at", null: false
     t.string "type", null: false
     t.index ["type"], name: "index_programmes_on_type", unique: true
-  end
-
-  create_table "programmes_sessions", id: false, force: :cascade do |t|
-    t.bigint "session_id", null: false
-    t.bigint "programme_id", null: false
-    t.index ["session_id", "programme_id"], name: "index_programmes_sessions_on_session_id_and_programme_id", unique: true
   end
 
   create_table "school_move_log_entries", force: :cascade do |t|
@@ -675,6 +670,14 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_10_092331) do
     t.index ["session_id"], name: "index_session_notifications_on_session_id"
   end
 
+  create_table "session_programmes", force: :cascade do |t|
+    t.bigint "session_id", null: false
+    t.bigint "programme_id", null: false
+    t.index ["programme_id"], name: "index_session_programmes_on_programme_id"
+    t.index ["session_id", "programme_id"], name: "index_session_programmes_on_session_id_and_programme_id", unique: true
+    t.index ["session_id"], name: "index_session_programmes_on_session_id"
+  end
+
   create_table "sessions", force: :cascade do |t|
     t.bigint "location_id", null: false
     t.datetime "created_at", null: false
@@ -683,7 +686,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_10_092331) do
     t.bigint "organisation_id", null: false
     t.integer "academic_year", null: false
     t.integer "days_before_consent_reminders"
-    t.datetime "closed_at"
     t.string "slug", null: false
     t.date "send_invitations_at"
     t.index ["organisation_id", "location_id", "academic_year"], name: "idx_on_organisation_id_location_id_academic_year_3496b72d0c", unique: true
@@ -812,14 +814,15 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_10_092331) do
   add_foreign_key "cohort_imports_parents", "parents"
   add_foreign_key "cohort_imports_patients", "cohort_imports"
   add_foreign_key "cohort_imports_patients", "patients"
-  add_foreign_key "cohorts", "organisations"
+  add_foreign_key "consent_form_programmes", "consent_forms"
+  add_foreign_key "consent_form_programmes", "programmes"
   add_foreign_key "consent_forms", "consents"
   add_foreign_key "consent_forms", "locations"
   add_foreign_key "consent_forms", "locations", column: "school_id"
   add_foreign_key "consent_forms", "organisations"
-  add_foreign_key "consent_forms", "programmes"
+  add_foreign_key "consent_notification_programmes", "consent_notifications"
+  add_foreign_key "consent_notification_programmes", "programmes"
   add_foreign_key "consent_notifications", "patients"
-  add_foreign_key "consent_notifications", "programmes"
   add_foreign_key "consent_notifications", "sessions"
   add_foreign_key "consent_notifications", "users", column: "sent_by_user_id"
   add_foreign_key "consents", "organisations"
@@ -855,14 +858,11 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_10_092331) do
   add_foreign_key "parent_relationships", "patients"
   add_foreign_key "patient_sessions", "patients"
   add_foreign_key "patient_sessions", "sessions"
-  add_foreign_key "patients", "cohorts"
   add_foreign_key "patients", "locations", column: "gp_practice_id"
   add_foreign_key "patients", "locations", column: "school_id"
   add_foreign_key "patients", "organisations"
   add_foreign_key "pre_screenings", "patient_sessions"
   add_foreign_key "pre_screenings", "users", column: "performed_by_user_id"
-  add_foreign_key "programmes_sessions", "programmes"
-  add_foreign_key "programmes_sessions", "sessions"
   add_foreign_key "school_move_log_entries", "locations", column: "school_id"
   add_foreign_key "school_move_log_entries", "patients"
   add_foreign_key "school_move_log_entries", "users"
@@ -875,6 +875,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_10_092331) do
   add_foreign_key "session_notifications", "patients"
   add_foreign_key "session_notifications", "sessions"
   add_foreign_key "session_notifications", "users", column: "sent_by_user_id"
+  add_foreign_key "session_programmes", "programmes"
+  add_foreign_key "session_programmes", "sessions"
   add_foreign_key "sessions", "organisations"
   add_foreign_key "teams", "organisations"
   add_foreign_key "triage", "organisations"

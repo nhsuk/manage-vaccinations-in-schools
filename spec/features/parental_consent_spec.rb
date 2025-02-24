@@ -72,7 +72,7 @@ describe "Parental consent" do
     click_on "Continue"
 
     expect(page).to have_content("About you")
-    fill_in "Your name", with: "Jane #{@child.family_name}"
+    fill_in "Full name", with: "Jane #{@child.family_name}"
     choose "Mum" # Your relationship to the child
     fill_in "Email address", with: "jane@example.com"
     fill_in "Phone number", with: "07123456789"
@@ -112,14 +112,14 @@ describe "Parental consent" do
   end
 
   def and_i_answer_no_to_all_the_medical_questions
-    until page.has_content?("Check your answers and confirm")
+    until page.has_content?("Check and confirm")
       choose "No"
       click_on "Continue"
     end
   end
 
   def then_i_can_check_my_answers
-    expect(page).to have_content("Check your answers and confirm")
+    expect(page).to have_content("Check and confirm")
     expect(page).to have_content("Child’s name#{@child.full_name}")
   end
 

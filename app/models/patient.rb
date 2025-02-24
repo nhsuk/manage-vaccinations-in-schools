@@ -27,14 +27,12 @@
 #  updated_from_pds_at       :datetime
 #  created_at                :datetime         not null
 #  updated_at                :datetime         not null
-#  cohort_id                 :bigint
 #  gp_practice_id            :bigint
 #  organisation_id           :bigint
 #  school_id                 :bigint
 #
 # Indexes
 #
-#  index_patients_on_cohort_id            (cohort_id)
 #  index_patients_on_family_name_trigram  (family_name) USING gin
 #  index_patients_on_given_name_trigram   (given_name) USING gin
 #  index_patients_on_gp_practice_id       (gp_practice_id)
@@ -46,7 +44,6 @@
 #
 # Foreign Keys
 #
-#  fk_rails_...  (cohort_id => cohorts.id)
 #  fk_rails_...  (gp_practice_id => locations.id)
 #  fk_rails_...  (organisation_id => organisations.id)
 #  fk_rails_...  (school_id => locations.id)
@@ -58,7 +55,6 @@ class Patient < ApplicationRecord
   include Invalidatable
   include PendingChangesConcern
   include Schoolable
-  include YearGroupConcern
 
   audited
 
@@ -87,8 +83,8 @@ class Patient < ApplicationRecord
   has_many :session_attendances, through: :patient_sessions
   has_many :sessions, through: :patient_sessions
 
-  has_many :upcoming_sessions,
-           -> { upcoming },
+  has_many :sessions_for_current_academic_year,
+           -> { for_current_academic_year },
            through: :patient_sessions,
            source: :session
 
@@ -109,13 +105,6 @@ class Patient < ApplicationRecord
   scope :restricted, -> { where.not(restricted_at: nil) }
 
   scope :with_notice, -> { deceased.or(restricted).or(invalidated) }
-
-  scope :unvaccinated_for,
-        ->(programmes:) do
-          includes(:vaccination_records).reject do |patient|
-            programmes.all? { |programme| patient.vaccinated?(programme) }
-          end
-        end
 
   scope :in_programme,
         ->(programme) do
@@ -144,6 +133,8 @@ class Patient < ApplicationRecord
         end
 
   validates :given_name, :family_name, :date_of_birth, presence: true
+
+  validates :birth_academic_year, comparison: { greater_than_or_equal_to: 1990 }
 
   validates :nhs_number,
             uniqueness: true,
@@ -239,20 +230,16 @@ class Patient < ApplicationRecord
     results
   end
 
-  def has_consent?(programme)
-    consents.any? { _1.programme_id == programme.id }
+  def year_group
+    birth_academic_year.to_year_group
+  end
+
+  def year_group_changed?
+    birth_academic_year_changed?
   end
 
   def as_json(options = {})
     super.merge("full_name" => full_name, "age" => age)
-  end
-
-  def vaccinated?(programme)
-    # TODO: This logic doesn't work for vaccinations that require multiple doses.
-
-    vaccination_records.any? do
-      (_1.administered? || _1.already_had?) && _1.programme_id == programme.id
-    end
   end
 
   def deceased?
@@ -276,16 +263,13 @@ class Patient < ApplicationRecord
       self.date_of_death = pds_patient.date_of_death
 
       if date_of_death_changed?
-        clear_upcoming_sessions unless date_of_death.nil?
+        clear_sessions_for_current_academic_year! unless date_of_death.nil?
         self.date_of_death_recorded_at = Time.current
       end
 
       # If we've got a response from DPS we know the patient is valid,
       # otherwise PDS will return a 404 status.
-      if invalidated?
-        self.invalidated_at = nil
-        add_to_upcoming_sessions!
-      end
+      self.invalidated_at = nil if invalidated?
 
       if pds_patient.restricted
         self.restricted_at = Time.current unless restricted?
@@ -312,17 +296,14 @@ class Patient < ApplicationRecord
   def invalidate!
     return if invalidated?
 
-    ActiveRecord::Base.transaction do
-      clear_upcoming_sessions
-      update!(invalidated_at: Time.current)
-    end
+    update!(invalidated_at: Time.current)
   end
 
   def dup_for_pending_changes
     dup.tap do |new_patient|
       new_patient.nhs_number = nil
 
-      upcoming_sessions.each do |session|
+      sessions_for_current_academic_year.each do |session|
         new_patient.patient_sessions.build(session:)
       end
 
@@ -335,19 +316,6 @@ class Patient < ApplicationRecord
         )
       end
     end
-  end
-
-  def add_to_upcoming_sessions!
-    school_move =
-      if school
-        SchoolMove.new(patient: self, school:)
-      elsif organisation
-        SchoolMove.new(patient: self, home_educated:, organisation:)
-      end
-
-    return if school_move.nil?
-
-    school_move.confirm!
   end
 
   def self.from_consent_form(consent_form)
@@ -395,15 +363,10 @@ class Patient < ApplicationRecord
     end
   end
 
-  def clear_upcoming_sessions
+  def clear_sessions_for_current_academic_year!
     patient_sessions
-      .includes(
-        :programmes,
-        :gillick_assessments,
-        :session_attendances,
-        patient: :vaccination_records
-      )
-      .where(session: upcoming_sessions)
+      .preload_for_status
+      .where(session: sessions_for_current_academic_year)
       .find_each(&:destroy_if_safe!)
   end
 end

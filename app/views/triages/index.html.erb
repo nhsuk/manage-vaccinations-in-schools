@@ -13,7 +13,7 @@
 <%= render AppSecondaryNavigationComponent.new do |nav| %>
   <% TAB_PATHS[:triage].each do |tab, state| %>
     <% nav.with_item(selected: @current_tab == state,
-                     href: session_triage_tab_path(@session, tab:)) do %>
+                     href: session_triage_tab_path(@session, tab:, programme_type: @programme)) do %>
       <%= t("patients_table.#{state}.label") %>
       <%= render AppCountComponent.new(count: @tab_counts[state]) %>
     <% end %>
@@ -21,10 +21,15 @@
 <% end %>
 
 <%= render AppSessionPatientTableComponent.new(
-      caption: t("patients_table.#{@current_tab}.caption", children: t("children", count: @patient_sessions.count)),
+      caption: t("patients_table.#{@current_tab}.caption", children: t("children", count: @pagy.count)),
       columns: %i[name year_group],
       params:,
       patient_sessions: @patient_sessions,
+      programme: @programme,
       section: :triage,
-      year_groups: @session.year_groups,
+      session: @session,
     ) %>
+
+<div class="nhsuk-u-margin-top-6">
+  <%= govuk_pagination(pagy: @pagy) %>
+</div>

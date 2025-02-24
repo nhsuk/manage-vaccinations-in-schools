@@ -1,22 +1,18 @@
 # frozen_string_literal: true
 
 class AppConsentComponent < ViewComponent::Base
-  attr_reader :patient_session, :section, :tab
+  attr_reader :patient_session, :section, :tab, :programme
 
-  def initialize(patient_session:, section:, tab:)
+  def initialize(patient_session:, programme:, section:, tab:)
     super
 
     @patient_session = patient_session
+    @programme = programme
     @section = section
     @tab = tab
   end
 
-  delegate :patient, to: :patient_session
-  delegate :session, to: :patient_session
-
-  def programme
-    patient_session.programmes.first # TODO: handle multiple programmes
-  end
+  delegate :patient, :session, to: :patient_session
 
   def consents
     @consents ||=
@@ -28,13 +24,13 @@ class AppConsentComponent < ViewComponent::Base
       patient
         .consent_notifications
         .request
-        .where(programme: session.programmes)
+        .has_programme(programme)
         .order(sent_at: :desc)
         .first
   end
 
   def can_send_consent_request?
-    patient_session.no_consent? && patient.send_notifications? &&
+    patient_session.no_consent?(programme:) && patient.send_notifications? &&
       session.open_for_consent? && patient.parents.any?
   end
 

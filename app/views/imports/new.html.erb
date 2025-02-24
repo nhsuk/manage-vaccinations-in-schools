@@ -10,9 +10,17 @@
     <%= f.govuk_radio_button(
           :type, :children,
           label: { text: "Child records" },
-          hint: { text: "Records of children from a CHIS, local authority or school, used to create cohorts " },
+          hint: { text: "Records of children from a CHIS, local authority or school, used to create cohorts" },
           link_errors: true,
         ) %>
+
+    <%= f.govuk_radio_button(
+          :type, "class-list",
+          label: { text: "Class list records" },
+          hint: { text: "Records of children from a school, used to update cohorts" },
+          link_errors: true,
+        ) %>
+
     <%= f.govuk_radio_button(
           :type, :vaccinations,
           label: { text: "Vaccination records" },

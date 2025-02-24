@@ -1,5 +1,8 @@
 <% content_for :before_main do %>
-  <%= render AppBacklinkComponent.new(session_patient_path(id: @patient.id), name: "#{@section.pluralize} page") %>
+  <%= render AppBacklinkComponent.new(
+        session_patient_programme_path(patient_id: @patient.id, programme_type: @patient_session.programmes.first.type),
+        name: "#{@section.pluralize} page",
+      ) %>
 <% end %>
 
 <% title = "Is #{@patient.full_name} attending today’s session?" %>

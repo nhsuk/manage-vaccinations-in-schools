@@ -29,41 +29,7 @@ describe "Parental consent school" do
 
     when_the_nurse_checks_the_school_moves
     then_the_nurse_should_see_one_move
-    and_the_nurse_confirms_the_move(and_moves_to_school: false)
-
-    when_the_nurse_checks_the_patient
-    then_the_nurse_should_see_the_school
-  end
-
-  scenario "Child attending a clinic goes to a school and nurse moves the child to the school session" do
-    stub_pds_search_to_return_no_patients
-
-    given_an_hpv_programme_is_underway
-    and_an_upcoming_school_session_exists
-
-    when_i_go_to_the_consent_form
-    and_i_fill_in_my_childs_name_and_birthday
-    then_i_see_a_page_asking_if_my_child_is_home_educated
-
-    when_i_choose_no_they_go_to_a_school
-    then_i_see_a_page_asking_for_the_childs_school
-
-    when_i_click_continue
-    then_i_see_an_error
-
-    when_i_choose_a_school
-    then_i_see_the_parent_step
-
-    when_i_give_consent
-    and_i_answer_no_to_all_the_medical_questions
-    then_i_can_check_my_answers
-
-    when_i_submit_the_consent_form
-    then_i_see_a_confirmation_page
-
-    when_the_nurse_checks_the_school_moves
-    then_the_nurse_should_see_one_move
-    and_the_nurse_confirms_the_move(and_moves_to_school: true)
+    and_the_nurse_confirms_the_move
 
     when_the_nurse_checks_the_patient(in_the_school: true)
     then_the_nurse_should_see_the_school
@@ -221,7 +187,7 @@ describe "Parental consent school" do
 
   def when_i_give_consent
     expect(page).to have_content("About you")
-    fill_in "Your name", with: "Jane #{@child.family_name}"
+    fill_in "Full name", with: "Jane #{@child.family_name}"
     choose "Mum" # Your relationship to the child
     fill_in "Email address", with: "jane@example.com"
     fill_in "Phone number", with: "07123456789"
@@ -245,14 +211,14 @@ describe "Parental consent school" do
   end
 
   def and_i_answer_no_to_all_the_medical_questions
-    until page.has_content?("Check your answers and confirm")
+    until page.has_content?("Check and confirm")
       choose "No"
       click_on "Continue"
     end
   end
 
   def then_i_can_check_my_answers
-    expect(page).to have_content("Check your answers and confirm")
+    expect(page).to have_content("Check and confirm")
     expect(page).to have_content("Child’s name#{@child.full_name}")
   end
 
@@ -281,17 +247,10 @@ describe "Parental consent school" do
     expect(page).to have_content("1 school move")
   end
 
-  def and_the_nurse_confirms_the_move(and_moves_to_school: nil)
+  def and_the_nurse_confirms_the_move
     expect(page).to have_content(@child.full_name)
     click_on "Review"
     choose "Update record with new school"
-
-    if and_moves_to_school
-      choose "Yes, move them to the upcoming school session"
-    elsif and_moves_to_school == false
-      choose "No, keep them in the community clinic"
-    end
-
     click_on "Update child record"
     expect(page).to have_content("Success")
   end

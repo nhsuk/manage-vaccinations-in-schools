@@ -78,7 +78,7 @@ FactoryBot.define do
     outcome { "administered" }
     performed_at { Time.current }
 
-    dose_sequence { 1 }
+    dose_sequence { programme.vaccinated_dose_sequence }
     uuid { SecureRandom.uuid }
 
     location_name { "Unknown" if session.nil? }

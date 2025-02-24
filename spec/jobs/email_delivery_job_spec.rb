@@ -34,22 +34,24 @@ describe EmailDeliveryJob do
         consent_form:,
         parent:,
         patient:,
-        programme:,
+        programmes:,
         sent_by:,
         vaccination_record:
       )
     end
 
     let(:template_name) { GOVUK_NOTIFY_EMAIL_TEMPLATES.keys.first }
-    let(:programme) { create(:programme) }
+    let(:programmes) { [create(:programme)] }
     let(:organisation) do
       create(
         :organisation,
         reply_to_id: "54bf1d28-8851-43f2-893d-1853f43a50cd",
-        programmes: [programme]
+        programmes:
       )
     end
-    let(:session) { create(:session, programme:, organisation:) }
+    let(:session) do
+      create(:session, programme: programmes.first, organisation:)
+    end
     let(:parent) { create(:parent, email: "test@example.com") }
     let(:consent) { nil }
     let(:consent_form) { nil }
@@ -63,7 +65,7 @@ describe EmailDeliveryJob do
         consent:,
         consent_form:,
         patient:,
-        programme:,
+        programmes:,
         vaccination_record:
       )
       perform_now
@@ -80,7 +82,7 @@ describe EmailDeliveryJob do
     end
 
     context "without a reply-to id" do
-      let(:organisation) { create(:organisation, programmes: [programme]) }
+      let(:organisation) { create(:organisation, programmes:) }
 
       it "sends a text using GOV.UK Notify" do
         expect(notifications_client).to receive(:send_email).with(
@@ -98,6 +100,7 @@ describe EmailDeliveryJob do
       notify_log_entry = NotifyLogEntry.last
       expect(notify_log_entry).to be_email
       expect(notify_log_entry.delivery_id).to eq(response.id)
+      expect(notify_log_entry.recipient).to eq("test@example.com")
       expect(notify_log_entry.recipient_deterministic).to eq("test@example.com")
       expect(notify_log_entry.template_id).to eq(
         GOVUK_NOTIFY_EMAIL_TEMPLATES[template_name]
@@ -118,12 +121,7 @@ describe EmailDeliveryJob do
 
     context "with a consent form" do
       let(:consent_form) do
-        create(
-          :consent_form,
-          programme:,
-          session:,
-          parent_email: "test@example.com"
-        )
+        create(:consent_form, session:, parent_email: "test@example.com")
       end
       let(:parent) { nil }
       let(:patient) { nil }
@@ -139,7 +137,7 @@ describe EmailDeliveryJob do
       end
 
       context "without a reply-to id" do
-        let(:organisation) { create(:organisation, programmes: [programme]) }
+        let(:organisation) { create(:organisation, programmes:) }
 
         it "sends a text using GOV.UK Notify" do
           expect(notifications_client).to receive(:send_email).with(
@@ -157,6 +155,7 @@ describe EmailDeliveryJob do
         notify_log_entry = NotifyLogEntry.last
         expect(notify_log_entry).to be_email
         expect(notify_log_entry.delivery_id).to eq(response.id)
+        expect(notify_log_entry.recipient).to eq("test@example.com")
         expect(notify_log_entry.recipient_deterministic).to eq(
           "test@example.com"
         )
@@ -168,7 +167,7 @@ describe EmailDeliveryJob do
 
       context "when the parent doesn't have a phone number" do
         let(:consent_form) do
-          create(:consent_form, programme:, session:, parent_email: nil)
+          create(:consent_form, session:, parent_email: nil)
         end
 
         it "doesn't send a text" do

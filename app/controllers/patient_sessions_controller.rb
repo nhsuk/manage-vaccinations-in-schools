@@ -2,6 +2,7 @@
 
 class PatientSessionsController < ApplicationController
   before_action :set_patient_session
+  before_action :set_programme, only: :show
   before_action :set_session
   before_action :set_patient
   before_action :set_section_and_tab
@@ -23,7 +24,6 @@ class PatientSessionsController < ApplicationController
         .eager_load(:location, :session, patient: %i[gp_practice school])
         .preload(
           :gillick_assessments,
-          :programmes,
           :session_attendances,
           patient: {
             consents: %i[parent],
@@ -32,7 +32,8 @@ class PatientSessionsController < ApplicationController
             vaccination_records: {
               vaccine: :programme
             }
-          }
+          },
+          session: :programmes
         )
         .find_by!(
           session: {
@@ -40,6 +41,13 @@ class PatientSessionsController < ApplicationController
           },
           patient_id: params.fetch(:id, params[:patient_id])
         )
+  end
+
+  def set_programme
+    @programme =
+      @patient_session.programmes.find { it.type == params[:programme_type] }
+
+    raise ActiveRecord::RecordNotFound if @programme.nil?
   end
 
   def set_session

@@ -3,7 +3,7 @@
 class ClassImportsController < ApplicationController
   include Pagy::Backend
 
-  before_action :set_session
+  before_action :set_draft_class_import, only: %i[new create]
   before_action :set_class_import, only: %i[show update]
 
   skip_after_action :verify_policy_scoped, only: %i[new create]
@@ -19,6 +19,7 @@ class ClassImportsController < ApplicationController
         session: @session,
         organisation: current_user.selected_organisation,
         uploaded_by: current_user,
+        year_groups: @draft_class_import.year_groups,
         **class_import_params
       )
 
@@ -34,7 +35,7 @@ class ClassImportsController < ApplicationController
       redirect_to imports_path, flash: { success: "Import processing started" }
     else
       ProcessImportJob.perform_now(@class_import)
-      redirect_to session_class_import_path(@session, @class_import)
+      redirect_to class_import_path(@class_import)
     end
   end
 
@@ -55,18 +56,21 @@ class ClassImportsController < ApplicationController
   def update
     @class_import.process!
 
-    redirect_to session_class_import_path(@session, @class_import)
+    redirect_to class_import_path(@class_import)
   end
 
   private
 
-  def set_session
-    @session =
-      policy_scope(Session).upcoming.find_by!(slug: params[:session_slug])
+  def set_draft_class_import
+    @draft_class_import =
+      DraftClassImport.new(request_session: session, current_user:)
+    @session = @draft_class_import.session
   end
 
   def set_class_import
-    @class_import = policy_scope(ClassImport).find(params[:id])
+    @class_import =
+      policy_scope(ClassImport).includes(:session).find(params[:id])
+    @session = @class_import.session
   end
 
   def class_import_params

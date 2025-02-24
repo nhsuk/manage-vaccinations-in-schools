@@ -6,7 +6,6 @@
 #
 #  id                            :bigint           not null, primary key
 #  academic_year                 :integer          not null
-#  closed_at                     :datetime
 #  days_before_consent_reminders :integer
 #  send_consent_requests_at      :date
 #  send_invitations_at           :date
@@ -81,10 +80,6 @@ FactoryBot.define do
 
     trait :completed do
       date { Date.current - 1.week }
-    end
-
-    trait :closed do
-      closed_at { Time.current }
     end
   end
 end

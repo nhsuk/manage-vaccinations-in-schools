@@ -17,10 +17,6 @@ en:
           apply: Use duplicate record
           discard: Keep previously uploaded record
           keep_both: Keep both records
-      school_move_form:
-        move_to_school_options:
-          false: No, keep them in the community clinic
-          true: Yes, move them to the upcoming school session
       vaccination_report:
         file_format_options:
           careplus: CarePlus

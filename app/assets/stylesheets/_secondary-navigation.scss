@@ -3,6 +3,13 @@
   @include govuk-font(19);
 }
 
+.app-secondary-navigation--sticky {
+  background-color: $color_nhsuk-grey-5;
+  position: sticky;
+  top: 0;
+  z-index: 99;
+}
+
 .app-secondary-navigation__link {
   @include govuk-link-common;
   @include govuk-link-style-no-visited-state;

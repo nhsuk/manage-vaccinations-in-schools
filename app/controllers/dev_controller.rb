@@ -75,7 +75,6 @@ class DevController < ApplicationController
     Faker::Config.locale = "en-GB"
 
     session = Session.includes(programmes: :vaccines).find(params[:session_id])
-    programme = session.programmes.first
 
     attributes =
       if ActiveModel::Type::Boolean.new.cast(params[:parent_phone])
@@ -85,15 +84,9 @@ class DevController < ApplicationController
       end
 
     consent_form =
-      FactoryBot.build(
-        :consent_form,
-        :draft,
-        programme:,
-        session:,
-        **attributes
-      )
+      FactoryBot.build(:consent_form, :draft, session:, **attributes)
 
-    vaccine = programme.vaccines.first
+    vaccine = consent_form.programmes.first.vaccines.first
     consent_form.health_answers = vaccine.health_questions.to_health_answers
     consent_form.save!
 

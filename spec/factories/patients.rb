@@ -27,14 +27,12 @@
 #  updated_from_pds_at       :datetime
 #  created_at                :datetime         not null
 #  updated_at                :datetime         not null
-#  cohort_id                 :bigint
 #  gp_practice_id            :bigint
 #  organisation_id           :bigint
 #  school_id                 :bigint
 #
 # Indexes
 #
-#  index_patients_on_cohort_id            (cohort_id)
 #  index_patients_on_family_name_trigram  (family_name) USING gin
 #  index_patients_on_given_name_trigram   (given_name) USING gin
 #  index_patients_on_gp_practice_id       (gp_practice_id)
@@ -46,7 +44,6 @@
 #
 # Foreign Keys
 #
-#  fk_rails_...  (cohort_id => cohorts.id)
 #  fk_rails_...  (gp_practice_id => locations.id)
 #  fk_rails_...  (organisation_id => organisations.id)
 #  fk_rails_...  (school_id => locations.id)
@@ -61,16 +58,16 @@ FactoryBot.define do
     transient do
       parents { [] }
       performed_by { association(:user) }
-      programme { session&.programmes&.first }
+      programmes { session&.programmes || [] }
       session { nil }
-      year_group { nil }
+      year_group { programmes.flat_map(&:year_groups).sort.uniq.first }
       location_name { nil }
       in_attendance { false }
     end
 
     organisation do
       session&.organisation || school&.organisation ||
-        association(:organisation, programmes: [programme].compact)
+        association(:organisation, programmes:)
     end
 
     nhs_number do
@@ -151,31 +148,37 @@ FactoryBot.define do
     end
 
     trait :consent_request_sent do
-      after(:create) do |patient, context|
+      after(:create) do |patient, evaluator|
         create(
           :consent_notification,
           :request,
           patient:,
-          programme: context.programme,
+          session:
+            evaluator.session ||
+              create(:session, programmes: evaluator.programmes),
+          programmes: evaluator.programmes,
           sent_at: 1.week.ago
         )
       end
     end
 
     trait :initial_consent_reminder_sent do
-      after(:create) do |patient, context|
+      after(:create) do |patient, evaluator|
         create(
           :consent_notification,
           :initial_reminder,
           patient:,
-          programme: context.programme
+          session:
+            evaluator.session ||
+              create(:session, programmes: evaluator.programmes),
+          programmes: evaluator.programmes
         )
       end
     end
 
     trait :consent_given_triage_not_needed do
       consents do
-        [
+        programmes.map do |programme|
           association(
             :consent,
             :given,
@@ -184,13 +187,13 @@ FactoryBot.define do
             organisation:,
             programme:
           )
-        ]
+        end
       end
     end
 
     trait :consent_given_triage_needed do
       consents do
-        [
+        programmes.map do |programme|
           association(
             :consent,
             :given,
@@ -200,13 +203,13 @@ FactoryBot.define do
             programme:,
             organisation:
           )
-        ]
+        end
       end
     end
 
     trait :consent_refused do
       consents do
-        [
+        programmes.map do |programme|
           association(
             :consent,
             :refused,
@@ -215,13 +218,13 @@ FactoryBot.define do
             organisation:,
             programme:
           )
-        ]
+        end
       end
     end
 
     trait :consent_refused_with_notes do
       consents do
-        [
+        programmes.map do |programme|
           association(
             :consent,
             :refused,
@@ -232,36 +235,38 @@ FactoryBot.define do
             reason_for_refusal: "already_vaccinated",
             notes: "Already had the vaccine at the GP"
           )
-        ]
+        end
       end
     end
 
     trait :consent_conflicting do
       consents do
-        [
-          association(
-            :consent,
-            :refused,
-            :from_mum,
-            patient: instance,
-            organisation:,
-            programme:
-          ),
-          association(
-            :consent,
-            :given,
-            :from_dad,
-            patient: instance,
-            organisation:,
-            programme:
-          )
-        ]
+        programmes.flat_map do |programme|
+          [
+            association(
+              :consent,
+              :refused,
+              :from_mum,
+              patient: instance,
+              organisation:,
+              programme:
+            ),
+            association(
+              :consent,
+              :given,
+              :from_dad,
+              patient: instance,
+              organisation:,
+              programme:
+            )
+          ]
+        end
       end
     end
 
     trait :consent_not_provided do
       consents do
-        [
+        programmes.map do |programme|
           association(
             :consent,
             :not_provided,
@@ -270,7 +275,21 @@ FactoryBot.define do
             organisation:,
             programme:
           )
-        ]
+        end
+      end
+    end
+
+    trait :historical_vaccination_triage_needed do
+      vaccination_records do
+        programmes.map do |programme|
+          association(
+            :vaccination_record,
+            patient: instance,
+            performed_by:,
+            programme:,
+            dose_sequence: 1
+          )
+        end
       end
     end
 
@@ -278,7 +297,7 @@ FactoryBot.define do
       consent_given_triage_needed
 
       triages do
-        [
+        programmes.map do |programme|
           association(
             :triage,
             :ready_to_vaccinate,
@@ -288,13 +307,13 @@ FactoryBot.define do
             organisation:,
             notes: "Okay to vaccinate"
           )
-        ]
+        end
       end
     end
 
     trait :triage_do_not_vaccinate do
       triages do
-        [
+        programmes.map do |programme|
           association(
             :triage,
             :do_not_vaccinate,
@@ -304,13 +323,13 @@ FactoryBot.define do
             organisation:,
             notes: "Do not vaccinate"
           )
-        ]
+        end
       end
     end
 
     trait :triage_needs_follow_up do
       triages do
-        [
+        programmes.map do |programme|
           association(
             :triage,
             :needs_follow_up,
@@ -320,13 +339,13 @@ FactoryBot.define do
             organisation:,
             notes: "Needs follow up"
           )
-        ]
+        end
       end
     end
 
     trait :triage_delay_vaccination do
       triages do
-        [
+        programmes.map do |programme|
           association(
             :triage,
             :delay_vaccination,
@@ -336,25 +355,31 @@ FactoryBot.define do
             organisation:,
             notes: "Delay vaccination"
           )
-        ]
+        end
       end
     end
 
     trait :vaccinated do
       vaccination_records do
-        [
+        programmes.map do |programme|
           if session
             association(
               :vaccination_record,
               patient: instance,
+              performed_by:,
               programme:,
               session:,
               location_name:
             )
           else
-            association(:vaccination_record, patient: instance, programme:)
+            association(
+              :vaccination_record,
+              patient: instance,
+              performed_by:,
+              programme:
+            )
           end
-        ]
+        end
       end
     end
   end

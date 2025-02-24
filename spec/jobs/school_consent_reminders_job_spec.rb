@@ -3,7 +3,7 @@
 describe SchoolConsentRemindersJob do
   subject(:perform_now) { described_class.perform_now }
 
-  let(:programme) { create(:programme) }
+  let(:programmes) { [create(:programme)] }
 
   let(:parents) { create_list(:parent, 2) }
 
@@ -13,15 +13,15 @@ describe SchoolConsentRemindersJob do
       :consent_request_sent,
       :initial_consent_reminder_sent,
       parents:,
-      programme:
+      programmes:
     )
   end
   let(:patient_not_sent_reminder) do
-    create(:patient, :consent_request_sent, parents:, programme:)
+    create(:patient, :consent_request_sent, parents:, programmes:)
   end
-  let(:patient_not_sent_request) { create(:patient, parents:, programme:) }
+  let(:patient_not_sent_request) { create(:patient, parents:, programmes:) }
   let(:patient_with_consent) do
-    create(:patient, :consent_given_triage_not_needed, programme:)
+    create(:patient, :consent_given_triage_not_needed, programmes:)
   end
   let(:deceased_patient) { create(:patient, :deceased) }
   let(:invalid_patient) { create(:patient, :invalidated) }
@@ -41,7 +41,7 @@ describe SchoolConsentRemindersJob do
 
   let(:dates) { [Date.new(2024, 1, 12), Date.new(2024, 1, 15)] }
 
-  let(:organisation) { create(:organisation, programmes: [programme]) }
+  let(:organisation) { create(:organisation, programmes:) }
   let(:location) { create(:school, organisation:) }
 
   let!(:session) do
@@ -52,7 +52,7 @@ describe SchoolConsentRemindersJob do
       days_before_consent_reminders: 7,
       location:,
       patients:,
-      programme:,
+      programmes:,
       organisation:
     )
   end
@@ -74,7 +74,7 @@ describe SchoolConsentRemindersJob do
     it "sends notifications to one patient" do
       expect(ConsentNotification).to receive(:create_and_send!).once.with(
         patient: patient_not_sent_reminder,
-        programme:,
+        programmes:,
         session:,
         type: :initial_reminder
       )
@@ -103,7 +103,7 @@ describe SchoolConsentRemindersJob do
         :consent_notification,
         :initial_reminder,
         patient: patient_not_sent_reminder,
-        programme:
+        session:
       )
     end
 
@@ -119,14 +119,14 @@ describe SchoolConsentRemindersJob do
     it "sends notifications to two patients" do
       expect(ConsentNotification).to receive(:create_and_send!).once.with(
         patient: patient_not_sent_reminder,
-        programme:,
+        programmes:,
         session:,
         type: :initial_reminder
       )
 
       expect(ConsentNotification).to receive(:create_and_send!).once.with(
         patient: patient_with_initial_reminder_sent,
-        programme:,
+        programmes:,
         session:,
         type: :subsequent_reminder
       )

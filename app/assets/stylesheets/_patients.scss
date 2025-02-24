@@ -22,7 +22,13 @@
       order: 2;
     }
 
-    .nhsuk-checkboxes__label {
+    .nhsuk-checkboxes__item,
+    .nhsuk-radios__item {
+      margin-bottom: 0;
+    }
+
+    .nhsuk-checkboxes__label,
+    .nhsuk-radios__label {
       padding-left: 0;
 
       &::before {

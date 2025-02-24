@@ -10,7 +10,7 @@ class AppSessionPatientTableComponent < ViewComponent::Base
     patient_sessions: nil,
     patients: nil,
     programme: nil,
-    year_groups: nil
+    session: nil
   )
     super
 
@@ -34,14 +34,15 @@ class AppSessionPatientTableComponent < ViewComponent::Base
     @columns = columns
     @consent_form = consent_form
     @params = params
-    @programme = programme
+    @programme = programme || session&.programmes&.first
     @section = section
-    @year_groups = year_groups || programme&.year_groups || []
+    @session = session
+    @year_groups = session&.year_groups || programme&.year_groups || []
   end
 
   private
 
-  attr_reader :params, :year_groups
+  attr_reader :params, :programme, :session, :year_groups
 
   def column_name(column)
     {
@@ -62,10 +63,10 @@ class AppSessionPatientTableComponent < ViewComponent::Base
 
     case column
     when :action
-      status = patient_session&.status || "not_in_session"
+      status = patient_session&.status(programme:) || "not_in_session"
       t("patient_session_statuses.#{status}.text")
     when :status
-      status = patient_session&.status || "not_in_session"
+      status = patient_session&.status(programme:) || "not_in_session"
       t("patient_session_statuses.#{status}.banner_title")
     when :dob
       patient.date_of_birth.to_fs(:long)
@@ -75,7 +76,7 @@ class AppSessionPatientTableComponent < ViewComponent::Base
       helpers.patient_year_group(patient)
     when :reason
       patient_session
-        .consents(programme: @programme)
+        .consents(programme:)
         .map { |c| c.human_enum_name(:reason_for_refusal) }
         .uniq
         .join("<br />")
@@ -114,43 +115,51 @@ class AppSessionPatientTableComponent < ViewComponent::Base
     section = params[:section]
     tab = params[:tab]
 
+    session = patient_session.session
+    programme = @programme || patient_session.programmes.first
+
     # TODO: Remove this once "Record session outcomes" exists.
     # We have to guess the section and tab if it's not provided, this
     # is only the case when looking at children at a programme-level.
     if section.nil? || tab.nil?
-      if patient_session.added_to_session?
+      if patient_session.added_to_session?(programme:)
         section = "consents"
         tab = "no-consent"
-      elsif patient_session.consent_refused?
+      elsif patient_session.consent_refused?(programme:)
         section = "consents"
         tab = "refused"
-      elsif patient_session.consent_conflicts?
+      elsif patient_session.consent_conflicts?(programme:)
         section = "consents"
         tab = "conflicts"
-      elsif patient_session.consent_given_triage_needed? ||
-            patient_session.triaged_kept_in_triage?
+      elsif patient_session.consent_given_triage_needed?(programme:) ||
+            patient_session.historical_vaccination_triage_needed?(programme:) ||
+            patient_session.triaged_kept_in_triage?(programme:)
         section = "triage"
         tab = "needed"
-      elsif patient_session.consent_given_triage_not_needed? ||
-            patient_session.triaged_ready_to_vaccinate? ||
-            patient_session.delay_vaccination?
+      elsif patient_session.consent_given_triage_not_needed?(programme:) ||
+            patient_session.triaged_ready_to_vaccinate?(programme:) ||
+            patient_session.delay_vaccination?(programme:)
         section = "vaccinations"
         tab = "vaccinate"
-      elsif patient_session.triaged_do_not_vaccinate? ||
-            patient_session.unable_to_vaccinate?
+      elsif patient_session.triaged_do_not_vaccinate?(programme:) ||
+            patient_session.unable_to_vaccinate?(programme:)
         section = "vaccinations"
         tab = "could-not"
-      elsif patient_session.vaccinated?
+      elsif patient_session.vaccinated?(programme:)
         section = "vaccinations"
         tab = "vaccinated"
       end
     end
 
-    session = patient_session.session
-
     govuk_link_to(
       patient.full_name,
-      session_patient_path(session, patient, section:, tab:)
+      session_patient_programme_path(
+        session,
+        patient,
+        programme,
+        section:,
+        tab:
+      )
     )
   end
 
@@ -220,7 +229,7 @@ class AppSessionPatientTableComponent < ViewComponent::Base
       if @section == :matching
         consent_form_path(@consent_form, **filter_params)
       elsif @section == :patients
-        patients_programme_path(@programme, **filter_params)
+        patients_programme_path(programme, **filter_params)
       else
         session_section_tab_path(
           session_slug: params[:session_slug],
@@ -237,7 +246,7 @@ class AppSessionPatientTableComponent < ViewComponent::Base
     if @section == :matching
       consent_form_path(@consent_form)
     elsif @section == :patients
-      patients_programme_path(@programme)
+      patients_programme_path(programme)
     else
       session_section_tab_path(
         session_slug: params[:session_slug],

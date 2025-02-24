@@ -36,7 +36,7 @@ describe AppActivityLogComponent do
     patient_session.patient.strict_loading!(false)
   end
 
-  shared_examples "card" do |title:, date:, notes: nil, by: nil|
+  shared_examples "card" do |title:, date:, notes: nil, by: nil, programme: nil|
     it "renders card '#{title}'" do
       expect(rendered).to have_css(".nhsuk-card h3", text: title)
 
@@ -45,6 +45,7 @@ describe AppActivityLogComponent do
       expect(card).to have_css("p", text: date)
       expect(card).to have_css("blockquote", text: notes) if notes
       expect(card).to have_css("p", text: by) if by
+      expect(card).to have_css("strong", text: programme) if programme
     end
   end
 
@@ -110,7 +111,7 @@ describe AppActivityLogComponent do
       create(
         :notify_log_entry,
         :email,
-        template_id: GOVUK_NOTIFY_EMAIL_TEMPLATES[:consent_school_request],
+        template_id: GOVUK_NOTIFY_EMAIL_TEMPLATES[:consent_school_request_hpv],
         patient:,
         consent_form: nil,
         recipient: "test@example.com",
@@ -141,39 +142,45 @@ describe AppActivityLogComponent do
                      title: "Vaccinated with Gardasil 9 (HPV)",
                      date: "31 May 2024 at 12:00pm",
                      notes: "Some notes",
-                     by: "Nurse Joy"
+                     by: "Nurse Joy",
+                     programme: "HPV"
 
     include_examples "card",
                      title: "Vaccinated with Gardasil (HPV)",
                      date: "31 May 2024 at 1:00pm",
-                     notes: "Some notes"
+                     notes: "Some notes",
+                     programme: "HPV"
 
     include_examples "card",
                      title: "Triaged decision: Safe to vaccinate",
                      date: "30 May 2024 at 2:30pm",
-                     by: "Nurse Joy"
+                     by: "Nurse Joy",
+                     programme: "HPV"
 
     include_examples "card",
                      title: "Triaged decision: Keep in triage",
                      date: "30 May 2024 at 2:00pm",
                      notes: "Some notes",
-                     by: "Nurse Joy"
+                     by: "Nurse Joy",
+                     programme: "HPV"
 
     include_examples "card",
                      title: "Consent refused by John Doe (Dad)",
-                     date: "30 May 2024 at 1:00pm"
+                     date: "30 May 2024 at 1:00pm",
+                     programme: "HPV"
 
     include_examples "card",
                      title: "Consent given by Jane Doe (Mum)",
                      date: "30 May 2024 at 12:00pm",
-                     by: "Nurse Joy"
+                     by: "Nurse Joy",
+                     programme: "HPV"
 
     include_examples "card",
                      title: "Added to session at Hogwarts",
                      date: "29 May 2024 at 12:00pm"
 
     include_examples "card",
-                     title: "Consent school request sent",
+                     title: "Consent school request hpv sent",
                      date: "10 May 2024 at 12:00am",
                      notes: "test@example.com",
                      by: "Nurse Joy"
@@ -198,7 +205,8 @@ describe AppActivityLogComponent do
                      title: "HPV vaccination not given: Unwell",
                      date: "31 May 2024 at 1:00pm",
                      notes: "Some notes.",
-                     by: "Nurse Joy"
+                     by: "Nurse Joy",
+                     programme: "HPV"
   end
 
   describe "discarded vaccination" do
@@ -218,11 +226,13 @@ describe AppActivityLogComponent do
     include_examples "card",
                      title: "Vaccinated with Gardasil 9 (HPV)",
                      date: "31 May 2024 at 1:00pm",
-                     by: "Nurse Joy"
+                     by: "Nurse Joy",
+                     programme: "HPV"
 
     include_examples "card",
                      title: "HPV vaccination record deleted",
-                     date: "31 May 2024 at 2:00pm"
+                     date: "31 May 2024 at 2:00pm",
+                     programme: "HPV"
   end
 
   describe "self-consent" do
@@ -240,7 +250,8 @@ describe AppActivityLogComponent do
     include_examples "card",
                      title:
                        "Consent given by Sarah Doe (Child (Gillick competent))",
-                     date: "30 May 2024 at 12:00pm"
+                     date: "30 May 2024 at 12:00pm",
+                     programme: "HPV"
   end
 
   describe "manually matched consent" do
@@ -248,7 +259,6 @@ describe AppActivityLogComponent do
       consent_form =
         create(
           :consent_form,
-          programme:,
           session:,
           recorded_at: Time.zone.local(2024, 5, 30, 12),
           parent_full_name: "Jane Doe",
@@ -271,7 +281,8 @@ describe AppActivityLogComponent do
     include_examples "card",
                      title: "Consent given",
                      date: "30 May 2024 at 12:00pm",
-                     by: "Jane Doe (Mum)"
+                     by: "Jane Doe (Mum)",
+                     programme: "HPV"
 
     include_examples "card",
                      title:
@@ -296,11 +307,13 @@ describe AppActivityLogComponent do
 
     include_examples "card",
                      title: "Consent from Jane Doe withdrawn",
-                     date: "30 June 2024 at 12:00pm"
+                     date: "30 June 2024 at 12:00pm",
+                     programme: "HPV"
 
     include_examples "card",
                      title: "Consent given by Jane Doe (Mum)",
-                     date: "30 May 2024 at 12:00pm"
+                     date: "30 May 2024 at 12:00pm",
+                     programme: "HPV"
   end
 
   describe "invalidated consent" do
@@ -319,16 +332,20 @@ describe AppActivityLogComponent do
 
     include_examples "card",
                      title: "Consent from Jane Doe invalidated",
-                     date: "30 June 2024 at 12:00pm"
+                     date: "30 June 2024 at 12:00pm",
+                     programme: "HPV"
 
     include_examples "card",
                      title: "Consent given by Jane Doe (Mum)",
-                     date: "30 May 2024 at 12:00pm"
+                     date: "30 May 2024 at 12:00pm",
+                     programme: "HPV"
   end
 
   describe "gillick assessments" do
-    let(:programme) { create(:programme) }
-    let(:patient_session) { create(:patient_session, patient:, programme:) }
+    let(:programme) { create(:programme, :td_ipv) }
+    let(:patient_session) do
+      create(:patient_session, patient:, programmes: [programme])
+    end
 
     before do
       create(
@@ -353,19 +370,22 @@ describe AppActivityLogComponent do
                      title: "Completed Gillick assessment as Gillick competent",
                      notes: "First notes",
                      date: "1 June 2024 at 12:00pm",
-                     by: "Nurse Joy"
+                     by: "Nurse Joy",
+                     programme: "Td/IPV"
 
     include_examples "card",
                      title:
                        "Updated Gillick assessment as not Gillick competent",
                      notes: "Second notes",
                      date: "1 June 2024 at 1:00pm",
-                     by: "Nurse Joy"
+                     by: "Nurse Joy",
+                     programme: "Td/IPV"
   end
 
   describe "pre-screenings" do
-    let(:programme) { create(:programme) }
-    let(:patient_session) { create(:patient_session, patient:, programme:) }
+    let(:patient_session) do
+      create(:patient_session, patient:, programmes: [programme])
+    end
 
     before do
       create(

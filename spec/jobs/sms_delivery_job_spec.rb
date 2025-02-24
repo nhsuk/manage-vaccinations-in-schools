@@ -34,15 +34,15 @@ describe SMSDeliveryJob do
         consent_form:,
         parent:,
         patient:,
-        programme:,
+        programmes:,
         sent_by:,
         vaccination_record:
       )
     end
 
     let(:template_name) { GOVUK_NOTIFY_SMS_TEMPLATES.keys.first }
-    let(:programme) { create(:programme) }
-    let(:session) { create(:session, programme:) }
+    let(:programmes) { [create(:programme)] }
+    let(:session) { create(:session, programme: programmes.first) }
     let(:parent) { create(:parent, phone: "01234 567890") }
     let(:consent) { nil }
     let(:consent_form) { nil }
@@ -56,7 +56,7 @@ describe SMSDeliveryJob do
         consent:,
         consent_form:,
         patient:,
-        programme:,
+        programmes:,
         vaccination_record:
       )
       perform_now
@@ -77,6 +77,7 @@ describe SMSDeliveryJob do
       notify_log_entry = NotifyLogEntry.last
       expect(notify_log_entry).to be_sms
       expect(notify_log_entry.delivery_id).to eq(response.id)
+      expect(notify_log_entry.recipient).to eq("01234 567890")
       expect(notify_log_entry.recipient_deterministic).to eq("01234 567890")
       expect(notify_log_entry.template_id).to eq(
         GOVUK_NOTIFY_SMS_TEMPLATES[template_name]
@@ -97,7 +98,7 @@ describe SMSDeliveryJob do
 
     context "with a consent form" do
       let(:consent_form) do
-        create(:consent_form, programme:, session:, parent_phone: "01234567890")
+        create(:consent_form, session:, parent_phone: "01234567890")
       end
       let(:parent) { nil }
       let(:patient) { nil }
@@ -117,6 +118,7 @@ describe SMSDeliveryJob do
         notify_log_entry = NotifyLogEntry.last
         expect(notify_log_entry).to be_sms
         expect(notify_log_entry.delivery_id).to eq(response.id)
+        expect(notify_log_entry.recipient).to eq("01234 567890")
         expect(notify_log_entry.recipient_deterministic).to eq("01234 567890")
         expect(notify_log_entry.template_id).to eq(
           GOVUK_NOTIFY_SMS_TEMPLATES[template_name]
@@ -126,7 +128,7 @@ describe SMSDeliveryJob do
 
       context "when the parent doesn't have a phone number" do
         let(:consent_form) do
-          create(:consent_form, programme:, session:, parent_phone: nil)
+          create(:consent_form, session:, parent_phone: nil)
         end
 
         it "doesn't send a text" do

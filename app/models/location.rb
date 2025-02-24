@@ -52,11 +52,6 @@ class Location < ApplicationRecord
 
   scope :clinic, -> { generic_clinic.or(community_clinic) }
 
-  scope :for_year_groups,
-        ->(year_groups) do
-          where("year_groups && ARRAY[?]::integer[]", year_groups)
-        end
-
   validates :name, presence: true
   validates :url, url: true, allow_nil: true
   validates :urn, uniqueness: true, allow_nil: true

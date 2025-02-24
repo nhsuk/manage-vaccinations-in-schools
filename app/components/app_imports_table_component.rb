@@ -55,7 +55,7 @@ class AppImportsTableComponent < ViewComponent::Base
 
   def path(import)
     if import.is_a?(ClassImport)
-      session_class_import_path(import.session, import)
+      class_import_path(import)
     elsif import.is_a?(CohortImport)
       cohort_import_path(import)
     else
@@ -65,7 +65,7 @@ class AppImportsTableComponent < ViewComponent::Base
 
   def record_type(import)
     if import.is_a?(ClassImport)
-      "Class list"
+      "Class list records"
     elsif import.is_a?(CohortImport)
       "Child records"
     else

@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
+require "pagy/extras/array"
+
 class VaccinationsController < ApplicationController
+  include Pagy::Backend
+
   include TodaysBatchConcern
   include VaccinationMailerConcern
   include PatientTabsConcern
@@ -9,6 +13,7 @@ class VaccinationsController < ApplicationController
   before_action :set_session
   before_action :set_patient, only: :create
   before_action :set_patient_session, only: :create
+  before_action :set_programme, only: :create
   before_action :set_section_and_tab, only: :create
 
   before_action :set_batches, only: %i[index create batch update_batch]
@@ -19,24 +24,31 @@ class VaccinationsController < ApplicationController
   def index
     authorize VaccinationRecord
 
+    @programme =
+      @session.programmes.find_by(type: params[:programme_type]) ||
+        @session.programmes.first
+
     all_patient_sessions =
       @session
         .patient_sessions
         .preload_for_status
         .eager_load(:patient)
+        .merge(Patient.in_programme(@programme))
         .order_by_name
 
     grouped_patient_sessions =
       group_patient_sessions_by_state(
         all_patient_sessions,
+        @programme,
         section: :vaccinations
       )
 
     @current_tab = TAB_PATHS[:vaccinations][params[:tab]]
     @tab_counts = count_patient_sessions(grouped_patient_sessions)
-    @patient_sessions = grouped_patient_sessions.fetch(@current_tab, [])
+    patient_sessions = grouped_patient_sessions.fetch(@current_tab, [])
 
-    sort_and_filter_patients!(@patient_sessions)
+    sort_and_filter_patients!(patient_sessions, programme: @programme)
+    @pagy, @patient_sessions = pagy_array(patient_sessions)
 
     session[:current_section] = "vaccinations"
 
@@ -127,7 +139,7 @@ class VaccinationsController < ApplicationController
 
   def set_session
     @session =
-      policy_scope(Session).includes(:location).find_by!(
+      policy_scope(Session).includes(:location, :programmes).find_by!(
         slug: params[:session_slug] || params[:slug]
       )
   end
@@ -143,15 +155,16 @@ class VaccinationsController < ApplicationController
     @patient_session =
       @patient
         .patient_sessions
-        .includes(
-          :organisation,
-          patient: {
-            parent_relationships: :parent
-          },
-          session: :programmes
-        )
+        .includes(:organisation, patient: { parent_relationships: :parent })
         .preload_for_status
         .find_by!(session: @session)
+  end
+
+  def set_programme
+    @programme =
+      @patient_session.programmes.find { it.type == params[:programme_type] }
+
+    raise ActiveRecord::RecordNotFound if @programme.nil?
   end
 
   def set_section_and_tab

@@ -4,7 +4,7 @@ module ParentInterface
   class ConsentFormsController < ConsentForms::BaseController
     include ConsentFormMailerConcern
 
-    prepend_before_action :set_session_and_programme,
+    prepend_before_action :set_session_and_programmes,
                           only: %i[start create deadline_passed]
     skip_before_action :set_consent_form, only: %i[start create deadline_passed]
     skip_before_action :authenticate_consent_form_user!,
@@ -19,7 +19,7 @@ module ParentInterface
     def create
       consent_form =
         ConsentForm.create!(
-          programme: @programme,
+          programmes: @programmes,
           organisation: @session.organisation,
           location: @session.location
         )
@@ -50,10 +50,11 @@ module ParentInterface
 
     private
 
-    def set_session_and_programme
+    def set_session_and_programmes
       @session = Session.find_by!(slug: params[:session_slug])
       @organisation = @session.organisation
-      @programme = @session.programmes.find_by!(type: params[:programme_type])
+      @programmes =
+        @session.programmes.where(type: params[:programme_types].split("-"))
       @team = @session.team
     end
 

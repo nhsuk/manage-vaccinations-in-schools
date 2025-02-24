@@ -72,8 +72,8 @@ Rails.application.routes.draw do
   namespace :parent_interface, path: "/" do
     resources :consent_forms, path: "/consents", only: %i[create] do
       collection do
-        get ":session_slug/:programme_type/start", action: "start", as: :start
-        get ":session_slug/:programme_type/deadline-passed",
+        get ":session_slug/:programme_types/start", action: "start", as: :start
+        get ":session_slug/:programme_types/deadline-passed",
             action: "deadline_passed",
             as: :deadline_passed
       end
@@ -87,6 +87,8 @@ Rails.application.routes.draw do
       resources :edit, only: %i[show update], controller: "consent_forms/edit"
     end
   end
+
+  resources :class_imports, path: "class-imports", except: %i[index destroy]
 
   resources :cohort_imports, path: "cohort-imports", except: %i[index destroy]
 
@@ -103,10 +105,19 @@ Rails.application.routes.draw do
     end
   end
 
+  resource :draft_class_import,
+           only: :new,
+           path: "draft-class-import/:session_slug"
+  resource :draft_class_import,
+           only: %i[show update],
+           path: "draft-class-import/:id"
+
   resource :draft_consent, only: %i[show update], path: "draft-consent/:id"
+
   resource :draft_vaccination_record,
            only: %i[show update],
            path: "draft-vaccination-record/:id"
+
   resource :vaccination_report,
            only: %i[show update],
            path: "draft-vaccination-report/:id" do
@@ -117,14 +128,16 @@ Rails.application.routes.draw do
             path: "immunisation-imports",
             except: %i[index destroy]
 
-  resources :import_issues, path: "import-issues", only: %i[index] do
-    get ":type", action: :show, on: :member, as: ""
-    patch ":type", action: :update, on: :member
-  end
-
   resources :imports, only: %i[index new create]
 
-  resources :notices, only: :index
+  namespace :imports do
+    resources :issues, path: "issues", only: %i[index] do
+      get ":type", action: :show, on: :member, as: ""
+      patch ":type", action: :update, on: :member
+    end
+
+    resources :notices, only: :index
+  end
 
   resources :notifications, only: :create
 
@@ -150,6 +163,8 @@ Rails.application.routes.draw do
     member do
       get "sessions"
       get "patients"
+
+      get "consent-form", action: "consent_form"
     end
 
     resources :cohorts, only: %i[index show]
@@ -175,18 +190,24 @@ Rails.application.routes.draw do
   resources :school_moves, path: "school-moves", only: %i[index show update]
 
   resources :sessions, only: %i[edit index show], param: :slug do
+    resource :invite_to_clinic,
+             path: "invite-to-clinic",
+             only: %i[edit update],
+             controller: "sessions/invite_to_clinic"
+
     collection do
-      get "closed"
       get "completed"
       get "scheduled"
       get "unscheduled"
     end
 
     member do
-      get "close", action: "edit_close"
-      post "close", action: "update_close"
-
-      get "consent-form", action: "consent_form"
+      get "edit/programmes",
+          controller: "sessions/edit",
+          action: "edit_programmes"
+      put "edit/programmes",
+          controller: "sessions/edit",
+          action: "update_programmes"
 
       get "edit/send-consent-requests-at",
           controller: "sessions/edit",
@@ -219,8 +240,6 @@ Rails.application.routes.draw do
       end
     end
 
-    resources :class_imports, path: "class-imports", except: %i[index destroy]
-
     resource :dates, controller: "session_dates", only: %i[show update]
   end
 
@@ -231,7 +250,8 @@ Rails.application.routes.draw do
             as: "consents",
             to:
               redirect(
-                "/sessions/%{session_slug}/consents/#{TAB_PATHS[:consents].keys.first}"
+                path:
+                  "/sessions/%{session_slug}/consents/#{TAB_PATHS[:consents].keys.first}"
               )
 
         get ":tab",
@@ -248,7 +268,8 @@ Rails.application.routes.draw do
             as: "triage",
             to:
               redirect(
-                "/sessions/%{session_slug}/triage/#{TAB_PATHS[:triage].keys.first}"
+                path:
+                  "/sessions/%{session_slug}/triage/#{TAB_PATHS[:triage].keys.first}"
               )
 
         get ":tab",
@@ -265,7 +286,8 @@ Rails.application.routes.draw do
             as: "vaccinations",
             to:
               redirect(
-                "/sessions/%{session_slug}/vaccinations/#{TAB_PATHS[:vaccinations].keys.first}"
+                path:
+                  "/sessions/%{session_slug}/vaccinations/#{TAB_PATHS[:vaccinations].keys.first}"
               )
 
         get "batch", to: "vaccinations#batch"
@@ -304,31 +326,32 @@ Rails.application.routes.draw do
     end
 
     scope ":tab" do
-      resources :patient_sessions,
-                path: "patients",
-                as: :patient,
-                only: %i[show] do
+      resources :patient_sessions, path: "patients", as: :patient, only: [] do
         get "log"
-
-        resources :consents, only: %i[index create show] do
-          post "send-request", on: :collection, action: :send_request
-
-          member do
-            get "withdraw", action: :edit_withdraw
-            post "withdraw", action: :update_withdraw
-
-            get "invalidate", action: :edit_invalidate
-            post "invalidate", action: :update_invalidate
-          end
-        end
-
-        resource :gillick_assessment, path: "gillick", only: %i[edit update]
-        resource :triages, only: %i[new create]
-        resource :vaccinations, only: %i[create]
 
         resource :attendance,
                  controller: "session_attendances",
                  only: %i[edit update]
+
+        resources :programmes, path: "", param: :type, only: [] do
+          get "", as: "", action: :show, controller: :patient_sessions
+
+          resources :consents, only: %i[index create show] do
+            post "send-request", on: :collection, action: :send_request
+
+            member do
+              get "withdraw", action: :edit_withdraw
+              post "withdraw", action: :update_withdraw
+
+              get "invalidate", action: :edit_invalidate
+              post "invalidate", action: :update_invalidate
+            end
+          end
+
+          resource :gillick_assessment, path: "gillick", only: %i[edit update]
+          resource :triages, only: %i[new create]
+          resource :vaccinations, only: %i[create]
+        end
       end
     end
 

@@ -4,56 +4,20 @@ class ClinicSessionInvitationsJob < ApplicationJob
   queue_as :notifications
 
   def perform
-    sessions =
-      Session
-        .send_invitations
-        .includes(
-          :programmes,
-          patient_sessions: [
-            :session_notifications,
-            { patient: %i[consents parents vaccination_records] }
-          ]
-        )
-        .preload(:session_dates)
-        .joins(:location)
-        .merge(Location.clinic)
-
-    sessions.each do |session|
-      session_date = session.today_or_future_dates.first
-
-      session.patient_sessions.each do |patient_session|
-        next unless should_send_notification?(patient_session:, session_date:)
-
-        type =
-          if patient_session.session_notifications.any?
-            :clinic_subsequent_invitation
-          else
-            :clinic_initial_invitation
-          end
-
-        SessionNotification.create_and_send!(
-          patient_session:,
-          session_date:,
-          type:
+    Session
+      .send_invitations
+      .includes(:programmes)
+      .joins(:location)
+      .merge(Location.clinic)
+      .each do |session|
+        # We're only inviting patients who don't have a school.
+        # Patients who have a school are sent invitations manually by the
+        # nurse when they're finished at a school.
+        SendClinicInitialInvitationsJob.perform_now(
+          session,
+          school: nil,
+          programmes: session.programmes
         )
       end
-    end
-  end
-
-  def should_send_notification?(patient_session:, session_date:)
-    return false unless patient_session.send_notifications?
-
-    return false if patient_session.vaccination_administered?
-
-    already_sent_notification =
-      patient_session.session_notifications.any? do
-        _1.session_date == session_date
-      end
-
-    return false if already_sent_notification
-
-    return false if patient_session.consent_refused?
-
-    true
   end
 end

@@ -6,7 +6,6 @@ en:
         address_line_2: <code>CHILD_ADDRESS_LINE_2</code>
         address_postcode: <code>CHILD_POSTCODE</code>
         address_town: <code>CHILD_TOWN</code>
-        birth_academic_year: <code>CHILD_YEAR_GROUP</code>
         date_of_birth: <code>CHILD_DATE_OF_BIRTH</code>
         first_name: <code>CHILD_FIRST_NAME</code>
         gender_code: <code>CHILD_GENDER</code>
@@ -28,7 +27,6 @@ en:
         address_line_2: <code>CHILD_ADDRESS_LINE_2</code>
         address_postcode: <code>CHILD_POSTCODE</code>
         address_town: <code>CHILD_TOWN</code>
-        birth_academic_year: <code>CHILD_YEAR_GROUP</code>
         date_of_birth: <code>CHILD_DATE_OF_BIRTH</code>
         first_name: <code>CHILD_FIRST_NAME</code>
         gender_code: <code>CHILD_GENDER</code>
@@ -163,6 +161,12 @@ en:
               inclusion: The school URN is not recognised. If you’ve checked the URN, and you believe it’s valid, contact our support organisation.
             year_group:
               inclusion: is not part of this programme
+        draft_class_import:
+          attributes:
+            session_id:
+              blank: Choose which school this class list for
+            year_groups:
+              blank: Choose which year groups you want to import class list records for
         draft_consent:
           attributes:
             new_or_existing_contact:
@@ -250,8 +254,8 @@ en:
               inclusion: Enter a clinic name
             date_of_vaccination:
               blank: Enter a date in the correct format
-              greater_than_or_equal_to: The vaccination date is outside the programme. Enter a date after the programme started.
-              less_than_or_equal_to: The vaccination date is outside the programme. Enter a date before today.
+              greater_than: The vaccination date is before the date of birth
+              less_than_or_equal_to: The vaccination date is in the future
               inclusion: Enter a date for a current session
             delivery_site:
               blank: Enter an anatomical site.
@@ -305,8 +309,6 @@ en:
           attributes:
             action:
               inclusion: Choose whether to update the child’s record with this new information
-            move_to_school:
-              inclusion: Choose whether to move the child to the upcoming school session
         vaccinate_form:
           attributes:
             delivery_site:
@@ -581,6 +583,8 @@ en:
               match_type: Vaccines must be suitable for the programme type
         session:
           attributes:
+            programme_ids:
+              blank: Choose which programmes this session is part of
             send_consent_requests_at:
               blank: Enter a date
               missing_day: Enter a day
@@ -659,13 +663,19 @@ en:
       consent_card_title:
         flu: Consent for the flu vaccination
         hpv: Consent for the HPV vaccination
+        menacwy: Consent for the MenACWY and Td/IPV vaccinations
+        td_ipv: Consent for the MenACWY and Td/IPV vaccinations
       i_agree:
         flu: Yes, I agree to them having a nasal flu vaccination
         hpv: Yes, I agree
+        menacwy: Yes, I agree to them having both vaccinations
+        td_ipv: Yes, I agree to them having both vaccinations
     confirmation_agreed:
       title:
         flu: " %{full_name} will get their nasal flu vaccination at school"
         hpv: " %{full_name} will get their HPV vaccination at school"
+        menacwy: " %{full_name} will get their MenACWY and Td/IPV vaccinations at school"
+        td_ipv: " %{full_name} will get their MenACWY and Td/IPV vaccinations at school"
     confirmation_injection:
       title:
         flu: Your child will not get a nasal flu vaccination at school
@@ -673,20 +683,30 @@ en:
       title:
         flu: You’ve given consent for your child to get a flu vaccination
         hpv: You’ve given consent for your child to get an HPV vaccination
+        menacwy: You’ve given consent for your child to get the MenACWY and Td/IPV vaccinations
+        td_ipv: You’ve given consent for your child to get the MenACWY and Td/IPV vaccinations
     confirmation_refused:
       title:
         flu: Your child will not get a nasal flu vaccination at school
         hpv: Your child will not get an HPV vaccination at school
+        menacwy: Your child will not get the MenACWY and Td/IPV vaccinations at school
+        td_ipv: Your child will not get the MenACWY and Td/IPV vaccinations at school
     consent:
       hint:
         flu: The nasal flu spray contains gelatine which comes from pigs.
         hpv: ""
+        menacwy: ""
+        td_ipv: ""
       i_agree:
         flu: Yes, I agree to them having a nasal vaccine
         hpv: Yes, I agree
+        menacwy: Yes, I agree to them having both vaccinations
+        td_ipv: Yes, I agree to them having both vaccinations
       title:
         flu: Do you agree to them having a nasal flu vaccination?
         hpv: Do you agree to them having the HPV vaccination?
+        menacwy: Do you agree to your child having the MenACWY and Td/IPV (3-in-1 teenage booster) vaccinations?
+        td_ipv: Do you agree to your child having the MenACWY and Td/IPV (3-in-1 teenage booster) vaccinations?
     reason_notes:
       title:
         already_vaccinated: Where did your child get their vaccination?
@@ -696,22 +716,59 @@ en:
         personal_choice: Tell us why you don’t agree
         will_be_vaccinated_elsewhere: Where will your child get their vaccination?
     start:
-      paragraphs:
+      vaccines:
         flu:
-          - >-
-            The vaccination helps to protect children against flu. It also
-            protects others who are vulnerable to flu, such as babies and older
-            people.
+          title: Flu
+          description:
+            - >-
+              The vaccination helps to protect children against flu. It also
+              protects others who are vulnerable to flu, such as babies and
+              older people.
         hpv:
-          - >-
-            The HPV vaccine helps to prevent HPV related cancers from developing
-            in boys and girls.
-          - >-
-            The number of doses you need depends on your age and how well your
-            immune system works. Young people usually only need 1 dose.
-      title:
-        flu: Give or refuse consent for a flu vaccination
-        hpv: Give or refuse consent for an HPV vaccination
+          title: HPV
+          description:
+            - >-
+              The HPV vaccine helps to prevent HPV related cancers from
+              developing in boys and girls.
+            - >-
+              The number of doses you need depends on your age and how well your
+              immune system works. Young people usually only need 1 dose.
+            - >-
+              <a href="https://www.nhs.uk/conditions/vaccinations/hpv-human-papillomavirus-vaccine/">Find
+              out more about the HPV vaccine</a>
+        menacwy:
+          title: MenACWY
+          description:
+            - >-
+              The MenACWY vaccine helps protect against meningitis and sepsis.
+              It is recommended for all teenagers. Most people only need one
+              dose of the vaccine.
+            - >-
+              <a href="https://www.nhs.uk/vaccinations/menacwy-vaccine/">Find
+              out more about the MenACWY vaccine</a>
+        td_ipv:
+          title: Td/IPV (3-in-1 teenage booster)
+          description:
+            - >-
+              The Td/IPV vaccine (also called the 3-in-1 teenage booster) helps
+              protect against tetanus, diphtheria and polio.
+            - >-
+              It boosts the protection provided by the
+              <a href="https://www.nhs.uk/vaccinations/6-in-1-vaccine/">6-in-1
+              vaccine</a> and
+              <a href="https://www.nhs.uk/vaccinations/4-in-1-preschool-booster-vaccine/">4-in-1
+              pre-school booster vaccine</a>.
+            - >-
+              <a href="https://www.nhs.uk/vaccinations/td-ipv-vaccine-3-in-1-teenage-booster/">Find
+              out more about the Td/IPV vaccine</a>
+      title: Give or refuse consent for vaccinations
+  dashboard:
+    index:
+      notices:
+        header: Important notices
+        description:
+          one: "%{count} important notice needs attention"
+          other: "%{count} important notices need attention"
   draft_consents:
     agree:
       title:
@@ -728,15 +785,11 @@ en:
   hosting_environment: This is a %{name} environment. Do not use it to make clinical decisions.
   imports:
     index:
-      title: Imports
-  import_issues:
-    index:
-      title: Import issues
-  notices:
-    index:
-      title: Important notices
-      title_short: Notices
-      no_results: There are currently no important notices.
+      title: Import records
+      title_short: Import
+    notices:
+      index:
+        no_results: There are currently no important notices.
   mailers:
     consent_form_mailer:
       reasons_for_refusal:
@@ -830,11 +883,6 @@ en:
         zero: There are no sessions scheduled for today.
         one: 1 session today
         other: "%{count} sessions today"
-    closed:
-      table_heading:
-        zero: There are no locations with closed sessions.
-        one: 1 location with sessions closed
-        other: "%{count} locations with sessions closed"
     completed:
       table_heading:
         zero: There are no locations with all sessions completed.
@@ -868,18 +916,8 @@ en:
       title: Vaccines
   attendance_flash:
     absent: "%{name} is absent from today’s session."
-    added_to_session: "%{name} is attending today’s session. They still need consent to vaccinate."
-    consent_conflicts: "%{name} is attending today’s session. They still need consent to vaccinate."
-    consent_given_triage_needed: "%{name} is attending today’s session. A nurse needs to triage their record."
-    consent_given_triage_not_needed: "%{name} is attending today’s session. They are ready for the nurse."
-    consent_refused: "%{name} needs to leave the session because their parent or guardian refused to give consent."
-    delay_vaccination: "%{name} needs to leave the session because their vaccination is delayed to a later date."
     not_registered: "%{name} is not registered yet."
-    triaged_do_not_vaccinate: "%{name} needs to leave the session because their parent or guardian refused to give consent."
-    triaged_kept_in_triage: "%{name} is attending today’s session. A nurse needs to triage their record."
-    triaged_ready_to_vaccinate: "%{name} is attending today’s session. They are safe to vaccinate."
-    unable_to_vaccinate: "%{name} needs to leave the session because they cannot be vaccinated."
-    vaccinated: "%{name} needs to leave the session because they have already been vaccinated."
+    present: "%{name} is attending today’s session."
   wicked:
     address: address
     agree: agree
@@ -910,8 +948,10 @@ en:
     reason_notes: reason-notes
     route: route
     school: school
+    session: session
     timeline: timeline
     triage: triage
     vaccine: vaccine
     when: when
     who: who
+    year_groups: year-groups

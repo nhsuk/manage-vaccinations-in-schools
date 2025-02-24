@@ -18,78 +18,92 @@
     <%= session_status_tag(@session) %>
   </li>
 
-  <% if @session.open? %>
-    <li class="app-action-list__item">
-      <%= govuk_link_to "Download consent form (PDF)", consent_form_session_path(@session) %>
-    </li>
+  <li class="app-action-list__item">
+    <%= govuk_link_to "Record offline (Excel)", session_path(@session, format: :xlsx) %>
+  </li>
 
+  <% unless @session.clinic? %>
     <li class="app-action-list__item">
-      <%= govuk_link_to "Record offline (Excel)", session_path(@session, format: :xlsx) %>
+      <%= govuk_link_to "Import class list records", new_draft_class_import_path(@session) %>
     </li>
   <% end %>
 
-  <% if @session.open? && @session.location.school? %>
+  <% if @session.clinic? && @session.can_send_clinic_invitations? %>
     <li class="app-action-list__item">
-      <%= govuk_link_to "Import class list", new_session_class_import_path(@session) %>
+      <%= govuk_link_to "Send booking reminders", edit_session_invite_to_clinic_path(@session) %>
+    </li>
+  <% elsif @session.school? && @session.can_send_clinic_invitations? %>
+    <li class="app-action-list__item">
+      <%= govuk_link_to "Send clinic invitations", edit_session_invite_to_clinic_path(@session) %>
     </li>
   <% end %>
 </ul>
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-two-thirds">
-    <ul class="nhsuk-grid-row nhsuk-card-group">
-      <% if @session.unscheduled? %>
+    <% if @session.unscheduled? %>
+      <ul class="nhsuk-grid-row nhsuk-card-group">
         <li class="nhsuk-grid-column-full nhsuk-card-group__item">
           <%= render AppCardComponent.new(link_to: edit_session_path) do |c| %>
             <% c.with_heading { "Schedule sessions" } %>
             <% c.with_description { "Add dates for this school." } %>
           <% end %>
         </li>
-      <% else %>
-        <li class="nhsuk-grid-column-full nhsuk-card-group__item">
-          <%= render AppCardComponent.new(link_to: session_consents_path(@session)) do |c| %>
-            <% c.with_heading { "Check consent responses" } %>
-            <% c.with_description do %>
-              <%= t("children", count: @stats[:without_a_response]) %> without a response<br>
-              <%= t("children", count: @stats[:with_consent_given]) %> with consent given<br>
-              <%= t("children", count: @stats[:with_consent_refused]) %> with consent refused<br>
-              <%= t("children", count: @stats[:with_conflicting_consent]) %> with conflicting consent
-            <% end %>
-          <% end %>
-        </li>
-
-        <li class="nhsuk-grid-column-full nhsuk-card-group__item">
-          <%= render AppCardComponent.new(link_to: session_triage_path(@session)) do |c| %>
-            <% c.with_heading { "Triage health questions" } %>
-            <% c.with_description do %>
-              <%= t("children", count: @stats[:needing_triage]) %> needing triage
-            <% end %>
-          <% end %>
-        </li>
-
-        <% if @session.today? %>
+      </ul>
+    <% else %>
+      <% if @session.today? %>
+        <ul class="nhsuk-grid-row nhsuk-card-group">
           <li class="nhsuk-grid-column-full nhsuk-card-group__item">
             <%= render AppCardComponent.new(link_to: session_attendances_path(@session)) do |c| %>
               <% c.with_heading { "Register attendance" } %>
               <% c.with_description do %>
-                <%= t("children", count: @stats[:not_registered]) %> still to register
+                <%= t("children", count: @stats_by_programme[@session.programmes.first][:not_registered]) %> still to register
               <% end %>
             <% end %>
           </li>
-        <% end %>
-
-        <li class="nhsuk-grid-column-full nhsuk-card-group__item">
-          <%= render AppCardComponent.new(link_to: session_vaccinations_path(@session)) do |c| %>
-            <% c.with_heading { "Record vaccinations" } %>
-            <% c.with_description do %>
-              <%= t("children", count: @stats[:vaccinate]) %> to vaccinate<br>
-              <%= t("children", count: @stats[:vaccinated]) %> vaccinated<br>
-              <%= t("children", count: @stats[:could_not_vaccinate]) %> could not be vaccinated
-            <% end %>
-          <% end %>
-        </li>
+        </ul>
       <% end %>
-    </ul>
+
+      <% @session.programmes.each do |programme| %>
+        <% stats = @stats_by_programme[programme] %>
+
+        <h2 class="nhsuk-heading-m"><%= programme.name %></h2>
+
+        <ul class="nhsuk-grid-row nhsuk-card-group">
+          <li class="nhsuk-grid-column-full nhsuk-card-group__item">
+            <%= render AppCardComponent.new(link_to: session_consents_path(@session, programme_type: programme)) do |c| %>
+              <% c.with_heading { "Check consent responses" } %>
+              <% c.with_description do %>
+                <%= t("children", count: stats[:without_a_response]) %> without a response<br>
+                <%= t("children", count: stats[:with_consent_given]) %> with consent given<br>
+                <%= t("children", count: stats[:with_consent_refused]) %> with consent refused<br>
+                <%= t("children", count: stats[:with_conflicting_consent]) %> with conflicting consent
+              <% end %>
+            <% end %>
+          </li>
+
+          <li class="nhsuk-grid-column-full nhsuk-card-group__item">
+            <%= render AppCardComponent.new(link_to: session_triage_path(@session, programme_type: programme)) do |c| %>
+              <% c.with_heading { "Triage health questions" } %>
+              <% c.with_description do %>
+                <%= t("children", count: stats[:needing_triage]) %> needing triage
+              <% end %>
+            <% end %>
+          </li>
+
+          <li class="nhsuk-grid-column-full nhsuk-card-group__item">
+            <%= render AppCardComponent.new(link_to: session_vaccinations_path(@session, programme_type: programme)) do |c| %>
+              <% c.with_heading { "Record vaccinations" } %>
+              <% c.with_description do %>
+                <%= t("children", count: stats[:vaccinate]) %> to vaccinate<br>
+                <%= t("children", count: stats[:vaccinated]) %> vaccinated<br>
+                <%= t("children", count: stats[:could_not_vaccinate]) %> could not be vaccinated
+              <% end %>
+            <% end %>
+          </li>
+        </ul>
+      <% end %>
+    <% end %>
   </div>
 
   <div class="nhsuk-grid-column-one-third">
@@ -97,10 +111,6 @@
 
     <% if policy(@session).edit? %>
       <%= govuk_button_link_to "Edit session", edit_session_path(@session), class: "app-button--secondary" %>
-    <% end %>
-
-    <% if policy(@session).edit_close? %>
-      <%= govuk_button_link_to "Close session", close_session_path(@session), class: "app-button--secondary" %>
     <% end %>
   </div>
 </div>

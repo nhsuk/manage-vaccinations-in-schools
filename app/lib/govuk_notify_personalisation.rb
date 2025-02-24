@@ -7,18 +7,18 @@ class GovukNotifyPersonalisation
     consent: nil,
     consent_form: nil,
     patient: nil,
-    programme: nil,
+    programmes: nil,
     session: nil,
     vaccination_record: nil
   )
     @consent = consent
     @consent_form = consent_form
     @patient = patient || consent&.patient || vaccination_record&.patient
-    @programme =
-      programme || vaccination_record&.programme || consent_form&.programme ||
-        consent&.programme
+    @programmes =
+      programmes || [vaccination_record&.programme] ||
+        consent_form&.programmes || [consent&.programme]
     @session =
-      session || consent_form&.actual_upcoming_session ||
+      session || consent_form&.actual_session ||
         consent_form&.original_session || vaccination_record&.session
     @organisation =
       session&.organisation || consent_form&.organisation ||
@@ -72,7 +72,7 @@ class GovukNotifyPersonalisation
   attr_reader :consent,
               :consent_form,
               :patient,
-              :programme,
+              :programmes,
               :session,
               :team,
               :organisation,
@@ -83,13 +83,21 @@ class GovukNotifyPersonalisation
   end
 
   def catch_up
-    return nil if patient.nil? || programme.nil?
-    patient.year_group == programme.year_groups.first ? "no" : "yes"
+    return nil if patient.nil? || programmes.empty?
+    if patient.year_group == programmes.flat_map(&:year_groups).sort.uniq.first
+      "no"
+    else
+      "yes"
+    end
   end
 
   def not_catch_up
-    return nil if patient.nil? || programme.nil?
-    patient.year_group == programme.year_groups.first ? "yes" : "no"
+    return nil if patient.nil? || programmes.empty?
+    if patient.year_group == programmes.flat_map(&:year_groups).sort.uniq.first
+      "yes"
+    else
+      "no"
+    end
   end
 
   def consent_deadline
@@ -102,8 +110,12 @@ class GovukNotifyPersonalisation
   end
 
   def consent_link
-    return nil if session.nil? || programme.nil?
-    host + start_parent_interface_consent_forms_path(session, programme)
+    return nil if session.nil? || programmes.empty?
+    host +
+      start_parent_interface_consent_forms_path(
+        session,
+        programmes.map(&:to_param).join("-")
+      )
   end
 
   def day_month_year_of_vaccination
@@ -134,7 +146,7 @@ class GovukNotifyPersonalisation
   end
 
   def next_session_date
-    session.today_or_future_dates.first&.to_fs(:short_day_of_week)
+    session.next_date&.to_fs(:short_day_of_week)
   end
 
   def next_session_dates
@@ -174,7 +186,7 @@ class GovukNotifyPersonalisation
   end
 
   def programme_name
-    programme&.name
+    programmes.map(&:name).to_sentence
   end
 
   def reason_did_not_vaccinate

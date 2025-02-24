@@ -20,21 +20,17 @@ describe "Triage" do
     when_i_view_the_child_record
     then_they_should_have_the_status_banner_delay_vaccination
     and_i_am_able_to_record_a_vaccination
-
-    when_i_go_to_the_community_clinics
-    then_i_see_a_patient_in_the_session
   end
 
   def given_a_programme_with_a_running_session
-    programme = create(:programme, :hpv)
-    @organisation =
-      create(:organisation, :with_one_nurse, programmes: [programme])
+    programmes = [create(:programme, :hpv)]
+    @organisation = create(:organisation, :with_one_nurse, programmes:)
     @school = create(:school)
     session =
       create(
         :session,
         organisation: @organisation,
-        programme:,
+        programmes:,
         location: @school,
         date: Time.zone.today
       )
@@ -43,7 +39,7 @@ describe "Triage" do
         :patient_session,
         :consent_given_triage_needed,
         :in_attendance,
-        programme:,
+        programmes:,
         session:
       ).patient
   end
@@ -105,15 +101,5 @@ describe "Triage" do
 
   def and_i_am_able_to_record_a_vaccination
     expect(page).to have_content("ready to vaccinate in this session?")
-  end
-
-  def when_i_go_to_the_community_clinics
-    click_on "Sessions"
-    click_on "Unscheduled"
-    click_on "Community clinics"
-  end
-
-  def then_i_see_a_patient_in_the_session
-    expect(page).to have_content("1 child in this session")
   end
 end

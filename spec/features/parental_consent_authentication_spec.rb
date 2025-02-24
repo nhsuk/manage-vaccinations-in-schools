@@ -33,9 +33,7 @@ describe "Parental consent" do
   end
 
   def then_i_see_the_start_page
-    expect(page).to have_content(
-      "Give or refuse consent for an HPV vaccination"
-    )
+    expect(page).to have_content("Give or refuse consent for vaccinations")
   end
 
   def when_i_fill_in_my_childs_name_and_birthday
