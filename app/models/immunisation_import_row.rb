@@ -285,7 +285,7 @@ class ImmunisationImportRow
   def dose_sequence
     value = @data["DOSE_SEQUENCE"]&.gsub(/\s/, "")&.presence&.upcase
 
-    return 1 if value.blank? && (!administered || maximum_dose_sequence == 1)
+    return 1 if value.blank? && maximum_dose_sequence == 1
 
     return DOSE_SEQUENCES[value] if DOSE_SEQUENCES.include?(value)
 

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_02_24_173345) do
+ActiveRecord::Schema[8.0].define(version: 2025_02_24_200603) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -750,7 +750,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_24_173345) do
     t.integer "delivery_method"
     t.bigint "performed_by_user_id"
     t.text "notes"
-    t.integer "dose_sequence", null: false
+    t.integer "dose_sequence"
     t.uuid "uuid", default: -> { "gen_random_uuid()" }, null: false
     t.datetime "performed_at", null: false
     t.string "performed_by_given_name"

@@ -93,6 +93,7 @@ class DraftVaccinationRecord
     validates :batch_id,
               :delivery_method,
               :delivery_site,
+              :dose_sequence,
               :performed_at,
               :vaccine_id,
               presence: true
