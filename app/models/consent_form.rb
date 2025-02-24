@@ -528,9 +528,7 @@ class ConsentForm < ApplicationRecord
   def seed_health_questions
     return unless health_answers.empty?
 
-    # TODO: handle multiple active vaccines
-    vaccine = vaccines.select(&:active?).first
-
-    self.health_answers = vaccine.health_questions.to_health_answers
+    self.health_answers =
+      vaccines.active.flat_map { it.health_questions.to_health_answers }
   end
 end
