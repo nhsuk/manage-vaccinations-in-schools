@@ -664,13 +664,10 @@ en:
       consent_card_title:
         flu: Consent for the flu vaccination
         hpv: Consent for the HPV vaccination
-        menacwy: Consent for the MenACWY and Td/IPV vaccinations
-        td_ipv: Consent for the MenACWY and Td/IPV vaccinations
-      i_agree:
-        flu: Yes, I agree to them having a nasal flu vaccination
-        hpv: Yes, I agree
-        menacwy: Yes, I agree to them having both vaccinations
-        td_ipv: Yes, I agree to them having both vaccinations
+        menacwy: Consent for the MenACWY vaccination
+        td_ipv: Consent for the Td/IPV vaccination
+        menacwy_td_ipv: Consent for the MenACWY and Td/IPV vaccinations
+      i_agree: Consent given
     confirmation_agreed:
       title:
         flu: " %{full_name} will get their nasal flu vaccination at school"
