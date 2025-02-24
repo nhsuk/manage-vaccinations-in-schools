@@ -508,11 +508,13 @@ class ConsentForm < ApplicationRecord
 
     self.parent_relationship_other_name = nil unless parent_relationship_other?
 
-    if consent_given? || consent_given_one?
-      self.contact_injection = nil
-
+    if consent_given?
       self.reason = nil
       self.reason_notes = nil
+    end
+
+    if consent_given? || consent_given_one?
+      self.contact_injection = nil
 
       seed_health_questions
     end

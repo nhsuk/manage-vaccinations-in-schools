@@ -146,5 +146,8 @@ describe "Parental consent" do
   def and_i_give_a_reason_for_refusal
     choose "Vaccine already received"
     click_on "Continue"
+
+    fill_in "Give details", with: "At a hospital"
+    click_on "Continue"
   end
 end
