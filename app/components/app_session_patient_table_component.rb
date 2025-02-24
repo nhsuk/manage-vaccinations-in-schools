@@ -132,7 +132,6 @@ class AppSessionPatientTableComponent < ViewComponent::Base
         section = "consents"
         tab = "conflicts"
       elsif patient_session.consent_given_triage_needed?(programme:) ||
-            patient_session.historical_vaccination_triage_needed?(programme:) ||
             patient_session.triaged_kept_in_triage?(programme:)
         section = "triage"
         tab = "needed"

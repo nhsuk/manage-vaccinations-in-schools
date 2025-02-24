@@ -127,10 +127,10 @@ FactoryBot.define do
       end
     end
 
-    trait :historical_vaccination_triage_needed do
+    trait :partially_vaccinated_triage_needed do
       patient do
         association :patient,
-                    :historical_vaccination_triage_needed,
+                    :partially_vaccinated_triage_needed,
                     performed_by: user,
                     programmes: session.programmes,
                     organisation:,

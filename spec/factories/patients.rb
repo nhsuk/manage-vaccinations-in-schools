@@ -279,7 +279,9 @@ FactoryBot.define do
       end
     end
 
-    trait :historical_vaccination_triage_needed do
+    trait :partially_vaccinated_triage_needed do
+      consent_given_triage_needed
+
       vaccination_records do
         programmes.map do |programme|
           association(

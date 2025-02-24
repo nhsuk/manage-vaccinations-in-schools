@@ -14,21 +14,19 @@ describe "Triage" do
     then_i_see_the_completed_upload
 
     when_i_go_the_session
-    then_i_see_one_patient_needing_triage
+    then_i_see_one_patient_needing_consent
 
+    when_the_parent_gives_consent
+    then_i_see_one_patient_needing_triage
     when_i_click_on_triage
     and_i_click_on_the_patient
     then_i_see_the_patient_needs_triage
-
-    when_i_mark_the_patient_as_not_safe_to_vaccinate
-    and_the_consent_requests_are_sent
-    then_the_parent_doesnt_receive_a_consent_request
   end
 
   def given_a_td_ipv_programme_with_a_session
-    programmes = [create(:programme, :td_ipv)]
+    @programme = create(:programme, :td_ipv)
 
-    organisation = create(:organisation, programmes:)
+    organisation = create(:organisation, programmes: [@programme])
     @user = create(:nurse, organisations: [organisation])
 
     location = create(:school, :secondary, urn: 123_456, organisation:)
@@ -38,7 +36,7 @@ describe "Triage" do
         :session,
         date: 1.week.from_now.to_date,
         organisation:,
-        programmes:,
+        programmes: [@programme],
         location:
       )
   end
@@ -84,6 +82,16 @@ describe "Triage" do
     click_on "Continue"
   end
 
+  def then_i_see_one_patient_needing_consent
+    expect(page).to have_content("1 child without a response")
+  end
+
+  def when_the_parent_gives_consent
+    @consent =
+      create(:consent, :given, patient: Patient.first, programme: @programme)
+    page.refresh
+  end
+
   def then_i_see_one_patient_needing_triage
     expect(page).to have_content("1 child needing triage")
   end
@@ -98,18 +106,8 @@ describe "Triage" do
 
   def then_i_see_the_patient_needs_triage
     expect(page).to have_content("Needs triage")
-  end
-
-  def when_i_mark_the_patient_as_not_safe_to_vaccinate
-    choose "No, do not vaccinate"
-    click_on "Save triage"
-  end
-
-  def and_the_consent_requests_are_sent
-    SchoolConsentRequestsJob.perform_now
-  end
-
-  def then_the_parent_doesnt_receive_a_consent_request
-    expect(EmailDeliveryJob.deliveries).to be_empty
+    expect(page).to have_content(
+      "Incomplete vaccination history for Td/IPV. Check if the child needs another dose."
+    )
   end
 end

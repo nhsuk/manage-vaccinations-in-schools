@@ -35,8 +35,7 @@ describe PatientSessionStatusConcern do
         triage_delay_vaccination?: false,
         vaccination_administered?: false,
         vaccination_not_administered?: false,
-        vaccination_can_be_delayed?: false,
-        historical_vaccination?: false
+        vaccination_can_be_delayed?: false
       }.merge(conditions_hash)
 
       context "with conditions #{conditions_list}" do
@@ -81,10 +80,6 @@ describe PatientSessionStatusConcern do
     include_examples "it supports the status",
                      :delay_vaccination,
                      conditions: [:triage_delay_vaccination]
-
-    include_examples "it supports the status",
-                     :historical_vaccination_triage_needed,
-                     conditions: %i[historical_vaccination triage_needed]
 
     include_examples "it supports the status",
                      :vaccinated,
