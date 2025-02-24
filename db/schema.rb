@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_02_21_155425) do
+ActiveRecord::Schema[8.0].define(version: 2025_02_24_173345) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -763,6 +763,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_21_155425) do
     t.bigint "patient_id"
     t.bigint "session_id"
     t.string "performed_ods_code", null: false
+    t.bigint "vaccine_id"
     t.index ["batch_id"], name: "index_vaccination_records_on_batch_id"
     t.index ["discarded_at"], name: "index_vaccination_records_on_discarded_at"
     t.index ["patient_id"], name: "index_vaccination_records_on_patient_id"
@@ -770,6 +771,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_21_155425) do
     t.index ["programme_id"], name: "index_vaccination_records_on_programme_id"
     t.index ["session_id"], name: "index_vaccination_records_on_session_id"
     t.index ["uuid"], name: "index_vaccination_records_on_uuid", unique: true
+    t.index ["vaccine_id"], name: "index_vaccination_records_on_vaccine_id"
   end
 
   create_table "vaccines", force: :cascade do |t|
@@ -888,5 +890,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_21_155425) do
   add_foreign_key "vaccination_records", "programmes"
   add_foreign_key "vaccination_records", "sessions"
   add_foreign_key "vaccination_records", "users", column: "performed_by_user_id"
+  add_foreign_key "vaccination_records", "vaccines"
   add_foreign_key "vaccines", "programmes"
 end
