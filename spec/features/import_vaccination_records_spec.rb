@@ -111,7 +111,6 @@ describe "Immunisation imports" do
 
     expect(page).to have_content("Row 2")
     expect(page).to have_content("BATCH_EXPIRY_DATE:")
-    expect(page).to have_content("ANATOMICAL_SITE:")
     expect(page).to have_content("VACCINE_GIVEN:")
   end
 

@@ -6,7 +6,6 @@ class ImmunisationImportRow
   validates :administered, inclusion: [true, false]
 
   with_options if: :administered do
-    validates :delivery_site, presence: true
     validates :reason, absence: true
   end
 
@@ -18,9 +17,9 @@ class ImmunisationImportRow
   end
 
   with_options if: -> { administered && offline_recording? } do
-    validates :vaccine_given, presence: true
     validates :batch_expiry_date, presence: true
     validates :batch_number, presence: true
+    validates :delivery_site, presence: true
   end
 
   validates :vaccine_given,
@@ -41,8 +40,7 @@ class ImmunisationImportRow
               allow_nil: true
             }
 
-  validate :delivery_site_appropriate_for_vaccine,
-           if: -> { administered && delivery_site.present? && vaccine.present? }
+  validate :delivery_site_appropriate_for_vaccine
 
   validates :dose_sequence,
             presence: {

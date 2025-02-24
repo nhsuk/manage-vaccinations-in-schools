@@ -103,10 +103,7 @@ class VaccinationRecord < ApplicationRecord
 
   enum :delivery_method,
        { intramuscular: 0, subcutaneous: 1, nasal_spray: 2 },
-       prefix: true,
-       validate: {
-         if: :administered?
-       }
+       prefix: true
   enum :delivery_site,
        {
          left_arm_upper_position: 2,
@@ -119,10 +116,8 @@ class VaccinationRecord < ApplicationRecord
          right_buttock: 9,
          nose: 10
        },
-       prefix: true,
-       validate: {
-         if: :administered?
-       }
+       prefix: true
+
   enum :outcome,
        {
          administered: 0,
