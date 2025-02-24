@@ -205,14 +205,14 @@ class ImmunisationImportRow
   end
 
   def location_name
-    return unless session.nil? || location&.generic_clinic?
+    return unless session.nil? || session.location.generic_clinic?
 
     if school_urn == SCHOOL_URN_UNKNOWN &&
          (
            (care_setting.nil? && clinic_name.blank?) ||
              care_setting == CARE_SETTING_SCHOOL
          )
-      school_name
+      school_name.presence || "Unknown"
     else
       clinic_name.presence || "Unknown"
     end
@@ -377,7 +377,7 @@ class ImmunisationImportRow
   end
 
   def school_urn
-    @data["SCHOOL_URN"]&.strip
+    @data["SCHOOL_URN"]&.strip.presence
   end
 
   def date_of_vaccination
@@ -434,19 +434,6 @@ class ImmunisationImportRow
     )
   end
 
-  def location
-    @location ||=
-      if school &&
-           (
-             (care_setting.nil? && clinic_name.blank?) ||
-               care_setting == CARE_SETTING_SCHOOL
-           )
-        school
-      else
-        organisation.generic_clinic
-      end
-  end
-
   def school
     @school ||=
       if school_urn != SCHOOL_URN_HOME_EDUCATED &&
@@ -465,7 +452,7 @@ class ImmunisationImportRow
         organisation
           .sessions
           .for_current_academic_year
-          .includes(:session_dates)
+          .includes(:location, :session_dates)
           .find(session_id)
       end
   end
@@ -630,6 +617,8 @@ class ImmunisationImportRow
   end
 
   def school_urn_inclusion
+    return if school_urn.nil?
+
     unless Location.school.exists?(urn: school_urn) ||
              school_urn.in?([SCHOOL_URN_HOME_EDUCATED, SCHOOL_URN_UNKNOWN])
       errors.add(:school_urn, :inclusion)

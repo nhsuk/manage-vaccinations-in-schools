@@ -74,7 +74,7 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
       {
         name: "SCHOOL_URN",
         notes:
-          "#{tag.strong("Required")}, must be 6 digits and numeric. " \
+          "Optional, must be 6 digits and numeric. " \
             "Use #{tag.i("888888")} for school unknown and #{tag.i("999999")} " \
             "for homeschooled."
       },
