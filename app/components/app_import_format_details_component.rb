@@ -282,8 +282,7 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
       {
         name: "CARE_SETTING",
         notes:
-          "Required if #{tag.code("VACCINATED")} is #{tag.i("Y")}, must be " \
-            "#{tag.i("1")} (school) or #{tag.i("2")} (clinic)"
+          "Optional, must be #{tag.i("1")} (school) or #{tag.i("2")} (clinic)"
       },
       {
         name: "CLINIC_NAME",
