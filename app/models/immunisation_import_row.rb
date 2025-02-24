@@ -82,9 +82,6 @@ class ImmunisationImportRow
             }
 
   validates :performed_ods_code,
-            presence: {
-              unless: :offline_recording?
-            },
             comparison: {
               equal_to: :organisation_ods_code,
               if: :offline_recording?
@@ -355,7 +352,7 @@ class ImmunisationImportRow
   end
 
   def performed_ods_code
-    @data["ORGANISATION_CODE"]&.strip&.upcase
+    @data["ORGANISATION_CODE"]&.strip&.upcase&.presence
   end
 
   def programme_name

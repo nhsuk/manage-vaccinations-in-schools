@@ -17,7 +17,7 @@
 #  performed_at             :datetime         not null
 #  performed_by_family_name :string
 #  performed_by_given_name  :string
-#  performed_ods_code       :string           not null
+#  performed_ods_code       :string
 #  uuid                     :uuid             not null
 #  created_at               :datetime         not null
 #  updated_at               :datetime         not null
