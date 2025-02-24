@@ -2,11 +2,12 @@
 
 class PatientSessionsController < ApplicationController
   before_action :set_patient_session
-  before_action :set_programme, only: :show
+  before_action :set_programme, except: :log
   before_action :set_session
   before_action :set_patient
   before_action :set_section_and_tab
-  before_action :record_access_log_entry
+
+  before_action :record_access_log_entry, except: :record_already_vaccinated
 
   layout "three_quarters"
 
@@ -14,6 +15,33 @@ class PatientSessionsController < ApplicationController
   end
 
   def log
+  end
+
+  def record_already_vaccinated
+    unless @patient_session.can_record_as_already_vaccinated?(
+             programme: @programme
+           )
+      redirect_to session_patient_path and return
+    end
+
+    draft_vaccination_record =
+      DraftVaccinationRecord.new(request_session: session, current_user:)
+
+    draft_vaccination_record.reset!
+    draft_vaccination_record.update!(
+      outcome: :already_had,
+      patient: @patient,
+      performed_at: Time.current,
+      performed_by_user_id: nil,
+      programme: @programme,
+      # TODO: Ideally we wouldn't set these, but other parts of the service break if we don't.
+      # These are set when recording an "already had" vaccination normally, and we probably
+      # want to change that too.
+      session: @session,
+      performed_ods_code: current_user.selected_organisation.ods_code
+    )
+
+    redirect_to draft_vaccination_record_path("confirm")
   end
 
   private

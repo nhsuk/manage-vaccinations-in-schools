@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-describe "Triage" do
-  scenario "nurse can triage after importing cohort to remove from programme" do
+describe "Td/IPV" do
+  scenario "record a patient as already vaccinated outside the session" do
     given_a_menacwy_programme_with_a_session
     and_i_am_signed_in_as_a_nurse
 
@@ -17,7 +17,7 @@ describe "Triage" do
     and_i_click_on_the_patient
     then_i_see_the_patient_needs_consent
 
-    when_i_mark_the_patient_as_not_safe_to_vaccinate
+    when_i_record_the_patient_as_already_vaccinated
     and_the_consent_requests_are_sent
     then_the_parent_doesnt_receive_a_consent_request
   end
@@ -86,9 +86,9 @@ describe "Triage" do
     expect(page).to have_content("No response")
   end
 
-  def when_i_mark_the_patient_as_not_safe_to_vaccinate
-    choose "No, do not vaccinate"
-    click_on "Save triage"
+  def when_i_record_the_patient_as_already_vaccinated
+    click_on "Record as already vaccinated"
+    click_on "Confirm"
   end
 
   def and_the_consent_requests_are_sent

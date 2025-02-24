@@ -20,7 +20,7 @@
      delivery_site: wizard_path("delivery"),
      location: @draft_vaccination_record.wizard_steps.include?(:location) ? wizard_path("location") : nil,
      notes: wizard_path("notes"),
-     outcome: wizard_path("outcome"),
+     outcome: @draft_vaccination_record.wizard_steps.include?(:outcome) ? wizard_path("outcome") : nil,
      performed_at: wizard_path("date-and-time"),
      vaccine: wizard_path("vaccine"),
    } %>

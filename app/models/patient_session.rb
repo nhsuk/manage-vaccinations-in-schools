@@ -77,10 +77,6 @@ class PatientSession < ApplicationRecord
 
   delegate :send_notifications?, to: :patient
 
-  def able_to_vaccinate?
-    !unable_to_vaccinate?
-  end
-
   def safe_to_destroy?
     any_vaccination_records =
       programmes.any? do |programme|
@@ -94,6 +90,11 @@ class PatientSession < ApplicationRecord
 
   def destroy_if_safe!
     destroy! if safe_to_destroy?
+  end
+
+  def can_record_as_already_vaccinated?(programme:)
+    !session.today? && !vaccinated?(programme:) &&
+      !unable_to_vaccinate?(programme:)
   end
 
   def programmes

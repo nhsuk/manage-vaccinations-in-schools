@@ -267,6 +267,8 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
     if (location = @vaccination_record.location)
       if location.generic_clinic?
         @vaccination_record.location_name
+      elsif @vaccination_record.already_had?
+        "Unknown"
       else
         location.name
       end
