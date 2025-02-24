@@ -113,13 +113,26 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
         notes: "Optional, must use #{tag.i("HH:MM:SS")} format"
       },
       {
+        name: "PROGRAMME",
+        notes:
+          "#{tag.strong("Required")}, must be " +
+            organisation
+              .programmes
+              .flat_map(&:import_names)
+              .map { tag.i(it) }
+              .to_sentence(
+                last_word_connector: ", or ",
+                two_words_connector: " or "
+              )
+      },
+      {
         name: "VACCINE_GIVEN",
         notes:
           "#{tag.strong("Required")}, must be " +
             organisation
               .vaccines
               .pluck(:nivs_name)
-              .map { tag.i(_1) }
+              .map { tag.i(it) }
               .to_sentence(
                 last_word_connector: ", or ",
                 two_words_connector: " or "

@@ -34,7 +34,7 @@ class ImmunisationImportRow
               greater_than_or_equal_to: 1,
               less_than_or_equal_to: :maximum_dose_sequence
             },
-            if: :programme
+            if: :maximum_dose_sequence
 
   SCHOOL_URN_HOME_EDUCATED = "999999"
   SCHOOL_URN_UNKNOWN = "888888"
@@ -72,6 +72,8 @@ class ImmunisationImportRow
               equal_to: :organisation_ods_code,
               if: :outcome_in_this_academic_year?
             }
+
+  validates :programme_name, inclusion: { in: :valid_programme_names }
 
   validates :date_of_vaccination,
             comparison: {
@@ -283,9 +285,7 @@ class ImmunisationImportRow
   def dose_sequence
     value = @data["DOSE_SEQUENCE"]&.gsub(/\s/, "")&.presence&.upcase
 
-    if value.blank? && (!administered || programme&.maximum_dose_sequence == 1)
-      return 1
-    end
+    return 1 if value.blank? && (!administered || maximum_dose_sequence == 1)
 
     return DOSE_SEQUENCES[value] if DOSE_SEQUENCES.include?(value)
 
@@ -333,6 +333,10 @@ class ImmunisationImportRow
 
   def performed_ods_code
     @data["ORGANISATION_CODE"]&.strip&.upcase
+  end
+
+  def programme_name
+    @data["PROGRAMME"]&.strip
   end
 
   def school_name
@@ -424,15 +428,14 @@ class ImmunisationImportRow
       end
   end
 
-  def vaccine
-    @vaccine ||=
-      organisation
-        .vaccines
-        .includes(:programme)
-        .find_by(nivs_name: vaccine_given)
+  def programme
+    @programme ||= programmes_by_name[programme_name]
   end
 
-  delegate :programme, to: :vaccine, allow_nil: true
+  def vaccine
+    @vaccine ||=
+      organisation.vaccines.where(programme:).find_by(nivs_name: vaccine_given)
+  end
 
   def batch
     return unless valid? && administered
@@ -450,11 +453,24 @@ class ImmunisationImportRow
     organisation.ods_code
   end
 
+  def programmes_by_name
+    @programmes_by_name ||=
+      organisation
+        .programmes
+        .each_with_object({}) do |programme, hash|
+          programme.import_names.each { |name| hash[name] = programme }
+        end
+  end
+
+  def valid_programme_names
+    programmes_by_name.keys
+  end
+
   def valid_given_vaccines
     organisation.vaccines.pluck(:nivs_name)
   end
 
-  delegate :maximum_dose_sequence, to: :programme
+  delegate :maximum_dose_sequence, to: :programme, allow_nil: true
 
   # TODO: we want tougher validation from the point of integration of Mavis
   # but permit looser validation in historical data

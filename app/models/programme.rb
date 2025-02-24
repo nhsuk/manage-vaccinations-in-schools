@@ -85,6 +85,17 @@ class Programme < ApplicationRecord
     hpv? ? 3 : vaccinated_dose_sequence
   end
 
+  IMPORT_NAMES = {
+    "flu" => %w[Flu],
+    "hpv" => %w[HPV],
+    "menacwy" => %w[ACWYX4 MenACWY],
+    "td_ipv" => %w[3-in-1 Td/IPV]
+  }.freeze
+
+  def import_names
+    IMPORT_NAMES.fetch(type)
+  end
+
   SNOMED_PROCEDURE_CODES = {
     "flu" => "822851000000102",
     "hpv" => "761841000",
