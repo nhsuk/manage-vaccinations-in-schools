@@ -6,8 +6,6 @@ class ImmunisationImportRow
   validates :administered, inclusion: [true, false]
 
   with_options if: :administered do
-    validates :batch_expiry_date, presence: true
-    validates :batch_number, presence: true
     validates :delivery_site, presence: true
     validates :reason, absence: true
   end
@@ -19,14 +17,30 @@ class ImmunisationImportRow
     validates :reason, presence: true
   end
 
-  validates :vaccine_given, inclusion: { in: :valid_given_vaccines }
+  with_options if: -> { administered && offline_recording? } do
+    validates :vaccine_given, presence: true
+    validates :batch_expiry_date, presence: true
+    validates :batch_number, presence: true
+  end
+
+  validates :vaccine_given,
+            inclusion: {
+              in: :valid_given_vaccines,
+              allow_nil: true
+            }
+
+  validates :batch_number, presence: { if: :batch_expiry_date }
 
   validates :batch_expiry_date,
+            presence: {
+              if: :batch_number
+            },
             comparison: {
               greater_than: -> { Date.new(Date.current.year - 15, 1, 1) },
-              less_than: -> { Date.new(Date.current.year + 15, 1, 1) }
-            },
-            if: :batch_expiry_date
+              less_than: -> { Date.new(Date.current.year + 15, 1, 1) },
+              allow_nil: true
+            }
+
   validate :delivery_site_appropriate_for_vaccine,
            if: -> { administered && delivery_site.present? && vaccine.present? }
 
@@ -223,7 +237,7 @@ class ImmunisationImportRow
   end
 
   def batch_number
-    @data["BATCH_NUMBER"]&.strip
+    @data["BATCH_NUMBER"]&.strip.presence
   end
 
   REASONS = {
@@ -464,7 +478,7 @@ class ImmunisationImportRow
   end
 
   def batch
-    return unless valid? && administered
+    return unless valid? && administered && vaccine
 
     @batch ||=
       Batch.create_with(archived_at: Time.current).find_or_create_by!(

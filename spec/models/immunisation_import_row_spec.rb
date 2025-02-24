@@ -78,12 +78,6 @@ describe ImmunisationImportRow do
 
       it "has errors" do
         expect(immunisation_import_row).to be_invalid
-        expect(immunisation_import_row.errors[:batch_expiry_date]).to eq(
-          ["Enter a batch expiry date."]
-        )
-        expect(immunisation_import_row.errors[:batch_number]).to eq(
-          ["Enter a batch number."]
-        )
         expect(immunisation_import_row.errors[:delivery_site]).to eq(
           ["Enter an anatomical site."]
         )
@@ -479,6 +473,31 @@ describe ImmunisationImportRow do
         expect(immunisation_import_row).to be_invalid
         expect(immunisation_import_row.errors[:delivery_site]).to eq(
           ["Enter a anatomical site that is appropriate for the vaccine."]
+        )
+      end
+    end
+
+    context "vaccination in a session without a batch" do
+      let(:programme) { create(:programme, :flu) }
+
+      let(:data) do
+        {
+          "VACCINATED" => "Y",
+          "PROGRAMME" => "Flu",
+          "DATE_OF_VACCINATION" => "#{Date.current.academic_year}0901",
+          "SESSION_ID" => session.id.to_s
+        }
+      end
+
+      let(:session) { create(:session, organisation:, programme:) }
+
+      it "has errors" do
+        expect(immunisation_import_row).to be_invalid
+        expect(immunisation_import_row.errors[:batch_expiry_date]).to eq(
+          ["Enter a batch expiry date."]
+        )
+        expect(immunisation_import_row.errors[:batch_number]).to eq(
+          ["Enter a batch number."]
         )
       end
     end

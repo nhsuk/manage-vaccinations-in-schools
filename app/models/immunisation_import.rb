@@ -78,8 +78,8 @@ class ImmunisationImport < ApplicationRecord
     @patient_sessions_batch ||= Set.new
 
     @vaccination_records_batch.add(vaccination_record)
-    if vaccination_record.administered?
-      @batches_batch.add(vaccination_record.batch)
+    if (batch = vaccination_record.batch)
+      @batches_batch.add(batch)
     end
     @patients_batch.add(vaccination_record.patient)
 
