@@ -1065,28 +1065,48 @@ describe ImmunisationImportRow do
     let(:programme) { create(:programme, :hpv) }
 
     context "without a value" do
-      let(:data) { { "VACCINE_GIVEN" => "Gardasil9" } }
+      let(:data) { { "PROGRAMME" => "HPV" } }
 
       it { should be_nil }
     end
 
     context "with an invalid value" do
-      let(:data) do
-        { "VACCINE_GIVEN" => "Gardasil9", "DOSE_SEQUENCE" => "abc" }
-      end
+      let(:data) { { "PROGRAMME" => "HPV", "DOSE_SEQUENCE" => "abc" } }
 
       it { should be_nil }
     end
 
     context "with a valid value" do
-      let(:data) { { "VACCINE_GIVEN" => "Gardasil9", "DOSE_SEQUENCE" => "1" } }
+      let(:data) { { "PROGRAMME" => "HPV", "DOSE_SEQUENCE" => "1" } }
 
       it { should eq(1) }
     end
 
+    %w[1P 2P 3P].each_with_index do |value, index|
+      context "with an HPV special value of #{value}" do
+        let(:programme) { create(:programme, :hpv) }
+
+        let(:data) { { "PROGRAMME" => "HPV", "DOSE_SEQUENCE" => value } }
+
+        it { should eq(index + 1) }
+      end
+    end
+
+    %w[1P 1B 2B].each_with_index do |value, index|
+      context "with a MenACWY special value of #{value}" do
+        let(:programme) { create(:programme, :menacwy) }
+
+        let(:data) { { "PROGRAMME" => "MenACWY", "DOSE_SEQUENCE" => value } }
+
+        it { should eq(index + 1) }
+      end
+    end
+
     %w[1P 2P 3P 1B 2B].each_with_index do |value, index|
-      context "with a special value of #{value}" do
-        let(:data) { { "DOSE_SEQUENCE" => value } }
+      context "with a Td/IPV special value of #{value}" do
+        let(:programme) { create(:programme, :td_ipv) }
+
+        let(:data) { { "PROGRAMME" => "Td/IPV", "DOSE_SEQUENCE" => value } }
 
         it { should eq(index + 1) }
       end

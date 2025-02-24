@@ -259,7 +259,12 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
 
   def dose_sequence
     special_values =
-      ImmunisationImportRow::DOSE_SEQUENCES.keys.map { tag.i(_1) }
+      ImmunisationImportRow::DOSE_SEQUENCES
+        .values
+        .flat_map(&:keys)
+        .sort
+        .uniq
+        .map { tag.i(it) }
 
     special_values_sentence =
       special_values.to_sentence(
