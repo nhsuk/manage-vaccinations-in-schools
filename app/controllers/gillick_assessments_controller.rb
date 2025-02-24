@@ -2,9 +2,9 @@
 
 class GillickAssessmentsController < ApplicationController
   before_action :set_session
-  before_action :set_programme
   before_action :set_patient
   before_action :set_patient_session
+  before_action :set_programme
   before_action :set_is_first_assessment
   before_action :set_gillick_assessment
 
@@ -28,20 +28,23 @@ class GillickAssessmentsController < ApplicationController
     @session = policy_scope(Session).find_by!(slug: params[:session_slug])
   end
 
-  def set_programme
-    @programme = @session.programmes.find_by!(type: params[:programme_type])
-  end
-
   def set_patient
     @patient = policy_scope(Patient).find(params[:patient_id])
   end
 
   def set_patient_session
     @patient_session =
-      policy_scope(PatientSession).includes(:gillick_assessments).find_by!(
-        session: @session,
-        patient: @patient
-      )
+      policy_scope(PatientSession).includes(
+        :gillick_assessments,
+        session: :programmes
+      ).find_by!(session: @session, patient: @patient)
+  end
+
+  def set_programme
+    @programme =
+      @patient_session.programmes.find { it.type == params[:programme_type] }
+
+    raise ActiveRecord::RecordNotFound if @programme.nil?
   end
 
   def set_is_first_assessment

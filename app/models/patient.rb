@@ -238,10 +238,6 @@ class Patient < ApplicationRecord
     birth_academic_year_changed?
   end
 
-  def eligible_for?(programme:)
-    year_group.in?(programme.year_groups)
-  end
-
   def has_consent?(programme)
     consents.any? { _1.programme_id == programme.id }
   end
@@ -373,12 +369,7 @@ class Patient < ApplicationRecord
 
   def clear_sessions_for_current_academic_year!
     patient_sessions
-      .includes(
-        :programmes,
-        :gillick_assessments,
-        :session_attendances,
-        patient: :vaccination_records
-      )
+      .preload_for_status
       .where(session: sessions_for_current_academic_year)
       .find_each(&:destroy_if_safe!)
   end

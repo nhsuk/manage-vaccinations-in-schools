@@ -11,9 +11,9 @@ class VaccinationsController < ApplicationController
   include PatientSortingConcern
 
   before_action :set_session
-  before_action :set_programme
   before_action :set_patient, only: :create
   before_action :set_patient_session, only: :create
+  before_action :set_programme, only: :create
   before_action :set_section_and_tab, only: :create
 
   before_action :set_batches, only: %i[index create batch update_batch]
@@ -23,6 +23,10 @@ class VaccinationsController < ApplicationController
 
   def index
     authorize VaccinationRecord
+
+    @programme =
+      @session.programmes.find_by(type: params[:programme_type]) ||
+        @session.programmes.first
 
     all_patient_sessions =
       @session
@@ -140,12 +144,6 @@ class VaccinationsController < ApplicationController
       )
   end
 
-  def set_programme
-    @programme =
-      @session.programmes.find_by(type: params[:programme_type]) ||
-        @session.programmes.first
-  end
-
   def set_patient
     @patient =
       policy_scope(Patient).find(
@@ -157,15 +155,16 @@ class VaccinationsController < ApplicationController
     @patient_session =
       @patient
         .patient_sessions
-        .includes(
-          :organisation,
-          patient: {
-            parent_relationships: :parent
-          },
-          session: :programmes
-        )
+        .includes(:organisation, patient: { parent_relationships: :parent })
         .preload_for_status
         .find_by!(session: @session)
+  end
+
+  def set_programme
+    @programme =
+      @patient_session.programmes.find { it.type == params[:programme_type] }
+
+    raise ActiveRecord::RecordNotFound if @programme.nil?
   end
 
   def set_section_and_tab

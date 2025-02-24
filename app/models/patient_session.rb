@@ -33,7 +33,6 @@ class PatientSession < ApplicationRecord
   has_one :location, through: :session
   has_one :team, through: :session
   has_one :organisation, through: :session
-  has_many :programmes, through: :session
   has_many :session_attendances, dependent: :destroy
 
   has_many :gillick_assessments, -> { order(:created_at) }
@@ -65,9 +64,9 @@ class PatientSession < ApplicationRecord
         -> do
           preload(
             :gillick_assessments,
-            :programmes,
             :session_attendances,
-            patient: [:triages, { consents: :parent }, :vaccination_records]
+            patient: [:triages, { consents: :parent }, :vaccination_records],
+            session: :programmes
           )
         end
 
@@ -95,6 +94,10 @@ class PatientSession < ApplicationRecord
 
   def destroy_if_safe!
     destroy! if safe_to_destroy?
+  end
+
+  def programmes
+    session.programmes.select { it.year_groups.include?(patient.year_group) }
   end
 
   def consents(programme:)

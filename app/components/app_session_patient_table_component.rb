@@ -116,7 +116,7 @@ class AppSessionPatientTableComponent < ViewComponent::Base
     tab = params[:tab]
 
     session = patient_session.session
-    programme = @programme || session.programmes.first
+    programme = @programme || patient_session.programmes.first
 
     # TODO: Remove this once "Record session outcomes" exists.
     # We have to guess the section and tab if it's not provided, this

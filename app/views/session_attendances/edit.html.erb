@@ -1,6 +1,6 @@
 <% content_for :before_main do %>
   <%= render AppBacklinkComponent.new(
-        session_patient_programme_path(patient_id: @patient.id, programme_type: @session.programmes.first.type),
+        session_patient_programme_path(patient_id: @patient.id, programme_type: @patient_session.programmes.first.type),
         name: "#{@section.pluralize} page",
       ) %>
 <% end %>

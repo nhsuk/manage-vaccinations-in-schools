@@ -129,19 +129,19 @@ class Reports::OfflineSessionExporter
       .patient_sessions
       .eager_load(patient: :school)
       .preload(
-        :programmes,
         patient: {
           consents: [:parent, { patient: :parent_relationships }],
           triages: :performed_by,
           vaccination_records: %i[batch performed_by_user vaccine]
         },
+        session: :programmes,
         gillick_assessments: :performed_by
       )
       .order_by_name
   end
 
   def rows(patient_session:)
-    session.programmes.flat_map do |programme|
+    patient_session.programmes.flat_map do |programme|
       bg_color =
         if patient_session.consent_refused?(programme:)
           "F7D4D1"
