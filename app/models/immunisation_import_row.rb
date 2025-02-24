@@ -152,7 +152,8 @@ class ImmunisationImportRow
         batch_id: batch&.id,
         delivery_method:,
         delivery_site:,
-        notes:
+        notes:,
+        vaccine_id: vaccine&.id
       )
     else
       # Postgres UUID generation is skipped in bulk import
@@ -162,6 +163,7 @@ class ImmunisationImportRow
       vaccination_record.delivery_method = delivery_method
       vaccination_record.delivery_site = delivery_site
       vaccination_record.notes = notes
+      vaccination_record.vaccine = vaccine
     end
 
     vaccination_record
