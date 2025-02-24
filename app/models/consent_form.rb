@@ -412,7 +412,13 @@ class ConsentForm < ApplicationRecord
         school_move.update!(source: :parental_consent_form)
       end
 
-      Consent.from_consent_form!(self, patient:, current_user:)
+      Consent
+        .from_consent_form!(self, patient:, current_user:)
+        .each do |consent|
+          if consent.triage_needed?
+            patient.triages.where(programme: consent.programme).invalidate_all
+          end
+        end
     end
   end
 
