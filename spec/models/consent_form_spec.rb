@@ -634,6 +634,31 @@ describe ConsentForm do
     expect(consent_form.health_answers).to be_empty
   end
 
+  it "combines health questions from multiple active vaccines" do
+    programme1 = create(:programme, :menacwy)
+    programme2 = create(:programme, :td_ipv)
+    consent_form =
+      create(
+        :consent_form,
+        session: create(:session, programmes: [programme1, programme2]),
+        programmes: [programme1, programme2],
+        response: "refused"
+      )
+
+    consent_form.update!(
+      response: "given",
+      address_line_1: "123 Fake St",
+      address_town: "London",
+      address_postcode: "SW1A 1AA"
+    )
+    consent_form.reload
+
+    expect(consent_form.health_answers.count).to eq(
+      programme1.vaccines.first.health_questions.count +
+        programme2.vaccines.first.health_questions.count
+    )
+  end
+
   it "removes the health questions when the parent refuses consent for HPV" do
     consent_form =
       create(
