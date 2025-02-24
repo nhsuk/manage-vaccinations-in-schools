@@ -10,6 +10,7 @@
 #  address_postcode                    :string
 #  address_town                        :string
 #  archived_at                         :datetime
+#  chosen_vaccine                      :string
 #  contact_injection                   :boolean
 #  date_of_birth                       :date
 #  education_setting                   :integer
@@ -656,6 +657,31 @@ describe ConsentForm do
     expect(consent_form.health_answers.count).to eq(
       programme1.vaccines.first.health_questions.count +
         programme2.vaccines.first.health_questions.count
+    )
+  end
+
+  it "only shows the health questions for the chosen vaccine" do
+    programme1 = create(:programme, :menacwy)
+    programme2 = create(:programme, :td_ipv)
+    consent_form =
+      create(
+        :consent_form,
+        session: create(:session, programmes: [programme1, programme2]),
+        programmes: [programme1, programme2],
+        response: "refused"
+      )
+
+    consent_form.update!(
+      response: "given",
+      chosen_vaccine: programme2.type,
+      address_line_1: "123 Fake St",
+      address_town: "London",
+      address_postcode: "SW1A 1AA"
+    )
+    consent_form.reload
+
+    expect(consent_form.health_answers.count).to eq(
+      programme2.vaccines.first.health_questions.count
     )
   end
 
