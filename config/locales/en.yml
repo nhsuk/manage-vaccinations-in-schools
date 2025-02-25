@@ -310,6 +310,11 @@ en:
           attributes:
             action:
               inclusion: Choose whether to update the child’s record with this new information
+        session_programmes_form:
+          attributes:
+            programme_ids:
+              blank: Choose which programmes this session is part of
+              inclusion: You cannot remove a program from the session once it has been added
         vaccinate_form:
           attributes:
             delivery_site:
@@ -584,8 +589,6 @@ en:
               match_type: Vaccines must be suitable for the programme type
         session:
           attributes:
-            programme_ids:
-              blank: Choose which programmes this session is part of
             send_consent_requests_at:
               blank: Enter a date
               missing_day: Enter a day
