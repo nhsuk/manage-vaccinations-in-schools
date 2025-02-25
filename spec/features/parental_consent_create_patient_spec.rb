@@ -133,7 +133,7 @@ describe "Parental consent create patient" do
 
   def then_i_see_the_consent_confirmation_page
     expect(page).to have_content(
-      "#{@child.full_name} will get their HPV vaccination at school"
+      "#{@child.full_name} is due to get the HPV vaccination at school"
     )
   end
 

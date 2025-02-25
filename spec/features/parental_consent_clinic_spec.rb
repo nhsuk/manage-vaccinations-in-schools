@@ -228,7 +228,7 @@ describe "Parental consent school" do
 
   def then_i_see_a_confirmation_page
     # TODO: "will get their HPV vaccination at the clinic"
-    expect(page).to have_content("will get their HPV vaccination")
+    expect(page).to have_content("is due to get the HPV vaccination")
 
     perform_enqueued_jobs # match consent form with patient
   end
