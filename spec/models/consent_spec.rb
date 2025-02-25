@@ -164,6 +164,64 @@ describe Consent do
         end
       end
     end
+
+    context "when only consenting to one programme" do
+      subject(:consents) do
+        described_class.from_consent_form!(
+          consent_form,
+          patient:,
+          current_user:
+        )
+      end
+
+      let(:programmes) do
+        [create(:programme, :menacwy), create(:programme, :td_ipv)]
+      end
+      let(:organisation) { create(:organisation, programmes:) }
+      let(:session) { create(:session, organisation:, programmes:) }
+      let(:consent_form) do
+        create(
+          :consent_form,
+          :recorded,
+          session:,
+          response: :given_one,
+          reason: :personal_choice,
+          reason_notes: "Personal reasons.",
+          chosen_vaccine: "menacwy"
+        )
+      end
+
+      let(:patient) { create(:patient) }
+      let(:current_user) { create(:user) }
+
+      it "creates a consent per programme" do
+        expect(consents.map(&:programme)).to eq(programmes)
+      end
+
+      it "creates consent given for MenACWY" do
+        expect(consents.first).to have_attributes(
+          programme: programmes.first,
+          patient:,
+          consent_form:,
+          reason_for_refusal: nil,
+          notes: "",
+          response: "given",
+          route: "website"
+        )
+      end
+
+      it "creates consent refused for Td/IPV" do
+        expect(consents.second).to have_attributes(
+          programme: programmes.second,
+          patient:,
+          consent_form:,
+          reason_for_refusal: "personal_choice",
+          notes: "Personal reasons.",
+          response: "refused",
+          route: "website"
+        )
+      end
+    end
   end
 
   it "resets health answer notes if a 'yes' changes to a 'no'" do

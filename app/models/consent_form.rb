@@ -431,6 +431,14 @@ class ConsentForm < ApplicationRecord
     education_setting_home?
   end
 
+  def chosen_vaccines
+    if chosen_vaccine.present?
+      programmes.find_by(type: chosen_vaccine).vaccines.active
+    else
+      vaccines.active
+    end
+  end
+
   private
 
   def academic_year
@@ -549,13 +557,5 @@ class ConsentForm < ApplicationRecord
 
         health_answer
       end
-  end
-
-  def chosen_vaccines
-    if chosen_vaccine.present?
-      programmes.find_by(type: chosen_vaccine).vaccines.active
-    else
-      vaccines.active
-    end
   end
 end
