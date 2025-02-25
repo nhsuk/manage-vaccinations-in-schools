@@ -158,49 +158,40 @@ class Consent < ApplicationRecord
       parent =
         consent_form.find_or_create_parent_with_relationship_to!(patient:)
 
-      consent_form.programmes.map do |programme|
-        given_one_and_this_refused =
-          consent_form.consent_given_one? &&
-            consent_form.chosen_vaccines.none? do
-              it.programme_id == programme.id
-            end
+      consent_given =
+        consent_form.chosen_programmes.map do |programme|
+          create!(
+            consent_form:,
+            organisation: consent_form.organisation,
+            programme:,
+            patient:,
+            parent:,
+            notes: "",
+            response: "given",
+            route: "website",
+            health_answers: consent_form.health_answers,
+            recorded_by: current_user
+          )
+        end
 
-        reason_for_refusal =
-          if given_one_and_this_refused || consent_form.consent_refused?
-            consent_form.reason
-          end
+      consent_refused =
+        consent_form.not_chosen_programmes.map do |programme|
+          create!(
+            consent_form:,
+            organisation: consent_form.organisation,
+            programme:,
+            patient:,
+            parent:,
+            reason_for_refusal: consent_form.reason,
+            notes: consent_form.reason_notes.presence || "",
+            response: "refused",
+            route: "website",
+            health_answers: consent_form.health_answers,
+            recorded_by: current_user
+          )
+        end
 
-        notes =
-          if given_one_and_this_refused || consent_form.consent_refused?
-            consent_form.reason_notes
-          end
-
-        response =
-          if given_one_and_this_refused
-            "refused"
-          elsif consent_form.consent_given_one?
-            "given"
-          else
-            consent_form.response
-          end
-
-        # TODO: Unpick health answers from different programmes.
-        health_answers = consent_form.health_answers
-
-        create!(
-          consent_form:,
-          organisation: consent_form.organisation,
-          programme:,
-          patient:,
-          parent:,
-          reason_for_refusal:,
-          notes: notes.presence || "",
-          response:,
-          route: "website",
-          health_answers:,
-          recorded_by: current_user
-        )
-      end
+      consent_given + consent_refused
     end
   end
 

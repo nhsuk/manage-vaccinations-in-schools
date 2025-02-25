@@ -431,7 +431,23 @@ class ConsentForm < ApplicationRecord
     education_setting_home?
   end
 
+  def chosen_programmes
+    return [] if consent_refused?
+
+    if chosen_vaccine.present?
+      programmes.where(type: chosen_vaccine)
+    else
+      programmes
+    end
+  end
+
+  def not_chosen_programmes
+    programmes - chosen_programmes
+  end
+
   def chosen_vaccines
+    return [] if consent_refused?
+
     if chosen_vaccine.present?
       programmes.find_by(type: chosen_vaccine).vaccines.active
     else
