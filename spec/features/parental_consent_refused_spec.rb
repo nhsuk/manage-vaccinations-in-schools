@@ -53,7 +53,9 @@ describe "Parental consent" do
     choose "No"
     click_on "Continue"
 
-    expect(page).to have_content("Why are you refusing to give consent?")
+    expect(page).to have_content(
+      "Please tell us why you do not agree to your child having the HPV vaccination"
+    )
     choose "Medical reasons"
     click_on "Continue"
 

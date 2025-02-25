@@ -170,6 +170,10 @@ describe "Parental consent" do
   end
 
   def and_i_give_a_reason_for_refusal
+    expect(page).to have_content(
+      "Please tell us why you do not agree to your child having the Td/IPV vaccination"
+    )
+
     choose "Vaccine already received"
     click_on "Continue"
 
