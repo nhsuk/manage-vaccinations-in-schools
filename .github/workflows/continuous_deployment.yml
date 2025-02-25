@@ -1,9 +1,8 @@
 name: Continuous Deployment
-run-name: Continuous Deployment of ${{ github.ref }} to environment "copilotmigration"
+run-name: Continuous Deployment of ${{ github.ref }} to "copilotmigration"
 on:
-  workflow_dispatch: # TODO remove before merging
   push:
-#    branches: [ "main" ] # Uncommented to register workflow with github initially
+    branches: ["main"]
 jobs:
   Test:
     uses: ./.github/workflows/test.yml
