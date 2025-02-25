@@ -15,26 +15,32 @@ class EmailDeliveryJob < NotifyDeliveryJob
     template_id = GOVUK_NOTIFY_EMAIL_TEMPLATES[template_name.to_sym]
     raise UnknownTemplate if template_id.nil?
 
-    parent ||= consent&.parent
-
-    email_address = consent_form&.parent_email || parent&.email
-    return if email_address.nil?
-
     personalisation =
-      GovukNotifyPersonalisation.call(
+      GovukNotifyPersonalisation.new(
         session:,
         consent:,
         consent_form:,
+        parent:,
         patient:,
         programmes:,
         vaccination_record:
       )
 
-    args = { email_address:, personalisation:, template_id: }
+    email_address =
+      personalisation.consent_form&.parent_email ||
+        personalisation.parent&.email
+    return if email_address.nil?
+
+    args = {
+      email_address:,
+      personalisation: personalisation.to_h,
+      template_id:
+    }
 
     if (
          email_reply_to_id =
-           reply_to_id(consent:, consent_form:, session:, vaccination_record:)
+           personalisation.team&.reply_to_id ||
+             personalisation.organisation.reply_to_id
        )
       args[:email_reply_to_id] = email_reply_to_id
     end
@@ -50,30 +56,16 @@ class EmailDeliveryJob < NotifyDeliveryJob
         nil
       end
 
-    patient ||= consent&.patient || vaccination_record&.patient
-
     NotifyLogEntry.create!(
-      consent_form:,
+      consent_form: personalisation.consent_form,
       delivery_id:,
-      parent:,
-      patient:,
+      parent: personalisation.parent,
+      patient: personalisation.patient,
       recipient: email_address,
       recipient_deterministic: email_address,
       sent_by:,
       template_id:,
       type: :email
     )
-  end
-
-  def reply_to_id(consent:, consent_form:, session:, vaccination_record:)
-    team = session&.team || consent_form&.team || vaccination_record&.team
-
-    return team.reply_to_id if team&.reply_to_id
-
-    organisation =
-      session&.organisation || consent_form&.organisation ||
-        consent&.organisation || vaccination_record&.organisation
-
-    organisation.reply_to_id
   end
 end

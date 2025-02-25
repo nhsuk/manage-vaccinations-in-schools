@@ -51,14 +51,15 @@ describe SMSDeliveryJob do
     let(:vaccination_record) { nil }
 
     it "generates personalisation" do
-      expect(GovukNotifyPersonalisation).to receive(:call).with(
+      expect(GovukNotifyPersonalisation).to receive(:new).with(
         session:,
         consent:,
         consent_form:,
+        parent:,
         patient:,
         programmes:,
         vaccination_record:
-      )
+      ).and_call_original
       perform_now
     end
 
