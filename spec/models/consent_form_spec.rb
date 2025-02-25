@@ -654,9 +654,9 @@ describe ConsentForm do
     )
     consent_form.reload
 
+    # there's only one extra question, the other questions are the same for both programmes
     expect(consent_form.health_answers.count).to eq(
-      programme1.vaccines.first.health_questions.count +
-        programme2.vaccines.first.health_questions.count
+      programme1.vaccines.first.health_questions.count + 1
     )
   end
 

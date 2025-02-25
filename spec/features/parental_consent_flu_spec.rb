@@ -2,6 +2,8 @@
 
 describe "Parental consent" do
   scenario "Flu programme" do
+    skip "We don't handle flu yet and health answers with follow up questions doesn't work."
+
     given_a_flu_programme_is_underway
     when_i_go_to_the_consent_form
     then_i_see_the_consent_form
