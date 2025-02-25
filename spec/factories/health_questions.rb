@@ -62,11 +62,10 @@ FactoryBot.define do
 
     trait :menacwy_vaccination do
       title do
-        "Has your child already had the teenage meningitis vaccination (MenACWY)?"
+        "Has your child had a meningitis (MenACWY) vaccination in the last 5 years?"
       end
       hint do
-        "This is different from the meningitis vaccines given to babies and young children. " \
-          "It’s usually given once in Year 9 or 10. Some children may have had it before travelling abroad."
+        "It’s usually given once in Year 9 or 10. Some children may have had it before travelling abroad."
       end
     end
 

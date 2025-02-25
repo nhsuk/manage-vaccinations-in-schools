@@ -533,8 +533,22 @@ class ConsentForm < ApplicationRecord
   def seed_health_questions
     return unless health_answers.empty?
 
-    self.health_answers =
+    health_answers =
       chosen_vaccines.flat_map { it.health_questions.to_health_answers }
+
+    # TODO: This doesn't work if we have follow up questions. Currently no vaccines have these.
+
+    deduplicated_health_answers = health_answers.uniq(&:question)
+
+    self.health_answers =
+      deduplicated_health_answers.each_with_index.map do |health_answer, index|
+        health_answer.id = index
+
+        health_answer.next_question =
+          (index + 1 if index < deduplicated_health_answers.count - 1)
+
+        health_answer
+      end
   end
 
   def chosen_vaccines

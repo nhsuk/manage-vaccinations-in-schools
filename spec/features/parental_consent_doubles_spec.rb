@@ -13,7 +13,7 @@ describe "Parental consent" do
 
     when_i_give_consent_to_both_programmes
     and_i_fill_in_my_address
-    and_i_answer_no_until_the_check_answers_page
+    and_i_answer_no_to_all_the_medical_questions(only_menacwy: false)
     then_i_can_check_my_answers
   end
 
@@ -29,7 +29,7 @@ describe "Parental consent" do
 
     when_i_give_consent_to_one_programme
     and_i_fill_in_my_address
-    and_i_answer_no_until_the_reason_for_refusal_page
+    and_i_answer_no_to_all_the_medical_questions(only_menacwy: true)
     and_i_give_a_reason_for_refusal
     then_i_can_check_my_answers
   end
@@ -112,15 +112,41 @@ describe "Parental consent" do
     click_on "Continue"
   end
 
-  def and_i_answer_no_until_the_check_answers_page
-    until page.has_content?("Check and confirm")
-      choose "No"
-      click_on "Continue"
-    end
-  end
+  def and_i_answer_no_to_all_the_medical_questions(only_menacwy:)
+    expect(page).to have_content(
+      "Does your child have a bleeding disorder or " \
+        "another medical condition they receive treatment for?"
+    )
+    choose "No"
+    click_on "Continue"
 
-  def and_i_answer_no_until_the_reason_for_refusal_page
-    until page.has_content?("Why are you refusing")
+    expect(page).to have_content("Does your child have any severe allergies?")
+    choose "No"
+    click_on "Continue"
+
+    expect(page).to have_content(
+      "Has your child ever had a severe reaction to any medicines, including vaccines?"
+    )
+    choose "No"
+    click_on "Continue"
+
+    expect(page).to have_content(
+      "Does your child need extra support during vaccination sessions?"
+    )
+    choose "No"
+    click_on "Continue"
+
+    expect(page).to have_content(
+      "Has your child had a meningitis (MenACWY) vaccination in the last 5 years?"
+    )
+    choose "No"
+    click_on "Continue"
+
+    unless only_menacwy
+      expect(page).to have_content(
+        "Has your child had a tetanus, diphtheria " \
+          "and polio vaccination in the last 5 years?"
+      )
       choose "No"
       click_on "Continue"
     end
