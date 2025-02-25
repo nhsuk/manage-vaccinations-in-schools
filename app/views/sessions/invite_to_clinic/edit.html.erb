@@ -18,7 +18,11 @@
     <p>There are <%= @invitations_to_send %> children currently without clinic appointments. You can send invitations to their parents to book an appointment.</p>
   <% end %>
 <% else %>
-  <% if @invitations_to_send == 1 %>
+  <% if @invitations_to_send == 0 %>
+    <p>You cannot send a booking reminder now. This is because there are currently no children whose parents have not already been sent a reminder about the next clinic session.</p>
+
+    <p>You will be able to send new booking reminders after the next clinic date has passed, if there are still children who did not get vaccinated.</p>
+  <% elsif @invitations_to_send == 1 %>
     <p>This will send booking reminders to the parents of <%= @invitations_to_send %> child who has not yet been sent a reminder.</p>
   <% else %>
     <p>This will send booking reminders to the parents of <%= @invitations_to_send %> children who have not yet been sent a reminder.</p>
@@ -27,6 +31,10 @@
 
 <p>The next clinic is on <%= @generic_clinic_session.next_date.to_fs(:long) %>.</p>
 
-<%= form_with url: session_invite_to_clinic_path(@session), method: :put do |f| %>
-  <%= f.govuk_submit @initial_invitations ? "Send clinic invitations" : "Send booking reminders" %>
+<% if @invitations_to_send == 0 %>
+  <p><%= link_to "Return to session", session_path(@session) %></p>
+<% else %>
+  <%= form_with url: session_invite_to_clinic_path(@session), method: :put do |f| %>
+    <%= f.govuk_submit @initial_invitations ? "Send clinic invitations" : "Send booking reminders" %>
+  <% end %>
 <% end %>
