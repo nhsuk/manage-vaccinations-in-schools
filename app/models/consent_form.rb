@@ -273,7 +273,9 @@ class ConsentForm < ApplicationRecord
       (:reason_notes if consent_refused? && reason_notes_must_be_provided?),
       (:injection if injection_offered_as_alternative?),
       (:address if consent_given? || consent_given_one?),
-      (:health_question if consent_given? || consent_given_one?)
+      (:health_question if consent_given? || consent_given_one?),
+      (:reason if consent_given_one?),
+      (:reason_notes if consent_given_one? && reason_notes_must_be_provided?)
     ].compact
   end
 
@@ -506,11 +508,13 @@ class ConsentForm < ApplicationRecord
 
     self.parent_relationship_other_name = nil unless parent_relationship_other?
 
-    if consent_given? || consent_given_one?
-      self.contact_injection = nil
-
+    if consent_given?
       self.reason = nil
       self.reason_notes = nil
+    end
+
+    if consent_given? || consent_given_one?
+      self.contact_injection = nil
 
       seed_health_questions
     end
