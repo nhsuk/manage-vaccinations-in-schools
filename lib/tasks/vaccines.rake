@@ -77,14 +77,14 @@ def create_menacwy_health_questions(vaccine)
             next_question:
               vaccine.health_questions.create!(
                 title:
-                  "Has your child had a meningitis (MenACWY) vaccination in the last 5 years?",
-                hint:
-                  "It’s usually given once in Year 9 or 10. Some children may have had it before travelling abroad.",
+                  "Does your child need extra support during vaccination sessions?",
+                hint: "For example, they’re autistic, or extremely anxious",
                 next_question:
                   vaccine.health_questions.create!(
                     title:
-                      "Does your child need extra support during vaccination sessions?",
-                    hint: "For example, they’re autistic, or extremely anxious"
+                      "Has your child had a meningitis (MenACWY) vaccination in the last 5 years?",
+                    hint:
+                      "It’s usually given once in Year 9 or 10. Some children may have had it before travelling abroad.",
                   )
               )
           )
@@ -106,14 +106,14 @@ def create_td_ipv_health_questions(vaccine)
             next_question:
               vaccine.health_questions.create!(
                 title:
-                  "Has your child had a tetanus, diphtheria and polio vaccination in the last 5 years?",
-                hint:
-                  "Most children will not have had this vaccination since their 4-in-1 pre-school booster",
+                  "Does your child need extra support during vaccination sessions?",
+                hint: "For example, they’re autistic, or extremely anxious",
                 next_question:
                   vaccine.health_questions.create!(
                     title:
-                      "Does your child need extra support during vaccination sessions?",
-                    hint: "For example, they’re autistic, or extremely anxious"
+                      "Has your child had a tetanus, diphtheria and polio vaccination in the last 5 years?",
+                    hint:
+                      "Most children will not have had this vaccination since their 4-in-1 pre-school booster",
                   )
               )
           )
