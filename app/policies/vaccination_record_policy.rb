@@ -24,19 +24,13 @@ class VaccinationRecordPolicy < ApplicationPolicy
 
   class Scope < ApplicationPolicy::Scope
     def resolve
+      organisation = user.selected_organisation
+
       scope
         .kept
-        .where(patient: PatientPolicy::Scope.new(user, Patient).resolve)
-        .or(
-          scope.kept.where(
-            session: SessionPolicy::Scope.new(user, Session).resolve
-          )
-        )
-        .or(
-          scope.kept.where(
-            performed_ods_code: user.selected_organisation.ods_code
-          )
-        )
+        .where(patient: organisation.patients)
+        .or(scope.kept.where(session: organisation.sessions))
+        .or(scope.kept.where(performed_ods_code: organisation.ods_code))
     end
   end
 end

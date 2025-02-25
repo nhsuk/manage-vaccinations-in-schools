@@ -60,5 +60,29 @@ describe PatientPolicy do
       it { should include(patient_with_move_in_school) }
       it { should_not include(patient_with_move_in_another_school) }
     end
+
+    context "when the patient not in the org but was vaccinated by them" do
+      let(:patient_with_vaccination_record) { create(:patient) }
+      let(:patient_with_another_vaccination_record) { create(:patient) }
+
+      let(:programme) { create(:programme) }
+
+      before do
+        create(
+          :vaccination_record,
+          patient: patient_with_vaccination_record,
+          performed_ods_code: organisation.ods_code,
+          programme:
+        )
+        create(
+          :vaccination_record,
+          patient: patient_with_another_vaccination_record,
+          programme:
+        )
+      end
+
+      it { should include(patient_with_vaccination_record) }
+      it { should_not include(patient_with_another_vaccination_record) }
+    end
   end
 end

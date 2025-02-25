@@ -11,7 +11,7 @@ class CohortsController < ApplicationController
     birth_academic_years = @programme.birth_academic_years
 
     @patient_count_by_birth_academic_year =
-      policy_scope(Patient)
+      patients_in_cohort
         .where(birth_academic_year: birth_academic_years)
         .group(:birth_academic_year)
         .count
@@ -25,7 +25,7 @@ class CohortsController < ApplicationController
     @birth_academic_year = Integer(params[:id])
 
     patients =
-      policy_scope(Patient)
+      patients_in_cohort
         .where(birth_academic_year: @birth_academic_year)
         .not_deceased
         .includes(:school)
@@ -38,5 +38,9 @@ class CohortsController < ApplicationController
 
   def set_programme
     @programme = policy_scope(Programme).find_by!(type: params[:programme_type])
+  end
+
+  def patients_in_cohort
+    Patient.where(organisation: current_user.selected_organisation)
   end
 end

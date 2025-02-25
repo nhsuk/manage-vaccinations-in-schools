@@ -12,9 +12,26 @@ class PatientPolicy < ApplicationPolicy
           SchoolMove.where(school: organisation.schools)
         )
 
-      scope.where(organisation:).or(
-        scope.where(school_moves.where("patient_id = patients.id").arel.exists)
-      )
+      vaccination_records =
+        VaccinationRecord
+          .left_outer_joins(:session)
+          .where(session: { organisation: })
+          .or(
+            VaccinationRecord.where(performed_ods_code: organisation.ods_code)
+          )
+
+      scope
+        .where(organisation:)
+        .or(
+          scope.where(
+            school_moves.where("patient_id = patients.id").arel.exists
+          )
+        )
+        .or(
+          scope.where(
+            vaccination_records.where("patient_id = patients.id").arel.exists
+          )
+        )
     end
   end
 end
