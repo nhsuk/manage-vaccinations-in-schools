@@ -99,7 +99,7 @@ class AppActivityLogComponent < ViewComponent::Base
           at: consent_form.recorded_at,
           by:
             "#{consent_form.parent_full_name} (#{consent_form.parent_relationship_label})",
-          programme: consent.programme
+          programmes: [consent.programme]
         }
       else
         {
@@ -107,7 +107,7 @@ class AppActivityLogComponent < ViewComponent::Base
             "Consent #{original_response} by #{consent.name} (#{consent.who_responded})",
           at: consent.created_at,
           by: consent.recorded_by,
-          programme: consent.programme
+          programmes: [consent.programme]
         }
       end
 
@@ -116,7 +116,7 @@ class AppActivityLogComponent < ViewComponent::Base
           title: "Consent response manually matched with child record",
           at: consent.created_at,
           by: consent.recorded_by,
-          programme: consent.programme
+          programmes: [consent.programme]
         }
       end
 
@@ -124,7 +124,7 @@ class AppActivityLogComponent < ViewComponent::Base
         events << {
           title: "Consent from #{consent.name} invalidated",
           at: consent.invalidated_at,
-          programme: consent.programme
+          programmes: [consent.programme]
         }
       end
 
@@ -132,7 +132,7 @@ class AppActivityLogComponent < ViewComponent::Base
         events << {
           title: "Consent from #{consent.name} withdrawn",
           at: consent.withdrawn_at,
-          programme: consent.programme
+          programmes: [consent.programme]
         }
       end
 
@@ -157,7 +157,7 @@ class AppActivityLogComponent < ViewComponent::Base
         body: gillick_assessment.notes,
         at: gillick_assessment.created_at,
         by: gillick_assessment.performed_by,
-        programme: gillick_assessment.programme
+        programmes: [gillick_assessment.programme]
       }
     end
   end
@@ -203,7 +203,7 @@ class AppActivityLogComponent < ViewComponent::Base
         body: triage.notes,
         at: triage.created_at,
         by: triage.performed_by,
-        programme: triage.programme
+        programmes: [triage.programme]
       }
     end
   end
@@ -222,7 +222,7 @@ class AppActivityLogComponent < ViewComponent::Base
         body: vaccination_record.notes,
         at: vaccination_record.performed_at,
         by: vaccination_record.performed_by,
-        programme: vaccination_record.programme
+        programmes: [vaccination_record.programme]
       }
 
       discarded =
@@ -231,7 +231,7 @@ class AppActivityLogComponent < ViewComponent::Base
             title:
               "#{vaccination_record.programme.name} vaccination record deleted",
             at: vaccination_record.discarded_at,
-            programme: vaccination_record.programme
+            programmes: [vaccination_record.programme]
           }
         end
 
