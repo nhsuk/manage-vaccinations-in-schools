@@ -772,6 +772,8 @@ en:
       title:
         flu: Do they agree to them having the flu vaccination?
         hpv: Do they agree to them having the HPV vaccination?
+        menacwy: Do they agree to them having the MenACWY vaccination?
+        td_ipv: Do they agree to them having the Td/IPV vaccination?
     notes:
       title:
         already_vaccinated: Where did their child get their vaccination?
