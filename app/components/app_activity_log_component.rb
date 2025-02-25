@@ -212,9 +212,9 @@ class AppActivityLogComponent < ViewComponent::Base
     vaccination_records.flat_map do |vaccination_record|
       title =
         if vaccination_record.administered?
-          "Vaccinated with #{helpers.vaccine_heading(vaccination_record.vaccine)}"
+          "Vaccinated with #{vaccination_record.vaccine.brand}"
         else
-          "#{vaccination_record.programme.name} vaccination not given: #{vaccination_record.human_enum_name(:outcome)}"
+          "Vaccination not given: #{vaccination_record.human_enum_name(:outcome)}"
         end
 
       kept = {
@@ -228,8 +228,7 @@ class AppActivityLogComponent < ViewComponent::Base
       discarded =
         if vaccination_record.discarded?
           {
-            title:
-              "#{vaccination_record.programme.name} vaccination record deleted",
+            title: "Vaccination record deleted",
             at: vaccination_record.discarded_at,
             programmes: [vaccination_record.programme]
           }

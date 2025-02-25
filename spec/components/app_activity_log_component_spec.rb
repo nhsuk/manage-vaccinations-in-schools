@@ -105,7 +105,7 @@ describe AppActivityLogComponent do
         performed_at: Time.zone.parse("2024-05-31 13:00"),
         performed_by: nil,
         notes: "Some notes",
-        vaccine: create(:vaccine, :gardasil, programme:)
+        vaccine: create(:vaccine, :cervarix, programme:)
       )
 
       create(
@@ -139,14 +139,14 @@ describe AppActivityLogComponent do
     end
 
     include_examples "card",
-                     title: "Vaccinated with Gardasil 9 (HPV)",
+                     title: "Vaccinated with Gardasil 9",
                      date: "31 May 2024 at 12:00pm",
                      notes: "Some notes",
                      by: "Nurse Joy",
                      programme: "HPV"
 
     include_examples "card",
-                     title: "Vaccinated with Gardasil (HPV)",
+                     title: "Vaccinated with Cervarix",
                      date: "31 May 2024 at 1:00pm",
                      notes: "Some notes",
                      programme: "HPV"
@@ -202,7 +202,7 @@ describe AppActivityLogComponent do
     end
 
     include_examples "card",
-                     title: "HPV vaccination not given: Unwell",
+                     title: "Vaccination not given: Unwell",
                      date: "31 May 2024 at 1:00pm",
                      notes: "Some notes.",
                      by: "Nurse Joy",
@@ -224,13 +224,13 @@ describe AppActivityLogComponent do
     end
 
     include_examples "card",
-                     title: "Vaccinated with Gardasil 9 (HPV)",
+                     title: "Vaccinated with Gardasil 9",
                      date: "31 May 2024 at 1:00pm",
                      by: "Nurse Joy",
                      programme: "HPV"
 
     include_examples "card",
-                     title: "HPV vaccination record deleted",
+                     title: "Vaccination record deleted",
                      date: "31 May 2024 at 2:00pm",
                      programme: "HPV"
   end
