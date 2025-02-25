@@ -13,13 +13,13 @@ describe ConsentFormMailerConcern do
     it "sends a confirmation email" do
       expect { send_consent_form_confirmation }.to have_delivered_email(
         :consent_confirmation_given
-      ).with(consent_form:)
+      ).with(consent_form:, programmes: consent_form.programmes)
     end
 
     it "sends a consent given text" do
       expect { send_consent_form_confirmation }.to have_delivered_sms(
         :consent_confirmation_given
-      ).with(consent_form:)
+      ).with(consent_form:, programmes: consent_form.programmes)
     end
 
     context "when user agrees to be contacted about injections" do
@@ -52,13 +52,53 @@ describe ConsentFormMailerConcern do
       end
     end
 
+    context "when user only consents to one programme" do
+      let(:menacwy_programme) { create(:programme, :menacwy) }
+      let(:td_ipv_programme) { create(:programme, :td_ipv) }
+      let(:programmes) { [menacwy_programme, td_ipv_programme] }
+      let(:session) { create(:session, programmes:) }
+
+      let(:consent_form) do
+        create(
+          :consent_form,
+          session:,
+          response: :given_one,
+          chosen_vaccine: "menacwy"
+        )
+      end
+
+      it "sends a confirmation given and a confirmation refused email" do
+        expect { send_consent_form_confirmation }.to have_delivered_email(
+          :consent_confirmation_given
+        ).with(
+          consent_form:,
+          programmes: [menacwy_programme]
+        ).and have_delivered_email(:consent_confirmation_refused).with(
+                consent_form:,
+                programmes: [td_ipv_programme]
+              )
+      end
+
+      it "sends a confirmation given and a confirmation refused text" do
+        expect { send_consent_form_confirmation }.to have_delivered_sms(
+          :consent_confirmation_given
+        ).with(
+          consent_form:,
+          programmes: [menacwy_programme]
+        ).and have_delivered_sms(:consent_confirmation_refused).with(
+                consent_form:,
+                programmes: [td_ipv_programme]
+              )
+      end
+    end
+
     context "when a health question is yes" do
       before { consent_form.health_answers.last.response = "yes" }
 
       it "sends an confirmation needs triage email" do
         expect { send_consent_form_confirmation }.to have_delivered_email(
           :consent_confirmation_triage
-        ).with(consent_form:)
+        ).with(consent_form:, programmes: consent_form.programmes)
       end
 
       it "doesn't send a text" do
@@ -82,7 +122,7 @@ describe ConsentFormMailerConcern do
       it "sends an confirmation needs triage email" do
         expect { send_consent_form_confirmation }.to have_delivered_email(
           :consent_confirmation_clinic
-        ).with(consent_form:)
+        ).with(consent_form:, programmes: consent_form.programmes)
       end
 
       it "doesn't send a text" do
