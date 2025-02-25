@@ -6,6 +6,7 @@
 #
 #  id                      :bigint           not null, primary key
 #  delivery_status         :integer          default("sending"), not null
+#  programme_ids           :integer          default([]), not null, is an Array
 #  recipient               :string
 #  recipient_deterministic :string
 #  type                    :integer          not null
