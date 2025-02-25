@@ -493,7 +493,7 @@ class ImmunisationImportRow
   end
 
   def valid_given_vaccines
-    organisation.vaccines.pluck(:nivs_name)
+    organisation.vaccines.where(programme:).pluck(:nivs_name)
   end
 
   delegate :maximum_dose_sequence, to: :programme, allow_nil: true
