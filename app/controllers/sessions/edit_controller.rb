@@ -4,11 +4,19 @@ class Sessions::EditController < ApplicationController
   before_action :set_session
 
   def edit_programmes
+    @form =
+      SessionProgrammesForm.new(
+        session: @session,
+        programme_ids: @session.programme_ids
+      )
+
     render :programmes
   end
 
   def update_programmes
-    if @session.update(programmes_params)
+    @form = SessionProgrammesForm.new(session: @session, **programmes_params)
+
+    if @form.save
       redirect_to edit_session_path(@session)
     else
       render :programmes, status: :unprocessable_entity
@@ -66,7 +74,7 @@ class Sessions::EditController < ApplicationController
   end
 
   def programmes_params
-    params.expect(session: { programme_ids: [] })
+    params.expect(session_programmes_form: { programme_ids: [] })
   end
 
   def send_consent_requests_at_validator
