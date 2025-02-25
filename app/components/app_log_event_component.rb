@@ -17,8 +17,8 @@ class AppLogEventComponent < ViewComponent::Base
     <% end %>
     
     <p class="nhsuk-body-s nhsuk-u-margin-0 nhsuk-u-secondary-text-color">
-      <% if programme %>
-        <%= render AppProgrammeTagsComponent.new([programme]) %>
+      <% if programmes.any? %>
+        <%= render AppProgrammeTagsComponent.new(programmes) %>
         &nbsp;
       <% end %>
       <%= invalidated ? tag.s(subtitle) : subtitle %>
@@ -34,7 +34,7 @@ class AppLogEventComponent < ViewComponent::Base
     at:,
     body: nil,
     by: nil,
-    programme: nil,
+    programmes: [],
     invalidated: false,
     card: false
   )
@@ -44,14 +44,14 @@ class AppLogEventComponent < ViewComponent::Base
     @body = body
     @at = at.to_fs(:long)
     @by = by.respond_to?(:full_name) ? by.full_name : by
-    @programme = programme
+    @programmes = programmes
     @invalidated = invalidated
     @card = card
   end
 
   private
 
-  attr_reader :title, :body, :programme, :invalidated, :card
+  attr_reader :title, :body, :programmes, :invalidated, :card
 
   def subtitle
     safe_join([@at, @by].compact, " &middot; ".html_safe)

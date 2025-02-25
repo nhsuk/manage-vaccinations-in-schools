@@ -15,22 +15,27 @@ class SMSDeliveryJob < NotifyDeliveryJob
     template_id = GOVUK_NOTIFY_SMS_TEMPLATES[template_name.to_sym]
     raise UnknownTemplate if template_id.nil?
 
-    parent ||= consent&.parent
-
-    phone_number = consent_form&.parent_phone || parent&.phone
-    return if phone_number.nil?
-
     personalisation =
-      GovukNotifyPersonalisation.call(
+      GovukNotifyPersonalisation.new(
         session:,
         consent:,
         consent_form:,
+        parent:,
         patient:,
         programmes:,
         vaccination_record:
       )
 
-    args = { personalisation:, phone_number:, template_id: }
+    phone_number =
+      personalisation.consent_form&.parent_phone ||
+        personalisation.parent&.phone
+    return if phone_number.nil?
+
+    args = {
+      personalisation: personalisation.to_h,
+      phone_number:,
+      template_id:
+    }
 
     delivery_id =
       if self.class.send_via_notify?
@@ -43,13 +48,12 @@ class SMSDeliveryJob < NotifyDeliveryJob
         nil
       end
 
-    patient ||= consent&.patient || vaccination_record&.patient
-
     NotifyLogEntry.create!(
-      consent_form:,
+      consent_form: personalisation.consent_form,
       delivery_id:,
-      parent:,
-      patient:,
+      parent: personalisation.parent,
+      patient: personalisation.patient,
+      programme_ids: personalisation.programmes.map(&:id),
       recipient: phone_number,
       recipient_deterministic: phone_number,
       sent_by:,

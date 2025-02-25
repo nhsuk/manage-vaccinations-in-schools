@@ -208,7 +208,7 @@ describe "Delete vaccination record" do
 
   def then_i_see_the_delete_vaccination
     expect(page).to have_content("Vaccinated with Gardasil 9")
-    expect(page).to have_content("HPV vaccination record deleted")
+    expect(page).to have_content("Vaccination record deleted")
   end
 
   def and_the_parent_receives_an_email

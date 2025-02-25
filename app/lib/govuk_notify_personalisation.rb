@@ -6,6 +6,7 @@ class GovukNotifyPersonalisation
   def initialize(
     consent: nil,
     consent_form: nil,
+    parent: nil,
     patient: nil,
     programmes: nil,
     session: nil,
@@ -13,10 +14,11 @@ class GovukNotifyPersonalisation
   )
     @consent = consent
     @consent_form = consent_form
+    @parent = parent || consent&.parent
     @patient = patient || consent&.patient || vaccination_record&.patient
     @programmes =
-      programmes || [vaccination_record&.programme] ||
-        consent_form&.programmes || [consent&.programme]
+      programmes.presence || consent_form&.programmes.presence ||
+        [consent&.programme || vaccination_record&.programme].compact
     @session =
       session || consent_form&.actual_session ||
         consent_form&.original_session || vaccination_record&.session
@@ -27,7 +29,7 @@ class GovukNotifyPersonalisation
     @vaccination_record = vaccination_record
   end
 
-  def call
+  def to_h
     {
       batch_name:,
       catch_up:,
@@ -61,22 +63,17 @@ class GovukNotifyPersonalisation
     }.compact
   end
 
-  def self.call(*args, **kwargs)
-    new(*args, **kwargs).call
-  end
-
-  private_class_method :new
-
-  private
-
   attr_reader :consent,
               :consent_form,
+              :parent,
               :patient,
               :programmes,
               :session,
               :team,
               :organisation,
               :vaccination_record
+
+  private
 
   def batch_name
     vaccination_record&.batch&.name

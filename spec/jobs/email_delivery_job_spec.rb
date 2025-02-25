@@ -49,9 +49,7 @@ describe EmailDeliveryJob do
         programmes:
       )
     end
-    let(:session) do
-      create(:session, programme: programmes.first, organisation:)
-    end
+    let(:session) { create(:session, programmes:, organisation:) }
     let(:parent) { create(:parent, email: "test@example.com") }
     let(:consent) { nil }
     let(:consent_form) { nil }
@@ -60,14 +58,15 @@ describe EmailDeliveryJob do
     let(:vaccination_record) { nil }
 
     it "generates personalisation" do
-      expect(GovukNotifyPersonalisation).to receive(:call).with(
+      expect(GovukNotifyPersonalisation).to receive(:new).with(
         session:,
         consent:,
         consent_form:,
+        parent:,
         patient:,
         programmes:,
         vaccination_record:
-      )
+      ).and_call_original
       perform_now
     end
 
@@ -107,6 +106,7 @@ describe EmailDeliveryJob do
       )
       expect(notify_log_entry.parent).to eq(parent)
       expect(notify_log_entry.patient).to eq(patient)
+      expect(notify_log_entry.programme_ids).to eq(programmes.map(&:id))
       expect(notify_log_entry.sent_by).to eq(sent_by)
     end
 
@@ -163,6 +163,7 @@ describe EmailDeliveryJob do
           GOVUK_NOTIFY_EMAIL_TEMPLATES[template_name]
         )
         expect(notify_log_entry.consent_form).to eq(consent_form)
+        expect(notify_log_entry.programme_ids).to eq(programmes.map(&:id))
       end
 
       context "when the parent doesn't have a phone number" do

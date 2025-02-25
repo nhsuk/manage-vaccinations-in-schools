@@ -105,15 +105,16 @@ describe AppActivityLogComponent do
         performed_at: Time.zone.parse("2024-05-31 13:00"),
         performed_by: nil,
         notes: "Some notes",
-        vaccine: create(:vaccine, :gardasil, programme:)
+        vaccine: create(:vaccine, :cervarix, programme:)
       )
 
       create(
         :notify_log_entry,
         :email,
         template_id: GOVUK_NOTIFY_EMAIL_TEMPLATES[:consent_school_request_hpv],
-        patient:,
         consent_form: nil,
+        patient:,
+        programme_ids: [programme.id],
         recipient: "test@example.com",
         created_at: Date.new(2024, 5, 10),
         sent_by: user
@@ -139,14 +140,14 @@ describe AppActivityLogComponent do
     end
 
     include_examples "card",
-                     title: "Vaccinated with Gardasil 9 (HPV)",
+                     title: "Vaccinated with Gardasil 9",
                      date: "31 May 2024 at 12:00pm",
                      notes: "Some notes",
                      by: "Nurse Joy",
                      programme: "HPV"
 
     include_examples "card",
-                     title: "Vaccinated with Gardasil (HPV)",
+                     title: "Vaccinated with Cervarix",
                      date: "31 May 2024 at 1:00pm",
                      notes: "Some notes",
                      programme: "HPV"
@@ -183,7 +184,8 @@ describe AppActivityLogComponent do
                      title: "Consent school request hpv sent",
                      date: "10 May 2024 at 12:00am",
                      notes: "test@example.com",
-                     by: "Nurse Joy"
+                     by: "Nurse Joy",
+                     programme: "HPV"
   end
 
   describe "vaccination not administered" do
@@ -202,7 +204,7 @@ describe AppActivityLogComponent do
     end
 
     include_examples "card",
-                     title: "HPV vaccination not given: Unwell",
+                     title: "Vaccination not given: Unwell",
                      date: "31 May 2024 at 1:00pm",
                      notes: "Some notes.",
                      by: "Nurse Joy",
@@ -224,13 +226,13 @@ describe AppActivityLogComponent do
     end
 
     include_examples "card",
-                     title: "Vaccinated with Gardasil 9 (HPV)",
+                     title: "Vaccinated with Gardasil 9",
                      date: "31 May 2024 at 1:00pm",
                      by: "Nurse Joy",
                      programme: "HPV"
 
     include_examples "card",
-                     title: "HPV vaccination record deleted",
+                     title: "Vaccination record deleted",
                      date: "31 May 2024 at 2:00pm",
                      programme: "HPV"
   end

@@ -1,15 +1,15 @@
 # frozen_string_literal: true
 
 describe GovukNotifyPersonalisation do
-  subject(:personalisation) do
-    described_class.call(
+  subject(:to_h) do
+    described_class.new(
       patient:,
       session:,
       consent:,
       consent_form:,
       programmes:,
       vaccination_record:
-    )
+    ).to_h
   end
 
   let(:programmes) { [create(:programme, :hpv)] }
@@ -47,7 +47,7 @@ describe GovukNotifyPersonalisation do
   let(:vaccination_record) { nil }
 
   it do
-    expect(personalisation).to eq(
+    expect(to_h).to eq(
       {
         catch_up: "no",
         consent_deadline: "Wednesday 31 December",
@@ -99,7 +99,7 @@ describe GovukNotifyPersonalisation do
     before { session.session_dates.create!(value: Date.new(2026, 1, 2)) }
 
     it do
-      expect(personalisation).to match(
+      expect(to_h).to match(
         hash_including(
           consent_deadline: "Wednesday 31 December",
           next_session_date: "Thursday 1 January",
@@ -115,7 +115,7 @@ describe GovukNotifyPersonalisation do
       around { |example| travel_to(Date.new(2026, 1, 1)) { example.run } }
 
       it do
-        expect(personalisation).to match(
+        expect(to_h).to match(
           hash_including(consent_deadline: "Thursday 1 January")
         )
       end
@@ -133,7 +133,7 @@ describe GovukNotifyPersonalisation do
     end
 
     it do
-      expect(personalisation).to match(
+      expect(to_h).to match(
         hash_including(
           reason_for_refusal: "of personal choice",
           survey_deadline_date: "8 January 2024"
@@ -153,7 +153,7 @@ describe GovukNotifyPersonalisation do
     end
 
     it do
-      expect(personalisation).to include(
+      expect(to_h).to include(
         reason_for_refusal: "of personal choice",
         survey_deadline_date: "8 January 2024",
         location_name: "Hogwarts"
@@ -205,7 +205,7 @@ describe GovukNotifyPersonalisation do
     end
 
     it do
-      expect(personalisation).to match(
+      expect(to_h).to match(
         hash_including(
           day_month_year_of_vaccination: "01/01/2024",
           reason_did_not_vaccinate: "the nurse decided John was not well",
