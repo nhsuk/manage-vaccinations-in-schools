@@ -61,6 +61,7 @@ class EmailDeliveryJob < NotifyDeliveryJob
       delivery_id:,
       parent: personalisation.parent,
       patient: personalisation.patient,
+      programme_ids: personalisation.programmes.map(&:id),
       recipient: email_address,
       recipient_deterministic: email_address,
       sent_by:,

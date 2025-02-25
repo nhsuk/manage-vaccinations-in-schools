@@ -53,6 +53,7 @@ class SMSDeliveryJob < NotifyDeliveryJob
       delivery_id:,
       parent: personalisation.parent,
       patient: personalisation.patient,
+      programme_ids: personalisation.programmes.map(&:id),
       recipient: phone_number,
       recipient_deterministic: phone_number,
       sent_by:,
