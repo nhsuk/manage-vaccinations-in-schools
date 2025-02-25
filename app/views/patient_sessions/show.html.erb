@@ -10,8 +10,8 @@
   <%= @patient.full_name %>
 <% end %>
 
-<% if (session_attendance = @patient_session.todays_attendance) %>
-  <ul class="app-action-list">
+<ul class="app-action-list">
+  <% if (session_attendance = @patient_session.todays_attendance) %>
     <li class="app-action-list__item">
       <% if session_attendance.attending %>
         <%= govuk_tag(text: "Attending today’s session") %>
@@ -29,8 +29,17 @@
             ) %>
       <% end %>
     </li>
-  </ul>
-<% end %>
+  <% end %>
+
+  <li class="app-action-list__item">
+    <% if @patient_session.can_record_as_already_vaccinated?(programme: @programme) %>
+      <%= link_to(
+            "Record as already vaccinated",
+            session_patient_record_already_vaccinated_path(programme_type: @programme),
+          ) %>
+    <% end %>
+  </li>
+</ul>
 
 <%= render "patient_sessions/secondary_navigation" %>
 

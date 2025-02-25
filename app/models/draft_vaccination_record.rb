@@ -37,7 +37,7 @@ class DraftVaccinationRecord
     [
       :notes,
       :date_and_time,
-      :outcome,
+      (:outcome if can_change_outcome?),
       (:delivery if administered?),
       (:vaccine if administered?),
       (:batch if administered?),
@@ -102,6 +102,11 @@ class DraftVaccinationRecord
   def administered?
     return nil if outcome.nil?
     outcome == "administered"
+  end
+
+  def already_had?
+    return nil if outcome.nil?
+    outcome == "already_had"
   end
 
   # So that a form error matches to a field in this model
@@ -198,6 +203,10 @@ class DraftVaccinationRecord
       self.delivery_site = nil
       self.vaccine_id = nil
     end
+  end
+
+  def can_change_outcome?
+    outcome != "already_had" || editing? || session.nil? || session.today?
   end
 
   def batch_vaccine_matches_vaccine

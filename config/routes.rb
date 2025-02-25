@@ -328,6 +328,7 @@ Rails.application.routes.draw do
     scope ":tab" do
       resources :patient_sessions, path: "patients", as: :patient, only: [] do
         get "log"
+        get "record-already-vaccinated"
 
         resource :attendance,
                  controller: "session_attendances",
