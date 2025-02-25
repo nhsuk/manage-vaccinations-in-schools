@@ -1,9 +1,0 @@
-<%
-vaccines = vaccines_key(@consent_form.programmes)
-title = t("consent_forms.confirmation_agreed.title.#{vaccines}",
-          full_name: @consent_form.full_name)
-%>
-
-<% content_for :page_title, title %>
-
-<%= govuk_panel title_text: title %>

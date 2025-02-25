@@ -1,11 +1,3 @@
-<% if @consent_form.contact_injection? %>
-  <%= render "confirmation_injection" %>
-<% elsif @consent_form.consent_refused? %>
-  <%= render "confirmation_refused" %>
-<% elsif @consent_form.needs_triage? %>
-  <%= render "confirmation_needs_triage" %>
-<% else %>
-  <%= render "confirmation_agreed" %>
-<% end %>
-
-<p>We’ve sent a confirmation to <%= @consent_form.parent_email %>.</p>
+<% component = AppConsentConfirmationComponent.new(@consent_form) %>
+<%= content_for :page_title, component.title %>
+<%= render component %>
