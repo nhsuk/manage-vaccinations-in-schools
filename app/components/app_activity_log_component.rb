@@ -31,16 +31,12 @@ class AppActivityLogComponent < ViewComponent::Base
       @patient.consents.includes(
         :consent_form,
         :parent,
-        :programme,
         :recorded_by,
         patient: :parent_relationships
       )
 
     @gillick_assessments =
-      (patient || patient_session).gillick_assessments.includes(
-        :performed_by,
-        :programme
-      )
+      (patient || patient_session).gillick_assessments.includes(:performed_by)
 
     @notify_log_entries = @patient.notify_log_entries.includes(:sent_by)
 
@@ -50,12 +46,11 @@ class AppActivityLogComponent < ViewComponent::Base
     @session_attendances =
       (patient || patient_session).session_attendances.includes(:location)
 
-    @triages = @patient.triages.includes(:performed_by, :programme)
+    @triages = @patient.triages.includes(:performed_by)
 
     @vaccination_records =
       @patient.vaccination_records.with_discarded.includes(
         :performed_by_user,
-        :programme,
         :vaccine
       )
   end
@@ -99,7 +94,7 @@ class AppActivityLogComponent < ViewComponent::Base
           at: consent_form.recorded_at,
           by:
             "#{consent_form.parent_full_name} (#{consent_form.parent_relationship_label})",
-          programmes: [consent.programme]
+          programmes: programmes_for(consent)
         }
       else
         {
@@ -107,7 +102,7 @@ class AppActivityLogComponent < ViewComponent::Base
             "Consent #{original_response} by #{consent.name} (#{consent.who_responded})",
           at: consent.created_at,
           by: consent.recorded_by,
-          programmes: [consent.programme]
+          programmes: programmes_for(consent)
         }
       end
 
@@ -116,7 +111,7 @@ class AppActivityLogComponent < ViewComponent::Base
           title: "Consent response manually matched with child record",
           at: consent.created_at,
           by: consent.recorded_by,
-          programmes: [consent.programme]
+          programmes: programmes_for(consent)
         }
       end
 
@@ -124,7 +119,7 @@ class AppActivityLogComponent < ViewComponent::Base
         events << {
           title: "Consent from #{consent.name} invalidated",
           at: consent.invalidated_at,
-          programmes: [consent.programme]
+          programmes: programmes_for(consent)
         }
       end
 
@@ -132,7 +127,7 @@ class AppActivityLogComponent < ViewComponent::Base
         events << {
           title: "Consent from #{consent.name} withdrawn",
           at: consent.withdrawn_at,
-          programmes: [consent.programme]
+          programmes: programmes_for(consent)
         }
       end
 
@@ -157,7 +152,7 @@ class AppActivityLogComponent < ViewComponent::Base
         body: gillick_assessment.notes,
         at: gillick_assessment.created_at,
         by: gillick_assessment.performed_by,
-        programmes: [gillick_assessment.programme]
+        programmes: programmes_for(gillick_assessment)
       }
     end
   end
@@ -169,7 +164,8 @@ class AppActivityLogComponent < ViewComponent::Base
         body:
           patient.restricted? ? "" : notify_log_entry.recipient_deterministic,
         at: notify_log_entry.created_at,
-        by: notify_log_entry.sent_by
+        by: notify_log_entry.sent_by,
+        programmes: programmes_for(notify_log_entry)
       }
     end
   end
@@ -203,7 +199,7 @@ class AppActivityLogComponent < ViewComponent::Base
         body: triage.notes,
         at: triage.created_at,
         by: triage.performed_by,
-        programmes: [triage.programme]
+        programmes: programmes_for(triage)
       }
     end
   end
@@ -222,7 +218,7 @@ class AppActivityLogComponent < ViewComponent::Base
         body: vaccination_record.notes,
         at: vaccination_record.performed_at,
         by: vaccination_record.performed_by,
-        programmes: [vaccination_record.programme]
+        programmes: programmes_for(vaccination_record)
       }
 
       discarded =
@@ -230,7 +226,7 @@ class AppActivityLogComponent < ViewComponent::Base
           {
             title: "Vaccination record deleted",
             at: vaccination_record.discarded_at,
-            programmes: [vaccination_record.programme]
+            programmes: programmes_for(vaccination_record)
           }
         end
 
@@ -253,5 +249,14 @@ class AppActivityLogComponent < ViewComponent::Base
 
       { title:, at: session_attendance.created_at }
     end
+  end
+
+  def programmes_for(object)
+    ids = object.try(:programme_ids) || [object.try(:programme_id)].compact
+    ids.map { programmes_by_id.fetch(it) }
+  end
+
+  def programmes_by_id
+    @programmes_by_id ||= Programme.all.index_by(&:id)
   end
 end

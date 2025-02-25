@@ -112,8 +112,9 @@ describe AppActivityLogComponent do
         :notify_log_entry,
         :email,
         template_id: GOVUK_NOTIFY_EMAIL_TEMPLATES[:consent_school_request_hpv],
-        patient:,
         consent_form: nil,
+        patient:,
+        programme_ids: [programme.id],
         recipient: "test@example.com",
         created_at: Date.new(2024, 5, 10),
         sent_by: user
@@ -183,7 +184,8 @@ describe AppActivityLogComponent do
                      title: "Consent school request hpv sent",
                      date: "10 May 2024 at 12:00am",
                      notes: "test@example.com",
-                     by: "Nurse Joy"
+                     by: "Nurse Joy",
+                     programme: "HPV"
   end
 
   describe "vaccination not administered" do
