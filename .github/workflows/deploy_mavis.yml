@@ -20,6 +20,14 @@ on:
         description: "Docker image tag"
         required: false
         type: string
+  workflow_call:
+    inputs:
+      image_tag:
+        required: true
+        type: string
+      environment:
+        required: true
+        type: string
 
 env:
   aws-role: ${{ inputs.environment == 'production'
