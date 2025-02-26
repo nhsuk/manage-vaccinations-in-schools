@@ -74,11 +74,6 @@ class SessionsController < ApplicationController
   end
 
   def sessions_scope
-    policy_scope(Session).includes(
-      :programmes,
-      :session_dates,
-      location: :organisation,
-      organisation: :programmes
-    )
+    policy_scope(Session).includes(:location, :programmes, :session_dates)
   end
 end

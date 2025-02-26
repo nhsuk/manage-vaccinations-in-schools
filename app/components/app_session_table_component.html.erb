@@ -63,7 +63,7 @@
 
           <% row.with_cell(numeric: true) do %>
             <span class="nhsuk-table-responsive__heading">Cohort</span>
-            <%= (count = session.patients.count).zero? ? "None" : count %>
+            <%= (count = patient_count(session)).zero? ? "None" : count %>
           <% end %>
         <% end %>
       <% end %>
