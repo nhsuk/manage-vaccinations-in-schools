@@ -54,8 +54,8 @@ class AppConsentConfirmationComponent < ViewComponent::Base
           your answers and get in touch again soon.
         END_OF_TEXT
       else
-        "#{full_name} is due to get the #{chosen_vaccinations} at school on" \
-          " #{session_dates}"
+        "#{full_name} is due to get the #{chosen_vaccinations} at school" +
+          (session_dates.present? ? " on #{session_dates}" : "")
       end
     when "refused"
       "You’ve told us that you do not want #{full_name} to get the" \
@@ -90,10 +90,8 @@ class AppConsentConfirmationComponent < ViewComponent::Base
 
   def session_dates
     @consent_form
-      .location
-      .sessions
-      .includes(:session_dates)
-      .flat_map(&:dates)
+      .actual_session
+      .today_or_future_dates
       .map { it.to_fs(:short_day_of_week) }
       .to_sentence(two_words_connector: " or ", last_word_connector: " or ")
   end
