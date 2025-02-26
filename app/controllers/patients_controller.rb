@@ -60,6 +60,7 @@ class PatientsController < ApplicationController
         @patient
           .patient_sessions
           .preload_for_status
+          .includes(:gillick_assessments, :session_attendances)
           .where(session: old_organisation.sessions)
           .find_each(&:destroy_if_safe!)
       end
