@@ -36,6 +36,20 @@ class PatientSessionStats
     @patient_sessions.select { it.programmes.include?(programme) }
   end
 
+  def session_attendances
+    @session_attendances ||=
+      SessionAttendance
+        .joins(:session_date)
+        .where(
+          patient_session: @patient_sessions,
+          session_date: {
+            value: Date.current
+          }
+        )
+        .group(:patient_session_id)
+        .count
+  end
+
   def include_in_statistics?(patient_session, programme, key)
     case key
     when :with_consent_given
@@ -61,7 +75,7 @@ class PatientSessionStats
         patient_session.triaged_do_not_vaccinate?(programme:) ||
         patient_session.unable_to_vaccinate?(programme:)
     when :not_registered
-      patient_session.todays_attendance&.attending.nil?
+      session_attendances.fetch(patient_session.id, 0).zero?
     end
   end
 end
