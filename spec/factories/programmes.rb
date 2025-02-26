@@ -88,7 +88,7 @@ FactoryBot.define do
         [
           association(:vaccine, :menquadfi, programme: instance),
           association(:vaccine, :menveo, programme: instance),
-          association(:nimenrix, :menquadfi, programme: instance)
+          association(:vaccine, :nimenrix, programme: instance)
         ]
       end
     end
