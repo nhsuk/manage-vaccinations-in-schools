@@ -98,7 +98,11 @@ class TriagesController < ApplicationController
 
   def set_patient_session
     @patient_session =
-      @patient.patient_sessions.preload_for_status.find_by!(session: @session)
+      @patient
+        .patient_sessions
+        .preload_for_status
+        .includes(:gillick_assessments)
+        .find_by!(session: @session)
   end
 
   def set_programme

@@ -65,7 +65,11 @@ class SchoolMove < ApplicationRecord
   private
 
   def patient_sessions
-    @patient_sessions ||= patient.patient_sessions.preload_for_status
+    @patient_sessions ||=
+      patient.patient_sessions.preload_for_status.includes(
+        :gillick_assessments,
+        :session_attendances
+      )
   end
 
   def update_patient!

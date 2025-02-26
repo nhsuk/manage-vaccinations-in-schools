@@ -155,7 +155,13 @@ class VaccinationsController < ApplicationController
     @patient_session =
       @patient
         .patient_sessions
-        .includes(:organisation, patient: { parent_relationships: :parent })
+        .includes(
+          :gillick_assessments,
+          :organisation,
+          patient: {
+            parent_relationships: :parent
+          }
+        )
         .preload_for_status
         .find_by!(session: @session)
   end

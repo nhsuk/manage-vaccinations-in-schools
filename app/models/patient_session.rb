@@ -63,8 +63,6 @@ class PatientSession < ApplicationRecord
   scope :preload_for_status,
         -> do
           preload(
-            :gillick_assessments,
-            :session_attendances,
             patient: [:triages, { consents: :parent }, :vaccination_records],
             session: :programmes
           )
