@@ -21,68 +21,51 @@ class AppConsentConfirmationComponent < ViewComponent::Base
     if @consent_form.contact_injection
       "Your child will not get a nasal flu vaccination at school"
     else
-      case @consent_form.response
+      case response
       when "given"
         "Consent given"
       when "given_one"
-        chosen_programme = consented_programmes.first
-        "Consent for the #{chosen_programme.name} vaccination confirmed"
+        chosen_programme = chosen_programmes.first.name
+        "Consent for the #{chosen_programme} vaccination confirmed"
       when "refused"
         "Consent refused"
       else
-        raise "unrecognised consent response: #{@consent_form.response}"
+        raise "unrecognised consent response: #{response}"
       end
     end
   end
 
   private
 
+  delegate :full_name,
+           :chosen_programmes,
+           :not_chosen_programmes,
+           :response,
+           :parent_email,
+           to: :@consent_form
+
   def panel_text
-    case @consent_form.response
+    case response
     when "given", "given_one"
       if @consent_form.needs_triage?
         <<-END_OF_TEXT
           As you answered ‘yes’ to some of the health questions, we need to check
-          the #{vaccinations_are} suitable for #{patient_full_name}. We’ll review
+          the #{chosen_vaccinations_are} suitable for #{full_name}. We’ll review
           your answers and get in touch again soon.
         END_OF_TEXT
       else
-        "#{patient_full_name} is due to get the #{vaccinations} at school on" \
+        "#{full_name} is due to get the #{chosen_vaccinations} at school on" \
           " #{session_dates}"
       end
     when "refused"
-      "You’ve told us that you do not want #{patient_full_name} to get the" \
-        " #{refused_programmes.first.name} vaccination at school"
+      "You’ve told us that you do not want #{full_name} to get the" \
+        " #{not_chosen_programmes.first.name} vaccination at school"
     else
-      raise "unrecognised consent response: #{@consent_form.response}"
+      raise "unrecognised consent response: #{response}"
     end
   end
 
-  def parent_email
-    @consent_form.parent_email
-  end
-
-  def patient_full_name
-    "#{@consent_form.given_name} #{@consent_form.family_name}"
-  end
-
-  def consented_programmes
-    @consented_programmes ||=
-      case @consent_form.response
-      when "given"
-        @consent_form.programmes
-      when "given_one"
-        [@consent_form.programmes.find_by(type: @consent_form.chosen_vaccine)]
-      else
-        []
-      end
-  end
-
-  def refused_programmes
-    @consent_form.programmes - consented_programmes
-  end
-
-  def vaccinations(programmes: consented_programmes)
+  def chosen_vaccinations(programmes: chosen_programmes)
     programme_names =
       programmes.map do |programme|
         programme.type == "flu" ? "nasal flu" : programme.name
@@ -93,12 +76,8 @@ class AppConsentConfirmationComponent < ViewComponent::Base
     )
   end
 
-  def refused_vaccinations
-    vaccinations(programmes: refused_programmes)
-  end
-
-  def vaccinations_are
-    "#{vaccinations} #{consented_programmes.one? ? "is" : "are"}"
+  def chosen_vaccinations_are
+    "#{chosen_vaccinations} #{chosen_programmes.one? ? "is" : "are"}"
   end
 
   def session_dates
