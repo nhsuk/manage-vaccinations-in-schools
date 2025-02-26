@@ -57,7 +57,7 @@
             <%= render AppCardComponent.new(link_to: session_attendances_path(@session)) do |c| %>
               <% c.with_heading { "Register attendance" } %>
               <% c.with_description do %>
-                <%= t("children", count: @stats_by_programme[@session.programmes.first][:not_registered]) %> still to register
+                <%= t("children", count: @stats.fetch(@session.programmes.first)[:not_registered]) %> still to register
               <% end %>
             <% end %>
           </li>
@@ -65,7 +65,7 @@
       <% end %>
 
       <% @session.programmes.each do |programme| %>
-        <% stats = @stats_by_programme[programme] %>
+        <% stats = @stats.fetch(programme) %>
 
         <h2 class="nhsuk-heading-m"><%= programme.name %></h2>
 

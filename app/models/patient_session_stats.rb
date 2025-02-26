@@ -1,14 +1,10 @@
 # frozen_string_literal: true
 
 class PatientSessionStats
-  def initialize(patient_sessions, programme:, keys: nil)
+  def initialize(patient_sessions, keys: nil)
     @patient_sessions =
-      patient_sessions
-        .sort_by(&:created_at)
-        .reverse
-        .uniq(&:patient_id)
-        .select { it.programmes.include?(programme) }
-    @programme = programme
+      patient_sessions.sort_by(&:created_at).reverse.uniq(&:patient_id)
+
     @keys =
       keys ||
         %i[
@@ -22,26 +18,25 @@ class PatientSessionStats
           with_conflicting_consent
           not_registered
         ]
+
+    @cache = {}
   end
 
-  delegate :[], to: :statistics
-
-  def to_h
-    statistics
+  def fetch(programme)
+    @cache[programme.id] ||= @keys.index_with do |key|
+      patient_sessions(programme).count do
+        include_in_statistics?(_1, programme, key)
+      end
+    end
   end
 
   private
 
-  attr_reader :programme
-
-  def statistics
-    @statistics ||=
-      @keys.index_with do |key|
-        @patient_sessions.count { include_in_statistics?(_1, key) }
-      end
+  def patient_sessions(programme)
+    @patient_sessions.select { it.programmes.include?(programme) }
   end
 
-  def include_in_statistics?(patient_session, key)
+  def include_in_statistics?(patient_session, programme, key)
     case key
     when :with_consent_given
       patient_session.consent_given?(programme:)
