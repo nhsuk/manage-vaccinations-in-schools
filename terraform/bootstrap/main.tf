@@ -100,33 +100,6 @@ resource "aws_s3_bucket_versioning" "log_bucket_version" {
   }
 }
 
-resource "aws_s3_bucket_policy" "logs_bucket_block_http" {
-  bucket = aws_s3_bucket.logs.id
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Id      = "block-backend-bucket-http-access"
-    Statement = [
-      {
-        Sid       = "HTTPSOnly"
-        Effect    = "Deny"
-        Principal = {
-          "AWS": "*"
-        }
-        Action    = "s3:*"
-        Resource = [
-          aws_s3_bucket.logs.arn,
-          "${aws_s3_bucket.logs.arn}/*",
-        ]
-        Condition = {
-          Bool = {
-            "aws:SecureTransport" = "false"
-          }
-        }
-      },
-    ]
-  })
-}
-
 resource "aws_s3_bucket_public_access_block" "s3_logs_bucket_access" {
   bucket                  = aws_s3_bucket.logs.bucket
   block_public_acls       = true
@@ -149,7 +122,24 @@ resource "aws_s3_bucket_policy" "logs" {
         },
         "Action": "s3:PutObject",
         "Resource": "${aws_s3_bucket.logs.arn}/*"
-      }
+      },
+      {
+        Sid       = "HTTPSOnly"
+        Effect    = "Deny"
+        Principal = {
+          "AWS": "*"
+        }
+        Action    = "s3:*"
+        Resource = [
+          aws_s3_bucket.logs.arn,
+          "${aws_s3_bucket.logs.arn}/*",
+        ]
+        Condition = {
+          Bool = {
+            "aws:SecureTransport" = "false"
+          }
+        }
+      },
     ]
   })
 }
