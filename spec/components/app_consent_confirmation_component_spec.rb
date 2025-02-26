@@ -91,4 +91,23 @@ describe AppConsentConfirmationComponent do
       )
     end
   end
+
+  context "multiple session dates" do
+    let(:session) do
+      create(
+        :session,
+        programmes: [create(:programme, :hpv)],
+        dates: [10.days.from_now, 11.days.from_now, 13.days.from_now]
+      )
+    end
+    let(:consent_form) { create(:consent_form, response: "given", session:) }
+
+    it "lists the session dates" do
+      expect(rendered).to have_text(
+        "at school on #{10.days.from_now.to_date.to_fs(:short_day_of_week)}, " \
+          "#{11.days.from_now.to_date.to_fs(:short_day_of_week)} or " \
+          "#{13.days.from_now.to_date.to_fs(:short_day_of_week)}"
+      )
+    end
+  end
 end

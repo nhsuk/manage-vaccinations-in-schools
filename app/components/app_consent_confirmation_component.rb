@@ -95,6 +95,6 @@ class AppConsentConfirmationComponent < ViewComponent::Base
       .includes(:session_dates)
       .flat_map(&:dates)
       .map { it.to_fs(:short_day_of_week) }
-      .to_sentence
+      .to_sentence(two_words_connector: " or ", last_word_connector: " or ")
   end
 end
