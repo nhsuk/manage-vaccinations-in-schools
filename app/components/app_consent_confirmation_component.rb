@@ -25,9 +25,12 @@ class AppConsentConfirmationComponent < ViewComponent::Base
       when "given"
         "Consent given"
       when "given_one"
-        "Consent for the #{@consent_form.chosen_vaccine} vaccination confirmed"
+        chosen_programme = consented_programmes.first
+        "Consent for the #{chosen_programme.name} vaccination confirmed"
       when "refused"
         "Consent refused"
+      else
+        raise "unrecognised consent response: #{@consent_form.response}"
       end
     end
   end
@@ -39,9 +42,9 @@ class AppConsentConfirmationComponent < ViewComponent::Base
     when "given", "given_one"
       if @consent_form.needs_triage?
         <<-END_OF_TEXT
-          As you answered ‘yes’ to some of the health questions, we need to check the
-          #{vaccinations_are} suitable for #{patient_full_name}. We’ll review your
-          answers and get in touch again soon.
+          As you answered ‘yes’ to some of the health questions, we need to check
+          the #{vaccinations_are} suitable for #{patient_full_name}. We’ll review
+          your answers and get in touch again soon.
         END_OF_TEXT
       else
         "#{patient_full_name} is due to get the #{vaccinations} at school on" \
@@ -49,7 +52,9 @@ class AppConsentConfirmationComponent < ViewComponent::Base
       end
     when "refused"
       "You’ve told us that you do not want #{patient_full_name} to get the" \
-        " #{vaccinations} at school"
+        " #{refused_programmes.first.name} vaccination at school"
+    else
+      raise "unrecognised consent response: #{@consent_form.response}"
     end
   end
 
@@ -61,30 +66,46 @@ class AppConsentConfirmationComponent < ViewComponent::Base
     "#{@consent_form.given_name} #{@consent_form.family_name}"
   end
 
-  def vaccines_key(programmes)
-    programmes.map(&:type).sort.join("_")
+  def consented_programmes
+    @consented_programmes ||=
+      case @consent_form.response
+      when "given"
+        @consent_form.programmes
+      when "given_one"
+        [@consent_form.programmes.find_by(type: @consent_form.chosen_vaccine)]
+      else
+        []
+      end
   end
 
-  def vaccinations
-    vaccine_names =
-      @consent_form.programmes.map do |programme|
+  def refused_programmes
+    @consent_form.programmes - consented_programmes
+  end
+
+  def vaccinations(programmes: consented_programmes)
+    programme_names =
+      programmes.map do |programme|
         programme.type == "flu" ? "nasal flu" : programme.name
       end
 
-    "#{vaccine_names.to_sentence} vaccination".pluralize(
-      @consent_form.programmes.size
+    "#{programme_names.to_sentence} vaccination".pluralize(
+      programme_names.count
     )
   end
 
+  def refused_vaccinations
+    vaccinations(programmes: refused_programmes)
+  end
+
   def vaccinations_are
-    "#{vaccinations} #{@consent_form.programmes.one? ? "is" : "are"}"
+    "#{vaccinations} #{consented_programmes.one? ? "is" : "are"}"
   end
 
   def session_dates
     @consent_form
       .location
       .sessions
-      .strict_loading(false)
+      .includes(:session_dates)
       .flat_map(&:dates)
       .map { it.to_fs(:short_day_of_week) }
       .to_sentence
