@@ -497,7 +497,7 @@ class ImmunisationImportRow
   delegate :maximum_dose_sequence, to: :programme, allow_nil: true
 
   def offline_recording?
-    session_id.present?
+    @data["SESSION_ID"].present?
   end
 
   def performed_by_details_present_where_required
