@@ -71,4 +71,24 @@ describe AppConsentConfirmationComponent do
       )
     end
   end
+
+  context "consent refused for MenACWY and Td/IPV" do
+    let(:session) do
+      create(
+        :session,
+        programmes: [create(:programme, :menacwy), create(:programme, :td_ipv)]
+      )
+    end
+    let(:consent_form) { create(:consent_form, response: "refused", session:) }
+
+    it { should have_text("Consent refused") }
+
+    it "informs the user that they have refused consent" do
+      expect(rendered).to have_text(
+        "You’ve told us that you do not want #{consent_form.given_name} " \
+          "#{consent_form.family_name} to get the MenACWY and Td/IPV " \
+          "vaccinations at school"
+      )
+    end
+  end
 end
