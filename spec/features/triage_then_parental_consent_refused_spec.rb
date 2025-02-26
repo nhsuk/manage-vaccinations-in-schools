@@ -113,7 +113,7 @@ describe "Triage" do
 
   def then_i_see_the_confirmation_page
     expect(page).to have_content(
-      "Your child will not get an HPV vaccination at school"
+      "You’ve told us that you do not want #{@patient.full_name} to get the HPV vaccination at school"
     )
   end
 

@@ -128,9 +128,7 @@ describe "Parental consent" do
   end
 
   def then_i_get_a_confirmation_email_and_scheduled_survey_email
-    expect(page).to have_content(
-      "#{@child.full_name} will get their HPV vaccination at school"
-    )
+    expect(page).to have_content("Consent given")
 
     expect_email_to("jane@example.com", :consent_confirmation_given)
   end

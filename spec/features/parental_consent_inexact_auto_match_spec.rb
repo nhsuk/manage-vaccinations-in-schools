@@ -84,7 +84,7 @@ describe "Parental consent given with an inexact automatic match" do
     click_on "Confirm"
 
     expect(page).to have_content(
-      "Joanna Smith will get their HPV vaccination at school"
+      "Joanna Smith is due to get the HPV vaccination at school"
     )
   end
 

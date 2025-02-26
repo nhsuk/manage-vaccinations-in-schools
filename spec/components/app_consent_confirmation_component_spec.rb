@@ -1,0 +1,72 @@
+# frozen_string_literal: true
+
+describe AppConsentConfirmationComponent do
+  subject(:rendered) { render_inline(component) }
+
+  let(:consent_form) { create(:consent_form) }
+  let(:component) { described_class.new(consent_form) }
+
+  it { should have_text("Consent given") }
+
+  it "informs the user a confirmation email will be sent" do
+    expect(rendered).to have_text(
+      "We've sent a confirmation to #{consent_form.parent_email}"
+    )
+  end
+
+  context "consent for only MenACWY" do
+    let(:session) { create(:session, programme: create(:programme, :menacwy)) }
+    let(:consent_form) do
+      create(
+        :consent_form,
+        response: "given_one",
+        chosen_vaccine: "menacwy",
+        session:
+      )
+    end
+
+    it { should have_text("Consent for the MenACWY vaccination confirmed") }
+
+    it "informs the user that their child is due a vaccination" do
+      expect(rendered).to have_text(
+        "#{consent_form.given_name} #{consent_form.family_name} is due to get " \
+          "the MenACWY vaccination at school on " \
+          "#{session.dates.first.to_fs(:short_day_of_week)}"
+      )
+    end
+  end
+
+  context "consent for MenACWY and Td/IPV" do
+    let(:session) do
+      create(
+        :session,
+        programmes: [create(:programme, :menacwy), create(:programme, :td_ipv)]
+      )
+    end
+    let(:consent_form) { create(:consent_form, response: "given", session:) }
+
+    it { should have_text("Consent given") }
+
+    it "informs the user that their child is due a vaccination" do
+      expect(rendered).to have_text(
+        "#{consent_form.given_name} #{consent_form.family_name} is due to get " \
+          "the MenACWY and Td/IPV vaccinations at school on " \
+          "#{session.dates.first.to_fs(:short_day_of_week)}"
+      )
+    end
+  end
+
+  context "consent refused for HPV" do
+    let(:session) { create(:session, programmes: [create(:programme, :hpv)]) }
+    let(:consent_form) { create(:consent_form, response: "refused", session:) }
+
+    it { should have_text("Consent refused") }
+
+    it "informs the user that they have refused consent" do
+      expect(rendered).to have_text(
+        "You’ve told us that you do not want #{consent_form.given_name} " \
+          "#{consent_form.family_name} to get the HPV vaccination at school"
+      )
+    end
+  end
+end

@@ -671,27 +671,6 @@ en:
         td_ipv: Consent for the Td/IPV vaccination
         menacwy_td_ipv: Consent for the MenACWY and Td/IPV vaccinations
       i_agree: Consent given
-    confirmation_agreed:
-      title:
-        flu: " %{full_name} will get their nasal flu vaccination at school"
-        hpv: " %{full_name} will get their HPV vaccination at school"
-        menacwy: " %{full_name} will get their MenACWY and Td/IPV vaccinations at school"
-        td_ipv: " %{full_name} will get their MenACWY and Td/IPV vaccinations at school"
-    confirmation_injection:
-      title:
-        flu: Your child will not get a nasal flu vaccination at school
-    confirmation_needs_triage:
-      title:
-        flu: You’ve given consent for your child to get a flu vaccination
-        hpv: You’ve given consent for your child to get an HPV vaccination
-        menacwy: You’ve given consent for your child to get the MenACWY and Td/IPV vaccinations
-        td_ipv: You’ve given consent for your child to get the MenACWY and Td/IPV vaccinations
-    confirmation_refused:
-      title:
-        flu: Your child will not get a nasal flu vaccination at school
-        hpv: Your child will not get an HPV vaccination at school
-        menacwy: Your child will not get the MenACWY and Td/IPV vaccinations at school
-        td_ipv: Your child will not get the MenACWY and Td/IPV vaccinations at school
     consent:
       hint:
         flu: The nasal flu spray contains gelatine which comes from pigs.

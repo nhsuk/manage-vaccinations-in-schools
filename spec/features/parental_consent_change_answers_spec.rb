@@ -246,12 +246,10 @@ RSpec.feature "Parental consent change answers" do
   end
 
   def then_i_see_the_needs_triage_confirmation_page
-    expect(page).to have_content(
-      "You’ve given consent for your child to get a flu vaccination"
-    )
+    expect(page).to have_content("Consent given")
     expect(page).to have_content(
       "As you answered ‘yes’ to some of the health questions, " \
-        "we need to check the vaccination is suitable for Joe Test."
+        "we need to check the nasal flu vaccination is suitable for Joe Test."
     )
   end
 
@@ -263,7 +261,7 @@ RSpec.feature "Parental consent change answers" do
 
   def then_i_see_the_given_confirmation_page
     expect(page).to have_content(
-      "will get their nasal flu vaccination at school"
+      "is due to get the nasal flu vaccination at school"
     )
   end
 
