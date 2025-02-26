@@ -3,6 +3,9 @@
 describe "MenACWY vaccination" do
   around { |example| travel_to(Time.zone.local(2024, 2, 1)) { example.run } }
 
+  before { Flipper.enable(:vaccinate_doubles) }
+  after { Flipper.disable(:vaccinate_doubles) }
+
   scenario "Administered" do
     given_i_am_signed_in
 
