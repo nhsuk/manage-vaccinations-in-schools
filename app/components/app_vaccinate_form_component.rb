@@ -13,7 +13,7 @@ class AppVaccinateFormComponent < ViewComponent::Base
 
   def render?
     patient_session.next_step(programme:) == :vaccinate &&
-      (patient_session.attending_today? || false)
+      (patient_session.todays_attendance&.attending? || false)
   end
 
   private

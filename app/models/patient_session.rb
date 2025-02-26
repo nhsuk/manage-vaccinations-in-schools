@@ -146,10 +146,6 @@ class PatientSession < ApplicationRecord
       end
   end
 
-  def attending_today?
-    todays_attendance&.attending?
-  end
-
   private
 
   def latest_consents_by_programme
