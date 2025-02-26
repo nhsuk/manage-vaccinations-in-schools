@@ -1,11 +1,7 @@
 #!/usr/bin/env bash
 
 initialize_terraform () {
-    cat << EOF > "bootstrap-$ENV.hcl" || { echo "Failed bootstrap file creation"; exit 1; }
-path = "terraform-$ENV.tfstate"
-EOF
-
-  terraform init -reconfigure -backend-config="bootstrap-$ENV.hcl"; INIT_STATUS=$?
+  terraform init -reconfigure -backend-config="path=terraform-$ENV.tfstate"; INIT_STATUS=$?
   if [ ! $INIT_STATUS -eq 0 ]; then
     echo "Terraform init failed. Please check output and fix the issue."
     exit 1
@@ -108,31 +104,8 @@ resource_name = {
 EOF
 }
 
-create_docker_build_script () {
-  cd "$DIR" || { echo "Could not return to script directory, $DOCKER_SCRIPT script not generated"; exit 1; }
-  repositoryURI=$(aws ecr describe-repositories --region $REGION --repository-names mavis-$ENV | jq -r .repositories[0].repositoryUri)
-  cat << EOF > $DOCKER_SCRIPT
-#!/usr/bin/env bash
-TAG="\$1"
-if [ "\$#" -ne 1 ]; then
-    echo "Usage: $0 <IMAGE_TAG>"
-    exit 1
-elif [ -n "\$(echo "\$TAG" | tr -d 'a-zA-Z0-9_.-')" ] ; then
-   echo "Invalid tag value. Only lowercase and uppercase letters, digits, underscores, periods, and hyphens are allowed"
-   exit 1
-fi
-aws ecr get-login-password --region "$REGION" | docker login --username AWS --password-stdin "${repositoryURI%/*}" || { echo "Login failed"; exit 1; }
-docker build -t "mavis-$ENV" . || { echo "Build failed"; exit 1; }
-docker tag "mavis-$ENV":"\$TAG" "$repositoryURI":"\$TAG" || { echo "Tagging failed"; exit 1; }
-docker push "$repositoryURI":"\$TAG" || { echo "Push failed"; exit 1; }
-EOF
-  chmod +x $DOCKER_SCRIPT
-}
-
 ENV="$1"
 REGION=eu-west-2
-DIR=$(pwd)
-DOCKER_SCRIPT=docker_build_$ENV.sh
 
 if [ "$#" -ne 1 ]; then
     echo "Usage: $0 <Environment name>"
@@ -144,16 +117,15 @@ fi
 
 run_bootstrap
 create_environment_files
-create_docker_build_script
 
 echo ""
 echo "##########################################"
 echo "########## Setup complete ################"
 echo "##########################################"
 echo ""
-echo "Next steps:"
-echo "    - To deploy terraform configuration go into the ../app directory and execute: \`terraform apply -var-file=\"env/$ENV.tfvars\"\`"
-echo "    - Remember to publish a docker image to the newly created repository (mavis-$ENV) before applying the terraform configuration."
-echo "    - To build the docker image, execute \`$DIR/$DOCKER_SCRIPT <IMAGE_TAG>\` in the same directory as your dockerfile"
+echo "Next steps for the first deployment of the environment:"
+echo "    - Get the docker image digest of the mavis image you want to deploy from the \"mavis/webapp\" repository."
+echo "    - Go into the ../app directory and execute: \`terraform apply -var-file=\"env/$ENV.tfvars\"\`"
+echo "    - When prompted, enter the docker image digest you obtained in the first step."
 
 exit 0
