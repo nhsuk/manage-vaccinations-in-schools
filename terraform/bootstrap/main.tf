@@ -168,13 +168,3 @@ resource "aws_dynamodb_table" "dynamodb_lock_table" {
     enabled = true
   }
 }
-
-resource "aws_ecr_repository" "ecr_repository" {
-  name = "mavis-${var.environment}"
-}
-
-
-variable "environment" {
-  type        = string
-  description = "String literal for the environment"
-}
