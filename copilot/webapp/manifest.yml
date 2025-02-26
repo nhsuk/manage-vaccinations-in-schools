@@ -79,6 +79,7 @@ environments:
       MAVIS__CIS2__ENABLED: false
       MAVIS__PDS__PERFORM_JOBS: false
       MAVIS__SPLUNK__ENABLED: false
+      GOOD_JOB_QUEUES: -pds,*
   test:
     http:
       alias:
