@@ -7,8 +7,10 @@ describe AppProgrammeSessionTableComponent do
 
   let(:programme) { create(:programme) }
   let(:location) { create(:school, name: "Waterloo Road") }
-  let(:session) { create(:session, programme:, location:) }
-  let(:sessions) { [session] + create_list(:session, 2, programme:) }
+  let(:session) { create(:session, programmes: [programme], location:) }
+  let(:sessions) do
+    [session] + create_list(:session, 2, programmes: [programme])
+  end
   let(:patient) { create(:patient, session:) }
 
   before do

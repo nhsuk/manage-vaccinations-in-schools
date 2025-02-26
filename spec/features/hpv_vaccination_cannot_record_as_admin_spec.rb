@@ -10,11 +10,10 @@ describe "HPV vaccination" do
   end
 
   def given_i_am_signed_in_as_an_admin
-    programme = create(:programme, :hpv_all_vaccines)
-    organisation =
-      create(:organisation, :with_one_admin, programmes: [programme])
+    programmes = [create(:programme, :hpv_all_vaccines)]
+    organisation = create(:organisation, :with_one_admin, programmes:)
     location = create(:school)
-    @session = create(:session, organisation:, programme:, location:)
+    @session = create(:session, organisation:, programmes:, location:)
     @patient =
       create(:patient, :consent_given_triage_not_needed, session: @session)
 

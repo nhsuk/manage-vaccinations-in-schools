@@ -12,10 +12,9 @@ describe "Verbal consent" do
   end
 
   def given_i_am_signed_in
-    programme = create(:programme, :hpv)
-    organisation =
-      create(:organisation, :with_one_nurse, programmes: [programme])
-    @session = create(:session, organisation:, programme:)
+    programmes = [create(:programme, :hpv)]
+    organisation = create(:organisation, :with_one_nurse, programmes:)
+    @session = create(:session, organisation:, programmes:)
     @patient = create(:patient, session: @session)
 
     sign_in organisation.users.first

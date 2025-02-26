@@ -539,7 +539,7 @@ describe ConsentForm do
       consent_form =
         create(
           :consent_form,
-          session: create(:session, programme: create(:programme, :flu))
+          session: create(:session, programmes: [create(:programme, :flu)])
         )
       consent_form.strict_loading!(false)
       expect(consent_form.gelatine_content_status_in_vaccines).to eq(:maybe)
@@ -550,7 +550,7 @@ describe ConsentForm do
         create(
           :consent_form,
           session:
-            create(:session, programme: create(:programme, :flu_nasal_only))
+            create(:session, programmes: [create(:programme, :flu_nasal_only)])
         )
       consent_form.strict_loading!(false)
       expect(consent_form.gelatine_content_status_in_vaccines).to be(true)
@@ -560,7 +560,7 @@ describe ConsentForm do
       consent_form =
         create(
           :consent_form,
-          session: create(:session, programme: create(:programme, :hpv))
+          session: create(:session, programmes: [create(:programme, :hpv)])
         )
       consent_form.strict_loading!(false)
       expect(consent_form.gelatine_content_status_in_vaccines).to be(false)
@@ -569,7 +569,7 @@ describe ConsentForm do
 
   describe "scope unmatched" do
     let(:programme) { create(:programme) }
-    let(:session) { create(:session, programme:) }
+    let(:session) { create(:session, programmes: [programme]) }
     let(:consent) { create(:consent, programme:) }
     let(:unmatched_consent_form) do
       create(:consent_form, consent: nil, session:)
@@ -584,7 +584,7 @@ describe ConsentForm do
 
   describe "scope recorded" do
     let(:programme) { create(:programme) }
-    let(:session) { create(:session, programme:) }
+    let(:session) { create(:session, programmes: [programme]) }
     let(:consent) { create(:consent, programme:) }
     let(:recorded_consent_form) do
       create(:consent_form, :recorded, consent:, session:)
@@ -601,7 +601,7 @@ describe ConsentForm do
     consent_form =
       create(
         :consent_form,
-        session: create(:session, programme: create(:programme, :hpv)),
+        session: create(:session, programmes: [create(:programme, :hpv)]),
         response: "refused"
       )
 
@@ -621,7 +621,7 @@ describe ConsentForm do
       create(
         :consent_form,
         :with_health_answers_no_branching,
-        session: create(:session, programme: create(:programme, :flu)),
+        session: create(:session, programmes: [create(:programme, :flu)]),
         response: nil
       )
 
@@ -690,7 +690,7 @@ describe ConsentForm do
       create(
         :consent_form,
         :with_health_answers_no_branching,
-        session: create(:session, programme: create(:programme, :hpv)),
+        session: create(:session, programmes: [create(:programme, :hpv)]),
         response: nil
       )
 
@@ -732,7 +732,9 @@ describe ConsentForm do
 
     let(:school) { create(:school) }
     let(:location) { school }
-    let(:session) { create(:session, organisation:, programme:, location:) }
+    let(:session) do
+      create(:session, organisation:, programmes: [programme], location:)
+    end
     let(:patient) { create(:patient, school:, session:) }
     let(:current_user) { create(:user) }
 
@@ -835,9 +837,9 @@ describe ConsentForm do
   end
 
   it "resets unused fields" do
-    programme = create(:programme)
+    programmes = [create(:programme)]
 
-    session = create(:session, programme:)
+    session = create(:session, programmes:)
 
     consent_form =
       build(

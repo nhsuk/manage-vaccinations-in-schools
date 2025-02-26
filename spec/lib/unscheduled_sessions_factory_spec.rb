@@ -4,8 +4,8 @@ describe UnscheduledSessionsFactory do
   describe "#call" do
     subject(:call) { described_class.new.call }
 
-    let(:programme) { create(:programme, :hpv) }
-    let(:organisation) { create(:organisation, programmes: [programme]) }
+    let(:programmes) { [create(:programme, :hpv)] }
+    let(:organisation) { create(:organisation, programmes:) }
 
     context "with a school that's eligible for the programme" do
       let!(:location) { create(:school, :secondary, organisation:) }
@@ -15,7 +15,7 @@ describe UnscheduledSessionsFactory do
 
         session = organisation.sessions.includes(:location, :programmes).first
         expect(session.location).to eq(location)
-        expect(session.programmes).to eq([programme])
+        expect(session.programmes).to eq(programmes)
       end
     end
 
@@ -27,7 +27,7 @@ describe UnscheduledSessionsFactory do
 
         session = organisation.sessions.includes(:location, :programmes).first
         expect(session.location).to eq(location)
-        expect(session.programmes).to eq([programme])
+        expect(session.programmes).to eq(programmes)
       end
     end
 
@@ -50,7 +50,7 @@ describe UnscheduledSessionsFactory do
     context "when a session already exists" do
       before do
         location = create(:school, :secondary, organisation:)
-        create(:session, organisation:, location:, programme:)
+        create(:session, organisation:, location:, programmes:)
       end
 
       it "doesn't create any sessions" do
@@ -65,7 +65,7 @@ describe UnscheduledSessionsFactory do
           :session,
           organisation:,
           location:,
-          programme:,
+          programmes:,
           date: Date.new(2013, 1, 1)
         )
       end
@@ -78,7 +78,7 @@ describe UnscheduledSessionsFactory do
     context "with an unscheduled session for a location no longer managed by the organisation" do
       let(:location) { create(:school, :secondary) }
       let!(:session) do
-        create(:session, :unscheduled, organisation:, location:, programme:)
+        create(:session, :unscheduled, organisation:, location:, programmes:)
       end
 
       it "destroys the session" do
@@ -91,7 +91,7 @@ describe UnscheduledSessionsFactory do
       let(:location) { create(:school, :secondary) }
 
       before do
-        create(:session, :scheduled, organisation:, location:, programme:)
+        create(:session, :scheduled, organisation:, location:, programmes:)
       end
 
       it "doesn't destroy the session" do

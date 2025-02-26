@@ -48,7 +48,7 @@ describe ConsentNotification do
       create(
         :session,
         location:,
-        programme: programmes.first,
+        programmes:,
         patients: [patient],
         organisation:
       )

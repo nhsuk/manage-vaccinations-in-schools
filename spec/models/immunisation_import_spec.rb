@@ -42,14 +42,9 @@ describe ImmunisationImport do
     create(:school, urn: "144012")
   end
 
-  let(:programme) { create(:programme, :flu_all_vaccines) }
+  let(:programmes) { [create(:programme, :flu_all_vaccines)] }
   let(:organisation) do
-    create(
-      :organisation,
-      :with_generic_clinic,
-      ods_code: "R1L",
-      programmes: [programme]
-    )
+    create(:organisation, :with_generic_clinic, ods_code: "R1L", programmes:)
   end
 
   let(:file) { "valid_flu.csv" }
@@ -93,7 +88,7 @@ describe ImmunisationImport do
     before { immunisation_import.parse_rows! }
 
     context "with valid Flu rows" do
-      let(:programme) { create(:programme, :flu_all_vaccines) }
+      let(:programmes) { [create(:programme, :flu_all_vaccines)] }
       let(:file) { "valid_flu.csv" }
 
       it "populates the rows" do
@@ -103,7 +98,7 @@ describe ImmunisationImport do
     end
 
     context "with valid HPV rows" do
-      let(:programme) { create(:programme, :hpv_all_vaccines) }
+      let(:programmes) { [create(:programme, :hpv_all_vaccines)] }
       let(:file) { "valid_hpv.csv" }
 
       it "populates the rows" do
@@ -127,7 +122,7 @@ describe ImmunisationImport do
     subject(:process!) { immunisation_import.process! }
 
     context "with valid Flu rows" do
-      let(:programme) { create(:programme, :flu_all_vaccines) }
+      let(:programmes) { [create(:programme, :flu_all_vaccines)] }
       let(:file) { "valid_flu.csv" }
 
       it "creates locations, patients, and vaccination records" do
@@ -181,7 +176,7 @@ describe ImmunisationImport do
     end
 
     context "with valid HPV rows" do
-      let(:programme) { create(:programme, :hpv_all_vaccines) }
+      let(:programmes) { [create(:programme, :hpv_all_vaccines)] }
       let(:file) { "valid_hpv.csv" }
 
       it "creates locations, patients, and vaccination records" do
@@ -235,7 +230,7 @@ describe ImmunisationImport do
     end
 
     context "with an existing patient matching the name" do
-      let(:programme) { create(:programme, :flu_all_vaccines) }
+      let(:programmes) { [create(:programme, :flu_all_vaccines)] }
       let(:file) { "valid_flu.csv" }
 
       let!(:patient) do
@@ -258,7 +253,7 @@ describe ImmunisationImport do
     end
 
     context "with an existing patient matching the name but with a different case" do
-      let(:programme) { create(:programme, :flu_all_vaccines) }
+      let(:programmes) { [create(:programme, :flu_all_vaccines)] }
       let(:file) { "valid_flu.csv" }
 
       before do
@@ -277,7 +272,7 @@ describe ImmunisationImport do
     end
 
     context "with a patient record that has different attributes" do
-      let(:programme) { create(:programme, :hpv_all_vaccines) }
+      let(:programmes) { [create(:programme, :hpv_all_vaccines)] }
       let(:file) { "valid_hpv_with_changes.csv" }
       let!(:existing_patient) do
         create(

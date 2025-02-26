@@ -5,10 +5,10 @@ describe AppImportsTableComponent do
 
   let(:component) { described_class.new(organisation:) }
 
-  let(:programme) { create(:programme) }
-  let(:organisation) { create(:organisation, programmes: [programme]) }
+  let(:programmes) { [create(:programme)] }
+  let(:organisation) { create(:organisation, programmes:) }
   let(:school) { create(:school, organisation:, name: "Test School") }
-  let(:session) { create(:session, programme:, location: school) }
+  let(:session) { create(:session, programmes:, location: school) }
 
   before do
     cohort_imports =
@@ -42,7 +42,7 @@ describe AppImportsTableComponent do
       create(
         :vaccination_record,
         organisation:,
-        programme:,
+        programme: programmes.first,
         immunisation_imports: [immunisation_import]
       )
     end

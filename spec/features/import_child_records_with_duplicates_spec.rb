@@ -56,19 +56,15 @@ describe "Child record imports duplicates" do
   end
 
   def and_an_hpv_programme_is_underway
-    @programme = create(:programme, :hpv)
-    create(
-      :organisation_programme,
-      organisation: @organisation,
-      programme: @programme
-    )
+    programme = create(:programme, :hpv, organisations: [@organisation])
+
     @school = create(:school, urn: "123456", organisation: @organisation)
     @session =
       create(
         :session,
         organisation: @organisation,
         location: @school,
-        programme: @programme
+        programmes: [programme]
       )
   end
 

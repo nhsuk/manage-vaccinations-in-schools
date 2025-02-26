@@ -38,7 +38,7 @@ describe GovukNotifyPersonalisation do
       :session,
       location:,
       organisation:,
-      programme: programmes.first,
+      programmes:,
       date: Date.new(2026, 1, 1)
     )
   end
@@ -169,26 +169,13 @@ describe GovukNotifyPersonalisation do
           :consent_form,
           :given,
           :recorded,
-          session:
-            create(
-              :session,
-              location:,
-              programme: programmes.first,
-              organisation:
-            ),
+          session: create(:session, location:, programmes:, organisation:),
           school_confirmed: false,
           school:
         )
       end
 
-      before do
-        create(
-          :session,
-          location: school,
-          programme: programmes.first,
-          organisation:
-        )
-      end
+      before { create(:session, location: school, programmes:, organisation:) }
 
       it { should include(location_name: "Waterloo Road") }
     end

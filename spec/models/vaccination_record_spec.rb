@@ -59,7 +59,7 @@ describe VaccinationRecord do
       end
 
       let(:programme) { create(:programme) }
-      let(:session) { create(:session, programme: programme) }
+      let(:session) { create(:session, programmes: [programme]) }
 
       it { should validate_absence_of(:location_name) }
     end

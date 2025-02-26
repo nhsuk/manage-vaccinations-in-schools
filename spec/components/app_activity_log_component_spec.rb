@@ -5,8 +5,8 @@ describe AppActivityLogComponent do
 
   let(:component) { described_class.new(patient_session:) }
 
-  let(:programme) { create(:programme, :hpv) }
-  let(:organisation) { create(:organisation, programmes: [programme]) }
+  let(:programmes) { [create(:programme, :hpv)] }
+  let(:organisation) { create(:organisation, programmes:) }
   let(:patient_session) do
     create(
       :patient_session,
@@ -19,7 +19,7 @@ describe AppActivityLogComponent do
     create(:user, organisation:, family_name: "Joy", given_name: "Nurse")
   end
   let(:location) { create(:school, name: "Hogwarts") }
-  let(:session) { create(:session, programme:, location:) }
+  let(:session) { create(:session, programmes:, location:) }
   let(:patient) do
     create(:patient, school: location, given_name: "Sarah", family_name: "Doe")
   end
@@ -54,7 +54,7 @@ describe AppActivityLogComponent do
       create(
         :consent,
         :given,
-        programme:,
+        programme: programmes.first,
         patient:,
         parent: mum,
         created_at: Time.zone.parse("2024-05-30 12:00"),
@@ -63,7 +63,7 @@ describe AppActivityLogComponent do
       create(
         :consent,
         :refused,
-        programme:,
+        programme: programmes.first,
         patient:,
         parent: dad,
         created_at: Time.zone.parse("2024-05-30 13:00")
@@ -72,7 +72,7 @@ describe AppActivityLogComponent do
       create(
         :triage,
         :needs_follow_up,
-        programme:,
+        programme: programmes.first,
         patient:,
         created_at: Time.zone.parse("2024-05-30 14:00"),
         notes: "Some notes",
@@ -81,7 +81,7 @@ describe AppActivityLogComponent do
       create(
         :triage,
         :ready_to_vaccinate,
-        programme:,
+        programme: programmes.first,
         patient:,
         created_at: Time.zone.parse("2024-05-30 14:30"),
         performed_by: user
@@ -89,7 +89,7 @@ describe AppActivityLogComponent do
 
       create(
         :vaccination_record,
-        programme:,
+        programme: programmes.first,
         patient:,
         session:,
         performed_at: Time.zone.parse("2024-05-31 12:00"),
@@ -99,13 +99,13 @@ describe AppActivityLogComponent do
 
       create(
         :vaccination_record,
-        programme:,
+        programme: programmes.first,
         patient:,
         session:,
         performed_at: Time.zone.parse("2024-05-31 13:00"),
         performed_by: nil,
         notes: "Some notes",
-        vaccine: create(:vaccine, :cervarix, programme:)
+        vaccine: create(:vaccine, :cervarix, programme: programmes.first)
       )
 
       create(
@@ -114,7 +114,7 @@ describe AppActivityLogComponent do
         template_id: GOVUK_NOTIFY_EMAIL_TEMPLATES[:consent_school_request_hpv],
         consent_form: nil,
         patient:,
-        programme_ids: [programme.id],
+        programme_ids: programmes.map(&:id),
         recipient: "test@example.com",
         created_at: Date.new(2024, 5, 10),
         sent_by: user
@@ -193,13 +193,13 @@ describe AppActivityLogComponent do
       create(
         :vaccination_record,
         :not_administered,
-        programme:,
+        programme: programmes.first,
         patient:,
         session:,
         performed_at: Time.zone.local(2024, 5, 31, 13),
         performed_by: user,
         notes: "Some notes.",
-        vaccine: create(:vaccine, :gardasil, programme:)
+        vaccine: create(:vaccine, :gardasil, programme: programmes.first)
       )
     end
 
@@ -216,7 +216,7 @@ describe AppActivityLogComponent do
       create(
         :vaccination_record,
         :discarded,
-        programme:,
+        programme: programmes.first,
         patient:,
         session:,
         performed_at: Time.zone.local(2024, 5, 31, 13),
@@ -243,7 +243,7 @@ describe AppActivityLogComponent do
         :consent,
         :given,
         :self_consent,
-        programme:,
+        programme: programmes.first,
         patient:,
         created_at: Time.zone.parse("2024-05-30 12:00")
       )
@@ -271,7 +271,7 @@ describe AppActivityLogComponent do
         :consent,
         :given,
         :invalidated,
-        programme:,
+        programme: programmes.first,
         patient:,
         parent: mum,
         consent_form:,
@@ -299,7 +299,7 @@ describe AppActivityLogComponent do
         :consent,
         :given,
         :withdrawn,
-        programme:,
+        programme: programmes.first,
         patient:,
         parent: mum,
         created_at: Time.zone.local(2024, 5, 30, 12),
@@ -324,7 +324,7 @@ describe AppActivityLogComponent do
         :consent,
         :given,
         :invalidated,
-        programme:,
+        programme: programmes.first,
         patient:,
         parent: mum,
         created_at: Time.zone.local(2024, 5, 30, 12),
@@ -344,10 +344,8 @@ describe AppActivityLogComponent do
   end
 
   describe "gillick assessments" do
-    let(:programme) { create(:programme, :td_ipv) }
-    let(:patient_session) do
-      create(:patient_session, patient:, programmes: [programme])
-    end
+    let(:programmes) { [create(:programme, :td_ipv)] }
+    let(:patient_session) { create(:patient_session, patient:, programmes:) }
 
     before do
       create(
@@ -385,9 +383,7 @@ describe AppActivityLogComponent do
   end
 
   describe "pre-screenings" do
-    let(:patient_session) do
-      create(:patient_session, patient:, programmes: [programme])
-    end
+    let(:patient_session) { create(:patient_session, patient:, programmes:) }
 
     before do
       create(

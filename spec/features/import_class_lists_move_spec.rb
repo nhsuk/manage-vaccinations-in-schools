@@ -31,7 +31,11 @@ describe "Import class lists - Moving patients" do
   end
 
   def given_an_hpv_programme_is_underway
-    @organisation = create(:organisation, :with_one_nurse)
+    programmes = [create(:programme, :hpv)]
+
+    @organisation = create(:organisation, :with_one_nurse, programmes:)
+    @user = @organisation.users.first
+
     location =
       create(
         :school,
@@ -46,21 +50,20 @@ describe "Import class lists - Moving patients" do
         name: "Different Road",
         organisation: @organisation
       )
-    @user = @organisation.users.first
-    programme = create(:programme, :hpv, organisations: [@organisation])
+
     create(
       :session,
       :unscheduled,
       organisation: @organisation,
       location:,
-      programme:
+      programmes:
     )
     create(
       :session,
       :unscheduled,
       organisation: @organisation,
       location: other_location,
-      programme:
+      programmes:
     )
   end
 

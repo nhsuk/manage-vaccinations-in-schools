@@ -33,8 +33,8 @@
 describe CohortImport do
   subject(:cohort_import) { create(:cohort_import, csv:, organisation:) }
 
-  let(:programme) { create(:programme) }
-  let(:organisation) { create(:organisation, programmes: [programme]) }
+  let(:programmes) { [create(:programme)] }
+  let(:organisation) { create(:organisation, programmes:) }
 
   let(:file) { "valid.csv" }
   let(:csv) { fixture_file_upload("spec/fixtures/cohort_import/#{file}") }
@@ -335,7 +335,7 @@ describe CohortImport do
 
     context "with an unscheduled session" do
       let(:session) do
-        create(:session, :unscheduled, organisation:, programme:, location:)
+        create(:session, :unscheduled, organisation:, programmes:, location:)
       end
 
       it "adds the patients to the session" do
@@ -345,7 +345,7 @@ describe CohortImport do
 
     context "with a scheduled session" do
       let(:session) do
-        create(:session, :scheduled, organisation:, programme:, location:)
+        create(:session, :scheduled, organisation:, programmes:, location:)
       end
 
       it "adds the patients to the session" do

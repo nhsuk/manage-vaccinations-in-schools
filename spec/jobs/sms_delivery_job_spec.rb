@@ -42,7 +42,7 @@ describe SMSDeliveryJob do
 
     let(:template_name) { GOVUK_NOTIFY_SMS_TEMPLATES.keys.first }
     let(:programmes) { [create(:programme)] }
-    let(:session) { create(:session, programme: programmes.first) }
+    let(:session) { create(:session, programmes:) }
     let(:parent) { create(:parent, phone: "01234 567890") }
     let(:consent) { nil }
     let(:consent_form) { nil }

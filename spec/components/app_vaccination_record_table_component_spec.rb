@@ -21,7 +21,8 @@ describe AppVaccinationRecordTableComponent do
             date_of_birth: Date.new(2000, 5, 28),
             address_postcode: "SW1A 2AA"
           ),
-        session: create(:session, programme:, date: Date.new(2020, 9, 1))
+        session:
+          create(:session, programmes: [programme], date: Date.new(2020, 9, 1))
       )
     ] + create_list(:vaccination_record, 4, programme:) +
       create_list(:vaccination_record, 5, :not_administered, programme:)

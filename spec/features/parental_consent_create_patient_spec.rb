@@ -66,7 +66,7 @@ describe "Parental consent create patient" do
         :session,
         :scheduled,
         organisation: @organisation,
-        programme: @programme,
+        programmes: [@programme],
         location:
       )
     @child = build(:patient, year_group: 8) # NB: Build, not create, so we don't persist to DB

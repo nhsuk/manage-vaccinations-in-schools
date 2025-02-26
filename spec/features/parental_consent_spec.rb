@@ -37,7 +37,7 @@ describe "Parental consent" do
         :session,
         :scheduled,
         organisation: @organisation,
-        programme: @programme,
+        programmes: [@programme],
         location:
       )
     @child = create(:patient, session: @session)

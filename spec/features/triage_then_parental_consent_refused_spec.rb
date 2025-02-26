@@ -29,7 +29,7 @@ describe "Triage" do
         :session,
         :scheduled,
         organisation: @organisation,
-        programme: @programme
+        programmes: [@programme]
       )
 
     @patient =

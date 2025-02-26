@@ -11,7 +11,9 @@ describe AppVaccinationRecordSummaryComponent do
   let(:location) { create(:school, name: "Hogwarts") }
   let(:programme) { create(:programme, :hpv) }
   let(:organisation) { create(:organisation, programmes: [programme]) }
-  let(:session) { create(:session, programme:, location:, organisation:) }
+  let(:session) do
+    create(:session, programmes: [programme], location:, organisation:)
+  end
   let(:patient) { create(:patient) }
   let(:vaccine) { programme.vaccines.first }
   let(:batch) do

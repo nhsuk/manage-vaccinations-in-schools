@@ -33,7 +33,9 @@ describe Reports::OfflineSessionExporter do
   let(:organisation) { create(:organisation, programmes: [programme]) }
   let(:user) { create(:user, email: "nurse@example.com", organisation:) }
   let(:team) { create(:team, organisation:) }
-  let(:session) { create(:session, location:, organisation:, programme:) }
+  let(:session) do
+    create(:session, location:, organisation:, programmes: [programme])
+  end
 
   context "a school session" do
     subject(:workbook) { RubyXL::Parser.parse_buffer(call) }

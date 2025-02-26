@@ -30,13 +30,12 @@ describe "Access log" do
   end
 
   def given_i_am_signed_in
-    programme = create(:programme, :hpv)
-    organisation =
-      create(:organisation, :with_one_nurse, programmes: [programme])
+    programmes = [create(:programme, :hpv)]
+    organisation = create(:organisation, :with_one_nurse, programmes:)
 
     @user = organisation.users.first
 
-    @session = create(:session, organisation:, programme:)
+    @session = create(:session, organisation:, programmes:)
     @patient =
       create(
         :patient,

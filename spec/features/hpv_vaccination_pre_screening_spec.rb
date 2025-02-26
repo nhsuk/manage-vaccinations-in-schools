@@ -13,16 +13,16 @@ describe "HPV vaccination" do
   end
 
   def given_i_am_signed_in
-    programme = create(:programme, :hpv_all_vaccines)
-    organisation =
-      create(:organisation, :with_one_nurse, programmes: [programme])
+    programmes = [create(:programme, :hpv_all_vaccines)]
+    organisation = create(:organisation, :with_one_nurse, programmes:)
     location = create(:school)
 
-    programme.vaccines.discontinued.each do |vaccine|
-      create(:batch, organisation:, vaccine:)
-    end
+    Vaccine
+      .where(programme: programmes)
+      .discontinued
+      .each { |vaccine| create(:batch, organisation:, vaccine:) }
 
-    @session = create(:session, organisation:, programme:, location:)
+    @session = create(:session, organisation:, programmes:, location:)
     @patient =
       create(
         :patient,

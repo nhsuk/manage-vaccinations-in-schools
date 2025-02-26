@@ -27,28 +27,23 @@ describe "Triage" do
   end
 
   def given_a_programme_with_a_running_session
-    @programme = create(:programme, :hpv)
-    @organisation =
-      create(:organisation, :with_one_nurse, programmes: [@programme])
+    programmes = [create(:programme, :hpv)]
+    @organisation = create(:organisation, :with_one_nurse, programmes:)
+
     @batch =
       create(
         :batch,
         organisation: @organisation,
-        vaccine: @programme.vaccines.first
+        vaccine: programmes.first.vaccines.first
       )
     location = create(:school)
     @session =
-      create(
-        :session,
-        organisation: @organisation,
-        programme: @programme,
-        location:
-      )
+      create(:session, organisation: @organisation, programmes:, location:)
     @patient =
       create(
         :patient_session,
         :consent_given_triage_needed,
-        programmes: [@programme],
+        programmes:,
         session: @session
       ).patient
     create(
@@ -57,7 +52,7 @@ describe "Triage" do
       :health_question_notes,
       :from_granddad,
       patient: @patient,
-      programme: @programme
+      programme: programmes.first
     )
 
     @patient.reload # Make sure both consents are accessible

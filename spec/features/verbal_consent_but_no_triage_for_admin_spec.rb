@@ -11,10 +11,9 @@ describe "Verbal consent recorded by admin" do
   end
 
   def given_i_am_signed_in_as_an_admin
-    programme = create(:programme, :hpv)
-    organisation =
-      create(:organisation, :with_one_admin, programmes: [programme])
-    @session = create(:session, organisation:, programme:)
+    programmes = [create(:programme, :hpv)]
+    organisation = create(:organisation, :with_one_admin, programmes:)
+    @session = create(:session, organisation:, programmes:)
 
     @parent = create(:parent)
     @patient = create(:patient, session: @session, parents: [@parent])

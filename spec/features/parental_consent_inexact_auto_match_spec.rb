@@ -22,7 +22,7 @@ describe "Parental consent given with an inexact automatic match" do
         :session,
         :scheduled,
         organisation: @organisation,
-        programme: @programme,
+        programmes: [@programme],
         location:
       )
   end

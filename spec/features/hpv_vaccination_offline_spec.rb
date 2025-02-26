@@ -41,14 +41,10 @@ describe "HPV vaccination" do
   end
 
   def given_an_hpv_programme_is_underway(clinic: false)
-    programme = create(:programme, :hpv)
+    programmes = [create(:programme, :hpv)]
+
     @organisation =
-      create(
-        :organisation,
-        :with_one_nurse,
-        :with_generic_clinic,
-        programmes: [programme]
-      )
+      create(:organisation, :with_one_nurse, :with_generic_clinic, programmes:)
     school = create(:school)
     previous_date = 1.month.ago
 
@@ -65,7 +61,7 @@ describe "HPV vaccination" do
         )
     end
 
-    vaccine = programme.vaccines.active.first
+    vaccine = programmes.first.vaccines.active.first
     @batch = create(:batch, organisation: @organisation, vaccine:)
 
     create(:gp_practice, ods_code: "Y12345")
@@ -75,7 +71,7 @@ describe "HPV vaccination" do
         :session,
         :today,
         organisation: @organisation,
-        programme:,
+        programmes:,
         location: school
       )
 

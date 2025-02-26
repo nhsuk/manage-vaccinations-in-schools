@@ -3,17 +3,17 @@
 describe DPSExportRow do
   subject(:row) { described_class.new(vaccination_record) }
 
-  let(:programme) { create(:programme, type: "hpv") }
+  let(:programme) { create(:programme, :hpv) }
   let(:organisation) { create(:organisation, programmes: [programme]) }
-  let(:vaccine) do
-    create(:vaccine, :gardasil_9, programme:, dose_volume_ml: 0.5)
-  end
+  let(:vaccine) { programme.vaccines.first }
   let(:location) { create(:school) }
   let(:school) { create(:school) }
   let(:patient) do
     create(:patient, date_of_birth: Date.new(2012, 12, 29), school:)
   end
-  let(:session) { create(:session, organisation:, programme:, location:) }
+  let(:session) do
+    create(:session, organisation:, programmes: [programme], location:)
+  end
   let(:performed_by) { create(:user, family_name: "Doe", given_name: "Jane") }
   let(:performed_by_given_name) { nil }
   let(:performed_by_family_name) { nil }

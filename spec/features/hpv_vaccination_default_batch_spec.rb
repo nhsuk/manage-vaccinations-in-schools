@@ -32,7 +32,7 @@ describe "HPV vaccination" do
     @batch = batches.first
     @batch2 = batches.second
 
-    @session = create(:session, organisation:, programme:)
+    @session = create(:session, organisation:, programmes: [programme])
 
     @patient =
       create(

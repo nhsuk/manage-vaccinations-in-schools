@@ -43,7 +43,8 @@ describe "HPV vaccination" do
     active_vaccine = programme.vaccines.active.first
     @active_batch = create(:batch, organisation:, vaccine: active_vaccine)
 
-    @session = create(:session, organisation:, programme:, location:)
+    @session =
+      create(:session, organisation:, programmes: [programme], location:)
     @patient =
       create(
         :patient,

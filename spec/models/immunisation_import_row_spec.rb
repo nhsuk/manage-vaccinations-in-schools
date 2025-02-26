@@ -5,10 +5,8 @@ describe ImmunisationImportRow do
     described_class.new(data:, organisation:)
   end
 
-  let(:programme) { create(:programme, :flu) }
-  let(:organisation) do
-    create(:organisation, ods_code: "abc", programmes: [programme])
-  end
+  let(:programmes) { [create(:programme, :flu)] }
+  let(:organisation) { create(:organisation, ods_code: "abc", programmes:) }
 
   let(:nhs_number) { "1234567890" }
   let(:given_name) { "Harry" }
@@ -211,7 +209,7 @@ describe ImmunisationImportRow do
           }
         end
 
-        let(:session) { create(:session, organisation:, programme:) }
+        let(:session) { create(:session, organisation:, programmes:) }
 
         it { should include(/current session/) }
       end
@@ -287,7 +285,7 @@ describe ImmunisationImportRow do
     end
 
     context "with an invalid dose sequence" do
-      let(:programme) { create(:programme, :hpv) }
+      let(:programmes) { [create(:programme, :hpv)] }
 
       let(:data) { { "PROGRAMME" => "HPV", "DOSE_SEQUENCE" => "4" } }
 
@@ -302,7 +300,7 @@ describe ImmunisationImportRow do
     context "vaccination in a session and no organisation provided" do
       let(:data) { { "SESSION_ID" => session.id.to_s } }
 
-      let(:session) { create(:session, organisation:, programme:) }
+      let(:session) { create(:session, organisation:, programmes:) }
 
       it "has errors" do
         expect(immunisation_import_row).to be_invalid
@@ -325,7 +323,7 @@ describe ImmunisationImportRow do
         )
       end
 
-      let(:session) { create(:session, organisation:, programme:) }
+      let(:session) { create(:session, organisation:, programmes:) }
 
       it "has errors" do
         expect(immunisation_import_row).to be_invalid
@@ -352,7 +350,7 @@ describe ImmunisationImportRow do
         )
       end
 
-      let(:session) { create(:session, organisation:, programme:) }
+      let(:session) { create(:session, organisation:, programmes:) }
 
       it "has errors" do
         expect(immunisation_import_row).to be_invalid
@@ -363,7 +361,7 @@ describe ImmunisationImportRow do
     end
 
     context "HPV vaccination in previous academic year, no vaccinator details provided" do
-      let(:programme) { create(:programme, :hpv) }
+      let(:programmes) { [create(:programme, :hpv)] }
 
       let(:data) do
         valid_hpv_data.except(
@@ -405,8 +403,8 @@ describe ImmunisationImportRow do
     end
 
     context "vaccination in a session, with a delivery site that is not appropriate for HPV" do
-      let(:programme) { create(:programme, :hpv) }
-      let(:session) { create(:session, organisation:, programme:) }
+      let(:programmes) { [create(:programme, :hpv)] }
+      let(:session) { create(:session, organisation:, programmes:) }
 
       let(:data) do
         valid_hpv_data.merge(
@@ -427,7 +425,7 @@ describe ImmunisationImportRow do
     end
 
     context "vaccination in a previous academic year, with a delivery site that's typically not appropriate for HPV" do
-      let(:programme) { create(:programme, :hpv) }
+      let(:programmes) { [create(:programme, :hpv)] }
 
       let(:data) do
         {
@@ -445,7 +443,8 @@ describe ImmunisationImportRow do
     end
 
     context "vaccination in a session, with a delivery site that is not appropriate for flu" do
-      let(:programme) { create(:programme, :flu) }
+      let(:programmes) { [create(:programme, :flu)] }
+      let(:session) { create(:session, organisation:, programmes:) }
 
       let(:data) do
         {
@@ -458,8 +457,6 @@ describe ImmunisationImportRow do
         }
       end
 
-      let(:session) { create(:session, organisation:, programme:) }
-
       it "has errors" do
         expect(immunisation_import_row).to be_invalid
         expect(immunisation_import_row.errors[:delivery_site]).to eq(
@@ -469,7 +466,7 @@ describe ImmunisationImportRow do
     end
 
     context "vaccination in a session without a batch" do
-      let(:programme) { create(:programme, :flu) }
+      let(:programmes) { [create(:programme, :flu)] }
 
       let(:data) do
         {
@@ -480,7 +477,7 @@ describe ImmunisationImportRow do
         }
       end
 
-      let(:session) { create(:session, organisation:, programme:) }
+      let(:session) { create(:session, organisation:, programmes:) }
 
       it "has errors" do
         expect(immunisation_import_row).to be_invalid
@@ -494,7 +491,7 @@ describe ImmunisationImportRow do
     end
 
     context "vaccination in a session without a delivery site" do
-      let(:programme) { create(:programme, :flu) }
+      let(:programmes) { [create(:programme, :flu)] }
 
       let(:data) do
         {
@@ -505,7 +502,7 @@ describe ImmunisationImportRow do
         }
       end
 
-      let(:session) { create(:session, organisation:, programme:) }
+      let(:session) { create(:session, organisation:, programmes:) }
 
       it "has errors" do
         expect(immunisation_import_row).to be_invalid
@@ -516,7 +513,7 @@ describe ImmunisationImportRow do
     end
 
     context "with valid fields for Flu" do
-      let(:programme) { create(:programme, :flu) }
+      let(:programmes) { [create(:programme, :flu)] }
 
       let(:data) do
         {
@@ -555,7 +552,7 @@ describe ImmunisationImportRow do
     end
 
     context "with valid fields for HPV" do
-      let(:programme) { create(:programme, :hpv) }
+      let(:programmes) { [create(:programme, :hpv)] }
 
       let(:data) do
         {
@@ -710,7 +707,7 @@ describe ImmunisationImportRow do
         )
       end
 
-      let(:session) { create(:session, organisation:, location:, programme:) }
+      let(:session) { create(:session, organisation:, location:, programmes:) }
 
       it { should be_nil }
     end
@@ -1094,7 +1091,7 @@ describe ImmunisationImportRow do
   describe "#dose_sequence" do
     subject(:dose_sequence) { immunisation_import_row.dose_sequence }
 
-    let(:programme) { create(:programme, :hpv) }
+    let(:programmes) { [create(:programme, :hpv)] }
 
     context "without a value" do
       let(:data) { { "PROGRAMME" => "HPV" } }
@@ -1116,7 +1113,7 @@ describe ImmunisationImportRow do
 
     %w[1P 2P 3P].each_with_index do |value, index|
       context "with an HPV special value of #{value}" do
-        let(:programme) { create(:programme, :hpv) }
+        let(:programmes) { [create(:programme, :hpv)] }
 
         let(:data) { { "PROGRAMME" => "HPV", "DOSE_SEQUENCE" => value } }
 
@@ -1126,7 +1123,7 @@ describe ImmunisationImportRow do
 
     %w[1P 1B 2B].each_with_index do |value, index|
       context "with a MenACWY special value of #{value}" do
-        let(:programme) { create(:programme, :menacwy) }
+        let(:programmes) { [create(:programme, :menacwy)] }
 
         let(:data) { { "PROGRAMME" => "MenACWY", "DOSE_SEQUENCE" => value } }
 
@@ -1136,7 +1133,7 @@ describe ImmunisationImportRow do
 
     %w[1P 2P 3P 1B 2B].each_with_index do |value, index|
       context "with a Td/IPV special value of #{value}" do
-        let(:programme) { create(:programme, :td_ipv) }
+        let(:programmes) { [create(:programme, :td_ipv)] }
 
         let(:data) { { "PROGRAMME" => "Td/IPV", "DOSE_SEQUENCE" => value } }
 
@@ -1473,8 +1470,8 @@ describe ImmunisationImportRow do
       let!(:existing_vaccination_record) do
         create(
           :vaccination_record,
-          programme:,
-          session: create(:session, organisation:, programme:)
+          programme: programmes.first,
+          session: create(:session, organisation:, programmes:)
         )
       end
 

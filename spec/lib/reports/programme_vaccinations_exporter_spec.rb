@@ -2,11 +2,16 @@
 
 describe Reports::ProgrammeVaccinationsExporter do
   subject(:call) do
-    described_class.call(organisation:, programme:, start_date:, end_date:)
+    described_class.call(
+      organisation:,
+      programme: programmes.first,
+      start_date:,
+      end_date:
+    )
   end
 
-  let(:programme) { create(:programme, :hpv) }
-  let(:organisation) { create(:organisation, programmes: [programme]) }
+  let(:programmes) { [create(:programme, :hpv)] }
+  let(:organisation) { create(:organisation, programmes:) }
   let(:user) do
     create(
       :user,
@@ -17,7 +22,7 @@ describe Reports::ProgrammeVaccinationsExporter do
     )
   end
   let(:team) { create(:team, organisation:) }
-  let(:session) { create(:session, location:, organisation:, programme:) }
+  let(:session) { create(:session, location:, organisation:, programmes:) }
 
   let(:start_date) { nil }
   let(:end_date) { nil }
@@ -101,7 +106,7 @@ describe Reports::ProgrammeVaccinationsExporter do
           create(
             :batch,
             expiry: Date.new(2025, 12, 1),
-            vaccine: programme.vaccines.active.first
+            vaccine: programmes.first.vaccines.active.first
           )
         end
         let(:performed_at) { Time.zone.local(2024, 1, 1, 12, 5, 20) }
@@ -115,7 +120,7 @@ describe Reports::ProgrammeVaccinationsExporter do
             performed_at:,
             created_at: performed_at,
             updated_at: performed_at,
-            programme:,
+            programme: programmes.first,
             performed_by: user
           )
         end
@@ -188,7 +193,7 @@ describe Reports::ProgrammeVaccinationsExporter do
             session:,
             created_at: 1.day.ago,
             updated_at: 1.day.ago,
-            programme:,
+            programme: programmes.first,
             performed_by: user
           )
         end
@@ -207,7 +212,7 @@ describe Reports::ProgrammeVaccinationsExporter do
             session:,
             created_at: 10.days.ago,
             updated_at: Time.current,
-            programme:,
+            programme: programmes.first,
             performed_by: user
           )
         end
@@ -231,7 +236,7 @@ describe Reports::ProgrammeVaccinationsExporter do
           create(
             :batch,
             expiry: Date.new(2025, 12, 1),
-            vaccine: programme.vaccines.active.first
+            vaccine: programmes.first.vaccines.active.first
           )
         end
         let(:performed_at) { Time.zone.local(2024, 1, 1, 12, 5, 20) }
@@ -243,7 +248,7 @@ describe Reports::ProgrammeVaccinationsExporter do
             batch:,
             patient:,
             session:,
-            programme:,
+            programme: programmes.first,
             location_name: "A Clinic",
             performed_by: user
           )
@@ -308,7 +313,7 @@ describe Reports::ProgrammeVaccinationsExporter do
     end
 
     context "with a deceased patient" do
-      let(:session) { create(:session, programme:, organisation:) }
+      let(:session) { create(:session, programmes:, organisation:) }
 
       before do
         create(
@@ -317,7 +322,7 @@ describe Reports::ProgrammeVaccinationsExporter do
           :deceased,
           date_of_death: Date.new(2010, 1, 1),
           session:,
-          programmes: [programme]
+          programmes:
         )
       end
 
@@ -329,7 +334,7 @@ describe Reports::ProgrammeVaccinationsExporter do
     end
 
     context "with a traced NHS number" do
-      let(:session) { create(:session, programme:, organisation:) }
+      let(:session) { create(:session, programmes:, organisation:) }
 
       before do
         create(
@@ -337,7 +342,7 @@ describe Reports::ProgrammeVaccinationsExporter do
           :vaccinated,
           updated_from_pds_at: Time.current,
           session:,
-          programmes: [programme]
+          programmes:
         )
       end
 
@@ -350,16 +355,10 @@ describe Reports::ProgrammeVaccinationsExporter do
       let(:gp_practice) do
         create(:gp_practice, name: "Practice", ods_code: "GP")
       end
-      let(:session) { create(:session, programmes: [programme], organisation:) }
+      let(:session) { create(:session, programmes:, organisation:) }
 
       before do
-        create(
-          :patient,
-          :vaccinated,
-          gp_practice:,
-          session:,
-          programmes: [programme]
-        )
+        create(:patient, :vaccinated, gp_practice:, session:, programmes:)
       end
 
       it "includes the information" do
@@ -371,16 +370,21 @@ describe Reports::ProgrammeVaccinationsExporter do
     end
 
     context "with consent" do
-      let(:session) { create(:session, programme:, organisation:) }
-      let(:patient) do
-        create(:patient, :vaccinated, session:, programmes: [programme])
-      end
+      let(:session) { create(:session, programmes:, organisation:) }
+      let(:patient) { create(:patient, :vaccinated, session:) }
 
       before do
         parent = create(:parent, full_name: "John Smith")
         create(:parent_relationship, :father, parent:, patient:)
         created_at = Time.zone.local(2024, 1, 1, 12, 5, 20)
-        create(:consent, :given, patient:, parent:, programme:, created_at:)
+        create(
+          :consent,
+          :given,
+          patient:,
+          parent:,
+          programme: programmes.first,
+          created_at:
+        )
       end
 
       it "includes the information" do
@@ -399,10 +403,8 @@ describe Reports::ProgrammeVaccinationsExporter do
     end
 
     context "with a gillick assessment" do
-      let(:session) { create(:session, programme:, organisation:) }
-      let(:patient_session) do
-        create(:patient_session, :vaccinated, programmes: [programme], session:)
-      end
+      let(:session) { create(:session, programmes:, organisation:) }
+      let(:patient_session) { create(:patient_session, :vaccinated, session:) }
       let(:patient) { patient_session.patient }
 
       before do
@@ -437,7 +439,7 @@ describe Reports::ProgrammeVaccinationsExporter do
             :consent,
             :self_consent,
             patient:,
-            programme:,
+            programme: programmes.first,
             notify_parents: false
           )
         end
@@ -453,7 +455,7 @@ describe Reports::ProgrammeVaccinationsExporter do
             :consent,
             :self_consent,
             patient:,
-            programme:,
+            programme: programmes.first,
             notify_parents: true
           )
         end
@@ -465,19 +467,13 @@ describe Reports::ProgrammeVaccinationsExporter do
     end
 
     context "with a triage assessment" do
-      let(:session) { create(:session, programme:, organisation:) }
+      let(:session) { create(:session, programmes:, organisation:) }
       let(:performed_by) do
         create(:user, given_name: "Test", family_name: "Nurse")
       end
 
       before do
-        create(
-          :patient_session,
-          :vaccinated,
-          programmes: [programme],
-          session:,
-          user: performed_by
-        )
+        create(:patient_session, :vaccinated, session:, user: performed_by)
       end
 
       it "includes the information" do
