@@ -22,7 +22,7 @@ feature "Verbal consent" do
         :session,
         :scheduled,
         organisation: @organisation,
-        programme: @programme,
+        programmes: [@programme],
         location:
       )
   end

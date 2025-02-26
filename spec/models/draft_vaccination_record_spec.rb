@@ -13,7 +13,7 @@ describe DraftVaccinationRecord do
   let(:current_user) { organisation.users.first }
 
   let(:programme) { create(:programme, :hpv) }
-  let(:session) { create(:session, programme:) }
+  let(:session) { create(:session, programmes: [programme]) }
   let(:patient) { create(:patient, session:) }
   let(:vaccine) { programme.vaccines.first }
   let(:batch) { create(:batch, vaccine:) }

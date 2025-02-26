@@ -24,7 +24,7 @@ describe PatientMerger do
     let(:user) { create(:user) }
 
     let(:programme) { create(:programme) }
-    let(:session) { create(:session, programme:) }
+    let(:session) { create(:session, programmes: [programme]) }
 
     let!(:patient_to_keep) { create(:patient) }
     let!(:patient_to_destroy) { create(:patient) }

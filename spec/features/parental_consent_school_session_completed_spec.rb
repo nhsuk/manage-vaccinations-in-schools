@@ -32,7 +32,7 @@ describe "Parental consent" do
         :session,
         :scheduled,
         organisation: @organisation,
-        programme: @programme,
+        programmes: [@programme],
         location: @scheduled_school
       )
 
@@ -41,7 +41,7 @@ describe "Parental consent" do
         :session,
         :completed,
         organisation: @organisation,
-        programme: @programme,
+        programmes: [@programme],
         location: @completed_school
       )
 

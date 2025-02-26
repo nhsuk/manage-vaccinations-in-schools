@@ -53,8 +53,8 @@ describe SchoolMove do
 
     let(:user) { create(:user) }
 
-    let(:programme) { create(:programme) }
-    let(:organisation) { create(:organisation, programmes: [programme]) }
+    let(:programmes) { [create(:programme)] }
+    let(:organisation) { create(:organisation, programmes:) }
     let(:generic_clinic_session) { organisation.generic_clinic_session }
 
     shared_examples "creates a log entry" do
@@ -184,7 +184,7 @@ describe SchoolMove do
             :scheduled,
             location: school,
             organisation:,
-            programme:
+            programmes:
           )
         end
 
@@ -207,7 +207,7 @@ describe SchoolMove do
             :completed,
             location: school,
             organisation:,
-            programme:
+            programmes:
           )
         end
 
@@ -232,7 +232,7 @@ describe SchoolMove do
     end
 
     context "with a patient in a school session" do
-      let(:session) { create(:session, organisation:, programme:) }
+      let(:session) { create(:session, organisation:, programmes:) }
       let(:patient) { create(:patient, session:) }
 
       context "and not already vaccinated" do
@@ -248,7 +248,7 @@ describe SchoolMove do
               :scheduled,
               location: school,
               organisation:,
-              programme:
+              programmes:
             )
           end
 
@@ -272,7 +272,7 @@ describe SchoolMove do
               :completed,
               location: school,
               organisation:,
-              programme:
+              programmes:
             )
           end
 
@@ -302,9 +302,7 @@ describe SchoolMove do
             create(:school_move, :to_school, patient:, school:)
           end
 
-          let(:new_organisation) do
-            create(:organisation, programmes: [programme])
-          end
+          let(:new_organisation) { create(:organisation, programmes:) }
           let(:school) { create(:school, organisation: new_organisation) }
           let(:new_session) do
             create(
@@ -312,7 +310,7 @@ describe SchoolMove do
               :scheduled,
               location: school,
               organisation: new_organisation,
-              programme:
+              programmes:
             )
           end
 
@@ -334,9 +332,7 @@ describe SchoolMove do
             )
           end
 
-          let(:new_organisation) do
-            create(:organisation, programmes: [programme])
-          end
+          let(:new_organisation) { create(:organisation, programmes:) }
           let(:generic_clinic_session) do
             new_organisation.generic_clinic_session
           end
@@ -351,7 +347,14 @@ describe SchoolMove do
       end
 
       context "and already vaccinated" do
-        before { create(:vaccination_record, programme:, patient:, session:) }
+        before do
+          create(
+            :vaccination_record,
+            patient:,
+            session:,
+            programme: programmes.first
+          )
+        end
 
         context "to a school with a scheduled session" do
           let(:school_move) do
@@ -365,7 +368,7 @@ describe SchoolMove do
               :scheduled,
               location: school,
               organisation:,
-              programme:
+              programmes:
             )
           end
 
@@ -388,7 +391,7 @@ describe SchoolMove do
               :completed,
               location: school,
               organisation:,
-              programme:
+              programmes:
             )
           end
 
@@ -416,9 +419,7 @@ describe SchoolMove do
             create(:school_move, :to_school, patient:, school:)
           end
 
-          let(:new_organisation) do
-            create(:organisation, programmes: [programme])
-          end
+          let(:new_organisation) { create(:organisation, programmes:) }
           let(:school) { create(:school, organisation: new_organisation) }
           let(:new_session) do
             create(
@@ -426,7 +427,7 @@ describe SchoolMove do
               :scheduled,
               location: school,
               organisation: new_organisation,
-              programme:
+              programmes:
             )
           end
 
@@ -447,9 +448,7 @@ describe SchoolMove do
             )
           end
 
-          let(:new_organisation) do
-            create(:organisation, programmes: [programme])
-          end
+          let(:new_organisation) { create(:organisation, programmes:) }
           let(:generic_clinic_session) do
             new_organisation.generic_clinic_session
           end
@@ -481,7 +480,7 @@ describe SchoolMove do
               :scheduled,
               location: school,
               organisation:,
-              programme:
+              programmes:
             )
           end
 
@@ -505,7 +504,7 @@ describe SchoolMove do
               :completed,
               location: school,
               organisation:,
-              programme:
+              programmes:
             )
           end
 
@@ -537,9 +536,7 @@ describe SchoolMove do
             create(:school_move, :to_school, patient:, school:)
           end
 
-          let(:new_organisation) do
-            create(:organisation, programmes: [programme])
-          end
+          let(:new_organisation) { create(:organisation, programmes:) }
           let(:school) { create(:school, organisation: new_organisation) }
           let(:new_session) do
             create(
@@ -547,7 +544,7 @@ describe SchoolMove do
               :scheduled,
               location: school,
               organisation: new_organisation,
-              programme:
+              programmes:
             )
           end
 
@@ -575,9 +572,7 @@ describe SchoolMove do
               session: organisation.generic_clinic_session
             )
           end
-          let(:new_organisation) do
-            create(:organisation, programmes: [programme])
-          end
+          let(:new_organisation) { create(:organisation, programmes:) }
           let(:generic_clinic_session) do
             new_organisation.generic_clinic_session
           end
@@ -597,9 +592,9 @@ describe SchoolMove do
         before do
           create(
             :vaccination_record,
-            programme:,
             patient:,
             session: generic_clinic_session,
+            programme: programmes.first,
             location_name: "A clinic"
           )
         end
@@ -616,7 +611,7 @@ describe SchoolMove do
               :scheduled,
               location: school,
               organisation:,
-              programme:
+              programmes:
             )
           end
 
@@ -639,7 +634,7 @@ describe SchoolMove do
               :completed,
               location: school,
               organisation:,
-              programme:
+              programmes:
             )
           end
 
@@ -669,9 +664,7 @@ describe SchoolMove do
             create(:school_move, :to_school, patient:, school:)
           end
 
-          let(:new_organisation) do
-            create(:organisation, programmes: [programme])
-          end
+          let(:new_organisation) { create(:organisation, programmes:) }
           let(:school) { create(:school, organisation: new_organisation) }
           let(:new_session) do
             create(
@@ -679,7 +672,7 @@ describe SchoolMove do
               :scheduled,
               location: school,
               organisation: new_organisation,
-              programme:
+              programmes:
             )
           end
 
@@ -707,9 +700,7 @@ describe SchoolMove do
               session: organisation.generic_clinic_session
             )
           end
-          let(:new_organisation) do
-            create(:organisation, programmes: [programme])
-          end
+          let(:new_organisation) { create(:organisation, programmes:) }
 
           it "keeps the patient as home-schooled" do
             expect { confirm! }.not_to(change { patient.reload.home_educated })
@@ -741,7 +732,7 @@ describe SchoolMove do
               :scheduled,
               location: school,
               organisation:,
-              programme:
+              programmes:
             )
           end
 
@@ -764,7 +755,7 @@ describe SchoolMove do
               :completed,
               location: school,
               organisation:,
-              programme:
+              programmes:
             )
           end
 
@@ -791,9 +782,7 @@ describe SchoolMove do
             create(:school_move, :to_school, patient:, school:)
           end
 
-          let(:new_organisation) do
-            create(:organisation, programmes: [programme])
-          end
+          let(:new_organisation) { create(:organisation, programmes:) }
           let(:school) { create(:school, organisation: new_organisation) }
           let(:new_session) do
             create(
@@ -801,7 +790,7 @@ describe SchoolMove do
               :scheduled,
               location: school,
               organisation: new_organisation,
-              programme:
+              programmes:
             )
           end
 
@@ -829,9 +818,7 @@ describe SchoolMove do
               session: organisation.generic_clinic_session
             )
           end
-          let(:new_organisation) do
-            create(:organisation, programmes: [programme])
-          end
+          let(:new_organisation) { create(:organisation, programmes:) }
           let(:generic_clinic_session) do
             new_organisation.generic_clinic_session
           end
@@ -848,9 +835,9 @@ describe SchoolMove do
         before do
           create(
             :vaccination_record,
-            programme:,
             patient:,
             session: generic_clinic_session,
+            programme: programmes.first,
             location_name: "A clinic"
           )
         end
@@ -867,7 +854,7 @@ describe SchoolMove do
               :scheduled,
               location: school,
               organisation:,
-              programme:
+              programmes:
             )
           end
 
@@ -889,7 +876,7 @@ describe SchoolMove do
               :completed,
               location: school,
               organisation:,
-              programme:
+              programmes:
             )
           end
 
@@ -915,9 +902,7 @@ describe SchoolMove do
             create(:school_move, :to_school, patient:, school:)
           end
 
-          let(:new_organisation) do
-            create(:organisation, programmes: [programme])
-          end
+          let(:new_organisation) { create(:organisation, programmes:) }
           let(:school) { create(:school, organisation: new_organisation) }
           let(:new_session) do
             create(
@@ -925,7 +910,7 @@ describe SchoolMove do
               :scheduled,
               location: school,
               organisation: new_organisation,
-              programme:
+              programmes:
             )
           end
 
@@ -953,9 +938,7 @@ describe SchoolMove do
               session: organisation.generic_clinic_session
             )
           end
-          let(:new_organisation) do
-            create(:organisation, programmes: [programme])
-          end
+          let(:new_organisation) { create(:organisation, programmes:) }
 
           include_examples "creates a log entry"
           include_examples "sets the patient to home-schooled"

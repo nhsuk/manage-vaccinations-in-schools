@@ -3,8 +3,8 @@
 describe ClinicSessionInvitationsJob do
   subject(:perform_now) { described_class.perform_now }
 
-  let(:programme) { create(:programme, :hpv) }
-  let(:organisation) { create(:organisation, programmes: [programme]) }
+  let(:programmes) { [create(:programme, :hpv)] }
+  let(:organisation) { create(:organisation, programmes:) }
   let(:parents) { create_list(:parent, 2) }
   let(:patient) { create(:patient, parents:, year_group: 8) }
   let(:location) { create(:generic_clinic, organisation:) }
@@ -12,7 +12,7 @@ describe ClinicSessionInvitationsJob do
   context "for a scheduled clinic session in 3 weeks" do
     let(:date) { 3.weeks.from_now.to_date }
     let(:session) do
-      create(:session, programme:, date:, location:, organisation:)
+      create(:session, programmes:, date:, location:, organisation:)
     end
     let(:patient_session) { create(:patient_session, patient:, session:) }
 
@@ -67,7 +67,7 @@ describe ClinicSessionInvitationsJob do
           :vaccination_record,
           patient:,
           session:,
-          programme:,
+          programme: programmes.first,
           location_name: "A clinic."
         )
       end
@@ -80,7 +80,13 @@ describe ClinicSessionInvitationsJob do
 
     context "when refused consent has been received" do
       before do
-        create(:consent, :refused, patient:, programme:, parent: parents.first)
+        create(
+          :consent,
+          :refused,
+          patient:,
+          programme: programmes.first,
+          parent: parents.first
+        )
       end
 
       it "doesn't send any notifications" do
@@ -120,7 +126,7 @@ describe ClinicSessionInvitationsJob do
   context "for a scheduled clinic session in 2 weeks" do
     let(:date) { 2.weeks.from_now.to_date }
     let(:session) do
-      create(:session, programme:, date:, location:, organisation:)
+      create(:session, programmes:, date:, location:, organisation:)
     end
     let(:patient_session) { create(:patient_session, patient:, session:) }
 
@@ -137,7 +143,7 @@ describe ClinicSessionInvitationsJob do
   context "for a scheduled clinic session in 4 weeks" do
     let(:date) { 4.weeks.from_now.to_date }
     let(:session) do
-      create(:session, programme:, date:, location:, organisation:)
+      create(:session, programmes:, date:, location:, organisation:)
     end
     let(:patient_session) { create(:patient_session, patient:, session:) }
 
@@ -153,7 +159,7 @@ describe ClinicSessionInvitationsJob do
     before do
       create(
         :session,
-        programme:,
+        programmes:,
         date: 3.weeks.from_now.to_date,
         patients: [patient],
         organisation:,
@@ -171,7 +177,7 @@ describe ClinicSessionInvitationsJob do
     before do
       create(
         :session,
-        programme:,
+        programmes:,
         date: Date.yesterday,
         patients: [patient],
         location:,

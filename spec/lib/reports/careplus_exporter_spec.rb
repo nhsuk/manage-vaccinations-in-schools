@@ -4,15 +4,15 @@ describe Reports::CareplusExporter do
   subject(:csv) do
     described_class.call(
       organisation:,
-      programme:,
+      programme: programmes.first,
       start_date: 1.month.ago.to_date,
       end_date: Date.current
     )
   end
 
-  let(:programme) { create(:programme, :hpv) }
+  let(:programmes) { [create(:programme, :hpv)] }
   let(:organisation) do
-    create(:organisation, careplus_venue_code: "ABC", programmes: [programme])
+    create(:organisation, careplus_venue_code: "ABC", programmes:)
   end
   let(:location) do
     create(
@@ -21,9 +21,7 @@ describe Reports::CareplusExporter do
       gias_establishment_number: 456
     )
   end
-  let(:session) do
-    create(:session, organisation:, programmes: [programme], location:)
-  end
+  let(:session) { create(:session, organisation:, programmes:, location:) }
   let(:parsed_csv) { CSV.parse(csv) }
   let(:headers) { parsed_csv.first }
   let(:data_rows) { parsed_csv[1..] }
@@ -71,13 +69,13 @@ describe Reports::CareplusExporter do
       create(
         :patient_session,
         :consent_given_triage_not_needed,
-        programmes: [programme],
+        programmes:,
         session:
       )
     vaccination_record =
       create(
         :vaccination_record,
-        programme:,
+        programme: programmes.first,
         patient: patient_session.patient,
         session: patient_session.session,
         performed_at: 2.weeks.ago
@@ -114,13 +112,13 @@ describe Reports::CareplusExporter do
       create(
         :patient_session,
         :consent_given_triage_not_needed,
-        programmes: [programme],
+        programmes:,
         patient:,
         session:
       )
       create(
         :vaccination_record,
-        programme:,
+        programme: programmes.first,
         patient:,
         session:,
         location_name: "A clinic"
@@ -141,7 +139,7 @@ describe Reports::CareplusExporter do
 
     create(
       :vaccination_record,
-      programme:,
+      programme: programmes.first,
       patient:,
       session:,
       created_at: 2.months.ago,
@@ -158,7 +156,7 @@ describe Reports::CareplusExporter do
     create(
       :vaccination_record,
       :not_administered,
-      programme:,
+      programme: programmes.first,
       patient:,
       session:
     )
@@ -171,7 +169,7 @@ describe Reports::CareplusExporter do
 
     create(
       :vaccination_record,
-      programme:,
+      programme: programmes.first,
       patient:,
       session:,
       created_at: 2.months.ago,
@@ -183,10 +181,10 @@ describe Reports::CareplusExporter do
   end
 
   context "with a session in a different organisation" do
-    let(:session) { create(:session, programme:, location:) }
+    let(:session) { create(:session, programmes:, location:) }
 
     it "excludes the vaccination record" do
-      create(:vaccination_record, programme:, session:)
+      create(:vaccination_record, programme: programmes.first, session:)
 
       expect(data_rows.first).to be_nil
     end

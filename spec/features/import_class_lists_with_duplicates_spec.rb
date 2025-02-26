@@ -49,12 +49,8 @@ describe "Class list imports duplicates" do
   end
 
   def and_an_hpv_programme_is_underway
-    @programme = create(:programme, :hpv)
-    create(
-      :organisation_programme,
-      organisation: @organisation,
-      programme: @programme
-    )
+    programmes = [create(:programme, :hpv, organisations: [@organisation])]
+
     @location =
       create(
         :school,
@@ -68,7 +64,7 @@ describe "Class list imports duplicates" do
         :unscheduled,
         organisation: @organisation,
         location: @location,
-        programme: @programme
+        programmes:
       )
   end
 

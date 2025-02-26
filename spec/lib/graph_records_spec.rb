@@ -3,9 +3,9 @@
 describe GraphRecords do
   subject(:graph) { described_class.new.graph(patients: [patient]) }
 
-  let!(:programme) { create(:programme, :hpv) }
-  let!(:organisation) { create(:organisation, programmes: [programme]) }
-  let!(:session) { create(:session, organisation:, programmes: [programme]) }
+  let!(:programmes) { [create(:programme, :hpv)] }
+  let!(:organisation) { create(:organisation, programmes:) }
+  let!(:session) { create(:session, organisation:, programmes:) }
   let!(:class_import) { create(:class_import, session:) }
   let!(:cohort_import) { create(:cohort_import, organisation:) }
   let!(:parent) do
@@ -21,13 +21,20 @@ describe GraphRecords do
       parents: [parent],
       session:,
       organisation:,
-      programme:,
+      programmes:,
       class_imports: [class_import],
       cohort_imports: [cohort_import]
     )
   end
   let!(:consent) do
-    create(:consent, :given, patient:, parent:, organisation:, programme:)
+    create(
+      :consent,
+      :given,
+      patient:,
+      parent:,
+      organisation:,
+      programme: programmes.first
+    )
   end
 
   it { should start_with "flowchart TB" }

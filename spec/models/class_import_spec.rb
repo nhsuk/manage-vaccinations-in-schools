@@ -39,10 +39,10 @@ describe ClassImport do
     create(:class_import, csv:, session:, organisation:)
   end
 
-  let(:programme) { create(:programme, :hpv) }
-  let(:organisation) { create(:organisation, programmes: [programme]) }
+  let(:programmes) { [create(:programme, :hpv)] }
+  let(:organisation) { create(:organisation, programmes:) }
   let(:location) { create(:school, organisation:) }
-  let(:session) { create(:session, location:, programme:, organisation:) }
+  let(:session) { create(:session, location:, programmes:, organisation:) }
 
   let(:file) { "valid.csv" }
   let(:csv) { fixture_file_upload("spec/fixtures/class_import/#{file}") }
@@ -366,7 +366,7 @@ describe ClassImport do
 
     context "with an unscheduled session" do
       let(:session) do
-        create(:session, :unscheduled, organisation:, programme:, location:)
+        create(:session, :unscheduled, organisation:, programmes:, location:)
       end
 
       it "adds the patients to the session" do
@@ -376,7 +376,7 @@ describe ClassImport do
 
     context "with a scheduled session" do
       let(:session) do
-        create(:session, :scheduled, organisation:, programme:, location:)
+        create(:session, :scheduled, organisation:, programmes:, location:)
       end
 
       it "adds the patients to the session" do

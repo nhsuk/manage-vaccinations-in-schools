@@ -76,7 +76,7 @@ describe "Patient sorting and filtering" do
       create(
         :session,
         organisation: @organisation,
-        programme: @programme,
+        programmes: [@programme],
         location:
       )
 

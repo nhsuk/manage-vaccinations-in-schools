@@ -17,7 +17,7 @@ describe "Parental consent closed" do
       create(
         :session,
         :completed,
-        programme: @programme,
+        programmes: [@programme],
         location:,
         date: Date.yesterday
       )

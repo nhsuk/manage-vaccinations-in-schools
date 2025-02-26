@@ -25,7 +25,7 @@ describe VaccinationMailerConcern do
     end
 
     let(:programme) { create(:programme) }
-    let(:session) { create(:session, programme:) }
+    let(:session) { create(:session, programmes: [programme]) }
     let(:parent) { create(:parent) }
     let(:patient) { create(:patient, parents: [parent], session:) }
     let(:vaccination_record) do

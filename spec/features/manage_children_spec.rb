@@ -178,7 +178,7 @@ describe "Manage children" do
 
   def and_the_patient_belongs_to_a_session
     session =
-      create(:session, organisation: @organisation, programme: @programme)
+      create(:session, organisation: @organisation, programmes: [@programme])
     create(:patient_session, session:, patient: @patient)
   end
 

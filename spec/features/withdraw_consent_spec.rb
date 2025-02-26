@@ -57,7 +57,7 @@ describe "Withdraw consent" do
     organisation =
       create(:organisation, :with_one_nurse, programmes: [@programme])
 
-    @session = create(:session, organisation:, programme: @programme)
+    @session = create(:session, organisation:, programmes: [@programme])
     @patient = create(:patient, session: @session)
 
     sign_in organisation.users.first

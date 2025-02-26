@@ -47,7 +47,12 @@ describe "Immunisation imports" do
       create(:programme, :hpv_all_vaccines, organisations: [@organisation])
     location = create(:school)
     @session =
-      create(:session, programme:, location:, organisation: @organisation)
+      create(
+        :session,
+        programmes: [programme],
+        location:,
+        organisation: @organisation
+      )
   end
 
   def and_school_locations_exist

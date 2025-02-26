@@ -29,14 +29,13 @@ FactoryBot.define do
     transient do
       date { Date.current }
       dates { [] }
-      programme { association :programme }
       team { association(:team, organisation:) }
     end
 
     sequence(:slug) { |n| "session-#{n}" }
 
     academic_year { (date || Date.current).academic_year }
-    programmes { [programme] }
+    programmes { [association(:programme)] }
     organisation { association(:organisation, programmes:) }
     location { association :school, team: }
 

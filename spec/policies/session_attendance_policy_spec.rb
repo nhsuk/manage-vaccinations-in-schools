@@ -7,7 +7,7 @@ describe SessionAttendancePolicy do
 
   let(:programme) { create(:programme) }
   let(:organisation) { create(:organisation, programmes: [programme]) }
-  let(:session) { create(:session, organisation:, programme:) }
+  let(:session) { create(:session, organisation:, programmes: [programme]) }
   let(:patient) { create(:patient) }
   let(:patient_session) { create(:patient_session, patient:, session:) }
 

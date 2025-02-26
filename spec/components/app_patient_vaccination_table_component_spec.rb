@@ -33,7 +33,7 @@ describe AppPatientVaccinationTableComponent do
         address_postcode: "SE1 8TY"
       )
     end
-    let(:session) { create(:session, location:, programme:) }
+    let(:session) { create(:session, location:, programmes: [programme]) }
     let(:vaccination_record) do
       create(
         :vaccination_record,

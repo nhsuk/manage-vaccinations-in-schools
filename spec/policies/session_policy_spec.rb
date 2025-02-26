@@ -52,14 +52,14 @@ describe SessionPolicy do
   describe "Scope#resolve" do
     subject { SessionPolicy::Scope.new(user, Session).resolve }
 
-    let(:programme) { create(:programme) }
-    let(:organisation) { create(:organisation, programmes: [programme]) }
+    let(:programmes) { [create(:programme)] }
+    let(:organisation) { create(:organisation, programmes:) }
     let(:user) { create(:user, organisation:) }
 
     let(:users_organisations_session) do
-      create(:session, organisation:, programme:)
+      create(:session, organisation:, programmes:)
     end
-    let(:another_organisations_session) { create(:session, programme:) }
+    let(:another_organisations_session) { create(:session, programmes:) }
 
     it { should include(users_organisations_session) }
     it { should_not include(another_organisations_session) }

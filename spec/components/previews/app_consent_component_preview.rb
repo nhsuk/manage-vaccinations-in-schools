@@ -64,6 +64,6 @@ class AppConsentComponentPreview < ViewComponent::Preview
         :hpv,
         organisation: Organisation.first || create(:organisation)
       )
-    @session = create(:session, programme:)
+    @session = create(:session, programmes: [@programme])
   end
 end

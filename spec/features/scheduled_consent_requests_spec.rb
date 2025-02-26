@@ -20,14 +20,9 @@ describe "Scheduled consent requests" do
   end
 
   def given_my_organisation_is_running_an_hpv_vaccination_programme
-    @programme = create(:programme, :hpv)
+    programmes = [create(:programme, :hpv)]
     @organisation =
-      create(
-        :organisation,
-        :with_one_nurse,
-        :with_generic_clinic,
-        programmes: [@programme]
-      )
+      create(:organisation, :with_one_nurse, :with_generic_clinic, programmes:)
     @location = create(:school, :secondary, organisation: @organisation)
     @session =
       create(
@@ -35,7 +30,7 @@ describe "Scheduled consent requests" do
         :unscheduled,
         location: @location,
         organisation: @organisation,
-        programme: @programme
+        programmes:
       )
     @user = @organisation.users.first
   end

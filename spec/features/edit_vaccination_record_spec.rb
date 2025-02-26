@@ -266,7 +266,7 @@ describe "Edit vaccination record" do
         :session,
         :completed,
         organisation: @organisation,
-        programme: @programme,
+        programmes: [@programme],
         location:
       )
 

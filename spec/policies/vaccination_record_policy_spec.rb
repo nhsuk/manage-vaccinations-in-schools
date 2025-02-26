@@ -17,7 +17,9 @@ describe VaccinationRecordPolicy do
       it { should be(false) }
 
       context "when vaccination record is managed by the organisation" do
-        let(:session) { create(:session, organisation:, programme:) }
+        let(:session) do
+          create(:session, organisation:, programmes: [programme])
+        end
         let(:vaccination_record) do
           create(:vaccination_record, organisation:, programme:, session:)
         end
@@ -32,7 +34,9 @@ describe VaccinationRecordPolicy do
       it { should be(false) }
 
       context "when vaccination record is managed by the organisation" do
-        let(:session) { create(:session, organisation:, programme:) }
+        let(:session) do
+          create(:session, organisation:, programmes: [programme])
+        end
         let(:vaccination_record) do
           create(:vaccination_record, organisation:, programme:, session:)
         end
@@ -81,7 +85,7 @@ describe VaccinationRecordPolicy do
     let(:organisation) { create(:organisation, programmes: [programme]) }
     let(:user) { create(:user, organisation:) }
 
-    let(:session) { create(:session, organisation:, programme:) }
+    let(:session) { create(:session, organisation:, programmes: [programme]) }
 
     let(:kept_vaccination_record) do
       create(:vaccination_record, session:, programme:)

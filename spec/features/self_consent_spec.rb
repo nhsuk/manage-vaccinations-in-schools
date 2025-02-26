@@ -35,7 +35,7 @@ describe "Self-consent" do
         :session,
         :today,
         organisation: @organisation,
-        programme:,
+        programmes: [programme],
         location: @school
       )
 

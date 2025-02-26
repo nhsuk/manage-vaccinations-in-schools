@@ -3,8 +3,8 @@
 describe SendClinicSubsequentInvitationsJob do
   subject(:perform_now) { described_class.perform_now(session) }
 
-  let(:programme) { create(:programme, :hpv) }
-  let(:organisation) { create(:organisation, programmes: [programme]) }
+  let(:programmes) { [create(:programme, :hpv)] }
+  let(:organisation) { create(:organisation, programmes:) }
   let(:parents) { create_list(:parent, 2) }
   let(:patient) { create(:patient, parents:, year_group: 8) }
   let(:location) { create(:generic_clinic, organisation:) }
@@ -12,7 +12,7 @@ describe SendClinicSubsequentInvitationsJob do
   let(:session) do
     create(
       :session,
-      programme:,
+      programmes:,
       date: 1.week.ago.to_date,
       location:,
       organisation:
@@ -52,7 +52,7 @@ describe SendClinicSubsequentInvitationsJob do
           :vaccination_record,
           patient:,
           session:,
-          programme:,
+          programme: programmes.first,
           location_name: "A clinic."
         )
       end
@@ -65,7 +65,13 @@ describe SendClinicSubsequentInvitationsJob do
 
     context "when refused consent has been received" do
       before do
-        create(:consent, :refused, patient:, programme:, parent: parents.first)
+        create(
+          :consent,
+          :refused,
+          patient:,
+          programme: programmes.first,
+          parent: parents.first
+        )
       end
 
       it "doesn't send any notifications" do

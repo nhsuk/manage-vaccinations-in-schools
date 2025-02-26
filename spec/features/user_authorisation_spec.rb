@@ -35,7 +35,7 @@ describe "User authorisation" do
         :session,
         :scheduled,
         organisation: @organisation,
-        programme: @programme,
+        programmes: [@programme],
         location:
       )
     @other_session =
@@ -43,7 +43,7 @@ describe "User authorisation" do
         :session,
         :scheduled,
         organisation: @other_organisation,
-        programme: @programme,
+        programmes: [@programme],
         location: other_location
       )
     @child = create(:patient, session: @session)

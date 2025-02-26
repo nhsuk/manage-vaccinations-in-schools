@@ -5,15 +5,15 @@ describe AppSessionSummaryComponent do
 
   let(:component) { described_class.new(session) }
 
-  let(:programme) { create(:programme, :hpv) }
+  let(:programmes) { [create(:programme, :hpv)] }
   let(:location) { create(:school) }
-  let(:organisation) { create(:organisation, programmes: [programme]) }
+  let(:organisation) { create(:organisation, programmes:) }
   let(:session) do
     create(
       :session,
       location:,
       date: Date.new(2024, 1, 1),
-      programme:,
+      programmes:,
       organisation:
     )
   end
@@ -49,7 +49,7 @@ describe AppSessionSummaryComponent do
 
   context "when consent is open" do
     let(:session) do
-      create(:session, location:, date: 1.week.from_now.to_date, programme:)
+      create(:session, location:, date: 1.week.from_now.to_date, programmes:)
     end
 
     it { should have_content("Consent link") }

@@ -41,7 +41,9 @@ describe "Import class lists" do
   end
 
   def given_an_hpv_programme_is_underway
-    @organisation = create(:organisation, :with_one_nurse)
+    programmes = [create(:programme, :hpv)]
+    @organisation = create(:organisation, :with_one_nurse, programmes:)
+
     location =
       create(
         :school,
@@ -50,13 +52,13 @@ describe "Import class lists" do
         organisation: @organisation
       )
     @user = @organisation.users.first
-    programme = create(:programme, :hpv, organisations: [@organisation])
+
     create(
       :session,
       :unscheduled,
       organisation: @organisation,
       location:,
-      programme:
+      programmes:
     )
   end
 

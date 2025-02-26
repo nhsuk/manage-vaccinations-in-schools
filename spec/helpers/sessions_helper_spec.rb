@@ -1,12 +1,9 @@
 # frozen_string_literal: true
 
 describe SessionsHelper do
-  let(:programme) { create(:programme, :flu) }
   let(:location) { create(:school, name: "Waterloo Road") }
   let(:date) { nil }
-  let(:session) do
-    create(:session, programme:, academic_year: 2024, date:, location:)
-  end
+  let(:session) { create(:session, academic_year: 2024, date:, location:) }
 
   describe "#session_academic_year" do
     subject(:session_academic_year) { helper.session_academic_year(session) }

@@ -88,7 +88,7 @@ describe "Manage school sessions" do
         :unscheduled,
         location: @location,
         organisation: @organisation,
-        programme: @programme
+        programmes: [@programme]
       )
 
     @parent = create(:parent)

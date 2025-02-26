@@ -78,7 +78,8 @@ describe "HPV vaccination" do
       build(:batch, :expired, organisation:, vaccine: @active_vaccine)
     @expired_batch.save!(validate: false)
 
-    @session = create(:session, organisation:, programme:, location:)
+    @session =
+      create(:session, organisation:, programmes: [programme], location:)
     @patient =
       create(
         :patient,

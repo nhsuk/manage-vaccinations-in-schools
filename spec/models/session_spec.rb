@@ -27,13 +27,13 @@
 
 describe Session do
   describe "scopes" do
-    let(:programme) { create(:programme) }
+    let(:programmes) { [create(:programme)] }
 
-    let(:closed_session) { create(:session, :closed, programme:) }
-    let(:completed_session) { create(:session, :completed, programme:) }
-    let(:scheduled_session) { create(:session, :scheduled, programme:) }
-    let(:today_session) { create(:session, :today, programme:) }
-    let(:unscheduled_session) { create(:session, :unscheduled, programme:) }
+    let(:closed_session) { create(:session, :closed, programmes:) }
+    let(:completed_session) { create(:session, :completed, programmes:) }
+    let(:scheduled_session) { create(:session, :scheduled, programmes:) }
+    let(:today_session) { create(:session, :today, programmes:) }
+    let(:unscheduled_session) { create(:session, :unscheduled, programmes:) }
 
     describe "#for_current_academic_year" do
       subject(:scope) { described_class.for_current_academic_year }
@@ -60,7 +60,7 @@ describe Session do
 
       context "for a different academic year" do
         let(:unscheduled_session) do
-          create(:session, :unscheduled, programme:, academic_year: 2023)
+          create(:session, :unscheduled, programmes:, academic_year: 2023)
         end
 
         it { should_not include(unscheduled_session) }
@@ -80,7 +80,7 @@ describe Session do
 
       context "for a different academic year" do
         let(:completed_session) do
-          create(:session, :completed, programme:, date: Date.new(2023, 9, 1))
+          create(:session, :completed, programmes:, date: Date.new(2023, 9, 1))
         end
 
         it { should_not include(completed_session) }
@@ -94,10 +94,8 @@ describe Session do
     let(:hpv_programme) { create(:programme, :hpv) }
     let(:menacwy_programme) { create(:programme, :menacwy) }
 
-    let(:session) { create(:session, programme: menacwy_programme) }
-
-    before do
-      session.update!(programme_ids: [menacwy_programme.id, hpv_programme.id])
+    let(:session) do
+      create(:session, programmes: [menacwy_programme, hpv_programme])
     end
 
     it "is ordered by name" do

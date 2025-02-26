@@ -45,9 +45,10 @@ describe "End-to-end journey" do
   end
 
   def given_an_hpv_programme_is_underway
-    @programme = create(:programme, :hpv)
+    programme = create(:programme, :hpv)
+
     @organisation =
-      create(:organisation, :with_one_nurse, programmes: [@programme])
+      create(:organisation, :with_one_nurse, programmes: [programme])
     @school =
       create(
         :school,
@@ -60,14 +61,15 @@ describe "End-to-end journey" do
         :batch,
         expiry: Date.new(2024, 4, 1),
         organisation: @organisation,
-        vaccine: @programme.vaccines.first
+        vaccine: programme.vaccines.first
       )
+
     create(
       :session,
       :unscheduled,
       location: @school,
       organisation: @organisation,
-      programme: @programme
+      programmes: [programme]
     )
   end
 

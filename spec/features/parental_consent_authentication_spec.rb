@@ -24,7 +24,7 @@ describe "Parental consent" do
     @organisation =
       create(:organisation, :with_one_nurse, programmes: [@programme])
     location = create(:school, name: "Pilot School")
-    @session = create(:session, :scheduled, programme: @programme, location:)
+    @session = create(:session, :scheduled, programmes: [@programme], location:)
     @child = create(:patient, session: @session)
   end
 

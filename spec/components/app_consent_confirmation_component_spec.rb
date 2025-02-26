@@ -15,7 +15,9 @@ describe AppConsentConfirmationComponent do
   end
 
   context "consent for only MenACWY" do
-    let(:session) { create(:session, programme: create(:programme, :menacwy)) }
+    let(:session) do
+      create(:session, programmes: [create(:programme, :menacwy)])
+    end
     let(:consent_form) do
       create(
         :consent_form,
