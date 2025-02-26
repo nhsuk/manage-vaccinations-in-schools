@@ -10,9 +10,8 @@ class AppProgrammeSessionTableComponent < ViewComponent::Base
       sessions.index_with do |session|
         PatientSessionStats.new(
           session.patient_sessions,
-          programme:,
           keys: %i[without_a_response needing_triage vaccinated]
-        ).to_h
+        ).fetch(programme)
       end
   end
 
