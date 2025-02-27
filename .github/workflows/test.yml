@@ -44,8 +44,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          ref: ${{ inputs.github_sha || github.sha }}
       - uses: actions/setup-node@v4
         with:
           node-version-file: .tool-versions
@@ -75,8 +73,6 @@ jobs:
       MAVIS__CIS2__ENABLED: false
     steps:
       - uses: actions/checkout@v4
-        with:
-          ref: ${{ inputs.github_sha || github.sha }}
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: .tool-versions
