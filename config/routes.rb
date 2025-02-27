@@ -290,8 +290,7 @@ Rails.application.routes.draw do
                   "/sessions/%{session_slug}/vaccinations/#{TAB_PATHS[:vaccinations].keys.first}"
               )
 
-        get "batch", to: "vaccinations#batch"
-        patch "batch", to: "vaccinations#update_batch"
+        resource :batch, only: %i[edit update], controller: "vaccinations/batch"
 
         get ":tab",
             controller: "vaccinations",
