@@ -1,88 +1,68 @@
-// Adapted from https://github.com/x-govuk/govuk-prototype-components/blob/main/x-govuk/components/secondary-navigation/_secondary-navigation.scss
 .app-secondary-navigation {
-  @include govuk-font(19);
-}
+  @include nhsuk-font(19);
+  @include nhsuk-responsive-margin(5, "bottom");
 
-.app-secondary-navigation--sticky {
-  background-color: $color_nhsuk-grey-5;
-  position: sticky;
-  top: 0;
-  z-index: 99;
-}
+  margin-left: #{$nhsuk-gutter-half * -1};
+  margin-right: #{$nhsuk-gutter-half * -1};
 
-.app-secondary-navigation__link {
-  @include govuk-link-common;
-  @include govuk-link-style-no-visited-state;
-  @include govuk-link-style-no-underline;
-
-  // Extend the touch area of the link to the list
-  &::after {
-    bottom: 0;
-    content: "";
-    left: 0;
-    position: absolute;
-    right: 0;
-    top: 0;
+  @include mq($from: tablet) {
+    margin-left: auto;
+    margin-right: auto;
   }
 }
 
-.app-secondary-navigation__list {
-  @include govuk-clearfix;
+.app-secondary-navigation__link {
+  @include nhsuk-link-style-default;
+  @include nhsuk-link-style-no-visited-state;
 
-  // The list uses box-shadow rather than a border to set a 1px
-  // grey line at the bottom, so that border from the current
-  // item appears on top of the grey line.
-  box-shadow: inset 0 -1px 0 $govuk-border-colour;
+  display: block;
+  padding: nhsuk-spacing(2) $nhsuk-gutter-half;
+  text-decoration: none;
+
+  @include mq($from: tablet) {
+    padding: nhsuk-spacing(3) 2px;
+  }
+
+  &[aria-current] {
+    box-shadow: inset $nhsuk-border-width 0 $color_nhsuk-blue;
+    color: $nhsuk-text-color;
+    text-decoration: none;
+
+    @include mq($from: tablet) {
+      box-shadow: inset 0 ($nhsuk-border-width * -1) $color_nhsuk-blue;
+    }
+  }
+
+  &:focus {
+    box-shadow: inset $nhsuk-focus-width 0 $nhsuk-focus-text-color;
+
+    @include mq($from: tablet) {
+      box-shadow: inset 0 ($nhsuk-focus-width * -1) $nhsuk-focus-text-color;
+    }
+  }
+}
+
+.app-secondary-navigation__current {
+  font-weight: inherit;
+}
+
+.app-secondary-navigation__list {
+  // The list uses box-shadow rather than a border to set a 1px grey line at the
+  // bottom, so that the current item appears on top of the grey line.
+  box-shadow: inset 0 -1px 0 $nhsuk-border-color;
+  display: flex;
+  flex-flow: column;
   list-style: none;
   margin: 0;
   padding: 0;
   width: 100%;
-}
 
-.app-secondary-navigation__list-item {
-  box-sizing: border-box;
-  display: block;
-  float: left;
-  margin-right: govuk-spacing(4);
-  padding-bottom: govuk-spacing(2);
-  padding-top: govuk-spacing(2);
-  position: relative;
-
-  // More generous padding beneath items on wider screens
-  @include govuk-media-query($from: tablet) {
-    padding-bottom: govuk-spacing(3);
+  @include mq($from: tablet) {
+    flex-flow: row wrap;
+    gap: nhsuk-spacing(2) nhsuk-spacing(4);
   }
 }
 
-// The last item of the list doesn’t need any spacing to its right.
-// Removing this prevents the item from wrapping to the next line
-// unnecessarily.
-.app-secondary-navigation__list-item:last-child {
-  margin-right: 0;
-}
-
-.app-secondary-navigation__list-item--current {
-  border-bottom: $govuk-border-width solid $govuk-brand-colour;
-  padding-bottom: govuk-spacing(1);
-
-  // More generous padding beneath items on wider screens
-  @include govuk-media-query($from: tablet) {
-    padding-bottom: govuk-spacing(2);
-  }
-}
-
-.app-secondary-navigation__list-item--current
-  .app-secondary-navigation__link:link,
-.app-secondary-navigation__list-item--current
-  .app-secondary-navigation__link:visited {
-  color: $govuk-text-colour;
-}
-
 .app-secondary-navigation__list-item {
-  margin: 0;
-}
-
-.app-secondary-navigation__link {
-  padding-left: nhsuk-spacing(3);
-  padding-right: nhsuk-spacing(3);
+  margin-bottom: 0;
 }
