@@ -159,8 +159,7 @@ class Reports::OfflineSessionExporter
         }
       }
 
-      vaccination_records =
-        patient_session.vaccination_records(programme:, for_session: true)
+      vaccination_records = patient_session.vaccination_records(programme:)
 
       if vaccination_records.any?
         vaccination_records.map do |vaccination_record|
@@ -173,7 +172,7 @@ class Reports::OfflineSessionExporter
         [
           Row.new(columns, style: row_style) do |row|
             add_patient_cells(row, patient_session:, programme:)
-            add_new_row_cells(row, session: patient_session.session, programme:)
+            add_new_row_cells(row, patient_session:, programme:)
           end
         ]
       end
@@ -188,13 +187,6 @@ class Reports::OfflineSessionExporter
     triage = patient_session.latest_triage(programme:)
 
     row[:organisation_code] = organisation.ods_code
-    row[:school_urn] = school_urn(location:, patient:)
-    row[:school_name] = school_name(location:, patient:)
-    row[:care_setting] = Cell.new(
-      care_setting(location:),
-      type: :integer,
-      allowed_values: [1, 2]
-    )
     row[:person_forename] = patient.given_name
     row[:person_surname] = patient.family_name
     row[:person_dob] = patient.date_of_birth
@@ -232,13 +224,28 @@ class Reports::OfflineSessionExporter
 
   def add_existing_row_cells(row, vaccination_record:)
     batch = vaccination_record.batch
+    patient = vaccination_record.patient
     programme = vaccination_record.programme
     session = vaccination_record.session
     vaccine = vaccination_record.vaccine
+    location = session&.location
 
     row[:vaccinated] = Cell.new(
       vaccinated(vaccination_record:),
       allowed_values: %w[Y N]
+    )
+    row[:school_urn] = location ? school_urn(location:, patient:) : "888888"
+    row[:school_name] = (
+      if location
+        school_name(location:, patient:)
+      else
+        vaccination_record.location_name
+      end
+    )
+    row[:care_setting] = Cell.new(
+      location ? care_setting(location:) : nil,
+      type: :integer,
+      allowed_values: [1, 2]
     )
     row[:date_of_vaccination] = vaccination_record.performed_at.to_date
     row[:time_of_vaccination] = vaccination_record.performed_at.strftime(
@@ -268,10 +275,10 @@ class Reports::OfflineSessionExporter
       allowed_values: ImmunisationImportRow::REASONS.keys
     )
     row[:notes] = vaccination_record.notes
-    row[:session_id] = session.id
+    row[:session_id] = session&.id
     row[:uuid] = vaccination_record.uuid
 
-    if location.generic_clinic?
+    if location&.generic_clinic?
       row[:clinic_name] = Cell.new(
         vaccination_record.location_name,
         allowed_values: clinic_name_values
@@ -279,9 +286,19 @@ class Reports::OfflineSessionExporter
     end
   end
 
-  def add_new_row_cells(row, session:, programme:)
+  def add_new_row_cells(row, patient_session:, programme:)
+    patient = patient_session.patient
+    location = patient_session.session.location
+
     row[:vaccinated] = Cell.new(allowed_values: %w[Y N])
     row[:date_of_vaccination] = Cell.new(type: :date)
+    row[:school_urn] = school_urn(location:, patient:)
+    row[:school_name] = school_name(location:, patient:)
+    row[:care_setting] = Cell.new(
+      care_setting(location:),
+      type: :integer,
+      allowed_values: [1, 2]
+    )
     row[:programme] = programme.import_names.first
     row[:vaccine_given] = Cell.new(
       allowed_values: vaccine_values_for_programme(programme)
