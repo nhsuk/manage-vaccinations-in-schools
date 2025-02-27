@@ -202,11 +202,8 @@ class ImmunisationImportRow
   def location_name
     return unless session.nil? || session.location.generic_clinic?
 
-    if school_urn == SCHOOL_URN_UNKNOWN &&
-         (
-           (care_setting.nil? && clinic_name.blank?) ||
-             care_setting == CARE_SETTING_SCHOOL
-         )
+    if care_setting == CARE_SETTING_SCHOOL ||
+         (care_setting.nil? && clinic_name.blank?)
       school_name.presence || "Unknown"
     else
       clinic_name.presence || "Unknown"
