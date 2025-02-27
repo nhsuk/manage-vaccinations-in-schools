@@ -13,7 +13,7 @@ class VaccinationsController < ApplicationController
   before_action :set_session
   before_action :set_patient, only: :create
   before_action :set_patient_session, only: :create
-  before_action :set_programme, only: :create
+  before_action :set_programme, only: %i[index create]
   before_action :set_section_and_tab, only: :create
 
   before_action :set_todays_batch, only: %i[index create]
@@ -22,10 +22,6 @@ class VaccinationsController < ApplicationController
 
   def index
     authorize VaccinationRecord
-
-    @programme =
-      @session.programmes.find_by(type: params[:programme_type]) ||
-        @session.programmes.first
 
     all_patient_sessions =
       @session
@@ -143,10 +139,16 @@ class VaccinationsController < ApplicationController
   end
 
   def set_programme
-    @programme =
-      @patient_session.programmes.find { it.type == params[:programme_type] }
+    if @patient_session.present?
+      @programme =
+        @patient_session.programmes.find { it.type == params[:programme_type] }
 
-    raise ActiveRecord::RecordNotFound if @programme.nil?
+      raise ActiveRecord::RecordNotFound if @programme.nil?
+    else
+      @programme =
+        @session.programmes.find_by(type: params[:programme_type]) ||
+          @session.programmes.first
+    end
   end
 
   def set_section_and_tab
@@ -160,6 +162,6 @@ class VaccinationsController < ApplicationController
         .where(vaccine: @session.vaccines)
         .not_archived
         .not_expired
-        .find_by(id: todays_batch_id)
+        .find_by(id: todays_batch_id(programme: @programme))
   end
 end

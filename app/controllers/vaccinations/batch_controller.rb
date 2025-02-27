@@ -3,13 +3,15 @@
 class Vaccinations::BatchController < ApplicationController
   include TodaysBatchConcern
 
+  before_action :set_programme
   before_action :set_session
   before_action :set_batches
 
   after_action :verify_authorized
 
   def edit
-    @todays_batch = authorize @batches.find_by(id: todays_batch_id)
+    @todays_batch =
+      authorize @batches.find_by(id: todays_batch_id(programme: @programme))
   end
 
   def update
@@ -32,6 +34,10 @@ class Vaccinations::BatchController < ApplicationController
 
   private
 
+  def set_programme
+    @programme = policy_scope(Programme).find_by!(type: params[:programme_type])
+  end
+
   def set_session
     @session = policy_scope(Session).find_by!(slug: params[:session_slug])
   end
@@ -39,7 +45,7 @@ class Vaccinations::BatchController < ApplicationController
   def set_batches
     @batches =
       policy_scope(Batch)
-        .where(vaccine: @session.vaccines)
+        .where(vaccine: @session.vaccines.where(programme: @programme))
         .not_archived
         .not_expired
         .order_by_name_and_expiration

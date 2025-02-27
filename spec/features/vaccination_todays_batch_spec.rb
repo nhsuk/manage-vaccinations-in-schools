@@ -1,11 +1,15 @@
 # frozen_string_literal: true
 
-describe "HPV vaccination" do
+describe "Vaccination" do
   around { |example| travel_to(Time.zone.local(2024, 2, 1)) { example.run } }
 
-  scenario "Default batch" do
+  before { Flipper.enable(:vaccinate_doubles) }
+  after { Flipper.disable(:vaccinate_doubles) }
+
+  scenario "Today's batch" do
     given_i_am_signed_in
-    when_i_vaccinate_a_patient
+
+    when_i_vaccinate_a_patient_with_hpv
     then_i_see_the_default_batch_banner_with_batch_1
 
     when_i_click_the_change_batch_link
@@ -14,46 +18,55 @@ describe "HPV vaccination" do
     when_i_choose_the_second_batch
     then_i_see_the_default_batch_banner_with_batch_2
 
-    when_i_vaccinate_a_second_patient
+    when_i_vaccinate_a_second_patient_with_hpv
     then_i_see_the_default_batch_on_the_confirmation_page
     and_i_see_the_default_batch_on_the_patient_page
+
+    when_i_vaccinate_a_patient_with_menacwy
+    then_i_am_required_to_choose_a_batch
   end
 
   def given_i_am_signed_in
-    programme = create(:programme, :hpv)
-    organisation =
-      create(:organisation, :with_one_nurse, programmes: [programme])
+    programmes = [create(:programme, :hpv), create(:programme, :menacwy)]
+
+    organisation = create(:organisation, :with_one_nurse, programmes:)
 
     batches =
-      programme.vaccines.flat_map do |vaccine|
-        create_list(:batch, 4, organisation:, vaccine:)
+      programmes.map do |programme|
+        programme.vaccines.flat_map do |vaccine|
+          create_list(:batch, 4, organisation:, vaccine:)
+        end
       end
 
-    @batch = batches.first
-    @batch2 = batches.second
+    @hpv_batch = batches.first.first
+    @hpv_batch2 = batches.first.second
 
-    @session = create(:session, organisation:, programmes: [programme])
+    @session = create(:session, organisation:, programmes:)
 
     @patient =
       create(
         :patient,
         :consent_given_triage_not_needed,
         :in_attendance,
-        session: @session
+        session: @session,
+        year_group: 9
       )
+
     @patient2 =
       create(
         :patient,
         :consent_given_triage_not_needed,
         :in_attendance,
-        session: @session
+        session: @session,
+        year_group: 8
       )
 
     sign_in organisation.users.first
   end
 
-  def when_i_vaccinate_a_patient
+  def when_i_vaccinate_a_patient_with_hpv
     visit session_vaccinations_path(@session)
+
     click_link @patient.full_name
 
     # pre-screening
@@ -67,10 +80,10 @@ describe "HPV vaccination" do
     choose "Left arm (upper position)"
     click_button "Continue"
 
-    choose @batch.name
+    choose @hpv_batch.name
 
     # Find the selected radio button element
-    selected_radio_button = find(:radio_button, @batch.name, checked: true)
+    selected_radio_button = find(:radio_button, @hpv_batch.name, checked: true)
 
     # Find the "Default to this batch for this session" checkbox immediately below and check it
     checkbox_below =
@@ -84,8 +97,9 @@ describe "HPV vaccination" do
     click_button "Confirm"
   end
 
-  def when_i_vaccinate_a_second_patient
+  def when_i_vaccinate_a_second_patient_with_hpv
     visit session_vaccinations_path(@session)
+
     click_link @patient2.full_name
 
     # pre-screening
@@ -101,11 +115,11 @@ describe "HPV vaccination" do
   end
 
   def then_i_see_the_default_batch_banner_with_batch_1
-    expect(page).to have_content(/You are currently using.*#{@batch.name}/)
+    expect(page).to have_content(/You are currently using.*#{@hpv_batch.name}/)
   end
 
   def then_i_see_the_default_batch_banner_with_batch_2
-    expect(page).to have_content(/You are currently using.*#{@batch2.name}/)
+    expect(page).to have_content(/You are currently using.*#{@hpv_batch2.name}/)
   end
 
   def when_i_click_the_change_batch_link
@@ -114,18 +128,18 @@ describe "HPV vaccination" do
 
   def then_i_see_the_change_batch_page
     expect(page).to have_content("Select a default batch for this session")
-    expect(page).to have_selector(:label, @batch.name)
-    expect(page).to have_selector(:label, @batch2.name)
+    expect(page).to have_selector(:label, @hpv_batch.name)
+    expect(page).to have_selector(:label, @hpv_batch2.name)
   end
 
   def when_i_choose_the_second_batch
-    choose @batch2.name
+    choose @hpv_batch2.name
     click_button "Continue"
   end
 
   def then_i_see_the_default_batch_on_the_confirmation_page
     expect(page).to have_content("Check and confirm")
-    expect(page).to have_content(@batch2.name)
+    expect(page).to have_content(@hpv_batch2.name)
 
     click_button "Confirm"
   end
@@ -134,6 +148,27 @@ describe "HPV vaccination" do
     click_link @patient2.full_name
 
     expect(page).to have_content("Vaccinated")
-    expect(page).to have_content(@batch2.name)
+    expect(page).to have_content(@hpv_batch2.name)
+  end
+
+  def when_i_vaccinate_a_patient_with_menacwy
+    visit session_vaccinations_path(@session, programme_type: "menacwy")
+
+    click_link @patient.full_name
+
+    # pre-screening
+    find_all(".nhsuk-fieldset")[0].choose "Yes"
+    find_all(".nhsuk-fieldset")[1].choose "Yes"
+    find_all(".nhsuk-fieldset")[2].choose "Yes"
+    find_all(".nhsuk-fieldset")[3].choose "Yes"
+
+    # vaccination
+    find_all(".nhsuk-fieldset")[4].choose "Yes"
+    choose "Left arm (upper position)"
+    click_button "Continue"
+  end
+
+  def then_i_am_required_to_choose_a_batch
+    expect(page).to have_content("Which batch did you use?")
   end
 end
