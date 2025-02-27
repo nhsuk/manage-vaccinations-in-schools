@@ -118,7 +118,8 @@ describe "Immunisation imports duplicates" do
         dose_sequence: 1,
         patient: @already_vaccinated_patient,
         vaccine: @vaccine,
-        performed_by_user: nil
+        performed_by_user: nil,
+        location_name: "Eton College"
       )
     @another_previous_vaccination_record =
       create(
@@ -133,7 +134,8 @@ describe "Immunisation imports duplicates" do
         dose_sequence: 1,
         patient: @third_patient,
         vaccine: @other_vaccine,
-        performed_by_user: nil
+        performed_by_user: nil,
+        location_name: "Eton College"
       )
   end
 

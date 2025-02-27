@@ -738,6 +738,29 @@ describe ImmunisationImportRow do
       it { should be_nil }
     end
 
+    context "with a known school and unknown care setting" do
+      let(:data) do
+        valid_data.merge(
+          "SCHOOL_URN" => "123456",
+          "SCHOOL_NAME" => "Waterloo Road"
+        )
+      end
+
+      it { should eq("Waterloo Road") }
+    end
+
+    context "with a known school and community care setting" do
+      let(:data) do
+        valid_data.merge(
+          "SCHOOL_URN" => "123456",
+          "SCHOOL_NAME" => "Waterloo Road",
+          "CARE_SETTING" => "2"
+        )
+      end
+
+      it { should eq("Unknown") }
+    end
+
     context "when home educated and community care setting" do
       let(:data) do
         valid_data.merge(
