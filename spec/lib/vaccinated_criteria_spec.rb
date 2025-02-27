@@ -74,6 +74,22 @@ describe VaccinatedCriteria do
         it { should be(true) }
       end
 
+      context "with a second dose administered vaccination record" do
+        let(:vaccination_records) do
+          [
+            create(
+              :vaccination_record,
+              :administered,
+              dose_sequence: 2,
+              patient:,
+              programme:
+            )
+          ]
+        end
+
+        it { should be(true) }
+      end
+
       context "with an administered vaccination record when the patient was younger than 10 years old" do
         let(:vaccination_records) do
           [
