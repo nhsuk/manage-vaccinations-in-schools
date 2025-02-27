@@ -52,7 +52,7 @@ export async function parentJourney(page: Page, context: Context) {
   // Consent
   await expect(
     page.getByRole("heading", {
-      name: "Do you agree to them having the HPV vaccination?",
+      name: "Do you agree to your child having the Human papillomavirus (HPV) vaccination?",
     }),
   ).toBeVisible();
   await page.getByLabel("Yes, I agree").check();
