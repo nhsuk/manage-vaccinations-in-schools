@@ -110,3 +110,17 @@ jobs:
           name: playwright-report
           path: playwright?report
           retention-days: 10
+
+  terraform:
+    name: Terraform Validate
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: terraform
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: 1.10.5
+      - run: terraform init -backend=false
+      - run: terraform validate
