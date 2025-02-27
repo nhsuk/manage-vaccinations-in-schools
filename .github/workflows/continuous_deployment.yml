@@ -15,8 +15,7 @@ jobs:
     with:
       environment: "copilotmigration"
   DeployApplication:
-    needs: DeployInfrastructure
+    needs: [Build, DeployInfrastructure]
     uses: ./.github/workflows/deploy_mavis.yml
     with:
       environment: "copilotmigration"
-      image_tag: ${{ github.sha }}
