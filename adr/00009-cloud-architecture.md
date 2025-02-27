@@ -1,4 +1,4 @@
-# 9. Cloud Architecture
+# 9. Cloud architecture
 
 Date: 2025-02-26
 
