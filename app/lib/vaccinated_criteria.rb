@@ -12,7 +12,11 @@ class VaccinatedCriteria
       raise "Vaccination records provided for different programme."
     end
 
-    if programme.doubles?
+    if programme.menacwy?
+      vaccination_records.any? do
+        it.administered? && patient.age(now: it.performed_at) >= 10
+      end
+    elsif programme.td_ipv?
       vaccination_records.any? do
         it.administered? &&
           it.dose_sequence == programme.vaccinated_dose_sequence &&
