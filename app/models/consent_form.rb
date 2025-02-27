@@ -532,6 +532,8 @@ class ConsentForm < ApplicationRecord
 
     self.parent_relationship_other_name = nil unless parent_relationship_other?
 
+    self.chosen_vaccine = nil unless consent_given_one?
+
     if consent_given?
       self.reason = nil
       self.reason_notes = nil

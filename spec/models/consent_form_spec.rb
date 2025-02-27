@@ -672,7 +672,8 @@ describe ConsentForm do
       )
 
     consent_form.update!(
-      response: "given",
+      response: "given_one",
+      reason: "personal_choice",
       chosen_vaccine: programme2.type,
       address_line_1: "123 Fake St",
       address_town: "London",
