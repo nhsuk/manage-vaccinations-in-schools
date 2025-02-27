@@ -683,8 +683,8 @@ en:
         menacwy: Yes, I agree to them having both vaccinations
         td_ipv: Yes, I agree to them having both vaccinations
       title:
-        flu: Do you agree to them having a nasal flu vaccination?
-        hpv: Do you agree to them having the HPV vaccination?
+        flu: Do you agree to your child having the nasal flu vaccination?
+        hpv: Do you agree to your child having the Human papillomavirus (HPV) vaccination?
         menacwy: Do you agree to your child having the MenACWY and Td/IPV (3-in-1 teenage booster) vaccinations?
         td_ipv: Do you agree to your child having the MenACWY and Td/IPV (3-in-1 teenage booster) vaccinations?
     reason_notes:
