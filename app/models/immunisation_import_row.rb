@@ -448,7 +448,7 @@ class ImmunisationImportRow
           .sessions
           .for_current_academic_year
           .includes(:location, :session_dates)
-          .find(session_id)
+          .find_by(id: session_id)
       end
   end
 
