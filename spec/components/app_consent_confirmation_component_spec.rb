@@ -6,7 +6,7 @@ describe AppConsentConfirmationComponent do
   let(:consent_form) { create(:consent_form) }
   let(:component) { described_class.new(consent_form) }
 
-  it { should have_text("Consent given") }
+  it { should have_text("Consent confirmed") }
 
   it "informs the user a confirmation email will be sent" do
     expect(rendered).to have_text(
@@ -52,7 +52,7 @@ describe AppConsentConfirmationComponent do
     end
     let(:consent_form) { create(:consent_form, response: "given", session:) }
 
-    it { should have_text("Consent given") }
+    it { should have_text("Consent confirmed") }
 
     it "informs the user that their child is due a vaccination" do
       expect(rendered).to have_text(
