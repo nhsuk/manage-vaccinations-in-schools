@@ -18,7 +18,7 @@ describe AppSecondaryNavigationComponent do
 
   it { should have_css("ul.app-secondary-navigation__list") }
   it { should have_css("li.app-secondary-navigation__list-item") }
-  it { should have_css("li.app-secondary-navigation__list-item--current") }
+  it { should have_css("strong.app-secondary-navigation__current") }
 
   it { should have_link("Example 1", href: "https://example.com") }
   it { should have_link("Example 2", href: "https://example.com") }
