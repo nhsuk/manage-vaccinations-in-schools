@@ -16,6 +16,12 @@ on:
           - preview
           - training
 #          - production
+  workflow_call:
+    inputs:
+      environment:
+        description: "Deployment environment"
+        required: true
+        type: string
 
 env:
   aws_role: ${{ inputs.environment == 'production'

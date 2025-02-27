@@ -3,10 +3,6 @@ name: Test
 on:
   pull_request:
   workflow_call:
-    inputs:
-      github_sha:
-        required: true
-        type: string
 
 jobs:
   rails:
@@ -29,8 +25,6 @@ jobs:
       RAILS_ENV: test
     steps:
       - uses: actions/checkout@v4
-        with:
-          ref: ${{ inputs.github_sha || github.sha }}
       - uses: actions/setup-node@v4
         with:
           node-version-file: .tool-versions
