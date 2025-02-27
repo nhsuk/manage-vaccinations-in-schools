@@ -39,4 +39,4 @@ We will use Terraform to manage our infrastructure. This is based on
 
 ## Consequences
 
-A proof of concept with terraform has already been created and has been accepted. Each environment must be now migrated to Terraform. 
+A proof of concept with Terraform has already been created and has been accepted. Each environment must be now migrated to Terraform. 
