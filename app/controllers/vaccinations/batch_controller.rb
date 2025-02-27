@@ -16,7 +16,7 @@ class Vaccinations::BatchController < ApplicationController
     @todays_batch = authorize @batches.find_by(id: params.dig(:batch, :id))
 
     if @todays_batch
-      self.todays_batch_id = @todays_batch.id
+      self.todays_batch = @todays_batch
 
       flash[:success] = {
         heading: "The default batch for this session has been updated"
