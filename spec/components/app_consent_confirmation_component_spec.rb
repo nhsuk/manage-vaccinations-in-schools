@@ -16,7 +16,11 @@ describe AppConsentConfirmationComponent do
 
   context "consent for only MenACWY" do
     let(:session) do
-      create(:session, programmes: [create(:programme, :menacwy)])
+      create(
+        :session,
+        dates: [Date.yesterday, Date.tomorrow],
+        programmes: [create(:programme, :menacwy)]
+      )
     end
     let(:consent_form) do
       create(
@@ -33,7 +37,7 @@ describe AppConsentConfirmationComponent do
       expect(rendered).to have_text(
         "#{consent_form.given_name} #{consent_form.family_name} is due to get " \
           "the MenACWY vaccination at school on " \
-          "#{session.dates.first.to_fs(:short_day_of_week)}"
+          "#{session.dates.second.to_fs(:short_day_of_week)}"
       )
     end
   end
@@ -42,6 +46,7 @@ describe AppConsentConfirmationComponent do
     let(:session) do
       create(
         :session,
+        dates: [Date.yesterday, Date.tomorrow],
         programmes: [create(:programme, :menacwy), create(:programme, :td_ipv)]
       )
     end
@@ -53,7 +58,7 @@ describe AppConsentConfirmationComponent do
       expect(rendered).to have_text(
         "#{consent_form.given_name} #{consent_form.family_name} is due to get " \
           "the MenACWY and Td/IPV vaccinations at school on " \
-          "#{session.dates.first.to_fs(:short_day_of_week)}"
+          "#{session.dates.second.to_fs(:short_day_of_week)}"
       )
     end
   end
