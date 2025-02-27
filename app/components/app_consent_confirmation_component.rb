@@ -23,7 +23,7 @@ class AppConsentConfirmationComponent < ViewComponent::Base
     else
       case response
       when "given"
-        "Consent given"
+        "Consent confirmed"
       when "given_one"
         chosen_programme = chosen_programmes.first.name
         "Consent for the #{chosen_programme} vaccination confirmed"
