@@ -59,13 +59,21 @@ class AppConsentConfirmationComponent < ViewComponent::Base
       end
     when "refused"
       "You’ve told us that you do not want #{full_name} to get the" \
-        " #{not_chosen_programmes.first.name} vaccination at school"
+        " #{not_chosen_vaccinations} at school"
     else
       raise "unrecognised consent response: #{response}"
     end
   end
 
-  def chosen_vaccinations(programmes: chosen_programmes)
+  def chosen_vaccinations
+    vaccinations_text(chosen_programmes)
+  end
+
+  def not_chosen_vaccinations
+    vaccinations_text(not_chosen_programmes)
+  end
+
+  def vaccinations_text(programmes)
     programme_names =
       programmes.map do |programme|
         programme.type == "flu" ? "nasal flu" : programme.name
@@ -87,6 +95,6 @@ class AppConsentConfirmationComponent < ViewComponent::Base
       .includes(:session_dates)
       .flat_map(&:dates)
       .map { it.to_fs(:short_day_of_week) }
-      .to_sentence
+      .to_sentence(two_words_connector: " or ", last_word_connector: " or ")
   end
 end
