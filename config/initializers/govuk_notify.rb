@@ -30,7 +30,7 @@ GOVUK_NOTIFY_EMAIL_TEMPLATES = {
 
 GOVUK_NOTIFY_SMS_TEMPLATES = {
   consent_clinic_request: "03a0d572-ca5b-417e-87c3-838872a9eabc",
-  consent_confirmation_given: "25473aa7-2d7c-4d1d-b0c6-2ac492f737c3",
+  consent_confirmation_given: "df3af79e-b8d0-4bbd-a5d2-573ba11be4d9",
   consent_confirmation_refused: "eb34f3ab-0c58-4e56-b6b1-2c179270dfc3",
   consent_school_reminder: "ee3d36b1-4682-4eb0-a74a-7e0f6c9d0598",
   consent_school_request: "c7bd8150-d09e-4607-817d-db75c9a6a966",
