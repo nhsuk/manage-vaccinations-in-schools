@@ -258,7 +258,7 @@ en:
               blank: Enter a date in the correct format
               greater_than: The vaccination date is before the date of birth
               less_than_or_equal_to: The vaccination date is in the future
-              inclusion: Enter a date for a current session
+              inclusion: Enter a date that matches when the vaccination session took place
             delivery_site:
               blank: Enter an anatomical site.
               inclusion: Enter a anatomical site that is appropriate for the vaccine.
