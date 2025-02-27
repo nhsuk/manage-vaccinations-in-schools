@@ -15,7 +15,7 @@ on:
           - test
           - preview
           - training
-#          - production
+  #          - production
   workflow_call:
     inputs:
       environment:
