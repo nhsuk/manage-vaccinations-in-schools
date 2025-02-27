@@ -67,6 +67,7 @@ en:
         reason: <code>REASON_NOT_VACCINATED</code>
         school_name: <code>SCHOOL_NAME</code>
         school_urn: <code>SCHOOL_URN</code>
+        session_id: <code>SESSION_ID</code>
         time_of_vaccination: <code>TIME_OF_VACCINATION</code>
         uuid: <code>UUID</code>
         vaccine_given: <code>VACCINE_GIVEN</code>
@@ -295,6 +296,8 @@ en:
               blank: Enter a school name.
             school_urn:
               inclusion: The school URN is not recognised. If you’ve checked the URN, and you believe it’s valid, contact our support organisation.
+            session_id:
+              inclusion: Enter a valid ID for this organisation and programme
             time_of_vaccination:
               blank: Enter a time in the correct format
               less_than_or_equal_to: Enter a time in the past

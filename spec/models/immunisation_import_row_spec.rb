@@ -297,6 +297,28 @@ describe ImmunisationImportRow do
       end
     end
 
+    context "with an invalid session ID" do
+      let(:data) { { "SESSION_ID" => "abc" } }
+
+      it "has errors" do
+        expect(immunisation_import_row).to be_invalid
+        expect(immunisation_import_row.errors[:session_id]).to include(
+          "Enter a valid ID for this organisation and programme"
+        )
+      end
+    end
+
+    context "with a session ID that doesn't exist" do
+      let(:data) { { "SESSION_ID" => "123" } }
+
+      it "has errors" do
+        expect(immunisation_import_row).to be_invalid
+        expect(immunisation_import_row.errors[:session_id]).to include(
+          "Enter a valid ID for this organisation and programme"
+        )
+      end
+    end
+
     context "vaccination in a session and no organisation provided" do
       let(:data) { { "SESSION_ID" => session.id.to_s } }
 
