@@ -22,18 +22,20 @@ NHSDigital provides Terraform modules for common infrastructure components. In p
 module (https://github.com/NHSDigital/terraform-aws-backup/) which according to the Red Lines document must be used for backups.
 It's not possible to integrate a Terraform module with AWS Copilot.
 
-#### End of life semi-officially announced
+#### Uncertain future of AWS Copilot
 
 Despite no official announcement, AWS Copilot seems not to be maintained anymore.
 The last release happened 8 months ago in June 2024. Before that, releases occurred roughly monthly. According to 
 https://github.com/aws/copilot-cli/issues/5987, there was already an official announcement for end of support which got removed again.  
 
-For these reason we are looking for a tool to replace AWS Copilot.
-Terraform is a logical choice as it allows to use the NHS Terraform modules easily. Furthermore, it is widely used and has a large community.
+For this reason we would in any case want to replace AWS Copilot as the infrastructure management tool.
 
 ## Decision
 
-We will use Terraform to manage our infrastructure. 
+We will use Terraform to manage our infrastructure. This is based on
+* Terraform is a logical choice as it allows to use the NHS Terraform modules easily.
+* Terraform widely used and has a large community.
+* AWS Copilot future is uncertain
 
 ## Consequences
 
