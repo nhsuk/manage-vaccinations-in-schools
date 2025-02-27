@@ -211,7 +211,11 @@ describe ImmunisationImportRow do
 
         let(:session) { create(:session, organisation:, programmes:) }
 
-        it { should include(/current session/) }
+        it do
+          expect(errors).to include(
+            "Enter a date that matches when the vaccination session took place"
+          )
+        end
       end
 
       context "when importing without a session" do
