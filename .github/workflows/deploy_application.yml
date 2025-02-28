@@ -1,5 +1,5 @@
-name: TF Deploy Mavis
-run-name: TF Deploy Mavis on ${{ inputs.environment }}
+name: TF Deploy Application
+run-name: TF Deploy Application on ${{ inputs.environment }}
 
 on:
   workflow_dispatch:
@@ -76,7 +76,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: tfplan
+          name: tfplan_app
           path: ${{ runner.temp }}/tfplan
   DeployUpdate:
     runs-on: ubuntu-latest
@@ -95,8 +95,8 @@ jobs:
       - name: Download artifact
         uses: actions/download-artifact@v4
         with:
-          name: tfplan
-          path: ${{ runner.temp }}/artifact
+          name: tfplan_app
+          path: ${{ runner.temp }}
       - name: Install terraform
         uses: hashicorp/setup-terraform@v3
         with:
@@ -105,7 +105,7 @@ jobs:
         working-directory: ${{ env.tf-dir }}
         run: |
           terraform init -backend-config="env/${{ inputs.environment }}-backend.hcl"
-          terraform apply ${{ runner.temp }}/artifact/tfplan
+          terraform apply ${{ runner.temp }}/tfplan_app
           echo "s3_bucket=$(terraform output -raw s3_bucket)" >> ${{ runner.temp }}/CODEDEPLOY_ENV
           echo "s3_key=$(terraform output -raw s3_key)" >> ${{ runner.temp }}/CODEDEPLOY_ENV
           echo "application=$(terraform output -raw codedeploy_application_name)" >> ${{ runner.temp }}/CODEDEPLOY_ENV
