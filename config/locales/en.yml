@@ -317,7 +317,7 @@ en:
           attributes:
             programme_ids:
               blank: Choose which programmes this session is part of
-              inclusion: You cannot remove a program from the session once it has been added
+              inclusion: You cannot remove a programme from the session once it has been added
         vaccinate_form:
           attributes:
             delivery_site:
