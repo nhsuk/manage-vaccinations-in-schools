@@ -51,7 +51,7 @@ describe ImmunisationImportRow do
   end
   let(:valid_data) { valid_flu_data }
 
-  let!(:location) { create(:school, urn: "123456") }
+  let!(:location) { create(:school, urn: "123456", name: "Waterloo Road") }
 
   describe "validations" do
     context "with an empty row" do
@@ -745,6 +745,12 @@ describe ImmunisationImportRow do
           "SCHOOL_NAME" => "Waterloo Road"
         )
       end
+
+      it { should eq("Waterloo Road") }
+    end
+
+    context "with a known school and no school name" do
+      let(:data) { valid_data.merge("SCHOOL_URN" => "123456") }
 
       it { should eq("Waterloo Road") }
     end
