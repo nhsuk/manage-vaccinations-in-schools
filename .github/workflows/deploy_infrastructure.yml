@@ -117,4 +117,4 @@ jobs:
         working-directory: ${{ env.tf_dir }}
         run: |
           terraform init -backend-config="env/${{ inputs.environment }}-backend.hcl"
-          terraform apply ${{ runner.temp }}/tfplan_infrastructure
+          terraform apply ${{ runner.temp }}/tfplan
