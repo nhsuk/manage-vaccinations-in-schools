@@ -290,6 +290,9 @@ en:
             performed_ods_code:
               blank: Enter an organisation code.
               equal_to: Enter an organisation code that matches the current organisation.
+            programme_name:
+              blank: Enter a programme
+              inclusion: Enter a programme administered by this organisation
             reason:
               blank: Enter a valid reason
             school_name:

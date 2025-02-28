@@ -63,7 +63,7 @@ describe ImmunisationImportRow do
           /You need to record whether the child was vaccinated or not/
         )
         expect(immunisation_import_row.errors[:programme_name]).to include(
-          "is not included in the list"
+          "Enter a programme administered by this organisation"
         )
       end
     end
@@ -332,6 +332,26 @@ describe ImmunisationImportRow do
         expect(immunisation_import_row).to be_invalid
         expect(immunisation_import_row.errors[:performed_ods_code]).to eq(
           ["Enter an organisation code."]
+        )
+      end
+    end
+
+    context "vaccination in a session and invalid programme" do
+      let(:data) do
+        { "SESSION_ID" => session.id.to_s, "PROGRAMME" => "MenACWY" }
+      end
+
+      let(:programmes) do
+        [create(:programme, :hpv), create(:programme, :menacwy)]
+      end
+      let(:session) do
+        create(:session, organisation:, programmes: [programmes.first])
+      end
+
+      it "has errors" do
+        expect(immunisation_import_row).to be_invalid
+        expect(immunisation_import_row.errors[:programme_name]).to eq(
+          ["Enter a programme administered by this organisation"]
         )
       end
     end
