@@ -204,7 +204,7 @@ class ImmunisationImportRow
 
     if care_setting == CARE_SETTING_SCHOOL ||
          (care_setting.nil? && clinic_name.blank?)
-      school_name.presence || "Unknown"
+      school&.name || school_name.presence || "Unknown"
     else
       clinic_name.presence || "Unknown"
     end
