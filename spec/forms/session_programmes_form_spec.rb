@@ -20,7 +20,7 @@ describe SessionProgrammesForm do
     it "is invalid" do
       expect(form).to be_invalid
       expect(form.errors[:programme_ids]).to include(
-        "You cannot remove a program from the session once it has been added"
+        "You cannot remove a programme from the session once it has been added"
       )
     end
   end
