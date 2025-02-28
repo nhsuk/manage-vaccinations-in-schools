@@ -31,6 +31,15 @@ This creates a new clinic location and attaches it to a organisation.
 
 Creates a GP practice location suitable for smoke testing in production.
 
+## Organisations
+
+### `organisations:add_programme[ods_code,type]`
+
+- `ods_code` - The ODS code of the organisation.
+- `type` - The programme type to add to the organisation. (`hpv`, `menacwy`, `td_ipv`)
+
+This adds a programme to an existing organisation. Normally this would be handled by the onboarding process.
+
 ## Schools
 
 ### `schools:add_to_organisation[ods_code,team_name,urn,...]`
