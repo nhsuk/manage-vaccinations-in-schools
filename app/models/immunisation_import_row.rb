@@ -444,7 +444,7 @@ class ImmunisationImportRow
         organisation
           .sessions
           .for_current_academic_year
-          .includes(:location, :session_dates)
+          .includes(:location, :programmes, :session_dates)
           .find_by(id: session_id)
       end
   end
@@ -472,7 +472,7 @@ class ImmunisationImportRow
 
   def programmes_by_name
     @programmes_by_name ||=
-      organisation
+      (session || organisation)
         .programmes
         .each_with_object({}) do |programme, hash|
           programme.import_names.each { |name| hash[name] = programme }
