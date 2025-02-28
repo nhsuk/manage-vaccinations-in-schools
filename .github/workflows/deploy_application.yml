@@ -105,7 +105,7 @@ jobs:
         working-directory: ${{ env.tf-dir }}
         run: |
           terraform init -backend-config="env/${{ inputs.environment }}-backend.hcl"
-          terraform apply ${{ runner.temp }}/tfplan_app
+          terraform apply ${{ runner.temp }}/tfplan
           echo "s3_bucket=$(terraform output -raw s3_bucket)" >> ${{ runner.temp }}/CODEDEPLOY_ENV
           echo "s3_key=$(terraform output -raw s3_key)" >> ${{ runner.temp }}/CODEDEPLOY_ENV
           echo "application=$(terraform output -raw codedeploy_application_name)" >> ${{ runner.temp }}/CODEDEPLOY_ENV
