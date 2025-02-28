@@ -16,6 +16,6 @@ jobs:
       environment: "copilotmigration"
   DeployApplication:
     needs: [Build, DeployInfrastructure]
-    uses: ./.github/workflows/deploy_mavis.yml
+    uses: ./.github/workflows/deploy_application.yml
     with:
       environment: "copilotmigration"
