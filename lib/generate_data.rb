@@ -44,7 +44,9 @@ class GenerateData
   )
     @organisation = Organisation.find_by(ods_code:)
     @programme = Programme.find_by(type: programme)
-    @urns = urns || @organisation.locations.sample(3).pluck(:urn)
+    @urns =
+      urns ||
+        @organisation.locations.select { it.urn.present? }.sample(3).pluck(:urn)
     @student_count = student_count
     @students = nil
   end
@@ -88,26 +90,6 @@ class GenerateData
         CHILD_SCHOOL_URN
       ]
 
-      # CHILD_SCHOOL_URN
-      # PARENT_1_NAME
-      # PARENT_1_RELATIONSHIP
-      # PARENT_1_EMAIL
-      # PARENT_1_PHONE
-      # PARENT_2_NAME
-      # PARENT_2_RELATIONSHIP
-      # PARENT_2_EMAIL
-      # PARENT_2_PHONE
-      # CHILD_FIRST_NAME
-      # CHILD_LAST_NAME
-      # CHILD_PREFERRED_GIVEN_NAME
-      # CHILD_DATE_OF_BIRTH
-      # CHILD_YEAR_GROUP
-      # CHILD_ADDRESS_LINE_1
-      # CHILD_ADDRESS_LINE_2
-      # CHILD_TOWN
-      # CHILD_POSTCODE
-      # CHILD_NHS_NUMBER
-
       students.each do |student|
         csv << [
           student.address_line_1,
@@ -127,7 +109,7 @@ class GenerateData
           student.parents.second&.full_name,
           student.parents.second&.phone,
           student.parent_relationships.second&.type,
-          urns.sample.to_s
+          student.school.urn
         ]
       end
     end
@@ -174,11 +156,11 @@ class GenerateData
 
   def create_student(year_group: nil)
     year_group ||= (8..11).to_a.sample
-    # school = Location.find_by!(urn: urns.sample)
+    school = Location.find_by!(urn: urns.sample)
 
     FactoryBot.build(
       :patient,
-      # school:,
+      school:,
       date_of_birth: date_of_birth_for_year(2024, year_group),
       # organisation:,
       # home_educated: school.nil? ? [true, false].sample : nil,
