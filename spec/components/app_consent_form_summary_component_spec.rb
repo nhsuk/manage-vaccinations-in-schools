@@ -1,24 +1,21 @@
 # frozen_string_literal: true
 
 describe AppConsentFormSummaryComponent do
-  subject(:rendered) { render_inline(component) }
+  subject { render_inline(component) }
 
-  let(:component) do
-    described_class.new(
-      name: "Jane Smith",
-      relationship: "Mum",
-      contact: {
-        phone: "07987 654321",
-        email: "jane@example.com"
-      },
-      response: {
-        text: "Consent refused (online)",
-        timestamp: Time.zone.local(2024, 3, 1, 14, 23, 0)
-      },
-      refusal_reason: {
-        reason: "already vaccinated",
-        notes: "Vaccinated at the GP"
-      }
+  let(:component) { described_class.new(consent_form) }
+
+  let(:consent_form) do
+    create(
+      :consent_form,
+      parent_full_name: "Jane Smith",
+      parent_relationship_type: :mother,
+      parent_phone: "07987 654321",
+      parent_email: "jane@example.com",
+      response: :refused,
+      recorded_at: Time.zone.local(2024, 3, 1, 14, 23, 0),
+      reason: :already_vaccinated,
+      reason_notes: "Vaccinated at the GP"
     )
   end
 
@@ -28,88 +25,6 @@ describe AppConsentFormSummaryComponent do
   it { should have_text("jane@example.com") }
   it { should have_text("Consent refused (online)") }
   it { should have_text("1 March 2024 at 2:23pm") }
-
-  it do
-    expect(rendered).to have_text(
-      "Refusal reason\nAlready vaccinated\nVaccinated at the GP"
-    )
-  end
-
-  context "with only mandatory fields" do
-    let(:component) do
-      described_class.new(
-        name: "Jane Smith",
-        response: {
-          text: "Consent given (online)",
-          timestamp: Time.zone.local(2024, 3, 1, 14, 23, 0)
-        }
-      )
-    end
-
-    it { should have_text("Jane Smith") }
-    it { should have_text("Consent given (online)") }
-    it { should have_text("1 March 2024 at 2:23pm") }
-    it { should_not have_text("Relationship") }
-    it { should_not have_text("Contact") }
-    it { should_not have_text("Refusal reason") }
-  end
-
-  context "with only refusal reason" do
-    let(:component) do
-      described_class.new(
-        name: "Jane Smith",
-        response: {
-          text: "Consent refused (online)",
-          timestamp: Time.zone.local(2024, 3, 1, 14, 23, 0)
-        },
-        refusal_reason: {
-          reason: "Personal choice"
-        }
-      )
-    end
-
-    it { should have_text("Jane Smith") }
-    it { should have_text("Refusal reason\nPersonal choice") }
-  end
-
-  context "with multiple responses" do
-    let(:component) do
-      described_class.new(
-        name: "Jane Smith",
-        response: [
-          {
-            text: "Consent given (online)",
-            timestamp: Time.zone.local(2024, 3, 1, 14, 23, 0)
-          },
-          {
-            text: "Consent refused (online)",
-            timestamp: Time.zone.local(2024, 3, 2, 14, 24, 0)
-          }
-        ]
-      )
-    end
-
-    it { should have_text("Jane Smith") }
-    it { should have_text("Consent given (online)") }
-    it { should have_text("1 March 2024 at 2:23pm") }
-    it { should have_text("Consent refused (online)") }
-    it { should have_text("2 March 2024 at 2:24pm") }
-  end
-
-  context "with response being an array with one element" do
-    let(:component) do
-      described_class.new(
-        name: "Jane Smith",
-        response: [
-          {
-            text: "Consent given (online)",
-            timestamp: Time.zone.local(2024, 3, 1, 14, 23, 0)
-          }
-        ]
-      )
-    end
-
-    it { should have_text("1 March 2024 at 2:23pm") }
-    it { should_not have_css("li") }
-  end
+  it { should have_text("Vaccine already received") }
+  it { should have_text("Vaccinated at the GP") }
 end
