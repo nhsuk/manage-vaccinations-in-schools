@@ -46,7 +46,7 @@ class DevController < ApplicationController
       patient_sessions = PatientSession.where(session: sessions)
       log_destroy(GillickAssessment.where(patient_session: patient_sessions))
       log_destroy(PreScreening.where(patient_session: patient_sessions))
-      log_destroy(patient_sessions)
+      patient_sessions.in_batches { log_destroy(it) }
 
       log_destroy(sessions)
 
@@ -65,7 +65,7 @@ class DevController < ApplicationController
       log_destroy(Consent.where(organisation:))
       log_destroy(Triage.where(organisation:))
 
-      log_destroy(patients.includes(:parents))
+      patients.includes(:parents).in_batches { log_destroy(it) }
 
       batches = Batch.where(organisation:)
       log_destroy(VaccinationRecord.where(batch: batches))
