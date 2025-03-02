@@ -34,7 +34,12 @@ require "csv"
 Faker::Config.locale = "en-GB"
 
 class GenerateData
-  attr_reader :ods_code, :organisation, :urns, :student_count, :students
+  attr_reader :ods_code,
+              :organisation,
+              :programme,
+              :urns,
+              :student_count,
+              :students
 
   def initialize(
     ods_code: "A9A5A",
@@ -58,17 +63,23 @@ class GenerateData
   def generate_csv
     generate
     write_cohort_import_csv
-    puts "wrote #{cohort_import_csv_filename}"
+    write_class_import_csv
   end
 
-  def cohort_import_csv_filename
+  def cohort_import_csv_filepath
     Rails.root.join(
-      "tmp/perf-test-cohort-import-#{@organisation.ods_code}-#{@programme.type}.csv"
+      "tmp/perf-test-cohort-import-#{organisation.ods_code}-#{programme.type}.csv"
+    )
+  end
+
+  def class_import_csv_filepath(school:)
+    Rails.root.join(
+      "tmp/perf-test-class-import-#{school.name}-#{school.sessions.first.slug}.csv"
     )
   end
 
   def write_cohort_import_csv
-    CSV.open(cohort_import_csv_filename, "w") do |csv|
+    CSV.open(cohort_import_csv_filepath, "w") do |csv|
       csv << %w[
         CHILD_ADDRESS_LINE_1
         CHILD_ADDRESS_LINE_2
@@ -115,79 +126,72 @@ class GenerateData
     end
   end
 
-  # def write_class_lists_csv
-  #   students
-  #     .group_by(&:school)
-  #     .each do |school, school_students|
-  #       next if school.nil?
+  def write_class_import_csv
+    students
+      .group_by(&:school)
+      .each do |school, school_students|
+        next if school.nil?
 
-  #       CSV.open(
-  #         "scratchpad/perf-test-class-import-#{school.name}#{school.name.parameterize(separator: "_")}.csv",
-  #         "w"
-  #       ) do |csv|
-  #         csv << %w[
-  #           CHILD_POSTCODE
-  #           CHILD_DATE_OF_BIRTH
-  #           CHILD_FIRST_NAME
-  #           CHILD_LAST_NAME
-  #           PARENT_1_EMAIL
-  #           PARENT_1_PHONE
-  #         ]
+        CSV.open(class_import_csv_filepath(school:), "w") do |csv|
+          csv << %w[
+            CHILD_POSTCODE
+            CHILD_DATE_OF_BIRTH
+            CHILD_FIRST_NAME
+            CHILD_LAST_NAME
+            PARENT_1_EMAIL
+            PARENT_1_PHONE
+            PARENT_2_EMAIL
+            PARENT_2_PHONE
+          ]
 
-  #         # remove up to 10 students who have moved out of the area
-  #         # add up to 10 students who have moved from a different school
-  #         students_to_write =
-  #           school_students.shuffle.drop(rand(10)) +
-  #             students.reject { _1.school_id == school.id }.sample(rand(10))
+          school_students.each do |student|
+            csv << [
+              student.address_postcode,
+              student.date_of_birth,
+              student.given_name,
+              student.family_name,
+              student.parents.first&.email,
+              student.parents.first&.phone,
+              student.parents.second&.email,
+              student.parents.second&.phone
+            ]
+          end
+        end
+      end
+  end
 
-  #         students_to_write.each do |student|
-  #           csv << [
-  #             student.address_postcode,
-  #             student.date_of_birth,
-  #             student.given_name,
-  #             student.family_name,
-  #             student.parents.first&.email,
-  #             student.parents.first&.phone
-  #           ]
-  #         end
-  #       end
-  #     end
-  # end
+  def programme_year_groups
+    Programme::YEAR_GROUPS_BY_TYPE[programme.type]
+  end
 
-  def create_student(year_group: nil)
-    year_group ||= (8..11).to_a.sample
-    school = Location.find_by!(urn: urns.sample)
+  def schools_with_year_groups
+    @schools_with_year_groups ||=
+      organisation
+        .locations
+        .includes(:organisation, :sessions)
+        .select { (it.year_groups & programme_year_groups).any? }
+  end
+
+  def build_student(year_group: nil)
+    school = schools_with_year_groups.sample
+    year_group ||= (school.year_groups & programme_year_groups).sample
 
     FactoryBot.build(
       :patient,
       school:,
-      date_of_birth: date_of_birth_for_year(2024, year_group),
-      # organisation:,
-      # home_educated: school.nil? ? [true, false].sample : nil,
+      date_of_birth: date_of_birth_for_year(year_group),
       nhs_number_base: 999_900_000
     )
-    # .tap do |student|
-    #   parents = FactoryBot.build_list(:parent, rand(1..2))
-    #   student.parent_relationships <<
-    #   parents.each do |parent|
-    #     FactoryBot.create(:parent_relationship, parent:, patient: student)
-    #   end
-    # end
   end
 
-  def create_students()
-    # year_8s, year_9s, year_10s, year_11s =
-    #   (8..11).map do |year_group|
-    #     year_size_estimate.times.map do
-    #       create_student(school:, year_group, organisation)
-    #     end
-    #   end
-
-    # [year_8s + year_9s + year_10s + year_11s]
-    @students = 10.times.map { create_student() }
+  def build_students()
+    @students = student_count.times.map { build_student() }
   end
 
-  def date_of_birth_for_year(academic_year, year_group)
+  def date_of_birth_for_year(
+    year_group,
+    academic_year: Date.current.academic_year
+  )
     academic_year = academic_year.to_s
     year_group = year_group.to_i
 
