@@ -33,7 +33,8 @@ class AppCardComponent < ViewComponent::Base
     link_to: nil,
     secondary: false,
     data: false,
-    filter: false
+    filter: false,
+    patient: false
   )
     super
 
@@ -42,6 +43,7 @@ class AppCardComponent < ViewComponent::Base
     @secondary = secondary
     @data = data
     @filter = filter
+    @patient = patient
 
     @feature = (colour.present? && !data) || filter
   end
@@ -57,7 +59,8 @@ class AppCardComponent < ViewComponent::Base
       ("nhsuk-card--clickable" if @link_to.present?),
       ("nhsuk-card--secondary" if @secondary),
       ("app-card--data" if @data),
-      ("app-filters" if @filter)
+      ("app-filters" if @filter),
+      ("app-card--patient" if @patient)
     ].compact.join(" ")
   end
 
