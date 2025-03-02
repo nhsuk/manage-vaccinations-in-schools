@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe AppConsentFormSummaryComponent do
+describe AppConsentFormCardComponent do
   subject { render_inline(component) }
 
   let(:component) { described_class.new(consent_form) }

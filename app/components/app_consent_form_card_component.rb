@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class AppConsentFormSummaryComponent < ViewComponent::Base
+class AppConsentFormCardComponent < ViewComponent::Base
   def initialize(consent_form)
     super
 
@@ -8,31 +8,35 @@ class AppConsentFormSummaryComponent < ViewComponent::Base
   end
 
   def call
-    govuk_summary_list do |summary_list|
-      summary_list.with_row do |row|
-        row.with_key { "Name" }
-        row.with_value { @consent_form.parent_full_name }
-      end
+    render AppCardComponent.new do |card|
+      card.with_heading { "Consent response" }
 
-      summary_list.with_row do |row|
-        row.with_key { "Relationship" }
-        row.with_value { @consent_form.parent_relationship_label }
-      end
-
-      summary_list.with_row do |row|
-        row.with_key { "Contact" }
-        row.with_value { contact_details }
-      end
-
-      summary_list.with_row do |row|
-        row.with_key { "Response" }
-        row.with_value { render AppTimestampedEntryComponent.new(**response) }
-      end
-
-      if show_refusal_row?
+      govuk_summary_list do |summary_list|
         summary_list.with_row do |row|
-          row.with_key { "Refusal reason" }
-          row.with_value { refusal_reason_details }
+          row.with_key { "Name" }
+          row.with_value { @consent_form.parent_full_name }
+        end
+
+        summary_list.with_row do |row|
+          row.with_key { "Relationship" }
+          row.with_value { @consent_form.parent_relationship_label }
+        end
+
+        summary_list.with_row do |row|
+          row.with_key { "Contact" }
+          row.with_value { contact_details }
+        end
+
+        summary_list.with_row do |row|
+          row.with_key { "Response" }
+          row.with_value { render AppTimestampedEntryComponent.new(**response) }
+        end
+
+        if show_refusal_row?
+          summary_list.with_row do |row|
+            row.with_key { "Refusal reason" }
+            row.with_value { refusal_reason_details }
+          end
         end
       end
     end
