@@ -176,12 +176,21 @@ class GenerateData
     school = schools_with_year_groups.sample
     year_group ||= (school.year_groups & programme_year_groups).sample
 
-    FactoryBot.build(
-      :patient,
-      school:,
-      date_of_birth: date_of_birth_for_year(year_group),
-      nhs_number_base: 999_900_000
-    )
+    FactoryBot
+      .build(
+        :patient,
+        school:,
+        date_of_birth: date_of_birth_for_year(year_group),
+        nhs_number_base: 999_900_000
+      )
+      .tap do |patient|
+        patient.parents =
+          FactoryBot.build_list(:parent, 2, family_name: patient.family_name)
+        patient.parent_relationships =
+          patient.parents.map do
+            FactoryBot.build(:parent_relationship, parent: it)
+          end
+      end
   end
 
   def build_patients()
