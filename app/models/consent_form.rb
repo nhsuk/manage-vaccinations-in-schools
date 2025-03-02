@@ -386,6 +386,10 @@ class ConsentForm < ApplicationRecord
     ).contact_method_description
   end
 
+  def parent_label
+    "#{parent_full_name} (#{parent_relationship_label})"
+  end
+
   def parent_relationship_label
     ParentRelationship.new(
       type: parent_relationship_type,

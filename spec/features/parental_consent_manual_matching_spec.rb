@@ -79,7 +79,7 @@ describe "Parental consent manual matching" do
   end
 
   def when_i_choose_a_consent_response
-    click_on "Match with record"
+    click_on "Match"
   end
 
   def then_i_am_on_the_consent_matching_page

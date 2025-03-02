@@ -151,7 +151,7 @@ describe "Parental consent create patient" do
 
   def then_they_see_the_consent_form
     expect(page).to have_content(@child.full_name)
-    expect(page).to have_link("Match with record")
+    expect(page).to have_link("Match")
     expect(page).to have_link("Create record")
   end
 

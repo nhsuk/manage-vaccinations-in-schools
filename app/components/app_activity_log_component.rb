@@ -92,8 +92,7 @@ class AppActivityLogComponent < ViewComponent::Base
         {
           title: "Consent #{original_response}",
           at: consent_form.recorded_at,
-          by:
-            "#{consent_form.parent_full_name} (#{consent_form.parent_relationship_label})",
+          by: consent_form.parent_label,
           programmes: programmes_for(consent)
         }
       else
