@@ -12,29 +12,8 @@
 <% end %>
 
 <%= render AppCompareConsentFormAndPatientComponent.new(
-      heading: "Compare details",
       consent_form: @consent_form,
       patient: @patient,
     ) %>
-
-<%= render AppCardComponent.new do |c|
-      c.with_heading { "Consent response" }
-      render AppConsentFormSummaryComponent.new(
-        name: @consent_form.parent_full_name,
-        relationship: @consent_form.parent_relationship_label,
-        contact: {
-          phone: @consent_form.parent_phone,
-          email: @consent_form.parent_email,
-        },
-        response: {
-          text: @consent_form.summary_with_route,
-          timestamp: @consent_form.recorded_at,
-        },
-        refusal_reason: {
-          reason: @consent_form.human_enum_name(:reason).presence,
-          notes: @consent_form.reason_notes,
-        },
-      )
-    end %>
 
 <%= govuk_button_to "Link response with record", match_consent_form_path(@consent_form, @patient) %>

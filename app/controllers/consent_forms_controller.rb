@@ -24,7 +24,7 @@ class ConsentFormsController < ApplicationController
   end
 
   def edit_match
-    render :match
+    render :match, layout: "full"
   end
 
   def update_match
@@ -128,6 +128,7 @@ class ConsentFormsController < ApplicationController
   def set_patient
     @patient =
       policy_scope(Patient).includes(
+        parent_relationships: :parent,
         sessions_for_current_academic_year: :programmes
       ).find(params[:patient_id])
   end
