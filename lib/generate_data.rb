@@ -38,26 +38,26 @@ class GenerateData
               :organisation,
               :programme,
               :urns,
-              :student_count,
-              :students
+              :patient_count,
+              :patients
 
   def initialize(
     ods_code: "A9A5A",
     programme: "hpv",
     urns: nil,
-    student_count: 10
+    patient_count: 10
   )
     @organisation = Organisation.find_by(ods_code:)
     @programme = Programme.find_by(type: programme)
     @urns =
       urns ||
         @organisation.locations.select { it.urn.present? }.sample(3).pluck(:urn)
-    @student_count = student_count
-    @students = nil
+    @patient_count = patient_count
+    @patients = nil
   end
 
   def generate
-    @students ||= create_students
+    @patients ||= build_patients
   end
 
   def generate_csv
@@ -101,35 +101,35 @@ class GenerateData
         CHILD_SCHOOL_URN
       ]
 
-      students.each do |student|
+      patients.each do |patient|
         csv << [
-          student.address_line_1,
-          student.address_line_2,
-          student.address_postcode,
-          student.address_town,
-          student.preferred_given_name,
-          student.date_of_birth,
-          student.given_name,
-          student.family_name,
-          student.nhs_number,
-          student.parents.first&.email,
-          student.parents.first&.full_name,
-          student.parents.first&.phone,
-          student.parent_relationships.first&.type,
-          student.parents.second&.email,
-          student.parents.second&.full_name,
-          student.parents.second&.phone,
-          student.parent_relationships.second&.type,
-          student.school.urn
+          patient.address_line_1,
+          patient.address_line_2,
+          patient.address_postcode,
+          patient.address_town,
+          patient.preferred_given_name,
+          patient.date_of_birth,
+          patient.given_name,
+          patient.family_name,
+          patient.nhs_number,
+          patient.parents.first&.email,
+          patient.parents.first&.full_name,
+          patient.parents.first&.phone,
+          patient.parent_relationships.first&.type,
+          patient.parents.second&.email,
+          patient.parents.second&.full_name,
+          patient.parents.second&.phone,
+          patient.parent_relationships.second&.type,
+          patient.school.urn
         ]
       end
     end
   end
 
   def write_class_import_csv
-    students
+    patients
       .group_by(&:school)
-      .each do |school, school_students|
+      .each do |school, school_patients|
         next if school.nil?
 
         CSV.open(class_import_csv_filepath(school:), "w") do |csv|
@@ -144,16 +144,16 @@ class GenerateData
             PARENT_2_PHONE
           ]
 
-          school_students.each do |student|
+          school_patients.each do |patient|
             csv << [
-              student.address_postcode,
-              student.date_of_birth,
-              student.given_name,
-              student.family_name,
-              student.parents.first&.email,
-              student.parents.first&.phone,
-              student.parents.second&.email,
-              student.parents.second&.phone
+              patient.address_postcode,
+              patient.date_of_birth,
+              patient.given_name,
+              patient.family_name,
+              patient.parents.first&.email,
+              patient.parents.first&.phone,
+              patient.parents.second&.email,
+              patient.parents.second&.phone
             ]
           end
         end
@@ -172,7 +172,7 @@ class GenerateData
         .select { (it.year_groups & programme_year_groups).any? }
   end
 
-  def build_student(year_group: nil)
+  def build_patient(year_group: nil)
     school = schools_with_year_groups.sample
     year_group ||= (school.year_groups & programme_year_groups).sample
 
@@ -184,8 +184,8 @@ class GenerateData
     )
   end
 
-  def build_students()
-    @students = student_count.times.map { build_student() }
+  def build_patients()
+    @patients = patient_count.times.map { build_patient() }
   end
 
   def date_of_birth_for_year(
