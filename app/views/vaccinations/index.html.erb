@@ -17,7 +17,7 @@
     <p>
       You are currently using <%= @todays_batch.vaccine.brand %> batch
       <span class="app-u-monospace"><%= @todays_batch.name %></span>.
-      <%= link_to session_batch_path(@session) do %>
+      <%= link_to edit_session_batch_path(@session, @programme) do %>
         Change<span class="nhsuk-u-visually-hidden"> the default batch</span>
       <% end %>
     </p>

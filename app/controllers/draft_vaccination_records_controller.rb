@@ -40,7 +40,7 @@ class DraftVaccinationRecordsController < ApplicationController
     when :outcome
       handle_outcome
     when :batch
-      update_default_batch_for_today
+      handle_batch
     when :confirm
       handle_confirm
     end
@@ -87,6 +87,15 @@ class DraftVaccinationRecordsController < ApplicationController
     # TODO: Require the nurse to specify the dose sequence.
     @draft_vaccination_record.dose_sequence ||=
       1 if @draft_vaccination_record.administered?
+  end
+
+  def handle_batch
+    if params.dig(:draft_vaccination_record, :todays_batch).present? &&
+         update_params[:batch_id].in?(
+           params[:draft_vaccination_record][:todays_batch]
+         )
+      self.todays_batch = policy_scope(Batch).find(update_params[:batch_id])
+    end
   end
 
   def handle_confirm
@@ -229,14 +238,5 @@ class DraftVaccinationRecordsController < ApplicationController
       else
         previous_wizard_path
       end
-  end
-
-  def update_default_batch_for_today
-    if params.dig(:draft_vaccination_record, :todays_batch).present? &&
-         update_params[:batch_id].in?(
-           params[:draft_vaccination_record][:todays_batch]
-         )
-      self.todays_batch_id = update_params[:batch_id]
-    end
   end
 end
