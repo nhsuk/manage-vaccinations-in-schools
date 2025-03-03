@@ -119,7 +119,7 @@ jobs:
         working-directory: terraform
     steps:
       - uses: actions/checkout@v4
-      - uses: hashicorp/setup-terraform@v1
+      - uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: 1.10.5
       - run: terraform init -backend=false
