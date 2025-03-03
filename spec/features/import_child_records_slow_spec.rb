@@ -69,7 +69,7 @@ describe "Import child records" do
   def and_i_should_see_the_patients_for_page_two
     expect(page).to have_content("1000 children")
     expect(page).to have_content("Full nameNHS numberDate of birthPostcode")
-    expect(page).to have_content("Elijah Christiansen")
+    expect(page).to have_content("Fonda Schowalter")
   end
 
   def then_i_should_see_the_upload
@@ -90,7 +90,7 @@ describe "Import child records" do
   end
 
   def and_i_should_see_the_pagination_buttons
-    expect(page).to have_content("12345⋯50")
+    expect(page).to have_content("12345⋯20")
     expect(page).to have_content("Next page")
   end
 
