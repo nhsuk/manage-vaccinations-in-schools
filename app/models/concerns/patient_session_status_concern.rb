@@ -152,8 +152,6 @@ module PatientSessionStatusConcern
     end
 
     def next_step(programme:)
-      return if programme.doubles? && !Flipper.enabled?(:vaccinate_doubles)
-
       if consent_given_triage_needed?(programme:) ||
            triaged_kept_in_triage?(programme:)
         :triage
