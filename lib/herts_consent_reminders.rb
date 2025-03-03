@@ -15,7 +15,7 @@ module HertsConsentReminders
   REMINDERS_BEFORE_SESSION_DAYS = [7, 3].freeze
 
   def self.sessions_with_reminders_due(on_date: Date.current, ods_code: "RY4")
-    reminder_dates = REMINDERS_BEFORE_SESSION_DAYS.map { on_date + it }
+    reminder_dates = REMINDERS_BEFORE_SESSION_DAYS.map { on_date.to_date + it }
 
     Organisation
       .find_by(ods_code:)
@@ -30,7 +30,7 @@ module HertsConsentReminders
 
     filter_patients_to_send_consent(
       session,
-      on_date:
+      on_date: on_date.to_date
     ).each do |patient, programme, type|
       ConsentNotification.create_and_send!(
         patient:,
@@ -51,7 +51,7 @@ module HertsConsentReminders
                    patient:,
                    programme:,
                    session:,
-                   on_date:
+                   on_date: on_date.to_date
                  )
             next
           end
@@ -87,7 +87,7 @@ module HertsConsentReminders
     return false if reminders_sent >= REMINDERS_BEFORE_SESSION_DAYS.count
 
     next_reminder_date = next_reminder_for_session(session, reminders_sent)
-    on_date >= next_reminder_date
+    on_date.to_date >= next_reminder_date
   end
 
   def self.next_reminder_for_session(session, reminders_sent)
