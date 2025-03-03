@@ -13,23 +13,20 @@ class AppConsentFormCardComponent < ViewComponent::Base
 
       govuk_summary_list do |summary_list|
         summary_list.with_row do |row|
-          row.with_key { "Name" }
-          row.with_value { @consent_form.parent_full_name }
+          row.with_key { "Programmes" }
+          row.with_value do
+            render AppProgrammeTagsComponent.new(@consent_form.programmes)
+          end
         end
 
         summary_list.with_row do |row|
-          row.with_key { "Relationship" }
-          row.with_value { @consent_form.parent_relationship.label }
-        end
-
-        summary_list.with_row do |row|
-          row.with_key { "Contact" }
-          row.with_value { contact_details }
-        end
-
-        summary_list.with_row do |row|
-          row.with_key { "Response" }
-          row.with_value { render AppTimestampedEntryComponent.new(**response) }
+          row.with_key { "Decision" }
+          row.with_value do
+            render AppTimestampedEntryComponent.new(
+                     text: @consent_form.summary_with_route,
+                     timestamp: @consent_form.recorded_at
+                   )
+          end
         end
 
         if show_refusal_row?
@@ -44,25 +41,11 @@ class AppConsentFormCardComponent < ViewComponent::Base
 
   private
 
-  def response
-    {
-      text: @consent_form.summary_with_route,
-      timestamp: @consent_form.recorded_at
-    }
-  end
-
   def refusal_reason
     {
       reason: @consent_form.human_enum_name(:reason).presence,
       notes: @consent_form.reason_notes
     }
-  end
-
-  def contact_details
-    safe_join(
-      [@consent_form.parent_phone, @consent_form.parent_email].compact_blank,
-      tag.br
-    )
   end
 
   def show_refusal_row?

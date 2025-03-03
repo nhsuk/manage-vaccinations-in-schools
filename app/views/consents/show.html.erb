@@ -39,5 +39,5 @@
 <% end %>
 
 <% if @consent.response_given? %>
-  <%= render AppHealthAnswersCardComponent.new(@consent, heading: "Answers to health questions") %>
+  <%= render AppHealthAnswersCardComponent.new(@consent) %>
 <% end %>

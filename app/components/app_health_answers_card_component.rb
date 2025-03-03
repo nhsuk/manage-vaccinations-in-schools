@@ -26,7 +26,7 @@ class AppHealthAnswersCardComponent < ViewComponent::Base
     <% end %>
   ERB
 
-  def initialize(objects, heading:)
+  def initialize(objects, heading: "Answers to health questions")
     super
 
     @objects = objects.is_a?(Array) ? objects : [objects]

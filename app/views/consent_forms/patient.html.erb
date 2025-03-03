@@ -14,5 +14,7 @@
 
 <%= render AppConsentFormCardComponent.new(@consent_form) %>
 
+<%= render AppHealthAnswersCardComponent.new(@consent_form) %>
+
 <%= govuk_button_to "Create a new record from response",
                     patient_consent_form_path(@consent_form) %>
