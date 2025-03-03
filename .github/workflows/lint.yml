@@ -64,12 +64,21 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .tool-versions
+          cache: yarn
+      - uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
       - uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: 1.10.5
       - uses: actions/setup-python@v5
         with:
           python-version: "3.13"
+      - uses: terraform-linters/setup-tflint@v4
+      - run: yarn install --immutable --immutable-cache --check-cache
       - name: Install pre-commit
         run: pip install pre-commit
       - name: Run pre-commit

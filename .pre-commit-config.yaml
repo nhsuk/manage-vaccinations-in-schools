@@ -25,14 +25,13 @@ repos:
       - id: prettier
         name: Prettier
         entry: |
-          yarn add --immutable --immutable-cache --check-cache
           yarn prettier --check --ignore-unknown '**/*'
         language: system
         pass_filenames: false
         stages: [manual]
       - id: rubocop
         name: Rubocop
-        entry: bin/rubocop --autocorrect-all $*
+        entry: bin/bundle exec rubocop --autocorrect-all $*
         language: system
         files: ^app/
         types: [ruby]
