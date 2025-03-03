@@ -37,7 +37,7 @@
     <p class="app-patients__no-results nhsuk-caption-m">No children</p>
   </div>
 <% else %>
-  <%= render AppPatientTableComponent.new(@patients, current_user:, heading: @heading) %>
+  <%= render AppPatientTableComponent.new(@patients, current_user:, count: @pagy.count) %>
 <% end %>
 
 <%= govuk_pagination(pagy: @pagy) %>

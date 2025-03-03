@@ -25,12 +25,6 @@ class PatientsController < ApplicationController
 
     @pagy, @patients = pagy(scope.order_by_name)
 
-    @heading = [
-      I18n.t("children", count: @pagy.count),
-      @filter_name.present? ? "matching “#{@filter_name}”" : nil,
-      @filter_missing_nhs_number ? "without an NHS number" : nil
-    ].compact.join(" ")
-
     render layout: "full", status: request.post? ? :created : :ok
   end
 

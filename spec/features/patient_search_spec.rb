@@ -79,7 +79,7 @@ describe "Patient search" do
   end
 
   def and_i_see_the_search_count
-    expect(page).to have_content "2 children matching “cas”"
+    expect(page).to have_content("2 children")
   end
 
   def when_i_clear_the_search
