@@ -63,7 +63,7 @@ describe ImmunisationImportRow do
           /You need to record whether the child was vaccinated or not/
         )
         expect(immunisation_import_row.errors[:programme_name]).to include(
-          "Enter a programme administered by this organisation"
+          "This programme is not available in this session"
         )
       end
     end
@@ -100,7 +100,7 @@ describe ImmunisationImportRow do
       it "has errors" do
         expect(immunisation_import_row).to be_invalid
         expect(immunisation_import_row.errors[:vaccine_given]).to eq(
-          ["Enter a valid vaccine, eg Gardasil9."]
+          ["This vaccine is not available in this session"]
         )
       end
     end
@@ -351,7 +351,7 @@ describe ImmunisationImportRow do
       it "has errors" do
         expect(immunisation_import_row).to be_invalid
         expect(immunisation_import_row.errors[:programme_name]).to eq(
-          ["Enter a programme administered by this organisation"]
+          ["This programme is not available in this session"]
         )
       end
     end
