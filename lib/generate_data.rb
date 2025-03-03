@@ -1,33 +1,4 @@
-#!/usr/bin/env ruby
-
-## Table name: patients
-#
-#  id                        :bigint           not null, primary key
-#  address_line_1            :string
-#  address_line_2            :string
-#  address_postcode          :string
-#  address_town              :string
-#  birth_academic_year       :integer          not null
-#  date_of_birth             :date             not null
-#  date_of_death             :date
-#  date_of_death_recorded_at :datetime
-#  family_name               :string           not null
-#  gender_code               :integer          default("not_known"), not null
-#  given_name                :string           not null
-#  home_educated             :boolean
-#  invalidated_at            :datetime
-#  nhs_number                :string
-#  pending_changes           :jsonb            not null
-#  preferred_family_name     :string
-#  preferred_given_name      :string
-#  registration              :string
-#  restricted_at             :datetime
-#  updated_from_pds_at       :datetime
-#  created_at                :datetime         not null
-#  updated_at                :datetime         not null
-#  gp_practice_id            :bigint
-#  organisation_id           :bigint
-#  school_id                 :bigint
+# frozen_string_literal: true
 
 require "csv"
 
@@ -54,6 +25,7 @@ class GenerateData
         @organisation.locations.select { it.urn.present? }.sample(3).pluck(:urn)
     @patient_count = patient_count
     @patients = nil
+    @nhs_number_prefix = "99"
   end
 
   def generate
@@ -180,8 +152,7 @@ class GenerateData
       .build(
         :patient,
         school:,
-        date_of_birth: date_of_birth_for_year(year_group),
-        nhs_number_base: 999_900_000
+        date_of_birth: date_of_birth_for_year(year_group)
       )
       .tap do |patient|
         patient.parents =
@@ -194,7 +165,7 @@ class GenerateData
   end
 
   def build_patients()
-    @patients = patient_count.times.map { build_patient() }
+    @patients = patient_count.times.map { build_patient }
   end
 
   def date_of_birth_for_year(
