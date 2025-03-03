@@ -40,6 +40,7 @@
 
 class Consent < ApplicationRecord
   include Invalidatable
+  include HasHealthAnswers
 
   audited
 
@@ -80,9 +81,7 @@ class Consent < ApplicationRecord
          if: -> { response_refused? || withdrawn? }
        }
 
-  serialize :health_answers, coder: HealthAnswer::ArraySerializer
-
-  encrypts :health_answers, :notes
+  encrypts :notes
 
   validates :notes,
             presence: {
@@ -127,14 +126,6 @@ class Consent < ApplicationRecord
 
   def parent_relationship
     patient.parent_relationships.find { _1.parent_id == parent_id }
-  end
-
-  def who_responded
-    if via_self_consent?
-      "Child (Gillick competent)"
-    else
-      (parent_relationship || parent).label
-    end
   end
 
   def health_answers_require_follow_up?

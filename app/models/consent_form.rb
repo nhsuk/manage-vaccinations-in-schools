@@ -63,6 +63,7 @@ class ConsentForm < ApplicationRecord
   include AgeConcern
   include Archivable
   include FullNameConcern
+  include HasHealthAnswers
   include WizardStepConcern
 
   before_save :reset_unused_fields
@@ -117,15 +118,12 @@ class ConsentForm < ApplicationRecord
 
   enum :education_setting, { school: 0, home: 1, none: 2 }, prefix: true
 
-  serialize :health_answers, coder: HealthAnswer::ArraySerializer
-
   encrypts :address_line_1,
            :address_line_2,
            :address_postcode,
            :address_town,
            :family_name,
            :given_name,
-           :health_answers,
            :parent_contact_method_other_details,
            :parent_email,
            :parent_full_name,
