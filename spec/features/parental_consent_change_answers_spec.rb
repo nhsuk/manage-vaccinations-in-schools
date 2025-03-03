@@ -35,6 +35,10 @@ RSpec.feature "Parental consent change answers" do
     then_i_see_the_consent_form_confirmation_page
     and_i_see_the_answer_i_changed_is_yes
 
+    when_i_click_back
+    then_i_see_the_last_health_question
+    and_i_answer_no_to_the_last_health_question
+
     when_i_click_the_confirm_button
     then_i_see_the_needs_triage_confirmation_page
   end
@@ -205,6 +209,19 @@ RSpec.feature "Parental consent change answers" do
     expect(page).to have_content("Yes – He has had asthma since he was 2")
     expect(page).to have_content("Yes – Follow up details")
     expect(page).to have_content("Yes – Even more follow up details")
+  end
+
+  def when_i_click_back
+    click_link "Back"
+  end
+
+  def then_i_see_the_last_health_question
+    expect(page).to have_content("Does you child take regular aspirin?")
+  end
+
+  def and_i_answer_no_to_the_last_health_question
+    choose "No"
+    click_button "Continue"
   end
 
   def when_i_change_my_consent_to_refused

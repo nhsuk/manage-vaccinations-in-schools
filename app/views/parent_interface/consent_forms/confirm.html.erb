@@ -1,8 +1,5 @@
 <% content_for :before_main do %>
-  <%= render AppBacklinkComponent.new(
-        parent_interface_consent_form_edit_path(@consent_form, :consent),
-        name: "edit consent page",
-      ) %>
+  <%= render AppBacklinkComponent.new(@back_link_path, name: "edit consent page") %>
 <% end %>
 
 <% change_link = Proc.new do |attr, params = {}|

@@ -36,6 +36,19 @@ module ParentInterface
     end
 
     def confirm
+      previous_step = t(@consent_form.wizard_steps.last, scope: :wicked)
+
+      @back_link_path =
+        if previous_step == "health-question"
+          question_number = @consent_form.each_health_answer.to_a.last&.id
+          parent_interface_consent_form_edit_path(
+            @consent_form,
+            previous_step,
+            question_number:
+          )
+        else
+          parent_interface_consent_form_edit_path(@consent_form, previous_step)
+        end
     end
 
     def record
