@@ -1,6 +1,6 @@
 <div class="app-grid-row">
   <div class="app-grid-column-filters">
-    <%= render AppCardComponent.new(filter: true) do |card| %>
+    <%= render AppCardComponent.new(filters: true) do |card| %>
       <% card.with_heading { "Find children" } %>
 
       <%= form_with url: form_url,

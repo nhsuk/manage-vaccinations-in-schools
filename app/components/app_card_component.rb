@@ -33,7 +33,8 @@ class AppCardComponent < ViewComponent::Base
     link_to: nil,
     secondary: false,
     data: false,
-    filter: false
+    patient: false,
+    filters: false
   )
     super
 
@@ -41,9 +42,10 @@ class AppCardComponent < ViewComponent::Base
     @colour = colour
     @secondary = secondary
     @data = data
-    @filter = filter
+    @patient = patient
+    @filters = filters
 
-    @feature = (colour.present? && !data) || filter
+    @feature = (colour.present? && !data) || filters
   end
 
   private
@@ -57,7 +59,8 @@ class AppCardComponent < ViewComponent::Base
       ("nhsuk-card--clickable" if @link_to.present?),
       ("nhsuk-card--secondary" if @secondary),
       ("app-card--data" if @data),
-      ("app-filters" if @filter)
+      ("app-card--patient" if @patient),
+      ("app-filters" if @filters)
     ].compact.join(" ")
   end
 
@@ -73,7 +76,7 @@ class AppCardComponent < ViewComponent::Base
   def heading_size
     if @data
       "xs"
-    elsif @secondary || @filter
+    elsif @feature || @secondary || @patient
       "s"
     else
       "m"
