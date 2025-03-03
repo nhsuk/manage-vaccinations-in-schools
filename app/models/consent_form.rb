@@ -377,22 +377,22 @@ class ConsentForm < ApplicationRecord
     "#{human_enum_name(:response).capitalize} (online)"
   end
 
-  def parent_contact_method_description
+  def parent
     Parent.new(
+      full_name: parent_full_name,
+      email: parent_email,
+      phone: parent_phone,
       contact_method_type: parent_contact_method_type,
       contact_method_other_details: parent_contact_method_other_details
-    ).contact_method_description
+    )
   end
 
-  def parent_label
-    "#{parent_full_name} (#{parent_relationship_label})"
-  end
-
-  def parent_relationship_label
+  def parent_relationship
     ParentRelationship.new(
+      parent:,
       type: parent_relationship_type,
       other_name: parent_relationship_other_name
-    ).label
+    )
   end
 
   def match_with_patient!(patient, current_user:)
@@ -458,6 +458,10 @@ class ConsentForm < ApplicationRecord
   end
 
   private
+
+  def via_self_consent?
+    false
+  end
 
   def academic_year
     created_at.to_date.academic_year

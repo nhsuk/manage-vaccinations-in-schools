@@ -19,7 +19,7 @@ class AppConsentFormCardComponent < ViewComponent::Base
 
         summary_list.with_row do |row|
           row.with_key { "Relationship" }
-          row.with_value { @consent_form.parent_relationship_label }
+          row.with_value { @consent_form.parent_relationship.label }
         end
 
         summary_list.with_row do |row|

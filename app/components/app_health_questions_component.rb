@@ -30,6 +30,6 @@ class AppHealthQuestionsComponent < ViewComponent::Base
   end
 
   def health_answers
-    ConsolidatedHealthAnswers.new(consents: @consents).to_h
+    ConsolidatedHealthAnswers.new(@consents).to_h
   end
 end

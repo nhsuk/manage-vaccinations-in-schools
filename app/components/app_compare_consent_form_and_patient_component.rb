@@ -93,7 +93,7 @@ class AppCompareConsentFormAndPatientComponent < ViewComponent::Base
         value: {
           text:
             helpers.format_parent_with_relationship(
-              consent_form_parent_relationship
+              consent_form.parent_relationship
             )
         }
       }
@@ -177,21 +177,6 @@ class AppCompareConsentFormAndPatientComponent < ViewComponent::Base
   def school_match?
     consent_form.home_educated == patient.home_educated &&
       consent_form.school == patient.school
-  end
-
-  def consent_form_parent_relationship
-    parent =
-      Parent.new(
-        full_name: consent_form.parent_full_name,
-        email: consent_form.parent_email,
-        phone: consent_form.parent_phone
-      )
-
-    ParentRelationship.new(
-      parent:,
-      type: consent_form.parent_relationship_type,
-      other_name: consent_form.parent_relationship_other_name
-    )
   end
 
   def highlight(text, opts)
