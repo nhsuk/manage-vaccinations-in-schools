@@ -292,7 +292,7 @@ en:
               equal_to: Enter an organisation code that matches the current organisation.
             programme_name:
               blank: Enter a programme
-              inclusion: Enter a programme administered by this organisation
+              inclusion: This programme is not available in this session
             reason:
               blank: Enter a valid reason
             school_name:
@@ -307,7 +307,8 @@ en:
             uuid:
               inclusion: Enter an existing record
             vaccine_given:
-              inclusion: Enter a valid vaccine, eg Gardasil9.
+              blank: Enter a vaccine
+              inclusion: This vaccine is not available in this session
         import_duplicate_form:
           attributes:
             apply_changes:
