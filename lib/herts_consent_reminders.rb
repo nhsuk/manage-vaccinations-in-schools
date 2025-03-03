@@ -12,7 +12,7 @@
 # will be sent notifications.
 
 module HertsConsentReminders
-  REMINDERS_BEFORE_SESSION_DAYS = [14, 7, 3].freeze
+  REMINDERS_BEFORE_SESSION_DAYS = [7, 3].freeze
 
   def self.sessions_with_reminders_due(on_date: Date.current, ods_code: "RY4")
     reminder_dates = REMINDERS_BEFORE_SESSION_DAYS.map { on_date + it }
