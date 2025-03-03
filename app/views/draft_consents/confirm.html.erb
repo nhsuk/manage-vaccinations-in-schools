@@ -37,10 +37,7 @@
 <% end %>
 
 <% if @draft_consent.response_given? %>
-  <%= render AppCardComponent.new do |card| %>
-    <% card.with_heading { "Health questions" } %>
-    <%= render AppHealthQuestionsComponent.new(consents: [@draft_consent]) %>
-  <% end %>
+  <%= render AppHealthAnswersCardComponent.new(@draft_consent, heading: "Health questions") %>
 <% end %>
 
 <% if @draft_consent.response_given? && @triage&.status.present? %>
