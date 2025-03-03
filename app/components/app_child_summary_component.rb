@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-class AppPatientSummaryComponent < ViewComponent::Base
-  def initialize(patient, change_links: {})
+class AppChildSummaryComponent < ViewComponent::Base
+  def initialize(child, change_links: {})
     super
 
-    @patient = patient
+    @child = child
     @change_links = change_links
   end
 
@@ -25,7 +25,7 @@ class AppPatientSummaryComponent < ViewComponent::Base
         row.with_key { "Full name" }
         row.with_value { format_full_name }
       end
-      if @patient.has_preferred_name? || @patient.preferred_full_name_changed?
+      if @child.has_preferred_name? || @child.preferred_full_name_changed?
         summary_list.with_row do |row|
           row.with_key { "Known as" }
           row.with_value { format_preferred_full_name }
@@ -35,17 +35,19 @@ class AppPatientSummaryComponent < ViewComponent::Base
         row.with_key { "Date of birth" }
         row.with_value { format_date_of_birth }
       end
-      if @patient.deceased?
+      if @child.try(:deceased?)
         summary_list.with_row do |row|
           row.with_key { "Date of death" }
           row.with_value { format_date_of_death }
         end
       end
-      summary_list.with_row do |row|
-        row.with_key { "Gender" }
-        row.with_value { format_gender_code }
+      if @child.respond_to?(:gender_code)
+        summary_list.with_row do |row|
+          row.with_key { "Gender" }
+          row.with_value { format_gender_code }
+        end
       end
-      unless @patient.restricted?
+      unless @child.try(:restricted?)
         summary_list.with_row do |row|
           row.with_key { "Address" }
           row.with_value { format_address }
@@ -55,11 +57,13 @@ class AppPatientSummaryComponent < ViewComponent::Base
         row.with_key { "School" }
         row.with_value { format_school }
       end
-      summary_list.with_row do |row|
-        row.with_key { "Year group" }
-        row.with_value { format_year_group }
+      if @child.respond_to?(:year_group)
+        summary_list.with_row do |row|
+          row.with_key { "Year group" }
+          row.with_value { format_year_group }
+        end
       end
-      if (gp_practice = @patient.gp_practice)
+      if (gp_practice = @child.try(:gp_practice))
         summary_list.with_row do |row|
           row.with_key { "GP surgery" }
           row.with_value { gp_practice.name }
@@ -71,65 +75,59 @@ class AppPatientSummaryComponent < ViewComponent::Base
   private
 
   def format_nhs_number
-    highlight_if(
-      helpers.patient_nhs_number(@patient),
-      @patient.nhs_number_changed?
-    )
+    highlight_if(helpers.patient_nhs_number(@child), @child.nhs_number_changed?)
   end
 
   def format_full_name
     highlight_if(
-      @patient.full_name,
-      @patient.given_name_changed? || @patient.family_name_changed?
+      @child.full_name,
+      @child.given_name_changed? || @child.family_name_changed?
     )
   end
 
   def format_preferred_full_name
     highlight_if(
-      @patient.preferred_full_name,
-      @patient.preferred_full_name_changed?
+      @child.preferred_full_name,
+      @child.preferred_full_name_changed?
     )
   end
 
   def format_date_of_birth
     highlight_if(
-      helpers.patient_date_of_birth(@patient),
-      @patient.date_of_birth_changed?
+      helpers.patient_date_of_birth(@child),
+      @child.date_of_birth_changed?
     )
   end
 
   def format_date_of_death
     highlight_if(
-      @patient.date_of_death.to_fs(:long),
-      @patient.date_of_death_changed?
+      @child.date_of_death.to_fs(:long),
+      @child.date_of_death_changed?
     )
   end
 
   def format_gender_code
-    highlight_if(
-      @patient.gender_code.to_s.humanize,
-      @patient.gender_code_changed?
-    )
+    highlight_if(@child.gender_code.to_s.humanize, @child.gender_code_changed?)
   end
 
   def format_address
     highlight_if(
-      helpers.format_address_multi_line(@patient),
-      @patient.address_changed?
+      helpers.format_address_multi_line(@child),
+      @child.address_changed?
     )
   end
 
   def format_school
     highlight_if(
-      helpers.patient_school(@patient),
-      @patient.school_id_changed? || @patient.home_educated_changed?
+      helpers.patient_school(@child),
+      @child.school_id_changed? || @child.home_educated_changed?
     )
   end
 
   def format_year_group
     highlight_if(
-      helpers.patient_year_group(@patient),
-      @patient.year_group_changed? || @patient.registration_changed?
+      helpers.patient_year_group(@child),
+      @child.year_group_changed? || @child.registration_changed?
     )
   end
 

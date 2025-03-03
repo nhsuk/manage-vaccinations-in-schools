@@ -5,25 +5,25 @@ class AppPatientCardComponent < ViewComponent::Base
     <%= render AppCardComponent.new do |card| %>
       <% card.with_heading { "Child record" } %>
 
-      <% if @patient.date_of_death.present? %>
+      <% if patient.date_of_death.present? %>
         <%= render AppStatusComponent.new(
           text: "Record updated with child’s date of death"
         ) %>
       <% end %>
       
-      <% if @patient.invalidated? %>
+      <% if patient.invalidated? %>
         <%= render AppStatusComponent.new(
           text: "Record flagged as invalid"
         ) %>
       <% end %>
       
-      <% if @patient.restricted? %>
+      <% if patient.restricted? %>
         <%= render AppStatusComponent.new(
           text: "Record flagged as sensitive"
         ) %>
       <% end %>
 
-      <%= render AppPatientSummaryComponent.new(patient) %>
+      <%= render AppChildSummaryComponent.new(patient) %>
 
       <% unless patient.restricted? %>
         <% parent_relationships.each do |parent_relationship| %>

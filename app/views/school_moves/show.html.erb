@@ -19,14 +19,14 @@
   <div class="nhsuk-grid-column-one-half">
     <%= render AppCardComponent.new(colour: "blue") do |card| %>
       <% card.with_heading { "#{@school_move.human_enum_name(:source)} record" } %>
-      <%= render AppPatientSummaryComponent.new(@patient_with_changes) %>
+      <%= render AppChildSummaryComponent.new(@patient_with_changes) %>
     <% end %>
   </div>
 
   <div class="nhsuk-grid-column-one-half">
     <%= render AppCardComponent.new(colour: "blue") do |card| %>
       <% card.with_heading { "Child record" } %>
-      <%= render AppPatientSummaryComponent.new(@patient) %>
+      <%= render AppChildSummaryComponent.new(@patient) %>
     <% end %>
   </div>
 </div>

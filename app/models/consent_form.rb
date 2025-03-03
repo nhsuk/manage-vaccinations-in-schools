@@ -433,6 +433,10 @@ class ConsentForm < ApplicationRecord
     education_setting_home?
   end
 
+  def home_educated_changed?
+    education_setting_changed?
+  end
+
   def chosen_programmes
     return [] if consent_refused?
 

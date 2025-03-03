@@ -26,7 +26,7 @@
     <%= render AppCardComponent.new(colour: "blue") do |c| %>
       <% c.with_heading { "Duplicate record" } %>
       <h3 class="nhsuk-heading-s">Duplicate child record</h3>
-      <%= render AppPatientSummaryComponent.new(@patient.with_pending_changes) %>
+      <%= render AppChildSummaryComponent.new(@patient.with_pending_changes) %>
       <% if @vaccination_record %>
         <h3 class="nhsuk-heading-s">Duplicate vaccination record</h3>
         <%= render AppVaccinationRecordSummaryComponent.new(
@@ -40,7 +40,7 @@
     <%= render AppCardComponent.new(colour: "blue") do |c| %>
       <% c.with_heading { "Existing record" } %>
       <h3 class="nhsuk-heading-s">Existing child record</h3>
-      <%= render AppPatientSummaryComponent.new(@patient) %>
+      <%= render AppChildSummaryComponent.new(@patient) %>
       <% if @vaccination_record %>
         <h3 class="nhsuk-heading-s">Existing vaccination record</h3>
         <%= render AppVaccinationRecordSummaryComponent.new(
