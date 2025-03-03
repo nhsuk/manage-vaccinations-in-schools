@@ -1,10 +1,7 @@
 # frozen_string_literal: true
 
-require "pagy/extras/array"
-
 class ConsentFormsController < ApplicationController
   include Pagy::Backend
-  include PatientSortingConcern
 
   before_action :set_consent_form, except: :index
   before_action :set_patient, only: %i[edit_match update_match]
@@ -20,9 +17,25 @@ class ConsentFormsController < ApplicationController
   end
 
   def search
-    patients = policy_scope(Patient).to_a
-    sort_and_filter_patients!(patients)
-    @pagy, @patients = pagy_array(patients)
+    @form =
+      ConsentFormSearchForm.new(
+        params.fetch(:consent_form_search_form, {}).permit(
+          %w[
+            q
+            date_of_birth(3i)
+            date_of_birth(2i)
+            date_of_birth(1i)
+            missing_nhs_number
+          ]
+        )
+      )
+
+    patients =
+      @form.apply(
+        policy_scope(Patient).includes(:school, parent_relationships: :parent)
+      )
+
+    @pagy, @patients = pagy(patients)
 
     render layout: "full"
   end
