@@ -307,7 +307,8 @@ describe ImmunisationImportRow do
       it "has errors" do
         expect(immunisation_import_row).to be_invalid
         expect(immunisation_import_row.errors[:session_id]).to include(
-          "Enter a valid ID for this organisation and programme"
+          "The session ID is not recognised. Download the offline spreadsheet and copy the session ID " \
+            "for this row from there, or contact our support organisation."
         )
       end
     end
@@ -318,7 +319,8 @@ describe ImmunisationImportRow do
       it "has errors" do
         expect(immunisation_import_row).to be_invalid
         expect(immunisation_import_row.errors[:session_id]).to include(
-          "Enter a valid ID for this organisation and programme"
+          "The session ID is not recognised. Download the offline spreadsheet and copy the session ID " \
+            "for this row from there, or contact our support organisation."
         )
       end
     end
