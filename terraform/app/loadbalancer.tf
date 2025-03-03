@@ -62,12 +62,12 @@ resource "aws_lb" "app_lb" {
   internal           = false
   load_balancer_type = "application"
   access_logs {
-    bucket = "nhse-mavis-logs-${var.environment}"
-    prefix = "lb-access-logs"
+    bucket  = "nhse-mavis-logs-${var.environment}"
+    prefix  = "lb-access-logs"
     enabled = true
   }
-  security_groups    = [aws_security_group.lb_service_sg.id]
-  subnets            = [aws_subnet.public_subnet_a.id, aws_subnet.public_subnet_b.id]
+  security_groups = [aws_security_group.lb_service_sg.id]
+  subnets         = [aws_subnet.public_subnet_a.id, aws_subnet.public_subnet_b.id]
 }
 
 resource "aws_lb_target_group" "blue" {

@@ -65,4 +65,3 @@ for resource in "${resources[@]}"; do
   fi
 
 done
-
