@@ -20,12 +20,11 @@ describe AppSessionPatientTableComponent do
 
   let(:component) do
     described_class.new(
+      patient_sessions,
       caption: "Foo",
       columns:,
       params:,
-      patient_sessions:,
       section:,
-      session:,
       programme: programmes.first
     )
   end
@@ -79,62 +78,6 @@ describe AppSessionPatientTableComponent do
   it { should have_css(".nhsuk-table__body") }
   it { should have_css(".nhsuk-table__body .nhsuk-table__row", count: 2) }
   it { should have_link(patient_sessions.first.patient.full_name) }
-
-  context "when the section is :matching" do
-    let(:component) do
-      described_class.new(
-        patient_sessions:,
-        programme: programmes.first,
-        section: :matching,
-        consent_form:
-          create(:consent_form, session: patient_sessions.first.session),
-        columns: %i[name postcode year_group select_for_matching]
-      )
-    end
-
-    it { should have_column("Action") }
-    it { should have_column("Postcode") }
-    it { should_not have_link(patient_sessions.first.patient.full_name) }
-  end
-
-  context "when passing in patients" do
-    let(:patients) { patient_sessions.map(&:patient) }
-
-    let(:component) do
-      described_class.new(
-        params:,
-        patients:,
-        programme: programmes.first,
-        section:
-      )
-    end
-
-    it { should have_css(".nhsuk-table") }
-    it { should have_css(".nhsuk-table__head") }
-    it { should have_column("Full name") }
-    it { should have_column("Year group") }
-    it { should have_css(".nhsuk-table__head .nhsuk-table__row", count: 1) }
-
-    it "includes the patient's full name" do
-      expect(rendered).to have_text(patients.first.full_name)
-    end
-  end
-
-  context "when passing in patients and patient sessions" do
-    let(:patients) { patient_sessions.map(&:patient) + [create(:patient)] }
-
-    let(:component) do
-      described_class.new(
-        params:,
-        patients:,
-        patient_sessions:,
-        programme: programmes.first,
-        section:
-      )
-    end
-
-    it { should have_css(".nhsuk-table__body .nhsuk-table__row", count: 3) }
-  end
 
   describe "vaccinations section" do
     let(:section) { :vaccination }
@@ -218,7 +161,7 @@ describe AppSessionPatientTableComponent do
     context "is not set" do
       let(:component) do
         described_class.new(
-          patient_sessions:,
+          patient_sessions,
           programme: programmes.first,
           section:,
           params:

@@ -2,47 +2,33 @@
 
 class AppSessionPatientTableComponent < ViewComponent::Base
   def initialize(
+    patient_sessions,
     section:,
     caption: nil,
     columns: %i[name year_group],
     consent_form: nil,
     params: {},
-    patient_sessions: nil,
-    patients: nil,
-    programme: nil,
-    session: nil
+    programme: nil
   )
     super
 
-    if patient_sessions.nil? && patients.nil?
-      raise "Provide patients and/or patient sessions."
-    end
-
     @patient_sessions =
-      if patient_sessions
-        patient_sessions
-          .group_by(&:patient)
-          .map { [_1, _2.max_by(&:created_at)] }
-          .to_h
-      else
-        {}
-      end
+      patient_sessions.group_by(&:patient_id).map { _2.max_by(&:created_at) }
 
-    @patients = patients || @patient_sessions.keys
+    @session = patient_sessions.first&.session
 
     @caption = caption
     @columns = columns
     @consent_form = consent_form
     @params = params
-    @programme = programme || session&.programmes&.first
+    @programme = programme || @session&.programmes&.first
     @section = section
-    @session = session
-    @year_groups = session&.year_groups || programme&.year_groups || []
+    @year_groups = @session&.year_groups || programme&.year_groups || []
   end
 
   private
 
-  attr_reader :params, :programme, :session, :year_groups
+  attr_reader :params, :programme, :year_groups
 
   def column_name(column)
     {
@@ -52,26 +38,25 @@ class AppSessionPatientTableComponent < ViewComponent::Base
       status: "Status",
       postcode: "Postcode",
       reason: "Reason for refusal",
-      select_for_matching: "Action",
       year_group: "Year group",
       attendance: "Today’s attendance"
     }.fetch(column)
   end
 
-  def column_value(patient, column)
-    patient_session = @patient_sessions[patient]
+  def column_value(patient_session, column)
+    patient = patient_session.patient
 
     case column
     when :action
-      status = patient_session&.status(programme:) || "not_in_session"
+      status = patient_session.status(programme:)
       t("patient_session_statuses.#{status}.text")
     when :status
-      status = patient_session&.status(programme:) || "not_in_session"
+      status = patient_session.status(programme:)
       t("patient_session_statuses.#{status}.banner_title")
     when :dob
       patient.date_of_birth.to_fs(:long)
     when :name
-      name_cell(patient)
+      name_cell(patient_session)
     when :year_group
       helpers.patient_year_group(patient)
     when :reason
@@ -83,19 +68,19 @@ class AppSessionPatientTableComponent < ViewComponent::Base
         .html_safe
     when :postcode
       patient.restricted? ? "" : patient.address_postcode
-    when :select_for_matching
-      matching_link(patient)
     when :attendance
-      attendance_cell(patient)
+      attendance_cell(patient_session)
     else
       raise ArgumentError, "Unknown column: #{column}"
     end
   end
 
-  def name_cell(patient)
+  def name_cell(patient_session)
+    patient = patient_session.patient
+
     safe_join(
       [
-        patient_link(patient),
+        patient_link(patient_session),
         (
           if patient.has_preferred_name?
             "<span class=\"nhsuk-u-font-size-16\">Known as: ".html_safe +
@@ -107,14 +92,11 @@ class AppSessionPatientTableComponent < ViewComponent::Base
     )
   end
 
-  def patient_link(patient)
-    patient_session = @patient_sessions[patient]
-
-    return patient.full_name if @section == :matching || patient_session.nil?
-
+  def patient_link(patient_session)
     section = params[:section]
     tab = params[:tab]
 
+    patient = patient_session.patient
     session = patient_session.session
     programme = @programme || patient_session.programmes.first
 
@@ -162,42 +144,35 @@ class AppSessionPatientTableComponent < ViewComponent::Base
     )
   end
 
-  def matching_link(patient)
-    govuk_button_link_to(
-      "Select",
-      match_consent_form_path(@consent_form, patient),
-      secondary: true,
-      class: "app-button--small"
-    )
-  end
-
-  def attendance_cell(patient)
+  def attendance_cell(patient_session)
     tag.div(
-      safe_join([attending_button(patient), absent_button(patient)]),
+      safe_join(
+        [attending_button(patient_session), absent_button(patient_session)]
+      ),
       class: "app-button-group app-button-group--table"
     )
   end
 
-  def attending_button(patient)
+  def attending_button(patient_session)
     govuk_button_to(
       "Attending",
       session_register_attendance_path(
         session_slug: params[:session_slug],
         tab: :unregistered,
-        patient_id: patient.id,
+        patient_id: patient_session.patient_id,
         state: :attending
       ),
       class: "app-button--secondary app-button--small"
     )
   end
 
-  def absent_button(patient)
+  def absent_button(patient_session)
     govuk_button_to(
       "Absent",
       session_register_attendance_path(
         session_slug: params[:session_slug],
         tab: :unregistered,
-        patient_id: patient.id,
+        patient_id: patient_session.patient_id,
         state: :absent
       ),
       class: "app-button--secondary-warning app-button--small"
@@ -205,7 +180,7 @@ class AppSessionPatientTableComponent < ViewComponent::Base
   end
 
   def header_link(column)
-    return column_name(column) if column.in? %i[attendance select_for_matching]
+    return column_name(column) if column == :attendance
 
     direction =
       if params[:sort] == column.to_s && params[:direction] == "asc"
@@ -225,9 +200,7 @@ class AppSessionPatientTableComponent < ViewComponent::Base
     }
 
     path =
-      if @section == :matching
-        consent_form_path(@consent_form, **filter_params)
-      elsif @section == :patients
+      if @section == :patients
         patients_programme_path(programme, **filter_params)
       else
         session_section_tab_path(
@@ -242,9 +215,7 @@ class AppSessionPatientTableComponent < ViewComponent::Base
   end
 
   def form_url
-    if @section == :matching
-      consent_form_path(@consent_form)
-    elsif @section == :patients
+    if @section == :patients
       patients_programme_path(programme)
     else
       session_section_tab_path(
