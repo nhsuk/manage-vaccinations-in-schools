@@ -7,7 +7,7 @@ class AppActivityLogComponent < ViewComponent::Base
                  nhsuk-u-font-weight-normal">
         <%= day.to_fs(:long) %>
       </h2>
-    
+
       <% events.each do |event| %>
         <%= render AppLogEventComponent.new(card: true, **event) %>
       <% end %>

@@ -13,18 +13,20 @@ repos:
     rev: v5.0.0
     hooks:
       - id: trailing-whitespace
+        exclude: \.(enc)$
       - id: end-of-file-fixer
+        exclude: \.(enc|erb)$
       - id: check-yaml
         exclude: ^copilot/
       - id: check-json
       - id: check-added-large-files # Default is fail on files larger than 500kB
       - id: mixed-line-ending
         args: [--fix=lf] # Ensure all line endings are LF
-  - repo: https://github.com/shellcheck-py/shellcheck-py
-    rev: v0.10.0.1
-    hooks:
-      - id: shellcheck
-        stages: [manual]
+#  - repo: https://github.com/shellcheck-py/shellcheck-py
+#    rev: v0.10.0.1
+#    hooks:
+#      - id: shellcheck
+#        stages: [manual]
   - repo: local
     hooks:
       - id: prettier
