@@ -25,15 +25,12 @@
 <% end %>
 
 <% if (parent_relationship = @draft_consent.parent_relationship).present? %>
-  <%= render AppCardComponent.new do |card| %>
-    <% card.with_heading { "Parent or guardian" } %>
-    <%= render AppParentSummaryComponent.new(parent_relationship:, change_links: {
-                                               name: wizard_path("who"),
-                                               relationship: wizard_path("who"),
-                                               email: wizard_path("parent-details"),
-                                               phone: wizard_path("parent-details"),
-                                             }, show_name_and_relationship: true) %>
-  <% end %>
+  <%= render AppParentCardComponent.new(parent_relationship:, change_links: {
+                                          name: wizard_path("who"),
+                                          relationship: wizard_path("who"),
+                                          email: wizard_path("parent-details"),
+                                          phone: wizard_path("parent-details"),
+                                        }) %>
 <% end %>
 
 <% if @draft_consent.response_given? %>

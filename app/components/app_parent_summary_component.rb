@@ -52,7 +52,7 @@ class AppParentSummaryComponent < ViewComponent::Base
         end
       end
 
-      unless @patient.restricted?
+      unless @patient&.restricted?
         summary_list.with_row do |row|
           row.with_key { "Email address" }
           if @parent.email.present?
