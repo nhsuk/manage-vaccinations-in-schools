@@ -4,19 +4,18 @@
 #
 # Table name: notify_log_entries
 #
-#  id                      :bigint           not null, primary key
-#  delivery_status         :integer          default("sending"), not null
-#  programme_ids           :integer          default([]), not null, is an Array
-#  recipient               :string
-#  recipient_deterministic :string
-#  type                    :integer          not null
-#  created_at              :datetime         not null
-#  consent_form_id         :bigint
-#  delivery_id             :uuid
-#  parent_id               :bigint
-#  patient_id              :bigint
-#  sent_by_user_id         :bigint
-#  template_id             :uuid             not null
+#  id              :bigint           not null, primary key
+#  delivery_status :integer          default("sending"), not null
+#  programme_ids   :integer          default([]), not null, is an Array
+#  recipient       :string           not null
+#  type            :integer          not null
+#  created_at      :datetime         not null
+#  consent_form_id :bigint
+#  delivery_id     :uuid
+#  parent_id       :bigint
+#  patient_id      :bigint
+#  sent_by_user_id :bigint
+#  template_id     :uuid             not null
 #
 # Indexes
 #
@@ -48,8 +47,6 @@ FactoryBot.define do
       recipient { Faker::PhoneNumber.phone_number }
       template_id { GOVUK_NOTIFY_SMS_TEMPLATES.values.sample }
     end
-
-    recipient_deterministic { recipient }
 
     delivery_id { SecureRandom.uuid }
     traits_for_enum :delivery_status

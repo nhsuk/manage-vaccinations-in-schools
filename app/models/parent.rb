@@ -119,9 +119,6 @@ class Parent < ApplicationRecord
 
   def most_recent_notify_log_entry(type, recipient:)
     return nil if recipient.blank?
-    notify_log_entries.order(created_at: :desc).find_by(
-      type:,
-      recipient_deterministic: recipient
-    )
+    notify_log_entries.order(created_at: :desc).find_by(type:, recipient:)
   end
 end
