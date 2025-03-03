@@ -13,20 +13,13 @@ repos:
     rev: v5.0.0
     hooks:
       - id: trailing-whitespace
-        exclude: \.(enc)$
+        exclude: \.(enc|erb)$
       - id: end-of-file-fixer
         exclude: \.(enc|erb)$
-      - id: check-yaml
-        exclude: ^copilot/
       - id: check-json
       - id: check-added-large-files # Default is fail on files larger than 500kB
       - id: mixed-line-ending
         args: [--fix=lf] # Ensure all line endings are LF
-#  - repo: https://github.com/shellcheck-py/shellcheck-py
-#    rev: v0.10.0.1
-#    hooks:
-#      - id: shellcheck
-#        stages: [manual]
   - repo: local
     hooks:
       - id: prettier
@@ -39,21 +32,21 @@ repos:
         stages: [manual]
       - id: rubocop
         name: Rubocop
-        entry: |
-          yarn add --immutable --immutable-cache --check-cache
-          bin/bundle exec rubocop
+        entry: bin/rubocop --autocorrect-all $*
         language: system
+        files: ^app/
         types: [ruby]
         stages: [manual]
       - id: rufo
         name: Rufo
         entry: bin/bundle exec rufo --check app
         language: system
-        files: ^app/
+        pass_filenames: false
         stages: [manual]
       - id: brakeman
         name: Brakeman
-        entry: bin/bundle exec brakeman
+        entry: bin/bundle exec brakeman --no-pager .
         language: system
         always_run: true
+        pass_filenames: false
         stages: [manual]

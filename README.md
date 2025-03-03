@@ -173,6 +173,7 @@ export PKG_CONFIG_PATH="$CMAKE_PREFIX_PATH/lib/pkgconfig"
 ```
 
 For ubuntu run
+
 ```shell
 apt install curl libyaml-dev libreadline-dev zlib1g-dev \
 libssl-dev libicu-dev cmake pkg-config uuid-dev flex bison \
@@ -201,7 +202,9 @@ Then to install the required tools (or update, following a change to
 mise install
 mise exec python -- pip install pre-commit
 ```
+
 Next ensure you have the pre-commit hook installed by running
+
 ```shell
 pre-commit install
 ```
