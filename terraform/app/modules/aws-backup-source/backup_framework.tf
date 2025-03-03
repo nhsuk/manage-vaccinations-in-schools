@@ -24,10 +24,10 @@ resource "aws_backup_framework" "main" {
       }
     }
 
-    input_parameter {
-      name  = "principalArnList"
-      value = var.terraform_role_arn
-    }
+    # input_parameter {
+    #   name  = "principalArnList"
+    #   value = var.terraform_role_arn
+    # }
   }
 
   # Evaluates if recovery point retention period is at least 1 month.
