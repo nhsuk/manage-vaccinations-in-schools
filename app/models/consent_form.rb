@@ -382,6 +382,7 @@ class ConsentForm < ApplicationRecord
       full_name: parent_full_name,
       email: parent_email,
       phone: parent_phone,
+      phone_receive_updates: parent_phone_receive_updates,
       contact_method_type: parent_contact_method_type,
       contact_method_other_details: parent_contact_method_other_details
     )

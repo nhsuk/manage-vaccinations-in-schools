@@ -1,0 +1,28 @@
+<% content_for :before_main do %>
+  <%= render AppBacklinkComponent.new(consent_form_path, name: "consent page") %>
+<% end %>
+
+<% page_title = "Search for a child record to match with #{@consent_form.full_name}" %>
+<%= h1 page_title: do %>
+  <span class="nhsuk-caption-l nhsuk-u-margin-top-2">
+    Consent response from <%= @consent_form.parent_full_name %>
+  </span>
+  <%= page_title %>
+<% end %>
+
+<%= render AppDetailsComponent.new(summary: "Details given in consent response", open: true, expander: true) do %>
+  <%= render AppMatchingCriteriaComponent.new(consent_form: @consent_form) %>
+<% end %>
+
+<%= render AppCardComponent.new do |card|
+      card.with_heading { "Children in this cohort" }
+      render AppSessionPatientTableComponent.new(
+        columns: %i[name postcode dob select_for_matching],
+        consent_form: @consent_form,
+        params:,
+        patients: @patients,
+        section: :matching,
+      )
+    end %>
+
+<%= govuk_pagination(pagy: @pagy) %>

@@ -2,27 +2,27 @@
   <%= render AppBacklinkComponent.new(consent_forms_path, name: "unmatched consent responses") %>
 <% end %>
 
-<% page_title = "Search for a child record" %>
-<%= h1 page_title: do %>
-  <span class="nhsuk-caption-l">
-    Consent response from <%= @consent_form.parent_full_name %>
-  </span>
-  <%= page_title %>
+<%= h1 "Consent response from #{@consent_form.parent_full_name}" %>
+
+<ul class="app-action-list">
+  <li class="app-action-list__item">
+    <%= link_to "Match", search_consent_form_path(@consent_form) %>
+  </li>
+  <li class="app-action-list__item">
+    <%= link_to "Create new record", patient_consent_form_path(@consent_form) %>
+  </li>
+  <li class="app-action-list__item">
+    <%= link_to "Archive", archive_consent_form_path(@consent_form) %>
+  </li>
+</ul>
+
+<%= render AppConsentFormCardComponent.new(@consent_form) %>
+
+<%= render AppParentCardComponent.new(parent_relationship: @consent_form.parent_relationship) %>
+
+<%= render AppCardComponent.new do |card| %>
+  <% card.with_heading { "Child" } %>
+  <%= render AppChildSummaryComponent.new(@consent_form) %>
 <% end %>
 
-<%= render AppDetailsComponent.new(summary: "Details given in consent response", open: true, expander: true) do %>
-  <%= render AppMatchingCriteriaComponent.new(consent_form: @consent_form) %>
-<% end %>
-
-<%= render AppCardComponent.new do |card|
-      card.with_heading { "Children in this cohort" }
-      render AppSessionPatientTableComponent.new(
-        columns: %i[name postcode dob select_for_matching],
-        consent_form: @consent_form,
-        params:,
-        patients: @patients,
-        section: :matching,
-      )
-    end %>
-
-<%= govuk_pagination(pagy: @pagy) %>
+<%= render AppHealthAnswersCardComponent.new(@consent_form) %>

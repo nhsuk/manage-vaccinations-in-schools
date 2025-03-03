@@ -16,6 +16,10 @@ class ConsentFormsController < ApplicationController
   end
 
   def show
+    render layout: "three_quarters"
+  end
+
+  def search
     patients = policy_scope(Patient).to_a
     sort_and_filter_patients!(patients)
     @pagy, @patients = pagy_array(patients)
