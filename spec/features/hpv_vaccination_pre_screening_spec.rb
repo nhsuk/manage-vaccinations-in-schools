@@ -35,12 +35,9 @@ describe "HPV vaccination" do
   end
 
   def when_i_go_to_a_patient_that_is_ready_to_vaccinate
-    # TODO: Check in "Record" tab
-    # visit session_triage_path(@session)
-    # choose "No triage needed"
-    # click_on "Update results"
-
-    visit session_consent_path(@session)
+    visit session_record_path(@session)
+    choose "No outcome yet"
+    click_on "Update results"
     click_link @patient.full_name
   end
 

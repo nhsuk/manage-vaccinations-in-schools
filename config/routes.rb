@@ -194,9 +194,10 @@ Rails.application.routes.draw do
   resources :sessions, only: %i[edit index show], param: :slug do
     resource :consent, only: :show, controller: "sessions/consent"
     resource :triage, only: :show, controller: "sessions/triage"
-    resource :register, only: %i[show], controller: "sessions/register" do
+    resource :register, only: :show, controller: "sessions/register" do
       post ":patient_id/:status", as: :create, action: :create
     end
+    resource :record, only: :show, controller: "sessions/record"
 
     resource :invite_to_clinic,
              path: "invite-to-clinic",
@@ -252,24 +253,6 @@ Rails.application.routes.draw do
   end
 
   scope "/sessions/:session_slug/:section", as: "session" do
-    constraints section: "vaccinations" do
-      defaults section: "vaccinations" do
-        get "/",
-            as: "vaccinations",
-            to:
-              redirect(
-                path:
-                  "/sessions/%{session_slug}/vaccinations/#{TAB_PATHS[:vaccinations].keys.first}"
-              )
-
-        get ":tab",
-            controller: "vaccinations",
-            action: :index,
-            as: :vaccinations_tab,
-            tab: TAB_PATHS[:vaccinations].keys.join("|")
-      end
-    end
-
     scope ":tab" do
       resources :patient_sessions, path: "patients", as: :patient, only: [] do
         get "log"

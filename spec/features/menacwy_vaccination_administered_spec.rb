@@ -92,12 +92,9 @@ describe "MenACWY vaccination" do
   end
 
   def when_i_go_to_a_patient_that_is_ready_to_vaccinate
-    # TODO: Check in "Record" tab
-    # visit session_triage_path(@session)
-    # choose "No triage needed"
-    # click_on "Update results"
-
-    visit session_consent_path(@session)
+    visit session_record_path(@session)
+    choose "No outcome yet"
+    click_on "Update results"
     click_link @patient.full_name
   end
 
@@ -179,7 +176,7 @@ describe "MenACWY vaccination" do
   end
 
   def then_i_see_the_record_vaccinations_page
-    expect(page).to have_content("Record vaccinations")
+    expect(page).to have_content("Vaccination status")
   end
 
   def and_a_success_message
@@ -197,7 +194,7 @@ describe "MenACWY vaccination" do
   end
 
   def when_i_go_to_the_patient
-    click_link @patient.full_name
+    click_link @patient.full_name, match: :first
   end
 
   def then_i_see_that_the_status_is_vaccinated

@@ -40,7 +40,7 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
     @link_to = link_to
     @context = context
 
-    unless context.in?(%i[consent triage register])
+    unless context.in?(%i[consent triage register record])
       raise "Unknown context: #{context}"
     end
   end

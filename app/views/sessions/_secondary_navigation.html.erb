@@ -22,4 +22,10 @@
        text: "Register",
        selected: request.path == session_register_path(@session),
      )
+   
+     nav.with_item(
+       href: session_record_path(@session),
+       text: "Record",
+       selected: request.path == session_record_path(@session),
+     )
    end %>

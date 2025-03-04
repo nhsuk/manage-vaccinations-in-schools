@@ -1,0 +1,40 @@
+<% content_for :before_main do %>
+  <%= render AppBreadcrumbComponent.new(items: [
+                                          { text: "Home", href: dashboard_path },
+                                          { text: t("sessions.index.title"), href: sessions_path },
+                                          { text: @session.location.name, href: session_path(@session) },
+                                        ]) %>
+<% end %>
+
+<%= h1 @session.location.name %>
+
+<%= render "sessions/secondary_navigation" %>
+
+<div class="app-grid-row">
+  <div class="app-grid-column-filters">
+    <%= render AppSearchComponent.new(
+          form: @form,
+          url: session_record_path(@session),
+          record_statuses: @valid_statuses,
+          year_groups: @session.year_groups,
+        ) %>
+  </div>
+
+  <div class="app-grid-column-results">
+    <%= render AppSearchResultsComponent.new(@pagy) do %>
+      <% @patient_sessions.each do |patient_session| %>
+        <% programme = patient_session.programmes.first %>
+
+        <% link_to = session_patient_programme_path(
+             patient_session.session,
+             patient_session.section(programme:),
+             patient_session.tab(programme:),
+             patient_session.patient,
+             programme
+           ) %>
+
+        <%= render AppPatientSessionSearchResultCardComponent.new(patient_session, link_to:, context: :record) %>
+      <% end %>
+    <% end %>
+  </div>
+</div>

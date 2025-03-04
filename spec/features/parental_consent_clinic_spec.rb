@@ -274,7 +274,9 @@ describe "Parental consent school" do
       click_on "Community clinics"
     end
 
-    click_on "Record vaccinations"
+    # TODO: Check in "Outcome" tab
+    click_on "Consent"
+
     click_on @child.full_name
   end
 
