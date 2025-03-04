@@ -15,7 +15,8 @@ To set up the backup infrastructure from scratch, follow these steps:
 2) Create an S3 bucket "nhse-mavisbackup-terraform-state" and a DynamoDB table "mavisbackup-state-lock" in the **source** account (for Terraform).
 3) Set up the **destination** account by running `terraform apply` in the `destination` directory. Pass the account_id of the source account as input.
    It returns the ARN of the destination vault that is created.
-4) Set up the **source** account by running `terraform apply` in the `source` directory. Pass the ARN of the destination vault as input.
+4) Put the ARN of the destination vault in the *.tfvars file in the `source` directory.
+5) Set up the **source** account by running `terraform apply -var-file=dev.tfvars` in the `source` directory.
 
 
 ## Disaster Recovery
