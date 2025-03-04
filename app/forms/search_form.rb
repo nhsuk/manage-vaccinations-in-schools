@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class ConsentFormSearchForm
+class SearchForm
   include ActiveModel::Model
   include ActiveModel::Attributes
 

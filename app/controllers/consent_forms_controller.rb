@@ -2,7 +2,9 @@
 
 class ConsentFormsController < ApplicationController
   include Pagy::Backend
+  include SearchFormConcern
 
+  before_action :set_search_form, only: :search
   before_action :set_consent_form, except: :index
   before_action :set_patient, only: %i[edit_match update_match]
 
@@ -17,19 +19,6 @@ class ConsentFormsController < ApplicationController
   end
 
   def search
-    @form =
-      ConsentFormSearchForm.new(
-        params.fetch(:consent_form_search_form, {}).permit(
-          %w[
-            q
-            date_of_birth(3i)
-            date_of_birth(2i)
-            date_of_birth(1i)
-            missing_nhs_number
-          ]
-        )
-      )
-
     patients =
       @form.apply(
         policy_scope(Patient).includes(:school, parent_relationships: :parent)
