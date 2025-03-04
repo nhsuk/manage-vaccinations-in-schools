@@ -73,33 +73,28 @@ module PatientSessionStatusConcern
       consent.status[programme] == PatientSession::Consent::NONE
     end
 
-    def consent_needs_triage?(programme:)
-      consent.latest(programme:).any?(&:triage_needed?)
-    end
-
     def triage_needed?(programme:)
-      consent_needs_triage?(programme:) ||
-        vaccination_partially_administered?(programme:)
+      triage.status[programme] == PatientSession::Triage::REQUIRED
     end
 
     def triage_not_needed?(programme:)
-      !triage_needed?(programme:)
+      triage.status[programme] == PatientSession::Triage::NOT_REQUIRED
     end
 
     def triage_ready_to_vaccinate?(programme:)
-      latest_triage(programme:)&.ready_to_vaccinate?
+      triage.status[programme] == PatientSession::Triage::SAFE_TO_VACCINATE
     end
 
     def triage_keep_in_triage?(programme:)
-      latest_triage(programme:)&.needs_follow_up?
+      triage.latest(programme:)&.needs_follow_up?
     end
 
     def triage_do_not_vaccinate?(programme:)
-      latest_triage(programme:)&.do_not_vaccinate?
+      triage.status[programme] == PatientSession::Triage::DO_NOT_VACCINATE
     end
 
     def triage_delay_vaccination?(programme:)
-      latest_triage(programme:)&.delay_vaccination?
+      triage.status[programme] == PatientSession::Triage::DELAY_VACCINATION
     end
 
     def vaccination_administered?(programme:)

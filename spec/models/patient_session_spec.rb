@@ -30,54 +30,6 @@ describe PatientSession do
 
   it { should have_many(:gillick_assessments).order(:created_at) }
 
-  describe "#triages" do
-    subject(:triages) { patient_session.triages(programme:) }
-
-    let(:patient) { patient_session.patient }
-    let(:later_triage) { create(:triage, programme:, patient:) }
-    let(:earlier_triage) do
-      create(:triage, programme:, patient:, updated_at: 1.day.ago)
-    end
-
-    it { should eq([earlier_triage, later_triage]) }
-  end
-
-  describe "#latest_triage" do
-    subject(:latest_triage) { patient_session.latest_triage(programme:) }
-
-    let(:patient) { patient_session.patient }
-    let(:later_triage) do
-      create(
-        :triage,
-        created_at: 1.day.ago,
-        programme:,
-        status: :ready_to_vaccinate,
-        patient:
-      )
-    end
-
-    before do
-      create(
-        :triage,
-        programme:,
-        status: :needs_follow_up,
-        created_at: 2.days.ago,
-        patient:
-      )
-
-      # should not be returned as invalidated even if more recent
-      create(
-        :triage,
-        :invalidated,
-        programme:,
-        status: :ready_to_vaccinate,
-        patient:
-      )
-    end
-
-    it { should eq(later_triage) }
-  end
-
   describe "#vaccination_records" do
     subject(:vaccination_records) do
       patient_session.vaccination_records(programme:)

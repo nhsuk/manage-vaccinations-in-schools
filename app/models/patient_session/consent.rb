@@ -21,7 +21,7 @@ class PatientSession::Consent
   end
 
   def latest(programme:)
-    latest_consents_by_programme.fetch(programme.id, [])
+    latest_by_programme.fetch(programme.id, [])
   end
 
   private
@@ -68,8 +68,8 @@ class PatientSession::Consent
     latest(programme:).select(&:via_self_consent?)
   end
 
-  def latest_consents_by_programme
-    @latest_consents_by_programme ||=
+  def latest_by_programme
+    @latest_by_programme ||=
       patient
         .consents
         .reject(&:invalidated?)

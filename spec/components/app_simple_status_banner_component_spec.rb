@@ -22,7 +22,7 @@ describe AppSimpleStatusBannerComponent do
   let(:component) { described_class.new(patient_session:, programme:) }
 
   let(:triage_nurse_name) do
-    patient_session.triages(programme:).last.performed_by.full_name
+    patient_session.triage.all(programme:).last.performed_by.full_name
   end
   let(:vaccination_nurse_name) do
     patient_session.vaccination_records(programme:).last.performed_by.full_name
