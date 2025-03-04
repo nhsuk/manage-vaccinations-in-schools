@@ -110,7 +110,7 @@ class Patient < ApplicationRecord
         ->(programmes) do
           where(
             birth_academic_year:
-              programmes.map(&:birth_academic_years).sort.uniq
+              programmes.flat_map(&:birth_academic_years).sort.uniq
           )
         end
 

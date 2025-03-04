@@ -43,7 +43,11 @@ describe "Triage" do
 
   def when_i_go_to_the_patient_that_needs_triage
     sign_in @organisation.users.first
-    visit session_triage_tab_path(@session, tab: "needed")
+
+    visit session_triage_path(@session)
+    choose "Needs triage"
+    click_on "Update results"
+
     click_link @patient.full_name
   end
 
@@ -53,7 +57,7 @@ describe "Triage" do
   end
 
   def then_i_see_the_patient_is_ready
-    click_on @patient.full_name
+    click_on @patient.full_name, match: :first
     expect(page).to have_content("Safe to vaccinate")
   end
 

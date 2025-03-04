@@ -8,6 +8,8 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
     @patient = patient_session.patient
     @link_to = link_to
     @context = context
+
+    raise "Unknown context: #{context}" unless context.in?(%i[consent triage])
   end
 
   def call
@@ -28,10 +30,7 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
         summary_list.with_row do |row|
           row.with_key { "Status" }
           row.with_value do
-            render AppProgrammeStatusTagsComponent.new(
-                     patient_session.consent.status,
-                     context:
-                   )
+            render AppProgrammeStatusTagsComponent.new(status, context:)
           end
         end
       end
@@ -41,4 +40,8 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
   private
 
   attr_reader :patient_session, :patient, :link_to, :context
+
+  def status
+    patient_session.send(context).status
+  end
 end

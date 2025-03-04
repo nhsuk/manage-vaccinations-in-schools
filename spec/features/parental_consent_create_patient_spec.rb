@@ -196,8 +196,10 @@ describe "Parental consent create patient" do
       click_on "Sessions"
     end
     click_link "Pilot School"
-    click_on "Triage health questions"
-    click_on "No triage needed"
+
+    click_on "Triage"
+    choose "No triage needed"
+    click_on "Update results"
   end
 
   def then_the_patient_should_be_ready_to_vaccinate

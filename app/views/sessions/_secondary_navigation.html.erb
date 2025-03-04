@@ -10,4 +10,10 @@
        text: "Consent",
        selected: request.path == session_consent_path(@session),
      )
+   
+     nav.with_item(
+       href: session_triage_path(@session),
+       text: "Triage",
+       selected: request.path == session_triage_path(@session),
+     )
    end %>
