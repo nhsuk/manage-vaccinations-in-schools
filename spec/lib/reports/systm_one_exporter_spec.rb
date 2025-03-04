@@ -54,7 +54,7 @@ describe Reports::SystmOneExporter do
         "Expiry date" => vaccination_record.batch.expiry.strftime("%d/%m/%Y"),
         "Dose" => vaccination_record.dose_volume_ml.to_s,
         "Reason" => "Routine",
-        "Site" => vaccination_record.delivery_site,
+        "Site" => "Left deltoid",
         "Method" => vaccination_record.delivery_method,
         "Notes" => vaccination_record.notes
       }
@@ -187,6 +187,27 @@ describe Reports::SystmOneExporter do
       let(:dose_sequence) { 1 }
 
       it { should eq "Fluad Tetra - aQIV Part 1" }
+    end
+  end
+
+  describe "Site field" do
+    subject { csv_row["Site"] }
+
+    let(:vaccination_record) do
+      create(
+        :vaccination_record,
+        programme:,
+        patient:,
+        session:,
+        performed_at: 2.weeks.ago,
+        delivery_site:
+      )
+    end
+
+    context "left arm lower position" do
+      let(:delivery_site) { "left_arm_lower_position" }
+
+      it { should eq "Left anterior forearm" }
     end
   end
 end

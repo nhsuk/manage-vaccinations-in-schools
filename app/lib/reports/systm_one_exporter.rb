@@ -9,6 +9,15 @@ class Reports::SystmOneExporter
     }
   }.freeze
 
+  DELIVERY_SITE_MAPPINGS = {
+    left_arm_upper_position: "Left deltoid",
+    left_arm_lower_position: "Left anterior forearm",
+    left_thigh: "Left lateral thigh",
+    right_arm_upper_position: "Right deltoid",
+    right_arm_lower_position: "Right anterior forearm",
+    right_thigh: "Right lateral thigh"
+  }.with_indifferent_access.freeze
+
   def initialize(organisation:, programme:, start_date:, end_date:)
     @organisation = organisation
     @programme = programme
@@ -127,7 +136,7 @@ class Reports::SystmOneExporter
       vaccination_record.batch&.expiry&.to_fs(:uk_short), # Expiry date
       vaccination_record.dose_volume_ml, # Dose
       reason(vaccination_record), # Reason (not specified)
-      vaccination_record.delivery_site, # Site
+      site(vaccination_record), # Site
       vaccination_record.delivery_method, # Method
       vaccination_record.notes # Notes
     ]
@@ -158,5 +167,14 @@ class Reports::SystmOneExporter
     else
       "At Risk"
     end
+  end
+
+  # TODO: These mappings are valid for Hertforshire, but may not be correct for
+  #       other SAIS teams. We'll need to check these are correct with new SAIS
+  #       teams.
+  def site(vaccination_record)
+    return if vaccination_record.not_administered?
+
+    DELIVERY_SITE_MAPPINGS.fetch(vaccination_record.delivery_site)
   end
 end
