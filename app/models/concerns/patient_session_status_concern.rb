@@ -115,7 +115,7 @@ module PatientSessionStatusConcern
     end
 
     def vaccination_can_be_delayed?(programme:)
-      if (vaccination_record = vaccination_records(programme:).last)
+      if (vaccination_record = record.latest(programme:))
         vaccination_record.not_administered? &&
           vaccination_record.retryable_reason?
       end

@@ -92,14 +92,8 @@ class PatientSession < ApplicationRecord
   delegate :send_notifications?, to: :patient
 
   def safe_to_destroy?
-    any_vaccination_records =
-      programmes.any? do |programme|
-        vaccination_records(programme:, for_session: true).present?
-      end
-
-    return false if any_vaccination_records
-
-    gillick_assessments.empty? && session_attendances.none?(&:attending?)
+    programmes.none? { |programme| record.all(programme:).any? } &&
+      gillick_assessments.empty? && session_attendances.none?(&:attending?)
   end
 
   def destroy_if_safe!
@@ -127,22 +121,17 @@ class PatientSession < ApplicationRecord
     @register ||= PatientSession::Register.new(self)
   end
 
+  def record
+    @record ||= PatientSession::Record.new(self)
+  end
+
+  # TODO: Replace these two with objects like the above.
+
   def gillick_assessment(programme:)
     gillick_assessments.select { it.programme_id == programme.id }.last
   end
 
-  def vaccination_records(programme:, for_session: false)
-    vaccination_records_for_programme =
-      patient.vaccination_records.select { it.programme_id == programme.id }
-
-    # Normally we would want to show all vaccination records for a patient regardless of
-    # the session they were vaccinated in. However, there are some cases where it may be
-    # necessary to show only vaccination records for this particular session.
-
-    if for_session
-      vaccination_records_for_programme.select { it.session_id == session_id }
-    else
-      vaccination_records_for_programme
-    end
+  def vaccination_records(programme:)
+    patient.vaccination_records.select { it.programme_id == programme.id }
   end
 end

@@ -817,40 +817,6 @@ en:
   patients:
     index:
       title: Children
-  patients_table:
-    conflicting_consent:
-      caption: "%{children} with conflicting consent responses"
-      label: Conflicting consent
-    consent_given:
-      caption: "%{children} with consent given"
-      label: Consent given
-    consent_refused:
-      caption: "%{children} with consent refused"
-      label: Consent refused
-    could_not_vaccinate:
-      caption: "%{children} could not vaccinated"
-      label: Could not vaccinate
-    needs_triage:
-      caption: "%{children} needing triage"
-      label: Triage needed
-    no_consent:
-      caption: "%{children} without a response"
-      label: No response
-    no_triage_needed:
-      caption: "%{children} with no triage needed"
-      label: No triage needed
-    register_attendance:
-      caption: "%{children} still to register"
-      label: Register attendance
-    triage_complete:
-      caption: "%{children} with triage completed"
-      label: Triage completed
-    vaccinate:
-      caption: "%{children} to vaccinate"
-      label: Vaccinate
-    vaccinated:
-      caption: "%{children} vaccinated"
-      label: Vaccinated
   programmes:
     index:
       title: Programmes

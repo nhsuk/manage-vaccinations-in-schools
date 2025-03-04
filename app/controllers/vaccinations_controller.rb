@@ -1,56 +1,17 @@
 # frozen_string_literal: true
 
-require "pagy/extras/array"
-
 class VaccinationsController < ApplicationController
-  include Pagy::Backend
-
   include TodaysBatchConcern
   include VaccinationMailerConcern
-  include PatientTabsConcern
-  include PatientSortingConcern
 
   before_action :set_session
-  before_action :set_patient, only: :create
-  before_action :set_patient_session, only: :create
-  before_action :set_programme, only: %i[index create]
-  before_action :set_section_and_tab, only: :create
-
-  before_action :set_todays_batch, only: %i[index create]
+  before_action :set_patient
+  before_action :set_patient_session
+  before_action :set_programme
+  before_action :set_section_and_tab
+  before_action :set_todays_batch
 
   after_action :verify_authorized
-
-  def index
-    authorize VaccinationRecord
-
-    all_patient_sessions =
-      @session
-        .patient_sessions
-        .preload_for_status
-        .in_programmes([@programme])
-        .order_by_name
-
-    grouped_patient_sessions =
-      group_patient_sessions_by_state(
-        all_patient_sessions,
-        @programme,
-        section: :vaccinations
-      )
-
-    @current_tab = TAB_PATHS[:vaccinations][params[:tab]]
-    @tab_counts = count_patient_sessions(grouped_patient_sessions)
-    patient_sessions = grouped_patient_sessions.fetch(@current_tab, [])
-
-    sort_and_filter_patients!(patient_sessions, programme: @programme)
-    @pagy, @patient_sessions = pagy_array(patient_sessions)
-
-    session[:current_section] = "vaccinations"
-
-    respond_to do |format|
-      format.html { render layout: "full" }
-      format.json { render json: @patient_outcomes.map(&:first).index_by(&:id) }
-    end
-  end
 
   def create
     authorize VaccinationRecord

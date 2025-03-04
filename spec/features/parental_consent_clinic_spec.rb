@@ -272,7 +272,7 @@ describe "Parental consent school" do
       click_on "Community clinics"
     end
 
-    click_on "Record vaccinations"
+    click_on "Record"
     click_on @child.full_name
   end
 

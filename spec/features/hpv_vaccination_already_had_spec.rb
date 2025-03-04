@@ -96,7 +96,7 @@ describe "HPV vaccination" do
   end
 
   def then_i_see_the_record_vaccinations_page
-    expect(page).to have_content("Record vaccinations")
+    expect(page).to have_content("Vaccination status")
   end
 
   def and_a_success_message
@@ -104,7 +104,7 @@ describe "HPV vaccination" do
   end
 
   def when_i_go_to_the_patient
-    click_link @patient.full_name
+    click_link @patient.full_name, match: :first
   end
 
   def then_i_see_that_the_status_is_could_not_vaccinate

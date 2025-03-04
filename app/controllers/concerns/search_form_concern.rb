@@ -13,6 +13,7 @@ module SearchFormConcern
           :consent_status,
           :missing_nhs_number,
           :q,
+          :record_status,
           :register_status,
           :triage_status,
           year_groups: []
