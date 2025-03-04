@@ -300,7 +300,7 @@ en:
             school_urn:
               inclusion: The school URN is not recognised. If you’ve checked the URN, and you believe it’s valid, contact our support organisation.
             session_id:
-              inclusion: Enter a valid ID for this organisation and programme
+              inclusion: The session ID is not recognised. Download the offline spreadsheet and copy the session ID for this row from there, or contact our support organisation.
             time_of_vaccination:
               blank: Enter a time in the correct format
               less_than_or_equal_to: Enter a time in the past
