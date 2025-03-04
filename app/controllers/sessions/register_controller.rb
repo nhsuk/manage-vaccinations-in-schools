@@ -23,6 +23,10 @@ class Sessions::RegisterController < ApplicationController
     patient_sessions =
       @form.apply(scope) do |filtered_scope|
         filtered_scope.select do
+          if it.outcome.status.values.all?(PatientSession::Outcome::VACCINATED)
+            next false
+          end
+
           it.consent.status.values.include?(PatientSession::Consent::GIVEN) &&
             (
               it.triage.status.values.include?(

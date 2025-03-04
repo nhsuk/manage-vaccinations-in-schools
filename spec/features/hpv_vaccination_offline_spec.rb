@@ -245,12 +245,10 @@ describe "HPV vaccination" do
   def then_i_see_the_uploaded_vaccination_outcomes_reflected_in_the_session(
     clinic:
   )
-    # TODO: Check "Outcome" tab
-    # click_on "Record"
-    # choose "Vaccinated"
-    # click_on "Update results"
+    click_on "Outcome"
+    choose "Vaccinated"
+    click_on "Update results"
 
-    click_on "Consent"
     click_on @vaccinated_patient.full_name
 
     expect(page).to have_content("Vaccinated")
@@ -266,9 +264,9 @@ describe "HPV vaccination" do
 
     # TODO: Update this once back links work
     # click_link "Back to record tab"
-    visit session_consent_path(session)
+    visit session_outcome_path(session)
 
-    # choose "Absent from session"
+    choose "Could not vaccinate"
     click_on "Update results"
 
     click_on @unvaccinated_patient.full_name
@@ -279,9 +277,9 @@ describe "HPV vaccination" do
 
     # TODO: Update this once back links work
     # click_link "Back to record tab"
-    visit session_consent_path(session)
+    visit session_outcome_path(session)
 
-    # choose "Vaccinated"
+    choose "Vaccinated"
     click_on "Update results"
 
     click_on @restricted_vaccinated_patient.full_name

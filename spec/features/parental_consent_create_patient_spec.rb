@@ -197,8 +197,7 @@ describe "Parental consent create patient" do
     end
     click_link "Pilot School"
 
-    # TODO: Check "Outcome" tab
-    click_on "Consent"
+    click_on "Outcome"
   end
 
   def then_the_patient_should_be_ready_to_vaccinate

@@ -201,6 +201,7 @@ Rails.application.routes.draw do
       get "batch/:programme_type", action: :edit_batch, as: :batch
       post "batch/:programme_type", action: :update_batch
     end
+    resource :outcome, only: :show, controller: "sessions/outcome"
 
     resource :invite_to_clinic,
              path: "invite-to-clinic",
