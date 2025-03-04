@@ -6,6 +6,7 @@ describe SearchForm do
       consent_status:,
       date_of_birth:,
       missing_nhs_number:,
+      outcome_status:,
       q:,
       record_status:,
       register_status:,
@@ -17,6 +18,7 @@ describe SearchForm do
   let(:consent_status) { nil }
   let(:date_of_birth) { Date.current }
   let(:missing_nhs_number) { true }
+  let(:outcome_status) { nil }
   let(:q) { "query" }
   let(:record_status) { nil }
   let(:register_status) { nil }
@@ -40,6 +42,7 @@ describe SearchForm do
       let(:consent_status) { "given" }
       let(:date_of_birth) { nil }
       let(:missing_nhs_number) { nil }
+      let(:outcome_status) { nil }
       let(:q) { nil }
       let(:register_status) { nil }
       let(:triage_status) { nil }
@@ -52,10 +55,28 @@ describe SearchForm do
       end
     end
 
+    context "filtering on outcome status" do
+      let(:consent_status) { nil }
+      let(:date_of_birth) { nil }
+      let(:missing_nhs_number) { nil }
+      let(:outcome_status) { "vaccinated" }
+      let(:q) { nil }
+      let(:record_status) { nil }
+      let(:register_status) { nil }
+      let(:triage_status) { nil }
+      let(:year_groups) { nil }
+
+      it "filters on outcome status" do
+        patient_session = create(:patient_session, :vaccinated)
+        expect(form.apply(scope)).to include(patient_session)
+      end
+    end
+
     context "filtering on record status" do
       let(:consent_status) { nil }
       let(:date_of_birth) { nil }
       let(:missing_nhs_number) { nil }
+      let(:outcome_status) { nil }
       let(:q) { nil }
       let(:record_status) { "administered" }
       let(:register_status) { nil }
@@ -72,6 +93,7 @@ describe SearchForm do
       let(:consent_status) { nil }
       let(:date_of_birth) { nil }
       let(:missing_nhs_number) { nil }
+      let(:outcome_status) { nil }
       let(:q) { nil }
       let(:record_status) { nil }
       let(:register_status) { "present" }
@@ -88,6 +110,7 @@ describe SearchForm do
       let(:consent_status) { nil }
       let(:date_of_birth) { nil }
       let(:missing_nhs_number) { nil }
+      let(:outcome_status) { nil }
       let(:q) { nil }
       let(:record_status) { nil }
       let(:register_status) { nil }
