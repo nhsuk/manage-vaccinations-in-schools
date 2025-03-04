@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
 describe Reports::SystmOneExporter do
-  subject(:parsed_csv) { CSV.parse(csv, headers: true) }
+  subject(:csv_row) { parsed_csv.first }
+
+  before { vaccination_record }
 
   let(:csv) do
     described_class.call(
@@ -11,24 +13,25 @@ describe Reports::SystmOneExporter do
       end_date: Date.current
     )
   end
-  let(:programme) { create(:programme, :hpv) }
-  let(:organisation) do
-    create(:organisation, ods_code: "ABC123", programmes: [programme])
-  end
+  let(:programme) { create(:programme, :hpv, organisations: [organisation]) }
+  let(:organisation) { create(:organisation, ods_code: "ABC123") }
   let(:location) { create(:school) }
-  let(:session) { create(:session, organisation:, programme:, location:) }
-  let(:headers) { parsed_csv.headers }
+  let(:session) do
+    create(:session, organisation:, programmes: [programme], location:)
+  end
+  let(:patient) { create(:patient) }
+  let(:vaccination_record) do
+    create(
+      :vaccination_record,
+      programme:,
+      patient:,
+      session:,
+      performed_at: 2.weeks.ago
+    )
+  end
+  let(:parsed_csv) { CSV.parse(csv, headers: true) }
 
   it "includes the patient and vaccination details" do
-    patient_session = create(:patient_session, session:)
-    vaccination_record =
-      create(
-        :vaccination_record,
-        programme:,
-        patient_session:,
-        performed_at: 2.weeks.ago
-      )
-
     expect(parsed_csv.first.to_h).to eq(
       {
         "Practice code" => "ABC123",
@@ -36,14 +39,14 @@ describe Reports::SystmOneExporter do
         "Surname" => vaccination_record.patient.family_name,
         "Middle name" => "",
         "Forename" => vaccination_record.patient.given_name,
-        "Gender" => "Not known",
+        "Gender" => "U",
         "Date of Birth" =>
           vaccination_record.patient.date_of_birth.strftime("%d/%m/%Y"),
         "House name" => vaccination_record.patient.address_line_2,
         "House number and road" => vaccination_record.patient.address_line_1,
         "Town" => vaccination_record.patient.address_town,
         "Postcode" => vaccination_record.patient.address_postcode,
-        "Vaccination" => "Gardasil 9 dose 1",
+        "Vaccination" => "Y19a4",
         "Part" => "",
         "Admin date" =>
           vaccination_record.performed_at.to_date.strftime("%d/%m/%Y"),
@@ -59,64 +62,72 @@ describe Reports::SystmOneExporter do
   end
 
   context "no vaccination details" do
-    before { create(:patient_session, session:) }
+    before { vaccination_record.destroy }
 
-    it { should be_empty }
+    it { should be_blank }
   end
 
   context "with vaccination records outside the date range" do
-    before do
-      patient_session = create(:patient_session, session:)
+    let(:vaccination_record) do
       create(
         :vaccination_record,
         programme:,
-        patient_session:,
+        patient:,
+        session:,
         created_at: 2.months.ago,
         updated_at: 2.months.ago,
         performed_at: 2.months.ago
       )
     end
 
-    it { should be_empty }
+    it { should be_blank }
   end
 
   context "with vaccination records that haven't been administered" do
-    before do
-      patient_session = create(:patient_session, session:)
+    let(:vaccination_record) do
       create(
         :vaccination_record,
         :not_administered,
         programme:,
-        patient_session:
+        patient:,
+        session:
       )
     end
 
-    it { should be_empty }
+    it { should be_blank }
   end
 
   context "with vaccination records updated within the date range do" do
-    before do
-      patient_session = create(:patient_session, session:)
+    let(:vaccination_record) do
       create(
         :vaccination_record,
         programme:,
-        patient_session:,
+        patient:,
+        session:,
         created_at: 2.months.ago,
         updated_at: 1.day.ago,
         performed_at: 2.months.ago
       )
     end
 
-    it { should_not be_empty }
+    it { should_not be_blank }
   end
 
   context "with a session in a different organisation" do
-    before do
-      session = create(:session, programme:, location:)
-      patient_session = create(:patient_session, session:)
-      create(:vaccination_record, programme:, patient_session:)
+    let(:programme) do
+      create(:programme, :hpv, organisations: [other_organisation])
+    end
+    let(:other_organisation) { create(:organisation, ods_code: "XYZ890") }
+
+    let(:session) do
+      create(
+        :session,
+        organisation: other_organisation,
+        programmes: [programme],
+        location:
+      )
     end
 
-    it { should be_empty }
+    it { should be_blank }
   end
 end

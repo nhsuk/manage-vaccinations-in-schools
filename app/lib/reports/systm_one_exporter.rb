@@ -10,14 +10,9 @@ class Reports::SystmOneExporter
 
   def call
     CSV.generate(headers:, write_headers: true) do |csv|
-      programme
-        .sessions
-        .where(organisation:)
-        .find_each do |session|
-          patient_sessions_for_session(session).each do |patient_session|
-            rows(patient_session:).each { |row| csv << row }
-          end
-        end
+      vaccination_records.each do |vaccination_record|
+        csv << row(vaccination_record:)
+      end
     end
   end
 
@@ -57,18 +52,21 @@ class Reports::SystmOneExporter
     ]
   end
 
-  def patient_sessions_for_session(session)
+  def vaccination_records
     scope =
-      session
-        .patient_sessions
-        .includes(
-          :location,
-          :vaccination_records,
-          consents: %i[parent patient],
-          patient: :school
-        )
-        .where.not(vaccination_records: { id: nil })
+      programme
+        .vaccination_records
+        .joins(:organisation)
+        .where(organisations: { id: organisation.id })
         .merge(VaccinationRecord.administered)
+        .includes(
+          :batch,
+          :location,
+          :performed_by_user,
+          :programme,
+          :vaccine,
+          patient: %i[gp_practice school]
+        )
 
     if start_date.present?
       scope =
@@ -99,20 +97,8 @@ class Reports::SystmOneExporter
     scope
   end
 
-  def rows(patient_session:)
-    patient = patient_session.patient
-    vaccination_records =
-      patient_session.vaccination_records.administered.order(:performed_at)
-
-    if vaccination_records.any?
-      vaccination_records.map do |vaccination_record|
-        existing_row(patient:, vaccination_record:)
-      end
-    end
-  end
-
-  def existing_row(patient:, vaccination_record:)
-    batch = vaccination_record.batch
+  def row(vaccination_record:)
+    patient = vaccination_record.patient
 
     [
       organisation.ods_code, # Practice code
@@ -129,8 +115,8 @@ class Reports::SystmOneExporter
       vaccination(vaccination_record), # Vaccination
       "", # Part
       vaccination_record.performed_at.to_date.to_fs(:uk_short), # Admin date
-      batch&.name, # Batch number
-      batch&.expiry&.to_fs(:uk_short), # Expiry date
+      vaccination_record.batch&.name, # Batch number
+      vaccination_record.batch&.expiry&.to_fs(:uk_short), # Expiry date
       vaccination_record.dose_volume_ml, # Dose
       reason(vaccination_record), # Reason (not specified)
       vaccination_record.delivery_site, # Site
