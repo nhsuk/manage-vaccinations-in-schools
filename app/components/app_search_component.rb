@@ -55,6 +55,15 @@ class AppSearchComponent < ViewComponent::Base
             <% end %>
           <% end %>
         <% end %>
+        
+        <% if outcome_statuses.any? %>
+          <%= f.govuk_radio_buttons_fieldset :outcome_status, legend: { text: "Programme outcome", size: "s" } do %>
+            <%= f.govuk_radio_button :outcome_status, "", label: { text: "Any" } %>
+            <% outcome_statuses.each do |status| %>
+              <%= f.govuk_radio_button :outcome_status, status, label: { text: t(status, scope: %i[patient_session status outcome label]) } %>
+            <% end %>
+          <% end %>
+        <% end %>
 
         <% if year_groups.any? %>
           <%= f.govuk_check_boxes_fieldset :year_groups, legend: { text: "Year group", size: "s" } do %>
@@ -93,6 +102,7 @@ class AppSearchComponent < ViewComponent::Base
     form:,
     url:,
     consent_statuses: [],
+    outcome_statuses: [],
     record_statuses: [],
     register_statuses: [],
     triage_statuses: [],
@@ -104,6 +114,7 @@ class AppSearchComponent < ViewComponent::Base
     @url = url
 
     @consent_statuses = consent_statuses
+    @outcome_statuses = outcome_statuses
     @register_statuses = register_statuses
     @triage_statuses = triage_statuses
     @record_statuses = record_statuses
@@ -115,6 +126,7 @@ class AppSearchComponent < ViewComponent::Base
   attr_reader :form,
               :url,
               :consent_statuses,
+              :outcome_statuses,
               :record_statuses,
               :register_statuses,
               :triage_statuses,
@@ -122,8 +134,8 @@ class AppSearchComponent < ViewComponent::Base
 
   def show_buttons_in_details?
     !(
-      consent_statuses.any? || record_statuses.any? || register_statuses.any? ||
-        triage_statuses.any? || year_groups.any?
+      consent_statuses.any? || outcome_statuses.any? || record_statuses.any? ||
+        register_statuses.any? || triage_statuses.any? || year_groups.any?
     )
   end
 end
