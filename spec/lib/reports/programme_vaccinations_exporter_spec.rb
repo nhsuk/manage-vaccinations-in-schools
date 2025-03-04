@@ -333,6 +333,27 @@ describe Reports::ProgrammeVaccinationsExporter do
       end
     end
 
+    context "with a restricted patient" do
+      let(:session) { create(:session, programmes:, organisation:) }
+      let(:patient) { create(:patient, :restricted, session:) }
+
+      before do
+        create(
+          :vaccination_record,
+          patient:,
+          session:,
+          programme: programmes.first,
+          performed_by: user
+        )
+      end
+
+      it "doesn't include the address or postcode" do
+        expect(rows.count).to eq(1)
+        expect(rows.first["PERSON_ADDRESS_LINE_1"]).to be_blank
+        expect(rows.first["PERSON_POSTCODE"]).to be_blank
+      end
+    end
+
     context "with a traced NHS number" do
       let(:session) { create(:session, programmes:, organisation:) }
 
