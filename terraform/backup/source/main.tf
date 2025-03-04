@@ -1,5 +1,22 @@
+terraform {
+  required_version = "~> 1.10.5"
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.87"
+    }
+  }
+
+  backend "s3" {
+    bucket         = "nhse-mavisbackup-terraform-state"
+    key            = "terraform.tfstate"
+    region         = "eu-west-2"
+    dynamodb_table = "mavisbackup-state-lock"
+    encrypt = true
+  }
+}
+
 provider  "aws" {
-  alias  = "source"
   region = "eu-west-2"
 }
 
@@ -9,8 +26,13 @@ variable "destination_vault_arn" {
 }
 
 variable "environment" {
-  description = "Environment name"
+  description = "Environment name. Allowed values are 'dev' and 'prod'."
   type        = string
+    validation {
+        condition     = var.environment == "dev" || var.environment == "prod"
+        error_message = "Environment must be either 'dev' or 'prod'."
+    }
+  default     = "dev"
 }
 
 data "aws_arn" "destination_vault_arn" {

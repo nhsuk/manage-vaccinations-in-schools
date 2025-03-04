@@ -1,5 +1,22 @@
+terraform {
+  required_version = "~> 1.10.5"
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.87"
+    }
+  }
+
+  backend "s3" {
+    bucket         = "nhse-mavisbackup-destination-terraform-state"
+    key            = "terraform.tfstate"
+    region         = "eu-west-2"
+    dynamodb_table = "mavisbackup-destination-state-lock"
+    encrypt = true
+  }
+}
+
 provider  "aws" {
-  alias  = "source"
   region = "eu-west-2"
 }
 
