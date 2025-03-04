@@ -27,6 +27,14 @@ module FullNameConcern
     preferred_given_name_changed? || preferred_family_name_changed?
   end
 
+  def full_name_with_known_as
+    if has_preferred_name?
+      "#{full_name} (known as #{preferred_full_name})"
+    else
+      full_name
+    end
+  end
+
   def initials
     [given_name[0], family_name[0]].join
   end

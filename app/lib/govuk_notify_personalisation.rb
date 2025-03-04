@@ -120,14 +120,7 @@ class GovukNotifyPersonalisation
   end
 
   def full_and_preferred_patient_name
-    patient_or_consent_form = consent_form || patient
-
-    if patient_or_consent_form.has_preferred_name?
-      patient_or_consent_form.full_name +
-        " (known as #{patient_or_consent_form.preferred_full_name})"
-    else
-      patient_or_consent_form.full_name
-    end
+    (consent_form || patient).full_name_with_known_as
   end
 
   def host
