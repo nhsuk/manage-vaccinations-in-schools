@@ -16,4 +16,10 @@
        text: "Triage",
        selected: request.path == session_triage_path(@session),
      )
+   
+     nav.with_item(
+       href: session_register_path(@session),
+       text: "Register",
+       selected: request.path == session_register_path(@session),
+     )
    end %>
