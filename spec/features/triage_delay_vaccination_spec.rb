@@ -11,7 +11,7 @@ describe "Triage" do
     then_i_see_an_alert_saying_the_record_was_saved
     and_a_vaccination_at_clinic_email_is_sent_to_the_parent
 
-    when_i_go_to_the_triage_completed_tab
+    when_i_filter_by_delay_vaccination
     then_i_see_the_patient
 
     when_i_access_the_vaccinate_later_page
@@ -52,7 +52,7 @@ describe "Triage" do
     visit "/dashboard"
     click_link "Sessions", match: :first
     click_link @school.name
-    click_link "Triage health questions"
+    click_link "Triage"
   end
 
   def when_i_click_on_a_patient
@@ -77,8 +77,9 @@ describe "Triage" do
                     :triage_vaccination_at_clinic
   end
 
-  def when_i_go_to_the_triage_completed_tab
-    click_link "Triage completed"
+  def when_i_filter_by_delay_vaccination
+    choose "Delay vaccination"
+    click_on "Update results"
   end
 
   def then_i_see_the_patient

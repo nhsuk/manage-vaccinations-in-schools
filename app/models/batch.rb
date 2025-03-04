@@ -32,14 +32,16 @@ class Batch < ApplicationRecord
   belongs_to :organisation
   belongs_to :vaccine
 
+  has_many :vaccination_records, -> { kept }
+
+  has_and_belongs_to_many :immunisation_imports
+
+  has_one :programme, through: :vaccine
+
   scope :order_by_name_and_expiration, -> { order(expiry: :asc, name: :asc) }
 
   scope :expired, -> { where("expiry <= ?", Time.current) }
   scope :not_expired, -> { where("expiry > ?", Time.current) }
-
-  has_many :vaccination_records, -> { kept }
-
-  has_and_belongs_to_many :immunisation_imports
 
   validates :name, presence: true, format: { with: /\A[A-Za-z0-9]+\z/ }
 

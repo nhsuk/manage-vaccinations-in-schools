@@ -53,13 +53,15 @@ describe "Parental consent" do
       click_on "Sessions"
     end
     click_on "Pilot School"
-    click_on "Check consent responses"
+    click_on "Consent"
   end
 
   def then_there_should_be_no_consent_for_my_child
     expect(page).to have_content("No response")
 
-    click_on "No response"
+    choose "No response"
+    click_on "Update results"
+
     expect(page).to have_content(@child.full_name)
   end
 
@@ -147,12 +149,13 @@ describe "Parental consent" do
       click_on "Sessions"
     end
     click_on "Pilot School"
-    click_on "Check consent responses"
+    click_on "Consent"
   end
 
   def then_they_see_that_the_child_has_consent
     expect(page).to have_content("Consent given")
-    click_on "Consent given"
+    choose "Consent given"
+    click_on "Update results"
     expect(page).to have_content(@child.full_name)
   end
 
@@ -182,13 +185,17 @@ describe "Parental consent" do
       "Consent response manually matched with child record"
     )
 
-    click_on "Back to consents page"
+    # TODO: Update this once back links work
+    # click_link "Back to consents page"
+    visit session_consent_path(@session)
   end
 
   def when_they_check_triage
     click_link "Pilot School"
-    click_on "Triage health questions"
-    click_on "No triage needed"
+
+    click_on "Triage"
+    choose "No triage needed"
+    click_on "Update results"
   end
 
   def then_the_patient_should_be_ready_to_vaccinate

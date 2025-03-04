@@ -52,7 +52,7 @@ class AppParentSummaryComponent < ViewComponent::Base
         end
       end
 
-      unless @patient.restricted?
+      unless @patient&.restricted?
         summary_list.with_row do |row|
           row.with_key { "Email address" }
           if @parent.email.present?
@@ -91,15 +91,27 @@ class AppParentSummaryComponent < ViewComponent::Base
 
         if @parent.contact_method_type.present?
           summary_list.with_row do |row|
-            row.with_key { "Phone contact method" }
+            row.with_key { "Communication needs" }
             row.with_value { @parent.contact_method_description }
             if (href = @change_links[:phone])
               row.with_action(
                 text: "Change",
                 href:,
-                visually_hidden_text: "phone contact method"
+                visually_hidden_text: "communication needs"
               )
             end
+          end
+        end
+
+        summary_list.with_row do |row|
+          row.with_key { "Get updates by text message" }
+          row.with_value { @parent.phone_receive_updates ? "Yes" : "No" }
+          if (href = @change_links[:phone])
+            row.with_action(
+              text: "Change",
+              href:,
+              visually_hidden_text: "get updates by text message"
+            )
           end
         end
       end

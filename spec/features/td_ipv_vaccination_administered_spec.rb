@@ -3,9 +3,6 @@
 describe "Td/IPV vaccination" do
   around { |example| travel_to(Time.zone.local(2024, 2, 1)) { example.run } }
 
-  before { Flipper.enable(:vaccinate_doubles) }
-  after { Flipper.disable(:vaccinate_doubles) }
-
   scenario "Administered" do
     given_i_am_signed_in
 
@@ -96,7 +93,8 @@ describe "Td/IPV vaccination" do
 
   def when_i_go_to_a_patient_that_is_ready_to_vaccinate
     visit session_triage_path(@session)
-    click_link "No triage needed"
+    choose "No triage needed"
+    click_on "Update results"
     click_link @patient.full_name
   end
 

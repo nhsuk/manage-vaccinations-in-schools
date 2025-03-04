@@ -15,7 +15,7 @@ class ProgrammesController < ApplicationController
   end
 
   def show
-    patients = policy_scope(Patient).in_programme(@programme)
+    patients = policy_scope(Patient).in_programmes([@programme])
 
     @patients_count = patients.count
     @vaccinations_count =
@@ -43,7 +43,7 @@ class ProgrammesController < ApplicationController
   end
 
   def patients
-    patients = policy_scope(Patient).in_programme(@programme).not_deceased
+    patients = policy_scope(Patient).in_programmes([@programme]).not_deceased
     sessions = policy_scope(Session).has_programme(@programme)
 
     patient_sessions =

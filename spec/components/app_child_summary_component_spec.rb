@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
-describe AppPatientSummaryComponent do
-  subject(:rendered) { render_inline(component) }
+describe AppChildSummaryComponent do
+  subject { render_inline(component) }
 
   let(:component) { described_class.new(patient) }
+
   let(:school) { create(:school, name: "Test School") }
   let(:gp_practice) { nil }
   let(:other_school) { create(:school, name: "Other School") }
@@ -93,5 +94,15 @@ describe AppPatientSummaryComponent do
 
       it { should_not have_content("SW1A 2AA") }
     end
+  end
+
+  context "with a consent form" do
+    let(:component) { described_class.new(consent_form) }
+
+    let(:consent_form) do
+      create(:consent_form, :recorded, given_name: "John", family_name: "Doe")
+    end
+
+    it { should have_text("John Doe") }
   end
 end

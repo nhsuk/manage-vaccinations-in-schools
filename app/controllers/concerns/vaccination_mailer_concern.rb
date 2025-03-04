@@ -55,7 +55,7 @@ module VaccinationMailerConcern
     patient_session.patient = patient
 
     programme = vaccination_record.programme
-    consents = patient_session.latest_consents(programme:)
+    consents = patient_session.consent.latest(programme:)
 
     parents =
       if consents.any?(&:via_self_consent?)

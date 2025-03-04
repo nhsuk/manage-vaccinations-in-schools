@@ -44,9 +44,9 @@ class ImmunisationImportsController < ApplicationController
     vaccination_records =
       @immunisation_import.vaccination_records.includes(
         :location,
-        :patient,
         :programme,
-        :session
+        :session,
+        patient: :school
       )
 
     @pagy, @vaccination_records = pagy(vaccination_records)

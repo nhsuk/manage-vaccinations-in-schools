@@ -8,10 +8,8 @@ describe "Manage attendance" do
     and_there_is_a_vaccination_session_today_with_a_patient_ready_to_vaccinate
 
     when_i_go_to_the_session
-    then_i_see_the_register_attendance_card
-
-    when_i_click_on_the_register_attendance_card
-    then_i_see_the_register_attendance_page
+    and_i_click_on_the_register_tab
+    then_i_see_the_register_tab
 
     when_i_register_a_patient_as_attending
     then_i_see_the_attending_flash
@@ -73,16 +71,12 @@ describe "Manage attendance" do
     click_link @session.location.name
   end
 
-  def then_i_see_the_register_attendance_card
-    expect(page).to have_link("Register attendance")
+  def and_i_click_on_the_register_tab
+    click_link "Register"
   end
 
-  def when_i_click_on_the_register_attendance_card
-    click_link "Register attendance"
-  end
-
-  def then_i_see_the_register_attendance_page
-    expect(page).to have_heading("Register attendance")
+  def then_i_see_the_register_tab
+    expect(page).to have_content("Registration status")
   end
 
   def when_i_register_a_patient_as_attending

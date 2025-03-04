@@ -70,6 +70,25 @@
   }
 }
 
+.app-card--patient {
+  @include nhsuk-responsive-margin(3, "bottom");
+
+  .app-button-group {
+    gap: nhsuk-spacing(2);
+    margin-bottom: nhsuk-spacing(1);
+    margin-top: #{nhsuk-spacing(4) * -1};
+  }
+
+  .nhsuk-card__heading {
+    @include nhsuk-responsive-margin(1, "bottom");
+  }
+
+  .nhsuk-card__content {
+    @include nhsuk-responsive-padding(4);
+    @include nhsuk-responsive-padding(3, "bottom");
+  }
+}
+
 // Card title and actions (borrowed from GOV.UK Summary Card component)
 .app-card__title-wrapper {
   @include nhsuk-responsive-padding(5);

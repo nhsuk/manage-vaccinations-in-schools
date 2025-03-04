@@ -94,6 +94,8 @@ Rails.application.routes.draw do
 
   resources :consent_forms, path: "consent-forms", only: %i[index show] do
     member do
+      get "search"
+
       get "match/:patient_id", action: :edit_match, as: :match
       post "match/:patient_id", action: :update_match
 
@@ -190,6 +192,12 @@ Rails.application.routes.draw do
   resources :school_moves, path: "school-moves", only: %i[index show update]
 
   resources :sessions, only: %i[edit index show], param: :slug do
+    resource :consent, only: :show, controller: "sessions/consent"
+    resource :triage, only: :show, controller: "sessions/triage"
+    resource :register, only: %i[show], controller: "sessions/register" do
+      post ":patient_id/:status", as: :create, action: :create
+    end
+
     resource :invite_to_clinic,
              path: "invite-to-clinic",
              only: %i[edit update],
@@ -244,42 +252,6 @@ Rails.application.routes.draw do
   end
 
   scope "/sessions/:session_slug/:section", as: "session" do
-    constraints section: "consents" do
-      defaults section: "consents" do
-        get "/",
-            as: "consents",
-            to:
-              redirect(
-                path:
-                  "/sessions/%{session_slug}/consents/#{TAB_PATHS[:consents].keys.first}"
-              )
-
-        get ":tab",
-            controller: "consents",
-            action: :index,
-            as: :consents_tab,
-            tab: TAB_PATHS[:consents].keys.join("|")
-      end
-    end
-
-    constraints section: "triage" do
-      defaults section: "triage" do
-        get "/",
-            as: "triage",
-            to:
-              redirect(
-                path:
-                  "/sessions/%{session_slug}/triage/#{TAB_PATHS[:triage].keys.first}"
-              )
-
-        get ":tab",
-            controller: "triages",
-            action: :index,
-            as: :triage_tab,
-            tab: TAB_PATHS[:triage].keys.join("|")
-      end
-    end
-
     constraints section: "vaccinations" do
       defaults section: "vaccinations" do
         get "/",
@@ -290,38 +262,16 @@ Rails.application.routes.draw do
                   "/sessions/%{session_slug}/vaccinations/#{TAB_PATHS[:vaccinations].keys.first}"
               )
 
-        get "batch", to: "vaccinations#batch"
-        patch "batch", to: "vaccinations#update_batch"
+        resource :batch,
+                 path: "batch/:programme_type",
+                 only: %i[edit update],
+                 controller: "vaccinations/batch"
 
         get ":tab",
             controller: "vaccinations",
             action: :index,
             as: :vaccinations_tab,
             tab: TAB_PATHS[:vaccinations].keys.join("|")
-      end
-    end
-
-    constraints section: "attendances" do
-      defaults section: "attendances" do
-        get "/",
-            as: "attendances",
-            to:
-              redirect(
-                "/sessions/%{session_slug}/attendances/unregistered?sort=name&direction=asc"
-              )
-
-        get ":tab",
-            controller: "register_attendances",
-            action: :index,
-            as: :attendances_tab,
-            tab: :unregistered
-
-        post ":tab/patients/:patient_id/register/:state",
-             controller: "register_attendances",
-             action: :create,
-             as: :register_attendance,
-             tab: :unregistered,
-             status: %i[attending absent]
       end
     end
 

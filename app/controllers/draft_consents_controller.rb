@@ -93,7 +93,7 @@ class DraftConsentsController < ApplicationController
   end
 
   def finish_wizard_path
-    session_consents_path(@session, programme_type: @programme)
+    session_consent_path(@session)
   end
 
   def update_params
@@ -175,9 +175,10 @@ class DraftConsentsController < ApplicationController
     @parent_options =
       (
         @patient.parent_relationships.includes(:parent) +
-          @patient_session.consents(programme: @programme).filter_map(
-            &:parent_relationship
-          )
+          @patient_session
+            .consent
+            .all(programme: @programme)
+            .filter_map(&:parent_relationship)
       ).compact.uniq.sort_by(&:label)
   end
 

@@ -2,7 +2,7 @@
 
 class AppConsentFormSummaryComponentPreview < ViewComponent::Preview
   def self_consent
-    render AppConsentFormSummaryComponent.new(
+    render AppConsentFormCardComponent.new(
              name: "Mary Smith",
              response: {
                text: "Consent given (self-consent)",
@@ -12,7 +12,7 @@ class AppConsentFormSummaryComponentPreview < ViewComponent::Preview
   end
 
   def mum_refuses_consent_for_personal_reasons
-    render AppConsentFormSummaryComponent.new(
+    render AppConsentFormCardComponent.new(
              name: "Jane Smith",
              relationship: "mum",
              contact: {
@@ -30,7 +30,7 @@ class AppConsentFormSummaryComponentPreview < ViewComponent::Preview
   end
 
   def consent_refused_with_notes
-    render AppConsentFormSummaryComponent.new(
+    render AppConsentFormCardComponent.new(
              name: "Jane Smith",
              response: {
                text: "Consent refused (online)",
@@ -44,7 +44,7 @@ class AppConsentFormSummaryComponentPreview < ViewComponent::Preview
   end
 
   def multiple_responses
-    render AppConsentFormSummaryComponent.new(
+    render AppConsentFormCardComponent.new(
              name: "Jane Smith",
              relationship: "mum",
              contact: {

@@ -62,11 +62,27 @@ class PatientSession < ApplicationRecord
 
   scope :preload_for_status,
         -> do
-          preload(
+          eager_load(:patient).preload(
             patient: [:triages, { consents: :parent }, :vaccination_records],
             session: :programmes
           )
         end
+
+  scope :in_programmes,
+        ->(programmes) { merge(Patient.in_programmes(programmes)) }
+
+  scope :search_by_name, ->(name) { merge(Patient.search_by_name(name)) }
+
+  scope :search_by_year_groups,
+        ->(year_groups) { merge(Patient.search_by_year_groups(year_groups)) }
+
+  scope :search_by_date_of_birth,
+        ->(date_of_birth) do
+          merge(Patient.search_by_date_of_birth(date_of_birth))
+        end
+
+  scope :search_by_nhs_number,
+        ->(nhs_number) { merge(Patient.search_by_nhs_number(nhs_number)) }
 
   scope :order_by_name,
         -> do
@@ -99,24 +115,20 @@ class PatientSession < ApplicationRecord
     session.programmes.select { it.year_groups.include?(patient.year_group) }
   end
 
-  def consents(programme:)
-    patient.consents.select { it.programme_id == programme.id }
+  def consent
+    @consent ||= PatientSession::Consent.new(self)
   end
 
-  def latest_consents(programme:)
-    latest_consents_by_programme.fetch(programme.id, [])
+  def triage
+    @triage ||= PatientSession::Triage.new(self)
+  end
+
+  def register
+    @register ||= PatientSession::Register.new(self)
   end
 
   def gillick_assessment(programme:)
     gillick_assessments.select { it.programme_id == programme.id }.last
-  end
-
-  def triages(programme:)
-    patient.triages.select { it.programme_id == programme.id }
-  end
-
-  def latest_triage(programme:)
-    latest_triage_by_programme[programme.id]
   end
 
   def vaccination_records(programme:, for_session: false)
@@ -132,38 +144,5 @@ class PatientSession < ApplicationRecord
     else
       vaccination_records_for_programme
     end
-  end
-
-  def todays_attendance
-    @todays_attendance ||=
-      if (session_date = session.session_dates.find(&:today?))
-        session_attendances.eager_load(
-          :patient,
-          :session_date
-        ).find_or_initialize_by(session_date:)
-      end
-  end
-
-  private
-
-  def latest_consents_by_programme
-    @latest_consents_by_programme ||=
-      patient
-        .consents
-        .reject(&:invalidated?)
-        .select { it.response_given? || it.response_refused? }
-        .group_by(&:programme_id)
-        .transform_values do |consents|
-          consents.group_by(&:name).map { it.second.max_by(&:created_at) }
-        end
-  end
-
-  def latest_triage_by_programme
-    @latest_triage_by_programme ||=
-      patient
-        .triages
-        .reject(&:invalidated?)
-        .group_by(&:programme_id)
-        .transform_values { it.max_by(&:created_at) }
   end
 end

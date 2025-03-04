@@ -10,7 +10,5 @@
   <%= f.govuk_text_area :reason_notes,
                         label: { text: "Give details" + (@consent_form.reason_notes_must_be_provided? ? "" : " (optional)") } %>
 
-  <div class="nhsuk-u-margin-top-6">
-    <%= f.govuk_submit "Continue" %>
-  </div>
+  <%= f.govuk_submit "Continue" %>
 <% end %>

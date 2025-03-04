@@ -1,0 +1,36 @@
+en:
+  patient_session:
+    status:
+      consent:
+        label:
+          conflicts: Conflicting consent
+          given: Consent given
+          none: No response
+          refused: Consent refused
+        colour:
+          conflicts: dark-orange
+          given: aqua-green
+          none: grey
+          refused: red
+      triage:
+        label:
+          delay_vaccination: Delay vaccination
+          do_not_vaccinate: Do not vaccinate
+          not_required: No triage needed
+          required: Needs triage
+          safe_to_vaccinate: Safe to vaccinate
+        colour:
+          delay_vaccination: dark-orange
+          do_not_vaccinate: red
+          not_required: grey
+          required: blue
+          safe_to_vaccinate: aqua-green
+      register:
+        label:
+          absent: Absent from session
+          present: Attending session
+          unknown: Not registered yet
+        colour:
+          absent: red
+          present: green
+          unknown: blue

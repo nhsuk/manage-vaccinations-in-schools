@@ -9,7 +9,7 @@
      end %>
 
 <%= h1 page_title: do %>
-  <span class="nhsuk-caption-l nhsuk-u-margin-top-2">
+  <span class="nhsuk-caption-l">
     <%= @parent.label %>
   </span>
   <%= page_title %>
@@ -57,7 +57,5 @@
     <%= f.govuk_check_box :parent_phone_receive_updates, 1, 0, multiple: false, link_errors: true, label: { text: "Get updates by text message" } %>
   <% end %>
 
-  <div class="nhsuk-u-margin-top-6">
-    <%= f.govuk_submit "Continue" %>
-  </div>
+  <%= f.govuk_submit "Continue" %>
 <% end %>

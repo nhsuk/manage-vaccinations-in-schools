@@ -17,7 +17,7 @@ module PatientsHelper
         end
       end
 
-    patient.invalidated? ? tag.s(span) : span
+    patient.try(:invalidated?) ? tag.s(span) : span
   end
 
   def patient_date_of_birth(patient)
