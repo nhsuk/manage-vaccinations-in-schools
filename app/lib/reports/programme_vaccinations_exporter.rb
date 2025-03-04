@@ -161,7 +161,7 @@ class Reports::ProgrammeVaccinationsExporter
 
     consents = patient_session&.consent&.latest(programme:) || []
     gillick_assessment = patient_session&.gillick_assessment(programme:)
-    triage = patient_session&.latest_triage(programme:)
+    triage = patient_session&.triage&.latest(programme:)
 
     [
       organisation.ods_code,

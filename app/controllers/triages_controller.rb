@@ -1,13 +1,7 @@
 # frozen_string_literal: true
 
-require "pagy/extras/array"
-
 class TriagesController < ApplicationController
-  include Pagy::Backend
-
   include TriageMailerConcern
-  include PatientTabsConcern
-  include PatientSortingConcern
 
   before_action :set_session
   before_action :set_patient, only: %i[create new]
@@ -17,38 +11,6 @@ class TriagesController < ApplicationController
   before_action :set_section_and_tab, only: %i[create new]
 
   after_action :verify_authorized
-
-  def index
-    @programme =
-      @session.programmes.find_by(type: params[:programme_type]) ||
-        @session.programmes.first
-
-    all_patient_sessions =
-      @session
-        .patient_sessions
-        .preload_for_status
-        .in_programmes([@programme])
-        .order_by_name
-
-    @current_tab = TAB_PATHS[:triage][params[:tab]]
-    tab_patient_sessions =
-      group_patient_sessions_by_state(
-        all_patient_sessions,
-        @programme,
-        section: :triage
-      )
-    @tab_counts = count_patient_sessions(tab_patient_sessions)
-    patient_sessions = tab_patient_sessions[@current_tab] || []
-
-    sort_and_filter_patients!(patient_sessions, programme: @programme)
-    @pagy, @patient_sessions = pagy_array(patient_sessions)
-
-    session[:current_section] = "triage"
-
-    authorize Triage
-
-    render layout: "full"
-  end
 
   def new
     authorize @triage
@@ -136,7 +98,7 @@ class TriagesController < ApplicationController
     elsif session[:current_section] == "consents"
       session_consent_path(@session)
     else # if current_section is triage or anything else
-      session_triage_path(@session, programme_type: @programme)
+      session_triage_path(@session)
     end
   end
 end

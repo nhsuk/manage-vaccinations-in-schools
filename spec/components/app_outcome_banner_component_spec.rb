@@ -101,7 +101,7 @@ describe AppOutcomeBannerComponent do
     end
     let(:vaccination_record) { patient_session.vaccination_records.first }
     let(:location) { patient_session.session.location }
-    let(:triage) { patient_session.triages(programme:).first }
+    let(:triage) { patient_session.triage.all(programme:).first }
     let(:date) { triage.created_at.to_date.to_fs(:long) }
 
     it { should have_css(".app-card--red") }
@@ -125,7 +125,8 @@ describe AppOutcomeBannerComponent do
           session:
         ).tap do |ps|
           ps
-            .triages(programme: ps.programmes.first)
+            .triage
+            .all(programme: ps.programmes.first)
             .first
             .update!(created_at: date)
         end

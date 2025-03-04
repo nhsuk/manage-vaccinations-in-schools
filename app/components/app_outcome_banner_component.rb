@@ -64,7 +64,7 @@ class AppOutcomeBannerComponent < ViewComponent::Base
   end
 
   def triage
-    @triage ||= @patient_session.latest_triage(programme:)
+    @triage ||= @patient_session.triage.latest(programme:)
   end
 
   def show_location?

@@ -7,6 +7,7 @@ describe SearchForm do
       date_of_birth:,
       missing_nhs_number:,
       q:,
+      triage_status:,
       year_groups:
     )
   end
@@ -15,6 +16,7 @@ describe SearchForm do
   let(:date_of_birth) { Date.current }
   let(:missing_nhs_number) { true }
   let(:q) { "query" }
+  let(:triage_status) { nil }
   let(:year_groups) { %w[8 9 10 11] }
 
   context "for patients" do
@@ -35,11 +37,26 @@ describe SearchForm do
       let(:date_of_birth) { nil }
       let(:missing_nhs_number) { nil }
       let(:q) { nil }
+      let(:triage_status) { nil }
       let(:year_groups) { nil }
 
       it "filters on consent status" do
         patient_session =
           create(:patient_session, :consent_given_triage_not_needed)
+        expect(form.apply(scope)).to include(patient_session)
+      end
+    end
+
+    context "filtering on triage status" do
+      let(:consent_status) { nil }
+      let(:date_of_birth) { nil }
+      let(:missing_nhs_number) { nil }
+      let(:q) { nil }
+      let(:triage_status) { "required" }
+      let(:year_groups) { nil }
+
+      it "filters on triage status" do
+        patient_session = create(:patient_session, :consent_given_triage_needed)
         expect(form.apply(scope)).to include(patient_session)
       end
     end

@@ -17,8 +17,8 @@ describe "Triage" do
     then_i_see_one_patient_needing_consent
 
     when_the_parent_gives_consent
+    and_i_click_on_triage
     then_i_see_one_patient_needing_triage
-    when_i_click_on_triage
     and_i_click_on_the_patient
     then_i_see_the_patient_needs_triage
   end
@@ -99,12 +99,15 @@ describe "Triage" do
     page.refresh
   end
 
-  def then_i_see_one_patient_needing_triage
-    expect(page).to have_content("1 child needing triage")
+  def and_i_click_on_triage
+    click_on "Triage"
   end
 
-  def when_i_click_on_triage
-    click_on "Triage health questions"
+  def then_i_see_one_patient_needing_triage
+    choose "Needs triage"
+    click_on "Update results"
+
+    expect(page).to have_content("Showing 1 to 1 of 1 children")
   end
 
   def and_i_click_on_the_patient

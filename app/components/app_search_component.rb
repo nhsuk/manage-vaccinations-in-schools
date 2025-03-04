@@ -28,6 +28,15 @@ class AppSearchComponent < ViewComponent::Base
             <% end %>
           <% end %>
         <% end %>
+        
+        <% if triage_status %>
+          <%= f.govuk_radio_buttons_fieldset :triage_status, legend: { text: "Triage outcome", size: "s" } do %>
+            <%= f.govuk_radio_button :triage_status, "", label: { text: "Any" } %>
+            <% PatientSession::Triage::STATUSES.each do |status| %>
+              <%= f.govuk_radio_button :triage_status, status, label: { text: t(status, scope: %i[patient_session status triage label]) } %>
+            <% end %>
+          <% end %>
+        <% end %>
 
         <% if year_groups.any? %>
           <%= f.govuk_check_boxes_fieldset :year_groups, legend: { text: "Year group", size: "s" } do %>
@@ -44,15 +53,15 @@ class AppSearchComponent < ViewComponent::Base
             <%= f.govuk_check_box :missing_nhs_number, 1, 0, multiple: false, link_errors: true, label: { text: "Missing NHS number" } %>
           <% end %>
 
-          <% unless consent_status || year_groups.any? %>
+          <% if show_buttons_in_details? %>
             <div class="app-button-group">
               <%= f.govuk_submit "Update results", secondary: true, class: "app-button--small" %>
               <%= govuk_button_link_to "Clear filters", @url, class: "app-button--small app-button--secondary" %>
             </div>
           <% end %>
         <% end %>
-        
-        <% if consent_status || year_groups.any? %>
+
+        <% unless show_buttons_in_details? %>
           <div class="app-button-group">
             <%= f.govuk_submit "Update results", secondary: true, class: "app-button--small" %>
             <%= govuk_button_link_to "Clear filters", @url, class: "app-button--small app-button--secondary" %>
@@ -62,17 +71,28 @@ class AppSearchComponent < ViewComponent::Base
     <% end %>
   ERB
 
-  def initialize(form:, url:, consent_status: false, year_groups: [])
+  def initialize(
+    form:,
+    url:,
+    consent_status: false,
+    triage_status: false,
+    year_groups: []
+  )
     super
 
     @form = form
     @url = url
 
     @consent_status = consent_status
+    @triage_status = triage_status
     @year_groups = year_groups
   end
 
   private
 
-  attr_reader :form, :url, :consent_status, :year_groups
+  attr_reader :form, :url, :consent_status, :triage_status, :year_groups
+
+  def show_buttons_in_details?
+    !(consent_status || triage_status || year_groups.any?)
+  end
 end

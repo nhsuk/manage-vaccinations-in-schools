@@ -119,16 +119,12 @@ class PatientSession < ApplicationRecord
     @consent ||= PatientSession::Consent.new(self)
   end
 
+  def triage
+    @triage ||= PatientSession::Triage.new(self)
+  end
+
   def gillick_assessment(programme:)
     gillick_assessments.select { it.programme_id == programme.id }.last
-  end
-
-  def triages(programme:)
-    patient.triages.select { it.programme_id == programme.id }
-  end
-
-  def latest_triage(programme:)
-    latest_triage_by_programme[programme.id]
   end
 
   def vaccination_records(programme:, for_session: false)
@@ -154,16 +150,5 @@ class PatientSession < ApplicationRecord
           :session_date
         ).find_or_initialize_by(session_date:)
       end
-  end
-
-  private
-
-  def latest_triage_by_programme
-    @latest_triage_by_programme ||=
-      patient
-        .triages
-        .reject(&:invalidated?)
-        .group_by(&:programme_id)
-        .transform_values { it.max_by(&:created_at) }
   end
 end

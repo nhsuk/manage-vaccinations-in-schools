@@ -73,15 +73,6 @@
 
         <ul class="nhsuk-grid-row nhsuk-card-group">
           <li class="nhsuk-grid-column-full nhsuk-card-group__item">
-            <%= render AppCardComponent.new(link_to: session_triage_path(@session, programme_type: programme)) do |c| %>
-              <% c.with_heading { "Triage health questions" } %>
-              <% c.with_description do %>
-                <%= t("children", count: stats[:needing_triage]) %> needing triage
-              <% end %>
-            <% end %>
-          </li>
-
-          <li class="nhsuk-grid-column-full nhsuk-card-group__item">
             <%= render AppCardComponent.new(link_to: session_vaccinations_path(@session, programme_type: programme)) do |c| %>
               <% c.with_heading { "Record vaccinations" } %>
               <% c.with_description do %>

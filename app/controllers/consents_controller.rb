@@ -1,10 +1,6 @@
 # frozen_string_literal: true
 
-require "pagy/extras/array"
-
 class ConsentsController < ApplicationController
-  include Pagy::Backend
-
   before_action :set_session
   before_action :set_patient_session
   before_action :set_programme
