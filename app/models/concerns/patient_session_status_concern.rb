@@ -136,5 +136,51 @@ module PatientSessionStatusConcern
         :vaccinate
       end
     end
+
+    # TODO: Remove these once the new session design is complete.
+
+    def section(programme:)
+      if added_to_session?(programme:)
+        "consents"
+      elsif consent_refused?(programme:)
+        "consents"
+      elsif consent_conflicts?(programme:)
+        "consents"
+      elsif consent_given_triage_needed?(programme:) ||
+            triaged_kept_in_triage?(programme:)
+        "triage"
+      elsif consent_given_triage_not_needed?(programme:) ||
+            triaged_ready_to_vaccinate?(programme:) ||
+            delay_vaccination?(programme:)
+        "vaccinations"
+      elsif triaged_do_not_vaccinate?(programme:) ||
+            unable_to_vaccinate?(programme:)
+        "vaccinations"
+      elsif vaccinated?(programme:)
+        "vaccinations"
+      end
+    end
+
+    def tab(programme:)
+      if added_to_session?(programme:)
+        "no-consent"
+      elsif consent_refused?(programme:)
+        "refused"
+      elsif consent_conflicts?(programme:)
+        "conflicts"
+      elsif consent_given_triage_needed?(programme:) ||
+            triaged_kept_in_triage?(programme:)
+        "needed"
+      elsif consent_given_triage_not_needed?(programme:) ||
+            triaged_ready_to_vaccinate?(programme:) ||
+            delay_vaccination?(programme:)
+        "vaccinate"
+      elsif triaged_do_not_vaccinate?(programme:) ||
+            unable_to_vaccinate?(programme:)
+        "could-not"
+      elsif vaccinated?(programme:)
+        "vaccinated"
+      end
+    end
   end
 end
