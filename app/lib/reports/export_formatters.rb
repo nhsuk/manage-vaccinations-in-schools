@@ -47,7 +47,7 @@ module Reports::ExportFormatters
   end
 
   def health_question_answers(consents:)
-    health_answers = ConsolidatedHealthAnswers.new(consents:).to_h
+    health_answers = ConsolidatedHealthAnswers.new(consents).to_h
 
     values =
       health_answers.map do |question, responses|

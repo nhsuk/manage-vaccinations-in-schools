@@ -63,6 +63,7 @@ class ConsentForm < ApplicationRecord
   include AgeConcern
   include Archivable
   include FullNameConcern
+  include HasHealthAnswers
   include WizardStepConcern
 
   before_save :reset_unused_fields
@@ -117,15 +118,12 @@ class ConsentForm < ApplicationRecord
 
   enum :education_setting, { school: 0, home: 1, none: 2 }, prefix: true
 
-  serialize :health_answers, coder: HealthAnswer::ArraySerializer
-
   encrypts :address_line_1,
            :address_line_2,
            :address_postcode,
            :address_town,
            :family_name,
            :given_name,
-           :health_answers,
            :parent_contact_method_other_details,
            :parent_email,
            :parent_full_name,
@@ -379,18 +377,23 @@ class ConsentForm < ApplicationRecord
     "#{human_enum_name(:response).capitalize} (online)"
   end
 
-  def parent_contact_method_description
+  def parent
     Parent.new(
+      full_name: parent_full_name,
+      email: parent_email,
+      phone: parent_phone,
+      phone_receive_updates: parent_phone_receive_updates,
       contact_method_type: parent_contact_method_type,
       contact_method_other_details: parent_contact_method_other_details
-    ).contact_method_description
+    )
   end
 
-  def parent_relationship_label
+  def parent_relationship
     ParentRelationship.new(
+      parent:,
       type: parent_relationship_type,
       other_name: parent_relationship_other_name
-    ).label
+    )
   end
 
   def match_with_patient!(patient, current_user:)
@@ -431,6 +434,10 @@ class ConsentForm < ApplicationRecord
     education_setting_home?
   end
 
+  def home_educated_changed?
+    education_setting_changed?
+  end
+
   def chosen_programmes
     return [] if consent_refused?
 
@@ -456,6 +463,10 @@ class ConsentForm < ApplicationRecord
   end
 
   private
+
+  def via_self_consent?
+    false
+  end
 
   def academic_year
     created_at.to_date.academic_year

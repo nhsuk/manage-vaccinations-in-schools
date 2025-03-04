@@ -30,6 +30,6 @@ class AppMatchingCriteriaComponent < ViewComponent::Base
   end
 
   def parent_guardian_or_other
-    @consent_form.parent_relationship_label
+    @consent_form.parent_relationship.label
   end
 end

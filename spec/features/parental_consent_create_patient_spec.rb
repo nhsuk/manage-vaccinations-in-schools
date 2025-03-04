@@ -18,7 +18,8 @@ describe "Parental consent create patient" do
     when_the_nurse_checks_the_unmatched_consent_responses
     then_they_see_the_consent_form
 
-    when_the_nurse_clicks_create_record
+    when_the_nurse_clicks_on_the_consent_form
+    and_the_nurse_clicks_on_create_record
     then_they_see_the_new_patient_page
 
     when_the_nurse_submits_the_new_patient
@@ -44,7 +45,8 @@ describe "Parental consent create patient" do
     when_the_nurse_checks_the_unmatched_consent_responses
     then_they_see_the_consent_form
 
-    when_the_nurse_clicks_create_record
+    when_the_nurse_clicks_on_the_consent_form
+    and_the_nurse_clicks_on_create_record
     then_they_see_the_new_patient_page
 
     when_the_nurse_submits_the_new_patient
@@ -151,12 +153,16 @@ describe "Parental consent create patient" do
 
   def then_they_see_the_consent_form
     expect(page).to have_content(@child.full_name)
-    expect(page).to have_link("Match with record")
-    expect(page).to have_link("Create record")
+    expect(page).to have_link("Match")
+    expect(page).to have_link("Archive")
   end
 
-  def when_the_nurse_clicks_create_record
-    click_link "Create record"
+  def when_the_nurse_clicks_on_the_consent_form
+    click_link "Jane #{@child.family_name}"
+  end
+
+  def and_the_nurse_clicks_on_create_record
+    click_link "Create new record"
   end
 
   def then_they_see_the_new_patient_page

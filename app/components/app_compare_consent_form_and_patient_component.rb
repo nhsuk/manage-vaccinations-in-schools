@@ -1,14 +1,161 @@
 # frozen_string_literal: true
 
 class AppCompareConsentFormAndPatientComponent < ViewComponent::Base
-  attr_reader :heading, :consent_form, :patient
+  erb_template <<-ERB
+    <div class="nhsuk-grid-row nhsuk-card-group">
+      <div class="nhsuk-grid-column-one-half nhsuk-card-group__item">
+        <%= render AppCardComponent.new(colour: "blue") do |card| %>
+          <% card.with_heading { "Consent response" } %>
+          <%= govuk_summary_list(rows: consent_form_rows) %>
+        <% end %>
+      </div>
+    
+      <div class="nhsuk-grid-column-one-half nhsuk-card-group__item">
+        <%= render AppCardComponent.new(colour: "blue") do |card| %>
+          <% card.with_heading { "Child record" } %>
+          <%= govuk_summary_list(rows: patient_rows) %>
+        <% end %>
+      </div>
+    </div>
+  ERB
 
-  def initialize(heading:, consent_form:, patient:)
+  def initialize(consent_form:, patient:)
     super
 
-    @heading = heading
     @consent_form = consent_form
     @patient = patient
+  end
+
+  def consent_form_rows
+    [
+      {
+        key: {
+          text: "Full name"
+        },
+        value: {
+          text: highlight(consent_form.full_name, unless: full_name_match?)
+        }
+      },
+      if include_preferred_full_name_row?
+        {
+          key: {
+            text: "Preferred name"
+          },
+          value: {
+            text:
+              highlight(
+                consent_form.preferred_full_name,
+                unless: preferred_full_name_match?
+              )
+          }
+        }
+      end,
+      {
+        key: {
+          text: "Date of birth"
+        },
+        value: {
+          text:
+            highlight(
+              consent_form.date_of_birth.to_fs(:long),
+              unless: date_of_birth_match?
+            )
+        }
+      },
+      {
+        key: {
+          text: "Address"
+        },
+        value: {
+          text:
+            highlight(
+              helpers.format_address_multi_line(consent_form),
+              unless: address_match?
+            )
+        }
+      },
+      {
+        key: {
+          text: "School"
+        },
+        value: {
+          text:
+            highlight(
+              helpers.patient_school(consent_form),
+              unless: school_match?
+            )
+        }
+      },
+      {
+        key: {
+          text: "Parent"
+        },
+        value: {
+          text:
+            helpers.format_parent_with_relationship(
+              consent_form.parent_relationship
+            )
+        }
+      }
+    ].compact
+  end
+
+  def patient_rows
+    [
+      { key: { text: "Full name" }, value: { text: patient.full_name } },
+      if include_preferred_full_name_row?
+        {
+          key: {
+            text: "Preferred name"
+          },
+          value: {
+            text: patient.preferred_full_name
+          }
+        }
+      end,
+      {
+        key: {
+          text: "Date of birth"
+        },
+        value: {
+          text: patient.date_of_birth.to_fs(:long)
+        }
+      },
+      {
+        key: {
+          text: "Address"
+        },
+        value: {
+          text: helpers.format_address_multi_line(patient)
+        }
+      },
+      {
+        key: {
+          text: "School"
+        },
+        value: {
+          text: helpers.patient_school(patient)
+        }
+      },
+      if patient.parent_relationships.any?
+        {
+          key: {
+            text: "Parents"
+          },
+          value: {
+            text: helpers.patient_parents(patient)
+          }
+        }
+      end
+    ].compact
+  end
+
+  private
+
+  attr_reader :heading, :consent_form, :patient
+
+  def include_preferred_full_name_row?
+    consent_form.has_preferred_name? || patient.has_preferred_name?
   end
 
   def full_name_match?
@@ -32,29 +179,7 @@ class AppCompareConsentFormAndPatientComponent < ViewComponent::Base
       consent_form.school == patient.school
   end
 
-  def consent_form_patient
-    parent =
-      Parent.new(
-        full_name: consent_form.parent_full_name,
-        email: consent_form.parent_email,
-        phone: consent_form.parent_phone
-      )
-
-    parent_relationship =
-      ParentRelationship.new(
-        parent:,
-        type: consent_form.parent_relationship_type,
-        other_name: consent_form.parent_relationship_other_name
-      )
-
-    Patient.new(
-      school: consent_form.school,
-      home_educated: consent_form.home_educated,
-      parent_relationships: [parent_relationship]
-    )
-  end
-
-  def mark(text, opts)
+  def highlight(text, opts)
     opts[:unless] ? text : tag.mark(text, class: "app-highlight")
   end
 end

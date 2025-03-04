@@ -1,9 +1,11 @@
 # frozen_string_literal: true
 
-describe AppHealthQuestionsComponent do
+describe AppHealthAnswersCardComponent do
   subject(:rendered) { render_inline(component) }
 
-  let(:component) { described_class.new(consents: consents.map(&:reload)) }
+  let(:component) do
+    described_class.new(consents.map(&:reload), heading: "Health answers")
+  end
 
   context "with one consent" do
     let(:consents) do

@@ -6,6 +6,7 @@ class DraftConsent
   include WizardStepConcern
 
   include ActiveRecord::AttributeMethods::Serialization
+  include HasHealthAnswers
 
   def self.request_session_key
     "consent"
@@ -32,8 +33,6 @@ class DraftConsent
   attribute :route, :string
   attribute :triage_notes, :string
   attribute :triage_status, :string
-
-  serialize :health_answers, coder: HealthAnswer::ArraySerializer
 
   def wizard_steps
     [
@@ -294,10 +293,6 @@ class DraftConsent
       &.parent_relationships
       &.find { _1.patient_id == patient_id }
       .tap { _1&.patient = patient } # acts as preload
-  end
-
-  def who_responded
-    via_self_consent? ? "Child (Gillick competent)" : parent_relationship.label
   end
 
   private

@@ -1,28 +1,47 @@
 # frozen_string_literal: true
 
-require "pagy/extras/array"
-
 class ConsentFormsController < ApplicationController
   include Pagy::Backend
-  include PatientSortingConcern
 
   before_action :set_consent_form, except: :index
   before_action :set_patient, only: %i[edit_match update_match]
 
-  layout "full"
-
   def index
     @pagy, @consent_forms = pagy(consent_form_scope.order(:recorded_at))
+
+    render layout: "full"
   end
 
   def show
-    patients = policy_scope(Patient).to_a
-    sort_and_filter_patients!(patients)
-    @pagy, @patients = pagy_array(patients)
+    render layout: "three_quarters"
+  end
+
+  def search
+    @form =
+      ConsentFormSearchForm.new(
+        params.fetch(:consent_form_search_form, {}).permit(
+          %w[
+            q
+            date_of_birth(3i)
+            date_of_birth(2i)
+            date_of_birth(1i)
+            missing_nhs_number
+          ]
+        )
+      )
+
+    patients =
+      @form.apply(
+        policy_scope(Patient).includes(:school, parent_relationships: :parent)
+      )
+
+    @pagy, @patients = pagy(patients)
+
+    render layout: "full"
   end
 
   def edit_match
-    render :match, layout: "two_thirds"
+    render :match, layout: "full"
   end
 
   def update_match
@@ -55,7 +74,7 @@ class ConsentFormsController < ApplicationController
   end
 
   def edit_archive
-    render :archive, layout: "two_thirds"
+    render :archive
   end
 
   def update_archive
@@ -68,7 +87,7 @@ class ConsentFormsController < ApplicationController
                       "Consent response from #{@consent_form.parent_full_name} archived"
                   }
     else
-      render :archive, layout: "two_thirds", status: :unprocessable_entity
+      render :archive, status: :unprocessable_entity
     end
   end
 
@@ -76,7 +95,7 @@ class ConsentFormsController < ApplicationController
     @patient =
       Patient.from_consent_form(@consent_form).tap(&:clear_changes_information)
 
-    render layout: "two_thirds"
+    render :patient
   end
 
   def create_patient
@@ -126,6 +145,7 @@ class ConsentFormsController < ApplicationController
   def set_patient
     @patient =
       policy_scope(Patient).includes(
+        parent_relationships: :parent,
         sessions_for_current_academic_year: :programmes
       ).find(params[:patient_id])
   end

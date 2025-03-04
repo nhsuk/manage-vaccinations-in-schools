@@ -94,6 +94,8 @@ Rails.application.routes.draw do
 
   resources :consent_forms, path: "consent-forms", only: %i[index show] do
     member do
+      get "search"
+
       get "match/:patient_id", action: :edit_match, as: :match
       post "match/:patient_id", action: :update_match
 

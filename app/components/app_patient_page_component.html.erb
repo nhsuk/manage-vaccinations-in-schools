@@ -70,10 +70,7 @@
 <% end %>
 
 <% if display_health_questions? %>
-  <%= render AppCardComponent.new do |c| %>
-    <% c.with_heading { "All answers to health questions" } %>
-    <%= render AppHealthQuestionsComponent.new(consents: patient_session.latest_consents(programme:)) %>
-  <% end %>
+  <%= render AppHealthAnswersCardComponent.new(patient_session.latest_consents(programme:), heading: "All answers to health questions") %>
 <% end %>
 
 <% if patient_session.triages(programme:).any? %>

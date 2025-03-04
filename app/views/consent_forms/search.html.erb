@@ -1,0 +1,73 @@
+<% content_for :before_main do %>
+  <%= render AppBacklinkComponent.new(consent_form_path, name: "consent page") %>
+<% end %>
+
+<% page_title = "Search for a child record to match with #{@consent_form.full_name}" %>
+<%= h1 page_title: do %>
+  <span class="nhsuk-caption-l nhsuk-u-margin-top-2">
+    Consent response from <%= @consent_form.parent_full_name %>
+  </span>
+  <%= page_title %>
+<% end %>
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-one-third app-grid-column--sticky">
+    <%= render AppCardComponent.new(colour: "blue") do |card| %>
+      <% card.with_heading { "Consent response" } %>
+
+      <%= govuk_summary_list(classes: %w[nhsuk-u-margin-bottom-4 nhsuk-summary-list--no-border app-summary-list--full-width]) do |summary_list|
+            summary_list.with_row do |row|
+              row.with_key { "Full name" }
+              row.with_value { @consent_form.full_name }
+            end
+            summary_list.with_row do |row|
+              row.with_key { "Date of birth" }
+              row.with_value { patient_date_of_birth(@consent_form) }
+            end
+            summary_list.with_row do |row|
+              row.with_key { "Postcode" }
+              row.with_value { @consent_form.address_postcode }
+            end
+            summary_list.with_row do |row|
+              row.with_key { "School" }
+              row.with_value { patient_school(@consent_form) }
+            end
+          end %>
+
+      <p class="nhsuk-body">
+        <%= link_to "View full consent response", consent_form_path(@consent_form) %>
+      </p>
+
+      <%= govuk_button_link_to "Create new record", patient_consent_form_path(@consent_form), class: "app-button--secondary" %>
+    <% end %>
+  </div>
+
+  <div class="nhsuk-grid-column-two-thirds">
+    <%= render AppCardComponent.new(filters: true) do |card| %>
+      <% card.with_heading { "Find children" } %>
+
+      <%= form_with model: @form, url: search_consent_form_path(@consent_form), method: :get do |f| %>
+        <%= render AppSearchInputComponent.new(f:) %>
+
+        <%= govuk_details(summary_text: "Advanced filters", open: @form.date_of_birth.present? || @form.missing_nhs_number) do %>
+          <%= f.govuk_date_field :date_of_birth, date_of_birth: true, legend: { text: "Date of birth", size: "s" } %>
+
+          <%= f.govuk_check_boxes_fieldset :missing_nhs_number, multiple: false, legend: { text: "Options", size: "s" } do %>
+            <%= f.govuk_check_box :missing_nhs_number, 1, 0, multiple: false, link_errors: true, label: { text: "Missing NHS number" } %>
+          <% end %>
+
+          <div class="app-button-group">
+            <%= f.govuk_submit "Update results", secondary: true, class: "app-button--small" %>
+            <%= govuk_button_link_to "Clear filters", search_consent_form_path(@consent_form), class: "app-button--small app-button--secondary" %>
+          </div>
+        <% end %>
+      <% end %>
+    <% end %>
+
+    <%= render AppSearchResultsComponent.new(@pagy) do %>
+      <% @patients.each do |patient| %>
+        <%= render AppPatientSearchResultCardComponent.new(patient, link_to: match_consent_form_path(@consent_form, patient)) %>
+      <% end %>
+    <% end %>
+  </div>
+</div>
