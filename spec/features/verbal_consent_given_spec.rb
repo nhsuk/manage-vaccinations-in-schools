@@ -23,7 +23,7 @@ describe "Verbal consent" do
   end
 
   def when_i_record_that_verbal_consent_was_given
-    visit session_consents_path(@session)
+    visit session_consent_path(@session)
     click_link @patient.full_name
     click_button "Get consent"
 
@@ -67,12 +67,11 @@ describe "Verbal consent" do
     click_button "Confirm"
 
     # Back on the consent responses page
-    expect(page).to have_content("Check consent responses")
     expect(page).to have_content("Consent recorded for #{@patient.full_name}")
   end
 
   def and_the_patients_status_is_safe_to_vaccinate
-    click_link @patient.full_name
+    click_link @patient.full_name, match: :first
     expect(page).to have_content("Safe to vaccinate")
   end
 

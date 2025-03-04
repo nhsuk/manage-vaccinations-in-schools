@@ -44,6 +44,15 @@ class AppSearchComponent < ViewComponent::Base
             <%= f.govuk_check_box :missing_nhs_number, 1, 0, multiple: false, link_errors: true, label: { text: "Missing NHS number" } %>
           <% end %>
 
+          <% unless consent_status || year_groups.any? %>
+            <div class="app-button-group">
+              <%= f.govuk_submit "Update results", secondary: true, class: "app-button--small" %>
+              <%= govuk_button_link_to "Clear filters", @url, class: "app-button--small app-button--secondary" %>
+            </div>
+          <% end %>
+        <% end %>
+        
+        <% if consent_status || year_groups.any? %>
           <div class="app-button-group">
             <%= f.govuk_submit "Update results", secondary: true, class: "app-button--small" %>
             <%= govuk_button_link_to "Clear filters", @url, class: "app-button--small app-button--secondary" %>

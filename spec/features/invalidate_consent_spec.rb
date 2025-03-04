@@ -71,8 +71,9 @@ describe "Invalidate consent" do
   end
 
   def when_i_go_to_the_patient
-    visit session_consents_path(@session)
-    click_on "Consent given"
+    visit session_consent_path(@session)
+    choose "Consent given"
+    click_on "Update results"
     click_link @patient.full_name
   end
 

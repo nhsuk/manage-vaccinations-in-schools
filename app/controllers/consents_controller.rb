@@ -5,49 +5,14 @@ require "pagy/extras/array"
 class ConsentsController < ApplicationController
   include Pagy::Backend
 
-  include PatientTabsConcern
-  include PatientSortingConcern
-
   before_action :set_session
-  before_action :set_patient_session, except: :index
-  before_action :set_programme, except: :index
-  before_action :set_patient, except: :index
-  before_action :set_consent, except: %i[index create send_request]
+  before_action :set_patient_session
+  before_action :set_programme
+  before_action :set_patient
+  before_action :set_consent, except: %i[create send_request]
   before_action :ensure_can_withdraw, only: %i[edit_withdraw update_withdraw]
   before_action :ensure_can_invalidate,
                 only: %i[edit_invalidate update_invalidate]
-
-  def index
-    @programme =
-      @session.programmes.find_by(type: params[:programme_type]) ||
-        @session.programmes.first
-
-    all_patient_sessions =
-      @session
-        .patient_sessions
-        .preload_for_status
-        .preload(patient: { consents: %i[parent patient] })
-        .in_programmes([@programme])
-        .order_by_name
-
-    tab_patient_sessions =
-      group_patient_sessions_by_conditions(
-        all_patient_sessions,
-        programme: @programme,
-        section: :consents
-      )
-
-    @current_tab = TAB_PATHS[:consents][params[:tab]]
-    @tab_counts = count_patient_sessions(tab_patient_sessions)
-    patient_sessions = tab_patient_sessions[@current_tab] || []
-
-    sort_and_filter_patients!(patient_sessions, programme: @programme)
-    @pagy, @patient_sessions = pagy_array(patient_sessions)
-
-    session[:current_section] = "consents"
-
-    render layout: "full"
-  end
 
   def create
     authorize Consent

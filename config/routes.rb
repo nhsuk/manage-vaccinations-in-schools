@@ -192,6 +192,8 @@ Rails.application.routes.draw do
   resources :school_moves, path: "school-moves", only: %i[index show update]
 
   resources :sessions, only: %i[edit index show], param: :slug do
+    resource :consent, only: :show, controller: "sessions/consent"
+
     resource :invite_to_clinic,
              path: "invite-to-clinic",
              only: %i[edit update],
@@ -246,24 +248,6 @@ Rails.application.routes.draw do
   end
 
   scope "/sessions/:session_slug/:section", as: "session" do
-    constraints section: "consents" do
-      defaults section: "consents" do
-        get "/",
-            as: "consents",
-            to:
-              redirect(
-                path:
-                  "/sessions/%{session_slug}/consents/#{TAB_PATHS[:consents].keys.first}"
-              )
-
-        get ":tab",
-            controller: "consents",
-            action: :index,
-            as: :consents_tab,
-            tab: TAB_PATHS[:consents].keys.join("|")
-      end
-    end
-
     constraints section: "triage" do
       defaults section: "triage" do
         get "/",

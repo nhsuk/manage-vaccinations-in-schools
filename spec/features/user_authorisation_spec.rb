@@ -62,7 +62,7 @@ describe "User authorisation" do
       click_on "Sessions"
     end
     click_on "Pilot School"
-    click_on "Check consent responses"
+    click_on "Consent"
   end
 
   def then_i_should_only_see_my_patients

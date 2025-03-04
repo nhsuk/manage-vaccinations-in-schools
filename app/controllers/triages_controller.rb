@@ -134,11 +134,7 @@ class TriagesController < ApplicationController
     if session[:current_section] == "vaccinations"
       session_vaccinations_path(@session, programme_type: @programme)
     elsif session[:current_section] == "consents"
-      session_consents_tab_path(
-        @session,
-        tab: params[:tab],
-        programme_type: @programme
-      )
+      session_consent_path(@session)
     else # if current_section is triage or anything else
       session_triage_path(@session, programme_type: @programme)
     end

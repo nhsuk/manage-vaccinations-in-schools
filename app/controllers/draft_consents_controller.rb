@@ -93,7 +93,7 @@ class DraftConsentsController < ApplicationController
   end
 
   def finish_wizard_path
-    session_consents_path(@session, programme_type: @programme)
+    session_consent_path(@session)
   end
 
   def update_params

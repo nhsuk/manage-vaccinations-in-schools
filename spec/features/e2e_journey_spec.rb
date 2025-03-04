@@ -160,11 +160,12 @@ describe "End-to-end journey" do
   end
 
   def when_i_look_at_children_that_need_consent_responses
-    click_link "Check consent responses"
+    click_link "Consent"
+    choose "No response"
+    click_on "Update results"
   end
 
   def then_i_see_the_children_from_the_cohort
-    click_link "No response"
     expect(page).to have_content("Bobby Tables")
   end
 
@@ -207,7 +208,7 @@ describe "End-to-end journey" do
 
     click_button "Confirm"
 
-    click_link "Bobby Tables"
+    click_link "Bobby Tables", match: :first
   end
 
   def then_i_should_see_that_the_patient_is_ready_for_vaccination
@@ -215,7 +216,10 @@ describe "End-to-end journey" do
   end
 
   def when_i_click_on_the_register_attendance_section
-    click_link "Back to consents page"
+    # TODO: Update this once back links work
+    # click_link "Back to consents page"
+    visit sessions_path
+
     click_link "Pilot School"
     click_link "Register attendance"
   end

@@ -24,7 +24,7 @@ describe "Verbal consent" do
   end
 
   def when_i_record_the_consent_refusal_and_reason
-    visit session_consents_path(@session)
+    visit session_consent_path(@session)
     click_link @patient.full_name
     click_button "Get consent"
 
@@ -56,12 +56,11 @@ describe "Verbal consent" do
     expect(page).to have_content(["Name", @parent.full_name].join)
     click_button "Confirm"
 
-    expect(page).to have_content("Check consent responses")
     expect(page).to have_content("Consent recorded for #{@patient.full_name}")
   end
 
   def and_the_patients_status_is_consent_refused
-    click_link @patient.full_name
+    click_link @patient.full_name, match: :first
 
     relation = @patient.parent_relationships.first.label
     expect(page).to have_content("Consent refused")
