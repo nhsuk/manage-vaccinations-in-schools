@@ -62,7 +62,7 @@ describe PatientSession::Triage do
 
     let(:later_triage) { create(:triage, programme:, patient:) }
     let(:earlier_triage) do
-      create(:triage, programme:, patient:, updated_at: 1.day.ago)
+      create(:triage, programme:, patient:, created_at: 1.day.ago)
     end
 
     it { should eq([earlier_triage, later_triage]) }

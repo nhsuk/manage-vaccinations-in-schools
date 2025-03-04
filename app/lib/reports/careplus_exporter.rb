@@ -118,10 +118,7 @@ class Reports::CareplusExporter
 
     patient_session.programmes.filter_map do |programme|
       vaccination_records =
-        patient_session.vaccination_records(
-          programme:,
-          for_session: true
-        ).select(&:administered?)
+        patient_session.record.all(programme:).select(&:administered?)
 
       if vaccination_records.any?
         existing_row(patient:, patient_session:, vaccination_records:)
