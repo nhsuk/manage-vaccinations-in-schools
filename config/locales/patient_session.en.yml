@@ -34,3 +34,22 @@ en:
           absent: red
           present: green
           unknown: blue
+      record:
+        label:
+          absent_from_school: Absent from school
+          absent_from_session: Absent from session
+          administered: Vaccinated
+          already_had: Already had vaccine
+          contraindications: Had contraindications
+          none: No outcome yet
+          not_well: Unwell
+          refused: Vaccine refused
+        colour:
+          absent_from_school: red
+          absent_from_session: red
+          administered: green
+          already_had: green
+          contraindications: red
+          none: grey
+          not_well: red
+          refused: red

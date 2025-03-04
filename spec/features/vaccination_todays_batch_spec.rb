@@ -54,7 +54,7 @@ describe "Vaccination" do
   end
 
   def when_i_vaccinate_a_patient_with_hpv
-    visit session_vaccinations_path(@session)
+    visit session_record_path(@session)
 
     click_link @patient.full_name
 
@@ -87,7 +87,7 @@ describe "Vaccination" do
   end
 
   def when_i_vaccinate_a_second_patient_with_hpv
-    visit session_vaccinations_path(@session)
+    visit session_record_path(@session)
 
     click_link @patient2.full_name
 
@@ -111,16 +111,17 @@ describe "Vaccination" do
   end
 
   def and_i_see_the_default_batch_on_the_patient_page
-    click_link @patient2.full_name
+    click_link @patient2.full_name, match: :first
 
     expect(page).to have_content("Vaccinated")
     expect(page).to have_content(@hpv_batch.name)
   end
 
   def when_i_vaccinate_a_patient_with_menacwy
-    visit session_vaccinations_path(@session, programme_type: "menacwy")
+    visit session_record_path(@session)
 
     click_link @patient.full_name
+    click_on "MenACWY"
 
     # pre-screening
     find_all(".nhsuk-fieldset")[0].choose "Yes"

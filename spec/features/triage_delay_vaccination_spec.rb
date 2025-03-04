@@ -88,8 +88,10 @@ describe "Triage" do
 
   def when_i_access_the_vaccinate_later_page
     click_on @school.name, match: :first
-    click_on "Record vaccinations"
-    click_on "Could not vaccinate"
+    click_on "Record"
+
+    choose "No outcome yet"
+    click_on "Update results"
   end
 
   def when_i_view_the_child_record

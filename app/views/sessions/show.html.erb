@@ -52,25 +52,6 @@
           <% end %>
         </li>
       </ul>
-    <% else %>
-      <% @session.programmes.each do |programme| %>
-        <% stats = @stats.fetch(programme) %>
-
-        <h2 class="nhsuk-heading-m"><%= programme.name %></h2>
-
-        <ul class="nhsuk-grid-row nhsuk-card-group">
-          <li class="nhsuk-grid-column-full nhsuk-card-group__item">
-            <%= render AppCardComponent.new(link_to: session_vaccinations_path(@session, programme_type: programme)) do |c| %>
-              <% c.with_heading { "Record vaccinations" } %>
-              <% c.with_description do %>
-                <%= t("children", count: stats[:vaccinate]) %> to vaccinate<br>
-                <%= t("children", count: stats[:vaccinated]) %> vaccinated<br>
-                <%= t("children", count: stats[:could_not_vaccinate]) %> could not be vaccinated
-              <% end %>
-            <% end %>
-          </li>
-        </ul>
-      <% end %>
     <% end %>
   </div>
 
