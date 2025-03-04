@@ -20,11 +20,10 @@ class PatientsController < ApplicationController
   end
 
   def show
-    @sessions =
-      policy_scope(Session)
-        .joins(:patients)
-        .where(patients: @patient)
-        .includes(:location)
+    @patient_sessions =
+      policy_scope(PatientSession).where(patient: @patient).includes(
+        session: %i[location programmes]
+      )
   end
 
   def log
