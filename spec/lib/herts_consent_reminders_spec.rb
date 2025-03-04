@@ -22,7 +22,7 @@ describe HertsConsentReminders do
   end
 
   describe ".sessions_with_reminders_due" do
-    subject { described_class.sessions_reminders_due_on }
+    subject { described_class.sessions_with_reminders_due }
 
     before { session }
 
@@ -58,7 +58,9 @@ describe HertsConsentReminders do
 
     describe "specifying the date" do
       subject do
-        described_class.sessions_reminders_due_on(on_date: Date.current + 1.day)
+        described_class.sessions_with_reminders_due(
+          on_date: Date.current + 1.day
+        )
       end
 
       let(:session_date) { 15.days.from_now }
@@ -71,7 +73,7 @@ describe HertsConsentReminders do
     before do
       allow(described_class).to receive(:filter_patients_to_send_consent).with(
         session,
-        on_date: nil
+        on_date: Date.current
       ).and_return([[patient, programme, :initial_reminder]])
 
       allow(ConsentNotification).to receive(:create_and_send!)
