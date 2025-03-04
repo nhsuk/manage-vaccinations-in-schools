@@ -1,10 +1,15 @@
-# provider  "aws" {
-#   alias  = "source"
-#   region = "eu-west-2"
-# }
+provider  "aws" {
+  alias  = "source"
+  region = "eu-west-2"
+}
 
 variable "destination_vault_arn" {
   description = "ARN of the backup vault in the destination account"
+  type        = string
+}
+
+variable "environment" {
+  description = "Environment name"
   type        = string
 }
 
@@ -12,14 +17,13 @@ data "aws_arn" "destination_vault_arn" {
   arn = var.destination_vault_arn
 }
 
+data "aws_caller_identity" "current" {}
+
 locals {
   # Adjust these as required
   project_name = "mavis-${var.environment}"
-  # environment_name = "dev"
-
-  # source_account_id = data.aws_caller_identity.current.account_id
-  # destination_account_id = data.aws_caller_identity.current.account_id
-  # destination_account_id = data.aws_arn.destination_vault_arn.account
+  source_account_id = data.aws_caller_identity.current.account_id
+  destination_account_id = data.aws_arn.destination_vault_arn.account
 }
 
 # First, we create an S3 bucket for compliance reports. You may already have a module for creating
@@ -85,7 +89,7 @@ resource "aws_kms_key" "backup_notifications" {
 # Now we can deploy the source and destination modules, referencing the resources we've created above.
 
 module "source" {
-  source = "./modules/aws-backup-source"
+  source = "../modules/aws-backup-source"
 
   backup_copy_vault_account_id       = local.destination_account_id
   backup_copy_vault_arn              = data.aws_arn.destination_vault_arn.arn
