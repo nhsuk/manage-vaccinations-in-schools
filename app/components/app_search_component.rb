@@ -5,7 +5,7 @@ class AppSearchComponent < ViewComponent::Base
     <%= render AppCardComponent.new(filters: true) do |card| %>
       <% card.with_heading { "Find children" } %>
 
-      <%= form_with model: @form, url: @url, method: :get, builder: GOVUKDesignSystemFormBuilder::FormBuilder do |f| %>
+      <%= form_with model: form, url:, method: :get, builder: GOVUKDesignSystemFormBuilder::FormBuilder do |f| %>
         <div class="app-search-input" role="search">
           <%= f.govuk_text_field :q,
                                  label: { text: "Search", class: "nhsuk-u-visually-hidden" },
@@ -19,6 +19,23 @@ class AppSearchComponent < ViewComponent::Base
             </svg>
           </button>
         </div>
+        
+        <% if consent_status %>
+          <%= f.govuk_radio_buttons_fieldset :consent_status, legend: { text: "Consent status", size: "s" } do %>
+            <%= f.govuk_radio_button :consent_status, "", label: { text: "Any" } %>
+            <% PatientSession::Consent::STATUSES.each do |status| %>
+              <%= f.govuk_radio_button :consent_status, status, label: { text: t(status, scope: %i[patient_session status consent label]) } %>
+            <% end %>
+          <% end %>
+        <% end %>
+
+        <% if year_groups.any? %>
+          <%= f.govuk_check_boxes_fieldset :year_groups, legend: { text: "Year group", size: "s" } do %>
+            <% year_groups.each do |year_group| %>
+              <%= f.govuk_check_box :year_groups, year_group, label: { text: helpers.format_year_group(year_group) } %>
+            <% end %>
+          <% end %>
+        <% end %>
 
         <%= govuk_details(summary_text: "Advanced filters", open: @form.date_of_birth.present? || @form.missing_nhs_number) do %>
           <%= f.govuk_date_field :date_of_birth, date_of_birth: true, legend: { text: "Date of birth", size: "s" } %>
@@ -27,6 +44,15 @@ class AppSearchComponent < ViewComponent::Base
             <%= f.govuk_check_box :missing_nhs_number, 1, 0, multiple: false, link_errors: true, label: { text: "Missing NHS number" } %>
           <% end %>
 
+          <% unless consent_status || year_groups.any? %>
+            <div class="app-button-group">
+              <%= f.govuk_submit "Update results", secondary: true, class: "app-button--small" %>
+              <%= govuk_button_link_to "Clear filters", @url, class: "app-button--small app-button--secondary" %>
+            </div>
+          <% end %>
+        <% end %>
+        
+        <% if consent_status || year_groups.any? %>
           <div class="app-button-group">
             <%= f.govuk_submit "Update results", secondary: true, class: "app-button--small" %>
             <%= govuk_button_link_to "Clear filters", @url, class: "app-button--small app-button--secondary" %>
@@ -36,10 +62,17 @@ class AppSearchComponent < ViewComponent::Base
     <% end %>
   ERB
 
-  def initialize(form:, url:)
+  def initialize(form:, url:, consent_status: false, year_groups: [])
     super
 
     @form = form
     @url = url
+
+    @consent_status = consent_status
+    @year_groups = year_groups
   end
+
+  private
+
+  attr_reader :form, :url, :consent_status, :year_groups
 end

@@ -18,10 +18,9 @@ class RegisterAttendancesController < ApplicationController
     ps =
       @session
         .patient_sessions
-        .eager_load(:patient)
         .preload_for_status
         .includes(session: :session_dates, session_attendances: :session_date)
-        .merge(Patient.in_programme(@programme))
+        .in_programmes([@programme])
 
     patient_sessions =
       ps

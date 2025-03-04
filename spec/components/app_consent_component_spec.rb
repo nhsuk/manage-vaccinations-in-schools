@@ -13,7 +13,9 @@ describe AppConsentComponent do
   end
 
   let(:programmes) { [create(:programme)] }
-  let(:consent) { patient_session.consents(programme: programmes.first).first }
+  let(:consent) do
+    patient_session.consent.all(programme: programmes.first).first
+  end
 
   before { patient_session.reload.strict_loading!(false) }
 

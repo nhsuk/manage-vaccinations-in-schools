@@ -53,7 +53,7 @@ class SchoolConsentRemindersJob < ApplicationJob
 
     has_consent_or_vaccinated =
       programmes.all? do |programme|
-        patient_session.consents(programme:).any? ||
+        patient_session.consent.all(programme:).any? ||
           patient_session.vaccinated?(programme:) ||
           patient_session.unable_to_vaccinate?(programme:)
       end

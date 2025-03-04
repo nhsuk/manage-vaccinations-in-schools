@@ -61,7 +61,8 @@ class AppSessionPatientTableComponent < ViewComponent::Base
       helpers.patient_year_group(patient)
     when :reason
       patient_session
-        .consents(programme:)
+        .consent
+        .all(programme:)
         .map { |c| c.human_enum_name(:reason_for_refusal) }
         .uniq
         .join("<br />")
@@ -99,48 +100,12 @@ class AppSessionPatientTableComponent < ViewComponent::Base
     patient = patient_session.patient
     session = patient_session.session
     programme = @programme || patient_session.programmes.first
+    section ||= patient_session.section(programme:)
+    tab ||= patient_session.tab(programme:)
 
-    # TODO: Remove this once "Record session outcomes" exists.
-    # We have to guess the section and tab if it's not provided, this
-    # is only the case when looking at children at a programme-level.
-    if section.nil? || tab.nil?
-      if patient_session.added_to_session?(programme:)
-        section = "consents"
-        tab = "no-consent"
-      elsif patient_session.consent_refused?(programme:)
-        section = "consents"
-        tab = "refused"
-      elsif patient_session.consent_conflicts?(programme:)
-        section = "consents"
-        tab = "conflicts"
-      elsif patient_session.consent_given_triage_needed?(programme:) ||
-            patient_session.triaged_kept_in_triage?(programme:)
-        section = "triage"
-        tab = "needed"
-      elsif patient_session.consent_given_triage_not_needed?(programme:) ||
-            patient_session.triaged_ready_to_vaccinate?(programme:) ||
-            patient_session.delay_vaccination?(programme:)
-        section = "vaccinations"
-        tab = "vaccinate"
-      elsif patient_session.triaged_do_not_vaccinate?(programme:) ||
-            patient_session.unable_to_vaccinate?(programme:)
-        section = "vaccinations"
-        tab = "could-not"
-      elsif patient_session.vaccinated?(programme:)
-        section = "vaccinations"
-        tab = "vaccinated"
-      end
-    end
-
-    govuk_link_to(
+    link_to(
       patient.full_name,
-      session_patient_programme_path(
-        session,
-        patient,
-        programme,
-        section:,
-        tab:
-      )
+      session_patient_programme_path(session, section, tab, patient, programme)
     )
   end
 

@@ -83,7 +83,14 @@ describe "Triage" do
   end
 
   def then_i_see_one_patient_needing_consent
-    expect(page).to have_content("1 child without a response")
+    click_on "Consent"
+
+    choose "No response"
+    click_on "Update results"
+
+    expect(page).to have_content("Showing 1 to 1 of 1 children")
+
+    click_on @session.location.name
   end
 
   def when_the_parent_gives_consent

@@ -1,0 +1,13 @@
+<%= render AppSecondaryNavigationComponent.new do |nav|
+     nav.with_item(
+       href: session_path(@session),
+       text: "Overview",
+       selected: request.path == session_path(@session),
+     )
+   
+     nav.with_item(
+       href: session_consent_path(@session),
+       text: "Consent",
+       selected: request.path == session_consent_path(@session),
+     )
+   end %>

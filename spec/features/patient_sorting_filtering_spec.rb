@@ -1,55 +1,6 @@
 # frozen_string_literal: true
 
 describe "Patient sorting and filtering" do
-  scenario "Users can sort and filter patients" do
-    given_that_i_am_signed_in
-    when_i_visit_the_consents_page
-    then_i_see_patients_ordered_by_name_asc # Initial server load is name asc
-
-    when_i_click_on_the_name_header
-    then_i_see_patients_ordered_by_name_asc # On first press still name asc
-
-    when_i_click_on_the_name_header
-    then_i_see_patients_ordered_by_name_desc
-
-    when_i_click_on_the_name_header
-    then_i_see_patients_ordered_by_name_asc
-
-    when_i_click_on_the_year_group_header
-    then_i_see_patients_ordered_by_year_group_asc
-
-    when_i_click_on_the_year_group_header
-    then_i_see_patients_ordered_by_year_group_desc
-
-    when_i_filter_by_names_starting_with_cas
-    and_i_click_filter
-    then_i_see_patients_with_names_starting_with_cas_by_year_group_desc
-    and_by_name_contains_cas
-
-    when_i_click_on_the_name_header
-    then_i_see_patients_with_names_starting_with_cas_by_name_asc
-
-    when_i_filter_by_year_group_10
-    and_i_click_filter
-    then_i_see_patients_with_year_group_10
-  end
-
-  scenario "Users can sort and filter patients with JS", :js do
-    given_that_i_am_signed_in
-    when_i_visit_the_consents_page
-    then_i_see_patients_ordered_by_name_asc
-    and_there_should_be_no_filter_button
-
-    2.times { when_i_click_on_the_name_header }
-    then_i_see_patients_ordered_by_name_desc
-
-    when_i_filter_by_names_starting_with_cas
-    then_i_see_patients_with_names_starting_with_cas_by_name_desc
-
-    when_i_reset_filters
-    then_i_see_patients_ordered_by_name_desc
-  end
-
   scenario "Users can sort and filter date of birth" do
     given_that_i_am_signed_in
     when_i_visit_the_programme_patients_page
@@ -94,10 +45,6 @@ describe "Patient sorting and filtering" do
       end
 
     sign_in @user
-  end
-
-  def when_i_visit_the_consents_page
-    visit session_consents_path(@session)
   end
 
   def when_i_visit_the_programme_patients_page

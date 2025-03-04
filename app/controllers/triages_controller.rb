@@ -27,8 +27,7 @@ class TriagesController < ApplicationController
       @session
         .patient_sessions
         .preload_for_status
-        .eager_load(:patient)
-        .merge(Patient.in_programme(@programme))
+        .in_programmes([@programme])
         .order_by_name
 
     @current_tab = TAB_PATHS[:triage][params[:tab]]
@@ -63,7 +62,8 @@ class TriagesController < ApplicationController
     if @triage.save(context: :consent)
       @patient_session
         .reload
-        .latest_consents(programme: @triage.programme)
+        .consent
+        .latest(programme: @triage.programme)
         .each { send_triage_confirmation(@patient_session, it) }
 
       flash[:success] = {
@@ -134,11 +134,7 @@ class TriagesController < ApplicationController
     if session[:current_section] == "vaccinations"
       session_vaccinations_path(@session, programme_type: @programme)
     elsif session[:current_section] == "consents"
-      session_consents_tab_path(
-        @session,
-        tab: params[:tab],
-        programme_type: @programme
-      )
+      session_consent_path(@session)
     else # if current_section is triage or anything else
       session_triage_path(@session, programme_type: @programme)
     end

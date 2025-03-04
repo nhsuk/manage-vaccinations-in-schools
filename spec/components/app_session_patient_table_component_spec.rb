@@ -104,10 +104,10 @@ describe AppSessionPatientTableComponent do
         it "guesses the path" do
           expect(component).to receive(:session_patient_programme_path).with(
             anything,
+            section,
+            tab,
             anything,
-            anything,
-            section:,
-            tab:
+            anything
           )
           rendered
         end

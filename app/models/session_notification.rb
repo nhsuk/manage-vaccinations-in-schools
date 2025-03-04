@@ -58,7 +58,8 @@ class SessionNotification < ApplicationRecord
       if type == :school_reminder
         patient_session.programmes.flat_map do |programme|
           patient_session
-            .latest_consents(programme:)
+            .consent
+            .latest(programme:)
             .select(&:response_given?)
             .filter_map(&:parent)
         end

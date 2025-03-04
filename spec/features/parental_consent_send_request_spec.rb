@@ -45,7 +45,7 @@ describe "Parental consent" do
   end
 
   def when_i_go_to_a_patient_without_consent
-    visit session_consents_path(@session)
+    visit session_consent_path(@session)
     click_link @patient.full_name
   end
 

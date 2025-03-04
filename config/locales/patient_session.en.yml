@@ -1,0 +1,14 @@
+en:
+  patient_session:
+    status:
+      consent:
+        label:
+          given: Consent given
+          refused: Consent refused
+          conflicts: Conflicting consent
+          none: No response
+        colour:
+          given: aqua-green
+          refused: red
+          conflicts: dark-orange
+          none: grey

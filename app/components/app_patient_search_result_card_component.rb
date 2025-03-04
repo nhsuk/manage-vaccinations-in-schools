@@ -10,7 +10,7 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
 
   def call
     render AppCardComponent.new(link_to: @link_to, patient: true) do |card|
-      card.with_heading { @patient.full_name }
+      card.with_heading { @patient.full_name_with_known_as }
 
       govuk_summary_list do |summary_list|
         summary_list.with_row do |row|
