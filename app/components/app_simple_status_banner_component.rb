@@ -52,13 +52,13 @@ class AppSimpleStatusBannerComponent < ViewComponent::Base
 
     if patient_session.consent_given_triage_needed?(programme:)
       reasons = [
-        if patient_session.consent.latest(programme:).any?(&:triage_needed?)
+        if patient_session.triage.consent_needs_triage?(programme:)
           I18n.t(
             "patient_session_statuses.#{status}.banner_explanation.consent_needs_triage",
             **options
           )
         end,
-        if patient_session.vaccination_partially_administered?(programme:)
+        if patient_session.triage.vaccination_history_needs_triage?(programme:)
           I18n.t(
             "patient_session_statuses.#{status}.banner_explanation.vaccination_partially_administered",
             **options
@@ -84,7 +84,7 @@ class AppSimpleStatusBannerComponent < ViewComponent::Base
   def nurse
     (
       patient_session.triage.all(programme:) +
-        patient_session.vaccination_records(programme:)
+        patient_session.outcome.all(programme:)
     ).max_by(&:updated_at)&.performed_by&.full_name
   end
 

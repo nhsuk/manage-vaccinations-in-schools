@@ -30,20 +30,6 @@ describe PatientSession do
 
   it { should have_many(:gillick_assessments).order(:created_at) }
 
-  describe "#vaccination_records" do
-    subject(:vaccination_records) do
-      patient_session.vaccination_records(programme:)
-    end
-
-    let(:patient) { patient_session.patient }
-    let(:later_record) { create(:vaccination_record, programme:, patient:) }
-    let(:earlier_record) do
-      create(:vaccination_record, programme:, patient:, performed_at: 1.day.ago)
-    end
-
-    it { should eq([earlier_record, later_record]) }
-  end
-
   describe "#safe_to_destroy?" do
     subject(:safe_to_destroy?) { patient_session.safe_to_destroy? }
 

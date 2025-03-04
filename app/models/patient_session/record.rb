@@ -21,7 +21,7 @@ class PatientSession::Record
   end
 
   def all(programme:)
-    patient.vaccination_records.select do
+    vaccination_records.select do
       it.programme_id == programme.id && it.session_id == session.id
     end
   end
@@ -42,11 +42,13 @@ class PatientSession::Record
 
   def latest_by_programme
     @latest_by_programme ||=
-      patient
-        .vaccination_records
+      vaccination_records
         .select { it.session_id == session.id }
-        .reject(&:discarded?)
         .group_by(&:programme_id)
         .transform_values { it.max_by(&:created_at) }
+  end
+
+  def vaccination_records
+    patient.vaccination_records.reject(&:discarded?)
   end
 end
