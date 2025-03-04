@@ -106,9 +106,12 @@ class Patient < ApplicationRecord
 
   scope :with_notice, -> { deceased.or(restricted).or(invalidated) }
 
-  scope :in_programme,
-        ->(programme) do
-          where(birth_academic_year: programme.birth_academic_years)
+  scope :in_programmes,
+        ->(programmes) do
+          where(
+            birth_academic_year:
+              programmes.map(&:birth_academic_years).sort.uniq
+          )
         end
 
   scope :with_pending_changes, -> { where.not(pending_changes: {}) }

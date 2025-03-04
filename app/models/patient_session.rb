@@ -68,6 +68,9 @@ class PatientSession < ApplicationRecord
           )
         end
 
+  scope :in_programmes,
+        ->(programmes) { merge(Patient.in_programmes(programmes)) }
+
   scope :search_by_name, ->(name) { merge(Patient.search_by_name(name)) }
 
   scope :search_by_year_groups,

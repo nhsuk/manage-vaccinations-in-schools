@@ -27,8 +27,7 @@ class TriagesController < ApplicationController
       @session
         .patient_sessions
         .preload_for_status
-        .eager_load(:patient)
-        .merge(Patient.in_programme(@programme))
+        .in_programmes([@programme])
         .order_by_name
 
     @current_tab = TAB_PATHS[:triage][params[:tab]]
