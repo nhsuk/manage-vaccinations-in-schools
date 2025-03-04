@@ -4,10 +4,14 @@ class VaccinationReport
   include RequestSessionPersistable
   include WizardStepConcern
 
-  FILE_FORMATS = %w[careplus mavis].freeze
-
   def self.request_session_key
     "vaccination_report"
+  end
+
+  def self.file_formats
+    %w[careplus mavis].tap do
+      it << "systm_one" if Flipper.enabled?(:systm_one_exporter)
+    end
   end
 
   attribute :date_from, :date
@@ -20,7 +24,10 @@ class VaccinationReport
   end
 
   on_wizard_step :file_format, exact: true do
-    validates :file_format, inclusion: { in: FILE_FORMATS }
+    validates :file_format,
+              inclusion: {
+                in: -> { VaccinationReport.file_formats }
+              }
   end
 
   def programme
@@ -57,7 +64,8 @@ class VaccinationReport
   def exporter_class
     {
       careplus: Reports::CareplusExporter,
-      mavis: Reports::ProgrammeVaccinationsExporter
+      mavis: Reports::ProgrammeVaccinationsExporter,
+      systm_one: Reports::SystmOneExporter
     }.fetch(file_format.to_sym)
   end
 

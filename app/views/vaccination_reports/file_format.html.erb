@@ -8,7 +8,7 @@
 <%= form_with model: @vaccination_report, url: wizard_path, method: :put do |f| %>
   <%= f.govuk_error_summary %>
 
-  <%= f.govuk_collection_radio_buttons :file_format, VaccinationReport::FILE_FORMATS, :itself, legend: { text: title, size: "l", tag: "h1" }, caption: { text: @programme.name } %>
+  <%= f.govuk_collection_radio_buttons :file_format, VaccinationReport.file_formats, :itself, legend: { text: title, size: "l", tag: "h1" }, caption: { text: @programme.name } %>
 
   <%= f.govuk_submit %>
 <% end %>
