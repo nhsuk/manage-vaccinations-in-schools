@@ -34,7 +34,7 @@ describe Reports::SystmOneExporter do
   it "includes the patient and vaccination details" do
     expect(parsed_csv.first.to_h).to eq(
       {
-        "Practice code" => "ABC123",
+        "Practice code" => location.urn,
         "NHS number" => vaccination_record.patient.nhs_number,
         "Surname" => vaccination_record.patient.family_name,
         "Middle name" => "",
@@ -129,6 +129,16 @@ describe Reports::SystmOneExporter do
     end
 
     it { should be_blank }
+  end
+
+  describe "Practice code field" do
+    subject { csv_row["Practice code"] }
+
+    context "location is a gp clinic" do
+      let(:location) { create(:gp_practice) }
+
+      it { should eq location.ods_code }
+    end
   end
 
   describe "Gender field" do

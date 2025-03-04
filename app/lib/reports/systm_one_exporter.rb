@@ -1,6 +1,13 @@
 # frozen_string_literal: true
 
 class Reports::SystmOneExporter
+  GENDER_CODE_MAPPINGS = {
+    male: "M",
+    female: "F",
+    not_specified: "U",
+    not_known: "U"
+  }.with_indifferent_access.freeze
+
   VACCINE_DOSE_MAPPINGS = {
     "Gardasil 9" => {
       "1" => "Y19a4",
@@ -76,14 +83,7 @@ class Reports::SystmOneExporter
         .joins(:organisation)
         .where(organisations: { id: organisation.id })
         .merge(VaccinationRecord.administered)
-        .includes(
-          :batch,
-          :location,
-          :performed_by_user,
-          :programme,
-          :vaccine,
-          patient: %i[gp_practice school]
-        )
+        .includes(:batch, :location, :programme, :vaccine, :patient)
 
     if start_date.present?
       scope =
@@ -118,7 +118,7 @@ class Reports::SystmOneExporter
     patient = vaccination_record.patient
 
     [
-      organisation.ods_code, # Practice code
+      practice_code(vaccination_record), # Practice code
       patient.nhs_number, # NHS number
       patient.family_name, # Surname
       "", # Middle name (not stored)
@@ -142,8 +142,15 @@ class Reports::SystmOneExporter
     ]
   end
 
+  # TODO: Needs support for community and generic clinics.
+  def practice_code(vaccination_record)
+    location = vaccination_record.session.location
+
+    location.school? ? location.urn : location.ods_code
+  end
+
   def gender_code(code)
-    { male: "M", female: "F", not_specified: "U", not_known: "U" }[code.to_sym]
+    GENDER_CODE_MAPPINGS[code]
   end
 
   # TODO: These mappings are valid for Hertforshire, but may not be correct for
