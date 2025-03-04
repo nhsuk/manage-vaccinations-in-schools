@@ -262,11 +262,6 @@ Rails.application.routes.draw do
                   "/sessions/%{session_slug}/vaccinations/#{TAB_PATHS[:vaccinations].keys.first}"
               )
 
-        resource :batch,
-                 path: "batch/:programme_type",
-                 only: %i[edit update],
-                 controller: "vaccinations/batch"
-
         get ":tab",
             controller: "vaccinations",
             action: :index,
