@@ -126,13 +126,13 @@ class PatientSession < ApplicationRecord
     @record ||= PatientSession::Record.new(self)
   end
 
+  def outcome
+    @outcome ||= PatientSession::Outcome.new(self)
+  end
+
   # TODO: Replace these two with objects like the above.
 
   def gillick_assessment(programme:)
     gillick_assessments.select { it.programme_id == programme.id }.last
-  end
-
-  def vaccination_records(programme:)
-    patient.vaccination_records.select { it.programme_id == programme.id }
   end
 end

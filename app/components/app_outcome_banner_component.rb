@@ -54,7 +54,7 @@ class AppOutcomeBannerComponent < ViewComponent::Base
   def vaccination_record
     @vaccination_record ||=
       begin
-        vaccination_records = @patient_session.vaccination_records(programme:)
+        vaccination_records = @patient_session.outcome.all(programme:)
         if @patient_session.vaccinated?(programme:)
           vaccination_records.select(&:administered?).last
         else
