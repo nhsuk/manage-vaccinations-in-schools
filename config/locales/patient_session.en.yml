@@ -53,3 +53,14 @@ en:
           none: grey
           not_well: red
           refused: red
+      outcome:
+        label:
+          could_not_vaccinate: Could not vaccinate
+          none: No outcome yet
+          partially_vaccinated: Partially vaccinated
+          vaccinated: Vaccinated
+        colour:
+          could_not_vaccinate: red
+          none: grey
+          partially_vaccinated: green
+          vaccinated: green

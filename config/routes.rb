@@ -198,6 +198,7 @@ Rails.application.routes.draw do
       post ":patient_id/:status", as: :create, action: :create
     end
     resource :record, only: :show, controller: "sessions/record"
+    resource :outcome, only: :show, controller: "sessions/outcome"
 
     resource :invite_to_clinic,
              path: "invite-to-clinic",
