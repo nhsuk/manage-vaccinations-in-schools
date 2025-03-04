@@ -48,7 +48,7 @@ feature "Verbal consent" do
         patient: @child
       )
     @refusing_parent =
-      patient_session.consents(programme: @programme).first.parent
+      patient_session.consent.all(programme: @programme).first.parent
 
     visit "/dashboard"
     click_on "Programmes", match: :first

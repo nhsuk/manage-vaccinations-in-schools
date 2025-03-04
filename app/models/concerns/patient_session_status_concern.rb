@@ -58,48 +58,23 @@ module PatientSessionStatusConcern
     end
 
     def consent_given?(programme:)
-      return false if no_consent?(programme:)
-
-      if (
-           self_consents =
-             latest_consents(programme:).select(&:via_self_consent?)
-         ).present?
-        self_consents.all?(&:response_given?)
-      else
-        latest_consents(programme:).all?(&:response_given?)
-      end
+      consent.status[programme] == PatientSession::Consent::GIVEN
     end
 
     def consent_refused?(programme:)
-      return false if no_consent?(programme:)
-
-      latest_consents(programme:).all?(&:response_refused?)
+      consent.status[programme] == PatientSession::Consent::REFUSED
     end
 
     def consent_conflicts?(programme:)
-      return false if no_consent?(programme:)
-
-      if (
-           self_consents =
-             latest_consents(programme:).select(&:via_self_consent?)
-         ).present?
-        self_consents.any?(&:response_refused?) &&
-          self_consents.any?(&:response_given?)
-      else
-        latest_consents(programme:).any?(&:response_refused?) &&
-          latest_consents(programme:).any?(&:response_given?)
-      end
+      consent.status[programme] == PatientSession::Consent::CONFLICTS
     end
 
     def no_consent?(programme:)
-      consents(programme:).empty? ||
-        consents(programme:).all? do
-          _1.response_not_provided? || _1.invalidated?
-        end
+      consent.status[programme] == PatientSession::Consent::NONE
     end
 
     def consent_needs_triage?(programme:)
-      latest_consents(programme:).any?(&:triage_needed?)
+      consent.latest(programme:).any?(&:triage_needed?)
     end
 
     def triage_needed?(programme:)

@@ -63,7 +63,8 @@ class TriagesController < ApplicationController
     if @triage.save(context: :consent)
       @patient_session
         .reload
-        .latest_consents(programme: @triage.programme)
+        .consent
+        .latest(programme: @triage.programme)
         .each { send_triage_confirmation(@patient_session, it) }
 
       flash[:success] = {

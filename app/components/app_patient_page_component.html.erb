@@ -70,7 +70,7 @@
 <% end %>
 
 <% if display_health_questions? %>
-  <%= render AppHealthAnswersCardComponent.new(patient_session.latest_consents(programme:), heading: "All answers to health questions") %>
+  <%= render AppHealthAnswersCardComponent.new(patient_session.consent.latest(programme:), heading: "All answers to health questions") %>
 <% end %>
 
 <% if patient_session.triages(programme:).any? %>

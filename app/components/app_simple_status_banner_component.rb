@@ -74,7 +74,8 @@ class AppSimpleStatusBannerComponent < ViewComponent::Base
 
   def who_refused
     patient_session
-      .latest_consents(programme:)
+      .consent
+      .latest(programme:)
       .select(&:response_refused?)
       .map(&:who_responded)
       .last

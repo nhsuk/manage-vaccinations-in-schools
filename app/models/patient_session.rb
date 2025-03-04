@@ -99,12 +99,8 @@ class PatientSession < ApplicationRecord
     session.programmes.select { it.year_groups.include?(patient.year_group) }
   end
 
-  def consents(programme:)
-    patient.consents.select { it.programme_id == programme.id }
-  end
-
-  def latest_consents(programme:)
-    latest_consents_by_programme.fetch(programme.id, [])
+  def consent
+    @consent ||= PatientSession::Consent.new(self)
   end
 
   def gillick_assessment(programme:)
@@ -145,18 +141,6 @@ class PatientSession < ApplicationRecord
   end
 
   private
-
-  def latest_consents_by_programme
-    @latest_consents_by_programme ||=
-      patient
-        .consents
-        .reject(&:invalidated?)
-        .select { it.response_given? || it.response_refused? }
-        .group_by(&:programme_id)
-        .transform_values do |consents|
-          consents.group_by(&:name).map { it.second.max_by(&:created_at) }
-        end
-  end
 
   def latest_triage_by_programme
     @latest_triage_by_programme ||=
