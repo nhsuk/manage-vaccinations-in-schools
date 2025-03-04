@@ -62,7 +62,7 @@ class PatientSession < ApplicationRecord
 
   scope :preload_for_status,
         -> do
-          preload(
+          eager_load(:patient).preload(
             patient: [:triages, { consents: :parent }, :vaccination_records],
             session: :programmes
           )

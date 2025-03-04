@@ -20,6 +20,15 @@ class AppSearchComponent < ViewComponent::Base
           </button>
         </div>
         
+        <% if consent_status %>
+          <%= f.govuk_radio_buttons_fieldset :consent_status, legend: { text: "Consent status", size: "s" } do %>
+            <%= f.govuk_radio_button :consent_status, "", label: { text: "Any" } %>
+            <% PatientSession::Consent::STATUSES.each do |status| %>
+              <%= f.govuk_radio_button :consent_status, status, label: { text: t(status, scope: %i[patient_session status consent label]) } %>
+            <% end %>
+          <% end %>
+        <% end %>
+
         <% if year_groups.any? %>
           <%= f.govuk_check_boxes_fieldset :year_groups, legend: { text: "Year group", size: "s" } do %>
             <% year_groups.each do |year_group| %>
@@ -44,16 +53,17 @@ class AppSearchComponent < ViewComponent::Base
     <% end %>
   ERB
 
-  def initialize(form:, url:, year_groups: [])
+  def initialize(form:, url:, consent_status: false, year_groups: [])
     super
 
     @form = form
     @url = url
 
+    @consent_status = consent_status
     @year_groups = year_groups
   end
 
   private
 
-  attr_reader :form, :url, :year_groups
+  attr_reader :form, :url, :consent_status, :year_groups
 end

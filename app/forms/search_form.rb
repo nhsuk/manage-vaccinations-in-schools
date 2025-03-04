@@ -5,13 +5,14 @@ class SearchForm
   include ActiveModel::Attributes
   include ActiveRecord::AttributeAssignment
 
+  attribute :consent_status, :string
   attribute :date_of_birth, :date
   attribute :missing_nhs_number, :boolean
   attribute :q, :string
   attribute :year_groups, array: true
 
   def year_groups=(values)
-    super(values.compact_blank.map(&:to_i).compact)
+    super(values&.compact_blank&.map(&:to_i)&.compact || [])
   end
 
   def apply(scope)
@@ -24,6 +25,12 @@ class SearchForm
 
     scope = scope.search_by_nhs_number(nil) if missing_nhs_number.present?
 
-    scope.order_by_name
+    scope = scope.order_by_name
+
+    if (status = consent_status&.to_sym).present?
+      scope = scope.select { it.consent.status.values.include?(status) }
+    end
+
+    scope
   end
 end

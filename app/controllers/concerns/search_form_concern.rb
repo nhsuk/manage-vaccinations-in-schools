@@ -12,6 +12,7 @@ module SearchFormConcern
           :"date_of_birth(2i)",
           :"date_of_birth(1i)",
           :missing_nhs_number,
+          :consent_status,
           year_groups: []
         )
       )
