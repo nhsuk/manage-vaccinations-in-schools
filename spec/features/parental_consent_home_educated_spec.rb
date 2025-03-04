@@ -117,7 +117,9 @@ describe "Parental consent school" do
 
   def then_i_can_check_my_answers
     expect(page).to have_content("Check and confirm")
-    expect(page).to have_content("Child’s name#{@child.full_name}")
+    expect(page).to have_content(
+      "Child’s name#{@child.full_name(context: :parents)}"
+    )
     expect(page).to have_content("SchoolHome-schooled")
   end
 end

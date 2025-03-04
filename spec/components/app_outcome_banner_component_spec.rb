@@ -33,7 +33,7 @@ describe AppOutcomeBannerComponent do
 
     it { should have_css(".app-card--red") }
     it { should have_css(".nhsuk-card__heading", text: "Could not vaccinate") }
-    it { should have_text("Alya Merton has already had the vaccine") }
+    it { should have_text("MERTON, Alya has already had the vaccine") }
     it { should have_text("Location\n#{location_name}") }
   end
 
@@ -44,7 +44,7 @@ describe AppOutcomeBannerComponent do
 
     it { should have_css(".app-card--red") }
     it { should have_css(".nhsuk-card__heading", text: "Could not vaccinate") }
-    it { should have_text("Reason\nAlya Merton has already had the vaccine") }
+    it { should have_text("Reason\nMERTON, Alya has already had the vaccine") }
   end
 
   context "not triaged, not possible to vaccinate" do
@@ -54,7 +54,7 @@ describe AppOutcomeBannerComponent do
 
     it { should have_css(".app-card--red") }
     it { should have_css(".nhsuk-card__heading", text: "Could not vaccinate") }
-    it { should have_text("Reason\nAlya Merton has already had the vaccine") }
+    it { should have_text("Reason\nMERTON, Alya has already had the vaccine") }
   end
 
   context "state is vaccinated" do

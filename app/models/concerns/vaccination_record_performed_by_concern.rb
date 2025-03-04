@@ -11,17 +11,20 @@ module VaccinationRecordPerformedByConcern
               }
   end
 
+  PerformedBy =
+    Struct.new(:given_name, :family_name) do
+      def full_name
+        FullNameFormatter.call(self, context: :internal)
+      end
+    end
+
   def performed_by
     return performed_by_user if performed_by_user
 
     if performed_by_given_name.present? || performed_by_family_name.present?
-      OpenStruct.new(
+      PerformedBy.new(
         given_name: performed_by_given_name,
-        family_name: performed_by_family_name,
-        full_name: [
-          performed_by_given_name,
-          performed_by_family_name
-        ].compact_blank.join(" ")
+        family_name: performed_by_family_name
       )
     end
   end

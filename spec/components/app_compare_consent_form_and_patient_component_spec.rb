@@ -36,7 +36,7 @@ describe AppCompareConsentFormAndPatientComponent do
     end
 
     it "displays the key consent form details without anything being highlighted as unmatched" do
-      expect(rendered).to have_text("Full name\nJohn Doe\nJohn Doe")
+      expect(rendered).to have_text("Full name\nDOE, John\nDOE, John")
       expect(rendered).to have_text(
         "Date of birth\n1 January 2000\n1 January 2000"
       )
@@ -67,7 +67,7 @@ describe AppCompareConsentFormAndPatientComponent do
     end
 
     it "displays the key consent form details with the unmatched details highlighted" do
-      expect(rendered).to have_text("Full name\nJohn Doe\nJane Doe")
+      expect(rendered).to have_text("Full name\nDOE, John\nDOE, Jane")
       expect(rendered).to have_text(
         "Date of birth\n1 January 2000\n2 January 2000"
       )

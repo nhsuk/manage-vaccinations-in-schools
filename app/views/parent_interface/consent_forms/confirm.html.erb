@@ -139,7 +139,7 @@
   <%= govuk_summary_list do |summary_list|
         summary_list.with_row do |row|
           row.with_key { "Child’s name" }
-          row.with_value { @consent_form.full_name }
+          row.with_value { @consent_form.full_name(context: :parents) }
           row.with_action(text: "Change",
                           href: change_link[:name],
                           visually_hidden_text: "child’s name")
@@ -148,7 +148,7 @@
         if @consent_form.use_preferred_name
           summary_list.with_row do |row|
             row.with_key { "Also known as" }
-            row.with_value { @consent_form.preferred_full_name }
+            row.with_value { @consent_form.preferred_full_name(context: :parents) }
             row.with_action(text: "Change",
                             href: change_link[:name],
                             visually_hidden_text: "common name")
