@@ -128,6 +128,7 @@ class VaccinationsController < ApplicationController
         .patient_sessions
         .includes(
           :gillick_assessments,
+          :session_attendances,
           :organisation,
           patient: {
             parent_relationships: :parent
