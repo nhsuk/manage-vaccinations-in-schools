@@ -39,10 +39,13 @@ describe AppPatientTableComponent do
   end
 
   it "renders the headers" do
-    expect(rendered).to have_css(".nhsuk-table__header", text: "Full name")
-    expect(rendered).to have_css(".nhsuk-table__header", text: "NHS number")
-    expect(rendered).to have_css(".nhsuk-table__header", text: "Date of birth")
+    expect(rendered).to have_css(
+      ".nhsuk-table__header",
+      text: "Name and NHS number"
+    )
     expect(rendered).to have_css(".nhsuk-table__header", text: "Postcode")
+    expect(rendered).to have_css(".nhsuk-table__header", text: "School")
+    expect(rendered).to have_css(".nhsuk-table__header", text: "Date of birth")
   end
 
   it "renders the rows" do

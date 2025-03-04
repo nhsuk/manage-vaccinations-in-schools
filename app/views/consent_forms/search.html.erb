@@ -43,26 +43,7 @@
   </div>
 
   <div class="nhsuk-grid-column-two-thirds">
-    <%= render AppCardComponent.new(filters: true) do |card| %>
-      <% card.with_heading { "Find children" } %>
-
-      <%= form_with model: @form, url: search_consent_form_path(@consent_form), method: :get do |f| %>
-        <%= render AppSearchInputComponent.new(f:) %>
-
-        <%= govuk_details(summary_text: "Advanced filters", open: @form.date_of_birth.present? || @form.missing_nhs_number) do %>
-          <%= f.govuk_date_field :date_of_birth, date_of_birth: true, legend: { text: "Date of birth", size: "s" } %>
-
-          <%= f.govuk_check_boxes_fieldset :missing_nhs_number, multiple: false, legend: { text: "Options", size: "s" } do %>
-            <%= f.govuk_check_box :missing_nhs_number, 1, 0, multiple: false, link_errors: true, label: { text: "Missing NHS number" } %>
-          <% end %>
-
-          <div class="app-button-group">
-            <%= f.govuk_submit "Update results", secondary: true, class: "app-button--small" %>
-            <%= govuk_button_link_to "Clear filters", search_consent_form_path(@consent_form), class: "app-button--small app-button--secondary" %>
-          </div>
-        <% end %>
-      <% end %>
-    <% end %>
+    <%= render AppSearchComponent.new(form: @form, url: search_consent_form_path(@consent_form)) %>
 
     <%= render AppSearchResultsComponent.new(@pagy) do %>
       <% @patients.each do |patient| %>
