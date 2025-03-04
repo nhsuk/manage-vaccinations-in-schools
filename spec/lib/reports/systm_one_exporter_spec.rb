@@ -152,4 +152,41 @@ describe Reports::SystmOneExporter do
       it { should eq "U" }
     end
   end
+
+  describe "Vaccination field" do
+    subject { csv_row["Vaccination"] }
+
+    let(:vaccination_record) do
+      create(
+        :vaccination_record,
+        programme:,
+        patient:,
+        session:,
+        performed_at: 2.weeks.ago,
+        vaccine:,
+        dose_sequence:
+      )
+    end
+
+    context "HPV Gardasil 9 dose 2" do
+      let(:vaccine) { Vaccine.find_by(brand: "Gardasil 9") }
+      let(:dose_sequence) { 2 }
+
+      it { should eq "Y19a5" }
+    end
+
+    context "HPV Gardasil 9 dose 3" do
+      let(:vaccine) { Vaccine.find_by(brand: "Gardasil 9") }
+      let(:dose_sequence) { 3 }
+
+      it { should eq "Y19a6" }
+    end
+
+    context "unknown vaccine and no dose sequence" do
+      let(:vaccine) { create(:vaccine, :fluad_tetra) }
+      let(:dose_sequence) { 1 }
+
+      it { should eq "Fluad Tetra - aQIV Part 1" }
+    end
+  end
 end

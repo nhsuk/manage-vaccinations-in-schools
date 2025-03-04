@@ -1,6 +1,14 @@
 # frozen_string_literal: true
 
 class Reports::SystmOneExporter
+  VACCINE_DOSE_MAPPINGS = {
+    "Gardasil 9" => {
+      "1" => "Y19a4",
+      "2" => "Y19a5",
+      "3" => "Y19a6"
+    }
+  }.freeze
+
   def initialize(organisation:, programme:, start_date:, end_date:)
     @organisation = organisation
     @programme = programme
@@ -129,8 +137,18 @@ class Reports::SystmOneExporter
     { male: "M", female: "F", not_specified: "U", not_known: "U" }[code.to_sym]
   end
 
+  # TODO: These mappings are valid for Hertforshire, but may not be correct for
+  #       other SAIS teams. We'll need to check these are correct with new SAIS
+  #       teams.
   def vaccination(vaccination_record)
-    "#{vaccination_record.vaccine.brand} dose #{vaccination_record.dose_sequence}"
+    return if vaccination_record.not_administered?
+
+    VACCINE_DOSE_MAPPINGS.dig(
+      vaccination_record.vaccine.brand,
+      vaccination_record.dose_sequence.to_s
+    ) ||
+      "#{vaccination_record.vaccine.brand} " \
+        "Part #{vaccination_record.dose_sequence}"
   end
 
   def reason(vaccination_record)
