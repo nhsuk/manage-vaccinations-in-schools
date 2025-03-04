@@ -221,7 +221,7 @@ describe "End-to-end journey" do
     visit sessions_path
 
     click_link "Pilot School"
-    click_link "Register attendance"
+    click_link "Register"
   end
 
   def and_i_record_the_patient_in_attendance

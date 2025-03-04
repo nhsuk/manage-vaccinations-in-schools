@@ -25,3 +25,12 @@ en:
           not_required: grey
           required: blue
           safe_to_vaccinate: aqua-green
+      register:
+        label:
+          absent: Absent from session
+          present: Attending session
+          unknown: Not registered yet
+        colour:
+          absent: red
+          present: green
+          unknown: blue

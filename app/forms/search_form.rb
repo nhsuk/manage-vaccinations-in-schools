@@ -9,6 +9,7 @@ class SearchForm
   attribute :date_of_birth, :date
   attribute :missing_nhs_number, :boolean
   attribute :q, :string
+  attribute :register_status, :string
   attribute :triage_status, :string
   attribute :year_groups, array: true
 
@@ -30,6 +31,10 @@ class SearchForm
 
     if (status = consent_status&.to_sym).present?
       scope = scope.select { it.consent.status.values.include?(status) }
+    end
+
+    if (status = register_status&.to_sym).present?
+      scope = scope.select { it.register.status == status }
     end
 
     if (status = triage_status&.to_sym).present?

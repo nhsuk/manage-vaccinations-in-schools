@@ -123,6 +123,10 @@ class PatientSession < ApplicationRecord
     @triage ||= PatientSession::Triage.new(self)
   end
 
+  def register
+    @register ||= PatientSession::Register.new(self)
+  end
+
   def gillick_assessment(programme:)
     gillick_assessments.select { it.programme_id == programme.id }.last
   end
@@ -140,15 +144,5 @@ class PatientSession < ApplicationRecord
     else
       vaccination_records_for_programme
     end
-  end
-
-  def todays_attendance
-    @todays_attendance ||=
-      if (session_date = session.session_dates.find(&:today?))
-        session_attendances.eager_load(
-          :patient,
-          :session_date
-        ).find_or_initialize_by(session_date:)
-      end
   end
 end

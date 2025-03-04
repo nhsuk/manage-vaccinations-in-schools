@@ -11,7 +11,7 @@
 <% end %>
 
 <ul class="app-action-list">
-  <% if (session_attendance = @patient_session.todays_attendance) %>
+  <% if (session_attendance = @patient_session.register.today) %>
     <li class="app-action-list__item">
       <% if session_attendance.attending %>
         <%= govuk_tag(text: "Attending today’s session") %>
