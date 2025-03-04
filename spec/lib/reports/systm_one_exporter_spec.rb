@@ -130,4 +130,26 @@ describe Reports::SystmOneExporter do
 
     it { should be_blank }
   end
+
+  describe "Gender field" do
+    subject { csv_row["Gender"] }
+
+    context "gender_code is male" do
+      let(:patient) { create(:patient, gender_code: :male) }
+
+      it { should eq "M" }
+    end
+
+    context "gender_code is female" do
+      let(:patient) { create(:patient, gender_code: :female) }
+
+      it { should eq "F" }
+    end
+
+    context "gender_code is not specified" do
+      let(:patient) { create(:patient, gender_code: :not_specified) }
+
+      it { should eq "U" }
+    end
+  end
 end

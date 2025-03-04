@@ -126,14 +126,7 @@ class Reports::SystmOneExporter
   end
 
   def gender_code(code)
-    case code
-    when "not_known"
-      "Not known"
-    when "not_specified"
-      "Not specified"
-    else
-      code.capitalize
-    end
+    { male: "M", female: "F", not_specified: "U", not_known: "U" }[code.to_sym]
   end
 
   def vaccination(vaccination_record)
