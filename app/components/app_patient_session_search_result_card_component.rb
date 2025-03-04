@@ -31,13 +31,12 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
     <% end %>
   ERB
 
-  def initialize(patient_session, link_to:, context:)
+  def initialize(patient_session, context:)
     super
 
     @patient_session = patient_session
     @patient = patient_session.patient
     @session = patient_session.session
-    @link_to = link_to
     @context = context
 
     unless context.in?(%i[consent triage register record outcome])
@@ -47,7 +46,17 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
 
   private
 
-  attr_reader :patient_session, :patient, :session, :link_to, :context
+  attr_reader :patient_session, :patient, :session, :context
+
+  def link_to
+    programme = patient_session.programmes.first
+    session_patient_programme_path(
+      session,
+      patient,
+      programme,
+      return_to: context
+    )
+  end
 
   def status_tag
     if context == :register

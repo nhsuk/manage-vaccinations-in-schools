@@ -4,12 +4,7 @@ describe AppConsentComponent do
   subject(:rendered) { render_inline(component) }
 
   let(:component) do
-    described_class.new(
-      patient_session:,
-      programme: programmes.first,
-      section: "triage",
-      tab: "needed"
-    )
+    described_class.new(patient_session:, programme: programmes.first)
   end
 
   let(:programmes) { [create(:programme)] }

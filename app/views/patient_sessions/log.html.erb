@@ -1,8 +1,5 @@
 <% content_for :before_main do %>
-  <%= render AppBacklinkComponent.new(
-        session_section_tab_path(@session),
-        name: "#{@section.pluralize} page",
-      ) %>
+  <%= render AppBacklinkComponent.new(@back_link_path, name: "session") %>
 <% end %>
 
 <%= h1 page_title: @patient.initials do %>

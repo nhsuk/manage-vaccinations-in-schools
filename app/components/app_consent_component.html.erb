@@ -31,7 +31,7 @@
         <%= body.with_row do |row| %>
           <%= row.with_cell(classes: "app-table__cell-status--#{status_colour(consent)}") do %>
             <%= govuk_link_to consent&.parent&.full_name || consent.patient.full_name,
-                              session_patient_programme_consent_path(session, patient, programme, consent, section:, tab:) %>
+                              session_patient_programme_consent_path(session, patient, programme, consent) %>
             <br>
             <span class="nhsuk-u-font-size-16"><%= consent.who_responded %></span>
           <% end %>
@@ -52,13 +52,13 @@
 <% if can_send_consent_request? %>
   <%= govuk_button_to "Send consent request",
                       send_request_session_patient_programme_consents_path(
-                        session, patient, programme, section: @section, tab: @tab,
+                        session, patient, programme
                       ),
                       class: "app-button--secondary" %>
 <% end %>
 
 <%= govuk_button_to "Get consent response",
                     session_patient_programme_consents_path(
-                      session, patient, programme, section: @section, tab: @tab,
+                      session, patient, programme
                     ),
                     class: "app-button--secondary" %>

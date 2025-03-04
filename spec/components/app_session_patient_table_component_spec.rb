@@ -11,12 +11,11 @@ describe AppSessionPatientTableComponent do
     patient_sessions.each { _1.strict_loading!(false) }
   end
 
-  let(:section) { :consent }
   let(:programmes) { [create(:programme)] }
   let(:session) { create(:session, programmes:) }
   let(:patient_sessions) { create_list(:patient_session, 2, session:) }
   let(:columns) { %i[name year_group] }
-  let(:params) { { session_slug: session.slug, section:, tab: :needed } }
+  let(:params) { { session_slug: session.slug } }
 
   let(:component) do
     described_class.new(
@@ -24,7 +23,6 @@ describe AppSessionPatientTableComponent do
       caption: "Foo",
       columns:,
       params:,
-      section:,
       programme: programmes.first
     )
   end
@@ -79,91 +77,12 @@ describe AppSessionPatientTableComponent do
   it { should have_css(".nhsuk-table__body .nhsuk-table__row", count: 2) }
   it { should have_link(patient_sessions.first.patient.full_name) }
 
-  describe "vaccinations section" do
-    let(:section) { :vaccination }
-    let(:tab) { :actions }
-
-    it do
-      expect(rendered).to have_link(
-        patient_sessions.first.patient.full_name,
-        href: "/session/patient/"
-      )
-    end
-  end
-
-  describe "without a section or tab in the params" do
-    let(:section) { :patients }
-    let(:params) { { session_slug: session.slug } }
-
-    shared_examples "guesses the path" do |status, section, tab|
-      context "for #{status}" do
-        let(:patient_sessions) do
-          create_list(:patient_session, 1, status, session:, programmes:)
-        end
-
-        it "guesses the path" do
-          expect(component).to receive(:session_patient_programme_path).with(
-            anything,
-            section,
-            tab,
-            anything,
-            anything
-          )
-          rendered
-        end
-      end
-    end
-
-    include_examples "guesses the path",
-                     :added_to_session,
-                     "consents",
-                     "no-consent"
-    include_examples "guesses the path", :consent_refused, "consents", "refused"
-    include_examples "guesses the path",
-                     :consent_conflicting,
-                     "consents",
-                     "conflicts"
-    include_examples "guesses the path",
-                     :consent_given_triage_needed,
-                     "triage",
-                     "needed"
-    include_examples "guesses the path",
-                     :triaged_kept_in_triage,
-                     "triage",
-                     "needed"
-    include_examples "guesses the path",
-                     :consent_given_triage_not_needed,
-                     "vaccinations",
-                     "vaccinate"
-    include_examples "guesses the path",
-                     :triaged_ready_to_vaccinate,
-                     "vaccinations",
-                     "vaccinate"
-    include_examples "guesses the path",
-                     :delay_vaccination,
-                     "vaccinations",
-                     "vaccinate"
-    include_examples "guesses the path",
-                     :triaged_do_not_vaccinate,
-                     "vaccinations",
-                     "could-not"
-    include_examples "guesses the path",
-                     :unable_to_vaccinate,
-                     "vaccinations",
-                     "could-not"
-    include_examples "guesses the path",
-                     :vaccinated,
-                     "vaccinations",
-                     "vaccinated"
-  end
-
   describe "columns parameter" do
     context "is not set" do
       let(:component) do
         described_class.new(
           patient_sessions,
           programme: programmes.first,
-          section:,
           params:
         )
       end

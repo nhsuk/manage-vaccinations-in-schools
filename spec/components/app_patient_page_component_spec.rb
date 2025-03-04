@@ -21,8 +21,6 @@ describe AppPatientPageComponent do
     described_class.new(
       patient_session:,
       programme: programmes.first,
-      section: "triage",
-      tab: "needed",
       triage: nil
     )
   end

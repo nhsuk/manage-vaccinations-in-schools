@@ -254,46 +254,35 @@ Rails.application.routes.draw do
     end
 
     resource :dates, controller: "session_dates", only: %i[show update]
-  end
 
-  scope "/sessions/:session_slug/:section", as: "session" do
-    scope ":tab" do
-      resources :patient_sessions, path: "patients", as: :patient, only: [] do
-        get "log"
-        get "record-already-vaccinated"
+    resources :patient_sessions, path: "patients", as: :patient, only: [] do
+      get "log"
+      get "record-already-vaccinated"
 
-        resource :attendance,
-                 controller: "session_attendances",
-                 only: %i[edit update]
+      resource :attendance,
+               controller: "session_attendances",
+               only: %i[edit update]
 
-        resources :programmes, path: "", param: :type, only: [] do
-          get "", as: "", action: :show, controller: :patient_sessions
+      resources :programmes, path: "", param: :type, only: [] do
+        get "", as: "", action: :show, controller: :patient_sessions
 
-          resources :consents, only: %i[index create show] do
-            post "send-request", on: :collection, action: :send_request
+        resources :consents, only: %i[index create show] do
+          post "send-request", on: :collection, action: :send_request
 
-            member do
-              get "withdraw", action: :edit_withdraw
-              post "withdraw", action: :update_withdraw
+          member do
+            get "withdraw", action: :edit_withdraw
+            post "withdraw", action: :update_withdraw
 
-              get "invalidate", action: :edit_invalidate
-              post "invalidate", action: :update_invalidate
-            end
+            get "invalidate", action: :edit_invalidate
+            post "invalidate", action: :update_invalidate
           end
-
-          resource :gillick_assessment, path: "gillick", only: %i[edit update]
-          resource :triages, only: %i[new create]
-          resource :vaccinations, only: %i[create]
         end
+
+        resource :gillick_assessment, path: "gillick", only: %i[edit update]
+        resource :triages, only: %i[new create]
+        resource :vaccinations, only: %i[create]
       end
     end
-
-    # These are just used to create helpers with better names that allow passing
-    # in section and/or tab as a parameter. e.g. session_section_path(@session,
-    # section: @section) which looks cleaner than session_triage_path(@session,
-    # section: @section)
-    get "/", to: "errors#not_found", as: "section"
-    get "/:tab", to: "errors#not_found", as: "section_tab"
   end
 
   resource :organisation, only: %i[show]

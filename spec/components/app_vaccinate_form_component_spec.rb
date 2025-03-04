@@ -24,9 +24,7 @@ describe AppVaccinateFormComponent do
     described_class.new(
       patient_session:,
       programme: programmes.first,
-      vaccinate_form: VaccinateForm.new,
-      section: "vaccinate",
-      tab: "needed"
+      vaccinate_form: VaccinateForm.new
     )
   end
 

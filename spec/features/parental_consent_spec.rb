@@ -187,9 +187,7 @@ describe "Parental consent" do
       "Consent response manually matched with child record"
     )
 
-    # TODO: Update this once back links work
-    # click_link "Back to consents page"
-    visit session_consent_path(@session)
+    click_link "Back to session"
   end
 
   def when_they_check_triage

@@ -3,18 +3,11 @@
 class AppPatientPageComponent < ViewComponent::Base
   include ApplicationHelper
 
-  attr_reader :current_user,
-              :patient_session,
-              :programme,
-              :section,
-              :tab,
-              :vaccinate_form
+  attr_reader :current_user, :patient_session, :programme, :vaccinate_form
 
   def initialize(
     patient_session:,
     programme:,
-    section:,
-    tab:,
     current_user: nil,
     triage: nil,
     vaccinate_form: nil
@@ -23,8 +16,6 @@ class AppPatientPageComponent < ViewComponent::Base
 
     @patient_session = patient_session
     @programme = programme
-    @section = section
-    @tab = tab
     @current_user = current_user
     @triage = triage
     @vaccinate_form = vaccinate_form || VaccinateForm.new

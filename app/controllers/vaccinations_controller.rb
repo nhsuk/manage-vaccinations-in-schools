@@ -8,7 +8,6 @@ class VaccinationsController < ApplicationController
   before_action :set_patient
   before_action :set_patient_session
   before_action :set_programme
-  before_action :set_section_and_tab
   before_action :set_todays_batch
 
   after_action :verify_authorized
@@ -110,11 +109,6 @@ class VaccinationsController < ApplicationController
         @session.programmes.find_by(type: params[:programme_type]) ||
           @session.programmes.first
     end
-  end
-
-  def set_section_and_tab
-    @section = params[:section]
-    @tab = params[:tab]
   end
 
   def set_todays_batch

@@ -15,9 +15,7 @@ describe "HPV vaccination" do
     when_i_record_vaccination_outcomes_to_the_spreadsheet_and_export_it_to_csv
     and_i_upload_the_modified_csv_file
     and_i_navigate_to_the_session_page
-    then_i_see_the_uploaded_vaccination_outcomes_reflected_in_the_session(
-      clinic: false
-    )
+    then_i_see_the_uploaded_vaccination_outcomes_reflected_in_the_session
 
     when_vaccination_confirmations_are_sent
     then_an_email_is_sent_to_the_parent_confirming_the_vaccination
@@ -34,9 +32,7 @@ describe "HPV vaccination" do
     when_i_record_vaccination_outcomes_to_the_spreadsheet_and_export_it_to_csv
     and_i_upload_the_modified_csv_file
     and_i_navigate_to_the_clinic_page
-    then_i_see_the_uploaded_vaccination_outcomes_reflected_in_the_session(
-      clinic: true
-    )
+    then_i_see_the_uploaded_vaccination_outcomes_reflected_in_the_session
     and_the_clinic_location_is_displayed
 
     when_vaccination_confirmations_are_sent
@@ -242,10 +238,9 @@ describe "HPV vaccination" do
     click_on "Community clinics"
   end
 
-  def then_i_see_the_uploaded_vaccination_outcomes_reflected_in_the_session(
-    clinic:
-  )
+  def then_i_see_the_uploaded_vaccination_outcomes_reflected_in_the_session
     click_on "Outcome"
+
     choose "Vaccinated"
     click_on "Update results"
 
@@ -260,11 +255,7 @@ describe "HPV vaccination" do
     )
     expect(page).to have_content("SiteLeft arm (upper position)")
 
-    session = clinic ? @organisation.generic_clinic_session : @session
-
-    # TODO: Update this once back links work
-    # click_link "Back to record tab"
-    visit session_outcome_path(session)
+    click_link "Back to session"
 
     choose "Could not vaccinate"
     click_on "Update results"
@@ -275,9 +266,7 @@ describe "HPV vaccination" do
     expect(page).to have_content("OutcomeAbsent from session")
     expect(page).to have_content("NotesSome notes.")
 
-    # TODO: Update this once back links work
-    # click_link "Back to record tab"
-    visit session_outcome_path(session)
+    click_link "Back to session"
 
     choose "Vaccinated"
     click_on "Update results"

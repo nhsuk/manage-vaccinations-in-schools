@@ -1,15 +1,13 @@
 # frozen_string_literal: true
 
 class AppConsentComponent < ViewComponent::Base
-  attr_reader :patient_session, :section, :tab, :programme
+  attr_reader :patient_session, :programme
 
-  def initialize(patient_session:, programme:, section:, tab:)
+  def initialize(patient_session:, programme:)
     super
 
     @patient_session = patient_session
     @programme = programme
-    @section = section
-    @tab = tab
   end
 
   delegate :patient, :session, to: :patient_session

@@ -53,9 +53,7 @@ class ConsentFormsController < ApplicationController
         session_patient_programme_path(
           session,
           @patient,
-          patient_session.programmes.first,
-          section: "triage",
-          tab: "given"
+          patient_session.programmes.first
         )
     }
 

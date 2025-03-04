@@ -3,7 +3,6 @@
 class AppSessionPatientTableComponent < ViewComponent::Base
   def initialize(
     patient_sessions,
-    section:,
     caption: nil,
     columns: %i[name year_group],
     consent_form: nil,
@@ -22,7 +21,6 @@ class AppSessionPatientTableComponent < ViewComponent::Base
     @consent_form = consent_form
     @params = params
     @programme = programme || @session&.programmes&.first
-    @section = section
     @year_groups = @session&.year_groups || programme&.year_groups || []
   end
 
@@ -94,18 +92,13 @@ class AppSessionPatientTableComponent < ViewComponent::Base
   end
 
   def patient_link(patient_session)
-    section = params[:section]
-    tab = params[:tab]
-
     patient = patient_session.patient
     session = patient_session.session
     programme = @programme || patient_session.programmes.first
-    section ||= patient_session.section(programme:)
-    tab ||= patient_session.tab(programme:)
 
     link_to(
       patient.full_name,
-      session_patient_programme_path(session, section, tab, patient, programme)
+      session_patient_programme_path(session, patient, programme)
     )
   end
 
@@ -164,31 +157,13 @@ class AppSessionPatientTableComponent < ViewComponent::Base
       year_groups: params[:year_groups]
     }
 
-    path =
-      if @section == :patients
-        patients_programme_path(programme, **filter_params)
-      else
-        session_section_tab_path(
-          session_slug: params[:session_slug],
-          section: params[:section],
-          tab: params[:tab],
-          **filter_params
-        )
-      end
+    path = patients_programme_path(programme, **filter_params)
 
     link_to column_name(column), path, data:
   end
 
   def form_url
-    if @section == :patients
-      patients_programme_path(programme)
-    else
-      session_section_tab_path(
-        session_slug: params[:session_slug],
-        section: params[:section],
-        tab: params[:tab]
-      )
-    end
+    patients_programme_path(programme)
   end
 
   def header_attributes(column)

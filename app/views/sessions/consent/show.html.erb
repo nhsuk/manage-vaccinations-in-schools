@@ -23,17 +23,7 @@
   <div class="app-grid-column-results">
     <%= render AppSearchResultsComponent.new(@pagy) do %>
       <% @patient_sessions.each do |patient_session| %>
-        <% programme = patient_session.programmes.first %>
-
-        <% link_to = session_patient_programme_path(
-             patient_session.session,
-             patient_session.section(programme:),
-             patient_session.tab(programme:),
-             patient_session.patient,
-             programme
-           ) %>
-
-        <%= render AppPatientSessionSearchResultCardComponent.new(patient_session, link_to:, context: :consent) %>
+        <%= render AppPatientSessionSearchResultCardComponent.new(patient_session, context: :consent) %>
       <% end %>
     <% end %>
   </div>
