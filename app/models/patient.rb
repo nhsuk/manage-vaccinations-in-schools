@@ -132,6 +132,10 @@ class Patient < ApplicationRecord
           end
         end
 
+  scope :search_by_date_of_birth, ->(date_of_birth) { where(date_of_birth:) }
+
+  scope :search_by_nhs_number, ->(nhs_number) { where(nhs_number:) }
+
   validates :given_name, :family_name, :date_of_birth, presence: true
 
   validates :birth_academic_year, comparison: { greater_than_or_equal_to: 1990 }

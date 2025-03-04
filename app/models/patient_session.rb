@@ -68,6 +68,16 @@ class PatientSession < ApplicationRecord
           )
         end
 
+  scope :search_by_name, ->(name) { merge(Patient.search_by_name(name)) }
+
+  scope :search_by_date_of_birth,
+        ->(date_of_birth) do
+          merge(Patient.search_by_date_of_birth(date_of_birth))
+        end
+
+  scope :search_by_nhs_number,
+        ->(nhs_number) { merge(Patient.search_by_nhs_number(nhs_number)) }
+
   scope :order_by_name,
         -> do
           order("LOWER(patients.family_name)", "LOWER(patients.given_name)")
