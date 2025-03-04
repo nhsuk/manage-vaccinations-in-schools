@@ -70,6 +70,9 @@ class PatientSession < ApplicationRecord
 
   scope :search_by_name, ->(name) { merge(Patient.search_by_name(name)) }
 
+  scope :search_by_year_groups,
+        ->(year_groups) { merge(Patient.search_by_year_groups(year_groups)) }
+
   scope :search_by_date_of_birth,
         ->(date_of_birth) do
           merge(Patient.search_by_date_of_birth(date_of_birth))
