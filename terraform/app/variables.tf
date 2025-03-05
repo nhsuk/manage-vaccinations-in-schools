@@ -62,28 +62,6 @@ locals {
   additional_sni_certificates = var.dns_certificate_arn == null ? [] : slice(var.dns_certificate_arn, 1, length(var.dns_certificate_arn))
 }
 
-variable "firewall_subnet_cidr" {
-  type        = string
-  description = "CIDR block for the firewall subnet"
-  default     = "10.0.5.0/24"
-  nullable    = false
-}
-
-variable "enable_firewall" {
-  type        = bool
-  default     = false
-  description = "Boolean toggle to determine whether the firewall should be enabled."
-  nullable    = false
-}
-
-variable "firewall_log_retention_days" {
-  type        = number
-  default     = 3
-  description = "Number of days to retain logs for the firewall"
-  nullable    = false
-}
-
-
 variable "resource_name" {
   type = object(
     {
