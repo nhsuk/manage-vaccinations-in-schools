@@ -4,7 +4,9 @@ module ApplicationHelper
   def h1(text = nil, size: "l", **options, &block)
     title_text = options.delete(:page_title) { text }
 
-    options[:class] = "nhsuk-heading-#{size}"
+    options[:class] = ["nhsuk-heading-#{size}", options[:class]].compact.join(
+      " "
+    )
 
     content_for(:page_title, title_text) unless content_for?(:page_title)
 

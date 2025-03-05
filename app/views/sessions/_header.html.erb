@@ -1,0 +1,43 @@
+<%= h1 @session.location.name, class: "nhsuk-u-margin-bottom-2" %>
+
+<p class="nhsuk-caption-l nhsuk-u-margin-bottom-4">
+  <%= @session.programmes.map(&:name).to_sentence %>
+</p>
+
+<%= render AppSecondaryNavigationComponent.new do |nav|
+      nav.with_item(
+        href: session_path(@session),
+        text: "Overview",
+        selected: request.path == session_path(@session),
+      )
+    
+      nav.with_item(
+        href: session_consent_path(@session),
+        text: "Consent",
+        selected: request.path == session_consent_path(@session),
+      )
+    
+      nav.with_item(
+        href: session_triage_path(@session),
+        text: "Triage",
+        selected: request.path == session_triage_path(@session),
+      )
+    
+      nav.with_item(
+        href: session_register_path(@session),
+        text: "Register",
+        selected: request.path == session_register_path(@session),
+      )
+    
+      nav.with_item(
+        href: session_record_path(@session),
+        text: "Record",
+        selected: request.path == session_record_path(@session),
+      )
+    
+      nav.with_item(
+        href: session_outcome_path(@session),
+        text: "Outcome",
+        selected: request.path == session_outcome_path(@session),
+      )
+    end %>
