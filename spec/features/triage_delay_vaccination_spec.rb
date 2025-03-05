@@ -101,6 +101,6 @@ describe "Triage" do
   end
 
   def and_i_am_able_to_record_a_vaccination
-    expect(page).to have_content("ready to vaccinate in this session?")
+    expect(page).to have_content("ready for their HPV vaccination?")
   end
 end
