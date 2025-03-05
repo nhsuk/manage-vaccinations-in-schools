@@ -42,10 +42,10 @@ describe AppChildSummaryComponent do
   it { should have_content("123\u00A0\u200D456\u00A0\u200D7890") }
 
   it { should have_content("Full name") }
-  it { should have_content("John Doe") }
+  it { should have_content("DOE, John") }
 
   it { should have_content("Known as") }
-  it { should have_content("Johnny Doe") }
+  it { should have_content("DOE, Johnny") }
 
   it { should have_content("Date of birth") }
   it { should have_content("1 January 2000") }
@@ -83,7 +83,7 @@ describe AppChildSummaryComponent do
   context "with pending changes" do
     let(:component) { described_class.new(patient.with_pending_changes) }
 
-    it { should have_css(".app-highlight", text: "Jane Doe") }
+    it { should have_css(".app-highlight", text: "DOE, Jane") }
     it { should have_css(".app-highlight", text: "1 January 2001") }
     it { should have_css(".app-highlight", text: "SW1A 2AA") }
     it { should_not have_css(".app-highlight", text: "Male") }
@@ -103,6 +103,6 @@ describe AppChildSummaryComponent do
       create(:consent_form, :recorded, given_name: "John", family_name: "Doe")
     end
 
-    it { should have_text("John Doe") }
+    it { should have_text("DOE, John") }
   end
 end

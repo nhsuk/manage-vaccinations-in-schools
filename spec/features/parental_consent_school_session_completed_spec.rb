@@ -133,7 +133,9 @@ describe "Parental consent" do
 
   def then_i_can_check_my_answers
     expect(page).to have_content("Check and confirm")
-    expect(page).to have_content("Child’s name#{@child.full_name}")
+    expect(page).to have_content(
+      "Child’s name#{@child.full_name(context: :parents)}"
+    )
   end
 
   def when_i_submit_the_consent_form
@@ -142,7 +144,7 @@ describe "Parental consent" do
 
   def then_i_get_a_confirmation_email
     expect(page).to have_content(
-      "#{@child.full_name} is due to get the HPV vaccination at school"
+      "#{@child.full_name(context: :parents)} is due to get the HPV vaccination at school"
     )
 
     expect_email_to("jane@example.com", :consent_confirmation_clinic)

@@ -40,14 +40,14 @@ describe "User CIS2 authentication" do
   end
 
   def and_i_am_logged_in
-    expect(page).to have_content "Nurse Test"
-    expect(page).to have_button "Log out"
+    expect(page).to have_content("TEST, Nurse")
+    expect(page).to have_button("Log out")
   end
 
   def then_i_see_the_organisation_not_found_error
-    expect(
-      page
-    ).to have_heading "Your organisation is not using this service yet"
+    expect(page).to have_heading(
+      "Your organisation is not using this service yet"
+    )
   end
 
   def when_i_click_the_change_role_button

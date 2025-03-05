@@ -120,7 +120,7 @@ class GovukNotifyPersonalisation
   end
 
   def full_and_preferred_patient_name
-    (consent_form || patient).full_name_with_known_as
+    (consent_form || patient).full_name_with_known_as(context: :parents)
   end
 
   def host

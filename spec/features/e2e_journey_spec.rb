@@ -166,11 +166,11 @@ describe "End-to-end journey" do
   end
 
   def then_i_see_the_children_from_the_cohort
-    expect(page).to have_content("Bobby Tables")
+    expect(page).to have_content("TABLES, Bobby")
   end
 
   def when_i_click_on_the_child_we_registered
-    click_link "Bobby Tables"
+    click_link "TABLES, Bobby"
   end
 
   def then_i_see_the_childs_details_including_the_updated_nhs_number
@@ -208,7 +208,7 @@ describe "End-to-end journey" do
 
     click_button "Confirm"
 
-    click_link "Bobby Tables", match: :first
+    click_link "TABLES, Bobby", match: :first
   end
 
   def then_i_should_see_that_the_patient_is_ready_for_vaccination
@@ -235,7 +235,7 @@ describe "End-to-end journey" do
   end
 
   def and_i_record_the_successful_vaccination
-    click_link "Bobby Tables"
+    click_link "TABLES, Bobby"
 
     expect(page).to have_content("Update attendance")
 

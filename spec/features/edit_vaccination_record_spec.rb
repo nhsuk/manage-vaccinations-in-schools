@@ -344,18 +344,18 @@ describe "Edit vaccination record" do
 
   def then_i_should_see_the_vaccination_records
     expect(page).to have_content("1 vaccination record")
-    expect(page).to have_content("John Smith")
+    expect(page).to have_content("SMITH, John")
   end
 
   def when_i_click_on_the_vaccination_record
-    click_on "John Smith"
+    click_on "SMITH, John"
   end
 
   alias_method :and_i_click_on_the_vaccination_record,
                :when_i_click_on_the_vaccination_record
 
   def then_i_should_see_the_vaccination_record
-    expect(page).to have_content("Full nameJohn Smith")
+    expect(page).to have_content("Full nameSMITH, John")
   end
 
   def when_i_click_on_edit_vaccination_record

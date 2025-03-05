@@ -111,7 +111,7 @@ describe "Triage" do
   end
 
   def and_i_click_on_the_patient
-    click_on "Chyna Pickle"
+    click_on "PICKLE, Chyna"
   end
 
   def then_i_see_the_patient_needs_triage
