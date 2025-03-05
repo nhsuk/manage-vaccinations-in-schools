@@ -75,13 +75,13 @@ variable "resource_name" {
 
 variable "ecs_log_retention_days" {
   type        = number
-  default     = 7
+  default     = 30
   description = "Number of days to retain logs for ecs instances"
   nullable = false
 }
 variable "vpc_log_retention_days" {
   type        = number
-  default     = 7
+  default     = 14
   description = "Number of days to retain logs for the vpc traffic"
   nullable = false
 }
