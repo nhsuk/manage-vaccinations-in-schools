@@ -71,7 +71,7 @@ describe SessionsHelper do
 
       it do
         expect(session_status_tag).to eq(
-          "<strong class=\"nhsuk-tag\">Sessions scheduled</strong>"
+          "<strong class=\"nhsuk-tag nhsuk-tag--blue\">Sessions scheduled</strong>"
         )
       end
     end

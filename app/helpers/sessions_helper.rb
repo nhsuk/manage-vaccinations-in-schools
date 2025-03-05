@@ -30,7 +30,7 @@ module SessionsHelper
     elsif session.completed?
       govuk_tag(text: "All sessions completed", colour: "green")
     else
-      govuk_tag(text: "Sessions scheduled")
+      govuk_tag(text: "Sessions scheduled", colour: "blue")
     end
   end
 end
