@@ -25,7 +25,6 @@ class VaccinateForm
   validates :no_allergies, inclusion: { in: [true, false] }
 
   validate :valid_administered_values
-  validates :dose_sequence, presence: true
   validates :programme_id, presence: true
 
   with_options if: :administered do
