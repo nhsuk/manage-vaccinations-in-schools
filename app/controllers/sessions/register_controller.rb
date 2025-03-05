@@ -20,7 +20,22 @@ class Sessions::RegisterController < ApplicationController
         .includes(:session_attendances)
         .in_programmes(@session.programmes)
 
-    patient_sessions = @form.apply(scope)
+    @valid_statuses = PatientSession::Register::STATUSES
+
+    patient_sessions =
+      @form.apply(scope) do |filtered_scope|
+        filtered_scope.select do
+          it.consent.status.values.include?(PatientSession::Consent::GIVEN) &&
+            (
+              it.triage.status.values.include?(
+                PatientSession::Triage::SAFE_TO_VACCINATE
+              ) ||
+                it.triage.status.values.include?(
+                  PatientSession::Triage::NOT_REQUIRED
+                )
+            )
+        end
+      end
 
     if patient_sessions.is_a?(Array)
       @pagy, @patient_sessions = pagy_array(patient_sessions)
