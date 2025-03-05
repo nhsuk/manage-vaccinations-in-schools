@@ -29,13 +29,7 @@ class SessionsController < ApplicationController
 
   def show
     respond_to do |format|
-      format.html do
-        patient_sessions = @session.patient_sessions.preload_for_status
-
-        @stats = PatientSessionStats.new(patient_sessions)
-
-        render layout: "full"
-      end
+      format.html { render layout: "full" }
 
       format.xlsx do
         filename =
