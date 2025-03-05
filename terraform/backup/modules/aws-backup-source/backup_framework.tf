@@ -24,13 +24,10 @@ resource "aws_backup_framework" "main" {
       }
     }
 
-    # This validation fails if the terraform apply is called from local with an assumed role,
-    # because the ARN of the assumed role is not a valid principalArn.
-    # TODO: Uncomment this block when creating the resources with a dedicated role.
-    # input_parameter {
-    #   name  = "principalArnList"
-    #   value = var.terraform_role_arn
-    # }
+    input_parameter {
+      name  = "principalArnList"
+      value = var.terraform_role_arn
+    }
   }
 
   # Evaluates if recovery point retention period is at least 1 month.
