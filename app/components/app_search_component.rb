@@ -29,10 +29,10 @@ class AppSearchComponent < ViewComponent::Base
           <% end %>
         <% end %>
         
-        <% if triage_status %>
+        <% if triage_statuses.any? %>
           <%= f.govuk_radio_buttons_fieldset :triage_status, legend: { text: "Triage outcome", size: "s" } do %>
             <%= f.govuk_radio_button :triage_status, "", label: { text: "Any" } %>
-            <% PatientSession::Triage::STATUSES.each do |status| %>
+            <% triage_statuses.each do |status| %>
               <%= f.govuk_radio_button :triage_status, status, label: { text: t(status, scope: %i[patient_session status triage label]) } %>
             <% end %>
           <% end %>
@@ -85,7 +85,7 @@ class AppSearchComponent < ViewComponent::Base
     url:,
     consent_statuses: [],
     register_status: false,
-    triage_status: false,
+    triage_statuses: [],
     year_groups: []
   )
     super
@@ -95,7 +95,7 @@ class AppSearchComponent < ViewComponent::Base
 
     @consent_statuses = consent_statuses
     @register_status = register_status
-    @triage_status = triage_status
+    @triage_statuses = triage_statuses
     @year_groups = year_groups
   end
 
@@ -105,12 +105,12 @@ class AppSearchComponent < ViewComponent::Base
               :url,
               :consent_statuses,
               :register_status,
-              :triage_status,
+              :triage_statuses,
               :year_groups
 
   def show_buttons_in_details?
     !(
-      consent_statuses.any? || register_status || triage_status ||
+      consent_statuses.any? || register_status || triage_statuses.any? ||
         year_groups.any?
     )
   end
