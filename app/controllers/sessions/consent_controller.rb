@@ -17,6 +17,8 @@ class Sessions::ConsentController < ApplicationController
         @session.programmes
       )
 
+    @valid_statuses = PatientSession::Consent::STATUSES
+
     patient_sessions = @form.apply(scope)
 
     if patient_sessions.is_a?(Array)
