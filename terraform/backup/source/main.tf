@@ -127,7 +127,7 @@ module "source" {
 
   backup_plan_config                 = {
     "compliance_resource_types": [
-      "RDS"
+      "Aurora"
     ],
     "rules": [
       {
