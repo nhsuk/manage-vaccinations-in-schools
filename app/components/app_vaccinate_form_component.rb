@@ -37,7 +37,7 @@ class AppVaccinateFormComponent < ViewComponent::Base
   end
 
   def dose_sequence
-    1
+    programme.vaccinated_dose_sequence == 1 ? 1 : nil
   end
 
   def common_delivery_sites_options

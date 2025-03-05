@@ -200,8 +200,8 @@ describe "Td/IPV vaccination" do
   end
 
   def and_i_see_the_vaccination_details
-    # TODO: Check dose sequence is fifth.
     expect(page).to have_content("Vaccination details").once
+    expect(page).to have_content("Dose numberUnknown")
   end
 
   def when_vaccination_confirmations_are_sent
