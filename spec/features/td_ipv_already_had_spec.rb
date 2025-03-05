@@ -57,7 +57,7 @@ describe "Td/IPV" do
   alias_method :and_i_go_to_the_session, :when_i_go_the_session
 
   def and_i_upload_the_class_list
-    click_on "Import class list records"
+    click_on "Import class lists"
 
     check "Year 9"
     click_on "Continue"
