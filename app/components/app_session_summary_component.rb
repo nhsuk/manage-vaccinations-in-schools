@@ -65,7 +65,7 @@ class AppSessionSummaryComponent < ViewComponent::Base
   end
 
   def consent_period
-    helpers.session_consent_period(@session)
+    helpers.session_consent_period(@session, in_sentence: false)
   end
 
   def consent_form_links

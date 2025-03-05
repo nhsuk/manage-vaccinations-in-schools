@@ -9,13 +9,18 @@ module SessionsHelper
     "#{year_1}/#{year_2[2..3]}"
   end
 
-  def session_consent_period(session)
+  def session_consent_period(session, in_sentence:)
     if session.close_consent_at.nil?
-      "Not provided"
-    elsif session.close_consent_at.past?
-      "Closed #{session.close_consent_at.to_fs(:short)}"
+      in_sentence ? "not provided" : "Not provided"
     else
-      "Open until #{session.close_consent_at.to_fs(:short)}"
+      [
+        if session.close_consent_at.past?
+          in_sentence ? "closed" : "Closed"
+        else
+          in_sentence ? "open until" : "Open until"
+        end,
+        session.close_consent_at.to_fs(:long)
+      ].join(" ")
     end
   end
 
