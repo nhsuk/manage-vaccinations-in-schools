@@ -106,18 +106,22 @@ resource "aws_lb_target_group" "green" {
   }
 }
 
+resource "aws_lb_target_group" "dump"{
+  name = "dump-${var.environment}"
+  port = 80
+  protocol = "HTTP"
+  target_type = "ip"
+  vpc_id = aws_vpc.application_vpc.id
+}
+
 resource "aws_lb_listener" "app_listener_http" {
   load_balancer_arn = aws_lb.app_lb.arn
   port              = "80"
   protocol          = "HTTP"
 
   default_action {
-    type = "redirect"
-    redirect {
-      port        = "443"
-      protocol    = "HTTPS"
-      status_code = "HTTP_301"
-    }
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.dump.arn
   }
 }
 
@@ -129,14 +133,45 @@ resource "aws_lb_listener" "app_listener_https" {
 
   default_action {
     type             = "forward"
+    target_group_arn = aws_lb_target_group.dump.arn
+  }
+
+}
+
+resource "aws_lb_listener_rule" "forward_to_mavis" {
+  listener_arn = aws_lb_listener.app_listener_https.arn
+  priority     = 49999
+  action {
+    type             = "forward"
     target_group_arn = aws_lb_target_group.blue.arn
+  }
+  condition {
+    path_pattern {
+    values = ["/*"]
+    }
   }
 
   lifecycle {
-    ignore_changes = [
-      default_action
-    ]
+    ignore_changes = [action]
   }
+}
+
+resource "aws_lb_listener_rule" "redirect_to_https" {
+  listener_arn = aws_lb_listener.app_listener_http.arn
+  priority     = 49999
+    action {
+      type             = "redirect"
+      redirect {
+      port        = "443"
+      protocol    = "HTTPS"
+      status_code = "HTTP_301"
+      }
+    }
+    condition {
+      path_pattern {
+      values = ["/*"]
+      }
+    }
 }
 
 module "dns_route53" {
