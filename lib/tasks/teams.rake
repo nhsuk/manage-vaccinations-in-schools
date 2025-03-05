@@ -5,7 +5,7 @@ require_relative "../task_helpers"
 namespace :teams do
   desc <<-DESC
     Create a new team within an organisation.
-  
+
     Usage:
       rake team:create # Complete the prompts
       rake team:create[ods_code,name,email,phone]

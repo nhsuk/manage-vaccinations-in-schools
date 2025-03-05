@@ -1,8 +1,8 @@
-environment = "copilotmigration"
+environment         = "copilotmigration"
 db_secret_arn       = "arn:aws:secretsmanager:eu-west-2:393416225559:secret:dbAuroraSecret-t7WsT4gxwQDz-LpQLQg"
 dns_certificate_arn = "arn:aws:acm:eu-west-2:393416225559:certificate/2936cd40-34df-40b9-a902-f77be4edb05e"
-enable_autoscaling = false
-docker_image       = "mavis/webapp"
+enable_autoscaling  = false
+docker_image        = "mavis/webapp"
 
 resource_name = {
   dbsubnet_group           = "mavis-copilotmigration-addonsstack-1g1buclosh22s-dbdbsubnetgroup-bob2xepawvic"

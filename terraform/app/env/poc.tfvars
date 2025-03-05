@@ -1,4 +1,4 @@
-environment  = "poc"
+environment         = "poc"
 db_secret_arn       = null
 dns_certificate_arn = null
 resource_name = {
