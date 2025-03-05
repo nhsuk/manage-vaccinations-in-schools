@@ -6,7 +6,7 @@ describe AppSessionSummaryComponent do
   let(:component) { described_class.new(session) }
 
   let(:programmes) { [create(:programme, :hpv)] }
-  let(:location) { create(:school) }
+  let(:location) { create(:school, urn: 123_456, address_postcode: "SW1A 1AA") }
   let(:organisation) { create(:organisation, programmes:) }
   let(:session) do
     create(
@@ -18,41 +18,24 @@ describe AppSessionSummaryComponent do
     )
   end
 
-  it { should have_content("Type") }
-  it { should have_content("School session") }
+  it { should have_content("School URN") }
+  it { should have_content("123456") }
 
-  context "with a community clinic" do
-    let(:location) { create(:community_clinic, organisation:) }
+  it { should have_content("Address") }
+  it { should have_content("SW1A 1AA") }
 
-    it { should have_content("Community clinic") }
-  end
-
-  context "with a generic clinic" do
-    let(:location) { create(:generic_clinic, organisation:) }
-
-    it { should have_content("Community clinic") }
-  end
-
-  it { should have_content("Programmes") }
-  it { should have_content("HPV") }
-
-  it { should have_content("Session dates") }
-  it { should have_content("1 January 2024") }
-
-  it { should have_content("Consent period") }
-  it { should have_content("Closed 31 December") }
-
-  it { should_not have_content("Consent link") }
-
-  it { should have_content("Children") }
-  it { should have_content("No children") }
+  it { should have_content("Consent forms") }
+  it { should have_link("Download the HPV consent form (PDF)") }
 
   context "when consent is open" do
     let(:session) do
       create(:session, location:, date: 1.week.from_now.to_date, programmes:)
     end
 
-    it { should have_content("Consent link") }
-    it { should have_link("View HPV parental consent form (opens in new tab)") }
+    it do
+      expect(rendered).to have_link(
+        "View the HPV online consent form (opens in new tab)"
+      )
+    end
   end
 end
