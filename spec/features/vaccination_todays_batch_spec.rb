@@ -7,6 +7,13 @@ describe "Vaccination" do
     given_i_am_signed_in
 
     when_i_vaccinate_a_patient_with_hpv
+    then_i_see_the_default_batch_banner_with_batch_1
+
+    when_i_click_the_change_batch_link
+    then_i_see_the_change_batch_page
+
+    when_i_choose_the_second_batch
+    then_i_see_the_default_batch_banner_with_batch_2
 
     when_i_vaccinate_a_second_patient_with_hpv
     then_i_see_the_default_batch_on_the_confirmation_page
@@ -29,6 +36,7 @@ describe "Vaccination" do
       end
 
     @hpv_batch = batches.first.first
+    @hpv_batch2 = batches.first.second
 
     @session = create(:session, organisation:, programmes:)
 
@@ -103,9 +111,32 @@ describe "Vaccination" do
     click_button "Continue"
   end
 
+  def then_i_see_the_default_batch_banner_with_batch_1
+    expect(page).to have_content("Gardasil 9 (HPV): #{@hpv_batch.name}")
+  end
+
+  def then_i_see_the_default_batch_banner_with_batch_2
+    expect(page).to have_content("Gardasil 9 (HPV): #{@hpv_batch2.name}")
+  end
+
+  def when_i_click_the_change_batch_link
+    click_link "Change default batch"
+  end
+
+  def then_i_see_the_change_batch_page
+    expect(page).to have_content("Select a default batch for this session")
+    expect(page).to have_selector(:label, @hpv_batch.name)
+    expect(page).to have_selector(:label, @hpv_batch2.name)
+  end
+
+  def when_i_choose_the_second_batch
+    choose @hpv_batch2.name
+    click_button "Continue"
+  end
+
   def then_i_see_the_default_batch_on_the_confirmation_page
     expect(page).to have_content("Check and confirm")
-    expect(page).to have_content(@hpv_batch.name)
+    expect(page).to have_content(@hpv_batch2.name)
 
     click_button "Confirm"
   end
@@ -114,7 +145,7 @@ describe "Vaccination" do
     click_link @patient2.full_name, match: :first
 
     expect(page).to have_content("Vaccinated")
-    expect(page).to have_content(@hpv_batch.name)
+    expect(page).to have_content(@hpv_batch2.name)
   end
 
   def when_i_vaccinate_a_patient_with_menacwy

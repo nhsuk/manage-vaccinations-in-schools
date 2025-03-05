@@ -197,7 +197,10 @@ Rails.application.routes.draw do
     resource :register, only: :show, controller: "sessions/register" do
       post ":patient_id/:status", as: :create, action: :create
     end
-    resource :record, only: :show, controller: "sessions/record"
+    resource :record, only: :show, controller: "sessions/record" do
+      get "batch/:programme_type", action: :edit_batch, as: :batch
+      post "batch/:programme_type", action: :update_batch
+    end
 
     resource :invite_to_clinic,
              path: "invite-to-clinic",
