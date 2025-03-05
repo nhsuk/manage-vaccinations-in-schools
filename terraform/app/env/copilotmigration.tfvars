@@ -7,6 +7,7 @@ docker_image       = "mavis/webapp"
 resource_name = {
   dbsubnet_group           = "mavis-copilotmigration-addonsstack-1g1buclosh22s-dbdbsubnetgroup-bob2xepawvic"
   db_cluster               = "mavis-copilotmigration-addonsstack-1g1-dbdbcluster-hhag0c0l90rb"
+  db_instance              = "tf-20250225163322733000000001"
   rds_security_group       = "mavis-copilotmigration-AddonsStack-1G1BUCLOSH22S-dbDBClusterSecurityGroup-nCJ5DRyjNeMI"
   loadbalancer             = "mavis-copilotmigration-pub-lb"
   lb_security_group        = "mavis-copilotmigration-PublicHTTPLoadBalancerSecurityGroup-IZesKSNYalJs"

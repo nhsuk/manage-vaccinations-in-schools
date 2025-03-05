@@ -62,6 +62,7 @@ variable "resource_name" {
     {
       dbsubnet_group           = string
       db_cluster               = string
+      db_instance              = string
       rds_security_group       = string
       loadbalancer             = string
       lb_security_group        = string
