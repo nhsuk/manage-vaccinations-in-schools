@@ -11,3 +11,8 @@ resource_name = {
 }
 rails_env             = "staging"
 rails_master_key_path = "/copilot/mavis/copilotmigration/secrets/RAILS_MASTER_KEY"
+enable_firewall = true
+
+splunk_enabled = "true"
+cis2_enabled   = "false"
+pds_enabled    = "false"

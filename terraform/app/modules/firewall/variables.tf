@@ -22,16 +22,10 @@ variable "environment" {
   nullable    = false
 }
 
-variable "private_route_table_id" {
-  type        = string
-  description = "ID of the private route table"
-  nullable    = false
-}
-
-variable "nat_gateway_id" {
-  type        = string
-  description = "ID of the NAT gateway"
-  nullable    = false
+variable "nat_gateway_ids" {
+  type        = map(string)
+  description = "Map of availability zones to NAT Gateway IDs"
+  nullable = false
 }
 
 variable "log_retention_days" {
@@ -40,8 +34,9 @@ variable "log_retention_days" {
   nullable    = false
 }
 
-variable "ecs_security_group_id" {
-  type        = string
-  description = "ID of the ECS security group"
-  nullable    = false
+locals {
+  azs            = keys(var.nat_gateway_ids)
+  subnet_count   = length(local.azs)
+  newbits        = ceil(log(local.subnet_count, 2))
+  subnet_cidrs   = [for i in range(local.subnet_count) : cidrsubnet(var.firewall_subnet_cidr, local.newbits, i)]
 }

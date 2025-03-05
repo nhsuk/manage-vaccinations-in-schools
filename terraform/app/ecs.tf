@@ -28,15 +28,6 @@ resource "aws_security_group_rule" "ecs_talk_to_internet" {
   security_group_id = aws_security_group.ecs_service_sg.id
 }
 
-resource "aws_security_group_rule" "ecs_nat_egress" {
-  type              = "egress"
-  from_port         = 0
-  to_port           = 0
-  protocol          = "-1"
-  cidr_blocks       = [aws_subnet.nat_subnet_a.cidr_block]
-  security_group_id = aws_security_group.ecs_service_sg.id
-}
-
 resource "aws_ecs_cluster" "cluster" {
   name = "mavis-${var.environment}"
 
