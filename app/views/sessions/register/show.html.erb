@@ -6,9 +6,7 @@
                                         ]) %>
 <% end %>
 
-<%= h1 @session.location.name %>
-
-<%= render "sessions/secondary_navigation" %>
+<%= render "sessions/header" %>
 
 <% if @session.today? %>
   <div class="app-grid-row">

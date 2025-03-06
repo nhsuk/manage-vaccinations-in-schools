@@ -73,7 +73,7 @@ describe "Triage" do
   end
 
   def and_i_upload_the_class_list
-    click_on "Import class list records"
+    click_on "Import class lists"
 
     check "Year 9"
     click_on "Continue"

@@ -117,7 +117,7 @@ describe "Class list imports duplicates" do
   end
 
   def and_i_start_adding_children_to_the_session
-    click_on "Import class list records"
+    click_on "Import class lists"
   end
 
   def and_i_select_the_year_groups

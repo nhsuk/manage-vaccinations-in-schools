@@ -6,9 +6,7 @@
                                         ]) %>
 <% end %>
 
-<%= h1 @session.location.name %>
-
-<%= render "sessions/secondary_navigation" %>
+<%= render "sessions/header" %>
 
 <% if @todays_batches.any? %>
   <%= govuk_inset_text html_attributes: { class: "nhsuk-u-margin-top-2 nhsuk-u-margin-bottom-4" } do %>
