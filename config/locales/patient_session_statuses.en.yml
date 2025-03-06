@@ -40,11 +40,6 @@ en:
       text: Do not vaccinate
       banner_title: Could not vaccinate
       banner_explanation: "%{nurse} decided that %{full_name} should not be vaccinated."
-    triaged_kept_in_triage:
-      colour: blue
-      text: Triage started
-      banner_title: Needs triage
-      banner_explanation: Responses to health questions need triage.
     triaged_ready_to_vaccinate:
       colour: purple
       text: Vaccinate
