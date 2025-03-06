@@ -152,12 +152,9 @@ describe "Delete vaccination record" do
   end
 
   def and_i_go_to_a_patient_that_is_vaccinated_in_the_session
-    # TODO: Check "Outcome" tab
-    # visit session_record_path(@session)
-    # choose "Vaccinated"
-    # click_on "Update results"
-
-    visit session_consent_path(@session)
+    visit session_outcome_path(@session)
+    choose "Vaccinated"
+    click_on "Update results"
     click_link @patient.full_name
   end
 

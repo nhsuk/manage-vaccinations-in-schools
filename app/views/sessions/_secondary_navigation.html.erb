@@ -28,4 +28,10 @@
        text: "Record",
        selected: request.path == session_record_path(@session),
      )
+   
+     nav.with_item(
+       href: session_outcome_path(@session),
+       text: "Outcome",
+       selected: request.path == session_outcome_path(@session),
+     )
    end %>

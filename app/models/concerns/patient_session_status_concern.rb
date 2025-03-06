@@ -98,20 +98,11 @@ module PatientSessionStatusConcern
     end
 
     def vaccination_administered?(programme:)
-      VaccinatedCriteria.call(
-        programme,
-        patient:,
-        vaccination_records: vaccination_records(programme:)
-      )
-    end
-
-    def vaccination_partially_administered?(programme:)
-      vaccination_records(programme:).any?(&:administered?) &&
-        !vaccination_administered?(programme:)
+      outcome.status[programme] == PatientSession::Outcome::VACCINATED
     end
 
     def vaccination_not_administered?(programme:)
-      vaccination_records(programme:).any?(&:not_administered?)
+      outcome.all(programme:).any?(&:not_administered?)
     end
 
     def vaccination_can_be_delayed?(programme:)

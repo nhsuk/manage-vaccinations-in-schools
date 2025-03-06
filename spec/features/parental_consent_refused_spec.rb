@@ -152,10 +152,10 @@ describe "Parental consent" do
     end
     click_on "Pilot School"
 
-    click_on "Consent" # TODO: Outcome
+    click_on "Outcome"
 
-    expect(page).to have_content("Consent refused")
-    choose "Consent refused"
+    expect(page).to have_content("Could not vaccinate")
+    choose "Could not vaccinate"
     click_on "Update results"
 
     expect(page).to have_content(@child.full_name)

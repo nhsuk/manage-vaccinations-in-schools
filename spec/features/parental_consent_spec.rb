@@ -195,11 +195,9 @@ describe "Parental consent" do
   def when_they_check_triage
     click_link "Pilot School"
 
-    # TODO: Check in "Outcome" tab
-    # choose "No triage needed"
-    # click_on "Update results"
-
-    click_on "Consent"
+    click_on "Outcome"
+    choose "No outcome yet"
+    click_on "Update results"
   end
 
   def then_the_patient_should_be_ready_to_vaccinate

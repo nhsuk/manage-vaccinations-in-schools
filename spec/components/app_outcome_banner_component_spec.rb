@@ -59,9 +59,7 @@ describe AppOutcomeBannerComponent do
 
   context "state is vaccinated" do
     let(:patient_session) { create(:patient_session, :vaccinated, session:) }
-    let(:vaccination_record) do
-      patient_session.vaccination_records(programme:).first
-    end
+    let(:vaccination_record) { patient_session.outcome.all(programme:).first }
     let(:vaccine) { programme.vaccines.first }
     let(:location) { patient_session.session.location }
     let(:batch) { vaccine.batches.first }
@@ -81,7 +79,7 @@ describe AppOutcomeBannerComponent do
       let(:patient_session) do
         create(:patient_session, :vaccinated, session:).tap do |ps|
           ps.strict_loading!(false)
-          ps.vaccination_records(programme:).first.update!(performed_at: date)
+          ps.outcome.all(programme:).first.update!(performed_at: date)
         end
       end
 

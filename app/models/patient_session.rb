@@ -110,6 +110,10 @@ class PatientSession < ApplicationRecord
     session.programmes.select { it.year_groups.include?(patient.year_group) }
   end
 
+  def gillick_assessment(programme:)
+    gillick_assessments.select { it.programme_id == programme.id }.last
+  end
+
   def consent
     @consent ||= PatientSession::Consent.new(self)
   end
@@ -126,13 +130,7 @@ class PatientSession < ApplicationRecord
     @record ||= PatientSession::Record.new(self)
   end
 
-  # TODO: Replace these two with objects like the above.
-
-  def gillick_assessment(programme:)
-    gillick_assessments.select { it.programme_id == programme.id }.last
-  end
-
-  def vaccination_records(programme:)
-    patient.vaccination_records.select { it.programme_id == programme.id }
+  def outcome
+    @outcome ||= PatientSession::Outcome.new(self)
   end
 end
