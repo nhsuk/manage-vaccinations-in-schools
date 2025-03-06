@@ -43,13 +43,7 @@ class ConsentsController < ApplicationController
       current_user:
     )
 
-    redirect_to session_patient_programme_path(
-                  @session,
-                  @patient,
-                  @programme,
-                  section: params[:section],
-                  tab: params[:tab]
-                ),
+    redirect_to session_patient_programme_path(@session, @patient, @programme),
                 flash: {
                   success: "Consent request sent."
                 }

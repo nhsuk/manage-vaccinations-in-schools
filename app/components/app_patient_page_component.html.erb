@@ -44,8 +44,6 @@
                                      session,
                                      patient,
                                      programme,
-                                     section: @section,
-                                     tab: @tab,
                                    ), class: "app-button--secondary nhsuk-u-margin-bottom-0" %>
         </p>
       <% end %>
@@ -56,8 +54,6 @@
                                    session,
                                    patient,
                                    programme,
-                                   section: @section,
-                                   tab: @tab,
                                  ), class: "app-button--secondary nhsuk-u-margin-bottom-0" %>
       </p>
     <% end %>
@@ -66,7 +62,7 @@
 
 <%= render AppCardComponent.new do |c| %>
   <% c.with_heading { "Consent" } %>
-  <%= render AppConsentComponent.new(patient_session:, programme:, section:, tab:) %>
+  <%= render AppConsentComponent.new(patient_session:, programme:) %>
 <% end %>
 
 <% if display_health_questions? %>
@@ -89,9 +85,7 @@
             session,
             patient,
             programme,
-            @triage,
-            section: @section,
-            tab: @tab,
+            @triage
           ),
           triage: @triage,
           legend: :bold,
@@ -128,7 +122,5 @@
         patient_session:,
         programme:,
         vaccinate_form:,
-        section:,
-        tab:,
       ) %>
 <% end %>

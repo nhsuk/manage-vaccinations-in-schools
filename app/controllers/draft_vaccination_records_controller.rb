@@ -129,16 +129,8 @@ class DraftVaccinationRecordsController < ApplicationController
         t("vaccinations.flash.not_given")
       end
 
-    tab = @vaccination_record.administered? ? "vaccinated" : "could-not"
-
     heading_link_href =
-      session_patient_programme_path(
-        @session,
-        @patient,
-        @programme,
-        section: "vaccinations",
-        tab:
-      )
+      session_patient_programme_path(@session, @patient, @programme)
 
     flash[:success] = {
       heading:,
@@ -228,13 +220,7 @@ class DraftVaccinationRecordsController < ApplicationController
           wizard_path("confirm")
         end
       elsif current_step == @draft_vaccination_record.wizard_steps.first
-        session_patient_programme_path(
-          @session,
-          @patient,
-          @programme,
-          section: "vaccinations",
-          tab: "vaccinate"
-        )
+        session_patient_programme_path(@session, @patient, @programme)
       else
         previous_wizard_path
       end

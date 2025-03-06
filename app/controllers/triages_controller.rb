@@ -4,11 +4,10 @@ class TriagesController < ApplicationController
   include TriageMailerConcern
 
   before_action :set_session
-  before_action :set_patient, only: %i[create new]
-  before_action :set_patient_session, only: %i[create new]
-  before_action :set_programme, only: %i[create new]
-  before_action :set_triage, only: %i[create new]
-  before_action :set_section_and_tab, only: %i[create new]
+  before_action :set_patient
+  before_action :set_patient_session
+  before_action :set_programme
+  before_action :set_triage
 
   after_action :verify_authorized
 
@@ -81,11 +80,6 @@ class TriagesController < ApplicationController
         programme: @programme,
         organisation: @session.organisation
       )
-  end
-
-  def set_section_and_tab
-    @section = params[:section]
-    @tab = params[:tab]
   end
 
   def triage_params

@@ -65,16 +65,8 @@ class DraftConsentsController < ApplicationController
 
     send_triage_confirmation(@patient_session, @consent)
 
-    tab = @consent.response_given? ? "given" : "refused"
-
     heading_link_href =
-      session_patient_programme_path(
-        @session,
-        @patient,
-        @programme,
-        section: "consents",
-        tab:
-      )
+      session_patient_programme_path(@session, @patient, @programme)
 
     flash[:success] = {
       heading: "Consent recorded for",
@@ -187,13 +179,7 @@ class DraftConsentsController < ApplicationController
       if @draft_consent.editing?
         wizard_path("confirm")
       elsif current_step == @draft_consent.wizard_steps.first
-        session_patient_programme_path(
-          @session,
-          @patient,
-          @programme,
-          section: "consents",
-          tab: "no-consent"
-        )
+        session_patient_programme_path(@session, @patient, @programme)
       else
         previous_wizard_path
       end
