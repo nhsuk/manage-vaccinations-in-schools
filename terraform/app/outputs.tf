@@ -10,7 +10,7 @@ output "s3_bucket" {
 
 output "s3_key" {
   description = "The key of the S3 CodeDeploy appspec object"
-  value = aws_s3_object.appspec_object.key
+  value       = aws_s3_object.appspec_object.key
 }
 
 output "codedeploy_application_name" {
@@ -20,7 +20,7 @@ output "codedeploy_application_name" {
 
 output "codedeploy_deployment_group_name" {
   description = "The name of the CodeDeploy deployment group"
-  value = aws_codedeploy_deployment_group.blue_green_deployment_group.deployment_group_name
+  value       = aws_codedeploy_deployment_group.blue_green_deployment_group.deployment_group_name
 }
 
 output "mavis_cluster_name" {

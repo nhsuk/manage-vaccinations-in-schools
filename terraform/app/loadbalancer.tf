@@ -12,7 +12,7 @@ resource "aws_security_group_rule" "lb_ingress_http" {
   from_port         = 80
   to_port           = 80
   protocol          = "tcp"
-  cidr_blocks = ["0.0.0.0/0"]
+  cidr_blocks       = ["0.0.0.0/0"]
   security_group_id = aws_security_group.lb_service_sg.id
   lifecycle {
     create_before_destroy = true
@@ -24,7 +24,7 @@ resource "aws_security_group_rule" "lb_ingress_https" {
   from_port         = 443
   to_port           = 443
   protocol          = "tcp"
-  cidr_blocks = ["0.0.0.0/0"]
+  cidr_blocks       = ["0.0.0.0/0"]
   security_group_id = aws_security_group.lb_service_sg.id
   lifecycle {
     create_before_destroy = true
@@ -37,7 +37,7 @@ resource "aws_security_group_rule" "lb_egress_a" {
   from_port         = 0
   to_port           = 0
   protocol          = "-1"
-  cidr_blocks = ["10.0.2.0/24"]
+  cidr_blocks       = ["10.0.2.0/24"]
   security_group_id = aws_security_group.lb_service_sg.id
   lifecycle {
     create_before_destroy = true
@@ -50,7 +50,7 @@ resource "aws_security_group_rule" "lb_egress_b" {
   from_port         = 0
   to_port           = 0
   protocol          = "-1"
-  cidr_blocks = ["10.0.3.0/24"]
+  cidr_blocks       = ["10.0.3.0/24"]
   security_group_id = aws_security_group.lb_service_sg.id
   lifecycle {
     create_before_destroy = true
@@ -67,7 +67,7 @@ resource "aws_lb" "app_lb" {
     enabled = true
   }
   security_groups = [aws_security_group.lb_service_sg.id]
-  subnets = [aws_subnet.public_subnet_a.id, aws_subnet.public_subnet_b.id]
+  subnets         = [aws_subnet.public_subnet_a.id, aws_subnet.public_subnet_b.id]
 }
 
 resource "aws_lb_target_group" "blue" {
@@ -185,10 +185,10 @@ resource "aws_lb_listener_rule" "redirect_to_https" {
 }
 
 module "dns_route53" {
-  count              = var.dns_certificate_arn == null ? 1 : 0
-  source             = "./modules/dns"
-  dns_name           = aws_lb.app_lb.dns_name
-  zone_id            = aws_lb.app_lb.zone_id
-  zone_name          = var.zone_name
-  domain_names       = tolist(toset(values(var.http_hosts)))
+  count        = var.dns_certificate_arn == null ? 1 : 0
+  source       = "./modules/dns"
+  dns_name     = aws_lb.app_lb.dns_name
+  zone_id      = aws_lb.app_lb.zone_id
+  zone_name    = var.zone_name
+  domain_names = tolist(toset(values(var.http_hosts)))
 }

@@ -67,7 +67,7 @@ resource "aws_rds_cluster" "aurora_cluster" {
 
 resource "aws_rds_cluster_instance" "aurora_instance" {
   cluster_identifier   = aws_rds_cluster.aurora_cluster.id
-  identifier    = var.resource_name.db_instance
+  identifier           = var.resource_name.db_instance
   instance_class       = "db.serverless"
   engine               = aws_rds_cluster.aurora_cluster.engine
   engine_version       = aws_rds_cluster.aurora_cluster.engine_version

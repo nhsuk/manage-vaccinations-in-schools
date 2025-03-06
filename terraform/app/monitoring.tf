@@ -3,7 +3,7 @@ resource "aws_flow_log" "vpc_flowlogs" {
   log_destination = aws_cloudwatch_log_group.vpc_log_group.arn
   traffic_type    = "ALL"
   vpc_id          = aws_vpc.application_vpc.id
-  depends_on = [time_sleep.wait_to_delete_flowlogs_group]
+  depends_on      = [time_sleep.wait_to_delete_flowlogs_group]
 }
 
 resource "aws_cloudwatch_log_group" "vpc_log_group" {
@@ -14,7 +14,7 @@ resource "aws_cloudwatch_log_group" "vpc_log_group" {
 
 resource "time_sleep" "wait_to_delete_flowlogs_group" {
   destroy_duration = "3m"
-  depends_on = [aws_cloudwatch_log_group.vpc_log_group]
+  depends_on       = [aws_cloudwatch_log_group.vpc_log_group]
 }
 
 resource "aws_cloudwatch_log_group" "ecs_log_group" {

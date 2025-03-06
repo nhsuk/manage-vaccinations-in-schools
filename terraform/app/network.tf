@@ -141,7 +141,7 @@ module "firewall" {
   vpc_id                 = aws_vpc.application_vpc.id
   firewall_subnet_cidr   = var.firewall_subnet_cidr
   retain_logs            = local.is_production
-  environment     = var.environment
+  environment            = var.environment
   nat_gateway_id         = aws_nat_gateway.nat_gateway.id
   private_route_table_id = aws_route_table.private_route_table.id
   log_retention_days     = var.firewall_log_retention_days
