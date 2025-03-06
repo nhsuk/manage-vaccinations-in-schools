@@ -47,7 +47,7 @@ class PatientSession::Outcome
   end
 
   def could_not_vaccinate?(programme:)
-    all(programme:).any?(&:not_administered?) ||
+    all(programme:).any? { it.not_administered? && !it.retryable_reason? } ||
       consent.status[programme] == PatientSession::Consent::REFUSED ||
       triage.status[programme] == PatientSession::Triage::DO_NOT_VACCINATE
   end
