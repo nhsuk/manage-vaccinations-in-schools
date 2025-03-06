@@ -141,7 +141,7 @@ describe AppSimpleStatusBannerComponent do
 
     it do
       expect(rendered).to have_text(
-        "#{vaccination_nurse_name} decided that #{patient_name}’s vaccination should be delayed"
+        "#{triage_nurse_name} decided that #{patient_name}’s vaccination should be delayed"
       )
     end
 

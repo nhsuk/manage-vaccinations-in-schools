@@ -15,6 +15,9 @@ describe "HPV vaccination" do
     when_i_go_to_the_patient
     then_i_see_that_the_status_is_delayed
 
+    when_i_go_to_the_outcome_tab
+    then_i_see_the_patient_has_no_outcome_yet
+
     when_vaccination_confirmations_are_sent
     then_an_email_is_sent_to_the_parent_confirming_the_delay
     and_a_text_is_sent_to_the_parent_confirming_the_delay
@@ -104,9 +107,15 @@ describe "HPV vaccination" do
 
   def then_i_see_that_the_status_is_delayed
     expect(page).to have_content("Could not vaccinate")
-    expect(page).to have_content(
-      "#{@organisation.users.first.full_name} decided that"
-    )
+  end
+
+  def when_i_go_to_the_outcome_tab
+    click_on "Back to session"
+    click_on "Outcome"
+  end
+
+  def then_i_see_the_patient_has_no_outcome_yet
+    expect(page).to have_content("Status\nHPVNo outcome yet")
   end
 
   def when_vaccination_confirmations_are_sent

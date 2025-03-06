@@ -138,22 +138,17 @@ class PatientSession < ApplicationRecord
     vaccinated = PatientSession::Outcome::VACCINATED
     consent_given = PatientSession::Consent::GIVEN
     safe_to_vaccinate = PatientSession::Triage::SAFE_TO_VACCINATE
+    delay_vaccination = PatientSession::Triage::DELAY_VACCINATION
     triage_not_needed = PatientSession::Triage::NOT_REQUIRED
 
-    if programme
-      return false if outcome.status[programme] == vaccinated
+    programmes_to_check = programme ? [programme] : programmes
 
-      consent.status[programme] == consent_given &&
-        [safe_to_vaccinate, triage_not_needed].include?(
-          triage.status[programme]
-        )
-    else
-      return false if outcome.status.values.all?(vaccinated)
+    programmes_to_check.any? do
+      return false if outcome.status[it] == vaccinated
 
-      consent.status.values.include?(consent_given) &&
-        (
-          triage.status.values.include?(safe_to_vaccinate) ||
-            triage.status.values.include?(triage_not_needed)
+      consent.status[it] == consent_given &&
+        [safe_to_vaccinate, delay_vaccination, triage_not_needed].include?(
+          triage.status[it]
         )
     end
   end

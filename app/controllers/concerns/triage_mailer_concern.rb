@@ -53,6 +53,8 @@ module TriageMailerConcern
 
   def vaccination_at_clinic?(patient_session, consent)
     programme = consent.programme
-    consent.triage_needed? && patient_session.delay_vaccination?(programme:)
+    consent.triage_needed? &&
+      patient_session.triage.status[programme] ==
+        PatientSession::Triage::DELAY_VACCINATION
   end
 end

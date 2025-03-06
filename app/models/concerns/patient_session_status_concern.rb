@@ -26,8 +26,7 @@ module PatientSessionStatusConcern
            programme:
          )
         "vaccinated"
-      elsif triage_delay_vaccination?(programme:) ||
-            vaccination_can_be_delayed?(programme:)
+      elsif triage_delay_vaccination?(programme:)
         "delay_vaccination"
       elsif vaccination_not_administered?(programme:)
         "unable_to_vaccinate"
@@ -98,17 +97,10 @@ module PatientSessionStatusConcern
       outcome.all(programme:).any?(&:not_administered?)
     end
 
-    def vaccination_can_be_delayed?(programme:)
-      if (vaccination_record = record.latest(programme:))
-        vaccination_record.not_administered? &&
-          vaccination_record.retryable_reason?
-      end
-    end
-
     def next_step(programme:)
       if triage.status[programme] == PatientSession::Triage::REQUIRED
         :triage
-      elsif ready_for_vaccinator?(programme:) || delay_vaccination?(programme:)
+      elsif ready_for_vaccinator?(programme:)
         :vaccinate
       end
     end

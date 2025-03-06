@@ -25,6 +25,9 @@ describe PatientSortingConcern do
   let(:blair) do
     create(
       :patient,
+      :consent_given_triage_needed,
+      :triage_delay_vaccination,
+      programmes: [programme],
       family_name: "Blair",
       year_group: 9,
       address_postcode: "SW2A 1AA"
@@ -33,6 +36,9 @@ describe PatientSortingConcern do
   let(:casey) do
     create(
       :patient,
+      :consent_given_triage_needed,
+      :triage_ready_to_vaccinate,
+      programmes: [programme],
       family_name: "Casey",
       year_group: 10,
       address_postcode: nil
@@ -44,8 +50,8 @@ describe PatientSortingConcern do
 
   let(:patient_sessions) do
     [
-      create(:patient_session, :added_to_session, patient: alex, session:),
-      create(:patient_session, :delay_vaccination, patient: blair, session:),
+      create(:patient_session, patient: alex, session:),
+      create(:patient_session, patient: blair, session:),
       create(:patient_session, :vaccinated, patient: casey, session:)
     ]
   end
