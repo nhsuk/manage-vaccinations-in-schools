@@ -100,8 +100,7 @@ class AppSessionActionsSummaryComponent < ViewComponent::Base
 
     count =
       patient_sessions.count do
-        it.register.status == PatientSession::Register::UNKNOWN &&
-          it.ready_for_vaccinator?
+        it.register.unknown? && it.ready_for_vaccinator?
       end
 
     href =

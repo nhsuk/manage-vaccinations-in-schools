@@ -42,7 +42,7 @@ class SchoolSessionRemindersJob < ApplicationJob
 
     all_vaccinated =
       programmes.all? do |programme|
-        patient_session.vaccination_administered?(programme:)
+        patient_session.outcome.vaccinated?(programme)
       end
 
     return false if all_vaccinated

@@ -50,8 +50,7 @@ class AppSimpleStatusBannerComponent < ViewComponent::Base
       programme_name: programme.name
     }
 
-    if patient_session.triage.status[programme] ==
-         PatientSession::Triage::REQUIRED
+    if patient_session.triage.required?(programme)
       reasons = [
         if patient_session.triage.consent_needs_triage?(programme:)
           I18n.t(

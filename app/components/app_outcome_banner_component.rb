@@ -55,8 +55,7 @@ class AppOutcomeBannerComponent < ViewComponent::Base
     @vaccination_record ||=
       begin
         vaccination_records = @patient_session.outcome.all[programme]
-        if @patient_session.outcome.status[programme] ==
-             PatientSession::Outcome::VACCINATED
+        if @patient_session.outcome.vaccinated?(programme)
           vaccination_records.select(&:administered?).last
         else
           vaccination_records.last

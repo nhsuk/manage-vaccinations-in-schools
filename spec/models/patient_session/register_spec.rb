@@ -39,7 +39,7 @@ describe PatientSession::Register do
         )
       end
 
-      it { should be(described_class::PRESENT) }
+      it { should be(described_class::ATTENDING) }
     end
 
     context "with an absent session attendance for today" do
@@ -52,7 +52,7 @@ describe PatientSession::Register do
         )
       end
 
-      it { should be(described_class::ABSENT) }
+      it { should be(described_class::NOT_ATTENDING) }
     end
   end
 end

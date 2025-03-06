@@ -11,6 +11,12 @@ class PatientSession::Outcome
     NONE = :none
   ].freeze
 
+  def vaccinated?(programme) = status[programme] == VACCINATED
+
+  def could_not_vaccinate?(programme) = status[programme] == COULD_NOT_VACCINATE
+
+  def none?(programme) = status[programme] == NONE
+
   def status
     @status ||= programmes.index_with { programme_status(it) }
   end
@@ -29,16 +35,16 @@ class PatientSession::Outcome
   delegate :consent, :triage, :patient, :programmes, to: :patient_session
 
   def programme_status(programme)
-    if vaccinated?(programme)
+    if outcome_vaccinated?(programme)
       VACCINATED
-    elsif could_not_vaccinate?(programme)
+    elsif outcome_could_not_vaccinate?(programme)
       COULD_NOT_VACCINATE
     else
       NONE
     end
   end
 
-  def vaccinated?(programme)
+  def outcome_vaccinated?(programme)
     VaccinatedCriteria.call(
       programme,
       patient:,
@@ -46,10 +52,9 @@ class PatientSession::Outcome
     )
   end
 
-  def could_not_vaccinate?(programme)
+  def outcome_could_not_vaccinate?(programme)
     all[programme].any? { it.not_administered? && !it.retryable_reason? } ||
-      consent.status[programme] == PatientSession::Consent::REFUSED ||
-      triage.status[programme] == PatientSession::Triage::DO_NOT_VACCINATE
+      consent.refused?(programme) || triage.do_not_vaccinate?(programme)
   end
 
   def all_by_programme_id

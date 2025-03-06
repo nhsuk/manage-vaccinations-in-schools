@@ -27,12 +27,12 @@ en:
           safe_to_vaccinate: aqua-green
       register:
         label:
-          absent: Absent from session
-          present: Attending session
+          attending: Attending session
+          not_attending: Absent from session
           unknown: Not registered yet
         colour:
-          absent: red
-          present: green
+          attending: green
+          not_attending: red
           unknown: blue
       record:
         label:

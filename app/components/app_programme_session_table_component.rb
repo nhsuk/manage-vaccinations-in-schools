@@ -30,32 +30,22 @@ class AppProgrammeSessionTableComponent < ViewComponent::Base
   end
 
   def no_response_count(session:)
-    number_stat(session:) do
-      it.consent.status[programme] == PatientSession::Consent::NONE
-    end
+    number_stat(session:) { it.consent.none?(programme) }
   end
 
   def no_response_percentage(session:)
-    percentage_stat(session:) do
-      it.consent.status[programme] == PatientSession::Consent::NONE
-    end
+    percentage_stat(session:) { it.consent.none?(programme) }
   end
 
   def triage_needed_count(session:)
-    number_stat(session:) do
-      it.triage.status[programme] == PatientSession::Triage::REQUIRED
-    end
+    number_stat(session:) { it.triage.required?(programme) }
   end
 
   def vaccinated_count(session:)
-    number_stat(session:) do
-      it.record.status[programme] == PatientSession::Record::VACCINATED
-    end
+    number_stat(session:) { it.record.vaccinated?(programme) }
   end
 
   def vaccinated_percentage(session:)
-    percentage_stat(session:) do
-      it.record.status[programme] == PatientSession::Record::VACCINATED
-    end
+    percentage_stat(session:) { it.record.vaccinated?(programme) }
   end
 end

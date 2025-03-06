@@ -16,6 +16,13 @@ class PatientSession::Record
     NONE = :none
   ].freeze
 
+  def vaccinated?(programme) = status[programme] == VACCINATED
+
+  def not_vaccinated?(programme) =
+    status[programme] != VACCINATED && status[programme] != NONE
+
+  def none?(programme) = status[programme] == NONE
+
   def status
     @status ||= programmes.index_with { programme_status(it) }
   end

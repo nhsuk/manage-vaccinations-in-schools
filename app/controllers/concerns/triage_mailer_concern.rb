@@ -40,21 +40,18 @@ module TriageMailerConcern
   def vaccination_will_happen?(patient_session, consent)
     programme = consent.programme
     consent.triage_needed? &&
-      patient_session.triage.status[programme] ==
-        PatientSession::Triage::SAFE_TO_VACCINATE
+      patient_session.triage.safe_to_vaccinate?(programme)
   end
 
   def vaccination_wont_happen?(patient_session, consent)
     programme = consent.programme
     consent.triage_needed? &&
-      patient_session.triage.status[programme] ==
-        PatientSession::Triage::DO_NOT_VACCINATE
+      patient_session.triage.do_not_vaccinate?(programme)
   end
 
   def vaccination_at_clinic?(patient_session, consent)
     programme = consent.programme
     consent.triage_needed? &&
-      patient_session.triage.status[programme] ==
-        PatientSession::Triage::DELAY_VACCINATION
+      patient_session.triage.delay_vaccination?(programme)
   end
 end

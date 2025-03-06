@@ -13,6 +13,16 @@ class PatientSession::Triage
     NOT_REQUIRED = :not_required
   ].freeze
 
+  def safe_to_vaccinate?(programme) = status[programme] == SAFE_TO_VACCINATE
+
+  def do_not_vaccinate?(programme) = status[programme] == DO_NOT_VACCINATE
+
+  def delay_vaccination?(programme) = status[programme] == DELAY_VACCINATION
+
+  def required?(programme) = status[programme] == REQUIRED
+
+  def not_required?(programme) = status[programme] == NOT_REQUIRED
+
   def status
     @status ||= programmes.index_with { programme_status(it) }
   end
@@ -53,35 +63,35 @@ class PatientSession::Triage
   delegate :consent, :outcome, :patient, :programmes, to: :patient_session
 
   def programme_status(programme)
-    if safe_to_vaccinate?(programme)
+    if triage_safe_to_vaccinate?(programme)
       SAFE_TO_VACCINATE
-    elsif do_not_vaccinate?(programme)
+    elsif triage_do_not_vaccinate?(programme)
       DO_NOT_VACCINATE
-    elsif delay_vaccination?(programme)
+    elsif triage_delay_vaccination?(programme)
       DELAY_VACCINATION
-    elsif required?(programme)
+    elsif triage_required?(programme)
       REQUIRED
     else
       NOT_REQUIRED
     end
   end
 
-  def safe_to_vaccinate?(programme)
+  def triage_safe_to_vaccinate?(programme)
     latest[programme]&.ready_to_vaccinate?
   end
 
-  def do_not_vaccinate?(programme)
+  def triage_do_not_vaccinate?(programme)
     latest[programme]&.do_not_vaccinate?
   end
 
-  def delay_vaccination?(programme)
+  def triage_delay_vaccination?(programme)
     latest[programme]&.delay_vaccination?
   end
 
-  def required?(programme)
+  def triage_required?(programme)
     return true if latest[programme]&.needs_follow_up?
 
-    consent.status[programme] == PatientSession::Consent::GIVEN &&
+    consent.given?(programme) &&
       (
         consent_needs_triage?(programme:) ||
           vaccination_history_needs_triage?(programme:)

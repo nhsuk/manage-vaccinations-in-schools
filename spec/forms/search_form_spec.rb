@@ -114,7 +114,7 @@ describe SearchForm do
       let(:outcome_status) { nil }
       let(:q) { nil }
       let(:record_status) { nil }
-      let(:register_status) { "present" }
+      let(:register_status) { "attending" }
       let(:triage_status) { nil }
       let(:year_groups) { nil }
 

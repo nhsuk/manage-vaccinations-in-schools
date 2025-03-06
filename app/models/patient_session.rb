@@ -102,8 +102,7 @@ class PatientSession < ApplicationRecord
   end
 
   def can_record_as_already_vaccinated?(programme:)
-    !session.today? &&
-      outcome.status[programme] == PatientSession::Outcome::NONE
+    !session.today? && outcome.none?(programme)
   end
 
   def programmes
@@ -137,20 +136,15 @@ class PatientSession < ApplicationRecord
   end
 
   def ready_for_vaccinator?(programme: nil)
-    vaccinated = PatientSession::Outcome::VACCINATED
-    consent_given = PatientSession::Consent::GIVEN
-    safe_to_vaccinate = PatientSession::Triage::SAFE_TO_VACCINATE
-    delay_vaccination = PatientSession::Triage::DELAY_VACCINATION
-    triage_not_needed = PatientSession::Triage::NOT_REQUIRED
-
     programmes_to_check = programme ? [programme] : programmes
 
     programmes_to_check.any? do
-      return false if outcome.status[it] == vaccinated
+      return false if outcome.vaccinated?(it)
 
-      consent.status[it] == consent_given &&
-        [safe_to_vaccinate, delay_vaccination, triage_not_needed].include?(
-          triage.status[it]
+      consent.given?(it) &&
+        (
+          triage.safe_to_vaccinate?(it) || triage.delay_vaccination?(it) ||
+            triage.not_required?(it)
         )
     end
   end

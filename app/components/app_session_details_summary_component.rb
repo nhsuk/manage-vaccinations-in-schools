@@ -39,7 +39,7 @@ class AppSessionDetailsSummaryComponent < ViewComponent::Base
     count =
       patient_sessions.count do
         it.outcome.status.values.none?(PatientSession::Outcome::VACCINATED) &&
-          it.register.status == PatientSession::Register::PRESENT
+          it.register.attending?
       end
 
     href =

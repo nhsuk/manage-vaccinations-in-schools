@@ -5,14 +5,24 @@ class PatientSession::Register
     @patient_session = patient_session
   end
 
-  STATUSES = [UNKNOWN = :unknown, PRESENT = :present, ABSENT = :absent].freeze
+  STATUSES = [
+    UNKNOWN = :unknown,
+    ATTENDING = :attending,
+    NOT_ATTENDING = :not_attending
+  ].freeze
+
+  def attending? = status == ATTENDING
+
+  def not_attending? = status == NOT_ATTENDING
+
+  def unknown? = status == UNKNOWN
 
   def status
     @status ||=
       if latest&.attending
-        PRESENT
+        ATTENDING
       elsif latest&.attending == false
-        ABSENT
+        NOT_ATTENDING
       else
         UNKNOWN
       end

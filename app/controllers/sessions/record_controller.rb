@@ -25,7 +25,7 @@ class Sessions::RecordController < ApplicationController
     patient_sessions =
       @form.apply(scope) do |filtered_scope|
         filtered_scope.select do
-          it.register.status == PatientSession::Register::PRESENT ||
+          it.register.attending? ||
             it.record.status.values.none?(PatientSession::Record::NONE)
         end
       end

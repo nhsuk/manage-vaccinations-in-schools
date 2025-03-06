@@ -144,11 +144,10 @@ class Reports::OfflineSessionExporter
   def rows(patient_session:)
     patient_session.programmes.flat_map do |programme|
       bg_color =
-        if patient_session.consent.status[programme] ==
-             PatientSession::Consent::REFUSED
+        case patient_session.consent.status[programme]
+        when PatientSession::Consent::REFUSED
           "F7D4D1"
-        elsif patient_session.consent.status[programme] ==
-              PatientSession::Consent::CONFLICTS
+        when PatientSession::Consent::CONFLICTS
           "FFDC8E"
         end
 

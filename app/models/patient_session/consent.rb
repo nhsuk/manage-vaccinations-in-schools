@@ -12,6 +12,14 @@ class PatientSession::Consent
     NONE = :none
   ].freeze
 
+  def given?(programme) = status[programme] == GIVEN
+
+  def refused?(programme) = status[programme] == REFUSED
+
+  def conflicts?(programme) = status[programme] == CONFLICTS
+
+  def none?(programme) = status[programme] == NONE
+
   def status
     @status ||= programmes.index_with { programme_status(it) }
   end
