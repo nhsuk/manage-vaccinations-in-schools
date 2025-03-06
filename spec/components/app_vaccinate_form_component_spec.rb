@@ -37,7 +37,7 @@ describe AppVaccinateFormComponent do
   it "has the correct heading" do
     expect(rendered).to have_css(
       ".nhsuk-card__heading",
-      text: "Is Hari ready to vaccinate in this session?"
+      text: "Is Hari ready for their HPV vaccination?"
     )
   end
 
