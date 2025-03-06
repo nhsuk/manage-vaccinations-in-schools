@@ -104,7 +104,7 @@ describe PatientSession::Consent do
   end
 
   describe "#latest" do
-    subject(:latest) { instance.latest(programme:) }
+    subject(:latest) { instance.latest[programme] }
 
     context "multiple consent given responses from different parents" do
       let(:parents) { create_list(:parent, 2) }

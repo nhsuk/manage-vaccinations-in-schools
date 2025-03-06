@@ -93,8 +93,8 @@ class PatientSession < ApplicationRecord
   delegate :send_notifications?, to: :patient
 
   def safe_to_destroy?
-    programmes.none? { |programme| record.all(programme:).any? } &&
-      gillick_assessments.empty? && session_attendances.none?(&:attending?)
+    programmes.none? { record.all[it].any? } && gillick_assessments.empty? &&
+      session_attendances.none?(&:attending?)
   end
 
   def destroy_if_safe!
@@ -110,8 +110,10 @@ class PatientSession < ApplicationRecord
     session.programmes.select { it.year_groups.include?(patient.year_group) }
   end
 
-  def gillick_assessment(programme:)
-    gillick_assessments.select { it.programme_id == programme.id }.last
+  def gillick_assessment(programme)
+    gillick_assessments
+      .select { it.programme_id == programme.id }
+      .max_by(&:created_at)
   end
 
   def consent

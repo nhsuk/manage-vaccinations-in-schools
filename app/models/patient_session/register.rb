@@ -9,17 +9,17 @@ class PatientSession::Register
 
   def status
     @status ||=
-      if today&.attending
+      if latest&.attending
         PRESENT
-      elsif today&.attending == false
+      elsif latest&.attending == false
         ABSENT
       else
         UNKNOWN
       end
   end
 
-  def today
-    @today ||=
+  def latest
+    @latest ||=
       if session_date
         session_attendances.find { it.session_date_id == session_date.id } ||
           session_attendances.new(session_date:)

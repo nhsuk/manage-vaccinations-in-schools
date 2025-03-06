@@ -161,7 +161,7 @@ class Reports::OfflineSessionExporter
         }
       }
 
-      vaccination_records = patient_session.outcome.all(programme:)
+      vaccination_records = patient_session.outcome.all[programme]
 
       if vaccination_records.any?
         vaccination_records.map do |vaccination_record|
@@ -184,9 +184,9 @@ class Reports::OfflineSessionExporter
   def add_patient_cells(row, patient_session:, programme:)
     patient = patient_session.patient
 
-    gillick_assessment = patient_session.gillick_assessment(programme:)
-    consents = patient_session.consent.latest(programme:)
-    triage = patient_session.triage.latest(programme:)
+    gillick_assessment = patient_session.gillick_assessment(programme)
+    consents = patient_session.consent.latest[programme]
+    triage = patient_session.triage.latest[programme]
 
     row[:organisation_code] = organisation.ods_code
     row[:person_forename] = patient.given_name

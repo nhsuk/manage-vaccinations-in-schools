@@ -52,7 +52,7 @@ describe PatientSession::Outcome do
   end
 
   describe "#all" do
-    subject(:all) { instance.all(programme:) }
+    subject(:all) { instance.all[programme] }
 
     let(:later_vaccination_record) do
       create(:vaccination_record, patient:, programme:)

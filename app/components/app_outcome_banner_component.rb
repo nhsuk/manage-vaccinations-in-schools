@@ -54,7 +54,7 @@ class AppOutcomeBannerComponent < ViewComponent::Base
   def vaccination_record
     @vaccination_record ||=
       begin
-        vaccination_records = @patient_session.outcome.all(programme:)
+        vaccination_records = @patient_session.outcome.all[programme]
         if @patient_session.outcome.status[programme] ==
              PatientSession::Outcome::VACCINATED
           vaccination_records.select(&:administered?).last
@@ -65,7 +65,7 @@ class AppOutcomeBannerComponent < ViewComponent::Base
   end
 
   def triage
-    @triage ||= @patient_session.triage.latest(programme:)
+    @triage ||= @patient_session.triage.latest[programme]
   end
 
   def show_location?

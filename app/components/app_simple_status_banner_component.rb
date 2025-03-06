@@ -84,9 +84,7 @@ class AppSimpleStatusBannerComponent < ViewComponent::Base
   end
 
   def who_refused
-    patient_session
-      .consent
-      .latest(programme:)
+    patient_session.consent.latest[programme]
       .select(&:response_refused?)
       .map(&:who_responded)
       .last
@@ -94,8 +92,8 @@ class AppSimpleStatusBannerComponent < ViewComponent::Base
 
   def nurse
     (
-      patient_session.triage.all(programme:) +
-        patient_session.outcome.all(programme:)
+      patient_session.triage.all[programme] +
+        patient_session.outcome.all[programme]
     ).max_by(&:updated_at)&.performed_by&.full_name
   end
 

@@ -14,7 +14,7 @@ class AppConsentComponent < ViewComponent::Base
 
   def consents
     @consents ||=
-      patient_session.consent.all(programme:).sort_by(&:created_at).reverse
+      patient_session.consent.all[programme].sort_by(&:created_at).reverse
   end
 
   def latest_consent_request

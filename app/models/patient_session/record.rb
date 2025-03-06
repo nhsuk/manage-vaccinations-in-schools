@@ -20,14 +20,18 @@ class PatientSession::Record
     @status ||= programmes.index_with { programme_status(it) }
   end
 
-  def all(programme:)
-    vaccination_records.select do
-      it.programme_id == programme.id && it.session_id == session.id
-    end
+  def all
+    @all ||=
+      Hash.new do |hash, programme|
+        hash[programme] = all_by_programme_id.fetch(programme.id, [])
+      end
   end
 
-  def latest(programme:)
-    latest_by_programme[programme.id]
+  def latest
+    @latest ||=
+      Hash.new do |hash, programme|
+        hash[programme] = all[programme].max_by(&:created_at)
+      end
   end
 
   private
@@ -37,18 +41,15 @@ class PatientSession::Record
   delegate :patient, :session, :programmes, to: :patient_session
 
   def programme_status(programme)
-    latest(programme:)&.outcome&.to_sym || NONE
+    latest[programme]&.outcome&.to_sym || NONE
   end
 
-  def latest_by_programme
-    @latest_by_programme ||=
-      vaccination_records
+  def all_by_programme_id
+    @all_by_programme_id ||=
+      patient
+        .vaccination_records
+        .reject(&:discarded?)
         .select { it.session_id == session.id }
         .group_by(&:programme_id)
-        .transform_values { it.max_by(&:created_at) }
-  end
-
-  def vaccination_records
-    patient.vaccination_records.reject(&:discarded?)
   end
 end

@@ -46,7 +46,7 @@ class SchoolConsentRequestsJob < ApplicationJob
 
     has_consent_or_vaccinated =
       programmes.all? do |programme|
-        patient_session.consent.all(programme:).any? ||
+        patient_session.consent.all[programme].any? ||
           patient_session.outcome.status[programme] !=
             PatientSession::Outcome::NONE
       end

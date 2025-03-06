@@ -58,7 +58,7 @@ describe PatientSession::Triage do
   end
 
   describe "#all" do
-    subject(:all) { instance.all(programme:) }
+    subject(:all) { instance.all[programme] }
 
     let(:later_triage) { create(:triage, programme:, patient:) }
     let(:earlier_triage) do
@@ -69,7 +69,7 @@ describe PatientSession::Triage do
   end
 
   describe "#latest" do
-    subject(:latest) { instance.latest(programme:) }
+    subject(:latest) { instance.latest[programme] }
 
     let(:later_triage) do
       create(
