@@ -57,7 +57,7 @@ resource "aws_rds_cluster" "aurora_cluster" {
   skip_final_snapshot         = !local.is_production
   db_subnet_group_name        = aws_db_subnet_group.aurora_subnet_group.name
   vpc_security_group_ids      = [aws_security_group.rds_security_group.id]
-  deletion_protection         = var.rails_env != "development"
+  deletion_protection         = true
 
   serverlessv2_scaling_configuration {
     max_capacity = 8.0
