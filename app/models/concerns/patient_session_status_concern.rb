@@ -47,12 +47,6 @@ module PatientSessionStatusConcern
       end
     end
 
-    PatientSessionStatusConcern.available_statuses.each do |status|
-      define_method("#{status}?") do |programme:|
-        self.status(programme:) == status
-      end
-    end
-
     def consent_given?(programme:)
       consent.status[programme] == PatientSession::Consent::GIVEN
     end
