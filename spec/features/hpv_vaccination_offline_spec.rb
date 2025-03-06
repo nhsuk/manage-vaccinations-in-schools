@@ -257,7 +257,7 @@ describe "HPV vaccination" do
 
     click_link "Back to session"
 
-    choose "Could not vaccinate"
+    choose "No outcome yet"
     click_on "Update results"
 
     click_on @unvaccinated_patient.full_name

@@ -29,6 +29,18 @@ describe PatientSession::Outcome do
         create(:vaccination_record, :not_administered, patient:, programme:)
       end
 
+      it { should be(described_class::NONE) }
+    end
+
+    context "with a consent refused" do
+      before { create(:consent, :refused, patient:, programme:) }
+
+      it { should be(described_class::COULD_NOT_VACCINATE) }
+    end
+
+    context "with a triage as unsafe to vaccination" do
+      before { create(:triage, :do_not_vaccinate, patient:, programme:) }
+
       it { should be(described_class::COULD_NOT_VACCINATE) }
     end
 
