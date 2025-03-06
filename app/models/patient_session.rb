@@ -133,4 +133,28 @@ class PatientSession < ApplicationRecord
   def outcome
     @outcome ||= PatientSession::Outcome.new(self)
   end
+
+  def ready_for_vaccinator?(programme: nil)
+    vaccinated = PatientSession::Outcome::VACCINATED
+    consent_given = PatientSession::Consent::GIVEN
+    safe_to_vaccinate = PatientSession::Triage::SAFE_TO_VACCINATE
+    triage_not_needed = PatientSession::Triage::NOT_REQUIRED
+
+    if programme
+      return false if outcome.status[programme] == vaccinated
+
+      consent.status[programme] == consent_given &&
+        [safe_to_vaccinate, triage_not_needed].include?(
+          triage.status[programme]
+        )
+    else
+      return false if outcome.status.values.all?(vaccinated)
+
+      consent.status.values.include?(consent_given) &&
+        (
+          triage.status.values.include?(safe_to_vaccinate) ||
+            triage.status.values.include?(triage_not_needed)
+        )
+    end
+  end
 end

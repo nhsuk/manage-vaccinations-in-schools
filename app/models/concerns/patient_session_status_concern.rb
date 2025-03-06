@@ -116,9 +116,7 @@ module PatientSessionStatusConcern
       if consent_given_triage_needed?(programme:) ||
            triaged_kept_in_triage?(programme:)
         :triage
-      elsif consent_given_triage_not_needed?(programme:) ||
-            triaged_ready_to_vaccinate?(programme:) ||
-            delay_vaccination?(programme:)
+      elsif ready_for_vaccinator?(programme:) || delay_vaccination?(programme:)
         :vaccinate
       end
     end
