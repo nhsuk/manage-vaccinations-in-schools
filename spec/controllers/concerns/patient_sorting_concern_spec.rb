@@ -45,7 +45,7 @@ describe PatientSortingConcern do
     )
   end
 
-  let(:programme) { create(:programme) }
+  let(:programme) { create(:programme, :hpv) }
   let(:session) { create(:session, programmes: [programme]) }
 
   let(:patient_sessions) do

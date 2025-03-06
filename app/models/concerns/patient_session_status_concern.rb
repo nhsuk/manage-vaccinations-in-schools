@@ -94,7 +94,8 @@ module PatientSessionStatusConcern
     end
 
     def vaccination_not_administered?(programme:)
-      outcome.all(programme:).any?(&:not_administered?)
+      record.status[programme] != PatientSession::Record::NONE &&
+        record.status[programme] != PatientSession::Record::VACCINATED
     end
 
     def next_step(programme:)
