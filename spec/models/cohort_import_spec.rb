@@ -189,7 +189,8 @@ describe CohortImport do
         school: location,
         address_line_1: "10 Downing Street",
         address_town: "London",
-        address_postcode: "SW1A 1AA"
+        address_postcode: "SW1A 1AA",
+        organisation:
       )
 
       expect(Patient.first.parents).to be_empty
@@ -202,7 +203,8 @@ describe CohortImport do
         school: location,
         address_line_1: "10 Downing Street",
         address_town: "London",
-        address_postcode: "SW1A 1AA"
+        address_postcode: "SW1A 1AA",
+        organisation:
       )
 
       expect(Patient.second.parents.count).to eq(1)
@@ -220,10 +222,11 @@ describe CohortImport do
         date_of_birth: Date.new(2010, 1, 3),
         given_name: "Mark",
         family_name: "Doe",
-        school: location,
+        school: nil,
         address_line_1: "11 Downing Street",
         address_town: "London",
-        address_postcode: "SW1A 1AA"
+        address_postcode: "SW1A 1AA",
+        organisation:
       )
 
       expect(Patient.third.parents.count).to eq(2)
@@ -341,8 +344,8 @@ describe CohortImport do
         create(:session, :unscheduled, organisation:, programmes:, location:)
       end
 
-      it "adds the patients to the session" do
-        expect { process! }.to change(session.patients, :count).from(0).to(3)
+      it "adds the known school patients to the session" do
+        expect { process! }.to change(session.patients, :count).from(0).to(2)
       end
     end
 
@@ -351,7 +354,15 @@ describe CohortImport do
         create(:session, :scheduled, organisation:, programmes:, location:)
       end
 
-      it "adds the patients to the session" do
+      it "adds the known school patients to the session" do
+        expect { process! }.to change(session.patients, :count).from(0).to(2)
+      end
+    end
+
+    context "with a scheduled clinic session" do
+      let(:session) { organisation.generic_clinic_session }
+
+      it "adds all the patients to the session" do
         expect { process! }.to change(session.patients, :count).from(0).to(3)
       end
     end
