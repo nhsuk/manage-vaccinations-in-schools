@@ -13,6 +13,18 @@ class SearchForm
   attribute :triage_status, :string
   attribute :year_groups, array: true
 
+  def initialize(options)
+    super(options)
+  rescue ActiveRecord::MultiparameterAssignmentErrors
+    super(
+      options.except(
+        :"date_of_birth(1i)",
+        :"date_of_birth(2i)",
+        :"date_of_birth(3i)"
+      )
+    )
+  end
+
   def year_groups=(values)
     super(values&.compact_blank&.map(&:to_i)&.compact || [])
   end
