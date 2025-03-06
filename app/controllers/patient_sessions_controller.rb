@@ -88,8 +88,13 @@ class PatientSessionsController < ApplicationController
 
   def set_back_link_path
     context = params[:return_to]
-    context_path = try(:"session_#{context}_path")
-    @back_link_path = context_path || session_outcome_path
+
+    @back_link_path =
+      if context.in?(%w[consent triage register record outcome])
+        send(:"session_#{context}_path")
+      else
+        session_outcome_path
+      end
   end
 
   def record_access_log_entry
