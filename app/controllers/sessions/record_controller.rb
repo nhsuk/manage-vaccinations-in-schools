@@ -15,12 +15,12 @@ class Sessions::RecordController < ApplicationController
   before_action :set_batches, except: :show
 
   def show
+    @statuses = PatientSession::Record::STATUSES
+
     scope =
       @session.patient_sessions.preload_for_status.in_programmes(
         @session.programmes
       )
-
-    @valid_statuses = PatientSession::Record::STATUSES
 
     patient_sessions =
       @form.apply(scope) do |filtered_scope|

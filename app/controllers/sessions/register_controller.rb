@@ -13,12 +13,12 @@ class Sessions::RegisterController < ApplicationController
   layout "full"
 
   def show
+    @statuses = PatientSession::Register::STATUSES
+
     scope =
       @session.patient_sessions.preload_for_status.in_programmes(
         @session.programmes
       )
-
-    @valid_statuses = PatientSession::Register::STATUSES
 
     patient_sessions =
       @form.apply(scope) do |filtered_scope|

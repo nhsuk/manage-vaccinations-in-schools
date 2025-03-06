@@ -14,7 +14,7 @@
       <%= render AppSearchComponent.new(
             form: @form,
             url: session_register_path(@session),
-            register_statuses: @valid_statuses,
+            register_statuses: @statuses,
             year_groups: @session.year_groups,
           ) %>
     </div>
