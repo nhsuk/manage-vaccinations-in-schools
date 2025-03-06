@@ -41,6 +41,8 @@ class SearchForm
 
     scope = scope.order_by_name
 
+    scope = yield(scope) if block_given?
+
     if (status = consent_status&.to_sym).present?
       scope = scope.select { it.consent.status.values.include?(status) }
     end

@@ -20,28 +20,28 @@ class AppSearchComponent < ViewComponent::Base
           </button>
         </div>
         
-        <% if consent_status %>
+        <% if consent_statuses.any? %>
           <%= f.govuk_radio_buttons_fieldset :consent_status, legend: { text: "Consent status", size: "s" } do %>
             <%= f.govuk_radio_button :consent_status, "", label: { text: "Any" } %>
-            <% PatientSession::Consent::STATUSES.each do |status| %>
+            <% consent_statuses.each do |status| %>
               <%= f.govuk_radio_button :consent_status, status, label: { text: t(status, scope: %i[patient_session status consent label]) } %>
             <% end %>
           <% end %>
         <% end %>
         
-        <% if triage_status %>
+        <% if triage_statuses.any? %>
           <%= f.govuk_radio_buttons_fieldset :triage_status, legend: { text: "Triage outcome", size: "s" } do %>
             <%= f.govuk_radio_button :triage_status, "", label: { text: "Any" } %>
-            <% PatientSession::Triage::STATUSES.each do |status| %>
+            <% triage_statuses.each do |status| %>
               <%= f.govuk_radio_button :triage_status, status, label: { text: t(status, scope: %i[patient_session status triage label]) } %>
             <% end %>
           <% end %>
         <% end %>
         
-        <% if register_status %>
+        <% if register_statuses.any? %>
           <%= f.govuk_radio_buttons_fieldset :register_status, legend: { text: "Registration status", size: "s" } do %>
             <%= f.govuk_radio_button :register_status, "", label: { text: "Any" } %>
-            <% PatientSession::Register::STATUSES.each do |status| %>
+            <% register_statuses.each do |status| %>
               <%= f.govuk_radio_button :register_status, status, label: { text: t(status, scope: %i[patient_session status register label]) } %>
             <% end %>
           <% end %>
@@ -83,9 +83,9 @@ class AppSearchComponent < ViewComponent::Base
   def initialize(
     form:,
     url:,
-    consent_status: false,
-    register_status: false,
-    triage_status: false,
+    consent_statuses: [],
+    register_statuses: [],
+    triage_statuses: [],
     year_groups: []
   )
     super
@@ -93,9 +93,9 @@ class AppSearchComponent < ViewComponent::Base
     @form = form
     @url = url
 
-    @consent_status = consent_status
-    @register_status = register_status
-    @triage_status = triage_status
+    @consent_statuses = consent_statuses
+    @register_statuses = register_statuses
+    @triage_statuses = triage_statuses
     @year_groups = year_groups
   end
 
@@ -103,12 +103,15 @@ class AppSearchComponent < ViewComponent::Base
 
   attr_reader :form,
               :url,
-              :consent_status,
-              :register_status,
-              :triage_status,
+              :consent_statuses,
+              :register_statuses,
+              :triage_statuses,
               :year_groups
 
   def show_buttons_in_details?
-    !(consent_status || register_status || triage_status || year_groups.any?)
+    !(
+      consent_statuses.any? || register_statuses || triage_statuses.any? ||
+        year_groups.any?
+    )
   end
 end

@@ -12,7 +12,12 @@
 
 <div class="app-grid-row">
   <div class="app-grid-column-filters">
-    <%= render AppSearchComponent.new(form: @form, url: session_consent_path(@session), consent_status: true, year_groups: @session.year_groups) %>
+    <%= render AppSearchComponent.new(
+          form: @form,
+          url: session_consent_path(@session),
+          consent_statuses: @valid_statuses,
+          year_groups: @session.year_groups,
+        ) %>
   </div>
 
   <div class="app-grid-column-results">

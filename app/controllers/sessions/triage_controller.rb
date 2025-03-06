@@ -17,7 +17,15 @@ class Sessions::TriageController < ApplicationController
         @session.programmes
       )
 
-    patient_sessions = @form.apply(scope)
+    @valid_statuses =
+      PatientSession::Triage::STATUSES - [PatientSession::Triage::NOT_REQUIRED]
+
+    patient_sessions =
+      @form.apply(scope) do |filtered_scope|
+        filtered_scope.select do
+          it.triage.status.values.intersect?(@valid_statuses)
+        end
+      end
 
     if patient_sessions.is_a?(Array)
       @pagy, @patient_sessions = pagy_array(patient_sessions)
