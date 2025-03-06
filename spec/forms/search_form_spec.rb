@@ -7,6 +7,7 @@ describe SearchForm do
       date_of_birth:,
       missing_nhs_number:,
       q:,
+      record_status:,
       register_status:,
       triage_status:,
       year_groups:
@@ -17,6 +18,7 @@ describe SearchForm do
   let(:date_of_birth) { Date.current }
   let(:missing_nhs_number) { true }
   let(:q) { "query" }
+  let(:record_status) { nil }
   let(:register_status) { nil }
   let(:triage_status) { nil }
   let(:year_groups) { %w[8 9 10 11] }
@@ -68,11 +70,28 @@ describe SearchForm do
       end
     end
 
+    context "filtering on record status" do
+      let(:consent_status) { nil }
+      let(:date_of_birth) { nil }
+      let(:missing_nhs_number) { nil }
+      let(:q) { nil }
+      let(:record_status) { "administered" }
+      let(:register_status) { nil }
+      let(:triage_status) { nil }
+      let(:year_groups) { nil }
+
+      it "filters on record status" do
+        patient_session = create(:patient_session, :vaccinated)
+        expect(form.apply(scope)).to include(patient_session)
+      end
+    end
+
     context "filtering on register status" do
       let(:consent_status) { nil }
       let(:date_of_birth) { nil }
       let(:missing_nhs_number) { nil }
       let(:q) { nil }
+      let(:record_status) { nil }
       let(:register_status) { "present" }
       let(:triage_status) { nil }
       let(:year_groups) { nil }
@@ -88,6 +107,7 @@ describe SearchForm do
       let(:date_of_birth) { nil }
       let(:missing_nhs_number) { nil }
       let(:q) { nil }
+      let(:record_status) { nil }
       let(:register_status) { nil }
       let(:triage_status) { "required" }
       let(:year_groups) { nil }

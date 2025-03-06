@@ -230,8 +230,10 @@ describe "End-to-end journey" do
 
   def when_i_click_on_the_vaccination_section
     click_link "Back"
-    click_link "Record vaccinations"
-    click_link "Vaccinate ( 1 )"
+    click_link "Record"
+
+    choose "No outcome yet"
+    click_on "Update results"
   end
 
   def and_i_record_the_successful_vaccination
@@ -257,8 +259,10 @@ describe "End-to-end journey" do
   end
 
   def then_i_see_that_the_child_is_vaccinated
-    click_link "Vaccinated ( 1 )"
-    expect(page).to have_content "1 child vaccinated"
+    choose "Vaccinated"
+    click_on "Update results"
+
+    expect(page).to have_content("Showing 1 to 1 of 1 children")
   end
 
   def and_i_cant_edit_attendance

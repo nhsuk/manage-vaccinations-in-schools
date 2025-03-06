@@ -31,7 +31,7 @@ describe "Vaccination" do
     batches =
       programmes.map do |programme|
         programme.vaccines.flat_map do |vaccine|
-          create_list(:batch, 4, organisation:, vaccine:)
+          create_list(:batch, 2, organisation:, vaccine:)
         end
       end
 
@@ -62,7 +62,7 @@ describe "Vaccination" do
   end
 
   def when_i_vaccinate_a_patient_with_hpv
-    visit session_vaccinations_path(@session)
+    visit session_record_path(@session)
 
     click_link @patient.full_name
 
@@ -95,7 +95,7 @@ describe "Vaccination" do
   end
 
   def when_i_vaccinate_a_second_patient_with_hpv
-    visit session_vaccinations_path(@session)
+    visit session_record_path(@session)
 
     click_link @patient2.full_name
 
@@ -112,15 +112,15 @@ describe "Vaccination" do
   end
 
   def then_i_see_the_default_batch_banner_with_batch_1
-    expect(page).to have_content(/You are currently using.*#{@hpv_batch.name}/)
+    expect(page).to have_content("Gardasil 9 (HPV): #{@hpv_batch.name}")
   end
 
   def then_i_see_the_default_batch_banner_with_batch_2
-    expect(page).to have_content(/You are currently using.*#{@hpv_batch2.name}/)
+    expect(page).to have_content("Gardasil 9 (HPV): #{@hpv_batch2.name}")
   end
 
   def when_i_click_the_change_batch_link
-    click_link "Change the default batch"
+    click_link "Change default batch"
   end
 
   def then_i_see_the_change_batch_page
@@ -142,16 +142,17 @@ describe "Vaccination" do
   end
 
   def and_i_see_the_default_batch_on_the_patient_page
-    click_link @patient2.full_name
+    click_link @patient2.full_name, match: :first
 
     expect(page).to have_content("Vaccinated")
     expect(page).to have_content(@hpv_batch2.name)
   end
 
   def when_i_vaccinate_a_patient_with_menacwy
-    visit session_vaccinations_path(@session, programme_type: "menacwy")
+    visit session_record_path(@session)
 
     click_link @patient.full_name
+    click_on "MenACWY"
 
     # pre-screening
     find_all(".nhsuk-fieldset")[0].choose "Yes"

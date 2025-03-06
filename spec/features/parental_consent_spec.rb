@@ -195,7 +195,7 @@ describe "Parental consent" do
   def when_they_check_triage
     click_link "Pilot School"
 
-    # TODO: Check in "Record" tab
+    # TODO: Check in "Outcome" tab
     # choose "No triage needed"
     # click_on "Update results"
 

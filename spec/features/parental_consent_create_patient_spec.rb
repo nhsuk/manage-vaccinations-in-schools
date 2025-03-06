@@ -197,10 +197,7 @@ describe "Parental consent create patient" do
     end
     click_link "Pilot School"
 
-    # TODO: Check in "Record" tab
-    # choose "No triage needed"
-    # click_on "Update results"
-
+    # TODO: Check "Outcome" tab
     click_on "Consent"
   end
 

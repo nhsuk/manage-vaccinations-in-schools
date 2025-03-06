@@ -14,11 +14,9 @@ class Sessions::RegisterController < ApplicationController
 
   def show
     scope =
-      @session
-        .patient_sessions
-        .preload_for_status
-        .includes(:session_attendances)
-        .in_programmes(@session.programmes)
+      @session.patient_sessions.preload_for_status.in_programmes(
+        @session.programmes
+      )
 
     @valid_statuses = PatientSession::Register::STATUSES
 
@@ -73,10 +71,8 @@ class Sessions::RegisterController < ApplicationController
 
   def set_patient_session
     @patient_session =
-      @session
-        .patient_sessions
-        .preload_for_status
-        .includes(:session_attendances)
-        .find_by!(patient_id: params[:patient_id])
+      @session.patient_sessions.preload_for_status.find_by!(
+        patient_id: params[:patient_id]
+      )
   end
 end

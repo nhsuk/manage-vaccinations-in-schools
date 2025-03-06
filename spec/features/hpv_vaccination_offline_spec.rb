@@ -15,7 +15,9 @@ describe "HPV vaccination" do
     when_i_record_vaccination_outcomes_to_the_spreadsheet_and_export_it_to_csv
     and_i_upload_the_modified_csv_file
     and_i_navigate_to_the_session_page
-    then_i_see_the_uploaded_vaccination_outcomes_reflected_in_the_session
+    then_i_see_the_uploaded_vaccination_outcomes_reflected_in_the_session(
+      clinic: false
+    )
 
     when_vaccination_confirmations_are_sent
     then_an_email_is_sent_to_the_parent_confirming_the_vaccination
@@ -32,7 +34,9 @@ describe "HPV vaccination" do
     when_i_record_vaccination_outcomes_to_the_spreadsheet_and_export_it_to_csv
     and_i_upload_the_modified_csv_file
     and_i_navigate_to_the_clinic_page
-    then_i_see_the_uploaded_vaccination_outcomes_reflected_in_the_session
+    then_i_see_the_uploaded_vaccination_outcomes_reflected_in_the_session(
+      clinic: true
+    )
     and_the_clinic_location_is_displayed
 
     when_vaccination_confirmations_are_sent
@@ -238,10 +242,15 @@ describe "HPV vaccination" do
     click_on "Community clinics"
   end
 
-  def then_i_see_the_uploaded_vaccination_outcomes_reflected_in_the_session
-    click_on "Record vaccinations"
-    click_on "Vaccinated"
+  def then_i_see_the_uploaded_vaccination_outcomes_reflected_in_the_session(
+    clinic:
+  )
+    # TODO: Check "Outcome" tab
+    # click_on "Record"
+    # choose "Vaccinated"
+    # click_on "Update results"
 
+    click_on "Consent"
     click_on @vaccinated_patient.full_name
 
     expect(page).to have_content("Vaccinated")
@@ -253,8 +262,14 @@ describe "HPV vaccination" do
     )
     expect(page).to have_content("SiteLeft arm (upper position)")
 
-    click_on "Back"
-    click_on "Could not vaccinate"
+    session = clinic ? @organisation.generic_clinic_session : @session
+
+    # TODO: Update this once back links work
+    # click_link "Back to record tab"
+    visit session_consent_path(session)
+
+    # choose "Absent from session"
+    click_on "Update results"
 
     click_on @unvaccinated_patient.full_name
     expect(page).to have_content(@unvaccinated_patient.full_name)
@@ -262,8 +277,12 @@ describe "HPV vaccination" do
     expect(page).to have_content("OutcomeAbsent from session")
     expect(page).to have_content("NotesSome notes.")
 
-    click_on "Back"
-    click_on "Vaccinated"
+    # TODO: Update this once back links work
+    # click_link "Back to record tab"
+    visit session_consent_path(session)
+
+    # choose "Vaccinated"
+    click_on "Update results"
 
     click_on @restricted_vaccinated_patient.full_name
     expect(page).to have_content(@restricted_vaccinated_patient.full_name)
