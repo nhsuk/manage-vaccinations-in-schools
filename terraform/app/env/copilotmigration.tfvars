@@ -21,3 +21,7 @@ rails_env = "staging"
 splunk_enabled = "true"
 cis2_enabled   = "false"
 pds_enabled    = "false"
+http_hosts = {
+  MAVIS__HOST                        = "copilotmigration.mavistesting.com"
+  MAVIS__GIVE_OR_REFUSE_CONSENT_HOST = "copilotmigration.mavistesting.com"
+}

@@ -12,7 +12,7 @@ resource "aws_security_group_rule" "lb_ingress_http" {
   from_port         = 80
   to_port           = 80
   protocol          = "tcp"
-  cidr_blocks       = ["0.0.0.0/0"]
+  cidr_blocks = ["0.0.0.0/0"]
   security_group_id = aws_security_group.lb_service_sg.id
   lifecycle {
     create_before_destroy = true
@@ -24,7 +24,7 @@ resource "aws_security_group_rule" "lb_ingress_https" {
   from_port         = 443
   to_port           = 443
   protocol          = "tcp"
-  cidr_blocks       = ["0.0.0.0/0"]
+  cidr_blocks = ["0.0.0.0/0"]
   security_group_id = aws_security_group.lb_service_sg.id
   lifecycle {
     create_before_destroy = true
@@ -37,7 +37,7 @@ resource "aws_security_group_rule" "lb_egress_a" {
   from_port         = 0
   to_port           = 0
   protocol          = "-1"
-  cidr_blocks       = ["10.0.2.0/24"]
+  cidr_blocks = ["10.0.2.0/24"]
   security_group_id = aws_security_group.lb_service_sg.id
   lifecycle {
     create_before_destroy = true
@@ -50,7 +50,7 @@ resource "aws_security_group_rule" "lb_egress_b" {
   from_port         = 0
   to_port           = 0
   protocol          = "-1"
-  cidr_blocks       = ["10.0.3.0/24"]
+  cidr_blocks = ["10.0.3.0/24"]
   security_group_id = aws_security_group.lb_service_sg.id
   lifecycle {
     create_before_destroy = true
@@ -62,12 +62,12 @@ resource "aws_lb" "app_lb" {
   internal           = false
   load_balancer_type = "application"
   access_logs {
-    bucket = "nhse-mavis-logs-${var.environment}"
-    prefix = "lb-access-logs"
+    bucket  = "nhse-mavis-logs-${var.environment}"
+    prefix  = "lb-access-logs"
     enabled = true
   }
-  security_groups    = [aws_security_group.lb_service_sg.id]
-  subnets            = [aws_subnet.public_subnet_a.id, aws_subnet.public_subnet_b.id]
+  security_groups = [aws_security_group.lb_service_sg.id]
+  subnets = [aws_subnet.public_subnet_a.id, aws_subnet.public_subnet_b.id]
 }
 
 resource "aws_lb_target_group" "blue" {
@@ -106,12 +106,12 @@ resource "aws_lb_target_group" "green" {
   }
 }
 
-resource "aws_lb_target_group" "dump"{
-  name = "dump-${var.environment}"
-  port = 80
-  protocol = "HTTP"
+resource "aws_lb_target_group" "dump" {
+  name        = "dump-${var.environment}"
+  port        = 80
+  protocol    = "HTTP"
   target_type = "ip"
-  vpc_id = aws_vpc.application_vpc.id
+  vpc_id      = aws_vpc.application_vpc.id
 }
 
 resource "aws_lb_listener" "app_listener_http" {
@@ -147,7 +147,12 @@ resource "aws_lb_listener_rule" "forward_to_mavis" {
   }
   condition {
     path_pattern {
-    values = ["/*"]
+      values = ["/*"]
+    }
+  }
+  condition {
+    host_header {
+      values = local.host_headers
     }
   }
 
@@ -159,19 +164,24 @@ resource "aws_lb_listener_rule" "forward_to_mavis" {
 resource "aws_lb_listener_rule" "redirect_to_https" {
   listener_arn = aws_lb_listener.app_listener_http.arn
   priority     = 49999
-    action {
-      type             = "redirect"
-      redirect {
+  action {
+    type = "redirect"
+    redirect {
       port        = "443"
       protocol    = "HTTPS"
       status_code = "HTTP_301"
-      }
     }
-    condition {
-      path_pattern {
+  }
+  condition {
+    path_pattern {
       values = ["/*"]
-      }
     }
+  }
+  condition {
+    host_header {
+      values = local.host_headers
+    }
+  }
 }
 
 module "dns_route53" {

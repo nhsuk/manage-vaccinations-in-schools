@@ -1,4 +1,4 @@
-environment  = "poc"
+environment         = "poc"
 db_secret_arn       = null
 dns_certificate_arn = null
 resource_name = {
@@ -12,3 +12,7 @@ resource_name = {
 }
 rails_env             = "staging"
 rails_master_key_path = "/copilot/mavis/copilotmigration/secrets/RAILS_MASTER_KEY"
+http_hosts = {
+  MAVIS__HOST                        = "poc.mavistesting.com"
+  MAVIS__GIVE_OR_REFUSE_CONSENT_HOST = "poc.mavistesting.com"
+}
