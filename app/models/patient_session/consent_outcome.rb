@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class PatientSession::Consent
+class PatientSession::ConsentOutcome
   def initialize(patient_session)
     @patient_session = patient_session
   end

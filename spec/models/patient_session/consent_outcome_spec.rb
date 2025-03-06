@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe PatientSession::Consent do
+describe PatientSession::ConsentOutcome do
   subject(:instance) { described_class.new(patient_session) }
 
   let(:programme) { create(:programme, :hpv) }

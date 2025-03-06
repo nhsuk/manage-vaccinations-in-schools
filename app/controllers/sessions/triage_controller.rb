@@ -13,7 +13,8 @@ class Sessions::TriageController < ApplicationController
 
   def show
     @statuses =
-      PatientSession::Triage::STATUSES - [PatientSession::Triage::NOT_REQUIRED]
+      PatientSession::TriageOutcome::STATUSES -
+        [PatientSession::TriageOutcome::NOT_REQUIRED]
 
     scope =
       @session.patient_sessions.preload_for_status.in_programmes(

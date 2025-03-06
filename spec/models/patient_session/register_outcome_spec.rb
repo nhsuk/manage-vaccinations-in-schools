@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe PatientSession::Register do
+describe PatientSession::RegisterOutcome do
   subject(:instance) { described_class.new(patient_session) }
 
   let(:patient) { create(:patient) }

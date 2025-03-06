@@ -145,9 +145,9 @@ class Reports::OfflineSessionExporter
     patient_session.programmes.flat_map do |programme|
       bg_color =
         case patient_session.consent.status[programme]
-        when PatientSession::Consent::REFUSED
+        when PatientSession::ConsentOutcome::REFUSED
           "F7D4D1"
-        when PatientSession::Consent::CONFLICTS
+        when PatientSession::ConsentOutcome::CONFLICTS
           "FFDC8E"
         end
 

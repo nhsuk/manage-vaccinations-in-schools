@@ -8,9 +8,9 @@ class SearchForm
   attribute :consent_status, :string
   attribute :date_of_birth, :date
   attribute :missing_nhs_number, :boolean
-  attribute :outcome_status, :string
+  attribute :programme_status, :string
   attribute :q, :string
-  attribute :record_status, :string
+  attribute :session_status, :string
   attribute :register_status, :string
   attribute :triage_status, :string
   attribute :year_groups, array: true
@@ -49,11 +49,11 @@ class SearchForm
       scope = scope.select { it.consent.status.values.include?(status) }
     end
 
-    if (status = outcome_status&.to_sym).present?
+    if (status = programme_status&.to_sym).present?
       scope = scope.select { it.outcome.status.values.include?(status) }
     end
 
-    if (status = record_status&.to_sym).present?
+    if (status = session_status&.to_sym).present?
       scope = scope.select { it.record.status.values.include?(status) }
     end
 

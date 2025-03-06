@@ -116,23 +116,23 @@ class PatientSession < ApplicationRecord
   end
 
   def consent
-    @consent ||= PatientSession::Consent.new(self)
+    @consent ||= PatientSession::ConsentOutcome.new(self)
   end
 
   def triage
-    @triage ||= PatientSession::Triage.new(self)
+    @triage ||= PatientSession::TriageOutcome.new(self)
   end
 
   def register
-    @register ||= PatientSession::Register.new(self)
+    @register ||= PatientSession::RegisterOutcome.new(self)
   end
 
   def record
-    @record ||= PatientSession::Record.new(self)
+    @record ||= PatientSession::SessionOutcome.new(self)
   end
 
   def outcome
-    @outcome ||= PatientSession::Outcome.new(self)
+    @outcome ||= PatientSession::ProgrammeOutcome.new(self)
   end
 
   def ready_for_vaccinator?(programme: nil)

@@ -13,7 +13,7 @@ class Sessions::RegisterController < ApplicationController
   layout "full"
 
   def show
-    @statuses = PatientSession::Register::STATUSES
+    @statuses = PatientSession::RegisterOutcome::STATUSES
 
     scope =
       @session.patient_sessions.preload_for_status.in_programmes(

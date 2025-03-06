@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class PatientSession::Outcome
+class PatientSession::ProgrammeOutcome
   def initialize(patient_session)
     @patient_session = patient_session
   end

@@ -15,7 +15,7 @@ class Sessions::RecordController < ApplicationController
   before_action :set_batches, except: :show
 
   def show
-    @statuses = PatientSession::Record::STATUSES
+    @statuses = PatientSession::SessionOutcome::STATUSES
 
     scope =
       @session.patient_sessions.preload_for_status.in_programmes(
@@ -26,7 +26,7 @@ class Sessions::RecordController < ApplicationController
       @form.apply(scope) do |filtered_scope|
         filtered_scope.select do
           it.register.attending? ||
-            it.record.status.values.none?(PatientSession::Record::NONE)
+            it.record.status.values.none?(PatientSession::SessionOutcome::NONE)
         end
       end
 
