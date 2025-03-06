@@ -73,10 +73,11 @@ class PatientSession::Triage
   def required?(programme:)
     return true if latest(programme:)&.needs_follow_up?
 
-    return false if consent.latest(programme:).empty?
-
-    consent_needs_triage?(programme:) ||
-      vaccination_history_needs_triage?(programme:)
+    consent.status[programme] == PatientSession::Consent::GIVEN &&
+      (
+        consent_needs_triage?(programme:) ||
+          vaccination_history_needs_triage?(programme:)
+      )
   end
 
   def latest_by_programme

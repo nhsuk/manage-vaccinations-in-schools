@@ -50,17 +50,28 @@ class AppSimpleStatusBannerComponent < ViewComponent::Base
       programme_name: programme.name
     }
 
-    if patient_session.consent_given_triage_needed?(programme:)
+    if patient_session.triage.status[programme] ==
+         PatientSession::Triage::REQUIRED
       reasons = [
         if patient_session.triage.consent_needs_triage?(programme:)
           I18n.t(
-            "patient_session_statuses.#{status}.banner_explanation.consent_needs_triage",
+            :consent_needs_triage,
+            scope: %i[
+              patient_session_statuses
+              consent_given_triage_needed
+              banner_explanation
+            ],
             **options
           )
         end,
         if patient_session.triage.vaccination_history_needs_triage?(programme:)
           I18n.t(
-            "patient_session_statuses.#{status}.banner_explanation.vaccination_partially_administered",
+            :vaccination_partially_administered,
+            scope: %i[
+              patient_session_statuses
+              consent_given_triage_needed
+              banner_explanation
+            ],
             **options
           )
         end
