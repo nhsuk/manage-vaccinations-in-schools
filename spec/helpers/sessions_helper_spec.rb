@@ -12,20 +12,44 @@ describe SessionsHelper do
   end
 
   describe "#session_consent_period" do
-    subject(:session_consent_period) { helper.session_consent_period(session) }
-
-    it { should eq("Not provided") }
-
-    context "when in the past" do
-      let(:date) { Date.yesterday }
-
-      it { should start_with("Closed ") }
+    subject(:session_consent_period) do
+      helper.session_consent_period(session, in_sentence:)
     end
 
-    context "when in the future" do
-      let(:date) { Date.tomorrow }
+    context "when in a sentence" do
+      let(:in_sentence) { true }
 
-      it { should start_with("Open until ") }
+      it { should eq("not provided") }
+
+      context "when in the past" do
+        let(:date) { Date.yesterday }
+
+        it { should start_with("closed ") }
+      end
+
+      context "when in the future" do
+        let(:date) { Date.tomorrow }
+
+        it { should start_with("open until ") }
+      end
+    end
+
+    context "when not in a sentence" do
+      let(:in_sentence) { false }
+
+      it { should eq("Not provided") }
+
+      context "when in the past" do
+        let(:date) { Date.yesterday }
+
+        it { should start_with("Closed ") }
+      end
+
+      context "when in the future" do
+        let(:date) { Date.tomorrow }
+
+        it { should start_with("Open until ") }
+      end
     end
   end
 
