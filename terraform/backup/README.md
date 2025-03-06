@@ -18,3 +18,23 @@ To set up the backup infrastructure from scratch, follow these steps:
    It returns the ARN of the destination vault that is created.
 4. Put the ARN of the destination vault in the \*.tfvars file in the `source` directory.
 5. Set up the **source** account by running `terraform apply -var-file=dev.tfvars` in the `source` directory.
+
+
+## Disaster Recovery
+
+To restore the database from a recovery point, follow these steps:
+
+1. In the AWS Backup vault, select the recovery point you want to restore.
+2. Set a new DB cluster identifier, e.g. `mavis-$ENV-restored` and click on "Restore".
+3. Wait for the restored DB cluster to be complete. 
+4. Update the DB credentials:
+   - If the environment uses self managed credentials, update the DB hostname and instance name in the secret in AWS Secrets Manager.
+   - If the environment uses RDS managed credentials, it's likely that the credentials are also gone. In that case, 
+     - Update the DB cluster config in the UI to use RDS-managed credentials again.
+4. Refresh the terraform state of the app by running `terraform refresh`. 
+5. Import the new DB cluster into the terraform state
+```angular2html
+terraform import aws_rds_cluster.aurora_cluster mavis-$ENV-restored
+```
+6. Run `terraform apply`. This will create a new DB instance and update all security groups as necessary.
+7. Trigger a copilot deployment to start new tasks with the updated task definition.
