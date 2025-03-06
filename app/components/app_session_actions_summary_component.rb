@@ -100,23 +100,8 @@ class AppSessionActionsSummaryComponent < ViewComponent::Base
 
     count =
       patient_sessions.count do
-        unless it.register.status == PatientSession::Register::UNKNOWN
-          next false
-        end
-
-        if it.outcome.status.values.all?(PatientSession::Outcome::VACCINATED)
-          next false
-        end
-
-        it.consent.status.values.include?(PatientSession::Consent::GIVEN) &&
-          (
-            it.triage.status.values.include?(
-              PatientSession::Triage::SAFE_TO_VACCINATE
-            ) ||
-              it.triage.status.values.include?(
-                PatientSession::Triage::NOT_REQUIRED
-              )
-          )
+        it.register.status == PatientSession::Register::UNKNOWN &&
+          it.ready_for_vaccinator?
       end
 
     href =

@@ -12,7 +12,6 @@ module PatientSessionStatusConcern
       consent_conflicts
       triaged_ready_to_vaccinate
       triaged_do_not_vaccinate
-      triaged_kept_in_triage
       unable_to_vaccinate
       delay_vaccination
       vaccinated
@@ -27,13 +26,10 @@ module PatientSessionStatusConcern
            programme:
          )
         "vaccinated"
-      elsif triage_delay_vaccination?(programme:) ||
-            vaccination_can_be_delayed?(programme:)
+      elsif triage_delay_vaccination?(programme:)
         "delay_vaccination"
       elsif vaccination_not_administered?(programme:)
         "unable_to_vaccinate"
-      elsif triage_keep_in_triage?(programme:)
-        "triaged_kept_in_triage"
       elsif consent_given?(programme:) && triage_ready_to_vaccinate?(programme:)
         "triaged_ready_to_vaccinate"
       elsif triage_do_not_vaccinate?(programme:)
@@ -48,12 +44,6 @@ module PatientSessionStatusConcern
         "consent_conflicts"
       else
         "added_to_session"
-      end
-    end
-
-    PatientSessionStatusConcern.available_statuses.each do |status|
-      define_method("#{status}?") do |programme:|
-        self.status(programme:) == status
       end
     end
 
@@ -85,10 +75,6 @@ module PatientSessionStatusConcern
       triage.status[programme] == PatientSession::Triage::SAFE_TO_VACCINATE
     end
 
-    def triage_keep_in_triage?(programme:)
-      triage.latest(programme:)&.needs_follow_up?
-    end
-
     def triage_do_not_vaccinate?(programme:)
       triage.status[programme] == PatientSession::Triage::DO_NOT_VACCINATE
     end
@@ -102,23 +88,14 @@ module PatientSessionStatusConcern
     end
 
     def vaccination_not_administered?(programme:)
-      outcome.all(programme:).any?(&:not_administered?)
-    end
-
-    def vaccination_can_be_delayed?(programme:)
-      if (vaccination_record = record.latest(programme:))
-        vaccination_record.not_administered? &&
-          vaccination_record.retryable_reason?
-      end
+      record.status[programme] != PatientSession::Record::NONE &&
+        record.status[programme] != PatientSession::Record::VACCINATED
     end
 
     def next_step(programme:)
-      if consent_given_triage_needed?(programme:) ||
-           triaged_kept_in_triage?(programme:)
+      if triage.status[programme] == PatientSession::Triage::REQUIRED
         :triage
-      elsif consent_given_triage_not_needed?(programme:) ||
-            triaged_ready_to_vaccinate?(programme:) ||
-            delay_vaccination?(programme:)
+      elsif ready_for_vaccinator?(programme:)
         :vaccinate
       end
     end

@@ -31,11 +31,9 @@ describe PatientSessionStatusConcern do
         triage_not_needed?: false,
         triage_ready_to_vaccinate?: false,
         triage_do_not_vaccinate?: false,
-        triage_keep_in_triage?: false,
         triage_delay_vaccination?: false,
         vaccination_administered?: false,
-        vaccination_not_administered?: false,
-        vaccination_can_be_delayed?: false
+        vaccination_not_administered?: false
       }.merge(conditions_hash)
 
       context "with conditions #{conditions_list}" do
@@ -74,10 +72,6 @@ describe PatientSessionStatusConcern do
                      conditions: [:triage_do_not_vaccinate]
 
     include_examples "it supports the status",
-                     :triaged_kept_in_triage,
-                     conditions: [:triage_keep_in_triage]
-
-    include_examples "it supports the status",
                      :delay_vaccination,
                      conditions: [:triage_delay_vaccination]
 
@@ -88,9 +82,5 @@ describe PatientSessionStatusConcern do
     include_examples "it supports the status",
                      :unable_to_vaccinate,
                      conditions: [:vaccination_not_administered]
-
-    include_examples "it supports the status",
-                     :delay_vaccination,
-                     conditions: [:vaccination_can_be_delayed]
   end
 end

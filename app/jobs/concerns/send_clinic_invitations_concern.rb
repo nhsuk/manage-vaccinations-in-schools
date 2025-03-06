@@ -37,7 +37,8 @@ module SendClinicInvitationsConcern
 
     all_consent_refused =
       eligible_programmes.all? do |programme|
-        patient_session.consent_refused?(programme:)
+        patient_session.consent.status[programme] ==
+          PatientSession::Consent::REFUSED
       end
 
     return false if all_consent_refused
