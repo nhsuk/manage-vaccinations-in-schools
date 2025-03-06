@@ -33,7 +33,7 @@ class Sessions::RegisterController < ApplicationController
   end
 
   def create
-    session_attendance = authorize @patient_session.register.latest
+    session_attendance = authorize @patient_session.register_outcome.latest
     session_attendance.update!(attending: params[:status] == "present")
 
     name = @patient_session.patient.full_name

@@ -26,7 +26,7 @@ module Reports::ExportFormatters
   end
 
   def consent_status(patient_session:, programme:)
-    case patient_session.consent.status[programme]
+    case patient_session.consent_outcome.status[programme]
     when PatientSession::ConsentOutcome::GIVEN
       "Consent given"
     when PatientSession::ConsentOutcome::REFUSED

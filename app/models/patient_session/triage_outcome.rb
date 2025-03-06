@@ -44,23 +44,24 @@ class PatientSession::TriageOutcome
   end
 
   def consent_needs_triage?(programme:)
-    consent.latest[programme].any?(&:triage_needed?)
+    consent_outcome.latest[programme].any?(&:triage_needed?)
   end
 
   def vaccination_history_needs_triage?(programme:)
-    outcome.all[programme].any?(&:administered?) &&
-      !VaccinatedCriteria.call(
-        programme,
-        patient:,
-        vaccination_records: outcome.all[programme]
-      )
+    vaccination_records = programme_outcome.all[programme]
+    vaccination_records.any?(&:administered?) &&
+      !VaccinatedCriteria.call(programme, patient:, vaccination_records:)
   end
 
   private
 
   attr_reader :patient_session
 
-  delegate :consent, :outcome, :patient, :programmes, to: :patient_session
+  delegate :consent_outcome,
+           :programme_outcome,
+           :patient,
+           :programmes,
+           to: :patient_session
 
   def programme_status(programme)
     if triage_safe_to_vaccinate?(programme)
@@ -91,7 +92,7 @@ class PatientSession::TriageOutcome
   def triage_required?(programme)
     return true if latest[programme]&.needs_follow_up?
 
-    consent.given?(programme) &&
+    consent_outcome.given?(programme) &&
       (
         consent_needs_triage?(programme:) ||
           vaccination_history_needs_triage?(programme:)

@@ -144,7 +144,7 @@ class Reports::OfflineSessionExporter
   def rows(patient_session:)
     patient_session.programmes.flat_map do |programme|
       bg_color =
-        case patient_session.consent.status[programme]
+        case patient_session.consent_outcome.status[programme]
         when PatientSession::ConsentOutcome::REFUSED
           "F7D4D1"
         when PatientSession::ConsentOutcome::CONFLICTS
@@ -160,7 +160,7 @@ class Reports::OfflineSessionExporter
         }
       }
 
-      vaccination_records = patient_session.outcome.all[programme]
+      vaccination_records = patient_session.programme_outcome.all[programme]
 
       if vaccination_records.any?
         vaccination_records.map do |vaccination_record|
@@ -184,8 +184,8 @@ class Reports::OfflineSessionExporter
     patient = patient_session.patient
 
     gillick_assessment = patient_session.gillick_assessment(programme)
-    consents = patient_session.consent.latest[programme]
-    triage = patient_session.triage.latest[programme]
+    consents = patient_session.consent_outcome.latest[programme]
+    triage = patient_session.triage_outcome.latest[programme]
 
     row[:organisation_code] = organisation.ods_code
     row[:person_forename] = patient.given_name

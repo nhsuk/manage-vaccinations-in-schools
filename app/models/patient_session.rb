@@ -93,8 +93,8 @@ class PatientSession < ApplicationRecord
   delegate :send_notifications?, to: :patient
 
   def safe_to_destroy?
-    programmes.none? { record.all[it].any? } && gillick_assessments.empty? &&
-      session_attendances.none?(&:attending?)
+    programmes.none? { session_outcome.all[it].any? } &&
+      gillick_assessments.empty? && session_attendances.none?(&:attending?)
   end
 
   def destroy_if_safe!
@@ -102,7 +102,7 @@ class PatientSession < ApplicationRecord
   end
 
   def can_record_as_already_vaccinated?(programme:)
-    !session.today? && outcome.none?(programme)
+    !session.today? && programme_outcome.none?(programme)
   end
 
   def programmes
@@ -115,36 +115,37 @@ class PatientSession < ApplicationRecord
       .max_by(&:created_at)
   end
 
-  def consent
-    @consent ||= PatientSession::ConsentOutcome.new(self)
+  def consent_outcome
+    @consent_outcome ||= PatientSession::ConsentOutcome.new(self)
   end
 
-  def triage
-    @triage ||= PatientSession::TriageOutcome.new(self)
+  def triage_outcome
+    @triage_outcome ||= PatientSession::TriageOutcome.new(self)
   end
 
-  def register
-    @register ||= PatientSession::RegisterOutcome.new(self)
+  def register_outcome
+    @register_outcome ||= PatientSession::RegisterOutcome.new(self)
   end
 
-  def record
-    @record ||= PatientSession::SessionOutcome.new(self)
+  def session_outcome
+    @session_outcome ||= PatientSession::SessionOutcome.new(self)
   end
 
-  def outcome
-    @outcome ||= PatientSession::ProgrammeOutcome.new(self)
+  def programme_outcome
+    @programme_outcome ||= PatientSession::ProgrammeOutcome.new(self)
   end
 
   def ready_for_vaccinator?(programme: nil)
     programmes_to_check = programme ? [programme] : programmes
 
     programmes_to_check.any? do
-      return false if outcome.vaccinated?(it)
+      return false if programme_outcome.vaccinated?(it)
 
-      consent.given?(it) &&
+      consent_outcome.given?(it) &&
         (
-          triage.safe_to_vaccinate?(it) || triage.delay_vaccination?(it) ||
-            triage.not_required?(it)
+          triage_outcome.safe_to_vaccinate?(it) ||
+            triage_outcome.delay_vaccination?(it) ||
+            triage_outcome.not_required?(it)
         )
     end
   end

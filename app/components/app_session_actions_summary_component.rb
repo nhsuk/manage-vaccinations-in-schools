@@ -23,7 +23,9 @@ class AppSessionActionsSummaryComponent < ViewComponent::Base
   def get_consent_row
     count =
       patient_sessions.count do
-        it.consent.status.values.include?(PatientSession::ConsentOutcome::NONE)
+        it.consent_outcome.status.values.include?(
+          PatientSession::ConsentOutcome::NONE
+        )
       end
 
     href =
@@ -48,7 +50,7 @@ class AppSessionActionsSummaryComponent < ViewComponent::Base
   def resolve_consent_row
     count =
       patient_sessions.count do
-        it.consent.status.values.include?(
+        it.consent_outcome.status.values.include?(
           PatientSession::ConsentOutcome::CONFLICTS
         )
       end
@@ -75,7 +77,7 @@ class AppSessionActionsSummaryComponent < ViewComponent::Base
   def triage_row
     count =
       patient_sessions.count do
-        it.triage.status.values.include?(
+        it.triage_outcome.status.values.include?(
           PatientSession::TriageOutcome::REQUIRED
         )
       end
@@ -104,7 +106,7 @@ class AppSessionActionsSummaryComponent < ViewComponent::Base
 
     count =
       patient_sessions.count do
-        it.register.unknown? && it.ready_for_vaccinator?
+        it.register_outcome.unknown? && it.ready_for_vaccinator?
       end
 
     href =

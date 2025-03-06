@@ -22,23 +22,28 @@ module PatientSessionStatusConcern
     def status(programme:)
       @status_by_programme ||= {}
 
-      @status_by_programme[programme] ||= if outcome.vaccinated?(programme)
+      @status_by_programme[programme] ||= if programme_outcome.vaccinated?(
+           programme
+         )
         "vaccinated"
-      elsif triage.delay_vaccination?(programme)
+      elsif triage_outcome.delay_vaccination?(programme)
         "delay_vaccination"
-      elsif record.not_vaccinated?(programme)
+      elsif session_outcome.not_vaccinated?(programme)
         "unable_to_vaccinate"
-      elsif consent.given?(programme) && triage.safe_to_vaccinate?(programme)
+      elsif consent_outcome.given?(programme) &&
+            triage_outcome.safe_to_vaccinate?(programme)
         "triaged_ready_to_vaccinate"
-      elsif triage.do_not_vaccinate?(programme)
+      elsif triage_outcome.do_not_vaccinate?(programme)
         "triaged_do_not_vaccinate"
-      elsif consent.given?(programme) && triage.required?(programme)
+      elsif consent_outcome.given?(programme) &&
+            triage_outcome.required?(programme)
         "consent_given_triage_needed"
-      elsif consent.given?(programme) && triage.not_required?(programme)
+      elsif consent_outcome.given?(programme) &&
+            triage_outcome.not_required?(programme)
         "consent_given_triage_not_needed"
-      elsif consent.refused?(programme)
+      elsif consent_outcome.refused?(programme)
         "consent_refused"
-      elsif consent.conflicts?(programme)
+      elsif consent_outcome.conflicts?(programme)
         "consent_conflicts"
       else
         "added_to_session"
@@ -46,7 +51,7 @@ module PatientSessionStatusConcern
     end
 
     def next_step(programme:)
-      if triage.required?(programme)
+      if triage_outcome.required?(programme)
         :triage
       elsif ready_for_vaccinator?(programme:)
         :vaccinate

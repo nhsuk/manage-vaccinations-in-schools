@@ -50,9 +50,9 @@ class AppSimpleStatusBannerComponent < ViewComponent::Base
       programme_name: programme.name
     }
 
-    if patient_session.triage.required?(programme)
+    if patient_session.triage_outcome.required?(programme)
       reasons = [
-        if patient_session.triage.consent_needs_triage?(programme:)
+        if patient_session.triage_outcome.consent_needs_triage?(programme:)
           I18n.t(
             :consent_needs_triage,
             scope: %i[
@@ -63,7 +63,9 @@ class AppSimpleStatusBannerComponent < ViewComponent::Base
             **options
           )
         end,
-        if patient_session.triage.vaccination_history_needs_triage?(programme:)
+        if patient_session.triage_outcome.vaccination_history_needs_triage?(
+             programme:
+           )
           I18n.t(
             :vaccination_partially_administered,
             scope: %i[
@@ -83,7 +85,7 @@ class AppSimpleStatusBannerComponent < ViewComponent::Base
   end
 
   def who_refused
-    patient_session.consent.latest[programme]
+    patient_session.consent_outcome.latest[programme]
       .select(&:response_refused?)
       .map(&:who_responded)
       .last
@@ -91,8 +93,8 @@ class AppSimpleStatusBannerComponent < ViewComponent::Base
 
   def nurse
     (
-      patient_session.triage.all[programme] +
-        patient_session.outcome.all[programme]
+      patient_session.triage_outcome.all[programme] +
+        patient_session.programme_outcome.all[programme]
     ).max_by(&:updated_at)&.performed_by&.full_name
   end
 

@@ -32,19 +32,23 @@ class PatientSession::ProgrammeOutcome
 
   attr_reader :patient_session
 
-  delegate :consent, :triage, :patient, :programmes, to: :patient_session
+  delegate :consent_outcome,
+           :triage_outcome,
+           :patient,
+           :programmes,
+           to: :patient_session
 
   def programme_status(programme)
-    if outcome_vaccinated?(programme)
+    if programme_vaccinated?(programme)
       VACCINATED
-    elsif outcome_could_not_vaccinate?(programme)
+    elsif programme_could_not_vaccinate?(programme)
       COULD_NOT_VACCINATE
     else
       NONE
     end
   end
 
-  def outcome_vaccinated?(programme)
+  def programme_vaccinated?(programme)
     VaccinatedCriteria.call(
       programme,
       patient:,
@@ -52,9 +56,10 @@ class PatientSession::ProgrammeOutcome
     )
   end
 
-  def outcome_could_not_vaccinate?(programme)
+  def programme_could_not_vaccinate?(programme)
     all[programme].any? { it.not_administered? && !it.retryable_reason? } ||
-      consent.refused?(programme) || triage.do_not_vaccinate?(programme)
+      consent_outcome.refused?(programme) ||
+      triage_outcome.do_not_vaccinate?(programme)
   end
 
   def all_by_programme_id

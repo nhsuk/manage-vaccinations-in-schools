@@ -23,7 +23,9 @@ class Sessions::TriageController < ApplicationController
 
     patient_sessions =
       @form.apply(scope) do |filtered_scope|
-        filtered_scope.select { it.triage.status.values.intersect?(@statuses) }
+        filtered_scope.select do
+          it.triage_outcome.status.values.intersect?(@statuses)
+        end
       end
 
     if patient_sessions.is_a?(Array)

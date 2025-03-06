@@ -54,8 +54,8 @@ class AppOutcomeBannerComponent < ViewComponent::Base
   def vaccination_record
     @vaccination_record ||=
       begin
-        vaccination_records = @patient_session.outcome.all[programme]
-        if @patient_session.outcome.vaccinated?(programme)
+        vaccination_records = @patient_session.programme_outcome.all[programme]
+        if @patient_session.programme_outcome.vaccinated?(programme)
           vaccination_records.select(&:administered?).last
         else
           vaccination_records.last
@@ -64,7 +64,7 @@ class AppOutcomeBannerComponent < ViewComponent::Base
   end
 
   def triage
-    @triage ||= @patient_session.triage.latest[programme]
+    @triage ||= @patient_session.triage_outcome.latest[programme]
   end
 
   def show_location?

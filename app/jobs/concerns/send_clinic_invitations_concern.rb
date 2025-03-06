@@ -23,7 +23,7 @@ module SendClinicInvitationsConcern
 
     all_vaccinated =
       eligible_programmes.all? do |programme|
-        patient_session.outcome.vaccinated?(programme)
+        patient_session.programme_outcome.vaccinated?(programme)
       end
 
     return false if all_vaccinated
@@ -37,7 +37,7 @@ module SendClinicInvitationsConcern
 
     all_consent_refused =
       eligible_programmes.all? do |programme|
-        patient_session.consent.refused?(programme)
+        patient_session.consent_outcome.refused?(programme)
       end
 
     return false if all_consent_refused

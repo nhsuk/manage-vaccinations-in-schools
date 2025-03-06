@@ -159,9 +159,9 @@ class Reports::ProgrammeVaccinationsExporter
     patient_session =
       patient_sessions.find { it.patient == patient && it.session == session }
 
-    consents = patient_session&.consent&.latest&.dig(programme) || []
+    consents = patient_session&.consent_outcome&.latest&.dig(programme) || []
     gillick_assessment = patient_session&.gillick_assessment(programme)
-    triage = patient_session&.triage&.latest&.dig(programme)
+    triage = patient_session&.triage_outcome&.latest&.dig(programme)
 
     [
       organisation.ods_code,

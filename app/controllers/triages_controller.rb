@@ -21,7 +21,7 @@ class TriagesController < ApplicationController
     authorize @triage
 
     if @triage.save(context: :consent)
-      @patient_session.reload.consent.latest[@triage.programme].each do
+      @patient_session.reload.consent_outcome.latest[@triage.programme].each do
         send_triage_confirmation(@patient_session, it)
       end
 
