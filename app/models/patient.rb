@@ -131,6 +131,11 @@ class Patient < ApplicationRecord
                 "similarity(given_name, :query) > 0.3 OR " \
                 "similarity(family_name, :query) > 0.3",
               query:
+            ).order(
+              Arel.sql(
+                "similarity(family_name, :query) DESC, similarity(given_name, :query) DESC",
+                query:
+              )
             )
           end
         end
