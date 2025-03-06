@@ -189,6 +189,6 @@ module "dns_route53" {
   source             = "./modules/dns"
   dns_name           = aws_lb.app_lb.dns_name
   zone_id            = aws_lb.app_lb.zone_id
-  domain_name        = var.domain_name
-  domain_name_prefix = var.environment
+  zone_name          = var.zone_name
+  domain_names       = tolist(toset(values(var.http_hosts)))
 }

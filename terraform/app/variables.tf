@@ -24,7 +24,7 @@ variable "account_id" {
   nullable    = false
 }
 
-variable "domain_name" {
+variable "zone_name" {
   type        = string
   default     = "mavistesting.com"
   description = "Domain for which to create DNS certificate"
