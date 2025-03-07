@@ -28,7 +28,7 @@ class Sessions::TriageController < ApplicationController
             .triage_outcome
             .status
             .values_at(*it.programmes)
-            .intersect?(@statuses)
+            .none?(Patient::TriageOutcome::NOT_REQUIRED)
         end
       end
 

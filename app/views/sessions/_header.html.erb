@@ -31,13 +31,13 @@
     
       nav.with_item(
         href: session_record_path(@session),
-        text: "Record",
+        text: "Record vaccinations",
         selected: request.path == session_record_path(@session),
       )
     
       nav.with_item(
         href: session_outcome_path(@session),
-        text: "Outcome",
+        text: "Session outcomes",
         selected: request.path == session_outcome_path(@session),
       )
     end %>

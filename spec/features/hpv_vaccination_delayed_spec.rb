@@ -9,7 +9,7 @@ describe "HPV vaccination" do
     then_i_see_the_confirmation_page
 
     when_i_confirm_the_details
-    then_i_see_the_record_vaccinations_page
+    then_i_still_see_the_patient_in_the_record_tab
     and_a_success_message
 
     when_i_go_to_the_patient
@@ -50,8 +50,6 @@ describe "HPV vaccination" do
 
   def when_i_go_to_a_patient_that_is_ready_to_vaccinate
     visit session_record_path(@session)
-    choose "No outcome yet"
-    click_on "Update results"
     click_link @patient.full_name
   end
 
@@ -93,8 +91,9 @@ describe "HPV vaccination" do
     click_button "Confirm"
   end
 
-  def then_i_see_the_record_vaccinations_page
-    expect(page).to have_content("Vaccination status")
+  def then_i_still_see_the_patient_in_the_record_tab
+    expect(page).to have_content("Showing 1 to 1 of 1 children")
+    expect(page).to have_content(@patient.full_name)
   end
 
   def and_a_success_message
@@ -111,11 +110,11 @@ describe "HPV vaccination" do
 
   def when_i_go_to_the_outcome_tab
     click_on "Back to session"
-    click_on "Outcome"
+    click_on "Session outcomes"
   end
 
   def then_i_see_the_patient_has_no_outcome_yet
-    expect(page).to have_content("Status\nHPVNo outcome yet")
+    expect(page).to have_content("Status\nHPVUnwell")
   end
 
   def when_vaccination_confirmations_are_sent

@@ -274,7 +274,7 @@ describe "Parental consent school" do
       click_on "Community clinics"
     end
 
-    click_on "Outcome"
+    click_on "Session outcome"
     click_on @child.full_name
   end
 

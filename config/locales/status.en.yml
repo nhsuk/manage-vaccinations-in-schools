@@ -35,7 +35,7 @@ en:
         completed: green
         not_attending: red
         unknown: blue
-    record:
+    session:
       label:
         absent_from_school: Absent from school
         absent_from_session: Absent from session
@@ -46,15 +46,15 @@ en:
         not_well: Unwell
         refused: Vaccine refused
       colour:
-        absent_from_school: red
-        absent_from_session: red
+        absent_from_school: dark-orange
+        absent_from_session: dark-orange
         administered: green
         already_had: green
-        contraindications: red
-        none: grey
-        not_well: red
-        refused: red
-    outcome:
+        contraindications: dark-orange
+        none: white
+        not_well: dark-orange
+        refused: dark-orange
+    programme:
       label:
         could_not_vaccinate: Could not vaccinate
         none: No outcome yet

@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
 class AppProgrammeStatusTagsComponent < ViewComponent::Base
-  def initialize(programme_statuses, context:)
+  def initialize(programme_statuses, outcome:)
     super
 
     @programme_statuses = programme_statuses
-    @context = context
+    @outcome = outcome
   end
 
   def call
@@ -18,7 +18,7 @@ class AppProgrammeStatusTagsComponent < ViewComponent::Base
 
   private
 
-  attr_reader :programme_statuses, :context
+  attr_reader :programme_statuses, :outcome
 
   def programme_status_tag(programme, status)
     programme_tag =
@@ -27,9 +27,8 @@ class AppProgrammeStatusTagsComponent < ViewComponent::Base
         class: "nhsuk-tag app-tag--attached nhsuk-tag--white"
       )
 
-    label = I18n.t(status, scope: [:status, context, :label])
-
-    colour = I18n.t(status, scope: [:status, context, :colour])
+    label = I18n.t(status, scope: [:status, outcome, :label])
+    colour = I18n.t(status, scope: [:status, outcome, :colour])
 
     status_tag = tag.strong(label, class: "nhsuk-tag nhsuk-tag--#{colour}")
 

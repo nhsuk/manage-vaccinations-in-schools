@@ -12,7 +12,7 @@ class Sessions::OutcomeController < ApplicationController
   layout "full"
 
   def show
-    @statuses = Patient::ProgrammeOutcome::STATUSES
+    @statuses = PatientSession::SessionOutcome::STATUSES
 
     scope =
       @session.patient_sessions.preload_for_status.in_programmes(
