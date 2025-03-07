@@ -21,7 +21,13 @@ describe AppActivityLogComponent do
   let(:location) { create(:school, name: "Hogwarts") }
   let(:session) { create(:session, programmes:, location:) }
   let(:patient) do
-    create(:patient, school: location, given_name: "Sarah", family_name: "Doe")
+    create(
+      :patient,
+      school: location,
+      given_name: "Sarah",
+      family_name: "Doe",
+      year_group: 8
+    )
   end
 
   let(:mum) { create(:parent, full_name: "Jane Doe") }
@@ -400,6 +406,7 @@ describe AppActivityLogComponent do
                      title: "Completed pre-screening checks",
                      notes: "Some notes",
                      date: "1 June 2024 at 12:00pm",
-                     by: "JOY, Nurse"
+                     by: "JOY, Nurse",
+                     programme: "HPV"
   end
 end
