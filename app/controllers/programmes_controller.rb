@@ -4,9 +4,10 @@ require "pagy/extras/array"
 
 class ProgrammesController < ApplicationController
   include Pagy::Backend
-  include PatientSortingConcern
+  include SearchFormConcern
 
   before_action :set_programme, except: :index
+  before_action :set_search_form, only: :patients
 
   layout "full"
 
@@ -43,19 +44,22 @@ class ProgrammesController < ApplicationController
   end
 
   def patients
-    patients = policy_scope(Patient).in_programmes([@programme]).not_deceased
-    sessions = policy_scope(Session).has_programme(@programme)
+    @statuses = Patient::ProgrammeOutcome::STATUSES
 
-    patient_sessions =
-      PatientSession
-        .where(patient: patients, session: sessions)
-        .eager_load(:session, :patient)
-        .preload_for_status
-        .order_by_name
-        .to_a
+    scope =
+      policy_scope(Patient).in_programmes([@programme]).preload(
+        :triages,
+        :vaccination_records,
+        consents: :parent
+      )
 
-    sort_and_filter_patients!(patient_sessions)
-    @pagy, @patient_sessions = pagy_array(patient_sessions)
+    patients = @form.apply(scope, programme: @programme)
+
+    if patients.is_a?(Array)
+      @pagy, @patients = pagy_array(patients)
+    else
+      @pagy, @patients = pagy(patients)
+    end
   end
 
   def consent_form

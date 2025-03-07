@@ -47,7 +47,13 @@
 
     <%= render AppSearchResultsComponent.new(@pagy) do %>
       <% @patients.each do |patient| %>
-        <%= render AppPatientSearchResultCardComponent.new(patient, link_to: match_consent_form_path(@consent_form, patient)) %>
+        <%= render AppPatientSearchResultCardComponent.new(
+              patient,
+              link_to: match_consent_form_path(@consent_form, patient),
+              show_parents: true,
+              show_postcode: true,
+              show_school: true,
+            ) %>
       <% end %>
     <% end %>
   </div>

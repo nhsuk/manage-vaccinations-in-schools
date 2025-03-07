@@ -31,7 +31,7 @@ class SearchForm
     super(values&.compact_blank&.map(&:to_i)&.compact || [])
   end
 
-  def apply(scope)
+  def apply(scope, programme: nil)
     scope = scope.search_by_name(q) if q.present?
 
     scope = scope.search_by_year_groups(year_groups) if year_groups.present?
@@ -58,15 +58,7 @@ class SearchForm
     end
 
     if (status = programme_status&.to_sym).present?
-      scope =
-        scope.select do
-          it
-            .patient
-            .programme_outcome
-            .status
-            .values_at(*it.programmes)
-            .include?(status)
-        end
+      scope = scope.select { it.programme_outcome.status[programme] == status }
     end
 
     if (status = session_status&.to_sym).present?
