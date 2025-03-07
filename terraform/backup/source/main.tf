@@ -64,6 +64,47 @@ module "s3_reports_bucket" {
   logging_target_prefix = "backup-reports/"
 }
 
+resource "aws_s3_bucket_policy" "backup_reports_bucket_policy" {
+  bucket = module.s3_reports_bucket.bucket_id
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Id      = "backup-reports-bucket-policy"
+    Statement = [
+      {
+        Sid       = "HTTPSOnly"
+        Effect    = "Deny"
+        Principal = {
+          "AWS": "*"
+        }
+        Action    = "s3:*"
+        Resource = [
+          module.s3_reports_bucket.arn,
+          "${module.s3_reports_bucket.arn}/*",
+        ]
+        Condition = {
+          Bool = {
+            "aws:SecureTransport" = "false"
+          }
+        }
+      }, {
+        Sid       = "AllowBackupReports"
+        Effect = "Allow"
+        Principal = {
+          "AWS": "arn:aws:iam::393416225559:role/aws-service-role/reports.backup.amazonaws.com/AWSServiceRoleForBackupReports"
+        }
+        Action = "s3:PutObject"
+        Resource = ["${module.s3_reports_bucket.arn}/*"]
+        Condition = {
+          StringEquals = {
+            "s3:x-amz-acl" = "bucket-owner-full-control"
+          }
+        }
+      }
+    ]
+  })
+}
+
+
 # We need a key for the SNS topic that will be used for notifications from AWS Backup. This key
 # will be used to encrypt the messages sent to the topic before they are sent to the subscribers,
 # but isn't needed by the recipients of the messages.
