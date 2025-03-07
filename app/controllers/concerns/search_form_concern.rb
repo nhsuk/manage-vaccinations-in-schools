@@ -7,15 +7,15 @@ module SearchFormConcern
     @form =
       SearchForm.new(
         params.fetch(:search_form, {}).permit(
-          :"date_of_birth(1i)",
-          :"date_of_birth(2i)",
-          :"date_of_birth(3i)",
           :consent_status,
+          :date_of_birth_day,
+          :date_of_birth_month,
+          :date_of_birth_year,
           :missing_nhs_number,
           :programme_status,
           :q,
-          :session_status,
           :register_status,
+          :session_status,
           :triage_status,
           year_groups: []
         )

@@ -4,44 +4,30 @@ describe SearchForm do
   subject(:form) do
     described_class.new(
       consent_status:,
-      date_of_birth:,
+      date_of_birth_day:,
+      date_of_birth_month:,
+      date_of_birth_year:,
       missing_nhs_number:,
       programme_status:,
       q:,
-      session_status:,
       register_status:,
+      session_status:,
       triage_status:,
       year_groups:
     )
   end
 
   let(:consent_status) { nil }
-  let(:date_of_birth) { Date.current }
+  let(:date_of_birth_day) { Date.current.day }
+  let(:date_of_birth_month) { Date.current.month }
+  let(:date_of_birth_year) { Date.current.year }
   let(:missing_nhs_number) { true }
   let(:programme_status) { nil }
   let(:q) { "query" }
-  let(:session_status) { nil }
   let(:register_status) { nil }
+  let(:session_status) { nil }
   let(:triage_status) { nil }
   let(:year_groups) { %w[8 9 10 11] }
-
-  context "with invalid date parameters" do
-    subject(:form) do
-      described_class.new(
-        "date_of_birth(1i)": "invalid",
-        "date_of_birth(2i)": "value",
-        "date_of_birth(3i)": "12345"
-      )
-    end
-
-    it "doesn't raise an error" do
-      expect { form }.not_to raise_error
-    end
-
-    it "doesn't filter by date" do
-      expect(form.date_of_birth).to be_nil
-    end
-  end
 
   context "for patients" do
     let(:scope) { Patient.all }
@@ -50,14 +36,66 @@ describe SearchForm do
       expect { form.apply(scope) }.not_to raise_error
     end
 
+    context "filtering on date of birth" do
+      let(:consent_status) { nil }
+      let(:date_of_birth_day) { nil }
+      let(:date_of_birth_month) { nil }
+      let(:date_of_birth_year) { nil }
+      let(:missing_nhs_number) { nil }
+      let(:programme_status) { nil }
+      let(:q) { nil }
+      let(:register_status) { nil }
+      let(:session_status) { nil }
+      let(:triage_status) { nil }
+      let(:year_groups) { nil }
+
+      let(:patient) { create(:patient, date_of_birth: Date.new(2000, 1, 1)) }
+
+      context "with only a year specified" do
+        let(:date_of_birth_year) { 2000 }
+
+        it "includes the patient" do
+          expect(form.apply(scope)).to include(patient)
+        end
+      end
+
+      context "with only a month specified" do
+        let(:date_of_birth_month) { 1 }
+
+        it "includes the patient" do
+          expect(form.apply(scope)).to include(patient)
+        end
+      end
+
+      context "with only a day specified" do
+        let(:date_of_birth_day) { 1 }
+
+        it "includes the patient" do
+          expect(form.apply(scope)).to include(patient)
+        end
+      end
+
+      context "with all parts specified" do
+        let(:date_of_birth_year) { 2000 }
+        let(:date_of_birth_month) { 1 }
+        let(:date_of_birth_day) { 1 }
+
+        it "includes the patient" do
+          expect(form.apply(scope)).to include(patient)
+        end
+      end
+    end
+
     context "filtering on programme status" do
       let(:consent_status) { nil }
-      let(:date_of_birth) { nil }
+      let(:date_of_birth_day) { nil }
+      let(:date_of_birth_month) { nil }
+      let(:date_of_birth_year) { nil }
       let(:missing_nhs_number) { nil }
       let(:programme_status) { "vaccinated" }
       let(:q) { nil }
-      let(:session_status) { nil }
       let(:register_status) { nil }
+      let(:session_status) { nil }
       let(:triage_status) { nil }
       let(:year_groups) { nil }
 
@@ -79,7 +117,9 @@ describe SearchForm do
 
     context "filtering on consent status" do
       let(:consent_status) { "given" }
-      let(:date_of_birth) { nil }
+      let(:date_of_birth_day) { nil }
+      let(:date_of_birth_month) { nil }
+      let(:date_of_birth_year) { nil }
       let(:missing_nhs_number) { nil }
       let(:programme_status) { nil }
       let(:q) { nil }
@@ -96,12 +136,14 @@ describe SearchForm do
 
     context "filtering on session status" do
       let(:consent_status) { nil }
-      let(:date_of_birth) { nil }
+      let(:date_of_birth_day) { nil }
+      let(:date_of_birth_month) { nil }
+      let(:date_of_birth_year) { nil }
       let(:missing_nhs_number) { nil }
       let(:programme_status) { nil }
       let(:q) { nil }
-      let(:session_status) { "administered" }
       let(:register_status) { nil }
+      let(:session_status) { "administered" }
       let(:triage_status) { nil }
       let(:year_groups) { nil }
 
@@ -113,12 +155,14 @@ describe SearchForm do
 
     context "filtering on register status" do
       let(:consent_status) { nil }
-      let(:date_of_birth) { nil }
+      let(:date_of_birth_day) { nil }
+      let(:date_of_birth_month) { nil }
+      let(:date_of_birth_year) { nil }
       let(:missing_nhs_number) { nil }
       let(:programme_status) { nil }
       let(:q) { nil }
-      let(:session_status) { nil }
       let(:register_status) { "attending" }
+      let(:session_status) { nil }
       let(:triage_status) { nil }
       let(:year_groups) { nil }
 
@@ -130,12 +174,14 @@ describe SearchForm do
 
     context "filtering on triage status" do
       let(:consent_status) { nil }
-      let(:date_of_birth) { nil }
+      let(:date_of_birth_day) { nil }
+      let(:date_of_birth_month) { nil }
+      let(:date_of_birth_year) { nil }
       let(:missing_nhs_number) { nil }
       let(:programme_status) { nil }
       let(:q) { nil }
-      let(:session_status) { nil }
       let(:register_status) { nil }
+      let(:session_status) { nil }
       let(:triage_status) { "required" }
       let(:year_groups) { nil }
 

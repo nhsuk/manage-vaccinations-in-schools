@@ -77,10 +77,18 @@ class PatientSession < ApplicationRecord
   scope :search_by_year_groups,
         ->(year_groups) { merge(Patient.search_by_year_groups(year_groups)) }
 
-  scope :search_by_date_of_birth,
-        ->(date_of_birth) do
-          merge(Patient.search_by_date_of_birth(date_of_birth))
+  scope :search_by_date_of_birth_year,
+        ->(year) do
+          where("extract(year from patients.date_of_birth) = ?", year)
         end
+
+  scope :search_by_date_of_birth_month,
+        ->(month) do
+          where("extract(month from patients.date_of_birth) = ?", month)
+        end
+
+  scope :search_by_date_of_birth_day,
+        ->(day) { where("extract(day from patients.date_of_birth) = ?", day) }
 
   scope :search_by_nhs_number,
         ->(nhs_number) { merge(Patient.search_by_nhs_number(nhs_number)) }

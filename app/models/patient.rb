@@ -145,7 +145,14 @@ class Patient < ApplicationRecord
           where(birth_academic_year: year_groups.map(&:to_birth_academic_year))
         end
 
-  scope :search_by_date_of_birth, ->(date_of_birth) { where(date_of_birth:) }
+  scope :search_by_date_of_birth_year,
+        ->(year) { where("extract(year from date_of_birth) = ?", year) }
+
+  scope :search_by_date_of_birth_month,
+        ->(month) { where("extract(month from date_of_birth) = ?", month) }
+
+  scope :search_by_date_of_birth_day,
+        ->(day) { where("extract(day from date_of_birth) = ?", day) }
 
   scope :search_by_nhs_number, ->(nhs_number) { where(nhs_number:) }
 
