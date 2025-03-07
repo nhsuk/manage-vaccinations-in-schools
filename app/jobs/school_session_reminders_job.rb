@@ -49,6 +49,8 @@ class SchoolSessionRemindersJob < ApplicationJob
 
     return false if all_vaccinated
 
-    patient_session.ready_for_vaccinator?
+    programmes.any? do |programme|
+      patient.consent_given_and_safe_to_vaccinate?(programme:)
+    end
   end
 end
