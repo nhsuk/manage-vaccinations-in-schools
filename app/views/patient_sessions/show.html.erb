@@ -18,24 +18,24 @@
         <%= govuk_tag(text: "Not registered yet", colour: "blue") %>
       <% end %>
     </li>
-    <li class="app-action-list__item">
-      <% if policy(session_attendance).edit? %>
+    <% if policy(session_attendance).edit? %>
+      <li class="app-action-list__item">
         <%= link_to(
               "Update attendance",
               edit_session_patient_attendance_path(patient_id: @patient.id)
             ) %>
-      <% end %>
-    </li>
+      </li>
+    <% end %>
   <% end %>
 
-  <li class="app-action-list__item">
-    <% if @patient_session.can_record_as_already_vaccinated?(programme: @programme) %>
+  <% if @patient_session.can_record_as_already_vaccinated?(programme: @programme) %>
+    <li class="app-action-list__item">
       <%= link_to(
             "Record as already vaccinated",
             session_patient_record_already_vaccinated_path(programme_type: @programme),
           ) %>
-    <% end %>
-  </li>
+    </li>
+  <% end %>
 </ul>
 
 <%= render "patient_sessions/secondary_navigation" %>

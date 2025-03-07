@@ -8,18 +8,23 @@ class PatientSession::RegisterOutcome
   STATUSES = [
     UNKNOWN = :unknown,
     ATTENDING = :attending,
-    NOT_ATTENDING = :not_attending
+    NOT_ATTENDING = :not_attending,
+    COMPLETED = :completed
   ].freeze
+
+  def unknown? = status == UNKNOWN
 
   def attending? = status == ATTENDING
 
   def not_attending? = status == NOT_ATTENDING
 
-  def unknown? = status == UNKNOWN
+  def completed? = status == COMPLETED
 
   def status
     @status ||=
-      if latest&.attending
+      if all_programmes_have_outcome?
+        COMPLETED
+      elsif latest&.attending
         ATTENDING
       elsif latest&.attending == false
         NOT_ATTENDING
@@ -40,9 +45,17 @@ class PatientSession::RegisterOutcome
 
   attr_reader :patient_session
 
-  delegate :session, :session_attendances, to: :patient_session
+  delegate :programmes,
+           :session,
+           :session_attendances,
+           :session_outcome,
+           to: :patient_session
 
   def session_date
     @session_date ||= session.session_dates.find(&:today?)
+  end
+
+  def all_programmes_have_outcome?
+    programmes.none? { session_outcome.none?(it) }
   end
 end
