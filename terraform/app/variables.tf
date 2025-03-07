@@ -53,8 +53,13 @@ locals {
 }
 
 variable "dns_certificate_arn" {
-  type        = string
-  description = "The ARN for a pre-existing DNS certificate to be used for ECS service"
+  type        = list(string)
+  description = "The ARN(s) for pre-existing DNS certificate(s) to be used for https listener"
+}
+
+locals {
+  default_certificate_arn = var.dns_certificate_arn == null ? module.dns_route53[0].certificate_arn : var.dns_certificate_arn[0]
+  additional_sni_certificates = var.dns_certificate_arn == null ? [] : slice(var.dns_certificate_arn, 1, length(var.dns_certificate_arn))
 }
 
 variable "firewall_subnet_cidr" {
