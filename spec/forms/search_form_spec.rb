@@ -44,8 +44,29 @@ describe SearchForm do
   end
 
   context "for patients" do
+    let(:scope) { Patient.all }
+
     it "doesn't raise an error" do
-      expect { form.apply(Patient.all) }.not_to raise_error
+      expect { form.apply(scope) }.not_to raise_error
+    end
+
+    context "filtering on programme status" do
+      let(:consent_status) { nil }
+      let(:date_of_birth) { nil }
+      let(:missing_nhs_number) { nil }
+      let(:programme_status) { "vaccinated" }
+      let(:q) { nil }
+      let(:session_status) { nil }
+      let(:register_status) { nil }
+      let(:triage_status) { nil }
+      let(:year_groups) { nil }
+
+      let(:programme) { create(:programme) }
+
+      it "filters on session status" do
+        patient = create(:patient, :vaccinated, programmes: [programme])
+        expect(form.apply(scope, programme:)).to include(patient)
+      end
     end
   end
 
@@ -73,24 +94,7 @@ describe SearchForm do
       end
     end
 
-    context "filtering on outcome status" do
-      let(:consent_status) { nil }
-      let(:date_of_birth) { nil }
-      let(:missing_nhs_number) { nil }
-      let(:programme_status) { "vaccinated" }
-      let(:q) { nil }
-      let(:session_status) { nil }
-      let(:register_status) { nil }
-      let(:triage_status) { nil }
-      let(:year_groups) { nil }
-
-      it "filters on outcome status" do
-        patient_session = create(:patient_session, :vaccinated)
-        expect(form.apply(scope)).to include(patient_session)
-      end
-    end
-
-    context "filtering on record status" do
+    context "filtering on session status" do
       let(:consent_status) { nil }
       let(:date_of_birth) { nil }
       let(:missing_nhs_number) { nil }
@@ -101,7 +105,7 @@ describe SearchForm do
       let(:triage_status) { nil }
       let(:year_groups) { nil }
 
-      it "filters on record status" do
+      it "filters on session status" do
         patient_session = create(:patient_session, :vaccinated)
         expect(form.apply(scope)).to include(patient_session)
       end

@@ -17,14 +17,23 @@
                          new_cohort_import_path,
                          class: "app-button--secondary" %>
 
-<%= render AppSessionPatientTableComponent.new(
-      @patient_sessions,
-      caption: t("children", count: @pagy.count),
-      columns: %i[name dob year_group status],
-      params:,
-      programme: @programme,
-    ) %>
+<div class="app-grid-row">
+  <div class="app-grid-column-filters">
+    <%= render AppSearchComponent.new(
+          form: @form,
+          url: patients_programme_path(@programme),
+          programme_statuses: @statuses,
+          year_groups: @programme.year_groups,
+        ) %>
+  </div>
 
-<div class="nhsuk-u-margin-top-6">
-  <%= govuk_pagination(pagy: @pagy) %>
+  <div class="app-grid-column-results">
+    <%= render AppSearchResultsComponent.new(@pagy) do %>
+      <% @patients.each do |patient| %>
+        <%= render AppPatientSearchResultCardComponent.new(
+              patient, link_to: patient_path(patient), programme: @programme, show_year_group: true,
+            ) %>
+      <% end %>
+    <% end %>
+  </div>
 </div>
