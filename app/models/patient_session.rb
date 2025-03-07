@@ -121,7 +121,14 @@ class PatientSession < ApplicationRecord
     @session_outcome ||= PatientSession::SessionOutcome.new(self)
   end
 
-  def ready_for_vaccinator?
-    programmes.any? { patient.ready_for_vaccinator?(programme: it) }
+  def ready_for_vaccinator?(programme: nil)
+    return false if register_outcome.unknown? || register_outcome.not_attending?
+
+    programmes_to_check = programme ? [programme] : programmes
+
+    programmes_to_check.any? do
+      session_outcome.latest[it].nil? ||
+        session_outcome.latest[it].retryable_reason?
+    end
   end
 end

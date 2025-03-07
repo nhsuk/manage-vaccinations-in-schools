@@ -53,7 +53,7 @@ module PatientSessionStatusConcern
     def next_step(programme:)
       if patient.triage_outcome.required?(programme)
         :triage
-      elsif patient.ready_for_vaccinator?(programme:) &&
+      elsif patient.consent_given_and_safe_to_vaccinate?(programme:) &&
             register_outcome.attending?
         :vaccinate
       end

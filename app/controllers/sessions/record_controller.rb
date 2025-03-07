@@ -20,22 +20,9 @@ class Sessions::RecordController < ApplicationController
         @session.programmes
       )
 
-    vaccinated_statuses = [
-      PatientSession::SessionOutcome::VACCINATED,
-      PatientSession::SessionOutcome::ALREADY_HAD
-    ]
-
     patient_sessions =
       @form.apply(scope) do |filtered_scope|
-        filtered_scope.select do
-          vaccinated =
-            it.session_outcome.status.values.all? do
-              it.in?(vaccinated_statuses)
-            end
-
-          !vaccinated &&
-            (it.register_outcome.attending? || it.register_outcome.completed?)
-        end
+        filtered_scope.select(&:ready_for_vaccinator?)
       end
 
     if patient_sessions.is_a?(Array)
