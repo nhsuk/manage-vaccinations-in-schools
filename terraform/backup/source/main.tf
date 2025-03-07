@@ -26,7 +26,7 @@ variable "destination_vault_arn" {
 }
 
 variable "environment" {
-  description = "Environment name. Allowed values are 'dev' and 'prod'."
+  description = "Environment name (AWS Account level). Allowed values are 'dev' and 'prod'."
   type        = string
     validation {
         condition     = var.environment == "dev" || var.environment == "prod"
@@ -52,28 +52,58 @@ locals {
   destination_account_id = data.aws_arn.destination_vault_arn.account
 }
 
-# First, we create an S3 bucket for compliance reports. You may already have a module for creating
-# S3 buckets with more refined access rules, which you may prefer to use.
-
-resource "aws_s3_bucket" "backup_reports" {
-  bucket_prefix        = "${local.project_name}-backup-reports"
+# First, we create an S3 bucket for compliance reports.
+data "aws_s3_bucket" "mavis_logs" {
+  bucket = "nhse-mavis-logs"
 }
 
-# Now we have to configure access to the report bucket.
-
-resource "aws_s3_bucket_ownership_controls" "backup_reports" {
-  bucket = aws_s3_bucket.backup_reports.id
-  rule {
-    object_ownership = "BucketOwnerPreferred"
-  }
+module "s3_reports_bucket" {
+  source = "../../modules/s3"
+  bucket_name = "${local.project_name}-backup-reports"
+  logging_target_bucket_id = data.aws_s3_bucket.mavis_logs.id
+  logging_target_prefix = "backup-reports/"
 }
 
-resource "aws_s3_bucket_acl" "backup_reports" {
-  depends_on = [aws_s3_bucket_ownership_controls.backup_reports]
-
-  bucket = aws_s3_bucket.backup_reports.id
-  acl    = "private"
+resource "aws_s3_bucket_policy" "backup_reports_bucket_policy" {
+  bucket = module.s3_reports_bucket.bucket_id
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Id      = "backup-reports-bucket-policy"
+    Statement = [
+      {
+        Sid       = "HTTPSOnly"
+        Effect    = "Deny"
+        Principal = {
+          "AWS": "*"
+        }
+        Action    = "s3:*"
+        Resource = [
+          module.s3_reports_bucket.arn,
+          "${module.s3_reports_bucket.arn}/*",
+        ]
+        Condition = {
+          Bool = {
+            "aws:SecureTransport" = "false"
+          }
+        }
+      }, {
+        Sid       = "AllowBackupReports"
+        Effect = "Allow"
+        Principal = {
+          "AWS": "arn:aws:iam::393416225559:role/aws-service-role/reports.backup.amazonaws.com/AWSServiceRoleForBackupReports"
+        }
+        Action = "s3:PutObject"
+        Resource = ["${module.s3_reports_bucket.arn}/*"]
+        Condition = {
+          StringEquals = {
+            "s3:x-amz-acl" = "bucket-owner-full-control"
+          }
+        }
+      }
+    ]
+  })
 }
+
 
 # We need a key for the SNS topic that will be used for notifications from AWS Backup. This key
 # will be used to encrypt the messages sent to the topic before they are sent to the subscribers,
@@ -122,7 +152,7 @@ module "source" {
   environment_name                   = var.environment
   bootstrap_kms_key_arn              = aws_kms_key.backup_notifications.arn
   project_name                       = local.project_name
-  reports_bucket                     = aws_s3_bucket.backup_reports.bucket
+  reports_bucket                     = module.s3_reports_bucket.bucket_id
   terraform_role_arn                 = var.terraform_role_arn
 
   backup_plan_config                 = {
