@@ -15,6 +15,13 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
               row.with_key { "Year group" }
               row.with_value { helpers.patient_year_group(patient) }
             end
+            
+            if context == :register
+              summary_list.with_row do |row|
+                row.with_key { "Action required" }
+                row.with_value { action_required }
+              end
+            end
 
             if (value = status_tag)
               summary_list.with_row do |row|
@@ -58,6 +65,19 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
       programme,
       return_to: context
     )
+  end
+
+  def action_required
+    return unless context == :register
+
+    tag.ul(class: "nhsuk-list nhsuk-list--bullet") do
+      safe_join(
+        patient_session.programmes.map do |programme|
+          status = patient_session.patient.next_activity.status[programme]
+          tag.li("#{I18n.t(status, scope: :activity)} for #{programme.name}")
+        end
+      )
+    end
   end
 
   def status_tag
