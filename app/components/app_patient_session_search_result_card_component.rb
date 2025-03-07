@@ -16,17 +16,17 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
               row.with_value { helpers.patient_year_group(patient) }
             end
             
-            if context == :register
+            if action_required
               summary_list.with_row do |row|
                 row.with_key { "Action required" }
                 row.with_value { action_required }
               end
             end
 
-            if (value = status_tag)
+            if status_tag
               summary_list.with_row do |row|
                 row.with_key { "Status" }
-                row.with_value { value }
+                row.with_value { status_tag }
               end
             end
           end %>
@@ -68,7 +68,7 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
   end
 
   def action_required
-    return unless context == :register
+    return unless %i[register record].include?(context)
 
     tag.ul(class: "nhsuk-list nhsuk-list--bullet") do
       safe_join(

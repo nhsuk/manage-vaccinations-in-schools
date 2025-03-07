@@ -34,4 +34,10 @@ describe AppPatientSessionSearchResultCardComponent do
 
     it { should have_text("Action required\nGet consent for HPV") }
   end
+
+  context "when context is record" do
+    let(:context) { :record }
+
+    it { should have_text("Action required\nGet consent for HPV") }
+  end
 end
