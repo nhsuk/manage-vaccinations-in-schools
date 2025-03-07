@@ -18,7 +18,7 @@ class AppPatientPageComponent < ViewComponent::Base
     @programme = programme
     @current_user = current_user
     @triage = triage
-    @vaccinate_form = vaccinate_form || VaccinateForm.new
+    @vaccinate_form = vaccinate_form || default_vaccinate_form
   end
 
   delegate :patient, :session, to: :patient_session
@@ -34,5 +34,17 @@ class AppPatientPageComponent < ViewComponent::Base
 
   def gillick_assessment_can_be_recorded?
     patient_session.session.today? && helpers.policy(GillickAssessment).new?
+  end
+
+  def default_vaccinate_form
+    pre_screening = patient_session.pre_screenings.last
+
+    VaccinateForm.new(
+      feeling_well: pre_screening&.feeling_well,
+      knows_vaccination: pre_screening&.knows_vaccination,
+      no_allergies: pre_screening&.no_allergies,
+      not_already_had: pre_screening&.not_already_had,
+      pre_screening_notes: pre_screening&.notes || ""
+    )
   end
 end
