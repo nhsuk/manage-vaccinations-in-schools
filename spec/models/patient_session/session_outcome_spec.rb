@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe PatientSession::Record do
+describe PatientSession::SessionOutcome do
   subject(:instance) { described_class.new(patient_session) }
 
   let(:programme) { create(:programme, :hpv) }
@@ -11,7 +11,7 @@ describe PatientSession::Record do
   before { patient.strict_loading!(false) }
 
   describe "#status" do
-    subject(:status) { instance.status.fetch(programme) }
+    subject(:status) { instance.status[programme] }
 
     context "with no vaccination record" do
       it { should be(described_class::NONE) }
@@ -47,7 +47,7 @@ describe PatientSession::Record do
   end
 
   describe "#all" do
-    subject(:all) { instance.all(programme:) }
+    subject(:all) { instance.all[programme] }
 
     let(:later_vaccination_record) do
       create(:vaccination_record, patient:, session:, programme:)
@@ -66,7 +66,7 @@ describe PatientSession::Record do
   end
 
   describe "#latest" do
-    subject(:latest) { instance.latest(programme:) }
+    subject(:latest) { instance.latest[programme] }
 
     let(:later_vaccination_record) do
       create(

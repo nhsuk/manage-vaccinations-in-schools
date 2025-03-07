@@ -60,18 +60,29 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
 
   def status_tag
     if context == :register
-      status = patient_session.register.status
+      status = patient_session.register_outcome.status
 
-      text = I18n.t(status, scope: %i[patient_session status register label])
-
-      colour = I18n.t(status, scope: %i[patient_session status register colour])
+      text = I18n.t(status, scope: %i[status register label])
+      colour = I18n.t(status, scope: %i[status register colour])
 
       govuk_tag(text:, colour:)
     else
-      render AppProgrammeStatusTagsComponent.new(
-               patient_session.send(context).status,
-               context:
-             )
+      outcome =
+        case context
+        when :consent
+          patient.consent_outcome
+        when :triage
+          patient.triage_outcome
+        when :record
+          patient_session.session_outcome
+        when :outcome
+          patient.programme_outcome
+        end
+
+      # ensure status is calculated for each programme
+      patient_session.programmes.each { outcome.status[it] }
+
+      render AppProgrammeStatusTagsComponent.new(outcome.status, context:)
     end
   end
 end

@@ -1,18 +1,15 @@
 # frozen_string_literal: true
 
-describe PatientSession::Consent do
-  subject(:instance) { described_class.new(patient_session) }
+describe Patient::ConsentOutcome do
+  subject(:instance) { described_class.new(patient) }
 
   let(:programme) { create(:programme, :hpv) }
   let(:patient) { create(:patient, year_group: 8) }
-  let(:patient_session) do
-    create(:patient_session, programmes: [programme], patient:)
-  end
 
   before { patient.strict_loading!(false) }
 
   describe "#status" do
-    subject(:status) { instance.status.fetch(programme) }
+    subject(:status) { instance.status[programme] }
 
     context "with no consent" do
       it { should be(described_class::NONE) }
@@ -104,7 +101,7 @@ describe PatientSession::Consent do
   end
 
   describe "#latest" do
-    subject(:latest) { instance.latest(programme:) }
+    subject(:latest) { instance.latest[programme] }
 
     context "multiple consent given responses from different parents" do
       let(:parents) { create_list(:parent, 2) }

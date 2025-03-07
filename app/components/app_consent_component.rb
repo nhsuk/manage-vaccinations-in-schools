@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 class AppConsentComponent < ViewComponent::Base
-  attr_reader :patient_session, :programme
-
   def initialize(patient_session:, programme:)
     super
 
@@ -10,11 +8,13 @@ class AppConsentComponent < ViewComponent::Base
     @programme = programme
   end
 
+  attr_reader :patient_session, :programme
+
   delegate :patient, :session, to: :patient_session
 
   def consents
     @consents ||=
-      patient_session.consent.all(programme:).sort_by(&:created_at).reverse
+      patient.consent_outcome.all[programme].sort_by(&:created_at).reverse
   end
 
   def latest_consent_request
@@ -28,7 +28,7 @@ class AppConsentComponent < ViewComponent::Base
   end
 
   def can_send_consent_request?
-    patient_session.no_consent?(programme:) && patient.send_notifications? &&
+    patient.consent_outcome.none?(programme) && patient.send_notifications? &&
       session.open_for_consent? && patient.parents.any?
   end
 

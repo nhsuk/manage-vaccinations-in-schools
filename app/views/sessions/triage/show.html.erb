@@ -13,7 +13,7 @@
     <%= render AppSearchComponent.new(
           form: @form,
           url: session_triage_path(@session),
-          triage_statuses: @valid_statuses,
+          triage_statuses: @statuses,
           year_groups: @session.year_groups,
         ) %>
   </div>

@@ -12,18 +12,23 @@ class Sessions::TriageController < ApplicationController
   layout "full"
 
   def show
+    @statuses =
+      Patient::TriageOutcome::STATUSES - [Patient::TriageOutcome::NOT_REQUIRED]
+
     scope =
       @session.patient_sessions.preload_for_status.in_programmes(
         @session.programmes
       )
 
-    @valid_statuses =
-      PatientSession::Triage::STATUSES - [PatientSession::Triage::NOT_REQUIRED]
-
     patient_sessions =
       @form.apply(scope) do |filtered_scope|
         filtered_scope.select do
-          it.triage.status.values.intersect?(@valid_statuses)
+          it
+            .patient
+            .triage_outcome
+            .status
+            .values_at(*it.programmes)
+            .intersect?(@statuses)
         end
       end
 

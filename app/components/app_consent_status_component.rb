@@ -9,20 +9,21 @@ class AppConsentStatusComponent < ViewComponent::Base
   end
 
   def call
-    status = @patient_session.consent.status[programme]
-    case status
-    when PatientSession::Consent::GIVEN
+    case patient.consent_outcome.status[programme]
+    when Patient::ConsentOutcome::GIVEN
       icon_tick "Consent given", "aqua-green"
-    when PatientSession::Consent::REFUSED
+    when Patient::ConsentOutcome::REFUSED
       icon_cross "Consent refused", "red"
-    when PatientSession::Consent::CONFLICTS
+    when Patient::ConsentOutcome::CONFLICTS
       icon_cross "Conflicting consent", "dark-orange"
     end
   end
 
   private
 
-  attr_reader :programme
+  attr_reader :patient_session, :programme
+
+  delegate :patient, to: :patient_session
 
   def icon_tick(content, color)
     template = <<-ERB

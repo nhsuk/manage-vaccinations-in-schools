@@ -90,10 +90,8 @@ class PatientSession < ApplicationRecord
           order("LOWER(patients.family_name)", "LOWER(patients.given_name)")
         end
 
-  delegate :send_notifications?, to: :patient
-
   def safe_to_destroy?
-    programmes.none? { |programme| record.all(programme:).any? } &&
+    programmes.none? { session_outcome.all[it].any? } &&
       gillick_assessments.empty? && session_attendances.none?(&:attending?)
   end
 
@@ -102,54 +100,28 @@ class PatientSession < ApplicationRecord
   end
 
   def can_record_as_already_vaccinated?(programme:)
-    !session.today? &&
-      outcome.status[programme] == PatientSession::Outcome::NONE
+    !session.today? && patient.programme_outcome.none?(programme)
   end
 
   def programmes
     session.programmes.select { it.year_groups.include?(patient.year_group) }
   end
 
-  def gillick_assessment(programme:)
-    gillick_assessments.select { it.programme_id == programme.id }.last
+  def gillick_assessment(programme)
+    gillick_assessments
+      .select { it.programme_id == programme.id }
+      .max_by(&:created_at)
   end
 
-  def consent
-    @consent ||= PatientSession::Consent.new(self)
+  def register_outcome
+    @register_outcome ||= PatientSession::RegisterOutcome.new(self)
   end
 
-  def triage
-    @triage ||= PatientSession::Triage.new(self)
+  def session_outcome
+    @session_outcome ||= PatientSession::SessionOutcome.new(self)
   end
 
-  def register
-    @register ||= PatientSession::Register.new(self)
-  end
-
-  def record
-    @record ||= PatientSession::Record.new(self)
-  end
-
-  def outcome
-    @outcome ||= PatientSession::Outcome.new(self)
-  end
-
-  def ready_for_vaccinator?(programme: nil)
-    vaccinated = PatientSession::Outcome::VACCINATED
-    consent_given = PatientSession::Consent::GIVEN
-    safe_to_vaccinate = PatientSession::Triage::SAFE_TO_VACCINATE
-    delay_vaccination = PatientSession::Triage::DELAY_VACCINATION
-    triage_not_needed = PatientSession::Triage::NOT_REQUIRED
-
-    programmes_to_check = programme ? [programme] : programmes
-
-    programmes_to_check.any? do
-      return false if outcome.status[it] == vaccinated
-
-      consent.status[it] == consent_given &&
-        [safe_to_vaccinate, delay_vaccination, triage_not_needed].include?(
-          triage.status[it]
-        )
-    end
+  def ready_for_vaccinator?
+    programmes.any? { patient.ready_for_vaccinator?(programme: it) }
   end
 end

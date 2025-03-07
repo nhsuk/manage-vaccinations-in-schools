@@ -12,9 +12,9 @@ module SearchFormConcern
           :"date_of_birth(3i)",
           :consent_status,
           :missing_nhs_number,
-          :outcome_status,
+          :programme_status,
           :q,
-          :record_status,
+          :session_status,
           :register_status,
           :triage_status,
           year_groups: []

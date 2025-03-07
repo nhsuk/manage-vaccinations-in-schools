@@ -58,10 +58,8 @@ class AppSessionPatientTableComponent < ViewComponent::Base
     when :year_group
       helpers.patient_year_group(patient)
     when :reason
-      patient_session
-        .consent
-        .all(programme:)
-        .map { |c| c.human_enum_name(:reason_for_refusal) }
+      patient.consent_outcome.all[programme]
+        .map { it.human_enum_name(:reason_for_refusal) }
         .uniq
         .join("<br />")
         .html_safe

@@ -45,17 +45,8 @@ module VaccinationMailerConcern
     patient = vaccination_record.patient
     return [] unless patient.send_notifications?
 
-    patient_session =
-      PatientSession.find_by(
-        patient:,
-        session_id: vaccination_record.session_id
-      )
-    return [] if patient_session.nil?
-
-    patient_session.patient = patient
-
     programme = vaccination_record.programme
-    consents = patient_session.consent.latest(programme:)
+    consents = patient.consent_outcome.latest[programme]
 
     parents =
       if consents.any?(&:via_self_consent?)

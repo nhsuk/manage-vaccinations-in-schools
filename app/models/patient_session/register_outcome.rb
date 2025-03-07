@@ -1,25 +1,35 @@
 # frozen_string_literal: true
 
-class PatientSession::Register
+class PatientSession::RegisterOutcome
   def initialize(patient_session)
     @patient_session = patient_session
   end
 
-  STATUSES = [UNKNOWN = :unknown, PRESENT = :present, ABSENT = :absent].freeze
+  STATUSES = [
+    UNKNOWN = :unknown,
+    ATTENDING = :attending,
+    NOT_ATTENDING = :not_attending
+  ].freeze
+
+  def attending? = status == ATTENDING
+
+  def not_attending? = status == NOT_ATTENDING
+
+  def unknown? = status == UNKNOWN
 
   def status
     @status ||=
-      if today&.attending
-        PRESENT
-      elsif today&.attending == false
-        ABSENT
+      if latest&.attending
+        ATTENDING
+      elsif latest&.attending == false
+        NOT_ATTENDING
       else
         UNKNOWN
       end
   end
 
-  def today
-    @today ||=
+  def latest
+    @latest ||=
       if session_date
         session_attendances.find { it.session_date_id == session_date.id } ||
           session_attendances.new(session_date:)

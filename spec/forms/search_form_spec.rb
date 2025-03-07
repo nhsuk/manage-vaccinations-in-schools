@@ -6,9 +6,9 @@ describe SearchForm do
       consent_status:,
       date_of_birth:,
       missing_nhs_number:,
-      outcome_status:,
+      programme_status:,
       q:,
-      record_status:,
+      session_status:,
       register_status:,
       triage_status:,
       year_groups:
@@ -18,9 +18,9 @@ describe SearchForm do
   let(:consent_status) { nil }
   let(:date_of_birth) { Date.current }
   let(:missing_nhs_number) { true }
-  let(:outcome_status) { nil }
+  let(:programme_status) { nil }
   let(:q) { "query" }
-  let(:record_status) { nil }
+  let(:session_status) { nil }
   let(:register_status) { nil }
   let(:triage_status) { nil }
   let(:year_groups) { %w[8 9 10 11] }
@@ -60,7 +60,7 @@ describe SearchForm do
       let(:consent_status) { "given" }
       let(:date_of_birth) { nil }
       let(:missing_nhs_number) { nil }
-      let(:outcome_status) { nil }
+      let(:programme_status) { nil }
       let(:q) { nil }
       let(:register_status) { nil }
       let(:triage_status) { nil }
@@ -77,9 +77,9 @@ describe SearchForm do
       let(:consent_status) { nil }
       let(:date_of_birth) { nil }
       let(:missing_nhs_number) { nil }
-      let(:outcome_status) { "vaccinated" }
+      let(:programme_status) { "vaccinated" }
       let(:q) { nil }
-      let(:record_status) { nil }
+      let(:session_status) { nil }
       let(:register_status) { nil }
       let(:triage_status) { nil }
       let(:year_groups) { nil }
@@ -94,9 +94,9 @@ describe SearchForm do
       let(:consent_status) { nil }
       let(:date_of_birth) { nil }
       let(:missing_nhs_number) { nil }
-      let(:outcome_status) { nil }
+      let(:programme_status) { nil }
       let(:q) { nil }
-      let(:record_status) { "administered" }
+      let(:session_status) { "administered" }
       let(:register_status) { nil }
       let(:triage_status) { nil }
       let(:year_groups) { nil }
@@ -111,10 +111,10 @@ describe SearchForm do
       let(:consent_status) { nil }
       let(:date_of_birth) { nil }
       let(:missing_nhs_number) { nil }
-      let(:outcome_status) { nil }
+      let(:programme_status) { nil }
       let(:q) { nil }
-      let(:record_status) { nil }
-      let(:register_status) { "present" }
+      let(:session_status) { nil }
+      let(:register_status) { "attending" }
       let(:triage_status) { nil }
       let(:year_groups) { nil }
 
@@ -128,9 +128,9 @@ describe SearchForm do
       let(:consent_status) { nil }
       let(:date_of_birth) { nil }
       let(:missing_nhs_number) { nil }
-      let(:outcome_status) { nil }
+      let(:programme_status) { nil }
       let(:q) { nil }
-      let(:record_status) { nil }
+      let(:session_status) { nil }
       let(:register_status) { nil }
       let(:triage_status) { "required" }
       let(:year_groups) { nil }

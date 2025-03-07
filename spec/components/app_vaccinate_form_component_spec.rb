@@ -1,13 +1,12 @@
 # frozen_string_literal: true
 
 describe AppVaccinateFormComponent do
-  subject(:rendered) { render_inline(component) }
+  subject { render_inline(component) }
 
   let(:heading) { "A Heading" }
   let(:body) { "A Body" }
   let(:programmes) { [create(:programme, :hpv)] }
   let(:session) { create(:session, :today, programmes:) }
-  let(:vaccine) { programme.vaccines.first }
   let(:patient) do
     create(
       :patient,
@@ -32,12 +31,7 @@ describe AppVaccinateFormComponent do
 
   it { should have_css(".nhsuk-card") }
 
-  it "has the correct heading" do
-    expect(rendered).to have_css(
-      ".nhsuk-card__heading",
-      text: "Is Hari ready for their HPV vaccination?"
-    )
-  end
+  it { should have_heading("Is Hari ready for their HPV vaccination?") }
 
   it { should have_field("Yes") }
   it { should have_field("No") }
@@ -50,17 +44,7 @@ describe AppVaccinateFormComponent do
         allow(patient_session).to receive(:next_step).and_return(:triage)
       end
 
-      context "session is in progress" do
-        let(:session) { create(:session, :today, programmes:) }
-
-        it { should be(false) }
-      end
-
-      context "session is in the future" do
-        let(:session) { create(:session, :scheduled, programmes:) }
-
-        it { should be(false) }
-      end
+      it { should be(false) }
     end
 
     context "patient is ready for vaccination" do
@@ -68,17 +52,7 @@ describe AppVaccinateFormComponent do
         allow(patient_session).to receive(:next_step).and_return(:vaccinate)
       end
 
-      context "session is progress" do
-        let(:session) { create(:session, :today, programmes:) }
-
-        it { should be(true) }
-      end
-
-      context "session is in the future" do
-        let(:session) { create(:session, :scheduled, programmes:) }
-
-        it { should be(false) }
-      end
+      it { should be(true) }
     end
   end
 end

@@ -27,10 +27,9 @@ class AppProgrammeStatusTagsComponent < ViewComponent::Base
         class: "nhsuk-tag app-tag--attached nhsuk-tag--white"
       )
 
-    label = I18n.t(status, scope: [:patient_session, :status, context, :label])
+    label = I18n.t(status, scope: [:status, context, :label])
 
-    colour =
-      I18n.t(status, scope: [:patient_session, :status, context, :colour])
+    colour = I18n.t(status, scope: [:status, context, :colour])
 
     status_tag = tag.strong(label, class: "nhsuk-tag nhsuk-tag--#{colour}")
 

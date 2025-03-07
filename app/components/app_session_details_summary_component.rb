@@ -38,15 +38,20 @@ class AppSessionDetailsSummaryComponent < ViewComponent::Base
   def ready_for_vaccinator_row
     count =
       patient_sessions.count do
-        it.outcome.status.values.none?(PatientSession::Outcome::VACCINATED) &&
-          it.register.status == PatientSession::Register::PRESENT
+        it
+          .patient
+          .programme_outcome
+          .status
+          .values_at(*it.programmes)
+          .none?(Patient::ProgrammeOutcome::VACCINATED) &&
+          it.register_outcome.attending?
       end
 
     href =
       session_record_path(
         session,
         search_form: {
-          record_status: PatientSession::Record::NONE
+          session_status: PatientSession::SessionOutcome::NONE
         }
       )
 
@@ -64,14 +69,16 @@ class AppSessionDetailsSummaryComponent < ViewComponent::Base
   def vaccinated_row
     count =
       patient_sessions.count do
-        it.record.status.values.include?(PatientSession::Record::VACCINATED)
+        it.session_outcome.status.values.include?(
+          PatientSession::SessionOutcome::VACCINATED
+        )
       end
 
     href =
       session_record_path(
         session,
         search_form: {
-          record_status: PatientSession::Record::VACCINATED
+          session_status: PatientSession::SessionOutcome::VACCINATED
         }
       )
 

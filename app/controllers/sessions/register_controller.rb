@@ -13,12 +13,12 @@ class Sessions::RegisterController < ApplicationController
   layout "full"
 
   def show
+    @statuses = PatientSession::RegisterOutcome::STATUSES
+
     scope =
       @session.patient_sessions.preload_for_status.in_programmes(
         @session.programmes
       )
-
-    @valid_statuses = PatientSession::Register::STATUSES
 
     patient_sessions =
       @form.apply(scope) do |filtered_scope|
@@ -33,7 +33,7 @@ class Sessions::RegisterController < ApplicationController
   end
 
   def create
-    session_attendance = authorize @patient_session.register.today
+    session_attendance = authorize @patient_session.register_outcome.latest
     session_attendance.update!(attending: params[:status] == "present")
 
     name = @patient_session.patient.full_name
