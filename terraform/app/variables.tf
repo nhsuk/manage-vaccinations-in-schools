@@ -36,12 +36,13 @@ variable "http_hosts" {
     MAVIS__HOST                        = string
     MAVIS__GIVE_OR_REFUSE_CONSENT_HOST = string
   })
-  description = "Https host names"
+  description = "Http host names. Only requests that set the HTTP Host Header to one of these values will be accepted."
   nullable    = true
 }
 
 locals {
-  host_headers = concat(tolist(toset(values(var.http_hosts))), [for v in tolist(toset(values(var.http_hosts))) : "www.${v}"])
+  unique_host_headers = toset(values(var.http_hosts))
+  host_headers = concat(tolist(local.unique_host_headers), [for v in local.unique_host_headers : "www.${v}"])
 }
 
 variable "dns_certificate_arn" {
