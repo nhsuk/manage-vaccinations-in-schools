@@ -27,10 +27,12 @@ en:
     register:
       label:
         attending: Attending session
+        completed: Completed session
         not_attending: Absent from session
         unknown: Not registered yet
       colour:
         attending: green
+        completed: green
         not_attending: red
         unknown: blue
     record:

@@ -53,6 +53,10 @@ describe "HPV vaccination" do
     then_i_see_that_the_status_is_vaccinated
     and_i_see_the_vaccination_details
 
+    when_i_go_to_the_register_tab
+    and_i_filter_by_completed_session
+    then_i_see_the_patient
+
     when_vaccination_confirmations_are_sent
     then_an_email_is_sent_to_the_parent_confirming_the_vaccination
     and_a_text_is_sent_to_the_parent_confirming_the_vaccination
@@ -203,6 +207,20 @@ describe "HPV vaccination" do
 
   def and_i_see_the_vaccination_details
     expect(page).to have_content("Vaccination details").once
+  end
+
+  def when_i_go_to_the_register_tab
+    click_on "Back to session"
+    click_on "Register"
+  end
+
+  def and_i_filter_by_completed_session
+    choose "Completed session"
+    click_on "Update results"
+  end
+
+  def then_i_see_the_patient
+    expect(page).to have_content(@patient.full_name)
   end
 
   def when_vaccination_confirmations_are_sent
