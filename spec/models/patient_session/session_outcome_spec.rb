@@ -11,7 +11,7 @@ describe PatientSession::SessionOutcome do
   before { patient.strict_loading!(false) }
 
   describe "#status" do
-    subject(:status) { instance.status.fetch(programme) }
+    subject(:status) { instance.status[programme] }
 
     context "with no vaccination record" do
       it { should be(described_class::NONE) }

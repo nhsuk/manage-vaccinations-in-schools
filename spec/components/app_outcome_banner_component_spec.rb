@@ -59,9 +59,8 @@ describe AppOutcomeBannerComponent do
 
   context "state is vaccinated" do
     let(:patient_session) { create(:patient_session, :vaccinated, session:) }
-    let(:vaccination_record) do
-      patient_session.programme_outcome.all[programme].first
-    end
+    let(:patient) { patient_session.patient }
+    let(:vaccination_record) { patient.programme_outcome.all[programme].first }
     let(:vaccine) { programme.vaccines.first }
     let(:location) { patient_session.session.location }
     let(:batch) { vaccine.batches.first }
@@ -81,7 +80,9 @@ describe AppOutcomeBannerComponent do
       let(:patient_session) do
         create(:patient_session, :vaccinated, session:).tap do |ps|
           ps.strict_loading!(false)
-          ps.programme_outcome.all[programme].first.update!(performed_at: date)
+          ps.patient.programme_outcome.all[programme].first.update!(
+            performed_at: date
+          )
         end
       end
 
@@ -99,9 +100,10 @@ describe AppOutcomeBannerComponent do
     let(:patient_session) do
       create(:patient_session, :triaged_do_not_vaccinate, session:, user:)
     end
+    let(:patient) { patient_session.patient }
     let(:vaccination_record) { patient_session.vaccination_records.first }
     let(:location) { patient_session.session.location }
-    let(:triage) { patient_session.triage_outcome.all[programme].first }
+    let(:triage) { patient.triage_outcome.all[programme].first }
     let(:date) { triage.created_at.to_date.to_fs(:long) }
 
     it { should have_css(".app-card--red") }
@@ -124,7 +126,7 @@ describe AppOutcomeBannerComponent do
           :triaged_do_not_vaccinate,
           session:
         ).tap do |ps|
-          ps.triage_outcome.all[ps.programmes.first].first.update!(
+          ps.patient.triage_outcome.all[ps.programmes.first].first.update!(
             created_at: date
           )
         end

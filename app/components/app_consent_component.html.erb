@@ -1,6 +1,6 @@
 <%= render AppConsentStatusComponent.new(patient_session:, programme:) %>
 
-<% if patient_session.consent_outcome.none?(programme) %>
+<% if patient.consent_outcome.none?(programme) %>
   <% if latest_consent_request %>
     <p class="nhsuk-body">
       No-one responded to our requests for consent.

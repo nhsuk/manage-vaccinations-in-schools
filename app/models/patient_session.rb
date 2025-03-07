@@ -90,8 +90,6 @@ class PatientSession < ApplicationRecord
           order("LOWER(patients.family_name)", "LOWER(patients.given_name)")
         end
 
-  delegate :send_notifications?, to: :patient
-
   def safe_to_destroy?
     programmes.none? { session_outcome.all[it].any? } &&
       gillick_assessments.empty? && session_attendances.none?(&:attending?)
@@ -102,7 +100,7 @@ class PatientSession < ApplicationRecord
   end
 
   def can_record_as_already_vaccinated?(programme:)
-    !session.today? && programme_outcome.none?(programme)
+    !session.today? && patient.programme_outcome.none?(programme)
   end
 
   def programmes
@@ -115,14 +113,6 @@ class PatientSession < ApplicationRecord
       .max_by(&:created_at)
   end
 
-  def consent_outcome
-    @consent_outcome ||= PatientSession::ConsentOutcome.new(self)
-  end
-
-  def triage_outcome
-    @triage_outcome ||= PatientSession::TriageOutcome.new(self)
-  end
-
   def register_outcome
     @register_outcome ||= PatientSession::RegisterOutcome.new(self)
   end
@@ -131,22 +121,7 @@ class PatientSession < ApplicationRecord
     @session_outcome ||= PatientSession::SessionOutcome.new(self)
   end
 
-  def programme_outcome
-    @programme_outcome ||= PatientSession::ProgrammeOutcome.new(self)
-  end
-
-  def ready_for_vaccinator?(programme: nil)
-    programmes_to_check = programme ? [programme] : programmes
-
-    programmes_to_check.any? do
-      return false if programme_outcome.vaccinated?(it)
-
-      consent_outcome.given?(it) &&
-        (
-          triage_outcome.safe_to_vaccinate?(it) ||
-            triage_outcome.delay_vaccination?(it) ||
-            triage_outcome.not_required?(it)
-        )
-    end
+  def ready_for_vaccinator?
+    programmes.any? { patient.ready_for_vaccinator?(programme: it) }
   end
 end

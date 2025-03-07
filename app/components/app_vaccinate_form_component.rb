@@ -10,8 +10,7 @@ class AppVaccinateFormComponent < ViewComponent::Base
   end
 
   def render?
-    patient_session.next_step(programme:) == :vaccinate &&
-      patient_session.register_outcome.attending?
+    patient_session.next_step(programme:) == :vaccinate
   end
 
   private

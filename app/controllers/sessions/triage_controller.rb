@@ -13,8 +13,7 @@ class Sessions::TriageController < ApplicationController
 
   def show
     @statuses =
-      PatientSession::TriageOutcome::STATUSES -
-        [PatientSession::TriageOutcome::NOT_REQUIRED]
+      Patient::TriageOutcome::STATUSES - [Patient::TriageOutcome::NOT_REQUIRED]
 
     scope =
       @session.patient_sessions.preload_for_status.in_programmes(
@@ -24,7 +23,12 @@ class Sessions::TriageController < ApplicationController
     patient_sessions =
       @form.apply(scope) do |filtered_scope|
         filtered_scope.select do
-          it.triage_outcome.status.values.intersect?(@statuses)
+          it
+            .patient
+            .triage_outcome
+            .status
+            .values_at(*it.programmes)
+            .intersect?(@statuses)
         end
       end
 

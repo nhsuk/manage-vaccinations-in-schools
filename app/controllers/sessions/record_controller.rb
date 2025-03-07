@@ -26,7 +26,9 @@ class Sessions::RecordController < ApplicationController
       @form.apply(scope) do |filtered_scope|
         filtered_scope.select do
           it.register_outcome.attending? ||
-            it.record.status.values.none?(PatientSession::SessionOutcome::NONE)
+            it.session_outcome.status.values.none?(
+              PatientSession::SessionOutcome::NONE
+            )
         end
       end
 

@@ -25,13 +25,13 @@ module Reports::ExportFormatters
     location.school? ? "" : vaccination_record.location_name
   end
 
-  def consent_status(patient_session:, programme:)
-    case patient_session.consent_outcome.status[programme]
-    when PatientSession::ConsentOutcome::GIVEN
+  def consent_status(patient:, programme:)
+    case patient.consent_outcome.status[programme]
+    when Patient::ConsentOutcome::GIVEN
       "Consent given"
-    when PatientSession::ConsentOutcome::REFUSED
+    when Patient::ConsentOutcome::REFUSED
       "Consent refused"
-    when PatientSession::ConsentOutcome::CONFLICTS
+    when Patient::ConsentOutcome::CONFLICTS
       "Conflicting consent"
     else
       ""

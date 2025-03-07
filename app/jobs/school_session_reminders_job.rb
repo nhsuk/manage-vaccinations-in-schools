@@ -36,13 +36,15 @@ class SchoolSessionRemindersJob < ApplicationJob
   end
 
   def should_send_notification?(patient_session:)
-    return false unless patient_session.send_notifications?
+    patient = patient_session.patient
+
+    return false unless patient.send_notifications?
 
     programmes = patient_session.programmes
 
     all_vaccinated =
       programmes.all? do |programme|
-        patient_session.programme_outcome.vaccinated?(programme)
+        patient.programme_outcome.vaccinated?(programme)
       end
 
     return false if all_vaccinated

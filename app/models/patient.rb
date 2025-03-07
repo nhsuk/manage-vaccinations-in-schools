@@ -255,8 +255,27 @@ class Patient < ApplicationRecord
     birth_academic_year_changed?
   end
 
-  def as_json(options = {})
-    super.merge("full_name" => full_name, "age" => age)
+  def consent_outcome
+    @consent_outcome ||= Patient::ConsentOutcome.new(self)
+  end
+
+  def triage_outcome
+    @triage_outcome ||= Patient::TriageOutcome.new(self)
+  end
+
+  def programme_outcome
+    @programme_outcome ||= Patient::ProgrammeOutcome.new(self)
+  end
+
+  def ready_for_vaccinator?(programme:)
+    return false if programme_outcome.vaccinated?(programme)
+
+    consent_outcome.given?(programme) &&
+      (
+        triage_outcome.safe_to_vaccinate?(programme) ||
+          triage_outcome.delay_vaccination?(programme) ||
+          triage_outcome.not_required?(programme)
+      )
   end
 
   def deceased?

@@ -23,16 +23,19 @@ class AppSessionActionsSummaryComponent < ViewComponent::Base
   def get_consent_row
     count =
       patient_sessions.count do
-        it.consent_outcome.status.values.include?(
-          PatientSession::ConsentOutcome::NONE
-        )
+        it
+          .patient
+          .consent_outcome
+          .status
+          .values_at(*it.programmes)
+          .include?(Patient::ConsentOutcome::NONE)
       end
 
     href =
       session_consent_path(
         session,
         search_form: {
-          consent_status: PatientSession::ConsentOutcome::NONE
+          consent_status: Patient::ConsentOutcome::NONE
         }
       )
 
@@ -50,16 +53,19 @@ class AppSessionActionsSummaryComponent < ViewComponent::Base
   def resolve_consent_row
     count =
       patient_sessions.count do
-        it.consent_outcome.status.values.include?(
-          PatientSession::ConsentOutcome::CONFLICTS
-        )
+        it
+          .patient
+          .consent_outcome
+          .status
+          .values_at(*it.programmes)
+          .include?(Patient::ConsentOutcome::CONFLICTS)
       end
 
     href =
       session_consent_path(
         session,
         search_form: {
-          consent_status: PatientSession::ConsentOutcome::CONFLICTS
+          consent_status: Patient::ConsentOutcome::CONFLICTS
         }
       )
 
@@ -77,16 +83,19 @@ class AppSessionActionsSummaryComponent < ViewComponent::Base
   def triage_row
     count =
       patient_sessions.count do
-        it.triage_outcome.status.values.include?(
-          PatientSession::TriageOutcome::REQUIRED
-        )
+        it
+          .patient
+          .triage_outcome
+          .status
+          .values_at(*it.programmes)
+          .include?(Patient::TriageOutcome::REQUIRED)
       end
 
     href =
       session_triage_path(
         session,
         search_form: {
-          triage_status: PatientSession::TriageOutcome::REQUIRED
+          triage_status: Patient::TriageOutcome::REQUIRED
         }
       )
 

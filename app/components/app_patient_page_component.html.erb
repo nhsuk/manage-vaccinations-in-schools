@@ -67,12 +67,12 @@
 
 <% if display_health_questions? %>
   <%= render AppHealthAnswersCardComponent.new(
-        patient_session.consent_outcome.latest[programme],
+        patient.consent_outcome.latest[programme],
         heading: "All answers to health questions",
       ) %>
 <% end %>
 
-<% if patient_session.triage_outcome.all[programme].any? %>
+<% if patient.triage_outcome.all[programme].any? %>
   <%= render AppCardComponent.new do |c| %>
     <% c.with_heading { "Triage notes" } %>
     <%= render AppTriageNotesComponent.new(patient_session:, programme:) %>
@@ -96,7 +96,7 @@
   <% end %>
 <% end %>
 
-<% patient_session.programme_outcome.all[programme].each do |vaccination_record| %>
+<% patient.programme_outcome.all[programme].each do |vaccination_record| %>
   <%= render AppCardComponent.new do |c| %>
     <% c.with_heading { "Vaccination details" } %>
     <%= render AppVaccinationRecordSummaryComponent.new(vaccination_record, current_user:) %>

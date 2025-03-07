@@ -38,9 +38,13 @@ class AppSessionDetailsSummaryComponent < ViewComponent::Base
   def ready_for_vaccinator_row
     count =
       patient_sessions.count do
-        it.programme_outcome.status.values.none?(
-          PatientSession::ProgrammeOutcome::VACCINATED
-        ) && it.register_outcome.attending?
+        it
+          .patient
+          .programme_outcome
+          .status
+          .values_at(*it.programmes)
+          .none?(Patient::ProgrammeOutcome::VACCINATED) &&
+          it.register_outcome.attending?
       end
 
     href =

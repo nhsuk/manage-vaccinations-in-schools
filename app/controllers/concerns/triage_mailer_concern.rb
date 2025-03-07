@@ -12,11 +12,11 @@ module TriageMailerConcern
 
     params = { consent:, session:, sent_by: current_user }
 
-    if vaccination_will_happen?(patient_session, consent)
+    if vaccination_will_happen?(patient, consent)
       EmailDeliveryJob.perform_later(:triage_vaccination_will_happen, **params)
-    elsif vaccination_wont_happen?(patient_session, consent)
+    elsif vaccination_wont_happen?(patient, consent)
       EmailDeliveryJob.perform_later(:triage_vaccination_wont_happen, **params)
-    elsif vaccination_at_clinic?(patient_session, consent)
+    elsif vaccination_at_clinic?(patient, consent)
       EmailDeliveryJob.perform_later(:triage_vaccination_at_clinic, **params)
     elsif consent.triage_needed?
       EmailDeliveryJob.perform_later(:consent_confirmation_triage, **params)
@@ -37,21 +37,21 @@ module TriageMailerConcern
 
   private
 
-  def vaccination_will_happen?(patient_session, consent)
+  def vaccination_will_happen?(patient, consent)
     programme = consent.programme
     consent.triage_needed? &&
-      patient_session.triage_outcome.safe_to_vaccinate?(programme)
+      patient.triage_outcome.safe_to_vaccinate?(programme)
   end
 
-  def vaccination_wont_happen?(patient_session, consent)
+  def vaccination_wont_happen?(patient, consent)
     programme = consent.programme
     consent.triage_needed? &&
-      patient_session.triage_outcome.do_not_vaccinate?(programme)
+      patient.triage_outcome.do_not_vaccinate?(programme)
   end
 
-  def vaccination_at_clinic?(patient_session, consent)
+  def vaccination_at_clinic?(patient, consent)
     programme = consent.programme
     consent.triage_needed? &&
-      patient_session.triage_outcome.delay_vaccination?(programme)
+      patient.triage_outcome.delay_vaccination?(programme)
   end
 end

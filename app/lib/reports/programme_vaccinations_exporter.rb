@@ -101,7 +101,7 @@ class Reports::ProgrammeVaccinationsExporter
           :performed_by_user,
           :programme,
           :vaccine,
-          patient: %i[gp_practice school]
+          patient: [:gp_practice, :school, :triages, { consents: :parent }]
         )
 
     if start_date.present?
@@ -133,21 +133,14 @@ class Reports::ProgrammeVaccinationsExporter
     scope
   end
 
-  def patient_sessions
-    @patient_sessions ||=
-      PatientSession
-        .preload_for_status
-        .includes(
-          gillick_assessments: :performed_by,
-          patient: {
-            consents: [:parent, { patient: :parent_relationships }],
-            triages: :performed_by
-          }
-        )
-        .where(
+  def gillick_assessments
+    @gillick_assessments ||=
+      GillickAssessment.eager_load(:patient_session, :performed_by).where(
+        patient_session: {
           patient_id: vaccination_records.map(&:patient_id),
           session_id: vaccination_records.map(&:session_id)
-        )
+        }
+      )
   end
 
   def row(vaccination_record:)
@@ -156,12 +149,14 @@ class Reports::ProgrammeVaccinationsExporter
     programme = vaccination_record.programme
     session = vaccination_record.session
 
-    patient_session =
-      patient_sessions.find { it.patient == patient && it.session == session }
+    consents = patient.consent_outcome.latest[programme]
+    triage = patient.triage_outcome.latest[programme]
 
-    consents = patient_session&.consent_outcome&.latest&.dig(programme) || []
-    gillick_assessment = patient_session&.gillick_assessment(programme)
-    triage = patient_session&.triage_outcome&.latest&.dig(programme)
+    gillick_assessment =
+      gillick_assessments.find do
+        it.patient_session.patient_id == patient.id &&
+          it.patient_session.session_id == session.id
+      end
 
     [
       organisation.ods_code,
@@ -181,7 +176,7 @@ class Reports::ProgrammeVaccinationsExporter
       nhs_number_status_code(patient:),
       patient.gp_practice&.ods_code || "",
       patient.gp_practice&.name || "",
-      patient_session ? consent_status(patient_session:, programme:) : "",
+      consent_status(patient:, programme:),
       consent_details(consents:),
       health_question_answers(consents:),
       triage&.status&.humanize || "",

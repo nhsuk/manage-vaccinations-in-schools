@@ -142,17 +142,19 @@ class Reports::OfflineSessionExporter
   end
 
   def rows(patient_session:)
+    patient = patient_session.patient
+
     patient_session.programmes.flat_map do |programme|
       bg_color =
-        case patient_session.consent_outcome.status[programme]
-        when PatientSession::ConsentOutcome::REFUSED
+        case patient.consent_outcome.status[programme]
+        when Patient::ConsentOutcome::REFUSED
           "F7D4D1"
-        when PatientSession::ConsentOutcome::CONFLICTS
+        when Patient::ConsentOutcome::CONFLICTS
           "FFDC8E"
         end
 
       row_style = {
-        strike: patient_session.patient.invalidated?,
+        strike: patient.invalidated?,
         bg_color:,
         border: {
           style: :thin,
@@ -160,7 +162,7 @@ class Reports::OfflineSessionExporter
         }
       }
 
-      vaccination_records = patient_session.programme_outcome.all[programme]
+      vaccination_records = patient.programme_outcome.all[programme]
 
       if vaccination_records.any?
         vaccination_records.map do |vaccination_record|
@@ -184,8 +186,8 @@ class Reports::OfflineSessionExporter
     patient = patient_session.patient
 
     gillick_assessment = patient_session.gillick_assessment(programme)
-    consents = patient_session.consent_outcome.latest[programme]
-    triage = patient_session.triage_outcome.latest[programme]
+    consents = patient.consent_outcome.latest[programme]
+    triage = patient.triage_outcome.latest[programme]
 
     row[:organisation_code] = organisation.ods_code
     row[:person_forename] = patient.given_name
@@ -203,7 +205,7 @@ class Reports::OfflineSessionExporter
       patient.address_postcode unless patient.restricted?
     )
     row[:nhs_number] = patient.nhs_number
-    row[:consent_status] = consent_status(patient_session:, programme:)
+    row[:consent_status] = consent_status(patient:, programme:)
     row[:consent_details] = consent_details(consents:)
     row[:health_question_answers] = Cell.new(
       health_question_answers(consents:),

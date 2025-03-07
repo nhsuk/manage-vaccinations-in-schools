@@ -46,12 +46,27 @@ class SearchForm
     scope = yield(scope) if block_given?
 
     if (status = consent_status&.to_sym).present?
-      scope = scope.select { it.consent_outcome.status.values.include?(status) }
+      scope =
+        scope.select do
+          it
+            .patient
+            .consent_outcome
+            .status
+            .values_at(*it.programmes)
+            .include?(status)
+        end
     end
 
     if (status = programme_status&.to_sym).present?
       scope =
-        scope.select { it.programme_outcome.status.values.include?(status) }
+        scope.select do
+          it
+            .patient
+            .programme_outcome
+            .status
+            .values_at(*it.programmes)
+            .include?(status)
+        end
     end
 
     if (status = session_status&.to_sym).present?
@@ -63,7 +78,15 @@ class SearchForm
     end
 
     if (status = triage_status&.to_sym).present?
-      scope = scope.select { it.triage_outcome.status.values.include?(status) }
+      scope =
+        scope.select do
+          it
+            .patient
+            .triage_outcome
+            .status
+            .values_at(*it.programmes)
+            .include?(status)
+        end
     end
 
     scope

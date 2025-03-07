@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-class PatientSession::ProgrammeOutcome
-  def initialize(patient_session)
-    @patient_session = patient_session
+class Patient::ProgrammeOutcome
+  def initialize(patient)
+    @patient = patient
   end
 
   STATUSES = [
@@ -18,7 +18,10 @@ class PatientSession::ProgrammeOutcome
   def none?(programme) = status[programme] == NONE
 
   def status
-    @status ||= programmes.index_with { programme_status(it) }
+    @status ||=
+      Hash.new do |hash, programme|
+        hash[programme] = programme_status(programme)
+      end
   end
 
   def all
@@ -30,13 +33,9 @@ class PatientSession::ProgrammeOutcome
 
   private
 
-  attr_reader :patient_session
+  attr_reader :patient
 
-  delegate :consent_outcome,
-           :triage_outcome,
-           :patient,
-           :programmes,
-           to: :patient_session
+  delegate :consent_outcome, :triage_outcome, to: :patient
 
   def programme_status(programme)
     if programme_vaccinated?(programme)

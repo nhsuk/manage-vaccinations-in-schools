@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-class PatientSession::ConsentOutcome
-  def initialize(patient_session)
-    @patient_session = patient_session
+class Patient::ConsentOutcome
+  def initialize(patient)
+    @patient = patient
   end
 
   STATUSES = [
@@ -21,7 +21,10 @@ class PatientSession::ConsentOutcome
   def none?(programme) = status[programme] == NONE
 
   def status
-    @status ||= programmes.index_with { programme_status(it) }
+    @status ||=
+      Hash.new do |hash, programme|
+        hash[programme] = programme_status(programme)
+      end
   end
 
   def all
@@ -44,9 +47,7 @@ class PatientSession::ConsentOutcome
 
   private
 
-  attr_reader :patient_session
-
-  delegate :patient, :programmes, to: :patient_session
+  attr_reader :patient
 
   def programme_status(programme)
     if consent_given?(programme)

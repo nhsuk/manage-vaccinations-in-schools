@@ -12,7 +12,7 @@ class Sessions::ConsentController < ApplicationController
   layout "full"
 
   def show
-    @statuses = PatientSession::ConsentOutcome::STATUSES
+    @statuses = Patient::ConsentOutcome::STATUSES
 
     scope =
       @session.patient_sessions.preload_for_status.in_programmes(
