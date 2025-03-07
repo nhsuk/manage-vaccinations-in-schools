@@ -67,13 +67,13 @@ describe "Vaccination" do
     click_link @patient.full_name
 
     # pre-screening
-    find_all(".nhsuk-fieldset")[0].choose "Yes"
-    find_all(".nhsuk-fieldset")[1].choose "Yes"
-    find_all(".nhsuk-fieldset")[2].choose "Yes"
-    find_all(".nhsuk-fieldset")[3].choose "Yes"
+    check "know what the vaccination is for, and are happy to have it"
+    check "have not already had the vaccination"
+    check "are feeling well"
+    check "have no allergies which would prevent vaccination"
 
     # vaccination
-    find_all(".nhsuk-fieldset")[4].choose "Yes"
+    choose "Yes"
     choose "Left arm (upper position)"
     click_button "Continue"
 
@@ -100,13 +100,13 @@ describe "Vaccination" do
     click_link @patient2.full_name
 
     # pre-screening
-    find_all(".nhsuk-fieldset")[0].choose "Yes"
-    find_all(".nhsuk-fieldset")[1].choose "Yes"
-    find_all(".nhsuk-fieldset")[2].choose "Yes"
-    find_all(".nhsuk-fieldset")[3].choose "Yes"
+    check "know what the vaccination is for, and are happy to have it"
+    check "have not already had the vaccination"
+    check "are feeling well"
+    check "have no allergies which would prevent vaccination"
 
     # vaccination
-    find_all(".nhsuk-fieldset")[4].choose "Yes"
+    choose "Yes"
     choose "Left arm (upper position)"
     click_button "Continue"
   end
@@ -155,13 +155,13 @@ describe "Vaccination" do
     click_on "MenACWY"
 
     # pre-screening
-    find_all(".nhsuk-fieldset")[0].choose "Yes"
-    find_all(".nhsuk-fieldset")[1].choose "Yes"
-    find_all(".nhsuk-fieldset")[2].choose "Yes"
-    find_all(".nhsuk-fieldset")[3].choose "Yes"
+    check "know what the vaccination is for, and are happy to have it"
+    check "have not already had the vaccination"
+    check "are feeling well"
+    check "have no allergies which would prevent vaccination"
 
     # vaccination
-    find_all(".nhsuk-fieldset")[4].choose "Yes"
+    choose "Yes"
     choose "Left arm (upper position)"
     click_button "Continue"
   end
