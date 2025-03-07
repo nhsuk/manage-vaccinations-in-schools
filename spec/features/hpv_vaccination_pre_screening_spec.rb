@@ -43,6 +43,7 @@ describe "HPV vaccination" do
     check "know what the vaccination is for, and are happy to have it"
     check "are feeling well"
     check "have no allergies which would prevent vaccination"
+    check "are not pregnant"
   end
 
   def and_i_choose_that_the_patient_is_ready_to_vaccinate

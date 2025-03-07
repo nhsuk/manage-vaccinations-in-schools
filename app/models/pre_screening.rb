@@ -4,17 +4,19 @@
 #
 # Table name: pre_screenings
 #
-#  id                   :bigint           not null, primary key
-#  feeling_well         :boolean          not null
-#  knows_vaccination    :boolean          not null
-#  no_allergies         :boolean          not null
-#  not_already_had      :boolean          not null
-#  notes                :text             default(""), not null
-#  created_at           :datetime         not null
-#  updated_at           :datetime         not null
-#  patient_session_id   :bigint           not null
-#  performed_by_user_id :bigint           not null
-#  programme_id         :bigint           not null
+#  id                    :bigint           not null, primary key
+#  feeling_well          :boolean          not null
+#  knows_vaccination     :boolean          not null
+#  no_allergies          :boolean          not null
+#  not_already_had       :boolean          not null
+#  not_pregnant          :boolean          not null
+#  not_taking_medication :boolean          not null
+#  notes                 :text             default(""), not null
+#  created_at            :datetime         not null
+#  updated_at            :datetime         not null
+#  patient_session_id    :bigint           not null
+#  performed_by_user_id  :bigint           not null
+#  programme_id          :bigint           not null
 #
 # Indexes
 #
@@ -45,11 +47,26 @@ class PreScreening < ApplicationRecord
             :not_already_had,
             :feeling_well,
             :no_allergies,
+            :not_taking_medication,
+            :not_pregnant,
             inclusion: {
               in: [true, false]
             }
 
   def allows_vaccination?
-    knows_vaccination && not_already_had && no_allergies
+    knows_vaccination && not_already_had && no_allergies &&
+      (
+        !PreScreening.ask_not_taking_medication?(programme:) ||
+          not_taking_medication
+      ) &&
+      (!PreScreening.ask_not_pregnant?(programme:, patient:) || not_pregnant)
+  end
+
+  def self.ask_not_taking_medication?(programme:)
+    programme.doubles?
+  end
+
+  def self.ask_not_pregnant?(programme:, patient:)
+    (programme.hpv? || programme.td_ipv?) && patient.gender_code != "male"
   end
 end

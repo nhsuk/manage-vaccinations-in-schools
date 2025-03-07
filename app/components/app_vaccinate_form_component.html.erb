@@ -24,6 +24,16 @@
 
       <%= f.govuk_check_box :no_allergies, 1, 0, multiple: false, link_errors: true,
                                                  label: { text: "have no allergies which would prevent vaccination" } %>
+
+      <% if PreScreening.ask_not_taking_medication?(programme:) %>
+        <%= f.govuk_check_box :not_taking_medication, 1, 0, multiple: false, link_errors: true,
+                                                            label: { text: "are not taking any medication which prevents vaccination" } %>
+      <% end %>
+
+      <% if PreScreening.ask_not_pregnant?(programme:, patient:) %>
+        <%= f.govuk_check_box :not_pregnant, 1, 0, multiple: false, link_errors: true,
+                                                   label: { text: "are not pregnant" } %>
+      <% end %>
     <% end %>
 
     <%= f.govuk_text_area :pre_screening_notes, label: { text: "Pre-screening notes (optional)" } %>

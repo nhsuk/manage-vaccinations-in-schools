@@ -102,6 +102,7 @@ describe "MenACWY vaccination" do
     check "have not already had the vaccination"
     check "are feeling well"
     check "have no allergies which would prevent vaccination"
+    check "are not taking any medication which prevents vaccination"
 
     # vaccination
     choose "Yes"
