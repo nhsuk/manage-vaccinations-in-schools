@@ -20,10 +20,7 @@ class Sessions::RegisterController < ApplicationController
         @session.programmes
       )
 
-    patient_sessions =
-      @form.apply(scope) do |filtered_scope|
-        filtered_scope.select(&:ready_for_vaccinator?)
-      end
+    patient_sessions = @form.apply(scope)
 
     if patient_sessions.is_a?(Array)
       @pagy, @patient_sessions = pagy_array(patient_sessions)
