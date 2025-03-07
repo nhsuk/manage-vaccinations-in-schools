@@ -24,7 +24,7 @@
 #  fk_rails_...  (patient_id => patients.id)
 #
 class ParentRelationship < ApplicationRecord
-  audited
+  audited associated_with: :patient
 
   self.inheritance_column = nil
 

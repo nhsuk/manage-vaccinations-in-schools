@@ -32,7 +32,8 @@
 class Vaccine < ApplicationRecord
   self.inheritance_column = nil
 
-  audited
+  audited associated_with: :programme
+  has_associated_audits
 
   belongs_to :programme
 

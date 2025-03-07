@@ -42,7 +42,7 @@ class Consent < ApplicationRecord
   include Invalidatable
   include HasHealthAnswers
 
-  audited
+  audited associated_with: :patient
 
   belongs_to :patient
   belongs_to :programme

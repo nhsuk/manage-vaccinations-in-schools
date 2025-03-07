@@ -26,7 +26,7 @@
 #  fk_rails_...  (performed_by_user_id => users.id)
 #
 class PreScreening < ApplicationRecord
-  audited
+  audited associated_with: :patient_session
 
   belongs_to :patient_session
   belongs_to :performed_by,

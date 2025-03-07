@@ -18,7 +18,7 @@
 #  fk_rails_...  (session_id => sessions.id)
 #
 class SessionDate < ApplicationRecord
-  audited
+  audited associated_with: :session
 
   belongs_to :session
 

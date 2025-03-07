@@ -27,6 +27,8 @@
 class Organisation < ApplicationRecord
   include ODSCodeConcern
 
+  has_associated_audits
+
   has_many :batches
   has_many :cohort_imports
   has_many :consent_forms

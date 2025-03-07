@@ -56,7 +56,8 @@ class Patient < ApplicationRecord
   include PendingChangesConcern
   include Schoolable
 
-  audited
+  audited associated_with: :organisation
+  has_associated_audits
 
   belongs_to :gp_practice, class_name: "Location", optional: true
   belongs_to :organisation, optional: true

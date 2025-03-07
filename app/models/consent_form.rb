@@ -73,7 +73,8 @@ class ConsentForm < ApplicationRecord
 
   attr_accessor :health_question_number, :parental_responsibility
 
-  audited
+  audited associated_with: :consent
+  has_associated_audits
 
   belongs_to :consent, optional: true
   belongs_to :location
