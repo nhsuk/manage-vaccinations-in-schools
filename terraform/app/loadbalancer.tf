@@ -129,6 +129,7 @@ resource "aws_lb_listener" "app_listener_https" {
   load_balancer_arn = aws_lb.app_lb.arn
   port              = "443"
   protocol          = "HTTPS"
+  ssl_policy        = var.ssl_policy
   certificate_arn   = var.dns_certificate_arn == null ? module.dns_route53[0].certificate_arn : var.dns_certificate_arn
 
   default_action {
