@@ -73,8 +73,23 @@ class AppSearchComponent < ViewComponent::Base
           <% end %>
         <% end %>
 
-        <%= govuk_details(summary_text: "Advanced filters", open: @form.date_of_birth.present? || @form.missing_nhs_number) do %>
-          <%= f.govuk_date_field :date_of_birth, date_of_birth: true, legend: { text: "Date of birth", size: "s" } %>
+        <%= govuk_details(summary_text: "Advanced filters", open: open_details?) do %>
+          <div class="nhsuk-form-group">
+            <fieldset class="nhsuk-fieldset">
+              <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--s">Date of birth</legend>
+              <div class="nhsuk-date-input">
+                <div class="nhsuk-date-input__item">
+                  <%= f.govuk_number_field :date_of_birth_day, label: { text: "Day" }, width: 2 %>
+                </div>
+                <div class="nhsuk-date-input__item">
+                  <%= f.govuk_number_field :date_of_birth_month, label: { text: "Month" }, width: 2 %>
+                </div>
+                <div class="nhsuk-date-input__item">
+                  <%= f.govuk_number_field :date_of_birth_year, label: { text: "Year" }, width: 4 %>
+                </div>
+              </div>
+            </fieldset>
+          </div>
 
           <%= f.govuk_check_boxes_fieldset :missing_nhs_number, multiple: false, legend: { text: "Options", size: "s" } do %>
             <%= f.govuk_check_box :missing_nhs_number, 1, 0, multiple: false, link_errors: true, label: { text: "Missing NHS number" } %>
@@ -131,6 +146,11 @@ class AppSearchComponent < ViewComponent::Base
               :session_statuses,
               :triage_statuses,
               :year_groups
+
+  def open_details?
+    @form.date_of_birth_year.present? || @form.date_of_birth_month.present? ||
+      @form.date_of_birth_day.present? || @form.missing_nhs_number
+  end
 
   def show_buttons_in_details?
     !(

@@ -6,26 +6,16 @@ class SearchForm
   include ActiveRecord::AttributeAssignment
 
   attribute :consent_status, :string
-  attribute :date_of_birth, :date
+  attribute :date_of_birth_day, :integer
+  attribute :date_of_birth_month, :integer
+  attribute :date_of_birth_year, :integer
   attribute :missing_nhs_number, :boolean
   attribute :programme_status, :string
   attribute :q, :string
-  attribute :session_status, :string
   attribute :register_status, :string
+  attribute :session_status, :string
   attribute :triage_status, :string
   attribute :year_groups, array: true
-
-  def initialize(options)
-    super(options)
-  rescue ActiveRecord::MultiparameterAssignmentErrors
-    super(
-      options.except(
-        :"date_of_birth(1i)",
-        :"date_of_birth(2i)",
-        :"date_of_birth(3i)"
-      )
-    )
-  end
 
   def year_groups=(values)
     super(values&.compact_blank&.map(&:to_i)&.compact || [])
@@ -36,8 +26,17 @@ class SearchForm
 
     scope = scope.search_by_year_groups(year_groups) if year_groups.present?
 
-    scope =
-      scope.search_by_date_of_birth(date_of_birth) if date_of_birth.present?
+    if date_of_birth_year.present?
+      scope = scope.search_by_date_of_birth_year(date_of_birth_year)
+    end
+
+    if date_of_birth_month.present?
+      scope = scope.search_by_date_of_birth_month(date_of_birth_month)
+    end
+
+    if date_of_birth_day.present?
+      scope = scope.search_by_date_of_birth_day(date_of_birth_day)
+    end
 
     scope = scope.search_by_nhs_number(nil) if missing_nhs_number.present?
 
