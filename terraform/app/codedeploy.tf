@@ -83,12 +83,12 @@ resource "aws_s3_bucket_policy" "block_http" {
     Id      = "block-http-policy"
     Statement = [
       {
-        Sid       = "HTTPSOnly"
-        Effect    = "Deny"
+        Sid    = "HTTPSOnly"
+        Effect = "Deny"
         Principal = {
-          "AWS": "*"
+          "AWS" : "*"
         }
-        Action    = "s3:*"
+        Action = "s3:*"
         Resource = [
           aws_s3_bucket.code_deploy_bucket.arn,
           "${aws_s3_bucket.code_deploy_bucket.arn}/*",

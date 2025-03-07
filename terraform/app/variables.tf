@@ -7,11 +7,12 @@ variable "region" {
 variable "environment" {
   type        = string
   description = "String literal for the environment"
-  nullable = false
+  nullable    = false
 
   validation {
     condition = contains([
-    "poc", "copilotmigration", "qa", "test", "training", "preview", "production"], var.environment)
+      "poc", "copilotmigration", "qa", "test", "training", "preview", "production"
+    ], var.environment)
     error_message = "Valid values for environment: poc, copilotmigration, qa, test, training, preview, production."
   }
 }
@@ -20,14 +21,28 @@ variable "account_id" {
   type        = string
   default     = "393416225559"
   description = "ID of aws account. Defaults to non-prod account."
-  nullable = false
+  nullable    = false
 }
 
-variable "domain_name" {
+variable "zone_name" {
   type        = string
   default     = "mavistesting.com"
   description = "Domain for which to create DNS certificate"
-  nullable = false
+  nullable    = false
+}
+
+variable "http_hosts" {
+  type = object({
+    MAVIS__HOST                        = string
+    MAVIS__GIVE_OR_REFUSE_CONSENT_HOST = string
+  })
+  description = "Http host names. Only requests that set the HTTP Host Header to one of these values will be accepted."
+  nullable    = true
+}
+
+locals {
+  unique_host_headers = toset(values(var.http_hosts))
+  host_headers = concat(tolist(local.unique_host_headers), [for v in local.unique_host_headers : "www.${v}"])
 }
 
 variable "dns_certificate_arn" {
@@ -39,21 +54,21 @@ variable "firewall_subnet_cidr" {
   type        = string
   description = "CIDR block for the firewall subnet"
   default     = "10.0.5.0/24"
-  nullable = false
+  nullable    = false
 }
 
 variable "enable_firewall" {
   type        = bool
   default     = false
   description = "Boolean toggle to determine whether the firewall should be enabled."
-  nullable = false
+  nullable    = false
 }
 
 variable "firewall_log_retention_days" {
   type        = number
   default     = 3
   description = "Number of days to retain logs for the firewall"
-  nullable = false
+  nullable    = false
 }
 
 
@@ -62,6 +77,7 @@ variable "resource_name" {
     {
       dbsubnet_group           = string
       db_cluster               = string
+      db_instance              = string
       rds_security_group       = string
       loadbalancer             = string
       lb_security_group        = string
@@ -69,20 +85,20 @@ variable "resource_name" {
     }
   )
   description = "Names of terraform managed resource. Used to import pre-existing infrastructure resources"
-  nullable = false
+  nullable    = false
 }
 
 variable "ecs_log_retention_days" {
   type        = number
-  default     = 7
+  default     = 30
   description = "Number of days to retain logs for ecs instances"
-  nullable = false
+  nullable    = false
 }
 variable "vpc_log_retention_days" {
   type        = number
-  default     = 7
+  default     = 14
   description = "Number of days to retain logs for the vpc traffic"
-  nullable = false
+  nullable    = false
 }
 
 ########## Task definition configuration ##########
@@ -91,7 +107,7 @@ variable "rails_env" {
   type        = string
   default     = "staging"
   description = "The rails environment configuration to use for the mavis application"
-  nullable = false
+  nullable    = false
   validation {
     condition     = contains(["staging", "production"], var.rails_env)
     error_message = "Incorrect rails environment, allowed values are: {staging, production}"
@@ -102,21 +118,21 @@ variable "rails_master_key_path" {
   type        = string
   default     = "/mavis/development/credentials/RAILS_MASTER_KEY"
   description = "The path of the System Manager Parameter Store secure string for the rails master key."
-  nullable = false
+  nullable    = false
 }
 
 variable "container_name" {
   type        = string
   default     = "mavis"
   description = "Name of essential container in the task definition."
-  nullable = false
+  nullable    = false
 }
 
 variable "docker_image" {
   type        = string
   default     = "mavis/webapp"
   description = "The docker image name for the essential container in the task definition"
-  nullable = false
+  nullable    = false
 }
 
 variable "image_digest" {
@@ -168,11 +184,11 @@ locals {
     },
     {
       name  = "MAVIS__HOST"
-      value = "${var.environment}.${var.domain_name}"
+      value = var.http_hosts.MAVIS__HOST
     },
     {
       name  = "MAVIS__GIVE_OR_REFUSE_CONSENT_HOST"
-      value = "${var.environment}.${var.domain_name}"
+      value = var.http_hosts.MAVIS__GIVE_OR_REFUSE_CONSENT_HOST
     },
     {
       name  = "MAVIS__CIS2__ENABLED"
@@ -207,8 +223,8 @@ variable "db_secret_arn" {
 }
 
 variable "backup_retention_period" {
-  type = number
-  default = 7
+  type        = number
+  default     = 7
   description = "The number of days to retain backups for the RDS cluster."
 }
 
