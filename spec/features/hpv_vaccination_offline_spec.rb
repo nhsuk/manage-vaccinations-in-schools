@@ -239,7 +239,7 @@ describe "HPV vaccination" do
   end
 
   def then_i_see_the_uploaded_vaccination_outcomes_reflected_in_the_session
-    click_on "Outcome"
+    click_on "Session outcomes"
 
     choose "Vaccinated"
     click_on "Update results"
@@ -257,7 +257,7 @@ describe "HPV vaccination" do
 
     click_link "Back to session"
 
-    choose "No outcome yet"
+    choose "Absent from session"
     click_on "Update results"
 
     click_on @unvaccinated_patient.full_name

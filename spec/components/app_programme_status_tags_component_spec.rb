@@ -3,7 +3,7 @@
 describe AppProgrammeStatusTagsComponent do
   subject { render_inline(component) }
 
-  let(:component) { described_class.new(programme_statuses, context: :consent) }
+  let(:component) { described_class.new(programme_statuses, outcome: :consent) }
 
   let(:menacwy_programme) { create(:programme, :menacwy) }
   let(:td_ipv_programme) { create(:programme, :td_ipv) }

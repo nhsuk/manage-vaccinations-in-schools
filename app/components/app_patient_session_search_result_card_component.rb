@@ -16,9 +16,11 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
               row.with_value { helpers.patient_year_group(patient) }
             end
 
-            summary_list.with_row do |row|
-              row.with_key { "Status" }
-              row.with_value { status_tag }
+            if (value = status_tag)
+              summary_list.with_row do |row|
+                row.with_key { "Status" }
+                row.with_value { value }
+              end
             end
           end %>
       
@@ -59,6 +61,8 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
   end
 
   def status_tag
+    return if context == :record
+
     if context == :register
       status = patient_session.register_outcome.status
 
@@ -73,16 +77,17 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
           patient.consent_outcome
         when :triage
           patient.triage_outcome
-        when :record
-          patient_session.session_outcome
         when :outcome
-          patient.programme_outcome
+          patient_session.session_outcome
         end
 
       # ensure status is calculated for each programme
       patient_session.programmes.each { outcome.status[it] }
 
-      render AppProgrammeStatusTagsComponent.new(outcome.status, context:)
+      render AppProgrammeStatusTagsComponent.new(
+               outcome.status,
+               outcome: context == :outcome ? :session : context
+             )
     end
   end
 end

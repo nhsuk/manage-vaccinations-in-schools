@@ -193,7 +193,7 @@ describe "Parental consent" do
   def when_they_check_triage
     click_link "Pilot School"
 
-    click_on "Outcome"
+    click_on "Session outcomes"
     choose "No outcome yet"
     click_on "Update results"
   end

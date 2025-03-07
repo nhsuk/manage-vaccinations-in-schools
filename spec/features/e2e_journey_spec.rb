@@ -227,9 +227,7 @@ describe "End-to-end journey" do
 
   def when_i_click_on_the_vaccination_section
     click_link "Back"
-    click_link "Record"
-
-    choose "No outcome yet"
+    click_link "Record vaccinations"
     click_on "Update results"
   end
 
@@ -256,6 +254,7 @@ describe "End-to-end journey" do
   end
 
   def then_i_see_that_the_child_is_vaccinated
+    click_on "Session outcomes"
     choose "Vaccinated"
     click_on "Update results"
 

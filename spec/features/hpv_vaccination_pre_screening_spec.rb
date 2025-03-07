@@ -36,8 +36,6 @@ describe "HPV vaccination" do
 
   def when_i_go_to_a_patient_that_is_ready_to_vaccinate
     visit session_record_path(@session)
-    choose "No outcome yet"
-    click_on "Update results"
     click_link @patient.full_name
   end
 

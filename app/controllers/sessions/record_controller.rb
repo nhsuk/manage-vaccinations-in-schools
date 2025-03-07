@@ -15,20 +15,26 @@ class Sessions::RecordController < ApplicationController
   before_action :set_batches, except: :show
 
   def show
-    @statuses = PatientSession::SessionOutcome::STATUSES
-
     scope =
       @session.patient_sessions.preload_for_status.in_programmes(
         @session.programmes
       )
 
+    vaccinated_statuses = [
+      PatientSession::SessionOutcome::VACCINATED,
+      PatientSession::SessionOutcome::ALREADY_HAD
+    ]
+
     patient_sessions =
       @form.apply(scope) do |filtered_scope|
         filtered_scope.select do
-          it.register_outcome.attending? ||
-            it.session_outcome.status.values.none?(
-              PatientSession::SessionOutcome::NONE
-            )
+          vaccinated =
+            it.session_outcome.status.values.all? do
+              it.in?(vaccinated_statuses)
+            end
+
+          !vaccinated &&
+            (it.register_outcome.attending? || it.register_outcome.completed?)
         end
       end
 

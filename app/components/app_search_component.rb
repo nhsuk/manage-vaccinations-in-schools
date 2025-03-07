@@ -51,7 +51,7 @@ class AppSearchComponent < ViewComponent::Base
           <%= f.govuk_radio_buttons_fieldset :session_status, legend: { text: "Vaccination status", size: "s" } do %>
             <%= f.govuk_radio_button :session_status, "", label: { text: "Any" } %>
             <% session_statuses.each do |status| %>
-              <%= f.govuk_radio_button :session_status, status, label: { text: t(status, scope: %i[status record label]) } %>
+              <%= f.govuk_radio_button :session_status, status, label: { text: t(status, scope: %i[status session label]) } %>
             <% end %>
           <% end %>
         <% end %>
@@ -60,7 +60,7 @@ class AppSearchComponent < ViewComponent::Base
           <%= f.govuk_radio_buttons_fieldset :programme_status, legend: { text: "Programme outcome", size: "s" } do %>
             <%= f.govuk_radio_button :programme_status, "", label: { text: "Any" } %>
             <% programme_statuses.each do |status| %>
-              <%= f.govuk_radio_button :programme_status, status, label: { text: t(status, scope: %i[status outcome label]) } %>
+              <%= f.govuk_radio_button :programme_status, status, label: { text: t(status, scope: %i[status programme label]) } %>
             <% end %>
           <% end %>
         <% end %>
