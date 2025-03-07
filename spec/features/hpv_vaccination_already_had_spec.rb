@@ -49,27 +49,11 @@ describe "HPV vaccination" do
   end
 
   def and_i_record_that_the_patient_wasnt_vaccinated
-    within(
-      "fieldset",
-      text:
-        "Does the child know what the vaccination is for, and are they happy to have it?"
-    ) { choose "Yes" }
+    check "know what the vaccination is for, and are happy to have it"
+    check "are feeling well"
+    check "have no allergies which would prevent vaccination"
 
-    within(
-      "fieldset",
-      text:
-        "Has the child confirmed they have not already had this vaccination?"
-    ) { choose "No" }
-
-    within("fieldset", text: "Is the child is feeling well?") { choose "Yes" }
-
-    within(
-      "fieldset",
-      text:
-        "Has the child confirmed they have no allergies which would prevent vaccination?"
-    ) { choose "Yes" }
-
-    find_all(".nhsuk-fieldset")[4].choose "No"
+    choose "No"
     click_button "Continue"
   end
 
