@@ -138,7 +138,7 @@ resource "aws_lb_listener" "app_listener_https" {
 
 }
 
-resource "aws_lb_listener_rule" "forward_to_mavis" {
+resource "aws_lb_listener_rule" "forward_to_app" {
   listener_arn = aws_lb_listener.app_listener_https.arn
   priority     = 49999
   action {
