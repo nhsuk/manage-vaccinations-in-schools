@@ -12,27 +12,29 @@
       <%= patient.given_name %> has confirmed that they:
     </h2>
 
+    <% count = patient_session.programmes.count %>
+
     <%= f.govuk_check_boxes_fieldset :pre_screening, multiple: false, legend: nil do %>
       <%= f.govuk_check_box :knows_vaccination, 1, 0, multiple: false, link_errors: true,
-                                                      label: { text: "know what the vaccination is for, and are happy to have it" } %>
+                                                      label: { text: t("pre_screening.knows_vaccination", count:) } %>
 
       <%= f.govuk_check_box :not_already_had, 1, 0, multiple: false, link_errors: true,
-                                                    label: { text: "have not already had the vaccination" } %>
+                                                    label: { text: t("pre_screening.not_already_had", count:) } %>
 
       <%= f.govuk_check_box :feeling_well, 1, 0, multiple: false, link_errors: true,
-                                                 label: { text: "are feeling well" } %>
+                                                 label: { text: t("pre_screening.feeling_well", count:) } %>
 
       <%= f.govuk_check_box :no_allergies, 1, 0, multiple: false, link_errors: true,
-                                                 label: { text: "have no allergies which would prevent vaccination" } %>
+                                                 label: { text: t("pre_screening.no_allergies", count:) } %>
 
       <% if PreScreening.ask_not_taking_medication?(programme:) %>
         <%= f.govuk_check_box :not_taking_medication, 1, 0, multiple: false, link_errors: true,
-                                                            label: { text: "are not taking any medication which prevents vaccination" } %>
+                                                            label: { text: t("pre_screening.not_taking_medication", count:) } %>
       <% end %>
 
       <% if PreScreening.ask_not_pregnant?(programme:, patient:) %>
         <%= f.govuk_check_box :not_pregnant, 1, 0, multiple: false, link_errors: true,
-                                                   label: { text: "are not pregnant" } %>
+                                                   label: { text: t("pre_screening.not_pregnant", count:) } %>
       <% end %>
     <% end %>
 

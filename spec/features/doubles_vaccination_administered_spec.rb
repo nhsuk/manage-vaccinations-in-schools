@@ -61,8 +61,8 @@ describe "MenACWY and Td/IPV vaccination" do
   end
 
   def and_i_fill_out_pre_screening_questions
-    check "know what the vaccination is for, and are happy to have it"
-    check "have not already had the vaccination"
+    check "know what these vaccinations are for, and are happy to have them"
+    check "have not already had these vaccinations"
     check "are feeling well"
     check "have no allergies which would prevent vaccination"
     check "are not taking any medication which prevents vaccination"
