@@ -26,6 +26,7 @@ class Programme < ApplicationRecord
   has_many :gillick_assessments
   has_many :immunisation_imports
   has_many :organisation_programmes
+  has_many :pre_screenings
   has_many :session_programmes
   has_many :triages
   has_many :vaccination_records, -> { kept }

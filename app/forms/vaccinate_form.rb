@@ -69,13 +69,14 @@ class VaccinateForm
   def pre_screening
     @pre_screening ||=
       PreScreening.new(
+        feeling_well:,
+        knows_vaccination:,
+        no_allergies:,
+        not_already_had:,
+        notes: pre_screening_notes,
         patient_session:,
         performed_by: current_user,
-        knows_vaccination:,
-        not_already_had:,
-        feeling_well:,
-        no_allergies:,
-        notes: pre_screening_notes
+        programme_id:
       )
   end
 
