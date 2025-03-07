@@ -5,21 +5,17 @@ describe AppSessionDetailsSummaryComponent do
 
   let(:component) { described_class.new(session, patient_sessions:) }
 
-  let(:session) { create(:session) }
+  let(:programme) { create(:programme, :hpv) }
+  let(:session) { create(:session, programmes: [programme]) }
   let(:patient_sessions) { session.patient_sessions.preload_for_status }
 
   before do
     create(:patient_session, session:)
-    create(
-      :patient_session,
-      :consent_given_triage_not_needed,
-      :in_attendance,
-      session:
-    )
+    create(:patient_session, :consent_refused, session:)
     create(:patient_session, :vaccinated, session:)
   end
 
   it { should have_text("Cohort\n3 children") }
-  it { should have_text("Ready for vaccinator\n1 child") }
-  it { should have_text("Vaccinated\n1 vaccination given") }
+  it { should have_text("Consent refused\n1 child") }
+  it { should have_text("Vaccinated\n1 vaccination given for HPV") }
 end

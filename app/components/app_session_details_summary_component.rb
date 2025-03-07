@@ -9,16 +9,12 @@ class AppSessionDetailsSummaryComponent < ViewComponent::Base
   end
 
   def call
-    govuk_summary_list(rows:)
+    govuk_summary_list(rows: [cohort_row, consent_refused_row, vaccinated_row])
   end
 
   private
 
   attr_reader :session, :patient_sessions
-
-  def rows
-    [cohort_row, ready_for_vaccinator_row, vaccinated_row]
-  end
 
   def cohort_row
     count = patient_sessions.length
@@ -35,29 +31,18 @@ class AppSessionDetailsSummaryComponent < ViewComponent::Base
     }
   end
 
-  def ready_for_vaccinator_row
+  def consent_refused_row
+    status = Patient::ConsentOutcome::REFUSED
     count =
       patient_sessions.count do
-        it
-          .patient
-          .programme_outcome
-          .status
-          .values_at(*it.programmes)
-          .none?(Patient::ProgrammeOutcome::VACCINATED) &&
-          it.register_outcome.attending?
+        it.patient.consent_outcome.status.values_at(*it.programmes).any?(status)
       end
-
     href =
-      session_record_path(
-        session,
-        search_form: {
-          session_status: PatientSession::SessionOutcome::NONE
-        }
-      )
+      session_consent_path(session, search_form: { consent_status: status })
 
     {
       key: {
-        text: "Ready for vaccinator"
+        text: "Consent refused"
       },
       value: {
         text: I18n.t("children", count:)
@@ -67,15 +52,16 @@ class AppSessionDetailsSummaryComponent < ViewComponent::Base
   end
 
   def vaccinated_row
-    count =
-      patient_sessions.count do
-        it.session_outcome.status.values.include?(
-          PatientSession::SessionOutcome::VACCINATED
-        )
+    texts =
+      session.programmes.map do |programme|
+        count =
+          patient_sessions.count { it.session_outcome.vaccinated?(programme) }
+
+        "#{pluralize(count, "vaccination")} given for #{programme.name}"
       end
 
     href =
-      session_record_path(
+      session_outcome_path(
         session,
         search_form: {
           session_status: PatientSession::SessionOutcome::VACCINATED
@@ -87,7 +73,7 @@ class AppSessionDetailsSummaryComponent < ViewComponent::Base
         text: "Vaccinated"
       },
       value: {
-        text: "#{pluralize(count, "vaccination")} given"
+        text: safe_join(texts, tag.br)
       },
       actions: [{ text: "Review", href: }]
     }
