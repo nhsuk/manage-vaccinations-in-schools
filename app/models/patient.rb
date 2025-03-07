@@ -267,6 +267,10 @@ class Patient < ApplicationRecord
     @programme_outcome ||= Patient::ProgrammeOutcome.new(self)
   end
 
+  def next_activity
+    @next_activity ||= Patient::NextActivity.new(self)
+  end
+
   def consent_given_and_safe_to_vaccinate?(programme:)
     return false if programme_outcome.vaccinated?(programme)
 
