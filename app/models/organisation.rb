@@ -27,6 +27,7 @@
 class Organisation < ApplicationRecord
   include ODSCodeConcern
 
+  audited
   has_associated_audits
 
   has_many :batches
