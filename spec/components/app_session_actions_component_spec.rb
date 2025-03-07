@@ -1,11 +1,12 @@
 # frozen_string_literal: true
 
-describe AppSessionActionsSummaryComponent do
+describe AppSessionActionsComponent do
   subject { render_inline(component) }
 
   let(:component) { described_class.new(session, patient_sessions:) }
 
-  let(:session) { create(:session) }
+  let(:programmes) { [create(:programme, :hpv)] }
+  let(:session) { create(:session, programmes:) }
   let(:patient_sessions) { session.patient_sessions.preload_for_status }
 
   before do
@@ -25,5 +26,5 @@ describe AppSessionActionsSummaryComponent do
   it { should have_text("Conflicting consent\n1 child") }
   it { should have_text("Triage needed\n1 child") }
   it { should have_text("Register attendance\n3 child") }
-  it { should have_text("Ready for vaccinator\n1 child") }
+  it { should have_text("Ready for vaccinator\n1 child for HPV") }
 end

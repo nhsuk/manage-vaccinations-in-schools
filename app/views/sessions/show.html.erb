@@ -34,9 +34,7 @@
           <%= govuk_button_link_to "Schedule sessions", edit_session_path(@session), class: "app-button--secondary" %>
         <% end %>
       <% else %>
-        <h3 class="nhsuk-heading-s nhsuk-u-margin-bottom-2">Action required</h3>
-
-        <%= render AppSessionActionsSummaryComponent.new(@session, patient_sessions: @patient_sessions) %>
+        <%= render AppSessionActionsComponent.new(@session, patient_sessions: @patient_sessions) %>
 
         <div class="app-button-group">
           <% if policy(@session).edit? %>
