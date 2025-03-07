@@ -232,7 +232,7 @@ FactoryBot.define do
             programme:,
             performed_by: evaluator.user,
             location_name: evaluator.location_name,
-            outcome: :already_had
+            outcome: :not_well
           )
         end
       end
@@ -259,7 +259,7 @@ FactoryBot.define do
             session: patient_session.session,
             programme:,
             performed_by: evaluator.user,
-            outcome: :already_had
+            outcome: :not_well
           )
         end
       end

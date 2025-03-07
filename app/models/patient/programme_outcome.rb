@@ -48,11 +48,12 @@ class Patient::ProgrammeOutcome
   end
 
   def programme_vaccinated?(programme)
-    VaccinatedCriteria.call(
-      programme,
-      patient:,
-      vaccination_records: all[programme]
-    )
+    all[programme].any?(&:already_had?) ||
+      VaccinatedCriteria.call(
+        programme,
+        patient:,
+        vaccination_records: all[programme]
+      )
   end
 
   def programme_could_not_vaccinate?(programme)

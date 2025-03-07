@@ -21,6 +21,20 @@ describe Patient::ProgrammeOutcome do
       it { should be(described_class::VACCINATED) }
     end
 
+    context "with a vaccination already had" do
+      before do
+        create(
+          :vaccination_record,
+          :not_administered,
+          :already_had,
+          patient:,
+          programme:
+        )
+      end
+
+      it { should be(described_class::VACCINATED) }
+    end
+
     context "with a vaccination not administered" do
       before do
         create(:vaccination_record, :not_administered, patient:, programme:)

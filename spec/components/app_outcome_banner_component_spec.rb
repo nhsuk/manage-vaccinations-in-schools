@@ -33,7 +33,7 @@ describe AppOutcomeBannerComponent do
 
     it { should have_css(".app-card--red") }
     it { should have_css(".nhsuk-card__heading", text: "Could not vaccinate") }
-    it { should have_text("MERTON, Alya has already had the vaccine") }
+    it { should have_text("MERTON, Alya was not well enough") }
     it { should have_text("Location\n#{location_name}") }
   end
 
@@ -44,7 +44,7 @@ describe AppOutcomeBannerComponent do
 
     it { should have_css(".app-card--red") }
     it { should have_css(".nhsuk-card__heading", text: "Could not vaccinate") }
-    it { should have_text("Reason\nMERTON, Alya has already had the vaccine") }
+    it { should have_text("Reason\nMERTON, Alya was not well enough") }
   end
 
   context "not triaged, not possible to vaccinate" do
@@ -54,6 +54,24 @@ describe AppOutcomeBannerComponent do
 
     it { should have_css(".app-card--red") }
     it { should have_css(".nhsuk-card__heading", text: "Could not vaccinate") }
+    it { should have_text("Reason\nMERTON, Alya was not well enough") }
+  end
+
+  context "already had vaccine" do
+    let(:patient_session) { create(:patient_session, session:) }
+
+    before do
+      create(
+        :vaccination_record,
+        :not_administered,
+        :already_had,
+        patient: patient_session.patient,
+        programme:
+      )
+    end
+
+    it { should have_css(".app-card--green") }
+    it { should have_css(".nhsuk-card__heading", text: "Vaccinated") }
     it { should have_text("Reason\nMERTON, Alya has already had the vaccine") }
   end
 
