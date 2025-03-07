@@ -10,6 +10,8 @@ class VaccinateForm
   attribute :not_already_had, :boolean
   attribute :feeling_well, :boolean
   attribute :no_allergies, :boolean
+  attribute :not_taking_medication, :boolean
+  attribute :not_pregnant, :boolean
   attribute :pre_screening_notes, :string
 
   attribute :administered, :boolean
@@ -23,6 +25,8 @@ class VaccinateForm
   validates :not_already_had, inclusion: { in: [true, false] }
   validates :feeling_well, inclusion: { in: [true, false] }
   validates :no_allergies, inclusion: { in: [true, false] }
+  validates :not_taking_medication, inclusion: { in: [true, false] }
+  validates :not_pregnant, inclusion: { in: [true, false] }
 
   validate :valid_administered_values
   validates :dose_sequence, presence: true
@@ -74,6 +78,8 @@ class VaccinateForm
         knows_vaccination:,
         no_allergies:,
         not_already_had:,
+        not_pregnant:,
+        not_taking_medication:,
         notes: pre_screening_notes,
         patient_session:,
         performed_by: current_user,

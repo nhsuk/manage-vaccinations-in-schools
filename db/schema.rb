@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_03_07_161252) do
+ActiveRecord::Schema[8.0].define(version: 2025_03_07_163053) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -604,6 +604,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_07_161252) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "programme_id", null: false
+    t.boolean "not_taking_medication", null: false
+    t.boolean "not_pregnant", null: false
     t.index ["patient_session_id"], name: "index_pre_screenings_on_patient_session_id"
     t.index ["performed_by_user_id"], name: "index_pre_screenings_on_performed_by_user_id"
     t.index ["programme_id"], name: "index_pre_screenings_on_programme_id"

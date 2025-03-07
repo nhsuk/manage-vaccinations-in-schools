@@ -44,6 +44,8 @@ class AppPatientPageComponent < ViewComponent::Base
       knows_vaccination: pre_screening&.knows_vaccination,
       no_allergies: pre_screening&.no_allergies,
       not_already_had: pre_screening&.not_already_had,
+      not_pregnant: pre_screening&.not_pregnant,
+      not_taking_medication: pre_screening&.not_taking_medication,
       pre_screening_notes: pre_screening&.notes || ""
     )
   end

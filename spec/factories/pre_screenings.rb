@@ -4,17 +4,19 @@
 #
 # Table name: pre_screenings
 #
-#  id                   :bigint           not null, primary key
-#  feeling_well         :boolean          not null
-#  knows_vaccination    :boolean          not null
-#  no_allergies         :boolean          not null
-#  not_already_had      :boolean          not null
-#  notes                :text             default(""), not null
-#  created_at           :datetime         not null
-#  updated_at           :datetime         not null
-#  patient_session_id   :bigint           not null
-#  performed_by_user_id :bigint           not null
-#  programme_id         :bigint           not null
+#  id                    :bigint           not null, primary key
+#  feeling_well          :boolean          not null
+#  knows_vaccination     :boolean          not null
+#  no_allergies          :boolean          not null
+#  not_already_had       :boolean          not null
+#  not_pregnant          :boolean          not null
+#  not_taking_medication :boolean          not null
+#  notes                 :text             default(""), not null
+#  created_at            :datetime         not null
+#  updated_at            :datetime         not null
+#  patient_session_id    :bigint           not null
+#  performed_by_user_id  :bigint           not null
+#  programme_id          :bigint           not null
 #
 # Indexes
 #
@@ -39,6 +41,8 @@ FactoryBot.define do
       not_already_had { true }
       feeling_well { true }
       no_allergies { true }
+      not_taking_medication { true }
+      not_pregnant { true }
       notes { "Fine to vaccinate" }
     end
 
@@ -47,6 +51,8 @@ FactoryBot.define do
       not_already_had { false }
       feeling_well { false }
       no_allergies { false }
+      not_taking_medication { false }
+      not_pregnant { false }
       notes { "Not safe to vaccinate" }
     end
   end
