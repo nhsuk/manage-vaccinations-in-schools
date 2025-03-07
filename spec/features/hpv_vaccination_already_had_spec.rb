@@ -18,7 +18,7 @@ describe "HPV vaccination" do
     and_a_success_message
 
     when_i_go_to_the_patient
-    then_i_see_that_the_status_is_could_not_vaccinate
+    then_i_see_that_the_status_is_vaccinated
 
     when_vaccination_confirmations_are_sent
     then_an_email_is_sent_saying_the_vaccination_didnt_happen
@@ -105,8 +105,8 @@ describe "HPV vaccination" do
     click_link @patient.full_name, match: :first
   end
 
-  def then_i_see_that_the_status_is_could_not_vaccinate
-    expect(page).to have_content("Could not vaccinate")
+  def then_i_see_that_the_status_is_vaccinated
+    expect(page).to have_content("Vaccinated")
     expect(page).to have_content(
       "Reason#{@patient.full_name} has already had the vaccine"
     )
