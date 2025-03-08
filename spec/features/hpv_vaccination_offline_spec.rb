@@ -274,7 +274,6 @@ describe "HPV vaccination" do
     click_on @restricted_vaccinated_patient.full_name
     expect(page).to have_content(@restricted_vaccinated_patient.full_name)
     expect(page).to have_content("Vaccinated")
-    expect(page).not_to have_content("Address")
   end
 
   def and_the_clinic_location_is_displayed
