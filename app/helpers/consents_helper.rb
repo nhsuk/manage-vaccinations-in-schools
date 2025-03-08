@@ -3,17 +3,11 @@
 module ConsentsHelper
   def consent_decision(consent)
     if consent.invalidated?
-      safe_join(
-        [
-          tag.s(Consent.human_enum_name(:response, consent.response).humanize),
-          "Invalid"
-        ],
-        tag.br
-      )
+      safe_join([tag.s(consent.human_enum_name(:response)), "Invalid"], tag.br)
     elsif consent.withdrawn?
       safe_join([tag.s("Consent given"), "Withdrawn"], tag.br)
     else
-      Consent.human_enum_name(:response, consent.response).humanize
+      consent.human_enum_name(:response)
     end
   end
 end
