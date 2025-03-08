@@ -10,6 +10,7 @@ class PatientSessionsController < ApplicationController
   layout "three_quarters"
 
   def show
+    render layout: "full"
   end
 
   def log
