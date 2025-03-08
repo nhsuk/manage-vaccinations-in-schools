@@ -12,11 +12,6 @@ class AppConsentComponent < ViewComponent::Base
 
   delegate :patient, :session, to: :patient_session
 
-  def consents
-    @consents ||=
-      patient.consent_outcome.all[programme].sort_by(&:created_at).reverse
-  end
-
   def latest_consent_request
     @latest_consent_request ||=
       patient
@@ -31,17 +26,5 @@ class AppConsentComponent < ViewComponent::Base
     patient.consent_outcome.no_response?(programme) &&
       patient.send_notifications? && session.open_for_consent? &&
       patient.parents.any?
-  end
-
-  def status_colour(consent)
-    if consent.invalidated? || consent.withdrawn?
-      "grey"
-    elsif consent.response_given?
-      "aqua-green"
-    elsif consent.response_refused?
-      "red"
-    else
-      "grey"
-    end
   end
 end
