@@ -20,26 +20,9 @@
   }
 }
 
-.app-table__cell-status {
-  &--aqua-green:first-of-type {
-    border-left: nhsuk-spacing(2) solid $color_nhsuk-aqua-green;
-    padding-left: nhsuk-spacing(3);
-  }
-
-  &--grey {
-    background-color: $color_nhsuk-grey-5;
-    color: $nhsuk-secondary-text-color;
-
-    &:first-of-type {
-      border-left: nhsuk-spacing(2) solid $color_nhsuk-grey-3;
-      padding-left: nhsuk-spacing(3);
-    }
-  }
-
-  &--red:first-of-type {
-    border-left: nhsuk-spacing(2) solid $color_nhsuk-red;
-    padding-left: nhsuk-spacing(3);
-  }
+.app-table__cell--muted {
+  background-color: $color_nhsuk-grey-5;
+  color: $nhsuk-secondary-text-color;
 }
 
 // Don't show a grey background when hovering over table rows.
