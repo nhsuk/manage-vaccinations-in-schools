@@ -21,7 +21,9 @@ class ConsentsController < ApplicationController
     if @draft_consent.save
       redirect_to draft_consent_path(Wicked::FIRST_STEP)
     else
-      render "patient_sessions/show", status: :unprocessable_entity
+      render "patient_sessions/show",
+             layout: "full",
+             status: :unprocessable_entity
     end
   end
 
