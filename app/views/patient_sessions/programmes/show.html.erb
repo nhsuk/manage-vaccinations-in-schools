@@ -1,9 +1,17 @@
 <%= render "patient_sessions/header" %>
 
-<%= render AppPatientPageComponent.new(
-      patient_session: @patient_session,
-      programme: @programme,
-      vaccinate_form: @vaccinate_form,
-      triage: @triage,
-      current_user:,
-    ) %>
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-three-quarters">
+    <%= render AppPatientPageComponent.new(
+          patient_session: @patient_session,
+          programme: @programme,
+          vaccinate_form: @vaccinate_form,
+          triage: @triage,
+          current_user:,
+        ) %>
+  </div>
+
+  <div class="nhsuk-grid-column-one-quarter">
+    <%= render AppPatientSummaryComponent.new(@patient) %>
+  </div>
+</div>
