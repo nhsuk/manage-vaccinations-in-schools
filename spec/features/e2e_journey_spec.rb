@@ -183,7 +183,7 @@ describe "End-to-end journey" do
   end
 
   def when_i_register_verbal_consent_and_triage
-    click_button "Get consent"
+    click_button "Get verbal consent"
 
     choose "Big Daddy Tests"
     click_button "Continue"
