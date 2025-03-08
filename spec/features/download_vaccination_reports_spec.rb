@@ -34,7 +34,6 @@ describe "Download vaccination reports" do
   scenario "Download in SystmOne format" do
     given_an_hpv_programme_is_underway
     and_an_administered_vaccination_record_exists
-    and_systm_one_export_is_enabled
 
     when_i_go_to_the_programme
     and_i_click_on_download_vaccination_report
@@ -47,8 +46,8 @@ describe "Download vaccination reports" do
     then_i_download_a_systm_one_file
   end
 
-  scenario "SystmOne disabled" do
-    given_an_hpv_programme_is_underway
+  scenario "Programme is not HPV" do
+    given_a_menacwy_programme_is_underway
     and_an_administered_vaccination_record_exists
 
     when_i_go_to_the_programme
@@ -81,6 +80,27 @@ describe "Download vaccination reports" do
       create(:patient_session, patient: @patient, session: @session)
   end
 
+  def given_a_menacwy_programme_is_underway
+    @organisation = create(:organisation, :with_one_nurse)
+    @programme = create(:programme, :menacwy, organisations: [@organisation])
+
+    @session =
+      create(:session, organisation: @organisation, programmes: [@programme])
+
+    @patient =
+      create(
+        :patient,
+        :triage_ready_to_vaccinate,
+        given_name: "John",
+        family_name: "Smith",
+        programmes: [@programme],
+        organisation: @organisation
+      )
+
+    @patient_session =
+      create(:patient_session, patient: @patient, session: @session)
+  end
+
   def and_an_administered_vaccination_record_exists
     vaccine = @programme.vaccines.first
 
@@ -93,10 +113,6 @@ describe "Download vaccination reports" do
       session: @session,
       batch:
     )
-  end
-
-  def and_systm_one_export_is_enabled
-    Flipper.enable(:systm_one_exporter)
   end
 
   def when_i_go_to_the_programme

@@ -9,11 +9,7 @@ class VaccinationReport
   end
 
   def self.file_formats(programme)
-    %w[careplus mavis].tap do
-      if Flipper.enabled?(:systm_one_exporter) && programme.hpv?
-        it << "systm_one"
-      end
-    end
+    %w[careplus mavis].tap { it << "systm_one" if programme.hpv? }
   end
 
   attribute :date_from, :date
