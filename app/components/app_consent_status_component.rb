@@ -9,7 +9,6 @@ class AppConsentStatusComponent < ViewComponent::Base
   end
 
   def call
-    consent_status = patient.consent_status(programme:)
     if consent_status.given?
       icon_tick "Consent given", "aqua-green"
     elsif consent_status.refused?
@@ -24,6 +23,11 @@ class AppConsentStatusComponent < ViewComponent::Base
   attr_reader :patient_session, :programme
 
   delegate :patient, to: :patient_session
+
+  def consent_status
+    @consent_status ||=
+      patient.consent_statuses.find_or_initialize_by(programme:)
+  end
 
   def icon_tick(content, color)
     template = <<-ERB
