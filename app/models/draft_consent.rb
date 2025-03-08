@@ -297,6 +297,10 @@ class DraftConsent
       .tap { _1&.patient = patient } # acts as preload
   end
 
+  def human_enum_name(attribute)
+    Consent.human_enum_name(attribute, send(attribute))
+  end
+
   private
 
   def readable_attribute_names
