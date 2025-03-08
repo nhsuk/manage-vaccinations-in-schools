@@ -23,10 +23,6 @@ class AppPatientPageComponent < ViewComponent::Base
 
   delegate :patient, :session, to: :patient_session
 
-  def display_health_questions?
-    patient.consent_outcome.latest[programme].any?(&:response_given?)
-  end
-
   def default_vaccinate_form
     pre_screening = patient_session.pre_screenings.last
 
