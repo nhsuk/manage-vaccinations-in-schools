@@ -7,37 +7,37 @@
 <%= render AppSecondaryNavigationComponent.new do |nav|
       nav.with_item(
         href: session_path(@session),
-        text: "Overview",
+        text: t("sessions.tabs.overview"),
         selected: request.path == session_path(@session),
       )
     
       nav.with_item(
         href: session_consent_path(@session),
-        text: "Consent",
+        text: t("sessions.tabs.consent"),
         selected: request.path == session_consent_path(@session),
       )
     
       nav.with_item(
         href: session_triage_path(@session),
-        text: "Triage",
+        text: t("sessions.tabs.triage"),
         selected: request.path == session_triage_path(@session),
       )
     
       nav.with_item(
         href: session_register_path(@session),
-        text: "Register",
+        text: t("sessions.tabs.register"),
         selected: request.path == session_register_path(@session),
       )
     
       nav.with_item(
         href: session_record_path(@session),
-        text: "Record vaccinations",
+        text: t("sessions.tabs.record"),
         selected: request.path == session_record_path(@session),
       )
     
       nav.with_item(
         href: session_outcome_path(@session),
-        text: "Session outcomes",
+        text: t("sessions.tabs.outcome"),
         selected: request.path == session_outcome_path(@session),
       )
     end %>

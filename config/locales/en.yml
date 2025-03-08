@@ -855,6 +855,13 @@ en:
         zero: There are no locations with no sessions scheduled.
         one: 1 location with no sessions scheduled
         other: "%{count} locations with no sessions scheduled"
+    tabs:
+      overview: Overview
+      consent: Consent
+      triage: Triage
+      register: Register
+      record: Record vaccinations
+      outcome: Session outcomes
   table:
     no_filtered_results: We couldn’t find any children that matched your filters.
     no_results: No results

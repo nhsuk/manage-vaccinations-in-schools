@@ -109,7 +109,7 @@ describe "HPV vaccination" do
   end
 
   def when_i_go_to_the_outcome_tab
-    click_on "Back to session"
+    click_on @session.location.name
     click_on "Session outcomes"
   end
 

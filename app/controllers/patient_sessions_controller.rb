@@ -5,7 +5,7 @@ class PatientSessionsController < ApplicationController
   before_action :set_programme, except: :log
   before_action :set_session
   before_action :set_patient
-  before_action :set_back_link_path
+  before_action :set_breadcrumb_item
 
   before_action :record_access_log_entry, except: :record_already_vaccinated
 
@@ -86,17 +86,17 @@ class PatientSessionsController < ApplicationController
     @patient = @patient_session.patient
   end
 
-  def set_back_link_path
-    context = params[:return_to]
+  def set_breadcrumb_item
+    return_to = params[:return_to]
+    return nil if return_to.blank?
 
-    @back_link_path =
-      if context == :session
-        session_outcome_path
-      elsif context.in?(%w[consent triage register record])
-        send(:"session_#{context}_path")
-      else
-        session_outcome_path
-      end
+    known_return_to = %w[consent triage register record outcome]
+    return unless return_to.in?(known_return_to)
+
+    @breadcrumb_item = {
+      text: t(return_to, scope: %i[sessions tabs]),
+      href: send(:"session_#{return_to}_path")
+    }
   end
 
   def record_access_log_entry
