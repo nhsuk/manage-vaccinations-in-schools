@@ -125,10 +125,10 @@ class Reports::SystmOneExporter
       patient.given_name, # Forename
       gender_code(patient.gender_code), # Gender
       patient.date_of_birth.to_fs(:uk_short),
-      patient.address_line_2, # House name
-      patient.address_line_1, # House number and road
-      patient.address_town, # Town
-      patient.address_postcode, # Postcode
+      patient.restricted? ? "" : patient.address_line_2, # House name
+      patient.restricted? ? "" : patient.address_line_1, # House number and road
+      patient.restricted? ? "" : patient.address_town, # Town
+      patient.restricted? ? "" : patient.address_postcode, # Postcode
       vaccination(vaccination_record), # Vaccination
       "", # Part
       vaccination_record.performed_at.to_date.to_fs(:uk_short), # Admin date

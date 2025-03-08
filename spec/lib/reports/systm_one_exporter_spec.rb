@@ -220,4 +220,19 @@ describe Reports::SystmOneExporter do
       it { should eq "Left anterior forearm" }
     end
   end
+
+  describe "address fields" do
+    context "patient is restricted" do
+      let(:patient) { create(:patient, :restricted) }
+
+      it "does not include address details" do
+        expect(csv_row.to_h).to include(
+          "House name" => "",
+          "House number and road" => "",
+          "Town" => "",
+          "Postcode" => ""
+        )
+      end
+    end
+  end
 end
