@@ -2,6 +2,8 @@
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-three-quarters">
+    <%= render AppPatientSessionConsentComponent.new(@patient_session, programme: @programme) %>
+
     <%= render AppPatientPageComponent.new(
           patient_session: @patient_session,
           programme: @programme,

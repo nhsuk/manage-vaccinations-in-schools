@@ -55,7 +55,7 @@ feature "Verbal consent" do
     choose "Consent refused"
     click_on "Update results"
     click_on @child.full_name
-    click_on "Get consent"
+    click_on "Get verbal consent"
 
     # contacting the same parent who refused
     choose @refusing_parent.full_name
