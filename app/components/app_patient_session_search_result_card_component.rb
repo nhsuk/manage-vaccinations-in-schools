@@ -84,12 +84,9 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
     return if context == :record
 
     if context == :register
-      status = patient_session.register_outcome.status
-
-      text = I18n.t(status, scope: %i[status register label])
-      colour = I18n.t(status, scope: %i[status register colour])
-
-      govuk_tag(text:, colour:)
+      render AppRegisterStatusTagComponent.new(
+               patient_session.register_outcome.status
+             )
     else
       outcome =
         case context
