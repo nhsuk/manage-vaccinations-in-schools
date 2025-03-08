@@ -36,14 +36,11 @@ describe AppPatientPageComponent do
     end
 
     it { should have_css(".nhsuk-card__heading", text: "Child") }
-    it { should have_css(".nhsuk-card__heading", text: "Consent") }
     it { should_not have_css(".nhsuk-card__heading", text: "Triage notes") }
 
     it { should have_content("Is it safe to vaccinate") }
 
     it { should_not have_content("ready for their HPV vaccination?") }
-
-    it { should have_css("a", text: "Assess Gillick competence") }
 
     context "user is not allowed to triage or vaccinate" do
       before { stub_authorization(allowed: false) }
@@ -64,7 +61,6 @@ describe AppPatientPageComponent do
     end
 
     it { should have_css(".nhsuk-card__heading", text: "Child") }
-    it { should have_css(".nhsuk-card__heading", text: "Consent") }
     it { should have_css(".nhsuk-card__heading", text: "Triage notes") }
 
     it { should_not have_content("Is it safe to vaccinate") }
@@ -75,54 +71,6 @@ describe AppPatientPageComponent do
       before { stub_authorization(allowed: false) }
 
       it { should_not have_content("ready for their HPV vaccination?") }
-    end
-  end
-
-  context "session in progress, patient without consent, no Gillick assessment" do
-    let(:patient_session) do
-      create(:patient_session, :session_in_progress, programmes:)
-    end
-
-    context "nurse user" do
-      before { stub_authorization(allowed: true) }
-
-      it { should have_css("a", text: "Assess Gillick competence") }
-    end
-
-    context "admin user" do
-      before { stub_authorization(allowed: false) }
-
-      it { should_not have_css("a", text: "Assess Gillick competence") }
-    end
-  end
-
-  context "session in progress, patient without consent, Gillick assessment" do
-    let(:patient_session) do
-      create(
-        :patient_session,
-        :session_in_progress,
-        :gillick_competent,
-        programmes:
-      )
-    end
-
-    context "nurse user" do
-      before { stub_authorization(allowed: true) }
-
-      it { should have_css("a", text: "Edit Gillick competence") }
-
-      it "shows the Gillick assessment" do
-        expect(rendered).to have_css(
-          ".nhsuk-card__heading",
-          text: "Gillick assessment"
-        )
-      end
-    end
-
-    context "admin user" do
-      before { stub_authorization(allowed: false) }
-
-      it { should_not have_css("a", text: "Edit Gillick competence") }
     end
   end
 

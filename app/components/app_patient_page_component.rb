@@ -23,14 +23,6 @@ class AppPatientPageComponent < ViewComponent::Base
 
   delegate :patient, :session, to: :patient_session
 
-  def display_health_questions?
-    consents.any?(&:response_given?)
-  end
-
-  def consents
-    @consents ||= ConsentGrouper.call(patient.consents, programme:)
-  end
-
   def vaccination_records
     patient
       .vaccination_records
