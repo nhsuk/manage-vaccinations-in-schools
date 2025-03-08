@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-class AppConsentComponent < ViewComponent::Base
-  def initialize(patient_session:, programme:)
+class AppConsentCardComponent < ViewComponent::Base
+  def initialize(patient_session, programme:)
     super
 
     @patient_session = patient_session
