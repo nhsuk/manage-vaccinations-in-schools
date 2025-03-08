@@ -1,9 +1,6 @@
 <% render "patient_sessions/breadcrumbs" %>
 
-<%= h1 page_title: @patient.initials do %>
-  <span class="nhsuk-caption-l"><%= patient_school(@patient) %></span>
-  <%= @patient.full_name %>
-<% end %>
+<%= render "patient_sessions/header" %>
 
 <%= render "patient_sessions/secondary_navigation" %>
 
