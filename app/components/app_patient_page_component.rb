@@ -27,15 +27,6 @@ class AppPatientPageComponent < ViewComponent::Base
     patient.consent_outcome.latest[programme].any?(&:response_given?)
   end
 
-  def display_gillick_assessment_card?
-    patient_session.gillick_assessment(programme) ||
-      gillick_assessment_can_be_recorded?
-  end
-
-  def gillick_assessment_can_be_recorded?
-    patient_session.session.today? && helpers.policy(GillickAssessment).new?
-  end
-
   def default_vaccinate_form
     pre_screening = patient_session.pre_screenings.last
 
