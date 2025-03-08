@@ -27,7 +27,7 @@
 class Batch < ApplicationRecord
   include Archivable
 
-  audited
+  audited associated_with: :vaccine
 
   belongs_to :organisation
   belongs_to :vaccine

@@ -23,7 +23,8 @@
 #
 
 class PatientSession < ApplicationRecord
-  audited
+  audited associated_with: :patient
+  has_associated_audits
 
   include PatientSessionStatusConcern
 

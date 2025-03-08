@@ -30,7 +30,7 @@
 #  fk_rails_...  (programme_id => programmes.id)
 #
 class GillickAssessment < ApplicationRecord
-  audited
+  audited associated_with: :patient_session
 
   belongs_to :patient_session
   belongs_to :programme
