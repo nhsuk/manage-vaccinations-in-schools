@@ -5,14 +5,9 @@
 <ul class="app-action-list">
   <% if (session_attendance = @patient_session.register_outcome.latest) %>
     <li class="app-action-list__item">
-      <% if session_attendance.attending %>
-        <%= govuk_tag(text: "Attending today’s session") %>
-      <% elsif session_attendance.attending == false %>
-        <%= govuk_tag(text: "Absent from today’s session", colour: "red") %>
-      <% else %>
-        <%= govuk_tag(text: "Not registered yet", colour: "blue") %>
-      <% end %>
+      <%= render AppRegisterStatusTagComponent.new(@patient_session.register_outcome.status) %>
     </li>
+
     <% if policy(session_attendance).edit? %>
       <li class="app-action-list__item">
         <%= link_to(

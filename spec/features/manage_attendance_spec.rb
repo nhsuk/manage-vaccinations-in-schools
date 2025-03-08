@@ -121,7 +121,7 @@ describe "Manage attendance" do
   end
 
   def then_the_patient_is_absent
-    expect(page).to have_content("Absent from today")
+    expect(page).to have_content("Absent from session")
   end
 
   def and_i_see_the_absent_flash
@@ -136,7 +136,7 @@ describe "Manage attendance" do
   end
 
   def then_the_patient_is_attending
-    expect(page).to have_content("Attending today")
+    expect(page).to have_content("Attending session")
   end
 
   def and_i_see_the_attending_flash
