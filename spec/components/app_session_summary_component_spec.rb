@@ -6,7 +6,14 @@ describe AppSessionSummaryComponent do
   let(:component) { described_class.new(session) }
 
   let(:programmes) { [create(:programme, :hpv)] }
-  let(:location) { create(:school, urn: 123_456, address_postcode: "SW1A 1AA") }
+  let(:location) do
+    create(
+      :school,
+      name: "Streeling University",
+      urn: 123_456,
+      address_postcode: "SW1A 1AA"
+    )
+  end
   let(:organisation) { create(:organisation, programmes:) }
   let(:session) do
     create(
@@ -17,6 +24,8 @@ describe AppSessionSummaryComponent do
       organisation:
     )
   end
+
+  it { should have_content("Streeling University") }
 
   it { should have_content("School URN") }
   it { should have_content("123456") }
