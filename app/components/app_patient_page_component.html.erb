@@ -13,20 +13,6 @@
 
 <%= render AppPatientCardComponent.new(patient) %>
 
-<%= render AppGillickAssessmentComponent.new(patient_session:, programme:) %>
-
-<%= render AppCardComponent.new do |c| %>
-  <% c.with_heading { "Consent" } %>
-  <%= render AppConsentComponent.new(patient_session:, programme:) %>
-<% end %>
-
-<% if display_health_questions? %>
-  <%= render AppHealthAnswersCardComponent.new(
-        consents,
-        heading: "All answers to health questions",
-      ) %>
-<% end %>
-
 <% if patient.triages.exists?(programme:) %>
   <%= render AppCardComponent.new do |c| %>
     <% c.with_heading { "Triage notes" } %>
