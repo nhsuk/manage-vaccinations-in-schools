@@ -31,9 +31,58 @@ describe "Download vaccination reports" do
     then_i_download_a_mavis_file
   end
 
+  scenario "Download in SystmOne format" do
+    given_an_hpv_programme_is_underway
+    and_an_administered_vaccination_record_exists
+
+    when_i_go_to_the_programme
+    and_i_click_on_download_vaccination_report
+    then_i_see_the_dates_page
+
+    when_i_enter_some_dates
+    then_i_see_the_file_format_page
+
+    when_i_choose_systm_one
+    then_i_download_a_systm_one_file
+  end
+
+  scenario "Programme is not HPV" do
+    given_a_menacwy_programme_is_underway
+    and_an_administered_vaccination_record_exists
+
+    when_i_go_to_the_programme
+    and_i_click_on_download_vaccination_report
+    then_i_see_the_dates_page
+
+    when_i_enter_some_dates
+    then_i_see_the_file_format_page
+    and_systm_one_export_is_disabled
+  end
+
   def given_an_hpv_programme_is_underway
     @organisation = create(:organisation, :with_one_nurse)
     @programme = create(:programme, :hpv, organisations: [@organisation])
+
+    @session =
+      create(:session, organisation: @organisation, programmes: [@programme])
+
+    @patient =
+      create(
+        :patient,
+        :triage_ready_to_vaccinate,
+        given_name: "John",
+        family_name: "Smith",
+        programmes: [@programme],
+        organisation: @organisation
+      )
+
+    @patient_session =
+      create(:patient_session, patient: @patient, session: @session)
+  end
+
+  def given_a_menacwy_programme_is_underway
+    @organisation = create(:organisation, :with_one_nurse)
+    @programme = create(:programme, :menacwy, organisations: [@organisation])
 
     @session =
       create(:session, organisation: @organisation, programmes: [@programme])
@@ -109,6 +158,11 @@ describe "Download vaccination reports" do
     click_on "Continue"
   end
 
+  def when_i_choose_systm_one
+    choose "SystmOne"
+    click_on "Continue"
+  end
+
   def then_i_download_a_careplus_file
     expect(page.status_code).to eq(200)
 
@@ -123,5 +177,17 @@ describe "Download vaccination reports" do
     expect(page).to have_content(
       "ORGANISATION_CODE,SCHOOL_URN,SCHOOL_NAME,CARE_SETTING,CLINIC_NAME,PERSON_FORENAME,PERSON_SURNAME"
     )
+  end
+
+  def then_i_download_a_systm_one_file
+    expect(page.status_code).to eq(200)
+
+    expect(page).to have_content(
+      "Practice code,NHS number,Surname,Middle name,Forename,Gender,Date of Birth,House name,House number and road,Town"
+    )
+  end
+
+  def and_systm_one_export_is_disabled
+    expect(page).not_to have_selector("SystmOne")
   end
 end
