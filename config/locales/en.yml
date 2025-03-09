@@ -326,14 +326,6 @@ en:
           attributes:
             delivery_site:
               blank: Choose where the injection will be given
-            knows_vaccination:
-              inclusion: Choose whether the child knows what the vaccination is for
-            not_already_had:
-              inclusion: Choose whether the child has confirmed they have not already had this vaccination
-            feeling_well:
-              inclusion: Choose whether the child is feeling well
-            no_allergies:
-              inclusion: Choose whether the child has confirmed they have no allergies which would prevent vaccination
         vaccination_report:
           attributes:
             file_format:

@@ -174,7 +174,8 @@ class AppActivityLogComponent < ViewComponent::Base
         title: "Completed pre-screening checks",
         body: pre_screening.notes,
         at: pre_screening.created_at,
-        by: pre_screening.performed_by
+        by: pre_screening.performed_by,
+        programmes: programmes_for(pre_screening)
       }
     end
   end

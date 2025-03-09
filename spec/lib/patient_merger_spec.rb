@@ -23,11 +23,11 @@ describe PatientMerger do
 
     let(:user) { create(:user) }
 
-    let(:programme) { create(:programme) }
+    let(:programme) { create(:programme, :hpv) }
     let(:session) { create(:session, programmes: [programme]) }
 
-    let!(:patient_to_keep) { create(:patient) }
-    let!(:patient_to_destroy) { create(:patient) }
+    let!(:patient_to_keep) { create(:patient, year_group: 8) }
+    let!(:patient_to_destroy) { create(:patient, year_group: 8) }
 
     let(:access_log_entry) do
       create(:access_log_entry, patient: patient_to_destroy)
