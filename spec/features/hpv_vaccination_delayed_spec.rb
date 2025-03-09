@@ -9,11 +9,14 @@ describe "HPV vaccination" do
     then_i_see_the_confirmation_page
 
     when_i_confirm_the_details
-    then_i_see_the_record_vaccinations_page
+    then_i_still_see_the_patient_in_the_record_tab
     and_a_success_message
 
     when_i_go_to_the_patient
     then_i_see_that_the_status_is_delayed
+
+    when_i_go_to_the_outcome_tab
+    then_i_see_the_patient_has_no_outcome_yet
 
     when_vaccination_confirmations_are_sent
     then_an_email_is_sent_to_the_parent_confirming_the_delay
@@ -46,8 +49,7 @@ describe "HPV vaccination" do
   end
 
   def when_i_go_to_a_patient_that_is_ready_to_vaccinate
-    visit session_triage_path(@session)
-    click_link "No triage needed"
+    visit session_record_path(@session)
     click_link @patient.full_name
   end
 
@@ -89,8 +91,9 @@ describe "HPV vaccination" do
     click_button "Confirm"
   end
 
-  def then_i_see_the_record_vaccinations_page
-    expect(page).to have_content("Record vaccinations")
+  def then_i_still_see_the_patient_in_the_record_tab
+    expect(page).to have_content("Showing 1 to 1 of 1 children")
+    expect(page).to have_content(@patient.full_name)
   end
 
   def and_a_success_message
@@ -98,14 +101,20 @@ describe "HPV vaccination" do
   end
 
   def when_i_go_to_the_patient
-    click_link @patient.full_name
+    click_link @patient.full_name, match: :first
   end
 
   def then_i_see_that_the_status_is_delayed
     expect(page).to have_content("Could not vaccinate")
-    expect(page).to have_content(
-      "#{@organisation.users.first.full_name} decided that"
-    )
+  end
+
+  def when_i_go_to_the_outcome_tab
+    click_on "Back to session"
+    click_on "Session outcomes"
+  end
+
+  def then_i_see_the_patient_has_no_outcome_yet
+    expect(page).to have_content("Status\nHPVUnwell")
   end
 
   def when_vaccination_confirmations_are_sent

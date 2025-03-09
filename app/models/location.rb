@@ -37,7 +37,8 @@ class Location < ApplicationRecord
 
   self.inheritance_column = :nil
 
-  audited
+  audited associated_with: :team
+  has_associated_audits
 
   belongs_to :team, optional: true
 

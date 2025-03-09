@@ -145,14 +145,11 @@
   <% end %>
 
   <% if @patients.present? %>
-    <%= render AppPatientTableComponent.new(@patients,
-                                            current_user:,
-                                            count: @pagy.count) %>
+    <%= render AppPatientTableComponent.new(@patients, current_user:, count: @pagy.count) %>
   <% end %>
 
   <% if @vaccination_records.present? %>
-    <%= render AppVaccinationRecordTableComponent.new(@vaccination_records,
-                                                      count: @pagy.count) %>
+    <%= render AppVaccinationRecordTableComponent.new(@vaccination_records, count: @pagy.count) %>
   <% end %>
 
   <%= govuk_pagination(pagy: @pagy) %>

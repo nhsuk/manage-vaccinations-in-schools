@@ -83,7 +83,7 @@ describe "Import class lists - Moving patients" do
   end
 
   def and_i_start_adding_children_to_the_session
-    click_on "Import class list records"
+    click_on "Import class lists"
   end
 
   def and_i_select_the_year_groups
@@ -105,7 +105,7 @@ describe "Import class lists - Moving patients" do
   alias_method :and_i_upload_a_valid_file, :when_i_upload_a_valid_file
 
   def when_i_go_to_the_upload_page
-    click_on "Import class list records"
+    click_on "Import class lists"
   end
 
   def then_i_should_see_the_import_complete_page

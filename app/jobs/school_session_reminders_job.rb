@@ -36,20 +36,21 @@ class SchoolSessionRemindersJob < ApplicationJob
   end
 
   def should_send_notification?(patient_session:)
-    return false unless patient_session.send_notifications?
+    patient = patient_session.patient
+
+    return false unless patient.send_notifications?
 
     programmes = patient_session.programmes
 
     all_vaccinated =
       programmes.all? do |programme|
-        patient_session.vaccination_administered?(programme:)
+        patient.programme_outcome.vaccinated?(programme)
       end
 
     return false if all_vaccinated
 
     programmes.any? do |programme|
-      patient_session.consent_given_triage_not_needed?(programme:) ||
-        patient_session.triaged_ready_to_vaccinate?(programme:)
+      patient.consent_given_and_safe_to_vaccinate?(programme:)
     end
   end
 end

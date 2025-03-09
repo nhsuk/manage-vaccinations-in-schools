@@ -57,10 +57,9 @@ class SessionNotification < ApplicationRecord
     parents =
       if type == :school_reminder
         patient_session.programmes.flat_map do |programme|
-          patient_session
-            .latest_consents(programme:)
-            .select(&:response_given?)
-            .filter_map(&:parent)
+          patient.consent_outcome.latest[programme].select(
+            &:response_given?
+          ).filter_map(&:parent)
         end
       else
         patient.parents.select(&:contactable?)

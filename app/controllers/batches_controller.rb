@@ -4,7 +4,7 @@ class BatchesController < ApplicationController
   include TodaysBatchConcern
 
   before_action :set_vaccine
-  before_action :set_batch, except: %i[new create make_default]
+  before_action :set_batch, except: %i[new create]
 
   def new
     @batch =
@@ -50,7 +50,7 @@ class BatchesController < ApplicationController
   end
 
   def make_default
-    self.todays_batch_id = params[:id]
+    self.todays_batch = @batch
     redirect_to vaccines_path
   end
 

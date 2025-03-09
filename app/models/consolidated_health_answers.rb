@@ -1,30 +1,15 @@
 # frozen_string_literal: true
 
 class ConsolidatedHealthAnswers
-  def initialize(consents: nil)
+  def initialize(objects = [])
     @answers = {}
 
-    add_answers_from_consents(consents) if consents.present?
+    objects.each { add_answers_from_model(it) }
   end
 
   def add_answer(responder:, question:, answer:, notes: nil)
     @answers[question] ||= []
     @answers[question] << { responder:, answer:, notes: }
-  end
-
-  def add_answers_from_consent(consent)
-    consent.health_answers.each do |health_question|
-      add_answer(
-        responder: consent.who_responded,
-        question: health_question.question,
-        answer: health_question.response.humanize.presence,
-        notes: health_question.notes.presence
-      )
-    end
-  end
-
-  def add_answers_from_consents(consents)
-    consents.each { add_answers_from_consent(_1) }
   end
 
   # Produces responses in the format:
@@ -42,6 +27,17 @@ class ConsolidatedHealthAnswers
   end
 
   private
+
+  def add_answers_from_model(model)
+    model.health_answers.each do |health_question|
+      add_answer(
+        responder: model.who_responded,
+        question: health_question.question,
+        answer: health_question.response.humanize.presence,
+        notes: health_question.notes.presence
+      )
+    end
+  end
 
   def consolidated_answers
     @answers.transform_values { |answers| consolidate_answers(answers) }

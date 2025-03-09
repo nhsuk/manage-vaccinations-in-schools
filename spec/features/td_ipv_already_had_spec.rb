@@ -57,7 +57,7 @@ describe "Td/IPV" do
   alias_method :and_i_go_to_the_session, :when_i_go_the_session
 
   def and_i_upload_the_class_list
-    click_on "Import class list records"
+    click_on "Import class lists"
 
     check "Year 9"
     click_on "Continue"
@@ -71,15 +71,22 @@ describe "Td/IPV" do
   end
 
   def then_i_see_one_patient_needing_consent
-    expect(page).to have_content("1 child without a response")
+    click_on "Consent"
+
+    choose "No response"
+    click_on "Update results"
+
+    expect(page).to have_content("Showing 1 to 1 of 1 children")
+
+    click_on @session.location.name
   end
 
   def when_i_click_on_consent
-    click_on "Check consent responses"
+    click_on "Consent"
   end
 
   def and_i_click_on_the_patient
-    click_on "Chyna Pickle"
+    click_on "PICKLE, Chyna"
   end
 
   def then_i_see_the_patient_needs_consent

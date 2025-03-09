@@ -35,8 +35,7 @@ describe "HPV vaccination" do
   end
 
   def when_i_go_to_a_patient_that_is_ready_to_vaccinate
-    visit session_triage_path(@session)
-    click_link "No triage needed"
+    visit session_record_path(@session)
     click_link @patient.full_name
   end
 

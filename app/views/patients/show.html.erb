@@ -25,7 +25,7 @@
 
 <%= render AppCardComponent.new do |c| %>
   <% c.with_heading { "Sessions" } %>
-  <%= render AppPatientSessionTableComponent.new(@patient, sessions: @sessions) %>
+  <%= render AppPatientSessionTableComponent.new(@patient_sessions) %>
 <% end %>
 
 <%= render AppCardComponent.new do |c| %>

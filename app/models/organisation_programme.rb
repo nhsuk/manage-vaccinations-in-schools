@@ -20,8 +20,6 @@
 #  fk_rails_...  (programme_id => programmes.id)
 #
 class OrganisationProgramme < ApplicationRecord
-  audited
-
   belongs_to :programme
   belongs_to :organisation
 end

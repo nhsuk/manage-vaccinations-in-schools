@@ -333,6 +333,27 @@ describe Reports::ProgrammeVaccinationsExporter do
       end
     end
 
+    context "with a restricted patient" do
+      let(:session) { create(:session, programmes:, organisation:) }
+      let(:patient) { create(:patient, :restricted, session:) }
+
+      before do
+        create(
+          :vaccination_record,
+          patient:,
+          session:,
+          programme: programmes.first,
+          performed_by: user
+        )
+      end
+
+      it "doesn't include the address or postcode" do
+        expect(rows.count).to eq(1)
+        expect(rows.first["PERSON_ADDRESS_LINE_1"]).to be_blank
+        expect(rows.first["PERSON_POSTCODE"]).to be_blank
+      end
+    end
+
     context "with a traced NHS number" do
       let(:session) { create(:session, programmes:, organisation:) }
 
@@ -425,7 +446,7 @@ describe Reports::ProgrammeVaccinationsExporter do
 
       it "includes the information" do
         expect(rows.first.to_hash).to include(
-          "GILLICK_ASSESSED_BY" => "Test Nurse",
+          "GILLICK_ASSESSED_BY" => "NURSE, Test",
           "GILLICK_ASSESSMENT_DATE" => "2024-01-01",
           "GILLICK_ASSESSMENT_NOTES" => "Assessed as Gillick competent",
           "GILLICK_NOTIFY_PARENTS" => "",
@@ -478,7 +499,7 @@ describe Reports::ProgrammeVaccinationsExporter do
 
       it "includes the information" do
         expect(rows.first.to_hash).to include(
-          "TRIAGED_BY" => "Test Nurse",
+          "TRIAGED_BY" => "NURSE, Test",
           "TRIAGE_DATE" => Date.current.strftime("%Y-%m-%d"),
           "TRIAGE_NOTES" => "Okay to vaccinate",
           "TRIAGE_STATUS" => "Ready to vaccinate"

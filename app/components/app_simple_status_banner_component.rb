@@ -30,7 +30,7 @@ class AppSimpleStatusBannerComponent < ViewComponent::Base
   delegate :patient, :session, to: :patient_session
 
   def status
-    @status ||= @patient_session.status(programme:)
+    @status ||= patient_session.status(programme:)
   end
 
   def colour
@@ -50,17 +50,27 @@ class AppSimpleStatusBannerComponent < ViewComponent::Base
       programme_name: programme.name
     }
 
-    if patient_session.consent_given_triage_needed?(programme:)
+    if patient.triage_outcome.required?(programme)
       reasons = [
-        if patient_session.consent_needs_triage?(programme:)
+        if patient.triage_outcome.consent_needs_triage?(programme:)
           I18n.t(
-            "patient_session_statuses.#{status}.banner_explanation.consent_needs_triage",
+            :consent_needs_triage,
+            scope: %i[
+              patient_session_statuses
+              consent_given_triage_needed
+              banner_explanation
+            ],
             **options
           )
         end,
-        if patient_session.vaccination_partially_administered?(programme:)
+        if patient.triage_outcome.vaccination_history_needs_triage?(programme:)
           I18n.t(
-            "patient_session_statuses.#{status}.banner_explanation.vaccination_partially_administered",
+            :vaccination_partially_administered,
+            scope: %i[
+              patient_session_statuses
+              consent_given_triage_needed
+              banner_explanation
+            ],
             **options
           )
         end
@@ -73,8 +83,7 @@ class AppSimpleStatusBannerComponent < ViewComponent::Base
   end
 
   def who_refused
-    patient_session
-      .latest_consents(programme:)
+    patient.consent_outcome.latest[programme]
       .select(&:response_refused?)
       .map(&:who_responded)
       .last
@@ -82,8 +91,8 @@ class AppSimpleStatusBannerComponent < ViewComponent::Base
 
   def nurse
     (
-      patient_session.triages(programme:) +
-        patient_session.vaccination_records(programme:)
+      patient.triage_outcome.all[programme] +
+        patient.programme_outcome.all[programme]
     ).max_by(&:updated_at)&.performed_by&.full_name
   end
 

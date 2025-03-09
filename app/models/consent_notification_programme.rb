@@ -20,8 +20,6 @@
 #  fk_rails_...  (programme_id => programmes.id)
 #
 class ConsentNotificationProgramme < ApplicationRecord
-  audited
-
   belongs_to :consent_notification
   belongs_to :programme
 end

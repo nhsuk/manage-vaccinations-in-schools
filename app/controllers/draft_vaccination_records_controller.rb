@@ -40,7 +40,7 @@ class DraftVaccinationRecordsController < ApplicationController
     when :outcome
       handle_outcome
     when :batch
-      update_default_batch_for_today
+      handle_batch
     when :confirm
       handle_confirm
     end
@@ -89,6 +89,15 @@ class DraftVaccinationRecordsController < ApplicationController
       1 if @draft_vaccination_record.administered?
   end
 
+  def handle_batch
+    if params.dig(:draft_vaccination_record, :todays_batch).present? &&
+         update_params[:batch_id].in?(
+           params[:draft_vaccination_record][:todays_batch]
+         )
+      self.todays_batch = policy_scope(Batch).find(update_params[:batch_id])
+    end
+  end
+
   def handle_confirm
     return unless @draft_vaccination_record.save
 
@@ -120,16 +129,8 @@ class DraftVaccinationRecordsController < ApplicationController
         t("vaccinations.flash.not_given")
       end
 
-    tab = @vaccination_record.administered? ? "vaccinated" : "could-not"
-
     heading_link_href =
-      session_patient_programme_path(
-        @session,
-        @patient,
-        @programme,
-        section: "vaccinations",
-        tab:
-      )
+      session_patient_programme_path(@session, @patient, @programme)
 
     flash[:success] = {
       heading:,
@@ -140,7 +141,7 @@ class DraftVaccinationRecordsController < ApplicationController
 
   def finish_wizard_path
     if @session.today?
-      session_vaccinations_path(@session, programme_type: @programme)
+      session_record_path(@session)
     else
       programme_vaccination_record_path(@programme, @vaccination_record)
     end
@@ -219,24 +220,9 @@ class DraftVaccinationRecordsController < ApplicationController
           wizard_path("confirm")
         end
       elsif current_step == @draft_vaccination_record.wizard_steps.first
-        session_patient_programme_path(
-          @session,
-          @patient,
-          @programme,
-          section: "vaccinations",
-          tab: "vaccinate"
-        )
+        session_patient_programme_path(@session, @patient, @programme)
       else
         previous_wizard_path
       end
-  end
-
-  def update_default_batch_for_today
-    if params.dig(:draft_vaccination_record, :todays_batch).present? &&
-         update_params[:batch_id].in?(
-           params[:draft_vaccination_record][:todays_batch]
-         )
-      self.todays_batch_id = update_params[:batch_id]
-    end
   end
 end

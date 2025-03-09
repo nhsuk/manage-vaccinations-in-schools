@@ -5,7 +5,7 @@ class PatientSessionsController < ApplicationController
   before_action :set_programme, except: :log
   before_action :set_session
   before_action :set_patient
-  before_action :set_section_and_tab
+  before_action :set_back_link_path
 
   before_action :record_access_log_entry, except: :record_already_vaccinated
 
@@ -86,9 +86,17 @@ class PatientSessionsController < ApplicationController
     @patient = @patient_session.patient
   end
 
-  def set_section_and_tab
-    @section = params[:section]
-    @tab = params[:tab]
+  def set_back_link_path
+    context = params[:return_to]
+
+    @back_link_path =
+      if context == :session
+        session_outcome_path
+      elsif context.in?(%w[consent triage register record])
+        send(:"session_#{context}_path")
+      else
+        session_outcome_path
+      end
   end
 
   def record_access_log_entry

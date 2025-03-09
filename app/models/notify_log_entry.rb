@@ -4,19 +4,18 @@
 #
 # Table name: notify_log_entries
 #
-#  id                      :bigint           not null, primary key
-#  delivery_status         :integer          default("sending"), not null
-#  programme_ids           :integer          default([]), not null, is an Array
-#  recipient               :string
-#  recipient_deterministic :string
-#  type                    :integer          not null
-#  created_at              :datetime         not null
-#  consent_form_id         :bigint
-#  delivery_id             :uuid
-#  parent_id               :bigint
-#  patient_id              :bigint
-#  sent_by_user_id         :bigint
-#  template_id             :uuid             not null
+#  id              :bigint           not null, primary key
+#  delivery_status :integer          default("sending"), not null
+#  programme_ids   :integer          default([]), not null, is an Array
+#  recipient       :string           not null
+#  type            :integer          not null
+#  created_at      :datetime         not null
+#  consent_form_id :bigint
+#  delivery_id     :uuid
+#  parent_id       :bigint
+#  patient_id      :bigint
+#  sent_by_user_id :bigint
+#  template_id     :uuid             not null
 #
 # Indexes
 #
@@ -37,6 +36,7 @@ class NotifyLogEntry < ApplicationRecord
   include Sendable
 
   self.inheritance_column = nil
+  self.ignored_columns = ["recipient_deterministic"]
 
   belongs_to :consent_form, optional: true
   belongs_to :patient, optional: true
@@ -52,11 +52,10 @@ class NotifyLogEntry < ApplicationRecord
          technical_failure: 4
        }
 
-  validates :recipient_deterministic, presence: true
+  validates :recipient, presence: true
   validates :template_id, presence: true
 
   encrypts :recipient, deterministic: true
-  encrypts :recipient_deterministic, deterministic: true
 
   def title
     template_name&.to_s&.humanize.presence ||

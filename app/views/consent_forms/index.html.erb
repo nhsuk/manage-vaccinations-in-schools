@@ -6,41 +6,56 @@
       <%= pluralize(@pagy.count, "unmatched consent response") %>
     </h3>
 
-    <%= govuk_table(html_attributes: { class: "nhsuk-table-responsive" }) do |table|
-          table.with_head do |head|
+    <%= govuk_table(html_attributes: { class: "nhsuk-table-responsive" }) do |table| %>
+      <%= table.with_head do |head|
             head.with_row do |row|
-              row.with_cell(text: "Response date", html_attributes: { "data-col": "date" })
-              row.with_cell(text: "Child", html_attributes: { "data-col": "child" })
-              row.with_cell(text: "Parent or guardian", html_attributes: { "data-col": "parent" })
-              row.with_cell(text: "Action", html_attributes: { "no-sort": true })
+              row.with_cell(text: "Response")
+              row.with_cell(text: "Response date")
+              row.with_cell(text: "Decision")
+              row.with_cell(text: "Actions")
             end
-          end
-        
-          table.with_body do |body|
-            @consent_forms.each do |consent_form|
-              body.with_row do |row|
-                row.with_cell(text: consent_form.recorded_at.to_date.to_fs(:long))
-                row.with_cell(text: consent_form.full_name)
-                row.with_cell(text: consent_form.parent_full_name)
-                row.with_cell do
-                  tag.ul(class: "app-action-list") do
-                    safe_join([
-                      tag.li(class: "app-action-list__item") do
-                        link_to("Match with record", consent_form_path(consent_form))
-                      end,
-                      tag.li(class: "app-action-list__item") do
-                        link_to("Create record", patient_consent_form_path(consent_form))
-                      end,
-                      tag.li(class: "app-action-list__item") do
-                        link_to("Archive", archive_consent_form_path(consent_form))
-                      end,
-                    ])
-                  end
-                end
-              end
-            end
-          end
-        end %>
+          end %>
+
+      <%= table.with_body do |body| %>
+        <% @consent_forms.each do |consent_form| %>
+          <%= body.with_row do |row| %>
+            <%= row.with_cell do %>
+              <span class="nhsuk-table-responsive__heading">Response</span>
+              <span>
+                <%= link_to consent_form.parent_relationship.label_with_parent, consent_form_path(consent_form) %>
+                <br>
+                <span class="nhsuk-u-secondary-text-color nhsuk-u-font-size-16">
+                  for <%= consent_form.full_name %>
+                </span>
+              </span>
+            <% end %>
+
+            <%= row.with_cell do %>
+              <span class="nhsuk-table-responsive__heading">Response date</span>
+              <%= consent_form.recorded_at.to_date.to_fs(:long) %>
+            <% end %>
+
+            <%= row.with_cell do %>
+              <span class="nhsuk-table-responsive__heading">Decision</span>
+              <%= consent_form.human_enum_name(:response) %>
+            <% end %>
+
+            <%= row.with_cell do %>
+              <span class="nhsuk-table-responsive__heading">Decision</span>
+              <ul class="app-action-list">
+                <li class="app-action-list__item">
+                  <%= link_to "Match", search_consent_form_path(consent_form) %>
+                </li>
+
+                <li class="app-action-list__item">
+                  <%= link_to "Archive", archive_consent_form_path(consent_form) %>
+                </li>
+              </ul>
+            <% end %>
+          <% end %>
+        <% end %>
+      <% end %>
+    <% end %>
   </div>
 
   <%= govuk_pagination(pagy: @pagy) %>

@@ -53,9 +53,12 @@ describe "Self-consent" do
       click_on "Sessions"
     end
     click_on @school.name
-    click_on "Check consent responses"
+    click_on "Consent"
 
-    expect(page).to have_content("No response ( 1 )")
+    choose "No response"
+    click_on "Update results"
+
+    expect(page).to have_content("Showing 1 to 1 of 1 children")
     expect(page).to have_content(@patient.full_name)
   end
 
@@ -198,12 +201,11 @@ describe "Self-consent" do
     # confirmation page
     click_on "Confirm"
 
-    expect(page).to have_content("Check consent responses")
-    expect(page).to have_content("Consent given ( 1 )")
+    expect(page).to have_content("Consent recorded for #{@patient.full_name}")
   end
 
   def when_the_nurse_views_the_childs_record
-    click_on @patient.full_name
+    click_on @patient.full_name, match: :first
   end
 
   def then_they_see_that_the_child_has_consent

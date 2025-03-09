@@ -25,7 +25,8 @@
 #  fk_rails_...  (organisation_id => organisations.id)
 #
 class Session < ApplicationRecord
-  audited
+  audited associated_with: :location
+  has_associated_audits
 
   belongs_to :organisation
   belongs_to :location
