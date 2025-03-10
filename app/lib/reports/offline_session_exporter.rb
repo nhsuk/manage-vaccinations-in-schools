@@ -86,7 +86,6 @@ class Reports::OfflineSessionExporter
         person_forename
         person_surname
         organisation_code
-        school_urn
         school_name
         care_setting
         person_dob
@@ -121,7 +120,7 @@ class Reports::OfflineSessionExporter
         session_id
         uuid
       ].tap do |values|
-        values.insert(6, :clinic_name) if location.generic_clinic?
+        values.insert(5, :clinic_name) if location.generic_clinic?
       end
   end
 
@@ -237,7 +236,6 @@ class Reports::OfflineSessionExporter
       vaccinated(vaccination_record:),
       allowed_values: %w[Y N]
     )
-    row[:school_urn] = location ? school_urn(location:, patient:) : "888888"
     row[:school_name] = (
       if location
         school_name(location:, patient:)
@@ -295,7 +293,6 @@ class Reports::OfflineSessionExporter
 
     row[:vaccinated] = Cell.new(allowed_values: %w[Y N])
     row[:date_of_vaccination] = Cell.new(type: :date)
-    row[:school_urn] = school_urn(location:, patient:)
     row[:school_name] = school_name(location:, patient:)
     row[:care_setting] = Cell.new(
       care_setting(location:),
