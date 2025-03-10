@@ -611,7 +611,7 @@ describe ConsentForm do
       address_town: "London",
       address_postcode: "SW1A 1AA"
     )
-    consent_form.reload
+    consent_form.reload.seed_health_questions
 
     expect(consent_form.health_answers).not_to be_empty
   end
@@ -652,7 +652,7 @@ describe ConsentForm do
       address_town: "London",
       address_postcode: "SW1A 1AA"
     )
-    consent_form.reload
+    consent_form.reload.seed_health_questions
 
     # there's only one extra question, the other questions are the same for both programmes
     expect(consent_form.health_answers.count).to eq(
@@ -679,7 +679,7 @@ describe ConsentForm do
       address_town: "London",
       address_postcode: "SW1A 1AA"
     )
-    consent_form.reload
+    consent_form.reload.seed_health_questions
 
     expect(consent_form.health_answers.count).to eq(
       programme2.vaccines.first.health_questions.count

@@ -84,12 +84,9 @@ class DevController < ApplicationController
       end
 
     consent_form =
-      FactoryBot.build(:consent_form, :draft, session:, **attributes)
+      FactoryBot.create(:consent_form, :draft, session:, **attributes)
 
-    vaccine = consent_form.programmes.first.vaccines.first
-    consent_form.health_answers = vaccine.health_questions.to_health_answers
-    consent_form.save!
-
+    consent_form.seed_health_questions
     consent_form.each_health_answer do |health_answer|
       health_answer.response = "no"
     end

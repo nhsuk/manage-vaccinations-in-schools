@@ -36,6 +36,7 @@ class HealthQuestion < ApplicationRecord
   def self.first_health_question
     question_ids, next_question_ids, follow_up_question_ids =
       pluck(:id, :next_question_id, :follow_up_question_id).transpose
+
     id_set = question_ids - next_question_ids - follow_up_question_ids
 
     raise "No first question found" if id_set.empty?
