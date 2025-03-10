@@ -54,7 +54,7 @@ describe Patient do
     describe "#search_by_name" do
       subject(:scope) { described_class.search_by_name(query) }
 
-      let(:query) { "Harry" }
+      let(:query) { "Harry Potter" }
 
       let(:patient_a) do
         # exact match comes first
@@ -66,11 +66,11 @@ describe Patient do
       end
       let(:patient_c) do
         # least similar match comes last
-        create(:patient, given_name: "Arry", family_name: "Potter")
+        create(:patient, given_name: "Arry", family_name: "Pott")
       end
       let(:patient_d) do
         # no match isn't returned
-        create(:patient, given_name: "James", family_name: "Potter")
+        create(:patient, given_name: "Ron", family_name: "Weasley")
       end
 
       it { should eq([patient_a, patient_b, patient_c]) }
