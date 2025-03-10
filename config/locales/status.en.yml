@@ -31,10 +31,10 @@ en:
         not_attending: Absent from session
         unknown: Not registered yet
       colour:
-        attending: green
+        attending: blue
         completed: green
         not_attending: red
-        unknown: blue
+        unknown: grey
     session:
       label:
         absent_from_school: Absent from school
