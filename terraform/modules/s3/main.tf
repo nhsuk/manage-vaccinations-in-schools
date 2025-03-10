@@ -17,33 +17,6 @@ resource "aws_s3_bucket_versioning" "this" {
   }
 }
 
-resource "aws_s3_bucket_policy" "block_http_access" {
-  bucket = aws_s3_bucket.this.id
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Id      = "block-http-policy"
-    Statement = [
-      {
-        Sid       = "HTTPSOnly"
-        Effect    = "Deny"
-        Principal = {
-          "AWS": "*"
-        }
-        Action    = "s3:*"
-        Resource = [
-          aws_s3_bucket.this.arn,
-          "${aws_s3_bucket.this.arn}/*",
-        ]
-        Condition = {
-          Bool = {
-            "aws:SecureTransport" = "false"
-          }
-        }
-      },
-    ]
-  })
-}
-
 resource "aws_s3_bucket_public_access_block" "s3_bucket_access" {
   bucket                  = aws_s3_bucket.this.id
   block_public_acls       = true
