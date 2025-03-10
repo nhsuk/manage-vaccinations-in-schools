@@ -463,6 +463,48 @@ class ConsentForm < ApplicationRecord
     end
   end
 
+  def seed_health_questions
+    return unless consent_given? || consent_given_one?
+
+    # If the health answers change due to the chosen vaccines changing, we
+    # want to try and keep as much as what the parents already wrote intact.
+    # We do this be saving the answers to the question title (as the IDs
+    # and ordering can change).
+
+    existing_health_answers =
+      health_answers.each_with_object({}) do |health_answer, memo|
+        memo[health_answer.question] = {
+          response: health_answer.response,
+          notes: health_answer.notes
+        }
+      end
+
+    health_answers_for_chosen_vaccines =
+      chosen_vaccines.flat_map { it.health_questions.to_health_answers }
+
+    # TODO: This doesn't work if we have follow up questions. Currently no vaccines have these.
+    deduplicated_health_answers =
+      health_answers_for_chosen_vaccines.uniq(&:question)
+
+    self.health_answers =
+      deduplicated_health_answers.each_with_index.map do |health_answer, index|
+        health_answer.id = index
+
+        health_answer.next_question =
+          (index + 1 if index < deduplicated_health_answers.count - 1)
+
+        if (
+             existing_health_answer =
+               existing_health_answers[health_answer.question]
+           )
+          health_answer.response = existing_health_answer[:response]
+          health_answer.notes = existing_health_answer[:notes]
+        end
+
+        health_answer
+      end
+  end
+
   private
 
   def via_self_consent?
@@ -551,11 +593,7 @@ class ConsentForm < ApplicationRecord
       self.reason_notes = nil
     end
 
-    if consent_given? || consent_given_one?
-      self.contact_injection = nil
-
-      seed_health_questions
-    end
+    self.contact_injection = nil if consent_given? || consent_given_one?
 
     if school_confirmed
       self.education_setting = "school"
@@ -566,26 +604,5 @@ class ConsentForm < ApplicationRecord
     elsif school
       self.education_setting = "school"
     end
-  end
-
-  def seed_health_questions
-    return unless health_answers.empty?
-
-    health_answers =
-      chosen_vaccines.flat_map { it.health_questions.to_health_answers }
-
-    # TODO: This doesn't work if we have follow up questions. Currently no vaccines have these.
-
-    deduplicated_health_answers = health_answers.uniq(&:question)
-
-    self.health_answers =
-      deduplicated_health_answers.each_with_index.map do |health_answer, index|
-        health_answer.id = index
-
-        health_answer.next_question =
-          (index + 1 if index < deduplicated_health_answers.count - 1)
-
-        health_answer
-      end
   end
 end
