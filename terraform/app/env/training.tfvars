@@ -16,7 +16,7 @@ resource_name = {
   cloudwatch_vpc_log_group = "mavis-training-FlowLogs"
 }
 rails_env             = "staging"
-rails_master_key_path = "/copilot/mavis/training/secrets/RAILS_MASTER_KEY"
+rails_master_key_path = "/copilot/mavis/secrets/STAGING_RAILS_MASTER_KEY"
 splunk_enabled        = "false"
 cis2_enabled          = "false"
 pds_enabled           = "false"
