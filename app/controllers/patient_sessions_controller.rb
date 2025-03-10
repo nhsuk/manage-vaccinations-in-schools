@@ -41,7 +41,8 @@ class PatientSessionsController < ApplicationController
       performed_ods_code: current_user.selected_organisation.ods_code
     )
 
-    redirect_to draft_vaccination_record_path("confirm")
+    next_step = @session.clinic? ? "location" : "confirm"
+    redirect_to draft_vaccination_record_path(next_step)
   end
 
   private
