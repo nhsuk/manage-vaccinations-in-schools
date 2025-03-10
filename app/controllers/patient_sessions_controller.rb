@@ -32,7 +32,7 @@ class PatientSessionsController < ApplicationController
       outcome: :already_had,
       patient: @patient,
       performed_at: Time.current,
-      performed_by_user_id: nil,
+      performed_by_user_id: current_user.id,
       programme: @programme,
       # TODO: Ideally we wouldn't set these, but other parts of the service break if we don't.
       # These are set when recording an "already had" vaccination normally, and we probably
