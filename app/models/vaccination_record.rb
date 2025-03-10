@@ -177,6 +177,34 @@ class VaccinationRecord < ApplicationRecord
     performed_at.to_date.academic_year
   end
 
+  def triage_patient_as_do_not_vaccinate!
+    return unless already_had?
+
+    # If an "already had" vaccination record is created, and the patient needs
+    # triage, we should record a "do not vaccinate" triage to make sure the
+    # patient isn't double vaccinated.
+
+    patient = Patient.includes(:triages, consents: :parent).find(patient_id)
+
+    unless patient.triage_outcome.required?(programme) ||
+             patient.triage_outcome.delay_vaccination?(programme)
+      return
+    end
+
+    triage_notes =
+      "Recorded as already vaccinated on #{Date.current.to_fs(:long)}"
+    triage_notes += ": #{notes}" if notes.present?
+
+    Triage.create!(
+      patient:,
+      programme:,
+      organisation:,
+      status: :do_not_vaccinate,
+      performed_by: performed_by_user,
+      notes: triage_notes
+    )
+  end
+
   private
 
   def requires_location_name?

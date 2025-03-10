@@ -7,8 +7,6 @@ describe "Td/IPV" do
 
     when_i_go_the_session
     then_i_see_one_patient_needing_consent
-
-    when_i_click_on_consent
     and_i_click_on_the_patient
     then_i_see_the_patient_needs_consent
 
@@ -23,8 +21,6 @@ describe "Td/IPV" do
 
     when_i_go_the_session
     then_i_see_one_patient_needing_consent
-
-    when_i_click_on_consent
     and_i_click_on_the_patient
     then_i_see_the_patient_needs_consent
 
@@ -33,8 +29,24 @@ describe "Td/IPV" do
     then_the_parent_doesnt_receive_a_consent_request
   end
 
+  scenario "record a patient needing triage as already vaccinated outside the school session" do
+    given_a_td_ipv_programme_with_a_session(clinic: false)
+    and_a_patient_is_in_the_session
+    and_the_patient_needs_triage
+
+    when_i_go_the_session
+    then_i_see_one_patient_needing_triage
+    and_i_click_on_the_patient
+    then_i_see_the_patient_needs_triage
+
+    when_i_record_the_patient_as_already_vaccinated(clinic: false)
+    and_i_click_on_triage
+    then_i_see_the_patient_should_not_be_vaccinated
+  end
+
   def given_a_td_ipv_programme_with_a_session(clinic:)
-    programmes = [create(:programme, :td_ipv)]
+    @programme = create(:programme, :td_ipv)
+    programmes = [@programme]
 
     organisation = create(:organisation, programmes:)
     @nurse = create(:nurse, organisations: [organisation])
@@ -64,6 +76,10 @@ describe "Td/IPV" do
     @patient = create(:patient, session: @session)
   end
 
+  def and_the_patient_needs_triage
+    create(:consent, :needing_triage, patient: @patient, programme: @programme)
+  end
+
   def when_i_go_the_session
     sign_in @nurse
     visit dashboard_path
@@ -79,12 +95,15 @@ describe "Td/IPV" do
     click_on "Update results"
 
     expect(page).to have_content("Showing 1 to 1 of 1 children")
-
-    click_on @session.location.name
   end
 
-  def when_i_click_on_consent
-    click_on "Consent"
+  def then_i_see_one_patient_needing_triage
+    click_on "Triage"
+
+    choose "Needs triage"
+    click_on "Update results"
+
+    expect(page).to have_content("Showing 1 to 1 of 1 children")
   end
 
   def and_i_click_on_the_patient
@@ -93,6 +112,10 @@ describe "Td/IPV" do
 
   def then_i_see_the_patient_needs_consent
     expect(page).to have_content("No response")
+  end
+
+  def then_i_see_the_patient_needs_triage
+    expect(page).to have_content("Needs triage")
   end
 
   def when_i_record_the_patient_as_already_vaccinated(clinic: false)
@@ -112,5 +135,19 @@ describe "Td/IPV" do
 
   def then_the_parent_doesnt_receive_a_consent_request
     expect(EmailDeliveryJob.deliveries).to be_empty
+  end
+
+  def and_i_click_on_triage
+    click_on "Sessions"
+    click_on "Scheduled"
+    click_on @session.location.name
+    click_on "Triage"
+  end
+
+  def then_i_see_the_patient_should_not_be_vaccinated
+    choose "Do not vaccinate"
+    click_on "Update results"
+
+    expect(page).to have_content(@patient.full_name)
   end
 end
