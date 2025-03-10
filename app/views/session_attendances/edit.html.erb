@@ -1,7 +1,7 @@
 <% content_for :before_main do %>
   <%= render AppBacklinkComponent.new(
-        session_patient_programme_path(patient_id: @patient.id, programme_type: @patient_session.programmes.first.type),
-        name: "#{@section.pluralize} page",
+        session_patient_programme_path(@session, @patient, @patient_session.programmes.first),
+        name: "patient",
       ) %>
 <% end %>
 
@@ -31,6 +31,7 @@
     <%= f.govuk_radio_button(
           :attending, "not_registered",
           label: { text: "They have not been registered yet" },
+          checked: @session_attendance.attending.nil?,
         ) %>
   <% end %>
 

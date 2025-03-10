@@ -9,104 +9,64 @@ class AppSessionSummaryComponent < ViewComponent::Base
 
   def call
     govuk_summary_list(
-      classes: %w[app-summary-list--full-width nhsuk-u-margin-bottom-4]
+      classes: %w[nhsuk-summary-list--no-border app-summary-list--full-width]
     ) do |summary_list|
-      summary_list.with_row do |row|
-        row.with_key { "Type" }
-        row.with_value { type }
-      end
-      summary_list.with_row do |row|
-        row.with_key { "Programmes" }
-        row.with_value do
-          render AppProgrammeTagsComponent.new(@session.programmes)
-        end
-      end
-      summary_list.with_row do |row|
-        row.with_key { "Session dates" }
-        row.with_value { dates }
-      end
-      summary_list.with_row do |row|
-        row.with_key { "Consent period" }
-        row.with_value { consent_period }
-      end
-      if consent_form_links
+      if (urn = location.urn).present?
         summary_list.with_row do |row|
-          row.with_key { "Consent links" }
-          row.with_value { consent_form_links }
+          row.with_key { "School URN" }
+          row.with_value { urn }
         end
       end
-      if consent_form_downloads
+
+      if location.has_address?
         summary_list.with_row do |row|
-          row.with_key { "Consent forms" }
-          row.with_value { consent_form_downloads }
+          row.with_key { "Address" }
+          row.with_value { helpers.format_address_multi_line(location) }
         end
       end
+
       summary_list.with_row do |row|
-        row.with_key { "Children" }
-        row.with_value { children }
+        row.with_key { "Consent forms" }
+        row.with_value { consent_form_links }
       end
     end
   end
 
   private
 
-  def type
-    @session.location.clinic? ? "Community clinic" : "School session"
-  end
+  attr_reader :session
 
-  def dates
-    if (dates = @session.dates).present?
-      tag.ul(class: "nhsuk-list") do
-        safe_join(dates.map { tag.li(_1.to_fs(:long)) })
-      end
-    else
-      "Not provided"
-    end
-  end
-
-  def consent_period
-    helpers.session_consent_period(@session)
-  end
+  delegate :location, to: :session
 
   def consent_form_links
-    if @session.open_for_consent?
-      tag.ul(class: "nhsuk-list") do
-        safe_join(
-          ProgrammeGrouper
-            .call(@session.programmes)
-            .map do |_group, programmes|
-              tag.li(
-                govuk_link_to(
-                  "View #{programmes.map(&:name).to_sentence} parental consent form",
-                  start_parent_interface_consent_forms_path(
-                    @session,
-                    programmes.map(&:to_param).join("-")
-                  ),
-                  new_tab: true
-                )
-              )
-            end
+    online_consent_links =
+      if session.open_for_consent?
+        ProgrammeGrouper
+          .call(session.programmes)
+          .map do |_group, programmes|
+            govuk_link_to(
+              "View the #{programmes.map(&:name).to_sentence} online consent form",
+              start_parent_interface_consent_forms_path(
+                session,
+                programmes.map(&:to_param).join("-")
+              ),
+              new_tab: true
+            )
+          end
+      else
+        []
+      end
+
+    download_consent_links =
+      session.programmes.map do
+        link_to(
+          "Download the #{it.name} consent form (PDF)",
+          consent_form_programme_path(it)
         )
       end
-    end
-  end
 
-  def consent_form_downloads
-    tag.ul(class: "nhsuk-list") do
-      safe_join(
-        @session.programmes.map do
-          tag.li(
-            link_to(
-              "Download #{it.name} consent form (PDF)",
-              consent_form_programme_path(it)
-            )
-          )
-        end
-      )
-    end
-  end
+    links = online_consent_links + download_consent_links
 
-  def children
-    "#{I18n.t("children", count: @session.patients.count)} in this session"
+    tag.ul(class: "nhsuk-list") { safe_join(links.map { tag.li(it) }) }
   end
 end

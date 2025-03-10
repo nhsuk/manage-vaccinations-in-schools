@@ -23,6 +23,9 @@
 #  fk_rails_...  (organisation_id => organisations.id)
 #
 class Team < ApplicationRecord
+  audited associated_with: :organisation
+  has_associated_audits
+
   belongs_to :organisation
 
   has_many :locations

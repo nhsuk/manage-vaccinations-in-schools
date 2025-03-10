@@ -1,0 +1,33 @@
+// Search filters and results
+.app-grid-column-filters > .nhsuk-card--feature,
+.app-grid-column-results > .nhsuk-card--feature,
+.app-grid-column-results > .nhsuk-warning-callout {
+  margin-top: nhsuk-spacing(3);
+}
+
+@include govuk-grid-row($class: "app-grid-row");
+@include govuk-grid-column(
+  filters,
+  $at: large-desktop,
+  $class: "app-grid-column"
+);
+@include govuk-grid-column(
+  results,
+  $at: large-desktop,
+  $class: "app-grid-column"
+);
+
+// Sticky column
+.app-grid-column--sticky {
+  @include mq($from: desktop) {
+    position: sticky;
+    top: 0;
+  }
+}
+
+.app-grid-column--sticky-below-secondary-navigation {
+  @include mq($from: desktop) {
+    position: sticky;
+    top: #{nhsuk-spacing(9) + nhsuk-spacing(3)};
+  }
+}

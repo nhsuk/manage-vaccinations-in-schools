@@ -92,8 +92,7 @@ class AppActivityLogComponent < ViewComponent::Base
         {
           title: "Consent #{original_response}",
           at: consent_form.recorded_at,
-          by:
-            "#{consent_form.parent_full_name} (#{consent_form.parent_relationship_label})",
+          by: consent_form.parent_relationship.label_with_parent,
           programmes: programmes_for(consent)
         }
       else
@@ -161,8 +160,7 @@ class AppActivityLogComponent < ViewComponent::Base
     notify_log_entries.map do |notify_log_entry|
       {
         title: "#{notify_log_entry.title} sent",
-        body:
-          patient.restricted? ? "" : notify_log_entry.recipient_deterministic,
+        body: patient.restricted? ? "" : notify_log_entry.recipient,
         at: notify_log_entry.created_at,
         by: notify_log_entry.sent_by,
         programmes: programmes_for(notify_log_entry)
@@ -176,7 +174,8 @@ class AppActivityLogComponent < ViewComponent::Base
         title: "Completed pre-screening checks",
         body: pre_screening.notes,
         at: pre_screening.created_at,
-        by: pre_screening.performed_by
+        by: pre_screening.performed_by,
+        programmes: programmes_for(pre_screening)
       }
     end
   end

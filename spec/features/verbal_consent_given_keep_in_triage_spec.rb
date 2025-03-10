@@ -22,7 +22,7 @@ describe "Verbal consent" do
   end
 
   def when_i_record_that_consent_was_given_but_keep_in_triage
-    visit session_consents_path(@session)
+    visit session_consent_path(@session)
     click_link @patient.full_name
     click_button "Get consent"
 
@@ -57,12 +57,11 @@ describe "Verbal consent" do
     # Confirm
     click_button "Confirm"
 
-    expect(page).to have_content("Check consent responses")
     expect(page).to have_content("Consent recorded for #{@patient.full_name}")
   end
 
   def and_the_patient_status_is_needing_triage
-    click_link @patient.full_name
+    click_link @patient.full_name, match: :first
     expect(page).to have_content("Needs triage")
     expect(page).to have_content("Some notes.")
   end

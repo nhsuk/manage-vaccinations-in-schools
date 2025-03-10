@@ -18,7 +18,8 @@ describe "Parental consent create patient" do
     when_the_nurse_checks_the_unmatched_consent_responses
     then_they_see_the_consent_form
 
-    when_the_nurse_clicks_create_record
+    when_the_nurse_clicks_on_the_consent_form
+    and_the_nurse_clicks_on_create_record
     then_they_see_the_new_patient_page
 
     when_the_nurse_submits_the_new_patient
@@ -44,7 +45,8 @@ describe "Parental consent create patient" do
     when_the_nurse_checks_the_unmatched_consent_responses
     then_they_see_the_consent_form
 
-    when_the_nurse_clicks_create_record
+    when_the_nurse_clicks_on_the_consent_form
+    and_the_nurse_clicks_on_create_record
     then_they_see_the_new_patient_page
 
     when_the_nurse_submits_the_new_patient
@@ -133,7 +135,7 @@ describe "Parental consent create patient" do
 
   def then_i_see_the_consent_confirmation_page
     expect(page).to have_content(
-      "#{@child.full_name} is due to get the HPV vaccination at school"
+      "#{@child.full_name(context: :parents)} is due to get the HPV vaccination at school"
     )
   end
 
@@ -151,12 +153,16 @@ describe "Parental consent create patient" do
 
   def then_they_see_the_consent_form
     expect(page).to have_content(@child.full_name)
-    expect(page).to have_link("Match with record")
-    expect(page).to have_link("Create record")
+    expect(page).to have_link("Match")
+    expect(page).to have_link("Archive")
   end
 
-  def when_the_nurse_clicks_create_record
-    click_link "Create record"
+  def when_the_nurse_clicks_on_the_consent_form
+    click_link "Jane #{@child.family_name}"
+  end
+
+  def and_the_nurse_clicks_on_create_record
+    click_link "Create new record"
   end
 
   def then_they_see_the_new_patient_page
@@ -190,8 +196,8 @@ describe "Parental consent create patient" do
       click_on "Sessions"
     end
     click_link "Pilot School"
-    click_on "Triage health questions"
-    click_on "No triage needed"
+
+    click_on "Session outcomes"
   end
 
   def then_the_patient_should_be_ready_to_vaccinate

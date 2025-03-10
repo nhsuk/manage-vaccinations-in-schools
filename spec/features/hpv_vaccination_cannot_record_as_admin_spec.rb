@@ -25,12 +25,13 @@ describe "HPV vaccination" do
   end
 
   def when_i_go_to_a_patient_that_is_ready_to_vaccinate
-    visit session_triage_path(@session)
-    click_link "No triage needed"
+    visit session_register_path(@session)
+    choose "Not registered yet"
+    click_on "Update results"
     click_link @patient.full_name
   end
 
   def then_i_cannot_record_that_the_patient_has_been_vaccinated
-    expect(page).not_to have_content("ready to vaccinate in this session?")
+    expect(page).not_to have_content("ready for their HPV vaccination?")
   end
 end

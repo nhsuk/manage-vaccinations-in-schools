@@ -4,7 +4,6 @@ class SessionAttendancesController < ApplicationController
   before_action :set_patient_session
   before_action :set_session
   before_action :set_patient
-  before_action :set_section_and_tab
   before_action :set_session_date
   before_action :set_session_attendance
 
@@ -66,11 +65,6 @@ class SessionAttendancesController < ApplicationController
 
   def set_patient
     @patient = @patient_session.patient
-  end
-
-  def set_section_and_tab
-    @section = params[:section]
-    @tab = params[:tab]
   end
 
   def set_session_date

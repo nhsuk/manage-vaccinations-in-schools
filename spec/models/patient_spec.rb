@@ -51,6 +51,32 @@
 
 describe Patient do
   describe "scopes" do
+    describe "#search_by_name" do
+      subject(:scope) { described_class.search_by_name(query) }
+
+      let(:query) { "Harry" }
+
+      let(:patient_a) do
+        # exact match comes first
+        create(:patient, given_name: "Harry", family_name: "Potter")
+      end
+      let(:patient_b) do
+        # similar match comes next
+        create(:patient, given_name: "Hari", family_name: "Potter")
+      end
+      let(:patient_c) do
+        # least similar match comes last
+        create(:patient, given_name: "Arry", family_name: "Potter")
+      end
+      let(:patient_d) do
+        # no match isn't returned
+        create(:patient, given_name: "James", family_name: "Potter")
+      end
+
+      it { should eq([patient_a, patient_b, patient_c]) }
+      it { should_not include(patient_d) }
+    end
+
     describe "#order_by_name" do
       subject(:scope) { described_class.order_by_name }
 

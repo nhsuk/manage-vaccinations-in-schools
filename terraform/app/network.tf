@@ -52,6 +52,15 @@ resource "aws_subnet" "nat_subnet_a" {
   }
 }
 
+resource "aws_subnet" "nat_subnet_b" {
+  vpc_id            = aws_vpc.application_vpc.id
+  cidr_block        = "10.0.5.0/24"
+  availability_zone = "eu-west-2b"
+  tags = {
+    Name = "nat-subnet-${var.environment}-b"
+  }
+}
+
 resource "aws_internet_gateway" "internet_gateway" {
   vpc_id = aws_vpc.application_vpc.id
   tags = {
@@ -68,26 +77,31 @@ resource "aws_route_table" "public_route_table" {
   }
 }
 
-resource "aws_route_table" "private_route_table" {
+resource "aws_route_table" "private_route_table_a" {
   vpc_id = aws_vpc.application_vpc.id
   tags = {
-    Name = "private-rt-${var.environment}"
+    Name = "private-rt-${var.environment}-a"
+  }
+}
+
+resource "aws_route_table" "private_route_table_b" {
+  vpc_id = aws_vpc.application_vpc.id
+  tags = {
+    Name = "private-rt-${var.environment}-b"
   }
 }
 
 
-resource "aws_route" "private_to_nat" {
-  count                  = var.enable_firewall ? 0 : 1
-  route_table_id         = aws_route_table.private_route_table.id
+resource "aws_route" "private_to_nat_a" {
+  route_table_id         = aws_route_table.private_route_table_a.id
   destination_cidr_block = "0.0.0.0/0"
-  nat_gateway_id         = aws_nat_gateway.nat_gateway.id
+  nat_gateway_id         = aws_nat_gateway.nat_gateway_a.id
 }
 
-resource "aws_route" "private_to_firewall" {
-  count                  = var.enable_firewall ? 1 : 0
-  route_table_id         = aws_route_table.private_route_table.id
+resource "aws_route" "private_to_nat_b" {
+  route_table_id         = aws_route_table.private_route_table_b.id
   destination_cidr_block = "0.0.0.0/0"
-  vpc_endpoint_id        = module.firewall[0].firewall_endpoint_id
+  nat_gateway_id         = aws_nat_gateway.nat_gateway_b.id
 }
 
 resource "aws_route" "igw_route" {
@@ -108,12 +122,12 @@ resource "aws_route_table_association" "public_b" {
 
 resource "aws_route_table_association" "private_a" {
   subnet_id      = aws_subnet.private_subnet_a.id
-  route_table_id = aws_route_table.private_route_table.id
+  route_table_id = aws_route_table.private_route_table_a.id
 }
 
 resource "aws_route_table_association" "private_b" {
   subnet_id      = aws_subnet.private_subnet_b.id
-  route_table_id = aws_route_table.private_route_table.id
+  route_table_id = aws_route_table.private_route_table_b.id
 }
 
 resource "aws_route_table_association" "nat_subnet_a" {
@@ -121,29 +135,33 @@ resource "aws_route_table_association" "nat_subnet_a" {
   route_table_id = aws_route_table.public_route_table.id
 }
 
-################################# NAT/Firewall #################################
+resource "aws_route_table_association" "nat_subnet_b" {
+  subnet_id      = aws_subnet.nat_subnet_b.id
+  route_table_id = aws_route_table.public_route_table.id
+}
 
-resource "aws_eip" "nat_ip" {
+################################# NAT Gateway #################################
+
+resource "aws_eip" "nat_ip_a" {
   domain     = "vpc"
   depends_on = [aws_internet_gateway.internet_gateway]
 }
 
-resource "aws_nat_gateway" "nat_gateway" {
+resource "aws_eip" "nat_ip_b" {
+  domain     = "vpc"
+  depends_on = [aws_internet_gateway.internet_gateway]
+}
+
+resource "aws_nat_gateway" "nat_gateway_a" {
   subnet_id         = aws_subnet.nat_subnet_a.id
-  allocation_id     = aws_eip.nat_ip.id
+  allocation_id     = aws_eip.nat_ip_a.id
   connectivity_type = "public"
   depends_on        = [aws_internet_gateway.internet_gateway]
 }
 
-module "firewall" {
-  count                  = var.enable_firewall ? 1 : 0
-  source                 = "./modules/firewall"
-  vpc_id                 = aws_vpc.application_vpc.id
-  firewall_subnet_cidr   = var.firewall_subnet_cidr
-  retain_logs            = local.is_production
-  environment            = var.environment
-  nat_gateway_id         = aws_nat_gateway.nat_gateway.id
-  private_route_table_id = aws_route_table.private_route_table.id
-  log_retention_days     = var.firewall_log_retention_days
-  ecs_security_group_id  = aws_security_group.ecs_service_sg.id
+resource "aws_nat_gateway" "nat_gateway_b" {
+  subnet_id         = aws_subnet.nat_subnet_b.id
+  allocation_id     = aws_eip.nat_ip_b.id
+  connectivity_type = "public"
+  depends_on        = [aws_internet_gateway.internet_gateway]
 }

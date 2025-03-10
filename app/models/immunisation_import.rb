@@ -43,7 +43,6 @@ class ImmunisationImport < ApplicationRecord
   def required_headers
     %w[
       ORGANISATION_CODE
-      SCHOOL_URN
       SCHOOL_NAME
       NHS_NUMBER
       PERSON_FORENAME

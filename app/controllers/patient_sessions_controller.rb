@@ -5,7 +5,7 @@ class PatientSessionsController < ApplicationController
   before_action :set_programme, except: :log
   before_action :set_session
   before_action :set_patient
-  before_action :set_section_and_tab
+  before_action :set_breadcrumb_item
 
   before_action :record_access_log_entry, except: :record_already_vaccinated
 
@@ -41,7 +41,8 @@ class PatientSessionsController < ApplicationController
       performed_ods_code: current_user.selected_organisation.ods_code
     )
 
-    redirect_to draft_vaccination_record_path("confirm")
+    next_step = @session.clinic? ? "location" : "confirm"
+    redirect_to draft_vaccination_record_path(next_step)
   end
 
   private
@@ -86,9 +87,17 @@ class PatientSessionsController < ApplicationController
     @patient = @patient_session.patient
   end
 
-  def set_section_and_tab
-    @section = params[:section]
-    @tab = params[:tab]
+  def set_breadcrumb_item
+    return_to = params[:return_to]
+    return nil if return_to.blank?
+
+    known_return_to = %w[consent triage register record outcome]
+    return unless return_to.in?(known_return_to)
+
+    @breadcrumb_item = {
+      text: t(return_to, scope: %i[sessions tabs]),
+      href: send(:"session_#{return_to}_path")
+    }
   end
 
   def record_access_log_entry

@@ -181,7 +181,7 @@ describe "Immunisation imports duplicates" do
   end
 
   def when_i_review_the_first_duplicate_record
-    click_on "Review Caden Attwater"
+    click_on "Review ATTWATER, Caden"
   end
 
   def then_i_should_see_the_first_duplicate_record
@@ -222,7 +222,7 @@ describe "Immunisation imports duplicates" do
   end
 
   def when_i_review_the_second_duplicate_record
-    click_on "Review Joanna Hamilton"
+    click_on "Review HAMILTON, Joanna"
   end
 
   def and_the_duplicate_record_should_be_persisted

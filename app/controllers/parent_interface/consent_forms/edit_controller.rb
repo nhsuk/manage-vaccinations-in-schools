@@ -46,6 +46,8 @@ module ParentInterface
              @consent_form.parent_phone.present?
           jump_to("contact-method", skip_to_confirm: true)
         end
+      elsif current_step == :consent
+        @consent_form.seed_health_questions
       end
 
       set_steps # The wizard_steps can change after certain attrs change

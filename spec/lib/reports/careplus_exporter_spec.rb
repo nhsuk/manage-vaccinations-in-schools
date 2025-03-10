@@ -189,4 +189,32 @@ describe Reports::CareplusExporter do
       expect(data_rows.first).to be_nil
     end
   end
+
+  context "with a restricted patient" do
+    it "doesn't include the address line 1" do
+      patient_session =
+        create(
+          :patient_session,
+          :consent_given_triage_not_needed,
+          programmes:,
+          session:
+        )
+      create(
+        :vaccination_record,
+        programme: programmes.first,
+        patient: patient_session.patient,
+        session: patient_session.session,
+        performed_at: 2.weeks.ago
+      )
+
+      patient_session.patient.update!(restricted_at: Time.current)
+
+      address_index = headers.index("Address Line 1")
+      row = data_rows.first
+
+      expect(row[0]).to eq(patient_session.patient.nhs_number)
+      expect(row).not_to be_nil
+      expect(row[address_index]).to be_blank
+    end
+  end
 end

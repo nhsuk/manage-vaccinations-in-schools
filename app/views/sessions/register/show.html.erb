@@ -1,0 +1,32 @@
+<% content_for :before_main do %>
+  <%= render AppBreadcrumbComponent.new(items: [
+                                          { text: t("dashboard.index.title"), href: dashboard_path },
+                                          { text: t("sessions.index.title"), href: sessions_path },
+                                          { text: @session.location.name, href: session_path(@session) },
+                                        ]) %>
+<% end %>
+
+<%= render "sessions/header" %>
+
+<% if @session.today? %>
+  <div class="app-grid-row">
+    <div class="app-grid-column-filters">
+      <%= render AppSearchComponent.new(
+            form: @form,
+            url: session_register_path(@session),
+            register_statuses: @statuses,
+            year_groups: @session.year_groups,
+          ) %>
+    </div>
+
+    <div class="app-grid-column-results">
+      <%= render AppSearchResultsComponent.new(@pagy) do %>
+        <% @patient_sessions.each do |patient_session| %>
+          <%= render AppPatientSessionSearchResultCardComponent.new(patient_session, context: :register) %>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+<% else %>
+  <p class="nhsuk-body">You can register attendance when a session is in progress.</p>
+<% end %>

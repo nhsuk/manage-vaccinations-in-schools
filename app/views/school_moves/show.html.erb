@@ -1,15 +1,13 @@
 <% content_for :before_main do %>
-  <%= render AppBreadcrumbComponent.new(
-        items: [
-          { text: "Home", href: dashboard_path },
-          { text: t("school_moves.index.title"), href: school_moves_path },
-        ],
-      ) %>
+  <%= render AppBreadcrumbComponent.new(items: [
+                                          { text: t("dashboard.index.title"), href: dashboard_path },
+                                          { text: t("school_moves.index.title"), href: school_moves_path },
+                                        ]) %>
 <% end %>
 
 <% page_title = "Review school move" %>
 <%= h1 page_title: do %>
-  <span class="nhsuk-caption-l nhsuk-u-margin-top-2">
+  <span class="nhsuk-caption-l">
     <%= @patient.full_name %>
   </span>
   <%= page_title %>
@@ -19,14 +17,14 @@
   <div class="nhsuk-grid-column-one-half">
     <%= render AppCardComponent.new(colour: "blue") do |card| %>
       <% card.with_heading { "#{@school_move.human_enum_name(:source)} record" } %>
-      <%= render AppPatientSummaryComponent.new(@patient_with_changes) %>
+      <%= render AppChildSummaryComponent.new(@patient_with_changes) %>
     <% end %>
   </div>
 
   <div class="nhsuk-grid-column-one-half">
     <%= render AppCardComponent.new(colour: "blue") do |card| %>
       <% card.with_heading { "Child record" } %>
-      <%= render AppPatientSummaryComponent.new(@patient) %>
+      <%= render AppChildSummaryComponent.new(@patient) %>
     <% end %>
   </div>
 </div>

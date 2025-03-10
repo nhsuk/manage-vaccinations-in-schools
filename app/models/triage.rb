@@ -34,7 +34,7 @@ class Triage < ApplicationRecord
 
   self.table_name = "triage"
 
-  audited
+  audited associated_with: :patient
 
   belongs_to :patient
   belongs_to :programme

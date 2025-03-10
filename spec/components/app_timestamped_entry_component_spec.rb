@@ -33,6 +33,6 @@ describe AppTimestampedEntryComponent do
       )
     end
 
-    it { should have_link("Test User", href: "mailto:test@example.com") }
+    it { should have_link("USER, Test", href: "mailto:test@example.com") }
   end
 end

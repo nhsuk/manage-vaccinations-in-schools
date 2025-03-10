@@ -2,7 +2,7 @@
   <%= render AppBacklinkComponent.new(@back_link_path) %>
 <% end %>
 
-<% page_title = "Vaccine" %>
+<% page_title = "Which vaccine did you use for the #{@programme.name} vaccination?" %>
 <% content_for :page_title, page_title %>
 
 <%= form_with model: @draft_vaccination_record, url: wizard_path, method: :put do |f| %>

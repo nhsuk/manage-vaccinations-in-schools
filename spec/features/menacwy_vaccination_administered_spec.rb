@@ -3,9 +3,6 @@
 describe "MenACWY vaccination" do
   around { |example| travel_to(Time.zone.local(2024, 2, 1)) { example.run } }
 
-  before { Flipper.enable(:vaccinate_doubles) }
-  after { Flipper.disable(:vaccinate_doubles) }
-
   scenario "Administered" do
     given_i_am_signed_in
 
@@ -46,7 +43,7 @@ describe "MenACWY vaccination" do
     then_i_see_the_confirmation_page
 
     when_i_confirm_the_details
-    then_i_see_the_record_vaccinations_page
+    then_i_no_longer_see_the_patient_in_the_record_tab
     and_a_success_message
 
     when_i_go_back
@@ -95,20 +92,20 @@ describe "MenACWY vaccination" do
   end
 
   def when_i_go_to_a_patient_that_is_ready_to_vaccinate
-    visit session_triage_path(@session)
-    click_link "No triage needed"
+    visit session_record_path(@session)
     click_link @patient.full_name
   end
 
   def and_i_record_that_the_patient_has_been_vaccinated
     # pre-screening
-    find_all(".nhsuk-fieldset")[0].choose "Yes"
-    find_all(".nhsuk-fieldset")[1].choose "Yes"
-    find_all(".nhsuk-fieldset")[2].choose "Yes"
-    find_all(".nhsuk-fieldset")[3].choose "Yes"
+    check "know what the vaccination is for, and are happy to have it"
+    check "have not already had the vaccination"
+    check "are feeling well"
+    check "have no allergies which would prevent vaccination"
+    check "are not taking any medication which prevents vaccination"
 
     # vaccination
-    find_all(".nhsuk-fieldset")[4].choose "Yes"
+    choose "Yes"
     choose "Left arm (upper position)"
     click_button "Continue"
   end
@@ -177,8 +174,8 @@ describe "MenACWY vaccination" do
     click_button "Confirm"
   end
 
-  def then_i_see_the_record_vaccinations_page
-    expect(page).to have_content("Record vaccinations")
+  def then_i_no_longer_see_the_patient_in_the_record_tab
+    expect(page).to have_content("No children matching search criteria found")
   end
 
   def and_a_success_message
@@ -196,7 +193,7 @@ describe "MenACWY vaccination" do
   end
 
   def when_i_go_to_the_patient
-    click_link @patient.full_name
+    click_link @patient.full_name, match: :first
   end
 
   def then_i_see_that_the_status_is_vaccinated

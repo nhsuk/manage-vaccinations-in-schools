@@ -1,12 +1,11 @@
 <%= content_for :page_title, "#{@programme.name} – #{t("patients.index.title")}" %>
 
 <% content_for :before_main do %>
-  <%= render AppBreadcrumbComponent.new(
-        items: [
-          { text: t("programmes.index.title"), href: programmes_path },
-          { text: @programme.name, href: programme_path(@programme) },
-        ],
-      ) %>
+  <%= render AppBreadcrumbComponent.new(items: [
+                                          { text: t("dashboard.index.title"), href: dashboard_path },
+                                          { text: t("programmes.index.title"), href: programmes_path },
+                                          { text: @programme.name, href: programme_path(@programme) },
+                                        ]) %>
 <% end %>
 
 <h1 class="nhsuk-heading-l"><%= @programme.name %></h1>
@@ -17,15 +16,23 @@
                          new_cohort_import_path,
                          class: "app-button--secondary" %>
 
-<%= render AppSessionPatientTableComponent.new(
-      caption: t("children", count: @pagy.count),
-      columns: %i[name dob year_group status],
-      params:,
-      patient_sessions: @patient_sessions,
-      programme: @programme,
-      section: :patients,
-    ) %>
+<div class="app-grid-row">
+  <div class="app-grid-column-filters">
+    <%= render AppSearchComponent.new(
+          form: @form,
+          url: patients_programme_path(@programme),
+          programme_statuses: @statuses,
+          year_groups: @programme.year_groups,
+        ) %>
+  </div>
 
-<div class="nhsuk-u-margin-top-6">
-  <%= govuk_pagination(pagy: @pagy) %>
+  <div class="app-grid-column-results">
+    <%= render AppSearchResultsComponent.new(@pagy) do %>
+      <% @patients.each do |patient| %>
+        <%= render AppPatientSearchResultCardComponent.new(
+              patient, link_to: patient_path(patient), programme: @programme, show_year_group: true,
+            ) %>
+      <% end %>
+    <% end %>
+  </div>
 </div>

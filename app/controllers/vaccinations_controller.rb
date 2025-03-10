@@ -1,62 +1,16 @@
 # frozen_string_literal: true
 
-require "pagy/extras/array"
-
 class VaccinationsController < ApplicationController
-  include Pagy::Backend
-
   include TodaysBatchConcern
   include VaccinationMailerConcern
-  include PatientTabsConcern
-  include PatientSortingConcern
 
   before_action :set_session
-  before_action :set_patient, only: :create
-  before_action :set_patient_session, only: :create
-  before_action :set_programme, only: :create
-  before_action :set_section_and_tab, only: :create
-
-  before_action :set_batches, only: %i[index create batch update_batch]
-  before_action :set_todays_batch, only: %i[index create batch]
+  before_action :set_patient
+  before_action :set_patient_session
+  before_action :set_programme
+  before_action :set_todays_batch
 
   after_action :verify_authorized
-
-  def index
-    authorize VaccinationRecord
-
-    @programme =
-      @session.programmes.find_by(type: params[:programme_type]) ||
-        @session.programmes.first
-
-    all_patient_sessions =
-      @session
-        .patient_sessions
-        .preload_for_status
-        .eager_load(:patient)
-        .merge(Patient.in_programme(@programme))
-        .order_by_name
-
-    grouped_patient_sessions =
-      group_patient_sessions_by_state(
-        all_patient_sessions,
-        @programme,
-        section: :vaccinations
-      )
-
-    @current_tab = TAB_PATHS[:vaccinations][params[:tab]]
-    @tab_counts = count_patient_sessions(grouped_patient_sessions)
-    patient_sessions = grouped_patient_sessions.fetch(@current_tab, [])
-
-    sort_and_filter_patients!(patient_sessions, programme: @programme)
-    @pagy, @patient_sessions = pagy_array(patient_sessions)
-
-    session[:current_section] = "vaccinations"
-
-    respond_to do |format|
-      format.html { render layout: "full" }
-      format.json { render json: @patient_outcomes.map(&:first).index_by(&:id) }
-    end
-  end
 
   def create
     authorize VaccinationRecord
@@ -94,29 +48,6 @@ class VaccinationsController < ApplicationController
     end
   end
 
-  def batch
-    authorize Batch, :index?
-  end
-
-  def update_batch
-    @todays_batch = @batches.find_by(params.fetch(:batch).permit(:id))
-
-    authorize @todays_batch, :update?
-
-    if @todays_batch
-      self.todays_batch_id = @todays_batch.id
-
-      flash[:success] = {
-        heading: "The default batch for this session has been updated"
-      }
-      redirect_to session_vaccinations_path(@session)
-    else
-      @todays_batch = Batch.new
-      @todays_batch.errors.add(:id, "Select a default batch for this session")
-      render :batch, status: :unprocessable_entity
-    end
-  end
-
   private
 
   def vaccinate_form_params
@@ -130,6 +61,8 @@ class VaccinationsController < ApplicationController
         knows_vaccination
         no_allergies
         not_already_had
+        not_pregnant
+        not_taking_medication
         pre_screening_notes
         programme_id
         vaccine_id
@@ -157,6 +90,7 @@ class VaccinationsController < ApplicationController
         .patient_sessions
         .includes(
           :gillick_assessments,
+          :session_attendances,
           :organisation,
           patient: {
             parent_relationships: :parent
@@ -167,27 +101,24 @@ class VaccinationsController < ApplicationController
   end
 
   def set_programme
-    @programme =
-      @patient_session.programmes.find { it.type == params[:programme_type] }
+    if @patient_session.present?
+      @programme =
+        @patient_session.programmes.find { it.type == params[:programme_type] }
 
-    raise ActiveRecord::RecordNotFound if @programme.nil?
+      raise ActiveRecord::RecordNotFound if @programme.nil?
+    else
+      @programme =
+        @session.programmes.find_by(type: params[:programme_type]) ||
+          @session.programmes.first
+    end
   end
 
-  def set_section_and_tab
-    @section = params[:section]
-    @tab = params[:tab]
-  end
-
-  def set_batches
-    @batches =
+  def set_todays_batch
+    @todays_batch =
       policy_scope(Batch)
         .where(vaccine: @session.vaccines)
         .not_archived
         .not_expired
-        .order_by_name_and_expiration
-  end
-
-  def set_todays_batch
-    @todays_batch = @batches.find_by(id: todays_batch_id)
+        .find_by(id: todays_batch_id(programme: @programme))
   end
 end

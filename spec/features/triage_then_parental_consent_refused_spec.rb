@@ -43,7 +43,11 @@ describe "Triage" do
 
   def when_i_go_to_the_patient_that_needs_triage
     sign_in @organisation.users.first
-    visit session_triage_tab_path(@session, tab: "needed")
+
+    visit session_triage_path(@session)
+    choose "Needs triage"
+    click_on "Update results"
+
     click_link @patient.full_name
   end
 
@@ -53,7 +57,7 @@ describe "Triage" do
   end
 
   def then_i_see_the_patient_is_ready
-    click_on @patient.full_name
+    click_on @patient.full_name, match: :first
     expect(page).to have_content("Safe to vaccinate")
   end
 
@@ -113,7 +117,8 @@ describe "Triage" do
 
   def then_i_see_the_confirmation_page
     expect(page).to have_content(
-      "You’ve told us that you do not want #{@patient.full_name} to get the HPV vaccination at school"
+      "You’ve told us that you do not want #{@patient.full_name(context: :parents)} " \
+        "to get the HPV vaccination at school"
     )
   end
 
@@ -122,7 +127,10 @@ describe "Triage" do
   end
 
   def and_i_go_to_the_patient_with_conflicting_consent
-    visit session_consents_tab_path(@session, tab: "conflicts")
+    visit session_consent_path(@session)
+    choose "Conflicting consent"
+    click_on "Update results"
+
     click_on @patient.full_name
   end
 

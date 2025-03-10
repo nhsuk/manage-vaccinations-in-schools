@@ -42,13 +42,7 @@ feature "Verbal consent" do
   end
 
   def when_i_record_the_consent_given_for_that_child_from_the_same_parent
-    patient_session =
-      PatientSession.includes(patient: { consents: :parent }).find_by(
-        session: @session,
-        patient: @child
-      )
-    @refusing_parent =
-      patient_session.consents(programme: @programme).first.parent
+    @refusing_parent = @child.consent_outcome.all[@programme].first.parent
 
     visit "/dashboard"
     click_on "Programmes", match: :first
@@ -57,8 +51,9 @@ feature "Verbal consent" do
       click_on "Sessions"
     end
     click_on "Pilot School"
-    click_on "Check consent responses"
-    click_on "Consent refused"
+    click_on "Consent"
+    choose "Consent refused"
+    click_on "Update results"
     click_on @child.full_name
     click_on "Get consent"
 
@@ -89,7 +84,6 @@ feature "Verbal consent" do
 
     click_button "Confirm"
 
-    expect(page).to have_content("Check consent responses")
     expect(page).to have_alert(
       "Success",
       text: "Consent recorded for #{@child.full_name}"
@@ -105,7 +99,9 @@ feature "Verbal consent" do
   end
 
   def and_the_child_is_shown_as_having_consent_given
-    click_on "Consent given"
+    choose "Consent given"
+    click_on "Update results"
+
     expect(page).to have_content(@child.full_name)
 
     click_on @child.full_name

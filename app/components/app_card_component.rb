@@ -28,14 +28,24 @@ class AppCardComponent < ViewComponent::Base
   renders_one :heading
   renders_one :description
 
-  def initialize(colour: nil, link_to: nil, secondary: false, data: false)
+  def initialize(
+    colour: nil,
+    link_to: nil,
+    secondary: false,
+    data: false,
+    patient: false,
+    filters: false
+  )
     super
 
     @link_to = link_to
     @colour = colour
     @secondary = secondary
     @data = data
-    @feature = colour.present? && !data
+    @patient = patient
+    @filters = filters
+
+    @feature = (colour.present? && !data) || filters
   end
 
   private
@@ -48,7 +58,9 @@ class AppCardComponent < ViewComponent::Base
       ("app-card--#{@colour}" if @colour.present?),
       ("nhsuk-card--clickable" if @link_to.present?),
       ("nhsuk-card--secondary" if @secondary),
-      ("app-card--data" if @data)
+      ("app-card--data" if @data),
+      ("app-card--patient" if @patient),
+      ("app-filters" if @filters)
     ].compact.join(" ")
   end
 
@@ -64,7 +76,7 @@ class AppCardComponent < ViewComponent::Base
   def heading_size
     if @data
       "xs"
-    elsif @secondary
+    elsif @feature || @secondary || @patient
       "s"
     else
       "m"

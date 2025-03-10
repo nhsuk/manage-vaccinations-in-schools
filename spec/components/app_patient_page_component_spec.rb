@@ -21,8 +21,6 @@ describe AppPatientPageComponent do
     described_class.new(
       patient_session:,
       programme: programmes.first,
-      section: "triage",
-      tab: "needed",
       triage: nil
     )
   end
@@ -43,7 +41,7 @@ describe AppPatientPageComponent do
 
     it { should have_content("Is it safe to vaccinate") }
 
-    it { should_not have_content("ready to vaccinate in this session?") }
+    it { should_not have_content("ready for their HPV vaccination?") }
 
     it { should have_css("a", text: "Assess Gillick competence") }
 
@@ -71,12 +69,12 @@ describe AppPatientPageComponent do
 
     it { should_not have_content("Is it safe to vaccinate") }
 
-    it { should have_content("ready to vaccinate in this session?") }
+    it { should have_content("ready for their HPV vaccination?") }
 
     context "user is not allowed to triage or vaccinate" do
       before { stub_authorization(allowed: false) }
 
-      it { should_not have_content("ready to vaccinate in this session?") }
+      it { should_not have_content("ready for their HPV vaccination?") }
     end
   end
 

@@ -1,19 +1,16 @@
 # frozen_string_literal: true
 
 class AppVaccinateFormComponent < ViewComponent::Base
-  def initialize(patient_session:, programme:, vaccinate_form:, section:, tab:)
+  def initialize(patient_session:, programme:, vaccinate_form:)
     super
 
     @patient_session = patient_session
     @programme = programme
     @vaccinate_form = vaccinate_form
-    @section = section
-    @tab = tab
   end
 
   def render?
-    patient_session.next_step(programme:) == :vaccinate &&
-      (patient_session.todays_attendance&.attending? || false)
+    patient_session.next_step(programme:) == :vaccinate
   end
 
   private
@@ -23,13 +20,7 @@ class AppVaccinateFormComponent < ViewComponent::Base
   delegate :patient, :session, to: :patient_session
 
   def url
-    session_patient_programme_vaccinations_path(
-      session,
-      patient,
-      programme,
-      section: @section,
-      tab: @tab
-    )
+    session_patient_programme_vaccinations_path(session, patient, programme)
   end
 
   # TODO: this code will need to be revisited in future as it only really
@@ -46,7 +37,7 @@ class AppVaccinateFormComponent < ViewComponent::Base
   end
 
   def dose_sequence
-    1
+    programme.vaccinated_dose_sequence == 1 ? 1 : nil
   end
 
   def common_delivery_sites_options

@@ -21,7 +21,13 @@ describe AppActivityLogComponent do
   let(:location) { create(:school, name: "Hogwarts") }
   let(:session) { create(:session, programmes:, location:) }
   let(:patient) do
-    create(:patient, school: location, given_name: "Sarah", family_name: "Doe")
+    create(
+      :patient,
+      school: location,
+      given_name: "Sarah",
+      family_name: "Doe",
+      year_group: 8
+    )
   end
 
   let(:mum) { create(:parent, full_name: "Jane Doe") }
@@ -143,7 +149,7 @@ describe AppActivityLogComponent do
                      title: "Vaccinated with Gardasil 9",
                      date: "31 May 2024 at 12:00pm",
                      notes: "Some notes",
-                     by: "Nurse Joy",
+                     by: "JOY, Nurse",
                      programme: "HPV"
 
     include_examples "card",
@@ -155,14 +161,14 @@ describe AppActivityLogComponent do
     include_examples "card",
                      title: "Triaged decision: Safe to vaccinate",
                      date: "30 May 2024 at 2:30pm",
-                     by: "Nurse Joy",
+                     by: "JOY, Nurse",
                      programme: "HPV"
 
     include_examples "card",
                      title: "Triaged decision: Keep in triage",
                      date: "30 May 2024 at 2:00pm",
                      notes: "Some notes",
-                     by: "Nurse Joy",
+                     by: "JOY, Nurse",
                      programme: "HPV"
 
     include_examples "card",
@@ -173,7 +179,7 @@ describe AppActivityLogComponent do
     include_examples "card",
                      title: "Consent given by Jane Doe (Mum)",
                      date: "30 May 2024 at 12:00pm",
-                     by: "Nurse Joy",
+                     by: "JOY, Nurse",
                      programme: "HPV"
 
     include_examples "card",
@@ -184,7 +190,7 @@ describe AppActivityLogComponent do
                      title: "Consent school request hpv sent",
                      date: "10 May 2024 at 12:00am",
                      notes: "test@example.com",
-                     by: "Nurse Joy",
+                     by: "JOY, Nurse",
                      programme: "HPV"
   end
 
@@ -207,7 +213,7 @@ describe AppActivityLogComponent do
                      title: "Vaccination not given: Unwell",
                      date: "31 May 2024 at 1:00pm",
                      notes: "Some notes.",
-                     by: "Nurse Joy",
+                     by: "JOY, Nurse",
                      programme: "HPV"
   end
 
@@ -228,7 +234,7 @@ describe AppActivityLogComponent do
     include_examples "card",
                      title: "Vaccinated with Gardasil 9",
                      date: "31 May 2024 at 1:00pm",
-                     by: "Nurse Joy",
+                     by: "JOY, Nurse",
                      programme: "HPV"
 
     include_examples "card",
@@ -251,7 +257,7 @@ describe AppActivityLogComponent do
 
     include_examples "card",
                      title:
-                       "Consent given by Sarah Doe (Child (Gillick competent))",
+                       "Consent given by DOE, Sarah (Child (Gillick competent))",
                      date: "30 May 2024 at 12:00pm",
                      programme: "HPV"
   end
@@ -290,7 +296,7 @@ describe AppActivityLogComponent do
                      title:
                        "Consent response manually matched with child record",
                      date: "30 May 2024 at 1:00pm",
-                     by: "Nurse Joy"
+                     by: "JOY, Nurse"
   end
 
   describe "withdrawn consent" do
@@ -370,7 +376,7 @@ describe AppActivityLogComponent do
                      title: "Completed Gillick assessment as Gillick competent",
                      notes: "First notes",
                      date: "1 June 2024 at 12:00pm",
-                     by: "Nurse Joy",
+                     by: "JOY, Nurse",
                      programme: "Td/IPV"
 
     include_examples "card",
@@ -378,7 +384,7 @@ describe AppActivityLogComponent do
                        "Updated Gillick assessment as not Gillick competent",
                      notes: "Second notes",
                      date: "1 June 2024 at 1:00pm",
-                     by: "Nurse Joy",
+                     by: "JOY, Nurse",
                      programme: "Td/IPV"
   end
 
@@ -400,6 +406,7 @@ describe AppActivityLogComponent do
                      title: "Completed pre-screening checks",
                      notes: "Some notes",
                      date: "1 June 2024 at 12:00pm",
-                     by: "Nurse Joy"
+                     by: "JOY, Nurse",
+                     programme: "HPV"
   end
 end

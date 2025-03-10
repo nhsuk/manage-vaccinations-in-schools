@@ -53,13 +53,15 @@ describe "Parental consent" do
       click_on "Sessions"
     end
     click_on "Pilot School"
-    click_on "Check consent responses"
+    click_on "Consent"
   end
 
   def then_there_should_be_no_consent_for_my_child
     expect(page).to have_content("No response")
 
-    click_on "No response"
+    choose "No response"
+    click_on "Update results"
+
     expect(page).to have_content(@child.full_name)
   end
 
@@ -120,7 +122,9 @@ describe "Parental consent" do
 
   def then_i_can_check_my_answers
     expect(page).to have_content("Check and confirm")
-    expect(page).to have_content("Child’s name#{@child.full_name}")
+    expect(page).to have_content(
+      "Child’s name#{@child.full_name(context: :parents)}"
+    )
   end
 
   def when_i_submit_the_consent_form
@@ -147,12 +151,13 @@ describe "Parental consent" do
       click_on "Sessions"
     end
     click_on "Pilot School"
-    click_on "Check consent responses"
+    click_on "Consent"
   end
 
   def then_they_see_that_the_child_has_consent
     expect(page).to have_content("Consent given")
-    click_on "Consent given"
+    choose "Consent given"
+    click_on "Update results"
     expect(page).to have_content(@child.full_name)
   end
 
@@ -181,14 +186,13 @@ describe "Parental consent" do
     expect(page).not_to have_content(
       "Consent response manually matched with child record"
     )
-
-    click_on "Back to consents page"
   end
 
   def when_they_check_triage
-    click_link "Pilot School"
-    click_on "Triage health questions"
-    click_on "No triage needed"
+    click_on @session.location.name
+    click_on "Session outcomes"
+    choose "No outcome yet"
+    click_on "Update results"
   end
 
   def then_the_patient_should_be_ready_to_vaccinate

@@ -23,6 +23,8 @@
 #  fk_rails_...  (session_date_id => session_dates.id)
 #
 class SessionAttendance < ApplicationRecord
+  audited associated_with: :patient_session
+
   belongs_to :patient_session
   belongs_to :session_date
 

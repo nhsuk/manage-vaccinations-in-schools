@@ -56,7 +56,6 @@ describe Reports::OfflineSessionExporter do
             PERSON_FORENAME
             PERSON_SURNAME
             ORGANISATION_CODE
-            SCHOOL_URN
             SCHOOL_NAME
             CARE_SETTING
             PERSON_DOB
@@ -137,7 +136,6 @@ describe Reports::OfflineSessionExporter do
               "PROGRAMME" => "HPV",
               "REASON_NOT_VACCINATED" => "",
               "SCHOOL_NAME" => location.name,
-              "SCHOOL_URN" => location.urn,
               "SESSION_ID" => session.id,
               "TIME_OF_VACCINATION" => "",
               "TRIAGED_BY" => nil,
@@ -213,7 +211,6 @@ describe Reports::OfflineSessionExporter do
               "PROGRAMME" => "HPV",
               "REASON_NOT_VACCINATED" => "",
               "SCHOOL_NAME" => location.name,
-              "SCHOOL_URN" => location.urn,
               "SESSION_ID" => session.id,
               "TIME_OF_VACCINATION" => "12:05:20",
               "TRIAGED_BY" => nil,
@@ -301,7 +298,6 @@ describe Reports::OfflineSessionExporter do
               "PROGRAMME" => "HPV",
               "REASON_NOT_VACCINATED" => "",
               "SCHOOL_NAME" => "Waterloo Road",
-              "SCHOOL_URN" => "888888",
               "SESSION_ID" => nil,
               "TIME_OF_VACCINATION" => "12:05:20",
               "TRIAGED_BY" => nil,
@@ -366,7 +362,6 @@ describe Reports::OfflineSessionExporter do
               "PROGRAMME" => "HPV",
               "REASON_NOT_VACCINATED" => "unwell",
               "SCHOOL_NAME" => location.name,
-              "SCHOOL_URN" => location.urn,
               "SESSION_ID" => session.id,
               "TIME_OF_VACCINATION" => "12:05:20",
               "TRIAGED_BY" => nil,
@@ -495,7 +490,6 @@ describe Reports::OfflineSessionExporter do
             PERSON_FORENAME
             PERSON_SURNAME
             ORGANISATION_CODE
-            SCHOOL_URN
             SCHOOL_NAME
             CARE_SETTING
             CLINIC_NAME
@@ -573,7 +567,6 @@ describe Reports::OfflineSessionExporter do
               "PROGRAMME" => "HPV",
               "REASON_NOT_VACCINATED" => "",
               "SCHOOL_NAME" => "",
-              "SCHOOL_URN" => "888888",
               "SESSION_ID" => session.id,
               "TIME_OF_VACCINATION" => "",
               "TRIAGED_BY" => nil,
@@ -650,7 +643,6 @@ describe Reports::OfflineSessionExporter do
               "PROGRAMME" => "HPV",
               "REASON_NOT_VACCINATED" => "",
               "SCHOOL_NAME" => "Waterloo Road",
-              "SCHOOL_URN" => "123456",
               "SESSION_ID" => session.id,
               "TIME_OF_VACCINATION" => "12:05:20",
               "TRIAGED_BY" => nil,

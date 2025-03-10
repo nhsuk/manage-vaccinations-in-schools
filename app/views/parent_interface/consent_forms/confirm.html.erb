@@ -1,8 +1,5 @@
 <% content_for :before_main do %>
-  <%= render AppBacklinkComponent.new(
-        parent_interface_consent_form_edit_path(@consent_form, :consent),
-        name: "edit consent page",
-      ) %>
+  <%= render AppBacklinkComponent.new(@back_link_path, name: "edit consent page") %>
 <% end %>
 
 <% change_link = Proc.new do |attr, params = {}|
@@ -142,7 +139,7 @@
   <%= govuk_summary_list do |summary_list|
         summary_list.with_row do |row|
           row.with_key { "Child’s name" }
-          row.with_value { @consent_form.full_name }
+          row.with_value { @consent_form.full_name(context: :parents) }
           row.with_action(text: "Change",
                           href: change_link[:name],
                           visually_hidden_text: "child’s name")
@@ -151,7 +148,7 @@
         if @consent_form.use_preferred_name
           summary_list.with_row do |row|
             row.with_key { "Also known as" }
-            row.with_value { @consent_form.preferred_full_name }
+            row.with_value { @consent_form.preferred_full_name(context: :parents) }
             row.with_action(text: "Change",
                             href: change_link[:name],
                             visually_hidden_text: "common name")
@@ -213,7 +210,7 @@
       
         summary_list.with_row do |row|
           row.with_key { "Relationship" }
-          row.with_value { @consent_form.parent_relationship_label }
+          row.with_value { @consent_form.parent_relationship.label }
           row.with_action(text: "Change",
                           href: change_link[:parent],
                           visually_hidden_text: "your relationship")
@@ -239,7 +236,7 @@
           if @consent_form.parent_contact_method_type.present?
             summary_list.with_row do |row|
               row.with_key { "Phone contact method" }
-              row.with_value { @consent_form.parent_contact_method_description }
+              row.with_value { @consent_form.parent.contact_method_description }
               row.with_action(text: "Change",
                               href: change_link[:contact_method],
                               visually_hidden_text: "your phone contact method")

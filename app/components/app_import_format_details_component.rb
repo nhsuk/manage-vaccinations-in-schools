@@ -272,9 +272,7 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
     [
       {
         name: "DOSE_SEQUENCE",
-        notes:
-          "Required if #{tag.code("VACCINATED")} is #{tag.i("Y")}, " \
-            "must be a number or #{special_values_sentence}"
+        notes: "Optional, must be a number or #{special_values_sentence}"
       }
     ]
   end
