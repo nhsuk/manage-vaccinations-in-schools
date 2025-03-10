@@ -32,7 +32,15 @@ describe VaccinatedCriteria do
 
       context "with an already had vaccination record" do
         let(:vaccination_records) do
-          [create(:vaccination_record, :not_administered, :already_had, patient:, programme:)]
+          [
+            create(
+              :vaccination_record,
+              :not_administered,
+              :already_had,
+              patient:,
+              programme:
+            )
+          ]
         end
 
         it { should be(true) }
@@ -62,7 +70,15 @@ describe VaccinatedCriteria do
 
       context "with an already had vaccination record" do
         let(:vaccination_records) do
-          [create(:vaccination_record, :not_administered, :already_had, patient:, programme:)]
+          [
+            create(
+              :vaccination_record,
+              :not_administered,
+              :already_had,
+              patient:,
+              programme:
+            )
+          ]
         end
 
         it { should be(true) }
@@ -124,7 +140,15 @@ describe VaccinatedCriteria do
 
       context "with an already had vaccination record" do
         let(:vaccination_records) do
-          [create(:vaccination_record, :not_administered, :already_had, patient:, programme:)]
+          [
+            create(
+              :vaccination_record,
+              :not_administered,
+              :already_had,
+              patient:,
+              programme:
+            )
+          ]
         end
 
         it { should be(true) }
@@ -210,9 +234,50 @@ describe VaccinatedCriteria do
         it { should be(false) }
       end
 
+      context "with an unknown dose administered vaccination record" do
+        let(:vaccination_records) do
+          [
+            create(
+              :vaccination_record,
+              :administered,
+              dose_sequence: nil,
+              patient:,
+              programme:
+            )
+          ]
+        end
+
+        it { should be(false) }
+      end
+
+      context "with an unknown dose administered vaccination record recorded in a session" do
+        let(:vaccination_records) do
+          [
+            create(
+              :vaccination_record,
+              :administered,
+              dose_sequence: nil,
+              patient:,
+              programme:,
+              session: create(:session, programmes: [programme])
+            )
+          ]
+        end
+
+        it { should be(true) }
+      end
+
       context "with an already had vaccination record" do
         let(:vaccination_records) do
-          [create(:vaccination_record, :not_administered, :already_had, patient:, programme:)]
+          [
+            create(
+              :vaccination_record,
+              :not_administered,
+              :already_had,
+              patient:,
+              programme:
+            )
+          ]
         end
 
         it { should be(true) }
