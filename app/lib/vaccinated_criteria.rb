@@ -12,6 +12,8 @@ class VaccinatedCriteria
       raise "Vaccination records provided for different programme."
     end
 
+    return true if vaccination_records.any?(&:already_had?)
+
     if programme.menacwy?
       vaccination_records.any? do
         it.administered? && patient.age(now: it.performed_at) >= 10

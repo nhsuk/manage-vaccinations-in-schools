@@ -29,6 +29,14 @@ describe VaccinatedCriteria do
 
         it { should be(true) }
       end
+
+      context "with an already had vaccination record" do
+        let(:vaccination_records) do
+          [create(:vaccination_record, :not_administered, :already_had, patient:, programme:)]
+        end
+
+        it { should be(true) }
+      end
     end
 
     context "with an HPV programme" do
@@ -47,6 +55,14 @@ describe VaccinatedCriteria do
       context "with an administered vaccination record" do
         let(:vaccination_records) do
           [create(:vaccination_record, :administered, patient:, programme:)]
+        end
+
+        it { should be(true) }
+      end
+
+      context "with an already had vaccination record" do
+        let(:vaccination_records) do
+          [create(:vaccination_record, :not_administered, :already_had, patient:, programme:)]
         end
 
         it { should be(true) }
@@ -104,6 +120,14 @@ describe VaccinatedCriteria do
         end
 
         it { should be(false) }
+      end
+
+      context "with an already had vaccination record" do
+        let(:vaccination_records) do
+          [create(:vaccination_record, :not_administered, :already_had, patient:, programme:)]
+        end
+
+        it { should be(true) }
       end
     end
 
@@ -184,6 +208,14 @@ describe VaccinatedCriteria do
         end
 
         it { should be(false) }
+      end
+
+      context "with an already had vaccination record" do
+        let(:vaccination_records) do
+          [create(:vaccination_record, :not_administered, :already_had, patient:, programme:)]
+        end
+
+        it { should be(true) }
       end
     end
   end
