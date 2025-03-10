@@ -205,6 +205,7 @@ describe "HPV vaccination" do
 
   def and_i_see_the_vaccination_details
     expect(page).to have_content("Vaccination details").once
+    expect(page).to have_content("Dose numberFirst")
   end
 
   def when_i_go_to_the_register_tab
