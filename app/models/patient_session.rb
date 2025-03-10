@@ -136,8 +136,11 @@ class PatientSession < ApplicationRecord
     programmes_to_check = programme ? [programme] : programmes
 
     programmes_to_check.any? do
-      session_outcome.latest[it].nil? ||
-        session_outcome.latest[it].retryable_reason?
+      patient.consent_given_and_safe_to_vaccinate?(programme: it) &&
+        (
+          session_outcome.latest[it].nil? ||
+            session_outcome.latest[it].retryable_reason?
+        )
     end
   end
 end
