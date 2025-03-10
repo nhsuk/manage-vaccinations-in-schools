@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe AppConsentComponent do
+describe AppConsentCardComponent do
   subject(:rendered) { render_inline(component) }
 
   let(:component) do
