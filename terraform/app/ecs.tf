@@ -88,7 +88,7 @@ resource "aws_ecs_task_definition" "task_definition" {
   task_role_arn            = aws_iam_role.ecs_task_role.arn
   container_definitions = jsonencode([
     {
-      name = local.container_name
+      name      = local.container_name
       image     = "${var.account_id}.dkr.ecr.eu-west-2.amazonaws.com/${var.docker_image}@${var.image_digest}"
       essential = true
       portMappings = [

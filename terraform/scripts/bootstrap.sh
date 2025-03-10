@@ -96,11 +96,17 @@ db_secret_arn = null
 resource_name = {
   dbsubnet_group     = "mavis-$ENV-rds-subnet"
   db_cluster         = "mavis-$ENV-rds-cluster"
+  db_instance        = "mavis-$ENV-rds-instance"
   rds_security_group = "mavis-$ENV-rds-sg"
   loadbalancer       = "mavis-$ENV-alb"
-  lb_security_group = "mavis-$ENV-alb-sg"
+  lb_security_group  = "mavis-$ENV-alb-sg"
   cloudwatch_vpc_log_group = "mavis-$ENV-FlowLogs"
 }
+http_hosts = {
+  MAVIS__HOST                        = "$ENV.mavistesting.com"
+  MAVIS__GIVE_OR_REFUSE_CONSENT_HOST = "$ENV.mavistesting.com"
+}
+
 EOF
 }
 

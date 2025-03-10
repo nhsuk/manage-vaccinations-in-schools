@@ -62,12 +62,12 @@ resource "aws_lb" "app_lb" {
   internal           = false
   load_balancer_type = "application"
   access_logs {
-    bucket = "nhse-mavis-logs-${var.environment}"
-    prefix = "lb-access-logs"
+    bucket  = "nhse-mavis-logs-${var.environment}"
+    prefix  = "lb-access-logs"
     enabled = true
   }
-  security_groups    = [aws_security_group.lb_service_sg.id]
-  subnets            = [aws_subnet.public_subnet_a.id, aws_subnet.public_subnet_b.id]
+  security_groups = [aws_security_group.lb_service_sg.id]
+  subnets         = [aws_subnet.public_subnet_a.id, aws_subnet.public_subnet_b.id]
 }
 
 resource "aws_lb_target_group" "blue" {
@@ -106,18 +106,22 @@ resource "aws_lb_target_group" "green" {
   }
 }
 
+resource "aws_lb_target_group" "dump" {
+  name        = "dump-${var.environment}"
+  port        = 80
+  protocol    = "HTTP"
+  target_type = "ip"
+  vpc_id      = aws_vpc.application_vpc.id
+}
+
 resource "aws_lb_listener" "app_listener_http" {
   load_balancer_arn = aws_lb.app_lb.arn
   port              = "80"
   protocol          = "HTTP"
 
   default_action {
-    type = "redirect"
-    redirect {
-      port        = "443"
-      protocol    = "HTTPS"
-      status_code = "HTTP_301"
-    }
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.dump.arn
   }
 }
 
@@ -129,21 +133,62 @@ resource "aws_lb_listener" "app_listener_https" {
 
   default_action {
     type             = "forward"
+    target_group_arn = aws_lb_target_group.dump.arn
+  }
+
+}
+
+resource "aws_lb_listener_rule" "forward_to_app" {
+  listener_arn = aws_lb_listener.app_listener_https.arn
+  priority     = 49999
+  action {
+    type             = "forward"
     target_group_arn = aws_lb_target_group.blue.arn
+  }
+  condition {
+    path_pattern {
+      values = ["/*"]
+    }
+  }
+  condition {
+    host_header {
+      values = local.host_headers
+    }
   }
 
   lifecycle {
-    ignore_changes = [
-      default_action
-    ]
+    ignore_changes = [action]
+  }
+}
+
+resource "aws_lb_listener_rule" "redirect_to_https" {
+  listener_arn = aws_lb_listener.app_listener_http.arn
+  priority     = 49999
+  action {
+    type = "redirect"
+    redirect {
+      port        = "443"
+      protocol    = "HTTPS"
+      status_code = "HTTP_301"
+    }
+  }
+  condition {
+    path_pattern {
+      values = ["/*"]
+    }
+  }
+  condition {
+    host_header {
+      values = local.host_headers
+    }
   }
 }
 
 module "dns_route53" {
-  count              = var.dns_certificate_arn == null ? 1 : 0
-  source             = "./modules/dns"
-  dns_name           = aws_lb.app_lb.dns_name
-  zone_id            = aws_lb.app_lb.zone_id
-  domain_name        = var.domain_name
-  domain_name_prefix = var.environment
+  count        = var.dns_certificate_arn == null ? 1 : 0
+  source       = "./modules/dns"
+  dns_name     = aws_lb.app_lb.dns_name
+  zone_id      = aws_lb.app_lb.zone_id
+  zone_name    = var.zone_name
+  domain_names = tolist(toset(values(var.http_hosts)))
 }
