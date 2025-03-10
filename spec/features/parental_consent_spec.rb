@@ -186,13 +186,10 @@ describe "Parental consent" do
     expect(page).not_to have_content(
       "Consent response manually matched with child record"
     )
-
-    click_link "Back to session"
   end
 
   def when_they_check_triage
-    click_link "Pilot School"
-
+    click_on @session.location.name
     click_on "Session outcomes"
     choose "No outcome yet"
     click_on "Update results"

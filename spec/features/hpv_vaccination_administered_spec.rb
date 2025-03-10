@@ -208,8 +208,8 @@ describe "HPV vaccination" do
   end
 
   def when_i_go_to_the_register_tab
-    click_on "Back to session"
-    click_on "Register"
+    click_link @session.location.name
+    click_link "Register"
   end
 
   def and_i_filter_by_completed_session

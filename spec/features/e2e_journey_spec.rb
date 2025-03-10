@@ -216,7 +216,6 @@ describe "End-to-end journey" do
   end
 
   def when_i_click_on_the_register_attendance_section
-    click_link "Back to session"
     click_link "Pilot School"
     click_link "Register"
   end

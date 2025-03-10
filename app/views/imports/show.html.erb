@@ -1,9 +1,8 @@
 <% content_for :before_main do %>
-  <%= render AppBreadcrumbComponent.new(
-        items: [
-          { text: t("imports.index.title"), href: imports_path },
-        ],
-      ) %>
+  <%= render AppBreadcrumbComponent.new(items: [
+                                          { text: t("dashboard.index.title"), href: dashboard_path },
+                                          { text: t("imports.index.title"), href: imports_path },
+                                        ]) %>
 <% end %>
 
 <%= h1 "Import (#{import.created_at.to_fs(:long)})" %>
