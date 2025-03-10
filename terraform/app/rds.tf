@@ -63,6 +63,10 @@ resource "aws_rds_cluster" "aurora_cluster" {
     max_capacity = 8.0
     min_capacity = 0.5
   }
+
+  tags = {
+    NHSE-Enable-Backup = "True"
+  }
 }
 
 resource "aws_rds_cluster_instance" "aurora_instance" {
