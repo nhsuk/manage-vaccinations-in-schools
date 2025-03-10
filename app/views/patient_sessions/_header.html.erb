@@ -1,0 +1,9 @@
+<% content_for :page_title, @patient.initials %>
+
+<h1 class="nhsuk-heading-l nhsuk-u-margin-bottom-2">
+  <%= @patient.full_name %>
+</h1>
+
+<p class="nhsuk-caption-l nhsuk-u-margin-bottom-4">
+  <%= patient_year_group(@patient) %>
+</p>
