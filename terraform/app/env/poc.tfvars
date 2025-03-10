@@ -1,5 +1,5 @@
 environment         = "poc"
-rails_master_key_path = "/copilot/mavis/copilotmigration/secrets/RAILS_MASTER_KEY"
+rails_master_key_path = "/copilot/mavis/secrets/STAGING_RAILS_MASTER_KEY"
 db_secret_arn       = null
 dns_certificate_arn = null
 resource_name = {

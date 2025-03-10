@@ -90,7 +90,7 @@ dynamodb_table = "mavis-state-lock-$ENV"
 EOF
   cat << EOF > "$ENV.tfvars" || { echo "Failed environment variables file creation"; exit 1; }
 environment = "$ENV"
-rails_master_key_path = "CHANGE_ME"
+rails_master_key_path = "/copilot/mavis/secrets/STAGING_RAILS_MASTER_KEY"
 db_secret_arn = null
 db_secret_arn = null
 resource_name = {

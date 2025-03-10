@@ -40,14 +40,26 @@ variable "http_hosts" {
   nullable    = true
 }
 
+variable "ssl_policy" {
+  type        = string
+  default     = "ELBSecurityPolicy-TLS13-1-2-2021-06"
+  description = "The name of the SSL Policy for the https listener"
+  nullable    = false
+}
+
 locals {
   unique_host_headers = toset(values(var.http_hosts))
   host_headers = concat(tolist(local.unique_host_headers), [for v in local.unique_host_headers : "www.${v}"])
 }
 
 variable "dns_certificate_arn" {
-  type        = string
-  description = "The ARN for a pre-existing DNS certificate to be used for ECS service"
+  type        = list(string)
+  description = "The ARN(s) for pre-existing DNS certificate(s) to be used for https listener"
+}
+
+locals {
+  default_certificate_arn = var.dns_certificate_arn == null ? module.dns_route53[0].certificate_arn : var.dns_certificate_arn[0]
+  additional_sni_certificates = var.dns_certificate_arn == null ? [] : slice(var.dns_certificate_arn, 1, length(var.dns_certificate_arn))
 }
 
 variable "firewall_subnet_cidr" {
