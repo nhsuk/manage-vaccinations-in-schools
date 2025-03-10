@@ -6,8 +6,8 @@ describe "Patient search" do
     when_i_visit_the_patients_page
     then_i_see_all_patients
 
-    when_i_search_for_cas
-    then_i_see_patients_matching_cas
+    when_i_search_by_name
+    then_i_see_patients_matching_the_name
     and_i_see_the_search_count
 
     when_i_open_advanced_filters
@@ -80,14 +80,14 @@ describe "Patient search" do
     expect(page).to have_content("SELDON, Hari")
   end
 
-  def when_i_search_for_cas
-    fill_in "Search", with: "cas"
+  def when_i_search_by_name
+    fill_in "Search", with: "Casy Brown" # intentional typo
     click_button "Search"
   end
 
-  def then_i_see_patients_matching_cas
+  def then_i_see_patients_matching_the_name
     expect(page).to have_content("BROWN, Casey")
-    expect(page).to have_content("WILSON, Cassidy")
+    expect(page).not_to have_content("WILSON, Cassidy")
     expect(page).not_to have_content("SMITH, Aaron")
     expect(page).not_to have_content("JONES, Aardvark")
     expect(page).not_to have_content("TAYLOR, Bob")
@@ -96,7 +96,7 @@ describe "Patient search" do
   end
 
   def and_i_see_the_search_count
-    expect(page).to have_content("2 children")
+    expect(page).to have_content("1 child")
   end
 
   def when_i_open_advanced_filters

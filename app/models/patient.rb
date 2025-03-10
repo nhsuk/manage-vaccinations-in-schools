@@ -127,14 +127,13 @@ class Patient < ApplicationRecord
             )
           else
             where(
-              "given_name % :query OR " \
-                "family_name % :query OR " \
-                "similarity(given_name, :query) > 0.3 OR " \
-                "similarity(family_name, :query) > 0.3",
+              "SIMILARITY(CONCAT(given_name, ' ', family_name), :query) > 0.3 OR " \
+                "SIMILARITY(CONCAT(family_name, ' ', given_name), :query) > 0.3",
               query:
             ).order(
               Arel.sql(
-                "similarity(family_name, :query) DESC, similarity(given_name, :query) DESC",
+                "GREATEST(SIMILARITY(CONCAT(given_name, ' ', family_name), :query), " \
+                  "SIMILARITY(CONCAT(family_name, ' ', given_name), :query)) DESC",
                 query:
               )
             )
