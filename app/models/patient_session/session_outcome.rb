@@ -46,9 +46,18 @@ class PatientSession::SessionOutcome
   attr_reader :patient_session
 
   delegate :patient, :session, :programmes, to: :patient_session
+  delegate :consent_outcome, :triage_outcome, to: :patient
 
   def programme_status(programme)
-    latest[programme]&.outcome&.to_sym || NONE
+    if (vaccination_record = latest[programme])
+      vaccination_record.outcome.to_sym
+    elsif consent_outcome.refused?(programme)
+      REFUSED
+    elsif triage_outcome.do_not_vaccinate?(programme)
+      HAD_CONTRAINDICATIONS
+    else
+      NONE
+    end
   end
 
   def all_by_programme_id

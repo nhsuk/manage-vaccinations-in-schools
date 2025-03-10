@@ -44,6 +44,18 @@ describe PatientSession::SessionOutcome do
 
       it { should be(described_class::NONE) }
     end
+
+    context "with a consent refused" do
+      before { create(:consent, :refused, patient:, programme:) }
+
+      it { should be(described_class::REFUSED) }
+    end
+
+    context "when triaged as do not vaccinate" do
+      before { create(:triage, :do_not_vaccinate, patient:, programme:) }
+
+      it { should be(described_class::HAD_CONTRAINDICATIONS) }
+    end
   end
 
   describe "#all" do
