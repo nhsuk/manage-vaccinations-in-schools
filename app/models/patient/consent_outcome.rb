@@ -6,10 +6,10 @@ class Patient::ConsentOutcome
   end
 
   STATUSES = [
-    GIVEN = :given,
-    REFUSED = :refused,
+    NONE = :none,
     CONFLICTS = :conflicts,
-    NONE = :none
+    GIVEN = :given,
+    REFUSED = :refused
   ].freeze
 
   def given?(programme) = status[programme] == GIVEN
