@@ -169,6 +169,7 @@ module "source" {
         },
         "name": "daily_kept_for_2_days",
         "schedule": "cron(0 0 * * ? *)"
+        enable_continuous_backup = true
       }
     ],
     "selection_tag": "NHSE-Enable-Backup"
