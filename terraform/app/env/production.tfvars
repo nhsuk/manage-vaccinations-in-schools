@@ -9,7 +9,7 @@ resource_name = {
   db_instance              = "mavis-production-addonsstack-h6-dbdbwriterinstance-l8rqm5mbgilx"
   rds_security_group       = "mavis-production-AddonsStack-H6B1986BQ928-dbDBClusterSecurityGroup-dEt2cEtcHBMo"
   loadbalancer             = "mavis-production-pub-lb"
-  lb_security_group        = "mavis-production-PublicHTTPSLoadBalancerSecurityGroup-vBCn4J7twTdb"
+  lb_security_group        = "mavis-production-PublicHTTPLoadBalancerSecurityGroup-G7umbZTkvkwK"
   cloudwatch_vpc_log_group = "mavis-production-FlowLogs"
 }
 rails_env             = "production"

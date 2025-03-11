@@ -146,7 +146,7 @@ resource "aws_lb_listener_certificate" "https_sni_certificates" {
 
 resource "aws_lb_listener_rule" "forward_to_app" {
   listener_arn = aws_lb_listener.app_listener_https.arn
-  priority     = 49999
+  priority     = 50000
   action {
     type             = "forward"
     target_group_arn = aws_lb_target_group.blue.arn
@@ -169,7 +169,7 @@ resource "aws_lb_listener_rule" "forward_to_app" {
 
 resource "aws_lb_listener_rule" "redirect_to_https" {
   listener_arn = aws_lb_listener.app_listener_http.arn
-  priority     = 49999
+  priority     = 50000
   action {
     type = "redirect"
     redirect {

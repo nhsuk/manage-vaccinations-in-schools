@@ -12,7 +12,7 @@ resource_name = {
   db_instance              = "mavis-training-addonsstack-1jzs-dbdbwriterinstance-pbl8rjktgtmp"
   rds_security_group       = "mavis-training-AddonsStack-1JZSXP7P84221-dbDBClusterSecurityGroup-A5NL1GFJ83LX"
   loadbalancer             = "mavis--Publi-w1wzc4E2jrl6"
-  lb_security_group        = "mavis-training-PublicHTTPSLoadBalancerSecurityGroup-EAFEGTY9VX44"
+  lb_security_group        = "mavis-training-PublicHTTPLoadBalancerSecurityGroup-L8GOGS04ARYI"
   cloudwatch_vpc_log_group = "mavis-training-FlowLogs"
 }
 rails_env             = "staging"
