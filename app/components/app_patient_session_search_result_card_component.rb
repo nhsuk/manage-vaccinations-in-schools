@@ -33,8 +33,8 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
       
       <% if context == :register %>
         <div class="app-button-group">
-          <%= helpers.govuk_button_to "Attending", create_session_register_path(session, patient, "present", **params.permit(search_form: {})), class: "app-button--secondary app-button--small" %>
-          <%= helpers.govuk_button_to "Absent", create_session_register_path(session, patient, "absent", **params.permit(search_form: {})), class: "app-button--secondary-warning app-button--small" %>
+          <%= helpers.govuk_button_to "Attending", create_session_register_path(session, patient, "present", search_form: params[:search_form]&.permit!), class: "app-button--secondary app-button--small" %>
+          <%= helpers.govuk_button_to "Absent", create_session_register_path(session, patient, "absent", search_form: params[:search_form]&.permit!), class: "app-button--secondary-warning app-button--small" %>
         </div>
       <% end %>
     <% end %>
