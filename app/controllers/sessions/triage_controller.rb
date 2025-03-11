@@ -22,13 +22,13 @@ class Sessions::TriageController < ApplicationController
 
     patient_sessions =
       @form.apply(scope) do |filtered_scope|
-        filtered_scope.select do
+        filtered_scope.reject do
           it
             .patient
             .triage_outcome
             .status
             .values_at(*it.programmes)
-            .none?(Patient::TriageOutcome::NOT_REQUIRED)
+            .all?(Patient::TriageOutcome::NOT_REQUIRED)
         end
       end
 
