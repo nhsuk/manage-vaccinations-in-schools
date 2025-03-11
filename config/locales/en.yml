@@ -863,10 +863,6 @@ en:
   vaccination_records:
     index:
       title: Vaccinations
-  vaccinations:
-    flash:
-      given: Vaccination recorded for
-      not_given: Record updated for
   vaccines:
     index:
       title: Vaccines

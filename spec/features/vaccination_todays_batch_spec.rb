@@ -147,8 +147,6 @@ describe "Vaccination" do
   end
 
   def and_i_see_the_default_batch_on_the_patient_page
-    click_link @patient2.full_name, match: :first
-
     expect(page).to have_content("Vaccinated")
     expect(page).to have_content(@hpv_batch2.name)
   end

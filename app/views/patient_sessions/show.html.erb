@@ -1,34 +1,4 @@
-<% render "patient_sessions/breadcrumbs" %>
-
 <%= render "patient_sessions/header" %>
-
-<ul class="app-action-list">
-  <% if (session_attendance = @patient_session.register_outcome.latest) %>
-    <li class="app-action-list__item">
-      <%= render AppRegisterStatusTagComponent.new(@patient_session.register_outcome.status) %>
-    </li>
-
-    <% if policy(session_attendance).edit? %>
-      <li class="app-action-list__item">
-        <%= link_to(
-              "Update attendance",
-              edit_session_patient_attendance_path(patient_id: @patient.id)
-            ) %>
-      </li>
-    <% end %>
-  <% end %>
-
-  <% if @patient_session.can_record_as_already_vaccinated?(programme: @programme) %>
-    <li class="app-action-list__item">
-      <%= link_to(
-            "Record as already vaccinated",
-            session_patient_record_already_vaccinated_path(programme_type: @programme),
-          ) %>
-    </li>
-  <% end %>
-</ul>
-
-<%= render "patient_sessions/secondary_navigation" %>
 
 <%= render AppPatientPageComponent.new(
       patient_session: @patient_session,
