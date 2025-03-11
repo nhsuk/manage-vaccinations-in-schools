@@ -37,7 +37,7 @@ describe AppSimpleStatusBannerComponent do
       create(:patient_session, :added_to_session, programmes: [programme])
     end
 
-    it { should have_css(".app-card--blue") }
+    it { should have_css(".app-card--grey") }
   end
 
   context "state is consent_given_triage_not_needed" do
@@ -97,7 +97,7 @@ describe AppSimpleStatusBannerComponent do
       )
     end
 
-    it { should have_css(".app-card--purple") }
+    it { should have_css(".app-card--aqua-green") }
     it { should have_css(".nhsuk-card__heading", text: "Ready for nurse") }
 
     it do
@@ -135,7 +135,7 @@ describe AppSimpleStatusBannerComponent do
       create(:patient_session, :delay_vaccination, programmes: [programme])
     end
 
-    it { should have_css(".app-card--red") }
+    it { should have_css(".app-card--dark-orange") }
     it { should have_css(".nhsuk-card__heading", text: "Could not vaccinate") }
 
     it do
