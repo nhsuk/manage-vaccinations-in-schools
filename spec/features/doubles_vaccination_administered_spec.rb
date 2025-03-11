@@ -20,8 +20,8 @@ describe "MenACWY and Td/IPV vaccination" do
     then_i_see_the_patient_is_vaccinated_for_td_ipv
 
     when_vaccination_confirmations_are_sent
-    then_an_email_is_sent_to_the_parent_confirming_the_vaccination
-    and_a_text_is_sent_to_the_parent_confirming_the_vaccination
+    then_an_email_is_sent_to_the_parent_confirming_the_vaccinations
+    and_a_text_is_sent_to_the_parent_confirming_the_vaccinations
   end
 
   def given_a_doubles_session_exists
@@ -120,17 +120,29 @@ describe "MenACWY and Td/IPV vaccination" do
     VaccinationConfirmationsJob.perform_now
   end
 
-  def then_an_email_is_sent_to_the_parent_confirming_the_vaccination
+  def then_an_email_is_sent_to_the_parent_confirming_the_vaccinations
     expect_email_to(
       @patient.consents.last.parent.email,
-      :vaccination_administered
+      :vaccination_administered_menacwy
+    )
+
+    expect_email_to(
+      @patient.consents.last.parent.email,
+      :vaccination_administered_td_ipv,
+      :second
     )
   end
 
-  def and_a_text_is_sent_to_the_parent_confirming_the_vaccination
+  def and_a_text_is_sent_to_the_parent_confirming_the_vaccinations
     expect_sms_to(
       @patient.consents.last.parent.phone,
-      :vaccination_administered
+      :vaccination_administered_menacwy
+    )
+
+    expect_sms_to(
+      @patient.consents.last.parent.phone,
+      :vaccination_administered_td_ipv,
+      :second
     )
   end
 end
