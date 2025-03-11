@@ -52,6 +52,7 @@ jobs:
       - name: Check if any deployments are running
         working-directory: ${{ env.tf_dir }}
         run: |
+          set -e
           terraform init -backend-config="env/${{ inputs.environment }}-backend.hcl" -upgrade
           APPLICATION_NAME=$(terraform output -raw codedeploy_application_name)
           echo "Application Name: $APPLICATION_NAME"
@@ -80,10 +81,12 @@ jobs:
         id: plan
         working-directory: ${{ env.tf_dir }}
         run: |
+          set -e
           terraform plan -var="image_digest=$DIGEST" -var-file="env/${{ inputs.environment }}.tfvars" \
           -out ${{ runner.temp }}/tfplan | tee ${{ runner.temp }}/tf_stdout
       - name: Validate the changes
         run: |
+          set -e
           ./terraform/scripts/validate_plan.sh ${{ runner.temp }}/tf_stdout
       - name: Upload artifact
         uses: actions/upload-artifact@v4
@@ -116,5 +119,6 @@ jobs:
       - name: Apply the changes
         working-directory: ${{ env.tf_dir }}
         run: |
+          set -e
           terraform init -backend-config="env/${{ inputs.environment }}-backend.hcl" -upgrade
           terraform apply ${{ runner.temp }}/tfplan
