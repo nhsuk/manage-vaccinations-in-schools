@@ -93,6 +93,9 @@ describe "Vaccination" do
     click_button "Continue"
 
     click_button "Confirm"
+
+    # back to session
+    click_on "Record vaccinations"
   end
 
   def when_i_vaccinate_a_second_patient_with_hpv
