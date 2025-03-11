@@ -139,7 +139,12 @@ class DraftVaccinationRecordsController < ApplicationController
 
   def finish_wizard_path
     if @session.today?
-      session_record_path(@session)
+      session_patient_programme_path(
+        @session,
+        @patient,
+        @programme,
+        return_to: "record"
+      )
     else
       programme_vaccination_record_path(@programme, @vaccination_record)
     end

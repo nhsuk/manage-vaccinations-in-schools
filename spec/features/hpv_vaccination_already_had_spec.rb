@@ -14,8 +14,8 @@ describe "HPV vaccination" do
     then_i_see_the_confirmation_page
 
     when_i_confirm_the_details
-    then_i_no_longer_see_the_patient_in_the_record_tab
-    and_a_success_message
+    then_i_see_a_success_message
+    and_i_no_longer_see_the_patient_in_the_record_tab
 
     when_i_go_to_the_patient
     then_i_see_that_the_status_is_vaccinated
@@ -78,16 +78,18 @@ describe "HPV vaccination" do
     click_button "Confirm"
   end
 
-  def then_i_no_longer_see_the_patient_in_the_record_tab
-    expect(page).to have_content("No children matching search criteria found")
-  end
-
-  def and_a_success_message
+  def then_i_see_a_success_message
     expect(page).to have_content("Record updated for #{@patient.full_name}")
   end
 
+  def and_i_no_longer_see_the_patient_in_the_record_tab
+    click_on "Record vaccinations"
+    expect(page).to have_content("No children matching search criteria found")
+  end
+
   def when_i_go_to_the_patient
-    click_link @patient.full_name, match: :first
+    click_on "Session outcomes"
+    click_on @patient.full_name
   end
 
   def then_i_see_that_the_status_is_vaccinated

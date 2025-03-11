@@ -53,7 +53,7 @@ jobs:
         working-directory: ${{ env.tf_dir }}
         run: |
           set -e
-          terraform init -backend-config="env/${{ inputs.environment }}-backend.hcl"
+          terraform init -backend-config="env/${{ inputs.environment }}-backend.hcl" -upgrade
           APPLICATION_NAME=$(terraform output -raw codedeploy_application_name)
           echo "Application Name: $APPLICATION_NAME"
           APPLICATION_GROUP=$(terraform output -raw codedeploy_deployment_group_name)
@@ -120,5 +120,5 @@ jobs:
         working-directory: ${{ env.tf_dir }}
         run: |
           set -e
-          terraform init -backend-config="env/${{ inputs.environment }}-backend.hcl"
+          terraform init -backend-config="env/${{ inputs.environment }}-backend.hcl" -upgrade
           terraform apply ${{ runner.temp }}/tfplan

@@ -66,7 +66,7 @@ jobs:
         id: plan
         working-directory: ${{ env.tf-dir }}
         run: |
-          terraform init -backend-config="env/${{ inputs.environment }}-backend.hcl"
+          terraform init -backend-config="env/${{ inputs.environment }}-backend.hcl" -upgrade
           terraform plan -var="image_digest=$DIGEST" -target=aws_ecs_task_definition.task_definition \
           -target=aws_s3_object.appspec_object -var-file="env/${{ inputs.environment }}.tfvars" \
           -out=${{ runner.temp }}/tfplan | tee ${{ runner.temp }}/tf_stdout
@@ -104,7 +104,7 @@ jobs:
       - name: Apply the changes
         working-directory: ${{ env.tf-dir }}
         run: |
-          terraform init -backend-config="env/${{ inputs.environment }}-backend.hcl"
+          terraform init -backend-config="env/${{ inputs.environment }}-backend.hcl" -upgrade
           terraform apply ${{ runner.temp }}/tfplan
           echo "s3_bucket=$(terraform output -raw s3_bucket)" >> ${{ runner.temp }}/CODEDEPLOY_ENV
           echo "s3_key=$(terraform output -raw s3_key)" >> ${{ runner.temp }}/CODEDEPLOY_ENV
