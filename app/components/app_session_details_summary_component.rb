@@ -57,7 +57,7 @@ class AppSessionDetailsSummaryComponent < ViewComponent::Base
         count =
           patient_sessions.count { it.session_outcome.vaccinated?(programme) }
 
-        "#{pluralize(count, "vaccination")} given for #{programme.name}"
+        "#{I18n.t("vaccinations_given", count:)} for #{programme.name}"
       end
 
     href =
