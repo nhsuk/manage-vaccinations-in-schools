@@ -874,6 +874,10 @@ en:
     absent: "%{name} is absent from today’s session."
     not_registered: "%{name} is not registered yet."
     present: "%{name} is attending today’s session."
+  vaccinations_given:
+    zero: No vaccinations given
+    one: 1 vaccination given
+    other: "%{count} vaccinations given"
   wicked:
     address: address
     agree: agree
