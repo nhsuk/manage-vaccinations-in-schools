@@ -10,7 +10,8 @@ describe "Td/IPV" do
     and_i_click_on_the_patient
     then_i_see_the_patient_needs_consent
 
-    when_i_record_the_patient_as_already_vaccinated(clinic: false)
+    when_i_record_the_patient_as_already_vaccinated
+    then_i_see_the_patient_is_already_vaccinated
     and_the_consent_requests_are_sent
     then_the_parent_doesnt_receive_a_consent_request
   end
@@ -24,7 +25,8 @@ describe "Td/IPV" do
     and_i_click_on_the_patient
     then_i_see_the_patient_needs_consent
 
-    when_i_record_the_patient_as_already_vaccinated(clinic: true)
+    when_i_record_the_patient_as_already_vaccinated
+    then_i_see_the_patient_is_already_vaccinated
     and_the_consent_requests_are_sent
     then_the_parent_doesnt_receive_a_consent_request
   end
@@ -39,7 +41,8 @@ describe "Td/IPV" do
     and_i_click_on_the_patient
     then_i_see_the_patient_needs_triage
 
-    when_i_record_the_patient_as_already_vaccinated(clinic: false)
+    when_i_record_the_patient_as_already_vaccinated
+    then_i_see_the_patient_is_already_vaccinated
     and_i_click_on_triage
     then_i_see_the_patient_should_not_be_vaccinated
   end
@@ -118,15 +121,16 @@ describe "Td/IPV" do
     expect(page).to have_content("Needs triage")
   end
 
-  def when_i_record_the_patient_as_already_vaccinated(clinic: false)
+  def when_i_record_the_patient_as_already_vaccinated
     click_on "Record as already vaccinated"
-
-    if clinic
-      choose "Waterloo Hospital"
-      click_on "Continue"
-    end
-
     click_on "Confirm"
+  end
+
+  def then_i_see_the_patient_is_already_vaccinated
+    click_on @patient.full_name
+
+    expect(page).to have_content("Vaccinated")
+    expect(page).to have_content("LocationUnknown")
   end
 
   def and_the_consent_requests_are_sent
@@ -138,7 +142,7 @@ describe "Td/IPV" do
   end
 
   def and_i_click_on_triage
-    click_on "Sessions"
+    click_on "Sessions", match: :first
     click_on "Scheduled"
     click_on @session.location.name
     click_on "Triage"
