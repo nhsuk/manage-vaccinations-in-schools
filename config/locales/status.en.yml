@@ -50,10 +50,10 @@ en:
         absent_from_session: dark-orange
         administered: green
         already_had: green
-        contraindications: dark-orange
+        contraindications: red
         none: white
         not_well: dark-orange
-        refused: dark-orange
+        refused: red
     programme:
       label:
         could_not_vaccinate: Could not vaccinate

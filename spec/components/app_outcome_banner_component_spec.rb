@@ -31,7 +31,7 @@ describe AppOutcomeBannerComponent do
       create(:patient_session, :unable_to_vaccinate, session:)
     end
 
-    it { should have_css(".app-card--red") }
+    it { should have_css(".app-card--dark-orange") }
     it { should have_css(".nhsuk-card__heading", text: "Could not vaccinate") }
     it { should have_text("MERTON, Alya was not well enough") }
     it { should have_text("Location\n#{location_name}") }
@@ -42,7 +42,7 @@ describe AppOutcomeBannerComponent do
       create(:patient_session, :unable_to_vaccinate, session:)
     end
 
-    it { should have_css(".app-card--red") }
+    it { should have_css(".app-card--dark-orange") }
     it { should have_css(".nhsuk-card__heading", text: "Could not vaccinate") }
     it { should have_text("Reason\nMERTON, Alya was not well enough") }
   end
@@ -52,7 +52,7 @@ describe AppOutcomeBannerComponent do
       create(:patient_session, :unable_to_vaccinate_and_had_no_triage, session:)
     end
 
-    it { should have_css(".app-card--red") }
+    it { should have_css(".app-card--dark-orange") }
     it { should have_css(".nhsuk-card__heading", text: "Could not vaccinate") }
     it { should have_text("Reason\nMERTON, Alya was not well enough") }
   end

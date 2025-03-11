@@ -4,7 +4,7 @@ en:
       text: Not in a session
       banner_title: Not in session
     added_to_session:
-      colour: blue
+      colour: grey
       text: Get consent
       banner_title: No response
       banner_explanation: No-one responded to our requests for consent.
@@ -31,7 +31,7 @@ en:
       banner_title: Conflicting consent
       banner_explanation: You can only vaccinate if all respondents give consent.
     delay_vaccination:
-      colour: red
+      colour: dark-orange
       text: Delay vaccination to a later date
       banner_title: Could not vaccinate
       banner_explanation: "%{nurse} decided that %{full_name}’s vaccination should be delayed."
@@ -41,12 +41,12 @@ en:
       banner_title: Could not vaccinate
       banner_explanation: "%{nurse} decided that %{full_name} should not be vaccinated."
     triaged_ready_to_vaccinate:
-      colour: purple
+      colour: aqua-green
       text: Vaccinate
       banner_title: Ready for nurse
       banner_explanation: "%{nurse} decided that %{full_name} is ready for the nurse."
     unable_to_vaccinate:
-      colour: red
+      colour: dark-orange
       text: Could not vaccinate
       banner_title: Could not vaccinate
       banner_explanation:
