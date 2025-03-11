@@ -58,15 +58,14 @@ class PreScreening < ApplicationRecord
       (
         !PreScreening.ask_not_taking_medication?(programme:) ||
           not_taking_medication
-      ) &&
-      (!PreScreening.ask_not_pregnant?(programme:, patient:) || not_pregnant)
+      ) && (!PreScreening.ask_not_pregnant?(programme:) || not_pregnant)
   end
 
   def self.ask_not_taking_medication?(programme:)
     programme.doubles?
   end
 
-  def self.ask_not_pregnant?(programme:, patient:)
-    (programme.hpv? || programme.td_ipv?) && patient.gender_code != "male"
+  def self.ask_not_pregnant?(programme:)
+    programme.hpv? || programme.td_ipv?
   end
 end
