@@ -32,7 +32,21 @@ describe AppPatientSessionSearchResultCardComponent do
   context "when context is register" do
     let(:context) { :register }
 
-    it { should have_text("Action required\nGet consent for HPV") }
+    context "when allowed to record attendance" do
+      before { stub_authorization(allowed: true) }
+
+      it { should have_text("Action required\nGet consent for HPV") }
+      it { should have_button("Attending") }
+      it { should have_button("Absent") }
+    end
+
+    context "when not allowed to record attendance" do
+      before { stub_authorization(allowed: false) }
+
+      it { should have_text("Action required\nGet consent for HPV") }
+      it { should_not have_button("Attending") }
+      it { should_not have_button("Absent") }
+    end
   end
 
   context "when context is record" do
