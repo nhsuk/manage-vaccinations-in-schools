@@ -82,6 +82,10 @@ class Programme < ApplicationRecord
     DOSE_SEQUENCES.fetch(type)
   end
 
+  def default_dose_sequence
+    hpv? ? vaccinated_dose_sequence : nil
+  end
+
   def maximum_dose_sequence
     # HPV is given 3 times to patients with a weakened immune system.
     # MenACWY is sometimes given more frequently.

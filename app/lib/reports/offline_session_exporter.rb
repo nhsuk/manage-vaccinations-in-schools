@@ -313,7 +313,7 @@ class Reports::OfflineSessionExporter
     row[:anatomical_site] = Cell.new(
       allowed_values: ImmunisationImportRow::DELIVERY_SITES.keys
     )
-    row[:dose_sequence] = 1 if programme.vaccinated_dose_sequence == 1
+    row[:dose_sequence] = programme.default_dose_sequence
     row[:reason_not_vaccinated] = Cell.new(
       allowed_values: ImmunisationImportRow::REASONS.keys
     )
