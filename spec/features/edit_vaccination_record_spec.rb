@@ -513,17 +513,11 @@ describe "Edit vaccination record" do
                :then_the_parent_doesnt_receive_an_email
 
   def and_the_parent_receives_a_not_administered_email
-    expect_email_to(
-      @patient.parents.first.email,
-      :vaccination_confirmation_not_administered
-    )
+    expect_email_to(@patient.parents.first.email, :vaccination_not_administered)
   end
 
   def then_the_parent_receives_an_administered_email
-    expect_email_to(
-      @patient.parents.first.email,
-      :vaccination_confirmation_administered
-    )
+    expect_email_to(@patient.parents.first.email, :vaccination_administered_hpv)
   end
 
   alias_method :and_the_parent_receives_an_administered_email,

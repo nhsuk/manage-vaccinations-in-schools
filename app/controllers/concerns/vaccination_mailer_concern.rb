@@ -7,11 +7,13 @@ module VaccinationMailerConcern
     parents = parents_for_vaccination_mailer(vaccination_record)
     return if parents.empty?
 
+    programme_type = vaccination_record.programme.type
+
     template_name =
       if vaccination_record.administered?
-        :vaccination_confirmation_administered
+        :"vaccination_administered_#{programme_type}"
       else
-        :vaccination_confirmation_not_administered
+        :vaccination_not_administered
       end
 
     parents.each do |parent|
