@@ -9,8 +9,8 @@ describe "HPV vaccination" do
     then_i_see_the_confirmation_page
 
     when_i_confirm_the_details
-    then_i_still_see_the_patient_in_the_record_tab
-    and_a_success_message
+    then_i_see_a_success_message
+    and_i_still_see_the_patient_in_the_record_tab
 
     when_i_go_to_the_patient
     then_i_see_that_the_status_is_delayed
@@ -78,13 +78,14 @@ describe "HPV vaccination" do
     click_button "Confirm"
   end
 
-  def then_i_still_see_the_patient_in_the_record_tab
-    expect(page).to have_content("Showing 1 to 1 of 1 children")
-    expect(page).to have_content(@patient.full_name)
+  def then_i_see_a_success_message
+    expect(page).to have_content("Record updated for #{@patient.full_name}")
   end
 
-  def and_a_success_message
-    expect(page).to have_content("Record updated for #{@patient.full_name}")
+  def and_i_still_see_the_patient_in_the_record_tab
+    click_on "Record vaccinations"
+    expect(page).to have_content("Showing 1 to 1 of 1 children")
+    expect(page).to have_content(@patient.full_name)
   end
 
   def when_i_go_to_the_patient

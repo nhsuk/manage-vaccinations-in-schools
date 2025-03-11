@@ -83,11 +83,11 @@ describe "MenACWY and Td/IPV vaccination" do
   def then_i_see_the_patient_is_vaccinated_for_menacwy
     expect(page).to have_content("Vaccination recorded")
 
-    # actions required
+    click_on "Record vaccinations"
     expect(page).to have_content("Report for MenACWY")
     expect(page).to have_content("Record vaccination for Td/IPV")
 
-    click_link @patient.full_name, match: :first
+    click_link @patient.full_name
     expect(page).to have_content("Vaccinated")
   end
 
@@ -108,10 +108,11 @@ describe "MenACWY and Td/IPV vaccination" do
   def then_i_see_the_patient_is_vaccinated_for_td_ipv
     expect(page).to have_content("Vaccination recorded")
 
-    # patient should no longer be in record tab
+    click_on "Record vaccinations"
     expect(page).to have_content("No children matching search criteria found")
 
-    click_link @patient.full_name
+    click_on "Session outcomes"
+    click_on @patient.full_name
     expect(page).to have_content("Vaccinated")
   end
 
