@@ -139,4 +139,12 @@ class PatientSession < ApplicationRecord
       patient.consent_given_and_safe_to_vaccinate?(programme: it)
     end
   end
+
+  def programmes_ready_for_vaccinator
+    # If this patient hasn't been seen yet by a nurse for any of the programmes,
+    # we don't want to show the banner.
+    return [] if programmes.all? { session_outcome.none?(it) }
+
+    programmes.select { ready_for_vaccinator?(programme: it) }
+  end
 end

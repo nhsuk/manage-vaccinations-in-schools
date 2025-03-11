@@ -9,6 +9,12 @@
                                         ].compact) %>
 <% end %>
 
+<% if (outstanding_programmes = @patient_session.programmes_ready_for_vaccinator).any? %>
+  <%= govuk_notification_banner(title_text: "Important") do |notification_banner| %>
+    <% notification_banner.with_heading(text: "You still need to record an outcome for #{outstanding_programmes.map(&:name).to_sentence}.") %>
+  <% end %>
+<% end %>
+
 <h1 class="nhsuk-heading-l nhsuk-u-margin-bottom-2">
   <%= @patient.full_name %>
 </h1>

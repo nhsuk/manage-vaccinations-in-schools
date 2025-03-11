@@ -182,6 +182,7 @@ describe "HPV vaccination" do
   end
 
   def and_i_can_no_longer_vaccinate_the_patient
+    expect(page).not_to have_content("You still need to record an outcome")
     expect(page).not_to have_content("ready for their HPV vaccination?")
   end
 

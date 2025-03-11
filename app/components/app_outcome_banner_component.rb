@@ -97,7 +97,7 @@ class AppOutcomeBannerComponent < ViewComponent::Base
 
   def location
     @location ||=
-      vaccination_record.location_name || patient_session.location.name
+      vaccination_record.location_name || patient_session.session.location.name
   end
 
   def notes
