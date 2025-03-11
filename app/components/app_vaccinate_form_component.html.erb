@@ -25,7 +25,7 @@
         <%= f.govuk_check_box :not_taking_medication, true, multiple: false, link_errors: true %>
       <% end %>
 
-      <% if PreScreening.ask_not_pregnant?(programme:, patient:) %>
+      <% if PreScreening.ask_not_pregnant?(programme:) %>
         <%= f.govuk_check_box :not_pregnant, true, multiple: false, link_errors: true %>
       <% end %>
     <% end %>
