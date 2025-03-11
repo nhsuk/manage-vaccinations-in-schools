@@ -120,21 +120,7 @@ class DraftVaccinationRecordsController < ApplicationController
     # vaccination record.
     @draft_vaccination_record.update!(editing_id: @vaccination_record.id)
 
-    heading =
-      if @vaccination_record.administered?
-        t("vaccinations.flash.given")
-      else
-        t("vaccinations.flash.not_given")
-      end
-
-    heading_link_href =
-      session_patient_programme_path(@session, @patient, @programme)
-
-    flash[:success] = {
-      heading:,
-      heading_link_text: @patient.full_name,
-      heading_link_href:
-    }
+    flash[:success] = "Vaccination outcome recorded for #{@programme.name}"
   end
 
   def finish_wizard_path

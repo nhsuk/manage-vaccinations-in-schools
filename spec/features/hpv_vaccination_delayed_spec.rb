@@ -80,7 +80,7 @@ describe "HPV vaccination" do
   end
 
   def then_i_see_a_success_message
-    expect(page).to have_content("Record updated for #{@patient.full_name}")
+    expect(page).to have_content("Vaccination outcome recorded for HPV")
   end
 
   def and_i_still_see_the_patient_in_the_record_tab

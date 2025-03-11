@@ -127,9 +127,7 @@ describe "Td/IPV" do
   end
 
   def then_i_see_the_patient_is_already_vaccinated
-    click_on @patient.full_name
-
-    expect(page).to have_content("Vaccinated")
+    expect(page).to have_content("Vaccination outcome recorded for Td/IPV")
     expect(page).to have_content("LocationUnknown")
   end
 

@@ -48,8 +48,6 @@ describe "MenACWY vaccination" do
 
     when_i_go_back
     and_i_save_changes
-
-    when_i_go_to_the_patient
     then_i_see_that_the_status_is_vaccinated
     and_i_see_the_vaccination_details
 
@@ -175,9 +173,7 @@ describe "MenACWY vaccination" do
   end
 
   def then_i_see_a_success_message
-    expect(page).to have_content(
-      "Vaccination recorded for #{@patient.full_name}"
-    )
+    expect(page).to have_content("Vaccination outcome recorded for MenACWY")
   end
 
   def and_i_no_longer_see_the_patient_in_the_record_tab
@@ -191,10 +187,6 @@ describe "MenACWY vaccination" do
 
   def and_i_save_changes
     click_button "Save changes"
-  end
-
-  def when_i_go_to_the_patient
-    click_link @patient.full_name, match: :first
   end
 
   def then_i_see_that_the_status_is_vaccinated

@@ -81,7 +81,7 @@ describe "MenACWY and Td/IPV vaccination" do
   end
 
   def then_i_see_the_patient_is_vaccinated_for_menacwy
-    expect(page).to have_content("Vaccination recorded")
+    expect(page).to have_content("Vaccination outcome recorded for MenACWY")
 
     click_on "Record vaccinations"
     expect(page).to have_content("Report for MenACWY")
@@ -106,7 +106,7 @@ describe "MenACWY and Td/IPV vaccination" do
   end
 
   def then_i_see_the_patient_is_vaccinated_for_td_ipv
-    expect(page).to have_content("Vaccination recorded")
+    expect(page).to have_content("Vaccination outcome recorded for Td/IPV")
 
     click_on "Record vaccinations"
     expect(page).to have_content("No children matching search criteria found")
