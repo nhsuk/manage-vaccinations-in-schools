@@ -9,9 +9,9 @@ module VaccinationMailerConcern
 
     template_name =
       if vaccination_record.administered?
-        :vaccination_confirmation_administered
+        :vaccination_administered
       else
-        :vaccination_confirmation_not_administered
+        :vaccination_not_administered
       end
 
     parents.each do |parent|
