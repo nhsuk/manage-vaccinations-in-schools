@@ -49,14 +49,5 @@ module PatientSessionStatusConcern
         "added_to_session"
       end
     end
-
-    def next_step(programme:)
-      if patient.triage_outcome.required?(programme)
-        :triage
-      elsif patient.consent_given_and_safe_to_vaccinate?(programme:) &&
-            register_outcome.attending?
-        :vaccinate
-      end
-    end
   end
 end

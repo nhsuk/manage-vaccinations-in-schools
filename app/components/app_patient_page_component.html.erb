@@ -79,7 +79,7 @@
   <% end %>
 <% end %>
 
-<% if helpers.policy(Triage).create? && patient_session.next_step(programme:) == :triage %>
+<% if helpers.policy(Triage).create? && patient.triage_outcome.required?(programme) %>
   <%= render AppCardComponent.new do %>
     <%= render AppTriageFormComponent.new(
           patient_session:,

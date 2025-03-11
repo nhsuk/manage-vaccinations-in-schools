@@ -39,20 +39,20 @@ describe AppVaccinateFormComponent do
   describe "#render?" do
     subject(:render) { component.render? }
 
+    it { should be(true) }
+
     context "patient is not ready for vaccination" do
-      before do
-        allow(patient_session).to receive(:next_step).and_return(:triage)
-      end
+      let(:patient) { create(:patient, programmes:, given_name: "Hari") }
 
       it { should be(false) }
     end
 
-    context "patient is ready for vaccination" do
-      before do
-        allow(patient_session).to receive(:next_step).and_return(:vaccinate)
+    context "patient is not attending the session" do
+      let(:patient_session) do
+        create(:patient_session, programmes:, patient:, session:)
       end
 
-      it { should be(true) }
+      it { should be(false) }
     end
   end
 end

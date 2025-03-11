@@ -162,11 +162,6 @@ class VaccinationRecord < ApplicationRecord
     confirmation_sent_at != nil
   end
 
-  def retryable_reason?
-    not_well? || contraindications? || absent_from_session? ||
-      absent_from_school? || refused?
-  end
-
   def dose_volume_ml
     # TODO: this will need to be revisited once it's possible to record half-doses
     # e.g. for the flu programme where a child refuses the second half of the dose

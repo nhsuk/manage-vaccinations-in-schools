@@ -56,8 +56,7 @@ class Patient::ProgrammeOutcome
   end
 
   def programme_could_not_vaccinate?(programme)
-    all[programme].any? { it.not_administered? && !it.retryable_reason? } ||
-      consent_outcome.refused?(programme) ||
+    consent_outcome.refused?(programme) ||
       triage_outcome.do_not_vaccinate?(programme)
   end
 

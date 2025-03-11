@@ -44,6 +44,7 @@ describe "HPV vaccination" do
 
     when_i_confirm_the_details
     then_i_see_a_success_message
+    and_i_can_no_longer_vaccinate_the_patient
     and_i_no_longer_see_the_patient_in_the_record_tab
 
     when_i_go_back
@@ -182,6 +183,10 @@ describe "HPV vaccination" do
     expect(page).to have_content(
       "Vaccination recorded for #{@patient.full_name}"
     )
+  end
+
+  def and_i_can_no_longer_vaccinate_the_patient
+    expect(page).not_to have_content("ready for their HPV vaccination?")
   end
 
   def and_i_no_longer_see_the_patient_in_the_record_tab
