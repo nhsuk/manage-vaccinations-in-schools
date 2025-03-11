@@ -14,6 +14,7 @@ describe "HPV vaccination" do
 
     when_i_go_to_the_patient
     then_i_see_that_the_status_is_delayed
+    and_i_can_record_a_second_vaccination
 
     when_i_go_to_the_outcome_tab
     then_i_see_the_patient_has_no_outcome_yet
@@ -94,6 +95,10 @@ describe "HPV vaccination" do
 
   def then_i_see_that_the_status_is_delayed
     expect(page).to have_content("Could not vaccinate")
+  end
+
+  def and_i_can_record_a_second_vaccination
+    expect(page).to have_content("ready for their HPV vaccination?")
   end
 
   def when_i_go_to_the_outcome_tab

@@ -11,7 +11,10 @@ class AppVaccinateFormComponent < ViewComponent::Base
 
   def render?
     patient.consent_given_and_safe_to_vaccinate?(programme:) &&
-      patient_session.register_outcome.attending?
+      (
+        patient_session.register_outcome.attending? ||
+          patient_session.register_outcome.completed?
+      )
   end
 
   private
