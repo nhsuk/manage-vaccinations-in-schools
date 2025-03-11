@@ -12,29 +12,21 @@
       <%= patient.given_name %> has confirmed that they:
     </h2>
 
-    <% count = patient_session.programmes.count %>
-
     <%= f.govuk_check_boxes_fieldset :pre_screening, multiple: false, legend: nil do %>
-      <%= f.govuk_check_box :knows_vaccination, 1, 0, multiple: false, link_errors: true,
-                                                      label: { text: t("pre_screening.knows_vaccination", count:) } %>
+      <%= f.govuk_check_box :knows_vaccination, true, multiple: false, link_errors: true %>
 
-      <%= f.govuk_check_box :not_already_had, 1, 0, multiple: false, link_errors: true,
-                                                    label: { text: t("pre_screening.not_already_had", count:) } %>
+      <%= f.govuk_check_box :not_already_had, true, multiple: false, link_errors: true %>
 
-      <%= f.govuk_check_box :feeling_well, 1, 0, multiple: false, link_errors: true,
-                                                 label: { text: t("pre_screening.feeling_well", count:) } %>
+      <%= f.govuk_check_box :feeling_well, true, multiple: false, link_errors: true %>
 
-      <%= f.govuk_check_box :no_allergies, 1, 0, multiple: false, link_errors: true,
-                                                 label: { text: t("pre_screening.no_allergies", count:) } %>
+      <%= f.govuk_check_box :no_allergies, true, multiple: false, link_errors: true %>
 
       <% if PreScreening.ask_not_taking_medication?(programme:) %>
-        <%= f.govuk_check_box :not_taking_medication, 1, 0, multiple: false, link_errors: true,
-                                                            label: { text: t("pre_screening.not_taking_medication", count:) } %>
+        <%= f.govuk_check_box :not_taking_medication, true, multiple: false, link_errors: true %>
       <% end %>
 
       <% if PreScreening.ask_not_pregnant?(programme:, patient:) %>
-        <%= f.govuk_check_box :not_pregnant, 1, 0, multiple: false, link_errors: true,
-                                                   label: { text: t("pre_screening.not_pregnant", count:) } %>
+        <%= f.govuk_check_box :not_pregnant, true, multiple: false, link_errors: true %>
       <% end %>
     <% end %>
 

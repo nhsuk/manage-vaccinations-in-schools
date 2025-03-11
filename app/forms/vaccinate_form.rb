@@ -21,12 +21,12 @@ class VaccinateForm
   attribute :programme_id, :integer
   attribute :vaccine_id, :integer
 
-  validates :knows_vaccination, inclusion: { in: [true, false] }
-  validates :not_already_had, inclusion: { in: [true, false] }
-  validates :feeling_well, inclusion: { in: [true, false] }
-  validates :no_allergies, inclusion: { in: [true, false] }
-  validates :not_taking_medication, inclusion: { in: [true, false, nil] }
-  validates :not_pregnant, inclusion: { in: [true, false, nil] }
+  validates :knows_vaccination, inclusion: { in: [true, nil] }
+  validates :not_already_had, inclusion: { in: [true, nil] }
+  validates :feeling_well, inclusion: { in: [true, nil] }
+  validates :no_allergies, inclusion: { in: [true, nil] }
+  validates :not_taking_medication, inclusion: { in: [true, nil] }
+  validates :not_pregnant, inclusion: { in: [true, nil] }
 
   validate :valid_administered_values
   validates :programme_id, presence: true
@@ -73,10 +73,10 @@ class VaccinateForm
   def pre_screening
     @pre_screening ||=
       PreScreening.new(
-        feeling_well:,
-        knows_vaccination:,
-        no_allergies:,
-        not_already_had:,
+        feeling_well: feeling_well || false,
+        knows_vaccination: knows_vaccination || false,
+        no_allergies: no_allergies || false,
+        not_already_had: not_already_had || false,
         not_pregnant: not_pregnant || false,
         not_taking_medication: not_taking_medication || false,
         notes: pre_screening_notes,
