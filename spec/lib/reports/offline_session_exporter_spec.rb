@@ -57,6 +57,7 @@ describe Reports::OfflineSessionExporter do
             PERSON_SURNAME
             ORGANISATION_CODE
             SCHOOL_NAME
+            CLINIC_NAME
             CARE_SETTING
             PERSON_DOB
             YEAR_GROUP
@@ -115,6 +116,7 @@ describe Reports::OfflineSessionExporter do
               "BATCH_EXPIRY_DATE" => nil,
               "BATCH_NUMBER" => "",
               "CARE_SETTING" => 1,
+              "CLINIC_NAME" => "",
               "CONSENT_DETAILS" => "",
               "CONSENT_STATUS" => "",
               "DATE_OF_VACCINATION" => nil,
@@ -191,6 +193,7 @@ describe Reports::OfflineSessionExporter do
               "ANATOMICAL_SITE" => "left upper arm",
               "BATCH_NUMBER" => batch.name,
               "CARE_SETTING" => 1,
+              "CLINIC_NAME" => "",
               "CONSENT_DETAILS" => "",
               "CONSENT_STATUS" => "",
               "DOSE_SEQUENCE" => 1,
@@ -278,6 +281,7 @@ describe Reports::OfflineSessionExporter do
               "ANATOMICAL_SITE" => "left upper arm",
               "BATCH_NUMBER" => batch.name,
               "CARE_SETTING" => nil,
+              "CLINIC_NAME" => "",
               "CONSENT_DETAILS" => "",
               "CONSENT_STATUS" => "",
               "DOSE_SEQUENCE" => 1,
@@ -318,6 +322,82 @@ describe Reports::OfflineSessionExporter do
         end
       end
 
+      context "with a vaccinated patient outside the school session, but in a clinic" do
+        let(:clinic_session) { organisation.generic_clinic_session }
+
+        let!(:vaccination_record) do
+          create(
+            :vaccination_record,
+            performed_at:,
+            batch:,
+            patient:,
+            session: clinic_session,
+            programme:,
+            performed_by: user,
+            notes: "Some notes.",
+            location_name: "Waterloo Hospital"
+          )
+        end
+
+        before do
+          create(:patient_session, patient:, session:)
+          create(:patient_session, patient:, session: clinic_session)
+        end
+
+        it "adds a row with the vaccination details" do
+          expect(rows.count).to eq(1)
+          expect(
+            rows.first.except(
+              "BATCH_EXPIRY_DATE",
+              "PERSON_DOB",
+              "DATE_OF_VACCINATION"
+            )
+          ).to eq(
+            {
+              "ANATOMICAL_SITE" => "left upper arm",
+              "BATCH_NUMBER" => batch.name,
+              "CARE_SETTING" => 2,
+              "CLINIC_NAME" => "Waterloo Hospital",
+              "CONSENT_DETAILS" => "",
+              "CONSENT_STATUS" => "",
+              "DOSE_SEQUENCE" => 1,
+              "GILLICK_ASSESSED_BY" => nil,
+              "GILLICK_ASSESSMENT_DATE" => nil,
+              "GILLICK_ASSESSMENT_NOTES" => nil,
+              "GILLICK_STATUS" => "",
+              "HEALTH_QUESTION_ANSWERS" => "",
+              "NHS_NUMBER" => patient.nhs_number,
+              "NOTES" => "Some notes.",
+              "ORGANISATION_CODE" => organisation.ods_code,
+              "PERFORMING_PROFESSIONAL_EMAIL" => "nurse@example.com",
+              "PERSON_ADDRESS_LINE_1" => patient.address_line_1,
+              "PERSON_FORENAME" => patient.given_name,
+              "PERSON_GENDER_CODE" => "Not known",
+              "PERSON_POSTCODE" => patient.address_postcode,
+              "PERSON_SURNAME" => patient.family_name,
+              "PROGRAMME" => "HPV",
+              "REASON_NOT_VACCINATED" => "",
+              "SCHOOL_NAME" => "",
+              "SESSION_ID" => clinic_session.id,
+              "TIME_OF_VACCINATION" => "12:05:20",
+              "TRIAGED_BY" => nil,
+              "TRIAGE_DATE" => nil,
+              "TRIAGE_NOTES" => nil,
+              "TRIAGE_STATUS" => nil,
+              "VACCINATED" => "Y",
+              "VACCINE_GIVEN" => "Gardasil9",
+              "UUID" => vaccination_record.uuid,
+              "YEAR_GROUP" => patient.year_group
+            }
+          )
+          expect(rows.first["BATCH_EXPIRY_DATE"].to_date).to eq(batch.expiry)
+          expect(rows.first["PERSON_DOB"].to_date).to eq(patient.date_of_birth)
+          expect(rows.first["DATE_OF_VACCINATION"].to_date).to eq(
+            performed_at.to_date
+          )
+        end
+      end
+
       context "with a patient who couldn't be vaccinated" do
         before { create(:patient_session, patient:, session:) }
 
@@ -342,6 +422,7 @@ describe Reports::OfflineSessionExporter do
               "BATCH_EXPIRY_DATE" => nil,
               "BATCH_NUMBER" => nil,
               "CARE_SETTING" => 1,
+              "CLINIC_NAME" => "",
               "CONSENT_DETAILS" => "",
               "CONSENT_STATUS" => "",
               "DOSE_SEQUENCE" => "",
@@ -491,8 +572,8 @@ describe Reports::OfflineSessionExporter do
             PERSON_SURNAME
             ORGANISATION_CODE
             SCHOOL_NAME
-            CARE_SETTING
             CLINIC_NAME
+            CARE_SETTING
             PERSON_DOB
             YEAR_GROUP
             PERSON_GENDER_CODE
