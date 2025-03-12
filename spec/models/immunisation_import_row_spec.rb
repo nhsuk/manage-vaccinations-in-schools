@@ -408,6 +408,46 @@ describe ImmunisationImportRow do
       end
     end
 
+    context "vaccination in a MenACWY session and a dose sequence is provided" do
+      let(:data) do
+        {
+          "SESSION_ID" => session.id.to_s,
+          "PROGRAMME" => "MenACWY",
+          "DOSE_SEQUENCE" => "1"
+        }
+      end
+
+      let(:programmes) { [create(:programme, :menacwy)] }
+      let(:session) { create(:session, organisation:, programmes:) }
+
+      it "has errors" do
+        expect(immunisation_import_row).to be_invalid
+        expect(immunisation_import_row.errors[:dose_sequence]).to eq(
+          ["Do not provide a dose sequence for this programme (leave blank)"]
+        )
+      end
+    end
+
+    context "vaccination in a Td/IPV session and a dose sequence is provided" do
+      let(:data) do
+        {
+          "SESSION_ID" => session.id.to_s,
+          "PROGRAMME" => "3-in-1",
+          "DOSE_SEQUENCE" => "1"
+        }
+      end
+
+      let(:programmes) { [create(:programme, :td_ipv)] }
+      let(:session) { create(:session, organisation:, programmes:) }
+
+      it "has errors" do
+        expect(immunisation_import_row).to be_invalid
+        expect(immunisation_import_row.errors[:dose_sequence]).to eq(
+          ["Do not provide a dose sequence for this programme (leave blank)"]
+        )
+      end
+    end
+
     context "HPV vaccination in previous academic year, no vaccinator details provided" do
       let(:programmes) { [create(:programme, :hpv)] }
 
@@ -1170,8 +1210,20 @@ describe ImmunisationImportRow do
 
     let(:programmes) { [create(:programme, :hpv)] }
 
-    context "without a value" do
+    context "without a value and for HPV" do
       let(:data) { { "PROGRAMME" => "HPV" } }
+
+      it { should eq(1) }
+    end
+
+    context "without a value and for Td/IPV" do
+      let(:data) { { "PROGRAMME" => "3-in-1" } }
+
+      it { should be_nil }
+    end
+
+    context "without a value and for MenACWY" do
+      let(:data) { { "PROGRAMME" => "MenACWY" } }
 
       it { should be_nil }
     end
