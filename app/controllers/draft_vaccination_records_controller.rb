@@ -40,7 +40,7 @@ class DraftVaccinationRecordsController < ApplicationController
     when :outcome
       handle_outcome
     when :batch
-      update_default_batch_for_today
+      handle_batch
     when :confirm
       handle_confirm
     end
@@ -83,10 +83,15 @@ class DraftVaccinationRecordsController < ApplicationController
   def handle_outcome
     # If not administered we can skip the remaining steps as they're not relevant.
     jump_to("confirm") unless @draft_vaccination_record.administered?
+  end
 
-    # TODO: Require the nurse to specify the dose sequence.
-    @draft_vaccination_record.dose_sequence ||=
-      1 if @draft_vaccination_record.administered?
+  def handle_batch
+    if params.dig(:draft_vaccination_record, :todays_batch).present? &&
+         update_params[:batch_id].in?(
+           params[:draft_vaccination_record][:todays_batch]
+         )
+      self.todays_batch = policy_scope(Batch).find(update_params[:batch_id])
+    end
   end
 
   def handle_confirm
@@ -109,38 +114,23 @@ class DraftVaccinationRecordsController < ApplicationController
 
     send_vaccination_confirmation(@vaccination_record) if should_notify_parents
 
+    @vaccination_record.triage_patient_as_do_not_vaccinate!
+
     # In case the user navigates back to try and edit the newly created
     # vaccination record.
     @draft_vaccination_record.update!(editing_id: @vaccination_record.id)
 
-    heading =
-      if @vaccination_record.administered?
-        t("vaccinations.flash.given")
-      else
-        t("vaccinations.flash.not_given")
-      end
-
-    tab = @vaccination_record.administered? ? "vaccinated" : "could-not"
-
-    heading_link_href =
-      session_patient_programme_path(
-        @session,
-        @patient,
-        @programme,
-        section: "vaccinations",
-        tab:
-      )
-
-    flash[:success] = {
-      heading:,
-      heading_link_text: @patient.full_name,
-      heading_link_href:
-    }
+    flash[:success] = "Vaccination outcome recorded for #{@programme.name}"
   end
 
   def finish_wizard_path
     if @session.today?
-      session_vaccinations_path(@session, programme_type: @programme)
+      session_patient_programme_path(
+        @session,
+        @patient,
+        @programme,
+        return_to: "record"
+      )
     else
       programme_vaccination_record_path(@programme, @vaccination_record)
     end
@@ -219,24 +209,9 @@ class DraftVaccinationRecordsController < ApplicationController
           wizard_path("confirm")
         end
       elsif current_step == @draft_vaccination_record.wizard_steps.first
-        session_patient_programme_path(
-          @session,
-          @patient,
-          @programme,
-          section: "vaccinations",
-          tab: "vaccinate"
-        )
+        session_patient_programme_path(@session, @patient, @programme)
       else
         previous_wizard_path
       end
-  end
-
-  def update_default_batch_for_today
-    if params.dig(:draft_vaccination_record, :todays_batch).present? &&
-         update_params[:batch_id].in?(
-           params[:draft_vaccination_record][:todays_batch]
-         )
-      self.todays_batch_id = update_params[:batch_id]
-    end
   end
 end

@@ -63,6 +63,7 @@ class ConsentForm < ApplicationRecord
   include AgeConcern
   include Archivable
   include FullNameConcern
+  include HasHealthAnswers
   include WizardStepConcern
 
   before_save :reset_unused_fields
@@ -72,7 +73,8 @@ class ConsentForm < ApplicationRecord
 
   attr_accessor :health_question_number, :parental_responsibility
 
-  audited
+  audited associated_with: :consent
+  has_associated_audits
 
   belongs_to :consent, optional: true
   belongs_to :location
@@ -117,15 +119,12 @@ class ConsentForm < ApplicationRecord
 
   enum :education_setting, { school: 0, home: 1, none: 2 }, prefix: true
 
-  serialize :health_answers, coder: HealthAnswer::ArraySerializer
-
   encrypts :address_line_1,
            :address_line_2,
            :address_postcode,
            :address_town,
            :family_name,
            :given_name,
-           :health_answers,
            :parent_contact_method_other_details,
            :parent_email,
            :parent_full_name,
@@ -379,18 +378,23 @@ class ConsentForm < ApplicationRecord
     "#{human_enum_name(:response).capitalize} (online)"
   end
 
-  def parent_contact_method_description
+  def parent
     Parent.new(
+      full_name: parent_full_name,
+      email: parent_email,
+      phone: parent_phone,
+      phone_receive_updates: parent_phone_receive_updates,
       contact_method_type: parent_contact_method_type,
       contact_method_other_details: parent_contact_method_other_details
-    ).contact_method_description
+    )
   end
 
-  def parent_relationship_label
+  def parent_relationship
     ParentRelationship.new(
+      parent:,
       type: parent_relationship_type,
       other_name: parent_relationship_other_name
-    ).label
+    )
   end
 
   def match_with_patient!(patient, current_user:)
@@ -431,6 +435,10 @@ class ConsentForm < ApplicationRecord
     education_setting_home?
   end
 
+  def home_educated_changed?
+    education_setting_changed?
+  end
+
   def chosen_programmes
     return [] if consent_refused?
 
@@ -455,7 +463,53 @@ class ConsentForm < ApplicationRecord
     end
   end
 
+  def seed_health_questions
+    return unless consent_given? || consent_given_one?
+
+    # If the health answers change due to the chosen vaccines changing, we
+    # want to try and keep as much as what the parents already wrote intact.
+    # We do this be saving the answers to the question title (as the IDs
+    # and ordering can change).
+
+    existing_health_answers =
+      health_answers.each_with_object({}) do |health_answer, memo|
+        memo[health_answer.question] = {
+          response: health_answer.response,
+          notes: health_answer.notes
+        }
+      end
+
+    health_answers_for_chosen_vaccines =
+      chosen_vaccines.flat_map { it.health_questions.to_health_answers }
+
+    # TODO: This doesn't work if we have follow up questions. Currently no vaccines have these.
+    deduplicated_health_answers =
+      health_answers_for_chosen_vaccines.uniq(&:question)
+
+    self.health_answers =
+      deduplicated_health_answers.each_with_index.map do |health_answer, index|
+        health_answer.id = index
+
+        health_answer.next_question =
+          (index + 1 if index < deduplicated_health_answers.count - 1)
+
+        if (
+             existing_health_answer =
+               existing_health_answers[health_answer.question]
+           )
+          health_answer.response = existing_health_answer[:response]
+          health_answer.notes = existing_health_answer[:notes]
+        end
+
+        health_answer
+      end
+  end
+
   private
+
+  def via_self_consent?
+    false
+  end
 
   def academic_year
     created_at.to_date.academic_year
@@ -539,11 +593,7 @@ class ConsentForm < ApplicationRecord
       self.reason_notes = nil
     end
 
-    if consent_given? || consent_given_one?
-      self.contact_injection = nil
-
-      seed_health_questions
-    end
+    self.contact_injection = nil if consent_given? || consent_given_one?
 
     if school_confirmed
       self.education_setting = "school"
@@ -554,26 +604,5 @@ class ConsentForm < ApplicationRecord
     elsif school
       self.education_setting = "school"
     end
-  end
-
-  def seed_health_questions
-    return unless health_answers.empty?
-
-    health_answers =
-      chosen_vaccines.flat_map { it.health_questions.to_health_answers }
-
-    # TODO: This doesn't work if we have follow up questions. Currently no vaccines have these.
-
-    deduplicated_health_answers = health_answers.uniq(&:question)
-
-    self.health_answers =
-      deduplicated_health_answers.each_with_index.map do |health_answer, index|
-        health_answer.id = index
-
-        health_answer.next_question =
-          (index + 1 if index < deduplicated_health_answers.count - 1)
-
-        health_answer
-      end
   end
 end

@@ -143,7 +143,7 @@ describe "Manage school sessions" do
   end
 
   def and_i_see_a_child_in_the_cohort
-    expect(page).to have_content("1 child in this session")
+    expect(page).to have_content("1 child")
   end
 
   def when_i_click_on_schedule_sessions

@@ -23,7 +23,8 @@
 #
 
 class PatientSession < ApplicationRecord
-  audited
+  audited associated_with: :patient
+  has_associated_audits
 
   include PatientSessionStatusConcern
 
@@ -62,28 +63,45 @@ class PatientSession < ApplicationRecord
 
   scope :preload_for_status,
         -> do
-          preload(
+          eager_load(:patient).preload(
+            session_attendances: :session_date,
             patient: [:triages, { consents: :parent }, :vaccination_records],
             session: :programmes
           )
         end
+
+  scope :in_programmes,
+        ->(programmes) { merge(Patient.in_programmes(programmes)) }
+
+  scope :search_by_name, ->(name) { merge(Patient.search_by_name(name)) }
+
+  scope :search_by_year_groups,
+        ->(year_groups) { merge(Patient.search_by_year_groups(year_groups)) }
+
+  scope :search_by_date_of_birth_year,
+        ->(year) do
+          where("extract(year from patients.date_of_birth) = ?", year)
+        end
+
+  scope :search_by_date_of_birth_month,
+        ->(month) do
+          where("extract(month from patients.date_of_birth) = ?", month)
+        end
+
+  scope :search_by_date_of_birth_day,
+        ->(day) { where("extract(day from patients.date_of_birth) = ?", day) }
+
+  scope :search_by_nhs_number,
+        ->(nhs_number) { merge(Patient.search_by_nhs_number(nhs_number)) }
 
   scope :order_by_name,
         -> do
           order("LOWER(patients.family_name)", "LOWER(patients.given_name)")
         end
 
-  delegate :send_notifications?, to: :patient
-
   def safe_to_destroy?
-    any_vaccination_records =
-      programmes.any? do |programme|
-        vaccination_records(programme:, for_session: true).present?
-      end
-
-    return false if any_vaccination_records
-
-    gillick_assessments.empty? && session_attendances.none?(&:attending?)
+    programmes.none? { session_outcome.all[it].any? } &&
+      gillick_assessments.empty? && session_attendances.none?(&:attending?)
   end
 
   def destroy_if_safe!
@@ -91,79 +109,42 @@ class PatientSession < ApplicationRecord
   end
 
   def can_record_as_already_vaccinated?(programme:)
-    !session.today? && !vaccinated?(programme:) &&
-      !unable_to_vaccinate?(programme:)
+    !session.today? && patient.programme_outcome.none?(programme)
   end
 
   def programmes
     session.programmes.select { it.year_groups.include?(patient.year_group) }
   end
 
-  def consents(programme:)
-    patient.consents.select { it.programme_id == programme.id }
+  def gillick_assessment(programme)
+    gillick_assessments
+      .select { it.programme_id == programme.id }
+      .max_by(&:created_at)
   end
 
-  def latest_consents(programme:)
-    latest_consents_by_programme.fetch(programme.id, [])
+  def register_outcome
+    @register_outcome ||= PatientSession::RegisterOutcome.new(self)
   end
 
-  def gillick_assessment(programme:)
-    gillick_assessments.select { it.programme_id == programme.id }.last
+  def session_outcome
+    @session_outcome ||= PatientSession::SessionOutcome.new(self)
   end
 
-  def triages(programme:)
-    patient.triages.select { it.programme_id == programme.id }
-  end
+  def ready_for_vaccinator?(programme: nil)
+    return false if register_outcome.unknown? || register_outcome.not_attending?
 
-  def latest_triage(programme:)
-    latest_triage_by_programme[programme.id]
-  end
+    programmes_to_check = programme ? [programme] : programmes
 
-  def vaccination_records(programme:, for_session: false)
-    vaccination_records_for_programme =
-      patient.vaccination_records.select { it.programme_id == programme.id }
-
-    # Normally we would want to show all vaccination records for a patient regardless of
-    # the session they were vaccinated in. However, there are some cases where it may be
-    # necessary to show only vaccination records for this particular session.
-
-    if for_session
-      vaccination_records_for_programme.select { it.session_id == session_id }
-    else
-      vaccination_records_for_programme
+    programmes_to_check.any? do
+      patient.consent_given_and_safe_to_vaccinate?(programme: it)
     end
   end
 
-  def todays_attendance
-    @todays_attendance ||=
-      if (session_date = session.session_dates.find(&:today?))
-        session_attendances.eager_load(
-          :patient,
-          :session_date
-        ).find_or_initialize_by(session_date:)
-      end
-  end
+  def programmes_ready_for_vaccinator
+    # If this patient hasn't been seen yet by a nurse for any of the programmes,
+    # we don't want to show the banner.
+    return [] if programmes.all? { session_outcome.none?(it) }
 
-  private
-
-  def latest_consents_by_programme
-    @latest_consents_by_programme ||=
-      patient
-        .consents
-        .reject(&:invalidated?)
-        .select { it.response_given? || it.response_refused? }
-        .group_by(&:programme_id)
-        .transform_values do |consents|
-          consents.group_by(&:name).map { it.second.max_by(&:created_at) }
-        end
-  end
-
-  def latest_triage_by_programme
-    @latest_triage_by_programme ||=
-      patient
-        .triages
-        .reject(&:invalidated?)
-        .group_by(&:programme_id)
-        .transform_values { it.max_by(&:created_at) }
+    programmes.select { ready_for_vaccinator?(programme: it) }
   end
 end

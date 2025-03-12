@@ -1,0 +1,28 @@
+<% content_for :before_main do %>
+  <%= render AppBreadcrumbComponent.new(items: [
+                                          { text: t("dashboard.index.title"), href: dashboard_path },
+                                          { text: t("sessions.index.title"), href: sessions_path },
+                                          { text: @session.location.name, href: session_path(@session) },
+                                        ]) %>
+<% end %>
+
+<%= render "sessions/header" %>
+
+<div class="app-grid-row">
+  <div class="app-grid-column-filters">
+    <%= render AppSearchComponent.new(
+          form: @form,
+          url: session_consent_path(@session),
+          consent_statuses: @statuses,
+          year_groups: @session.year_groups,
+        ) %>
+  </div>
+
+  <div class="app-grid-column-results">
+    <%= render AppSearchResultsComponent.new(@pagy) do %>
+      <% @patient_sessions.each do |patient_session| %>
+        <%= render AppPatientSessionSearchResultCardComponent.new(patient_session, context: :consent) %>
+      <% end %>
+    <% end %>
+  </div>
+</div>

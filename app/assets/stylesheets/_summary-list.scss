@@ -48,6 +48,11 @@
     }
   }
 
+  &.nhsuk-summary-list--no-border .nhsuk-summary-list__row {
+    border-bottom: none;
+    margin-bottom: 0;
+  }
+
   .nhsuk-summary-list__key,
   .nhsuk-summary-list__value,
   .nhsuk-summary-list__actions {

@@ -219,7 +219,9 @@ describe "Parental consent school" do
 
   def then_i_can_check_my_answers
     expect(page).to have_content("Check and confirm")
-    expect(page).to have_content("Child’s name#{@child.full_name}")
+    expect(page).to have_content(
+      "Child’s name#{@child.full_name(context: :parents)}"
+    )
   end
 
   def when_i_submit_the_consent_form
@@ -272,7 +274,7 @@ describe "Parental consent school" do
       click_on "Community clinics"
     end
 
-    click_on "Record vaccinations"
+    click_on "Session outcome"
     click_on @child.full_name
   end
 

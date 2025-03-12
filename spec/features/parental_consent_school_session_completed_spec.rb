@@ -58,13 +58,15 @@ describe "Parental consent" do
       click_on "Sessions"
     end
     click_on "Pilot School"
-    click_on "Check consent responses"
+    click_on "Consent"
   end
 
   def then_there_should_be_no_consent_for_my_child
     expect(page).to have_content("No response")
 
-    click_on "No response"
+    choose "No response"
+    click_on "Update results"
+
     expect(page).to have_content(@child.full_name)
   end
 
@@ -131,7 +133,9 @@ describe "Parental consent" do
 
   def then_i_can_check_my_answers
     expect(page).to have_content("Check and confirm")
-    expect(page).to have_content("Child’s name#{@child.full_name}")
+    expect(page).to have_content(
+      "Child’s name#{@child.full_name(context: :parents)}"
+    )
   end
 
   def when_i_submit_the_consent_form
@@ -140,7 +144,7 @@ describe "Parental consent" do
 
   def then_i_get_a_confirmation_email
     expect(page).to have_content(
-      "#{@child.full_name} is due to get the HPV vaccination at school"
+      "#{@child.full_name(context: :parents)} is due to get the HPV vaccination at school"
     )
 
     expect_email_to("jane@example.com", :consent_confirmation_clinic)

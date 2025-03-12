@@ -194,21 +194,6 @@ FactoryBot.define do
                     home_educated:,
                     year_group:
       end
-
-      after(:create) do |patient_session, evaluator|
-        patient_session.session.programmes.each do |programme|
-          create(
-            :vaccination_record,
-            :not_administered,
-            patient: patient_session.patient,
-            session: patient_session.session,
-            programme:,
-            performed_by: evaluator.user,
-            location_name: evaluator.location_name,
-            outcome: :absent_from_school
-          )
-        end
-      end
     end
 
     trait :did_not_need_triage do
@@ -247,7 +232,7 @@ FactoryBot.define do
             programme:,
             performed_by: evaluator.user,
             location_name: evaluator.location_name,
-            outcome: :already_had
+            outcome: :not_well
           )
         end
       end
@@ -274,7 +259,7 @@ FactoryBot.define do
             session: patient_session.session,
             programme:,
             performed_by: evaluator.user,
-            outcome: :already_had
+            outcome: :not_well
           )
         end
       end

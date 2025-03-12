@@ -31,9 +31,9 @@ describe AppOutcomeBannerComponent do
       create(:patient_session, :unable_to_vaccinate, session:)
     end
 
-    it { should have_css(".app-card--red") }
+    it { should have_css(".app-card--dark-orange") }
     it { should have_css(".nhsuk-card__heading", text: "Could not vaccinate") }
-    it { should have_text("Alya Merton has already had the vaccine") }
+    it { should have_text("MERTON, Alya was not well enough") }
     it { should have_text("Location\n#{location_name}") }
   end
 
@@ -42,9 +42,9 @@ describe AppOutcomeBannerComponent do
       create(:patient_session, :unable_to_vaccinate, session:)
     end
 
-    it { should have_css(".app-card--red") }
+    it { should have_css(".app-card--dark-orange") }
     it { should have_css(".nhsuk-card__heading", text: "Could not vaccinate") }
-    it { should have_text("Reason\nAlya Merton has already had the vaccine") }
+    it { should have_text("Reason\nMERTON, Alya was not well enough") }
   end
 
   context "not triaged, not possible to vaccinate" do
@@ -52,16 +52,33 @@ describe AppOutcomeBannerComponent do
       create(:patient_session, :unable_to_vaccinate_and_had_no_triage, session:)
     end
 
-    it { should have_css(".app-card--red") }
+    it { should have_css(".app-card--dark-orange") }
     it { should have_css(".nhsuk-card__heading", text: "Could not vaccinate") }
-    it { should have_text("Reason\nAlya Merton has already had the vaccine") }
+    it { should have_text("Reason\nMERTON, Alya was not well enough") }
+  end
+
+  context "already had vaccine" do
+    let(:patient_session) { create(:patient_session, session:) }
+
+    before do
+      create(
+        :vaccination_record,
+        :not_administered,
+        :already_had,
+        patient: patient_session.patient,
+        programme:
+      )
+    end
+
+    it { should have_css(".app-card--green") }
+    it { should have_css(".nhsuk-card__heading", text: "Vaccinated") }
+    it { should have_text("Reason\nMERTON, Alya has already had the vaccine") }
   end
 
   context "state is vaccinated" do
     let(:patient_session) { create(:patient_session, :vaccinated, session:) }
-    let(:vaccination_record) do
-      patient_session.vaccination_records(programme:).first
-    end
+    let(:patient) { patient_session.patient }
+    let(:vaccination_record) { patient.programme_outcome.all[programme].first }
     let(:vaccine) { programme.vaccines.first }
     let(:location) { patient_session.session.location }
     let(:batch) { vaccine.batches.first }
@@ -81,7 +98,9 @@ describe AppOutcomeBannerComponent do
       let(:patient_session) do
         create(:patient_session, :vaccinated, session:).tap do |ps|
           ps.strict_loading!(false)
-          ps.vaccination_records(programme:).first.update!(performed_at: date)
+          ps.patient.programme_outcome.all[programme].first.update!(
+            performed_at: date
+          )
         end
       end
 
@@ -99,9 +118,10 @@ describe AppOutcomeBannerComponent do
     let(:patient_session) do
       create(:patient_session, :triaged_do_not_vaccinate, session:, user:)
     end
+    let(:patient) { patient_session.patient }
     let(:vaccination_record) { patient_session.vaccination_records.first }
     let(:location) { patient_session.session.location }
-    let(:triage) { patient_session.triages(programme:).first }
+    let(:triage) { patient.triage_outcome.all[programme].first }
     let(:date) { triage.created_at.to_date.to_fs(:long) }
 
     it { should have_css(".app-card--red") }
@@ -124,10 +144,9 @@ describe AppOutcomeBannerComponent do
           :triaged_do_not_vaccinate,
           session:
         ).tap do |ps|
-          ps
-            .triages(programme: ps.programmes.first)
-            .first
-            .update!(created_at: date)
+          ps.patient.triage_outcome.all[ps.programmes.first].first.update!(
+            created_at: date
+          )
         end
       end
 

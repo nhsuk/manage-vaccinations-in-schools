@@ -43,15 +43,18 @@ describe "HPV vaccination" do
     then_i_see_the_confirmation_page
 
     when_i_confirm_the_details
-    then_i_see_the_record_vaccinations_page
-    and_a_success_message
+    then_i_see_a_success_message
+    and_i_can_no_longer_vaccinate_the_patient
+    and_i_no_longer_see_the_patient_in_the_record_tab
 
     when_i_go_back
     and_i_save_changes
-
-    when_i_go_to_the_patient
     then_i_see_that_the_status_is_vaccinated
     and_i_see_the_vaccination_details
+
+    when_i_go_to_the_register_tab
+    and_i_filter_by_completed_session
+    then_i_see_the_patient
 
     when_vaccination_confirmations_are_sent
     then_an_email_is_sent_to_the_parent_confirming_the_vaccination
@@ -92,20 +95,20 @@ describe "HPV vaccination" do
   end
 
   def when_i_go_to_a_patient_that_is_ready_to_vaccinate
-    visit session_triage_path(@session)
-    click_link "No triage needed"
+    visit session_record_path(@session)
     click_link @patient.full_name
   end
 
   def and_i_record_that_the_patient_has_been_vaccinated
     # pre-screening
-    find_all(".nhsuk-fieldset")[0].choose "Yes"
-    find_all(".nhsuk-fieldset")[1].choose "Yes"
-    find_all(".nhsuk-fieldset")[2].choose "Yes"
-    find_all(".nhsuk-fieldset")[3].choose "Yes"
+    check "know what the vaccination is for, and are happy to have it"
+    check "have not already had the vaccination"
+    check "are feeling well"
+    check "have no allergies which would prevent vaccination"
+    check "are not pregnant"
 
     # vaccination
-    find_all(".nhsuk-fieldset")[4].choose "Yes"
+    choose "Yes"
     choose "Left arm (upper position)"
     click_button "Continue"
   end
@@ -174,14 +177,18 @@ describe "HPV vaccination" do
     click_button "Confirm"
   end
 
-  def then_i_see_the_record_vaccinations_page
-    expect(page).to have_content("Record vaccinations")
+  def then_i_see_a_success_message
+    expect(page).to have_content("Vaccination outcome recorded for HPV")
   end
 
-  def and_a_success_message
-    expect(page).to have_content(
-      "Vaccination recorded for #{@patient.full_name}"
-    )
+  def and_i_can_no_longer_vaccinate_the_patient
+    expect(page).not_to have_content("You still need to record an outcome")
+    expect(page).not_to have_content("ready for their HPV vaccination?")
+  end
+
+  def and_i_no_longer_see_the_patient_in_the_record_tab
+    click_on "Record vaccinations"
+    expect(page).to have_content("No children matching search criteria found")
   end
 
   def when_i_go_back
@@ -192,16 +199,27 @@ describe "HPV vaccination" do
     click_button "Save changes"
   end
 
-  def when_i_go_to_the_patient
-    click_link @patient.full_name
-  end
-
   def then_i_see_that_the_status_is_vaccinated
     expect(page).to have_content("Vaccinated")
   end
 
   def and_i_see_the_vaccination_details
     expect(page).to have_content("Vaccination details").once
+    expect(page).to have_content("Dose numberFirst")
+  end
+
+  def when_i_go_to_the_register_tab
+    click_link @session.location.name
+    click_link "Register"
+  end
+
+  def and_i_filter_by_completed_session
+    choose "Completed session"
+    click_on "Update results"
+  end
+
+  def then_i_see_the_patient
+    expect(page).to have_content(@patient.full_name)
   end
 
   def when_vaccination_confirmations_are_sent
@@ -211,14 +229,14 @@ describe "HPV vaccination" do
   def then_an_email_is_sent_to_the_parent_confirming_the_vaccination
     expect_email_to(
       @patient.consents.last.parent.email,
-      :vaccination_confirmation_administered
+      :vaccination_administered_hpv
     )
   end
 
   def and_a_text_is_sent_to_the_parent_confirming_the_vaccination
     expect_sms_to(
       @patient.consents.last.parent.phone,
-      :vaccination_confirmation_administered
+      :vaccination_administered_hpv
     )
   end
 end

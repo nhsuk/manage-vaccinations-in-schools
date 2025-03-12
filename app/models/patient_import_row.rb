@@ -67,7 +67,8 @@ class PatientImportRow
   end
 
   def to_school_move(patient)
-    if patient.school != school || patient.home_educated != home_educated
+    if patient.new_record? ||
+         (patient.school != school || patient.home_educated != home_educated)
       school_move =
         if school
           SchoolMove.find_or_initialize_by(patient:, school:)

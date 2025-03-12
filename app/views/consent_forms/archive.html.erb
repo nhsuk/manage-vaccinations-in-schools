@@ -1,5 +1,5 @@
 <% content_for :before_main do %>
-  <%= render AppBacklinkComponent.new(consent_form_path, name: "consent page") %>
+  <%= render AppBacklinkComponent.new(consent_form_path(@consent_form), name: "consent page") %>
 <% end %>
 
 <%= form_with model: @consent_form, url: archive_consent_form_path, method: :post do |f| %>
@@ -7,7 +7,7 @@
 
   <% page_title = "Archive response" %>
   <%= h1 page_title: do %>
-    <span class="nhsuk-caption-l nhsuk-u-margin-top-2">
+    <span class="nhsuk-caption-l">
       Consent response from <%= @consent_form.parent_full_name %>
     </span>
     <%= page_title %>
@@ -17,7 +17,5 @@
 
   <%= f.govuk_text_area :notes, label: { text: "Notes", size: "m" } %>
 
-  <div class="nhsuk-u-margin-top-6">
-    <%= f.govuk_submit "Archive response", warning: true %>
-  </div>
+  <%= f.govuk_submit "Archive response", warning: true %>
 <% end %>

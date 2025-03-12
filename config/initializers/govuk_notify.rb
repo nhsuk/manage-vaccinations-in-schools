@@ -22,10 +22,11 @@ GOVUK_NOTIFY_EMAIL_TEMPLATES = {
   triage_vaccination_at_clinic: "9faef718-bd76-4c30-93ea-fbe8584388a6",
   triage_vaccination_will_happen: "fa3c8dd5-4688-4b93-960a-1d422c4e5597",
   triage_vaccination_wont_happen: "d1faf47e-ccc3-4481-975b-1ec34211a21f",
-  vaccination_confirmation_administered: "8a65d7b5-045c-4f26-8f76-6e593c14cb6d",
-  vaccination_confirmation_not_administered:
-    "130fe52a-014a-45dd-9f53-8e65c1b8bb79",
-  vaccination_deleted: "1caf1459-abc9-4944-b8c0-deba906ea005"
+  vaccination_administered_hpv: "8a65d7b5-045c-4f26-8f76-6e593c14cb6d",
+  vaccination_administered_menacwy: "38727494-9a81-42b3-9c1f-5c31e55333e7",
+  vaccination_administered_td_ipv: "3abe7ca8-a889-484b-ab9f-07523302eb6a",
+  vaccination_deleted: "1caf1459-abc9-4944-b8c0-deba906ea005",
+  vaccination_not_administered: "130fe52a-014a-45dd-9f53-8e65c1b8bb79"
 }.freeze
 
 GOVUK_NOTIFY_SMS_TEMPLATES = {
@@ -37,7 +38,8 @@ GOVUK_NOTIFY_SMS_TEMPLATES = {
   session_clinic_initial_invitation: "8ef5712f-bb7f-4911-8f3b-19df6f8a7179",
   session_clinic_subsequent_invitation: "018f146d-e7b7-4b63-ae26-bb07ca6fe2f9",
   session_school_reminder: "6e4c514d-fcc9-4bc8-b7eb-e222a1445681",
-  vaccination_confirmation_administered: "69612d3a-d6eb-4f04-8b99-ed14212e7245",
-  vaccination_confirmation_not_administered:
-    "aae061e0-b847-4d4c-a87a-12508f95a302"
+  vaccination_administered_hpv: "69612d3a-d6eb-4f04-8b99-ed14212e7245",
+  vaccination_administered_menacwy: "16ae7602-c2b1-4731-bb74-fd4f1357feca",
+  vaccination_administered_td_ipv: "4c616b22-eee8-423f-84d6-bd5710f744fd",
+  vaccination_not_administered: "aae061e0-b847-4d4c-a87a-12508f95a302"
 }.freeze

@@ -5,7 +5,7 @@ class PatientSessionsController < ApplicationController
   before_action :set_programme, except: :log
   before_action :set_session
   before_action :set_patient
-  before_action :set_section_and_tab
+  before_action :set_breadcrumb_item
 
   before_action :record_access_log_entry, except: :record_already_vaccinated
 
@@ -32,12 +32,10 @@ class PatientSessionsController < ApplicationController
       outcome: :already_had,
       patient: @patient,
       performed_at: Time.current,
-      performed_by_user_id: nil,
+      performed_by_user_id: current_user.id,
       programme: @programme,
-      # TODO: Ideally we wouldn't set these, but other parts of the service break if we don't.
-      # These are set when recording an "already had" vaccination normally, and we probably
-      # want to change that too.
       session: @session,
+      location_name: @session.clinic? ? "Unknown" : nil,
       performed_ods_code: current_user.selected_organisation.ods_code
     )
 
@@ -86,9 +84,17 @@ class PatientSessionsController < ApplicationController
     @patient = @patient_session.patient
   end
 
-  def set_section_and_tab
-    @section = params[:section]
-    @tab = params[:tab]
+  def set_breadcrumb_item
+    return_to = params[:return_to]
+    return nil if return_to.blank?
+
+    known_return_to = %w[consent triage register record outcome]
+    return unless return_to.in?(known_return_to)
+
+    @breadcrumb_item = {
+      text: t(return_to, scope: %i[sessions tabs]),
+      href: send(:"session_#{return_to}_path")
+    }
   end
 
   def record_access_log_entry

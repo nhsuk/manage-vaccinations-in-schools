@@ -14,11 +14,11 @@ describe "HPV vaccination" do
     then_i_see_the_confirmation_page
 
     when_i_confirm_the_details
-    then_i_see_the_record_vaccinations_page
-    and_a_success_message
+    then_i_see_a_success_message
+    and_i_no_longer_see_the_patient_in_the_record_tab
 
     when_i_go_to_the_patient
-    then_i_see_that_the_status_is_could_not_vaccinate
+    then_i_see_that_the_status_is_vaccinated
 
     when_vaccination_confirmations_are_sent
     then_an_email_is_sent_saying_the_vaccination_didnt_happen
@@ -44,33 +44,17 @@ describe "HPV vaccination" do
   end
 
   def when_i_go_to_a_patient_that_is_ready_to_vaccinate
-    visit session_triage_path(@session)
-    click_link "No triage needed"
+    visit session_record_path(@session)
     click_link @patient.full_name
   end
 
   def and_i_record_that_the_patient_wasnt_vaccinated
-    within(
-      "fieldset",
-      text:
-        "Does the child know what the vaccination is for, and are they happy to have it?"
-    ) { choose "Yes" }
+    check "know what the vaccination is for, and are happy to have it"
+    check "are feeling well"
+    check "have no allergies which would prevent vaccination"
+    check "are not pregnant"
 
-    within(
-      "fieldset",
-      text:
-        "Has the child confirmed they have not already had this vaccination?"
-    ) { choose "No" }
-
-    within("fieldset", text: "Is the child is feeling well?") { choose "Yes" }
-
-    within(
-      "fieldset",
-      text:
-        "Has the child confirmed they have no allergies which would prevent vaccination?"
-    ) { choose "Yes" }
-
-    find_all(".nhsuk-fieldset")[4].choose "No"
+    choose "No"
     click_button "Continue"
   end
 
@@ -94,20 +78,22 @@ describe "HPV vaccination" do
     click_button "Confirm"
   end
 
-  def then_i_see_the_record_vaccinations_page
-    expect(page).to have_content("Record vaccinations")
+  def then_i_see_a_success_message
+    expect(page).to have_content("Vaccination outcome recorded for HPV")
   end
 
-  def and_a_success_message
-    expect(page).to have_content("Record updated for #{@patient.full_name}")
+  def and_i_no_longer_see_the_patient_in_the_record_tab
+    click_on "Record vaccinations"
+    expect(page).to have_content("No children matching search criteria found")
   end
 
   def when_i_go_to_the_patient
-    click_link @patient.full_name
+    click_on "Session outcomes"
+    click_on @patient.full_name
   end
 
-  def then_i_see_that_the_status_is_could_not_vaccinate
-    expect(page).to have_content("Could not vaccinate")
+  def then_i_see_that_the_status_is_vaccinated
+    expect(page).to have_content("Vaccinated")
     expect(page).to have_content(
       "Reason#{@patient.full_name} has already had the vaccine"
     )
@@ -120,14 +106,14 @@ describe "HPV vaccination" do
   def then_an_email_is_sent_saying_the_vaccination_didnt_happen
     expect_email_to(
       @patient.consents.last.parent.email,
-      :vaccination_confirmation_not_administered
+      :vaccination_not_administered
     )
   end
 
   def and_a_text_is_sent_saying_the_vaccination_didnt_happen
     expect_sms_to(
       @patient.consents.last.parent.phone,
-      :vaccination_confirmation_not_administered
+      :vaccination_not_administered
     )
   end
 end

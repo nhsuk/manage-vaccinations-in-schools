@@ -5,53 +5,47 @@ class AppProgrammeSessionTableComponent < ViewComponent::Base
     super
 
     @sessions = sessions
-
-    @stats =
-      sessions.index_with do |session|
-        PatientSessionStats.new(
-          session.patient_sessions,
-          keys: %i[without_a_response needing_triage vaccinated]
-        ).fetch(programme)
-      end
+    @programme = programme
   end
 
   private
 
-  attr_reader :sessions
+  attr_reader :sessions, :programme
 
   def cohort_count(session:)
     session.patient_sessions.length.to_s
   end
 
-  def number_stat(session:, key:)
-    @stats.dig(session, key).to_s
+  def number_stat(session:)
+    session.patient_sessions.select { yield it }.length.to_s
   end
 
-  def percentage_stat(session:, key:)
-    count = session.patient_sessions.length
-    return nil if count.zero?
+  def percentage_stat(session:)
+    total_count = session.patient_sessions.length
+    return nil if total_count.zero?
 
-    value = @stats.dig(session, key) / count.to_f * 100.0
-    number_to_percentage(value, precision: 0)
+    count = session.patient_sessions.select { yield it }.length
+
+    number_to_percentage(count / total_count.to_f * 100.0, precision: 0)
   end
 
   def no_response_count(session:)
-    number_stat(session:, key: :without_a_response)
+    number_stat(session:) { it.patient.consent_outcome.none?(programme) }
   end
 
   def no_response_percentage(session:)
-    percentage_stat(session:, key: :without_a_response)
+    percentage_stat(session:) { it.patient.consent_outcome.none?(programme) }
   end
 
   def triage_needed_count(session:)
-    number_stat(session:, key: :needing_triage)
+    number_stat(session:) { it.patient.triage_outcome.required?(programme) }
   end
 
   def vaccinated_count(session:)
-    number_stat(session:, key: :vaccinated)
+    number_stat(session:) { it.session_outcome.vaccinated?(programme) }
   end
 
   def vaccinated_percentage(session:)
-    percentage_stat(session:, key: :vaccinated)
+    percentage_stat(session:) { it.session_outcome.vaccinated?(programme) }
   end
 end

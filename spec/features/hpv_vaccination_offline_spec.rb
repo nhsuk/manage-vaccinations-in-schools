@@ -115,7 +115,7 @@ describe "HPV vaccination" do
   def when_i_choose_to_record_offline_from_a_school_session_page
     sign_in @organisation.users.first
     visit session_path(@session)
-    click_link "Record offline (Excel)"
+    click_link "Record offline"
   end
 
   def when_i_choose_to_record_offline_from_a_clinic_page
@@ -124,7 +124,7 @@ describe "HPV vaccination" do
     click_link "Sessions", match: :first
     click_link "Scheduled"
     click_on "Community clinics"
-    click_link "Record offline (Excel)"
+    click_link "Record offline"
   end
 
   def then_i_see_an_excel_spreadsheet_for_recording_offline
@@ -239,8 +239,10 @@ describe "HPV vaccination" do
   end
 
   def then_i_see_the_uploaded_vaccination_outcomes_reflected_in_the_session
-    click_on "Record vaccinations"
-    click_on "Vaccinated"
+    click_on "Session outcomes"
+
+    choose "Vaccinated"
+    click_on "Update results"
 
     click_on @vaccinated_patient.full_name
 
@@ -253,8 +255,10 @@ describe "HPV vaccination" do
     )
     expect(page).to have_content("SiteLeft arm (upper position)")
 
-    click_on "Back"
-    click_on "Could not vaccinate"
+    click_link "Session outcomes"
+
+    choose "Absent from session"
+    click_on "Update results"
 
     click_on @unvaccinated_patient.full_name
     expect(page).to have_content(@unvaccinated_patient.full_name)
@@ -262,8 +266,10 @@ describe "HPV vaccination" do
     expect(page).to have_content("OutcomeAbsent from session")
     expect(page).to have_content("NotesSome notes.")
 
-    click_on "Back"
-    click_on "Vaccinated"
+    click_link "Session outcomes"
+
+    choose "Vaccinated"
+    click_on "Update results"
 
     click_on @restricted_vaccinated_patient.full_name
     expect(page).to have_content(@restricted_vaccinated_patient.full_name)
@@ -282,13 +288,13 @@ describe "HPV vaccination" do
   def then_an_email_is_sent_to_the_parent_confirming_the_vaccination
     expect_email_to(
       @vaccinated_patient.consents.last.parent.email,
-      :vaccination_confirmation_administered,
+      :vaccination_administered_hpv,
       :any
     )
 
     expect_email_to(
       @unvaccinated_patient.consents.last.parent.email,
-      :vaccination_confirmation_not_administered,
+      :vaccination_not_administered,
       :any
     )
   end
@@ -296,13 +302,13 @@ describe "HPV vaccination" do
   def and_a_text_is_sent_to_the_parent_confirming_the_vaccination
     expect_sms_to(
       @vaccinated_patient.consents.last.parent.phone,
-      :vaccination_confirmation_administered,
+      :vaccination_administered_hpv,
       :any
     )
 
     expect_sms_to(
       @unvaccinated_patient.consents.last.parent.phone,
-      :vaccination_confirmation_not_administered,
+      :vaccination_not_administered,
       :any
     )
   end

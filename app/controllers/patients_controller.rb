@@ -2,44 +2,28 @@
 
 class PatientsController < ApplicationController
   include Pagy::Backend
+  include SearchFormConcern
 
+  before_action :set_search_form, only: :index
   before_action :set_patient, except: :index
   before_action :record_access_log_entry, only: %i[show log]
 
   def index
-    scope = policy_scope(Patient).includes(:school).not_deceased
+    patients =
+      @form.apply(
+        policy_scope(Patient).includes(:school).not_deceased.order_by_name
+      )
 
-    if (@filter_name = params[:name]).present?
-      @filter_name.strip!
-      scope = scope.search_by_name(@filter_name)
-    end
+    @pagy, @patients = pagy(patients)
 
-    if (
-         @filter_missing_nhs_number =
-           ActiveModel::Type::Boolean.new.cast(params[:missing_nhs_number])
-       )
-      scope = scope.without_nhs_number
-    end
-
-    @filtered = @filter_name.present? || @filter_missing_nhs_number
-
-    @pagy, @patients = pagy(scope.order_by_name)
-
-    @heading = [
-      I18n.t("children", count: @pagy.count),
-      @filter_name.present? ? "matching “#{@filter_name}”" : nil,
-      @filter_missing_nhs_number ? "without an NHS number" : nil
-    ].compact.join(" ")
-
-    render layout: "full", status: request.post? ? :created : :ok
+    render layout: "full"
   end
 
   def show
-    @sessions =
-      policy_scope(Session)
-        .joins(:patients)
-        .where(patients: @patient)
-        .includes(:location)
+    @patient_sessions =
+      policy_scope(PatientSession).where(patient: @patient).includes(
+        session: %i[location programmes]
+      )
   end
 
   def log

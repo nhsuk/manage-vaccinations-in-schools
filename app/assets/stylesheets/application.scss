@@ -24,6 +24,17 @@ $mq-breakpoints: (
   wide: 1300px,
 );
 
+$_nhsuk-grid-widths: (
+  one-quarter: 25%,
+  one-third: 33.3333%,
+  one-half: 50%,
+  two-thirds: 66.6666%,
+  three-quarters: 75%,
+  full: 100%,
+  filters: 30%,
+  results: 70%,
+) !default;
+
 @import "nhsuk-frontend/packages/nhsuk";
 
 // App options
@@ -47,7 +58,9 @@ $color_app-dark-orange: color.scale(
 @import "dev-tools";
 @import "environment";
 @import "file-upload";
+@import "filters";
 @import "globals";
+@import "grid";
 @import "header";
 @import "heading-group";
 @import "highlight";
@@ -56,12 +69,13 @@ $color_app-dark-orange: color.scale(
 @import "overrides";
 @import "panel";
 @import "password-input";
-@import "patients";
+@import "search-input";
 @import "secondary-navigation";
 @import "status";
 @import "summary-list";
 @import "table";
 @import "tabs";
+@import "tag";
 @import "typography";
 @import "utilities";
 

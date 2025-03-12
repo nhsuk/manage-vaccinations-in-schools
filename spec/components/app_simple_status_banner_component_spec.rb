@@ -18,27 +18,26 @@ describe AppSimpleStatusBannerComponent do
   let(:patient_session) do
     create(:patient_session, programmes: [programme], user:)
   end
+  let(:patient) { patient_session.patient }
 
   let(:component) { described_class.new(patient_session:, programme:) }
 
   let(:triage_nurse_name) do
-    patient_session.triages(programme:).last.performed_by.full_name
+    patient.triage_outcome.all[programme].last.performed_by.full_name
   end
   let(:vaccination_nurse_name) do
-    patient_session.vaccination_records(programme:).last.performed_by.full_name
+    patient.programme_outcome.all[programme].last.performed_by.full_name
   end
-  let(:patient_name) { patient_session.patient.full_name }
+  let(:patient_name) { patient.full_name }
 
-  prepend_before do
-    patient_session.patient.update!(given_name: "Alya", family_name: "Merton")
-  end
+  prepend_before { patient.update!(given_name: "Alya", family_name: "Merton") }
 
   context "state is added_to_session" do
     let(:patient_session) do
       create(:patient_session, :added_to_session, programmes: [programme])
     end
 
-    it { should have_css(".app-card--blue") }
+    it { should have_css(".app-card--grey") }
   end
 
   context "state is consent_given_triage_not_needed" do
@@ -98,7 +97,7 @@ describe AppSimpleStatusBannerComponent do
       )
     end
 
-    it { should have_css(".app-card--purple") }
+    it { should have_css(".app-card--aqua-green") }
     it { should have_css(".nhsuk-card__heading", text: "Ready for nurse") }
 
     it do
@@ -136,12 +135,12 @@ describe AppSimpleStatusBannerComponent do
       create(:patient_session, :delay_vaccination, programmes: [programme])
     end
 
-    it { should have_css(".app-card--red") }
+    it { should have_css(".app-card--dark-orange") }
     it { should have_css(".nhsuk-card__heading", text: "Could not vaccinate") }
 
     it do
       expect(rendered).to have_text(
-        "#{vaccination_nurse_name} decided that #{patient_name}’s vaccination should be delayed"
+        "#{triage_nurse_name} decided that #{patient_name}’s vaccination should be delayed"
       )
     end
 

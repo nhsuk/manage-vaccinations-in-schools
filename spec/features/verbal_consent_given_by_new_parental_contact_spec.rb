@@ -21,7 +21,7 @@ describe "Verbal consent" do
   end
 
   def when_i_start_recording_consent_from_a_new_parental_contact
-    visit session_consents_path(@session)
+    visit session_consent_path(@session)
     click_link @patient.full_name
     click_button "Get consent"
 
@@ -63,12 +63,11 @@ describe "Verbal consent" do
     click_button "Confirm"
 
     # Back on the consent responses page
-    expect(page).to have_content("Check consent responses")
     expect(page).to have_content("Consent recorded for #{@patient.full_name}")
   end
 
   def and_i_can_see_the_parents_details_on_the_consent_response
-    click_link @patient.full_name
+    click_link @patient.full_name, match: :first
     click_link "Jane Smith"
 
     expect(page).to have_content("Consent response from Jane Smith")

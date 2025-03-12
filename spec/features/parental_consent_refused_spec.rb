@@ -21,7 +21,8 @@ describe "Parental consent" do
 
     when_the_nurse_checks_the_consent_responses
     then_they_see_that_the_child_has_consent_refused
-    and_the_action_in_the_vaccination_session_is_to_check_refusal
+    and_the_session_outcome_is_could_not_vaccinate
+    and_the_programme_outcome_is_could_not_vaccinate
   end
 
   def given_an_hpv_programme_is_underway
@@ -112,7 +113,7 @@ describe "Parental consent" do
 
   def then_i_see_the_confirmation_page
     expect(page).to have_content(
-      "You’ve told us that you do not want #{@child.full_name} to get the HPV vaccination at school"
+      "You’ve told us that you do not want #{@child.full_name(context: :parents)} to get the HPV vaccination at school"
     )
   end
 
@@ -134,29 +135,34 @@ describe "Parental consent" do
       click_on "Sessions"
     end
     click_on "Pilot School"
-    click_on "Check consent responses"
+    click_on "Consent"
   end
 
   def then_they_see_that_the_child_has_consent_refused
     expect(page).to have_content("Consent refused")
-    click_on "Consent refused"
+    choose "Consent refused"
+    click_on "Update results"
     expect(page).to have_content(@child.full_name)
   end
 
-  def and_the_action_in_the_vaccination_session_is_to_check_refusal
+  def and_the_session_outcome_is_could_not_vaccinate
+    click_on "Session outcomes"
+    choose "Vaccine refused"
+    click_on "Update results"
+    expect(page).to have_content(@child.full_name)
+  end
+
+  def and_the_programme_outcome_is_could_not_vaccinate
     click_on "Programmes", match: :first
     click_on "HPV"
+
     within ".app-secondary-navigation" do
-      click_on "Sessions"
+      click_on "Children"
     end
-    click_on "Pilot School"
-    click_on "Record vaccinations"
 
-    expect(page).to have_content("Could not vaccinate")
-    click_on "Could not vaccinate"
+    choose "Could not vaccinate"
+    click_on "Update results"
 
-    within("tr", text: @child.full_name) do
-      expect(page).to have_content("Consent refused")
-    end
+    expect(page).to have_content(@child.full_name)
   end
 end

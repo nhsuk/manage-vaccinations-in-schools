@@ -82,6 +82,34 @@ describe Programme do
     end
   end
 
+  describe "#default_dose_sequence" do
+    subject(:default_dose_sequence) { programme.default_dose_sequence }
+
+    context "with a Flu programme" do
+      let(:programme) { build(:programme, :flu) }
+
+      it { should be_nil }
+    end
+
+    context "with an HPV programme" do
+      let(:programme) { build(:programme, :hpv) }
+
+      it { should eq(1) }
+    end
+
+    context "with a MenACWY programme" do
+      let(:programme) { build(:programme, :menacwy) }
+
+      it { should be_nil }
+    end
+
+    context "with an Td/IPV programme" do
+      let(:programme) { build(:programme, :td_ipv) }
+
+      it { should be_nil }
+    end
+  end
+
   describe "#maximum_dose_sequence" do
     subject(:maximum_dose_sequence) { programme.maximum_dose_sequence }
 

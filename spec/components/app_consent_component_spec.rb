@@ -4,16 +4,13 @@ describe AppConsentComponent do
   subject(:rendered) { render_inline(component) }
 
   let(:component) do
-    described_class.new(
-      patient_session:,
-      programme: programmes.first,
-      section: "triage",
-      tab: "needed"
-    )
+    described_class.new(patient_session:, programme: programmes.first)
   end
 
   let(:programmes) { [create(:programme)] }
-  let(:consent) { patient_session.consents(programme: programmes.first).first }
+  let(:consent) do
+    patient_session.patient.consent_outcome.all[programmes.first].first
+  end
 
   before { patient_session.reload.strict_loading!(false) }
 

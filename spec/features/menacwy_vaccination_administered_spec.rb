@@ -3,9 +3,6 @@
 describe "MenACWY vaccination" do
   around { |example| travel_to(Time.zone.local(2024, 2, 1)) { example.run } }
 
-  before { Flipper.enable(:vaccinate_doubles) }
-  after { Flipper.disable(:vaccinate_doubles) }
-
   scenario "Administered" do
     given_i_am_signed_in
 
@@ -46,13 +43,11 @@ describe "MenACWY vaccination" do
     then_i_see_the_confirmation_page
 
     when_i_confirm_the_details
-    then_i_see_the_record_vaccinations_page
-    and_a_success_message
+    then_i_see_a_success_message
+    and_i_no_longer_see_the_patient_in_the_record_tab
 
     when_i_go_back
     and_i_save_changes
-
-    when_i_go_to_the_patient
     then_i_see_that_the_status_is_vaccinated
     and_i_see_the_vaccination_details
 
@@ -95,20 +90,20 @@ describe "MenACWY vaccination" do
   end
 
   def when_i_go_to_a_patient_that_is_ready_to_vaccinate
-    visit session_triage_path(@session)
-    click_link "No triage needed"
+    visit session_record_path(@session)
     click_link @patient.full_name
   end
 
   def and_i_record_that_the_patient_has_been_vaccinated
     # pre-screening
-    find_all(".nhsuk-fieldset")[0].choose "Yes"
-    find_all(".nhsuk-fieldset")[1].choose "Yes"
-    find_all(".nhsuk-fieldset")[2].choose "Yes"
-    find_all(".nhsuk-fieldset")[3].choose "Yes"
+    check "know what the vaccination is for, and are happy to have it"
+    check "have not already had the vaccination"
+    check "are feeling well"
+    check "have no allergies which would prevent vaccination"
+    check "are not taking any medication which prevents vaccination"
 
     # vaccination
-    find_all(".nhsuk-fieldset")[4].choose "Yes"
+    choose "Yes"
     choose "Left arm (upper position)"
     click_button "Continue"
   end
@@ -177,14 +172,13 @@ describe "MenACWY vaccination" do
     click_button "Confirm"
   end
 
-  def then_i_see_the_record_vaccinations_page
-    expect(page).to have_content("Record vaccinations")
+  def then_i_see_a_success_message
+    expect(page).to have_content("Vaccination outcome recorded for MenACWY")
   end
 
-  def and_a_success_message
-    expect(page).to have_content(
-      "Vaccination recorded for #{@patient.full_name}"
-    )
+  def and_i_no_longer_see_the_patient_in_the_record_tab
+    click_on "Record vaccinations"
+    expect(page).to have_content("No children matching search criteria found")
   end
 
   def when_i_go_back
@@ -195,16 +189,13 @@ describe "MenACWY vaccination" do
     click_button "Save changes"
   end
 
-  def when_i_go_to_the_patient
-    click_link @patient.full_name
-  end
-
   def then_i_see_that_the_status_is_vaccinated
     expect(page).to have_content("Vaccinated")
   end
 
   def and_i_see_the_vaccination_details
     expect(page).to have_content("Vaccination details").once
+    expect(page).to have_content("Dose numberUnknown")
   end
 
   def when_vaccination_confirmations_are_sent
@@ -214,14 +205,14 @@ describe "MenACWY vaccination" do
   def then_an_email_is_sent_to_the_parent_confirming_the_vaccination
     expect_email_to(
       @patient.consents.last.parent.email,
-      :vaccination_confirmation_administered
+      :vaccination_administered_menacwy
     )
   end
 
   def and_a_text_is_sent_to_the_parent_confirming_the_vaccination
     expect_sms_to(
       @patient.consents.last.parent.phone,
-      :vaccination_confirmation_administered
+      :vaccination_administered_menacwy
     )
   end
 end

@@ -45,7 +45,7 @@ describe "Parental consent" do
   end
 
   def when_i_go_to_a_patient_without_consent
-    visit session_consents_path(@session)
+    visit session_consent_path(@session)
     click_link @patient.full_name
   end
 
@@ -80,7 +80,7 @@ describe "Parental consent" do
     click_on "Activity log"
     expect(page).to have_content(
       "Consent clinic request sent\n#{@parent.email}\n" \
-        "HPV   1 January 2024 at 12:00am · Test User"
+        "HPV   1 January 2024 at 12:00am · USER, Test"
     )
   end
 
@@ -88,7 +88,7 @@ describe "Parental consent" do
     click_on "Activity log"
     expect(page).to have_content(
       "Consent clinic request sent\n#{@parent.phone}\n" \
-        "HPV   1 January 2024 at 12:00am · Test User"
+        "HPV   1 January 2024 at 12:00am · USER, Test"
     )
   end
 end

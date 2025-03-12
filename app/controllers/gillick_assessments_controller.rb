@@ -48,15 +48,12 @@ class GillickAssessmentsController < ApplicationController
   end
 
   def set_is_first_assessment
-    @is_first_assessment =
-      @patient_session.gillick_assessment(programme: @programme).nil?
+    @is_first_assessment = @patient_session.gillick_assessment(@programme).nil?
   end
 
   def set_gillick_assessment
     @gillick_assessment =
-      authorize @patient_session.gillick_assessment(
-                  programme: @programme
-                )&.dup ||
+      authorize @patient_session.gillick_assessment(@programme)&.dup ||
                   @patient_session.gillick_assessments.build(
                     programme: @programme
                   )

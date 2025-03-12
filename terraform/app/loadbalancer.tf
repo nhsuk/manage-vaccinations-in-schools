@@ -129,18 +129,24 @@ resource "aws_lb_listener" "app_listener_https" {
   load_balancer_arn = aws_lb.app_lb.arn
   port              = "443"
   protocol          = "HTTPS"
-  certificate_arn   = var.dns_certificate_arn == null ? module.dns_route53[0].certificate_arn : var.dns_certificate_arn
+  ssl_policy        = var.ssl_policy
+  certificate_arn   = local.default_certificate_arn
 
   default_action {
     type             = "forward"
     target_group_arn = aws_lb_target_group.dump.arn
   }
+}
 
+resource "aws_lb_listener_certificate" "https_sni_certificates" {
+  count = length(local.additional_sni_certificates)
+  listener_arn = aws_lb_listener.app_listener_https.arn
+  certificate_arn = local.additional_sni_certificates[count.index]
 }
 
 resource "aws_lb_listener_rule" "forward_to_app" {
   listener_arn = aws_lb_listener.app_listener_https.arn
-  priority     = 49999
+  priority     = 50000
   action {
     type             = "forward"
     target_group_arn = aws_lb_target_group.blue.arn
@@ -163,7 +169,7 @@ resource "aws_lb_listener_rule" "forward_to_app" {
 
 resource "aws_lb_listener_rule" "redirect_to_https" {
   listener_arn = aws_lb_listener.app_listener_http.arn
-  priority     = 49999
+  priority     = 50000
   action {
     type = "redirect"
     redirect {

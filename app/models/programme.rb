@@ -17,6 +17,7 @@ class Programme < ApplicationRecord
   self.inheritance_column = nil
 
   audited
+  has_associated_audits
 
   has_many :consent_forms
   has_many :consent_notification_programmes
@@ -25,6 +26,7 @@ class Programme < ApplicationRecord
   has_many :gillick_assessments
   has_many :immunisation_imports
   has_many :organisation_programmes
+  has_many :pre_screenings
   has_many :session_programmes
   has_many :triages
   has_many :vaccination_records, -> { kept }
@@ -78,6 +80,10 @@ class Programme < ApplicationRecord
 
   def vaccinated_dose_sequence
     DOSE_SEQUENCES.fetch(type)
+  end
+
+  def default_dose_sequence
+    hpv? ? vaccinated_dose_sequence : nil
   end
 
   def maximum_dose_sequence

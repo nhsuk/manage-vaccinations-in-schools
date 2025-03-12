@@ -94,6 +94,8 @@ Rails.application.routes.draw do
 
   resources :consent_forms, path: "consent-forms", only: %i[index show] do
     member do
+      get "search"
+
       get "match/:patient_id", action: :edit_match, as: :match
       post "match/:patient_id", action: :update_match
 
@@ -190,6 +192,17 @@ Rails.application.routes.draw do
   resources :school_moves, path: "school-moves", only: %i[index show update]
 
   resources :sessions, only: %i[edit index show], param: :slug do
+    resource :consent, only: :show, controller: "sessions/consent"
+    resource :triage, only: :show, controller: "sessions/triage"
+    resource :register, only: :show, controller: "sessions/register" do
+      post ":patient_id/:status", as: :create, action: :create
+    end
+    resource :record, only: :show, controller: "sessions/record" do
+      get "batch/:programme_type", action: :edit_batch, as: :batch
+      post "batch/:programme_type", action: :update_batch
+    end
+    resource :outcome, only: :show, controller: "sessions/outcome"
+
     resource :invite_to_clinic,
              path: "invite-to-clinic",
              only: %i[edit update],
@@ -241,127 +254,39 @@ Rails.application.routes.draw do
     end
 
     resource :dates, controller: "session_dates", only: %i[show update]
-  end
 
-  scope "/sessions/:session_slug/:section", as: "session" do
-    constraints section: "consents" do
-      defaults section: "consents" do
-        get "/",
-            as: "consents",
-            to:
-              redirect(
-                path:
-                  "/sessions/%{session_slug}/consents/#{TAB_PATHS[:consents].keys.first}"
-              )
+    resources :patient_sessions, path: "patients", as: :patient, only: [] do
+      get "log"
 
-        get ":tab",
-            controller: "consents",
-            action: :index,
-            as: :consents_tab,
-            tab: TAB_PATHS[:consents].keys.join("|")
-      end
-    end
+      resource :attendance,
+               controller: "session_attendances",
+               only: %i[edit update]
 
-    constraints section: "triage" do
-      defaults section: "triage" do
-        get "/",
-            as: "triage",
-            to:
-              redirect(
-                path:
-                  "/sessions/%{session_slug}/triage/#{TAB_PATHS[:triage].keys.first}"
-              )
+      resources :programmes, path: "", param: :type, only: [] do
+        get "", as: "", controller: :patient_sessions, action: :show
 
-        get ":tab",
-            controller: "triages",
-            action: :index,
-            as: :triage_tab,
-            tab: TAB_PATHS[:triage].keys.join("|")
-      end
-    end
+        get "record-already-vaccinated",
+            as: "record_already_vaccinated",
+            controller: :patient_sessions,
+            action: :record_already_vaccinated
 
-    constraints section: "vaccinations" do
-      defaults section: "vaccinations" do
-        get "/",
-            as: "vaccinations",
-            to:
-              redirect(
-                path:
-                  "/sessions/%{session_slug}/vaccinations/#{TAB_PATHS[:vaccinations].keys.first}"
-              )
+        resources :consents, only: %i[index create show] do
+          post "send-request", on: :collection, action: :send_request
 
-        get "batch", to: "vaccinations#batch"
-        patch "batch", to: "vaccinations#update_batch"
+          member do
+            get "withdraw", action: :edit_withdraw
+            post "withdraw", action: :update_withdraw
 
-        get ":tab",
-            controller: "vaccinations",
-            action: :index,
-            as: :vaccinations_tab,
-            tab: TAB_PATHS[:vaccinations].keys.join("|")
-      end
-    end
-
-    constraints section: "attendances" do
-      defaults section: "attendances" do
-        get "/",
-            as: "attendances",
-            to:
-              redirect(
-                "/sessions/%{session_slug}/attendances/unregistered?sort=name&direction=asc"
-              )
-
-        get ":tab",
-            controller: "register_attendances",
-            action: :index,
-            as: :attendances_tab,
-            tab: :unregistered
-
-        post ":tab/patients/:patient_id/register/:state",
-             controller: "register_attendances",
-             action: :create,
-             as: :register_attendance,
-             tab: :unregistered,
-             status: %i[attending absent]
-      end
-    end
-
-    scope ":tab" do
-      resources :patient_sessions, path: "patients", as: :patient, only: [] do
-        get "log"
-        get "record-already-vaccinated"
-
-        resource :attendance,
-                 controller: "session_attendances",
-                 only: %i[edit update]
-
-        resources :programmes, path: "", param: :type, only: [] do
-          get "", as: "", action: :show, controller: :patient_sessions
-
-          resources :consents, only: %i[index create show] do
-            post "send-request", on: :collection, action: :send_request
-
-            member do
-              get "withdraw", action: :edit_withdraw
-              post "withdraw", action: :update_withdraw
-
-              get "invalidate", action: :edit_invalidate
-              post "invalidate", action: :update_invalidate
-            end
+            get "invalidate", action: :edit_invalidate
+            post "invalidate", action: :update_invalidate
           end
-
-          resource :gillick_assessment, path: "gillick", only: %i[edit update]
-          resource :triages, only: %i[new create]
-          resource :vaccinations, only: %i[create]
         end
+
+        resource :gillick_assessment, path: "gillick", only: %i[edit update]
+        resource :triages, only: %i[new create]
+        resource :vaccinations, only: %i[create]
       end
     end
-
-    # These are just used to create helpers with better names that allow passing
-    # in section and/or tab as a parameter. e.g. session_section_path(@session,
-    # section: @section) which looks cleaner than session_triage_path(@session,
-    # section: @section)
-    get "/", to: "errors#not_found", as: "section"
-    get "/:tab", to: "errors#not_found", as: "section_tab"
   end
 
   resource :organisation, only: %i[show]

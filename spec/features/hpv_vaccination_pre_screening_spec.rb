@@ -35,35 +35,19 @@ describe "HPV vaccination" do
   end
 
   def when_i_go_to_a_patient_that_is_ready_to_vaccinate
-    visit session_triage_path(@session)
-    click_link "No triage needed"
+    visit session_record_path(@session)
     click_link @patient.full_name
   end
 
   def and_i_record_that_the_patient_has_already_received_the_vaccination
-    within(
-      "fieldset",
-      text:
-        "Does the child know what the vaccination is for, and are they happy to have it?"
-    ) { choose "Yes" }
-
-    within(
-      "fieldset",
-      text:
-        "Has the child confirmed they have not already had this vaccination?"
-    ) { choose "No" }
-
-    within("fieldset", text: "Is the child is feeling well?") { choose "Yes" }
-
-    within(
-      "fieldset",
-      text:
-        "Has the child confirmed they have no allergies which would prevent vaccination?"
-    ) { choose "Yes" }
+    check "know what the vaccination is for, and are happy to have it"
+    check "are feeling well"
+    check "have no allergies which would prevent vaccination"
+    check "are not pregnant"
   end
 
   def and_i_choose_that_the_patient_is_ready_to_vaccinate
-    find_all(".nhsuk-fieldset")[4].choose "Yes"
+    choose "Yes"
     choose "Left arm (upper position)"
     click_button "Continue"
   end

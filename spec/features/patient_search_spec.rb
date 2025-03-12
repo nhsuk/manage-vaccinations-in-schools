@@ -6,11 +6,12 @@ describe "Patient search" do
     when_i_visit_the_patients_page
     then_i_see_all_patients
 
-    when_i_search_for_cas
-    then_i_see_patients_matching_cas
+    when_i_search_by_name
+    then_i_see_patients_matching_the_name
     and_i_see_the_search_count
 
-    when_i_clear_the_search
+    when_i_open_advanced_filters
+    and_i_clear_the_search
     then_i_see_all_patients
 
     when_i_search_for_a
@@ -19,11 +20,18 @@ describe "Patient search" do
     when_i_search_for_aa
     then_i_see_patients_starting_with_aa
 
-    when_i_clear_the_search
+    when_i_open_advanced_filters
+    and_i_clear_the_search
     then_i_see_all_patients
 
     when_i_search_for_patients_without_nhs_numbers
     then_i_see_patients_without_nhs_numbers
+
+    when_i_clear_the_search
+    then_i_see_all_patients
+
+    when_i_search_for_patients_by_date_of_birth
+    then_i_see_patients_by_date_of_birth
   end
 
   def given_that_i_am_signed_in
@@ -47,6 +55,14 @@ describe "Patient search" do
       nhs_number: nil
     )
 
+    create(
+      :patient,
+      given_name: "Hari",
+      family_name: "Seldon",
+      organisation:,
+      date_of_birth: Date.new(2013, 1, 1)
+    )
+
     sign_in organisation.users.first
   end
 
@@ -55,78 +71,105 @@ describe "Patient search" do
   end
 
   def then_i_see_all_patients
-    expect(page).to have_content "Aaron Smith"
-    expect(page).to have_content "Aardvark Jones"
-    expect(page).to have_content "Casey Brown"
-    expect(page).to have_content "Cassidy Wilson"
-    expect(page).to have_content "Bob Taylor"
-    expect(page).to have_content "Salvor Hardin"
+    expect(page).to have_content("SMITH, Aaron")
+    expect(page).to have_content("JONES, Aardvark")
+    expect(page).to have_content("BROWN, Casey")
+    expect(page).to have_content("WILSON, Cassidy")
+    expect(page).to have_content("TAYLOR, Bob")
+    expect(page).to have_content("HARDIN, Salvor")
+    expect(page).to have_content("SELDON, Hari")
   end
 
-  def when_i_search_for_cas
-    find(".nhsuk-details__summary").click
-    fill_in "Name", with: "cas"
-    click_button "Update children"
+  def when_i_search_by_name
+    fill_in "Search", with: "Casy Brown" # intentional typo
+    click_button "Search"
   end
 
-  def then_i_see_patients_matching_cas
-    expect(page).to have_content "Casey Brown"
-    expect(page).to have_content "Cassidy Wilson"
-    expect(page).not_to have_content "Aaron Smith"
-    expect(page).not_to have_content "Aardvark Jones"
-    expect(page).not_to have_content "Bob Taylor"
-    expect(page).not_to have_content "Salvor Hardin"
+  def then_i_see_patients_matching_the_name
+    expect(page).to have_content("BROWN, Casey")
+    expect(page).not_to have_content("WILSON, Cassidy")
+    expect(page).not_to have_content("SMITH, Aaron")
+    expect(page).not_to have_content("JONES, Aardvark")
+    expect(page).not_to have_content("TAYLOR, Bob")
+    expect(page).not_to have_content("HARDIN, Salvor")
+    expect(page).not_to have_content("SELDON, Hari")
   end
 
   def and_i_see_the_search_count
-    expect(page).to have_content "2 children matching “cas”"
+    expect(page).to have_content("1 child")
+  end
+
+  def when_i_open_advanced_filters
+    find(".nhsuk-details__summary").click
   end
 
   def when_i_clear_the_search
     click_link "Clear filters"
   end
 
+  alias_method :and_i_clear_the_search, :when_i_clear_the_search
+
   def when_i_search_for_a
-    find(".nhsuk-details__summary").click
-    fill_in "Name", with: "a"
-    click_button "Update children"
+    fill_in "Search", with: "a"
+    click_button "Search"
   end
 
   def then_i_see_patients_starting_with_a
-    expect(page).to have_content "Aaron Smith"
-    expect(page).to have_content "Aardvark Jones"
-    expect(page).not_to have_content "Bob Taylor"
-    expect(page).not_to have_content "Casey Brown"
-    expect(page).not_to have_content "Cassidy Wilson"
-    expect(page).not_to have_content "Salvor Hardin"
+    expect(page).to have_content("SMITH, Aaron")
+    expect(page).to have_content("JONES, Aardvark")
+    expect(page).not_to have_content("TAYLOR, Bob")
+    expect(page).not_to have_content("BROWN, Casey")
+    expect(page).not_to have_content("WILSON, Cassidy")
+    expect(page).not_to have_content("HARDIN, Salvor")
+    expect(page).not_to have_content("SELDON, Hari")
   end
 
   def when_i_search_for_aa
-    fill_in "Name", with: "aa"
-    click_button "Update children"
+    fill_in "Search", with: "a"
+    click_button "Search"
   end
 
   def then_i_see_patients_starting_with_aa
-    expect(page).to have_content "Aaron Smith"
-    expect(page).to have_content "Aardvark Jones"
-    expect(page).not_to have_content "Bob Taylor"
-    expect(page).not_to have_content "Casey Brown"
-    expect(page).not_to have_content "Cassidy Wilson"
-    expect(page).not_to have_content "Salvor Hardin"
+    expect(page).to have_content("SMITH, Aaron")
+    expect(page).to have_content("JONES, Aardvark")
+    expect(page).not_to have_content("TAYLOR, Bob")
+    expect(page).not_to have_content("BROWN, Casey")
+    expect(page).not_to have_content("WILSON, Cassidy")
+    expect(page).not_to have_content("HARDIN, Salvor")
+    expect(page).not_to have_content("SELDON, Hari")
   end
 
   def when_i_search_for_patients_without_nhs_numbers
     find(".nhsuk-details__summary").click
     check "Missing NHS number"
-    click_button "Update children"
+    click_button "Update results"
   end
 
   def then_i_see_patients_without_nhs_numbers
-    expect(page).not_to have_content "Aaron Smith"
-    expect(page).not_to have_content "Aardvark Jones"
-    expect(page).not_to have_content "Bob Taylor"
-    expect(page).not_to have_content "Casey Brown"
-    expect(page).not_to have_content "Cassidy Wilson"
-    expect(page).to have_content "Salvor Hardin"
+    expect(page).not_to have_content("SMITH, Aaron")
+    expect(page).not_to have_content("JONES, Aardvark")
+    expect(page).not_to have_content("TAYLOR, Bob")
+    expect(page).not_to have_content("BROWN, Casey")
+    expect(page).not_to have_content("WILSON, Cassidy")
+    expect(page).to have_content("HARDIN, Salvor")
+    expect(page).not_to have_content("SELDON, Hari")
+  end
+
+  def when_i_search_for_patients_by_date_of_birth
+    find(".nhsuk-details__summary").click
+    fill_in "Day", with: "1"
+    fill_in "Month", with: "1"
+    fill_in "Year", with: "2013"
+    click_button "Update results"
+  end
+
+  def then_i_see_patients_by_date_of_birth
+    expect(page).not_to have_content("SMITH, Aaron")
+    expect(page).not_to have_content("JONES, Aardvark")
+    expect(page).not_to have_content("TAYLOR, Bob")
+    expect(page).not_to have_content("BROWN, Casey")
+    expect(page).not_to have_content("WILSON, Cassidy")
+    expect(page).not_to have_content("HARDIN, Salvor")
+    expect(page).to have_content("SELDON, Hari")
   end
 end

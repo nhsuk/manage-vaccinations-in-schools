@@ -1,15 +1,3 @@
-<% content_for :before_main do %>
-  <%= render AppBacklinkComponent.new(
-        session_section_tab_path(@session),
-        name: "#{@section.pluralize} page",
-      ) %>
-<% end %>
-
-<%= h1 page_title: @patient.initials do %>
-  <span class="nhsuk-caption-l"><%= patient_school(@patient) %></span>
-  <%= @patient.full_name %>
-<% end %>
-
-<%= render "patient_sessions/secondary_navigation" %>
+<%= render "patient_sessions/header" %>
 
 <%= render AppActivityLogComponent.new(patient_session: @patient_session) %>

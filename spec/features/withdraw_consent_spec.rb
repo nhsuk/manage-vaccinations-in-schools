@@ -82,8 +82,9 @@ describe "Withdraw consent" do
   end
 
   def when_i_go_to_the_patient
-    visit session_consents_path(@session)
-    click_on "Consent given"
+    visit session_consent_path(@session)
+    choose "Consent given"
+    click_on "Update results"
     click_link @patient.full_name
   end
 
@@ -127,6 +128,6 @@ describe "Withdraw consent" do
 
   def and_i_am_not_able_to_record_a_vaccination
     expect(page).to have_content("Consent refused")
-    expect(page).not_to have_content("ready to vaccinate in this session?")
+    expect(page).not_to have_content("ready for their HPV vaccination?")
   end
 end

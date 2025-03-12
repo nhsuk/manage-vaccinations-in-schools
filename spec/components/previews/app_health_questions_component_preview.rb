@@ -9,7 +9,7 @@ class AppHealthQuestionsComponentPreview < ViewComponent::Preview
     patient_session =
       create(:patient_session, :consent_given_triage_not_needed, session:)
 
-    render AppHealthQuestionsComponent.new(consents: patient_session.consents)
+    render AppHealthAnswersCardComponent.new(consents: patient_session.consents)
   end
 
   def single_consent_triage_needed
@@ -18,7 +18,7 @@ class AppHealthQuestionsComponentPreview < ViewComponent::Preview
     patient_session =
       create(:patient_session, :consent_given_triage_needed, session:)
 
-    render AppHealthQuestionsComponent.new(consents: patient_session.consents)
+    render AppHealthAnswersCardComponent.new(consents: patient_session.consents)
   end
 
   def multiple_consents_no_triage_needed
@@ -34,7 +34,7 @@ class AppHealthQuestionsComponentPreview < ViewComponent::Preview
       programme:
     )
 
-    render AppHealthQuestionsComponent.new(consents: patient_session.consents)
+    render AppHealthAnswersCardComponent.new(consents: patient_session.consents)
   end
 
   def multiple_consents_triage_needed
@@ -57,7 +57,7 @@ class AppHealthQuestionsComponentPreview < ViewComponent::Preview
     dad_consent.health_answers.first.notes = "They fainted once"
     dad_consent.save!
 
-    render AppHealthQuestionsComponent.new(
+    render AppHealthAnswersCardComponent.new(
              consents: patient_session.consents.reload
            )
   end

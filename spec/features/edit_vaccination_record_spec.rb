@@ -344,18 +344,18 @@ describe "Edit vaccination record" do
 
   def then_i_should_see_the_vaccination_records
     expect(page).to have_content("1 vaccination record")
-    expect(page).to have_content("John Smith")
+    expect(page).to have_content("SMITH, John")
   end
 
   def when_i_click_on_the_vaccination_record
-    click_on "John Smith"
+    click_on "SMITH, John"
   end
 
   alias_method :and_i_click_on_the_vaccination_record,
                :when_i_click_on_the_vaccination_record
 
   def then_i_should_see_the_vaccination_record
-    expect(page).to have_content("Full nameJohn Smith")
+    expect(page).to have_content("Full nameSMITH, John")
   end
 
   def when_i_click_on_edit_vaccination_record
@@ -513,17 +513,11 @@ describe "Edit vaccination record" do
                :then_the_parent_doesnt_receive_an_email
 
   def and_the_parent_receives_a_not_administered_email
-    expect_email_to(
-      @patient.parents.first.email,
-      :vaccination_confirmation_not_administered
-    )
+    expect_email_to(@patient.parents.first.email, :vaccination_not_administered)
   end
 
   def then_the_parent_receives_an_administered_email
-    expect_email_to(
-      @patient.parents.first.email,
-      :vaccination_confirmation_administered
-    )
+    expect_email_to(@patient.parents.first.email, :vaccination_administered_hpv)
   end
 
   alias_method :and_the_parent_receives_an_administered_email,

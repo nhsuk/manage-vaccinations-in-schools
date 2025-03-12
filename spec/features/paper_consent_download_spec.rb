@@ -18,7 +18,7 @@ describe "Paper consent" do
 
   def when_i_click_download_consent_form
     visit session_path(@session)
-    click_on "Download HPV consent form (PDF)"
+    click_on "Download the HPV consent form (PDF)"
   end
 
   def then_i_download_a_pdf_consent_form

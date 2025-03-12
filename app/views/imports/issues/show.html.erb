@@ -1,10 +1,9 @@
 <% content_for :before_main do %>
-  <%= render AppBreadcrumbComponent.new(
-        items: [
-          { text: t("programmes.index.title"), href: programmes_path },
-          { text: "Import issues", href: imports_issues_path },
-        ],
-      ) %>
+  <%= render AppBreadcrumbComponent.new(items: [
+                                          { text: t("dashboard.index.title"), href: dashboard_path },
+                                          { text: t("programmes.index.title"), href: programmes_path },
+                                          { text: "Import issues", href: imports_issues_path },
+                                        ]) %>
 <% end %>
 
 <% if @vaccination_record %>
@@ -26,7 +25,7 @@
     <%= render AppCardComponent.new(colour: "blue") do |c| %>
       <% c.with_heading { "Duplicate record" } %>
       <h3 class="nhsuk-heading-s">Duplicate child record</h3>
-      <%= render AppPatientSummaryComponent.new(@patient.with_pending_changes) %>
+      <%= render AppChildSummaryComponent.new(@patient.with_pending_changes) %>
       <% if @vaccination_record %>
         <h3 class="nhsuk-heading-s">Duplicate vaccination record</h3>
         <%= render AppVaccinationRecordSummaryComponent.new(
@@ -40,7 +39,7 @@
     <%= render AppCardComponent.new(colour: "blue") do |c| %>
       <% c.with_heading { "Existing record" } %>
       <h3 class="nhsuk-heading-s">Existing child record</h3>
-      <%= render AppPatientSummaryComponent.new(@patient) %>
+      <%= render AppChildSummaryComponent.new(@patient) %>
       <% if @vaccination_record %>
         <h3 class="nhsuk-heading-s">Existing vaccination record</h3>
         <%= render AppVaccinationRecordSummaryComponent.new(

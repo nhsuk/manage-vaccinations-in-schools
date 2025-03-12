@@ -17,12 +17,14 @@ class AppOutcomeBannerComponent < ViewComponent::Base
   end
 
   def status
-    @status ||= @patient_session.status(programme:)
+    @status ||= patient_session.status(programme:)
   end
 
   private
 
-  attr_reader :programme
+  attr_reader :patient_session, :programme
+
+  delegate :patient, to: :patient_session
 
   def rows
     data =
@@ -52,19 +54,11 @@ class AppOutcomeBannerComponent < ViewComponent::Base
   end
 
   def vaccination_record
-    @vaccination_record ||=
-      begin
-        vaccination_records = @patient_session.vaccination_records(programme:)
-        if @patient_session.vaccinated?(programme:)
-          vaccination_records.select(&:administered?).last
-        else
-          vaccination_records.last
-        end
-      end
+    @vaccination_record ||= patient.programme_outcome.all[programme].last
   end
 
   def triage
-    @triage ||= @patient_session.latest_triage(programme:)
+    @triage ||= patient.triage_outcome.latest[programme]
   end
 
   def show_location?
@@ -86,7 +80,7 @@ class AppOutcomeBannerComponent < ViewComponent::Base
       else
         "patient_session_statuses.unable_to_vaccinate.banner_explanation.#{status}"
       end
-    I18n.t(key, full_name: @patient_session.patient.full_name)
+    I18n.t(key, full_name: patient.full_name)
   end
 
   def clinician_name
@@ -103,7 +97,7 @@ class AppOutcomeBannerComponent < ViewComponent::Base
 
   def location
     @location ||=
-      vaccination_record.location_name || @patient_session.location.name
+      vaccination_record.location_name || patient_session.session.location.name
   end
 
   def notes

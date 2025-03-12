@@ -56,7 +56,8 @@ class Patient < ApplicationRecord
   include PendingChangesConcern
   include Schoolable
 
-  audited
+  audited associated_with: :organisation
+  has_associated_audits
 
   belongs_to :gp_practice, class_name: "Location", optional: true
   belongs_to :organisation, optional: true
@@ -106,9 +107,12 @@ class Patient < ApplicationRecord
 
   scope :with_notice, -> { deceased.or(restricted).or(invalidated) }
 
-  scope :in_programme,
-        ->(programme) do
-          where(birth_academic_year: programme.birth_academic_years)
+  scope :in_programmes,
+        ->(programmes) do
+          where(
+            birth_academic_year:
+              programmes.flat_map(&:birth_academic_years).sort.uniq
+          )
         end
 
   scope :with_pending_changes, -> { where.not(pending_changes: {}) }
@@ -123,14 +127,34 @@ class Patient < ApplicationRecord
             )
           else
             where(
-              "given_name % :query OR " \
-                "family_name % :query OR " \
-                "similarity(given_name, :query) > 0.3 OR " \
-                "similarity(family_name, :query) > 0.3",
+              "SIMILARITY(CONCAT(given_name, ' ', family_name), :query) > 0.3 OR " \
+                "SIMILARITY(CONCAT(family_name, ' ', given_name), :query) > 0.3",
               query:
+            ).order(
+              Arel.sql(
+                "GREATEST(SIMILARITY(CONCAT(given_name, ' ', family_name), :query), " \
+                  "SIMILARITY(CONCAT(family_name, ' ', given_name), :query)) DESC",
+                query:
+              )
             )
           end
         end
+
+  scope :search_by_year_groups,
+        ->(year_groups) do
+          where(birth_academic_year: year_groups.map(&:to_birth_academic_year))
+        end
+
+  scope :search_by_date_of_birth_year,
+        ->(year) { where("extract(year from date_of_birth) = ?", year) }
+
+  scope :search_by_date_of_birth_month,
+        ->(month) { where("extract(month from date_of_birth) = ?", month) }
+
+  scope :search_by_date_of_birth_day,
+        ->(day) { where("extract(day from date_of_birth) = ?", day) }
+
+  scope :search_by_nhs_number, ->(nhs_number) { where(nhs_number:) }
 
   validates :given_name, :family_name, :date_of_birth, presence: true
 
@@ -238,8 +262,31 @@ class Patient < ApplicationRecord
     birth_academic_year_changed?
   end
 
-  def as_json(options = {})
-    super.merge("full_name" => full_name, "age" => age)
+  def consent_outcome
+    @consent_outcome ||= Patient::ConsentOutcome.new(self)
+  end
+
+  def triage_outcome
+    @triage_outcome ||= Patient::TriageOutcome.new(self)
+  end
+
+  def programme_outcome
+    @programme_outcome ||= Patient::ProgrammeOutcome.new(self)
+  end
+
+  def next_activity
+    @next_activity ||= Patient::NextActivity.new(self)
+  end
+
+  def consent_given_and_safe_to_vaccinate?(programme:)
+    return false if programme_outcome.vaccinated?(programme)
+
+    consent_outcome.given?(programme) &&
+      (
+        triage_outcome.safe_to_vaccinate?(programme) ||
+          triage_outcome.delay_vaccination?(programme) ||
+          triage_outcome.not_required?(programme)
+      )
   end
 
   def deceased?

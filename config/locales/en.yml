@@ -326,14 +326,6 @@ en:
           attributes:
             delivery_site:
               blank: Choose where the injection will be given
-            knows_vaccination:
-              inclusion: Choose whether the child knows what the vaccination is for
-            not_already_had:
-              inclusion: Choose whether the child has confirmed they have not already had this vaccination
-            feeling_well:
-              inclusion: Choose whether the child is feeling well
-            no_allergies:
-              inclusion: Choose whether the child has confirmed they have no allergies which would prevent vaccination
         vaccination_report:
           attributes:
             file_format:
@@ -371,6 +363,7 @@ en:
           will_be_vaccinated_elsewhere: Vaccine will be given elsewhere
         responses:
           given: Consent given
+          given_one: Partial consent given
           refused: Consent refused
       notify_log_entry:
         types:
@@ -751,6 +744,7 @@ en:
       title: Give or refuse consent for vaccinations
   dashboard:
     index:
+      title: Home
       notices:
         header: Important notices
         description:
@@ -816,40 +810,6 @@ en:
   patients:
     index:
       title: Children
-  patients_table:
-    conflicting_consent:
-      caption: "%{children} with conflicting consent responses"
-      label: Conflicting consent
-    consent_given:
-      caption: "%{children} with consent given"
-      label: Consent given
-    consent_refused:
-      caption: "%{children} with consent refused"
-      label: Consent refused
-    could_not_vaccinate:
-      caption: "%{children} could not vaccinated"
-      label: Could not vaccinate
-    needs_triage:
-      caption: "%{children} needing triage"
-      label: Triage needed
-    no_consent:
-      caption: "%{children} without a response"
-      label: No response
-    no_triage_needed:
-      caption: "%{children} with no triage needed"
-      label: No triage needed
-    register_attendance:
-      caption: "%{children} still to register"
-      label: Register attendance
-    triage_complete:
-      caption: "%{children} with triage completed"
-      label: Triage completed
-    vaccinate:
-      caption: "%{children} to vaccinate"
-      label: Vaccinate
-    vaccinated:
-      caption: "%{children} vaccinated"
-      label: Vaccinated
   programmes:
     index:
       title: Programmes
@@ -887,6 +847,13 @@ en:
         zero: There are no locations with no sessions scheduled.
         one: 1 location with no sessions scheduled
         other: "%{count} locations with no sessions scheduled"
+    tabs:
+      overview: Overview
+      consent: Consent
+      triage: Triage
+      register: Register
+      record: Record vaccinations
+      outcome: Session outcomes
   table:
     no_filtered_results: We couldn’t find any children that matched your filters.
     no_results: No results
@@ -896,10 +863,6 @@ en:
   vaccination_records:
     index:
       title: Vaccinations
-  vaccinations:
-    flash:
-      given: Vaccination recorded for
-      not_given: Record updated for
   vaccines:
     index:
       title: Vaccines
@@ -907,6 +870,10 @@ en:
     absent: "%{name} is absent from today’s session."
     not_registered: "%{name} is not registered yet."
     present: "%{name} is attending today’s session."
+  vaccinations_given:
+    zero: No vaccinations given
+    one: 1 vaccination given
+    other: "%{count} vaccinations given"
   wicked:
     address: address
     agree: agree

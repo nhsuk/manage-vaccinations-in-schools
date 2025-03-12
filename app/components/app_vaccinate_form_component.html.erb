@@ -9,45 +9,33 @@
 
   <div class="nhsuk-card__content">
     <h2 class="nhsuk-card__heading nhsuk-heading-m">
-      Pre-screening questions
+      <%= patient.given_name %> has confirmed that they:
     </h2>
 
-    <% options = [OpenStruct.new(value: true, label: "Yes"), OpenStruct.new(value: false, label: "No")] %>
+    <%= f.govuk_check_boxes_fieldset :pre_screening, multiple: false, legend: nil do %>
+      <%= f.govuk_check_box :knows_vaccination, true, multiple: false, link_errors: true %>
 
-    <%= f.govuk_collection_radio_buttons :knows_vaccination,
-                                         options,
-                                         :value,
-                                         :label,
-                                         inline: true,
-                                         legend: { text: "Does the child know what the vaccination is for, and are they happy to have it?", size: nil } %>
+      <%= f.govuk_check_box :not_already_had, true, multiple: false, link_errors: true %>
 
-    <%= f.govuk_collection_radio_buttons :not_already_had,
-                                         options,
-                                         :value,
-                                         :label,
-                                         inline: true,
-                                         legend: { text: "Has the child confirmed they have not already had this vaccination?", size: nil } %>
+      <%= f.govuk_check_box :feeling_well, true, multiple: false, link_errors: true %>
 
-    <%= f.govuk_collection_radio_buttons :feeling_well,
-                                         options,
-                                         :value,
-                                         :label,
-                                         inline: true,
-                                         legend: { text: "Is the child is feeling well?", size: nil } %>
+      <%= f.govuk_check_box :no_allergies, true, multiple: false, link_errors: true %>
 
-    <%= f.govuk_collection_radio_buttons :no_allergies,
-                                         options,
-                                         :value,
-                                         :label,
-                                         inline: true,
-                                         legend: { text: "Has the child confirmed they have no allergies which would prevent vaccination?", size: nil } %>
+      <% if PreScreening.ask_not_taking_medication?(programme:) %>
+        <%= f.govuk_check_box :not_taking_medication, true, multiple: false, link_errors: true %>
+      <% end %>
+
+      <% if PreScreening.ask_not_pregnant?(programme:) %>
+        <%= f.govuk_check_box :not_pregnant, true, multiple: false, link_errors: true %>
+      <% end %>
+    <% end %>
 
     <%= f.govuk_text_area :pre_screening_notes, label: { text: "Pre-screening notes (optional)" } %>
 
     <hr class="nhsuk-section-break nhsuk-section-break--visible nhsuk-section-break--l">
 
     <h2 class="nhsuk-card__heading nhsuk-heading-m">
-      Is <%= patient.given_name %> ready to vaccinate in this session?
+      Is <%= patient.given_name %> ready for their <%= programme.name %> vaccination?
     </h2>
 
     <%= f.govuk_radio_buttons_fieldset :administered, legend: nil do %>

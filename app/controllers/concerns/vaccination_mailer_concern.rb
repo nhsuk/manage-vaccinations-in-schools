@@ -7,11 +7,13 @@ module VaccinationMailerConcern
     parents = parents_for_vaccination_mailer(vaccination_record)
     return if parents.empty?
 
+    programme_type = vaccination_record.programme.type
+
     template_name =
       if vaccination_record.administered?
-        :vaccination_confirmation_administered
+        :"vaccination_administered_#{programme_type}"
       else
-        :vaccination_confirmation_not_administered
+        :vaccination_not_administered
       end
 
     parents.each do |parent|
@@ -45,17 +47,8 @@ module VaccinationMailerConcern
     patient = vaccination_record.patient
     return [] unless patient.send_notifications?
 
-    patient_session =
-      PatientSession.find_by(
-        patient:,
-        session_id: vaccination_record.session_id
-      )
-    return [] if patient_session.nil?
-
-    patient_session.patient = patient
-
     programme = vaccination_record.programme
-    consents = patient_session.latest_consents(programme:)
+    consents = patient.consent_outcome.latest[programme]
 
     parents =
       if consents.any?(&:via_self_consent?)

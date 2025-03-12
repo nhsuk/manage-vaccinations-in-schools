@@ -24,7 +24,7 @@ describe VaccinationMailerConcern do
       sample.send_vaccination_confirmation(vaccination_record)
     end
 
-    let(:programme) { create(:programme) }
+    let(:programme) { create(:programme, :hpv) }
     let(:session) { create(:session, programmes: [programme]) }
     let(:parent) { create(:parent) }
     let(:patient) { create(:patient, parents: [parent], session:) }
@@ -37,13 +37,13 @@ describe VaccinationMailerConcern do
 
       it "sends an email" do
         expect { send_vaccination_confirmation }.to have_delivered_email(
-          :vaccination_confirmation_administered
+          :vaccination_administered_hpv
         ).with(parent:, vaccination_record:, sent_by: current_user)
       end
 
       it "sends a text message" do
         expect { send_vaccination_confirmation }.to have_delivered_sms(
-          :vaccination_confirmation_administered
+          :vaccination_administered_hpv
         ).with(parent:, vaccination_record:, sent_by: current_user)
       end
     end
@@ -63,13 +63,13 @@ describe VaccinationMailerConcern do
 
       it "sends an email" do
         expect { send_vaccination_confirmation }.to have_delivered_email(
-          :vaccination_confirmation_not_administered
+          :vaccination_not_administered
         ).with(parent:, vaccination_record:, sent_by: current_user)
       end
 
       it "sends a text message" do
         expect { send_vaccination_confirmation }.to have_delivered_sms(
-          :vaccination_confirmation_not_administered
+          :vaccination_not_administered
         ).with(parent:, vaccination_record:, sent_by: current_user)
       end
     end
@@ -93,13 +93,13 @@ describe VaccinationMailerConcern do
 
         it "sends an email" do
           expect { send_vaccination_confirmation }.to have_delivered_email(
-            :vaccination_confirmation_administered
+            :vaccination_administered_hpv
           ).with(parent:, vaccination_record:, sent_by: current_user)
         end
 
         it "sends a text message" do
           expect { send_vaccination_confirmation }.to have_delivered_sms(
-            :vaccination_confirmation_administered
+            :vaccination_administered_hpv
           ).with(parent:, vaccination_record:, sent_by: current_user)
         end
       end

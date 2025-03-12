@@ -160,16 +160,17 @@ describe "End-to-end journey" do
   end
 
   def when_i_look_at_children_that_need_consent_responses
-    click_link "Check consent responses"
+    click_link "Consent"
+    choose "No response"
+    click_on "Update results"
   end
 
   def then_i_see_the_children_from_the_cohort
-    click_link "No response"
-    expect(page).to have_content("Bobby Tables")
+    expect(page).to have_content("TABLES, Bobby")
   end
 
   def when_i_click_on_the_child_we_registered
-    click_link "Bobby Tables"
+    click_link "TABLES, Bobby"
   end
 
   def then_i_see_the_childs_details_including_the_updated_nhs_number
@@ -207,7 +208,7 @@ describe "End-to-end journey" do
 
     click_button "Confirm"
 
-    click_link "Bobby Tables"
+    click_link "TABLES, Bobby", match: :first
   end
 
   def then_i_should_see_that_the_patient_is_ready_for_vaccination
@@ -215,9 +216,8 @@ describe "End-to-end journey" do
   end
 
   def when_i_click_on_the_register_attendance_section
-    click_link "Back to consents page"
     click_link "Pilot School"
-    click_link "Register attendance"
+    click_link "Register"
   end
 
   def and_i_record_the_patient_in_attendance
@@ -227,22 +227,23 @@ describe "End-to-end journey" do
   def when_i_click_on_the_vaccination_section
     click_link "Back"
     click_link "Record vaccinations"
-    click_link "Vaccinate ( 1 )"
+    click_on "Update results"
   end
 
   def and_i_record_the_successful_vaccination
-    click_link "Bobby Tables"
+    click_link "TABLES, Bobby"
 
     expect(page).to have_content("Update attendance")
 
     # pre-screening
-    find_all(".nhsuk-fieldset")[0].choose "Yes"
-    find_all(".nhsuk-fieldset")[1].choose "Yes"
-    find_all(".nhsuk-fieldset")[2].choose "Yes"
-    find_all(".nhsuk-fieldset")[3].choose "Yes"
+    check "know what the vaccination is for, and are happy to have it"
+    check "have not already had the vaccination"
+    check "are feeling well"
+    check "have no allergies which would prevent vaccination"
+    check "are not pregnant"
 
     # vaccination
-    find_all(".nhsuk-fieldset")[4].choose "Yes"
+    choose "Yes"
     choose "Left arm (upper position)"
     click_button "Continue"
 
@@ -253,8 +254,12 @@ describe "End-to-end journey" do
   end
 
   def then_i_see_that_the_child_is_vaccinated
-    click_link "Vaccinated ( 1 )"
-    expect(page).to have_content "1 child vaccinated"
+    click_on "Pilot School"
+    click_on "Session outcomes"
+    choose "Vaccinated"
+    click_on "Update results"
+
+    expect(page).to have_content("Showing 1 to 1 of 1 children")
   end
 
   def and_i_cant_edit_attendance

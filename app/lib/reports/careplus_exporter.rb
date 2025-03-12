@@ -118,10 +118,7 @@ class Reports::CareplusExporter
 
     patient_session.programmes.filter_map do |programme|
       vaccination_records =
-        patient_session.vaccination_records(
-          programme:,
-          for_session: true
-        ).select(&:administered?)
+        patient_session.session_outcome.all[programme].select(&:administered?)
 
       if vaccination_records.any?
         existing_row(patient:, patient_session:, vaccination_records:)
@@ -138,8 +135,8 @@ class Reports::CareplusExporter
       patient.family_name,
       patient.given_name,
       patient.date_of_birth.strftime("%d/%m/%Y"),
-      patient.address_line_1,
-      patient_session.latest_consents(programme:).first&.name || "",
+      patient.restricted? ? "" : patient.address_line_1,
+      patient.consent_outcome.latest[programme].first&.name || "",
       99, # Ethnicity, 99 is "Not known"
       first_vaccination.performed_at.strftime("%d/%m/%Y"),
       first_vaccination.performed_at.strftime("%H:%M"),

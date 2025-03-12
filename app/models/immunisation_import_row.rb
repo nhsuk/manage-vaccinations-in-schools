@@ -541,7 +541,7 @@ class ImmunisationImportRow
 
     parsed_times =
       TIME_FORMATS.lazy.filter_map do |format|
-        Time.strptime(value, format)
+        Time.zone.strptime(value, format)
       rescue ArgumentError, TypeError
         nil
       end
