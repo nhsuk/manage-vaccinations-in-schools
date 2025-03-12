@@ -208,7 +208,11 @@ class AppActivityLogComponent < ViewComponent::Base
     vaccination_records.flat_map do |vaccination_record|
       title =
         if vaccination_record.administered?
-          "Vaccinated with #{vaccination_record.vaccine.brand}"
+          if (vaccine = vaccination_record.vaccine)
+            "Vaccinated with #{vaccine.brand}"
+          else
+            "Vaccinated"
+          end
         else
           "Vaccination not given: #{vaccination_record.human_enum_name(:outcome)}"
         end

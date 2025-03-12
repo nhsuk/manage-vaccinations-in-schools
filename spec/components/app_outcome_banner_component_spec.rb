@@ -93,6 +93,14 @@ describe AppOutcomeBannerComponent do
 
       it { should have_text("Vaccinator\nUnknown") }
     end
+
+    context "when the vaccination is historical" do
+      before do
+        vaccination_record.update!(session: nil, location_name: "Unknown")
+      end
+
+      it { should have_text("Vaccinated") }
+    end
   end
 
   context "state is triaged_do_not_vaccinate" do

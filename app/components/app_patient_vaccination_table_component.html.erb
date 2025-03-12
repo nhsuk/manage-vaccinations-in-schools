@@ -15,7 +15,12 @@
         <% body.with_row do |row| %>
           <% row.with_cell do %>
             <span class="nhsuk-table-responsive__heading">Vaccine</span>
-            <% label = "#{vaccination_record.vaccine.brand} (#{vaccination_record.programme.name})" %>
+            <% label = if (vaccine = vaccination_record.vaccine)
+                   "#{vaccine.brand} (#{vaccination_record.programme.name})"
+                 else
+                   vaccination_record.programme.name
+                 end %>
+
             <%= link_to label, programme_vaccination_record_path(vaccination_record.programme, vaccination_record) %>
           <% end %>
           <% row.with_cell do %>

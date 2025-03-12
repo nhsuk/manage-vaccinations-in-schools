@@ -34,20 +34,38 @@ describe AppPatientVaccinationTableComponent do
       )
     end
     let(:session) { create(:session, location:, programmes: [programme]) }
-    let(:vaccination_record) do
-      create(
-        :vaccination_record,
-        patient:,
-        programme:,
-        session:,
-        performed_at: Time.zone.local(2024, 1, 1)
-      )
+
+    context "with a vaccine" do
+      before do
+        create(
+          :vaccination_record,
+          patient:,
+          programme:,
+          session:,
+          performed_at: Time.zone.local(2024, 1, 1)
+        )
+      end
+
+      it { should have_link("Gardasil 9 (HPV)") }
+      it { should have_content("Test School, Waterloo Road, London, SE1 8TY") }
+      it { should have_content("1 January 2024") }
     end
 
-    before { vaccination_record }
+    context "without a vaccine" do
+      before do
+        create(
+          :vaccination_record,
+          patient:,
+          programme:,
+          session:,
+          performed_at: Time.zone.local(2024, 1, 1),
+          vaccine: nil
+        )
+      end
 
-    it { should have_link("Gardasil 9 (HPV)") }
-    it { should have_content("Test School, Waterloo Road, London, SE1 8TY") }
-    it { should have_content("1 January 2024") }
+      it { should have_link("HPV") }
+      it { should have_content("Test School, Waterloo Road, London, SE1 8TY") }
+      it { should have_content("1 January 2024") }
+    end
   end
 end

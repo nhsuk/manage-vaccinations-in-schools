@@ -74,9 +74,19 @@ class AppOutcomeBannerComponent < ViewComponent::Base
 
   def vaccine_summary
     type = vaccination_record.programme.name
-    brand = vaccination_record.vaccine.brand
-    batch = vaccination_record.batch.name
-    "#{type} (#{brand}, #{batch})"
+    batch = vaccination_record.batch&.name
+    brand =
+      (vaccination_record.vaccine || vaccination_record.batch&.vaccine)&.brand
+
+    if brand.present? && batch.present?
+      "#{type} (#{brand}, #{batch})"
+    elsif brand.present?
+      "#{type} (#{brand})"
+    elsif batch.present?
+      "#{type} (#{batch})"
+    else
+      type
+    end
   end
 
   def reason_do_not_vaccinate
