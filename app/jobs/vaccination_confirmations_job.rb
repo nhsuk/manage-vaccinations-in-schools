@@ -19,6 +19,7 @@ class VaccinationConfirmationsJob < ApplicationJob
       .kept
       .where("created_at >= ?", since)
       .where(confirmation_sent_at: nil)
+      .where.not(session_id: nil)
       .select { _1.academic_year == academic_year }
       .each do |vaccation_record|
         send_vaccination_confirmation(vaccation_record)

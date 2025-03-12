@@ -17,11 +17,19 @@ describe VaccinationConfirmationsJob do
       )
     end
 
+    let(:session) { create(:session, programmes: [programme]) }
+
     let(:old_vaccination_record) do
-      create(:vaccination_record, created_at: 2.days.ago, programme:)
+      create(:vaccination_record, created_at: 2.days.ago, programme:, session:)
     end
 
-    let(:new_vaccination_record) { create(:vaccination_record, programme:) }
+    let(:new_vaccination_record) do
+      create(:vaccination_record, programme:, session:)
+    end
+
+    let(:new_vaccination_record_outside_session) do
+      create(:vaccination_record, programme:)
+    end
 
     let(:discarded_vaccination_record) do
       create(:vaccination_record, :discarded, programme:)
@@ -37,7 +45,7 @@ describe VaccinationConfirmationsJob do
 
     before { allow(job).to receive(:send_vaccination_confirmation) }
 
-    it "sends vaccination confirmations for approriate records" do
+    it "sends vaccination confirmations for the appropriate records" do
       expect(job).not_to receive(:send_vaccination_confirmation).with(
         existing_vaccination_record_already_sent
       )
@@ -46,6 +54,9 @@ describe VaccinationConfirmationsJob do
       )
       expect(job).to receive(:send_vaccination_confirmation).with(
         new_vaccination_record
+      )
+      expect(job).not_to receive(:send_vaccination_confirmation).with(
+        new_vaccination_record_outside_session
       )
       expect(job).not_to receive(:send_vaccination_confirmation).with(
         discarded_vaccination_record
