@@ -81,47 +81,45 @@ class Reports::OfflineSessionExporter
   end
 
   def columns
-    @columns ||=
-      %i[
-        person_forename
-        person_surname
-        organisation_code
-        school_name
-        care_setting
-        person_dob
-        year_group
-        person_gender_code
-        person_address_line_1
-        person_postcode
-        nhs_number
-        consent_status
-        consent_details
-        health_question_answers
-        triage_status
-        triaged_by
-        triage_date
-        triage_notes
-        gillick_status
-        gillick_assessment_date
-        gillick_assessed_by
-        gillick_assessment_notes
-        vaccinated
-        date_of_vaccination
-        time_of_vaccination
-        programme
-        vaccine_given
-        performing_professional_email
-        batch_number
-        batch_expiry_date
-        anatomical_site
-        dose_sequence
-        reason_not_vaccinated
-        notes
-        session_id
-        uuid
-      ].tap do |values|
-        values.insert(5, :clinic_name) if location.generic_clinic?
-      end
+    @columns ||= %i[
+      person_forename
+      person_surname
+      organisation_code
+      school_name
+      clinic_name
+      care_setting
+      person_dob
+      year_group
+      person_gender_code
+      person_address_line_1
+      person_postcode
+      nhs_number
+      consent_status
+      consent_details
+      health_question_answers
+      triage_status
+      triaged_by
+      triage_date
+      triage_notes
+      gillick_status
+      gillick_assessment_date
+      gillick_assessed_by
+      gillick_assessment_notes
+      vaccinated
+      date_of_vaccination
+      time_of_vaccination
+      programme
+      vaccine_given
+      performing_professional_email
+      batch_number
+      batch_expiry_date
+      anatomical_site
+      dose_sequence
+      reason_not_vaccinated
+      notes
+      session_id
+      uuid
+    ]
   end
 
   def patient_sessions
