@@ -1,7 +1,7 @@
 <% content_for :before_main do %>
   <%= render AppBreadcrumbComponent.new(items: [
                                           { text: t("dashboard.index.title"), href: dashboard_path },
-                                          { text: t("programmes.index.title"), href: programmes_path },
+                                          { text: t("imports.index.title"), href: imports_path },
                                           { text: "Import issues", href: imports_issues_path },
                                         ]) %>
 <% end %>
