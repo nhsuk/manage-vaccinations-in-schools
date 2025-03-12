@@ -7,7 +7,12 @@ class MESHDPSExportJob < ApplicationJob
     return unless Flipper.enabled? :mesh_jobs
 
     Programme.find_each do |programme|
-      if programme.vaccination_records.administered.unexported.any?
+      if programme
+           .vaccination_records
+           .administered
+           .unexported
+           .recorded_in_service
+           .any?
         dps_export = DPSExport.create!(programme:)
         response =
           MESH.send_file(data: dps_export.csv, to: Settings.mesh.dps_mailbox)

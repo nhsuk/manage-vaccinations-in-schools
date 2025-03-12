@@ -402,4 +402,23 @@ describe AppActivityLogComponent do
                      date: "1 June 2024 at 12:00pm",
                      by: "Nurse Joy"
   end
+
+  describe "vaccination records" do
+    context "without a vaccine" do
+      before do
+        create(
+          :vaccination_record,
+          patient:,
+          programme: programmes.first,
+          vaccine: nil,
+          performed_at: Time.zone.parse("2024-05-31 13:00")
+        )
+      end
+
+      include_examples "card",
+                       title: "Vaccinated",
+                       date: "31 May 2024 at 1:00pm",
+                       programme: "HPV"
+    end
+  end
 end
