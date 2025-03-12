@@ -70,11 +70,13 @@ FactoryBot.define do
     delivery_method { "intramuscular" }
 
     vaccine do
-      programme.vaccines.active.first || association(:vaccine, programme:)
+      if session
+        programme.vaccines.active.first || association(:vaccine, programme:)
+      end
     end
 
     batch do
-      association :batch, organisation:, vaccine:, strategy: :create if vaccine
+      association(:batch, organisation:, vaccine:, strategy: :create) if vaccine
     end
 
     performed_by
