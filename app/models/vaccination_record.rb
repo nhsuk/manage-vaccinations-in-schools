@@ -92,6 +92,7 @@ class VaccinationRecord < ApplicationRecord
   has_one :organisation, through: :session
   has_one :team, through: :session
 
+  scope :recorded_in_service, -> { where.not(session: nil) }
   scope :unexported, -> { where.missing(:dps_exports) }
 
   scope :with_pending_changes,
