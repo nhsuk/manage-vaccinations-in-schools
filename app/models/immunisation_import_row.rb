@@ -44,12 +44,18 @@ class ImmunisationImportRow
 
   validates :dose_sequence,
             presence: {
-              if: -> { administered && offline_recording? }
+              if: -> do
+                administered && offline_recording? &&
+                  default_dose_sequence.present?
+              end
+            },
+            absence: {
+              if: -> { offline_recording? && default_dose_sequence.nil? }
             },
             comparison: {
+              allow_nil: true,
               greater_than_or_equal_to: 1,
               less_than_or_equal_to: :maximum_dose_sequence,
-              allow_nil: true,
               if: :maximum_dose_sequence
             }
 
@@ -298,7 +304,7 @@ class ImmunisationImportRow
   def dose_sequence
     value = @data["DOSE_SEQUENCE"]&.gsub(/\s/, "")&.presence&.upcase
 
-    return 1 if value.blank? && maximum_dose_sequence == 1
+    return default_dose_sequence if value.blank?
 
     dose_sequences = DOSE_SEQUENCES[programme&.type]
 
@@ -491,7 +497,10 @@ class ImmunisationImportRow
     organisation.vaccines.where(programme:).pluck(:nivs_name)
   end
 
-  delegate :maximum_dose_sequence, to: :programme, allow_nil: true
+  delegate :default_dose_sequence,
+           :maximum_dose_sequence,
+           to: :programme,
+           allow_nil: true
 
   def offline_recording?
     @data["SESSION_ID"].present?
