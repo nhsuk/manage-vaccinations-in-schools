@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe "HPV vaccination" do
+describe "MenACWY and Td/IPV vaccination" do
   around { |example| travel_to(Time.zone.local(2024, 2, 1)) { example.run } }
 
   scenario "Cannot be recorded by an admin" do
@@ -10,15 +10,26 @@ describe "HPV vaccination" do
   end
 
   def given_i_am_signed_in_as_an_admin
-    programmes = [create(:programme, :hpv_all_vaccines)]
+    programmes = [create(:programme, :menacwy), create(:programme, :td_ipv)]
     organisation = create(:organisation, :with_one_admin, programmes:)
+
     location = create(:school)
+
     @session = create(:session, organisation:, programmes:, location:)
     @patient =
       create(:patient, :consent_given_triage_not_needed, session: @session)
 
+    create(
+      :vaccination_record,
+      patient: @patient,
+      programme: programmes.first,
+      session: @session
+    )
+
     sign_in organisation.users.first, role: :admin_staff
+
     visit "/"
+
     expect(page).to have_content(
       "#{organisation.users.first.full_name} (Administrator)"
     )
@@ -33,5 +44,6 @@ describe "HPV vaccination" do
 
   def then_i_cannot_record_that_the_patient_has_been_vaccinated
     expect(page).not_to have_content("ready for their HPV vaccination?")
+    expect(page).not_to have_content("You still need to record an outcome")
   end
 end
