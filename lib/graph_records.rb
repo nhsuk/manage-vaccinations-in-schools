@@ -177,8 +177,8 @@ class GraphRecords
     vaccine: %i[nivs_name],
     organisation: %i[name],
     location: %i[name],
-    cohort_import: %i[csv_filename created_at status],
-    class_import: %i[csv_filename created_at status],
+    cohort_import: %i[csv_filename created_at status rows_count],
+    class_import: %i[csv_filename created_at status rows_count year_groups],
     session_date: %i[value],
     team: %i[name]
   }.freeze
