@@ -154,6 +154,7 @@ variable "splunk_enabled" {
 locals {
   container_name = "${var.container_name}-${var.environment}"
   is_production  = var.environment == "production"
+  ecs_service_name = "mavis-${var.environment}"
 
   task_envs = [
     {
