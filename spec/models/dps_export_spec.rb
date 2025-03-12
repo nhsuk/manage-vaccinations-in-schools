@@ -28,10 +28,11 @@ describe DPSExport do
   end
 
   let(:programme) { create(:programme) }
+  let(:session) { create(:session, programmes: [programme]) }
 
   before do
-    create_list(:vaccination_record, 2, programme:)
-    create(:vaccination_record, :discarded, programme:)
+    create_list(:vaccination_record, 2, programme:, session:)
+    create(:vaccination_record, :discarded, programme:, session:)
   end
 
   describe "#csv" do

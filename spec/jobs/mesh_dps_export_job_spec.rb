@@ -17,11 +17,13 @@ describe MESHDPSExportJob do # rubocop:disable RSpec/SpecFilePathFormat
   context "mesh_jobs feature flag is enabled" do
     before { Flipper.enable(:mesh_jobs) }
 
+    let(:programme) { create(:programme) }
+    let(:session) { create(:session, programmes: [programme]) }
+
     context "with a programme that has unexported vaccination records" do
-      let!(:vaccination_record) { create :vaccination_record }
+      before { create(:vaccination_record, session:, programme:) }
 
       it "creates a DPS export and sends it" do
-        programme = vaccination_record.programme
         allow(DPSExport).to receive(:create!).with(programme:) {
           instance_double(DPSExport, csv: "csv", update!: nil, id: 1)
         }
@@ -47,12 +49,14 @@ describe MESHDPSExportJob do # rubocop:disable RSpec/SpecFilePathFormat
     end
 
     context "with a programme that has exported vaccination records" do
-      let!(:vaccination_record) { create :vaccination_record }
+      let!(:vaccination_record) do
+        create(:vaccination_record, session:, programme:)
+      end
 
       it "does not send anything" do
         create(
           :dps_export,
-          programme: vaccination_record.programme,
+          programme:,
           vaccination_records: [vaccination_record]
         )
 
@@ -73,8 +77,7 @@ describe MESHDPSExportJob do # rubocop:disable RSpec/SpecFilePathFormat
     end
 
     context "when MESH returns a parseable error" do
-      before { create :vaccination_record }
-
+      let(:programme) { create(:programme) }
       let(:response_double) do
         instance_double(
           Faraday::Response,
@@ -94,6 +97,14 @@ describe MESHDPSExportJob do # rubocop:disable RSpec/SpecFilePathFormat
               }
             ),
           status: 417
+        )
+      end
+
+      before do
+        create(
+          :vaccination_record,
+          programme:,
+          session: create(:session, programmes: [programme])
         )
       end
 
