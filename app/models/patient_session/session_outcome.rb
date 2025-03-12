@@ -18,6 +18,8 @@ class PatientSession::SessionOutcome
 
   def vaccinated?(programme) = status[programme] == VACCINATED
 
+  def already_had?(programme) = status[programme] == ALREADY_HAD
+
   def not_vaccinated?(programme) =
     status[programme] != VACCINATED && status[programme] != NONE
 
