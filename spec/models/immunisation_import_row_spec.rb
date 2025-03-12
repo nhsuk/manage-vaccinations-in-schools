@@ -760,6 +760,20 @@ describe ImmunisationImportRow do
       it { should be_nil }
     end
 
+    context "without a school URN" do
+      let(:data) { valid_data.merge("SCHOOL_NAME" => "Waterloo Road") }
+
+      it { should eq("Waterloo Road") }
+    end
+
+    context "without a school URN and a clinic exists" do
+      let(:data) { valid_data.merge("SCHOOL_NAME" => "Waterloo Road") }
+
+      before { create(:community_clinic, urn: nil) }
+
+      it { should eq("Waterloo Road") }
+    end
+
     context "with a known school and unknown care setting" do
       let(:data) do
         valid_data.merge(
