@@ -179,6 +179,8 @@ class GraphRecords
     location: %i[name],
     cohort_import: %i[csv_filename created_at status],
     class_import: %i[csv_filename created_at status],
+    session_date: %i[value],
+    team: %i[name]
   }.freeze
 
   # @param focus_config [Hash] Hash of model names to ids to focus on (make bold)
@@ -372,7 +374,7 @@ class GraphRecords
         value = obj.send(detail)
         detail_text = "#{detail}: #{value}"
         # Insert non-breaking spaces and hyphens to prevent Mermaid from breaking the line
-        detail_text = detail_text.gsub(' ', '&nbsp;').gsub('-', '&#8209;')
+        detail_text = detail_text.gsub(" ", "&nbsp;").gsub("-", "&#8209;")
         text += "<br><span style=\"font-size:14px\">#{detail_text}</span>"
       end
     end
