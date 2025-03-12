@@ -305,7 +305,7 @@ describe Reports::OfflineSessionExporter do
               "TRIAGE_NOTES" => nil,
               "TRIAGE_STATUS" => nil,
               "VACCINATED" => "Y",
-              "VACCINE_GIVEN" => "Gardasil9",
+              "VACCINE_GIVEN" => nil,
               "UUID" => vaccination_record.uuid,
               "YEAR_GROUP" => patient.year_group
             }
