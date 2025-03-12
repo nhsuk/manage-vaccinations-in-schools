@@ -420,7 +420,7 @@ class ImmunisationImportRow
       date_of_vaccination.year,
       date_of_vaccination.month,
       date_of_vaccination.day,
-      time_of_vaccination&.hour || 12,
+      time_of_vaccination&.hour || 0,
       time_of_vaccination&.min || 0,
       time_of_vaccination&.sec || 0
     )

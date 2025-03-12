@@ -1490,7 +1490,7 @@ describe ImmunisationImportRow do
 
     it "sets the administered at time" do
       expect(vaccination_record.performed_at).to eq(
-        Time.new(2024, 1, 1, 12, 0, 0, "+00:00")
+        Time.new(2024, 1, 1, 0, 0, 0, "+00:00")
       )
     end
 
@@ -1499,7 +1499,7 @@ describe ImmunisationImportRow do
 
       it "sets the administered at time" do
         expect(vaccination_record.performed_at).to eq(
-          Time.new(2023, 9, 1, 12, 0, 0, "+01:00")
+          Time.new(2023, 9, 1, 0, 0, 0, "+01:00")
         )
       end
     end
@@ -1509,7 +1509,7 @@ describe ImmunisationImportRow do
 
       it "parses the date and sets the administered at time" do
         expect(vaccination_record.performed_at).to eq(
-          Time.new(2023, 9, 1, 12, 0, 0, "+01:00")
+          Time.new(2023, 9, 1, 0, 0, 0, "+01:00")
         )
       end
     end
@@ -1519,7 +1519,7 @@ describe ImmunisationImportRow do
 
       it "parses the date and sets the administered at time" do
         expect(vaccination_record.performed_at).to eq(
-          Time.new(2023, 9, 1, 12, 0, 0, "+01:00")
+          Time.new(2023, 9, 1, 0, 0, 0, "+01:00")
         )
       end
     end
