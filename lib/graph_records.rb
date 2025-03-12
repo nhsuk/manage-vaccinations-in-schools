@@ -168,6 +168,19 @@ class GraphRecords
     }
   }.freeze
 
+  DETAIL_WHITELIST = {
+    consent: %i[response],
+    session: %i[clinic?],
+    triage: %i[status],
+    vaccination_record: %i[outcome],
+    programme: %i[type],
+    vaccine: %i[nivs_name],
+    organisation: %i[name],
+    location: %i[name],
+    cohort_import: %i[csv_filename created_at status],
+    class_import: %i[csv_filename created_at status],
+  }.freeze
+
   # @param focus_config [Hash] Hash of model names to ids to focus on (make bold)
   # @param node_order [Array] Array of model names in order to render nodes
   # @param traversals_config [Hash] Hash of model names to arrays of associations to traverse
@@ -352,6 +365,16 @@ class GraphRecords
         "puts GraphRecords.new.graph(#{obj.class.name.underscore}: #{obj.id})"
       text +=
         "<br><span style=\"font-size:10px\"><i>#{non_breaking_text(command)}</i></span>"
+    end
+
+    if DETAIL_WHITELIST.key?(obj.class.name.underscore.to_sym)
+      DETAIL_WHITELIST[obj.class.name.underscore.to_sym].each do |detail|
+        value = obj.send(detail)
+        detail_text = "#{detail}: #{value}"
+        # Insert non-breaking spaces and hyphens to prevent Mermaid from breaking the line
+        detail_text = detail_text.gsub(' ', '&nbsp;').gsub('-', '&#8209;')
+        text += "<br><span style=\"font-size:14px\">#{detail_text}</span>"
+      end
     end
 
     "#{text}\""
