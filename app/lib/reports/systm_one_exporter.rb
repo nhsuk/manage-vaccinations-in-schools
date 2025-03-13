@@ -78,12 +78,11 @@ class Reports::SystmOneExporter
 
   def vaccination_records
     scope =
-      programme
+      organisation
         .vaccination_records
-        .joins(:organisation)
-        .where(organisations: { id: organisation.id })
-        .merge(VaccinationRecord.administered)
-        .includes(:batch, :location, :programme, :vaccine, :patient)
+        .administered
+        .where(programme:)
+        .includes(:batch, :location, :vaccine, :patient)
 
     if start_date.present?
       scope =

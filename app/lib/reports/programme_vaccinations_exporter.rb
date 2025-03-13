@@ -91,15 +91,13 @@ class Reports::ProgrammeVaccinationsExporter
 
   def vaccination_records
     scope =
-      programme
+      organisation
         .vaccination_records
-        .joins(:organisation)
-        .where(organisations: { id: organisation.id })
+        .where(programme:)
         .includes(
           :batch,
           :location,
           :performed_by_user,
-          :programme,
           :vaccine,
           patient: [:gp_practice, :school, :triages, { consents: :parent }]
         )
@@ -146,7 +144,6 @@ class Reports::ProgrammeVaccinationsExporter
   def row(vaccination_record:)
     location = vaccination_record.location
     patient = vaccination_record.patient
-    programme = vaccination_record.programme
     session = vaccination_record.session
 
     consents = patient.consent_outcome.latest[programme]

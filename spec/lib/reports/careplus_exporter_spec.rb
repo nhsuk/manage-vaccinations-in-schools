@@ -186,6 +186,25 @@ describe Reports::CareplusExporter do
         expect(data_rows.first).not_to be_nil
       end
 
+      it "excludes vaccination records for a different programme outside the date range" do
+        patient = create(:patient_session, session:).patient
+
+        other_programme =
+          create(
+            :programme,
+            type: (Programme.types.values - [programme.type]).sample
+          )
+
+        create(
+          :vaccination_record,
+          programme: other_programme,
+          patient:,
+          session:
+        )
+
+        expect(data_rows.first).to be_nil
+      end
+
       context "with a session in a different organisation" do
         let(:session) { create(:session, programmes:, location:) }
 
