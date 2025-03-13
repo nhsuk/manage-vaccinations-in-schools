@@ -22,7 +22,7 @@ class VaccinatedCriteria
       administered_records.any? do
         (
           it.dose_sequence == programme.vaccinated_dose_sequence ||
-            (it.dose_sequence.nil? && it.session.present?)
+            (it.dose_sequence.nil? && it.recorded_in_service?)
         ) && patient.age(now: it.performed_at) >= 10
       end
     else
