@@ -109,7 +109,7 @@ class PatientSession < ApplicationRecord
   end
 
   def can_record_as_already_vaccinated?(programme:)
-    !session.today? && patient.programme_outcome.none?(programme)
+    !session.today? && patient.programme_outcome.none_yet?(programme)
   end
 
   def programmes
