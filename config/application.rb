@@ -23,6 +23,8 @@ Bundler.require(*Rails.groups)
 
 module ManageVaccinations
   class Application < Rails::Application
+    config.deploy_env = ENV.fetch("DEPLOY_ENV", ENV["RAILS_ENV"])
+
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 8.0
 

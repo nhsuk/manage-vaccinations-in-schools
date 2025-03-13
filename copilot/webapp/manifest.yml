@@ -59,7 +59,7 @@ environments:
       rolling: recreate # Disables blue-green deployment for speed
     variables:
       RAILS_ENV: staging
-      SENTRY_ENVIRONMENT: preview
+      DEPLOY_ENV: preview
       MAVIS__HOST: "preview.mavistesting.com"
       MAVIS__GIVE_OR_REFUSE_CONSENT_HOST: "preview.mavistesting.com"
       MAVIS__CIS2__ENABLED: false
@@ -73,7 +73,7 @@ environments:
       rolling: recreate # Disables blue-green deployment for speed
     variables:
       RAILS_ENV: staging
-      SENTRY_ENVIRONMENT: qa
+      DEPLOY_ENV: qa
       MAVIS__HOST: "qa.mavistesting.com"
       MAVIS__GIVE_OR_REFUSE_CONSENT_HOST: "qa.mavistesting.com"
       MAVIS__CIS2__ENABLED: false
@@ -86,7 +86,7 @@ environments:
       rolling: recreate # Disables blue-green deployment for speed
     variables:
       RAILS_ENV: staging
-      SENTRY_ENVIRONMENT: test
+      DEPLOY_ENV: test
       MAVIS__HOST: "test.mavistesting.com"
       MAVIS__GIVE_OR_REFUSE_CONSENT_HOST: "test.mavistesting.com"
   training:
@@ -98,7 +98,7 @@ environments:
       rolling: recreate # Disables blue-green deployment for speed
     variables:
       RAILS_ENV: staging
-      SENTRY_ENVIRONMENT: training
+      DEPLOY_ENV: training
       MAVIS__HOST: "training.manage-vaccinations-in-schools.nhs.uk"
       MAVIS__GIVE_OR_REFUSE_CONSENT_HOST: "training.manage-vaccinations-in-schools.nhs.uk"
       MAVIS__CIS2__ENABLED: false
@@ -117,7 +117,6 @@ environments:
         - "give-or-refuse-consent-for-vaccinations.nhs.uk"
     variables:
       RAILS_ENV: production
-      SENTRY_ENVIRONMENT: production
       MAVIS__HOST: "www.manage-vaccinations-in-schools.nhs.uk"
       MAVIS__GIVE_OR_REFUSE_CONSENT_HOST: "www.give-or-refuse-consent-for-vaccinations.nhs.uk"
   copilotmigration:
@@ -128,7 +127,7 @@ environments:
       rolling: recreate # Disables blue-green deployment for speed
     variables:
       RAILS_ENV: staging
-      SENTRY_ENVIRONMENT: copilotmigration
+      DEPLOY_ENV: copilotmigration
       MAVIS__HOST: "copilotmigration.mavistesting.com"
       MAVIS__GIVE_OR_REFUSE_CONSENT_HOST: "copilotmigration.mavistesting.com"
       MAVIS__CIS2__ENABLED: false
