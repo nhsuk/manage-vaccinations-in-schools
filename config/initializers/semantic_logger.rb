@@ -10,6 +10,14 @@ module SplunkHttpPatch
   end
 end
 
+class MavisSplunkFormatter
+  def call(log, logger)
+    message = JSON.parse(logger.call(log, logger))
+    message["event"]["hosting_environment"] = HostingEnvironment.name
+    message.to_json
+  end
+end
+
 SemanticLogger::Appender::SplunkHttp.prepend(SplunkHttpPatch)
 
 if Settings.splunk.enabled
@@ -17,6 +25,7 @@ if Settings.splunk.enabled
     appender: :splunk_http,
     url: Settings.splunk.hec_endpoint,
     token: Settings.splunk.hec_token,
-    request_channel: SecureRandom.uuid
+    request_channel: SecureRandom.uuid,
+    formatter: MavisSplunkFormatter.new
   )
 end
