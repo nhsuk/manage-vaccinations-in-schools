@@ -92,7 +92,9 @@ describe Reports::ProgrammeVaccinationsExporter do
       end
 
       describe "rows" do
-        subject(:rows) { freeze_time { CSV.parse(call, headers: true) } }
+        subject(:rows) { CSV.parse(call, headers: true) }
+
+        around { |example| freeze_time { example.run } }
 
         context "a school session" do
           let(:location) { create(:school, team:) }
