@@ -12,19 +12,19 @@ describe Patient::ConsentOutcome do
     subject(:status) { instance.status[programme] }
 
     context "with no consent" do
-      it { should be(described_class::NONE) }
+      it { should be(described_class::NO_RESPONSE) }
     end
 
     context "with an invalidated consent" do
       before { create(:consent, :invalidated, patient:, programme:) }
 
-      it { should be(described_class::NONE) }
+      it { should be(described_class::NO_RESPONSE) }
     end
 
     context "with a not provided consent" do
       before { create(:consent, :not_provided, patient:, programme:) }
 
-      it { should be(described_class::NONE) }
+      it { should be(described_class::NO_RESPONSE) }
     end
 
     context "with both an invalidated and not provided consent" do
@@ -33,7 +33,7 @@ describe Patient::ConsentOutcome do
         create(:consent, :not_provided, patient:, programme:)
       end
 
-      it { should be(described_class::NONE) }
+      it { should be(described_class::NO_RESPONSE) }
     end
 
     context "with a refused consent" do

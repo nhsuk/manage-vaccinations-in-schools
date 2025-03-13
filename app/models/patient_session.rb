@@ -109,7 +109,7 @@ class PatientSession < ApplicationRecord
   end
 
   def can_record_as_already_vaccinated?(programme:)
-    !session.today? && patient.programme_outcome.none?(programme)
+    !session.today? && patient.programme_outcome.none_yet?(programme)
   end
 
   def programmes
@@ -143,10 +143,10 @@ class PatientSession < ApplicationRecord
   def outstanding_programmes
     # If this patient hasn't been seen yet by a nurse for any of the programmes,
     # we don't want to show the banner.
-    return [] if programmes.all? { session_outcome.none?(it) }
+    return [] if programmes.all? { session_outcome.none_yet?(it) }
 
     programmes.select do
-      ready_for_vaccinator?(programme: it) && session_outcome.none?(it)
+      ready_for_vaccinator?(programme: it) && session_outcome.none_yet?(it)
     end
   end
 end

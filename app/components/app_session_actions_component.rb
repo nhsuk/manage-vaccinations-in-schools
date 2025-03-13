@@ -34,7 +34,7 @@ class AppSessionActionsComponent < ViewComponent::Base
   def no_consent_response_row
     consent_row(
       text: "No consent response",
-      status: Patient::ConsentOutcome::NONE
+      status: Patient::ConsentOutcome::NO_RESPONSE
     )
   end
 

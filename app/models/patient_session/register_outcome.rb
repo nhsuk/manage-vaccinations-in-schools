@@ -56,6 +56,6 @@ class PatientSession::RegisterOutcome
   end
 
   def all_programmes_have_outcome?
-    programmes.none? { session_outcome.none?(it) }
+    programmes.none? { session_outcome.none_yet?(it) }
   end
 end

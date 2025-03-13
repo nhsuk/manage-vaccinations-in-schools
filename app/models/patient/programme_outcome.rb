@@ -8,14 +8,14 @@ class Patient::ProgrammeOutcome
   STATUSES = [
     VACCINATED = :vaccinated,
     COULD_NOT_VACCINATE = :could_not_vaccinate,
-    NONE = :none
+    NONE_YET = :none_yet
   ].freeze
 
   def vaccinated?(programme) = status[programme] == VACCINATED
 
   def could_not_vaccinate?(programme) = status[programme] == COULD_NOT_VACCINATE
 
-  def none?(programme) = status[programme] == NONE
+  def none_yet?(programme) = status[programme] == NONE_YET
 
   def status
     @status ||=
@@ -43,7 +43,7 @@ class Patient::ProgrammeOutcome
     elsif programme_could_not_vaccinate?(programme)
       COULD_NOT_VACCINATE
     else
-      NONE
+      NONE_YET
     end
   end
 

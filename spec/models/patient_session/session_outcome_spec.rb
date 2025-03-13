@@ -14,7 +14,7 @@ describe PatientSession::SessionOutcome do
     subject(:status) { instance.status[programme] }
 
     context "with no vaccination record" do
-      it { should be(described_class::NONE) }
+      it { should be(described_class::NONE_YET) }
     end
 
     context "with a vaccination administered" do
@@ -42,7 +42,7 @@ describe PatientSession::SessionOutcome do
         create(:vaccination_record, :discarded, patient:, session:, programme:)
       end
 
-      it { should be(described_class::NONE) }
+      it { should be(described_class::NONE_YET) }
     end
 
     context "with a consent refused" do

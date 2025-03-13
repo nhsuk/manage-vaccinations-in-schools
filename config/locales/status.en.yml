@@ -4,12 +4,12 @@ en:
       label:
         conflicts: Conflicting consent
         given: Consent given
-        none: No response
+        no_response: No response
         refused: Consent refused
       colour:
         conflicts: dark-orange
         given: aqua-green
-        none: grey
+        no_response: grey
         refused: red
     triage:
       label:
@@ -42,7 +42,7 @@ en:
         administered: Vaccinated
         already_had: Already had vaccine
         contraindications: Had contraindications
-        none: No outcome yet
+        none_yet: No outcome yet
         not_well: Unwell
         refused: Vaccine refused
       colour:
@@ -51,17 +51,15 @@ en:
         administered: green
         already_had: green
         contraindications: red
-        none: white
+        none_yet: white
         not_well: dark-orange
         refused: red
     programme:
       label:
         could_not_vaccinate: Could not vaccinate
-        none: No outcome yet
-        partially_vaccinated: Partially vaccinated
+        none_yet: No outcome yet
         vaccinated: Vaccinated
       colour:
         could_not_vaccinate: red
-        none: grey
-        partially_vaccinated: green
+        none_yet: grey
         vaccinated: green
