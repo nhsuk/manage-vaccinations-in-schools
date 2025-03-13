@@ -1642,5 +1642,19 @@ describe ImmunisationImportRow do
     let(:data) { valid_data }
 
     it { should be_archived }
+
+    context "without a vaccine" do
+      let(:data) { valid_data.merge("VACCINE_GIVEN" => "") }
+
+      it { should be_nil }
+    end
+
+    context "without a batch number or expiry date" do
+      let(:data) do
+        valid_data.merge("BATCH_NUMBER" => "", "BATCH_EXPIRY_DATE" => "")
+      end
+
+      it { should be_nil }
+    end
   end
 end

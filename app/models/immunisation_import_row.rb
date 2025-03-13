@@ -318,7 +318,7 @@ class ImmunisationImportRow
   end
 
   def vaccine_given
-    @data["VACCINE_GIVEN"]&.strip
+    @data["VACCINE_GIVEN"]&.strip&.presence
   end
 
   def patient_first_name
@@ -464,7 +464,10 @@ class ImmunisationImportRow
   end
 
   def batch
-    return unless valid? && administered && vaccine
+    unless valid? && administered && vaccine && batch_expiry_date &&
+             batch_number.present?
+      return
+    end
 
     @batch ||=
       Batch.create_with(archived_at: Time.current).find_or_create_by!(
