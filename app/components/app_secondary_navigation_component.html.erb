@@ -2,20 +2,22 @@
   <ul class="app-secondary-navigation__list">
     <% items.each do |item| %>
       <li class="app-secondary-navigation__list-item">
-        <% if item.selected %>
-          <%= link_to item.href,
-                      class: "app-secondary-navigation__link",
-                      aria: { current: true },
-                      data: { turbo: true, turbo_action: "replace" } do %>
+        <%= link_to item.href,
+                    class: "app-secondary-navigation__link",
+                    aria: { current: item.selected || nil },
+                    data: { turbo: true, turbo_action: "replace" } do %>
+          <% if item.selected %>
             <strong class="app-secondary-navigation__current">
               <%= item %>
             </strong>
+          <% else %>
+              <%= item %>
           <% end %>
-        <% else %>
-          <%= link_to item.href,
-                      class: "app-secondary-navigation__link",
-                      data: { turbo: true, turbo_action: "replace" } do %>
-            <%= item %>
+
+          <% if item.ticked %>
+            <svg class="nhsuk-icon nhsuk-icon__tick" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" focusable="false" aria-hidden="true" role="presentation">
+              <path d="M18.4 7.8l-8.5 8.4L5.6 12" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"></path>
+            </svg>
           <% end %>
         <% end %>
       </li>

@@ -53,6 +53,18 @@
   font-weight: inherit;
 }
 
+.app-secondary-navigation__link,
+.app-secondary-navigation__current {
+  align-items: center;
+  display: flex;
+  gap: nhsuk-spacing(1);
+
+  .nhsuk-icon {
+    height: 1.5rem;
+    width: 1.5rem;
+  }
+}
+
 .app-secondary-navigation__list {
   // The list uses box-shadow rather than a border to set a 1px grey line at the
   // bottom, so that the current item appears on top of the grey line.
