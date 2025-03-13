@@ -47,6 +47,17 @@ describe "Td/IPV" do
     then_i_see_the_patient_should_not_be_vaccinated
   end
 
+  scenario "can't record as already vaccinated as an admin" do
+    given_a_td_ipv_programme_with_a_session(clinic: false)
+    and_a_patient_is_in_the_session
+
+    when_i_go_the_session_as_an_admin
+    then_i_see_one_patient_needing_consent
+    and_i_click_on_the_patient
+    then_i_see_the_patient_needs_consent
+    and_i_cannot_record_the_patient_as_already_vaccinated
+  end
+
   def given_a_td_ipv_programme_with_a_session(clinic:)
     @programme = create(:programme, :td_ipv)
     programmes = [@programme]
@@ -91,6 +102,14 @@ describe "Td/IPV" do
     click_on @session.location.name
   end
 
+  def when_i_go_the_session_as_an_admin
+    sign_in @nurse, role: :admin_staff
+    visit dashboard_path
+    click_on "Sessions", match: :first
+    click_on "Scheduled"
+    click_on @session.location.name
+  end
+
   def then_i_see_one_patient_needing_consent
     click_on "Consent"
 
@@ -129,6 +148,10 @@ describe "Td/IPV" do
   def then_i_see_the_patient_is_already_vaccinated
     expect(page).to have_content("Vaccination outcome recorded for Td/IPV")
     expect(page).to have_content("LocationUnknown")
+  end
+
+  def and_i_cannot_record_the_patient_as_already_vaccinated
+    expect(page).not_to have_content("Record as already vaccinated")
   end
 
   def and_the_consent_requests_are_sent
