@@ -39,12 +39,10 @@
     <% end %>
   <% end %>
 
-  <% if @programme && @patient_session.can_record_as_already_vaccinated?(programme: @programme) %>
+  <% if policy(VaccinationRecord).create? && @programme && @patient_session.can_record_as_already_vaccinated?(programme: @programme) %>
     <li class="app-action-list__item">
-      <%= link_to(
-            "Record as already vaccinated",
-            session_patient_programme_record_already_vaccinated_path(@session, @patient, @programme)
-          ) %>
+      <%= link_to "Record as already vaccinated",
+                  session_patient_programme_record_already_vaccinated_path(@session, @patient, @programme) %>
     </li>
   <% end %>
 </ul>
