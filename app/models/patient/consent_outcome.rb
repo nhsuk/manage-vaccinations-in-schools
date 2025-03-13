@@ -6,19 +6,19 @@ class Patient::ConsentOutcome
   end
 
   STATUSES = [
-    NONE = :none,
+    NO_RESPONSE = :no_response,
     CONFLICTS = :conflicts,
     GIVEN = :given,
     REFUSED = :refused
   ].freeze
 
-  def given?(programme) = status[programme] == GIVEN
-
-  def refused?(programme) = status[programme] == REFUSED
+  def no_response?(programme) = status[programme] == NO_RESPONSE
 
   def conflicts?(programme) = status[programme] == CONFLICTS
 
-  def none?(programme) = status[programme] == NONE
+  def given?(programme) = status[programme] == GIVEN
+
+  def refused?(programme) = status[programme] == REFUSED
 
   def status
     @status ||=
@@ -57,7 +57,7 @@ class Patient::ConsentOutcome
     elsif consent_conflicts?(programme)
       CONFLICTS
     else
-      NONE
+      NO_RESPONSE
     end
   end
 

@@ -37,7 +37,8 @@ class Patient::NextActivity
 
     return TRIAGE if triage_outcome.required?(programme)
 
-    if consent_outcome.none?(programme) || consent_outcome.conflicts?(programme)
+    if consent_outcome.no_response?(programme) ||
+         consent_outcome.conflicts?(programme)
       return CONSENT
     end
 

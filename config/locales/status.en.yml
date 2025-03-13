@@ -4,12 +4,12 @@ en:
       label:
         conflicts: Conflicting consent
         given: Consent given
-        none: No response
+        no_response: No response
         refused: Consent refused
       colour:
         conflicts: dark-orange
         given: aqua-green
-        none: grey
+        no_response: grey
         refused: red
     triage:
       label:
