@@ -78,7 +78,6 @@ environments:
       MAVIS__GIVE_OR_REFUSE_CONSENT_HOST: "qa.mavistesting.com"
       MAVIS__CIS2__ENABLED: false
       MAVIS__PDS__PERFORM_JOBS: false
-      MAVIS__SPLUNK__ENABLED: false
   test:
     http:
       alias:
