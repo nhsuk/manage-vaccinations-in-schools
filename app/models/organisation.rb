@@ -48,6 +48,7 @@ class Organisation < ApplicationRecord
   has_many :programmes, through: :organisation_programmes
   has_many :schools, through: :teams
   has_many :vaccines, through: :programmes
+  has_many :vaccination_records, through: :sessions
 
   has_and_belongs_to_many :users
 

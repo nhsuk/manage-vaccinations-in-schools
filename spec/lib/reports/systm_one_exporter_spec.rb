@@ -113,6 +113,26 @@ describe Reports::SystmOneExporter do
     it { should_not be_blank }
   end
 
+  context "with vaccination records for a different programme" do
+    let(:other_programme) do
+      create(
+        :programme,
+        type: (Programme.types.values - [programme.type]).sample
+      )
+    end
+
+    let(:vaccination_record) do
+      create(
+        :vaccination_record,
+        programme: other_programme,
+        patient:,
+        session:
+      )
+    end
+
+    it { should be_blank }
+  end
+
   context "with a session in a different organisation" do
     let(:programme) do
       create(:programme, :hpv, organisations: [other_organisation])

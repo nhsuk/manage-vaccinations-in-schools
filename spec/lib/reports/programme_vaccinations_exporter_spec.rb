@@ -208,6 +208,28 @@ describe Reports::ProgrammeVaccinationsExporter do
             it { should be_empty }
           end
 
+          context "with a vaccination for a different programme" do
+            let(:patient) { create(:patient_session, session:).patient }
+
+            let(:other_programme) do
+              create(
+                :programme,
+                type: (Programme.types.values - programmes.map(&:type)).sample
+              )
+            end
+
+            let(:vaccination_record) do
+              create(
+                :vaccination_record,
+                programme: other_programme,
+                patient:,
+                session:
+              )
+            end
+
+            it { should be_blank }
+          end
+
           context "with a vaccinated patient that was updated in the date range" do
             let(:patient) { create(:patient_session, session:).patient }
             let(:start_date) { 1.day.ago }

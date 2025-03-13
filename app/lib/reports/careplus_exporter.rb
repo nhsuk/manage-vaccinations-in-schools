@@ -10,9 +10,9 @@ class Reports::CareplusExporter
 
   def call
     CSV.generate(headers:, write_headers: true) do |csv|
-      programme
+      organisation
         .sessions
-        .where(organisation:)
+        .has_programme(programme)
         .find_each do |session|
           patient_sessions_for_session(session).each do |patient_session|
             rows(patient_session:).each { |row| csv << row }
@@ -116,19 +116,18 @@ class Reports::CareplusExporter
   def rows(patient_session:)
     patient = patient_session.patient
 
-    patient_session.programmes.filter_map do |programme|
-      vaccination_records =
-        patient_session.session_outcome.all[programme].select(&:administered?)
+    vaccination_records =
+      patient_session.session_outcome.all[programme].select(&:administered?)
 
-      if vaccination_records.any?
-        existing_row(patient:, patient_session:, vaccination_records:)
-      end
+    if vaccination_records.any?
+      [existing_row(patient:, patient_session:, vaccination_records:)]
+    else
+      []
     end
   end
 
   def existing_row(patient:, patient_session:, vaccination_records:)
     first_vaccination = vaccination_records.first
-    programme = first_vaccination.programme
 
     [
       patient.nhs_number,
