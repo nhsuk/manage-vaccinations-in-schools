@@ -92,7 +92,7 @@ class VaccinationRecord < ApplicationRecord
   has_one :organisation, through: :session
   has_one :team, through: :session
 
-  scope :recorded_in_service, -> { where.not(session: nil) }
+  scope :recorded_in_service, -> { where.not(session_id: nil) }
   scope :unexported, -> { where.missing(:dps_exports) }
 
   scope :with_pending_changes,
@@ -161,6 +161,10 @@ class VaccinationRecord < ApplicationRecord
 
   def confirmation_sent?
     confirmation_sent_at != nil
+  end
+
+  def recorded_in_service?
+    session_id != nil
   end
 
   def dose_volume_ml
