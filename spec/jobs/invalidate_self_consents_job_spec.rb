@@ -76,6 +76,38 @@ describe InvalidateSelfConsentsJob do
         ).to(true)
       end
     end
+
+    context "if the patient was vaccinated" do
+      before do
+        create(
+          :vaccination_record,
+          organisation: consent.organisation,
+          programme: consent.programme,
+          patient: consent.patient,
+          created_at: 1.day.ago
+        )
+      end
+
+      it "does not invalidate the consent" do
+        expect { perform_now }.not_to(change { consent.reload.invalidated? })
+      end
+
+      context "with triage" do
+        let(:triage) do
+          create(
+            :triage,
+            created_at: 1.day.ago,
+            organisation: consent.organisation,
+            programme: consent.programme,
+            patient: consent.patient
+          )
+        end
+
+        it "does not invalidate the triage" do
+          expect { perform_now }.not_to(change { triage.reload.invalidated? })
+        end
+      end
+    end
   end
 
   context "with self-consent from today" do
