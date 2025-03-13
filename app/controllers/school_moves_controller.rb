@@ -9,7 +9,14 @@ class SchoolMovesController < ApplicationController
   layout "full"
 
   def index
-    @pagy, @school_moves = pagy(policy_scope(SchoolMove).order(:updated_at))
+    school_moves =
+      policy_scope(SchoolMove).includes(
+        :school,
+        :organisation,
+        patient: :school
+      ).order(:updated_at)
+
+    @pagy, @school_moves = pagy(school_moves)
   end
 
   def show
