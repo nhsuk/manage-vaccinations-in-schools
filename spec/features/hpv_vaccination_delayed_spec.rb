@@ -95,6 +95,7 @@ describe "HPV vaccination" do
 
   def then_i_see_that_the_status_is_delayed
     expect(page).to have_content("Could not vaccinate")
+    expect(page).not_to have_content("You still need to record an outcome")
   end
 
   def and_i_can_record_a_second_vaccination

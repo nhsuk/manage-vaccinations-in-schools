@@ -140,11 +140,13 @@ class PatientSession < ApplicationRecord
     end
   end
 
-  def programmes_ready_for_vaccinator
+  def outstanding_programmes
     # If this patient hasn't been seen yet by a nurse for any of the programmes,
     # we don't want to show the banner.
     return [] if programmes.all? { session_outcome.none?(it) }
 
-    programmes.select { ready_for_vaccinator?(programme: it) }
+    programmes.select do
+      ready_for_vaccinator?(programme: it) && session_outcome.none?(it)
+    end
   end
 end
