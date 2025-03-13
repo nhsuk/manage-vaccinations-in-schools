@@ -42,7 +42,7 @@ en:
         administered: Vaccinated
         already_had: Already had vaccine
         contraindications: Had contraindications
-        none: No outcome yet
+        none_yet: No outcome yet
         not_well: Unwell
         refused: Vaccine refused
       colour:
@@ -51,7 +51,7 @@ en:
         administered: green
         already_had: green
         contraindications: red
-        none: white
+        none_yet: white
         not_well: dark-orange
         refused: red
     programme:

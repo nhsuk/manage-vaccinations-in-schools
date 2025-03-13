@@ -13,7 +13,7 @@ class PatientSession::SessionOutcome
     ABSENT_FROM_SCHOOL = :absent_from_school,
     ABSENT_FROM_SESSION = :absent_from_session,
     UNWELL = :not_well,
-    NONE = :none
+    NONE_YET = :none_yet
   ].freeze
 
   def vaccinated?(programme) = status[programme] == VACCINATED
@@ -21,9 +21,9 @@ class PatientSession::SessionOutcome
   def already_had?(programme) = status[programme] == ALREADY_HAD
 
   def not_vaccinated?(programme) =
-    status[programme] != VACCINATED && status[programme] != NONE
+    status[programme] != VACCINATED && status[programme] != NONE_YET
 
-  def none?(programme) = status[programme] == NONE
+  def none_yet?(programme) = status[programme] == NONE_YET
 
   def status
     @status ||= programmes.index_with { programme_status(it) }
@@ -58,7 +58,7 @@ class PatientSession::SessionOutcome
     elsif triage_outcome.do_not_vaccinate?(programme)
       HAD_CONTRAINDICATIONS
     else
-      NONE
+      NONE_YET
     end
   end
 
