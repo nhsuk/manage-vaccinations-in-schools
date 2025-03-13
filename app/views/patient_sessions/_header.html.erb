@@ -55,7 +55,7 @@
           href: session_patient_programme_path(@session, @patient, programme, return_to: params[:return_to]),
           text: programme.name,
           selected: @programme == programme,
-          ticked: @patient_session.session_outcome.vaccinated?(programme) || @patient_session.session_outcome.already_had?(programme),
+          ticked: @patient.programme_outcome.vaccinated?(programme),
         )
       end
     
