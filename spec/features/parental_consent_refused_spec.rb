@@ -147,7 +147,7 @@ describe "Parental consent" do
 
   def and_the_session_outcome_is_could_not_vaccinate
     click_on "Session outcomes"
-    choose "Vaccine refused"
+    choose "Refused vaccine"
     click_on "Update results"
     expect(page).to have_content(@child.full_name)
   end
