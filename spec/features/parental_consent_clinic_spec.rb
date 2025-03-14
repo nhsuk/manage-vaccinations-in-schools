@@ -279,14 +279,17 @@ describe "Parental consent school" do
   end
 
   def then_the_nurse_should_see_the_school
+    click_on "View full child record"
     expect(page).to have_content("School#{@school.name}")
   end
 
   def then_the_nurse_should_see_home_schooled
+    click_on "View full child record"
     expect(page).to have_content("SchoolHome-schooled")
   end
 
   def then_the_nurse_should_see_unknown_school
+    click_on "View full child record"
     expect(page).to have_content("SchoolUnknown")
   end
 end
