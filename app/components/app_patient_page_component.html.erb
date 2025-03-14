@@ -36,11 +36,3 @@
     </div>
   <% end %>
 <% end %>
-
-<% if helpers.policy(VaccinationRecord).create? %>
-  <%= render AppVaccinateFormComponent.new(
-        patient_session:,
-        programme:,
-        vaccinate_form:,
-      ) %>
-<% end %>

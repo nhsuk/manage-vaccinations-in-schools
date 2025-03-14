@@ -9,14 +9,6 @@ class AppVaccinateFormComponent < ViewComponent::Base
     @vaccinate_form = vaccinate_form || default_vaccinate_form
   end
 
-  def render?
-    patient.consent_given_and_safe_to_vaccinate?(programme:) &&
-      (
-        patient_session.register_outcome.attending? ||
-          patient_session.register_outcome.completed?
-      )
-  end
-
   private
 
   attr_reader :patient_session, :programme, :vaccinate_form
