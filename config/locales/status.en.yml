@@ -42,7 +42,6 @@ en:
         unknown: grey
     session:
       label:
-        absent_from_school: Absent from school
         absent_from_session: Absent from session
         already_had: Already had vaccine
         had_contraindications: Had contraindications
@@ -51,7 +50,6 @@ en:
         unwell: Unwell
         vaccinated: Vaccinated
       colour:
-        absent_from_school: dark-orange
         absent_from_session: dark-orange
         already_had: green
         had_contraindications: red

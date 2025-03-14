@@ -128,7 +128,6 @@ class VaccinationRecord < ApplicationRecord
          not_well: 2,
          contraindications: 3,
          already_had: 4,
-         absent_from_school: 5,
          absent_from_session: 6
        },
        validate: true

@@ -50,8 +50,7 @@ class PatientSession::SessionStatus < ApplicationRecord
          had_contraindications: 3,
          refused: 4,
          absent_from_session: 5,
-         unwell: 6,
-         absent_from_school: 7
+         unwell: 6
        },
        default: :none_yet,
        validate: true
@@ -70,8 +69,6 @@ class PatientSession::SessionStatus < ApplicationRecord
         :absent_from_session
       elsif status_should_be_unwell?
         :unwell
-      elsif status_should_be_absent_from_school?
-        :absent_from_school
       else
         :none_yet
       end
@@ -103,10 +100,6 @@ class PatientSession::SessionStatus < ApplicationRecord
 
   def status_should_be_unwell?
     vaccination_record&.not_well?
-  end
-
-  def status_should_be_absent_from_school?
-    vaccination_record&.absent_from_school?
   end
 
   def latest_consents
