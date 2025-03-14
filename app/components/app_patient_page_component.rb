@@ -3,20 +3,14 @@
 class AppPatientPageComponent < ViewComponent::Base
   include ApplicationHelper
 
-  attr_reader :current_user, :patient_session, :programme, :vaccinate_form
+  attr_reader :current_user, :patient_session, :programme
 
-  def initialize(
-    patient_session:,
-    programme:,
-    current_user: nil,
-    vaccinate_form: nil
-  )
+  def initialize(patient_session:, programme:, current_user: nil)
     super
 
     @patient_session = patient_session
     @programme = programme
     @current_user = current_user
-    @vaccinate_form = vaccinate_form
   end
 
   delegate :patient, :session, to: :patient_session
