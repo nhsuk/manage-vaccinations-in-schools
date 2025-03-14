@@ -162,12 +162,12 @@ module "source" {
     "rules": [
       {
         "copy_action": {
-          "delete_after": 4
+          "delete_after": 60
         },
         "lifecycle": {
-          "delete_after": 2
+          "delete_after": 60
         },
-        "name": "daily_kept_for_2_days",
+        "name": "daily_kept_for_2_months",
         "schedule": "cron(0 0 * * ? *)"
       }
     ],
