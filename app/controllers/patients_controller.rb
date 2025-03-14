@@ -78,7 +78,7 @@ class PatientsController < ApplicationController
         consents: %i[parent patient],
         parent_relationships: :parent,
         patient_sessions: %i[location session_attendances],
-        vaccination_records: [{ vaccine: :programme }]
+        vaccination_records: [:location, { vaccine: :programme }]
       ).find(params[:id])
   end
 
