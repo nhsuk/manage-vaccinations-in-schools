@@ -13,26 +13,10 @@
 
 <%= render AppPatientCardComponent.new(patient) %>
 
-<% vaccination_records.find_each do |vaccination_record| %>
-  <%= render AppCardComponent.new do |c| %>
-    <% c.with_heading { "Vaccination details" } %>
-    <%= render AppVaccinationRecordSummaryComponent.new(vaccination_record, current_user:) %>
-
-    <div class="app-button-group">
-      <% if helpers.policy(vaccination_record).edit? %>
-        <%= govuk_button_to "Edit vaccination record",
-                            programme_vaccination_record_path(programme, vaccination_record),
-                            method: :put, secondary: true %>
-      <% end %>
-
-      <% if helpers.policy(vaccination_record).destroy? %>
-        <%= govuk_link_to "Delete vaccination record",
-                          destroy_programme_vaccination_record_path(
-                            programme,
-                            vaccination_record,
-                            return_to: session_patient_programme_path(session, patient, programme),
-                          ) %>
-      <% end %>
-    </div>
-  <% end %>
+<%= render AppCardComponent.new do |card| %>
+  <%= render AppPatientVaccinationTableComponent.new(
+        patient,
+        show_caption: true,
+        show_programme: false,
+      ) %>
 <% end %>
