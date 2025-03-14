@@ -23,7 +23,7 @@
 
         <% row.with_cell(classes:, text: consent.responded_at.to_fs(:long)) %>
 
-        <% row.with_cell(classes:, text: helpers.consent_decision(consent)) %>
+        <% row.with_cell(classes:, text: helpers.consent_status_tag(consent)) %>
       <% end %>
     <% end %>
   <% end %>
