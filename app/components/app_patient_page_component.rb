@@ -16,22 +16,8 @@ class AppPatientPageComponent < ViewComponent::Base
     @patient_session = patient_session
     @programme = programme
     @current_user = current_user
-    @vaccinate_form = vaccinate_form || default_vaccinate_form
+    @vaccinate_form = vaccinate_form
   end
 
   delegate :patient, :session, to: :patient_session
-
-  def default_vaccinate_form
-    pre_screening = patient_session.pre_screenings.last
-
-    VaccinateForm.new(
-      feeling_well: pre_screening&.feeling_well,
-      knows_vaccination: pre_screening&.knows_vaccination,
-      no_allergies: pre_screening&.no_allergies,
-      not_already_had: pre_screening&.not_already_had,
-      not_pregnant: pre_screening&.not_pregnant,
-      not_taking_medication: pre_screening&.not_taking_medication,
-      pre_screening_notes: pre_screening&.notes || ""
-    )
-  end
 end
