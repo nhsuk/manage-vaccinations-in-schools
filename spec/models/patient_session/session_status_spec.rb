@@ -42,7 +42,6 @@ describe PatientSession::SessionStatus do
         refused
         absent_from_session
         unwell
-        absent_from_school
       ]
     )
   end
