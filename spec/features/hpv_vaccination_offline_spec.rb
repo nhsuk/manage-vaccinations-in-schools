@@ -255,7 +255,7 @@ describe "HPV vaccination" do
     )
     expect(page).to have_content("SiteLeft arm (upper position)")
 
-    click_link "Session outcomes"
+    click_on "Session outcomes"
 
     choose "Absent from session"
     click_on "Update results"
@@ -263,10 +263,9 @@ describe "HPV vaccination" do
     click_on @unvaccinated_patient.full_name
     expect(page).to have_content(@unvaccinated_patient.full_name)
     expect(page).to have_content("Could not vaccinate")
-    expect(page).to have_content("OutcomeAbsent from session")
-    expect(page).to have_content("NotesSome notes.")
+    expect(page).to have_content("absent from the session")
 
-    click_link "Session outcomes"
+    click_on "Session outcomes"
 
     choose "Vaccinated"
     click_on "Update results"
