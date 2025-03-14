@@ -17,6 +17,9 @@ describe "Manage attendance" do
     when_i_register_a_patient_as_absent
     then_i_see_the_absent_flash
 
+    when_i_go_to_the_session_outcomes
+    then_i_see_a_patient_is_absent
+
     when_i_go_to_a_patient
     then_the_patient_is_not_registered_yet
     and_i_am_not_able_to_vaccinate
@@ -87,7 +90,21 @@ describe "Manage attendance" do
     click_button "Absent", match: :first
   end
 
+  def when_i_go_to_the_session_outcomes
+    click_on "Session outcomes"
+  end
+
+  def then_i_see_a_patient_is_absent
+    choose "Absent from session"
+    click_on "Update results"
+
+    expect(page).to have_content("Showing 1 to 1 of 1 children")
+  end
+
   def when_i_go_to_a_patient
+    choose "Any"
+    click_on "Update results"
+
     click_link PatientSession
                  .where
                  .missing(:session_attendances)
