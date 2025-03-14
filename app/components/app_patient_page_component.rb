@@ -9,7 +9,6 @@ class AppPatientPageComponent < ViewComponent::Base
     patient_session:,
     programme:,
     current_user: nil,
-    triage: nil,
     vaccinate_form: nil
   )
     super
@@ -17,7 +16,6 @@ class AppPatientPageComponent < ViewComponent::Base
     @patient_session = patient_session
     @programme = programme
     @current_user = current_user
-    @triage = triage
     @vaccinate_form = vaccinate_form || default_vaccinate_form
   end
 
