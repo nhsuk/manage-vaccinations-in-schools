@@ -26,8 +26,6 @@ class PatientSession < ApplicationRecord
   audited associated_with: :patient
   has_associated_audits
 
-  include PatientSessionStatusConcern
-
   belongs_to :patient
   belongs_to :session
 
