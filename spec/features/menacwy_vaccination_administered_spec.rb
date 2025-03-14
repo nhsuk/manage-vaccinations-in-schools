@@ -172,7 +172,10 @@ describe "MenACWY vaccination" do
   end
 
   def and_i_see_the_vaccination_details
-    expect(page).to have_content("Vaccination details").once
+    expect(page).to have_content("Vaccinations")
+    click_on Date.current.to_fs(:long)
+
+    expect(page).to have_content("Vaccination details")
     expect(page).to have_content("Dose numberUnknown")
   end
 
