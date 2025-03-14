@@ -14,12 +14,4 @@ class AppPatientPageComponent < ViewComponent::Base
   end
 
   delegate :patient, :session, to: :patient_session
-
-  def vaccination_records
-    patient
-      .vaccination_records
-      .where(programme:)
-      .includes(:batch, :location, :performed_by_user, :programme, :vaccine)
-      .order(:performed_at)
-  end
 end
