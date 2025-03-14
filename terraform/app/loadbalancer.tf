@@ -139,17 +139,24 @@ resource "aws_lb_listener" "app_listener_https" {
 }
 
 resource "aws_lb_listener_certificate" "https_sni_certificates" {
-  count = length(local.additional_sni_certificates)
-  listener_arn = aws_lb_listener.app_listener_https.arn
+  count           = length(local.additional_sni_certificates)
+  listener_arn    = aws_lb_listener.app_listener_https.arn
   certificate_arn = local.additional_sni_certificates[count.index]
+}
+
+data "external" "active_target_group" {
+  program = ["bash", "-c", "aws ecs describe-services --cluster ${aws_ecs_cluster.cluster.arn} --service ${local.ecs_service_name} | jq -r '.services[0].loadBalancers[0] | {targetGroupArn}'"]
 }
 
 resource "aws_lb_listener_rule" "forward_to_app" {
   listener_arn = aws_lb_listener.app_listener_https.arn
   priority     = 50000
-  action {
-    type             = "forward"
-    target_group_arn = aws_lb_target_group.blue.arn
+  dynamic "action" {
+    for_each = [data.external.active_target_group.result["targetGroupArn"]]
+    content {
+      type             = "forward"
+      target_group_arn = action.value == "" ? aws_lb_target_group.blue.arn : action.value
+    }
   }
   condition {
     path_pattern {
@@ -160,10 +167,6 @@ resource "aws_lb_listener_rule" "forward_to_app" {
     host_header {
       values = local.host_headers
     }
-  }
-
-  lifecycle {
-    ignore_changes = [action]
   }
 }
 
