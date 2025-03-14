@@ -29,3 +29,5 @@ ssl_policy                = "ELBSecurityPolicy-TLS13-1-2-2021-06"
 access_logs_bucket        = "nhse-mavis-access-logs-production"
 max_aurora_capacity_units = 16
 container_insights        = "enhanced"
+
+enable_backup_to_vault = true

@@ -58,7 +58,8 @@ resource "aws_rds_cluster" "aurora_cluster" {
   }
 
   tags = {
-    NHSE-Enable-Backup = "True"
+    NHSE-Enable-Backup = var.enable_backup_to_vault ? "True" : "False" # Required by the backup module to backup this resource
+    environment_name   = var.environment                               # Required by the backup module to include in the backup framework compliance check
   }
 }
 
