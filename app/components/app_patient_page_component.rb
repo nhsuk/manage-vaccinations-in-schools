@@ -3,20 +3,14 @@
 class AppPatientPageComponent < ViewComponent::Base
   include ApplicationHelper
 
-  attr_reader :current_user, :patient_session, :programme, :vaccinate_form
+  attr_reader :current_user, :patient_session, :programme
 
-  def initialize(
-    patient_session:,
-    programme:,
-    current_user: nil,
-    vaccinate_form: nil
-  )
+  def initialize(patient_session:, programme:, current_user: nil)
     super
 
     @patient_session = patient_session
     @programme = programme
     @current_user = current_user
-    @vaccinate_form = vaccinate_form || default_vaccinate_form
   end
 
   delegate :patient, :session, to: :patient_session
@@ -27,24 +21,5 @@ class AppPatientPageComponent < ViewComponent::Base
       .where(programme:)
       .includes(:batch, :location, :performed_by_user, :programme, :vaccine)
       .order(:performed_at)
-  end
-
-  def default_vaccinate_form
-    today_pre_screenings =
-      patient_session
-        .pre_screenings
-        .joins(:session_date)
-        .merge(SessionDate.today)
-        .order(created_at: :desc)
-
-    feeling_well = today_pre_screenings.any?(&:feeling_well) || nil
-    not_pregnant = today_pre_screenings.any?(&:not_pregnant) || nil
-
-    VaccinateForm.new(
-      patient_session:,
-      programme:,
-      feeling_well:,
-      not_pregnant:
-    )
   end
 end
