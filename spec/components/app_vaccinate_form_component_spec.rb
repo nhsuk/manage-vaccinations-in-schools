@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 describe AppVaccinateFormComponent do
+  subject { render_inline(component) }
+
   let(:programme) { create(:programme) }
   let(:programmes) { [programme] }
   let(:session) { create(:session, :today, programmes:) }
