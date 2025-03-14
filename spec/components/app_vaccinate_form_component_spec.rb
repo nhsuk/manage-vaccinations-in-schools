@@ -24,57 +24,33 @@ describe AppVaccinateFormComponent do
 
   before { patient_session.strict_loading!(false) }
 
-  describe "#render?" do
-    subject(:render) { component.render? }
+  it { should have_css(".nhsuk-card") }
 
-    it { should be(true) }
+  context "with a Flu programme" do
+    let(:programme) { create(:programme, :flu) }
 
-    context "patient is not ready for vaccination" do
-      let(:patient) { create(:patient, programmes:, given_name: "Hari") }
+    it { should have_heading("Is Hari ready for their Flu vaccination?") }
 
-      it { should be(false) }
-    end
+    it { should have_field("Yes") }
+    it { should have_field("No") }
 
-    context "patient is not attending the session" do
-      let(:patient_session) do
-        create(:patient_session, programmes:, patient:, session:)
-      end
-
-      it { should be(false) }
-    end
+    it { should_not have_field("Left arm (upper position)") }
+    it { should_not have_field("Right arm (upper position)") }
+    it { should_not have_field("Nose") }
+    it { should_not have_field("Other") }
   end
 
-  describe "rendered content" do
-    subject { render_inline(component) }
+  context "with an HPV programme" do
+    let(:programme) { create(:programme, :hpv) }
 
-    it { should have_css(".nhsuk-card") }
+    it { should have_heading("Is Hari ready for their HPV vaccination?") }
 
-    context "with a Flu programme" do
-      let(:programme) { create(:programme, :flu) }
+    it { should have_field("Yes") }
+    it { should have_field("No") }
 
-      it { should have_heading("Is Hari ready for their Flu vaccination?") }
-
-      it { should have_field("Yes") }
-      it { should have_field("No") }
-
-      it { should_not have_field("Left arm (upper position)") }
-      it { should_not have_field("Right arm (upper position)") }
-      it { should_not have_field("Nose") }
-      it { should_not have_field("Other") }
-    end
-
-    context "with an HPV programme" do
-      let(:programme) { create(:programme, :hpv) }
-
-      it { should have_heading("Is Hari ready for their HPV vaccination?") }
-
-      it { should have_field("Yes") }
-      it { should have_field("No") }
-
-      it { should have_field("Left arm (upper position)") }
-      it { should have_field("Right arm (upper position)") }
-      it { should_not have_field("Nose") }
-      it { should have_field("Other") }
-    end
+    it { should have_field("Left arm (upper position)") }
+    it { should have_field("Right arm (upper position)") }
+    it { should_not have_field("Nose") }
+    it { should have_field("Other") }
   end
 end
