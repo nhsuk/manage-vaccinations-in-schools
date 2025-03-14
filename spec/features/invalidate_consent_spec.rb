@@ -74,6 +74,12 @@ describe "Invalidate consent" do
 
   def and_triaged_as_safe_to_vaccinate
     create(:triage, patient: @patient, programme: @programme)
+    create(
+      :patient_triage_status,
+      :safe_to_vaccinate,
+      patient: @patient,
+      programme: @programme
+    )
   end
 
   def when_i_go_to_the_patient
