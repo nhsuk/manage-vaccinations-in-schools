@@ -13,24 +13,6 @@
 
 <%= render AppPatientCardComponent.new(patient) %>
 
-<% if patient.triage_outcome.all[programme].any? %>
-  <%= render AppCardComponent.new do |c| %>
-    <% c.with_heading { "Triage notes" } %>
-    <%= render AppTriageTableComponent.new(patient_session:, programme:) %>
-  <% end %>
-<% end %>
-
-<% if helpers.policy(Triage).create? && patient.triage_outcome.required?(programme) %>
-  <%= render AppCardComponent.new do %>
-    <%= render AppTriageFormComponent.new(
-          patient_session:,
-          programme:,
-          triage: @triage,
-          legend: :bold,
-        ) %>
-  <% end %>
-<% end %>
-
 <% patient.programme_outcome.all[programme].each do |vaccination_record| %>
   <%= render AppCardComponent.new do |c| %>
     <% c.with_heading { "Vaccination details" } %>
