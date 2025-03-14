@@ -78,7 +78,7 @@ describe "Triage" do
   end
 
   def when_i_record_that_they_are_safe_to_vaccinate
-    click_link "Update triage"
+    click_link "Update triage", match: :first
     choose "Yes, it’s safe to vaccinate"
     click_button "Save triage"
   end
