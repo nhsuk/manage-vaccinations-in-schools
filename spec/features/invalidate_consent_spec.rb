@@ -100,7 +100,7 @@ describe "Invalidate consent" do
   alias_method :and_i_see_the_consent, :then_i_see_the_consent
 
   def and_the_patient_is_ready_for_the_nurse
-    expect(page).to have_content("Ready for nurse")
+    expect(page).to have_content("ready for the vaccinator")
   end
 
   def and_the_patient_is_safe_to_vaccinate
