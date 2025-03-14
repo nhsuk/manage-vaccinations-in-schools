@@ -1,21 +1,16 @@
 # frozen_string_literal: true
 
 class AppPatientVaccinationTableComponent < ViewComponent::Base
-  def initialize(patient)
+  def initialize(vaccination_records:, show_caption:, show_programme:)
     super
 
-    @patient = patient
+    @vaccination_records = vaccination_records.sort_by(&:performed_at).reverse
+
+    @show_caption = show_caption
+    @show_programme = show_programme
   end
 
   private
 
-  attr_reader :patient
-
-  def vaccination_records
-    patient
-      .vaccination_records
-      .select(&:administered?)
-      .sort_by(&:performed_at)
-      .reverse
-  end
+  attr_reader :vaccination_records, :show_caption, :show_programme
 end
