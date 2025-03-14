@@ -1,0 +1,39 @@
+# frozen_string_literal: true
+
+describe AppPatientSessionTriageComponent do
+  subject { render_inline(component) }
+
+  let(:component) do
+    described_class.new(patient_session, programme:, triage: nil)
+  end
+
+  let(:programme) { create(:programme) }
+  let(:session) { create(:session, programmes: [programme]) }
+  let(:patient_session) { create(:patient_session, session:) }
+  let(:patient) { patient_session.patient }
+
+  before do
+    patient_session.reload.strict_loading!(false)
+    stub_authorization(allowed: true)
+  end
+
+  context "without triage" do
+    it { should_not have_link("Update triage outcome") }
+  end
+
+  context "when triaged as safe to vaccinate" do
+    before { create(:triage, :ready_to_vaccinate, patient:, programme:) }
+
+    it { should have_css(".app-card--aqua-green", text: "Safe to vaccinate") }
+    it { should have_content("safe to vaccinate") }
+    it { should have_link("Update triage outcome") }
+  end
+
+  context "when triaged as unsafe to vaccinate" do
+    before { create(:triage, :do_not_vaccinate, patient:, programme:) }
+
+    it { should have_css(".app-card--red", text: "Do not vaccinate") }
+    it { should have_content("should not be vaccinated") }
+    it { should have_link("Update triage outcome") }
+  end
+end

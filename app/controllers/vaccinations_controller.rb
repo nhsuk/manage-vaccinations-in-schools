@@ -44,7 +44,9 @@ class VaccinationsController < ApplicationController
                     I18n.t(steps.first, scope: :wicked)
                   )
     else
-      render "patient_sessions/show", status: :unprocessable_entity
+      render "patient_sessions/show",
+             layout: "full",
+             status: :unprocessable_entity
     end
   end
 
