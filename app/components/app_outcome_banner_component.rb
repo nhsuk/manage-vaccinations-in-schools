@@ -61,6 +61,10 @@ class AppOutcomeBannerComponent < ViewComponent::Base
     @triage ||= patient.triage_outcome.latest[programme]
   end
 
+  def session_attendance
+    @session_attendance ||= patient_session.register_outcome.latest
+  end
+
   def show_location?
     # location only makes sense if an attempt to vaccinate on site was made
     vaccination_record.present?
@@ -87,6 +91,8 @@ class AppOutcomeBannerComponent < ViewComponent::Base
     key =
       if vaccination_record&.not_administered?
         "patient_session_statuses.unable_to_vaccinate.banner_explanation.#{vaccination_record.outcome}"
+      elsif session_attendance&.attending == false
+        "patient_session_statuses.unable_to_vaccinate.banner_explanation.absent_from_session"
       else
         "patient_session_statuses.unable_to_vaccinate.banner_explanation.#{status}"
       end
@@ -102,7 +108,7 @@ class AppOutcomeBannerComponent < ViewComponent::Base
   end
 
   def clinician
-    @clinician ||= (vaccination_record || triage).performed_by
+    @clinician ||= (vaccination_record || triage)&.performed_by
   end
 
   def location
@@ -125,7 +131,9 @@ class AppOutcomeBannerComponent < ViewComponent::Base
   end
 
   def last_action_time
-    @last_action_time ||= vaccination_record&.performed_at || triage&.created_at
+    @last_action_time ||=
+      vaccination_record&.performed_at || triage&.created_at ||
+        session_attendance&.created_at
   end
 
   def heading

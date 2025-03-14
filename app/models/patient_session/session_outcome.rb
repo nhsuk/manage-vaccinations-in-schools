@@ -47,7 +47,11 @@ class PatientSession::SessionOutcome
 
   attr_reader :patient_session
 
-  delegate :patient, :session, :programmes, to: :patient_session
+  delegate :patient,
+           :programmes,
+           :register_outcome,
+           :session,
+           to: :patient_session
   delegate :consent_outcome, :triage_outcome, to: :patient
 
   def programme_status(programme)
@@ -57,6 +61,8 @@ class PatientSession::SessionOutcome
       REFUSED
     elsif triage_outcome.do_not_vaccinate?(programme)
       HAD_CONTRAINDICATIONS
+    elsif register_outcome.not_attending?
+      ABSENT_FROM_SESSION
     else
       NONE_YET
     end

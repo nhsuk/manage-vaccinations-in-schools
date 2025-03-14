@@ -56,6 +56,12 @@ describe PatientSession::SessionOutcome do
 
       it { should be(described_class::HAD_CONTRAINDICATIONS) }
     end
+
+    context "when not attending the session" do
+      before { create(:session_attendance, :absent, patient_session:) }
+
+      it { should be(described_class::ABSENT_FROM_SESSION) }
+    end
   end
 
   describe "#all" do
