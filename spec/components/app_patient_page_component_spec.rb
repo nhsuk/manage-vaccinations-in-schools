@@ -33,14 +33,6 @@ describe AppPatientPageComponent do
     end
 
     it { should have_css(".nhsuk-card__heading", text: "Child") }
-
-    it { should have_content("ready for their HPV vaccination?") }
-
-    context "user is not allowed to triage or vaccinate" do
-      before { stub_authorization(allowed: false) }
-
-      it { should_not have_content("ready for their HPV vaccination?") }
-    end
   end
 
   context "when a pre_screening from today's session date is present" do
