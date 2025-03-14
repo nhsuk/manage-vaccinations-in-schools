@@ -61,7 +61,7 @@ describe "Verbal consent" do
 
   def and_the_patients_status_is_do_not_vaccinate
     click_link @patient.full_name, match: :first
-    expect(page).to have_content("Could not vaccinate")
+    expect(page).to have_content("Do not vaccinate")
   end
 
   def then_an_email_is_sent_to_the_parent_that_the_vaccination_wont_happen

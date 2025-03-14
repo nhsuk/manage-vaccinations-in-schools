@@ -136,6 +136,8 @@ describe "Vaccination" do
 
   def and_i_see_the_default_batch_on_the_patient_page
     expect(page).to have_content("Vaccinated")
+
+    click_on "1 February 2024"
     expect(page).to have_content(@hpv_batch2.name)
   end
 
