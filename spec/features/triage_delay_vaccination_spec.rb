@@ -98,7 +98,7 @@ describe "Triage" do
   end
 
   def then_they_should_have_the_status_banner_delay_vaccination
-    expect(page).to have_content("Could not vaccinate")
+    expect(page).to have_content("Delay vaccination")
   end
 
   def and_i_am_able_to_record_a_vaccination

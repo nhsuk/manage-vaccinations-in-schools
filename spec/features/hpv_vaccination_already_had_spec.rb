@@ -91,9 +91,7 @@ describe "HPV vaccination" do
 
   def then_i_see_that_the_status_is_vaccinated
     expect(page).to have_content("Vaccinated")
-    expect(page).to have_content(
-      "Reason#{@patient.full_name} has already had the vaccine"
-    )
+    expect(page).to have_content("Already had the vaccine")
   end
 
   def when_vaccination_confirmations_are_sent
