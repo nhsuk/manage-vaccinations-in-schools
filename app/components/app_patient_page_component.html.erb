@@ -12,11 +12,3 @@
    end %>
 
 <%= render AppPatientCardComponent.new(patient) %>
-
-<%= render AppCardComponent.new do |card| %>
-  <%= render AppPatientVaccinationTableComponent.new(
-        patient,
-        show_caption: true,
-        show_programme: false,
-      ) %>
-<% end %>
