@@ -11,15 +11,7 @@ class AppSimpleStatusBannerComponent < ViewComponent::Base
   def call
     render AppCardComponent.new(colour:) do |card|
       card.with_heading { heading }
-
-      safe_join(
-        [
-          tag.p(description),
-          if (link = update_triage_outcome_link)
-            tag.p(link)
-          end
-        ]
-      )
+      tag.p(description)
     end
   end
 
@@ -106,22 +98,5 @@ class AppSimpleStatusBannerComponent < ViewComponent::Base
           .includes(:performed_by_user)
           .where(programme:)
     ).max_by(&:updated_at)&.performed_by&.full_name
-  end
-
-  def update_triage_outcome_link
-    unless status.in?(
-             %w[
-               delay_vaccination
-               triaged_ready_to_vaccinate
-               triaged_do_not_vaccinate
-             ]
-           ) && helpers.policy(Triage).edit?
-      return
-    end
-
-    link_to(
-      "Update triage outcome",
-      new_session_patient_programme_triages_path(session, patient, programme)
-    )
   end
 end
