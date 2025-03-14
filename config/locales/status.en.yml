@@ -37,7 +37,6 @@ en:
         unknown: grey
     session:
       label:
-        absent_from_school: Absent from school
         absent_from_session: Absent from session
         administered: Vaccinated
         already_had: Already had vaccine
@@ -46,7 +45,6 @@ en:
         not_well: Unwell
         refused: Refused vaccine
       colour:
-        absent_from_school: dark-orange
         absent_from_session: dark-orange
         administered: green
         already_had: green

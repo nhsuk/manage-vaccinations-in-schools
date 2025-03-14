@@ -10,7 +10,6 @@ class PatientSession::SessionOutcome
     ALREADY_HAD = :already_had,
     HAD_CONTRAINDICATIONS = :contraindications,
     REFUSED = :refused,
-    ABSENT_FROM_SCHOOL = :absent_from_school,
     ABSENT_FROM_SESSION = :absent_from_session,
     UNWELL = :not_well,
     NONE_YET = :none_yet
