@@ -1,37 +1,31 @@
 <%= form_with(
      model: @triage,
-     url: @url,
-     method: @method,
+     url:,
+     method: :post,
      builder: GOVUKDesignSystemFormBuilder::FormBuilder,
    ) do |f| %>
   <% content_for(:before_content) { f.govuk_error_summary } %>
 
-  <%= f.govuk_radio_buttons_fieldset(:status, **fieldset_options) do %>
-    <%= f.govuk_radio_button(
-          :status, :ready_to_vaccinate,
-          label: { text: "Yes, it’s safe to vaccinate" },
-          link_errors: true,
-        ) %>
+  <%= f.govuk_radio_buttons_fieldset :status, **fieldset_options do %>
+    <%= f.govuk_radio_button :status, :ready_to_vaccinate,
+                             label: { text: "Yes, it’s safe to vaccinate" },
+                             link_errors: true %>
+
     <%= f.govuk_radio_divider %>
-    <%= f.govuk_radio_button(
-          :status, :do_not_vaccinate,
-          label: { text: "No, do not vaccinate" },
-        ) %>
-    <%= f.govuk_radio_button(
-          :status, :delay_vaccination,
-          label: { text: "No, delay vaccination (and invite to clinic)" },
-        ) %>
-    <%= f.govuk_radio_button(
-          :status, :needs_follow_up,
-          label: { text: "No, keep in triage" },
-        ) %>
+
+    <%= f.govuk_radio_button :status, :do_not_vaccinate,
+                             label: { text: "No, do not vaccinate" } %>
+
+    <%= f.govuk_radio_button :status, :delay_vaccination,
+                             label: { text: "No, delay vaccination (and invite to clinic)" } %>
+
+    <%= f.govuk_radio_button :status, :needs_follow_up,
+                             label: { text: "No, keep in triage" } %>
   <% end %>
 
-  <%= f.govuk_text_area(
-        :notes,
-        label: { text: "Triage notes (optional)" },
-        rows: 5,
-      ) %>
+  <%= f.govuk_text_area :notes,
+                        label: { text: "Triage notes (optional)" },
+                        rows: 5 %>
 
-  <%= f.govuk_submit @method == :put ? "Continue" : "Save triage" %>
+  <%= f.govuk_submit @triage.new_record? ? "Save triage" : "Continue" %>
 <% end %>
