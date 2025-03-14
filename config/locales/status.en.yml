@@ -44,7 +44,7 @@ en:
         contraindications: Had contraindications
         none_yet: No outcome yet
         not_well: Unwell
-        refused: Vaccine refused
+        refused: Refused vaccine
       colour:
         absent_from_school: dark-orange
         absent_from_session: dark-orange
