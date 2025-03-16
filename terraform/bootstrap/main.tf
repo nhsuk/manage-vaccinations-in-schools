@@ -90,7 +90,7 @@ resource "aws_s3_bucket_logging" "backend_bucket_logging" {
 
 ##### Set up a logging bucket
 resource "aws_s3_bucket" "logs" {
-  bucket = "nhse-mavis-logs-${var.environment}"
+  bucket = "nhse-mavis-access-logs"
 }
 
 resource "aws_s3_bucket_versioning" "log_bucket_version" {
@@ -144,8 +144,9 @@ resource "aws_s3_bucket_policy" "logs" {
   })
 }
 
+#### Dynamo DB table for terraform state locking
 resource "aws_dynamodb_table" "dynamodb_lock_table" {
-  name         = "mavis-state-lock-${var.environment}"
+  name         = "mavis-terraform-state-lock"
   hash_key     = "LockID"
   billing_mode = "PAY_PER_REQUEST"
 

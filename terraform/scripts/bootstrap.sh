@@ -83,16 +83,16 @@ create_environment_files () {
   cd ../app/env || \
   { echo "Could not cd into app/env directory, environment files were not created"; exit 1; }
   cat << EOF > "$ENV-backend.hcl" || { echo "Failed backend file creation"; exit 1; }
-bucket         = "nhse-mavis-terraform-state-$ENV"
+bucket         = "nhse-mavis-terraform-state"
 key            = "terraform-$ENV.tfstate"
 region         = "$REGION"
-dynamodb_table = "mavis-state-lock-$ENV"
+dynamodb_table = "mavis-terraform-state-lock"
 EOF
   cat << EOF > "$ENV.tfvars" || { echo "Failed environment variables file creation"; exit 1; }
-environment = "$ENV"
+environment           = "$ENV"
 rails_master_key_path = "/copilot/mavis/secrets/STAGING_RAILS_MASTER_KEY"
-db_secret_arn = null
-db_secret_arn = null
+db_secret_arn         = null
+db_secret_arn         = null
 resource_name = {
   dbsubnet_group     = "mavis-$ENV-rds-subnet"
   db_cluster         = "mavis-$ENV-rds-cluster"
@@ -106,6 +106,8 @@ http_hosts = {
   MAVIS__HOST                        = "$ENV.mavistesting.com"
   MAVIS__GIVE_OR_REFUSE_CONSENT_HOST = "$ENV.mavistesting.com"
 }
+minimum_replicas     = 3
+db_delete_protection = true
 
 EOF
 }
@@ -113,15 +115,22 @@ EOF
 ENV="$1"
 REGION=eu-west-2
 
-if [ "$#" -ne 1 ]; then
-    echo "Usage: $0 <Environment name>"
-    exit 1
+if [ "$#" == 0 ] || [ "$#" -gt 2 ] ; then
+  echo "Usage: $0 <Environment name> [options]"
+  echo "Options:"
+  echo "  --environment-only  Skips creation of dynamodb table and S3 bucket (e.g. if these resources already exist)"
+  exit 1
 elif [ -n "$(echo "$ENV" | tr -d 'a-z0-9')" ] ; then
-   echo "Invalid environment string. Only lowercase alphanumeric characters are allowed"
-   exit 1
+ echo "Invalid environment string. Only lowercase alphanumeric characters are allowed"
+ exit 1
+elif [ -n "$2" ] && [ "$2" != "--environment-only" ] ; then
+ echo "Unknown option: $2"
+ exit 1
 fi
 
-run_bootstrap
+if [ -z "$2" ]; then
+  run_bootstrap
+fi
 create_environment_files
 
 echo ""
@@ -129,9 +138,7 @@ echo "##########################################"
 echo "########## Setup complete ################"
 echo "##########################################"
 echo ""
-echo "Next steps for the first deployment of the environment:"
-echo "    - Get the docker image digest of the mavis image you want to deploy from the \"mavis/webapp\" repository."
-echo "    - Go into the ../app directory and execute: \`terraform apply -var-file=\"env/$ENV.tfvars\"\`"
-echo "    - When prompted, enter the docker image digest you obtained in the first step."
+echo "The environment is now ready for application or infrastructure deployment via github workflows."
+
 
 exit 0
