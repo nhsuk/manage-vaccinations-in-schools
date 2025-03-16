@@ -28,3 +28,4 @@ vpc_log_retention_days  = 14
 ecs_log_retention_days  = 30
 backup_retention_period = 7
 ssl_policy              = "ELBSecurityPolicy-TLS13-1-2-2021-06"
+db_delete_protection    = true

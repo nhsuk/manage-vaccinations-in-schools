@@ -1,7 +1,7 @@
-environment = "copilotmigration"
+environment           = "copilotmigration"
 rails_master_key_path = "/copilot/mavis/secrets/STAGING_RAILS_MASTER_KEY"
-db_secret_arn       = "arn:aws:secretsmanager:eu-west-2:393416225559:secret:dbAuroraSecret-zdVWVjrfgplI-7RGaPm"
-dns_certificate_arn = ["arn:aws:acm:eu-west-2:393416225559:certificate/2936cd40-34df-40b9-a902-f77be4edb05e"]
+db_secret_arn         = "arn:aws:secretsmanager:eu-west-2:393416225559:secret:dbAuroraSecret-zdVWVjrfgplI-7RGaPm"
+dns_certificate_arn   = ["arn:aws:acm:eu-west-2:393416225559:certificate/2936cd40-34df-40b9-a902-f77be4edb05e"]
 resource_name = {
   dbsubnet_group           = "mavis-copilotmigration-addonsstack-an4d9pidj1qd-dbdbsubnetgroup-il53a9jq9xg1"
   db_cluster               = "mavis-copilotmigration-addonsstack-an4-dbdbcluster-jrv5mrfo45rl"
@@ -15,7 +15,8 @@ http_hosts = {
   MAVIS__HOST                        = "copilotmigration.mavistesting.com"
   MAVIS__GIVE_OR_REFUSE_CONSENT_HOST = "copilotmigration.mavistesting.com"
 }
-splunk_enabled = "false"
-cis2_enabled   = "false"
-pds_enabled    = "false"
-minimum_replicas = 3
+splunk_enabled       = "false"
+cis2_enabled         = "false"
+pds_enabled          = "false"
+minimum_replicas     = 3
+db_delete_protection = true
