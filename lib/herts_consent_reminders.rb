@@ -20,9 +20,17 @@ module HertsConsentReminders
     Organisation
       .find_by(ods_code:)
       .sessions
+      .includes(
+        :programmes,
+        patient_sessions: {
+          patient: %i[consents consent_notifications parents]
+        }
+      )
       .joins(:session_dates)
+      .eager_load(:location)
       .strict_loading(false)
       .where(session_dates: { value: reminder_dates })
+      .select(&:open_for_consent?)
   end
 
   def self.send_consent_reminders(session, on_date: Date.current)
@@ -31,10 +39,10 @@ module HertsConsentReminders
     filter_patients_to_send_consent(
       session,
       on_date: on_date.to_date
-    ).each do |patient, programme, type|
+    ).each do |patient, programmes, type|
       ConsentNotification.create_and_send!(
         patient:,
-        programme:,
+        programmes:,
         session:,
         type:
       )
@@ -42,52 +50,86 @@ module HertsConsentReminders
   end
 
   def self.filter_patients_to_send_consent(session, on_date: Date.current)
-    session.programmes.flat_map do |programme|
-      session
-        .patients
-        .includes(:consents, :consent_notifications)
-        .map do |patient|
-          unless should_send_notification?(
-                   patient:,
-                   programme:,
-                   session:,
-                   on_date: on_date.to_date
-                 )
-            next
+    session
+      .patient_sessions
+      .flat_map do |patient_session|
+        ProgrammeGrouper
+          .call(patient_session.programmes)
+          .map do |_type, programmes|
+            unless should_send_notification?(
+                     patient_session:,
+                     programmes:,
+                     on_date: on_date.to_date
+                   )
+              next
+            end
+
+            patient = patient_session.patient
+            sent_initial_reminder =
+              programmes.all? do |programme|
+                patient
+                  .consent_notifications
+                  .select { it.programmes.include?(programme) }
+                  .any?(&:initial_reminder?)
+              end
+
+            [
+              patient,
+              programmes,
+              sent_initial_reminder ? :subsequent_reminder : :initial_reminder
+            ]
           end
-
-          sent_initial_reminder =
-            patient.consent_notifications.any?(&:initial_reminder?)
-
-          [
-            patient,
-            programme,
-            sent_initial_reminder ? :subsequent_reminder : :initial_reminder
-          ]
-        end
-        .compact
-    end
+      end
+      .compact
   end
 
   def self.should_send_notification?(
-    patient:,
-    programme:,
-    session:,
+    patient_session:,
+    programmes:,
     on_date: Date.current
   )
-    return false unless patient.send_notifications?
-    return false if patient.has_consent?(programme)
-    return false if patient.consent_notifications.none?(&:request?)
-    return false if session.dates.empty?
+    return false unless patient_session.send_notifications?
 
-    last_sent = patient.consent_notifications.map(&:sent_at).max
-    return false if last_sent&.to_date == Date.current
+    # return false if patient.has_consent?(programme)
+    has_consent_or_vaccinated =
+      programmes.all? do |programme|
+        patient_session.consents(programme:).any? ||
+          patient_session.vaccinated?(programme:) ||
+          patient_session.unable_to_vaccinate?(programme:)
+      end
 
-    reminders_sent = patient.consent_notifications.select(&:reminder?).length
-    return false if reminders_sent >= REMINDERS_BEFORE_SESSION_DAYS.count
+    return false if has_consent_or_vaccinated
 
-    next_reminder_date = next_reminder_for_session(session, reminders_sent)
-    on_date.to_date >= next_reminder_date
+    patient = patient_session.patient
+    session = patient_session.session
+
+    programmes.any? do |programme|
+      # return false if patient.consent_notifications.none?(&:request?)
+      no_requests =
+        patient.consent_notifications.none? do
+          it.request? && it.programmes.include?(programme)
+        end
+
+      next false if no_requests
+
+      last_sent =
+        patient
+          .consent_notifications
+          .select { it.programmes.include?(programme) }
+          .map(&:sent_at)
+          .max
+      next false if last_sent&.to_date == Date.current
+
+      reminders_sent =
+        patient
+          .consent_notifications
+          .select { it.reminder? && it.programmes.include?(programme) }
+          .length
+      next false if reminders_sent >= REMINDERS_BEFORE_SESSION_DAYS.count
+
+      next_reminder_date = next_reminder_for_session(session, reminders_sent)
+      on_date.to_date >= next_reminder_date
+    end
   end
 
   def self.next_reminder_for_session(session, reminders_sent)
