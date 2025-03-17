@@ -1,24 +1,34 @@
 # frozen_string_literal: true
 
 describe HertsConsentReminders do
-  let(:programme) { create(:programme, :hpv) }
+  let(:programme) { Programme.find_by(type: "hpv") || create(:programme, :hpv) }
   let(:organisation) do
     create(:organisation, ods_code: "RY4", programmes: [programme])
   end
   let(:session_date) { 13.days.from_now }
   let(:session) do
-    create(:session, programme:, organisation:, dates: [session_date])
+    create(
+      :session,
+      programmes: [programme],
+      organisation:,
+      dates: [session_date]
+    )
   end
   let(:patient) { create(:patient, :consent_request_sent, session:) }
+  let(:patient_session) { patient.patient_sessions.strict_loading(false).first }
   let(:consent_request) do
     create(
       :consent_notification,
       :request,
       sent_at: initial_reminder_sent_at,
       patient:,
-      programme:,
+      programmes: [programme],
       session:
     )
+  end
+  let(:consent) { create(:consent, patient: patient, programme: programme) }
+  let(:vaccination_record) do
+    create(:vaccination_record, patient: patient, programme: programme)
   end
 
   describe ".sessions_with_reminders_due" do
@@ -74,7 +84,7 @@ describe HertsConsentReminders do
       allow(described_class).to receive(:filter_patients_to_send_consent).with(
         session,
         on_date: Date.current
-      ).and_return([[patient, programme, :initial_reminder]])
+      ).and_return([[patient, [programme], :initial_reminder]])
 
       allow(ConsentNotification).to receive(:create_and_send!)
     end
@@ -84,7 +94,7 @@ describe HertsConsentReminders do
 
       expect(ConsentNotification).to have_received(:create_and_send!).with(
         patient:,
-        programme:,
+        programmes: [programme],
         session:,
         type: :initial_reminder
       )
@@ -101,7 +111,10 @@ describe HertsConsentReminders do
 
   describe ".should_send_notification?" do
     subject do
-      described_class.should_send_notification?(patient:, programme:, session:)
+      described_class.should_send_notification?(
+        patient_session:,
+        programmes: [programme]
+      )
     end
 
     let(:initial_reminder_sent_at) { 3.days.ago }
@@ -111,7 +124,7 @@ describe HertsConsentReminders do
         :initial_reminder,
         sent_at: initial_reminder_sent_at,
         patient:,
-        programme:,
+        programmes: [programme],
         session:
       )
     end
@@ -123,7 +136,7 @@ describe HertsConsentReminders do
         :subsequent_reminder,
         sent_at: subsequent_reminder_sent_at,
         patient:,
-        programme:,
+        programmes: [programme],
         session:
       )
     end
@@ -135,7 +148,7 @@ describe HertsConsentReminders do
         :subsequent_reminder,
         sent_at: subsequent_reminder2_sent_at,
         patient:,
-        programme:,
+        programmes: [programme],
         session:
       )
     end
@@ -151,13 +164,19 @@ describe HertsConsentReminders do
     end
 
     context "patient already has consent" do
-      before { allow(patient).to receive(:has_consent?).and_return(true) }
+      before { consent }
+
+      it { should be false }
+    end
+
+    context "patient already has been vaccinated" do
+      before { vaccination_record }
 
       it { should be false }
     end
 
     context "no consent request has been sent yet" do
-      before { patient.consent_notifications.destroy_all }
+      before { patient.consent_notifications.strict_loading(false).destroy_all }
 
       it { should be false }
     end
@@ -273,12 +292,6 @@ describe HertsConsentReminders do
       it { should be false }
     end
 
-    context "no session date" do
-      before { session.session_dates.destroy_all }
-
-      it { should be false }
-    end
-
     context "last request was sent today" do
       before { consent_request.update!(sent_at: Date.current) }
 
@@ -326,12 +339,14 @@ describe HertsConsentReminders do
         false
       )
 
+      session.strict_loading!(false)
       result = described_class.filter_patients_to_send_consent(session)
 
       expect(result).to be_empty
     end
 
     it "returns initial reminder type for first reminder" do
+      session.strict_loading!(false)
       result = described_class.filter_patients_to_send_consent(session)
 
       expect(result.first[2]).to eq(:initial_reminder)
@@ -343,9 +358,11 @@ describe HertsConsentReminders do
         :initial_reminder,
         sent_at: 1.day.ago,
         patient:,
-        programme:
+        session:,
+        programmes: [programme]
       )
 
+      session.strict_loading!(false)
       result = described_class.filter_patients_to_send_consent(session)
 
       expect(result.first[2]).to eq(:subsequent_reminder)
