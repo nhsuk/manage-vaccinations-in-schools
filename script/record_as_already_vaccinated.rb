@@ -26,7 +26,11 @@ puts "Of which #{patient_sessions.length} might need to be marked as vaccinated"
 
 patient_sessions.each do |patient_session|
   programmes.each do |programme|
-    next if patient_session.vaccination_administered?(programme:)
+    if patient_session.vaccination_administered?(programme:) ||
+         patient_session.unable_to_vaccinate?(programme:) ||
+         patient_session.patient.consents.exists?(programme:)
+      next
+    end
 
     VaccinationRecord.create!(
       patient: patient_session.patient,
