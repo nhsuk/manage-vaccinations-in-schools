@@ -6,21 +6,13 @@ describe "User CIS2 authentication", :cis2 do
     when_i_go_to_the_sessions_page
     then_i_am_on_the_start_page
     when_i_click_the_cis2_login_button
-    then_i_see_the_organisation_not_found_error
+    then_i_see_the_wrong_workgroup_error
   end
 
   def given_i_am_setup_in_mavis_and_cis2_but_with_an_empty_role
     @organisation = create :organisation, ods_code: "AB12"
 
-    mock_cis2_auth(
-      uid: "123",
-      given_name: "Nurse",
-      family_name: "Test",
-      org_code: @organisation.ods_code,
-      org_name: @organisation.name,
-      role_code: "S8002:G8003:R0001",
-      selected_roleid: nil
-    )
+    mock_cis2_auth(selected_roleid: "")
   end
 
   def when_i_click_the_cis2_login_button
@@ -39,9 +31,9 @@ describe "User CIS2 authentication", :cis2 do
     expect(page).to have_current_path sessions_path
   end
 
-  def then_i_see_the_organisation_not_found_error
+  def then_i_see_the_wrong_workgroup_error
     expect(
       page
-    ).to have_heading "You do not have permission to use this service"
+    ).to have_heading "You’re not in the right workgroup to use this service"
   end
 end

@@ -34,30 +34,46 @@ module CIS2AuthHelper
               "role_name" =>
                 '"Clinical":"Clinical Provision":"Nurse Access Role"',
               "role_code" => "S8000:G8000:R8001",
-              "activities" => [
-                "Receive Self Claimed LR Alerts",
-                "Receive Legal Override and Emergency View Alerts",
-                "Receive Sealing Alerts"
-              ],
-              "activity_codes" => %w[B0016 B0015 B0018],
+              "activities" => [],
+              "activity_codes" => [],
               "workgroups" => ["schoolagedimmunisations"],
               "workgroups_codes" => ["15025792819"]
             },
             {
+              "person_orgid" => "1111222233334444",
+              "person_roleid" => "wrong-role",
+              "org_code" => "A9A5A",
+              "role_name" =>
+                '"Clinical":"Clinical Provision":"Health Professional Access Role"',
+              "role_code" => "S8000:G8000:R8003",
+              "activities" => [],
+              "activity_codes" => [],
+              "workgroups" => ["schoolagedimmunisations"],
+              "workgroups_codes" => ["15025792819"]
+            },
+            {
+              "person_orgid" => "1111222233334444",
+              "person_roleid" => "wrong-workgroup",
+              "org_code" => "A9A5A",
+              "role_name" =>
+                '"Clinical":"Clinical Provision":"Nurse Access Role"',
+              "role_code" => "S8000:G8000:R8001",
+              "activities" => [],
+              "activity_codes" => [],
+              "workgroups" => [],
+              "workgroups_codes" => []
+            },
+            {
               "person_orgid" => "1234123412341234",
-              "person_roleid" => "5678567856785678",
+              "person_roleid" => "wrong-organisation",
               "org_code" => "AB12",
               "role_name" =>
                 '"Clinical":"Clinical Provision":"Nurse Access Role"',
               "role_code" => "S8000:G8000:R8001",
-              "activities" => [
-                "Personal Medication Administration",
-                "Perform Detailed Health Record",
-                "Amend Patient Demographics",
-                "Perform Patient Administration",
-                "Verify Health Records"
-              ],
-              "activity_codes" => %w[B0428 B0380 B0825 B0560 B8028]
+              "activities" => [],
+              "activity_codes" => [],
+              "workgroups" => ["schoolagedimmunisations"],
+              "workgroups_codes" => ["15025792819"]
             }
           ],
           "given_name" => "Nurse",
@@ -106,15 +122,15 @@ module CIS2AuthHelper
   end
 
   def mock_cis2_auth(
-    uid:,
-    given_name:,
-    family_name:,
+    uid: "123",
+    given_name: "Nurse",
+    family_name: "Test",
     email: nil,
     role: :nurse,
     role_code: nil,
     org_code: nil,
     org_name: "Test SAIS Org",
-    user_only_has_one_org: false,
+    user_only_has_one_role: false,
     workgroups: nil,
     no_workgroup: false,
     sid: nil,
@@ -128,8 +144,10 @@ module CIS2AuthHelper
       raw_info["nhsid_user_orgs"][0].merge!(org_code:, org_name:)
     end
 
-    if user_only_has_one_org
-      raw_info["nhsid_nrbac_roles"].select! { _1["org_code"] == org_code }
+    if user_only_has_one_role
+      raw_info["nhsid_nrbac_roles"].select! do
+        _1["person_roleid"] == selected_roleid
+      end
     end
 
     role_code ||= {
