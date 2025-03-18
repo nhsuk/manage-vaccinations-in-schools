@@ -78,10 +78,7 @@ class DraftConsent
               end
             }
 
-  with_options if: -> do
-                 parent_id.nil? &&
-                   required_for_step?(:parent_details, exact: true)
-               end do
+  with_options if: -> { required_for_step?(:parent_details, exact: true) } do
     validates :parent_full_name, presence: true
     validates :parent_relationship_type,
               inclusion: {
@@ -90,7 +87,7 @@ class DraftConsent
   end
 
   with_options if: -> do
-                 parent_id.nil? && parent_relationship_type == "other" &&
+                 parent_relationship_type == "other" &&
                    required_for_step?(:parent_details, exact: true)
                end do
     validates :parent_relationship_other_name,
@@ -199,6 +196,7 @@ class DraftConsent
     self.parent_phone_receive_updates = value&.phone_receive_updates
     self.parent_relationship_type = parent_relationship&.type
     self.parent_relationship_other_name = parent_relationship&.other_name
+    self.parent_responsibility = true # if consent was submitted this must've been true
   end
 
   def patient_session
