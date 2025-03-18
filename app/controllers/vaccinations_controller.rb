@@ -17,8 +17,9 @@ class VaccinationsController < ApplicationController
 
     @vaccinate_form =
       VaccinateForm.new(
-        patient_session: @patient_session,
         current_user:,
+        patient_session: @patient_session,
+        programme: @programme,
         todays_batch: @todays_batch,
         **vaccinate_form_params
       )
@@ -61,7 +62,6 @@ class VaccinationsController < ApplicationController
         not_pregnant
         not_taking_medication
         pre_screening_notes
-        programme_id
         vaccine_id
       ]
     )

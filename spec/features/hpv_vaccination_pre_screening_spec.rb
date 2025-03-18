@@ -53,6 +53,8 @@ describe "HPV vaccination" do
   end
 
   def then_i_see_an_error_message
-    expect(page).to have_content("Patient should not be vaccinated")
+    expect(page).to have_content(
+      "Confirm that they have not already had the vaccination"
+    )
   end
 end

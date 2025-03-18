@@ -37,34 +37,12 @@ describe PreScreening do
   subject(:pre_screening) { build(:pre_screening) }
 
   describe "validations" do
-    it { should allow_values(true, false).for(:knows_vaccination) }
-    it { should allow_values(true, false).for(:not_already_had) }
     it { should allow_values(true, false).for(:feeling_well) }
+    it { should allow_values(true, false).for(:knows_vaccination) }
     it { should allow_values(true, false).for(:no_allergies) }
+    it { should allow_values(true, false).for(:not_already_had) }
+    it { should allow_values(true, false).for(:not_pregnant) }
+    it { should allow_values(true, false).for(:not_taking_medication) }
     it { should_not validate_presence_of(:notes) }
-  end
-
-  describe "#allows_vaccination?" do
-    subject(:allows_vaccination?) { pre_screening.allows_vaccination? }
-
-    context "when allows vaccination" do
-      let(:pre_screening) { create(:pre_screening, :allows_vaccination) }
-
-      it { should be(true) }
-
-      context "and the patient is feeling unwell" do
-        let(:pre_screening) do
-          create(:pre_screening, :allows_vaccination, feeling_well: false)
-        end
-
-        it { should be(true) }
-      end
-    end
-
-    context "when prevents vaccination" do
-      let(:pre_screening) { create(:pre_screening, :prevents_vaccination) }
-
-      it { should be(false) }
-    end
   end
 end
