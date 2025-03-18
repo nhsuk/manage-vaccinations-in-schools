@@ -9,11 +9,8 @@
   <%= page_title %>
 <% end %>
 
-<% change_links = { nhs_number: edit_nhs_number_patient_path(@patient) } %>
-
-<%= render AppCardComponent.new do |card| %>
-  <% card.with_heading { "Record details" } %>
-  <%= render AppChildSummaryComponent.new(@patient, change_links:) %>
-<% end %>
+<%= render AppPatientCardComponent.new(@patient, change_links: {
+                                                   nhs_number: edit_nhs_number_patient_path(@patient),
+                                                 }) %>
 
 <%= govuk_button_link_to "Continue", patient_path(@patient) %>

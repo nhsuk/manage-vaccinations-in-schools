@@ -1,11 +1,7 @@
 # frozen_string_literal: true
 
 class AppParentSummaryComponent < ViewComponent::Base
-  def initialize(
-    parent_relationship:,
-    change_links: {},
-    show_name_and_relationship: false
-  )
+  def initialize(parent_relationship:, change_links: {})
     super
 
     @parent_relationship = parent_relationship
@@ -13,42 +9,34 @@ class AppParentSummaryComponent < ViewComponent::Base
     @patient = parent_relationship.patient
 
     @change_links = change_links
-
-    @show_name_and_relationship = show_name_and_relationship
   end
 
   def call
     govuk_summary_list do |summary_list|
-      if @show_name_and_relationship
-        summary_list.with_row do |row|
-          row.with_key { "Name" }
+      summary_list.with_row do |row|
+        row.with_key { "Name" }
 
-          if @parent.full_name.present?
-            row.with_value { @parent.full_name }
-            if (href = @change_links[:name])
-              row.with_action(
-                text: "Change",
-                href:,
-                visually_hidden_text: "name"
-              )
-            end
-          elsif (href = @change_links[:name])
-            row.with_value { govuk_link_to("Add name", href) }
-          else
-            row.with_value { "Not provided" }
+        if @parent.full_name.present?
+          row.with_value { @parent.full_name }
+          if (href = @change_links[:name])
+            row.with_action(text: "Change", href:, visually_hidden_text: "name")
           end
+        elsif (href = @change_links[:name])
+          row.with_value { govuk_link_to("Add name", href) }
+        else
+          row.with_value { "Not provided" }
         end
+      end
 
-        summary_list.with_row do |row|
-          row.with_key { "Relationship" }
-          row.with_value { @parent_relationship.label }
-          if (href = @change_links[:relationship])
-            row.with_action(
-              text: "Change",
-              href:,
-              visually_hidden_text: "relationship"
-            )
-          end
+      summary_list.with_row do |row|
+        row.with_key { "Relationship" }
+        row.with_value { @parent_relationship.label }
+        if (href = @change_links[:relationship])
+          row.with_action(
+            text: "Change",
+            href:,
+            visually_hidden_text: "relationship"
+          )
         end
       end
 

@@ -56,4 +56,16 @@ class ParentRelationship < ApplicationRecord
   def label_with_parent
     unknown? ? parent.label : "#{parent.label} (#{label})"
   end
+
+  def ordinal_label
+    index = patient.parent_relationships.find_index(self)
+
+    if index.nil?
+      "parent or guardian"
+    elsif index <= 10
+      "#{I18n.t(index + 1, scope: :ordinal_number)} parent or guardian"
+    else
+      "#{index.ordinalize} parent or guardian"
+    end
+  end
 end
