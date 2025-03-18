@@ -372,8 +372,9 @@ class GraphRecords
 
     if DETAIL_WHITELIST.key?(obj.class.name.underscore.to_sym)
       DETAIL_WHITELIST[obj.class.name.underscore.to_sym].each do |detail|
-        value = obj.send(detail)
-        detail_text = "#{detail}: #{value}"
+        value = obj.send(detail).to_s.humanize
+        name = detail.to_s.humanize # TODO: is this nicer than the raw value? (Also applies to line above)
+        detail_text = "#{name}: #{value}"
         # Insert non-breaking spaces and hyphens to prevent Mermaid from breaking the line
         detail_text = detail_text.gsub(" ", "&nbsp;").gsub("-", "&#8209;")
         text += "<br><span style=\"font-size:14px\">#{detail_text}</span>"
