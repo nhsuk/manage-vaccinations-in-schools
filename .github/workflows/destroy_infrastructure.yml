@@ -1,0 +1,81 @@
+name: Destroy Infrastructure
+run-name: Destroy Infrastructure for ${{ inputs.environment }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Environment to be Destroyed"
+        required: true
+        type: choice
+        options:
+          - qa
+          - poc
+          - copilotmigration
+          - test
+          - preview
+          - training
+
+env:
+  aws_role: 'arn:aws:iam::393416225559:role/GithubDeployMavisAndInfrastructure'
+  tf_dir: terraform/app
+        
+jobs:
+  DestroyTerraformResources:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+    environment: ${{ inputs.environment }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ env.aws_role }}
+          aws-region: eu-west-2
+      - name: Install terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.10.5
+      - name: Ensure DB cluster can be deleted
+        working-directory: ${{ env.tf_dir }}
+        run: |
+          set -e
+          terraform init -backend-config="env/${{ inputs.environment }}-backend.hcl" -upgrade
+          if terraform state list | grep -q 'aws_rds_cluster.aurora_cluster'; then
+            echo "DB cluster exsits: removing delete protection"
+            terraform apply -var-file="env/${{ inputs.environment }}.tfvars" \
+            -var="db_delete_protection=false" -var="image_digest=notneededfortargetedapply" \
+            -target=aws_rds_cluster.aurora_cluster -auto-approve
+            echo "DB cluster delete protection removed: proceeding to delete stage"
+          else 
+            echo "DB cluster not in state: proceeding to delete stage"
+          fi
+
+      - name: Delete cluster
+        working-directory: ${{ env.tf_dir }}
+        run: | 
+          terraform destroy -var-file="env/${{ inputs.environment }}.tfvars" \
+          -var="image_digest=notneededfordestroy" -auto-approve
+  DestroyTerraformBackend:
+    runs-on: ubuntu-latest
+    needs: DestroyTerraformResources
+    permissions:
+      id-token: write
+    environment: ${{ inputs.environment }}
+    steps:
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        role-to-assume: ${{ env.aws_role }}
+        aws-region: eu-west-2
+    - name: Install AWS CLI
+      run: |
+        sudo snap install --classic aws-cli
+    - name: Delete terraform backend elements
+      run: |
+        TF_STATE_FILE=nhse-mavis-terraform-state/terraform-${{ inputs.environment }}.tfstate
+        aws s3 rm s3://$TF_STATE_FILE
+        aws dynamodb delete-item --table-name mavis-terraform-state-lock \
+        --key "{\"LockID\": {\"S\": \"$TF_STATE_FILE-md5\"}}"

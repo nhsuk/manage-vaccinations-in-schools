@@ -92,14 +92,14 @@ EOF
 environment           = "$ENV"
 rails_master_key_path = "/copilot/mavis/secrets/STAGING_RAILS_MASTER_KEY"
 db_secret_arn         = null
-db_secret_arn         = null
+dns_certificate_arn   = null
 resource_name = {
-  dbsubnet_group     = "mavis-$ENV-rds-subnet"
-  db_cluster         = "mavis-$ENV-rds-cluster"
-  db_instance        = "mavis-$ENV-rds-instance"
-  rds_security_group = "mavis-$ENV-rds-sg"
-  loadbalancer       = "mavis-$ENV-alb"
-  lb_security_group  = "mavis-$ENV-alb-sg"
+  dbsubnet_group           = "mavis-$ENV-rds-subnet"
+  db_cluster               = "mavis-$ENV-rds-cluster"
+  db_instance              = "mavis-$ENV-rds-instance"
+  rds_security_group       = "mavis-$ENV-rds-sg"
+  loadbalancer             = "mavis-$ENV-alb"
+  lb_security_group        = "mavis-$ENV-alb-sg"
   cloudwatch_vpc_log_group = "mavis-$ENV-FlowLogs"
 }
 http_hosts = {

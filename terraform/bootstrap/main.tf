@@ -18,7 +18,7 @@ provider "aws" {
 
 #### S3 bucket to store the terraform state
 resource "aws_s3_bucket" "s3_bucket_backend" {
-  bucket = "nhse-mavis-terraform-state-${var.environment}"
+  bucket = "nhse-mavis-terraform-state"
 }
 
 resource "aws_s3_bucket_ownership_controls" "s3_bucket_acl_ownership" {
