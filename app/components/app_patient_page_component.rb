@@ -65,6 +65,8 @@ class AppPatientPageComponent < ViewComponent::Base
         .first
 
     VaccinateForm.new(
+      patient_session:,
+      programme:,
       feeling_well: pre_screening&.feeling_well,
       not_pregnant: pre_screening&.not_pregnant
     )
