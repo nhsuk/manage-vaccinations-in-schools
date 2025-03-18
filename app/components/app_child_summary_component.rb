@@ -90,6 +90,17 @@ class AppChildSummaryComponent < ViewComponent::Base
                 visually_hidden_text: parent_relationship.ordinal_label
               )
             end
+
+            if (
+                 href =
+                   @change_links.dig(:parent, parent_relationship.parent_id)
+               )
+              row.with_action(
+                text: "Change",
+                href:,
+                visually_hidden_text: parent_relationship.ordinal_label
+              )
+            end
           end
         end
       end
