@@ -40,6 +40,8 @@ class AppPatientPageComponent < ViewComponent::Base
     pre_screening = patient_session.pre_screenings.last
 
     VaccinateForm.new(
+      patient_session:,
+      programme:,
       feeling_well: pre_screening&.feeling_well,
       knows_vaccination: pre_screening&.knows_vaccination,
       no_allergies: pre_screening&.no_allergies,
