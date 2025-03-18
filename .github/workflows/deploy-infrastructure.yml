@@ -15,7 +15,11 @@ on:
           - test
           - preview
           - training
-          # - production
+          - production
+      docker_sha:
+        description: "Docker image sha to deploy. This is used only if no existing task definition is found"
+        required: false
+        type: string
   workflow_call:
     inputs:
       environment:
@@ -56,7 +60,7 @@ jobs:
       - name: Get saved image digest
         working-directory: ${{ env.tf_dir }}
         run: |
-          DIGEST=$(terraform state show aws_ecs_task_definition.task_definition | grep -oP '(?<=mavis/webapp@)sha256:[0-9a-z]{64}')
+          DIGEST=$(terraform state show aws_ecs_task_definition.task_definition | grep -oP '(?<=mavis/webapp@)sha256:[0-9a-z]{64}' || ${{ inputs.docker_sha }})
           if [ -z "$DIGEST" ]; then
             echo "Image digest not found in the currently deployed task definition"
             echo "Aborting infrastructure deployment"
