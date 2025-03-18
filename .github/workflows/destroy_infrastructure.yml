@@ -17,9 +17,9 @@ on:
           - training
 
 env:
-  aws_role: 'arn:aws:iam::393416225559:role/GithubDeployMavisAndInfrastructure'
+  aws_role: "arn:aws:iam::393416225559:role/GithubDeployMavisAndInfrastructure"
   tf_dir: terraform/app
-        
+
 jobs:
   DestroyTerraformResources:
     runs-on: ubuntu-latest
@@ -55,7 +55,7 @@ jobs:
 
       - name: Delete cluster
         working-directory: ${{ env.tf_dir }}
-        run: | 
+        run: |
           terraform destroy -var-file="env/${{ inputs.environment }}.tfvars" \
           -var="image_digest=notneededfordestroy" -auto-approve
   DestroyTerraformBackend:
@@ -65,17 +65,17 @@ jobs:
       id-token: write
     environment: ${{ inputs.environment }}
     steps:
-    - name: Configure AWS Credentials
-      uses: aws-actions/configure-aws-credentials@v4
-      with:
-        role-to-assume: ${{ env.aws_role }}
-        aws-region: eu-west-2
-    - name: Install AWS CLI
-      run: |
-        sudo snap install --classic aws-cli
-    - name: Delete terraform backend elements
-      run: |
-        TF_STATE_FILE=nhse-mavis-terraform-state/terraform-${{ inputs.environment }}.tfstate
-        aws s3 rm s3://$TF_STATE_FILE
-        aws dynamodb delete-item --table-name mavis-terraform-state-lock \
-        --key "{\"LockID\": {\"S\": \"$TF_STATE_FILE-md5\"}}"
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ env.aws_role }}
+          aws-region: eu-west-2
+      - name: Install AWS CLI
+        run: |
+          sudo snap install --classic aws-cli
+      - name: Delete terraform backend elements
+        run: |
+          TF_STATE_FILE=nhse-mavis-terraform-state/terraform-${{ inputs.environment }}.tfstate
+          aws s3 rm s3://$TF_STATE_FILE
+          aws dynamodb delete-item --table-name mavis-terraform-state-lock \
+          --key "{\"LockID\": {\"S\": \"$TF_STATE_FILE-md5\"}}"
