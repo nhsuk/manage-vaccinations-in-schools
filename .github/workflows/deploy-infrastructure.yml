@@ -55,6 +55,11 @@ jobs:
           set -e
           terraform init -backend-config="env/${{ inputs.environment }}-backend.hcl" -upgrade
           APPLICATION_NAME=$(terraform output -raw codedeploy_application_name)
+          if [ -z "$APPLICATION_NAME" ]; then
+              echo "No CodeDeploy application found in the current terraform state. Skipping check for running deployment."
+              exit 0
+          fi
+          
           echo "Application Name: $APPLICATION_NAME"
           APPLICATION_GROUP=$(terraform output -raw codedeploy_deployment_group_name)
           echo "Deployment Group Name: $APPLICATION_GROUP"
