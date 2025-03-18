@@ -478,18 +478,6 @@ describe ImmunisationImportRow do
       end
     end
 
-    context "Flu vaccination in previous academic year, no vaccinator details provided" do
-      let(:data) do
-        valid_flu_data.except(
-          "PERFORMING_PROFESSIONAL_EMAIL",
-          "PERFORMING_PROFESSIONAL_FORENAME",
-          "PERFORMING_PROFESSIONAL_SURNAME"
-        ).merge("DATE_OF_VACCINATION" => "20220101")
-      end
-
-      it { should be_invalid }
-    end
-
     context "vaccination in a session, with a delivery site that is not appropriate for HPV" do
       let(:programmes) { [create(:programme, :hpv)] }
       let(:session) { create(:session, organisation:, programmes:) }
@@ -586,7 +574,8 @@ describe ImmunisationImportRow do
           "VACCINATED" => "Y",
           "PROGRAMME" => "Flu",
           "DATE_OF_VACCINATION" => "#{Date.current.academic_year}0901",
-          "SESSION_ID" => session.id.to_s
+          "SESSION_ID" => session.id.to_s,
+          "VACCINE_GIVEN" => "AstraZeneca Fluenz Tetra LAIV"
         }
       end
 

@@ -5,10 +5,6 @@ class ImmunisationImportRow
 
   validates :administered, inclusion: [true, false]
 
-  with_options if: :administered do
-    validates :reason, absence: true
-  end
-
   with_options unless: :administered do
     validates :batch_expiry_date, absence: true
     validates :batch_number, absence: true
@@ -16,11 +12,15 @@ class ImmunisationImportRow
     validates :reason, presence: true
   end
 
-  with_options if: -> { administered && offline_recording? } do
-    validates :batch_expiry_date, presence: true
-    validates :batch_number, presence: true
-    validates :delivery_site, presence: true
-  end
+  validates :reason, absence: true, if: :administered
+
+  validates :delivery_site,
+            presence: true,
+            inclusion: {
+              allow_nil: true,
+              in: :valid_delivery_sites
+            },
+            if: -> { administered && offline_recording? }
 
   validates :vaccine_given,
             inclusion: {
@@ -28,19 +28,24 @@ class ImmunisationImportRow
               allow_nil: true
             }
 
-  validates :batch_number, presence: { if: :batch_expiry_date }
-
+  validates :batch_number,
+            presence: {
+              if: -> do
+                (administered && offline_recording?) ||
+                  batch_expiry_date.present?
+              end
+            }
   validates :batch_expiry_date,
             presence: {
-              if: :batch_number
+              if: -> do
+                (administered && offline_recording?) || batch_number.present?
+              end
             },
             comparison: {
               greater_than: -> { Date.new(Date.current.year - 15, 1, 1) },
               less_than: -> { Date.new(Date.current.year + 15, 1, 1) },
               allow_nil: true
             }
-
-  validate :delivery_site_appropriate_for_vaccine
 
   validates :dose_sequence,
             presence: {
@@ -105,6 +110,10 @@ class ImmunisationImportRow
               greater_than: :patient_date_of_birth,
               less_than_or_equal_to: -> { Date.current },
               if: :patient_date_of_birth
+            },
+            inclusion: {
+              in: :valid_date_of_vaccinations,
+              if: :offline_recording?
             }
   validates :time_of_vaccination,
             presence: {
@@ -115,8 +124,8 @@ class ImmunisationImportRow
               if: -> { date_of_vaccination == Date.current },
               allow_nil: true
             }
-  validate :date_matches_session
-  validate :uuid_exists
+
+  validate :uuid_inclusion
 
   CARE_SETTING_SCHOOL = 1
   CARE_SETTING_COMMUNITY = 2
@@ -129,10 +138,15 @@ class ImmunisationImportRow
               if: -> do
                 offline_recording? && care_setting == CARE_SETTING_COMMUNITY
               end,
-              in: -> { _1.organisation.community_clinics.map(&:name) }
+              in: :valid_clinic_names
             }
 
-  validate :performed_by_details_present_where_required
+  validates :performed_by_user,
+            presence: true,
+            if: -> do
+              offline_recording? ||
+                @data["PERFORMING_PROFESSIONAL_EMAIL"]&.strip.present?
+            end
 
   attr_reader :organisation
 
@@ -503,6 +517,18 @@ class ImmunisationImportRow
     organisation.vaccines.where(programme:).pluck(:nivs_name)
   end
 
+  def valid_delivery_sites
+    vaccine&.available_delivery_sites || []
+  end
+
+  def valid_date_of_vaccinations
+    session&.dates || []
+  end
+
+  def valid_clinic_names
+    organisation.community_clinics.map(&:name)
+  end
+
   delegate :default_dose_sequence,
            :maximum_dose_sequence,
            to: :programme,
@@ -510,26 +536,6 @@ class ImmunisationImportRow
 
   def offline_recording?
     @data["SESSION_ID"].present?
-  end
-
-  def performed_by_details_present_where_required
-    if offline_recording?
-      errors.add(:performed_by_user, :blank) if performed_by_user.nil?
-    else # previous academic years from here on
-      email_field_populated =
-        @data["PERFORMING_PROFESSIONAL_EMAIL"]&.strip.present?
-
-      if email_field_populated
-        errors.add(:performed_by_user, :blank) if performed_by_user.nil?
-      elsif programme&.flu? # no validation required for HPV
-        if performed_by_given_name.blank?
-          errors.add(:performed_by_given_name, :blank)
-        end
-        if performed_by_family_name.blank?
-          errors.add(:performed_by_family_name, :blank)
-        end
-      end
-    end
   end
 
   DATE_FORMATS = %w[%Y%m%d %Y-%m-%d %d/%m/%Y].freeze
@@ -562,36 +568,6 @@ class ImmunisationImportRow
       end
 
     parsed_times.first
-  end
-
-  def delivery_site_appropriate_for_vaccine
-    return unless offline_recording?
-    return if vaccine.nil? || delivery_site.nil?
-
-    unless vaccine.available_delivery_sites.include?(delivery_site)
-      errors.add(:delivery_site, :inclusion)
-    end
-  end
-
-  def date_matches_session
-    return unless offline_recording?
-    return if date_of_vaccination.nil? || session.nil?
-
-    unless session.dates.include?(date_of_vaccination)
-      errors.add(:date_of_vaccination, :inclusion)
-    end
-  end
-
-  def uuid_exists
-    if uuid.present? &&
-         !VaccinationRecord.joins(:organisation).exists?(
-           organisations: {
-             id: organisation.id
-           },
-           uuid:
-         )
-      errors.add(:uuid, :inclusion)
-    end
   end
 
   def existing_patients
@@ -629,6 +605,19 @@ class ImmunisationImportRow
     unless Location.school.exists?(urn: school_urn) ||
              school_urn.in?([SCHOOL_URN_HOME_EDUCATED, SCHOOL_URN_UNKNOWN])
       errors.add(:school_urn, :inclusion)
+    end
+  end
+
+  def uuid_inclusion
+    return if uuid.nil?
+
+    unless VaccinationRecord.joins(:organisation).exists?(
+             organisations: {
+               id: organisation.id
+             },
+             uuid:
+           )
+      errors.add(:uuid, :inclusion)
     end
   end
 end
