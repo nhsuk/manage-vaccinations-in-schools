@@ -8,14 +8,10 @@ fi
 environment=$1
 
 terraform init -backend-config="env/${environment}-backend.hcl" -upgrade
-APPLICATION_NAME=$(terraform output -json codedeploy_application_name 2>/dev/null | tr -d '"' || echo "")
+APPLICATION_NAME=$(terraform output -json codedeploy_application_name | tr -d '"') || { echo "No CodeDeploy application found in the current terraform state. Skipping check for running deployment."; exit 0; }
 echo "Application Name: $APPLICATION_NAME"
-APPLICATION_GROUP=$(terraform output -json codedeploy_deployment_group_name 2>/dev/null | tr -d '"' || echo "")
+APPLICATION_GROUP=$(terraform output -json codedeploy_deployment_group_name | tr -d '"') || { echo "No CodeDeploy application found in the current terraform state. Skipping check for running deployment."; exit 0; }
 echo "Deployment Group Name: $APPLICATION_GROUP"
-if [ -z "$APPLICATION_NAME" ] || [ -z "$APPLICATION_GROUP" ]; then
-    echo "No CodeDeploy application found in the current terraform state. Skipping check for running deployment."
-    exit 0
-fi
 
 running_deployment=$(aws deploy list-deployments --application-name $APPLICATION_NAME \
     --deployment-group-name $APPLICATION_GROUP --include-only-statuses InProgress \
