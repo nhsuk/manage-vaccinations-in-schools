@@ -320,24 +320,14 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
   def dose_number
     return nil if @vaccine&.seasonal?
 
-    return "Unknown" if @vaccination_record.dose_sequence.nil?
+    dose_sequence = @vaccination_record.dose_sequence
 
-    numbers_to_words = {
-      1 => "First",
-      2 => "Second",
-      3 => "Third",
-      4 => "Fourth",
-      5 => "Fifth",
-      6 => "Sixth",
-      7 => "Seventh",
-      8 => "Eighth",
-      9 => "Ninth"
-    }.freeze
-
-    if @vaccination_record.dose_sequence <= 9
-      numbers_to_words[@vaccination_record.dose_sequence]
+    if dose_sequence.nil?
+      "Unknown"
+    elsif dose_sequence <= 10
+      I18n.t(dose_sequence, scope: :ordinal_number).upcase_first
     else
-      @vaccination_record.dose_sequence.ordinalize
+      dose_sequence.ordinalize
     end
   end
 
