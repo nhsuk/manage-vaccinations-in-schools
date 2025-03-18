@@ -8,9 +8,9 @@ fi
 environment=$1
 
 terraform init -backend-config="env/${environment}-backend.hcl" -upgrade
-APPLICATION_NAME=$(terraform output -json codedeploy_application_name | tr -d '"')
+APPLICATION_NAME=$(terraform output -json codedeploy_application_name 2>/dev/null | tr -d '"' || echo "")
 echo "Application Name: $APPLICATION_NAME"
-APPLICATION_GROUP=$(terraform output -json codedeploy_deployment_group_name | tr -d '"')
+APPLICATION_GROUP=$(terraform output -json codedeploy_deployment_group_name 2>/dev/null | tr -d '"' || echo "")
 echo "Deployment Group Name: $APPLICATION_GROUP"
 if [ -z "$APPLICATION_NAME" ] || [ -z "$APPLICATION_GROUP" ]; then
     echo "No CodeDeploy application found in the current terraform state. Skipping check for running deployment."
