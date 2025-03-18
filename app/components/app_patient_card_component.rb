@@ -3,7 +3,7 @@
 class AppPatientCardComponent < ViewComponent::Base
   erb_template <<-ERB
     <%= render AppCardComponent.new do |card| %>
-      <% card.with_heading { "Child record" } %>
+      <% card.with_heading { "Child’s details" } %>
 
       <% if patient.date_of_death.present? %>
         <%= render AppStatusComponent.new(

@@ -5,6 +5,17 @@ class ParentRelationshipsController < ApplicationController
   before_action :set_parent_relationship
   before_action :set_parent
 
+  def edit
+  end
+
+  def update
+    if @parent_relationship.update(parent_relationship_params)
+      redirect_to edit_patient_path(@patient)
+    else
+      render :edit, status: :unprocessable_entity
+    end
+  end
+
   def confirm_destroy = render :destroy
 
   def destroy
@@ -32,5 +43,15 @@ class ParentRelationshipsController < ApplicationController
 
   def set_parent
     @parent = @parent_relationship.parent
+  end
+
+  def parent_relationship_params
+    params.expect(
+      parent_relationship: [
+        :type,
+        :other_name,
+        { parent_attributes: %i[id full_name email phone] }
+      ]
+    )
   end
 end

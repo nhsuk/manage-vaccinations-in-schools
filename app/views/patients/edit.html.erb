@@ -2,15 +2,13 @@
   <%= render AppBacklinkComponent.new(patient_path(@patient), name: @patient.full_name) %>
 <% end %>
 
-<% page_title = "Edit child record" %>
-
-<%= h1 page_title: do %>
-  <span class="nhsuk-caption-l"><%= @patient.full_name %></span>
-  <%= page_title %>
-<% end %>
+<%= h1 "Edit child record" %>
 
 <% change_links = {
      nhs_number: edit_nhs_number_patient_path(@patient),
+     parent: @patient.parent_relationships.each_with_object({}) do |parent_relationship, memo|
+       memo[parent_relationship.parent_id] = edit_patient_parent_relationship_path(@patient, parent_relationship.parent_id)
+     end,
    } %>
 
 <% remove_links = {
