@@ -27,7 +27,7 @@
 
       <h3 class="nhsuk-heading-s nhsuk-u-margin-bottom-2">Session details</h3>
 
-      <%= render AppSessionDetailsSummaryComponent.new(@session, patient_sessions: @patient_sessions) %>
+      <%= render AppSessionDetailsSummaryComponent.new(@session, patient_sessions: @patient_sessions, outcomes: @outcomes) %>
 
       <% if @session.unscheduled? %>
         <% if policy(@session).edit? %>

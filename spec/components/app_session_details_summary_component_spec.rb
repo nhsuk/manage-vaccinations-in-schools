@@ -3,11 +3,12 @@
 describe AppSessionDetailsSummaryComponent do
   subject { render_inline(component) }
 
-  let(:component) { described_class.new(session, patient_sessions:) }
+  let(:component) { described_class.new(session, patient_sessions:, outcomes:) }
 
   let(:programme) { create(:programme, :hpv) }
   let(:session) { create(:session, programmes: [programme]) }
   let(:patient_sessions) { session.patient_sessions.preload_for_status }
+  let(:outcomes) { Outcomes.new(patient_sessions: patient_sessions) }
 
   it { should have_text("Cohort\nNo children") }
   it { should have_text("Consent refused\nNo children") }

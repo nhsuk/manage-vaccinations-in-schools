@@ -6,11 +6,13 @@ class AppProgrammeSessionTableComponent < ViewComponent::Base
 
     @sessions = sessions
     @programme = programme
+    @outcomes =
+      Outcomes.new(patient_sessions: PatientSession.where(session: sessions))
   end
 
   private
 
-  attr_reader :sessions, :programme
+  attr_reader :sessions, :programme, :outcomes
 
   def cohort_count(session:)
     session.patient_sessions.length.to_s
@@ -44,10 +46,10 @@ class AppProgrammeSessionTableComponent < ViewComponent::Base
   end
 
   def vaccinated_count(session:)
-    number_stat(session:) { it.session_outcome.vaccinated?(programme) }
+    number_stat(session:) { outcomes.session.vaccinated?(it, programme:) }
   end
 
   def vaccinated_percentage(session:)
-    percentage_stat(session:) { it.session_outcome.vaccinated?(programme) }
+    percentage_stat(session:) { outcomes.session.vaccinated?(it, programme:) }
   end
 end

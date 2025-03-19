@@ -42,6 +42,9 @@ class PatientSession < ApplicationRecord
   has_many :session_notifications,
            -> { where(session_id: _1.session_id) },
            through: :patient
+  has_many :vaccination_records,
+           -> { where(session_id: _1.session_id) },
+           through: :patient
 
   has_and_belongs_to_many :immunisation_imports
 
@@ -100,8 +103,8 @@ class PatientSession < ApplicationRecord
         end
 
   def safe_to_destroy?
-    programmes.none? { session_outcome.all[it].any? } &&
-      gillick_assessments.empty? && session_attendances.none?(&:attending?)
+    vaccination_records.empty? && gillick_assessments.empty? &&
+      session_attendances.none?(&:attending?)
   end
 
   def destroy_if_safe!
@@ -126,10 +129,6 @@ class PatientSession < ApplicationRecord
     @register_outcome ||= PatientSession::RegisterOutcome.new(self)
   end
 
-  def session_outcome
-    @session_outcome ||= PatientSession::SessionOutcome.new(self)
-  end
-
   def ready_for_vaccinator?(programme: nil)
     return false if register_outcome.unknown? || register_outcome.not_attending?
 
@@ -141,12 +140,18 @@ class PatientSession < ApplicationRecord
   end
 
   def outstanding_programmes
+    session_outcome =
+      SessionOutcome.new(patient_sessions: PatientSession.where(id:))
+
     # If this patient hasn't been seen yet by a nurse for any of the programmes,
     # we don't want to show the banner.
-    return [] if programmes.all? { session_outcome.none_yet?(it) }
+    if programmes.all? { session_outcome.none_yet?(self, programme: it) }
+      return []
+    end
 
     programmes.select do
-      ready_for_vaccinator?(programme: it) && session_outcome.none_yet?(it)
+      ready_for_vaccinator?(programme: it) &&
+        session_outcome.none_yet?(self, programme: it)
     end
   end
 end

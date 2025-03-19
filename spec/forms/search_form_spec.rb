@@ -32,8 +32,10 @@ describe SearchForm do
   context "for patients" do
     let(:scope) { Patient.all }
 
+    let(:outcomes) { Outcomes.new(patients: scope) }
+
     it "doesn't raise an error" do
-      expect { form.apply(scope) }.not_to raise_error
+      expect { form.apply(scope, outcomes:) }.not_to raise_error
     end
 
     context "filtering on date of birth" do
@@ -55,7 +57,7 @@ describe SearchForm do
         let(:date_of_birth_year) { 2000 }
 
         it "includes the patient" do
-          expect(form.apply(scope)).to include(patient)
+          expect(form.apply(scope, outcomes:)).to include(patient)
         end
       end
 
@@ -63,7 +65,7 @@ describe SearchForm do
         let(:date_of_birth_month) { 1 }
 
         it "includes the patient" do
-          expect(form.apply(scope)).to include(patient)
+          expect(form.apply(scope, outcomes:)).to include(patient)
         end
       end
 
@@ -71,7 +73,7 @@ describe SearchForm do
         let(:date_of_birth_day) { 1 }
 
         it "includes the patient" do
-          expect(form.apply(scope)).to include(patient)
+          expect(form.apply(scope, outcomes:)).to include(patient)
         end
       end
 
@@ -81,7 +83,7 @@ describe SearchForm do
         let(:date_of_birth_day) { 1 }
 
         it "includes the patient" do
-          expect(form.apply(scope)).to include(patient)
+          expect(form.apply(scope, outcomes:)).to include(patient)
         end
       end
     end
@@ -103,16 +105,17 @@ describe SearchForm do
 
       it "filters on session status" do
         patient = create(:patient, :vaccinated, programmes: [programme])
-        expect(form.apply(scope, programme:)).to include(patient)
+        expect(form.apply(scope, outcomes:, programme:)).to include(patient)
       end
     end
   end
 
   context "for patient sessions" do
     let(:scope) { PatientSession.preload_for_status }
+    let(:outcomes) { Outcomes.new(patient_sessions: scope) }
 
     it "doesn't raise an error" do
-      expect { form.apply(scope) }.not_to raise_error
+      expect { form.apply(scope, outcomes:) }.not_to raise_error
     end
 
     context "filtering on consent status" do
@@ -130,7 +133,7 @@ describe SearchForm do
       it "filters on consent status" do
         patient_session =
           create(:patient_session, :consent_given_triage_not_needed)
-        expect(form.apply(scope)).to include(patient_session)
+        expect(form.apply(scope, outcomes:)).to include(patient_session)
       end
     end
 
@@ -149,7 +152,7 @@ describe SearchForm do
 
       it "filters on session status" do
         patient_session = create(:patient_session, :vaccinated)
-        expect(form.apply(scope)).to include(patient_session)
+        expect(form.apply(scope, outcomes:)).to include(patient_session)
       end
     end
 
@@ -168,7 +171,7 @@ describe SearchForm do
 
       it "filters on register status" do
         patient_session = create(:patient_session, :in_attendance)
-        expect(form.apply(scope)).to include(patient_session)
+        expect(form.apply(scope, outcomes:)).to include(patient_session)
       end
     end
 
@@ -187,7 +190,7 @@ describe SearchForm do
 
       it "filters on triage status" do
         patient_session = create(:patient_session, :consent_given_triage_needed)
-        expect(form.apply(scope)).to include(patient_session)
+        expect(form.apply(scope, outcomes:)).to include(patient_session)
       end
     end
   end

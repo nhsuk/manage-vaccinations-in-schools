@@ -21,8 +21,8 @@ class SearchForm
     super(values&.compact_blank&.map(&:to_i)&.compact || [])
   end
 
-  def apply(scope, programme: nil)
-    apply_outcomes(apply_to_scope(scope), programme:)
+  def apply(scope, outcomes:, programme: nil)
+    apply_outcomes(apply_to_scope(scope), outcomes:, programme:)
   end
 
   def apply_to_scope(scope)
@@ -47,7 +47,7 @@ class SearchForm
     scope.order_by_name
   end
 
-  def apply_outcomes(scope, programme: nil)
+  def apply_outcomes(scope, outcomes:, programme: nil)
     if (status = consent_status&.to_sym).present?
       scope =
         scope.select do
@@ -65,7 +65,12 @@ class SearchForm
     end
 
     if (status = session_status&.to_sym).present?
-      scope = scope.select { it.session_outcome.status.values.include?(status) }
+      scope =
+        scope.select do |patient_session|
+          patient_session.programmes.any? do
+            outcomes.session.status(patient_session, programme: it) == status
+          end
+        end
     end
 
     if (status = register_status&.to_sym).present?

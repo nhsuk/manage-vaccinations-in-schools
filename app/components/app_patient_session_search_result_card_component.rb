@@ -40,22 +40,24 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
     <% end %>
   ERB
 
-  def initialize(patient_session, context:)
-    super
-
-    @patient_session = patient_session
-    @patient = patient_session.patient
-    @session = patient_session.session
-    @context = context
-
+  def initialize(patient_session, context:, outcomes:)
     unless context.in?(%i[consent triage register record outcome])
       raise "Unknown context: #{context}"
     end
+
+    super
+
+    @patient_session = patient_session
+    @context = context
+    @outcomes = outcomes
+
+    @patient = patient_session.patient
+    @session = patient_session.session
   end
 
   private
 
-  attr_reader :patient_session, :patient, :session, :context
+  attr_reader :patient_session, :patient, :session, :context, :outcomes
 
   def link_to
     programme = patient_session.programmes.first
@@ -87,6 +89,12 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
       render AppRegisterStatusTagComponent.new(
                patient_session.register_outcome.status
              )
+    elsif context == :outcome
+      statuses =
+        patient_session.programmes.index_with do
+          outcomes.session.status(patient_session, programme: it)
+        end
+      render AppProgrammeStatusTagsComponent.new(statuses, outcome: :session)
     else
       outcome =
         case context
@@ -94,8 +102,6 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
           patient.consent_outcome
         when :triage
           patient.triage_outcome
-        when :outcome
-          patient_session.session_outcome
         end
 
       # ensure status is calculated for each programme

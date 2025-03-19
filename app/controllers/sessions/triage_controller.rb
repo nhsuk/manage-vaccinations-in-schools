@@ -22,6 +22,8 @@ class Sessions::TriageController < ApplicationController
         )
       )
 
+    @outcomes = Outcomes.new(patient_sessions: scope)
+
     filtered_scope =
       scope.reject do
         it
@@ -32,7 +34,7 @@ class Sessions::TriageController < ApplicationController
           .all?(Patient::TriageOutcome::NOT_REQUIRED)
       end
 
-    patient_sessions = @form.apply_outcomes(filtered_scope)
+    patient_sessions = @form.apply_outcomes(filtered_scope, outcomes: @outcomes)
 
     if patient_sessions.is_a?(Array)
       @pagy, @patient_sessions = pagy_array(patient_sessions)

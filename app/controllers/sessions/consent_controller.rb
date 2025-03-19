@@ -21,7 +21,9 @@ class Sessions::ConsentController < ApplicationController
         )
       )
 
-    patient_sessions = @form.apply_outcomes(scope)
+    @outcomes = Outcomes.new(patient_sessions: scope)
+
+    patient_sessions = @form.apply_outcomes(scope, outcomes: @outcomes)
 
     if patient_sessions.is_a?(Array)
       @pagy, @patient_sessions = pagy_array(patient_sessions)

@@ -55,7 +55,10 @@ class ProgrammesController < ApplicationController
         )
       )
 
-    patients = @form.apply_outcomes(scope, programme: @programme)
+    @outcomes = Outcomes.new(patients: scope)
+
+    patients =
+      @form.apply_outcomes(scope, outcomes: @outcomes, programme: @programme)
 
     if patients.is_a?(Array)
       @pagy, @patients = pagy_array(patients)

@@ -22,8 +22,13 @@ class Sessions::RecordController < ApplicationController
         )
       )
 
+    @outcomes = Outcomes.new(patient_sessions: scope)
+
     patient_sessions =
-      @form.apply_outcomes(scope.select(&:ready_for_vaccinator?))
+      @form.apply_outcomes(
+        scope.select(&:ready_for_vaccinator?),
+        outcomes: @outcomes
+      )
 
     if patient_sessions.is_a?(Array)
       @pagy, @patient_sessions = pagy_array(patient_sessions)

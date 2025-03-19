@@ -36,6 +36,8 @@ class SessionsController < ApplicationController
             .in_programmes(@session.programmes)
             .preload_for_status
 
+        @outcomes = Outcomes.new(patient_sessions: @session.patient_sessions)
+
         render layout: "full"
       end
 

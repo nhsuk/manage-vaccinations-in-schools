@@ -3,7 +3,7 @@
 describe AppPatientSessionSearchResultCardComponent do
   subject { render_inline(component) }
 
-  let(:component) { described_class.new(patient_session, context:) }
+  let(:component) { described_class.new(patient_session, context:, outcomes:) }
 
   let(:patient) do
     create(
@@ -20,6 +20,7 @@ describe AppPatientSessionSearchResultCardComponent do
   let(:session) { create(:session, programmes: [programme]) }
   let(:patient_session) { create(:patient_session, patient:, session:) }
   let(:context) { :consent }
+  let(:outcomes) { Outcomes.new(patient_session:) }
 
   let(:href) do
     "/sessions/#{session.slug}/patients/#{patient.id}/hpv?return_to=consent"

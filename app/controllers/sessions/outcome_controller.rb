@@ -12,7 +12,7 @@ class Sessions::OutcomeController < ApplicationController
   layout "full"
 
   def show
-    @statuses = PatientSession::SessionOutcome::STATUSES
+    @statuses = SessionOutcome::STATUSES
 
     scope =
       @form.apply_to_scope(
@@ -21,7 +21,9 @@ class Sessions::OutcomeController < ApplicationController
         )
       )
 
-    patient_sessions = @form.apply_outcomes(scope)
+    @outcomes = Outcomes.new(patient_sessions: scope)
+
+    patient_sessions = @form.apply_outcomes(scope, outcomes: @outcomes)
 
     if patient_sessions.is_a?(Array)
       @pagy, @patient_sessions = pagy_array(patient_sessions)

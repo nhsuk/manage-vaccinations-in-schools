@@ -56,6 +56,8 @@ class PatientSession::RegisterOutcome
   end
 
   def all_programmes_have_outcome?
-    programmes.none? { session_outcome.latest[it].nil? }
+    programmes.all? do
+      patient_session.vaccination_records.exists?(programme: it)
+    end
   end
 end
