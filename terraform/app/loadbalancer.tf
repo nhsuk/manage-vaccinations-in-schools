@@ -62,8 +62,8 @@ resource "aws_lb" "app_lb" {
   internal           = false
   load_balancer_type = "application"
   access_logs {
-    bucket  = "nhse-mavis-logs-${var.environment}"
-    prefix  = "lb-access-logs"
+    bucket  = var.access_logs_bucket
+    prefix  = "lb-access-logs-${var.environment}"
     enabled = true
   }
   security_groups = [aws_security_group.lb_service_sg.id]
@@ -139,8 +139,8 @@ resource "aws_lb_listener" "app_listener_https" {
 }
 
 resource "aws_lb_listener_certificate" "https_sni_certificates" {
-  count = length(local.additional_sni_certificates)
-  listener_arn = aws_lb_listener.app_listener_https.arn
+  count           = length(local.additional_sni_certificates)
+  listener_arn    = aws_lb_listener.app_listener_https.arn
   certificate_arn = local.additional_sni_certificates[count.index]
 }
 

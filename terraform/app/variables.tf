@@ -17,6 +17,12 @@ variable "environment" {
   }
 }
 
+variable "access_logs_bucket" {
+  type        = string
+  default     = "nhse-mavis-access-logs"
+  description = "Name of the S3 bucket which stores access logs for various resources"
+}
+
 variable "account_id" {
   type        = string
   default     = "393416225559"
