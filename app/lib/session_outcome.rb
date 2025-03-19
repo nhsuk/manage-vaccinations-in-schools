@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
 class SessionOutcome
-  def initialize(patient_sessions:)
+  def initialize(patient_sessions:, register_outcome:)
     @patient_sessions = patient_sessions
+    @register_outcome = register_outcome
   end
 
   STATUSES = [
@@ -47,7 +48,7 @@ class SessionOutcome
       REFUSED
     elsif patient_session.patient.triage_outcome.do_not_vaccinate?(programme)
       HAD_CONTRAINDICATIONS
-    elsif patient_session.register_outcome.not_attending?
+    elsif register_outcome.not_attending?(patient_session)
       ABSENT_FROM_SESSION
     else
       NONE_YET
@@ -56,7 +57,7 @@ class SessionOutcome
 
   private
 
-  attr_reader :patient_sessions
+  attr_reader :patient_sessions, :register_outcome
 
   def vaccination_record_outcomes
     @vaccination_record_outcomes ||=

@@ -2,7 +2,11 @@
 
 describe SessionOutcome do
   subject(:instance) do
-    described_class.new(patient_sessions: PatientSession.all)
+    described_class.new(
+      patient_sessions: PatientSession.all,
+      register_outcome:
+        RegisterOutcome.new(patient_sessions: PatientSession.all)
+    )
   end
 
   let(:programme) { create(:programme, :hpv) }

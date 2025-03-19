@@ -6,11 +6,12 @@ class AppSessionActionsComponent < ViewComponent::Base
     <%= govuk_summary_list(rows:) %>
   ERB
 
-  def initialize(session, patient_sessions:)
+  def initialize(session, patient_sessions:, outcomes:)
     super
 
     @session = session
     @patient_sessions = patient_sessions
+    @outcomes = outcomes
   end
 
   def render?
@@ -19,7 +20,7 @@ class AppSessionActionsComponent < ViewComponent::Base
 
   private
 
-  attr_reader :session, :patient_sessions
+  attr_reader :session, :patient_sessions, :outcomes
 
   def rows
     @rows ||= [
@@ -93,7 +94,7 @@ class AppSessionActionsComponent < ViewComponent::Base
   def register_attendance_row
     return nil unless session.today?
 
-    count = patient_sessions.count { it.register_outcome.unknown? }
+    count = patient_sessions.count { outcomes.register.unknown?(it) }
 
     return nil if count.zero?
 
@@ -101,7 +102,7 @@ class AppSessionActionsComponent < ViewComponent::Base
       session_register_path(
         session,
         search_form: {
-          register_status: PatientSession::RegisterOutcome::UNKNOWN
+          register_status: RegisterOutcome::UNKNOWN
         }
       )
 
@@ -121,7 +122,9 @@ class AppSessionActionsComponent < ViewComponent::Base
 
     counts_by_programme =
       session.programmes.index_with do |programme|
-        patient_sessions.count { it.ready_for_vaccinator?(programme:) }
+        patient_sessions.count do
+          it.ready_for_vaccinator?(outcomes:, programme:)
+        end
       end
 
     return nil if counts_by_programme.values.all?(&:zero?)

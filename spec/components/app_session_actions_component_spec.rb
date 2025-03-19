@@ -3,11 +3,12 @@
 describe AppSessionActionsComponent do
   subject { render_inline(component) }
 
-  let(:component) { described_class.new(session, patient_sessions:) }
+  let(:component) { described_class.new(session, patient_sessions:, outcomes:) }
 
   let(:programmes) { [create(:programme, :hpv)] }
   let(:session) { create(:session, programmes:) }
   let(:patient_sessions) { session.patient_sessions.preload_for_status }
+  let(:outcomes) { Outcomes.new(patient_sessions:) }
 
   before do
     create(:patient_session, session:)

@@ -14,8 +14,13 @@ class Outcomes
     end
   end
 
+  def register
+    @register ||= RegisterOutcome.new(patient_sessions:)
+  end
+
   def session
-    @session ||= SessionOutcome.new(patient_sessions:)
+    @session ||=
+      SessionOutcome.new(patient_sessions:, register_outcome: register)
   end
 
   private

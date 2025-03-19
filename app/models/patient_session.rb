@@ -67,7 +67,6 @@ class PatientSession < ApplicationRecord
   scope :preload_for_status,
         -> do
           eager_load(:patient).preload(
-            session_attendances: :session_date,
             patient: [:triages, { consents: :parent }, :vaccination_records],
             session: :programmes
           )
@@ -125,12 +124,19 @@ class PatientSession < ApplicationRecord
       .max_by(&:created_at)
   end
 
-  def register_outcome
-    @register_outcome ||= PatientSession::RegisterOutcome.new(self)
+  def todays_attendance
+    if (session_date = session.session_dates.today.first)
+      session_attendances.includes(:session_date).find_or_initialize_by(
+        session_date:
+      )
+    end
   end
 
-  def ready_for_vaccinator?(programme: nil)
-    return false if register_outcome.unknown? || register_outcome.not_attending?
+  def ready_for_vaccinator?(outcomes:, programme: nil)
+    if outcomes.register.unknown?(self) ||
+         outcomes.register.not_attending?(self)
+      return false
+    end
 
     programmes_to_check = programme ? [programme] : programmes
 
@@ -140,18 +146,17 @@ class PatientSession < ApplicationRecord
   end
 
   def outstanding_programmes
-    session_outcome =
-      SessionOutcome.new(patient_sessions: PatientSession.where(id:))
+    outcomes = Outcomes.new(patient_session: self)
 
     # If this patient hasn't been seen yet by a nurse for any of the programmes,
     # we don't want to show the banner.
-    if programmes.all? { session_outcome.none_yet?(self, programme: it) }
+    if programmes.all? { outcomes.session.none_yet?(self, programme: it) }
       return []
     end
 
     programmes.select do
-      ready_for_vaccinator?(programme: it) &&
-        session_outcome.none_yet?(self, programme: it)
+      ready_for_vaccinator?(outcomes:, programme: it) &&
+        outcomes.session.none_yet?(self, programme: it)
     end
   end
 end

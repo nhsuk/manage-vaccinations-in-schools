@@ -30,8 +30,8 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
               end
             end
           end %>
-      
-      <% if context == :register && helpers.policy(patient_session.register_outcome.latest).new? %>
+
+      <% if context == :register && helpers.policy(SessionAttendance.new(patient_session:, session_date: SessionDate.new(value: Date.current))).new? %>
         <div class="app-button-group">
           <%= helpers.govuk_button_to "Attending", create_session_register_path(session, patient, "present", search_form: params[:search_form]&.permit!), class: "app-button--secondary app-button--small" %>
           <%= helpers.govuk_button_to "Absent", create_session_register_path(session, patient, "absent", search_form: params[:search_form]&.permit!), class: "app-button--secondary-warning app-button--small" %>
@@ -87,7 +87,7 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
 
     if context == :register
       render AppRegisterStatusTagComponent.new(
-               patient_session.register_outcome.status
+               outcomes.register.status(patient_session)
              )
     elsif context == :outcome
       statuses =

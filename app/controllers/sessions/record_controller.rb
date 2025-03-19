@@ -26,7 +26,7 @@ class Sessions::RecordController < ApplicationController
 
     patient_sessions =
       @form.apply_outcomes(
-        scope.select(&:ready_for_vaccinator?),
+        scope.select { it.ready_for_vaccinator?(outcomes: @outcomes) },
         outcomes: @outcomes
       )
 

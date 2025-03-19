@@ -70,7 +70,11 @@ describe PatientSession do
   end
 
   describe "#ready_for_vaccinator?" do
-    subject(:ready_for_vaccinator?) { patient_session.ready_for_vaccinator? }
+    subject(:ready_for_vaccinator?) do
+      patient_session.ready_for_vaccinator?(outcomes:)
+    end
+
+    let(:outcomes) { Outcomes.new(patient_session:) }
 
     it { should be(false) }
 

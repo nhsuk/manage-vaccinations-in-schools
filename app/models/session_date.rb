@@ -26,6 +26,8 @@ class SessionDate < ApplicationRecord
 
   scope :for_session, -> { where("session_id = sessions.id") }
 
+  scope :today, -> { where(value: Date.current) }
+
   validates :value,
             uniqueness: {
               scope: :session
