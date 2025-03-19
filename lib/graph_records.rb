@@ -172,6 +172,7 @@ class GraphRecords
   DETAIL_WHITELIST = {
     consent: %i[response route created_at],
     session: %i[clinic?],
+    session_attendance: %i[attending],
     triage: %i[status created_at],
     vaccination_record: %i[outcome performed_at],
     programme: %i[type],
