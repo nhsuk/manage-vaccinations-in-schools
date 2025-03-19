@@ -15,7 +15,7 @@ on:
           - test
           - preview
           - training
-          # - production
+          - production
       image_tag:
         description: Docker image tag
         required: false
@@ -28,7 +28,7 @@ on:
 
 env:
   aws-role: ${{ inputs.environment == 'production'
-    && 'arn:aws:iam::820242920762:role/GitHubActionsRole'
+    && 'arn:aws:iam::820242920762:role/GithubDeployMavisAndInfrastructure'
     || 'arn:aws:iam::393416225559:role/GithubDeployMavisAndInfrastructure' }}
   tf-dir: terraform/app
 
