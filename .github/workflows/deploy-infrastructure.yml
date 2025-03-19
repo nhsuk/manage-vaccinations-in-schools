@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
     inputs:
       environment:
-        description: "Deployment environment"
+        description: Deployment environment
         required: true
         type: choice
         options:
@@ -15,11 +15,11 @@ on:
           - test
           - preview
           - training
-  #          - production
+          # - production
   workflow_call:
     inputs:
       environment:
-        description: "Deployment environment"
+        description: Deployment environment
         required: true
         type: string
 
@@ -48,8 +48,7 @@ jobs:
         with:
           terraform_version: 1.10.5
       - name: Install AWS Cli
-        run: |
-          sudo snap install --classic aws-cli
+        run: sudo snap install --classic aws-cli
       - name: Check if any deployments are running
         working-directory: ${{ env.tf_dir }}
         run: |

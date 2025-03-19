@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
     inputs:
       environment:
-        description: "Deployment environment"
+        description: Deployment environment
         required: true
         type: choice
         options:
@@ -15,9 +15,9 @@ on:
           - test
           - preview
           - training
-      #          - production
+          # - production
       image_tag:
-        description: "Docker image tag"
+        description: Docker image tag
         required: false
         type: string
   workflow_call:
@@ -138,8 +138,7 @@ jobs:
           role-to-assume: ${{ env.aws-role }}
           aws-region: eu-west-2
       - name: Install AWS CLI
-        run: |
-          sudo snap install --classic aws-cli
+        run: sudo snap install --classic aws-cli
       - name: Trigger CodeDeploy deployment
         run: |
           source ${{ runner.temp }}/artifact/CODEDEPLOY_ENV

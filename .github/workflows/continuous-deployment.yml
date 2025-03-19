@@ -3,7 +3,7 @@ run-name: Continuous deployment of ${{ github.ref }} to "copilotmigration"
 
 on:
   push:
-    branches: ["main"]
+    branches: [main]
 
 jobs:
   test:
@@ -15,9 +15,9 @@ jobs:
     needs: test
     uses: ./.github/workflows/deploy-infrastructure.yml
     with:
-      environment: "copilotmigration"
+      environment: copilotmigration
   deploy-application:
     needs: [build-and-push-image, deploy-infrastructure]
     uses: ./.github/workflows/deploy-application.yml
     with:
-      environment: "copilotmigration"
+      environment: copilotmigration
