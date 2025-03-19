@@ -319,9 +319,11 @@ Rails.application.routes.draw do
 
   get "/oidc/jwks", to: "jwks#jwks"
 
-  namespace :inspect do
-    namespace :graph do
-      get ":object_type/:object_id", to: "graphs#show"
+  constraints -> { !Rails.env.production? } do
+    namespace :inspect do
+      namespace :graph do
+        get ":object_type/:object_id", to: "graphs#show"
+      end
     end
   end
 end
