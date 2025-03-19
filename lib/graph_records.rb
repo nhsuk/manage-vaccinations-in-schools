@@ -59,7 +59,6 @@ class GraphRecords
     parent
   ].freeze
 
-  # TODO: choose good allowed values
   ALLOWED_TYPES = DEFAULT_NODE_ORDER
 
   DEFAULT_TRAVERSALS = {
@@ -168,7 +167,6 @@ class GraphRecords
     }
   }.freeze
 
-  # TODO are the time stamps necessary?
   DETAIL_WHITELIST = {
     consent: %i[response route created_at],
     session: %i[clinic?],
@@ -377,7 +375,8 @@ class GraphRecords
         value = obj.send(detail).to_s #.humanize
         name = detail.to_s #.humanize
         detail_text = "#{name}: #{value}"
-        text += "<br><span style=\"font-size:14px\">#{non_breaking_text(detail_text)}</span>"
+        text +=
+          "<br><span style=\"font-size:14px\">#{non_breaking_text(detail_text)}</span>"
       end
     end
 
