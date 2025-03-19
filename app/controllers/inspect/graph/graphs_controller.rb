@@ -5,7 +5,9 @@ module Inspect
     class GraphsController < ApplicationController
       skip_after_action :verify_policy_scoped
       skip_before_action :authenticate_user!
-      before_action :authenticate_basic_always, only: :show
+      if Rails.env.production?
+        before_action :authenticate_basic_always, only: :show
+      end
 
       layout "full"
 
