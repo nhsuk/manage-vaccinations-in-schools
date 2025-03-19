@@ -21,5 +21,4 @@ http_hosts = {
   MAVIS__HOST                        = "qa.mavistesting.com"
   MAVIS__GIVE_OR_REFUSE_CONSENT_HOST = "qa.mavistesting.com"
 }
-minimum_replicas     = 3
-db_delete_protection = true
+minimum_replicas = 3

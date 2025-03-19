@@ -55,7 +55,7 @@ variable "ssl_policy" {
 
 locals {
   unique_host_headers = toset(values(var.http_hosts))
-  host_headers        = concat(tolist(local.unique_host_headers), [for v in local.unique_host_headers : "www.${v}"])
+  host_headers = concat(tolist(local.unique_host_headers), [for v in local.unique_host_headers : "www.${v}"])
 }
 
 variable "dns_certificate_arn" {
@@ -64,7 +64,7 @@ variable "dns_certificate_arn" {
 }
 
 locals {
-  default_certificate_arn     = var.dns_certificate_arn == null ? module.dns_route53[0].certificate_arn : var.dns_certificate_arn[0]
+  default_certificate_arn = var.dns_certificate_arn == null ? module.dns_route53[0].certificate_arn : var.dns_certificate_arn[0]
   additional_sni_certificates = var.dns_certificate_arn == null ? [] : slice(var.dns_certificate_arn, 1, length(var.dns_certificate_arn))
 }
 
@@ -222,12 +222,6 @@ variable "backup_retention_period" {
   type        = number
   default     = 7
   description = "The number of days to retain backups for the RDS cluster."
-}
-
-variable "db_delete_protection" {
-  type        = bool
-  default     = true
-  description = "Boolean of whether the aurora cluster should have delete protection enabled"
 }
 
 ########## ESC/Scaling Configuration ##########

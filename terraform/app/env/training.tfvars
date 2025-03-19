@@ -24,5 +24,4 @@ http_hosts = {
   MAVIS__HOST                        = "training.manage-vaccinations-in-schools.nhs.uk"
   MAVIS__GIVE_OR_REFUSE_CONSENT_HOST = "training.manage-vaccinations-in-schools.nhs.uk"
 }
-minimum_replicas     = 3
-db_delete_protection = true
+minimum_replicas = 3
