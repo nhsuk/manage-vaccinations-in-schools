@@ -17,11 +17,11 @@ on:
           - training
 
 env:
-  aws_role: "arn:aws:iam::393416225559:role/GithubDeployMavisAndInfrastructure"
+  aws_role: arn:aws:iam::393416225559:role/GithubDeployMavisAndInfrastructure
   tf_dir: terraform/app
 
 jobs:
-  DestroyTerraformResources:
+  destroy-resources:
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -57,9 +57,9 @@ jobs:
         run: |
           terraform destroy -var-file="env/${{ inputs.environment }}.tfvars" \
           -var="image_digest=notneededfordestroy" -auto-approve
-  DestroyTerraformBackend:
+  destroy-backend:
     runs-on: ubuntu-latest
-    needs: DestroyTerraformResources
+    needs: destroy-resources
     permissions:
       id-token: write
     environment: ${{ inputs.environment }}
