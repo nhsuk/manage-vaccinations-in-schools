@@ -8,14 +8,14 @@ jobs:
     uses: ./.github/workflows/test.yml
   Build:
     needs: Test
-    uses: ./.github/workflows/build.yml
+    uses: ./.github/workflows/build-and-push-image.yml
   DeployInfrastructure:
     needs: Test
-    uses: ./.github/workflows/deploy_infrastructure.yml
+    uses: ./.github/workflows/deploy-infrastructure.yml
     with:
       environment: "copilotmigration"
   DeployApplication:
     needs: [Build, DeployInfrastructure]
-    uses: ./.github/workflows/deploy_application.yml
+    uses: ./.github/workflows/deploy-application.yml
     with:
       environment: "copilotmigration"
