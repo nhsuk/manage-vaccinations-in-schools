@@ -60,20 +60,16 @@ jobs:
       - name: Get image digest
         working-directory: ${{ env.tf_dir }}
         run: |
-          TASK_DEFINITION_EXISTS=$(terraform state list | grep aws_ecs_task_definition.task_definition) || true
-          if [ -z "$TASK_DEFINITION_EXISTS" ]; then
-            echo "No existing task definition found. Using the provided docker image sha"
-            DIGEST=${{ inputs.docker_sha }}
-          else
+          DIGEST="${{ inputs.docker_sha }}"
+          if terraform state list | grep -q 'aws_ecs_task_definition.task_definition'; then
             DIGEST=$(terraform state show aws_ecs_task_definition.task_definition | grep -oP '(?<=mavis/webapp@)sha256:[0-9a-z]{64}')
-          fi
-          if [ -z "$DIGEST" ]; then
-            echo "Image digest not found in the currently deployed task definition"
-            echo "Aborting infrastructure deployment"
-            exit 1
+            echo "Existing task definition found, using image digest from the state: $DIGEST"
+          elif [ -z "$DIGEST" ]; then
+            echo "Aborting infrastructure deployment: Missing existing task definition or image digest input parameter"
+          else
+            echo "No existing task definition found: Using image digest from the input parameter: $DIGEST"
           fi
           echo "DIGEST=$DIGEST" >> $GITHUB_ENV
-          echo "Image digest in terraform state: $DIGEST"
       - name: Terraform Plan
         id: plan
         working-directory: ${{ env.tf_dir }}
