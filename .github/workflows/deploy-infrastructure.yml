@@ -60,7 +60,7 @@ jobs:
       - name: Get image digest
         working-directory: ${{ env.tf_dir }}
         run: |
-          TASK_DEFINITION_EXISTS=$(terraform state list | grep aws_ecs_task_definition.task_definition)
+          TASK_DEFINITION_EXISTS=$(terraform state list | grep aws_ecs_task_definition.task_definition) || true
           if [ -z "$TASK_DEFINITION_EXISTS" ]; then
             echo "No existing task definition found. Using the provided docker image sha"
             DIGEST=${{ inputs.docker_sha }}
