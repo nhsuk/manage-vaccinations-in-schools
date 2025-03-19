@@ -1,5 +1,5 @@
-name: TF Deploy Application
-run-name: TF Deploy Application on ${{ inputs.environment }}
+name: Deploy application
+run-name: Deploy application to ${{ inputs.environment }}
 
 on:
   workflow_dispatch:
@@ -33,7 +33,8 @@ env:
   tf-dir: terraform/app
 
 jobs:
-  PlanUpdate:
+  plan-changes:
+    name: Plan task definition changes
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -78,9 +79,11 @@ jobs:
         with:
           name: tfplan_app
           path: ${{ runner.temp }}/tfplan
-  DeployUpdate:
+
+  apply-changes:
+    name: Apply task definition changes
     runs-on: ubuntu-latest
-    needs: PlanUpdate
+    needs: plan-changes
     environment: ${{ inputs.environment }}
     permissions:
       id-token: write
@@ -115,9 +118,11 @@ jobs:
         with:
           name: CODEDEPLOY_ENV
           path: ${{ runner.temp }}/CODEDEPLOY_ENV
-  TriggerCodeDeploy:
+
+  create-deployment:
+    name: Create deployment
     runs-on: ubuntu-latest
-    needs: DeployUpdate
+    needs: apply-changes
     environment: ${{ inputs.environment }}
     permissions:
       id-token: write

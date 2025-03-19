@@ -1,21 +1,23 @@
-name: Continuous Deployment
-run-name: Continuous Deployment of ${{ github.ref }} to "copilotmigration"
+name: Continuous deployment
+run-name: Continuous deployment of ${{ github.ref }} to "copilotmigration"
+
 on:
   push:
     branches: ["main"]
+
 jobs:
-  Test:
+  test:
     uses: ./.github/workflows/test.yml
-  Build:
-    needs: Test
+  build-and-push-image:
+    needs: test
     uses: ./.github/workflows/build-and-push-image.yml
-  DeployInfrastructure:
-    needs: Test
+  deploy-infrastructure:
+    needs: test
     uses: ./.github/workflows/deploy-infrastructure.yml
     with:
       environment: "copilotmigration"
-  DeployApplication:
-    needs: [Build, DeployInfrastructure]
+  deploy-application:
+    needs: [build-and-push-image, deploy-infrastructure]
     uses: ./.github/workflows/deploy-application.yml
     with:
       environment: "copilotmigration"

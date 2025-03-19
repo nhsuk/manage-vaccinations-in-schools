@@ -1,5 +1,5 @@
-name: Deploy Infrastructure with Terraform
-run-name: Deploy AWS infrastructure for ${{ inputs.environment }}
+name: Deploy infrastructure
+run-name: Deploy infrastructure for ${{ inputs.environment }}
 
 on:
   workflow_dispatch:
@@ -30,7 +30,8 @@ env:
   tf_dir: terraform/app
 
 jobs:
-  TerraformPlan:
+  plan:
+    name: Terraform plan
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -93,9 +94,11 @@ jobs:
         with:
           name: tfplan_infrastructure
           path: ${{ runner.temp }}/tfplan
-  ApplyUpdate:
+
+  apply:
+    name: Terraform apply
     runs-on: ubuntu-latest
-    needs: TerraformPlan
+    needs: plan
     environment: ${{ inputs.environment }}
     permissions:
       id-token: write

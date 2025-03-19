@@ -1,10 +1,11 @@
-name: Build Mavis image
+name: Build and push image
+
 on:
   workflow_dispatch:
   workflow_call:
 
 jobs:
-  Build:
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -20,9 +21,9 @@ jobs:
         with:
           name: image
           path: image.tar
-  Push-image:
+  push:
     runs-on: ubuntu-latest
-    needs: Build
+    needs: build
     permissions:
       id-token: write
     strategy:
