@@ -355,6 +355,7 @@ class GraphRecords
   end
 
   def non_breaking_text(text)
+    # Insert non-breaking spaces and hyphens to prevent Mermaid from breaking the line
     text.gsub(" ", "&nbsp;").gsub("-", "#8209;")
   end
 
@@ -376,9 +377,7 @@ class GraphRecords
         value = obj.send(detail).to_s #.humanize
         name = detail.to_s #.humanize
         detail_text = "#{name}: #{value}"
-        # Insert non-breaking spaces and hyphens to prevent Mermaid from breaking the line
-        detail_text = detail_text.gsub(" ", "&nbsp;").gsub("-", "&#8209;")
-        text += "<br><span style=\"font-size:14px\">#{detail_text}</span>"
+        text += "<br><span style=\"font-size:14px\">#{non_breaking_text(detail_text)}</span>"
       end
     end
 
