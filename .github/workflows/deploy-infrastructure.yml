@@ -57,10 +57,16 @@ jobs:
         working-directory: ${{ env.tf_dir }}
         run: |
           ../scripts/check-for-running-deployments.sh ${{ inputs.environment }}
-      - name: Get saved image digest
+      - name: Get image digest
         working-directory: ${{ env.tf_dir }}
         run: |
-          DIGEST=$(terraform state show aws_ecs_task_definition.task_definition | grep -oP '(?<=mavis/webapp@)sha256:[0-9a-z]{64}' || ${{ inputs.docker_sha }})
+          TASK_DEFINITION_EXISTS=$(terraform state list | grep aws_ecs_task_definition.task_definition)
+          if [ -z "$TASK_DEFINITION_EXISTS" ]; then
+            echo "No existing task definition found. Using the provided docker image sha"
+            DIGEST=${{ inputs.docker_sha }}
+          else
+            DIGEST=$(terraform state show aws_ecs_task_definition.task_definition | grep -oP '(?<=mavis/webapp@)sha256:[0-9a-z]{64}')
+          fi
           if [ -z "$DIGEST" ]; then
             echo "Image digest not found in the currently deployed task definition"
             echo "Aborting infrastructure deployment"
