@@ -4,6 +4,7 @@ module Inspect
   module Graph
     class GraphsController < ApplicationController
       skip_after_action :verify_policy_scoped
+      skip_before_action :authenticate_user!
       before_action :authenticate_basic_always, only: :show
 
       layout "full"
