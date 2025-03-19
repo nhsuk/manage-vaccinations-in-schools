@@ -10,7 +10,7 @@ class PatientsController < ApplicationController
 
   def index
     patients =
-      @form.apply(
+      @form.apply_to_scope(
         policy_scope(Patient).includes(:school).not_deceased.order_by_name
       )
 

@@ -22,6 +22,10 @@ class SearchForm
   end
 
   def apply(scope, programme: nil)
+    apply_outcomes(apply_to_scope(scope), programme:)
+  end
+
+  def apply_to_scope(scope)
     scope = scope.search_by_name(q) if q.present?
 
     scope = scope.search_by_year_groups(year_groups) if year_groups.present?
@@ -40,10 +44,10 @@ class SearchForm
 
     scope = scope.search_by_nhs_number(nil) if missing_nhs_number.present?
 
-    scope = scope.order_by_name
+    scope.order_by_name
+  end
 
-    scope = yield(scope) if block_given?
-
+  def apply_outcomes(scope, programme: nil)
     if (status = consent_status&.to_sym).present?
       scope =
         scope.select do

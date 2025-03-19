@@ -16,11 +16,13 @@ class Sessions::RegisterController < ApplicationController
     @statuses = PatientSession::RegisterOutcome::STATUSES
 
     scope =
-      @session.patient_sessions.preload_for_status.in_programmes(
-        @session.programmes
+      @form.apply_to_scope(
+        @session.patient_sessions.preload_for_status.in_programmes(
+          @session.programmes
+        )
       )
 
-    patient_sessions = @form.apply(scope)
+    patient_sessions = @form.apply_outcomes(scope)
 
     if patient_sessions.is_a?(Array)
       @pagy, @patient_sessions = pagy_array(patient_sessions)

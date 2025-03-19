@@ -47,13 +47,15 @@ class ProgrammesController < ApplicationController
     @statuses = Patient::ProgrammeOutcome::STATUSES
 
     scope =
-      policy_scope(Patient).in_programmes([@programme]).preload(
-        :triages,
-        :vaccination_records,
-        consents: :parent
+      @form.apply_to_scope(
+        policy_scope(Patient).in_programmes([@programme]).preload(
+          :triages,
+          :vaccination_records,
+          consents: :parent
+        )
       )
 
-    patients = @form.apply(scope, programme: @programme)
+    patients = @form.apply_outcomes(scope, programme: @programme)
 
     if patients.is_a?(Array)
       @pagy, @patients = pagy_array(patients)

@@ -20,7 +20,7 @@ class ConsentFormsController < ApplicationController
 
   def search
     patients =
-      @form.apply(
+      @form.apply_to_scope(
         policy_scope(Patient).includes(:school, parent_relationships: :parent)
       )
 
