@@ -31,7 +31,10 @@ env:
   aws_role: ${{ inputs.environment == 'production'
     && 'arn:aws:iam::820242920762:role/GithubDeployMavisAndInfrastructure'
     || 'arn:aws:iam::393416225559:role/GithubDeployMavisAndInfrastructure' }}
-  tf_dir: terraform/app
+
+defaults:
+  run:
+    working-directory: terraform/app
 
 jobs:
   plan:
@@ -54,11 +57,8 @@ jobs:
       - name: Install AWS Cli
         run: sudo snap install --classic aws-cli
       - name: Check if any deployments are running
-        working-directory: ${{ env.tf_dir }}
-        run: |
-          ../scripts/check-for-running-deployments.sh ${{ inputs.environment }}
+        run: ../scripts/check-for-running-deployments.sh ${{ inputs.environment }}
       - name: Get image digest
-        working-directory: ${{ env.tf_dir }}
         run: |
           DIGEST="${{ inputs.docker_sha }}"
           if terraform state list | grep -q 'aws_ecs_task_definition.task_definition'; then
@@ -72,7 +72,6 @@ jobs:
           echo "DIGEST=$DIGEST" >> $GITHUB_ENV
       - name: Terraform Plan
         id: plan
-        working-directory: ${{ env.tf_dir }}
         run: |
           set -e
           terraform plan -var="image_digest=$DIGEST" -var-file="env/${{ inputs.environment }}.tfvars" \
@@ -80,7 +79,7 @@ jobs:
       - name: Validate the changes
         run: |
           set -e
-          ./terraform/scripts/validate_plan.sh ${{ runner.temp }}/tf_stdout
+          ../scripts/validate_plan.sh ${{ runner.temp }}/tf_stdout
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
@@ -112,7 +111,6 @@ jobs:
         with:
           terraform_version: 1.10.5
       - name: Apply the changes
-        working-directory: ${{ env.tf_dir }}
         run: |
           set -e
           terraform init -backend-config="env/${{ inputs.environment }}-backend.hcl" -upgrade

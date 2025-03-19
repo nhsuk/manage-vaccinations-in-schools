@@ -30,7 +30,7 @@ env:
   aws-role: ${{ inputs.environment == 'production'
     && 'arn:aws:iam::820242920762:role/GithubDeployMavisAndInfrastructure'
     || 'arn:aws:iam::393416225559:role/GithubDeployMavisAndInfrastructure' }}
-  tf-dir: terraform/app
+  terraform-working-directory: terraform/app
 
 jobs:
   plan-changes:
@@ -65,7 +65,7 @@ jobs:
           terraform_version: 1.10.5
       - name: Update the task definition
         id: plan
-        working-directory: ${{ env.tf-dir }}
+        working-directory: ${{ env.terraform-working-directory }}
         run: |
           terraform init -backend-config="env/${{ inputs.environment }}-backend.hcl" -upgrade
           terraform plan -var="image_digest=$DIGEST" -target=aws_ecs_task_definition.task_definition \
@@ -105,7 +105,7 @@ jobs:
         with:
           terraform_version: 1.10.5
       - name: Apply the changes
-        working-directory: ${{ env.tf-dir }}
+        working-directory: ${{ env.terraform-working-directory }}
         run: |
           terraform init -backend-config="env/${{ inputs.environment }}-backend.hcl" -upgrade
           terraform apply ${{ runner.temp }}/tfplan
