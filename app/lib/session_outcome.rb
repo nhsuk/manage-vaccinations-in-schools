@@ -1,8 +1,14 @@
 # frozen_string_literal: true
 
 class SessionOutcome
-  def initialize(patient_sessions:, register_outcome:, triage_outcome:)
+  def initialize(
+    patient_sessions:,
+    consent_outcome:,
+    register_outcome:,
+    triage_outcome:
+  )
     @patient_sessions = patient_sessions
+    @consent_outcome = consent_outcome
     @register_outcome = register_outcome
     @triage_outcome = triage_outcome
   end
@@ -47,7 +53,7 @@ class SessionOutcome
            )
        )
       outcome.to_sym
-    elsif patient_session.patient.consent_outcome.refused?(programme)
+    elsif consent_outcome.refused?(patient, programme:)
       REFUSED
     elsif triage_outcome.do_not_vaccinate?(patient, programme:)
       HAD_CONTRAINDICATIONS
@@ -60,7 +66,10 @@ class SessionOutcome
 
   private
 
-  attr_reader :patient_sessions, :register_outcome, :triage_outcome
+  attr_reader :patient_sessions,
+              :consent_outcome,
+              :register_outcome,
+              :triage_outcome
 
   def vaccination_record_outcomes
     @vaccination_record_outcomes ||=

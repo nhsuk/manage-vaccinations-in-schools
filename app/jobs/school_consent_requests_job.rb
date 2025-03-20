@@ -10,11 +10,7 @@ class SchoolConsentRequestsJob < ApplicationJob
         .includes(
           :programmes,
           patient_sessions: {
-            patient: [
-              :consents,
-              :parents,
-              { consent_notifications: :programmes }
-            ]
+            patient: [:parents, { consent_notifications: :programmes }]
           }
         )
         .preload(:session_dates)
@@ -48,8 +44,8 @@ class SchoolConsentRequestsJob < ApplicationJob
 
     has_consent_or_vaccinated =
       programmes.all? do |programme|
-        patient.consents.exists?(programme:)
-        patient.vaccination_records.exists?(programme:)
+        patient.consents.exists?(programme:) ||
+          patient.vaccination_records.exists?(programme:)
       end
 
     return false if has_consent_or_vaccinated

@@ -8,9 +8,7 @@ describe AppConsentComponent do
   end
 
   let(:programmes) { [create(:programme)] }
-  let(:consent) do
-    patient_session.patient.consent_outcome.all[programmes.first].first
-  end
+  let(:consent) { patient_session.patient.consents.first }
 
   before { patient_session.reload.strict_loading!(false) }
 

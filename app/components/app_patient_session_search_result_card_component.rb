@@ -103,15 +103,11 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
         end
       render AppProgrammeStatusTagsComponent.new(statuses, outcome: :triage)
     else
-      outcome = patient.consent_outcome
-
-      # ensure status is calculated for each programme
-      patient_session.programmes.each { outcome.status[it] }
-
-      render AppProgrammeStatusTagsComponent.new(
-               outcome.status,
-               outcome: context
-             )
+      statuses =
+        patient_session.programmes.index_with do
+          outcomes.consent.status(patient, programme: it)
+        end
+      render AppProgrammeStatusTagsComponent.new(statuses, outcome: :consent)
     end
   end
 end

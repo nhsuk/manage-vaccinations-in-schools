@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
 class TriageOutcome
-  def initialize(patients:, vaccinated_criteria:)
+  def initialize(patients:, consent_outcome:, vaccinated_criteria:)
     @patients = patients
+    @consent_outcome = consent_outcome
     @vaccinated_criteria = vaccinated_criteria
   end
 
@@ -49,7 +50,7 @@ class TriageOutcome
   end
 
   def consent_needs_triage?(patient, programme:)
-    patient.consent_outcome.latest[programme].any?(&:triage_needed?)
+    consent_outcome.needs_triage?(patient, programme:)
   end
 
   def vaccination_history_needs_triage?(patient, programme:)
@@ -58,7 +59,7 @@ class TriageOutcome
 
   private
 
-  attr_reader :patients, :vaccinated_criteria
+  attr_reader :patients, :consent_outcome, :vaccinated_criteria
 
   def triage_safe_to_vaccinate?(patient, programme:)
     triages.dig(patient.id, programme.id) == "ready_to_vaccinate"
@@ -75,7 +76,7 @@ class TriageOutcome
   def triage_required?(patient, programme:)
     return true if triages.dig(patient.id, programme.id) == "needs_follow_up"
 
-    patient.consent_outcome.given?(programme) &&
+    consent_outcome.given?(patient, programme:) &&
       (
         consent_needs_triage?(patient, programme:) ||
           vaccination_history_needs_triage?(patient, programme:)

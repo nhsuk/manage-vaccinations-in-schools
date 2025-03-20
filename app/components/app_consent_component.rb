@@ -14,7 +14,11 @@ class AppConsentComponent < ViewComponent::Base
 
   def consents
     @consents ||=
-      patient.consent_outcome.all[programme].sort_by(&:created_at).reverse
+      patient
+        .consents
+        .eager_load(:consent_form, :parent)
+        .where(programme:)
+        .order(created_at: :desc)
   end
 
   def latest_consent_request
@@ -28,9 +32,8 @@ class AppConsentComponent < ViewComponent::Base
   end
 
   def can_send_consent_request?
-    patient.consent_outcome.no_response?(programme) &&
-      patient.send_notifications? && session.open_for_consent? &&
-      patient.parents.any?
+    consents.empty? && patient.send_notifications? &&
+      session.open_for_consent? && patient.parents.any?
   end
 
   def status_colour(consent)

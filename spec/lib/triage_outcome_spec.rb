@@ -4,15 +4,13 @@ describe TriageOutcome do
   subject(:instance) do
     described_class.new(
       patients: Patient.all,
+      consent_outcome: ConsentOutcome.new(patients: Patient.all),
       vaccinated_criteria: VaccinatedCriteria.new(patients: Patient.all)
     )
   end
 
   let(:programme) { create(:programme, :hpv) }
   let(:patient) { create(:patient, year_group: 8) }
-
-  # TODO: Remove once ConsentOutcome is refactored
-  before { patient.strict_loading!(false) }
 
   describe "#status" do
     subject(:status) { instance.status(patient, programme:) }

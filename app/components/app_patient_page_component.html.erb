@@ -67,7 +67,7 @@
 
 <% if display_health_questions? %>
   <%= render AppHealthAnswersCardComponent.new(
-        patient.consent_outcome.latest[programme],
+        patient.latest_consents(programme:),
         heading: "All answers to health questions",
       ) %>
 <% end %>

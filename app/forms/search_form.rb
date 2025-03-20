@@ -50,13 +50,11 @@ class SearchForm
   def apply_outcomes(scope, outcomes:, programme: nil)
     if (status = consent_status&.to_sym).present?
       scope =
-        scope.select do
-          it
-            .patient
-            .consent_outcome
-            .status
-            .values_at(*it.programmes)
-            .include?(status)
+        scope.select do |patient_session|
+          patient_session.programmes.any? do
+            outcomes.consent.status(patient_session.patient, programme: it) ==
+              status
+          end
         end
     end
 

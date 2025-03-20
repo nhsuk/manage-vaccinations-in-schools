@@ -8,9 +8,6 @@ describe Patient::NextActivity do
   let(:programme) { create(:programme, :hpv) }
   let(:patient) { create(:patient, year_group: 8) }
 
-  # TODO: Remove once ConsentOutcome is refactored
-  before { patient.strict_loading!(false) }
-
   describe "#status" do
     subject(:status) { instance.status[programme] }
 

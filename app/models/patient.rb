@@ -262,18 +262,25 @@ class Patient < ApplicationRecord
     birth_academic_year_changed?
   end
 
-  def consent_outcome
-    @consent_outcome ||= Patient::ConsentOutcome.new(self)
-  end
-
   def next_activity(outcomes)
     @next_activity ||= Patient::NextActivity.new(self, outcomes:)
+  end
+
+  def latest_consents(programme:)
+    scope =
+      consents
+        .where(programme:)
+        .not_invalidated
+        .where(response: %i[given refused])
+        .eager_load(:parent)
+
+    ConsentGrouper.call(scope, programme:)
   end
 
   def consent_given_and_safe_to_vaccinate?(outcomes:, programme:)
     return false if outcomes.programme.vaccinated?(self, programme:)
 
-    consent_outcome.given?(programme) &&
+    outcomes.consent.given?(self, programme:) &&
       (
         outcomes.triage.safe_to_vaccinate?(self, programme:) ||
           outcomes.triage.delay_vaccination?(self, programme:) ||

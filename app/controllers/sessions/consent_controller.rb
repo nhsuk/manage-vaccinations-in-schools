@@ -12,7 +12,7 @@ class Sessions::ConsentController < ApplicationController
   layout "full"
 
   def show
-    @statuses = Patient::ConsentOutcome::STATUSES
+    @statuses = ConsentOutcome::STATUSES
 
     scope =
       @form.apply_to_scope(

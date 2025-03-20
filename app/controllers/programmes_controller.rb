@@ -47,11 +47,7 @@ class ProgrammesController < ApplicationController
     @statuses = ProgrammeOutcome::STATUSES
 
     scope =
-      @form.apply_to_scope(
-        policy_scope(Patient).in_programmes([@programme]).preload(
-          consents: :parent
-        )
-      )
+      @form.apply_to_scope(policy_scope(Patient).in_programmes([@programme]))
 
     @outcomes = Outcomes.new(patients: scope)
 

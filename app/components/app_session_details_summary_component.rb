@@ -33,13 +33,20 @@ class AppSessionDetailsSummaryComponent < ViewComponent::Base
   end
 
   def consent_refused_row
-    status = Patient::ConsentOutcome::REFUSED
     count =
-      patient_sessions.count do
-        it.patient.consent_outcome.status.values_at(*it.programmes).any?(status)
+      patient_sessions.count do |patient_session|
+        patient_session.programmes.any? do |programme|
+          outcomes.consent.refused?(patient_session.patient, programme:)
+        end
       end
+
     href =
-      session_consent_path(session, search_form: { consent_status: status })
+      session_consent_path(
+        session,
+        search_form: {
+          consent_status: ConsentOutcome::REFUSED
+        }
+      )
 
     {
       key: {

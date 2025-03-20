@@ -21,9 +21,9 @@ class TriagesController < ApplicationController
     authorize @triage
 
     if @triage.save(context: :consent)
-      @patient.reload.consent_outcome.latest[@triage.programme].each do
-        send_triage_confirmation(@patient_session, it)
-      end
+      @patient
+        .latest_consents(programme: @triage.programme)
+        .each { send_triage_confirmation(@patient_session, it) }
 
       flash[:success] = {
         heading: "Triage outcome updated for",

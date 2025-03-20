@@ -22,10 +22,15 @@ class Outcomes
     end
   end
 
+  def consent
+    @consent ||= ConsentOutcome.new(patients:)
+  end
+
   def programme
     @programme ||=
       ProgrammeOutcome.new(
         patients:,
+        consent_outcome: consent,
         triage_outcome: triage,
         vaccinated_criteria:
       )
@@ -39,13 +44,19 @@ class Outcomes
     @session ||=
       SessionOutcome.new(
         patient_sessions:,
+        consent_outcome: consent,
         register_outcome: register,
         triage_outcome: triage
       )
   end
 
   def triage
-    @triage ||= TriageOutcome.new(patients:, vaccinated_criteria:)
+    @triage ||=
+      TriageOutcome.new(
+        patients:,
+        consent_outcome: consent,
+        vaccinated_criteria:
+      )
   end
 
   def vaccinated_criteria

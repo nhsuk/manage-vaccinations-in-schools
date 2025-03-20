@@ -1,8 +1,14 @@
 # frozen_string_literal: true
 
 class ProgrammeOutcome
-  def initialize(patients:, triage_outcome:, vaccinated_criteria:)
+  def initialize(
+    patients:,
+    consent_outcome:,
+    triage_outcome:,
+    vaccinated_criteria:
+  )
     @patients = patients
+    @consent_outcome = consent_outcome
     @triage_outcome = triage_outcome
     @vaccinated_criteria = vaccinated_criteria
   end
@@ -37,10 +43,10 @@ class ProgrammeOutcome
 
   private
 
-  attr_reader :patients, :triage_outcome, :vaccinated_criteria
+  attr_reader :patients, :consent_outcome, :triage_outcome, :vaccinated_criteria
 
   def programme_could_not_vaccinate?(patient, programme:)
-    patient.consent_outcome.refused?(programme) ||
+    consent_outcome.refused?(patient, programme:) ||
       triage_outcome.do_not_vaccinate?(patient, programme:)
   end
 end

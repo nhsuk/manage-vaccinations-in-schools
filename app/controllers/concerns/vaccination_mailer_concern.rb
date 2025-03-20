@@ -48,7 +48,7 @@ module VaccinationMailerConcern
     return [] unless patient.send_notifications?
 
     programme = vaccination_record.programme
-    consents = patient.consent_outcome.latest[programme]
+    consents = patient.latest_consents(programme:)
 
     parents =
       if consents.any?(&:via_self_consent?)

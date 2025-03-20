@@ -14,22 +14,22 @@ module PatientSessionStatusConcern
           "vaccinated"
         elsif outcomes.triage.delay_vaccination?(patient, programme:)
           "delay_vaccination"
-        elsif patient.consent_outcome.refused?(programme)
+        elsif outcomes.consent.refused?(patient, programme:)
           "consent_refused"
         elsif outcomes.triage.do_not_vaccinate?(patient, programme:)
           "triaged_do_not_vaccinate"
         elsif outcomes.session.not_vaccinated?(self, programme:)
           "unable_to_vaccinate"
-        elsif patient.consent_outcome.given?(programme) &&
+        elsif outcomes.consent.given?(patient, programme:) &&
               outcomes.triage.safe_to_vaccinate?(patient, programme:)
           "triaged_ready_to_vaccinate"
-        elsif patient.consent_outcome.given?(programme) &&
+        elsif outcomes.consent.given?(patient, programme:) &&
               outcomes.triage.required?(patient, programme:)
           "consent_given_triage_needed"
-        elsif patient.consent_outcome.given?(programme) &&
+        elsif outcomes.consent.given?(patient, programme:) &&
               outcomes.triage.not_required?(patient, programme:)
           "consent_given_triage_not_needed"
-        elsif patient.consent_outcome.conflicts?(programme)
+        elsif outcomes.consent.conflicts?(patient, programme:)
           "consent_conflicts"
         else
           "added_to_session"

@@ -4,16 +4,22 @@ describe SessionOutcome do
   subject(:instance) do
     described_class.new(
       patient_sessions: PatientSession.all,
+      consent_outcome:,
       register_outcome:,
       triage_outcome:
     )
   end
 
+  let(:consent_outcome) { ConsentOutcome.new(patients: Patient.all) }
   let(:register_outcome) do
     RegisterOutcome.new(patient_sessions: PatientSession.all)
   end
   let(:triage_outcome) do
-    TriageOutcome.new(patients: Patient.all, vaccinated_criteria:)
+    TriageOutcome.new(
+      patients: Patient.all,
+      consent_outcome:,
+      vaccinated_criteria:
+    )
   end
   let(:vaccinated_criteria) { VaccinatedCriteria.new(patients: Patient.all) }
 
