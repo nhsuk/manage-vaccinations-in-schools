@@ -1,8 +1,7 @@
 # frozen_string_literal: true
 
-class Patient::NextActivity
-  def initialize(patient, outcomes:)
-    @patient = patient
+class NextActivity
+  def initialize(outcomes:)
     @outcomes = outcomes
   end
 
@@ -14,18 +13,7 @@ class Patient::NextActivity
     RECORD = :record
   ].freeze
 
-  def status
-    @status ||=
-      Hash.new do |hash, programme|
-        hash[programme] = status_for_programme(programme)
-      end
-  end
-
-  private
-
-  attr_reader :patient, :outcomes
-
-  def status_for_programme(programme)
+  def status(patient, programme:)
     return REPORT if outcomes.programme.vaccinated?(patient, programme:)
 
     if patient.consent_given_and_safe_to_vaccinate?(outcomes:, programme:)
@@ -41,4 +29,8 @@ class Patient::NextActivity
 
     DO_NOT_RECORD
   end
+
+  private
+
+  attr_reader :outcomes
 end

@@ -40,7 +40,7 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
     <% end %>
   ERB
 
-  def initialize(patient_session, context:, outcomes:)
+  def initialize(patient_session, context:, outcomes:, next_activity: nil)
     unless context.in?(%i[consent triage register record outcome])
       raise "Unknown context: #{context}"
     end
@@ -50,6 +50,7 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
     @patient_session = patient_session
     @context = context
     @outcomes = outcomes
+    @next_activity = next_activity
 
     @patient = patient_session.patient
     @session = patient_session.session
@@ -57,7 +58,12 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
 
   private
 
-  attr_reader :patient_session, :patient, :session, :context, :outcomes
+  attr_reader :patient_session,
+              :patient,
+              :session,
+              :context,
+              :outcomes,
+              :next_activity
 
   def link_to
     programme = patient_session.programmes.first
@@ -75,8 +81,7 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
     tag.ul(class: "nhsuk-list nhsuk-list--bullet") do
       safe_join(
         patient_session.programmes.map do |programme|
-          status =
-            patient_session.patient.next_activity(outcomes).status[programme]
+          status = next_activity.status(patient, programme:)
           tag.li("#{I18n.t(status, scope: :activity)} for #{programme.name}")
         end
       )

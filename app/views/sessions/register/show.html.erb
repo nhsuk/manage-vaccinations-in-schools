@@ -23,7 +23,7 @@
       <%= render AppSearchResultsComponent.new(@pagy) do %>
         <% @patient_sessions.each do |patient_session| %>
           <%= render AppPatientSessionSearchResultCardComponent.new(
-                patient_session, context: :register, outcomes: @outcomes,
+                patient_session, context: :register, outcomes: @outcomes, next_activity: @next_activity,
               ) %>
         <% end %>
       <% end %>

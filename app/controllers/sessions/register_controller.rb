@@ -23,6 +23,7 @@ class Sessions::RegisterController < ApplicationController
       )
 
     @outcomes = Outcomes.new(patient_sessions: scope)
+    @next_activity = NextActivity.new(outcomes: @outcomes)
 
     patient_sessions = @form.apply_outcomes(scope, outcomes: @outcomes)
 

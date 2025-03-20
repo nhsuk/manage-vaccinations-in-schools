@@ -1,15 +1,13 @@
 # frozen_string_literal: true
 
-describe Patient::NextActivity do
-  subject(:instance) do
-    described_class.new(patient, outcomes: Outcomes.new(patient:))
-  end
+describe NextActivity do
+  subject(:instance) { described_class.new(outcomes: Outcomes.new(patient:)) }
 
   let(:programme) { create(:programme, :hpv) }
   let(:patient) { create(:patient, year_group: 8) }
 
   describe "#status" do
-    subject(:status) { instance.status[programme] }
+    subject(:status) { instance.status(patient, programme:) }
 
     context "with no consent" do
       it { should be(described_class::CONSENT) }

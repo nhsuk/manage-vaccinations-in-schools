@@ -262,10 +262,6 @@ class Patient < ApplicationRecord
     birth_academic_year_changed?
   end
 
-  def next_activity(outcomes)
-    @next_activity ||= Patient::NextActivity.new(self, outcomes:)
-  end
-
   def latest_consents(programme:)
     scope =
       consents
