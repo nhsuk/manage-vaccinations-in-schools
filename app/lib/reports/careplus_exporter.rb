@@ -117,7 +117,7 @@ class Reports::CareplusExporter
     patient = patient_session.patient
 
     vaccination_records =
-      patient_session.session_outcome.all[programme].select(&:administered?)
+      patient_session.vaccination_records.where(programme:).administered
 
     if vaccination_records.any?
       [existing_row(patient:, patient_session:, vaccination_records:)]
@@ -135,7 +135,7 @@ class Reports::CareplusExporter
       patient.given_name,
       patient.date_of_birth.strftime("%d/%m/%Y"),
       patient.restricted? ? "" : patient.address_line_1,
-      patient.consent_outcome.latest[programme].first&.name || "",
+      patient.latest_consents(programme:).first&.name || "",
       99, # Ethnicity, 99 is "Not known"
       first_vaccination.performed_at.strftime("%d/%m/%Y"),
       first_vaccination.performed_at.strftime("%H:%M"),

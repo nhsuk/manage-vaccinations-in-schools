@@ -4,6 +4,7 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
   def initialize(
     patient,
     link_to:,
+    outcomes: nil,
     programme: nil,
     show_parents: false,
     show_postcode: false,
@@ -14,6 +15,7 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
 
     @patient = patient
     @link_to = link_to
+    @outcomes = outcomes
     @programme = programme
 
     @show_parents = show_parents
@@ -68,7 +70,7 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
   private
 
   def programme_outcome_tag
-    status = @patient.programme_outcome.status[@programme]
+    status = @outcomes.programme.status(@patient, programme: @programme)
     render AppProgrammeStatusTagsComponent.new(
              { @programme => status },
              outcome: :programme

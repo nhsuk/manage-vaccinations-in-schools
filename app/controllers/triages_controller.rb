@@ -21,9 +21,9 @@ class TriagesController < ApplicationController
     authorize @triage
 
     if @triage.save(context: :consent)
-      @patient.reload.consent_outcome.latest[@triage.programme].each do
-        send_triage_confirmation(@patient_session, it)
-      end
+      @patient
+        .latest_consents(programme: @triage.programme)
+        .each { send_triage_confirmation(@patient_session, it) }
 
       flash[:success] = {
         heading: "Triage outcome updated for",
@@ -51,7 +51,7 @@ class TriagesController < ApplicationController
     @patient =
       @session
         .patients
-        .includes(:consents, :school, parent_relationships: :parent)
+        .includes(:school, parent_relationships: :parent)
         .find_by(id: params[:patient_id])
   end
 
@@ -59,9 +59,10 @@ class TriagesController < ApplicationController
     @patient_session =
       @patient
         .patient_sessions
-        .preload_for_status
         .includes(:gillick_assessments)
         .find_by!(session: @session)
+
+    @outcomes = Outcomes.new(patient_session: @patient_session)
   end
 
   def set_programme

@@ -1,15 +1,13 @@
 # frozen_string_literal: true
 
-describe Patient::ConsentOutcome do
-  subject(:instance) { described_class.new(patient) }
+describe ConsentOutcome do
+  subject(:instance) { described_class.new(patients: Patient.all) }
 
   let(:programme) { create(:programme, :hpv) }
   let(:patient) { create(:patient, year_group: 8) }
 
-  before { patient.strict_loading!(false) }
-
   describe "#status" do
-    subject(:status) { instance.status[programme] }
+    subject(:status) { instance.status(patient, programme:) }
 
     context "with no consent" do
       it { should be(described_class::NO_RESPONSE) }
@@ -96,56 +94,6 @@ describe Patient::ConsentOutcome do
         end
 
         it { should be(described_class::GIVEN) }
-      end
-    end
-  end
-
-  describe "#latest" do
-    subject(:latest) { instance.latest[programme] }
-
-    context "multiple consent given responses from different parents" do
-      let(:parents) { create_list(:parent, 2) }
-      let(:consents) do
-        [
-          build(:consent, :given, parent: parents.first, programme:),
-          build(:consent, :given, parent: parents.second, programme:)
-        ]
-      end
-      let(:patient) { create(:patient, parents:, consents:) }
-
-      it "groups consents by parent name" do
-        expect(latest).to contain_exactly(consents.first, consents.second)
-      end
-    end
-
-    context "multiple consent responses from same parents" do
-      let(:parent) { create(:parent) }
-      let(:refused_consent) { build(:consent, :refused, programme:, parent:) }
-      let(:given_consent) { build(:consent, :given, programme:, parent:) }
-      let(:patient) do
-        create(
-          :patient,
-          parents: [parent],
-          consents: [refused_consent, given_consent]
-        )
-      end
-
-      it "returns the latest consent for each parent" do
-        expect(latest).to eq [given_consent]
-      end
-    end
-
-    context "with an invalidated consent" do
-      let(:parent) { create(:parent) }
-      let(:invalidated_consent) do
-        build(:consent, :given, :invalidated, programme:, parent:)
-      end
-      let(:patient) do
-        create(:patient, parents: [parent], consents: [invalidated_consent])
-      end
-
-      it "does not return the consent record" do
-        expect(latest).not_to include(invalidated_consent)
       end
     end
   end

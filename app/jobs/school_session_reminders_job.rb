@@ -10,12 +10,7 @@ class SchoolSessionRemindersJob < ApplicationJob
       PatientSession
         .includes(
           :gillick_assessments,
-          patient: [
-            :parents,
-            :triages,
-            :vaccination_records,
-            { consents: %i[parent patient] }
-          ],
+          patient: [:parents, { consents: %i[parent patient] }],
           session: :programmes
         )
         .eager_load(:session)
@@ -24,8 +19,10 @@ class SchoolSessionRemindersJob < ApplicationJob
         .merge(Session.has_date(date))
         .notification_not_sent(date)
 
+    outcomes = Outcomes.new(patient_sessions:)
+
     patient_sessions.each do |patient_session|
-      next unless should_send_notification?(patient_session:)
+      next unless should_send_notification?(patient_session:, outcomes:)
 
       SessionNotification.create_and_send!(
         patient_session:,
@@ -35,7 +32,7 @@ class SchoolSessionRemindersJob < ApplicationJob
     end
   end
 
-  def should_send_notification?(patient_session:)
+  def should_send_notification?(patient_session:, outcomes:)
     patient = patient_session.patient
 
     return false unless patient.send_notifications?
@@ -44,13 +41,13 @@ class SchoolSessionRemindersJob < ApplicationJob
 
     all_vaccinated =
       programmes.all? do |programme|
-        patient.programme_outcome.vaccinated?(programme)
+        outcomes.programme.vaccinated?(patient, programme:)
       end
 
     return false if all_vaccinated
 
     programmes.any? do |programme|
-      patient.consent_given_and_safe_to_vaccinate?(programme:)
+      patient.consent_given_and_safe_to_vaccinate?(outcomes:, programme:)
     end
   end
 end

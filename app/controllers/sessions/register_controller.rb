@@ -13,14 +13,21 @@ class Sessions::RegisterController < ApplicationController
   layout "full"
 
   def show
-    @statuses = PatientSession::RegisterOutcome::STATUSES
+    @statuses = RegisterOutcome::STATUSES
 
     scope =
-      @session.patient_sessions.preload_for_status.in_programmes(
-        @session.programmes
+      @form.apply_to_scope(
+        @session
+          .patient_sessions
+          .eager_load(:patient)
+          .preload(session: :programmes)
+          .in_programmes(@session.programmes)
       )
 
-    patient_sessions = @form.apply(scope)
+    @outcomes = Outcomes.new(patient_sessions: scope)
+    @next_activity = NextActivity.new(outcomes: @outcomes)
+
+    patient_sessions = @form.apply_outcomes(scope, outcomes: @outcomes)
 
     if patient_sessions.is_a?(Array)
       @pagy, @patient_sessions = pagy_array(patient_sessions)
@@ -30,7 +37,7 @@ class Sessions::RegisterController < ApplicationController
   end
 
   def create
-    session_attendance = authorize @patient_session.register_outcome.latest
+    session_attendance = authorize @patient_session.todays_attendance
     session_attendance.update!(attending: params[:status] == "present")
 
     name = @patient_session.patient.full_name
@@ -58,8 +65,10 @@ class Sessions::RegisterController < ApplicationController
 
   def set_patient_session
     @patient_session =
-      @session.patient_sessions.preload_for_status.find_by!(
-        patient_id: params[:patient_id]
-      )
+      @session
+        .patient_sessions
+        .eager_load(:patient)
+        .preload(session: :programmes)
+        .find_by!(patient_id: params[:patient_id])
   end
 end

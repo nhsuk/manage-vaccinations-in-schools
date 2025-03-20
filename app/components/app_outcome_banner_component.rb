@@ -54,15 +54,20 @@ class AppOutcomeBannerComponent < ViewComponent::Base
   end
 
   def vaccination_record
-    @vaccination_record ||= patient.programme_outcome.all[programme].last
+    @vaccination_record ||=
+      patient
+        .vaccination_records
+        .eager_load(:performed_by_user, :vaccine, :batch)
+        .where(programme:)
+        .last
   end
 
   def triage
-    @triage ||= patient.triage_outcome.latest[programme]
+    @triage ||= patient.triages.eager_load(:performed_by).where(programme:).last
   end
 
   def session_attendance
-    @session_attendance ||= patient_session.register_outcome.latest
+    @session_attendance ||= patient_session.todays_attendance
   end
 
   def show_location?
@@ -71,7 +76,7 @@ class AppOutcomeBannerComponent < ViewComponent::Base
   end
 
   def vaccine_summary
-    type = vaccination_record.programme.name
+    type = programme.name
     batch = vaccination_record.batch&.name
     brand =
       (vaccination_record.vaccine || vaccination_record.batch&.vaccine)&.brand

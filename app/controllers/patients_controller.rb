@@ -10,7 +10,7 @@ class PatientsController < ApplicationController
 
   def index
     patients =
-      @form.apply(
+      @form.apply_to_scope(
         policy_scope(Patient).includes(:school).not_deceased.order_by_name
       )
 
@@ -43,8 +43,7 @@ class PatientsController < ApplicationController
       if organisation_id.nil?
         @patient
           .patient_sessions
-          .preload_for_status
-          .includes(:gillick_assessments, :session_attendances)
+          .preload(:session_attendances)
           .where(session: old_organisation.sessions)
           .find_each(&:destroy_if_safe!)
       end

@@ -6,11 +6,12 @@ class AppSessionActionsComponent < ViewComponent::Base
     <%= govuk_summary_list(rows:) %>
   ERB
 
-  def initialize(session, patient_sessions:)
+  def initialize(session, patient_sessions:, outcomes:)
     super
 
     @session = session
     @patient_sessions = patient_sessions
+    @outcomes = outcomes
   end
 
   def render?
@@ -19,7 +20,7 @@ class AppSessionActionsComponent < ViewComponent::Base
 
   private
 
-  attr_reader :session, :patient_sessions
+  attr_reader :session, :patient_sessions, :outcomes
 
   def rows
     @rows ||= [
@@ -34,21 +35,20 @@ class AppSessionActionsComponent < ViewComponent::Base
   def no_consent_response_row
     consent_row(
       text: "No consent response",
-      status: Patient::ConsentOutcome::NO_RESPONSE
+      status: ConsentOutcome::NO_RESPONSE
     )
   end
 
   def conflicting_consent_row
-    consent_row(
-      text: "Conflicting consent",
-      status: Patient::ConsentOutcome::CONFLICTS
-    )
+    consent_row(text: "Conflicting consent", status: ConsentOutcome::CONFLICTS)
   end
 
   def consent_row(text:, status:)
     count =
-      patient_sessions.count do
-        it.patient.consent_outcome.status.values_at(*it.programmes).any?(status)
+      patient_sessions.count do |patient_session|
+        patient_session.programmes.any? do |programme|
+          outcomes.consent.status(patient_session.patient, programme:) == status
+        end
       end
 
     return nil if count.zero?
@@ -68,16 +68,22 @@ class AppSessionActionsComponent < ViewComponent::Base
   end
 
   def triage_required_row
-    status = Patient::TriageOutcome::REQUIRED
-
     count =
-      patient_sessions.count do
-        it.patient.triage_outcome.status.values_at(*it.programmes).any?(status)
+      patient_sessions.count do |patient_session|
+        patient_session.programmes.any? do |programme|
+          outcomes.triage.required?(patient_session.patient, programme:)
+        end
       end
 
     return nil if count.zero?
 
-    href = session_triage_path(session, search_form: { triage_status: status })
+    href =
+      session_triage_path(
+        session,
+        search_form: {
+          triage_status: TriageOutcome::REQUIRED
+        }
+      )
 
     {
       key: {
@@ -93,7 +99,7 @@ class AppSessionActionsComponent < ViewComponent::Base
   def register_attendance_row
     return nil unless session.today?
 
-    count = patient_sessions.count { it.register_outcome.unknown? }
+    count = patient_sessions.count { outcomes.register.unknown?(it) }
 
     return nil if count.zero?
 
@@ -101,7 +107,7 @@ class AppSessionActionsComponent < ViewComponent::Base
       session_register_path(
         session,
         search_form: {
-          register_status: PatientSession::RegisterOutcome::UNKNOWN
+          register_status: RegisterOutcome::UNKNOWN
         }
       )
 
@@ -121,7 +127,9 @@ class AppSessionActionsComponent < ViewComponent::Base
 
     counts_by_programme =
       session.programmes.index_with do |programme|
-        patient_sessions.count { it.ready_for_vaccinator?(programme:) }
+        patient_sessions.count do
+          it.ready_for_vaccinator?(outcomes:, programme:)
+        end
       end
 
     return nil if counts_by_programme.values.all?(&:zero?)

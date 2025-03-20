@@ -42,6 +42,9 @@ class PatientSession < ApplicationRecord
   has_many :session_notifications,
            -> { where(session_id: _1.session_id) },
            through: :patient
+  has_many :vaccination_records,
+           -> { where(session_id: _1.session_id) },
+           through: :patient
 
   has_and_belongs_to_many :immunisation_imports
 
@@ -58,15 +61,6 @@ class PatientSession < ApplicationRecord
               .where(session_date:)
               .arel
               .exists
-          )
-        end
-
-  scope :preload_for_status,
-        -> do
-          eager_load(:patient).preload(
-            session_attendances: :session_date,
-            patient: [:triages, { consents: :parent }, :vaccination_records],
-            session: :programmes
           )
         end
 
@@ -100,8 +94,8 @@ class PatientSession < ApplicationRecord
         end
 
   def safe_to_destroy?
-    programmes.none? { session_outcome.all[it].any? } &&
-      gillick_assessments.empty? && session_attendances.none?(&:attending?)
+    vaccination_records.empty? && gillick_assessments.empty? &&
+      session_attendances.none?(&:attending?)
   end
 
   def destroy_if_safe!
@@ -109,7 +103,8 @@ class PatientSession < ApplicationRecord
   end
 
   def can_record_as_already_vaccinated?(programme:)
-    !session.today? && patient.programme_outcome.none_yet?(programme)
+    outcomes = Outcomes.new(patient_session: self)
+    !session.today? && outcomes.programme.none_yet?(patient, programme:)
   end
 
   def programmes
@@ -122,31 +117,39 @@ class PatientSession < ApplicationRecord
       .max_by(&:created_at)
   end
 
-  def register_outcome
-    @register_outcome ||= PatientSession::RegisterOutcome.new(self)
+  def todays_attendance
+    if (session_date = session.session_dates.today.first)
+      session_attendances.includes(:session_date).find_or_initialize_by(
+        session_date:
+      )
+    end
   end
 
-  def session_outcome
-    @session_outcome ||= PatientSession::SessionOutcome.new(self)
-  end
-
-  def ready_for_vaccinator?(programme: nil)
-    return false if register_outcome.unknown? || register_outcome.not_attending?
+  def ready_for_vaccinator?(outcomes:, programme: nil)
+    if outcomes.register.unknown?(self) ||
+         outcomes.register.not_attending?(self)
+      return false
+    end
 
     programmes_to_check = programme ? [programme] : programmes
 
     programmes_to_check.any? do
-      patient.consent_given_and_safe_to_vaccinate?(programme: it)
+      patient.consent_given_and_safe_to_vaccinate?(outcomes:, programme: it)
     end
   end
 
   def outstanding_programmes
+    outcomes = Outcomes.new(patient_session: self)
+
     # If this patient hasn't been seen yet by a nurse for any of the programmes,
     # we don't want to show the banner.
-    return [] if programmes.all? { session_outcome.none_yet?(it) }
+    if programmes.all? { outcomes.session.none_yet?(self, programme: it) }
+      return []
+    end
 
     programmes.select do
-      ready_for_vaccinator?(programme: it) && session_outcome.none_yet?(it)
+      ready_for_vaccinator?(outcomes:, programme: it) &&
+        outcomes.session.none_yet?(self, programme: it)
     end
   end
 end

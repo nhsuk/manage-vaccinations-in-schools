@@ -141,13 +141,21 @@ class Reports::ProgrammeVaccinationsExporter
       )
   end
 
+  def outcomes
+    @outcomes ||= Outcomes.new(patients: organisation.patients)
+  end
+
   def row(vaccination_record:)
     location = vaccination_record.location
     patient = vaccination_record.patient
     session = vaccination_record.session
 
-    consents = patient.consent_outcome.latest[programme]
-    triage = patient.triage_outcome.latest[programme]
+    consents = ConsentGrouper.call(patient.consents, programme:)
+    triage =
+      patient
+        .triages
+        .select { it.programme == programme && !it.invalidated? }
+        .last
 
     gillick_assessment =
       gillick_assessments.find do
@@ -173,7 +181,7 @@ class Reports::ProgrammeVaccinationsExporter
       nhs_number_status_code(patient:),
       patient.gp_practice&.ods_code || "",
       patient.gp_practice&.name || "",
-      consent_status(patient:, programme:),
+      consent_status(patient:, programme:, outcomes:),
       consent_details(consents:),
       health_question_answers(consents:),
       triage&.status&.humanize || "",

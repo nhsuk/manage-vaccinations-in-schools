@@ -6,6 +6,7 @@ class PatientSessionsController < ApplicationController
   before_action :set_session
   before_action :set_patient
   before_action :set_breadcrumb_item
+  before_action :set_outcomes, except: :record_already_vaccinated
 
   before_action :record_access_log_entry, except: :record_already_vaccinated
 
@@ -95,6 +96,10 @@ class PatientSessionsController < ApplicationController
       text: t(return_to, scope: %i[sessions tabs]),
       href: send(:"session_#{return_to}_path")
     }
+  end
+
+  def set_outcomes
+    @outcomes = Outcomes.new(patient_session: @patient_session)
   end
 
   def record_access_log_entry

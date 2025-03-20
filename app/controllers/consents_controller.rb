@@ -26,7 +26,12 @@ class ConsentsController < ApplicationController
   end
 
   def send_request
-    return unless @patient.consent_outcome.no_response?(@programme)
+    unless Outcomes
+             .new(patient: @patient)
+             .consent
+             .no_response?(@patient, programme: @programme)
+      return
+    end
 
     # For programmes that are administered together we should send the consent request together.
     programmes =
@@ -115,6 +120,8 @@ class ConsentsController < ApplicationController
         :gillick_assessments,
         session: :programmes
       ).find_by!(session: @session, patient_id: params[:patient_id])
+
+    @outcomes = Outcomes.new(patient_session: @patient_session)
   end
 
   def set_programme

@@ -55,8 +55,8 @@ class SchoolConsentRemindersJob < ApplicationJob
 
     has_consent_or_vaccinated =
       programmes.all? do |programme|
-        patient.consent_outcome.all[programme].any? ||
-          patient.programme_outcome.all[programme].any?
+        patient.consents.exists?(programme:) ||
+          patient.vaccination_records.exists?(programme:)
       end
 
     return false if has_consent_or_vaccinated

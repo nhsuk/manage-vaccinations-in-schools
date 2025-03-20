@@ -25,21 +25,27 @@ class SendClinicInitialInvitationsJob < ApplicationJob
     # We only send initial invitations to patients who haven't already
     # received an invitation.
 
-    session
-      .patient_sessions
-      .eager_load(:patient)
-      .preload(
-        :session_notifications,
-        patient: %i[consents parents vaccination_records],
-        session: :programmes
-      )
-      .where(patient: { school: })
+    scope =
+      session
+        .patient_sessions
+        .eager_load(:patient)
+        .preload(
+          :session_notifications,
+          patient: %i[consents parents],
+          session: :programmes
+        )
+        .where(patient: { school: })
+
+    outcomes = Outcomes.new(patient_sessions: scope)
+
+    scope
       .reject { it.session_notifications.any? }
       .select do
         should_send_notification?(
           patient_session: it,
           programmes:,
-          session_date:
+          session_date:,
+          outcomes:
         )
       end
   end

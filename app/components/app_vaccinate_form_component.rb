@@ -10,16 +10,22 @@ class AppVaccinateFormComponent < ViewComponent::Base
   end
 
   def render?
-    patient.consent_given_and_safe_to_vaccinate?(programme:) &&
+    outcomes = Outcomes.new(patient_session:)
+
+    patient.consent_given_and_safe_to_vaccinate?(outcomes:, programme:) &&
       (
-        patient_session.register_outcome.attending? ||
-          patient_session.register_outcome.completed?
+        outcomes.register.attending?(patient_session) ||
+          outcomes.register.completed?(patient_session)
       )
   end
 
   private
 
-  attr_reader :patient_session, :programme, :vaccinate_form
+  attr_reader :patient_session,
+              :programme,
+              :vaccinate_form,
+              :programme_outcome,
+              :triage_outcome
 
   delegate :patient, :session, to: :patient_session
 

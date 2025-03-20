@@ -21,7 +21,11 @@ class SearchForm
     super(values&.compact_blank&.map(&:to_i)&.compact || [])
   end
 
-  def apply(scope, programme: nil)
+  def apply(scope, outcomes:, programme: nil)
+    apply_outcomes(apply_to_scope(scope), outcomes:, programme:)
+  end
+
+  def apply_to_scope(scope)
     scope = scope.search_by_name(q) if q.present?
 
     scope = scope.search_by_year_groups(year_groups) if year_groups.present?
@@ -40,43 +44,45 @@ class SearchForm
 
     scope = scope.search_by_nhs_number(nil) if missing_nhs_number.present?
 
-    scope = scope.order_by_name
+    scope.order_by_name
+  end
 
-    scope = yield(scope) if block_given?
-
+  def apply_outcomes(scope, outcomes:, programme: nil)
     if (status = consent_status&.to_sym).present?
       scope =
-        scope.select do
-          it
-            .patient
-            .consent_outcome
-            .status
-            .values_at(*it.programmes)
-            .include?(status)
+        scope.select do |patient_session|
+          patient_session.programmes.any? do
+            outcomes.consent.status(patient_session.patient, programme: it) ==
+              status
+          end
         end
     end
 
     if (status = programme_status&.to_sym).present?
-      scope = scope.select { it.programme_outcome.status[programme] == status }
+      scope =
+        scope.select { outcomes.programme.status(it, programme:) == status }
     end
 
     if (status = session_status&.to_sym).present?
-      scope = scope.select { it.session_outcome.status.values.include?(status) }
+      scope =
+        scope.select do |patient_session|
+          patient_session.programmes.any? do
+            outcomes.session.status(patient_session, programme: it) == status
+          end
+        end
     end
 
     if (status = register_status&.to_sym).present?
-      scope = scope.select { it.register_outcome.status == status }
+      scope = scope.select { outcomes.register.status(it) == status }
     end
 
     if (status = triage_status&.to_sym).present?
       scope =
-        scope.select do
-          it
-            .patient
-            .triage_outcome
-            .status
-            .values_at(*it.programmes)
-            .include?(status)
+        scope.select do |patient_session|
+          patient_session.programmes.any? do
+            outcomes.triage.status(patient_session.patient, programme: it) ==
+              status
+          end
         end
     end
 

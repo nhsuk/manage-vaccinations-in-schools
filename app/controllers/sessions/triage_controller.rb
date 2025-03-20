@@ -12,25 +12,27 @@ class Sessions::TriageController < ApplicationController
   layout "full"
 
   def show
-    @statuses =
-      Patient::TriageOutcome::STATUSES - [Patient::TriageOutcome::NOT_REQUIRED]
+    @statuses = TriageOutcome::STATUSES - [TriageOutcome::NOT_REQUIRED]
 
     scope =
-      @session.patient_sessions.preload_for_status.in_programmes(
-        @session.programmes
+      @form.apply_to_scope(
+        @session
+          .patient_sessions
+          .eager_load(:patient)
+          .preload(session: :programmes)
+          .in_programmes(@session.programmes)
       )
 
-    patient_sessions =
-      @form.apply(scope) do |filtered_scope|
-        filtered_scope.reject do
-          it
-            .patient
-            .triage_outcome
-            .status
-            .values_at(*it.programmes)
-            .all?(Patient::TriageOutcome::NOT_REQUIRED)
+    @outcomes = Outcomes.new(patient_sessions: scope)
+
+    filtered_scope =
+      scope.reject do |patient_session|
+        patient_session.programmes.all? do |programme|
+          @outcomes.triage.not_required?(patient_session.patient, programme:)
         end
       end
+
+    patient_sessions = @form.apply_outcomes(filtered_scope, outcomes: @outcomes)
 
     if patient_sessions.is_a?(Array)
       @pagy, @patient_sessions = pagy_array(patient_sessions)

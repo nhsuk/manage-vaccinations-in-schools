@@ -184,10 +184,12 @@ class VaccinationRecord < ApplicationRecord
     # triage, we should record a "do not vaccinate" triage to make sure the
     # patient isn't double vaccinated.
 
-    patient = Patient.includes(:triages, consents: :parent).find(patient_id)
+    patient = Patient.includes(consents: :parent).find(patient_id)
 
-    unless patient.triage_outcome.required?(programme) ||
-             patient.triage_outcome.delay_vaccination?(programme)
+    outcomes = Outcomes.new(patient:)
+
+    unless outcomes.triage.required?(patient, programme:) ||
+             outcomes.triage.delay_vaccination?(patient, programme:)
       return
     end
 

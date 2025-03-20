@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
-describe PatientSession::RegisterOutcome do
-  subject(:instance) { described_class.new(patient_session) }
+describe RegisterOutcome do
+  subject(:instance) do
+    described_class.new(patient_sessions: PatientSession.all)
+  end
 
   let(:programmes) do
     [create(:programme, :menacwy), create(:programme, :td_ipv)]
@@ -12,10 +14,8 @@ describe PatientSession::RegisterOutcome do
   end
   let(:patient_session) { create(:patient_session, patient:, session:) }
 
-  before { patient.strict_loading!(false) }
-
   describe "#status" do
-    subject(:status) { instance.status }
+    subject(:status) { instance.status(patient_session) }
 
     context "with no session attendance" do
       it { should be(described_class::UNKNOWN) }

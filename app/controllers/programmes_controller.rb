@@ -33,27 +33,20 @@ class ProgrammesController < ApplicationController
         .has_programme(@programme)
         .for_current_academic_year
         .eager_load(:location)
-        .preload(
-          :session_dates,
-          patient_sessions: [
-            :gillick_assessments,
-            { patient: [:triages, :vaccination_records, { consents: :parent }] }
-          ]
-        )
+        .preload(:session_dates)
         .order("locations.name")
   end
 
   def patients
-    @statuses = Patient::ProgrammeOutcome::STATUSES
+    @statuses = ProgrammeOutcome::STATUSES
 
     scope =
-      policy_scope(Patient).in_programmes([@programme]).preload(
-        :triages,
-        :vaccination_records,
-        consents: :parent
-      )
+      @form.apply_to_scope(policy_scope(Patient).in_programmes([@programme]))
 
-    patients = @form.apply(scope, programme: @programme)
+    @outcomes = Outcomes.new(patients: scope)
+
+    patients =
+      @form.apply_outcomes(scope, outcomes: @outcomes, programme: @programme)
 
     if patients.is_a?(Array)
       @pagy, @patients = pagy_array(patients)

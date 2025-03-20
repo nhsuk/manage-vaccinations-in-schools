@@ -3,7 +3,11 @@
 class AppPatientPageComponent < ViewComponent::Base
   include ApplicationHelper
 
-  attr_reader :current_user, :patient_session, :programme, :vaccinate_form
+  attr_reader :current_user,
+              :patient_session,
+              :programme,
+              :vaccinate_form,
+              :outcomes
 
   def initialize(
     patient_session:,
@@ -19,12 +23,13 @@ class AppPatientPageComponent < ViewComponent::Base
     @current_user = current_user
     @triage = triage
     @vaccinate_form = vaccinate_form || default_vaccinate_form
+    @outcomes = Outcomes.new(patient_session:)
   end
 
   delegate :patient, :session, to: :patient_session
 
   def display_health_questions?
-    patient.consent_outcome.latest[programme].any?(&:response_given?)
+    patient.latest_consents(programme:).any?(&:response_given?)
   end
 
   def display_gillick_assessment_card?
@@ -34,6 +39,13 @@ class AppPatientPageComponent < ViewComponent::Base
 
   def gillick_assessment_can_be_recorded?
     patient_session.session.today? && helpers.policy(GillickAssessment).new?
+  end
+
+  def vaccination_records
+    patient
+      .vaccination_records
+      .where(programme:)
+      .eager_load(:batch, :location, :performed_by_user, :programme, :vaccine)
   end
 
   def default_vaccinate_form

@@ -16,14 +16,22 @@ class Sessions::RecordController < ApplicationController
 
   def show
     scope =
-      @session.patient_sessions.preload_for_status.in_programmes(
-        @session.programmes
+      @form.apply_to_scope(
+        @session
+          .patient_sessions
+          .eager_load(:patient)
+          .preload(session: :programmes)
+          .in_programmes(@session.programmes)
       )
 
+    @outcomes = Outcomes.new(patient_sessions: scope)
+    @next_activity = NextActivity.new(outcomes: @outcomes)
+
     patient_sessions =
-      @form.apply(scope) do |filtered_scope|
-        filtered_scope.select(&:ready_for_vaccinator?)
-      end
+      @form.apply_outcomes(
+        scope.select { it.ready_for_vaccinator?(outcomes: @outcomes) },
+        outcomes: @outcomes
+      )
 
     if patient_sessions.is_a?(Array)
       @pagy, @patient_sessions = pagy_array(patient_sessions)

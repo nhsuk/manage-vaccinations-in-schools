@@ -12,14 +12,20 @@ class Sessions::OutcomeController < ApplicationController
   layout "full"
 
   def show
-    @statuses = PatientSession::SessionOutcome::STATUSES
+    @statuses = SessionOutcome::STATUSES
 
     scope =
-      @session.patient_sessions.preload_for_status.in_programmes(
-        @session.programmes
+      @form.apply_to_scope(
+        @session
+          .patient_sessions
+          .eager_load(:patient)
+          .preload(session: :programmes)
+          .in_programmes(@session.programmes)
       )
 
-    patient_sessions = @form.apply(scope)
+    @outcomes = Outcomes.new(patient_sessions: scope)
+
+    patient_sessions = @form.apply_outcomes(scope, outcomes: @outcomes)
 
     if patient_sessions.is_a?(Array)
       @pagy, @patient_sessions = pagy_array(patient_sessions)

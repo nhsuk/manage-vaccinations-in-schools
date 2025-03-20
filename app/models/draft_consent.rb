@@ -148,9 +148,9 @@ class DraftConsent
     else
       self.parent =
         patient.parents.find_by(id: value) ||
-          Parent.where(
-            consents: patient.consent_outcome.all[programme]
-          ).find_by(id: value)
+          Parent.where(consents: patient.consents.where(programme:)).find_by(
+            id: value
+          )
     end
   end
 
@@ -203,7 +203,6 @@ class DraftConsent
     PatientSessionPolicy::Scope
       .new(@current_user, PatientSession)
       .resolve
-      .preload_for_status
       .find_by(id: patient_session_id)
   end
 

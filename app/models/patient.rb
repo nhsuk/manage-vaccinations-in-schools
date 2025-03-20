@@ -262,30 +262,25 @@ class Patient < ApplicationRecord
     birth_academic_year_changed?
   end
 
-  def consent_outcome
-    @consent_outcome ||= Patient::ConsentOutcome.new(self)
+  def latest_consents(programme:)
+    scope =
+      consents
+        .where(programme:)
+        .not_invalidated
+        .where(response: %i[given refused])
+        .eager_load(:parent)
+
+    ConsentGrouper.call(scope, programme:)
   end
 
-  def triage_outcome
-    @triage_outcome ||= Patient::TriageOutcome.new(self)
-  end
+  def consent_given_and_safe_to_vaccinate?(outcomes:, programme:)
+    return false if outcomes.programme.vaccinated?(self, programme:)
 
-  def programme_outcome
-    @programme_outcome ||= Patient::ProgrammeOutcome.new(self)
-  end
-
-  def next_activity
-    @next_activity ||= Patient::NextActivity.new(self)
-  end
-
-  def consent_given_and_safe_to_vaccinate?(programme:)
-    return false if programme_outcome.vaccinated?(programme)
-
-    consent_outcome.given?(programme) &&
+    outcomes.consent.given?(self, programme:) &&
       (
-        triage_outcome.safe_to_vaccinate?(programme) ||
-          triage_outcome.delay_vaccination?(programme) ||
-          triage_outcome.not_required?(programme)
+        outcomes.triage.safe_to_vaccinate?(self, programme:) ||
+          outcomes.triage.delay_vaccination?(self, programme:) ||
+          outcomes.triage.not_required?(self, programme:)
       )
   end
 
@@ -412,9 +407,8 @@ class Patient < ApplicationRecord
 
   def clear_sessions_for_current_academic_year!
     patient_sessions
-      .preload_for_status
-      .includes(:gillick_assessments, :session_attendances)
       .where(session: sessions_for_current_academic_year)
+      .preload(:session_attendances)
       .find_each(&:destroy_if_safe!)
   end
 end
