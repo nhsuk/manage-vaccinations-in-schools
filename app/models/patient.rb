@@ -266,26 +266,18 @@ class Patient < ApplicationRecord
     @consent_outcome ||= Patient::ConsentOutcome.new(self)
   end
 
-  def triage_outcome
-    @triage_outcome ||= Patient::TriageOutcome.new(self)
+  def next_activity(outcomes)
+    @next_activity ||= Patient::NextActivity.new(self, outcomes:)
   end
 
-  def programme_outcome
-    @programme_outcome ||= Patient::ProgrammeOutcome.new(self)
-  end
-
-  def next_activity
-    @next_activity ||= Patient::NextActivity.new(self)
-  end
-
-  def consent_given_and_safe_to_vaccinate?(programme:)
-    return false if programme_outcome.vaccinated?(programme)
+  def consent_given_and_safe_to_vaccinate?(outcomes:, programme:)
+    return false if outcomes.programme.vaccinated?(self, programme:)
 
     consent_outcome.given?(programme) &&
       (
-        triage_outcome.safe_to_vaccinate?(programme) ||
-          triage_outcome.delay_vaccination?(programme) ||
-          triage_outcome.not_required?(programme)
+        outcomes.triage.safe_to_vaccinate?(self, programme:) ||
+          outcomes.triage.delay_vaccination?(self, programme:) ||
+          outcomes.triage.not_required?(self, programme:)
       )
   end
 

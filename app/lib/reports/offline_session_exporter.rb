@@ -159,7 +159,8 @@ class Reports::OfflineSessionExporter
         }
       }
 
-      vaccination_records = patient.programme_outcome.all[programme]
+      vaccination_records =
+        patient.vaccination_records.select { it.programme == programme }
 
       if vaccination_records.any?
         vaccination_records.map do |vaccination_record|
@@ -184,7 +185,11 @@ class Reports::OfflineSessionExporter
 
     gillick_assessment = patient_session.gillick_assessment(programme)
     consents = patient.consent_outcome.latest[programme]
-    triage = patient.triage_outcome.latest[programme]
+    triage =
+      patient
+        .triages
+        .select { it.programme == programme && !it.invalidated? }
+        .last
 
     row[:organisation_code] = organisation.ods_code
     row[:person_forename] = patient.given_name

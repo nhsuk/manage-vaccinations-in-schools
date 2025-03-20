@@ -22,16 +22,23 @@ class SendClinicSubsequentInvitationsJob < ApplicationJob
     # We only send subsequent invitations (reminders) to patients who
     # have already received an invitation.
 
-    session
-      .patient_sessions
-      .eager_load(:patient)
-      .preload(
-        :session_notifications,
-        patient: %i[consents parents vaccination_records]
-      )
+    scope =
+      session
+        .patient_sessions
+        .eager_load(:patient)
+        .preload(:session_notifications, patient: %i[consents parents])
+
+    outcomes = Outcomes.new(patient_sessions: scope)
+
+    scope
       .select { it.session_notifications.any? }
       .select do |patient_session|
-        should_send_notification?(patient_session:, programmes:, session_date:)
+        should_send_notification?(
+          patient_session:,
+          programmes:,
+          session_date:,
+          outcomes:
+        )
       end
   end
 end

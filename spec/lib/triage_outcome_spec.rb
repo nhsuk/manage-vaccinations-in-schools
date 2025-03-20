@@ -1,15 +1,21 @@
 # frozen_string_literal: true
 
-describe Patient::TriageOutcome do
-  subject(:instance) { described_class.new(patient) }
+describe TriageOutcome do
+  subject(:instance) do
+    described_class.new(
+      patients: Patient.all,
+      vaccinated_criteria: VaccinatedCriteria.new(patients: Patient.all)
+    )
+  end
 
   let(:programme) { create(:programme, :hpv) }
   let(:patient) { create(:patient, year_group: 8) }
 
+  # TODO: Remove once ConsentOutcome is refactored
   before { patient.strict_loading!(false) }
 
   describe "#status" do
-    subject(:status) { instance.status[programme] }
+    subject(:status) { instance.status(patient, programme:) }
 
     context "with no triage" do
       it { should be(described_class::NOT_REQUIRED) }
@@ -52,51 +58,5 @@ describe Patient::TriageOutcome do
 
       it { should be(described_class::NOT_REQUIRED) }
     end
-  end
-
-  describe "#all" do
-    subject(:all) { instance.all[programme] }
-
-    let(:later_triage) { create(:triage, programme:, patient:) }
-    let(:earlier_triage) do
-      create(:triage, programme:, patient:, created_at: 1.day.ago)
-    end
-
-    it { should eq([earlier_triage, later_triage]) }
-  end
-
-  describe "#latest" do
-    subject(:latest) { instance.latest[programme] }
-
-    let(:later_triage) do
-      create(
-        :triage,
-        created_at: 1.day.ago,
-        programme:,
-        status: :ready_to_vaccinate,
-        patient:
-      )
-    end
-
-    before do
-      create(
-        :triage,
-        programme:,
-        status: :needs_follow_up,
-        created_at: 2.days.ago,
-        patient:
-      )
-
-      # should not be returned as invalidated even if more recent
-      create(
-        :triage,
-        :invalidated,
-        programme:,
-        status: :ready_to_vaccinate,
-        patient:
-      )
-    end
-
-    it { should eq(later_triage) }
   end
 end

@@ -14,7 +14,12 @@ module SendClinicInvitationsConcern
     SessionNotification.create_and_send!(patient_session:, session_date:, type:)
   end
 
-  def should_send_notification?(patient_session:, programmes:, session_date:)
+  def should_send_notification?(
+    patient_session:,
+    programmes:,
+    session_date:,
+    outcomes:
+  )
     patient = patient_session.patient
 
     return false unless patient.send_notifications?
@@ -25,7 +30,7 @@ module SendClinicInvitationsConcern
 
     all_vaccinated =
       eligible_programmes.all? do |programme|
-        patient.programme_outcome.vaccinated?(programme)
+        outcomes.programme.vaccinated?(patient, programme:)
       end
 
     return false if all_vaccinated

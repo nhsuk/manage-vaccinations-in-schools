@@ -6,6 +6,7 @@ class AppSimpleStatusBannerComponent < ViewComponent::Base
 
     @patient_session = patient_session
     @programme = programme
+    @outcomes = Outcomes.new(patient_session:)
   end
 
   def call
@@ -25,7 +26,7 @@ class AppSimpleStatusBannerComponent < ViewComponent::Base
 
   private
 
-  attr_reader :patient_session, :programme
+  attr_reader :patient_session, :programme, :outcomes
 
   delegate :patient, :session, to: :patient_session
 
@@ -50,9 +51,9 @@ class AppSimpleStatusBannerComponent < ViewComponent::Base
       programme_name: programme.name
     }
 
-    if patient.triage_outcome.required?(programme)
+    if outcomes.triage.required?(patient, programme:)
       reasons = [
-        if patient.triage_outcome.consent_needs_triage?(programme:)
+        if outcomes.triage.consent_needs_triage?(patient, programme:)
           I18n.t(
             :consent_needs_triage,
             scope: %i[
@@ -63,7 +64,10 @@ class AppSimpleStatusBannerComponent < ViewComponent::Base
             **options
           )
         end,
-        if patient.triage_outcome.vaccination_history_needs_triage?(programme:)
+        if outcomes.triage.vaccination_history_needs_triage?(
+             patient,
+             programme:
+           )
           I18n.t(
             :vaccination_partially_administered,
             scope: %i[
@@ -91,8 +95,11 @@ class AppSimpleStatusBannerComponent < ViewComponent::Base
 
   def nurse
     (
-      patient.triage_outcome.all[programme] +
-        patient.programme_outcome.all[programme]
+      patient.triages.eager_load(:performed_by).where(programme:) +
+        patient
+          .vaccination_records
+          .eager_load(:performed_by_user)
+          .where(programme:)
     ).max_by(&:updated_at)&.performed_by&.full_name
   end
 

@@ -1,15 +1,27 @@
 # frozen_string_literal: true
 
-describe Patient::ProgrammeOutcome do
-  subject(:instance) { described_class.new(patient) }
+describe ProgrammeOutcome do
+  subject(:instance) do
+    described_class.new(
+      patients: Patient.all,
+      triage_outcome:,
+      vaccinated_criteria:
+    )
+  end
+
+  let(:vaccinated_criteria) { VaccinatedCriteria.new(patients: Patient.all) }
+  let(:triage_outcome) do
+    TriageOutcome.new(patients: Patient.all, vaccinated_criteria:)
+  end
 
   let(:programme) { create(:programme, :hpv) }
   let(:patient) { create(:patient, year_group: 8) }
 
+  # TODO: Remove once ConsentOutcome is refactored
   before { patient.strict_loading!(false) }
 
   describe "#status" do
-    subject(:status) { instance.status[programme] }
+    subject(:status) { instance.status(patient, programme:) }
 
     context "with no vaccination record" do
       it { should be(described_class::NONE_YET) }
@@ -60,18 +72,5 @@ describe Patient::ProgrammeOutcome do
 
       it { should be(described_class::NONE_YET) }
     end
-  end
-
-  describe "#all" do
-    subject(:all) { instance.all[programme] }
-
-    let(:later_vaccination_record) do
-      create(:vaccination_record, patient:, programme:)
-    end
-    let(:earlier_vaccination_record) do
-      create(:vaccination_record, patient:, programme:, created_at: 1.day.ago)
-    end
-
-    it { should eq([earlier_vaccination_record, later_vaccination_record]) }
   end
 end

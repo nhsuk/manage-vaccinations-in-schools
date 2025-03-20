@@ -69,16 +69,22 @@ class AppSessionActionsComponent < ViewComponent::Base
   end
 
   def triage_required_row
-    status = Patient::TriageOutcome::REQUIRED
-
     count =
-      patient_sessions.count do
-        it.patient.triage_outcome.status.values_at(*it.programmes).any?(status)
+      patient_sessions.count do |patient_session|
+        patient_session.programmes.any? do |programme|
+          outcomes.triage.required?(patient_session.patient, programme:)
+        end
       end
 
     return nil if count.zero?
 
-    href = session_triage_path(session, search_form: { triage_status: status })
+    href =
+      session_triage_path(
+        session,
+        search_form: {
+          triage_status: TriageOutcome::REQUIRED
+        }
+      )
 
     {
       key: {

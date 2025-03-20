@@ -12,8 +12,7 @@ class Sessions::TriageController < ApplicationController
   layout "full"
 
   def show
-    @statuses =
-      Patient::TriageOutcome::STATUSES - [Patient::TriageOutcome::NOT_REQUIRED]
+    @statuses = TriageOutcome::STATUSES - [TriageOutcome::NOT_REQUIRED]
 
     scope =
       @form.apply_to_scope(
@@ -25,13 +24,10 @@ class Sessions::TriageController < ApplicationController
     @outcomes = Outcomes.new(patient_sessions: scope)
 
     filtered_scope =
-      scope.reject do
-        it
-          .patient
-          .triage_outcome
-          .status
-          .values_at(*it.programmes)
-          .all?(Patient::TriageOutcome::NOT_REQUIRED)
+      scope.reject do |patient_session|
+        patient_session.programmes.all? do |programme|
+          @outcomes.triage.not_required?(patient_session.patient, programme:)
+        end
       end
 
     patient_sessions = @form.apply_outcomes(filtered_scope, outcomes: @outcomes)

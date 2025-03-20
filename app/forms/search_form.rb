@@ -61,7 +61,8 @@ class SearchForm
     end
 
     if (status = programme_status&.to_sym).present?
-      scope = scope.select { it.programme_outcome.status[programme] == status }
+      scope =
+        scope.select { outcomes.programme.status(it, programme:) == status }
     end
 
     if (status = session_status&.to_sym).present?
@@ -79,13 +80,11 @@ class SearchForm
 
     if (status = triage_status&.to_sym).present?
       scope =
-        scope.select do
-          it
-            .patient
-            .triage_outcome
-            .status
-            .values_at(*it.programmes)
-            .include?(status)
+        scope.select do |patient_session|
+          patient_session.programmes.any? do
+            outcomes.triage.status(patient_session.patient, programme: it) ==
+              status
+          end
         end
     end
 

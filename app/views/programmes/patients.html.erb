@@ -30,7 +30,11 @@
     <%= render AppSearchResultsComponent.new(@pagy) do %>
       <% @patients.each do |patient| %>
         <%= render AppPatientSearchResultCardComponent.new(
-              patient, link_to: patient_path(patient), programme: @programme, show_year_group: true,
+              patient,
+              link_to: patient_path(patient),
+              outcomes: @outcomes,
+              programme: @programme,
+              show_year_group: true,
             ) %>
       <% end %>
     <% end %>

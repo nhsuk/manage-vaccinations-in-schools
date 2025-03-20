@@ -26,7 +26,7 @@
 <ul class="app-action-list">
   <% if (session_attendance = @patient_session.todays_attendance) %>
     <li class="app-action-list__item">
-      <%= render AppRegisterStatusTagComponent.new(Outcomes.new(patient_session: @patient_session).register.status(@patient_session)) %>
+      <%= render AppRegisterStatusTagComponent.new(@outcomes.register.status(@patient_session)) %>
     </li>
 
     <% if policy(session_attendance).edit? %>
@@ -53,7 +53,7 @@
           href: session_patient_programme_path(@session, @patient, programme, return_to: params[:return_to]),
           text: programme.name,
           selected: @programme == programme,
-          ticked: @patient.programme_outcome.vaccinated?(programme),
+          ticked: @outcomes.programme.vaccinated?(@patient, programme:),
         )
       end
     

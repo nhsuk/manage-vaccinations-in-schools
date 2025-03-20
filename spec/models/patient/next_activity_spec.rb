@@ -1,11 +1,14 @@
 # frozen_string_literal: true
 
 describe Patient::NextActivity do
-  subject(:instance) { described_class.new(patient) }
+  subject(:instance) do
+    described_class.new(patient, outcomes: Outcomes.new(patient:))
+  end
 
   let(:programme) { create(:programme, :hpv) }
   let(:patient) { create(:patient, year_group: 8) }
 
+  # TODO: Remove once ConsentOutcome is refactored
   before { patient.strict_loading!(false) }
 
   describe "#status" do

@@ -44,13 +44,11 @@ class ProgrammesController < ApplicationController
   end
 
   def patients
-    @statuses = Patient::ProgrammeOutcome::STATUSES
+    @statuses = ProgrammeOutcome::STATUSES
 
     scope =
       @form.apply_to_scope(
         policy_scope(Patient).in_programmes([@programme]).preload(
-          :triages,
-          :vaccination_records,
           consents: :parent
         )
       )

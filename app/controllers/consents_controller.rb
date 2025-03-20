@@ -115,6 +115,8 @@ class ConsentsController < ApplicationController
         :gillick_assessments,
         session: :programmes
       ).find_by!(session: @session, patient_id: params[:patient_id])
+
+    @outcomes = Outcomes.new(patient_session: @patient_session)
   end
 
   def set_programme

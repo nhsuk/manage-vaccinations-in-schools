@@ -32,7 +32,14 @@ describe AppPatientSearchResultCardComponent do
   context "when showing the programme outcome" do
     let(:programme) { create(:programme, :flu) }
 
-    let(:component) { described_class.new(patient, link_to:, programme:) }
+    let(:component) do
+      described_class.new(
+        patient,
+        link_to:,
+        outcomes: Outcomes.new(patient:),
+        programme:
+      )
+    end
 
     it { should have_text("Programme outcome\nFluNo outcome yet") }
   end

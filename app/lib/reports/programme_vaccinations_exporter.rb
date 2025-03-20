@@ -147,7 +147,11 @@ class Reports::ProgrammeVaccinationsExporter
     session = vaccination_record.session
 
     consents = patient.consent_outcome.latest[programme]
-    triage = patient.triage_outcome.latest[programme]
+    triage =
+      patient
+        .triages
+        .select { it.programme == programme && !it.invalidated? }
+        .last
 
     gillick_assessment =
       gillick_assessments.find do

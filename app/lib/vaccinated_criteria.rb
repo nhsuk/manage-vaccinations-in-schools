@@ -1,42 +1,63 @@
 # frozen_string_literal: true
 
 class VaccinatedCriteria
-  def initialize(programme, patient:, vaccination_records:)
-    @programme = programme
-    @patient = patient
-    @vaccination_records = vaccination_records
+  def initialize(patients:)
+    @patients = patients
   end
 
-  def call
-    if vaccination_records.any? { it.programme_id != programme.id }
-      raise "Vaccination records provided for different programme."
-    end
+  def vaccinated?(patient, programme:)
+    records = vaccination_records.dig(patient.id, programme.id)
+    return false if records.blank?
 
-    return true if vaccination_records.any?(&:already_had?)
+    # .first => outcome == already_had
+    # .second => performed_at
+    # .third => dose_sequence
+    # .fourth => session_id
 
-    administered_records = vaccination_records.select(&:administered?)
+    return true if records.any? { it.first }
 
     if programme.menacwy?
-      administered_records.any? { patient.age(now: it.performed_at) >= 10 }
+      records.any? { patient.age(now: it.second) >= 10 }
     elsif programme.td_ipv?
-      administered_records.any? do
+      records.any? do
         (
-          it.dose_sequence == programme.vaccinated_dose_sequence ||
-            (it.dose_sequence.nil? && it.recorded_in_service?)
-        ) && patient.age(now: it.performed_at) >= 10
+          it.third == programme.vaccinated_dose_sequence ||
+            (it.third.nil? && !it.fourth.nil?)
+        ) && patient.age(now: it.second) >= 10
       end
     else
-      administered_records.any?
+      records.any?
     end
   end
 
-  def self.call(*args, **kwargs)
-    new(*args, **kwargs).call
-  end
+  def administered_but_not_vaccinated?(patient, programme:)
+    return false if vaccinated?(patient, programme:)
 
-  private_class_method :new
+    vaccination_records.dig(patient.id, programme.id).present?
+  end
 
   private
 
-  attr_reader :programme, :patient, :vaccination_records
+  attr_reader :patients
+
+  def vaccination_records
+    @vaccination_records ||=
+      VaccinationRecord
+        .kept
+        .where(patient: patients)
+        .where(outcome: %w[already_had administered])
+        .pluck(
+          :patient_id,
+          :programme_id,
+          Arel.sql("outcome = ?", VaccinationRecord.outcomes[:already_had]),
+          :performed_at,
+          :dose_sequence,
+          :session_id
+        )
+        .each_with_object({}) do |row, hash|
+          hash[row.first] ||= {}
+          hash[row.first][row.second] ||= []
+          hash[row.first][row.second] << row.drop(2)
+        end
+  end
 end

@@ -62,6 +62,8 @@ class TriagesController < ApplicationController
         .preload_for_status
         .includes(:gillick_assessments)
         .find_by!(session: @session)
+
+    @outcomes = Outcomes.new(patient_session: @patient_session)
   end
 
   def set_programme

@@ -42,7 +42,7 @@ class AppProgrammeSessionTableComponent < ViewComponent::Base
   end
 
   def triage_needed_count(session:)
-    number_stat(session:) { it.patient.triage_outcome.required?(programme) }
+    number_stat(session:) { outcomes.triage.required?(it.patient, programme:) }
   end
 
   def vaccinated_count(session:)

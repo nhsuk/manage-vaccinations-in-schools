@@ -75,7 +75,8 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
     tag.ul(class: "nhsuk-list nhsuk-list--bullet") do
       safe_join(
         patient_session.programmes.map do |programme|
-          status = patient_session.patient.next_activity.status[programme]
+          status =
+            patient_session.patient.next_activity(outcomes).status[programme]
           tag.li("#{I18n.t(status, scope: :activity)} for #{programme.name}")
         end
       )
@@ -85,31 +86,31 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
   def status_tag
     return if context == :record
 
-    if context == :register
-      render AppRegisterStatusTagComponent.new(
-               outcomes.register.status(patient_session)
-             )
-    elsif context == :outcome
+    case context
+    when :register
+      status = outcomes.register.status(patient_session)
+      render AppRegisterStatusTagComponent.new(status)
+    when :outcome
       statuses =
         patient_session.programmes.index_with do
           outcomes.session.status(patient_session, programme: it)
         end
       render AppProgrammeStatusTagsComponent.new(statuses, outcome: :session)
-    else
-      outcome =
-        case context
-        when :consent
-          patient.consent_outcome
-        when :triage
-          patient.triage_outcome
+    when :triage
+      statuses =
+        patient_session.programmes.index_with do
+          outcomes.triage.status(patient, programme: it)
         end
+      render AppProgrammeStatusTagsComponent.new(statuses, outcome: :triage)
+    else
+      outcome = patient.consent_outcome
 
       # ensure status is calculated for each programme
       patient_session.programmes.each { outcome.status[it] }
 
       render AppProgrammeStatusTagsComponent.new(
                outcome.status,
-               outcome: context == :outcome ? :session : context
+               outcome: context
              )
     end
   end

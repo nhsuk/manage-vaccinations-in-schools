@@ -67,7 +67,9 @@ class PatientSession < ApplicationRecord
   scope :preload_for_status,
         -> do
           eager_load(:patient).preload(
-            patient: [:triages, { consents: :parent }, :vaccination_records],
+            patient: {
+              consents: :parent
+            },
             session: :programmes
           )
         end
@@ -111,7 +113,8 @@ class PatientSession < ApplicationRecord
   end
 
   def can_record_as_already_vaccinated?(programme:)
-    !session.today? && patient.programme_outcome.none_yet?(programme)
+    outcomes = Outcomes.new(patient_session: self)
+    !session.today? && outcomes.programme.none_yet?(patient, programme:)
   end
 
   def programmes
@@ -141,7 +144,7 @@ class PatientSession < ApplicationRecord
     programmes_to_check = programme ? [programme] : programmes
 
     programmes_to_check.any? do
-      patient.consent_given_and_safe_to_vaccinate?(programme: it)
+      patient.consent_given_and_safe_to_vaccinate?(outcomes:, programme: it)
     end
   end
 
