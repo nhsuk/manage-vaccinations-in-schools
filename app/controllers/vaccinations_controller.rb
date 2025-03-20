@@ -94,9 +94,9 @@ class VaccinationsController < ApplicationController
           :organisation,
           patient: {
             parent_relationships: :parent
-          }
+          },
+          session: :programmes
         )
-        .preload_for_status
         .find_by!(session: @session)
 
     @outcomes = Outcomes.new(patient_session: @patient_session)

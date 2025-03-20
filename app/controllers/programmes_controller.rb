@@ -33,13 +33,7 @@ class ProgrammesController < ApplicationController
         .has_programme(@programme)
         .for_current_academic_year
         .eager_load(:location)
-        .preload(
-          :session_dates,
-          patient_sessions: [
-            :gillick_assessments,
-            { patient: [:triages, :vaccination_records, { consents: :parent }] }
-          ]
-        )
+        .preload(:session_dates)
         .order("locations.name")
   end
 

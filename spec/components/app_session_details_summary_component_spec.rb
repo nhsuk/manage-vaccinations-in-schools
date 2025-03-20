@@ -7,7 +7,9 @@ describe AppSessionDetailsSummaryComponent do
 
   let(:programme) { create(:programme, :hpv) }
   let(:session) { create(:session, programmes: [programme]) }
-  let(:patient_sessions) { session.patient_sessions.preload_for_status }
+  let(:patient_sessions) do
+    session.patient_sessions.eager_load(:patient).preload(session: :programmes)
+  end
   let(:outcomes) { Outcomes.new(patient_sessions: patient_sessions) }
 
   it { should have_text("Cohort\nNo children") }

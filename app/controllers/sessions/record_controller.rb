@@ -17,9 +17,11 @@ class Sessions::RecordController < ApplicationController
   def show
     scope =
       @form.apply_to_scope(
-        @session.patient_sessions.preload_for_status.in_programmes(
-          @session.programmes
-        )
+        @session
+          .patient_sessions
+          .eager_load(:patient)
+          .preload(session: :programmes)
+          .in_programmes(@session.programmes)
       )
 
     @outcomes = Outcomes.new(patient_sessions: scope)

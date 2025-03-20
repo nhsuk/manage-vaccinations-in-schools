@@ -33,8 +33,9 @@ class SessionsController < ApplicationController
         @patient_sessions =
           @session
             .patient_sessions
+            .eager_load(:patient)
+            .preload(session: :programmes)
             .in_programmes(@session.programmes)
-            .preload_for_status
 
         @outcomes = Outcomes.new(patient_sessions: @session.patient_sessions)
 

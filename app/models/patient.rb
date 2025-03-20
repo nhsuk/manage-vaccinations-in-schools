@@ -407,9 +407,8 @@ class Patient < ApplicationRecord
 
   def clear_sessions_for_current_academic_year!
     patient_sessions
-      .preload_for_status
-      .includes(:gillick_assessments, :session_attendances)
       .where(session: sessions_for_current_academic_year)
+      .preload(:session_attendances)
       .find_each(&:destroy_if_safe!)
   end
 end

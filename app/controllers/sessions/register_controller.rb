@@ -17,9 +17,11 @@ class Sessions::RegisterController < ApplicationController
 
     scope =
       @form.apply_to_scope(
-        @session.patient_sessions.preload_for_status.in_programmes(
-          @session.programmes
-        )
+        @session
+          .patient_sessions
+          .eager_load(:patient)
+          .preload(session: :programmes)
+          .in_programmes(@session.programmes)
       )
 
     @outcomes = Outcomes.new(patient_sessions: scope)
@@ -63,8 +65,10 @@ class Sessions::RegisterController < ApplicationController
 
   def set_patient_session
     @patient_session =
-      @session.patient_sessions.preload_for_status.find_by!(
-        patient_id: params[:patient_id]
-      )
+      @session
+        .patient_sessions
+        .eager_load(:patient)
+        .preload(session: :programmes)
+        .find_by!(patient_id: params[:patient_id])
   end
 end

@@ -64,9 +64,6 @@ class PatientSession < ApplicationRecord
           )
         end
 
-  scope :preload_for_status,
-        -> { eager_load(:patient).preload(session: :programmes) }
-
   scope :in_programmes,
         ->(programmes) { merge(Patient.in_programmes(programmes)) }
 

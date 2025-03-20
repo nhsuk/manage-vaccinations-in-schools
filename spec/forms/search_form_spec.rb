@@ -111,7 +111,7 @@ describe SearchForm do
   end
 
   context "for patient sessions" do
-    let(:scope) { PatientSession.preload_for_status }
+    let(:scope) { PatientSession.eager_load(:patient) }
     let(:outcomes) { Outcomes.new(patient_sessions: scope) }
 
     it "doesn't raise an error" do

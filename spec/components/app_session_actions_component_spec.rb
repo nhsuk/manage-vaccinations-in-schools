@@ -7,7 +7,9 @@ describe AppSessionActionsComponent do
 
   let(:programmes) { [create(:programme, :hpv)] }
   let(:session) { create(:session, programmes:) }
-  let(:patient_sessions) { session.patient_sessions.preload_for_status }
+  let(:patient_sessions) do
+    session.patient_sessions.eager_load(:patient).preload(session: :programmes)
+  end
   let(:outcomes) { Outcomes.new(patient_sessions:) }
 
   before do

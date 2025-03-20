@@ -51,7 +51,7 @@ class TriagesController < ApplicationController
     @patient =
       @session
         .patients
-        .includes(:consents, :school, parent_relationships: :parent)
+        .includes(:school, parent_relationships: :parent)
         .find_by(id: params[:patient_id])
   end
 
@@ -59,7 +59,6 @@ class TriagesController < ApplicationController
     @patient_session =
       @patient
         .patient_sessions
-        .preload_for_status
         .includes(:gillick_assessments)
         .find_by!(session: @session)
 
