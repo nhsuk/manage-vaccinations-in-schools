@@ -31,4 +31,55 @@ class Patient::ConsentStatus < ApplicationRecord
   enum :status,
        { no_response: 0, given: 1, refused: 2, conflicts: 3 },
        validate: true
+
+  def refresh!
+    health_answers_require_follow_up =
+      latest_consents.any?(&:health_answers_require_follow_up?)
+
+    if status_should_be_given?
+      update!(status: :given, health_answers_require_follow_up:)
+    elsif status_should_be_refused?
+      update!(status: :refused, health_answers_require_follow_up:)
+    elsif status_should_be_conflicts?
+      update!(status: :conflicts, health_answers_require_follow_up:)
+    else
+      update!(status: :no_response, health_answers_require_follow_up:)
+    end
+  end
+
+  private
+
+  def status_should_be_given?
+    if self_consents.any?
+      self_consents.all?(&:response_given?)
+    else
+      parental_consents.any? && parental_consents.all?(&:response_given?)
+    end
+  end
+
+  def status_should_be_refused?
+    latest_consents.any? && latest_consents.all?(&:response_refused?)
+  end
+
+  def status_should_be_conflicts?
+    if self_consents.any?
+      self_consents.any?(&:response_refused?) &&
+        self_consents.any?(&:response_given?)
+    else
+      parental_consents.any?(&:response_refused?) &&
+        parental_consents.any?(&:response_given?)
+    end
+  end
+
+  def self_consents
+    @self_consents ||= latest_consents.select(&:via_self_consent?)
+  end
+
+  def parental_consents
+    @parental_consents ||= latest_consents.reject(&:via_self_consent?)
+  end
+
+  def latest_consents
+    @latest_consents ||= patient.latest_consents(programme_id:)
+  end
 end
