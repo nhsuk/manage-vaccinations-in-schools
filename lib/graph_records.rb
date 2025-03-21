@@ -325,7 +325,7 @@ class GraphRecords
 
   def order_nodes(*nodes)
     nodes.sort_by do |node|
-      @node_order.index(node.class.name.underscore.to_sym) || Float::INFINITY
+      @node_order.index(node.class.name.underscore) || Float::INFINITY
     end
   end
 
