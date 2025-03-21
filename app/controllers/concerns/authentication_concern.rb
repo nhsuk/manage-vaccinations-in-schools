@@ -63,24 +63,18 @@ module AuthenticationConcern
     end
 
     def authenticate_basic
-      perform_basic_auth if Flipper.enabled? :basic_auth
-    end
+      if Flipper.enabled? :basic_auth
+        authenticated =
+          authenticate_with_http_basic do |username, password|
+            username == Rails.application.credentials.support_username &&
+              password == Rails.application.credentials.support_password
+          end
 
-    def authenticate_basic_always
-      perform_basic_auth
-    end
-
-    def perform_basic_auth
-      authenticated =
-        authenticate_with_http_basic do |username, password|
-          username == Rails.application.credentials.support_username &&
-            password == Rails.application.credentials.support_password
-        end
-
-      unless authenticated
-        request_http_basic_authentication "Application", <<~MESSAGE
+        unless authenticated
+          request_http_basic_authentication "Application", <<~MESSAGE
         Access is currently restricted to authorised users only.
       MESSAGE
+        end
       end
     end
 
