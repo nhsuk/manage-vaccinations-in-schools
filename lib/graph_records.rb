@@ -288,7 +288,7 @@ class GraphRecords
   end
 
   def render_clicks
-    @nodes.to_a.map { "  click #{node_name(it)} \"#{node_link(it)}\"" }
+    @nodes.map { "  click #{node_name(it)} \"#{node_link(it)}\"" }
   end
 
   def introspect(obj)
