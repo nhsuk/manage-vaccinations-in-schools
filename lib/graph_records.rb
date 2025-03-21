@@ -210,15 +210,12 @@ class GraphRecords
     @inspected = Set.new
     @focus = @focus_config.map { _1.to_s.classify.constantize.where(id: _2) }
 
-    if @primary_type.nil?
-      @primary_type =
-        (
-          if objects.keys.size >= 1
-            objects.keys.first.to_s.singularize.to_sym
-          else
-            :patient
-          end
-        )
+    @primary_type ||=
+      if objects.keys.size >= 1
+        objects.keys.first.to_s.singularize.to_sym
+      else
+        :patient
+      end
     end
 
     begin
