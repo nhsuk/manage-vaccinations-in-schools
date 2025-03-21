@@ -59,6 +59,8 @@ class DraftConsentsController < ApplicationController
 
       @consent.parent&.save!
       @consent.save!
+
+      StatusUpdater.call(patient: @patient)
     end
 
     set_patient_session # reload with new consents

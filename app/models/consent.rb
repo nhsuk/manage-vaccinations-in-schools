@@ -155,11 +155,10 @@ class Consent < ApplicationRecord
 
       consent_given =
         consent_form.chosen_programmes.map do |programme|
-          create!(
+          patient.consents.create!(
             consent_form:,
             organisation: consent_form.organisation,
             programme:,
-            patient:,
             parent:,
             notes: "",
             response: "given",
@@ -171,11 +170,10 @@ class Consent < ApplicationRecord
 
       consent_refused =
         consent_form.not_chosen_programmes.map do |programme|
-          create!(
+          patient.consents.create!(
             consent_form:,
             organisation: consent_form.organisation,
             programme:,
-            patient:,
             parent:,
             reason_for_refusal: consent_form.reason,
             notes: consent_form.reason_notes.presence || "",
@@ -185,6 +183,8 @@ class Consent < ApplicationRecord
             recorded_by: current_user
           )
         end
+
+      StatusUpdater.call(patient:)
 
       consent_given + consent_refused
     end

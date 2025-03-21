@@ -31,7 +31,7 @@ class StatusUpdater
 
     Patient::ConsentStatus
       .where(patient: patient_sessions.select(:patient_id))
-      .includes(:programme, patient: { consents: :parent })
+      .includes(:consents)
       .find_in_batches(batch_size: 10_000) do |batch|
         batch.each(&:assign_status)
 
