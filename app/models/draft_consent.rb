@@ -148,9 +148,9 @@ class DraftConsent
     else
       self.parent =
         patient.parents.find_by(id: value) ||
-          Parent.where(
-            consents: patient.consent_outcome.all[programme]
-          ).find_by(id: value)
+          Parent.where(consents: patient.consents.where(programme:)).find_by(
+            id: value
+          )
     end
   end
 
