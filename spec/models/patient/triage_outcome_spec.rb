@@ -16,7 +16,15 @@ describe Patient::TriageOutcome do
     end
 
     context "with a consent that needs triage" do
-      before { create(:consent, :given, :needing_triage, patient:, programme:) }
+      before do
+        create(
+          :patient_consent_status,
+          :given,
+          :health_answers_require_follow_up,
+          patient:,
+          programme:
+        )
+      end
 
       it { should be(described_class::REQUIRED) }
     end

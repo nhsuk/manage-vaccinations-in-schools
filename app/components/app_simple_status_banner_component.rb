@@ -52,7 +52,7 @@ class AppSimpleStatusBannerComponent < ViewComponent::Base
 
     if patient.triage_outcome.required?(programme)
       reasons = [
-        if patient.triage_outcome.consent_needs_triage?(programme:)
+        if patient.consent_status(programme:).health_answers_require_follow_up?
           I18n.t(
             :consent_needs_triage,
             scope: %i[
@@ -86,8 +86,8 @@ class AppSimpleStatusBannerComponent < ViewComponent::Base
     patient
       .latest_consents(programme:)
       .select(&:response_refused?)
-      .map(&:who_responded)
       .last
+      &.who_responded
   end
 
   def nurse

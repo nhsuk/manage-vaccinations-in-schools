@@ -31,10 +31,13 @@ class AppConsentComponent < ViewComponent::Base
         .first
   end
 
+  def consent_status
+    @consent_status ||= patient.consent_status(programme:)
+  end
+
   def can_send_consent_request?
-    patient.consent_outcome.no_response?(programme) &&
-      patient.send_notifications? && session.open_for_consent? &&
-      patient.parents.any?
+    consent_status.no_response? && patient.send_notifications? &&
+      session.open_for_consent? && patient.parents.any?
   end
 
   def status_colour(consent)

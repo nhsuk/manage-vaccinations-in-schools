@@ -263,10 +263,6 @@ class Patient < ApplicationRecord
     birth_academic_year_changed?
   end
 
-  def consent_outcome
-    @consent_outcome ||= Patient::ConsentOutcome.new(self)
-  end
-
   def triage_outcome
     @triage_outcome ||= Patient::TriageOutcome.new(self)
   end
@@ -279,6 +275,12 @@ class Patient < ApplicationRecord
     @next_activity ||= Patient::NextActivity.new(self)
   end
 
+  def consent_status(programme:)
+    # Use `find` to allow for preloading.
+    consent_statuses.find { it.programme_id == programme.id } ||
+      consent_statuses.build(programme:)
+  end
+
   def latest_consents(programme:)
     ConsentGrouper.call(consents, programme:)
   end
@@ -286,7 +288,7 @@ class Patient < ApplicationRecord
   def consent_given_and_safe_to_vaccinate?(programme:)
     return false if programme_outcome.vaccinated?(programme)
 
-    consent_outcome.given?(programme) &&
+    consent_status(programme:).given? &&
       (
         triage_outcome.safe_to_vaccinate?(programme) ||
           triage_outcome.delay_vaccination?(programme) ||

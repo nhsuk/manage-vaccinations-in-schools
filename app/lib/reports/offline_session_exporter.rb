@@ -142,11 +142,12 @@ class Reports::OfflineSessionExporter
     patient = patient_session.patient
 
     patient_session.programmes.flat_map do |programme|
+      consent_status = patient.consent_status(programme:)
+
       bg_color =
-        case patient.consent_outcome.status[programme]
-        when Patient::ConsentOutcome::REFUSED
+        if consent_status.refused?
           "F7D4D1"
-        when Patient::ConsentOutcome::CONFLICTS
+        elsif consent_status.conflicts?
           "FFDC8E"
         end
 
@@ -183,7 +184,6 @@ class Reports::OfflineSessionExporter
     patient = patient_session.patient
 
     gillick_assessment = patient_session.gillick_assessment(programme)
-    consents = patient.latest_consents(programme:)
     triage = patient.triage_outcome.latest[programme]
 
     row[:organisation_code] = organisation.ods_code
@@ -203,9 +203,9 @@ class Reports::OfflineSessionExporter
     )
     row[:nhs_number] = patient.nhs_number
     row[:consent_status] = consent_status(patient:, programme:)
-    row[:consent_details] = consent_details(consents:)
+    row[:consent_details] = consent_details(patient:, programme:)
     row[:health_question_answers] = Cell.new(
-      health_question_answers(consents:),
+      health_question_answers(patient:, programme:),
       style: {
         alignment: {
           wrap_text: true

@@ -46,7 +46,7 @@ describe PatientSession::SessionOutcome do
     end
 
     context "with a consent refused" do
-      before { create(:consent, :refused, patient:, programme:) }
+      before { create(:patient_consent_status, :refused, patient:, programme:) }
 
       it { should be(described_class::REFUSED) }
     end

@@ -21,6 +21,8 @@ class AppSessionActionsComponent < ViewComponent::Base
 
   attr_reader :session, :patient_sessions
 
+  delegate :programmes, to: :session
+
   def rows
     @rows ||= [
       no_consent_response_row,
@@ -32,24 +34,16 @@ class AppSessionActionsComponent < ViewComponent::Base
   end
 
   def no_consent_response_row
-    consent_row(
-      text: "No consent response",
-      status: Patient::ConsentOutcome::NO_RESPONSE
-    )
+    consent_row("No consent response", status: "no_response")
   end
 
   def conflicting_consent_row
-    consent_row(
-      text: "Conflicting consent",
-      status: Patient::ConsentOutcome::CONFLICTS
-    )
+    consent_row("Conflicting consent", status: "conflicts")
   end
 
-  def consent_row(text:, status:)
+  def consent_row(text, status:)
     count =
-      patient_sessions.count do
-        it.patient.consent_outcome.status.values_at(*it.programmes).any?(status)
-      end
+      patient_sessions.has_consent_status(status, programme: programmes).count
 
     return nil if count.zero?
 

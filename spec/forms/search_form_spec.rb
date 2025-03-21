@@ -127,10 +127,16 @@ describe SearchForm do
       let(:triage_status) { nil }
       let(:year_groups) { nil }
 
+      let(:programme) { create(:programme) }
+
       it "filters on consent status" do
         patient_session =
-          create(:patient_session, :consent_given_triage_not_needed)
-        expect(form.apply(scope)).to include(patient_session)
+          create(
+            :patient_session,
+            :consent_given_triage_not_needed,
+            programmes: [programme]
+          )
+        expect(form.apply(scope, programme:)).to include(patient_session)
       end
     end
 
