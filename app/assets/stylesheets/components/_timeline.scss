@@ -1,0 +1,75 @@
+@use "../vendor/nhsuk-frontend" as *;
+
+.timeline {
+  position: relative;
+  margin-bottom: nhsuk-spacing(4);
+  margin-left: nhsuk-spacing(2);
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: nhsuk-spacing(2);
+    left: 0;
+    width: 5px;
+    height: 100%;
+    background-color: $color_nhsuk-blue;
+  }
+}
+
+.timeline__item {
+  position: relative;
+  padding-bottom: nhsuk-spacing(4);
+  padding-left: nhsuk-spacing(4);
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: nhsuk-spacing(2);
+    left: 0;
+    width: 15px;
+    height: 5px;
+    background-color: $color_nhsuk-blue;
+  }
+}
+
+.timeline__item--date {
+  position: relative;
+  padding-left: nhsuk-spacing(4);
+  padding-bottom: nhsuk-spacing(4);
+  margin-top: nhsuk-spacing(1);
+  margin-bottom: 0;
+  @include nhsuk-font(16);
+
+  &::before {
+    content: "";
+    position: absolute;
+    left: -9.5px;
+    top: 50%;
+    transform: translateY(-125%);
+    display: block;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background-color: $color_nhsuk-blue;
+  }
+}
+
+.timeline__header {
+  margin-bottom: nhsuk-spacing(1);
+}
+
+.timeline__title {
+  display: inline;
+  @include nhsuk-font(16);
+}
+
+.timeline__byline {
+  display: inline;
+  margin: 0;
+  color: $color_nhsuk-grey-5;
+  @include nhsuk-font(16);
+}
+
+.timeline__description {
+  @include nhsuk-font(16);
+}
