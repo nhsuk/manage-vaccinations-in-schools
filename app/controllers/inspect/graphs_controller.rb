@@ -18,7 +18,7 @@ module Inspect
 
       # Set default relationships when loading a page
       if params[:relationships].blank? &&
-        GraphRecords::DEFAULT_TRAVERSALS.key?(@primary_type)
+           GraphRecords::DEFAULT_TRAVERSALS.key?(@primary_type)
         default_rels = GraphRecords::DEFAULT_TRAVERSALS[@primary_type] || {}
         # Merge the default relationships and any additional_ids already provided.
         new_params = params.to_unsafe_h.merge("relationships" => default_rels)
@@ -56,9 +56,7 @@ module Inspect
 
         # Get selected relationships for this type
         selected_rels =
-          Array(params.dig(:relationships, type)).reject(&:blank?).map(
-            &:to_sym
-          )
+          Array(params.dig(:relationships, type)).reject(&:blank?).map(&:to_sym)
 
         # Add this type and its relationships to the config
         traversals_config[type] = selected_rels
