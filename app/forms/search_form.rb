@@ -44,16 +44,11 @@ class SearchForm
 
     scope = yield(scope) if block_given?
 
-    if (status = consent_status&.to_sym).present?
+    if (status = consent_status).present?
       scope =
-        scope.select do
-          it
-            .patient
-            .consent_outcome
-            .status
-            .values_at(*it.programmes)
-            .include?(status)
-        end
+        scope.where(
+          Patient::ConsentStatus.for_patient.where(status:).arel.exists
+        )
     end
 
     if (status = programme_status&.to_sym).present?

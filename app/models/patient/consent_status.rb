@@ -32,6 +32,8 @@ class Patient::ConsentStatus < ApplicationRecord
        { no_response: 0, given: 1, refused: 2, conflicts: 3 },
        validate: true
 
+  scope :for_patient, -> { where("patient_id = patients.id") }
+
   def refresh!
     health_answers_require_follow_up =
       latest_consents.any?(&:health_answers_require_follow_up?)

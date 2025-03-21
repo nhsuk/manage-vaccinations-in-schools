@@ -28,7 +28,7 @@ class AppConsentComponent < ViewComponent::Base
   end
 
   def can_send_consent_request?
-    patient.consent_outcome.no_response?(programme) &&
+    patient.consent_status(programme:).no_response? &&
       patient.send_notifications? && session.open_for_consent? &&
       patient.parents.any?
   end
