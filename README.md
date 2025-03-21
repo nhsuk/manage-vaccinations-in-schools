@@ -66,6 +66,8 @@ git pull origin release
 
 # Check that release can be fast-forwarded to the release candidate
 git merge-base --is-ancestor release v1.0.0-rc1 && echo "safe to ff-merge"
+# If release has diverged from main and cannot be fast-forwarded to the release
+# candidate, see the instructions below
 
 git merge --ff-only v1.0.0-rc1
 git push --tags origin release
