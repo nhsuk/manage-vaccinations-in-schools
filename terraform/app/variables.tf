@@ -23,6 +23,12 @@ variable "access_logs_bucket" {
   description = "Name of the S3 bucket which stores access logs for various resources"
 }
 
+variable "appspec_bucket" {
+  type        = string
+  description = "Name of the S3 bucket which stores appspec files"
+  nullable    = false
+}
+
 variable "account_id" {
   type        = string
   default     = "393416225559"
