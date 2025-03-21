@@ -49,7 +49,7 @@ module Inspect
       private
 
       def build_traversals_config
-        used_types = {}
+        traversals_config = {}
         to_process = Set.new([@primary_type])
         processed = Set.new
 
@@ -65,7 +65,7 @@ module Inspect
             )
 
           # Add this type and its relationships to the config
-          used_types[type] = selected_rels
+          traversals_config[type] = selected_rels
 
           # Add target types to process queue
           klass = type.to_s.classify.constantize
@@ -78,7 +78,7 @@ module Inspect
           end
         end
 
-        used_types
+        traversals_config
       end
 
       def build_graph_params
