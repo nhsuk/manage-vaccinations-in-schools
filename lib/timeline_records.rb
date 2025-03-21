@@ -164,7 +164,28 @@ class TimelineRecords
       end
   end
 
-  private
+  def load_timeline_events(event_names)
+    load_grouped_events(event_names)
+
+    formatted_items = []
+
+    @grouped_events.each do |date, events|
+      formatted_items << { type: :section_header, date: date }
+
+      events.each do |event|
+        formatted_items << {
+          type: :event,
+          event_type: event[:event_type],
+          id: event[:id],
+          details: event[:details],
+          created_at: event[:created_at],
+          active: false,
+          is_past_item: true
+        }
+      end
+    end
+    formatted_items
+  end
 
   def custom_event_handler(event_type)
     case event_type
