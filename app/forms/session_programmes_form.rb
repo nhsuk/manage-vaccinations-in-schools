@@ -12,7 +12,10 @@ class SessionProgrammesForm
   validate :cannot_remove_programmes
 
   def save
-    session.programme_ids = programme_ids if valid?
+    if valid?
+      session.programme_ids = programme_ids
+      PatientSessionsStatusFactory.call(session:)
+    end
   end
 
   def programme_ids=(values)
