@@ -68,11 +68,14 @@ git pull origin release
 git merge-base --is-ancestor release v1.0.0-rc1 && echo "safe to ff-merge"
 
 git merge --ff-only v1.0.0-rc1
-git tag v1.0.0
 git push --tags origin release
 ```
 
-Once this is done, you can deploy `release` to production.
+Once the `release` branch is updated on GitHub, create the release in GitHub UI
+with the release tag, e.g. v1.0.0, copying the release notes from the release
+candidate. Now it's time to deploy. Start with a deploy to `training` or
+`preview` to ensure the tagged version is correct. Once that's done you can
+deploy to production.
 
 #### When `release` and `main` have diverged
 
@@ -88,9 +91,11 @@ candidate.
 git checkout release
 git pull origin release
 git reset --hard v1.0.0-rc1
-git tag v1.0.0
 git push --tags origin release
 ```
+
+And then you can follow the instructions above about creating the release tag
+and deploying.
 
 ### Hot-fixes
 
