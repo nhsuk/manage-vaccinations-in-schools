@@ -102,6 +102,8 @@ class PatientMerger
         )
       end
 
+      patient_to_keep.reload.consent_statuses.find_each(&:refresh!)
+
       patient_to_destroy.reload.destroy!
     end
   end

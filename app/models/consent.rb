@@ -151,35 +151,45 @@ class Consent < ApplicationRecord
 
       consent_given =
         consent_form.chosen_programmes.map do |programme|
-          create!(
-            consent_form:,
-            organisation: consent_form.organisation,
-            programme:,
-            patient:,
-            parent:,
-            notes: "",
-            response: "given",
-            route: "website",
-            health_answers: consent_form.health_answers,
-            recorded_by: current_user
-          )
+          consent =
+            create!(
+              consent_form:,
+              organisation: consent_form.organisation,
+              programme:,
+              patient:,
+              parent:,
+              notes: "",
+              response: "given",
+              route: "website",
+              health_answers: consent_form.health_answers,
+              recorded_by: current_user
+            )
+
+          patient.consent_statuses.find_or_create_by!(programme:).refresh!
+
+          consent
         end
 
       consent_refused =
         consent_form.not_chosen_programmes.map do |programme|
-          create!(
-            consent_form:,
-            organisation: consent_form.organisation,
-            programme:,
-            patient:,
-            parent:,
-            reason_for_refusal: consent_form.reason,
-            notes: consent_form.reason_notes.presence || "",
-            response: "refused",
-            route: "website",
-            health_answers: consent_form.health_answers,
-            recorded_by: current_user
-          )
+          consent =
+            create!(
+              consent_form:,
+              organisation: consent_form.organisation,
+              programme:,
+              patient:,
+              parent:,
+              reason_for_refusal: consent_form.reason,
+              notes: consent_form.reason_notes.presence || "",
+              response: "refused",
+              route: "website",
+              health_answers: consent_form.health_answers,
+              recorded_by: current_user
+            )
+
+          patient.consent_statuses.find_or_create_by!(programme:).refresh!
+
+          consent
         end
 
       consent_given + consent_refused
