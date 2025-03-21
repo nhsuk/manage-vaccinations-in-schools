@@ -22,7 +22,7 @@
 </script>
 
 <%= render AppDetailsComponent.new(summary: "Graph options", expander: true, open: false) do %>
-  <%= form_with url: inspect_graph_path(object_type: @primary_type, object_id: @primary_id), method: :get, local: true do |form| %>
+  <%= form_with url: inspect_path(object_type: @primary_type, object_id: @primary_id), method: :get, local: true do |form| %>
     <!-- TODO add UI to allow changing order of nodes -->
     <% @traversals_config.keys.sort_by { |r| r.name.to_s.humanize }.each do |type| %>
       <%= render AppDetailsComponent.new(summary: "#{type.to_s.humanize}", expander: true, open: false) do %>

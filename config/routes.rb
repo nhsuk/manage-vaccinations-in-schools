@@ -321,9 +321,7 @@ Rails.application.routes.draw do
 
   constraints -> { !Rails.env.production? } do
     namespace :inspect do
-      namespace :graph do
-        get ":object_type/:object_id", to: "graphs#show"
-      end
+      get "graph/:object_type/:object_id", to: "graphs#show"
     end
   end
 end
