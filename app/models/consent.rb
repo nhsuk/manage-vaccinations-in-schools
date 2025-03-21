@@ -58,6 +58,8 @@ class Consent < ApplicationRecord
   scope :withdrawn, -> { where.not(withdrawn_at: nil) }
   scope :not_withdrawn, -> { where(withdrawn_at: nil) }
 
+  scope :response_provided, -> { not_response_not_provided }
+
   enum :response,
        { given: 0, refused: 1, not_provided: 2 },
        prefix: true,
