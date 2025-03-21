@@ -98,9 +98,8 @@ module Inspect
       end
 
       def safe_get_primary_type
-        object_type = params[:object_type].to_s.downcase.singularize
-        allowed_types = GraphRecords::ALLOWED_TYPES.map(&:to_s)
-        return nil unless allowed_types.include?(object_type)
+        object_type = params[:object_type].downcase.singularize
+        return nil unless GraphRecords::ALLOWED_TYPES.include?(object_type)
         object_type.to_sym
       end
     end
