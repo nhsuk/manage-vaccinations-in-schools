@@ -216,7 +216,6 @@ class GraphRecords
       else
         :patient
       end
-    end
 
     begin
       objects.map do |klass, ids|
@@ -253,8 +252,7 @@ class GraphRecords
   end
 
   def render_styles
-    object_types =
-      @nodes.map { |node| node.class.name.underscore.to_sym }.uniq
+    object_types = @nodes.map { |node| node.class.name.underscore.to_sym }.uniq
 
     styles =
       object_types.each_with_object({}) do |type, hash|
