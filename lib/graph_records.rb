@@ -254,7 +254,7 @@ class GraphRecords
 
   def render_styles
     object_types =
-      @nodes.to_a.map { |node| node.class.name.underscore.to_sym }.uniq
+      @nodes.map { |node| node.class.name.underscore.to_sym }.uniq
 
     styles =
       object_types.each_with_object({}) do |type, hash|
