@@ -1,0 +1,53 @@
+<div class="nhsuk-table__panel-with-heading-tab">
+  <h3 class="nhsuk-table__heading-tab">
+    <%= "Timeline for Patient-#{@patient_id}" %>
+  </h3>
+
+  <%= govuk_table(html_attributes: { class: "nhsuk-table-responsive" }) do |table| %>
+    <% table.with_head do |head| %>
+      <% head.with_row do |row| %>
+        <% row.with_cell(text: "Date/Time") %>
+        <% row.with_cell(text: "Event type") %>
+        <% row.with_cell(text: "Event ID") %>
+        <% unless @omit_details %>
+          <% row.with_cell(text: "Details") %>
+        <% end %>
+      <% end %>
+    <% end %>
+
+    <% table.with_body do |body| %>
+      <% @events.each do |date, events| %>
+        <%= body.with_row do |row| %>
+          <% # Date header row spanning all columns %>
+          <% colspan = @omit_details ? 3 : 4 %>
+          <% row.with_cell(text: content_tag(:strong, date), colspan: colspan) %>
+        <% end %>
+        <% events.each do |event| %>
+          <% body.with_row do |row| %>
+            <% row.with_cell do %>
+              <span class="nhsuk-table-responsive__heading">Time</span>
+              <%= format_time(event[:created_at]) %>
+            <% end %>
+
+            <% row.with_cell do %>
+              <span class="nhsuk-table-responsive__heading">Event type</span>
+              <%= govuk_tag(text: event[:event_type], colour: tag_colour(event[:event_type])) %>
+            <% end %>
+
+            <% row.with_cell do %>
+              <span class="nhsuk-table-responsive__heading">Event ID</span>
+              <%= event[:id].to_s %>
+            <% end %>
+
+            <% unless @omit_details %>
+              <% row.with_cell do %>
+                <span class="nhsuk-table-responsive__heading">Details</span>
+                <%= format_event_details(event[:details]) %>
+              <% end %>
+            <% end %>
+          <% end %>
+        <% end %>
+      <% end %>
+    <% end %>
+  <% end %>
+</div>
