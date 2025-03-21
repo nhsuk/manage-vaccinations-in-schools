@@ -35,7 +35,7 @@ class GraphRecords
     fill:#000000,color:white
   ].freeze
 
-  DEFAULT_NODE_ORDER = %i[
+  DEFAULT_NODE_ORDER = %w[
     programme
     organisation
     team
