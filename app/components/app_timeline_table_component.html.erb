@@ -1,0 +1,30 @@
+<% if @comparison %>
+  <h3 class="timeline__heading">
+    Patient-<%= @patient_id %>
+  </h3>
+<% end %>
+<div class="timeline">
+  <% @events.each do |date, events| %>
+    <div class="timeline__item timeline__item--date">
+      <div class="timeline__header">
+        <h2 class="timeline__title">
+          <%= content_tag(:strong, date) %>
+        </h2>
+      </div>
+    </div>
+
+    <% events.each do |event| %>
+      <div class="timeline__item">
+        <div class="timeline__header">
+          <h3 class="timeline__title">
+            <%= govuk_tag(text: event[:event_type], colour: tag_colour(event[:event_type])) %> at <%= format_time(event[:created_at]) %>
+          </h3>
+        </div>
+        <p class="timeline__byline">id: <%= event[:id] %></p>
+        <div class="timeline__description">
+          <%= format_event_details(event[:details]) %>
+        </div>
+      </div>
+    <% end %>
+  <% end %>
+</div>
