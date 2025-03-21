@@ -278,6 +278,19 @@ class Patient < ApplicationRecord
     @next_activity ||= Patient::NextActivity.new(self)
   end
 
+  def latest_consents(programme_id: nil, programme: nil)
+    programme_id ||= programme.id
+
+    scope =
+      consents
+        .where(programme_id:)
+        .not_invalidated
+        .where(response: %i[given refused])
+        .eager_load(:parent)
+
+    ConsentGrouper.call(scope, programme_id:)
+  end
+
   def consent_given_and_safe_to_vaccinate?(programme:)
     return false if programme_outcome.vaccinated?(programme)
 
