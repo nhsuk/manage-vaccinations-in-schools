@@ -18,7 +18,7 @@ module Inspect
                    "You don't have permission to view object type: #{params[:object_type].to_s.downcase.singularize}",
                  status: :bad_request and return
         end
-        @primary_id = params[:object_id].to_i
+        @primary_id = params[:object_id]
 
         # Set default relationships when loading a page
         if params[:relationships].blank? &&
