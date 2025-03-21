@@ -25,3 +25,4 @@ http_hosts = {
   MAVIS__GIVE_OR_REFUSE_CONSENT_HOST = "training.manage-vaccinations-in-schools.nhs.uk"
 }
 minimum_replicas = 3
+appspec_bucket = "nhse-mavis-appspec-bucket-training"

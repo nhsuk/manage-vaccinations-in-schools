@@ -53,7 +53,7 @@ resource "aws_codedeploy_deployment_group" "blue_green_deployment_group" {
 }
 
 resource "aws_s3_bucket" "code_deploy_bucket" {
-  bucket        = "appspec-bucket-${var.environment}"
+  bucket        = var.appspec_bucket
   force_destroy = true
 }
 

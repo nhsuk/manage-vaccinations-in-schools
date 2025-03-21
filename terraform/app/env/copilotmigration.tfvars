@@ -19,3 +19,4 @@ splunk_enabled = "false"
 cis2_enabled   = "false"
 pds_enabled    = "false"
 minimum_replicas = 3
+appspec_bucket = "nhse-mavis-appspec-bucket-copilotmigration"
