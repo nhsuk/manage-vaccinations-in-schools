@@ -1,0 +1,91 @@
+.app-timeline {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  background-color: transparent;
+
+  & &__content {
+    @include nhsuk-responsive-margin(4);
+    
+    width: 100%;
+    flex-basis: 100%;
+    order: 1;
+    
+    @include govuk-media-query($from: desktop) {
+      width: auto;
+      flex: 1;
+      min-width: 0;
+      max-width: calc(100% - 20rem);
+    }
+  }
+
+  & &__filters {
+    @include nhsuk-responsive-padding(4);
+    
+    background-color: $color_nhsuk-grey-4;
+    
+    width: 100%;
+    flex-basis: 100%;
+    order: 2;
+    
+    @include govuk-media-query($from: desktop) {
+      width: 21rem;
+      flex: 0 0 21rem;
+    }
+
+    .nhsuk-checkboxes__label,
+    .nhsuk-radios__label {
+      font-size: 16px;
+      padding-left: 0;
+
+      &::before {
+        border-width: 3px;
+        padding: 0;
+        transform: scale(0.6667);
+        transform-origin: center left;
+      }
+
+      &::after {
+        left: 3px;
+        transform: rotate(-45deg) scale(0.6667);
+      }
+    }
+
+    .nhsuk-checkboxes__item,
+    .nhsuk-radios__item {
+      margin-bottom: 0;
+    }
+  }
+
+  & &__comparison {
+    display: flex;
+    flex-direction: row;
+    gap: nhsuk-spacing(4);
+    width: 100%;
+    
+    @include govuk-media-query($until: tablet) {
+      flex-direction: column;
+    }
+  }
+
+  & &__column {
+    flex: 1;
+    min-width: 0;
+    overflow-x: auto;
+  }
+
+  .nhsuk-table-responsive {
+    width: 100%;
+    
+    td, th {
+      word-break: break-word;
+      overflow-wrap: break-word;
+    }
+    
+    pre {
+      white-space: pre-wrap;
+      max-width: 100%;
+      overflow-x: auto;
+    }
+  }
+}
