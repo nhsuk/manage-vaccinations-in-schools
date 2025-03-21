@@ -100,6 +100,8 @@ class Consent < ApplicationRecord
     via_self_consent? ? patient.full_name : parent.label
   end
 
+  def response_provided? = !response_not_provided?
+
   def withdrawn?
     withdrawn_at != nil
   end

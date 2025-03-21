@@ -37,11 +37,7 @@ class Patient::ConsentOutcome
   def latest
     @latest ||=
       Hash.new do |hash, programme|
-        hash[programme] = all[programme]
-          .reject(&:invalidated?)
-          .select { it.response_given? || it.response_refused? }
-          .group_by(&:name)
-          .map { it.second.max_by(&:created_at) }
+        hash[programme] = patient.latest_consents(programme:)
       end
   end
 

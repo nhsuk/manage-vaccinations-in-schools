@@ -146,7 +146,7 @@ class Reports::ProgrammeVaccinationsExporter
     patient = vaccination_record.patient
     session = vaccination_record.session
 
-    consents = patient.consent_outcome.latest[programme]
+    consents = patient.latest_consents(programme:)
     triage = patient.triage_outcome.latest[programme]
 
     gillick_assessment =

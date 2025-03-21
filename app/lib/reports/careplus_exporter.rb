@@ -135,7 +135,7 @@ class Reports::CareplusExporter
       patient.given_name,
       patient.date_of_birth.strftime("%d/%m/%Y"),
       patient.restricted? ? "" : patient.address_line_1,
-      patient.consent_outcome.latest[programme].first&.name || "",
+      patient.latest_consents(programme:).first&.name || "",
       99, # Ethnicity, 99 is "Not known"
       first_vaccination.performed_at.strftime("%d/%m/%Y"),
       first_vaccination.performed_at.strftime("%H:%M"),

@@ -183,7 +183,7 @@ class Reports::OfflineSessionExporter
     patient = patient_session.patient
 
     gillick_assessment = patient_session.gillick_assessment(programme)
-    consents = patient.consent_outcome.latest[programme]
+    consents = patient.latest_consents(programme:)
     triage = patient.triage_outcome.latest[programme]
 
     row[:organisation_code] = organisation.ods_code
