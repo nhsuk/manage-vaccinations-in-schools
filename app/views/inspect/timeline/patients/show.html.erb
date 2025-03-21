@@ -1,0 +1,78 @@
+<%= h1 page_title: @patient.initials do %>
+  <%= "Inspect Patient #{@patient.id}" %>
+<% end %>
+
+<code>
+  <%= "Patient.find(#{@patient.id})" %>
+</code>
+
+<% if params[:event_names].include?("audits") && @patient_timeline %>
+  <%= govuk_inset_text do %>
+    <p class="nhsuk-body">
+      Only audited changes that do not involve PII are included
+    </p>
+  <% end %>
+<% end %>
+
+<div class="nhsuk-grid-row nhsuk-u-margin-top-4">
+  
+  <div class="nhsuk-grid-column-one-third app-grid-column--sticky">
+      <%= render AppTimelineFilterComponent.new(
+            url: inspect_timeline_patient_path,
+            patient: @patient,
+            teams: @patient.teams,
+            event_options: TimelineRecords::DEFAULT_DETAILS_CONFIG,
+            timeline_fields: TimelineRecords::AVAILABLE_DETAILS_CONFIG,
+            class_imports: @patient_events[:class_imports],
+            cohort_imports: @patient_events[:cohort_imports],
+            sessions: @patient_events[:sessions],
+            additional_class_imports: @additional_events[:class_imports],
+            reset_url: inspect_timeline_patient_path(
+              event_names: Inspect::Timeline::PatientsController::DEFAULT_EVENT_NAMES,
+              detail_config: TimelineRecords::DEFAULT_DETAILS_CONFIG,
+              compare_option: nil,
+            ),
+          ) %>
+  </div>
+
+  <div class="nhsuk-grid-column-two-thirds">
+    <% if @no_events_message %>
+      <%= render AppWarningCalloutComponent.new(
+            heading: "No events found",
+            description: "Patient-#{@patient.id} doesn't have the following events recorded: " +
+                         "#{params[:event_names].map(&:humanize).join(", ")}".html_safe,
+          ) %>
+    <% else %>
+        <% if @compare_patient_timeline || @invalid_patient_id || @no_events_compare_message %>
+          <div class="nhsuk-grid-column-one-half">
+            <h2 class="nhsuk-heading-m">Patient <%= @patient.id %></h2>
+            <%= render AppTimelineComponent.new(@patient_timeline) %>
+          </div>
+
+          <% if @invalid_patient_id %>
+            <div class="nhsuk-grid-column-one-half">
+              <%= render AppWarningCalloutComponent.new(
+                    heading: "Invalid patient ID",
+                    description: "Patient-#{params[:manual_patient_id]} doesn't exist",
+                  ) %>
+            </div>
+          <% elsif @no_events_compare_message %>
+            <div class="nhsuk-grid-column-one-half">
+              <%= render AppWarningCalloutComponent.new(
+                    heading: "No events found for comparison patient",
+                    description: "Patient-#{@compare_patient.id} doesn't have the following events recorded: " +
+                                 "#{params[:event_names].map(&:humanize).join(", ")}".html_safe,
+                  ) %>
+            </div>
+          <% elsif @compare_patient_timeline %>
+            <h2 class="nhsuk-heading-m">Patient <%= @compare_patient.id %></h2>
+              <div class="nhsuk-grid-column-one-half">
+                <%= render AppTimelineComponent.new(@compare_patient_timeline) %>
+              </div>
+          <% end %>
+        <% else %>
+          <%= render AppTimelineComponent.new(@patient_timeline) %>
+        <% end %>
+    <% end %>
+  </div>
+</div>
