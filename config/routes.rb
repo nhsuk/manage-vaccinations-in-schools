@@ -328,6 +328,9 @@ Rails.application.routes.draw do
   constraints -> { !Rails.env.production? } do
     namespace :inspect do
       get "graph/:object_type/:object_id", to: "graphs#show"
+      namespace :timeline do
+        resources :patients, only: [:show]
+      end
     end
   end
 end
