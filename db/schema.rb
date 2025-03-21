@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_03_07_163053) do
+ActiveRecord::Schema[8.0].define(version: 2025_03_21_065747) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -546,6 +546,15 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_07_163053) do
     t.index ["email"], name: "index_parents_on_email"
   end
 
+  create_table "patient_consent_statuses", force: :cascade do |t|
+    t.bigint "patient_id", null: false
+    t.bigint "programme_id", null: false
+    t.integer "status", default: 0, null: false
+    t.boolean "health_answers_require_follow_up", default: false, null: false
+    t.index ["patient_id", "programme_id"], name: "index_patient_consent_statuses_on_patient_id_and_programme_id", unique: true
+    t.index ["status"], name: "index_patient_consent_statuses_on_status"
+  end
+
   create_table "patient_sessions", force: :cascade do |t|
     t.bigint "session_id", null: false
     t.bigint "patient_id", null: false
@@ -863,6 +872,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_07_163053) do
   add_foreign_key "organisation_programmes", "programmes"
   add_foreign_key "parent_relationships", "parents"
   add_foreign_key "parent_relationships", "patients"
+  add_foreign_key "patient_consent_statuses", "patients", on_delete: :cascade
+  add_foreign_key "patient_consent_statuses", "programmes"
   add_foreign_key "patient_sessions", "patients"
   add_foreign_key "patient_sessions", "sessions"
   add_foreign_key "patients", "locations", column: "gp_practice_id"
