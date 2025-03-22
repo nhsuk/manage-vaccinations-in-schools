@@ -26,7 +26,7 @@ class ConsentsController < ApplicationController
   end
 
   def send_request
-    return unless @patient.consent_outcome.no_response?(@programme)
+    return unless @patient.consent_status(programme: @programme).no_response?
 
     # For programmes that are administered together we should send the consent request together.
     programmes =

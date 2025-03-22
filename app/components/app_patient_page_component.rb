@@ -24,7 +24,7 @@ class AppPatientPageComponent < ViewComponent::Base
   delegate :patient, :session, to: :patient_session
 
   def display_health_questions?
-    patient.consent_outcome.latest[programme].any?(&:response_given?)
+    patient.latest_consents(programme:).any?(&:response_given?)
   end
 
   def display_gillick_assessment_card?

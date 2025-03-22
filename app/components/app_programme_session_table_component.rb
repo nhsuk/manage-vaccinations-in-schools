@@ -30,12 +30,12 @@ class AppProgrammeSessionTableComponent < ViewComponent::Base
   end
 
   def no_response_count(session:)
-    number_stat(session:) { it.patient.consent_outcome.no_response?(programme) }
+    number_stat(session:) { it.patient.consent_status(programme:).no_response? }
   end
 
   def no_response_percentage(session:)
     percentage_stat(session:) do
-      it.patient.consent_outcome.no_response?(programme)
+      it.patient.consent_status(programme:).no_response?
     end
   end
 

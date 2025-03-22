@@ -87,11 +87,15 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
       render AppRegisterStatusTagComponent.new(
                patient_session.register_outcome.status
              )
+    elsif context == :consent
+      statuses =
+        patient_session.programmes.index_with do |programme|
+          patient.consent_status(programme:).status
+        end
+      render AppProgrammeStatusTagsComponent.new(statuses, outcome: :consent)
     else
       outcome =
         case context
-        when :consent
-          patient.consent_outcome
         when :triage
           patient.triage_outcome
         when :outcome

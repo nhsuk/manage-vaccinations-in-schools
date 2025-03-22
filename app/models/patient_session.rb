@@ -65,7 +65,7 @@ class PatientSession < ApplicationRecord
         -> do
           eager_load(:patient).preload(
             session_attendances: :session_date,
-            patient: [:triages, { consents: :parent }, :vaccination_records],
+            patient: %i[consent_statuses triages vaccination_records],
             session: :programmes
           )
         end

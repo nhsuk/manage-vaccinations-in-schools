@@ -9,12 +9,12 @@ class AppConsentStatusComponent < ViewComponent::Base
   end
 
   def call
-    case patient.consent_outcome.status[programme]
-    when Patient::ConsentOutcome::GIVEN
+    consent_status = patient.consent_status(programme:)
+    if consent_status.given?
       icon_tick "Consent given", "aqua-green"
-    when Patient::ConsentOutcome::REFUSED
+    elsif consent_status.refused?
       icon_cross "Consent refused", "red"
-    when Patient::ConsentOutcome::CONFLICTS
+    elsif consent_status.conflicts?
       icon_cross "Conflicting consent", "dark-orange"
     end
   end

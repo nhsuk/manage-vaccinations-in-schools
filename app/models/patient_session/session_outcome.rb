@@ -52,12 +52,12 @@ class PatientSession::SessionOutcome
            :register_outcome,
            :session,
            to: :patient_session
-  delegate :consent_outcome, :triage_outcome, to: :patient
+  delegate :triage_outcome, to: :patient
 
   def programme_status(programme)
     if (vaccination_record = latest[programme])
       vaccination_record.outcome.to_sym
-    elsif consent_outcome.refused?(programme)
+    elsif patient.consent_status(programme:).refused?
       REFUSED
     elsif triage_outcome.do_not_vaccinate?(programme)
       HAD_CONTRAINDICATIONS
