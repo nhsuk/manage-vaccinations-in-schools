@@ -26,5 +26,9 @@ FactoryBot.define do
     programme
 
     traits_for_enum :status
+
+    trait :health_answers_require_follow_up do
+      health_answers_require_follow_up { true }
+    end
   end
 end
