@@ -10,8 +10,6 @@ describe "clinics:create" do
     stdout.string
   end
 
-  before { Rails.application.load_tasks }
-
   let(:organisation) { create(:organisation, ods_code: "ABC123") }
 
   it "creates a clinic location with the provided details" do
