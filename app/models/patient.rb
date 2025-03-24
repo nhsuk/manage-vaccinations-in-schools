@@ -159,6 +159,17 @@ class Patient < ApplicationRecord
 
   scope :search_by_nhs_number, ->(nhs_number) { where(nhs_number:) }
 
+  scope :has_vaccination_status,
+        ->(status, programme:) do
+          where(
+            Patient::VaccinationStatus
+              .where("patient_id = patients.id")
+              .where(status:, programme:)
+              .arel
+              .exists
+          )
+        end
+
   validates :given_name, :family_name, :date_of_birth, presence: true
 
   validates :birth_academic_year, comparison: { greater_than_or_equal_to: 1990 }
@@ -265,10 +276,6 @@ class Patient < ApplicationRecord
     birth_academic_year_changed?
   end
 
-  def programme_outcome
-    @programme_outcome ||= Patient::ProgrammeOutcome.new(self)
-  end
-
   def next_activity
     @next_activity ||= Patient::NextActivity.new(self)
   end
@@ -296,6 +303,12 @@ class Patient < ApplicationRecord
       .max_by(&:created_at)
   end
 
+  def vaccination_status(programme:)
+    # Use `find` to allow for preloading.
+    vaccination_statuses.find { it.programme_id == programme.id } ||
+      vaccination_statuses.build(programme:)
+  end
+
   def latest_vaccination_records(programme:)
     vaccination_records
       .select { it.programme_id == programme.id }
@@ -303,7 +316,7 @@ class Patient < ApplicationRecord
   end
 
   def consent_given_and_safe_to_vaccinate?(programme:)
-    return false if programme_outcome.vaccinated?(programme)
+    return false if vaccination_status(programme:).vaccinated?
 
     consent_status(programme:).given? &&
       (

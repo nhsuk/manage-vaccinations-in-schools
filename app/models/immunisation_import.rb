@@ -125,6 +125,6 @@ class ImmunisationImport < ApplicationRecord
   end
 
   def postprocess_rows!
-    # Nothing to do.
+    StatusUpdater.call(patient: patients)
   end
 end

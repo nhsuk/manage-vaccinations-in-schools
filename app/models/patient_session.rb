@@ -65,7 +65,12 @@ class PatientSession < ApplicationRecord
         -> do
           eager_load(:patient).preload(
             session_attendances: :session_date,
-            patient: %i[consent_statuses triage_statuses vaccination_records],
+            patient: %i[
+              consent_statuses
+              triage_statuses
+              vaccination_records
+              vaccination_statuses
+            ],
             session: :programmes
           )
         end
@@ -131,7 +136,7 @@ class PatientSession < ApplicationRecord
   end
 
   def can_record_as_already_vaccinated?(programme:)
-    !session.today? && patient.programme_outcome.none_yet?(programme)
+    !session.today? && patient.vaccination_status(programme:).none_yet?
   end
 
   def programmes
