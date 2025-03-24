@@ -276,7 +276,6 @@ FactoryBot.define do
           association(
             :patient_consent_status,
             :given,
-            :health_answers_require_follow_up,
             patient: instance,
             programme:
           )

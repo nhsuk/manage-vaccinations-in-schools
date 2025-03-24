@@ -4,11 +4,10 @@
 #
 # Table name: patient_consent_statuses
 #
-#  id                               :bigint           not null, primary key
-#  health_answers_require_follow_up :boolean          default(FALSE), not null
-#  status                           :integer          default("no_response"), not null
-#  patient_id                       :bigint           not null
-#  programme_id                     :bigint           not null
+#  id           :bigint           not null, primary key
+#  status       :integer          default("no_response"), not null
+#  patient_id   :bigint           not null
+#  programme_id :bigint           not null
 #
 # Indexes
 #
@@ -128,39 +127,6 @@ describe Patient::ConsentStatus do
 
         it { should be(:given) }
       end
-    end
-  end
-
-  describe "#health_answers_require_follow_up" do
-    subject do
-      patient_consent_status.assign_status
-      patient_consent_status.health_answers_require_follow_up
-    end
-
-    before { patient.strict_loading!(false) }
-
-    context "with no consent" do
-      it { should be(false) }
-    end
-
-    context "with an invalidated consent with health answers" do
-      before do
-        create(
-          :consent,
-          :invalidated,
-          :health_question_notes,
-          patient:,
-          programme:
-        )
-      end
-
-      it { should be(false) }
-    end
-
-    context "with a consent with health answers" do
-      before { create(:consent, :health_question_notes, patient:, programme:) }
-
-      it { should be(true) }
     end
   end
 end

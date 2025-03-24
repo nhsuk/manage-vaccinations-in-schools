@@ -40,7 +40,7 @@ class StatusUpdater
           batch,
           on_duplicate_key_update: {
             conflict_target: [:id],
-            columns: %i[health_answers_require_follow_up status]
+            columns: %i[status]
           }
         )
       end

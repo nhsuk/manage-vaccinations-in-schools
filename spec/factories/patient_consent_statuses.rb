@@ -4,11 +4,10 @@
 #
 # Table name: patient_consent_statuses
 #
-#  id                               :bigint           not null, primary key
-#  health_answers_require_follow_up :boolean          default(FALSE), not null
-#  status                           :integer          default("no_response"), not null
-#  patient_id                       :bigint           not null
-#  programme_id                     :bigint           not null
+#  id           :bigint           not null, primary key
+#  status       :integer          default("no_response"), not null
+#  patient_id   :bigint           not null
+#  programme_id :bigint           not null
 #
 # Indexes
 #
@@ -26,9 +25,5 @@ FactoryBot.define do
     programme
 
     traits_for_enum :status
-
-    trait :health_answers_require_follow_up do
-      health_answers_require_follow_up { true }
-    end
   end
 end
