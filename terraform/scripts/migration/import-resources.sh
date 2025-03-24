@@ -2,23 +2,23 @@
 
 # This script is used to import resources that were created by AWS copilot into the terraform state file.
 # Add the resource IDs to the variables below before running the script.
-vpc_id=
-vpc_flowlogs_id=
-public_subnet_a_id=
-public_subnet_b_id=
-private_subnet_a_id=
-private_subnet_b_id=
-public_route_table_id=
-internet_gateway_id=
-lb_arn=
-http_listener_arn=
-https_listener_arn=
-lb_http_security_group_id=
-db_cluster_id=
-db_instance_id=
-rds_sg_id=
-db_subnet_id=
-cloudwatch_vpc_log_group_name=
+vpc_id=vpc-038fc6883f3d93661
+vpc_flowlogs_id=fl-0f016acda08316ca5
+public_subnet_a_id=subnet-0aa22d8dbf4ce207b
+public_subnet_b_id=subnet-004b1d3be074c1368
+private_subnet_a_id=subnet-058c536bca9b954a6
+private_subnet_b_id=subnet-0513b2602f1132fcc
+public_route_table_id=rtb-05889363dd69d3d28
+internet_gateway_id=igw-0357ebb0c317ee3ff
+lb_arn=arn:aws:elasticloadbalancing:eu-west-2:393416225559:loadbalancer/app/mavis-qa-pub-lb/b13314d26cd282f3
+http_listener_arn=arn:aws:elasticloadbalancing:eu-west-2:393416225559:listener/app/mavis-qa-pub-lb/b13314d26cd282f3/162b02dc6827062b
+https_listener_arn=arn:aws:elasticloadbalancing:eu-west-2:393416225559:listener/app/mavis-qa-pub-lb/b13314d26cd282f3/fa982b10f320d6f8
+lb_http_security_group_id=sg-0a82ebc892f267a9b
+db_cluster_id=mavis-qa-addonsstack-z0l4gx5euv3i-dbdbcluster-ysszxsdiq1ka
+db_instance_id=mavis-qa-addonsstack-z0l4gx5euv-dbdbwriterinstance-sstfvcbqdcwa
+rds_sg_id=sg-0afbf6f377139039b
+db_subnet_id=mavis-qa-addonsstack-z0l4gx5euv3i-dbdbsubnetgroup-fgvafc16exxw
+cloudwatch_vpc_log_group_name=mavis-qa-FlowLogs
 
 if [ "$#" -ne 1 ]; then
     echo "Usage: $0 <var-file>"
