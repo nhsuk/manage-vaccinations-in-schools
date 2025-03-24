@@ -16,6 +16,10 @@ describe StatusUpdater do
     it "doesn't create any triage statuses" do
       expect { call }.not_to change(Patient::TriageStatus, :count)
     end
+
+    it "doesn't create any vaccination statuses" do
+      expect { call }.not_to change(Patient::VaccinationStatus, :count)
+    end
   end
 
   context "with an HPV session and eligible patient" do
@@ -31,6 +35,11 @@ describe StatusUpdater do
       expect { call }.to change(patient.triage_statuses, :count).by(1)
       expect(patient.triage_statuses.first).to be_not_required
     end
+
+    it "creates a vaccination status" do
+      expect { call }.to change(patient.vaccination_statuses, :count).by(1)
+      expect(patient.vaccination_statuses.first).to be_none_yet
+    end
   end
 
   context "with a doubles session and ineligible patient" do
@@ -45,6 +54,10 @@ describe StatusUpdater do
 
     it "doesn't create any triage statuses" do
       expect { call }.not_to change(Patient::TriageStatus, :count)
+    end
+
+    it "doesn't create any vaccination statuses" do
+      expect { call }.not_to change(Patient::VaccinationStatus, :count)
     end
   end
 
@@ -64,6 +77,12 @@ describe StatusUpdater do
       expect { call }.to change(patient.triage_statuses, :count).by(2)
       expect(patient.triage_statuses.first).to be_not_required
       expect(patient.triage_statuses.second).to be_not_required
+    end
+
+    it "creates a vaccination status for both programmes" do
+      expect { call }.to change(patient.vaccination_statuses, :count).by(2)
+      expect(patient.vaccination_statuses.first).to be_none_yet
+      expect(patient.vaccination_statuses.second).to be_none_yet
     end
   end
 end

@@ -35,4 +35,60 @@ describe Patient::VaccinationStatus do
       %i[none_yet vaccinated could_not_vaccinate]
     )
   end
+
+  describe "#status" do
+    subject { patient_vaccination_status.assign_status }
+
+    before { patient.strict_loading!(false) }
+
+    context "with no vaccination record" do
+      it { should be(:none_yet) }
+    end
+
+    context "with a vaccination administered" do
+      before { create(:vaccination_record, patient:, programme:) }
+
+      it { should be(:vaccinated) }
+    end
+
+    context "with a vaccination already had" do
+      before do
+        create(
+          :vaccination_record,
+          :not_administered,
+          :already_had,
+          patient:,
+          programme:
+        )
+      end
+
+      it { should be(:vaccinated) }
+    end
+
+    context "with a vaccination not administered" do
+      before do
+        create(:vaccination_record, :not_administered, patient:, programme:)
+      end
+
+      it { should be(:none_yet) }
+    end
+
+    context "with a consent refused" do
+      before { create(:consent, :refused, patient:, programme:) }
+
+      it { should be(:could_not_vaccinate) }
+    end
+
+    context "with a triage as unsafe to vaccination" do
+      before { create(:triage, :do_not_vaccinate, patient:, programme:) }
+
+      it { should be(:could_not_vaccinate) }
+    end
+
+    context "with a discarded vaccination administered" do
+      before { create(:vaccination_record, :discarded, patient:, programme:) }
+
+      it { should be(:none_yet) }
+    end
+  end
 end

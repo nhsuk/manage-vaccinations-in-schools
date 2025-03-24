@@ -47,7 +47,7 @@ class Patient::ProgrammeOutcome
 
   def programme_vaccinated?(programme)
     VaccinatedCriteria.call(
-      programme,
+      programme:,
       patient:,
       vaccination_records: all[programme]
     )
