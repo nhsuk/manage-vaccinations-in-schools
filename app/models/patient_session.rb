@@ -31,15 +31,19 @@ class PatientSession < ApplicationRecord
   belongs_to :patient
   belongs_to :session
 
+  has_many :gillick_assessments, -> { order(:created_at) }
+  has_many :pre_screenings, -> { order(:created_at) }
+
   has_one :location, through: :session
   has_one :team, through: :session
   has_one :organisation, through: :session
   has_many :session_attendances, dependent: :destroy
 
-  has_many :gillick_assessments, -> { order(:created_at) }
-  has_many :pre_screenings, -> { order(:created_at) }
-
   has_many :session_notifications,
+           -> { where(session_id: _1.session_id) },
+           through: :patient
+
+  has_many :vaccination_records,
            -> { where(session_id: _1.session_id) },
            through: :patient
 
@@ -127,8 +131,8 @@ class PatientSession < ApplicationRecord
         end
 
   def safe_to_destroy?
-    programmes.none? { session_outcome.all[it].any? } &&
-      gillick_assessments.empty? && session_attendances.none?(&:attending?)
+    vaccination_records.empty? && gillick_assessments.empty? &&
+      session_attendances.none?(&:attending?)
   end
 
   def destroy_if_safe!
