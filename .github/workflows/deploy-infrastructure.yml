@@ -1,11 +1,11 @@
-name: Deploy Infrastructure with Terraform
-run-name: Deploy AWS infrastructure for ${{ inputs.environment }}
+name: Deploy infrastructure
+run-name: Deploy infrastructure for ${{ inputs.environment }}
 
 on:
   workflow_dispatch:
     inputs:
       environment:
-        description: "Deployment environment"
+        description: Deployment environment
         required: true
         type: choice
         options:
@@ -15,22 +15,27 @@ on:
           - test
           - preview
           - training
-  #          - production
+          - production
+      docker_sha:
+        description: "Docker image sha to deploy. This is used only if no existing task definition is found"
+        required: false
+        type: string
   workflow_call:
     inputs:
       environment:
-        description: "Deployment environment"
+        description: Deployment environment
         required: true
         type: string
 
 env:
   aws_role: ${{ inputs.environment == 'production'
-    && 'arn:aws:iam::820242920762:role/GitHubActionsRole'
+    && 'arn:aws:iam::820242920762:role/GithubDeployMavisAndInfrastructure'
     || 'arn:aws:iam::393416225559:role/GithubDeployMavisAndInfrastructure' }}
   tf_dir: terraform/app
 
 jobs:
-  TerraformPlan:
+  plan:
+    name: Terraform plan
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -47,36 +52,24 @@ jobs:
         with:
           terraform_version: 1.10.5
       - name: Install AWS Cli
-        run: |
-          sudo snap install --classic aws-cli
+        run: sudo snap install --classic aws-cli
       - name: Check if any deployments are running
         working-directory: ${{ env.tf_dir }}
         run: |
-          set -e
-          terraform init -backend-config="env/${{ inputs.environment }}-backend.hcl" -upgrade
-          APPLICATION_NAME=$(terraform output -raw codedeploy_application_name)
-          echo "Application Name: $APPLICATION_NAME"
-          APPLICATION_GROUP=$(terraform output -raw codedeploy_deployment_group_name)
-          echo "Deployment Group Name: $APPLICATION_GROUP"
-          running_deployment=$(aws deploy list-deployments --application-name $APPLICATION_NAME \
-              --deployment-group-name $APPLICATION_GROUP --include-only-statuses InProgress \
-              --query 'deployments[0]' --output text)
-          if [ "$running_deployment" != "None" ]; then
-            echo "A mavis deployment for ${{ inputs.environment }} is currently running: $running_deployment"
-            echo "Aborting infrastructure deployment"
-            exit 1
-          fi
-      - name: Get saved image digest
+          ../scripts/check-for-running-deployments.sh ${{ inputs.environment }}
+      - name: Get image digest
         working-directory: ${{ env.tf_dir }}
         run: |
-          DIGEST=$(terraform state show aws_ecs_task_definition.task_definition | grep -oP '(?<=mavis/webapp@)sha256:[0-9a-z]{64}')
-          if [ -z "$DIGEST" ]; then
-            echo "Image digest not found in the currently deployed task definition"
-            echo "Aborting infrastructure deployment"
-            exit 1
+          DIGEST="${{ inputs.docker_sha }}"
+          if terraform state list | grep -q 'aws_ecs_task_definition.task_definition'; then
+            DIGEST=$(terraform state show aws_ecs_task_definition.task_definition | grep -oP '(?<=mavis/webapp@)sha256:[0-9a-z]{64}')
+            echo "Existing task definition found, using image digest from the state: $DIGEST"
+          elif [ -z "$DIGEST" ]; then
+            echo "Aborting infrastructure deployment: Missing existing task definition or image digest input parameter"
+          else
+            echo "No existing task definition found: Using image digest from the input parameter: $DIGEST"
           fi
           echo "DIGEST=$DIGEST" >> $GITHUB_ENV
-          echo "Image digest in terraform state: $DIGEST"
       - name: Terraform Plan
         id: plan
         working-directory: ${{ env.tf_dir }}
@@ -93,9 +86,11 @@ jobs:
         with:
           name: tfplan_infrastructure
           path: ${{ runner.temp }}/tfplan
-  ApplyUpdate:
+
+  apply:
+    name: Terraform apply
     runs-on: ubuntu-latest
-    needs: TerraformPlan
+    needs: plan
     environment: ${{ inputs.environment }}
     permissions:
       id-token: write
