@@ -23,3 +23,4 @@ http_hosts = {
 }
 minimum_replicas = 3
 appspec_bucket = "nhse-mavis-appspec-bucket-qa"
+image_digest="sha256:b35aa00cd4e61cc796f9c852291fb5ea188e33a08ce84a9ca1519b57c77d9a31"
