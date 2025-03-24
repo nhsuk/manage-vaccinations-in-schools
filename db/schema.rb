@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_03_24_191759) do
+ActiveRecord::Schema[8.0].define(version: 2025_03_24_195409) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -572,6 +572,14 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_24_191759) do
     t.index ["status"], name: "index_patient_triage_statuses_on_status"
   end
 
+  create_table "patient_vaccination_statuses", force: :cascade do |t|
+    t.bigint "patient_id", null: false
+    t.bigint "programme_id", null: false
+    t.integer "status", default: 0, null: false
+    t.index ["patient_id", "programme_id"], name: "idx_on_patient_id_programme_id_e876faade2", unique: true
+    t.index ["status"], name: "index_patient_vaccination_statuses_on_status"
+  end
+
   create_table "patients", force: :cascade do |t|
     t.date "date_of_birth", null: false
     t.string "nhs_number"
@@ -885,6 +893,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_24_191759) do
   add_foreign_key "patient_sessions", "sessions"
   add_foreign_key "patient_triage_statuses", "patients", on_delete: :cascade
   add_foreign_key "patient_triage_statuses", "programmes"
+  add_foreign_key "patient_vaccination_statuses", "patients", on_delete: :cascade
+  add_foreign_key "patient_vaccination_statuses", "programmes"
   add_foreign_key "patients", "locations", column: "gp_practice_id"
   add_foreign_key "patients", "locations", column: "school_id"
   add_foreign_key "patients", "organisations"
