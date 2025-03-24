@@ -191,9 +191,16 @@ describe SearchForm do
       let(:triage_status) { "required" }
       let(:year_groups) { nil }
 
+      let(:programme) { create(:programme) }
+
       it "filters on triage status" do
-        patient_session = create(:patient_session, :consent_given_triage_needed)
-        expect(form.apply(scope)).to include(patient_session)
+        patient_session =
+          create(
+            :patient_session,
+            :consent_given_triage_needed,
+            programmes: [programme]
+          )
+        expect(form.apply(scope, programme:)).to include(patient_session)
       end
     end
   end

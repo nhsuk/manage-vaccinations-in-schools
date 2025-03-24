@@ -95,13 +95,31 @@ describe "Td/IPV" do
 
   def and_the_patient_doesnt_need_triage
     create(:patient_consent_status, patient: @patient, programme: @programme)
+    create(
+      :patient_triage_status,
+      :not_required,
+      patient: @patient,
+      programme: @programme
+    )
   end
 
   def and_the_patient_needs_triage
     create(
+      :consent,
+      :given,
+      :needing_triage,
+      patient: @patient,
+      programme: @programme
+    )
+    create(
       :patient_consent_status,
       :given,
-      :health_answers_require_follow_up,
+      patient: @patient,
+      programme: @programme
+    )
+    create(
+      :patient_triage_status,
+      :required,
       patient: @patient,
       programme: @programme
     )

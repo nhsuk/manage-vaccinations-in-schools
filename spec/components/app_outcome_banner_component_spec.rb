@@ -6,7 +6,10 @@ describe AppOutcomeBannerComponent do
   let(:component) do
     described_class.new(
       patient_session:
-        PatientSession.preload_for_status.find(patient_session.id),
+        PatientSession
+          .preload_for_status
+          .includes(patient: :triages)
+          .find(patient_session.id),
       programme:,
       current_user: user
     )

@@ -50,7 +50,9 @@ describe Patient::ProgrammeOutcome do
     end
 
     context "with a triage as unsafe to vaccination" do
-      before { create(:triage, :do_not_vaccinate, patient:, programme:) }
+      before do
+        create(:patient_triage_status, :do_not_vaccinate, patient:, programme:)
+      end
 
       it { should be(described_class::COULD_NOT_VACCINATE) }
     end
