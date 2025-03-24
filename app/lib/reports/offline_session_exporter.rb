@@ -160,7 +160,7 @@ class Reports::OfflineSessionExporter
         }
       }
 
-      vaccination_records = patient.programme_outcome.all[programme]
+      vaccination_records = patient.vaccination_records
 
       if vaccination_records.any?
         vaccination_records.map do |vaccination_record|

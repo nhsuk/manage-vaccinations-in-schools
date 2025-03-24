@@ -49,7 +49,7 @@ class SchoolConsentRequestsJob < ApplicationJob
     has_consent_or_vaccinated =
       programmes.all? do |programme|
         patient.consents.any? { it.programme_id == programme.id } ||
-          patient.programme_outcome.all[programme].any?
+          patient.vaccination_records.any? { it.programme_id == programme.id }
       end
 
     return false if has_consent_or_vaccinated
