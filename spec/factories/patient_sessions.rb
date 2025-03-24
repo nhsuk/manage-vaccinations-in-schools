@@ -238,6 +238,11 @@ FactoryBot.define do
       after(:create) do |patient_session, evaluator|
         patient_session.session.programmes.each do |programme|
           create(
+            :patient_vaccination_status,
+            patient: patient_session.patient,
+            programme:
+          )
+          create(
             :vaccination_record,
             :not_administered,
             patient: patient_session.patient,
@@ -266,6 +271,11 @@ FactoryBot.define do
       after(:create) do |patient_session, evaluator|
         patient_session.session.programmes.each do |programme|
           create(
+            :patient_vaccination_status,
+            patient: patient_session.patient,
+            programme:
+          )
+          create(
             :vaccination_record,
             :not_administered,
             patient: patient_session.patient,
@@ -293,6 +303,12 @@ FactoryBot.define do
 
       after(:create) do |patient_session, evaluator|
         patient_session.session.programmes.each do |programme|
+          create(
+            :patient_vaccination_status,
+            :vaccinated,
+            patient: patient_session.patient,
+            programme:
+          )
           create(
             :vaccination_record,
             patient: patient_session.patient,
