@@ -12,15 +12,24 @@ describe StatusUpdater do
     it "doesn't create any consent statuses" do
       expect { call }.not_to change(Patient::ConsentStatus, :count)
     end
+
+    it "doesn't create any triage statuses" do
+      expect { call }.not_to change(Patient::TriageStatus, :count)
+    end
   end
 
   context "with an HPV session and eligible patient" do
     let(:programmes) { [create(:programme, :hpv)] }
     let(:patient) { create(:patient, year_group: 8) }
 
-    it "creates a consent statuses" do
+    it "creates a consent status" do
       expect { call }.to change(patient.consent_statuses, :count).by(1)
       expect(patient.consent_statuses.first).to be_no_response
+    end
+
+    it "creates a triage status" do
+      expect { call }.to change(patient.triage_statuses, :count).by(1)
+      expect(patient.triage_statuses.first).to be_not_required
     end
   end
 
@@ -32,6 +41,10 @@ describe StatusUpdater do
 
     it "doesn't create any consent statuses" do
       expect { call }.not_to change(Patient::ConsentStatus, :count)
+    end
+
+    it "doesn't create any triage statuses" do
+      expect { call }.not_to change(Patient::TriageStatus, :count)
     end
   end
 
@@ -45,6 +58,12 @@ describe StatusUpdater do
       expect { call }.to change(patient.consent_statuses, :count).by(2)
       expect(patient.consent_statuses.first).to be_no_response
       expect(patient.consent_statuses.second).to be_no_response
+    end
+
+    it "creates a triage status for both programmes" do
+      expect { call }.to change(patient.triage_statuses, :count).by(2)
+      expect(patient.triage_statuses.first).to be_not_required
+      expect(patient.triage_statuses.second).to be_not_required
     end
   end
 end

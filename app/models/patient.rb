@@ -293,6 +293,12 @@ class Patient < ApplicationRecord
       .max_by(&:created_at)
   end
 
+  def latest_vaccination_records(programme:)
+    vaccination_records
+      .select { it.programme_id == programme.id }
+      .reject(&:discarded?)
+  end
+
   def consent_given_and_safe_to_vaccinate?(programme:)
     return false if programme_outcome.vaccinated?(programme)
 
