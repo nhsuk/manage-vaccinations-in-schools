@@ -57,22 +57,7 @@ describe Patient::NextActivity do
     context "with an administered vaccination record" do
       before do
         create(:patient_consent_status, :given, patient:, programme:)
-        create(:vaccination_record, patient:, programme:)
-      end
-
-      it { should be(described_class::REPORT) }
-    end
-
-    context "with an already had administered vaccination record" do
-      before do
-        create(:patient_consent_status, :given, patient:, programme:)
-        create(
-          :vaccination_record,
-          :not_administered,
-          :already_had,
-          patient:,
-          programme:
-        )
+        create(:patient_vaccination_status, :vaccinated, patient:, programme:)
       end
 
       it { should be(described_class::REPORT) }
@@ -81,7 +66,7 @@ describe Patient::NextActivity do
     context "with an un-administered vaccination record" do
       before do
         create(:patient_consent_status, :given, patient:, programme:)
-        create(:vaccination_record, :not_administered, patient:, programme:)
+        create(:patient_vaccination_status, patient:, programme:)
       end
 
       it { should be(described_class::RECORD) }

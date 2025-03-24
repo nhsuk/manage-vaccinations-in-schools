@@ -68,7 +68,7 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
   private
 
   def programme_outcome_tag
-    status = @patient.programme_outcome.status[@programme]
+    status = @patient.vaccination_status(programme: @programme).status
     render AppProgrammeStatusTagsComponent.new(
              { @programme => status },
              outcome: :programme

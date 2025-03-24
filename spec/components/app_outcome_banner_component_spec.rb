@@ -8,7 +8,7 @@ describe AppOutcomeBannerComponent do
       patient_session:
         PatientSession
           .preload_for_status
-          .includes(patient: :triages)
+          .includes(patient: %i[triages vaccination_records])
           .find(patient_session.id),
       programme:,
       current_user: user
@@ -64,6 +64,12 @@ describe AppOutcomeBannerComponent do
     let(:patient_session) { create(:patient_session, session:) }
 
     before do
+      create(
+        :patient_vaccination_status,
+        :vaccinated,
+        patient: patient_session.patient,
+        programme:
+      )
       create(
         :vaccination_record,
         :not_administered,

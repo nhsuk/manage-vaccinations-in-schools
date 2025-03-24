@@ -39,6 +39,8 @@ class VaccinationRecordsController < ApplicationController
       send_vaccination_deletion(@vaccination_record)
     end
 
+    StatusUpdater.call(patient: @vaccination_record.patient)
+
     redirect_to @return_to, flash: { success: "Vaccination record deleted" }
   end
 

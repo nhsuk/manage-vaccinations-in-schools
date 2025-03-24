@@ -49,7 +49,7 @@ class SearchForm
     end
 
     if (status = programme_status&.to_sym).present?
-      scope = scope.select { it.programme_outcome.status[programme] == status }
+      scope = scope.has_vaccination_status(status, programme:)
     end
 
     if (status = session_status&.to_sym).present?

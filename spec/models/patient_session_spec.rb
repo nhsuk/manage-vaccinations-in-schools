@@ -95,12 +95,13 @@ describe PatientSession do
       it { should be(true) }
 
       context "when already vaccinated" do
-        before do
+        let(:patient_session) do
           create(
-            :vaccination_record,
-            patient: patient_session.patient,
-            session:,
-            programme:
+            :patient_session,
+            :in_attendance,
+            :consent_given_triage_not_needed,
+            :vaccinated,
+            session:
           )
         end
 
