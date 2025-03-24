@@ -167,6 +167,20 @@ class PatientSession < ApplicationRecord
     end
   end
 
+  def next_activity(programme:)
+    return :report if patient.vaccination_status(programme:).vaccinated?
+
+    return :record if patient.consent_given_and_safe_to_vaccinate?(programme:)
+
+    return :triage if patient.triage_status(programme:).required?
+
+    consent_status = patient.consent_status(programme:)
+
+    return :consent if consent_status.no_response? || consent_status.conflicts?
+
+    :do_not_record
+  end
+
   def outstanding_programmes
     # If this patient hasn't been seen yet by a nurse for any of the programmes,
     # we don't want to show the banner.

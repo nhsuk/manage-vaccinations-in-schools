@@ -276,10 +276,6 @@ class Patient < ApplicationRecord
     birth_academic_year_changed?
   end
 
-  def next_activity
-    @next_activity ||= Patient::NextActivity.new(self)
-  end
-
   def consent_status(programme:)
     # Use `find` to allow for preloading.
     consent_statuses.find { it.programme_id == programme.id } ||
