@@ -16,10 +16,7 @@ class AppTriageFormComponent < ViewComponent::Base
     @triage =
       triage ||
         Triage.new.tap do |t|
-          if (
-               latest_triage =
-                 patient_session.patient.triage_outcome.latest[programme]
-             )
+          if (latest_triage = patient_session.patient.latest_triage(programme:))
             t.status = latest_triage.status
           end
         end
