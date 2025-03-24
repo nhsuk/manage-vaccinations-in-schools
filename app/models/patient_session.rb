@@ -170,6 +170,13 @@ class PatientSession < ApplicationRecord
     @register_outcome ||= PatientSession::RegisterOutcome.new(self)
   end
 
+  def todays_attendance
+    if (session_date = session.session_dates.find(&:today?))
+      session_attendances.find { it.session_date == session_date } ||
+        session_attendances.build(session_date:)
+    end
+  end
+
   def ready_for_vaccinator?(programme: nil)
     return false if register_outcome.unknown? || register_outcome.not_attending?
 

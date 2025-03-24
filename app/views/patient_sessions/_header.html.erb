@@ -24,7 +24,7 @@
 </p>
 
 <ul class="app-action-list">
-  <% if (session_attendance = @patient_session.register_outcome.latest) %>
+  <% if (session_attendance = @patient_session.todays_attendance) %>
     <li class="app-action-list__item">
       <%= render AppRegisterStatusTagComponent.new(@patient_session.register_outcome.status) %>
     </li>

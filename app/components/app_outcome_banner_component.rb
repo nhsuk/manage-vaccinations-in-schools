@@ -62,7 +62,7 @@ class AppOutcomeBannerComponent < ViewComponent::Base
   end
 
   def session_attendance
-    @session_attendance ||= patient_session.register_outcome.latest
+    @session_attendance ||= patient_session.todays_attendance
   end
 
   def show_location?
