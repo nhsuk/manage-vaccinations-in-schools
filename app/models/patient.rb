@@ -72,6 +72,7 @@ class Patient < ApplicationRecord
   has_many :school_move_log_entries
   has_many :school_moves
   has_many :session_notifications
+  has_many :triage_statuses
   has_many :triages, -> { order(:created_at) }
   has_many :vaccination_records, -> { kept.order(:performed_at) }
 
