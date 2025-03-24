@@ -64,14 +64,9 @@ class Patient::TriageStatus < ApplicationRecord
   end
 
   def vaccination_history_requires_triage?
-    vaccination_records_for_programme =
-      vaccination_records.select { it.programme_id == programme_id }
-    vaccination_records_for_programme.any?(&:administered?) &&
-      !VaccinatedCriteria.call(
-        programme,
-        patient:,
-        vaccination_records: vaccination_records_for_programme
-      )
+    vaccination_records.any? do
+      it.programme_id == programme_id && it.administered?
+    end && !VaccinatedCriteria.call(programme:, patient:, vaccination_records:)
   end
 
   private
