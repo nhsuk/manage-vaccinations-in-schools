@@ -54,7 +54,7 @@ class AppOutcomeBannerComponent < ViewComponent::Base
   end
 
   def vaccination_record
-    @vaccination_record ||= patient.programme_outcome.all[programme].last
+    @vaccination_record ||= patient.latest_vaccination_records(programme:).last
   end
 
   def triage
