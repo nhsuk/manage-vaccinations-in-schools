@@ -112,16 +112,65 @@ class PipelineStats
     #   Total Patients,Without Consent Response,#{patient_ids_without_consent_response(@organisation, @programme).count}
     # DIAGRAM
 
-    <<~DIAGRAM
-      sankey-beta
-      Cohort Upload,Total Patients,#{patient_ids_from_cohort_imports.count}
-      Class Upload,Total Patients,#{patient_ids_from_class_not_cohort_imports.count}
-      Consent Forms,Total Patients,#{patient_ids_from_consents.count}
-      Total Patients,Consent Given,#{patient_ids_with_consent_response("given").count}
-      Total Patients,Consent Refused,#{patient_ids_with_consent_response("refused").count}
-      Total Patients,Consent Response Not Provided,#{patient_ids_with_consent_response("not_provided").count}
-      Total Patients,Without Consent Response,#{patient_ids_without_consent_response.count}
-    DIAGRAM
+    [
+      [
+        ["Cohort Upload", "Total Patients"],
+        patient_ids_from_cohort_imports.count
+      ],
+      [
+        ["Class Upload", "Total Patients"],
+        patient_ids_from_class_not_cohort_imports.count
+      ],
+      [["Consent Forms", "Total Patients"], patient_ids_from_consents.count],
+      [
+        ["Total Patients", "Consent Given"],
+        patient_ids_with_consent_response("given").count
+      ],
+      [
+        ["Total Patients", "Consent Refused"],
+        patient_ids_with_consent_response("refused").count
+      ],
+      [
+        ["Total Patients", "Consent Response Not Provided"],
+        patient_ids_with_consent_response("not_provided").count
+      ],
+      [
+        ["Total Patients", "Without Consent Response"],
+        patient_ids_without_consent_response.count
+      ]
+    ].map { |(from, to), count| "#{from},#{to},#{count}" }
+      .prepend("sankey-beta")
+      .join("\n") + "\n"
+
+    # stats = {
+    #   "Cohort Upload" => {
+    #     "Total Patients" => patient_ids_from_cohort_imports.count
+    #   },
+    #   "Class Upload" => {
+    #     "Total Patients" => patient_ids_from_class_not_cohort_imports.count
+    #   },
+    #   "Consent Forms" => {
+    #     "Total Patients" => patient_ids_from_consents.count
+    #   },
+    #   "Total Patients" => {
+    #     "Consent Given" => patient_ids_with_consent_response("given").count,
+    #     "Consent Refused" => patient_ids_with_consent_response("refused").count,
+    #     "Consent Response Not Provided" =>
+    #       patient_ids_with_consent_response("not_provided").count,
+    #     "Without Consent Response" => patient_ids_without_consent_response.count
+    #   }
+    # }
+
+    # <<~DIAGRAM
+    #   sankey-beta
+    #   Cohort Upload,Total Patients,#{patient_ids_from_cohort_imports.count}
+    #   Class Upload,Total Patients,#{patient_ids_from_class_not_cohort_imports.count}
+    #   Consent Forms,Total Patients,#{patient_ids_from_consents.count}
+    #   Total Patients,Consent Given,#{patient_ids_with_consent_response("given").count}
+    #   Total Patients,Consent Refused,#{patient_ids_with_consent_response("refused").count}
+    #   Total Patients,Consent Response Not Provided,#{patient_ids_with_consent_response("not_provided").count}
+    #   Total Patients,Without Consent Response,#{patient_ids_without_consent_response.count}
+    # DIAGRAM
   end
 
   def render_organisation
