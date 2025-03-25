@@ -186,19 +186,6 @@ class PatientSession < ApplicationRecord
     end
   end
 
-  def ready_for_vaccinator?(programme: nil)
-    if registration_status.nil? || registration_status.unknown? ||
-         registration_status.not_attending?
-      return false
-    end
-
-    programmes_to_check = programme ? [programme] : programmes
-
-    programmes_to_check.any? do
-      patient.consent_given_and_safe_to_vaccinate?(programme: it)
-    end
-  end
-
   def next_activity(programme:)
     return :report if patient.vaccination_status(programme:).vaccinated?
 
@@ -214,6 +201,11 @@ class PatientSession < ApplicationRecord
   end
 
   def outstanding_programmes
+    if registration_status.nil? || registration_status.unknown? ||
+         registration_status.not_attending?
+      return []
+    end
+
     # If this patient hasn't been seen yet by a nurse for any of the programmes,
     # we don't want to show the banner.
     all_programmes_none_yet =
@@ -222,7 +214,8 @@ class PatientSession < ApplicationRecord
     return [] if all_programmes_none_yet
 
     programmes.select do |programme|
-      session_status(programme:).none_yet? && ready_for_vaccinator?(programme:)
+      session_status(programme:).none_yet? &&
+        patient.consent_given_and_safe_to_vaccinate?(programme:)
     end
   end
 end
