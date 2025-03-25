@@ -69,7 +69,8 @@ class PatientSession < ApplicationRecord
   scope :preload_for_status,
         -> do
           eager_load(:patient).preload(
-            session_attendances: :session_date,
+            :session_attendances,
+            :vaccination_statuses,
             patient: %i[
               consent_statuses
               triage_statuses
@@ -131,6 +132,17 @@ class PatientSession < ApplicationRecord
           )
         end
 
+  scope :has_vaccination_status,
+        ->(status, programme:) do
+          where(
+            PatientSession::VaccinationStatus
+              .where("patient_session_id = patient_sessions.id")
+              .where(status:, programme:)
+              .arel
+              .exists
+          )
+        end
+
   def safe_to_destroy?
     vaccination_records.empty? && gillick_assessments.empty? &&
       session_attendances.none?(&:attending?)
@@ -154,12 +166,14 @@ class PatientSession < ApplicationRecord
       .max_by(&:created_at)
   end
 
-  def register_outcome
-    @register_outcome ||= PatientSession::RegisterOutcome.new(self)
+  def vaccination_status(programme:)
+    # Use `find` to allow for preloading.
+    vaccination_statuses.find { it.programme_id == programme.id } ||
+      vaccination_statuses.build(programme:)
   end
 
-  def session_outcome
-    @session_outcome ||= PatientSession::SessionOutcome.new(self)
+  def register_outcome
+    @register_outcome ||= PatientSession::RegisterOutcome.new(self)
   end
 
   def ready_for_vaccinator?(programme: nil)
@@ -189,10 +203,14 @@ class PatientSession < ApplicationRecord
   def outstanding_programmes
     # If this patient hasn't been seen yet by a nurse for any of the programmes,
     # we don't want to show the banner.
-    return [] if programmes.all? { session_outcome.none_yet?(it) }
+    all_programmes_none_yet =
+      programmes.all? { |programme| vaccination_status(programme:).none_yet? }
 
-    programmes.select do
-      ready_for_vaccinator?(programme: it) && session_outcome.none_yet?(it)
+    return [] if all_programmes_none_yet
+
+    programmes.select do |programme|
+      vaccination_status(programme:).none_yet? &&
+        ready_for_vaccinator?(programme:)
     end
   end
 end

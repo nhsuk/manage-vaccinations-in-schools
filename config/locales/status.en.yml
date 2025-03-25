@@ -39,21 +39,21 @@ en:
       label:
         absent_from_school: Absent from school
         absent_from_session: Absent from session
-        administered: Vaccinated
         already_had: Already had vaccine
-        contraindications: Had contraindications
+        had_contraindications: Had contraindications
         none_yet: No outcome yet
-        not_well: Unwell
         refused: Refused vaccine
+        unwell: Unwell
+        vaccinated: Vaccinated
       colour:
         absent_from_school: dark-orange
         absent_from_session: dark-orange
-        administered: green
         already_had: green
-        contraindications: red
+        had_contraindications: red
         none_yet: white
-        not_well: dark-orange
         refused: red
+        unwell: dark-orange
+        vaccinated: green
     programme:
       label:
         could_not_vaccinate: Could not vaccinate
