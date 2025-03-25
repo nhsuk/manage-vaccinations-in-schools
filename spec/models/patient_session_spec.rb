@@ -69,47 +69,6 @@ describe PatientSession do
     end
   end
 
-  describe "#ready_for_vaccinator?" do
-    subject(:ready_for_vaccinator?) { patient_session.ready_for_vaccinator? }
-
-    it { should be(false) }
-
-    context "when attending the session" do
-      let(:patient_session) do
-        create(:patient_session, :in_attendance, session:)
-      end
-
-      it { should be(false) }
-    end
-
-    context "when attending the session and consent given and triaged as safe to vaccinate" do
-      let(:patient_session) do
-        create(
-          :patient_session,
-          :in_attendance,
-          :consent_given_triage_not_needed,
-          session:
-        )
-      end
-
-      it { should be(true) }
-
-      context "when already vaccinated" do
-        let(:patient_session) do
-          create(
-            :patient_session,
-            :in_attendance,
-            :consent_given_triage_not_needed,
-            :vaccinated,
-            session:
-          )
-        end
-
-        it { should be(false) }
-      end
-    end
-  end
-
   describe "#next_activity" do
     subject { patient_session.next_activity(programme:) }
 
