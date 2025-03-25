@@ -101,15 +101,11 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
         end
       render AppProgrammeStatusTagsComponent.new(statuses, outcome: :triage)
     else
-      outcome = patient_session.session_outcome
-
-      # ensure status is calculated for each programme
-      patient_session.programmes.each { outcome.status[it] }
-
-      render AppProgrammeStatusTagsComponent.new(
-               outcome.status,
-               outcome: context == :outcome ? :session : context
-             )
+      statuses =
+        patient_session.programmes.index_with do |programme|
+          patient_session.session_status(programme:).status
+        end
+      render AppProgrammeStatusTagsComponent.new(statuses, outcome: :session)
     end
   end
 end

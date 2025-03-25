@@ -16,17 +16,6 @@ class AppProgrammeSessionTableComponent < ViewComponent::Base
     format_number(session.patient_sessions.count)
   end
 
-  def number_stat(session:)
-    format_number(session.patient_sessions.select { yield it }.length)
-  end
-
-  def percentage_stat(session:)
-    format_percentage(
-      session.patient_sessions.select { yield it }.length,
-      session.patient_sessions.count
-    )
-  end
-
   def no_response_scope(session:)
     session.patient_sessions.has_consent_status(:no_response, programme:)
   end
@@ -48,12 +37,19 @@ class AppProgrammeSessionTableComponent < ViewComponent::Base
     )
   end
 
+  def vaccinated_scope(session:)
+    session.patient_sessions.has_session_status(:vaccinated, programme:)
+  end
+
   def vaccinated_count(session:)
-    number_stat(session:) { it.session_outcome.vaccinated?(programme) }
+    format_number(vaccinated_scope(session:).count)
   end
 
   def vaccinated_percentage(session:)
-    percentage_stat(session:) { it.session_outcome.vaccinated?(programme) }
+    format_percentage(
+      vaccinated_scope(session:).count,
+      session.patient_sessions.count
+    )
   end
 
   def format_number(count) = count.to_s
