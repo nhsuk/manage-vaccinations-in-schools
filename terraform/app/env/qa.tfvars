@@ -22,3 +22,4 @@ http_hosts = {
   MAVIS__GIVE_OR_REFUSE_CONSENT_HOST = "qa.mavistesting.com"
 }
 minimum_replicas = 3
+appspec_bucket = "nhse-mavis-appspec-bucket-qa"
