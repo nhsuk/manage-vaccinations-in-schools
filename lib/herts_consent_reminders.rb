@@ -88,14 +88,15 @@ module HertsConsentReminders
     programmes:,
     on_date: Date.current
   )
-    return false unless patient_session.send_notifications?
+    patient = patient_session.patient
+
+    return false unless patient.send_notifications?
 
     # return false if patient.has_consent?(programme)
     has_consent_or_vaccinated =
       programmes.all? do |programme|
-        patient_session.consents(programme:).any? ||
-          patient_session.vaccinated?(programme:) ||
-          patient_session.unable_to_vaccinate?(programme:)
+        patient.consent_outcome.all[programme].any? ||
+          patient.programme_outcome.all[programme].any?
       end
 
     return false if has_consent_or_vaccinated
