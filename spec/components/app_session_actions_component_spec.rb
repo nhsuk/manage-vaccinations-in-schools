@@ -10,16 +10,31 @@ describe AppSessionActionsComponent do
   let(:patient_sessions) { session.patient_sessions.preload_for_status }
 
   before do
-    create(:patient_session, :consent_no_response, session:)
-    create(:patient_session, :consent_conflicting, session:)
-    create(:patient_session, :consent_given_triage_needed, session:)
+    create(
+      :patient_session,
+      :consent_no_response,
+      :unknown_attendance,
+      session:
+    )
+    create(
+      :patient_session,
+      :consent_conflicting,
+      :unknown_attendance,
+      session:
+    )
+    create(
+      :patient_session,
+      :consent_given_triage_needed,
+      :unknown_attendance,
+      session:
+    )
     create(
       :patient_session,
       :consent_given_triage_not_needed,
       :in_attendance,
       session:
     )
-    create(:patient_session, :vaccinated, session:)
+    create(:patient_session, :vaccinated, :in_attendance, session:)
   end
 
   it { should have_text("No consent response\n1 child") }

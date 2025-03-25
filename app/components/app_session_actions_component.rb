@@ -83,19 +83,14 @@ class AppSessionActionsComponent < ViewComponent::Base
   end
 
   def register_attendance_row
-    return nil unless session.today?
+    status = "unknown"
 
-    count = patient_sessions.count { it.register_outcome.unknown? }
+    count = patient_sessions.has_registration_status(status).count
 
     return nil if count.zero?
 
     href =
-      session_register_path(
-        session,
-        search_form: {
-          register_status: PatientSession::RegisterOutcome::UNKNOWN
-        }
-      )
+      session_register_path(session, search_form: { register_status: status })
 
     {
       key: {

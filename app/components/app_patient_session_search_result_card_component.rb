@@ -31,7 +31,7 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
             end
           end %>
       
-      <% if context == :register && helpers.policy(patient_session.todays_attendance).new? %>
+      <% if context == :register && can_register_attendance? %>
         <div class="app-button-group">
           <%= helpers.govuk_button_to "Attending", create_session_register_path(session, patient, "present", search_form: params[:search_form]&.permit!), class: "app-button--secondary app-button--small" %>
           <%= helpers.govuk_button_to "Absent", create_session_register_path(session, patient, "absent", search_form: params[:search_form]&.permit!), class: "app-button--secondary-warning app-button--small" %>
@@ -43,19 +43,29 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
   def initialize(patient_session, context:)
     super
 
-    @patient_session = patient_session
-    @patient = patient_session.patient
-    @session = patient_session.session
-    @context = context
-
     unless context.in?(%i[consent triage register record outcome])
       raise "Unknown context: #{context}"
     end
+
+    @patient_session = patient_session
+    @context = context
+
+    @patient = patient_session.patient
+    @session = patient_session.session
   end
 
   private
 
   attr_reader :patient_session, :patient, :session, :context
+
+  def can_register_attendance?
+    session_attendance =
+      SessionAttendance.new(
+        patient_session:,
+        session_date: SessionDate.new(value: Date.current)
+      )
+    helpers.policy(session_attendance).new?
+  end
 
   def link_to
     programme = patient_session.programmes.first
@@ -86,7 +96,7 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
     case context
     when :register
       render AppRegisterStatusTagComponent.new(
-               patient_session.register_outcome.status
+               patient_session.registration_status&.status || "unknown"
              )
     when :consent
       statuses =

@@ -57,7 +57,7 @@ class SearchForm
     end
 
     if (status = register_status&.to_sym).present?
-      scope = scope.select { it.register_outcome.status == status }
+      scope = scope.has_registration_status(status)
     end
 
     if (status = triage_status&.to_sym).present?
