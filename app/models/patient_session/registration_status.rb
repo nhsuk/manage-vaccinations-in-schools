@@ -20,8 +20,50 @@
 class PatientSession::RegistrationStatus < ApplicationRecord
   belongs_to :patient_session
 
+  has_one :patient, through: :patient_session
+  has_one :session, through: :patient_session
+
+  has_many :vaccination_records, -> { kept }, through: :patient
+
+  has_one :session_attendance,
+          -> { today },
+          through: :patient_session,
+          source: :session_attendances
+
   enum :status,
        { unknown: 0, attending: 1, not_attending: 2, completed: 3 },
        default: :unknown,
        validate: true
+
+  def assign_status
+    self.status =
+      if status_should_be_completed?
+        :completed
+      elsif status_should_be_attending?
+        :attending
+      elsif status_should_be_not_attending?
+        :not_attending
+      else
+        :unknown
+      end
+  end
+
+  private
+
+  def status_should_be_completed?
+    patient_session.programmes.all? do |programme|
+      vaccination_records.any? do
+        it.programme_id == programme.id &&
+          it.session_id == patient_session.session_id
+      end
+    end
+  end
+
+  def status_should_be_attending?
+    session_attendance&.attending
+  end
+
+  def status_should_be_not_attending?
+    session_attendance&.attending == false
+  end
 end
