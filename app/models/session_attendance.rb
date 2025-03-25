@@ -31,4 +31,6 @@ class SessionAttendance < ApplicationRecord
   has_one :session, through: :patient_session
   has_one :patient, through: :patient_session
   has_one :location, through: :session
+
+  scope :today, -> { joins(:session_date).merge(SessionDate.today) }
 end
