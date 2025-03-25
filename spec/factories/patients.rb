@@ -121,6 +121,11 @@ FactoryBot.define do
 
         if evaluator.in_attendance
           create(:session_attendance, :present, patient_session:)
+          create(
+            :patient_session_registration_status,
+            :attending,
+            patient_session:
+          )
         end
       end
     end
