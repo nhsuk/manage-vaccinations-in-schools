@@ -1,6 +1,6 @@
 environment         = "qa"
 db_secret_arn       = "arn:aws:secretsmanager:eu-west-2:393416225559:secret:dbAuroraSecret-GBwVtQEAmugK-wPubjU"
-dns_certificate_arn = null
+dns_certificate_arn = ["arn:aws:acm:eu-west-2:393416225559:certificate/dafb0f10-ee18-45e2-8971-28d4ab434375"]
 enable_autoscaling  = false
 docker_image        = "mavis/webapp"
 resource_name = {
@@ -14,7 +14,7 @@ resource_name = {
 }
 rails_env             = "staging"
 rails_master_key_path = "/copilot/mavis/secrets/STAGING_RAILS_MASTER_KEY"
-splunk_enabled        = "false"
+splunk_enabled        = "true"
 cis2_enabled          = "false"
 pds_enabled           = "false"
 http_hosts = {
@@ -23,3 +23,4 @@ http_hosts = {
 }
 minimum_replicas = 3
 appspec_bucket = "nhse-mavis-appspec-bucket-qa"
+image_digest="sha256:b35aa00cd4e61cc796f9c852291fb5ea188e33a08ce84a9ca1519b57c77d9a31"
