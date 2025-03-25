@@ -70,7 +70,7 @@ class PatientSession < ApplicationRecord
   scope :preload_for_status,
         -> do
           eager_load(:patient).preload(
-            :session_attendances,
+            :registration_status,
             :vaccination_statuses,
             patient: %i[
               consent_statuses
@@ -117,6 +117,17 @@ class PatientSession < ApplicationRecord
             Patient::ConsentStatus
               .where("patient_id = patient_sessions.patient_id")
               .where(status:, programme:)
+              .arel
+              .exists
+          )
+        end
+
+  scope :has_registration_status,
+        ->(status) do
+          where(
+            PatientSession::RegistrationStatus
+              .where("patient_session_id = patient_sessions.id")
+              .where(status:)
               .arel
               .exists
           )
@@ -173,19 +184,19 @@ class PatientSession < ApplicationRecord
       vaccination_statuses.build(programme:)
   end
 
-  def register_outcome
-    @register_outcome ||= PatientSession::RegisterOutcome.new(self)
-  end
-
   def todays_attendance
-    if (session_date = session.session_dates.find(&:today?))
-      session_attendances.find { it.session_date == session_date } ||
-        session_attendances.build(session_date:)
+    if (session_date = session.session_dates.today.first)
+      session_attendances.includes(:session_date).find_or_initialize_by(
+        session_date:
+      )
     end
   end
 
   def ready_for_vaccinator?(programme: nil)
-    return false if register_outcome.unknown? || register_outcome.not_attending?
+    if registration_status.nil? || registration_status.unknown? ||
+         registration_status.not_attending?
+      return false
+    end
 
     programmes_to_check = programme ? [programme] : programmes
 

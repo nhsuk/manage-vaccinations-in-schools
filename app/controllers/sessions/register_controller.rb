@@ -13,7 +13,7 @@ class Sessions::RegisterController < ApplicationController
   layout "full"
 
   def show
-    @statuses = PatientSession::RegisterOutcome::STATUSES
+    @statuses = PatientSession::RegistrationStatus.statuses.keys
 
     scope =
       @session.patient_sessions.preload_for_status.in_programmes(
@@ -22,11 +22,7 @@ class Sessions::RegisterController < ApplicationController
 
     patient_sessions = @form.apply(scope)
 
-    if patient_sessions.is_a?(Array)
-      @pagy, @patient_sessions = pagy_array(patient_sessions)
-    else
-      @pagy, @patient_sessions = pagy(patient_sessions)
-    end
+    @pagy, @patient_sessions = pagy(patient_sessions)
   end
 
   def create
@@ -54,10 +50,7 @@ class Sessions::RegisterController < ApplicationController
   private
 
   def set_session
-    @session =
-      policy_scope(Session).includes(:programmes, :session_dates).find_by!(
-        slug: params[:session_slug]
-      )
+    @session = policy_scope(Session).find_by!(slug: params[:session_slug])
   end
 
   def set_patient_session

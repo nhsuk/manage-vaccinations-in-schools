@@ -22,7 +22,7 @@ class Sessions::RecordController < ApplicationController
 
     patient_sessions =
       @form.apply(scope) do |filtered_scope|
-        filtered_scope.select(&:ready_for_vaccinator?)
+        filtered_scope.select { it.ready_for_vaccinator? }
       end
 
     if patient_sessions.is_a?(Array)
@@ -65,10 +65,7 @@ class Sessions::RecordController < ApplicationController
   private
 
   def set_session
-    @session =
-      policy_scope(Session).includes(:programmes).find_by!(
-        slug: params[:session_slug]
-      )
+    @session = policy_scope(Session).find_by!(slug: params[:session_slug])
   end
 
   def set_todays_batches
