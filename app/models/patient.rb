@@ -74,7 +74,7 @@ class Patient < ApplicationRecord
   has_many :session_notifications
   has_many :triage_statuses
   has_many :triages, -> { order(:created_at) }
-  has_many :vaccination_records, -> { kept.order(:performed_at) }
+  has_many :vaccination_records, -> { kept }
   has_many :vaccination_statuses
 
   has_many :parents, through: :parent_relationships
@@ -303,12 +303,6 @@ class Patient < ApplicationRecord
     # Use `find` to allow for preloading.
     vaccination_statuses.find { it.programme_id == programme.id } ||
       vaccination_statuses.build(programme:)
-  end
-
-  def latest_vaccination_records(programme:)
-    vaccination_records
-      .select { it.programme_id == programme.id }
-      .reject(&:discarded?)
   end
 
   def consent_given_and_safe_to_vaccinate?(programme:)

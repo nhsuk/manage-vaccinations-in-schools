@@ -72,12 +72,7 @@ class PatientSession < ApplicationRecord
           eager_load(:patient).preload(
             :registration_status,
             :vaccination_statuses,
-            patient: %i[
-              consent_statuses
-              triage_statuses
-              vaccination_records
-              vaccination_statuses
-            ],
+            patient: %i[consent_statuses triage_statuses vaccination_statuses],
             session: :programmes
           )
         end

@@ -36,6 +36,14 @@ class AppPatientPageComponent < ViewComponent::Base
     patient_session.session.today? && helpers.policy(GillickAssessment).new?
   end
 
+  def vaccination_records
+    patient
+      .vaccination_records
+      .where(programme:)
+      .includes(:batch, :location, :performed_by_user, :programme, :vaccine)
+      .order(:performed_at)
+  end
+
   def default_vaccinate_form
     pre_screening = patient_session.pre_screenings.last
 

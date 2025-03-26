@@ -80,8 +80,7 @@ class PatientsController < ApplicationController
         :triages,
         consents: %i[parent patient],
         parent_relationships: :parent,
-        patient_sessions: %i[location session_attendances],
-        vaccination_records: [{ vaccine: :programme }]
+        patient_sessions: %i[location session_attendances]
       ).find(params[:id])
   end
 
