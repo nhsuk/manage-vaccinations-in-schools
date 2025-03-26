@@ -32,17 +32,7 @@ class ProgrammesController < ApplicationController
       policy_scope(Session)
         .has_programme(@programme)
         .for_current_academic_year
-        .eager_load(:location)
-        .preload(
-          :session_dates,
-          patient_sessions: [
-            :gillick_assessments,
-            :session_attendances,
-            {
-              patient: %i[consent_statuses triage_statuses vaccination_records]
-            }
-          ]
-        )
+        .includes(:location, :session_dates)
         .order("locations.name")
   end
 

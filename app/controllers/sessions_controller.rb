@@ -29,15 +29,7 @@ class SessionsController < ApplicationController
 
   def show
     respond_to do |format|
-      format.html do
-        @patient_sessions =
-          @session
-            .patient_sessions
-            .includes(:patient)
-            .in_programmes(@session.programmes)
-
-        render layout: "full"
-      end
+      format.html { render layout: "full" }
 
       format.xlsx do
         filename =
