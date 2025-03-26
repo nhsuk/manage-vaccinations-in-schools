@@ -1,17 +1,38 @@
 #!/usr/bin/env bash
 
 usage() {
-    echo "Usage: $0 --cluster CLUSTER_NAME [--service SERVICE_NAME] [--task_id TASK_ID] [--task_ip TASK_IP]"
+    echo "Usage: $0 ENV [--service SERVICE_NAME] [--task_id TASK_ID] [--task_ip TASK_IP]"
     echo "Options:"
-    echo "  --cluster CLUSTER_NAME    Specify the ECS cluster name (required)"
-    echo "  --service SERVICE_NAME    Specify the service name (optional)"
+    echo "  ENV                       Specify the environment (cluster will be mavis-ENV)"
+    echo "  --service SERVICE_NAME    Specify the service name (optional): Ignored if using --task_id or --task_ip"
     echo "  --task_id TASK_ID         Specify the task ID directly (optional)"
-    echo "  --task_ip TASK_IP         Specify the task by its IP address (optional)"
+    echo "  --task_ip TASK_IP         Specify the task by its IP address (optional): Ignored if using --task_id"
     echo "  --help                    Display this help message"
-    echo "Note: Parameters can be provided in any order."
 }
 
-OPTIONS=$(getopt -o '' --long cluster:,service:,task_id:,task_ip:,help -- "$@")
+if [ "$1" = "--help" ]; then
+    usage
+    exit 0
+fi
+
+if [ $# -lt 1 ]; then
+    echo "Error: Environment is required"
+    usage
+    exit 1
+fi
+
+ENV="$1"
+shift
+
+if [ -z "$ENV" ]; then
+    echo "Error: Environment cannot be empty"
+    usage
+    exit 1
+fi
+
+CLUSTER_NAME="mavis-$ENV"
+
+OPTIONS=$(getopt -o '' --long service:,task_id:,task_ip:,help -- "$@")
 if ! [ "$OPTIONS" ]; then
     usage
     exit 1
@@ -19,17 +40,13 @@ fi
 
 eval set -- "$OPTIONS"
 
-CLUSTER_NAME=""
+REGION="eu-west-2"
 SERVICE_NAME=""
 TASK_ID=""
 TASK_IP=""
 
 while true; do
     case "$1" in
-        --cluster)
-            CLUSTER_NAME="$2"
-            shift 2
-            ;;
         --service)
             SERVICE_NAME="$2"
             shift 2
@@ -56,14 +73,6 @@ while true; do
             ;;
     esac
 done
-
-if [ -z "$CLUSTER_NAME" ]; then
-    echo "Error: --cluster is a required parameter"
-    usage
-    exit 1
-fi
-
-REGION="eu-west-2"
 
 if [ -n "$TASK_ID" ]; then
     task_description=$(aws ecs describe-tasks --region "$REGION" --cluster "$CLUSTER_NAME" --task "$TASK_ID")
