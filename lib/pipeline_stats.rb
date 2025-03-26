@@ -50,32 +50,6 @@ class PipelineStats
       .join("\n") + "\n"
   end
 
-  # def render_organisation
-  #   diagram << <<~EOSANKEY
-  #     sankey-beta
-  #     Cohort Upload,Cohort Patients,#{patient_ids_from_cohort_imports(@organisation).count}
-  #     Class Upload,Cohort Patients,#{patient_ids_from_class_not_cohort_imports(@organisation).count}
-  #     Consent Forms,Cohort Patients,#{patient_ids_from_consents(@organisation).count}
-  #   EOSANKEY
-
-  #   diagram
-  # end
-
-  # def render_all_organisations
-  #   diagram = "sankey-beta\n"
-
-  #   Organisation.all.each do |org|
-  #     ods = org.ods_code
-  #     diagram << <<~EOSANKEY
-  #       #{ods} Cohort Upload,#{ods} Cohort Patients,#{patient_ids_from_cohort_imports(org).count}
-  #       #{ods} Class Upload,#{ods} Cohort Patients,#{patient_ids_from_class_not_cohort_imports(org).count}
-  #       #{ods} Consent Forms,#{ods} Cohort Patients,#{patient_ids_from_consents(org).count}
-  #     EOSANKEY
-  #   end
-
-  #   diagram
-  # end
-
   def patients_scoped
     Patient
       .readonly
@@ -83,17 +57,6 @@ class PipelineStats
       .then { organisations.nil? ? it : it.where(organisation: organisations) }
       .then { programmes.nil? ? it : it.in_programmes(programmes) }
   end
-
-  # def patients_totals(org_id, prog_id)
-  #   @patients_totals ||=
-  #     Hash.new do |_hash, oid|
-  #       Hash.new do |_hash, pid|
-  #         patients = patients_scoped_to_org(oid)
-  #         pid.present? ? patients.in_programme(pid) : patients
-  #       end
-  #     end
-  #   @patients_totals[org_id][prog_id]
-  # end
 
   def patients_totals(org_id, prog_id)
     @patients_totals ||=
@@ -212,50 +175,5 @@ class PipelineStats
           end
           .pluck(:id)
       end
-  end
-
-  def patient_ids_in_sessions(organisation = nil, programme = nil)
-    @patient_ids_in_sessions ||=
-      Hash.new do |_hash, org|
-        Hash.new do |_hash, prog|
-          Session
-            .where(organisation: org)
-            .then { programme.present? ? it.has_programme(prog) : it }
-            .flat_map { it.patients.ids }
-            .uniq
-        end
-      end
-    @patient_ids_in_sessions[organisation][programme]
-  end
-
-  def hpv
-    @hpv ||= Programme.find_by(type: "hpv")
-  end
-
-  def patient_ids_from_cohort_imports_in_sessions(
-    organisation = nil,
-    programme = nil
-  )
-    organisation ||= @organisation
-    programme ||= @programme
-
-    patient_ids_from_cohort_imports(organisation, programme) &
-      patient_ids_in_sessions(organisation, programme)
-  end
-
-  def patient_ids_from_class_not_cohort_imports_in_sessions(
-    organisation,
-    programme
-  )
-    patient_ids_from_class_not_cohort_imports(organisation, programme) &
-      patient_ids_in_sessions(organisation, programme)
-  end
-
-  def patient_ids_from_consents_in_sessions(organisation = nil, programme = nil)
-    organisation ||= @organisation
-    programme ||= @programme
-
-    patient_ids_from_consents(organisation, programme) &
-      patient_ids_in_sessions(organisation, programme)
   end
 end
