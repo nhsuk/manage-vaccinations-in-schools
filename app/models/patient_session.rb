@@ -145,6 +145,15 @@ class PatientSession < ApplicationRecord
           )
         end
 
+  scope :destroy_all_if_safe,
+        -> do
+          includes(
+            :gillick_assessments,
+            :session_attendances,
+            :vaccination_records
+          ).find_each(&:destroy_if_safe!)
+        end
+
   def safe_to_destroy?
     vaccination_records.empty? && gillick_assessments.empty? &&
       session_attendances.none?(&:attending?)
