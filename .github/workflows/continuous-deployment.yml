@@ -1,9 +1,26 @@
 name: Continuous deployment
-run-name: Continuous deployment of ${{ github.ref_name }} to QA and Test
+run-name: >-
+  ${{ github.event_name == 'workflow_dispatch'
+      && format('Deployment of ${{ github.ref_name }} to {0}', inputs.environment)
+      || 'Continuous deployment of ${{ github.ref_name }} to QA and Test' }} 
 
 on:
   push:
     branches: [MAV-921_continuous_deployment_job]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Deployment environment
+        required: true
+        type: choice
+        options:
+          - qa
+          - poc
+          - copilotmigration
+          - test
+          - preview
+          - training
+          - production
 
 jobs:
   test:
@@ -16,7 +33,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        environment: [qa, test]
+        environment: >-
+          ${{ fromJSON(github.event_name == 'workflow_dispatch'
+            && format('["{0}"]', inputs.environment)
+            || '["qa", "test"]') }}
     uses: ./.github/workflows/deploy-infrastructure.yml
     with:
       environment: ${{ matrix.environment }}
@@ -25,7 +45,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        environment: [ qa, test ]
+        environment: >-
+          ${{ fromJSON(github.event_name == 'workflow_dispatch'
+            && format('["{0}"]', inputs.environment)
+            || '["qa", "test"]') }}
     uses: ./.github/workflows/deploy-application.yml
     with:
       environment: ${{ matrix.environment }}
