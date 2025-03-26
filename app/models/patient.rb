@@ -279,12 +279,7 @@ class Patient < ApplicationRecord
   end
 
   def latest_consents(programme:)
-    consents
-      .select { it.programme_id == programme.id }
-      .reject(&:invalidated?)
-      .select(&:response_provided?)
-      .group_by(&:name)
-      .map { it.second.max_by(&:created_at) }
+    ConsentGrouper.call(consents, programme:)
   end
 
   def consent_given_and_safe_to_vaccinate?(programme:)
