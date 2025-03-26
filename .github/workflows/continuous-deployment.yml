@@ -1,8 +1,8 @@
 name: Continuous deployment
 run-name: >-
   ${{ github.event_name == 'workflow_dispatch'
-      && format('Deployment of ${{ github.ref_name }} to {0}', inputs.environment)
-      || 'Continuous deployment of ${{ github.ref_name }} to QA and Test' }} 
+      && format('Deployment of {0} to {1}', github.ref_name, inputs.environment)
+      || format('Continuous deployment of {0} to QA and Test', github.ref_name) }} 
 
 on:
   push:
