@@ -78,6 +78,7 @@ class PipelineStats
 
   def patients_scoped
     Patient
+      .readonly
       .all
       .then { organisations.nil? ? it : it.where(organisation: organisations) }
       .then { programmes.nil? ? it : it.in_programmes(programmes) }
@@ -143,18 +144,19 @@ class PipelineStats
 
   def patients_from_immunisation_imports_ids
     @patients_from_immunisation_imports_ids ||=
-      Patient.joins(:immunisation_imports_patients).uniq.pluck(:id)
+      Patient.readonly.joins(:immunisation_imports_patients).uniq.pluck(:id)
   end
 
   def consent_requests_sent_count
     ConsentNotification
+      .readonly
       .includes(:programmes)
       .select("DISTINCT ON (patient_id) *")
       .sum do
         if programmes.nil?
           it.programmes.count
         else
-          groups = ProgrammeGrouper.new(it.programmes)
+          groups = ProgrammeGrouper.call(it.programmes)
           programmes.count { |prog| groups.any? { |_, group| prog.in?(group) } }
         end
       end
@@ -162,6 +164,7 @@ class PipelineStats
 
   def consent_responses_count
     Consent
+      .readonly
       .not_invalidated
       .not_response_not_provided
       .where(recorded_by_user_id: nil)
@@ -172,7 +175,7 @@ class PipelineStats
 
   def consents_response_given_ids
     @consents_response_given_ids ||=
-      Consent.where(response: "given").pluck(:patient_id)
+      Consent.readonly.where(response: "given").pluck(:patient_id)
   end
 
   def patient_ids_with_consent_response(response)
