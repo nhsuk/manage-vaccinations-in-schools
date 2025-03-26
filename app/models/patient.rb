@@ -438,13 +438,8 @@ class Patient < ApplicationRecord
   end
 
   def clear_sessions_for_current_academic_year!
-    patient_sessions
-      .includes(
-        :gillick_assessments,
-        :session_attendances,
-        :vaccination_records
-      )
-      .where(session: sessions_for_current_academic_year)
-      .find_each(&:destroy_if_safe!)
+    patient_sessions.where(
+      session: sessions_for_current_academic_year
+    ).destroy_all_if_safe
   end
 end
