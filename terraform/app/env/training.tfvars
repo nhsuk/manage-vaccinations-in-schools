@@ -22,7 +22,7 @@ cis2_enabled          = "false"
 pds_enabled           = "false"
 http_hosts = {
   MAVIS__HOST                        = "training.manage-vaccinations-in-schools.nhs.uk"
-  MAVIS__GIVE_OR_REFUSE_CONSENT_HOST = "training.manage-vaccinations-in-schools.nhs.uk"
+  MAVIS__GIVE_OR_REFUSE_CONSENT_HOST = "training.give-or-refuse-consent-for-vaccinations.nhs.uk"
 }
 minimum_replicas = 3
 appspec_bucket = "nhse-mavis-appspec-bucket-training"
