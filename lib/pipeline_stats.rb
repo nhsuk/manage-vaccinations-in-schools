@@ -1,4 +1,4 @@
-#!/usr/bin/env ruby
+# frozen_string_literal: true
 
 class PipelineStats
   attr_reader :organisations, :programmes
@@ -17,12 +17,12 @@ class PipelineStats
 
   def render
     # Line to output unaccounted-for patients (this should be 0):
-    # Unknown,Cohort Patients,#{patients_total - patient_ids_from_cohort_or_class_imports.count - patient_ids_from_consents.count}
+    # patients_total - patient_ids_from_cohort_or_class_imports.count - patient_ids_from_consents.count
 
-    [
+    [ # rubocop:disable Style/StringConcatenation
       [
         ["Cohort Upload", "Uploaded Patients"],
-        patient_ids_from_cohort_imports.count
+        patients_from_cohort_imports.count
       ],
       [
         ["Class Upload", "Uploaded Patients"],
@@ -30,9 +30,9 @@ class PipelineStats
       ],
       [
         ["Uploaded Patients", "Consent Requests Sent"],
-        consent_requests_sent_count
+        count_consent_requests_sent
       ],
-      [["Consent Requests Sent", "Consent Responses"], consent_responses_count],
+      [["Consent Requests Sent", "Consent Responses"], count_consent_responses],
       [
         ["Consent Responses", "Consent Given"],
         patient_ids_with_consent_response("given").uniq.count
@@ -66,8 +66,8 @@ class PipelineStats
       end
   end
 
-  def patient_ids_from_cohort_imports
-    @patient_ids_from_cohort_imports ||=
+  def patients_from_cohort_imports
+    @patients_from_cohort_imports ||=
       patients_scoped
         .joins(:cohort_imports)
         .then do
@@ -78,24 +78,21 @@ class PipelineStats
           end
         end
         .distinct
-        .pluck(:id)
   end
 
-  def patient_ids_from_class_imports
-    @patient_ids_from_class_imports ||=
-      patients_scoped.then do
-        it.joins(:class_imports_patients).distinct.pluck(:id)
-      end
+  def patients_from_class_imports
+    @patients_from_class_imports ||=
+      patients_scoped.joins(:class_imports_patients).distinct
   end
 
   def patient_ids_from_class_not_cohort_imports
     @patient_ids_from_class_not_cohort_imports ||=
-      patient_ids_from_class_imports - patient_ids_from_cohort_imports
+      patients_from_class_imports.ids - patients_from_cohort_imports.ids
   end
 
   def patient_ids_from_cohort_or_class_imports
     @patient_ids_from_cohort_or_class_imports ||=
-      patient_ids_from_cohort_imports | patient_ids_from_class_imports
+      patients_from_cohort_imports.ids | patients_from_class_imports.ids
   end
 
   def patient_ids_from_consents
@@ -105,13 +102,13 @@ class PipelineStats
         .ids
   end
 
-  def patients_from_immunisation_imports_ids
-    @patients_from_immunisation_imports_ids ||=
-      Patient.readonly.joins(:immunisation_imports_patients).uniq.pluck(:id)
+  def patients_from_immunisation_imports
+    @patients_from_immunisation_imports ||=
+      Patient.readonly.joins(:immunisation_imports_patients).distinct
   end
 
-  def consent_requests_sent_count
-    @consent_requests_sent_count ||=
+  def count_consent_requests_sent
+    @count_consent_requests_sent ||=
       begin
         where = {}
         includes = []
@@ -135,23 +132,21 @@ class PipelineStats
       end
   end
 
-  def consent_responses_count
-    @consent_responses_count ||=
-      begin
-        Consent
-          .readonly
-          .not_invalidated
-          .not_response_not_provided
-          .then do
-            where = { recorded_by_user_id: nil }
-            where[:programme] = programmes unless programmes.nil?
-            where[:organisation] = organisations unless organisations.nil?
+  def count_consent_responses
+    @count_consent_responses ||=
+      Consent
+        .readonly
+        .not_invalidated
+        .not_response_not_provided
+        .then do
+          where = { recorded_by_user_id: nil }
+          where[:programme] = programmes unless programmes.nil?
+          where[:organisation] = organisations unless organisations.nil?
 
-            it.where(**where)
-          end
-          .distinct
-          .count(:patient_id)
-      end
+          it.where(**where)
+        end
+        .distinct
+        .count(:patient_id)
   end
 
   def consents_response_given_ids
