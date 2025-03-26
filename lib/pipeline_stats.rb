@@ -111,29 +111,47 @@ class PipelineStats
   end
 
   def consent_requests_sent_count
-    ConsentNotification
-      .readonly
-      .includes(:programmes)
-      .select("DISTINCT ON (patient_id) *")
-      .sum do
-        if programmes.nil?
-          it.programmes.count
-        else
-          groups = ProgrammeGrouper.call(it.programmes)
-          programmes.count { |prog| groups.any? { |_, group| prog.in?(group) } }
+    @consent_requests_sent_count ||=
+      begin
+        where = {}
+        includes = []
+
+        unless programmes.nil?
+          where[:programmes] = programmes
+          includes << :programmes
         end
+
+        unless organisations.nil?
+          where[:session] = { organisation: organisations }
+          includes << :session
+        end
+
+        ConsentNotification
+          .readonly
+          .then { includes.any? ? it.includes(*includes) : it }
+          .then { where.any? ? it.where(**where) : it }
+          .distinct
+          .count(:patient_id)
       end
   end
 
   def consent_responses_count
-    Consent
-      .readonly
-      .not_invalidated
-      .not_response_not_provided
-      .where(recorded_by_user_id: nil)
-      .pluck(:patient_id)
-      .uniq
-      .count
+    @consent_responses_count ||=
+      begin
+        Consent
+          .readonly
+          .not_invalidated
+          .not_response_not_provided
+          .then do
+            where = { recorded_by_user_id: nil }
+            where[:programme] = programmes unless programmes.nil?
+            where[:organisation] = organisations unless organisations.nil?
+
+            it.where(**where)
+          end
+          .distinct
+          .count(:patient_id)
+      end
   end
 
   def consents_response_given_ids

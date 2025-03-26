@@ -166,14 +166,6 @@ describe PipelineStats do
       Consent Responses,Consent Refused,2
       Consent Responses,Without Consent Response,12
     DIAGRAM
-    # sankey-beta
-    # Cohort Upload,Cohort Patients,12
-    # Class Upload,Cohort Patients,4
-    # Consent Forms,Cohort Patients,2
-    # Cohort Patients,Consent Given,2
-    # Cohort Patients,Consent Refused,2
-    # Cohort Patients,Consent Response Not Provided,2
-    # Cohort Patients,Without Consent Response,12
   end
 
   context "given an organisation" do
@@ -182,13 +174,13 @@ describe PipelineStats do
     it "produces stats for the given organisation and all programmes" do
       expect(diagram).to eq <<~DIAGRAM
         sankey-beta
-        Cohort Upload,Cohort Patients,6
-        Class Upload,Cohort Patients,2
-        Consent Forms,Cohort Patients,1
-        Cohort Patients,Consent Given,1
-        Cohort Patients,Consent Refused,1
-        Cohort Patients,Consent Response Not Provided,1
-        Cohort Patients,Without Consent Response,6
+        Cohort Upload,Uploaded Patients,6
+        Class Upload,Uploaded Patients,2
+        Uploaded Patients,Consent Requests Sent,8
+        Consent Requests Sent,Consent Responses,2
+        Consent Responses,Consent Given,1
+        Consent Responses,Consent Refused,1
+        Consent Responses,Without Consent Response,6
       DIAGRAM
     end
   end
@@ -199,13 +191,13 @@ describe PipelineStats do
     it "produces stats for all organisations but only that programme" do
       expect(diagram).to eq <<~DIAGRAM
         sankey-beta
-        Cohort Upload,Cohort Patients,6
-        Class Upload,Cohort Patients,2
-        Consent Forms,Cohort Patients,1
-        Cohort Patients,Consent Given,1
-        Cohort Patients,Consent Refused,1
-        Cohort Patients,Consent Response Not Provided,1
-        Cohort Patients,Without Consent Response,6
+        Cohort Upload,Uploaded Patients,6
+        Class Upload,Uploaded Patients,2
+        Uploaded Patients,Consent Requests Sent,8
+        Consent Requests Sent,Consent Responses,2
+        Consent Responses,Consent Given,1
+        Consent Responses,Consent Refused,1
+        Consent Responses,Without Consent Response,6
       DIAGRAM
     end
   end
