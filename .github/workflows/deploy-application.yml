@@ -77,7 +77,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: tfplan_app
+          name: tfplan_app-${{ inputs.environment }}
           path: ${{ runner.temp }}/tfplan
 
   apply-changes:
@@ -98,7 +98,7 @@ jobs:
       - name: Download artifact
         uses: actions/download-artifact@v4
         with:
-          name: tfplan_app
+          name: tfplan_app-${{ inputs.environment }}
           path: ${{ runner.temp }}
       - name: Install terraform
         uses: hashicorp/setup-terraform@v3
@@ -116,7 +116,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: CODEDEPLOY_ENV
+          name: CODEDEPLOY_ENV-${{ inputs.environment }}
           path: ${{ runner.temp }}/CODEDEPLOY_ENV
 
   create-deployment:
@@ -130,7 +130,7 @@ jobs:
       - name: Download artifact
         uses: actions/download-artifact@v4
         with:
-          name: CODEDEPLOY_ENV
+          name: CODEDEPLOY_ENV-${{ inputs.environment }}
           path: ${{ runner.temp }}/artifact
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4

@@ -83,7 +83,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: tfplan_infrastructure
+          name: tfplan_infrastructure-${{ inputs.environment }}
           path: ${{ runner.temp }}/tfplan
 
   apply:
@@ -104,7 +104,7 @@ jobs:
       - name: Download artifact
         uses: actions/download-artifact@v4
         with:
-          name: tfplan_infrastructure
+          name: tfplan_infrastructure-${{ inputs.environment }}
           path: ${{ runner.temp }}
       - name: Install terraform
         uses: hashicorp/setup-terraform@v3
