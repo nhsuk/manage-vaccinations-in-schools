@@ -8,6 +8,24 @@ describe PipelineStats do
   let(:programme) { Programme.hpv&.first || create(:programme, :hpv) }
   let(:flu_programme) { Programme.flu&.first || create(:programme, :flu) }
 
+  def create_consents_for_patients(
+    patients,
+    count,
+    response,
+    organisation,
+    programme
+  )
+    return if patients.empty?
+    return if count.blank?
+
+    count.times do
+      patient = patients.sample
+      create(:consent, response, patient:, organisation:, programme:)
+      patients -= [patient]
+    end
+    patients
+  end
+
   before do
     [
       organisation,
@@ -19,57 +37,92 @@ describe PipelineStats do
       class_import = create(:class_import, organisation:, session:)
       programme = organisation.programmes.first
 
-      patient1 =
-        create(
+      counts = {
+        cohort_import: {
+          patients: 4,
+          consents: {
+            given: 1,
+            refused: 1,
+            not_provided: 1
+          }
+        },
+        cohort_and_class_import: {
+          patients: 2,
+          consents: {
+          }
+        },
+        class_import: {
+          patients: 2,
+          consents: {
+          }
+        }
+      }
+
+      cohort_import_patients =
+        create_list(
           :patient,
-          :vaccinated,
+          counts[:cohort_import][:patients],
           organisation:,
           session:,
           year_group: 10,
           cohort_imports: [cohort_import]
         )
-      create(:consent, :given, patient: patient1, organisation:, programme:)
 
-      patient2 =
-        create(
+      available_patients = cohort_import_patients.dup
+      counts[:cohort_import][:consents].each do |response, count|
+        available_patients =
+          create_consents_for_patients(
+            available_patients,
+            count,
+            response,
+            organisation,
+            programme
+          )
+      end
+
+      cohort_and_class_import_patients =
+        create_list(
           :patient,
-          :consent_given_triage_not_needed,
-          :vaccinated,
+          counts[:cohort_and_class_import][:patients],
           organisation:,
           session:,
           year_group: 10,
           cohort_imports: [cohort_import],
           class_imports: [class_import]
         )
-      create(
-        :consent,
-        :not_provided,
-        patient: patient2,
-        organisation:,
-        programme:
-      )
 
-      create(
-        :patient,
-        :vaccinated,
-        organisation:,
-        session:,
-        year_group: 10,
-        cohort_imports: [cohort_import],
-        class_imports: [class_import]
-      )
+      available_patients = cohort_and_class_import_patients.dup
+      counts[:cohort_and_class_import][:consents].each do |response, count|
+        available_patients =
+          create_consents_for_patients(
+            available_patients,
+            count,
+            response,
+            organisation,
+            programme
+          )
+      end
 
-      patient3 =
-        create(
+      class_import_patients =
+        create_list(
           :patient,
-          :triage_ready_to_vaccinate,
-          :vaccinated,
+          counts[:class_import][:patients],
           organisation:,
           session:,
           year_group: 10,
           class_imports: [class_import]
         )
-      create(:consent, :refused, patient: patient3, organisation:, programme:)
+      available_patients = class_import_patients.dup
+      counts[:class_import][:consents].each do |response, count|
+        available_patients =
+          create_consents_for_patients(
+            available_patients,
+            count,
+            response,
+            organisation,
+            programme
+          )
+      end
 
       create(:patient, organisation:, session:, year_group: 10)
     end
@@ -78,14 +131,23 @@ describe PipelineStats do
   it "produces stats for all organisations and programmes" do
     expect(diagram).to eq <<~DIAGRAM
       sankey-beta
-      Cohort Upload,Total Patients,6
-      Class Upload,Total Patients,2
-      Consent Forms,Total Patients,2
-      Total Patients,Consent Given,2
-      Total Patients,Consent Refused,2
-      Total Patients,Consent Response Not Provided,2
-      Total Patients,Without Consent Response,4
+      Cohort Upload,Cohort Patients,12
+      Class Upload,Cohort Patients,4
+      Consent Forms,Cohort Patients,2
+      Cohort Patients,Consent Given,2
+      Cohort Patients,Consent Refused,2
+      Cohort Patients,Consent Response Not Provided,2
+      Cohort Patients,Without Consent Response,12
     DIAGRAM
+    # sankey-beta
+    # Cohort Upload,Uploaded Patients,6
+    # Class Upload,Uploaded Patients,2
+    # Uploaded Patients.Consent Request Sent,6
+    # Consent Request Sent,Consent Responses,6
+    # Consent Responses,Consent Given,2
+    # Consent Responses,Consent Refused,2
+    # Consent Responses,Consent Response Not Provided,2
+    # Consent Responses,Without Consent Response,4
   end
 
   context "given an organisation" do
@@ -94,13 +156,13 @@ describe PipelineStats do
     it "produces stats for the given organisation and all programmes" do
       expect(diagram).to eq <<~DIAGRAM
         sankey-beta
-        Cohort Upload,Total Patients,3
-        Class Upload,Total Patients,1
-        Consent Forms,Total Patients,1
-        Total Patients,Consent Given,1
-        Total Patients,Consent Refused,1
-        Total Patients,Consent Response Not Provided,1
-        Total Patients,Without Consent Response,2
+        Cohort Upload,Cohort Patients,6
+        Class Upload,Cohort Patients,2
+        Consent Forms,Cohort Patients,1
+        Cohort Patients,Consent Given,1
+        Cohort Patients,Consent Refused,1
+        Cohort Patients,Consent Response Not Provided,1
+        Cohort Patients,Without Consent Response,6
       DIAGRAM
     end
   end
@@ -111,13 +173,13 @@ describe PipelineStats do
     it "produces stats for all organisations but only that programme" do
       expect(diagram).to eq <<~DIAGRAM
         sankey-beta
-        Cohort Upload,Total Patients,3
-        Class Upload,Total Patients,1
-        Consent Forms,Total Patients,1
-        Total Patients,Consent Given,1
-        Total Patients,Consent Refused,1
-        Total Patients,Consent Response Not Provided,1
-        Total Patients,Without Consent Response,2
+        Cohort Upload,Cohort Patients,6
+        Class Upload,Cohort Patients,2
+        Consent Forms,Cohort Patients,1
+        Cohort Patients,Consent Given,1
+        Cohort Patients,Consent Refused,1
+        Cohort Patients,Consent Response Not Provided,1
+        Cohort Patients,Without Consent Response,6
       DIAGRAM
     end
   end

@@ -24,49 +24,33 @@ class PipelineStats
 
   def render
     # Line to output unaccounted-for patients (this should be 0):
-    # Unknown,Total Patients,#{patients_total - patient_ids_from_cohort_or_class_imports.count - patient_ids_from_consents.count}
+    # Unknown,Cohort Patients,#{patients_total - patient_ids_from_cohort_or_class_imports.count - patient_ids_from_consents.count}
 
     [
       [
-        ["Cohort Upload", "Total Patients"],
+        ["Cohort Upload", "Cohort Patients"],
         patient_ids_from_cohort_imports.count
         # patients.from_cohort_imports.in_sessions.ids.uniq.count
       ],
       [
-        ["Class Upload", "Total Patients"],
+        ["Class Upload", "Cohort Patients"],
         patient_ids_from_class_not_cohort_imports.count
-        # (
-        #   patients.from_class_imports.in_sessions.ids -
-        #     patients.from_cohort_imports.in_sessions.ids
-        # ).uniq.count
       ],
+      [["Consent Forms", "Cohort Patients"], patient_ids_from_consents.count],
       [
-        ["Consent Forms", "Total Patients"],
-        patient_ids_from_consents.count
-        # (
-        #   patients.in_sessions.where.not(
-        #     id:
-        #       patients.from_class_imports.in_sessions.ids +
-        #         patients.from_cohort_imports.in_sessions.ids
-        #   )
-        # )
-        # .uniq.count
-      ],
-      [
-        ["Total Patients", "Consent Given"],
+        ["Cohort Patients", "Consent Given"],
         patient_ids_with_consent_response("given").uniq.count
-        # patients.with_consent_response("given").in_sessions.uniq.count
       ],
       [
-        ["Total Patients", "Consent Refused"],
+        ["Cohort Patients", "Consent Refused"],
         patient_ids_with_consent_response("refused").uniq.count
       ],
       [
-        ["Total Patients", "Consent Response Not Provided"],
+        ["Cohort Patients", "Consent Response Not Provided"],
         patient_ids_with_consent_response("not_provided").uniq.count
       ],
       [
-        ["Total Patients", "Without Consent Response"],
+        ["Cohort Patients", "Without Consent Response"],
         patient_ids_without_consent_response.count
       ]
     ].map { |(from, to), count| "#{from},#{to},#{count}" }
@@ -77,9 +61,9 @@ class PipelineStats
   def render_organisation
     diagram << <<~EOSANKEY
       sankey-beta
-      Cohort Upload,Total Patients,#{patient_ids_from_cohort_imports(@organisation).count}
-      Class Upload,Total Patients,#{patient_ids_from_class_not_cohort_imports(@organisation).count}
-      Consent Forms,Total Patients,#{patient_ids_from_consents(@organisation).count}
+      Cohort Upload,Cohort Patients,#{patient_ids_from_cohort_imports(@organisation).count}
+      Class Upload,Cohort Patients,#{patient_ids_from_class_not_cohort_imports(@organisation).count}
+      Consent Forms,Cohort Patients,#{patient_ids_from_consents(@organisation).count}
     EOSANKEY
 
     diagram
@@ -91,9 +75,9 @@ class PipelineStats
     Organisation.all.each do |org|
       ods = org.ods_code
       diagram << <<~EOSANKEY
-        #{ods} Cohort Upload,#{ods} Total Patients,#{patient_ids_from_cohort_imports(org).count}
-        #{ods} Class Upload,#{ods} Total Patients,#{patient_ids_from_class_not_cohort_imports(org).count}
-        #{ods} Consent Forms,#{ods} Total Patients,#{patient_ids_from_consents(org).count}
+        #{ods} Cohort Upload,#{ods} Cohort Patients,#{patient_ids_from_cohort_imports(org).count}
+        #{ods} Class Upload,#{ods} Cohort Patients,#{patient_ids_from_class_not_cohort_imports(org).count}
+        #{ods} Consent Forms,#{ods} Cohort Patients,#{patient_ids_from_consents(org).count}
       EOSANKEY
     end
 
