@@ -32,7 +32,7 @@ class PatientSession < ApplicationRecord
   belongs_to :session
 
   has_many :gillick_assessments
-  has_many :pre_screenings, -> { order(:created_at) }
+  has_many :pre_screenings
   has_many :session_statuses
   has_one :registration_status
 
