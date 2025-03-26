@@ -2,34 +2,41 @@
 
 class PipelineStats
   class PatientCollection
-    attr_reader :organisation, :patients, :programme
+    attr_reader :organisations, :patients, :programmes
 
-    delegate :count, :first, :pluck, :sample, :to_sql, :uniq, to: :patients
+    delegate :count,
+             :first,
+             :pluck,
+             :sample,
+             :to_sql,
+             :uniq,
+             :where,
+             to: :patients
 
-    def initialize(patients, organisation: nil, programme: nil)
+    def initialize(patients, organisations: nil, programmes: nil)
       @patients = patients
-      @organisation = organisation
-      @programme = programme
+      @organisations = organisations
+      @programmes = programmes
     end
 
     def replicate(patients)
       self.class.new(
         patients,
-        organisation: @organisation,
-        programme: @programme
+        organisations: @organisations,
+        programmes: @programmes
       )
     end
 
-    def in_organisation(organisation)
-      @organisation = organisation
+    def in_organisations(organisations)
+      @organisations = organisations
 
-      replicate(patients.where(organisation: organisation))
+      replicate(patients.where(organisation: organisations))
     end
 
-    def in_programme(programme)
-      @programme = programme
+    def in_programmes(programmes)
+      @programmes = programmes
 
-      replicate(patients.in_programme(programme))
+      replicate(patients.in_programmes(programmes))
     end
 
     def from_cohort_imports
@@ -50,17 +57,21 @@ class PipelineStats
       patients
         .joins(:sessions)
         .then do
-          organisation ? it.where(sessions: { organisation: organisation }) : it
+          if organisations.nil?
+            it
+          else
+            it.where(sessions: { organisation: organisations })
+          end
         end
         .then do
-          if programme
+          if programmes.nil?
+            it
+          else
             it.joins(sessions: :programmes).where(
               sessions: {
-                programmes: programme
+                programmes: programmes
               }
             )
-          else
-            it
           end
         end
     end
@@ -84,62 +95,59 @@ class PipelineStats
     @programmes = programmes
   end
 
-  def patients
-    PatientCollection
-      .new(Patient.all)
-      .in_organisation(@organisation)
-      .in_programme(@programme)
-  end
+  # def patients
+  #   PatientCollection
+  #     .new(Patient.all)
+  #     .in_organisation(@organisation)
+  #     .in_programme(@programme)
+  # end
 
   def render
     # Line to output unaccounted-for patients (this should be 0):
     # Unknown,Total Patients,#{patients_total - patient_ids_from_cohort_or_class_imports.count - patient_ids_from_consents.count}
 
-    # ids_only_from_class_imports =
-    #   (
-    #     patients.from_class_imports.in_sessions.ids -
-    #       patients.from_cohort_imports.in_sessions.ids
-    #   )
-    # ids_in_cohort_or_class_imports =
-    #   patients.from_class_imports.in_sessions.ids &
-    #     patients.from_cohort_imports.in_sessions.ids
-    # ids_not_in_imports =
-    #   (patients.where.not(id: ids_in_cohort_or_class_imports))
-
-    # only_from_class_imports = patients.from_class_imports.not_in(patients.from_cohort_imports).in_sessions.ids.uniq.count
-
-    # <<~DIAGRAM
-    #   sankey-beta
-    #   Cohort Upload,Total Patients,#{patients.from_cohort_imports.in_sessions.ids.uniq.count}
-    #   Class Upload,Total Patients,#{ids_only_from_class_imports.uniq.count}
-    #   Consent Forms,Total Patients,#{ids_not_in_imports.count}
-    #   Total Patients,Consent Given,#{patient_ids_with_consent_response("given", @organisation, @programme).count}
-    #   Total Patients,Consent Refused,#{patient_ids_with_consent_response("refused", @organisation, @programme).count}
-    #   Total Patients,Consent Response Not Provided,#{patient_ids_with_consent_response("not_provided", @organisation, @programme).count}
-    #   Total Patients,Without Consent Response,#{patient_ids_without_consent_response(@organisation, @programme).count}
-    # DIAGRAM
+    patients =
+      PatientCollection
+        .new(Patient.all)
+        .then { @organisations.nil? ? it : it.in_organisations(@organisations) }
+        .then { @programmes.nil? ? it : it.in_programmes(@programmes) }
 
     [
       [
         ["Cohort Upload", "Total Patients"],
-        patient_ids_from_cohort_imports.count
+        patients.from_cohort_imports.in_sessions.ids.uniq.count
+        # patient_ids_from_cohort_imports.count
       ],
       [
         ["Class Upload", "Total Patients"],
-        patient_ids_from_class_not_cohort_imports.count
+        (
+          patients.from_class_imports.in_sessions.ids -
+            patients.from_cohort_imports.in_sessions.ids
+        ).uniq.count
+        # patient_ids_from_class_not_cohort_imports.count
       ],
-      [["Consent Forms", "Total Patients"], patient_ids_from_consents.count],
+      [
+        ["Consent Forms", "Total Patients"],
+        (
+          patients.in_sessions.where.not(
+            id:
+              patients.from_class_imports.in_sessions.ids +
+                patients.from_cohort_imports.in_sessions.ids
+          )
+        ).uniq.count
+        # patient_ids_from_consents.count
+      ],
       [
         ["Total Patients", "Consent Given"],
-        patient_ids_with_consent_response("given").count
+        patient_ids_with_consent_response("given").uniq.count
       ],
       [
         ["Total Patients", "Consent Refused"],
-        patient_ids_with_consent_response("refused").count
+        patient_ids_with_consent_response("refused").uniq.count
       ],
       [
         ["Total Patients", "Consent Response Not Provided"],
-        patient_ids_with_consent_response("not_provided").count
+        patient_ids_with_consent_response("not_provided").uniq.count
       ],
       [
         ["Total Patients", "Without Consent Response"],

@@ -24,6 +24,7 @@ describe PipelineStats do
           :patient,
           :vaccinated,
           organisation:,
+          session:,
           year_group: 10,
           cohort_imports: [cohort_import]
         )
@@ -35,6 +36,7 @@ describe PipelineStats do
           :consent_given_triage_not_needed,
           :vaccinated,
           organisation:,
+          session:,
           year_group: 10,
           cohort_imports: [cohort_import],
           class_imports: [class_import]
@@ -51,6 +53,7 @@ describe PipelineStats do
         :patient,
         :vaccinated,
         organisation:,
+        session:,
         year_group: 10,
         cohort_imports: [cohort_import],
         class_imports: [class_import]
@@ -62,12 +65,13 @@ describe PipelineStats do
           :triage_ready_to_vaccinate,
           :vaccinated,
           organisation:,
+          session:,
           year_group: 10,
           class_imports: [class_import]
         )
       create(:consent, :refused, patient: patient3, organisation:, programme:)
 
-      create(:patient, organisation:, year_group: 10)
+      create(:patient, organisation:, session:, year_group: 10)
     end
   end
 
