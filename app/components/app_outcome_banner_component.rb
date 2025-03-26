@@ -54,7 +54,12 @@ class AppOutcomeBannerComponent < ViewComponent::Base
   end
 
   def vaccination_record
-    @vaccination_record ||= patient.latest_vaccination_records(programme:).last
+    @vaccination_record ||=
+      patient
+        .vaccination_records
+        .includes(:batch, :performed_by_user, :vaccine)
+        .order(performed_at: :desc)
+        .find_by(programme:)
   end
 
   def triage
@@ -71,7 +76,7 @@ class AppOutcomeBannerComponent < ViewComponent::Base
   end
 
   def vaccine_summary
-    type = vaccination_record.programme.name
+    type = programme.name
     batch = vaccination_record.batch&.name
     brand =
       (vaccination_record.vaccine || vaccination_record.batch&.vaccine)&.brand

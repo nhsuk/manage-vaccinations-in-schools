@@ -10,12 +10,7 @@ class SchoolSessionRemindersJob < ApplicationJob
       PatientSession
         .includes(
           :gillick_assessments,
-          patient: [
-            :parents,
-            :triages,
-            :vaccination_records,
-            { consents: %i[parent patient] }
-          ],
+          patient: [:parents, :triages, { consents: %i[parent patient] }],
           session: :programmes
         )
         .eager_load(:session)

@@ -33,7 +33,9 @@ class PatientSession::SessionStatus < ApplicationRecord
 
   has_many :triages, -> { not_invalidated }, through: :patient
 
-  has_many :vaccination_records, -> { kept }, through: :patient
+  has_many :vaccination_records,
+           -> { kept.order(performed_at: :desc) },
+           through: :patient
 
   has_one :session_attendance,
           -> { today },
@@ -116,7 +118,7 @@ class PatientSession::SessionStatus < ApplicationRecord
 
   def vaccination_record
     @vaccination_record ||=
-      vaccination_records.reverse.find do
+      vaccination_records.find do
         it.programme_id == programme_id &&
           it.session_id == patient_session.session_id
       end

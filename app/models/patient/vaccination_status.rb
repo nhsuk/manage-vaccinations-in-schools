@@ -31,7 +31,9 @@ class Patient::VaccinationStatus < ApplicationRecord
 
   has_many :triages, -> { not_invalidated }, through: :patient
 
-  has_many :vaccination_records, -> { kept }, through: :patient
+  has_many :vaccination_records,
+           -> { kept.order(performed_at: :desc) },
+           through: :patient
 
   enum :status,
        { none_yet: 0, vaccinated: 1, could_not_vaccinate: 2 },
