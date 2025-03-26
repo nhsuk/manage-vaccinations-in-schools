@@ -28,12 +28,19 @@ class AppPatientPageComponent < ViewComponent::Base
   end
 
   def display_gillick_assessment_card?
-    patient_session.gillick_assessment(programme) ||
-      gillick_assessment_can_be_recorded?
+    gillick_assessment.present? || gillick_assessment_can_be_recorded?
   end
 
   def gillick_assessment_can_be_recorded?
     patient_session.session.today? && helpers.policy(GillickAssessment).new?
+  end
+
+  def gillick_assessment
+    @gillick_assessment ||=
+      patient_session
+        .gillick_assessments
+        .order(created_at: :desc)
+        .find_by(programme:)
   end
 
   def vaccination_records

@@ -87,7 +87,6 @@ class VaccinationsController < ApplicationController
   def set_patient_session
     @patient_session =
       PatientSession.includes(
-        :gillick_assessments,
         :registration_status,
         :session_attendances,
         :organisation,

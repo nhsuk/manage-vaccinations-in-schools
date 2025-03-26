@@ -31,7 +31,7 @@ class PatientSession < ApplicationRecord
   belongs_to :patient
   belongs_to :session
 
-  has_many :gillick_assessments, -> { order(:created_at) }
+  has_many :gillick_assessments
   has_many :pre_screenings, -> { order(:created_at) }
   has_many :session_statuses
   has_one :registration_status
@@ -169,12 +169,6 @@ class PatientSession < ApplicationRecord
 
   def programmes
     session.programmes.select { it.year_groups.include?(patient.year_group) }
-  end
-
-  def gillick_assessment(programme)
-    gillick_assessments
-      .select { it.programme_id == programme.id }
-      .max_by(&:created_at)
   end
 
   def session_status(programme:)

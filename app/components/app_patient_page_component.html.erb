@@ -16,7 +16,7 @@
 <% if display_gillick_assessment_card? %>
   <%= render AppCardComponent.new do |c| %>
     <% c.with_heading { "Gillick assessment" } %>
-    <% if (gillick_assessment = patient_session.gillick_assessment(programme)) %>
+    <% if gillick_assessment %>
       <% if gillick_assessment.gillick_competent? %>
         <p class="app-status app-status--aqua-green">
           <svg class="nhsuk-icon nhsuk-icon__tick" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">

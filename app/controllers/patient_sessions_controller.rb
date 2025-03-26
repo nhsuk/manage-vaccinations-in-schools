@@ -49,7 +49,6 @@ class PatientSessionsController < ApplicationController
       policy_scope(PatientSession)
         .eager_load(:location, :session, patient: %i[gp_practice school])
         .preload(
-          :gillick_assessments,
           :session_attendances,
           patient: {
             consents: %i[parent],

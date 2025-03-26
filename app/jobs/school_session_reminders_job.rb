@@ -9,7 +9,6 @@ class SchoolSessionRemindersJob < ApplicationJob
     patient_sessions =
       PatientSession
         .includes(
-          :gillick_assessments,
           patient: [:parents, :triages, { consents: %i[parent patient] }],
           session: :programmes
         )

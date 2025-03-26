@@ -28,7 +28,7 @@ describe PatientSession do
   let(:programme) { create(:programme) }
   let(:session) { create(:session, programmes: [programme]) }
 
-  it { should have_many(:gillick_assessments).order(:created_at) }
+  it { should have_many(:gillick_assessments) }
 
   describe "#safe_to_destroy?" do
     subject(:safe_to_destroy?) { patient_session.safe_to_destroy? }
