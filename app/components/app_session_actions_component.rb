@@ -6,11 +6,10 @@ class AppSessionActionsComponent < ViewComponent::Base
     <%= govuk_summary_list(rows:) %>
   ERB
 
-  def initialize(session, patient_sessions:)
+  def initialize(session)
     super
 
     @session = session
-    @patient_sessions = patient_sessions
   end
 
   def render?
@@ -19,7 +18,9 @@ class AppSessionActionsComponent < ViewComponent::Base
 
   private
 
-  attr_reader :session, :patient_sessions
+  attr_reader :session
+
+  delegate :patient_sessions, to: :session
 
   delegate :programmes, to: :session
 

@@ -3,11 +3,10 @@
 describe AppSessionActionsComponent do
   subject { render_inline(component) }
 
-  let(:component) { described_class.new(session, patient_sessions:) }
+  let(:component) { described_class.new(session) }
 
   let(:programmes) { [create(:programme, :hpv)] }
   let(:session) { create(:session, programmes:) }
-  let(:patient_sessions) { session.patient_sessions }
 
   before do
     create(
