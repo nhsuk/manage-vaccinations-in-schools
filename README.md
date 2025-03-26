@@ -132,8 +132,12 @@ gitGraph
     checkout release
     branch v1.0.1-hotfixes
     commit id: "v1.0.1-hotfix-1"
+    checkout main
+    cherry-pick id: "v1.0.1-hotfix-1"
+    commit id: "v1.1.0-feature-3"
     checkout release
     merge v1.0.1-hotfixes tag: "v1.0.1"
+    checkout main
 ```
 
 At this point the histories of the `release` and `main` branches will have
@@ -204,10 +208,11 @@ commit id: "v2.1.0-feature-2"
 checkout main
 commit id: "v2.0.0-patch-1" tag: "v2.0.0-rc2"
 checkout "v2.1.0-wip"
-commit id: "v2.1.0-patch-1"
+cherry-pick id: "v2.0.0-patch-1"
 ```
 
-Once the release candidate has been confirmed good and release approvals have been given, it is tagged as the new version, and deployed to production:
+Once the release candidate has been confirmed good and release approvals have been given,
+it is tagged as the new version (`v2.0.0`), and deployed to production:
 
 ```mermaid
 gitGraph
@@ -220,7 +225,7 @@ commit id: "v2.1.0-feature-2"
 checkout main
 commit id: "v2.0.0-patch-1" tag: "v2.0.0-rc2, v2.0.0"
 checkout "v2.1.0-wip"
-commit id: "v2.1.0-patch-1"
+cherry-pick id: "v2.0.0-patch-1"
 ```
 
 At this point the wip branch can be merged into main and feature development for v2.1.0
@@ -237,7 +242,7 @@ commit id: "v2.1.0-feature-2"
 checkout main
 commit id: "v2.0.0-patch-1" tag:"v2.0.0-rc2, v2.0.0"
 checkout v2.1.0-wip
-commit id: "v2.1.0-patch-1"
+cherry-pick id: "v2.0.0-patch-1"
 checkout main
 merge v2.1.0-wip
 commit id: "v2.1.0-feature-3"
@@ -255,6 +260,9 @@ commit id: "v2.1.0-feature-1"
 commit id: "v2.1.0-feature-2"
 checkout main
 commit id: "v2.0.0-patch-1" tag:"v2.0.0-rc2, v2.0.0"
+checkout v2.1.0-wip
+cherry-pick id: "v2.0.0-patch-1"
+checkout main
 merge v2.1.0-wip
 commit id: "v2.1.0-feature-3"
 commit id: "v2.1.0-feature-4" tag: "v2.1.0-rc1"
