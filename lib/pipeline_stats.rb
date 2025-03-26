@@ -1,86 +1,6 @@
 #!/usr/bin/env ruby
 
 class PipelineStats
-  class PatientCollection
-    attr_reader :organisations, :patients, :programmes
-
-    delegate :count,
-             :first,
-             :pluck,
-             :sample,
-             :to_sql,
-             :uniq,
-             :where,
-             to: :patients
-
-    def initialize(patients, organisations: nil, programmes: nil)
-      @patients = patients
-      @organisations = organisations
-      @programmes = programmes
-    end
-
-    def replicate(patients)
-      self.class.new(
-        patients,
-        organisations: @organisations,
-        programmes: @programmes
-      )
-    end
-
-    def in_organisations(organisations)
-      @organisations = organisations
-
-      replicate(patients.where(organisation: organisations))
-    end
-
-    def in_programmes(programmes)
-      @programmes = programmes
-
-      replicate(patients.in_programmes(programmes))
-    end
-
-    def from_cohort_imports
-      replicate(patients.joins(:cohort_imports_patients))
-    end
-
-    def from_class_imports
-      replicate(patients.joins(:class_imports_patients))
-    end
-
-    def in_sessions
-      # Session
-      #   .all
-      #   .then { @organisation ? it.where(organisation: @organisation) : it }
-      #   .then { @programme.present? ? it.has_programme(@programme) : it }
-      #   .flat_map { it.patients.where(id: patients.pluck(:id)) }
-
-      patients
-        .joins(:sessions)
-        .then do
-          if organisations.nil?
-            it
-          else
-            it.where(sessions: { organisation: organisations })
-          end
-        end
-        .then do
-          if programmes.nil?
-            it
-          else
-            it.joins(sessions: :programmes).where(
-              sessions: {
-                programmes: programmes
-              }
-            )
-          end
-        end
-    end
-
-    def ids
-      patients.pluck(:id)
-    end
-  end
-
   attr_reader :organisations, :programmes
 
   def initialize(organisations: nil, programmes: nil)
@@ -106,37 +26,36 @@ class PipelineStats
     # Line to output unaccounted-for patients (this should be 0):
     # Unknown,Total Patients,#{patients_total - patient_ids_from_cohort_or_class_imports.count - patient_ids_from_consents.count}
 
-    patients =
-      PatientCollection
-        .new(Patient.all)
-        .then { @organisations.nil? ? it : it.in_organisations(@organisations) }
-        .then { @programmes.nil? ? it : it.in_programmes(@programmes) }
-
     [
       [
         ["Cohort Upload", "Total Patients"],
-        patients.from_cohort_imports.in_sessions.ids.uniq.count
+        patient_ids_from_cohort_imports.count
+        # patients.from_cohort_imports.in_sessions.ids.uniq.count
       ],
       [
         ["Class Upload", "Total Patients"],
-        (
-          patients.from_class_imports.in_sessions.ids -
-            patients.from_cohort_imports.in_sessions.ids
-        ).uniq.count
+        patient_ids_from_class_not_cohort_imports.count
+        # (
+        #   patients.from_class_imports.in_sessions.ids -
+        #     patients.from_cohort_imports.in_sessions.ids
+        # ).uniq.count
       ],
       [
         ["Consent Forms", "Total Patients"],
-        (
-          patients.in_sessions.where.not(
-            id:
-              patients.from_class_imports.in_sessions.ids +
-                patients.from_cohort_imports.in_sessions.ids
-          )
-        ).uniq.count
+        patient_ids_from_consents.count
+        # (
+        #   patients.in_sessions.where.not(
+        #     id:
+        #       patients.from_class_imports.in_sessions.ids +
+        #         patients.from_cohort_imports.in_sessions.ids
+        #   )
+        # )
+        # .uniq.count
       ],
       [
         ["Total Patients", "Consent Given"],
         patient_ids_with_consent_response("given").uniq.count
+        # patients.with_consent_response("given").in_sessions.uniq.count
       ],
       [
         ["Total Patients", "Consent Refused"],
