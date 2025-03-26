@@ -1,5 +1,5 @@
 name: Continuous deployment
-run-name: Continuous deployment of ${{ github.ref }} to "copilotmigration"
+run-name: Continuous deployment of ${{ github.ref_name }} to QA and Test
 
 on:
   push:
@@ -13,11 +13,19 @@ jobs:
     uses: ./.github/workflows/build-and-push-image.yml
   deploy-infrastructure:
     needs: test
+    strategy:
+      fail-fast: false
+      matrix:
+        environment: [qa, test]
     uses: ./.github/workflows/deploy-infrastructure.yml
     with:
-      environment: copilotmigration
+      environment: ${{ matrix.environment }}
   deploy-application:
     needs: [build-and-push-image, deploy-infrastructure]
+    strategy:
+      fail-fast: false
+      matrix:
+        environment: [ qa, test ]
     uses: ./.github/workflows/deploy-application.yml
     with:
-      environment: copilotmigration
+      environment: ${{ matrix.environment }}
