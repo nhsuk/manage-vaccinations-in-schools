@@ -86,19 +86,16 @@ class VaccinationsController < ApplicationController
 
   def set_patient_session
     @patient_session =
-      @patient
-        .patient_sessions
-        .includes(
-          :gillick_assessments,
-          :session_attendances,
-          :organisation,
-          patient: {
-            consents: :parent,
-            parent_relationships: :parent
-          }
-        )
-        .preload_for_status
-        .find_by!(session: @session)
+      PatientSession.includes(
+        :gillick_assessments,
+        :registration_status,
+        :session_attendances,
+        :organisation,
+        patient: {
+          consents: :parent,
+          parent_relationships: :parent
+        }
+      ).find_by!(patient: @patient, session: @session)
   end
 
   def set_programme

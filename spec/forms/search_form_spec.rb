@@ -109,7 +109,7 @@ describe SearchForm do
   end
 
   context "for patient sessions" do
-    let(:scope) { PatientSession.preload_for_status }
+    let(:scope) { PatientSession.all }
 
     it "doesn't raise an error" do
       expect { form.apply(scope) }.not_to raise_error

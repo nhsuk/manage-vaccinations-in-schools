@@ -33,8 +33,8 @@ class SessionsController < ApplicationController
         @patient_sessions =
           @session
             .patient_sessions
+            .includes(:patient)
             .in_programmes(@session.programmes)
-            .preload_for_status
 
         render layout: "full"
       end

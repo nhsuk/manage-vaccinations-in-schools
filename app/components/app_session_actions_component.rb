@@ -110,6 +110,9 @@ class AppSessionActionsComponent < ViewComponent::Base
       session.programmes.index_with do |programme|
         patient_sessions
           .has_registration_status(%w[attending completed])
+          .includes(
+            patient: %i[consent_statuses triage_statuses vaccination_statuses]
+          )
           .count do |patient_session|
             patient_session.patient.consent_given_and_safe_to_vaccinate?(
               programme:

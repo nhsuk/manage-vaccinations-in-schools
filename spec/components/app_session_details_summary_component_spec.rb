@@ -7,7 +7,7 @@ describe AppSessionDetailsSummaryComponent do
 
   let(:programme) { create(:programme, :hpv) }
   let(:session) { create(:session, programmes: [programme]) }
-  let(:patient_sessions) { session.patient_sessions.preload_for_status }
+  let(:patient_sessions) { session.patient_sessions }
 
   it { should have_text("Cohort\nNo children") }
   it { should have_text("Consent refused\nNo children") }
