@@ -116,7 +116,6 @@ class PipelineStats
       [
         ["Cohort Upload", "Total Patients"],
         patients.from_cohort_imports.in_sessions.ids.uniq.count
-        # patient_ids_from_cohort_imports.count
       ],
       [
         ["Class Upload", "Total Patients"],
@@ -124,7 +123,6 @@ class PipelineStats
           patients.from_class_imports.in_sessions.ids -
             patients.from_cohort_imports.in_sessions.ids
         ).uniq.count
-        # patient_ids_from_class_not_cohort_imports.count
       ],
       [
         ["Consent Forms", "Total Patients"],
@@ -135,7 +133,6 @@ class PipelineStats
                 patients.from_cohort_imports.in_sessions.ids
           )
         ).uniq.count
-        # patient_ids_from_consents.count
       ],
       [
         ["Total Patients", "Consent Given"],
