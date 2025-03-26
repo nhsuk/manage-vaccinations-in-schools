@@ -14,7 +14,10 @@ class Sessions::OutcomeController < ApplicationController
     @programmes = @session.programmes
 
     scope =
-      @session.patient_sessions.preload_for_status.in_programmes(@programmes)
+      @session
+        .patient_sessions
+        .includes(:patient, :session_statuses, session: :programmes)
+        .in_programmes(@programmes)
 
     patient_sessions = @form.apply(scope, programme: @programmes)
     @pagy, @patient_sessions = pagy(patient_sessions)

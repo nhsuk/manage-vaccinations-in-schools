@@ -8,6 +8,7 @@ class Sessions::RegisterController < ApplicationController
 
   before_action :set_session
   before_action :set_search_form, only: :show
+  before_action :set_patient, only: :create
   before_action :set_patient_session, only: :create
 
   layout "full"
@@ -16,9 +17,14 @@ class Sessions::RegisterController < ApplicationController
     @statuses = PatientSession::RegistrationStatus.statuses.keys
 
     scope =
-      @session.patient_sessions.preload_for_status.in_programmes(
-        @session.programmes
-      )
+      @session
+        .patient_sessions
+        .includes(
+          :registration_status,
+          patient: %i[consent_statuses triage_statuses vaccination_statuses],
+          session: :programmes
+        )
+        .in_programmes(@session.programmes)
 
     patient_sessions = @form.apply(scope)
 
@@ -53,10 +59,12 @@ class Sessions::RegisterController < ApplicationController
     @session = policy_scope(Session).find_by!(slug: params[:session_slug])
   end
 
+  def set_patient
+    @patient = policy_scope(Patient).find(params[:patient_id])
+  end
+
   def set_patient_session
     @patient_session =
-      @session.patient_sessions.preload_for_status.find_by!(
-        patient_id: params[:patient_id]
-      )
+      PatientSession.find_by!(patient: @patient, session: @session)
   end
 end

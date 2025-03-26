@@ -67,18 +67,10 @@ class PatientSession < ApplicationRecord
           )
         end
 
-  scope :preload_for_status,
-        -> do
-          eager_load(:patient).preload(
-            :registration_status,
-            :session_statuses,
-            patient: %i[consent_statuses triage_statuses vaccination_statuses],
-            session: :programmes
-          )
-        end
-
   scope :in_programmes,
-        ->(programmes) { merge(Patient.in_programmes(programmes)) }
+        ->(programmes) do
+          joins(:patient).merge(Patient.in_programmes(programmes))
+        end
 
   scope :search_by_name, ->(name) { merge(Patient.search_by_name(name)) }
 
