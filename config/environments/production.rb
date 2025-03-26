@@ -135,6 +135,11 @@ Rails.application.configure do
       class: "RemoveImportCSVJob",
       description: "Remove CSV data from old cohort and immunisation imports"
     },
+    status_updater: {
+      cron: "every day at 3am",
+      class: "StatusUpdaterJob",
+      description: "Updates the status of all patients"
+    },
     trim_active_record_sessions: {
       cron: "every day at 2am",
       class: "TrimActiveRecordSessionsJob",
