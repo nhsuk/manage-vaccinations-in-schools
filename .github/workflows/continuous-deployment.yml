@@ -1,8 +1,5 @@
 name: Continuous deployment
-run-name: >-
-  ${{ github.event_name == 'workflow_dispatch'
-      && format('Deployment of {0} to {1}', github.ref_name, inputs.environment)
-      || format('Continuous deployment of {0} to QA and Test', github.ref_name) }} 
+run-name: Continuous deployment of ${{ github.ref_name }} to QA and Test
 
 on:
   push:
@@ -10,45 +7,26 @@ on:
   workflow_dispatch:
     inputs:
       environment:
-        description: Deployment environment
+        description: "Deployment environment"
         required: true
         type: choice
         options:
           - qa
           - poc
-          - copilotmigration
           - test
           - preview
           - training
-          - production
+          - copilotmigration
 
 jobs:
-  test:
-    uses: ./.github/workflows/test.yml
   build-and-push-image:
-    needs: test
     uses: ./.github/workflows/build-and-push-image.yml
-  deploy-infrastructure:
-    needs: test
+  deploy-mavis:
+    needs: build-and-push-image
     strategy:
       fail-fast: false
       matrix:
-        environment: >-
-          ${{ fromJSON(github.event_name == 'workflow_dispatch'
-            && format('["{0}"]', inputs.environment)
-            || '["qa", "test"]') }}
-    uses: ./.github/workflows/deploy-infrastructure.yml
-    with:
-      environment: ${{ matrix.environment }}
-  deploy-application:
-    needs: [build-and-push-image, deploy-infrastructure]
-    strategy:
-      fail-fast: false
-      matrix:
-        environment: >-
-          ${{ fromJSON(github.event_name == 'workflow_dispatch'
-            && format('["{0}"]', inputs.environment)
-            || '["qa", "test"]') }}
-    uses: ./.github/workflows/deploy-application.yml
+        environment: ${{ fromJSON(github.event_name == 'workflow_dispatch' && format('["{0}"]', inputs.environment) || '["qa", "test"]') }}
+    uses: ./.github/workflows/deploy-mavis.yml
     with:
       environment: ${{ matrix.environment }}

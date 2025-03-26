@@ -25,6 +25,9 @@ on:
       environment:
         required: true
         type: string
+      image_tag:
+        required: false
+        type: string
 
 env:
   aws-role: ${{ inputs.environment == 'production'
