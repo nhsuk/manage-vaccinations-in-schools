@@ -68,7 +68,6 @@ class PatientsController < ApplicationController
   def set_patient
     @patient =
       policy_scope(Patient).includes(
-        :gillick_assessments,
         :gp_practice,
         :organisation,
         :school,
