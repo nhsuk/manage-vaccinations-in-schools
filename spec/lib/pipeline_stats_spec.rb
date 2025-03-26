@@ -8,6 +8,17 @@ describe PipelineStats do
   let(:programme) { Programme.hpv&.first || create(:programme, :hpv) }
   let(:flu_programme) { Programme.flu&.first || create(:programme, :flu) }
 
+  def create_consent_requests_for_patients(patients, count, session)
+    return if patients.empty?
+    return if count.blank?
+
+    count.times do
+      patient = patients.sample
+      create(:consent_notification, :request, session:, patient:)
+      patients -= [patient]
+    end
+  end
+
   def create_consents_for_patients(
     patients,
     count,
@@ -40,6 +51,7 @@ describe PipelineStats do
       counts = {
         cohort_import: {
           patients: 4,
+          consent_notifications: 4,
           consents: {
             given: 1,
             refused: 1,
@@ -48,11 +60,13 @@ describe PipelineStats do
         },
         cohort_and_class_import: {
           patients: 2,
+          consent_notifications: 2,
           consents: {
           }
         },
         class_import: {
           patients: 2,
+          consent_notifications: 2,
           consents: {
           }
         }
@@ -67,7 +81,11 @@ describe PipelineStats do
           year_group: 10,
           cohort_imports: [cohort_import]
         )
-
+      create_consent_requests_for_patients(
+        cohort_import_patients,
+        counts[:cohort_import][:consent_notifications],
+        session
+      )
       available_patients = cohort_import_patients.dup
       counts[:cohort_import][:consents].each do |response, count|
         available_patients =
@@ -90,7 +108,11 @@ describe PipelineStats do
           cohort_imports: [cohort_import],
           class_imports: [class_import]
         )
-
+      create_consent_requests_for_patients(
+        cohort_and_class_import_patients,
+        counts[:cohort_and_class_import][:consent_notifications],
+        session
+      )
       available_patients = cohort_and_class_import_patients.dup
       counts[:cohort_and_class_import][:consents].each do |response, count|
         available_patients =
@@ -112,6 +134,11 @@ describe PipelineStats do
           year_group: 10,
           class_imports: [class_import]
         )
+      create_consent_requests_for_patients(
+        class_import_patients,
+        counts[:class_import][:consent_notifications],
+        session
+      )
       available_patients = class_import_patients.dup
       counts[:class_import][:consents].each do |response, count|
         available_patients =
@@ -131,23 +158,22 @@ describe PipelineStats do
   it "produces stats for all organisations and programmes" do
     expect(diagram).to eq <<~DIAGRAM
       sankey-beta
-      Cohort Upload,Cohort Patients,12
-      Class Upload,Cohort Patients,4
-      Consent Forms,Cohort Patients,2
-      Cohort Patients,Consent Given,2
-      Cohort Patients,Consent Refused,2
-      Cohort Patients,Consent Response Not Provided,2
-      Cohort Patients,Without Consent Response,12
+      Cohort Upload,Uploaded Patients,12
+      Class Upload,Uploaded Patients,4
+      Uploaded Patients,Consent Requests Sent,16
+      Consent Requests Sent,Consent Responses,4
+      Consent Responses,Consent Given,2
+      Consent Responses,Consent Refused,2
+      Consent Responses,Without Consent Response,12
     DIAGRAM
     # sankey-beta
-    # Cohort Upload,Uploaded Patients,6
-    # Class Upload,Uploaded Patients,2
-    # Uploaded Patients.Consent Request Sent,6
-    # Consent Request Sent,Consent Responses,6
-    # Consent Responses,Consent Given,2
-    # Consent Responses,Consent Refused,2
-    # Consent Responses,Consent Response Not Provided,2
-    # Consent Responses,Without Consent Response,4
+    # Cohort Upload,Cohort Patients,12
+    # Class Upload,Cohort Patients,4
+    # Consent Forms,Cohort Patients,2
+    # Cohort Patients,Consent Given,2
+    # Cohort Patients,Consent Refused,2
+    # Cohort Patients,Consent Response Not Provided,2
+    # Cohort Patients,Without Consent Response,12
   end
 
   context "given an organisation" do

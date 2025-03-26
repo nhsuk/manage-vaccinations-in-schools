@@ -15,42 +15,34 @@ class PipelineStats
     @programmes = programmes
   end
 
-  # def patients
-  #   PatientCollection
-  #     .new(Patient.all)
-  #     .in_organisation(@organisation)
-  #     .in_programme(@programme)
-  # end
-
   def render
     # Line to output unaccounted-for patients (this should be 0):
     # Unknown,Cohort Patients,#{patients_total - patient_ids_from_cohort_or_class_imports.count - patient_ids_from_consents.count}
 
     [
       [
-        ["Cohort Upload", "Cohort Patients"],
+        ["Cohort Upload", "Uploaded Patients"],
         patient_ids_from_cohort_imports.count
-        # patients.from_cohort_imports.in_sessions.ids.uniq.count
       ],
       [
-        ["Class Upload", "Cohort Patients"],
+        ["Class Upload", "Uploaded Patients"],
         patient_ids_from_class_not_cohort_imports.count
       ],
-      [["Consent Forms", "Cohort Patients"], patient_ids_from_consents.count],
       [
-        ["Cohort Patients", "Consent Given"],
+        ["Uploaded Patients", "Consent Requests Sent"],
+        consent_requests_sent_count
+      ],
+      [["Consent Requests Sent", "Consent Responses"], consent_responses_count],
+      [
+        ["Consent Responses", "Consent Given"],
         patient_ids_with_consent_response("given").uniq.count
       ],
       [
-        ["Cohort Patients", "Consent Refused"],
+        ["Consent Responses", "Consent Refused"],
         patient_ids_with_consent_response("refused").uniq.count
       ],
       [
-        ["Cohort Patients", "Consent Response Not Provided"],
-        patient_ids_with_consent_response("not_provided").uniq.count
-      ],
-      [
-        ["Cohort Patients", "Without Consent Response"],
+        ["Consent Responses", "Without Consent Response"],
         patient_ids_without_consent_response.count
       ]
     ].map { |(from, to), count| "#{from},#{to},#{count}" }
@@ -58,31 +50,31 @@ class PipelineStats
       .join("\n") + "\n"
   end
 
-  def render_organisation
-    diagram << <<~EOSANKEY
-      sankey-beta
-      Cohort Upload,Cohort Patients,#{patient_ids_from_cohort_imports(@organisation).count}
-      Class Upload,Cohort Patients,#{patient_ids_from_class_not_cohort_imports(@organisation).count}
-      Consent Forms,Cohort Patients,#{patient_ids_from_consents(@organisation).count}
-    EOSANKEY
+  # def render_organisation
+  #   diagram << <<~EOSANKEY
+  #     sankey-beta
+  #     Cohort Upload,Cohort Patients,#{patient_ids_from_cohort_imports(@organisation).count}
+  #     Class Upload,Cohort Patients,#{patient_ids_from_class_not_cohort_imports(@organisation).count}
+  #     Consent Forms,Cohort Patients,#{patient_ids_from_consents(@organisation).count}
+  #   EOSANKEY
 
-    diagram
-  end
+  #   diagram
+  # end
 
-  def render_all_organisations
-    diagram = "sankey-beta\n"
+  # def render_all_organisations
+  #   diagram = "sankey-beta\n"
 
-    Organisation.all.each do |org|
-      ods = org.ods_code
-      diagram << <<~EOSANKEY
-        #{ods} Cohort Upload,#{ods} Cohort Patients,#{patient_ids_from_cohort_imports(org).count}
-        #{ods} Class Upload,#{ods} Cohort Patients,#{patient_ids_from_class_not_cohort_imports(org).count}
-        #{ods} Consent Forms,#{ods} Cohort Patients,#{patient_ids_from_consents(org).count}
-      EOSANKEY
-    end
+  #   Organisation.all.each do |org|
+  #     ods = org.ods_code
+  #     diagram << <<~EOSANKEY
+  #       #{ods} Cohort Upload,#{ods} Cohort Patients,#{patient_ids_from_cohort_imports(org).count}
+  #       #{ods} Class Upload,#{ods} Cohort Patients,#{patient_ids_from_class_not_cohort_imports(org).count}
+  #       #{ods} Consent Forms,#{ods} Cohort Patients,#{patient_ids_from_consents(org).count}
+  #     EOSANKEY
+  #   end
 
-    diagram
-  end
+  #   diagram
+  # end
 
   def patients_scoped
     Patient
@@ -154,17 +146,36 @@ class PipelineStats
       Patient.joins(:immunisation_imports_patients).uniq.pluck(:id)
   end
 
+  def consent_requests_sent_count
+    ConsentNotification
+      .includes(:programmes)
+      .select("DISTINCT ON (patient_id) *")
+      .sum do
+        if programmes.nil?
+          it.programmes.count
+        else
+          groups = ProgrammeGrouper.new(it.programmes)
+          programmes.count { |prog| groups.any? { |_, group| prog.in?(group) } }
+        end
+      end
+  end
+
+  def consent_responses_count
+    Consent
+      .not_invalidated
+      .not_response_not_provided
+      .where(recorded_by_user_id: nil)
+      .pluck(:patient_id)
+      .uniq
+      .count
+  end
+
   def consents_response_given_ids
     @consents_response_given_ids ||=
       Consent.where(response: "given").pluck(:patient_id)
   end
 
   def patient_ids_with_consent_response(response)
-    # @patient_ids_with_consent_response ||=
-    # Hash.new do |_hash, org|
-    #   Hash.new do |_hash, prog|
-    #     Hash.new do |_hash, resp|
-
     where_clause = { consents: { invalidated_at: nil } }
     unless programmes.nil?
       where_clause[:consents].merge({ programme: programmes })
@@ -179,17 +190,9 @@ class PipelineStats
           .select { it.consents.max_by(&:created_at).response == response }
           .pluck(:id)
       end
-    #     end
-    #   end
-    # end
-    # @patient_ids_with_consent_response[organisation][programme][response]
   end
 
   def patient_ids_without_consent_response
-    # @patient_ids_without_consent_response ||=
-    # Hash.new do |_hash, org|
-    #   Hash.new do |_hash, prog|
-
     patients_scoped
       .includes(:consents)
       .in_batches
@@ -206,9 +209,6 @@ class PipelineStats
           end
           .pluck(:id)
       end
-    #   end
-    # end
-    # @patient_ids_without_consent_response[organisation][programme]
   end
 
   def patient_ids_in_sessions(organisation = nil, programme = nil)
