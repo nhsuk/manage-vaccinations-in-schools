@@ -24,7 +24,7 @@ class SessionDatesController < ApplicationController
       @session.save!
     end
 
-    StatusUpdater.call(session: @session)
+    StatusUpdaterJob.perform_later(session: @session)
 
     if params.include?(:add_another)
       @session.session_dates.build
