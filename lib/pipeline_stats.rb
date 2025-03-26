@@ -70,11 +70,18 @@ class PipelineStats
     end
   end
 
-  attr_reader :organisation, :programme
+  attr_reader :organisations, :programmes
 
-  def initialize(organisation: nil, programme: nil)
-    @organisation = organisation
-    @programme = programme
+  def initialize(organisations: nil, programmes: nil)
+    @organisations =
+      if programmes.nil?
+        organisations
+      else
+        (organisations.nil? ? Organisation.all : organisations).select do |org|
+          org.programmes.any? { it.in? programmes }
+        end
+      end
+    @programmes = programmes
   end
 
   def patients
@@ -141,36 +148,6 @@ class PipelineStats
     ].map { |(from, to), count| "#{from},#{to},#{count}" }
       .prepend("sankey-beta")
       .join("\n") + "\n"
-
-    # stats = {
-    #   "Cohort Upload" => {
-    #     "Total Patients" => patient_ids_from_cohort_imports.count
-    #   },
-    #   "Class Upload" => {
-    #     "Total Patients" => patient_ids_from_class_not_cohort_imports.count
-    #   },
-    #   "Consent Forms" => {
-    #     "Total Patients" => patient_ids_from_consents.count
-    #   },
-    #   "Total Patients" => {
-    #     "Consent Given" => patient_ids_with_consent_response("given").count,
-    #     "Consent Refused" => patient_ids_with_consent_response("refused").count,
-    #     "Consent Response Not Provided" =>
-    #       patient_ids_with_consent_response("not_provided").count,
-    #     "Without Consent Response" => patient_ids_without_consent_response.count
-    #   }
-    # }
-
-    # <<~DIAGRAM
-    #   sankey-beta
-    #   Cohort Upload,Total Patients,#{patient_ids_from_cohort_imports.count}
-    #   Class Upload,Total Patients,#{patient_ids_from_class_not_cohort_imports.count}
-    #   Consent Forms,Total Patients,#{patient_ids_from_consents.count}
-    #   Total Patients,Consent Given,#{patient_ids_with_consent_response("given").count}
-    #   Total Patients,Consent Refused,#{patient_ids_with_consent_response("refused").count}
-    #   Total Patients,Consent Response Not Provided,#{patient_ids_with_consent_response("not_provided").count}
-    #   Total Patients,Without Consent Response,#{patient_ids_without_consent_response.count}
-    # DIAGRAM
   end
 
   def render_organisation
@@ -202,8 +179,8 @@ class PipelineStats
   def patients_scoped
     Patient
       .all
-      .then { organisation.present? ? it.where(organisation:) : it }
-      .then { @programme.present? ? it.in_programmes([@programme]) : it }
+      .then { organisations.nil? ? it : it.where(organisation: organisations) }
+      .then { programmes.nil? ? it : it.in_programmes(programmes) }
   end
 
   # def patients_totals(org_id, prog_id)
@@ -227,9 +204,17 @@ class PipelineStats
 
   def patient_ids_from_cohort_imports
     @patient_ids_from_cohort_imports ||=
-      patients_scoped.then do
-        it.joins(:cohort_imports_patients).distinct.pluck(:id)
-      end
+      patients_scoped
+        .joins(:cohort_imports)
+        .then do
+          if organisations.nil?
+            it
+          else
+            it.where(cohort_imports: { organisation: organisations })
+          end
+        end
+        .distinct
+        .pluck(:id)
   end
 
   def patient_ids_from_class_imports
@@ -271,9 +256,15 @@ class PipelineStats
     # Hash.new do |_hash, org|
     #   Hash.new do |_hash, prog|
     #     Hash.new do |_hash, resp|
+
+    where_clause = { consents: { invalidated_at: nil } }
+    unless programmes.nil?
+      where_clause[:consents].merge({ programme: programmes })
+    end
+
     patients_scoped
       .joins(:consents)
-      .where(consents: { programme: @programme, invalidated_at: nil })
+      .where(where_clause)
       .in_batches
       .flat_map do |batch|
         batch
@@ -290,6 +281,7 @@ class PipelineStats
     # @patient_ids_without_consent_response ||=
     # Hash.new do |_hash, org|
     #   Hash.new do |_hash, prog|
+
     patients_scoped
       .includes(:consents)
       .in_batches
@@ -298,7 +290,10 @@ class PipelineStats
           .select do
             it
               .consents
-              .select { it.programme == @programme && it.invalidated_at.nil? }
+              .select do
+                it.invalidated_at.nil? &&
+                  (programmes.nil? || it.programme.in?(programmes))
+              end
               .none?
           end
           .pluck(:id)
