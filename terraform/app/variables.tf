@@ -205,6 +205,44 @@ locals {
       value = var.splunk_enabled
     }
   ]
+  background_task_envs = [
+    {
+      name  = "DB_HOST"
+      value = aws_rds_cluster.aurora_cluster.endpoint
+    },
+    {
+      name  = "DB_NAME"
+      value = aws_rds_cluster.aurora_cluster.database_name
+    },
+    {
+      name  = "RAILS_ENV"
+      value = var.rails_env
+    },
+    {
+      name  = "SENTRY_ENVIRONMENT"
+      value = var.environment
+    },
+    {
+      name  = "MAVIS__HOST"
+      value = var.http_hosts.MAVIS__HOST
+    },
+    {
+      name  = "MAVIS__GIVE_OR_REFUSE_CONSENT_HOST"
+      value = var.http_hosts.MAVIS__GIVE_OR_REFUSE_CONSENT_HOST
+    },
+    {
+      name  = "MAVIS__CIS2__ENABLED"
+      value = "false"
+    },
+    {
+      name  = "MAVIS__PDS__PERFORM_JOBS"
+      value = var.pds_enabled
+    },
+    {
+      name  = "MAVIS__SPLUNK__ENABLED"
+      value = var.splunk_enabled
+    }
+  ]
   task_secrets = [
     {
       name      = var.db_secret_arn == null ? "DB_CREDENTIALS" : "DB_SECRET"
