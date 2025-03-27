@@ -19,13 +19,11 @@ describe AppVaccinateFormComponent do
     create(:patient_session, :in_attendance, programmes:, patient:, session:)
   end
 
-  let(:component) do
-    described_class.new(
-      patient_session:,
-      programme: programmes.first,
-      vaccinate_form: VaccinateForm.new
-    )
+  let(:vaccinate_form) do
+    VaccinateForm.new(patient_session:, programme: programmes.first)
   end
+
+  let(:component) { described_class.new(vaccinate_form) }
 
   before { patient_session.strict_loading!(false) }
 
