@@ -273,19 +273,17 @@ class Patient < ApplicationRecord
   end
 
   def consent_status(programme:)
-    # Use `find` to allow for preloading.
     consent_statuses.find { it.programme_id == programme.id } ||
       consent_statuses.build(programme:)
   end
 
-  def triage_status(programme:)
-    # Use `find` to allow for preloading.
-    triage_statuses.find { it.programme_id == programme.id } ||
-      triage_statuses.build(programme:)
+  def triage_status(programme: nil, programme_id: nil)
+    programme_id ||= programme.id
+    triage_statuses.find { it.programme_id == programme_id } ||
+      triage_statuses.build(programme_id:)
   end
 
   def vaccination_status(programme:)
-    # Use `find` to allow for preloading.
     vaccination_statuses.find { it.programme_id == programme.id } ||
       vaccination_statuses.build(programme:)
   end
