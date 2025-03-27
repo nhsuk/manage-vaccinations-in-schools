@@ -38,9 +38,7 @@ module Reports::ExportFormatters
     end
   end
 
-  def consent_details(patient:, programme:)
-    consents = patient.latest_consents(programme:)
-
+  def consent_details(consents:)
     values =
       consents.map do |consent|
         "#{consent.response.humanize} by #{consent.name} at #{consent.created_at}"
@@ -49,8 +47,7 @@ module Reports::ExportFormatters
     values.join(", ")
   end
 
-  def health_question_answers(patient:, programme:)
-    consents = patient.latest_consents(programme:)
+  def health_question_answers(consents:)
     health_answers = ConsolidatedHealthAnswers.new(consents).to_h
 
     values =

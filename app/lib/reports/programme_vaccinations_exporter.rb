@@ -97,7 +97,7 @@ class Reports::ProgrammeVaccinationsExporter
           :location,
           :performed_by_user,
           :vaccine,
-          patient: [:gp_practice, :school, { consents: :parent }]
+          patient: %i[consent_statuses gp_practice school]
         )
 
     if start_date.present?
@@ -127,6 +127,18 @@ class Reports::ProgrammeVaccinationsExporter
     end
 
     scope
+  end
+
+  def consents
+    @consents ||=
+      Consent
+        .where(patient_id: vaccination_records.select(:patient_id), programme:)
+        .not_invalidated
+        .includes(:parent, :patient)
+        .group_by(&:patient_id)
+        .transform_values do
+          ConsentGrouper.call(it, programme_id: programme.id)
+        end
   end
 
   def gillick_assessments
@@ -168,6 +180,7 @@ class Reports::ProgrammeVaccinationsExporter
     patient = vaccination_record.patient
     session = vaccination_record.session
 
+    grouped_consents = consents.fetch(patient.id, [])
     triage = triages[patient.id]
     gillick_assessment = gillick_assessments.dig(patient.id, session.id)
 
@@ -190,8 +203,8 @@ class Reports::ProgrammeVaccinationsExporter
       patient.gp_practice&.ods_code || "",
       patient.gp_practice&.name || "",
       consent_status(patient:, programme:),
-      consent_details(patient:, programme:),
-      health_question_answers(patient:, programme:),
+      consent_details(consents: grouped_consents),
+      health_question_answers(consents: grouped_consents),
       triage&.status&.humanize || "",
       triage&.performed_by&.full_name || "",
       triage&.updated_at&.to_date&.iso8601 || "",
@@ -247,9 +260,7 @@ class Reports::ProgrammeVaccinationsExporter
   def gillick_notify_parents(patient:, gillick_assessment:)
     return "" if gillick_assessment.nil?
 
-    consents = patient.latest_consents(programme: gillick_assessment.programme)
-
-    if (consent = consents.find(&:via_self_consent?))
+    if (consent = consents[patient.id]&.find(&:via_self_consent?))
       consent.notify_parents ? "Y" : "N"
     else
       ""
