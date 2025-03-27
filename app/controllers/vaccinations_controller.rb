@@ -87,11 +87,7 @@ class VaccinationsController < ApplicationController
   def set_patient_session
     @patient_session =
       PatientSession.includes(
-        :registration_status,
-        :session_attendances,
-        :organisation,
         patient: {
-          consents: :parent,
           parent_relationships: :parent
         }
       ).find_by!(patient: @patient, session: @session)

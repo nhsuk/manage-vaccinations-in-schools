@@ -24,7 +24,7 @@ class AppPatientPageComponent < ViewComponent::Base
   delegate :patient, :session, to: :patient_session
 
   def display_health_questions?
-    patient.latest_consents(programme:).any?(&:response_given?)
+    consents.any?(&:response_given?)
   end
 
   def display_gillick_assessment_card?
@@ -33,6 +33,10 @@ class AppPatientPageComponent < ViewComponent::Base
 
   def gillick_assessment_can_be_recorded?
     patient_session.session.today? && helpers.policy(GillickAssessment).new?
+  end
+
+  def consents
+    @consents ||= ConsentGrouper.call(patient.consents, programme:)
   end
 
   def gillick_assessment
