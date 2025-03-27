@@ -29,7 +29,9 @@ class Patient::TriageStatus < ApplicationRecord
            end,
            through: :patient
 
-  has_many :triages, -> { not_invalidated }, through: :patient
+  has_many :triages,
+           -> { not_invalidated.order(created_at: :desc) },
+           through: :patient
 
   has_many :vaccination_records,
            -> { kept.order(performed_at: :desc) },
@@ -92,6 +94,6 @@ class Patient::TriageStatus < ApplicationRecord
   end
 
   def latest_triage
-    @latest_triage ||= triages.select { it.programme_id == programme_id }.last
+    @latest_triage ||= triages.find { it.programme_id == programme_id }
   end
 end

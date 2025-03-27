@@ -31,7 +31,9 @@ class PatientSession::SessionStatus < ApplicationRecord
            end,
            through: :patient
 
-  has_many :triages, -> { not_invalidated }, through: :patient
+  has_many :triages,
+           -> { not_invalidated.order(created_at: :desc) },
+           through: :patient
 
   has_many :vaccination_records,
            -> { kept.order(performed_at: :desc) },

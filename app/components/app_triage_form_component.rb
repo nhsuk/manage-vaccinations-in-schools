@@ -13,13 +13,7 @@ class AppTriageFormComponent < ViewComponent::Base
 
     @patient_session = patient_session
     @programme = programme
-    @triage =
-      triage ||
-        Triage.new.tap do |t|
-          if (latest_triage = patient_session.patient.latest_triage(programme:))
-            t.status = latest_triage.status
-          end
-        end
+    @triage = triage || default_triage
     @url = url
     @method = method
     @legend = legend
@@ -27,7 +21,9 @@ class AppTriageFormComponent < ViewComponent::Base
 
   private
 
-  attr_reader :programme
+  attr_reader :patient_session, :programme
+
+  delegate :patient, to: :patient_session
 
   def fieldset_options
     text = "Is it safe to vaccinate #{@patient_session.patient.given_name}?"
@@ -40,5 +36,16 @@ class AppTriageFormComponent < ViewComponent::Base
     else
       { legend: { text:, size: "s", class: "app-fieldset__legend--reset" } }
     end
+  end
+
+  def default_triage
+    previous_triage =
+      patient
+        .triages
+        .not_invalidated
+        .order(created_at: :desc)
+        .find_by(programme:)
+
+    Triage.new(status: previous_triage&.status)
   end
 end
