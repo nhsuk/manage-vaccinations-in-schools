@@ -48,7 +48,7 @@ class Reports::OfflineSessionExporter
     workbook.add_worksheet(name: "Vaccinations") do |sheet|
       sheet.add_row(columns.map { _1.to_s.upcase })
 
-      patient_sessions.each do |patient_session|
+      patient_sessions.find_each do |patient_session|
         rows(patient_session:).each { |row| row.add_to(sheet:, cached_styles:) }
       end
 
