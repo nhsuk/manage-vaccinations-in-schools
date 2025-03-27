@@ -43,7 +43,7 @@ class AppImportsNavigationComponent < ViewComponent::Base
 
     unique_import_issues =
       (vaccination_records_with_issues + patients_with_issues).uniq do |record|
-        record.is_a?(VaccinationRecord) ? record.patient : record
+        record.is_a?(VaccinationRecord) ? record.patient_id : record.id
       end
 
     count = unique_import_issues.count
