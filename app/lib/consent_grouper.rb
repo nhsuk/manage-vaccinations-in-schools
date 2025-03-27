@@ -9,12 +9,22 @@ class ConsentGrouper
   end
 
   def call
-    consents
-      .select { it.programme_id == programme_id }
-      .reject(&:invalidated?)
-      .select(&:response_provided?)
-      .group_by(&:name)
-      .map { it.second.max_by(&:created_at) }
+    if consents.is_a?(Array) || consents.loaded?
+      consents
+        .select { it.programme_id == programme_id }
+        .reject(&:invalidated?)
+        .select(&:response_provided?)
+        .group_by(&:name)
+        .map { it.second.max_by(&:created_at) }
+    else
+      consents
+        .where(programme_id:)
+        .not_invalidated
+        .response_provided
+        .includes(:parent)
+        .group_by(&:name)
+        .map { it.second.max_by(&:created_at) }
+    end
   end
 
   def self.call(...) = new(...).call

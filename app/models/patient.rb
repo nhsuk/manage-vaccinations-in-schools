@@ -65,7 +65,7 @@ class Patient < ApplicationRecord
   has_many :access_log_entries
   has_many :consent_notifications
   has_many :consent_statuses
-  has_many :consents, -> { order(:created_at) }
+  has_many :consents
   has_many :notify_log_entries
   has_many :parent_relationships
   has_many :patient_sessions
@@ -276,10 +276,6 @@ class Patient < ApplicationRecord
     # Use `find` to allow for preloading.
     consent_statuses.find { it.programme_id == programme.id } ||
       consent_statuses.build(programme:)
-  end
-
-  def latest_consents(programme:)
-    ConsentGrouper.call(consents, programme:)
   end
 
   def triage_status(programme:)

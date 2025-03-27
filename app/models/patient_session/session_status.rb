@@ -26,9 +26,7 @@ class PatientSession::SessionStatus < ApplicationRecord
   has_one :patient, through: :patient_session
 
   has_many :consents,
-           -> do
-             not_invalidated.response_provided.eager_load(:parent, :patient)
-           end,
+           -> { not_invalidated.response_provided.includes(:parent, :patient) },
            through: :patient
 
   has_many :triages,
