@@ -11,7 +11,6 @@
 # Indexes
 #
 #  index_session_programmes_on_programme_id                 (programme_id)
-#  index_session_programmes_on_session_id                   (session_id)
 #  index_session_programmes_on_session_id_and_programme_id  (session_id,programme_id) UNIQUE
 #
 # Foreign Keys

@@ -12,7 +12,6 @@
 #
 # Indexes
 #
-#  index_patient_sessions_on_patient_id                 (patient_id)
 #  index_patient_sessions_on_patient_id_and_session_id  (patient_id,session_id) UNIQUE
 #  index_patient_sessions_on_session_id                 (session_id)
 #

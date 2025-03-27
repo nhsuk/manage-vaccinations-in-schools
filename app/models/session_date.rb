@@ -10,7 +10,6 @@
 #
 # Indexes
 #
-#  index_session_dates_on_session_id            (session_id)
 #  index_session_dates_on_session_id_and_value  (session_id,value) UNIQUE
 #
 # Foreign Keys
