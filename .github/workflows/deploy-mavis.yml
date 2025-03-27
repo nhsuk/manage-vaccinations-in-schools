@@ -22,8 +22,8 @@ on:
           - production
           - copilotmigration
       image_tag:
-        description: Docker image tag
-        required: false
+        description: Docker image tag of the image to deploy
+        required: true
         type: string
 
 jobs:
