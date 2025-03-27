@@ -18,9 +18,7 @@ class Reports::ProgrammeVaccinationsExporter
     end
   end
 
-  def self.call(*args, **kwargs)
-    new(*args, **kwargs).call
-  end
+  def self.call(...) = new(...).call
 
   private_class_method :new
 
@@ -133,12 +131,24 @@ class Reports::ProgrammeVaccinationsExporter
 
   def gillick_assessments
     @gillick_assessments ||=
-      GillickAssessment.eager_load(:patient_session, :performed_by).where(
-        patient_session: {
-          patient_id: vaccination_records.map(&:patient_id),
-          session_id: vaccination_records.map(&:session_id)
-        }
-      )
+      GillickAssessment
+        .select(
+          "DISTINCT ON (patient_session_id) gillick_assessments.*, patient_id, session_id"
+        )
+        .joins(:patient_session)
+        .where(
+          patient_sessions: {
+            patient_id: vaccination_records.select(:patient_id),
+            session_id: vaccination_records.select(:session_id)
+          },
+          programme:
+        )
+        .order(:patient_session_id, created_at: :desc)
+        .includes(:performed_by)
+        .group_by(&:patient_id)
+        .transform_values do
+          it.group_by(&:session_id).transform_values(&:first)
+        end
   end
 
   def row(vaccination_record:)
@@ -147,12 +157,7 @@ class Reports::ProgrammeVaccinationsExporter
     session = vaccination_record.session
 
     triage = patient.latest_triage(programme:)
-
-    gillick_assessment =
-      gillick_assessments.find do
-        it.patient_session.patient_id == patient.id &&
-          it.patient_session.session_id == session.id
-      end
+    gillick_assessment = gillick_assessments.dig(patient.id, session.id)
 
     [
       organisation.ods_code,
@@ -180,7 +185,7 @@ class Reports::ProgrammeVaccinationsExporter
       triage&.updated_at&.to_date&.iso8601 || "",
       triage&.notes || "",
       gillick_status(gillick_assessment:),
-      gillick_assessment&.updated_at&.to_date&.iso8601 || "",
+      gillick_assessment&.created_at&.to_date&.iso8601 || "",
       gillick_assessment&.performed_by&.full_name || "",
       gillick_assessment&.notes || ""
     ] +

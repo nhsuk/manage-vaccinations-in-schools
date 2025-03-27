@@ -26,9 +26,7 @@ class Reports::OfflineSessionExporter
       .read
   end
 
-  def self.call(*args, **kwargs)
-    new(*args, **kwargs).call
-  end
+  def self.call(...) = new(...).call
 
   private_class_method :new
 
@@ -37,6 +35,10 @@ class Reports::OfflineSessionExporter
   attr_reader :session
 
   delegate :location, :organisation, to: :session
+
+  def associations
+    @associations ||= Reports::Associations.new(patient_sessions:)
+  end
 
   def add_vaccinations_sheet(package)
     workbook = package.workbook
@@ -132,10 +134,24 @@ class Reports::OfflineSessionExporter
           triages: :performed_by,
           vaccination_records: %i[batch performed_by_user vaccine]
         },
-        session: :programmes,
-        gillick_assessments: :performed_by
+        session: :programmes
       )
       .order_by_name
+  end
+
+  def gillick_assessments
+    @gillick_assessments ||=
+      GillickAssessment
+        .select(
+          "DISTINCT ON (patient_session_id, programme_id) gillick_assessments.*"
+        )
+        .where(patient_session: patient_sessions)
+        .order(:patient_session_id, :programme_id, created_at: :desc)
+        .includes(:performed_by)
+        .group_by(&:patient_session_id)
+        .transform_values do
+          it.group_by(&:programme_id).transform_values(&:first)
+        end
   end
 
   def rows(patient_session:)
@@ -183,7 +199,8 @@ class Reports::OfflineSessionExporter
   def add_patient_cells(row, patient_session:, programme:)
     patient = patient_session.patient
 
-    gillick_assessment = patient_session.gillick_assessment(programme)
+    gillick_assessment =
+      gillick_assessments.dig(patient_session.id, programme.id)
     triage = patient.latest_triage(programme:)
 
     row[:organisation_code] = organisation.ods_code
