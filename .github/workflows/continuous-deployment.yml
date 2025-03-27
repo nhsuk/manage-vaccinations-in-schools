@@ -3,7 +3,7 @@ run-name: Continuous deployment of ${{ github.ref_name }} to QA and Test
 
 on:
   push:
-    branches: [MAV-921_continuous_deployment_job]
+    branches: [main]
 
 jobs:
   test:
