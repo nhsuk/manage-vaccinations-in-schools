@@ -9,6 +9,8 @@
   (<%= @cis2_info[:selected_org][:code] %>)
 <% end %>
 
+<p>You'll be able to use Mavis once your organisation has been onboarded.</p>
+
 <% if @cis2_info[:has_other_roles] %>
   <%= govuk_button_to "Change role", user_cis2_omniauth_authorize_path, params: { change_role: true } %>
 <% end %>
