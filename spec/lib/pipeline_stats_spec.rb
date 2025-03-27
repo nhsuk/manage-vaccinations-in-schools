@@ -2,7 +2,7 @@
 # frozen_string_literal: true
 
 describe PipelineStats do
-  subject(:diagram) { instance.render }
+  subject(:diagram) { instance.render_mermaid }
 
   let(:instance) { described_class.new }
   let(:organisation) { create(:organisation, programmes: [programme]) }
@@ -38,6 +38,30 @@ describe PipelineStats do
     patients
   end
 
+  def create_previous_vaccination_records_for_patients(
+    patients,
+    count,
+    session,
+    organisation,
+    programme
+  )
+    return if patients.empty?
+    return if count.blank?
+
+    count.times do
+      patient = patients.sample
+      create(
+        :vaccination_record,
+        patient:,
+        session:,
+        organisation:,
+        programme:,
+        performed_by_user_id: nil
+      )
+      patients -= [patient]
+    end
+  end
+
   before do
     [
       organisation,
@@ -53,6 +77,7 @@ describe PipelineStats do
         cohort_import: {
           patients: 4,
           consent_notifications: 4,
+          previously_vaccinated: 1,
           consents: {
             given: 1,
             refused: 1,
@@ -87,6 +112,14 @@ describe PipelineStats do
         counts[:cohort_import][:consent_notifications],
         session
       )
+      create_previous_vaccination_records_for_patients(
+        cohort_import_patients,
+        counts[:cohort_import][:previously_vaccinated],
+        session,
+        organisation,
+        programme
+      )
+
       available_patients = cohort_import_patients.dup
       counts[:cohort_import][:consents].each do |response, count|
         available_patients =
@@ -162,6 +195,7 @@ describe PipelineStats do
       Cohort Upload,Uploaded Patients,12
       Class Upload,Uploaded Patients,4
       Uploaded Patients,Consent Requests Sent,16
+      Uploaded Patients,Previously Vaccinated,2
       Consent Requests Sent,Consent Responses,4
       Consent Responses,Consent Given,2
       Consent Responses,Consent Refused,2
@@ -178,6 +212,7 @@ describe PipelineStats do
         Cohort Upload,Uploaded Patients,6
         Class Upload,Uploaded Patients,2
         Uploaded Patients,Consent Requests Sent,8
+        Uploaded Patients,Previously Vaccinated,1
         Consent Requests Sent,Consent Responses,2
         Consent Responses,Consent Given,1
         Consent Responses,Consent Refused,1
@@ -195,6 +230,7 @@ describe PipelineStats do
         Cohort Upload,Uploaded Patients,6
         Class Upload,Uploaded Patients,2
         Uploaded Patients,Consent Requests Sent,8
+        Uploaded Patients,Previously Vaccinated,1
         Consent Requests Sent,Consent Responses,2
         Consent Responses,Consent Given,1
         Consent Responses,Consent Refused,1

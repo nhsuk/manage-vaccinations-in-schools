@@ -15,7 +15,7 @@ class PipelineStats
     @programmes = programmes
   end
 
-  def render
+  def sankey_stats
     # Line to output unaccounted-for patients (this should be 0):
     # patients_total - patient_ids_from_cohort_or_class_imports.count - patient_ids_from_consents.count
 
@@ -32,6 +32,10 @@ class PipelineStats
         ["Uploaded Patients", "Consent Requests Sent"],
         count_consent_requests_sent
       ],
+      [
+        ["Uploaded Patients", "Previously Vaccinated"],
+        count_patients_from_cohort_or_class_imports_with_previous_vaccinations
+      ],
       [["Consent Requests Sent", "Consent Responses"], count_consent_responses],
       [
         ["Consent Responses", "Consent Given"],
@@ -45,7 +49,12 @@ class PipelineStats
         ["Consent Responses", "Without Consent Response"],
         patient_ids_without_consent_response.count
       ]
-    ].map { |(from, to), count| "#{from},#{to},#{count}" }
+    ]
+  end
+
+  def render_mermaid
+    sankey_stats
+      .map { |(from, to), count| "#{from},#{to},#{count}" }
       .prepend("sankey-beta")
       .join("\n") + "\n"
   end
@@ -71,18 +80,19 @@ class PipelineStats
       patients_scoped
         .joins(:cohort_imports)
         .then do
-          if organisations.nil?
-            it
-          else
-            it.where(cohort_imports: { organisation: organisations })
-          end
+          organisations.nil? ? it : it.where(organisation: organisations)
         end
         .distinct
   end
 
   def patients_from_class_imports
     @patients_from_class_imports ||=
-      patients_scoped.joins(:class_imports_patients).distinct
+      patients_scoped
+        .joins(:class_imports_patients)
+        .then do
+          organisations.nil? ? it : it.where(organisation: organisations)
+        end
+        .distinct
   end
 
   def patient_ids_from_class_not_cohort_imports
@@ -188,5 +198,43 @@ class PipelineStats
           end
           .pluck(:id)
       end
+  end
+
+  def patients_from_cohort_imports_with_previous_vaccinations
+    @patients_from_cohort_imports_with_previous_vaccinations ||=
+      patients_scoped
+        .joins(:vaccination_records, :cohort_imports)
+        .then do
+          where = { vaccination_records: { performed_by_user_id: nil } }
+          where[:vaccination_records] = {
+            programme: programmes
+          } unless programmes.nil?
+          where[:organisation] = organisations unless organisations.nil?
+
+          it.where(**where)
+        end
+        .distinct
+  end
+
+  def patients_from_class_imports_with_previous_vaccinations
+    @patients_from_class_imports_with_previous_vaccinations ||=
+      patients_scoped
+        .joins(:vaccination_records, :class_imports)
+        .then do
+          where = { vaccination_records: { performed_by_user_id: nil } }
+          where[:vaccination_records] = {
+            programme: programmes
+          } unless programmes.nil?
+          where[:organisation] = organisations unless organisations.nil?
+
+          it.where(**where)
+        end
+        .distinct
+  end
+
+  def count_patients_from_cohort_or_class_imports_with_previous_vaccinations
+    @count_patients_from_cohort_or_class_imports_with_previous_vaccinations ||=
+      patients_from_cohort_imports_with_previous_vaccinations.count +
+        patients_from_class_imports_with_previous_vaccinations.count
   end
 end
