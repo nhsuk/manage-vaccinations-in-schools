@@ -97,7 +97,7 @@ class Reports::ProgrammeVaccinationsExporter
           :location,
           :performed_by_user,
           :vaccine,
-          patient: [:gp_practice, :school, :triages, { consents: :parent }]
+          patient: [:gp_practice, :school, { consents: :parent }]
         )
 
     if start_date.present?
@@ -151,12 +151,24 @@ class Reports::ProgrammeVaccinationsExporter
         end
   end
 
+  def triages
+    @triages ||=
+      Triage
+        .select("DISTINCT ON (patient_id) triage.*")
+        .where(patient_id: vaccination_records.select(:patient_id), programme:)
+        .not_invalidated
+        .order(:patient_id, created_at: :desc)
+        .includes(:performed_by)
+        .group_by(&:patient_id)
+        .transform_values(&:first)
+  end
+
   def row(vaccination_record:)
     location = vaccination_record.location
     patient = vaccination_record.patient
     session = vaccination_record.session
 
-    triage = patient.latest_triage(programme:)
+    triage = triages[patient.id]
     gillick_assessment = gillick_assessments.dig(patient.id, session.id)
 
     [

@@ -131,7 +131,6 @@ class Reports::OfflineSessionExporter
       .preload(
         patient: {
           consents: [:parent, { patient: :parent_relationships }],
-          triages: :performed_by,
           vaccination_records: %i[batch performed_by_user vaccine]
         },
         session: :programmes
@@ -149,6 +148,20 @@ class Reports::OfflineSessionExporter
         .order(:patient_session_id, :programme_id, created_at: :desc)
         .includes(:performed_by)
         .group_by(&:patient_session_id)
+        .transform_values do
+          it.group_by(&:programme_id).transform_values(&:first)
+        end
+  end
+
+  def triages
+    @triages ||=
+      Triage
+        .select("DISTINCT ON (patient_id, programme_id) triage.*")
+        .where(patient_id: patient_sessions.select(:patient_id))
+        .not_invalidated
+        .order(:patient_id, :programme_id, created_at: :desc)
+        .includes(:performed_by)
+        .group_by(&:patient_id)
         .transform_values do
           it.group_by(&:programme_id).transform_values(&:first)
         end
@@ -201,7 +214,7 @@ class Reports::OfflineSessionExporter
 
     gillick_assessment =
       gillick_assessments.dig(patient_session.id, programme.id)
-    triage = patient.latest_triage(programme:)
+    triage = triages.dig(patient.id, programme.id)
 
     row[:organisation_code] = organisation.ods_code
     row[:person_forename] = patient.given_name
