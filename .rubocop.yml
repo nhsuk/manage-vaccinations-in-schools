@@ -57,3 +57,11 @@ Style/FrozenStringLiteralComment:
 Rails/ApplicationController:
   Exclude:
     - app/controllers/errors_controller.rb
+
+Style/BlockDelimiters:
+  Exclude:
+    - lib/pipeline_stats.rb
+
+Style/MethodCalledOnDoEndBlock:
+  Exclude:
+    - lib/pipeline_stats.rb
