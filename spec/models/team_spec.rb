@@ -15,7 +15,6 @@
 #
 # Indexes
 #
-#  index_teams_on_organisation_id           (organisation_id)
 #  index_teams_on_organisation_id_and_name  (organisation_id,name) UNIQUE
 #
 # Foreign Keys

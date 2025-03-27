@@ -16,7 +16,6 @@
 # Indexes
 #
 #  idx_on_organisation_id_name_expiry_vaccine_id_6d9ae30338  (organisation_id,name,expiry,vaccine_id) UNIQUE
-#  index_batches_on_organisation_id                          (organisation_id)
 #  index_batches_on_vaccine_id                               (vaccine_id)
 #
 # Foreign Keys

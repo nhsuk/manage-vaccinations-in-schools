@@ -12,7 +12,6 @@
 #
 #  idx_on_consent_notification_id_bde310472f               (consent_notification_id)
 #  idx_on_programme_id_consent_notification_id_e185bde5f5  (programme_id,consent_notification_id) UNIQUE
-#  index_consent_notification_programmes_on_programme_id   (programme_id)
 #
 # Foreign Keys
 #

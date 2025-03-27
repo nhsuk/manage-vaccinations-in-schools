@@ -14,7 +14,6 @@
 #
 # Indexes
 #
-#  index_parent_relationships_on_parent_id                 (parent_id)
 #  index_parent_relationships_on_parent_id_and_patient_id  (parent_id,patient_id) UNIQUE
 #  index_parent_relationships_on_patient_id                (patient_id)
 #
