@@ -1,0 +1,43 @@
+name: Deploy Mavis on Environment
+run-name: Deploying Mavis on ${{ inputs.environment }}
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+      image_tag:
+        description: Docker image tag of the image to deploy
+        required: true
+        type: string
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Deployment environment
+        required: true
+        type: choice
+        options:
+          - qa
+          - poc
+          - test
+          - preview
+          - training
+          - production
+          - copilotmigration
+      image_tag:
+        description: Docker image tag of the image to deploy
+        required: true
+        type: string
+
+jobs:
+  deploy-infrastructure:
+    uses: ./.github/workflows/deploy-infrastructure.yml
+    with:
+      environment: ${{ inputs.environment }}
+  deploy-application:
+    needs: deploy-infrastructure
+    uses: ./.github/workflows/deploy-application.yml
+    with:
+      environment: ${{ inputs.environment }}
+      image_tag: ${{ inputs.image_tag }}
