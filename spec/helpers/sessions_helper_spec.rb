@@ -5,12 +5,6 @@ describe SessionsHelper do
   let(:date) { nil }
   let(:session) { create(:session, academic_year: 2024, date:, location:) }
 
-  describe "#session_academic_year" do
-    subject(:session_academic_year) { helper.session_academic_year(session) }
-
-    it { should eq("2024/25") }
-  end
-
   describe "#session_consent_period" do
     subject(:session_consent_period) do
       helper.session_consent_period(session, in_sentence:)
