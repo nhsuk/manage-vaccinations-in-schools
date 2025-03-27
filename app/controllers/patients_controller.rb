@@ -71,7 +71,6 @@ class PatientsController < ApplicationController
         :gp_practice,
         :organisation,
         :school,
-        :triages,
         consents: %i[parent patient],
         parent_relationships: :parent,
         patient_sessions: %i[location session_attendances]

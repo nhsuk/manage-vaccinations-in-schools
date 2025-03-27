@@ -73,7 +73,7 @@ class Patient < ApplicationRecord
   has_many :school_moves
   has_many :session_notifications
   has_many :triage_statuses
-  has_many :triages, -> { order(:created_at) }
+  has_many :triages
   has_many :vaccination_records, -> { kept }
   has_many :vaccination_statuses
 
@@ -286,13 +286,6 @@ class Patient < ApplicationRecord
     # Use `find` to allow for preloading.
     triage_statuses.find { it.programme_id == programme.id } ||
       triage_statuses.build(programme:)
-  end
-
-  def latest_triage(programme:)
-    triages
-      .select { it.programme_id == programme.id }
-      .reject(&:invalidated?)
-      .max_by(&:created_at)
   end
 
   def vaccination_status(programme:)

@@ -63,7 +63,13 @@ class AppOutcomeBannerComponent < ViewComponent::Base
   end
 
   def triage
-    @triage ||= patient.latest_triage(programme:)
+    @triage ||=
+      patient
+        .triages
+        .not_invalidated
+        .includes(:performed_by)
+        .order(created_at: :desc)
+        .find_by(programme:)
   end
 
   def session_attendance
