@@ -2,13 +2,6 @@ variable "environment" {
   type        = string
   description = "String literal for the environment"
 }
-
-variable "container_name" {
-  type        = string
-  description = "Name of essential container in the task definition"
-  nullable    = false
-}
-
 variable "task_config" {
   type = object({
     environment = list(object({
@@ -17,14 +10,15 @@ variable "task_config" {
     }))
     secrets = list(object({
       name  = string
-      value = string
+      valueFrom = string
     }))
     cpu                = number
     memory             = number
     docker_image       = string
+    container_name     = string
     execution_role_arn = string
     task_role_arn      = string
-    log_group_name      = string
+    log_group_name     = string
     region             = string
     log_stream_prefix  = string
   })
