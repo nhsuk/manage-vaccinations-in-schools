@@ -241,8 +241,7 @@ class ImmunisationImportRow
     "unwell" => :not_well,
     "vaccination contraindicated" => :contraindications,
     "already had elsewhere" => :already_had,
-    "did not attend" => :absent_from_session,
-    "absent from school" => :absent_from_school
+    "did not attend" => :absent_from_session
   }.freeze
 
   def reason
