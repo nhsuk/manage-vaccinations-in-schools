@@ -70,14 +70,7 @@ class Reports::CareplusExporter
         .where(session: { organisation: }, programme:)
         .administered
         .order(:performed_at)
-        .includes(
-          :batch,
-          :vaccine,
-          patient: {
-            consents: :parent
-          },
-          session: :location
-        )
+        .includes(:batch, :patient, :vaccine, session: :location)
 
     if start_date.present?
       scope =
@@ -108,6 +101,19 @@ class Reports::CareplusExporter
     scope
   end
 
+  def consents
+    @consents ||=
+      Consent
+        .select("DISTINCT ON (patient_id) consents.*")
+        .where(patient: vaccination_records.select(:patient_id), programme:)
+        .not_invalidated
+        .response_given
+        .order(:patient_id, created_at: :desc)
+        .includes(:parent, :patient)
+        .group_by(&:patient_id)
+        .transform_values(&:first)
+  end
+
   def rows(patient:, vaccination_records:)
     vaccination_records
       .group_by(&:session)
@@ -118,7 +124,7 @@ class Reports::CareplusExporter
           patient.given_name,
           patient.date_of_birth.strftime("%d/%m/%Y"),
           patient.restricted? ? "" : patient.address_line_1,
-          patient.latest_consents(programme:).first&.name || "",
+          consents[patient.id]&.name || "",
           99, # Ethnicity, 99 is "Not known"
           records.first.performed_at.strftime("%d/%m/%Y"),
           records.first.performed_at.strftime("%H:%M"),

@@ -103,7 +103,10 @@ class PatientSession < ApplicationRecord
 
   scope :order_by_name,
         -> do
-          order("LOWER(patients.family_name)", "LOWER(patients.given_name)")
+          joins(:patient).order(
+            "LOWER(patients.family_name)",
+            "LOWER(patients.given_name)"
+          )
         end
 
   scope :has_consent_status,
