@@ -1,11 +1,9 @@
 # frozen_string_literal: true
 
 describe AppTriageFormComponent do
-  subject(:rendered) { render_inline(component) }
+  subject { render_inline(component) }
 
-  let(:component) do
-    described_class.new(patient_session:, programme:, url: "#")
-  end
+  let(:component) { described_class.new(patient_session:, programme:) }
 
   let(:programme) { create(:programme) }
   let(:patient_session) { create(:patient_session, programmes: [programme]) }
@@ -14,8 +12,8 @@ describe AppTriageFormComponent do
   it { should have_text("Is it safe to vaccinate") }
   it { should have_css(".app-fieldset__legend--reset") }
 
-  describe "triage instance variable" do
-    subject(:triage) { component.instance_variable_get(:@triage) }
+  describe "triage private method" do
+    subject { component.send(:triage) }
 
     context "patient_session has no existing triage" do
       it { should be_a(Triage) }
@@ -31,7 +29,7 @@ describe AppTriageFormComponent do
 
   describe "with a bold legend" do
     let(:component) do
-      described_class.new(patient_session:, programme:, url: "#", legend: :bold)
+      described_class.new(patient_session:, programme:, legend: :bold)
     end
 
     it { should have_css("h2") }
@@ -40,21 +38,18 @@ describe AppTriageFormComponent do
 
   describe "with a hidden legend" do
     let(:component) do
-      described_class.new(
-        patient_session:,
-        programme:,
-        url: "#",
-        legend: :hidden
-      )
+      described_class.new(patient_session:, programme:, legend: :hidden)
     end
 
     it { should have_css("legend.nhsuk-visually-hidden") }
   end
 
-  describe "with the put method" do
+  describe "with an existing triage" do
     let(:component) do
-      described_class.new(patient_session:, programme:, url: "#", method: :put)
+      described_class.new(patient_session:, programme:, triage:)
     end
+
+    let(:triage) { create(:triage, programme:) }
 
     it { should have_text("Continue") }
   end

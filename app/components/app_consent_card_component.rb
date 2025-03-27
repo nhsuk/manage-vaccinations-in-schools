@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class AppConsentComponent < ViewComponent::Base
+class AppConsentCardComponent < ViewComponent::Base
   def initialize(patient_session:, programme:)
     super
 
@@ -12,9 +12,12 @@ class AppConsentComponent < ViewComponent::Base
 
   delegate :patient, :session, to: :patient_session
 
-  def consents
-    @consents ||=
-      patient.consent_outcome.all[programme].sort_by(&:created_at).reverse
+  def colour
+    I18n.t(status, scope: %i[status consent colour])
+  end
+
+  def heading
+    "#{programme.name}: #{I18n.t(status, scope: %i[status consent label])}"
   end
 
   def latest_consent_request
@@ -33,15 +36,16 @@ class AppConsentComponent < ViewComponent::Base
       patient.parents.any?
   end
 
-  def status_colour(consent)
-    if consent.invalidated? || consent.withdrawn?
-      "grey"
-    elsif consent.response_given?
-      "aqua-green"
-    elsif consent.response_refused?
-      "red"
-    else
-      "grey"
-    end
+  def who_refused
+    patient.consent_outcome.latest[programme]
+      .select(&:response_refused?)
+      .map(&:who_responded)
+      .last
+  end
+
+  private
+
+  def status
+    patient.consent_outcome.status[programme]
   end
 end

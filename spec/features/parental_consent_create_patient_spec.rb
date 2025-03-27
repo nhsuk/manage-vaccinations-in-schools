@@ -203,7 +203,9 @@ describe "Parental consent create patient" do
   def then_the_patient_should_be_ready_to_vaccinate
     expect(page).to have_content(@child.full_name)
     click_on @child.full_name
-    expect(page).to have_content("#{@child.full_name} is ready for the nurse")
+    expect(page).to have_content(
+      "#{@child.full_name} is ready for the vaccinator"
+    )
     expect(Patient.last.birth_academic_year).to eq(
       @child.date_of_birth.academic_year
     )

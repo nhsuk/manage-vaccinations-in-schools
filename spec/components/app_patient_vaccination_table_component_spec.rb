@@ -3,27 +3,19 @@
 describe AppPatientVaccinationTableComponent do
   subject(:rendered) { render_inline(component) }
 
-  let(:component) { described_class.new(patient) }
-
-  let(:patient) { create(:patient) }
-
-  before { patient.strict_loading!(false) }
-
-  context "without a vaccination record" do
-    let(:sessions) { [] }
-
-    it { should have_content("No vaccinations") }
+  let(:component) do
+    described_class.new(vaccination_records:, show_caption:, show_programme:)
   end
 
-  context "with a not administered vaccination record" do
-    before { create(:vaccination_record, :not_administered, patient:) }
+  let(:vaccination_records) { [] }
+  let(:show_caption) { false }
+  let(:show_programme) { false }
 
-    it { should have_content("No vaccinations") }
-  end
+  it { should have_content("No vaccinations") }
 
   context "with a vaccination record" do
     let(:programme) { create(:programme, :hpv) }
-    let(:vaccine) { programme.vaccines.active.first }
+
     let(:location) do
       create(
         :school,
@@ -33,39 +25,28 @@ describe AppPatientVaccinationTableComponent do
         address_postcode: "SE1 8TY"
       )
     end
-    let(:session) { create(:session, location:, programmes: [programme]) }
 
-    context "with a vaccine" do
-      before do
+    let(:vaccination_records) do
+      [
         create(
           :vaccination_record,
-          patient:,
+          session: create(:session, location:, programmes: [programme]),
           programme:,
-          session:,
           performed_at: Time.zone.local(2024, 1, 1)
         )
-      end
-
-      it { should have_link("Gardasil 9 (HPV)") }
-      it { should have_content("Test School, Waterloo Road, London, SE1 8TY") }
-      it { should have_content("1 January 2024") }
+      ]
     end
 
-    context "without a vaccine" do
-      before do
-        create(
-          :vaccination_record,
-          patient:,
-          programme:,
-          session:,
-          performed_at: Time.zone.local(2024, 1, 1),
-          vaccine: nil
-        )
-      end
+    it { should have_link("1 January 2024") }
+    it { should have_content("Test School") }
+    it { should have_content("Waterloo Road, London, SE1 8TY") }
+    it { should have_content("Vaccinated") }
+    it { should_not have_content("HPV") }
 
-      it { should have_link("HPV") }
-      it { should have_content("Test School, Waterloo Road, London, SE1 8TY") }
-      it { should have_content("1 January 2024") }
+    context "when showing the programme" do
+      let(:show_programme) { true }
+
+      it { should have_content("HPV") }
     end
   end
 end
