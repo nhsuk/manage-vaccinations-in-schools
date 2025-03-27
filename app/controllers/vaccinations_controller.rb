@@ -1,13 +1,10 @@
 # frozen_string_literal: true
 
 class VaccinationsController < ApplicationController
+  include PatientSessionProgrammeConcern
   include TodaysBatchConcern
   include VaccinationMailerConcern
 
-  before_action :set_session
-  before_action :set_patient
-  before_action :set_patient_session
-  before_action :set_programme
   before_action :set_todays_batch
 
   after_action :verify_authorized
@@ -68,42 +65,6 @@ class VaccinationsController < ApplicationController
         vaccine_id
       ]
     )
-  end
-
-  def set_session
-    @session =
-      policy_scope(Session).includes(:location, :programmes).find_by!(
-        slug: params[:session_slug] || params[:slug]
-      )
-  end
-
-  def set_patient
-    @patient =
-      policy_scope(Patient).find(
-        params.fetch(:patient_id) { params.fetch(:id) }
-      )
-  end
-
-  def set_patient_session
-    @patient_session =
-      PatientSession.includes(
-        patient: {
-          parent_relationships: :parent
-        }
-      ).find_by!(patient: @patient, session: @session)
-  end
-
-  def set_programme
-    if @patient_session.present?
-      @programme =
-        @patient_session.programmes.find { it.type == params[:programme_type] }
-
-      raise ActiveRecord::RecordNotFound if @programme.nil?
-    else
-      @programme =
-        @session.programmes.find_by(type: params[:programme_type]) ||
-          @session.programmes.first
-    end
   end
 
   def set_todays_batch
