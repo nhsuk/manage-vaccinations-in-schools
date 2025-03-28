@@ -35,6 +35,8 @@ class VaccinationRecordsController < ApplicationController
 
     @vaccination_record.discard!
 
+    StatusUpdater.call(patient: @vaccination_record.patient)
+
     if @vaccination_record.confirmation_sent?
       send_vaccination_deletion(@vaccination_record)
     end

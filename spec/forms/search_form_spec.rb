@@ -149,13 +149,16 @@ describe SearchForm do
       let(:programme_status) { nil }
       let(:q) { nil }
       let(:register_status) { nil }
-      let(:session_status) { "administered" }
+      let(:session_status) { "vaccinated" }
       let(:triage_status) { nil }
       let(:year_groups) { nil }
 
+      let(:programme) { create(:programme) }
+
       it "filters on session status" do
-        patient_session = create(:patient_session, :vaccinated)
-        expect(form.apply(scope)).to include(patient_session)
+        patient_session =
+          create(:patient_session, :vaccinated, programmes: [programme])
+        expect(form.apply(scope, programme:)).to include(patient_session)
       end
     end
 

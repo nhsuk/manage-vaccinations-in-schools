@@ -24,6 +24,8 @@ class SessionDatesController < ApplicationController
       @session.save!
     end
 
+    StatusUpdaterJob.perform_later(session: @session)
+
     if params.include?(:add_another)
       @session.session_dates.build
       render :show

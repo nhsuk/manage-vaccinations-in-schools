@@ -45,10 +45,10 @@ class PatientSession::RegisterOutcome
 
   attr_reader :patient_session
 
-  delegate :programmes,
+  delegate :patient,
+           :programmes,
            :session,
            :session_attendances,
-           :session_outcome,
            to: :patient_session
 
   def session_date
@@ -56,6 +56,10 @@ class PatientSession::RegisterOutcome
   end
 
   def all_programmes_have_outcome?
-    programmes.none? { session_outcome.latest[it].nil? }
+    programmes.all? do |programme|
+      patient
+        .latest_vaccination_records(programme:)
+        .any? { it.session_id == session.id }
+    end
   end
 end

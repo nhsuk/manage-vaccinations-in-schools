@@ -21,6 +21,8 @@ class SessionAttendancesController < ApplicationController
       @session_attendance.save!
     end => success
 
+    StatusUpdater.call(patient: @patient)
+
     if success
       name = @patient.full_name
 
