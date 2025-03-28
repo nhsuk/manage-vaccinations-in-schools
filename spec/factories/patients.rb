@@ -176,6 +176,19 @@ FactoryBot.define do
       end
     end
 
+    trait :consent_no_response do
+      consent_statuses do
+        programmes.map do |programme|
+          association(
+            :patient_consent_status,
+            :no_response,
+            patient: instance,
+            programme:
+          )
+        end
+      end
+    end
+
     trait :consent_given_triage_not_needed do
       consents do
         programmes.map do |programme|
@@ -185,6 +198,16 @@ FactoryBot.define do
             :from_mum,
             patient: instance,
             organisation:,
+            programme:
+          )
+        end
+      end
+      consent_statuses do
+        programmes.map do |programme|
+          association(
+            :patient_consent_status,
+            :given,
+            patient: instance,
             programme:
           )
         end
@@ -205,6 +228,17 @@ FactoryBot.define do
           )
         end
       end
+      consent_statuses do
+        programmes.map do |programme|
+          association(
+            :patient_consent_status,
+            :given,
+            :health_answers_require_follow_up,
+            patient: instance,
+            programme:
+          )
+        end
+      end
     end
 
     trait :consent_refused do
@@ -216,6 +250,16 @@ FactoryBot.define do
             :from_mum,
             patient: instance,
             organisation:,
+            programme:
+          )
+        end
+      end
+      consent_statuses do
+        programmes.map do |programme|
+          association(
+            :patient_consent_status,
+            :refused,
+            patient: instance,
             programme:
           )
         end
@@ -234,6 +278,16 @@ FactoryBot.define do
             programme:,
             reason_for_refusal: "already_vaccinated",
             notes: "Already had the vaccine at the GP"
+          )
+        end
+      end
+      consent_statuses do
+        programmes.map do |programme|
+          association(
+            :patient_consent_status,
+            :refused,
+            patient: instance,
+            programme:
           )
         end
       end
@@ -260,6 +314,16 @@ FactoryBot.define do
               programme:
             )
           ]
+        end
+      end
+      consent_statuses do
+        programmes.map do |programme|
+          association(
+            :patient_consent_status,
+            :conflicts,
+            patient: instance,
+            programme:
+          )
         end
       end
     end

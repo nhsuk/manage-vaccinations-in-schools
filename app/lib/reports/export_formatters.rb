@@ -26,19 +26,21 @@ module Reports::ExportFormatters
   end
 
   def consent_status(patient:, programme:)
-    case patient.consent_outcome.status[programme]
-    when Patient::ConsentOutcome::GIVEN
+    consent_status = patient.consent_status(programme:)
+    if consent_status.given?
       "Consent given"
-    when Patient::ConsentOutcome::REFUSED
+    elsif consent_status.refused?
       "Consent refused"
-    when Patient::ConsentOutcome::CONFLICTS
+    elsif consent_status.conflicts?
       "Conflicting consent"
     else
       ""
     end
   end
 
-  def consent_details(consents:)
+  def consent_details(patient:, programme:)
+    consents = patient.latest_consents(programme:)
+
     values =
       consents.map do |consent|
         "#{consent.response.humanize} by #{consent.name} at #{consent.created_at}"
@@ -47,7 +49,8 @@ module Reports::ExportFormatters
     values.join(", ")
   end
 
-  def health_question_answers(consents:)
+  def health_question_answers(patient:, programme:)
+    consents = patient.latest_consents(programme:)
     health_answers = ConsolidatedHealthAnswers.new(consents).to_h
 
     values =

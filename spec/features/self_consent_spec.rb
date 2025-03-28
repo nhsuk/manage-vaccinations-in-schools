@@ -39,7 +39,7 @@ describe "Self-consent" do
         location: @school
       )
 
-    @patient = create(:patient, session: @session)
+    @patient = create(:patient, :consent_no_response, session: @session)
   end
 
   def and_there_is_a_child_without_parental_consent

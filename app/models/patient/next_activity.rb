@@ -25,7 +25,6 @@ class Patient::NextActivity
   attr_reader :patient
 
   delegate :consent_given_and_safe_to_vaccinate?,
-           :consent_outcome,
            :triage_outcome,
            :programme_outcome,
            to: :patient
@@ -37,10 +36,9 @@ class Patient::NextActivity
 
     return TRIAGE if triage_outcome.required?(programme)
 
-    if consent_outcome.no_response?(programme) ||
-         consent_outcome.conflicts?(programme)
-      return CONSENT
-    end
+    consent_status = patient.consent_status(programme:)
+
+    return CONSENT if consent_status.no_response? || consent_status.conflicts?
 
     DO_NOT_RECORD
   end

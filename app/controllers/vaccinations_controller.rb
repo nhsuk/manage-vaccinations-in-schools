@@ -93,6 +93,7 @@ class VaccinationsController < ApplicationController
           :session_attendances,
           :organisation,
           patient: {
+            consents: :parent,
             parent_relationships: :parent
           }
         )

@@ -321,5 +321,6 @@ create_school_moves(organisation)
 
 UnscheduledSessionsFactory.new.call
 
+Rake::Task["status:update:all"].execute
 Rake::Task["gp_practices:smoke"].execute
 Rake::Task["schools:smoke"].execute

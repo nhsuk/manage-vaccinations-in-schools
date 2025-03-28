@@ -58,6 +58,8 @@ class Consent < ApplicationRecord
   scope :withdrawn, -> { where.not(withdrawn_at: nil) }
   scope :not_withdrawn, -> { where(withdrawn_at: nil) }
 
+  scope :response_provided, -> { not_response_not_provided }
+
   enum :response,
        { given: 0, refused: 1, not_provided: 2 },
        prefix: true,
@@ -99,6 +101,8 @@ class Consent < ApplicationRecord
   def name
     via_self_consent? ? patient.full_name : parent.label
   end
+
+  def response_provided? = !response_not_provided?
 
   def withdrawn?
     withdrawn_at != nil
@@ -151,11 +155,10 @@ class Consent < ApplicationRecord
 
       consent_given =
         consent_form.chosen_programmes.map do |programme|
-          create!(
+          patient.consents.create!(
             consent_form:,
             organisation: consent_form.organisation,
             programme:,
-            patient:,
             parent:,
             notes: "",
             response: "given",
@@ -167,11 +170,10 @@ class Consent < ApplicationRecord
 
       consent_refused =
         consent_form.not_chosen_programmes.map do |programme|
-          create!(
+          patient.consents.create!(
             consent_form:,
             organisation: consent_form.organisation,
             programme:,
-            patient:,
             parent:,
             reason_for_refusal: consent_form.reason,
             notes: consent_form.reason_notes.presence || "",
@@ -181,6 +183,8 @@ class Consent < ApplicationRecord
             recorded_by: current_user
           )
         end
+
+      StatusUpdater.call(patient:)
 
       consent_given + consent_refused
     end
