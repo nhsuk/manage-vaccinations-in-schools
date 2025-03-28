@@ -20,6 +20,12 @@ describe "MenACWY and Td/IPV vaccination" do
       create(:patient, :consent_given_triage_not_needed, session: @session)
 
     create(
+      :patient_session_registration_status,
+      patient_session:
+        @patient.patient_sessions.includes(session: :session_dates).first
+    )
+
+    create(
       :vaccination_record,
       patient: @patient,
       programme: programmes.first,

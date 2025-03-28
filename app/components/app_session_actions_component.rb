@@ -83,19 +83,14 @@ class AppSessionActionsComponent < ViewComponent::Base
   end
 
   def register_attendance_row
-    return nil unless session.today?
+    status = "unknown"
 
-    count = patient_sessions.count { it.register_outcome.unknown? }
+    count = patient_sessions.has_registration_status(status).count
 
     return nil if count.zero?
 
     href =
-      session_register_path(
-        session,
-        search_form: {
-          register_status: PatientSession::RegisterOutcome::UNKNOWN
-        }
-      )
+      session_register_path(session, search_form: { register_status: status })
 
     {
       key: {
@@ -113,7 +108,13 @@ class AppSessionActionsComponent < ViewComponent::Base
 
     counts_by_programme =
       session.programmes.index_with do |programme|
-        patient_sessions.count { it.ready_for_vaccinator?(programme:) }
+        patient_sessions
+          .has_registration_status(%w[attending completed])
+          .count do |patient_session|
+            patient_session.patient.consent_given_and_safe_to_vaccinate?(
+              programme:
+            )
+          end
       end
 
     return nil if counts_by_programme.values.all?(&:zero?)

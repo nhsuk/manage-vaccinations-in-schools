@@ -40,10 +40,6 @@ class SearchForm
 
     scope = scope.search_by_nhs_number(nil) if missing_nhs_number.present?
 
-    scope = scope.order_by_name
-
-    scope = yield(scope) if block_given?
-
     if (status = consent_status).present?
       scope = scope.has_consent_status(status, programme:)
     end
@@ -57,13 +53,13 @@ class SearchForm
     end
 
     if (status = register_status&.to_sym).present?
-      scope = scope.select { it.register_outcome.status == status }
+      scope = scope.has_registration_status(status)
     end
 
     if (status = triage_status&.to_sym).present?
       scope = scope.has_triage_status(status, programme:)
     end
 
-    scope
+    scope.order_by_name
   end
 end

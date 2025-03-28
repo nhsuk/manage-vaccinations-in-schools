@@ -16,20 +16,24 @@ class Sessions::RecordController < ApplicationController
 
   def show
     scope =
-      @session.patient_sessions.preload_for_status.in_programmes(
-        @session.programmes
-      )
+      @session
+        .patient_sessions
+        .preload_for_status
+        .in_programmes(@session.programmes)
+        .has_registration_status(%w[attending completed])
+
+    scope = @form.apply(scope)
 
     patient_sessions =
-      @form.apply(scope) do |filtered_scope|
-        filtered_scope.select(&:ready_for_vaccinator?)
+      scope.select do |patient_session|
+        patient_session.programmes.any? do |programme|
+          patient_session.patient.consent_given_and_safe_to_vaccinate?(
+            programme:
+          )
+        end
       end
 
-    if patient_sessions.is_a?(Array)
-      @pagy, @patient_sessions = pagy_array(patient_sessions)
-    else
-      @pagy, @patient_sessions = pagy(patient_sessions)
-    end
+    @pagy, @patient_sessions = pagy_array(patient_sessions)
 
     render layout: "full"
   end
@@ -65,10 +69,7 @@ class Sessions::RecordController < ApplicationController
   private
 
   def set_session
-    @session =
-      policy_scope(Session).includes(:programmes).find_by!(
-        slug: params[:session_slug]
-      )
+    @session = policy_scope(Session).find_by!(slug: params[:session_slug])
   end
 
   def set_todays_batches

@@ -12,11 +12,12 @@ class SessionAttendancePolicy < ApplicationPolicy
   private
 
   delegate :patient_session, :session_date, to: :record
-  delegate :patient, to: :patient_session
 
   def was_seen_by_nurse?
-    patient.vaccination_records.any? do
-      it.performed_at.to_date == session_date.value
-    end
+    VaccinationRecord.kept.exists?(
+      patient_id: patient_session.patient_id,
+      session_id: patient_session.session_id,
+      performed_at: session_date.value.all_day
+    )
   end
 end
