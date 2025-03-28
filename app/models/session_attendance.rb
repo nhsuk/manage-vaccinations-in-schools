@@ -14,7 +14,6 @@
 # Indexes
 #
 #  idx_on_patient_session_id_session_date_id_be8bd21ddf  (patient_session_id,session_date_id) UNIQUE
-#  index_session_attendances_on_patient_session_id       (patient_session_id)
 #  index_session_attendances_on_session_date_id          (session_date_id)
 #
 # Foreign Keys

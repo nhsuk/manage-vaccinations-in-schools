@@ -17,7 +17,6 @@
 #
 #  idx_on_patient_id_home_educated_organisation_id_7c1b5f5066  (patient_id,home_educated,organisation_id) UNIQUE
 #  index_school_moves_on_organisation_id                       (organisation_id)
-#  index_school_moves_on_patient_id                            (patient_id)
 #  index_school_moves_on_patient_id_and_school_id              (patient_id,school_id) UNIQUE
 #  index_school_moves_on_school_id                             (school_id)
 #
