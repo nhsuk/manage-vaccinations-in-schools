@@ -34,15 +34,13 @@ class Reports::SystmOneExporter
 
   def call
     CSV.generate(headers:, write_headers: true) do |csv|
-      vaccination_records.each do |vaccination_record|
+      vaccination_records.find_each do |vaccination_record|
         csv << row(vaccination_record:)
       end
     end
   end
 
-  def self.call(*args, **kwargs)
-    new(*args, **kwargs).call
-  end
+  def self.call(...) = new(...).call
 
   private_class_method :new
 
