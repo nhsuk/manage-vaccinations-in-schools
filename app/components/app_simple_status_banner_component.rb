@@ -95,7 +95,10 @@ class AppSimpleStatusBannerComponent < ViewComponent::Base
   def nurse
     (
       patient.triages.includes(:performed_by).where(programme:) +
-        patient.programme_outcome.all[programme]
+        patient
+          .vaccination_records
+          .includes(:performed_by_user)
+          .where(programme:)
     ).max_by(&:updated_at)&.performed_by&.full_name
   end
 

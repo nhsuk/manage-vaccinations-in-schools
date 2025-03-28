@@ -73,7 +73,7 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
     tag.ul(class: "nhsuk-list nhsuk-list--bullet") do
       safe_join(
         patient_session.programmes.map do |programme|
-          status = patient_session.patient.next_activity.status[programme]
+          status = patient_session.next_activity(programme:)
           tag.li("#{I18n.t(status, scope: :activity)} for #{programme.name}")
         end
       )

@@ -3,7 +3,7 @@
 describe VaccinatedCriteria do
   describe "#call" do
     subject(:call) do
-      described_class.call(programme, patient:, vaccination_records:)
+      described_class.call(programme:, patient:, vaccination_records:)
     end
 
     let(:patient) { create(:patient, date_of_birth: 15.years.ago.to_date) }

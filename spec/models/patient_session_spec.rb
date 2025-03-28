@@ -95,17 +95,85 @@ describe PatientSession do
       it { should be(true) }
 
       context "when already vaccinated" do
-        before do
+        let(:patient_session) do
           create(
-            :vaccination_record,
-            patient: patient_session.patient,
-            session:,
-            programme:
+            :patient_session,
+            :in_attendance,
+            :consent_given_triage_not_needed,
+            :vaccinated,
+            session:
           )
         end
 
         it { should be(false) }
       end
+    end
+  end
+
+  describe "#next_activity" do
+    subject { patient_session.next_activity(programme:) }
+
+    let(:patient) { patient_session.patient }
+
+    context "with no consent" do
+      it { should be(:consent) }
+    end
+
+    context "with consent refused" do
+      before { create(:patient_consent_status, :refused, patient:, programme:) }
+
+      it { should be(:do_not_record) }
+    end
+
+    context "with triaged as do not vaccinate" do
+      before do
+        create(:patient_consent_status, :given, patient:, programme:)
+        create(:patient_triage_status, :do_not_vaccinate, patient:, programme:)
+      end
+
+      it { should be(:do_not_record) }
+    end
+
+    context "with consent needing triage" do
+      before do
+        create(:patient_consent_status, :given, patient:, programme:)
+        create(:patient_triage_status, :required, patient:, programme:)
+      end
+
+      it { should be(:triage) }
+    end
+
+    context "with triaged as safe to vaccinate" do
+      before do
+        create(:patient_consent_status, :given, patient:, programme:)
+        create(:patient_triage_status, :safe_to_vaccinate, patient:, programme:)
+      end
+
+      it { should be(:record) }
+    end
+
+    context "with consent no triage needed" do
+      before { create(:patient_consent_status, :given, patient:, programme:) }
+
+      it { should be(:record) }
+    end
+
+    context "with an administered vaccination record" do
+      before do
+        create(:patient_consent_status, :given, patient:, programme:)
+        create(:patient_vaccination_status, :vaccinated, patient:, programme:)
+      end
+
+      it { should be(:report) }
+    end
+
+    context "with an un-administered vaccination record" do
+      before do
+        create(:patient_consent_status, :given, patient:, programme:)
+        create(:patient_vaccination_status, patient:, programme:)
+      end
+
+      it { should be(:record) }
     end
   end
 end

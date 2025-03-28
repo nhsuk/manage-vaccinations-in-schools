@@ -24,7 +24,7 @@ describe AppSimpleStatusBannerComponent do
 
   let(:triage_nurse_name) { patient.triages.last.performed_by.full_name }
   let(:vaccination_nurse_name) do
-    patient.programme_outcome.all[programme].last.performed_by.full_name
+    patient.vaccination_records.last.performed_by.full_name
   end
   let(:patient_name) { patient.full_name }
 

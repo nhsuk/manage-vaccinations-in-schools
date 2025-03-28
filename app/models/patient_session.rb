@@ -65,7 +65,12 @@ class PatientSession < ApplicationRecord
         -> do
           eager_load(:patient).preload(
             session_attendances: :session_date,
-            patient: %i[consent_statuses triage_statuses vaccination_records],
+            patient: %i[
+              consent_statuses
+              triage_statuses
+              vaccination_records
+              vaccination_statuses
+            ],
             session: :programmes
           )
         end
@@ -131,7 +136,7 @@ class PatientSession < ApplicationRecord
   end
 
   def can_record_as_already_vaccinated?(programme:)
-    !session.today? && patient.programme_outcome.none_yet?(programme)
+    !session.today? && patient.vaccination_status(programme:).none_yet?
   end
 
   def programmes
@@ -160,6 +165,20 @@ class PatientSession < ApplicationRecord
     programmes_to_check.any? do
       patient.consent_given_and_safe_to_vaccinate?(programme: it)
     end
+  end
+
+  def next_activity(programme:)
+    return :report if patient.vaccination_status(programme:).vaccinated?
+
+    return :record if patient.consent_given_and_safe_to_vaccinate?(programme:)
+
+    return :triage if patient.triage_status(programme:).required?
+
+    consent_status = patient.consent_status(programme:)
+
+    return :consent if consent_status.no_response? || consent_status.conflicts?
+
+    :do_not_record
   end
 
   def outstanding_programmes

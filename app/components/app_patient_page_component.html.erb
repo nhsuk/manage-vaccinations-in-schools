@@ -96,7 +96,7 @@
   <% end %>
 <% end %>
 
-<% patient.programme_outcome.all[programme].each do |vaccination_record| %>
+<% patient.latest_vaccination_records(programme:).each do |vaccination_record| %>
   <%= render AppCardComponent.new do |c| %>
     <% c.with_heading { "Vaccination details" } %>
     <%= render AppVaccinationRecordSummaryComponent.new(vaccination_record, current_user:) %>
