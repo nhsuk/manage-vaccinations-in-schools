@@ -83,24 +83,25 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
   def status_tag
     return if context == :record
 
-    if context == :register
+    case context
+    when :register
       render AppRegisterStatusTagComponent.new(
                patient_session.register_outcome.status
              )
-    elsif context == :consent
+    when :consent
       statuses =
         patient_session.programmes.index_with do |programme|
           patient.consent_status(programme:).status
         end
       render AppProgrammeStatusTagsComponent.new(statuses, outcome: :consent)
-    else
-      outcome =
-        case context
-        when :triage
-          patient.triage_outcome
-        when :outcome
-          patient_session.session_outcome
+    when :triage
+      statuses =
+        patient_session.programmes.index_with do |programme|
+          patient.triage_status(programme:).status
         end
+      render AppProgrammeStatusTagsComponent.new(statuses, outcome: :triage)
+    else
+      outcome = patient_session.session_outcome
 
       # ensure status is calculated for each programme
       patient_session.programmes.each { outcome.status[it] }

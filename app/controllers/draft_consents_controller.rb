@@ -63,7 +63,7 @@ class DraftConsentsController < ApplicationController
       StatusUpdater.call(patient: @patient)
     end
 
-    set_patient_session # reload with new consents
+    set_patient_session # reload with new statuses
 
     send_triage_confirmation(@patient_session, @consent)
 

@@ -38,7 +38,9 @@ class ProgrammesController < ApplicationController
           patient_sessions: [
             :gillick_assessments,
             :session_attendances,
-            { patient: %i[consent_statuses triages vaccination_records] }
+            {
+              patient: %i[consent_statuses triage_statuses vaccination_records]
+            }
           ]
         )
         .order("locations.name")

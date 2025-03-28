@@ -72,14 +72,14 @@
       ) %>
 <% end %>
 
-<% if patient.triage_outcome.all[programme].any? %>
+<% if patient.triages.exists?(programme:) %>
   <%= render AppCardComponent.new do |c| %>
     <% c.with_heading { "Triage notes" } %>
     <%= render AppTriageNotesComponent.new(patient_session:, programme:) %>
   <% end %>
 <% end %>
 
-<% if helpers.policy(Triage).create? && patient.triage_outcome.required?(programme) %>
+<% if helpers.policy(Triage).create? && patient.triage_status(programme:).required? %>
   <%= render AppCardComponent.new do %>
     <%= render AppTriageFormComponent.new(
           patient_session:,

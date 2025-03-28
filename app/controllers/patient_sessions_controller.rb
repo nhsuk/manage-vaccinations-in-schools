@@ -54,6 +54,7 @@ class PatientSessionsController < ApplicationController
           patient: {
             consents: %i[parent],
             parent_relationships: :parent,
+            triage_statuses: :programme,
             triages: :performed_by,
             vaccination_records: {
               vaccine: :programme

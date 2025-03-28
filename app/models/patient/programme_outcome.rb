@@ -35,8 +35,6 @@ class Patient::ProgrammeOutcome
 
   attr_reader :patient
 
-  delegate :triage_outcome, to: :patient
-
   def programme_status(programme)
     if programme_vaccinated?(programme)
       VACCINATED
@@ -57,7 +55,7 @@ class Patient::ProgrammeOutcome
 
   def programme_could_not_vaccinate?(programme)
     patient.consent_status(programme:).refused? ||
-      triage_outcome.do_not_vaccinate?(programme)
+      patient.triage_status(programme:).do_not_vaccinate?
   end
 
   def all_by_programme_id

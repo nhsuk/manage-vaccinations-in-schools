@@ -146,7 +146,7 @@ class Reports::ProgrammeVaccinationsExporter
     patient = vaccination_record.patient
     session = vaccination_record.session
 
-    triage = patient.triage_outcome.latest[programme]
+    triage = patient.latest_triage(programme:)
 
     gillick_assessment =
       gillick_assessments.find do

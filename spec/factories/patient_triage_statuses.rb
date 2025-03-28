@@ -2,17 +2,17 @@
 
 # == Schema Information
 #
-# Table name: patient_consent_statuses
+# Table name: patient_triage_statuses
 #
 #  id           :bigint           not null, primary key
-#  status       :integer          default("no_response"), not null
+#  status       :integer          default("not_required"), not null
 #  patient_id   :bigint           not null
 #  programme_id :bigint           not null
 #
 # Indexes
 #
-#  index_patient_consent_statuses_on_patient_id_and_programme_id  (patient_id,programme_id) UNIQUE
-#  index_patient_consent_statuses_on_status                       (status)
+#  index_patient_triage_statuses_on_patient_id_and_programme_id  (patient_id,programme_id) UNIQUE
+#  index_patient_triage_statuses_on_status                       (status)
 #
 # Foreign Keys
 #
@@ -20,7 +20,7 @@
 #  fk_rails_...  (programme_id => programmes.id)
 #
 FactoryBot.define do
-  factory :patient_consent_status, class: "Patient::ConsentStatus" do
+  factory :patient_triage_status, class: "Patient::TriageStatus" do
     patient
     programme
 

@@ -65,7 +65,7 @@ class PatientSession < ApplicationRecord
         -> do
           eager_load(:patient).preload(
             session_attendances: :session_date,
-            patient: %i[consent_statuses triages vaccination_records],
+            patient: %i[consent_statuses triage_statuses vaccination_records],
             session: :programmes
           )
         end
@@ -103,6 +103,17 @@ class PatientSession < ApplicationRecord
         ->(status, programme:) do
           where(
             Patient::ConsentStatus
+              .where("patient_id = patient_sessions.patient_id")
+              .where(status:, programme:)
+              .arel
+              .exists
+          )
+        end
+
+  scope :has_triage_status,
+        ->(status, programme:) do
+          where(
+            Patient::TriageStatus
               .where("patient_id = patient_sessions.patient_id")
               .where(status:, programme:)
               .arel

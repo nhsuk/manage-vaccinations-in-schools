@@ -184,25 +184,24 @@ class VaccinationRecord < ApplicationRecord
     # triage, we should record a "do not vaccinate" triage to make sure the
     # patient isn't double vaccinated.
 
-    patient = Patient.includes(:triages, consents: :parent).find(patient_id)
+    patient = Patient.includes(:triage_statuses).find(patient_id)
+    triage_status = patient.triage_status(programme:)
 
-    unless patient.triage_outcome.required?(programme) ||
-             patient.triage_outcome.delay_vaccination?(programme)
-      return
-    end
+    return unless triage_status.required? || triage_status.delay_vaccination?
 
     triage_notes =
       "Recorded as already vaccinated on #{Date.current.to_fs(:long)}"
     triage_notes += ": #{notes}" if notes.present?
 
-    Triage.create!(
-      patient:,
+    patient.triages.create!(
       programme:,
       organisation:,
       status: :do_not_vaccinate,
       performed_by: performed_by_user,
       notes: triage_notes
     )
+
+    StatusUpdater.call(patient:)
   end
 
   private

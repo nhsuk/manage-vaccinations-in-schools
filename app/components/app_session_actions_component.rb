@@ -62,12 +62,10 @@ class AppSessionActionsComponent < ViewComponent::Base
   end
 
   def triage_required_row
-    status = Patient::TriageOutcome::REQUIRED
+    status = "required"
 
     count =
-      patient_sessions.count do
-        it.patient.triage_outcome.status.values_at(*it.programmes).any?(status)
-      end
+      patient_sessions.has_triage_status(status, programme: programmes).count
 
     return nil if count.zero?
 

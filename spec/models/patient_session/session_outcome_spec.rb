@@ -52,7 +52,9 @@ describe PatientSession::SessionOutcome do
     end
 
     context "when triaged as do not vaccinate" do
-      before { create(:triage, :do_not_vaccinate, patient:, programme:) }
+      before do
+        create(:patient_triage_status, :do_not_vaccinate, patient:, programme:)
+      end
 
       it { should be(described_class::HAD_CONTRAINDICATIONS) }
     end
