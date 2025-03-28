@@ -50,9 +50,13 @@ class AppSimpleStatusBannerComponent < ViewComponent::Base
       programme_name: programme.name
     }
 
-    triage_status = patient.triage_status(programme:)
+    triage_status =
+      patient
+        .triage_statuses
+        .includes(:consents, :programme, :vaccination_records)
+        .find_by(programme:)
 
-    if triage_status.required?
+    if triage_status&.required?
       reasons = [
         if triage_status.consent_requires_triage?
           I18n.t(

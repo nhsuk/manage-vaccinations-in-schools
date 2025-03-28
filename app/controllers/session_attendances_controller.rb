@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 class SessionAttendancesController < ApplicationController
-  before_action :set_patient_session
   before_action :set_session
   before_action :set_patient
+  before_action :set_patient_session
   before_action :set_session_date
   before_action :set_session_attendance
 
@@ -45,28 +45,17 @@ class SessionAttendancesController < ApplicationController
 
   private
 
-  def set_patient_session
-    @patient_session =
-      policy_scope(PatientSession)
-        .eager_load(:patient, :session)
-        .preload(
-          patient: %i[consents triages vaccination_records],
-          session: :programmes
-        )
-        .find_by!(
-          session: {
-            slug: params.fetch(:session_slug)
-          },
-          patient_id: params.fetch(:id, params[:patient_id])
-        )
-  end
-
   def set_session
-    @session = @patient_session.session
+    @session = policy_scope(Session).find_by!(slug: params[:session_slug])
   end
 
   def set_patient
-    @patient = @patient_session.patient
+    @patient = policy_scope(Patient).find(params[:patient_id])
+  end
+
+  def set_patient_session
+    @patient_session =
+      PatientSession.find_by!(patient: @patient, session: @session)
   end
 
   def set_session_date
