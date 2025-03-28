@@ -63,6 +63,12 @@ describe "Invalidate consent" do
   def and_consent_has_been_given
     @consent =
       create(:consent, :given, patient: @patient, programme: @programme)
+    create(
+      :patient_consent_status,
+      :given,
+      patient: @patient,
+      programme: @programme
+    )
     @parent = @consent.parent
   end
 

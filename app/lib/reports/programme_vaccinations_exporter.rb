@@ -146,7 +146,6 @@ class Reports::ProgrammeVaccinationsExporter
     patient = vaccination_record.patient
     session = vaccination_record.session
 
-    consents = patient.consent_outcome.latest[programme]
     triage = patient.triage_outcome.latest[programme]
 
     gillick_assessment =
@@ -174,8 +173,8 @@ class Reports::ProgrammeVaccinationsExporter
       patient.gp_practice&.ods_code || "",
       patient.gp_practice&.name || "",
       consent_status(patient:, programme:),
-      consent_details(consents:),
-      health_question_answers(consents:),
+      consent_details(patient:, programme:),
+      health_question_answers(patient:, programme:),
       triage&.status&.humanize || "",
       triage&.performed_by&.full_name || "",
       triage&.updated_at&.to_date&.iso8601 || "",
@@ -187,7 +186,7 @@ class Reports::ProgrammeVaccinationsExporter
     ] +
       (
         if Flipper.enabled?(:report_gillick_notify_parents)
-          [gillick_notify_parents(gillick_assessment:, consents:)]
+          [gillick_notify_parents(patient:, gillick_assessment:)]
         else
           []
         end
@@ -228,8 +227,10 @@ class Reports::ProgrammeVaccinationsExporter
     end
   end
 
-  def gillick_notify_parents(gillick_assessment:, consents:)
+  def gillick_notify_parents(patient:, gillick_assessment:)
     return "" if gillick_assessment.nil?
+
+    consents = patient.latest_consents(programme: gillick_assessment.programme)
 
     if (consent = consents.find(&:via_self_consent?))
       consent.notify_parents ? "Y" : "N"

@@ -49,6 +49,19 @@ FactoryBot.define do
 
     trait :added_to_session
 
+    trait :consent_no_response do
+      patient do
+        association :patient,
+                    :consent_no_response,
+                    performed_by: user,
+                    programmes: session.programmes,
+                    organisation:,
+                    school:,
+                    home_educated:,
+                    year_group:
+      end
+    end
+
     trait :consent_given_triage_not_needed do
       patient do
         association :patient,

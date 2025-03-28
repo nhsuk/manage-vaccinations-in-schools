@@ -435,6 +435,7 @@ describe Reports::ProgrammeVaccinationsExporter do
             parent = create(:parent, full_name: "John Smith")
             create(:parent_relationship, :father, parent:, patient:)
             created_at = Time.zone.local(2024, 1, 1, 12, 5, 20)
+            create(:patient_consent_status, :given, patient:, programme:)
             create(:consent, :given, patient:, parent:, programme:, created_at:)
           end
 

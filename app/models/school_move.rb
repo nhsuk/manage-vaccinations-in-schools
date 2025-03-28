@@ -65,11 +65,10 @@ class SchoolMove < ApplicationRecord
   private
 
   def patient_sessions
-    @patient_sessions ||=
-      patient.patient_sessions.preload_for_status.includes(
-        :gillick_assessments,
-        :session_attendances
-      )
+    patient.patient_sessions.preload_for_status.includes(
+      :gillick_assessments,
+      :session_attendances
+    )
   end
 
   def update_patient!
@@ -86,6 +85,8 @@ class SchoolMove < ApplicationRecord
     [school_session, generic_clinic_session].compact.each do |session|
       PatientSession.find_or_create_by!(patient:, session:)
     end
+
+    StatusUpdater.call(patient:)
   end
 
   def school_session

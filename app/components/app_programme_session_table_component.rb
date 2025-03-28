@@ -13,30 +13,33 @@ class AppProgrammeSessionTableComponent < ViewComponent::Base
   attr_reader :sessions, :programme
 
   def cohort_count(session:)
-    session.patient_sessions.length.to_s
+    format_number(session.patient_sessions.count)
   end
 
   def number_stat(session:)
-    session.patient_sessions.select { yield it }.length.to_s
+    format_number(session.patient_sessions.select { yield it }.length)
   end
 
   def percentage_stat(session:)
-    total_count = session.patient_sessions.length
-    return nil if total_count.zero?
+    format_percentage(
+      session.patient_sessions.select { yield it }.length,
+      session.patient_sessions.count
+    )
+  end
 
-    count = session.patient_sessions.select { yield it }.length
-
-    number_to_percentage(count / total_count.to_f * 100.0, precision: 0)
+  def no_response_scope(session:)
+    session.patient_sessions.has_consent_status(:no_response, programme:)
   end
 
   def no_response_count(session:)
-    number_stat(session:) { it.patient.consent_outcome.no_response?(programme) }
+    format_number(no_response_scope(session:).count)
   end
 
   def no_response_percentage(session:)
-    percentage_stat(session:) do
-      it.patient.consent_outcome.no_response?(programme)
-    end
+    format_percentage(
+      no_response_scope(session:).count,
+      session.patient_sessions.count
+    )
   end
 
   def triage_needed_count(session:)
@@ -49,5 +52,13 @@ class AppProgrammeSessionTableComponent < ViewComponent::Base
 
   def vaccinated_percentage(session:)
     percentage_stat(session:) { it.session_outcome.vaccinated?(programme) }
+  end
+
+  def format_number(count) = count.to_s
+
+  def format_percentage(count, total_count)
+    return nil if total_count.zero?
+
+    number_to_percentage(count / total_count.to_f * 100.0, precision: 0)
   end
 end

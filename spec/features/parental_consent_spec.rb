@@ -40,7 +40,7 @@ describe "Parental consent" do
         programmes: [@programme],
         location:
       )
-    @child = create(:patient, session: @session)
+    @child = create(:patient, :consent_no_response, session: @session)
   end
 
   def when_a_nurse_checks_consent_responses

@@ -26,7 +26,7 @@ class ConsentsController < ApplicationController
   end
 
   def send_request
-    return unless @patient.consent_outcome.no_response?(@programme)
+    return unless @patient.consent_status(programme: @programme).no_response?
 
     # For programmes that are administered together we should send the consent request together.
     programmes =
@@ -62,10 +62,7 @@ class ConsentsController < ApplicationController
     if @consent.valid?
       ActiveRecord::Base.transaction do
         @consent.save!
-        @patient
-          .triages
-          .where(programme_id: @consent.programme_id)
-          .invalidate_all
+        update_patient_status
       end
 
       redirect_to session_patient_programme_consent_path
@@ -84,10 +81,7 @@ class ConsentsController < ApplicationController
     if @consent.valid?
       ActiveRecord::Base.transaction do
         @consent.save!
-        @patient
-          .triages
-          .where(programme_id: @consent.programme_id)
-          .invalidate_all
+        update_patient_status
       end
 
       redirect_to session_patient_programme_consent_path,
@@ -132,8 +126,19 @@ class ConsentsController < ApplicationController
     @consent =
       @patient
         .consents
-        .includes(:consent_form, :parent, patient: :parent_relationships)
+        .includes(
+          :consent_form,
+          :parent,
+          :programme,
+          patient: :parent_relationships
+        )
         .find(params[:id])
+  end
+
+  def update_patient_status
+    @patient.triages.where(programme_id: @consent.programme_id).invalidate_all
+
+    StatusUpdater.call(patient: @patient)
   end
 
   def ensure_can_withdraw

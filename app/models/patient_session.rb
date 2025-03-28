@@ -65,7 +65,7 @@ class PatientSession < ApplicationRecord
         -> do
           eager_load(:patient).preload(
             session_attendances: :session_date,
-            patient: [:triages, { consents: :parent }, :vaccination_records],
+            patient: %i[consent_statuses triages vaccination_records],
             session: :programmes
           )
         end
@@ -97,6 +97,17 @@ class PatientSession < ApplicationRecord
   scope :order_by_name,
         -> do
           order("LOWER(patients.family_name)", "LOWER(patients.given_name)")
+        end
+
+  scope :has_consent_status,
+        ->(status, programme:) do
+          where(
+            Patient::ConsentStatus
+              .where("patient_id = patient_sessions.patient_id")
+              .where(status:, programme:)
+              .arel
+              .exists
+          )
         end
 
   def safe_to_destroy?

@@ -10,7 +10,7 @@ describe AppSessionActionsComponent do
   let(:patient_sessions) { session.patient_sessions.preload_for_status }
 
   before do
-    create(:patient_session, session:)
+    create(:patient_session, :consent_no_response, session:)
     create(:patient_session, :consent_conflicting, session:)
     create(:patient_session, :consent_given_triage_needed, session:)
     create(

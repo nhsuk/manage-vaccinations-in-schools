@@ -94,8 +94,7 @@ describe "Triage" do
   end
 
   def when_the_parent_gives_consent
-    @consent =
-      create(:consent, :given, patient: Patient.first, programme: @programme)
+    Patient.first.consent_status(programme: @programme).given!
     page.refresh
   end
 
