@@ -24,20 +24,40 @@ class AppPatientPageComponent < ViewComponent::Base
   delegate :patient, :session, to: :patient_session
 
   def display_health_questions?
-    patient.latest_consents(programme:).any?(&:response_given?)
+    consents.any?(&:response_given?)
   end
 
   def display_gillick_assessment_card?
-    patient_session.gillick_assessment(programme) ||
-      gillick_assessment_can_be_recorded?
+    gillick_assessment.present? || gillick_assessment_can_be_recorded?
   end
 
   def gillick_assessment_can_be_recorded?
     patient_session.session.today? && helpers.policy(GillickAssessment).new?
   end
 
+  def consents
+    @consents ||= ConsentGrouper.call(patient.consents, programme:)
+  end
+
+  def gillick_assessment
+    @gillick_assessment ||=
+      patient_session
+        .gillick_assessments
+        .order(created_at: :desc)
+        .find_by(programme:)
+  end
+
+  def vaccination_records
+    patient
+      .vaccination_records
+      .where(programme:)
+      .includes(:batch, :location, :performed_by_user, :programme, :vaccine)
+      .order(:performed_at)
+  end
+
   def default_vaccinate_form
-    pre_screening = patient_session.pre_screenings.last
+    pre_screening =
+      patient_session.pre_screenings.order(created_at: :desc).first
 
     VaccinateForm.new(
       feeling_well: pre_screening&.feeling_well,

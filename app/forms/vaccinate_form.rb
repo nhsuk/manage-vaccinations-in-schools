@@ -72,7 +72,7 @@ class VaccinateForm
 
   def pre_screening
     @pre_screening ||=
-      PreScreening.new(
+      patient_session.pre_screenings.build(
         feeling_well: feeling_well || false,
         knows_vaccination: knows_vaccination || false,
         no_allergies: no_allergies || false,
@@ -80,7 +80,6 @@ class VaccinateForm
         not_pregnant: not_pregnant || false,
         not_taking_medication: not_taking_medication || false,
         notes: pre_screening_notes,
-        patient_session:,
         performed_by: current_user,
         programme_id:
       )

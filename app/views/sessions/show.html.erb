@@ -27,14 +27,14 @@
 
       <h3 class="nhsuk-heading-s nhsuk-u-margin-bottom-2">Session details</h3>
 
-      <%= render AppSessionDetailsSummaryComponent.new(@session, patient_sessions: @patient_sessions) %>
+      <%= render AppSessionDetailsSummaryComponent.new(@session) %>
 
       <% if @session.unscheduled? %>
         <% if policy(@session).edit? %>
           <%= govuk_button_link_to "Schedule sessions", edit_session_path(@session), class: "app-button--secondary" %>
         <% end %>
       <% else %>
-        <%= render AppSessionActionsComponent.new(@session, patient_sessions: @patient_sessions) %>
+        <%= render AppSessionActionsComponent.new(@session) %>
 
         <div class="app-button-group">
           <% if policy(@session).edit? %>

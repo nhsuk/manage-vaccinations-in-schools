@@ -203,7 +203,6 @@ class DraftConsent
     PatientSessionPolicy::Scope
       .new(@current_user, PatientSession)
       .resolve
-      .preload_for_status
       .find_by(id: patient_session_id)
   end
 

@@ -105,10 +105,10 @@ class ConsentsController < ApplicationController
 
   def set_patient_session
     @patient_session =
-      policy_scope(PatientSession).includes(
-        :gillick_assessments,
-        session: :programmes
-      ).find_by!(session: @session, patient_id: params[:patient_id])
+      policy_scope(PatientSession).includes(session: :programmes).find_by!(
+        session: @session,
+        patient_id: params[:patient_id]
+      )
   end
 
   def set_programme

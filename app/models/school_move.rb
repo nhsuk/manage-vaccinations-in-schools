@@ -64,14 +64,6 @@ class SchoolMove < ApplicationRecord
 
   private
 
-  def patient_sessions
-    patient.patient_sessions.includes(
-      :gillick_assessments,
-      :session_attendances,
-      :vaccination_records
-    )
-  end
-
   def update_patient!
     patient.update!(
       home_educated:,
@@ -81,7 +73,7 @@ class SchoolMove < ApplicationRecord
   end
 
   def update_sessions!
-    patient_sessions.find_each(&:destroy_if_safe!)
+    patient.patient_sessions.destroy_all_if_safe
 
     [school_session, generic_clinic_session].compact.each do |session|
       PatientSession.find_or_create_by!(patient:, session:)

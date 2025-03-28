@@ -76,11 +76,7 @@ class VaccinationRecordsController < ApplicationController
           :location,
           :performed_by_user,
           :programme,
-          patient: [
-            :gp_practice,
-            :school,
-            { consents: :parent, parent_relationships: :parent }
-          ],
+          patient: [:gp_practice, :school, { parent_relationships: :parent }],
           session: %i[session_dates],
           vaccine: :programme
         )
