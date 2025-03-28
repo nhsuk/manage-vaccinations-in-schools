@@ -29,6 +29,9 @@ on:
         required: false
         type: string
 
+concurrency:
+  group: deploy-application-${{ inputs.environment }}
+
 env:
   aws-role: ${{ inputs.environment == 'production'
     && 'arn:aws:iam::820242920762:role/GithubDeployMavisAndInfrastructure'

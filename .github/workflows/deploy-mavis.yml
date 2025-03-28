@@ -1,6 +1,9 @@
 name: Deploy Mavis on Environment
 run-name: Deploying Mavis on ${{ inputs.environment }}
 
+concurrency:
+  group: deploy-mavis-${{ inputs.environment }}
+
 on:
   workflow_call:
     inputs:
