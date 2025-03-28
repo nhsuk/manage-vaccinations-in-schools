@@ -24,7 +24,7 @@ class AppPatientSessionTableComponent < ViewComponent::Base
       
                 <% row.with_cell do %>
                   <span class="nhsuk-table-responsive__heading">Programme</span>
-                  <%= programme.name %>
+                  <%= render AppProgrammeTagsComponent.new([programme]) %>
                 <% end %>
       
                 <% row.with_cell do %>
