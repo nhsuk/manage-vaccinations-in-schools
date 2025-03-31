@@ -335,12 +335,12 @@ describe ImmunisationImportRow do
     end
 
     context "with an invalid NHS number" do
-      let(:data) { { "NHS_NUMBER" => "abc" } }
+      let(:data) { { "NHS_NUMBER" => "TP01234567" } }
 
       it "has errors" do
         expect(immunisation_import_row).to be_invalid
         expect(immunisation_import_row.errors["NHS_NUMBER"]).to eq(
-          ["Enter an NHS number with 10 characters."]
+          ["should be a valid NHS number with 10 characters"]
         )
       end
     end
