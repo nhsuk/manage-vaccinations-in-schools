@@ -162,7 +162,7 @@ module CSVImportable
   end
 
   def update_from_pds
-    return unless Settings.pds.perform_jobs
+    return unless Settings.pds.enqueue_bulk_updates
 
     GoodJob::Bulk.enqueue do
       patients.each_with_index do |patient, index|
