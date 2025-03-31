@@ -72,6 +72,7 @@ class Patient < ApplicationRecord
   has_many :school_move_log_entries
   has_many :school_moves
   has_many :session_notifications
+  has_many :triage_statuses
   has_many :triages, -> { order(:created_at) }
   has_many :vaccination_records, -> { kept.order(:performed_at) }
 
@@ -263,10 +264,6 @@ class Patient < ApplicationRecord
     birth_academic_year_changed?
   end
 
-  def triage_outcome
-    @triage_outcome ||= Patient::TriageOutcome.new(self)
-  end
-
   def programme_outcome
     @programme_outcome ||= Patient::ProgrammeOutcome.new(self)
   end
@@ -285,14 +282,33 @@ class Patient < ApplicationRecord
     ConsentGrouper.call(consents, programme:)
   end
 
+  def triage_status(programme:)
+    # Use `find` to allow for preloading.
+    triage_statuses.find { it.programme_id == programme.id } ||
+      triage_statuses.build(programme:)
+  end
+
+  def latest_triage(programme:)
+    triages
+      .select { it.programme_id == programme.id }
+      .reject(&:invalidated?)
+      .max_by(&:created_at)
+  end
+
+  def latest_vaccination_records(programme:)
+    vaccination_records
+      .select { it.programme_id == programme.id }
+      .reject(&:discarded?)
+  end
+
   def consent_given_and_safe_to_vaccinate?(programme:)
     return false if programme_outcome.vaccinated?(programme)
 
     consent_status(programme:).given? &&
       (
-        triage_outcome.safe_to_vaccinate?(programme) ||
-          triage_outcome.delay_vaccination?(programme) ||
-          triage_outcome.not_required?(programme)
+        triage_status(programme:).safe_to_vaccinate? ||
+          triage_status(programme:).delay_vaccination? ||
+          triage_status(programme:).not_required?
       )
   end
 

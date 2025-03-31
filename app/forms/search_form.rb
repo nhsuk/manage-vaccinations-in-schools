@@ -61,15 +61,7 @@ class SearchForm
     end
 
     if (status = triage_status&.to_sym).present?
-      scope =
-        scope.select do
-          it
-            .patient
-            .triage_outcome
-            .status
-            .values_at(*it.programmes)
-            .include?(status)
-        end
+      scope = scope.has_triage_status(status, programme:)
     end
 
     scope

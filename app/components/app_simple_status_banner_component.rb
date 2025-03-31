@@ -50,9 +50,11 @@ class AppSimpleStatusBannerComponent < ViewComponent::Base
       programme_name: programme.name
     }
 
-    if patient.triage_outcome.required?(programme)
+    triage_status = patient.triage_status(programme:)
+
+    if triage_status.required?
       reasons = [
-        if patient.consent_status(programme:).health_answers_require_follow_up?
+        if triage_status.consent_requires_triage?
           I18n.t(
             :consent_needs_triage,
             scope: %i[
@@ -63,7 +65,7 @@ class AppSimpleStatusBannerComponent < ViewComponent::Base
             **options
           )
         end,
-        if patient.triage_outcome.vaccination_history_needs_triage?(programme:)
+        if triage_status.vaccination_history_requires_triage?
           I18n.t(
             :vaccination_partially_administered,
             scope: %i[
@@ -92,7 +94,7 @@ class AppSimpleStatusBannerComponent < ViewComponent::Base
 
   def nurse
     (
-      patient.triage_outcome.all[programme] +
+      patient.triages.includes(:performed_by).where(programme:) +
         patient.programme_outcome.all[programme]
     ).max_by(&:updated_at)&.performed_by&.full_name
   end
