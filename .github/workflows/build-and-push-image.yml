@@ -47,7 +47,7 @@ jobs:
 
   build:
     needs: check-image-presence
-    if: ${{ needs.check-images-presence.outputs.build_needed == 'true' }}
+    if: needs.check-image-presence.outputs.build_needed == 'true'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
