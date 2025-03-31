@@ -68,7 +68,7 @@ class ImmunisationImportRow
   validate :school_urn_inclusion
 
   validates :existing_patients, length: { maximum: 1 }
-  validates :patient_nhs_number, length: { is: 10 }, allow_blank: true
+  validates :patient_nhs_number, nhs_number: { allow_blank: true }
   validates :patient_first_name, presence: true
   validates :patient_last_name, presence: true
   validates :patient_date_of_birth,

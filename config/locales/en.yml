@@ -279,7 +279,7 @@ en:
               blank: Enter a last name.
             patient_nhs_number:
               blank: Enter an NHS number with 10 characters.
-              wrong_length: Enter an NHS number with 10 characters.
+              invalid: Enter a valid NHS number with 10 characters.
             patient_postcode:
               blank: Enter a valid postcode, such as SW1A 1AA
             performed_by_user:

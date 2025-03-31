@@ -7,7 +7,7 @@ class PatientImportRow
   validates :existing_patients, length: { maximum: 1 }
   validates :first_name, presence: true
   validates :last_name, presence: true
-  validates :nhs_number, length: { is: 10 }, allow_blank: true
+  validates :nhs_number, nhs_number: { allow_blank: true }
   validates :gender_code,
             inclusion: {
               in: Patient.gender_codes.keys,
