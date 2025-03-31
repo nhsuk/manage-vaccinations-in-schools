@@ -91,7 +91,7 @@ describe CohortImport do
       it "accepts NHS numbers with spaces, removes spaces" do
         expect(cohort_import).to be_valid
         expect(cohort_import.rows.second.to_patient[:nhs_number]).to eq(
-          "1234567891"
+          "9990000026"
         )
       end
 
@@ -165,7 +165,7 @@ describe CohortImport do
         .and change(cohort_import.parents, :count).by(3)
 
       expect(Patient.first).to have_attributes(
-        nhs_number: "1234567890",
+        nhs_number: "9990000018",
         date_of_birth: Date.new(2010, 1, 1),
         given_name: "Jennifer",
         family_name: "Clarke",
@@ -179,7 +179,7 @@ describe CohortImport do
       expect(Patient.first.parents).to be_empty
 
       expect(Patient.second).to have_attributes(
-        nhs_number: "1234567891",
+        nhs_number: "9990000026",
         date_of_birth: Date.new(2010, 1, 2),
         given_name: "Jimmy",
         family_name: "Smith",
