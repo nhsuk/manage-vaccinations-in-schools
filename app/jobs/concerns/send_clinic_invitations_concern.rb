@@ -25,7 +25,7 @@ module SendClinicInvitationsConcern
 
     all_vaccinated =
       eligible_programmes.all? do |programme|
-        patient.programme_outcome.vaccinated?(programme)
+        patient.vaccination_status(programme:).vaccinated?
       end
 
     return false if all_vaccinated

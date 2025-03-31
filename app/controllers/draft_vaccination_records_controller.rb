@@ -112,6 +112,8 @@ class DraftVaccinationRecordsController < ApplicationController
 
     @vaccination_record.save!
 
+    StatusUpdater.call(patient: @patient)
+
     send_vaccination_confirmation(@vaccination_record) if should_notify_parents
 
     @vaccination_record.triage_patient_as_do_not_vaccinate!

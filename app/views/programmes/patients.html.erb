@@ -21,7 +21,7 @@
     <%= render AppSearchComponent.new(
           form: @form,
           url: patients_programme_path(@programme),
-          programme_statuses: @statuses,
+          programme_statuses: Patient::VaccinationStatus.statuses.keys,
           year_groups: @programme.year_groups,
         ) %>
   </div>

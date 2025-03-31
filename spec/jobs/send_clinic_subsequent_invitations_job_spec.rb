@@ -49,6 +49,12 @@ describe SendClinicSubsequentInvitationsJob do
     context "when already vaccinated" do
       before do
         create(
+          :patient_vaccination_status,
+          :vaccinated,
+          patient:,
+          programme: programmes.first
+        )
+        create(
           :vaccination_record,
           patient:,
           session:,

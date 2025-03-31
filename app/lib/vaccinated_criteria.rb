@@ -1,20 +1,20 @@
 # frozen_string_literal: true
 
 class VaccinatedCriteria
-  def initialize(programme, patient:, vaccination_records:)
+  def initialize(programme:, patient:, vaccination_records:)
     @programme = programme
     @patient = patient
     @vaccination_records = vaccination_records
   end
 
   def call
-    if vaccination_records.any? { it.programme_id != programme.id }
-      raise "Vaccination records provided for different programme."
-    end
+    vaccination_records_for_programme =
+      vaccination_records.select { it.programme_id == programme.id }
 
-    return true if vaccination_records.any?(&:already_had?)
+    return true if vaccination_records_for_programme.any?(&:already_had?)
 
-    administered_records = vaccination_records.select(&:administered?)
+    administered_records =
+      vaccination_records_for_programme.select(&:administered?)
 
     if programme.menacwy?
       administered_records.any? { patient.age(now: it.performed_at) >= 10 }
@@ -30,9 +30,7 @@ class VaccinatedCriteria
     end
   end
 
-  def self.call(*args, **kwargs)
-    new(*args, **kwargs).call
-  end
+  def self.call(...) = new(...).call
 
   private_class_method :new
 

@@ -520,6 +520,16 @@ FactoryBot.define do
           end
         end
       end
+      vaccination_statuses do
+        programmes.map do |programme|
+          association(
+            :patient_vaccination_status,
+            :vaccinated,
+            patient: instance,
+            programme:
+          )
+        end
+      end
     end
   end
 end

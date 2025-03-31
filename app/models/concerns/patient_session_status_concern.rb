@@ -22,9 +22,9 @@ module PatientSessionStatusConcern
     def status(programme:)
       @status_by_programme ||= {}
 
-      @status_by_programme[
-        programme
-      ] ||= if patient.programme_outcome.vaccinated?(programme)
+      @status_by_programme[programme] ||= if patient.vaccination_status(
+           programme:
+         ).vaccinated?
         "vaccinated"
       elsif patient.triage_status(programme:).delay_vaccination?
         "delay_vaccination"

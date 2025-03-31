@@ -8,7 +8,7 @@ describe AppOutcomeBannerComponent do
       patient_session:
         PatientSession
           .preload_for_status
-          .includes(patient: :triages)
+          .includes(patient: %i[triages vaccination_records])
           .find(patient_session.id),
       programme:,
       current_user: user
@@ -65,6 +65,12 @@ describe AppOutcomeBannerComponent do
 
     before do
       create(
+        :patient_vaccination_status,
+        :vaccinated,
+        patient: patient_session.patient,
+        programme:
+      )
+      create(
         :vaccination_record,
         :not_administered,
         :already_had,
@@ -81,7 +87,7 @@ describe AppOutcomeBannerComponent do
   context "state is vaccinated" do
     let(:patient_session) { create(:patient_session, :vaccinated, session:) }
     let(:patient) { patient_session.patient }
-    let(:vaccination_record) { patient.programme_outcome.all[programme].first }
+    let(:vaccination_record) { patient.vaccination_records.first }
     let(:vaccine) { programme.vaccines.first }
     let(:location) { patient_session.session.location }
     let(:batch) { vaccine.batches.first }
@@ -101,9 +107,7 @@ describe AppOutcomeBannerComponent do
       let(:patient_session) do
         create(:patient_session, :vaccinated, session:).tap do |ps|
           ps.strict_loading!(false)
-          ps.patient.programme_outcome.all[programme].first.update!(
-            performed_at: date
-          )
+          ps.patient.vaccination_records.first.update!(performed_at: date)
         end
       end
 
