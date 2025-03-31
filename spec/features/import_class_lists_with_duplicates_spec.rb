@@ -74,7 +74,7 @@ describe "Class list imports duplicates" do
         :patient,
         given_name: "Jimmy",
         family_name: "Smith",
-        nhs_number: "9990000016",
+        nhs_number: "9990000018",
         date_of_birth: Date.new(2010, 1, 1),
         gender_code: :male,
         address_line_1: "10 Downing Street",
@@ -89,7 +89,7 @@ describe "Class list imports duplicates" do
         :patient,
         given_name: "Sarah",
         family_name: "Jones",
-        nhs_number: "9990000024",
+        nhs_number: "9990000026",
         date_of_birth: Date.new(2010, 2, 2),
         gender_code: :female,
         address_line_1: "10 Downing Street",
@@ -104,7 +104,7 @@ describe "Class list imports duplicates" do
         :patient,
         given_name: "Jenny",
         family_name: "Block",
-        nhs_number: "9990000032",
+        nhs_number: "9990000034",
         school: @location
       )
   end
@@ -210,7 +210,7 @@ describe "Class list imports duplicates" do
   def and_the_third_record_should_not_be_updated
     @third_patient.reload
     expect(@third_patient.given_name).to eq("Jenny")
-    expect(@third_patient.nhs_number).to eq("9990000032")
+    expect(@third_patient.nhs_number).to eq("9990000034")
     expect(@third_patient.pending_changes).to eq({})
   end
 

@@ -74,7 +74,7 @@ describe "Child record imports duplicates" do
         :patient,
         given_name: "Jennifer",
         family_name: "Clarke",
-        nhs_number: "1234567890", # First row of valid.csv
+        nhs_number: "9990000018", # First row of valid.csv
         date_of_birth: Date.new(2010, 1, 1),
         gender_code: :female,
         address_line_1: "10 Downing Street",
@@ -90,7 +90,7 @@ describe "Child record imports duplicates" do
         :patient,
         given_name: "James", # The upload will change this to Jimmy
         family_name: "Smith",
-        nhs_number: "1234567891", # Second row of valid.csv
+        nhs_number: "9990000026", # Second row of valid.csv
         date_of_birth: Date.new(2010, 1, 2),
         gender_code: :male,
         address_line_1: "10 Downing Street",
