@@ -16,7 +16,7 @@ jobs:
       - name: Configure AWS Dev Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: arn:aws:iam::393416225559:role/GitHubActionsRole
+          role-to-assume: arn:aws:iam::393416225559:role/GithubDeployMavisAndInfrastructure
           aws-region: eu-west-2
       - name: Check if dev image exists
         run: |
@@ -31,7 +31,7 @@ jobs:
       - name: Configure AWS Prod credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: arn:aws:iam::820242920762:role/GitHubActionsRole
+          role-to-assume: arn:aws:iam::820242920762:role/GithubDeployMavisAndInfrastructure
           aws-region: eu-west-2
       - name: Check if prod image exists
         id: check_image
@@ -69,8 +69,8 @@ jobs:
     strategy:
       matrix:
         aws-role:
-          - arn:aws:iam::820242920762:role/GitHubActionsRole
-          - arn:aws:iam::393416225559:role/GitHubActionsRole
+          - arn:aws:iam::820242920762:role/GithubDeployMavisAndInfrastructure
+          - arn:aws:iam::393416225559:role/GithubDeployMavisAndInfrastructure
     steps:
       - name: Download Docker image
         uses: actions/download-artifact@v4
