@@ -2,23 +2,23 @@
 
 # This script is used to import resources that were created by AWS copilot into the terraform state file.
 # Add the resource IDs to the variables below before running the script.
-vpc_id=
-vpc_flowlogs_id=
-public_subnet_a_id=
-public_subnet_b_id=
-private_subnet_a_id=
-private_subnet_b_id=
-public_route_table_id=
-internet_gateway_id=
-lb_arn=
-http_listener_arn=
-https_listener_arn=
-lb_http_security_group_id=
-db_cluster_id=
-db_instance_id=
-rds_sg_id=
-db_subnet_id=
-cloudwatch_vpc_log_group_name=
+vpc_id=vpc-0016fa51fbdfbf86e
+vpc_flowlogs_id=fl-08bd5f251fe92d277
+public_subnet_a_id=subnet-0e45214d2940ef9a8
+public_subnet_b_id=subnet-078685f75042efd82
+private_subnet_a_id=subnet-0522dade9bd8d11e5
+private_subnet_b_id=subnet-00fa7ee1070eab45c
+public_route_table_id=rtb-09b0d6376e48cd653
+internet_gateway_id=igw-01ce736d4aa6040f2
+lb_arn=arn:aws:elasticloadbalancing:eu-west-2:393416225559:loadbalancer/app/mavis--Publi-w1wzc4E2jrl6/b953a35af361bbf6
+http_listener_arn=arn:aws:elasticloadbalancing:eu-west-2:393416225559:listener/app/mavis--Publi-w1wzc4E2jrl6/b953a35af361bbf6/fd25d4042ac43a15
+https_listener_arn=arn:aws:elasticloadbalancing:eu-west-2:393416225559:listener/app/mavis--Publi-w1wzc4E2jrl6/b953a35af361bbf6/d21186d3d971fe1f
+lb_http_security_group_id=sg-03d88bf5572e8790d
+db_cluster_id=mavis-training-addonsstack-1jzsxp7p842-dbdbcluster-dojxjwailzmh
+db_instance_id=mavis-training-addonsstack-1jzs-dbdbwriterinstance-pbl8rjktgtmp
+rds_sg_id=sg-044c5b666b01ebb1e
+db_subnet_id=mavis-training-addonsstack-1jzsxp7p84221-dbdbsubnetgroup-ybdt5wfbx9jl
+cloudwatch_vpc_log_group_name=mavis-training-FlowLogs
 
 if [ "$#" -ne 1 ]; then
     echo "Usage: $0 <var-file>"

@@ -53,20 +53,20 @@ resource "aws_codedeploy_deployment_group" "blue_green_deployment_group" {
 }
 
 resource "aws_s3_bucket" "code_deploy_bucket" {
-  bucket        = "appspec-bucket-${var.environment}"
+  bucket        = var.appspec_bucket
   force_destroy = true
 }
 
 
 data "aws_s3_bucket" "logs" {
-  bucket = "nhse-mavis-logs-${var.environment}"
+  bucket = var.access_logs_bucket
 }
 
 resource "aws_s3_bucket_logging" "example" {
   bucket = aws_s3_bucket.code_deploy_bucket.id
 
   target_bucket = data.aws_s3_bucket.logs.id
-  target_prefix = "codedeploy-log/"
+  target_prefix = "codedeploy-log-${var.environment}/"
 }
 
 resource "aws_s3_bucket_versioning" "code_deploy_bucket_versioning" {

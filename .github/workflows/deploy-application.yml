@@ -1,11 +1,11 @@
-name: TF Deploy Application
-run-name: TF Deploy Application on ${{ inputs.environment }}
+name: Deploy application
+run-name: Deploy application to ${{ inputs.environment }}
 
 on:
   workflow_dispatch:
     inputs:
       environment:
-        description: "Deployment environment"
+        description: Deployment environment
         required: true
         type: choice
         options:
@@ -15,9 +15,9 @@ on:
           - test
           - preview
           - training
-      #          - production
+          - production
       image_tag:
-        description: "Docker image tag"
+        description: Docker image tag
         required: false
         type: string
   workflow_call:
@@ -25,15 +25,22 @@ on:
       environment:
         required: true
         type: string
+      image_tag:
+        required: false
+        type: string
+
+concurrency:
+  group: deploy-application-${{ inputs.environment }}
 
 env:
   aws-role: ${{ inputs.environment == 'production'
-    && 'arn:aws:iam::820242920762:role/GitHubActionsRole'
+    && 'arn:aws:iam::820242920762:role/GithubDeployMavisAndInfrastructure'
     || 'arn:aws:iam::393416225559:role/GithubDeployMavisAndInfrastructure' }}
-  tf-dir: terraform/app
+  terraform-working-directory: terraform/app
 
 jobs:
-  PlanUpdate:
+  plan-changes:
+    name: Plan task definition changes
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -64,23 +71,25 @@ jobs:
           terraform_version: 1.10.5
       - name: Update the task definition
         id: plan
-        working-directory: ${{ env.tf-dir }}
+        working-directory: ${{ env.terraform-working-directory }}
         run: |
           terraform init -backend-config="env/${{ inputs.environment }}-backend.hcl" -upgrade
-          terraform plan -var="image_digest=$DIGEST" -target=aws_ecs_task_definition.task_definition \
+          terraform plan -target=aws_ecs_task_definition.task_definition \
           -target=aws_s3_object.appspec_object -var-file="env/${{ inputs.environment }}.tfvars" \
-          -out=${{ runner.temp }}/tfplan | tee ${{ runner.temp }}/tf_stdout
+          -var="image_digest=$DIGEST" -out=${{ runner.temp }}/tfplan | tee ${{ runner.temp }}/tf_stdout
       - name: Validate the changes
         run: |
           ./terraform/scripts/check_task_definition.sh ${{ runner.temp }}/tf_stdout
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: tfplan_app
+          name: tfplan_app-${{ inputs.environment }}
           path: ${{ runner.temp }}/tfplan
-  DeployUpdate:
+
+  apply-changes:
+    name: Apply task definition changes
     runs-on: ubuntu-latest
-    needs: PlanUpdate
+    needs: plan-changes
     environment: ${{ inputs.environment }}
     permissions:
       id-token: write
@@ -95,14 +104,14 @@ jobs:
       - name: Download artifact
         uses: actions/download-artifact@v4
         with:
-          name: tfplan_app
+          name: tfplan_app-${{ inputs.environment }}
           path: ${{ runner.temp }}
       - name: Install terraform
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: 1.10.5
       - name: Apply the changes
-        working-directory: ${{ env.tf-dir }}
+        working-directory: ${{ env.terraform-working-directory }}
         run: |
           terraform init -backend-config="env/${{ inputs.environment }}-backend.hcl" -upgrade
           terraform apply ${{ runner.temp }}/tfplan
@@ -113,11 +122,13 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: CODEDEPLOY_ENV
+          name: CODEDEPLOY_ENV-${{ inputs.environment }}
           path: ${{ runner.temp }}/CODEDEPLOY_ENV
-  TriggerCodeDeploy:
+
+  create-deployment:
+    name: Create deployment
     runs-on: ubuntu-latest
-    needs: DeployUpdate
+    needs: apply-changes
     environment: ${{ inputs.environment }}
     permissions:
       id-token: write
@@ -125,7 +136,7 @@ jobs:
       - name: Download artifact
         uses: actions/download-artifact@v4
         with:
-          name: CODEDEPLOY_ENV
+          name: CODEDEPLOY_ENV-${{ inputs.environment }}
           path: ${{ runner.temp }}/artifact
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -133,15 +144,13 @@ jobs:
           role-to-assume: ${{ env.aws-role }}
           aws-region: eu-west-2
       - name: Install AWS CLI
-        run: |
-          sudo snap install --classic aws-cli
+        run: sudo snap install --classic aws-cli
       - name: Trigger CodeDeploy deployment
         run: |
           source ${{ runner.temp }}/artifact/CODEDEPLOY_ENV
           deployment_id=$(aws deploy create-deployment \
-          --application-name $application --deployment-group-name $application_group \
-          --s3-location bucket=appspec-bucket-${{ inputs.environment }},key=appspec.yaml,bundleType=yaml \
-          | jq -r .deploymentId)
+          --application-name "$application" --deployment-group-name "$application_group" \
+          --s3-location bucket="$s3_bucket",key="$s3_key",bundleType=yaml | jq -r .deploymentId)
           echo "Deployment started: $deployment_id"
           echo "deployment_id=$deployment_id" >> $GITHUB_ENV
       - name: Wait up to 30 minutes for deployment to complete

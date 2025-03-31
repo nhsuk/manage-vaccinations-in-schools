@@ -23,10 +23,10 @@ else
   echo "S3 bucket object is not being replaced, aborting."
   exit 1
 fi
-MODIFICATIONS=$(grep -E "[0-9]+ to add, [0-9]+ to change, [0-9]+ to destroy." test_less)
-ADDITIONS=$(echo "$MODIFICATIONS" | sed -E 's/.*([0-9]+) to add.*/\1/')
-CHANGES=$(echo "$MODIFICATIONS" | sed -E 's/.*([0-9]+) to change.*/\1/')
-DELETIONS=$(echo "$MODIFICATIONS" | sed -E 's/.*([0-9]+) to destroy.*/\1/')
+MODIFICATIONS=$(grep -E "[0-9]+ to add, [0-9]+ to change, [0-9]+ to destroy." "$tf_stdout") || exit 1
+ADDITIONS=$(echo "$MODIFICATIONS" | sed -E 's/.*([0-9]+) to add.*/\1/')  || exit 1
+CHANGES=$(echo "$MODIFICATIONS" | sed -E 's/.*([0-9]+) to change.*/\1/')  || exit 1
+DELETIONS=$(echo "$MODIFICATIONS" | sed -E 's/.*([0-9]+) to destroy.*/\1/') || exit 1
 if [[ $DELETIONS -gt $ADDITIONS ]]; then
   echo "More resources are being destroyed than created."
   echo "Other resources than task definition and s3 bucket object are being deleted, aborting."

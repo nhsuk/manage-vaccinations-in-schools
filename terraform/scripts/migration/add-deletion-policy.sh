@@ -33,6 +33,7 @@ environmentstack_resources=(
 "PublicSubnet2RouteTableAssociation"
 "VPC"
 "VpcFlowLogGroup"
+"HTTPSCert"
 )
 
 if [ "$#" -ne 2 ]; then
@@ -65,4 +66,3 @@ for resource in "${resources[@]}"; do
   fi
 
 done
-
