@@ -8,6 +8,8 @@ jobs:
   check-image-presence:
     name: Check if images already exist
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
     outputs:
       build_needed: ${{ steps.check_image.outputs.BUILD_NEEDED }}
     steps:
