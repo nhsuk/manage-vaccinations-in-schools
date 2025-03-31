@@ -105,7 +105,7 @@ describe ClassImport do
       it "accepts NHS numbers with spaces, removes spaces" do
         expect(class_import).to be_valid
         expect(class_import.rows.second.to_patient[:nhs_number]).to eq(
-          "1234567891"
+          "9990000026"
         )
       end
 
@@ -158,7 +158,7 @@ describe ClassImport do
         .and change(class_import.parents, :count).by(5)
 
       expect(Patient.first).to have_attributes(
-        nhs_number: "1234567890",
+        nhs_number: "9990000018",
         date_of_birth: Date.new(2010, 1, 1),
         given_name: "Jennifer",
         family_name: "Clarke",
@@ -178,7 +178,7 @@ describe ClassImport do
       )
 
       expect(Patient.second).to have_attributes(
-        nhs_number: "1234567891",
+        nhs_number: "9990000026",
         date_of_birth: Date.new(2010, 1, 2),
         given_name: "Jimmy",
         family_name: "Smith",
@@ -200,7 +200,7 @@ describe ClassImport do
       expect(Patient.second.parent_relationships.first).to be_father
 
       expect(Patient.third).to have_attributes(
-        nhs_number: "1234567892",
+        nhs_number: "9990000034",
         date_of_birth: Date.new(2010, 1, 3),
         given_name: "Mark",
         family_name: "Doe",
@@ -334,7 +334,7 @@ describe ClassImport do
 
     context "with an existing patient in a different school" do
       let(:patient) do
-        create(:patient, nhs_number: "1234567890", school: create(:school))
+        create(:patient, nhs_number: "9990000018", school: create(:school))
       end
 
       it "proposes a school move for the child" do
@@ -380,7 +380,9 @@ describe ClassImport do
     end
 
     context "with an existing patient not in the class list" do
-      let!(:existing_patient) { create(:patient, session:, year_group: 8) }
+      let!(:existing_patient) do
+        create(:patient, nhs_number: "9322774096", session:, year_group: 8)
+      end
 
       it "proposes a school move for the child" do
         expect(existing_patient.school_moves).to be_empty
