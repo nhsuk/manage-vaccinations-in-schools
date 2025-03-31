@@ -170,12 +170,7 @@ class Patient < ApplicationRecord
 
   validates :birth_academic_year, comparison: { greater_than_or_equal_to: 1990 }
 
-  validates :nhs_number,
-            uniqueness: true,
-            format: {
-              with: /\A(?:\d\s*){10}\z/
-            },
-            allow_nil: true
+  validates :nhs_number, nhs_number: true, uniqueness: true, allow_nil: true
 
   validates :address_postcode, postcode: { allow_nil: true }
 

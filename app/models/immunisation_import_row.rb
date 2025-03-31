@@ -740,12 +740,13 @@ class ImmunisationImportRow
   end
 
   def validate_patient_nhs_number
-    if patient_nhs_number.present? && patient_nhs_number_value.length != 10
-      errors.add(
-        patient_nhs_number.header,
-        "Enter an NHS number with 10 characters."
-      )
-    end
+    return if patient_nhs_number.blank?
+
+    NHSNumberValidator.new(
+      allow_blank: true,
+      message: "should be a valid NHS number with 10 characters",
+      attributes: [patient_nhs_number.header]
+    ).validate_each(self, patient_nhs_number.header, patient_nhs_number_value)
   end
 
   def validate_patient_postcode
