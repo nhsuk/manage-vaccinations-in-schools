@@ -41,16 +41,36 @@ describe NHSNumberValidator do
     it { should be_invalid }
   end
 
-  context "with an invalid NHS number" do
+  context "with an NHS number with letters" do
     let(:nhs_number) { "TP12345678" }
 
     it { should be_invalid }
   end
 
-  context "with a valid NHS number" do
-    let(:nhs_number) { "0123456789" }
+  context "with an invalid NHS number" do
+    let(:nhs_number) { "9990000010" }
 
-    it { should be_valid }
+    it { should be_invalid }
+  end
+
+  # This is a randomly generated list of known-to-be-valid NHS numbers.
+  %w[
+    8493322644
+    9772824701
+    6873319295
+    1645968170
+    1092187839
+    3614352714
+    3057221963
+    0762639571
+    4934821465
+    6072295150
+  ].each do |nhs_number|
+    context "with a valid NHS number #{nhs_number}" do
+      let(:nhs_number) { nhs_number }
+
+      it { should be_valid }
+    end
   end
 
   context "when allowing nil values" do
