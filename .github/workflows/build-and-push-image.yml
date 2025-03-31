@@ -42,7 +42,7 @@ jobs:
             echo "At least one image does not exist. Build needed"
             echo "$(aws ecr describe-images --repository-name mavis/webapp --image-ids imageTag=${{ github.sha }})"
 
-            echo "BUILD_NEEDED=true" >> $GITHUB_ENV
+            echo "BUILD_NEEDED=true" >> $GITHUB_OUTPUT
           fi
 
   build:
