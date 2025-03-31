@@ -13,7 +13,7 @@ describe AppChildSummaryComponent do
   let(:patient) do
     create(
       :patient,
-      nhs_number: "1234567890",
+      nhs_number: "9990000018",
       given_name: "John",
       preferred_given_name: "Johnny",
       family_name: "Doe",
@@ -39,7 +39,7 @@ describe AppChildSummaryComponent do
   end
 
   it { should have_content("NHS number") }
-  it { should have_content("123\u00A0\u200D456\u00A0\u200D7890") }
+  it { should have_content("999\u00A0\u200D000\u00A0\u200D0018") }
 
   it { should have_content("Full name") }
   it { should have_content("DOE, John") }
