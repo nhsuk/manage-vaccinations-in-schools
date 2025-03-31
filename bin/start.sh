@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+
+if [ "$SERVER_TYPE" == "thrust" ]; then
+  echo "Starting Thrust server..."
+  exec "$SCRIPT_DIR"/thrust "$SCRIPT_DIR"/rails server
+elif [ "$SERVER_TYPE" == "background" ]; then
+  echo "Starting background server..."
+  exec "$SCRIPT_DIR"/bundle exec good_job start
+else
+  echo "SERVER_TYPE variable: '$SERVER_TYPE' unknown. Allowed values ['thrust','background']"
+exit 1
+fi

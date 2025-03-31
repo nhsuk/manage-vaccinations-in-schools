@@ -24,4 +24,3 @@ http_hosts = {
 
 minimum_replicas           = 3
 appspec_bucket             = "nhse-mavis-appspec-bucket-preview"
-background_service_enabled = true

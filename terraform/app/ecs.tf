@@ -88,7 +88,7 @@ resource "aws_ecs_task_definition" "task_definition" {
           hostPort      = 4000
         }
       ]
-      environment = local.task_envs
+      environment = concat(local.task_envs, [{name  = "SERVER_TYPE", value = "thrust"}])
       secrets     = local.task_secrets
       logConfiguration = {
         logDriver = "awslogs"
@@ -111,10 +111,9 @@ resource "aws_ecs_task_definition" "task_definition" {
 }
 
 module "background_service" {
-  count = var.background_service_enabled ? 1 : 0
   source = "./modules/background_service"
   task_config = {
-    environment        = local.background_task_envs
+    environment        = local.task_envs
     secrets            = local.task_secrets
     cpu                = 1024
     memory             = 2048

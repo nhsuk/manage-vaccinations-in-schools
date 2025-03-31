@@ -64,7 +64,7 @@ resource "aws_ecs_task_definition" "this" {
           hostPort      = 4000
         }
       ]
-      environment = var.task_config.environment
+      environment = concat(var.task_config.environment, [{name  = "SERVER_TYPE", value = "background"}])
       secrets     = var.task_config.secrets
       logConfiguration = {
         logDriver = "awslogs"
@@ -75,7 +75,7 @@ resource "aws_ecs_task_definition" "this" {
         }
       }
       healthCheck = {
-        command     = ["CMD-SHELL", "curl -f http://localhost:4000/up || exit 1"]
+        command     = ["CMD-SHELL", "curl -f http://localhost:4000 || exit 1"]
         interval    = 30
         timeout     = 5
         retries     = 3
