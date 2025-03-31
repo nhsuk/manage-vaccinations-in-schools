@@ -5,7 +5,43 @@ on:
   workflow_call:
 
 jobs:
+  check-image-presence:
+    name: Check if images already exist
+    runs-on: ubuntu-latest
+    outputs:
+      build_needed: ${{ steps.check_image.outputs.BUILD_NEEDED }}
+    steps:
+      - name: Configure AWS Dev Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::393416225559:role/GitHubActionsRole
+          aws-region: eu-west-2
+      - name: Check if dev image exists
+        run: |
+          if aws ecr describe-images --repository-name mavis/webapp --image-ids imageTag=${{ github.sha }} > /dev/null 2>&1; then
+            echo "Dev image with given tag already exists"
+          else
+            echo "Dev image does not exist. Build needed"
+            echo "BUILD_NEEDED=true" >> $GITHUB_ENV
+          fi
+      - name: Configure AWS Prod credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::820242920762:role/GitHubActionsRole
+          aws-region: eu-west-2
+      - name: Check if prod image exists
+        id: check_image
+        run: |
+          if [ -e $BUILD_NEEDED ] && aws ecr describe-images --repository-name mavis/webapp --image-ids imageTag=${{ github.sha }} > /dev/null 2>&1; then
+            echo "Prod and dev images with given tag already exist. No build needed"
+          else
+            echo "At least one image does not exist. Build needed"
+            echo "BUILD_NEEDED=true" >> $GITHUB_ENV
+          fi
+
   build:
+    needs: check-image-presence
+    if: ${{ needs.check-images-presence.outputs.build_needed == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
