@@ -93,7 +93,7 @@ describe "Import child records" do
       "Name and NHS numberPostcodeSchoolDate of birth"
     )
     expect(page).to have_content("SMITH, Jimmy")
-    expect(page).to have_content(/NHS number.*123.*456.*7890/)
+    expect(page).to have_content(/NHS number.*999.*000.*0018/)
     expect(page).to have_content("Date of birth 1 January 2010")
     expect(page).to have_content("Postcode SW1A 1AA")
   end
@@ -133,7 +133,7 @@ describe "Import child records" do
       "Name and NHS numberPostcodeSchoolDate of birth"
     )
     expect(page).to have_content(
-      /Name.*and.*NHS.*number.*SMITH.*Jimmy.*123.*456.*7891/
+      /Name.*and.*NHS.*number.*SMITH.*Jimmy.*999.*000.*0026/
     )
     expect(page).to have_content("Date of birth 2 January 2010")
     expect(page).to have_content("Postcode SW1A 1AA")
