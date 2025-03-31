@@ -111,6 +111,7 @@ resource "aws_ecs_task_definition" "task_definition" {
 }
 
 module "background_service" {
+  count = var.background_service_enabled ? 1 : 0
   source = "./modules/background_service"
   task_config = {
     environment        = local.background_task_envs

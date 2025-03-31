@@ -21,5 +21,6 @@ http_hosts = {
   MAVIS__HOST                        = "test.mavistesting.com"
   MAVIS__GIVE_OR_REFUSE_CONSENT_HOST = "test.mavistesting.com"
 }
-minimum_replicas = 3
-appspec_bucket   = "nhse-mavis-appspec-bucket-test"
+minimum_replicas           = 3
+appspec_bucket             = "nhse-mavis-appspec-bucket-test"
+background_service_enabled = true

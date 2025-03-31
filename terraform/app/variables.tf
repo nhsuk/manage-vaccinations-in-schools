@@ -286,3 +286,9 @@ variable "maximum_replicas" {
   default     = 2
   description = "Maximum amount of allowed replicas"
 }
+
+variable "background_service_enabled" {
+  default     = false
+  type        = bool
+  description = "This will create a separate ECS task for background jobs and prevent user-facing tasks from executing background jobs."
+}
