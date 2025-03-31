@@ -17,4 +17,3 @@ jobs:
     uses: ./.github/workflows/deploy-mavis.yml
     with:
       environment: ${{ matrix.environment }}
-      image_tag: ${{ github.sha }}
