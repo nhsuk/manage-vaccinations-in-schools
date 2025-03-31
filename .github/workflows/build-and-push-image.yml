@@ -4,6 +4,9 @@ on:
   workflow_dispatch:
   workflow_call:
 
+concurrency:
+  group: build-and-push-image-${{ github.sha }}
+
 jobs:
   check-image-presence:
     name: Check if images already exist
@@ -24,8 +27,6 @@ jobs:
             echo "Dev image with given tag already exists"
           else
             echo "Dev image does not exist. Build needed"
-            echo "$(aws ecr describe-images --repository-name mavis/webapp --image-ids imageTag=${{ github.sha }})"
-          
             echo "BUILD_NEEDED=true" >> $GITHUB_ENV
           fi
       - name: Configure AWS Prod credentials
@@ -40,8 +41,6 @@ jobs:
             echo "Prod and dev images with given tag already exist. No build needed"
           else
             echo "At least one image does not exist. Build needed"
-            echo "$(aws ecr describe-images --repository-name mavis/webapp --image-ids imageTag=${{ github.sha }})"
-
             echo "BUILD_NEEDED=true" >> $GITHUB_OUTPUT
           fi
 
