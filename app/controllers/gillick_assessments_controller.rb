@@ -1,10 +1,8 @@
 # frozen_string_literal: true
 
 class GillickAssessmentsController < ApplicationController
-  before_action :set_session
-  before_action :set_patient
-  before_action :set_patient_session
-  before_action :set_programme
+  include PatientSessionProgrammeConcern
+
   before_action :set_gillick_assessment
 
   def edit
@@ -23,29 +21,6 @@ class GillickAssessmentsController < ApplicationController
   end
 
   private
-
-  def set_session
-    @session =
-      policy_scope(Session).includes(:programmes).find_by!(
-        slug: params[:session_slug]
-      )
-  end
-
-  def set_patient
-    @patient = policy_scope(Patient).find(params[:patient_id])
-  end
-
-  def set_patient_session
-    @patient_session =
-      PatientSession.find_by!(session: @session, patient: @patient)
-  end
-
-  def set_programme
-    @programme =
-      @patient_session.programmes.find { it.type == params[:programme_type] }
-
-    raise ActiveRecord::RecordNotFound if @programme.nil?
-  end
 
   def set_gillick_assessment
     @gillick_assessment =
