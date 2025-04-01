@@ -137,6 +137,13 @@ describe "Delete vaccination record" do
         session: @session,
         batch:
       )
+
+    create(
+      :patient_session_session_status,
+      :vaccinated,
+      patient_session: @patient_session,
+      programme: @programme
+    )
   end
 
   def and_a_confirmation_email_has_been_sent

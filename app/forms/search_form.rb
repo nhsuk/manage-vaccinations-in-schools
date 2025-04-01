@@ -53,7 +53,7 @@ class SearchForm
     end
 
     if (status = session_status&.to_sym).present?
-      scope = scope.select { it.session_outcome.status.values.include?(status) }
+      scope = scope.has_session_status(status, programme:)
     end
 
     if (status = register_status&.to_sym).present?

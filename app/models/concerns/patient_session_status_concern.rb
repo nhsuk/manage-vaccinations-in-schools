@@ -32,7 +32,8 @@ module PatientSessionStatusConcern
         "consent_refused"
       elsif patient.triage_status(programme:).do_not_vaccinate?
         "triaged_do_not_vaccinate"
-      elsif session_outcome.not_vaccinated?(programme)
+      elsif !session_status(programme:).none_yet? &&
+            !session_status(programme:).vaccinated?
         "unable_to_vaccinate"
       elsif patient.consent_status(programme:).given? &&
             patient.triage_status(programme:).safe_to_vaccinate?

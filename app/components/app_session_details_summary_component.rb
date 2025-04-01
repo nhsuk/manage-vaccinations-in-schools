@@ -19,7 +19,7 @@ class AppSessionDetailsSummaryComponent < ViewComponent::Base
   delegate :programmes, to: :session
 
   def cohort_row
-    count = patient_sessions.length
+    count = patient_sessions.count
     href = new_draft_class_import_path(session)
 
     {
@@ -57,7 +57,7 @@ class AppSessionDetailsSummaryComponent < ViewComponent::Base
     texts =
       session.programmes.map do |programme|
         count =
-          patient_sessions.count { it.session_outcome.vaccinated?(programme) }
+          patient_sessions.has_session_status(:vaccinated, programme:).count
 
         "#{I18n.t("vaccinations_given", count:)} for #{programme.name}"
       end
@@ -66,7 +66,7 @@ class AppSessionDetailsSummaryComponent < ViewComponent::Base
       session_outcome_path(
         session,
         search_form: {
-          session_status: PatientSession::SessionOutcome::VACCINATED
+          session_status: "vaccinated"
         }
       )
 

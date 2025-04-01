@@ -15,7 +15,7 @@ class SessionProgrammesForm
     return false if invalid?
 
     session.programme_ids = programme_ids
-    StatusUpdater.call(session:)
+    StatusUpdaterJob.perform_later(session:)
 
     true
   end

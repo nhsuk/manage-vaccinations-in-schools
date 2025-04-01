@@ -117,7 +117,11 @@ class Reports::CareplusExporter
     patient = patient_session.patient
 
     vaccination_records =
-      patient_session.session_outcome.all[programme].select(&:administered?)
+      patient
+        .latest_vaccination_records(programme:)
+        .select do
+          it.administered? && it.session_id == patient_session.session_id
+        end
 
     if vaccination_records.any?
       [existing_row(patient:, patient_session:, vaccination_records:)]

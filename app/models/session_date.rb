@@ -26,6 +26,8 @@ class SessionDate < ApplicationRecord
 
   scope :for_session, -> { where("session_id = sessions.id") }
 
+  scope :today, -> { where(value: Date.current) }
+
   validates :value,
             uniqueness: {
               scope: :session
@@ -35,7 +37,11 @@ class SessionDate < ApplicationRecord
               less_than_or_equal_to: :latest_possible_value
             }
 
-  delegate :today?, :future?, to: :value
+  delegate :today?, :past?, :future?, to: :value
+
+  def today_or_past?
+    today? || past?
+  end
 
   def today_or_future?
     today? || future?
