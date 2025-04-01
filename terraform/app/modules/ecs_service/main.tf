@@ -1,5 +1,5 @@
 resource "aws_security_group" "this" {
-  name        = "ecs-background-service-${var.environment}"
+  name        = "${var.server_type}-service-${var.environment}"
   description = "Security Group for communication with Background ECS Service"
   vpc_id      = var.network_params.vpc_id
   lifecycle {
@@ -7,7 +7,7 @@ resource "aws_security_group" "this" {
   }
 }
 
-resource "aws_security_group_rule" "this" {
+resource "aws_security_group_rule" "egress_all" {
   type              = "egress"
   from_port         = 0
   to_port           = 0
@@ -17,7 +17,7 @@ resource "aws_security_group_rule" "this" {
 }
 
 resource "aws_ecs_service" "this" {
-  name                              = "mavis-${var.environment}-background"
+  name                              = "mavis-${var.environment}-${var.server_type}"
   cluster                           = var.cluster_id
   task_definition                   = aws_ecs_task_definition.this.arn
   desired_count                     = 1
@@ -30,23 +30,34 @@ resource "aws_ecs_service" "this" {
     security_groups = [aws_security_group.this.id]
   }
   deployment_controller {
-    type = "ECS"
+    type = var.deployment_controller
   }
   deployment_circuit_breaker {
     enable   = true
     rollback = true
   }
+  dynamic "load_balancer" {
+    for_each = var.loadbalancer != null ? [1] : []
+    content {
+      target_group_arn = var.loadbalancer.target_group_arn
+      container_name   = "mavis-application"
+      container_port   = var.loadbalancer.container_port
+    }
+  }
   deployment_minimum_healthy_percent = 100
   deployment_maximum_percent         = 200
   lifecycle {
     ignore_changes = [
-      task_definition
+      task_definition,
+      load_balancer,
+      desired_count
     ]
+    create_before_destroy = true
   }
 }
 
 resource "aws_ecs_task_definition" "this" {
-  family                   = "background-task-definition-${var.environment}"
+  family                   = "${var.server_type}-task-definition-${var.environment}"
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
   cpu                      = 1024
@@ -55,7 +66,7 @@ resource "aws_ecs_task_definition" "this" {
   task_role_arn            = var.task_config.task_role_arn
   container_definitions = jsonencode([
     {
-      name      = var.task_config.container_name
+      name      = "mavis-application"
       image     = var.task_config.docker_image
       essential = true
       portMappings = [
@@ -64,18 +75,18 @@ resource "aws_ecs_task_definition" "this" {
           hostPort      = 4000
         }
       ]
-      environment = concat(var.task_config.environment, [{name  = "SERVER_TYPE", value = "background"}])
+      environment = concat(var.task_config.environment, [{name  = "SERVER_TYPE", value = var.server_type}])
       secrets     = var.task_config.secrets
       logConfiguration = {
         logDriver = "awslogs"
         options = {
           awslogs-group         = var.task_config.log_group_name
           awslogs-region        = var.task_config.region
-          awslogs-stream-prefix = "${var.environment}-background-logs"
+          awslogs-stream-prefix = "${var.environment}-${var.server_type}-logs"
         }
       }
       healthCheck = {
-        command     = ["CMD-SHELL", "curl -f http://localhost:4000 || exit 1"]
+        command     = var.task_config.health_check_command
         interval    = 30
         timeout     = 5
         retries     = 3

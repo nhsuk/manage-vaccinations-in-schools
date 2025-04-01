@@ -30,5 +30,5 @@ output "mavis_cluster_name" {
 
 output "mavis_service_name" {
   description = "The name of the ECS service"
-  value       = aws_ecs_service.service.name
+  value       = module.web_service.service.name
 }

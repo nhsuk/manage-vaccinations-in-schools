@@ -37,6 +37,7 @@ resource "aws_ecs_cluster" "cluster" {
   }
 }
 
+#TODO: Remove after release
 resource "aws_ecs_service" "service" {
   name                              = "mavis-${var.environment}"
   cluster                           = aws_ecs_cluster.cluster.id
@@ -52,8 +53,8 @@ resource "aws_ecs_service" "service" {
   }
 
   load_balancer {
-    target_group_arn = aws_lb_target_group.blue.arn
-    container_name   = local.container_name
+    target_group_arn = aws_lb_target_group.green.arn
+    container_name   = "mavis-${var.environment}"
     container_port   = 4000
   }
   deployment_controller {
@@ -69,6 +70,7 @@ resource "aws_ecs_service" "service" {
   }
 }
 
+#TODO: Remove after release
 resource "aws_ecs_task_definition" "task_definition" {
   family                   = "task-definition-${var.environment}"
   requires_compatibilities = ["FARGATE"]
@@ -79,7 +81,7 @@ resource "aws_ecs_task_definition" "task_definition" {
   task_role_arn            = aws_iam_role.ecs_task_role.arn
   container_definitions = jsonencode([
     {
-      name      = local.container_name
+      name      = "mavis-${var.environment}"
       image     = "${var.account_id}.dkr.ecr.eu-west-2.amazonaws.com/${var.docker_image}@${var.image_digest}"
       essential = true
       portMappings = [
@@ -88,7 +90,7 @@ resource "aws_ecs_task_definition" "task_definition" {
           hostPort      = 4000
         }
       ]
-      environment = concat(local.task_envs, [{name  = "SERVER_TYPE", value = "thrust"}])
+      environment = concat(local.task_envs, [{ name = "SERVER_TYPE", value = "thrust" }])
       secrets     = local.task_secrets
       logConfiguration = {
         logDriver = "awslogs"
@@ -110,25 +112,67 @@ resource "aws_ecs_task_definition" "task_definition" {
   depends_on = [aws_cloudwatch_log_group.ecs_log_group]
 }
 
-module "background_service" {
-  source = "./modules/background_service"
+resource "aws_security_group_rule" "web_service_alb_ingress" {
+  type                     = "ingress"
+  from_port                = 4000
+  to_port                  = 4000
+  protocol                 = "tcp"
+  security_group_id        = module.web_service.security_group_id
+  source_security_group_id = aws_security_group.lb_service_sg.id
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+module "web_service" {
+  source = "./modules/ecs_service"
   task_config = {
-    environment        = local.task_envs
-    secrets            = local.task_secrets
-    cpu                = 1024
-    memory             = 2048
-    docker_image       = "${var.account_id}.dkr.ecr.eu-west-2.amazonaws.com/${var.docker_image}@${var.image_digest}"
-    container_name     = "${var.container_name}-background-${var.environment}"
-    execution_role_arn = aws_iam_role.ecs_task_execution_role.arn
-    task_role_arn      = aws_iam_role.ecs_task_role.arn
-    log_group_name     = aws_cloudwatch_log_group.ecs_log_group.name
-    region             = var.region
+    environment         = local.task_envs
+    secrets             = local.task_secrets
+    cpu                 = 1024
+    memory              = 2048
+    docker_image        = "${var.account_id}.dkr.ecr.eu-west-2.amazonaws.com/${var.docker_image}@${var.image_digest}"
+    execution_role_arn  = aws_iam_role.ecs_task_execution_role.arn
+    task_role_arn       = aws_iam_role.ecs_task_role.arn
+    log_group_name      = aws_cloudwatch_log_group.ecs_log_group.name
+    region              = var.region
+    health_check_command = ["CMD-SHELL", "curl -f http://localhost:4000/up || exit 1"]
   }
   network_params = {
     subnets = [aws_subnet.private_subnet_a.id, aws_subnet.private_subnet_b.id]
     vpc_id  = aws_vpc.application_vpc.id
   }
-  depends_on = [aws_cloudwatch_log_group.ecs_log_group]
+  loadbalancer = {
+    target_group_arn = aws_lb_target_group.green.arn
+    container_port   = 4000
+  }
   cluster_id  = aws_ecs_cluster.cluster.id
   environment = var.environment
+  server_type = "thrust"
+  desired_count = var.minimum_replicas
+  deployment_controller = "CODE_DEPLOY"
+}
+
+module "good_job_service" {
+  source = "./modules/ecs_service"
+  task_config = {
+    environment         = local.task_envs
+    secrets             = local.task_secrets
+    cpu                 = 1024
+    memory              = 2048
+    docker_image        = "${var.account_id}.dkr.ecr.eu-west-2.amazonaws.com/${var.docker_image}@${var.image_digest}"
+    execution_role_arn  = aws_iam_role.ecs_task_execution_role.arn
+    task_role_arn       = aws_iam_role.ecs_task_role.arn
+    log_group_name      = aws_cloudwatch_log_group.ecs_log_group.name
+    region              = var.region
+    health_check_command = ["CMD-SHELL", "curl -f http://localhost:4000 || exit 1"]
+  }
+  network_params = {
+    subnets = [aws_subnet.private_subnet_a.id, aws_subnet.private_subnet_b.id]
+    vpc_id  = aws_vpc.application_vpc.id
+  }
+  cluster_id  = aws_ecs_cluster.cluster.id
+  environment = var.environment
+  server_type = "good-job"
+  desired_count = 1
 }
