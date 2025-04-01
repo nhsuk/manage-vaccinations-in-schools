@@ -14,7 +14,7 @@ jobs:
     permissions:
       id-token: write
     outputs:
-      build-needed: ${{ steps.check-image.outputs.BUILD_NEEDED }}
+      build-needed: ${{ steps.check-image.outputs.build-needed }}
     steps:
       - name: Configure AWS Dev Credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -41,7 +41,7 @@ jobs:
             echo "Production and dev images with given tag already exist. No build needed"
           else
             echo "At least one image does not exist. Build needed"
-            echo "BUILD_NEEDED=true" >> $GITHUB_OUTPUT
+            echo "build-needed=true" >> $GITHUB_OUTPUT
           fi
 
   build:
