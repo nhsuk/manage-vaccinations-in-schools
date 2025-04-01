@@ -8,11 +8,8 @@ on:
 jobs:
   test:
     uses: ./.github/workflows/test.yml
-  build-and-push-image:
-    needs: test
-    uses: ./.github/workflows/build-and-push-image.yml
   deploy-mavis:
-    needs: build-and-push-image
+    needs: test
     strategy:
       fail-fast: false
       matrix:
@@ -20,4 +17,3 @@ jobs:
     uses: ./.github/workflows/deploy-mavis.yml
     with:
       environment: ${{ matrix.environment }}
-      image_tag: ${{ github.sha }}

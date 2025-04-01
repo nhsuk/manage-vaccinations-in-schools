@@ -4,8 +4,49 @@ on:
   workflow_dispatch:
   workflow_call:
 
+concurrency:
+  group: build-and-push-image-${{ github.sha }}
+
 jobs:
+  check-image-presence:
+    name: Check if images already exist
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+    outputs:
+      build-needed: ${{ steps.check-image.outputs.build-needed }}
+    steps:
+      - name: Configure AWS Dev Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::393416225559:role/GithubDeployMavisAndInfrastructure
+          aws-region: eu-west-2
+      - name: Check if dev image exists
+        run: |
+          if aws ecr describe-images --repository-name mavis/webapp --image-ids imageTag=${{ github.sha }} > /dev/null 2>&1; then
+            echo "Dev image with given tag already exists"
+          else
+            echo "Dev image does not exist. Build needed"
+            echo "BUILD_NEEDED=true" >> $GITHUB_ENV
+          fi
+      - name: Configure AWS Production credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::820242920762:role/GithubDeployMavisAndInfrastructure
+          aws-region: eu-west-2
+      - name: Check if production image exists
+        id: check-image
+        run: |
+          if [ -e $BUILD_NEEDED ] && aws ecr describe-images --repository-name mavis/webapp --image-ids imageTag=${{ github.sha }} > /dev/null 2>&1; then
+            echo "Production and dev images with given tag already exist. No build needed"
+          else
+            echo "At least one image does not exist. Build needed"
+            echo "build-needed=true" >> $GITHUB_OUTPUT
+          fi
+
   build:
+    needs: check-image-presence
+    if: needs.check-image-presence.outputs.build-needed == 'true'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -27,8 +68,8 @@ jobs:
     strategy:
       matrix:
         aws-role:
-          - arn:aws:iam::820242920762:role/GitHubActionsRole
-          - arn:aws:iam::393416225559:role/GitHubActionsRole
+          - arn:aws:iam::820242920762:role/GithubDeployMavisAndInfrastructure
+          - arn:aws:iam::393416225559:role/GithubDeployMavisAndInfrastructure
     steps:
       - name: Download Docker image
         uses: actions/download-artifact@v4

@@ -10,10 +10,6 @@ on:
       environment:
         required: true
         type: string
-      image_tag:
-        description: Docker image tag of the image to deploy
-        required: true
-        type: string
   workflow_dispatch:
     inputs:
       environment:
@@ -28,13 +24,12 @@ on:
           - training
           - production
           - copilotmigration
-      image_tag:
-        description: Docker image tag of the image to deploy
-        required: true
-        type: string
 
 jobs:
+  build-and-push-image:
+    uses: ./.github/workflows/build-and-push-image.yml
   deploy-infrastructure:
+    needs: build-and-push-image
     uses: ./.github/workflows/deploy-infrastructure.yml
     with:
       environment: ${{ inputs.environment }}
@@ -43,4 +38,4 @@ jobs:
     uses: ./.github/workflows/deploy-application.yml
     with:
       environment: ${{ inputs.environment }}
-      image_tag: ${{ inputs.image_tag }}
+      image_tag: ${{ github.sha }}
