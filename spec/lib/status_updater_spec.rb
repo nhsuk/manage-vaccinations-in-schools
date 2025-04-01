@@ -13,6 +13,10 @@ describe StatusUpdater do
       expect { call }.not_to change(Patient::ConsentStatus, :count)
     end
 
+    it "doesn't create any registration statuses" do
+      expect { call }.not_to change(PatientSession::RegistrationStatus, :count)
+    end
+
     it "doesn't create any triage statuses" do
       expect { call }.not_to change(Patient::TriageStatus, :count)
     end
@@ -33,6 +37,13 @@ describe StatusUpdater do
     it "creates a consent status" do
       expect { call }.to change(patient.consent_statuses, :count).by(1)
       expect(patient.consent_statuses.first).to be_no_response
+    end
+
+    it "creates a registration status" do
+      expect { call }.to change {
+        patient_session.reload.registration_status
+      }.from(nil)
+      expect(patient_session.registration_status).to be_unknown
     end
 
     it "creates a triage status" do
@@ -61,6 +72,10 @@ describe StatusUpdater do
       expect { call }.not_to change(Patient::ConsentStatus, :count)
     end
 
+    it "doesn't create any registration statuses" do
+      expect { call }.not_to change(PatientSession::RegistrationStatus, :count)
+    end
+
     it "doesn't create any triage statuses" do
       expect { call }.not_to change(Patient::TriageStatus, :count)
     end
@@ -84,6 +99,13 @@ describe StatusUpdater do
       expect { call }.to change(patient.consent_statuses, :count).by(2)
       expect(patient.consent_statuses.first).to be_no_response
       expect(patient.consent_statuses.second).to be_no_response
+    end
+
+    it "creates a registration status" do
+      expect { call }.to change {
+        patient_session.reload.registration_status
+      }.from(nil)
+      expect(patient_session.registration_status).to be_unknown
     end
 
     it "creates a triage status for both programmes" do

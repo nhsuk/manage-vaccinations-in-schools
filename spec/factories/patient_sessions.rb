@@ -41,9 +41,25 @@ FactoryBot.define do
       association :patient, organisation:, school:, home_educated:, year_group:
     end
 
+    trait :unknown_attendance do
+      registration_status do
+        association(
+          :patient_session_registration_status,
+          patient_session: instance
+        )
+      end
+    end
+
     trait :in_attendance do
       session_attendances do
         [association(:session_attendance, :present, patient_session: instance)]
+      end
+      registration_status do
+        association(
+          :patient_session_registration_status,
+          :attending,
+          patient_session: instance
+        )
       end
     end
 

@@ -34,6 +34,7 @@ class PatientSession < ApplicationRecord
   has_many :gillick_assessments, -> { order(:created_at) }
   has_many :pre_screenings, -> { order(:created_at) }
   has_many :session_statuses
+  has_one :registration_status
 
   has_one :location, through: :session
   has_one :team, through: :session
@@ -69,7 +70,7 @@ class PatientSession < ApplicationRecord
   scope :preload_for_status,
         -> do
           eager_load(:patient).preload(
-            :session_attendances,
+            :registration_status,
             :session_statuses,
             patient: %i[consent_statuses triage_statuses vaccination_statuses],
             session: :programmes
@@ -111,6 +112,17 @@ class PatientSession < ApplicationRecord
             Patient::ConsentStatus
               .where("patient_id = patient_sessions.patient_id")
               .where(status:, programme:)
+              .arel
+              .exists
+          )
+        end
+
+  scope :has_registration_status,
+        ->(status) do
+          where(
+            PatientSession::RegistrationStatus
+              .where("patient_session_id = patient_sessions.id")
+              .where(status:)
               .arel
               .exists
           )
@@ -166,17 +178,11 @@ class PatientSession < ApplicationRecord
       session_statuses.build(programme:)
   end
 
-  def register_outcome
-    @register_outcome ||= PatientSession::RegisterOutcome.new(self)
-  end
-
-  def ready_for_vaccinator?(programme: nil)
-    return false if register_outcome.unknown? || register_outcome.not_attending?
-
-    programmes_to_check = programme ? [programme] : programmes
-
-    programmes_to_check.any? do
-      patient.consent_given_and_safe_to_vaccinate?(programme: it)
+  def todays_attendance
+    if (session_date = session.session_dates.today.first)
+      session_attendances.includes(:session_date).find_or_initialize_by(
+        session_date:
+      )
     end
   end
 
@@ -195,6 +201,11 @@ class PatientSession < ApplicationRecord
   end
 
   def outstanding_programmes
+    if registration_status.nil? || registration_status.unknown? ||
+         registration_status.not_attending?
+      return []
+    end
+
     # If this patient hasn't been seen yet by a nurse for any of the programmes,
     # we don't want to show the banner.
     all_programmes_none_yet =
@@ -203,7 +214,8 @@ class PatientSession < ApplicationRecord
     return [] if all_programmes_none_yet
 
     programmes.select do |programme|
-      session_status(programme:).none_yet? && ready_for_vaccinator?(programme:)
+      session_status(programme:).none_yet? &&
+        patient.consent_given_and_safe_to_vaccinate?(programme:)
     end
   end
 end

@@ -12,6 +12,7 @@ class StatusUpdater
 
   def call
     update_consent_statuses!
+    update_registration_statuses!
     update_session_statuses!
     update_triage_statuses!
     update_vaccination_statuses!
@@ -40,6 +41,34 @@ class StatusUpdater
 
         Patient::ConsentStatus.import!(
           batch,
+          on_duplicate_key_update: {
+            conflict_target: [:id],
+            columns: %i[status]
+          }
+        )
+      end
+  end
+
+  def update_registration_statuses!
+    PatientSession::RegistrationStatus.import!(
+      %i[patient_session_id],
+      registration_statuses_to_import,
+      on_duplicate_key_ignore: true
+    )
+
+    PatientSession::RegistrationStatus
+      .where(patient_session_id: patient_sessions.select(:id))
+      .includes(
+        :patient,
+        :session_attendance,
+        :vaccination_records,
+        session: :programmes
+      )
+      .find_in_batches(batch_size: 10_000) do |batch|
+        batch.each(&:assign_status)
+
+        PatientSession::RegistrationStatus.import!(
+          batch.select(&:changed?),
           on_duplicate_key_update: {
             conflict_target: [:id],
             columns: %i[status]
@@ -139,6 +168,18 @@ class StatusUpdater
           programme_ids_per_birth_academic_year
             .fetch(birth_academic_year, [])
             .map { [patient_session_id, it] }
+        end
+  end
+
+  def registration_statuses_to_import
+    @registration_statuses_to_import ||=
+      patient_sessions
+        .joins(:patient)
+        .pluck(:id, :"patients.birth_academic_year")
+        .filter_map do |patient_session_id, birth_academic_year|
+          if programme_ids_per_birth_academic_year.key?(birth_academic_year)
+            [patient_session_id]
+          end
         end
   end
 
