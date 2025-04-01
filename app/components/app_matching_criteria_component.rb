@@ -13,9 +13,7 @@ class AppMatchingCriteriaComponent < ViewComponent::Base
     @consent_form = consent_form
   end
 
-  def parent_full_name
-    @consent_form.parent_full_name
-  end
+  delegate :parent_full_name, to: :@consent_form
 
   def child_full_name
     @consent_form.full_name
