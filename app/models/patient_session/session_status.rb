@@ -92,7 +92,8 @@ class PatientSession::SessionStatus < ApplicationRecord
   end
 
   def status_should_be_refused?
-    vaccination_record&.refused? || latest_consents.any?(&:response_refused?)
+    vaccination_record&.refused? ||
+      (latest_consents.any? && latest_consents.all?(&:response_refused?))
   end
 
   def status_should_be_absent_from_session?
