@@ -10,9 +10,8 @@
 #
 # Indexes
 #
-#  idx_on_organisation_id_programme_id_892684ca8e    (organisation_id,programme_id) UNIQUE
-#  index_organisation_programmes_on_organisation_id  (organisation_id)
-#  index_organisation_programmes_on_programme_id     (programme_id)
+#  idx_on_organisation_id_programme_id_892684ca8e  (organisation_id,programme_id) UNIQUE
+#  index_organisation_programmes_on_programme_id   (programme_id)
 #
 # Foreign Keys
 #

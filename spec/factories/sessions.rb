@@ -18,7 +18,6 @@
 # Indexes
 #
 #  idx_on_organisation_id_location_id_academic_year_3496b72d0c  (organisation_id,location_id,academic_year) UNIQUE
-#  index_sessions_on_organisation_id                            (organisation_id)
 #
 # Foreign Keys
 #
