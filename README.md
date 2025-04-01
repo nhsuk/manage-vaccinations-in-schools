@@ -84,7 +84,7 @@ git push --tags origin release
 ```
 
 Once the `release` branch is updated on GitHub, create the release in GitHub UI
-with the release tag, e.g. v1.0.0, copying the release notes from the release
+with the release tag, e.g. v1.0.0, moving the release notes from the release
 candidate. Now it's time to deploy. Start with a deploy to `training` or
 `preview` to ensure the tagged version is correct. Once that's done you can
 deploy to production.
