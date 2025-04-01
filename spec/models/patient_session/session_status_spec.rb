@@ -91,6 +91,17 @@ describe PatientSession::SessionStatus do
       it { should be(:refused) }
     end
 
+    context "with conflicting consent" do
+      before do
+        create(:consent, :refused, patient:, programme:)
+
+        parent = create(:parent_relationship, patient:).parent
+        create(:consent, :given, patient:, programme:, parent:)
+      end
+
+      it { should be(:none_yet) }
+    end
+
     context "when triaged as do not vaccinate" do
       before { create(:triage, :do_not_vaccinate, patient:, programme:) }
 
