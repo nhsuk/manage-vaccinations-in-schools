@@ -9,10 +9,7 @@ class PatientsController < ApplicationController
   before_action :record_access_log_entry, only: %i[show log]
 
   def index
-    patients =
-      @form.apply(
-        policy_scope(Patient).includes(:school).not_deceased.order_by_name
-      )
+    patients = @form.apply(policy_scope(Patient).includes(:school).not_deceased)
 
     @pagy, @patients = pagy(patients)
 
