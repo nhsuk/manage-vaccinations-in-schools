@@ -123,7 +123,6 @@ module "background_service" {
     task_role_arn      = aws_iam_role.ecs_task_role.arn
     log_group_name     = aws_cloudwatch_log_group.ecs_log_group.name
     region             = var.region
-    log_stream_prefix  = "${var.environment}-background-logs"
   }
   network_params = {
     subnets = [aws_subnet.private_subnet_a.id, aws_subnet.private_subnet_b.id]

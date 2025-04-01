@@ -20,7 +20,6 @@ variable "task_config" {
     task_role_arn      = string
     log_group_name     = string
     region             = string
-    log_stream_prefix  = string
   })
   description = "Task configuration variables for the ECS background service"
   nullable    = false

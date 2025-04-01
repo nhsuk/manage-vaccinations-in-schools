@@ -80,7 +80,7 @@ USER 1000:1000
 # Entrypoint prepares the database.
 ENTRYPOINT ["/rails/bin/docker-entrypoint"]
 
-# Start server via Thruster by default, this can be overwritten by envionment variable
+# Start server via Thruster by default, this can be overwritten by environment variable
 EXPOSE 4000
 ENV HTTP_PORT=4000
 ENV GOOD_JOB_PROBE_PORT=4000

@@ -71,7 +71,7 @@ resource "aws_ecs_task_definition" "this" {
         options = {
           awslogs-group         = var.task_config.log_group_name
           awslogs-region        = var.task_config.region
-          awslogs-stream-prefix = var.task_config.log_stream_prefix
+          awslogs-stream-prefix = "${var.environment}-background-logs"
         }
       }
       healthCheck = {
