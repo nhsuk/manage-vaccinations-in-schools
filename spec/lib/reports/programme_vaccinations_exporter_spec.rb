@@ -463,13 +463,13 @@ describe Reports::ProgrammeVaccinationsExporter do
           before do
             performed_by =
               create(:user, given_name: "Test", family_name: "Nurse")
-            updated_at = Date.new(2024, 1, 1)
+            created_at = Date.new(2024, 1, 1)
             create(
               :gillick_assessment,
               :competent,
               patient_session:,
               performed_by:,
-              updated_at:
+              created_at:
             )
 
             Flipper.enable(:report_gillick_notify_parents)
