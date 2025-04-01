@@ -65,7 +65,7 @@ class Patient < ApplicationRecord
   has_many :access_log_entries
   has_many :consent_notifications
   has_many :consent_statuses
-  has_many :consents, -> { order(:created_at) }
+  has_many :consents
   has_many :notify_log_entries
   has_many :parent_relationships
   has_many :patient_sessions
@@ -73,17 +73,13 @@ class Patient < ApplicationRecord
   has_many :school_moves
   has_many :session_notifications
   has_many :triage_statuses
-  has_many :triages, -> { order(:created_at) }
-  has_many :vaccination_records, -> { kept.order(:performed_at) }
+  has_many :triages
+  has_many :vaccination_records, -> { kept }
   has_many :vaccination_statuses
 
   has_many :parents, through: :parent_relationships
-  has_many :gillick_assessments,
-           -> { order(:created_at) },
-           through: :patient_sessions
-  has_many :pre_screenings,
-           -> { order(:created_at) },
-           through: :patient_sessions
+  has_many :gillick_assessments, through: :patient_sessions
+  has_many :pre_screenings, through: :patient_sessions
   has_many :session_attendances, through: :patient_sessions
   has_many :sessions, through: :patient_sessions
 
@@ -282,33 +278,16 @@ class Patient < ApplicationRecord
       consent_statuses.build(programme:)
   end
 
-  def latest_consents(programme:)
-    ConsentGrouper.call(consents, programme:)
-  end
-
   def triage_status(programme:)
     # Use `find` to allow for preloading.
     triage_statuses.find { it.programme_id == programme.id } ||
       triage_statuses.build(programme:)
   end
 
-  def latest_triage(programme:)
-    triages
-      .select { it.programme_id == programme.id }
-      .reject(&:invalidated?)
-      .max_by(&:created_at)
-  end
-
   def vaccination_status(programme:)
     # Use `find` to allow for preloading.
     vaccination_statuses.find { it.programme_id == programme.id } ||
       vaccination_statuses.build(programme:)
-  end
-
-  def latest_vaccination_records(programme:)
-    vaccination_records
-      .select { it.programme_id == programme.id }
-      .reject(&:discarded?)
   end
 
   def consent_given_and_safe_to_vaccinate?(programme:)
@@ -444,13 +423,8 @@ class Patient < ApplicationRecord
   end
 
   def clear_sessions_for_current_academic_year!
-    patient_sessions
-      .includes(
-        :gillick_assessments,
-        :session_attendances,
-        :vaccination_records
-      )
-      .where(session: sessions_for_current_academic_year)
-      .find_each(&:destroy_if_safe!)
+    patient_sessions.where(
+      session: sessions_for_current_academic_year
+    ).destroy_all_if_safe
   end
 end

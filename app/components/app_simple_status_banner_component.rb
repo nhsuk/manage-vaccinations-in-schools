@@ -85,10 +85,12 @@ class AppSimpleStatusBannerComponent < ViewComponent::Base
   end
 
   def who_refused
-    patient
-      .latest_consents(programme:)
-      .select(&:response_refused?)
-      .last
+    consents =
+      patient.consents.where(programme:).not_invalidated.includes(:parent)
+
+    ConsentGrouper
+      .call(consents, programme:)
+      .find(&:response_refused?)
       &.who_responded
   end
 

@@ -5,18 +5,18 @@ class GillickAssessmentsController < ApplicationController
   before_action :set_patient
   before_action :set_patient_session
   before_action :set_programme
-  before_action :set_is_first_assessment
   before_action :set_gillick_assessment
 
   def edit
   end
 
   def update
-    @gillick_assessment.clear_changes_information
     @gillick_assessment.assign_attributes(gillick_assessment_params)
 
-    if !@gillick_assessment.changed? || @gillick_assessment.save
-      redirect_to session_patient_programme_path(patient_id: @patient.id)
+    if @gillick_assessment.valid?
+      @gillick_assessment.dup.save! if @gillick_assessment.changed?
+
+      redirect_to session_patient_programme_path(@session, @patient, @programme)
     else
       render :edit, status: :unprocessable_entity
     end
@@ -25,7 +25,10 @@ class GillickAssessmentsController < ApplicationController
   private
 
   def set_session
-    @session = policy_scope(Session).find_by!(slug: params[:session_slug])
+    @session =
+      policy_scope(Session).includes(:programmes).find_by!(
+        slug: params[:session_slug]
+      )
   end
 
   def set_patient
@@ -34,10 +37,7 @@ class GillickAssessmentsController < ApplicationController
 
   def set_patient_session
     @patient_session =
-      policy_scope(PatientSession).includes(
-        :gillick_assessments,
-        session: :programmes
-      ).find_by!(session: @session, patient: @patient)
+      PatientSession.find_by!(session: @session, patient: @patient)
   end
 
   def set_programme
@@ -47,16 +47,12 @@ class GillickAssessmentsController < ApplicationController
     raise ActiveRecord::RecordNotFound if @programme.nil?
   end
 
-  def set_is_first_assessment
-    @is_first_assessment = @patient_session.gillick_assessment(@programme).nil?
-  end
-
   def set_gillick_assessment
     @gillick_assessment =
-      authorize @patient_session.gillick_assessment(@programme)&.dup ||
-                  @patient_session.gillick_assessments.build(
-                    programme: @programme
-                  )
+      @patient_session
+        .gillick_assessments
+        .order(created_at: :desc)
+        .find_or_initialize_by(programme: @programme)
   end
 
   def gillick_assessment_params

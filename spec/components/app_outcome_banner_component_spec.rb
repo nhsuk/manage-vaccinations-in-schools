@@ -4,15 +4,7 @@ describe AppOutcomeBannerComponent do
   subject(:rendered) { render_inline(component) }
 
   let(:component) do
-    described_class.new(
-      patient_session:
-        PatientSession
-          .preload_for_status
-          .includes(patient: %i[triages vaccination_records])
-          .find(patient_session.id),
-      programme:,
-      current_user: user
-    )
+    described_class.new(patient_session:, programme:, current_user: user)
   end
 
   let(:user) { create(:user) }

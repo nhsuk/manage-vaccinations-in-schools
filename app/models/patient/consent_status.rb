@@ -24,9 +24,7 @@ class Patient::ConsentStatus < ApplicationRecord
   belongs_to :programme
 
   has_many :consents,
-           -> do
-             not_invalidated.response_provided.eager_load(:parent, :patient)
-           end,
+           -> { not_invalidated.response_provided.includes(:parent, :patient) },
            through: :patient
 
   enum :status,

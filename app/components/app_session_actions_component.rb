@@ -6,11 +6,10 @@ class AppSessionActionsComponent < ViewComponent::Base
     <%= govuk_summary_list(rows:) %>
   ERB
 
-  def initialize(session, patient_sessions:)
+  def initialize(session)
     super
 
     @session = session
-    @patient_sessions = patient_sessions
   end
 
   def render?
@@ -19,7 +18,9 @@ class AppSessionActionsComponent < ViewComponent::Base
 
   private
 
-  attr_reader :session, :patient_sessions
+  attr_reader :session
+
+  delegate :patient_sessions, to: :session
 
   delegate :programmes, to: :session
 
@@ -110,6 +111,9 @@ class AppSessionActionsComponent < ViewComponent::Base
       session.programmes.index_with do |programme|
         patient_sessions
           .has_registration_status(%w[attending completed])
+          .includes(
+            patient: %i[consent_statuses triage_statuses vaccination_statuses]
+          )
           .count do |patient_session|
             patient_session.patient.consent_given_and_safe_to_vaccinate?(
               programme:

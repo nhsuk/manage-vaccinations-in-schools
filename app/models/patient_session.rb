@@ -31,8 +31,8 @@ class PatientSession < ApplicationRecord
   belongs_to :patient
   belongs_to :session
 
-  has_many :gillick_assessments, -> { order(:created_at) }
-  has_many :pre_screenings, -> { order(:created_at) }
+  has_many :gillick_assessments
+  has_many :pre_screenings
   has_many :session_statuses
   has_one :registration_status
 
@@ -67,18 +67,10 @@ class PatientSession < ApplicationRecord
           )
         end
 
-  scope :preload_for_status,
-        -> do
-          eager_load(:patient).preload(
-            :registration_status,
-            :session_statuses,
-            patient: %i[consent_statuses triage_statuses vaccination_statuses],
-            session: :programmes
-          )
-        end
-
   scope :in_programmes,
-        ->(programmes) { merge(Patient.in_programmes(programmes)) }
+        ->(programmes) do
+          joins(:patient).merge(Patient.in_programmes(programmes))
+        end
 
   scope :search_by_name, ->(name) { merge(Patient.search_by_name(name)) }
 
@@ -153,6 +145,15 @@ class PatientSession < ApplicationRecord
           )
         end
 
+  scope :destroy_all_if_safe,
+        -> do
+          includes(
+            :gillick_assessments,
+            :session_attendances,
+            :vaccination_records
+          ).find_each(&:destroy_if_safe!)
+        end
+
   def safe_to_destroy?
     vaccination_records.empty? && gillick_assessments.empty? &&
       session_attendances.none?(&:attending?)
@@ -168,12 +169,6 @@ class PatientSession < ApplicationRecord
 
   def programmes
     session.programmes.select { it.year_groups.include?(patient.year_group) }
-  end
-
-  def gillick_assessment(programme)
-    gillick_assessments
-      .select { it.programme_id == programme.id }
-      .max_by(&:created_at)
   end
 
   def session_status(programme:)

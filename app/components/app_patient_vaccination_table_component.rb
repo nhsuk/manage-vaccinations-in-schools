@@ -14,8 +14,8 @@ class AppPatientVaccinationTableComponent < ViewComponent::Base
   def vaccination_records
     patient
       .vaccination_records
-      .select(&:administered?)
-      .sort_by(&:performed_at)
-      .reverse
+      .administered
+      .includes(:location, :programme, :vaccine)
+      .order(performed_at: :desc)
   end
 end

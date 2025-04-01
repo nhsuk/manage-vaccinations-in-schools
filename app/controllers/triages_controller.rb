@@ -23,9 +23,8 @@ class TriagesController < ApplicationController
     if @triage.save(context: :consent)
       StatusUpdater.call(patient: @patient)
 
-      @patient
-        .reload
-        .latest_consents(programme: @triage.programme)
+      ConsentGrouper
+        .call(@patient.reload.consents, programme: @programme)
         .each { send_triage_confirmation(@patient_session, it) }
 
       flash[:success] = {
@@ -55,21 +54,17 @@ class TriagesController < ApplicationController
       @session
         .patients
         .includes(
-          :consents,
+          :consent_statuses,
           :school,
-          :vaccination_records,
+          :triage_statuses,
+          :vaccination_statuses,
           parent_relationships: :parent
         )
         .find_by(id: params[:patient_id])
   end
 
   def set_patient_session
-    @patient_session =
-      @patient
-        .patient_sessions
-        .preload_for_status
-        .includes(:gillick_assessments)
-        .find_by!(session: @session)
+    @patient_session = @patient.patient_sessions.find_by!(session: @session)
   end
 
   def set_programme

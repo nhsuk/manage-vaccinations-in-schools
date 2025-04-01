@@ -24,14 +24,16 @@ class Patient::VaccinationStatus < ApplicationRecord
   belongs_to :programme
 
   has_many :consents,
-           -> do
-             not_invalidated.response_provided.eager_load(:parent, :patient)
-           end,
+           -> { not_invalidated.response_provided.includes(:parent, :patient) },
            through: :patient
 
-  has_many :triages, -> { not_invalidated }, through: :patient
+  has_many :triages,
+           -> { not_invalidated.order(created_at: :desc) },
+           through: :patient
 
-  has_many :vaccination_records, -> { kept }, through: :patient
+  has_many :vaccination_records,
+           -> { kept.order(performed_at: :desc) },
+           through: :patient
 
   enum :status,
        { none_yet: 0, vaccinated: 1, could_not_vaccinate: 2 },

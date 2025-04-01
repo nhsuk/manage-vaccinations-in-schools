@@ -16,7 +16,7 @@ class Sessions::TriageController < ApplicationController
     scope =
       @session
         .patient_sessions
-        .preload_for_status
+        .includes(patient: :triage_statuses, session: :programmes)
         .in_programmes(@programmes)
         .has_triage_status(@statuses, programme: @programmes)
 

@@ -1,11 +1,10 @@
 # frozen_string_literal: true
 
 class AppSessionDetailsSummaryComponent < ViewComponent::Base
-  def initialize(session, patient_sessions:)
+  def initialize(session)
     super
 
     @session = session
-    @patient_sessions = patient_sessions
   end
 
   def call
@@ -14,7 +13,9 @@ class AppSessionDetailsSummaryComponent < ViewComponent::Base
 
   private
 
-  attr_reader :session, :patient_sessions
+  attr_reader :session
+
+  delegate :patient_sessions, to: :session
 
   delegate :programmes, to: :session
 

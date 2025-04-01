@@ -43,13 +43,8 @@ class PatientsController < ApplicationController
       if organisation_id.nil?
         @patient
           .patient_sessions
-          .includes(
-            :gillick_assessments,
-            :session_attendances,
-            :vaccination_records
-          )
           .where(session: old_organisation.sessions)
-          .find_each(&:destroy_if_safe!)
+          .destroy_all_if_safe
       end
     end
 
@@ -73,15 +68,12 @@ class PatientsController < ApplicationController
   def set_patient
     @patient =
       policy_scope(Patient).includes(
-        :gillick_assessments,
         :gp_practice,
         :organisation,
         :school,
-        :triages,
         consents: %i[parent patient],
         parent_relationships: :parent,
-        patient_sessions: %i[location session_attendances],
-        vaccination_records: [{ vaccine: :programme }]
+        patient_sessions: %i[location session_attendances]
       ).find(params[:id])
   end
 
