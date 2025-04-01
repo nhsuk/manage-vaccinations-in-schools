@@ -280,7 +280,7 @@ if $PROGRAM_NAME == __FILE__
         puts opts
         puts ""
         puts "Available commands:"
-        puts AwsAccountSetup::COMMANDS.map { "  #{_1}" }
+        puts(AwsAccountSetup::COMMANDS.map { "  #{_1}" })
         exit
       end
     end
