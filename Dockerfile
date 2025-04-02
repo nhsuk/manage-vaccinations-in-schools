@@ -85,4 +85,4 @@ EXPOSE 4000
 ENV HTTP_PORT=4000
 ENV GOOD_JOB_PROBE_PORT=4000
 ENV SERVER_TYPE=thrust
-CMD ["./bin/start.sh"]
+CMD ["./bin/docker-start"]
