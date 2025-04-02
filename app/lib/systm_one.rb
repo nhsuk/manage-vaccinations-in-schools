@@ -12,4 +12,6 @@ module SystmOne
     "Right anterior forearm" => "right_arm_lower_position",
     "Right lateral thigh" => "right_thigh"
   }.freeze
+
+  GENDER_CODES = { "M" => "male", "F" => "female", "U" => "not_known" }.freeze
 end

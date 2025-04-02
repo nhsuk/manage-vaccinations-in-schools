@@ -1364,14 +1364,32 @@ describe ImmunisationImportRow do
         it { should eq("not_known") }
       end
 
+      context "with a 'u' value" do
+        let(:data) { { key => "U" } }
+
+        it { should eq("not_known") }
+      end
+
       context "with a 'male' value" do
         let(:data) { { key => "Male" } }
 
         it { should eq("male") }
       end
 
+      context "with an 'm' value" do
+        let(:data) { { key => "M" } }
+
+        it { should eq("male") }
+      end
+
       context "with a 'female' value" do
         let(:data) { { key => "Female" } }
+
+        it { should eq("female") }
+      end
+
+      context "with a 'f' value" do
+        let(:data) { { key => "F" } }
 
         it { should eq("female") }
       end

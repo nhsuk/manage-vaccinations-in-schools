@@ -1,13 +1,6 @@
 # frozen_string_literal: true
 
 class Reports::SystmOneExporter
-  GENDER_CODE_MAPPINGS = {
-    male: "M",
-    female: "F",
-    not_specified: "U",
-    not_known: "U"
-  }.with_indifferent_access.freeze
-
   VACCINE_DOSE_MAPPINGS = {
     "Gardasil 9" => {
       "1" => "Y19a4",
@@ -140,7 +133,7 @@ class Reports::SystmOneExporter
   end
 
   def gender_code(code)
-    GENDER_CODE_MAPPINGS[code]
+    SystmOne::GENDER_CODES.key(code) || "U"
   end
 
   # TODO: These mappings are valid for Hertforshire, but may not be correct for

@@ -90,12 +90,7 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
           "#{tag.strong("Required")}, must use either #{tag.i("YYYYMMDD")} or " \
             "#{tag.i("DD/MM/YYYY")} format."
       },
-      {
-        name: "PERSON_GENDER_CODE",
-        notes:
-          "#{tag.strong("Required")}, must be #{tag.i("Not known")}, " \
-            "#{tag.i("Male")}, #{tag.i("Female")}, #{tag.i("Not specified")}."
-      },
+      person_gender_code,
       {
         name: "PERSON_POSTCODE",
         notes:
@@ -159,6 +154,21 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
       { name: "CHILD_ADDRESS_LINE_2", notes: "Optional" },
       { name: "CHILD_TOWN", notes: "Optional" }
     ]
+  end
+
+  def person_gender_code
+    codes = ImmunisationImportRow::GENDER_CODES.keys.sort.map { tag.i(_1) }
+
+    codes_sentence =
+      codes.to_sentence(
+        last_word_connector: " or ",
+        two_words_connector: " or "
+      )
+
+    {
+      name: "PERSON_GENDER_CODE",
+      notes: "#{tag.strong("Required")}, must be one of #{codes_sentence}."
+    }
   end
 
   def parent_columns

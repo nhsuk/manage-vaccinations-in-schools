@@ -351,9 +351,17 @@ class ImmunisationImportRow
     patient_date_of_birth&.academic_year
   end
 
+  GENDER_CODES = {
+    "male" => "male",
+    "female" => "female",
+    "not known" => "not_known",
+    "not specified" => "not_specified"
+  }.merge(SystmOne::GENDER_CODES.transform_keys(&:downcase)).freeze
+
   def patient_gender_code
-    gender_code = @data["PERSON_GENDER_CODE"] || @data["PERSON_GENDER"]
-    gender_code&.strip&.downcase&.gsub(" ", "_")
+    if (value = @data["PERSON_GENDER_CODE"].presence || @data["PERSON_GENDER"])
+      GENDER_CODES[value.strip.downcase] || value
+    end
   end
 
   def patient_postcode
