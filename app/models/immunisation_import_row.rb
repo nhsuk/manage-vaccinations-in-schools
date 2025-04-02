@@ -279,7 +279,7 @@ class ImmunisationImportRow
     "left buttock" => "left_buttock",
     "right buttock" => "right_buttock",
     "nasal" => "nose"
-  }.freeze
+  }.merge(SystmOne::DELIVERY_SITES.transform_keys(&:downcase)).freeze
 
   def delivery_site
     DELIVERY_SITES[@data["ANATOMICAL_SITE"]&.strip&.downcase]

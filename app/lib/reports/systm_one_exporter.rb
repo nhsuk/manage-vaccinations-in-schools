@@ -16,15 +16,6 @@ class Reports::SystmOneExporter
     }
   }.freeze
 
-  DELIVERY_SITE_MAPPINGS = {
-    left_arm_upper_position: "Left deltoid",
-    left_arm_lower_position: "Left anterior forearm",
-    left_thigh: "Left lateral thigh",
-    right_arm_upper_position: "Right deltoid",
-    right_arm_lower_position: "Right anterior forearm",
-    right_thigh: "Right lateral thigh"
-  }.with_indifferent_access.freeze
-
   def initialize(organisation:, programme:, start_date:, end_date:)
     @organisation = organisation
     @programme = programme
@@ -175,12 +166,9 @@ class Reports::SystmOneExporter
     end
   end
 
-  # TODO: These mappings are valid for Hertforshire, but may not be correct for
-  #       other SAIS teams. We'll need to check these are correct with new SAIS
-  #       teams.
   def site(vaccination_record)
     return if vaccination_record.not_administered?
 
-    DELIVERY_SITE_MAPPINGS.fetch(vaccination_record.delivery_site)
+    SystmOne::DELIVERY_SITES.key(vaccination_record.delivery_site)
   end
 end

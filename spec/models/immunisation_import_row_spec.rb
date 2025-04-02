@@ -1195,6 +1195,42 @@ describe ImmunisationImportRow do
       it { should eq("right_buttock") }
     end
 
+    context "with a left deltoid anatomical site" do
+      let(:data) { { "ANATOMICAL_SITE" => "left deltoid" } }
+
+      it { should eq("left_arm_upper_position") }
+    end
+
+    context "with a left anterior forearm anatomical site" do
+      let(:data) { { "ANATOMICAL_SITE" => "left anterior forearm" } }
+
+      it { should eq("left_arm_lower_position") }
+    end
+
+    context "with a left lateral thigh anatomical site" do
+      let(:data) { { "ANATOMICAL_SITE" => "left lateral thigh" } }
+
+      it { should eq("left_thigh") }
+    end
+
+    context "with a right deltoid anatomical site" do
+      let(:data) { { "ANATOMICAL_SITE" => "right deltoid" } }
+
+      it { should eq("right_arm_upper_position") }
+    end
+
+    context "with a right anterior forearm anatomical site" do
+      let(:data) { { "ANATOMICAL_SITE" => "right anterior forearm" } }
+
+      it { should eq("right_arm_lower_position") }
+    end
+
+    context "with a right lateral thigh anatomical site" do
+      let(:data) { { "ANATOMICAL_SITE" => "right lateral thigh" } }
+
+      it { should eq("right_thigh") }
+    end
+
     context "with a nasal anatomical site" do
       let(:data) { { "ANATOMICAL_SITE" => "nasal" } }
 
