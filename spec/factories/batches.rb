@@ -6,7 +6,7 @@
 #
 #  id              :bigint           not null, primary key
 #  archived_at     :datetime
-#  expiry          :date             not null
+#  expiry          :date
 #  name            :string           not null
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null

@@ -6,7 +6,7 @@
 #
 #  id              :bigint           not null, primary key
 #  archived_at     :datetime
-#  expiry          :date             not null
+#  expiry          :date
 #  name            :string           not null
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
@@ -43,8 +43,8 @@ class Batch < ApplicationRecord
   validates :name, presence: true, format: { with: /\A[A-Za-z0-9]+\z/ }
 
   validates :expiry,
-            presence: true,
             uniqueness: {
-              scope: %i[organisation_id name vaccine_id]
+              scope: %i[organisation_id name vaccine_id],
+              allow_nil: true
             }
 end

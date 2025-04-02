@@ -6,7 +6,7 @@
 #
 #  id              :bigint           not null, primary key
 #  archived_at     :datetime
-#  expiry          :date             not null
+#  expiry          :date
 #  name            :string           not null
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
@@ -49,7 +49,6 @@ describe Batch do
     it { should be_valid }
 
     it { should validate_presence_of(:name) }
-    it { should validate_presence_of(:expiry) }
 
     it do
       expect(batch).to validate_uniqueness_of(:expiry).scoped_to(
