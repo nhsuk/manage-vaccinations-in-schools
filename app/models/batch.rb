@@ -31,8 +31,6 @@ class Batch < ApplicationRecord
   belongs_to :organisation
   belongs_to :vaccine
 
-  has_many :vaccination_records, -> { kept }
-
   has_and_belongs_to_many :immunisation_imports
 
   has_one :programme, through: :vaccine
