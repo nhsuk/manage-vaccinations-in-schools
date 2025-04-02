@@ -20,7 +20,7 @@ resource "aws_ecs_service" "this" {
   name                              = "mavis-${var.environment}-${var.server_type}"
   cluster                           = var.cluster_id
   task_definition                   = aws_ecs_task_definition.this.arn
-  desired_count                     = 1
+  desired_count                     = var.desired_count
   launch_type                       = "FARGATE"
   enable_execute_command            = true
   health_check_grace_period_seconds = 60
@@ -32,9 +32,12 @@ resource "aws_ecs_service" "this" {
   deployment_controller {
     type = var.deployment_controller
   }
-  deployment_circuit_breaker {
-    enable   = true
-    rollback = true
+  dynamic "deployment_circuit_breaker" {
+    for_each = var.deployment_controller == "ECS" ? [1] : []
+    content {
+      enable   = true
+      rollback = true
+    }
   }
   dynamic "load_balancer" {
     for_each = var.loadbalancer != null ? [1] : []
@@ -50,7 +53,7 @@ resource "aws_ecs_service" "this" {
     ignore_changes = [
       task_definition,
       load_balancer,
-      desired_count
+      # desired_count TODO: Uncomment once we include autoscaling
     ]
     create_before_destroy = true
   }

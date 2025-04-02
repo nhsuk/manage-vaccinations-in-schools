@@ -1,3 +1,4 @@
+#TODO: Remove after release
 resource "aws_security_group" "ecs_service_sg" {
   name        = "ecs-service-sg"
   description = "Security Group for communication with ECS"
@@ -7,6 +8,7 @@ resource "aws_security_group" "ecs_service_sg" {
   }
 }
 
+#TODO: Remove after release
 resource "aws_security_group_rule" "ecs_ingress_http" {
   type                     = "ingress"
   from_port                = 4000
@@ -19,6 +21,7 @@ resource "aws_security_group_rule" "ecs_ingress_http" {
   }
 }
 
+#TODO: Remove after release
 resource "aws_security_group_rule" "ecs_talk_to_internet" {
   type              = "egress"
   from_port         = 0
@@ -26,15 +29,6 @@ resource "aws_security_group_rule" "ecs_talk_to_internet" {
   protocol          = "-1"
   cidr_blocks       = ["0.0.0.0/0"]
   security_group_id = aws_security_group.ecs_service_sg.id
-}
-
-resource "aws_ecs_cluster" "cluster" {
-  name = "mavis-${var.environment}"
-
-  setting {
-    name  = "containerInsights"
-    value = "enabled"
-  }
 }
 
 #TODO: Remove after release
@@ -121,6 +115,15 @@ resource "aws_security_group_rule" "web_service_alb_ingress" {
   source_security_group_id = aws_security_group.lb_service_sg.id
   lifecycle {
     create_before_destroy = true
+  }
+}
+
+resource "aws_ecs_cluster" "cluster" {
+  name = "mavis-${var.environment}"
+
+  setting {
+    name  = "containerInsights"
+    value = "enabled"
   }
 }
 

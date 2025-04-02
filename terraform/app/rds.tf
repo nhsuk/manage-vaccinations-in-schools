@@ -37,19 +37,6 @@ resource "aws_security_group_rule" "rds_ingress" {
   }
 }
 
-#TODO: Is this still needed?
-resource "aws_security_group_rule" "ecs_rds_egress" {
-  type                     = "egress"
-  from_port                = 5432
-  to_port                  = 5432
-  protocol                 = "tcp"
-  source_security_group_id = aws_security_group.rds_security_group.id
-  security_group_id        = aws_security_group.ecs_service_sg.id
-  lifecycle {
-    create_before_destroy = true
-  }
-}
-
 resource "aws_db_subnet_group" "aurora_subnet_group" {
   name        = var.resource_name.dbsubnet_group
   description = "Group of private subnets for Aurora Serverless v2 cluster."
