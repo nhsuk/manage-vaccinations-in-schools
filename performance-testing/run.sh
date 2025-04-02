@@ -41,6 +41,6 @@ if [ -z "$SESSION_SLUG" ]; then
 fi
 
 # bin/jmeter -n -t ../Mavis_NURSE.jmx -l ../mavis-perf-test-2025-04-02-write.jtl -JSessionSlug=GrjmypgJXN -Jsample_varables=PatientInfo_matchNr,PatientId,Authenticity_Token,RandomNumber -JDuration=300 -JRampUp=10
-date=$(date '+%Y%m%d%H%M%S')
+DATE=$(date '+%Y%m%d%H%M%S')
 
-echo bin/jmeter -n -t ../Mavis_NURSE.jmx -l ../mavis-perf-test-${date}.jtl -JSessionSlug=${SESSION_SLUG} "${JMETER_PARAMS[@]}"
+echo bin/jmeter -n -t ../Mavis_NURSE.jmx -l ../mavis-perf-test-${DATE}.jtl -JSessionSlug=${SESSION_SLUG} "${JMETER_PARAMS[@]}"
