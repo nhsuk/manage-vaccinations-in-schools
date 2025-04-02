@@ -257,7 +257,12 @@ describe "Edit vaccination record" do
     @original_batch =
       create(:batch, organisation: @organisation, vaccine: @vaccine)
     @replacement_batch =
-      create(:batch, organisation: @organisation, vaccine: @vaccine)
+      create(
+        :batch,
+        :not_expired,
+        organisation: @organisation,
+        vaccine: @vaccine
+      )
 
     location = create(:school)
 

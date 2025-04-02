@@ -31,7 +31,7 @@ describe "Vaccination" do
     batches =
       programmes.map do |programme|
         programme.vaccines.flat_map do |vaccine|
-          create_list(:batch, 2, organisation:, vaccine:)
+          create_list(:batch, 2, :not_expired, organisation:, vaccine:)
         end
       end
 

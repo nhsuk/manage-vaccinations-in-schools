@@ -99,7 +99,9 @@ describe Reports::OfflineSessionExporter do
       subject(:rows) { worksheet_to_hashes(workbook.worksheets[0]) }
 
       let(:performed_at) { Time.zone.local(2024, 1, 1, 12, 5, 20) }
-      let(:batch) { create(:batch, vaccine: programme.vaccines.active.first) }
+      let(:batch) do
+        create(:batch, :not_expired, vaccine: programme.vaccines.active.first)
+      end
       let(:patient_session) { create(:patient_session, patient:, session:) }
       let(:patient) { create(:patient, year_group: 8) }
 
@@ -487,6 +489,7 @@ describe Reports::OfflineSessionExporter do
         subject(:validation) do
           create(
             :batch,
+            :not_expired,
             name: "BATCH12345",
             vaccine: programme.vaccines.active.first,
             organisation:
@@ -532,6 +535,7 @@ describe Reports::OfflineSessionExporter do
         create_list(
           :batch,
           2,
+          :not_expired,
           vaccine: programme.vaccines.active.first,
           organisation:
         )
@@ -539,7 +543,12 @@ describe Reports::OfflineSessionExporter do
 
       before do
         create(:patient, session:)
-        create(:batch, name: "OTHERBATCH", vaccine: create(:vaccine, :flu))
+        create(
+          :batch,
+          :not_expired,
+          name: "OTHERBATCH",
+          vaccine: create(:vaccine, :flu)
+        )
       end
 
       it "lists all the batch numbers for the programme" do
@@ -672,7 +681,9 @@ describe Reports::OfflineSessionExporter do
             school: create(:school, urn: "123456", name: "Waterloo Road")
           )
         end
-        let(:batch) { create(:batch, vaccine: programme.vaccines.active.first) }
+        let(:batch) do
+          create(:batch, :not_expired, vaccine: programme.vaccines.active.first)
+        end
         let(:performed_at) { Time.zone.local(2024, 1, 1, 12, 5, 20) }
         let!(:vaccination_record) do
           create(
@@ -769,6 +780,7 @@ describe Reports::OfflineSessionExporter do
         subject(:validation) do
           create(
             :batch,
+            :not_expired,
             name: "BATCH12345",
             vaccine: programme.vaccines.active.first,
             organisation:
@@ -814,6 +826,7 @@ describe Reports::OfflineSessionExporter do
         create_list(
           :batch,
           2,
+          :not_expired,
           vaccine: programme.vaccines.active.first,
           organisation:
         )
@@ -821,7 +834,12 @@ describe Reports::OfflineSessionExporter do
 
       before do
         create(:patient, session:)
-        create(:batch, name: "OTHERBATCH", vaccine: create(:vaccine, :flu))
+        create(
+          :batch,
+          :not_expired,
+          name: "OTHERBATCH",
+          vaccine: create(:vaccine, :flu)
+        )
       end
 
       it "lists all the batch numbers for the programme" do

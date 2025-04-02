@@ -30,8 +30,6 @@
 #  fk_rails_...  (programme_id => programmes.id)
 #
 class Vaccine < ApplicationRecord
-  self.inheritance_column = nil
-
   audited associated_with: :programme
   has_associated_audits
 
