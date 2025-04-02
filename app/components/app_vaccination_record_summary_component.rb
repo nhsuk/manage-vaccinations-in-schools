@@ -258,7 +258,7 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
 
   def batch_expiry_value
     highlight_if(
-      @batch.expiry.to_fs(:long),
+      @batch.expiry&.to_fs(:long) || "Unknown",
       @vaccination_record.batch_id_changed?
     )
   end

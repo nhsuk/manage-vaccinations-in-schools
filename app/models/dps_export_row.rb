@@ -156,7 +156,7 @@ class DPSExportRow
   end
 
   def expiry_date
-    vaccination_record.batch.expiry.to_fs(:dps)
+    vaccination_record.batch.expiry&.to_fs(:dps)
   end
 
   def route_of_vaccination_code

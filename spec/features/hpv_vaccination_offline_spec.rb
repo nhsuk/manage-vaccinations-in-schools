@@ -62,7 +62,7 @@ describe "HPV vaccination" do
     end
 
     vaccine = programmes.first.vaccines.active.first
-    @batch = create(:batch, organisation: @organisation, vaccine:)
+    @batch = create(:batch, :not_expired, organisation: @organisation, vaccine:)
 
     create(:gp_practice, ods_code: "Y12345")
 

@@ -33,7 +33,7 @@
                 <% end %>
               <% end %>
               <% row.with_cell(text: batch.created_at.to_date.to_fs(:long)) %>
-              <% row.with_cell(text: batch.expiry.to_fs(:long)) %>
+              <% row.with_cell(text: batch.expiry&.to_fs(:long) || "Unknown") %>
               <% row.with_cell do %>
                 <ul class="app-action-list">
                   <li class="app-action-list__item">
