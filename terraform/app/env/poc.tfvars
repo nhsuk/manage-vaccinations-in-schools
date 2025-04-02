@@ -1,7 +1,7 @@
-environment         = "poc"
+environment           = "poc"
 rails_master_key_path = "/copilot/mavis/secrets/STAGING_RAILS_MASTER_KEY"
-db_secret_arn       = null
-dns_certificate_arn = null
+db_secret_arn         = null
+dns_certificate_arn   = null
 resource_name = {
   dbsubnet_group           = "mavis-poc-rds-subnet"
   db_cluster               = "mavis-poc-rds-cluster"
