@@ -76,7 +76,15 @@ FactoryBot.define do
     end
 
     batch do
-      association(:batch, organisation:, vaccine:, strategy: :create) if vaccine
+      if vaccine
+        association(
+          :batch,
+          :not_expired,
+          organisation:,
+          vaccine:,
+          strategy: :create
+        )
+      end
     end
 
     performed_by

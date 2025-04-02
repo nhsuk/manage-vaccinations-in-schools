@@ -72,7 +72,8 @@ describe "HPV vaccination" do
     end
 
     @active_vaccine = programme.vaccines.active.first
-    @active_batch = create(:batch, organisation:, vaccine: @active_vaccine)
+    @active_batch =
+      create(:batch, :not_expired, organisation:, vaccine: @active_vaccine)
     @archived_batch =
       create(:batch, :archived, organisation:, vaccine: @active_vaccine)
 

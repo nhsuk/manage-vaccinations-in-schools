@@ -31,9 +31,19 @@ describe "MenACWY and Td/IPV vaccination" do
     location = create(:school)
 
     @menacwy_batch =
-      create(:batch, organisation:, vaccine: programmes.first.vaccines.first)
+      create(
+        :batch,
+        :not_expired,
+        organisation:,
+        vaccine: programmes.first.vaccines.first
+      )
     @td_ipv_batch =
-      create(:batch, organisation:, vaccine: programmes.second.vaccines.first)
+      create(
+        :batch,
+        :not_expired,
+        organisation:,
+        vaccine: programmes.second.vaccines.first
+      )
 
     @session = create(:session, organisation:, programmes:, location:)
 

@@ -37,8 +37,10 @@ class Batch < ApplicationRecord
 
   scope :order_by_name_and_expiration, -> { order(expiry: :asc, name: :asc) }
 
-  scope :expired, -> { where("expiry <= ?", Time.current) }
-  scope :not_expired, -> { where("expiry > ?", Time.current) }
+  scope :expired,
+        -> { where(expiry: nil).or(where("expiry <= ?", Time.current)) }
+  scope :not_expired,
+        -> { where.not(expiry: nil).where("expiry > ?", Time.current) }
 
   validates :name, presence: true, format: { with: /\A[A-Za-z0-9]+\z/ }
 
