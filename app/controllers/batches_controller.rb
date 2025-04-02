@@ -7,46 +7,32 @@ class BatchesController < ApplicationController
   before_action :set_batch, except: %i[new create]
 
   def new
-    @batch =
-      Batch.new(organisation: current_user.selected_organisation, vaccine:)
+    @form = BatchForm.new
   end
 
   def create
-    expiry =
-      begin
-        Date.new(
-          batch_params["expiry(1i)"].to_i,
-          batch_params["expiry(2i)"].to_i,
-          batch_params["expiry(3i)"].to_i
-        )
-      rescue StandardError
-        nil
-      end
-
-    @batch =
+    batch =
       Batch.archived.find_or_initialize_by(
-        name: batch_params[:name],
         organisation: current_user.selected_organisation,
-        expiry:,
-        vaccine:
+        vaccine: @vaccine,
+        **batch_form_params
       )
 
-    @batch.archived_at = nil if @batch.archived?
+    batch.archived_at = nil if batch.archived?
 
-    if !expiry_validator.date_params_valid? || @batch.invalid?
-      @batch.expiry = expiry_validator.date_params_as_struct
-      render :new, status: :unprocessable_entity
+    @form = BatchForm.new(**batch_form_params, batch:)
+
+    if expiry_validator.date_params_valid? && @form.save
+      redirect_to vaccines_path, flash: { success: "Batch #{batch.name} added" }
     else
-      @batch.save!
-
-      redirect_to vaccines_path,
-                  flash: {
-                    success: "Batch #{@batch.name} added"
-                  }
+      @form.expiry = expiry_validator.date_params_as_struct
+      render :new, status: :unprocessable_entity
     end
   end
 
   def edit
+    @form =
+      BatchForm.new(batch: @batch, name: @batch.name, expiry: @batch.expiry)
   end
 
   def make_default
@@ -55,14 +41,16 @@ class BatchesController < ApplicationController
   end
 
   def update
-    if !expiry_validator.date_params_valid?
-      @batch.expiry = expiry_validator.date_params_as_struct
-      render :edit, status: :unprocessable_entity
-    elsif !@batch.update(batch_params)
-      render :edit, status: :unprocessable_entity
+    @form = BatchForm.new(**batch_form_params, batch: @batch, name: @batch.name)
+
+    if expiry_validator.date_params_valid? && @form.save
+      redirect_to vaccines_path,
+                  flash: {
+                    success: "Batch #{@batch.name} updated"
+                  }
     else
-      flash[:success] = "Batch #{@batch.name} updated"
-      redirect_to vaccines_path
+      @form.expiry = expiry_validator.date_params_as_struct
+      render :edit, status: :unprocessable_entity
     end
   end
 
@@ -85,19 +73,34 @@ class BatchesController < ApplicationController
   end
 
   def set_batch
-    @batch = @vaccine.batches.find(params[:id])
+    @batch = policy_scope(Batch).where(vaccine: @vaccine).find(params[:id])
   end
 
-  def batch_params
-    params.expect(batch: %i[name expiry(3i) expiry(2i) expiry(1i)])
+  def batch_form_params
+    raw_params =
+      params.expect(batch_form: %i[name expiry(3i) expiry(2i) expiry(1i)])
+
+    {
+      name: raw_params[:name],
+      expiry:
+        begin
+          Date.new(
+            raw_params["expiry(1i)"].to_i,
+            raw_params["expiry(2i)"].to_i,
+            raw_params["expiry(3i)"].to_i
+          )
+        rescue StandardError
+          nil
+        end
+    }
   end
 
   def expiry_validator
     @expiry_validator ||=
       DateParamsValidator.new(
         field_name: :expiry,
-        object: @batch,
-        params: batch_params
+        object: @form,
+        params: params.expect(batch_form: %i[expiry(3i) expiry(2i) expiry(1i)])
       )
   end
 end

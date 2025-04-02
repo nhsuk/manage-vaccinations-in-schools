@@ -10,7 +10,7 @@
   <%= page_title %>
 <% end %>
 
-<%= form_with model: @batch, url: vaccine_batch_path(@vaccine, @batch), method: :put do |f| %>
+<%= form_with model: @form, url: vaccine_batch_path(@vaccine, @batch), method: :put do |f| %>
   <% content_for(:before_content) { f.govuk_error_summary } %>
 
   <%= f.govuk_date_field :expiry,

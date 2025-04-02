@@ -52,17 +52,6 @@ describe Batch do
     it { should validate_presence_of(:expiry) }
 
     it do
-      travel_to(Date.new(2024, 9, 1)) do
-        expect(batch).to validate_comparison_of(:expiry).is_greater_than(
-          Date.new(2024, 9, 1)
-        )
-        expect(batch).to validate_comparison_of(:expiry).is_less_than(
-          Date.new(2039, 9, 1)
-        )
-      end
-    end
-
-    it do
       expect(batch).to validate_uniqueness_of(:expiry).scoped_to(
         :organisation_id,
         :name,
