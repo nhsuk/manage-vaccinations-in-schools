@@ -31,9 +31,6 @@ class ImmunisationImportRow
   validates :batch_number, presence: { if: :batch_expiry_date }
 
   validates :batch_expiry_date,
-            presence: {
-              if: :batch_number
-            },
             comparison: {
               greater_than: -> { Date.new(Date.current.year - 15, 1, 1) },
               less_than: -> { Date.new(Date.current.year + 15, 1, 1) },
@@ -459,18 +456,17 @@ class ImmunisationImportRow
   end
 
   def batch
-    unless valid? && administered && vaccine && batch_expiry_date &&
-             batch_number.present?
-      return
-    end
+    return unless valid?
 
     @batch ||=
-      Batch.create_with(archived_at: Time.current).find_or_create_by!(
-        expiry: batch_expiry_date,
-        name: batch_number,
-        organisation:,
-        vaccine:
-      )
+      if administered && vaccine && batch_number.present?
+        Batch.create_with(archived_at: Time.current).find_or_create_by!(
+          expiry: batch_expiry_date,
+          name: batch_number,
+          organisation:,
+          vaccine:
+        )
+      end
   end
 
   def organisation_ods_code

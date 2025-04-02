@@ -1654,5 +1654,11 @@ describe ImmunisationImportRow do
 
       it { should be_nil }
     end
+
+    context "without an expiry date" do
+      let(:data) { valid_data.merge("BATCH_EXPIRY_DATE" => "") }
+
+      it { should_not be_nil }
+    end
   end
 end
