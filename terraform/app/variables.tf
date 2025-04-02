@@ -61,7 +61,7 @@ variable "ssl_policy" {
 
 locals {
   unique_host_headers = toset(values(var.http_hosts))
-  host_headers = concat(tolist(local.unique_host_headers), [for v in local.unique_host_headers : "www.${v}"])
+  host_headers        = concat(tolist(local.unique_host_headers), [for v in local.unique_host_headers : "www.${v}"])
 }
 
 variable "dns_certificate_arn" {
@@ -70,7 +70,7 @@ variable "dns_certificate_arn" {
 }
 
 locals {
-  default_certificate_arn = var.dns_certificate_arn == null ? module.dns_route53[0].certificate_arn : var.dns_certificate_arn[0]
+  default_certificate_arn     = var.dns_certificate_arn == null ? module.dns_route53[0].certificate_arn : var.dns_certificate_arn[0]
   additional_sni_certificates = var.dns_certificate_arn == null ? [] : slice(var.dns_certificate_arn, 1, length(var.dns_certificate_arn))
 }
 

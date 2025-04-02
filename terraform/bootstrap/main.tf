@@ -53,12 +53,12 @@ resource "aws_s3_bucket_policy" "backend_bucket_block_http" {
     Id      = "block-backend-bucket-http-access"
     Statement = [
       {
-        Sid       = "HTTPSOnly"
-        Effect    = "Deny"
+        Sid    = "HTTPSOnly"
+        Effect = "Deny"
         Principal = {
-          "AWS": "*"
+          "AWS" : "*"
         }
-        Action    = "s3:*"
+        Action = "s3:*"
         Resource = [
           aws_s3_bucket.s3_bucket_backend.arn,
           "${aws_s3_bucket.s3_bucket_backend.arn}/*",
@@ -111,25 +111,25 @@ resource "aws_s3_bucket_public_access_block" "s3_logs_bucket_access" {
 resource "aws_s3_bucket_policy" "logs" {
   bucket = aws_s3_bucket.logs.id
   policy = jsonencode({
-    "Version": "2012-10-17",
-    "Statement": [
+    "Version" : "2012-10-17",
+    "Statement" : [
       {
-        "Sid": "s3-log-delivery",
-        "Effect": "Allow",
-        "Principal": {
-          "Service": "logging.s3.amazonaws.com",
-          "AWS": "arn:aws:iam::652711504416:root"
+        "Sid" : "s3-log-delivery",
+        "Effect" : "Allow",
+        "Principal" : {
+          "Service" : "logging.s3.amazonaws.com",
+          "AWS" : "arn:aws:iam::652711504416:root"
         },
-        "Action": "s3:PutObject",
-        "Resource": "${aws_s3_bucket.logs.arn}/*"
+        "Action" : "s3:PutObject",
+        "Resource" : "${aws_s3_bucket.logs.arn}/*"
       },
       {
-        Sid       = "HTTPSOnly"
-        Effect    = "Deny"
+        Sid    = "HTTPSOnly"
+        Effect = "Deny"
         Principal = {
-          "AWS": "*"
+          "AWS" : "*"
         }
-        Action    = "s3:*"
+        Action = "s3:*"
         Resource = [
           aws_s3_bucket.logs.arn,
           "${aws_s3_bucket.logs.arn}/*",
