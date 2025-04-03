@@ -15,7 +15,7 @@ describe "MenACWY and Td/IPV vaccination" do
 
     when_i_switch_to_td_ipv
     then_i_see_the_td_ipv_vaccination_form
-    and_i_check_the_patient_is_not_pregnant
+    and_i_check_the_pre_screening_questions_again
     and_i_record_the_vaccination(@td_ipv_batch)
     then_i_see_the_patient_is_vaccinated_for_td_ipv
 
@@ -112,9 +112,11 @@ describe "MenACWY and Td/IPV vaccination" do
     expect(page).to have_content("ready for their Td/IPV vaccination?")
   end
 
-  def and_i_check_the_patient_is_not_pregnant
-    # The other pre-screening questions should be pre-checked
-    # from the MenACWY vaccination.
+  def and_i_check_the_pre_screening_questions_again
+    check "know what the vaccination is for, and are happy to have it"
+    check "have not already had the vaccination"
+    check "have no allergies which would prevent vaccination"
+    check "are not taking any medication which prevents vaccination"
     check "are not pregnant"
   end
 
