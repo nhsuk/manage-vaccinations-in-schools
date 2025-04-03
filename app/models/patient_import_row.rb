@@ -148,23 +148,23 @@ class PatientImportRow
   end
 
   def nhs_number
-    @data["CHILD_NHS_NUMBER"]&.gsub(/\s/, "").presence
+    @data["CHILD_NHS_NUMBER"]&.normalise_whitespace&.gsub(/\s/, "")
   end
 
   def first_name
-    @data["CHILD_FIRST_NAME"]&.strip
+    @data["CHILD_FIRST_NAME"]&.normalise_whitespace
   end
 
   def last_name
-    @data["CHILD_LAST_NAME"]&.strip
+    @data["CHILD_LAST_NAME"]&.normalise_whitespace
   end
 
   def preferred_first_name
-    @data["CHILD_PREFERRED_FIRST_NAME"]&.strip.presence
+    @data["CHILD_PREFERRED_FIRST_NAME"]&.normalise_whitespace
   end
 
   def preferred_last_name
-    @data["CHILD_PREFERRED_LAST_NAME"]&.strip.presence
+    @data["CHILD_PREFERRED_LAST_NAME"]&.normalise_whitespace
   end
 
   def date_of_birth
@@ -190,59 +190,59 @@ class PatientImportRow
   end
 
   def registration
-    @data["CHILD_REGISTRATION"]&.strip.presence
+    @data["CHILD_REGISTRATION"]
   end
 
   def gender_code
-    @data["CHILD_GENDER"]&.strip&.downcase&.gsub(" ", "_").presence
+    @data["CHILD_GENDER"]&.normalise_whitespace&.downcase&.gsub(" ", "_")
   end
 
   def address_line_1
-    @data["CHILD_ADDRESS_LINE_1"]&.strip.presence
+    @data["CHILD_ADDRESS_LINE_1"]&.normalise_whitespace
   end
 
   def address_line_2
-    @data["CHILD_ADDRESS_LINE_2"]&.strip.presence
+    @data["CHILD_ADDRESS_LINE_2"]&.normalise_whitespace
   end
 
   def address_town
-    @data["CHILD_TOWN"]&.strip.presence
+    @data["CHILD_TOWN"]&.normalise_whitespace
   end
 
   def address_postcode
-    @data["CHILD_POSTCODE"]&.strip.presence
+    @data["CHILD_POSTCODE"]&.normalise_whitespace
   end
 
   def parent_1_name
-    @data["PARENT_1_NAME"]&.strip.presence
+    @data["PARENT_1_NAME"]&.normalise_whitespace
   end
 
   def parent_1_relationship
-    @data["PARENT_1_RELATIONSHIP"]&.strip.presence
+    @data["PARENT_1_RELATIONSHIP"]&.normalise_whitespace
   end
 
   def parent_1_email
-    @data["PARENT_1_EMAIL"]&.downcase&.strip.presence
+    @data["PARENT_1_EMAIL"]&.normalise_whitespace&.downcase
   end
 
   def parent_1_phone
-    @data["PARENT_1_PHONE"]&.gsub(/\s/, "").presence
+    @data["PARENT_1_PHONE"]&.normalise_whitespace&.gsub(/\s/, "")
   end
 
   def parent_2_name
-    @data["PARENT_2_NAME"]&.strip.presence
+    @data["PARENT_2_NAME"]&.normalise_whitespace
   end
 
   def parent_2_relationship
-    @data["PARENT_2_RELATIONSHIP"]&.strip.presence
+    @data["PARENT_2_RELATIONSHIP"]&.normalise_whitespace
   end
 
   def parent_2_email
-    @data["PARENT_2_EMAIL"]&.downcase&.strip.presence
+    @data["PARENT_2_EMAIL"]&.normalise_whitespace&.downcase
   end
 
   def parent_2_phone
-    @data["PARENT_2_PHONE"]&.gsub(/\s/, "").presence
+    @data["PARENT_2_PHONE"]&.normalise_whitespace&.gsub(/\s/, "")
   end
 
   attr_reader :organisation, :year_groups
