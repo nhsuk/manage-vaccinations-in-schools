@@ -17,23 +17,27 @@
 #  patient_session_id    :bigint           not null
 #  performed_by_user_id  :bigint           not null
 #  programme_id          :bigint           not null
+#  session_date_id       :bigint           not null
 #
 # Indexes
 #
 #  index_pre_screenings_on_patient_session_id    (patient_session_id)
 #  index_pre_screenings_on_performed_by_user_id  (performed_by_user_id)
 #  index_pre_screenings_on_programme_id          (programme_id)
+#  index_pre_screenings_on_session_date_id       (session_date_id)
 #
 # Foreign Keys
 #
 #  fk_rails_...  (patient_session_id => patient_sessions.id)
 #  fk_rails_...  (performed_by_user_id => users.id)
 #  fk_rails_...  (programme_id => programmes.id)
+#  fk_rails_...  (session_date_id => session_dates.id)
 #
 FactoryBot.define do
   factory :pre_screening do
     patient_session
     programme { patient_session.programmes.first }
+    session_date { patient_session.session.session_dates.first }
     performed_by
 
     trait :allows_vaccination do
