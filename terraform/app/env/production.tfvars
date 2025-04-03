@@ -18,8 +18,8 @@ splunk_enabled        = "true"
 cis2_enabled          = "true"
 pds_enabled           = "true"
 http_hosts = {
-  MAVIS__HOST                        = "manage-vaccinations-in-schools.nhs.uk"
-  MAVIS__GIVE_OR_REFUSE_CONSENT_HOST = "give-or-refuse-consent-for-vaccinations.nhs.uk"
+  MAVIS__HOST                        = "www.manage-vaccinations-in-schools.nhs.uk"
+  MAVIS__GIVE_OR_REFUSE_CONSENT_HOST = "www.give-or-refuse-consent-for-vaccinations.nhs.uk"
 }
 
 minimum_replicas        = 3
@@ -29,3 +29,4 @@ vpc_log_retention_days  = 14
 ecs_log_retention_days  = 30
 backup_retention_period = 7
 ssl_policy              = "ELBSecurityPolicy-TLS13-1-2-2021-06"
+access_logs_bucket      = "nhse-mavis-access-logs-production"
