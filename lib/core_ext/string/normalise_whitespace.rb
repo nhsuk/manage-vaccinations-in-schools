@@ -6,4 +6,8 @@ class String
   def normalise_whitespace
     strip.gsub(/\s+/, " ").presence
   end
+
+  def normalise_whitespace_regex(database_column_name)
+    "regexp_replace(trim(#{database_column_name}), E'\\s+', ' ', 'g')"
+  end
 end
