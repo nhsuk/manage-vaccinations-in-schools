@@ -1054,10 +1054,8 @@ describe ImmunisationImport::Row do
     end
   end
 
-  describe "#to_vaccination_record" do
-    subject(:vaccination_record) do
-      immunisation_import_row.to_vaccination_record
-    end
+  describe "#vaccination_record" do
+    subject(:vaccination_record) { immunisation_import_row.vaccination_record }
 
     let(:data) { valid_data }
 
@@ -1151,7 +1149,7 @@ describe ImmunisationImport::Row do
   end
 
   describe "#batch" do
-    subject(:batch) { immunisation_import_row.to_vaccination_record.batch }
+    subject(:batch) { immunisation_import_row.vaccination_record.batch }
 
     let(:data) { valid_data }
 

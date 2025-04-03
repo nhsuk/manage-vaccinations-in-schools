@@ -64,7 +64,7 @@ class ImmunisationImport < ApplicationRecord
   def parse_row(data) = Row.new(data:, organisation:)
 
   def process_row(row)
-    vaccination_record = row.to_vaccination_record
+    vaccination_record = row.vaccination_record
     count_column_to_increment = count_column(vaccination_record)
     return count_column_to_increment unless vaccination_record
 
@@ -80,7 +80,7 @@ class ImmunisationImport < ApplicationRecord
     end
     @patients_batch.add(vaccination_record.patient)
 
-    if (patient_session = row.to_patient_session)
+    if (patient_session = row.patient_session)
       @patient_sessions_batch.add(patient_session)
     end
 

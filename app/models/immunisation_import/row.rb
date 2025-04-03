@@ -140,7 +140,7 @@ class ImmunisationImport::Row
     @organisation = organisation
   end
 
-  def to_vaccination_record
+  def vaccination_record
     return unless valid?
 
     outcome = (administered ? "administered" : reason_not_vaccinated)
@@ -191,17 +191,15 @@ class ImmunisationImport::Row
     vaccination_record
   end
 
-  def to_patient_session
-    return if patient.nil? || session.nil?
-
-    PatientSession.new(patient:, session:)
+  def patient_session
+    PatientSession.new(patient:, session:) if patient && session
   end
 
   def patient
-    return unless valid?
-
     @patient ||=
-      existing_patients.first || Patient.create!(new_patient_attributes)
+      if valid?
+        existing_patients.first || Patient.create!(new_patient_attributes)
+      end
   end
 
   def location_name
