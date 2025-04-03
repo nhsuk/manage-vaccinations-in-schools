@@ -131,16 +131,16 @@ jobs:
         run: |
           terraform init -backend-config="env/${{ inputs.environment }}-backend.hcl" -upgrade
           terraform apply ${{ runner.temp }}/tfplan
-          echo "s3_bucket=$(terraform output -raw s3_bucket)" >> ${{ runner.temp }}/CODEDEPLOY_ENV
-          echo "s3_key=$(terraform output -raw s3_key)" >> ${{ runner.temp }}/CODEDEPLOY_ENV
-          echo "application=$(terraform output -raw codedeploy_application_name)" >> ${{ runner.temp }}/CODEDEPLOY_ENV
-          echo "application_group=$(terraform output -raw codedeploy_deployment_group_name)" >> ${{ runner.temp }}/CODEDEPLOY_ENV
-          echo "ecs_variables=$(terraform output -json ecs_variables | sed 's/\"/\\"/g')" >> ${{ runner.temp }}/CODEDEPLOY_ENV
+          echo "s3_bucket=$(terraform output -raw s3_bucket)" >> ${{ runner.temp }}/DEPLOYMENT_ENVS
+          echo "s3_key=$(terraform output -raw s3_key)" >> ${{ runner.temp }}/DEPLOYMENT_ENVS
+          echo "application=$(terraform output -raw codedeploy_application_name)" >> ${{ runner.temp }}/DEPLOYMENT_ENVS
+          echo "application_group=$(terraform output -raw codedeploy_deployment_group_name)" >> ${{ runner.temp }}/DEPLOYMENT_ENVS
+          echo "ecs_variables=$(terraform output -json ecs_variables | sed 's/\"/\\"/g')" >> ${{ runner.temp }}/DEPLOYMENT_ENVS
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: CODEDEPLOY_ENV-${{ inputs.environment }}
-          path: ${{ runner.temp }}/CODEDEPLOY_ENV
+          name: DEPLOYMENT_ENVS-${{ inputs.environment }}
+          path: ${{ runner.temp }}/DEPLOYMENT_ENVS
 
   create-thrust-deployment:
     name: Create thrust deployment
@@ -154,7 +154,7 @@ jobs:
       - name: Download artifact
         uses: actions/download-artifact@v4
         with:
-          name: CODEDEPLOY_ENV-${{ inputs.environment }}
+          name: DEPLOYMENT_ENVS-${{ inputs.environment }}
           path: ${{ runner.temp }}/artifact
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -165,7 +165,7 @@ jobs:
         run: sudo snap install --classic aws-cli
       - name: Trigger CodeDeploy deployment
         run: |
-          source ${{ runner.temp }}/artifact/CODEDEPLOY_ENV
+          source ${{ runner.temp }}/artifact/DEPLOYMENT_ENVS
           deployment_id=$(aws deploy create-deployment \
           --application-name "$application" --deployment-group-name "$application_group" \
           --s3-location bucket="$s3_bucket",key="$s3_key",bundleType=yaml | jq -r .deploymentId)
@@ -188,7 +188,7 @@ jobs:
       - name: Download artifact
         uses: actions/download-artifact@v4
         with:
-          name: CODEDEPLOY_ENV-${{ inputs.environment }}
+          name: DEPLOYMENT_ENVS-${{ inputs.environment }}
           path: ${{ runner.temp }}/artifact
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -199,9 +199,30 @@ jobs:
         run: sudo snap install --classic aws-cli
       - name: Trigger ECR Deployment
         run: |
-          source ${{ runner.temp }}/artifact/CODEDEPLOY_ENV
+          source ${{ runner.temp }}/artifact/DEPLOYMENT_ENVS
           echo "$ecs_variables"
           cluster_name=$(echo "$ecs_variables" | jq -r '.cluster_name')
           service_name=$(echo "$ecs_variables" | jq -r '.good_job.service_name')
           task_definition=$(echo "$ecs_variables" | jq -r '.good_job.task_definition')
-          aws ecs update-service --cluster $cluster_name --service $service_name --task-definition $task_definition
+          DEPLOYMENT_ID=$(aws ecs update-service --cluster $cluster_name --service $service_name \
+          --task-definition $task_definition --force-new-deployment \
+          --query 'service.deployments[?rolloutState==`IN_PROGRESS`].[id][0]' --output text)
+          echo "Deployment started: $DEPLOYMENT_ID"
+          echo "deployment_id=$DEPLOYMENT_ID" >> $GITHUB_ENV
+      - name: Wait for deployment to complete
+        run: |
+          source ${{ runner.temp }}/artifact/DEPLOYMENT_ENVS
+          cluster_name=$(echo "$ecs_variables" | jq -r '.cluster_name')
+          service_name=$(echo "$ecs_variables" | jq -r '.good_job.service_name')
+          DEPLOYMENT_STATE=IN_PROGRESS
+          while [ "$DEPLOYMENT_STATE" == "IN_PROGRESS" ]; do
+            echo "Waiting for deployment to complete..."
+            sleep 30
+            DEPLOYMENT_STATE="$(aws ecs describe-services --cluster $cluster_name --services $service_name \
+            --query "services[0].deployments[?id == \`$deployment_id\`].[rolloutState][0]" --output text)"
+          done
+          if [ "$DEPLOYMENT_STATE" != "COMPLETED" ]; then
+            echo "Deployment failed with state: $DEPLOYMENT_STATE"
+            exit 1
+          fi
+          echo "Deployment successful"
