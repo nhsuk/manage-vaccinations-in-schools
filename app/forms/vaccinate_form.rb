@@ -82,8 +82,17 @@ class VaccinateForm
         notes: pre_screening_notes,
         patient_session:,
         performed_by: current_user,
-        programme_id:
+        programme_id:,
+        session_date_id: session_date_id
       )
+  end
+
+  def session_date_id
+    patient_session
+      .session
+      .session_dates
+      .find { |sd| sd.value == Date.current }
+      &.id
   end
 
   def valid_administered_values
