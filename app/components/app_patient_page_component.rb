@@ -37,7 +37,12 @@ class AppPatientPageComponent < ViewComponent::Base
   end
 
   def default_vaccinate_form
-    pre_screening = patient_session.pre_screenings.last
+    pre_screening =
+      patient_session
+        .pre_screenings
+        .joins(:session_date)
+        .where(session_dates: { value: Date.current })
+        .last
 
     VaccinateForm.new(
       feeling_well: pre_screening&.feeling_well,
