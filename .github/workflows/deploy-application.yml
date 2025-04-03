@@ -135,15 +135,15 @@ jobs:
           echo "s3_key=$(terraform output -raw s3_key)" >> ${{ runner.temp }}/CODEDEPLOY_ENV
           echo "application=$(terraform output -raw codedeploy_application_name)" >> ${{ runner.temp }}/CODEDEPLOY_ENV
           echo "application_group=$(terraform output -raw codedeploy_deployment_group_name)" >> ${{ runner.temp }}/CODEDEPLOY_ENV
-          echo "ecs_variables=$(terraform output -json ecs_variables)" >> ${{ runner.temp }}/CODEDEPLOY_ENV
+          echo "ecs_variables=$(terraform output -json ecs_variables | sed 's/\"/\\"/g')" >> ${{ runner.temp }}/CODEDEPLOY_ENV
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: CODEDEPLOY_ENV-${{ inputs.environment }}
           path: ${{ runner.temp }}/CODEDEPLOY_ENV
 
-  create-web-deployment:
-    name: Create deployment
+  create-thrust-deployment:
+    name: Create thrust deployment
     runs-on: ubuntu-latest
     needs: apply-changes
     if: inputs.server_types == 'thrust' || inputs.server_types == 'all'
@@ -197,9 +197,10 @@ jobs:
           aws-region: eu-west-2
       - name: Install AWS CLI
         run: sudo snap install --classic aws-cli
-      - name: Trigger Deployment
+      - name: Trigger ECR Deployment
         run: |
           source ${{ runner.temp }}/artifact/CODEDEPLOY_ENV
+          echo "$ecs_variables"
           cluster_name=$(echo "$ecs_variables" | jq -r '.cluster_name')
           service_name=$(echo "$ecs_variables" | jq -r '.good_job.service_name')
           task_definition=$(echo "$ecs_variables" | jq -r '.good_job.task_definition')
