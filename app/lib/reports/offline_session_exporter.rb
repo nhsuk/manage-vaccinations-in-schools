@@ -266,12 +266,12 @@ class Reports::OfflineSessionExporter
     row[:batch_expiry_date] = batch&.expiry
     row[:anatomical_site] = Cell.new(
       anatomical_site(vaccination_record:),
-      allowed_values: ImmunisationImportRow::DELIVERY_SITES.keys
+      allowed_values: ImmunisationImport::Row::DELIVERY_SITES.keys
     )
     row[:dose_sequence] = dose_sequence(vaccination_record:)
     row[:reason_not_vaccinated] = Cell.new(
       reason_not_vaccinated(vaccination_record:),
-      allowed_values: ImmunisationImportRow::REASONS.keys
+      allowed_values: ImmunisationImport::Row::REASONS.keys
     )
     row[:notes] = vaccination_record.notes
     row[:session_id] = session&.id
@@ -309,11 +309,11 @@ class Reports::OfflineSessionExporter
     )
     row[:batch_expiry_date] = Cell.new(type: :date)
     row[:anatomical_site] = Cell.new(
-      allowed_values: ImmunisationImportRow::DELIVERY_SITES.keys
+      allowed_values: ImmunisationImport::Row::DELIVERY_SITES.keys
     )
     row[:dose_sequence] = programme.default_dose_sequence
     row[:reason_not_vaccinated] = Cell.new(
-      allowed_values: ImmunisationImportRow::REASONS.keys
+      allowed_values: ImmunisationImport::Row::REASONS.keys
     )
 
     row[:session_id] = session.id

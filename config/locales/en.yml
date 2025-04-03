@@ -44,7 +44,7 @@ en:
         preferred_given_name: <code>CHILD_PREFERRED_FIRST_NAME</code>
         school_urn: <code>CHILD_SCHOOL_URN</code>
         year_group: <code>CHILD_YEAR_GROUP</code>
-      immunisation_import_row:
+      immunisation_import/row:
         administered: <code>VACCINATED</code>
         batch_expiry_date: <code>BATCH_EXPIRY_DATE</code>
         batch_number: <code>BATCH_NUMBER</code>
@@ -240,7 +240,7 @@ en:
               too_long: Enter details that are less than 1000 characters long
             response:
               inclusion: Choose an answer
-        immunisation_import_row:
+        immunisation_import/row:
           format: "%{attribute}: %{message}"
           attributes:
             administered:

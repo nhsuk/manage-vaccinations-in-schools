@@ -61,9 +61,7 @@ class ImmunisationImport < ApplicationRecord
     # there is no uniqueness check for immunisations
   end
 
-  def parse_row(data)
-    ImmunisationImportRow.new(data:, organisation:)
-  end
+  def parse_row(data) = Row.new(data:, organisation:)
 
   def process_row(row)
     vaccination_record = row.to_vaccination_record

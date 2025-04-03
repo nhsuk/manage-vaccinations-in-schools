@@ -197,7 +197,7 @@ def write_vaccination_records_to_file(vaccination_records)
         vaccination_record.vaccine.brand.gsub(" ", ""),
         vaccination_record.batch.name,
         vaccination_record.batch.expiry.to_fs(:dps),
-        ImmunisationImportRow::DELIVERY_SITES.key(
+        ImmunisationImport::Row::DELIVERY_SITES.key(
           vaccination_record.delivery_site
         ),
         vaccination_record.dose_sequence,

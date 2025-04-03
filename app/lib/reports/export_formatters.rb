@@ -81,7 +81,7 @@ module Reports::ExportFormatters
 
   def anatomical_site(vaccination_record:)
     if vaccination_record.delivery_site
-      ImmunisationImportRow::DELIVERY_SITES.key(
+      ImmunisationImport::Row::DELIVERY_SITES.key(
         vaccination_record.delivery_site
       )
     else
@@ -101,7 +101,7 @@ module Reports::ExportFormatters
     if vaccination_record.administered?
       ""
     else
-      ImmunisationImportRow::REASONS.key(vaccination_record.outcome.to_sym)
+      ImmunisationImport::Row::REASONS.key(vaccination_record.outcome.to_sym)
     end
   end
 end

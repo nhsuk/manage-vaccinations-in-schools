@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class ImmunisationImportRow
+class ImmunisationImport::Row
   include ActiveModel::Model
 
   validates :administered, inclusion: [true, false]

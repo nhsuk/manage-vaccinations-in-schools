@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe ImmunisationImportRow do
+describe ImmunisationImport::Row do
   subject(:immunisation_import_row) do
     described_class.new(data:, organisation:)
   end
