@@ -61,7 +61,7 @@ variable "ssl_policy" {
 
 locals {
   unique_host_headers = toset(values(var.http_hosts))
-  host_headers        = concat(tolist(local.unique_host_headers), [for v in local.unique_host_headers : "www.${v}"])
+  host_headers        = tolist(local.unique_host_headers)
 }
 
 variable "dns_certificate_arn" {
