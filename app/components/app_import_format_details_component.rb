@@ -217,7 +217,10 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
   end
 
   def reason_not_vaccinated_and_notes
-    reasons = ImmunisationImport::Row::REASONS.keys.sort.map { tag.i(_1) }
+    reasons =
+      ImmunisationImport::RowParser::REASONS_NOT_VACCINATED.keys.sort.map do
+        tag.i(_1)
+      end
     reasons_sentence =
       reasons.to_sentence(
         last_word_connector: " or ",
@@ -235,7 +238,8 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
   end
 
   def anatomical_site
-    sites = ImmunisationImport::Row::DELIVERY_SITES.keys.sort.map { tag.i(_1) }
+    sites =
+      ImmunisationImport::RowParser::DELIVERY_SITES.keys.sort.map { tag.i(_1) }
 
     site_sentence =
       sites.to_sentence(

@@ -6,33 +6,33 @@ class ImmunisationImport::Row
   validates :administered, inclusion: [true, false]
 
   with_options if: :administered do
-    validates :reason, absence: true
+    validates :reason_not_vaccinated, absence: true
   end
 
   with_options unless: :administered do
-    validates :batch_expiry_date, absence: true
-    validates :batch_number, absence: true
+    validates :batch_expiry, absence: true
+    validates :batch_name, absence: true
     validates :delivery_site, absence: true
-    validates :reason, presence: true
+    validates :reason_not_vaccinated, presence: true
   end
 
   with_options if: -> { administered && offline_recording? } do
-    validates :batch_expiry_date, presence: true
-    validates :batch_number, presence: true
+    validates :batch_expiry, presence: true
+    validates :batch_name, presence: true
     validates :delivery_site, presence: true
   end
 
-  validates :vaccine_given,
+  validates :vaccine_name,
             inclusion: {
-              in: :valid_given_vaccines,
+              in: :valid_vaccine_names,
               allow_nil: true
             }
 
-  validates :batch_number, presence: { if: :batch_expiry_date }
+  validates :batch_name, presence: { if: :batch_expiry }
 
-  validates :batch_expiry_date,
+  validates :batch_expiry,
             presence: {
-              if: :batch_number
+              if: :batch_name
             },
             comparison: {
               greater_than: -> { Date.new(Date.current.year - 15, 1, 1) },
@@ -69,8 +69,8 @@ class ImmunisationImport::Row
 
   validates :existing_patients, length: { maximum: 1 }
   validates :patient_nhs_number, length: { is: 10 }, allow_blank: true
-  validates :patient_first_name, presence: true
-  validates :patient_last_name, presence: true
+  validates :patient_given_name, presence: true
+  validates :patient_family_name, presence: true
   validates :patient_date_of_birth,
             comparison: {
               less_than: -> { Date.current }
@@ -82,8 +82,7 @@ class ImmunisationImport::Row
             },
             presence: {
               if: -> do
-                @data["PERSON_POSTCODE"]&.strip.present? ||
-                  patient_nhs_number.blank?
+                parser.patient_postcode_provided? || patient_nhs_number.blank?
               end
             }
 
@@ -108,7 +107,7 @@ class ImmunisationImport::Row
             }
   validates :time_of_vaccination,
             presence: {
-              if: -> { @data["TIME_OF_VACCINATION"]&.strip.present? }
+              if: -> { parser.time_of_vaccination_provided? }
             },
             comparison: {
               less_than_or_equal_to: -> { Time.current },
@@ -137,14 +136,14 @@ class ImmunisationImport::Row
   attr_reader :organisation
 
   def initialize(data:, organisation:)
-    @data = data
+    @parser = ImmunisationImport::RowParser.new(data)
     @organisation = organisation
   end
 
   def to_vaccination_record
     return unless valid?
 
-    outcome = (administered ? "administered" : reason)
+    outcome = (administered ? "administered" : reason_not_vaccinated)
 
     attributes = {
       dose_sequence:,
@@ -216,71 +215,6 @@ class ImmunisationImport::Row
     end
   end
 
-  def administered
-    if (vaccinated = @data["VACCINATED"]&.downcase).present?
-      if "yes".start_with?(vaccinated)
-        true
-      elsif "no".start_with?(vaccinated)
-        false
-      end
-    elsif @data["VACCINE_GIVEN"].present?
-      true
-    end
-  end
-
-  def batch_expiry_date
-    parse_date("BATCH_EXPIRY_DATE")
-  end
-
-  def batch_number
-    @data["BATCH_NUMBER"]&.strip.presence
-  end
-
-  REASONS = {
-    "refused" => :refused,
-    "unwell" => :not_well,
-    "vaccination contraindicated" => :contraindications,
-    "already had elsewhere" => :already_had,
-    "did not attend" => :absent_from_session,
-    "absent from school" => :absent_from_school
-  }.freeze
-
-  def reason
-    REASONS[@data["REASON_NOT_VACCINATED"]&.strip&.downcase]
-  end
-
-  def notes
-    @data["NOTES"]&.strip&.presence
-  end
-
-  DELIVERY_SITES = {
-    "left thigh" => "left_thigh",
-    "right thigh" => "right_thigh",
-    "left upper arm" => "left_arm_upper_position",
-    "left arm (upper position)" => "left_arm_upper_position",
-    "left arm (lower position)" => "left_arm_lower_position",
-    "right upper arm" => "right_arm_upper_position",
-    "right arm (upper position)" => "right_arm_upper_position",
-    "right arm (lower position)" => "right_arm_lower_position",
-    "left buttock" => "left_buttock",
-    "right buttock" => "right_buttock",
-    "nasal" => "nose"
-  }.freeze
-
-  def delivery_site
-    DELIVERY_SITES[@data["ANATOMICAL_SITE"]&.strip&.downcase]
-  end
-
-  def delivery_method
-    return unless delivery_site
-
-    if delivery_site == "nose"
-      "nasal_spray"
-    else
-      "intramuscular"
-    end
-  end
-
   DOSE_SEQUENCES = {
     "hpv" => {
       "1P" => 1,
@@ -302,122 +236,65 @@ class ImmunisationImport::Row
   }.freeze
 
   def dose_sequence
-    value = @data["DOSE_SEQUENCE"]&.gsub(/\s/, "")&.presence&.upcase
+    value = parser.dose_sequence
+    return value if value.is_a?(Integer)
 
     return default_dose_sequence if value.blank?
 
-    dose_sequences = DOSE_SEQUENCES[programme&.type]
-
-    return dose_sequences[value] if dose_sequences&.include?(value)
-
-    begin
-      Integer(@data["DOSE_SEQUENCE"])
-    rescue ArgumentError, TypeError
-      nil
-    end
-  end
-
-  def vaccine_given
-    @data["VACCINE_GIVEN"]&.strip&.presence
-  end
-
-  def patient_first_name
-    @data["PERSON_FORENAME"]&.strip
-  end
-
-  def patient_last_name
-    @data["PERSON_SURNAME"]&.strip
-  end
-
-  def patient_date_of_birth
-    parse_date("PERSON_DOB")
+    DOSE_SEQUENCES[programme&.type][value]
   end
 
   def patient_birth_academic_year
     patient_date_of_birth&.academic_year
   end
 
-  def patient_gender_code
-    gender_code = @data["PERSON_GENDER_CODE"] || @data["PERSON_GENDER"]
-    gender_code&.strip&.downcase&.gsub(" ", "_")
-  end
-
-  def patient_postcode
-    if (postcode = @data["PERSON_POSTCODE"]).present?
-      UKPostcode.parse(postcode).to_s
-    end
-  end
-
-  def patient_nhs_number
-    @data["NHS_NUMBER"]&.gsub(/\s/, "")&.presence
-  end
-
-  def performed_ods_code
-    @data["ORGANISATION_CODE"]&.strip&.upcase&.presence
-  end
-
-  def programme_name
-    @data["PROGRAMME"]&.strip
-  end
-
-  def session_id
-    Integer(@data["SESSION_ID"])
-  rescue ArgumentError, TypeError
-    nil
-  end
-
-  def school_name
-    @data["SCHOOL_NAME"]&.strip
-  end
-
-  def clinic_name
-    @data["CLINIC_NAME"]&.strip
-  end
-
-  def school_urn
-    @data["SCHOOL_URN"]&.strip.presence
-  end
-
-  def date_of_vaccination
-    @date_of_vaccination ||= parse_date("DATE_OF_VACCINATION")
-  end
-
-  def time_of_vaccination
-    @time_of_vaccination ||= parse_time("TIME_OF_VACCINATION")
-  end
-
-  def care_setting
-    Integer(@data["CARE_SETTING"])
-  rescue ArgumentError, TypeError
-    nil
-  end
-
   def performed_by_user
     @performed_by_user ||=
-      if (email = @data["PERFORMING_PROFESSIONAL_EMAIL"]&.strip)
+      if (email = parser.performed_by_email)
         User.find_by(email:)
       end
   end
 
   def performed_by_given_name
     @performed_by_given_name ||=
-      if performed_by_user.nil?
-        @data["PERFORMING_PROFESSIONAL_FORENAME"]&.strip&.presence
-      end
+      (parser.performed_by_given_name if performed_by_user.nil?)
   end
 
   def performed_by_family_name
     @performed_by_family_name ||=
-      if performed_by_user.nil?
-        @data["PERFORMING_PROFESSIONAL_SURNAME"]&.strip&.presence
-      end
-  end
-
-  def uuid
-    @data["UUID"]&.strip&.presence
+      (parser.performed_by_family_name if performed_by_user.nil?)
   end
 
   private
+
+  attr_reader :parser
+
+  delegate :administered,
+           :batch_expiry,
+           :batch_name,
+           :care_setting,
+           :clinic_name,
+           :date_of_vaccination,
+           :delivery_method,
+           :delivery_site,
+           :notes,
+           :offline_recording?,
+           :patient_date_of_birth,
+           :patient_family_name,
+           :patient_gender_code,
+           :patient_given_name,
+           :patient_nhs_number,
+           :patient_postcode,
+           :performed_ods_code,
+           :programme_name,
+           :reason_not_vaccinated,
+           :school_name,
+           :school_urn,
+           :session_id,
+           :time_of_vaccination,
+           :uuid,
+           :vaccine_name,
+           to: :parser
 
   def performed_at
     return nil if date_of_vaccination.nil?
@@ -460,19 +337,19 @@ class ImmunisationImport::Row
 
   def vaccine
     @vaccine ||=
-      organisation.vaccines.where(programme:).find_by(nivs_name: vaccine_given)
+      organisation.vaccines.where(programme:).find_by(nivs_name: vaccine_name)
   end
 
   def batch
-    unless valid? && administered && vaccine && batch_expiry_date &&
-             batch_number.present?
+    unless valid? && administered && vaccine && batch_expiry &&
+             batch_name.present?
       return
     end
 
     @batch ||=
       Batch.create_with(archived_at: Time.current).find_or_create_by!(
-        expiry: batch_expiry_date,
-        name: batch_number,
+        expiry: batch_expiry,
+        name: batch_name,
         organisation:,
         vaccine:
       )
@@ -499,7 +376,7 @@ class ImmunisationImport::Row
     organisation.sessions.for_current_academic_year.pluck(:id)
   end
 
-  def valid_given_vaccines
+  def valid_vaccine_names
     organisation.vaccines.where(programme:).pluck(:nivs_name)
   end
 
@@ -508,60 +385,17 @@ class ImmunisationImport::Row
            to: :programme,
            allow_nil: true
 
-  def offline_recording?
-    @data["SESSION_ID"].present?
-  end
-
   def performed_by_details_present_where_required
-    if offline_recording?
+    if offline_recording? || parser.performed_by_email.present?
       errors.add(:performed_by_user, :blank) if performed_by_user.nil?
-    else # previous academic years from here on
-      email_field_populated =
-        @data["PERFORMING_PROFESSIONAL_EMAIL"]&.strip.present?
-
-      if email_field_populated
-        errors.add(:performed_by_user, :blank) if performed_by_user.nil?
-      elsif programme&.flu? # no validation required for HPV
-        if performed_by_given_name.blank?
-          errors.add(:performed_by_given_name, :blank)
-        end
-        if performed_by_family_name.blank?
-          errors.add(:performed_by_family_name, :blank)
-        end
+    elsif programme&.flu? # no validation required for HPV
+      if performed_by_given_name.blank?
+        errors.add(:performed_by_given_name, :blank)
+      end
+      if performed_by_family_name.blank?
+        errors.add(:performed_by_family_name, :blank)
       end
     end
-  end
-
-  DATE_FORMATS = %w[%Y%m%d %Y-%m-%d %d/%m/%Y].freeze
-
-  def parse_date(key)
-    value = @data[key]&.strip
-    return nil if value.nil?
-
-    parsed_dates =
-      DATE_FORMATS.lazy.filter_map do |format|
-        Date.strptime(value, format)
-      rescue ArgumentError, TypeError
-        nil
-      end
-
-    parsed_dates.first
-  end
-
-  TIME_FORMATS = %w[%H:%M:%S %H:%M %H%M%S %H%M %H].freeze
-
-  def parse_time(key)
-    value = @data[key]&.strip
-    return nil if value.nil?
-
-    parsed_times =
-      TIME_FORMATS.lazy.filter_map do |format|
-        Time.zone.strptime(value, format)
-      rescue ArgumentError, TypeError
-        nil
-      end
-
-    parsed_times.first
   end
 
   def delivery_site_appropriate_for_vaccine
@@ -595,15 +429,15 @@ class ImmunisationImport::Row
   end
 
   def existing_patients
-    if patient_first_name.blank? || patient_last_name.blank? ||
+    if patient_given_name.blank? || patient_family_name.blank? ||
          patient_date_of_birth.nil?
       return
     end
 
     Patient.match_existing(
       nhs_number: patient_nhs_number,
-      given_name: patient_first_name,
-      family_name: patient_last_name,
+      given_name: patient_given_name,
+      family_name: patient_family_name,
       date_of_birth: patient_date_of_birth,
       address_postcode: patient_postcode
     )
@@ -614,8 +448,8 @@ class ImmunisationImport::Row
       address_postcode: patient_postcode,
       date_of_birth: patient_date_of_birth,
       birth_academic_year: patient_birth_academic_year,
-      family_name: patient_last_name,
-      given_name: patient_first_name,
+      family_name: patient_family_name,
+      given_name: patient_given_name,
       gender_code: patient_gender_code,
       nhs_number: patient_nhs_number,
       school: nil,
