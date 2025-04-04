@@ -32,7 +32,7 @@ resource "aws_codedeploy_deployment_group" "blue_green_deployment_group" {
 
   ecs_service {
     cluster_name = aws_ecs_cluster.cluster.name
-    service_name = aws_ecs_service.service.name
+    service_name = module.web_service.service.name
   }
 
   load_balancer_info {
