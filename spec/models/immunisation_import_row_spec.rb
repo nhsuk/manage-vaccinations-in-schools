@@ -763,6 +763,8 @@ describe ImmunisationImportRow do
       end
     end
 
+    # TODO: Add test for whitespace normalisation
+
     describe "#organisation" do
       subject(:cohort) { patient.organisation }
 
