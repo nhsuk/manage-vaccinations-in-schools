@@ -6,14 +6,14 @@ class ImmunisationImportRow
   validates :administered, inclusion: [true, false]
 
   with_options if: :administered do
-    validates :reason, absence: true
+    validates :reason_not_administered, absence: true
   end
 
   with_options unless: :administered do
     validates :batch_expiry_date, absence: true
     validates :batch_number, absence: true
     validates :delivery_site, absence: true
-    validates :reason, presence: true
+    validates :reason_not_administered, presence: true
   end
 
   with_options if: -> { administered && offline_recording? } do
@@ -140,7 +140,7 @@ class ImmunisationImportRow
   def to_vaccination_record
     return unless valid?
 
-    outcome = (administered ? "administered" : reason)
+    outcome = (administered ? "administered" : reason_not_administered)
 
     attributes = {
       dose_sequence:,
@@ -232,7 +232,7 @@ class ImmunisationImportRow
     @data[:batch_number]&.to_s
   end
 
-  REASONS = {
+  REASONS_NOT_ADMINISTERED = {
     "refused" => :refused,
     "unwell" => :not_well,
     "vaccination contraindicated" => :contraindications,
@@ -241,8 +241,8 @@ class ImmunisationImportRow
     "absent from school" => :absent_from_school
   }.freeze
 
-  def reason
-    REASONS[@data[:reason_not_vaccinated]&.to_s&.downcase]
+  def reason_not_administered
+    REASONS_NOT_ADMINISTERED[@data[:reason_not_vaccinated]&.to_s&.downcase]
   end
 
   def notes

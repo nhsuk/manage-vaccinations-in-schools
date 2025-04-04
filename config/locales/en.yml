@@ -64,7 +64,7 @@ en:
         performed_by_user: <code>PERFORMING_PROFESSIONAL_EMAIL</code>
         performed_ods_code: <code>ORGANISATION_CODE</code>
         programme_name: <code>PROGRAMME</code>
-        reason: <code>REASON_NOT_VACCINATED</code>
+        reason_not_administered: <code>REASON_NOT_VACCINATED</code>
         school_name: <code>SCHOOL_NAME</code>
         school_urn: <code>SCHOOL_URN</code>
         session_id: <code>SESSION_ID</code>
@@ -309,7 +309,7 @@ en:
             programme_name:
               blank: Enter a programme
               inclusion: This programme is not available in this session
-            reason:
+            reason_not_administered:
               blank: Enter a valid reason
             school_name:
               blank: Enter a school name.

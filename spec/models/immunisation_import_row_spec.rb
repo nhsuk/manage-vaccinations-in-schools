@@ -181,7 +181,9 @@ describe ImmunisationImportRow do
 
       it "has errors" do
         expect(immunisation_import_row).to be_invalid
-        expect(immunisation_import_row.errors[:reason]).to eq(["must be blank"])
+        expect(immunisation_import_row.errors[:reason_not_administered]).to eq(
+          ["must be blank"]
+        )
       end
     end
 
@@ -1058,8 +1060,8 @@ describe ImmunisationImportRow do
     end
   end
 
-  describe "#reason" do
-    subject(:reason) { immunisation_import_row.reason }
+  describe "#reason_not_administered" do
+    subject { immunisation_import_row.reason_not_administered }
 
     context "without a reason" do
       let(:data) { { "VACCINATED" => "N" } }
