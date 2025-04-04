@@ -822,6 +822,37 @@ en:
   school_moves:
     index:
       title: School moves
+      download: Download records
+      description:
+        - >-
+          When imported records or a new consent response indicates that a child has changed
+          school, Mavis flags this as a school move.
+        - >-
+          You can then review the new information and confirm the school move or ignore it.
+    download:
+      dates:
+        caption: School moves
+        title: Download school moves
+        date_from_legend: From (optional)
+        date_to_legend: To (optional)
+        date_range_heading: Select a date range
+        date_hint: For example, %{example}
+        submit: Continue
+        description:
+          You can download a record of school moves as a CSV file. Only school
+          moves that have been reviewed and confirmed will be included.
+        unconfirmed_moves: There are %{count} unconfirmed school moves in your cohort.
+      confirm:
+        caption: School moves
+        title: Check and confirm
+        heading: Requested download
+        date_from: From
+        date_to: Until
+        change: Change
+        records: Records
+        submit: Download CSV
+        date_from_not_specified: Earliest recorded vaccination
+        date_to_not_specified: Latest recorded vaccination
   service:
     email: england.mavis@nhs.net
     guide:
