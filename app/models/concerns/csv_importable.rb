@@ -66,33 +66,10 @@ module CSVImportable
     rows_count > 15
   end
 
-  def detect_encoding
-    return nil if csv_data.blank?
-
-    encoding = CharlockHolmes::EncodingDetector.detect(csv_data)
-    return nil if encoding.nil?
-
-    encoding[:ruby_encoding]
-  end
-
   def load_data!
     return if invalid?
 
-    converters = proc { |value| value&.strip.presence }
-    header_converters =
-      proc { |value| value.strip.downcase.tr("-", "_").tr(" ", "_").to_sym }
-
-    self.data ||=
-      CSV.parse(
-        csv_data,
-        converters:,
-        empty_value: nil,
-        encoding: detect_encoding,
-        header_converters:,
-        headers: true,
-        skip_blanks: true,
-        strip: true
-      )
+    self.data ||= CSVParser.call(csv_data)
     self.rows_count = data.count
   rescue CSV::MalformedCSVError
     self.csv_is_malformed = true
