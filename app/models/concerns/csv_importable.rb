@@ -210,7 +210,17 @@ module CSVImportable
 
       # The first row is the header and the index is 0-based, so we add two
       # to match what the user sees in the spreadsheet
-      errors.add("row_#{index + 2}".to_sym, row.errors.full_messages)
+
+      formatted_errors =
+        row.errors.map do |error|
+          if error.attribute == :base
+            error.message
+          else
+            "<code>#{error.attribute}</code>: #{error.message}"
+          end
+        end
+
+      errors.add("row_#{index + 2}".to_sym, formatted_errors)
     end
   end
 

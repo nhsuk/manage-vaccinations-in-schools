@@ -145,18 +145,6 @@ class ImmunisationImportRow
     PatientSession.new(patient:, session:) if patient && session
   end
 
-  def administered
-    if (vaccinated = @data[:vaccinated]&.to_s&.downcase).present?
-      if "yes".start_with?(vaccinated)
-        true
-      elsif "no".start_with?(vaccinated)
-        false
-      end
-    elsif vaccine_name.present?
-      true
-    end
-  end
-
   def batch_expiry = @data[:batch_expiry_date]
 
   def batch_name = @data[:batch_number]
@@ -207,6 +195,8 @@ class ImmunisationImportRow
   def time_of_vaccination = @data[:time_of_vaccination]
 
   def uuid = @data[:uuid]
+
+  def vaccinated = @data[:vaccinated]
 
   def vaccine_name = @data[:vaccine_given]
 
@@ -344,6 +334,18 @@ class ImmunisationImportRow
     }.compact
   end
 
+  def administered
+    if vaccinated.present?
+      if "yes".start_with?(vaccinated.to_s.downcase)
+        true
+      elsif "no".start_with?(vaccinated.to_s.downcase)
+        false
+      end
+    elsif vaccine_name.present?
+      true
+    end
+  end
+
   def delivery_site_value
     DELIVERY_SITES[delivery_site&.to_s&.downcase]
   end
@@ -381,8 +383,15 @@ class ImmunisationImportRow
   end
 
   def validate_administered
-    unless [true, false].include?(administered)
-      errors.add(:administered, :inclusion)
+    return if [true, false].include?(administered)
+
+    if vaccinated.nil?
+      errors.add(:base, "<code>VACCINATED</code> is required")
+    else
+      errors.add(
+        vaccinated.header,
+        "You need to record whether the child was vaccinated or not. Enter ‘Y’ or ‘N’ in the ‘vaccinated’ column."
+      )
     end
   end
 
@@ -394,30 +403,39 @@ class ImmunisationImportRow
       if batch_expiry.present?
         if (date = batch_expiry.to_date)
           if date > LATEST_BATCH_EXPIRY
-            errors.add(:batch_expiry, :less_than, count: LATEST_BATCH_EXPIRY)
-          elsif date < EARLIEST_BATCH_EXPIRY
             errors.add(
-              :batch_expiry,
-              :greater_than,
-              count: EARLIEST_BATCH_EXPIRY
+              batch_expiry.header,
+              "must be less than 15 years in the future"
             )
+          elsif date < EARLIEST_BATCH_EXPIRY
+            errors.add(batch_expiry.header, "must be more than 15 years old")
           end
         else
-          errors.add(:batch_expiry, :invalid)
+          errors.add(batch_expiry.header, "Enter a date in the correct format")
         end
       elsif offline_recording?
-        errors.add(:batch_expiry, :blank)
+        if batch_expiry.nil?
+          errors.add(:base, "<code>BATCH_EXPIRY_DATE</code> is required")
+        else
+          errors.add(batch_expiry.header, "Enter a batch expiry date.")
+        end
       end
     elsif batch_expiry.present?
-      errors.add(:batch_expiry, :present)
+      errors.add(batch_expiry.header, "is not required")
     end
   end
 
   def validate_batch_name
     if administered
-      errors.add(:batch_name, :blank) if batch_name.blank? && offline_recording?
+      if offline_recording?
+        if batch_name.nil?
+          errors.add(:base, "<code>BATCH_NUMBER</code> is required")
+        elsif batch_name.blank?
+          errors.add(batch_name.header, "Enter a batch number.")
+        end
+      end
     elsif batch_name.present?
-      errors.add(:batch_name, :present)
+      errors.add(batch_name.header, "is not required")
     end
   end
 
@@ -425,49 +443,57 @@ class ImmunisationImportRow
     return if care_setting.blank?
 
     if care_setting.to_i.nil?
-      errors.add(:care_setting, :invalid)
+      errors.add(care_setting.header, "Enter a valid care setting.")
     elsif ![CARE_SETTING_SCHOOL, CARE_SETTING_COMMUNITY].include?(
           care_setting.to_i
         )
-      errors.add(:care_setting, :inclusion)
+      errors.add(care_setting.header, "Enter a valid care setting.")
     end
   end
 
   def validate_clinic_name
     if offline_recording? && care_setting&.to_i == CARE_SETTING_COMMUNITY
-      if clinic_name.blank?
-        errors.add(:clinic_name, :blank)
+      if clinic_name.nil?
+        errors.add(:base, "<code>CLINIC_NAME</code> is required")
+      elsif clinic_name.blank?
+        errors.add(clinic_name.header, "Enter a clinic name")
       elsif !organisation.community_clinics.exists?(name: clinic_name.to_s)
-        errors.add(:clinic_name, :inclusion)
+        errors.add(clinic_name.header, "Enter a clinic name")
       end
     end
   end
 
   def validate_date_of_vaccination
-    if date_of_vaccination.blank?
-      errors.add(:date_of_vaccination, :blank)
+    if date_of_vaccination.nil?
+      errors.add(:base, "<code>DATE_OF_VACCINATION</code> is required")
+    elsif date_of_vaccination.blank?
+      errors.add(date_of_vaccination.header, "Enter a date")
     elsif date_of_vaccination.to_date.nil?
-      errors.add(:date_of_vaccination, :invalid)
+      errors.add(
+        date_of_vaccination.header,
+        "Enter a date in the correct format"
+      )
     else
       if patient_date_of_birth&.to_date
         if date_of_vaccination.to_date.future?
           errors.add(
-            :date_of_vaccination,
-            :less_than_or_equal_to,
-            count: Date.current
+            date_of_vaccination.header,
+            "The vaccination date is in the future."
           )
         elsif date_of_vaccination.to_date < patient_date_of_birth.to_date
           errors.add(
-            :date_of_vaccination,
-            :greater_than,
-            count: patient_date_of_birth
+            date_of_vaccination.header,
+            "The vaccination date is before the date of birth."
           )
         end
       end
 
       if offline_recording? && session &&
            !session.dates.include?(date_of_vaccination.to_date)
-        errors.add(:date_of_vaccination, :inclusion)
+        errors.add(
+          date_of_vaccination.header,
+          "Enter a date that matches when the vaccination session took place."
+        )
       end
     end
   end
@@ -476,142 +502,236 @@ class ImmunisationImportRow
     if administered
       if delivery_site.present?
         if delivery_site_value.blank?
-          errors.add(:delivery_site, :invalid)
+          errors.add(delivery_site.header, "Enter a valid anatomical site.")
         elsif offline_recording? && vaccine
           unless vaccine.available_delivery_sites.include?(delivery_site_value)
-            errors.add(:delivery_site, :inclusion)
+            errors.add(
+              delivery_site.header,
+              "Enter a anatomical site that is appropriate for the vaccine."
+            )
           end
         end
       elsif offline_recording?
-        errors.add(:delivery_site, :blank)
+        if delivery_site.nil?
+          errors.add(:base, "<code>ANATOMICAL_SITE</code> is required")
+        else
+          errors.add(delivery_site.header, "Enter an anatomical site.")
+        end
       end
     elsif delivery_site.present?
-      errors.add(:delivery_site, :present)
+      errors.add(delivery_site.header, "is not required")
     end
   end
 
   def validate_dose_sequence
     if dose_sequence.present?
       if offline_recording? && default_dose_sequence.nil?
-        errors.add(:dose_sequence, :present)
+        errors.add(
+          dose_sequence.header,
+          "Do not provide a dose sequence for this programme (leave blank)."
+        )
       elsif dose_sequence_value.nil?
-        errors.add(:dose_sequence, :invalid)
+        errors.add(
+          dose_sequence.header,
+          "The dose sequence number cannot be greater than 3. Enter a dose sequence number, for example, 1, 2 or 3."
+        )
       elsif maximum_dose_sequence
         if dose_sequence_value < 1
-          errors.add(:dose_sequence, :greater_than_or_equal_to, count: 1)
+          errors.add(dose_sequence.header, "must be greater than 0")
         elsif dose_sequence_value > maximum_dose_sequence
           errors.add(
-            :dose_sequence,
-            :less_than_or_equal_to,
-            count: maximum_dose_sequence
+            dose_sequence.header,
+            "must be less than #{maximum_dose_sequence}"
           )
         end
       end
     elsif administered && offline_recording? && default_dose_sequence.present?
-      errors.add(:dose_sequence, :blank)
+      if dose_sequence.nil?
+        errors.add(:base, "<code>DOSE_SEQUENCE</code> is required")
+      else
+        errors.add(
+          dose_sequence.header,
+          "The dose sequence number cannot be greater than 3. Enter a dose sequence number, for example, 1, 2 or 3."
+        )
+      end
     end
   end
 
   def validate_existing_patients
     if existing_patients && existing_patients.length > 1
-      errors.add(:existing_patients, :too_long)
+      errors.add(
+        :base,
+        "Two or more possible patients match the patient first name, last name, date of birth or postcode."
+      )
     end
   end
 
   def validate_patient_date_of_birth
-    if patient_date_of_birth.blank?
-      errors.add(:patient_date_of_birth, :blank)
+    if patient_date_of_birth.nil?
+      errors.add(:base, "<code>PERSON_DOB</code> is required")
+    elsif patient_date_of_birth.blank?
+      errors.add(patient_date_of_birth.header, "Enter a date of birth.")
     elsif patient_date_of_birth.to_date.nil?
-      errors.add(:patient_date_of_birth, :invalid)
+      errors.add(
+        patient_date_of_birth.header,
+        "Enter a date of birth in the correct format."
+      )
     elsif patient_date_of_birth.to_date.future?
-      errors.add(:patient_date_of_birth, :less_than, count: Date.current)
+      errors.add(
+        patient_date_of_birth.header,
+        "Enter a date of birth in the past."
+      )
     end
   end
 
   def validate_patient_first_name
-    errors.add(:patient_first_name, :blank) if patient_first_name.blank?
+    if patient_first_name.nil?
+      errors.add(:base, "<code>PERSON_FORENAME</code> is required")
+    elsif patient_first_name.blank?
+      errors.add(patient_first_name.header, "Enter a first name.")
+    end
   end
 
   def validate_patient_gender_code
-    if patient_gender_code.blank?
-      errors.add(:patient_gender_code, :blank)
+    if patient_gender_code.nil?
+      errors.add(
+        :base,
+        "<code>PERSON_GENDER_CODE</code> or <code>PERSON_GENDER</code> is required"
+      )
+    elsif patient_gender_code.blank?
+      errors.add(patient_gender_code.header, "Enter a gender or gender code.")
     elsif patient_gender_code_value.nil?
-      errors.add(:patient_gender_code, :invalid)
+      errors.add(patient_gender_code.header, "Enter a gender or gender code.")
     elsif !Patient.gender_codes.keys.include?(patient_gender_code_value)
-      errors.add(:patient_gender_code, :inclusion)
+      errors.add(patient_gender_code.header, "Enter a gender or gender code.")
     end
   end
 
   def validate_patient_last_name
-    errors.add(:patient_last_name, :blank) if patient_last_name.blank?
+    if patient_last_name.nil?
+      errors.add(:base, "<code>PERSON_SURNAME</code> is required")
+    elsif patient_last_name.blank?
+      errors.add(patient_last_name.header, "Enter a last name.")
+    end
   end
 
   def validate_patient_nhs_number
     if patient_nhs_number.present? && patient_nhs_number_value.length != 10
-      errors.add(:patient_nhs_number, :invalid)
+      errors.add(
+        patient_nhs_number.header,
+        "Enter an NHS number with 10 characters."
+      )
     end
   end
 
   def validate_patient_postcode
     if patient_postcode.present?
       if patient_postcode.to_postcode.nil?
-        errors.add(:patient_postcode, :invalid)
+        errors.add(
+          patient_postcode.header,
+          "Enter a valid postcode, such as SW1A 1AA."
+        )
       end
     elsif patient_nhs_number_value.blank?
-      errors.add(:patient_postcode, :blank)
+      if patient_postcode.nil?
+        errors.add(:base, "<code>PERSON_POSTCODE</code> is required")
+      else
+        errors.add(
+          patient_postcode.header,
+          "Enter a valid postcode, such as SW1A 1AA."
+        )
+      end
     end
   end
 
   def validate_performed_by
     if offline_recording?
-      errors.add(:performed_by_email, :blank) if performed_by_user.nil?
-    elsif performed_by_email.present? # previous academic years from here on
-      errors.add(:performed_by_email, :inclusion) if performed_by_user.nil?
-    elsif programme&.flu? # no validation required for HPV
-      if performed_by_given_name.blank?
-        errors.add(:performed_by_given_name, :blank)
+      if performed_by_user.nil?
+        if performed_by_email.nil?
+          errors.add(
+            :base,
+            "<code>PERFORMING_PROFESSIONAL_EMAIL</code> is required"
+          )
+        else
+          errors.add(performed_by_email.header, "Enter a valid email address.")
+        end
       end
-      if performed_by_family_name.blank?
-        errors.add(:performed_by_family_name, :blank)
+    elsif performed_by_email.present? # previous academic years from here on
+      if performed_by_user.nil?
+        errors.add(performed_by_email.header, "Enter a valid email address")
+      end
+    elsif programme&.flu? # no validation required for HPV
+      if performed_by_given_name.nil?
+        errors.add(
+          :base,
+          "<code>PERFORMING_PROFESSIONAL_FORENAME</code> is required"
+        )
+      elsif performed_by_given_name.blank?
+        errors.add(performed_by_given_name.header, "Enter a first name.")
+      end
+
+      if performed_by_family_name.nil?
+        errors.add(
+          :base,
+          "<code>PERFORMING_PROFESSIONAL_SURNAME</code> is required"
+        )
+      elsif performed_by_family_name.blank?
+        errors.add(performed_by_family_name.header, "Enter a last name.")
       end
     end
   end
 
   def validate_performed_ods_code
     if offline_recording?
-      if performed_ods_code.blank?
-        errors.add(:performed_ods_code, :blank)
+      if performed_ods_code.nil?
+        errors.add(:base, "<code>ORGANISATION_CODE</code> is required")
+      elsif performed_ods_code.blank?
+        errors.add(performed_ods_code.header, "Enter an organisation code.")
       elsif performed_ods_code.to_s != organisation.ods_code
-        errors.add(:performed_ods_code, :equal_to)
+        errors.add(
+          performed_ods_code.header,
+          "Enter an organisation code that matches the current organisation."
+        )
       end
     end
   end
 
   def validate_programme_name
-    if programme_name.blank?
-      errors.add(:programme_name, :blank)
+    if programme_name.nil?
+      errors.add(:base, "<code>PROGRAMME</code> is required")
+    elsif programme_name.blank?
+      errors.add(programme_name.header, "Enter a programme.")
     elsif !programmes_by_name.keys.include?(programme_name.to_s)
-      errors.add(:programme_name, :inclusion)
+      errors.add(
+        programme_name.header,
+        "This programme is not available in this session."
+      )
     end
   end
 
   def validate_reason_not_administered
     if administered
       if reason_not_administered.present?
-        errors.add(:reason_not_administered, :present)
+        errors.add(reason_not_administered.header, "is not required")
       end
     elsif reason_not_administered.present?
       if reason_not_administered_value.blank?
-        errors.add(:reason_not_administered, :invalid)
+        errors.add(reason_not_administered.header, "Enter a valid reason")
       end
+    elsif reason_not_administered.nil?
+      errors.add(:base, "<code>REASON_NOT_VACCINATED</code> is required")
     else
-      errors.add(:reason_not_administered, :blank)
+      errors.add(reason_not_administered.header, "Enter a valid reason")
     end
   end
 
   def validate_school_name
     if school_name.blank? && school_urn&.to_s == SCHOOL_URN_UNKNOWN
-      errors.add(:school_name, :blank)
+      if school_name.nil?
+        errors.add(:base, "<code>SCHOOL_NAME</code> is required")
+      else
+        errors.add(school_name.header, "Enter a school name.")
+      end
     end
   end
 
@@ -620,18 +740,32 @@ class ImmunisationImportRow
 
     unless Location.school.exists?(urn: school_urn.to_s) ||
              school_urn.to_s.in?([SCHOOL_URN_HOME_EDUCATED, SCHOOL_URN_UNKNOWN])
-      errors.add(:school_urn, :inclusion)
+      errors.add(
+        school_urn.header,
+        "The school URN is not recognised. If you’ve checked the URN, " \
+          "and you believe it’s valid, contact our support organisation."
+      )
     end
   end
 
   def validate_session_id
     if session_id.present?
       if session_id.to_i.nil?
-        errors.add(:session_id, :invalid)
+        errors.add(
+          session_id.header,
+          "The session ID is not recognised. Download the offline spreadsheet " \
+            "and copy the session ID for this row from there, or " \
+            "contact our support organisation."
+        )
       elsif !organisation.sessions.for_current_academic_year.exists?(
             id: session_id.to_i
           )
-        errors.add(:session_id, :inclusion)
+        errors.add(
+          session_id.header,
+          "The session ID is not recognised. Download the offline spreadsheet " \
+            "and copy the session ID for this row from there, or " \
+            "contact our support organisation."
+        )
       end
     end
   end
@@ -640,14 +774,13 @@ class ImmunisationImportRow
     return if time_of_vaccination.blank?
 
     if time_of_vaccination.to_time.nil?
-      errors.add(:time_of_vaccination, :invalid)
+      errors.add(
+        time_of_vaccination.header,
+        "Enter a time in the correct format."
+      )
     elsif date_of_vaccination&.to_date&.today?
       if time_of_vaccination.to_time.future?
-        errors.add(
-          :time_of_vaccination,
-          :less_than_or_equal_to,
-          count: Time.current
-        )
+        errors.add(time_of_vaccination.header, "Enter a time in the past.")
       end
     end
   end
@@ -663,12 +796,15 @@ class ImmunisationImportRow
         uuid: uuid.to_s
       )
 
-    errors.add(:uuid, :inclusion) unless scope.exists?
+    errors.add(uuid.header, "Enter an existing record.") unless scope.exists?
   end
 
   def validate_vaccine_name
     if vaccine_name.present? && vaccine.nil?
-      errors.add(:vaccine_name, :inclusion)
+      errors.add(
+        vaccine_name.header,
+        "This vaccine is not available in this session."
+      )
     end
   end
 end
