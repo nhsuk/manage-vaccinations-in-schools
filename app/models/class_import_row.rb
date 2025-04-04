@@ -26,7 +26,7 @@ class ClassImportRow < PatientImportRow
 
   def validate_address_postcode
     if address_postcode.present? && address_postcode.to_postcode.nil?
-      errors.add(:address_postcode, "Enter a valid postcode, such as SW1A 1AA")
+      errors.add(:address_postcode, "should be a postcode, like SW1A 1AA")
     end
   end
 end

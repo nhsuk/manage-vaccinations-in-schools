@@ -14,7 +14,12 @@ class PatientImport < ApplicationRecord
 
         rows
           .select { _1.nhs_number_value == nhs_number }
-          .each { |row| row.errors.add(:nhs_number, :taken) }
+          .each do |row|
+            row.errors.add(
+              :base,
+              "The same NHS number appears multiple times in this file."
+            )
+          end
       end
   end
 

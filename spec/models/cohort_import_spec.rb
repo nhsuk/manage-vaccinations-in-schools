@@ -272,18 +272,10 @@ describe CohortImport do
       it "has a validation error" do
         expect { process! }.not_to change(Patient, :count)
         expect(cohort_import.errors[:row_2]).to eq(
-          [
-            [
-              "<code>CHILD_NHS_NUMBER</code>: The same NHS number appears multiple times in this file."
-            ]
-          ]
+          [["The same NHS number appears multiple times in this file."]]
         )
         expect(cohort_import.errors[:row_3]).to eq(
-          [
-            [
-              "<code>CHILD_NHS_NUMBER</code>: The same NHS number appears multiple times in this file."
-            ]
-          ]
+          [["The same NHS number appears multiple times in this file."]]
         )
       end
     end
