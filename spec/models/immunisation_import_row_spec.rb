@@ -2,7 +2,10 @@
 
 describe ImmunisationImportRow do
   subject(:immunisation_import_row) do
-    described_class.new(data:, organisation:)
+    described_class.new(
+      data: data.transform_keys { it.downcase.to_sym },
+      organisation:
+    )
   end
 
   let(:programmes) { [create(:programme, :flu)] }

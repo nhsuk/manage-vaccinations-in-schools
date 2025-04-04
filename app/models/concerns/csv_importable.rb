@@ -79,6 +79,8 @@ module CSVImportable
     return if invalid?
 
     converters = proc { |value| value&.strip.presence }
+    header_converters =
+      proc { |value| value.strip.downcase.tr("-", "_").tr(" ", "_").to_sym }
 
     self.data ||=
       CSV.parse(
@@ -86,6 +88,7 @@ module CSVImportable
         converters:,
         empty_value: nil,
         encoding: detect_encoding,
+        header_converters:,
         headers: true,
         skip_blanks: true,
         strip: true

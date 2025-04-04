@@ -2,7 +2,11 @@
 
 describe ClassImportRow do
   subject(:class_import_row) do
-    described_class.new(data:, session:, year_groups: session.year_groups)
+    described_class.new(
+      data: data.transform_keys { it.downcase.to_sym },
+      session:,
+      year_groups: session.year_groups
+    )
   end
 
   let(:today) { Date.new(2024, 12, 1) }
