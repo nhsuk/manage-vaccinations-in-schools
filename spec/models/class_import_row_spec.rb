@@ -50,7 +50,7 @@ describe ClassImportRow do
 
       it "is invalid" do
         expect(class_import_row).to be_invalid
-        expect(class_import_row.errors[:year_group]).to contain_exactly(
+        expect(class_import_row.errors[:date_of_birth]).to contain_exactly(
           "is not part of this programme"
         )
       end
@@ -63,7 +63,7 @@ describe ClassImportRow do
         expect(class_import_row).to be_invalid
         expect(class_import_row.errors.size).to eq(1)
         expect(class_import_row.errors[:date_of_birth]).to contain_exactly(
-          "is required but missing"
+          "‘DDDDDDD’ should be formatted as YYYY-MM-DD"
         )
       end
     end

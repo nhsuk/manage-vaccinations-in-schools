@@ -1,12 +1,10 @@
 # frozen_string_literal: true
 
 class CohortImportRow < PatientImportRow
-  validates :address_postcode, postcode: true
+  validate :validate_address_postcode, :validate_school_urn
 
   SCHOOL_URN_HOME_EDUCATED = "999999"
   SCHOOL_URN_UNKNOWN = "888888"
-
-  validate :school_urn_inclusion
 
   def initialize(data:, organisation:)
     super(data:, organisation:, year_groups: organisation.year_groups)
@@ -41,7 +39,15 @@ class CohortImportRow < PatientImportRow
     end
   end
 
-  def school_urn_inclusion
+  def validate_address_postcode
+    if address_postcode.blank?
+      errors.add(:address_postcode, :blank)
+    elsif address_postcode.to_postcode.nil?
+      errors.add(:address_postcode, :invalid)
+    end
+  end
+
+  def validate_school_urn
     unless Location.school.exists?(urn: school_urn) ||
              school_urn.in?([SCHOOL_URN_HOME_EDUCATED, SCHOOL_URN_UNKNOWN])
       errors.add(:school_urn, :inclusion)

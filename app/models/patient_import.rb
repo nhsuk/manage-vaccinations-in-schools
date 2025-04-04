@@ -7,13 +7,13 @@ class PatientImport < ApplicationRecord
 
   def check_rows_are_unique
     rows
-      .map(&:nhs_number)
+      .map(&:nhs_number_value)
       .tally
       .each do |nhs_number, count|
         next if nhs_number.nil? || count <= 1
 
         rows
-          .select { _1.nhs_number == nhs_number }
+          .select { _1.nhs_number_value == nhs_number }
           .each { |row| row.errors.add(:nhs_number, :taken) }
       end
   end
