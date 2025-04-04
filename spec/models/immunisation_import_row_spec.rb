@@ -2,13 +2,16 @@
 
 describe ImmunisationImportRow do
   subject(:immunisation_import_row) do
-    described_class.new(
-      data:
-        data
-          .transform_keys { it.downcase.to_sym }
-          .transform_values { CSVParser::Field.new(it, nil, nil) },
-      organisation:
-    )
+    described_class.new(data: data_as_csv_row, organisation:)
+  end
+
+  # FIXME: Don't re-implement behaviour of `CSVParser`.
+  let(:data_as_csv_row) do
+    data.each_with_object({}) do |(key, value), hash|
+      hash[
+        key.strip.downcase.tr("-", "_").tr(" ", "_").to_sym
+      ] = CSVParser::Field.new(value, nil, nil, key)
+    end
   end
 
   let(:programmes) { [create(:programme, :flu)] }
@@ -65,11 +68,16 @@ describe ImmunisationImportRow do
 
       it "has errors" do
         expect(immunisation_import_row).to be_invalid
-        expect(immunisation_import_row.errors[:administered]).to include(
-          /You need to record whether the child was vaccinated or not/
-        )
-        expect(immunisation_import_row.errors[:programme_name]).to include(
-          "Enter a programme"
+        expect(immunisation_import_row.errors[:base]).to contain_exactly(
+          "<code>VACCINATED</code> is required",
+          "<code>DATE_OF_VACCINATION</code> is required",
+          "<code>PERSON_DOB</code> is required",
+          "<code>PERSON_FORENAME</code> is required",
+          "<code>PERSON_GENDER_CODE</code> or <code>PERSON_GENDER</code> is required",
+          "<code>PERSON_SURNAME</code> is required",
+          "<code>PERSON_POSTCODE</code> is required",
+          "<code>PROGRAMME</code> is required",
+          "<code>REASON_NOT_VACCINATED</code> is required"
         )
       end
     end
@@ -77,25 +85,16 @@ describe ImmunisationImportRow do
     context "when missing fields" do
       let(:data) { { "VACCINATED" => "Y" } }
 
-      it "has errors" do
-        expect(immunisation_import_row).to be_invalid
-        expect(immunisation_import_row.errors[:patient_date_of_birth]).to eq(
-          ["Enter a date of birth in the correct format."]
-        )
-        expect(immunisation_import_row.errors[:patient_gender_code]).to eq(
-          ["Enter a gender or gender code."]
-        )
-        expect(immunisation_import_row.errors[:patient_postcode]).to eq(
-          ["Enter a valid postcode, such as SW1A 1AA"]
-        )
-      end
+      it { should be_invalid }
 
       context "with an NHS number and missing fields" do
         let(:data) { { "VACCINATED" => "Y", "NHS_NUMBER" => nhs_number } }
 
         it "doesn't require a postcode" do
           expect(immunisation_import_row).to be_invalid
-          expect(immunisation_import_row.errors[:patient_postcode]).to be_empty
+          expect(immunisation_import_row.errors[:base]).not_to include(
+            "<code>PERSON_POSTCODE</code> is required"
+          )
         end
       end
     end
@@ -105,8 +104,8 @@ describe ImmunisationImportRow do
 
       it "has errors" do
         expect(immunisation_import_row).to be_invalid
-        expect(immunisation_import_row.errors[:vaccine_name]).to eq(
-          ["This vaccine is not available in this session"]
+        expect(immunisation_import_row.errors["VACCINE_GIVEN"]).to eq(
+          ["This vaccine is not available in this session."]
         )
       end
     end
@@ -118,8 +117,8 @@ describe ImmunisationImportRow do
 
       it "has errors" do
         expect(immunisation_import_row).to be_invalid
-        expect(immunisation_import_row.errors[:reason_not_administered]).to eq(
-          ["is invalid"]
+        expect(immunisation_import_row.errors["REASON_NOT_VACCINATED"]).to eq(
+          ["Enter a valid reason"]
         )
       end
     end
@@ -129,8 +128,8 @@ describe ImmunisationImportRow do
 
       it "has errors" do
         expect(immunisation_import_row).to be_invalid
-        expect(immunisation_import_row.errors[:patient_postcode]).to include(
-          "Enter a valid postcode, such as SW1A 1AA"
+        expect(immunisation_import_row.errors["PERSON_POSTCODE"]).to include(
+          "Enter a valid postcode, such as SW1A 1AA."
         )
       end
     end
@@ -140,7 +139,7 @@ describe ImmunisationImportRow do
 
       it "has errors" do
         expect(immunisation_import_row).to be_invalid
-        expect(immunisation_import_row.errors[:patient_gender_code]).to eq(
+        expect(immunisation_import_row.errors["PERSON_GENDER_CODE"]).to eq(
           ["Enter a gender or gender code."]
         )
       end
@@ -149,9 +148,7 @@ describe ImmunisationImportRow do
     context "with an invalid date of vaccination" do
       let(:data) { { "DATE_OF_VACCINATION" => "21000101" } }
 
-      it "has errors" do
-        expect(immunisation_import_row).to be_invalid
-      end
+      it { should be_invalid }
     end
 
     context "with a date and time of vaccination in the future" do
@@ -166,9 +163,9 @@ describe ImmunisationImportRow do
 
       it "has an error" do
         expect(immunisation_import_row).to be_invalid
-        expect(immunisation_import_row.errors[:time_of_vaccination]).to include(
-          "Enter a time in the past"
-        )
+        expect(
+          immunisation_import_row.errors["TIME_OF_VACCINATION"]
+        ).to include("Enter a time in the past.")
       end
     end
 
@@ -181,9 +178,9 @@ describe ImmunisationImportRow do
 
       it "has an error" do
         expect(immunisation_import_row).to be_invalid
-        expect(immunisation_import_row.errors[:date_of_vaccination]).to include(
-          "The vaccination date is before the date of birth"
-        )
+        expect(
+          immunisation_import_row.errors["DATE_OF_VACCINATION"]
+        ).to include("The vaccination date is before the date of birth.")
       end
     end
 
@@ -194,8 +191,8 @@ describe ImmunisationImportRow do
 
       it "has errors" do
         expect(immunisation_import_row).to be_invalid
-        expect(immunisation_import_row.errors[:reason_not_administered]).to eq(
-          ["must be blank"]
+        expect(immunisation_import_row.errors["REASON_NOT_VACCINATED"]).to eq(
+          ["is not required"]
         )
       end
     end
@@ -213,12 +210,14 @@ describe ImmunisationImportRow do
       end
 
       it "has a valid time of vaccination" do
-        expect(immunisation_import_row.errors[:time_of_vaccination]).to be_empty
+        expect(
+          immunisation_import_row.errors["TIME_OF_VACCINATION"]
+        ).to be_empty
       end
     end
 
     context "when date doesn't match an existing session" do
-      subject(:errors) { immunisation_import_row.errors[:date_of_vaccination] }
+      subject(:errors) { immunisation_import_row.errors["DATE_OF_VACCINATION"] }
 
       before { immunisation_import_row.valid? }
 
@@ -234,7 +233,7 @@ describe ImmunisationImportRow do
 
         it do
           expect(errors).to include(
-            "Enter a date that matches when the vaccination session took place"
+            "Enter a date that matches when the vaccination session took place."
           )
         end
       end
@@ -251,8 +250,8 @@ describe ImmunisationImportRow do
 
       it "has errors" do
         expect(immunisation_import_row).to be_invalid
-        expect(immunisation_import_row.errors[:time_of_vaccination]).to eq(
-          ["Enter a time in the correct format"]
+        expect(immunisation_import_row.errors["TIME_OF_VACCINATION"]).to eq(
+          ["Enter a time in the correct format."]
         )
       end
     end
@@ -262,7 +261,7 @@ describe ImmunisationImportRow do
 
       it "has errors" do
         expect(immunisation_import_row).to be_invalid
-        expect(immunisation_import_row.errors[:patient_nhs_number]).to eq(
+        expect(immunisation_import_row.errors["NHS_NUMBER"]).to eq(
           ["Enter an NHS number with 10 characters."]
         )
       end
@@ -273,7 +272,7 @@ describe ImmunisationImportRow do
 
       it "has errors" do
         expect(immunisation_import_row).to be_invalid
-        expect(immunisation_import_row.errors[:patient_date_of_birth]).to eq(
+        expect(immunisation_import_row.errors["PERSON_DOB"]).to eq(
           ["Enter a date of birth in the past."]
         )
       end
@@ -301,10 +300,8 @@ describe ImmunisationImportRow do
 
       it "has errors" do
         expect(immunisation_import_row).to be_invalid
-        expect(immunisation_import_row.errors[:existing_patients]).to eq(
-          [
-            "Two or more possible patients match the patient first name, last name, date of birth or postcode."
-          ]
+        expect(immunisation_import_row.errors[:base]).to include(
+          "Two or more possible patients match the patient first name, last name, date of birth or postcode."
         )
       end
     end
@@ -316,7 +313,7 @@ describe ImmunisationImportRow do
 
       it "has errors" do
         expect(immunisation_import_row).to be_invalid
-        expect(immunisation_import_row.errors[:dose_sequence]).to include(
+        expect(immunisation_import_row.errors["DOSE_SEQUENCE"]).to include(
           /must be less than/
         )
       end
@@ -327,7 +324,7 @@ describe ImmunisationImportRow do
 
       it "has errors" do
         expect(immunisation_import_row).to be_invalid
-        expect(immunisation_import_row.errors[:session_id]).to include(
+        expect(immunisation_import_row.errors["SESSION_ID"]).to include(
           "The session ID is not recognised. Download the offline spreadsheet and copy the session ID " \
             "for this row from there, or contact our support organisation."
         )
@@ -339,7 +336,7 @@ describe ImmunisationImportRow do
 
       it "has errors" do
         expect(immunisation_import_row).to be_invalid
-        expect(immunisation_import_row.errors[:session_id]).to include(
+        expect(immunisation_import_row.errors["SESSION_ID"]).to include(
           "The session ID is not recognised. Download the offline spreadsheet and copy the session ID " \
             "for this row from there, or contact our support organisation."
         )
@@ -353,8 +350,8 @@ describe ImmunisationImportRow do
 
       it "has errors" do
         expect(immunisation_import_row).to be_invalid
-        expect(immunisation_import_row.errors[:performed_ods_code]).to eq(
-          ["Enter an organisation code."]
+        expect(immunisation_import_row.errors[:base]).to include(
+          "<code>ORGANISATION_CODE</code> is required"
         )
       end
     end
@@ -373,8 +370,8 @@ describe ImmunisationImportRow do
 
       it "has errors" do
         expect(immunisation_import_row).to be_invalid
-        expect(immunisation_import_row.errors[:programme_name]).to eq(
-          ["This programme is not available in this session"]
+        expect(immunisation_import_row.errors["PROGRAMME"]).to eq(
+          ["This programme is not available in this session."]
         )
       end
     end
@@ -396,15 +393,9 @@ describe ImmunisationImportRow do
 
       it "has errors" do
         expect(immunisation_import_row).to be_invalid
-        expect(immunisation_import_row.errors[:performed_by_email]).to include(
-          "Enter a valid email address"
+        expect(immunisation_import_row.errors[:base]).to include(
+          "<code>PERFORMING_PROFESSIONAL_EMAIL</code> is required"
         )
-        expect(
-          immunisation_import_row.errors[:performed_by_given_name]
-        ).to be_empty
-        expect(
-          immunisation_import_row.errors[:performed_by_family_name]
-        ).to be_empty
       end
     end
 
@@ -423,8 +414,8 @@ describe ImmunisationImportRow do
 
       it "has errors" do
         expect(immunisation_import_row).to be_invalid
-        expect(immunisation_import_row.errors[:performed_by_email]).to include(
-          "Enter a valid email address"
+        expect(immunisation_import_row.errors[:base]).to include(
+          "<code>PERFORMING_PROFESSIONAL_EMAIL</code> is required"
         )
       end
     end
@@ -443,8 +434,8 @@ describe ImmunisationImportRow do
 
       it "has errors" do
         expect(immunisation_import_row).to be_invalid
-        expect(immunisation_import_row.errors[:dose_sequence]).to eq(
-          ["Do not provide a dose sequence for this programme (leave blank)"]
+        expect(immunisation_import_row.errors["DOSE_SEQUENCE"]).to eq(
+          ["Do not provide a dose sequence for this programme (leave blank)."]
         )
       end
     end
@@ -463,8 +454,8 @@ describe ImmunisationImportRow do
 
       it "has errors" do
         expect(immunisation_import_row).to be_invalid
-        expect(immunisation_import_row.errors[:dose_sequence]).to eq(
-          ["Do not provide a dose sequence for this programme (leave blank)"]
+        expect(immunisation_import_row.errors["DOSE_SEQUENCE"]).to eq(
+          ["Do not provide a dose sequence for this programme (leave blank)."]
         )
       end
     end
@@ -493,9 +484,9 @@ describe ImmunisationImportRow do
 
       it "has errors" do
         expect(immunisation_import_row).to be_invalid
-        expect(immunisation_import_row.errors[:performed_by_email]).to include(
-          "Enter a valid email address"
-        )
+        expect(
+          immunisation_import_row.errors["PERFORMING_PROFESSIONAL_EMAIL"]
+        ).to include("Enter a valid email address")
       end
     end
 
@@ -527,7 +518,7 @@ describe ImmunisationImportRow do
 
       it "has errors" do
         expect(immunisation_import_row).to be_invalid
-        expect(immunisation_import_row.errors[:delivery_site]).to eq(
+        expect(immunisation_import_row.errors["ANATOMICAL_SITE"]).to eq(
           ["Enter a anatomical site that is appropriate for the vaccine."]
         )
       end
@@ -547,7 +538,7 @@ describe ImmunisationImportRow do
 
       it "raises no errors on delivery site to be more permissive of legacy records" do
         immunisation_import_row.valid?
-        expect(immunisation_import_row.errors[:delivery_site]).to be_empty
+        expect(immunisation_import_row.errors["ANATOMICAL_SITE"]).to be_empty
       end
     end
 
@@ -568,7 +559,7 @@ describe ImmunisationImportRow do
 
       it "has errors" do
         expect(immunisation_import_row).to be_invalid
-        expect(immunisation_import_row.errors[:delivery_site]).to eq(
+        expect(immunisation_import_row.errors["ANATOMICAL_SITE"]).to eq(
           ["Enter a anatomical site that is appropriate for the vaccine."]
         )
       end
@@ -590,11 +581,11 @@ describe ImmunisationImportRow do
 
       it "has errors" do
         expect(immunisation_import_row).to be_invalid
-        expect(immunisation_import_row.errors[:batch_expiry]).to eq(
-          ["Enter a batch expiry date."]
+        expect(immunisation_import_row.errors[:base]).to include(
+          "<code>BATCH_EXPIRY_DATE</code> is required"
         )
-        expect(immunisation_import_row.errors[:batch_name]).to eq(
-          ["Enter a batch number."]
+        expect(immunisation_import_row.errors[:base]).to include(
+          "<code>BATCH_NUMBER</code> is required"
         )
       end
     end
@@ -615,8 +606,8 @@ describe ImmunisationImportRow do
 
       it "has errors" do
         expect(immunisation_import_row).to be_invalid
-        expect(immunisation_import_row.errors[:delivery_site]).to eq(
-          ["Enter an anatomical site."]
+        expect(immunisation_import_row.errors[:base]).to include(
+          "<code>ANATOMICAL_SITE</code> is required"
         )
       end
     end
@@ -977,52 +968,6 @@ describe ImmunisationImportRow do
     end
   end
 
-  describe "#administered" do
-    subject(:administered) { immunisation_import_row.administered }
-
-    context "without a vaccinated field" do
-      let(:data) { {} }
-
-      it { should be_nil }
-    end
-
-    context "with positive short vaccinated value" do
-      let(:data) { { "VACCINATED" => "Y" } }
-
-      it { should be(true) }
-    end
-
-    context "with positive long vaccinated value" do
-      let(:data) { { "VACCINATED" => "Yes" } }
-
-      it { should be(true) }
-    end
-
-    context "with negative short vaccinated value" do
-      let(:data) { { "VACCINATED" => "N" } }
-
-      it { should be(false) }
-    end
-
-    context "with negative long vaccinated value" do
-      let(:data) { { "VACCINATED" => "No" } }
-
-      it { should be(false) }
-    end
-
-    context "with an unknown vaccinated value" do
-      let(:data) { { "VACCINATED" => "Other" } }
-
-      it { should be_nil }
-    end
-
-    context "with a vaccine given value" do
-      let(:data) { { "VACCINE_GIVEN" => "Vaccine" } }
-
-      it { should be(true) }
-    end
-  end
-
   describe "#batch_expiry" do
     subject { immunisation_import_row.batch_expiry&.to_date }
 
@@ -1082,6 +1027,18 @@ describe ImmunisationImportRow do
     end
 
     it { should eq("administered") }
+
+    context "with positive short vaccinated value" do
+      let(:data) { valid_data.merge("VACCINATED" => "Y") }
+
+      it { should eq("administered") }
+    end
+
+    context "with positive long vaccinated value" do
+      let(:data) { valid_data.merge("VACCINATED" => "Yes") }
+
+      it { should eq("administered") }
+    end
 
     {
       "refused" => "refused",
