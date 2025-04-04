@@ -23,7 +23,7 @@ nhs_api:
   disable_authentication: true
 
 pds:
-  perform_jobs: false
+  enqueue_bulk_updates: false
 
 splunk:
   enabled: false

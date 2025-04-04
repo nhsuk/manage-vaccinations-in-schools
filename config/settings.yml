@@ -73,7 +73,7 @@ nhs_api:
 <%= Rails.application.credentials.nhs_api&.jwt_private_key&.gsub(/^/, "    ") %>
 
 pds:
-  perform_jobs: true
+  enqueue_bulk_updates: true
   raise_unknown_gp_practice: true
 
 splunk:

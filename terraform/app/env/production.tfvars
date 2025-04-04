@@ -14,9 +14,7 @@ resource_name = {
 }
 rails_env             = "production"
 rails_master_key_path = "/copilot/mavis/production/secrets/RAILS_MASTER_KEY"
-splunk_enabled        = "true"
-cis2_enabled          = "true"
-pds_enabled           = "true"
+
 http_hosts = {
   MAVIS__HOST                        = "www.manage-vaccinations-in-schools.nhs.uk"
   MAVIS__GIVE_OR_REFUSE_CONSENT_HOST = "www.give-or-refuse-consent-for-vaccinations.nhs.uk"
