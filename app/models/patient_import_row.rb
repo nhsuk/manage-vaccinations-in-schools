@@ -168,18 +168,12 @@ class PatientImportRow
   end
 
   def date_of_birth
-    Date.parse(@data[:child_date_of_birth]&.to_s)
-  rescue ArgumentError, TypeError
-    nil
+    @data[:child_date_of_birth]&.to_date
   end
 
   def birth_academic_year
-    if (year_group = @data[:child_year_group]&.to_s).present?
-      begin
-        Integer(year_group).to_birth_academic_year
-      rescue ArgumentError, TypeError
-        nil
-      end
+    if (year_group = @data[:child_year_group]).present?
+      year_group.to_i.to_birth_academic_year
     else
       date_of_birth&.academic_year
     end

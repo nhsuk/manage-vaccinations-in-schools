@@ -1374,7 +1374,7 @@ describe ImmunisationImportRow do
     context "with an invalid postcode" do
       let(:data) { { "PERSON_POSTCODE" => "abc" } }
 
-      it { should eq("abc") }
+      it { should be_nil }
     end
 
     context "with a valid postcode" do
