@@ -108,7 +108,7 @@ class ImmunisationImportRow
             }
   validates :time_of_vaccination,
             presence: {
-              if: -> { @data["TIME_OF_VACCINATION"]&.normalise_whitespace.present? }
+              if: -> { @data["TIME_OF_VACCINATION"].present? }
             },
             comparison: {
               less_than_or_equal_to: -> { Time.current },
@@ -217,7 +217,9 @@ class ImmunisationImportRow
   end
 
   def administered
-    if (vaccinated = @data["VACCINATED"]&.normalise_whitespace&.downcase).present?
+    if (
+         vaccinated = @data["VACCINATED"]&.normalise_whitespace&.downcase
+       ).present?
       if "yes".start_with?(vaccinated)
         true
       elsif "no".start_with?(vaccinated)
@@ -339,7 +341,9 @@ class ImmunisationImportRow
   end
 
   def patient_gender_code
-    gender_code = @data["PERSON_GENDER_CODE"]&.normalise_whitespace || @data["PERSON_GENDER"]&.normalise_whitespace
+    gender_code =
+      @data["PERSON_GENDER_CODE"]&.normalise_whitespace ||
+        @data["PERSON_GENDER"]&.normalise_whitespace
     gender_code&.strip&.downcase&.gsub(" ", "_")
   end
 
@@ -517,8 +521,7 @@ class ImmunisationImportRow
     if offline_recording?
       errors.add(:performed_by_user, :blank) if performed_by_user.nil?
     else # previous academic years from here on
-      email_field_populated =
-        @data["PERFORMING_PROFESSIONAL_EMAIL"].present?
+      email_field_populated = @data["PERFORMING_PROFESSIONAL_EMAIL"].present?
 
       if email_field_populated
         errors.add(:performed_by_user, :blank) if performed_by_user.nil?
