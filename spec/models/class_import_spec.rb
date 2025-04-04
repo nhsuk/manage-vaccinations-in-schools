@@ -69,15 +69,6 @@ describe ClassImport do
 
     before { parse_rows! }
 
-    describe "with invalid headers" do
-      let(:file) { "invalid_headers.csv" }
-
-      it "populates header errors" do
-        expect(class_import).to be_invalid
-        expect(class_import.errors[:csv]).to include(/missing.*headers/)
-      end
-    end
-
     describe "with a BOM" do
       let(:file) { "valid_with_bom.csv" }
 

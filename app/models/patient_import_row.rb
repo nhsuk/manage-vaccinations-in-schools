@@ -148,33 +148,33 @@ class PatientImportRow
   end
 
   def nhs_number
-    @data["CHILD_NHS_NUMBER"]&.gsub(/\s/, "").presence
+    @data[:child_nhs_number]&.gsub(/\s/, "")
   end
 
   def first_name
-    @data["CHILD_FIRST_NAME"]&.strip
+    @data[:child_first_name]
   end
 
   def last_name
-    @data["CHILD_LAST_NAME"]&.strip
+    @data[:child_last_name]
   end
 
   def preferred_first_name
-    @data["CHILD_PREFERRED_FIRST_NAME"]&.strip.presence
+    @data[:child_preferred_first_name]
   end
 
   def preferred_last_name
-    @data["CHILD_PREFERRED_LAST_NAME"]&.strip.presence
+    @data[:child_preferred_last_name]
   end
 
   def date_of_birth
-    Date.parse(@data["CHILD_DATE_OF_BIRTH"])
+    Date.parse(@data[:child_date_of_birth])
   rescue ArgumentError, TypeError
     nil
   end
 
   def birth_academic_year
-    if (year_group = @data["CHILD_YEAR_GROUP"]).present?
+    if (year_group = @data[:child_year_group]).present?
       begin
         Integer(year_group).to_birth_academic_year
       rescue ArgumentError, TypeError
@@ -190,59 +190,59 @@ class PatientImportRow
   end
 
   def registration
-    @data["CHILD_REGISTRATION"]&.strip.presence
+    @data[:child_registration]
   end
 
   def gender_code
-    @data["CHILD_GENDER"]&.strip&.downcase&.gsub(" ", "_").presence
+    @data[:child_gender]&.downcase&.gsub(" ", "_")
   end
 
   def address_line_1
-    @data["CHILD_ADDRESS_LINE_1"]&.strip.presence
+    @data[:child_address_line_1]
   end
 
   def address_line_2
-    @data["CHILD_ADDRESS_LINE_2"]&.strip.presence
+    @data[:child_address_line_2]
   end
 
   def address_town
-    @data["CHILD_TOWN"]&.strip.presence
+    @data[:child_town]
   end
 
   def address_postcode
-    @data["CHILD_POSTCODE"]&.strip.presence
+    @data[:child_postcode]
   end
 
   def parent_1_name
-    @data["PARENT_1_NAME"]&.strip.presence
+    @data[:parent_1_name]
   end
 
   def parent_1_relationship
-    @data["PARENT_1_RELATIONSHIP"]&.strip.presence
+    @data[:parent_1_relationship]
   end
 
   def parent_1_email
-    @data["PARENT_1_EMAIL"]&.downcase&.strip.presence
+    @data[:parent_1_email]&.downcase
   end
 
   def parent_1_phone
-    @data["PARENT_1_PHONE"]&.gsub(/\s/, "").presence
+    @data[:parent_1_phone]&.gsub(/\s/, "")
   end
 
   def parent_2_name
-    @data["PARENT_2_NAME"]&.strip.presence
+    @data[:parent_2_name]
   end
 
   def parent_2_relationship
-    @data["PARENT_2_RELATIONSHIP"]&.strip.presence
+    @data[:parent_2_relationship]
   end
 
   def parent_2_email
-    @data["PARENT_2_EMAIL"]&.downcase&.strip.presence
+    @data[:parent_2_email]&.downcase
   end
 
   def parent_2_phone
-    @data["PARENT_2_PHONE"]&.gsub(/\s/, "").presence
+    @data[:parent_2_phone]&.gsub(/\s/, "")
   end
 
   attr_reader :organisation, :year_groups
