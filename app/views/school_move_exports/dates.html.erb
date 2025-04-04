@@ -1,0 +1,27 @@
+<% content_for :before_main do %>
+  <%= render AppBacklinkComponent.new(school_moves_path, name: "school_moves_export") %>
+<% end %>
+
+<span class="nhsuk-caption-l"><%= t("school_moves.download.dates.caption") %></span>
+<%= h1 t("school_moves.download.dates.title") %>
+
+<p class="nhsuk-body"><%= t("school_moves.download.dates.description") %></p>
+
+<p class="nhsuk-body">
+  <%= t("school_moves.download.dates.unconfirmed_moves", count: @school_move_export.count) %>
+</p>
+
+<h3><%= t("school_moves.download.dates.date_range_heading") %></h3>
+
+<%= form_with model: @school_move_export, url: wizard_path, method: :put do |f| %>
+  <%= f.govuk_error_summary %>
+  <%= f.govuk_date_field :date_from,
+                         legend: { text: t("school_moves.download.dates.date_from_legend") },
+                         hint: { text: t("school_moves.download.dates.date_hint", example: "27 3 2024") } %>
+
+  <%= f.govuk_date_field :date_to,
+                         legend: { text: t("school_moves.download.dates.date_to_legend") },
+                         hint: { text: t("school_moves.download.dates.date_hint", example: "16 6 2025") } %>
+
+  <%= f.govuk_submit %>
+<% end %>

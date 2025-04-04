@@ -1,0 +1,33 @@
+<% content_for :before_main do %>
+  <%= render AppBacklinkComponent.new(wizard_path(:dates), name: "school_moves_export") %>
+<% end %>
+
+<span class="nhsuk-caption-l"><%= t("school_moves.download.confirm.caption") %></span>
+<%= h1 t("school_moves.download.confirm.title") %>
+
+<%= render AppCardComponent.new do |card| %>
+  <% card.with_heading { t("school_moves.download.confirm.heading") } %>
+
+  <%= govuk_summary_list do |summary_list|
+        summary_list.with_row do |row|
+          row.with_key { t("school_moves.download.confirm.date_from") }
+          row.with_value { @school_move_export.date_from_formatted }
+          row.with_action(text: t("school_moves.download.confirm.change"), href: wizard_path(:dates))
+        end
+      
+        summary_list.with_row do |row|
+          row.with_key { t("school_moves.download.confirm.date_to") }
+          row.with_value { @school_move_export.date_to_formatted }
+          row.with_action(text: t("school_moves.download.confirm.change"), href: wizard_path(:dates))
+        end
+      
+        summary_list.with_row do |row|
+          row.with_key { t("school_moves.download.confirm.records") }
+          row.with_value { @school_move_export.count.to_s }
+        end
+      end %>
+<% end %>
+
+<%= form_with model: @school_move_export, url: wizard_path, method: :put do |f| %>
+  <%= f.govuk_submit t("school_moves.download.confirm.submit") %>
+<% end %>
