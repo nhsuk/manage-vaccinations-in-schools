@@ -190,7 +190,7 @@ class PatientImportRow
   end
 
   def registration
-    @data["CHILD_REGISTRATION"]
+    @data["CHILD_REGISTRATION"]&.normalise_whitespace
   end
 
   def gender_code
