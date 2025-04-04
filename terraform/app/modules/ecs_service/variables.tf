@@ -1,6 +1,6 @@
 variable "environment" {
   type        = string
-  description = "String literal for the environment"
+  description = "Application environment (for example production or staging)"
 }
 
 variable "server_type" {
