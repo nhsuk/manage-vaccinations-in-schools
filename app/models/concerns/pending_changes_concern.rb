@@ -9,6 +9,18 @@ module PendingChangesConcern
     new_pending_changes =
       attributes.each_with_object({}) do |(attr, new_value), staged_changes|
         current_value = public_send(attr)
+
+        current_value =
+          current_value.normalise_whitespace if current_value.respond_to?(
+          :normalise_whitespace
+        )
+
+        # Automatically update the patient's attribute if `current_value` is an un-whitespace-normalised
+        # version of `new_value`
+        if (new_value == current_value) && (current_value != public_send(attr))
+          public_send("#{attr}=", new_value)
+        end
+
         staged_changes[attr.to_s] = new_value if new_value != current_value
       end
 
