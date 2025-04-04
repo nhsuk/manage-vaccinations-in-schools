@@ -7,7 +7,23 @@ class String
     strip.gsub(/\s+/, " ").presence
   end
 
-  def normalise_whitespace_regex(database_column_name)
-    "regexp_replace(trim(#{database_column_name}), E'\\s+', ' ', 'g')"
+  def self.normalise_whitespace_sql(klass, database_column_name)
+    # Equivalent to "regexp_replace(trim(#{database_column_name}), E'\\s+', ' ', 'g')"
+    if klass.column_names.include?(database_column_name)
+      Arel::Nodes::NamedFunction.new(
+        "regexp_replace",
+        [
+          Arel::Nodes::NamedFunction.new(
+            "trim",
+            [Patient.arel_table[database_column_name]]
+          ),
+          Arel::Nodes::SqlLiteral.new("E'\\s+'"),
+          Arel::Nodes::SqlLiteral.new("' '"),
+          Arel::Nodes::SqlLiteral.new("'g'")
+        ]
+      )
+    else
+      raise "Invalid column name: #{database_column_name}"
+    end
   end
 end
