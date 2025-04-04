@@ -109,6 +109,8 @@ describe ClassImportRow do
         expect(parents.first.full_name).to eq("John Smith")
       end
     end
+
+    # TODO: Add test for whitespace normalisation
   end
 
   describe "#to_patient" do
@@ -179,6 +181,8 @@ describe ClassImportRow do
         end
       end
     end
+
+    # TODO: Add test for whitespace normalisation
   end
 
   describe "#to_parent_relationships" do

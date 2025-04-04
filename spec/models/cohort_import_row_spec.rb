@@ -14,7 +14,7 @@ describe CohortImportRow do
     {
       "CHILD_ADDRESS_LINE_1" => "10 Downing Street",
       "CHILD_ADDRESS_LINE_2" => "",
-      "CHILD_PREFERRED_GIVEN_NAME" => "Jim",
+      "CHILD_PREFERRED_FIRST_NAME" => "Jim",
       "CHILD_DATE_OF_BIRTH" => "2010-01-01",
       "CHILD_FIRST_NAME" => "Jimmy",
       "CHILD_GENDER" => "Male",
@@ -130,6 +130,8 @@ describe CohortImportRow do
         )
       end
     end
+
+    # TODO: Add test for whitespace normalisation
   end
 
   describe "#to_patient" do
@@ -183,6 +185,65 @@ describe CohortImportRow do
       it "stages the registration" do
         expect(patient.registration).not_to eq("8AB")
         expect(patient.pending_changes).to include("registration" => "8AB")
+      end
+    end
+
+    context "with an existing patient with un-normalised whitespace" do
+      let(:data) do
+        {
+          "CHILD_ADDRESS_LINE_1" => " 10  Downing  \t Street   ",
+          "CHILD_ADDRESS_LINE_2" => "",
+          "CHILD_PREFERRED_FIRST_NAME" => "\t Jim  ",
+          "CHILD_DATE_OF_BIRTH" => "2010-01-01",
+          "CHILD_FIRST_NAME" => "  \tJimmy ",
+          "CHILD_GENDER" => "Male",
+          "CHILD_LAST_NAME" => "   Smith  ",
+          "CHILD_PREFERRED_LAST_NAME" => "   Smithy\t  ",
+          "CHILD_NHS_NUMBER" => " \t12 34 ‍567890 ",
+          "CHILD_POSTCODE" => "SW1A 1AA",
+          "CHILD_REGISTRATION" => " 8AB  ",
+          "CHILD_SCHOOL_URN" => school_urn,
+          "CHILD_TOWN" => " London \t "
+        }
+      end
+
+      let!(:existing_patient) do
+        create(
+          :patient,
+          address_postcode: "SW1A 1AA",
+          family_name: " Smith  \t",
+          gender_code: "male",
+          given_name: "  Jimmy \t",
+          nhs_number: "1234567890",
+          address_line_1: " 10  Downing  \t Street   ",
+          preferred_given_name: " Jim\t  ",
+          preferred_family_name: " \tSmithy  ",
+          date_of_birth: Date.new(2010, 1, 1),
+          registration: " 8AB  ",
+          address_town: "\t London  "
+        )
+      end
+
+      it { should eq(existing_patient) }
+      it { should be_male }
+
+      it "saves normalised versions of the incoming values" do
+        expect(patient).to have_attributes(
+          address_postcode: "SW1A 1AA",
+          family_name: "Smith",
+          gender_code: "male",
+          given_name: "Jimmy",
+          nhs_number: "1234567890",
+          address_line_1: "10 Downing Street",
+          preferred_given_name: "Jim",
+          preferred_family_name: "Smithy",
+          registration: "8AB",
+          address_town: "London"
+        )
+      end
+
+      it "doesn't stage the whitespace differences" do
+        expect(patient.pending_changes).to be_empty
       end
     end
   end
