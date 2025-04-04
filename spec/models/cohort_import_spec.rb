@@ -64,15 +64,6 @@ describe CohortImport do
 
     before { parse_rows! }
 
-    describe "with invalid headers" do
-      let(:file) { "invalid_headers.csv" }
-
-      it "populates header errors" do
-        expect(cohort_import).to be_invalid
-        expect(cohort_import.errors[:csv]).to include(/missing.*headers/)
-      end
-    end
-
     describe "with invalid fields" do
       let(:file) { "invalid_fields.csv" }
 

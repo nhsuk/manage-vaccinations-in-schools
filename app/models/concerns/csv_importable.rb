@@ -35,7 +35,6 @@ module CSVImportable
 
     validate :csv_is_valid
     validate :csv_has_records
-    validate :headers_are_valid
     validate :rows_are_valid
 
     before_save :ensure_processed_with_count_statistics
@@ -215,19 +214,6 @@ module CSVImportable
     return unless data
 
     errors.add(:csv, :empty) if data.empty?
-  end
-
-  def headers_are_valid
-    return unless data
-
-    missing_headers = required_headers - data.headers
-    if missing_headers.any?
-      errors.add(
-        :csv,
-        :missing_headers,
-        missing_headers: missing_headers.join(", ")
-      )
-    end
   end
 
   def rows_are_valid
