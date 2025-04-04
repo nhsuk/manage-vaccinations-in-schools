@@ -150,10 +150,10 @@ variable "enable_cis2" {
   nullable    = false
 }
 
-variable "enable_pds" {
+variable "enable_pds_enqueue_bulk_updates" {
   type        = bool
-  default     = true
-  description = "Boolean toggle to determine whether the PDS feature should be enabled."
+  default     = false
+  description = "Whether PDS jobs that update patients in bulk should execute or not. This is disabled in non-production environments to avoid making unnecessary requests to PDS."
   nullable    = false
 }
 
@@ -198,8 +198,8 @@ locals {
       value = var.enable_cis2 ? "true" : "false"
     },
     {
-      name  = "MAVIS__PDS__PERFORM_JOBS"
-      value = var.enable_pds ? "true" : "false"
+      name  = "MAVIS__PDS__ENQUEUE_BULK_UPDATES"
+      value = var.enable_pds_enqueue_bulk_updates ? "true" : "false"
     },
     {
       name  = "MAVIS__SPLUNK__ENABLED"
