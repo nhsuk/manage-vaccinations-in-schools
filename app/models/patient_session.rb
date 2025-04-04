@@ -100,6 +100,8 @@ class PatientSession < ApplicationRecord
           )
         end
 
+  scope :includes_programmes, -> { includes(:patient, session: :programmes) }
+
   scope :has_consent_status,
         ->(status, programme:) do
           where(

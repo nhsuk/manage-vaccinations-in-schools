@@ -41,10 +41,7 @@ class ConsentFormsController < ApplicationController
         @consent_form.original_session
 
     patient_session =
-      PatientSession.includes(session: :programmes).find_by!(
-        patient: @patient,
-        session:
-      )
+      PatientSession.includes_programmes.find_by!(patient: @patient, session:)
 
     flash[:success] = {
       heading: "Consent matched for",
