@@ -3,7 +3,10 @@
 describe ImmunisationImportRow do
   subject(:immunisation_import_row) do
     described_class.new(
-      data: data.transform_keys { it.downcase.to_sym },
+      data:
+        data
+          .transform_keys { it.downcase.to_sym }
+          .transform_values { CSVParser::Field.new(it, nil, nil) },
       organisation:
     )
   end

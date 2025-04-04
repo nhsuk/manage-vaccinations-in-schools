@@ -22,21 +22,47 @@ class CSVParser
 
   private_class_method :new
 
+  Field =
+    Struct.new("Field", :value, :column, :row, :header) do
+      delegate :blank?, :present?, to: :value
+
+      alias_method :to_s, :value
+
+      def cell = "#{column}#{row}"
+    end
+
   private
 
   attr_reader :data
 
+  ALPHABET = %w[A B C D E F G H I J K L M N O P Q R S T U V W X Y Z].freeze
+  COLUMNS = ALPHABET + ALPHABET.product(ALPHABET).map { _1 + _2 }
+
+  def unconverted_headers
+    @unconverted_headers ||=
+      CSV.parse_line(data.lines.first, encoding:, strip: true)
+  end
+
   def encoding
-    return nil if data.blank?
+    @encoding ||=
+      begin
+        return nil if data.blank?
 
-    encoding = CharlockHolmes::EncodingDetector.detect(data)
-    return nil if encoding.nil?
+        encoding = CharlockHolmes::EncodingDetector.detect(data)
+        return nil if encoding.nil?
 
-    encoding[:ruby_encoding]
+        encoding[:ruby_encoding]
+      end
   end
 
   def converters
-    proc { |value| value&.strip.presence }
+    proc do |value, info|
+      column = COLUMNS[info.index]
+      row = info.line
+      header = unconverted_headers[info.index]
+
+      Field.new(value&.strip.presence, column, row, header)
+    end
   end
 
   def header_converters

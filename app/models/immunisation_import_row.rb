@@ -216,7 +216,7 @@ class ImmunisationImportRow
   end
 
   def administered
-    if (vaccinated = @data[:vaccinated]&.downcase).present?
+    if (vaccinated = @data[:vaccinated]&.to_s&.downcase).present?
       if "yes".start_with?(vaccinated)
         true
       elsif "no".start_with?(vaccinated)
@@ -232,7 +232,7 @@ class ImmunisationImportRow
   end
 
   def batch_number
-    @data[:batch_number]
+    @data[:batch_number]&.to_s
   end
 
   REASONS = {
@@ -245,11 +245,11 @@ class ImmunisationImportRow
   }.freeze
 
   def reason
-    REASONS[@data[:reason_not_vaccinated]&.downcase]
+    REASONS[@data[:reason_not_vaccinated]&.to_s&.downcase]
   end
 
   def notes
-    @data[:notes]
+    @data[:notes]&.to_s
   end
 
   DELIVERY_SITES = {
@@ -267,7 +267,7 @@ class ImmunisationImportRow
   }.freeze
 
   def delivery_site
-    DELIVERY_SITES[@data[:anatomical_site]&.downcase]
+    DELIVERY_SITES[@data[:anatomical_site]&.to_s&.downcase]
   end
 
   def delivery_method
@@ -301,7 +301,7 @@ class ImmunisationImportRow
   }.freeze
 
   def dose_sequence
-    value = @data[:dose_sequence]&.gsub(/\s/, "")&.upcase
+    value = @data[:dose_sequence]&.to_s&.gsub(/\s/, "")&.upcase
 
     return default_dose_sequence if value.blank?
 
@@ -310,22 +310,22 @@ class ImmunisationImportRow
     return dose_sequences[value] if dose_sequences&.include?(value)
 
     begin
-      Integer(@data[:dose_sequence])
+      Integer(@data[:dose_sequence]&.to_s)
     rescue ArgumentError, TypeError
       nil
     end
   end
 
   def vaccine_given
-    @data[:vaccine_given]
+    @data[:vaccine_given]&.to_s
   end
 
   def patient_first_name
-    @data[:person_forename]
+    @data[:person_forename]&.to_s
   end
 
   def patient_last_name
-    @data[:person_surname]
+    @data[:person_surname]&.to_s
   end
 
   def patient_date_of_birth
@@ -337,44 +337,45 @@ class ImmunisationImportRow
   end
 
   def patient_gender_code
-    gender_code = @data[:person_gender_code] || @data[:person_gender]
+    gender_code =
+      @data[:person_gender_code]&.to_s || @data[:person_gender]&.to_s
     gender_code&.downcase&.gsub(" ", "_")
   end
 
   def patient_postcode
-    if (postcode = @data[:person_postcode]).present?
+    if (postcode = @data[:person_postcode]&.to_s).present?
       UKPostcode.parse(postcode).to_s
     end
   end
 
   def patient_nhs_number
-    @data[:nhs_number]&.gsub(/\s/, "")
+    @data[:nhs_number]&.to_s&.gsub(/\s/, "")
   end
 
   def performed_ods_code
-    @data[:organisation_code]&.upcase
+    @data[:organisation_code]&.to_s&.upcase
   end
 
   def programme_name
-    @data[:programme]
+    @data[:programme]&.to_s
   end
 
   def session_id
-    Integer(@data[:session_id])
+    Integer(@data[:session_id]&.to_s)
   rescue ArgumentError, TypeError
     nil
   end
 
   def school_name
-    @data[:school_name]
+    @data[:school_name]&.to_s
   end
 
   def clinic_name
-    @data[:clinic_name]
+    @data[:clinic_name]&.to_s
   end
 
   def school_urn
-    @data[:school_urn]
+    @data[:school_urn]&.to_s
   end
 
   def date_of_vaccination
@@ -386,26 +387,26 @@ class ImmunisationImportRow
   end
 
   def care_setting
-    Integer(@data[:care_setting])
+    Integer(@data[:care_setting]&.to_s)
   rescue ArgumentError, TypeError
     nil
   end
 
   def performed_by_user
     @performed_by_user ||=
-      if (email = @data[:performing_professional_email])
+      if (email = @data[:performing_professional_email]&.to_s)
         User.find_by(email:)
       end
   end
 
   def performed_by_given_name
     @performed_by_given_name ||=
-      (@data[:performing_professional_forename] if performed_by_user.nil?)
+      (@data[:performing_professional_forename]&.to_s if performed_by_user.nil?)
   end
 
   def performed_by_family_name
     @performed_by_family_name ||=
-      (@data[:performing_professional_surname] if performed_by_user.nil?)
+      (@data[:performing_professional_surname]&.to_s if performed_by_user.nil?)
   end
 
   def uuid
@@ -529,7 +530,7 @@ class ImmunisationImportRow
   DATE_FORMATS = %w[%Y%m%d %Y-%m-%d %d/%m/%Y].freeze
 
   def parse_date(key)
-    value = @data[key]
+    value = @data[key]&.to_s
     return nil if value.nil?
 
     parsed_dates =
@@ -545,7 +546,7 @@ class ImmunisationImportRow
   TIME_FORMATS = %w[%H:%M:%S %H:%M %H%M%S %H%M %H].freeze
 
   def parse_time(key)
-    value = @data[key]
+    value = @data[key]&.to_s
     return nil if value.nil?
 
     parsed_times =
