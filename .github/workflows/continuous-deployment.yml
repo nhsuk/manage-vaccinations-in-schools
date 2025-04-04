@@ -3,7 +3,7 @@ run-name: Continuous deployment of ${{ github.ref_name }} to QA and Test
 
 on:
   push:
-    branches: [main]
+    branches: [MAV-932_create_background_service]
 
 jobs:
   test:
@@ -13,7 +13,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        environment: ["qa", "test"]
+        environment: ["poc"]
     uses: ./.github/workflows/deploy-mavis.yml
     with:
       environment: ${{ matrix.environment }}
