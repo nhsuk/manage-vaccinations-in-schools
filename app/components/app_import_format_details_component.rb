@@ -68,7 +68,7 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
       {
         name: "ORGANISATION_CODE",
         notes:
-          "Optional, must be a valid #{link_to("ODS code", "https://odsportal.digital.nhs.uk/")}"
+          "Optional, must be a valid #{link_to("ODS code", "https://odsportal.digital.nhs.uk/")}."
       },
       {
         name: "SCHOOL_URN",
@@ -79,80 +79,47 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
       },
       {
         name: "SCHOOL_NAME",
-        notes: "Required if #{tag.i("SCHOOL_URN")} is #{tag.i("888888")}"
+        notes: "Required if #{tag.code("SCHOOL_URN")} is #{tag.i("888888")}."
       },
-      { name: "NHS_NUMBER", notes: "Optional, must be 10 digits and numeric" },
+      { name: "NHS_NUMBER", notes: "Optional, must be 10 digits and numeric." },
       { name: "PERSON_FORENAME", notes: tag.strong("Required") },
       { name: "PERSON_SURNAME", notes: tag.strong("Required") },
       {
         name: "PERSON_DOB",
         notes:
           "#{tag.strong("Required")}, must use either #{tag.i("YYYYMMDD")} or " \
-            "#{tag.i("DD/MM/YYYY")} format"
+            "#{tag.i("DD/MM/YYYY")} format."
       },
       {
         name: "PERSON_GENDER_CODE",
         notes:
           "#{tag.strong("Required")}, must be #{tag.i("Not known")}, " \
-            "#{tag.i("Male")}, #{tag.i("Female")}, #{tag.i("Not specified")}"
+            "#{tag.i("Male")}, #{tag.i("Female")}, #{tag.i("Not specified")}."
       },
       {
         name: "PERSON_POSTCODE",
         notes:
-          "#{tag.strong("Required")}, must be formatted as a valid postcode"
+          "#{tag.strong("Required")}, must be formatted as a valid postcode."
       },
       {
         name: "DATE_OF_VACCINATION",
         notes:
           "#{tag.strong("Required")}, must use either #{tag.i("YYYYMMDD")} or " \
-            "#{tag.i("DD/MM/YYYY")} format"
+            "#{tag.i("DD/MM/YYYY")} format."
       },
       {
         name: "TIME_OF_VACCINATION",
-        notes: "Optional, must use #{tag.i("HH:MM:SS")} format"
-      },
-      {
-        name: "PROGRAMME",
-        notes:
-          "#{tag.strong("Required")}, must be " +
-            organisation
-              .programmes
-              .flat_map(&:import_names)
-              .map { tag.i(it) }
-              .to_sentence(
-                last_word_connector: ", or ",
-                two_words_connector: " or "
-              )
-      },
-      {
-        name: "VACCINE_GIVEN",
-        notes:
-          "Optional, must be #{
-            organisation
-              .vaccines
-              .pluck(:nivs_name)
-              .map { tag.i(it) }
-              .to_sentence(
-                last_word_connector: ", or ",
-                two_words_connector: " or "
-              )
-          }"
-      },
-      { name: "BATCH_NUMBER", notes: "Optional" },
-      {
-        name: "BATCH_EXPIRY_DATE",
-        notes:
-          "Optional, must use " \
-            "either #{tag.i("YYYYMMDD")} or #{tag.i("DD/MM/YYYY")} format"
+        notes: "Optional, must use #{tag.i("HH:MM:SS")} format."
       },
       {
         name: "VACCINATED",
         notes:
-          "Optional, must be #{tag.i("Y")} or #{tag.i("N")}. If omitted, " \
-            "#{tag.i("Y")} is assumed."
+          "Required, must be #{tag.i("Y")} or #{tag.i("N")}. " \
+            "Can be omitted if #{tag.code("VACCINE_GIVEN")} is provided."
       }
-    ] + anatomical_site + reason_not_vaccinated_and_notes + dose_sequence +
-      care_setting + performing_professional
+    ] + vaccine_and_batch + programme + anatomical_site +
+      reason_not_vaccinated_and_notes + dose_sequence + care_setting +
+      performing_professional
   end
 
   def child_columns
@@ -164,7 +131,7 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
       {
         name: "CHILD_DATE_OF_BIRTH",
         notes:
-          "#{tag.strong("Required")}, must use #{tag.i("DD/MM/YYYY")} or #{tag.i("YYYY-MM-DD")} format"
+          "#{tag.strong("Required")}, must use #{tag.i("DD/MM/YYYY")} or #{tag.i("YYYY-MM-DD")} format."
       },
       {
         name: "CHILD_YEAR_GROUP",
@@ -176,17 +143,17 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
       {
         name: "CHILD_REGISTRATION",
         notes:
-          "Optional, the child’s registration group, for example #{tag.i("8T5")}"
+          "Optional, the child’s registration group, for example #{tag.i("8T5")}."
       },
       {
         name: "CHILD_NHS_NUMBER",
-        notes: "Optional, must be 10 digits and numeric"
+        notes: "Optional, must be 10 digits and numeric."
       },
       {
         name: "CHILD_GENDER",
         notes:
           "Optional, must be one of: #{tag.i("Male")}, #{tag.i("Female")}, " \
-            "#{tag.i("Not known")} or #{tag.i("Not specified")}"
+            "#{tag.i("Not known")} or #{tag.i("Not specified")}."
       },
       { name: "CHILD_ADDRESS_LINE_1", notes: "Optional" },
       { name: "CHILD_ADDRESS_LINE_2", notes: "Optional" },
@@ -202,7 +169,7 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
           name: "#{prefix}_RELATIONSHIP",
           notes:
             "Optional, must be one of: #{tag.i("Mum")}, #{tag.i("Dad")} or " \
-              "#{tag.i("Guardian")}"
+              "#{tag.i("Guardian")}."
         },
         {
           name: "#{prefix}_EMAIL",
@@ -216,21 +183,48 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
     end
   end
 
-  def reason_not_vaccinated_and_notes
-    reasons = ImmunisationImportRow::REASONS.keys.sort.map { tag.i(_1) }
-    reasons_sentence =
-      reasons.to_sentence(
-        last_word_connector: " or ",
+  def programme
+    programmes =
+      organisation.programmes.flat_map(&:import_names).map { tag.i(it) }
+
+    programmes_sentence =
+      programmes.to_sentence(
+        last_word_connector: ", or ",
         two_words_connector: " or "
       )
 
     [
       {
-        name: "REASON_NOT_VACCINATED",
-        notes:
-          "Required if #{tag.code("VACCINATED")} is #{tag.i("N")}, must be #{reasons_sentence}"
+        name: "PROGRAMME",
+        notes: "#{tag.strong("Required")}, must be #{programmes_sentence}."
+      }
+    ]
+  end
+
+  def vaccine_and_batch
+    vaccines = organisation.vaccines.pluck(:nivs_name).map { tag.i(it) }
+
+    vaccines_sentence =
+      vaccines.to_sentence(
+        last_word_connector: ", or ",
+        two_words_connector: " or "
+      )
+
+    [
+      {
+        name: "VACCINE_GIVEN",
+        notes: "Optional, must be #{vaccines_sentence}."
       },
-      { name: "NOTES", notes: "Optional" }
+      {
+        name: "BATCH_NUMBER",
+        notes: "Required if #{tag.code("BATCH_EXPIRY_DATE")} is provided."
+      },
+      {
+        name: "BATCH_EXPIRY_DATE",
+        notes:
+          "Required if #{tag.code("BATCH_NUMBER")} is provided, must use " \
+            "either #{tag.i("YYYYMMDD")} or #{tag.i("DD/MM/YYYY")} format."
+      }
     ]
   end
 
@@ -247,10 +241,27 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
       {
         name: "ANATOMICAL_SITE",
         notes:
-          "Required if #{tag.code("VACCINATED")} is #{tag.i("Y")}. It must be " \
-            "appropriate for the vaccine delivery method and be one of: " \
-            "#{site_sentence}"
+          "Optional, if provided must be appropriate for the vaccine delivery method " \
+            "and be one of: #{site_sentence}."
       }
+    ]
+  end
+
+  def reason_not_vaccinated_and_notes
+    reasons = ImmunisationImportRow::REASONS.keys.sort.map { tag.i(_1) }
+    reasons_sentence =
+      reasons.to_sentence(
+        last_word_connector: " or ",
+        two_words_connector: " or "
+      )
+
+    [
+      {
+        name: "REASON_NOT_VACCINATED",
+        notes:
+          "Required if #{tag.code("VACCINATED")} is #{tag.i("N")}, must be #{reasons_sentence}."
+      },
+      { name: "NOTES", notes: "Optional" }
     ]
   end
 
@@ -272,7 +283,7 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
     [
       {
         name: "DOSE_SEQUENCE",
-        notes: "Optional, must be a number or #{special_values_sentence}"
+        notes: "Optional, must be a number or #{special_values_sentence}."
       }
     ]
   end
@@ -282,32 +293,25 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
       {
         name: "CARE_SETTING",
         notes:
-          "Optional, must be #{tag.i("1")} (school) or #{tag.i("2")} (clinic)"
+          "Optional, must be #{tag.i("1")} (school) or #{tag.i("2")} (clinic)."
       },
       {
         name: "CLINIC_NAME",
         notes:
           "Required if #{tag.code("CARE_SETTING")} is #{tag.i("2")}, must be " \
-            "the name of a community clinic location"
+            "the name of a community clinic location."
       }
     ]
   end
 
   def performing_professional
     [
-      { name: "PERFORMING_PROFESSIONAL_EMAIL", notes: tag.strong("Required") },
       {
-        name: "PERFORMING_PROFESSIONAL_FORENAME",
-        notes:
-          "Required for uploading historical vaccination records unless " \
-            "#{tag.code("PERFORMING_PROFESSIONAL_EMAIL")} is provided"
+        name: "PERFORMING_PROFESSIONAL_EMAIL",
+        notes: "Required if uploading offline vaccination records."
       },
-      {
-        name: "PERFORMING_PROFESSIONAL_SURNAME",
-        notes:
-          "Required for uploading historical vaccination records unless " \
-            "#{tag.code("PERFORMING_PROFESSIONAL_EMAIL")} is provided"
-      }
+      { name: "PERFORMING_PROFESSIONAL_FORENAME", notes: "Optional" },
+      { name: "PERFORMING_PROFESSIONAL_SURNAME", notes: "Optional" }
     ]
   end
 end
