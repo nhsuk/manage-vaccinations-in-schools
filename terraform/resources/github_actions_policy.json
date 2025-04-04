@@ -108,6 +108,7 @@
         "elasticloadbalancing:DeleteTargetGroup",
         "elasticloadbalancing:DescribeListenerAttributes",
         "elasticloadbalancing:DescribeListeners",
+        "elasticloadbalancing:DescribeListenerCertificates",
         "elasticloadbalancing:DescribeLoadBalancerAttributes",
         "elasticloadbalancing:DescribeLoadBalancers",
         "elasticloadbalancing:DescribeRules",

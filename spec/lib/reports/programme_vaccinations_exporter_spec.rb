@@ -435,6 +435,7 @@ describe Reports::ProgrammeVaccinationsExporter do
             parent = create(:parent, full_name: "John Smith")
             create(:parent_relationship, :father, parent:, patient:)
             created_at = Time.zone.local(2024, 1, 1, 12, 5, 20)
+            create(:patient_consent_status, :given, patient:, programme:)
             create(:consent, :given, patient:, parent:, programme:, created_at:)
           end
 
@@ -462,13 +463,13 @@ describe Reports::ProgrammeVaccinationsExporter do
           before do
             performed_by =
               create(:user, given_name: "Test", family_name: "Nurse")
-            updated_at = Date.new(2024, 1, 1)
+            created_at = Date.new(2024, 1, 1)
             create(
               :gillick_assessment,
               :competent,
               patient_session:,
               performed_by:,
-              updated_at:
+              created_at:
             )
 
             Flipper.enable(:report_gillick_notify_parents)

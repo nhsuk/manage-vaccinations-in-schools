@@ -31,7 +31,7 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
             end
           end %>
       
-      <% if context == :register && helpers.policy(patient_session.register_outcome.latest).new? %>
+      <% if context == :register && can_register_attendance? %>
         <div class="app-button-group">
           <%= helpers.govuk_button_to "Attending", create_session_register_path(session, patient, "present", search_form: params[:search_form]&.permit!), class: "app-button--secondary app-button--small" %>
           <%= helpers.govuk_button_to "Absent", create_session_register_path(session, patient, "absent", search_form: params[:search_form]&.permit!), class: "app-button--secondary-warning app-button--small" %>
@@ -43,19 +43,29 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
   def initialize(patient_session, context:)
     super
 
-    @patient_session = patient_session
-    @patient = patient_session.patient
-    @session = patient_session.session
-    @context = context
-
     unless context.in?(%i[consent triage register record outcome])
       raise "Unknown context: #{context}"
     end
+
+    @patient_session = patient_session
+    @context = context
+
+    @patient = patient_session.patient
+    @session = patient_session.session
   end
 
   private
 
   attr_reader :patient_session, :patient, :session, :context
+
+  def can_register_attendance?
+    session_attendance =
+      SessionAttendance.new(
+        patient_session:,
+        session_date: SessionDate.new(value: Date.current)
+      )
+    helpers.policy(session_attendance).new?
+  end
 
   def link_to
     programme = patient_session.programmes.first
@@ -73,7 +83,7 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
     tag.ul(class: "nhsuk-list nhsuk-list--bullet") do
       safe_join(
         patient_session.programmes.map do |programme|
-          status = patient_session.patient.next_activity.status[programme]
+          status = patient_session.next_activity(programme:)
           tag.li("#{I18n.t(status, scope: :activity)} for #{programme.name}")
         end
       )
@@ -83,28 +93,29 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
   def status_tag
     return if context == :record
 
-    if context == :register
+    case context
+    when :register
       render AppRegisterStatusTagComponent.new(
-               patient_session.register_outcome.status
+               patient_session.registration_status&.status || "unknown"
              )
-    else
-      outcome =
-        case context
-        when :consent
-          patient.consent_outcome
-        when :triage
-          patient.triage_outcome
-        when :outcome
-          patient_session.session_outcome
+    when :consent
+      statuses =
+        patient_session.programmes.index_with do |programme|
+          patient.consent_status(programme:).status
         end
-
-      # ensure status is calculated for each programme
-      patient_session.programmes.each { outcome.status[it] }
-
-      render AppProgrammeStatusTagsComponent.new(
-               outcome.status,
-               outcome: context == :outcome ? :session : context
-             )
+      render AppProgrammeStatusTagsComponent.new(statuses, outcome: :consent)
+    when :triage
+      statuses =
+        patient_session.programmes.index_with do |programme|
+          patient.triage_status(programme:).status
+        end
+      render AppProgrammeStatusTagsComponent.new(statuses, outcome: :triage)
+    else
+      statuses =
+        patient_session.programmes.index_with do |programme|
+          patient_session.session_status(programme:).status
+        end
+      render AppProgrammeStatusTagsComponent.new(statuses, outcome: :session)
     end
   end
 end

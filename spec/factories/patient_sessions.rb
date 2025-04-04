@@ -12,7 +12,6 @@
 #
 # Indexes
 #
-#  index_patient_sessions_on_patient_id                 (patient_id)
 #  index_patient_sessions_on_patient_id_and_session_id  (patient_id,session_id) UNIQUE
 #  index_patient_sessions_on_session_id                 (session_id)
 #
@@ -41,13 +40,42 @@ FactoryBot.define do
       association :patient, organisation:, school:, home_educated:, year_group:
     end
 
+    trait :unknown_attendance do
+      registration_status do
+        association(
+          :patient_session_registration_status,
+          patient_session: instance
+        )
+      end
+    end
+
     trait :in_attendance do
       session_attendances do
         [association(:session_attendance, :present, patient_session: instance)]
       end
+      registration_status do
+        association(
+          :patient_session_registration_status,
+          :attending,
+          patient_session: instance
+        )
+      end
     end
 
     trait :added_to_session
+
+    trait :consent_no_response do
+      patient do
+        association :patient,
+                    :consent_no_response,
+                    performed_by: user,
+                    programmes: session.programmes,
+                    organisation:,
+                    school:,
+                    home_educated:,
+                    year_group:
+      end
+    end
 
     trait :consent_given_triage_not_needed do
       patient do
@@ -86,6 +114,16 @@ FactoryBot.define do
                     home_educated:,
                     year_group:
       end
+      session_statuses do
+        session.programmes.map do |programme|
+          association(
+            :patient_session_session_status,
+            :refused,
+            patient_session: instance,
+            programme:
+          )
+        end
+      end
     end
 
     trait :consent_refused_with_notes do
@@ -98,6 +136,16 @@ FactoryBot.define do
                     school:,
                     home_educated:,
                     year_group:
+      end
+      session_statuses do
+        session.programmes.map do |programme|
+          association(
+            :patient_session_session_status,
+            :refused,
+            patient_session: instance,
+            programme:
+          )
+        end
       end
     end
 
@@ -166,6 +214,16 @@ FactoryBot.define do
                     home_educated:,
                     year_group:
       end
+      session_statuses do
+        session.programmes.map do |programme|
+          association(
+            :patient_session_session_status,
+            :had_contraindications,
+            patient_session: instance,
+            programme:
+          )
+        end
+      end
     end
 
     trait :triaged_kept_in_triage do
@@ -221,9 +279,24 @@ FactoryBot.define do
                     home_educated:,
                     year_group:
       end
+      session_statuses do
+        session.programmes.map do |programme|
+          association(
+            :patient_session_session_status,
+            :unwell,
+            patient_session: instance,
+            programme:
+          )
+        end
+      end
 
       after(:create) do |patient_session, evaluator|
         patient_session.session.programmes.each do |programme|
+          create(
+            :patient_vaccination_status,
+            patient: patient_session.patient,
+            programme:
+          )
           create(
             :vaccination_record,
             :not_administered,
@@ -249,9 +322,24 @@ FactoryBot.define do
                     home_educated:,
                     year_group:
       end
+      session_statuses do
+        session.programmes.map do |programme|
+          association(
+            :patient_session_session_status,
+            :unwell,
+            patient_session: instance,
+            programme:
+          )
+        end
+      end
 
       after(:create) do |patient_session, evaluator|
         patient_session.session.programmes.each do |programme|
+          create(
+            :patient_vaccination_status,
+            patient: patient_session.patient,
+            programme:
+          )
           create(
             :vaccination_record,
             :not_administered,
@@ -277,9 +365,25 @@ FactoryBot.define do
                     home_educated:,
                     year_group:
       end
+      session_statuses do
+        session.programmes.map do |programme|
+          association(
+            :patient_session_session_status,
+            :vaccinated,
+            patient_session: instance,
+            programme:
+          )
+        end
+      end
 
       after(:create) do |patient_session, evaluator|
         patient_session.session.programmes.each do |programme|
+          create(
+            :patient_vaccination_status,
+            :vaccinated,
+            patient: patient_session.patient,
+            programme:
+          )
           create(
             :vaccination_record,
             patient: patient_session.patient,

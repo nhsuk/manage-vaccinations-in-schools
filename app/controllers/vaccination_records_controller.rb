@@ -35,9 +35,13 @@ class VaccinationRecordsController < ApplicationController
 
     @vaccination_record.discard!
 
+    StatusUpdater.call(patient: @vaccination_record.patient)
+
     if @vaccination_record.confirmation_sent?
       send_vaccination_deletion(@vaccination_record)
     end
+
+    StatusUpdater.call(patient: @vaccination_record.patient)
 
     redirect_to @return_to, flash: { success: "Vaccination record deleted" }
   end
@@ -72,11 +76,7 @@ class VaccinationRecordsController < ApplicationController
           :location,
           :performed_by_user,
           :programme,
-          patient: [
-            :gp_practice,
-            :school,
-            { consents: :parent, parent_relationships: :parent }
-          ],
+          patient: [:gp_practice, :school, { parent_relationships: :parent }],
           session: %i[session_dates],
           vaccine: :programme
         )

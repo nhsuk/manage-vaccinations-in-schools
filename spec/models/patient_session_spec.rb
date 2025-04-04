@@ -12,7 +12,6 @@
 #
 # Indexes
 #
-#  index_patient_sessions_on_patient_id                 (patient_id)
 #  index_patient_sessions_on_patient_id_and_session_id  (patient_id,session_id) UNIQUE
 #  index_patient_sessions_on_session_id                 (session_id)
 #
@@ -28,7 +27,8 @@ describe PatientSession do
   let(:programme) { create(:programme) }
   let(:session) { create(:session, programmes: [programme]) }
 
-  it { should have_many(:gillick_assessments).order(:created_at) }
+  it { should have_many(:gillick_assessments) }
+  it { should have_many(:pre_screenings) }
 
   describe "#safe_to_destroy?" do
     subject(:safe_to_destroy?) { patient_session.safe_to_destroy? }
@@ -69,43 +69,70 @@ describe PatientSession do
     end
   end
 
-  describe "#ready_for_vaccinator?" do
-    subject(:ready_for_vaccinator?) { patient_session.ready_for_vaccinator? }
+  describe "#next_activity" do
+    subject { patient_session.next_activity(programme:) }
 
-    it { should be(false) }
+    let(:patient) { patient_session.patient }
 
-    context "when attending the session" do
-      let(:patient_session) do
-        create(:patient_session, :in_attendance, session:)
-      end
-
-      it { should be(false) }
+    context "with no consent" do
+      it { should be(:consent) }
     end
 
-    context "when attending the session and consent given and triaged as safe to vaccinate" do
-      let(:patient_session) do
-        create(
-          :patient_session,
-          :in_attendance,
-          :consent_given_triage_not_needed,
-          session:
-        )
+    context "with consent refused" do
+      before { create(:patient_consent_status, :refused, patient:, programme:) }
+
+      it { should be(:do_not_record) }
+    end
+
+    context "with triaged as do not vaccinate" do
+      before do
+        create(:patient_consent_status, :given, patient:, programme:)
+        create(:patient_triage_status, :do_not_vaccinate, patient:, programme:)
       end
 
-      it { should be(true) }
+      it { should be(:do_not_record) }
+    end
 
-      context "when already vaccinated" do
-        before do
-          create(
-            :vaccination_record,
-            patient: patient_session.patient,
-            session:,
-            programme:
-          )
-        end
-
-        it { should be(false) }
+    context "with consent needing triage" do
+      before do
+        create(:patient_consent_status, :given, patient:, programme:)
+        create(:patient_triage_status, :required, patient:, programme:)
       end
+
+      it { should be(:triage) }
+    end
+
+    context "with triaged as safe to vaccinate" do
+      before do
+        create(:patient_consent_status, :given, patient:, programme:)
+        create(:patient_triage_status, :safe_to_vaccinate, patient:, programme:)
+      end
+
+      it { should be(:record) }
+    end
+
+    context "with consent no triage needed" do
+      before { create(:patient_consent_status, :given, patient:, programme:) }
+
+      it { should be(:record) }
+    end
+
+    context "with an administered vaccination record" do
+      before do
+        create(:patient_consent_status, :given, patient:, programme:)
+        create(:patient_vaccination_status, :vaccinated, patient:, programme:)
+      end
+
+      it { should be(:report) }
+    end
+
+    context "with an un-administered vaccination record" do
+      before do
+        create(:patient_consent_status, :given, patient:, programme:)
+        create(:patient_vaccination_status, patient:, programme:)
+      end
+
+      it { should be(:record) }
     end
   end
 end

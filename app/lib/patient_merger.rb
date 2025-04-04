@@ -103,6 +103,8 @@ class PatientMerger
       end
 
       patient_to_destroy.reload.destroy!
+
+      StatusUpdater.call(patient: patient_to_keep)
     end
   end
 

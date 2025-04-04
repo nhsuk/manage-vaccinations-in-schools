@@ -32,34 +32,19 @@ class ProgrammesController < ApplicationController
       policy_scope(Session)
         .has_programme(@programme)
         .for_current_academic_year
-        .eager_load(:location)
-        .preload(
-          :session_dates,
-          patient_sessions: [
-            :gillick_assessments,
-            { patient: [:triages, :vaccination_records, { consents: :parent }] }
-          ]
-        )
+        .includes(:location, :session_dates)
         .order("locations.name")
   end
 
   def patients
-    @statuses = Patient::ProgrammeOutcome::STATUSES
-
     scope =
-      policy_scope(Patient).in_programmes([@programme]).preload(
-        :triages,
-        :vaccination_records,
-        consents: :parent
+      policy_scope(Patient).includes(:vaccination_statuses).in_programmes(
+        [@programme]
       )
 
     patients = @form.apply(scope, programme: @programme)
 
-    if patients.is_a?(Array)
-      @pagy, @patients = pagy_array(patients)
-    else
-      @pagy, @patients = pagy(patients)
-    end
+    @pagy, @patients = pagy(patients)
   end
 
   def consent_form

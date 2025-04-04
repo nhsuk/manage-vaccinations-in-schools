@@ -12,7 +12,12 @@ class SessionProgrammesForm
   validate :cannot_remove_programmes
 
   def save
-    session.programme_ids = programme_ids if valid?
+    return false if invalid?
+
+    session.programme_ids = programme_ids
+    StatusUpdaterJob.perform_later(session:)
+
+    true
   end
 
   def programme_ids=(values)

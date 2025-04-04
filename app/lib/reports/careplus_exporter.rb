@@ -10,20 +10,15 @@ class Reports::CareplusExporter
 
   def call
     CSV.generate(headers:, write_headers: true) do |csv|
-      organisation
-        .sessions
-        .has_programme(programme)
-        .find_each do |session|
-          patient_sessions_for_session(session).each do |patient_session|
-            rows(patient_session:).each { |row| csv << row }
-          end
+      vaccination_records
+        .group_by(&:patient)
+        .each do |patient, vaccination_records|
+          rows(patient:, vaccination_records:).each { |row| csv << row }
         end
     end
   end
 
-  def self.call(*args, **kwargs)
-    new(*args, **kwargs).call
-  end
+  def self.call(...) = new(...).call
 
   private_class_method :new
 
@@ -68,21 +63,14 @@ class Reports::CareplusExporter
     ]
   end
 
-  def patient_sessions_for_session(session)
+  def vaccination_records
     scope =
-      session
-        .patient_sessions
-        .includes(
-          :location,
-          patient: [
-            :school,
-            :vaccination_records,
-            { consents: %i[parent patient] }
-          ],
-          session: :programmes
-        )
-        .where.not(vaccination_records: { id: nil })
-        .merge(VaccinationRecord.administered)
+      VaccinationRecord
+        .kept
+        .where(session: { organisation: }, programme:)
+        .administered
+        .order(:performed_at)
+        .includes(:batch, :patient, :vaccine, session: :location)
 
     if start_date.present?
       scope =
@@ -113,45 +101,47 @@ class Reports::CareplusExporter
     scope
   end
 
-  def rows(patient_session:)
-    patient = patient_session.patient
-
-    vaccination_records =
-      patient_session.session_outcome.all[programme].select(&:administered?)
-
-    if vaccination_records.any?
-      [existing_row(patient:, patient_session:, vaccination_records:)]
-    else
-      []
-    end
+  def consents
+    @consents ||=
+      Consent
+        .select("DISTINCT ON (patient_id) consents.*")
+        .where(patient: vaccination_records.select(:patient_id), programme:)
+        .not_invalidated
+        .response_given
+        .order(:patient_id, created_at: :desc)
+        .includes(:parent, :patient)
+        .group_by(&:patient_id)
+        .transform_values(&:first)
   end
 
-  def existing_row(patient:, patient_session:, vaccination_records:)
-    first_vaccination = vaccination_records.first
-
-    [
-      patient.nhs_number,
-      patient.family_name,
-      patient.given_name,
-      patient.date_of_birth.strftime("%d/%m/%Y"),
-      patient.restricted? ? "" : patient.address_line_1,
-      patient.consent_outcome.latest[programme].first&.name || "",
-      99, # Ethnicity, 99 is "Not known"
-      first_vaccination.performed_at.strftime("%d/%m/%Y"),
-      first_vaccination.performed_at.strftime("%H:%M"),
-      patient_session.location.school? ? "SC" : "CL", # Venue Type
-      patient_session.location.dfe_number || organisation.careplus_venue_code, # Venue Code
-      "IN", # Staff Type
-      "LW5PM", # Staff Code
-      "Y", # Attended; Did not attends do not get recorded on GP systems
-      "", # Reason Not Attended; Always blank
-      "", # Suspension End Date; Doesn't need to be used
-      *vaccine_fields(vaccination_records, 0),
-      *vaccine_fields(vaccination_records, 1),
-      *vaccine_fields(vaccination_records, 2),
-      *vaccine_fields(vaccination_records, 3),
-      *vaccine_fields(vaccination_records, 4)
-    ]
+  def rows(patient:, vaccination_records:)
+    vaccination_records
+      .group_by(&:session)
+      .map do |session, records|
+        [
+          patient.nhs_number,
+          patient.family_name,
+          patient.given_name,
+          patient.date_of_birth.strftime("%d/%m/%Y"),
+          patient.restricted? ? "" : patient.address_line_1,
+          consents[patient.id]&.name || "",
+          99, # Ethnicity, 99 is "Not known"
+          records.first.performed_at.strftime("%d/%m/%Y"),
+          records.first.performed_at.strftime("%H:%M"),
+          session.location.school? ? "SC" : "CL", # Venue Type
+          session.location.dfe_number || organisation.careplus_venue_code, # Venue Code
+          "IN", # Staff Type
+          "LW5PM", # Staff Code
+          "Y", # Attended; Did not attends do not get recorded on GP systems
+          "", # Reason Not Attended; Always blank
+          "", # Suspension End Date; Doesn't need to be used
+          *vaccine_fields(records, 0),
+          *vaccine_fields(records, 1),
+          *vaccine_fields(records, 2),
+          *vaccine_fields(records, 3),
+          *vaccine_fields(records, 4)
+        ]
+      end
   end
 
   def blank_vaccine_fields

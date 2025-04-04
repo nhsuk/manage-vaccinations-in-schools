@@ -1,7 +1,26 @@
 # frozen_string_literal: true
 
-describe PatientSession::RegisterOutcome do
-  subject(:instance) { described_class.new(patient_session) }
+# == Schema Information
+#
+# Table name: patient_session_registration_statuses
+#
+#  id                 :bigint           not null, primary key
+#  status             :integer          default("unknown"), not null
+#  patient_session_id :bigint           not null
+#
+# Indexes
+#
+#  idx_on_patient_session_id_438fc21144                   (patient_session_id) UNIQUE
+#  index_patient_session_registration_statuses_on_status  (status)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (patient_session_id => patient_sessions.id) ON DELETE => cascade
+#
+describe PatientSession::RegistrationStatus do
+  subject(:patient_session_registration_status) do
+    build(:patient_session_registration_status, patient_session:)
+  end
 
   let(:programmes) do
     [create(:programme, :menacwy), create(:programme, :td_ipv)]
@@ -12,13 +31,19 @@ describe PatientSession::RegisterOutcome do
   end
   let(:patient_session) { create(:patient_session, patient:, session:) }
 
-  before { patient.strict_loading!(false) }
+  it { should belong_to(:patient_session) }
+
+  it do
+    expect(patient_session_registration_status).to define_enum_for(
+      :status
+    ).with_values(%i[unknown attending not_attending completed])
+  end
 
   describe "#status" do
-    subject(:status) { instance.status }
+    subject(:status) { patient_session_registration_status.assign_status }
 
     context "with no session attendance" do
-      it { should be(described_class::UNKNOWN) }
+      it { should be(:unknown) }
     end
 
     context "with a session attendance for a different day to today" do
@@ -31,7 +56,7 @@ describe PatientSession::RegisterOutcome do
         )
       end
 
-      it { should be(described_class::UNKNOWN) }
+      it { should be(:unknown) }
     end
 
     context "with a present session attendance for today" do
@@ -44,7 +69,7 @@ describe PatientSession::RegisterOutcome do
         )
       end
 
-      it { should be(described_class::ATTENDING) }
+      it { should be(:attending) }
     end
 
     context "with an absent session attendance for today" do
@@ -57,10 +82,10 @@ describe PatientSession::RegisterOutcome do
         )
       end
 
-      it { should be(described_class::NOT_ATTENDING) }
+      it { should be(:not_attending) }
     end
 
-    context "with an outcome for one of the sessions" do
+    context "with an outcome for one of the programmes" do
       before do
         create(
           :vaccination_record,
@@ -70,17 +95,17 @@ describe PatientSession::RegisterOutcome do
         )
       end
 
-      it { should be(described_class::UNKNOWN) }
+      it { should be(:unknown) }
     end
 
-    context "with an outcome for both of the sessions" do
+    context "with an outcome for both of the programmes" do
       before do
         programmes.each do |programme|
           create(:vaccination_record, patient:, session:, programme:)
         end
       end
 
-      it { should be(described_class::COMPLETED) }
+      it { should be(:completed) }
     end
   end
 end

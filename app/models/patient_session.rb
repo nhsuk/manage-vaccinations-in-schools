@@ -12,7 +12,6 @@
 #
 # Indexes
 #
-#  index_patient_sessions_on_patient_id                 (patient_id)
 #  index_patient_sessions_on_patient_id_and_session_id  (patient_id,session_id) UNIQUE
 #  index_patient_sessions_on_session_id                 (session_id)
 #
@@ -31,15 +30,21 @@ class PatientSession < ApplicationRecord
   belongs_to :patient
   belongs_to :session
 
+  has_many :gillick_assessments
+  has_many :pre_screenings
+  has_many :session_statuses
+  has_one :registration_status
+
   has_one :location, through: :session
   has_one :team, through: :session
   has_one :organisation, through: :session
   has_many :session_attendances, dependent: :destroy
 
-  has_many :gillick_assessments, -> { order(:created_at) }
-  has_many :pre_screenings, -> { order(:created_at) }
-
   has_many :session_notifications,
+           -> { where(session_id: _1.session_id) },
+           through: :patient
+
+  has_many :vaccination_records,
            -> { where(session_id: _1.session_id) },
            through: :patient
 
@@ -61,17 +66,10 @@ class PatientSession < ApplicationRecord
           )
         end
 
-  scope :preload_for_status,
-        -> do
-          eager_load(:patient).preload(
-            session_attendances: :session_date,
-            patient: [:triages, { consents: :parent }, :vaccination_records],
-            session: :programmes
-          )
-        end
-
   scope :in_programmes,
-        ->(programmes) { merge(Patient.in_programmes(programmes)) }
+        ->(programmes) do
+          joins(:patient).merge(Patient.in_programmes(programmes))
+        end
 
   scope :search_by_name, ->(name) { merge(Patient.search_by_name(name)) }
 
@@ -96,12 +94,68 @@ class PatientSession < ApplicationRecord
 
   scope :order_by_name,
         -> do
-          order("LOWER(patients.family_name)", "LOWER(patients.given_name)")
+          joins(:patient).order(
+            "LOWER(patients.family_name)",
+            "LOWER(patients.given_name)"
+          )
+        end
+
+  scope :has_consent_status,
+        ->(status, programme:) do
+          where(
+            Patient::ConsentStatus
+              .where("patient_id = patient_sessions.patient_id")
+              .where(status:, programme:)
+              .arel
+              .exists
+          )
+        end
+
+  scope :has_registration_status,
+        ->(status) do
+          where(
+            PatientSession::RegistrationStatus
+              .where("patient_session_id = patient_sessions.id")
+              .where(status:)
+              .arel
+              .exists
+          )
+        end
+
+  scope :has_session_status,
+        ->(status, programme:) do
+          where(
+            PatientSession::SessionStatus
+              .where("patient_session_id = patient_sessions.id")
+              .where(status:, programme:)
+              .arel
+              .exists
+          )
+        end
+
+  scope :has_triage_status,
+        ->(status, programme:) do
+          where(
+            Patient::TriageStatus
+              .where("patient_id = patient_sessions.patient_id")
+              .where(status:, programme:)
+              .arel
+              .exists
+          )
+        end
+
+  scope :destroy_all_if_safe,
+        -> do
+          includes(
+            :gillick_assessments,
+            :session_attendances,
+            :vaccination_records
+          ).find_each(&:destroy_if_safe!)
         end
 
   def safe_to_destroy?
-    programmes.none? { session_outcome.all[it].any? } &&
-      gillick_assessments.empty? && session_attendances.none?(&:attending?)
+    vaccination_records.empty? && gillick_assessments.empty? &&
+      session_attendances.none?(&:attending?)
   end
 
   def destroy_if_safe!
@@ -109,44 +163,56 @@ class PatientSession < ApplicationRecord
   end
 
   def can_record_as_already_vaccinated?(programme:)
-    !session.today? && patient.programme_outcome.none_yet?(programme)
+    !session.today? && patient.vaccination_status(programme:).none_yet?
   end
 
   def programmes
     session.programmes.select { it.year_groups.include?(patient.year_group) }
   end
 
-  def gillick_assessment(programme)
-    gillick_assessments
-      .select { it.programme_id == programme.id }
-      .max_by(&:created_at)
+  def session_status(programme:)
+    session_statuses.find { it.programme_id == programme.id } ||
+      session_statuses.build(programme:)
   end
 
-  def register_outcome
-    @register_outcome ||= PatientSession::RegisterOutcome.new(self)
-  end
-
-  def session_outcome
-    @session_outcome ||= PatientSession::SessionOutcome.new(self)
-  end
-
-  def ready_for_vaccinator?(programme: nil)
-    return false if register_outcome.unknown? || register_outcome.not_attending?
-
-    programmes_to_check = programme ? [programme] : programmes
-
-    programmes_to_check.any? do
-      patient.consent_given_and_safe_to_vaccinate?(programme: it)
+  def todays_attendance
+    if (session_date = session.session_dates.today.first)
+      session_attendances.includes(:session_date).find_or_initialize_by(
+        session_date:
+      )
     end
   end
 
+  def next_activity(programme:)
+    return :report if patient.vaccination_status(programme:).vaccinated?
+
+    return :record if patient.consent_given_and_safe_to_vaccinate?(programme:)
+
+    return :triage if patient.triage_status(programme:).required?
+
+    consent_status = patient.consent_status(programme:)
+
+    return :consent if consent_status.no_response? || consent_status.conflicts?
+
+    :do_not_record
+  end
+
   def outstanding_programmes
+    if registration_status.nil? || registration_status.unknown? ||
+         registration_status.not_attending?
+      return []
+    end
+
     # If this patient hasn't been seen yet by a nurse for any of the programmes,
     # we don't want to show the banner.
-    return [] if programmes.all? { session_outcome.none_yet?(it) }
+    all_programmes_none_yet =
+      programmes.all? { |programme| session_status(programme:).none_yet? }
 
-    programmes.select do
-      ready_for_vaccinator?(programme: it) && session_outcome.none_yet?(it)
+    return [] if all_programmes_none_yet
+
+    programmes.select do |programme|
+      session_status(programme:).none_yet? &&
+        patient.consent_given_and_safe_to_vaccinate?(programme:)
     end
   end
 end

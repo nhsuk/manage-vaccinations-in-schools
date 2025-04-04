@@ -64,23 +64,22 @@ class Patient < ApplicationRecord
 
   has_many :access_log_entries
   has_many :consent_notifications
-  has_many :consents, -> { order(:created_at) }
+  has_many :consent_statuses
+  has_many :consents
   has_many :notify_log_entries
   has_many :parent_relationships
   has_many :patient_sessions
   has_many :school_move_log_entries
   has_many :school_moves
   has_many :session_notifications
-  has_many :triages, -> { order(:created_at) }
-  has_many :vaccination_records, -> { kept.order(:performed_at) }
+  has_many :triage_statuses
+  has_many :triages
+  has_many :vaccination_records, -> { kept }
+  has_many :vaccination_statuses
 
   has_many :parents, through: :parent_relationships
-  has_many :gillick_assessments,
-           -> { order(:created_at) },
-           through: :patient_sessions
-  has_many :pre_screenings,
-           -> { order(:created_at) },
-           through: :patient_sessions
+  has_many :gillick_assessments, through: :patient_sessions
+  has_many :pre_screenings, through: :patient_sessions
   has_many :session_attendances, through: :patient_sessions
   has_many :sessions, through: :patient_sessions
 
@@ -155,6 +154,17 @@ class Patient < ApplicationRecord
         ->(day) { where("extract(day from date_of_birth) = ?", day) }
 
   scope :search_by_nhs_number, ->(nhs_number) { where(nhs_number:) }
+
+  scope :has_vaccination_status,
+        ->(status, programme:) do
+          where(
+            Patient::VaccinationStatus
+              .where("patient_id = patients.id")
+              .where(status:, programme:)
+              .arel
+              .exists
+          )
+        end
 
   validates :given_name, :family_name, :date_of_birth, presence: true
 
@@ -262,30 +272,30 @@ class Patient < ApplicationRecord
     birth_academic_year_changed?
   end
 
-  def consent_outcome
-    @consent_outcome ||= Patient::ConsentOutcome.new(self)
+  def consent_status(programme:)
+    consent_statuses.find { it.programme_id == programme.id } ||
+      consent_statuses.build(programme:)
   end
 
-  def triage_outcome
-    @triage_outcome ||= Patient::TriageOutcome.new(self)
+  def triage_status(programme: nil, programme_id: nil)
+    programme_id ||= programme.id
+    triage_statuses.find { it.programme_id == programme_id } ||
+      triage_statuses.build(programme_id:)
   end
 
-  def programme_outcome
-    @programme_outcome ||= Patient::ProgrammeOutcome.new(self)
-  end
-
-  def next_activity
-    @next_activity ||= Patient::NextActivity.new(self)
+  def vaccination_status(programme:)
+    vaccination_statuses.find { it.programme_id == programme.id } ||
+      vaccination_statuses.build(programme:)
   end
 
   def consent_given_and_safe_to_vaccinate?(programme:)
-    return false if programme_outcome.vaccinated?(programme)
+    return false if vaccination_status(programme:).vaccinated?
 
-    consent_outcome.given?(programme) &&
+    consent_status(programme:).given? &&
       (
-        triage_outcome.safe_to_vaccinate?(programme) ||
-          triage_outcome.delay_vaccination?(programme) ||
-          triage_outcome.not_required?(programme)
+        triage_status(programme:).safe_to_vaccinate? ||
+          triage_status(programme:).delay_vaccination? ||
+          triage_status(programme:).not_required?
       )
   end
 
@@ -411,10 +421,8 @@ class Patient < ApplicationRecord
   end
 
   def clear_sessions_for_current_academic_year!
-    patient_sessions
-      .preload_for_status
-      .includes(:gillick_assessments, :session_attendances)
-      .where(session: sessions_for_current_academic_year)
-      .find_each(&:destroy_if_safe!)
+    patient_sessions.where(
+      session: sessions_for_current_academic_year
+    ).destroy_all_if_safe
   end
 end

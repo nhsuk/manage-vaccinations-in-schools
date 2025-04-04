@@ -14,12 +14,19 @@ describe AppProgrammeSessionTableComponent do
   let(:patient) { create(:patient, session:) }
 
   before do
-    create_list(:patient_session, 4, session:)
+    create_list(:patient_session, 4, :consent_no_response, session:)
 
-    create(:consent, :given, programme:, patient:)
-    create(:vaccination_record, programme:, patient:, session:)
+    create(:patient_consent_status, :given, programme:, patient:)
 
-    sessions.each { _1.strict_loading!(false) }
+    patient_session =
+      patient.patient_sessions.includes(session: :session_dates).first
+
+    create(
+      :patient_session_session_status,
+      :vaccinated,
+      patient_session:,
+      programme:
+    )
   end
 
   it { should have_content("3 sessions") }

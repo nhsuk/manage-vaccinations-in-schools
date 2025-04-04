@@ -22,28 +22,29 @@ module PatientSessionStatusConcern
     def status(programme:)
       @status_by_programme ||= {}
 
-      @status_by_programme[
-        programme
-      ] ||= if patient.programme_outcome.vaccinated?(programme)
+      @status_by_programme[programme] ||= if patient.vaccination_status(
+           programme:
+         ).vaccinated?
         "vaccinated"
-      elsif patient.triage_outcome.delay_vaccination?(programme)
+      elsif patient.triage_status(programme:).delay_vaccination?
         "delay_vaccination"
-      elsif patient.consent_outcome.refused?(programme)
+      elsif patient.consent_status(programme:).refused?
         "consent_refused"
-      elsif patient.triage_outcome.do_not_vaccinate?(programme)
+      elsif patient.triage_status(programme:).do_not_vaccinate?
         "triaged_do_not_vaccinate"
-      elsif session_outcome.not_vaccinated?(programme)
+      elsif !session_status(programme:).none_yet? &&
+            !session_status(programme:).vaccinated?
         "unable_to_vaccinate"
-      elsif patient.consent_outcome.given?(programme) &&
-            patient.triage_outcome.safe_to_vaccinate?(programme)
+      elsif patient.consent_status(programme:).given? &&
+            patient.triage_status(programme:).safe_to_vaccinate?
         "triaged_ready_to_vaccinate"
-      elsif patient.consent_outcome.given?(programme) &&
-            patient.triage_outcome.required?(programme)
+      elsif patient.consent_status(programme:).given? &&
+            patient.triage_status(programme:).required?
         "consent_given_triage_needed"
-      elsif patient.consent_outcome.given?(programme) &&
-            patient.triage_outcome.not_required?(programme)
+      elsif patient.consent_status(programme:).given? &&
+            patient.triage_status(programme:).not_required?
         "consent_given_triage_not_needed"
-      elsif patient.consent_outcome.conflicts?(programme)
+      elsif patient.consent_status(programme:).conflicts?
         "consent_conflicts"
       else
         "added_to_session"

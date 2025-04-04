@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class TriagesController < ApplicationController
+  include PatientSessionProgrammeConcern
   include TriageMailerConcern
 
   before_action :set_session
@@ -21,9 +22,11 @@ class TriagesController < ApplicationController
     authorize @triage
 
     if @triage.save(context: :consent)
-      @patient.reload.consent_outcome.latest[@triage.programme].each do
-        send_triage_confirmation(@patient_session, it)
-      end
+      StatusUpdater.call(patient: @patient)
+
+      ConsentGrouper
+        .call(@patient.reload.consents, programme: @programme)
+        .each { send_triage_confirmation(@patient_session, it) }
 
       flash[:success] = {
         heading: "Triage outcome updated for",
@@ -39,37 +42,6 @@ class TriagesController < ApplicationController
   end
 
   private
-
-  def set_session
-    @session =
-      policy_scope(Session).includes(:location, :programmes).find_by!(
-        slug: params[:session_slug] || params[:slug]
-      )
-  end
-
-  def set_patient
-    @patient =
-      @session
-        .patients
-        .includes(:consents, :school, parent_relationships: :parent)
-        .find_by(id: params[:patient_id])
-  end
-
-  def set_patient_session
-    @patient_session =
-      @patient
-        .patient_sessions
-        .preload_for_status
-        .includes(:gillick_assessments)
-        .find_by!(session: @session)
-  end
-
-  def set_programme
-    @programme =
-      @patient_session.programmes.find { it.type == params[:programme_type] }
-
-    raise ActiveRecord::RecordNotFound if @programme.nil?
-  end
 
   def set_triage
     @triage =

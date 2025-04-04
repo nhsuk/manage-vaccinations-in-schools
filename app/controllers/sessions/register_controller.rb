@@ -8,30 +8,36 @@ class Sessions::RegisterController < ApplicationController
 
   before_action :set_session
   before_action :set_search_form, only: :show
+  before_action :set_patient, only: :create
   before_action :set_patient_session, only: :create
 
   layout "full"
 
   def show
-    @statuses = PatientSession::RegisterOutcome::STATUSES
+    @statuses = PatientSession::RegistrationStatus.statuses.keys
 
     scope =
-      @session.patient_sessions.preload_for_status.in_programmes(
-        @session.programmes
-      )
+      @session
+        .patient_sessions
+        .includes(
+          :registration_status,
+          patient: %i[consent_statuses triage_statuses vaccination_statuses],
+          session: :programmes
+        )
+        .in_programmes(@session.programmes)
 
     patient_sessions = @form.apply(scope)
 
-    if patient_sessions.is_a?(Array)
-      @pagy, @patient_sessions = pagy_array(patient_sessions)
-    else
-      @pagy, @patient_sessions = pagy(patient_sessions)
-    end
+    @pagy, @patient_sessions = pagy(patient_sessions)
   end
 
   def create
-    session_attendance = authorize @patient_session.register_outcome.latest
-    session_attendance.update!(attending: params[:status] == "present")
+    session_attendance = authorize @patient_session.todays_attendance
+
+    ActiveRecord::Base.transaction do
+      session_attendance.update!(attending: params[:status] == "present")
+      StatusUpdater.call(patient: @patient_session.patient)
+    end
 
     name = @patient_session.patient.full_name
 
@@ -50,16 +56,15 @@ class Sessions::RegisterController < ApplicationController
   private
 
   def set_session
-    @session =
-      policy_scope(Session).includes(:programmes, :session_dates).find_by!(
-        slug: params[:session_slug]
-      )
+    @session = policy_scope(Session).find_by!(slug: params[:session_slug])
+  end
+
+  def set_patient
+    @patient = policy_scope(Patient).find(params[:patient_id])
   end
 
   def set_patient_session
     @patient_session =
-      @session.patient_sessions.preload_for_status.find_by!(
-        patient_id: params[:patient_id]
-      )
+      PatientSession.find_by!(patient: @patient, session: @session)
   end
 end

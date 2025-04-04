@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "pagy/extras/array"
-
 class Sessions::ConsentController < ApplicationController
   include Pagy::Backend
   include SearchFormConcern
@@ -12,28 +10,22 @@ class Sessions::ConsentController < ApplicationController
   layout "full"
 
   def show
-    @statuses = Patient::ConsentOutcome::STATUSES
+    @statuses = Patient::ConsentStatus.statuses.keys
+    @programmes = @session.programmes
 
     scope =
-      @session.patient_sessions.preload_for_status.in_programmes(
-        @session.programmes
-      )
+      @session
+        .patient_sessions
+        .includes(patient: :consent_statuses, session: :programmes)
+        .in_programmes(@programmes)
 
-    patient_sessions = @form.apply(scope)
-
-    if patient_sessions.is_a?(Array)
-      @pagy, @patient_sessions = pagy_array(patient_sessions)
-    else
-      @pagy, @patient_sessions = pagy(patient_sessions)
-    end
+    patient_sessions = @form.apply(scope, programme: @programmes)
+    @pagy, @patient_sessions = pagy(patient_sessions)
   end
 
   private
 
   def set_session
-    @session =
-      policy_scope(Session).includes(:programmes).find_by!(
-        slug: params[:session_slug]
-      )
+    @session = policy_scope(Session).find_by!(slug: params[:session_slug])
   end
 end

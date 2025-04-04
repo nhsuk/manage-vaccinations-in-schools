@@ -121,6 +121,11 @@ FactoryBot.define do
 
         if evaluator.in_attendance
           create(:session_attendance, :present, patient_session:)
+          create(
+            :patient_session_registration_status,
+            :attending,
+            patient_session:
+          )
         end
       end
     end
@@ -176,7 +181,61 @@ FactoryBot.define do
       end
     end
 
+    trait :consent_no_response do
+      consent_statuses do
+        programmes.map do |programme|
+          association(
+            :patient_consent_status,
+            :no_response,
+            patient: instance,
+            programme:
+          )
+        end
+      end
+    end
+
+    trait :triage_not_required do
+      triage_statuses do
+        programmes.map do |programme|
+          association(
+            :patient_triage_status,
+            :not_required,
+            patient: instance,
+            programme:
+          )
+        end
+      end
+    end
+
+    trait :triage_safe_to_vaccinate do
+      triage_statuses do
+        programmes.map do |programme|
+          association(
+            :patient_triage_status,
+            :safe_to_vaccinate,
+            patient: instance,
+            programme:
+          )
+        end
+      end
+    end
+
+    trait :triage_required do
+      triage_statuses do
+        programmes.map do |programme|
+          association(
+            :patient_triage_status,
+            :required,
+            patient: instance,
+            programme:
+          )
+        end
+      end
+    end
+
     trait :consent_given_triage_not_needed do
+      triage_not_required
+
       consents do
         programmes.map do |programme|
           association(
@@ -189,9 +248,21 @@ FactoryBot.define do
           )
         end
       end
+      consent_statuses do
+        programmes.map do |programme|
+          association(
+            :patient_consent_status,
+            :given,
+            patient: instance,
+            programme:
+          )
+        end
+      end
     end
 
     trait :consent_given_triage_needed do
+      triage_required
+
       consents do
         programmes.map do |programme|
           association(
@@ -205,9 +276,21 @@ FactoryBot.define do
           )
         end
       end
+      consent_statuses do
+        programmes.map do |programme|
+          association(
+            :patient_consent_status,
+            :given,
+            patient: instance,
+            programme:
+          )
+        end
+      end
     end
 
     trait :consent_refused do
+      triage_not_required
+
       consents do
         programmes.map do |programme|
           association(
@@ -220,9 +303,21 @@ FactoryBot.define do
           )
         end
       end
+      consent_statuses do
+        programmes.map do |programme|
+          association(
+            :patient_consent_status,
+            :refused,
+            patient: instance,
+            programme:
+          )
+        end
+      end
     end
 
     trait :consent_refused_with_notes do
+      triage_not_required
+
       consents do
         programmes.map do |programme|
           association(
@@ -237,9 +332,21 @@ FactoryBot.define do
           )
         end
       end
+      consent_statuses do
+        programmes.map do |programme|
+          association(
+            :patient_consent_status,
+            :refused,
+            patient: instance,
+            programme:
+          )
+        end
+      end
     end
 
     trait :consent_conflicting do
+      triage_not_required
+
       consents do
         programmes.flat_map do |programme|
           [
@@ -262,9 +369,21 @@ FactoryBot.define do
           ]
         end
       end
+      consent_statuses do
+        programmes.map do |programme|
+          association(
+            :patient_consent_status,
+            :conflicts,
+            patient: instance,
+            programme:
+          )
+        end
+      end
     end
 
     trait :consent_not_provided do
+      triage_not_required
+
       consents do
         programmes.map do |programme|
           association(
@@ -297,6 +416,7 @@ FactoryBot.define do
 
     trait :triage_ready_to_vaccinate do
       consent_given_triage_needed
+      triage_safe_to_vaccinate
 
       triages do
         programmes.map do |programme|
@@ -327,9 +447,21 @@ FactoryBot.define do
           )
         end
       end
+      triage_statuses do
+        programmes.map do |programme|
+          association(
+            :patient_triage_status,
+            :do_not_vaccinate,
+            patient: instance,
+            programme:
+          )
+        end
+      end
     end
 
     trait :triage_needs_follow_up do
+      triage_required
+
       triages do
         programmes.map do |programme|
           association(
@@ -359,6 +491,16 @@ FactoryBot.define do
           )
         end
       end
+      triage_statuses do
+        programmes.map do |programme|
+          association(
+            :patient_triage_status,
+            :delay_vaccination,
+            patient: instance,
+            programme:
+          )
+        end
+      end
     end
 
     trait :vaccinated do
@@ -381,6 +523,16 @@ FactoryBot.define do
               programme:
             )
           end
+        end
+      end
+      vaccination_statuses do
+        programmes.map do |programme|
+          association(
+            :patient_vaccination_status,
+            :vaccinated,
+            patient: instance,
+            programme:
+          )
         end
       end
     end

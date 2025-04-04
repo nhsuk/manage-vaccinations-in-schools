@@ -1,11 +1,10 @@
 # frozen_string_literal: true
 
 class AppSessionDetailsSummaryComponent < ViewComponent::Base
-  def initialize(session, patient_sessions:)
+  def initialize(session)
     super
 
     @session = session
-    @patient_sessions = patient_sessions
   end
 
   def call
@@ -14,10 +13,14 @@ class AppSessionDetailsSummaryComponent < ViewComponent::Base
 
   private
 
-  attr_reader :session, :patient_sessions
+  attr_reader :session
+
+  delegate :patient_sessions, to: :session
+
+  delegate :programmes, to: :session
 
   def cohort_row
-    count = patient_sessions.length
+    count = patient_sessions.count
     href = new_draft_class_import_path(session)
 
     {
@@ -32,11 +35,11 @@ class AppSessionDetailsSummaryComponent < ViewComponent::Base
   end
 
   def consent_refused_row
-    status = Patient::ConsentOutcome::REFUSED
+    status = "refused"
+
     count =
-      patient_sessions.count do
-        it.patient.consent_outcome.status.values_at(*it.programmes).any?(status)
-      end
+      patient_sessions.has_consent_status(status, programme: programmes).count
+
     href =
       session_consent_path(session, search_form: { consent_status: status })
 
@@ -55,7 +58,7 @@ class AppSessionDetailsSummaryComponent < ViewComponent::Base
     texts =
       session.programmes.map do |programme|
         count =
-          patient_sessions.count { it.session_outcome.vaccinated?(programme) }
+          patient_sessions.has_session_status(:vaccinated, programme:).count
 
         "#{I18n.t("vaccinations_given", count:)} for #{programme.name}"
       end
@@ -64,7 +67,7 @@ class AppSessionDetailsSummaryComponent < ViewComponent::Base
       session_outcome_path(
         session,
         search_form: {
-          session_status: PatientSession::SessionOutcome::VACCINATED
+          session_status: "vaccinated"
         }
       )
 

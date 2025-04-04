@@ -109,7 +109,7 @@ describe SearchForm do
   end
 
   context "for patient sessions" do
-    let(:scope) { PatientSession.preload_for_status }
+    let(:scope) { PatientSession.all }
 
     it "doesn't raise an error" do
       expect { form.apply(scope) }.not_to raise_error
@@ -127,10 +127,16 @@ describe SearchForm do
       let(:triage_status) { nil }
       let(:year_groups) { nil }
 
+      let(:programme) { create(:programme) }
+
       it "filters on consent status" do
         patient_session =
-          create(:patient_session, :consent_given_triage_not_needed)
-        expect(form.apply(scope)).to include(patient_session)
+          create(
+            :patient_session,
+            :consent_given_triage_not_needed,
+            programmes: [programme]
+          )
+        expect(form.apply(scope, programme:)).to include(patient_session)
       end
     end
 
@@ -143,13 +149,16 @@ describe SearchForm do
       let(:programme_status) { nil }
       let(:q) { nil }
       let(:register_status) { nil }
-      let(:session_status) { "administered" }
+      let(:session_status) { "vaccinated" }
       let(:triage_status) { nil }
       let(:year_groups) { nil }
 
+      let(:programme) { create(:programme) }
+
       it "filters on session status" do
-        patient_session = create(:patient_session, :vaccinated)
-        expect(form.apply(scope)).to include(patient_session)
+        patient_session =
+          create(:patient_session, :vaccinated, programmes: [programme])
+        expect(form.apply(scope, programme:)).to include(patient_session)
       end
     end
 
@@ -185,9 +194,16 @@ describe SearchForm do
       let(:triage_status) { "required" }
       let(:year_groups) { nil }
 
+      let(:programme) { create(:programme) }
+
       it "filters on triage status" do
-        patient_session = create(:patient_session, :consent_given_triage_needed)
-        expect(form.apply(scope)).to include(patient_session)
+        patient_session =
+          create(
+            :patient_session,
+            :consent_given_triage_needed,
+            programmes: [programme]
+          )
+        expect(form.apply(scope, programme:)).to include(patient_session)
       end
     end
   end

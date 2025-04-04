@@ -40,46 +40,26 @@ class SearchForm
 
     scope = scope.search_by_nhs_number(nil) if missing_nhs_number.present?
 
-    scope = scope.order_by_name
-
-    scope = yield(scope) if block_given?
-
-    if (status = consent_status&.to_sym).present?
-      scope =
-        scope.select do
-          it
-            .patient
-            .consent_outcome
-            .status
-            .values_at(*it.programmes)
-            .include?(status)
-        end
+    if (status = consent_status).present?
+      scope = scope.has_consent_status(status, programme:)
     end
 
     if (status = programme_status&.to_sym).present?
-      scope = scope.select { it.programme_outcome.status[programme] == status }
+      scope = scope.has_vaccination_status(status, programme:)
     end
 
     if (status = session_status&.to_sym).present?
-      scope = scope.select { it.session_outcome.status.values.include?(status) }
+      scope = scope.has_session_status(status, programme:)
     end
 
     if (status = register_status&.to_sym).present?
-      scope = scope.select { it.register_outcome.status == status }
+      scope = scope.has_registration_status(status)
     end
 
     if (status = triage_status&.to_sym).present?
-      scope =
-        scope.select do
-          it
-            .patient
-            .triage_outcome
-            .status
-            .values_at(*it.programmes)
-            .include?(status)
-        end
+      scope = scope.has_triage_status(status, programme:)
     end
 
-    scope
+    scope.order_by_name
   end
 end

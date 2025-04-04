@@ -17,7 +17,6 @@
 #
 #  idx_on_patient_id_home_educated_organisation_id_7c1b5f5066  (patient_id,home_educated,organisation_id) UNIQUE
 #  index_school_moves_on_organisation_id                       (organisation_id)
-#  index_school_moves_on_patient_id                            (patient_id)
 #  index_school_moves_on_patient_id_and_school_id              (patient_id,school_id) UNIQUE
 #  index_school_moves_on_school_id                             (school_id)
 #
@@ -64,14 +63,6 @@ class SchoolMove < ApplicationRecord
 
   private
 
-  def patient_sessions
-    @patient_sessions ||=
-      patient.patient_sessions.preload_for_status.includes(
-        :gillick_assessments,
-        :session_attendances
-      )
-  end
-
   def update_patient!
     patient.update!(
       home_educated:,
@@ -81,11 +72,13 @@ class SchoolMove < ApplicationRecord
   end
 
   def update_sessions!
-    patient_sessions.find_each(&:destroy_if_safe!)
+    patient.patient_sessions.destroy_all_if_safe
 
     [school_session, generic_clinic_session].compact.each do |session|
       PatientSession.find_or_create_by!(patient:, session:)
     end
+
+    StatusUpdater.call(patient:)
   end
 
   def school_session

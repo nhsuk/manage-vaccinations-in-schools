@@ -7,17 +7,11 @@ class SchoolConsentRemindersJob < ApplicationJob
     sessions =
       Session
         .send_consent_reminders
-        .includes(
-          :programmes,
-          patient_sessions: {
-            patient: %i[consents consent_notifications parents]
-          }
-        )
-        .preload(:session_dates)
-        .eager_load(:location)
+        .joins(:location)
+        .includes(:session_dates, :programmes, :patient_sessions, :location)
         .merge(Location.school)
 
-    sessions.each do |session|
+    sessions.find_each(batch_size: 1) do |session|
       next unless session.open_for_consent?
 
       session.patient_sessions.each do |patient_session|
@@ -55,8 +49,8 @@ class SchoolConsentRemindersJob < ApplicationJob
 
     has_consent_or_vaccinated =
       programmes.all? do |programme|
-        patient.consent_outcome.all[programme].any? ||
-          patient.programme_outcome.all[programme].any?
+        patient.consents.any? { it.programme_id == programme.id } ||
+          patient.vaccination_records.any? { it.programme_id == programme.id }
       end
 
     return false if has_consent_or_vaccinated

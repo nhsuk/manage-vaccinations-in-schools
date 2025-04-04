@@ -11,7 +11,7 @@ namespace :pds do
       if $stdout.tty?
         puts response.env.url
         puts ""
-        puts response.headers.map { "#{_1}: #{_2}" }
+        puts(response.headers.map { "#{_1}: #{_2}" })
         puts ""
         puts JSON.pretty_generate(response.body)
       else
@@ -43,7 +43,7 @@ namespace :pds do
       if $stdout.tty?
         puts response.env.url
         puts ""
-        puts response.headers.map { "#{_1}: #{_2}" }
+        puts(response.headers.map { "#{_1}: #{_2}" })
         puts ""
         puts JSON.pretty_generate(response.body)
       else

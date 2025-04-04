@@ -9,13 +9,7 @@ class SchoolSessionRemindersJob < ApplicationJob
     patient_sessions =
       PatientSession
         .includes(
-          :gillick_assessments,
-          patient: [
-            :parents,
-            :triages,
-            :vaccination_records,
-            { consents: %i[parent patient] }
-          ],
+          patient: [:parents, { consents: %i[parent patient] }],
           session: :programmes
         )
         .eager_load(:session)
@@ -44,7 +38,7 @@ class SchoolSessionRemindersJob < ApplicationJob
 
     all_vaccinated =
       programmes.all? do |programme|
-        patient.programme_outcome.vaccinated?(programme)
+        patient.vaccination_status(programme:).vaccinated?
       end
 
     return false if all_vaccinated

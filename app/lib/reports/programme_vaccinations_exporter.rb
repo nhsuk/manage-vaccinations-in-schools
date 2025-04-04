@@ -12,15 +12,13 @@ class Reports::ProgrammeVaccinationsExporter
 
   def call
     CSV.generate(headers:, write_headers: true) do |csv|
-      vaccination_records.each do |vaccination_record|
+      vaccination_records.find_each do |vaccination_record|
         csv << row(vaccination_record:)
       end
     end
   end
 
-  def self.call(*args, **kwargs)
-    new(*args, **kwargs).call
-  end
+  def self.call(...) = new(...).call
 
   private_class_method :new
 
@@ -99,7 +97,7 @@ class Reports::ProgrammeVaccinationsExporter
           :location,
           :performed_by_user,
           :vaccine,
-          patient: [:gp_practice, :school, :triages, { consents: :parent }]
+          patient: %i[consent_statuses gp_practice school]
         )
 
     if start_date.present?
@@ -131,14 +129,50 @@ class Reports::ProgrammeVaccinationsExporter
     scope
   end
 
+  def consents
+    @consents ||=
+      Consent
+        .where(patient_id: vaccination_records.select(:patient_id), programme:)
+        .not_invalidated
+        .includes(:parent, :patient)
+        .group_by(&:patient_id)
+        .transform_values do
+          ConsentGrouper.call(it, programme_id: programme.id)
+        end
+  end
+
   def gillick_assessments
     @gillick_assessments ||=
-      GillickAssessment.eager_load(:patient_session, :performed_by).where(
-        patient_session: {
-          patient_id: vaccination_records.map(&:patient_id),
-          session_id: vaccination_records.map(&:session_id)
-        }
-      )
+      GillickAssessment
+        .select(
+          "DISTINCT ON (patient_session_id) gillick_assessments.*, patient_id, session_id"
+        )
+        .joins(:patient_session)
+        .where(
+          patient_sessions: {
+            patient_id: vaccination_records.select(:patient_id),
+            session_id: vaccination_records.select(:session_id)
+          },
+          programme:
+        )
+        .order(:patient_session_id, created_at: :desc)
+        .includes(:performed_by)
+        .group_by(&:patient_id)
+        .transform_values do
+          it.group_by(&:session_id).transform_values(&:first)
+        end
+  end
+
+  def triages
+    @triages ||=
+      Triage
+        .select("DISTINCT ON (patient_id) triage.*")
+        .where(patient_id: vaccination_records.select(:patient_id), programme:)
+        .not_invalidated
+        .order(:patient_id, created_at: :desc)
+        .includes(:performed_by)
+        .group_by(&:patient_id)
+        .transform_values(&:first)
   end
 
   def row(vaccination_record:)
@@ -146,14 +180,9 @@ class Reports::ProgrammeVaccinationsExporter
     patient = vaccination_record.patient
     session = vaccination_record.session
 
-    consents = patient.consent_outcome.latest[programme]
-    triage = patient.triage_outcome.latest[programme]
-
-    gillick_assessment =
-      gillick_assessments.find do
-        it.patient_session.patient_id == patient.id &&
-          it.patient_session.session_id == session.id
-      end
+    grouped_consents = consents.fetch(patient.id, [])
+    triage = triages[patient.id]
+    gillick_assessment = gillick_assessments.dig(patient.id, session.id)
 
     [
       organisation.ods_code,
@@ -174,20 +203,20 @@ class Reports::ProgrammeVaccinationsExporter
       patient.gp_practice&.ods_code || "",
       patient.gp_practice&.name || "",
       consent_status(patient:, programme:),
-      consent_details(consents:),
-      health_question_answers(consents:),
+      consent_details(consents: grouped_consents),
+      health_question_answers(consents: grouped_consents),
       triage&.status&.humanize || "",
       triage&.performed_by&.full_name || "",
       triage&.updated_at&.to_date&.iso8601 || "",
       triage&.notes || "",
       gillick_status(gillick_assessment:),
-      gillick_assessment&.updated_at&.to_date&.iso8601 || "",
+      gillick_assessment&.created_at&.to_date&.iso8601 || "",
       gillick_assessment&.performed_by&.full_name || "",
       gillick_assessment&.notes || ""
     ] +
       (
         if Flipper.enabled?(:report_gillick_notify_parents)
-          [gillick_notify_parents(gillick_assessment:, consents:)]
+          [gillick_notify_parents(patient:, gillick_assessment:)]
         else
           []
         end
@@ -228,10 +257,10 @@ class Reports::ProgrammeVaccinationsExporter
     end
   end
 
-  def gillick_notify_parents(gillick_assessment:, consents:)
+  def gillick_notify_parents(patient:, gillick_assessment:)
     return "" if gillick_assessment.nil?
 
-    if (consent = consents.find(&:via_self_consent?))
+    if (consent = consents[patient.id]&.find(&:via_self_consent?))
       consent.notify_parents ? "Y" : "N"
     else
       ""

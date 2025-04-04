@@ -26,9 +26,7 @@ class Reports::OfflineSessionExporter
       .read
   end
 
-  def self.call(*args, **kwargs)
-    new(*args, **kwargs).call
-  end
+  def self.call(...) = new(...).call
 
   private_class_method :new
 
@@ -38,6 +36,10 @@ class Reports::OfflineSessionExporter
 
   delegate :location, :organisation, to: :session
 
+  def associations
+    @associations ||= Reports::Associations.new(patient_sessions:)
+  end
+
   def add_vaccinations_sheet(package)
     workbook = package.workbook
 
@@ -46,7 +48,7 @@ class Reports::OfflineSessionExporter
     workbook.add_worksheet(name: "Vaccinations") do |sheet|
       sheet.add_row(columns.map { _1.to_s.upcase })
 
-      patient_sessions.each do |patient_session|
+      patient_sessions.find_each do |patient_session|
         rows(patient_session:).each { |row| row.add_to(sheet:, cached_styles:) }
       end
 
@@ -125,28 +127,72 @@ class Reports::OfflineSessionExporter
   def patient_sessions
     session
       .patient_sessions
-      .eager_load(patient: :school)
-      .preload(
-        patient: {
-          consents: [:parent, { patient: :parent_relationships }],
-          triages: :performed_by,
-          vaccination_records: %i[batch performed_by_user vaccine]
-        },
-        session: :programmes,
-        gillick_assessments: :performed_by
+      .includes(
+        patient: [
+          :consent_statuses,
+          :school,
+          { vaccination_records: %i[batch performed_by_user vaccine] }
+        ],
+        session: :programmes
       )
       .order_by_name
+  end
+
+  def consents
+    @consents ||=
+      Consent
+        .where(patient_id: patient_sessions.select(:patient_id))
+        .not_invalidated
+        .includes(:parent, :patient)
+        .group_by(&:patient_id)
+        .transform_values do
+          it
+            .group_by(&:programme_id)
+            .each_with_object({}) do |(programme_id, consents), hash|
+              hash[programme_id] = ConsentGrouper.call(consents, programme_id:)
+            end
+        end
+  end
+
+  def gillick_assessments
+    @gillick_assessments ||=
+      GillickAssessment
+        .select(
+          "DISTINCT ON (patient_session_id, programme_id) gillick_assessments.*"
+        )
+        .where(patient_session: patient_sessions)
+        .order(:patient_session_id, :programme_id, created_at: :desc)
+        .includes(:performed_by)
+        .group_by(&:patient_session_id)
+        .transform_values do
+          it.group_by(&:programme_id).transform_values(&:first)
+        end
+  end
+
+  def triages
+    @triages ||=
+      Triage
+        .select("DISTINCT ON (patient_id, programme_id) triage.*")
+        .where(patient_id: patient_sessions.select(:patient_id))
+        .not_invalidated
+        .order(:patient_id, :programme_id, created_at: :desc)
+        .includes(:performed_by)
+        .group_by(&:patient_id)
+        .transform_values do
+          it.group_by(&:programme_id).transform_values(&:first)
+        end
   end
 
   def rows(patient_session:)
     patient = patient_session.patient
 
     patient_session.programmes.flat_map do |programme|
+      consent_status = patient.consent_status(programme:)
+
       bg_color =
-        case patient.consent_outcome.status[programme]
-        when Patient::ConsentOutcome::REFUSED
+        if consent_status.refused?
           "F7D4D1"
-        when Patient::ConsentOutcome::CONFLICTS
+        elsif consent_status.conflicts?
           "FFDC8E"
         end
 
@@ -159,7 +205,7 @@ class Reports::OfflineSessionExporter
         }
       }
 
-      vaccination_records = patient.programme_outcome.all[programme]
+      vaccination_records = patient.vaccination_records
 
       if vaccination_records.any?
         vaccination_records.map do |vaccination_record|
@@ -182,9 +228,10 @@ class Reports::OfflineSessionExporter
   def add_patient_cells(row, patient_session:, programme:)
     patient = patient_session.patient
 
-    gillick_assessment = patient_session.gillick_assessment(programme)
-    consents = patient.consent_outcome.latest[programme]
-    triage = patient.triage_outcome.latest[programme]
+    grouped_consents = consents.dig(patient.id, programme.id) || []
+    gillick_assessment =
+      gillick_assessments.dig(patient_session.id, programme.id)
+    triage = triages.dig(patient.id, programme.id)
 
     row[:organisation_code] = organisation.ods_code
     row[:person_forename] = patient.given_name
@@ -203,9 +250,9 @@ class Reports::OfflineSessionExporter
     )
     row[:nhs_number] = patient.nhs_number
     row[:consent_status] = consent_status(patient:, programme:)
-    row[:consent_details] = consent_details(consents:)
+    row[:consent_details] = consent_details(consents: grouped_consents)
     row[:health_question_answers] = Cell.new(
-      health_question_answers(consents:),
+      health_question_answers(consents: grouped_consents),
       style: {
         alignment: {
           wrap_text: true

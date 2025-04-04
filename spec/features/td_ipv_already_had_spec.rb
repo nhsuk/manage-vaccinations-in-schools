@@ -4,6 +4,7 @@ describe "Td/IPV" do
   scenario "record a patient as already vaccinated outside the school session" do
     given_a_td_ipv_programme_with_a_session(clinic: false)
     and_a_patient_is_in_the_session
+    and_the_patient_doesnt_need_triage
 
     when_i_go_the_session
     then_i_see_one_patient_needing_consent
@@ -19,6 +20,7 @@ describe "Td/IPV" do
   scenario "record a patient as already vaccinated outside the clinic session" do
     given_a_td_ipv_programme_with_a_session(clinic: true)
     and_a_patient_is_in_the_session
+    and_the_patient_doesnt_need_triage
 
     when_i_go_the_session
     then_i_see_one_patient_needing_consent
@@ -50,6 +52,7 @@ describe "Td/IPV" do
   scenario "can't record as already vaccinated as an admin" do
     given_a_td_ipv_programme_with_a_session(clinic: false)
     and_a_patient_is_in_the_session
+    and_the_patient_doesnt_need_triage
 
     when_i_go_the_session_as_an_admin
     then_i_see_one_patient_needing_consent
@@ -90,8 +93,36 @@ describe "Td/IPV" do
     @patient = create(:patient, session: @session)
   end
 
+  def and_the_patient_doesnt_need_triage
+    create(:patient_consent_status, patient: @patient, programme: @programme)
+    create(
+      :patient_triage_status,
+      :not_required,
+      patient: @patient,
+      programme: @programme
+    )
+  end
+
   def and_the_patient_needs_triage
-    create(:consent, :needing_triage, patient: @patient, programme: @programme)
+    create(
+      :consent,
+      :given,
+      :needing_triage,
+      patient: @patient,
+      programme: @programme
+    )
+    create(
+      :patient_consent_status,
+      :given,
+      patient: @patient,
+      programme: @programme
+    )
+    create(
+      :patient_triage_status,
+      :required,
+      patient: @patient,
+      programme: @programme
+    )
   end
 
   def when_i_go_the_session

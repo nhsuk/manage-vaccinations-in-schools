@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_03_07_163053) do
+ActiveRecord::Schema[8.0].define(version: 2025_03_27_101002) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -66,7 +66,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_07_163053) do
     t.bigint "organisation_id", null: false
     t.datetime "archived_at"
     t.index ["organisation_id", "name", "expiry", "vaccine_id"], name: "idx_on_organisation_id_name_expiry_vaccine_id_6d9ae30338", unique: true
-    t.index ["organisation_id"], name: "index_batches_on_organisation_id"
     t.index ["vaccine_id"], name: "index_batches_on_vaccine_id"
   end
 
@@ -158,7 +157,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_07_163053) do
     t.bigint "consent_form_id", null: false
     t.index ["consent_form_id"], name: "index_consent_form_programmes_on_consent_form_id"
     t.index ["programme_id", "consent_form_id"], name: "idx_on_programme_id_consent_form_id_2113cb7f37", unique: true
-    t.index ["programme_id"], name: "index_consent_form_programmes_on_programme_id"
   end
 
   create_table "consent_forms", force: :cascade do |t|
@@ -210,7 +208,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_07_163053) do
     t.bigint "consent_notification_id", null: false
     t.index ["consent_notification_id"], name: "idx_on_consent_notification_id_bde310472f"
     t.index ["programme_id", "consent_notification_id"], name: "idx_on_programme_id_consent_notification_id_e185bde5f5", unique: true
-    t.index ["programme_id"], name: "index_consent_notification_programmes_on_programme_id"
   end
 
   create_table "consent_notifications", force: :cascade do |t|
@@ -494,7 +491,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_07_163053) do
     t.bigint "organisation_id", null: false
     t.bigint "programme_id", null: false
     t.index ["organisation_id", "programme_id"], name: "idx_on_organisation_id_programme_id_892684ca8e", unique: true
-    t.index ["organisation_id"], name: "index_organisation_programmes_on_organisation_id"
     t.index ["programme_id"], name: "index_organisation_programmes_on_programme_id"
   end
 
@@ -531,7 +527,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_07_163053) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["parent_id", "patient_id"], name: "index_parent_relationships_on_parent_id_and_patient_id", unique: true
-    t.index ["parent_id"], name: "index_parent_relationships_on_parent_id"
     t.index ["patient_id"], name: "index_parent_relationships_on_patient_id"
   end
 
@@ -547,14 +542,52 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_07_163053) do
     t.index ["email"], name: "index_parents_on_email"
   end
 
+  create_table "patient_consent_statuses", force: :cascade do |t|
+    t.bigint "patient_id", null: false
+    t.bigint "programme_id", null: false
+    t.integer "status", default: 0, null: false
+    t.index ["patient_id", "programme_id"], name: "index_patient_consent_statuses_on_patient_id_and_programme_id", unique: true
+    t.index ["status"], name: "index_patient_consent_statuses_on_status"
+  end
+
+  create_table "patient_session_registration_statuses", force: :cascade do |t|
+    t.bigint "patient_session_id", null: false
+    t.integer "status", default: 0, null: false
+    t.index ["patient_session_id"], name: "idx_on_patient_session_id_438fc21144", unique: true
+    t.index ["status"], name: "index_patient_session_registration_statuses_on_status"
+  end
+
+  create_table "patient_session_session_statuses", force: :cascade do |t|
+    t.bigint "patient_session_id", null: false
+    t.bigint "programme_id", null: false
+    t.integer "status", default: 0, null: false
+    t.index ["patient_session_id", "programme_id"], name: "idx_on_patient_session_id_programme_id_8777f5ba39", unique: true
+    t.index ["status"], name: "index_patient_session_session_statuses_on_status"
+  end
+
   create_table "patient_sessions", force: :cascade do |t|
     t.bigint "session_id", null: false
     t.bigint "patient_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["patient_id", "session_id"], name: "index_patient_sessions_on_patient_id_and_session_id", unique: true
-    t.index ["patient_id"], name: "index_patient_sessions_on_patient_id"
     t.index ["session_id"], name: "index_patient_sessions_on_session_id"
+  end
+
+  create_table "patient_triage_statuses", force: :cascade do |t|
+    t.bigint "patient_id", null: false
+    t.bigint "programme_id", null: false
+    t.integer "status", default: 0, null: false
+    t.index ["patient_id", "programme_id"], name: "index_patient_triage_statuses_on_patient_id_and_programme_id", unique: true
+    t.index ["status"], name: "index_patient_triage_statuses_on_status"
+  end
+
+  create_table "patient_vaccination_statuses", force: :cascade do |t|
+    t.bigint "patient_id", null: false
+    t.bigint "programme_id", null: false
+    t.integer "status", default: 0, null: false
+    t.index ["patient_id", "programme_id"], name: "idx_on_patient_id_programme_id_e876faade2", unique: true
+    t.index ["status"], name: "index_patient_vaccination_statuses_on_status"
   end
 
   create_table "patients", force: :cascade do |t|
@@ -641,7 +674,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_07_163053) do
     t.index ["organisation_id"], name: "index_school_moves_on_organisation_id"
     t.index ["patient_id", "home_educated", "organisation_id"], name: "idx_on_patient_id_home_educated_organisation_id_7c1b5f5066", unique: true
     t.index ["patient_id", "school_id"], name: "index_school_moves_on_patient_id_and_school_id", unique: true
-    t.index ["patient_id"], name: "index_school_moves_on_patient_id"
     t.index ["school_id"], name: "index_school_moves_on_school_id"
   end
 
@@ -652,7 +684,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_07_163053) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["patient_session_id", "session_date_id"], name: "idx_on_patient_session_id_session_date_id_be8bd21ddf", unique: true
-    t.index ["patient_session_id"], name: "index_session_attendances_on_patient_session_id"
     t.index ["session_date_id"], name: "index_session_attendances_on_session_date_id"
   end
 
@@ -660,7 +691,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_07_163053) do
     t.bigint "session_id", null: false
     t.date "value", null: false
     t.index ["session_id", "value"], name: "index_session_dates_on_session_id_and_value", unique: true
-    t.index ["session_id"], name: "index_session_dates_on_session_id"
   end
 
   create_table "session_notifications", force: :cascade do |t|
@@ -671,7 +701,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_07_163053) do
     t.integer "type", null: false
     t.bigint "sent_by_user_id"
     t.index ["patient_id", "session_id", "session_date"], name: "idx_on_patient_id_session_id_session_date_f7f30a3aa3"
-    t.index ["patient_id"], name: "index_session_notifications_on_patient_id"
     t.index ["sent_by_user_id"], name: "index_session_notifications_on_sent_by_user_id"
     t.index ["session_id"], name: "index_session_notifications_on_session_id"
   end
@@ -681,7 +710,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_07_163053) do
     t.bigint "programme_id", null: false
     t.index ["programme_id"], name: "index_session_programmes_on_programme_id"
     t.index ["session_id", "programme_id"], name: "index_session_programmes_on_session_id_and_programme_id", unique: true
-    t.index ["session_id"], name: "index_session_programmes_on_session_id"
   end
 
   create_table "sessions", force: :cascade do |t|
@@ -695,7 +723,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_07_163053) do
     t.string "slug", null: false
     t.date "send_invitations_at"
     t.index ["organisation_id", "location_id", "academic_year"], name: "idx_on_organisation_id_location_id_academic_year_3496b72d0c", unique: true
-    t.index ["organisation_id"], name: "index_sessions_on_organisation_id"
   end
 
   create_table "teams", force: :cascade do |t|
@@ -707,7 +734,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_07_163053) do
     t.datetime "updated_at", null: false
     t.uuid "reply_to_id"
     t.index ["organisation_id", "name"], name: "index_teams_on_organisation_id_and_name", unique: true
-    t.index ["organisation_id"], name: "index_teams_on_organisation_id"
   end
 
   create_table "triage", force: :cascade do |t|
@@ -864,8 +890,17 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_07_163053) do
   add_foreign_key "organisation_programmes", "programmes"
   add_foreign_key "parent_relationships", "parents"
   add_foreign_key "parent_relationships", "patients"
+  add_foreign_key "patient_consent_statuses", "patients", on_delete: :cascade
+  add_foreign_key "patient_consent_statuses", "programmes"
+  add_foreign_key "patient_session_registration_statuses", "patient_sessions", on_delete: :cascade
+  add_foreign_key "patient_session_session_statuses", "patient_sessions", on_delete: :cascade
+  add_foreign_key "patient_session_session_statuses", "programmes"
   add_foreign_key "patient_sessions", "patients"
   add_foreign_key "patient_sessions", "sessions"
+  add_foreign_key "patient_triage_statuses", "patients", on_delete: :cascade
+  add_foreign_key "patient_triage_statuses", "programmes"
+  add_foreign_key "patient_vaccination_statuses", "patients", on_delete: :cascade
+  add_foreign_key "patient_vaccination_statuses", "programmes"
   add_foreign_key "patients", "locations", column: "gp_practice_id"
   add_foreign_key "patients", "locations", column: "school_id"
   add_foreign_key "patients", "organisations"

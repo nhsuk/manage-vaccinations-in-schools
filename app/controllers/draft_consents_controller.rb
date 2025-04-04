@@ -59,9 +59,11 @@ class DraftConsentsController < ApplicationController
 
       @consent.parent&.save!
       @consent.save!
+
+      StatusUpdater.call(patient: @patient)
     end
 
-    set_patient_session # reload with new consents
+    set_patient_session # reload with new statuses
 
     send_triage_confirmation(@patient_session, @consent)
 
@@ -167,9 +169,10 @@ class DraftConsentsController < ApplicationController
     @parent_options =
       (
         @patient.parent_relationships.includes(:parent) +
-          @patient.consent_outcome.all[@programme].filter_map(
-            &:parent_relationship
-          )
+          @patient
+            .consents
+            .select { it.programme_id == @programme.id }
+            .filter_map(&:parent_relationship)
       ).compact.uniq.sort_by(&:label)
   end
 

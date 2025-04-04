@@ -49,6 +49,12 @@ describe SendClinicSubsequentInvitationsJob do
     context "when already vaccinated" do
       before do
         create(
+          :patient_vaccination_status,
+          :vaccinated,
+          patient:,
+          programme: programmes.first
+        )
+        create(
           :vaccination_record,
           patient:,
           session:,
@@ -64,14 +70,8 @@ describe SendClinicSubsequentInvitationsJob do
     end
 
     context "when refused consent has been received" do
-      before do
-        create(
-          :consent,
-          :refused,
-          patient:,
-          programme: programmes.first,
-          parent: parents.first
-        )
+      let(:patient) do
+        create(:patient, :consent_refused, parents:, programmes:)
       end
 
       it "doesn't send any notifications" do
