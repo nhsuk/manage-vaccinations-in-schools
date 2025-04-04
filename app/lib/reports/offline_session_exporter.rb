@@ -318,7 +318,7 @@ class Reports::OfflineSessionExporter
     row[:dose_sequence] = dose_sequence(vaccination_record:)
     row[:reason_not_vaccinated] = Cell.new(
       reason_not_vaccinated(vaccination_record:),
-      allowed_values: ImmunisationImportRow::REASONS.keys
+      allowed_values: ImmunisationImportRow::REASONS_NOT_ADMINISTERED.keys
     )
     row[:notes] = vaccination_record.notes
     row[:session_id] = session&.id
@@ -360,7 +360,7 @@ class Reports::OfflineSessionExporter
     )
     row[:dose_sequence] = programme.default_dose_sequence
     row[:reason_not_vaccinated] = Cell.new(
-      allowed_values: ImmunisationImportRow::REASONS.keys
+      allowed_values: ImmunisationImportRow::REASONS_NOT_ADMINISTERED.keys
     )
 
     row[:session_id] = session.id
