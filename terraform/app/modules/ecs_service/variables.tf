@@ -1,18 +1,19 @@
 variable "environment" {
   type        = string
   description = "Application environment (for example production or staging)"
+  nullable    = false
 }
 
 variable "server_type" {
   type        = string
-  description = "Type of server to be deployed"
+  description = "Type of server to be deployed. This is set as an environment variable in the main container, and is used to determine how the application is launched"
   nullable    = false
 }
 
 variable "desired_count" {
-  type = number
+  type        = number
   description = "The initial amount of instances when creating the service"
-  nullable = false
+  nullable    = false
 }
 
 variable "task_config" {
@@ -25,16 +26,16 @@ variable "task_config" {
       name      = string
       valueFrom = string
     }))
-    cpu                 = number
-    memory              = number
-    docker_image        = string
-    execution_role_arn  = string
-    task_role_arn       = string
-    log_group_name      = string
-    region              = string
+    cpu                  = number
+    memory               = number
+    docker_image         = string
+    execution_role_arn   = string
+    task_role_arn        = string
+    log_group_name       = string
+    region               = string
     health_check_command = list(string)
   })
-  description = "Task configuration variables for the ECS background service"
+  description = "Task configuration variables for the task definition ECS service"
   nullable    = false
 }
 
@@ -59,7 +60,7 @@ variable "loadbalancer" {
     container_port   = number
   })
   description = "Load balancer configuration for the ECS service if the service should be user-facing"
-  default     =  null
+  default     = null
   nullable    = true
 }
 

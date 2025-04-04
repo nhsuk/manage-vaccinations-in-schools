@@ -1,6 +1,6 @@
 resource "aws_security_group" "this" {
   name        = "${var.server_type}-service-${var.environment}"
-  description = "Security Group for communication with Background ECS Service"
+  description = "Security Group for communication with ECS Service"
   vpc_id      = var.network_params.vpc_id
   lifecycle {
     ignore_changes = [description]
@@ -43,7 +43,7 @@ resource "aws_ecs_service" "this" {
     for_each = var.loadbalancer != null ? [1] : []
     content {
       target_group_arn = var.loadbalancer.target_group_arn
-      container_name   = "mavis-application"
+      container_name   = "application"
       container_port   = var.loadbalancer.container_port
     }
   }
@@ -60,11 +60,11 @@ resource "aws_ecs_service" "this" {
 }
 
 resource "aws_ecs_task_definition" "this" {
-  family                   = "${var.server_type}-task-definition-${var.environment}"
+  family                   = "mavis-${var.server_type}-task-definition-${var.environment}"
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
-  cpu                      = 1024
-  memory                   = 2048
+  cpu                      = var.task_config.cpu
+  memory                   = var.task_config.memory
   execution_role_arn       = var.task_config.execution_role_arn
   task_role_arn            = var.task_config.task_role_arn
   container_definitions = jsonencode([
@@ -78,7 +78,7 @@ resource "aws_ecs_task_definition" "this" {
           hostPort      = 4000
         }
       ]
-      environment = concat(var.task_config.environment, [{name  = "SERVER_TYPE", value = var.server_type}])
+      environment = concat(var.task_config.environment, [{ name = "SERVER_TYPE", value = var.server_type }])
       secrets     = var.task_config.secrets
       logConfiguration = {
         logDriver = "awslogs"
