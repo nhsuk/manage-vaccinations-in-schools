@@ -79,12 +79,17 @@ module CSVImportable
   def load_data!
     return if invalid?
 
+    converters = proc { |value| value&.strip.presence }
+
     self.data ||=
       CSV.parse(
         csv_data,
+        converters:,
+        empty_value: nil,
+        encoding: detect_encoding,
         headers: true,
         skip_blanks: true,
-        encoding: detect_encoding
+        strip: true
       )
     self.rows_count = data.count
   rescue CSV::MalformedCSVError

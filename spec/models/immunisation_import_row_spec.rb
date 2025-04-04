@@ -1096,12 +1096,6 @@ describe ImmunisationImportRow do
       it { expect(notes).to be_nil }
     end
 
-    context "with blank notes" do
-      let(:data) { { "NOTES" => "" } }
-
-      it { expect(notes).to be_nil }
-    end
-
     context "with notes" do
       let(:data) { { "NOTES" => "Some notes." } }
 
@@ -1644,14 +1638,15 @@ describe ImmunisationImportRow do
     it { should be_archived }
 
     context "without a vaccine" do
-      let(:data) { valid_data.merge("VACCINE_GIVEN" => "") }
+      before { data.delete("VACCINE_GIVEN") }
 
       it { should be_nil }
     end
 
     context "without a batch number or expiry date" do
-      let(:data) do
-        valid_data.merge("BATCH_NUMBER" => "", "BATCH_EXPIRY_DATE" => "")
+      before do
+        data.delete("BATCH_NUMBER")
+        data.delete("BATCH_EXPIRY_DATE")
       end
 
       it { should be_nil }
