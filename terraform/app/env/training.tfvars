@@ -17,9 +17,11 @@ resource_name = {
 }
 rails_env             = "staging"
 rails_master_key_path = "/copilot/mavis/secrets/STAGING_RAILS_MASTER_KEY"
-splunk_enabled        = false
-cis2_enabled          = false
-pds_enabled           = false
+
+enable_splunk = false
+enable_cis2   = false
+enable_pds    = false
+
 http_hosts = {
   MAVIS__HOST                        = "training.manage-vaccinations-in-schools.nhs.uk"
   MAVIS__GIVE_OR_REFUSE_CONSENT_HOST = "training.give-or-refuse-consent-for-vaccinations.nhs.uk"

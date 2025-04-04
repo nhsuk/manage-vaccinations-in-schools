@@ -143,23 +143,23 @@ variable "image_digest" {
   nullable    = false
 }
 
-variable "cis2_enabled" {
+variable "enable_cis2" {
   type        = bool
-  default     = false
+  default     = true
   description = "Boolean toggle to determine whether the CIS2 feature should be enabled."
   nullable    = false
 }
 
-variable "pds_enabled" {
+variable "enable_pds" {
   type        = bool
-  default     = false
+  default     = true
   description = "Boolean toggle to determine whether the PDS feature should be enabled."
   nullable    = false
 }
 
-variable "splunk_enabled" {
+variable "enable_splunk" {
   type        = bool
-  default     = false
+  default     = true
   description = "Boolean toggle to determine whether the Splunk feature should be enabled."
   nullable    = false
 }
@@ -195,15 +195,15 @@ locals {
     },
     {
       name  = "MAVIS__CIS2__ENABLED"
-      value = var.cis2_enabled ? "true" : "false"
+      value = var.enable_cis2 ? "true" : "false"
     },
     {
       name  = "MAVIS__PDS__PERFORM_JOBS"
-      value = var.pds_enabled ? "true" : "false"
+      value = var.enable_pds ? "true" : "false"
     },
     {
       name  = "MAVIS__SPLUNK__ENABLED"
-      value = var.splunk_enabled ? "true" : "false"
+      value = var.enable_splunk ? "true" : "false"
     }
   ]
   task_secrets = [

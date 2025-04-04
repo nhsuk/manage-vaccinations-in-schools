@@ -14,9 +14,7 @@ resource_name = {
 }
 rails_env             = "staging"
 rails_master_key_path = "/copilot/mavis/secrets/STAGING_RAILS_MASTER_KEY"
-splunk_enabled        = true
-cis2_enabled          = true
-pds_enabled           = true
+
 http_hosts = {
   MAVIS__HOST                        = "test.mavistesting.com"
   MAVIS__GIVE_OR_REFUSE_CONSENT_HOST = "test.mavistesting.com"

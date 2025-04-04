@@ -15,8 +15,10 @@ http_hosts = {
   MAVIS__HOST                        = "copilotmigration.mavistesting.com"
   MAVIS__GIVE_OR_REFUSE_CONSENT_HOST = "copilotmigration.mavistesting.com"
 }
-splunk_enabled   = false
-cis2_enabled     = false
-pds_enabled      = false
+
+enable_splunk = false
+enable_cis2   = false
+enable_pds    = false
+
 minimum_replicas = 3
 appspec_bucket   = "nhse-mavis-appspec-bucket-copilotmigration"
