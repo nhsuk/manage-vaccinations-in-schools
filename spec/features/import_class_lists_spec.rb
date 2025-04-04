@@ -17,9 +17,6 @@ describe "Import class lists" do
     when_i_upload_a_malformed_csv
     then_i_should_see_an_error
 
-    when_i_upload_a_file_with_invalid_headers
-    then_i_should_the_errors_page_with_invalid_headers
-
     when_i_upload_a_file_with_invalid_fields
     then_i_should_see_the_imports_page_with_the_processing_flash
 
@@ -150,18 +147,6 @@ describe "Import class lists" do
   def when_i_upload_a_malformed_csv
     attach_file("class_import[csv]", "spec/fixtures/class_import/malformed.csv")
     click_on "Continue"
-  end
-
-  def when_i_upload_a_file_with_invalid_headers
-    attach_file(
-      "class_import[csv]",
-      "spec/fixtures/class_import/invalid_headers.csv"
-    )
-    click_on "Continue"
-  end
-
-  def then_i_should_the_errors_page_with_invalid_headers
-    expect(page).to have_content("The file is missing the following headers")
   end
 
   def when_i_upload_a_file_with_invalid_fields

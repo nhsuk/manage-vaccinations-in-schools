@@ -38,10 +38,6 @@ class CohortImport < PatientImport
 
   private
 
-  def required_headers
-    super + %w[CHILD_POSTCODE CHILD_SCHOOL_URN]
-  end
-
   def parse_row(data)
     CohortImportRow.new(data:, organisation:)
   end
