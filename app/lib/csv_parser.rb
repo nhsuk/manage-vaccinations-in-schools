@@ -29,14 +29,56 @@ class CSVParser
       alias_method :to_s, :value
 
       def cell = "#{column}#{row}"
+
+      def to_i
+        Integer(value)
+      rescue ArgumentError, TypeError
+        nil
+      end
+
+      def to_date
+        return nil if blank?
+
+        parsed_values =
+          DATE_FORMATS.lazy.filter_map do |format|
+            Date.strptime(value, format)
+          rescue ArgumentError, TypeError
+            nil
+          end
+
+        parsed_values.first
+      end
+
+      def to_postcode
+        if present?
+          postcode = UKPostcode.parse(value)
+          postcode.to_s if postcode.full_valid?
+        end
+      end
+
+      def to_time
+        return nil if blank?
+
+        parsed_values =
+          TIME_FORMATS.lazy.filter_map do |format|
+            Time.zone.strptime(value, format)
+          rescue ArgumentError, TypeError
+            nil
+          end
+
+        parsed_values.first
+      end
     end
 
   private
 
   attr_reader :data
 
-  ALPHABET = %w[A B C D E F G H I J K L M N O P Q R S T U V W X Y Z].freeze
+  ALPHABET = ("A".."Z").to_a.freeze
   COLUMNS = ALPHABET + ALPHABET.product(ALPHABET).map { _1 + _2 }
+
+  DATE_FORMATS = %w[%Y%m%d %Y-%m-%d %d/%m/%Y].freeze
+  TIME_FORMATS = %w[%H:%M:%S %H:%M %H%M%S %H%M %H].freeze
 
   def unconverted_headers
     @unconverted_headers ||=

@@ -228,7 +228,7 @@ class ImmunisationImportRow
   end
 
   def batch_expiry_date
-    parse_date(:batch_expiry_date)
+    @data[:batch_expiry_date]&.to_date
   end
 
   def batch_number
@@ -309,11 +309,7 @@ class ImmunisationImportRow
 
     return dose_sequences[value] if dose_sequences&.include?(value)
 
-    begin
-      Integer(@data[:dose_sequence]&.to_s)
-    rescue ArgumentError, TypeError
-      nil
-    end
+    @data[:dose_sequence]&.to_i
   end
 
   def vaccine_given
@@ -329,7 +325,7 @@ class ImmunisationImportRow
   end
 
   def patient_date_of_birth
-    parse_date(:person_dob)
+    @data[:person_dob]&.to_date
   end
 
   def patient_birth_academic_year
@@ -343,9 +339,7 @@ class ImmunisationImportRow
   end
 
   def patient_postcode
-    if (postcode = @data[:person_postcode]&.to_s).present?
-      UKPostcode.parse(postcode).to_s
-    end
+    @data[:person_postcode]&.to_postcode
   end
 
   def patient_nhs_number
@@ -361,9 +355,7 @@ class ImmunisationImportRow
   end
 
   def session_id
-    Integer(@data[:session_id]&.to_s)
-  rescue ArgumentError, TypeError
-    nil
+    @data[:session_id]&.to_i
   end
 
   def school_name
@@ -379,17 +371,15 @@ class ImmunisationImportRow
   end
 
   def date_of_vaccination
-    @date_of_vaccination ||= parse_date(:date_of_vaccination)
+    @data[:date_of_vaccination]&.to_date
   end
 
   def time_of_vaccination
-    @time_of_vaccination ||= parse_time(:time_of_vaccination)
+    @data[:time_of_vaccination]&.to_time
   end
 
   def care_setting
-    Integer(@data[:care_setting]&.to_s)
-  rescue ArgumentError, TypeError
-    nil
+    @data[:care_setting]&.to_i
   end
 
   def performed_by_user
@@ -525,38 +515,6 @@ class ImmunisationImportRow
         end
       end
     end
-  end
-
-  DATE_FORMATS = %w[%Y%m%d %Y-%m-%d %d/%m/%Y].freeze
-
-  def parse_date(key)
-    value = @data[key]&.to_s
-    return nil if value.nil?
-
-    parsed_dates =
-      DATE_FORMATS.lazy.filter_map do |format|
-        Date.strptime(value, format)
-      rescue ArgumentError, TypeError
-        nil
-      end
-
-    parsed_dates.first
-  end
-
-  TIME_FORMATS = %w[%H:%M:%S %H:%M %H%M%S %H%M %H].freeze
-
-  def parse_time(key)
-    value = @data[key]&.to_s
-    return nil if value.nil?
-
-    parsed_times =
-      TIME_FORMATS.lazy.filter_map do |format|
-        Time.zone.strptime(value, format)
-      rescue ArgumentError, TypeError
-        nil
-      end
-
-    parsed_times.first
   end
 
   def delivery_site_appropriate_for_vaccine
