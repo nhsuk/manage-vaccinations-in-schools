@@ -108,19 +108,39 @@ $button-shadow-size: 4px;
 
 .app-button--small {
   @include nhsuk-typography-responsive(16);
-  padding: nhsuk-spacing(1) 12px;
+  $padding-block: 6px;
+  $padding-block-icon: 3px;
+  $padding-inline: 12px;
+  $padding-inline-icon: 6px;
+
+  padding: $padding-block $padding-inline;
 
   &.app-button--secondary,
   &.app-button--secondary-warning {
     // Adjust padding to account for removal of 2px bottom border
-    padding-bottom: #{nhsuk-spacing(1) + 1px};
-    padding-top: #{nhsuk-spacing(1) + 1px};
+    padding: #{$padding-block + 1px} $padding-inline;
+
+    &.app-button--icon {
+      padding: #{$padding-block-icon + 1px} $padding-inline-icon;
+    }
 
     &:active {
       margin-bottom: -1px;
       // Revert padding to account for reintroduction of 2px bottom border
-      padding-bottom: nhsuk-spacing(1);
-      padding-top: nhsuk-spacing(1);
+      padding: $padding-block $padding-inline;
     }
+
+    &.app-button--icon:active {
+      // Revert padding to account for reintroduction of 2px bottom border
+      padding: $padding-block-icon $padding-inline-icon;
+    }
+  }
+}
+
+.app-button--icon {
+  .nhsuk-icon {
+    display: block;
+    height: 28px;
+    width: 28px;
   }
 }
