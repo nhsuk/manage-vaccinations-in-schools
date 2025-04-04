@@ -46,8 +46,8 @@ en:
         year_group: <code>CHILD_YEAR_GROUP</code>
       immunisation_import_row:
         administered: <code>VACCINATED</code>
-        batch_expiry_date: <code>BATCH_EXPIRY_DATE</code>
-        batch_number: <code>BATCH_NUMBER</code>
+        batch_expiry: <code>BATCH_EXPIRY_DATE</code>
+        batch_name: <code>BATCH_NUMBER</code>
         care_setting: <code>CARE_SETTING</code>
         clinic_name: <code>CLINIC_NAME</code>
         date_of_vaccination: <code>DATE_OF_VACCINATION</code>
@@ -59,9 +59,9 @@ en:
         patient_last_name: <code>PERSON_SURNAME</code>
         patient_nhs_number: <code>NHS_NUMBER</code>
         patient_postcode: <code>PERSON_POSTCODE</code>
+        performed_by_email: <code>PERFORMING_PROFESSIONAL_EMAIL</code>
         performed_by_family_name: <code>PERFORMING_PROFESSIONAL_SURNAME</code>
         performed_by_given_name: <code>PERFORMING_PROFESSIONAL_FORENAME</code>
-        performed_by_user: <code>PERFORMING_PROFESSIONAL_EMAIL</code>
         performed_ods_code: <code>ORGANISATION_CODE</code>
         programme_name: <code>PROGRAMME</code>
         reason_not_administered: <code>REASON_NOT_VACCINATED</code>
@@ -70,7 +70,7 @@ en:
         session_id: <code>SESSION_ID</code>
         time_of_vaccination: <code>TIME_OF_VACCINATION</code>
         uuid: <code>UUID</code>
-        vaccine_given: <code>VACCINE_GIVEN</code>
+        vaccine_name: <code>VACCINE_GIVEN</code>
     errors:
       models:
         batch_form:
@@ -260,9 +260,9 @@ en:
           attributes:
             administered:
               inclusion: You need to record whether the child was vaccinated or not. Enter ‘Y’ or ‘N’ in the ‘vaccinated’ column.
-            batch_expiry_date:
+            batch_expiry:
               blank: Enter a batch expiry date.
-            batch_number:
+            batch_name:
               blank: Enter a batch number.
             care_setting:
               blank: Enter a care setting.
@@ -293,12 +293,14 @@ en:
             patient_last_name:
               blank: Enter a last name.
             patient_nhs_number:
-              blank: Enter an NHS number with 10 characters.
+              invalid: Enter an NHS number with 10 characters.
               wrong_length: Enter an NHS number with 10 characters.
             patient_postcode:
               blank: Enter a valid postcode, such as SW1A 1AA
-            performed_by_user:
+              invalid: Enter a valid postcode, such as SW1A 1AA
+            performed_by_email:
               blank: Enter a valid email address
+              inclusion: Enter a valid email address
             performed_by_given_name:
               blank: Enter a first name
             performed_by_family_name:
@@ -316,13 +318,14 @@ en:
             school_urn:
               inclusion: The school URN is not recognised. If you’ve checked the URN, and you believe it’s valid, contact our support organisation.
             session_id:
+              invalid: The session ID is not recognised. Download the offline spreadsheet and copy the session ID for this row from there, or contact our support organisation.
               inclusion: The session ID is not recognised. Download the offline spreadsheet and copy the session ID for this row from there, or contact our support organisation.
             time_of_vaccination:
-              blank: Enter a time in the correct format
+              invalid: Enter a time in the correct format
               less_than_or_equal_to: Enter a time in the past
             uuid:
               inclusion: Enter an existing record
-            vaccine_given:
+            vaccine_name:
               blank: Enter a vaccine
               inclusion: This vaccine is not available in this session
         import_duplicate_form:
