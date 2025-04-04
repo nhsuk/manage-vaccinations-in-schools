@@ -82,8 +82,7 @@ class ImmunisationImportRow
             },
             presence: {
               if: -> do
-                @data["PERSON_POSTCODE"]&.strip.present? ||
-                  patient_nhs_number.blank?
+                @data["PERSON_POSTCODE"].present? || patient_nhs_number.blank?
               end
             }
 
@@ -108,7 +107,7 @@ class ImmunisationImportRow
             }
   validates :time_of_vaccination,
             presence: {
-              if: -> { @data["TIME_OF_VACCINATION"]&.strip.present? }
+              if: -> { @data["TIME_OF_VACCINATION"].present? }
             },
             comparison: {
               less_than_or_equal_to: -> { Time.current },
@@ -233,7 +232,7 @@ class ImmunisationImportRow
   end
 
   def batch_number
-    @data["BATCH_NUMBER"]&.strip.presence
+    @data["BATCH_NUMBER"]
   end
 
   REASONS = {
@@ -246,11 +245,11 @@ class ImmunisationImportRow
   }.freeze
 
   def reason
-    REASONS[@data["REASON_NOT_VACCINATED"]&.strip&.downcase]
+    REASONS[@data["REASON_NOT_VACCINATED"]&.downcase]
   end
 
   def notes
-    @data["NOTES"]&.strip&.presence
+    @data["NOTES"]
   end
 
   DELIVERY_SITES = {
@@ -268,7 +267,7 @@ class ImmunisationImportRow
   }.freeze
 
   def delivery_site
-    DELIVERY_SITES[@data["ANATOMICAL_SITE"]&.strip&.downcase]
+    DELIVERY_SITES[@data["ANATOMICAL_SITE"]&.downcase]
   end
 
   def delivery_method
@@ -302,7 +301,7 @@ class ImmunisationImportRow
   }.freeze
 
   def dose_sequence
-    value = @data["DOSE_SEQUENCE"]&.gsub(/\s/, "")&.presence&.upcase
+    value = @data["DOSE_SEQUENCE"]&.gsub(/\s/, "")&.upcase
 
     return default_dose_sequence if value.blank?
 
@@ -318,15 +317,15 @@ class ImmunisationImportRow
   end
 
   def vaccine_given
-    @data["VACCINE_GIVEN"]&.strip&.presence
+    @data["VACCINE_GIVEN"]
   end
 
   def patient_first_name
-    @data["PERSON_FORENAME"]&.strip
+    @data["PERSON_FORENAME"]
   end
 
   def patient_last_name
-    @data["PERSON_SURNAME"]&.strip
+    @data["PERSON_SURNAME"]
   end
 
   def patient_date_of_birth
@@ -339,7 +338,7 @@ class ImmunisationImportRow
 
   def patient_gender_code
     gender_code = @data["PERSON_GENDER_CODE"] || @data["PERSON_GENDER"]
-    gender_code&.strip&.downcase&.gsub(" ", "_")
+    gender_code&.downcase&.gsub(" ", "_")
   end
 
   def patient_postcode
@@ -349,15 +348,15 @@ class ImmunisationImportRow
   end
 
   def patient_nhs_number
-    @data["NHS_NUMBER"]&.gsub(/\s/, "")&.presence
+    @data["NHS_NUMBER"]&.gsub(/\s/, "")
   end
 
   def performed_ods_code
-    @data["ORGANISATION_CODE"]&.strip&.upcase&.presence
+    @data["ORGANISATION_CODE"]&.upcase
   end
 
   def programme_name
-    @data["PROGRAMME"]&.strip
+    @data["PROGRAMME"]
   end
 
   def session_id
@@ -367,15 +366,15 @@ class ImmunisationImportRow
   end
 
   def school_name
-    @data["SCHOOL_NAME"]&.strip
+    @data["SCHOOL_NAME"]
   end
 
   def clinic_name
-    @data["CLINIC_NAME"]&.strip
+    @data["CLINIC_NAME"]
   end
 
   def school_urn
-    @data["SCHOOL_URN"]&.strip.presence
+    @data["SCHOOL_URN"]
   end
 
   def date_of_vaccination
@@ -394,27 +393,23 @@ class ImmunisationImportRow
 
   def performed_by_user
     @performed_by_user ||=
-      if (email = @data["PERFORMING_PROFESSIONAL_EMAIL"]&.strip)
+      if (email = @data["PERFORMING_PROFESSIONAL_EMAIL"])
         User.find_by(email:)
       end
   end
 
   def performed_by_given_name
     @performed_by_given_name ||=
-      if performed_by_user.nil?
-        @data["PERFORMING_PROFESSIONAL_FORENAME"]&.strip&.presence
-      end
+      (@data["PERFORMING_PROFESSIONAL_FORENAME"] if performed_by_user.nil?)
   end
 
   def performed_by_family_name
     @performed_by_family_name ||=
-      if performed_by_user.nil?
-        @data["PERFORMING_PROFESSIONAL_SURNAME"]&.strip&.presence
-      end
+      (@data["PERFORMING_PROFESSIONAL_SURNAME"] if performed_by_user.nil?)
   end
 
   def uuid
-    @data["UUID"]&.strip&.presence
+    @data["UUID"]
   end
 
   private
@@ -516,8 +511,7 @@ class ImmunisationImportRow
     if offline_recording?
       errors.add(:performed_by_user, :blank) if performed_by_user.nil?
     else # previous academic years from here on
-      email_field_populated =
-        @data["PERFORMING_PROFESSIONAL_EMAIL"]&.strip.present?
+      email_field_populated = @data["PERFORMING_PROFESSIONAL_EMAIL"].present?
 
       if email_field_populated
         errors.add(:performed_by_user, :blank) if performed_by_user.nil?
@@ -535,7 +529,7 @@ class ImmunisationImportRow
   DATE_FORMATS = %w[%Y%m%d %Y-%m-%d %d/%m/%Y].freeze
 
   def parse_date(key)
-    value = @data[key]&.strip
+    value = @data[key]
     return nil if value.nil?
 
     parsed_dates =
@@ -551,7 +545,7 @@ class ImmunisationImportRow
   TIME_FORMATS = %w[%H:%M:%S %H:%M %H%M%S %H%M %H].freeze
 
   def parse_time(key)
-    value = @data[key]&.strip
+    value = @data[key]
     return nil if value.nil?
 
     parsed_times =
