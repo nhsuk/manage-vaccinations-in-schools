@@ -3,25 +3,19 @@
 class PatientImportRow
   include ActiveModel::Model
 
-  validates :date_of_birth, presence: true
-  validates :existing_patients, length: { maximum: 1 }
-  validates :first_name, presence: true
-  validates :last_name, presence: true
-  validates :nhs_number, length: { is: 10 }, allow_blank: true
-  validates :gender_code,
-            inclusion: {
-              in: Patient.gender_codes.keys,
-              allow_nil: true
-            }
-  validates :year_group, inclusion: { in: :year_groups }, if: :date_of_birth
-
-  validates :parent_1_email, notify_safe_email: { allow_blank: true }
-  validates :parent_1_phone, phone: { allow_blank: true }
-  validates :parent_1_relationship, absence: true, unless: :parent_1_exists?
-
-  validates :parent_2_email, notify_safe_email: { allow_blank: true }
-  validates :parent_2_phone, phone: { allow_blank: true }
-  validates :parent_2_relationship, absence: true, unless: :parent_2_exists?
+  validate :validate_date_of_birth,
+           :validate_existing_patients,
+           :validate_first_name,
+           :validate_gender_code,
+           :validate_last_name,
+           :validate_nhs_number,
+           :validate_parent_1_email,
+           :validate_parent_1_phone,
+           :validate_parent_1_relationship,
+           :validate_parent_2_email,
+           :validate_parent_2_phone,
+           :validate_parent_2_relationship,
+           :validate_year_group
 
   def initialize(data:, organisation:, year_groups:)
     @data = data
@@ -33,19 +27,19 @@ class PatientImportRow
     return unless valid?
 
     attributes = {
-      address_line_1:,
-      address_line_2:,
-      address_postcode:,
-      address_town:,
-      birth_academic_year:,
-      date_of_birth:,
-      family_name: last_name,
-      gender_code:,
-      given_name: first_name,
-      nhs_number:,
-      preferred_family_name: preferred_last_name,
-      preferred_given_name: preferred_first_name,
-      registration:
+      address_line_1: address_line_1&.to_s,
+      address_line_2: address_line_2&.to_s,
+      address_postcode: address_postcode&.to_postcode,
+      address_town: address_town&.to_s,
+      birth_academic_year: birth_academic_year_value,
+      date_of_birth: date_of_birth.to_date,
+      family_name: last_name.to_s,
+      gender_code: gender_code_value,
+      given_name: first_name.to_s,
+      nhs_number: nhs_number_value,
+      preferred_family_name: preferred_last_name&.to_s,
+      preferred_given_name: preferred_first_name&.to_s,
+      registration: registration&.to_s
     }.compact
 
     if (existing_patient = existing_patients.first)
@@ -54,8 +48,12 @@ class PatientImportRow
       end
 
       if address_postcode.present? &&
-           address_postcode != existing_patient.address_postcode
-        attributes.merge!(address_line_1:, address_line_2:, address_town:)
+           address_postcode.to_postcode != existing_patient.address_postcode
+        attributes.merge!(
+          address_line_1: address_line_1&.to_s,
+          address_line_2: address_line_2&.to_s,
+          address_town: address_town&.to_s
+        )
       end
 
       existing_patient.stage_changes(attributes)
@@ -90,16 +88,16 @@ class PatientImportRow
     parents = [
       if parent_1_exists?
         {
-          email: parent_1_email,
-          full_name: parent_1_name,
-          phone: parent_1_phone
+          email: parent_1_email_value,
+          full_name: parent_1_name&.to_s,
+          phone: parent_1_phone_value
         }
       end,
       if parent_2_exists?
         {
-          email: parent_2_email,
-          full_name: parent_2_name,
-          phone: parent_2_phone
+          email: parent_2_email_value,
+          full_name: parent_2_name&.to_s,
+          phone: parent_2_phone_value
         }
       end
     ].compact
@@ -131,10 +129,10 @@ class PatientImportRow
 
     parent_relationships = [
       if parent_1_exists?
-        parent_relationship_attributes(parent_1_relationship)
+        parent_relationship_attributes(parent_1_relationship&.to_s)
       end,
       if parent_2_exists?
-        parent_relationship_attributes(parent_2_relationship)
+        parent_relationship_attributes(parent_2_relationship&.to_s)
       end
     ].compact
 
@@ -147,96 +145,50 @@ class PatientImportRow
       end
   end
 
-  def nhs_number
-    @data[:child_nhs_number]&.to_s&.gsub(/\s/, "")
-  end
+  def nhs_number = @data[:child_nhs_number]
 
-  def first_name
-    @data[:child_first_name]&.to_s
-  end
+  def first_name = @data[:child_first_name]
 
-  def last_name
-    @data[:child_last_name]&.to_s
-  end
+  def last_name = @data[:child_last_name]
 
-  def preferred_first_name
-    @data[:child_preferred_first_name]&.to_s
-  end
+  def preferred_first_name = @data[:child_preferred_first_name]
 
-  def preferred_last_name
-    @data[:child_preferred_last_name]&.to_s
-  end
+  def preferred_last_name = @data[:child_preferred_last_name]
 
-  def date_of_birth
-    @data[:child_date_of_birth]&.to_date
-  end
+  def date_of_birth = @data[:child_date_of_birth]
 
-  def birth_academic_year
-    if (year_group = @data[:child_year_group]).present?
-      year_group.to_i.to_birth_academic_year
-    else
-      date_of_birth&.academic_year
-    end
-  end
+  def year_group = @data[:child_year_group]
 
-  def year_group
-    birth_academic_year&.to_year_group
-  end
+  def registration = @data[:child_registration]
 
-  def registration
-    @data[:child_registration]&.to_s
-  end
+  def gender_code = @data[:child_gender]
 
-  def gender_code
-    @data[:child_gender]&.to_s&.downcase&.gsub(" ", "_")
-  end
+  def address_line_1 = @data[:child_address_line_1]
 
-  def address_line_1
-    @data[:child_address_line_1]&.to_s
-  end
+  def address_line_2 = @data[:child_address_line_2]
 
-  def address_line_2
-    @data[:child_address_line_2]&.to_s
-  end
+  def address_town = @data[:child_town]
 
-  def address_town
-    @data[:child_town]&.to_s
-  end
+  def address_postcode = @data[:child_postcode]
 
-  def address_postcode
-    @data[:child_postcode]&.to_s
-  end
+  def parent_1_name = @data[:parent_1_name]
 
-  def parent_1_name
-    @data[:parent_1_name]&.to_s
-  end
+  def parent_1_relationship = @data[:parent_1_relationship]
 
-  def parent_1_relationship
-    @data[:parent_1_relationship]&.to_s
-  end
+  def parent_1_email = @data[:parent_1_email]
 
-  def parent_1_email
-    @data[:parent_1_email]&.to_s&.downcase
-  end
+  def parent_1_phone = @data[:parent_1_phone]
 
-  def parent_1_phone
-    @data[:parent_1_phone]&.to_s&.gsub(/\s/, "")
-  end
+  def parent_2_name = @data[:parent_2_name]
 
-  def parent_2_name
-    @data[:parent_2_name]&.to_s
-  end
+  def parent_2_relationship = @data[:parent_2_relationship]
 
-  def parent_2_relationship
-    @data[:parent_2_relationship]&.to_s
-  end
+  def parent_2_email = @data[:parent_2_email]
 
-  def parent_2_email
-    @data[:parent_2_email]&.to_s&.downcase
-  end
+  def parent_2_phone = @data[:parent_2_phone]
 
-  def parent_2_phone
-    @data[:parent_2_phone]&.to_s&.gsub(/\s/, "")
+  def nhs_number_value
+    nhs_number&.to_s&.gsub(/\s/, "")
   end
 
   attr_reader :organisation, :year_groups
@@ -267,14 +219,128 @@ class PatientImportRow
   end
 
   def existing_patients
-    return if first_name.blank? || last_name.blank? || date_of_birth.nil?
+    if first_name.blank? || last_name.blank? || date_of_birth&.to_date.nil?
+      return
+    end
 
     Patient.match_existing(
-      nhs_number:,
-      given_name: first_name,
-      family_name: last_name,
-      date_of_birth:,
-      address_postcode:
+      nhs_number: nhs_number_value,
+      given_name: first_name.to_s,
+      family_name: last_name.to_s,
+      date_of_birth: date_of_birth.to_date,
+      address_postcode: address_postcode&.to_postcode&.to_s
     )
+  end
+
+  def birth_academic_year_value
+    if year_group.present?
+      year_group.to_i&.to_birth_academic_year
+    else
+      date_of_birth&.to_date&.academic_year
+    end
+  end
+
+  def gender_code_value
+    gender_code&.to_s&.downcase&.gsub(" ", "_")
+  end
+
+  def parent_1_email_value
+    parent_1_email&.to_s&.downcase
+  end
+
+  def parent_2_email_value
+    parent_2_email&.to_s&.downcase
+  end
+
+  def parent_1_phone_value
+    parent_1_phone&.to_s&.gsub(/\s/, "")
+  end
+
+  def parent_2_phone_value
+    parent_2_phone&.to_s&.gsub(/\s/, "")
+  end
+
+  def validate_date_of_birth
+    if date_of_birth.blank?
+      errors.add(:date_of_birth, :blank)
+    elsif date_of_birth.to_date.nil?
+      errors.add(:date_of_birth, :invalid)
+    end
+  end
+
+  def validate_existing_patients
+    if existing_patients && existing_patients.length > 1
+      errors.add(:existing_patients, :too_long)
+    end
+  end
+
+  def validate_first_name
+    errors.add(:first_name, :blank) if first_name.blank?
+  end
+
+  def validate_gender_code
+    if gender_code.present? &&
+         !Patient.gender_codes.keys.include?(gender_code_value)
+      errors.add(:gender_code, :inclusion)
+    end
+  end
+
+  def validate_last_name
+    errors.add(:last_name, :blank) if last_name.blank?
+  end
+
+  def validate_nhs_number
+    if nhs_number.present? && nhs_number_value.length != 10
+      errors.add(:nhs_number, :invalid)
+    end
+  end
+
+  def validate_parent_1_email
+    NotifySafeEmailValidator.new(
+      allow_blank: true,
+      attributes: [:parent_1_email]
+    ).validate_each(self, :parent_1_email, parent_1_email_value)
+  end
+
+  def validate_parent_1_phone
+    PhoneValidator.new(
+      allow_blank: true,
+      attributes: [:parent_1_phone]
+    ).validate_each(self, :parent_1_phone, parent_1_phone_value)
+  end
+
+  def validate_parent_1_relationship
+    if parent_1_relationship.present? && !parent_1_exists?
+      errors.add(:parent_1_relationship, :present)
+    end
+  end
+
+  def validate_parent_2_email
+    NotifySafeEmailValidator.new(
+      allow_blank: true,
+      attributes: [:parent_2_email]
+    ).validate_each(self, :parent_2_email, parent_2_email_value)
+  end
+
+  def validate_parent_2_phone
+    PhoneValidator.new(
+      allow_blank: true,
+      attributes: [:parent_2_phone]
+    ).validate_each(self, :parent_2_phone, parent_2_phone_value)
+  end
+
+  def validate_parent_2_relationship
+    if parent_2_relationship.present? && !parent_2_exists?
+      errors.add(:parent_2_relationship, :present)
+    end
+  end
+
+  def validate_year_group
+    attribute = year_group.present? ? :year_group : :date_of_birth
+
+    year_group_value = birth_academic_year_value&.to_year_group
+    return if year_group_value.nil?
+
+    errors.add(attribute, :inclusion) unless year_group_value.in?(year_groups)
   end
 end

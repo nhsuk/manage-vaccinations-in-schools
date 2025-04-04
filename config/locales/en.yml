@@ -97,6 +97,7 @@ en:
             date_of_birth:
               blank: is required but missing
               invalid: ‘%{value}’ should be formatted as YYYY-MM-DD
+              inclusion: is not part of this programme
             existing_patients:
               too_long: Two or more possible patients match the patient first name, last name, date of birth or postcode.
             first_name:
@@ -140,6 +141,7 @@ en:
             date_of_birth:
               blank: is required but missing
               invalid: ‘%{value}’ should be formatted as YYYY-MM-DD
+              inclusion: is not part of this programme
             existing_patients:
               too_long: Two or more possible patients match the patient first name, last name, date of birth or postcode.
             first_name:
