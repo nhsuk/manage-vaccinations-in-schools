@@ -15,7 +15,7 @@ class NotifySafeEmailValidator < ActiveModel::EachValidator
       match = EMAIL_REGEX_PATTERN.match(value)
 
       if !match || value.length > 320 || value.include?("..")
-        record.errors.add(attribute, :invalid, value:)
+        record.errors.add(attribute, options[:message] || :invalid, value:)
         return
       end
 
@@ -24,11 +24,11 @@ class NotifySafeEmailValidator < ActiveModel::EachValidator
       parts = hostname.split(".")
 
       if hostname.length > 253 || parts.length < 2
-        record.errors.add(attribute, :invalid, value:)
+        record.errors.add(attribute, options[:message] || :invalid, value:)
       elsif !parts.all? { |part| HOSTNAME_PART.match?(part) }
-        record.errors.add(attribute, :invalid, value:)
+        record.errors.add(attribute, options[:message] || :invalid, value:)
       elsif !TLD_PART.match?(parts.last)
-        record.errors.add(attribute, :invalid, value:)
+        record.errors.add(attribute, options[:message] || :invalid, value:)
       end
     end
   end

@@ -261,86 +261,118 @@ class PatientImportRow
   end
 
   def validate_date_of_birth
-    if date_of_birth.blank?
-      errors.add(:date_of_birth, :blank)
+    if date_of_birth.nil?
+      errors.add(:base, "<code>CHILD_DATE_OF_BIRTH</code> is missing")
+    elsif date_of_birth.blank?
+      errors.add(date_of_birth.header, "is required but missing")
     elsif date_of_birth.to_date.nil?
-      errors.add(:date_of_birth, :invalid)
+      errors.add(date_of_birth.header, "should be formatted as YYYY-MM-DD")
     end
   end
 
   def validate_existing_patients
     if existing_patients && existing_patients.length > 1
-      errors.add(:existing_patients, :too_long)
+      errors.add(
+        :base,
+        "Two or more possible patients match the patient first name, last name, date of birth or postcode."
+      )
     end
   end
 
   def validate_first_name
-    errors.add(:first_name, :blank) if first_name.blank?
+    if first_name.nil?
+      errors.add(:base, "<code>CHILD_FIRST_NAME</code> is missing")
+    elsif first_name.blank?
+      errors.add(first_name.header, "is required but missing")
+    end
   end
 
   def validate_gender_code
     if gender_code.present? &&
          !Patient.gender_codes.keys.include?(gender_code_value)
-      errors.add(:gender_code, :inclusion)
+      errors.add(gender_code.header, "is not a valid gender code")
     end
   end
 
   def validate_last_name
-    errors.add(:last_name, :blank) if last_name.blank?
+    if last_name.nil?
+      errors.add(:base, "<code>CHILD_LAST_NAME</code> is missing")
+    elsif last_name.blank?
+      errors.add(last_name.header, "is required but missing")
+    end
   end
 
   def validate_nhs_number
     if nhs_number.present? && nhs_number_value.length != 10
-      errors.add(:nhs_number, :invalid)
+      errors.add(
+        nhs_number.header,
+        "should be a valid NHS number, like 999 888 7777"
+      )
     end
   end
 
   def validate_parent_1_email
+    return if parent_1_email.blank?
+
     NotifySafeEmailValidator.new(
       allow_blank: true,
-      attributes: [:parent_1_email]
-    ).validate_each(self, :parent_1_email, parent_1_email_value)
+      message: "should be a valid email address, like j.doe@example.com",
+      attributes: [parent_1_email.header]
+    ).validate_each(self, parent_1_email.header, parent_1_email_value)
   end
 
   def validate_parent_1_phone
+    return if parent_1_phone.blank?
+
     PhoneValidator.new(
       allow_blank: true,
-      attributes: [:parent_1_phone]
-    ).validate_each(self, :parent_1_phone, parent_1_phone_value)
+      message:
+        "should be a valid phone number, like 01632 960 001, 07700 900 982 or +44 808 157 0192",
+      attributes: [parent_1_phone.header]
+    ).validate_each(self, parent_1_phone.header, parent_1_phone_value)
   end
 
   def validate_parent_1_relationship
     if parent_1_relationship.present? && !parent_1_exists?
-      errors.add(:parent_1_relationship, :present)
+      errors.add(parent_1_relationship.header, "is not required")
     end
   end
 
   def validate_parent_2_email
+    return if parent_2_email.blank?
+
     NotifySafeEmailValidator.new(
       allow_blank: true,
-      attributes: [:parent_2_email]
-    ).validate_each(self, :parent_2_email, parent_2_email_value)
+      message: "should be a valid email address, like j.doe@example.com",
+      attributes: [parent_2_email.header]
+    ).validate_each(self, parent_2_email.header, parent_2_email_value)
   end
 
   def validate_parent_2_phone
+    return if parent_2_phone.blank?
+
     PhoneValidator.new(
       allow_blank: true,
-      attributes: [:parent_2_phone]
-    ).validate_each(self, :parent_2_phone, parent_2_phone_value)
+      message:
+        "should be a valid phone number, like 01632 960 001, 07700 900 982 or +44 808 157 0192",
+      attributes: [parent_2_phone.header]
+    ).validate_each(self, parent_2_phone.header, parent_2_phone_value)
   end
 
   def validate_parent_2_relationship
     if parent_2_relationship.present? && !parent_2_exists?
-      errors.add(:parent_2_relationship, :present)
+      errors.add(parent_2_relationship.header, "is not required")
     end
   end
 
   def validate_year_group
-    attribute = year_group.present? ? :year_group : :date_of_birth
+    field = year_group.presence || date_of_birth
 
     year_group_value = birth_academic_year_value&.to_year_group
     return if year_group_value.nil?
 
-    errors.add(attribute, :inclusion) unless year_group_value.in?(year_groups)
+    unless year_group_value.in?(year_groups)
+      errors.add(field.header, "is not part of this programme")
+    end
   end
 end

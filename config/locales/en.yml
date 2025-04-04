@@ -1,49 +1,6 @@
 en:
   activemodel:
     attributes:
-      class_import_row:
-        address_line_1: <code>CHILD_ADDRESS_LINE_1</code>
-        address_line_2: <code>CHILD_ADDRESS_LINE_2</code>
-        address_postcode: <code>CHILD_POSTCODE</code>
-        address_town: <code>CHILD_TOWN</code>
-        date_of_birth: <code>CHILD_DATE_OF_BIRTH</code>
-        first_name: <code>CHILD_FIRST_NAME</code>
-        gender_code: <code>CHILD_GENDER</code>
-        last_name: <code>CHILD_LAST_NAME</code>
-        nhs_number: <code>CHILD_NHS_NUMBER</code>
-        parent_1_email: <code>PARENT_1_EMAIL</code>
-        parent_1_name: <code>PARENT_1_NAME</code>
-        parent_1_phone: <code>PARENT_1_PHONE</code>
-        parent_1_relationship: <code>PARENT_1_RELATIONSHIP</code>
-        parent_2_email: <code>PARENT_2_EMAIL</code>
-        parent_2_name: <code>PARENT_2_NAME</code>
-        parent_2_phone: <code>PARENT_2_PHONE</code>
-        parent_2_relationship: <code>PARENT_2_RELATIONSHIP</code>
-        preferred_family_name: <code>CHILD_PREFERRED_LAST_NAME</code>
-        preferred_given_name: <code>CHILD_PREFERRED_FIRST_NAME</code>
-        year_group: <code>CHILD_YEAR_GROUP</code>
-      cohort_import_row:
-        address_line_1: <code>CHILD_ADDRESS_LINE_1</code>
-        address_line_2: <code>CHILD_ADDRESS_LINE_2</code>
-        address_postcode: <code>CHILD_POSTCODE</code>
-        address_town: <code>CHILD_TOWN</code>
-        date_of_birth: <code>CHILD_DATE_OF_BIRTH</code>
-        first_name: <code>CHILD_FIRST_NAME</code>
-        gender_code: <code>CHILD_GENDER</code>
-        last_name: <code>CHILD_LAST_NAME</code>
-        nhs_number: <code>CHILD_NHS_NUMBER</code>
-        parent_1_email: <code>PARENT_1_EMAIL</code>
-        parent_1_name: <code>PARENT_1_NAME</code>
-        parent_1_phone: <code>PARENT_1_PHONE</code>
-        parent_1_relationship: <code>PARENT_1_RELATIONSHIP</code>
-        parent_2_email: <code>PARENT_2_EMAIL</code>
-        parent_2_name: <code>PARENT_2_NAME</code>
-        parent_2_phone: <code>PARENT_2_PHONE</code>
-        parent_2_relationship: <code>PARENT_2_RELATIONSHIP</code>
-        preferred_family_name: <code>CHILD_PREFERRED_LAST_NAME</code>
-        preferred_given_name: <code>CHILD_PREFERRED_FIRST_NAME</code>
-        school_urn: <code>CHILD_SCHOOL_URN</code>
-        year_group: <code>CHILD_YEAR_GROUP</code>
       immunisation_import_row:
         administered: <code>VACCINATED</code>
         batch_expiry: <code>BATCH_EXPIRY_DATE</code>
@@ -87,97 +44,9 @@ en:
               blank: Enter a batch
               invalid: Enter a batch with only letters and numbers
         class_import_row:
-          format: "%{attribute}: %{message}"
-          attributes:
-            address_postcode:
-              blank: is required but missing
-              invalid_postcode: ‘%{value}’ should be a postcode, like SW1A 1AA
-            birth_academic_year:
-              blank: is required but missing
-            date_of_birth:
-              blank: is required but missing
-              invalid: ‘%{value}’ should be formatted as YYYY-MM-DD
-              inclusion: is not part of this programme
-            existing_patients:
-              too_long: Two or more possible patients match the patient first name, last name, date of birth or postcode.
-            first_name:
-              blank: is required but missing
-            last_name:
-              blank: is required but missing
-            nhs_number:
-              blank: is required but missing
-              invalid: ‘%{value}’ should be a valid NHS number, like 999 888 7777
-              taken: The same NHS number appears multiple times in this file.
-            parent_1_name:
-              blank: is required but missing
-            parent_1_relationship:
-              blank: is required but missing
-            parent_1_email:
-              blank: is required but missing
-              invalid: ‘%{value}’ should be a valid email address, like j.doe@example.com
-            parent_1_phone:
-              blank: is required but missing
-              invalid: ‘%{value}’ should be a valid phone number, like 01632 960 001, 07700 900 982 or +44 808 157 0192
-            parent_2_name:
-              blank: is required but missing
-            parent_2_relationship:
-              blank: is required but missing
-            parent_2_email:
-              blank: is required but missing
-              invalid: ‘%{value}’ should be a valid email address, like j.doe@example.com
-            parent_2_phone:
-              blank: is required but missing
-              invalid: ‘%{value}’ should be a valid phone number, like 01632 960 001, 07700 900 982 or +44 808 157 0192
-            year_group:
-              inclusion: is not part of this programme
+          format: "<code>%{attribute}</code>: %{message}"
         cohort_import_row:
-          format: "%{attribute}: %{message}"
-          attributes:
-            address_postcode:
-              blank: is required but missing
-              invalid_postcode: ‘%{value}’ should be a postcode, like SW1A 1AA
-            birth_academic_year:
-              blank: is required but missing
-            date_of_birth:
-              blank: is required but missing
-              invalid: ‘%{value}’ should be formatted as YYYY-MM-DD
-              inclusion: is not part of this programme
-            existing_patients:
-              too_long: Two or more possible patients match the patient first name, last name, date of birth or postcode.
-            first_name:
-              blank: is required but missing
-            last_name:
-              blank: is required but missing
-            nhs_number:
-              blank: is required but missing
-              invalid: ‘%{value}’ should be a valid NHS number, like 999 888 7777
-              taken: The same NHS number appears multiple times in this file.
-            parent_1_email:
-              blank: is required but missing
-              invalid: ‘%{value}’ should be a valid email address, like j.doe@example.com
-            parent_1_name:
-              blank: is required but missing
-            parent_1_phone:
-              blank: is required but missing
-              invalid: ‘%{value}’ should be a valid phone number, like 01632 960 001, 07700 900 982 or +44 808 157 0192
-            parent_1_relationship:
-              blank: is required but missing
-            parent_2_email:
-              blank: is required but missing
-              invalid: ‘%{value}’ should be a valid email address, like j.doe@example.com
-            parent_2_name:
-              blank: is required but missing
-            parent_2_phone:
-              blank: is required but missing
-              invalid: ‘%{value}’ should be a valid phone number, like 01632 960 001, 07700 900 982 or +44 808 157 0192
-            parent_2_relationship:
-              blank: is required but missing
-            school_urn:
-              blank: is required but missing
-              invalid: ‘%{value}’ is not a known school URN
-              inclusion: The school URN is not recognised. If you’ve checked the URN, and you believe it’s valid, contact our support organisation.
-            year_group:
-              inclusion: is not part of this programme
+          format: "<code>%{attribute}</code>: %{message}"
         draft_class_import:
           attributes:
             session_id:

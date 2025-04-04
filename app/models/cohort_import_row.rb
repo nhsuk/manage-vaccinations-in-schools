@@ -40,10 +40,12 @@ class CohortImportRow < PatientImportRow
   end
 
   def validate_address_postcode
-    if address_postcode.blank?
-      errors.add(:address_postcode, :blank)
+    if address_postcode.nil?
+      errors.add(:base, "<code>CHILD_POSTCODE</code> is missing")
+    elsif address_postcode.blank?
+      errors.add(address_postcode.header, "is required but missing")
     elsif address_postcode.to_postcode.nil?
-      errors.add(:address_postcode, :invalid)
+      errors.add(address_postcode.header, "should be a postcode, like SW1A 1AA")
     end
   end
 
