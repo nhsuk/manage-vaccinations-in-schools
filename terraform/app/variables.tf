@@ -123,13 +123,6 @@ variable "rails_master_key_path" {
   nullable    = false
 }
 
-variable "container_name" {
-  type        = string
-  default     = "mavis"
-  description = "Name of essential container in the task definition."
-  nullable    = false
-}
-
 variable "docker_image" {
   type        = string
   default     = "mavis/webapp"
@@ -165,7 +158,6 @@ variable "enable_splunk" {
 }
 
 locals {
-  container_name = "${var.container_name}-${var.environment}"
   is_production  = var.environment == "production"
 
   task_envs = [
@@ -252,4 +244,8 @@ variable "maximum_replicas" {
   type        = number
   default     = 2
   description = "Maximum amount of allowed replicas"
+}
+
+locals {
+  ecs_sg_ids = [ module.web_service.security_group_id, module.good_job_service.security_group_id]
 }

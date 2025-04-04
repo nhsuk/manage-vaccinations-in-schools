@@ -23,12 +23,13 @@ output "codedeploy_deployment_group_name" {
   value       = aws_codedeploy_deployment_group.blue_green_deployment_group.deployment_group_name
 }
 
-output "mavis_cluster_name" {
-  description = "The name of the ECS cluster"
-  value       = aws_ecs_cluster.cluster.name
-}
-
-output "mavis_service_name" {
-  description = "The name of the ECS service"
-  value       = aws_ecs_service.service.name
+output "ecs_variables" {
+  value = {
+    cluster_name = aws_ecs_cluster.cluster.name
+    good_job = {
+      service_name    = module.good_job_service.service.name
+      task_definition = module.good_job_service.task_definition
+    }
+  }
+  description = "Essential attributes of the ECS service"
 }

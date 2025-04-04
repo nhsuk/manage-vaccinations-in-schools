@@ -12,6 +12,10 @@ output "service" {
 }
 
 output "task_definition" {
-  value       = aws_ecs_task_definition.this.family
+  value = {
+    arn            = aws_ecs_task_definition.this.arn
+    family         = aws_ecs_task_definition.this.family
+    container_name = var.container_name
+  }
   description = "Essential attributes of the ECS task definition"
 }
