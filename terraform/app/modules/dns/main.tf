@@ -4,9 +4,9 @@ data "aws_route53_zone" "this" {
 }
 
 resource "aws_acm_certificate" "this" {
-  domain_name       = var.domain_names[0]
+  domain_name               = var.domain_names[0]
   subject_alternative_names = slice(var.domain_names, 1, length(var.domain_names))
-  validation_method = "DNS"
+  validation_method         = "DNS"
   lifecycle {
     create_before_destroy = true
   }
@@ -15,9 +15,9 @@ resource "aws_acm_certificate" "this" {
 resource "aws_route53_record" "cert_validation" {
   for_each = {
     for dvo in aws_acm_certificate.this.domain_validation_options : dvo.domain_name => {
-      name   = dvo.resource_record_name
-      type   = dvo.resource_record_type
-      value  = dvo.resource_record_value
+      name  = dvo.resource_record_name
+      type  = dvo.resource_record_type
+      value = dvo.resource_record_value
     }
   }
 

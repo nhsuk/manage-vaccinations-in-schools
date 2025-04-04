@@ -61,7 +61,7 @@ variable "ssl_policy" {
 
 locals {
   unique_host_headers = toset(values(var.http_hosts))
-  host_headers = concat(tolist(local.unique_host_headers), [for v in local.unique_host_headers : "www.${v}"])
+  host_headers        = concat(tolist(local.unique_host_headers), [for v in local.unique_host_headers : "www.${v}"])
 }
 
 variable "dns_certificate_arn" {
@@ -70,7 +70,7 @@ variable "dns_certificate_arn" {
 }
 
 locals {
-  default_certificate_arn = var.dns_certificate_arn == null ? module.dns_route53[0].certificate_arn : var.dns_certificate_arn[0]
+  default_certificate_arn     = var.dns_certificate_arn == null ? module.dns_route53[0].certificate_arn : var.dns_certificate_arn[0]
   additional_sni_certificates = var.dns_certificate_arn == null ? [] : slice(var.dns_certificate_arn, 1, length(var.dns_certificate_arn))
 }
 
@@ -123,13 +123,6 @@ variable "rails_master_key_path" {
   nullable    = false
 }
 
-variable "container_name" {
-  type        = string
-  default     = "mavis"
-  description = "Name of essential container in the task definition."
-  nullable    = false
-}
-
 variable "docker_image" {
   type        = string
   default     = "mavis/webapp"
@@ -164,7 +157,6 @@ variable "splunk_enabled" {
 }
 
 locals {
-  container_name = "${var.container_name}-${var.environment}"
   is_production  = var.environment == "production"
 
   task_envs = [
@@ -247,4 +239,8 @@ variable "maximum_replicas" {
   type        = number
   default     = 2
   description = "Maximum amount of allowed replicas"
+}
+
+locals {
+  ecs_sg_ids = [ module.web_service.security_group_id, module.good_job_service.security_group_id]
 }
