@@ -27,7 +27,7 @@ class ImmunisationImportRow
            :validate_session_id,
            :validate_time_of_vaccination,
            :validate_uuid,
-           :validate_vaccine_name
+           :validate_vaccine
 
   CARE_SETTING_SCHOOL = 1
   CARE_SETTING_COMMUNITY = 2
@@ -253,7 +253,8 @@ class ImmunisationImportRow
   end
 
   def programme
-    @programme ||= programmes_by_name[programme_name&.to_s]
+    @programme ||=
+      programmes_by_name[programme_name&.to_s] || vaccine&.programme
   end
 
   def session
@@ -271,7 +272,7 @@ class ImmunisationImportRow
     @vaccine ||=
       organisation
         .vaccines
-        .where(programme:)
+        .includes(:programme)
         .find_by(nivs_name: vaccine_name&.to_s)
   end
 
@@ -697,6 +698,8 @@ class ImmunisationImportRow
   end
 
   def validate_programme_name
+    return if programme
+
     if programme_name.nil?
       errors.add(:base, "<code>PROGRAMME</code> is required")
     elsif programme_name.blank?
@@ -799,8 +802,15 @@ class ImmunisationImportRow
     errors.add(uuid.header, "Enter an existing record.") unless scope.exists?
   end
 
-  def validate_vaccine_name
-    if vaccine_name.present? && vaccine.nil?
+  def validate_vaccine
+    if vaccine
+      if programme && vaccine.programme_id != programme.id
+        errors.add(
+          vaccine_name.header,
+          "is not given in the #{programme.name} programme"
+        )
+      end
+    elsif vaccine_name.present?
       errors.add(
         vaccine_name.header,
         "This vaccine is not available in this session."

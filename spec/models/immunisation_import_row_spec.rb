@@ -110,6 +110,24 @@ describe ImmunisationImportRow do
       end
     end
 
+    context "with an invalid vaccine for the programme" do
+      let(:data) do
+        {
+          "PROGRAMME" => "HPV",
+          "VACCINE_GIVEN" => "AstraZeneca Fluenz Tetra LAIV"
+        }
+      end
+
+      let(:programmes) { [create(:programme, :flu), create(:programme, :hpv)] }
+
+      it "has errors" do
+        expect(immunisation_import_row).to be_invalid
+        expect(
+          immunisation_import_row.errors["VACCINE_GIVEN"]
+        ).to contain_exactly("is not given in the HPV programme")
+      end
+    end
+
     context "with an invalid reason not vaccinated" do
       let(:data) do
         { "VACCINATED" => "N", "REASON_NOT_VACCINATED" => "unknown" }
