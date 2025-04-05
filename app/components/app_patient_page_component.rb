@@ -60,6 +60,8 @@ class AppPatientPageComponent < ViewComponent::Base
       patient_session.pre_screenings.order(created_at: :desc).first
 
     VaccinateForm.new(
+      patient_session:,
+      programme:,
       feeling_well: pre_screening&.feeling_well,
       knows_vaccination: pre_screening&.knows_vaccination,
       no_allergies: pre_screening&.no_allergies,
