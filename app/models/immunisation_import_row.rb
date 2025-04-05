@@ -170,7 +170,8 @@ class ImmunisationImportRow
     @data[:person_forename].presence || @data[:first_name]
 
   def patient_gender_code =
-    @data[:person_gender_code].presence || @data[:person_gender].presence
+    @data[:person_gender_code].presence || @data[:person_gender].presence ||
+      @data[:sex]
 
   def patient_last_name = @data[:person_surname].presence || @data[:surname]
 
@@ -379,7 +380,13 @@ class ImmunisationImportRow
   end
 
   def patient_gender_code_value
-    patient_gender_code&.to_s&.downcase&.gsub(" ", "_")
+    value = patient_gender_code&.to_s&.downcase&.gsub(" ", "_")
+
+    if value.in?(%w[indeterminate unknown])
+      "not_known"
+    elsif value.in?(Patient.gender_codes.keys)
+      value
+    end
   end
 
   def patient_nhs_number_value
@@ -619,14 +626,15 @@ class ImmunisationImportRow
     if patient_gender_code.nil?
       errors.add(
         :base,
-        "<code>PERSON_GENDER_CODE</code> or <code>PERSON_GENDER</code> is required"
+        "<code>PERSON_GENDER_CODE</code>, <code>PERSON_GENDER</code> or <code>Sex</code> is required"
       )
     elsif patient_gender_code.blank?
       errors.add(patient_gender_code.header, "Enter a gender or gender code.")
     elsif patient_gender_code_value.nil?
-      errors.add(patient_gender_code.header, "Enter a gender or gender code.")
-    elsif !Patient.gender_codes.keys.include?(patient_gender_code_value)
-      errors.add(patient_gender_code.header, "Enter a gender or gender code.")
+      errors.add(
+        patient_gender_code.header,
+        "Enter a valid gender or gender code."
+      )
     end
   end
 
