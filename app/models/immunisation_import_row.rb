@@ -161,6 +161,8 @@ class ImmunisationImportRow
 
   def dose_sequence = @data[:dose_sequence]
 
+  def location_type = @data[:event_location_type]
+
   def notes = @data[:notes]
 
   def patient_date_of_birth =
@@ -213,8 +215,7 @@ class ImmunisationImportRow
   def location_name
     return unless session.nil? || session.location.generic_clinic?
 
-    if care_setting&.to_i == CARE_SETTING_SCHOOL ||
-         (care_setting.blank? && clinic_name.blank?)
+    if is_school_setting? || (is_unknown_setting? && clinic_name.blank?)
       school&.name || school_name&.to_s || "Unknown"
     else
       clinic_name&.to_s || "Unknown"
@@ -379,6 +380,20 @@ class ImmunisationImportRow
     dose_sequence&.to_i
   end
 
+  def is_unknown_setting?
+    care_setting.blank? && location_type.blank?
+  end
+
+  def is_school_setting?
+    care_setting&.to_i == CARE_SETTING_SCHOOL ||
+      location_type&.to_s&.downcase == "school"
+  end
+
+  def is_community_setting?
+    care_setting&.to_i == CARE_SETTING_COMMUNITY ||
+      (location_type.present? && location_type.to_s.downcase != "school")
+  end
+
   def patient_gender_code_value
     value = patient_gender_code&.to_s&.downcase&.gsub(" ", "_")
 
@@ -470,7 +485,7 @@ class ImmunisationImportRow
   end
 
   def validate_clinic_name
-    if offline_recording? && care_setting&.to_i == CARE_SETTING_COMMUNITY
+    if offline_recording? && is_community_setting?
       if clinic_name.nil?
         errors.add(
           :base,
