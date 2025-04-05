@@ -70,12 +70,12 @@ describe ImmunisationImportRow do
         expect(immunisation_import_row).to be_invalid
         expect(immunisation_import_row.errors[:base]).to contain_exactly(
           "<code>VACCINATED</code> is required",
-          "<code>DATE_OF_VACCINATION</code> is required",
-          "<code>PERSON_DOB</code> is required",
-          "<code>PERSON_FORENAME</code> is required",
+          "<code>DATE_OF_VACCINATION</code> or <code>Event date</code> is required",
+          "<code>PERSON_DOB</code> or <code>Date of birth</code> is required",
+          "<code>PERSON_FORENAME</code> or <code>First name</code> is required",
           "<code>PERSON_GENDER_CODE</code> or <code>PERSON_GENDER</code> is required",
-          "<code>PERSON_SURNAME</code> is required",
-          "<code>PERSON_POSTCODE</code> is required",
+          "<code>PERSON_SURNAME</code> or <code>Surname</code> is required",
+          "<code>PERSON_POSTCODE</code> or <code>Postcode</code> is required",
           "<code>PROGRAMME</code> is required",
           "<code>REASON_NOT_VACCINATED</code> is required"
         )
@@ -93,7 +93,7 @@ describe ImmunisationImportRow do
         it "doesn't require a postcode" do
           expect(immunisation_import_row).to be_invalid
           expect(immunisation_import_row.errors[:base]).not_to include(
-            "<code>PERSON_POSTCODE</code> is required"
+            "<code>PERSON_POSTCODE</code> or <code>Postcode</code> is required"
           )
         end
       end
@@ -603,7 +603,7 @@ describe ImmunisationImportRow do
           "<code>BATCH_EXPIRY_DATE</code> is required"
         )
         expect(immunisation_import_row.errors[:base]).to include(
-          "<code>BATCH_NUMBER</code> is required"
+          "<code>BATCH_NUMBER</code> or <code>Vaccination batch number</code> is required"
         )
       end
     end
@@ -1560,16 +1560,96 @@ describe ImmunisationImportRow do
   describe "#batch_name" do
     subject { immunisation_import_row.batch_name&.to_s }
 
-    context "without a value" do
-      let(:data) { {} }
-
-      it { should be_nil }
-    end
-
-    context "with a value" do
+    context "with a BATCH_NUMBER field" do
       let(:data) { { "BATCH_NUMBER" => "abc" } }
 
       it { should eq("abc") }
+    end
+
+    context "with a Vaccination Batch Number field" do
+      let(:data) { { "Vaccination Batch Number" => "abc" } }
+
+      it { should eq("abc") }
+    end
+  end
+
+  describe "#clinic_name" do
+    subject { immunisation_import_row.clinic_name&.to_s }
+
+    context "with a CLINIC_NAME field" do
+      let(:data) { { "CLINIC_NAME" => "Hospital" } }
+
+      it { should eq("Hospital") }
+    end
+
+    context "with an Event Done At field" do
+      let(:data) { { "Event Done At" => "Hospital" } }
+
+      it { should eq("Hospital") }
+    end
+  end
+
+  describe "#date_of_vaccination" do
+    subject { immunisation_import_row.date_of_vaccination&.to_s }
+
+    context "with a DATE_OF_VACCINATION field" do
+      let(:data) { { "DATE_OF_VACCINATION" => "01/01/2020" } }
+
+      it { should eq("01/01/2020") }
+    end
+
+    context "with an Event Date field" do
+      let(:data) { { "Event Date" => "01/01/2020" } }
+
+      it { should eq("01/01/2020") }
+    end
+  end
+
+  describe "#patient_date_of_birth" do
+    subject { immunisation_import_row.patient_date_of_birth&.to_s }
+
+    context "with a PERSON_DOB field" do
+      let(:data) { { "PERSON_DOB" => "01/01/2020" } }
+
+      it { should eq("01/01/2020") }
+    end
+
+    context "with a Date of Birth field" do
+      let(:data) { { "Date of Birth" => "01/01/2020" } }
+
+      it { should eq("01/01/2020") }
+    end
+  end
+
+  describe "#patient_first_name" do
+    subject { immunisation_import_row.patient_first_name&.to_s }
+
+    context "with a PERSON_FORENAME field" do
+      let(:data) { { "PERSON_FORENAME" => "Sally" } }
+
+      it { should eq("Sally") }
+    end
+
+    context "with a First name field" do
+      let(:data) { { "First name" => "Sally" } }
+
+      it { should eq("Sally") }
+    end
+  end
+
+  describe "#patient_last_name" do
+    subject { immunisation_import_row.patient_last_name&.to_s }
+
+    context "with a PERSON_SURNAME field" do
+      let(:data) { { "PERSON_SURNAME" => "Phillips" } }
+
+      it { should eq("Phillips") }
+    end
+
+    context "with a Surname field" do
+      let(:data) { { "Surname" => "Phillips" } }
+
+      it { should eq("Phillips") }
     end
   end
 
@@ -1587,5 +1667,37 @@ describe ImmunisationImportRow do
     let(:data) { { "PERFORMING_PROFESSIONAL_SURNAME" => "Smith" } }
 
     it { should eq("Smith") }
+  end
+
+  describe "#school_name" do
+    subject { immunisation_import_row.school_name&.to_s }
+
+    context "with a SCHOOL_NAME field" do
+      let(:data) { { "SCHOOL_NAME" => "Waterloo Road" } }
+
+      it { should eq("Waterloo Road") }
+    end
+
+    context "with a School field" do
+      let(:data) { { "School" => "Waterloo Road" } }
+
+      it { should eq("Waterloo Road") }
+    end
+  end
+
+  describe "#school_urn" do
+    subject { immunisation_import_row.school_urn&.to_s }
+
+    context "with a SCHOOL_URN field" do
+      let(:data) { { "SCHOOL_URN" => "123456" } }
+
+      it { should eq("123456") }
+    end
+
+    context "with a School Code field" do
+      let(:data) { { "School Code" => "123456" } }
+
+      it { should eq("123456") }
+    end
   end
 end
