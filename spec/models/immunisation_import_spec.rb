@@ -98,6 +98,16 @@ describe ImmunisationImport do
       end
     end
 
+    context "with a SystmOne file" do
+      let(:programmes) { [create(:programme, :hpv_all_vaccines)] }
+      let(:file) { "systm_one.csv" }
+
+      it "populates the rows" do
+        expect(immunisation_import).to be_valid
+        expect(immunisation_import.rows).not_to be_empty
+      end
+    end
+
     context "with invalid rows" do
       let(:file) { "invalid_rows.csv" }
 
@@ -217,6 +227,32 @@ describe ImmunisationImport do
           .exactly(9)
           .times
           .on_queue(:imports)
+      end
+    end
+
+    context "with a SystmOne file format" do
+      let(:programmes) { [create(:programme, :hpv_all_vaccines)] }
+      let(:file) { "systm_one.csv" }
+
+      it "creates locations, patients, and vaccination records" do
+        # stree-ignore
+        expect { process! }
+          .to change(immunisation_import, :processed_at).from(nil)
+          .and change(immunisation_import.vaccination_records, :count).by(1)
+          .and change(immunisation_import.patients, :count).by(1)
+          .and change(immunisation_import.batches, :count).by(1)
+          .and not_change(immunisation_import.patient_sessions, :count)
+
+        # Second import should not duplicate the vaccination records if they're
+        # identical.
+
+        # stree-ignore
+        expect { immunisation_import.process! }
+          .to not_change(immunisation_import, :processed_at)
+          .and not_change(VaccinationRecord, :count)
+          .and not_change(Patient, :count)
+          .and not_change(PatientSession, :count)
+          .and not_change(Batch, :count)
       end
     end
 
