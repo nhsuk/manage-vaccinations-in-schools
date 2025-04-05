@@ -20,7 +20,7 @@ class ImmunisationImportRow
            :validate_patient_postcode,
            :validate_performed_by,
            :validate_performed_ods_code,
-           :validate_programme_name,
+           :validate_programme,
            :validate_reason_not_administered,
            :validate_school_name,
            :validate_school_urn,
@@ -55,14 +55,18 @@ class ImmunisationImportRow
     "menacwy" => {
       "1P" => 1,
       "1B" => 2,
-      "2B" => 3
+      "2B" => 3,
+      "1st Scheduled Booster" => 2,
+      "2nd Scheduled Booster" => 3
     },
     "td_ipv" => {
       "1P" => 1,
       "2P" => 2,
       "3P" => 3,
       "1B" => 4,
-      "2B" => 5
+      "2B" => 5,
+      "1st Scheduled Booster" => 4,
+      "2nd Scheduled Booster" => 5
     }
   }.freeze
 
@@ -153,6 +157,8 @@ class ImmunisationImportRow
   def care_setting = @data[:care_setting]
 
   def clinic_name = @data[:clinic_name].presence || @data[:event_done_at]
+
+  def combined_vaccination_and_dose_sequence = @data[:vaccination_type]
 
   def date_of_vaccination =
     @data[:date_of_vaccination].presence || @data[:event_date]
@@ -263,7 +269,13 @@ class ImmunisationImportRow
 
   def programme
     @programme ||=
-      programmes_by_name[programme_name&.to_s] || vaccine&.programme
+      begin
+        name =
+          parsed_vaccination_description_string&.dig(:programme_name) ||
+            programme_name&.to_s
+
+        programmes_by_name[name] || vaccine&.programme
+      end
   end
 
   def session
@@ -279,10 +291,13 @@ class ImmunisationImportRow
 
   def vaccine
     @vaccine ||=
-      organisation
-        .vaccines
-        .includes(:programme)
-        .find_by(nivs_name: vaccine_name&.to_s)
+      begin
+        nivs_name =
+          parsed_vaccination_description_string&.dig(:vaccine_name) ||
+            vaccine_name&.to_s
+
+        organisation.vaccines.includes(:programme).find_by(nivs_name:)
+      end
   end
 
   def batch
@@ -369,9 +384,13 @@ class ImmunisationImportRow
   end
 
   def dose_sequence_value
-    value = dose_sequence&.to_s&.gsub(/\s/, "")&.upcase
+    value =
+      parsed_vaccination_description_string&.dig(:dose_sequence) ||
+        dose_sequence&.to_s&.gsub(/\s/, "")&.upcase
 
     return default_dose_sequence if value.blank?
+
+    return value if value.is_a?(Integer)
 
     dose_sequences = DOSE_SEQUENCES[programme&.type]
 
@@ -392,6 +411,14 @@ class ImmunisationImportRow
   def is_community_setting?
     care_setting&.to_i == CARE_SETTING_COMMUNITY ||
       (location_type.present? && location_type.to_s.downcase != "school")
+  end
+
+  def parsed_vaccination_description_string
+    if combined_vaccination_and_dose_sequence.present?
+      VaccinationDescriptionStringParser.call(
+        combined_vaccination_and_dose_sequence.to_s
+      )
+    end
   end
 
   def patient_gender_code_value
@@ -563,33 +590,35 @@ class ImmunisationImportRow
   end
 
   def validate_dose_sequence
-    if dose_sequence.present?
+    field = dose_sequence.presence || combined_vaccination_and_dose_sequence
+
+    if field.present?
       if offline_recording? && default_dose_sequence.nil?
         errors.add(
-          dose_sequence.header,
+          field.header,
           "Do not provide a dose sequence for this programme (leave blank)."
         )
       elsif dose_sequence_value.nil?
         errors.add(
-          dose_sequence.header,
+          field.header,
           "The dose sequence number cannot be greater than 3. Enter a dose sequence number, for example, 1, 2 or 3."
         )
       elsif maximum_dose_sequence
         if dose_sequence_value < 1
-          errors.add(dose_sequence.header, "must be greater than 0")
+          errors.add(field.header, "must be greater than 0")
         elsif dose_sequence_value > maximum_dose_sequence
-          errors.add(
-            dose_sequence.header,
-            "must be less than #{maximum_dose_sequence}"
-          )
+          errors.add(field.header, "must be less than #{maximum_dose_sequence}")
         end
       end
     elsif administered && offline_recording? && default_dose_sequence.present?
-      if dose_sequence.nil?
-        errors.add(:base, "<code>DOSE_SEQUENCE</code> is required")
+      if field.nil?
+        errors.add(
+          :base,
+          "<code>DOSE_SEQUENCE</code> or <code>Vaccination type</code> is required"
+        )
       else
         errors.add(
-          dose_sequence.header,
+          field.header,
           "The dose sequence number cannot be greater than 3. Enter a dose sequence number, for example, 1, 2 or 3."
         )
       end
@@ -748,16 +777,21 @@ class ImmunisationImportRow
     end
   end
 
-  def validate_programme_name
+  def validate_programme
     return if programme
 
-    if programme_name.nil?
-      errors.add(:base, "<code>PROGRAMME</code> is required")
-    elsif programme_name.blank?
-      errors.add(programme_name.header, "Enter a programme.")
-    elsif !programmes_by_name.keys.include?(programme_name.to_s)
+    field = programme_name.presence || combined_vaccination_and_dose_sequence
+
+    if field.nil?
       errors.add(
-        programme_name.header,
+        :base,
+        "<code>PROGRAMME</code> or <code>Vaccination type</code> is required"
+      )
+    elsif field.blank?
+      errors.add(field.header, "Enter a programme.")
+    else
+      errors.add(
+        field.header,
         "This programme is not available in this session."
       )
     end
@@ -857,18 +891,17 @@ class ImmunisationImportRow
   end
 
   def validate_vaccine
+    field = vaccine_name.presence || combined_vaccination_and_dose_sequence
+
     if vaccine
       if programme && vaccine.programme_id != programme.id
         errors.add(
-          vaccine_name.header,
+          field.header,
           "is not given in the #{programme.name} programme"
         )
       end
-    elsif vaccine_name.present?
-      errors.add(
-        vaccine_name.header,
-        "This vaccine is not available in this session."
-      )
+    elsif field.present?
+      errors.add(field.header, "This vaccine is not available in this session.")
     end
   end
 end

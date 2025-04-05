@@ -76,7 +76,7 @@ describe ImmunisationImportRow do
           "<code>PERSON_GENDER_CODE</code>, <code>PERSON_GENDER</code> or <code>Sex</code> is required",
           "<code>PERSON_SURNAME</code> or <code>Surname</code> is required",
           "<code>PERSON_POSTCODE</code> or <code>Postcode</code> is required",
-          "<code>PROGRAMME</code> is required",
+          "<code>PROGRAMME</code> or <code>Vaccination type</code> is required",
           "<code>REASON_NOT_VACCINATED</code> is required"
         )
       end
