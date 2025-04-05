@@ -43,6 +43,6 @@ class AppHostingEnvironmentComponent < ViewComponent::Base
   end
 
   def environment
-    pull_request ? "review" : ENV.fetch("SENTRY_ENVIRONMENT", "development")
+    pull_request ? "review" : Rails.configuration.deploy_env
   end
 end
