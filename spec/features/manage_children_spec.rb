@@ -236,7 +236,7 @@ describe "Manage children" do
   def then_i_see_the_edit_child_record_page
     expect(page).to have_title("Edit child record")
     expect(page).to have_content("SMITH, John")
-    expect(page).to have_content("Record details")
+    expect(page).to have_content("Change")
   end
 
   def when_i_click_on_change_nhs_number
