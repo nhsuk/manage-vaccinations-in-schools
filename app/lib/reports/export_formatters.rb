@@ -101,7 +101,9 @@ module Reports::ExportFormatters
     if vaccination_record.administered?
       ""
     else
-      ImmunisationImportRow::REASONS.key(vaccination_record.outcome.to_sym)
+      ImmunisationImportRow::REASONS_NOT_ADMINISTERED.key(
+        vaccination_record.outcome.to_sym
+      )
     end
   end
 end

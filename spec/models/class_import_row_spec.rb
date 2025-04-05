@@ -3,13 +3,19 @@
 describe ClassImportRow do
   subject(:class_import_row) do
     described_class.new(
-      data:
-        data
-          .transform_keys { it.downcase.to_sym }
-          .transform_values { CSVParser::Field.new(it, nil, nil) },
+      data: data_as_csv_row,
       session:,
       year_groups: session.year_groups
     )
+  end
+
+  # FIXME: Don't re-implement behaviour of `CSVParser`.
+  let(:data_as_csv_row) do
+    data.each_with_object({}) do |(key, value), hash|
+      hash[
+        key.strip.downcase.tr("-", "_").tr(" ", "_").to_sym
+      ] = CSVParser::Field.new(value, nil, nil, key)
+    end
   end
 
   let(:today) { Date.new(2024, 12, 1) }
@@ -50,9 +56,9 @@ describe ClassImportRow do
 
       it "is invalid" do
         expect(class_import_row).to be_invalid
-        expect(class_import_row.errors[:year_group]).to contain_exactly(
-          "is not part of this programme"
-        )
+        expect(
+          class_import_row.errors["CHILD_DATE_OF_BIRTH"]
+        ).to contain_exactly("is not part of this programme")
       end
     end
 
@@ -62,9 +68,9 @@ describe ClassImportRow do
       it "is invalid" do
         expect(class_import_row).to be_invalid
         expect(class_import_row.errors.size).to eq(1)
-        expect(class_import_row.errors[:date_of_birth]).to contain_exactly(
-          "is required but missing"
-        )
+        expect(
+          class_import_row.errors["CHILD_DATE_OF_BIRTH"]
+        ).to contain_exactly("should be formatted as YYYY-MM-DD")
       end
     end
   end

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class ClassImportRow < PatientImportRow
-  validates :address_postcode, postcode: { allow_nil: true }
+  validate :validate_address_postcode
 
   def initialize(data:, session:, year_groups:)
     super(data:, organisation: session.organisation, year_groups:)
@@ -22,5 +22,11 @@ class ClassImportRow < PatientImportRow
 
   def home_educated
     nil # false is used when school is unknown
+  end
+
+  def validate_address_postcode
+    if address_postcode.present? && address_postcode.to_postcode.nil?
+      errors.add(:address_postcode, "should be a postcode, like SW1A 1AA")
+    end
   end
 end
