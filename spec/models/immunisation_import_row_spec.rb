@@ -73,7 +73,7 @@ describe ImmunisationImportRow do
           "<code>DATE_OF_VACCINATION</code> or <code>Event date</code> is required",
           "<code>PERSON_DOB</code> or <code>Date of birth</code> is required",
           "<code>PERSON_FORENAME</code> or <code>First name</code> is required",
-          "<code>PERSON_GENDER_CODE</code> or <code>PERSON_GENDER</code> is required",
+          "<code>PERSON_GENDER_CODE</code>, <code>PERSON_GENDER</code> or <code>Sex</code> is required",
           "<code>PERSON_SURNAME</code> or <code>Surname</code> is required",
           "<code>PERSON_POSTCODE</code> or <code>Postcode</code> is required",
           "<code>PROGRAMME</code> is required",
@@ -158,7 +158,7 @@ describe ImmunisationImportRow do
       it "has errors" do
         expect(immunisation_import_row).to be_invalid
         expect(immunisation_import_row.errors["PERSON_GENDER_CODE"]).to eq(
-          ["Enter a gender or gender code."]
+          ["Enter a valid gender or gender code."]
         )
       end
     end
@@ -1406,6 +1406,20 @@ describe ImmunisationImportRow do
         end
 
         shared_examples "with a value" do |key|
+          context "with a 'unknown' value" do
+            let(:data) { valid_data_without_gender.merge(key => "Unknown") }
+
+            it { should eq("not_known") }
+          end
+
+          context "with a 'indeterminate' value" do
+            let(:data) do
+              valid_data_without_gender.merge(key => "Indeterminate")
+            end
+
+            it { should eq("not_known") }
+          end
+
           context "with a 'not known' value" do
             let(:data) { valid_data_without_gender.merge(key => "Not Known") }
 
@@ -1435,6 +1449,7 @@ describe ImmunisationImportRow do
 
         include_examples "with a value", "PERSON_GENDER_CODE"
         include_examples "with a value", "PERSON_GENDER"
+        include_examples "with a value", "Sex"
       end
 
       describe "#organisation" do
@@ -1634,6 +1649,28 @@ describe ImmunisationImportRow do
       let(:data) { { "First name" => "Sally" } }
 
       it { should eq("Sally") }
+    end
+  end
+
+  describe "#patient_gender_code" do
+    subject { immunisation_import_row.patient_gender_code&.to_s }
+
+    context "with a PERSON_GENDER_CODE field" do
+      let(:data) { { "PERSON_GENDER_CODE" => "male" } }
+
+      it { should eq("male") }
+    end
+
+    context "with a PERSON_GENDER field" do
+      let(:data) { { "PERSON_GENDER" => "female" } }
+
+      it { should eq("female") }
+    end
+
+    context "with a Sex field" do
+      let(:data) { { "Sex" => "unknown" } }
+
+      it { should eq("unknown") }
     end
   end
 
