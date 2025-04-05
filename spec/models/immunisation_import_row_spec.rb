@@ -1095,6 +1095,18 @@ describe ImmunisationImportRow do
         it { should eq("Unknown") }
       end
 
+      context "with a known school and community location type" do
+        let(:data) do
+          valid_data.merge(
+            "SCHOOL_URN" => "123456",
+            "SCHOOL_NAME" => "Waterloo Road",
+            "Event Location Type" => "Hospital"
+          )
+        end
+
+        it { should eq("Unknown") }
+      end
+
       context "when home educated and community care setting" do
         let(:data) do
           valid_data.merge(
@@ -1114,6 +1126,19 @@ describe ImmunisationImportRow do
             "SCHOOL_NAME" => "",
             "CARE_SETTING" => "2",
             "CLINIC_NAME" => "A Clinic"
+          )
+        end
+
+        it { should eq("A Clinic") }
+      end
+
+      context "when home educated and community location type and a named clinic" do
+        let(:data) do
+          valid_data.merge(
+            "School Code" => "999999",
+            "School" => "",
+            "Event Location Type" => "Clinic",
+            "Event Done At" => "A Clinic"
           )
         end
 
