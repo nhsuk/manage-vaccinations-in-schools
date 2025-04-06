@@ -147,7 +147,7 @@ Rails.application.configure do
     },
     vaccination_confirmations: {
       cron: "every day at 7pm",
-      class: "VaccinationConfirmationsJob",
+      class: "SendVaccinationConfirmationsJob",
       description: "Send vaccination confirmation emails to parents"
     }
   }
