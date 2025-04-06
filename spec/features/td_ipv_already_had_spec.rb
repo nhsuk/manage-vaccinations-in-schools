@@ -186,7 +186,8 @@ describe "Td/IPV" do
   end
 
   def and_the_consent_requests_are_sent
-    SchoolConsentRequestsJob.perform_now
+    EnqueueSchoolConsentRequestsJob.perform_now
+    perform_enqueued_jobs
   end
 
   def then_the_parent_doesnt_receive_a_consent_request

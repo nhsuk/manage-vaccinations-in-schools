@@ -102,15 +102,15 @@ Rails.application.configure do
       class: "EnqueueClinicSessionInvitationsJob",
       description: "Send school clinic invitation emails to parents"
     },
-    consent_request: {
+    school_consent_requests: {
       cron: "every day at 4pm",
-      class: "SchoolConsentRequestsJob",
+      class: "EnqueueSchoolConsentRequestsJob",
       description:
         "Send school consent request emails to parents for each session"
     },
     consent_reminder: {
-      cron: "every day at 4pm",
-      class: "SchoolConsentRemindersJob",
+      cron: "every day at 9am",
+      class: "SendSchoolConsentReminderJob",
       description:
         "Send school consent reminder emails to parents for each session"
     },

@@ -1,20 +1,16 @@
 # frozen_string_literal: true
 
-class SchoolConsentRequestsJob < ApplicationJob
+class SendSchoolConsentRequestsJob < ApplicationJob
   queue_as :notifications
 
-  def perform
-    sessions =
-      Session
-        .send_consent_requests
-        .joins(:location)
-        .includes(:session_dates, :programmes, :patient_sessions, :location)
-        .merge(Location.school)
+  def perform(session)
+    return unless session.school? && session.open_for_consent?
 
-    sessions.find_each(batch_size: 1) do |session|
-      next unless session.open_for_consent?
-
-      session.patient_sessions.each do |patient_session|
+    session
+      .patient_sessions
+      .includes_programmes
+      .includes(patient: %i[consent_notifications consents vaccination_records])
+      .find_each do |patient_session|
         ProgrammeGrouper
           .call(patient_session.programmes)
           .each_value do |programmes|
@@ -30,7 +26,6 @@ class SchoolConsentRequestsJob < ApplicationJob
             )
           end
       end
-    end
   end
 
   def should_send_notification?(patient:, programmes:)
