@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class VaccinationConfirmationsJob < ApplicationJob
+class SendVaccinationConfirmationsJob < ApplicationJob
   include VaccinationMailerConcern
 
   queue_as :notifications
