@@ -120,9 +120,9 @@ Rails.application.configure do
       description:
         "Invalidate all self-consents and associated triage for the previous day"
     },
-    session_reminder: {
+    school_session_reminders: {
       cron: "every day at 9am",
-      class: "SchoolSessionRemindersJob",
+      class: "SendSchoolSessionRemindersJob",
       description: "Send school session reminder emails to parents"
     },
     remove_import_csv: {

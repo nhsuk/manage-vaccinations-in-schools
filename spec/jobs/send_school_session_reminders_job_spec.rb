@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe SchoolSessionRemindersJob do
+describe SendSchoolSessionRemindersJob do
   subject(:perform_now) { described_class.perform_now }
 
   let(:programmes) { [create(:programme)] }
