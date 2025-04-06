@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-describe SchoolConsentRemindersJob do
-  subject(:perform_now) { described_class.perform_now }
+describe SendSchoolConsentRemindersJob do
+  subject(:perform_now) { described_class.perform_now(session) }
 
   let(:programmes) { [create(:programme)] }
 
