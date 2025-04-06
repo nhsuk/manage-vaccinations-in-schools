@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe ClinicSessionInvitationsJob do
+describe EnqueueClinicSessionInvitationsJob do
   subject(:perform_now) { described_class.perform_now }
 
   let(:programmes) { [create(:programme, :hpv)] }

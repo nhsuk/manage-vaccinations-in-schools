@@ -97,9 +97,9 @@ Rails.application.configure do
 
   config.good_job.enable_cron = true
   config.good_job.cron = {
-    clinic_invitation: {
+    clinic_session_invitations: {
       cron: "every day at 9am",
-      class: "ClinicSessionInvitationsJob",
+      class: "EnqueueClinicSessionInvitationsJob",
       description: "Send school clinic invitation emails to parents"
     },
     consent_request: {
