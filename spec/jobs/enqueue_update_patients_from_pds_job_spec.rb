@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe BulkUpdatePatientsFromPDSJob do
+describe EnqueueUpdatePatientsFromPDSJob do
   subject(:perform_now) { described_class.perform_now }
 
   let!(:invalidated_patient) { create(:patient, :invalidated) }
