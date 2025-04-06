@@ -97,11 +97,6 @@ Rails.application.configure do
 
   config.good_job.enable_cron = true
   config.good_job.cron = {
-    bulk_update_patients_from_pds: {
-      cron: "every day at 6:00 and 18:00",
-      class: "BulkUpdatePatientsFromPDSJob",
-      description: "Keep patient details up to date with PDS."
-    },
     clinic_invitation: {
       cron: "every day at 9am",
       class: "ClinicSessionInvitationsJob",
@@ -144,6 +139,11 @@ Rails.application.configure do
       cron: "every day at 2am",
       class: "TrimActiveRecordSessionsJob",
       description: "Remove ActiveRecord sessions older than 30 days"
+    },
+    update_patients_from_pds: {
+      cron: "every day at 6:00 and 18:00",
+      class: "EnqueueUpdatePatientsFromPDSJob",
+      description: "Keep patient details up to date with PDS."
     },
     vaccination_confirmations: {
       cron: "every day at 7pm",

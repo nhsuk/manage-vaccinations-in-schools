@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class BulkUpdatePatientsFromPDSJob < ApplicationJob
+class EnqueueUpdatePatientsFromPDSJob < ApplicationJob
   include GoodJob::ActiveJobExtensions::Concurrency
 
   queue_as :pds
