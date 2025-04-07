@@ -238,17 +238,17 @@ describe ClassImportRow do
 
       it "saves normalised versions of the incoming values" do
         expect(patient).to have_attributes(
-                             address_postcode: "SW1A 1AA",
-                             family_name: "Smith",
-                             gender_code: "male",
-                             given_name: "Jimmy",
-                             nhs_number: "1234567890",
-                             address_line_1: "10 Downing Street",
-                             preferred_given_name: "Jim",
-                             preferred_family_name: "Smithy",
-                             registration: "8AB",
-                             address_town: "London"
-                           )
+          address_postcode: "SW1A 1AA",
+          family_name: "Smith",
+          gender_code: "male",
+          given_name: "Jimmy",
+          nhs_number: "1234567890",
+          address_line_1: "10 Downing Street",
+          preferred_given_name: "Jim",
+          preferred_family_name: "Smithy",
+          registration: "8AB",
+          address_town: "London"
+        )
       end
 
       it "doesn't stage the whitespace differences" do
