@@ -57,7 +57,8 @@ environment ENV.fetch("RAILS_ENV", "development")
 # processes).
 workers Settings.web_concurrency
 
-if Settings.web_concurrency > 1
+if Settings.web_concurrency > 1 &&
+     Rails.configuration.good_job.execution_mode != :external
   # Cleanly shut down GoodJob when Puma is shut down.
   # See https://github.com/bensheldon/good_job#execute-jobs-async--in-process
   MAIN_PID = Process.pid
