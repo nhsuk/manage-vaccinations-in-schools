@@ -16,7 +16,7 @@ class String
         [
           Arel::Nodes::NamedFunction.new(
             "trim",
-            [Patient.arel_table[database_column_name]]
+            [klass.arel_table[database_column_name]]
           ),
           Arel::Nodes::SqlLiteral.new("E'\\s+'"),
           Arel::Nodes::SqlLiteral.new("' '"),
