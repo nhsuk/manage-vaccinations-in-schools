@@ -764,12 +764,11 @@ describe ImmunisationImportRow do
     end
 
     context "with an existing matching patient but mismatching whitespace in NHS number and batch number" do
-      let(:data) do valid_data.merge(
-        {
-          "BATCH_NUMBER" => " 123  ",
-          "NHS_NUMBER" => "\t123‍456‍ 7890",
-        }
-      ) end
+      let(:data) do
+        valid_data.merge(
+          { "BATCH_NUMBER" => " 123  ", "NHS_NUMBER" => "\t123‍456‍ 7890" }
+        )
+      end
 
       it "still matches to a patient" do
         create(
@@ -778,10 +777,10 @@ describe ImmunisationImportRow do
           family_name: "Weasley",
           date_of_birth: Date.parse(date_of_birth),
           address_postcode:,
-          nhs_number: "1234567890",
-          )
+          nhs_number: "1234567890"
+        )
 
-        expect(subject).to eq(patient)
+        expect(immunisation_import_row.patient).to eq(patient)
       end
 
       it "normalises the batch number correctly" do
@@ -790,12 +789,14 @@ describe ImmunisationImportRow do
     end
 
     context "with an existing matching patient but mismatching whitespace name, without NHS number" do
-      let(:data) do valid_data.except("NHS_NUMBER").merge(
-        {
-          "PERSON_FORENAME" => "\t   Ron ",
-          "PERSON_SURNAME" => "\t  Weasley  ",
-        }
-      ) end
+      let(:data) do
+        valid_data.except("NHS_NUMBER").merge(
+          {
+            "PERSON_FORENAME" => "\t   Ron ",
+            "PERSON_SURNAME" => "\t  Weasley  "
+          }
+        )
+      end
 
       it "still matches to a patient" do
         create(
@@ -804,10 +805,10 @@ describe ImmunisationImportRow do
           family_name: "Weasley",
           date_of_birth: Date.parse(date_of_birth),
           address_postcode:,
-          nhs_number: "1234567890",
-          )
+          nhs_number: "1234567890"
+        )
 
-        expect(subject).to eq(patient)
+        expect(immunisation_import_row.patient).to eq(patient)
       end
     end
 
