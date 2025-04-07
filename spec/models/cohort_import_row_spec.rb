@@ -131,7 +131,23 @@ describe CohortImportRow do
       end
     end
 
-    # TODO: Add test for whitespace normalisation
+    context "when uploading un-normalised whitespace" do
+      let(:parent_2_data) do
+        {
+          "PARENT_2_EMAIL" => "  jenny@example.com   ",
+          "PARENT_2_NAME" => " \tJenny\t Smith ",
+          "PARENT_2_PHONE" => " 07412  345‍6 78",
+          "PARENT_2_RELATIONSHIP" => "Mother"
+        }
+      end
+      let(:data) { valid_data.merge(parent_2_data) }
+
+      let!(:existing_parent) do
+        create(:parent, full_name: "Jenny Smith", email: "jenny@example.com")
+      end
+
+      it { should eq([existing_parent]) }
+    end
   end
 
   describe "#to_patient" do
