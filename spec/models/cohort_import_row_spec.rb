@@ -132,7 +132,7 @@ describe CohortImportRow do
     end
 
     context "when uploading un-normalised whitespace" do
-      let(:parent_2_data) do
+      let(:unnormalised_parent_2_data) do
         {
           "PARENT_2_EMAIL" => "  jenny@example.com   ",
           "PARENT_2_NAME" => " \tJenny\t Smith ",
@@ -140,7 +140,7 @@ describe CohortImportRow do
           "PARENT_2_RELATIONSHIP" => "Mother"
         }
       end
-      let(:data) { valid_data.merge(parent_2_data) }
+      let(:data) { valid_data.merge(unnormalised_parent_2_data) }
 
       let!(:existing_parent) do
         create(:parent, full_name: "Jenny Smith", email: "jenny@example.com")
