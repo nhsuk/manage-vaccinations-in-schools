@@ -9,6 +9,7 @@ class String
   end
 
   def self.normalise_whitespace_sql(klass, database_column_name)
+    # Note that this only works for attributes which aren't [FILTERED]
     # Equivalent to "regexp_replace(trim(#{database_column_name}), E'\\s+', ' ', 'g')"
     if klass.column_names.include?(database_column_name)
       Arel::Nodes::NamedFunction.new(
