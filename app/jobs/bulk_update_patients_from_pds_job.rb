@@ -17,7 +17,8 @@ class BulkUpdatePatientsFromPDSJob < ApplicationJob
         .where(updated_from_pds_at: nil)
         .or(patients.where("updated_from_pds_at < ?", 12.hours.ago))
         .order("updated_from_pds_at ASC NULLS FIRST")
-        .each_with_index do |patient, index|
+        .find_each
+        .with_index do |patient, index|
           # Schedule with a delay to preemptively handle rate limit issues.
           # This shouldn't be necessary, but we're finding that Good Job
           # has occasional race condition issues, and spreading out the jobs

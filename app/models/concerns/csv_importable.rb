@@ -172,7 +172,7 @@ module CSVImportable
     return unless Settings.pds.enqueue_bulk_updates
 
     GoodJob::Bulk.enqueue do
-      patients.each_with_index do |patient, index|
+      patients.find_each.with_index do |patient, index|
         # Schedule with a delay to preemptively handle rate limit issues.
         # This shouldn't be necessary, but we're finding that Good Job
         # has occasional race condition issues, and spreading out the jobs
