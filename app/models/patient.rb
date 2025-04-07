@@ -120,12 +120,16 @@ class Patient < ApplicationRecord
         ->(query) do
           # Trigram matching requires at least 3 characters
           if query.length < 3
-            where(
-              ":given_name ILIKE :like_query OR " \
-                ":family_name ILIKE :like_query",
-              given_name: String.normalise_whitespace_sql("given_name"),
-              family_name: String.normalise_whitespace_sql("family_name"),
-              like_query: "#{query}%"
+            Patient.where(
+              String
+                .normalise_whitespace_sql(Patient, "given_name")
+                .matches("%#{query}%", nil, false)
+                .or(
+                  String.normalise_whitespace_sql(
+                    Patient,
+                    "family_name"
+                  ).matches("%#{query}%", nil, false)
+                )
             )
           else
             where(
@@ -213,10 +217,10 @@ class Patient < ApplicationRecord
       Patient.where(
         String
           .normalise_whitespace_sql(Patient, "given_name")
-          .matches("%#{given_name}%", nil, false)
+          .matches(given_name.to_s, nil, false)
           .and(
             String.normalise_whitespace_sql(Patient, "family_name").matches(
-              "%#{family_name}%",
+              family_name.to_s,
               nil,
               false
             )
