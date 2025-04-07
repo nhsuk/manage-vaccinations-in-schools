@@ -117,6 +117,7 @@
         "elasticloadbalancing:DescribeTargetGroups",
         "elasticloadbalancing:ModifyListenerAttributes",
         "elasticloadbalancing:ModifyLoadBalancerAttributes",
+        "elasticloadbalancing:ModifyRule",
         "elasticloadbalancing:ModifyTargetGroupAttributes",
         "iam:AttachRolePolicy",
         "iam:GetRole",
