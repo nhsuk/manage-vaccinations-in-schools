@@ -24,7 +24,7 @@ describe Patient::VaccinationStatus do
     build(:patient_vaccination_status, patient:, programme:)
   end
 
-  let(:patient) { create(:patient) }
+  let(:patient) { create(:patient, programmes: [programme]) }
   let(:programme) { create(:programme) }
 
   it { should belong_to(:patient) }
