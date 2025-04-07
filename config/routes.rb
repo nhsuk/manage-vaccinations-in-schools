@@ -190,6 +190,12 @@ Rails.application.routes.draw do
   end
 
   resources :school_moves, path: "school-moves", only: %i[index show update]
+  resources :school_move_exports,
+            path: "school-moves/exports",
+            controller: "school_moves/exports",
+            only: %i[create show update] do
+    get "download", on: :member
+  end
 
   resources :sessions, only: %i[edit index show], param: :slug do
     resource :consent, only: :show, controller: "sessions/consent"

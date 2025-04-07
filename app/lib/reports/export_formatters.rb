@@ -4,7 +4,7 @@ module Reports::ExportFormatters
   extend ActiveSupport::Concern
 
   def school_urn(location:, patient:)
-    if location.school?
+    if location&.school?
       location.urn
     elsif patient.home_educated?
       "999999"

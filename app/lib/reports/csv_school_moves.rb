@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class Reports::CSVSchoolMoves
+  include Reports::ExportFormatters
+
   HEADERS = %i[
     NHS_REF
     SURNAME
@@ -28,7 +30,7 @@ class Reports::CSVSchoolMoves
 
   def call
     CSV.generate(headers: HEADERS, write_headers: true) do |csv|
-      school_move_log_entries.each do |log_entry|
+      school_move_log_entries.find_each do |log_entry|
         csv << row(log_entry.school, log_entry.patient)
       end
     end
@@ -42,7 +44,7 @@ class Reports::CSVSchoolMoves
 
   attr_reader :school_move_log_entries
 
-  def row(school, patient)
+  def row(location, patient)
     [
       patient.nhs_number,
       patient.family_name,
@@ -57,21 +59,11 @@ class Reports::CSVSchoolMoves
       nil,
       nil,
       nil,
-      school_urn(school, patient),
-      school&.name,
-      school&.created_at&.to_fs(:govuk),
+      school_urn(location:, patient:),
+      location&.name,
+      location&.created_at&.to_fs(:govuk),
       nil,
       nil
     ]
-  end
-
-  def school_urn(school, patient)
-    if school
-      school.urn
-    elsif patient.home_educated?
-      "999999"
-    else
-      patient.school&.urn || "888888"
-    end
   end
 end

@@ -1,0 +1,30 @@
+<% content_for :before_main do %>
+  <%= render AppBacklinkComponent.new(school_moves_path, name: "school_moves_export") %>
+<% end %>
+
+<span class="nhsuk-caption-l">School moves</span>
+<%= h1 "Download school moves" %>
+
+<p class="nhsuk-body">
+  You can download a record of school moves as a CSV file. Only school
+  moves that have been reviewed and confirmed will be included.
+</p>
+
+<p class="nhsuk-body">
+  You can then review the new information and confirm the school move or ignore it.
+</p>
+
+<h3>Select a date range</h3>
+
+<%= form_with model: @school_move_export, url: wizard_path, method: :put do |f| %>
+  <%= f.govuk_error_summary %>
+  <%= f.govuk_date_field :date_from,
+                         legend: { text: "From (optional)" },
+                         hint: { text: "For example, 27 3 2024" } %>
+
+  <%= f.govuk_date_field :date_to,
+                         legend: { text: "To (optional)" },
+                         hint: { text: "For example, 16 6 2025" } %>
+
+  <%= f.govuk_submit %>
+<% end %>
