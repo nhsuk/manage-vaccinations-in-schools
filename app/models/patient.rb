@@ -123,12 +123,12 @@ class Patient < ApplicationRecord
             Patient.where(
               String
                 .normalise_whitespace_sql(Patient, "given_name")
-                .matches("%#{query}%", nil, false)
+                .matches("#{query}%", nil, false)
                 .or(
                   String.normalise_whitespace_sql(
                     Patient,
                     "family_name"
-                  ).matches("%#{query}%", nil, false)
+                  ).matches("#{query}%", nil, false)
                 )
             )
           else
