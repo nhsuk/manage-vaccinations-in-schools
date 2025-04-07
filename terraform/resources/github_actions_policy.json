@@ -115,6 +115,7 @@
         "elasticloadbalancing:DescribeTags",
         "elasticloadbalancing:DescribeTargetGroupAttributes",
         "elasticloadbalancing:DescribeTargetGroups",
+        "elasticloadbalancing:ModifyListener",
         "elasticloadbalancing:ModifyListenerAttributes",
         "elasticloadbalancing:ModifyLoadBalancerAttributes",
         "elasticloadbalancing:ModifyRule",
