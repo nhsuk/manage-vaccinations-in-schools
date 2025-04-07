@@ -23,8 +23,10 @@ down_time_if_destroyed=(
 "aws_security_group\.rds_security_group"
 "aws_db_subnet_group\.aurora_subnet_group"
 "aws_ecs_cluster\.cluster"
-"aws_ecs_service\.service"
-"aws_security_group\.ecs_service_sg"
+"aws_ecs_service\.service" #TODO: Remove after release
+"aws_security_group\.ecs_service_sg" #TODO: Remove after release
+"module\.[^.]+\.aws_ecs_service\.this"
+"module\.[^.]+\.aws_security_group"
 )
 
 if [ "$#" -ne 1 ]; then
@@ -36,7 +38,9 @@ tfstdout=$1
 
 for resource in "${down_time_if_destroyed[@]}"; do
   if [[ $(grep -cE "$resource.*(replaced|destroyed)" "$tfstdout") -ne 0 ]]; then
-    echo "$resource is being destroyed. This would cause a downtime. Aborting"
+    echo "A resource is being destroyed:"
+    grep -E "$resource.*(replaced|destroyed)" "$tfstdout"
+    echo "This would cause a downtime. Aborting"
     exit 1
   fi
 done
