@@ -15,7 +15,7 @@ class BulkUpdatePatientsFromPDSJob < ApplicationJob
     GoodJob::Bulk.enqueue do
       patients
         .where(updated_from_pds_at: nil)
-        .or(patients.where("updated_from_pds_at < ?", 6.hours.ago))
+        .or(patients.where("updated_from_pds_at < ?", 12.hours.ago))
         .order("updated_from_pds_at ASC NULLS FIRST")
         .each_with_index do |patient, index|
           # Schedule with a delay to preemptively handle rate limit issues.
