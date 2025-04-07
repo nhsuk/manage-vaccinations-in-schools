@@ -8,12 +8,12 @@ on:
 jobs:
   test:
     uses: ./.github/workflows/test.yml
-  deploy-mavis:
+  deploy:
     needs: test
     strategy:
       fail-fast: false
       matrix:
-        environment: ["qa", "test"]
-    uses: ./.github/workflows/deploy-mavis.yml
+        environment: [qa, test]
+    uses: ./.github/workflows/deploy.yml
     with:
       environment: ${{ matrix.environment }}
