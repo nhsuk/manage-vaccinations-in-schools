@@ -246,13 +246,17 @@ variable "maximum_replicas" {
   description = "Maximum amount of allowed replicas"
 }
 
-variable "default_lb_target_group_arn" {
-  type = string
+variable "active_lb_target_group" {
+  type        = string
   description = "The actual loadbalancer target group is set by Codedeploy. However in scenarios where new resources behind the load balancer are created, terraform already needs to know the current target group. In this case, set the variable to the currently active target group."
-  default = null
+  default     = ""
+  validation {
+    condition     = contains(["blue", "green", ""], var.active_lb_target_group)
+    error_message = "Valid target groups: blue, green"
+  }
 }
 
 locals {
-  default_lb_target_group_arn = var.default_lb_target_group_arn == null ? aws_lb_target_group.blue.arn : var.default_lb_target_group_arn
-  ecs_sg_ids = [module.web_service.security_group_id, module.good_job_service.security_group_id]
+  default_lb_target_group_arn = var.active_lb_target_group == "green" ? aws_lb_target_group.green.arn : aws_lb_target_group.blue.arn
+  ecs_sg_ids                  = [module.web_service.security_group_id, module.good_job_service.security_group_id]
 }
