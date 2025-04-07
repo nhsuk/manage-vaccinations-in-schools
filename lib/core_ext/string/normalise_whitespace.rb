@@ -26,7 +26,7 @@ class String
             "trim",
             [klass.arel_table[database_column_name]]
           ),
-          Arel::Nodes::SqlLiteral.new("E'\\s+'"),
+          Arel::Nodes::SqlLiteral.new("E'\\\\s+'"),
           Arel::Nodes::SqlLiteral.new("' '"),
           Arel::Nodes::SqlLiteral.new("'g'")
         ]
