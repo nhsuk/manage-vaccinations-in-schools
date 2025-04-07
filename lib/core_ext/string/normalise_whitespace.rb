@@ -4,8 +4,15 @@ class String
   # Normalises whitespace in a string by removing leading and trailing whitespace,
   # replacing multiple spaces with a single space, and returning nil if the result is empty.
   def normalise_whitespace
-    # \u200D is a zero-width joiner (ZWJ) which is used in the frontend to display the NHS number
-    strip.gsub(/\s+/, " ").gsub(/\u200D/, "").presence
+    result = strip.gsub(/\s+/, " ")
+
+    # Only apply the Unicode gsub if the string is UTF-8 encoded
+    if result.encoding == Encoding::UTF_8
+      # \u200D is a zero-width joiner (ZWJ) which is used in the frontend to display the NHS number
+      result = result.gsub(/\u200D/, "")
+    end
+
+    result.presence
   end
 
   def self.normalise_whitespace_sql(klass, database_column_name)
