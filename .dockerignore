@@ -36,7 +36,6 @@
 !/app/assets/builds/.keep
 /public/assets
 
-/copilot
 /docs
 /coverage
 /spec
