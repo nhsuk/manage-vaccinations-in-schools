@@ -17,3 +17,4 @@ jobs:
     uses: ./.github/workflows/deploy.yml
     with:
       environment: ${{ matrix.environment }}
+      server_types: all

@@ -117,7 +117,7 @@ resource "aws_s3_object" "appspec_object" {
   acl    = "private"
   content = templatefile("templates/appspec.yaml.tpl", {
     task_definition_arn = module.web_service.task_definition.arn
-    container_name      = module.web_service.task_definition.arn
+    container_name      = module.web_service.task_definition.container_name
     container_port      = aws_lb_target_group.blue.port
   })
 
