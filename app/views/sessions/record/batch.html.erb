@@ -14,7 +14,9 @@
     <% @batches.each_with_index do |batch, index| %>
       <% label = proc do %>
         <span class="app-u-monospace"><%= batch.name %></span>
-        (expires <%= batch.expiry.to_fs(:long) %>)
+        <% if (expiry = batch.expiry) %>
+          (expires <%= expiry.to_fs(:long) %>)
+        <% end %>
       <% end %>
       <%= f.govuk_radio_button :id, batch.id, label:, link_errors: index.zero? %>
     <% end %>

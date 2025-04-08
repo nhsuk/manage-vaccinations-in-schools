@@ -6,7 +6,7 @@
 #
 #  id              :bigint           not null, primary key
 #  archived_at     :datetime
-#  expiry          :date             not null
+#  expiry          :date
 #  name            :string           not null
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
@@ -31,29 +31,22 @@ class Batch < ApplicationRecord
   belongs_to :organisation
   belongs_to :vaccine
 
-  has_many :vaccination_records, -> { kept }
-
   has_and_belongs_to_many :immunisation_imports
 
   has_one :programme, through: :vaccine
 
   scope :order_by_name_and_expiration, -> { order(expiry: :asc, name: :asc) }
 
-  scope :expired, -> { where("expiry <= ?", Time.current) }
-  scope :not_expired, -> { where("expiry > ?", Time.current) }
+  scope :expired,
+        -> { where(expiry: nil).or(where("expiry <= ?", Time.current)) }
+  scope :not_expired,
+        -> { where.not(expiry: nil).where("expiry > ?", Time.current) }
 
   validates :name, presence: true, format: { with: /\A[A-Za-z0-9]+\z/ }
 
   validates :expiry,
-            presence: true,
             uniqueness: {
-              scope: %i[organisation_id name vaccine_id]
+              scope: %i[organisation_id name vaccine_id],
+              allow_nil: true
             }
-
-  validates :expiry,
-            comparison: {
-              greater_than: -> { Date.current },
-              less_than: -> { Date.current + 15.years }
-            },
-            unless: :archived?
 end

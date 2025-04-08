@@ -73,6 +73,19 @@ en:
         vaccine_given: <code>VACCINE_GIVEN</code>
     errors:
       models:
+        batch_form:
+          attributes:
+            expiry:
+              blank: Enter an expiry date
+              greater_than: Enter an expiry date after %{count}
+              less_than: Enter an expiry date before %{count}
+              missing_day: Enter a day
+              missing_month: Enter a month
+              missing_year: Enter a year
+              taken: This batch already exists
+            name:
+              blank: Enter a batch
+              invalid: Enter a batch with only letters and numbers
         class_import_row:
           format: "%{attribute}: %{message}"
           attributes:
@@ -425,19 +438,6 @@ en:
           nasal: Nasal spray
     errors:
       models:
-        batch:
-          attributes:
-            expiry:
-              blank: Enter an expiry date
-              greater_than: Enter an expiry date after %{count}
-              less_than: Enter an expiry date before %{count}
-              missing_day: Enter a day
-              missing_month: Enter a month
-              missing_year: Enter a year
-              taken: This batch already exists
-            name:
-              blank: Enter a batch
-              invalid: Enter a batch with only letters and numbers
         class_import:
           attributes:
             csv:
