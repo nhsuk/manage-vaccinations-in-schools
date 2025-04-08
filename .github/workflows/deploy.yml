@@ -1,38 +1,41 @@
 name: Deploy
-run-name: >-
-  ${{ github.event_name == 'workflow_dispatch'
-      && format('Copilot ({0})', inputs.environment)
-      || 'Copilot (All staging environments)' }}
+run-name: Deploy to ${{ inputs.environment }}
+
+concurrency:
+  group: deploy-${{ inputs.environment }}
 
 on:
-  push:
-    branches: [main]
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
   workflow_dispatch:
     inputs:
       environment:
-        description: "Deployment environment"
+        description: Deployment environment
         required: true
         type: choice
         options:
           - qa
+          - poc
           - test
           - preview
           - training
           - production
+          - copilotmigration
 
 jobs:
-  Deploy:
-    strategy:
-      fail-fast: false
-      matrix:
-        environment: >-
-          ${{ fromJSON(github.event_name == 'workflow_dispatch'
-              && format('["{0}"]', inputs.environment)
-              || '["qa", "test"]') }}
-    uses: ./.github/workflows/_deploy-template.yml
+  build-and-push-image:
+    uses: ./.github/workflows/build-and-push-image.yml
+  deploy-infrastructure:
+    needs: build-and-push-image
+    uses: ./.github/workflows/deploy-infrastructure.yml
     with:
-      environment: ${{ matrix.environment }}
-      aws-account-id: >-
-        ${{ matrix.environment == 'production'
-          && 'arn:aws:iam::820242920762:role/GitHubActionsRole'
-          || 'arn:aws:iam::393416225559:role/GitHubActionsRole' }}
+      environment: ${{ inputs.environment }}
+  deploy-application:
+    needs: deploy-infrastructure
+    uses: ./.github/workflows/deploy-application.yml
+    with:
+      environment: ${{ inputs.environment }}
+      image_tag: ${{ github.sha }}
