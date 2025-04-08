@@ -122,6 +122,8 @@ class PatientImportRow
       parent.phone = attributes[:phone] if attributes[:phone]
       parent.phone_receive_updates = false if parent.phone.blank?
 
+      parent.save!
+
       parent
     end
   end
