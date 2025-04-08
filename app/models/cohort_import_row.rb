@@ -13,7 +13,7 @@ class CohortImportRow < PatientImportRow
   end
 
   def school_urn
-    @data["CHILD_SCHOOL_URN"]&.strip
+    @data["CHILD_SCHOOL_URN"]&.normalise_whitespace
   end
 
   private

@@ -120,9 +120,16 @@ class Patient < ApplicationRecord
         ->(query) do
           # Trigram matching requires at least 3 characters
           if query.length < 3
-            where(
-              "given_name ILIKE :like_query OR family_name ILIKE :like_query",
-              like_query: "#{query}%"
+            Patient.where(
+              String
+                .normalise_whitespace_sql(Patient, "given_name")
+                .matches("#{query}%", nil, false)
+                .or(
+                  String.normalise_whitespace_sql(
+                    Patient,
+                    "family_name"
+                  ).matches("#{query}%", nil, false)
+                )
             )
           else
             where(
@@ -208,9 +215,16 @@ class Patient < ApplicationRecord
 
     scope =
       Patient.where(
-        "given_name ILIKE ? AND family_name ILIKE ?",
-        given_name,
-        family_name
+        String
+          .normalise_whitespace_sql(Patient, "given_name")
+          .matches(given_name.to_s, nil, false)
+          .and(
+            String.normalise_whitespace_sql(Patient, "family_name").matches(
+              family_name.to_s,
+              nil,
+              false
+            )
+          )
       ).where(date_of_birth:)
 
     if address_postcode.present?
@@ -218,22 +232,34 @@ class Patient < ApplicationRecord
         scope
           .or(
             Patient.where(
-              "given_name ILIKE ? AND family_name ILIKE ?",
-              given_name,
-              family_name
+              String
+                .normalise_whitespace_sql(Patient, "given_name")
+                .matches("%#{given_name}%", nil, false)
+                .and(
+                  String.normalise_whitespace_sql(
+                    Patient,
+                    "family_name"
+                  ).matches("%#{family_name}%", nil, false)
+                )
             ).where(address_postcode:)
           )
           .or(
-            Patient.where("given_name ILIKE ?", given_name).where(
-              date_of_birth:,
-              address_postcode:
-            )
+            Patient.where(
+              String.normalise_whitespace_sql(Patient, "given_name").matches(
+                "%#{given_name}%",
+                nil,
+                false
+              )
+            ).where(date_of_birth:, address_postcode:)
           )
           .or(
-            Patient.where("family_name ILIKE ?", family_name).where(
-              date_of_birth:,
-              address_postcode:
-            )
+            Patient.where(
+              String.normalise_whitespace_sql(Patient, "family_name").matches(
+                "%#{family_name}%",
+                nil,
+                false
+              )
+            ).where(date_of_birth:, address_postcode:)
           )
     end
 
@@ -252,9 +278,9 @@ class Patient < ApplicationRecord
       # to avoid an extra query to the database for each record.
       exact_results =
         results.select do
-          _1.given_name.downcase == given_name.downcase &&
-            _1.family_name.downcase == family_name.downcase &&
-            _1.date_of_birth == date_of_birth &&
+          _1.given_name.normalise_whitespace.downcase == given_name.downcase &&
+            _1.family_name.normalise_whitespace.downcase ==
+              family_name.downcase && _1.date_of_birth == date_of_birth &&
             _1.address_postcode == UKPostcode.parse(address_postcode).to_s
         end
 
