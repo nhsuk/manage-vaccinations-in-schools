@@ -16,7 +16,8 @@ class Sessions::ConsentController < ApplicationController
     scope =
       @session
         .patient_sessions
-        .includes(patient: :consent_statuses, session: :programmes)
+        .includes_programmes
+        .includes(patient: :consent_statuses)
         .in_programmes(@programmes)
 
     patient_sessions = @form.apply(scope, programme: @programmes)

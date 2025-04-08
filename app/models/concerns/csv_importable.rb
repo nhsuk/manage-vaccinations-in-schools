@@ -162,7 +162,7 @@ module CSVImportable
   end
 
   def update_from_pds
-    return unless Settings.pds.perform_jobs
+    return unless Settings.pds.enqueue_bulk_updates
 
     GoodJob::Bulk.enqueue do
       patients.each_with_index do |patient, index|
@@ -172,9 +172,13 @@ module CSVImportable
         # should reduce the risk of this.
 
         if patient.nhs_number.nil?
-          PatientNHSNumberLookupJob.set(wait: 2 * index).perform_later(patient)
+          PatientNHSNumberLookupJob.set(
+            priority: 25,
+            wait: 2 * index
+          ).perform_later(patient)
         else
           PatientUpdateFromPDSJob.set(
+            priority: 25,
             wait: 2 * index,
             queue: :imports
           ).perform_later(patient)

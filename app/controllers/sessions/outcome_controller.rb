@@ -16,7 +16,8 @@ class Sessions::OutcomeController < ApplicationController
     scope =
       @session
         .patient_sessions
-        .includes(:patient, :session_statuses, session: :programmes)
+        .includes_programmes
+        .includes(:session_statuses)
         .in_programmes(@programmes)
 
     patient_sessions = @form.apply(scope, programme: @programmes)

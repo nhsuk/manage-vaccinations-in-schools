@@ -8,10 +8,8 @@ class SchoolSessionRemindersJob < ApplicationJob
 
     patient_sessions =
       PatientSession
-        .includes(
-          patient: [:parents, { consents: %i[parent patient] }],
-          session: :programmes
-        )
+        .includes_programmes
+        .includes(patient: [:parents, { consents: %i[parent patient] }])
         .eager_load(:session)
         .joins(:location)
         .merge(Location.school)
