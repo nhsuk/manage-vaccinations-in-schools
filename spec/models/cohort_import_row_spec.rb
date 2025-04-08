@@ -2,13 +2,16 @@
 
 describe CohortImportRow do
   subject(:cohort_import_row) do
-    described_class.new(
-      data:
-        data
-          .transform_keys { it.downcase.to_sym }
-          .transform_values { CSVParser::Field.new(it, nil, nil) },
-      organisation:
-    )
+    described_class.new(data: data_as_csv_row, organisation:)
+  end
+
+  # FIXME: Don't re-implement behaviour of `CSVParser`.
+  let(:data_as_csv_row) do
+    data.each_with_object({}) do |(key, value), hash|
+      hash[
+        key.strip.downcase.tr("-", "_").tr(" ", "_").to_sym
+      ] = CSVParser::Field.new(value, nil, nil, key)
+    end
   end
 
   let(:today) { Date.new(2024, 12, 1) }
@@ -65,9 +68,9 @@ describe CohortImportRow do
 
       it "is invalid" do
         expect(cohort_import_row).to be_invalid
-        expect(cohort_import_row.errors[:year_group]).to contain_exactly(
-          "is not part of this programme"
-        )
+        expect(
+          cohort_import_row.errors["CHILD_DATE_OF_BIRTH"]
+        ).to contain_exactly("is not part of this programme")
       end
     end
 
@@ -77,9 +80,9 @@ describe CohortImportRow do
       it "is invalid" do
         expect(cohort_import_row).to be_invalid
         expect(cohort_import_row.errors.size).to eq(1)
-        expect(cohort_import_row.errors[:date_of_birth]).to contain_exactly(
-          "is required but missing"
-        )
+        expect(
+          cohort_import_row.errors["CHILD_DATE_OF_BIRTH"]
+        ).to contain_exactly("should be formatted as YYYY-MM-DD")
       end
     end
   end

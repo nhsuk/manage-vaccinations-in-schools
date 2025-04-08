@@ -248,7 +248,10 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
   end
 
   def reason_not_vaccinated_and_notes
-    reasons = ImmunisationImportRow::REASONS.keys.sort.map { tag.i(_1) }
+    reasons =
+      ImmunisationImportRow::REASONS_NOT_ADMINISTERED.keys.sort.map do
+        tag.i(_1)
+      end
     reasons_sentence =
       reasons.to_sentence(
         last_word_connector: " or ",

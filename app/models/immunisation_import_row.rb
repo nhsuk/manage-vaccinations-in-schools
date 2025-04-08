@@ -3,251 +3,34 @@
 class ImmunisationImportRow
   include ActiveModel::Model
 
-  validates :administered, inclusion: [true, false]
-
-  with_options if: :administered do
-    validates :reason, absence: true
-  end
-
-  with_options unless: :administered do
-    validates :batch_expiry_date, absence: true
-    validates :batch_number, absence: true
-    validates :delivery_site, absence: true
-    validates :reason, presence: true
-  end
-
-  with_options if: -> { administered && offline_recording? } do
-    validates :batch_expiry_date, presence: true
-    validates :batch_number, presence: true
-    validates :delivery_site, presence: true
-  end
-
-  validates :vaccine_given,
-            inclusion: {
-              in: :valid_given_vaccines,
-              allow_nil: true
-            }
-
-  validates :batch_number, presence: { if: :batch_expiry_date }
-
-  validates :batch_expiry_date,
-            comparison: {
-              greater_than: -> { Date.new(Date.current.year - 15, 1, 1) },
-              less_than: -> { Date.new(Date.current.year + 15, 1, 1) },
-              allow_nil: true
-            }
-
-  validate :delivery_site_appropriate_for_vaccine
-
-  validates :dose_sequence,
-            presence: {
-              if: -> do
-                administered && offline_recording? &&
-                  default_dose_sequence.present?
-              end
-            },
-            absence: {
-              if: -> { offline_recording? && default_dose_sequence.nil? }
-            },
-            comparison: {
-              allow_nil: true,
-              greater_than_or_equal_to: 1,
-              less_than_or_equal_to: :maximum_dose_sequence,
-              if: :maximum_dose_sequence
-            }
-
-  SCHOOL_URN_HOME_EDUCATED = "999999"
-  SCHOOL_URN_UNKNOWN = "888888"
-
-  validates :school_name,
-            presence: true,
-            if: -> { school_urn == SCHOOL_URN_UNKNOWN }
-  validate :school_urn_inclusion
-
-  validates :existing_patients, length: { maximum: 1 }
-  validates :patient_nhs_number, length: { is: 10 }, allow_blank: true
-  validates :patient_first_name, presence: true
-  validates :patient_last_name, presence: true
-  validates :patient_date_of_birth,
-            comparison: {
-              less_than: -> { Date.current }
-            }
-  validates :patient_gender_code, inclusion: { in: Patient.gender_codes.keys }
-  validates :patient_postcode,
-            postcode: {
-              allow_nil: true
-            },
-            presence: {
-              if: -> do
-                @data[:person_postcode].present? || patient_nhs_number.blank?
-              end
-            }
-
-  validates :performed_ods_code,
-            comparison: {
-              equal_to: :organisation_ods_code,
-              if: :offline_recording?
-            }
-
-  validates :programme_name, inclusion: { in: :valid_programme_names }
-  validates :session_id,
-            inclusion: {
-              in: :valid_session_ids
-            },
-            if: :offline_recording?
-
-  validates :date_of_vaccination,
-            comparison: {
-              greater_than: :patient_date_of_birth,
-              less_than_or_equal_to: -> { Date.current },
-              if: :patient_date_of_birth
-            }
-  validates :time_of_vaccination,
-            presence: {
-              if: -> { @data[:time_of_vaccination].present? }
-            },
-            comparison: {
-              less_than_or_equal_to: -> { Time.current },
-              if: -> { date_of_vaccination == Date.current },
-              allow_nil: true
-            }
-  validate :date_matches_session
-  validate :uuid_exists
+  validate :validate_administered,
+           :validate_batch_expiry,
+           :validate_batch_name,
+           :validate_care_setting,
+           :validate_clinic_name,
+           :validate_date_of_vaccination,
+           :validate_delivery_site,
+           :validate_dose_sequence,
+           :validate_existing_patients,
+           :validate_patient_date_of_birth,
+           :validate_patient_first_name,
+           :validate_patient_gender_code,
+           :validate_patient_last_name,
+           :validate_patient_nhs_number,
+           :validate_patient_postcode,
+           :validate_performed_by,
+           :validate_performed_ods_code,
+           :validate_programme_name,
+           :validate_reason_not_administered,
+           :validate_school_name,
+           :validate_school_urn,
+           :validate_session_id,
+           :validate_time_of_vaccination,
+           :validate_uuid,
+           :validate_vaccine_name
 
   CARE_SETTING_SCHOOL = 1
   CARE_SETTING_COMMUNITY = 2
-
-  validates :care_setting,
-            inclusion: [CARE_SETTING_SCHOOL, CARE_SETTING_COMMUNITY],
-            allow_nil: true
-  validates :clinic_name,
-            inclusion: {
-              if: -> do
-                offline_recording? && care_setting == CARE_SETTING_COMMUNITY
-              end,
-              in: -> { _1.organisation.community_clinics.map(&:name) }
-            }
-
-  validate :performed_by_details_present_where_required
-
-  attr_reader :organisation
-
-  def initialize(data:, organisation:)
-    @data = data
-    @organisation = organisation
-  end
-
-  def to_vaccination_record
-    return unless valid?
-
-    outcome = (administered ? "administered" : reason)
-
-    attributes = {
-      dose_sequence:,
-      location_name:,
-      outcome:,
-      patient:,
-      performed_at:,
-      performed_by_family_name:,
-      performed_by_given_name:,
-      performed_by_user:,
-      performed_ods_code:,
-      programme:,
-      session:
-    }
-
-    vaccination_record =
-      if uuid.present?
-        VaccinationRecord
-          .joins(:organisation)
-          .find_by!(organisations: { id: organisation.id }, uuid:)
-          .tap { _1.assign_attributes(attributes) }
-      else
-        VaccinationRecord.find_or_initialize_by(attributes)
-      end
-
-    if vaccination_record.persisted?
-      vaccination_record.stage_changes(
-        batch_id: batch&.id,
-        delivery_method:,
-        delivery_site:,
-        notes:,
-        vaccine_id: vaccine&.id
-      )
-    else
-      # Postgres UUID generation is skipped in bulk import
-      vaccination_record.uuid = SecureRandom.uuid
-
-      vaccination_record.batch = batch
-      vaccination_record.delivery_method = delivery_method
-      vaccination_record.delivery_site = delivery_site
-      vaccination_record.notes = notes
-      vaccination_record.vaccine = vaccine
-    end
-
-    vaccination_record
-  end
-
-  def to_patient_session
-    return if patient.nil? || session.nil?
-
-    PatientSession.new(patient:, session:)
-  end
-
-  def patient
-    return unless valid?
-
-    @patient ||=
-      existing_patients.first || Patient.create!(new_patient_attributes)
-  end
-
-  def location_name
-    return unless session.nil? || session.location.generic_clinic?
-
-    if care_setting == CARE_SETTING_SCHOOL ||
-         (care_setting.nil? && clinic_name.blank?)
-      school&.name || school_name.presence || "Unknown"
-    else
-      clinic_name.presence || "Unknown"
-    end
-  end
-
-  def administered
-    if (vaccinated = @data[:vaccinated]&.to_s&.downcase).present?
-      if "yes".start_with?(vaccinated)
-        true
-      elsif "no".start_with?(vaccinated)
-        false
-      end
-    elsif @data[:vaccine_given].present?
-      true
-    end
-  end
-
-  def batch_expiry_date
-    @data[:batch_expiry_date]&.to_date
-  end
-
-  def batch_number
-    @data[:batch_number]&.to_s
-  end
-
-  REASONS = {
-    "refused" => :refused,
-    "unwell" => :not_well,
-    "vaccination contraindicated" => :contraindications,
-    "already had elsewhere" => :already_had,
-    "did not attend" => :absent_from_session,
-    "absent from school" => :absent_from_school
-  }.freeze
-
-  def reason
-    REASONS[@data[:reason_not_vaccinated]&.to_s&.downcase]
-  end
-
-  def notes
-    @data[:notes]&.to_s
-  end
 
   DELIVERY_SITES = {
     "left thigh" => "left_thigh",
@@ -262,20 +45,6 @@ class ImmunisationImportRow
     "right buttock" => "right_buttock",
     "nasal" => "nose"
   }.freeze
-
-  def delivery_site
-    DELIVERY_SITES[@data[:anatomical_site]&.to_s&.downcase]
-  end
-
-  def delivery_method
-    return unless delivery_site
-
-    if delivery_site == "nose"
-      "nasal_spray"
-    else
-      "intramuscular"
-    end
-  end
 
   DOSE_SEQUENCES = {
     "hpv" => {
@@ -297,171 +66,227 @@ class ImmunisationImportRow
     }
   }.freeze
 
-  def dose_sequence
-    value = @data[:dose_sequence]&.to_s&.gsub(/\s/, "")&.upcase
+  REASONS_NOT_ADMINISTERED = {
+    "refused" => :refused,
+    "unwell" => :not_well,
+    "vaccination contraindicated" => :contraindications,
+    "already had elsewhere" => :already_had,
+    "did not attend" => :absent_from_session,
+    "absent from school" => :absent_from_school
+  }.freeze
 
-    return default_dose_sequence if value.blank?
+  SCHOOL_URN_HOME_EDUCATED = "999999"
+  SCHOOL_URN_UNKNOWN = "888888"
 
-    dose_sequences = DOSE_SEQUENCES[programme&.type]
+  attr_reader :organisation
 
-    return dose_sequences[value] if dose_sequences&.include?(value)
-
-    @data[:dose_sequence]&.to_i
+  def initialize(data:, organisation:)
+    @data = data
+    @organisation = organisation
   end
 
-  def vaccine_given
-    @data[:vaccine_given]&.to_s
+  def to_vaccination_record
+    return unless valid?
+
+    outcome = (administered ? "administered" : reason_not_administered_value)
+
+    attributes = {
+      dose_sequence: dose_sequence_value,
+      location_name:,
+      outcome:,
+      patient:,
+      performed_at:,
+      performed_by_user:,
+      performed_ods_code: performed_ods_code&.to_s,
+      programme:,
+      session:
+    }
+
+    if performed_by_user.nil?
+      attributes.merge!(
+        performed_by_family_name: performed_by_family_name&.to_s,
+        performed_by_given_name: performed_by_given_name&.to_s
+      )
+    end
+
+    vaccination_record =
+      if uuid.present?
+        VaccinationRecord
+          .joins(:organisation)
+          .find_by!(organisations: { id: organisation.id }, uuid: uuid.to_s)
+          .tap { _1.assign_attributes(attributes) }
+      else
+        VaccinationRecord.find_or_initialize_by(attributes)
+      end
+
+    if vaccination_record.persisted?
+      vaccination_record.stage_changes(
+        batch_id: batch&.id,
+        delivery_method: delivery_method_value,
+        delivery_site: delivery_site_value,
+        notes: notes&.to_s,
+        vaccine_id: vaccine&.id
+      )
+    else
+      # Postgres UUID generation is skipped in bulk import
+      vaccination_record.uuid = SecureRandom.uuid
+
+      vaccination_record.batch = batch
+      vaccination_record.delivery_method = delivery_method_value
+      vaccination_record.delivery_site = delivery_site_value
+      vaccination_record.notes = notes&.to_s
+      vaccination_record.vaccine = vaccine
+    end
+
+    vaccination_record
   end
 
-  def patient_first_name
-    @data[:person_forename]&.to_s
+  def to_patient_session
+    PatientSession.new(patient:, session:) if patient && session
   end
 
-  def patient_last_name
-    @data[:person_surname]&.to_s
+  def batch_expiry = @data[:batch_expiry_date]
+
+  def batch_name = @data[:batch_number]
+
+  def care_setting = @data[:care_setting]
+
+  def clinic_name = @data[:clinic_name]
+
+  def date_of_vaccination = @data[:date_of_vaccination]
+
+  def delivery_site = @data[:anatomical_site]
+
+  def dose_sequence = @data[:dose_sequence]
+
+  def notes = @data[:notes]
+
+  def patient_date_of_birth = @data[:person_dob]
+
+  def patient_first_name = @data[:person_forename]
+
+  def patient_gender_code =
+    @data[:person_gender_code].presence || @data[:person_gender]
+
+  def patient_last_name = @data[:person_surname]
+
+  def patient_nhs_number = @data[:nhs_number]
+
+  def patient_postcode = @data[:person_postcode]
+
+  def performed_by_email = @data[:performing_professional_email]
+
+  def performed_by_family_name = @data[:performing_professional_surname]
+
+  def performed_by_given_name = @data[:performing_professional_forename]
+
+  def performed_ods_code = @data[:organisation_code]
+
+  def programme_name = @data[:programme]
+
+  def reason_not_administered = @data[:reason_not_vaccinated]
+
+  def school_name = @data[:school_name]
+
+  def school_urn = @data[:school_urn]
+
+  def session_id = @data[:session_id]
+
+  def time_of_vaccination = @data[:time_of_vaccination]
+
+  def uuid = @data[:uuid]
+
+  def vaccinated = @data[:vaccinated]
+
+  def vaccine_name = @data[:vaccine_given]
+
+  private
+
+  def location_name
+    return unless session.nil? || session.location.generic_clinic?
+
+    if care_setting&.to_i == CARE_SETTING_SCHOOL ||
+         (care_setting.blank? && clinic_name.blank?)
+      school&.name || school_name&.to_s || "Unknown"
+    else
+      clinic_name&.to_s || "Unknown"
+    end
   end
 
-  def patient_date_of_birth
-    @data[:person_dob]&.to_date
-  end
+  def performed_at
+    data = date_of_vaccination.to_date
+    time = time_of_vaccination&.to_time
 
-  def patient_birth_academic_year
-    patient_date_of_birth&.academic_year
-  end
-
-  def patient_gender_code
-    gender_code =
-      @data[:person_gender_code]&.to_s || @data[:person_gender]&.to_s
-    gender_code&.downcase&.gsub(" ", "_")
-  end
-
-  def patient_postcode
-    @data[:person_postcode]&.to_postcode
-  end
-
-  def patient_nhs_number
-    @data[:nhs_number]&.to_s&.gsub(/\s/, "")
-  end
-
-  def performed_ods_code
-    @data[:organisation_code]&.to_s&.upcase
-  end
-
-  def programme_name
-    @data[:programme]&.to_s
-  end
-
-  def session_id
-    @data[:session_id]&.to_i
-  end
-
-  def school_name
-    @data[:school_name]&.to_s
-  end
-
-  def clinic_name
-    @data[:clinic_name]&.to_s
-  end
-
-  def school_urn
-    @data[:school_urn]&.to_s
-  end
-
-  def date_of_vaccination
-    @data[:date_of_vaccination]&.to_date
-  end
-
-  def time_of_vaccination
-    @data[:time_of_vaccination]&.to_time
-  end
-
-  def care_setting
-    @data[:care_setting]&.to_i
+    Time.zone.local(
+      data.year,
+      data.month,
+      data.day,
+      time&.hour || 0,
+      time&.min || 0,
+      time&.sec || 0
+    )
   end
 
   def performed_by_user
     @performed_by_user ||=
-      if (email = @data[:performing_professional_email]&.to_s)
+      if (email = performed_by_email&.to_s)
         User.find_by(email:)
       end
   end
 
-  def performed_by_given_name
-    @performed_by_given_name ||=
-      (@data[:performing_professional_forename]&.to_s if performed_by_user.nil?)
-  end
-
-  def performed_by_family_name
-    @performed_by_family_name ||=
-      (@data[:performing_professional_surname]&.to_s if performed_by_user.nil?)
-  end
-
-  def uuid
-    @data[:uuid]
-  end
-
-  private
-
-  def performed_at
-    return nil if date_of_vaccination.nil?
-
-    Time.zone.local(
-      date_of_vaccination.year,
-      date_of_vaccination.month,
-      date_of_vaccination.day,
-      time_of_vaccination&.hour || 0,
-      time_of_vaccination&.min || 0,
-      time_of_vaccination&.sec || 0
-    )
+  def patient
+    @patient ||=
+      if valid?
+        existing_patients.first || Patient.create!(new_patient_attributes)
+      end
   end
 
   def school
     @school ||=
       if school_urn.present? &&
            (
-             school_urn != SCHOOL_URN_HOME_EDUCATED &&
-               school_urn != SCHOOL_URN_UNKNOWN
+             school_urn.to_s != SCHOOL_URN_HOME_EDUCATED &&
+               school_urn.to_s != SCHOOL_URN_UNKNOWN
            )
-        Location.school.find_by(urn: school_urn)
+        Location.school.find_by(urn: school_urn.to_s)
       end
   end
 
   def programme
-    @programme ||= programmes_by_name[programme_name]
+    @programme ||= programmes_by_name[programme_name&.to_s]
   end
 
   def session
     @session ||=
-      if session_id.present?
+      if (id = session_id&.to_i)
         organisation
           .sessions
           .for_current_academic_year
           .includes(:location, :programmes, :session_dates)
-          .find_by(id: session_id)
+          .find_by(id:)
       end
   end
 
   def vaccine
     @vaccine ||=
-      organisation.vaccines.where(programme:).find_by(nivs_name: vaccine_given)
+      organisation
+        .vaccines
+        .where(programme:)
+        .find_by(nivs_name: vaccine_name&.to_s)
   end
 
   def batch
     return unless valid?
 
     @batch ||=
-      if administered && vaccine && batch_number.present?
+      if administered && vaccine && batch_name.present?
         Batch.create_with(archived_at: Time.current).find_or_create_by!(
-          expiry: batch_expiry_date,
-          name: batch_number,
+          expiry: batch_expiry&.to_date,
+          name: batch_name.to_s,
           organisation:,
           vaccine:
         )
       end
-  end
-
-  def organisation_ods_code
-    organisation.ods_code
   end
 
   def programmes_by_name
@@ -473,75 +298,12 @@ class ImmunisationImportRow
         end
   end
 
-  def valid_programme_names
-    programmes_by_name.keys
-  end
-
-  def valid_session_ids
-    organisation.sessions.for_current_academic_year.pluck(:id)
-  end
-
-  def valid_given_vaccines
-    organisation.vaccines.where(programme:).pluck(:nivs_name)
-  end
-
   delegate :default_dose_sequence,
            :maximum_dose_sequence,
            to: :programme,
            allow_nil: true
 
-  def offline_recording?
-    @data[:session_id].present?
-  end
-
-  def performed_by_details_present_where_required
-    if offline_recording?
-      errors.add(:performed_by_user, :blank) if performed_by_user.nil?
-    else # previous academic years from here on
-      email_field_populated = @data[:performing_professional_email].present?
-
-      if email_field_populated
-        errors.add(:performed_by_user, :blank) if performed_by_user.nil?
-      elsif programme&.flu? # no validation required for HPV
-        if performed_by_given_name.blank?
-          errors.add(:performed_by_given_name, :blank)
-        end
-        if performed_by_family_name.blank?
-          errors.add(:performed_by_family_name, :blank)
-        end
-      end
-    end
-  end
-
-  def delivery_site_appropriate_for_vaccine
-    return unless offline_recording?
-    return if vaccine.nil? || delivery_site.nil?
-
-    unless vaccine.available_delivery_sites.include?(delivery_site)
-      errors.add(:delivery_site, :inclusion)
-    end
-  end
-
-  def date_matches_session
-    return unless offline_recording?
-    return if date_of_vaccination.nil? || session.nil?
-
-    unless session.dates.include?(date_of_vaccination)
-      errors.add(:date_of_vaccination, :inclusion)
-    end
-  end
-
-  def uuid_exists
-    if uuid.present? &&
-         !VaccinationRecord.joins(:organisation).exists?(
-           organisations: {
-             id: organisation.id
-           },
-           uuid:
-         )
-      errors.add(:uuid, :inclusion)
-    end
-  end
+  def offline_recording? = session_id.present?
 
   def existing_patients
     if patient_first_name.blank? || patient_last_name.blank? ||
@@ -550,34 +312,499 @@ class ImmunisationImportRow
     end
 
     Patient.match_existing(
-      nhs_number: patient_nhs_number,
-      given_name: patient_first_name,
-      family_name: patient_last_name,
-      date_of_birth: patient_date_of_birth,
-      address_postcode: patient_postcode
+      nhs_number: patient_nhs_number_value,
+      given_name: patient_first_name.to_s,
+      family_name: patient_last_name.to_s,
+      date_of_birth: patient_date_of_birth.to_date,
+      address_postcode: patient_postcode&.to_postcode
     )
   end
 
   def new_patient_attributes
     {
-      address_postcode: patient_postcode,
-      date_of_birth: patient_date_of_birth,
-      birth_academic_year: patient_birth_academic_year,
-      family_name: patient_last_name,
-      given_name: patient_first_name,
-      gender_code: patient_gender_code,
-      nhs_number: patient_nhs_number,
+      address_postcode: patient_postcode&.to_postcode,
+      date_of_birth: patient_date_of_birth.to_date,
+      birth_academic_year: patient_date_of_birth.to_date.academic_year,
+      family_name: patient_last_name.to_s,
+      given_name: patient_first_name.to_s,
+      gender_code: patient_gender_code_value,
+      nhs_number: patient_nhs_number_value,
       school: nil,
       home_educated: false
     }.compact
   end
 
-  def school_urn_inclusion
-    return if school_urn.nil?
+  def administered
+    if vaccinated.present?
+      if "yes".start_with?(vaccinated.to_s.downcase)
+        true
+      elsif "no".start_with?(vaccinated.to_s.downcase)
+        false
+      end
+    elsif vaccine_name.present?
+      true
+    end
+  end
 
-    unless Location.school.exists?(urn: school_urn) ||
-             school_urn.in?([SCHOOL_URN_HOME_EDUCATED, SCHOOL_URN_UNKNOWN])
-      errors.add(:school_urn, :inclusion)
+  def delivery_site_value
+    DELIVERY_SITES[delivery_site&.to_s&.downcase]
+  end
+
+  def delivery_method_value
+    if delivery_site_value == "nose"
+      "nasal_spray"
+    elsif delivery_site_value.present?
+      "intramuscular"
+    end
+  end
+
+  def dose_sequence_value
+    value = dose_sequence&.to_s&.gsub(/\s/, "")&.upcase
+
+    return default_dose_sequence if value.blank?
+
+    dose_sequences = DOSE_SEQUENCES[programme&.type]
+
+    return dose_sequences[value] if dose_sequences&.include?(value)
+
+    dose_sequence&.to_i
+  end
+
+  def patient_gender_code_value
+    patient_gender_code&.to_s&.downcase&.gsub(" ", "_")
+  end
+
+  def patient_nhs_number_value
+    patient_nhs_number&.to_s&.gsub(/\s/, "")
+  end
+
+  def reason_not_administered_value
+    REASONS_NOT_ADMINISTERED[reason_not_administered&.to_s&.downcase]
+  end
+
+  def validate_administered
+    return if [true, false].include?(administered)
+
+    if vaccinated.nil?
+      errors.add(:base, "<code>VACCINATED</code> is required")
+    else
+      errors.add(
+        vaccinated.header,
+        "You need to record whether the child was vaccinated or not. Enter ‘Y’ or ‘N’ in the ‘vaccinated’ column."
+      )
+    end
+  end
+
+  EARLIEST_BATCH_EXPIRY = Date.new(Date.current.year - 15, 1, 1)
+  LATEST_BATCH_EXPIRY = Date.new(Date.current.year + 15, 1, 1)
+
+  def validate_batch_expiry
+    if administered
+      if batch_expiry.present?
+        if (date = batch_expiry.to_date)
+          if date > LATEST_BATCH_EXPIRY
+            errors.add(
+              batch_expiry.header,
+              "must be less than 15 years in the future"
+            )
+          elsif date < EARLIEST_BATCH_EXPIRY
+            errors.add(batch_expiry.header, "must be more than 15 years old")
+          end
+        else
+          errors.add(batch_expiry.header, "Enter a date in the correct format")
+        end
+      elsif offline_recording?
+        if batch_expiry.nil?
+          errors.add(:base, "<code>BATCH_EXPIRY_DATE</code> is required")
+        else
+          errors.add(batch_expiry.header, "Enter a batch expiry date.")
+        end
+      end
+    elsif batch_expiry.present?
+      errors.add(batch_expiry.header, "is not required")
+    end
+  end
+
+  def validate_batch_name
+    if administered
+      if offline_recording?
+        if batch_name.nil?
+          errors.add(:base, "<code>BATCH_NUMBER</code> is required")
+        elsif batch_name.blank?
+          errors.add(batch_name.header, "Enter a batch number.")
+        end
+      end
+    elsif batch_name.present?
+      errors.add(batch_name.header, "is not required")
+    end
+  end
+
+  def validate_care_setting
+    return if care_setting.blank?
+
+    if care_setting.to_i.nil?
+      errors.add(care_setting.header, "Enter a valid care setting.")
+    elsif ![CARE_SETTING_SCHOOL, CARE_SETTING_COMMUNITY].include?(
+          care_setting.to_i
+        )
+      errors.add(care_setting.header, "Enter a valid care setting.")
+    end
+  end
+
+  def validate_clinic_name
+    if offline_recording? && care_setting&.to_i == CARE_SETTING_COMMUNITY
+      if clinic_name.nil?
+        errors.add(:base, "<code>CLINIC_NAME</code> is required")
+      elsif clinic_name.blank?
+        errors.add(clinic_name.header, "Enter a clinic name")
+      elsif !organisation.community_clinics.exists?(name: clinic_name.to_s)
+        errors.add(clinic_name.header, "Enter a clinic name")
+      end
+    end
+  end
+
+  def validate_date_of_vaccination
+    if date_of_vaccination.nil?
+      errors.add(:base, "<code>DATE_OF_VACCINATION</code> is required")
+    elsif date_of_vaccination.blank?
+      errors.add(date_of_vaccination.header, "Enter a date")
+    elsif date_of_vaccination.to_date.nil?
+      errors.add(
+        date_of_vaccination.header,
+        "Enter a date in the correct format"
+      )
+    else
+      if patient_date_of_birth&.to_date
+        if date_of_vaccination.to_date.future?
+          errors.add(
+            date_of_vaccination.header,
+            "The vaccination date is in the future."
+          )
+        elsif date_of_vaccination.to_date < patient_date_of_birth.to_date
+          errors.add(
+            date_of_vaccination.header,
+            "The vaccination date is before the date of birth."
+          )
+        end
+      end
+
+      if offline_recording? && session &&
+           !session.dates.include?(date_of_vaccination.to_date)
+        errors.add(
+          date_of_vaccination.header,
+          "Enter a date that matches when the vaccination session took place."
+        )
+      end
+    end
+  end
+
+  def validate_delivery_site
+    if administered
+      if delivery_site.present?
+        if delivery_site_value.blank?
+          errors.add(delivery_site.header, "Enter a valid anatomical site.")
+        elsif offline_recording? && vaccine
+          unless vaccine.available_delivery_sites.include?(delivery_site_value)
+            errors.add(
+              delivery_site.header,
+              "Enter a anatomical site that is appropriate for the vaccine."
+            )
+          end
+        end
+      elsif offline_recording?
+        if delivery_site.nil?
+          errors.add(:base, "<code>ANATOMICAL_SITE</code> is required")
+        else
+          errors.add(delivery_site.header, "Enter an anatomical site.")
+        end
+      end
+    elsif delivery_site.present?
+      errors.add(delivery_site.header, "is not required")
+    end
+  end
+
+  def validate_dose_sequence
+    if dose_sequence.present?
+      if offline_recording? && default_dose_sequence.nil?
+        errors.add(
+          dose_sequence.header,
+          "Do not provide a dose sequence for this programme (leave blank)."
+        )
+      elsif dose_sequence_value.nil?
+        errors.add(
+          dose_sequence.header,
+          "The dose sequence number cannot be greater than 3. Enter a dose sequence number, for example, 1, 2 or 3."
+        )
+      elsif maximum_dose_sequence
+        if dose_sequence_value < 1
+          errors.add(dose_sequence.header, "must be greater than 0")
+        elsif dose_sequence_value > maximum_dose_sequence
+          errors.add(
+            dose_sequence.header,
+            "must be less than #{maximum_dose_sequence}"
+          )
+        end
+      end
+    elsif administered && offline_recording? && default_dose_sequence.present?
+      if dose_sequence.nil?
+        errors.add(:base, "<code>DOSE_SEQUENCE</code> is required")
+      else
+        errors.add(
+          dose_sequence.header,
+          "The dose sequence number cannot be greater than 3. Enter a dose sequence number, for example, 1, 2 or 3."
+        )
+      end
+    end
+  end
+
+  def validate_existing_patients
+    if existing_patients && existing_patients.length > 1
+      errors.add(
+        :base,
+        "Two or more possible patients match the patient first name, last name, date of birth or postcode."
+      )
+    end
+  end
+
+  def validate_patient_date_of_birth
+    if patient_date_of_birth.nil?
+      errors.add(:base, "<code>PERSON_DOB</code> is required")
+    elsif patient_date_of_birth.blank?
+      errors.add(patient_date_of_birth.header, "Enter a date of birth.")
+    elsif patient_date_of_birth.to_date.nil?
+      errors.add(
+        patient_date_of_birth.header,
+        "Enter a date of birth in the correct format."
+      )
+    elsif patient_date_of_birth.to_date.future?
+      errors.add(
+        patient_date_of_birth.header,
+        "Enter a date of birth in the past."
+      )
+    end
+  end
+
+  def validate_patient_first_name
+    if patient_first_name.nil?
+      errors.add(:base, "<code>PERSON_FORENAME</code> is required")
+    elsif patient_first_name.blank?
+      errors.add(patient_first_name.header, "Enter a first name.")
+    end
+  end
+
+  def validate_patient_gender_code
+    if patient_gender_code.nil?
+      errors.add(
+        :base,
+        "<code>PERSON_GENDER_CODE</code> or <code>PERSON_GENDER</code> is required"
+      )
+    elsif patient_gender_code.blank?
+      errors.add(patient_gender_code.header, "Enter a gender or gender code.")
+    elsif patient_gender_code_value.nil?
+      errors.add(patient_gender_code.header, "Enter a gender or gender code.")
+    elsif !Patient.gender_codes.keys.include?(patient_gender_code_value)
+      errors.add(patient_gender_code.header, "Enter a gender or gender code.")
+    end
+  end
+
+  def validate_patient_last_name
+    if patient_last_name.nil?
+      errors.add(:base, "<code>PERSON_SURNAME</code> is required")
+    elsif patient_last_name.blank?
+      errors.add(patient_last_name.header, "Enter a last name.")
+    end
+  end
+
+  def validate_patient_nhs_number
+    if patient_nhs_number.present? && patient_nhs_number_value.length != 10
+      errors.add(
+        patient_nhs_number.header,
+        "Enter an NHS number with 10 characters."
+      )
+    end
+  end
+
+  def validate_patient_postcode
+    if patient_postcode.present?
+      if patient_postcode.to_postcode.nil?
+        errors.add(
+          patient_postcode.header,
+          "Enter a valid postcode, such as SW1A 1AA."
+        )
+      end
+    elsif patient_nhs_number_value.blank?
+      if patient_postcode.nil?
+        errors.add(:base, "<code>PERSON_POSTCODE</code> is required")
+      else
+        errors.add(
+          patient_postcode.header,
+          "Enter a valid postcode, such as SW1A 1AA."
+        )
+      end
+    end
+  end
+
+  def validate_performed_by
+    if offline_recording?
+      if performed_by_user.nil?
+        if performed_by_email.nil?
+          errors.add(
+            :base,
+            "<code>PERFORMING_PROFESSIONAL_EMAIL</code> is required"
+          )
+        else
+          errors.add(performed_by_email.header, "Enter a valid email address.")
+        end
+      end
+    elsif performed_by_email.present? # previous academic years from here on
+      if performed_by_user.nil?
+        errors.add(performed_by_email.header, "Enter a valid email address")
+      end
+    elsif programme&.flu? # no validation required for HPV
+      if performed_by_given_name.nil?
+        errors.add(
+          :base,
+          "<code>PERFORMING_PROFESSIONAL_FORENAME</code> is required"
+        )
+      elsif performed_by_given_name.blank?
+        errors.add(performed_by_given_name.header, "Enter a first name.")
+      end
+
+      if performed_by_family_name.nil?
+        errors.add(
+          :base,
+          "<code>PERFORMING_PROFESSIONAL_SURNAME</code> is required"
+        )
+      elsif performed_by_family_name.blank?
+        errors.add(performed_by_family_name.header, "Enter a last name.")
+      end
+    end
+  end
+
+  def validate_performed_ods_code
+    if offline_recording?
+      if performed_ods_code.nil?
+        errors.add(:base, "<code>ORGANISATION_CODE</code> is required")
+      elsif performed_ods_code.blank?
+        errors.add(performed_ods_code.header, "Enter an organisation code.")
+      elsif performed_ods_code.to_s != organisation.ods_code
+        errors.add(
+          performed_ods_code.header,
+          "Enter an organisation code that matches the current organisation."
+        )
+      end
+    end
+  end
+
+  def validate_programme_name
+    if programme_name.nil?
+      errors.add(:base, "<code>PROGRAMME</code> is required")
+    elsif programme_name.blank?
+      errors.add(programme_name.header, "Enter a programme.")
+    elsif !programmes_by_name.keys.include?(programme_name.to_s)
+      errors.add(
+        programme_name.header,
+        "This programme is not available in this session."
+      )
+    end
+  end
+
+  def validate_reason_not_administered
+    if administered
+      if reason_not_administered.present?
+        errors.add(reason_not_administered.header, "is not required")
+      end
+    elsif reason_not_administered.present?
+      if reason_not_administered_value.blank?
+        errors.add(reason_not_administered.header, "Enter a valid reason")
+      end
+    elsif reason_not_administered.nil?
+      errors.add(:base, "<code>REASON_NOT_VACCINATED</code> is required")
+    else
+      errors.add(reason_not_administered.header, "Enter a valid reason")
+    end
+  end
+
+  def validate_school_name
+    if school_name.blank? && school_urn&.to_s == SCHOOL_URN_UNKNOWN
+      if school_name.nil?
+        errors.add(:base, "<code>SCHOOL_NAME</code> is required")
+      else
+        errors.add(school_name.header, "Enter a school name.")
+      end
+    end
+  end
+
+  def validate_school_urn
+    return if school_urn.blank?
+
+    unless Location.school.exists?(urn: school_urn.to_s) ||
+             school_urn.to_s.in?([SCHOOL_URN_HOME_EDUCATED, SCHOOL_URN_UNKNOWN])
+      errors.add(
+        school_urn.header,
+        "The school URN is not recognised. If you’ve checked the URN, " \
+          "and you believe it’s valid, contact our support organisation."
+      )
+    end
+  end
+
+  def validate_session_id
+    if session_id.present?
+      if session_id.to_i.nil?
+        errors.add(
+          session_id.header,
+          "The session ID is not recognised. Download the offline spreadsheet " \
+            "and copy the session ID for this row from there, or " \
+            "contact our support organisation."
+        )
+      elsif !organisation.sessions.for_current_academic_year.exists?(
+            id: session_id.to_i
+          )
+        errors.add(
+          session_id.header,
+          "The session ID is not recognised. Download the offline spreadsheet " \
+            "and copy the session ID for this row from there, or " \
+            "contact our support organisation."
+        )
+      end
+    end
+  end
+
+  def validate_time_of_vaccination
+    return if time_of_vaccination.blank?
+
+    if time_of_vaccination.to_time.nil?
+      errors.add(
+        time_of_vaccination.header,
+        "Enter a time in the correct format."
+      )
+    elsif date_of_vaccination&.to_date&.today?
+      if time_of_vaccination.to_time.future?
+        errors.add(time_of_vaccination.header, "Enter a time in the past.")
+      end
+    end
+  end
+
+  def validate_uuid
+    return if uuid.blank?
+
+    scope =
+      VaccinationRecord.joins(:organisation).where(
+        organisations: {
+          id: organisation.id
+        },
+        uuid: uuid.to_s
+      )
+
+    errors.add(uuid.header, "Enter an existing record.") unless scope.exists?
+  end
+
+  def validate_vaccine_name
+    if vaccine_name.present? && vaccine.nil?
+      errors.add(
+        vaccine_name.header,
+        "This vaccine is not available in this session."
+      )
     end
   end
 end
