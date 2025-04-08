@@ -32,7 +32,7 @@ resource "aws_codedeploy_deployment_group" "blue_green_deployment_group" {
 
   ecs_service {
     cluster_name = aws_ecs_cluster.cluster.name
-    service_name = aws_ecs_service.service.name
+    service_name = module.web_service.service.name
   }
 
   load_balancer_info {
@@ -116,8 +116,8 @@ resource "aws_s3_object" "appspec_object" {
   key    = "appspec.yaml"
   acl    = "private"
   content = templatefile("templates/appspec.yaml.tpl", {
-    task_definition_arn = aws_ecs_task_definition.task_definition.arn
-    container_name      = jsondecode(aws_ecs_task_definition.task_definition.container_definitions)[0].name
+    task_definition_arn = module.web_service.task_definition.arn
+    container_name      = module.web_service.task_definition.arn
     container_port      = aws_lb_target_group.blue.port
   })
 

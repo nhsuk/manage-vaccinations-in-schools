@@ -11,6 +11,20 @@ resource "aws_security_group" "rds_security_group" {
   }
 }
 
+resource "aws_security_group_rule" "rds_ecs_ingress" {
+  count                    = length(local.ecs_sg_ids)
+  type                     = "ingress"
+  from_port                = 5432
+  to_port                  = 5432
+  protocol                 = "tcp"
+  security_group_id        = aws_security_group.rds_security_group.id
+  source_security_group_id = local.ecs_sg_ids[count.index]
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+#TODO: Remove after release
 resource "aws_security_group_rule" "rds_ingress" {
   type                     = "ingress"
   from_port                = 5432
@@ -18,18 +32,6 @@ resource "aws_security_group_rule" "rds_ingress" {
   protocol                 = "tcp"
   security_group_id        = aws_security_group.rds_security_group.id
   source_security_group_id = aws_security_group.ecs_service_sg.id
-  lifecycle {
-    create_before_destroy = true
-  }
-}
-
-resource "aws_security_group_rule" "ecs_rds_egress" {
-  type                     = "egress"
-  from_port                = 5432
-  to_port                  = 5432
-  protocol                 = "tcp"
-  source_security_group_id = aws_security_group.rds_security_group.id
-  security_group_id        = aws_security_group.ecs_service_sg.id
   lifecycle {
     create_before_destroy = true
   }
