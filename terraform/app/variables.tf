@@ -214,7 +214,11 @@ locals {
     {
       name      = "RAILS_MASTER_KEY"
       valueFrom = var.rails_master_key_path
-    }
+    },
+    {
+      name      = "MAVIS__PDS__WAIT_BETWEEN_JOBS",
+      valueFrom = aws_ssm_parameter.pds_wait_between_jobs.name,
+    },
   ]
 }
 
