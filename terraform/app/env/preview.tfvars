@@ -26,3 +26,4 @@ http_hosts = {
 
 minimum_replicas = 3
 appspec_bucket   = "nhse-mavis-appspec-bucket-preview"
+ecs_initial_lb_target_group = "green"

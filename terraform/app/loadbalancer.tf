@@ -150,7 +150,7 @@ resource "aws_lb_listener_rule" "forward_to_app" {
   priority     = 50000
   action {
     type             = "forward"
-    target_group_arn = local.default_lb_target_group_arn
+    target_group_arn = local.ecs_initial_lb_target_group
   }
   condition {
     path_pattern {

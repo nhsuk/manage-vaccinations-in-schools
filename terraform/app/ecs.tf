@@ -146,7 +146,7 @@ module "web_service" {
     vpc_id  = aws_vpc.application_vpc.id
   }
   loadbalancer = {
-    target_group_arn = aws_lb_target_group.green.arn
+    target_group_arn = local.ecs_initial_lb_target_group
     container_port   = 4000
   }
   cluster_id            = aws_ecs_cluster.cluster.id
