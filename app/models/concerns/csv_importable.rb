@@ -35,7 +35,6 @@ module CSVImportable
 
     validate :csv_is_valid
     validate :csv_has_records
-    validate :headers_are_valid
     validate :rows_are_valid
 
     before_save :ensure_processed_with_count_statistics
@@ -79,12 +78,20 @@ module CSVImportable
   def load_data!
     return if invalid?
 
+    converters = proc { |value| value&.strip.presence }
+    header_converters =
+      proc { |value| value.strip.downcase.tr("-", "_").tr(" ", "_").to_sym }
+
     self.data ||=
       CSV.parse(
         csv_data,
+        converters:,
+        empty_value: nil,
+        encoding: detect_encoding,
+        header_converters:,
         headers: true,
         skip_blanks: true,
-        encoding: detect_encoding
+        strip: true
       )
     self.rows_count = data.count
   rescue CSV::MalformedCSVError
@@ -210,19 +217,6 @@ module CSVImportable
     return unless data
 
     errors.add(:csv, :empty) if data.empty?
-  end
-
-  def headers_are_valid
-    return unless data
-
-    missing_headers = required_headers - data.headers
-    if missing_headers.any?
-      errors.add(
-        :csv,
-        :missing_headers,
-        missing_headers: missing_headers.join(", ")
-      )
-    end
   end
 
   def rows_are_valid

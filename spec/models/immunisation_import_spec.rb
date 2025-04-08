@@ -73,15 +73,6 @@ describe ImmunisationImport do
         expect(immunisation_import.errors[:csv]).to include(/one record/)
       end
     end
-
-    context "with missing headers" do
-      let(:file) { "missing_headers.csv" }
-
-      it "is invalid" do
-        expect(immunisation_import).to be_invalid
-        expect(immunisation_import.errors[:csv]).to include(/missing/)
-      end
-    end
   end
 
   describe "#parse_rows!" do

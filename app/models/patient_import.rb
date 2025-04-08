@@ -5,10 +5,6 @@ class PatientImport < ApplicationRecord
 
   private
 
-  def required_headers
-    %w[CHILD_DATE_OF_BIRTH CHILD_FIRST_NAME CHILD_LAST_NAME]
-  end
-
   def check_rows_are_unique
     rows
       .map(&:nhs_number)

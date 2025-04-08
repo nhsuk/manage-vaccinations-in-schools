@@ -1,7 +1,12 @@
 # frozen_string_literal: true
 
 describe CohortImportRow do
-  subject(:cohort_import_row) { described_class.new(data:, organisation:) }
+  subject(:cohort_import_row) do
+    described_class.new(
+      data: data.transform_keys { it.downcase.to_sym },
+      organisation:
+    )
+  end
 
   let(:today) { Date.new(2024, 12, 1) }
 

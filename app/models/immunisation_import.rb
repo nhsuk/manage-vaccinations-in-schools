@@ -40,23 +40,6 @@ class ImmunisationImport < ApplicationRecord
 
   private
 
-  def required_headers
-    %w[
-      ORGANISATION_CODE
-      SCHOOL_NAME
-      NHS_NUMBER
-      PERSON_FORENAME
-      PERSON_SURNAME
-      PERSON_DOB
-      PERSON_POSTCODE
-      DATE_OF_VACCINATION
-      VACCINE_GIVEN
-      BATCH_NUMBER
-      BATCH_EXPIRY_DATE
-      ANATOMICAL_SITE
-    ]
-  end
-
   def check_rows_are_unique
     # there is no uniqueness check for immunisations
   end
