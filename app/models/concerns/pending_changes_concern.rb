@@ -9,6 +9,13 @@ module PendingChangesConcern
     new_pending_changes =
       attributes.each_with_object({}) do |(attr, new_value), staged_changes|
         current_value = public_send(attr)
+
+        # Automatically update the patient's attribute if `new_value` is the same as `current_value` except from:
+        #  - case
+        if (new_value.downcase == current_value.downcase) && (new_value != public_send(attr))
+          public_send("#{attr}=", new_value)
+        end
+
         staged_changes[attr.to_s] = new_value if new_value != current_value
       end
 
