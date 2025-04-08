@@ -7,20 +7,24 @@ describe AppImportFormatDetailsComponent do
   it "renders the correct summary text for ClassImport" do
     import = ClassImport.new(organisation:)
     render_inline(described_class.new(import:))
-    expect(page).to have_content("How to format your CSV for class lists")
+    expect(page).to have_content(
+      "How to format your Mavis CSV file for class lists"
+    )
   end
 
   it "renders the correct summary text for CohortImport" do
     import = CohortImport.new(organisation:)
     render_inline(described_class.new(import:))
-    expect(page).to have_content("How to format your CSV for child records")
+    expect(page).to have_content(
+      "How to format your Mavis CSV file for child records"
+    )
   end
 
   it "renders the correct summary text for ImmunisationImport" do
     import = ImmunisationImport.new(organisation:)
     render_inline(described_class.new(import:))
     expect(page).to have_content(
-      "How to format your CSV for vaccination records"
+      "How to format your Mavis CSV file for vaccination records"
     )
   end
 

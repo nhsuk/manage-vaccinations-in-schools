@@ -3,18 +3,24 @@
 <% end %>
 
 <% title = "Import vaccination records" %>
-<% hint = "Make sure the CSV you upload has the same format as your usual reporting template." %>
 
 <% content_for :page_title, title %>
 
 <%= form_with model: @immunisation_import, url: immunisation_imports_path do |f| %>
   <%= f.govuk_error_summary %>
 
-  <%= f.govuk_file_field :csv,
-                         label: { text: title, tag: "h1", size: "l" },
-                         hint: { text: hint } %>
+  <h1 class="nhsuk-heading-l"><%= title %></h1>
+
+  <p>You can import vaccination records by uploading:</p>
+
+  <ul class="nhsuk-list nhsuk-list--bullet">
+    <li>a Mavis CSV file</li>
+    <li>a SystmOne file</li>
+  </ul>
 
   <%= render AppImportFormatDetailsComponent.new(import: @immunisation_import) %>
+
+  <%= f.govuk_file_field :csv, label: { text: "Upload file", size: "m" } %>
 
   <%= f.govuk_submit %>
 <% end %>

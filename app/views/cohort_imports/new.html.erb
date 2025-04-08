@@ -3,18 +3,19 @@
 <% end %>
 
 <% title = "Import child records" %>
-<% hint = "Make sure the CSV you import has the same format as your usual template for child records." %>
 
 <% content_for :page_title, title %>
 
 <%= form_with model: @cohort_import, url: cohort_imports_path do |f| %>
   <%= f.govuk_error_summary %>
 
-  <%= f.govuk_file_field :csv,
-                         label: { text: title, tag: "h1", size: "l" },
-                         hint: { text: hint } %>
+  <h1 class="nhsuk-heading-l"><%= title %></h1>
+
+  <p>The file you upload should use the Mavis CSV format for child records.</p>
 
   <%= render AppImportFormatDetailsComponent.new(import: @cohort_import) %>
+
+  <%= f.govuk_file_field :csv, label: { text: "Upload file", size: "m" } %>
 
   <%= f.govuk_submit %>
 <% end %>

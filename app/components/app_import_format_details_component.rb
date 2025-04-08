@@ -14,11 +14,11 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
   def summary_text
     case @import
     when ClassImport
-      "How to format your CSV for class lists"
+      "How to format your Mavis CSV file for class lists"
     when CohortImport
-      "How to format your CSV for child records"
+      "How to format your Mavis CSV file for child records"
     when ImmunisationImport
-      "How to format your CSV for vaccination records"
+      "How to format your Mavis CSV file for vaccination records"
     else
       raise ArgumentError, "Unsupported import type: #{@import.class}"
     end
