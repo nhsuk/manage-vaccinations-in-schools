@@ -171,6 +171,8 @@ module CSVImportable
   def update_from_pds
     return unless Settings.pds.enqueue_bulk_updates
 
+    wait_between_jobs = Settings.pds.wait_between_jobs.to_i
+
     GoodJob::Bulk.enqueue do
       patients.find_each.with_index do |patient, index|
         # Schedule with a delay to preemptively handle rate limit issues.
@@ -181,12 +183,12 @@ module CSVImportable
         if patient.nhs_number.nil?
           PatientNHSNumberLookupJob.set(
             priority: 25,
-            wait: 2 * index
+            wait: index * wait_between_jobs
           ).perform_later(patient)
         else
           PatientUpdateFromPDSJob.set(
             priority: 25,
-            wait: 2 * index,
+            wait: index * wait_between_jobs,
             queue: :imports
           ).perform_later(patient)
         end
