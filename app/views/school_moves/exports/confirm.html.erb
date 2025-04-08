@@ -1,0 +1,33 @@
+<% content_for :before_main do %>
+  <%= render AppBacklinkComponent.new(wizard_path(:dates), name: "school_moves_export") %>
+<% end %>
+
+<span class="nhsuk-caption-l">School moves</span>
+<%= h1 "Check and confirm" %>
+
+<%= render AppCardComponent.new do |card| %>
+  <% card.with_heading { "Requested download" } %>
+
+  <%= govuk_summary_list do |summary_list|
+        summary_list.with_row do |row|
+          row.with_key { "From" }
+          row.with_value { @school_move_export.date_from_formatted }
+          row.with_action(text: "Change", href: wizard_path(:dates))
+        end
+      
+        summary_list.with_row do |row|
+          row.with_key { "Until" }
+          row.with_value { @school_move_export.date_to_formatted }
+          row.with_action(text: "Change", href: wizard_path(:dates))
+        end
+      
+        summary_list.with_row do |row|
+          row.with_key { "Records" }
+          row.with_value { @school_move_export.count.to_s }
+        end
+      end %>
+<% end %>
+
+<%= form_with model: @school_move_export, url: wizard_path, method: :put do |f| %>
+  <%= f.govuk_submit "Download CSV" %>
+<% end %>

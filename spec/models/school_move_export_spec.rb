@@ -1,0 +1,144 @@
+# frozen_string_literal: true
+
+describe SchoolMoveExport do
+  subject(:school_move_export) do
+    described_class.new(request_session:, current_user:)
+  end
+
+  let(:request_session) { {} }
+  let(:current_user) { organisation.users.first }
+  let(:organisation) { create(:organisation, :with_one_nurse) }
+
+  describe ".request_session_key" do
+    it "returns the correct session key" do
+      expect(described_class.request_session_key).to eq("school_move_export")
+    end
+  end
+
+  describe "#wizard_steps" do
+    it "returns an array of symbols for the wizard steps" do
+      expect(school_move_export.wizard_steps).to eq(%i[dates confirm])
+    end
+  end
+
+  describe "#count" do
+    let(:one_day_ago) { 1.day.ago }
+    let(:three_days_ago) { 3.days.ago }
+
+    before do
+      3.times do
+        patient = create(:patient, organisation: organisation)
+        create(:school_move_log_entry, patient:, created_at: one_day_ago)
+      end
+
+      2.times do
+        patient = create(:patient, organisation: organisation)
+        create(:school_move_log_entry, patient:, created_at: three_days_ago)
+      end
+    end
+
+    it "returns the count of school moves" do
+      expect(school_move_export.count).to eq(5)
+    end
+
+    context "when date range is specified" do
+      before do
+        school_move_export.assign_attributes(
+          {
+            "date_from(3i)" => one_day_ago.day.to_s,
+            "date_from(2i)" => one_day_ago.month.to_s,
+            "date_from(1i)" => one_day_ago.year.to_s,
+            "wizard_step" => :dates
+          }
+        )
+      end
+
+      it "returns the count of school moves within the date range" do
+        expect(school_move_export.count).to eq(3)
+      end
+    end
+  end
+
+  describe "dates formatted" do
+    let(:date) { Date.new(2023, 1, 1) }
+
+    describe "#date_from_formatted" do
+      context "when date_from is present" do
+        before do
+          school_move_export.assign_attributes(
+            {
+              "date_from(3i)" => date.day.to_s,
+              "date_from(2i)" => date.month.to_s,
+              "date_from(1i)" => date.year.to_s,
+              "wizard_step" => :dates
+            }
+          )
+        end
+
+        it "returns the formatted date" do
+          expect(school_move_export.date_from_formatted).to eq(
+            "01 January 2023"
+          )
+        end
+      end
+
+      context "when date_from is not present" do
+        it do
+          expect(school_move_export.date_from_formatted).to eq(
+            "Earliest recorded vaccination"
+          )
+        end
+      end
+    end
+
+    describe "#date_to_formatted" do
+      context "when date_to is present" do
+        before do
+          school_move_export.assign_attributes(
+            {
+              "date_from(3i)" => date.day.to_s,
+              "date_from(2i)" => date.month.to_s,
+              "date_from(1i)" => date.year.to_s,
+              "wizard_step" => :dates
+            }
+          )
+        end
+
+        it "returns the formatted date" do
+          expect(school_move_export.date_from_formatted).to eq(
+            "01 January 2023"
+          )
+        end
+      end
+
+      context "when date_to is not present" do
+        it do
+          expect(school_move_export.date_to_formatted).to eq(
+            "Latest recorded vaccination"
+          )
+        end
+      end
+    end
+  end
+
+  describe "#csv_filename" do
+    before do
+      school_move_export.assign_attributes(
+        {
+          "date_from(3i)" => "01",
+          "date_from(2i)" => "01",
+          "date_from(1i)" => "2024",
+          "date_to(3i)" => "31",
+          "date_to(2i)" => "12",
+          "date_to(1i)" => "2025",
+          "wizard_step" => :dates
+        }
+      )
+    end
+
+    it "returns the correct filename" do
+      expected_filename = "school_moves_export_2024-01-01_to_2025-12-31.csv"
+      expect(school_move_export.csv_filename).to eq(expected_filename)
+    end
+  end
+end
