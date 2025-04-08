@@ -323,7 +323,7 @@ describe CohortImport do
     end
 
     context "with an existing patient matching the name but a different case" do
-      before do
+      let!(:existing_patient) do
         create(
           :patient,
           given_name: "JIMMY",
@@ -336,6 +336,22 @@ describe CohortImport do
 
       it "doesn't create an additional patient" do
         expect { process! }.to change(Patient, :count).by(2)
+      end
+
+      it "doesn't stage the changes to the names" do
+        process!
+        expect(existing_patient.reload.pending_changes).not_to have_key(
+          "given_name"
+        )
+        expect(existing_patient.reload.pending_changes).not_to have_key(
+          "family_name"
+        )
+      end
+
+      it "automatically accepts the incoming case differences" do
+        process!
+        expect(existing_patient.reload.given_name).to eq("Jimmy")
+        expect(existing_patient.reload.family_name).to eq("Smith")
       end
     end
 

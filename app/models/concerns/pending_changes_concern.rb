@@ -12,16 +12,22 @@ module PendingChangesConcern
 
         # Automatically update the patient's attribute if `new_value` is the same as `current_value` except from:
         #  - case
-        if (new_value.downcase == current_value.downcase) && (new_value != public_send(attr))
-          public_send("#{attr}=", new_value)
+        if normalise_for_comparison(new_value) ==
+             normalise_for_comparison(current_value)
+          public_send("#{attr}=", new_value) if new_value != current_value
+        else
+          staged_changes[attr.to_s] = new_value
         end
-
-        staged_changes[attr.to_s] = new_value if new_value != current_value
       end
 
     if new_pending_changes.any?
       update!(pending_changes: pending_changes.merge(new_pending_changes))
     end
+  end
+
+  def normalise_for_comparison(value)
+    # Normalise by case
+    value.respond_to?(:downcase) ? value.downcase : value
   end
 
   def with_pending_changes
