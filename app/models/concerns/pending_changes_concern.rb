@@ -12,6 +12,7 @@ module PendingChangesConcern
 
         # Automatically update the patient's attribute if `new_value` is the same as `current_value` except from:
         #  - case
+        # Otherwise, stage the change for review
         if normalise_for_comparison(new_value) ==
              normalise_for_comparison(current_value)
           public_send("#{attr}=", new_value) if new_value != current_value
