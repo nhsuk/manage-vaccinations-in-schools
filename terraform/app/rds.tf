@@ -12,7 +12,7 @@ resource "aws_security_group" "rds_security_group" {
 }
 
 resource "aws_security_group_rule" "rds_ecs_ingress" {
-  count = length(local.ecs_sg_ids)
+  count                    = length(local.ecs_sg_ids)
   type                     = "ingress"
   from_port                = 5432
   to_port                  = 5432

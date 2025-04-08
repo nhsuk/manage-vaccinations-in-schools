@@ -158,7 +158,7 @@ variable "enable_splunk" {
 }
 
 locals {
-  is_production  = var.environment == "production"
+  is_production = var.environment == "production"
 
   task_envs = [
     {
@@ -247,5 +247,5 @@ variable "maximum_replicas" {
 }
 
 locals {
-  ecs_sg_ids = [ module.web_service.security_group_id, module.good_job_service.security_group_id]
+  ecs_sg_ids = [module.web_service.security_group_id, module.good_job_service.security_group_id]
 }
