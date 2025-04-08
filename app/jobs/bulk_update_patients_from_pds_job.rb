@@ -24,8 +24,8 @@ class BulkUpdatePatientsFromPDSJob < ApplicationJob
           # should reduce the risk of this.
 
           PatientUpdateFromPDSJob.set(
-            priority: 50,
-            wait: 2 * index
+            priority: 50
+            # wait: 2 * index
           ).perform_later(patient)
         end
     end
