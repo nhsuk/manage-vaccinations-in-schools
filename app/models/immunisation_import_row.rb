@@ -20,14 +20,14 @@ class ImmunisationImportRow
            :validate_patient_postcode,
            :validate_performed_by,
            :validate_performed_ods_code,
-           :validate_programme_name,
+           :validate_programme,
            :validate_reason_not_administered,
            :validate_school_name,
            :validate_school_urn,
            :validate_session_id,
            :validate_time_of_vaccination,
            :validate_uuid,
-           :validate_vaccine_name
+           :validate_vaccine
 
   CARE_SETTING_SCHOOL = 1
   CARE_SETTING_COMMUNITY = 2
@@ -55,14 +55,18 @@ class ImmunisationImportRow
     "menacwy" => {
       "1P" => 1,
       "1B" => 2,
-      "2B" => 3
+      "2B" => 3,
+      "1st Scheduled Booster" => 2,
+      "2nd Scheduled Booster" => 3
     },
     "td_ipv" => {
       "1P" => 1,
       "2P" => 2,
       "3P" => 3,
       "1B" => 4,
-      "2B" => 5
+      "2B" => 5,
+      "1st Scheduled Booster" => 4,
+      "2nd Scheduled Booster" => 5
     }
   }.freeze
 
@@ -147,32 +151,41 @@ class ImmunisationImportRow
 
   def batch_expiry = @data[:batch_expiry_date]
 
-  def batch_name = @data[:batch_number]
+  def batch_name =
+    @data[:batch_number].presence || @data[:vaccination_batch_number]
 
   def care_setting = @data[:care_setting]
 
-  def clinic_name = @data[:clinic_name]
+  def clinic_name = @data[:clinic_name].presence || @data[:event_done_at]
 
-  def date_of_vaccination = @data[:date_of_vaccination]
+  def combined_vaccination_and_dose_sequence = @data[:vaccination_type]
+
+  def date_of_vaccination =
+    @data[:date_of_vaccination].presence || @data[:event_date]
 
   def delivery_site = @data[:anatomical_site]
 
   def dose_sequence = @data[:dose_sequence]
 
+  def location_type = @data[:event_location_type]
+
   def notes = @data[:notes]
 
-  def patient_date_of_birth = @data[:person_dob]
+  def patient_date_of_birth =
+    @data[:person_dob].presence || @data[:date_of_birth]
 
-  def patient_first_name = @data[:person_forename]
+  def patient_first_name =
+    @data[:person_forename].presence || @data[:first_name]
 
   def patient_gender_code =
-    @data[:person_gender_code].presence || @data[:person_gender]
+    @data[:person_gender_code].presence || @data[:person_gender].presence ||
+      @data[:sex]
 
-  def patient_last_name = @data[:person_surname]
+  def patient_last_name = @data[:person_surname].presence || @data[:surname]
 
   def patient_nhs_number = @data[:nhs_number]
 
-  def patient_postcode = @data[:person_postcode]
+  def patient_postcode = @data[:person_postcode].presence || @data[:postcode]
 
   def performed_by_email = @data[:performing_professional_email]
 
@@ -186,13 +199,16 @@ class ImmunisationImportRow
 
   def reason_not_administered = @data[:reason_not_vaccinated]
 
-  def school_name = @data[:school_name]
+  def school_name =
+    @data[:school_name].presence || @data[:school].presence ||
+      @data[:event_done_at]
 
-  def school_urn = @data[:school_urn]
+  def school_urn = @data[:school_urn].presence || @data[:school_code]
 
   def session_id = @data[:session_id]
 
-  def time_of_vaccination = @data[:time_of_vaccination]
+  def time_of_vaccination =
+    @data[:time_of_vaccination].presence || @data[:event_time]
 
   def uuid = @data[:uuid]
 
@@ -205,8 +221,7 @@ class ImmunisationImportRow
   def location_name
     return unless session.nil? || session.location.generic_clinic?
 
-    if care_setting&.to_i == CARE_SETTING_SCHOOL ||
-         (care_setting.blank? && clinic_name.blank?)
+    if is_school_setting? || (is_unknown_setting? && clinic_name.blank?)
       school&.name || school_name&.to_s || "Unknown"
     else
       clinic_name&.to_s || "Unknown"
@@ -253,7 +268,14 @@ class ImmunisationImportRow
   end
 
   def programme
-    @programme ||= programmes_by_name[programme_name&.to_s]
+    @programme ||=
+      begin
+        name =
+          parsed_vaccination_description_string&.dig(:programme_name) ||
+            programme_name&.to_s
+
+        programmes_by_name[name] || vaccine&.programme
+      end
   end
 
   def session
@@ -269,10 +291,13 @@ class ImmunisationImportRow
 
   def vaccine
     @vaccine ||=
-      organisation
-        .vaccines
-        .where(programme:)
-        .find_by(nivs_name: vaccine_name&.to_s)
+      begin
+        nivs_name =
+          parsed_vaccination_description_string&.dig(:vaccine_name) ||
+            vaccine_name&.to_s
+
+        organisation.vaccines.includes(:programme).find_by(nivs_name:)
+      end
   end
 
   def batch
@@ -341,7 +366,7 @@ class ImmunisationImportRow
       elsif "no".start_with?(vaccinated.to_s.downcase)
         false
       end
-    elsif vaccine_name.present?
+    elsif vaccine.present?
       true
     end
   end
@@ -359,9 +384,13 @@ class ImmunisationImportRow
   end
 
   def dose_sequence_value
-    value = dose_sequence&.to_s&.gsub(/\s/, "")&.upcase
+    value =
+      parsed_vaccination_description_string&.dig(:dose_sequence) ||
+        dose_sequence&.to_s&.gsub(/\s/, "")&.upcase
 
     return default_dose_sequence if value.blank?
+
+    return value if value.is_a?(Integer)
 
     dose_sequences = DOSE_SEQUENCES[programme&.type]
 
@@ -370,8 +399,36 @@ class ImmunisationImportRow
     dose_sequence&.to_i
   end
 
+  def is_unknown_setting?
+    care_setting.blank? && location_type.blank?
+  end
+
+  def is_school_setting?
+    care_setting&.to_i == CARE_SETTING_SCHOOL ||
+      location_type&.to_s&.downcase == "school"
+  end
+
+  def is_community_setting?
+    care_setting&.to_i == CARE_SETTING_COMMUNITY ||
+      (location_type.present? && location_type.to_s.downcase != "school")
+  end
+
+  def parsed_vaccination_description_string
+    if combined_vaccination_and_dose_sequence.present?
+      VaccinationDescriptionStringParser.call(
+        combined_vaccination_and_dose_sequence.to_s
+      )
+    end
+  end
+
   def patient_gender_code_value
-    patient_gender_code&.to_s&.downcase&.gsub(" ", "_")
+    value = patient_gender_code&.to_s&.downcase&.gsub(" ", "_")
+
+    if value.in?(%w[indeterminate unknown])
+      "not_known"
+    elsif value.in?(Patient.gender_codes.keys)
+      value
+    end
   end
 
   def patient_nhs_number_value
@@ -429,7 +486,10 @@ class ImmunisationImportRow
     if administered
       if offline_recording?
         if batch_name.nil?
-          errors.add(:base, "<code>BATCH_NUMBER</code> is required")
+          errors.add(
+            :base,
+            "<code>BATCH_NUMBER</code> or <code>Vaccination batch number</code> is required"
+          )
         elsif batch_name.blank?
           errors.add(batch_name.header, "Enter a batch number.")
         end
@@ -452,9 +512,12 @@ class ImmunisationImportRow
   end
 
   def validate_clinic_name
-    if offline_recording? && care_setting&.to_i == CARE_SETTING_COMMUNITY
+    if offline_recording? && is_community_setting?
       if clinic_name.nil?
-        errors.add(:base, "<code>CLINIC_NAME</code> is required")
+        errors.add(
+          :base,
+          "<code>CLINIC_NAME</code> or <code>Event done at</code> is required"
+        )
       elsif clinic_name.blank?
         errors.add(clinic_name.header, "Enter a clinic name")
       elsif !organisation.community_clinics.exists?(name: clinic_name.to_s)
@@ -465,7 +528,10 @@ class ImmunisationImportRow
 
   def validate_date_of_vaccination
     if date_of_vaccination.nil?
-      errors.add(:base, "<code>DATE_OF_VACCINATION</code> is required")
+      errors.add(
+        :base,
+        "<code>DATE_OF_VACCINATION</code> or <code>Event date</code> is required"
+      )
     elsif date_of_vaccination.blank?
       errors.add(date_of_vaccination.header, "Enter a date")
     elsif date_of_vaccination.to_date.nil?
@@ -524,33 +590,35 @@ class ImmunisationImportRow
   end
 
   def validate_dose_sequence
-    if dose_sequence.present?
+    field = dose_sequence.presence || combined_vaccination_and_dose_sequence
+
+    if field.present?
       if offline_recording? && default_dose_sequence.nil?
         errors.add(
-          dose_sequence.header,
+          field.header,
           "Do not provide a dose sequence for this programme (leave blank)."
         )
       elsif dose_sequence_value.nil?
         errors.add(
-          dose_sequence.header,
+          field.header,
           "The dose sequence number cannot be greater than 3. Enter a dose sequence number, for example, 1, 2 or 3."
         )
       elsif maximum_dose_sequence
         if dose_sequence_value < 1
-          errors.add(dose_sequence.header, "must be greater than 0")
+          errors.add(field.header, "must be greater than 0")
         elsif dose_sequence_value > maximum_dose_sequence
-          errors.add(
-            dose_sequence.header,
-            "must be less than #{maximum_dose_sequence}"
-          )
+          errors.add(field.header, "must be less than #{maximum_dose_sequence}")
         end
       end
     elsif administered && offline_recording? && default_dose_sequence.present?
-      if dose_sequence.nil?
-        errors.add(:base, "<code>DOSE_SEQUENCE</code> is required")
+      if field.nil?
+        errors.add(
+          :base,
+          "<code>DOSE_SEQUENCE</code> or <code>Vaccination type</code> is required"
+        )
       else
         errors.add(
-          dose_sequence.header,
+          field.header,
           "The dose sequence number cannot be greater than 3. Enter a dose sequence number, for example, 1, 2 or 3."
         )
       end
@@ -568,7 +636,10 @@ class ImmunisationImportRow
 
   def validate_patient_date_of_birth
     if patient_date_of_birth.nil?
-      errors.add(:base, "<code>PERSON_DOB</code> is required")
+      errors.add(
+        :base,
+        "<code>PERSON_DOB</code> or <code>Date of birth</code> is required"
+      )
     elsif patient_date_of_birth.blank?
       errors.add(patient_date_of_birth.header, "Enter a date of birth.")
     elsif patient_date_of_birth.to_date.nil?
@@ -586,7 +657,10 @@ class ImmunisationImportRow
 
   def validate_patient_first_name
     if patient_first_name.nil?
-      errors.add(:base, "<code>PERSON_FORENAME</code> is required")
+      errors.add(
+        :base,
+        "<code>PERSON_FORENAME</code> or <code>First name</code> is required"
+      )
     elsif patient_first_name.blank?
       errors.add(patient_first_name.header, "Enter a first name.")
     end
@@ -596,20 +670,24 @@ class ImmunisationImportRow
     if patient_gender_code.nil?
       errors.add(
         :base,
-        "<code>PERSON_GENDER_CODE</code> or <code>PERSON_GENDER</code> is required"
+        "<code>PERSON_GENDER_CODE</code>, <code>PERSON_GENDER</code> or <code>Sex</code> is required"
       )
     elsif patient_gender_code.blank?
       errors.add(patient_gender_code.header, "Enter a gender or gender code.")
     elsif patient_gender_code_value.nil?
-      errors.add(patient_gender_code.header, "Enter a gender or gender code.")
-    elsif !Patient.gender_codes.keys.include?(patient_gender_code_value)
-      errors.add(patient_gender_code.header, "Enter a gender or gender code.")
+      errors.add(
+        patient_gender_code.header,
+        "Enter a valid gender or gender code."
+      )
     end
   end
 
   def validate_patient_last_name
     if patient_last_name.nil?
-      errors.add(:base, "<code>PERSON_SURNAME</code> is required")
+      errors.add(
+        :base,
+        "<code>PERSON_SURNAME</code> or <code>Surname</code> is required"
+      )
     elsif patient_last_name.blank?
       errors.add(patient_last_name.header, "Enter a last name.")
     end
@@ -634,7 +712,10 @@ class ImmunisationImportRow
       end
     elsif patient_nhs_number_value.blank?
       if patient_postcode.nil?
-        errors.add(:base, "<code>PERSON_POSTCODE</code> is required")
+        errors.add(
+          :base,
+          "<code>PERSON_POSTCODE</code> or <code>Postcode</code> is required"
+        )
       else
         errors.add(
           patient_postcode.header,
@@ -696,14 +777,21 @@ class ImmunisationImportRow
     end
   end
 
-  def validate_programme_name
-    if programme_name.nil?
-      errors.add(:base, "<code>PROGRAMME</code> is required")
-    elsif programme_name.blank?
-      errors.add(programme_name.header, "Enter a programme.")
-    elsif !programmes_by_name.keys.include?(programme_name.to_s)
+  def validate_programme
+    return if programme
+
+    field = programme_name.presence || combined_vaccination_and_dose_sequence
+
+    if field.nil?
       errors.add(
-        programme_name.header,
+        :base,
+        "<code>PROGRAMME</code> or <code>Vaccination type</code> is required"
+      )
+    elsif field.blank?
+      errors.add(field.header, "Enter a programme.")
+    else
+      errors.add(
+        field.header,
         "This programme is not available in this session."
       )
     end
@@ -728,7 +816,10 @@ class ImmunisationImportRow
   def validate_school_name
     if school_name.blank? && school_urn&.to_s == SCHOOL_URN_UNKNOWN
       if school_name.nil?
-        errors.add(:base, "<code>SCHOOL_NAME</code> is required")
+        errors.add(
+          :base,
+          "<code>SCHOOL_NAME</code> or <code>School</code> is required"
+        )
       else
         errors.add(school_name.header, "Enter a school name.")
       end
@@ -799,12 +890,18 @@ class ImmunisationImportRow
     errors.add(uuid.header, "Enter an existing record.") unless scope.exists?
   end
 
-  def validate_vaccine_name
-    if vaccine_name.present? && vaccine.nil?
-      errors.add(
-        vaccine_name.header,
-        "This vaccine is not available in this session."
-      )
+  def validate_vaccine
+    field = vaccine_name.presence || combined_vaccination_and_dose_sequence
+
+    if vaccine
+      if programme && vaccine.programme_id != programme.id
+        errors.add(
+          field.header,
+          "is not given in the #{programme.name} programme"
+        )
+      end
+    elsif field.present?
+      errors.add(field.header, "This vaccine is not available in this session.")
     end
   end
 end
