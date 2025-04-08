@@ -478,7 +478,7 @@ class Reports::OfflineSessionExporter
       @allowed_formula = allowed_formula
     end
 
-    ALPHABET = %w[A B C D E F G H I J K L M N O P Q R S T U V W X Y Z].freeze
+    ALPHABET = ("A".."Z").to_a.freeze
     CELL_COLUMNS = ALPHABET + ALPHABET.product(ALPHABET).map { _1 + _2 }
 
     def add_data_validation_to(sheet:, column_index:, row_index:)

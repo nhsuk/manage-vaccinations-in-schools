@@ -148,38 +148,32 @@ class PatientImportRow
   end
 
   def nhs_number
-    @data[:child_nhs_number]&.gsub(/\s/, "")
+    @data[:child_nhs_number]&.to_s&.gsub(/\s/, "")
   end
 
   def first_name
-    @data[:child_first_name]
+    @data[:child_first_name]&.to_s
   end
 
   def last_name
-    @data[:child_last_name]
+    @data[:child_last_name]&.to_s
   end
 
   def preferred_first_name
-    @data[:child_preferred_first_name]
+    @data[:child_preferred_first_name]&.to_s
   end
 
   def preferred_last_name
-    @data[:child_preferred_last_name]
+    @data[:child_preferred_last_name]&.to_s
   end
 
   def date_of_birth
-    Date.parse(@data[:child_date_of_birth])
-  rescue ArgumentError, TypeError
-    nil
+    @data[:child_date_of_birth]&.to_date
   end
 
   def birth_academic_year
     if (year_group = @data[:child_year_group]).present?
-      begin
-        Integer(year_group).to_birth_academic_year
-      rescue ArgumentError, TypeError
-        nil
-      end
+      year_group.to_i.to_birth_academic_year
     else
       date_of_birth&.academic_year
     end
@@ -190,59 +184,59 @@ class PatientImportRow
   end
 
   def registration
-    @data[:child_registration]
+    @data[:child_registration]&.to_s
   end
 
   def gender_code
-    @data[:child_gender]&.downcase&.gsub(" ", "_")
+    @data[:child_gender]&.to_s&.downcase&.gsub(" ", "_")
   end
 
   def address_line_1
-    @data[:child_address_line_1]
+    @data[:child_address_line_1]&.to_s
   end
 
   def address_line_2
-    @data[:child_address_line_2]
+    @data[:child_address_line_2]&.to_s
   end
 
   def address_town
-    @data[:child_town]
+    @data[:child_town]&.to_s
   end
 
   def address_postcode
-    @data[:child_postcode]
+    @data[:child_postcode]&.to_s
   end
 
   def parent_1_name
-    @data[:parent_1_name]
+    @data[:parent_1_name]&.to_s
   end
 
   def parent_1_relationship
-    @data[:parent_1_relationship]
+    @data[:parent_1_relationship]&.to_s
   end
 
   def parent_1_email
-    @data[:parent_1_email]&.downcase
+    @data[:parent_1_email]&.to_s&.downcase
   end
 
   def parent_1_phone
-    @data[:parent_1_phone]&.gsub(/\s/, "")
+    @data[:parent_1_phone]&.to_s&.gsub(/\s/, "")
   end
 
   def parent_2_name
-    @data[:parent_2_name]
+    @data[:parent_2_name]&.to_s
   end
 
   def parent_2_relationship
-    @data[:parent_2_relationship]
+    @data[:parent_2_relationship]&.to_s
   end
 
   def parent_2_email
-    @data[:parent_2_email]&.downcase
+    @data[:parent_2_email]&.to_s&.downcase
   end
 
   def parent_2_phone
-    @data[:parent_2_phone]&.gsub(/\s/, "")
+    @data[:parent_2_phone]&.to_s&.gsub(/\s/, "")
   end
 
   attr_reader :organisation, :year_groups

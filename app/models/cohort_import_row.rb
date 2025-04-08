@@ -13,7 +13,7 @@ class CohortImportRow < PatientImportRow
   end
 
   def school_urn
-    @data[:child_school_urn]
+    @data[:child_school_urn]&.to_s
   end
 
   private

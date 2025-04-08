@@ -141,10 +141,6 @@ describe CohortImport do
         expect(cohort_import).to be_valid
         expect(cohort_import.rows.count).to eq(16)
       end
-
-      it "detected the encoding" do
-        expect(cohort_import.detect_encoding).to eq("ISO-8859-1")
-      end
     end
 
     describe "with an invalid file using ISO-8859-1 encoding" do
@@ -152,10 +148,6 @@ describe CohortImport do
 
       it "is invalid" do
         expect(cohort_import).to be_invalid
-      end
-
-      it "detected the encoding" do
-        expect(cohort_import.detect_encoding).to eq("ISO-8859-1")
       end
     end
   end

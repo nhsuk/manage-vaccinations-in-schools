@@ -3,7 +3,10 @@
 describe ImmunisationImportRow do
   subject(:immunisation_import_row) do
     described_class.new(
-      data: data.transform_keys { it.downcase.to_sym },
+      data:
+        data
+          .transform_keys { it.downcase.to_sym }
+          .transform_values { CSVParser::Field.new(it, nil, nil) },
       organisation:
     )
   end
@@ -1371,7 +1374,7 @@ describe ImmunisationImportRow do
     context "with an invalid postcode" do
       let(:data) { { "PERSON_POSTCODE" => "abc" } }
 
-      it { should eq("abc") }
+      it { should be_nil }
     end
 
     context "with a valid postcode" do
