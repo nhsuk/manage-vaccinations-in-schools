@@ -9,6 +9,15 @@ Sentry.init do |config|
 
   config.traces_sample_rate = 0.2
 
+  config.before_send_transaction =
+    lambda do |event, _hint|
+      if event.transaction == "/up" || event.transaction.starts_with?("/health")
+        nil
+      else
+        event
+      end
+    end
+
   rails_filter_parameters =
     Rails.application.config.filter_parameters.map(&:to_s)
 
