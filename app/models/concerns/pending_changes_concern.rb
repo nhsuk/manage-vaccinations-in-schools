@@ -10,23 +10,25 @@ module PendingChangesConcern
       attributes.each_with_object({}) do |(attr, new_value), staged_changes|
         current_value = public_send(attr)
 
-        current_value =
-          current_value.normalise_whitespace if current_value.respond_to?(
-          :normalise_whitespace
-        )
-
         # Automatically update the patient's attribute if `new_value` is the same as `current_value` except from:
-        #  - whitespace normalisation
-        if (new_value == current_value) && (current_value != public_send(attr))
-          public_send("#{attr}=", new_value)
+        #  - whitespace
+        # Otherwise, stage the change for review
+        if normalise_for_comparison(new_value) ==
+          normalise_for_comparison(current_value)
+          public_send("#{attr}=", new_value) if new_value != current_value
+        else
+          staged_changes[attr.to_s] = new_value
         end
-
-        staged_changes[attr.to_s] = new_value if new_value != current_value
       end
 
     if new_pending_changes.any?
       update!(pending_changes: pending_changes.merge(new_pending_changes))
     end
+  end
+
+  def normalise_for_comparison(value)
+    # Normalise whitespace
+    value.respond_to?(:normalise_whitespace) ? value.normalise_whitespace : value
   end
 
   def with_pending_changes
