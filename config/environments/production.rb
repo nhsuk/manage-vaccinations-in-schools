@@ -108,13 +108,13 @@ Rails.application.configure do
       description: "Send school clinic invitation emails to parents"
     },
     consent_request: {
-      cron: "every day at 9am",
+      cron: "every day at 4pm",
       class: "SchoolConsentRequestsJob",
       description:
         "Send school consent request emails to parents for each session"
     },
     consent_reminder: {
-      cron: "every day at 9am",
+      cron: "every day at 4pm",
       class: "SchoolConsentRemindersJob",
       description:
         "Send school consent reminder emails to parents for each session"
