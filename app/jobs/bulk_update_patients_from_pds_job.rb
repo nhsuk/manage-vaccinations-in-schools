@@ -11,13 +11,15 @@ class BulkUpdatePatientsFromPDSJob < ApplicationJob
     return unless Settings.pds.enqueue_bulk_updates
 
     patients = Patient.with_nhs_number.not_invalidated.not_deceased
+    wait_between_jobs = Settings.pds.wait_between_jobs.to_i
 
     GoodJob::Bulk.enqueue do
       patients
         .where(updated_from_pds_at: nil)
-        .or(patients.where("updated_from_pds_at < ?", 6.hours.ago))
+        .or(patients.where("updated_from_pds_at < ?", 12.hours.ago))
         .order("updated_from_pds_at ASC NULLS FIRST")
-        .each_with_index do |patient, index|
+        .find_each
+        .with_index do |patient, index|
           # Schedule with a delay to preemptively handle rate limit issues.
           # This shouldn't be necessary, but we're finding that Good Job
           # has occasional race condition issues, and spreading out the jobs
@@ -25,7 +27,7 @@ class BulkUpdatePatientsFromPDSJob < ApplicationJob
 
           PatientUpdateFromPDSJob.set(
             priority: 50,
-            wait: 2 * index
+            wait: index * wait_between_jobs
           ).perform_later(patient)
         end
     end
