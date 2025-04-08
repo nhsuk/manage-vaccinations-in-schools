@@ -15,8 +15,8 @@ module PendingChangesConcern
           :normalise_whitespace
         )
 
-        # Automatically update the patient's attribute if `current_value` is an un-whitespace-normalised
-        # version of `new_value`
+        # Automatically update the patient's attribute if `new_value` is the same as `current_value` except from:
+        #  - whitespace normalisation
         if (new_value == current_value) && (current_value != public_send(attr))
           public_send("#{attr}=", new_value)
         end
