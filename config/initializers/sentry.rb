@@ -35,5 +35,15 @@ Sentry.init do |config|
     )
 
   config.before_send =
-    lambda { |event, _hint| combined_filter.filter(event.to_hash) }
+    lambda do |event, hint|
+      if !Rails.env.production? &&
+           hint[:exception].is_a?(Notifications::Client::BadRequestError) &&
+           hint[:exception].message.include?(
+             "Can’t send to this recipient using a team-only API key"
+           )
+        nil
+      else
+        combined_filter.filter(event.to_hash)
+      end
+    end
 end
