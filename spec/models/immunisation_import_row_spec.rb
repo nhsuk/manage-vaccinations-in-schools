@@ -683,337 +683,10 @@ describe ImmunisationImportRow do
     end
   end
 
-  describe "#patient" do
-    subject(:patient) { immunisation_import_row.to_vaccination_record.patient }
-
-    context "with new patient data" do
-      let(:data) { valid_data }
-
-      it { should_not be_nil }
+  describe "#to_vaccination_record" do
+    subject(:vaccination_record) do
+      immunisation_import_row.to_vaccination_record
     end
-
-    context "with an existing patient matching NHS number" do
-      let(:data) { valid_data }
-
-      let(:other_patient) { create(:patient, nhs_number:) }
-
-      it { should eq(other_patient) }
-    end
-
-    context "without an NHS number and an existing patient matching first name, last name and date of birth" do
-      let(:data) { valid_data.except("NHS_NUMBER") }
-
-      let(:other_patient) do
-        create(
-          :patient,
-          given_name:,
-          family_name:,
-          nhs_number:,
-          date_of_birth: Date.parse(date_of_birth)
-        )
-      end
-
-      it { should eq(other_patient) }
-    end
-
-    context "without an NHS number and an existing patient matching first name, last name and postcode" do
-      let(:data) { valid_data.except("NHS_NUMBER") }
-
-      let(:other_patient) do
-        create(
-          :patient,
-          given_name:,
-          family_name:,
-          address_postcode:,
-          nhs_number:
-        )
-      end
-
-      it { should eq(other_patient) }
-    end
-
-    context "without an NHS number and an existing patient matching first name, date of birth and postcode" do
-      let(:data) { valid_data.except("NHS_NUMBER") }
-
-      let(:other_patient) do
-        create(
-          :patient,
-          given_name:,
-          date_of_birth: Date.parse(date_of_birth),
-          address_postcode:,
-          nhs_number:
-        )
-      end
-
-      it { should eq(other_patient) }
-    end
-
-    context "without an NHS number and an existing patient matching last name, date of birth and postcode" do
-      let(:data) { valid_data.except("NHS_NUMBER") }
-
-      let(:other_patient) do
-        create(
-          :patient,
-          family_name:,
-          date_of_birth: Date.parse(date_of_birth),
-          address_postcode:,
-          nhs_number:
-        )
-      end
-
-      it { should eq(other_patient) }
-    end
-
-    context "with an existing matching patient but different patient data" do
-      let(:data) { valid_data }
-
-      it "does not stage any changes as vaccs history data is potentially out of date" do
-        create(:patient, nhs_number:, address_postcode: "CB1 1AA")
-        expect(patient.pending_changes).to be_empty
-      end
-    end
-
-    describe "#organisation" do
-      subject { patient.organisation }
-
-      let(:data) { valid_data }
-
-      it { should be_nil }
-
-      context "with an existing patient in the cohort" do
-        let(:patient) { create(:patient, nhs_number:) }
-
-        it { should eq(patient.organisation) }
-      end
-    end
-  end
-
-  describe "#location_name" do
-    subject { immunisation_import_row.to_vaccination_record.location_name }
-
-    context "with a school session that exists" do
-      let(:data) do
-        valid_data.merge(
-          "DATE_OF_VACCINATION" => session.dates.first.strftime("%Y%m%d"),
-          "SESSION_ID" => session.id.to_s,
-          "ORGANISATION_CODE" => organisation.ods_code,
-          "PERFORMING_PROFESSIONAL_EMAIL" => create(:user).email
-        )
-      end
-
-      let(:session) { create(:session, organisation:, location:, programmes:) }
-
-      it { should be_nil }
-    end
-
-    context "without a school URN" do
-      let(:data) { valid_data.merge("SCHOOL_NAME" => "Waterloo Road") }
-
-      it { should eq("Waterloo Road") }
-    end
-
-    context "without a school URN and a clinic exists" do
-      let(:data) { valid_data.merge("SCHOOL_NAME" => "Waterloo Road") }
-
-      before { create(:community_clinic, urn: nil) }
-
-      it { should eq("Waterloo Road") }
-    end
-
-    context "with a known school and unknown care setting" do
-      let(:data) do
-        valid_data.merge(
-          "SCHOOL_URN" => "123456",
-          "SCHOOL_NAME" => "Waterloo Road"
-        )
-      end
-
-      it { should eq("Waterloo Road") }
-    end
-
-    context "with a known school and no school name" do
-      let(:data) { valid_data.merge("SCHOOL_URN" => "123456") }
-
-      it { should eq("Waterloo Road") }
-    end
-
-    context "with a known school and community care setting" do
-      let(:data) do
-        valid_data.merge(
-          "SCHOOL_URN" => "123456",
-          "SCHOOL_NAME" => "Waterloo Road",
-          "CARE_SETTING" => "2"
-        )
-      end
-
-      it { should eq("Unknown") }
-    end
-
-    context "when home educated and community care setting" do
-      let(:data) do
-        valid_data.merge(
-          "SCHOOL_URN" => "999999",
-          "SCHOOL_NAME" => "",
-          "CARE_SETTING" => "2"
-        )
-      end
-
-      it { should eq("Unknown") }
-    end
-
-    context "when home educated and community care setting and a named clinic" do
-      let(:data) do
-        valid_data.merge(
-          "SCHOOL_URN" => "999999",
-          "SCHOOL_NAME" => "",
-          "CARE_SETTING" => "2",
-          "CLINIC_NAME" => "A Clinic"
-        )
-      end
-
-      it { should eq("A Clinic") }
-    end
-
-    context "when home educated and unknown care setting" do
-      let(:data) do
-        valid_data.merge("SCHOOL_URN" => "999999", "SCHOOL_NAME" => nil)
-      end
-
-      it { should eq("Unknown") }
-    end
-
-    context "when home educated and unknown care setting and a named clinic" do
-      let(:data) do
-        valid_data.merge(
-          "SCHOOL_URN" => "999999",
-          "SCHOOL_NAME" => "",
-          "CLINIC_NAME" => "A Clinic"
-        )
-      end
-
-      it { should eq("A Clinic") }
-    end
-
-    context "with an unknown school and school care setting" do
-      let(:data) do
-        valid_data.merge(
-          "SCHOOL_URN" => "888888",
-          "SCHOOL_NAME" => "Waterloo Road",
-          "CARE_SETTING" => "1"
-        )
-      end
-
-      it { should eq("Waterloo Road") }
-    end
-
-    context "with an unknown school and school care setting and a clinic name" do
-      let(:data) do
-        valid_data.merge(
-          "SCHOOL_URN" => "888888",
-          "SCHOOL_NAME" => "Waterloo Road",
-          "CARE_SETTING" => "1",
-          "CLINIC_NAME" => "A Clinic"
-        )
-      end
-
-      it { should eq("Waterloo Road") }
-    end
-
-    context "with an unknown school and community care setting" do
-      let(:data) do
-        valid_data.merge(
-          "SCHOOL_URN" => "888888",
-          "SCHOOL_NAME" => "Waterloo Road",
-          "CARE_SETTING" => "2"
-        )
-      end
-
-      it { should eq("Unknown") }
-    end
-
-    context "with an unknown school and community care setting and a clinic name" do
-      let(:data) do
-        valid_data.merge(
-          "SCHOOL_URN" => "888888",
-          "SCHOOL_NAME" => "Waterloo Road",
-          "CARE_SETTING" => "2",
-          "CLINIC_NAME" => "A Clinic"
-        )
-      end
-
-      it { should eq("A Clinic") }
-    end
-
-    context "with an unknown school and unknown care setting" do
-      let(:data) do
-        valid_data.merge(
-          "SCHOOL_URN" => "888888",
-          "SCHOOL_NAME" => "Waterloo Road"
-        )
-      end
-
-      it { should eq("Waterloo Road") }
-    end
-
-    context "with an unknown school and unknown care setting and a clinic name" do
-      let(:data) do
-        valid_data.merge(
-          "SCHOOL_URN" => "888888",
-          "SCHOOL_NAME" => "Waterloo Road",
-          "CLINIC_NAME" => "A Clinic"
-        )
-      end
-
-      it { should eq("A Clinic") }
-    end
-  end
-
-  describe "#batch_expiry" do
-    subject { immunisation_import_row.batch_expiry&.to_date }
-
-    context "without a value" do
-      let(:data) { {} }
-
-      it { should be_nil }
-    end
-
-    context "with an invalid value" do
-      let(:data) { { "BATCH_EXPIRY_DATE" => "abc" } }
-
-      it { should be_nil }
-    end
-
-    context "with a valid value" do
-      let(:data) { { "BATCH_EXPIRY_DATE" => "20100101" } }
-
-      it { should eq(Date.new(2010, 1, 1)) }
-    end
-
-    context "with an Excel-exported-to-CSV date format" do
-      let(:data) { { "BATCH_EXPIRY_DATE" => "01/09/2027" } }
-
-      it { should eq(Date.new(2027, 9, 1)) }
-    end
-  end
-
-  describe "#batch_name" do
-    subject { immunisation_import_row.batch_name&.to_s }
-
-    context "without a value" do
-      let(:data) { {} }
-
-      it { should be_nil }
-    end
-
-    context "with a value" do
-      let(:data) { { "BATCH_NUMBER" => "abc" } }
-
-      it { should eq("abc") }
-    end
-  end
-
-  describe "#outcome" do
-    subject { immunisation_import_row.to_vaccination_record.outcome }
 
     let(:data) { valid_data }
 
@@ -1025,437 +698,6 @@ describe ImmunisationImportRow do
         "ANATOMICAL_SITE" => ""
       )
     end
-
-    it { should eq("administered") }
-
-    context "with positive short vaccinated value" do
-      let(:data) { valid_data.merge("VACCINATED" => "Y") }
-
-      it { should eq("administered") }
-    end
-
-    context "with positive long vaccinated value" do
-      let(:data) { valid_data.merge("VACCINATED" => "Yes") }
-
-      it { should eq("administered") }
-    end
-
-    {
-      "refused" => "refused",
-      "unwell" => "not_well",
-      "vaccination contraindicated" => "contraindications",
-      "already had elsewhere" => "already_had",
-      "did not attend" => "absent_from_session",
-      "absent from school" => "absent_from_school"
-    }.each do |input_reason, expected_enum|
-      context "with reason '#{input_reason}'" do
-        let(:data) do
-          not_vaccinated_data.merge("REASON_NOT_VACCINATED" => input_reason)
-        end
-
-        it { should eq(expected_enum) }
-      end
-    end
-  end
-
-  describe "#notes" do
-    subject { immunisation_import_row.to_vaccination_record.notes }
-
-    context "without notes" do
-      let(:data) { valid_data }
-
-      it { should be_nil }
-    end
-
-    context "with notes" do
-      let(:data) { valid_data.merge("NOTES" => "Some notes.") }
-
-      it { should eq("Some notes.") }
-    end
-  end
-
-  describe "#delivery_method" do
-    subject { immunisation_import_row.to_vaccination_record.delivery_method }
-
-    context "with a nasal anatomical site" do
-      let(:data) { valid_data.merge("ANATOMICAL_SITE" => "nasal") }
-
-      it { should eq("nasal_spray") }
-    end
-
-    context "with a non-nasal anatomical site" do
-      let(:data) { valid_data.merge("ANATOMICAL_SITE" => "left thigh") }
-
-      it { should eq("intramuscular") }
-    end
-  end
-
-  describe "#delivery_site" do
-    subject { immunisation_import_row.to_vaccination_record.delivery_site }
-
-    context "with a left thigh anatomical site" do
-      let(:data) { valid_data.merge("ANATOMICAL_SITE" => "left thigh") }
-
-      it { should eq("left_thigh") }
-    end
-
-    context "with a right thigh anatomical site" do
-      let(:data) { valid_data.merge("ANATOMICAL_SITE" => "right thigh") }
-
-      it { should eq("right_thigh") }
-    end
-
-    context "with a left upper arm anatomical site" do
-      let(:data) { valid_data.merge("ANATOMICAL_SITE" => "left upper arm") }
-
-      it { should eq("left_arm_upper_position") }
-    end
-
-    context "with a right upper arm anatomical site" do
-      let(:data) { valid_data.merge("ANATOMICAL_SITE" => "right upper arm") }
-
-      it { should eq("right_arm_upper_position") }
-    end
-
-    context "with a left arm (upper position) anatomical site" do
-      let(:data) do
-        valid_data.merge("ANATOMICAL_SITE" => "left arm (upper position)")
-      end
-
-      it { should eq("left_arm_upper_position") }
-    end
-
-    context "with a right arm (upper position) anatomical site" do
-      let(:data) do
-        valid_data.merge("ANATOMICAL_SITE" => "right arm (upper position)")
-      end
-
-      it { should eq("right_arm_upper_position") }
-    end
-
-    context "with a left arm (lower position) anatomical site" do
-      let(:data) do
-        valid_data.merge("ANATOMICAL_SITE" => "left arm (lower position)")
-      end
-
-      it { should eq("left_arm_lower_position") }
-    end
-
-    context "with a right arm (lower position) anatomical site" do
-      let(:data) do
-        valid_data.merge("ANATOMICAL_SITE" => "right arm (lower position)")
-      end
-
-      it { should eq("right_arm_lower_position") }
-    end
-
-    context "with a left buttock anatomical site" do
-      let(:data) { valid_data.merge("ANATOMICAL_SITE" => "left buttock") }
-
-      it { should eq("left_buttock") }
-    end
-
-    context "with a right buttock anatomical site" do
-      let(:data) { valid_data.merge("ANATOMICAL_SITE" => "right buttock") }
-
-      it { should eq("right_buttock") }
-    end
-
-    context "with a nasal anatomical site" do
-      let(:data) { valid_data.merge("ANATOMICAL_SITE" => "nasal") }
-
-      it { should eq("nose") }
-    end
-  end
-
-  describe "#dose_sequence" do
-    subject(:dose_sequence) do
-      immunisation_import_row.to_vaccination_record.dose_sequence
-    end
-
-    context "without a value and for HPV" do
-      let(:programmes) { [create(:programme, :hpv)] }
-
-      let(:data) do
-        valid_data.merge("PROGRAMME" => "HPV", "VACCINE_GIVEN" => "Gardasil9")
-      end
-
-      it { should eq(1) }
-    end
-
-    context "without a value and for Td/IPV" do
-      let(:programmes) { [create(:programme, :td_ipv)] }
-
-      let(:data) do
-        valid_data.merge("PROGRAMME" => "3-in-1", "VACCINE_GIVEN" => "Revaxis")
-      end
-
-      it { should be_nil }
-    end
-
-    context "without a value and for MenACWY" do
-      let(:programmes) { [create(:programme, :menacwy)] }
-
-      let(:data) do
-        valid_data.merge(
-          "PROGRAMME" => "MenACWY",
-          "VACCINE_GIVEN" => "MenQuadfi"
-        )
-      end
-
-      it { should be_nil }
-    end
-
-    context "with an invalid value" do
-      let(:programmes) { [create(:programme, :hpv)] }
-
-      let(:data) do
-        valid_data.merge(
-          "PROGRAMME" => "HPV",
-          "VACCINE_GIVEN" => "Gardasil9",
-          "DOSE_SEQUENCE" => "abc"
-        )
-      end
-
-      it { expect(immunisation_import_row).to be_invalid }
-    end
-
-    context "with a valid value" do
-      let(:programmes) { [create(:programme, :hpv)] }
-
-      let(:data) do
-        valid_data.merge(
-          "PROGRAMME" => "HPV",
-          "VACCINE_GIVEN" => "Gardasil9",
-          "DOSE_SEQUENCE" => "1"
-        )
-      end
-
-      it { should eq(1) }
-    end
-
-    %w[1P 2P 3P].each_with_index do |value, index|
-      context "with an HPV special value of #{value}" do
-        let(:programmes) { [create(:programme, :hpv)] }
-
-        let(:data) do
-          valid_data.merge(
-            "PROGRAMME" => "HPV",
-            "VACCINE_GIVEN" => "Gardasil9",
-            "DOSE_SEQUENCE" => value
-          )
-        end
-
-        it { should eq(index + 1) }
-      end
-    end
-
-    %w[1P 1B 2B].each_with_index do |value, index|
-      context "with a MenACWY special value of #{value}" do
-        let(:programmes) { [create(:programme, :menacwy)] }
-
-        let(:data) do
-          valid_data.merge(
-            "PROGRAMME" => "MenACWY",
-            "VACCINE_GIVEN" => "MenQuadfi",
-            "DOSE_SEQUENCE" => value
-          )
-        end
-
-        it { should eq(index + 1) }
-      end
-    end
-
-    %w[1P 2P 3P 1B 2B].each_with_index do |value, index|
-      context "with a Td/IPV special value of #{value}" do
-        let(:programmes) { [create(:programme, :td_ipv)] }
-
-        let(:data) do
-          valid_data.merge(
-            "PROGRAMME" => "Td/IPV",
-            "VACCINE_GIVEN" => "Revaxis",
-            "DOSE_SEQUENCE" => value
-          )
-        end
-
-        it { should eq(index + 1) }
-      end
-    end
-  end
-
-  describe "#patient_date_of_birth" do
-    subject do
-      immunisation_import_row.to_vaccination_record.patient.date_of_birth
-    end
-
-    context "with a YYYYMMDD value" do
-      let(:data) { valid_data.merge("PERSON_DOB" => "20230901") }
-
-      it { should eq(Date.new(2023, 9, 1)) }
-    end
-
-    context "with an Excel-exported-to-CSV date format" do
-      let(:data) { valid_data.merge("PERSON_DOB" => "01/09/2023") }
-
-      it { should eq(Date.new(2023, 9, 1)) }
-    end
-  end
-
-  describe "#patient_gender_code" do
-    subject do
-      immunisation_import_row.to_vaccination_record.patient.gender_code
-    end
-
-    let(:valid_data_without_gender) { valid_data.except("PERSON_GENDER_CODE") }
-
-    shared_examples "with a value" do |key|
-      context "with a 'not known' value" do
-        let(:data) { valid_data_without_gender.merge(key => "Not Known") }
-
-        it { should eq("not_known") }
-      end
-
-      context "with a 'male' value" do
-        let(:data) { valid_data_without_gender.merge(key => "Male") }
-
-        it { should eq("male") }
-      end
-
-      context "with a 'female' value" do
-        let(:data) { valid_data_without_gender.merge(key => "Female") }
-
-        it { should eq("female") }
-      end
-
-      context "with a 'not specified' value" do
-        let(:data) { valid_data_without_gender.merge(key => "Not Specified") }
-
-        it { should eq("not_specified") }
-      end
-    end
-
-    include_examples "with a value", "PERSON_GENDER_CODE"
-    include_examples "with a value", "PERSON_GENDER"
-  end
-
-  describe "#patient_address_postcode" do
-    subject(:patient_postcode) do
-      immunisation_import_row.to_vaccination_record.patient.address_postcode
-    end
-
-    context "with a valid postcode" do
-      let(:data) { valid_data.merge("PERSON_POSTCODE" => "SW1 1AA") }
-
-      it { should eq("SW1 1AA") }
-    end
-
-    context "with a valid unformatted postcode" do
-      let(:data) { valid_data.merge("PERSON_POSTCODE" => "sw11aa") }
-
-      it { should eq("SW1 1AA") }
-    end
-  end
-
-  describe "#performed_ods_code" do
-    subject { immunisation_import_row.to_vaccination_record.performed_ods_code }
-
-    context "with a value" do
-      let(:data) { valid_data.merge("ORGANISATION_CODE" => "ABC") }
-
-      it { should eq("ABC") }
-    end
-  end
-
-  describe "#performed_at" do
-    subject(:performed_at) do
-      immunisation_import_row.to_vaccination_record.performed_at
-    end
-
-    let(:year) { 2024 }
-    let(:month) { 1 }
-    let(:day) { 1 }
-
-    context "with a HH:MM:SS value" do
-      let(:data) { valid_data.merge("TIME_OF_VACCINATION" => "10:15:30") }
-
-      it { should eq(Time.zone.local(year, month, day, 10, 15, 30)) }
-    end
-
-    context "with a HHMMSS value" do
-      let(:data) { valid_data.merge("TIME_OF_VACCINATION" => "101530") }
-
-      it { should eq(Time.zone.local(year, month, day, 10, 15, 30)) }
-    end
-
-    context "with a HH:MM value" do
-      let(:data) { valid_data.merge("TIME_OF_VACCINATION" => "10:15") }
-
-      it { should eq(Time.zone.local(year, month, day, 10, 15, 0)) }
-    end
-
-    context "with a HHMM value" do
-      let(:data) { valid_data.merge("TIME_OF_VACCINATION" => "1015") }
-
-      it { should eq(Time.zone.local(year, month, day, 10, 15, 0)) }
-    end
-
-    context "with a HH value" do
-      let(:data) { valid_data.merge("TIME_OF_VACCINATION" => "10") }
-
-      it { should eq(Time.zone.local(year, month, day, 10, 0, 0)) }
-    end
-  end
-
-  describe "#performed_by_user" do
-    subject { immunisation_import_row.to_vaccination_record.performed_by_user }
-
-    context "with a value" do
-      let(:data) do
-        valid_data.merge("PERFORMING_PROFESSIONAL_EMAIL" => "nurse@example.com")
-      end
-
-      context "and a user that doesn't exist" do
-        it { expect(immunisation_import_row).to be_invalid }
-      end
-
-      context "and a user that does exist" do
-        let!(:user) { create(:user, email: "nurse@example.com") }
-
-        it { should eq(user) }
-      end
-    end
-  end
-
-  describe "#performed_by_given_name" do
-    subject do
-      immunisation_import_row.to_vaccination_record.performed_by_given_name
-    end
-
-    let(:data) do
-      valid_data.merge("PERFORMING_PROFESSIONAL_FORENAME" => "John")
-    end
-
-    it { should eq("John") }
-  end
-
-  describe "#performed_by_family_name" do
-    subject do
-      immunisation_import_row.to_vaccination_record.performed_by_family_name
-    end
-
-    let(:data) do
-      valid_data.merge("PERFORMING_PROFESSIONAL_SURNAME" => "Smith")
-    end
-
-    it { should eq("Smith") }
-  end
-
-  describe "#to_vaccination_record" do
-    subject(:vaccination_record) do
-      immunisation_import_row.to_vaccination_record
-    end
-
-    let(:data) { valid_data }
 
     it { should be_administered }
 
@@ -1538,28 +780,728 @@ describe ImmunisationImportRow do
       it { should_not be_nil }
       it { should eq(existing_vaccination_record) }
     end
-  end
 
-  describe "#batch" do
-    subject(:batch) { immunisation_import_row.to_vaccination_record.batch }
+    describe "#batch" do
+      subject(:batch) { vaccination_record.batch }
 
-    let(:data) { valid_data }
+      let(:data) { valid_data }
 
-    it { should be_archived }
+      it { should be_archived }
 
-    context "without a vaccine" do
-      before { data.delete("VACCINE_GIVEN") }
+      context "without a vaccine" do
+        before { data.delete("VACCINE_GIVEN") }
 
-      it { should be_nil }
-    end
-
-    context "without a batch number or expiry date" do
-      before do
-        data.delete("BATCH_NUMBER")
-        data.delete("BATCH_EXPIRY_DATE")
+        it { should be_nil }
       end
 
-      it { should be_nil }
+      context "without a batch number or expiry date" do
+        before do
+          data.delete("BATCH_NUMBER")
+          data.delete("BATCH_EXPIRY_DATE")
+        end
+
+        it { should be_nil }
+      end
+    end
+
+    describe "#delivery_method" do
+      subject { vaccination_record.delivery_method }
+
+      context "with a nasal anatomical site" do
+        let(:data) { valid_data.merge("ANATOMICAL_SITE" => "nasal") }
+
+        it { should eq("nasal_spray") }
+      end
+
+      context "with a non-nasal anatomical site" do
+        let(:data) { valid_data.merge("ANATOMICAL_SITE" => "left thigh") }
+
+        it { should eq("intramuscular") }
+      end
+    end
+
+    describe "#delivery_site" do
+      subject { vaccination_record.delivery_site }
+
+      context "with a left thigh anatomical site" do
+        let(:data) { valid_data.merge("ANATOMICAL_SITE" => "left thigh") }
+
+        it { should eq("left_thigh") }
+      end
+
+      context "with a right thigh anatomical site" do
+        let(:data) { valid_data.merge("ANATOMICAL_SITE" => "right thigh") }
+
+        it { should eq("right_thigh") }
+      end
+
+      context "with a left upper arm anatomical site" do
+        let(:data) { valid_data.merge("ANATOMICAL_SITE" => "left upper arm") }
+
+        it { should eq("left_arm_upper_position") }
+      end
+
+      context "with a right upper arm anatomical site" do
+        let(:data) { valid_data.merge("ANATOMICAL_SITE" => "right upper arm") }
+
+        it { should eq("right_arm_upper_position") }
+      end
+
+      context "with a left arm (upper position) anatomical site" do
+        let(:data) do
+          valid_data.merge("ANATOMICAL_SITE" => "left arm (upper position)")
+        end
+
+        it { should eq("left_arm_upper_position") }
+      end
+
+      context "with a right arm (upper position) anatomical site" do
+        let(:data) do
+          valid_data.merge("ANATOMICAL_SITE" => "right arm (upper position)")
+        end
+
+        it { should eq("right_arm_upper_position") }
+      end
+
+      context "with a left arm (lower position) anatomical site" do
+        let(:data) do
+          valid_data.merge("ANATOMICAL_SITE" => "left arm (lower position)")
+        end
+
+        it { should eq("left_arm_lower_position") }
+      end
+
+      context "with a right arm (lower position) anatomical site" do
+        let(:data) do
+          valid_data.merge("ANATOMICAL_SITE" => "right arm (lower position)")
+        end
+
+        it { should eq("right_arm_lower_position") }
+      end
+
+      context "with a left buttock anatomical site" do
+        let(:data) { valid_data.merge("ANATOMICAL_SITE" => "left buttock") }
+
+        it { should eq("left_buttock") }
+      end
+
+      context "with a right buttock anatomical site" do
+        let(:data) { valid_data.merge("ANATOMICAL_SITE" => "right buttock") }
+
+        it { should eq("right_buttock") }
+      end
+
+      context "with a nasal anatomical site" do
+        let(:data) { valid_data.merge("ANATOMICAL_SITE" => "nasal") }
+
+        it { should eq("nose") }
+      end
+    end
+
+    describe "#dose_sequence" do
+      subject { vaccination_record.dose_sequence }
+
+      context "without a value and for HPV" do
+        let(:programmes) { [create(:programme, :hpv)] }
+
+        let(:data) do
+          valid_data.merge("PROGRAMME" => "HPV", "VACCINE_GIVEN" => "Gardasil9")
+        end
+
+        it { should eq(1) }
+      end
+
+      context "without a value and for Td/IPV" do
+        let(:programmes) { [create(:programme, :td_ipv)] }
+
+        let(:data) do
+          valid_data.merge(
+            "PROGRAMME" => "3-in-1",
+            "VACCINE_GIVEN" => "Revaxis"
+          )
+        end
+
+        it { should be_nil }
+      end
+
+      context "without a value and for MenACWY" do
+        let(:programmes) { [create(:programme, :menacwy)] }
+
+        let(:data) do
+          valid_data.merge(
+            "PROGRAMME" => "MenACWY",
+            "VACCINE_GIVEN" => "MenQuadfi"
+          )
+        end
+
+        it { should be_nil }
+      end
+
+      context "with an invalid value" do
+        let(:programmes) { [create(:programme, :hpv)] }
+
+        let(:data) do
+          valid_data.merge(
+            "PROGRAMME" => "HPV",
+            "VACCINE_GIVEN" => "Gardasil9",
+            "DOSE_SEQUENCE" => "abc"
+          )
+        end
+
+        it { expect(immunisation_import_row).to be_invalid }
+      end
+
+      context "with a valid value" do
+        let(:programmes) { [create(:programme, :hpv)] }
+
+        let(:data) do
+          valid_data.merge(
+            "PROGRAMME" => "HPV",
+            "VACCINE_GIVEN" => "Gardasil9",
+            "DOSE_SEQUENCE" => "1"
+          )
+        end
+
+        it { should eq(1) }
+      end
+
+      %w[1P 2P 3P].each_with_index do |value, index|
+        context "with an HPV special value of #{value}" do
+          let(:programmes) { [create(:programme, :hpv)] }
+
+          let(:data) do
+            valid_data.merge(
+              "PROGRAMME" => "HPV",
+              "VACCINE_GIVEN" => "Gardasil9",
+              "DOSE_SEQUENCE" => value
+            )
+          end
+
+          it { should eq(index + 1) }
+        end
+      end
+
+      %w[1P 1B 2B].each_with_index do |value, index|
+        context "with a MenACWY special value of #{value}" do
+          let(:programmes) { [create(:programme, :menacwy)] }
+
+          let(:data) do
+            valid_data.merge(
+              "PROGRAMME" => "MenACWY",
+              "VACCINE_GIVEN" => "MenQuadfi",
+              "DOSE_SEQUENCE" => value
+            )
+          end
+
+          it { should eq(index + 1) }
+        end
+      end
+
+      %w[1P 2P 3P 1B 2B].each_with_index do |value, index|
+        context "with a Td/IPV special value of #{value}" do
+          let(:programmes) { [create(:programme, :td_ipv)] }
+
+          let(:data) do
+            valid_data.merge(
+              "PROGRAMME" => "Td/IPV",
+              "VACCINE_GIVEN" => "Revaxis",
+              "DOSE_SEQUENCE" => value
+            )
+          end
+
+          it { should eq(index + 1) }
+        end
+      end
+    end
+
+    describe "#location_name" do
+      subject { vaccination_record.location_name }
+
+      context "with a school session that exists" do
+        let(:data) do
+          valid_data.merge(
+            "DATE_OF_VACCINATION" => session.dates.first.strftime("%Y%m%d"),
+            "SESSION_ID" => session.id.to_s,
+            "ORGANISATION_CODE" => organisation.ods_code,
+            "PERFORMING_PROFESSIONAL_EMAIL" => create(:user).email
+          )
+        end
+
+        let(:session) do
+          create(:session, organisation:, location:, programmes:)
+        end
+
+        it { should be_nil }
+      end
+
+      context "without a school URN" do
+        let(:data) { valid_data.merge("SCHOOL_NAME" => "Waterloo Road") }
+
+        it { should eq("Waterloo Road") }
+      end
+
+      context "without a school URN and a clinic exists" do
+        let(:data) { valid_data.merge("SCHOOL_NAME" => "Waterloo Road") }
+
+        before { create(:community_clinic, urn: nil) }
+
+        it { should eq("Waterloo Road") }
+      end
+
+      context "with a known school and unknown care setting" do
+        let(:data) do
+          valid_data.merge(
+            "SCHOOL_URN" => "123456",
+            "SCHOOL_NAME" => "Waterloo Road"
+          )
+        end
+
+        it { should eq("Waterloo Road") }
+      end
+
+      context "with a known school and no school name" do
+        let(:data) { valid_data.merge("SCHOOL_URN" => "123456") }
+
+        it { should eq("Waterloo Road") }
+      end
+
+      context "with a known school and community care setting" do
+        let(:data) do
+          valid_data.merge(
+            "SCHOOL_URN" => "123456",
+            "SCHOOL_NAME" => "Waterloo Road",
+            "CARE_SETTING" => "2"
+          )
+        end
+
+        it { should eq("Unknown") }
+      end
+
+      context "when home educated and community care setting" do
+        let(:data) do
+          valid_data.merge(
+            "SCHOOL_URN" => "999999",
+            "SCHOOL_NAME" => "",
+            "CARE_SETTING" => "2"
+          )
+        end
+
+        it { should eq("Unknown") }
+      end
+
+      context "when home educated and community care setting and a named clinic" do
+        let(:data) do
+          valid_data.merge(
+            "SCHOOL_URN" => "999999",
+            "SCHOOL_NAME" => "",
+            "CARE_SETTING" => "2",
+            "CLINIC_NAME" => "A Clinic"
+          )
+        end
+
+        it { should eq("A Clinic") }
+      end
+
+      context "when home educated and unknown care setting" do
+        let(:data) do
+          valid_data.merge("SCHOOL_URN" => "999999", "SCHOOL_NAME" => nil)
+        end
+
+        it { should eq("Unknown") }
+      end
+
+      context "when home educated and unknown care setting and a named clinic" do
+        let(:data) do
+          valid_data.merge(
+            "SCHOOL_URN" => "999999",
+            "SCHOOL_NAME" => "",
+            "CLINIC_NAME" => "A Clinic"
+          )
+        end
+
+        it { should eq("A Clinic") }
+      end
+
+      context "with an unknown school and school care setting" do
+        let(:data) do
+          valid_data.merge(
+            "SCHOOL_URN" => "888888",
+            "SCHOOL_NAME" => "Waterloo Road",
+            "CARE_SETTING" => "1"
+          )
+        end
+
+        it { should eq("Waterloo Road") }
+      end
+
+      context "with an unknown school and school care setting and a clinic name" do
+        let(:data) do
+          valid_data.merge(
+            "SCHOOL_URN" => "888888",
+            "SCHOOL_NAME" => "Waterloo Road",
+            "CARE_SETTING" => "1",
+            "CLINIC_NAME" => "A Clinic"
+          )
+        end
+
+        it { should eq("Waterloo Road") }
+      end
+
+      context "with an unknown school and community care setting" do
+        let(:data) do
+          valid_data.merge(
+            "SCHOOL_URN" => "888888",
+            "SCHOOL_NAME" => "Waterloo Road",
+            "CARE_SETTING" => "2"
+          )
+        end
+
+        it { should eq("Unknown") }
+      end
+
+      context "with an unknown school and community care setting and a clinic name" do
+        let(:data) do
+          valid_data.merge(
+            "SCHOOL_URN" => "888888",
+            "SCHOOL_NAME" => "Waterloo Road",
+            "CARE_SETTING" => "2",
+            "CLINIC_NAME" => "A Clinic"
+          )
+        end
+
+        it { should eq("A Clinic") }
+      end
+
+      context "with an unknown school and unknown care setting" do
+        let(:data) do
+          valid_data.merge(
+            "SCHOOL_URN" => "888888",
+            "SCHOOL_NAME" => "Waterloo Road"
+          )
+        end
+
+        it { should eq("Waterloo Road") }
+      end
+
+      context "with an unknown school and unknown care setting and a clinic name" do
+        let(:data) do
+          valid_data.merge(
+            "SCHOOL_URN" => "888888",
+            "SCHOOL_NAME" => "Waterloo Road",
+            "CLINIC_NAME" => "A Clinic"
+          )
+        end
+
+        it { should eq("A Clinic") }
+      end
+    end
+
+    describe "#notes" do
+      subject { vaccination_record.notes }
+
+      context "without notes" do
+        let(:data) { valid_data }
+
+        it { should be_nil }
+      end
+
+      context "with notes" do
+        let(:data) { valid_data.merge("NOTES" => "Some notes.") }
+
+        it { should eq("Some notes.") }
+      end
+    end
+
+    describe "#outcome" do
+      subject { vaccination_record.outcome }
+
+      let(:data) { valid_data }
+
+      let(:not_vaccinated_data) do
+        valid_data.merge(
+          "VACCINATED" => "N",
+          "BATCH_EXPIRY_DATE" => "",
+          "BATCH_NUMBER" => "",
+          "ANATOMICAL_SITE" => ""
+        )
+      end
+
+      it { should eq("administered") }
+
+      context "with positive short vaccinated value" do
+        let(:data) { valid_data.merge("VACCINATED" => "Y") }
+
+        it { should eq("administered") }
+      end
+
+      context "with positive long vaccinated value" do
+        let(:data) { valid_data.merge("VACCINATED" => "Yes") }
+
+        it { should eq("administered") }
+      end
+
+      {
+        "refused" => "refused",
+        "unwell" => "not_well",
+        "vaccination contraindicated" => "contraindications",
+        "already had elsewhere" => "already_had",
+        "did not attend" => "absent_from_session",
+        "absent from school" => "absent_from_school"
+      }.each do |input_reason, expected_enum|
+        context "with reason '#{input_reason}'" do
+          let(:data) do
+            not_vaccinated_data.merge("REASON_NOT_VACCINATED" => input_reason)
+          end
+
+          it { should eq(expected_enum) }
+        end
+      end
+    end
+
+    describe "#patient" do
+      subject(:patient) { vaccination_record.patient }
+
+      context "with new patient data" do
+        let(:data) { valid_data }
+
+        it { should_not be_nil }
+      end
+
+      context "with an existing patient matching NHS number" do
+        let(:data) { valid_data }
+
+        let(:other_patient) { create(:patient, nhs_number:) }
+
+        it { should eq(other_patient) }
+      end
+
+      context "without an NHS number and an existing patient matching first name, last name and date of birth" do
+        let(:data) { valid_data.except("NHS_NUMBER") }
+
+        let(:other_patient) do
+          create(
+            :patient,
+            given_name:,
+            family_name:,
+            nhs_number:,
+            date_of_birth: Date.parse(date_of_birth)
+          )
+        end
+
+        it { should eq(other_patient) }
+      end
+
+      context "without an NHS number and an existing patient matching first name, last name and postcode" do
+        let(:data) { valid_data.except("NHS_NUMBER") }
+
+        let(:other_patient) do
+          create(
+            :patient,
+            given_name:,
+            family_name:,
+            address_postcode:,
+            nhs_number:
+          )
+        end
+
+        it { should eq(other_patient) }
+      end
+
+      context "without an NHS number and an existing patient matching first name, date of birth and postcode" do
+        let(:data) { valid_data.except("NHS_NUMBER") }
+
+        let(:other_patient) do
+          create(
+            :patient,
+            given_name:,
+            date_of_birth: Date.parse(date_of_birth),
+            address_postcode:,
+            nhs_number:
+          )
+        end
+
+        it { should eq(other_patient) }
+      end
+
+      context "without an NHS number and an existing patient matching last name, date of birth and postcode" do
+        let(:data) { valid_data.except("NHS_NUMBER") }
+
+        let(:other_patient) do
+          create(
+            :patient,
+            family_name:,
+            date_of_birth: Date.parse(date_of_birth),
+            address_postcode:,
+            nhs_number:
+          )
+        end
+
+        it { should eq(other_patient) }
+      end
+
+      context "with an existing matching patient but different patient data" do
+        let(:data) { valid_data }
+
+        it "does not stage any changes as vaccs history data is potentially out of date" do
+          create(:patient, nhs_number:, address_postcode: "CB1 1AA")
+          expect(patient.pending_changes).to be_empty
+        end
+      end
+
+      describe "#address_postcode" do
+        subject { patient.address_postcode }
+
+        context "with a valid postcode" do
+          let(:data) { valid_data.merge("PERSON_POSTCODE" => "SW1 1AA") }
+
+          it { should eq("SW1 1AA") }
+        end
+
+        context "with a valid unformatted postcode" do
+          let(:data) { valid_data.merge("PERSON_POSTCODE" => "sw11aa") }
+
+          it { should eq("SW1 1AA") }
+        end
+      end
+
+      describe "#date_of_birth" do
+        subject { patient.date_of_birth }
+
+        context "with a YYYYMMDD value" do
+          let(:data) { valid_data.merge("PERSON_DOB" => "20230901") }
+
+          it { should eq(Date.new(2023, 9, 1)) }
+        end
+
+        context "with an Excel-exported-to-CSV date format" do
+          let(:data) { valid_data.merge("PERSON_DOB" => "01/09/2023") }
+
+          it { should eq(Date.new(2023, 9, 1)) }
+        end
+      end
+
+      describe "#gender_code" do
+        subject { patient.gender_code }
+
+        let(:valid_data_without_gender) do
+          valid_data.except("PERSON_GENDER_CODE")
+        end
+
+        shared_examples "with a value" do |key|
+          context "with a 'not known' value" do
+            let(:data) { valid_data_without_gender.merge(key => "Not Known") }
+
+            it { should eq("not_known") }
+          end
+
+          context "with a 'male' value" do
+            let(:data) { valid_data_without_gender.merge(key => "Male") }
+
+            it { should eq("male") }
+          end
+
+          context "with a 'female' value" do
+            let(:data) { valid_data_without_gender.merge(key => "Female") }
+
+            it { should eq("female") }
+          end
+
+          context "with a 'not specified' value" do
+            let(:data) do
+              valid_data_without_gender.merge(key => "Not Specified")
+            end
+
+            it { should eq("not_specified") }
+          end
+        end
+
+        include_examples "with a value", "PERSON_GENDER_CODE"
+        include_examples "with a value", "PERSON_GENDER"
+      end
+
+      describe "#organisation" do
+        subject { patient.organisation }
+
+        let(:data) { valid_data }
+
+        it { should be_nil }
+
+        context "with an existing patient in the cohort" do
+          let(:patient) { create(:patient, nhs_number:) }
+
+          it { should eq(patient.organisation) }
+        end
+      end
+    end
+
+    describe "#performed_at" do
+      subject { vaccination_record.performed_at }
+
+      let(:year) { 2024 }
+      let(:month) { 1 }
+      let(:day) { 1 }
+
+      context "with a HH:MM:SS value" do
+        let(:data) { valid_data.merge("TIME_OF_VACCINATION" => "10:15:30") }
+
+        it { should eq(Time.zone.local(year, month, day, 10, 15, 30)) }
+      end
+
+      context "with a HHMMSS value" do
+        let(:data) { valid_data.merge("TIME_OF_VACCINATION" => "101530") }
+
+        it { should eq(Time.zone.local(year, month, day, 10, 15, 30)) }
+      end
+
+      context "with a HH:MM value" do
+        let(:data) { valid_data.merge("TIME_OF_VACCINATION" => "10:15") }
+
+        it { should eq(Time.zone.local(year, month, day, 10, 15, 0)) }
+      end
+
+      context "with a HHMM value" do
+        let(:data) { valid_data.merge("TIME_OF_VACCINATION" => "1015") }
+
+        it { should eq(Time.zone.local(year, month, day, 10, 15, 0)) }
+      end
+
+      context "with a HH value" do
+        let(:data) { valid_data.merge("TIME_OF_VACCINATION" => "10") }
+
+        it { should eq(Time.zone.local(year, month, day, 10, 0, 0)) }
+      end
+    end
+
+    describe "#performed_by_user" do
+      subject { vaccination_record.performed_by_user }
+
+      context "with a value" do
+        let(:data) do
+          valid_data.merge(
+            "PERFORMING_PROFESSIONAL_EMAIL" => "nurse@example.com"
+          )
+        end
+
+        context "and a user that doesn't exist" do
+          it { expect(immunisation_import_row).to be_invalid }
+        end
+
+        context "and a user that does exist" do
+          let!(:user) { create(:user, email: "nurse@example.com") }
+
+          it { should eq(user) }
+        end
+      end
+    end
+
+    describe "#performed_ods_code" do
+      subject { vaccination_record.performed_ods_code }
+
+      context "with a value" do
+        let(:data) { valid_data.merge("ORGANISATION_CODE" => "ABC") }
+
+        it { should eq("ABC") }
+      end
     end
 
     context "without an expiry date" do
@@ -1567,5 +1509,65 @@ describe ImmunisationImportRow do
 
       it { should_not be_nil }
     end
+  end
+
+  describe "#batch_expiry" do
+    subject { immunisation_import_row.batch_expiry&.to_date }
+
+    context "without a value" do
+      let(:data) { {} }
+
+      it { should be_nil }
+    end
+
+    context "with an invalid value" do
+      let(:data) { { "BATCH_EXPIRY_DATE" => "abc" } }
+
+      it { should be_nil }
+    end
+
+    context "with a valid value" do
+      let(:data) { { "BATCH_EXPIRY_DATE" => "20100101" } }
+
+      it { should eq(Date.new(2010, 1, 1)) }
+    end
+
+    context "with an Excel-exported-to-CSV date format" do
+      let(:data) { { "BATCH_EXPIRY_DATE" => "01/09/2027" } }
+
+      it { should eq(Date.new(2027, 9, 1)) }
+    end
+  end
+
+  describe "#batch_name" do
+    subject { immunisation_import_row.batch_name&.to_s }
+
+    context "without a value" do
+      let(:data) { {} }
+
+      it { should be_nil }
+    end
+
+    context "with a value" do
+      let(:data) { { "BATCH_NUMBER" => "abc" } }
+
+      it { should eq("abc") }
+    end
+  end
+
+  describe "#performed_by_given_name" do
+    subject { immunisation_import_row.performed_by_given_name&.to_s }
+
+    let(:data) { { "PERFORMING_PROFESSIONAL_FORENAME" => "John" } }
+
+    it { should eq("John") }
+  end
+
+  describe "#performed_by_family_name" do
+    subject { immunisation_import_row.performed_by_family_name&.to_s }
+
+    let(:data) { { "PERFORMING_PROFESSIONAL_SURNAME" => "Smith" } }
+
+    it { should eq("Smith") }
   end
 end
