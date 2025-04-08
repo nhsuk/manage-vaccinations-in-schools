@@ -32,12 +32,13 @@ class Sessions::RegisterController < ApplicationController
   end
 
   def create
-    session_attendance = authorize @patient_session.todays_attendance
-
-    ActiveRecord::Base.transaction do
-      session_attendance.update!(attending: params[:status] == "present")
-      StatusUpdater.call(patient: @patient_session.patient)
-    end
+    session_attendance =
+      ActiveRecord::Base.transaction do
+        record = authorize @patient_session.todays_attendance
+        record.update!(attending: params[:status] == "present")
+        StatusUpdater.call(patient: @patient_session.patient)
+        record
+      end
 
     name = @patient_session.patient.full_name
 
