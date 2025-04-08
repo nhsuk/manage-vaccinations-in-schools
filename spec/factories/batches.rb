@@ -32,7 +32,7 @@ FactoryBot.define do
     vaccine
 
     name { "#{prefix}#{Faker::Number.number(digits: 4)}" }
-    expiry { Faker::Time.forward(days: 50) }
+    expiry { Faker::Time.forward(days: 50, period: :morning) }
 
     trait :expired do
       expiry { Date.yesterday }
