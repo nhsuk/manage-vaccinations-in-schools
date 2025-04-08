@@ -39,6 +39,10 @@
     margin-right: nhsuk-spacing(3);
   }
 
+  & .nhsuk-date-input__item:last-child {
+    margin-right: 0;
+  }
+
   // Adjust sizing of checkbox and radio items
   & .nhsuk-checkboxes__item,
   & .nhsuk-radios__item {

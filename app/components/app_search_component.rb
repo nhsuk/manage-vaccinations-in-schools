@@ -2,10 +2,10 @@
 
 class AppSearchComponent < ViewComponent::Base
   erb_template <<-ERB
-    <%= render AppCardComponent.new(filters: true) do |card| %>
-      <% card.with_heading { "Find children" } %>
+    <%= form_with model: form, url:, method: :get, builder: GOVUKDesignSystemFormBuilder::FormBuilder do |f| %>
+      <%= render AppCardComponent.new(filters: true) do |card| %>
+        <% card.with_heading { "Find children" } %>
 
-      <%= form_with model: form, url:, method: :get, builder: GOVUKDesignSystemFormBuilder::FormBuilder do |f| %>
         <div class="app-search-input" role="search">
           <%= f.govuk_text_field :q,
                                  label: { text: "Search", class: "nhsuk-u-visually-hidden" },

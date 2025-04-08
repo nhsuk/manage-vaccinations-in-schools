@@ -9,6 +9,15 @@ Sentry.init do |config|
 
   config.traces_sample_rate = 0.2
 
+  config.before_send_transaction =
+    lambda do |event, _hint|
+      if event.transaction == "/up" || event.transaction.starts_with?("/health")
+        nil
+      else
+        event
+      end
+    end
+
   rails_filter_parameters =
     Rails.application.config.filter_parameters.map(&:to_s)
 
@@ -35,5 +44,15 @@ Sentry.init do |config|
     )
 
   config.before_send =
-    lambda { |event, _hint| combined_filter.filter(event.to_hash) }
+    lambda do |event, hint|
+      if !Rails.env.production? &&
+           hint[:exception].is_a?(Notifications::Client::BadRequestError) &&
+           hint[:exception].message.include?(
+             "Can’t send to this recipient using a team-only API key"
+           )
+        nil
+      else
+        combined_filter.filter(event.to_hash)
+      end
+    end
 end
