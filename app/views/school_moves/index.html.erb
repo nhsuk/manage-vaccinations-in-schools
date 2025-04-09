@@ -1,14 +1,16 @@
 <%= h1 "School moves", size: "xl" %>
 
-<div class="nhsuk-grid-row">
-  <div class="nhsuk-grid-column-two-thirds">
-    <p>When imported records or a new consent response indicates that a child has changed
-      school, Mavis flags this as a school move.</p>
-    <p>You can then review the new information and confirm the school move or ignore it.</p>
+<% if Flipper.enabled?(:school_moves_export) %>
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-two-thirds">
+      <p>When imported records or a new consent response indicates that a child has changed
+        school, Mavis flags this as a school move.</p>
+      <p>You can then review the new information and confirm the school move or ignore it.</p>
 
-    <%= govuk_button_to "Download records", school_move_exports_path, class: "app-button--secondary nhsuk-u-margin-bottom-5" %>
+      <%= govuk_button_to "Download records", school_move_exports_path, class: "app-button--secondary nhsuk-u-margin-bottom-5" %>
+    </div>
   </div>
-</div>
+<% end %>
 
 <% if @school_moves.any? %>
   <div class="nhsuk-table__panel-with-heading-tab">
