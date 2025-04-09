@@ -20,5 +20,5 @@ enable_splunk                   = false
 enable_cis2                     = false
 enable_pds_enqueue_bulk_updates = false
 
-minimum_replicas = 3
-appspec_bucket   = "nhse-mavis-appspec-bucket-copilotmigration"
+appspec_bucket        = "nhse-mavis-appspec-bucket-copilotmigration"
+minimnum_web_replicas = 2

@@ -20,7 +20,6 @@ http_hosts = {
   MAVIS__GIVE_OR_REFUSE_CONSENT_HOST = "www.give-or-refuse-consent-for-vaccinations.nhs.uk"
 }
 
-minimum_replicas        = 3
 appspec_bucket          = "nhse-mavis-appspec-bucket-production"
 account_id              = 820242920762
 vpc_log_retention_days  = 14
