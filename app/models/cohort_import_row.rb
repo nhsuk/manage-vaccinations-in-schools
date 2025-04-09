@@ -10,9 +10,7 @@ class CohortImportRow < PatientImportRow
     super(data:, organisation:, year_groups: organisation.year_groups)
   end
 
-  def school_urn
-    @data[:child_school_urn]&.to_s
-  end
+  def school_urn = @data[:child_school_urn]
 
   private
 
@@ -26,15 +24,16 @@ class CohortImportRow < PatientImportRow
 
   def school
     @school ||=
-      unless [SCHOOL_URN_HOME_EDUCATED, SCHOOL_URN_UNKNOWN].include?(school_urn)
-        Location.school.find_by!(urn: school_urn)
+      if (urn = school_urn&.to_s).present? &&
+           ![SCHOOL_URN_HOME_EDUCATED, SCHOOL_URN_UNKNOWN].include?(urn)
+        Location.school.find_by!(urn:)
       end
   end
 
   def home_educated
-    if school_urn == SCHOOL_URN_HOME_EDUCATED
+    if school_urn&.to_s == SCHOOL_URN_HOME_EDUCATED
       true
-    elsif school_urn == SCHOOL_URN_UNKNOWN
+    elsif school_urn&.to_s == SCHOOL_URN_UNKNOWN
       false
     end
   end
@@ -50,9 +49,17 @@ class CohortImportRow < PatientImportRow
   end
 
   def validate_school_urn
-    unless Location.school.exists?(urn: school_urn) ||
-             school_urn.in?([SCHOOL_URN_HOME_EDUCATED, SCHOOL_URN_UNKNOWN])
-      errors.add(:school_urn, :inclusion)
+    if school_urn.nil?
+      errors.add(:base, "<code>CHILD_SCHOOL_URN</code> is missing")
+    elsif school_urn.blank?
+      errors.add(school_urn.header, "is required but missing")
+    elsif !Location.school.exists?(urn: school_urn.to_s) &&
+          !school_urn.to_s.in?([SCHOOL_URN_HOME_EDUCATED, SCHOOL_URN_UNKNOWN])
+      errors.add(
+        school_urn.header,
+        "The school URN is not recognised. If you’ve checked the URN, " \
+          "and you believe it’s valid, contact our support organisation."
+      )
     end
   end
 end

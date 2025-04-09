@@ -85,6 +85,19 @@ describe CohortImportRow do
         ).to contain_exactly("should be formatted as YYYY-MM-DD")
       end
     end
+
+    context "with an invalid school URN" do
+      let(:data) { valid_data.merge("CHILD_SCHOOL_URN" => "123456789") }
+
+      it "is invalid" do
+        expect(cohort_import_row).to be_invalid
+        expect(cohort_import_row.errors.size).to eq(1)
+        expect(cohort_import_row.errors["CHILD_SCHOOL_URN"]).to contain_exactly(
+          "The school URN is not recognised. If you’ve checked the URN, " \
+            "and you believe it’s valid, contact our support organisation."
+        )
+      end
+    end
   end
 
   describe "#to_parents" do
