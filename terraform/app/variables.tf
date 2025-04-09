@@ -234,16 +234,22 @@ variable "enable_autoscaling" {
   description = "Boolean toggle to determine whether the ECS service should have autoscaling enabled."
 }
 
-variable "minimum_replicas" {
+variable "minimum_web_replicas" {
   type        = number
-  default     = 2
-  description = "Minimum amount of allowed replicas"
+  default     = 3
+  description = "Minimum amount of allowed replicas for web service"
 }
 
-variable "maximum_replicas" {
+variable "maximum_web_replicas" {
+  type        = number
+  default     = 3
+  description = "Maximum amount of allowed replicas for web service"
+}
+
+variable "minimum_good_job_replicas" {
   type        = number
   default     = 2
-  description = "Maximum amount of allowed replicas"
+  description = "Minimum amount of allowed replicas for good-job service"
 }
 
 variable "active_lb_target_group" {

@@ -36,7 +36,7 @@ resource "aws_ecs_service" "service" {
   name                              = "mavis-${var.environment}"
   cluster                           = aws_ecs_cluster.cluster.id
   task_definition                   = aws_ecs_task_definition.task_definition.arn
-  desired_count                     = var.minimum_replicas
+  desired_count                     = var.minimum_web_replicas
   launch_type                       = "FARGATE"
   enable_execute_command            = true
   health_check_grace_period_seconds = 60
@@ -152,7 +152,7 @@ module "web_service" {
   cluster_id            = aws_ecs_cluster.cluster.id
   environment           = var.environment
   server_type           = "web"
-  desired_count         = var.minimum_replicas
+  desired_count         = var.minimum_web_replicas
   deployment_controller = "CODE_DEPLOY"
 }
 
@@ -177,5 +177,5 @@ module "good_job_service" {
   cluster_id    = aws_ecs_cluster.cluster.id
   environment   = var.environment
   server_type   = "good-job"
-  desired_count = 1
+  desired_count = var.minimum_good_job_replicas
 }
