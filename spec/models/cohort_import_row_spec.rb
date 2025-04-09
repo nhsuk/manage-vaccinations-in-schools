@@ -221,7 +221,7 @@ describe CohortImportRow do
           "CHILD_LAST_NAME" => "Smith",
           "CHILD_PREFERRED_LAST_NAME" => "Smithy",
           "CHILD_NHS_NUMBER" => "1234567890",
-          "CHILD_POSTCODE" => "SW1A 1AA",
+          "CHILD_POSTCODE" => "sw1a 1aa",
           "CHILD_SCHOOL_URN" => school_urn,
           "CHILD_TOWN" => "London"
         }
@@ -244,7 +244,6 @@ describe CohortImportRow do
       end
 
       it { should eq(existing_patient) }
-      it { should be_male }
 
       it "saves the incoming values" do
         expect(patient).to have_attributes(

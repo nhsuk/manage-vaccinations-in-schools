@@ -202,6 +202,60 @@ describe ClassImportRow do
         end
       end
     end
+
+    context "with an existing patient with different capitalisation" do
+      let(:data) do
+        {
+          "CHILD_ADDRESS_LINE_1" => "10 Downing Street",
+          "CHILD_ADDRESS_LINE_2" => "",
+          "CHILD_PREFERRED_FIRST_NAME" => "Jim",
+          "CHILD_DATE_OF_BIRTH" => "2010-01-01",
+          "CHILD_FIRST_NAME" => "Jimmy",
+          "CHILD_GENDER" => "Male",
+          "CHILD_LAST_NAME" => "Smith",
+          "CHILD_PREFERRED_LAST_NAME" => "Smithy",
+          "CHILD_NHS_NUMBER" => "1234567890",
+          "CHILD_POSTCODE" => "sw1a 1aa",
+          "CHILD_TOWN" => "London"
+        }
+      end
+
+      let!(:existing_patient) do
+        create(
+          :patient,
+          address_postcode: "SW1A 1AA",
+          family_name: "SMITH",
+          gender_code: "male",
+          given_name: "JIMMY",
+          nhs_number: "1234567890",
+          address_line_1: "10 DOWNING STREET",
+          preferred_given_name: "JIM",
+          preferred_family_name: "SMITHY",
+          date_of_birth: Date.new(2010, 1, 1),
+          address_town: "LONDON"
+        )
+      end
+
+      it { should eq(existing_patient) }
+
+      it "saves the incoming values" do
+        expect(patient).to have_attributes(
+          address_postcode: "SW1A 1AA",
+          family_name: "Smith",
+          gender_code: "male",
+          given_name: "Jimmy",
+          nhs_number: "1234567890",
+          address_line_1: "10 Downing Street",
+          preferred_given_name: "Jim",
+          preferred_family_name: "Smithy",
+          address_town: "London"
+        )
+      end
+
+      it "doesn't stage the capitalisation differences" do
+        expect(patient.pending_changes).to be_empty
+      end
+    end
   end
 
   describe "#to_parent_relationships" do
