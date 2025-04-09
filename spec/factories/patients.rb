@@ -60,11 +60,11 @@ FactoryBot.define do
       year_group { programmes.flat_map(&:year_groups).sort.uniq.first }
       location_name { nil }
       in_attendance { false }
-    end
 
-    organisation do
-      session&.organisation || school&.organisation ||
-        association(:organisation, programmes:)
+      organisation do
+        session&.organisation || school&.organisation ||
+          create(:organisation, programmes:)
+      end
     end
 
     nhs_number do
