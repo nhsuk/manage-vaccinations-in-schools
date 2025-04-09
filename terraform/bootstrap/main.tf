@@ -18,7 +18,7 @@ provider "aws" {
 
 #### S3 bucket to store the terraform state
 resource "aws_s3_bucket" "s3_bucket_backend" {
-  bucket = "nhse-mavis-terraform-state-production"
+  bucket = "nhse-mavis-terraform-state${local.suffix}"
 }
 
 resource "aws_s3_bucket_ownership_controls" "s3_bucket_acl_ownership" {
@@ -90,7 +90,7 @@ resource "aws_s3_bucket_logging" "backend_bucket_logging" {
 
 ##### Set up a logging bucket
 resource "aws_s3_bucket" "logs" {
-  bucket = "nhse-mavis-access-logs-production"
+  bucket = "nhse-mavis-access-logs${local.suffix}"
 }
 
 resource "aws_s3_bucket_versioning" "log_bucket_version" {
