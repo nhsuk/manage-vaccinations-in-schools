@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class DevController < ApplicationController
+  include ActionController::Live
+
   skip_before_action :authenticate_user!
   skip_before_action :store_user_location!
   skip_after_action :verify_policy_scoped
@@ -20,55 +22,65 @@ class DevController < ApplicationController
   end
 
   def reset_organisation
+    response.headers["Content-Type"] = "text/event-stream"
+    response.headers["Cache-Control"] = "no-cache"
+
     organisation =
       Organisation.find_by!(ods_code: params[:organisation_ods_code])
 
+    @start_time = Time.zone.now
+
     Organisation.with_advisory_lock("reset-organisation-#{organisation.id}") do
-      CohortImport.where(organisation:).destroy_all
-      ImmunisationImport.where(organisation:).destroy_all
+      log_destroy(CohortImport.where(organisation:))
+      log_destroy(ImmunisationImport.where(organisation:))
 
       sessions = Session.where(organisation:)
 
-      ClassImport.where(session: sessions).destroy_all
-      SessionDate.where(session: sessions).destroy_all
-      ConsentNotification.where(session: sessions).destroy_all
-      SessionNotification.where(session: sessions).destroy_all
-      VaccinationRecord.where(session: sessions).destroy_all
+      log_destroy(ClassImport.where(session: sessions))
+      log_destroy(SessionDate.where(session: sessions))
+
+      log_destroy(ConsentNotification.where(session: sessions))
+      log_destroy(SessionNotification.where(session: sessions))
+      log_destroy(VaccinationRecord.where(session: sessions))
 
       patient_sessions = PatientSession.where(session: sessions)
-      GillickAssessment.where(patient_session: patient_sessions).destroy_all
-      PreScreening.where(patient_session: patient_sessions).destroy_all
-      patient_sessions.destroy_all
+      log_destroy(GillickAssessment.where(patient_session: patient_sessions))
+      log_destroy(PreScreening.where(patient_session: patient_sessions))
+      patient_sessions.in_batches { log_destroy(it) }
 
-      sessions.destroy_all
+      log_destroy(sessions)
 
       patients = organisation.patients
 
-      SchoolMove.where(patient: patients).destroy_all
-      SchoolMove.where(organisation:).destroy_all
-      SchoolMoveLogEntry.where(patient: patients).destroy_all
-      AccessLogEntry.where(patient: patients).destroy_all
-      NotifyLogEntry.where(patient: patients).destroy_all
-      VaccinationRecord.where(patient: patients).destroy_all
+      log_destroy(SchoolMove.where(patient: patients))
+      log_destroy(SchoolMove.where(organisation:))
+      log_destroy(SchoolMoveLogEntry.where(patient: patients))
+      log_destroy(AccessLogEntry.where(patient: patients))
+      log_destroy(NotifyLogEntry.where(patient: patients))
+      # In local dev we can end up with NotifyLogEntries without a patient
+      log_destroy(NotifyLogEntry.where(patient_id: nil))
+      log_destroy(VaccinationRecord.where(patient: patients))
 
-      ConsentForm.where(organisation:).destroy_all
-      Consent.where(organisation:).destroy_all
-      Triage.where(organisation:).destroy_all
+      log_destroy(ConsentForm.where(organisation:))
+      log_destroy(Consent.where(organisation:))
+      log_destroy(Triage.where(organisation:))
 
-      patients.includes(:parents).destroy_all
+      patients.includes(:parents).in_batches { log_destroy(it) }
 
       batches = Batch.where(organisation:)
-      VaccinationRecord.where(batch: batches).destroy_all
-      batches.destroy_all
+      log_destroy(VaccinationRecord.where(batch: batches))
+      log_destroy(batches)
 
-      VaccinationRecord.where(
-        performed_ods_code: organisation.ods_code
-      ).destroy_all
+      log_destroy(
+        VaccinationRecord.where(performed_ods_code: organisation.ods_code)
+      )
 
       UnscheduledSessionsFactory.new.call
     end
 
-    head :ok
+    response.stream.write "Done"
+  ensure
+    response.stream.close
   end
 
   def random_consent_form
@@ -102,5 +114,15 @@ class DevController < ApplicationController
     unless Rails.env.local? || Flipper.enabled?(:dev_tools)
       raise "Not in development environment"
     end
+  end
+
+  def log_destroy(query)
+    where_clause = query.where_clause
+    @log_time ||= Time.zone.now
+    query.destroy_all
+    response.stream.write(
+      "#{query.model.name}.where(#{where_clause.to_h}) reset: #{Time.zone.now - @log_time}s\n"
+    )
+    @log_time = Time.zone.now
   end
 end
