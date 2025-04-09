@@ -332,8 +332,8 @@ describe CohortImport do
 
       it "automatically re-adds the patient to the cohort" do
         expect { process! }.to change {
-          existing_patient.reload.organisation
-        }.from(nil).to(organisation)
+          existing_patient.reload.organisations
+        }.from([]).to([organisation])
       end
 
       it "doesn't propose a school move" do

@@ -351,6 +351,8 @@ class Patient < ApplicationRecord
     update_column(:invalidated_at, Time.current)
   end
 
+  def not_in_organisation? = patient_sessions.empty?
+
   def dup_for_pending_changes
     dup.tap do |new_patient|
       new_patient.nhs_number = nil

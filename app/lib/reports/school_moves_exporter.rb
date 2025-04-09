@@ -50,7 +50,7 @@ class Reports::SchoolMovesExporter
       begin
         historical_patients =
           Patient
-            .where.not(organisation:)
+            .where.not(id: organisation.patients.select(:id))
             .where(
               SchoolMoveLogEntry
                 .where("patient_id = patients.id")

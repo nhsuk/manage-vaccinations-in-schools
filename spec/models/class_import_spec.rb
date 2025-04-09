@@ -334,7 +334,12 @@ describe ClassImport do
 
     context "with an existing patient in a different school" do
       let(:patient) do
-        create(:patient, nhs_number: "9990000018", school: create(:school))
+        create(
+          :patient,
+          nhs_number: "9990000018",
+          school: create(:school),
+          session: create(:session, programmes:)
+        )
       end
 
       it "proposes a school move for the child" do

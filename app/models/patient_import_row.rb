@@ -33,13 +33,15 @@ class PatientImportRow
     if (existing_patient = existing_patients.first)
       prepare_patient_changes(existing_patient, import_attributes)
     else
-      Patient.new(import_attributes.merge(home_educated: false))
+      Patient.new(
+        import_attributes.merge(home_educated: false, patient_sessions: [])
+      )
     end
   end
 
   def to_school_move(patient)
     if patient.new_record? || patient.school != school ||
-         patient.home_educated != home_educated || patient.organisation.nil?
+         patient.home_educated != home_educated || patient.not_in_organisation?
       school_move =
         if school
           SchoolMove.find_or_initialize_by(patient:, school:)
@@ -51,7 +53,7 @@ class PatientImportRow
           )
         end
 
-      school_move.tap { _1.source = school_move_source }
+      school_move.tap { it.source = school_move_source }
     end
   end
 
@@ -114,7 +116,7 @@ class PatientImportRow
       .map do |parent, attributes|
         ParentRelationship
           .find_or_initialize_by(parent:, patient:)
-          .tap { _1.assign_attributes(attributes) }
+          .tap { it.assign_attributes(attributes) }
       end
   end
 
@@ -303,7 +305,7 @@ class PatientImportRow
       return
     end
 
-    Patient.match_existing(
+    Patient.includes(:patient_sessions).match_existing(
       nhs_number: nhs_number_value,
       given_name: first_name.to_s,
       family_name: last_name.to_s,
