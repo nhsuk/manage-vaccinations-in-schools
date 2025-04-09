@@ -497,10 +497,14 @@ class ImmunisationImportRow
     if administered
       if offline_recording?
         if batch_name.nil?
-          errors.add(
-            :base,
-            "<code>BATCH_NUMBER</code> or <code>Vaccination batch number</code> is required"
-          )
+          if systm_one_enabled?
+            errors.add(
+              :base,
+              "<code>BATCH_NUMBER</code> or <code>Vaccination batch number</code> is required"
+            )
+          else
+            errors.add(:base, "<code>BATCH_NUMBER</code> is required")
+          end
         elsif batch_name.blank?
           errors.add(batch_name.header, "Enter a batch number.")
         end
@@ -525,10 +529,14 @@ class ImmunisationImportRow
   def validate_clinic_name
     if offline_recording? && is_community_setting?
       if clinic_name.nil?
-        errors.add(
-          :base,
-          "<code>CLINIC_NAME</code> or <code>Event done at</code> is required"
-        )
+        if systm_one_enabled?
+          errors.add(
+            :base,
+            "<code>CLINIC_NAME</code> or <code>Event done at</code> is required"
+          )
+        else
+          errors.add(:base, "<code>CLINIC_NAME</code> is required")
+        end
       elsif clinic_name.blank?
         errors.add(clinic_name.header, "Enter a clinic name")
       elsif !organisation.community_clinics.exists?(name: clinic_name.to_s)
@@ -539,10 +547,14 @@ class ImmunisationImportRow
 
   def validate_date_of_vaccination
     if date_of_vaccination.nil?
-      errors.add(
-        :base,
-        "<code>DATE_OF_VACCINATION</code> or <code>Event date</code> is required"
-      )
+      if systm_one_enabled?
+        errors.add(
+          :base,
+          "<code>DATE_OF_VACCINATION</code> or <code>Event date</code> is required"
+        )
+      else
+        errors.add(:base, "<code>DATE_OF_VACCINATION</code> is required")
+      end
     elsif date_of_vaccination.blank?
       errors.add(date_of_vaccination.header, "Enter a date")
     elsif date_of_vaccination.to_date.nil?
@@ -623,10 +635,14 @@ class ImmunisationImportRow
       end
     elsif administered && offline_recording? && default_dose_sequence.present?
       if field.nil?
-        errors.add(
-          :base,
-          "<code>DOSE_SEQUENCE</code> or <code>Vaccination type</code> is required"
-        )
+        if systm_one_enabled?
+          errors.add(
+            :base,
+            "<code>DOSE_SEQUENCE</code> or <code>Vaccination type</code> is required"
+          )
+        else
+          errors.add(:base, "<code>DOSE_SEQUENCE</code> is required")
+        end
       else
         errors.add(
           field.header,
@@ -647,10 +663,14 @@ class ImmunisationImportRow
 
   def validate_patient_date_of_birth
     if patient_date_of_birth.nil?
-      errors.add(
-        :base,
-        "<code>PERSON_DOB</code> or <code>Date of birth</code> is required"
-      )
+      if systm_one_enabled?
+        errors.add(
+          :base,
+          "<code>PERSON_DOB</code> or <code>Date of birth</code> is required"
+        )
+      else
+        errors.add(:base, "<code>PERSON_DOB</code> is required")
+      end
     elsif patient_date_of_birth.blank?
       errors.add(patient_date_of_birth.header, "Enter a date of birth.")
     elsif patient_date_of_birth.to_date.nil?
@@ -668,10 +688,14 @@ class ImmunisationImportRow
 
   def validate_patient_first_name
     if patient_first_name.nil?
-      errors.add(
-        :base,
-        "<code>PERSON_FORENAME</code> or <code>First name</code> is required"
-      )
+      if systm_one_enabled?
+        errors.add(
+          :base,
+          "<code>PERSON_FORENAME</code> or <code>First name</code> is required"
+        )
+      else
+        errors.add(:base, "<code>PERSON_FORENAME</code> is required")
+      end
     elsif patient_first_name.blank?
       errors.add(patient_first_name.header, "Enter a first name.")
     end
@@ -679,10 +703,17 @@ class ImmunisationImportRow
 
   def validate_patient_gender_code
     if patient_gender_code.nil?
-      errors.add(
-        :base,
-        "<code>PERSON_GENDER_CODE</code>, <code>PERSON_GENDER</code> or <code>Sex</code> is required"
-      )
+      if systm_one_enabled?
+        errors.add(
+          :base,
+          "<code>PERSON_GENDER_CODE</code>, <code>PERSON_GENDER</code> or <code>Sex</code> is required"
+        )
+      else
+        errors.add(
+          :base,
+          "<code>PERSON_GENDER_CODE</code> or <code>PERSON_GENDER</code> is required"
+        )
+      end
     elsif patient_gender_code.blank?
       errors.add(patient_gender_code.header, "Enter a gender or gender code.")
     elsif patient_gender_code_value.nil?
@@ -695,10 +726,14 @@ class ImmunisationImportRow
 
   def validate_patient_last_name
     if patient_last_name.nil?
-      errors.add(
-        :base,
-        "<code>PERSON_SURNAME</code> or <code>Surname</code> is required"
-      )
+      if systm_one_enabled?
+        errors.add(
+          :base,
+          "<code>PERSON_SURNAME</code> or <code>Surname</code> is required"
+        )
+      else
+        errors.add(:base, "<code>PERSON_SURNAME</code> is required")
+      end
     elsif patient_last_name.blank?
       errors.add(patient_last_name.header, "Enter a last name.")
     end
@@ -723,10 +758,14 @@ class ImmunisationImportRow
       end
     elsif patient_nhs_number_value.blank?
       if patient_postcode.nil?
-        errors.add(
-          :base,
-          "<code>PERSON_POSTCODE</code> or <code>Postcode</code> is required"
-        )
+        if systm_one_enabled?
+          errors.add(
+            :base,
+            "<code>PERSON_POSTCODE</code> or <code>Postcode</code> is required"
+          )
+        else
+          errors.add(:base, "<code>PERSON_POSTCODE</code> is required")
+        end
       else
         errors.add(
           patient_postcode.header,
@@ -794,10 +833,14 @@ class ImmunisationImportRow
     field = programme_name.presence || combined_vaccination_and_dose_sequence
 
     if field.nil?
-      errors.add(
-        :base,
-        "<code>PROGRAMME</code> or <code>Vaccination type</code> is required"
-      )
+      if systm_one_enabled?
+        errors.add(
+          :base,
+          "<code>PROGRAMME</code> or <code>Vaccination type</code> is required"
+        )
+      else
+        errors.add(:base, "<code>PROGRAMME</code> is required")
+      end
     elsif field.blank?
       errors.add(field.header, "Enter a programme.")
     else
@@ -827,10 +870,14 @@ class ImmunisationImportRow
   def validate_school_name
     if school_name.blank? && school_urn&.to_s == SCHOOL_URN_UNKNOWN
       if school_name.nil?
-        errors.add(
-          :base,
-          "<code>SCHOOL_NAME</code> or <code>School</code> is required"
-        )
+        if systm_one_enabled?
+          errors.add(
+            :base,
+            "<code>SCHOOL_NAME</code> or <code>School</code> is required"
+          )
+        else
+          errors.add(:base, "<code>SCHOOL_NAME</code> is required")
+        end
       else
         errors.add(school_name.header, "Enter a school name.")
       end

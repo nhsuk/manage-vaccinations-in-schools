@@ -70,15 +70,35 @@ describe ImmunisationImportRow do
         expect(immunisation_import_row).to be_invalid
         expect(immunisation_import_row.errors[:base]).to contain_exactly(
           "<code>VACCINATED</code> is required",
-          "<code>DATE_OF_VACCINATION</code> or <code>Event date</code> is required",
-          "<code>PERSON_DOB</code> or <code>Date of birth</code> is required",
-          "<code>PERSON_FORENAME</code> or <code>First name</code> is required",
-          "<code>PERSON_GENDER_CODE</code>, <code>PERSON_GENDER</code> or <code>Sex</code> is required",
-          "<code>PERSON_SURNAME</code> or <code>Surname</code> is required",
-          "<code>PERSON_POSTCODE</code> or <code>Postcode</code> is required",
-          "<code>PROGRAMME</code> or <code>Vaccination type</code> is required",
+          "<code>DATE_OF_VACCINATION</code> is required",
+          "<code>PERSON_DOB</code> is required",
+          "<code>PERSON_FORENAME</code> is required",
+          "<code>PERSON_GENDER_CODE</code> or <code>PERSON_GENDER</code> is required",
+          "<code>PERSON_SURNAME</code> is required",
+          "<code>PERSON_POSTCODE</code> is required",
+          "<code>PROGRAMME</code> is required",
           "<code>REASON_NOT_VACCINATED</code> is required"
         )
+      end
+
+      context "when SystmOne is enabled" do
+        before { Flipper.enable(:systm_one_import) }
+        after { Flipper.disable(:systm_one_import) }
+
+        it "has errors" do
+          expect(immunisation_import_row).to be_invalid
+          expect(immunisation_import_row.errors[:base]).to contain_exactly(
+            "<code>VACCINATED</code> is required",
+            "<code>DATE_OF_VACCINATION</code> or <code>Event date</code> is required",
+            "<code>PERSON_DOB</code> or <code>Date of birth</code> is required",
+            "<code>PERSON_FORENAME</code> or <code>First name</code> is required",
+            "<code>PERSON_GENDER_CODE</code>, <code>PERSON_GENDER</code> or <code>Sex</code> is required",
+            "<code>PERSON_SURNAME</code> or <code>Surname</code> is required",
+            "<code>PERSON_POSTCODE</code> or <code>Postcode</code> is required",
+            "<code>PROGRAMME</code> or <code>Vaccination type</code> is required",
+            "<code>REASON_NOT_VACCINATED</code> is required"
+          )
+        end
       end
     end
 
@@ -93,7 +113,7 @@ describe ImmunisationImportRow do
         it "doesn't require a postcode" do
           expect(immunisation_import_row).to be_invalid
           expect(immunisation_import_row.errors[:base]).not_to include(
-            "<code>PERSON_POSTCODE</code> or <code>Postcode</code> is required"
+            "<code>PERSON_POSTCODE</code> is required"
           )
         end
       end
@@ -603,7 +623,7 @@ describe ImmunisationImportRow do
           "<code>BATCH_EXPIRY_DATE</code> is required"
         )
         expect(immunisation_import_row.errors[:base]).to include(
-          "<code>BATCH_NUMBER</code> or <code>Vaccination batch number</code> is required"
+          "<code>BATCH_NUMBER</code> is required"
         )
       end
     end
