@@ -203,7 +203,7 @@ jobs:
           echo "$ecs_variables"
           cluster_name=$(echo "$ecs_variables" | jq -r '.cluster_name')
           service_name=$(echo "$ecs_variables" | jq -r '.good_job.service_name')
-          task_definition=$(echo "$ecs_variables" | jq -r '.good_job.task_definition')
+          task_definition=$(echo "$ecs_variables" | jq -r '.good_job.task_definition.arn')
           DEPLOYMENT_ID=$(aws ecs update-service --cluster $cluster_name --service $service_name \
           --task-definition $task_definition --force-new-deployment \
           --query 'service.deployments[?rolloutState==`IN_PROGRESS`].[id][0]' --output text)
