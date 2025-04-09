@@ -788,12 +788,13 @@ describe ImmunisationImportRow do
       end
     end
 
-    context "with an existing matching patient but mismatching whitespace name, without NHS number" do
+    context "with an existing matching patient but mismatching whitespace in name & postcode, without NHS number" do
       let(:data) do
         valid_data.except("NHS_NUMBER").merge(
           {
             "PERSON_FORENAME" => "\t   Ron ",
-            "PERSON_SURNAME" => "\t  Weasley  "
+            "PERSON_SURNAME" => "\t  Weasley  ",
+            "PERSON_POSTCODE" => "  SW1A\t 1AA "
           }
         )
       end
