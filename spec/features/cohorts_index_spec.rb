@@ -21,24 +21,12 @@ describe "Cohorts index" do
   end
 
   def and_there_are_patients_in_different_year_groups
-    # Create patients in year 8 and 9
-    # For year 8 in 2024, birth academic year is 2010
-    # For year 9 in 2024, birth academic year is 2009
-    create(
-      :patient,
-      organisation: @organisation,
-      date_of_birth: Date.new(2009, 9, 1)
-    )
-    create(
-      :patient,
-      organisation: @organisation,
-      date_of_birth: Date.new(2009, 9, 1)
-    )
-    create(
-      :patient,
-      organisation: @organisation,
-      date_of_birth: Date.new(2008, 9, 1)
-    )
+    session =
+      create(:session, organisation: @organisation, programmes: [@programme])
+
+    create(:patient, session:, year_group: 9)
+    create(:patient, session:, year_group: 9)
+    create(:patient, session:, year_group: 10)
   end
 
   def when_i_visit_the_cohorts_page
