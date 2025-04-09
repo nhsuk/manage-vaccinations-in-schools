@@ -205,7 +205,8 @@ class Reports::OfflineSessionExporter
         }
       }
 
-      vaccination_records = patient.vaccination_records
+      vaccination_records =
+        patient.vaccination_records.select { it.programme_id == programme.id }
 
       if vaccination_records.any?
         vaccination_records.map do |vaccination_record|
