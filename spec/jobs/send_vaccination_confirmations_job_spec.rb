@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe VaccinationConfirmationsJob do
+describe SendVaccinationConfirmationsJob do
   let(:job) { described_class.new }
 
   describe "#perform" do

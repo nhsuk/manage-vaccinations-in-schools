@@ -102,14 +102,16 @@ describe "Scheduled consent requests" do
   end
 
   def then_no_consent_requests_have_been_sent
-    SchoolConsentRequestsJob.perform_now
+    EnqueueSchoolConsentRequestsJob.perform_now
+    perform_enqueued_jobs
 
     expect(email_deliveries).to be_empty
     expect(sms_deliveries).to be_empty
   end
 
   def then_all_four_parents_received_consent_requests
-    SchoolConsentRequestsJob.perform_now
+    EnqueueSchoolConsentRequestsJob.perform_now
+    perform_enqueued_jobs
 
     expect_email_to(
       "parent1.child1@example.com",

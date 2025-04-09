@@ -97,25 +97,20 @@ Rails.application.configure do
 
   config.good_job.enable_cron = true
   config.good_job.cron = {
-    bulk_update_patients_from_pds: {
-      cron: "every day at 6:00 and 18:00",
-      class: "BulkUpdatePatientsFromPDSJob",
-      description: "Keep patient details up to date with PDS."
-    },
-    clinic_invitation: {
+    clinic_session_invitations: {
       cron: "every day at 9am",
-      class: "ClinicSessionInvitationsJob",
+      class: "EnqueueClinicSessionInvitationsJob",
       description: "Send school clinic invitation emails to parents"
     },
-    consent_request: {
+    school_consent_requests: {
       cron: "every day at 4pm",
-      class: "SchoolConsentRequestsJob",
+      class: "EnqueueSchoolConsentRequestsJob",
       description:
         "Send school consent request emails to parents for each session"
     },
     consent_reminder: {
-      cron: "every day at 4pm",
-      class: "SchoolConsentRemindersJob",
+      cron: "every day at 9am",
+      class: "SendSchoolConsentReminderJob",
       description:
         "Send school consent reminder emails to parents for each session"
     },
@@ -125,9 +120,9 @@ Rails.application.configure do
       description:
         "Invalidate all self-consents and associated triage for the previous day"
     },
-    session_reminder: {
+    school_session_reminders: {
       cron: "every day at 9am",
-      class: "SchoolSessionRemindersJob",
+      class: "SendSchoolSessionRemindersJob",
       description: "Send school session reminder emails to parents"
     },
     remove_import_csv: {
@@ -145,9 +140,14 @@ Rails.application.configure do
       class: "TrimActiveRecordSessionsJob",
       description: "Remove ActiveRecord sessions older than 30 days"
     },
+    update_patients_from_pds: {
+      cron: "every day at 6:00 and 18:00",
+      class: "EnqueueUpdatePatientsFromPDSJob",
+      description: "Keep patient details up to date with PDS."
+    },
     vaccination_confirmations: {
       cron: "every day at 7pm",
-      class: "VaccinationConfirmationsJob",
+      class: "SendVaccinationConfirmationsJob",
       description: "Send vaccination confirmation emails to parents"
     }
   }
