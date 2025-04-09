@@ -486,7 +486,7 @@ The previews are defined in `spec/components/previews`.
 
 ### Deploying
 
-This app can be deployed to AWS with Terraform. 
+This app can be deployed to AWS with Terraform.
 
 See [terraform/README.md](docs/terraform.md#local-deployment) for more information.
 
