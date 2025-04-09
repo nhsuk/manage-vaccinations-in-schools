@@ -52,8 +52,8 @@ env:
   terraform-target-options: ${{ inputs.server_types == 'web'
     && '-target=aws_ecs_task_definition.task_definition -target=aws_s3_object.appspec_object'
     || inputs.server_types == 'good-job'
-    && '-target=module.good-job_service.aws_ecs_task_definition.this'
-    || '-target=aws_ecs_task_definition.task_definition -target=aws_s3_object.appspec_object -target=module.good-job_service.aws_ecs_task_definition.this' }}
+    && '-target=module.good_job_service.aws_ecs_task_definition.this'
+    || '-target=aws_ecs_task_definition.task_definition -target=aws_s3_object.appspec_object -target=module.good_job_service.aws_ecs_task_definition.this' }}
 
 jobs:
   plan-changes:
