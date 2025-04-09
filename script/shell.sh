@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 
 usage() {
-    echo "Usage: $0 ENV [--service SERVICE_NAME] [--task_id TASK_ID] [--task_ip TASK_IP]"
+    echo "Usage: $0 [--service SERVICE_NAME] [--task-id TASK_ID] [--task-ip TASK_IP] ENV"
     echo "Options:"
     echo "  ENV                       Specify the environment (cluster will be mavis-ENV)"
-    echo "  --service SERVICE_NAME    Specify the service name (optional): Ignored if using --task_id or --task_ip"
-    echo "  --task_id TASK_ID         Specify the task ID directly (optional)"
-    echo "  --task_ip TASK_IP         Specify the task by its IP address (optional): Ignored if using --task_id"
+    echo "  --service SERVICE_NAME    Specify the service name (optional): Ignored if using --task-id or --task-ip"
+    echo "  --task-id TASK_ID         Specify the task ID directly (optional)"
+    echo "  --task-ip TASK_IP         Specify the task by its IP address (optional): Ignored if using --task-id"
     echo "  --help                    Display this help message"
 }
 
@@ -32,11 +32,11 @@ while [[ $# -gt 0 ]]; do
             service_name="$2"
             shift 2
             ;;
-        --task_id)
+        --task-id)
             task_id="$2"
             shift 2
             ;;
-        --task_ip)
+        --task-ip)
             task_ip="$2"
             shift 2
             ;;
