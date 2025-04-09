@@ -324,4 +324,12 @@ Rails.application.routes.draw do
   end
 
   get "/oidc/jwks", to: "jwks#jwks"
+
+  constraints -> { !Rails.env.production? } do
+    namespace :inspect do
+      namespace :timeline do
+        resources :patients, only: [:show]
+      end
+    end
+  end
 end
