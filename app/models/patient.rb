@@ -53,11 +53,10 @@ class Patient < ApplicationRecord
   include PendingChangesConcern
   include Schoolable
 
-  audited associated_with: :organisation
+  audited
   has_associated_audits
 
   belongs_to :gp_practice, class_name: "Location", optional: true
-  belongs_to :organisation, optional: true
 
   has_many :access_log_entries
   has_many :consent_notifications
@@ -74,11 +73,12 @@ class Patient < ApplicationRecord
   has_many :vaccination_records, -> { kept }
   has_many :vaccination_statuses
 
-  has_many :parents, through: :parent_relationships
   has_many :gillick_assessments, through: :patient_sessions
+  has_many :parents, through: :parent_relationships
   has_many :pre_screenings, through: :patient_sessions
   has_many :session_attendances, through: :patient_sessions
   has_many :sessions, through: :patient_sessions
+  has_many :organisations, through: :sessions
 
   has_many :sessions_for_current_academic_year,
            -> { for_current_academic_year },
