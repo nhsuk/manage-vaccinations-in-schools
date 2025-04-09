@@ -85,6 +85,18 @@ describe ClassImportRow do
         )
       end
     end
+
+    context "with an invalid year group" do
+      let(:data) { valid_data.merge("CHILD_YEAR_GROUP" => "abc") }
+
+      it "is invalid" do
+        expect(class_import_row).to be_invalid
+        expect(class_import_row.errors.size).to eq(1)
+        expect(class_import_row.errors["CHILD_YEAR_GROUP"]).to contain_exactly(
+          "is not a valid year group"
+        )
+      end
+    end
   end
 
   describe "#to_parents" do
