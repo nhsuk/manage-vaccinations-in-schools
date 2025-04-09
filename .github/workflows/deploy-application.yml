@@ -49,11 +49,6 @@ env:
     && 'arn:aws:iam::820242920762:role/GithubDeployMavisAndInfrastructure'
     || 'arn:aws:iam::393416225559:role/GithubDeployMavisAndInfrastructure' }}
   terraform-working-directory: terraform/app
-  terraform-target-options: ${{ inputs.server_types == 'web'
-    && '-target=aws_ecs_task_definition.task_definition -target=aws_s3_object.appspec_object'
-    || inputs.server_types == 'good-job'
-    && '-target=module.good_job_service.aws_ecs_task_definition.this'
-    || '-target=aws_ecs_task_definition.task_definition -target=aws_s3_object.appspec_object -target=module.good_job_service.aws_ecs_task_definition.this' }}
 
 jobs:
   plan-changes:
@@ -91,7 +86,7 @@ jobs:
         working-directory: ${{ env.terraform-working-directory }}
         run: |
           terraform init -backend-config="env/${{ inputs.environment }}-backend.hcl" -upgrade
-          terraform plan ${{ env.terraform-target-options }} -var-file="env/${{ inputs.environment }}.tfvars" \
+          terraform plan -var-file="env/${{ inputs.environment }}.tfvars" \
           -var="image_digest=$DIGEST" -out=${{ runner.temp }}/tfplan | tee ${{ runner.temp }}/tf_stdout
       - name: Validate the changes
         run: |
@@ -197,7 +192,7 @@ jobs:
           aws-region: eu-west-2
       - name: Install AWS CLI
         run: sudo snap install --classic aws-cli
-      - name: Trigger ECR Deployment
+      - name: Trigger ECS Deployment
         run: |
           source ${{ runner.temp }}/artifact/DEPLOYMENT_ENVS
           echo "$ecs_variables"
