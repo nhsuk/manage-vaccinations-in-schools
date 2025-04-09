@@ -24,6 +24,8 @@ class API::OrganisationsController < API::BaseController
         log_destroy(SessionNotification.where(session: sessions))
         log_destroy(VaccinationRecord.where(session: sessions))
 
+        patient_ids = organisation.patients.pluck(:id)
+
         patient_sessions = PatientSession.where(session: sessions)
         log_destroy(GillickAssessment.where(patient_session: patient_sessions))
         log_destroy(PreScreening.where(patient_session: patient_sessions))
@@ -32,22 +34,25 @@ class API::OrganisationsController < API::BaseController
         log_destroy(SessionDate.where(session: sessions))
         log_destroy(sessions)
 
-        patients = organisation.patients
+        organisation.patients
 
-        log_destroy(SchoolMove.where(patient: patients))
+        log_destroy(SchoolMove.where(patient_id: patient_ids))
         log_destroy(SchoolMove.where(organisation:))
-        log_destroy(SchoolMoveLogEntry.where(patient: patients))
-        log_destroy(AccessLogEntry.where(patient: patients))
-        log_destroy(NotifyLogEntry.where(patient: patients))
+        log_destroy(SchoolMoveLogEntry.where(patient_id: patient_ids))
+        log_destroy(AccessLogEntry.where(patient_id: patient_ids))
+        log_destroy(NotifyLogEntry.where(patient_id: patient_ids))
         # In local dev we can end up with NotifyLogEntries without a patient
         log_destroy(NotifyLogEntry.where(patient_id: nil))
-        log_destroy(VaccinationRecord.where(patient: patients))
+        log_destroy(VaccinationRecord.where(patient_id: patient_ids))
 
         log_destroy(ConsentForm.where(organisation:))
         log_destroy(Consent.where(organisation:))
         log_destroy(Triage.where(organisation:))
 
-        patients.includes(:parents).in_batches { log_destroy(it) }
+        Patient
+          .where(id: patient_ids)
+          .includes(:parents)
+          .in_batches { log_destroy(it) }
 
         batches = Batch.where(organisation:)
         log_destroy(VaccinationRecord.where(batch: batches))
