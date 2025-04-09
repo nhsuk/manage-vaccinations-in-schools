@@ -61,11 +61,11 @@ FactoryBot.define do
       location_name { nil }
       in_attendance { false }
       random_nhs_number { false }
-    end
 
-    organisation do
-      session&.organisation || school&.organisation ||
-        association(:organisation, programmes:)
+      organisation do
+        session&.organisation || school&.organisation ||
+          create(:organisation, programmes:)
+      end
     end
 
     nhs_number do
