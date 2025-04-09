@@ -109,7 +109,7 @@ describe "Immunisation imports" do
 
   def then_i_should_see_the_errors_page
     expect(page).to have_content(
-      "How to format your CSV for vaccination records"
+      "How to format your Mavis CSV file for vaccination records"
     )
     expect(page).to have_content("Row 2")
     expect(page).to have_content("VACCINATED:")

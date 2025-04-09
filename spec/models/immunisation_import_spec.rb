@@ -102,9 +102,18 @@ describe ImmunisationImport do
       let(:programmes) { [create(:programme, :hpv_all_vaccines)] }
       let(:file) { "systm_one.csv" }
 
-      it "populates the rows" do
-        expect(immunisation_import).to be_valid
-        expect(immunisation_import.rows).not_to be_empty
+      it "is invalid" do
+        expect(immunisation_import).to be_invalid
+      end
+
+      context "with SystmOne enabled" do
+        before { Flipper.enable(:systm_one_import) }
+        after { Flipper.disable(:systm_one_import) }
+
+        it "populates the rows" do
+          expect(immunisation_import).to be_valid
+          expect(immunisation_import.rows).not_to be_empty
+        end
       end
     end
 
@@ -233,6 +242,9 @@ describe ImmunisationImport do
     context "with a SystmOne file format" do
       let(:programmes) { [create(:programme, :hpv_all_vaccines)] }
       let(:file) { "systm_one.csv" }
+
+      before { Flipper.enable(:systm_one_import) }
+      after { Flipper.disable(:systm_one_import) }
 
       it "creates locations, patients, and vaccination records" do
         # stree-ignore

@@ -152,40 +152,43 @@ class ImmunisationImportRow
   def batch_expiry = @data[:batch_expiry_date]
 
   def batch_name =
-    @data[:batch_number].presence || @data[:vaccination_batch_number]
+    @data[:batch_number].presence || systm_one_data(:vaccination_batch_number)
 
   def care_setting = @data[:care_setting]
 
-  def clinic_name = @data[:clinic_name].presence || @data[:event_done_at]
+  def clinic_name =
+    @data[:clinic_name].presence || systm_one_data(:event_done_at)
 
-  def combined_vaccination_and_dose_sequence = @data[:vaccination_type]
+  def combined_vaccination_and_dose_sequence = systm_one_data(:vaccination_type)
 
   def date_of_vaccination =
-    @data[:date_of_vaccination].presence || @data[:event_date]
+    @data[:date_of_vaccination].presence || systm_one_data(:event_date)
 
   def delivery_site = @data[:anatomical_site]
 
   def dose_sequence = @data[:dose_sequence]
 
-  def location_type = @data[:event_location_type]
+  def location_type = systm_one_data(:event_location_type)
 
   def notes = @data[:notes]
 
   def patient_date_of_birth =
-    @data[:person_dob].presence || @data[:date_of_birth]
+    @data[:person_dob].presence || systm_one_data(:date_of_birth)
 
   def patient_first_name =
-    @data[:person_forename].presence || @data[:first_name]
+    @data[:person_forename].presence || systm_one_data(:first_name)
 
   def patient_gender_code =
     @data[:person_gender_code].presence || @data[:person_gender].presence ||
-      @data[:sex]
+      systm_one_data(:sex)
 
-  def patient_last_name = @data[:person_surname].presence || @data[:surname]
+  def patient_last_name =
+    @data[:person_surname].presence || systm_one_data(:surname)
 
   def patient_nhs_number = @data[:nhs_number]
 
-  def patient_postcode = @data[:person_postcode].presence || @data[:postcode]
+  def patient_postcode =
+    @data[:person_postcode].presence || systm_one_data(:postcode)
 
   def performed_by_email = @data[:performing_professional_email]
 
@@ -200,15 +203,15 @@ class ImmunisationImportRow
   def reason_not_administered = @data[:reason_not_vaccinated]
 
   def school_name =
-    @data[:school_name].presence || @data[:school].presence ||
-      @data[:event_done_at]
+    @data[:school_name].presence || systm_one_data(:school).presence ||
+      systm_one_data(:event_done_at)
 
-  def school_urn = @data[:school_urn].presence || @data[:school_code]
+  def school_urn = @data[:school_urn].presence || systm_one_data(:school_code)
 
   def session_id = @data[:session_id]
 
   def time_of_vaccination =
-    @data[:time_of_vaccination].presence || @data[:event_time]
+    @data[:time_of_vaccination].presence || systm_one_data(:event_time)
 
   def uuid = @data[:uuid]
 
@@ -217,6 +220,14 @@ class ImmunisationImportRow
   def vaccine_name = @data[:vaccine_given]
 
   private
+
+  def systm_one_enabled?
+    @systm_one_enabled ||= Flipper.enabled?(:systm_one_import)
+  end
+
+  def systm_one_data(key)
+    systm_one_enabled? ? @data[key] : nil
+  end
 
   def location_name
     return unless session.nil? || session.location.generic_clinic?
