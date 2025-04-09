@@ -334,7 +334,7 @@ class PatientImportRow
 
   def validate_parent_1_relationship
     if parent_1_relationship.present? && !parent_1_exists?
-      errors.add(parent_1_relationship.header, "is not required")
+      errors.add(parent_1_relationship.header, "must be blank")
     end
   end
 
@@ -361,7 +361,7 @@ class PatientImportRow
 
   def validate_parent_2_relationship
     if parent_2_relationship.present? && !parent_2_exists?
-      errors.add(parent_2_relationship.header, "is not required")
+      errors.add(parent_2_relationship.header, "must be blank")
     end
   end
 
