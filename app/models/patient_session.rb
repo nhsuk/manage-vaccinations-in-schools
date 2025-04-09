@@ -100,7 +100,8 @@ class PatientSession < ApplicationRecord
           )
         end
 
-  scope :includes_programmes, -> { includes(:patient, session: :programmes) }
+  scope :includes_programmes,
+        -> { eager_load(:patient).preload(session: :programmes) }
 
   scope :has_consent_status,
         ->(status, programme:) do
