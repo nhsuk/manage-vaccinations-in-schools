@@ -10,6 +10,7 @@ describe "Manage attendance" do
     when_i_go_to_the_session
     and_i_click_on_the_register_tab
     then_i_see_the_register_tab
+    and_i_see_the_actions_required
 
     when_i_register_a_patient_as_attending
     then_i_see_the_attending_flash
@@ -80,6 +81,11 @@ describe "Manage attendance" do
 
   def then_i_see_the_register_tab
     expect(page).to have_content("Registration status")
+  end
+
+  def and_i_see_the_actions_required
+    # This should be shown once per patient (there are 3 patients).
+    expect(page).to have_content("Record vaccination for HPV").exactly(3).times
   end
 
   def when_i_register_a_patient_as_attending
