@@ -78,6 +78,7 @@ https://docs.aws.amazon.com/systems-manager/latest/userguide/install-plugin-debi
 ## Local deployment
 
 Step 1: Build and push a docker image
+
 ```bash
 aws ecr get-login-password --region eu-west-2 | docker login --username AWS --password-stdin 393416225559.dkr.ecr.eu-west-2.amazonaws.com
 docker build -t mavis/webapp .
@@ -86,12 +87,17 @@ docker push 393416225559.dkr.ecr.eu-west-2.amazonaws.com/mavis/webapp:<GIT_SHA>
 ```
 
 Step 2: Apply the terraform changes
-* Fetch the image digest of the docker image from ECR and run the following commands
+
+- Fetch the image digest of the docker image from ECR and run the following commands
+
 ```bash
-env=... # The environment to deploy  
+env=... # The environment to deploy
 cd terraform/app
 terraform init -reconfigure -backend-config=env/$env-backend.hcl
 tf apply -var-file=env/$env.tfvars -var="image_digest=$env"
 ```
+
 Step 3: Run Codedeploy from the AWS Console
 Step 4: If needed, trigger a deployment for the good-job service from the AWS ECS Console
+
+For a more high-level description of the process see [deployment-process.md](../terraform/documentation/deployment-process.md)
