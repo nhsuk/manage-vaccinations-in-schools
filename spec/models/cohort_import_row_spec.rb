@@ -132,13 +132,13 @@ describe CohortImportRow do
     end
 
     context "when uploading different caps name" do
-      let(:unnormalised_parent_2_data) do
+      let(:capitalised_parent_2_data) do
         {
           "PARENT_2_EMAIL" => "jenny@example.com",
           "PARENT_2_NAME" => "Jenny Smith"
         }
       end
-      let(:data) { valid_data.merge(unnormalised_parent_2_data) }
+      let(:data) { valid_data.merge(capitalised_parent_2_data) }
 
       let!(:existing_parent) do
         create(:parent, full_name: "JENNY SMITH", email: "jenny@example.com")
@@ -148,7 +148,7 @@ describe CohortImportRow do
 
       it "changes the parent's name to the incoming version" do
         # This is called to force ruby to evaluate the `to_parents` method
-        expect(parents.first.full_name).to eq("Jenny Smith")
+        parents
 
         expect(existing_parent.reload.full_name).to eq("Jenny Smith")
       end

@@ -109,6 +109,29 @@ describe ClassImportRow do
         expect(parents.first.full_name).to eq("John Smith")
       end
     end
+
+    context "when uploading different caps name" do
+      let!(:existing_parent) do
+        create(:parent, full_name: "JENNY SMITH", email: "jenny@example.com")
+      end
+
+      let(:capitalised_parent_2_data) do
+        {
+          "PARENT_2_EMAIL" => "jenny@example.com",
+          "PARENT_2_NAME" => "Jenny Smith"
+        }
+      end
+      let(:data) { valid_data.merge(capitalised_parent_2_data) }
+
+      it { should include(existing_parent) }
+
+      it "changes the existing parent's name to the incoming version" do
+        # This is called to force ruby to evaluate the `to_parents` method
+        parents
+
+        expect(existing_parent.reload.full_name).to eq("Jenny Smith")
+      end
+    end
   end
 
   describe "#to_patient" do
