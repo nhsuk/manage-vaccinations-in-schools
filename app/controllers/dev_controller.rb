@@ -35,6 +35,8 @@ class DevController < ApplicationController
       SessionNotification.where(session: sessions).destroy_all
       VaccinationRecord.where(session: sessions).destroy_all
 
+      patient_ids = organisation.patients.pluck(:id)
+
       patient_sessions = PatientSession.where(session: sessions)
       GillickAssessment.where(patient_session: patient_sessions).destroy_all
       PreScreening.where(patient_session: patient_sessions).destroy_all
@@ -42,20 +44,18 @@ class DevController < ApplicationController
 
       sessions.destroy_all
 
-      patients = organisation.patients
-
-      SchoolMove.where(patient: patients).destroy_all
+      SchoolMove.where(patient_id: patient_ids).destroy_all
       SchoolMove.where(organisation:).destroy_all
-      SchoolMoveLogEntry.where(patient: patients).destroy_all
-      AccessLogEntry.where(patient: patients).destroy_all
-      NotifyLogEntry.where(patient: patients).destroy_all
-      VaccinationRecord.where(patient: patients).destroy_all
+      SchoolMoveLogEntry.where(patient_id: patient_ids).destroy_all
+      AccessLogEntry.where(patient_id: patient_ids).destroy_all
+      NotifyLogEntry.where(patient_id: patient_ids).destroy_all
+      VaccinationRecord.where(patient_id: patient_ids).destroy_all
 
       ConsentForm.where(organisation:).destroy_all
       Consent.where(organisation:).destroy_all
       Triage.where(organisation:).destroy_all
 
-      patients.includes(:parents).destroy_all
+      Patient.where(id: patient_ids).includes(:parents).destroy_all
 
       batches = Batch.where(organisation:)
       VaccinationRecord.where(batch: batches).destroy_all
