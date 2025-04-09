@@ -486,14 +486,9 @@ The previews are defined in `spec/components/previews`.
 
 ### Deploying
 
-This app can be deployed to AWS using AWS Copilot. Once authenticated, you can
-run:
+This app can be deployed to AWS with Terraform. 
 
-```shell
-bin/deploy test
-```
-
-See [docs/aws-copilot.md](docs/aws-copilot.md) for more information.
+See [terraform/README.md](docs/terraform.md#local-deployment) for more information.
 
 ### Notify
 
