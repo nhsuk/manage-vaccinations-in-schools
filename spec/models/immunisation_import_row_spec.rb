@@ -17,7 +17,7 @@ describe ImmunisationImportRow do
   let(:programmes) { [create(:programme, :flu)] }
   let(:organisation) { create(:organisation, ods_code: "abc", programmes:) }
 
-  let(:nhs_number) { "1234567890" }
+  let(:nhs_number) { "9990000018" }
   let(:given_name) { "Harry" }
   let(:family_name) { "Potter" }
   let(:date_of_birth) { "20120101" }

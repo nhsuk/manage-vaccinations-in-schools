@@ -11,7 +11,7 @@ describe AppPatientTableComponent do
         :patient,
         given_name: "John",
         family_name: "Smith",
-        nhs_number: "9999999999",
+        nhs_number: "9991000003",
         date_of_birth: Date.new(2000, 5, 28),
         address_postcode: "SW1A 1AA"
       ),
@@ -20,7 +20,7 @@ describe AppPatientTableComponent do
         :restricted,
         given_name: "Jenny",
         family_name: "Smith",
-        nhs_number: "9999999998",
+        nhs_number: "9991000011",
         date_of_birth: Date.new(2000, 5, 28),
         address_postcode: "SW1B 1AA"
       )
@@ -56,7 +56,7 @@ describe AppPatientTableComponent do
     expect(rendered).to have_css(".nhsuk-table__cell", text: "SMITH, John")
     expect(rendered).to have_css(
       ".nhsuk-table__cell",
-      text: "999\u00A0\u200D999\u00A0\u200D9999"
+      text: "999\u00A0\u200D100\u00A0\u200D0003"
     )
     expect(rendered).to have_css(".nhsuk-table__cell", text: "28 May 2000")
     expect(rendered).to have_css(".nhsuk-table__cell", text: "SW1A 1AA")
