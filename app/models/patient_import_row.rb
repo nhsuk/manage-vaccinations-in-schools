@@ -54,7 +54,8 @@ class PatientImportRow
       end
 
       if address_postcode.present? &&
-           address_postcode.downcase != existing_patient.address_postcode.downcase
+           address_postcode.downcase !=
+             existing_patient.address_postcode.downcase
         attributes.merge!(address_line_1:, address_line_2:, address_town:)
       end
 
