@@ -21,31 +21,12 @@ if [ $# -lt 1 ]; then
     exit 1
 fi
 
-ENV="$1"
-shift
-
-if [ -z "$ENV" ]; then
-    echo "Error: Environment cannot be empty"
-    usage
-    exit 1
-fi
-
-CLUSTER_NAME="mavis-$ENV"
-
-OPTIONS=$(getopt -o '' --long service:,task_id:,task_ip:,help -- "$@")
-if ! [ "$OPTIONS" ]; then
-    usage
-    exit 1
-fi
-
-eval set -- "$OPTIONS"
-
 REGION="eu-west-2"
 SERVICE_NAME=""
 TASK_ID=""
 TASK_IP=""
 
-while true; do
+while [[ $# -gt 0 ]]; do
     case "$1" in
         --service)
             SERVICE_NAME="$2"
@@ -59,20 +40,29 @@ while true; do
             TASK_IP="$2"
             shift 2
             ;;
-        --help)
+        -h|--help)
             usage
             exit 0
             ;;
-        --)
-            shift
-            break
-            ;;
-        *)
+        -*)
+            echo "Error: Invalid option $1"
             usage
             exit 1
             ;;
+        *)
+            ENV="$1"
+            shift
+            ;;
     esac
 done
+
+if [ -z "$ENV" ]; then
+    echo "Error: Environment cannot be empty"
+    usage
+    exit 1
+fi
+
+CLUSTER_NAME="mavis-$ENV"
 
 if [ -n "$TASK_ID" ]; then
     task_description=$(aws ecs describe-tasks --region "$REGION" --cluster "$CLUSTER_NAME" --task "$TASK_ID")
