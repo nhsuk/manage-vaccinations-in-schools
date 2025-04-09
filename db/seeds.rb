@@ -126,7 +126,7 @@ def create_session(
       end
 
       # Add extra consent forms with a successful NHS number lookup
-      temporary_patient = FactoryBot.build(:patient, organisation:)
+      temporary_patient = FactoryBot.build(:patient)
       FactoryBot.create(
         :consent_form,
         :recorded,
@@ -210,7 +210,7 @@ def create_imports(user, organisation)
 end
 
 def create_school_moves(organisation)
-  patients = Patient.where(organisation:).sample(10)
+  patients = organisation.patients.sample(10)
 
   patients.each do |patient|
     if [true, false].sample
