@@ -770,7 +770,7 @@ describe ImmunisationImportRow do
         )
       end
 
-      it "still matches to a patient" do
+      let!(:existing_patient) do
         create(
           :patient,
           given_name: "Ron",
@@ -779,8 +779,10 @@ describe ImmunisationImportRow do
           address_postcode:,
           nhs_number: "1234567890"
         )
+      end
 
-        expect(immunisation_import_row.patient).to eq(patient)
+      it "still matches to a patient" do
+        expect(patient).to eq(existing_patient)
       end
 
       it "normalises the batch number correctly" do
