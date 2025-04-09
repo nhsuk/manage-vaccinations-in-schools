@@ -73,6 +73,18 @@ describe ClassImportRow do
         ).to contain_exactly("should be formatted as YYYY-MM-DD")
       end
     end
+
+    context "with an invalid postcode" do
+      let(:data) { valid_data.merge("CHILD_POSTCODE" => "not a postcode") }
+
+      it "is invalid" do
+        expect(class_import_row).to be_invalid
+        expect(class_import_row.errors.size).to eq(1)
+        expect(class_import_row.errors["CHILD_POSTCODE"]).to contain_exactly(
+          "should be a postcode, like SW1A 1AA"
+        )
+      end
+    end
   end
 
   describe "#to_parents" do
