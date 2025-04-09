@@ -7,25 +7,29 @@ infrastructure see [infrastructure-overview.md](../terraform/documentation/infra
 
 ### AWS profile
 
-The setup is configured to use aws profiles to prevent having to copy secrets multiple times, this means you need to
-create
-an aws credentials file (if you don't have one already)
+To set up `awscli` for the first time:
 
 ```bash
-mkdir $HOME/.aws
-touch credentials
+aws configure sso
 ```
 
-and add the following text
+Your `~/.aws/config` should look something like:
 
 ```bash
 [default]
-aws_access_key_id=...
-aws_secret_access_key=...
-aws_session_token=...
+region = eu-west-2
+[profile Admin-ACCOUNT_ID]
+sso_session = SESSION_NAME
+sso_account_id = ACCOUNT_ID
+sso_role_name = Admin
+region = eu-west-2
+[sso-session SESSION_NAME]
+sso_start_url = https://SUBDOMAIN.awsapps.com/start#
+sso_region = eu-west-2
+sso_registration_scopes = sso:account:access
 ```
 
-Before running `terraform ...` make sure you set the environment variable
+Before running `terraform ...` make sure you set the environment variable to the desired profile
 
 ```bash
 export AWS_PROFILE=default
