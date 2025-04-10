@@ -24,19 +24,6 @@ resource "aws_security_group_rule" "rds_ecs_ingress" {
   }
 }
 
-#TODO: Remove after release
-resource "aws_security_group_rule" "rds_ingress" {
-  type                     = "ingress"
-  from_port                = 5432
-  to_port                  = 5432
-  protocol                 = "tcp"
-  security_group_id        = aws_security_group.rds_security_group.id
-  source_security_group_id = aws_security_group.ecs_service_sg.id
-  lifecycle {
-    create_before_destroy = true
-  }
-}
-
 resource "aws_db_subnet_group" "aurora_subnet_group" {
   name        = var.resource_name.dbsubnet_group
   description = "Group of private subnets for Aurora Serverless v2 cluster."
