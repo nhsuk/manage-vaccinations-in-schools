@@ -148,7 +148,7 @@ module CSVImportable
   def update_from_pds
     return unless Settings.pds.enqueue_bulk_updates
 
-    wait_between_jobs = Settings.pds.wait_between_jobs.to_i
+    wait_between_jobs = Settings.pds.wait_between_jobs.to_f
 
     GoodJob::Bulk.enqueue do
       patients.find_each.with_index do |patient, index|

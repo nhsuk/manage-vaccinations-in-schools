@@ -11,7 +11,7 @@ class BulkUpdatePatientsFromPDSJob < ApplicationJob
     return unless Settings.pds.enqueue_bulk_updates
 
     patients = Patient.with_nhs_number.not_invalidated.not_deceased
-    wait_between_jobs = Settings.pds.wait_between_jobs.to_i
+    wait_between_jobs = Settings.pds.wait_between_jobs.to_f
 
     GoodJob::Bulk.enqueue do
       patients

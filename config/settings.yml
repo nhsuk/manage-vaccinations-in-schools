@@ -75,7 +75,7 @@ nhs_api:
 pds:
   enqueue_bulk_updates: true
   raise_unknown_gp_practice: true
-  wait_between_jobs: 2
+  wait_between_jobs: 2.0
 
 splunk:
   enabled: true
