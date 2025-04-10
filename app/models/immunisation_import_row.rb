@@ -489,7 +489,7 @@ class ImmunisationImportRow
         end
       end
     elsif batch_expiry.present?
-      errors.add(batch_expiry.header, "is not required")
+      errors.add(batch_expiry.header, "must be blank")
     end
   end
 
@@ -510,7 +510,7 @@ class ImmunisationImportRow
         end
       end
     elsif batch_name.present?
-      errors.add(batch_name.header, "is not required")
+      errors.add(batch_name.header, "must be blank")
     end
   end
 
@@ -608,7 +608,7 @@ class ImmunisationImportRow
         end
       end
     elsif delivery_site.present?
-      errors.add(delivery_site.header, "is not required")
+      errors.add(delivery_site.header, "must be blank")
     end
   end
 
@@ -854,7 +854,7 @@ class ImmunisationImportRow
   def validate_reason_not_administered
     if administered
       if reason_not_administered.present?
-        errors.add(reason_not_administered.header, "is not required")
+        errors.add(reason_not_administered.header, "must be blank")
       end
     elsif reason_not_administered.present?
       if reason_not_administered_value.blank?

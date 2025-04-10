@@ -230,7 +230,7 @@ describe ImmunisationImportRow do
       it "has errors" do
         expect(immunisation_import_row).to be_invalid
         expect(immunisation_import_row.errors["REASON_NOT_VACCINATED"]).to eq(
-          ["is not required"]
+          ["must be blank"]
         )
       end
     end
