@@ -37,6 +37,8 @@ describe "Patient search" do
   def given_that_i_am_signed_in
     organisation = create(:organisation, :with_one_nurse)
 
+    session = create(:session, organisation:)
+
     [
       %w[Aaron Smith],
       %w[Aardvark Jones],
@@ -44,14 +46,14 @@ describe "Patient search" do
       %w[Cassidy Wilson],
       %w[Bob Taylor]
     ].each do |(given_name, family_name)|
-      create(:patient, given_name:, family_name:, organisation:)
+      create(:patient, given_name:, family_name:, session:)
     end
 
     create(
       :patient,
       given_name: "Salvor",
       family_name: "Hardin",
-      organisation:,
+      session:,
       nhs_number: nil
     )
 
@@ -59,7 +61,7 @@ describe "Patient search" do
       :patient,
       given_name: "Hari",
       family_name: "Seldon",
-      organisation:,
+      session:,
       date_of_birth: Date.new(2013, 1, 1)
     )
 

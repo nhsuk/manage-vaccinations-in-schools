@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_04_02_093102) do
+ActiveRecord::Schema[8.0].define(version: 2025_04_08_195356) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -615,14 +615,12 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_02_093102) do
     t.datetime "updated_from_pds_at"
     t.bigint "gp_practice_id"
     t.integer "birth_academic_year", null: false
-    t.bigint "organisation_id"
     t.index ["family_name", "given_name"], name: "index_patients_on_names_family_first"
     t.index ["family_name"], name: "index_patients_on_family_name_trigram", opclass: :gin_trgm_ops, using: :gin
     t.index ["given_name", "family_name"], name: "index_patients_on_names_given_first"
     t.index ["given_name"], name: "index_patients_on_given_name_trigram", opclass: :gin_trgm_ops, using: :gin
     t.index ["gp_practice_id"], name: "index_patients_on_gp_practice_id"
     t.index ["nhs_number"], name: "index_patients_on_nhs_number", unique: true
-    t.index ["organisation_id"], name: "index_patients_on_organisation_id"
     t.index ["school_id"], name: "index_patients_on_school_id"
   end
 
@@ -903,7 +901,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_02_093102) do
   add_foreign_key "patient_vaccination_statuses", "programmes"
   add_foreign_key "patients", "locations", column: "gp_practice_id"
   add_foreign_key "patients", "locations", column: "school_id"
-  add_foreign_key "patients", "organisations"
   add_foreign_key "pre_screenings", "patient_sessions"
   add_foreign_key "pre_screenings", "programmes"
   add_foreign_key "pre_screenings", "users", column: "performed_by_user_id"
