@@ -161,6 +161,7 @@
         "rds:ListTagsForResource",
         "rds:AddTagsToResource",
         "rds:ModifyDBCluster",
+        "rds:ModifyCurrentDBClusterCapacity",
         "rds:ModifyDBInstance",
         "rds:RemoveTagsFromResource",
         "resource-groups:CreateGroup",
