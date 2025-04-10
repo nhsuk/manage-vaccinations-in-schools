@@ -143,13 +143,6 @@ variable "enable_cis2" {
   nullable    = false
 }
 
-variable "enable_pds_enqueue_bulk_updates" {
-  type        = bool
-  default     = false
-  description = "Whether PDS jobs that update patients in bulk should execute or not. This is disabled in non-production environments to avoid making unnecessary requests to PDS."
-  nullable    = false
-}
-
 variable "enable_splunk" {
   type        = bool
   default     = true
@@ -190,10 +183,6 @@ locals {
       value = var.enable_cis2 ? "true" : "false"
     },
     {
-      name  = "MAVIS__PDS__ENQUEUE_BULK_UPDATES"
-      value = var.enable_pds_enqueue_bulk_updates ? "true" : "false"
-    },
-    {
       name  = "MAVIS__SPLUNK__ENABLED"
       value = var.enable_splunk ? "true" : "false"
     }
@@ -206,6 +195,10 @@ locals {
     {
       name      = "RAILS_MASTER_KEY"
       valueFrom = var.rails_master_key_path
+    },
+    {
+      name      = "MAVIS__PDS__ENQUEUE_BULK_UPDATES"
+      valueFrom = aws_ssm_parameter.pds_enqueue_bulk_jobs.name,
     },
     {
       name      = "MAVIS__PDS__WAIT_BETWEEN_JOBS",
