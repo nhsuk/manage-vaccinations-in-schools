@@ -54,6 +54,7 @@ data "aws_iam_policy_document" "ecs_secrets_access" {
     resources = [
       "arn:aws:ssm:${var.region}:${var.account_id}:parameter${var.rails_master_key_path}",
       aws_ssm_parameter.good_job_max_threads.arn,
+      aws_ssm_parameter.pds_enqueue_bulk_jobs.arn,
       aws_ssm_parameter.pds_wait_between_jobs.arn
     ]
     effect = "Allow"
