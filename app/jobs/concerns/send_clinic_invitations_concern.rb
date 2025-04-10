@@ -19,17 +19,6 @@ module SendClinicInvitationsConcern
 
     return false unless patient.send_notifications?
 
-    eligible_programmes = patient_session.programmes & programmes
-
-    return false if eligible_programmes.empty?
-
-    all_vaccinated =
-      eligible_programmes.all? do |programme|
-        patient.vaccination_status(programme:).vaccinated?
-      end
-
-    return false if all_vaccinated
-
     already_sent_notification =
       patient_session.session_notifications.any? do
         _1.session_date == session_date
@@ -37,14 +26,14 @@ module SendClinicInvitationsConcern
 
     return false if already_sent_notification
 
-    all_consent_refused =
-      eligible_programmes.all? do |programme|
-        patient.consent_status(programme:).refused?
-      end
+    eligible_programmes = patient_session.programmes & programmes
 
-    return false if all_consent_refused
+    return false if eligible_programmes.empty?
 
-    true
+    eligible_programmes.any? do |programme|
+      !patient.vaccination_status(programme:).vaccinated? &&
+        !patient.consent_status(programme:).refused?
+    end
   end
 
   class InvalidLocation < StandardError
