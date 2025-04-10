@@ -10,9 +10,6 @@ module PendingChangesConcern
       attributes.each_with_object({}) do |(attr, new_value), staged_changes|
         current_value = public_send(attr)
 
-        # Automatically update the patient's attribute if `new_value` is the same as `current_value` except from:
-        #  - case
-        # Otherwise, stage the change for review
         if normalise_for_comparison(new_value) ==
              normalise_for_comparison(current_value)
           public_send("#{attr}=", new_value) if new_value != current_value
@@ -27,7 +24,6 @@ module PendingChangesConcern
   end
 
   def normalise_for_comparison(value)
-    # Normalise by case
     value.respond_to?(:downcase) ? value.downcase : value
   end
 
