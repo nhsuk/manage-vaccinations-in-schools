@@ -355,6 +355,21 @@ describe CohortImport do
       end
     end
 
+    context "with an existing parent matching the name but a different case" do
+      let!(:existing_parent) do
+        create(:parent, full_name: "JOHN smith", email: "john@example.com")
+      end
+
+      it "doesn't create an additional parent" do
+        expect { process! }.to change(Parent, :count).by(2)
+      end
+
+      it "changes the parent's name to the incoming version" do
+        process!
+        expect(existing_parent.reload.full_name).to eq("John Smith")
+      end
+    end
+
     context "with an unscheduled session" do
       let(:session) do
         create(:session, :unscheduled, organisation:, programmes:, location:)

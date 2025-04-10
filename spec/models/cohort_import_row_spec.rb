@@ -145,13 +145,6 @@ describe CohortImportRow do
       end
 
       it { should eq([existing_parent]) }
-
-      it "changes the parent's name to the incoming version" do
-        # This is called to force ruby to evaluate the `to_parents` method
-        parents
-
-        expect(existing_parent.reload.full_name).to eq("Jenny Smith")
-      end
     end
   end
 
