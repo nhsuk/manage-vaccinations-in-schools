@@ -20,10 +20,11 @@ http_hosts = {
   MAVIS__GIVE_OR_REFUSE_CONSENT_HOST = "www.give-or-refuse-consent-for-vaccinations.nhs.uk"
 }
 
-appspec_bucket          = "nhse-mavis-appspec-bucket-production"
-account_id              = 820242920762
-vpc_log_retention_days  = 14
-ecs_log_retention_days  = 30
-backup_retention_period = 7
-ssl_policy              = "ELBSecurityPolicy-TLS13-1-2-2021-06"
-access_logs_bucket      = "nhse-mavis-access-logs-production"
+appspec_bucket            = "nhse-mavis-appspec-bucket-production"
+account_id                = 820242920762
+vpc_log_retention_days    = 14
+ecs_log_retention_days    = 30
+backup_retention_period   = 7
+ssl_policy                = "ELBSecurityPolicy-TLS13-1-2-2021-06"
+access_logs_bucket        = "nhse-mavis-access-logs-production"
+max_aurora_capacity_units = 16
