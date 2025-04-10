@@ -62,7 +62,7 @@ resource "aws_rds_cluster" "aurora_cluster" {
   deletion_protection         = true
 
   serverlessv2_scaling_configuration {
-    max_capacity = 8.0
+    max_capacity = var.max_aurora_capacity_units
     min_capacity = 0.5
   }
 }

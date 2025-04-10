@@ -256,6 +256,12 @@ variable "minimum_good_job_replicas" {
   description = "Minimum amount of allowed replicas for good-job service"
 }
 
+variable "max_aurora_capacity_units" {
+  type        = number
+  default     = 8
+  description = "Maximum amount of allowed ACU capacity for Aurora Serverless v2"
+}
+
 variable "active_lb_target_group" {
   type        = string
   description = "The actual loadbalancer target group is set by Codedeploy. However in scenarios where new resources behind the load balancer are created, terraform already needs to know the current target group. In this case, set the variable to the currently active target group."
