@@ -5,3 +5,4 @@ aws-copilot 1.34.0
 awscli 2.13.31
 terraform 1.10.5
 tflint 0.55.1
+python 3.13.2
