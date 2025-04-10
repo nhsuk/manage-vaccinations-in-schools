@@ -369,7 +369,19 @@ class PatientImportRow
     field = year_group.presence || date_of_birth
 
     year_group_value = birth_academic_year_value&.to_year_group
-    return if year_group_value.nil?
+
+    if year_group_value.nil?
+      # We only need to add a validation error here is the file had an
+      # explicit year group, since otherwise the year group comes from the
+      # date of birth. If the date of birth is missing, there would already
+      # be a validation error for that.
+
+      if year_group.present?
+        errors.add(field.header, "is not a valid year group")
+      end
+
+      return
+    end
 
     unless year_group_value.in?(year_groups)
       errors.add(field.header, "is not part of this programme")
