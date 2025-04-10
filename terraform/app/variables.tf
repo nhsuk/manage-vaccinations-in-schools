@@ -211,6 +211,10 @@ locals {
       name      = "MAVIS__PDS__WAIT_BETWEEN_JOBS",
       valueFrom = aws_ssm_parameter.pds_wait_between_jobs.name,
     },
+    {
+      name      = "GOOD_JOB_MAX_THREADS",
+      valueFrom = aws_ssm_parameter.good_job_max_threads.name,
+    },
   ]
 }
 
