@@ -143,6 +143,13 @@ variable "enable_cis2" {
   nullable    = false
 }
 
+variable "enable_pds_enqueue_bulk_updates" {
+  type        = bool
+  default     = true
+  description = "Whether PDS jobs that update patients in bulk should execute or not. This is disabled in non-production environments to avoid making unnecessary requests to PDS."
+  nullable    = false
+}
+
 variable "enable_splunk" {
   type        = bool
   default     = true
@@ -152,6 +159,16 @@ variable "enable_splunk" {
 
 locals {
   is_production = var.environment == "production"
+  parameter_store_variables = tomap({
+    MAVIS__PDS__ENQUEUE_BULK_UPDATES = var.enable_pds_enqueue_bulk_updates ? "true" : "false"
+    MAVIS__PDS__WAIT_BETWEEN_JOBS    = 0.5
+    GOOD_JOB_MAX_THREADS             = 5
+  })
+  parameter_store_config_list = [for key, value in local.parameter_store_variables : {
+    name      = key
+    valueFrom = aws_ssm_parameter.environment_config[key].arn
+  }]
+  parameter_store_arns = [for key, value in local.parameter_store_variables : aws_ssm_parameter.environment_config[key].arn]
 
   task_envs = [
     {
@@ -187,7 +204,7 @@ locals {
       value = var.enable_splunk ? "true" : "false"
     }
   ]
-  task_secrets = [
+  task_secrets = concat([
     {
       name      = var.db_secret_arn == null ? "DB_CREDENTIALS" : "DB_SECRET"
       valueFrom = var.db_secret_arn == null ? aws_rds_cluster.aurora_cluster.master_user_secret[0].secret_arn : var.db_secret_arn
@@ -195,20 +212,8 @@ locals {
     {
       name      = "RAILS_MASTER_KEY"
       valueFrom = var.rails_master_key_path
-    },
-    {
-      name      = "MAVIS__PDS__ENQUEUE_BULK_UPDATES"
-      valueFrom = aws_ssm_parameter.pds_enqueue_bulk_jobs.name,
-    },
-    {
-      name      = "MAVIS__PDS__WAIT_BETWEEN_JOBS",
-      valueFrom = aws_ssm_parameter.pds_wait_between_jobs.name,
-    },
-    {
-      name      = "GOOD_JOB_MAX_THREADS",
-      valueFrom = aws_ssm_parameter.good_job_max_threads.name,
-    },
-  ]
+    }
+  ], local.parameter_store_config_list)
 }
 
 ########## RDS configuration ##########

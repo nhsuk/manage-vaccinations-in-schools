@@ -106,7 +106,12 @@ http_hosts = {
   MAVIS__HOST                        = "$ENV.mavistesting.com"
   MAVIS__GIVE_OR_REFUSE_CONSENT_HOST = "$ENV.mavistesting.com"
 }
-minimum_replicas     = 3
+
+enable_splunk                   = false
+enable_cis2                     = false
+enable_pds_enqueue_bulk_updates = false
+
+minimum_web_replicas = 3
 appspec_bucket       = "nhse-mavis-appspec-bucket-$ENV"
 
 EOF
