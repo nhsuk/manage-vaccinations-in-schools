@@ -1,0 +1,57 @@
+name: Performance testing
+
+on:
+  workflow_dispatch:
+    inputs:
+      session_slug:
+        description: "Session slug - for a session in the QA environment. This session MUST HAVE A SESSION DATE FOR TODAY."
+        required: true
+        type: string
+      duration:
+        description: "Duration of test, in seconds. This will include ramp-up."
+        required: false
+        type: number
+      threads:
+        description: "Threads to run. Equivalent to the number of nurses using the system."
+        required: false
+        type: number
+      ramp_up:
+        description: "Ramp-up time in seconds. Threads will be gradually started up over this time."
+        required: false
+        type: number
+      vaccination_loop:
+        description: "Vaccination loop. The number of vaccinations each nurse will perform before logging and back in again."
+        required: false
+        type: number
+
+jobs:
+  nurse_test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Run JMeter test
+        uses: QAInsights/PerfAction@v5.6.2
+        with:
+          test-plan-path: performance-tests/Mavis_NURSE.jmx
+          results-file: results-nurse.jtl
+          args: "-e -o ./reports-nurse/html/ -JSessionSlug=${{inputs.session_slug}} -JAuthToken=${{secrets.HTTP_AUTH_TOKEN_FOR_TESTS}} -JDuration=${{inputs.duration}} -JThreads=${{inputs.threads}} -JRampUp=${{inputs.ramp_up}} -JVaccinationLoop=${{inputs.vaccination_loop}}"
+      - name: Upload Results
+        uses: actions/upload-artifact@v3
+        with:
+          name: jmeter-results
+          path: result-nurse.jtl
+          if-no-files-found: error
+
+      - name: Upload Results
+        uses: actions/upload-artifact@v1
+        with:
+          name: jmeter-test-results
+          path: reports/
+
+      - name: Upload HTML Reports
+        uses: actions/upload-artifact@v3
+        with:
+          name: jmeter-html-reports
+          path: reports-nurse
+          if-no-files-found: error
