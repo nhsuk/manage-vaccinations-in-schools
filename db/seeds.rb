@@ -8,9 +8,7 @@ end
 Faker::Config.locale = "en-GB"
 
 def set_feature_flags
-  %i[dev_tools mesh_jobs cis2].each do |feature_flag|
-    Flipper.add(feature_flag) unless Flipper.exist?(feature_flag)
-  end
+  FeatureFlagFactory.call
 end
 
 def seed_vaccines
