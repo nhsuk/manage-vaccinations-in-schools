@@ -71,10 +71,13 @@ class PatientSession < ApplicationRecord
           joins(:patient).merge(Patient.in_programmes(programmes))
         end
 
-  scope :search_by_name, ->(name) { merge(Patient.search_by_name(name)) }
+  scope :search_by_name,
+        ->(name) { joins(:patient).merge(Patient.search_by_name(name)) }
 
   scope :search_by_year_groups,
-        ->(year_groups) { merge(Patient.search_by_year_groups(year_groups)) }
+        ->(year_groups) do
+          joins(:patient).merge(Patient.search_by_year_groups(year_groups))
+        end
 
   scope :search_by_date_of_birth_year,
         ->(year) do
@@ -100,8 +103,7 @@ class PatientSession < ApplicationRecord
           )
         end
 
-  scope :includes_programmes,
-        -> { eager_load(:patient).preload(session: :programmes) }
+  scope :includes_programmes, -> { preload(:patient, session: :programmes) }
 
   scope :has_consent_status,
         ->(status, programme:) do
