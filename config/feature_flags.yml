@@ -1,7 +1,15 @@
-- basic_auth
-- dev_tools
-- mesh_jobs
-- offline_working
-- report_gillick_notify_parents
-- school_moves_export
-- systm_one_import
+basic_auth: Require users to sign in with basic authentication before they
+  can use the service.
+
+dev_tools: Developer tools useful for testing and debugging.
+
+mesh_jobs: Export vaccination records to MESH automatically.
+
+offline_working: Prototype support for using Mavis offline.
+
+report_gillick_notify_parents: Include whether patients would like their
+  parents to be informed of vaccinations in the reporting.
+
+school_moves_export: Allow exporting confirmed school moves.
+
+systm_one_import: Allow importing vaccination records in SystmOne format.
