@@ -104,6 +104,7 @@ group :test do
       git: "https://github.com/citizensadvice/capybara_accessible_selectors",
       branch: "main"
   gem "capybara-screenshot"
+  gem "climate_control"
   gem "cuprite"
   gem "its"
   gem "rspec"
