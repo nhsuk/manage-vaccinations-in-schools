@@ -58,12 +58,18 @@ class SchoolConsentRemindersJob < ApplicationJob
     session = patient_session.session
 
     programmes.any? do |programme|
-      no_requests =
-        patient.consent_notifications.none? do
-          it.request? && it.programmes.include?(programme)
-        end
+      request_consent_notification =
+        patient
+          .consent_notifications
+          .sort_by(&:sent_at)
+          .find { it.request? && it.programmes.include?(programme) }
 
-      next false if no_requests
+      return false if request_consent_notification.nil?
+
+      session_dates_after_request =
+        session.dates.select do
+          it > request_consent_notification.sent_at.to_date
+        end
 
       date_index_to_send_reminder_for =
         patient
@@ -71,9 +77,13 @@ class SchoolConsentRemindersJob < ApplicationJob
           .select { it.reminder? && it.programmes.include?(programme) }
           .length
 
-      next false if date_index_to_send_reminder_for >= session.dates.length
+      if date_index_to_send_reminder_for >= session_dates_after_request.length
+        next false
+      end
 
-      date_to_send_reminder_for = session.dates[date_index_to_send_reminder_for]
+      date_to_send_reminder_for =
+        session_dates_after_request[date_index_to_send_reminder_for]
+
       earliest_date_to_send_reminder =
         date_to_send_reminder_for - session.days_before_consent_reminders.days
 

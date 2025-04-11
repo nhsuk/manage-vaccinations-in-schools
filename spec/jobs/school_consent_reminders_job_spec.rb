@@ -19,6 +19,9 @@ describe SchoolConsentRemindersJob do
   let(:patient_not_sent_reminder) do
     create(:patient, :consent_request_sent, parents:, programmes:)
   end
+  let(:patient_not_sent_reminder_joined_after_first_date) do
+    create(:patient, :consent_request_sent, parents:, programmes:)
+  end
   let(:patient_not_sent_request) { create(:patient, parents:, programmes:) }
   let(:patient_with_consent) do
     create(:patient, :consent_given_triage_not_needed, programmes:)
@@ -31,6 +34,7 @@ describe SchoolConsentRemindersJob do
     [
       patient_with_initial_reminder_sent,
       patient_not_sent_reminder,
+      patient_not_sent_reminder_joined_after_first_date,
       patient_not_sent_request,
       patient_with_consent,
       deceased_patient,
@@ -39,7 +43,7 @@ describe SchoolConsentRemindersJob do
     ]
   end
 
-  let(:dates) { [Date.new(2024, 1, 12), Date.new(2024, 1, 15)] }
+  let(:dates) { [Date.new(2024, 2, 1), Date.new(2024, 3, 1)] }
 
   let(:organisation) { create(:organisation, programmes:) }
   let(:location) { create(:school, organisation:) }
@@ -54,6 +58,15 @@ describe SchoolConsentRemindersJob do
       patients:,
       programmes:,
       organisation:
+    )
+  end
+
+  before do
+    ConsentNotification.request.update_all(sent_at: dates.first - 1.week)
+    ConsentNotification.reminder.update_all(sent_at: dates.first)
+
+    patient_not_sent_reminder_joined_after_first_date.consent_notifications.update_all(
+      sent_at: dates.first + 1.day
     )
   end
 
@@ -113,12 +126,38 @@ describe SchoolConsentRemindersJob do
     end
   end
 
+  context "one day after the first session" do
+    let(:today) { dates.first + 1.day }
+
+    it "doesn't send a reminder to the patient who just joined" do
+      expect(ConsentNotification).not_to receive(:create_and_send!).with(
+        patient: patient_not_sent_reminder_joined_after_first_date,
+        programmes:,
+        session:,
+        type: :initial_reminder
+      )
+
+      perform_now
+
+      expect(
+        patient_not_sent_reminder_joined_after_first_date.consent_notifications.count
+      ).to eq(1)
+    end
+  end
+
   context "one week before the second session" do
     let(:today) { dates.last - 1.week }
 
-    it "sends notifications to two patients" do
+    it "sends notifications to three patients" do
       expect(ConsentNotification).to receive(:create_and_send!).once.with(
         patient: patient_not_sent_reminder,
+        programmes:,
+        session:,
+        type: :initial_reminder
+      )
+
+      expect(ConsentNotification).to receive(:create_and_send!).once.with(
+        patient: patient_not_sent_reminder_joined_after_first_date,
         programmes:,
         session:,
         type: :initial_reminder
@@ -135,7 +174,7 @@ describe SchoolConsentRemindersJob do
     end
 
     it "records the notifications" do
-      expect { perform_now }.to change(ConsentNotification, :count).by(2)
+      expect { perform_now }.to change(ConsentNotification, :count).by(3)
     end
   end
 end

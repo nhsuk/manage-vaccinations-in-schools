@@ -44,6 +44,8 @@ class ConsentNotification < ApplicationRecord
   scope :has_programme,
         ->(programme) { joins(:programmes).where(programmes: programme) }
 
+  scope :reminder, -> { initial_reminder.or(subsequent_reminder) }
+
   def reminder?
     initial_reminder? || subsequent_reminder?
   end
