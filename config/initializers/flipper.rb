@@ -17,4 +17,9 @@ DESCRIPTIONS =
 Flipper::UI.configure do |config|
   config.show_feature_description_in_list = true
   config.descriptions_source = ->(keys) { DESCRIPTIONS.slice(*keys) }
+
+  if Rails.env.production?
+    config.banner_text = "This will configure features in production."
+    config.banner_class = "danger"
+  end
 end
