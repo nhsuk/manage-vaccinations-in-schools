@@ -10,3 +10,11 @@ if Rails.env.test?
     end
   end
 end
+
+DESCRIPTIONS =
+  YAML.safe_load(File.read(Rails.root.join("config/feature_flags.yml")))
+
+Flipper::UI.configure do |config|
+  config.show_feature_description_in_list = true
+  config.descriptions_source = ->(keys) { DESCRIPTIONS.slice(*keys) }
+end
