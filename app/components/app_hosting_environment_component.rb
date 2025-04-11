@@ -7,14 +7,14 @@ class AppHostingEnvironmentComponent < ViewComponent::Base
         <strong class="nhsuk-tag nhsuk-tag--<%= colour %>">
           <%= title %>
         </strong>
-        <span><%= t("hosting_environment", name:) %></span>
+        <span><%= t("hosting_environment", name: title_in_sentence) %></span>
       </div>
     </div>
   ERB
 
-  def render?
-    !Rails.env.production?
-  end
+  def render? = !Rails.env.production?
+
+  delegate :title, :title_in_sentence, to: :HostingEnvironment
 
   ENVIRONMENT_COLOR = {
     development: "white",
@@ -24,25 +24,7 @@ class AppHostingEnvironmentComponent < ViewComponent::Base
     preview: "yellow"
   }.freeze
 
-  def pull_request
-    ENV.fetch("HEROKU_PR_NUMBER", false)
-  end
-
-  def title
-    pull_request ? "PR #{pull_request}" : environment.titleize
-  end
-
-  def name
-    return title if environment == "qa"
-
-    environment
-  end
-
   def colour
-    ENVIRONMENT_COLOR[environment.to_sym]
-  end
-
-  def environment
-    pull_request ? "review" : ENV.fetch("SENTRY_ENVIRONMENT", "development")
+    ENVIRONMENT_COLOR[HostingEnvironment.name.to_sym]
   end
 end
