@@ -27,8 +27,9 @@ class SendClinicInitialInvitationsJob < ApplicationJob
 
     session
       .patient_sessions
+      .joins(:patient)
       .includes_programmes
-      .preload(
+      .includes(
         :session_notifications,
         patient: %i[consents parents vaccination_records]
       )

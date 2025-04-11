@@ -34,8 +34,35 @@ describe "Patient search" do
     then_i_see_patients_by_date_of_birth
   end
 
+  scenario "Search result returns no patients" do
+    given_that_i_am_signed_in
+
+    when_i_visit_the_session_consent_tab
+    and_i_search_for_a_name_that_doesnt_exist
+    then_i_see_no_results
+
+    when_i_visit_the_session_triage_tab
+    and_i_search_for_a_name_that_doesnt_exist
+    then_i_see_no_results
+
+    when_i_visit_the_session_register_tab
+    and_i_search_for_a_name_that_doesnt_exist
+    then_i_see_no_results
+
+    when_i_visit_the_session_record_tab
+    and_i_search_for_a_name_that_doesnt_exist
+    then_i_see_no_results
+
+    when_i_visit_the_session_outcome_tab
+    and_i_search_for_a_name_that_doesnt_exist
+    then_i_see_no_results
+  end
+
   def given_that_i_am_signed_in
     organisation = create(:organisation, :with_one_nurse)
+
+    location = create(:school, name: "Waterloo Road")
+    @session = create(:session, location:, organisation:)
 
     [
       %w[Aaron Smith],
@@ -44,14 +71,14 @@ describe "Patient search" do
       %w[Cassidy Wilson],
       %w[Bob Taylor]
     ].each do |(given_name, family_name)|
-      create(:patient, given_name:, family_name:, organisation:)
+      create(:patient, given_name:, family_name:, session: @session)
     end
 
     create(
       :patient,
       given_name: "Salvor",
       family_name: "Hardin",
-      organisation:,
+      session: @session,
       nhs_number: nil
     )
 
@@ -59,7 +86,7 @@ describe "Patient search" do
       :patient,
       given_name: "Hari",
       family_name: "Seldon",
-      organisation:,
+      session: @session,
       date_of_birth: Date.new(2013, 1, 1)
     )
 
@@ -171,5 +198,34 @@ describe "Patient search" do
     expect(page).not_to have_content("WILSON, Cassidy")
     expect(page).not_to have_content("HARDIN, Salvor")
     expect(page).to have_content("SELDON, Hari")
+  end
+
+  def when_i_visit_the_session_consent_tab
+    visit session_consent_path(@session)
+  end
+
+  def when_i_visit_the_session_triage_tab
+    visit session_triage_path(@session)
+  end
+
+  def when_i_visit_the_session_register_tab
+    visit session_register_path(@session)
+  end
+
+  def when_i_visit_the_session_record_tab
+    visit session_record_path(@session)
+  end
+
+  def when_i_visit_the_session_outcome_tab
+    visit session_outcome_path(@session)
+  end
+
+  def and_i_search_for_a_name_that_doesnt_exist
+    fill_in "Search", with: "Name doesn't exist"
+    click_on "Search"
+  end
+
+  def then_i_see_no_results
+    expect(page).to have_content("No children matching search criteria found")
   end
 end
