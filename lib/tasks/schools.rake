@@ -208,4 +208,53 @@ namespace :schools do
       year_groups: [8, 9, 10, 11]
     )
   end
+
+  desc "Check school URNs in onboarding YAML files against locations database and GIAS data"
+  task check_onboarding_urns: :environment do
+    puts "Loading GIAS data..."
+    gias_data = {}
+
+    Zip::File.open(Rails.root.join("db/data/dfe-schools.zip")) do |zip|
+      csv_entry = zip.glob("*.csv").first
+      csv_content = csv_entry.get_input_stream.read
+
+      CSV.parse(
+        csv_content,
+        headers: true,
+        encoding: "ISO-8859-1:UTF-8"
+      ) do |row|
+        urn = row["URN"].to_s
+        status = row["EstablishmentStatus (code)"]
+        gias_data[urn] = {
+          name: row["EstablishmentName"],
+          status:,
+          status_name: row["EstablishmentStatus (name)"]
+        }
+      end
+    end
+
+    Dir
+      .glob(Rails.root.join("config/onboarding/*-production.yaml"))
+      .each do |file|
+        puts "\nChecking #{File.basename(file)}..."
+
+        yaml_content = YAML.load_file(file)
+        all_urns = yaml_content["schools"].values.flatten.map(&:to_s)
+
+        all_urns.each do |urn|
+          gias_info = gias_data[urn]
+          location = Location.school.find_by(urn:)
+
+          if gias_info.nil?
+            puts "Missing school: URN #{urn} (not found in GIAS data)"
+          elsif gias_info[:status] != "1"
+            puts "Closed school: URN #{urn} (#{gias_info[:name]}) - " \
+                   "Status: #{gias_info[:status_name]} (#{gias_info[:status]})"
+          elsif location.nil?
+            puts "Missing school: URN #{urn} (#{gias_info[:name]}) - " \
+                   "Status: #{gias_info[:status_name]} (#{gias_info[:status]})"
+          end
+        end
+      end
+  end
 end
