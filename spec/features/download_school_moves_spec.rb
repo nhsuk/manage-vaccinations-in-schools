@@ -1,9 +1,6 @@
 # frozen_string_literal: true
 
 describe "Download school moves" do
-  before { Flipper.enable(:school_moves_export) }
-  after { Flipper.disable(:school_moves_export) }
-
   scenario "no dates given" do
     given_i_am_signed_in
     and_school_moves_exist
