@@ -1,5 +1,5 @@
 name: Deploy
-run-name: Deploy to ${{ inputs.environment }}
+run-name: Deploy ${{ inputs.git_ref_to_deploy || github.ref_name }} to ${{ inputs.environment }}
 
 concurrency:
   group: deploy-${{ inputs.environment }}
@@ -15,6 +15,12 @@ on:
         type: string
   workflow_dispatch:
     inputs:
+      git_ref_to_deploy:
+        description:
+          | # Use blank unicode character (U+2800) to force line-break
+          Use code from: ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+          (Git ref to deploy, for example, a tag, branch name or commit SHA. Will use workflow ref if not provided.)
+        type: string
       environment:
         description: Deployment environment
         required: true
@@ -38,16 +44,34 @@ on:
         default: all
 
 jobs:
+  determine-git-sha:
+    runs-on: ubuntu-latest
+    outputs:
+      git-sha: ${{ steps.get-git-sha.outputs.git-sha }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.git_ref_to_deploy || github.sha }}
+      - name: Get git sha
+        id: get-git-sha
+        run: echo "git-sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
   build-and-push-image:
+    needs: determine-git-sha
     uses: ./.github/workflows/build-and-push-image.yml
+    with:
+      git-sha: ${{ needs.determine-git-sha.outputs.git-sha }}
   deploy-infrastructure:
-    needs: build-and-push-image
+    needs: [build-and-push-image, determine-git-sha]
     uses: ./.github/workflows/deploy-infrastructure.yml
     with:
       environment: ${{ inputs.environment }}
+      image_tag: ${{ needs.determine-git-sha.outputs.git-sha }}
   deploy-application:
-    needs: deploy-infrastructure
+    needs: [deploy-infrastructure, determine-git-sha]
     uses: ./.github/workflows/deploy-application.yml
     with:
       environment: ${{ inputs.environment }}
+      image_tag: ${{ needs.determine-git-sha.outputs.git-sha }}
       server_types: ${{ inputs.server_types }}
+      git_sha_to_deploy: ${{ needs.determine-git-sha.outputs.git-sha }}

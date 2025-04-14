@@ -33,6 +33,10 @@ on:
       server_types:
         required: true
         type: string
+      git_sha_to_deploy:
+        description: The git commit SHA to deploy.
+        required: true
+        type: string
 
 concurrency:
   group: deploy-application-${{ inputs.environment }}
@@ -52,6 +56,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.git_sha_to_deploy || github.sha }}
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
