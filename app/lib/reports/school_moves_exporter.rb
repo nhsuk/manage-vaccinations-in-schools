@@ -53,7 +53,7 @@ class Reports::SchoolMovesExporter
       patient.family_name,
       patient.given_name,
       patient.gender_code.humanize,
-      patient.date_of_birth.to_fs(:govuk),
+      patient.date_of_birth.iso8601,
       patient.address_line_1,
       patient.address_line_2,
       nil,
@@ -64,7 +64,7 @@ class Reports::SchoolMovesExporter
       nil,
       school_urn(location:, patient:),
       location&.name,
-      location&.created_at&.to_fs(:govuk),
+      location&.created_at&.iso8601,
       nil,
       nil
     ]
