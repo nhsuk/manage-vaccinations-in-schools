@@ -143,7 +143,9 @@ describe SearchForm do
           [patient_a, patient_b, patient_c, patient_d, patient_e] # forces the creation of the patients in memory
 
           expect(form.apply(scope).count).to eq(5)
-          expect(form.apply(scope)).to eq([patient_c, patient_b, patient_a, patient_e, patient_d])
+          expect(form.apply(scope)).to eq(
+            [patient_c, patient_b, patient_a, patient_e, patient_d]
+          )
         end
       end
 
