@@ -133,10 +133,13 @@ class Onboarding
     validates :existing_team, absence: true
     validates :location, presence: true
     validates :team, presence: true
+    validates :status, inclusion: %w[open opening]
 
     def location
       @location ||= Location.school.find_by(urn:)
     end
+
+    delegate :status, to: :location, allow_nil: true
 
     def existing_team
       location&.team
