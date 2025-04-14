@@ -52,36 +52,6 @@ describe Vaccine do
     end
   end
 
-  describe "#common_delivery_sites" do
-    subject(:common_delivery_sites) { vaccine.common_delivery_sites }
-
-    context "with a Flu vaccine" do
-      let(:vaccine) { build(:vaccine, :flu) }
-
-      it "raises an error" do
-        expect { common_delivery_sites }.to raise_error(NotImplementedError)
-      end
-    end
-
-    context "with an HPV vaccine" do
-      let(:vaccine) { build(:vaccine, :hpv) }
-
-      it { should eq(%w[left_arm_upper_position right_arm_upper_position]) }
-    end
-
-    context "with an MenACWY vaccine" do
-      let(:vaccine) { build(:vaccine, :menacwy) }
-
-      it { should eq(%w[left_arm_upper_position right_arm_upper_position]) }
-    end
-
-    context "with an Td/IPV vaccine" do
-      let(:vaccine) { build(:vaccine, :td_ipv) }
-
-      it { should eq(%w[left_arm_upper_position right_arm_upper_position]) }
-    end
-  end
-
   describe "#seasonal?" do
     subject(:seasonal?) { vaccine.seasonal? }
 
