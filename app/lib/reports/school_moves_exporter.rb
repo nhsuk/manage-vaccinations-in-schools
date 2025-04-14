@@ -30,9 +30,9 @@ class Reports::SchoolMovesExporter
 
   def call
     CSV.generate(headers: HEADERS, write_headers: true) do |csv|
-      school_move_log_entries.find_each do |log_entry|
-        csv << row(log_entry.school, log_entry.patient)
-      end
+      school_move_log_entries
+        .includes(:patient, :school)
+        .find_each { |log_entry| csv << row(log_entry) }
     end
   end
 
@@ -44,7 +44,10 @@ class Reports::SchoolMovesExporter
 
   attr_reader :school_move_log_entries
 
-  def row(location, patient)
+  def row(log_entry)
+    patient = log_entry.patient
+    location = log_entry.school
+
     [
       patient.nhs_number,
       patient.family_name,

@@ -5,7 +5,7 @@ describe Reports::SchoolMovesExporter do
 
   let(:rows) { CSV.parse(csv, headers: true) }
 
-  describe ".call" do
+  describe "#call" do
     context "with a standard school move" do
       let(:old_school) { create(:school, :secondary) }
       let(:new_school) { create(:school, :secondary) }
@@ -16,19 +16,20 @@ describe Reports::SchoolMovesExporter do
       end
 
       it "returns a CSV with the school moves data" do
+        entry = SchoolMoveLogEntry.last
+
         expect(rows.first.to_hash).to include(
           {
-            "NHS_REF" => SchoolMoveLogEntry.last.patient.nhs_number,
-            "SURNAME" => SchoolMoveLogEntry.last.patient.family_name,
-            "FORENAME" => SchoolMoveLogEntry.last.patient.given_name,
-            "GENDER" => SchoolMoveLogEntry.last.patient.gender_code.humanize,
-            "DOB" =>
-              SchoolMoveLogEntry.last.patient.date_of_birth.to_fs(:govuk),
-            "ADDRESS1" => SchoolMoveLogEntry.last.patient.address_line_1,
-            "ADDRESS2" => SchoolMoveLogEntry.last.patient.address_line_2,
+            "NHS_REF" => entry.patient.nhs_number,
+            "SURNAME" => entry.patient.family_name,
+            "FORENAME" => entry.patient.given_name,
+            "GENDER" => entry.patient.gender_code.humanize,
+            "DOB" => entry.patient.date_of_birth.to_fs(:govuk),
+            "ADDRESS1" => entry.patient.address_line_1,
+            "ADDRESS2" => entry.patient.address_line_2,
             "ADDRESS3" => nil,
-            "TOWN" => SchoolMoveLogEntry.last.patient.address_town,
-            "POSTCODE" => SchoolMoveLogEntry.last.patient.address_postcode,
+            "TOWN" => entry.patient.address_town,
+            "POSTCODE" => entry.patient.address_postcode,
             "COUNTY" => nil,
             "ETHNIC_OR" => nil,
             "ETHNIC_DESCRIPTION" => nil,
