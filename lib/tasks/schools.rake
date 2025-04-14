@@ -247,7 +247,7 @@ namespace :schools do
 
           if gias_info.nil?
             puts "Missing school: URN #{urn} (not found in GIAS data)"
-          elsif gias_info[:status] != "1"
+          elsif !gias_info[:status].in?(%w[1 3]) # 1 = Open, 3 = Open, but proposed to close
             puts "Closed school: URN #{urn} (#{gias_info[:name]}) - " \
                    "Status: #{gias_info[:status_name]} (#{gias_info[:status]})"
           elsif location.nil?
