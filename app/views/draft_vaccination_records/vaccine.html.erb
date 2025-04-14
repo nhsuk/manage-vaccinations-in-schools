@@ -8,11 +8,11 @@
 <%= form_with model: @draft_vaccination_record, url: wizard_path, method: :put do |f| %>
   <%= f.govuk_error_summary %>
 
-  <%= f.govuk_radio_buttons_fieldset(:vaccine_id,
+  <%= f.govuk_radio_buttons_fieldset :vaccine_id,
                                      caption: { text: @patient.full_name, size: "l" },
-                                     legend: { size: "l", tag: "h1", text: page_title }) do %>
-    <% @programme.vaccines.active.each do |vaccine| %>
-      <%= f.govuk_radio_button(:vaccine_id, vaccine.id, label: { text: vaccine_heading(vaccine) }) %>
+                                     legend: { size: "l", tag: "h1", text: page_title } do %>
+    <% @programme.vaccines.active.find_each do |vaccine| %>
+      <%= f.govuk_radio_button :vaccine_id, vaccine.id, label: { text: vaccine.brand } %>
     <% end %>
   <% end %>
 
