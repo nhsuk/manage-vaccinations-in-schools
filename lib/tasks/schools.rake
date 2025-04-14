@@ -45,7 +45,8 @@ namespace :schools do
       download_button = download_form.button_with(value: "Results.zip")
       puts "'Results.zip' link found, downloading the file..."
       download_file = agent.click(download_button)
-      download_file.save("db/data/dfe-schools.zip")
+      puts "Overwriting db/data/dfe-schools.zip"
+      download_file.save!("db/data/dfe-schools.zip")
       puts "File downloaded successfully to db/data/dfe-schools.zip"
     else
       puts "Download button never appeared, aborting"
