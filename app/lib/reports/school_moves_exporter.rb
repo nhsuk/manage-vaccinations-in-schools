@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Reports::CSVSchoolMoves
+class Reports::SchoolMovesExporter
   include Reports::ExportFormatters
 
   HEADERS = %i[
