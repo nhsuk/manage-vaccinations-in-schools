@@ -35,7 +35,7 @@ describe Reports::SchoolMovesExporter do
             "ETHNIC_DESCRIPTION" => nil,
             "NATIONAL_URN_NO" => new_school.urn,
             "BASE_NAME" => new_school.name,
-            "STARTDATE" => new_school.created_at.iso8601,
+            "STARTDATE" => entry.created_at.iso8601,
             "STUD_ID" => nil,
             "DES_NUMBER" => nil
           }
