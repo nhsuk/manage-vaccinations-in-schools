@@ -26,15 +26,6 @@ class AppVaccinateFormComponent < ViewComponent::Base
     session_patient_programme_vaccinations_path(session, patient, programme)
   end
 
-  # TODO: this code will need to be revisited in future as it only really
-  # works for HPV, where we only have one vaccine. It is likely to fail for
-  # the flu programme for the SAIS organisations that offer both nasal and
-  # injectable vaccines.
-
-  def vaccine
-    programme.vaccines.active.first
-  end
-
   def delivery_method
     :intramuscular
   end

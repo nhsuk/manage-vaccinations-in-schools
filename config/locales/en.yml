@@ -64,7 +64,6 @@ en:
           attributes:
             batch_id:
               blank: Choose a batch
-              incorrect_vaccine: Choose a batch of the %{vaccine_brand} vaccine
             delivery_method:
               blank: Choose a method of delivery
               inclusion: Choose a method of delivery
@@ -84,8 +83,6 @@ en:
               missing_year: Enter a year
               invalid: Enter a valid date and time
               less_than_or_equal_to: Enter a time in the past
-            vaccine_id:
-              blank: Choose a vaccine
         health_answer:
           attributes:
             notes:
