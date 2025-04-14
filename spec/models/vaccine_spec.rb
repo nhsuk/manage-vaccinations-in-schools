@@ -31,7 +31,7 @@
 #
 
 describe Vaccine do
-  describe "validation" do
+  describe "validations" do
     it { should validate_inclusion_of(:method).in_array(%w[injection nasal]) }
   end
 
@@ -53,7 +53,7 @@ describe Vaccine do
   end
 
   describe "#seasonal?" do
-    subject(:seasonal?) { vaccine.seasonal? }
+    subject { vaccine.seasonal? }
 
     context "with a Flu vaccine" do
       let(:vaccine) { build(:vaccine, :flu) }
@@ -69,30 +69,18 @@ describe Vaccine do
   end
 
   describe "#available_delivery_methods" do
-    subject(:available_delivery_methods) { vaccine.available_delivery_methods }
+    subject { vaccine.available_delivery_methods }
 
-    context "with a Flu vaccine" do
-      let(:vaccine) { build(:vaccine, :flu) }
+    context "with an injection vaccine" do
+      let(:vaccine) { build(:vaccine, :injection) }
+
+      it { should eq(%w[intramuscular subcutaneous]) }
+    end
+
+    context "with a nasal vaccine" do
+      let(:vaccine) { build(:vaccine, :nasal) }
 
       it { should eq(%w[nasal_spray]) }
-    end
-
-    context "with an HPV vaccine" do
-      let(:vaccine) { build(:vaccine, :hpv) }
-
-      it { should eq(%w[intramuscular subcutaneous]) }
-    end
-
-    context "with an MenACWY vaccine" do
-      let(:vaccine) { build(:vaccine, :menacwy) }
-
-      it { should eq(%w[intramuscular subcutaneous]) }
-    end
-
-    context "with an Td/IPV vaccine" do
-      let(:vaccine) { build(:vaccine, :td_ipv) }
-
-      it { should eq(%w[intramuscular subcutaneous]) }
     end
   end
 end

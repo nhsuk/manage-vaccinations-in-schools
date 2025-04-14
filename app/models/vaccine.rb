@@ -63,7 +63,7 @@ class Vaccine < ApplicationRecord
     programme.flu?
   end
 
-  AVAILABLE_DELIVERY_SITES_BY_METHOD = {
+  AVAILABLE_DELIVERY_SITES = {
     "injection" =>
       VaccinationRecord.delivery_sites.keys -
         %w[left_buttock right_buttock nose],
@@ -71,17 +71,15 @@ class Vaccine < ApplicationRecord
   }.freeze
 
   def available_delivery_sites
-    AVAILABLE_DELIVERY_SITES_BY_METHOD.fetch(method)
+    AVAILABLE_DELIVERY_SITES.fetch(method)
   end
 
-  AVAILABLE_DELIVERY_METHODS_BY_TYPE = {
-    "flu" => %w[nasal_spray],
-    "hpv" => %w[intramuscular subcutaneous],
-    "td_ipv" => %w[intramuscular subcutaneous],
-    "menacwy" => %w[intramuscular subcutaneous]
+  AVAILABLE_DELIVERY_METHODS = {
+    "nasal" => %w[nasal_spray],
+    "injection" => %w[intramuscular subcutaneous]
   }.freeze
 
   def available_delivery_methods
-    AVAILABLE_DELIVERY_METHODS_BY_TYPE.fetch(programme.type)
+    AVAILABLE_DELIVERY_METHODS.fetch(method)
   end
 end
