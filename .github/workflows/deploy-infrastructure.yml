@@ -4,6 +4,9 @@ run-name: Deploy infrastructure for ${{ inputs.environment }}
 on:
   workflow_dispatch:
     inputs:
+      git-sha:
+        description: The git commit sha of the commit to deploy.
+        type: string
       environment:
         description: Deployment environment
         required: true
@@ -22,6 +25,9 @@ on:
         type: string
   workflow_call:
     inputs:
+      git-sha:
+        description: The git commit sha of the commit to deploy.
+        type: string
       environment:
         description: Deployment environment
         required: true
@@ -51,6 +57,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.git-sha || github.sha }}
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:

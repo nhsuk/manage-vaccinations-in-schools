@@ -36,18 +36,42 @@ on:
           - web
           - good-job
         default: all
+      git_tag:
+        description: Git tag to deploy
+        required: false
+        type: string
 
 jobs:
+  determine-git-sha:
+    runs-on: ubuntu-latest
+    outputs:
+      git-sha: ${{ steps.get-git-sha.outputs.git-sha }}
+    steps:
+        - name: Get git sha
+          id: get-git-sha
+          run: |
+            if [ -z "${{ inputs.git_tag }}" ]; then
+                echo "No git tag provided. Using the latest commit sha"
+                echo "git-sha=${{ github.sha }}" >> $GITHUB_OUTPUT
+            else
+                echo "Git tag provided. Using the sha of the tagged commit"
+                echo "git-sha=$(git rev-parse ${{ inputs.git_tag }})" >> $GITHUB_OUTPUT
+            fi
   build-and-push-image:
+    needs: determine-git-sha
     uses: ./.github/workflows/build-and-push-image.yml
+    with:
+      git-sha: ${{ needs.determine-git-sha.outputs.git-sha }}
   deploy-infrastructure:
     needs: build-and-push-image
     uses: ./.github/workflows/deploy-infrastructure.yml
     with:
       environment: ${{ inputs.environment }}
+      git-sha: ${{ needs.determine-git-sha.outputs.git-sha }}
   deploy-application:
     needs: deploy-infrastructure
     uses: ./.github/workflows/deploy-application.yml
     with:
       environment: ${{ inputs.environment }}
+      image_tag: ${{ needs.determine-git-sha.outputs.git-sha }}
       server_types: ${{ inputs.server_types }}
