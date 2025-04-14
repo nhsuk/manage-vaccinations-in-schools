@@ -146,8 +146,7 @@ class DraftVaccinationRecordsController < ApplicationController
       delivery: %i[delivery_site delivery_method],
       location: %i[location_name],
       notes: %i[notes],
-      outcome: %i[outcome],
-      vaccine: %i[vaccine_id]
+      outcome: %i[outcome]
     }.fetch(current_step)
 
     params
@@ -190,13 +189,22 @@ class DraftVaccinationRecordsController < ApplicationController
   def set_batches
     scope =
       policy_scope(Batch).includes(:vaccine).where(
-        vaccine: @draft_vaccination_record.vaccine
+        vaccine: {
+          programme: @programme
+        }
       )
+
+    method =
+      if @draft_vaccination_record.delivery_method == "nasal_spray"
+        "nasal_spray"
+      else
+        "injection"
+      end
 
     @batches =
       scope
         .where(id: @draft_vaccination_record.batch_id)
-        .or(scope.not_archived.not_expired)
+        .or(scope.not_archived.not_expired.where(vaccine: { method: }))
         .order_by_name_and_expiration
   end
 
