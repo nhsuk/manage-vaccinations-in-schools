@@ -83,3 +83,17 @@ jobs:
         run: |
           tflint --init
           tflint --recursive
+
+  pre-commit:
+    name: Pre-commit
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.10.5
+      - uses: actions/setup-python@v5
+        with:
+          python-version-file: .tool-versions
+      - uses: pre-commit/action@v3.0.1
