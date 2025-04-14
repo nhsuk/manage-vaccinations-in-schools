@@ -1,5 +1,5 @@
 name: Deploy
-run-name: Deploy to ${{ inputs.environment }}
+run-name: Deploy ${{ inputs.git_tag || github.ref_name }} to ${{ inputs.environment }}
 
 concurrency:
   group: deploy-${{ inputs.environment }}
@@ -47,16 +47,21 @@ jobs:
     outputs:
       git-sha: ${{ steps.get-git-sha.outputs.git-sha }}
     steps:
-        - name: Get git sha
-          id: get-git-sha
-          run: |
-            if [ -z "${{ inputs.git_tag }}" ]; then
-                echo "No git tag provided. Using the latest commit sha"
-                echo "git-sha=${{ github.sha }}" >> $GITHUB_OUTPUT
-            else
-                echo "Git tag provided. Using the sha of the tagged commit"
-                echo "git-sha=$(git rev-parse ${{ inputs.git_tag }})" >> $GITHUB_OUTPUT
-            fi
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.git_tag || github.sha }}
+      - name: Get git sha
+        id: get-git-sha
+        run: |
+          if [ -z "${{ inputs.git_tag }}" ]; then
+              echo "No git tag provided. Using the latest commit sha"
+              echo "git-sha=${{ github.sha }}" >> $GITHUB_OUTPUT
+          else
+              git_sha=$(git rev-parse refs/tags/${{ inputs.git_tag }})
+              echo "Git tag provided. Using the sha of the tagged commit: $git_sha"
+              echo "git-sha=$git_ssha" >> $GITHUB_OUTPUT
+          fi
   build-and-push-image:
     needs: determine-git-sha
     uses: ./.github/workflows/build-and-push-image.yml
