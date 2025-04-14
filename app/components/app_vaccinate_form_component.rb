@@ -45,14 +45,10 @@ class AppVaccinateFormComponent < ViewComponent::Base
 
   def common_delivery_sites_options
     options =
-      vaccine.common_delivery_sites.map do |site|
+      programme.common_delivery_sites.map do
         OpenStruct.new(
-          value: site,
-          label:
-            t(
-              site,
-              scope: "activerecord.attributes.vaccination_record.delivery_sites"
-            )
+          value: it,
+          label: VaccinationRecord.human_enum_name(:delivery_site, it)
         )
       end
 
