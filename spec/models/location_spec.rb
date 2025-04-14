@@ -13,6 +13,7 @@
 #  gias_local_authority_code :integer
 #  name                      :text             not null
 #  ods_code                  :string
+#  status                    :integer          default("unknown"), not null
 #  type                      :integer          not null
 #  url                       :text
 #  urn                       :string
