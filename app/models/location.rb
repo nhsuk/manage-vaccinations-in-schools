@@ -13,6 +13,7 @@
 #  gias_local_authority_code :integer
 #  name                      :text             not null
 #  ods_code                  :string
+#  status                    :integer          default("unknown"), not null
 #  type                      :integer          not null
 #  url                       :text
 #  urn                       :string
@@ -47,6 +48,11 @@ class Location < ApplicationRecord
   has_many :sessions
 
   has_one :organisation, through: :team
+
+  # This is based on the school statuses from the DfE GIAS data.
+  enum :status,
+       { unknown: 0, open: 1, closed: 2, opening: 3, closing: 4 },
+       default: :unknown
 
   enum :type,
        { school: 0, generic_clinic: 1, community_clinic: 2, gp_practice: 3 }
