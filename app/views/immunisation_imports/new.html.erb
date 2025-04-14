@@ -11,16 +11,12 @@
 
   <h1 class="nhsuk-heading-l"><%= title %></h1>
 
-  <% if Flipper.enabled?(:systm_one_import) %>
-    <p>You can import vaccination records by uploading:</p>
+  <p>You can import vaccination records by uploading:</p>
 
-    <ul class="nhsuk-list nhsuk-list--bullet">
-      <li>a Mavis CSV file</li>
-      <li>a SystmOne file</li>
-    </ul>
-  <% else %>
-    <p>The file you upload should use the Mavis CSV format for vaccination records.</p>
-  <% end %>
+  <ul class="nhsuk-list nhsuk-list--bullet">
+    <li>a Mavis CSV file</li>
+    <li>a SystmOne file</li>
+  </ul>
 
   <%= render AppImportFormatDetailsComponent.new(import: @immunisation_import) %>
 
