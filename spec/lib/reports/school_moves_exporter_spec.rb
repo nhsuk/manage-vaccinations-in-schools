@@ -24,7 +24,7 @@ describe Reports::SchoolMovesExporter do
             "SURNAME" => entry.patient.family_name,
             "FORENAME" => entry.patient.given_name,
             "GENDER" => entry.patient.gender_code.humanize,
-            "DOB" => entry.patient.date_of_birth.to_fs(:govuk),
+            "DOB" => entry.patient.date_of_birth.iso8601,
             "ADDRESS1" => entry.patient.address_line_1,
             "ADDRESS2" => entry.patient.address_line_2,
             "ADDRESS3" => nil,
@@ -35,7 +35,7 @@ describe Reports::SchoolMovesExporter do
             "ETHNIC_DESCRIPTION" => nil,
             "NATIONAL_URN_NO" => new_school.urn,
             "BASE_NAME" => new_school.name,
-            "STARTDATE" => new_school.created_at.to_fs(:govuk),
+            "STARTDATE" => new_school.created_at.iso8601,
             "STUD_ID" => nil,
             "DES_NUMBER" => nil
           }
