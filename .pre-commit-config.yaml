@@ -4,3 +4,9 @@ repos:
     hooks:
       - id: terraform_fmt
         files: \.(tf|tfvars|hcl)$
+  - repo: local
+    hooks:
+      - id: prettier
+        name: Prettier
+        entry: yarn prettier --write --ignore-unknown
+        language: system
