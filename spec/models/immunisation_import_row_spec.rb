@@ -70,35 +70,15 @@ describe ImmunisationImportRow do
         expect(immunisation_import_row).to be_invalid
         expect(immunisation_import_row.errors[:base]).to contain_exactly(
           "<code>VACCINATED</code> is required",
-          "<code>DATE_OF_VACCINATION</code> is required",
-          "<code>PERSON_DOB</code> is required",
-          "<code>PERSON_FORENAME</code> is required",
-          "<code>PERSON_GENDER_CODE</code> or <code>PERSON_GENDER</code> is required",
-          "<code>PERSON_SURNAME</code> is required",
-          "<code>PERSON_POSTCODE</code> is required",
-          "<code>PROGRAMME</code> is required",
+          "<code>DATE_OF_VACCINATION</code> or <code>Event date</code> is required",
+          "<code>PERSON_DOB</code> or <code>Date of birth</code> is required",
+          "<code>PERSON_FORENAME</code> or <code>First name</code> is required",
+          "<code>PERSON_GENDER_CODE</code>, <code>PERSON_GENDER</code> or <code>Sex</code> is required",
+          "<code>PERSON_SURNAME</code> or <code>Surname</code> is required",
+          "<code>PERSON_POSTCODE</code> or <code>Postcode</code> is required",
+          "<code>PROGRAMME</code> or <code>Vaccination type</code> is required",
           "<code>REASON_NOT_VACCINATED</code> is required"
         )
-      end
-
-      context "when SystmOne is enabled" do
-        before { Flipper.enable(:systm_one_import) }
-        after { Flipper.disable(:systm_one_import) }
-
-        it "has errors" do
-          expect(immunisation_import_row).to be_invalid
-          expect(immunisation_import_row.errors[:base]).to contain_exactly(
-            "<code>VACCINATED</code> is required",
-            "<code>DATE_OF_VACCINATION</code> or <code>Event date</code> is required",
-            "<code>PERSON_DOB</code> or <code>Date of birth</code> is required",
-            "<code>PERSON_FORENAME</code> or <code>First name</code> is required",
-            "<code>PERSON_GENDER_CODE</code>, <code>PERSON_GENDER</code> or <code>Sex</code> is required",
-            "<code>PERSON_SURNAME</code> or <code>Surname</code> is required",
-            "<code>PERSON_POSTCODE</code> or <code>Postcode</code> is required",
-            "<code>PROGRAMME</code> or <code>Vaccination type</code> is required",
-            "<code>REASON_NOT_VACCINATED</code> is required"
-          )
-        end
       end
     end
 
@@ -116,23 +96,11 @@ describe ImmunisationImportRow do
     context "when missing VACCINATED but a vaccination type has been given" do
       let(:data) { { "Vaccination type" => "HPV 1" } }
 
-      it "requires a VACCINATED column" do
+      it "doesn't require a VACCINATED column" do
         expect(immunisation_import_row).to be_invalid
-        expect(immunisation_import_row.errors[:base]).to include(
+        expect(immunisation_import_row.errors[:base]).not_to include(
           "<code>VACCINATED</code> is required"
         )
-      end
-
-      context "when SystmOne is enabled" do
-        before { Flipper.enable(:systm_one_import) }
-        after { Flipper.disable(:systm_one_import) }
-
-        it "doesn't require a VACCINATED column" do
-          expect(immunisation_import_row).to be_invalid
-          expect(immunisation_import_row.errors[:base]).not_to include(
-            "<code>VACCINATED</code> is required"
-          )
-        end
       end
     end
 
@@ -663,7 +631,7 @@ describe ImmunisationImportRow do
           "<code>BATCH_EXPIRY_DATE</code> is required"
         )
         expect(immunisation_import_row.errors[:base]).to include(
-          "<code>BATCH_NUMBER</code> is required"
+          "<code>BATCH_NUMBER</code> or <code>Vaccination batch number</code> is required"
         )
       end
     end
@@ -1196,14 +1164,7 @@ describe ImmunisationImportRow do
           )
         end
 
-        it { should eq("Waterloo Road") }
-
-        context "with SystmOne enabled" do
-          before { Flipper.enable(:systm_one_import) }
-          after { Flipper.enable(:systm_one_import) }
-
-          it { should eq("Unknown") }
-        end
+        it { should eq("Unknown") }
       end
 
       context "when home educated and community care setting" do
@@ -1241,14 +1202,7 @@ describe ImmunisationImportRow do
           )
         end
 
-        it { should eq("Waterloo Road") }
-
-        context "with SystmOne enabled" do
-          before { Flipper.enable(:systm_one_import) }
-          after { Flipper.enable(:systm_one_import) }
-
-          it { should eq("A Clinic") }
-        end
+        it { should eq("A Clinic") }
       end
 
       context "when home educated and unknown care setting" do
@@ -1580,13 +1534,7 @@ describe ImmunisationImportRow do
 
         include_examples "with a value", "PERSON_GENDER_CODE"
         include_examples "with a value", "PERSON_GENDER"
-
-        context "with SystmOne enabled" do
-          before { Flipper.enable(:systm_one_import) }
-          after { Flipper.enable(:systm_one_import) }
-
-          include_examples "with a value", "Sex"
-        end
+        include_examples "with a value", "Sex"
       end
 
       describe "#organisation" do
@@ -1721,14 +1669,7 @@ describe ImmunisationImportRow do
     context "with a Vaccination Batch Number field" do
       let(:data) { { "Vaccination Batch Number" => "abc" } }
 
-      it { should be_nil }
-
-      context "with SystmOne enabled" do
-        before { Flipper.enable(:systm_one_import) }
-        after { Flipper.enable(:systm_one_import) }
-
-        it { should eq("abc") }
-      end
+      it { should eq("abc") }
     end
   end
 
@@ -1744,14 +1685,7 @@ describe ImmunisationImportRow do
     context "with an Event Done At field" do
       let(:data) { { "Event Done At" => "Hospital" } }
 
-      it { should be_nil }
-
-      context "with SystmOne enabled" do
-        before { Flipper.enable(:systm_one_import) }
-        after { Flipper.enable(:systm_one_import) }
-
-        it { should eq("Hospital") }
-      end
+      it { should eq("Hospital") }
     end
   end
 
@@ -1767,14 +1701,7 @@ describe ImmunisationImportRow do
     context "with an Event Date field" do
       let(:data) { { "Event Date" => "01/01/2020" } }
 
-      it { should be_nil }
-
-      context "with SystmOne enabled" do
-        before { Flipper.enable(:systm_one_import) }
-        after { Flipper.enable(:systm_one_import) }
-
-        it { should eq("01/01/2020") }
-      end
+      it { should eq("01/01/2020") }
     end
   end
 
@@ -1790,14 +1717,7 @@ describe ImmunisationImportRow do
     context "with a Date of Birth field" do
       let(:data) { { "Date of Birth" => "01/01/2020" } }
 
-      it { should be_nil }
-
-      context "with SystmOne enabled" do
-        before { Flipper.enable(:systm_one_import) }
-        after { Flipper.enable(:systm_one_import) }
-
-        it { should eq("01/01/2020") }
-      end
+      it { should eq("01/01/2020") }
     end
   end
 
@@ -1813,14 +1733,7 @@ describe ImmunisationImportRow do
     context "with a First name field" do
       let(:data) { { "First name" => "Sally" } }
 
-      it { should be_nil }
-
-      context "with SystmOne enabled" do
-        before { Flipper.enable(:systm_one_import) }
-        after { Flipper.enable(:systm_one_import) }
-
-        it { should eq("Sally") }
-      end
+      it { should eq("Sally") }
     end
   end
 
@@ -1842,14 +1755,7 @@ describe ImmunisationImportRow do
     context "with a Sex field" do
       let(:data) { { "Sex" => "unknown" } }
 
-      it { should be_nil }
-
-      context "with SystmOne enabled" do
-        before { Flipper.enable(:systm_one_import) }
-        after { Flipper.enable(:systm_one_import) }
-
-        it { should eq("unknown") }
-      end
+      it { should eq("unknown") }
     end
   end
 
@@ -1865,14 +1771,7 @@ describe ImmunisationImportRow do
     context "with a Surname field" do
       let(:data) { { "Surname" => "Phillips" } }
 
-      it { should be_nil }
-
-      context "with SystmOne enabled" do
-        before { Flipper.enable(:systm_one_import) }
-        after { Flipper.enable(:systm_one_import) }
-
-        it { should eq("Phillips") }
-      end
+      it { should eq("Phillips") }
     end
   end
 
@@ -1904,14 +1803,7 @@ describe ImmunisationImportRow do
     context "with a School field" do
       let(:data) { { "School" => "Waterloo Road" } }
 
-      it { should be_nil }
-
-      context "with SystmOne enabled" do
-        before { Flipper.enable(:systm_one_import) }
-        after { Flipper.enable(:systm_one_import) }
-
-        it { should eq("Waterloo Road") }
-      end
+      it { should eq("Waterloo Road") }
     end
   end
 
@@ -1927,14 +1819,7 @@ describe ImmunisationImportRow do
     context "with a School Code field" do
       let(:data) { { "School Code" => "123456" } }
 
-      it { should be_nil }
-
-      context "with SystmOne enabled" do
-        before { Flipper.enable(:systm_one_import) }
-        after { Flipper.enable(:systm_one_import) }
-
-        it { should eq("123456") }
-      end
+      it { should eq("123456") }
     end
   end
 end
