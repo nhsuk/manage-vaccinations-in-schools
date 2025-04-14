@@ -67,7 +67,9 @@ describe "Download school moves" do
   end
 
   def then_i_get_a_csv_file_with_expected_row_count(expected_count)
-    expect(page).to have_content(Reports::CSVSchoolMoves::HEADERS.join(","))
+    expect(page).to have_content(
+      Reports::SchoolMovesExporter::HEADERS.join(",")
+    )
     csv_content = CSV.parse(page.body, headers: true)
     expect(csv_content.size).to eq(expected_count)
   end

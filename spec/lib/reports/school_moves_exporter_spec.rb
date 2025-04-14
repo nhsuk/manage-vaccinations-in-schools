@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe Reports::CSVSchoolMoves do
+describe Reports::SchoolMovesExporter do
   subject(:csv) { described_class.call(SchoolMoveLogEntry.all) }
 
   let(:rows) { CSV.parse(csv, headers: true) }
