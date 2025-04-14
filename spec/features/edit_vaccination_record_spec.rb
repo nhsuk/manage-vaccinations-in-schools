@@ -434,7 +434,7 @@ describe "Edit vaccination record" do
   end
 
   def and_i_choose_a_vaccine
-    choose "Gardasil 9 (HPV)"
+    choose "Gardasil 9"
     click_on "Continue"
   end
 
