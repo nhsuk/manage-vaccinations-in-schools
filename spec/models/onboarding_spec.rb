@@ -7,11 +7,13 @@ describe Onboarding do
 
   let!(:programme) { create(:programme, :hpv) }
   # rubocop:disable RSpec/IndexedLet
-  let!(:school1) { create(:school, :secondary, urn: "123456") }
-  let!(:school2) { create(:school, :secondary, urn: "234567") }
-  let!(:school3) { create(:school, :secondary, urn: "345678") }
-  let!(:school4) { create(:school, :secondary, urn: "456789") }
+  let!(:school1) { create(:school, :secondary, :open, urn: "123456") }
+  let!(:school2) { create(:school, :secondary, :open, urn: "234567") }
+  let!(:school3) { create(:school, :secondary, :open, urn: "345678") }
+  let!(:school4) { create(:school, :secondary, :open, urn: "456789") }
   # rubocop:enable RSpec/IndexedLet
+
+  before { create(:school, :secondary, :closed, urn: "567890") }
 
   context "with a valid configuration file" do
     let(:filename) { "onboarding/valid.yaml" }
@@ -71,6 +73,7 @@ describe Onboarding do
           "organisation.privacy_policy_url": ["can't be blank"],
           "school.0.team": ["can't be blank"],
           "school.1.team": ["can't be blank"],
+          "school.2.status": ["is not included in the list"],
           "team.email": ["can't be blank"],
           "team.name": ["can't be blank"],
           clinics: ["can't be blank"],
