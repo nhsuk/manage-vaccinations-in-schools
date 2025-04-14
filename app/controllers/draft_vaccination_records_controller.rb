@@ -189,7 +189,9 @@ class DraftVaccinationRecordsController < ApplicationController
 
   def set_batches
     scope =
-      policy_scope(Batch).where(vaccine: @draft_vaccination_record.vaccine)
+      policy_scope(Batch).includes(:vaccine).where(
+        vaccine: @draft_vaccination_record.vaccine
+      )
 
     @batches =
       scope
