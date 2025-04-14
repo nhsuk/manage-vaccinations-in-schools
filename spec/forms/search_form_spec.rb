@@ -120,66 +120,41 @@ describe SearchForm do
       let(:triage_status) { nil }
       let(:year_groups) { nil }
 
-      context "with family name only" do
-        let(:q) { "Doe" }
+      let(:patient_a) do
+        create(:patient, given_name: "Harry", family_name: "Potter")
+      end
+      let(:patient_b) do
+        create(:patient, given_name: "Hari", family_name: "Potter")
+      end
+      let(:patient_c) do
+        create(:patient, given_name: "Arry", family_name: "Pott")
+      end
+      let(:patient_d) do
+        create(:patient, given_name: "Ron", family_name: "Weasley")
+      end
+      let(:patient_e) do
+        create(:patient, given_name: "Ginny", family_name: "Weasley")
+      end
 
-        it "returns the matching patient" do
-          patient = create(:patient, given_name: "John", family_name: "Doe")
+      context "with no search query" do
+        let(:q) { nil }
 
-          expect(form.apply(scope)).to include(patient)
+        it "sorts alphabetically by name" do
+          [patient_a, patient_b, patient_c, patient_d, patient_e] # forces the creation of the patients in memory
+
+          expect(form.apply(scope).count).to eq(5)
+          expect(form.apply(scope)).to eq([patient_c, patient_b, patient_a, patient_e, patient_d])
         end
       end
 
-      context "with given name only" do
-        let(:q) { "John" }
+      context "with some search query" do
+        let(:q) { "Harry Potter" }
 
-        it "returns the matching patient" do
-          patient = create(:patient, given_name: "John", family_name: "Doe")
+        it "sorts by similarity" do
+          [patient_a, patient_b, patient_c, patient_d, patient_e] # forces the creation of the patients in memory
 
-          expect(form.apply(scope)).to include(patient)
-        end
-      end
-
-      context "with exact name, in `given_name family_name` format" do
-        let(:q) { "John Doe" }
-
-        it "returns the exact matching patient first" do
-          patient = create(:patient, given_name: "John", family_name: "Doe")
-
-          expect(form.apply(scope).first.given_name).to eq(patient.given_name)
-          expect(form.apply(scope).first.family_name).to eq(patient.family_name)
-        end
-      end
-
-      context "with exact name, in `FAMILY_NAME, given_name` format" do
-        let(:q) { "DOE, John" }
-
-        it "returns the exact matching patient first" do
-          patient = create(:patient, given_name: "John", family_name: "Doe")
-
-          expect(form.apply(scope).first.given_name).to eq(patient.given_name)
-          expect(form.apply(scope).first.family_name).to eq(patient.family_name)
-        end
-      end
-
-      context "with exact name, in `family_name given_name` format" do
-        let(:q) { "Doe John" }
-
-        it "returns the exact matching patient first" do
-          patient = create(:patient, given_name: "John", family_name: "Doe")
-
-          expect(form.apply(scope).first.given_name).to eq(patient.given_name)
-          expect(form.apply(scope).first.family_name).to eq(patient.family_name)
-        end
-      end
-
-      context "with slightly misspelt name" do
-        let(:q) { "Kenneth Dockerty" }
-
-        it "returns the matching patient" do
-          patient = create(:patient, given_name: "Ken", family_name: "Doherty")
-
-          expect(form.apply(scope)).to include(patient)
+          expect(form.apply(scope).count).to eq(3)
+          expect(form.apply(scope)).to eq([patient_a, patient_b, patient_c])
         end
       end
     end
