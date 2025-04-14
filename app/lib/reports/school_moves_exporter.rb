@@ -32,6 +32,7 @@ class Reports::SchoolMovesExporter
     CSV.generate(headers: HEADERS, write_headers: true) do |csv|
       school_move_log_entries
         .includes(:patient, :school)
+        .order(:created_at)
         .find_each { |log_entry| csv << row(log_entry) }
     end
   end
