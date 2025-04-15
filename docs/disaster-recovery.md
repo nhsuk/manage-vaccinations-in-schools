@@ -195,3 +195,14 @@ RAILS_ENV=staging bin/bundle exec \
 EXPORT_PASSWORD=secure \
   node ./script/encrypt_xlsx.mjs <filename>
 ```
+
+
+## Set up a new AWS account from scratch
+
+### Create a new IAM role for GitHub workflows
+
+In the AWS IAM console, create a new role for the GitHub workflows. Create a custom policy from `terraform/resources/github_actions_policy.json`. Also, attach the managed policies
+- `ReadOnlyAccess`
+- `ResourceGroupsTaggingAPITagUntagSupportedResources`
+
+to the role.
