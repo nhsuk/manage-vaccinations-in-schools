@@ -192,13 +192,13 @@ describe ClassImportRow do
           family_name: "Smith",
           gender_code: "male",
           given_name: "Jimmy",
-          nhs_number: "0123456789"
+          nhs_number: "9990000018"
         )
       end
 
       it { should eq(existing_patient) }
       it { should be_male }
-      it { should have_attributes(nhs_number: "0123456789") }
+      it { should have_attributes(nhs_number: "9990000018") }
 
       it "overwrites registration" do
         expect(patient.registration).to eq("8AB")
@@ -281,6 +281,96 @@ describe ClassImportRow do
 
       it "does stage the gender differences" do
         expect(patient.pending_changes).to include("gender_code" => "male")
+      end
+    end
+
+    context "with an existing patient without address" do
+      let(:data) do
+        valid_data.merge(
+          "CHILD_ADDRESS_LINE_1" => "10 Downing Street",
+          "CHILD_ADDRESS_LINE_2" => "",
+          "CHILD_TOWN" => "London",
+          "CHILD_POSTCODE" => "SW1A 1AA"
+        )
+      end
+
+      let!(:existing_patient) do
+        create(
+          :patient,
+          family_name: "Smith",
+          given_name: "Jimmy",
+          gender_code: "male",
+          nhs_number: "9990000018",
+          birth_academic_year: 2009,
+          date_of_birth: Date.new(2010, 1, 1),
+          registration: "8AB",
+          address_line_1: nil,
+          address_line_2: nil,
+          address_town: nil,
+          address_postcode: "SW1A 1AA"
+        )
+      end
+
+      it { should eq(existing_patient) }
+
+      it "saves the incoming address" do
+        expect(patient).to have_attributes(
+          address_line_1: "10 Downing Street",
+          address_line_2: "",
+          address_town: "London",
+          address_postcode: "SW1A 1AA"
+        )
+      end
+
+      it "doesn't stage the incoming address" do
+        expect(patient.pending_changes).to be_empty
+      end
+    end
+
+    context "with an existing patient already with an address" do
+      let(:data) do
+        valid_data.merge(
+          "CHILD_ADDRESS_LINE_1" => "10 Downing Street",
+          "CHILD_ADDRESS_LINE_2" => "",
+          "CHILD_TOWN" => "London",
+          "CHILD_POSTCODE" => "SW1A 1AA"
+        )
+      end
+
+      let!(:existing_patient) do
+        create(
+          :patient,
+          family_name: "Smith",
+          gender_code: "male",
+          given_name: "Jimmy",
+          nhs_number: "9990000018",
+          address_line_1: "20 Woodstock Road",
+          address_line_2: "",
+          address_town: "Oxford",
+          address_postcode: "OX2 6HD",
+          birth_academic_year: 2009,
+          date_of_birth: Date.new(2010, 1, 1),
+          registration: "8AB"
+        )
+      end
+
+      it { should eq(existing_patient) }
+
+      it "does not save the incoming address" do
+        expect(patient).to have_attributes(
+          address_line_1: "20 Woodstock Road",
+          address_line_2: "",
+          address_town: "Oxford",
+          address_postcode: "OX2 6HD"
+        )
+      end
+
+      it "does stage the address differences" do
+        expect(patient.pending_changes).to include(
+          "address_line_1" => "10 Downing Street",
+          "address_postcode" => "SW1A 1AA",
+          "address_town" => "London"
+        )
       end
     end
   end
