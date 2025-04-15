@@ -9,7 +9,6 @@ require "digest"
 #  puts graph
 #
 class GraphRecords
-  # TODO: put all these constants elsewhere?
   BOX_STYLES = %w[
     fill:#e6194B,color:white
     fill:#3cb44b,color:white
@@ -324,7 +323,8 @@ class GraphRecords
     traversals_config: {},
     node_limit: 1000,
     primary_type: nil,
-    clickable: false
+    clickable: false,
+    show_pii: false
   )
     @focus_config = focus_config
     @node_order = node_order
@@ -332,6 +332,7 @@ class GraphRecords
     @node_limit = node_limit
     @primary_type = primary_type
     @clickable = clickable
+    @detail_whitelist = show_pii ? DETAIL_WHITELIST_WITH_PII : DETAIL_WHITELIST
   end
 
   # @param objects [Hash] Hash of model name to ids to be graphed
@@ -498,8 +499,8 @@ class GraphRecords
         "<br><span style=\"font-size:10px\"><i>#{non_breaking_text(command)}</i></span>"
     end
 
-    if DETAIL_WHITELIST.key?(obj.class.name.underscore.to_sym)
-      DETAIL_WHITELIST[obj.class.name.underscore.to_sym].each do |detail|
+    if @detail_whitelist.key?(obj.class.name.underscore.to_sym)
+      @detail_whitelist[obj.class.name.underscore.to_sym].each do |detail|
         value = obj.send(detail)
         name = detail.to_s
         detail_text = "#{name}: #{escape_special_chars(value)}"
