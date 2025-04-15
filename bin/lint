@@ -1,15 +1,3 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
-set -e
-
-bin/rubocop --autocorrect-all $*
-bin/prettier --write --list-different --ignore-unknown ${*:-'**/*'}
-bin/rufo ${*:-app}
-if [ -z "$*" ]; then
-   bin/brakeman --quiet --no-summary --no-pager
-   terraform fmt -recursive
-else
-   terraform fmt $*
-fi
-tflint --chdir=terraform --init
-tflint --chdir=terraform --recursive
+hk fix "$@"
