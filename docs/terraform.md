@@ -68,7 +68,7 @@ the [Session Manager plugin](https://docs.aws.amazon.com/systems-manager/latest/
 Run
 
 ```bash
-scripts/shell.sh <CLUSTER-NAME>
+scripts/shell.sh <ENVIRONMENT_NAME>
 ```
 
 to open an interactive shell to the container running in the specified cluster.
