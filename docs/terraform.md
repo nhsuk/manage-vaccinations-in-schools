@@ -68,7 +68,7 @@ the [Session Manager plugin](https://docs.aws.amazon.com/systems-manager/latest/
 Run
 
 ```bash
-./scripts/shell-access <CLUSTER-NAME>
+scripts/shell.sh <CLUSTER-NAME>
 ```
 
 to open an interactive shell to the container running in the specified cluster.
@@ -94,7 +94,7 @@ Step 2: Apply the terraform changes
 env=... # The environment to deploy
 cd terraform/app
 terraform init -reconfigure -backend-config=env/$env-backend.hcl
-tf apply -var-file=env/$env.tfvars -var="image_digest=$env"
+tf apply -var-file=env/$env.tfvars -var="image_digest=<image_digest_from_ECR>"
 ```
 
 Step 3: Run Codedeploy from the AWS Console
