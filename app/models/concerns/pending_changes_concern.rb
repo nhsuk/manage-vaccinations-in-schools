@@ -9,12 +9,22 @@ module PendingChangesConcern
     new_pending_changes =
       attributes.each_with_object({}) do |(attr, new_value), staged_changes|
         current_value = public_send(attr)
-        staged_changes[attr.to_s] = new_value if new_value != current_value
+
+        if attr == :gender_code && overwrite_gender?(current_value)
+          public_send("#{attr}=", new_value) if new_value != current_value
+        elsif new_value != current_value
+          staged_changes[attr.to_s] = new_value
+        end
       end
 
     if new_pending_changes.any?
       update!(pending_changes: pending_changes.merge(new_pending_changes))
     end
+  end
+
+  def overwrite_gender?(current_value)
+    current_value.nil? || current_value == "not_known" ||
+      current_value == "not_specified"
   end
 
   def with_pending_changes
