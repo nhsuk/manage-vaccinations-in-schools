@@ -290,6 +290,78 @@ describe CohortImportRow do
         expect(patient.pending_changes).to include("gender_code" => "male")
       end
     end
+
+    context "with an existing patient without address (ex. postcode)" do
+      let!(:existing_patient) do
+        create(
+          :patient,
+          family_name: "Smith",
+          given_name: "Jimmy",
+          gender_code: "male",
+          nhs_number: "1234567890",
+          birth_academic_year: 2009,
+          date_of_birth: Date.new(2010, 1, 1),
+          registration: "8AB",
+          address_line_1: nil,
+          address_line_2: nil,
+          address_town: nil,
+          address_postcode: "SW1A 1AA"
+        )
+      end
+
+      it { should eq(existing_patient) }
+
+      it "saves the incoming address" do
+        expect(patient).to have_attributes(
+          address_line_1: "10 Downing Street",
+          address_line_2: "",
+          address_town: "London",
+          address_postcode: "SW1A 1AA"
+        )
+      end
+
+      it "doesn't stage the incoming address" do
+        expect(patient.pending_changes).to be_empty
+      end
+    end
+
+    context "with an existing patient already with an address" do
+      let!(:existing_patient) do
+        create(
+          :patient,
+          family_name: "Smith",
+          gender_code: "male",
+          given_name: "Jimmy",
+          nhs_number: "1234567890",
+          address_line_1: "20 Woodstock Road",
+          address_line_2: "",
+          address_town: "Oxford",
+          address_postcode: "OX2 6HD",
+          birth_academic_year: 2009,
+          date_of_birth: Date.new(2010, 1, 1),
+          registration: "8AB"
+        )
+      end
+
+      it { should eq(existing_patient) }
+
+      it "does not save the incoming address" do
+        expect(patient).to have_attributes(
+          address_line_1: "20 Woodstock Road",
+          address_line_2: "",
+          address_town: "Oxford",
+          address_postcode: "OX2 6HD"
+        )
+      end
+
+      it "does stage the address differences" do
+        expect(patient.pending_changes).to include(
+          "address_line_1" => "10 Downing Street",
+          "address_postcode" => "SW1A 1AA",
+          "address_town" => "London"
+        )
+      end
+    end
   end
 
   describe "#to_school_move" do
