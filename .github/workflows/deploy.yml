@@ -50,5 +50,4 @@ jobs:
     uses: ./.github/workflows/deploy-application.yml
     with:
       environment: ${{ inputs.environment }}
-      image_tag: ${{ github.sha }}
       server_types: ${{ inputs.server_types }}

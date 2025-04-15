@@ -16,10 +16,6 @@ on:
           - preview
           - training
           - production
-      image_tag:
-        description: Docker image tag
-        required: false
-        type: string
       server_types:
         description: Server types to deploy
         required: true
@@ -34,9 +30,6 @@ on:
       environment:
         required: true
         type: string
-      image_tag:
-        required: false
-        type: string
       server_types:
         required: true
         type: string
@@ -48,11 +41,10 @@ env:
   aws-role: ${{ inputs.environment == 'production'
     && 'arn:aws:iam::820242920762:role/GithubDeployMavisAndInfrastructure'
     || 'arn:aws:iam::393416225559:role/GithubDeployMavisAndInfrastructure' }}
-  terraform-working-directory: terraform/app
 
 jobs:
-  plan-changes:
-    name: Plan task definition changes
+  prepare-deployment:
+    name: Prepare deployment
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -64,74 +56,25 @@ jobs:
         with:
           role-to-assume: ${{ env.aws-role }}
           aws-region: eu-west-2
-      - name: Login to ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v2
-      - name: pull docker image
-        run: |
-          DOCKER_IMAGE="${{ steps.login-ecr.outputs.registry }}/mavis/webapp:${{ inputs.image_tag || github.sha }}"
-          docker pull "$DOCKER_IMAGE"
-          echo "DOCKER_IMAGE=$DOCKER_IMAGE" >> $GITHUB_ENV
-      - name: Extract image digest
-        run: |
-          DOCKER_DIGEST=$(docker inspect --format='{{index .RepoDigests 0}}' "$DOCKER_IMAGE")
-          DIGEST="${DOCKER_DIGEST#*@}"
-          echo "DIGEST=$DIGEST" >> $GITHUB_ENV
       - name: Install terraform
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: 1.10.5
-      - name: Update the task definition
-        id: plan
-        working-directory: ${{ env.terraform-working-directory }}
+      - name: Get terraform output
+        id: terraform-output
+        working-directory: terraform/app
         run: |
-          terraform init -backend-config="env/${{ inputs.environment }}-backend.hcl" -upgrade
-          terraform plan -var-file="env/${{ inputs.environment }}.tfvars" \
-          -var="image_digest=$DIGEST" -out=${{ runner.temp }}/tfplan | tee ${{ runner.temp }}/tf_stdout
-      - name: Validate the changes
-        run: |
-          ./terraform/scripts/check_task_definition.sh ${{ runner.temp }}/tf_stdout
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: tfplan_app-${{ inputs.environment }}
-          path: ${{ runner.temp }}/tfplan
-
-  apply-changes:
-    name: Apply task definition changes
-    runs-on: ubuntu-latest
-    needs: plan-changes
-    environment: ${{ inputs.environment }}
-    permissions:
-      id-token: write
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: ${{ env.aws-role }}
-          aws-region: eu-west-2
-      - name: Download artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: tfplan_app-${{ inputs.environment }}
-          path: ${{ runner.temp }}
-      - name: Install terraform
-        uses: hashicorp/setup-terraform@v3
-        with:
-          terraform_version: 1.10.5
-      - name: Apply the changes
-        working-directory: ${{ env.terraform-working-directory }}
-        run: |
-          terraform init -backend-config="env/${{ inputs.environment }}-backend.hcl" -upgrade
-          terraform apply ${{ runner.temp }}/tfplan
-          echo "s3_bucket=$(terraform output -raw s3_bucket)" >> ${{ runner.temp }}/DEPLOYMENT_ENVS
-          echo "s3_key=$(terraform output -raw s3_key)" >> ${{ runner.temp }}/DEPLOYMENT_ENVS
-          echo "application=$(terraform output -raw codedeploy_application_name)" >> ${{ runner.temp }}/DEPLOYMENT_ENVS
-          echo "application_group=$(terraform output -raw codedeploy_deployment_group_name)" >> ${{ runner.temp }}/DEPLOYMENT_ENVS
-          echo "ecs_variables=$(terraform output -json ecs_variables | sed 's/\"/\\"/g')" >> ${{ runner.temp }}/DEPLOYMENT_ENVS
-      - name: Upload artifact
+          terraform init -backend-config=env/${{ inputs.environment }}-backend.hcl -reconfigure
+          terraform output -json | jq -r '
+          "s3_bucket=" + .s3_bucket.value,
+          "s3_key=" + .s3_key.value,
+          "application=" + .codedeploy_application_name.value,
+          "application_group=" + .codedeploy_deployment_group_name.value,
+          "cluster_name=" + .ecs_variables.value.cluster_name,
+          "good_job_service=" + .ecs_variables.value.good_job.service_name,
+          "good_job_task_definition=" + .ecs_variables.value.good_job.task_definition.arn
+          ' > ${{ runner.temp }}/DEPLOYMENT_ENVS
+      - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: DEPLOYMENT_ENVS-${{ inputs.environment }}
@@ -140,7 +83,7 @@ jobs:
   create-web-deployment:
     name: Create web deployment
     runs-on: ubuntu-latest
-    needs: apply-changes
+    needs: prepare-deployment
     if: inputs.server_types == 'web' || inputs.server_types == 'all'
     environment: ${{ inputs.environment }}
     permissions:
@@ -150,17 +93,15 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: DEPLOYMENT_ENVS-${{ inputs.environment }}
-          path: ${{ runner.temp }}/artifact
+          path: ${{ runner.temp }}
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ env.aws-role }}
           aws-region: eu-west-2
-      - name: Install AWS CLI
-        run: sudo snap install --classic aws-cli
       - name: Trigger CodeDeploy deployment
         run: |
-          source ${{ runner.temp }}/artifact/DEPLOYMENT_ENVS
+          source ${{ runner.temp }}/DEPLOYMENT_ENVS
           deployment_id=$(aws deploy create-deployment \
           --application-name "$application" --deployment-group-name "$application_group" \
           --s3-location bucket="$s3_bucket",key="$s3_key",bundleType=yaml | jq -r .deploymentId)
@@ -168,23 +109,23 @@ jobs:
           echo "deployment_id=$deployment_id" >> $GITHUB_ENV
       - name: Wait up to 30 minutes for deployment to complete
         run: |
-          aws deploy wait deployment-successful --deployment-id $deployment_id
+          aws deploy wait deployment-successful --deployment-id "$deployment_id"
           echo "Deployment successful"
 
   create-good-job-deployment:
     name: Create good-job deployment
     runs-on: ubuntu-latest
-    needs: apply-changes
-    if: inputs.server_types == 'good-job'  || inputs.server_types == 'all'
+    needs: prepare-deployment
+    if: inputs.server_types == 'good-job' || inputs.server_types == 'all'
     environment: ${{ inputs.environment }}
     permissions:
       id-token: write
     steps:
-      - name: Download artifact
+      - name: Download Artifact
         uses: actions/download-artifact@v4
         with:
           name: DEPLOYMENT_ENVS-${{ inputs.environment }}
-          path: ${{ runner.temp }}/artifact
+          path: ${{ runner.temp }}
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -194,26 +135,20 @@ jobs:
         run: sudo snap install --classic aws-cli
       - name: Trigger ECS Deployment
         run: |
-          source ${{ runner.temp }}/artifact/DEPLOYMENT_ENVS
-          echo "$ecs_variables"
-          cluster_name=$(echo "$ecs_variables" | jq -r '.cluster_name')
-          service_name=$(echo "$ecs_variables" | jq -r '.good_job.service_name')
-          task_definition=$(echo "$ecs_variables" | jq -r '.good_job.task_definition.arn')
-          DEPLOYMENT_ID=$(aws ecs update-service --cluster $cluster_name --service $service_name \
-          --task-definition $task_definition --force-new-deployment \
+          source ${{ runner.temp }}/DEPLOYMENT_ENVS
+          DEPLOYMENT_ID=$(aws ecs update-service --cluster $cluster_name --service $good_job_service \
+          --task-definition $good_job_task_definition --force-new-deployment \
           --query 'service.deployments[?rolloutState==`IN_PROGRESS`].[id][0]' --output text)
           echo "Deployment started: $DEPLOYMENT_ID"
           echo "deployment_id=$DEPLOYMENT_ID" >> $GITHUB_ENV
       - name: Wait for deployment to complete
         run: |
-          source ${{ runner.temp }}/artifact/DEPLOYMENT_ENVS
-          cluster_name=$(echo "$ecs_variables" | jq -r '.cluster_name')
-          service_name=$(echo "$ecs_variables" | jq -r '.good_job.service_name')
+          source ${{ runner.temp }}/DEPLOYMENT_ENVS
           DEPLOYMENT_STATE=IN_PROGRESS
           while [ "$DEPLOYMENT_STATE" == "IN_PROGRESS" ]; do
             echo "Waiting for deployment to complete..."
             sleep 30
-            DEPLOYMENT_STATE="$(aws ecs describe-services --cluster $cluster_name --services $service_name \
+            DEPLOYMENT_STATE="$(aws ecs describe-services --cluster $cluster_name --services $good_job_service \
             --query "services[0].deployments[?id == \`$deployment_id\`].[rolloutState][0]" --output text)"
           done
           if [ "$DEPLOYMENT_STATE" != "COMPLETED" ]; then
