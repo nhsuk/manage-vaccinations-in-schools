@@ -106,6 +106,54 @@ describe SearchForm do
         expect(form.apply(scope, programme:)).to include(patient)
       end
     end
+
+    context "searching on name" do
+      let(:consent_status) { nil }
+      let(:date_of_birth_day) { nil }
+      let(:date_of_birth_month) { nil }
+      let(:date_of_birth_year) { nil }
+      let(:missing_nhs_number) { nil }
+      let(:programme_status) { nil }
+      let(:q) { nil }
+      let(:register_status) { nil }
+      let(:session_status) { nil }
+      let(:triage_status) { nil }
+      let(:year_groups) { nil }
+
+      let(:patient_a) do
+        create(:patient, given_name: "Harry", family_name: "Potter")
+      end
+      let(:patient_b) do
+        create(:patient, given_name: "Hari", family_name: "Potter")
+      end
+      let(:patient_c) do
+        create(:patient, given_name: "Arry", family_name: "Pott")
+      end
+      let(:patient_d) do
+        create(:patient, given_name: "Ron", family_name: "Weasley")
+      end
+      let(:patient_e) do
+        create(:patient, given_name: "Ginny", family_name: "Weasley")
+      end
+
+      context "with no search query" do
+        let(:q) { nil }
+
+        it "sorts alphabetically by name" do
+          expect(form.apply(scope)).to eq(
+            [patient_c, patient_b, patient_a, patient_e, patient_d]
+          )
+        end
+      end
+
+      context "with some search query" do
+        let(:q) { "Harry Potter" }
+
+        it "sorts by similarity" do
+          expect(form.apply(scope)).to eq([patient_a, patient_b, patient_c])
+        end
+      end
+    end
   end
 
   context "for patient sessions" do
