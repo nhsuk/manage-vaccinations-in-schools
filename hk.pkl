@@ -2,6 +2,11 @@ amends "package://github.com/jdx/hk/releases/download/v0.8.5/hk@0.8.5#/Config.pk
 import "package://github.com/jdx/hk/releases/download/v0.8.5/hk@0.8.5#/Builtins.pkl"
 
 local linters = new Mapping<String, Step> {
+    ["prettier"] {
+        check = "bin/prettier --check --ignore-unknown {{ files }}"
+        fix = "bin/prettier --write --list-different --ignore-unknown {{ files }}"
+    }
+
     ["rubocop"] {
         glob = List("**/*.rb")
         check = "bin/rubocop {{ files }}"
