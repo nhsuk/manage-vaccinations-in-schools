@@ -47,6 +47,13 @@ class PatientImportRow
         existing_patient.registration = attributes.delete(:registration)
       end
 
+      unless existing_patient.has_address?
+        existing_patient.address_line_1 = attributes.delete(:address_line_1)
+        existing_patient.address_line_2 = attributes.delete(:address_line_2)
+        existing_patient.address_town = attributes.delete(:address_town)
+        existing_patient.address_postcode = attributes.delete(:address_postcode)
+      end
+
       if address_postcode.present? &&
            address_postcode.to_postcode != existing_patient.address_postcode
         attributes.merge!(
