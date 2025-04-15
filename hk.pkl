@@ -25,6 +25,12 @@ local linters = new Mapping<String, Step> {
     }
 
     ["terraform"] = Builtins.terraform
+
+    ["tf_lint"] {
+        glob = List("**/*.tf")
+        check = "tflint --chdir=terraform --recursive"
+        fix = "tflint --chdir=terraform --recursive --fix"
+    }
 }
 
 hooks {
