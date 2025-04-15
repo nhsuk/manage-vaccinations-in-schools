@@ -10,3 +10,9 @@ repos:
         name: Prettier
         entry: yarn prettier --write --ignore-unknown
         language: system
+      - id: rubocop
+        name: Rubocop
+        entry: bin/bundle exec rubocop --autocorrect-all
+        language: system
+        files: ^app/
+        types: [ruby]
