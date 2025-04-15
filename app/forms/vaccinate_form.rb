@@ -81,8 +81,13 @@ class VaccinateForm
         not_taking_medication: not_taking_medication || false,
         notes: pre_screening_notes,
         performed_by: current_user,
-        programme_id:
+        programme_id:,
+        session_date_id:
       )
+  end
+
+  def session_date_id
+    patient_session.session.session_dates.today.first&.id
   end
 
   def valid_administered_values
