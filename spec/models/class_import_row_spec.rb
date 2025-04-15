@@ -227,6 +227,62 @@ describe ClassImportRow do
         end
       end
     end
+
+    context "with an existing patient without gender" do
+      let(:data) { valid_data.merge("CHILD_GENDER" => "male") }
+
+      let!(:existing_patient) do
+        create(
+          :patient,
+          address_postcode: "SW1A 1AA",
+          family_name: "Smith",
+          gender_code: "not_known",
+          given_name: "Jimmy",
+          date_of_birth: Date.new(2010, 1, 1)
+        )
+      end
+
+      it { should eq(existing_patient) }
+
+      it "saves the incoming gender" do
+        expect(patient).to have_attributes(gender_code: "male")
+      end
+
+      it "doesn't stage the gender differences" do
+        expect(patient.pending_changes).to be_empty
+      end
+    end
+
+    context "with an existing patient already with gender" do
+      let(:data) { valid_data.merge("CHILD_GENDER" => "male") }
+
+      let!(:existing_patient) do
+        create(
+          :patient,
+          address_postcode: "SW1A 1AA",
+          family_name: "Smith",
+          gender_code: "female",
+          given_name: "Jimmy",
+          nhs_number: "1234567890",
+          address_line_1: "10 Downing Street",
+          address_line_2: "",
+          address_town: "London",
+          birth_academic_year: 2009,
+          date_of_birth: Date.new(2010, 1, 1),
+          registration: "8AB"
+        )
+      end
+
+      it { should eq(existing_patient) }
+
+      it "does not save the incoming gender" do
+        expect(patient).to have_attributes(gender_code: "female")
+      end
+
+      it "does stage the gender differences" do
+        expect(patient.pending_changes).to include("gender_code" => "male")
+      end
+    end
   end
 
   describe "#to_parent_relationships" do
