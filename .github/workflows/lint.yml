@@ -70,3 +70,16 @@ jobs:
           terraform_version: 1.10.5
       - name: Check formatting
         run: terraform fmt -check -recursive
+
+  tflint:
+    name: TFLint
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: terraform-linters/setup-tflint@v4
+      - name: Run TFLint
+        working-directory: terraform
+        run: |
+          tflint --init
+          tflint --recursive

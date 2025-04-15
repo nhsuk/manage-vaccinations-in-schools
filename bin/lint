@@ -11,3 +11,5 @@ if [ -z "$*" ]; then
 else
    terraform fmt $*
 fi
+tflint --chdir=terraform --init
+tflint --chdir=terraform --recursive

@@ -1,3 +1,13 @@
+terraform {
+  required_version = "~> 1.10.5"
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.87"
+    }
+  }
+}
+
 resource "aws_security_group" "this" {
   name        = "${var.server_type}-service-${var.environment}"
   description = "Security Group for communication with ECS Service"

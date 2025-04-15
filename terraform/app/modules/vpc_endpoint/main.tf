@@ -1,3 +1,13 @@
+terraform {
+  required_version = "~> 1.10.5"
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.87"
+    }
+  }
+}
+
 resource "aws_vpc_endpoint" "this" {
   vpc_id              = var.vpc_id
   service_name        = var.service_name
