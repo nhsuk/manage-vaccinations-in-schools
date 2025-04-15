@@ -11,6 +11,9 @@ on:
 concurrency:
   group: build-and-push-image-${{ inputs.git-sha || github.sha }}
 
+env:
+  PUSH_IMAGE_TO_PRODUCTION: ${{ github.ref_name == 'main' || github.ref_name == 'release' }}
+
 jobs:
   check-image-presence:
     name: Check if images already exist
@@ -34,11 +37,13 @@ jobs:
             echo "BUILD_NEEDED=true" >> $GITHUB_ENV
           fi
       - name: Configure AWS Production credentials
+        if: ${{ env.PUSH_IMAGE_TO_PRODUCTION == 'true'}}
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: arn:aws:iam::820242920762:role/GithubDeployMavisAndInfrastructure
           aws-region: eu-west-2
       - name: Check if production image exists
+        if: ${{ env.PUSH_IMAGE_TO_PRODUCTION == 'true' }}
         id: check-image
         run: |
           if [ -e $BUILD_NEEDED ] && aws ecr describe-images --repository-name mavis/webapp --image-ids imageTag=${{ inputs.git-sha || github.sha }} > /dev/null 2>&1; then
@@ -64,16 +69,29 @@ jobs:
         with:
           name: image
           path: image.tar
+  define-matrix:
+    name: Determine AWS roles to push the image
+    runs-on: ubuntu-latest
+    needs: check-image-presence
+    outputs:
+      aws-roles: ${{ steps.determine-aws-roles.outputs.aws-roles }}
+    steps:
+      - name: Set aws roles
+        id: determine-aws-roles
+        run: |
+          if [ ${{ env.PUSH_IMAGE_TO_PRODUCTION }} = 'true' ]; then
+            echo 'aws-roles=["arn:aws:iam::393416225559:role/GithubDeployMavisAndInfrastructure", "arn:aws:iam::820242920762:role/GithubDeployMavisAndInfrastructure"]' >> $GITHUB_OUTPUT
+          else
+            echo 'aws-roles=["arn:aws:iam::393416225559:role/GithubDeployMavisAndInfrastructure"]' >> $GITHUB_OUTPUT
+          fi
   push:
     runs-on: ubuntu-latest
-    needs: build
+    needs: [build, define-matrix]
     permissions:
       id-token: write
     strategy:
       matrix:
-        aws-role:
-          - arn:aws:iam::820242920762:role/GithubDeployMavisAndInfrastructure
-          - arn:aws:iam::393416225559:role/GithubDeployMavisAndInfrastructure
+        aws-role: ${{ fromJSON(needs.define-matrix.outputs.aws-roles) }}
     steps:
       - name: Download Docker image
         uses: actions/download-artifact@v4
