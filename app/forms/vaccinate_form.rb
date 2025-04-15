@@ -19,7 +19,6 @@ class VaccinateForm
   attribute :delivery_site, :string
   attribute :dose_sequence, :integer
   attribute :programme_id, :integer
-  attribute :vaccine_id, :integer
 
   validates :knows_vaccination, inclusion: { in: [true, nil] }
   validates :not_already_had, inclusion: { in: [true, nil] }
@@ -34,7 +33,6 @@ class VaccinateForm
   with_options if: :administered do
     validates :delivery_method, presence: true
     validates :delivery_site, presence: true
-    validates :vaccine_id, presence: true
   end
 
   def save(draft_vaccination_record:)
@@ -61,7 +59,6 @@ class VaccinateForm
     draft_vaccination_record.performed_ods_code = organisation.ods_code
     draft_vaccination_record.programme_id = programme_id
     draft_vaccination_record.session_id = patient_session.session_id
-    draft_vaccination_record.vaccine_id = vaccine_id
 
     draft_vaccination_record.save # rubocop:disable Rails/SaveBang
   end
