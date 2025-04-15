@@ -3,7 +3,9 @@
 class FeatureFlagFactory
   def self.call
     names =
-      YAML.safe_load(File.read(Rails.root.join("config/feature_flags.yml")))
+      YAML.safe_load(
+        File.read(Rails.root.join("config/feature_flags.yml"))
+      ).keys
 
     names.each { Flipper.add(it) unless Flipper.exist?(it) }
 
