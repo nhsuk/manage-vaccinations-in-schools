@@ -7,27 +7,18 @@ public subnet.
 
 ## ECS Service
 
-The core of this configuration is an ECS Fargate service. The service is running inside the private subnet and is
-accessible through a load balancer.
-The service contains an ECS task, which runs a docker image of the app. The service uses autoscaling to dynamically
-adapt the number of running tasks to the actual load.
+The core of this configuration are two ECS Fargate services. One service is running the webapp and the other one runs the background jobs.
+Both are running inside private subnets. The webapp service is accessible through a load balancer.
+The services contain ECS taskw, which run a docker image of the app. In the future, it is planed for the services to use
+autoscaling to dynamically adapt the number of running tasks to accommodate load.
 
 ## Database
 
 The service uses an Aurora Serverless RDS Database. It can be accessed only from within the private subnets.
 
-## VPC Endpoints
+## NAT Gateway
 
-Since the ECS Service runs in a private subnet, it can't communicate to other AWS services outside the VPC by default.
-This is required for
-
-- Fetching the docker image from ECR
-- Sending logs to CloudWatch
-- Setting up secure shell access from a local machine with AWS SystemsManager
-
-VPC endpoints are a way to enable resources to communicate with other AWS services without requiring a public IP. For
-each of the use cases, there is a dedicated VPC endpoint which is configured by the
-custom [VPC Endpoint](../app/modules/vpc_endpoint/README.md) module.
+A NAT Gateway exists to enable outgoing traffic from the services.
 
 ## CodeDeploy
 
