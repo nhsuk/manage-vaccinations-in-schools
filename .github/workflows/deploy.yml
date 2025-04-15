@@ -37,7 +37,7 @@ on:
           - good-job
         default: all
       git_tag:
-        description: Git tag to deploy
+        description: Git tag to deploy (optional). Will use workflow ref if not provided.
         required: false
         type: string
 
@@ -53,28 +53,20 @@ jobs:
           ref: ${{ inputs.git_tag || github.sha }}
       - name: Get git sha
         id: get-git-sha
-        run: |
-          if [ -z "${{ inputs.git_tag }}" ]; then
-              echo "No git tag provided. Using the latest commit sha"
-              echo "git-sha=${{ github.sha }}" >> $GITHUB_OUTPUT
-          else
-              git_sha=$(git rev-parse refs/tags/${{ inputs.git_tag }})
-              echo "Git tag provided. Using the sha of the tagged commit: $git_sha"
-              echo "git-sha=$git_ssha" >> $GITHUB_OUTPUT
-          fi
+        run: echo "git-sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
   build-and-push-image:
     needs: determine-git-sha
     uses: ./.github/workflows/build-and-push-image.yml
     with:
       git-sha: ${{ needs.determine-git-sha.outputs.git-sha }}
   deploy-infrastructure:
-    needs: build-and-push-image
+    needs: [build-and-push-image, determine-git-sha]
     uses: ./.github/workflows/deploy-infrastructure.yml
     with:
       environment: ${{ inputs.environment }}
       git-sha: ${{ needs.determine-git-sha.outputs.git-sha }}
   deploy-application:
-    needs: deploy-infrastructure
+    needs: [deploy-infrastructure, determine-git-sha]
     uses: ./.github/workflows/deploy-application.yml
     with:
       environment: ${{ inputs.environment }}
