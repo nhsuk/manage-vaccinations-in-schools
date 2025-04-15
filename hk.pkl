@@ -1,0 +1,25 @@
+amends "package://github.com/jdx/hk/releases/download/v0.8.5/hk@0.8.5#/Config.pkl"
+import "package://github.com/jdx/hk/releases/download/v0.8.5/hk@0.8.5#/Builtins.pkl"
+
+local linters = new Mapping<String, Step> {
+    ["rubocop"] {
+        glob = List("**/*.rb")
+        check = "bin/rubocop {{ files }}"
+        fix = "bin/rubocop --fix {{ files }}"
+    }
+}
+
+hooks {
+    ["pre-commit"] {
+        fix = true
+        stash = "patch-file"
+        steps = linters
+    }
+    ["fix"] {
+        fix = true
+        steps = linters
+    }
+    ["check"] {
+        steps = linters
+    }
+}
