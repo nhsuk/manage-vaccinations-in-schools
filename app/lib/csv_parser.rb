@@ -86,7 +86,11 @@ class CSVParser
   end
 
   def encoding
-    @encoding ||=
+    "#{detect_encoding}:UTF-8" if detect_encoding
+  end
+
+  def detect_encoding
+    @detect_encoding ||=
       begin
         return nil if data.blank?
 
