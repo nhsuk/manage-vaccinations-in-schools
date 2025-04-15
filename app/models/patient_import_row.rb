@@ -60,6 +60,10 @@ class PatientImportRow
           address_line_2: address_line_2&.to_s,
           address_town: address_town&.to_s
         )
+      elsif auto_overwrite_address?(existing_patient)
+        existing_patient.address_line_1 = attributes.delete(:address_line_1)
+        existing_patient.address_line_2 = attributes.delete(:address_line_2)
+        existing_patient.address_town = attributes.delete(:address_town)
       end
 
       existing_patient.stage_changes(attributes)
@@ -200,6 +204,13 @@ class PatientImportRow
   attr_reader :organisation, :year_groups
 
   private
+
+  def auto_overwrite_address?(existing_patient)
+    existing_patient.address_postcode == address_postcode&.to_postcode &&
+      existing_patient.address_line_1.blank? &&
+      existing_patient.address_line_2.blank? &&
+      existing_patient.address_town.blank?
+  end
 
   def parent_1_exists?
     [parent_1_name, parent_1_email, parent_1_phone].any?(&:present?)
