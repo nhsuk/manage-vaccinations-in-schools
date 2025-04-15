@@ -216,6 +216,31 @@ describe ClassImportRow do
         end
       end
     end
+
+    context "with an existing patient without gender" do
+      let(:data) { valid_data.merge("CHILD_GENDER" => "male") }
+
+      let!(:existing_patient) do
+        create(
+          :patient,
+          address_postcode: "SW1A 1AA",
+          family_name: "Smith",
+          gender_code: "not_known",
+          given_name: "Jimmy",
+          date_of_birth: Date.new(2010, 1, 1)
+        )
+      end
+
+      it { should eq(existing_patient) }
+
+      it "saves the incoming gender" do
+        expect(patient).to have_attributes(gender_code: "male")
+      end
+
+      it "doesn't stage the gender differences" do
+        expect(patient.pending_changes).to be_empty
+      end
+    end
   end
 
   describe "#to_parent_relationships" do
