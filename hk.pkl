@@ -23,6 +23,8 @@ local linters = new Mapping<String, Step> {
         check = "bin/rufo --check {{ files }}"
         fix = "bin/rufo {{ files }}"
     }
+
+    ["terraform"] = Builtins.terraform
 }
 
 hooks {
