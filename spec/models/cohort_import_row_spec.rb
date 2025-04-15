@@ -25,16 +25,16 @@ describe CohortImportRow do
     {
       "CHILD_ADDRESS_LINE_1" => "10 Downing Street",
       "CHILD_ADDRESS_LINE_2" => "",
+      "CHILD_TOWN" => "London",
+      "CHILD_POSTCODE" => "SW1A 1AA",
       "CHILD_PREFERRED_GIVEN_NAME" => "Jim",
       "CHILD_DATE_OF_BIRTH" => "2010-01-01",
       "CHILD_FIRST_NAME" => "Jimmy",
       "CHILD_GENDER" => "Male",
       "CHILD_LAST_NAME" => "Smith",
       "CHILD_NHS_NUMBER" => "9990000018",
-      "CHILD_POSTCODE" => "SW1A 1AA",
       "CHILD_REGISTRATION" => "8AB",
-      "CHILD_SCHOOL_URN" => school_urn,
-      "CHILD_TOWN" => "London"
+      "CHILD_SCHOOL_URN" => school_urn
     }
   end
 
@@ -298,7 +298,7 @@ describe CohortImportRow do
           family_name: "Smith",
           given_name: "Jimmy",
           gender_code: "male",
-          nhs_number: "1234567890",
+          nhs_number: "9990000018",
           birth_academic_year: 2009,
           date_of_birth: Date.new(2010, 1, 1),
           registration: "8AB",
@@ -332,7 +332,7 @@ describe CohortImportRow do
           family_name: "Smith",
           gender_code: "male",
           given_name: "Jimmy",
-          nhs_number: "1234567890",
+          nhs_number: "9990000018",
           address_line_1: "20 Woodstock Road",
           address_line_2: "",
           address_town: "Oxford",
