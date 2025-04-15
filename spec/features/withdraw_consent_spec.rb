@@ -77,10 +77,16 @@ describe "Withdraw consent" do
 
   def and_triaged_as_safe_to_vaccinate
     create(:triage, patient: @patient, programme: @programme)
+    create(
+      :patient_triage_status,
+      :safe_to_vaccinate,
+      patient: @patient,
+      programme: @programme
+    )
   end
 
   def and_the_patient_is_ready_for_the_nurse
-    expect(page).to have_content("Ready for nurse")
+    expect(page).to have_content("ready for the vaccinator")
   end
 
   def and_the_patient_is_safe_to_vaccinate

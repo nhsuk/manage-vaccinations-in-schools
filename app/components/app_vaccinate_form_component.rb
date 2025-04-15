@@ -6,15 +6,7 @@ class AppVaccinateFormComponent < ViewComponent::Base
 
     @patient_session = patient_session
     @programme = programme
-    @vaccinate_form = vaccinate_form
-  end
-
-  def render?
-    patient.consent_given_and_safe_to_vaccinate?(programme:) &&
-      (
-        patient_session.registration_status&.attending? ||
-          patient_session.registration_status&.completed? || false
-      )
+    @vaccinate_form = vaccinate_form || default_vaccinate_form
   end
 
   private
@@ -58,5 +50,20 @@ class AppVaccinateFormComponent < ViewComponent::Base
       end
 
     options + [OpenStruct.new(value: "other", label: "Other")]
+  end
+
+  def default_vaccinate_form
+    pre_screening =
+      patient_session.pre_screenings.order(created_at: :desc).first
+
+    VaccinateForm.new(
+      feeling_well: pre_screening&.feeling_well,
+      knows_vaccination: pre_screening&.knows_vaccination,
+      no_allergies: pre_screening&.no_allergies,
+      not_already_had: pre_screening&.not_already_had,
+      not_pregnant: pre_screening&.not_pregnant,
+      not_taking_medication: pre_screening&.not_taking_medication,
+      pre_screening_notes: pre_screening&.notes || ""
+    )
   end
 end
