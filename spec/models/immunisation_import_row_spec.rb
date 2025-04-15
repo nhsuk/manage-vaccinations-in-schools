@@ -102,6 +102,40 @@ describe ImmunisationImportRow do
       end
     end
 
+    context "when missing VACCINATED but a vaccine has been given" do
+      let(:data) { { "VACCINE_GIVEN" => "A vaccine" } }
+
+      it "doesn't require a VACCINATED column" do
+        expect(immunisation_import_row).to be_invalid
+        expect(immunisation_import_row.errors[:base]).not_to include(
+          "<code>VACCINATED</code> is required"
+        )
+      end
+    end
+
+    context "when missing VACCINATED but a vaccination type has been given" do
+      let(:data) { { "Vaccination type" => "HPV 1" } }
+
+      it "requires a VACCINATED column" do
+        expect(immunisation_import_row).to be_invalid
+        expect(immunisation_import_row.errors[:base]).to include(
+          "<code>VACCINATED</code> is required"
+        )
+      end
+
+      context "when SystmOne is enabled" do
+        before { Flipper.enable(:systm_one_import) }
+        after { Flipper.disable(:systm_one_import) }
+
+        it "doesn't require a VACCINATED column" do
+          expect(immunisation_import_row).to be_invalid
+          expect(immunisation_import_row.errors[:base]).not_to include(
+            "<code>VACCINATED</code> is required"
+          )
+        end
+      end
+    end
+
     context "when missing fields" do
       let(:data) { { "VACCINATED" => "Y" } }
 
