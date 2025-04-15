@@ -86,7 +86,11 @@ class CSVParser
   end
 
   def encoding
-    @encoding ||=
+    "#{detect_encoding}:UTF-8" if detect_encoding
+  end
+
+  def detect_encoding
+    @detect_encoding ||=
       begin
         return nil if data.blank?
 
@@ -103,11 +107,13 @@ class CSVParser
       row = info.line
       header = unconverted_headers[info.index]
 
-      Field.new(value&.strip.presence, column, row, header)
+      Field.new(value&.tr("\u00A0", " ")&.strip.presence, column, row, header)
     end
   end
 
   def header_converters
-    proc { |value| value.strip.downcase.tr("-", "_").tr(" ", "_").to_sym }
+    proc do |value|
+      value.downcase.tr("-", "_").tr(" ", "_").tr("\u00A0", " ").strip.to_sym
+    end
   end
 end
