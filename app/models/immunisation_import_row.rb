@@ -377,7 +377,8 @@ class ImmunisationImportRow
       elsif "no".start_with?(vaccinated.to_s.downcase)
         false
       end
-    elsif vaccine.present?
+    elsif vaccine_name.present? ||
+          combined_vaccination_and_dose_sequence.present?
       true
     end
   end
