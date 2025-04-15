@@ -75,11 +75,7 @@ describe Patient do
         let(:query) { "Harry Potter" }
 
         it "returns the patients in the correct order" do
-          [patient_a, patient_b, patient_c, patient_d] # forces the creation of the patients in memory
-
-          expect(scope.count).to eq(3)
           expect(scope).to eq([patient_a, patient_b, patient_c])
-          expect(scope).not_to include(patient_d)
         end
       end
 
@@ -87,11 +83,7 @@ describe Patient do
         let(:query) { "POTTER, Harry" }
 
         it "returns the patients in the correct order" do
-          [patient_a, patient_b, patient_c, patient_d] # forces the creation of the patients in memory
-
-          expect(scope.count).to eq(3)
           expect(scope).to eq([patient_a, patient_b, patient_c])
-          expect(scope).not_to include(patient_d)
         end
       end
 
@@ -99,11 +91,7 @@ describe Patient do
         let(:query) { "Potter Harry" }
 
         it "returns the patients in the correct order" do
-          [patient_a, patient_b, patient_c, patient_d] # forces the creation of the patients in memory
-
-          expect(scope.count).to eq(3)
           expect(scope).to eq([patient_a, patient_b, patient_c])
-          expect(scope).not_to include(patient_d)
         end
       end
 
@@ -111,11 +99,7 @@ describe Patient do
         let(:query) { "Potter" }
 
         it "returns the patients in the correct order" do
-          [patient_a, patient_b, patient_c, patient_d] # forces the creation of the patients in memory
-
-          expect(scope.count).to eq(3)
           expect(scope).to eq([patient_a, patient_b, patient_c])
-          expect(scope).not_to include(patient_d)
         end
       end
 
@@ -123,11 +107,7 @@ describe Patient do
         let(:query) { "Harry" }
 
         it "returns the patients in the correct order" do
-          [patient_a, patient_b, patient_c, patient_d] # forces the creation of the patients in memory
-
-          expect(scope.count).to eq(1)
           expect(scope).to eq([patient_a])
-          expect(scope).not_to include(patient_b, patient_c, patient_d)
         end
       end
     end

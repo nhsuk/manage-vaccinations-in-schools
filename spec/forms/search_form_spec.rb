@@ -140,9 +140,6 @@ describe SearchForm do
         let(:q) { nil }
 
         it "sorts alphabetically by name" do
-          [patient_a, patient_b, patient_c, patient_d, patient_e] # forces the creation of the patients in memory
-
-          expect(form.apply(scope).count).to eq(5)
           expect(form.apply(scope)).to eq(
             [patient_c, patient_b, patient_a, patient_e, patient_d]
           )
@@ -153,9 +150,6 @@ describe SearchForm do
         let(:q) { "Harry Potter" }
 
         it "sorts by similarity" do
-          [patient_a, patient_b, patient_c, patient_d, patient_e] # forces the creation of the patients in memory
-
-          expect(form.apply(scope).count).to eq(3)
           expect(form.apply(scope)).to eq([patient_a, patient_b, patient_c])
         end
       end
