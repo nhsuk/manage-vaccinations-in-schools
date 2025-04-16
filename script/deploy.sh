@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 set -e
 
@@ -17,7 +17,7 @@ while [[ $# -gt 0 ]]; do
       shift
       ;;
     -h|--help)
-      echo "Usage: bin/deploy [options] <environment>"
+      echo "Usage: script/deploy.sh [options] <environment>"
       echo ""
       echo "Options:"
       echo "  -f | --force               : force deploying HEAD"
