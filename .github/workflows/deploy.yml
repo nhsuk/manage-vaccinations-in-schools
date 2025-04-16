@@ -64,7 +64,7 @@ jobs:
     uses: ./.github/workflows/deploy-infrastructure.yml
     with:
       environment: ${{ inputs.environment }}
-      git-sha: ${{ needs.determine-git-sha.outputs.git-sha }}
+      image_tag: ${{ needs.determine-git-sha.outputs.git-sha }}
   deploy-application:
     needs: deploy-infrastructure
     uses: ./.github/workflows/deploy-application.yml
