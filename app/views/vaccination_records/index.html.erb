@@ -14,7 +14,7 @@
 
 <%= govuk_button_link_to "Import vaccination records", new_immunisation_import_path, class: "app-button--secondary nhsuk-u-margin-bottom-0" %>
 
-<%= render AppVaccinationRecordTableComponent.new(@vaccination_records, count: @pagy.count) %>
+<%= render AppVaccinationRecordTableComponent.new(@vaccination_records, current_user:, count: @pagy.count) %>
 
 <%= govuk_pagination(pagy: @pagy) %>
 
