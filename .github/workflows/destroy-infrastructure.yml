@@ -56,6 +56,7 @@ jobs:
 
       - name: Delete cluster
         run: |
+          set -e
           terraform destroy -var-file="env/${{ inputs.environment }}.tfvars" \
           -var="image_digest=notneededfordestroy" -auto-approve
 
@@ -77,6 +78,7 @@ jobs:
           sudo snap install --classic aws-cli
       - name: Delete terraform backend elements
         run: |
+          set -e
           TF_STATE_FILE=nhse-mavis-terraform-state/terraform-${{ inputs.environment }}.tfstate
           aws s3 rm s3://$TF_STATE_FILE
           aws dynamodb delete-item --table-name mavis-terraform-state-lock \

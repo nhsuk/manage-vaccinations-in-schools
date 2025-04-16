@@ -64,6 +64,7 @@ jobs:
         id: terraform-output
         working-directory: terraform/app
         run: |
+          set -e
           terraform init -backend-config=env/${{ inputs.environment }}-backend.hcl -reconfigure
           terraform output -json | jq -r '
           "s3_bucket=" + .s3_bucket.value,
@@ -101,6 +102,7 @@ jobs:
           aws-region: eu-west-2
       - name: Trigger CodeDeploy deployment
         run: |
+          set -e
           source ${{ runner.temp }}/DEPLOYMENT_ENVS
           deployment_id=$(aws deploy create-deployment \
           --application-name "$application" --deployment-group-name "$application_group" \
@@ -109,6 +111,7 @@ jobs:
           echo "deployment_id=$deployment_id" >> $GITHUB_ENV
       - name: Wait up to 30 minutes for deployment to complete
         run: |
+          set -e
           aws deploy wait deployment-successful --deployment-id "$deployment_id"
           echo "Deployment successful"
 
@@ -135,6 +138,7 @@ jobs:
         run: sudo snap install --classic aws-cli
       - name: Trigger ECS Deployment
         run: |
+          set -e
           source ${{ runner.temp }}/DEPLOYMENT_ENVS
           DEPLOYMENT_ID=$(aws ecs update-service --cluster $cluster_name --service $good_job_service \
           --task-definition $good_job_task_definition --force-new-deployment \
@@ -143,6 +147,7 @@ jobs:
           echo "deployment_id=$DEPLOYMENT_ID" >> $GITHUB_ENV
       - name: Wait for deployment to complete
         run: |
+          set -e
           source ${{ runner.temp }}/DEPLOYMENT_ENVS
           DEPLOYMENT_STATE=IN_PROGRESS
           while [ "$DEPLOYMENT_STATE" == "IN_PROGRESS" ]; do
