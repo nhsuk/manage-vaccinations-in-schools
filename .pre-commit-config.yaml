@@ -16,3 +16,9 @@ repos:
         language: system
         files: ^app/
         types: [ruby]
+      - id: rufo
+        name: Rufo
+        entry: bin/bundle exec rufo
+        language: system
+        files: .erb$
+        exclude: .*/layouts/[^/]*$
