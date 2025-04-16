@@ -50,7 +50,7 @@ jobs:
             CLUSTER_IDENTIFIER=$(grep -oP 'db_cluster\s*=\s*"\K[^"]+' env/${{ inputs.environment }}.tfvars)
             aws rds modify-db-cluster --db-cluster-identifier "$CLUSTER_IDENTIFIER" --no-deletion-protection
             echo "DB cluster delete protection removed: proceeding to delete stage"
-          else 
+          else
             echo "DB cluster not in state: proceeding to delete stage"
           fi
 

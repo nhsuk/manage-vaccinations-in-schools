@@ -9,7 +9,7 @@ class AppCompareConsentFormAndPatientComponent < ViewComponent::Base
           <%= govuk_summary_list(rows: consent_form_rows) %>
         <% end %>
       </div>
-    
+
       <div class="nhsuk-grid-column-one-half nhsuk-card-group__item">
         <%= render AppCardComponent.new(colour: "blue") do |card| %>
           <% card.with_heading { "Child record" } %>

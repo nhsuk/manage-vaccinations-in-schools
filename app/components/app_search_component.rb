@@ -11,7 +11,7 @@ class AppSearchComponent < ViewComponent::Base
                                  label: { text: "Search", class: "nhsuk-u-visually-hidden" },
                                  autocomplete: "off",
                                  class: "app-search-input__input" %>
-    
+
           <button class="nhsuk-button nhsuk-button--secondary app-button--icon app-search-input__submit" data-module="nhsuk-button" type="submit">
             <svg class="nhsuk-icon nhsuk-icon__search" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" focusable="false" role="img">
               <title>Search</title>
@@ -19,7 +19,7 @@ class AppSearchComponent < ViewComponent::Base
             </svg>
           </button>
         </div>
-        
+
         <% if consent_statuses.any? %>
           <%= f.govuk_radio_buttons_fieldset :consent_status, legend: { text: "Consent status", size: "s" } do %>
             <%= f.govuk_radio_button :consent_status, "", label: { text: "Any" } %>
@@ -28,7 +28,7 @@ class AppSearchComponent < ViewComponent::Base
             <% end %>
           <% end %>
         <% end %>
-        
+
         <% if triage_statuses.any? %>
           <%= f.govuk_radio_buttons_fieldset :triage_status, legend: { text: "Triage outcome", size: "s" } do %>
             <%= f.govuk_radio_button :triage_status, "", label: { text: "Any" } %>
@@ -37,7 +37,7 @@ class AppSearchComponent < ViewComponent::Base
             <% end %>
           <% end %>
         <% end %>
-        
+
         <% if register_statuses.any? %>
           <%= f.govuk_radio_buttons_fieldset :register_status, legend: { text: "Registration status", size: "s" } do %>
             <%= f.govuk_radio_button :register_status, "", label: { text: "Any" } %>
@@ -46,7 +46,7 @@ class AppSearchComponent < ViewComponent::Base
             <% end %>
           <% end %>
         <% end %>
-        
+
         <% if session_statuses.any? %>
           <%= f.govuk_radio_buttons_fieldset :session_status, legend: { text: "Vaccination status", size: "s" } do %>
             <%= f.govuk_radio_button :session_status, "", label: { text: "Any" } %>
@@ -55,7 +55,7 @@ class AppSearchComponent < ViewComponent::Base
             <% end %>
           <% end %>
         <% end %>
-        
+
         <% if programme_statuses.any? %>
           <%= f.govuk_radio_buttons_fieldset :programme_status, legend: { text: "Programme outcome", size: "s" } do %>
             <%= f.govuk_radio_button :programme_status, "", label: { text: "Any" } %>

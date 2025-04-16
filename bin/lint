@@ -2,14 +2,21 @@
 
 set -e
 
-bin/rubocop --autocorrect-all $*
-yarn prettier --write --list-different --ignore-unknown ${*:-'**/*'}
-bin/bundle exec rufo ${*:-app}
-if [ -z "$*" ]; then
-   bin/brakeman --quiet --no-summary --no-pager
-   terraform fmt -recursive
-else
-   terraform fmt $*
+
+usage() {
+    echo "Usage: $0 <pre-commit-run-args>"
+    echo "For pre-commit documentation run \`pre-commit run --help\`"
+}
+
+if [ "$1" = "--help" ]; then
+    usage
+    exit 0
 fi
-tflint --chdir=terraform --init
-tflint --chdir=terraform --recursive
+
+if [ -z "$1" ]; then
+    echo "No arguments provided. Running pre-commit with default arguments."
+    pre-commit run --all-files
+else
+    echo "Running pre-commit with provided arguments: $*"
+    pre-commit run "$@"
+fi
