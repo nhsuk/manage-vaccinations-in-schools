@@ -46,30 +46,4 @@ class PreScreening < ApplicationRecord
   has_one :patient, through: :patient_session
 
   encrypts :notes
-
-  validates :knows_vaccination,
-            :not_already_had,
-            :feeling_well,
-            :no_allergies,
-            :not_taking_medication,
-            :not_pregnant,
-            inclusion: {
-              in: [true, false]
-            }
-
-  def allows_vaccination?
-    knows_vaccination && not_already_had && no_allergies &&
-      (
-        !PreScreening.ask_not_taking_medication?(programme:) ||
-          not_taking_medication
-      ) && (!PreScreening.ask_not_pregnant?(programme:) || not_pregnant)
-  end
-
-  def self.ask_not_taking_medication?(programme:)
-    programme.doubles?
-  end
-
-  def self.ask_not_pregnant?(programme:)
-    programme.hpv? || programme.td_ipv?
-  end
 end

@@ -12,20 +12,30 @@
       <%= patient.given_name %> has confirmed that they:
     </h2>
 
-    <%= f.govuk_check_boxes_fieldset :pre_screening, multiple: false, legend: nil do %>
+    <%= f.govuk_check_boxes_fieldset :knows_vaccination, multiple: false, legend: nil do %>
       <%= f.govuk_check_box :knows_vaccination, true, multiple: false, link_errors: true %>
+    <% end %>
 
+    <%= f.govuk_check_boxes_fieldset :not_already_had, multiple: false, legend: nil do %>
       <%= f.govuk_check_box :not_already_had, true, multiple: false, link_errors: true %>
+    <% end %>
 
+    <%= f.govuk_check_boxes_fieldset :feeling_well, multiple: false, legend: nil do %>
       <%= f.govuk_check_box :feeling_well, true, multiple: false, link_errors: true %>
+    <% end %>
 
+    <%= f.govuk_check_boxes_fieldset :no_allergies, multiple: false, legend: nil do %>
       <%= f.govuk_check_box :no_allergies, true, multiple: false, link_errors: true %>
+    <% end %>
 
-      <% if PreScreening.ask_not_taking_medication?(programme:) %>
+    <% if vaccinate_form.ask_not_taking_medication? %>
+      <%= f.govuk_check_boxes_fieldset :not_taking_medication, multiple: false, legend: nil do %>
         <%= f.govuk_check_box :not_taking_medication, true, multiple: false, link_errors: true %>
       <% end %>
+    <% end %>
 
-      <% if PreScreening.ask_not_pregnant?(programme:) %>
+    <% if vaccinate_form.ask_not_pregnant? %>
+      <%= f.govuk_check_boxes_fieldset :not_pregnant, multiple: false, legend: nil do %>
         <%= f.govuk_check_box :not_pregnant, true, multiple: false, link_errors: true %>
       <% end %>
     <% end %>
@@ -54,7 +64,6 @@
 
     <%= f.hidden_field :delivery_method, value: delivery_method %>
     <%= f.hidden_field :dose_sequence, value: dose_sequence %>
-    <%= f.hidden_field :programme_id, value: programme.id %>
     <%= f.hidden_field :vaccine_id, value: vaccine.id %>
 
     <%= f.govuk_submit "Continue" %>
