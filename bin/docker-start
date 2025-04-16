@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
 
-SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+BIN_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
 if [ "$SERVER_TYPE" == "web" ]; then
   echo "Starting web server..."
-  exec "$SCRIPT_DIR"/thrust "$SCRIPT_DIR"/rails server
+  exec "$BIN_DIR"/thrust "$BIN_DIR"/rails server
 elif [ "$SERVER_TYPE" == "good-job" ]; then
   echo "Starting good-job server..."
-  exec "$SCRIPT_DIR"/bundle exec good_job start
+  exec "$BIN_DIR"/good_job start
 else
   echo "SERVER_TYPE variable: '$SERVER_TYPE' unknown. Allowed values ['web','good-job']"
-exit 1
+  exit 1
 fi
