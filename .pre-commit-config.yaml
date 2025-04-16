@@ -4,6 +4,18 @@ repos:
     hooks:
       - id: terraform_fmt
         files: \.(tf|tfvars|hcl)$
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: trailing-whitespace
+        exclude: \.(enc|erb)$
+      - id: end-of-file-fixer
+        exclude: \.(enc|erb|csv|svg|rladr)$
+      - id: check-json
+      - id: check-added-large-files # Default is fail on files larger than 500kB
+      - id: mixed-line-ending
+        args: [--fix=lf] # Ensure all line endings are LF
+        exclude: \.csv$
   - repo: local
     hooks:
       - id: prettier

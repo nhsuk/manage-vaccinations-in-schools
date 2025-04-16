@@ -5,16 +5,16 @@ require_relative "../task_helpers"
 namespace :health_questions do
   desc <<-DESC
     Add health questions to a vaccine.
-  
+
     Usage:
       rake health_questions:add[programme,vaccine_id,replace]
-  
+
     The vaccine must belong to the programme given, this is a safety check.
-  
+
     Use "replace" for the replace arg to replace the existing health questions.
-  
+
     Example:
-  
+
       rake health_questions:add[hpv,1,replace]
   DESC
   task :add, %i[programme vaccine_id replace] => :environment do |_task, args|

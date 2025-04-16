@@ -15,7 +15,7 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
               row.with_key { "Year group" }
               row.with_value { helpers.patient_year_group(patient) }
             end
-            
+
             if action_required
               summary_list.with_row do |row|
                 row.with_key { "Action required" }
@@ -30,7 +30,7 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
               end
             end
           end %>
-      
+
       <% if context == :register && can_register_attendance? %>
         <div class="app-button-group">
           <%= helpers.govuk_button_to "Attending", create_session_register_path(session, patient, "present", search_form: params[:search_form]&.permit!), class: "app-button--secondary app-button--small" %>

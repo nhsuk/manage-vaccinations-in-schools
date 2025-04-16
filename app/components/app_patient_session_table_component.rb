@@ -11,7 +11,7 @@ class AppPatientSessionTableComponent < ViewComponent::Base
             <% row.with_cell(text: "Programme") %>
           <% end %>
         <% end %>
-    
+
         <% table.with_body do |body| %>
           <% patient_sessions.each do |patient_session| %>
             <% patient_session.programmes.each do |programme| %>
@@ -21,7 +21,7 @@ class AppPatientSessionTableComponent < ViewComponent::Base
                   <%= link_to patient_session.session.location.name,
                               session_patient_programme_path(patient_session.session, patient_session.patient, programme) %>
                 <% end %>
-      
+
                 <% row.with_cell do %>
                   <span class="nhsuk-table-responsive__heading">Session dates</span>
                   <ul class="nhsuk-list app-list--spaced">
@@ -30,7 +30,7 @@ class AppPatientSessionTableComponent < ViewComponent::Base
                     <% end %>
                   </ul>
                 <% end %>
-      
+
                 <% row.with_cell do %>
                   <span class="nhsuk-table-responsive__heading">Programme</span>
                   <%= render AppProgrammeTagsComponent.new([programme]) %>
