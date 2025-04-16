@@ -18,7 +18,7 @@ class SchoolMoveExport
   end
 
   def csv_data
-    Reports::CSVSchoolMoves.call(school_moves)
+    Reports::SchoolMovesExporter.call(school_moves)
   end
 
   def csv_filename
