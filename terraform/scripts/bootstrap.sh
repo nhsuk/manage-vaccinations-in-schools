@@ -125,8 +125,8 @@ if [ "$#" == 0 ] || [ "$#" -gt 2 ] ; then
   echo "Options:"
   echo "  --environment-only  Skips creation of dynamodb table and S3 bucket (e.g. if these resources already exist)"
   exit 1
-elif [ -n "$(echo "$ENV" | tr -d 'a-z0-9')" ] ; then
- echo "Invalid environment string. Only lowercase alphanumeric characters are allowed"
+elif [ -n "$(echo "$ENV" | tr -d 'a-z0-9-')" ] ; then
+ echo "Invalid environment string. Only lowercase alphanumeric characters and '-' are allowed"
  exit 1
 elif [ -n "$2" ] && [ "$2" != "--environment-only" ] ; then
  echo "Unknown option: $2"

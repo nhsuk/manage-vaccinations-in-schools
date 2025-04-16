@@ -11,9 +11,9 @@ variable "environment" {
 
   validation {
     condition = contains([
-      "poc", "copilotmigration", "qa", "test", "training", "preview", "production"
+      "sandbox-alpha", "sandbox-beta", "qa", "test", "training", "preview", "production"
     ], var.environment)
-    error_message = "Valid values for environment: poc, copilotmigration, qa, test, training, preview, production."
+    error_message = "Valid values for environment: sandbox-alpha, sandbox-beta, qa, test, training, preview, production."
   }
 }
 
