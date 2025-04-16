@@ -200,7 +200,7 @@ describe "MenACWY vaccination" do
   end
 
   def when_vaccination_confirmations_are_sent
-    VaccinationConfirmationsJob.perform_now
+    SendVaccinationConfirmationsJob.perform_now
   end
 
   def then_an_email_is_sent_to_the_parent_confirming_the_vaccination

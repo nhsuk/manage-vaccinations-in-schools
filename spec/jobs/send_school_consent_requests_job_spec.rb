@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-describe SchoolConsentRequestsJob do
-  subject(:perform_now) { described_class.perform_now }
+describe SendSchoolConsentRequestsJob do
+  subject(:perform_now) { described_class.perform_now(session) }
 
   let(:programmes) { [create(:programme)] }
 
@@ -38,23 +38,7 @@ describe SchoolConsentRequestsJob do
     end
   end
 
-  context "when requests should be sent in the future" do
-    let(:session) do
-      create(
-        :session,
-        patients:,
-        programmes:,
-        send_consent_requests_at: 2.days.from_now
-      )
-    end
-
-    it "doesn't send any notifications" do
-      expect(ConsentNotification).not_to receive(:create_and_send!)
-      perform_now
-    end
-  end
-
-  context "when requests should be sent today" do
+  context "when session is scheduled" do
     let(:session) do
       create(
         :session,
@@ -73,17 +57,6 @@ describe SchoolConsentRequestsJob do
         type: :request
       )
       perform_now
-    end
-
-    context "when triaged as do not vaccinate" do
-      let(:patient_not_sent_request) do
-        create(:patient, :triage_do_not_vaccinate, parents:, programmes:)
-      end
-
-      it "doesn't send any notifications" do
-        expect(ConsentNotification).not_to receive(:create_and_send!)
-        perform_now
-      end
     end
 
     context "with Td/IPV and MenACWY" do
@@ -151,15 +124,7 @@ describe SchoolConsentRequestsJob do
     context "when location is a generic clinic" do
       let(:organisation) { create(:organisation, programmes:) }
       let(:location) { create(:generic_clinic, organisation:) }
-      let(:session) do
-        create(
-          :session,
-          patients:,
-          programmes:,
-          send_consent_requests_at: Date.current,
-          organisation:
-        )
-      end
+      let(:session) { create(:session, patients:, programmes:, organisation:) }
 
       it "doesn't send any notifications" do
         expect(ConsentNotification).not_to receive(:create_and_send!)
