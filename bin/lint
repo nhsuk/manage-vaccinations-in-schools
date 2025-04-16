@@ -4,7 +4,7 @@ set -e
 
 bin/rubocop --autocorrect-all $*
 yarn prettier --write --list-different --ignore-unknown ${*:-'**/*'}
-bin/bundle exec rufo ${*:-app}
+bin/rufo ${*:-app}
 if [ -z "$*" ]; then
    bin/brakeman --quiet --no-summary --no-pager
    terraform fmt -recursive
