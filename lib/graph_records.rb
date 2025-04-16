@@ -9,7 +9,6 @@ require "digest"
 #  puts graph
 #
 class GraphRecords
-  # TODO: put all these constants elsewhere?
   BOX_STYLES = %w[
     fill:#e6194B,color:white
     fill:#3cb44b,color:white
