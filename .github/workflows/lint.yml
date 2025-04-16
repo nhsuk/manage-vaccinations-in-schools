@@ -105,6 +105,8 @@ jobs:
           node-version-file: .tool-versions
           cache: yarn
       - run: yarn install --immutable --immutable-cache --check-cache
+      - uses: terraform-linters/setup-tflint@v4
+      - run: tflint --chdir=terraform --init
       - uses: pre-commit/action@v3.0.1
         with:
           extra_args: "--all-files --hook-stage=manual"
