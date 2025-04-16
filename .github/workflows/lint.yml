@@ -106,3 +106,5 @@ jobs:
           cache: yarn
       - run: yarn install --immutable --immutable-cache --check-cache
       - uses: pre-commit/action@v3.0.1
+        with:
+          extra_args: "--all-files --hook-stage=manual"

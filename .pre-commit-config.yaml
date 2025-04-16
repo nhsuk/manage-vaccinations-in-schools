@@ -22,3 +22,10 @@ repos:
         language: system
         files: .erb$
         exclude: .*/layouts/[^/]*$
+      - id: brakeman
+        name: Brakeman
+        entry: bin/bundle exec brakeman --no-pager .
+        language: system
+        always_run: true
+        pass_filenames: false
+        stages: [manual]
