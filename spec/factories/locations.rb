@@ -13,6 +13,7 @@
 #  gias_local_authority_code :integer
 #  name                      :text             not null
 #  ods_code                  :string
+#  status                    :integer          default("unknown"), not null
 #  type                      :integer          not null
 #  url                       :text
 #  urn                       :string
@@ -45,6 +46,8 @@ FactoryBot.define do
     url { Faker::Internet.url }
 
     team { organisation ? association(:team, organisation:) : nil }
+
+    traits_for_enum :status
 
     factory :community_clinic do
       type { :community_clinic }

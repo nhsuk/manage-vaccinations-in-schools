@@ -7,3 +7,4 @@ teams:
 
 schools:
   unknown_team: [123456, 234567]
+  team_1: [567890]

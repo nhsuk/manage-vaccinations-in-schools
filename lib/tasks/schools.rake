@@ -116,6 +116,7 @@ namespace :schools do
           ),
           address_town: row["Town"],
           address_postcode: row["Postcode"],
+          status: Integer(row["EstablishmentStatus (code)"]),
           url: process_url.call(row["SchoolWebsite"].presence),
           year_groups: process_year_groups.call(row)
         )
@@ -132,6 +133,7 @@ namespace :schools do
                                gias_establishment_number
                                gias_local_authority_code
                                name
+                               status
                                url
                                year_groups
                              ]
@@ -155,6 +157,7 @@ namespace :schools do
                              gias_establishment_number
                              gias_local_authority_code
                              name
+                             status
                              url
                              year_groups
                            ]
