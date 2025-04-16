@@ -76,6 +76,8 @@ class Inspect::Timeline::PatientsController < ApplicationController
   # TODO: Fix so that a new comparison patient isn't sampled every time
   #       a filter option is changed and the page is reloaded.
   def sample_patient(compare_option)
+    return nil if compare_option.blank? || compare_option == "on"
+
     case compare_option
     when "class_import"
       class_import = params[:compare_option_class_import]
@@ -105,8 +107,10 @@ class Inspect::Timeline::PatientsController < ApplicationController
         :invalid_patient
       end
     else
-      raise ArgumentError,
-            "Invalid patient comparison option: #{compare_option}"
+      raise ArgumentError, <<~MESSAGE
+      Invalid patient comparison option: #{compare_option}.
+      Supported options are: class_import, cohort_import, session, manual_entry
+    MESSAGE
     end
   end
 
