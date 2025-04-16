@@ -37,13 +37,13 @@ jobs:
             echo "BUILD_NEEDED=true" >> $GITHUB_ENV
           fi
       - name: Configure AWS Production credentials
-        if: ${{ env.PUSH_IMAGE_TO_PRODUCTION == 'true'}}
+        if: env.PUSH_IMAGE_TO_PRODUCTION == 'true'
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: arn:aws:iam::820242920762:role/GithubDeployMavisAndInfrastructure
           aws-region: eu-west-2
       - name: Check if production image exists
-        if: ${{ env.PUSH_IMAGE_TO_PRODUCTION == 'true' }}
+        if: env.PUSH_IMAGE_TO_PRODUCTION == 'true'
         id: check-image
         run: |
           if [ -e $BUILD_NEEDED ] && aws ecr describe-images --repository-name mavis/webapp --image-ids imageTag=${{ inputs.git-sha || github.sha }} > /dev/null 2>&1; then
