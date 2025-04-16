@@ -11,15 +11,11 @@ class AppPatientTableComponent < ViewComponent::Base
 
   private
 
-  def can_link_to?(patient)
-    allowed_patient_ids.include?(patient.id)
-  end
+  attr_reader :patients, :current_user, :count
 
-  def allowed_patient_ids
-    # FIXME: Can we use helpers.policy_scope here?
-    # We can remove this once we show a page for the patient that contains
-    # limited information for the old organisation.
-    @allowed_patient_ids ||=
-      PatientPolicy::Scope.new(@current_user, Patient).resolve.ids
+  def can_link_to?(record) = allowed_ids.include?(record.id)
+
+  def allowed_ids
+    @allowed_ids ||= PatientPolicy::Scope.new(current_user, Patient).resolve.ids
   end
 end
