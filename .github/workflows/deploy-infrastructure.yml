@@ -10,12 +10,12 @@ on:
         type: choice
         options:
           - qa
-          - poc
-          - copilotmigration
           - test
           - preview
           - training
           - production
+          - sandbox-alpha
+          - sandbox-beta
       image_tag:
         description: Docker image tag to deploy
         required: false
