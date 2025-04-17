@@ -12,7 +12,7 @@ concurrency:
   group: build-and-push-image-${{ inputs.git-sha || github.sha }}
 
 env:
-  PUSH_IMAGE_TO_PRODUCTION: ${{ github.ref_name == 'main' || github.ref_name == 'release' }}
+  PUSH_IMAGE_TO_PRODUCTION: ${{ github.ref_name == 'main' }}
 
 jobs:
   check-image-presence:
