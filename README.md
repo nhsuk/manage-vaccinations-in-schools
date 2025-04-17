@@ -89,6 +89,12 @@ candidate. Now it's time to deploy. Start with a deploy to `training` or
 `preview` to ensure the tagged version is correct. Once that's done you can
 deploy to production.
 
+Use the `deploy.yml` workflow to run the deployments. For the production deployment,
+it's important to start the workflow from the `main` branch and specify the tag to deploy
+as input. This is because only workflows from the `main` branch can authenticate with the
+production AWS account.
+
+````yaml
 #### When `release` and `main` have diverged
 
 There are cases when `release` won't be fast-forwardable to the release
@@ -104,7 +110,7 @@ git checkout release
 git pull origin release
 git reset --hard v1.0.0-rc1
 git push --tags origin release
-```
+````
 
 And then you can follow the instructions above about creating the release tag
 and deploying.
