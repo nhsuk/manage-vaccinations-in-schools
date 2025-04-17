@@ -16,8 +16,8 @@ on:
           - preview
           - training
           - production
-      docker_sha:
-        description: "Docker image sha to deploy. This is used only if no existing task definition is found"
+      image_tag:
+        description: Docker image tag to deploy
         required: false
         type: string
   workflow_call:
@@ -25,6 +25,9 @@ on:
       environment:
         description: Deployment environment
         required: true
+        type: string
+      image_tag:
+        required: false
         type: string
 
 concurrency:
@@ -53,30 +56,36 @@ jobs:
         with:
           role-to-assume: ${{ env.aws_role }}
           aws-region: eu-west-2
+      - name: Set image tag
+        run: |
+          IMAGE_TAG="${{ inputs.image_tag || github.sha }}"
+          echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
+      - name: Login to ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+      - name: Pull Docker image
+        run: |
+          DOCKER_IMAGE="${{ steps.login-ecr.outputs.registry }}/mavis/webapp:${IMAGE_TAG}"
+          docker pull "$DOCKER_IMAGE"
+          echo "DOCKER_IMAGE=$DOCKER_IMAGE" >> $GITHUB_ENV
+      - name: Extract image digest
+        run: |
+          DOCKER_DIGEST=$(docker inspect --format='{{index .RepoDigests 0}}' "$DOCKER_IMAGE")
+          DIGEST="${DOCKER_DIGEST#*@}"
+          echo "DIGEST=$DIGEST" >> $GITHUB_ENV
       - name: Install terraform
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: 1.10.5
-      - name: Install AWS Cli
+      - name: Install AWS CLI
         run: sudo snap install --classic aws-cli
       - name: Check if any deployments are running
         run: ../scripts/check-for-running-deployments.sh ${{ inputs.environment }}
-      - name: Get image digest
-        run: |
-          DIGEST="${{ inputs.docker_sha }}"
-          if terraform state list | grep -q 'aws_ecs_task_definition.task_definition'; then
-            DIGEST=$(terraform state show aws_ecs_task_definition.task_definition | grep -oP '(?<=mavis/webapp@)sha256:[0-9a-z]{64}')
-            echo "Existing task definition found, using image digest from the state: $DIGEST"
-          elif [ -z "$DIGEST" ]; then
-            echo "Aborting infrastructure deployment: Missing existing task definition or image digest input parameter"
-          else
-            echo "No existing task definition found: Using image digest from the input parameter: $DIGEST"
-          fi
-          echo "DIGEST=$DIGEST" >> $GITHUB_ENV
       - name: Terraform Plan
         id: plan
         run: |
           set -e
+          terraform init -backend-config="env/${{ inputs.environment }}-backend.hcl" -upgrade
           terraform plan -var="image_digest=$DIGEST" -var-file="env/${{ inputs.environment }}.tfvars" \
           -out ${{ runner.temp }}/tfplan | tee ${{ runner.temp }}/tf_stdout
       - name: Validate the changes
