@@ -21,12 +21,12 @@ on:
         type: choice
         options:
           - qa
-          - poc
           - test
           - preview
           - training
           - production
-          - copilotmigration
+          - sandbox-alpha
+          - sandbox-beta
       server_types:
         description: Server types to deploy
         required: true
