@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_04_02_093102) do
+ActiveRecord::Schema[8.0].define(version: 2025_04_14_092500) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -456,6 +456,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_02_093102) do
     t.bigint "team_id"
     t.integer "gias_local_authority_code"
     t.integer "gias_establishment_number"
+    t.integer "status", default: 0, null: false
     t.index ["ods_code"], name: "index_locations_on_ods_code", unique: true
     t.index ["team_id"], name: "index_locations_on_team_id"
     t.index ["urn"], name: "index_locations_on_urn", unique: true
@@ -639,9 +640,11 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_02_093102) do
     t.bigint "programme_id", null: false
     t.boolean "not_taking_medication", null: false
     t.boolean "not_pregnant", null: false
+    t.bigint "session_date_id", null: false
     t.index ["patient_session_id"], name: "index_pre_screenings_on_patient_session_id"
     t.index ["performed_by_user_id"], name: "index_pre_screenings_on_performed_by_user_id"
     t.index ["programme_id"], name: "index_pre_screenings_on_programme_id"
+    t.index ["session_date_id"], name: "index_pre_screenings_on_session_date_id"
   end
 
   create_table "programmes", force: :cascade do |t|
@@ -906,6 +909,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_02_093102) do
   add_foreign_key "patients", "organisations"
   add_foreign_key "pre_screenings", "patient_sessions"
   add_foreign_key "pre_screenings", "programmes"
+  add_foreign_key "pre_screenings", "session_dates"
   add_foreign_key "pre_screenings", "users", column: "performed_by_user_id"
   add_foreign_key "school_move_log_entries", "locations", column: "school_id"
   add_foreign_key "school_move_log_entries", "patients"

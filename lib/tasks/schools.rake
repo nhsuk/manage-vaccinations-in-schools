@@ -45,7 +45,8 @@ namespace :schools do
       download_button = download_form.button_with(value: "Results.zip")
       puts "'Results.zip' link found, downloading the file..."
       download_file = agent.click(download_button)
-      download_file.save("db/data/dfe-schools.zip")
+      puts "Overwriting db/data/dfe-schools.zip"
+      download_file.save!("db/data/dfe-schools.zip")
       puts "File downloaded successfully to db/data/dfe-schools.zip"
     else
       puts "Download button never appeared, aborting"
@@ -116,6 +117,7 @@ namespace :schools do
           ),
           address_town: row["Town"],
           address_postcode: row["Postcode"],
+          status: Integer(row["EstablishmentStatus (code)"]),
           url: process_url.call(row["SchoolWebsite"].presence),
           year_groups: process_year_groups.call(row)
         )
@@ -132,6 +134,7 @@ namespace :schools do
                                gias_establishment_number
                                gias_local_authority_code
                                name
+                               status
                                url
                                year_groups
                              ]
@@ -155,6 +158,7 @@ namespace :schools do
                              gias_establishment_number
                              gias_local_authority_code
                              name
+                             status
                              url
                              year_groups
                            ]

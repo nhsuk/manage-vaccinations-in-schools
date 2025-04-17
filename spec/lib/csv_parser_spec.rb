@@ -21,4 +21,14 @@ describe CSVParser do
     expect(row[:another_header].cell).to eq("B2")
     expect(row[:another_header].header).to eq("Another-Header")
   end
+
+  context "with a non-breaking space" do
+    let(:data) { "header\u00A0\nvalue\u00A0" }
+
+    it "removes the characters" do
+      row = table.first
+
+      expect(row[:header].value).to eq("value")
+    end
+  end
 end

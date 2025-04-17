@@ -1,22 +1,25 @@
 # frozen_string_literal: true
 
 class AppVaccinationRecordTableComponent < ViewComponent::Base
-  def initialize(vaccination_records, count:, new_records: false)
+  def initialize(vaccination_records, current_user:, count:)
     super
 
     @vaccination_records = vaccination_records
+    @current_user = current_user
     @count = count
-    @new_records = new_records
   end
 
   private
 
-  attr_reader :vaccination_records, :new_records
+  attr_reader :vaccination_records, :current_user, :count
 
-  def heading
-    pluralize(
-      @count,
-      new_records ? "new vaccination record" : "vaccination record"
-    )
+  def can_link_to?(record) = allowed_ids.include?(record.id)
+
+  def allowed_ids
+    @allowed_ids ||=
+      VaccinationRecordPolicy::Scope
+        .new(@current_user, VaccinationRecord)
+        .resolve
+        .ids
   end
 end

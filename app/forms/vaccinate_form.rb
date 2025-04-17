@@ -4,7 +4,7 @@ class VaccinateForm
   include ActiveModel::Model
   include ActiveModel::Attributes
 
-  attr_accessor :patient_session, :current_user, :todays_batch
+  attr_accessor :patient_session, :programme, :current_user, :todays_batch
 
   attribute :knows_vaccination, :boolean
   attribute :not_already_had, :boolean
@@ -18,18 +18,23 @@ class VaccinateForm
   attribute :delivery_method, :string
   attribute :delivery_site, :string
   attribute :dose_sequence, :integer
-  attribute :programme_id, :integer
   attribute :vaccine_id, :integer
 
-  validates :knows_vaccination, inclusion: { in: [true, nil] }
-  validates :not_already_had, inclusion: { in: [true, nil] }
-  validates :feeling_well, inclusion: { in: [true, nil] }
-  validates :no_allergies, inclusion: { in: [true, nil] }
-  validates :not_taking_medication, inclusion: { in: [true, nil] }
-  validates :not_pregnant, inclusion: { in: [true, nil] }
+  validates :administered, inclusion: [true, false]
 
-  validate :valid_administered_values
-  validates :programme_id, presence: true
+  with_options if: :administered do
+    validates :knows_vaccination, presence: true
+    validates :not_already_had, presence: true
+    validates :no_allergies, presence: true
+  end
+
+  with_options if: -> { administered && ask_not_taking_medication? } do
+    validates :not_taking_medication, presence: true
+  end
+
+  with_options if: -> { administered && ask_not_pregnant? } do
+    validates :not_pregnant, presence: true
+  end
 
   with_options if: :administered do
     validates :delivery_method, presence: true
@@ -59,11 +64,19 @@ class VaccinateForm
     draft_vaccination_record.performed_at = Time.current
     draft_vaccination_record.performed_by_user = current_user
     draft_vaccination_record.performed_ods_code = organisation.ods_code
-    draft_vaccination_record.programme_id = programme_id
+    draft_vaccination_record.programme = programme
     draft_vaccination_record.session_id = patient_session.session_id
     draft_vaccination_record.vaccine_id = vaccine_id
 
     draft_vaccination_record.save # rubocop:disable Rails/SaveBang
+  end
+
+  def ask_not_taking_medication?
+    programme.doubles?
+  end
+
+  def ask_not_pregnant?
+    programme.hpv? || programme.td_ipv?
   end
 
   private
@@ -81,20 +94,12 @@ class VaccinateForm
         not_taking_medication: not_taking_medication || false,
         notes: pre_screening_notes,
         performed_by: current_user,
-        programme_id:
+        programme:,
+        session_date_id:
       )
   end
 
-  def valid_administered_values
-    if administered.nil?
-      errors.add(:administered, "Choose if they are ready to vaccinate")
-    end
-
-    vaccination_allowed =
-      pre_screening.invalid? || pre_screening.allows_vaccination?
-
-    if administered && !vaccination_allowed
-      errors.add(:administered, "Patient should not be vaccinated")
-    end
+  def session_date_id
+    patient_session.session.session_dates.today.first&.id
   end
 end

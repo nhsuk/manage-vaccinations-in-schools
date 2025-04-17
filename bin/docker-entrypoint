@@ -9,6 +9,7 @@ fi
 # When starting the container then create or migrate existing database
 if [ "$1" == "./bin/docker-start" ]; then
   ./bin/rails db:prepare:ignore_concurrent_migration_exceptions
+  ./bin/rails feature_flags:seed
 fi
 
 exec "${@}"

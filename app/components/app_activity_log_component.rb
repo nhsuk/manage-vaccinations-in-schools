@@ -184,8 +184,9 @@ class AppActivityLogComponent < ViewComponent::Base
     patient_sessions.map do |patient_session|
       [
         {
-          title: "Added to session at #{patient_session.location.name}",
-          at: patient_session.created_at
+          title: "Invited to the session at #{patient_session.location.name}",
+          at: patient_session.created_at,
+          programmes: programmes_for(patient_session)
         }
       ]
     end
@@ -255,8 +256,13 @@ class AppActivityLogComponent < ViewComponent::Base
   end
 
   def programmes_for(object)
-    ids = object.try(:programme_ids) || [object.try(:programme_id)].compact
-    ids.map { programmes_by_id.fetch(it) }
+    if object.respond_to?(:programme_ids)
+      object.programme_ids.map { programmes_by_id.fetch(it) }
+    elsif object.respond_to?(:programme_id)
+      [programmes_by_id.fetch(object.programme_id)]
+    else
+      object.programmes
+    end
   end
 
   def programmes_by_id

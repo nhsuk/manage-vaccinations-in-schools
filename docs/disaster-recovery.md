@@ -3,8 +3,8 @@
 ## Restoring a production database using a snapshot
 
 Spin up a new environment with an empty database. Follow the instructions in
-[AWS Copilot: Setting up a new
-environment](aws-copilot.md#setting-up-a-new-environment).
+[Terraform: Creating a new
+environment](terraform.md#creating-a-new-environment).
 
 Go to the RDS > Snapshots page in the AWS console. From the System tab, find a
 snapshot you want to restore and copy it to a Manual snapshot.
@@ -23,8 +23,7 @@ aws rds copy-db-cluster-snapshot \
   --target-db-cluster-snapshot-identifier NAME_OF_MANUAL_SNAPSHOT
 ```
 
-Uncomment the `SnapshotIdentifier` in `copilot/environments/addons/db.yml`.
-Populate it with the ARN of the manual snapshot.
+In `terraform/app/rds.tf`, add the snapshot ARN as `snapshot_identifier` to the `aws_rds_cluster` resource block.
 
 Disable deletion protection for the old cluster:
 
@@ -40,11 +39,7 @@ aws rds modify-db-cluster \
   --no-deletion-protection
 ```
 
-Deploy to your restored environment:
-
-```sh
-copilot deploy env -n test
-```
+Deploy to your restored environment as described in [Terraform: Local deployment](terraform.md#local-deployment).
 
 ## Getting a local dump of an Aurora DB
 
@@ -200,3 +195,14 @@ RAILS_ENV=staging bin/bundle exec \
 EXPORT_PASSWORD=secure \
   node ./script/encrypt_xlsx.mjs <filename>
 ```
+
+## Set up a new AWS account from scratch
+
+### Create a new IAM role for GitHub workflows
+
+In the AWS IAM console, create a new role for the GitHub workflows. Create a custom policy from `terraform/resources/github_actions_policy.json`. Also, attach the managed policies
+
+- `ReadOnlyAccess`
+- `ResourceGroupsTaggingAPITagUntagSupportedResources`
+
+to the role.

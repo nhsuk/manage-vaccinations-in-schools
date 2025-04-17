@@ -15,17 +15,23 @@ describe AppPatientSessionTableComponent do
     let(:location) { create(:school, name: "Waterloo Road") }
     let(:programme) { create(:programme, :hpv) }
     let(:session) do
-      create(:session, academic_year: 2024, location:, programmes: [programme])
+      create(
+        :session,
+        location:,
+        programmes: [programme],
+        academic_year: 2024,
+        date: Date.new(2025, 1, 1)
+      )
     end
 
     let(:patient_sessions) { create_list(:patient_session, 1, session:) }
 
     it { should have_content("Location") }
+    it { should have_content("Session dates") }
     it { should have_content("Programme") }
-    it { should have_content("Academic year") }
 
     it { should have_link("Waterloo Road") }
+    it { should have_content("1 January 2025") }
     it { should have_content("HPV") }
-    it { should have_content("2024/25") }
   end
 end

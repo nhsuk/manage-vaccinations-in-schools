@@ -22,6 +22,7 @@ class SessionDate < ApplicationRecord
   belongs_to :session
 
   has_many :session_attendances, dependent: :restrict_with_error
+  has_many :pre_screenings, dependent: :restrict_with_error
 
   scope :for_session, -> { where("session_id = sessions.id") }
 
