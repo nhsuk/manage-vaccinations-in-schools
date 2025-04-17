@@ -56,19 +56,21 @@ class AppPatientPageComponent < ViewComponent::Base
   end
 
   def default_vaccinate_form
-    pre_screening =
+    today_pre_screenings =
       patient_session
         .pre_screenings
         .joins(:session_date)
         .merge(SessionDate.today)
         .order(created_at: :desc)
-        .first
+
+    feeling_well = today_pre_screenings.any?(&:feeling_well) || nil
+    not_pregnant = today_pre_screenings.any?(&:not_pregnant) || nil
 
     VaccinateForm.new(
       patient_session:,
       programme:,
-      feeling_well: pre_screening&.feeling_well,
-      not_pregnant: pre_screening&.not_pregnant
+      feeling_well:,
+      not_pregnant:
     )
   end
 end
