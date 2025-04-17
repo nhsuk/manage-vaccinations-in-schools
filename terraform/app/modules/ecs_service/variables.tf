@@ -10,11 +10,35 @@ variable "server_type" {
   nullable    = false
 }
 
-variable "desired_count" {
+variable "minimum_replica_count" {
   type        = number
-  description = "The initial amount of instances when creating the service"
+  description = "Minimum amount of allowed replicas for the service. Also the replica count when creating th service."
   nullable    = false
 }
+
+variable "maximum_replica_count" {
+  type        = number
+  description = "The maximum amount of instances by which the service can scale"
+  default     = null
+  nullable    = true
+  validation {
+    condition     = length(var.autoscaling_policies) > 0 ? var.maximum_replica_count > var.minimum_replica_count : var.maximum_replica_count == null
+    error_message = "Maximum replica count must be greater than initial replica count when autoscaling policies are defined and null otherwise"
+  }
+}
+
+variable "autoscaling_policies" {
+  type = map(object({
+    predefined_metric_type = string
+    target_value           = number
+    scale_in_cooldown      = number
+    scale_out_cooldown     = number
+  }))
+  description = "List of autoscaling policy configuration parameters for the ECS service"
+  default     = {}
+  nullable    = false
+}
+
 
 variable "task_config" {
   type = object({
@@ -42,6 +66,12 @@ variable "task_config" {
 variable "cluster_id" {
   type        = string
   description = "The ID of the ECS cluster."
+  nullable    = false
+}
+
+variable "cluster_name" {
+  type        = string
+  description = "The name of the ECS cluster."
   nullable    = false
 }
 
