@@ -21,13 +21,14 @@ on:
         required: false
         type: string
   workflow_call:
-    environment:
-      description: Deployment environment
-      required: true
-      type: string
-    image_tag:
-      required: false
-      type: string
+    inputs:
+      environment:
+        description: Deployment environment
+        required: true
+        type: string
+      image_tag:
+        required: false
+        type: string
 
 concurrency:
   group: deploy-infrastructure-${{ inputs.environment }}

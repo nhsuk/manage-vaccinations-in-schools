@@ -1,5 +1,5 @@
 name: Deploy
-run-name: Deploy ${{ inputs.git_tag || github.ref_name }} to ${{ inputs.environment }}
+run-name: Deploy ${{ inputs.git_ref_to_deploy || github.ref_name }} to ${{ inputs.environment }}
 
 concurrency:
   group: deploy-${{ inputs.environment }}
@@ -36,9 +36,8 @@ on:
           - web
           - good-job
         default: all
-      git_tag:
-        description: Git tag to deploy (optional). Will use workflow ref if not provided.
-        required: false
+      git_ref_to_deploy:
+        description: The Git ref to deploy, for example, a tag, branch name or commit SHA (optional). Will use workflow ref if not provided.
         type: string
 
 jobs:
@@ -50,7 +49,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.git_tag || github.sha }}
+          ref: ${{ inputs.git_ref_to_deploy || github.sha }}
       - name: Get git sha
         id: get-git-sha
         run: echo "git-sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
@@ -66,8 +65,9 @@ jobs:
       environment: ${{ inputs.environment }}
       image_tag: ${{ needs.determine-git-sha.outputs.git-sha }}
   deploy-application:
-    needs: deploy-infrastructure
+    needs: [deploy-infrastructure, determine-git-sha]
     uses: ./.github/workflows/deploy-application.yml
     with:
       environment: ${{ inputs.environment }}
       server_types: ${{ inputs.server_types }}
+      git_sha_to_deploy: ${{ needs.determine-git-sha.outputs.git-sha }}
