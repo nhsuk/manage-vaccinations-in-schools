@@ -8,7 +8,7 @@ describe SendClinicInitialInvitationsJob do
   let(:programmes) { [create(:programme, :hpv)] }
   let(:organisation) { create(:organisation, programmes:) }
   let(:parents) { create_list(:parent, 2) }
-  let(:patient) { create(:patient, parents:, year_group: 8) }
+  let(:patient) { create(:patient, parents:, year_group: 9) }
   let(:location) { create(:generic_clinic, organisation:) }
 
   let(:session) do
@@ -20,7 +20,7 @@ describe SendClinicInitialInvitationsJob do
       organisation:
     )
   end
-  let(:patient_session) { create(:patient_session, patient:, session:) }
+  let!(:patient_session) { create(:patient_session, patient:, session:) }
 
   it "sends a notification" do
     expect(SessionNotification).to receive(:create_and_send!).once.with(
@@ -49,13 +49,8 @@ describe SendClinicInitialInvitationsJob do
 
   context "when already vaccinated" do
     before do
-      create(
-        :vaccination_record,
-        patient:,
-        session:,
-        programme: programmes.first,
-        location_name: "A clinic."
-      )
+      create(:vaccination_record, patient:, programme: programmes.first)
+      StatusUpdater.call(patient:)
     end
 
     it "doesn't send any notifications" do
@@ -73,6 +68,33 @@ describe SendClinicInitialInvitationsJob do
         programme: programmes.first,
         parent: parents.first
       )
+
+      StatusUpdater.call(patient:)
+    end
+
+    it "doesn't send any notifications" do
+      expect(SessionNotification).not_to receive(:create_and_send!)
+      perform_now
+    end
+  end
+
+  context "when vaccinated for one programme and consent refused for another" do
+    let(:programmes) do
+      [create(:programme, :menacwy), create(:programme, :td_ipv)]
+    end
+
+    before do
+      create(:vaccination_record, patient:, programme: programmes.first)
+
+      create(
+        :consent,
+        :refused,
+        patient:,
+        programme: programmes.second,
+        parent: parents.first
+      )
+
+      StatusUpdater.call(patient:)
     end
 
     it "doesn't send any notifications" do
