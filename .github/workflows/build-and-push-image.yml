@@ -21,7 +21,7 @@ jobs:
     permissions:
       id-token: write
     outputs:
-      build-needed: ${{ steps.check-image.outputs.build-needed }}
+      build-needed: ${{ steps.check-dev-image.outputs.build-needed || steps.check-prod-image.outputs.build-needed }}
     steps:
       - name: Configure AWS Dev Credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -29,12 +29,13 @@ jobs:
           role-to-assume: arn:aws:iam::393416225559:role/GithubDeployMavisAndInfrastructure
           aws-region: eu-west-2
       - name: Check if dev image exists
+        id: check-dev-image
         run: |
           if aws ecr describe-images --repository-name mavis/webapp --image-ids imageTag=${{ inputs.git-sha || github.sha }} > /dev/null 2>&1; then
             echo "Dev image with given tag already exists"
           else
             echo "Dev image does not exist. Build needed"
-            echo "BUILD_NEEDED=true" >> $GITHUB_ENV
+            echo "build-needed=true" >> $GITHUB_OUTPUT
           fi
       - name: Configure AWS Production credentials
         if: env.PUSH_IMAGE_TO_PRODUCTION == 'true'
@@ -44,12 +45,12 @@ jobs:
           aws-region: eu-west-2
       - name: Check if production image exists
         if: env.PUSH_IMAGE_TO_PRODUCTION == 'true'
-        id: check-image
+        id: check-prod-image
         run: |
-          if [ -e $BUILD_NEEDED ] && aws ecr describe-images --repository-name mavis/webapp --image-ids imageTag=${{ inputs.git-sha || github.sha }} > /dev/null 2>&1; then
-            echo "Production and dev images with given tag already exist. No build needed"
+          if aws ecr describe-images --repository-name mavis/webapp --image-ids imageTag=${{ inputs.git-sha || github.sha }} > /dev/null 2>&1; then
+            echo "Production image with given tag already exists"
           else
-            echo "At least one image does not exist. Build needed"
+            echo "Production image does not exist. Build needed"
             echo "build-needed=true" >> $GITHUB_OUTPUT
           fi
 
