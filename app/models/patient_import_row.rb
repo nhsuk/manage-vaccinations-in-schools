@@ -47,6 +47,11 @@ class PatientImportRow
         existing_patient.registration = attributes.delete(:registration)
       end
 
+      if is_gender_known?(attributes[:gender_code]) &&
+           !is_gender_known?(existing_patient.gender_code)
+        existing_patient.gender_code = attributes.delete(:gender_code)
+      end
+
       if address_postcode.present? &&
            address_postcode.to_postcode != existing_patient.address_postcode
         attributes.merge!(
@@ -143,6 +148,10 @@ class PatientImportRow
           .find_or_initialize_by(parent:, patient:)
           .tap { _1.assign_attributes(attributes) }
       end
+  end
+
+  def is_gender_known?(gender_code)
+    gender_code.in?(%w[male female])
   end
 
   def nhs_number = @data[:child_nhs_number]
