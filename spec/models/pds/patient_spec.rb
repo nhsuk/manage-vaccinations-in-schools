@@ -4,7 +4,9 @@ describe PDS::Patient do
   describe "#find" do
     subject(:find) { described_class.find("9000000009") }
 
-    let(:json_response) { file_fixture("pds/get-patient-response.json").read }
+    let(:json_response) do
+      file_fixture("pds/get-patient-response-deceased.json").read
+    end
 
     before do
       allow(NHS::PDS).to receive(:get_patient).and_return(
