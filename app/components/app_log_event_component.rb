@@ -9,13 +9,13 @@ class AppLogEventComponent < ViewComponent::Base
     <h3 class="<% if card %>nhsuk-card__heading <% end %>nhsuk-heading-s">
       <%= invalidated ? tag.s(title) : title %>
     </h3>
-    
+
     <% if body.present? %>
       <blockquote><p>
         <%= invalidated ? tag.s(body) : body %>
       </p></blockquote>
     <% end %>
-    
+
     <p class="nhsuk-body-s nhsuk-u-margin-0 nhsuk-u-secondary-text-color">
       <% if programmes.any? %>
         <%= render AppProgrammeTagsComponent.new(programmes) %>
@@ -23,7 +23,7 @@ class AppLogEventComponent < ViewComponent::Base
       <% end %>
       <%= invalidated ? tag.s(subtitle) : subtitle %>
     </p>
-    
+
     <% if card %>
       </div></div>
     <% end %>

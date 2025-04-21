@@ -64,7 +64,7 @@ describe Generate::Consents do
         given_needs_triage: 1
       )
 
-      consents_given = Consent.response_given.select { it.triage_needed? }
+      consents_given = Consent.response_given.select(&:triage_needed?)
       expect(consents_given.count).to eq 1
       expect(consents_given.count { it.consent_form.present? }).to eq 1
     end

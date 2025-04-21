@@ -269,11 +269,8 @@ class ImmunisationImportRow
 
   def school
     @school ||=
-      if school_urn.present? &&
-           (
-             school_urn.to_s != SCHOOL_URN_HOME_EDUCATED &&
-               school_urn.to_s != SCHOOL_URN_UNKNOWN
-           )
+      if school_urn.present? && school_urn.to_s != SCHOOL_URN_HOME_EDUCATED &&
+           school_urn.to_s != SCHOOL_URN_UNKNOWN
         Location.school.find_by(urn: school_urn.to_s)
       end
   end
