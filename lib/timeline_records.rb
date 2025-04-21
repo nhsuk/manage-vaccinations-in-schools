@@ -83,22 +83,26 @@ class TimelineRecords
   end
 
   def additional_events(patient)
-    patient_imports = patient_events(patient)[:class_imports]
+    events = patient_events(patient)
+
     class_imports =
-      ClassImport.where(session_id: patient_events(patient)[:sessions])
-    class_imports =
-      class_imports.where.not(id: patient_imports) if patient_imports.present?
+      ClassImport
+        .where(session_id: events[:sessions])
+        .then do |scope|
+          (id = events[:class_imports]).present? ? scope.where.not(id:) : scope
+        end
+
+    cohort_imports =
+      CohortImport
+        .where(organisation_id: events[:organisations])
+        .then do |scope|
+          (id = events[:cohort_imports]).present? ? scope.where.not(id:) : scope
+        end
+
     {
       class_imports:
-        class_imports
-          .group_by(&:session_id)
-          .transform_values { |imports| imports.map(&:id) },
-      cohort_imports:
-        patient
-          .organisation
-          .cohort_imports
-          .map(&:id)
-          .reject { |id| patient_events(patient)[:cohort_imports].include?(id) }
+        class_imports.group_by(&:session_id).transform_values { it.map(&:id) },
+      cohort_imports: cohort_imports.map(&:id)
     }
   end
 
@@ -106,6 +110,7 @@ class TimelineRecords
     {
       class_imports: patient.class_imports.map(&:id),
       cohort_imports: patient.cohort_imports.map(&:id),
+      organisations: patient.organisations.map(&:id),
       sessions: patient.sessions.map(&:id)
     }
   end
