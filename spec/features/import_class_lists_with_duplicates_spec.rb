@@ -81,7 +81,8 @@ describe "Class list imports duplicates" do
         address_line_2: "",
         address_town: "London",
         address_postcode: "SW1A 1AA",
-        school: @location
+        school: @location,
+        session: @session
       )
 
     @second_patient =
@@ -96,7 +97,8 @@ describe "Class list imports duplicates" do
         address_line_2: "",
         address_town: "London",
         address_postcode: "SW1A 2BB",
-        school: @location
+        school: @location,
+        session: @session
       )
 
     @third_patient =
@@ -105,7 +107,8 @@ describe "Class list imports duplicates" do
         given_name: "Jenny",
         family_name: "Block",
         nhs_number: "9990000034",
-        school: @location
+        school: @location,
+        session: @session
       )
   end
 
