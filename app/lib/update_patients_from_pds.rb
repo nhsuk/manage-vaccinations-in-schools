@@ -15,6 +15,12 @@ class UpdatePatientsFromPDS
       else
         PatientUpdateFromPDSJob.set(queue:).perform_later(patient)
       end
+
+      if patient.pending_changes.present?
+        PatientNHSNumberLookupWithPendingChangesJob.set(queue:).perform_later(
+          patient
+        )
+      end
     end
   end
 
