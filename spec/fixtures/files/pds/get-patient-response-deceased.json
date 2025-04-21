@@ -49,6 +49,7 @@
   "gender": "female",
   "birthDate": "2010-10-22",
   "multipleBirthInteger": 1,
+  "deceasedDateTime": "2010-10-22T00:00:00+00:00",
   "generalPractitioner": [
     {
       "id": "254406A3",
@@ -101,6 +102,28 @@
           "value": "Y34567"
         }
       }
+    },
+    {
+      "url": "https://fhir.hl7.org.uk/StructureDefinition/Extension-UKCore-DeathNotificationStatus",
+      "extension": [
+        {
+          "url": "deathNotificationStatus",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "https://fhir.hl7.org.uk/CodeSystem/UKCore-DeathNotificationStatus",
+                "version": "1.0.0",
+                "code": "2",
+                "display": "Formal - death notice received from Registrar of Deaths"
+              }
+            ]
+          }
+        },
+        {
+          "url": "systemEffectiveDate",
+          "valueDateTime": "2010-10-22T00:00:00+00:00"
+        }
+      ]
     },
     {
       "url": "https://fhir.hl7.org.uk/StructureDefinition/Extension-UKCore-NHSCommunication",
