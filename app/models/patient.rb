@@ -384,7 +384,6 @@ class Patient < ApplicationRecord
       given_name: consent_form.given_name,
       home_educated: consent_form.home_educated,
       nhs_number: consent_form.nhs_number,
-      organisation: consent_form.organisation,
       preferred_family_name: consent_form.preferred_family_name,
       preferred_given_name: consent_form.preferred_given_name,
       school: consent_form.school
