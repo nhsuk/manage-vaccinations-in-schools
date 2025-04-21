@@ -10,13 +10,13 @@ class AppPatientCardComponent < ViewComponent::Base
           text: "Record updated with child’s date of death"
         ) %>
       <% end %>
-      
+
       <% if patient.invalidated? %>
         <%= render AppStatusComponent.new(
           text: "Record flagged as invalid"
         ) %>
       <% end %>
-      
+
       <% if patient.restricted? %>
         <%= render AppStatusComponent.new(
           text: "Record flagged as sensitive"
@@ -30,7 +30,7 @@ class AppPatientCardComponent < ViewComponent::Base
           <h3 class="nhsuk-heading-s nhsuk-u-margin-bottom-2">
             <%= parent_relationship.label_with_parent %>
           </h3>
-  
+
           <%= render AppParentSummaryComponent.new(parent_relationship:) %>
         <% end %>
       <% end %>

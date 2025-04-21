@@ -16,7 +16,7 @@
                                           "data-autosubmit-target": "field",
                                           "data-action": "autosubmit#submit",
                                           "data-turbo-permanent": "true" %>
-                    
+
                     <% available_fields = timeline_fields[value.to_sym] || [] %>
                     <% if available_fields.any? && value.to_s.in?(params[:event_names]) %>
                         <div class="nhsuk-checkboxes__conditional nhsuk-u-margin-bottom-2">
@@ -79,7 +79,7 @@
                                       "data-turbo-permanent": "true" %>
             <% end %>
 
-            
+
             <%= f.govuk_radio_buttons_fieldset :compare_option, legend: { text: "Compare with another patient:", size: "s" } do %>
             <%= f.govuk_radio_button :compare_option,
                                      nil,
@@ -88,7 +88,7 @@
                                      "data-autosubmit-target": "field",
                                      "data-action": "autosubmit#submit",
                                      "data-turbo-permanent": "true" %>
-            
+
             <% if class_imports.present? %>
                 <%= f.govuk_radio_button :compare_option,
                                          "class_import",
@@ -108,7 +108,7 @@
                 <% end %>
                 <% end %>
             <% end %>
-            
+
             <% if cohort_imports.present? %>
                 <%= f.govuk_radio_button :compare_option,
                                          "cohort_import",
@@ -128,7 +128,7 @@
                 <% end %>
                 <% end %>
             <% end %>
-            
+
             <% if sessions.present? %>
                 <%= f.govuk_radio_button :compare_option,
                                          "session",
@@ -145,7 +145,7 @@
                 <% end %>
                 <% end %>
             <% end %>
-            
+
             <%= f.govuk_radio_button :compare_option,
                                      "manual_entry",
                                      label: { text: "With a specific Patient-ID" },
@@ -158,7 +158,7 @@
                                          "data-turbo-permanent": "true" %>
             <% end %>
             <% end %>
-            
+
             <%= govuk_button_link_to "Reset filters",
                                      @reset_url,
                                      class: "govuk-button govuk-button--secondary nhsuk-u-display-block app-button--small",

@@ -4,7 +4,7 @@ class AppTriageNotesComponent < ViewComponent::Base
   erb_template <<-ERB
     <% events.each_with_index do |event, index| %>
       <%= render AppLogEventComponent.new(**event) %>
-    
+
       <% if index < events.size - 1 %>
         <hr class="nhsuk-section-break nhsuk-section-break--visible nhsuk-section-break--m">
       <% end %>
