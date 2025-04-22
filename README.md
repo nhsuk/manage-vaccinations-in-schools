@@ -13,15 +13,7 @@ This is a service used within the NHS for managing and recording school-aged vac
 | [Training](https://github.com/nhsuk/manage-vaccinations-in-schools/deployments/training)     | [training.manage-vaccinations-in-schools.nhs.uk](https://training.manage-vaccinations-in-schools.nhs.uk) | External training            | ❌                  | `release` branch               | manual     | [`staging`](config/environments/staging.rb)       |
 | [Production](https://github.com/nhsuk/manage-vaccinations-in-schools/deployments/production) | [www.manage-vaccinations-in-schools.nhs.uk](https://www.manage-vaccinations-in-schools.nhs.uk)           | Live service                 | ✅                  | `release` branch               | manual     | [`production`](config/environments/production.rb) |
 
-## Releasing
-
-See the [releasing documentation](docs/releasing.md) for more information.
-
 ## Development
-
-### Branching strategy
-
-See the [branching strategy documentation](docs/branching.md) for more information.
 
 ### Prerequisites
 
@@ -99,12 +91,26 @@ To run the project locally:
 bin/setup
 ```
 
+### Branching strategy
+
+See the [branching strategy documentation](docs/branching.md) for more information.
+
 ### Linting
 
-To run the linters:
+The linters are configured to run using [`hk`](https://hk.jdx.dev/) which is a tool for running hooks in a Git repository.
+
+If using `mise` this should have already been installed as it's listed in `.tool-versions`, but it can be installed manually by running:
 
 ```shell
-bin/lint
+mise use hk pkl
+```
+
+To run the linters you can use `hk check` and `hk fix` to check and fix any linting issues respectively. Alternatively `bin/lint` is provided as a way of running the linters without needing to know about `hk`.
+
+`hk` allows for the linters to be installed as Git hook, ensuring they are run on each commit. This can be configured by running:
+
+```shell
+hk install
 ```
 
 ### Intellisense
@@ -314,6 +320,10 @@ Keys should be rotated regularly. When a new key is introduced it's JWK will
 automatically be added to the JWKS generated for `/oidc/jwks`, but the old
 public key can also be added to `JWKSController::EXTRA_JWK` to ensure a smooth
 roll-over.
+
+## Releasing
+
+See the [releasing documentation](docs/releasing.md) for more information.
 
 ## Rake tasks
 
