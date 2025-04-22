@@ -80,13 +80,18 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
   def action_required
     return unless %i[register record].include?(context)
 
+    next_activities =
+      patient_session.programmes.filter_map do |programme|
+        status = patient_session.next_activity(programme:)
+        next if status.nil?
+
+        "#{I18n.t(status, scope: :activity)} for #{programme.name}"
+      end
+
+    return if next_activities.empty?
+
     tag.ul(class: "nhsuk-list nhsuk-list--bullet") do
-      safe_join(
-        patient_session.programmes.map do |programme|
-          status = patient_session.next_activity(programme:)
-          tag.li("#{I18n.t(status, scope: :activity)} for #{programme.name}")
-        end
-      )
+      safe_join(next_activities.map { tag.li(it) })
     end
   end
 
