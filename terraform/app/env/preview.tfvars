@@ -24,5 +24,4 @@ http_hosts = {
   MAVIS__GIVE_OR_REFUSE_CONSENT_HOST = "preview.mavistesting.com"
 }
 
-appspec_bucket         = "nhse-mavis-appspec-bucket-preview"
-active_lb_target_group = "green"
+appspec_bucket = "nhse-mavis-appspec-bucket-preview"

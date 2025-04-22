@@ -21,4 +21,6 @@ enable_cis2                     = false
 enable_pds_enqueue_bulk_updates = false
 
 appspec_bucket       = "nhse-mavis-appspec-bucket-sandbox-beta"
-minimum_web_replicas = 2
+minimum_web_replicas = 1
+maximum_web_replicas = 2
+good_job_replicas    = 1

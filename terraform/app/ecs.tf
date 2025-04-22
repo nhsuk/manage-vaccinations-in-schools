@@ -41,10 +41,20 @@ module "web_service" {
     target_group_arn = local.ecs_initial_lb_target_group
     container_port   = 4000
   }
+  autoscaling_policies = tomap({
+    cpu = {
+      predefined_metric_type = "ECSServiceAverageCPUUtilization"
+      target_value           = 60
+      scale_in_cooldown      = 600
+      scale_out_cooldown     = 300
+    }
+  })
   cluster_id            = aws_ecs_cluster.cluster.id
+  cluster_name          = aws_ecs_cluster.cluster.name
+  minimum_replica_count = var.minimum_web_replicas
+  maximum_replica_count = var.maximum_web_replicas
   environment           = var.environment
   server_type           = "web"
-  desired_count         = var.minimum_web_replicas
   deployment_controller = "CODE_DEPLOY"
 }
 
@@ -66,8 +76,10 @@ module "good_job_service" {
     subnets = [aws_subnet.private_subnet_a.id, aws_subnet.private_subnet_b.id]
     vpc_id  = aws_vpc.application_vpc.id
   }
-  cluster_id    = aws_ecs_cluster.cluster.id
-  environment   = var.environment
-  server_type   = "good-job"
-  desired_count = var.minimum_good_job_replicas
+  minimum_replica_count = var.good_job_replicas
+  maximum_replica_count = var.good_job_replicas
+  cluster_id            = aws_ecs_cluster.cluster.id
+  cluster_name          = aws_ecs_cluster.cluster.name
+  environment           = var.environment
+  server_type           = "good-job"
 }

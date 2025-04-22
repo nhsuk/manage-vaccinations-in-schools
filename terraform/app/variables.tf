@@ -230,16 +230,11 @@ variable "backup_retention_period" {
 }
 
 ########## ESC/Scaling Configuration ##########
-variable "enable_autoscaling" {
-  type        = bool
-  default     = false
-  description = "Boolean toggle to determine whether the ECS service should have autoscaling enabled."
-}
 
 variable "minimum_web_replicas" {
   type        = number
   default     = 3
-  description = "Minimum amount of allowed replicas for web service"
+  description = "Minimum amount of allowed replicas for web service. Also the replica count when creating th service."
 }
 
 variable "maximum_web_replicas" {
@@ -248,10 +243,10 @@ variable "maximum_web_replicas" {
   description = "Maximum amount of allowed replicas for web service"
 }
 
-variable "minimum_good_job_replicas" {
+variable "good_job_replicas" {
   type        = number
   default     = 2
-  description = "Minimum amount of allowed replicas for good-job service"
+  description = "Amount of replicas for the good-job service"
 }
 
 variable "max_aurora_capacity_units" {

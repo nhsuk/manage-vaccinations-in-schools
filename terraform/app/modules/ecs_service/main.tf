@@ -30,7 +30,7 @@ resource "aws_ecs_service" "this" {
   name                              = "mavis-${var.environment}-${var.server_type}"
   cluster                           = var.cluster_id
   task_definition                   = aws_ecs_task_definition.this.arn
-  desired_count                     = var.desired_count
+  desired_count                     = var.minimum_replica_count
   launch_type                       = "FARGATE"
   enable_execute_command            = true
   health_check_grace_period_seconds = 60
@@ -63,7 +63,7 @@ resource "aws_ecs_service" "this" {
     ignore_changes = [
       task_definition,
       load_balancer,
-      # desired_count TODO: Uncomment once we include autoscaling
+      desired_count
     ]
     create_before_destroy = true
   }
