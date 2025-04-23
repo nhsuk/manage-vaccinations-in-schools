@@ -7,6 +7,12 @@
       "Action": [
         "acm:DeleteCertificate",
         "acm:RequestCertificate",
+        "application-autoscaling:DeleteScalingPolicy",
+        "application-autoscaling:DeregisterScalableTarget",
+        "application-autoscaling:PutScalingPolicy",
+        "application-autoscaling:RegisterScalableTarget",
+        "application-autoscaling:TagResource",
+        "application-autoscaling:UntagResource",
         "codedeploy:CreateApplication",
         "codedeploy:CreateDeployment",
         "codedeploy:CreateDeploymentGroup",
