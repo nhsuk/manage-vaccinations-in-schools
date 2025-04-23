@@ -19,6 +19,8 @@ on:
 env:
   aws_role: arn:aws:iam::393416225559:role/GithubDeployMavisAndInfrastructure
 
+permissions: {}
+
 jobs:
   destroy-resources:
     name: Destroy resources
