@@ -9,7 +9,15 @@ class BatchForm
   attribute :name, :string
   attribute :expiry, :date
 
-  validates :name, presence: true, format: { with: /\A[A-Za-z0-9]+\z/ }
+  validates :name,
+            presence: true,
+            format: {
+              with: /\A[A-Za-z0-9]+\z/
+            },
+            length: {
+              minimum: 2,
+              maximum: 100
+            }
 
   validates :expiry,
             comparison: {
