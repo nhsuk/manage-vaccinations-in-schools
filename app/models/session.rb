@@ -163,15 +163,15 @@ class Session < ApplicationRecord
   end
 
   def today_or_future_dates
-    dates.select { _1.today? || _1.future? }
+    dates.select { it.today? || it.future? }
   end
 
   def future_dates
     dates.select(&:future?)
   end
 
-  def next_date
-    today_or_future_dates.first
+  def next_date(include_today:)
+    (include_today ? today_or_future_dates : future_dates).first
   end
 
   def can_change_notification_dates?
@@ -180,9 +180,10 @@ class Session < ApplicationRecord
 
   def can_send_clinic_invitations?
     if clinic?
-      next_date && !completed?
+      next_date(include_today: true) && !completed?
     else
-      completed? && organisation.generic_clinic_session.next_date
+      completed? &&
+        organisation.generic_clinic_session.next_date(include_today: true)
     end
   end
 

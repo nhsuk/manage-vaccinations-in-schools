@@ -77,6 +77,24 @@ describe GovukNotifyPersonalisation do
     )
   end
 
+  context "when the session is today" do
+    let(:session) do
+      create(
+        :session,
+        location:,
+        organisation:,
+        programmes:,
+        dates: [Date.current, Date.tomorrow]
+      )
+    end
+
+    it "doesn't show today's date" do
+      expect(to_h).to include(
+        next_session_date: Date.tomorrow.to_fs(:short_day_of_week)
+      )
+    end
+  end
+
   context "when patient is in Year 9" do
     let(:patient) do
       create(
