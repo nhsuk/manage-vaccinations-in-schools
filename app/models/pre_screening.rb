@@ -46,4 +46,6 @@ class PreScreening < ApplicationRecord
   has_one :patient, through: :patient_session
 
   encrypts :notes
+
+  validates :notes, length: { maximum: 1000 }
 end
