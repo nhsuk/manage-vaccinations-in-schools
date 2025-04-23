@@ -39,6 +39,10 @@
 #
 
 describe Consent do
+  describe "validations" do
+    it { should validate_length_of(:notes).is_at_most(1000) }
+  end
+
   describe "when consent given by parent or guardian, all health questions are no" do
     it "does not require triage" do
       response = build(:consent, :given)
