@@ -29,7 +29,7 @@
   <% end %>
 <% end %>
 
-<p>The next clinic is on <%= @generic_clinic_session.next_date.to_fs(:long) %>.</p>
+<p>The next clinic is on <%= @generic_clinic_session.next_date(include_today: true).to_fs(:long) %>.</p>
 
 <% if @invitations_to_send == 0 %>
   <p><%= link_to "Return to session", session_path(@session) %></p>
