@@ -15,6 +15,6 @@ class AppProgrammeStatsComponent < ViewComponent::Base
   end
 
   def consent_notifications_count
-    @programme.consent_notifications.has_programme(@programme).count
+    helpers.policy_scope(ConsentNotification).has_programme(@programme).count
   end
 end
