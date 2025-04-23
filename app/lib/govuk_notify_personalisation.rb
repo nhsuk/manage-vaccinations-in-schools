@@ -137,19 +137,16 @@ class GovukNotifyPersonalisation
   end
 
   def next_session_date
-    session.next_date&.to_fs(:short_day_of_week)
+    session.next_date(include_today: false)&.to_fs(:short_day_of_week)
   end
 
   def next_session_dates
-    session
-      .today_or_future_dates
-      .map { _1.to_fs(:short_day_of_week) }
-      .to_sentence
+    session.future_dates.map { it.to_fs(:short_day_of_week) }.to_sentence
   end
 
   def next_session_dates_or
     session
-      .today_or_future_dates
+      .future_dates
       .map { _1.to_fs(:short_day_of_week) }
       .to_sentence(last_word_connector: ", or ", two_words_connector: " or ")
   end

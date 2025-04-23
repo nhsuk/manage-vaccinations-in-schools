@@ -37,9 +37,9 @@
                   Last session completed <%= session.dates.max&.to_fs(:long) %>
                 <% else %>
                   <% if session.started? %>
-                    Next session starts <%= session.next_date.to_fs(:long) %>
+                    Next session starts <%= session.next_date(include_today: true).to_fs(:long) %>
                   <% else %>
-                    First session starts <%= session.next_date.to_fs(:long) %>
+                    First session starts <%= session.next_date(include_today: true).to_fs(:long) %>
                   <% end %>
 
                   <br />

@@ -8,7 +8,7 @@ class SendClinicSubsequentInvitationsJob < ApplicationJob
   def perform(session)
     raise InvalidLocation unless session.clinic?
 
-    session_date = session.next_date
+    session_date = session.next_date(include_today: true)
     raise NoSessionDates if session_date.nil?
 
     patient_sessions(session, session_date:).each do |patient_session|
