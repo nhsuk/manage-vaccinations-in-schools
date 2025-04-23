@@ -4,6 +4,8 @@ on:
   pull_request:
   workflow_call:
 
+permissions: {}
+
 jobs:
   rails:
     name: Rails

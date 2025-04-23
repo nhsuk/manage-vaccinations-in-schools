@@ -30,6 +30,8 @@ on:
         required: false
         type: string
 
+permissions: {}
+
 concurrency:
   group: deploy-infrastructure-${{ inputs.environment }}
 

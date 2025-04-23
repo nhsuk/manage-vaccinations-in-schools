@@ -46,6 +46,7 @@ on:
 jobs:
   determine-git-sha:
     runs-on: ubuntu-latest
+    permissions: {}
     outputs:
       git-sha: ${{ steps.get-git-sha.outputs.git-sha }}
     steps:
@@ -57,17 +58,23 @@ jobs:
         id: get-git-sha
         run: echo "git-sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
   build-and-push-image:
+    permissions:
+      id-token: write
     needs: determine-git-sha
     uses: ./.github/workflows/build-and-push-image.yml
     with:
       git-sha: ${{ needs.determine-git-sha.outputs.git-sha }}
   deploy-infrastructure:
+    permissions:
+      id-token: write
     needs: [build-and-push-image, determine-git-sha]
     uses: ./.github/workflows/deploy-infrastructure.yml
     with:
       environment: ${{ inputs.environment }}
       image_tag: ${{ needs.determine-git-sha.outputs.git-sha }}
   deploy-application:
+    permissions:
+      id-token: write
     needs: deploy-infrastructure
     uses: ./.github/workflows/deploy-application.yml
     with:
