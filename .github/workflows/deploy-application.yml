@@ -38,6 +38,8 @@ on:
         required: true
         type: string
 
+permissions: {}
+
 concurrency:
   group: deploy-application-${{ inputs.environment }}
 
