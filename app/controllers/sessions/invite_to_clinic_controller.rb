@@ -48,7 +48,7 @@ class Sessions::InviteToClinicController < ApplicationController
   end
 
   def set_invitations_to_send
-    session_date = @generic_clinic_session.next_date
+    session_date = @generic_clinic_session.next_date(include_today: true)
 
     @invitations_to_send =
       if @session.school?
