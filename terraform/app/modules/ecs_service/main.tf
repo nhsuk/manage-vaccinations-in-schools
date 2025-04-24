@@ -27,7 +27,7 @@ resource "aws_security_group_rule" "egress_all" {
 }
 
 resource "aws_ecs_service" "this" {
-  name                              = "mavis-${var.environment}-${var.server_type}"
+  name                              = "${var.naming_prefix}${var.environment}-${var.server_type}"
   cluster                           = var.cluster_id
   task_definition                   = aws_ecs_task_definition.this.arn
   desired_count                     = var.minimum_replica_count
@@ -70,7 +70,7 @@ resource "aws_ecs_service" "this" {
 }
 
 resource "aws_ecs_task_definition" "this" {
-  family                   = "mavis-${var.server_type}-task-definition-${var.environment}"
+  family                   = "${var.naming_prefix}${var.server_type}-task-definition-${var.environment}"
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
   cpu                      = var.task_config.cpu
