@@ -333,10 +333,7 @@ class ImmunisationImportRow
         end
   end
 
-  delegate :default_dose_sequence,
-           :maximum_dose_sequence,
-           to: :programme,
-           allow_nil: true
+  delegate :default_dose_sequence, :maximum_dose_sequence, to: :programme
 
   def offline_recording? = session_id.present?
 
@@ -613,6 +610,8 @@ class ImmunisationImportRow
   end
 
   def validate_dose_sequence
+    return if programme.nil?
+
     field = dose_sequence.presence || combined_vaccination_and_dose_sequence
 
     if field.present?

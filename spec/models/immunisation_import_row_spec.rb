@@ -1041,6 +1041,26 @@ describe ImmunisationImportRow do
         it { expect(immunisation_import_row).to be_invalid }
       end
 
+      context "with an invalid value and no programme" do
+        let(:programmes) { [create(:programme, :hpv)] }
+
+        let(:data) do
+          valid_data.merge(
+            "PROGRAMME" => "Unknown",
+            "VACCINE_GIVEN" => "Unknown",
+            "DOSE_SEQUENCE" => "abc"
+          )
+        end
+
+        it "has errors about the programme but not the dose sequence" do
+          expect(immunisation_import_row).to be_invalid
+          expect(immunisation_import_row.errors["PROGRAMME"]).to eq(
+            ["This programme is not available in this session."]
+          )
+          expect(immunisation_import_row.errors["DOSE_SEQUENCE"]).to be_empty
+        end
+      end
+
       context "with a valid value" do
         let(:programmes) { [create(:programme, :hpv)] }
 
