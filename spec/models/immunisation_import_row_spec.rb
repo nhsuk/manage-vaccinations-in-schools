@@ -182,6 +182,12 @@ describe ImmunisationImportRow do
       end
     end
 
+    context "without a vaccine" do
+      let(:data) { valid_data.except("VACCINE_GIVEN") }
+
+      it { should be_valid }
+    end
+
     context "with an invalid reason not vaccinated" do
       let(:data) do
         { "VACCINATED" => "N", "REASON_NOT_VACCINATED" => "unknown" }
@@ -833,6 +839,18 @@ describe ImmunisationImportRow do
         expect(vaccination_record.performed_at).to eq(
           Time.new(2024, 1, 1, 10, 30, 0, "+00:00")
         )
+      end
+    end
+
+    context "without a vaccine" do
+      let(:data) { valid_data.except("VACCINE_GIVEN") }
+
+      it "doesn't set a vaccine" do
+        expect(vaccination_record.vaccine).to be_nil
+      end
+
+      it "does set a programme" do
+        expect(vaccination_record.programme).not_to be_nil
       end
     end
 

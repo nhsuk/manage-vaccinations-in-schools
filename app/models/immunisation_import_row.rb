@@ -297,15 +297,17 @@ class ImmunisationImportRow
       end
   end
 
+  def vaccine_nivs_name
+    parsed_vaccination_description_string&.dig(:vaccine_name) ||
+      vaccine_name&.to_s
+  end
+
   def vaccine
     @vaccine ||=
-      begin
-        nivs_name =
-          parsed_vaccination_description_string&.dig(:vaccine_name) ||
-            vaccine_name&.to_s
-
-        organisation.vaccines.includes(:programme).find_by(nivs_name:)
-      end
+      organisation
+        .vaccines
+        .includes(:programme)
+        .find_by(nivs_name: vaccine_nivs_name)
   end
 
   def batch
@@ -956,7 +958,7 @@ class ImmunisationImportRow
           "is not given in the #{programme.name} programme"
         )
       end
-    elsif field.present?
+    elsif vaccine_nivs_name.present?
       errors.add(field.header, "This vaccine is not available in this session.")
     end
   end
