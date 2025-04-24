@@ -26,6 +26,13 @@ variable "maximum_replica_count" {
   }
 }
 
+variable "naming_prefix" {
+  type        = string
+  description = "Prefix to be used for naming the ECS service and task definition"
+  default     = "mavis-"
+  nullable    = false
+}
+
 variable "autoscaling_policies" {
   type = map(object({
     predefined_metric_type = string
