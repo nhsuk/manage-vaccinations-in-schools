@@ -64,11 +64,7 @@ class SchoolMove < ApplicationRecord
   private
 
   def update_patient!
-    patient.update!(
-      home_educated:,
-      organisation: school&.organisation || organisation,
-      school:
-    )
+    patient.update!(home_educated:, school:)
   end
 
   def update_sessions!

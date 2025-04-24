@@ -397,11 +397,13 @@ describe TimelineRecords do
 
     before do
       class_import_additional.session_id = session.id
+
+      session.organisation.cohort_imports =
+        cohort_imports_with_patient + cohort_imports_without_patient
+
       patient.sessions = [session]
       patient.class_imports = [class_import]
       patient.cohort_imports = cohort_imports_with_patient
-      patient.organisation.cohort_imports =
-        cohort_imports_with_patient + cohort_imports_without_patient
     end
 
     context "with class imports" do
@@ -446,7 +448,9 @@ describe TimelineRecords do
       it "returns a hash with class imports, cohort imports, and sessions" do
         result = timeline.patient_events(patient)
         expect(result).to be_a(Hash)
-        expect(result.keys).to eq(%i[class_imports cohort_imports sessions])
+        expect(result.keys).to eq(
+          %i[class_imports cohort_imports organisations sessions]
+        )
       end
 
       it "returns an array of class import IDs" do

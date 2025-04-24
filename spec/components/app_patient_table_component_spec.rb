@@ -66,16 +66,21 @@ describe AppPatientTableComponent do
     expect(rendered).not_to have_text("SW1B 1AA")
   end
 
-  it "renders links" do
-    expect(rendered).to have_link("SMITH, John")
-  end
-
   context "with a patient not in the cohort" do
-    before { patients.first.update!(organisation: nil) }
-
     it "doesn't render a link" do
       expect(rendered).not_to have_link("SMITH, John")
       expect(rendered).to have_content("Child has moved out of the area")
+    end
+  end
+
+  context "with a patient in the cohort" do
+    let(:organisation) { current_user.selected_organisation }
+    let(:session) { create(:session, organisation:) }
+
+    before { create(:patient_session, patient: patients.first, session:) }
+
+    it "renders links" do
+      expect(rendered).to have_link("SMITH, John")
     end
   end
 end

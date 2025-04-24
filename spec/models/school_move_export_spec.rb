@@ -25,14 +25,16 @@ describe SchoolMoveExport do
     let(:one_day_ago) { 1.day.ago }
     let(:three_days_ago) { 3.days.ago }
 
+    let(:session) { create(:session, organisation:) }
+
     before do
       3.times do
-        patient = create(:patient, organisation: organisation)
+        patient = create(:patient, session:)
         create(:school_move_log_entry, patient:, created_at: one_day_ago)
       end
 
       2.times do
-        patient = create(:patient, organisation: organisation)
+        patient = create(:patient, session:)
         create(:school_move_log_entry, patient:, created_at: three_days_ago)
       end
     end

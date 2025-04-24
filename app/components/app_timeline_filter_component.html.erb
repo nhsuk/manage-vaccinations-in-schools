@@ -64,13 +64,13 @@
             <% end %>
 
             <%= f.govuk_check_box :event_names, "org_cohort_imports",
-                                  label: { text: "Cohort Imports for Organisation-#{@patient.organisation.id} excluding Patient" },
+                                  label: { text: "Cohort Imports for organisations excluding Patient" },
                                   checked: "org_cohort_imports".in?(params[:event_names]),
                                   "data-autosubmit-target": "field",
                                   "data-action": "autosubmit#submit",
                                   "data-turbo-permanent": "true" %>
 
-            <% (@additional_class_imports).each do |session_id, import_ids| %>
+            <% @additional_class_imports.each do |session_id, import_ids| %>
                 <%= f.govuk_check_box :event_names, "add_class_imports_#{session_id}",
                                       label: { text: "Class Imports for Session-#{session_id} excluding Patient" },
                                       checked: "add_class_imports_#{session_id}".in?(params[:event_names]),
