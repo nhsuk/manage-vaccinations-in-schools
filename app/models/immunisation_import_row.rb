@@ -866,7 +866,8 @@ class ImmunisationImportRow
   end
 
   def validate_school_name
-    if school_name.blank? && school_urn&.to_s == SCHOOL_URN_UNKNOWN
+    if school_name.blank? && school_urn&.to_s == SCHOOL_URN_UNKNOWN &&
+         is_school_setting?
       if school_name.nil?
         if systm_one_enabled?
           errors.add(
