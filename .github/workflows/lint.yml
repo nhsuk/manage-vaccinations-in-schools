@@ -3,9 +3,12 @@ name: Lint
 on:
   pull_request:
 
+permissions:
+  contents: read
+
 jobs:
-  prettier:
-    name: Prettier
+  lint:
+    name: Lint
     runs-on: ubuntu-latest
 
     steps:
@@ -15,71 +18,12 @@ jobs:
           bundler-cache: true
       - uses: actions/setup-node@v4
         with:
-          node-version-file: .tool-versions
           cache: yarn
-      - run: yarn install --immutable --immutable-cache --check-cache
-      - run: yarn prettier --check --ignore-unknown '**/*'
-
-  rubocop:
-    name: Rubocop
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ruby/setup-ruby@v1
-        with:
-          bundler-cache: true
-      - uses: actions/setup-node@v4
-        with:
           node-version-file: .tool-versions
-          cache: yarn
       - run: yarn install --immutable --immutable-cache --check-cache
-      - run: bin/bundle exec rubocop
-
-  rufo:
-    name: Rufo
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ruby/setup-ruby@v1
-        with:
-          bundler-cache: true
-      - run: bin/bundle exec rufo --check app
-
-  brakeman:
-    name: Brakeman
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ruby/setup-ruby@v1
-        with:
-          bundler-cache: true
-      - run: bin/bundle exec brakeman
-
-  terraform-fmt:
-    name: Terraform fmt
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-      - name: Install terraform
-        uses: hashicorp/setup-terraform@v3
-        with:
-          terraform_version: 1.10.5
-      - name: Check formatting
-        run: terraform fmt -check -recursive
-
-  tflint:
-    name: TFLint
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
       - uses: terraform-linters/setup-tflint@v4
-      - name: Run TFLint
-        working-directory: terraform
-        run: |
-          tflint --init
-          tflint --recursive
+      - uses: jdx/mise-action@v2
+        with:
+          install_args: hk pkl
+      - run: hk check

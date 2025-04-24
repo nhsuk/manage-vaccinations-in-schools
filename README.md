@@ -13,268 +13,7 @@ This is a service used within the NHS for managing and recording school-aged vac
 | [Training](https://github.com/nhsuk/manage-vaccinations-in-schools/deployments/training)     | [training.manage-vaccinations-in-schools.nhs.uk](https://training.manage-vaccinations-in-schools.nhs.uk) | External training            | ❌                  | `release` branch               | manual     | [`staging`](config/environments/staging.rb)       |
 | [Production](https://github.com/nhsuk/manage-vaccinations-in-schools/deployments/production) | [www.manage-vaccinations-in-schools.nhs.uk](https://www.manage-vaccinations-in-schools.nhs.uk)           | Live service                 | ✅                  | `release` branch               | manual     | [`production`](config/environments/production.rb) |
 
-## Release Cycle
-
-Our default branch for making changes is `main`: new features and non-urgent
-bug fixes should be merged into here.
-
-The `release` branch is a reference to what is in production at any point in
-time. It usually tracks `main` but can also point to hotfix branches as
-necessary.
-
-Releasing basically follows these steps:
-
-1. Create a release candidate by tagging `main` (e.g. `v1.0.0-rc1`)
-2. Create a release in GitHub and add information about the changes. Update the
-   assurance statement.
-3. Create a release by fast-forwarding or resetting `release` to the release
-   candidate, and creating a tag (e.g. `v1.0.0`)
-
-```mermaid
-gitGraph
-    branch release
-    commit tag: "v0.9.9"
-    checkout main
-    commit tag: "v1.0.0-rc1"
-    checkout release
-    merge main tag: "v1.0.0"
-```
-
-Details below.
-
-### Pre-release and testing
-
-Changes merged into `main` are deployed to the `qa` and `test` environments for
-testing. When there is a large batch of PRs to merge at once, after a
-merge-freeze for example, only merge a few at a time to try to make it easier to
-trace any issues that arise during testing.
-
-### Release candidate
-
-Once all the necessary changes are merged and have been tested, create a
-release candidate by creating a tag on the `main` branch. e.g. `v1.0.0-rc1`.
-
-Create a [release in GitHub](https://github.com/nhsuk/manage-vaccinations-in-schools/releases/)
-using this tag, or if one has been created for this version already update the
-tag in it. The assurance statement will also need to be updated with the tag URL
-(if the tag changes, e.g. to `-rc2`, this will need to be updated).
-
-At this point the changes in the release will go through the NHS assurance
-processes, and possibly through external testing and assurance. If required it
-can be deployed to the `preview` or `training` environements.
-
-### Releasing
-
-When we are ready to release, update the `release` branch and deploy it to
-production. If there have been no hot-fixes since the last release then this is
-a simple fast-forward merge that has to be done on your localhost (see below for
-how to manage non-fast-forwardable situations):
-
-```shell
-git checkout release
-git pull origin release
-
-# Check that release can be fast-forwarded to the release candidate
-git merge-base --is-ancestor release v1.0.0-rc1 && echo "safe to ff-merge"
-# If release has diverged from main and cannot be fast-forwarded to the release
-# candidate, see the instructions below
-
-git merge --ff-only v1.0.0-rc1
-git push --tags origin release
-```
-
-Once the `release` branch is updated on GitHub, create the release in GitHub UI
-with the release tag, e.g. v1.0.0, moving the release notes from the release
-candidate. Now it's time to deploy. Start with a deploy to `training` or
-`preview` to ensure the tagged version is correct. Once that's done you can
-deploy to production.
-
-Use the `deploy.yml` workflow to run the deployments. For the production deployment,
-it's important to start the workflow from the `main` branch and specify the tag to deploy
-as input. This is because only workflows from the `main` branch can authenticate with the
-production AWS account.
-
-#### When `release` and `main` have diverged
-
-There are cases when `release` won't be fast-forwardable to the release
-candidate on `main`. This will happen when a fix has been applied to the
-`release` branch that circumvented the normal release cycle (AKA hot-fix, see
-below).
-
-In these cases the `release` branch will need to be reset to the latest release
-candidate.
-
-```sh
-git checkout release
-git pull origin release
-git reset --hard v1.0.0-rc1
-git push --tags origin release
-```
-
-And then you can follow the instructions above about creating the release tag
-and deploying.
-
-### Hot-fixes
-
-Hot-fixes are emergency fixes made to the current release that bypass changes
-that are in `main`. These fixes should still go through the pull-request
-process, but to a version-specific branch, e.g. `v1.0.1-hotfixes`. Once these
-are merged in, the commits will need to be applied to `main`, e.g. via
-cherry-picking, and `release` should be fast-forwarded/reset to the latest code
-released.
-
-```mermaid
-gitGraph
-    branch release
-    commit tag: "v0.9.9"
-    checkout main
-    commit tag: "v1.0.0-rc1, v1.0.0"
-    checkout release
-    merge main tag: "v1.0.0"
-    checkout main
-    commit id: "v1.1.0-feature-1"
-    commit id: "v1.1.0-feature-2"
-    checkout release
-    branch v1.0.1-hotfixes
-    commit id: "v1.0.1-hotfix-1"
-    checkout main
-    cherry-pick id: "v1.0.1-hotfix-1"
-    commit id: "v1.1.0-feature-3"
-    checkout release
-    merge v1.0.1-hotfixes tag: "v1.0.1"
-    checkout main
-```
-
-At this point the histories of the `release` and `main` branches will have
-diverged and it will not be possible to fast-forward the `release` branch when
-releasing. It will have to be reset to the latest release candidate as
-previously described.
-
 ## Development
-
-### Branching strategy
-
-We follow the patterns and conventions in [GitHub
-Flow](https://docs.github.com/en/get-started/using-github/github-flow).
-
-- Try to only put related changes into a single PR and keep them as small and as focused
-  as is reasonable.
-  - If you start shaving yaks consider putting these changes into
-    a separate PR.
-- Likewise, if you find the change you're making is quite large, you can spread it across
-  multiple PRs
-  - Even if functionality is only partly
-    complete any one of them.
-- Include a link to the Jira card in a relevant commit message and in the PR
-  description.
-
-Below is a visual representation of the branching strategy. For concreteness lets consider
-the next version being developed for release v2.0.0:
-
-Outside a release cycle, features get merged into main:
-
-```mermaid
-gitGraph
-commit id: "v2.0.0-feature-1"
-commit id: "v2.0.0-feature-2"
-```
-
-Once a release is ready for testing we tag it as a release candidate, e.g. v2.0.0-rc1, to be tested in the test and qa environments:
-
-```mermaid
-gitGraph
-commit id: "v2.0.0-feature-1"
-commit id: "v2.0.0-feature-2" tag: "v2.0.0-rc1"
-```
-
-Any new work for the next version, v2.1.0 in this case, goes onto a work in progress (wip) branch:
-
-```mermaid
-gitGraph
-commit id: "v2.0.0-feature-1"
-commit id: "v2.0.0-feature-2" tag: "v2.0.0-rc1"
-branch v2.1.0-wip
-checkout v2.1.0-wip
-commit id: "v2.1.0-feature-1"
-commit id: "v2.1.0-feature-2"
-```
-
-Any patches to the release candidate are applied to both main and the wip branch,
-and the commit on main gets tagged as the next release candidate:
-
-```mermaid
-gitGraph
-commit id: "v2.0.0-feature-1"
-commit id: "v2.0.0-feature-2" tag: "v2.0.0-rc1"
-branch v2.1.0-wip
-checkout v2.1.0-wip
-commit id: "v2.1.0-feature-1"
-commit id: "v2.1.0-feature-2"
-checkout main
-commit id: "v2.0.0-patch-1" tag: "v2.0.0-rc2"
-checkout "v2.1.0-wip"
-cherry-pick id: "v2.0.0-patch-1"
-```
-
-Once the release candidate has been confirmed good and release approvals have been given,
-it is tagged as the new version (`v2.0.0`), and deployed to production:
-
-```mermaid
-gitGraph
-commit id: "v2.0.0-feature-1"
-commit id: "v2.0.0-feature-2" tag: "v2.0.0-rc1"
-branch v2.1.0-wip
-checkout v2.1.0-wip
-commit id: "v2.1.0-feature-1"
-commit id: "v2.1.0-feature-2"
-checkout main
-commit id: "v2.0.0-patch-1" tag: "v2.0.0-rc2, v2.0.0"
-checkout "v2.1.0-wip"
-cherry-pick id: "v2.0.0-patch-1"
-```
-
-At this point the wip branch can be merged into main and feature development for v2.1.0
-can continue on main branch:
-
-```mermaid
-gitGraph
-commit id: "v2.0.0-feature-1"
-commit id: "v2.0.0-feature-2" tag: "v2.0.0-rc1"
-branch v2.1.0-wip
-checkout v2.1.0-wip
-commit id: "v2.1.0-feature-1"
-commit id: "v2.1.0-feature-2"
-checkout main
-commit id: "v2.0.0-patch-1" tag:"v2.0.0-rc2, v2.0.0"
-checkout v2.1.0-wip
-cherry-pick id: "v2.0.0-patch-1"
-checkout main
-merge v2.1.0-wip
-commit id: "v2.1.0-feature-3"
-```
-
-Once the first release candidate for v.2.1.0 is ready, the process repeats:
-
-```mermaid
-gitGraph
-commit id: "v2.0.0-feature-1"
-commit id: "v2.0.0-feature-2" tag: "v2.0.0-rc1"
-branch v2.1.0-wip
-checkout v2.1.0-wip
-commit id: "v2.1.0-feature-1"
-commit id: "v2.1.0-feature-2"
-checkout main
-commit id: "v2.0.0-patch-1" tag:"v2.0.0-rc2, v2.0.0"
-checkout v2.1.0-wip
-cherry-pick id: "v2.0.0-patch-1"
-checkout main
-merge v2.1.0-wip
-commit id: "v2.1.0-feature-3"
-commit id: "v2.1.0-feature-4" tag: "v2.1.0-rc1"
-branch v2.2.0-wip
-checkout v2.2.0-wip
-commit id: "v2.2.0-feature-1"
-```
 
 ### Prerequisites
 
@@ -352,12 +91,26 @@ To run the project locally:
 bin/setup
 ```
 
+### Branching strategy
+
+See the [branching strategy documentation](docs/branching.md) for more information.
+
 ### Linting
 
-To run the linters:
+The linters are configured to run using [`hk`](https://hk.jdx.dev/) which is a tool for running hooks in a Git repository.
+
+If using `mise` this should have already been installed as it's listed in `.tool-versions`, but it can be installed manually by running:
 
 ```shell
-bin/lint
+mise use hk pkl
+```
+
+To run the linters you can use `hk check` and `hk fix` to check and fix any linting issues respectively. Alternatively `bin/lint` is provided as a way of running the linters without needing to know about `hk`.
+
+`hk` allows for the linters to be installed as Git hook, ensuring they are run on each commit. This can be configured by running:
+
+```shell
+hk install
 ```
 
 ### Intellisense
@@ -567,6 +320,10 @@ Keys should be rotated regularly. When a new key is introduced it's JWK will
 automatically be added to the JWKS generated for `/oidc/jwks`, but the old
 public key can also be added to `JWKSController::EXTRA_JWK` to ensure a smooth
 roll-over.
+
+## Releasing
+
+See the [releasing documentation](docs/releasing.md) for more information.
 
 ## Rake tasks
 

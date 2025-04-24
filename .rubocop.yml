@@ -20,10 +20,16 @@ Layout/EmptyLineAfterMagicComment:
 
 Layout/LineLength:
   AllowedPatterns: [idx_on]
+  Exclude:
+    - db/schema.rb
 
 Lint/PercentStringArray:
   Exclude:
     - spec/models/dps_export_spec.rb
+
+Rails/CreateTableWithTimestamps:
+  Exclude:
+    - db/schema.rb
 
 Rails/LexicallyScopedActionFilter:
   Exclude:
@@ -56,6 +62,12 @@ RSpec/VerifiedDoubles:
 Style/FrozenStringLiteralComment:
   Enabled: true
   EnforcedStyle: always_true
+  Exclude:
+    - db/schema.rb
+
+Style/NumericLiterals:
+  Exclude:
+    - db/schema.rb
 
 Rails/ApplicationController:
   Exclude:
