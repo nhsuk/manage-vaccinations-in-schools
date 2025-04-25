@@ -250,8 +250,8 @@ describe ImmunisationImport do
         # stree-ignore
         expect { process! }
           .to change(immunisation_import, :processed_at).from(nil)
-          .and change(immunisation_import.vaccination_records, :count).by(1)
-          .and change(immunisation_import.patients, :count).by(1)
+          .and change(immunisation_import.vaccination_records, :count).by(2)
+          .and change(immunisation_import.patients, :count).by(2)
           .and change(immunisation_import.batches, :count).by(1)
           .and not_change(immunisation_import.patient_sessions, :count)
 

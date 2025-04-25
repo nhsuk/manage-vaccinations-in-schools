@@ -182,6 +182,12 @@ describe ImmunisationImportRow do
       end
     end
 
+    context "without a vaccine" do
+      let(:data) { valid_data.except("VACCINE_GIVEN") }
+
+      it { should be_valid }
+    end
+
     context "with an invalid reason not vaccinated" do
       let(:data) do
         { "VACCINATED" => "N", "REASON_NOT_VACCINATED" => "unknown" }
@@ -836,6 +842,18 @@ describe ImmunisationImportRow do
       end
     end
 
+    context "without a vaccine" do
+      let(:data) { valid_data.except("VACCINE_GIVEN") }
+
+      it "doesn't set a vaccine" do
+        expect(vaccination_record.vaccine).to be_nil
+      end
+
+      it "does set a programme" do
+        expect(vaccination_record.programme).not_to be_nil
+      end
+    end
+
     context "with an existing vaccination record" do
       let!(:existing_vaccination_record) do
         create(
@@ -1021,6 +1039,26 @@ describe ImmunisationImportRow do
         end
 
         it { expect(immunisation_import_row).to be_invalid }
+      end
+
+      context "with an invalid value and no programme" do
+        let(:programmes) { [create(:programme, :hpv)] }
+
+        let(:data) do
+          valid_data.merge(
+            "PROGRAMME" => "Unknown",
+            "VACCINE_GIVEN" => "Unknown",
+            "DOSE_SEQUENCE" => "abc"
+          )
+        end
+
+        it "has errors about the programme but not the dose sequence" do
+          expect(immunisation_import_row).to be_invalid
+          expect(immunisation_import_row.errors["PROGRAMME"]).to eq(
+            ["This programme is not available in this session."]
+          )
+          expect(immunisation_import_row.errors["DOSE_SEQUENCE"]).to be_empty
+        end
       end
 
       context "with a valid value" do
