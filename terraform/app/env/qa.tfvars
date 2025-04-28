@@ -25,3 +25,6 @@ http_hosts = {
 appspec_bucket       = "nhse-mavis-appspec-bucket-qa"
 minimum_web_replicas = 2
 maximum_web_replicas = 4
+
+rds_engine_version     = "16.8"
+rds_maintenance_window = "tue:02:30-tue:03:00"

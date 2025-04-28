@@ -20,3 +20,6 @@ http_hosts = {
   MAVIS__GIVE_OR_REFUSE_CONSENT_HOST = "test.mavistesting.com"
 }
 appspec_bucket = "nhse-mavis-appspec-bucket-test"
+
+rds_engine_version     = "16.8"
+rds_maintenance_window = "tue:02:30-tue:03:00"

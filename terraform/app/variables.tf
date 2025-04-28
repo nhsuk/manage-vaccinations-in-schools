@@ -229,7 +229,19 @@ variable "backup_retention_period" {
   description = "The number of days to retain backups for the RDS cluster."
 }
 
-########## ESC/Scaling Configuration ##########
+variable "rds_engine_version" {
+  type        = string
+  default     = "14.9"
+  description = "The version of the database engine to use for the RDS cluster."
+}
+
+variable "rds_maintenance_window" {
+  type        = string
+  default     = "sun:02:30-sun:03:00"
+  description = "The preferred maintenance window for the RDS cluster."
+}
+
+########## ECS/Scaling Configuration ##########
 
 variable "minimum_web_replicas" {
   type        = number
