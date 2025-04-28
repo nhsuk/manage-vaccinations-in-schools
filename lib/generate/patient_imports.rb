@@ -153,6 +153,7 @@ module Generate
       @schools_with_year_groups ||=
         organisation
           .locations
+          .where(urn: urns)
           .includes(:organisation, :sessions)
           .select { (it.year_groups & programme_year_groups).any? }
     end
