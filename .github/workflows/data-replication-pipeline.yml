@@ -1,0 +1,186 @@
+name: Data replication pipeline
+run-name: ${{ inputs.action }} data replication resources for ${{ inputs.environment }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Deployment environment
+        required: true
+        type: choice
+        options:
+          - training
+          - production
+          - test
+          - qa
+          - sandbox-alpha
+          - sandbox-beta
+      image_tag:
+        description: Docker image tag to deploy
+        required: false
+        type: string
+      action:
+        description: Action to perform on data replication env
+        required: true
+        type: choice
+        options:
+          - Destroy
+          - Recreate
+        default: Recreate
+
+env:
+  aws_role: ${{ inputs.environment == 'production'
+    && 'arn:aws:iam::820242920762:role/GithubDeployDataReplicationInfrastructure'
+    || 'arn:aws:iam::393416225559:role/GithubDeployDataReplicationInfrastructure' }}
+
+defaults:
+  run:
+    working-directory: terraform/data_replication
+
+concurrency:
+  group: deploy-data-replica-${{ inputs.environment }}
+
+jobs:
+  prepare:
+    name: Prepare data replica
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ env.aws_role }}
+          aws-region: eu-west-2
+      - name: get latest snapshot
+        id: get-latest-snapshot
+        run: |
+          set -e
+          SNAPSHOT_ARN=$(aws rds describe-db-cluster-snapshots \
+          --query 'DBClusterSnapshots[?contains(DBClusterSnapshotIdentifier, `${{ inputs.environment}}`)].[DBClusterSnapshotArn, SnapshotCreateTime]' \
+          --output text | sort -k2 -r | head -n 1 | cut -f1)
+          echo "SNAPSHOT_ARN=$SNAPSHOT_ARN" >> $GITHUB_OUTPUT
+      - name: Install terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.10.5
+      - name: Get db secret arn
+        id: get-db-secret-arn
+        working-directory: terraform/app
+        run: |
+          terraform init -backend-config="env/${{ inputs.environment }}-backend.hcl" -upgrade
+          DB_SECRET_ARN=$(terraform output --raw db_secret_arn)
+          echo "DB_SECRET_ARN=$DB_SECRET_ARN" >> $GITHUB_OUTPUT
+      - name: ECR login
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+      - name: Get docker image digest
+        id: get-docker-image-digest
+        run: |
+          set -e
+          DOCKER_IMAGE="${{ steps.login-ecr.outputs.registry }}/mavis/webapp:${{ inputs.image_tag || github.sha }}"
+          docker pull "$DOCKER_IMAGE"
+          DOCKER_DIGEST=$(docker inspect --format='{{index .RepoDigests 0}}' "$DOCKER_IMAGE")
+          DIGEST="${DOCKER_DIGEST#*@}"
+          echo "DIGEST=$DIGEST" >> $GITHUB_OUTPUT
+    outputs:
+      SNAPSHOT_ARN: ${{ steps.get-latest-snapshot.outputs.SNAPSHOT_ARN }}
+      DB_SECRET_ARN: ${{ steps.get-db-secret-arn.outputs.DB_SECRET_ARN }}
+      DOCKER_DIGEST: ${{ steps.get-docker-image-digest.outputs.DIGEST }}
+
+  destroy:
+    name: Destroy data replication infrastructure
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    permissions:
+      id-token: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ env.aws_role }}
+          aws-region: eu-west-2
+      - name: Install terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.10.5
+      - name: Terraform Destroy
+        id: destroy
+        run: |
+          set -e
+          terraform init -backend-config="env/${{ inputs.environment }}-backend.hcl" -upgrade
+          terraform destroy -var-file="env/${{ inputs.environment }}.tfvars" -var="image_digest=filler_value" \
+          -var="db_secret_arn=filler_value" -var="imported_snapshot=filler_value" -auto-approve
+
+  plan:
+    if: ${{ inputs.action == 'Recreate' }}
+    name: Terraform plan
+    runs-on: ubuntu-latest
+    needs:
+      - prepare
+      - destroy
+    env:
+      SNAPSHOT_ARN: ${{ needs.prepare.outputs.SNAPSHOT_ARN }}
+      DB_SECRET_ARN: ${{ needs.prepare.outputs.DB_SECRET_ARN }}
+      DOCKER_DIGEST: ${{ needs.prepare.outputs.DOCKER_DIGEST }}
+    permissions:
+      id-token: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ env.aws_role }}
+          aws-region: eu-west-2
+      - name: Install terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.10.5
+      - name: Terraform Plan
+        id: plan
+        run: |
+          set -e
+          terraform init -backend-config="env/${{ inputs.environment }}-backend.hcl" -upgrade
+          terraform plan -var="image_digest=${{ env.DOCKER_DIGEST }}" -var="db_secret_arn=${{ env.DB_SECRET_ARN }}" \
+          -var="imported_snapshot=${{ env.SNAPSHOT_ARN }}" -var-file="env/${{ inputs.environment }}.tfvars" \
+          -out ${{ runner.temp }}/tfplan | tee ${{ runner.temp }}/tf_stdout
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: tfplan_infrastructure-${{ inputs.environment }}
+          path: ${{ runner.temp }}/tfplan
+
+  apply:
+    name: Terraform apply
+    runs-on: ubuntu-latest
+    needs: plan
+    environment: ${{ inputs.environment }}
+    permissions:
+      id-token: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ env.aws_role }}
+          aws-region: eu-west-2
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: tfplan_infrastructure-${{ inputs.environment }}
+          path: ${{ runner.temp }}
+      - name: Install terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.10.5
+      - name: Apply the changes
+        run: |
+          set -e
+          terraform init -backend-config="env/${{ inputs.environment }}-backend.hcl" -upgrade
+          terraform apply ${{ runner.temp }}/tfplan
