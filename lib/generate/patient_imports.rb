@@ -36,9 +36,9 @@ module Generate
     def self.call(...) = new(...).call
 
     def call
-      generate
-      write_cohort_import_csv
-      write_class_import_csv
+      files_written = Array(write_cohort_import_csv)
+      files_written += write_class_import_csv
+      files_written
     end
 
     def patients
@@ -105,12 +105,14 @@ module Generate
           ]
         end
       end
+      cohort_import_csv_filepath.to_s
     end
 
     def write_class_import_csv
+      # stree-ignore
       patients
         .group_by(&:school)
-        .each do |school, school_patients|
+        .map { |school, school_patients|
           next if school.nil?
 
           CSV.open(class_import_csv_filepath(school:), "w") do |csv|
@@ -138,7 +140,9 @@ module Generate
               ]
             end
           end
-        end
+          class_import_csv_filepath(school:).to_s
+        }
+        .compact
     end
 
     def programme_year_groups
