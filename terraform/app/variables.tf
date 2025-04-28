@@ -231,6 +231,17 @@ variable "backup_retention_period" {
 
 ########## ESC/Scaling Configuration ##########
 
+variable "container_insights" {
+  default     = "enabled"
+  type        = string
+  description = "Enable container insights level for the ECS cluster"
+  nullable    = false
+  validation {
+    condition     = contains(["enhanced", "enabled", "disabled"], var.container_insights)
+    error_message = "Valid values for container insights: enhanced, enabled, disabled"
+  }
+}
+
 variable "minimum_web_replicas" {
   type        = number
   default     = 3
