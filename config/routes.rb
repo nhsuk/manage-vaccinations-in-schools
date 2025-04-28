@@ -65,12 +65,6 @@ Rails.application.routes.draw do
         to: "dev#reset_organisation",
         as: :reset_organisation
     get "/random-consent-form", to: "dev#random_consent_form"
-    namespace :inspect do
-      get "graph/:object_type/:object_id", to: "graphs#show"
-      namespace :timeline do
-        resources :patients, only: [:show]
-      end
-    end
   end
 
   get "/csrf", to: "csrf#new"
