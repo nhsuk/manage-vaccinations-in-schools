@@ -99,7 +99,9 @@ describe ImmunisationImport do
     end
 
     context "with a SystmOne file" do
-      let(:programmes) { [create(:programme, :hpv_all_vaccines)] }
+      let(:programmes) do
+        [create(:programme, :hpv_all_vaccines), create(:programme, :menacwy)]
+      end
       let(:file) { "systm_one.csv" }
 
       it "is invalid" do
@@ -240,7 +242,9 @@ describe ImmunisationImport do
     end
 
     context "with a SystmOne file format" do
-      let(:programmes) { [create(:programme, :hpv_all_vaccines)] }
+      let(:programmes) do
+        [create(:programme, :hpv_all_vaccines), create(:programme, :menacwy)]
+      end
       let(:file) { "systm_one.csv" }
 
       before { Flipper.enable(:systm_one_import) }
@@ -250,8 +254,8 @@ describe ImmunisationImport do
         # stree-ignore
         expect { process! }
           .to change(immunisation_import, :processed_at).from(nil)
-          .and change(immunisation_import.vaccination_records, :count).by(2)
-          .and change(immunisation_import.patients, :count).by(2)
+          .and change(immunisation_import.vaccination_records, :count).by(3)
+          .and change(immunisation_import.patients, :count).by(3)
           .and change(immunisation_import.batches, :count).by(1)
           .and not_change(immunisation_import.patient_sessions, :count)
 
