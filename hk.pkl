@@ -1,35 +1,39 @@
-amends "package://github.com/jdx/hk/releases/download/v0.8.5/hk@0.8.5#/Config.pkl"
-import "package://github.com/jdx/hk/releases/download/v0.8.5/hk@0.8.5#/Builtins.pkl"
+amends "package://github.com/jdx/hk/releases/download/v1.0.0/hk@1.0.0#/Config.pkl"
+import "package://github.com/jdx/hk/releases/download/v1.0.0/hk@1.0.0#/Builtins.pkl"
 
-local linters = new Mapping<String, Step> {
-    ["brakeman"] {
-        check = "bin/brakeman --quiet --no-summary --no-pager"
-    }
+local linters = new Mapping<String, Group> {
+    ["all"] = new Group {
+        steps = new Mapping<String, Step> {
+                ["prettier"] = new Step {
+                    check = "bin/prettier --check --ignore-unknown {{ files }}"
+                    fix = "bin/prettier --write --list-different --ignore-unknown {{ files }}"
+                }
 
-    ["prettier"] {
-        check = "bin/prettier --check --ignore-unknown {{ files }}"
-        fix = "bin/prettier --write --list-different --ignore-unknown {{ files }}"
-    }
+                ["rubocop"] = new Step {
+                    glob = List("**/*.rb")
+                    check = "bin/rubocop {{ files }}"
+                    fix = "bin/rubocop --fix {{ files }}"
+                }
 
-    ["rubocop"] {
-        glob = List("**/*.rb")
-        check = "bin/rubocop {{ files }}"
-        fix = "bin/rubocop --fix {{ files }}"
-    }
+                ["rufo"] = new Step {
+                    glob = List("**/*.erb")
+                    exclude = List("**/layouts/*")
+                    check = "bin/rufo --check {{ files }}"
+                    fix = "bin/rufo {{ files }}"
+                }
 
-    ["rufo"] {
-        glob = List("**/*.erb")
-        exclude = List("**/layouts/*")
-        check = "bin/rufo --check {{ files }}"
-        fix = "bin/rufo {{ files }}"
-    }
+                ["terraform"] = (Builtins.terraform) {
+                }
 
-    ["terraform"] = Builtins.terraform
-
-    ["tf_lint"] {
-        glob = List("**/*.tf")
-        check = "tflint --chdir=terraform --recursive"
-        fix = "tflint --chdir=terraform --recursive --fix"
+                ["tf_lint"] = new Step {
+                    glob = List("**/*.tf")
+                    check = "tflint --chdir=terraform --recursive"
+                    fix = "tflint --chdir=terraform --recursive --fix"
+                }
+                ["brakeman"] = new Step {
+                    check = "bin/brakeman --quiet --no-summary --no-pager"
+                }
+        }
     }
 }
 
@@ -37,13 +41,13 @@ hooks {
     ["pre-commit"] {
         fix = true
         stash = "patch-file"
-        steps = linters
+        steps = linters["all"].steps
     }
     ["fix"] {
         fix = true
-        steps = linters
+        steps = linters["all"].steps
     }
     ["check"] {
-        steps = linters
+        steps = linters["all"].steps
     }
 }
