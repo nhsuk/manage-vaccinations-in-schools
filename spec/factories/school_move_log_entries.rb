@@ -4,13 +4,12 @@
 #
 # Table name: school_move_log_entries
 #
-#  id             :bigint           not null, primary key
-#  home_educated  :boolean
-#  move_to_school :boolean
-#  created_at     :datetime         not null
-#  patient_id     :bigint           not null
-#  school_id      :bigint
-#  user_id        :bigint
+#  id            :bigint           not null, primary key
+#  home_educated :boolean
+#  created_at    :datetime         not null
+#  patient_id    :bigint           not null
+#  school_id     :bigint
+#  user_id       :bigint
 #
 # Indexes
 #
