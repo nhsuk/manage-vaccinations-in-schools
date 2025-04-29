@@ -102,6 +102,17 @@ Rails.application.configure do
       class: "EnqueueClinicSessionInvitationsJob",
       description: "Send school clinic invitation emails to parents"
     },
+    invalidate_self_consents: {
+      cron: "every day at 2am",
+      class: "InvalidateSelfConsentsJob",
+      description:
+        "Invalidate all self-consents and associated triage for the previous day"
+    },
+    remove_import_csv: {
+      cron: "every day at 1am",
+      class: "RemoveImportCSVJob",
+      description: "Remove CSV data from old cohort and immunisation imports"
+    },
     school_consent_requests: {
       cron: "every day at 4pm",
       class: "EnqueueSchoolConsentRequestsJob",
@@ -114,21 +125,10 @@ Rails.application.configure do
       description:
         "Send school consent reminder emails to parents for each session"
     },
-    invalidate_self_consents: {
-      cron: "every day at 2am",
-      class: "InvalidateSelfConsentsJob",
-      description:
-        "Invalidate all self-consents and associated triage for the previous day"
-    },
     school_session_reminders: {
       cron: "every day at 9am",
       class: "SendSchoolSessionRemindersJob",
       description: "Send school session reminder emails to parents"
-    },
-    remove_import_csv: {
-      cron: "every day at 1am",
-      class: "RemoveImportCSVJob",
-      description: "Remove CSV data from old cohort and immunisation imports"
     },
     status_updater: {
       cron: "every day at 3am",
