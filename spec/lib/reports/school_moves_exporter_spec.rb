@@ -15,15 +15,27 @@ describe Reports::SchoolMovesExporter do
     let(:one_day_ago) { 1.day.ago }
     let(:three_days_ago) { 3.days.ago }
 
+    let(:school) { create(:school, :secondary, organisation:) }
+
     before do
       3.times do
-        patient = create(:patient, organisation:)
-        create(:school_move_log_entry, patient:, created_at: one_day_ago)
+        patient = create(:patient, school:, organisation:)
+        create(
+          :school_move_log_entry,
+          patient:,
+          school:,
+          created_at: one_day_ago
+        )
       end
 
       2.times do
-        patient = create(:patient, organisation:)
-        create(:school_move_log_entry, patient:, created_at: three_days_ago)
+        patient = create(:patient, school:, organisation:)
+        create(
+          :school_move_log_entry,
+          patient:,
+          school:,
+          created_at: three_days_ago
+        )
       end
     end
 
@@ -42,8 +54,8 @@ describe Reports::SchoolMovesExporter do
     let(:rows) { CSV.parse(csv_data, headers: true) }
 
     context "with a standard school move" do
-      let(:old_school) { create(:school, :secondary) }
-      let(:new_school) { create(:school, :secondary) }
+      let(:old_school) { create(:school, :secondary, organisation:) }
+      let(:new_school) { create(:school, :secondary, organisation:) }
 
       before do
         patient = create(:patient, school: old_school, organisation:)
@@ -97,6 +109,84 @@ describe Reports::SchoolMovesExporter do
 
       it "returns '888888' as the URN" do
         expect(rows.first["NATIONAL_URN_NO"]).to eq("888888")
+      end
+    end
+
+    context "when a patient moves out of an organisation" do
+      let(:organisation1) { create(:organisation) }
+      let(:organisation2) { create(:organisation) }
+
+      let(:school1) { create(:school, :secondary, organisation: organisation1) }
+      let(:school2) { create(:school, :secondary, organisation: organisation2) }
+
+      let(:patient) { create(:patient, organisation: organisation2) }
+
+      let(:created_at1) { 1.week.ago }
+      let(:created_at2) { Time.current }
+
+      before do
+        # first they were added to school 1
+        create(
+          :school_move_log_entry,
+          patient:,
+          school: school1,
+          created_at: created_at1
+        )
+
+        # next they were moved to school 2
+        create(
+          :school_move_log_entry,
+          patient:,
+          school: school2,
+          created_at: created_at2
+        )
+      end
+
+      context "from the old organisation" do
+        let(:organisation) { organisation1 }
+
+        it "includes two rows" do
+          expect(rows.count).to eq(2)
+        end
+
+        it "has the move in and the move out" do
+          expect(rows[0].to_hash).to include(
+            {
+              "NHS_REF" => patient.nhs_number,
+              "NATIONAL_URN_NO" => school1.urn,
+              "BASE_NAME" => school1.name,
+              "STARTDATE" => created_at1.iso8601
+            }
+          )
+
+          expect(rows[1].to_hash).to include(
+            {
+              "NHS_REF" => patient.nhs_number,
+              "NATIONAL_URN_NO" => school2.urn,
+              "BASE_NAME" => school2.name,
+              "STARTDATE" => created_at2.iso8601
+            }
+          )
+        end
+      end
+
+      context "from the new organisation" do
+        let(:organisation) { organisation2 }
+
+        it "includes one row" do
+          expect(rows.count).to eq(1)
+        end
+
+        it "has the move in" do
+          expect(rows.first.to_hash).to include(
+            {
+              "NHS_REF" => patient.nhs_number,
+              "NATIONAL_URN_NO" => school2.urn,
+              "BASE_NAME" => school2.name,
+              "STARTDATE" => created_at2.iso8601
+            }
+          )
+        end
       end
     end
   end

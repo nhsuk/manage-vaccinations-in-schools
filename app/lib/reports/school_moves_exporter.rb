@@ -45,12 +45,34 @@ class Reports::SchoolMovesExporter
 
   attr_reader :organisation, :start_date, :end_date
 
-  delegate :patients, to: :organisation
-
   def school_move_log_entries
     @school_move_log_entries ||=
       begin
-        scope = SchoolMoveLogEntry.where(patient: patients)
+        historical_patients =
+          Patient
+            .where.not(organisation:)
+            .where(
+              SchoolMoveLogEntry
+                .where("patient_id = patients.id")
+                .where(school: organisation.schools)
+                .arel
+                .exists
+            )
+
+        scope =
+          SchoolMoveLogEntry
+            .where(school: organisation.schools)
+            .or(
+              SchoolMoveLogEntry.where(
+                patient: organisation.patients,
+                school: nil
+              )
+            )
+            .or(
+              SchoolMoveLogEntry
+                .where.not(patient: organisation.patients)
+                .where(patient: historical_patients)
+            )
 
         if start_date.present?
           scope =
