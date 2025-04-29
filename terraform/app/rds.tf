@@ -34,21 +34,19 @@ resource "aws_db_subnet_group" "aurora_subnet_group" {
 }
 
 resource "aws_rds_cluster" "aurora_cluster" {
-  cluster_identifier           = var.resource_name.db_cluster
-  engine                       = "aurora-postgresql"
-  engine_mode                  = "provisioned"
-  engine_version               = var.rds_engine_version
-  database_name                = "manage_vaccinations"
-  master_username              = "postgres"
-  manage_master_user_password  = var.db_secret_arn == null
-  storage_encrypted            = true
-  backup_retention_period      = var.backup_retention_period
-  skip_final_snapshot          = !local.is_production
-  db_subnet_group_name         = aws_db_subnet_group.aurora_subnet_group.name
-  vpc_security_group_ids       = [aws_security_group.rds_security_group.id]
-  deletion_protection          = true
-  allow_major_version_upgrade  = true
-  preferred_maintenance_window = var.rds_maintenance_window
+  cluster_identifier          = var.resource_name.db_cluster
+  engine                      = "aurora-postgresql"
+  engine_mode                 = "provisioned"
+  engine_version              = "14.9"
+  database_name               = "manage_vaccinations"
+  master_username             = "postgres"
+  manage_master_user_password = var.db_secret_arn == null
+  storage_encrypted           = true
+  backup_retention_period     = var.backup_retention_period
+  skip_final_snapshot         = !local.is_production
+  db_subnet_group_name        = aws_db_subnet_group.aurora_subnet_group.name
+  vpc_security_group_ids      = [aws_security_group.rds_security_group.id]
+  deletion_protection         = true
 
   serverlessv2_scaling_configuration {
     max_capacity = var.max_aurora_capacity_units
