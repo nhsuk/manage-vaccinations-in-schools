@@ -186,7 +186,7 @@ GEM
     config (5.5.2)
       deep_merge (~> 1.2, >= 1.2.1)
       ostruct
-    connection_pool (2.5.1)
+    connection_pool (2.5.3)
     crack (1.0.0)
       bigdecimal
       rexml
@@ -277,7 +277,7 @@ GEM
       activemodel (>= 6.1)
       activesupport (>= 6.1)
       html-attributes-utils (~> 1)
-    govuk_markdown (2.0.2)
+    govuk_markdown (2.0.3)
       activesupport
       redcarpet
     haml (6.1.1)
@@ -509,7 +509,7 @@ GEM
       logger
     rdoc (6.13.1)
       psych (>= 4.0.0)
-    redcarpet (3.6.0)
+    redcarpet (3.6.1)
     regexp_parser (2.10.0)
     reline (0.6.1)
       io-console (~> 0.5)
