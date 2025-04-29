@@ -614,7 +614,8 @@ class ImmunisationImportRow
 
     field = dose_sequence.presence || combined_vaccination_and_dose_sequence
 
-    if field.present?
+    if dose_sequence.present? ||
+         parsed_vaccination_description_string&.dig(:dose_sequence).present?
       if offline_recording? && default_dose_sequence.nil?
         errors.add(
           field.header,
