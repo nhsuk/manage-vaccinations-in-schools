@@ -108,9 +108,9 @@ Rails.application.configure do
       description:
         "Send school consent request emails to parents for each session"
     },
-    consent_reminder: {
-      cron: "every day at 9am",
-      class: "SendSchoolConsentReminderJob",
+    school_consent_reminders: {
+      cron: "every day at 4pm",
+      class: "EnqueueSchoolConsentRemindersJob",
       description:
         "Send school consent reminder emails to parents for each session"
     },
