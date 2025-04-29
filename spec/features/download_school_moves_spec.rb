@@ -42,10 +42,15 @@ describe "Download school moves" do
   end
 
   def and_school_moves_exist
-    create(:school_move_log_entry, patient: @patients.first)
+    create(
+      :school_move_log_entry,
+      patient: @patients.first,
+      school: @session.location
+    )
     create(
       :school_move_log_entry,
       patient: @patients.second,
+      school: @session.location,
       created_at: Time.zone.local(2024, 6, 15) # Middle of the date range
     )
   end

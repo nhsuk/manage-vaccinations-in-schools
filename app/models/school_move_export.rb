@@ -11,15 +11,11 @@ class SchoolMoveExport
     %i[dates confirm].freeze
   end
 
-  delegate :count, to: :school_moves
-
   def self.request_session_key
     "school_move_export"
   end
 
-  def csv_data
-    Reports::SchoolMovesExporter.call(school_moves)
-  end
+  delegate :csv_data, :row_count, to: :exporter
 
   def csv_filename
     name_parts = ["school_moves_export"]
@@ -48,29 +44,13 @@ class SchoolMoveExport
 
   private
 
-  def school_moves
-    scope =
-      SchoolMoveLogEntry.where(
-        patient: @current_user.selected_organisation.patients
+  def exporter
+    @exporter ||=
+      Reports::SchoolMovesExporter.new(
+        organisation: @current_user.selected_organisation,
+        start_date: date_from,
+        end_date: date_to
       )
-
-    if date_from.present?
-      scope =
-        scope.where(
-          "school_move_log_entries.created_at >= ?",
-          date_from.beginning_of_day
-        )
-    end
-
-    if date_to.present?
-      scope =
-        scope.where(
-          "school_move_log_entries.created_at <= ?",
-          date_to.end_of_day
-        )
-    end
-
-    scope
   end
 
   def reset_unused_fields

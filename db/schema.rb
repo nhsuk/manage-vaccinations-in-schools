@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_04_14_092500) do
+ActiveRecord::Schema[8.0].define(version: 2025_04_29_140846) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -659,7 +659,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_14_092500) do
     t.bigint "user_id"
     t.bigint "school_id"
     t.boolean "home_educated"
-    t.boolean "move_to_school"
     t.datetime "created_at", null: false
     t.index ["patient_id"], name: "index_school_move_log_entries_on_patient_id"
     t.index ["school_id"], name: "index_school_move_log_entries_on_school_id"

@@ -24,11 +24,15 @@ class Reports::SchoolMovesExporter
     DES_NUMBER
   ].freeze
 
-  def initialize(school_move_log_entries)
-    @school_move_log_entries = school_move_log_entries
+  def initialize(organisation:, start_date:, end_date:)
+    @organisation = organisation
+    @start_date = start_date
+    @end_date = end_date
   end
 
-  def call
+  def row_count = school_move_log_entries.count
+
+  def csv_data
     CSV.generate(headers: HEADERS, write_headers: true) do |csv|
       school_move_log_entries
         .includes(:patient, :school)
@@ -37,13 +41,58 @@ class Reports::SchoolMovesExporter
     end
   end
 
-  def self.call(...) = new(...).call
-
-  private_class_method :new
-
   private
 
-  attr_reader :school_move_log_entries
+  attr_reader :organisation, :start_date, :end_date
+
+  def school_move_log_entries
+    @school_move_log_entries ||=
+      begin
+        historical_patients =
+          Patient
+            .where.not(organisation:)
+            .where(
+              SchoolMoveLogEntry
+                .where("patient_id = patients.id")
+                .where(school: organisation.schools)
+                .arel
+                .exists
+            )
+
+        scope =
+          SchoolMoveLogEntry
+            .where(school: organisation.schools)
+            .or(
+              SchoolMoveLogEntry.where(
+                patient: organisation.patients,
+                school: nil
+              )
+            )
+            .or(
+              SchoolMoveLogEntry
+                .where.not(patient: organisation.patients)
+                .where(patient: historical_patients)
+            )
+
+        if start_date.present?
+          scope =
+            scope.where(
+              "school_move_log_entries.created_at >= ?",
+              start_date.beginning_of_day
+            )
+        end
+
+        if end_date.present?
+          scope =
+            scope.where(
+              "school_move_log_entries.created_at <= ?",
+              end_date.end_of_day
+            )
+        end
+
+        scope
+      end
+  end
 
   def row(log_entry)
     patient = log_entry.patient

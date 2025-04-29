@@ -21,44 +21,6 @@ describe SchoolMoveExport do
     end
   end
 
-  describe "#count" do
-    let(:one_day_ago) { 1.day.ago }
-    let(:three_days_ago) { 3.days.ago }
-
-    before do
-      3.times do
-        patient = create(:patient, organisation: organisation)
-        create(:school_move_log_entry, patient:, created_at: one_day_ago)
-      end
-
-      2.times do
-        patient = create(:patient, organisation: organisation)
-        create(:school_move_log_entry, patient:, created_at: three_days_ago)
-      end
-    end
-
-    it "returns the count of school moves" do
-      expect(school_move_export.count).to eq(5)
-    end
-
-    context "when date range is specified" do
-      before do
-        school_move_export.assign_attributes(
-          {
-            "date_from(3i)" => one_day_ago.day.to_s,
-            "date_from(2i)" => one_day_ago.month.to_s,
-            "date_from(1i)" => one_day_ago.year.to_s,
-            "wizard_step" => :dates
-          }
-        )
-      end
-
-      it "returns the count of school moves within the date range" do
-        expect(school_move_export.count).to eq(3)
-      end
-    end
-  end
-
   describe "dates formatted" do
     let(:date) { Date.new(2023, 1, 1) }
 
