@@ -27,4 +27,4 @@ minimum_web_replicas = 2
 maximum_web_replicas = 4
 
 rds_engine_version     = "16.8"
-rds_maintenance_window = "tue:02:30-tue:03:00"
+rds_maintenance_window = "thu:02:30-thu:03:00"
