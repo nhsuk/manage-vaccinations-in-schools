@@ -35,13 +35,29 @@ local linters = new Mapping<String, Group> {
                 }
         }
     }
+    local steps_with_staged_fixes = (linters["all"].steps) {
+        for (key, value in linters["all"].steps) {
+            [key] = (value) {
+                stage = List("*")
+            }
+        }
+    }
+    ["pre-commit"] = new Group {
+        steps = steps_with_staged_fixes.toMap().remove("brakeman").toMapping()
+    }
 }
 
 hooks {
     ["pre-commit"] {
         fix = true
         stash = "patch-file"
-        steps = linters["all"].steps
+        steps = new Mapping<String, Step | Group> {
+            ["pre-commit"] = linters["pre-commit"]
+            ["check_staged"] = new Step {
+                check = "if git diff --staged --quiet; then echo 'No staged files aborting commit'; exit 1; fi"
+                exclusive = true
+            }
+        }
     }
     ["fix"] {
         fix = true
