@@ -4,14 +4,15 @@
 #
 # Table name: teams
 #
-#  id              :bigint           not null, primary key
-#  email           :string           not null
-#  name            :string           not null
-#  phone           :string           not null
-#  created_at      :datetime         not null
-#  updated_at      :datetime         not null
-#  organisation_id :bigint           not null
-#  reply_to_id     :uuid
+#  id                 :bigint           not null, primary key
+#  email              :string           not null
+#  name               :string           not null
+#  phone              :string           not null
+#  phone_instructions :string
+#  created_at         :datetime         not null
+#  updated_at         :datetime         not null
+#  organisation_id    :bigint           not null
+#  reply_to_id        :uuid
 #
 # Indexes
 #

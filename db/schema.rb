@@ -509,6 +509,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_29_140846) do
     t.integer "days_before_invitations", default: 21, null: false
     t.string "careplus_venue_code", null: false
     t.string "privacy_notice_url", null: false
+    t.string "phone_instructions"
     t.index ["name"], name: "index_organisations_on_name", unique: true
     t.index ["ods_code"], name: "index_organisations_on_ods_code", unique: true
   end
@@ -735,6 +736,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_29_140846) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.uuid "reply_to_id"
+    t.string "phone_instructions"
     t.index ["organisation_id", "name"], name: "index_teams_on_organisation_id_and_name", unique: true
   end
 

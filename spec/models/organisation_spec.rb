@@ -13,6 +13,7 @@
 #  name                          :text             not null
 #  ods_code                      :string           not null
 #  phone                         :string
+#  phone_instructions            :string
 #  privacy_notice_url            :string           not null
 #  privacy_policy_url            :string           not null
 #  created_at                    :datetime         not null
