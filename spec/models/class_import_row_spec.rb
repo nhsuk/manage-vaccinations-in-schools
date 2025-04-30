@@ -263,7 +263,7 @@ describe ClassImportRow do
           family_name: "Smith",
           gender_code: "female",
           given_name: "Jimmy",
-          nhs_number: "1234567890",
+          nhs_number: "9990000018",
           address_line_1: "10 Downing Street",
           address_line_2: "",
           address_town: "London",
