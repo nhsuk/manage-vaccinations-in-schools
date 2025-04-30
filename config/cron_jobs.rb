@@ -69,4 +69,4 @@ CRON_JOBS = {
     class: "SendVaccinationConfirmationsJob",
     description: "Send vaccination confirmation emails to parents"
   }
-}
+}.freeze
