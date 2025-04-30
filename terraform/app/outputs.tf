@@ -33,3 +33,8 @@ output "ecs_variables" {
   }
   description = "Essential attributes of the ECS service"
 }
+
+output "db_secret_arn" {
+  description = "The ARN of the secret containing the DB credentials."
+  value       = var.db_secret_arn == null ? aws_rds_cluster.aurora_cluster.master_user_secret[0].secret_arn : var.db_secret_arn
+}
