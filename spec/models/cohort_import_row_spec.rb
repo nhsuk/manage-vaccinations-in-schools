@@ -299,7 +299,7 @@ describe CohortImportRow do
           family_name: "Smith",
           gender_code: "male",
           given_name: "Jimmy",
-          nhs_number: "1234567890",
+          nhs_number: "9990000018",
           organisation: nil,
           school: Location.first
         )
