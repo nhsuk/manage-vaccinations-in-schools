@@ -31,6 +31,8 @@ class ConsentNotification < ApplicationRecord
   belongs_to :patient
   belongs_to :session
 
+  has_one :organisation, through: :session
+
   has_many :consent_notification_programmes,
            -> { joins(:programme).order(:"programmes.type") },
            dependent: :destroy
