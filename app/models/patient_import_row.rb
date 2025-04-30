@@ -47,6 +47,12 @@ class PatientImportRow
         existing_patient.registration = attributes.delete(:registration)
       end
 
+      if attributes[:gender_code].in?(%w[male female not_specified]) &&
+           !existing_patient.gender_code.in?(%w[male female not_specified]) &&
+           attributes[:gender_code] != existing_patient.gender_code
+        existing_patient.gender_code = attributes.delete(:gender_code)
+      end
+
       if address_postcode.present? &&
            address_postcode.to_postcode != existing_patient.address_postcode
         attributes.merge!(
