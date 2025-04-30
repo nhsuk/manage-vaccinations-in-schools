@@ -12,7 +12,7 @@ local linters = new Mapping<String, Group> {
                 ["rubocop"] = new Step {
                     glob = List("**/*.rb")
                     check = "bin/rubocop {{ files }}"
-                    fix = "bin/rubocop --fix {{ files }}"
+                    fix = "bin/rubocop --autocorrect {{ files }}"
                 }
 
                 ["rufo"] = new Step {

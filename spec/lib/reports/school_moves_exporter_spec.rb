@@ -113,37 +113,41 @@ describe Reports::SchoolMovesExporter do
     end
 
     context "when a patient moves out of an organisation" do
-      let(:organisation1) { create(:organisation) }
-      let(:organisation2) { create(:organisation) }
+      let(:organisation_a) { create(:organisation) }
+      let(:organisation_b) { create(:organisation) }
 
-      let(:school1) { create(:school, :secondary, organisation: organisation1) }
-      let(:school2) { create(:school, :secondary, organisation: organisation2) }
+      let(:school_a) do
+        create(:school, :secondary, organisation: organisation_a)
+      end
+      let(:school_b) do
+        create(:school, :secondary, organisation: organisation_b)
+      end
 
-      let(:patient) { create(:patient, organisation: organisation2) }
+      let(:patient) { create(:patient, organisation: organisation_b) }
 
-      let(:created_at1) { 1.week.ago }
-      let(:created_at2) { Time.current }
+      let(:created_at_a) { 1.week.ago }
+      let(:created_at_b) { Time.current }
 
       before do
         # first they were added to school 1
         create(
           :school_move_log_entry,
           patient:,
-          school: school1,
-          created_at: created_at1
+          school: school_a,
+          created_at: created_at_a
         )
 
         # next they were moved to school 2
         create(
           :school_move_log_entry,
           patient:,
-          school: school2,
-          created_at: created_at2
+          school: school_b,
+          created_at: created_at_b
         )
       end
 
       context "from the old organisation" do
-        let(:organisation) { organisation1 }
+        let(:organisation) { organisation_a }
 
         it "includes two rows" do
           expect(rows.count).to eq(2)
@@ -153,25 +157,25 @@ describe Reports::SchoolMovesExporter do
           expect(rows[0].to_hash).to include(
             {
               "NHS_REF" => patient.nhs_number,
-              "NATIONAL_URN_NO" => school1.urn,
-              "BASE_NAME" => school1.name,
-              "STARTDATE" => created_at1.iso8601
+              "NATIONAL_URN_NO" => school_a.urn,
+              "BASE_NAME" => school_a.name,
+              "STARTDATE" => created_at_a.iso8601
             }
           )
 
           expect(rows[1].to_hash).to include(
             {
               "NHS_REF" => patient.nhs_number,
-              "NATIONAL_URN_NO" => school2.urn,
-              "BASE_NAME" => school2.name,
-              "STARTDATE" => created_at2.iso8601
+              "NATIONAL_URN_NO" => school_b.urn,
+              "BASE_NAME" => school_b.name,
+              "STARTDATE" => created_at_b.iso8601
             }
           )
         end
       end
 
       context "from the new organisation" do
-        let(:organisation) { organisation2 }
+        let(:organisation) { organisation_b }
 
         it "includes one row" do
           expect(rows.count).to eq(1)
@@ -181,9 +185,9 @@ describe Reports::SchoolMovesExporter do
           expect(rows.first.to_hash).to include(
             {
               "NHS_REF" => patient.nhs_number,
-              "NATIONAL_URN_NO" => school2.urn,
-              "BASE_NAME" => school2.name,
-              "STARTDATE" => created_at2.iso8601
+              "NATIONAL_URN_NO" => school_b.urn,
+              "BASE_NAME" => school_b.name,
+              "STARTDATE" => created_at_b.iso8601
             }
           )
         end
