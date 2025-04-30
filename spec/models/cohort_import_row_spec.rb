@@ -86,6 +86,17 @@ describe CohortImportRow do
       end
     end
 
+    context "with an invalid NHS number" do
+      let(:data) { { "CHILD_NHS_NUMBER" => "TP01234567" } }
+
+      it "has errors" do
+        expect(cohort_import_row).to be_invalid
+        expect(cohort_import_row.errors["CHILD_NHS_NUMBER"]).to eq(
+          ["should be a valid NHS number with 10 characters"]
+        )
+      end
+    end
+
     context "with an invalid school URN" do
       let(:data) { valid_data.merge("CHILD_SCHOOL_URN" => "123456789") }
 
