@@ -22,13 +22,13 @@ describe CSVParser do
     expect(row[:another_header].header).to eq("Another-Header")
   end
 
-  context "with a non-breaking space" do
-    let(:data) { "header\u00A0\nvalue\u00A0" }
+  context "with un-normalised whitespace" do
+    let(:data) { "  header\u200D \u00A0 \n clean \u200D \t value\u00A0 " }
 
     it "removes the characters" do
       row = table.first
 
-      expect(row[:header].value).to eq("value")
+      expect(row[:header].value).to eq("clean value")
     end
   end
 
