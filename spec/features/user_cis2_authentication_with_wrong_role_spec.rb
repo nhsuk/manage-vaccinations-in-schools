@@ -15,14 +15,7 @@ describe "User CIS2 authentication", :cis2 do
   def given_i_am_setup_in_mavis_and_cis2_but_with_the_wrong_role
     @organisation = create :organisation, ods_code: "AB12"
 
-    mock_cis2_auth(
-      uid: "123",
-      given_name: "Nurse",
-      family_name: "Test",
-      org_code: @organisation.ods_code,
-      org_name: @organisation.name,
-      role_code: "S8002:G8003:R0001"
-    )
+    mock_cis2_auth(selected_roleid: "wrong-role")
   end
 
   def when_i_click_the_cis2_login_button
@@ -51,9 +44,6 @@ describe "User CIS2 authentication", :cis2 do
     # With don't actually get to select the right role directly in our test
     # setup so we change the cis2 response to simulate it.
     mock_cis2_auth(
-      uid: "123",
-      given_name: "Nurse",
-      family_name: "Test",
       org_code: @organisation.ods_code,
       org_name: @organisation.name,
       role: :nurse
