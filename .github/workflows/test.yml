@@ -5,9 +5,34 @@ on:
   workflow_call:
 
 jobs:
+  pre-rails-tests:
+    name: Pre Rails Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Determine if rails tests are needed
+        id: check-rails-relevant-changes
+        run: |
+          if [ ${{ github.event_name }} == "pull_request" ]; then
+            git fetch origin ${{ github.event.pull_request.head.ref }}
+            RELEVANT_DIRS=$(git diff ${{ github.event.pull_request.base.sha }} origin/${{ github.event.pull_request.head.ref }}  --name-only)
+            echo "Relevant changes for rails: $RELEVANT_DIRS"
+            if [ -z "$(echo "$RELEVANT_DIRS" | egrep -v "^(.github|adr|aws|docs|storage|terraform|tests|tests-examples)/")" ]; then
+              echo "No relevant changes detected, skipping rails tests"
+              echo "RUN_PRE_RAILS_TESTS=false" >> $GITHUB_OUTPUT
+              exit 0
+            fi
+          fi
+          echo "Not a pull request or detected relevant changes: Running rails tests"
+          echo "RUN_PRE_RAILS_TESTS=true" >> $GITHUB_OUTPUT
+    outputs:
+      run-pre-rails-tests: ${{ steps.check-rails-relevant-changes.outputs.RUN_PRE_RAILS_TESTS }}
+
   rails:
     name: Rails
     runs-on: ubuntu-latest
+    needs: pre-rails-tests
+    if: needs.pre-rails-tests.outputs.run-pre-rails-tests == 'true'
     services:
       postgres:
         image: postgres:17.2
