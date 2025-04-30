@@ -286,6 +286,29 @@ describe CohortImportRow do
         it { should be(true) }
       end
     end
+
+    context "with an existing patient that was previously removed from cohort" do
+      subject(:school_move) do
+        cohort_import_row.to_school_move(existing_patient)
+      end
+
+      let!(:existing_patient) do
+        create(
+          :patient,
+          address_postcode: "SW1A 1AA",
+          family_name: "Smith",
+          gender_code: "male",
+          given_name: "Jimmy",
+          nhs_number: "1234567890",
+          organisation: nil,
+          school: Location.first
+        )
+      end
+
+      let(:data) { valid_data }
+
+      it { should_not be_nil }
+    end
   end
 
   describe "#to_parent_relationships" do
