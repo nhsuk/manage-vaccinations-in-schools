@@ -36,9 +36,7 @@ module Generate
     def self.call(...) = new(...).call
 
     def call
-      files_written = Array(write_cohort_import_csv)
-      files_written += write_class_import_csv
-      files_written
+      write_cohort_import_csv
     end
 
     def patients
@@ -50,12 +48,6 @@ module Generate
     def cohort_import_csv_filepath
       Rails.root.join(
         "tmp/perf-test-cohort-import-#{organisation.ods_code}-#{programme.type}.csv"
-      )
-    end
-
-    def class_import_csv_filepath(school:)
-      Rails.root.join(
-        "tmp/perf-test-class-import-#{school.name}-#{school.sessions.first.slug}.csv"
       )
     end
 
@@ -106,43 +98,6 @@ module Generate
         end
       end
       cohort_import_csv_filepath.to_s
-    end
-
-    def write_class_import_csv
-      # stree-ignore
-      patients
-        .group_by(&:school)
-        .map { |school, school_patients|
-          next if school.nil?
-
-          CSV.open(class_import_csv_filepath(school:), "w") do |csv|
-            csv << %w[
-              CHILD_POSTCODE
-              CHILD_DATE_OF_BIRTH
-              CHILD_FIRST_NAME
-              CHILD_LAST_NAME
-              PARENT_1_EMAIL
-              PARENT_1_PHONE
-              PARENT_2_EMAIL
-              PARENT_2_PHONE
-            ]
-
-            school_patients.each do |patient|
-              csv << [
-                patient.address_postcode,
-                patient.date_of_birth,
-                patient.given_name,
-                patient.family_name,
-                patient.parents.first&.email,
-                patient.parents.first&.phone,
-                patient.parents.second&.email,
-                patient.parents.second&.phone
-              ]
-            end
-          end
-          class_import_csv_filepath(school:).to_s
-        }
-        .compact
     end
 
     def programme_year_groups
