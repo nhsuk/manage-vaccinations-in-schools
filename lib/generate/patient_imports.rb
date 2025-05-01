@@ -13,12 +13,18 @@ Faker::Config.locale = "en-GB"
 #
 module Generate
   class PatientImports
-    attr_reader :ods_code, :organisation, :programme, :urns, :patient_count
+    attr_reader :ods_code,
+                :organisation,
+                :programme,
+                :urns,
+                :patient_count,
+                :school_year_groups
 
     def initialize(
       ods_code: "A9A5A",
       programme: "hpv",
       urns: nil,
+      school_year_groups: nil,
       patient_count: 10
     )
       @organisation = Organisation.find_by(ods_code:)
@@ -30,6 +36,7 @@ module Generate
             .select { it.urn.present? }
             .sample(3)
             .pluck(:urn)
+      @school_year_groups = school_year_groups
       @patient_count = patient_count
     end
 
@@ -106,11 +113,17 @@ module Generate
 
     def schools_with_year_groups
       @schools_with_year_groups ||=
-        organisation
-          .locations
-          .where(urn: urns)
-          .includes(:organisation, :sessions)
-          .select { (it.year_groups & programme_year_groups).any? }
+        if school_year_groups.present?
+          urns.map do |urn|
+            Location.new(urn:, year_groups: school_year_groups[urn])
+          end
+        else
+          organisation
+            .locations
+            .where(urn: urns)
+            .includes(:organisation, :sessions)
+            .select { (it.year_groups & programme_year_groups).any? }
+        end
     end
 
     def build_patient(year_group: nil)
