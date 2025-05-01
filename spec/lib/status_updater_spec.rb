@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 describe StatusUpdater do
+  #TODO: Add tests here
   subject(:call) { described_class.call }
 
   let!(:patient_session) { create(:patient_session, patient:, programmes:) }
