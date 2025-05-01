@@ -10,9 +10,9 @@ class SchoolMovesConfirmer
     ActiveRecord::Base.transaction do
       update_patients!
       update_sessions!
+      create_log_entries!
 
       school_moves.each do |school_move|
-        school_move.create_log_entry!(user:)
         if school_move.persisted?
           SchoolMove.where(patient: school_move.patient).destroy_all
         end
@@ -67,5 +67,12 @@ class SchoolMovesConfirmer
     )
 
     StatusUpdater.call(patient: patients)
+  end
+
+  def create_log_entries!
+    log_entries =
+      school_moves.map { |school_move| school_move.to_log_entry(user:) }
+
+    SchoolMoveLogEntry.import!(log_entries)
   end
 end

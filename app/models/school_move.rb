@@ -58,8 +58,8 @@ class SchoolMove < ApplicationRecord
 
   def sessions = [school_session, generic_clinic_session].compact
 
-  def create_log_entry!(user:)
-    SchoolMoveLogEntry.create!(home_educated:, patient:, school:, user:)
+  def to_log_entry(user:)
+    SchoolMoveLogEntry.new(home_educated:, patient:, school:, user:)
   end
 
   private
