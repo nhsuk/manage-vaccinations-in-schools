@@ -8,8 +8,9 @@ class SchoolMovesConfirmer
 
   def call
     ActiveRecord::Base.transaction do
+      update_patients!
+
       school_moves.each do |school_move|
-        school_move.update_patient!
         school_move.update_sessions!
         school_move.create_log_entry!(user:)
         if school_move.persisted?
@@ -26,4 +27,24 @@ class SchoolMovesConfirmer
   private
 
   attr_reader :school_moves, :user
+
+  def update_patients!
+    patients_to_import =
+      school_moves.filter_map do |school_move|
+        patient = school_move.patient
+
+        patient.home_educated = school_move.home_educated
+        patient.school = school_move.school
+
+        patient if patient.changed?
+      end
+
+    Patient.import!(
+      patients_to_import,
+      on_duplicate_key_update: {
+        conflict_target: [:id],
+        columns: %i[home_educated school_id]
+      }
+    )
+  end
 end
