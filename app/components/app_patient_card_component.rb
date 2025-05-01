@@ -23,20 +23,21 @@ class AppPatientCardComponent < ViewComponent::Base
         ) %>
       <% end %>
 
-      <%= render AppChildSummaryComponent.new(patient, show_parents: true, change_links:) %>
+      <%= render AppChildSummaryComponent.new(patient, show_parents: true, change_links:, remove_links:) %>
 
       <%= content %>
     <% end %>
   ERB
 
-  def initialize(patient, change_links: {})
+  def initialize(patient, change_links: {}, remove_links: {})
     super
 
     @patient = patient
     @change_links = change_links
+    @remove_links = remove_links
   end
 
   private
 
-  attr_reader :patient, :change_links
+  attr_reader :patient, :change_links, :remove_links
 end
