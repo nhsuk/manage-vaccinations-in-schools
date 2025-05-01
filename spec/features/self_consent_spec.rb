@@ -199,6 +199,10 @@ describe "Self-consent" do
     click_on "Continue"
 
     # confirmation page
+    click_on "Change response method"
+    choose "Child (Gillick competent)"
+    5.times { click_on "Continue" }
+
     click_on "Confirm"
 
     expect(page).to have_content("Consent recorded for #{@patient.full_name}")
