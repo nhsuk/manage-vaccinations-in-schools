@@ -325,6 +325,40 @@ describe CohortImportRow do
       end
     end
 
+    context "with an existing patient with a different address (but matching postcode)" do
+      let!(:existing_patient) do
+        create(
+          :patient,
+          family_name: "Smith",
+          given_name: "Jimmy",
+          gender_code: "male",
+          nhs_number: "9990000018",
+          birth_academic_year: 2009,
+          date_of_birth: Date.new(2010, 1, 1),
+          registration: "8AB",
+          address_line_1: "15 Woodstock Road",
+          address_line_2: "Jericho",
+          address_town: "Oxford",
+          address_postcode: "SW1A 1AA"
+        )
+      end
+
+      it { should eq(existing_patient) }
+
+      it "saves the incoming address" do
+        expect(patient).to have_attributes(
+          address_line_1: "10 Downing Street",
+          address_line_2: "",
+          address_town: "London",
+          address_postcode: "SW1A 1AA"
+        )
+      end
+
+      it "doesn't stage the incoming address" do
+        expect(patient.pending_changes).to be_empty
+      end
+    end
+
     context "with an existing patient already with an address" do
       let!(:existing_patient) do
         create(
