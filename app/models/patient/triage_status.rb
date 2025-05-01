@@ -73,19 +73,27 @@ class Patient::TriageStatus < ApplicationRecord
 
   private
 
+  def vaccinated?
+    VaccinatedCriteria.call(programme:, patient:, vaccination_records:)
+  end
+
   def status_should_be_safe_to_vaccinate?
+    return false if vaccinated?
     latest_triage&.ready_to_vaccinate?
   end
 
   def status_should_be_do_not_vaccinate?
+    return false if vaccinated?
     latest_triage&.do_not_vaccinate?
   end
 
   def status_should_be_delay_vaccination?
+    return false if vaccinated?
     latest_triage&.delay_vaccination?
   end
 
   def status_should_be_required?
+    return false if vaccinated?
     return true if latest_triage&.needs_follow_up?
 
     return false if latest_consents.empty?
