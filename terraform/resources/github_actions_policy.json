@@ -62,6 +62,7 @@
         "ecs:DeleteService",
         "ecs:DeregisterTaskDefinition",
         "ecs:RegisterTaskDefinition",
+        "ecs:UpdateCluster",
         "ecs:UpdateService",
         "elasticloadbalancing:CreateListener",
         "elasticloadbalancing:CreateLoadBalancer",
