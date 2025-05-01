@@ -146,6 +146,10 @@ Rails.application.routes.draw do
   resources :patients, only: %i[index show edit update] do
     post "", action: :index, on: :collection
 
+    resources :parent_relationships, path: "parents", only: %i[destroy] do
+      get "destroy", action: :confirm_destroy, on: :member, as: "destroy"
+    end
+
     member do
       get "log"
 

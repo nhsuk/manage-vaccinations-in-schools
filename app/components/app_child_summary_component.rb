@@ -1,16 +1,19 @@
 # frozen_string_literal: true
 
 class AppChildSummaryComponent < ViewComponent::Base
-  def initialize(child, show_parents: false, change_links: {})
+  def initialize(child, show_parents: false, change_links: {}, remove_links: {})
     super
 
     @child = child
     @show_parents = show_parents
     @change_links = change_links
+    @remove_links = remove_links
   end
 
   def call
-    govuk_summary_list(actions: @change_links.present?) do |summary_list|
+    govuk_summary_list(
+      actions: @change_links.present? || @remove_links.present?
+    ) do |summary_list|
       summary_list.with_row do |row|
         row.with_key { "NHS number" }
         row.with_value { format_nhs_number }
@@ -76,6 +79,16 @@ class AppChildSummaryComponent < ViewComponent::Base
             row.with_key { parent_relationship.ordinal_label.upcase_first }
             row.with_value do
               helpers.format_parent_with_relationship(parent_relationship)
+            end
+            if (
+                 href =
+                   @remove_links.dig(:parent, parent_relationship.parent_id)
+               )
+              row.with_action(
+                text: "Remove",
+                href:,
+                visually_hidden_text: parent_relationship.ordinal_label
+              )
             end
           end
         end
