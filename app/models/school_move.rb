@@ -56,10 +56,6 @@ class SchoolMove < ApplicationRecord
     destroy! if persisted?
   end
 
-  def update_patient!
-    patient.update!(home_educated:, school:)
-  end
-
   def update_sessions!
     patient.patient_sessions.destroy_all_if_safe
 
