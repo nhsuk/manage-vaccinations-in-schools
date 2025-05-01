@@ -12,7 +12,7 @@ Faker::Config.locale = "en-GB"
 #     Generate::PatientImports.call
 #
 module Generate
-  class PatientImports
+  class CohortImports
     attr_reader :ods_code,
                 :organisation,
                 :programme,
