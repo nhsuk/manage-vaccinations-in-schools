@@ -9,11 +9,19 @@
 }
 
 .app-header__navigation-item--current {
-  box-shadow: inset 0 ($nhsuk-focus-width * -1) $nhsuk-border-color;
+  .nhsuk-header__navigation-link {
+    border-bottom-color: $nhsuk-border-color;
+  }
+
   .nhsuk-header__drop-down & {
     box-shadow: inset $nhsuk-focus-width 0 $nhsuk-link-color;
+
+    .nhsuk-header__navigation-link {
+      border-bottom-color: transparent;
+    }
   }
 }
+
 .app-header__navigation-item--with-count {
   .app-count {
     @include nhsuk-font(14, $line-height: 1);
