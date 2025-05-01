@@ -327,7 +327,7 @@ describe ClassImportRow do
       end
     end
 
-    context "with an existing patient already with an address" do
+    context "with an existing patient already with an address (with a different postcode)" do
       let(:data) do
         valid_data.merge(
           "CHILD_ADDRESS_LINE_1" => "10 Downing Street",
@@ -371,6 +371,49 @@ describe ClassImportRow do
           "address_postcode" => "SW1A 1AA",
           "address_town" => "London"
         )
+      end
+    end
+
+    context "with an existing patient already with an address (with the same postcode)" do
+      let(:data) do
+        valid_data.merge(
+          "CHILD_ADDRESS_LINE_1" => "10 Downing Street",
+          "CHILD_ADDRESS_LINE_2" => "",
+          "CHILD_TOWN" => "London",
+          "CHILD_POSTCODE" => "SW1A 1AA"
+        )
+      end
+
+      let!(:existing_patient) do
+        create(
+          :patient,
+          family_name: "Smith",
+          gender_code: "male",
+          given_name: "Jimmy",
+          nhs_number: "9990000018",
+          address_line_1: "20 Woodstock Road",
+          address_line_2: "",
+          address_town: "Oxford",
+          address_postcode: "SW1A 1AA",
+          birth_academic_year: 2009,
+          date_of_birth: Date.new(2010, 1, 1),
+          registration: "8AB"
+        )
+      end
+
+      it { should eq(existing_patient) }
+
+      it "does save the incoming address" do
+        expect(patient).to have_attributes(
+          address_line_1: "10 Downing Street",
+          address_line_2: "",
+          address_town: "London",
+          address_postcode: "SW1A 1AA"
+        )
+      end
+
+      it "doesn't stage the address differences" do
+        expect(patient.pending_changes).to be_empty
       end
     end
   end
