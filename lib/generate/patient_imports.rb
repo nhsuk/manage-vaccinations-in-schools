@@ -166,14 +166,16 @@ module Generate
         .build(
           :patient,
           school:,
-          date_of_birth: date_of_birth_for_year(year_group)
+          organisation:,
+          date_of_birth: date_of_birth_for_year(year_group),
+          random_nhs_number: true
         )
         .tap do |patient|
           patient.parents =
             FactoryBot.build_list(:parent, 2, family_name: patient.family_name)
           patient.parent_relationships =
             patient.parents.map do
-              FactoryBot.build(:parent_relationship, parent: it)
+              FactoryBot.build(:parent_relationship, parent: it, patient:)
             end
         end
     end
