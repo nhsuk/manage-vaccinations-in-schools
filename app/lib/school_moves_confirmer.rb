@@ -9,9 +9,9 @@ class SchoolMovesConfirmer
   def call
     ActiveRecord::Base.transaction do
       update_patients!
+      update_sessions!
 
       school_moves.each do |school_move|
-        school_move.update_sessions!
         school_move.create_log_entry!(user:)
         if school_move.persisted?
           SchoolMove.where(patient: school_move.patient).destroy_all
@@ -46,5 +46,26 @@ class SchoolMovesConfirmer
         columns: %i[home_educated school_id]
       }
     )
+  end
+
+  def update_sessions!
+    patients = school_moves.map(&:patient)
+
+    PatientSession.where(patient: patients).destroy_all_if_safe
+
+    patient_sessions_to_import =
+      school_moves.flat_map do |school_move|
+        school_move.sessions.map do |session|
+          [school_move.patient.id, session.id]
+        end
+      end
+
+    PatientSession.import!(
+      %i[patient_id session_id],
+      patient_sessions_to_import,
+      on_duplicate_key_ignore: :all
+    )
+
+    StatusUpdater.call(patient: patients)
   end
 end
