@@ -25,16 +25,16 @@ describe CohortImportRow do
     {
       "CHILD_ADDRESS_LINE_1" => "10 Downing Street",
       "CHILD_ADDRESS_LINE_2" => "",
+      "CHILD_TOWN" => "London",
+      "CHILD_POSTCODE" => "SW1A 1AA",
       "CHILD_PREFERRED_GIVEN_NAME" => "Jim",
       "CHILD_DATE_OF_BIRTH" => "2010-01-01",
       "CHILD_FIRST_NAME" => "Jimmy",
       "CHILD_GENDER" => "Male",
       "CHILD_LAST_NAME" => "Smith",
       "CHILD_NHS_NUMBER" => "9990000018",
-      "CHILD_POSTCODE" => "SW1A 1AA",
       "CHILD_REGISTRATION" => "8AB",
-      "CHILD_SCHOOL_URN" => school_urn,
-      "CHILD_TOWN" => "London"
+      "CHILD_SCHOOL_URN" => school_urn
     }
   end
 
@@ -288,6 +288,78 @@ describe CohortImportRow do
 
       it "does stage the gender differences" do
         expect(patient.pending_changes).to include("gender_code" => "male")
+      end
+    end
+
+    context "with an existing patient without address (ex. postcode)" do
+      let!(:existing_patient) do
+        create(
+          :patient,
+          family_name: "Smith",
+          given_name: "Jimmy",
+          gender_code: "male",
+          nhs_number: "9990000018",
+          birth_academic_year: 2009,
+          date_of_birth: Date.new(2010, 1, 1),
+          registration: "8AB",
+          address_line_1: nil,
+          address_line_2: nil,
+          address_town: nil,
+          address_postcode: "SW1A 1AA"
+        )
+      end
+
+      it { should eq(existing_patient) }
+
+      it "saves the incoming address" do
+        expect(patient).to have_attributes(
+          address_line_1: "10 Downing Street",
+          address_line_2: "",
+          address_town: "London",
+          address_postcode: "SW1A 1AA"
+        )
+      end
+
+      it "doesn't stage the incoming address" do
+        expect(patient.pending_changes).to be_empty
+      end
+    end
+
+    context "with an existing patient already with an address" do
+      let!(:existing_patient) do
+        create(
+          :patient,
+          family_name: "Smith",
+          gender_code: "male",
+          given_name: "Jimmy",
+          nhs_number: "9990000018",
+          address_line_1: "20 Woodstock Road",
+          address_line_2: "",
+          address_town: "Oxford",
+          address_postcode: "OX2 6HD",
+          birth_academic_year: 2009,
+          date_of_birth: Date.new(2010, 1, 1),
+          registration: "8AB"
+        )
+      end
+
+      it { should eq(existing_patient) }
+
+      it "does not save the incoming address" do
+        expect(patient).to have_attributes(
+          address_line_1: "20 Woodstock Road",
+          address_line_2: "",
+          address_town: "Oxford",
+          address_postcode: "OX2 6HD"
+        )
+      end
+
+      it "does stage the address differences" do
+        expect(patient.pending_changes).to include(
+          "address_line_1" => "10 Downing Street",
+          "address_postcode" => "SW1A 1AA",
+          "address_town" => "London"
+        )
       end
     end
   end
