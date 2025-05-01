@@ -207,9 +207,7 @@ class PatientImportRow
 
   def auto_overwrite_address?(existing_patient)
     existing_patient.address_postcode == address_postcode&.to_postcode &&
-      existing_patient.address_line_1.blank? &&
-      existing_patient.address_line_2.blank? &&
-      existing_patient.address_town.blank?
+      [address_line_1, address_line_2, address_town].any?(&:present?)
   end
 
   def parent_1_exists?
