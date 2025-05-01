@@ -11,12 +11,7 @@ class SchoolMovesConfirmer
       update_patients!
       update_sessions!
       create_log_entries!
-
-      school_moves.each do |school_move|
-        if school_move.persisted?
-          SchoolMove.where(patient: school_move.patient).destroy_all
-        end
-      end
+      destroy_school_moves!
     end
   end
 
@@ -74,5 +69,10 @@ class SchoolMovesConfirmer
       school_moves.map { |school_move| school_move.to_log_entry(user:) }
 
     SchoolMoveLogEntry.import!(log_entries)
+  end
+
+  def destroy_school_moves!
+    patients = school_moves.select(&:persisted?).map(&:patient)
+    SchoolMove.where(patient: patients).destroy_all
   end
 end
