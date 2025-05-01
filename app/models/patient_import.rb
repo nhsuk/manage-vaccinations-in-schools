@@ -120,11 +120,14 @@ class PatientImport < ApplicationRecord
     @patients_batch.clear
     @relationships_batch.clear
 
-    @school_moves_to_confirm.each do |school_move|
-      # if the same patient appears multiple times in the file,
-      # the duplicates won't be persisted
-      school_move.confirm! if school_move.patient.persisted?
-    end
+    SchoolMovesConfirmer.call(
+      @school_moves_to_confirm.select do
+        # if the same patient appears multiple times in the file,
+        # the duplicates won't be persisted
+        it.patient.persisted?
+      end
+    )
+
     @school_moves_to_confirm.clear
 
     SchoolMove.import(@school_moves_to_save.to_a, on_duplicate_key_ignore: :all)
