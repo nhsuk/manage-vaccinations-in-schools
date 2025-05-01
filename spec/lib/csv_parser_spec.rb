@@ -31,4 +31,15 @@ describe CSVParser do
       expect(row[:header].value).to eq("value")
     end
   end
+
+  context "with input data in Windows-1252 encoding" do
+    let(:data) { "header\nvalue with \x92 character".b }
+
+    it "detects the encoding and converts to UTF-8" do
+      row = table.first
+
+      expect(row[:header].value.encoding).to eq(Encoding::UTF_8)
+      expect(row[:header].value).to eq("value with ’ character")
+    end
+  end
 end
