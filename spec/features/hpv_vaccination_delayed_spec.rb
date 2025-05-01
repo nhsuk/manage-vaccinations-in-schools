@@ -59,7 +59,6 @@ describe "HPV vaccination" do
     check "know what the vaccination is for, and are happy to have it"
     check "have not already had the vaccination"
     check "have no allergies which would prevent vaccination"
-    check "are not pregnant"
 
     # vaccination
     choose "No"
