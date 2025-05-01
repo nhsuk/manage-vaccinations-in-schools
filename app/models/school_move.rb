@@ -56,15 +56,7 @@ class SchoolMove < ApplicationRecord
     destroy! if persisted?
   end
 
-  def update_sessions!
-    patient.patient_sessions.destroy_all_if_safe
-
-    [school_session, generic_clinic_session].compact.each do |session|
-      PatientSession.find_or_create_by!(patient:, session:)
-    end
-
-    StatusUpdater.call(patient:)
-  end
+  def sessions = [school_session, generic_clinic_session].compact
 
   def create_log_entry!(user:)
     SchoolMoveLogEntry.create!(home_educated:, patient:, school:, user:)
