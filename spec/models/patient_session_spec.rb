@@ -123,7 +123,7 @@ describe PatientSession do
         create(:patient_vaccination_status, :vaccinated, patient:, programme:)
       end
 
-      it { should be(:report) }
+      it { should be_nil }
     end
 
     context "with an un-administered vaccination record" do
