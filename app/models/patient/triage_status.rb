@@ -86,6 +86,8 @@ class Patient::TriageStatus < ApplicationRecord
   end
 
   def status_should_be_required?
+    return false if patient.vaccination_status(programme:).vaccinated?
+
     return true if latest_triage&.needs_follow_up?
 
     consent_requires_triage? || vaccination_history_requires_triage?
