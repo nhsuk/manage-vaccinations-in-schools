@@ -12,6 +12,8 @@ module Generate
       given: 0,
       given_needs_triage: 0
     )
+      validate_programme_and_session(programme, session) if programme
+
       @organisation = organisation
       @programme = programme || organisation.programmes.sample
       @session = session
@@ -24,6 +26,7 @@ module Generate
       create_consent_with_response(:refused, @refused)
       create_consent_with_response(:given, @given)
       create_consent_given_needs_triage(@given_needs_triage)
+      StatusUpdater.call(patient: patients)
     end
 
     def self.call(...) = new(...).call
@@ -31,11 +34,26 @@ module Generate
     private
 
     def patients
-      (@session.presence || organisation)
-        .patients
-        .includes(:parents, :consents, consents: :parent)
-        .in_programmes([programme])
-        .select { it.consents.empty? && it.parents.any? }
+      @patients ||=
+        begin
+          sessions =
+            if @session
+              [@session]
+            else
+              organisation
+                .sessions
+                .eager_load(:location)
+                .merge(Location.school)
+                .has_programme(programme)
+            end
+
+          sessions.flat_map do |session|
+            session
+              .patients
+              .includes(:parents, :school, :consents, consents: :parent)
+              .select { it.consents.empty? && it.parents.any? }
+          end
+        end
     end
 
     def random_patients(count)
@@ -50,12 +68,13 @@ module Generate
     end
 
     def session_for(patient)
-      patient
-        .sessions
-        .eager_load(:location)
-        .merge(Location.school)
-        .has_programme(programme)
-        .sample
+      @session ||
+        patient
+          .sessions
+          .eager_load(:location)
+          .merge(Location.school)
+          .has_programme(programme)
+          .sample
     end
 
     def create_consent_with_response(response, count)
@@ -64,11 +83,13 @@ module Generate
 
       available_patient_sessions.each do |patient, session|
         consent = FactoryBot.create(:consent, response, patient:, programme:)
+        school = session.location.school? ? session.location : patient.school
         FactoryBot.create(
           :consent_form,
           organisation:,
           programmes: [programme],
           session:,
+          school:,
           consent:,
           response:
         )
@@ -96,6 +117,16 @@ module Generate
           consent:,
           response: "given"
         )
+      end
+    end
+
+    def validate_programme_and_session(programme, session)
+      if session
+        if session.programmes.exclude?(programme)
+          raise "Session does not support programme #{programme.type}"
+        end
+      elsif programme.sessions.none? { it.location.school? }
+        raise "Programme #{programme.type} does not have a school session"
       end
     end
   end
