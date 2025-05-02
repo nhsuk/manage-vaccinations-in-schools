@@ -97,6 +97,26 @@ describe ClassImportRow do
         )
       end
     end
+
+    context "vaccination in a session where name-like fields have length greater than 300" do
+      let(:invalid_name_length) { "a" * 301 }
+      let(:data) do
+        {
+          "CHILD_FIRST_NAME" => invalid_name_length,
+          "CHILD_LAST_NAME" => invalid_name_length
+        }
+      end
+
+      it "has errors" do
+        expect(class_import_row).to be_invalid
+        expect(class_import_row.errors["CHILD_FIRST_NAME"]).to include(
+          "is greater than 300 characters long"
+        )
+        expect(class_import_row.errors["CHILD_LAST_NAME"]).to include(
+          "is greater than 300 characters long"
+        )
+      end
+    end
   end
 
   describe "#to_parents" do

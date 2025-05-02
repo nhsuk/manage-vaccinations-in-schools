@@ -3,6 +3,8 @@
 class PatientImportRow
   include ActiveModel::Model
 
+  MAX_FIELD_LENGTH = 300
+
   validate :validate_date_of_birth,
            :validate_existing_patients,
            :validate_first_name,
@@ -284,6 +286,11 @@ class PatientImportRow
       errors.add(:base, "<code>CHILD_FIRST_NAME</code> is missing")
     elsif first_name.blank?
       errors.add(first_name.header, "is required but missing")
+    elsif first_name.to_s.length > MAX_FIELD_LENGTH
+      errors.add(
+        first_name.header,
+        "is greater than #{MAX_FIELD_LENGTH} characters long"
+      )
     end
   end
 
@@ -299,6 +306,11 @@ class PatientImportRow
       errors.add(:base, "<code>CHILD_LAST_NAME</code> is missing")
     elsif last_name.blank?
       errors.add(last_name.header, "is required but missing")
+    elsif last_name.to_s.length > MAX_FIELD_LENGTH
+      errors.add(
+        last_name.header,
+        "is greater than #{MAX_FIELD_LENGTH} characters long"
+      )
     end
   end
 
