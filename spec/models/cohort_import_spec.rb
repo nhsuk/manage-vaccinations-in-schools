@@ -314,6 +314,35 @@ describe CohortImport do
       end
     end
 
+    context "with an existing patient that was previously removed from cohort" do
+      let!(:existing_patient) do
+        create(
+          :patient,
+          given_name: "Jimmy",
+          family_name: "smith",
+          date_of_birth: Date.new(2010, 1, 2),
+          nhs_number: nil,
+          organisation: nil
+        )
+      end
+
+      it "doesn't create an additional patient" do
+        expect { process! }.to change(Patient, :count).by(2)
+      end
+
+      it "automatically re-adds the patient to the cohort" do
+        expect { process! }.to change {
+          existing_patient.reload.organisation
+        }.from(nil).to(organisation)
+      end
+
+      it "doesn't propose a school move" do
+        expect { process! }.not_to(
+          change { existing_patient.reload.school_moves.count }
+        )
+      end
+    end
+
     context "with an unscheduled session" do
       let(:session) do
         create(:session, :unscheduled, organisation:, programmes:, location:)
