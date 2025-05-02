@@ -170,9 +170,15 @@ class DraftVaccinationRecord
 
   delegate :vaccine, to: :batch, allow_nil: true
 
+  delegate :id, to: :vaccine, prefix: true, allow_nil: true
+
   def vaccine_id_changed? = batch_id_changed?
 
   private
+
+  def writable_attribute_names
+    super + %w[vaccine_id]
+  end
 
   def reset_unused_fields
     unless administered?
