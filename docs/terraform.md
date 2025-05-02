@@ -29,7 +29,7 @@ sso_region = eu-west-2
 sso_registration_scopes = sso:account:access
 ```
 
-Before running `terraform ...` make sure you set the environment variable to the desired profile
+Before running `terraform ...` make sure you set the environment variable to the desired profile, e.g.
 
 ```bash
 export AWS_PROFILE=default
@@ -43,22 +43,31 @@ This repo contains 2 folders with terraform configuration.
   For that purpose, it just contains an S3 bucket and a DynamoDB.
 - The `app` folder contains the actual infrastructure config for the app.
 
-To set up everything from scratch, run `./bootstrap.sh <ENV_NAME>` first in the `scripts` folder and follow the
-instructions from the output.
+#### Bootstrap -- Pre-requisites for creating a new environment:
+
+_Case 1:_ Setting up the first environment in an account
+
+To set up everything from scratch, run `./bootstrap.sh <ENV_NAME>` first in the `terraform/scripts` folder and follow
+any instructions from the output.
+
+_Case 2:_ Adding more environments to an account
+
+To add more environments to an account, run `./bootstrap.sh <ENV_NAME> --environment-only` in the `terraform/scripts`
+folder and follow any instructions from the output.
 
 If this environment is not yet included in the allowed values of variable "environment"
-in [variables.tf](app%2Fvariables.tf)
-this must be updated.
+in [variables.tf](../terraform/app/variables.tf) this must be updated.
 
 ### Configuring the terraform backend
 
-The POC demonstrates a multi-backend configuration. Just run
+We employ a multi-backend configuration (instead of workspaces) to adjust the configuration for multiple environments.
+To work with a specific environment just run
 
 ```bash
-terraform init -backend-config=env/<config-file>
+terraform init -backend-config=env/<environment>-backend.hcl
 ```
 
-in the `app` directory to select which environment/state-file you want.
+in the `terraform/app` directory.
 
 ## Shell Access
 
@@ -75,9 +84,9 @@ to open an interactive shell to the container running in the specified cluster.
 
 https://docs.aws.amazon.com/systems-manager/latest/userguide/install-plugin-debian-and-ubuntu.html
 
-## Local deployment
+## Manual deployment
 
-Step 1: Build and push a docker image
+Step 1: Build and push a docker image (can be skipped the if the image is already in ECR)
 
 ```bash
 aws ecr get-login-password --region eu-west-2 | docker login --username AWS --password-stdin 393416225559.dkr.ecr.eu-west-2.amazonaws.com
