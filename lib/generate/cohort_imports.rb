@@ -38,6 +38,7 @@ module Generate
             .pluck(:urn)
       @school_year_groups = school_year_groups
       @patient_count = patient_count
+      @nhs_numbers = Set.new
     end
 
     def self.call(...) = new(...).call
@@ -129,6 +130,12 @@ module Generate
     def build_patient(year_group: nil)
       school = schools_with_year_groups.sample
       year_group ||= (school.year_groups & programme_year_groups).sample
+      nhs_number = nil
+      loop do
+        nhs_number = Faker::NationalHealthService.british_number.gsub(" ", "")
+        break unless nhs_number.in? @nhs_numbers
+      end
+      @nhs_numbers << nhs_number
 
       FactoryBot
         .build(
@@ -136,7 +143,7 @@ module Generate
           school:,
           organisation:,
           date_of_birth: date_of_birth_for_year(year_group),
-          random_nhs_number: true
+          nhs_number:
         )
         .tap do |patient|
           patient.parents =
