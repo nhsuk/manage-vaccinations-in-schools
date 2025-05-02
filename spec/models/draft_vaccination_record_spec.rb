@@ -64,6 +64,22 @@ describe DraftVaccinationRecord do
     end
   end
 
+  describe "#write_to!" do
+    subject(:write_to!) do
+      draft_vaccination_record.write_to!(vaccination_record)
+    end
+
+    let(:attributes) { valid_administered_attributes }
+
+    let(:vaccination_record) { VaccinationRecord.new }
+
+    it "sets the vaccine" do
+      expect { write_to! }.to change(vaccination_record, :vaccine).to(
+        batch.vaccine
+      )
+    end
+  end
+
   describe "#reset_unused_fields" do
     subject(:save!) { draft_vaccination_record.save! }
 
