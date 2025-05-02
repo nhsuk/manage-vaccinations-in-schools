@@ -636,6 +636,42 @@ describe ImmunisationImportRow do
       end
     end
 
+    context "vaccination in a session where name-like fields have length greater than 300" do
+      let(:invalid_name_length) { "a" * 301 }
+      let(:data) do
+        {
+          "SESSION_ID" => "1",
+          "VACCINATED" => "Y",
+          "CARE_SETTING" => "2",
+          "BATCH_NUMBER" => invalid_name_length,
+          "CLINIC_NAME" => invalid_name_length,
+          "PERSON_FORENAME" => invalid_name_length,
+          "PERSON_SURNAME" => invalid_name_length,
+          "SCHOOL_NAME" => invalid_name_length
+        }
+      end
+
+      it "has errors" do
+        expect(immunisation_import_row).to be_invalid
+
+        expect(immunisation_import_row.errors["BATCH_NUMBER"]).to include(
+          "is greater than 300 characters long"
+        )
+        expect(immunisation_import_row.errors["CLINIC_NAME"]).to include(
+          "is greater than 300 characters long"
+        )
+        expect(immunisation_import_row.errors["PERSON_FORENAME"]).to include(
+          "is greater than 300 characters long"
+        )
+        expect(immunisation_import_row.errors["PERSON_SURNAME"]).to include(
+          "is greater than 300 characters long"
+        )
+        expect(immunisation_import_row.errors["SCHOOL_NAME"]).to include(
+          "is greater than 300 characters long"
+        )
+      end
+    end
+
     context "vaccination in a session without a delivery site" do
       let(:programmes) { [create(:programme, :flu)] }
 
