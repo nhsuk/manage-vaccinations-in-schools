@@ -11,11 +11,7 @@ class AppParentCardComponent < ViewComponent::Base
   def call
     render AppCardComponent.new do |card|
       card.with_heading { "Parent or guardian" }
-      render AppParentSummaryComponent.new(
-               parent_relationship:,
-               change_links:,
-               show_name_and_relationship: true
-             )
+      render AppParentSummaryComponent.new(parent_relationship:, change_links:)
     end
   end
 
