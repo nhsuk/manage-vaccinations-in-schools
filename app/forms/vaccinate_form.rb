@@ -63,20 +63,9 @@ class VaccinateForm
   def pre_screening
     @pre_screening ||=
       patient_session.pre_screenings.build(
-        feeling_well: true,
-        knows_vaccination: true,
-        no_allergies: true,
-        not_already_had: true,
-        not_pregnant: true,
-        not_taking_medication: true,
         notes: pre_screening_notes,
         performed_by: current_user,
-        programme:,
-        session_date_id:
+        programme:
       )
-  end
-
-  def session_date_id
-    patient_session.session.session_dates.today.first&.id
   end
 end
