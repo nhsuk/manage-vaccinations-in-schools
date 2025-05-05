@@ -9,8 +9,10 @@ local linters = new Mapping<String, Group> {
             }
 
             ["prettier"] = new Step {
+                batch = true
                 check = "bin/prettier --check --ignore-unknown {{ files }}"
-                fix = "bin/prettier --write --list-different --ignore-unknown {{ files }}"
+                check_list_files = "bin/prettier --list-different --ignore-unknown {{ files }}"
+                fix = "bin/prettier --write --ignore-unknown {{ files }}"
             }
 
             ["rubocop"] = new Step {
