@@ -22,10 +22,10 @@ local linters = new Mapping<String, Group> {
             }
 
             ["rufo"] = new Step {
-                glob = List("**/*.erb")
+                glob = "*.erb"
                 exclude = List("**/layouts/*")
                 check = "bin/rufo --check {{ files }}"
-                fix = "bin/rufo {{ files }}"
+                fix = "bin/rufo --simple-exit {{ files }}"
             }
 
             ["terraform"] = (Builtins.terraform) {
