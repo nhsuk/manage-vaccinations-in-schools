@@ -55,12 +55,6 @@ describe "HPV vaccination" do
   end
 
   def and_i_record_that_the_patient_was_unwell
-    # pre-screening
-    check "know what the vaccination is for, and are happy to have it"
-    check "have not already had the vaccination"
-    check "have no allergies which would prevent vaccination"
-
-    # vaccination
     choose "No"
     click_button "Continue"
 

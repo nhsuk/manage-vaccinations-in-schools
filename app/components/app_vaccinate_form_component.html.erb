@@ -9,38 +9,30 @@
 
   <div class="nhsuk-card__content">
     <h2 class="nhsuk-card__heading nhsuk-heading-m">
-      <%= patient.given_name %> has confirmed that they:
+      Pre-screening checks
     </h2>
 
-    <%= f.govuk_check_boxes_fieldset :feeling_well, multiple: false, legend: nil do %>
-      <%= f.govuk_check_box :feeling_well, true, multiple: false, link_errors: true %>
-    <% end %>
+    <p><%= patient.given_name %> has confirmed that they:</p>
 
-    <% if vaccinate_form.ask_not_pregnant? %>
-      <%= f.govuk_check_boxes_fieldset :not_pregnant, multiple: false, legend: nil do %>
-        <%= f.govuk_check_box :not_pregnant, true, multiple: false, link_errors: true %>
+    <ul class="nhsuk-list nhsuk-list--bullet">
+      <li>are not acutely unwell</li>
+      <% if vaccinate_form.ask_not_pregnant? %>
+        <li>are not pregnant</li>
       <% end %>
-    <% end %>
-
-    <% if vaccinate_form.ask_not_taking_medication? %>
-      <%= f.govuk_check_boxes_fieldset :not_taking_medication, multiple: false, legend: nil do %>
-        <%= f.govuk_check_box :not_taking_medication, true, multiple: false, link_errors: true %>
+      <% if vaccinate_form.ask_not_taking_medication? %>
+        <li>are not taking any medication which prevents vaccination</li>
       <% end %>
+      <li>have no allergies which would prevent vaccination</li>
+      <li>have not already had this vaccination</li>
+      <li>know what the vaccination is for, and are happy to have it</li>
+    </ul>
+
+    <%= f.govuk_check_boxes_fieldset :pre_screening_confirmed, multiple: false, legend: nil do %>
+      <%= f.govuk_check_box :pre_screening_confirmed, 1, 0, multiple: false, link_errors: true,
+                                                            label: { text: "#{patient.given_name} has confirmed the above statements are true" } %>
     <% end %>
 
-    <%= f.govuk_check_boxes_fieldset :no_allergies, multiple: false, legend: nil do %>
-      <%= f.govuk_check_box :no_allergies, true, multiple: false, link_errors: true %>
-    <% end %>
-
-    <%= f.govuk_check_boxes_fieldset :not_already_had, multiple: false, legend: nil do %>
-      <%= f.govuk_check_box :not_already_had, true, multiple: false, link_errors: true %>
-    <% end %>
-
-    <%= f.govuk_check_boxes_fieldset :knows_vaccination, multiple: false, legend: nil do %>
-      <%= f.govuk_check_box :knows_vaccination, true, multiple: false, link_errors: true %>
-    <% end %>
-
-    <%= f.govuk_text_area :pre_screening_notes, label: { text: "Pre-screening notes (optional)" } %>
+    <%= f.govuk_text_area :pre_screening_notes, label: { text: "Pre-screening notes (optional)" }, rows: 3 %>
 
     <hr class="nhsuk-section-break nhsuk-section-break--visible nhsuk-section-break--l">
 
@@ -48,9 +40,11 @@
       Is <%= patient.given_name %> ready for their <%= programme.name %> vaccination?
     </h2>
 
+    <% hint = "Pre-screening checks must be completed for vaccination to go ahead" %>
+
     <%= f.govuk_radio_buttons_fieldset :administered, legend: nil do %>
       <% if common_delivery_sites_options.length > 1 %>
-        <%= f.govuk_radio_button :administered, true, label: { text: "Yes" }, link_errors: true do %>
+        <%= f.govuk_radio_button :administered, true, label: { text: "Yes" }, hint: { text: hint }, link_errors: true do %>
           <%= f.govuk_collection_radio_buttons :delivery_site,
                                                common_delivery_sites_options,
                                                :value,
@@ -61,7 +55,7 @@
                                                } %>
         <% end %>
       <% else %>
-        <%= f.govuk_radio_button :administered, true, label: { text: "Yes" }, link_errors: true %>
+        <%= f.govuk_radio_button :administered, true, label: { text: "Yes" }, hint: { text: hint }, link_errors: true %>
         <%= f.hidden_field :delivery_site, value: common_delivery_sites_options.first.value %>
       <% end %>
       <%= f.govuk_radio_button :administered, false, label: { text: "No" } %>

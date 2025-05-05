@@ -70,8 +70,8 @@ describe "Pre-screening" do
     expect(page).to have_content(
       "know what the vaccination is for, and are happy to have it"
     )
-    expect(page).to have_content("have not already had the vaccination")
-    expect(page).to have_content("are feeling well")
+    expect(page).to have_content("have not already had this vaccination")
+    expect(page).to have_content("are not acutely unwell")
     expect(page).to have_content(
       "have no allergies which would prevent vaccination"
     )
@@ -105,7 +105,7 @@ describe "Pre-screening" do
 
   def then_i_see_an_error_message
     expect(page).to have_content(
-      "Confirm that they have not already had the vaccination"
+      "Select if the child has confirmed all pre-screening statements are true"
     )
   end
 end
