@@ -55,12 +55,7 @@ class VaccinationsController < ApplicationController
         delivery_method
         delivery_site
         dose_sequence
-        feeling_well
-        knows_vaccination
-        no_allergies
-        not_already_had
-        not_pregnant
-        not_taking_medication
+        pre_screening_confirmed
         pre_screening_notes
         vaccine_id
       ]

@@ -66,13 +66,8 @@ describe "Vaccination" do
 
     click_link @patient.full_name
 
-    # pre-screening
-    check "know what the vaccination is for, and are happy to have it"
-    check "have not already had the vaccination"
-    check "are feeling well"
-    check "have no allergies which would prevent vaccination"
+    check "has confirmed the above statements are true"
 
-    # vaccination
     choose "Yes"
     choose "Left arm (upper position)"
     click_button "Continue"
@@ -102,13 +97,8 @@ describe "Vaccination" do
 
     click_link @patient2.full_name
 
-    # pre-screening
-    check "know what the vaccination is for, and are happy to have it"
-    check "have not already had the vaccination"
-    check "are feeling well"
-    check "have no allergies which would prevent vaccination"
+    check "has confirmed the above statements are true"
 
-    # vaccination
     choose "Yes"
     choose "Left arm (upper position)"
     click_button "Continue"
@@ -155,14 +145,8 @@ describe "Vaccination" do
     click_link @patient.full_name
     click_on "MenACWY"
 
-    # pre-screening
-    check "know what the vaccination is for, and are happy to have it"
-    check "have not already had the vaccination"
-    check "are feeling well"
-    check "have no allergies which would prevent vaccination"
-    check "are not taking any medication which prevents vaccination"
+    check "has confirmed the above statements are true"
 
-    # vaccination
     choose "Yes"
     choose "Left arm (upper position)"
     click_button "Continue"
