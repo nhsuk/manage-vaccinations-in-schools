@@ -13,6 +13,7 @@
     <%= render AppSearchComponent.new(
           form: @form,
           url: session_triage_path(@session),
+          programmes: @session.programmes,
           triage_statuses: %w[safe_to_vaccinate do_not_vaccinate delay_vaccination required],
           year_groups: @session.year_groups,
         ) %>
@@ -22,7 +23,7 @@
     <%= render AppSearchResultsComponent.new(@pagy) do %>
       <% @patient_sessions.each do |patient_session| %>
         <%= render AppPatientSessionSearchResultCardComponent.new(
-              patient_session, context: :triage, programmes: @session.programmes,
+              patient_session, context: :triage, programmes: @form.programmes,
             ) %>
       <% end %>
     <% end %>
