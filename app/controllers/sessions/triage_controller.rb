@@ -11,17 +11,15 @@ class Sessions::TriageController < ApplicationController
 
   def show
     @statuses = Patient::TriageStatus.statuses.keys - %w[not_required]
-    @programmes = @session.programmes
 
     scope =
       @session
         .patient_sessions
         .includes_programmes
         .includes(:latest_note, patient: :triage_statuses)
-        .in_programmes(@programmes)
-        .has_triage_status(@statuses, programme: @programmes)
+        .has_triage_status(@statuses, programme: @form.programmes)
 
-    patient_sessions = @form.apply(scope, programme: @programmes)
+    patient_sessions = @form.apply(scope)
     @pagy, @patient_sessions = pagy(patient_sessions)
   end
 
