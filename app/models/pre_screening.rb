@@ -45,5 +45,7 @@ class PreScreening < ApplicationRecord
 
   has_one :patient, through: :patient_session
 
+  scope :today, -> { where(created_at: Date.current.all_day) }
+
   encrypts :notes
 end

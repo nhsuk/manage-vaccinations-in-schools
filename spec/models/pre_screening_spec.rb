@@ -36,6 +36,26 @@
 describe PreScreening do
   subject(:pre_screening) { build(:pre_screening) }
 
+  describe "scopes" do
+    describe "#today" do
+      subject { described_class.today }
+
+      context "with an instance created today" do
+        let(:pre_screening) { create(:pre_screening, :allows_vaccination) }
+
+        it { should include(pre_screening) }
+      end
+
+      context "with an instance created yesterday" do
+        let(:pre_screening) do
+          create(:pre_screening, :allows_vaccination, created_at: 1.day.ago)
+        end
+
+        it { should_not include(pre_screening) }
+      end
+    end
+  end
+
   describe "validations" do
     it { should allow_values(true, false).for(:feeling_well) }
     it { should allow_values(true, false).for(:knows_vaccination) }
