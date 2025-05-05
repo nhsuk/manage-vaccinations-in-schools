@@ -3,7 +3,9 @@
 describe AppPatientSessionSearchResultCardComponent do
   subject(:rendered) { render_inline(component) }
 
-  let(:component) { described_class.new(patient_session, context:) }
+  let(:component) do
+    described_class.new(patient_session, context:, programmes: [programme])
+  end
 
   let(:patient) do
     create(
