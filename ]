@@ -1,0 +1,47 @@
+Simplify pre-screening checks
+
+This updates the designs of the pre-screening checks to match the latest
+designs in the prototype where the process has been simplified to have
+only a single checkbox rather than a checkbox for each question. The
+content has also been refreshed to match the medical guidance.
+
+# Conflicts:
+#	spec/features/e2e_journey_spec.rb
+#	spec/features/hpv_vaccination_administered_spec.rb
+#	spec/features/hpv_vaccination_already_had_spec.rb
+#	spec/features/hpv_vaccination_clinic_spec.rb
+#	spec/features/hpv_vaccination_delayed_spec.rb
+#	spec/features/vaccination_todays_batch_spec.rb
+
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+#
+# interactive rebase in progress; onto 8bf4bba60
+# Last commands done (2 commands done):
+#    pick 8ef13d8e8 Refactor pre-screening feature specs
+#    pick 766d04241 Simplify pre-screening checks
+# Next command to do (1 remaining command):
+#    pick ce12b90dc Remove unused pre-screening columns
+# You are currently rebasing branch 'redesign-pre-screening-single-question' on '8bf4bba60'.
+#
+# Changes to be committed:
+#	modified:   app/components/app_patient_page_component.rb
+#	modified:   app/components/app_vaccinate_form_component.html.erb
+#	modified:   app/controllers/vaccinations_controller.rb
+#	modified:   app/forms/vaccinate_form.rb
+#	modified:   app/models/pre_screening.rb
+#	modified:   config/locales/en.yml
+#	modified:   config/locales/helpers.en.yml
+#	modified:   spec/components/app_patient_page_component_spec.rb
+#	modified:   spec/features/doubles_vaccination_administered_spec.rb
+#	modified:   spec/features/e2e_journey_spec.rb
+#	modified:   spec/features/hpv_vaccination_administered_spec.rb
+#	modified:   spec/features/hpv_vaccination_already_had_spec.rb
+#	modified:   spec/features/hpv_vaccination_clinic_spec.rb
+#	modified:   spec/features/hpv_vaccination_delayed_spec.rb
+#	modified:   spec/features/menacwy_vaccination_administered_spec.rb
+#	modified:   spec/features/pre_screening_spec.rb
+#	modified:   spec/features/td_ipv_vaccination_administered_spec.rb
+#	modified:   spec/features/vaccination_todays_batch_spec.rb
+#	modified:   spec/models/pre_screening_spec.rb
+#
