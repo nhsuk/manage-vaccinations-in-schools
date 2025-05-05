@@ -28,11 +28,10 @@ local linters = new Mapping<String, Group> {
                 fix = "bin/rufo --simple-exit {{ files }}"
             }
 
-            ["terraform"] = (Builtins.terraform) {
-            }
+            ["terraform"] = Builtins.terraform
 
             ["tf_lint"] = new Step {
-                glob = List("**/*.tf")
+                glob = "*.tf"
                 check = "tflint --chdir=terraform --recursive"
                 fix = "tflint --chdir=terraform --recursive --fix"
             }
