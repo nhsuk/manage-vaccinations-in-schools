@@ -17,15 +17,11 @@ class Sessions::RegisterController < ApplicationController
     @statuses = PatientSession::RegistrationStatus.statuses.keys
 
     scope =
-      @session
-        .patient_sessions
-        .includes_programmes
-        .includes(
-          :latest_note,
-          :registration_status,
-          patient: %i[consent_statuses triage_statuses vaccination_statuses]
-        )
-        .in_programmes(@session.programmes)
+      @session.patient_sessions.includes_programmes.includes(
+        :latest_note,
+        :registration_status,
+        patient: %i[consent_statuses triage_statuses vaccination_statuses]
+      )
 
     patient_sessions = @form.apply(scope)
     @pagy, @patient_sessions = pagy(patient_sessions)
