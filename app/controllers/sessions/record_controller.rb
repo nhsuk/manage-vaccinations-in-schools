@@ -15,8 +15,6 @@ class Sessions::RecordController < ApplicationController
   before_action :set_batches, except: :show
 
   def show
-    @programmes = @session.programmes
-
     scope =
       @session
         .patient_sessions
@@ -24,14 +22,13 @@ class Sessions::RecordController < ApplicationController
           :latest_note,
           patient: %i[consent_statuses triage_statuses vaccination_statuses]
         )
-        .in_programmes(@session.programmes)
         .has_registration_status(%w[attending completed])
 
-    scope = @form.apply(scope, programme: @programmes)
+    scope = @form.apply(scope)
 
     patient_sessions =
       scope.select do |patient_session|
-        patient_session.programmes.any? do |programme|
+        @form.programmes.any? do |programme|
           patient_session.patient.consent_given_and_safe_to_vaccinate?(
             programme:
           )
