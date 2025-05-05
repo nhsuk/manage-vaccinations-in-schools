@@ -129,25 +129,14 @@ describe AppPatientPageComponent do
   describe "#default_vaccinate_form" do
     subject(:vaccinate_form) { component.default_vaccinate_form }
 
-    context "when a pre-screening from today's session and programme exists" do
-      let(:today) { Date.current }
-      let(:patient_session) do
-        create(:patient_session, :session_in_progress, programmes:)
-      end
-      let(:session_date_today) { SessionDate.find_or_create_by(value: today) }
+    let(:patient_session) { create(:patient_session, programmes:) }
 
+    context "when a pre-screening from today's session and programme exists" do
       before do
         create(
           :pre_screening,
           patient_session:,
           programme: programmes.first,
-          session_date: session_date_today,
-          feeling_well: true,
-          knows_vaccination: true,
-          no_allergies: true,
-          not_already_had: true,
-          not_pregnant: true,
-          not_taking_medication: true,
           notes: "Today's prescreening"
         )
       end
@@ -162,24 +151,11 @@ describe AppPatientPageComponent do
     end
 
     context "when a pre-screening from today's session and different programme exists" do
-      let(:today) { Date.current }
-      let(:patient_session) do
-        create(:patient_session, :session_in_progress, programmes:)
-      end
-      let(:session_date_today) { SessionDate.find_or_create_by(value: today) }
-
       before do
         create(
           :pre_screening,
           patient_session:,
           programme: programmes.second,
-          session_date: session_date_today,
-          feeling_well: true,
-          knows_vaccination: true,
-          no_allergies: true,
-          not_already_had: true,
-          not_pregnant: true,
-          not_taking_medication: true,
           notes: "Today's prescreening"
         )
       end
@@ -194,24 +170,12 @@ describe AppPatientPageComponent do
     end
 
     context "when a pre-screening from yesterday's session and programme exists" do
-      subject(:vaccinate_form) { component.default_vaccinate_form }
-
-      let(:today) { Date.current }
-      let(:patient_session) do
-        create(:patient_session, :session_in_progress, programmes:)
-      end
-      let(:session_date_yesterday) { create(:session_date, value: today - 1) }
-      let(:pre_screening_yesterday) do
+      before do
         create(
           :pre_screening,
           patient_session:,
-          session_date: session_date_yesterday,
-          feeling_well: true,
-          knows_vaccination: true,
-          no_allergies: true,
-          not_already_had: true,
-          not_pregnant: true,
-          not_taking_medication: true,
+          programme: programmes.first,
+          created_at: 1.day.ago,
           notes: "Yesterday's prescreening"
         )
       end
