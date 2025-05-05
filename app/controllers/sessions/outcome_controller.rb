@@ -11,16 +11,14 @@ class Sessions::OutcomeController < ApplicationController
 
   def show
     @statuses = PatientSession::SessionStatus.statuses.keys
-    @programmes = @session.programmes
 
     scope =
-      @session
-        .patient_sessions
-        .includes_programmes
-        .includes(:latest_note, :session_statuses)
-        .in_programmes(@programmes)
+      @session.patient_sessions.includes_programmes.includes(
+        :latest_note,
+        :session_statuses
+      )
 
-    patient_sessions = @form.apply(scope, programme: @programmes)
+    patient_sessions = @form.apply(scope)
     @pagy, @patient_sessions = pagy(patient_sessions)
   end
 
