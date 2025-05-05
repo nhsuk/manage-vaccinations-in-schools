@@ -21,7 +21,9 @@
   <div class="app-grid-column-results">
     <%= render AppSearchResultsComponent.new(@pagy) do %>
       <% @patient_sessions.each do |patient_session| %>
-        <%= render AppPatientSessionSearchResultCardComponent.new(patient_session, context: :triage) %>
+        <%= render AppPatientSessionSearchResultCardComponent.new(
+              patient_session, context: :triage, programmes: @session.programmes,
+            ) %>
       <% end %>
     <% end %>
   </div>
