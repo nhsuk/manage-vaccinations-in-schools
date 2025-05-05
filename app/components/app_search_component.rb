@@ -19,6 +19,14 @@ class AppSearchComponent < ViewComponent::Base
             </svg>
           </button>
         </div>
+        
+        <% if programmes.any? %>
+          <%= f.govuk_check_boxes_fieldset :programme_types, legend: { text: "Programme", size: "s" } do %>
+            <% programmes.each do |programme| %>
+              <%= f.govuk_check_box :programme_types, programme.type, label: { text: programme.name } %>
+            <% end %>
+          <% end %>
+        <% end %>
 
         <% if consent_statuses.any? %>
           <%= f.govuk_radio_buttons_fieldset :consent_status, legend: { text: "Consent status", size: "s" } do %>
@@ -116,6 +124,7 @@ class AppSearchComponent < ViewComponent::Base
   def initialize(
     form:,
     url:,
+    programmes: [],
     consent_statuses: [],
     programme_statuses: [],
     register_statuses: [],
@@ -128,6 +137,7 @@ class AppSearchComponent < ViewComponent::Base
     @form = form
     @url = url
 
+    @programmes = programmes
     @consent_statuses = consent_statuses
     @programme_statuses = programme_statuses
     @register_statuses = register_statuses
@@ -140,6 +150,7 @@ class AppSearchComponent < ViewComponent::Base
 
   attr_reader :form,
               :url,
+              :programmes,
               :consent_statuses,
               :programme_statuses,
               :register_statuses,
