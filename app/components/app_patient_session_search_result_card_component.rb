@@ -40,7 +40,7 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
     <% end %>
   ERB
 
-  def initialize(patient_session, context:)
+  def initialize(patient_session, context:, programmes: [])
     super
 
     unless context.in?(%i[consent triage register record outcome])
@@ -48,15 +48,20 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
     end
 
     @patient_session = patient_session
-    @context = context
-
     @patient = patient_session.patient
     @session = patient_session.session
+
+    @context = context
+
+    @programmes =
+      programmes
+        .select { it.year_groups.include?(patient.year_group) }
+        .presence || patient_session.programmes
   end
 
   private
 
-  attr_reader :patient_session, :patient, :session, :context
+  attr_reader :patient_session, :patient, :session, :context, :programmes
 
   def can_register_attendance?
     session_attendance =
@@ -68,11 +73,10 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
   end
 
   def link_to
-    programme = patient_session.programmes.first
     session_patient_programme_path(
       session,
       patient,
-      programme,
+      programmes.first,
       return_to: context
     )
   end
@@ -105,19 +109,19 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
              )
     when :consent
       statuses =
-        patient_session.programmes.index_with do |programme|
+        programmes.index_with do |programme|
           patient.consent_status(programme:).status
         end
       render AppProgrammeStatusTagsComponent.new(statuses, outcome: :consent)
     when :triage
       statuses =
-        patient_session.programmes.index_with do |programme|
+        programmes.index_with do |programme|
           patient.triage_status(programme:).status
         end
       render AppProgrammeStatusTagsComponent.new(statuses, outcome: :triage)
     else
       statuses =
-        patient_session.programmes.index_with do |programme|
+        programmes.index_with do |programme|
           patient_session.session_status(programme:).status
         end
       render AppProgrammeStatusTagsComponent.new(statuses, outcome: :session)
