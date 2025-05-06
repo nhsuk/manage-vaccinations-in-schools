@@ -64,7 +64,7 @@ Rails.application.routes.draw do
     get "/reset/:organisation_ods_code",
         to: "dev/reset_organisation#call",
         as: :reset_organisation
-    get "/random-consent-form", to: "dev/random_consent_form#call"
+    get "/random-consent-form(/:slug)", to: "dev/random_consent_form#call"
   end
 
   get "/csrf", to: "csrf#new"

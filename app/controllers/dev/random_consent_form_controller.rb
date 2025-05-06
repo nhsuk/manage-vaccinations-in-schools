@@ -6,7 +6,12 @@ class Dev::RandomConsentFormController < ApplicationController
   def call
     Faker::Config.locale = "en-GB"
 
-    session = Session.includes(programmes: :vaccines).find(params[:session_id])
+    session =
+      if params[:slug].present?
+        Session.includes(programmes: :vaccines).find_by(slug: params[:slug])
+      else
+        Session.includes(programmes: :vaccines).find(params[:session_id])
+      end
 
     attributes =
       if ActiveModel::Type::Boolean.new.cast(params[:parent_phone])
