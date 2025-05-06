@@ -9,6 +9,7 @@ describe SearchForm do
       date_of_birth_year:,
       missing_nhs_number:,
       programme_status:,
+      programme_types:,
       q:,
       register_status:,
       session_status:,
@@ -23,6 +24,7 @@ describe SearchForm do
   let(:date_of_birth_year) { Date.current.year }
   let(:missing_nhs_number) { true }
   let(:programme_status) { nil }
+  let(:programme_types) { nil }
   let(:q) { "query" }
   let(:register_status) { nil }
   let(:session_status) { nil }
@@ -86,6 +88,39 @@ describe SearchForm do
       end
     end
 
+    context "filtering on programmes" do
+      let(:consent_status) { nil }
+      let(:date_of_birth_day) { nil }
+      let(:date_of_birth_month) { nil }
+      let(:date_of_birth_year) { nil }
+      let(:missing_nhs_number) { nil }
+      let(:programme_status) { nil }
+      let(:programme_types) { [programme.type] }
+      let(:q) { nil }
+      let(:register_status) { nil }
+      let(:session_status) { nil }
+      let(:triage_status) { nil }
+      let(:year_groups) { nil }
+
+      let(:programme) { create(:programme, :menacwy) }
+
+      context "with a patient eligible for the programme" do
+        let(:patient) { create(:patient, year_group: 9) }
+
+        it "is included" do
+          expect(form.apply(scope)).to include(patient)
+        end
+      end
+
+      context "with a patient not eligible for the programme" do
+        let(:patient) { create(:patient, year_group: 8) }
+
+        it "is not included" do
+          expect(form.apply(scope)).not_to include(patient)
+        end
+      end
+    end
+
     context "filtering on programme status" do
       let(:consent_status) { nil }
       let(:date_of_birth_day) { nil }
@@ -93,6 +128,7 @@ describe SearchForm do
       let(:date_of_birth_year) { nil }
       let(:missing_nhs_number) { nil }
       let(:programme_status) { "vaccinated" }
+      let(:programme_types) { [programme.type] }
       let(:q) { nil }
       let(:register_status) { nil }
       let(:session_status) { nil }
@@ -103,7 +139,7 @@ describe SearchForm do
 
       it "filters on session status" do
         patient = create(:patient, :vaccinated, programmes: [programme])
-        expect(form.apply(scope, programme:)).to include(patient)
+        expect(form.apply(scope)).to include(patient)
       end
     end
   end
@@ -115,6 +151,47 @@ describe SearchForm do
       expect { form.apply(scope) }.not_to raise_error
     end
 
+    context "filtering on programmes" do
+      let(:consent_status) { nil }
+      let(:date_of_birth_day) { nil }
+      let(:date_of_birth_month) { nil }
+      let(:date_of_birth_year) { nil }
+      let(:missing_nhs_number) { nil }
+      let(:programme_status) { nil }
+      let(:programme_types) { [programme.type] }
+      let(:q) { nil }
+      let(:register_status) { nil }
+      let(:session_status) { nil }
+      let(:triage_status) { nil }
+      let(:year_groups) { nil }
+
+      let(:programme) { create(:programme, :menacwy) }
+
+      context "with a patient session eligible for the programme" do
+        let(:patient) { create(:patient, year_group: 9) }
+
+        let(:patient_session) do
+          create(:patient_session, patient:, programmes: [programme])
+        end
+
+        it "is included" do
+          expect(form.apply(scope)).to include(patient_session)
+        end
+      end
+
+      context "with a patient session not eligible for the programme" do
+        let(:patient) { create(:patient, year_group: 8) }
+
+        let(:patient_session) do
+          create(:patient_session, patient:, programmes: [programme])
+        end
+
+        it "is not included" do
+          expect(form.apply(scope)).not_to include(patient_session)
+        end
+      end
+    end
+
     context "filtering on consent status" do
       let(:consent_status) { "given" }
       let(:date_of_birth_day) { nil }
@@ -122,6 +199,7 @@ describe SearchForm do
       let(:date_of_birth_year) { nil }
       let(:missing_nhs_number) { nil }
       let(:programme_status) { nil }
+      let(:programme_types) { [programme.type] }
       let(:q) { nil }
       let(:register_status) { nil }
       let(:triage_status) { nil }
@@ -136,7 +214,7 @@ describe SearchForm do
             :consent_given_triage_not_needed,
             programmes: [programme]
           )
-        expect(form.apply(scope, programme:)).to include(patient_session)
+        expect(form.apply(scope)).to include(patient_session)
       end
     end
 
@@ -147,6 +225,7 @@ describe SearchForm do
       let(:date_of_birth_year) { nil }
       let(:missing_nhs_number) { nil }
       let(:programme_status) { nil }
+      let(:programme_types) { [programme.type] }
       let(:q) { nil }
       let(:register_status) { nil }
       let(:session_status) { "vaccinated" }
@@ -158,7 +237,7 @@ describe SearchForm do
       it "filters on session status" do
         patient_session =
           create(:patient_session, :vaccinated, programmes: [programme])
-        expect(form.apply(scope, programme:)).to include(patient_session)
+        expect(form.apply(scope)).to include(patient_session)
       end
     end
 
@@ -188,6 +267,7 @@ describe SearchForm do
       let(:date_of_birth_year) { nil }
       let(:missing_nhs_number) { nil }
       let(:programme_status) { nil }
+      let(:programme_types) { [programme.type] }
       let(:q) { nil }
       let(:register_status) { nil }
       let(:session_status) { nil }
@@ -203,7 +283,7 @@ describe SearchForm do
             :consent_given_triage_needed,
             programmes: [programme]
           )
-        expect(form.apply(scope, programme:)).to include(patient_session)
+        expect(form.apply(scope)).to include(patient_session)
       end
     end
   end
