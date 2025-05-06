@@ -60,6 +60,7 @@ describe Reports::ProgrammeVaccinationsExporter do
               GILLICK_ASSESSMENT_DATE
               GILLICK_ASSESSED_BY
               GILLICK_ASSESSMENT_NOTES
+              GILLICK_NOTIFY_PARENTS
               VACCINATED
               DATE_OF_VACCINATION
               TIME_OF_VACCINATION
@@ -81,13 +82,6 @@ describe Reports::ProgrammeVaccinationsExporter do
               RECORD_UPDATED
             ]
           )
-        end
-
-        context "when Gillick notify parents is enabled" do
-          before { Flipper.enable(:report_gillick_notify_parents) }
-          after { Flipper.disable(:report_gillick_notify_parents) }
-
-          it { should include("GILLICK_NOTIFY_PARENTS") }
         end
       end
 
@@ -148,6 +142,7 @@ describe Reports::ProgrammeVaccinationsExporter do
                   "GILLICK_ASSESSED_BY" => "",
                   "GILLICK_ASSESSMENT_DATE" => "",
                   "GILLICK_ASSESSMENT_NOTES" => "",
+                  "GILLICK_NOTIFY_PARENTS" => "",
                   "GILLICK_STATUS" => "",
                   "GP_NAME" => "",
                   "GP_ORGANISATION_CODE" => "",
@@ -305,6 +300,7 @@ describe Reports::ProgrammeVaccinationsExporter do
                   "GILLICK_ASSESSED_BY" => "",
                   "GILLICK_ASSESSMENT_DATE" => "",
                   "GILLICK_ASSESSMENT_NOTES" => "",
+                  "GILLICK_NOTIFY_PARENTS" => "",
                   "GILLICK_STATUS" => "",
                   "GP_NAME" => "",
                   "GP_ORGANISATION_CODE" => "",
@@ -471,11 +467,7 @@ describe Reports::ProgrammeVaccinationsExporter do
               performed_by:,
               created_at:
             )
-
-            Flipper.enable(:report_gillick_notify_parents)
           end
-
-          after { Flipper.disable(:report_gillick_notify_parents) }
 
           it "includes the information" do
             expect(rows.first.to_hash).to include(
