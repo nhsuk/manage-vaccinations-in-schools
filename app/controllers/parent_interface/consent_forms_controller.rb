@@ -77,7 +77,9 @@ module ParentInterface
 
     def check_if_past_deadline
       return if @session.open_for_consent?
-      redirect_to action: :deadline_passed
+      redirect_to action: :deadline_passed,
+                  programme_types: params[:programme_types],
+                  session_slug: @session.slug
     end
   end
 end
