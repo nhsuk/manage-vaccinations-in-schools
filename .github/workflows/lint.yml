@@ -23,6 +23,7 @@ jobs:
       - run: yarn install --immutable --immutable-cache --check-cache
       - uses: hashicorp/setup-terraform@v3
       - uses: terraform-linters/setup-tflint@v4
+      - run: tflint --chdir=terraform --init
       - uses: jdx/mise-action@v2
         with:
           install_args: hk pkl
