@@ -5,6 +5,10 @@ module ParentInterface
     skip_before_action :authenticate_user!
     skip_after_action :verify_policy_scoped
 
+    prepend_before_action :set_team
+    prepend_before_action :set_programmes
+    prepend_before_action :set_organisation
+    prepend_before_action :set_session
     prepend_before_action :set_consent_form
     before_action :authenticate_consent_form_user!
     before_action :set_privacy_policy_url
@@ -16,10 +20,41 @@ module ParentInterface
         ConsentForm.includes(:programmes, :vaccines).find(
           params[:consent_form_id] || params[:id]
         )
-      @organisation = @consent_form.organisation
-      @programmes = @consent_form.programmes
-      @session = @consent_form.original_session
-      @team = @consent_form.team
+    end
+
+    def set_session
+      if params[:session_slug]
+        @session = Session.find_by!(slug: params[:session_slug])
+      elsif @consent_form.present?
+        @session = @consent_form.original_session
+      end
+    end
+
+    def set_organisation
+      @organisation =
+        if @consent_form.present?
+          @consent_form.organisation
+        elsif @session.present?
+          @session.organisation
+        end
+    end
+
+    def set_programmes
+      @programmes =
+        if @consent_form.present?
+          @consent_form.programmes
+        elsif @session.present? && params[:programme_types].present?
+          @session.programmes.where(type: params[:programme_types].split("-"))
+        end
+    end
+
+    def set_team
+      @team =
+        if @consent_form.present?
+          @consent_form.team
+        elsif @session.present?
+          @session.team
+        end
     end
 
     def authenticate_consent_form_user!
