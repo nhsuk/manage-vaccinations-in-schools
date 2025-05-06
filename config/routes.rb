@@ -60,11 +60,11 @@ Rails.application.routes.draw do
   mount flipper_app, at: "/flipper"
 
   unless Rails.env.production?
-    get "/reset", to: "dev#reset"
+    get "/reset", to: "dev/reset#call"
     get "/reset/:organisation_ods_code",
-        to: "dev#reset_organisation",
+        to: "dev/reset_organisation#call",
         as: :reset_organisation
-    get "/random-consent-form", to: "dev#random_consent_form"
+    get "/random-consent-form", to: "dev/random_consent_form#call"
   end
 
   get "/csrf", to: "csrf#new"
