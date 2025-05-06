@@ -60,6 +60,7 @@ export PATH="$OPENSSL_PATH/bin:$CMAKE_PREFIX_PATH/bin:$PATH"
 export LDFLAGS="-L$OPENSSL_PATH/lib $LDFLAGS"
 export CPPFLAGS="-I$OPENSSL_PATH/include $CPPFLAGS"
 export PKG_CONFIG_PATH="$CMAKE_PREFIX_PATH/lib/pkgconfig"
+export MACOSX_DEPLOYMENT_TARGET="$(sw_vers -productVersion)"
 
 # Version manager
 brew install mise
