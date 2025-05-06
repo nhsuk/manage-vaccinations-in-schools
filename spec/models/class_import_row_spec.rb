@@ -284,6 +284,81 @@ describe ClassImportRow do
       end
     end
 
+    context "with an existing patient without preferred names" do
+      let(:data) do
+        valid_data.merge(
+          "CHILD_PREFERRED_FIRST_NAME" => "Jim",
+          "CHILD_PREFERRED_LAST_NAME" => "Smithy"
+        )
+      end
+
+      let!(:existing_patient) do
+        create(
+          :patient,
+          address_postcode: "SW1A 1AA",
+          family_name: "Smith",
+          given_name: "Jimmy",
+          date_of_birth: Date.new(2010, 1, 1)
+        )
+      end
+
+      it { should eq(existing_patient) }
+
+      it "saves the incoming preferred names" do
+        expect(patient).to have_attributes(
+          preferred_given_name: "Jim",
+          preferred_family_name: "Smithy"
+        )
+      end
+
+      it "doesn't stage the preferred names differences" do
+        expect(patient.pending_changes).to be_empty
+      end
+    end
+
+    context "with an existing patient already with preferred names" do
+      let(:data) do
+        valid_data.merge(
+          "CHILD_PREFERRED_FIRST_NAME" => "Jim",
+          "CHILD_PREFERRED_LAST_NAME" => "Smithy"
+        )
+      end
+
+      let!(:existing_patient) do
+        create(
+          :patient,
+          address_postcode: "SW1A 1AA",
+          family_name: "Smith",
+          given_name: "Jimmy",
+          preferred_given_name: "Jimothy",
+          preferred_family_name: "Smithers",
+          nhs_number: "9990000018",
+          address_line_1: "10 Downing Street",
+          address_line_2: "",
+          address_town: "London",
+          birth_academic_year: 2009,
+          date_of_birth: Date.new(2010, 1, 1),
+          registration: "8AB"
+        )
+      end
+
+      it { should eq(existing_patient) }
+
+      it "does not save the incoming gender" do
+        expect(patient).to have_attributes(
+          preferred_given_name: "Jimothy",
+          preferred_family_name: "Smithers"
+        )
+      end
+
+      it "does stage the gender differences" do
+        expect(patient.pending_changes).to include(
+          "preferred_given_name" => "Jim",
+          "preferred_family_name" => "Smithy"
+        )
+      end
+    end
+
     context "with an existing patient without address" do
       let(:data) do
         valid_data.merge(
