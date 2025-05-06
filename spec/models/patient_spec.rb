@@ -54,15 +54,13 @@ describe Patient do
     describe "#search_by_name" do
       subject(:scope) { described_class.search_by_name(query) }
 
-      let(:query) { "Harry Potter" }
-
       let(:patient_a) do
         # exact match comes first
         create(:patient, given_name: "Harry", family_name: "Potter")
       end
       let(:patient_b) do
         # similar match comes next
-        create(:patient, given_name: "Hari", family_name: "Potter")
+        create(:patient, given_name: "Hari", family_name: "Potte")
       end
       let(:patient_c) do
         # least similar match comes last
@@ -73,8 +71,45 @@ describe Patient do
         create(:patient, given_name: "Ron", family_name: "Weasley")
       end
 
-      it { should eq([patient_a, patient_b, patient_c]) }
-      it { should_not include(patient_d) }
+      context "with full name, in `given_name family_name` format" do
+        let(:query) { "Harry Potter" }
+
+        it "returns the patients in the correct order" do
+          expect(scope).to eq([patient_a, patient_b, patient_c])
+        end
+      end
+
+      context "with exact name, in `FAMILY_NAME, given_name` format" do
+        let(:query) { "POTTER, Harry" }
+
+        it "returns the patients in the correct order" do
+          expect(scope).to eq([patient_a, patient_b, patient_c])
+        end
+      end
+
+      context "with exact name, in `family_name given_name` format" do
+        let(:query) { "Potter Harry" }
+
+        it "returns the patients in the correct order" do
+          expect(scope).to eq([patient_a, patient_b, patient_c])
+        end
+      end
+
+      context "with last name only" do
+        let(:query) { "Potter" }
+
+        it "returns the patients in the correct order" do
+          expect(scope).to eq([patient_a, patient_b, patient_c])
+        end
+      end
+
+      context "with first name only" do
+        let(:query) { "Harry" }
+
+        it "returns the patients in the correct order" do
+          expect(scope).to eq([patient_a])
+        end
+      end
     end
 
     describe "#order_by_name" do

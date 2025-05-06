@@ -107,13 +107,13 @@ class CSVParser
       row = info.line
       header = unconverted_headers[info.index]
 
-      Field.new(value&.tr("\u00A0", " ")&.strip.presence, column, row, header)
+      Field.new(value&.normalise_whitespace, column, row, header)
     end
   end
 
   def header_converters
     proc do |value|
-      value.downcase.tr("-", "_").tr(" ", "_").tr("\u00A0", " ").strip.to_sym
+      value.downcase.normalise_whitespace.tr("-", "_").tr(" ", "_").to_sym
     end
   end
 end

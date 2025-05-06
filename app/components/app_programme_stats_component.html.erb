@@ -1,0 +1,22 @@
+<div class="nhsuk-grid-row nhsuk-card-group">
+  <div class="nhsuk-grid-column-one-third nhsuk-card-group__item">
+    <%= render AppCardComponent.new(link_to: programme_cohorts_path(@programme), colour: "reversed", data: true) do |card| %>
+      <% card.with_heading { "Children" } %>
+      <% card.with_description { patients_count.to_s } %>
+    <% end %>
+  </div>
+
+  <div class="nhsuk-grid-column-one-third nhsuk-card-group__item">
+    <%= render AppCardComponent.new(link_to: programme_vaccination_records_path(@programme), colour: "reversed", data: true) do |card| %>
+      <% card.with_heading { "Vaccinations" } %>
+      <% card.with_description { vaccinations_count.to_s } %>
+    <% end %>
+  </div>
+
+  <div class="nhsuk-grid-column-one-third nhsuk-card-group__item">
+    <%= render AppCardComponent.new(data: true, colour: "reversed") do |card| %>
+      <% card.with_heading { "Consent requests and reminders sent" } %>
+      <% card.with_description { consent_notifications_count.to_s } %>
+    <% end %>
+  </div>
+</div>

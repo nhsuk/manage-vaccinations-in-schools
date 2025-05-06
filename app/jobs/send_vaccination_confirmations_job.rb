@@ -23,7 +23,7 @@ class SendVaccinationConfirmationsJob < ApplicationJob
       .select { _1.academic_year == academic_year }
       .each do |vaccation_record|
         send_vaccination_confirmation(vaccation_record)
-        vaccation_record.update!(confirmation_sent_at: Time.current)
+        vaccation_record.update_column(:confirmation_sent_at, Time.current)
       end
   end
 end

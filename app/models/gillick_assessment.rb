@@ -54,6 +54,8 @@ class GillickAssessment < ApplicationRecord
               in: [true, false]
             }
 
+  validates :notes, length: { maximum: 1000 }
+
   def gillick_competent?
     knows_consequences && knows_delivery && knows_disease &&
       knows_side_effects && knows_vaccination

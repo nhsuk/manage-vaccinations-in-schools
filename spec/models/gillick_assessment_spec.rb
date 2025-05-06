@@ -38,7 +38,9 @@ describe GillickAssessment do
     it { should allow_values(true, false).for(:knows_disease) }
     it { should allow_values(true, false).for(:knows_side_effects) }
     it { should allow_values(true, false).for(:knows_vaccination) }
+
     it { should_not validate_presence_of(:notes) }
+    it { should validate_length_of(:notes).is_at_most(1000) }
   end
 
   describe "#gillick_competent?" do

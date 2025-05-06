@@ -43,6 +43,8 @@ describe PreScreening do
     it { should allow_values(true, false).for(:not_already_had) }
     it { should allow_values(true, false).for(:not_pregnant) }
     it { should allow_values(true, false).for(:not_taking_medication) }
+
     it { should_not validate_presence_of(:notes) }
+    it { should validate_length_of(:notes).is_at_most(1000) }
   end
 end
