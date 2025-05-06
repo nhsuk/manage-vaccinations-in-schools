@@ -8,6 +8,20 @@
   }
 }
 
+.app-header {
+  .nhsuk-header__navigation-item {
+    @include mq($from: tablet) {
+      padding: 0 12px;
+    }
+  }
+
+  .nhsuk-header__drop-down .nhsuk-header__navigation-item {
+    @include mq($from: tablet) {
+      padding: 0;
+    }
+  }
+}
+
 .app-header__navigation-item--current {
   .nhsuk-header__navigation-link {
     border-bottom-color: $nhsuk-border-color;
