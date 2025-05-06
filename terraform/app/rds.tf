@@ -37,7 +37,7 @@ resource "aws_rds_cluster" "aurora_cluster" {
   cluster_identifier          = var.resource_name.db_cluster
   engine                      = "aurora-postgresql"
   engine_mode                 = "provisioned"
-  engine_version              = "14.9"
+  engine_version              = "14.15"
   database_name               = "manage_vaccinations"
   master_username             = "postgres"
   manage_master_user_password = var.db_secret_arn == null
