@@ -53,6 +53,18 @@ class PatientImportRow
         existing_patient.gender_code = attributes.delete(:gender_code)
       end
 
+      if attributes[:preferred_given_name].present? &&
+           existing_patient.preferred_given_name.blank?
+        existing_patient.preferred_given_name =
+          attributes.delete(:preferred_given_name)
+      end
+
+      if attributes[:preferred_family_name].present? &&
+           existing_patient.preferred_family_name.blank?
+        existing_patient.preferred_family_name =
+          attributes.delete(:preferred_family_name)
+      end
+
       if address_postcode.present? &&
            address_postcode.to_postcode != existing_patient.address_postcode
         attributes.merge!(
