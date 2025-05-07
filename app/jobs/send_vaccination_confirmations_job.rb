@@ -20,10 +20,10 @@ class SendVaccinationConfirmationsJob < ApplicationJob
       .where("created_at >= ?", since)
       .where(confirmation_sent_at: nil)
       .recorded_in_service
-      .select { _1.academic_year == academic_year }
-      .each do |vaccation_record|
-        send_vaccination_confirmation(vaccation_record)
-        vaccation_record.update!(confirmation_sent_at: Time.current)
+      .select { it.academic_year == academic_year }
+      .each do |vaccination_record|
+        send_vaccination_confirmation(vaccination_record)
+        vaccination_record.update!(confirmation_sent_at: Time.current)
       end
   end
 end

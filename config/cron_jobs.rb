@@ -65,7 +65,7 @@ CRON_JOBS = {
     description: "Keep patient details up to date with PDS."
   },
   vaccination_confirmations: {
-    cron: "every day at 7pm",
+    cron: "every day at 13:00 and 16:00 and 19:00",
     class: "SendVaccinationConfirmationsJob",
     description: "Send vaccination confirmation emails to parents"
   }
