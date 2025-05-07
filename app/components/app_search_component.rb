@@ -21,10 +21,9 @@ class AppSearchComponent < ViewComponent::Base
         </div>
 
         <% if consent_statuses.any? %>
-          <%= f.govuk_radio_buttons_fieldset :consent_status, legend: { text: "Consent status", size: "s" } do %>
-            <%= f.govuk_radio_button :consent_status, "", label: { text: "Any" } %>
+          <%= f.govuk_check_boxes_fieldset :consent_statuses, legend: { text: "Consent status", size: "s" } do %>
             <% consent_statuses.each do |status| %>
-              <%= f.govuk_radio_button :consent_status, status, label: { text: t(status, scope: %i[status consent label]) } %>
+              <%= f.govuk_check_box :consent_statuses, status, label: { text: t(status, scope: %i[status consent label]) } %>
             <% end %>
           <% end %>
         <% end %>

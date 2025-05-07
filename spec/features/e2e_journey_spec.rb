@@ -161,7 +161,7 @@ describe "End-to-end journey" do
 
   def when_i_look_at_children_that_need_consent_responses
     click_link "Consent"
-    choose "No response"
+    check "No response"
     click_on "Update results"
   end
 
