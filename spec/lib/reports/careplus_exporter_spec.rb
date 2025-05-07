@@ -10,9 +10,13 @@ describe Reports::CareplusExporter do
     )
   end
 
+  let(:delivery_method) { :intramuscular }
+  let(:expected_vaccine_code) do
+    described_class::PROGRAMME_TYPE_TO_VACCINE_CODE.fetch(programme.type)
+  end
+
   shared_examples "generates a report" do
     let(:programmes) { [programme] }
-
     let(:organisation) do
       create(:organisation, careplus_venue_code: "ABC", programmes:)
     end
@@ -51,6 +55,7 @@ describe Reports::CareplusExporter do
       (1..5).each do |i|
         expect(headers).to include(
           "Vaccine #{i}",
+          "Vaccine Code #{i}",
           "Dose #{i}",
           "Reason Not Given #{i}",
           "Site #{i}",
@@ -78,6 +83,7 @@ describe Reports::CareplusExporter do
         create(
           :vaccination_record,
           programme:,
+          delivery_method:,
           patient: patient_session.patient,
           session: patient_session.session,
           performed_at: 2.weeks.ago
@@ -85,6 +91,7 @@ describe Reports::CareplusExporter do
 
       attended_index = headers.index("Attended")
       vaccine_index = headers.index("Vaccine 1")
+      vaccine_code_index = headers.index("Vaccine Code 1")
       batch_index = headers.index("Batch No 1")
       site_index = headers.index("Site 1")
       staff_type_index = headers.index("Staff Type")
@@ -98,6 +105,7 @@ describe Reports::CareplusExporter do
       expect(row[vaccine_index]).to eq(
         vaccination_record.vaccine.snomed_product_code
       )
+      expect(row[vaccine_code_index]).to eq(expected_vaccine_code)
       expect(row[batch_index]).to eq(vaccination_record.batch.name)
       expect(row[site_index]).to eq("ULA")
       expect(row[staff_type_index]).to eq("IN")
@@ -243,6 +251,20 @@ describe Reports::CareplusExporter do
 
   context "HPV programme" do
     let(:programme) { create(:programme, :hpv) }
+
+    include_examples "generates a report"
+  end
+
+  context "FLU programme" do
+    let(:programme) { create(:programme, :flu) }
+
+    include_examples "generates a report"
+  end
+
+  context "FLU programme using nasal spray" do
+    let(:programme) { create(:programme, :flu) }
+    let(:delivery_method) { :nasal_spray }
+    let(:expected_vaccine_code) { "FLUENZ" }
 
     include_examples "generates a report"
   end
