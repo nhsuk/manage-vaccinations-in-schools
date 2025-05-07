@@ -1,6 +1,13 @@
 # frozen_string_literal: true
 
 class Reports::CareplusExporter
+  PROGRAMME_TYPE_TO_VACCINE_CODE = {
+    "flu" => "FLU",
+    "hpv" => "HPV",
+    "td_ipv" => "3IN1",
+    "menacwy" => "ACWYX4"
+  }.freeze
+
   def initialize(organisation:, programme:, start_date:, end_date:)
     @organisation = organisation
     @programme = programme
@@ -55,6 +62,7 @@ class Reports::CareplusExporter
   def vaccine_columns(number)
     [
       "Vaccine #{number}",
+      "Vaccine Code #{number}",
       "Dose #{number}",
       "Reason Not Given #{number}",
       "Site #{number}",
@@ -154,6 +162,7 @@ class Reports::CareplusExporter
 
     [
       record.vaccine.snomed_product_code, # Vaccine X
+      vaccine_code(record), # Code X field
       "#{record.dose_sequence}P", # Dose X field
       "", # Reason Not Given X
       coded_site(record.delivery_site), # Site X; Coded value
@@ -201,5 +210,16 @@ class Reports::CareplusExporter
       nose: "N"
       # We don't implement the other codes currently
     }.fetch(site.to_sym)
+  end
+
+  def vaccine_code(vaccination_record)
+    code =
+      PROGRAMME_TYPE_TO_VACCINE_CODE.fetch(vaccination_record.programme.type)
+
+    if code == "FLU" && vaccination_record.delivery_method == "nasal_spray"
+      return "FLUENZ"
+    end
+
+    code
   end
 end
