@@ -57,6 +57,19 @@ class PatientImportRow
         %w[male female not_specified]
       )
 
+      auto_accept_attribute(
+        existing_patient,
+        attributes,
+        :preferred_given_name,
+        :present?
+      )
+      auto_accept_attribute(
+        existing_patient,
+        attributes,
+        :preferred_family_name,
+        :present?
+      )
+
       if address_postcode.present? &&
            address_postcode.to_postcode != existing_patient.address_postcode
         attributes.merge!(
