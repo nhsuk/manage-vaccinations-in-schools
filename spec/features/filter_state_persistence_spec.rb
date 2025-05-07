@@ -42,7 +42,7 @@ describe "Filter state persistence" do
   end
 
   def and_i_apply_consent_filters
-    choose "Consent given"
+    check "Consent given"
     click_on "Update results"
   end
 
@@ -92,6 +92,6 @@ describe "Filter state persistence" do
   end
 
   def then_i_should_see_no_applied_filters
-    expect(page).to have_checked_field("Any")
+    expect(page).not_to have_checked_field
   end
 end
