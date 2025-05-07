@@ -10,19 +10,14 @@ describe "Triage" do
     then_i_see_a_validation_error
 
     when_i_record_that_they_need_triage
-    then_i_see_the_triage_page
+    then_i_see_the_triage_options
     and_needs_triage_emails_are_sent_to_both_parents
 
-    when_i_go_to_the_patient
-    and_i_do_not_vaccinate
-    then_i_see_the_triage_page
+    when_i_do_not_vaccinate
     and_vaccination_wont_happen_emails_are_sent_to_both_parents
 
-    when_i_go_to_the_patient
-    then_i_see_the_update_triage_link
-
     when_i_record_that_they_are_safe_to_vaccinate
-    then_i_see_the_triage_page
+    then_i_see_the_update_triage_link
     and_vaccination_will_happen_emails_are_sent_to_both_parents
   end
 
@@ -68,8 +63,8 @@ describe "Triage" do
     click_link @patient.full_name
   end
 
-  def when_i_go_to_the_patient
-    click_link @patient.full_name, match: :first
+  def then_i_see_the_triage_options
+    expect(page).to have_selector :heading, "Is it safe to vaccinate"
   end
 
   def when_i_record_that_they_need_triage
@@ -83,17 +78,9 @@ describe "Triage" do
     click_button "Save triage"
   end
 
-  def and_i_do_not_vaccinate
+  def when_i_do_not_vaccinate
     choose "No, do not vaccinate"
     click_button "Save triage"
-  end
-
-  def then_i_see_the_triage_page
-    expect(page).to have_content("Triage outcome")
-  end
-
-  def then_i_see_the_triage_options
-    expect(page).to have_selector :heading, "Is it safe to vaccinate"
   end
 
   def when_i_save_the_triage_without_choosing_an_option
