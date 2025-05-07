@@ -146,6 +146,8 @@ Rails.application.routes.draw do
   resources :patients, only: %i[index show edit update] do
     post "", action: :index, on: :collection
 
+    resources :parents, only: %i[edit update]
+
     member do
       get "log"
 
