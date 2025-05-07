@@ -64,7 +64,7 @@ describe "Parental consent" do
   def then_there_should_be_no_consent_for_my_child
     expect(page).to have_content("No response")
 
-    choose "No response"
+    check "No response"
     click_on "Update results"
 
     expect(page).to have_content(@child.full_name)
