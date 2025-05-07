@@ -48,6 +48,7 @@ resource "aws_rds_cluster" "aurora_cluster" {
   vpc_security_group_ids          = [aws_security_group.rds_security_group.id]
   deletion_protection             = true
   allow_major_version_upgrade     = true
+  preferred_backup_window         = "01:00-01:30"
   preferred_maintenance_window    = "sun:02:30-sun:03:00"
   db_cluster_parameter_group_name = "default.aurora-postgresql16" # Remove this line after it's released. The default parameter group will then be handled internally by AWS.
 
