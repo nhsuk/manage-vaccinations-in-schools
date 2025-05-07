@@ -128,7 +128,7 @@ describe "Triage" do
 
   def and_i_go_to_the_patient_with_conflicting_consent
     visit session_consent_path(@session)
-    choose "Conflicting consent"
+    check "Conflicting consent"
     click_on "Update results"
 
     click_on @patient.full_name
