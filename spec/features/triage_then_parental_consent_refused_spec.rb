@@ -57,7 +57,6 @@ describe "Triage" do
   end
 
   def then_i_see_the_patient_is_ready
-    click_on @patient.full_name, match: :first
     expect(page).to have_content("Safe to vaccinate")
   end
 
