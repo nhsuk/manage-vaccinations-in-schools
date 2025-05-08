@@ -72,3 +72,58 @@ resource "aws_rds_cluster_instance" "aurora_instance" {
   db_subnet_group_name = aws_db_subnet_group.aurora_subnet_group.name
   promotion_tier       = 1
 }
+
+resource "aws_rds_cluster" "core_cluster" {
+  cluster_identifier           = "mavis-${var.environment}"
+  engine                       = "aurora-postgresql"
+  engine_mode                  = "provisioned"
+  engine_version               = "16.8"
+  database_name                = "manage_vaccinations"
+  master_username              = "postgres"
+  backup_retention_period      = var.backup_retention_period
+  skip_final_snapshot          = !local.is_production
+  db_subnet_group_name         = aws_db_subnet_group.aurora_subnet_group.name
+  vpc_security_group_ids       = [aws_security_group.rds_security_group.id]
+  kms_key_id                   = aws_kms_key.rds_cluster.arn
+  storage_encrypted            = true
+  manage_master_user_password  = true
+  enable_http_endpoint         = true
+  deletion_protection          = true
+  allow_major_version_upgrade  = true
+  preferred_maintenance_window = "sun:02:30-sun:03:00"
+
+  serverlessv2_scaling_configuration {
+    max_capacity = var.max_aurora_capacity_units
+    min_capacity = 0.5
+  }
+}
+
+resource "aws_rds_cluster_instance" "write" {
+  cluster_identifier   = aws_rds_cluster.core_cluster.id
+  identifier           = "mavis-${var.environment}-write"
+  instance_class       = "db.serverless"
+  engine               = aws_rds_cluster.core_cluster.engine
+  engine_version       = aws_rds_cluster.core_cluster.engine_version
+  db_subnet_group_name = aws_db_subnet_group.aurora_subnet_group.name
+  promotion_tier       = 1
+}
+
+module "dms_custom_kms_migration" {
+  source      = "./modules/dms"
+  environment = var.environment
+
+  source_endpoint      = aws_rds_cluster.aurora_cluster.endpoint
+  source_port          = aws_rds_cluster.aurora_cluster.port
+  source_database_name = aws_rds_cluster.aurora_cluster.database_name
+  source_db_secret_arn = var.db_secret_arn == null ? aws_rds_cluster.aurora_cluster.master_user_secret[0].secret_arn : var.db_secret_arn
+
+  target_endpoint      = aws_rds_cluster.core_cluster.endpoint
+  target_port          = aws_rds_cluster.core_cluster.port
+  target_database_name = aws_rds_cluster.core_cluster.database_name
+  target_db_secret_arn = aws_rds_cluster.core_cluster.master_user_secret[0].secret_arn
+
+  engine_name = aws_rds_cluster.aurora_cluster.engine
+  subnet_ids  = [aws_subnet.private_subnet_a.id, aws_subnet.private_subnet_b.id]
+
+  security_group_id = aws_security_group.rds_security_group.id
+}
