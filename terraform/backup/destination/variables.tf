@@ -5,5 +5,5 @@ variable "source_account_id" {
 
 variable "source_account_environment" {
   description = "The environment of the source account"
-  type = string
+  type        = string
 }
