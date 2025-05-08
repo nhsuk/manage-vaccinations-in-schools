@@ -132,14 +132,15 @@ module "source" {
     ],
     "rules" : [
       {
-        "copy_action" : {
-          "delete_after" : 60
-        },
+        # Cross-account copying will be enabled in MAV-1158
+        # "copy_action" : {
+        #   "delete_after" : 60
+        # },
         "lifecycle" : {
-          "delete_after" : 60
+          "delete_after" : var.backup_retention_period
         },
-        "name" : "daily_kept_for_2_months",
-        "schedule" : "cron(0 0 * * ? *)"
+        "name" : "${local.project_name}-backup-plan",
+        "schedule" : "cron(0 7,19 * * ? *)"
       }
     ],
     "selection_tag" : "NHSE-Enable-Backup"
