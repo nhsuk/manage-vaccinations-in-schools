@@ -7,6 +7,7 @@ module SearchFormConcern
     @form =
       SearchForm.new(
         params.fetch(:search_form, {}).permit(
+          :clear_filters,
           :consent_status,
           :date_of_birth_day,
           :date_of_birth_month,
@@ -18,7 +19,9 @@ module SearchFormConcern
           :session_status,
           :triage_status,
           year_groups: []
-        )
+        ),
+        session: session,
+        request_path: request.path
       )
   end
 end
