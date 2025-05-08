@@ -116,7 +116,7 @@ resource "aws_kms_key" "backup_notifications" {
 # Now we can deploy the source and destination modules, referencing the resources we've created above.
 
 module "source" {
-  source = "../modules/aws-backup-source"
+  source = "../../modules-external/aws-backup-source"
 
   backup_copy_vault_account_id = local.destination_account_id
   backup_copy_vault_arn        = var.destination_vault_arn

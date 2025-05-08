@@ -48,7 +48,7 @@ resource "aws_kms_key" "destination_backup_key" {
 }
 
 module "destination" {
-  source                  = "../modules/aws-backup-destination"
+  source                  = "../../modules-external/aws-backup-destination"
   source_account_name     = "mavis-${var.source_account_environment}"
   account_id              = local.destination_account_id
   source_account_id       = var.source_account_id

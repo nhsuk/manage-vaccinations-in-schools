@@ -1,3 +1,17 @@
+terraform {
+  required_version = "~> 1.10.5"
+  backend "local" {}
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.87"
+    }
+  }
+}
+provider "aws" {
+  region = "eu-west-2"
+}
+
 module "terraform_state_bucket" {
   source      = "../../modules/s3"
   bucket_name = "mavisbackup-terraform-state"
