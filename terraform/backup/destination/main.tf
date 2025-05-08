@@ -11,11 +11,11 @@ terraform {
     bucket         = "mavisbackup-terraform-state"
     region         = "eu-west-2"
     dynamodb_table = "mavisbackup-terraform-state-lock"
-    encrypt = true
+    encrypt        = true
   }
 }
 
-provider  "aws" {
+provider "aws" {
   region = "eu-west-2"
 }
 
@@ -40,7 +40,7 @@ resource "aws_kms_key" "destination_backup_key" {
         Principal = {
           AWS = "arn:aws:iam::${local.destination_account_id}:root"
         }
-        Action = "kms:*"
+        Action   = "kms:*"
         Resource = "*"
       }
     ]
@@ -48,7 +48,7 @@ resource "aws_kms_key" "destination_backup_key" {
 }
 
 module "destination" {
-  source = "../modules/aws-backup-destination"
+  source                  = "../modules/aws-backup-destination"
   source_account_name     = "mavis-${var.source_account_environment}"
   account_id              = local.destination_account_id
   source_account_id       = var.source_account_id
