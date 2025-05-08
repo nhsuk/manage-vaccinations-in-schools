@@ -5,6 +5,9 @@ class SearchForm
   include ActiveModel::Attributes
   include ActiveRecord::AttributeAssignment
 
+  SESSION_KEY = "search_filters"
+
+  attribute :clear_filters, :boolean
   attribute :consent_status, :string
   attribute :date_of_birth_day, :integer
   attribute :date_of_birth_month, :integer
@@ -16,6 +19,13 @@ class SearchForm
   attribute :session_status, :string
   attribute :triage_status, :string
   attribute :year_groups, array: true
+
+  attr_accessor :session, :request_path
+
+  def initialize(params = {})
+    super(params)
+    handle_session_filters
+  end
 
   def year_groups=(values)
     super(values&.compact_blank&.map(&:to_i)&.compact || [])
@@ -61,5 +71,55 @@ class SearchForm
     end
 
     scope.order_by_name
+  end
+
+  private
+
+  def handle_session_filters
+    if clear_filters
+      clear_from_session
+    elsif has_filters?
+      store_in_session
+    else
+      load_from_session
+    end
+  end
+
+  def store_in_session
+    return if session.nil?
+
+    if has_filters?
+      session[SESSION_KEY] ||= {}
+      session[SESSION_KEY][path_key] = attributes
+    end
+  end
+
+  def load_from_session
+    return if session.nil? || session[SESSION_KEY].blank?
+
+    stored_filters = session[SESSION_KEY][path_key]
+    return if stored_filters.blank?
+
+    assign_attributes(stored_filters)
+  end
+
+  def clear_from_session
+    return if session.nil? || session[SESSION_KEY].blank?
+
+    session[SESSION_KEY].delete(path_key)
+  end
+
+  def has_filters?
+    # An empty string represents the "Any" option
+    attributes
+      .except(:clear_filters)
+      .values
+      .any? { |value| value.present? || value == "" }
+  end
+
+  def path_key
+    # 8 should be more than enough to avoid collisions
+    # for the number of distinct paths.
+    Digest::MD5.hexdigest(request_path).first(8)
   end
 end
