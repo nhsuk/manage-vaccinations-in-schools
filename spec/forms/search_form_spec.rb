@@ -1,22 +1,10 @@
 # frozen_string_literal: true
 
 describe SearchForm do
-  subject(:form) do
-    described_class.new(
-      consent_status:,
-      date_of_birth_day:,
-      date_of_birth_month:,
-      date_of_birth_year:,
-      missing_nhs_number:,
-      programme_status:,
-      q:,
-      register_status:,
-      session_status:,
-      triage_status:,
-      year_groups:
-    )
-  end
+  subject(:form) { described_class.new(**params, session:, request_path:) }
 
+  let(:session) { {} }
+  let(:empty_params) { {} }
   let(:consent_status) { nil }
   let(:date_of_birth_day) { Date.current.day }
   let(:date_of_birth_month) { Date.current.month }
@@ -28,6 +16,23 @@ describe SearchForm do
   let(:session_status) { nil }
   let(:triage_status) { nil }
   let(:year_groups) { %w[8 9 10 11] }
+  let(:request_path) { "/a-path" }
+
+  let(:params) do
+    {
+      consent_status:,
+      date_of_birth_day:,
+      date_of_birth_month:,
+      date_of_birth_year:,
+      missing_nhs_number:,
+      programme_status:,
+      q:,
+      register_status:,
+      session_status:,
+      triage_status:,
+      year_groups:
+    }
+  end
 
   context "for patients" do
     let(:scope) { Patient.all }
@@ -252,6 +257,100 @@ describe SearchForm do
             programmes: [programme]
           )
         expect(form.apply(scope, programme:)).to include(patient_session)
+      end
+    end
+  end
+
+  describe "session filter persistence" do
+    let(:another_path) { "/another-path" }
+
+    context "when clear_filters param is present" do
+      it "only clears filters for the current path" do
+        described_class.new(q: "John", session:, request_path:)
+        described_class.new(q: "Jane", session:, request_path: another_path)
+
+        described_class.new(clear_filters: "true", session:, request_path:)
+
+        form1 = described_class.new(**empty_params, session:, request_path:)
+        expect(form1.q).to be_nil
+
+        form2 =
+          described_class.new(
+            **empty_params,
+            session:,
+            request_path: another_path
+          )
+        expect(form2.q).to eq("Jane")
+      end
+    end
+
+    context "when filters are present in params" do
+      it "persists filters to be loaded in subsequent requests" do
+        described_class.new(q: "John", session:, request_path:)
+
+        form = described_class.new(**empty_params, session:, request_path:)
+        expect(form.q).to eq("John")
+      end
+
+      it "overwrites previously stored filters" do
+        described_class.new(q: "John", session:, request_path:)
+
+        form1 = described_class.new(q: "Jane", session:, request_path:)
+        expect(form1.q).to eq("Jane")
+
+        form2 = described_class.new(**empty_params, session:, request_path:)
+        expect(form2.q).to eq("Jane")
+      end
+
+      it "overrides session filters when 'Any' option is selected (empty string)" do
+        described_class.new(consent_status: "given", session:, request_path:)
+
+        form1 = described_class.new(**empty_params, session:, request_path:)
+        expect(form1.consent_status).to eq("given")
+
+        form2 = described_class.new(consent_status: "", session:, request_path:)
+        expect(form2.consent_status).to eq("")
+
+        form3 = described_class.new(**empty_params, session:, request_path:)
+        expect(form3.consent_status).to eq("")
+      end
+    end
+
+    context "when no filters are present in params but exist in session" do
+      before do
+        described_class.new(
+          q: "John",
+          year_groups: %w[8 11],
+          consent_status: "given",
+          session:,
+          request_path:
+        )
+      end
+
+      it "loads filters from the session" do
+        form = described_class.new(**empty_params, session:, request_path:)
+
+        expect(form.q).to eq("John")
+        expect(form.year_groups).to eq([8, 11])
+        expect(form.consent_status).to eq("given")
+      end
+    end
+
+    context "with path-specific filters" do
+      it "maintains separate filters for different paths" do
+        described_class.new(q: "John", session:, request_path:)
+        described_class.new(q: "Jane", session:, request_path: another_path)
+
+        form1 = described_class.new(**empty_params, session:, request_path:)
+        expect(form1.q).to eq("John")
+
+        form2 =
+          described_class.new(
+            **empty_params,
+            session:,
+            request_path: another_path
+          )
+        expect(form2.q).to eq("Jane")
       end
     end
   end
