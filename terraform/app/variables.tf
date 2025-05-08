@@ -233,6 +233,7 @@ variable "enable_backup_to_vault" {
   type        = bool
   default     = false
   description = "Enable backup to vault for the RDS cluster."
+  nullable    = false
 }
 
 ########## ESC/Scaling Configuration ##########

@@ -29,9 +29,7 @@
         "kms:RetireGrant",
         "kms:ScheduleKeyDeletion"
       ],
-      "Resource": [
-        "*"
-      ]
+      "Resource": ["*"]
     }
   ]
 }
