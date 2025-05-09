@@ -31,21 +31,24 @@ At the end of these steps the system will be in the desired configuration
 
 Some changes are only possible to achieve by recreating the service. The naive Terraform approach of deleting and
 recreating the service is not possible because the service's deployment is controlled by CodeDeploy, this is a built-in
-safety mechanism. Additionally even if we can circumvent this blocker to deployment recreating the service would
+safety mechanism. Additionally, even if we can circumvent this blocker to deployment recreating the service would
 cause a downtime which can easily be avoided by following the below steps.
 
 ### The deployment strategy
 
-For simplicity lets call the existing service `service-a` and the new modified service `service-b`
+For simplicity lets call the existing service `service-a` and the new modified service `service-b`.
 
 1. Update the terraform configuration:
    1. Create a `service-b` with the new configurations but identical loadbalancer configuration
-   2. Duplicate the existing autoscaling configuration and attached it to `service-b`
-   3. Update the CodeDeploy deployment group to be linked to the `service-b`
-2. Run `terraform apply` to deploy the new service and update the CodeDeploy configuration
-   1. This service is not yet accessible by users, as the LB listener is still pointing to `group-1`
-3. Run a CodeDeploy deployment
-   1. After this stage all traffic will be going to `service-b` and `service-a` will be completely disconnected
-4. Remove `service-a` and the attached autoscaling configuration from the configuration and run `terraform apply`
+   2. Update the wiring to autoscaling/codedeploy/etc to point to `service-b`
+   3. Identify which target group (`blue`/`green`) is currently active (e.g. via aws console)
+      1. Specify this as the variable `active_lb_target_group`
+2. Run the [deploy-application.yml](../../.github/workflows/deploy-application.yml) workflow. This will automatically
+   achieve:
+   1. Running `terraform apply` to deploy the new service and update the CodeDeploy configuration
+      1. At this stage traffic will be going to both `service-a` and `service-b`
+   2. Running a CodeDeploy deployment to switch the traffic to `service-b`
+3. Remove `service-a` and the attached autoscaling configuration from the configuration and run `terraform apply`
+   1. Either manually or via [deploy-infrastructure.yml](../../.github/workflows/deploy-infrastructure.yml)
 
 At the end of these steps a new service will be running with the updated configuration without any downtime
