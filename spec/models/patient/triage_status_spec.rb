@@ -57,6 +57,28 @@ describe Patient::TriageStatus do
       it { should be(:required) }
     end
 
+    context "with a historical vaccination that needs triage" do
+      let(:programme) { create(:programme, :td_ipv) }
+
+      before do
+        create(:vaccination_record, patient:, programme:, dose_sequence: 1)
+      end
+
+      it { should be(:not_required) }
+
+      context "when consent is given" do
+        before { create(:consent, :given, patient:, programme:) }
+
+        it { should be(:required) }
+      end
+
+      context "when consent is refused" do
+        before { create(:consent, :refused, patient:, programme:) }
+
+        it { should be(:not_required) }
+      end
+    end
+
     context "with a safe to vaccinate triage" do
       before { create(:triage, :ready_to_vaccinate, patient:, programme:) }
 

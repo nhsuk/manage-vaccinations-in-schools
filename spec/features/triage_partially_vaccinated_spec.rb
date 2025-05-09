@@ -15,8 +15,10 @@ describe "Triage" do
 
     when_i_go_the_session
     then_i_see_one_patient_needing_consent
+    and_i_see_no_patients_needing_triage
 
-    when_the_parent_gives_consent
+    when_i_go_the_session
+    and_the_parent_gives_consent
     and_i_click_on_triage
     then_i_see_one_patient_needing_triage
     and_i_click_on_the_patient
@@ -67,7 +69,7 @@ describe "Triage" do
   end
 
   def when_i_go_the_session
-    click_on "Sessions"
+    click_on "Sessions", match: :first
     click_on "Scheduled"
     click_on @session.location.name
   end
@@ -89,12 +91,21 @@ describe "Triage" do
     click_on "Update results"
 
     expect(page).to have_content("Showing 1 to 1 of 1 children")
-
-    click_on @session.location.name
   end
 
-  def when_the_parent_gives_consent
-    Patient.first.consent_status(programme: @programme).given!
+  def and_i_see_no_patients_needing_triage
+    click_on "Triage"
+
+    choose "Needs triage"
+    click_on "Update results"
+
+    expect(page).to have_content("No children matching search criteria found")
+  end
+
+  def and_the_parent_gives_consent
+    create(:consent, :given, patient: Patient.first, programme: @programme)
+    StatusUpdater.call(patient: @patient)
+
     page.refresh
   end
 
