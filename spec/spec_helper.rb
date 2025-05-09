@@ -211,6 +211,7 @@ RSpec.configure do |config|
   config.include ActiveJob::TestHelper, type: :feature
   config.include ActiveSupport::Testing::TimeHelpers
   config.include Capybara::RSpecMatchers, type: :component
+  config.include Devise::Test::ControllerHelpers, type: :controller
   config.include Devise::Test::IntegrationHelpers, type: :feature
   config.include CIS2AuthHelper, type: :feature
   config.include PDSHelper, type: :feature
