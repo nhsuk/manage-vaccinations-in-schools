@@ -5,10 +5,9 @@ on:
   push:
     branches: [main]
 
-permissions: {}
-
 jobs:
   test:
+    permissions: {}
     uses: ./.github/workflows/test.yml
   deploy:
     needs: test
@@ -16,6 +15,8 @@ jobs:
       fail-fast: false
       matrix:
         environment: [qa, test]
+    permissions:
+      id-token: write
     uses: ./.github/workflows/deploy.yml
     with:
       environment: ${{ matrix.environment }}
