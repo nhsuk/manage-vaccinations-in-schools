@@ -125,17 +125,27 @@ class Reports::OfflineSessionExporter
   end
 
   def patient_sessions
-    session
-      .patient_sessions
-      .includes(
-        patient: [
-          :consent_statuses,
-          :school,
-          { vaccination_records: %i[batch performed_by_user vaccine] }
-        ],
-        session: :programmes
-      )
-      .order_by_name
+    @patient_sessions ||=
+      session
+        .patient_sessions
+        .includes(
+          patient: [
+            :consent_statuses,
+            :school,
+            { parent_relationships: :parent },
+            {
+              vaccination_records: %i[
+                batch
+                performed_by_user
+                vaccine
+                programme
+                session
+              ]
+            }
+          ],
+          session: [{ programmes: :vaccines }, :location]
+        )
+        .order_by_name
   end
 
   def consents
@@ -143,7 +153,7 @@ class Reports::OfflineSessionExporter
       Consent
         .where(patient_id: patient_sessions.select(:patient_id))
         .not_invalidated
-        .includes(:parent, :patient)
+        .includes(:parent, patient: { parent_relationships: :parent })
         .group_by(&:patient_id)
         .transform_values do
           it
@@ -206,7 +216,9 @@ class Reports::OfflineSessionExporter
       }
 
       vaccination_records =
-        patient.vaccination_records.select { it.programme_id == programme.id }
+        patient.vaccination_records.to_a.select do
+          it.programme_id == programme.id
+        end
 
       if vaccination_records.any?
         vaccination_records.map do |vaccination_record|
@@ -409,7 +421,7 @@ class Reports::OfflineSessionExporter
   end
 
   def clinic_name_values
-    @clinic_name_values =
+    @clinic_name_values ||=
       Location
         .community_clinic
         .joins(:team)
