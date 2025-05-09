@@ -45,7 +45,11 @@ FactoryBot.define do
 
     url { Faker::Internet.url }
 
-    team { organisation ? association(:team, organisation:) : nil }
+    team do
+      if organisation
+        organisation.teams.first || association(:team, organisation:)
+      end
+    end
 
     traits_for_enum :status
 

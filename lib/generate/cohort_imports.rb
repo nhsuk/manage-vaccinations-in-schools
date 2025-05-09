@@ -12,13 +12,19 @@ Faker::Config.locale = "en-GB"
 #     Generate::PatientImports.call
 #
 module Generate
-  class PatientImports
-    attr_reader :ods_code, :organisation, :programme, :urns, :patient_count
+  class CohortImports
+    attr_reader :ods_code,
+                :organisation,
+                :programme,
+                :urns,
+                :patient_count,
+                :school_year_groups
 
     def initialize(
       ods_code: "A9A5A",
       programme: "hpv",
       urns: nil,
+      school_year_groups: nil,
       patient_count: 10
     )
       @organisation = Organisation.find_by(ods_code:)
@@ -30,15 +36,15 @@ module Generate
             .select { it.urn.present? }
             .sample(3)
             .pluck(:urn)
+      @school_year_groups = school_year_groups
       @patient_count = patient_count
+      @nhs_numbers = Set.new
     end
 
     def self.call(...) = new(...).call
 
     def call
-      generate
       write_cohort_import_csv
-      write_class_import_csv
     end
 
     def patients
@@ -50,12 +56,6 @@ module Generate
     def cohort_import_csv_filepath
       Rails.root.join(
         "tmp/perf-test-cohort-import-#{organisation.ods_code}-#{programme.type}.csv"
-      )
-    end
-
-    def class_import_csv_filepath(school:)
-      Rails.root.join(
-        "tmp/perf-test-class-import-#{school.name}-#{school.sessions.first.slug}.csv"
       )
     end
 
@@ -105,40 +105,7 @@ module Generate
           ]
         end
       end
-    end
-
-    def write_class_import_csv
-      patients
-        .group_by(&:school)
-        .each do |school, school_patients|
-          next if school.nil?
-
-          CSV.open(class_import_csv_filepath(school:), "w") do |csv|
-            csv << %w[
-              CHILD_POSTCODE
-              CHILD_DATE_OF_BIRTH
-              CHILD_FIRST_NAME
-              CHILD_LAST_NAME
-              PARENT_1_EMAIL
-              PARENT_1_PHONE
-              PARENT_2_EMAIL
-              PARENT_2_PHONE
-            ]
-
-            school_patients.each do |patient|
-              csv << [
-                patient.address_postcode,
-                patient.date_of_birth,
-                patient.given_name,
-                patient.family_name,
-                patient.parents.first&.email,
-                patient.parents.first&.phone,
-                patient.parents.second&.email,
-                patient.parents.second&.phone
-              ]
-            end
-          end
-        end
+      cohort_import_csv_filepath.to_s
     end
 
     def programme_year_groups
@@ -147,28 +114,41 @@ module Generate
 
     def schools_with_year_groups
       @schools_with_year_groups ||=
-        organisation
-          .locations
-          .includes(:organisation, :sessions)
-          .select { (it.year_groups & programme_year_groups).any? }
+        if school_year_groups.present?
+          urns.map do |urn|
+            Location.new(urn:, year_groups: school_year_groups[urn])
+          end
+        else
+          organisation
+            .locations
+            .where(urn: urns)
+            .includes(:organisation, :sessions)
+            .select { (it.year_groups & programme_year_groups).any? }
+        end
     end
 
     def build_patient(year_group: nil)
       school = schools_with_year_groups.sample
       year_group ||= (school.year_groups & programme_year_groups).sample
+      begin
+        nhs_number = Faker::NationalHealthService.british_number.gsub(" ", "")
+      end while nhs_number.in? @nhs_numbers
+      @nhs_numbers << nhs_number
 
       FactoryBot
         .build(
           :patient,
           school:,
-          date_of_birth: date_of_birth_for_year(year_group)
+          organisation:,
+          date_of_birth: date_of_birth_for_year(year_group),
+          nhs_number:
         )
         .tap do |patient|
           patient.parents =
             FactoryBot.build_list(:parent, 2, family_name: patient.family_name)
           patient.parent_relationships =
             patient.parents.map do
-              FactoryBot.build(:parent_relationship, parent: it)
+              FactoryBot.build(:parent_relationship, parent: it, patient:)
             end
         end
     end

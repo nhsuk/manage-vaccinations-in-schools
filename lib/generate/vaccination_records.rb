@@ -2,9 +2,14 @@
 
 module Generate
   class VaccinationRecords
-    attr_reader :config, :organisation, :programme
+    attr_reader :config, :organisation, :programme, :session, :administered
 
-    def initialize(organisation:, programme: nil, session: nil, administered: 0)
+    def initialize(
+      organisation:,
+      programme: nil,
+      session: nil,
+      administered: nil
+    )
       @organisation = organisation
       @programme = programme || organisation.programmes.sample
       @session = session
@@ -12,19 +17,65 @@ module Generate
     end
 
     def call
-      create_vaccination_administered(@administered)
+      create_vaccinations
     end
 
     def self.call(...) = new(...).call
 
     private
 
+    def create_vaccinations
+      random_patient_sessions.each do |patient_session|
+        patient_session_id = patient_session.id
+        session_date_ids = patient_session.session.session_dates.pluck(:id)
+
+        unless SessionAttendance.exists?(
+                 patient_session_id:,
+                 session_date_id: session_date_ids
+               )
+          FactoryBot.create(:session_attendance, :present, patient_session:)
+        end
+
+        FactoryBot.create(
+          :vaccination_record,
+          :administered,
+          patient: patient_session.patient,
+          programme:,
+          performed_by:,
+          session:,
+          vaccine:,
+          batch:,
+          location_name: patient_session.location.name
+        )
+      end
+
+      StatusUpdater.call(patient: patient_sessions.map(&:patient))
+    end
+
+    def random_patient_sessions
+      if administered&.positive?
+        patient_sessions
+          .shuffle
+          .take(administered)
+          .tap do |selected|
+            if selected.size < administered
+              info =
+                "#{selected.size} (patient_sessions) < #{administered} (administered)"
+              raise "Not enough patients to generate vaccinations: #{info}"
+            end
+          end
+      else
+        patient_sessions
+      end
+    end
+
     def patient_sessions
-      (@session.presence || organisation)
+      (session.presence || organisation)
         .patient_sessions
         .joins(:patient)
         .includes(
           :session,
+          :location,
           patient: [
             :consents,
             :triages,
@@ -38,50 +89,15 @@ module Generate
     end
 
     def vaccine
-      @vaccine ||= programme.vaccines.includes(:batches).active.first
+      programme.vaccines.includes(:batches).active.first
     end
 
     def batch
-      @batch ||= vaccine.batches.sample
+      vaccine.batches.sample
     end
 
-    def random_patient_sessions(count)
-      patient_sessions
-        .shuffle
-        .take(count)
-        .tap do
-          if it.size < count
-            raise "Not enough patients to generate vaccinations"
-          end
-        end
-    end
-
-    def location_name(session)
-      session.location.generic_clinic? ? session.location.name : ""
-    end
-
-    def user
-      @user ||= organisation.users.includes(:organisations).sample
-    end
-
-    def create_vaccination_administered(count)
-      available_patient_sessions = random_patient_sessions(count)
-
-      available_patient_sessions.each do |patient_session|
-        FactoryBot.create(:session_attendance, :present, patient_session:)
-
-        FactoryBot.create(
-          :vaccination_record,
-          :administered,
-          patient: patient_session.patient,
-          programme:,
-          performed_by: user,
-          session: patient_session.session,
-          vaccine:,
-          batch:,
-          location_name: location_name(patient_session.session)
-        )
-      end
+    def performed_by
+      organisation.users.includes(:organisations).sample
     end
   end
 end

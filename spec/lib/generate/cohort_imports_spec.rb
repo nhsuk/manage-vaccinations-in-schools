@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe Generate::PatientImports do
+describe Generate::CohortImports do
   before do
     organisation = create(:organisation, ods_code: "A9A5A")
     programme = create(:programme, :hpv)
