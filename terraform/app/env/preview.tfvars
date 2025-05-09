@@ -25,3 +25,5 @@ http_hosts = {
 }
 
 appspec_bucket = "nhse-mavis-appspec-bucket-preview"
+
+enable_backup_to_vault = true
