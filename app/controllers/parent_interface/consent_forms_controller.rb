@@ -4,8 +4,6 @@ module ParentInterface
   class ConsentFormsController < ConsentForms::BaseController
     include ConsentFormMailerConcern
 
-    prepend_before_action :set_session_and_programmes,
-                          only: %i[start create deadline_passed]
     skip_before_action :set_consent_form, only: %i[start create deadline_passed]
     skip_before_action :authenticate_consent_form_user!,
                        only: %i[start create deadline_passed]
@@ -63,21 +61,15 @@ module ParentInterface
 
     private
 
-    def set_session_and_programmes
-      @session = Session.find_by!(slug: params[:session_slug])
-      @organisation = @session.organisation
-      @programmes =
-        @session.programmes.where(type: params[:programme_types].split("-"))
-      @team = @session.team
-    end
-
     def clear_session_edit_variables
       session.delete(:follow_up_changes_start_page)
     end
 
     def check_if_past_deadline
       return if @session.open_for_consent?
-      redirect_to action: :deadline_passed
+      redirect_to action: :deadline_passed,
+                  programme_types: @programmes.map(&:type).join("-"),
+                  session_slug: @session.slug
     end
   end
 end
