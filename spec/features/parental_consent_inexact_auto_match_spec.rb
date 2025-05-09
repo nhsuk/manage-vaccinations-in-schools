@@ -106,7 +106,7 @@ describe "Parental consent given with an inexact automatic match" do
   def then_they_see_that_the_child_has_consent
     expect(page).to have_content("Consent given")
 
-    choose "Consent given"
+    check "Consent given"
     click_on "Update results"
 
     expect(page).to have_content(@child.full_name)

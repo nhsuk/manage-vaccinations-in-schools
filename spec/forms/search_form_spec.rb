@@ -3,7 +3,7 @@
 describe SearchForm do
   subject(:form) do
     described_class.new(
-      consent_status:,
+      consent_statuses:,
       date_of_birth_day:,
       date_of_birth_month:,
       date_of_birth_year:,
@@ -17,7 +17,7 @@ describe SearchForm do
     )
   end
 
-  let(:consent_status) { nil }
+  let(:consent_statuses) { nil }
   let(:date_of_birth_day) { Date.current.day }
   let(:date_of_birth_month) { Date.current.month }
   let(:date_of_birth_year) { Date.current.year }
@@ -37,7 +37,7 @@ describe SearchForm do
     end
 
     context "filtering on date of birth" do
-      let(:consent_status) { nil }
+      let(:consent_statuses) { nil }
       let(:date_of_birth_day) { nil }
       let(:date_of_birth_month) { nil }
       let(:date_of_birth_year) { nil }
@@ -87,7 +87,7 @@ describe SearchForm do
     end
 
     context "filtering on programme status" do
-      let(:consent_status) { nil }
+      let(:consent_statuses) { nil }
       let(:date_of_birth_day) { nil }
       let(:date_of_birth_month) { nil }
       let(:date_of_birth_year) { nil }
@@ -116,7 +116,7 @@ describe SearchForm do
     end
 
     context "filtering on consent status" do
-      let(:consent_status) { "given" }
+      let(:consent_statuses) { %w[given refused] }
       let(:date_of_birth_day) { nil }
       let(:date_of_birth_month) { nil }
       let(:date_of_birth_year) { nil }
@@ -130,18 +130,25 @@ describe SearchForm do
       let(:programme) { create(:programme) }
 
       it "filters on consent status" do
-        patient_session =
+        patient_session_given =
           create(
             :patient_session,
             :consent_given_triage_not_needed,
             programmes: [programme]
           )
-        expect(form.apply(scope, programme:)).to include(patient_session)
+
+        patient_session_refused =
+          create(:patient_session, :consent_refused, programmes: [programme])
+
+        expect(form.apply(scope, programme:)).to contain_exactly(
+          patient_session_given,
+          patient_session_refused
+        )
       end
     end
 
     context "filtering on session status" do
-      let(:consent_status) { nil }
+      let(:consent_statuses) { nil }
       let(:date_of_birth_day) { nil }
       let(:date_of_birth_month) { nil }
       let(:date_of_birth_year) { nil }
@@ -163,7 +170,7 @@ describe SearchForm do
     end
 
     context "filtering on register status" do
-      let(:consent_status) { nil }
+      let(:consent_statuses) { nil }
       let(:date_of_birth_day) { nil }
       let(:date_of_birth_month) { nil }
       let(:date_of_birth_year) { nil }
@@ -182,7 +189,7 @@ describe SearchForm do
     end
 
     context "filtering on triage status" do
-      let(:consent_status) { nil }
+      let(:consent_statuses) { nil }
       let(:date_of_birth_day) { nil }
       let(:date_of_birth_month) { nil }
       let(:date_of_birth_year) { nil }
