@@ -200,9 +200,11 @@ EXPORT_PASSWORD=secure \
 
 ### Create a new IAM role for GitHub workflows
 
-In the AWS IAM console, create a new role for the GitHub workflows. Create a custom policy from `terraform/resources/github_actions_policy.json`. Also, attach the managed policies
+In the AWS IAM console, create a new role for the GitHub workflows to assume.
 
-- `ReadOnlyAccess`
-- `ResourceGroupsTaggingAPITagUntagSupportedResources`
+- Create a custom policy from `terraform/resources/github_actions_policy.json`.
+- Define the trust policy either as `github_role_production_trust_policy.json` or `github_role_development_trust_policy.json` depending on whether the new account is a production account or not.
 
-to the role.
+- Attach the managed policies
+  - `ReadOnlyAccess`
+  - `ResourceGroupsTaggingAPITagUntagSupportedResources` to the role.
