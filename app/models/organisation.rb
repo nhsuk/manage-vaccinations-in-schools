@@ -13,6 +13,7 @@
 #  name                          :text             not null
 #  ods_code                      :string           not null
 #  phone                         :string
+#  phone_instructions            :string
 #  privacy_notice_url            :string           not null
 #  privacy_policy_url            :string           not null
 #  created_at                    :datetime         not null
@@ -68,7 +69,9 @@ class Organisation < ApplicationRecord
   end
 
   def generic_team
-    teams.create_with(email:, phone:).find_or_create_by!(name:)
+    teams.create_with(email:, phone:, phone_instructions:).find_or_create_by!(
+      name:
+    )
   end
 
   def generic_clinic

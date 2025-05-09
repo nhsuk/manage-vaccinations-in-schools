@@ -58,6 +58,8 @@ class GovukNotifyPersonalisation
       team_email:,
       team_name:,
       team_phone:,
+      team_phone_instructions_present:,
+      team_phone_instructions:,
       today_or_date_of_vaccination:,
       vaccination:
     }.compact
@@ -243,6 +245,14 @@ class GovukNotifyPersonalisation
 
   def team_phone
     (team || organisation).phone
+  end
+
+  def team_phone_instructions_present
+    team_phone_instructions.present? ? "yes" : "no"
+  end
+
+  def team_phone_instructions
+    (team || organisation).phone_instructions
   end
 
   def today_or_date_of_vaccination

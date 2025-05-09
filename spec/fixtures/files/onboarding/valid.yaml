@@ -2,6 +2,7 @@ organisation:
   name: NHS Trust
   email: example@trust.nhs.uk
   phone: 07700 900815
+  phone_instructions: option 1, followed by option 3
   ods_code: EXAMPLE
   careplus_venue_code: EXAMPLE
   privacy_notice_url: https://example.com/privacy-notice
@@ -14,6 +15,7 @@ teams:
     name: Team 1
     email: team-1@trust.nhs.uk
     phone: 07700 900816
+    phone_instructions: option 9
     reply_to_id: 24af66c3-d6bd-4b9f-8067-3844f49e08d0
   team_2:
     name: Team 2
