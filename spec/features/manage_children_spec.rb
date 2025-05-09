@@ -236,7 +236,7 @@ describe "Manage children" do
   def then_i_see_the_edit_child_record_page
     expect(page).to have_title("Edit child record")
     expect(page).to have_content("SMITH, John")
-    expect(page).to have_content("Record details")
+    expect(page).to have_content("Change")
   end
 
   def when_i_click_on_change_nhs_number
@@ -247,7 +247,7 @@ describe "Manage children" do
   end
 
   def when_i_enter_an_nhs_number
-    fill_in "What is the child’s NHS number?", with: "123 456 7890"
+    fill_in "What is the child’s NHS number?", with: "975 862 3168"
     click_on "Continue"
   end
 
@@ -263,7 +263,7 @@ describe "Manage children" do
   end
 
   def and_i_see_the_nhs_number
-    expect(page).to have_content("123 ‍456 ‍7890")
+    expect(page).to have_content("975 ‍862 ‍3168")
   end
 
   def and_the_patient_is_no_longer_invalidated

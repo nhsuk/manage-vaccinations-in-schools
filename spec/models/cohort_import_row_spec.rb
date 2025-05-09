@@ -30,7 +30,7 @@ describe CohortImportRow do
       "CHILD_FIRST_NAME" => "Jimmy",
       "CHILD_GENDER" => "Male",
       "CHILD_LAST_NAME" => "Smith",
-      "CHILD_NHS_NUMBER" => "1234567890",
+      "CHILD_NHS_NUMBER" => "9990000018",
       "CHILD_POSTCODE" => "SW1A 1AA",
       "CHILD_REGISTRATION" => "8AB",
       "CHILD_SCHOOL_URN" => school_urn,
@@ -83,6 +83,17 @@ describe CohortImportRow do
         expect(
           cohort_import_row.errors["CHILD_DATE_OF_BIRTH"]
         ).to contain_exactly("should be formatted as YYYY-MM-DD")
+      end
+    end
+
+    context "with an invalid NHS number" do
+      let(:data) { { "CHILD_NHS_NUMBER" => "TP01234567" } }
+
+      it "has errors" do
+        expect(cohort_import_row).to be_invalid
+        expect(cohort_import_row.errors["CHILD_NHS_NUMBER"]).to eq(
+          ["should be a valid NHS number with 10 characters"]
+        )
       end
     end
 
@@ -208,13 +219,13 @@ describe CohortImportRow do
           family_name: "Smith",
           gender_code: "male",
           given_name: "Jimmy",
-          nhs_number: "1234567890"
+          nhs_number: "9990000018"
         )
       end
 
       it { should eq(existing_patient) }
       it { should be_male }
-      it { should have_attributes(nhs_number: "1234567890") }
+      it { should have_attributes(nhs_number: "9990000018") }
 
       it "stages the registration" do
         expect(patient.registration).not_to eq("8AB")
@@ -274,6 +285,29 @@ describe CohortImportRow do
 
         it { should be(true) }
       end
+    end
+
+    context "with an existing patient that was previously removed from cohort" do
+      subject(:school_move) do
+        cohort_import_row.to_school_move(existing_patient)
+      end
+
+      let!(:existing_patient) do
+        create(
+          :patient,
+          address_postcode: "SW1A 1AA",
+          family_name: "Smith",
+          gender_code: "male",
+          given_name: "Jimmy",
+          nhs_number: "9990000018",
+          organisation: nil,
+          school: Location.first
+        )
+      end
+
+      let(:data) { valid_data }
+
+      it { should_not be_nil }
     end
   end
 

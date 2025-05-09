@@ -4,6 +4,8 @@ on:
   pull_request:
   workflow_call:
 
+permissions: {}
+
 jobs:
   pre-rails-tests:
     name: Check if Rails tests need to run

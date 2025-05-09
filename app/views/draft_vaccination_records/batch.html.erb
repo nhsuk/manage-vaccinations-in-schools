@@ -7,23 +7,26 @@
 <%= form_with model: @draft_vaccination_record, url: wizard_path, method: :put do |f| %>
   <%= f.govuk_error_summary %>
 
-  <%= f.govuk_radio_buttons_fieldset(:batch_id,
+  <%= f.govuk_radio_buttons_fieldset :batch_id,
                                      caption: { text: @patient.full_name, size: "l" },
-                                     legend: { size: "l", tag: "h1", text: "Which batch did you use?" }) do %>
-    <% @batches.each do |batch| %>
+                                     legend: { size: "l", tag: "h1", text: "Which batch did you use?" } do %>
+    <% @batches.find_each do |batch| %>
       <% label = proc do %>
         <span class="app-u-monospace"><%= batch.name %></span>
+        (<%= batch.vaccine.brand %>)
+      <% end %>
+
+      <% hint = proc do %>
         <% if (expiry = batch.expiry) %>
-          (expires <%= expiry.to_fs(:long) %>)
+          Expires <%= expiry.to_fs(:long) %>
         <% end %>
       <% end %>
-      <%= f.govuk_radio_button(:batch_id, batch.id, label:) do %>
+
+      <%= f.govuk_radio_button :batch_id, batch.id, label:, hint: do %>
         <% unless @draft_vaccination_record.editing? %>
-          <%= f.govuk_check_box(
-                :todays_batch,
-                batch.id,
-                label: { text: "Default to this batch for this session" },
-              ) %>
+          <%= f.govuk_check_box :todays_batch,
+                                batch.id,
+                                label: { text: "Default to this batch for this session" } %>
         <% end %>
       <% end %>
     <% end %>

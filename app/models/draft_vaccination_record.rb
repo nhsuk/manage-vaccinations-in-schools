@@ -25,7 +25,6 @@ class DraftVaccinationRecord
   attribute :performed_by_user_id, :integer
   attribute :performed_ods_code, :string
   attribute :programme_id, :integer
-  attribute :vaccine_id, :integer
 
   validates :performed_by_family_name,
             :performed_by_given_name,
@@ -39,7 +38,6 @@ class DraftVaccinationRecord
       :date_and_time,
       (:outcome if can_change_outcome?),
       (:delivery if administered?),
-      (:vaccine if administered?),
       (:batch if administered?),
       (:location if location&.generic_clinic?),
       :confirm
@@ -69,13 +67,8 @@ class DraftVaccinationRecord
               }
   end
 
-  on_wizard_step :vaccine, exact: true do
-    validates :vaccine_id, presence: true
-  end
-
   on_wizard_step :batch, exact: true do
     validates :batch_id, presence: true
-    validate :batch_vaccine_matches_vaccine
   end
 
   on_wizard_step :location, exact: true do
@@ -94,7 +87,6 @@ class DraftVaccinationRecord
               :delivery_method,
               :delivery_site,
               :performed_at,
-              :vaccine_id,
               presence: true
   end
 
@@ -176,40 +168,27 @@ class DraftVaccinationRecord
     self.editing_id = value.id
   end
 
-  def vaccine
-    VaccinePolicy::Scope
-      .new(@current_user, Vaccine)
-      .resolve
-      .find_by(id: vaccine_id)
-  end
+  delegate :vaccine, to: :batch, allow_nil: true
 
-  def vaccine=(value)
-    self.vaccine_id = value.id
-  end
+  delegate :id, to: :vaccine, prefix: true, allow_nil: true
+
+  def vaccine_id_changed? = batch_id_changed?
 
   private
 
+  def writable_attribute_names
+    super + %w[vaccine_id]
+  end
+
   def reset_unused_fields
-    if administered?
-      if vaccine_id.nil? && programme &&
-           (vaccines = programme.vaccines.active).count == 1
-        self.vaccine_id = vaccines.first.id
-      end
-    else
+    unless administered?
       self.batch_id = nil
       self.delivery_method = nil
       self.delivery_site = nil
-      self.vaccine_id = nil
     end
   end
 
   def can_change_outcome?
     outcome != "already_had" || editing? || session.nil? || session.today?
-  end
-
-  def batch_vaccine_matches_vaccine
-    return if batch&.vaccine_id == vaccine_id
-
-    errors.add(:batch_id, :incorrect_vaccine, vaccine_brand: vaccine&.brand)
   end
 end

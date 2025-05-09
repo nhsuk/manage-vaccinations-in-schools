@@ -64,7 +64,6 @@ en:
           attributes:
             batch_id:
               blank: Choose a batch
-              incorrect_vaccine: Choose a batch of the %{vaccine_brand} vaccine
             delivery_method:
               blank: Choose a method of delivery
               inclusion: Choose a method of delivery
@@ -84,8 +83,6 @@ en:
               missing_year: Enter a year
               invalid: Enter a valid date and time
               less_than_or_equal_to: Enter a time in the past
-            vaccine_id:
-              blank: Choose a vaccine
         health_answer:
           attributes:
             notes:
@@ -360,6 +357,7 @@ en:
           attributes:
             nhs_number:
               invalid: Enter a valid NHS number
+              wrong_length: Enter a valid NHS number with 10 characters
               taken: NHS number is already assigned to a different patient
         programme:
           attributes:
@@ -576,17 +574,18 @@ en:
     info: Information
     success: Success
     warning: Warning
-  number:
-    "0": zero
-    "1": one
-    "2": two
-    "3": three
-    "4": four
-    "5": five
-    "6": six
-    "7": seven
-    "8": eight
-    "9": nine
+  ordinal_number:
+    "0": zeroth
+    "1": first
+    "2": second
+    "3": third
+    "4": fourth
+    "5": fifth
+    "6": sixth
+    "7": seventh
+    "8": eighth
+    "9": ninth
+    "10": tenth
   page_titles:
     accessibility_statement: Accessibility statement
   patients:

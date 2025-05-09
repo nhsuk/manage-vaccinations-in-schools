@@ -71,6 +71,23 @@ class Programme < ApplicationRecord
     year_groups.map(&:to_birth_academic_year)
   end
 
+  def available_delivery_methods
+    vaccines.flat_map(&:available_delivery_methods).uniq
+  end
+
+  def available_delivery_sites
+    vaccines.flat_map(&:available_delivery_sites).uniq
+  end
+
+  def common_delivery_sites
+    if hpv? || menacwy? || td_ipv?
+      %w[left_arm_upper_position right_arm_upper_position]
+    else
+      raise NotImplementedError,
+            "Common delivery sites not implemented for #{type} vaccines."
+    end
+  end
+
   DOSE_SEQUENCES = {
     "flu" => 1,
     "hpv" => 1,

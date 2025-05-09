@@ -16,7 +16,7 @@ describe DraftVaccinationRecord do
   let(:session) { create(:session, programmes: [programme]) }
   let(:patient) { create(:patient, session:) }
   let(:vaccine) { programme.vaccines.first }
-  let(:batch) { create(:batch, vaccine:) }
+  let(:batch) { create(:batch, organisation:, vaccine:) }
 
   let(:valid_administered_attributes) do
     {
@@ -29,8 +29,7 @@ describe DraftVaccinationRecord do
       outcome: "administered",
       patient_id: patient.id,
       programme_id: programme.id,
-      session_id: session.id,
-      vaccine_id: vaccine.id
+      session_id: session.id
     }
   end
 
@@ -47,24 +46,6 @@ describe DraftVaccinationRecord do
   let(:invalid_attributes) { {} }
 
   describe "validations" do
-    context "vaccine and batch doesn't match" do
-      let(:different_vaccine) { create(:vaccine, programme:) }
-      let(:different_batch) { create(:batch, vaccine: different_vaccine) }
-
-      let(:attributes) do
-        valid_administered_attributes.merge(batch_id: different_batch.id)
-      end
-
-      before { draft_vaccination_record.wizard_step = :batch }
-
-      it "has an error" do
-        expect(draft_vaccination_record.save(context: :update)).to be(false)
-        expect(draft_vaccination_record.errors[:batch_id]).to include(
-          /Choose a batch/
-        )
-      end
-    end
-
     context "when performed_at is in the future" do
       let(:attributes) do
         valid_administered_attributes.merge(performed_at: 1.second.from_now)
@@ -83,18 +64,24 @@ describe DraftVaccinationRecord do
     end
   end
 
+  describe "#write_to!" do
+    subject(:write_to!) do
+      draft_vaccination_record.write_to!(vaccination_record)
+    end
+
+    let(:attributes) { valid_administered_attributes }
+
+    let(:vaccination_record) { VaccinationRecord.new }
+
+    it "sets the vaccine" do
+      expect { write_to! }.to change(vaccination_record, :vaccine).to(
+        batch.vaccine
+      )
+    end
+  end
+
   describe "#reset_unused_fields" do
     subject(:save!) { draft_vaccination_record.save! }
-
-    context "when administered" do
-      let(:attributes) { valid_administered_attributes.merge(vaccine_id: nil) }
-
-      it "sets the vaccine" do
-        expect { save! }.to change(draft_vaccination_record, :vaccine_id).to(
-          vaccine.id
-        )
-      end
-    end
 
     context "when not administered" do
       let(:attributes) do
@@ -116,12 +103,6 @@ describe DraftVaccinationRecord do
 
       it "clears the deliver site" do
         expect { save! }.to change(draft_vaccination_record, :delivery_site).to(
-          nil
-        )
-      end
-
-      it "clears the vaccine" do
-        expect { save! }.to change(draft_vaccination_record, :vaccine_id).to(
           nil
         )
       end

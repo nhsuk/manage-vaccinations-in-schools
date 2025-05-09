@@ -189,7 +189,7 @@ class PatientSession < ApplicationRecord
   end
 
   def next_activity(programme:)
-    return :report if patient.vaccination_status(programme:).vaccinated?
+    return nil if patient.vaccination_status(programme:).vaccinated?
 
     return :record if patient.consent_given_and_safe_to_vaccinate?(programme:)
 

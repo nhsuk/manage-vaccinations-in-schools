@@ -15,13 +15,13 @@
   <% content_for(:before_content) { f.govuk_error_summary } %>
 
   <%= f.govuk_collection_radio_buttons :delivery_method,
-                                       vaccination_delivery_methods_for(@draft_vaccination_record.vaccine),
+                                       available_delivery_methods_for(@draft_vaccination_record.programme),
                                        :first,
                                        :second,
                                        legend: { text: "Method" } %>
 
   <%= f.govuk_collection_radio_buttons :delivery_site,
-                                       vaccination_delivery_sites_for(@draft_vaccination_record.vaccine),
+                                       available_delivery_sites_for(@draft_vaccination_record.programme),
                                        :first,
                                        :second,
                                        legend: { text: "Site" } %>

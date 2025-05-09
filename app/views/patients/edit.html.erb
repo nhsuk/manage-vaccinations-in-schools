@@ -9,11 +9,16 @@
   <%= page_title %>
 <% end %>
 
-<% change_links = { nhs_number: edit_nhs_number_patient_path(@patient) } %>
+<% change_links = {
+     nhs_number: edit_nhs_number_patient_path(@patient),
+   } %>
 
-<%= render AppCardComponent.new do |card| %>
-  <% card.with_heading { "Record details" } %>
-  <%= render AppChildSummaryComponent.new(@patient, change_links:) %>
-<% end %>
+<% remove_links = {
+     parent: @patient.parent_relationships.each_with_object({}) do |parent_relationship, memo|
+       memo[parent_relationship.parent_id] = destroy_patient_parent_relationship_path(@patient, parent_relationship.parent_id)
+     end,
+   } %>
+
+<%= render AppPatientCardComponent.new(@patient, change_links:, remove_links:) %>
 
 <%= govuk_button_link_to "Continue", patient_path(@patient) %>

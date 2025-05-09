@@ -3317,10 +3317,10 @@ gopd@^1.0.1:
   dependencies:
     get-intrinsic "^1.1.3"
 
-govuk-frontend@^5.9.0:
-  version "5.9.0"
-  resolved "https://registry.yarnpkg.com/govuk-frontend/-/govuk-frontend-5.9.0.tgz#4064ac692019e60f030d6311c49330a6454a5689"
-  integrity sha512-8NzmyoDtRFYyHs413DfNPR8Zo6qw6Q02Mruxml/Yfy+EueaOI/JZ4gVM8d0pqzJmTiMcJuHhvxqYEgBRmqeoyA==
+govuk-frontend@^5.10.0:
+  version "5.10.0"
+  resolved "https://registry.yarnpkg.com/govuk-frontend/-/govuk-frontend-5.10.0.tgz#812a5a14e4466130603b60b9da3d43a6b06b7069"
+  integrity sha512-9tjpB8PDwsDqutkQPJXfDalLvNOeKxzFhV7me21s/oyn7HcTg/ei/GC3Y4JvNsXauzjOkxv4eeCHntKeySkdMg==
 
 graceful-fs@^4.1.6, graceful-fs@^4.2.0, graceful-fs@^4.2.4, graceful-fs@^4.2.9:
   version "4.2.10"
@@ -4620,10 +4620,10 @@ natural-compare@^1.4.0:
   resolved "https://registry.npmjs.org/natural-compare/-/natural-compare-1.4.0.tgz"
   integrity sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==
 
-nhsuk-frontend@^9.3.0:
-  version "9.3.0"
-  resolved "https://registry.yarnpkg.com/nhsuk-frontend/-/nhsuk-frontend-9.3.0.tgz#83cd7172e8a511eb67d36c58d1c8ce3ba0216ebd"
-  integrity sha512-XZqmZN8YMK/j5cHi7O5AEDigFzPPZJFhBOPkYO/kNIw6k3eveedfRZetgVzOVurI7GUQmWd9IF67eVwR8LFh7w==
+nhsuk-frontend@^9.4.1:
+  version "9.4.1"
+  resolved "https://registry.yarnpkg.com/nhsuk-frontend/-/nhsuk-frontend-9.4.1.tgz#20afa711b0015a01b6f3c0e81a3dd01035b3bbf0"
+  integrity sha512-0++l57I4qvAYInYJytwU57pRt5j5iQ2bYjD8PfJUfpMNLep0yOmcS2hwwr+JvhexT8pM07VwngK1wUzhCSOaQQ==
 
 nice-try@^1.0.4:
   version "1.0.5"

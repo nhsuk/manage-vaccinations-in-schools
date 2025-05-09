@@ -65,8 +65,8 @@ class PatientImportRow
   end
 
   def to_school_move(patient)
-    if patient.new_record? ||
-         (patient.school != school || patient.home_educated != home_educated)
+    if patient.new_record? || patient.school != school ||
+         patient.home_educated != home_educated || patient.organisation.nil?
       school_move =
         if school
           SchoolMove.find_or_initialize_by(patient:, school:)
@@ -303,12 +303,13 @@ class PatientImportRow
   end
 
   def validate_nhs_number
-    if nhs_number.present? && nhs_number_value.length != 10
-      errors.add(
-        nhs_number.header,
-        "should be a valid NHS number, like 999 888 7777"
-      )
-    end
+    return if nhs_number.blank?
+
+    NHSNumberValidator.new(
+      allow_blank: true,
+      message: "should be a valid NHS number with 10 characters",
+      attributes: [nhs_number.header]
+    ).validate_each(self, nhs_number.header, nhs_number_value)
   end
 
   def validate_parent_1_email

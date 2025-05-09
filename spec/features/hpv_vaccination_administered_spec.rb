@@ -3,11 +3,14 @@
 describe "HPV vaccination" do
   around { |example| travel_to(Time.zone.local(2024, 2, 1)) { example.run } }
 
-  scenario "Administered" do
+  scenario "Administered with common delivery site" do
     given_i_am_signed_in
 
     when_i_go_to_a_patient_that_is_ready_to_vaccinate
-    and_i_record_that_the_patient_has_been_vaccinated
+    and_i_fill_in_pre_screening_questions
+    and_i_record_that_the_patient_has_been_vaccinated(
+      "Left arm (upper position)"
+    )
     and_i_see_only_not_expired_batches
     and_i_select_the_batch
     then_i_see_the_confirmation_page
@@ -15,7 +18,6 @@ describe "HPV vaccination" do
     when_i_click_change_outcome
     and_i_choose_vaccinated
     and_i_select_the_delivery
-    and_i_select_the_vaccine
     and_i_select_the_batch
     then_i_see_the_confirmation_page
 
@@ -23,14 +25,8 @@ describe "HPV vaccination" do
     and_i_select_the_batch
     then_i_see_the_confirmation_page
 
-    when_i_click_change_vaccine
-    and_i_select_the_vaccine
-    and_i_select_the_batch
-    then_i_see_the_confirmation_page
-
     when_i_click_change_delivery_site
     and_i_select_the_delivery
-    and_i_select_the_vaccine
     and_i_select_the_batch
     then_i_see_the_confirmation_page
 
@@ -38,7 +34,6 @@ describe "HPV vaccination" do
     and_i_select_the_date
     and_i_choose_vaccinated
     and_i_select_the_delivery
-    and_i_select_the_vaccine
     and_i_select_the_batch
     then_i_see_the_confirmation_page
 
@@ -59,6 +54,20 @@ describe "HPV vaccination" do
     when_vaccination_confirmations_are_sent
     then_an_email_is_sent_to_the_parent_confirming_the_vaccination
     and_a_text_is_sent_to_the_parent_confirming_the_vaccination
+  end
+
+  scenario "Administered with other delivery site" do
+    given_i_am_signed_in
+
+    when_i_go_to_a_patient_that_is_ready_to_vaccinate
+    and_i_fill_in_pre_screening_questions
+    and_i_record_that_the_patient_has_been_vaccinated("Other")
+    and_i_select_the_delivery
+    and_i_select_the_batch
+    then_i_see_the_confirmation_page
+
+    when_i_confirm_the_details
+    then_i_see_a_success_message
   end
 
   def given_i_am_signed_in
@@ -100,17 +109,16 @@ describe "HPV vaccination" do
     click_link @patient.full_name
   end
 
-  def and_i_record_that_the_patient_has_been_vaccinated
-    # pre-screening
+  def and_i_fill_in_pre_screening_questions
     check "know what the vaccination is for, and are happy to have it"
     check "have not already had the vaccination"
     check "are feeling well"
     check "have no allergies which would prevent vaccination"
-    check "are not pregnant"
+  end
 
-    # vaccination
+  def and_i_record_that_the_patient_has_been_vaccinated(where)
     choose "Yes"
-    choose "Left arm (upper position)"
+    choose where
     click_button "Continue"
   end
 
@@ -122,11 +130,6 @@ describe "HPV vaccination" do
 
   def and_i_select_the_batch
     choose @active_batch.name
-    click_button "Continue"
-  end
-
-  def and_i_select_the_vaccine
-    choose @active_vaccine.brand
     click_button "Continue"
   end
 
@@ -150,10 +153,6 @@ describe "HPV vaccination" do
 
   def when_i_click_change_batch
     click_on "Change batch"
-  end
-
-  def when_i_click_change_vaccine
-    click_on "Change vaccine"
   end
 
   def when_i_click_change_delivery_site

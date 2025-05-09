@@ -9,7 +9,3 @@ offline_working: Prototype support for using Mavis offline.
 
 report_gillick_notify_parents: Include whether patients would like their
   parents to be informed of vaccinations in the reporting.
-
-school_moves_export: Allow exporting confirmed school moves.
-
-systm_one_import: Allow importing vaccination records in SystmOne format.

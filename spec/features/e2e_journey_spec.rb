@@ -91,7 +91,7 @@ describe "End-to-end journey" do
       "CHILD_DATE_OF_BIRTH" => "2011-01-01",
       "CHILD_FIRST_NAME" => "Bobby",
       "CHILD_LAST_NAME" => "Tables",
-      "CHILD_NHS_NUMBER" => "999 888 6666",
+      "CHILD_NHS_NUMBER" => "999 888 6678",
       "CHILD_SCHOOL_URN" => @school.urn.to_s,
       "PARENT_1_EMAIL" => "daddy.tests@example.com",
       "PARENT_1_NAME" => "Big Daddy Tests",
@@ -174,7 +174,7 @@ describe "End-to-end journey" do
   end
 
   def then_i_see_the_childs_details_including_the_updated_nhs_number
-    expect(page).to have_content(/NHS number.*999.*888.*6666/)
+    expect(page).to have_content(/NHS number.*999.*888.*6678/)
   end
 
   def given_the_day_of_the_session_comes
@@ -240,7 +240,6 @@ describe "End-to-end journey" do
     check "have not already had the vaccination"
     check "are feeling well"
     check "have no allergies which would prevent vaccination"
-    check "are not pregnant"
 
     # vaccination
     choose "Yes"
