@@ -27,7 +27,7 @@ describe AppPatientSessionSearchResultCardComponent do
 
   it { should have_link("SELDON, Hari", href:) }
   it { should have_text("Year 8") }
-  it { should have_text("Status") }
+  it { should have_text("Consent status") }
 
   context "when context is register" do
     let(:context) { :register }
