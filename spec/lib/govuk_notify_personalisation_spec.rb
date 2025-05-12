@@ -19,6 +19,7 @@ describe GovukNotifyPersonalisation do
       name: "Organisation",
       email: "organisation@example.com",
       phone: "01234 567890",
+      phone_instructions: "option 1",
       programmes:
     )
   end
@@ -69,6 +70,8 @@ describe GovukNotifyPersonalisation do
         team_email: "organisation@example.com",
         team_name: "Organisation",
         team_phone: "01234 567890",
+        team_phone_instructions_present: "yes",
+        team_phone_instructions: "option 1",
         vaccination: "HPV vaccination"
       }
     )
