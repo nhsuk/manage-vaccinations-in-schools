@@ -10,7 +10,7 @@ resource "aws_appautoscaling_target" "this" {
 
 resource "aws_appautoscaling_policy" "this" {
   for_each           = local.autoscaling_enabled ? var.autoscaling_policies : {}
-  name               = "${var.server_type}-${each.key}-scaling-${var.environment}"
+  name               = "${local.server_type_name}-${each.key}-scaling-${var.environment}"
   policy_type        = "TargetTrackingScaling"
   resource_id        = aws_appautoscaling_target.this[0].resource_id
   scalable_dimension = aws_appautoscaling_target.this[0].scalable_dimension
