@@ -54,6 +54,34 @@ describe Programme do
     end
   end
 
+  describe "#vaccine_may_contain_gelatine?" do
+    subject { programme.vaccine_may_contain_gelatine? }
+
+    context "with a Flu programme" do
+      let(:programme) { build(:programme, :flu) }
+
+      it { should be(true) }
+    end
+
+    context "with an HPV programme" do
+      let(:programme) { build(:programme, :hpv) }
+
+      it { should be(false) }
+    end
+
+    context "with an MenACWY programme" do
+      let(:programme) { build(:programme, :menacwy) }
+
+      it { should be(false) }
+    end
+
+    context "with an Td/IPV programme" do
+      let(:programme) { build(:programme, :td_ipv) }
+
+      it { should be(false) }
+    end
+  end
+
   describe "#common_delivery_sites" do
     subject(:common_delivery_sites) { programme.common_delivery_sites }
 
