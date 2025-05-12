@@ -25,8 +25,8 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
 
             if status_tag
               summary_list.with_row do |row|
-                row.with_key { "Status" }
-                row.with_value { status_tag }
+                row.with_key { I18n.t(status_tag[:key], scope: %i[status label]) }
+                row.with_value { status_tag[:value] }
               end
             end
           end %>
@@ -100,27 +100,54 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
 
     case context
     when :register
-      render AppRegisterStatusTagComponent.new(
-               patient_session.registration_status&.status || "unknown"
-             )
+      {
+        key: :register,
+        value:
+          render(
+            AppRegisterStatusTagComponent.new(
+              patient_session.registration_status&.status || "unknown"
+            )
+          )
+      }
     when :consent
-      statuses =
-        patient_session.programmes.index_with do |programme|
-          patient.consent_status(programme:).status
-        end
-      render AppProgrammeStatusTagsComponent.new(statuses, outcome: :consent)
+      {
+        key: :consent,
+        value:
+          render(
+            AppProgrammeStatusTagsComponent.new(
+              patient_session.programmes.index_with do |programme|
+                patient.consent_status(programme:).status
+              end,
+              outcome: :consent
+            )
+          )
+      }
     when :triage
-      statuses =
-        patient_session.programmes.index_with do |programme|
-          patient.triage_status(programme:).status
-        end
-      render AppProgrammeStatusTagsComponent.new(statuses, outcome: :triage)
+      {
+        key: :triage,
+        value:
+          render(
+            AppProgrammeStatusTagsComponent.new(
+              patient_session.programmes.index_with do |programme|
+                patient.triage_status(programme:).status
+              end,
+              outcome: :triage
+            )
+          )
+      }
     else
-      statuses =
-        patient_session.programmes.index_with do |programme|
-          patient_session.session_status(programme:).status
-        end
-      render AppProgrammeStatusTagsComponent.new(statuses, outcome: :session)
+      {
+        key: :session,
+        value:
+          render(
+            AppProgrammeStatusTagsComponent.new(
+              patient_session.programmes.index_with do |programme|
+                patient_session.session_status(programme:).status
+              end,
+              outcome: :session
+            )
+          )
+      }
     end
   end
 end
