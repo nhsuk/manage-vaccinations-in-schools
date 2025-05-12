@@ -3,7 +3,12 @@
 describe AppConsentRefusedTableComponent do
   subject(:rendered) { render_inline(component) }
 
-  let(:component) { described_class.new(Consent.all) }
+  let(:component) do
+    described_class.new(consents, vaccine_may_contain_gelatine:)
+  end
+
+  let(:consents) { Consent.all }
+  let(:vaccine_may_contain_gelatine) { true }
 
   let(:programme) { create(:programme) }
 
@@ -43,4 +48,10 @@ describe AppConsentRefusedTableComponent do
   it { should have_content("Medical reasons\n\n            16.7%") }
   it { should have_content("Personal choice\n\n            16.7%") }
   it { should have_content("Other\n\n            16.7%") }
+
+  context "when no vaccine contains gelatine" do
+    let(:vaccine_may_contain_gelatine) { false }
+
+    it { should_not have_content("Contains gelatine") }
+  end
 end

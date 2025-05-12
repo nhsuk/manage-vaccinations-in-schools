@@ -36,4 +36,7 @@
   </div>
 </div>
 
-<%= render AppConsentRefusedTableComponent.new(@consents) %>
+<%= render AppConsentRefusedTableComponent.new(
+      @consents,
+      vaccine_may_contain_gelatine: @programme.vaccine_may_contain_gelatine?,
+    ) %>
