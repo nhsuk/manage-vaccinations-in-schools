@@ -63,6 +63,7 @@ class ConsentForm < ApplicationRecord
   include AgeConcern
   include Archivable
   include FullNameConcern
+  include GelatineVaccinesConcern
   include HasHealthAnswers
   include WizardStepConcern
 
@@ -307,19 +308,6 @@ class ConsentForm < ApplicationRecord
 
   def any_health_answers_truthy?
     health_answers.any? { _1.response == "yes" }
-  end
-
-  def gelatine_content_status_in_vaccines
-    # we don't YET track the vaccine type that the user is agreeing to in the consent form,
-    # so we have to check all vaccines
-    # there might not be a true or false answer if there are multiple vaccines in the programme
-    # (e.g. flu nasal and flu injection)
-    possible_answers = vaccines.map(&:contains_gelatine?)
-    if possible_answers.uniq.length == 1
-      possible_answers.first
-    else
-      :maybe
-    end
   end
 
   def reason_notes_must_be_provided?
