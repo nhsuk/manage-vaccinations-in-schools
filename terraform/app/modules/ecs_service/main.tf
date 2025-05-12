@@ -9,7 +9,7 @@ terraform {
 }
 
 resource "aws_security_group" "this" {
-  name        = "${var.server_type}-service-${var.environment}"
+  name        = "${local.server_type_name}-service-${var.environment}"
   description = "Security Group for communication with ECS Service"
   vpc_id      = var.network_params.vpc_id
   lifecycle {
@@ -27,7 +27,7 @@ resource "aws_security_group_rule" "egress_all" {
 }
 
 resource "aws_ecs_service" "this" {
-  name                              = "${var.naming_prefix}${var.environment}-${var.server_type}"
+  name                              = "mavis-${var.environment}-${local.server_type_name}"
   cluster                           = var.cluster_id
   task_definition                   = aws_ecs_task_definition.this.arn
   desired_count                     = var.minimum_replica_count
@@ -70,7 +70,7 @@ resource "aws_ecs_service" "this" {
 }
 
 resource "aws_ecs_task_definition" "this" {
-  family                   = "${var.naming_prefix}${var.server_type}-task-definition-${var.environment}"
+  family                   = "mavis-${local.server_type_name}-task-definition-${var.environment}"
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
   cpu                      = var.task_config.cpu
@@ -95,7 +95,7 @@ resource "aws_ecs_task_definition" "this" {
         options = {
           awslogs-group         = var.task_config.log_group_name
           awslogs-region        = var.task_config.region
-          awslogs-stream-prefix = "${var.environment}-${var.server_type}-logs"
+          awslogs-stream-prefix = "${var.environment}-${local.server_type_name}-logs"
         }
       }
       healthCheck = {

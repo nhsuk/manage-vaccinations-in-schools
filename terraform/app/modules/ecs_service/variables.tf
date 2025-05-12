@@ -6,8 +6,15 @@ variable "environment" {
 
 variable "server_type" {
   type        = string
-  description = "Type of server to be deployed. This is set as an environment variable in the main container, and is used to determine how the application is launched"
+  description = "Type of server to be deployed. This is set as an environment variable in the main container, and is used to determine how the application is launched."
   nullable    = false
+}
+
+variable "server_type_name" {
+  type        = string
+  description = "Name of the server type to be deployed."
+  default     = null
+  nullable    = true
 }
 
 variable "minimum_replica_count" {
@@ -24,13 +31,6 @@ variable "maximum_replica_count" {
     condition     = var.maximum_replica_count >= var.minimum_replica_count
     error_message = "Maximum replica count must be greater than initial replica count when autoscaling policies are defined and null otherwise"
   }
-}
-
-variable "naming_prefix" {
-  type        = string
-  description = "Prefix to be used for naming the ECS service and task definition"
-  default     = "mavis-"
-  nullable    = false
 }
 
 variable "autoscaling_policies" {
@@ -116,4 +116,5 @@ variable "container_name" {
 
 locals {
   autoscaling_enabled = var.maximum_replica_count > var.minimum_replica_count
+  server_type_name    = var.server_type_name != null ? var.server_type_name : var.server_type
 }
