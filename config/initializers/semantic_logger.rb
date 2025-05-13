@@ -13,7 +13,10 @@ end
 class MavisSplunkFormatter
   def call(log, logger)
     message = JSON.parse(logger.call(log, logger))
-    message["event"]["hosting_environment"] = HostingEnvironment.name
+    message["time"] = message["time"].floor(6)
+    if defined?(HostingEnvironment)
+      message["event"]["hosting_environment"] = HostingEnvironment.name
+    end
     message.to_json
   end
 end
