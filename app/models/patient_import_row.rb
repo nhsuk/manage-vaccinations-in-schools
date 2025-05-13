@@ -49,11 +49,26 @@ class PatientImportRow
         existing_patient.registration = attributes.delete(:registration)
       end
 
-      if attributes[:gender_code].in?(%w[male female not_specified]) &&
-           !existing_patient.gender_code.in?(%w[male female not_specified]) &&
-           attributes[:gender_code] != existing_patient.gender_code
-        existing_patient.gender_code = attributes.delete(:gender_code)
-      end
+      auto_accept_attribute(
+        existing_patient,
+        attributes,
+        :gender_code,
+        :in?,
+        %w[male female not_specified]
+      )
+
+      auto_accept_attribute(
+        existing_patient,
+        attributes,
+        :preferred_given_name,
+        :present?
+      )
+      auto_accept_attribute(
+        existing_patient,
+        attributes,
+        :preferred_family_name,
+        :present?
+      )
 
       if address_postcode.present? &&
            address_postcode.to_postcode != existing_patient.address_postcode
@@ -206,6 +221,22 @@ class PatientImportRow
   attr_reader :organisation, :year_groups
 
   private
+
+  def auto_accept_attribute(
+    existing_patient,
+    attributes,
+    attribute_name,
+    condition_function,
+    *condition_params
+  )
+    if attributes[attribute_name].send(condition_function, *condition_params) &&
+         !existing_patient[attribute_name].send(
+           condition_function,
+           *condition_params
+         )
+      existing_patient[attribute_name] = attributes.delete(attribute_name)
+    end
+  end
 
   def auto_overwrite_address?(existing_patient)
     existing_patient.address_postcode == address_postcode&.to_postcode &&
