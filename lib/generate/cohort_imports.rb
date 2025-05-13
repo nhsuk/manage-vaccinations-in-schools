@@ -8,8 +8,26 @@ Faker::Config.locale = "en-GB"
 #
 # Usage from the Rails console:
 #
-#     # By default it uses existing locations in the db.
-#     Generate::PatientImports.call
+# Create a cohort import of 1000 children for all the school sessions for the
+# org A9A5A in the local db:
+#
+#     Generate::CohortImports.call(patient_count: 1000)
+#
+# You can also generate a cohort import for sessions not in the local db.
+#
+#     Generate::CohortImports.call(
+#       patient_count: 1000,
+#       urns: ["123456", "987654"],
+#       school_year_groups: {
+#         "123456" => [-2, -1, 0, 1, 2, 3, 4, 5, 6],
+#         "987654" => [9, 10, 11, 12, 13]
+#       }
+#     )
+#
+# You can pull out the year groups with the following:
+#
+#     org = Organisation.find_by(ods_code: "A9A5A")
+#     org.locations.school.pluck(:urn, :year_groups) .to_h
 #
 module Generate
   class CohortImports
