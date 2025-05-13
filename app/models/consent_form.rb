@@ -483,30 +483,20 @@ class ConsentForm < ApplicationRecord
         }
       end
 
-    health_answers_for_chosen_vaccines =
-      chosen_vaccines.flat_map { it.health_questions.to_health_answers }
-
-    # TODO: This doesn't work if we have follow up questions. Currently no vaccines have these.
-    deduplicated_health_answers =
-      health_answers_for_chosen_vaccines.uniq(&:question)
-
     self.health_answers =
-      deduplicated_health_answers.each_with_index.map do |health_answer, index|
-        health_answer.id = index
+      HealthAnswersDeduplicator
+        .call(vaccines: chosen_vaccines)
+        .map do |health_answer|
+          if (
+               existing_health_answer =
+                 existing_health_answers[health_answer.question]
+             )
+            health_answer.response = existing_health_answer[:response]
+            health_answer.notes = existing_health_answer[:notes]
+          end
 
-        health_answer.next_question =
-          (index + 1 if index < deduplicated_health_answers.count - 1)
-
-        if (
-             existing_health_answer =
-               existing_health_answers[health_answer.question]
-           )
-          health_answer.response = existing_health_answer[:response]
-          health_answer.notes = existing_health_answer[:notes]
+          health_answer
         end
-
-        health_answer
-      end
   end
 
   private
