@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 describe "Self-consent" do
-  scenario "From Gillick assessment" do
+  scenario "after Gillick assessment" do
     given_an_hpv_programme_is_underway
     and_there_is_a_child_without_parental_consent
 
@@ -15,18 +15,35 @@ describe "Self-consent" do
     then_the_details_of_the_gillick_competence_assessment_are_visible
     and_the_activity_log_shows_the_gillick_non_competence
     and_the_activity_log_shows_the_gillick_competence
+    and_the_nurse_records_consent_for_the_child
     and_the_child_can_give_their_own_consent_that_the_nurse_records
 
     when_the_nurse_views_the_childs_record
-    then_they_see_that_the_child_has_consent
+    then_they_see_that_the_child_has_consent_from_themselves
     and_the_child_should_be_safe_to_vaccinate
     and_enqueued_jobs_run_with_no_errors
   end
 
+  scenario "change to parent consent" do
+    given_an_hpv_programme_is_underway
+    and_there_is_a_child_with_gillick_competence
+    and_the_child_has_a_parent
+
+    when_the_nurse_goes_to_the_child
+    and_the_nurse_records_consent_for_the_child
+    and_changes_the_response_method_to_the_parent
+    then_the_parent_can_give_consent
+
+    when_the_nurse_views_the_childs_record
+    then_they_see_that_the_child_has_consent_from_the_parent
+    and_the_child_should_be_safe_to_vaccinate
+  end
+
   def given_an_hpv_programme_is_underway
-    programme = create(:programme, :hpv)
+    @programme = create(:programme, :hpv)
+
     @organisation =
-      create(:organisation, :with_one_nurse, programmes: [programme])
+      create(:organisation, :with_one_nurse, programmes: [@programme])
 
     @school = create(:school)
 
@@ -35,7 +52,7 @@ describe "Self-consent" do
         :session,
         :today,
         organisation: @organisation,
-        programmes: [programme],
+        programmes: [@programme],
         location: @school
       )
 
@@ -60,6 +77,25 @@ describe "Self-consent" do
 
     expect(page).to have_content("Showing 1 to 1 of 1 children")
     expect(page).to have_content(@patient.full_name)
+  end
+
+  def and_there_is_a_child_with_gillick_competence
+    create(
+      :gillick_assessment,
+      :competent,
+      patient_session: @patient.patient_sessions.first,
+      programme: @programme
+    )
+  end
+
+  def and_the_child_has_a_parent
+    @parent = create(:parent_relationship, patient: @patient).parent
+  end
+
+  def when_the_nurse_goes_to_the_child
+    sign_in @organisation.users.first
+
+    visit session_patient_programme_path(@session, @patient, @programme)
   end
 
   def when_the_nurse_assesses_the_child_as_not_being_gillick_competent
@@ -176,7 +212,7 @@ describe "Self-consent" do
     click_on "HPV"
   end
 
-  def and_the_child_can_give_their_own_consent_that_the_nurse_records
+  def and_the_nurse_records_consent_for_the_child
     click_on "Get consent"
 
     # who
@@ -197,8 +233,9 @@ describe "Self-consent" do
 
     choose "Yes, it’s safe to vaccinate"
     click_on "Continue"
+  end
 
-    # confirmation page
+  def and_the_child_can_give_their_own_consent_that_the_nurse_records
     click_on "Change response method"
     choose "Child (Gillick competent)"
     5.times { click_on "Continue" }
@@ -208,13 +245,37 @@ describe "Self-consent" do
     expect(page).to have_content("Consent recorded for #{@patient.full_name}")
   end
 
+  def and_changes_the_response_method_to_the_parent
+    click_on "Change response method"
+    choose @parent.full_name
+    click_on "Continue"
+
+    click_on "Continue"
+
+    choose "By phone"
+    click_on "Continue"
+
+    3.times { click_on "Continue" }
+  end
+
+  def then_the_parent_can_give_consent
+    click_on "Confirm"
+  end
+
   def when_the_nurse_views_the_childs_record
     click_on @patient.full_name, match: :first
   end
 
-  def then_they_see_that_the_child_has_consent
+  def then_they_see_that_the_child_has_consent_from_themselves
     expect(page).to have_content(
       "#{@patient.full_name} Child (Gillick competent)"
+    )
+    expect(page).to have_content("Consent given")
+  end
+
+  def then_they_see_that_the_child_has_consent_from_the_parent
+    expect(page).to have_content(
+      "Consent given\nNameResponse dateDecision #{@parent.full_name}"
     )
     expect(page).to have_content("Consent given")
   end
