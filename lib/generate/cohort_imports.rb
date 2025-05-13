@@ -132,20 +132,23 @@ module Generate
 
     def schools_with_year_groups
       @schools_with_year_groups ||=
-        if school_year_groups.present?
-          urns.map do |urn|
-            Location.new(urn:, year_groups: school_year_groups[urn])
-          end
-        else
-          organisation
-            .locations
-            .where(urn: urns)
-            .includes(:organisation, :sessions)
-            .select { (it.year_groups & programme_year_groups).any? }
+        begin
+          locations =
+            if school_year_groups.present?
+              urns.map do |urn|
+                Location.new(urn:, year_groups: school_year_groups[urn])
+              end
+            else
+              organisation
+                .locations
+                .where(urn: urns)
+                .includes(:organisation, :sessions)
+            end
+          locations.select { (it.year_groups & programme_year_groups).any? }
         end
     end
 
-    def build_patient(year_group: nil)
+    def build_patient
       school = schools_with_year_groups.sample
       year_group ||= (school.year_groups & programme_year_groups).sample
       nhs_number = nil
