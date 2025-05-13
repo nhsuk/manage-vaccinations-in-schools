@@ -655,7 +655,7 @@ describe ImmunisationImportRow do
         expect(immunisation_import_row).to be_invalid
 
         expect(immunisation_import_row.errors["BATCH_NUMBER"]).to include(
-          "is greater than 300 characters long"
+          "is greater than 100 characters long"
         )
         expect(immunisation_import_row.errors["CLINIC_NAME"]).to include(
           "is greater than 300 characters long"
