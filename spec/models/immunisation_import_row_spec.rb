@@ -156,6 +156,27 @@ describe ImmunisationImportRow do
       it { should be_valid }
     end
 
+    context "without a vaccine and recording offline" do
+      let(:data) do
+        valid_data.merge(
+          {
+            "VACCINE_GIVEN" => "",
+            "DATE_OF_VACCINATION" => "#{Date.current.academic_year}0901",
+            "SESSION_ID" => session.id.to_s
+          }
+        )
+      end
+
+      let(:session) { create(:session, organisation:, programmes:) }
+
+      it "has errors" do
+        expect(immunisation_import_row).to be_invalid
+        expect(immunisation_import_row.errors["VACCINE_GIVEN"]).to eq(
+          ["is required"]
+        )
+      end
+    end
+
     context "with an invalid reason not vaccinated" do
       let(:data) do
         { "VACCINATED" => "N", "REASON_NOT_VACCINATED" => "unknown" }
