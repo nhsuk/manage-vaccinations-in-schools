@@ -491,11 +491,8 @@ class ImmunisationImportRow
           )
         elsif batch_name.blank?
           errors.add(batch_name.header, "Enter a batch number.")
-        elsif batch_name.to_s.length > MAX_FIELD_LENGTH
-          errors.add(
-            batch_name.header,
-            "is greater than #{MAX_FIELD_LENGTH} characters long"
-          )
+        elsif batch_name.to_s.length > 100
+          errors.add(batch_name.header, "is greater than 100 characters long")
         end
       end
     elsif batch_name.present?
