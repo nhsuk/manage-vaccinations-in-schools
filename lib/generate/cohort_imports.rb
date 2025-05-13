@@ -48,7 +48,7 @@ module Generate
     end
 
     def patients
-      @patients = patient_count.times.map { build_patient }
+      patient_count.times.lazy.map { build_patient }
     end
 
     private
