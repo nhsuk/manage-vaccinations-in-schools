@@ -640,9 +640,7 @@ describe ImmunisationImportRow do
       let(:invalid_name_length) { "a" * 301 }
       let(:data) do
         {
-          "SESSION_ID" => "1",
           "VACCINATED" => "Y",
-          "CARE_SETTING" => "2",
           "BATCH_NUMBER" => invalid_name_length,
           "CLINIC_NAME" => invalid_name_length,
           "PERSON_FORENAME" => invalid_name_length,
