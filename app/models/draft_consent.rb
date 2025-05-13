@@ -141,11 +141,13 @@ class DraftConsent
     @new_or_existing_contact = value
 
     if value == "new"
+      self.route = nil
       self.parent = nil
     elsif value == "patient"
       self.route = "self_consent"
       self.parent = nil
     else
+      self.route = nil
       self.parent =
         patient.parents.find_by(id: value) ||
           Parent.where(consents: patient.consents.where(programme:)).find_by(
