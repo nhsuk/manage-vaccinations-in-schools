@@ -18,18 +18,18 @@
 // govuk-visually-hidden class. So we need to shim both namespaces.
 .govuk-visually-hidden,
 .nhsuk-visually-hidden {
-  @include visually-hidden();
+  @include visually-hidden;
 }
 
 .app-visually-hidden-until-desktop {
   @include nhsuk-media-query($until: desktop) {
-    @include visually-hidden();
+    @include visually-hidden;
   }
 }
 
 .app-visually-hidden-from-tablet {
   @include nhsuk-media-query($from: tablet) {
-    @include visually-hidden();
+    @include visually-hidden;
   }
 }
 
