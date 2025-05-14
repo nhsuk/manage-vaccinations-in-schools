@@ -16,6 +16,7 @@ class DraftVaccinationRecord
   attribute :delivery_site, :string
   attribute :dose_sequence, :integer
   attribute :full_dose, :boolean
+  attribute :location_id, :integer
   attribute :location_name, :string
   attribute :notes, :string
   attribute :outcome, :string
@@ -41,7 +42,7 @@ class DraftVaccinationRecord
       (:outcome if can_change_outcome?),
       (:delivery if administered?),
       (:batch if administered?),
-      (:location if location&.generic_clinic?),
+      (:location if session&.generic_clinic?),
       :confirm
     ].compact
   end
@@ -116,6 +117,17 @@ class DraftVaccinationRecord
     self.batch_id = value.id
   end
 
+  def location
+    LocationPolicy::Scope
+      .new(@current_user, Location)
+      .resolve
+      .find_by(id: location_id)
+  end
+
+  def location=(value)
+    self.location_id = value&.id
+  end
+
   def patient
     return nil if patient_id.nil?
 
@@ -125,8 +137,6 @@ class DraftVaccinationRecord
   def patient=(value)
     self.patient_id = value.id
   end
-
-  delegate :location, to: :session, allow_nil: true
 
   def performed_by_user
     return nil if performed_by_user_id.nil?
