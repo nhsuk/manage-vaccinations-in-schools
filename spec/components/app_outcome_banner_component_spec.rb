@@ -114,7 +114,11 @@ describe AppOutcomeBannerComponent do
 
     context "when the vaccination is historical" do
       before do
-        vaccination_record.update!(session: nil, location_name: "Unknown")
+        vaccination_record.update!(
+          session: nil,
+          location: nil,
+          location_name: "Unknown"
+        )
       end
 
       it { should have_text("Vaccinated") }

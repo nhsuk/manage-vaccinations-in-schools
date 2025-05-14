@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_04_29_140846) do
+ActiveRecord::Schema[8.0].define(version: 2025_05_14_170839) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -798,8 +798,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_29_140846) do
     t.bigint "session_id"
     t.string "performed_ods_code"
     t.bigint "vaccine_id"
+    t.bigint "location_id"
     t.index ["batch_id"], name: "index_vaccination_records_on_batch_id"
     t.index ["discarded_at"], name: "index_vaccination_records_on_discarded_at"
+    t.index ["location_id"], name: "index_vaccination_records_on_location_id"
     t.index ["patient_id"], name: "index_vaccination_records_on_patient_id"
     t.index ["performed_by_user_id"], name: "index_vaccination_records_on_performed_by_user_id"
     t.index ["programme_id"], name: "index_vaccination_records_on_programme_id"
