@@ -15,14 +15,14 @@
 
 // Sticky column
 .app-grid-column--sticky {
-  @include mq($from: desktop) {
+  @include nhsuk-media-query($from: desktop) {
     position: sticky;
     top: 0;
   }
 }
 
 .app-grid-column--sticky-below-secondary-navigation {
-  @include mq($from: desktop) {
+  @include nhsuk-media-query($from: desktop) {
     position: sticky;
     top: #{nhsuk-spacing(9) + nhsuk-spacing(3)};
   }

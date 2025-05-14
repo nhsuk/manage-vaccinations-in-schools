@@ -21,7 +21,7 @@
     width: 100%;
   }
 
-  @include mq($from: tablet) {
+  @include nhsuk-media-query($from: tablet) {
     flex-direction: row;
     flex-wrap: wrap;
 
@@ -42,7 +42,7 @@
   margin-top: nhsuk-spacing(-1);
   width: 100%;
 
-  @include mq($from: mobile) {
+  @include nhsuk-media-query($from: mobile) {
     flex-direction: row;
 
     .nhsuk-button {
@@ -50,7 +50,7 @@
     }
   }
 
-  @include mq($from: desktop) {
+  @include nhsuk-media-query($from: desktop) {
     flex-wrap: nowrap;
     justify-content: start;
   }

@@ -5,7 +5,7 @@
   gap: nhsuk-spacing(4);
   justify-content: space-between;
 
-  @include mq($from: tablet) {
+  @include nhsuk-media-query($from: tablet) {
     align-items: center;
     flex-direction: row;
   }

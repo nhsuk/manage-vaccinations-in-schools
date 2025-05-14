@@ -9,7 +9,7 @@
 .app-u-width-one-fifth {
   width: 100% !important;
 
-  @include mq($from: tablet) {
+  @include nhsuk-media-query($from: tablet) {
     width: 20% !important;
   }
 }
@@ -22,13 +22,13 @@
 }
 
 .app-visually-hidden-until-desktop {
-  @include mq($until: desktop) {
+  @include nhsuk-media-query($until: desktop) {
     @include visually-hidden();
   }
 }
 
 .app-visually-hidden-from-tablet {
-  @include mq($from: tablet) {
+  @include nhsuk-media-query($from: tablet) {
     @include visually-hidden();
   }
 }
