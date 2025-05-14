@@ -1,9 +1,9 @@
 .app-heading-group {
-  @include nhsuk-responsive-margin(7, "bottom");
   display: flex;
   flex-direction: column;
   gap: nhsuk-spacing(4);
   justify-content: space-between;
+  @include nhsuk-responsive-margin(7, "bottom");
 
   @include nhsuk-media-query($from: tablet) {
     align-items: center;

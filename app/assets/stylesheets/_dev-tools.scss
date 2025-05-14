@@ -1,9 +1,4 @@
 .app-dev-tools {
-  @include clearfix();
-  @include print-hide();
-  @include nhsuk-responsive-padding(5, bottom);
-  @include nhsuk-responsive-padding(5, top);
-
   background-color: $color_nhsuk-pale-yellow;
   background-image: linear-gradient(
     -45deg,
@@ -17,4 +12,8 @@
   );
   background-size: nhsuk-spacing(2) nhsuk-spacing(2);
   background-repeat: repeat-x;
+  @include clearfix();
+  @include print-hide();
+  @include nhsuk-responsive-padding(5, bottom);
+  @include nhsuk-responsive-padding(5, top);
 }

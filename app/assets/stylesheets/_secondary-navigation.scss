@@ -1,9 +1,8 @@
 .app-secondary-navigation {
-  @include nhsuk-font(19);
-  @include nhsuk-responsive-margin(5, "bottom");
-
   margin-left: #{$nhsuk-gutter-half * -1};
   margin-right: #{$nhsuk-gutter-half * -1};
+  @include nhsuk-font(19);
+  @include nhsuk-responsive-margin(5, "bottom");
 
   @include nhsuk-media-query($from: tablet) {
     margin-left: auto;
@@ -19,12 +18,11 @@
 }
 
 .app-secondary-navigation__link {
-  @include nhsuk-link-style-default;
-  @include nhsuk-link-style-no-visited-state;
-
   display: block;
   padding: nhsuk-spacing(2) $nhsuk-gutter-half;
   text-decoration: none;
+  @include nhsuk-link-style-default;
+  @include nhsuk-link-style-no-visited-state;
 
   @include nhsuk-media-query($from: tablet) {
     padding: nhsuk-spacing(3) 2px;

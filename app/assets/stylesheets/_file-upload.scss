@@ -1,9 +1,9 @@
 .nhsuk-file-upload {
-  @include nhsuk-font($size: 19);
   color: $nhsuk-text-color;
   margin-left: nhsuk-spacing(-1);
   max-width: 100%;
   padding: nhsuk-spacing(1);
+  @include nhsuk-font($size: 19);
 
   // The default file upload button in Safari does not support setting a
   // custom font-size. Set `-webkit-appearance` to `button` to drop out of the

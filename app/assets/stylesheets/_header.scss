@@ -38,12 +38,12 @@
 
 .app-header__navigation-item--with-count {
   .app-count {
-    @include nhsuk-font(14, $line-height: 1);
     margin-left: 6px;
     min-width: nhsuk-spacing(4);
     padding-bottom: 3px;
     padding-top: 5px;
     text-decoration: none;
+    @include nhsuk-font(14, $line-height: 1);
   }
 }
 
