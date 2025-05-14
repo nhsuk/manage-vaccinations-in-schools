@@ -17,14 +17,7 @@ $govuk-assets-path: "/";
 
 // Configure and import NHS.UK Frontend
 $nhsuk-fonts-path: "/";
-$mq-breakpoints: (
-  mobile: 320px,
-  tablet: 641px,
-  desktop: 769px,
-  wide: 1300px,
-);
-
-$_nhsuk-grid-widths: (
+$nhsuk-grid-widths: (
   one-quarter: 25%,
   one-third: 33.3333%,
   one-half: 50%,
@@ -33,7 +26,7 @@ $_nhsuk-grid-widths: (
   full: 100%,
   filters: 30%,
   results: 70%,
-) !default;
+);
 
 @import "nhsuk-frontend/packages/nhsuk";
 
