@@ -1,3 +1,5 @@
+@use "sass:color";
+
 @mixin app-link-style-inverse {
   &:link,
   &:visited {
@@ -8,7 +10,7 @@
   // https://webkit.org/b/224483
   &:hover,
   &:active {
-    color: rgba($color_nhsuk-white, 0.99);
+    color: color.change($color_nhsuk-white, $alpha: 0.99);
   }
 
   &:focus {
