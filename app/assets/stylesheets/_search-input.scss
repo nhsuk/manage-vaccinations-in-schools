@@ -1,4 +1,4 @@
-$button-shadow-size: $nhsuk-border-width-form-element * 2;
+$_button-shadow-size: $nhsuk-border-width-form-element * 2;
 
 .app-search-input {
   @include nhsuk-responsive-margin(4, "bottom");
@@ -29,7 +29,7 @@ $button-shadow-size: $nhsuk-border-width-form-element * 2;
   flex: 0;
 
   // Adjust bottom margin to offset shadow size given flex-end alignment
-  margin-bottom: $button-shadow-size;
+  margin-bottom: $_button-shadow-size;
 
   // Adjust inline padding
   padding: 0 nhsuk-spacing(2);
