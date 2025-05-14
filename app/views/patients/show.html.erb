@@ -15,7 +15,7 @@
     end %>
 
 <%= render AppPatientCardComponent.new(@patient) do %>
-  <%= govuk_button_link_to "Edit child record", edit_patient_path(@patient), class: "app-button--secondary" %>
+  <%= govuk_button_link_to "Edit child record", edit_patient_path(@patient), secondary: true %>
 <% end %>
 
 <%= render AppCardComponent.new do |c| %>

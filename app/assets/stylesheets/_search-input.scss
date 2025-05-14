@@ -1,4 +1,4 @@
-$button-shadow-size: 2px;
+$button-shadow-size: $nhsuk-border-width-form-element * 2;
 
 .app-search-input {
   @include nhsuk-responsive-margin(4, "bottom");
@@ -24,9 +24,6 @@ $button-shadow-size: 2px;
 }
 
 .app-search-input__submit {
-  // Reduce shadow size to align with input border
-  box-shadow: 0 $button-shadow-size 0 $nhsuk-secondary-button-shadow-color;
-
   // Keep button remains aligned with input
   display: flex;
   flex: 0;
@@ -39,8 +36,4 @@ $button-shadow-size: 2px;
 
   // Align icon in center of button
   place-items: center;
-
-  &:active {
-    top: $button-shadow-size;
-  }
 }

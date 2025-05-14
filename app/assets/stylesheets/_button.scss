@@ -1,4 +1,4 @@
-$button-shadow-size: 4px;
+$button-shadow-size: $nhsuk-border-width-form-element * 2;
 
 .nhsuk-button {
   .button_to &,
@@ -19,98 +19,38 @@ $button-shadow-size: 4px;
   }
 }
 
-// Proposed secondary button style
-// See https://github.com/nhsuk/nhsapp-frontend/issues/12
-// See https://github.com/nhsuk/nhs-app-design-styles-components-patterns
-@mixin app-button-secondary($button-color) {
-  background-color: transparent;
-  border-bottom: 0;
-  border-color: $button-color;
-  box-shadow: 0 4px 0 $button-color;
-  color: $button-color;
-  // Adjust padding to account for removal of 2px bottom border
-  padding-bottom: 13px;
-  padding-top: 13px;
+.app-button--secondary-warning {
+  @extend .nhsuk-button--secondary;
 
+  &,
   &:link,
-  &:visited {
-    color: $button-color;
+  &:visited,
+  &:active,
+  &:hover {
+    color: $nhsuk-warning-button-color;
   }
 
   &:hover {
-    background-color: rgba($button-color, 10%);
-    color: $button-color;
-  }
-
-  &:focus {
-    background-color: $nhsuk-focus-color;
-    border-color: $nhsuk-focus-color;
-    color: $nhsuk-focus-text-color;
-  }
-
-  &:focus:visited:active {
-    // Override .nhsuk-button turning colour white
-    color: $button-color;
+    background-color: rgba($nhsuk-warning-button-color, 10%);
   }
 
   &:active {
-    background-color: rgba($button-color, 15%);
-    border-bottom: $nhsuk-border-width-form-element solid; // Reintroduce 2px bottom border
-    border-color: $button-color;
-    color: $button-color;
-    // Revert padding to account for reintroduction of 2px bottom border
-    padding-bottom: 12px;
-    padding-top: 12px;
+    background-color: rgba($nhsuk-warning-button-color, 10%);
+    border-color: $nhsuk-warning-button-color;
   }
 
-  &::before {
-    bottom: #{$button-shadow-size * -1};
-    top: #{$nhsuk-border-width-form-element * -1};
+  &:not(:focus):not(:active)::before {
+    border-color: $nhsuk-warning-button-color;
   }
 
-  &:active::before {
-    bottom: #{($nhsuk-border-width-form-element + $button-shadow-size) * -1};
-    top: #{($nhsuk-border-width-form-element + $button-shadow-size) * -1};
+  &:not(:focus):not(:active)::after {
+    box-shadow: 0 $button-shadow-size 0 $nhsuk-warning-button-color;
   }
-}
-
-.app-button--secondary {
-  @include app-button-secondary($nhsuk-link-color);
-}
-
-.app-button--secondary-warning {
-  @include app-button-secondary($nhsuk-warning-button-color);
 }
 
 .app-button--small {
-  @include nhsuk-typography-responsive(16);
-  $padding-block: 6px;
-  $padding-block-icon: 3px;
-  $padding-inline: 12px;
-  $padding-inline-icon: 6px;
-
-  padding: $padding-block $padding-inline;
-
-  &.app-button--secondary,
-  &.app-button--secondary-warning {
-    // Adjust padding to account for removal of 2px bottom border
-    padding: #{$padding-block + 1px} $padding-inline;
-
-    &.app-button--icon {
-      padding: #{$padding-block-icon + 1px} $padding-inline-icon;
-    }
-
-    &:active {
-      margin-bottom: -1px;
-      // Revert padding to account for reintroduction of 2px bottom border
-      padding: $padding-block $padding-inline;
-    }
-
-    &.app-button--icon:active {
-      // Revert padding to account for reintroduction of 2px bottom border
-      padding: $padding-block-icon $padding-inline-icon;
-    }
-  }
+  @include nhsuk-font-size(16);
+  padding: nhsuk-spacing(2) 12px nhsuk-spacing(1);
 }
 
 .app-button--icon {

@@ -44,7 +44,9 @@
                                      session,
                                      patient,
                                      programme,
-                                   ), class: "app-button--secondary nhsuk-u-margin-bottom-0" %>
+                                   ),
+                                   secondary: true,
+                                   class: "nhsuk-u-margin-bottom-0" %>
         </p>
       <% end %>
     <% elsif gillick_assessment_can_be_recorded? %>
@@ -54,7 +56,9 @@
                                    session,
                                    patient,
                                    programme,
-                                 ), class: "app-button--secondary nhsuk-u-margin-bottom-0" %>
+                                 ),
+                                 secondary: true,
+                                 class: "nhsuk-u-margin-bottom-0" %>
       </p>
     <% end %>
   <% end %>
@@ -105,7 +109,7 @@
       <% if helpers.policy(vaccination_record).edit? %>
         <%= govuk_button_to "Edit vaccination record",
                             programme_vaccination_record_path(programme, vaccination_record),
-                            method: :put, class: "app-button--secondary" %>
+                            method: :put, secondary: true %>
       <% end %>
 
       <% if helpers.policy(vaccination_record).destroy? %>
