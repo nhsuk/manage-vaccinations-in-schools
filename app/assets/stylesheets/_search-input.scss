@@ -1,9 +1,9 @@
 $_button-shadow-size: $nhsuk-border-width-form-element * 2;
 
 .app-search-input {
-  @include nhsuk-responsive-margin(4, "bottom");
   display: flex;
   gap: nhsuk-spacing(1);
+  @include nhsuk-responsive-margin(4, "bottom");
 
   .nhsuk-input {
     &[type="search"]::-webkit-search-cancel-button {

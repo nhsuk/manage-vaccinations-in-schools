@@ -28,10 +28,9 @@
   }
 
   .nhsuk-details__text {
+    border-left: 0;
     @include nhsuk-responsive-padding(5, "left");
     @include nhsuk-responsive-padding(5, "right");
-
-    border-left: 0;
   }
 
   // Adjust margin around date inputs

@@ -63,9 +63,9 @@
     }
 
     .nhsuk-card__description {
+      margin-top: auto;
       @include nhsuk-font-size(48);
       @include nhsuk-typography-weight-bold;
-      margin-top: auto;
     }
   }
 }

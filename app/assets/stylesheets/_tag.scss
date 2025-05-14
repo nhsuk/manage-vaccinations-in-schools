@@ -13,9 +13,8 @@
 }
 
 .nhsuk-tag + .nhsuk-u-secondary-text-color {
-  @include nhsuk-font(16);
-
   margin-left: nhsuk-spacing(2);
+  @include nhsuk-font(16);
 }
 
 .app-tag--attached {

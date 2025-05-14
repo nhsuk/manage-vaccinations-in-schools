@@ -49,8 +49,8 @@ $_button-shadow-size: $nhsuk-border-width-form-element * 2;
 }
 
 .app-button--small {
-  @include nhsuk-font-size(16);
   padding: nhsuk-spacing(2) 12px nhsuk-spacing(1);
+  @include nhsuk-font-size(16);
 }
 
 .app-button--icon {
