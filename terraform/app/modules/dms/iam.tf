@@ -12,9 +12,9 @@ data "aws_iam_policy_document" "db_secret_access" {
     actions = [
       "secretsmanager:GetSecretValue",
       "secretsmanager:DescribeSecret",
-      "secretsmanager:ListSecretVersionIds",
-      "secretsmanager:ListSecrets",
-      "secretsmanager:*"
+      # "secretsmanager:ListSecretVersionIds",
+      # "secretsmanager:ListSecrets",
+      # "secretsmanager:*"
     ]
     resources = [
       aws_secretsmanager_secret.source.arn,

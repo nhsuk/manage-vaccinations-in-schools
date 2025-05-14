@@ -6,32 +6,32 @@ resource "aws_dms_replication_subnet_group" "dms_subnet_group" {
   depends_on                           = [aws_iam_role.dms_vpc_role]
 }
 
+resource "aws_security_group" "dms" {
+    name        = "dms-security-group"
+    description = "Security group for DMS replication instance"
+    vpc_id      = var.vpc_id
+
+    tags = {
+      Name        = "dms-security-group-${var.environment}"
+    }
+}
+
 resource "aws_dms_replication_instance" "dms_instance" {
-  replication_instance_id     = "dms-replication-instance"
-  replication_instance_class  = "dms.t3.medium"
-  allocated_storage           = 50
-  vpc_security_group_ids      = [var.security_group_id]
+  replication_instance_id    = "dms-replication-instance"
+  replication_instance_class = "dms.t3.medium"
+  # allocated_storage           = 50
+  vpc_security_group_ids      = [aws_security_group.dms.id]
   replication_subnet_group_id = aws_dms_replication_subnet_group.dms_subnet_group.id
   publicly_accessible         = false
 }
 
-resource "aws_security_group_rule" "source_cluster_ingress" {
-  type                     = "ingress"
+resource "aws_security_group_rule" "egress_to_rds" {
+  type                     = "egress"
   from_port                = var.source_port
   to_port                  = var.source_port
   protocol                 = "tcp"
-  security_group_id        = var.security_group_id
-  source_security_group_id = var.security_group_id
-}
-
-resource "aws_security_group_rule" "target_cluster_ingress" {
-  count                    = var.target_port == var.source_port ? 0 : 1
-  type                     = "ingress"
-  from_port                = var.target_port
-  to_port                  = var.target_port
-  protocol                 = "tcp"
-  security_group_id        = var.security_group_id
-  source_security_group_id = var.security_group_id
+  security_group_id        = aws_security_group.dms.id
+  source_security_group_id = var.rds_cluster_security_group_id
 }
 
 resource "aws_dms_endpoint" "source" {
@@ -42,7 +42,7 @@ resource "aws_dms_endpoint" "source" {
   secrets_manager_arn             = aws_secretsmanager_secret.source.arn
   secrets_manager_access_role_arn = aws_iam_role.secret_access.arn
   ssl_mode                        = "none"
-
+  extra_connection_attributes     = "secretsManagerEndpointOverride=${var.secretsmanager_vpc_endpoint_dns}"
 }
 
 resource "aws_dms_endpoint" "target" {
@@ -50,9 +50,10 @@ resource "aws_dms_endpoint" "target" {
   endpoint_type                   = "target"
   engine_name                     = var.engine_name
   database_name                   = var.target_database_name
-  secrets_manager_arn             = aws_secretsmanager_secret.target.arn
+  secrets_manager_arn             = aws_secretsmanager_secret.source.arn
   secrets_manager_access_role_arn = aws_iam_role.secret_access.arn
   ssl_mode                        = "none"
+  extra_connection_attributes     = "secretsManagerEndpointOverride=${var.secretsmanager_vpc_endpoint_dns}"
 }
 
 resource "aws_dms_replication_task" "migration_task" {

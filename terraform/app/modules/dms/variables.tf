@@ -62,8 +62,20 @@ variable "subnet_ids" {
   type        = list(string)
 }
 
-variable "security_group_id" {
-  description = "Security group ID for DMS resources"
+variable "rds_cluster_security_group_id" {
+  description = "Security group ID of the RDS cluster"
   type        = string
   default     = null
+}
+
+variable "vpc_id" {
+    description = "VPC ID"
+    type        = string
+    nullable    = false
+}
+
+variable "secretsmanager_vpc_endpoint_dns" {
+  description = "The DNS name of the Secrets Manager VPC endpoint"
+  type        = string
+  nullable    = false
 }
