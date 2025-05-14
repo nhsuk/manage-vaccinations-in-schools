@@ -1,7 +1,7 @@
 // Ensure width of value cell not affected by presence of actions cell
 .nhsuk-summary-list:where(:not(:has(.nhsuk-summary-list__actions))) {
   .nhsuk-summary-list__value {
-    @include mq($from: tablet) {
+    @include nhsuk-media-query($from: tablet) {
       width: 70%;
     }
   }

@@ -3,20 +3,20 @@
   flex-flow: column wrap;
   gap: nhsuk-spacing(2);
 
-  @include mq($until: tablet) {
+  @include nhsuk-media-query($until: tablet) {
     margin-top: nhsuk-spacing(3);
   }
 }
 
 .app-header {
   .nhsuk-header__navigation-item {
-    @include mq($from: tablet) {
+    @include nhsuk-media-query($from: tablet) {
       padding: 0 12px;
     }
   }
 
   .nhsuk-header__drop-down .nhsuk-header__navigation-item {
-    @include mq($from: tablet) {
+    @include nhsuk-media-query($from: tablet) {
       padding: 0;
     }
   }
