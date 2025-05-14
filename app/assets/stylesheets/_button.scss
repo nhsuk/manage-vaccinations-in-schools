@@ -1,4 +1,4 @@
-$button-shadow-size: $nhsuk-border-width-form-element * 2;
+$_button-shadow-size: $nhsuk-border-width-form-element * 2;
 
 .nhsuk-button {
   .button_to &,
@@ -44,7 +44,7 @@ $button-shadow-size: $nhsuk-border-width-form-element * 2;
   }
 
   &:not(:focus):not(:active)::after {
-    box-shadow: 0 $button-shadow-size 0 $nhsuk-warning-button-color;
+    box-shadow: 0 $_button-shadow-size 0 $nhsuk-warning-button-color;
   }
 }
 
