@@ -39,7 +39,7 @@
   @include nhsuk-responsive-margin(1, "bottom");
   gap: nhsuk-spacing(2);
   justify-content: end;
-  margin-top: #{nhsuk-spacing(1) * -1};
+  margin-top: nhsuk-spacing(-1);
   width: 100%;
 
   @include mq($from: mobile) {
