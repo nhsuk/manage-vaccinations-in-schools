@@ -54,11 +54,11 @@
                       send_request_session_patient_programme_consents_path(
                         session, patient, programme
                       ),
-                      class: "app-button--secondary" %>
+                      secondary: true %>
 <% end %>
 
 <%= govuk_button_to "Get consent response",
                     session_patient_programme_consents_path(
                       session, patient, programme
                     ),
-                    class: "app-button--secondary" %>
+                    secondary: true %>
