@@ -183,7 +183,18 @@ class DraftVaccinationRecord
   private
 
   def writable_attribute_names
-    super + %w[vaccine_id]
+    attributes = super + %w[vaccine_id]
+
+    # We don't store the session if there's no appropriate date.
+    # This is to handle when marking a patient as already having
+    # had the vaccine outside the normal vaccination journey,
+    # which is only allowed when there isn't a date today.
+
+    if session && !session.dates.include?(performed_at.to_date)
+      attributes.delete("session_id")
+    end
+
+    attributes
   end
 
   def reset_unused_fields

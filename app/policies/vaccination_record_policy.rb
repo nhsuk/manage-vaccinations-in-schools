@@ -10,8 +10,9 @@ class VaccinationRecordPolicy < ApplicationPolicy
   end
 
   def edit?
-    user.is_nurse? && record.session_id.present? &&
-      record.performed_ods_code == user.selected_organisation.ods_code
+    user.is_nurse? &&
+      record.performed_ods_code == user.selected_organisation.ods_code &&
+      (record.session_id.present? || record.already_had?)
   end
 
   def update?
