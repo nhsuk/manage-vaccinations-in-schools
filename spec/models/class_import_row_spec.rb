@@ -108,6 +108,26 @@ describe ClassImportRow do
         )
       end
     end
+
+    context "vaccination in a session where name-like fields have length greater than 300" do
+      let(:invalid_name_length) { "a" * 301 }
+      let(:data) do
+        {
+          "CHILD_FIRST_NAME" => invalid_name_length,
+          "CHILD_LAST_NAME" => invalid_name_length
+        }
+      end
+
+      it "has errors" do
+        expect(class_import_row).to be_invalid
+        expect(class_import_row.errors["CHILD_FIRST_NAME"]).to include(
+          "is greater than 300 characters long"
+        )
+        expect(class_import_row.errors["CHILD_LAST_NAME"]).to include(
+          "is greater than 300 characters long"
+        )
+      end
+    end
   end
 
   describe "#to_parents" do
@@ -192,13 +212,13 @@ describe ClassImportRow do
           family_name: "Smith",
           gender_code: "male",
           given_name: "Jimmy",
-          nhs_number: "0123456789"
+          nhs_number: "9990000018"
         )
       end
 
       it { should eq(existing_patient) }
       it { should be_male }
-      it { should have_attributes(nhs_number: "0123456789") }
+      it { should have_attributes(nhs_number: "9990000018") }
 
       it "overwrites registration" do
         expect(patient.registration).to eq("8AB")
@@ -225,6 +245,270 @@ describe ClassImportRow do
             )
           )
         end
+      end
+    end
+
+    context "with an existing patient without gender" do
+      let(:data) { valid_data.merge("CHILD_GENDER" => "male") }
+
+      let!(:existing_patient) do
+        create(
+          :patient,
+          address_postcode: "SW1A 1AA",
+          family_name: "Smith",
+          gender_code: "not_known",
+          given_name: "Jimmy",
+          date_of_birth: Date.new(2010, 1, 1)
+        )
+      end
+
+      it { should eq(existing_patient) }
+
+      it "saves the incoming gender" do
+        expect(patient).to have_attributes(gender_code: "male")
+      end
+
+      it "doesn't stage the gender differences" do
+        expect(patient.pending_changes).to be_empty
+      end
+    end
+
+    context "with an existing patient already with gender" do
+      let(:data) { valid_data.merge("CHILD_GENDER" => "male") }
+
+      let!(:existing_patient) do
+        create(
+          :patient,
+          address_postcode: "SW1A 1AA",
+          family_name: "Smith",
+          gender_code: "female",
+          given_name: "Jimmy",
+          nhs_number: "9990000018",
+          address_line_1: "10 Downing Street",
+          address_line_2: "",
+          address_town: "London",
+          birth_academic_year: 2009,
+          date_of_birth: Date.new(2010, 1, 1),
+          registration: "8AB"
+        )
+      end
+
+      it { should eq(existing_patient) }
+
+      it "does not save the incoming gender" do
+        expect(patient).to have_attributes(gender_code: "female")
+      end
+
+      it "does stage the gender differences" do
+        expect(patient.pending_changes).to include("gender_code" => "male")
+      end
+    end
+
+    context "with an existing patient without preferred names" do
+      let(:data) do
+        valid_data.merge(
+          "CHILD_PREFERRED_FIRST_NAME" => "Jim",
+          "CHILD_PREFERRED_LAST_NAME" => "Smithy"
+        )
+      end
+
+      let!(:existing_patient) do
+        create(
+          :patient,
+          address_postcode: "SW1A 1AA",
+          family_name: "Smith",
+          given_name: "Jimmy",
+          date_of_birth: Date.new(2010, 1, 1)
+        )
+      end
+
+      it { should eq(existing_patient) }
+
+      it "saves the incoming preferred names" do
+        expect(patient).to have_attributes(
+          preferred_given_name: "Jim",
+          preferred_family_name: "Smithy"
+        )
+      end
+
+      it "doesn't stage the preferred names differences" do
+        expect(patient.pending_changes).to be_empty
+      end
+    end
+
+    context "with an existing patient already with preferred names" do
+      let(:data) do
+        valid_data.merge(
+          "CHILD_PREFERRED_FIRST_NAME" => "Jim",
+          "CHILD_PREFERRED_LAST_NAME" => "Smithy"
+        )
+      end
+
+      let!(:existing_patient) do
+        create(
+          :patient,
+          address_postcode: "SW1A 1AA",
+          family_name: "Smith",
+          given_name: "Jimmy",
+          preferred_given_name: "Jimothy",
+          preferred_family_name: "Smithers",
+          nhs_number: "9990000018",
+          address_line_1: "10 Downing Street",
+          address_line_2: "",
+          address_town: "London",
+          birth_academic_year: 2009,
+          date_of_birth: Date.new(2010, 1, 1),
+          registration: "8AB"
+        )
+      end
+
+      it { should eq(existing_patient) }
+
+      it "does not save the incoming gender" do
+        expect(patient).to have_attributes(
+          preferred_given_name: "Jimothy",
+          preferred_family_name: "Smithers"
+        )
+      end
+
+      it "does stage the gender differences" do
+        expect(patient.pending_changes).to include(
+          "preferred_given_name" => "Jim",
+          "preferred_family_name" => "Smithy"
+        )
+      end
+    end
+
+    context "with an existing patient without address" do
+      let(:data) do
+        valid_data.merge(
+          "CHILD_ADDRESS_LINE_1" => "10 Downing Street",
+          "CHILD_ADDRESS_LINE_2" => "",
+          "CHILD_TOWN" => "London",
+          "CHILD_POSTCODE" => "SW1A 1AA"
+        )
+      end
+
+      let!(:existing_patient) do
+        create(
+          :patient,
+          family_name: "Smith",
+          given_name: "Jimmy",
+          gender_code: "male",
+          nhs_number: "9990000018",
+          birth_academic_year: 2009,
+          date_of_birth: Date.new(2010, 1, 1),
+          registration: "8AB",
+          address_line_1: nil,
+          address_line_2: nil,
+          address_town: nil,
+          address_postcode: "SW1A 1AA"
+        )
+      end
+
+      it { should eq(existing_patient) }
+
+      it "saves the incoming address" do
+        expect(patient).to have_attributes(
+          address_line_1: "10 Downing Street",
+          address_line_2: "",
+          address_town: "London",
+          address_postcode: "SW1A 1AA"
+        )
+      end
+
+      it "doesn't stage the incoming address" do
+        expect(patient.pending_changes).to be_empty
+      end
+    end
+
+    context "with an existing patient already with an address (with a different postcode)" do
+      let(:data) do
+        valid_data.merge(
+          "CHILD_ADDRESS_LINE_1" => "10 Downing Street",
+          "CHILD_ADDRESS_LINE_2" => "",
+          "CHILD_TOWN" => "London",
+          "CHILD_POSTCODE" => "SW1A 1AA"
+        )
+      end
+
+      let!(:existing_patient) do
+        create(
+          :patient,
+          family_name: "Smith",
+          gender_code: "male",
+          given_name: "Jimmy",
+          nhs_number: "9990000018",
+          address_line_1: "20 Woodstock Road",
+          address_line_2: "",
+          address_town: "Oxford",
+          address_postcode: "OX2 6HD",
+          birth_academic_year: 2009,
+          date_of_birth: Date.new(2010, 1, 1),
+          registration: "8AB"
+        )
+      end
+
+      it { should eq(existing_patient) }
+
+      it "does not save the incoming address" do
+        expect(patient).to have_attributes(
+          address_line_1: "20 Woodstock Road",
+          address_line_2: "",
+          address_town: "Oxford",
+          address_postcode: "OX2 6HD"
+        )
+      end
+
+      it "does stage the address differences" do
+        expect(patient.pending_changes).to include(
+          "address_line_1" => "10 Downing Street",
+          "address_postcode" => "SW1A 1AA",
+          "address_town" => "London"
+        )
+      end
+    end
+
+    context "with an existing patient already with an address (with the same postcode)" do
+      let(:data) do
+        valid_data.merge(
+          "CHILD_ADDRESS_LINE_1" => "10 Downing Street",
+          "CHILD_ADDRESS_LINE_2" => "",
+          "CHILD_TOWN" => "London",
+          "CHILD_POSTCODE" => "SW1A 1AA"
+        )
+      end
+
+      let!(:existing_patient) do
+        create(
+          :patient,
+          family_name: "Smith",
+          gender_code: "male",
+          given_name: "Jimmy",
+          nhs_number: "9990000018",
+          address_line_1: "20 Woodstock Road",
+          address_line_2: "",
+          address_town: "Oxford",
+          address_postcode: "SW1A 1AA",
+          birth_academic_year: 2009,
+          date_of_birth: Date.new(2010, 1, 1),
+          registration: "8AB"
+        )
+      end
+
+      it { should eq(existing_patient) }
+
+      it "does save the incoming address" do
+        expect(patient).to have_attributes(
+          address_line_1: "10 Downing Street",
+          address_line_2: "",
+          address_town: "London",
+          address_postcode: "SW1A 1AA"
+        )
+      end
+
+      it "doesn't stage the address differences" do
+        expect(patient.pending_changes).to be_empty
       end
     end
   end

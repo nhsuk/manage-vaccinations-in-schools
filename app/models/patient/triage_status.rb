@@ -62,7 +62,7 @@ class Patient::TriageStatus < ApplicationRecord
   end
 
   def consent_requires_triage?
-    ConsentGrouper.call(consents, programme_id:).any?(&:triage_needed?)
+    latest_consents.any?(&:triage_needed?)
   end
 
   def vaccination_history_requires_triage?
@@ -88,7 +88,22 @@ class Patient::TriageStatus < ApplicationRecord
   def status_should_be_required?
     return true if latest_triage&.needs_follow_up?
 
+    return false if latest_consents.empty?
+
+    consent_given =
+      if (self_consents = latest_consents.select(&:via_self_consent?)).any?
+        self_consents.all?(&:response_given?)
+      else
+        latest_consents.all?(&:response_given?)
+      end
+
+    return false unless consent_given
+
     consent_requires_triage? || vaccination_history_requires_triage?
+  end
+
+  def latest_consents
+    @latest_consents ||= ConsentGrouper.call(consents, programme_id:)
   end
 
   def latest_triage

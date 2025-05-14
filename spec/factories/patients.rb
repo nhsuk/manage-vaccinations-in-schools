@@ -63,6 +63,7 @@ FactoryBot.define do
       year_group { programmes.flat_map(&:year_groups).sort.uniq.first }
       location_name { nil }
       in_attendance { false }
+      random_nhs_number { false }
     end
 
     organisation do
@@ -71,15 +72,20 @@ FactoryBot.define do
     end
 
     nhs_number do
-      # Prevents duplicate NHS numbers by sequencing and appending a check
-      # digit. See Faker's implementation for details:
-      # https://github.com/faker-ruby/faker/blob/6ba06393f47d4018b5fdbdaaa04eb9891ae5fb55/lib/faker/default/national_health_service.rb
-      base = 999_000_000 + generate(:nhs_number_counter)
-      sum = base.to_s.chars.map.with_index { |d, i| d.to_i * (10 - i) }.sum
-      check_digit = (11 - (sum % 11)) % 11
-      redo if check_digit == 10 # Retry if check digit is 10, which is invalid
+      if random_nhs_number
+        Faker::NationalHealthService.british_number.gsub(" ", "")
+      else
+        # Faker doesn't allow us to generate sequential NHS numbers, so this is
+        # reimplemented here.
+        #
+        # https://github.com/faker-ruby/faker/blob/6ba06393f47d4018b5fdbdaaa04eb9891ae5fb55/lib/faker/default/national_health_service.rb
+        base = 999_000_000 + generate(:nhs_number_counter)
+        sum = base.to_s.chars.map.with_index { |d, i| d.to_i * (10 - i) }.sum
+        check_digit = (11 - (sum % 11)) % 11
+        redo if check_digit == 10 # Retry if check digit is 10, which is invalid
 
-      "#{base}#{check_digit}"
+        "#{base}#{check_digit}"
+      end
     end
 
     given_name { Faker::Name.first_name }

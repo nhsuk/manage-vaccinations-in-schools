@@ -10,7 +10,7 @@ class Sessions::TriageController < ApplicationController
   layout "full"
 
   def show
-    @statuses = Patient::TriageStatus.statuses.keys - [:not_required]
+    @statuses = Patient::TriageStatus.statuses.keys - %w[not_required]
     @programmes = @session.programmes
 
     scope =

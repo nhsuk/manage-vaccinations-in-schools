@@ -3,6 +3,8 @@
 class PatientImportRow
   include ActiveModel::Model
 
+  MAX_FIELD_LENGTH = 300
+
   validate :validate_date_of_birth,
            :validate_existing_patients,
            :validate_first_name,
@@ -47,6 +49,27 @@ class PatientImportRow
         existing_patient.registration = attributes.delete(:registration)
       end
 
+      auto_accept_attribute(
+        existing_patient,
+        attributes,
+        :gender_code,
+        :in?,
+        %w[male female not_specified]
+      )
+
+      auto_accept_attribute(
+        existing_patient,
+        attributes,
+        :preferred_given_name,
+        :present?
+      )
+      auto_accept_attribute(
+        existing_patient,
+        attributes,
+        :preferred_family_name,
+        :present?
+      )
+
       if address_postcode.present? &&
            address_postcode.to_postcode != existing_patient.address_postcode
         attributes.merge!(
@@ -54,6 +77,10 @@ class PatientImportRow
           address_line_2: address_line_2&.to_s,
           address_town: address_town&.to_s
         )
+      elsif auto_overwrite_address?(existing_patient)
+        existing_patient.address_line_1 = attributes.delete(:address_line_1)
+        existing_patient.address_line_2 = attributes.delete(:address_line_2)
+        existing_patient.address_town = attributes.delete(:address_town)
       end
 
       existing_patient.stage_changes(attributes)
@@ -195,6 +222,27 @@ class PatientImportRow
 
   private
 
+  def auto_accept_attribute(
+    existing_patient,
+    attributes,
+    attribute_name,
+    condition_function,
+    *condition_params
+  )
+    if attributes[attribute_name].send(condition_function, *condition_params) &&
+         !existing_patient[attribute_name].send(
+           condition_function,
+           *condition_params
+         )
+      existing_patient[attribute_name] = attributes.delete(attribute_name)
+    end
+  end
+
+  def auto_overwrite_address?(existing_patient)
+    existing_patient.address_postcode == address_postcode&.to_postcode &&
+      [address_line_1, address_line_2, address_town].any?(&:present?)
+  end
+
   def parent_1_exists?
     [parent_1_name, parent_1_email, parent_1_phone].any?(&:present?)
   end
@@ -284,6 +332,11 @@ class PatientImportRow
       errors.add(:base, "<code>CHILD_FIRST_NAME</code> is missing")
     elsif first_name.blank?
       errors.add(first_name.header, "is required but missing")
+    elsif first_name.to_s.length > MAX_FIELD_LENGTH
+      errors.add(
+        first_name.header,
+        "is greater than #{MAX_FIELD_LENGTH} characters long"
+      )
     end
   end
 
@@ -299,6 +352,11 @@ class PatientImportRow
       errors.add(:base, "<code>CHILD_LAST_NAME</code> is missing")
     elsif last_name.blank?
       errors.add(last_name.header, "is required but missing")
+    elsif last_name.to_s.length > MAX_FIELD_LENGTH
+      errors.add(
+        last_name.header,
+        "is greater than #{MAX_FIELD_LENGTH} characters long"
+      )
     end
   end
 

@@ -32,6 +32,8 @@ class ImmunisationImportRow
   CARE_SETTING_SCHOOL = 1
   CARE_SETTING_COMMUNITY = 2
 
+  MAX_FIELD_LENGTH = 300
+
   DELIVERY_SITES = {
     "left thigh" => "left_thigh",
     "right thigh" => "right_thigh",
@@ -489,6 +491,8 @@ class ImmunisationImportRow
           )
         elsif batch_name.blank?
           errors.add(batch_name.header, "Enter a batch number.")
+        elsif batch_name.to_s.length > 100
+          errors.add(batch_name.header, "is greater than 100 characters long")
         end
       end
     elsif batch_name.present?
@@ -517,6 +521,11 @@ class ImmunisationImportRow
         )
       elsif clinic_name.blank?
         errors.add(clinic_name.header, "Enter a clinic name")
+      elsif clinic_name.to_s.length > MAX_FIELD_LENGTH
+        errors.add(
+          clinic_name.header,
+          "is greater than #{MAX_FIELD_LENGTH} characters long"
+        )
       elsif !organisation.community_clinics.exists?(name: clinic_name.to_s)
         errors.add(clinic_name.header, "Enter a clinic name")
       end
@@ -663,6 +672,11 @@ class ImmunisationImportRow
       )
     elsif patient_first_name.blank?
       errors.add(patient_first_name.header, "Enter a first name.")
+    elsif patient_first_name.to_s.length > MAX_FIELD_LENGTH
+      errors.add(
+        patient_first_name.header,
+        "is greater than #{MAX_FIELD_LENGTH} characters long"
+      )
     end
   end
 
@@ -690,6 +704,11 @@ class ImmunisationImportRow
       )
     elsif patient_last_name.blank?
       errors.add(patient_last_name.header, "Enter a last name.")
+    elsif patient_last_name.to_s.length > MAX_FIELD_LENGTH
+      errors.add(
+        patient_last_name.header,
+        "is greater than #{MAX_FIELD_LENGTH} characters long"
+      )
     end
   end
 
@@ -824,6 +843,11 @@ class ImmunisationImportRow
       else
         errors.add(school_name.header, "Enter a school name.")
       end
+    elsif school_name.to_s.length > MAX_FIELD_LENGTH
+      errors.add(
+        school_name.header,
+        "is greater than #{MAX_FIELD_LENGTH} characters long"
+      )
     end
   end
 

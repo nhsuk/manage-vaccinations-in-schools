@@ -3,6 +3,13 @@
 describe "Triage" do
   scenario "nurse can triage a patient" do
     given_a_programme_with_a_running_session
+    and_a_patient_who_needs_triage_exists
+    and_a_patient_who_doesnt_need_triage_exists
+
+    when_i_go_to_the_session_triage_tab
+    then_i_see_the_patient_who_needs_triage
+    and_i_dont_see_the_patient_who_doesnt_need_triage
+
     when_i_go_to_the_patient_that_needs_triage
     then_i_see_the_triage_options
 
@@ -36,40 +43,60 @@ describe "Triage" do
         organisation: @organisation,
         vaccine: programmes.first.vaccines.first
       )
-    location = create(:school)
-    @session =
-      create(:session, organisation: @organisation, programmes:, location:)
-    @patient =
+
+    @session = create(:session, organisation: @organisation, programmes:)
+  end
+
+  def and_a_patient_who_needs_triage_exists
+    @patient_triage_needed =
       create(
         :patient_session,
         :consent_given_triage_needed,
-        programmes:,
         session: @session
       ).patient
+
     create(
       :consent,
       :given,
       :health_question_notes,
       :from_granddad,
-      patient: @patient,
-      programme: programmes.first
+      patient: @patient_triage_needed,
+      programme: @session.programmes.first
     )
 
-    @patient.reload # Make sure both consents are accessible
+    @patient_triage_needed.reload # Make sure both consents are accessible
+  end
+
+  def and_a_patient_who_doesnt_need_triage_exists
+    @patient_triage_not_needed =
+      create(
+        :patient_session,
+        :consent_given_triage_not_needed,
+        session: @session
+      ).patient
+  end
+
+  def when_i_go_to_the_session_triage_tab
+    sign_in @organisation.users.first
+    visit session_triage_path(@session)
+  end
+
+  def then_i_see_the_patient_who_needs_triage
+    expect(page).to have_content(@patient_triage_needed.full_name)
+  end
+
+  def and_i_dont_see_the_patient_who_doesnt_need_triage
+    expect(page).not_to have_content(@patient_triage_not_needed.full_name)
   end
 
   def when_i_go_to_the_patient_that_needs_triage
-    sign_in @organisation.users.first
-
-    visit session_triage_path(@session)
     choose "Needs triage"
     click_on "Update results"
-
-    click_link @patient.full_name
+    click_link @patient_triage_needed.full_name
   end
 
   def when_i_go_to_the_patient
-    click_link @patient.full_name, match: :first
+    click_link @patient_triage_needed.full_name, match: :first
   end
 
   def when_i_record_that_they_need_triage
@@ -109,19 +136,19 @@ describe "Triage" do
   end
 
   def and_needs_triage_emails_are_sent_to_both_parents
-    @patient.parents.each do |parent|
+    @patient_triage_needed.parents.each do |parent|
       expect_email_to parent.email, :consent_confirmation_triage, :any
     end
   end
 
   def and_vaccination_wont_happen_emails_are_sent_to_both_parents
-    @patient.parents.each do |parent|
+    @patient_triage_needed.parents.each do |parent|
       expect_email_to parent.email, :triage_vaccination_wont_happen, :any
     end
   end
 
   def and_vaccination_will_happen_emails_are_sent_to_both_parents
-    @patient.parents.each do |parent|
+    @patient_triage_needed.parents.each do |parent|
       expect_email_to parent.email, :triage_vaccination_will_happen, :any
     end
   end
