@@ -27,17 +27,17 @@ describe "Cohorts index" do
     create(
       :patient,
       organisation: @organisation,
-      date_of_birth: Date.new(2010, 9, 1)
-    )
-    create(
-      :patient,
-      organisation: @organisation,
-      date_of_birth: Date.new(2010, 9, 1)
+      date_of_birth: Date.new(2009, 9, 1)
     )
     create(
       :patient,
       organisation: @organisation,
       date_of_birth: Date.new(2009, 9, 1)
+    )
+    create(
+      :patient,
+      organisation: @organisation,
+      date_of_birth: Date.new(2008, 9, 1)
     )
   end
 
@@ -58,29 +58,29 @@ describe "Cohorts index" do
   end
 
   def and_i_should_see_the_correct_patient_counts
-    expect(page).to have_content("Year 8\n2 children")
-    expect(page).to have_content("Year 9\n1 child")
-    expect(page).to have_content("Year 10\nNo children")
+    expect(page).to have_content("Year 8\nNo children")
+    expect(page).to have_content("Year 9\n2 children")
+    expect(page).to have_content("Year 10\n1 child")
     expect(page).to have_content("Year 11\nNo children")
   end
 
   def and_the_cards_should_be_clickable_when_there_are_patients
-    # Year 8 and 9 cards should be clickable
-    expect(page).to have_link(
-      "Year 8",
-      href: programme_cohort_path(@programme, 2010)
-    )
+    # Year 9 and 10 cards should be clickable
     expect(page).to have_link(
       "Year 9",
       href: programme_cohort_path(@programme, 2009)
     )
+    expect(page).to have_link(
+      "Year 10",
+      href: programme_cohort_path(@programme, 2008)
+    )
   end
 
   def and_the_cards_should_not_be_clickable_when_there_are_no_patients
-    # Year 10 and 11 cards should not be clickable
+    # Year 8 and 11 cards should not be clickable
     expect(page).not_to have_link(
-      "Year 10",
-      href: programme_cohort_path(@programme, 2008)
+      "Year 8",
+      href: programme_cohort_path(@programme, 2010)
     )
     expect(page).not_to have_link(
       "Year 11",

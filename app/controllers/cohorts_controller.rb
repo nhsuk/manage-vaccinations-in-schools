@@ -15,13 +15,9 @@ class CohortsController < ApplicationController
         .where(birth_academic_year: birth_academic_years)
         .group(:birth_academic_year)
         .count
-        .sort
-        .reverse
-        .to_h
-
-    birth_academic_years.each do |birth_academic_year|
-      @patient_count_by_birth_academic_year[birth_academic_year] ||= 0
-    end
+        .then do |counts|
+          birth_academic_years.index_with { |year| counts[year] || 0 }
+        end
   end
 
   def show
