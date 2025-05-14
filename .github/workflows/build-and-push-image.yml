@@ -63,6 +63,10 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.git-sha || github.sha }}
+      - name: Write build SHA
+        run: git rev-parse HEAD > public/sha
       - name: Build Docker image
         run: docker build -t "mavis:latest" .
       - name: Save Docker image
