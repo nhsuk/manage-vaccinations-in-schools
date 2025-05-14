@@ -27,6 +27,10 @@ on:
           - Destroy
           - Recreate
         default: Recreate
+      db_snapshot_arn:
+        description: ARN of the DB snapshot to use (optional)
+        required: false
+        type: string
 
 env:
   aws_role: ${{ inputs.environment == 'production'
@@ -58,9 +62,15 @@ jobs:
         id: get-latest-snapshot
         run: |
           set -e
-          SNAPSHOT_ARN=$(aws rds describe-db-cluster-snapshots \
-          --query 'DBClusterSnapshots[?contains(DBClusterSnapshotIdentifier, `${{ inputs.environment}}`)].[DBClusterSnapshotArn, SnapshotCreateTime]' \
-          --output text | sort -k2 -r | head -n 1 | cut -f1)
+          if [ -z "${{ inputs.db_snapshot_arn }}" ]; then
+              echo "No snapshot ARN provided, fetching the latest snapshot"
+              SNAPSHOT_ARN=$(aws rds describe-db-cluster-snapshots \
+              --query 'DBClusterSnapshots[?contains(DBClusterSnapshotIdentifier, `${{ inputs.environment}}`)].[DBClusterSnapshotArn, SnapshotCreateTime]' \
+              --output text | sort -k2 -r | head -n 1 | cut -f1)
+          else
+              echo "Using provided snapshot ARN: ${{ inputs.db_snapshot_arn }}"
+              SNAPSHOT_ARN="${{ inputs.db_snapshot_arn }}"
+          fi
           echo "SNAPSHOT_ARN=$SNAPSHOT_ARN" >> $GITHUB_OUTPUT
       - name: Install terraform
         uses: hashicorp/setup-terraform@v3
