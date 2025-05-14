@@ -27,6 +27,7 @@
 #  created_at                            :datetime         not null
 #  updated_at                            :datetime         not null
 #  batch_id                              :bigint
+#  location_id                           :bigint
 #  nhs_immunisations_api_id              :string
 #  patient_id                            :bigint
 #  performed_by_user_id                  :bigint
@@ -38,6 +39,7 @@
 #
 #  index_vaccination_records_on_batch_id                  (batch_id)
 #  index_vaccination_records_on_discarded_at              (discarded_at)
+#  index_vaccination_records_on_location_id               (location_id)
 #  index_vaccination_records_on_nhs_immunisations_api_id  (nhs_immunisations_api_id) UNIQUE
 #  index_vaccination_records_on_patient_id                (patient_id)
 #  index_vaccination_records_on_performed_by_user_id      (performed_by_user_id)
@@ -89,11 +91,11 @@ class VaccinationRecord < ApplicationRecord
 
   has_and_belongs_to_many :immunisation_imports
 
+  belongs_to :location, optional: true
   belongs_to :patient
   belongs_to :session, optional: true
 
   has_one :identity_check, autosave: true, dependent: :destroy
-  has_one :location, through: :session
   has_one :organisation, through: :session
   has_one :team, through: :session
 
@@ -203,7 +205,7 @@ class VaccinationRecord < ApplicationRecord
   private
 
   def requires_location_name?
-    session.nil? || location&.generic_clinic?
+    location.nil? || session&.generic_clinic?
   end
 
   delegate :maximum_dose_sequence, to: :programme

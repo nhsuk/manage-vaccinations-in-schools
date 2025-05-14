@@ -20,6 +20,7 @@ class DraftVaccinationRecord
   attribute :identity_check_confirmed_by_other_name, :string
   attribute :identity_check_confirmed_by_other_relationship, :string
   attribute :identity_check_confirmed_by_patient, :boolean
+  attribute :location_id, :integer
   attribute :location_name, :string
   attribute :notes, :string
   attribute :outcome, :string
@@ -47,7 +48,7 @@ class DraftVaccinationRecord
       (:delivery if administered?),
       (:dose if administered? && can_be_half_dose?),
       (:batch if administered?),
-      (:location if location&.generic_clinic?),
+      (:location if session&.generic_clinic?),
       :confirm
     ].compact
   end
@@ -142,6 +143,15 @@ class DraftVaccinationRecord
     self.batch_id = value.id
   end
 
+  def location
+    return nil if location_id.nil?
+    Location.find(location_id)
+  end
+
+  def location=(value)
+    self.location_id = value&.id
+  end
+
   def patient
     return nil if patient_id.nil?
 
@@ -151,8 +161,6 @@ class DraftVaccinationRecord
   def patient=(value)
     self.patient_id = value.id
   end
-
-  delegate :location, to: :session, allow_nil: true
 
   def performed_by_user
     return nil if performed_by_user_id.nil?
@@ -265,6 +273,7 @@ class DraftVaccinationRecord
       full_dose
       protocol
       identity_check
+      location_id
       location_name
       notes
       outcome

@@ -98,7 +98,7 @@ class ImmunisationImportRow
     attributes = {
       dose_sequence: dose_sequence_value,
       full_dose: true,
-      protocol: :pgd,
+      location:,
       location_name:,
       outcome:,
       patient:,
@@ -106,6 +106,7 @@ class ImmunisationImportRow
       performed_by_user:,
       performed_ods_code: performed_ods_code&.to_s,
       programme:,
+      protocol: "pgd",
       session:
     }
 
@@ -220,6 +221,12 @@ class ImmunisationImportRow
   def vaccine_name = @data[:vaccine_given]
 
   private
+
+  def location
+    return nil if session&.generic_clinic?
+
+    session&.location
+  end
 
   def location_name
     return unless session.nil? || session.location.generic_clinic?
