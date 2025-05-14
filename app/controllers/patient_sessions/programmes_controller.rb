@@ -24,8 +24,8 @@ class PatientSessions::ProgrammesController < PatientSessions::BaseController
       performed_by_user_id: current_user.id,
       programme: @programme,
       session: @session,
-      location: @session.location,
-      location_name: @session.clinic? ? "Unknown" : nil,
+      location: nil,
+      location_name: "Unknown",
       performed_ods_code: current_user.selected_organisation.ods_code
     )
 
