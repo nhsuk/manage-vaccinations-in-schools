@@ -20,7 +20,7 @@ variable "region" {
 
 variable "db_engine_version" {
   type        = string
-  default     = "14"
+  default     = "16.8"
   description = "The version of the database engine to use."
   nullable    = false
 }
