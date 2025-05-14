@@ -2,6 +2,7 @@
 
 class GovukNotifyPersonalisation
   include Rails.application.routes.url_helpers
+  include PhoneHelper
 
   def initialize(
     consent: nil,
@@ -58,8 +59,6 @@ class GovukNotifyPersonalisation
       team_email:,
       team_name:,
       team_phone:,
-      team_phone_instructions_present:,
-      team_phone_instructions:,
       today_or_date_of_vaccination:,
       vaccination:
     }.compact
@@ -244,15 +243,7 @@ class GovukNotifyPersonalisation
   end
 
   def team_phone
-    (team || organisation).phone
-  end
-
-  def team_phone_instructions_present
-    team_phone_instructions.present? ? "yes" : "no"
-  end
-
-  def team_phone_instructions
-    (team || organisation).phone_instructions
+    format_phone_with_instructions(team || organisation)
   end
 
   def today_or_date_of_vaccination
