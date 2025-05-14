@@ -14,17 +14,18 @@ class DraftVaccinationRecord
   attribute :delivery_method, :string
   attribute :delivery_site, :string
   attribute :dose_sequence, :integer
+  attribute :location_id, :integer
   attribute :location_name, :string
   attribute :notes, :string
   attribute :outcome, :string
   attribute :patient_id, :integer
-  attribute :session_id, :integer
   attribute :performed_at, :datetime
   attribute :performed_by_family_name, :string
   attribute :performed_by_given_name, :string
   attribute :performed_by_user_id, :integer
   attribute :performed_ods_code, :string
   attribute :programme_id, :integer
+  attribute :session_id, :integer
 
   validates :performed_by_family_name,
             :performed_by_given_name,
@@ -39,7 +40,7 @@ class DraftVaccinationRecord
       (:outcome if can_change_outcome?),
       (:delivery if administered?),
       (:batch if administered?),
-      (:location if location&.generic_clinic?),
+      (:location if session&.generic_clinic?),
       :confirm
     ].compact
   end
@@ -117,6 +118,17 @@ class DraftVaccinationRecord
     vaccine.dose_volume_ml * 1 if vaccine.present?
   end
 
+  def location
+    LocationPolicy::Scope
+      .new(@current_user, Location)
+      .resolve
+      .find_by(id: location_id)
+  end
+
+  def location=(value)
+    self.location_id = value&.id
+  end
+
   def patient
     Patient.find_by(id: patient_id)
   end
@@ -124,8 +136,6 @@ class DraftVaccinationRecord
   def patient=(value)
     self.patient_id = value.id
   end
-
-  delegate :location, to: :session, allow_nil: true
 
   def performed_by_user
     User.find_by(id: performed_by_user_id)
