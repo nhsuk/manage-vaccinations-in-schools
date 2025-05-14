@@ -39,6 +39,7 @@ describe AppVaccinationRecordSummaryComponent do
       delivery_method: :intramuscular,
       delivery_site: :left_arm_upper_position,
       notes:,
+      location:,
       location_name:,
       protocol:,
       pending_changes: {
@@ -281,8 +282,17 @@ describe AppVaccinationRecordSummaryComponent do
       )
     end
 
-    context "when the location is a generic clinic" do
-      let(:location) { create(:generic_clinic, organisation:) }
+    context "when the session took place in the generic clinic" do
+      let(:session) do
+        create(
+          :session,
+          programmes: [programme],
+          location: create(:generic_clinic, organisation:),
+          organisation:
+        )
+      end
+
+      let(:location) { nil }
       let(:location_name) { "Hogwarts" }
 
       it do
