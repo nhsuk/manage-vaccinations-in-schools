@@ -78,7 +78,7 @@
 .app-header__account-link {
   color: $color_nhsuk-white;
   display: block;
-  margin: #{nhsuk-spacing(2) * -1} #{nhsuk-spacing(3) * -1};
+  margin: nhsuk-spacing(-2) nhsuk-spacing(-3);
   padding: nhsuk-spacing(2) nhsuk-spacing(3);
 
   &:visited {

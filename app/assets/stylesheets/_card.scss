@@ -76,7 +76,7 @@
   .app-button-group {
     gap: nhsuk-spacing(2);
     margin-bottom: nhsuk-spacing(1);
-    margin-top: #{nhsuk-spacing(4) * -1};
+    margin-top: nhsuk-spacing(-4);
   }
 
   .nhsuk-card__heading {

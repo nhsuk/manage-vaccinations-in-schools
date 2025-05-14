@@ -9,12 +9,12 @@
 
   // Adjust design and spacing of details component
   .nhsuk-details {
-    margin-left: #{nhsuk-spacing(4) * -1};
-    margin-right: #{nhsuk-spacing(4) * -1};
+    margin-left: nhsuk-spacing(-4);
+    margin-right: nhsuk-spacing(-4);
 
     @include mq($from: tablet) {
-      margin-left: #{nhsuk-spacing(5) * -1};
-      margin-right: #{nhsuk-spacing(5) * -1};
+      margin-left: nhsuk-spacing(-5);
+      margin-right: nhsuk-spacing(-5);
     }
 
     &[open] {
