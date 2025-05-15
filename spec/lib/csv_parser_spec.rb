@@ -42,4 +42,14 @@ describe CSVParser do
       expect(row[:header].value).to eq("value with ’ character")
     end
   end
+
+  context "when the encoding cannot be detected" do
+    # This is not a good example of a CSV file, but it was the only
+    # string I could find where the encoding wasn't detected.
+    let(:data) { "\x92".b }
+
+    it "doesn't raise an error" do
+      expect { table }.not_to raise_error
+    end
+  end
 end

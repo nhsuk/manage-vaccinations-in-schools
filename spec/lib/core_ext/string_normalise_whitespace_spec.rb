@@ -40,9 +40,14 @@ describe String do
     end
 
     context "with non-UTF-8 encoded strings" do
+      let(:windows_1252_encoded_string) do
+        "hello’s world".encode(Encoding::WINDOWS_1252)
+      end
+
       it "does not apply Unicode-specific transformations" do
-        ascii_string = "hello world".encode(Encoding::ASCII)
-        expect(ascii_string.normalise_whitespace).to eq("hello world")
+        expect(windows_1252_encoded_string.normalise_whitespace).to eq(
+          windows_1252_encoded_string
+        )
       end
     end
   end
