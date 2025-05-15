@@ -5,8 +5,8 @@
   gap: nhsuk-spacing(1);
 
   .nhsuk-icon {
-    margin-left: nhsuk-spacing(1) * -1;
-    margin-top: nhsuk-spacing(1) * -1;
+    margin-left: nhsuk-spacing(-1);
+    margin-top: nhsuk-spacing(-1);
   }
 
   &--aqua-green {

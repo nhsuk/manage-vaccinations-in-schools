@@ -9,12 +9,12 @@
 
   // Adjust design and spacing of details component
   .nhsuk-details {
-    margin-left: #{nhsuk-spacing(4) * -1};
-    margin-right: #{nhsuk-spacing(4) * -1};
+    margin-left: nhsuk-spacing(-4);
+    margin-right: nhsuk-spacing(-4);
 
-    @include mq($from: tablet) {
-      margin-left: #{nhsuk-spacing(5) * -1};
-      margin-right: #{nhsuk-spacing(5) * -1};
+    @include nhsuk-media-query($from: tablet) {
+      margin-left: nhsuk-spacing(-5);
+      margin-right: nhsuk-spacing(-5);
     }
 
     &[open] {
@@ -28,10 +28,9 @@
   }
 
   .nhsuk-details__text {
+    border-left: 0;
     @include nhsuk-responsive-padding(5, "left");
     @include nhsuk-responsive-padding(5, "right");
-
-    border-left: 0;
   }
 
   // Adjust margin around date inputs

@@ -1,19 +1,18 @@
 .app-button-group {
-  @include nhsuk-responsive-margin(6, "bottom");
-
   align-items: center;
   display: flex;
   flex-direction: column;
   flex-wrap: wrap;
   gap: nhsuk-spacing(3) nhsuk-spacing(4);
+  @include nhsuk-responsive-margin(6, "bottom");
 
   .nhsuk-link {
-    @include nhsuk-font($size: 19, $line-height: 19px);
     display: inline-block;
     margin-bottom: nhsuk-spacing(2);
     margin-top: nhsuk-spacing(2);
     max-width: 100%;
     text-align: center;
+    @include nhsuk-font($size: 19, $line-height: 19px);
   }
 
   .nhsuk-button {
@@ -21,7 +20,7 @@
     width: 100%;
   }
 
-  @include mq($from: tablet) {
+  @include nhsuk-media-query($from: tablet) {
     flex-direction: row;
     flex-wrap: wrap;
 
@@ -36,13 +35,13 @@
 }
 
 .app-button-group--table {
-  @include nhsuk-responsive-margin(1, "bottom");
   gap: nhsuk-spacing(2);
   justify-content: end;
-  margin-top: #{nhsuk-spacing(1) * -1};
+  margin-top: nhsuk-spacing(-1);
   width: 100%;
+  @include nhsuk-responsive-margin(1, "bottom");
 
-  @include mq($from: mobile) {
+  @include nhsuk-media-query($from: mobile) {
     flex-direction: row;
 
     .nhsuk-button {
@@ -50,7 +49,7 @@
     }
   }
 
-  @include mq($from: desktop) {
+  @include nhsuk-media-query($from: desktop) {
     flex-wrap: nowrap;
     justify-content: start;
   }

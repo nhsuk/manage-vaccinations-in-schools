@@ -5,11 +5,13 @@
   .nhsuk-navigation {
     max-width: $app-page-width;
 
-    @include govuk-media-query($from: desktop) {
+    @include nhsuk-media-query($from: desktop) {
       margin: 0 $nhsuk-gutter;
     }
 
-    @include mq($and: "(min-width: #{($app-page-width + $nhsuk-gutter * 2)})") {
+    @include nhsuk-media-query(
+      $and: "(min-width: #{($app-page-width + $nhsuk-gutter * 2)})"
+    ) {
       margin: 0 auto;
     }
   }

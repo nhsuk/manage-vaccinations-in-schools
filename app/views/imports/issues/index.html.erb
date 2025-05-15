@@ -1,6 +1,6 @@
 <%= h1 t("imports.index.title"), size: "xl" %>
 
-<%= govuk_button_link_to "Import records", new_import_path, class: "app-button--secondary" %>
+<%= govuk_button_link_to "Import records", new_import_path, secondary: true %>
 
 <%= render AppImportsNavigationComponent.new(active: :issues) %>
 

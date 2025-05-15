@@ -1,11 +1,10 @@
 .app-secondary-navigation {
+  margin-left: #{$nhsuk-gutter-half * -1};
+  margin-right: #{$nhsuk-gutter-half * -1};
   @include nhsuk-font(19);
   @include nhsuk-responsive-margin(5, "bottom");
 
-  margin-left: #{$nhsuk-gutter-half * -1};
-  margin-right: #{$nhsuk-gutter-half * -1};
-
-  @include mq($from: tablet) {
+  @include nhsuk-media-query($from: tablet) {
     margin-left: auto;
     margin-right: auto;
   }
@@ -19,14 +18,13 @@
 }
 
 .app-secondary-navigation__link {
-  @include nhsuk-link-style-default;
-  @include nhsuk-link-style-no-visited-state;
-
   display: block;
   padding: nhsuk-spacing(2) $nhsuk-gutter-half;
   text-decoration: none;
+  @include nhsuk-link-style-default;
+  @include nhsuk-link-style-no-visited-state;
 
-  @include mq($from: tablet) {
+  @include nhsuk-media-query($from: tablet) {
     padding: nhsuk-spacing(3) 2px;
   }
 
@@ -35,7 +33,7 @@
     color: $nhsuk-text-color;
     text-decoration: none;
 
-    @include mq($from: tablet) {
+    @include nhsuk-media-query($from: tablet) {
       box-shadow: inset 0 ($nhsuk-border-width * -1) $color_nhsuk-blue;
     }
   }
@@ -43,7 +41,7 @@
   &:focus {
     box-shadow: inset $nhsuk-focus-width 0 $nhsuk-focus-text-color;
 
-    @include mq($from: tablet) {
+    @include nhsuk-media-query($from: tablet) {
       box-shadow: inset 0 ($nhsuk-focus-width * -1) $nhsuk-focus-text-color;
     }
   }
@@ -76,7 +74,7 @@
   padding: 0;
   width: 100%;
 
-  @include mq($from: tablet) {
+  @include nhsuk-media-query($from: tablet) {
     flex-flow: row wrap;
     gap: nhsuk-spacing(2) nhsuk-spacing(4);
   }

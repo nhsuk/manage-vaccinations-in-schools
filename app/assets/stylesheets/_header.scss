@@ -3,20 +3,20 @@
   flex-flow: column wrap;
   gap: nhsuk-spacing(2);
 
-  @include mq($until: tablet) {
+  @include nhsuk-media-query($until: tablet) {
     margin-top: nhsuk-spacing(3);
   }
 }
 
 .app-header {
   .nhsuk-header__navigation-item {
-    @include mq($from: tablet) {
+    @include nhsuk-media-query($from: tablet) {
       padding: 0 12px;
     }
   }
 
   .nhsuk-header__drop-down .nhsuk-header__navigation-item {
-    @include mq($from: tablet) {
+    @include nhsuk-media-query($from: tablet) {
       padding: 0;
     }
   }
@@ -38,12 +38,12 @@
 
 .app-header__navigation-item--with-count {
   .app-count {
-    @include nhsuk-font(14, $line-height: 1);
     margin-left: 6px;
     min-width: nhsuk-spacing(4);
     padding-bottom: 3px;
     padding-top: 5px;
     text-decoration: none;
+    @include nhsuk-font(14, $line-height: 1);
   }
 }
 
@@ -78,7 +78,7 @@
 .app-header__account-link {
   color: $color_nhsuk-white;
   display: block;
-  margin: #{nhsuk-spacing(2) * -1} #{nhsuk-spacing(3) * -1};
+  margin: nhsuk-spacing(-2) nhsuk-spacing(-3);
   padding: nhsuk-spacing(2) nhsuk-spacing(3);
 
   &:visited {

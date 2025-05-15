@@ -1,6 +1,6 @@
 // Ensure the autocomplete uses the correct typeface
 .autocomplete__wrapper {
-  font-family: $govuk-font-family;
+  font-family: $nhsuk-font;
 }
 
 .autocomplete__input {
@@ -10,11 +10,11 @@
 // Style the autocomplete if there’s an error
 .nhsuk-form-group--error {
   .autocomplete__input {
-    border-color: $govuk-error-colour;
+    border-color: $nhsuk-error-color;
   }
 
   .autocomplete__input--focused {
-    border-color: $govuk-input-border-colour;
+    border-color: $nhsuk-form-border-color;
   }
 }
 
@@ -27,7 +27,7 @@
 }
 
 .autocomplete__input {
-  background-color: $color_nhsuk-white;
+  background-color: $nhsuk-form-element-background-color;
 }
 
 .autocomplete__option {
