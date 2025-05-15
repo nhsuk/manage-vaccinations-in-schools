@@ -102,6 +102,29 @@ describe Patient::ConsentStatus do
       it { should be(:given) }
     end
 
+    context "with a refused and given consent from the same parent at different times" do
+      before do
+        create(
+          :consent,
+          :refused,
+          patient:,
+          programme:,
+          created_at: 1.day.ago,
+          submitted_at: 2.days.ago
+        )
+        create(
+          :consent,
+          :given,
+          patient:,
+          programme:,
+          created_at: 2.days.ago,
+          submitted_at: 1.day.ago
+        )
+      end
+
+      it { should be(:given) }
+    end
+
     context "with self-consent" do
       before { create(:consent, :self_consent, :given, patient:, programme:) }
 
