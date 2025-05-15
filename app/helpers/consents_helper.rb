@@ -1,19 +1,41 @@
 # frozen_string_literal: true
 
 module ConsentsHelper
-  def consent_decision(consent)
+  def consent_status_tag(consent)
+    text =
+      if consent.withdrawn?
+        Consent.human_enum_name(:response, :given)
+      else
+        consent.human_enum_name(:response)
+      end
+
+    colour =
+      if consent.withdrawn? || consent.invalidated?
+        "grey"
+      elsif consent.response_given?
+        "green"
+      elsif consent.response_refused?
+        "red"
+      else
+        "blue"
+      end
+
     if consent.invalidated?
       safe_join(
         [
-          tag.s(Consent.human_enum_name(:response, consent.response).humanize),
-          "Invalid"
-        ],
-        tag.br
+          govuk_tag(text: tag.s(text), colour:),
+          tag.span("Invalid", class: "nhsuk-u-secondary-text-color")
+        ]
       )
     elsif consent.withdrawn?
-      safe_join([tag.s("Consent given"), "Withdrawn"], tag.br)
+      safe_join(
+        [
+          govuk_tag(text: tag.s(text), colour:),
+          tag.span("Withdrawn", class: "nhsuk-u-secondary-text-color")
+        ]
+      )
     else
-      Consent.human_enum_name(:response, consent.response).humanize
+      govuk_tag(text:, colour:)
     end
   end
 end

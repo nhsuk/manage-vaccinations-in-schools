@@ -1,34 +1,29 @@
 # frozen_string_literal: true
 
 class AppTriageFormComponent < ViewComponent::Base
-  def initialize(
-    patient_session:,
-    programme:,
-    url:,
-    method: :post,
-    triage: nil,
-    legend: nil
-  )
+  def initialize(patient_session:, programme:, triage: nil, legend: nil)
     super
 
     @patient_session = patient_session
     @programme = programme
     @triage = triage || default_triage
-    @url = url
-    @method = method
     @legend = legend
   end
 
   private
 
-  attr_reader :patient_session, :programme
+  attr_reader :patient_session, :programme, :triage, :legend
 
-  delegate :patient, to: :patient_session
+  delegate :patient, :session, to: :patient_session
+
+  def url
+    session_patient_programme_triages_path(session, patient, programme, triage)
+  end
 
   def fieldset_options
-    text = "Is it safe to vaccinate #{@patient_session.patient.given_name}?"
+    text = "Is it safe to vaccinate #{patient.given_name}?"
 
-    case @legend
+    case legend
     when :bold
       { legend: { text:, tag: :h2 } }
     when :hidden
