@@ -278,6 +278,10 @@ class ConsentForm < ApplicationRecord
     ].compact
   end
 
+  def recorded?
+    recorded_at != nil
+  end
+
   def each_health_answer
     return if health_answers.empty?
     return to_enum(:each_health_answer) unless block_given?
