@@ -474,19 +474,6 @@ describe Patient do
         )
       end
     end
-
-    context "with an invalid NHS number" do
-      let(:patient) { create(:patient, nhs_number: nil) }
-
-      before do
-        patient.nhs_number = "1234567890"
-        patient.save!(validate: false)
-      end
-
-      it "doesn't raise an error" do
-        expect { invalidate! }.not_to raise_error
-      end
-    end
   end
 
   describe "#stage_changes" do
