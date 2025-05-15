@@ -743,9 +743,25 @@ describe ConsentForm do
       create(:notify_log_entry, :email, consent_form:, patient: nil)
     end
 
+    context "when the consent form is draft" do
+      let(:consent_form) { create(:consent_form, organisation:, session:) }
+
+      it "raises an error" do
+        expect { match_with_patient! }.to raise_error(
+          Consent::ConsentFormNotRecorded
+        )
+      end
+    end
+
     context "when consent form confirms the school" do
       let(:consent_form) do
-        create(:consent_form, organisation:, session:, school_confirmed: true)
+        create(
+          :consent_form,
+          :recorded,
+          organisation:,
+          session:,
+          school_confirmed: true
+        )
       end
 
       it "creates a consent" do
@@ -763,10 +779,29 @@ describe ConsentForm do
       end
     end
 
+    context "when the consent form was submitted a week ago" do
+      let(:consent_form) do
+        create(
+          :consent_form,
+          recorded_at: 1.week.ago,
+          organisation:,
+          session:,
+          school_confirmed: true
+        )
+      end
+
+      it "creates a consent submitted a week ago" do
+        expect { match_with_patient! }.to change(Consent, :count).by(1)
+
+        expect(Consent.last.submitted_at).to eq(consent_form.recorded_at)
+      end
+    end
+
     context "when the patient goes to a different school" do
       let(:consent_form) do
         create(
           :consent_form,
+          :recorded,
           organisation:,
           session:,
           school_confirmed: false,
@@ -803,6 +838,7 @@ describe ConsentForm do
       let(:consent_form) do
         create(
           :consent_form,
+          :recorded,
           organisation:,
           session:,
           school_confirmed: nil,
