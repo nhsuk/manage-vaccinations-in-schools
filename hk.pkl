@@ -32,7 +32,7 @@ local linters = new Mapping<String, Group> {
 
             ["tf_lint"] = new Step {
                 glob = "*.tf"
-                check = "tflint --chdir=terraform/app --config=$(pwd)/terraform/.tflint.hcl --recursive && tflint --chdir=terraform/backup --config=$(pwd)/terraform/.tflint.hcl --recursive && tflint --chdir=terraform/bootstrap --config=$(pwd)/terraform/.tflint.hcl --recursive && tflint --chdir=terraform/modules --config=$(pwd)/terraform/.tflint.hcl --recursive"
+                check = "tflint --chdir=terraform --config=$(pwd)/terraform/.tflint.hcl --recursive"
                 fix = "tflint --chdir=terraform --config=$(pwd)/terraform/.tflint.hcl --recursive --fix"
             }
         }
