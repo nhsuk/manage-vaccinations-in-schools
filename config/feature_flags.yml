@@ -6,6 +6,3 @@ dev_tools: Developer tools useful for testing and debugging.
 mesh_jobs: Export vaccination records to MESH automatically.
 
 offline_working: Prototype support for using Mavis offline.
-
-report_gillick_notify_parents: Include whether patients would like their
-  parents to be informed of vaccinations in the reporting.
