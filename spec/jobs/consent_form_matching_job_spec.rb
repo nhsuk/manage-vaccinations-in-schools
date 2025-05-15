@@ -7,6 +7,7 @@ describe ConsentFormMatchingJob do
   let(:consent_form) do
     create(
       :consent_form,
+      :recorded,
       session:,
       given_name: "John",
       family_name: "Smith",
@@ -70,6 +71,7 @@ describe ConsentFormMatchingJob do
       let(:consent_form) do
         create(
           :consent_form,
+          :recorded,
           session:,
           given_name: "john",
           family_name: "SMITH",

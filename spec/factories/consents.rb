@@ -72,6 +72,8 @@ FactoryBot.define do
       end
     end
 
+    submitted_at { Time.current }
+
     traits_for_enum :response
 
     trait :given_verbally do
