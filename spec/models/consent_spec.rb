@@ -12,6 +12,7 @@
 #  reason_for_refusal  :integer
 #  response            :integer          not null
 #  route               :integer          not null
+#  submitted_at        :datetime         not null
 #  withdrawn_at        :datetime
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null
