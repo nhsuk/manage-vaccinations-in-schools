@@ -69,9 +69,7 @@ describe GovukNotifyPersonalisation do
         subsequent_session_dates_offered_message: "",
         team_email: "organisation@example.com",
         team_name: "Organisation",
-        team_phone: "01234 567890",
-        team_phone_instructions_present: "yes",
-        team_phone_instructions: "option 1",
+        team_phone: "01234 567890 (option 1)",
         vaccination: "HPV vaccination"
       }
     )
