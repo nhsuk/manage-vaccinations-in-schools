@@ -21,12 +21,18 @@ module AuthenticationConcern
       elsif cis2_session?
         if !selected_cis2_workgroup_is_valid?
           redirect_to users_workgroup_not_found_path
+        elsif check_user_is_ops
+          redirect_to inspect_dashboard_path
         elsif !selected_cis2_role_is_valid?
           redirect_to users_role_not_found_path
         elsif !selected_cis2_org_is_registered?
           redirect_to users_organisation_not_found_path
         end
       end
+    end
+
+    def authenticate_ops_user!
+      redirect_to users_unauthorized_path and return unless check_user_is_ops
     end
 
     def cis2_session?
@@ -42,6 +48,13 @@ module AuthenticationConcern
     def selected_cis2_workgroup_is_valid?
       workgroups = session.dig("cis2_info", "selected_role", "workgroups")
       workgroups.present? && CIS2_WORKGROUP.in?(workgroups)
+    end
+
+    def check_user_is_ops
+      current_user.fallback_role_support? ||
+        session.dig("cis2_info", "selected_role", "workgroups")&.include?(
+          "mavissupport"
+        )
     end
 
     def valid_cis2_roles
