@@ -164,6 +164,28 @@ class Patient < ApplicationRecord
           )
         end
 
+  scope :has_consent_status,
+        ->(status, programme:) do
+          where(
+            Patient::ConsentStatus
+              .where("patient_id = patients.id")
+              .where(status:, programme:)
+              .arel
+              .exists
+          )
+        end
+
+  scope :has_triage_status,
+        ->(status, programme:) do
+          where(
+            Patient::TriageStatus
+              .where("patient_id = patients.id")
+              .where(status:, programme:)
+              .arel
+              .exists
+          )
+        end
+
   validates :given_name, :family_name, :date_of_birth, presence: true
 
   validates :birth_academic_year, comparison: { greater_than_or_equal_to: 1990 }
