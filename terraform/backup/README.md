@@ -6,7 +6,7 @@ provided by NHSDigital in https://github.com/NHSDigital/terraform-aws-backup.
 ## Usage
 
 The `source` directory contains the configuration to be applied in the main AWS account where the app is running.
-It is set up with the `terraform-backup-module.yml` GitHub Action workflow.
+It is set up with the `deploy-backup-infrastructure.yml` GitHub Action workflow.
 
 The `destination` directory contains the configuration to be applied in a different AWS account that stores the backup of the backup.
 It will rarely change. In case of changes, terraform needs to be run manually.
@@ -18,8 +18,18 @@ To set up the backup infrastructure from scratch, follow these steps:
    It returns the ARN of the destination vault that is created.
 3. Put the ARN of the destination vault in the \*.tfvars file in the `source` directory.
 4. Create an AWS policy based on the `aws-backup-policy.json` file.
-   This policy should be attached to the IAM role that is used by the `terraform-backup-module.yml` GitHub Action workflow.
-5. Set up the **source** account by running the `terraform-backup-module.yml` GitHub Action workflow.
+   This policy should be attached to the IAM role that is used by the `deploy-backup-infrastructure.yml` GitHub Action workflow.
+5. Set up the **source** account by running the `deploy-backup-infrastructure.yml` GitHub Action workflow.
+
+### Personal Access Token
+
+The `deploy-backup-infrastructure.yml` GitHub Action workflow requires a personal access token to be set in the repository secrets to be able to fetch the terraform module.
+This token has a limited lifetime. If it has expired, create a new fine-grained personal access token as described in the [GitHub documentation](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-fine-grained-personal-access-token)
+and add it as repository secret.
+
+- Resource Owner: NHS Digital
+- Repository access: terraform-aws-backup
+- Permissions: read-only Content
 
 ## Disaster Recovery
 
