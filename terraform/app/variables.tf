@@ -229,6 +229,13 @@ variable "backup_retention_period" {
   description = "The number of days to retain backups for the RDS cluster."
 }
 
+variable "enable_backup_to_vault" {
+  type        = bool
+  default     = false
+  description = "Enable backup to vault for the RDS cluster."
+  nullable    = false
+}
+
 ########## ESC/Scaling Configuration ##########
 
 variable "container_insights" {
