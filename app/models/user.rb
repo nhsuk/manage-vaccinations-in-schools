@@ -65,7 +65,7 @@ class User < ApplicationRecord
   scope :recently_active,
         -> { where(last_sign_in_at: 1.week.ago..Time.current) }
 
-  enum :fallback_role, { nurse: 0, admin: 1, superuser: 2 }, prefix: true
+  enum :fallback_role, { nurse: 0, admin: 1, superuser: 2, support: 3 }, prefix: true
 
   def self.find_or_create_from_cis2_oidc(userinfo)
     user =
@@ -115,12 +115,21 @@ class User < ApplicationRecord
       false
   end
 
+  def is_support?
+    return fallback_role_support? unless Settings.cis2.enabled
+
+     cis2_info.dig("selected_role", "workgroups")&.include?("mavissupport") ||
+      false
+  end
+
   def role_description
     role =
       if is_admin?
         "Administrator"
       elsif is_nurse?
         "Nurse"
+      elsif is_support?
+        "Support"
       else
         "Unknown"
       end

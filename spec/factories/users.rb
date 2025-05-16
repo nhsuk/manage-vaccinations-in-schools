@@ -86,6 +86,14 @@ FactoryBot.define do
       fallback_role { :superuser }
     end
 
+    trait :support do
+      selected_role_name { "Support" }
+      selected_role_code { nil }
+      sequence(:email) { |n| "support-#{n}@example.com" }
+      selected_role_workgroups { %w[schoolagedimmunisations mavissupport] }
+      fallback_role { :support }
+    end
+
     trait :signed_in do
       current_sign_in_at { Time.current }
       current_sign_in_ip { "127.0.0.1" }
@@ -93,4 +101,5 @@ FactoryBot.define do
   end
 
   factory :admin, parent: :user, traits: %i[admin]
+  factory :support, parent: :user, traits: %i[support]
 end
