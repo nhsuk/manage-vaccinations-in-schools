@@ -186,7 +186,10 @@ class Patient < ApplicationRecord
 
   encrypts :address_line_1, :address_line_2, :address_town
 
-  normalizes :nhs_number, with: -> { _1.blank? ? nil : _1.gsub(/\s/, "") }
+  normalizes :nhs_number,
+             with: -> do
+               it.blank? ? nil : it.normalise_whitespace.gsub(/\s/, "")
+             end
 
   before_destroy :destroy_childless_parents
 

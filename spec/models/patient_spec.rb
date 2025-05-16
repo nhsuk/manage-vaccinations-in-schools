@@ -157,6 +157,20 @@ describe Patient do
     end
   end
 
+  describe "normalizations" do
+    let(:patient) { described_class.new }
+
+    it do
+      expect(patient).to normalize(:nhs_number).from(
+        "012\u200D345\u200D6789"
+      ).to("0123456789")
+    end
+
+    it { should normalize(:nhs_number).from(" 0123456789 ").to("0123456789") }
+
+    it { should normalize(:address_postcode).from(" SW111AA ").to("SW11 1AA") }
+  end
+
   describe "#vaccination_records" do
     subject(:vaccination_records) { patient.vaccination_records }
 
@@ -172,9 +186,6 @@ describe Patient do
     it { should include(kept_vaccination_record) }
     it { should_not include(discarded_vaccination_record) }
   end
-
-  it { should normalize(:nhs_number).from(" 0123456789 ").to("0123456789") }
-  it { should normalize(:address_postcode).from(" SW111AA ").to("SW11 1AA") }
 
   describe "#match_existing" do
     subject(:match_existing) do
