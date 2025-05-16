@@ -15,7 +15,7 @@ class ConsentGrouper
         .reject(&:invalidated?)
         .select(&:response_provided?)
         .group_by(&:name)
-        .map { it.second.max_by(&:created_at) }
+        .map { it.second.max_by(&:submitted_at) }
     else
       consents
         .where(programme_id:)
@@ -23,7 +23,7 @@ class ConsentGrouper
         .response_provided
         .includes(:parent)
         .group_by(&:name)
-        .map { it.second.max_by(&:created_at) }
+        .map { it.second.max_by(&:submitted_at) }
     end
   end
 

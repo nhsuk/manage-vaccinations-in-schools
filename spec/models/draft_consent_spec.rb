@@ -53,6 +53,23 @@ describe DraftConsent do
     end
   end
 
+  describe "#write_to" do
+    subject(:write_to) { draft_consent.write_to!(consent, triage:) }
+
+    let(:consent) { Consent.new }
+    let(:triage) { Triage.new }
+
+    let(:attributes) { valid_given_attributes }
+
+    it "sets the submitted at to today" do
+      freeze_time do
+        expect { write_to }.to change(consent, :submitted_at).from(nil).to(
+          Time.current
+        )
+      end
+    end
+  end
+
   describe "#reset_unused_fields" do
     subject(:save!) { draft_consent.save! }
 

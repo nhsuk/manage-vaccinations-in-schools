@@ -12,6 +12,7 @@
 #  reason_for_refusal  :integer
 #  response            :integer          not null
 #  route               :integer          not null
+#  submitted_at        :datetime         not null
 #  withdrawn_at        :datetime
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null
@@ -73,30 +74,11 @@ describe Consent do
   describe "#responded_at" do
     subject(:responded_at) { consent.responded_at }
 
-    context "with a consent form" do
-      let(:consent) do
-        build(
-          :consent,
-          created_at: Time.current,
-          consent_form:
-            build(:consent_form, recorded_at: Time.zone.local(2024, 12, 20, 12))
-        )
-      end
-
-      it { should eq(Time.zone.local(2024, 12, 20, 12)) }
+    let(:consent) do
+      build(:consent, submitted_at: Time.zone.local(2024, 12, 20, 12))
     end
 
-    context "without a consent form" do
-      let(:consent) do
-        build(
-          :consent,
-          created_at: Time.zone.local(2024, 12, 20, 12),
-          consent_form: nil
-        )
-      end
-
-      it { should eq(Time.zone.local(2024, 12, 20, 12)) }
-    end
+    it { should eq(Time.zone.local(2024, 12, 20, 12)) }
   end
 
   describe "#from_consent_form!" do
