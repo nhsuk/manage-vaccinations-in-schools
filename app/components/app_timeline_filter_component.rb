@@ -10,7 +10,8 @@ class AppTimelineFilterComponent < ViewComponent::Base
     class_imports:,
     cohort_imports:,
     sessions:,
-    reset_url:
+    reset_url:,
+    show_pii:
   )
     super
     @url = url
@@ -22,6 +23,7 @@ class AppTimelineFilterComponent < ViewComponent::Base
     @cohort_imports = cohort_imports
     @sessions = sessions
     @reset_url = reset_url
+    @show_pii = show_pii
   end
 
   attr_reader :url,
@@ -32,5 +34,6 @@ class AppTimelineFilterComponent < ViewComponent::Base
               :class_imports,
               :cohort_imports,
               :sessions,
-              :reset_url
+              :reset_url,
+              :show_pii
 end
