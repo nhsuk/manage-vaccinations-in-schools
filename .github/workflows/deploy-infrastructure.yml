@@ -39,6 +39,8 @@ env:
   aws_role: ${{ inputs.environment == 'production'
     && 'arn:aws:iam::820242920762:role/GithubDeployMavisAndInfrastructure'
     || 'arn:aws:iam::393416225559:role/GithubDeployMavisAndInfrastructure' }}
+  aws_account_id: ${{ inputs.environment == 'production'
+    && '820242920762' || '393416225559' }}
 
 defaults:
   run:
@@ -60,6 +62,10 @@ jobs:
         with:
           role-to-assume: ${{ env.aws_role }}
           aws-region: eu-west-2
+      - name: Update IAM policy
+        run: |
+          set -e
+          ./../scripts/update-github-actions-policy.sh arn:aws:iam::${{ env.aws_role }}:policy/DeployMavisResources ../resources/github_actions_policy.json
       - name: Set image tag
         run: |
           IMAGE_TAG="${{ inputs.image_tag || github.sha }}"
