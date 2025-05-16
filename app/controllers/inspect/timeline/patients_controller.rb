@@ -9,6 +9,8 @@ module Inspect
 
       layout "full"
 
+      SHOW_PII = false
+
       DEFAULT_EVENT_NAMES = %w[
         consents
         school_moves
@@ -22,6 +24,8 @@ module Inspect
       ].freeze
 
       def show
+        @show_pii = params[:show_pii] || SHOW_PII
+
         params.reverse_merge!(event_names: DEFAULT_EVENT_NAMES)
         params[:audit_config] ||= {}
 
@@ -46,7 +50,8 @@ module Inspect
           TimelineRecords.new(
             @patient,
             detail_config: build_details_config,
-            audit_config: audit_config
+            audit_config: audit_config,
+            show_pii: @show_pii
           ).load_grouped_events(event_names)
 
         @no_events_message = true if @patient_timeline.empty?
