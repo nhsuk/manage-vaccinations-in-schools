@@ -23,7 +23,7 @@
           url: patients_programme_path(@programme),
           programme_statuses: Patient::VaccinationStatus.statuses.keys,
           consent_statuses: Patient::ConsentStatus.statuses.keys,
-          triage_statuses: %w[safe_to_vaccinate do_not_vaccinate delay_vaccination required],
+          triage_statuses: %w[required delay_vaccination do_not_vaccinate safe_to_vaccinate],
           year_groups: @programme.year_groups,
         ) %>
   </div>
