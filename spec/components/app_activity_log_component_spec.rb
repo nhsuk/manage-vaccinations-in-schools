@@ -63,7 +63,7 @@ describe AppActivityLogComponent do
         programme: programmes.first,
         patient:,
         parent: mum,
-        created_at: Time.zone.parse("2024-05-30 12:00"),
+        submitted_at: Time.zone.parse("2024-05-30 12:00"),
         recorded_by: user
       )
       create(
@@ -72,7 +72,7 @@ describe AppActivityLogComponent do
         programme: programmes.first,
         patient:,
         parent: dad,
-        created_at: Time.zone.parse("2024-05-30 13:00")
+        submitted_at: Time.zone.parse("2024-05-30 13:00")
       )
 
       create(
@@ -251,7 +251,7 @@ describe AppActivityLogComponent do
         :self_consent,
         programme: programmes.first,
         patient:,
-        created_at: Time.zone.parse("2024-05-30 12:00")
+        submitted_at: Time.zone.parse("2024-05-30 12:00")
       )
     end
 
@@ -308,7 +308,7 @@ describe AppActivityLogComponent do
         programme: programmes.first,
         patient:,
         parent: mum,
-        created_at: Time.zone.local(2024, 5, 30, 12),
+        submitted_at: Time.zone.local(2024, 5, 30, 12),
         withdrawn_at: Time.zone.local(2024, 6, 30, 12)
       )
     end
@@ -333,7 +333,7 @@ describe AppActivityLogComponent do
         programme: programmes.first,
         patient:,
         parent: mum,
-        created_at: Time.zone.local(2024, 5, 30, 12),
+        submitted_at: Time.zone.local(2024, 5, 30, 12),
         invalidated_at: Time.zone.local(2024, 6, 30, 12)
       )
     end
