@@ -250,6 +250,7 @@ class DraftConsent
     super(consent)
 
     consent.parent = parent
+    consent.submitted_at ||= Time.current
 
     if triage_allowed? && response_given?
       triage.notes = triage_notes || ""

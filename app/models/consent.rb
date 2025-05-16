@@ -12,6 +12,7 @@
 #  reason_for_refusal  :integer
 #  response            :integer          not null
 #  route               :integer          not null
+#  submitted_at        :datetime         not null
 #  withdrawn_at        :datetime
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null
@@ -121,7 +122,7 @@ class Consent < ApplicationRecord
   end
 
   def responded_at
-    invalidated_at || withdrawn_at || consent_form&.recorded_at || created_at
+    invalidated_at || withdrawn_at || submitted_at
   end
 
   def triage_needed?
@@ -149,6 +150,8 @@ class Consent < ApplicationRecord
   end
 
   def self.from_consent_form!(consent_form, patient:, current_user:)
+    raise ConsentFormNotRecorded unless consent_form.recorded?
+
     ActiveRecord::Base.transaction do
       parent =
         consent_form.find_or_create_parent_with_relationship_to!(patient:)
@@ -164,7 +167,8 @@ class Consent < ApplicationRecord
             response: "given",
             route: "website",
             health_answers: consent_form.health_answers,
-            recorded_by: current_user
+            recorded_by: current_user,
+            submitted_at: consent_form.recorded_at
           )
         end
 
@@ -180,7 +184,8 @@ class Consent < ApplicationRecord
             response: "refused",
             route: "website",
             health_answers: consent_form.health_answers,
-            recorded_by: current_user
+            recorded_by: current_user,
+            submitted_at: consent_form.recorded_at
           )
         end
 
@@ -193,5 +198,8 @@ class Consent < ApplicationRecord
   def notes_required?
     withdrawn? || invalidated? ||
       (response_refused? && !reason_for_refusal_personal_choice?)
+  end
+
+  class ConsentFormNotRecorded < StandardError
   end
 end
