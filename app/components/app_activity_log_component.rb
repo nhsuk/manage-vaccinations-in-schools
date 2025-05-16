@@ -99,7 +99,7 @@ class AppActivityLogComponent < ViewComponent::Base
         {
           title:
             "Consent #{original_response} by #{consent.name} (#{consent.who_responded})",
-          at: consent.created_at,
+          at: consent.submitted_at,
           by: consent.recorded_by,
           programmes: programmes_for(consent)
         }

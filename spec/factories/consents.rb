@@ -72,7 +72,7 @@ FactoryBot.define do
       end
     end
 
-    submitted_at { Time.current }
+    submitted_at { consent_form&.recorded_at || Time.current }
 
     traits_for_enum :response
 
