@@ -95,7 +95,11 @@ module CIS2AuthHelper
 
   def cis2_sign_in(user, role: :nurse, org_code: nil, superuser: false)
     workgroups =
-      %w[schoolagedimmunisations] + (superuser ? %w[mavissuperusers] : [])
+      if user.is_support?
+        %w[mavissupport]
+      else
+        %w[schoolagedimmunisations] + (superuser ? %w[mavissuperusers] : [])
+      end
 
     mock_cis2_auth(
       uid: user.uid,

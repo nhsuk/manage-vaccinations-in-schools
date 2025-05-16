@@ -90,7 +90,7 @@ FactoryBot.define do
       selected_role_name { "Support" }
       selected_role_code { nil }
       sequence(:email) { |n| "support-#{n}@example.com" }
-      selected_role_workgroups { %w[schoolagedimmunisations mavissupport] }
+      selected_role_workgroups { %w[mavissupport] }
       fallback_role { :support }
     end
 

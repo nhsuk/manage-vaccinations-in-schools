@@ -14,7 +14,10 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   def cis2
     set_cis2_session_info
 
-    if !selected_cis2_workgroup_is_valid?
+    if user_is_ops?
+      @user = User.find_or_create_from_cis2_oidc(user_cis2_info)
+      sign_in_and_redirect @user, event: :authentication, force: true
+    elsif !selected_cis2_workgroup_is_valid?
       redirect_to users_workgroup_not_found_path
     elsif !selected_cis2_role_is_valid?
       redirect_to users_role_not_found_path
