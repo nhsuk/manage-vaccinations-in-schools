@@ -29,6 +29,12 @@ module AuthenticationConcern
       end
     end
 
+    def authenticate_ops_user!
+      unless check_user_is_ops
+        redirect_to users_unauthorized_path and return
+      end
+    end
+
     def cis2_session?
       session.key?(:cis2_info)
     end
@@ -42,6 +48,10 @@ module AuthenticationConcern
     def selected_cis2_workgroup_is_valid?
       workgroups = session.dig("cis2_info", "selected_role", "workgroups")
       workgroups.present? && CIS2_WORKGROUP.in?(workgroups)
+    end
+
+    def check_user_is_ops
+      current_user.is_support?
     end
 
     def valid_cis2_roles

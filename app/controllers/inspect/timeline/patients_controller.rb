@@ -6,6 +6,7 @@ module Inspect
       skip_after_action :verify_policy_scoped
       skip_before_action :authenticate_user!
       before_action :set_patient
+      before_action :authenticate_ops_user!
 
       layout "full"
 

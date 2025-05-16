@@ -93,9 +93,9 @@ module CIS2AuthHelper
     }
   end
 
-  def cis2_sign_in(user, role: :nurse, org_code: nil, superuser: false)
+  def cis2_sign_in(user, role: :nurse, org_code: nil, superuser: false, support: false)
     workgroups =
-      %w[schoolagedimmunisations] + (superuser ? %w[mavissuperusers] : [])
+      %w[schoolagedimmunisations] + (superuser ? %w[mavissuperusers] : []) + (support? ? %w[mavissupport] : [])
 
     mock_cis2_auth(
       uid: user.uid,
@@ -116,9 +116,9 @@ module CIS2AuthHelper
   end
 
   # Define a sign_in that is compatible with Devise's sign_in.
-  def sign_in(user, role: :nurse, org_code: nil, superuser: false)
+  def sign_in(user, role: :nurse, org_code: nil, superuser: false, support: false)
     org_code ||= user.organisations.first.ods_code
-    cis2_sign_in(user, role:, org_code:, superuser:)
+    cis2_sign_in(user, role:, org_code:, superuser:, support:)
   end
 
   def mock_cis2_auth(
