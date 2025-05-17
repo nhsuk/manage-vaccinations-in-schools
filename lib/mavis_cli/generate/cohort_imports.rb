@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-module MavisCLI
-  extend Dry::CLI::Registry
+require_relative "../../mavis_cli"
 
+module MavisCLI
   module Generate
     class CohortImports < Dry::CLI::Command
       desc "Generate cohort imports"
