@@ -20,7 +20,10 @@
     {
       "Effect": "Deny",
       "Action": ["*"],
-      "Resource": "*",
+      "NotResource": [
+        "arn:aws:s3:::nhse-mavis-terraform-state-production",
+        "arn:aws:s3:::nhse-mavis-terraform-state"
+      ],
       "Condition": {
         "StringEquals": {
           "aws:ResourceTag/Environment": [
