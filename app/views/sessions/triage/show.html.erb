@@ -14,7 +14,7 @@
           form: @form,
           url: session_triage_path(@session),
           programmes: @session.programmes,
-          triage_statuses: %w[safe_to_vaccinate do_not_vaccinate delay_vaccination required],
+          triage_statuses: %w[required delay_vaccination do_not_vaccinate safe_to_vaccinate],
           year_groups: @session.year_groups,
         ) %>
   </div>
