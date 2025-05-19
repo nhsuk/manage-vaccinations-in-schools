@@ -25,9 +25,9 @@ module Generate
     end
 
     def call
-      create_consent_with_response(:refused, @refused)
-      create_consent_with_response(:given, @given)
-      create_consent_given_needs_triage(@given_needs_triage)
+      create_consents(:refused, @refused)
+      create_consents(:given, @given)
+      create_consents(:needing_triage, @given_needs_triage)
 
       StatusUpdater.call(patient: @updated_patients, session: @updated_sessions)
     end
@@ -80,9 +80,16 @@ module Generate
           .sample
     end
 
-    def create_consents_with_responses(response, count)
+    def create_consents(response, count)
       available_patient_sessions =
         random_patients(count).map { [it, session_for(it)] }
+
+      if response == :needing_triage
+        response = :given
+        traits = %i[given needing_triage]
+      else
+        traits = [response]
+      end
 
       consents =
         available_patient_sessions.map do |patient, session|
@@ -93,6 +100,7 @@ module Generate
 
           FactoryBot.build(
             :consent,
+            *traits,
             patient:,
             programme:,
             consent_form:
@@ -106,38 +114,6 @@ module Generate
               )
           )
         end
-      Consent.import(consents, recursive: true)
-    end
-
-    def create_consent_given_needs_triage(count)
-      available_patient_sessions =
-        random_patients(count).map { [it, session_for(it)] }
-
-      consents =
-        available_patient_sessions.map do |patient, session|
-          school = session.location.school? ? session.location : patient.school
-
-          @updated_patients << patient
-          @updated_sessions << session
-
-          FactoryBot.build(
-            :consent,
-            :given,
-            :needing_triage,
-            patient:,
-            programme:,
-            consent_form:
-              FactoryBot.build(
-                :consent_form,
-                organisation:,
-                programmes: [programme],
-                session:,
-                school:,
-                response: "given"
-              )
-          )
-        end
-
       Consent.import(consents, recursive: true)
     end
 
