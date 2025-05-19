@@ -77,47 +77,59 @@ module Generate
           .sample
     end
 
-    def create_consent_with_response(response, count)
+    def create_consents_with_responses(response, count)
       available_patient_sessions =
         random_patients(count).map { [it, session_for(it)] }
 
-      available_patient_sessions.each do |patient, session|
-        consent = FactoryBot.create(:consent, response, patient:, programme:)
-        school = session.location.school? ? session.location : patient.school
-        FactoryBot.create(
-          :consent_form,
-          organisation:,
-          programmes: [programme],
-          session:,
-          school:,
-          consent:,
-          response:
-        )
-      end
+      consents =
+        available_patient_sessions.map do |patient, session|
+          school = session.location.school? ? session.location : patient.school
+
+          FactoryBot.build(
+            :consent,
+            patient:,
+            programme:,
+            consent_form:
+              FactoryBot.build(
+                :consent_form,
+                organisation:,
+                programmes: [programme],
+                session:,
+                school:,
+                response:
+              )
+          )
+        end
+      Consent.import(consents, recursive: true)
     end
 
     def create_consent_given_needs_triage(count)
       available_patient_sessions =
         random_patients(count).map { [it, session_for(it)] }
 
-      available_patient_sessions.each do |patient, session|
-        consent =
-          FactoryBot.create(
+      consents =
+        available_patient_sessions.map do |patient, session|
+          school = session.location.school? ? session.location : patient.school
+
+          FactoryBot.build(
             :consent,
             :given,
             :needing_triage,
             patient:,
-            programme:
+            programme:,
+            consent_form:
+              FactoryBot.build(
+                :consent_form,
+                organisation:,
+                programmes: [programme],
+                session:,
+                school:,
+                response: "given"
+              )
           )
-        FactoryBot.create(
-          :consent_form,
-          organisation:,
-          programmes: [programme],
-          session:,
-          consent:,
-          response: "given"
-        )
-      end
+        end
+
+      Consent.import(consents, recursive: true)
     end
 
     def validate_programme_and_session(programme, session)
