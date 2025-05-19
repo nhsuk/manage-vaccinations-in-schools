@@ -30,7 +30,7 @@ class AppSearchComponent < ViewComponent::Base
         <% end %>
 
         <% if triage_statuses.any? %>
-          <%= f.govuk_radio_buttons_fieldset :triage_status, legend: { text: "Triage outcome", size: "s" } do %>
+          <%= f.govuk_radio_buttons_fieldset :triage_status, legend: { text: "Triage status", size: "s" } do %>
             <%= f.govuk_radio_button :triage_status, "", label: { text: "Any" } %>
             <% triage_statuses.each do |status| %>
               <%= f.govuk_radio_button :triage_status, status, label: { text: t(status, scope: %i[status triage label]) } %>
