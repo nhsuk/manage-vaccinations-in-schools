@@ -104,10 +104,8 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
   end
 
   def display_triage_status?
-    status = @patient.triage_status(programme: @programme).status
-
     return true if @triage_status.present?
 
-    status == "required"
+    @patient.triage_status(programme: @programme).required?
   end
 end
