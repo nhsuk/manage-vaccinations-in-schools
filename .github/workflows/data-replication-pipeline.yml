@@ -100,9 +100,40 @@ jobs:
       DB_SECRET_ARN: ${{ steps.get-db-secret-arn.outputs.DB_SECRET_ARN }}
       DOCKER_DIGEST: ${{ steps.get-docker-image-digest.outputs.DIGEST }}
 
+  plan-destroy:
+    name: Plan destruction job
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ env.aws_role }}
+          aws-region: eu-west-2
+      - name: Install terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.10.5
+      - name: Terraform Plan
+        run: |
+          set -e
+          terraform init -backend-config="env/${{ inputs.environment }}-backend.hcl" -upgrade
+          terraform plan -destroy -var-file="env/${{ inputs.environment }}.tfvars" -var="image_digest=filler_value" \
+          -var="db_secret_arn=filler_value" -var="imported_snapshot=filler_value" \
+          -out ${{ runner.temp }}/tfplan_destroy | tee ${{ runner.temp }}/tf_stdout
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: tfplan_destroy_infrastructure-${{ inputs.environment }}
+          path: ${{ runner.temp }}/tfplan_destroy
+
   destroy:
     name: Destroy data replication infrastructure
     runs-on: ubuntu-latest
+    needs: plan-destroy
     environment: ${{ inputs.environment }}
     permissions:
       id-token: write
@@ -118,13 +149,17 @@ jobs:
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: 1.10.5
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: tfplan_destroy_infrastructure-${{ inputs.environment }}
+          path: ${{ runner.temp }}
       - name: Terraform Destroy
         id: destroy
         run: |
           set -e
           terraform init -backend-config="env/${{ inputs.environment }}-backend.hcl" -upgrade
-          terraform destroy -var-file="env/${{ inputs.environment }}.tfvars" -var="image_digest=filler_value" \
-          -var="db_secret_arn=filler_value" -var="imported_snapshot=filler_value" -auto-approve
+          terraform apply ${{ runner.temp }}/tfplan_destroy
 
   plan:
     if: ${{ inputs.action == 'Recreate' }}
