@@ -20,13 +20,16 @@ module Generate
       @refused = refused
       @given = given
       @given_needs_triage = given_needs_triage
+      @updated_patients = []
+      @updated_sessions = Set.new
     end
 
     def call
       create_consent_with_response(:refused, @refused)
       create_consent_with_response(:given, @given)
       create_consent_given_needs_triage(@given_needs_triage)
-      StatusUpdater.call(patient: patients)
+
+      StatusUpdater.call(patient: @updated_patients, session: @updated_sessions)
     end
 
     def self.call(...) = new(...).call
@@ -85,6 +88,9 @@ module Generate
         available_patient_sessions.map do |patient, session|
           school = session.location.school? ? session.location : patient.school
 
+          @updated_patients << patient
+          @updated_sessions << session
+
           FactoryBot.build(
             :consent,
             patient:,
@@ -110,6 +116,9 @@ module Generate
       consents =
         available_patient_sessions.map do |patient, session|
           school = session.location.school? ? session.location : patient.school
+
+          @updated_patients << patient
+          @updated_sessions << session
 
           FactoryBot.build(
             :consent,
