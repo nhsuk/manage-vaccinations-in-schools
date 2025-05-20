@@ -24,15 +24,6 @@ resource "aws_security_group_rule" "rds_ecs_ingress" {
   }
 }
 
-resource "aws_security_group_rule" "dms_ingress" {
-  type              = "ingress"
-  from_port         = 5432
-  to_port           = 5432
-  protocol          = "tcp"
-  security_group_id = aws_security_group.rds_security_group.id
-  source_security_group_id = module.dms_custom_kms_migration.dms_security_group_id
-}
-
 resource "aws_db_subnet_group" "aurora_subnet_group" {
   name        = var.resource_name.dbsubnet_group
   description = "Group of private subnets for Aurora Serverless v2 cluster."
@@ -135,18 +126,5 @@ module "dms_custom_kms_migration" {
   subnet_ids  = [aws_subnet.private_subnet_a.id, aws_subnet.private_subnet_b.id]
 
   rds_cluster_security_group_id = aws_security_group.rds_security_group.id
-  vpc_id = aws_vpc.application_vpc.id
-  secretsmanager_vpc_endpoint_dns = module.secretsmanager_vpc_endpoint.dns_name
-}
-
-module "secretsmanager_vpc_endpoint" {
-  source                = "./modules/vpc_endpoint"
-  ingress_ports         = ["443"]
-  service_name          = "com.amazonaws.eu-west-2.secretsmanager"
-  source_security_group = module.dms_custom_kms_migration.dms_security_group_id
-  subnet_ids            = [aws_subnet.private_subnet_a.id, aws_subnet.private_subnet_b.id]
-  vpc_id                = aws_vpc.application_vpc.id
-  tags = {
-    Name = "SecretsManager VPC Endpoint - ${var.environment}"
-  }
+  vpc_id                        = aws_vpc.application_vpc.id
 }

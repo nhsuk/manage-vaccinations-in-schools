@@ -1,9 +1,3 @@
-################################# Service Linked Roles #################################
-
-resource "aws_iam_service_linked_role" "dms_service_linked_role" {
-  aws_service_name = "dms.amazonaws.com"
-}
-
 ################################# IAM Policies #################################
 resource "aws_iam_policy" "ecs_secret_access_policy" {
   name   = "ecs-secret-access-policy-${var.environment}"

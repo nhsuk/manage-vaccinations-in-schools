@@ -16,7 +16,7 @@ resource "aws_kms_key" "rds_cluster" {
         Sid    = "AllowDMS"
         Effect = "Allow"
         Principal = {
-          AWS = aws_iam_service_linked_role.dms_service_linked_role.arn
+          AWS = module.dms_custom_kms_migration.dms_service_role_arn
         }
         Action = [
           "kms:Encrypt",
