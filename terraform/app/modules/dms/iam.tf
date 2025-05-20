@@ -1,7 +1,11 @@
+resource "aws_iam_service_linked_role" "dms_service_linked_role" {
+  aws_service_name = "dms.amazonaws.com"
+}
+
 resource "aws_iam_role" "secret_access" {
   name = "dms_secret_manager_access_role_${var.environment}"
   assume_role_policy = templatefile(
-    "./templates/iam_assume_role.json.tpl",
+    local.assume_role_policy_template,
     { service_name = "dms.eu-west-2.amazonaws.com" }
   )
 }
@@ -12,9 +16,6 @@ data "aws_iam_policy_document" "db_secret_access" {
     actions = [
       "secretsmanager:GetSecretValue",
       "secretsmanager:DescribeSecret",
-      # "secretsmanager:ListSecretVersionIds",
-      # "secretsmanager:ListSecrets",
-      # "secretsmanager:*"
     ]
     resources = [
       aws_secretsmanager_secret.source.arn,
@@ -38,7 +39,7 @@ resource "aws_iam_role_policy_attachment" "dms_secret_access" {
 resource "aws_iam_role" "dms_vpc_role" {
   name = "dms-vpc-role"
   assume_role_policy = templatefile(
-    "./templates/iam_assume_role.json.tpl",
+    local.assume_role_policy_template,
     { service_name = "dms.eu-west-2.amazonaws.com" }
   )
 }
@@ -52,7 +53,7 @@ resource "aws_iam_role_policy_attachment" "dms_vpc_policy" {
 resource "aws_iam_role" "dms_cloudwatch_logs_role" {
   name = "dms-cloudwatch-logs-role"
   assume_role_policy = templatefile(
-    "./templates/iam_assume_role.json.tpl",
+    local.assume_role_policy_template,
     { service_name = "dms.eu-west-2.amazonaws.com" }
   )
 }
