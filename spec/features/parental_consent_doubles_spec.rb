@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
 describe "Parental consent" do
-  scenario "Doubles - consent given for both programmes" do
-    stub_pds_search_to_return_no_patients
+  before { stub_pds_search_to_return_no_patients }
 
-    given_a_menacwy_programme_is_underway
+  scenario "Doubles - consent given for both programmes" do
+    given_a_doubles_programme_is_underway
     when_i_go_to_the_consent_form
     then_i_see_the_consent_form
 
@@ -18,9 +18,7 @@ describe "Parental consent" do
   end
 
   scenario "Doubles - consent given for one programme" do
-    stub_pds_search_to_return_no_patients
-
-    given_a_menacwy_programme_is_underway
+    given_a_doubles_programme_is_underway
     when_i_go_to_the_consent_form
     then_i_see_the_consent_form
 
@@ -34,7 +32,28 @@ describe "Parental consent" do
     then_i_can_check_my_answers
   end
 
-  def given_a_menacwy_programme_is_underway
+  scenario "Doubles - change consent given from one programme to both" do
+    given_a_doubles_programme_is_underway
+    when_i_go_to_the_consent_form
+    then_i_see_the_consent_form
+
+    when_i_fill_in_my_details
+    then_i_see_the_consent_page
+
+    when_i_give_consent_to_one_programme
+    and_i_fill_in_my_address
+    and_i_answer_no_to_all_the_medical_questions(only_menacwy: true)
+    and_i_give_a_reason_for_refusal
+    then_i_can_check_my_answers
+
+    when_i_change_my_consent_response
+    and_i_give_consent_to_both_programmes
+    and_i_fill_in_my_address
+    and_i_answer_no_to_all_the_medical_questions(only_menacwy: false)
+    then_i_can_check_my_answers
+  end
+
+  def given_a_doubles_programme_is_underway
     @programme1 = create(:programme, :menacwy)
     @programme2 = create(:programme, :td_ipv)
     @organisation =
@@ -103,6 +122,9 @@ describe "Parental consent" do
     click_on "Continue"
   end
 
+  alias_method :and_i_give_consent_to_both_programmes,
+               :when_i_give_consent_to_both_programmes
+
   def and_i_fill_in_my_address
     expect(page).to have_content("Home address")
     fill_in "Address line 1", with: "1 Test Street"
@@ -157,6 +179,10 @@ describe "Parental consent" do
     expect(page).to have_content(
       "Child’s name#{@child.full_name(context: :parents)}"
     )
+  end
+
+  def when_i_change_my_consent_response
+    click_on "Change consent", match: :first
   end
 
   def then_i_see_the_consent_page
