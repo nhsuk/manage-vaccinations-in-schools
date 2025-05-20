@@ -22,7 +22,19 @@ module RequestSessionPersistable
   def save(context: :update)
     reset_unused_fields
     return false if invalid?(context)
-    @request_session[self.class.request_session_key] = attributes
+
+    @request_session[
+      self.class.request_session_key
+    ] = attributes.each_with_object({}) do |(key, value), hash|
+      type = self.class.type_for_attribute(key)
+
+      hash[key] = if type.is_a?(ActiveRecord::Type::Serialized)
+        type.coder.dump(value)
+      else
+        value
+      end
+    end
+
     true
   end
 

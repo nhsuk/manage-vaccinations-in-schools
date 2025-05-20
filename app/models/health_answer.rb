@@ -45,13 +45,15 @@ class HealthAnswer
     hq_id_map = Hash[health_questions.map.with_index { |hq, i| [hq.id, i] }]
 
     health_questions.map do |hq|
-      new id: hq_id_map[hq.id],
-          question: hq.title,
-          response: nil,
-          notes: nil,
-          hint: hq.hint,
-          next_question: hq_id_map[hq.next_question_id],
-          follow_up_question: hq_id_map[hq.follow_up_question_id]
+      new(
+        id: hq_id_map[hq.id],
+        question: hq.title,
+        response: nil,
+        notes: nil,
+        hint: hq.hint,
+        next_question: hq_id_map[hq.next_question_id],
+        follow_up_question: hq_id_map[hq.follow_up_question_id]
+      )
     end
   end
 
