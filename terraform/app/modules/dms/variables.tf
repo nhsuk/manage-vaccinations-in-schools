@@ -69,13 +69,11 @@ variable "rds_cluster_security_group_id" {
 }
 
 variable "vpc_id" {
-    description = "VPC ID"
-    type        = string
-    nullable    = false
-}
-
-variable "secretsmanager_vpc_endpoint_dns" {
-  description = "The DNS name of the Secrets Manager VPC endpoint"
+  description = "VPC ID"
   type        = string
   nullable    = false
+}
+
+locals {
+  assume_role_policy_template = "${path.module}/../../templates/iam_assume_role.json.tpl"
 }
