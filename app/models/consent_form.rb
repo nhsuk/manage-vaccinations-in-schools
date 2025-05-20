@@ -460,7 +460,7 @@ class ConsentForm < ApplicationRecord
   def chosen_vaccines
     return [] if consent_refused?
 
-    if chosen_vaccine.present?
+    if consent_given_one? && chosen_vaccine.present?
       programmes.find_by(type: chosen_vaccine).vaccines.active
     else
       vaccines.active
