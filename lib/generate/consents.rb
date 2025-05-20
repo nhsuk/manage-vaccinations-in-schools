@@ -65,7 +65,7 @@ module Generate
         .take(count)
         .tap do
           if it.size < count
-            raise "Not enough patients without consent and with parents to generate consents"
+            raise "Only #{it.size} patients without consent in #{programme.type} programme"
           end
         end
     end
