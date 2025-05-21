@@ -6,31 +6,16 @@ module PendingChangesConcern
   included { attribute :pending_changes, :jsonb, default: {} }
 
   def stage_changes(attributes)
-    need_save = false
+    attributes.each do |attr, new_value|
+      current_value = public_send(attr)
 
-    new_pending_changes =
-      attributes.each_with_object({}) do |(attr, new_value), staged_changes|
-        current_value = public_send(attr)
-
-        if normalise_for_comparison(new_value) ==
-             normalise_for_comparison(current_value)
-          if new_value != current_value
-            public_send("#{attr}=", new_value)
-            pending_changes.delete(attr.to_s)
-            need_save = true
-          end
-        else
-          staged_changes[attr.to_s] = new_value
-        end
+      if normalised(new_value) == normalised(current_value)
+        public_send("#{attr}=", new_value)
+        pending_changes.delete(attr.to_s)
+      else
+        pending_changes[attr.to_s] = new_value
       end
-
-    if new_pending_changes.any? || need_save
-      update!(pending_changes: pending_changes.merge(new_pending_changes))
     end
-  end
-
-  def normalise_for_comparison(value)
-    value.respond_to?(:downcase) ? value.downcase : value
   end
 
   def with_pending_changes
@@ -61,5 +46,11 @@ module PendingChangesConcern
       discard_pending_changes!
       new_record
     end
+  end
+
+  private
+
+  def normalised(value)
+    value.respond_to?(:downcase) ? value.downcase : value
   end
 end
