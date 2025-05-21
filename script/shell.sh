@@ -40,6 +40,10 @@ while [[ $# -gt 0 ]]; do
             task_ip="$2"
             shift 2
             ;;
+        --exit-without-login|-x)
+            exit_without_login=true
+            shift
+            ;;
         -h|--help)
             usage
             exit 0
@@ -63,6 +67,20 @@ if [ -z "$env" ]; then
 fi
 
 cluster_name="mavis-$env"
+
+aws sts get-caller-identity &>/dev/null
+if [[ $? -ne 0 ]]; then
+    if [[ -z "$exit_without_login" ]]; then
+        aws sso login
+        if [[ $? -ne 0 ]]; then
+            echo "Error: AWS CLI SSO login failed. Please log in to your AWS account."
+            exit 1
+        fi
+    else
+        echo "Error: AWS SSO login required. Please log in to your AWS account using 'aws sso login'."
+        exit 1
+    fi
+fi
 
 if [ -n "$task_id" ]; then
     task_description=$(aws ecs describe-tasks --region "$region" --cluster "$cluster_name" --task "$task_id")
