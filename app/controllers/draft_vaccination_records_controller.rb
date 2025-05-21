@@ -83,8 +83,9 @@ class DraftVaccinationRecordsController < ApplicationController
   def handle_outcome
     if @draft_vaccination_record.administered?
       @draft_vaccination_record.full_dose = true
-    else
-      # If not administered we can skip the remaining steps as they're not relevant.
+    elsif @draft_vaccination_record.location_name.present?
+      # If not administered and location is set, we can skip to confirm.
+      # Otherwise, we need to get the location information from the user.
       jump_to("confirm")
     end
   end
