@@ -28,4 +28,6 @@ backup_retention_period   = 7
 ssl_policy                = "ELBSecurityPolicy-TLS13-1-2-2021-06"
 access_logs_bucket        = "nhse-mavis-access-logs-production"
 max_aurora_capacity_units = 16
+minimum_web_replicas      = 2
+maximum_web_replicas      = 4
 container_insights        = "enhanced"
