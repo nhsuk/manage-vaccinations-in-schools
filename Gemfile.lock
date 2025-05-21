@@ -207,6 +207,7 @@ GEM
     docile (1.4.0)
     domain_name (0.6.20240107)
     drb (2.2.3)
+    dry-cli (1.2.0)
     email_validator (2.2.4)
       activemodel
     erb (5.0.1)
@@ -736,6 +737,7 @@ DEPENDENCIES
   debug
   devise
   discard
+  dry-cli
   factory_bot_instruments
   factory_bot_rails
   faker
