@@ -81,8 +81,13 @@ class DraftVaccinationRecordsController < ApplicationController
   end
 
   def handle_outcome
-    # If not administered we can skip the remaining steps as they're not relevant.
-    jump_to("confirm") unless @draft_vaccination_record.administered?
+    # If not administered, we can skip the remaining steps as they're not relevant.
+    # Or, if the patient decides not to take the vaccine for whatever reason, other
+    # steps will be required such as selecting a location.
+    unless @draft_vaccination_record.administered? ||
+             @draft_vaccination_record.location_name.blank?
+      jump_to("confirm")
+    end
   end
 
   def handle_batch
