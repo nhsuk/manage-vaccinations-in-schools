@@ -103,6 +103,7 @@ module Generate
             *traits,
             patient:,
             programme:,
+            organisation:,
             consent_form:
               FactoryBot.build(
                 :consent_form,

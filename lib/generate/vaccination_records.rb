@@ -49,6 +49,7 @@ module Generate
           :administered,
           patient: patient_session.patient,
           programme:,
+          organisation:,
           performed_by:,
           session:,
           vaccine:,
