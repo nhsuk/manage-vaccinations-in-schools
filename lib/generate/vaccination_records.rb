@@ -11,7 +11,8 @@ module Generate
       administered: nil
     )
       @organisation = organisation
-      @programme = programme || organisation.programmes.sample
+      @programme =
+        programme || organisation.programmes.includes(:organisations).sample
       @session = session
       @administered = administered
     end
@@ -55,8 +56,7 @@ module Generate
     def random_patient_sessions
       if administered&.positive?
         patient_sessions
-          .shuffle
-          .take(administered)
+          .sample(administered)
           .tap do |selected|
             if selected.size < administered
               info =
@@ -76,28 +76,26 @@ module Generate
         .includes(
           :session,
           :location,
-          patient: [
-            :consents,
-            :triages,
-            :vaccination_records,
-            :parents,
-            { consents: :parent }
-          ]
+          session: :session_dates,
+          patient: %i[consent_statuses vaccination_statuses triage_statuses]
         )
         .in_programmes([programme])
+        .has_consent_status("given", programme:)
         .select { it.patient.consent_given_and_safe_to_vaccinate?(programme:) }
     end
 
     def vaccine
-      programme.vaccines.includes(:batches).active.first
+      (@vaccines ||= programme.vaccines.includes(:batches).active).first
     end
 
     def batch
-      vaccine.batches.sample
+      (@batches ||= vaccine.batches).sample
     end
 
     def performed_by
-      organisation.users.includes(:organisations).sample
+      (
+        @organisation_users ||= organisation.users.includes(:organisations)
+      ).sample
     end
   end
 end
