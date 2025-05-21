@@ -15,8 +15,8 @@ echo "Deployment Group Name: $APPLICATION_GROUP"
 
 running_deployment=$(aws deploy list-deployments --application-name $APPLICATION_NAME \
     --deployment-group-name $APPLICATION_GROUP --include-only-statuses InProgress \
-    --query 'deployments[0]' --output text) || { echo "No running deployment found for ${environment}"; exit 0; }
-if [ "$running_deployment" != "None" ]; then
+    --query 'deployments[]' --output text) || { echo "No running deployment found for ${environment}"; exit 0; }
+if [ -n "$running_deployment" ]; then
   echo "A mavis deployment for ${environment} is currently running: $running_deployment"
   echo "Aborting infrastructure deployment"
   exit 1
