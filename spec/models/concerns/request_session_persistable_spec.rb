@@ -9,9 +9,10 @@ describe RequestSessionPersistable do
         "key"
       end
 
-      attribute :value, :string
+      attribute :string, :string
+      attribute :datetime, :datetime
 
-      validates :value, presence: true, on: :update
+      validates :string, presence: true, on: :update
 
       def reset_unused_fields
       end
@@ -23,6 +24,32 @@ describe RequestSessionPersistable do
   let(:request_session) { {} }
   let(:current_user) { nil }
 
+  describe "#initialize" do
+    context "with a datetime attribute" do
+      let(:attributes) { { datetime: "2025-05-21 11:48:17 +0100" } }
+
+      it "isn't marked as having changed" do
+        expect(model.changed?).to be(false)
+      end
+
+      it "parses and keeps the time zone" do
+        expect(model.datetime).to eq(Time.zone.local(2025, 5, 21, 11, 48, 17))
+        expect(model.datetime).to be_a(ActiveSupport::TimeWithZone)
+        expect(model.datetime.time_zone.name).to eq("London")
+      end
+
+      context "when system timezone is UTC" do
+        around { |example| ClimateControl.modify(TZ: "UTC") { example.run } }
+
+        it "parses and keeps the time zone" do
+          expect(model.datetime).to eq(Time.zone.local(2025, 5, 21, 11, 48, 17))
+          expect(model.datetime).to be_a(ActiveSupport::TimeWithZone)
+          expect(model.datetime.time_zone.name).to eq("London")
+        end
+      end
+    end
+  end
+
   describe "#save" do
     subject(:save) { model.save(context: :update) }
 
@@ -33,13 +60,13 @@ describe RequestSessionPersistable do
     end
 
     context "when valid" do
-      let(:attributes) { { value: "abc" } }
+      let(:attributes) { { string: "abc" } }
 
       it { should be(true) }
 
       it "saves the attributes in the session" do
         expect { save }.to change { request_session }.to(
-          { "key" => { "value" => "abc" } }
+          { "key" => { "datetime" => nil, "string" => "abc" } }
         )
       end
     end
@@ -59,7 +86,7 @@ describe RequestSessionPersistable do
     end
 
     context "when valid" do
-      let(:attributes) { { value: "abc" } }
+      let(:attributes) { { string: "abc" } }
 
       it "doesn't raise an error" do
         expect { save! }.not_to raise_error
@@ -67,7 +94,7 @@ describe RequestSessionPersistable do
 
       it "saves the attributes in the session" do
         expect { save! }.to change { request_session }.to(
-          { "key" => { "value" => "abc" } }
+          { "key" => { "datetime" => nil, "string" => "abc" } }
         )
       end
     end
@@ -85,13 +112,13 @@ describe RequestSessionPersistable do
     end
 
     context "when valid" do
-      let(:update_attributes) { { value: "abc" } }
+      let(:update_attributes) { { string: "abc" } }
 
       it { should be(true) }
 
       it "saves the attributes in the session" do
         expect { update }.to change { request_session }.to(
-          { "key" => { "value" => "abc" } }
+          { "key" => { "datetime" => nil, "string" => "abc" } }
         )
       end
     end
@@ -100,12 +127,14 @@ describe RequestSessionPersistable do
   describe "#reset!" do
     subject(:reset!) { model.reset! }
 
-    let(:attributes) { { value: "abc" } }
+    let(:attributes) { { string: "abc" } }
 
     it "resets all the attributes and saves to the session" do
       expect { reset! }.to change(model, :attributes).to(
-        { "value" => nil }
-      ).and change { request_session }.to({ "key" => { "value" => nil } })
+        { "datetime" => nil, "string" => nil }
+      ).and change { request_session }.to(
+              { "key" => { "datetime" => nil, "string" => nil } }
+            )
     end
   end
 end
