@@ -26,6 +26,9 @@ module Generate
     private
 
     def create_vaccinations
+      session_attendances = []
+      vaccination_records = []
+
       random_patient_sessions.each do |patient_session|
         patient_session_id = patient_session.id
         session_date_ids = patient_session.session.session_dates.pluck(:id)
@@ -34,10 +37,14 @@ module Generate
                  patient_session_id:,
                  session_date_id: session_date_ids
                )
-          FactoryBot.create(:session_attendance, :present, patient_session:)
+          session_attendances << FactoryBot.build(
+            :session_attendance,
+            :present,
+            patient_session:
+          )
         end
 
-        FactoryBot.create(
+        vaccination_records << FactoryBot.build(
           :vaccination_record,
           :administered,
           patient: patient_session.patient,
@@ -50,7 +57,10 @@ module Generate
         )
       end
 
-      StatusUpdater.call(patient: patient_sessions.map(&:patient))
+      SessionAttendance.import(session_attendances)
+      VaccinationRecord.import(vaccination_records)
+
+      StatusUpdater.call(patient: vaccination_records.map(&:patient))
     end
 
     def random_patient_sessions
