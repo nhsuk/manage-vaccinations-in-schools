@@ -25,6 +25,16 @@ describe Generate::VaccinationRecords do
       expect(VaccinationRecord.administered.count).to eq 1
     end
 
+    describe "with a session" do
+      it "creates a vaccination record for the session" do
+        user
+        patient
+
+        described_class.call(organisation:, session:, administered: 1)
+        expect(session.reload.vaccination_records.administered.count).to eq 1
+      end
+    end
+
     context "no patients without vaccinations" do
       it "raises an error" do
         expect {
