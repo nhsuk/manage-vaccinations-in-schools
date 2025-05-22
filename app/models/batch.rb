@@ -42,10 +42,12 @@ class Batch < ApplicationRecord
   scope :not_expired,
         -> { where.not(expiry: nil).where("expiry > ?", Time.current) }
 
+  NAME_FORMAT = /\A[A-Za-z0-9]+\z/
+
   validates :name,
             presence: true,
             format: {
-              with: /\A[A-Za-z0-9]+\z/
+              with: NAME_FORMAT
             },
             length: {
               minimum: 2,
