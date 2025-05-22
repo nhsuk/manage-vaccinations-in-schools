@@ -61,8 +61,8 @@ module Generate
         )
       end
 
-      SessionAttendance.import(session_attendances)
-      VaccinationRecord.import(vaccination_records)
+      SessionAttendance.import!(session_attendances)
+      VaccinationRecord.import!(vaccination_records)
 
       StatusUpdater.call(patient: vaccination_records.map(&:patient))
     end

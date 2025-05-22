@@ -115,7 +115,7 @@ module Generate
               )
           )
         end
-      Consent.import(consents, recursive: true)
+      Consent.import!(consents, recursive: true)
     end
 
     def validate_programme_and_session(programme, session)
