@@ -42,46 +42,23 @@ module "s3_reports_bucket" {
   bucket_name              = "${local.project_name}-backup-reports"
   logging_target_bucket_id = data.aws_s3_bucket.mavis_logs.id
   logging_target_prefix    = "backup-reports/"
-}
-
-resource "aws_s3_bucket_policy" "backup_reports_bucket_policy" {
-  bucket = module.s3_reports_bucket.bucket_id
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Id      = "backup-reports-bucket-policy"
-    Statement = [
-      {
-        Sid    = "HTTPSOnly"
-        Effect = "Deny"
-        Principal = {
-          "AWS" : "*"
-        }
-        Action = "s3:*"
-        Resource = [
-          module.s3_reports_bucket.arn,
-          "${module.s3_reports_bucket.arn}/*",
-        ]
-        Condition = {
-          Bool = {
-            "aws:SecureTransport" = "false"
-          }
-        }
-        }, {
-        Sid    = "AllowBackupReports"
-        Effect = "Allow"
-        Principal = {
-          "AWS" : "arn:aws:iam::${local.source_account_id}:role/aws-service-role/reports.backup.amazonaws.com/AWSServiceRoleForBackupReports"
-        }
-        Action   = "s3:PutObject"
-        Resource = ["${module.s3_reports_bucket.arn}/*"]
-        Condition = {
-          StringEquals = {
-            "s3:x-amz-acl" = "bucket-owner-full-control"
-          }
-        }
+  additional_policy_statements = [
+    {
+      sid    = "AllowBackupReports"
+      effect = "Allow"
+      principals = [{
+        type        = "AWS"
+        identifiers = ["arn:aws:iam::${local.source_account_id}:role/aws-service-role/reports.backup.amazonaws.com/AWSServiceRoleForBackupReports"]
+      }]
+      actions   = ["s3:PutObject"]
+      resources = ["arn:aws:s3:::${local.project_name}-backup-reports/*"]
+      condition = {
+        test     = "StringEquals"
+        variable = "s3:x-amz-acl"
+        values   = ["bucket-owner-full-control"]
       }
-    ]
-  })
+    }
+  ]
 }
 
 # Now we can define the key itself
@@ -117,6 +94,9 @@ resource "aws_kms_key" "backup_notifications" {
 
 module "source" {
   source = "github.com/NHSDigital/terraform-aws-backup.git//modules/aws-backup-source?ref=v1.1.0"
+  # Use SSH to fetch sources locally
+  # source = "git@github.com:NHSDigital/terraform-aws-backup.git//modules/aws-backup-source?ref=v1.1.0"
+
 
   backup_copy_vault_account_id = local.destination_account_id
   backup_copy_vault_arn        = var.destination_vault_arn
