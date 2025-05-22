@@ -60,6 +60,11 @@
                   <%= link_to "#{t("service.guide.title")} (opens in a new tab)", @service_guide_url, classes: "nhsuk-footer__list-item-link", target: "_blank" %>
                 </li>
               <% end %>
+              <% if app_version %>
+                <li class="nhsuk-footer__list-item nhsuk-footer-default__list-item nhsuk-u-secondary-text-color">
+                  <%= app_version %>
+                </li>
+              <% end %>
             </ul>
             <p class="nhsuk-footer__copyright">&copy; NHS England</p>
           </div>
