@@ -1,28 +1,8 @@
-
 resource "aws_dms_replication_subnet_group" "dms_subnet_group" {
   replication_subnet_group_id          = "dms-subnet-group"
   replication_subnet_group_description = "Subnet group for DMS replication instance"
   subnet_ids                           = var.subnet_ids
   depends_on                           = [aws_iam_role.dms_vpc_role]
-}
-
-resource "aws_security_group" "dms" {
-  name        = "dms-security-group"
-  description = "Security group for DMS replication instance"
-  vpc_id      = var.vpc_id
-
-  tags = {
-    Name = "dms-security-group-${var.environment}"
-  }
-}
-
-resource "aws_security_group_rule" "dms_ingress" {
-  type                     = "ingress"
-  from_port                = 5432
-  to_port                  = 5432
-  protocol                 = "tcp"
-  security_group_id        = var.rds_cluster_security_group_id
-  source_security_group_id = aws_security_group.dms.id
 }
 
 resource "aws_dms_replication_instance" "dms_instance" {
@@ -31,27 +11,6 @@ resource "aws_dms_replication_instance" "dms_instance" {
   vpc_security_group_ids      = [aws_security_group.dms.id]
   replication_subnet_group_id = aws_dms_replication_subnet_group.dms_subnet_group.id
   publicly_accessible         = false
-}
-
-resource "aws_security_group_rule" "egress_to_rds" {
-  type                     = "egress"
-  from_port                = var.source_port
-  to_port                  = var.source_port
-  protocol                 = "tcp"
-  security_group_id        = aws_security_group.dms.id
-  source_security_group_id = var.rds_cluster_security_group_id
-}
-
-module "secretsmanager_vpc_endpoint" {
-  source                = "../vpc_endpoint"
-  ingress_ports         = ["443"]
-  service_name          = "com.amazonaws.eu-west-2.secretsmanager"
-  source_security_group = aws_security_group.dms.id
-  subnet_ids            = var.subnet_ids
-  vpc_id                = var.vpc_id
-  tags = {
-    Name = "SecretsManager VPC Endpoint - ${var.environment}"
-  }
 }
 
 resource "aws_dms_endpoint" "source" {

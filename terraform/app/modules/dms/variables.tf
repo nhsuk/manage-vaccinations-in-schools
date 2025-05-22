@@ -22,6 +22,13 @@ variable "source_database_name" {
   nullable    = false
 }
 
+variable "ecs_sg_ids" {
+  type        = list(string)
+  description = "List of ECS security group IDs"
+  default     = []
+  nullable    = false
+}
+
 variable "source_db_secret_arn" {
   type        = string
   description = "The secret arn for the source database"

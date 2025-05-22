@@ -112,6 +112,7 @@ module "dms_custom_kms_migration" {
   source      = "./modules/dms"
   environment = var.environment
 
+  ecs_sg_ids            = local.ecs_sg_ids
   source_endpoint       = aws_rds_cluster.aurora_cluster.endpoint
   source_port           = aws_rds_cluster.aurora_cluster.port
   source_database_name  = aws_rds_cluster.aurora_cluster.database_name
