@@ -14,17 +14,18 @@ class DraftVaccinationRecord
   attribute :delivery_method, :string
   attribute :delivery_site, :string
   attribute :dose_sequence, :integer
+  attribute :full_dose, :boolean
   attribute :location_name, :string
   attribute :notes, :string
   attribute :outcome, :string
   attribute :patient_id, :integer
-  attribute :session_id, :integer
   attribute :performed_at, :datetime
   attribute :performed_by_family_name, :string
   attribute :performed_by_given_name, :string
   attribute :performed_by_user_id, :integer
   attribute :performed_ods_code, :string
   attribute :programme_id, :integer
+  attribute :session_id, :integer
 
   validates :performed_by_family_name,
             :performed_by_given_name,
@@ -86,6 +87,7 @@ class DraftVaccinationRecord
     validates :batch_id,
               :delivery_method,
               :delivery_site,
+              :full_dose,
               :performed_at,
               presence: true
   end

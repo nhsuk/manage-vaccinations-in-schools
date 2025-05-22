@@ -25,6 +25,7 @@ describe DraftVaccinationRecord do
       delivery_method: "intramuscular",
       delivery_site: "left_arm_upper_position",
       dose_sequence: 1,
+      full_dose: true,
       notes: "Some notes.",
       outcome: "administered",
       patient_id: patient.id,

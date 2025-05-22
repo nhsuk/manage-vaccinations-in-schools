@@ -94,6 +94,8 @@ FactoryBot.define do
     performed_at { Time.current }
 
     dose_sequence { programme.vaccinated_dose_sequence }
+    full_dose { true }
+
     uuid { SecureRandom.uuid }
 
     location_name { "Unknown" if session.nil? }
