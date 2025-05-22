@@ -112,10 +112,11 @@ module "dms_custom_kms_migration" {
   source      = "./modules/dms"
   environment = var.environment
 
-  source_endpoint      = aws_rds_cluster.aurora_cluster.endpoint
-  source_port          = aws_rds_cluster.aurora_cluster.port
-  source_database_name = aws_rds_cluster.aurora_cluster.database_name
-  source_db_secret_arn = var.db_secret_arn == null ? aws_rds_cluster.aurora_cluster.master_user_secret[0].secret_arn : var.db_secret_arn
+  source_endpoint       = aws_rds_cluster.aurora_cluster.endpoint
+  source_port           = aws_rds_cluster.aurora_cluster.port
+  source_database_name  = aws_rds_cluster.aurora_cluster.database_name
+  source_db_secret_arn  = var.db_secret_arn == null ? aws_rds_cluster.aurora_cluster.master_user_secret[0].secret_arn : var.db_secret_arn
+  source_managed_secret = var.db_secret_arn != null
 
   target_endpoint      = aws_rds_cluster.core_cluster.endpoint
   target_port          = aws_rds_cluster.core_cluster.port
