@@ -10,6 +10,7 @@
 #  delivery_site            :integer
 #  discarded_at             :datetime
 #  dose_sequence            :integer
+#  full_dose                :boolean
 #  location_name            :string
 #  notes                    :text
 #  outcome                  :integer          not null
