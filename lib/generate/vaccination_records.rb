@@ -44,6 +44,9 @@ module Generate
           )
         end
 
+        location_name =
+          patient_session.location.name if patient_session.session.clinic?
+
         vaccination_records << FactoryBot.build(
           :vaccination_record,
           :administered,
@@ -51,10 +54,10 @@ module Generate
           programme:,
           organisation:,
           performed_by:,
-          session:,
+          session: patient_session.session,
           vaccine:,
           batch:,
-          location_name: patient_session.location.name
+          location_name:
         )
       end
 
