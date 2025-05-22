@@ -28,6 +28,13 @@ variable "source_db_secret_arn" {
   nullable    = false
 }
 
+variable "source_managed_secret" {
+  type        = bool
+  description = "Flag to indicate if the source database secret is managed by Aurora"
+  default     = true
+  nullable    = false
+}
+
 variable "target_endpoint" {
   type        = string
   description = "Target database endpoint"
