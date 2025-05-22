@@ -99,6 +99,8 @@ class Consent < ApplicationRecord
             presence: true,
             unless: -> { via_self_consent? || via_website? }
 
+  def self.verbal_routes = routes.except("website", "self_consent")
+
   def name
     via_self_consent? ? patient.full_name : parent.label
   end
