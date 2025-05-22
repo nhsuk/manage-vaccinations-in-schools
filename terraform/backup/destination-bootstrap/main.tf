@@ -12,36 +12,16 @@ provider "aws" {
   region = "eu-west-2"
 }
 
-module "terraform_state_bucket" {
+module "access_logs_bucket" {
   source      = "../../modules/s3"
-  bucket_name = "mavisbackup-terraform-state"
+  bucket_name = "nhse-mavis-destination-access-logs"
 }
 
-resource "aws_s3_bucket_policy" "backend_bucket_block_http" {
-  bucket = module.terraform_state_bucket.bucket_id
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Id      = "block-backend-bucket-http-access"
-    Statement = [
-      {
-        Sid    = "HTTPSOnly"
-        Effect = "Deny"
-        Principal = {
-          "AWS" : "*"
-        }
-        Action = "s3:*"
-        Resource = [
-          module.terraform_state_bucket.arn,
-          "${module.terraform_state_bucket.arn}/*",
-        ]
-        Condition = {
-          Bool = {
-            "aws:SecureTransport" = "false"
-          }
-        }
-      },
-    ]
-  })
+module "terraform_state_bucket" {
+  source                   = "../../modules/s3"
+  bucket_name              = "mavisbackup-terraform-state"
+  logging_target_bucket_id = module.access_logs_bucket.bucket_id
+  logging_target_prefix    = "terraform-state/"
 }
 
 #### Dynamo DB table for terraform state locking

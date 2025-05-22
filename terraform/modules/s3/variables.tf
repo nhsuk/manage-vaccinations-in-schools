@@ -18,3 +18,9 @@ variable "logging_target_prefix" {
   nullable    = false
 }
 
+variable "additional_policy_statements" {
+  description = "The JSON policy to apply to the bucket"
+  type        = list(any)
+  default     = []
+}
+
