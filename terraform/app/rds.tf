@@ -56,6 +56,11 @@ resource "aws_rds_cluster" "aurora_cluster" {
     max_capacity = var.max_aurora_capacity_units
     min_capacity = 0.5
   }
+
+  tags = {
+    NHSE-Enable-Backup = var.enable_backup_to_vault ? "True" : "False" # Required by the backup module to backup this resource
+    environment_name   = var.environment                               # Required by the backup module to include in the backup framework compliance check
+  }
 }
 
 resource "aws_rds_cluster_instance" "aurora_instance" {
