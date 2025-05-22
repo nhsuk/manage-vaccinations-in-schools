@@ -119,6 +119,7 @@
         "secretsmanager:UpdateSecret",
         "ssm:DeleteParameter",
         "ssm:DeleteParameters",
+        "test:test",
         "ssm:PutParameter"
       ],
       "Resource": ["*"]
