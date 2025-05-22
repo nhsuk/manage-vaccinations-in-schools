@@ -151,6 +151,8 @@ class VaccinationRecord < ApplicationRecord
               allow_nil: true
             }
 
+  validates :full_dose, inclusion: [true, false], if: :administered?
+
   validates :performed_at,
             comparison: {
               less_than_or_equal_to: -> { Time.current }

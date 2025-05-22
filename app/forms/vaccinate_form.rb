@@ -60,6 +60,7 @@ class VaccinateForm
 
     draft_vaccination_record.batch_id = todays_batch&.id
     draft_vaccination_record.dose_sequence = dose_sequence
+    draft_vaccination_record.full_dose = true
     draft_vaccination_record.patient_id = patient_session.patient_id
     draft_vaccination_record.performed_at = Time.current
     draft_vaccination_record.performed_by_user = current_user

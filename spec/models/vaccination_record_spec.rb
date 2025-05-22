@@ -54,6 +54,15 @@ describe VaccinationRecord do
   subject(:vaccination_record) { build(:vaccination_record) }
 
   describe "validations" do
+    context "when administered" do
+      it { should allow_values(true, false).for(:full_dose) }
+      it { should_not allow_values(nil).for(:full_dose) }
+    end
+
+    context "when not administered" do
+      it { should_not validate_presence_of(:full_dose) }
+    end
+
     context "for a school session" do
       subject(:vaccination_record) do
         build(:vaccination_record, programme:, session:)
