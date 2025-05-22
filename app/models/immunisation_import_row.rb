@@ -487,6 +487,8 @@ class ImmunisationImportRow
       if batch_name.present?
         if batch_name.to_s.length > 100
           errors.add(batch_name.header, "is greater than 100 characters long")
+        elsif batch_name.to_s !~ Batch::NAME_FORMAT
+          errors.add(batch_name.header, "must be only letters and numbers")
         end
       elsif offline_recording?
         if batch_name.nil?

@@ -190,6 +190,17 @@ describe ImmunisationImportRow do
       end
     end
 
+    context "with an invalid batch name" do
+      let(:data) { { "VACCINATED" => "Y", "BATCH_NUMBER" => "[invalid]" } }
+
+      it "has errors" do
+        expect(immunisation_import_row).to be_invalid
+        expect(immunisation_import_row.errors["BATCH_NUMBER"]).to eq(
+          ["must be only letters and numbers"]
+        )
+      end
+    end
+
     context "with an invalid postcode" do
       let(:data) { { "PERSON_POSTCODE" => "ABC DEF" } }
 
