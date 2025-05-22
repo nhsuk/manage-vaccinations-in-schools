@@ -1,0 +1,1 @@
+APP_VERSION = ENV.fetch('APP_VERSION', 'unknown')

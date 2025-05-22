@@ -4,6 +4,10 @@ run-name: Deploy infrastructure for ${{ inputs.environment }}
 on:
   workflow_dispatch:
     inputs:
+      git_ref_to_deploy:
+        description: "Git ref string for displaying app version (e.g., tag, branch or sha)"
+        required: false
+        type: string
       environment:
         description: Deployment environment
         required: true
@@ -22,6 +26,9 @@ on:
         type: string
   workflow_call:
     inputs:
+      git_ref_to_deploy:
+          required: false
+          type: string
       environment:
         description: Deployment environment
         required: true
@@ -87,12 +94,16 @@ jobs:
         run: sudo snap install --classic aws-cli
       - name: Check if any deployments are running
         run: ../scripts/check-for-running-deployments.sh ${{ inputs.environment }}
+      - name: Set Mavis app version
+        run: |
+          APP_VERSION="${{ inputs.git_ref_to_deploy || github.sha }}"
+          echo "APP_VERSION=$APP_VERSION" >> $GITHUB_ENV
       - name: Terraform Plan
         id: plan
         run: |
           set -e
           terraform init -backend-config="env/${{ inputs.environment }}-backend.hcl" -upgrade
-          terraform plan -var="image_digest=$DIGEST" -var-file="env/${{ inputs.environment }}.tfvars" \
+          terraform plan -var="image_digest=$DIGEST" -var="app_version=$APP_VERSION" -var-file="env/${{ inputs.environment }}.tfvars" \
           -out ${{ runner.temp }}/tfplan | tee ${{ runner.temp }}/tf_stdout
       - name: Validate the changes
         run: |

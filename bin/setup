@@ -28,6 +28,17 @@ FileUtils.chdir APP_ROOT do
   puts "\n== Removing old logs and tempfiles =="
   system! "bin/rails log:clear tmp:clear"
 
+  puts "\n== Detecting app version from git tag =="
+
+  git_tag = `git describe --tags --abbrev=0 2>/dev/null`.strip
+  if git_tag.match?(/^v\d+\.\d+\.\d+\.\d+$/)
+    ENV["APP_VERSION"] = git_tag
+    puts "Detected APP_VERSION: #{git_tag}"
+  else
+    ENV["APP_VERSION"] = nil
+    puts "No valid tag found. APP_VERSION set to nil."
+  end
+
   unless ARGV.include?("--skip-server")
     puts "\n== Starting development server =="
     STDOUT.flush # flush the output before exec(2) so that it displays

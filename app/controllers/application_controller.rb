@@ -15,6 +15,7 @@ class ApplicationController < ActionController::Base
   before_action :set_show_navigation
   before_action :set_privacy_policy_url
   before_action :authenticate_basic
+  before_action :set_app_version
 
   after_action :verify_policy_scoped, if: -> { Rails.env.local? }
 
@@ -32,6 +33,10 @@ class ApplicationController < ActionController::Base
   rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
 
   private
+  
+  def set_app_version
+    @app_version = APP_VERSION.match?(/\Av\d+\.\d+\.\d+\.\d+\z/) ? APP_VERSION : nil
+  end  
 
   def set_selected_organisation
     return if Settings.cis2.enabled
