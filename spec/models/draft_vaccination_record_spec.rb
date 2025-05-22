@@ -111,12 +111,16 @@ describe DraftVaccinationRecord do
   end
 
   describe "#dose_volume_ml" do
+    subject { draft_vaccination_record.dose_volume_ml }
+
     let(:attributes) { valid_administered_attributes }
 
-    it "determines the dose volume in ml from the vaccine" do
-      expect(draft_vaccination_record.dose_volume_ml).to eq(
-        vaccine.dose_volume_ml
-      )
+    it { should eq(vaccine.dose_volume_ml) }
+
+    context "with a half dose" do
+      let(:attributes) { valid_administered_attributes.merge(full_dose: false) }
+
+      it { should eq(vaccine.dose_volume_ml * 0.5) }
     end
   end
 end
