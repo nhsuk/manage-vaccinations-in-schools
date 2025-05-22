@@ -106,12 +106,17 @@ FactoryBot.define do
       outcome { "not_well" }
       vaccine { nil }
       dose_sequence { nil }
+      full_dose { nil }
     end
 
     trait :performed_by_not_user do
       performed_by { nil }
       performed_by_given_name { Faker::Name.first_name }
       performed_by_family_name { Faker::Name.last_name }
+    end
+
+    trait :half_dose do
+      full_dose { false }
     end
 
     trait :discarded do

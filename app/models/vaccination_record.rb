@@ -51,6 +51,7 @@
 #
 class VaccinationRecord < ApplicationRecord
   include Discard::Model
+  include HasDoseVolume
   include PendingChangesConcern
   include VaccinationRecordPerformedByConcern
 
@@ -168,12 +169,6 @@ class VaccinationRecord < ApplicationRecord
 
   def recorded_in_service?
     session_id != nil
-  end
-
-  def dose_volume_ml
-    # TODO: this will need to be revisited once it's possible to record half-doses
-    # e.g. for the flu programme where a child refuses the second half of the dose
-    vaccine.dose_volume_ml * 1 if vaccine.present?
   end
 
   def academic_year

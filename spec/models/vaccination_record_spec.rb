@@ -108,6 +108,38 @@ describe VaccinationRecord do
     end
   end
 
+  describe "#dose_volume_ml" do
+    subject { vaccination_record.dose_volume_ml }
+
+    let(:programme) { create(:programme) }
+
+    let(:vaccine) { build(:vaccine, programme:, dose_volume_ml: 10) }
+
+    context "when administered" do
+      let(:vaccination_record) do
+        build(:vaccination_record, programme:, vaccine:)
+      end
+
+      it { should eq(10) }
+    end
+
+    context "when not administered" do
+      let(:vaccination_record) do
+        build(:vaccination_record, :not_administered, programme:)
+      end
+
+      it { should be_nil }
+    end
+
+    context "with a half dose" do
+      let(:vaccination_record) do
+        build(:vaccination_record, :half_dose, programme:, vaccine:)
+      end
+
+      it { should eq(5) }
+    end
+  end
+
   describe "#performed_by" do
     subject(:performed_by) { vaccination_record.performed_by }
 
