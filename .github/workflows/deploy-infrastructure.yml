@@ -47,9 +47,34 @@ defaults:
     working-directory: terraform/app
 
 jobs:
-  plan:
-    name: Terraform plan
+  validate-permissions:
+    name: Validate permissions
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+    outputs:
+      policy-mismatch: ${{ steps.compare-permissions.outputs.policy_mismatch }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.image_tag || github.sha }}
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ env.aws_role }}
+          aws-region: eu-west-2
+      - name: Compare permissions
+        id: compare-permissions
+        run: |
+          ../scripts/validate-github-actions-policy.sh arn:aws:iam::${{ env.aws_account_id }}:policy/DeployMavisResources ../resources/github_actions_policy.json
+
+  update-permissions:
+    name: Update permissions
+    runs-on: ubuntu-latest
+    needs: validate-permissions
+    if: inputs.environment == 'production' && needs.validate-permissions.outputs.policy-mismatch == 'true'
+    environment: ${{ inputs.environment }}
     permissions:
       id-token: write
     steps:
@@ -64,8 +89,25 @@ jobs:
           aws-region: eu-west-2
       - name: Update IAM policy
         run: |
-          set -e
-          ./../scripts/update-github-actions-policy.sh arn:aws:iam::${{ env.aws_role }}:policy/DeployMavisResources ../resources/github_actions_policy.json
+          ../scripts/update-github-actions-policy.sh arn:aws:iam::${{ env.aws_account_id }}:policy/DeployMavisResources ../resources/github_actions_policy.json
+
+  plan:
+    name: Terraform plan
+    runs-on: ubuntu-latest
+    needs: [validate-permissions, update-permissions]
+    if: always() && (needs.validate-permissions.outputs.policy-mismatch != 'true' || needs.update-permissions.result == 'success')
+    permissions:
+      id-token: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.image_tag || github.sha }}
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ env.aws_role }}
+          aws-region: eu-west-2
       - name: Set image tag
         run: |
           IMAGE_TAG="${{ inputs.image_tag || github.sha }}"
