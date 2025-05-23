@@ -4,6 +4,8 @@ class GovukNotifyPersonalisation
   include Rails.application.routes.url_helpers
   include PhoneHelper
 
+  include VaccinationRecordsHelper
+
   def initialize(
     consent: nil,
     consent_form: nil,
@@ -133,7 +135,11 @@ class GovukNotifyPersonalisation
   end
 
   def location_name
-    session.location.name
+    if vaccination_record
+      vaccination_record_location(vaccination_record)
+    else
+      session.location.name
+    end
   end
 
   def next_session_date
