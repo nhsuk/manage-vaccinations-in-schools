@@ -21,6 +21,7 @@ class VaccinateForm
   attribute :programme_id, :integer
 
   validates :administered, inclusion: [true, false]
+  validates :pre_screening_notes, length: { maximum: 1000 }
 
   with_options if: :administered do
     validates :knows_vaccination, presence: true
