@@ -191,6 +191,8 @@ class VaccinationRecord < ApplicationRecord
       "Recorded as already vaccinated on #{Date.current.to_fs(:long)}"
     triage_notes += ": #{notes}" if notes.present?
 
+    organisation ||= Organisation.find_by(ods_code: performed_ods_code)
+
     patient.triages.create!(
       programme:,
       organisation:,
