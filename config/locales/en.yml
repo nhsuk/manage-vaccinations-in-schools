@@ -123,6 +123,8 @@ en:
               blank: Confirm that they are not pregnant
             not_taking_medication:
               blank: Confirm that they are not taking any medication which prevents vaccination
+            pre_screening_notes:
+              too_long: Enter notes that are less than %{count} characters long
         vaccination_report:
           attributes:
             file_format:
