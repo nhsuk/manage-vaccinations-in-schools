@@ -24,7 +24,7 @@ describe Patient::TriageStatus do
     build(:patient_triage_status, patient:, programme:)
   end
 
-  let(:patient) { create(:patient) }
+  let(:patient) { create(:patient, year_group: 9) }
   let(:programme) { create(:programme) }
 
   it { should belong_to(:patient) }
@@ -109,6 +109,45 @@ describe Patient::TriageStatus do
       end
 
       it { should be(:not_required) }
+    end
+
+    context "when the patient is already vaccinated" do
+      shared_examples "a vaccinated patient with any triage status" do
+        before do
+          create(:triage, triage_trait, patient:, programme:) if triage_trait
+        end
+
+        it { should be(:not_required) }
+      end
+
+      before do
+        create(:vaccination_record, patient:, programme:)
+        create(:patient_vaccination_status, :vaccinated, patient:, programme:)
+      end
+
+      context "with a safe to vaccinate triage" do
+        it_behaves_like "a vaccinated patient with any triage status" do
+          let(:triage_trait) { :ready_to_vaccinate }
+        end
+      end
+
+      context "with a do not vaccinate triage" do
+        it_behaves_like "a vaccinated patient with any triage status" do
+          let(:triage_trait) { :do_not_vaccinate }
+        end
+      end
+
+      context "with a needs follow up triage" do
+        it_behaves_like "a vaccinated patient with any triage status" do
+          let(:triage_trait) { :needs_follow_up }
+        end
+      end
+
+      context "with a delay vaccination triage" do
+        it_behaves_like "a vaccinated patient with any triage status" do
+          let(:triage_trait) { :delay_vaccination }
+        end
+      end
     end
   end
 end
