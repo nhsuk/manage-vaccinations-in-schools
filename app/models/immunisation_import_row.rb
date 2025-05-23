@@ -32,6 +32,8 @@ class ImmunisationImportRow
   CARE_SETTING_SCHOOL = 1
   CARE_SETTING_COMMUNITY = 2
 
+  MAX_FIELD_LENGTH = 300
+
   DELIVERY_SITES = {
     "left thigh" => "left_thigh",
     "right thigh" => "right_thigh",
@@ -96,6 +98,7 @@ class ImmunisationImportRow
 
     attributes = {
       dose_sequence: dose_sequence_value,
+      full_dose: true,
       location_name:,
       outcome:,
       patient:,
@@ -481,7 +484,11 @@ class ImmunisationImportRow
 
   def validate_batch_name
     if administered
-      if offline_recording?
+      if batch_name.present?
+        if batch_name.to_s.length > 100
+          errors.add(batch_name.header, "is greater than 100 characters long")
+        end
+      elsif offline_recording?
         if batch_name.nil?
           errors.add(
             :base,
@@ -509,15 +516,25 @@ class ImmunisationImportRow
   end
 
   def validate_clinic_name
-    if offline_recording? && is_community_setting?
+    clinic_name_required = offline_recording? && is_community_setting?
+
+    if clinic_name.present?
+      if clinic_name.to_s.length > MAX_FIELD_LENGTH
+        errors.add(
+          clinic_name.header,
+          "is greater than #{MAX_FIELD_LENGTH} characters long"
+        )
+      elsif clinic_name_required &&
+            !organisation.community_clinics.exists?(name: clinic_name.to_s)
+        errors.add(clinic_name.header, "Enter a clinic name")
+      end
+    elsif clinic_name_required
       if clinic_name.nil?
         errors.add(
           :base,
           "<code>CLINIC_NAME</code> or <code>Event done at</code> is required"
         )
       elsif clinic_name.blank?
-        errors.add(clinic_name.header, "Enter a clinic name")
-      elsif !organisation.community_clinics.exists?(name: clinic_name.to_s)
         errors.add(clinic_name.header, "Enter a clinic name")
       end
     end
@@ -663,6 +680,11 @@ class ImmunisationImportRow
       )
     elsif patient_first_name.blank?
       errors.add(patient_first_name.header, "Enter a first name.")
+    elsif patient_first_name.to_s.length > MAX_FIELD_LENGTH
+      errors.add(
+        patient_first_name.header,
+        "is greater than #{MAX_FIELD_LENGTH} characters long"
+      )
     end
   end
 
@@ -690,6 +712,11 @@ class ImmunisationImportRow
       )
     elsif patient_last_name.blank?
       errors.add(patient_last_name.header, "Enter a last name.")
+    elsif patient_last_name.to_s.length > MAX_FIELD_LENGTH
+      errors.add(
+        patient_last_name.header,
+        "is greater than #{MAX_FIELD_LENGTH} characters long"
+      )
     end
   end
 
@@ -815,7 +842,16 @@ class ImmunisationImportRow
   end
 
   def validate_school_name
-    if school_name.blank? && school_urn&.to_s == SCHOOL_URN_UNKNOWN
+    school_name_required = school_urn&.to_s == SCHOOL_URN_UNKNOWN
+
+    if school_name.present?
+      if school_name.to_s.length > MAX_FIELD_LENGTH
+        errors.add(
+          school_name.header,
+          "is greater than #{MAX_FIELD_LENGTH} characters long"
+        )
+      end
+    elsif school_name_required
       if school_name.nil?
         errors.add(
           :base,
@@ -903,6 +939,12 @@ class ImmunisationImportRow
       end
     elsif vaccine_nivs_name.present?
       errors.add(field.header, "This vaccine is not available in this session.")
+    elsif offline_recording? && administered
+      if vaccine_name.nil?
+        errors.add(:base, "<code>VACCINE_GIVEN</code> is required")
+      elsif vaccine_name.blank?
+        errors.add(vaccine_name.header, "is required")
+      end
     end
   end
 end

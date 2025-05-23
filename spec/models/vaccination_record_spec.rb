@@ -10,6 +10,7 @@
 #  delivery_site            :integer
 #  discarded_at             :datetime
 #  dose_sequence            :integer
+#  full_dose                :boolean
 #  location_name            :string
 #  notes                    :text
 #  outcome                  :integer          not null
@@ -53,6 +54,15 @@ describe VaccinationRecord do
   subject(:vaccination_record) { build(:vaccination_record) }
 
   describe "validations" do
+    context "when administered" do
+      it { should allow_values(true, false).for(:full_dose) }
+      it { should_not allow_values(nil).for(:full_dose) }
+    end
+
+    context "when not administered" do
+      it { should_not validate_presence_of(:full_dose) }
+    end
+
     context "for a school session" do
       subject(:vaccination_record) do
         build(:vaccination_record, programme:, session:)
@@ -95,6 +105,38 @@ describe VaccinationRecord do
           "Enter a time in the past"
         )
       end
+    end
+  end
+
+  describe "#dose_volume_ml" do
+    subject { vaccination_record.dose_volume_ml }
+
+    let(:programme) { create(:programme) }
+
+    let(:vaccine) { build(:vaccine, programme:, dose_volume_ml: 10) }
+
+    context "when administered" do
+      let(:vaccination_record) do
+        build(:vaccination_record, programme:, vaccine:)
+      end
+
+      it { should eq(10) }
+    end
+
+    context "when not administered" do
+      let(:vaccination_record) do
+        build(:vaccination_record, :not_administered, programme:)
+      end
+
+      it { should be_nil }
+    end
+
+    context "with a half dose" do
+      let(:vaccination_record) do
+        build(:vaccination_record, :half_dose, programme:, vaccine:)
+      end
+
+      it { should eq(5) }
     end
   end
 

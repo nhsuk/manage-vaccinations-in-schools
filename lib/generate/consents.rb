@@ -20,13 +20,16 @@ module Generate
       @refused = refused
       @given = given
       @given_needs_triage = given_needs_triage
+      @updated_patients = []
+      @updated_sessions = Set.new
     end
 
     def call
-      create_consent_with_response(:refused, @refused)
-      create_consent_with_response(:given, @given)
-      create_consent_given_needs_triage(@given_needs_triage)
-      StatusUpdater.call(patient: patients)
+      create_consents(:refused, @refused)
+      create_consents(:given, @given)
+      create_consents(:needing_triage, @given_needs_triage)
+
+      StatusUpdater.call(patient: @updated_patients, session: @updated_sessions)
     end
 
     def self.call(...) = new(...).call
@@ -62,7 +65,7 @@ module Generate
         .take(count)
         .tap do
           if it.size < count
-            raise "Not enough patients without consent and with parents to generate consents"
+            raise "Only #{it.size} patients without consent in #{programme.type} programme"
           end
         end
     end
@@ -77,47 +80,42 @@ module Generate
           .sample
     end
 
-    def create_consent_with_response(response, count)
+    def create_consents(response, count)
       available_patient_sessions =
         random_patients(count).map { [it, session_for(it)] }
 
-      available_patient_sessions.each do |patient, session|
-        consent = FactoryBot.create(:consent, response, patient:, programme:)
-        school = session.location.school? ? session.location : patient.school
-        FactoryBot.create(
-          :consent_form,
-          organisation:,
-          programmes: [programme],
-          session:,
-          school:,
-          consent:,
-          response:
-        )
+      if response == :needing_triage
+        response = :given
+        traits = %i[given needing_triage]
+      else
+        traits = [response]
       end
-    end
 
-    def create_consent_given_needs_triage(count)
-      available_patient_sessions =
-        random_patients(count).map { [it, session_for(it)] }
+      consents =
+        available_patient_sessions.map do |patient, session|
+          school = session.location.school? ? session.location : patient.school
 
-      available_patient_sessions.each do |patient, session|
-        consent =
-          FactoryBot.create(
+          @updated_patients << patient
+          @updated_sessions << session
+
+          FactoryBot.build(
             :consent,
-            :given,
-            :needing_triage,
+            *traits,
             patient:,
-            programme:
+            programme:,
+            organisation:,
+            consent_form:
+              FactoryBot.build(
+                :consent_form,
+                organisation:,
+                programmes: [programme],
+                session:,
+                school:,
+                response:
+              )
           )
-        FactoryBot.create(
-          :consent_form,
-          organisation:,
-          programmes: [programme],
-          session:,
-          consent:,
-          response: "given"
-        )
-      end
+        end
+      Consent.import!(consents, recursive: true)
     end
 
     def validate_programme_and_session(programme, session)

@@ -3,6 +3,7 @@
 class DraftVaccinationRecord
   include RequestSessionPersistable
   include EditableWrapper
+  include HasDoseVolume
   include VaccinationRecordPerformedByConcern
   include WizardStepConcern
 
@@ -14,17 +15,18 @@ class DraftVaccinationRecord
   attribute :delivery_method, :string
   attribute :delivery_site, :string
   attribute :dose_sequence, :integer
+  attribute :full_dose, :boolean
   attribute :location_name, :string
   attribute :notes, :string
   attribute :outcome, :string
   attribute :patient_id, :integer
-  attribute :session_id, :integer
   attribute :performed_at, :datetime
   attribute :performed_by_family_name, :string
   attribute :performed_by_given_name, :string
   attribute :performed_by_user_id, :integer
   attribute :performed_ods_code, :string
   attribute :programme_id, :integer
+  attribute :session_id, :integer
 
   validates :performed_by_family_name,
             :performed_by_given_name,
@@ -86,6 +88,7 @@ class DraftVaccinationRecord
     validates :batch_id,
               :delivery_method,
               :delivery_site,
+              :full_dose,
               :performed_at,
               presence: true
   end
@@ -109,12 +112,6 @@ class DraftVaccinationRecord
 
   def batch=(value)
     self.batch_id = value.id
-  end
-
-  def dose_volume_ml
-    # TODO: this will need to be revisited once it's possible to record half-doses
-    # e.g. for the flu programme where a child refuses the second half of the dose
-    vaccine.dose_volume_ml * 1 if vaccine.present?
   end
 
   def patient

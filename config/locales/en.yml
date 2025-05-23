@@ -16,6 +16,8 @@ en:
             name:
               blank: Enter a batch
               invalid: Enter a batch with only letters and numbers
+              too_short: Enter a batch that is more than %{count} characters long
+              too_long: Enter a batch that is less than %{count} characters long
         draft_class_import:
           attributes:
             session_id:
@@ -121,6 +123,8 @@ en:
               blank: Confirm that they are not pregnant
             not_taking_medication:
               blank: Confirm that they are not taking any medication which prevents vaccination
+            pre_screening_notes:
+              too_long: Enter notes that are less than %{count} characters long
         vaccination_report:
           attributes:
             file_format:
@@ -332,6 +336,8 @@ en:
               inclusion: Choose whether the child knows how the injection will be given
             knows_side_effects:
               inclusion: Choose whether the child knows which side effects they might experience
+            notes:
+              too_long: Enter notes that are less than %{count} characters long
         immunisation_import:
           attributes:
             csv:
@@ -359,6 +365,10 @@ en:
               invalid: Enter a valid NHS number
               wrong_length: Enter a valid NHS number with 10 characters
               taken: NHS number is already assigned to a different patient
+        pre_screening:
+          attributes:
+            notes:
+              too_long: Enter notes that are less than %{count} characters long
         programme:
           attributes:
             type:

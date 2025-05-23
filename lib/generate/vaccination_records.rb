@@ -11,7 +11,8 @@ module Generate
       administered: nil
     )
       @organisation = organisation
-      @programme = programme || organisation.programmes.sample
+      @programme =
+        programme || organisation.programmes.includes(:organisations).sample
       @session = session
       @administered = administered
     end
@@ -25,6 +26,9 @@ module Generate
     private
 
     def create_vaccinations
+      session_attendances = []
+      vaccination_records = []
+
       random_patient_sessions.each do |patient_session|
         patient_session_id = patient_session.id
         session_date_ids = patient_session.session.session_dates.pluck(:id)
@@ -33,30 +37,40 @@ module Generate
                  patient_session_id:,
                  session_date_id: session_date_ids
                )
-          FactoryBot.create(:session_attendance, :present, patient_session:)
+          session_attendances << FactoryBot.build(
+            :session_attendance,
+            :present,
+            patient_session:
+          )
         end
 
-        FactoryBot.create(
+        location_name =
+          patient_session.location.name if patient_session.session.clinic?
+
+        vaccination_records << FactoryBot.build(
           :vaccination_record,
           :administered,
           patient: patient_session.patient,
           programme:,
+          organisation:,
           performed_by:,
-          session:,
+          session: patient_session.session,
           vaccine:,
           batch:,
-          location_name: patient_session.location.name
+          location_name:
         )
       end
 
-      StatusUpdater.call(patient: patient_sessions.map(&:patient))
+      SessionAttendance.import!(session_attendances)
+      VaccinationRecord.import!(vaccination_records)
+
+      StatusUpdater.call(patient: vaccination_records.map(&:patient))
     end
 
     def random_patient_sessions
       if administered&.positive?
         patient_sessions
-          .shuffle
-          .take(administered)
+          .sample(administered)
           .tap do |selected|
             if selected.size < administered
               info =
@@ -76,28 +90,26 @@ module Generate
         .includes(
           :session,
           :location,
-          patient: [
-            :consents,
-            :triages,
-            :vaccination_records,
-            :parents,
-            { consents: :parent }
-          ]
+          session: :session_dates,
+          patient: %i[consent_statuses vaccination_statuses triage_statuses]
         )
         .in_programmes([programme])
+        .has_consent_status("given", programme:)
         .select { it.patient.consent_given_and_safe_to_vaccinate?(programme:) }
     end
 
     def vaccine
-      programme.vaccines.includes(:batches).active.first
+      (@vaccines ||= programme.vaccines.includes(:batches).active).first
     end
 
     def batch
-      vaccine.batches.sample
+      (@batches ||= vaccine.batches).sample
     end
 
     def performed_by
-      organisation.users.includes(:organisations).sample
+      (
+        @organisation_users ||= organisation.users.includes(:organisations)
+      ).sample
     end
   end
 end

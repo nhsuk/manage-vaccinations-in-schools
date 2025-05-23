@@ -10,6 +10,7 @@
 #  delivery_site            :integer
 #  discarded_at             :datetime
 #  dose_sequence            :integer
+#  full_dose                :boolean
 #  location_name            :string
 #  notes                    :text
 #  outcome                  :integer          not null
@@ -50,6 +51,7 @@
 #
 class VaccinationRecord < ApplicationRecord
   include Discard::Model
+  include HasDoseVolume
   include PendingChangesConcern
   include VaccinationRecordPerformedByConcern
 
@@ -150,6 +152,8 @@ class VaccinationRecord < ApplicationRecord
               allow_nil: true
             }
 
+  validates :full_dose, inclusion: [true, false], if: :administered?
+
   validates :performed_at,
             comparison: {
               less_than_or_equal_to: -> { Time.current }
@@ -165,12 +169,6 @@ class VaccinationRecord < ApplicationRecord
 
   def recorded_in_service?
     session_id != nil
-  end
-
-  def dose_volume_ml
-    # TODO: this will need to be revisited once it's possible to record half-doses
-    # e.g. for the flu programme where a child refuses the second half of the dose
-    vaccine.dose_volume_ml * 1 if vaccine.present?
   end
 
   def academic_year

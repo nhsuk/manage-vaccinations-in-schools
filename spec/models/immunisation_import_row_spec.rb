@@ -156,6 +156,27 @@ describe ImmunisationImportRow do
       it { should be_valid }
     end
 
+    context "without a vaccine and recording offline" do
+      let(:data) do
+        valid_data.merge(
+          {
+            "VACCINE_GIVEN" => "",
+            "DATE_OF_VACCINATION" => "#{Date.current.academic_year}0901",
+            "SESSION_ID" => session.id.to_s
+          }
+        )
+      end
+
+      let(:session) { create(:session, organisation:, programmes:) }
+
+      it "has errors" do
+        expect(immunisation_import_row).to be_invalid
+        expect(immunisation_import_row.errors["VACCINE_GIVEN"]).to eq(
+          ["is required"]
+        )
+      end
+    end
+
     context "with an invalid reason not vaccinated" do
       let(:data) do
         { "VACCINATED" => "N", "REASON_NOT_VACCINATED" => "unknown" }
@@ -632,6 +653,40 @@ describe ImmunisationImportRow do
         )
         expect(immunisation_import_row.errors[:base]).to include(
           "<code>BATCH_NUMBER</code> or <code>Vaccination batch number</code> is required"
+        )
+      end
+    end
+
+    context "vaccination in a session where name-like fields have length greater than 300" do
+      let(:invalid_name_length) { "a" * 301 }
+      let(:data) do
+        {
+          "VACCINATED" => "Y",
+          "BATCH_NUMBER" => invalid_name_length,
+          "CLINIC_NAME" => invalid_name_length,
+          "PERSON_FORENAME" => invalid_name_length,
+          "PERSON_SURNAME" => invalid_name_length,
+          "SCHOOL_NAME" => invalid_name_length
+        }
+      end
+
+      it "has errors" do
+        expect(immunisation_import_row).to be_invalid
+
+        expect(immunisation_import_row.errors["BATCH_NUMBER"]).to include(
+          "is greater than 100 characters long"
+        )
+        expect(immunisation_import_row.errors["CLINIC_NAME"]).to include(
+          "is greater than 300 characters long"
+        )
+        expect(immunisation_import_row.errors["PERSON_FORENAME"]).to include(
+          "is greater than 300 characters long"
+        )
+        expect(immunisation_import_row.errors["PERSON_SURNAME"]).to include(
+          "is greater than 300 characters long"
+        )
+        expect(immunisation_import_row.errors["SCHOOL_NAME"]).to include(
+          "is greater than 300 characters long"
         )
       end
     end

@@ -10,6 +10,7 @@
 #  delivery_site            :integer
 #  discarded_at             :datetime
 #  dose_sequence            :integer
+#  full_dose                :boolean
 #  location_name            :string
 #  notes                    :text
 #  outcome                  :integer          not null
@@ -93,6 +94,8 @@ FactoryBot.define do
     performed_at { Time.current }
 
     dose_sequence { programme.vaccinated_dose_sequence }
+    full_dose { true }
+
     uuid { SecureRandom.uuid }
 
     location_name { "Unknown" if session.nil? }
@@ -103,12 +106,17 @@ FactoryBot.define do
       outcome { "not_well" }
       vaccine { nil }
       dose_sequence { nil }
+      full_dose { nil }
     end
 
     trait :performed_by_not_user do
       performed_by { nil }
       performed_by_given_name { Faker::Name.first_name }
       performed_by_family_name { Faker::Name.last_name }
+    end
+
+    trait :half_dose do
+      full_dose { false }
     end
 
     trait :discarded do
