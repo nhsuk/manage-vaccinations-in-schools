@@ -82,7 +82,7 @@ describe "Child record imports duplicates" do
         address_town: "London",
         address_postcode: "SW11 1AA",
         school: nil, # Unknown school, should be silently updated
-        organisation: @organisation
+        session: @session
       )
 
     @second_patient =
@@ -98,7 +98,7 @@ describe "Child record imports duplicates" do
         address_town: "London",
         address_postcode: "SW11 1AA",
         school: @school,
-        organisation: @organisation
+        session: @session
       )
 
     @third_patient =
@@ -114,7 +114,6 @@ describe "Child record imports duplicates" do
         address_town: "London",
         address_postcode: "SW1A 1AA",
         school: @school,
-        organisation: @organisation,
         session: @session
       )
   end

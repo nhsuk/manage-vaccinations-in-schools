@@ -85,26 +85,6 @@ describe SchoolMove do
       end
     end
 
-    shared_examples "sets the patient cohort" do
-      it "sets the patient cohort" do
-        expect { confirm! }.to change(patient, :organisation).from(nil)
-        expect(patient.organisation).to eq(organisation)
-      end
-    end
-
-    shared_examples "keeps the patient cohort" do
-      it "keeps the patient cohort" do
-        expect { confirm! }.not_to change(patient, :organisation)
-      end
-    end
-
-    shared_examples "changes the patient cohort" do
-      it "changes the patient cohort" do
-        expect { confirm! }.to change(patient, :organisation)
-        expect(patient.organisation).to eq(new_organisation)
-      end
-    end
-
     shared_examples "adds the patient to the new school session" do
       it "adds the patient to the new school session" do
         expect(patient.sessions).not_to include(new_session)
@@ -188,7 +168,6 @@ describe SchoolMove do
         end
 
         include_examples "creates a log entry"
-        include_examples "sets the patient cohort"
         include_examples "sets the patient school"
         include_examples "adds the patient to the new school session"
         include_examples "destroys the school move"
@@ -211,7 +190,6 @@ describe SchoolMove do
         end
 
         include_examples "creates a log entry"
-        include_examples "sets the patient cohort"
         include_examples "sets the patient school"
         include_examples "adds the patient to the new school session"
         include_examples "destroys the school move"
@@ -223,7 +201,6 @@ describe SchoolMove do
         end
 
         include_examples "creates a log entry"
-        include_examples "sets the patient cohort"
         include_examples "sets the patient to home-schooled"
         include_examples "adds the patient to the community clinics"
         include_examples "destroys the school move"
@@ -253,7 +230,6 @@ describe SchoolMove do
 
           include_examples "creates a log entry"
           include_examples "sets the patient school"
-          include_examples "keeps the patient cohort"
           include_examples "removes the patient from the old school session"
           include_examples "adds the patient to the new school session"
           include_examples "destroys the school move"
@@ -277,7 +253,6 @@ describe SchoolMove do
 
           include_examples "creates a log entry"
           include_examples "sets the patient school"
-          include_examples "keeps the patient cohort"
           include_examples "removes the patient from the old school session"
           include_examples "adds the patient to the new school session"
           include_examples "destroys the school move"
@@ -290,7 +265,6 @@ describe SchoolMove do
 
           include_examples "creates a log entry"
           include_examples "sets the patient to home-schooled"
-          include_examples "keeps the patient cohort"
           include_examples "removes the patient from the old school session"
           include_examples "adds the patient to the community clinics"
           include_examples "destroys the school move"
@@ -315,7 +289,6 @@ describe SchoolMove do
 
           include_examples "creates a log entry"
           include_examples "sets the patient school"
-          include_examples "changes the patient cohort"
           include_examples "removes the patient from the old school session"
           include_examples "adds the patient to the new school session"
           include_examples "destroys the school move"
@@ -338,7 +311,6 @@ describe SchoolMove do
 
           include_examples "creates a log entry"
           include_examples "sets the patient to home-schooled"
-          include_examples "changes the patient cohort"
           include_examples "removes the patient from the old school session"
           include_examples "adds the patient to the community clinics"
           include_examples "destroys the school move"
@@ -373,7 +345,6 @@ describe SchoolMove do
 
           include_examples "creates a log entry"
           include_examples "sets the patient school"
-          include_examples "keeps the patient cohort"
           include_examples "keeps the patient in the old school session"
           include_examples "destroys the school move"
         end
@@ -396,7 +367,6 @@ describe SchoolMove do
 
           include_examples "creates a log entry"
           include_examples "sets the patient school"
-          include_examples "keeps the patient cohort"
           include_examples "keeps the patient in the old school session"
           include_examples "destroys the school move"
         end
@@ -408,7 +378,6 @@ describe SchoolMove do
 
           include_examples "creates a log entry"
           include_examples "sets the patient to home-schooled"
-          include_examples "keeps the patient cohort"
           include_examples "keeps the patient in the old school session"
           include_examples "destroys the school move"
         end
@@ -432,7 +401,6 @@ describe SchoolMove do
 
           include_examples "creates a log entry"
           include_examples "sets the patient school"
-          include_examples "changes the patient cohort"
           include_examples "keeps the patient in the old school session"
           include_examples "destroys the school move"
         end
@@ -454,7 +422,6 @@ describe SchoolMove do
 
           include_examples "creates a log entry"
           include_examples "sets the patient to home-schooled"
-          include_examples "changes the patient cohort"
           include_examples "keeps the patient in the old school session"
           include_examples "destroys the school move"
         end
@@ -485,7 +452,6 @@ describe SchoolMove do
 
           include_examples "creates a log entry"
           include_examples "sets the patient school"
-          include_examples "keeps the patient cohort"
           include_examples "keeps the patient in the community clinics"
           include_examples "adds the patient to the new school session"
           include_examples "destroys the school move"
@@ -509,7 +475,6 @@ describe SchoolMove do
 
           include_examples "creates a log entry"
           include_examples "sets the patient school"
-          include_examples "keeps the patient cohort"
           include_examples "keeps the patient in the community clinics"
           include_examples "adds the patient to the new school session"
           include_examples "destroys the school move"
@@ -525,7 +490,6 @@ describe SchoolMove do
           end
 
           include_examples "creates a log entry"
-          include_examples "keeps the patient cohort"
           include_examples "keeps the patient in the community clinics"
           include_examples "destroys the school move"
         end
@@ -549,7 +513,6 @@ describe SchoolMove do
 
           include_examples "creates a log entry"
           include_examples "sets the patient school"
-          include_examples "changes the patient cohort"
           include_examples "removes the patient from the community clinics"
           include_examples "destroys the school move"
         end
@@ -581,7 +544,6 @@ describe SchoolMove do
           end
 
           include_examples "creates a log entry"
-          include_examples "changes the patient cohort"
           include_examples "adds the patient to the community clinics"
           include_examples "destroys the school move"
         end
@@ -616,7 +578,6 @@ describe SchoolMove do
 
           include_examples "creates a log entry"
           include_examples "sets the patient school"
-          include_examples "keeps the patient cohort"
           include_examples "keeps the patient in the community clinics"
           include_examples "destroys the school move"
         end
@@ -639,7 +600,6 @@ describe SchoolMove do
 
           include_examples "creates a log entry"
           include_examples "sets the patient school"
-          include_examples "keeps the patient cohort"
           include_examples "keeps the patient in the community clinics"
           include_examples "destroys the school move"
         end
@@ -653,7 +613,6 @@ describe SchoolMove do
             expect { confirm! }.not_to(change { patient.reload.home_educated })
           end
 
-          include_examples "keeps the patient cohort"
           include_examples "keeps the patient in the community clinics"
           include_examples "destroys the school move"
         end
@@ -677,7 +636,6 @@ describe SchoolMove do
 
           include_examples "creates a log entry"
           include_examples "sets the patient school"
-          include_examples "changes the patient cohort"
           include_examples "keeps the patient in the community clinics"
           include_examples "destroys the school move"
         end
@@ -706,7 +664,6 @@ describe SchoolMove do
           end
 
           include_examples "creates a log entry"
-          include_examples "changes the patient cohort"
           include_examples "keeps the patient in the community clinics"
           include_examples "destroys the school move"
         end
@@ -795,7 +752,6 @@ describe SchoolMove do
 
           include_examples "creates a log entry"
           include_examples "sets the patient school"
-          include_examples "changes the patient cohort"
           include_examples "removes the patient from the community clinics"
           include_examples "destroys the school move"
         end
@@ -824,7 +780,6 @@ describe SchoolMove do
 
           include_examples "creates a log entry"
           include_examples "sets the patient to home-schooled"
-          include_examples "changes the patient cohort"
           include_examples "adds the patient to the community clinics"
           include_examples "destroys the school move"
         end
@@ -915,7 +870,6 @@ describe SchoolMove do
 
           include_examples "creates a log entry"
           include_examples "sets the patient school"
-          include_examples "changes the patient cohort"
           include_examples "keeps the patient in the community clinics"
           include_examples "destroys the school move"
         end
@@ -941,7 +895,6 @@ describe SchoolMove do
 
           include_examples "creates a log entry"
           include_examples "sets the patient to home-schooled"
-          include_examples "changes the patient cohort"
           include_examples "keeps the patient in the community clinics"
           include_examples "destroys the school move"
         end

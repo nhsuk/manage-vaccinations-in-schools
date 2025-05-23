@@ -9,7 +9,9 @@ describe PatientPolicy do
     let(:school) { create(:school, organisation:) }
     let(:user) { create(:user, organisation:) }
 
-    let(:patient_in_organisation) { create(:patient, organisation:) }
+    let(:patient_in_organisation) do
+      create(:patient, session: create(:session, organisation:))
+    end
     let(:patient_not_in_organisation) { create(:patient) }
 
     it { should include(patient_in_organisation) }
