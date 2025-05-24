@@ -30,3 +30,9 @@ Gets locations held by the service.
 - `url`
 - `urn`
 - `year_groups`
+
+## `POST /onboard`
+
+### Body
+
+See [onboarding documentation](onboarding.md).

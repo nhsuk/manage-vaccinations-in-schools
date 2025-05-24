@@ -91,6 +91,7 @@ Rails.application.routes.draw do
   unless Rails.env.production?
     namespace :api do
       resources :locations, only: %i[index]
+      post "/onboard", to: "onboard#create"
     end
   end
 
