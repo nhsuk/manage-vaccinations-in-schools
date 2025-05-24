@@ -35,7 +35,7 @@ test("Accessibility", async ({ page }) => {
   await checkAccessibility(page);
 
   // Vaccine page
-  await page.getByRole("link", { name: "Gardasil 9" }).click();
+  await page.getByRole("link", { name: "Gardasil 9 (HPV)" }).click();
   await expect(page.locator("h1")).toContainText("Gardasil 9");
   await checkAccessibility(page);
 });
