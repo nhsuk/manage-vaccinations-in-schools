@@ -95,6 +95,12 @@ class Location < ApplicationRecord
     "#{gias_local_authority_code}#{gias_establishment_number}" if school?
   end
 
+  def as_json
+    super.except("created_at", "updated_at", "team_id").merge(
+      "is_attached_to_organisation" => !team_id.nil?
+    )
+  end
+
   private
 
   def organisation_ods_code
