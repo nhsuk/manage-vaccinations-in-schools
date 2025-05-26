@@ -148,7 +148,7 @@ GEM
     bigdecimal (3.1.9)
     bindata (2.5.0)
     bindex (0.8.1)
-    bootsnap (1.18.4)
+    bootsnap (1.18.6)
       msgpack (~> 1.2)
     brakeman (7.0.2)
       racc
@@ -359,7 +359,7 @@ GEM
     mime-types-data (3.2025.0107)
     mini_mime (1.1.5)
     minitest (5.25.5)
-    msgpack (1.7.2)
+    msgpack (1.8.0)
     net-http (0.6.0)
       uri
     net-http-digest_auth (1.4.1)
