@@ -29,6 +29,7 @@
 #
 class User < ApplicationRecord
   include FullNameConcern
+  include UserToFHIRConcern
 
   attr_accessor :cis2_info
 
