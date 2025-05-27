@@ -26,8 +26,8 @@
 
 <% if (parent_relationship = @draft_consent.parent_relationship).present? %>
   <%= render AppParentCardComponent.new(parent_relationship:, change_links: {
-                                          name: wizard_path("who"),
-                                          relationship: wizard_path("who"),
+                                          name: wizard_path("parent-details"),
+                                          relationship: wizard_path("parent-details"),
                                           email: wizard_path("parent-details"),
                                           phone: wizard_path("parent-details"),
                                         }) %>
