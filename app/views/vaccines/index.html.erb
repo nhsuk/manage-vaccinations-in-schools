@@ -7,7 +7,10 @@
       <%= vaccine.manufacturer %>
     </p>
 
-    <%= govuk_button_link_to "Add a new batch", new_vaccine_batch_path(vaccine), secondary: true %>
+    <%= govuk_button_link_to "Add a new batch",
+                             new_vaccine_batch_path(vaccine),
+                             secondary: true,
+                             aria: { label: "Add a new #{vaccine.brand} batch" } %>
 
     <% if (batches = @batches_by_vaccine_id[vaccine.id]).present? %>
       <%= govuk_table do |table| %>
