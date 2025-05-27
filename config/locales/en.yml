@@ -359,6 +359,10 @@ en:
             contact_method_other_details:
               blank: Enter details about how to contact you
               too_long: Enter details that are less than 300 characters long
+            email:
+              blank: Enter an email address
+            phone:
+              blank: Enter a phone number
         patient:
           attributes:
             nhs_number:
