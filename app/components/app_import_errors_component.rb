@@ -10,9 +10,9 @@ class AppImportErrorsComponent < ViewComponent::Base
 
         <%= content %>
 
-        <div data-qa="import-errors">
+        <div data-testid="import-errors">
           <% @errors.each do |error| %>
-            <h3 class="nhsuk-heading-s" data-qa="import-errors__heading">
+            <h3 class="nhsuk-heading-s" data-testid="import-errors__heading">
               <% if error.attribute == :csv %>
                 CSV
               <% else %>
@@ -20,8 +20,7 @@ class AppImportErrorsComponent < ViewComponent::Base
               <% end %>
             </h3>
 
-            <ul class="nhsuk-list nhsuk-list--bullet"
-                data-qa="import-errors__list">
+            <ul class="nhsuk-list nhsuk-list--bullet" data-testid="import-errors__list">
               <% if error.type.is_a?(Array) %>
                 <% error.type.each do |type| %>
                   <li><%= sanitize type %></li>

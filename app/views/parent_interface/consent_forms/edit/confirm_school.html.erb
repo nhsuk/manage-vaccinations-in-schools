@@ -6,7 +6,7 @@
 
 <%= govuk_inset_text classes: "nhsuk-u-margin-top-2 nhsuk-u-margin-bottom-4" do %>
   <p>
-    <span class="nhsuk-heading-m nhsuk-u-margin-bottom-0" data-qa="school-name">
+    <span class="nhsuk-heading-m nhsuk-u-margin-bottom-0" data-testid="school-name">
       <%= @consent_form.location.name %>
     </span>
     <%= format_address_single_line(@consent_form.location) %>
