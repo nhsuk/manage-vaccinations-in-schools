@@ -55,6 +55,7 @@ class Patient < ApplicationRecord
   include Invalidatable
   include PendingChangesConcern
   include Schoolable
+  include PatientFHIRConcern
 
   audited associated_with: :organisation
   has_associated_audits
