@@ -206,7 +206,7 @@ GEM
       activerecord (>= 4.2, < 9.0)
     docile (1.4.0)
     domain_name (0.6.20240107)
-    drb (2.2.1)
+    drb (2.2.3)
     email_validator (2.2.4)
       activemodel
     erb (5.0.1)
@@ -266,7 +266,7 @@ GEM
       html-attributes-utils (~> 1.0.0, >= 1.0.0)
       pagy (>= 6, < 10)
       view_component (>= 3.18, < 3.22)
-    govuk_design_system_formbuilder (5.9.0)
+    govuk_design_system_formbuilder (5.10.0)
       actionview (>= 6.1)
       activemodel (>= 6.1)
       activesupport (>= 6.1)
@@ -474,7 +474,7 @@ GEM
       activesupport (= 8.0.2)
       bundler (>= 1.15.0)
       railties (= 8.0.2)
-    rails-dom-testing (2.2.0)
+    rails-dom-testing (2.3.0)
       activesupport (>= 5.0.0)
       minitest
       nokogiri (>= 1.6)
