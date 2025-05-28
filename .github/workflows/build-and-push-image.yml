@@ -7,6 +7,9 @@ on:
       git-sha:
         description: The git commit sha to build the image from.
         type: string
+      git_ref_to_deploy:
+        required: false
+        type: string
 
 concurrency:
   group: build-and-push-image-${{ inputs.git-sha || github.sha }}
@@ -65,8 +68,10 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: ${{ inputs.git-sha || github.sha }}
-      - name: Write build SHA
-        run: git rev-parse HEAD > public/sha
+      - name: Write build metadata
+        run: |
+          git rev-parse HEAD > public/sha
+          echo "${{ inputs.git_ref_to_deploy || github.ref_name }}" > public/ref
       - name: Build Docker image
         run: docker build -t "mavis:latest" .
       - name: Save Docker image

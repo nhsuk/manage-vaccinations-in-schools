@@ -32,4 +32,16 @@ or set it with content_for(:page_title)."
 
     safe_join([title, service_name], " – ")
   end
+
+  def app_version
+    return APP_VERSION if defined?(APP_VERSION) && APP_VERSION.present?
+
+    if Rails.env.local?
+      version = `git rev-parse --abbrev-ref HEAD 2>/dev/null`.strip
+      return nil if version.blank? || version == "HEAD"
+      return version
+    end
+
+    nil
+  end
 end
