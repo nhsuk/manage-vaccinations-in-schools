@@ -7,12 +7,15 @@ describe VaccinationRecordFHIRConcern do
   include FHIRHelper
 
   let(:patient) { create(:patient) }
-  let(:organisation) { create(:organisation) }
+  let(:organisation) { create(:organisation, programmes: [programme]) }
+  let(:programme) { create(:programme, :hpv) }
   let(:vaccination_record) do
     create(
       :vaccination_record,
       performed_ods_code: organisation.ods_code,
-      patient:
+      patient:,
+      programme:,
+      vaccine: programme.active_vaccines.first
     )
   end
   let(:user) { vaccination_record.performed_by_user }
@@ -62,7 +65,21 @@ describe VaccinationRecordFHIRConcern do
       end
 
       its(:value) { should eq vaccination_record.uuid }
-      its(:mavis_system) { should eq system }
+      its(:system) { should eq mavis_system }
+    end
+
+    describe "status" do
+      subject { immunisation_fhir.status }
+
+      it { should eq "completed" }
+    end
+
+    describe "vaccine code" do
+      subject { immunisation_fhir.vaccineCode.coding.first }
+
+      its(:code) { should eq vaccination_record.vaccine.snomed_product_code }
+      its(:display) { should eq vaccination_record.vaccine.snomed_product_term }
+      its(:system) { should eq "http://snomed.info/sct" }
     end
 
     describe "performing organisation" do
