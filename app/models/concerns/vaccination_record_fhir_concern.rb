@@ -13,7 +13,6 @@ module VaccinationRecordFHIRConcern
 
       immunisation.contained << patient.to_fhir
 
-      # Add extension
       immunisation.extension = [
         FHIR::Extension.new(
           url:
@@ -41,19 +40,14 @@ module VaccinationRecordFHIRConcern
         )
       ]
 
-      # Set other properties
       immunisation.status = "completed"
       immunisation.vaccineCode =
         FHIR::CodeableConcept.new(
           coding: [
             FHIR::Coding.new(
               system: "http://snomed.info/sct",
-              code: "39114911000001105",
-              display:
-                "COVID-19 Vaccine Vaxzevria (ChAdOx1 S [recombinant]) not" \
-                  " less than 2.5x100,000,000 infectious units/0.5ml dose" \
-                  " suspension for injection multidose vials (AstraZeneca UK" \
-                  " Ltd) (product)"
+              code: vaccine.snomed_product_code,
+              display: vaccine.snomed_product_term
             )
           ]
         )
