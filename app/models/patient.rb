@@ -351,7 +351,7 @@ class Patient < ApplicationRecord
   def invalidate!
     return if invalidated?
 
-    update_column(:invalidated_at, Time.current)
+    update!(invalidated_at: Time.current)
   end
 
   def dup_for_pending_changes
