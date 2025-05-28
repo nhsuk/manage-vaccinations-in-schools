@@ -5,32 +5,13 @@ module VaccinationRecordFHIRConcern
 
   included do
     def to_fhir
-      # Create contained Practitioner
-      practitioner = FHIR::Practitioner.new
-      practitioner.id = "Pract1"
-      practitioner.name = [
-        FHIR::HumanName.new(family: "Nightingale", given: ["Florence"])
-      ]
-
-      # Create contained Patient
-      fhir_patient = FHIR::Patient.new
-      fhir_patient.id = "Pat1"
-      fhir_patient.identifier = [
-        FHIR::Identifier.new(
-          system: "https://fhir.nhs.uk/Id/nhs-number",
-          value: "9449310475"
-        )
-      ]
-      fhir_patient.name = [
-        FHIR::HumanName.new(family: "Taylor", given: ["Sarah"])
-      ]
-      fhir_patient.gender = "unknown"
-      fhir_patient.birthDate = "1965-02-28"
-      fhir_patient.address = [FHIR::Address.new(postalCode: "EC1A 1BB")]
-
-      # Create Immunization
       immunisation = FHIR::Immunization.new
-      immunisation.contained = [practitioner, fhir_patient]
+
+      if performed_by_user.present?
+        immunisation.contained << performed_by_user.to_fhir_practitioner
+      end
+
+      immunisation.contained << patient.to_fhir
 
       # Add extension
       immunisation.extension = [
@@ -44,18 +25,19 @@ module VaccinationRecordFHIRConcern
                   system: "http://snomed.info/sct",
                   code: "1324681000000101",
                   display:
-                    "Administration of first dose of severe acute respiratory syndrome coronavirus 2 vaccine (procedure)"
+                    "Administration of first dose of severe acute" \
+                      " respiratory syndrome coronavirus 2 vaccine (procedure)"
                 )
               ]
             )
         )
       ]
 
-      # Add identifier
       immunisation.identifier = [
         FHIR::Identifier.new(
-          system: "https://supplierABC/identifiers/vacc",
-          value: "a7437179-e86e-4855-b68e-24b5jhg3g"
+          system:
+            "http://manage-vaccinations-in-schools.nhs.uk/vaccination_records",
+          value: uuid
         )
       ]
 
@@ -68,12 +50,15 @@ module VaccinationRecordFHIRConcern
               system: "http://snomed.info/sct",
               code: "39114911000001105",
               display:
-                "COVID-19 Vaccine Vaxzevria (ChAdOx1 S [recombinant]) not less than 2.5x100,000,000 infectious units/0.5ml dose suspension for injection multidose vials (AstraZeneca UK Ltd) (product)"
+                "COVID-19 Vaccine Vaxzevria (ChAdOx1 S [recombinant]) not" \
+                  " less than 2.5x100,000,000 infectious units/0.5ml dose" \
+                  " suspension for injection multidose vials (AstraZeneca UK" \
+                  " Ltd) (product)"
             )
           ]
         )
 
-      immunisation.patient = FHIR::Reference.new(reference: "#Pat1")
+      immunisation.patient = FHIR::Reference.new(reference: patient.fhir_id)
       immunisation.occurrenceDateTime = "2021-02-07T13:28:17.271+00:00"
       immunisation.recorded = "2021-02-07T13:28:17.271+00:00"
       immunisation.primarySource = true
@@ -124,18 +109,10 @@ module VaccinationRecordFHIRConcern
 
       immunisation.performer = [
         FHIR::Immunization::Performer.new(
-          actor: FHIR::Reference.new(reference: "#Pract1")
+          actor: FHIR::Reference.new(reference: performed_by_user.fhir_id)
         ),
         FHIR::Immunization::Performer.new(
-          actor:
-            FHIR::Reference.new(
-              type: "Organization",
-              identifier:
-                FHIR::Identifier.new(
-                  system: "https://fhir.nhs.uk/Id/ods-organization-code",
-                  value: "B0C4P"
-                )
-            )
+          actor: Organisation.fhir_reference(ods_code: performed_ods_code)
         )
       ]
 
