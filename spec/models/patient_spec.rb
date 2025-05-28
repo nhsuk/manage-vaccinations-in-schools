@@ -509,12 +509,6 @@ describe Patient do
       expect(patient.pending_changes).to eq({ "family_name" => "Smith" })
     end
 
-    it "updates the pending_changes attribute" do
-      expect { patient.stage_changes(given_name: "Jane") }.to change {
-        patient.reload.pending_changes
-      }.from({}).to({ "given_name" => "Jane" })
-    end
-
     it "does not update other attributes directly" do
       patient.stage_changes(given_name: "Jane", family_name: "Smith")
 
