@@ -237,7 +237,7 @@ describe "Child record imports duplicates" do
     expect(page).to have_content("Date of birth3 January 2010 (aged 14)")
     expect(page).to have_content("Date of birth3 March 2013 (aged 11)")
     expect(page).to have_content("Year groupYear 10 (")
-    expect(page).to have_content("Year groupYear 7 (")
+    expect(page).to have_content("Year groupYear 8 (")
   end
 
   def when_i_go_to_the_import_page
