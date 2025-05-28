@@ -34,12 +34,6 @@ describe PendingChangesConcern do
       expect(model.pending_changes).to eq({ "family_name" => "Smith" })
     end
 
-    it "updates the pending_changes attribute" do
-      expect { model.stage_changes(given_name: "Jane") }.to change {
-        model.reload.pending_changes
-      }.from({}).to({ "given_name" => "Jane" })
-    end
-
     it "does not update other attributes directly" do
       model.stage_changes(given_name: "Jane", family_name: "Smith")
 

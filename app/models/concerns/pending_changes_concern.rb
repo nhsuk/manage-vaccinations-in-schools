@@ -13,7 +13,7 @@ module PendingChangesConcern
       end
 
     if new_pending_changes.any?
-      update!(pending_changes: pending_changes.merge(new_pending_changes))
+      self.pending_changes = pending_changes.merge(new_pending_changes)
     end
   end
 
