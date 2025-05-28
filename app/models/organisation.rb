@@ -27,6 +27,7 @@
 #
 class Organisation < ApplicationRecord
   include ODSCodeConcern
+  include OrganisationFHIRConcern
 
   audited
   has_associated_audits
