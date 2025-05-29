@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# https://www.hl7.org/fhir/immunization.html
 module VaccinationRecordFHIRConcern
   extend ActiveSupport::Concern
 
@@ -16,7 +17,7 @@ module VaccinationRecordFHIRConcern
       immunisation.extension = [fhir_vaccination_procedure_extension]
       immunisation.identifier = [fhir_identifier]
 
-      immunisation.status = "completed"
+      immunisation.status = fhir_status
       immunisation.vaccineCode =
         FHIR::CodeableConcept.new(
           coding: [
@@ -118,6 +119,8 @@ module VaccinationRecordFHIRConcern
       immunisation
     end
 
+    private
+
     def fhir_identifier
       FHIR::Identifier.new(
         system:
@@ -143,6 +146,18 @@ module VaccinationRecordFHIRConcern
             ]
           )
       )
+    end
+
+    def fhir_status
+      case outcome
+      when "administered"
+        "completed"
+      when "refused", "not_well", "contraindications", "already_had",
+           "absent_from_school", "absent_from_session"
+        "not-done"
+      else
+        raise ArgumentError, "Unknown outcome: #{outcome}"
+      end
     end
   end
 end
