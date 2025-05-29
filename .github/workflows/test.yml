@@ -16,7 +16,7 @@ jobs:
         id: check-rails-relevant-changes
         run: |
           if [ ${{ github.event_name }} == "pull_request" ]; then
-            git fetch origin ${{ github.event.pull_request.head.ref }} || { echo "Fetch failed, running all tests"; \
+            git fetch origin || { echo "Fetch failed, running all tests"; \
             echo "RUN_RAILS_TESTS=true" > $GITHUB_OUTPUT; exit 0; };
             RELEVANT_DIRS=$(git diff ${{ github.event.pull_request.base.sha }} origin/${{ github.event.pull_request.head.ref }}  --name-only)
             if [ -z "$(echo "$RELEVANT_DIRS" | egrep -v "^(.github|adr|aws|docs|storage|terraform|tests|tests-examples)/")" ]; then
