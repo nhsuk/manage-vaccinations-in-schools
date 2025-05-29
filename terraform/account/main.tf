@@ -32,9 +32,9 @@ resource "aws_iam_policy" "data_replication_access" {
           "ecs:ExecuteCommand"
         ]
         Resource = [
-          "arn:aws:ecs:eu-west-2:393416225559:cluster/mavis-*-data-replication*",
-          "arn:aws:ecs:eu-west-2:393416225559:task/mavis-*-data-replication*/*",
-          "arn:aws:ecs:eu-west-2:393416225559:container-instance/mavis-*-data-replication*/*"
+          "arn:aws:ecs:eu-west-2:${var.account_id}:cluster/mavis-*-data-replication*",
+          "arn:aws:ecs:eu-west-2:${var.account_id}:task/mavis-*-data-replication*/*",
+          "arn:aws:ecs:eu-west-2:${var.account_id}:container-instance/mavis-*-data-replication*/*"
         ]
       }
     ]
