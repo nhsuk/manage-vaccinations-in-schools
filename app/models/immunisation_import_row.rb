@@ -624,7 +624,10 @@ class ImmunisationImportRow
         if dose_sequence_value < 1
           errors.add(field.header, "must be greater than 0")
         elsif dose_sequence_value > maximum_dose_sequence
-          errors.add(field.header, "must be less than #{maximum_dose_sequence}")
+          errors.add(
+            field.header,
+            "must be less than or equal to #{maximum_dose_sequence}"
+          )
         end
       end
     elsif administered && offline_recording? && default_dose_sequence.present?

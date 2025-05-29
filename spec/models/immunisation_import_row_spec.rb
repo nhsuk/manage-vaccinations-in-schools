@@ -381,7 +381,7 @@ describe ImmunisationImportRow do
       it "has errors" do
         expect(immunisation_import_row).to be_invalid
         expect(immunisation_import_row.errors["DOSE_SEQUENCE"]).to include(
-          /must be less than/
+          /must be less than or equal to/
         )
       end
     end
