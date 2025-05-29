@@ -6,7 +6,7 @@ resource "aws_dms_replication_subnet_group" "dms_subnet_group" {
 }
 
 resource "aws_dms_replication_instance" "dms_instance" {
-  replication_instance_id     = "dms-replication-instance"
+  replication_instance_id     = "${var.environment}-replication-instance"
   replication_instance_class  = "dms.t3.medium"
   vpc_security_group_ids      = [aws_security_group.dms.id]
   replication_subnet_group_id = aws_dms_replication_subnet_group.dms_subnet_group.id
@@ -42,15 +42,27 @@ resource "aws_dms_replication_task" "migration_task" {
   target_endpoint_arn      = aws_dms_endpoint.target.endpoint_arn
   replication_instance_arn = aws_dms_replication_instance.dms_instance.replication_instance_arn
   table_mappings = jsonencode({
-    rules = [{
-      rule-type = "selection"
-      rule-id   = "1"
-      rule-name = "1"
-      object-locator = {
-        schema-name = "%"
-        table-name  = "%"
+    rules = [
+      {
+        "rule-type" = "selection"
+        "rule-id"   = "1"
+        "rule-name" = "exclude_pglogical"
+        "object-locator" = {
+          "schema-name" = "pglogical"
+          "table-name"  = "%"
+        }
+        "rule-action" = "exclude"
+      },
+      {
+        "rule-type" = "selection"
+        "rule-id"   = "2"
+        "rule-name" = "include_all"
+        "object-locator" = {
+          "schema-name" = "%"
+          "table-name"  = "%"
+        }
+        "rule-action" = "include"
       }
-      rule-action = "include"
-    }]
+    ]
   })
 }
