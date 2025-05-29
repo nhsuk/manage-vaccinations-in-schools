@@ -7,8 +7,6 @@ module Inspect
 
     layout "full"
 
-    SHOW_PII = false
-
     def show
       @primary_type = safe_get_primary_type
       if @primary_type.nil?
@@ -31,6 +29,7 @@ module Inspect
 
       @traversals_config = build_traversals_config
       @graph_params = build_graph_params
+      @show_pii = params[:show_pii]&.first == "1"
 
       @mermaid =
         GraphRecords
@@ -38,7 +37,7 @@ module Inspect
             traversals_config: @traversals_config,
             primary_type: @primary_type,
             clickable: true,
-            show_pii: SHOW_PII
+            show_pii: @show_pii
           )
           .graph(**@graph_params)
           .join("\n")
