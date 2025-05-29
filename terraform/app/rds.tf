@@ -33,6 +33,34 @@ resource "aws_db_subnet_group" "aurora_subnet_group" {
   }
 }
 
+resource "aws_db_parameter_group" "custom" {
+  name        = "${var.environment}-custom"
+  family      = "aurora-postgresql16"
+  description = "DB migration parameter group for the source DB"
+  parameter {
+    name         = "shared_preload_libraries"
+    value        = "pglogical"
+    apply_method = "pending-reboot"
+  }
+}
+
+resource "aws_rds_cluster_parameter_group" "custom" {
+  name        = "${var.environment}-custom"
+  family      = "aurora-postgresql16"
+  description = "Custom parameter group for Aurora PostgreSQL cluster"
+
+  parameter {
+    name         = "rds.logical_replication"
+    value        = 1 #TODO: Set to 0 after DB migration
+    apply_method = "pending-reboot"
+  }
+  parameter {
+    name         = "wal_sender_timeout"
+    value        = 0
+    apply_method = "immediate"
+  }
+}
+
 resource "aws_rds_cluster" "aurora_cluster" {
   cluster_identifier              = var.resource_name.db_cluster
   engine                          = "aurora-postgresql"
@@ -50,7 +78,7 @@ resource "aws_rds_cluster" "aurora_cluster" {
   allow_major_version_upgrade     = true
   preferred_backup_window         = "01:00-01:30"
   preferred_maintenance_window    = "sun:02:30-sun:03:00"
-  db_cluster_parameter_group_name = "default.aurora-postgresql16" # Remove this line after it's released. The default parameter group will then be handled internally by AWS.
+  db_cluster_parameter_group_name = aws_rds_cluster_parameter_group.custom.name
 
   serverlessv2_scaling_configuration {
     max_capacity = var.max_aurora_capacity_units
@@ -64,13 +92,25 @@ resource "aws_rds_cluster" "aurora_cluster" {
 }
 
 resource "aws_rds_cluster_instance" "aurora_instance" {
-  cluster_identifier   = aws_rds_cluster.aurora_cluster.id
-  identifier           = var.resource_name.db_instance
-  instance_class       = "db.serverless"
-  engine               = aws_rds_cluster.aurora_cluster.engine
-  engine_version       = aws_rds_cluster.aurora_cluster.engine_version
-  db_subnet_group_name = aws_db_subnet_group.aurora_subnet_group.name
-  promotion_tier       = 1
+  cluster_identifier      = aws_rds_cluster.aurora_cluster.id
+  identifier              = var.resource_name.db_instance
+  instance_class          = "db.serverless"
+  engine                  = aws_rds_cluster.aurora_cluster.engine
+  engine_version          = aws_rds_cluster.aurora_cluster.engine_version
+  db_subnet_group_name    = aws_db_subnet_group.aurora_subnet_group.name
+  db_parameter_group_name = aws_db_parameter_group.custom.name
+  promotion_tier          = 1
+}
+
+resource "aws_rds_cluster_instance" "old_read_replica" {
+  cluster_identifier      = aws_rds_cluster.aurora_cluster.id
+  identifier              = "mavis-${var.environment}-rds-read-instance"
+  instance_class          = "db.serverless"
+  engine                  = aws_rds_cluster.aurora_cluster.engine
+  engine_version          = aws_rds_cluster.aurora_cluster.engine_version
+  db_subnet_group_name    = aws_db_subnet_group.aurora_subnet_group.name
+  db_parameter_group_name = aws_db_parameter_group.custom.name
+  promotion_tier          = 1
 }
 
 resource "aws_rds_cluster" "core_cluster" {
@@ -101,6 +141,16 @@ resource "aws_rds_cluster" "core_cluster" {
 resource "aws_rds_cluster_instance" "write" {
   cluster_identifier   = aws_rds_cluster.core_cluster.id
   identifier           = "mavis-${var.environment}-write"
+  instance_class       = "db.serverless"
+  engine               = aws_rds_cluster.core_cluster.engine
+  engine_version       = aws_rds_cluster.core_cluster.engine_version
+  db_subnet_group_name = aws_db_subnet_group.aurora_subnet_group.name
+  promotion_tier       = 1
+}
+
+resource "aws_rds_cluster_instance" "read" {
+  cluster_identifier   = aws_rds_cluster.core_cluster.id
+  identifier           = "mavis-${var.environment}-read"
   instance_class       = "db.serverless"
   engine               = aws_rds_cluster.core_cluster.engine
   engine_version       = aws_rds_cluster.core_cluster.engine_version
