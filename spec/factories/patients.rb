@@ -101,7 +101,13 @@ FactoryBot.define do
         Faker::Date.birthday(min_age: 7, max_age: 16)
       end
     end
-    birth_academic_year { date_of_birth.academic_year }
+    birth_academic_year do
+      if year_group
+        year_group.to_birth_academic_year
+      else
+        date_of_birth.academic_year
+      end
+    end
     registration { Faker::Alphanumeric.alpha(number: 2).upcase }
 
     school { session.location if session&.location&.school? }

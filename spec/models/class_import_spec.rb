@@ -417,5 +417,46 @@ describe ClassImport do
         )
       end
     end
+
+    context "with an existing twin" do
+      # This matches the details of the first row of `valid.csv` except the given name and registration.
+      let!(:twin) do
+        create(
+          :patient,
+          session:,
+          nhs_number: nil,
+          date_of_birth: Date.new(2010, 1, 1),
+          given_name: "Samuel",
+          preferred_given_name: nil,
+          family_name: "Clarke",
+          school: location,
+          address_line_1: "10 Downing Street",
+          address_line_2: nil,
+          address_town: "London",
+          address_postcode: "SW1A 1AA",
+          year_group: 9,
+          registration: "XYZ"
+        )
+      end
+
+      it "doesn't auto-accept changes for potential twins, but queues them for manual review" do
+        expect { process! }.to change { twin.reload.pending_changes }.from(
+          {}
+        ).to(
+          {
+            "given_name" => "Jennifer",
+            "preferred_given_name" => "Jenny",
+            "nhs_number" => "9990000018",
+            "registration" => "ABC"
+          }
+        ).and not_change(twin, :given_name).and not_change(
+                      twin,
+                      :preferred_given_name
+                    ).and not_change(twin, :nhs_number).and not_change(
+                                  twin,
+                                  :registration
+                                )
+      end
+    end
   end
 end
