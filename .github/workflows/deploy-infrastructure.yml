@@ -39,15 +39,63 @@ env:
   aws_role: ${{ inputs.environment == 'production'
     && 'arn:aws:iam::820242920762:role/GithubDeployMavisAndInfrastructure'
     || 'arn:aws:iam::393416225559:role/GithubDeployMavisAndInfrastructure' }}
+  aws_account_id: ${{ inputs.environment == 'production'
+    && '820242920762' || '393416225559' }}
 
 defaults:
   run:
     working-directory: terraform/app
 
 jobs:
+  validate-permissions:
+    name: Validate permissions
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+    outputs:
+      policy-mismatch: ${{ steps.compare-permissions.outputs.policy_mismatch }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.image_tag || github.sha }}
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ env.aws_role }}
+          aws-region: eu-west-2
+      - name: Compare permissions
+        id: compare-permissions
+        run: |
+          ../scripts/validate-github-actions-policy.sh arn:aws:iam::${{ env.aws_account_id }}:policy/DeployMavisResources ../resources/github_actions_policy.json
+
+  update-permissions:
+    name: Update permissions
+    runs-on: ubuntu-latest
+    needs: validate-permissions
+    if: inputs.environment == 'production' && needs.validate-permissions.outputs.policy-mismatch == 'true'
+    environment: ${{ inputs.environment }}
+    permissions:
+      id-token: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.image_tag || github.sha }}
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ env.aws_role }}
+          aws-region: eu-west-2
+      - name: Update IAM policy
+        run: |
+          ../scripts/update-github-actions-policy.sh arn:aws:iam::${{ env.aws_account_id }}:policy/DeployMavisResources ../resources/github_actions_policy.json
+
   plan:
     name: Terraform plan
     runs-on: ubuntu-latest
+    needs: [validate-permissions, update-permissions]
+    if: always() && (needs.validate-permissions.outputs.policy-mismatch != 'true' || needs.update-permissions.result == 'success')
     permissions:
       id-token: write
     steps:
