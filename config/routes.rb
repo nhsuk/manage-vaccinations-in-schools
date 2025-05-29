@@ -88,6 +88,13 @@ Rails.application.routes.draw do
     end
   end
 
+  unless Rails.env.production?
+    namespace :api do
+      resources :locations, only: %i[index]
+      post "/onboard", to: "onboard#create"
+    end
+  end
+
   resources :class_imports, path: "class-imports", except: %i[index destroy]
 
   resources :cohort_imports, path: "cohort-imports", except: %i[index destroy]

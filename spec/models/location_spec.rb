@@ -159,4 +159,38 @@ describe Location do
       it { should eq("123456") }
     end
   end
+
+  describe "#as_json" do
+    subject(:as_json) { location.as_json }
+
+    let(:location) { create(:community_clinic) }
+
+    it do
+      expect(as_json).to eq(
+        {
+          "address_line_1" => location.address_line_1,
+          "address_line_2" => location.address_line_2,
+          "address_postcode" => location.address_postcode,
+          "address_town" => location.address_town,
+          "gias_establishment_number" => nil,
+          "gias_local_authority_code" => nil,
+          "id" => location.id,
+          "is_attached_to_organisation" => true,
+          "name" => location.name,
+          "ods_code" => location.ods_code,
+          "status" => "unknown",
+          "type" => "community_clinic",
+          "url" => location.url,
+          "urn" => nil,
+          "year_groups" => []
+        }
+      )
+    end
+
+    context "when the location is not attached to an organisation" do
+      let(:location) { create(:school, team: nil) }
+
+      it { should include("is_attached_to_organisation" => false) }
+    end
+  end
 end

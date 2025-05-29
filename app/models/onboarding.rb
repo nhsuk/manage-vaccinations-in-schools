@@ -3,6 +3,42 @@
 class Onboarding
   include ActiveModel::Model
 
+  CLINIC_ATTRIBUTES = %i[
+    address_line_1
+    address_line_2
+    address_postcode
+    address_town
+    name
+    ods_code
+    url
+    year_groups
+  ].freeze
+
+  ORGANISATION_ATTRIBUTES = %i[
+    careplus_venue_code
+    days_before_consent_reminders
+    days_before_consent_requests
+    days_before_invitations
+    email
+    name
+    ods_code
+    phone
+    phone_instructions
+    privacy_notice_url
+    privacy_policy_url
+    reply_to_id
+  ].freeze
+
+  TEAM_ATTRIBUTES = %i[email name phone phone_instructions reply_to_id].freeze
+
+  USER_ATTRIBUTES = %i[
+    email
+    fallback_role
+    family_name
+    given_name
+    password
+  ].freeze
+
   validates :organisation, presence: true
   validates :programmes, presence: true
   validates :teams, presence: true
@@ -12,31 +48,32 @@ class Onboarding
   def initialize(hash)
     config = hash.deep_symbolize_keys
 
-    @organisation = Organisation.new(config.fetch(:organisation, {}))
+    @organisation =
+      Organisation.new(
+        config.fetch(:organisation, {}).slice(*ORGANISATION_ATTRIBUTES)
+      )
 
     @programmes =
       config
         .fetch(:programmes, [])
-        .map do |type|
-          ExistingProgramme.new(type:, organisation: @organisation)
-        end
+        .map { |type| ExistingProgramme.new(type:, organisation:) }
 
     teams_by_name =
       config
         .fetch(:teams, {})
-        .transform_values do |team_config|
-          Team.new(**team_config, organisation:)
-        end
+        .transform_values { it.slice(*TEAM_ATTRIBUTES) }
+        .transform_values { Team.new(**it, organisation:) }
 
     @teams = teams_by_name.values
 
     @users =
       config
         .fetch(:users, [])
-        .map do |user_config|
+        .map { it.slice(*USER_ATTRIBUTES) }
+        .map do |attributes|
           User
-            .find_or_initialize_by(email: user_config[:email])
-            .tap { |user| user.assign_attributes(user_config) }
+            .find_or_initialize_by(email: attributes[:email])
+            .tap { it.assign_attributes(attributes) }
         end
 
     @schools =
@@ -52,9 +89,9 @@ class Onboarding
         .fetch(:clinics, {})
         .flat_map do |team_name, clinic_configs|
           team = teams_by_name[team_name]
-          clinic_configs.map do |clinic_config|
-            Location.new(**clinic_config, type: :community_clinic, team:)
-          end
+          clinic_configs
+            .map { it.slice(*CLINIC_ATTRIBUTES) }
+            .map { Location.new(**it, type: :community_clinic, team:) }
         end
   end
 
