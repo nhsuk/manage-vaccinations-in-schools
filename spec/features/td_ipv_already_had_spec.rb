@@ -46,7 +46,7 @@ describe "Td/IPV" do
     when_i_record_the_patient_as_already_vaccinated
     then_i_see_the_patient_is_already_vaccinated
     and_i_click_on_triage
-    then_i_see_the_patient_should_not_be_vaccinated
+    then_i_see_the_patient_doesnt_need_triage
   end
 
   scenario "can't record as already vaccinated as an admin" do
@@ -201,10 +201,10 @@ describe "Td/IPV" do
     click_on "Triage"
   end
 
-  def then_i_see_the_patient_should_not_be_vaccinated
-    choose "Do not vaccinate"
+  def then_i_see_the_patient_doesnt_need_triage
+    choose "Any"
     click_on "Update results"
 
-    expect(page).to have_content(@patient.full_name)
+    expect(page).not_to have_content(@patient.full_name)
   end
 end
