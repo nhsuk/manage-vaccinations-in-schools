@@ -146,5 +146,11 @@ describe VaccinationRecordFHIRConcern do
         end
       end
     end
+
+    describe "occurenceDateTime" do
+      subject { immunisation_fhir.occurrenceDateTime }
+
+      it { should eq vaccination_record.performed_at.iso8601 }
+    end
   end
 end
