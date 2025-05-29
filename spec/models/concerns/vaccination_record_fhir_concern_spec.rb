@@ -9,13 +9,15 @@ describe VaccinationRecordFHIRConcern do
   let(:patient) { create(:patient) }
   let(:organisation) { create(:organisation, programmes: [programme]) }
   let(:programme) { create(:programme, :hpv) }
+  let(:vaccination_outcome) { :administered }
   let(:vaccination_record) do
     create(
       :vaccination_record,
       performed_ods_code: organisation.ods_code,
       patient:,
       programme:,
-      vaccine: programme.active_vaccines.first
+      vaccine: programme.active_vaccines.first,
+      outcome: vaccination_outcome
     )
   end
   let(:user) { vaccination_record.performed_by_user }
@@ -97,6 +99,26 @@ describe VaccinationRecordFHIRConcern do
       end
 
       it { should eq organisation_fhir_reference }
+    end
+
+    describe "status" do
+      subject { immunisation_fhir.status }
+
+      [
+        { outcome: :administered, status: "completed" },
+        { outcome: :refused, status: "not-done" },
+        { outcome: :not_well, status: "not-done" },
+        { outcome: :contraindications, status: "not-done" },
+        { outcome: :already_had, status: "not-done" },
+        { outcome: :absent_from_school, status: "not-done" },
+        { outcome: :absent_from_session, status: "not-done" }
+      ].each do |test|
+        context "when the vaccination record outcome is #{test[:outcome]}" do
+          let(:vaccination_outcome) { test[:outcome] }
+
+          it { should eq test[:status] }
+        end
+      end
     end
 
     describe "vaccination procedure" do
