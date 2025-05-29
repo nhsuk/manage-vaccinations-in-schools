@@ -18,16 +18,7 @@ module VaccinationRecordFHIRConcern
       immunisation.identifier = [fhir_identifier]
 
       immunisation.status = fhir_status
-      immunisation.vaccineCode =
-        FHIR::CodeableConcept.new(
-          coding: [
-            FHIR::Coding.new(
-              system: "http://snomed.info/sct",
-              code: vaccine.snomed_product_code,
-              display: vaccine.snomed_product_term
-            )
-          ]
-        )
+      immunisation.vaccineCode = fhir_vaccine_code
 
       immunisation.patient = FHIR::Reference.new(reference: patient.fhir_id)
       immunisation.occurrenceDateTime = "2021-02-07T13:28:17.271+00:00"
@@ -158,6 +149,18 @@ module VaccinationRecordFHIRConcern
       else
         raise ArgumentError, "Unknown outcome: #{outcome}"
       end
+    end
+
+    def fhir_vaccine_code
+      FHIR::CodeableConcept.new(
+        coding: [
+          FHIR::Coding.new(
+            system: "http://snomed.info/sct",
+            code: vaccine.snomed_product_code,
+            display: vaccine.snomed_product_term
+          )
+        ]
+      )
     end
   end
 end
