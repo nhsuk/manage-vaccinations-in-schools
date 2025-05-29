@@ -98,5 +98,31 @@ describe VaccinationRecordFHIRConcern do
 
       it { should eq organisation_fhir_reference }
     end
+
+    describe "vaccination procedure" do
+      subject(:vaccination_procedure) do
+        immunisation_fhir.extension.find do
+          it.url ==
+            "https://fhir.hl7.org.uk/StructureDefinition/Extension-UKCore-VaccinationProcedure"
+        end
+      end
+
+      it { should be_present }
+      it { should be_a FHIR::Extension }
+
+      describe "coding" do
+        subject { vaccination_procedure.valueCodeableConcept.coding.first }
+
+        its(:system) { should eq "http://snomed.info/sct" }
+        # TODO: This is a hardcoded value, need the correct code added
+        its(:code) { should eq "1324681000000101" }
+
+        # TODO: This is a hardcoded value, need the correct displayadded
+        its(:display) do
+          should eq "Administration of first dose of severe acute respiratory" \
+                      " syndrome coronavirus 2 vaccine (procedure)"
+        end
+      end
+    end
   end
 end

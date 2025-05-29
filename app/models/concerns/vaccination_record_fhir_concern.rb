@@ -13,25 +13,7 @@ module VaccinationRecordFHIRConcern
 
       immunisation.contained << patient.to_fhir
 
-      immunisation.extension = [
-        FHIR::Extension.new(
-          url:
-            "https://fhir.hl7.org.uk/StructureDefinition/Extension-UKCore-VaccinationProcedure",
-          valueCodeableConcept:
-            FHIR::CodeableConcept.new(
-              coding: [
-                FHIR::Coding.new(
-                  system: "http://snomed.info/sct",
-                  code: "1324681000000101",
-                  display:
-                    "Administration of first dose of severe acute" \
-                      " respiratory syndrome coronavirus 2 vaccine (procedure)"
-                )
-              ]
-            )
-        )
-      ]
-
+      immunisation.extension = [fhir_vaccination_procedure_extension]
       immunisation.identifier = [fhir_identifier]
 
       immunisation.status = "completed"
@@ -141,6 +123,25 @@ module VaccinationRecordFHIRConcern
         system:
           "http://manage-vaccinations-in-schools.nhs.uk/vaccination_records",
         value: uuid
+      )
+    end
+
+    def fhir_vaccination_procedure_extension
+      FHIR::Extension.new(
+        url:
+          "https://fhir.hl7.org.uk/StructureDefinition/Extension-UKCore-VaccinationProcedure",
+        valueCodeableConcept:
+          FHIR::CodeableConcept.new(
+            coding: [
+              FHIR::Coding.new(
+                system: "http://snomed.info/sct",
+                code: "1324681000000101",
+                display:
+                  "Administration of first dose of severe acute" \
+                    " respiratory syndrome coronavirus 2 vaccine (procedure)"
+              )
+            ]
+          )
       )
     end
   end
