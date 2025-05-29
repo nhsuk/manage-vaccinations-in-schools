@@ -32,13 +32,7 @@ module VaccinationRecordFHIRConcern
         )
       ]
 
-      immunisation.identifier = [
-        FHIR::Identifier.new(
-          system:
-            "http://manage-vaccinations-in-schools.nhs.uk/vaccination_records",
-          value: uuid
-        )
-      ]
+      immunisation.identifier = [fhir_identifier]
 
       immunisation.status = "completed"
       immunisation.vaccineCode =
@@ -140,6 +134,14 @@ module VaccinationRecordFHIRConcern
       ]
 
       immunisation
+    end
+
+    def fhir_identifier
+      FHIR::Identifier.new(
+        system:
+          "http://manage-vaccinations-in-schools.nhs.uk/vaccination_records",
+        value: uuid
+      )
     end
   end
 end
