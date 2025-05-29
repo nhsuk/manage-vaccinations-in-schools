@@ -135,7 +135,11 @@ describe GovukNotifyPersonalisation do
 
       it do
         expect(to_h).to match(
-          hash_including(consent_deadline: "Thursday 1 January")
+          hash_including(
+            consent_deadline: "Thursday 1 January",
+            next_session_date: "Friday 2 January",
+            subsequent_session_dates_offered_message: ""
+          )
         )
       end
     end

@@ -216,11 +216,11 @@ class GovukNotifyPersonalisation
   end
 
   def subsequent_session_dates_offered_message
-    dates = session.today_or_future_dates.drop(1)
+    dates = session.future_dates.drop(1)
     return "" if dates.empty?
 
     "If they’re not seen, they’ll be offered the vaccination on #{
-      dates.map { _1.to_fs(:short_day_of_week) }.to_sentence
+      dates.map { it.to_fs(:short_day_of_week) }.to_sentence
     }."
   end
 
