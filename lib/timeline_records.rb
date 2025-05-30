@@ -59,39 +59,7 @@ class TimelineRecords
     school_move_log_entries: %i[school_id user_id]
   }.freeze
 
-  AVAILABLE_DETAILS_CONFIG_WITH_PII = {
-    consents: %i[response route updated_at withdrawn_at invalidated_at],
-    sessions: %i[slug academic_year],
-    session_attendances: %i[attending updated_at],
-    triages: %i[status updated_at invalidated_at performed_by_user_id],
-    vaccination_records: %i[
-      outcome
-      performed_at
-      updated_at
-      discarded_at
-      uuid
-      session_id
-    ],
-    organisation: %i[name ods_code],
-    cohort_imports: %i[
-      csv_filename
-      processed_at
-      status
-      rows_count
-      new_record_count
-      exact_duplicate_record_count
-      changed_record_count
-    ],
-    class_imports: %i[
-      csv_filename
-      processed_at
-      status
-      rows_count
-      new_record_count
-      exact_duplicate_record_count
-      changed_record_count
-      year_groups
-    ],
+  AVAILABLE_DETAILS_CONFIG_PII = {
     parents: %i[full_name email phone],
     patient_sessions: %i[session_id],
     gillick_assessments: %i[
@@ -101,10 +69,13 @@ class TimelineRecords
       knows_delivery
       knows_side_effects
     ],
-    parent_relationships: %i[type other_name],
-    school_moves: %i[school_id source],
-    school_move_log_entries: %i[school_id user_id]
+    parent_relationships: %i[type other_name]
   }.freeze
+
+  AVAILABLE_DETAILS_CONFIG_WITH_PII =
+    AVAILABLE_DETAILS_CONFIG.merge(
+      AVAILABLE_DETAILS_CONFIG_PII
+    ) { |_, base_fields, pii_fields| (base_fields + pii_fields).uniq }
 
   DEFAULT_AUDITS_CONFIG = {
     include_associated_audits: true,
@@ -137,7 +108,7 @@ class TimelineRecords
     source
   ].freeze
 
-  ALLOWED_AUDITED_CHANGES_WITH_PII = %i[
+  ALLOWED_AUDITED_CHANGES_PII = %i[
     full_name
     email
     phone
@@ -149,35 +120,13 @@ class TimelineRecords
     address_line_2
     address_town
     address_postcode
-    home_educated
     updated_from_pds_at
-    restricted_at
     date_of_death
     pending_changes
-    patient_id
-    session_id
-    programme_id
-    vaccine_id
-    organisation_id
-    school_id
-    gp_practice_id
-    uploaded_by_user_id
-    performed_by_user_id
-    user_id
-    parent_id
-    status
-    outcome
-    response
-    route
-    date_of_death_recorded_at
-    restricted_at
-    invalidated_at
-    withdrawn_at
-    rows_count
-    year_groups
-    home_educated
-    source
   ].freeze
+
+  ALLOWED_AUDITED_CHANGES_WITH_PII =
+    (ALLOWED_AUDITED_CHANGES + ALLOWED_AUDITED_CHANGES_PII).uniq.freeze
 
   def initialize(patient, detail_config: {}, audit_config: {}, show_pii: false)
     @patient = patient
