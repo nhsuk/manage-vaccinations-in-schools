@@ -7,8 +7,9 @@ const checkAccessibility = async (page: Page) => {
 };
 
 test("Accessibility", async ({ page }) => {
+  await page.goto("/");
+
   // Home page
-  await page.goto("/reset");
   await expect(page.locator("h1")).toContainText(
     "Manage vaccinations in schools",
   );
