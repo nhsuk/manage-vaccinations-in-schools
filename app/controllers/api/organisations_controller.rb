@@ -1,15 +1,13 @@
 # frozen_string_literal: true
 
-class Dev::ResetOrganisationController < ApplicationController
+class API::OrganisationsController < ActionController::API
   include ActionController::Live
-  include DevConcern
 
-  def call
+  def destroy
     response.headers["Content-Type"] = "text/event-stream"
     response.headers["Cache-Control"] = "no-cache"
 
-    organisation =
-      Organisation.find_by!(ods_code: params[:organisation_ods_code])
+    organisation = Organisation.find_by!(ods_code: params[:ods_code])
 
     @start_time = Time.zone.now
 

@@ -1,10 +1,7 @@
 # frozen_string_literal: true
 
-describe Dev::ResetOrganisationController do
-  before { Flipper.enable(:dev_tools) }
-  after { Flipper.disable(:dev_tools) }
-
-  describe "GET" do
+describe API::OrganisationsController do
+  describe "DELETE" do
     let(:programmes) { [create(:programme, :hpv_all_vaccines)] }
 
     let(:organisation) { create(:organisation, ods_code: "R1L", programmes:) }
@@ -61,7 +58,7 @@ describe Dev::ResetOrganisationController do
     end
 
     it "deletes associated data" do
-      expect { get :call, params: { organisation_ods_code: "r1l" } }.to(
+      expect { delete :destroy, params: { ods_code: "r1l" } }.to(
         change(CohortImport, :count)
           .by(-1)
           .and(change(ImmunisationImport, :count).by(-1))

@@ -36,3 +36,7 @@ Gets locations held by the service.
 ### Body
 
 See [onboarding documentation](onboarding.md).
+
+## `DELETE /organisations/:ods_code`
+
+Resets an organisation by deleting all associated records.
