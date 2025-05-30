@@ -3,6 +3,7 @@
 class Inspect::Timeline::PatientsController < ApplicationController
   skip_after_action :verify_policy_scoped
   before_action :set_patient
+  before_action :record_access_log_entry
 
   layout "full"
 
@@ -136,6 +137,30 @@ class Inspect::Timeline::PatientsController < ApplicationController
     details_params.each_with_object({}) do |(event_type, fields), hash|
       selected_fields = Array(fields).reject(&:blank?).map(&:to_sym)
       hash[event_type.to_sym] = selected_fields
+    end
+  end
+
+  def pii_accessed?
+    detail_config = build_details_config
+
+    detail_config.any? do |event_type, selected_fields|
+      pii_fields =
+        TimelineRecords::AVAILABLE_DETAILS_CONFIG_PII[event_type] || []
+      (selected_fields & pii_fields).any?
+    end
+  end
+
+  def audit_pii_accessed?
+    true if @show_pii && params[:event_names].include?("audits")
+  end
+
+  def record_access_log_entry
+    if pii_accessed? || audit_pii_accessed?
+      @patient.access_log_entries.create!(
+        user: current_user,
+        controller: "timeline",
+        action: "show_pii"
+      )
     end
   end
 end
