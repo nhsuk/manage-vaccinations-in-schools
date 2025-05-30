@@ -24,8 +24,7 @@ module VaccinationRecordFHIRConcern
       immunisation.occurrenceDateTime = performed_at.iso8601
       immunisation.recorded = created_at.iso8601
       immunisation.primarySource = recorded_in_service?
-      immunisation.manufacturer =
-        FHIR::Reference.new(display: "AstraZeneca Ltd")
+      immunisation.manufacturer = vaccine.fhir_manufacturer_reference
 
       immunisation.location =
         FHIR::Reference.new(

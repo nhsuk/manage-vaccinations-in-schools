@@ -14,6 +14,7 @@ describe VaccinationRecordFHIRConcern do
   let(:patient) { patient_session.patient }
   let(:session) { patient_session.session }
   let(:vaccination_outcome) { :administered }
+  let(:vaccine) { vaccination_record.vaccine }
   let(:vaccination_record) do
     create(
       :vaccination_record,
@@ -176,6 +177,12 @@ describe VaccinationRecordFHIRConcern do
 
         it { should be false }
       end
+    end
+
+    describe "manufacturer" do
+      subject { immunisation_fhir.manufacturer }
+
+      it { should eq vaccine.fhir_manufacturer_reference }
     end
   end
 end
