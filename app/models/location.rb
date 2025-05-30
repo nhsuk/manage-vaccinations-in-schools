@@ -35,6 +35,7 @@
 class Location < ApplicationRecord
   include AddressConcern
   include ODSCodeConcern
+  include LocationFHIRConcern
 
   self.inheritance_column = :nil
 
