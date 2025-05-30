@@ -152,5 +152,11 @@ describe VaccinationRecordFHIRConcern do
 
       it { should eq vaccination_record.performed_at.iso8601 }
     end
+
+    describe "recorded" do
+      subject { immunisation_fhir.recorded }
+
+      it { should eq vaccination_record.created_at.iso8601 }
+    end
   end
 end
