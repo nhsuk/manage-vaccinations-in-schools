@@ -3,6 +3,7 @@
 module Inspect
   class GraphsController < ApplicationController
     skip_after_action :verify_policy_scoped
+    after_action :record_access_log_entry
 
     layout "full"
 
@@ -110,6 +111,26 @@ module Inspect
       singular_type = params[:object_type].downcase.singularize
       return nil unless GraphRecords::ALLOWED_TYPES.include?(singular_type)
       singular_type.to_sym
+    end
+
+    def pii_accessed?
+      return false unless @show_pii
+      additional_types = Array(params[:additional_ids].keys).map(&:to_sym)
+
+      additional_types.any? do |type|
+        GraphRecords::DETAIL_WHITELIST.keys.include?(type)
+      end
+    end
+
+    def record_access_log_entry
+      if pii_accessed? && @primary_type == :patient
+        patient = Patient.find(@primary_id)
+        patient.access_log_entries.create!(
+          user: current_user,
+          controller: "graph",
+          action: "show_pii"
+        )
+      end
     end
   end
 end
