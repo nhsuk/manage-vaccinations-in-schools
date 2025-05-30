@@ -58,6 +58,8 @@ describe API::OrganisationsController do
       end
 
       create(:school_move, :to_school, patient: Patient.first)
+
+      create(:session_date, session: Session.first)
     end
 
     it "deletes associated data" do
@@ -70,6 +72,7 @@ describe API::OrganisationsController do
           .and(change(Patient, :count).by(-3))
           .and(change(PatientSession, :count).by(-3))
           .and(change(VaccinationRecord, :count).by(-11))
+          .and(change(SessionDate, :count).by(-1))
       )
     end
   end

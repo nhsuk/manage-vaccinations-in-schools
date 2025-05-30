@@ -12,51 +12,53 @@ class API::OrganisationsController < API::BaseController
     @start_time = Time.zone.now
 
     Organisation.with_advisory_lock("reset-organisation-#{organisation.id}") do
-      log_destroy(CohortImport.where(organisation:))
-      log_destroy(ImmunisationImport.where(organisation:))
+      ActiveRecord::Base.transaction do
+        log_destroy(CohortImport.where(organisation:))
+        log_destroy(ImmunisationImport.where(organisation:))
 
-      sessions = Session.where(organisation:)
+        sessions = Session.where(organisation:)
 
-      log_destroy(ClassImport.where(session: sessions))
-      log_destroy(SessionDate.where(session: sessions))
+        log_destroy(ClassImport.where(session: sessions))
+        log_destroy(SessionDate.where(session: sessions))
 
-      log_destroy(ConsentNotification.where(session: sessions))
-      log_destroy(SessionNotification.where(session: sessions))
-      log_destroy(VaccinationRecord.where(session: sessions))
+        log_destroy(ConsentNotification.where(session: sessions))
+        log_destroy(SessionNotification.where(session: sessions))
+        log_destroy(VaccinationRecord.where(session: sessions))
 
-      patient_sessions = PatientSession.where(session: sessions)
-      log_destroy(GillickAssessment.where(patient_session: patient_sessions))
-      log_destroy(PreScreening.where(patient_session: patient_sessions))
-      patient_sessions.in_batches { log_destroy(it) }
+        patient_sessions = PatientSession.where(session: sessions)
+        log_destroy(GillickAssessment.where(patient_session: patient_sessions))
+        log_destroy(PreScreening.where(patient_session: patient_sessions))
+        patient_sessions.in_batches { log_destroy(it) }
 
-      log_destroy(sessions)
+        log_destroy(sessions)
 
-      patients = organisation.patients
+        patients = organisation.patients
 
-      log_destroy(SchoolMove.where(patient: patients))
-      log_destroy(SchoolMove.where(organisation:))
-      log_destroy(SchoolMoveLogEntry.where(patient: patients))
-      log_destroy(AccessLogEntry.where(patient: patients))
-      log_destroy(NotifyLogEntry.where(patient: patients))
-      # In local dev we can end up with NotifyLogEntries without a patient
-      log_destroy(NotifyLogEntry.where(patient_id: nil))
-      log_destroy(VaccinationRecord.where(patient: patients))
+        log_destroy(SchoolMove.where(patient: patients))
+        log_destroy(SchoolMove.where(organisation:))
+        log_destroy(SchoolMoveLogEntry.where(patient: patients))
+        log_destroy(AccessLogEntry.where(patient: patients))
+        log_destroy(NotifyLogEntry.where(patient: patients))
+        # In local dev we can end up with NotifyLogEntries without a patient
+        log_destroy(NotifyLogEntry.where(patient_id: nil))
+        log_destroy(VaccinationRecord.where(patient: patients))
 
-      log_destroy(ConsentForm.where(organisation:))
-      log_destroy(Consent.where(organisation:))
-      log_destroy(Triage.where(organisation:))
+        log_destroy(ConsentForm.where(organisation:))
+        log_destroy(Consent.where(organisation:))
+        log_destroy(Triage.where(organisation:))
 
-      patients.includes(:parents).in_batches { log_destroy(it) }
+        patients.includes(:parents).in_batches { log_destroy(it) }
 
-      batches = Batch.where(organisation:)
-      log_destroy(VaccinationRecord.where(batch: batches))
-      log_destroy(batches)
+        batches = Batch.where(organisation:)
+        log_destroy(VaccinationRecord.where(batch: batches))
+        log_destroy(batches)
 
-      log_destroy(
-        VaccinationRecord.where(performed_ods_code: organisation.ods_code)
-      )
+        log_destroy(
+          VaccinationRecord.where(performed_ods_code: organisation.ods_code)
+        )
 
-      UnscheduledSessionsFactory.new.call
+        UnscheduledSessionsFactory.new.call
+      end
     end
 
     response.stream.write "Done"
@@ -73,7 +75,7 @@ class API::OrganisationsController < API::BaseController
     @log_time ||= Time.zone.now
     query.destroy_all
     response.stream.write(
-      "#{query.model.name}.where(#{where_clause.to_h}) reset: #{Time.zone.now - @log_time}s\n"
+      "#{query.model.name}.where(#{where_clause.to_h}): #{Time.zone.now - @log_time}s\n"
     )
     @log_time = Time.zone.now
   end
