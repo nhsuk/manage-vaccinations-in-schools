@@ -184,5 +184,11 @@ describe VaccinationRecordFHIRConcern do
 
       it { should eq vaccine.fhir_manufacturer_reference }
     end
+
+    describe "location identifier" do
+      subject { immunisation_fhir.location }
+
+      it { should eq vaccination_record.location.fhir_reference }
+    end
   end
 end
