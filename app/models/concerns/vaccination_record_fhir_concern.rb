@@ -27,15 +27,7 @@ module VaccinationRecordFHIRConcern
       immunisation.manufacturer = vaccine.manufacturer
       immunisation.manufacturer = vaccine.fhir_manufacturer_reference
 
-      immunisation.location =
-        FHIR::Reference.new(
-          identifier:
-            FHIR::Identifier.new(
-              value: "X99999",
-              system: "https://fhir.nhs.uk/Id/ods-organization-code"
-            )
-        )
-
+      immunisation.location = (location || Location.school.new).fhir_reference
       immunisation.lotNumber = "4120Z001"
       immunisation.expirationDate = "2021-07-02"
 
