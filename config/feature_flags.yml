@@ -1,3 +1,5 @@
+api: Basic API useful for automated testing.
+
 basic_auth: Require users to sign in with basic authentication before they
   can use the service.
 
