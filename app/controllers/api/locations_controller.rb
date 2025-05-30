@@ -14,7 +14,7 @@ class API::LocationsController < ActionController::API
 
     if (year_groups = params[:year_groups]).present?
       @locations =
-        @locations.where("year_groups && ARRAY[?]::integer[]", year_groups)
+        @locations.where("ARRAY[?]::integer[] <@ year_groups", year_groups)
     end
 
     if (
