@@ -212,4 +212,19 @@ namespace :schools do
       year_groups: [8, 9, 10, 11]
     )
   end
+
+  desc "Roll over a school to a new school"
+  task :roll_over, %i[old_urn new_urn] => :environment do |_task, args|
+    old_loc = Location.find_by(urn: args[:old_urn])
+    new_loc = Location.find_by(urn: args[:new_urn])
+
+    raise "Could not find one or both schools." if old_loc.nil? || new_loc.nil?
+
+    Session.where(location_id: old_loc.id).update_all(location_id: new_loc.id)
+    Patient.where(school_id: old_loc.id).update_all(school_id: new_loc.id)
+    ConsentForm.where(location_id: old_loc.id).update_all(
+      location_id: new_loc.id
+    )
+    ConsentForm.where(school_id: old_loc.id).update_all(school_id: new_loc.id)
+  end
 end
