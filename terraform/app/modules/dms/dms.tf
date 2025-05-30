@@ -21,7 +21,10 @@ resource "aws_dms_endpoint" "source" {
   secrets_manager_arn             = aws_secretsmanager_secret.source.arn
   secrets_manager_access_role_arn = aws_iam_role.secret_access.arn
   ssl_mode                        = "none"
-  extra_connection_attributes     = "secretsManagerEndpointOverride=${module.secretsmanager_vpc_endpoint.dns_name}"
+  extra_connection_attributes = jsonencode({
+    secretsManagerEndpointOverride = module.secretsmanager_vpc_endpoint.dns_name
+    PluginName                     = "test_decoding"
+  })
 }
 
 resource "aws_dms_endpoint" "target" {
@@ -29,7 +32,7 @@ resource "aws_dms_endpoint" "target" {
   endpoint_type                   = "target"
   engine_name                     = var.engine_name
   database_name                   = var.target_database_name
-  secrets_manager_arn             = aws_secretsmanager_secret.source.arn
+  secrets_manager_arn             = aws_secretsmanager_secret.target.arn
   secrets_manager_access_role_arn = aws_iam_role.secret_access.arn
   ssl_mode                        = "none"
   extra_connection_attributes     = "secretsManagerEndpointOverride=${module.secretsmanager_vpc_endpoint.dns_name}"
@@ -64,5 +67,18 @@ resource "aws_dms_replication_task" "migration_task" {
         "rule-action" = "include"
       }
     ]
+  })
+  replication_task_settings = jsonencode({
+    "TargetMetadata" : {
+      "TargetSchema" : "",
+      "SupportLobs" : true,
+      "FullLobMode" : false,
+      "LobChunkSize" : 0,
+      "LimitedSizeLobMode" : true,
+      "LobMaxSize" : 32
+    },
+    "FullLoadSettings" : {
+      "TargetTablePrepMode" : "DO_NOTHING"
+    }
   })
 }
