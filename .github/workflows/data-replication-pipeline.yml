@@ -46,6 +46,7 @@ concurrency:
 
 jobs:
   prepare:
+    if: ${{ inputs.action == 'Recreate' }}
     name: Prepare data replica
     runs-on: ubuntu-latest
     permissions:
@@ -162,7 +163,6 @@ jobs:
           terraform apply ${{ runner.temp }}/tfplan_destroy
 
   plan:
-    if: ${{ inputs.action == 'Recreate' }}
     name: Terraform plan
     runs-on: ubuntu-latest
     needs:
