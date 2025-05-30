@@ -225,7 +225,7 @@ USERNAME=username PASSWORD=password SESSION=slug artillery run tests/load.yml --
 
 ### Example programmes
 
-You can generate an example programme with a few sessions in development by visiting `/reset`.
+You can generate an example programme by seeding the database with `rails db:seed:replant`.
 
 #### Adding a test user
 

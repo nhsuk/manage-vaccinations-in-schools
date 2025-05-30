@@ -26,7 +26,8 @@ test.afterEach(async () => {
 });
 
 test.skip("Works offline", async ({ page, context }) => {
-  await page.goto("/reset");
+  await page.goto("/");
+
   await expect(page.locator("h1")).toContainText(
     "Manage vaccinations in schools",
   );
