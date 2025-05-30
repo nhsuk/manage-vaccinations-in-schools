@@ -6,6 +6,10 @@
   <%= "Rails console: Patient.find(#{@patient.id})" %>
 </code>
 
+<div >
+<%= link_to "View graph", inspect_path(object_type: "patient", object_id: @patient.id), class: "nhsuk-button nhsuk-button--secondary" %>
+</div>
+
 <% if params[:event_names].include?("audits") && @patient_timeline && !@show_pii %>
   <%= govuk_inset_text do %>
     <p class="nhsuk-body">
