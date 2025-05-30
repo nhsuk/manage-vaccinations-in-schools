@@ -12,11 +12,11 @@ locals {
 }
 
 resource "aws_secretsmanager_secret" "source" {
-  name = "dms_temporary_secret_source_123"
+  name = "dms_temporary_secret_source_${var.environment}"
 }
 
 resource "aws_secretsmanager_secret" "target" {
-  name = "dms_temporary_secret_target_123"
+  name = "dms_temporary_secret_target_${var.environment}"
 }
 
 resource "aws_secretsmanager_secret_version" "source" {
