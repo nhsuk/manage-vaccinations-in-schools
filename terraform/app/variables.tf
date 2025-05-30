@@ -247,6 +247,17 @@ variable "enable_backup_to_vault" {
   nullable    = false
 }
 
+locals {
+  db_instances = {
+    "primary-1" = {
+      promotion_tier = 1
+    },
+    "primary-2" = {
+      promotion_tier = 1
+    }
+  }
+}
+
 ########## ESC/Scaling Configuration ##########
 
 variable "container_insights" {

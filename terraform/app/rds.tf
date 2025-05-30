@@ -33,16 +33,16 @@ resource "aws_db_subnet_group" "aurora_subnet_group" {
   }
 }
 
-resource "aws_db_parameter_group" "custom" {
-  name        = "${var.environment}-custom"
-  family      = "aurora-postgresql16"
-  description = "DB migration parameter group for the source DB"
-  parameter {
-    name         = "shared_preload_libraries"
-    value        = "pglogical"
-    apply_method = "pending-reboot"
-  }
-}
+# resource "aws_db_parameter_group" "custom" {
+#   name        = "${var.environment}-custom"
+#   family      = "aurora-postgresql16"
+#   description = "DB migration parameter group for the source DB"
+#   parameter {
+#     name         = "shared_preload_libraries"
+#     value        = "pglogical"
+#     apply_method = "pending-reboot"
+#   }
+# }
 
 resource "aws_rds_cluster_parameter_group" "custom" {
   name        = "${var.environment}-custom"
@@ -54,11 +54,11 @@ resource "aws_rds_cluster_parameter_group" "custom" {
     value        = 1 #TODO: Set to 0 after DB migration
     apply_method = "pending-reboot"
   }
-  parameter {
-    name         = "wal_sender_timeout"
-    value        = 0
-    apply_method = "immediate"
-  }
+  # parameter {
+  #   name         = "wal_sender_timeout"
+  #   value        = 0
+  #   apply_method = "immediate"
+  # }
 }
 
 resource "aws_rds_cluster" "aurora_cluster" {
@@ -92,25 +92,23 @@ resource "aws_rds_cluster" "aurora_cluster" {
 }
 
 resource "aws_rds_cluster_instance" "aurora_instance" {
-  cluster_identifier      = aws_rds_cluster.aurora_cluster.id
-  identifier              = var.resource_name.db_instance
-  instance_class          = "db.serverless"
-  engine                  = aws_rds_cluster.aurora_cluster.engine
-  engine_version          = aws_rds_cluster.aurora_cluster.engine_version
-  db_subnet_group_name    = aws_db_subnet_group.aurora_subnet_group.name
-  db_parameter_group_name = aws_db_parameter_group.custom.name
-  promotion_tier          = 1
+  cluster_identifier   = aws_rds_cluster.aurora_cluster.id
+  identifier           = var.resource_name.db_instance
+  instance_class       = "db.serverless"
+  engine               = aws_rds_cluster.aurora_cluster.engine
+  engine_version       = aws_rds_cluster.aurora_cluster.engine_version
+  db_subnet_group_name = aws_db_subnet_group.aurora_subnet_group.name
+  promotion_tier       = 1
 }
 
 resource "aws_rds_cluster_instance" "old_read_replica" {
-  cluster_identifier      = aws_rds_cluster.aurora_cluster.id
-  identifier              = "mavis-${var.environment}-rds-read-instance"
-  instance_class          = "db.serverless"
-  engine                  = aws_rds_cluster.aurora_cluster.engine
-  engine_version          = aws_rds_cluster.aurora_cluster.engine_version
-  db_subnet_group_name    = aws_db_subnet_group.aurora_subnet_group.name
-  db_parameter_group_name = aws_db_parameter_group.custom.name
-  promotion_tier          = 1
+  cluster_identifier   = aws_rds_cluster.aurora_cluster.id
+  identifier           = "mavis-${var.environment}-rds-read-instance"
+  instance_class       = "db.serverless"
+  engine               = aws_rds_cluster.aurora_cluster.engine
+  engine_version       = aws_rds_cluster.aurora_cluster.engine_version
+  db_subnet_group_name = aws_db_subnet_group.aurora_subnet_group.name
+  promotion_tier       = 1
 }
 
 resource "aws_rds_cluster" "core_cluster" {
@@ -138,24 +136,15 @@ resource "aws_rds_cluster" "core_cluster" {
   }
 }
 
-resource "aws_rds_cluster_instance" "write" {
+resource "aws_rds_cluster_instance" "core" {
+  for_each             = local.db_instances
   cluster_identifier   = aws_rds_cluster.core_cluster.id
-  identifier           = "mavis-${var.environment}-write"
+  identifier           = "mavis-${var.environment}-${each.key}"
   instance_class       = "db.serverless"
   engine               = aws_rds_cluster.core_cluster.engine
   engine_version       = aws_rds_cluster.core_cluster.engine_version
   db_subnet_group_name = aws_db_subnet_group.aurora_subnet_group.name
-  promotion_tier       = 1
-}
-
-resource "aws_rds_cluster_instance" "read" {
-  cluster_identifier   = aws_rds_cluster.core_cluster.id
-  identifier           = "mavis-${var.environment}-read"
-  instance_class       = "db.serverless"
-  engine               = aws_rds_cluster.core_cluster.engine
-  engine_version       = aws_rds_cluster.core_cluster.engine_version
-  db_subnet_group_name = aws_db_subnet_group.aurora_subnet_group.name
-  promotion_tier       = 1
+  promotion_tier       = each.value["promotion_tier"]
 }
 
 module "dms_custom_kms_migration" {
