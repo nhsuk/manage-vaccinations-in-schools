@@ -93,9 +93,9 @@ resource "aws_kms_key" "backup_notifications" {
 # Now we can deploy the source and destination modules, referencing the resources we've created above.
 
 module "source" {
-  source = "github.com/NHSDigital/terraform-aws-backup.git//modules/aws-backup-source?ref=v1.1.0"
+  # source = "github.com/NHSDigital/terraform-aws-backup.git//modules/aws-backup-source?ref=v1.1.0"
   # Use SSH to fetch sources locally
-  # source = "git@github.com:NHSDigital/terraform-aws-backup.git//modules/aws-backup-source?ref=v1.1.0"
+  source = "git@github.com:NHSDigital/terraform-aws-backup.git//modules/aws-backup-source?ref=v1.1.0"
 
 
   backup_copy_vault_account_id = local.destination_account_id
