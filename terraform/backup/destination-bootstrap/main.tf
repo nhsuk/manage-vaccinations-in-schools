@@ -1,5 +1,5 @@
 terraform {
-  required_version = "~> 1.10.5"
+  required_version = "~> 1.11.4"
   backend "local" {}
   required_providers {
     aws = {
