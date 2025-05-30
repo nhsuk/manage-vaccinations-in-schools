@@ -172,8 +172,7 @@ describe CohortImport do
         school: location,
         address_line_1: "10 Downing Street",
         address_town: "London",
-        address_postcode: "SW1A 1AA",
-        organisation:
+        address_postcode: "SW1A 1AA"
       )
 
       expect(Patient.first.parents).to be_empty
@@ -186,8 +185,7 @@ describe CohortImport do
         school: location,
         address_line_1: "10 Downing Street",
         address_town: "London",
-        address_postcode: "SW1A 1AA",
-        organisation:
+        address_postcode: "SW1A 1AA"
       )
 
       expect(Patient.second.parents.count).to eq(1)
@@ -208,8 +206,7 @@ describe CohortImport do
         school: nil,
         address_line_1: "11 Downing Street",
         address_town: "London",
-        address_postcode: "SW1A 1AA",
-        organisation:
+        address_postcode: "SW1A 1AA"
       )
 
       expect(Patient.third.parents.count).to eq(2)

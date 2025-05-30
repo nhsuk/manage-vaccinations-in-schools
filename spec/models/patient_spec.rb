@@ -28,7 +28,6 @@
 #  created_at                :datetime         not null
 #  updated_at                :datetime         not null
 #  gp_practice_id            :bigint
-#  organisation_id           :bigint
 #  school_id                 :bigint
 #
 # Indexes
@@ -39,13 +38,11 @@
 #  index_patients_on_names_family_first   (family_name,given_name)
 #  index_patients_on_names_given_first    (given_name,family_name)
 #  index_patients_on_nhs_number           (nhs_number) UNIQUE
-#  index_patients_on_organisation_id      (organisation_id)
 #  index_patients_on_school_id            (school_id)
 #
 # Foreign Keys
 #
 #  fk_rails_...  (gp_practice_id => locations.id)
-#  fk_rails_...  (organisation_id => organisations.id)
 #  fk_rails_...  (school_id => locations.id)
 #
 

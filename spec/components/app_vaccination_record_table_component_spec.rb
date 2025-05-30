@@ -4,7 +4,7 @@ describe AppVaccinationRecordTableComponent do
   subject(:rendered) { render_inline(component) }
 
   let(:component) do
-    described_class.new(vaccination_records, current_user:, count:)
+    described_class.new(vaccination_records, current_user:, count: 10)
   end
 
   let(:programme) { create(:programme) }
@@ -31,8 +31,6 @@ describe AppVaccinationRecordTableComponent do
   end
 
   let(:current_user) { create(:nurse) }
-
-  let(:count) { 10 }
 
   it "renders a heading tab" do
     expect(rendered).to have_css(
@@ -67,10 +65,15 @@ describe AppVaccinationRecordTableComponent do
   end
 
   context "with a vaccination record not performed by the organisation" do
-    before { vaccination_records.first.patient.update!(organisation: nil) }
-
-    it "doesn't render a link" do
-      expect(rendered).not_to have_link("SMITH, John")
+    before do
+      vaccination_records.first.patient.patient_sessions.destroy_all
+      vaccination_records.first.update!(
+        session: nil,
+        location_name: "Unknown",
+        performed_ods_code: nil
+      )
     end
+
+    it { should_not have_link("SMITH, John") }
   end
 end
