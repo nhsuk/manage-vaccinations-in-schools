@@ -5,6 +5,8 @@ module Inspect
     class PatientsController < ApplicationController
       skip_after_action :verify_policy_scoped
       before_action :set_patient
+      before_action :set_show_pii
+      before_action :record_access_log_entry
 
       layout "full"
 
@@ -23,8 +25,6 @@ module Inspect
       ].freeze
 
       def show
-        @show_pii = params[:show_pii] || SHOW_PII
-
         params.reverse_merge!(event_names: DEFAULT_EVENT_NAMES)
         params[:audit_config] ||= {}
 
@@ -82,6 +82,10 @@ module Inspect
         @additional_events = timeline.additional_events(@patient)
       end
 
+      def set_show_pii
+        @show_pii = params[:show_pii] || SHOW_PII
+      end
+
       # TODO: Fix so that a new comparison patient isn't sampled every time
       #       a filter option is changed and the page is reloaded.
       def sample_patient(compare_option)
@@ -132,6 +136,16 @@ module Inspect
         details_params.each_with_object({}) do |(event_type, fields), hash|
           selected_fields = Array(fields).reject(&:blank?).map(&:to_sym)
           hash[event_type.to_sym] = selected_fields
+        end
+      end
+
+      def record_access_log_entry
+        if @show_pii
+          @patient.access_log_entries.create!(
+            user: current_user,
+            controller: "timeline",
+            action: "show_pii"
+          )
         end
       end
     end

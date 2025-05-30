@@ -3,18 +3,13 @@
 module Inspect
   class GraphsController < ApplicationController
     skip_after_action :verify_policy_scoped
+    before_action :set_object
+    before_action :set_show_pii
+    before_action :record_access_log_entry
 
     layout "full"
 
     def show
-      @primary_type = safe_get_primary_type
-      if @primary_type.nil?
-        render plain:
-                 "You don't have permission to view object type: #{params[:object_type].to_s.downcase.singularize}",
-               status: :bad_request and return
-      end
-      @primary_id = params[:object_id]
-
       # Set default relationships when loading a page
       if params[:relationships].blank? &&
            GraphRecords::DEFAULT_TRAVERSALS.key?(@primary_type)
@@ -24,12 +19,9 @@ module Inspect
         redirect_to inspect_path(new_params) and return
       end
 
-      @object = @primary_type.to_s.classify.constantize.find(@primary_id)
-
       # Generate graph
       @traversals_config = build_traversals_config
       @graph_params = build_graph_params
-      @show_pii = params[:show_pii]&.first == "1"
 
       @mermaid =
         GraphRecords
@@ -44,6 +36,21 @@ module Inspect
     end
 
     private
+
+    def set_object
+      @primary_type = safe_get_primary_type
+      if @primary_type.nil?
+        render plain:
+                 "You don't have permission to view object type: #{params[:object_type].to_s.downcase.singularize}",
+               status: :bad_request and return
+      end
+      @primary_id = params[:object_id]
+      @object = @primary_type.to_s.classify.constantize.find(@primary_id)
+    end
+
+    def set_show_pii
+      @show_pii = params[:show_pii]&.first == "1"
+    end
 
     def build_traversals_config
       traversals_config = {}
@@ -99,6 +106,17 @@ module Inspect
       singular_type = params[:object_type].downcase.singularize
       return nil unless GraphRecords::ALLOWED_TYPES.include?(singular_type)
       singular_type.to_sym
+    end
+
+    def record_access_log_entry
+      if @show_pii && @primary_type == :patient
+        patient = Patient.find(@primary_id)
+        patient.access_log_entries.create!(
+          user: current_user,
+          controller: "graph",
+          action: "show_pii"
+        )
+      end
     end
   end
 end
