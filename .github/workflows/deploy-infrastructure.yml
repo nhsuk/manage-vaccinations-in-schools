@@ -156,6 +156,7 @@ jobs:
     name: Terraform apply
     runs-on: ubuntu-latest
     needs: plan
+    if: always() && needs.plan.result == 'success'
     environment: ${{ inputs.environment }}
     permissions:
       id-token: write
