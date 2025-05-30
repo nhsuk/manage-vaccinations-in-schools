@@ -6,9 +6,13 @@
 describe VaccinationRecordFHIRConcern do
   include FHIRHelper
 
-  let(:patient) { create(:patient) }
   let(:organisation) { create(:organisation, programmes: [programme]) }
   let(:programme) { create(:programme, :hpv) }
+  let(:patient_session) do
+    create(:patient_session, programmes: [programme], organisation:)
+  end
+  let(:patient) { patient_session.patient }
+  let(:session) { patient_session.session }
   let(:vaccination_outcome) { :administered }
   let(:vaccination_record) do
     create(
@@ -16,6 +20,7 @@ describe VaccinationRecordFHIRConcern do
       performed_ods_code: organisation.ods_code,
       patient:,
       programme:,
+      session:,
       vaccine: programme.active_vaccines.first,
       outcome: vaccination_outcome
     )
@@ -157,6 +162,20 @@ describe VaccinationRecordFHIRConcern do
       subject { immunisation_fhir.recorded }
 
       it { should eq vaccination_record.created_at.iso8601 }
+    end
+
+    describe "primarySource" do
+      subject { immunisation_fhir.primarySource }
+
+      context "when the vaccination record is recorded in service" do
+        it { should be true }
+      end
+
+      context "when the vaccination record was imported and has no session" do
+        let(:session) { nil }
+
+        it { should be false }
+      end
     end
   end
 end
