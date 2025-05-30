@@ -33,17 +33,6 @@ resource "aws_db_subnet_group" "aurora_subnet_group" {
   }
 }
 
-# resource "aws_db_parameter_group" "custom" {
-#   name        = "${var.environment}-custom"
-#   family      = "aurora-postgresql16"
-#   description = "DB migration parameter group for the source DB"
-#   parameter {
-#     name         = "shared_preload_libraries"
-#     value        = "pglogical"
-#     apply_method = "pending-reboot"
-#   }
-# }
-
 resource "aws_rds_cluster_parameter_group" "custom" {
   name        = "${var.environment}-custom"
   family      = "aurora-postgresql16"
@@ -54,11 +43,6 @@ resource "aws_rds_cluster_parameter_group" "custom" {
     value        = 1 #TODO: Set to 0 after DB migration
     apply_method = "pending-reboot"
   }
-  # parameter {
-  #   name         = "wal_sender_timeout"
-  #   value        = 0
-  #   apply_method = "immediate"
-  # }
 }
 
 resource "aws_rds_cluster" "aurora_cluster" {
@@ -111,7 +95,7 @@ resource "aws_rds_cluster_instance" "old_read_replica" {
   promotion_tier       = 1
 }
 
-resource "aws_rds_cluster" "core_cluster" {
+resource "aws_rds_cluster" "core" {
   cluster_identifier           = "mavis-${var.environment}"
   engine                       = "aurora-postgresql"
   engine_mode                  = "provisioned"
@@ -138,11 +122,11 @@ resource "aws_rds_cluster" "core_cluster" {
 
 resource "aws_rds_cluster_instance" "core" {
   for_each             = local.db_instances
-  cluster_identifier   = aws_rds_cluster.core_cluster.id
+  cluster_identifier   = aws_rds_cluster.core.id
   identifier           = "mavis-${var.environment}-${each.key}"
   instance_class       = "db.serverless"
-  engine               = aws_rds_cluster.core_cluster.engine
-  engine_version       = aws_rds_cluster.core_cluster.engine_version
+  engine               = aws_rds_cluster.core.engine
+  engine_version       = aws_rds_cluster.core.engine_version
   db_subnet_group_name = aws_db_subnet_group.aurora_subnet_group.name
   promotion_tier       = each.value["promotion_tier"]
 }
@@ -156,12 +140,12 @@ module "dms_custom_kms_migration" {
   source_port           = aws_rds_cluster.aurora_cluster.port
   source_database_name  = aws_rds_cluster.aurora_cluster.database_name
   source_db_secret_arn  = var.db_secret_arn == null ? aws_rds_cluster.aurora_cluster.master_user_secret[0].secret_arn : var.db_secret_arn
-  source_managed_secret = var.db_secret_arn != null
+  source_managed_secret = var.db_secret_arn == null
 
-  target_endpoint      = aws_rds_cluster.core_cluster.endpoint
-  target_port          = aws_rds_cluster.core_cluster.port
-  target_database_name = aws_rds_cluster.core_cluster.database_name
-  target_db_secret_arn = aws_rds_cluster.core_cluster.master_user_secret[0].secret_arn
+  target_endpoint      = aws_rds_cluster.core.endpoint
+  target_port          = aws_rds_cluster.core.port
+  target_database_name = aws_rds_cluster.core.database_name
+  target_db_secret_arn = aws_rds_cluster.core.master_user_secret[0].secret_arn
 
   engine_name = aws_rds_cluster.aurora_cluster.engine
   subnet_ids  = [aws_subnet.private_subnet_a.id, aws_subnet.private_subnet_b.id]
