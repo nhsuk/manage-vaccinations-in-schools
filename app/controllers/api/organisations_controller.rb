@@ -19,7 +19,6 @@ class API::OrganisationsController < API::BaseController
         sessions = Session.where(organisation:)
 
         log_destroy(ClassImport.where(session: sessions))
-        log_destroy(SessionDate.where(session: sessions))
 
         log_destroy(ConsentNotification.where(session: sessions))
         log_destroy(SessionNotification.where(session: sessions))
@@ -30,6 +29,7 @@ class API::OrganisationsController < API::BaseController
         log_destroy(PreScreening.where(patient_session: patient_sessions))
         patient_sessions.in_batches { log_destroy(it) }
 
+        log_destroy(SessionDate.where(session: sessions))
         log_destroy(sessions)
 
         patients = organisation.patients
