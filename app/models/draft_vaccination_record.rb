@@ -107,7 +107,9 @@ class DraftVaccinationRecord
   alias_method :administered, :administered?
 
   def batch
-    BatchPolicy::Scope.new(@current_user, Batch).resolve.find_by(id: batch_id)
+    return nil if batch_id.nil?
+
+    BatchPolicy::Scope.new(@current_user, Batch).resolve.find(batch_id)
   end
 
   def batch=(value)
@@ -115,7 +117,9 @@ class DraftVaccinationRecord
   end
 
   def patient
-    Patient.find_by(id: patient_id)
+    return nil if patient_id.nil?
+
+    Patient.find(patient_id)
   end
 
   def patient=(value)
@@ -125,7 +129,9 @@ class DraftVaccinationRecord
   delegate :location, to: :session, allow_nil: true
 
   def performed_by_user
-    User.find_by(id: performed_by_user_id)
+    return nil if performed_by_user_id.nil?
+
+    User.find(performed_by_user_id)
   end
 
   def performed_by_user=(value)
@@ -133,10 +139,12 @@ class DraftVaccinationRecord
   end
 
   def programme
+    return nil if programme_id.nil?
+
     ProgrammePolicy::Scope
       .new(@current_user, Programme)
       .resolve
-      .find_by(id: programme_id)
+      .find(programme_id)
   end
 
   def programme=(value)
@@ -144,10 +152,9 @@ class DraftVaccinationRecord
   end
 
   def session
-    SessionPolicy::Scope
-      .new(@current_user, Session)
-      .resolve
-      .find_by(id: session_id)
+    return nil if session_id.nil?
+
+    SessionPolicy::Scope.new(@current_user, Session).resolve.find(session_id)
   end
 
   def session=(value)
@@ -155,10 +162,12 @@ class DraftVaccinationRecord
   end
 
   def vaccination_record
+    return nil if editing_id.nil?
+
     VaccinationRecordPolicy::Scope
       .new(@current_user, VaccinationRecord)
       .resolve
-      .find_by(id: editing_id)
+      .find(editing_id)
   end
 
   def vaccination_record=(value)

@@ -13,7 +13,7 @@ describe DraftConsent do
   let(:current_user) { organisation.users.first }
 
   let(:programme) { create(:programme, :hpv) }
-  let(:session) { create(:session, programmes: [programme]) }
+  let(:session) { create(:session, organisation:, programmes: [programme]) }
 
   let(:patient_session) { create(:patient_session, session:) }
 
