@@ -190,5 +190,21 @@ describe VaccinationRecordFHIRConcern do
 
       it { should eq vaccination_record.location.fhir_reference }
     end
+
+    describe "site" do
+      subject(:site) { immunisation_fhir.site }
+
+      it { should be_a FHIR::CodeableConcept }
+
+      describe "site coding" do
+        subject { site.coding.first }
+
+        its(:code) { should eq "368208006" }
+        its(:system) { should eq "http://snomed.info/sct" }
+        its(:display) do
+          should eq "Structure of left upper arm (body structure)"
+        end
+      end
+    end
   end
 end

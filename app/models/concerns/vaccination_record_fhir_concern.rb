@@ -29,17 +29,7 @@ module VaccinationRecordFHIRConcern
       immunisation.location = (location || Location.school.new).fhir_reference
       immunisation.lotNumber = "4120Z001"
       immunisation.expirationDate = "2021-07-02"
-
-      immunisation.site =
-        FHIR::CodeableConcept.new(
-          coding: [
-            FHIR::Coding.new(
-              system: "http://snomed.info/sct",
-              code: "368208006",
-              display: "Left upper arm structure (body structure)"
-            )
-          ]
-        )
+      immunisation.site = fhir_site
 
       immunisation.route =
         FHIR::CodeableConcept.new(
@@ -149,6 +139,21 @@ module VaccinationRecordFHIRConcern
             system: "http://snomed.info/sct",
             code: vaccine.snomed_product_code,
             display: vaccine.snomed_product_term
+          )
+        ]
+      )
+    end
+
+    def fhir_site
+      site_info =
+        VaccinationRecord::DELIVERY_SITE_SNOMED_CODES_AND_TERMS[delivery_site]
+
+      FHIR::CodeableConcept.new(
+        coding: [
+          FHIR::Coding.new(
+            system: "http://snomed.info/sct",
+            code: site_info.first,
+            display: site_info.last
           )
         ]
       )
