@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 describe "/api/locations" do
+  before { Flipper.enable(:api) }
+  after { Flipper.disable(:api) }
+
   let(:team) { create(:team) }
 
   let!(:community_clinic) do

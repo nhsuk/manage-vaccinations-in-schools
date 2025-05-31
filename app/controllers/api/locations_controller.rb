@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class API::LocationsController < ActionController::API
+class API::LocationsController < API::BaseController
   def index
     @locations = Location.order(:name)
 

@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 describe "/api/onboard" do
+  before { Flipper.enable(:api) }
+  after { Flipper.disable(:api) }
+
   let(:config) { YAML.safe_load(file_fixture(filename).read) }
 
   describe "POST" do

@@ -60,9 +60,6 @@ Rails.application.routes.draw do
   mount flipper_app, at: "/flipper"
 
   unless Rails.env.production?
-    get "/reset/:organisation_ods_code",
-        to: "dev/reset_organisation#call",
-        as: :reset_organisation
     get "/random-consent-form(/:slug)", to: "dev/random_consent_form#call"
   end
 
@@ -89,7 +86,8 @@ Rails.application.routes.draw do
 
   unless Rails.env.production?
     namespace :api do
-      resources :locations, only: %i[index]
+      resources :locations, only: :index
+      resources :organisations, only: :destroy, param: :ods_code
       post "/onboard", to: "onboard#create"
     end
   end
