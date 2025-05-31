@@ -30,6 +30,8 @@
 #  fk_rails_...  (programme_id => programmes.id)
 #
 class Vaccine < ApplicationRecord
+  include VaccineFHIRConcern
+
   audited associated_with: :programme
   has_associated_audits
 
