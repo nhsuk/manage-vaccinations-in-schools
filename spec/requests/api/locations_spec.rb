@@ -75,6 +75,22 @@ describe "/api/locations" do
 
         expect(locations).to eq([primary_school.as_json])
       end
+
+      context "with multiple year groups" do
+        before { create(:school, year_groups: [8, 9]) }
+
+        let!(:secondary_school) { create(:school, year_groups: [8, 9, 10]) }
+
+        it "includes locations with all those year groups" do
+          get "/api/locations", params: { year_groups: [8, 9, 10] }
+
+          expect(response).to have_http_status(:ok)
+
+          locations = JSON.parse(response.body)
+
+          expect(locations).to eq([secondary_school.as_json])
+        end
+      end
     end
 
     context "when filtering by attached to organisation" do
