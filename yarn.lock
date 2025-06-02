@@ -1360,13 +1360,13 @@
   resolved "https://registry.yarnpkg.com/@hotwired/stimulus/-/stimulus-3.2.2.tgz#071aab59c600fed95b97939e605ff261a4251608"
   integrity sha512-eGeIqNOQpXoPAIP7tC1+1Yc1yl1xnwYqg+3mzqxyrbE5pg5YFBZcA6YoTiByJB6DKAEsiWtl6tjTJS4IYtbB7A==
 
-"@hotwired/turbo-rails@^8.0.13":
-  version "8.0.13"
-  resolved "https://registry.yarnpkg.com/@hotwired/turbo-rails/-/turbo-rails-8.0.13.tgz#7016651f7144053992ce5096bb95495f8faa5854"
-  integrity sha512-6SCnnOSzhtaJ0pNkAjncZxjtKsK3sP/vPEkCnTXBXSHkr+vF7DTZkOlwjhms1DbbQNTsjCsBoKvzSMbh/omSCQ==
+"@hotwired/turbo-rails@^8.0.16":
+  version "8.0.16"
+  resolved "https://registry.yarnpkg.com/@hotwired/turbo-rails/-/turbo-rails-8.0.16.tgz#096f3bec8c3c04d4aac4dd0f75305c67b3db3501"
+  integrity sha512-Yxiy2x+N3eOIEDokvLzSrd08aI5RDKnFYDQFl2J/LuMEWTtPdY7oNP0F/gv/sSe5AV23Lwz4FitG/uNFXNM5tA==
   dependencies:
     "@hotwired/turbo" "^8.0.13"
-    "@rails/actioncable" "^7.0"
+    "@rails/actioncable" ">=7.0"
 
 "@hotwired/turbo@^8.0.13":
   version "8.0.13"
@@ -1796,10 +1796,10 @@
   resolved "https://registry.yarnpkg.com/@prettier/plugin-ruby/-/plugin-ruby-4.0.4.tgz#73d85fc2a1731a3f62b57ac3116cf1c234027cb6"
   integrity sha512-lCpvfS/dQU5WrwN3AQ5vR8qrvj2h5gE41X08NNzAAXvHdM4zwwGRcP2sHSxfu6n6No+ljWCVx95NvJPFTTjCTg==
 
-"@rails/actioncable@^7.0":
-  version "7.1.3"
-  resolved "https://registry.yarnpkg.com/@rails/actioncable/-/actioncable-7.1.3.tgz#4db480347775aeecd4dde2405659eef74a458881"
-  integrity sha512-ojNvnoZtPN0pYvVFtlO7dyEN9Oml1B6IDM+whGKVak69MMYW99lC2NOWXWeE3bmwEydbP/nn6ERcpfjHVjYQjA==
+"@rails/actioncable@>=7.0":
+  version "8.0.200"
+  resolved "https://registry.yarnpkg.com/@rails/actioncable/-/actioncable-8.0.200.tgz#1d27d9d55e45266e061190db045925e0b4d53d6b"
+  integrity sha512-EDqWyxck22BHmv1e+mD8Kl6GmtNkhEPdRfGFT7kvsv1yoXd9iYrqHDVAaR8bKmU/syC5eEZ2I5aWWxtB73ukMw==
 
 "@rollup/plugin-babel@^5.2.0":
   version "5.3.1"
