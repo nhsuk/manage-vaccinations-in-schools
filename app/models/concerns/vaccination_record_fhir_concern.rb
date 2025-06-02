@@ -31,14 +31,7 @@ module VaccinationRecordFHIRConcern
       immunisation.expirationDate = "2021-07-02"
       immunisation.site = fhir_site
       immunisation.route = fhir_route
-
-      immunisation.doseQuantity =
-        FHIR::Quantity.new(
-          value: 0.5,
-          unit: "milliliter",
-          system: "http://unitsofmeasure.org",
-          code: "ml"
-        )
+      immunisation.doseQuantity = fhir_dose_quantity
 
       immunisation.performer = [
         FHIR::Immunization::Performer.new(
@@ -158,6 +151,15 @@ module VaccinationRecordFHIRConcern
             display: "Intramuscular route (qualifier value)"
           )
         ]
+      )
+    end
+
+    def fhir_dose_quantity
+      FHIR::Quantity.new(
+        value: dose_volume_ml,
+        unit: "milliliter",
+        system: "http://unitsofmeasure.org",
+        code: "ml"
       )
     end
   end

@@ -220,5 +220,15 @@ describe VaccinationRecordFHIRConcern do
         its(:display) { should eq "Intramuscular route (qualifier value)" }
       end
     end
+
+    describe "doseQuantity" do
+      subject { immunisation_fhir.doseQuantity }
+
+      it { should be_a FHIR::Quantity }
+      its(:value) { should eq 0.5 } # Default dose quantity
+      its(:unit) { should eq "milliliter" }
+      its(:system) { should eq "http://unitsofmeasure.org" }
+      its(:code) { should eq "ml" }
+    end
   end
 end
