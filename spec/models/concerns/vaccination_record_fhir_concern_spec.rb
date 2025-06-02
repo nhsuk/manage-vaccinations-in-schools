@@ -246,5 +246,18 @@ describe VaccinationRecordFHIRConcern do
         it { should eq organisation.fhir_reference }
       end
     end
+
+    describe "reasonCode" do
+      subject(:route) { immunisation_fhir.reasonCode.sole }
+
+      it { should be_a FHIR::CodeableConcept }
+
+      describe "reasonCode coding" do
+        subject { route.coding.first }
+
+        its(:code) { should eq "999004501000000104" }
+        its(:system) { should eq "http://snomed.info/sct" }
+      end
+    end
   end
 end
