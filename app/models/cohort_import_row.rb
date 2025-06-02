@@ -12,14 +12,8 @@ class CohortImportRow < PatientImportRow
 
   def school_urn = @data[:child_school_urn]
 
-  private
-
   def stage_registration?
     true
-  end
-
-  def school_move_source
-    :cohort_import
   end
 
   def school
@@ -28,6 +22,12 @@ class CohortImportRow < PatientImportRow
            ![SCHOOL_URN_HOME_EDUCATED, SCHOOL_URN_UNKNOWN].include?(urn)
         Location.school.find_by!(urn:)
       end
+  end
+
+  private
+
+  def school_move_source
+    :cohort_import
   end
 
   def home_educated
