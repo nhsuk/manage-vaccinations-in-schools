@@ -24,10 +24,9 @@ class DraftClassImport
   end
 
   def session
-    SessionPolicy::Scope
-      .new(@current_user, Session)
-      .resolve
-      .find_by(id: session_id)
+    return nil if session_id.nil?
+
+    SessionPolicy::Scope.new(@current_user, Session).resolve.find(session_id)
   end
 
   def session=(value)

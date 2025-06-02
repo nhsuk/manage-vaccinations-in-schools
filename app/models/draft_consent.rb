@@ -202,10 +202,12 @@ class DraftConsent
   end
 
   def patient_session
+    return nil if patient_session_id.nil?
+
     PatientSessionPolicy::Scope
       .new(@current_user, PatientSession)
       .resolve
-      .find_by(id: patient_session_id)
+      .find(patient_session_id)
   end
 
   def patient_session=(value)
@@ -228,7 +230,9 @@ class DraftConsent
   end
 
   def recorded_by
-    User.find_by(id: recorded_by_user_id)
+    return nil if recorded_by_user_id.nil?
+
+    User.find(recorded_by_user_id)
   end
 
   def recorded_by=(value)
@@ -236,10 +240,12 @@ class DraftConsent
   end
 
   def programme
+    return nil if programme_id.nil?
+
     ProgrammePolicy::Scope
       .new(@current_user, Programme)
       .resolve
-      .find_by(id: programme_id)
+      .find(programme_id)
   end
 
   def programme=(value)
