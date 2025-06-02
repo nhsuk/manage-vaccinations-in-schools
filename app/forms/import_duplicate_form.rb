@@ -49,6 +49,39 @@ class ImportDuplicateForm
   end
 
   def keep_both_changes!
-    object.apply_pending_changes_to_new_record! if can_keep_both?
+    if can_keep_both?
+      new_record = object.apply_pending_changes_to_new_record!
+
+      if twins?(object, new_record)
+        # When handling twin records, we need to ensure school moves
+        # are correctly assigned:
+        # 1. Remove the school move from the original patient record
+        #    because it was added during the duplicate detection process
+        #    when importing the second twin
+        # 2. Confirm the school move on the new twin record to ensure it's
+        #    properly assigned to the correct school.
+        # This prevents both twins from being incorrectly assigned to the same school
+        # and ensures each twin's school assignment reflects their actual situation.
+        find_latest_school_move(object)&.destroy!
+        find_latest_school_move(new_record)&.confirm!
+      end
+
+      new_record
+    end
+  end
+
+  def find_latest_school_move(patient)
+    patient
+      .school_moves
+      .includes(:organisation, :school)
+      .order(created_at: :desc)
+      .limit(1)
+      .first
+  end
+
+  def twins?(patient, new_record)
+    patient.date_of_birth == new_record.date_of_birth &&
+      patient.family_name == new_record.family_name &&
+      patient.address_postcode == new_record.address_postcode
   end
 end
