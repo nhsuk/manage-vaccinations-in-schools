@@ -15,4 +15,10 @@ module OrganisationFHIRConcern
       )
     end
   end
+
+  included do
+    def fhir_reference
+      self.class.fhir_reference(ods_code: ods_code)
+    end
+  end
 end

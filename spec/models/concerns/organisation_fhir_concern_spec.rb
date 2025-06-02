@@ -19,4 +19,18 @@ describe OrganisationFHIRConcern do
       expect(reference.identifier.value).to eq ods_code
     end
   end
+
+  describe "#fhir_reference" do
+    subject(:organisation) { Organisation.new(ods_code:) }
+
+    it "returns a FHIR reference with the correct ODS code" do
+      reference = organisation.fhir_reference
+
+      expect(reference.type).to eq "Organization"
+      expect(
+        reference.identifier.system
+      ).to eq "https://fhir.nhs.uk/Id/ods-organization-code"
+      expect(reference.identifier.value).to eq ods_code
+    end
+  end
 end
