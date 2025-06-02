@@ -65,6 +65,14 @@ if [ -z "$env" ]; then
     usage
     exit 1
 fi
+if [ "$env" == "production" ]; then
+    echo "You are trying to shell into a production container NOT Data-Replication. If you wish to proceed type 'production':"
+    read -r confirm
+    if [ "$confirm" != "production" ]; then
+        echo "Validation failed. Exiting without shelling into production container."
+        exit 1
+    fi
+fi
 
 cluster_name="mavis-$env"
 
