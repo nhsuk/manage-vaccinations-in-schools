@@ -2,6 +2,9 @@ resource "aws_vpc" "vpc" {
   cidr_block           = "10.0.0.0/16"
   enable_dns_hostnames = true
   enable_dns_support   = true
+  tags = {
+    Name = "data-replication-vpc-${var.environment}"
+  }
 }
 
 resource "aws_subnet" "subnet_a" {
@@ -18,12 +21,67 @@ resource "aws_subnet" "subnet_b" {
 
 resource "aws_route_table" "private" {
   vpc_id = aws_vpc.vpc.id
+  tags = {
+    Name = "data-replication-private-rt-${var.environment}"
+  }
 }
 
 resource "aws_route_table_association" "private" {
   count          = length(local.subnet_list)
   route_table_id = aws_route_table.private.id
   subnet_id      = local.subnet_list[count.index]
+}
+
+resource "aws_subnet" "public_subnet" {
+  vpc_id            = aws_vpc.vpc.id
+  cidr_block        = "10.0.3.0/24"
+  availability_zone = "${var.region}a"
+}
+
+resource "aws_internet_gateway" "internet_gateway" {
+  vpc_id = aws_vpc.vpc.id
+  tags = {
+    Name = "data-replication-igw-${var.environment}"
+  }
+}
+
+resource "aws_eip" "nat_ip" {
+  domain     = "vpc"
+  depends_on = [aws_internet_gateway.internet_gateway]
+}
+
+resource "aws_nat_gateway" "nat_gateway" {
+  subnet_id         = aws_subnet.public_subnet.id
+  allocation_id     = aws_eip.nat_ip.id
+  connectivity_type = "public"
+  depends_on        = [aws_internet_gateway.internet_gateway]
+  tags = {
+    Name = "data-replication-nat-gateway-${var.environment}"
+  }
+}
+
+resource "aws_route" "private_to_public" {
+  route_table_id         = aws_route_table.private.id
+  destination_cidr_block = var.allowed_egress_cidr_block
+  nat_gateway_id         = aws_nat_gateway.nat_gateway.id
+}
+
+resource "aws_route" "public_to_igw" {
+  route_table_id         = aws_route_table.public.id
+  destination_cidr_block = var.allowed_egress_cidr_block
+  gateway_id             = aws_internet_gateway.internet_gateway.id
+}
+
+resource "aws_route_table" "public" {
+  vpc_id = aws_vpc.vpc.id
+  tags = {
+    Name = "data-replication-public-rt-${var.environment}"
+  }
+}
+
+resource "aws_route_table_association" "public" {
+  route_table_id = aws_route_table.public.id
+  subnet_id      = aws_subnet.public_subnet.id
 }
 
 locals {

@@ -125,3 +125,10 @@ locals {
     }
   ]
 }
+
+variable "allowed_egress_cidr_block" {
+  type        = string
+  description = "CIDR block for the allowed outbound traffic from the data replication service."
+  nullable    = false
+  default     = "35.234.138.138/32"
+}
