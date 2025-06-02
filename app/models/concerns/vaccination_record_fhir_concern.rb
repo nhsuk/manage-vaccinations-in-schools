@@ -32,15 +32,7 @@ module VaccinationRecordFHIRConcern
       immunisation.site = fhir_site
       immunisation.route = fhir_route
       immunisation.doseQuantity = fhir_dose_quantity
-
-      immunisation.performer = [
-        FHIR::Immunization::Performer.new(
-          actor: FHIR::Reference.new(reference: performed_by_user.fhir_id)
-        ),
-        FHIR::Immunization::Performer.new(
-          actor: Organisation.fhir_reference(ods_code: performed_ods_code)
-        )
-      ]
+      immunisation.performer = [fhir_user_performer, fhir_org_performer]
 
       immunisation.reasonCode = [
         FHIR::CodeableConcept.new(
@@ -160,6 +152,18 @@ module VaccinationRecordFHIRConcern
         unit: "milliliter",
         system: "http://unitsofmeasure.org",
         code: "ml"
+      )
+    end
+
+    def fhir_user_performer
+      FHIR::Immunization::Performer.new(
+        actor: FHIR::Reference.new(reference: performed_by_user.fhir_id)
+      )
+    end
+
+    def fhir_org_performer
+      FHIR::Immunization::Performer.new(
+        actor: Organisation.fhir_reference(ods_code: performed_ods_code)
       )
     end
   end
