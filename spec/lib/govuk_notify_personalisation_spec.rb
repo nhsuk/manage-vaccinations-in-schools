@@ -56,6 +56,9 @@ describe GovukNotifyPersonalisation do
           "http://localhost:4000/consents/#{session.slug}/hpv/start",
         full_and_preferred_patient_name: "John Smith",
         location_name: "Hogwarts",
+        next_or_today_session_date: "Thursday 1 January",
+        next_or_today_session_dates: "Thursday 1 January",
+        next_or_today_session_dates_or: "Thursday 1 January",
         next_session_date: "Thursday 1 January",
         next_session_dates: "Thursday 1 January",
         next_session_dates_or: "Thursday 1 January",
@@ -86,8 +89,9 @@ describe GovukNotifyPersonalisation do
       )
     end
 
-    it "doesn't show today's date" do
+    it "doesn't show today's date in next date" do
       expect(to_h).to include(
+        next_or_today_session_date: Date.current.to_fs(:short_day_of_week),
         next_session_date: Date.tomorrow.to_fs(:short_day_of_week)
       )
     end
@@ -121,6 +125,11 @@ describe GovukNotifyPersonalisation do
       expect(to_h).to match(
         hash_including(
           consent_deadline: "Wednesday 31 December",
+          next_or_today_session_date: "Thursday 1 January",
+          next_or_today_session_dates:
+            "Thursday 1 January and Friday 2 January",
+          next_or_today_session_dates_or:
+            "Thursday 1 January or Friday 2 January",
           next_session_date: "Thursday 1 January",
           next_session_dates: "Thursday 1 January and Friday 2 January",
           next_session_dates_or: "Thursday 1 January or Friday 2 January",
@@ -137,6 +146,11 @@ describe GovukNotifyPersonalisation do
         expect(to_h).to match(
           hash_including(
             consent_deadline: "Thursday 1 January",
+            next_or_today_session_date: "Thursday 1 January",
+            next_or_today_session_dates:
+              "Thursday 1 January and Friday 2 January",
+            next_or_today_session_dates_or:
+              "Thursday 1 January or Friday 2 January",
             next_session_date: "Friday 2 January",
             subsequent_session_dates_offered_message: ""
           )
