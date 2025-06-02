@@ -39,6 +39,9 @@ class GovukNotifyPersonalisation
       day_month_year_of_vaccination:,
       full_and_preferred_patient_name:,
       location_name:,
+      next_or_today_session_date:,
+      next_or_today_session_dates:,
+      next_or_today_session_dates_or:,
       next_session_date:,
       next_session_dates:,
       next_session_dates_or:,
@@ -136,6 +139,24 @@ class GovukNotifyPersonalisation
     session.location.name
   end
 
+  def next_or_today_session_date
+    session.next_date(include_today: true)&.to_fs(:short_day_of_week)
+  end
+
+  def next_or_today_session_dates
+    session
+      .today_or_future_dates
+      .map { it.to_fs(:short_day_of_week) }
+      .to_sentence
+  end
+
+  def next_or_today_session_dates_or
+    session
+      .today_or_future_dates
+      .map { it.to_fs(:short_day_of_week) }
+      .to_sentence(last_word_connector: ", or ", two_words_connector: " or ")
+  end
+
   def next_session_date
     session.next_date(include_today: false)&.to_fs(:short_day_of_week)
   end
@@ -147,7 +168,7 @@ class GovukNotifyPersonalisation
   def next_session_dates_or
     session
       .future_dates
-      .map { _1.to_fs(:short_day_of_week) }
+      .map { it.to_fs(:short_day_of_week) }
       .to_sentence(last_word_connector: ", or ", two_words_connector: " or ")
   end
 
