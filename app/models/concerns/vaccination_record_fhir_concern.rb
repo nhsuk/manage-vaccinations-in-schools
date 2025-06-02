@@ -30,17 +30,7 @@ module VaccinationRecordFHIRConcern
       immunisation.lotNumber = "4120Z001"
       immunisation.expirationDate = "2021-07-02"
       immunisation.site = fhir_site
-
-      immunisation.route =
-        FHIR::CodeableConcept.new(
-          coding: [
-            FHIR::Coding.new(
-              system: "http://snomed.info/sct",
-              code: "78421000",
-              display: "Intramuscular route (qualifier value)"
-            )
-          ]
-        )
+      immunisation.route = fhir_route
 
       immunisation.doseQuantity =
         FHIR::Quantity.new(
@@ -154,6 +144,18 @@ module VaccinationRecordFHIRConcern
             system: "http://snomed.info/sct",
             code: site_info.first,
             display: site_info.last
+          )
+        ]
+      )
+    end
+
+    def fhir_route
+      FHIR::CodeableConcept.new(
+        coding: [
+          FHIR::Coding.new(
+            system: "http://snomed.info/sct",
+            code: "78421000",
+            display: "Intramuscular route (qualifier value)"
           )
         ]
       )
