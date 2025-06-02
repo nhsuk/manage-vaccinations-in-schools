@@ -73,7 +73,7 @@ jobs:
     name: Update permissions
     runs-on: ubuntu-latest
     needs: validate-permissions
-    if: inputs.environment == 'production' && needs.validate-permissions.outputs.policy-mismatch == 'true'
+    if: (inputs.environment == 'production' || inputs.environment == 'preview') && needs.validate-permissions.outputs.policy-mismatch == 'true'
     environment: ${{ inputs.environment }}
     permissions:
       id-token: write
