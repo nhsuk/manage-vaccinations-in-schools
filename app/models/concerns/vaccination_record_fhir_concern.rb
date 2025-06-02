@@ -33,17 +33,7 @@ module VaccinationRecordFHIRConcern
       immunisation.route = fhir_route
       immunisation.doseQuantity = fhir_dose_quantity
       immunisation.performer = [fhir_user_performer, fhir_org_performer]
-
-      immunisation.reasonCode = [
-        FHIR::CodeableConcept.new(
-          coding: [
-            FHIR::Coding.new(
-              code: "443684005",
-              system: "http://snomed.info/sct"
-            )
-          ]
-        )
-      ]
+      immunisation.reasonCode = [fhir_reason_code]
 
       immunisation.protocolApplied = [
         FHIR::Immunization::ProtocolApplied.new(
@@ -164,6 +154,17 @@ module VaccinationRecordFHIRConcern
     def fhir_org_performer
       FHIR::Immunization::Performer.new(
         actor: Organisation.fhir_reference(ods_code: performed_ods_code)
+      )
+    end
+
+    def fhir_reason_code
+      FHIR::CodeableConcept.new(
+        coding: [
+          FHIR::Coding.new(
+            code: "999004501000000104",
+            system: "http://snomed.info/sct"
+          )
+        ]
       )
     end
   end
