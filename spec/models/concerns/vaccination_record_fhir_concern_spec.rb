@@ -230,5 +230,21 @@ describe VaccinationRecordFHIRConcern do
       its(:system) { should eq "http://unitsofmeasure.org" }
       its(:code) { should eq "ml" }
     end
+
+    describe "performer" do
+      subject(:performer) { immunisation_fhir.performer }
+
+      describe "user actor" do
+        subject { performer.find { |p| p.actor.type != "Organization" }.actor }
+
+        its(:reference) { should eq user.fhir_id }
+      end
+
+      describe "organisation actor" do
+        subject { performer.find { |p| p.actor.type == "Organization" }.actor }
+
+        it { should eq organisation.fhir_reference }
+      end
+    end
   end
 end
