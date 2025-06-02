@@ -27,5 +27,3 @@ http_hosts = {
 appspec_bucket       = "nhse-mavis-appspec-bucket-preview"
 minimum_web_replicas = 2
 maximum_web_replicas = 4
-
-enable_backup_to_vault = true
