@@ -206,5 +206,19 @@ describe VaccinationRecordFHIRConcern do
         end
       end
     end
+
+    describe "route" do
+      subject(:route) { immunisation_fhir.route }
+
+      it { should be_a FHIR::CodeableConcept }
+
+      describe "route coding" do
+        subject { route.coding.first }
+
+        its(:code) { should eq "78421000" }
+        its(:system) { should eq "http://snomed.info/sct" }
+        its(:display) { should eq "Intramuscular route (qualifier value)" }
+      end
+    end
   end
 end
