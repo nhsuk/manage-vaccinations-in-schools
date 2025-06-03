@@ -39,6 +39,7 @@ resource "aws_subnet" "public_subnet" {
 }
 
 resource "aws_internet_gateway" "internet_gateway" {
+  count  = var.allowed_egress_cidr_block == null ? 0 : 1
   vpc_id = aws_vpc.vpc.id
   tags = {
     Name = "data-replication-igw-${var.environment}"
@@ -51,6 +52,7 @@ resource "aws_eip" "nat_ip" {
 }
 
 resource "aws_nat_gateway" "nat_gateway" {
+  count             = var.allowed_egress_cidr_block == null ? 0 : 1
   subnet_id         = aws_subnet.public_subnet.id
   allocation_id     = aws_eip.nat_ip.id
   connectivity_type = "public"
@@ -61,15 +63,17 @@ resource "aws_nat_gateway" "nat_gateway" {
 }
 
 resource "aws_route" "private_to_public" {
+  count                  = var.allowed_egress_cidr_block == null ? 0 : 1
   route_table_id         = aws_route_table.private.id
   destination_cidr_block = var.allowed_egress_cidr_block
-  nat_gateway_id         = aws_nat_gateway.nat_gateway.id
+  nat_gateway_id         = aws_nat_gateway.nat_gateway[0].id
 }
 
 resource "aws_route" "public_to_igw" {
+  count                  = var.allowed_egress_cidr_block == null ? 0 : 1
   route_table_id         = aws_route_table.public.id
   destination_cidr_block = var.allowed_egress_cidr_block
-  gateway_id             = aws_internet_gateway.internet_gateway.id
+  gateway_id             = aws_internet_gateway.internet_gateway[0].id
 }
 
 resource "aws_route_table" "public" {
