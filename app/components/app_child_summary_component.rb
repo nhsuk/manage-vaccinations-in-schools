@@ -80,6 +80,18 @@ class AppChildSummaryComponent < ViewComponent::Base
             row.with_value do
               helpers.format_parent_with_relationship(parent_relationship)
             end
+
+            if (
+                 href =
+                   @change_links.dig(:parent, parent_relationship.parent_id)
+               )
+              row.with_action(
+                text: "Change",
+                href:,
+                visually_hidden_text: parent_relationship.ordinal_label
+              )
+            end
+
             if (
                  href =
                    @remove_links.dig(:parent, parent_relationship.parent_id)

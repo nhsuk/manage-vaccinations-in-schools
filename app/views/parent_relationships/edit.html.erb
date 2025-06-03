@@ -1,0 +1,33 @@
+<% content_for :before_main do %>
+  <%= render AppBacklinkComponent.new(edit_patient_path(@patient), name: "patient") %>
+<% end %>
+
+<%= form_with model: @parent_relationship, url: patient_parent_relationship_path(@patient, @parent), method: :put do |f| %>
+  <%= f.govuk_error_summary %>
+
+  <% page_title = "Details for #{@parent_relationship.ordinal_label}" %>
+  <%= h1 page_title: do %>
+    <span class="nhsuk-caption-l"><%= @patient.full_name %></span>
+    <%= page_title %>
+  <% end %>
+
+  <%= f.fields_for :parent do |parent_f| %>
+    <%= parent_f.govuk_text_field :full_name, label: { text: "Name" } %>
+  <% end %>
+
+  <%= f.govuk_radio_buttons_fieldset :type, legend: { text: "Relationship to child", size: "s" } do %>
+    <%= f.govuk_radio_button :type, :mother, label: { text: "Mum" }, link_errors: true %>
+    <%= f.govuk_radio_button :type, :father, label: { text: "Dad" } %>
+    <%= f.govuk_radio_button :type, :guardian, label: { text: "Guardian" } %>
+    <%= f.govuk_radio_button :type, :other, label: { text: "Other" } do %>
+      <%= f.govuk_text_field :other_name, label: { text: "Relationship to the child" }, hint: { text: "For example, carer" } %>
+    <% end %>
+  <% end %>
+
+  <%= f.fields_for :parent do |parent_f| %>
+    <%= parent_f.govuk_text_field :email, label: { text: "Email address" } %>
+    <%= parent_f.govuk_text_field :phone, label: { text: "Phone number" } %>
+  <% end %>
+
+  <%= f.govuk_submit "Continue" %>
+<% end %>
