@@ -39,7 +39,7 @@ resource "aws_subnet" "public_subnet" {
 }
 
 resource "aws_internet_gateway" "internet_gateway" {
-  count  = min(length(var.allowed_egress_cidr_blocks), 1)
+  count  = local.shared_egress_infrastructure_count
   vpc_id = aws_vpc.vpc.id
   tags = {
     Name = "data-replication-igw-${var.environment}"
@@ -47,14 +47,15 @@ resource "aws_internet_gateway" "internet_gateway" {
 }
 
 resource "aws_eip" "nat_ip" {
+  count      = local.shared_egress_infrastructure_count
   domain     = "vpc"
   depends_on = [aws_internet_gateway.internet_gateway]
 }
 
 resource "aws_nat_gateway" "nat_gateway" {
-  count             = min(length(var.allowed_egress_cidr_blocks), 1)
+  count             = local.shared_egress_infrastructure_count
   subnet_id         = aws_subnet.public_subnet.id
-  allocation_id     = aws_eip.nat_ip.id
+  allocation_id     = aws_eip.nat_ip[0].id
   connectivity_type = "public"
   depends_on        = [aws_internet_gateway.internet_gateway]
   tags = {
