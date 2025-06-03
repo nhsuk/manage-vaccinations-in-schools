@@ -31,6 +31,10 @@ on:
         description: ARN of the DB snapshot to use (optional)
         required: false
         type: string
+      egress_cidr:
+        description: CIDR block to allow egress traffic (optional)
+        required: false
+        type: string
 
 env:
   aws_role: ${{ inputs.environment == 'production'
@@ -193,6 +197,7 @@ jobs:
           terraform init -backend-config="env/${{ inputs.environment }}-backend.hcl" -upgrade
           terraform plan -var="image_digest=${{ env.DOCKER_DIGEST }}" -var="db_secret_arn=${{ env.DB_SECRET_ARN }}" \
           -var="imported_snapshot=${{ env.SNAPSHOT_ARN }}" -var-file="env/${{ inputs.environment }}.tfvars" \
+          -var="allowed_egress_cidr_block=${{ inputs.egress_cidr }}" \
           -out ${{ runner.temp }}/tfplan | tee ${{ runner.temp }}/tf_stdout
       - name: Upload artifact
         uses: actions/upload-artifact@v4
