@@ -130,26 +130,3 @@ resource "aws_rds_cluster_instance" "core" {
   db_subnet_group_name = aws_db_subnet_group.aurora_subnet_group.name
   promotion_tier       = each.value["promotion_tier"]
 }
-
-module "dms_custom_kms_migration" {
-  source      = "./modules/dms"
-  environment = var.environment
-
-  ecs_sg_ids            = local.ecs_sg_ids
-  source_endpoint       = aws_rds_cluster.aurora_cluster.endpoint
-  source_port           = aws_rds_cluster.aurora_cluster.port
-  source_database_name  = aws_rds_cluster.aurora_cluster.database_name
-  source_db_secret_arn  = var.db_secret_arn == null ? aws_rds_cluster.aurora_cluster.master_user_secret[0].secret_arn : var.db_secret_arn
-  source_managed_secret = var.db_secret_arn == null
-
-  target_endpoint      = aws_rds_cluster.core.endpoint
-  target_port          = aws_rds_cluster.core.port
-  target_database_name = aws_rds_cluster.core.database_name
-  target_db_secret_arn = aws_rds_cluster.core.master_user_secret[0].secret_arn
-
-  engine_name = aws_rds_cluster.aurora_cluster.engine
-  subnet_ids  = [aws_subnet.private_subnet_a.id, aws_subnet.private_subnet_b.id]
-
-  rds_cluster_security_group_id = aws_security_group.rds_security_group.id
-  vpc_id                        = aws_vpc.application_vpc.id
-}
