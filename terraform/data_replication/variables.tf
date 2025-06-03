@@ -82,8 +82,10 @@ variable "rails_master_key_path" {
 }
 
 locals {
-  name_prefix = "mavis-${var.environment}-data-replication"
-  subnet_list = [aws_subnet.subnet_a.id, aws_subnet.subnet_b.id]
+  name_prefix                        = "mavis-${var.environment}-data-replication"
+  subnet_list                        = [aws_subnet.subnet_a.id, aws_subnet.subnet_b.id]
+  shared_egress_infrastructure_count = min(length(var.allowed_egress_cidr_blocks), 1)
+
   task_envs = [
     {
       name  = "DB_HOST"
@@ -124,4 +126,10 @@ locals {
       valueFrom = var.rails_master_key_path
     }
   ]
+}
+
+variable "allowed_egress_cidr_blocks" {
+  type        = list(string)
+  description = "CIDR blocks for the allowed outbound traffic from the data replication service."
+  default     = []
 }
