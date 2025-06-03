@@ -126,8 +126,8 @@ locals {
   ]
 }
 
-variable "allowed_egress_cidr_block" {
-  type        = string
-  description = "CIDR block for the allowed outbound traffic from the data replication service."
-  default     = null
+variable "allowed_egress_cidr_blocks" {
+  type        = list(string)
+  description = "CIDR blocks for the allowed outbound traffic from the data replication service."
+  default     = []
 }
