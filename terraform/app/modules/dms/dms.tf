@@ -78,7 +78,7 @@ resource "aws_dms_replication_task" "migration_task" {
       "LobMaxSize" : 32
     },
     "FullLoadSettings" : {
-      "TargetTablePrepMode" : "DO_NOTHING"
+      "TargetTablePrepMode" : "DO_NOTHING",
     }
   })
 }
