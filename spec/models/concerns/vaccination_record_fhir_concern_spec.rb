@@ -259,5 +259,23 @@ describe VaccinationRecordFHIRConcern do
         its(:system) { should eq "http://snomed.info/sct" }
       end
     end
+
+    describe "protocolApplied" do
+      subject(:protocol_applied) { immunisation_fhir.protocolApplied }
+
+      it { should be_a FHIR::Immunization::ProtocolApplied }
+
+      describe "targetDisease" do
+        subject(:target_disease) { protocol_applied.targetDisease.sole }
+
+        it { should eq programme.fhir_target_disease_coding }
+      end
+
+      describe "doseNumberPositiveInt" do
+        subject(:dose_number) { protocol_applied.doseNumberPositiveInt }
+
+        it { should eq 1 }
+      end
+    end
   end
 end

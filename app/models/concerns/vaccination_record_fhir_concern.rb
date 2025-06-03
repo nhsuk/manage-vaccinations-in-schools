@@ -34,24 +34,7 @@ module VaccinationRecordFHIRConcern
       immunisation.doseQuantity = fhir_dose_quantity
       immunisation.performer = [fhir_user_performer, fhir_org_performer]
       immunisation.reasonCode = [fhir_reason_code]
-
-      immunisation.protocolApplied = [
-        FHIR::Immunization::ProtocolApplied.new(
-          targetDisease: [
-            FHIR::CodeableConcept.new(
-              coding: [
-                FHIR::Coding.new(
-                  system: "http://snomed.info/sct",
-                  code: "840539006",
-                  display:
-                    "Disease caused by severe acute respiratory syndrome coronavirus 2 (disorder)"
-                )
-              ]
-            )
-          ],
-          doseNumberPositiveInt: 1
-        )
-      ]
+      immunisation.protocolApplied = fhir_protocol_applied
 
       immunisation
     end
@@ -165,6 +148,13 @@ module VaccinationRecordFHIRConcern
             system: "http://snomed.info/sct"
           )
         ]
+      )
+    end
+
+    def fhir_protocol_applied
+      FHIR::Immunization::ProtocolApplied.new(
+        targetDisease: [programme.fhir_target_disease_coding],
+        doseNumberPositiveInt: dose_sequence
       )
     end
   end
