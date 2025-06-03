@@ -95,24 +95,39 @@ resource "aws_rds_cluster_instance" "old_read_replica" {
   promotion_tier       = 1
 }
 
+
+resource "aws_rds_cluster_parameter_group" "migration_custom" {
+  name        = "${var.environment}-disable-constraints"
+  family      = "aurora-postgresql16"
+  description = "Custom parameter group for Aurora PostgreSQL cluster"
+
+  parameter {
+    name         = "session_replication_role"
+    value        = "replica" #TODO: Change to "origin" after DB migration
+    apply_method = "immediate"
+  }
+}
+
 resource "aws_rds_cluster" "core" {
-  cluster_identifier           = "mavis-${var.environment}"
-  engine                       = "aurora-postgresql"
-  engine_mode                  = "provisioned"
-  engine_version               = "16.8"
-  database_name                = "manage_vaccinations"
-  master_username              = "postgres"
-  backup_retention_period      = var.backup_retention_period
-  skip_final_snapshot          = !local.is_production
-  db_subnet_group_name         = aws_db_subnet_group.aurora_subnet_group.name
-  vpc_security_group_ids       = [aws_security_group.rds_security_group.id]
-  kms_key_id                   = aws_kms_key.rds_cluster.arn
-  storage_encrypted            = true
-  manage_master_user_password  = true
-  enable_http_endpoint         = true
-  deletion_protection          = true
-  allow_major_version_upgrade  = true
-  preferred_maintenance_window = "sun:02:30-sun:03:00"
+  cluster_identifier              = "mavis-${var.environment}"
+  engine                          = "aurora-postgresql"
+  engine_mode                     = "provisioned"
+  engine_version                  = "16.8"
+  database_name                   = "manage_vaccinations"
+  master_username                 = "postgres"
+  backup_retention_period         = var.backup_retention_period
+  skip_final_snapshot             = !local.is_production
+  db_subnet_group_name            = aws_db_subnet_group.aurora_subnet_group.name
+  vpc_security_group_ids          = [aws_security_group.rds_security_group.id]
+  kms_key_id                      = aws_kms_key.rds_cluster.arn
+  storage_encrypted               = true
+  manage_master_user_password     = true
+  enable_http_endpoint            = true
+  deletion_protection             = true
+  allow_major_version_upgrade     = true
+  preferred_backup_window         = "01:00-01:30"
+  preferred_maintenance_window    = "sun:02:30-sun:03:00"
+  db_cluster_parameter_group_name = aws_rds_cluster_parameter_group.migration_custom.name
 
   serverlessv2_scaling_configuration {
     max_capacity = var.max_aurora_capacity_units
