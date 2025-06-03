@@ -36,19 +36,24 @@ describe Vaccine do
   end
 
   describe "#contains_gelatine?" do
-    it "returns true if the vaccine is a nasal flu vaccine" do
-      vaccine = build(:vaccine, :fluenz_tetra)
-      expect(vaccine.contains_gelatine?).to be true
+    subject { vaccine.contains_gelatine? }
+
+    context "with a nasal Flu vaccine" do
+      let(:vaccine) { build(:vaccine, :fluenz_tetra) }
+
+      it { should be(true) }
     end
 
-    it "returns false if the vaccine is an injected flu vaccine" do
-      vaccine = build(:vaccine, :quadrivalent_influenza)
-      expect(vaccine.contains_gelatine?).to be false
+    context "with an injected Flu vaccine" do
+      let(:vaccine) { build(:vaccine, :quadrivalent_influenza) }
+
+      it { should be(false) }
     end
 
-    it "returns false if the vaccine is not a flu vaccine" do
-      vaccine = build(:vaccine, :gardasil_9)
-      expect(vaccine.contains_gelatine?).to be false
+    context "with an HPV vaccine" do
+      let(:vaccine) { build(:vaccine, :gardasil_9) }
+
+      it { should be(false) }
     end
   end
 

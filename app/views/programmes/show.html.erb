@@ -14,4 +14,8 @@
 <%= govuk_button_to "Download vaccination report", programme_vaccination_reports_path(@programme), secondary: true, class: "nhsuk-u-margin-bottom-5" %>
 
 <%= render AppProgrammeStatsComponent.new(programme: @programme) %>
-<%= render AppConsentRefusedTableComponent.new(@consents) %>
+
+<%= render AppConsentRefusedTableComponent.new(
+      @consents,
+      vaccine_may_contain_gelatine: @programme.vaccine_may_contain_gelatine?,
+    ) %>

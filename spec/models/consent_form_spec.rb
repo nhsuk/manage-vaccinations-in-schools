@@ -534,36 +534,31 @@ describe ConsentForm do
     end
   end
 
-  describe "#gelatine_content_status_in_vaccines" do
-    it "returns :maybe if the flu programme offers both injection and nasal vaccines" do
-      consent_form =
-        create(
-          :consent_form,
-          session: create(:session, programmes: [create(:programme, :flu)])
-        )
-      consent_form.strict_loading!(false)
-      expect(consent_form.gelatine_content_status_in_vaccines).to eq(:maybe)
+  describe "#vaccine_may_contain_gelatine?" do
+    subject { consent_form.vaccine_may_contain_gelatine? }
+
+    let(:consent_form) do
+      create(:consent_form, session: create(:session, programmes: [programme]))
     end
 
-    it "returns false if the flu programme only offers injection vaccines" do
-      consent_form =
-        create(
-          :consent_form,
-          session:
-            create(:session, programmes: [create(:programme, :flu_nasal_only)])
-        )
-      consent_form.strict_loading!(false)
-      expect(consent_form.gelatine_content_status_in_vaccines).to be(true)
+    before { consent_form.strict_loading!(false) }
+
+    context "if the flu programme offers both injection and nasal vaccines" do
+      let(:programme) { create(:programme, :flu) }
+
+      it { should be(true) }
     end
 
-    it "returns false for an HPV programme" do
-      consent_form =
-        create(
-          :consent_form,
-          session: create(:session, programmes: [create(:programme, :hpv)])
-        )
-      consent_form.strict_loading!(false)
-      expect(consent_form.gelatine_content_status_in_vaccines).to be(false)
+    context "if the flu programme only offers injection vaccines" do
+      let(:programme) { create(:programme, :flu_nasal_only) }
+
+      it { should be(true) }
+    end
+
+    context "for an HPV programme" do
+      let(:programme) { create(:programme, :hpv) }
+
+      it { should be(false) }
     end
   end
 

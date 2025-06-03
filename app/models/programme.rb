@@ -14,6 +14,8 @@
 #  index_programmes_on_type  (type) UNIQUE
 #
 class Programme < ApplicationRecord
+  include GelatineVaccinesConcern
+
   self.inheritance_column = nil
 
   audited

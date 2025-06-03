@@ -12,7 +12,7 @@
 
   <%= f.govuk_radio_buttons_fieldset(:reason,
                                      legend: { size: "l", text: title, tag: "h1" }) do %>
-    <% if @consent_form.gelatine_content_status_in_vaccines.in? [true, :maybe] %>
+    <% if @consent_form.vaccine_may_contain_gelatine? %>
       <%= f.govuk_radio_button :reason, "contains_gelatine",
                                label: { text: "Vaccine contains gelatine from pigs" },
                                link_errors: true %>
