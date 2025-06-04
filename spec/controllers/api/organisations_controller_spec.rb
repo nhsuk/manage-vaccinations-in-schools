@@ -58,14 +58,8 @@ describe API::OrganisationsController do
       end
 
       create(:school_move, :to_school, patient: Patient.first)
-
       create(:session_date, session: Session.first)
-
-      create(
-        :pre_screening,
-        :allows_vaccination,
-        patient_session: PatientSession.first
-      )
+      create(:pre_screening, patient_session: PatientSession.first)
     end
 
     it "deletes associated data" do

@@ -88,14 +88,8 @@ describe "MenACWY vaccination" do
   end
 
   def and_i_record_that_the_patient_has_been_vaccinated
-    # pre-screening
-    check "know what the vaccination is for, and are happy to have it"
-    check "have not already had the vaccination"
-    check "are feeling well"
-    check "have no allergies which would prevent vaccination"
-    check "are not taking any medication which prevents vaccination"
+    check "has confirmed the above statements are true"
 
-    # vaccination
     choose "Yes"
     choose "Left arm (upper position)"
     click_button "Continue"

@@ -69,7 +69,6 @@ describe AppTriageNotesComponent do
     before do
       create(
         :pre_screening,
-        :allows_vaccination,
         patient_session:,
         notes: "Some notes",
         performed_by:,
