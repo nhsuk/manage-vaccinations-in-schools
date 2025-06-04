@@ -60,9 +60,9 @@ module Generate
     end
 
     def random_patients(count)
-      patients
-        .shuffle
-        .take(count)
+      @patients_randomised ||= patients.shuffle
+      @patients_randomised
+        .shift(count)
         .tap do
           if it.size < count
             raise "Only #{it.size} patients without consent in #{programme.type} programme"
