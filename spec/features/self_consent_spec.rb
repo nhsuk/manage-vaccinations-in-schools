@@ -151,7 +151,7 @@ describe "Self-consent" do
   end
 
   def and_the_activity_log_shows_the_gillick_non_competence
-    click_on "Activity log"
+    click_on "Session activity and notes"
     expect(page).to have_content(
       "Completed Gillick assessment as not Gillick competent"
     )
@@ -205,7 +205,7 @@ describe "Self-consent" do
   end
 
   def and_the_activity_log_shows_the_gillick_competence
-    click_on "Activity log"
+    click_on "Session activity and notes"
     expect(page).to have_content(
       "Updated Gillick assessment as Gillick competent"
     )

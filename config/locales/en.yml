@@ -331,6 +331,11 @@ en:
               blank: Choose a file
               empty: Choose a CSV file with at least one record
               invalid: Choose a CSV file in the correct format
+        note:
+          attributes:
+            body:
+              blank: Enter a note
+              too_long: Enter a note that is less than %{count} characters long
         offline_password:
           attributes:
             password:
