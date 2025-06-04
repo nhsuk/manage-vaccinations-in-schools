@@ -6,6 +6,7 @@ class ParentRelationshipsController < ApplicationController
   before_action :set_parent
 
   def edit
+    @parent.contact_method_type = "any" if @parent.contact_method_type.nil?
   end
 
   def update
@@ -50,7 +51,17 @@ class ParentRelationshipsController < ApplicationController
       parent_relationship: [
         :type,
         :other_name,
-        { parent_attributes: %i[id full_name email phone] }
+        {
+          parent_attributes: %i[
+            id
+            full_name
+            email
+            phone
+            phone_receive_updates
+            contact_method_other_details
+            contact_method_type
+          ]
+        }
       ]
     )
   end
