@@ -29,6 +29,19 @@ describe AppPatientSessionSearchResultCardComponent do
   it { should have_text("Year 8") }
   it { should have_text("Consent status") }
 
+  context "when patient session has notes" do
+    let(:note) { create(:note, patient:, session:) }
+
+    it { should have_text(note.body) }
+  end
+
+  context "when patient has notes from a different session" do
+    let(:other_session) { create(:session, programmes: [programme]) }
+    let(:note) { create(:note, patient:, session: other_session) }
+
+    it { should_not have_text(note.body) }
+  end
+
   context "when context is register" do
     let(:context) { :register }
 

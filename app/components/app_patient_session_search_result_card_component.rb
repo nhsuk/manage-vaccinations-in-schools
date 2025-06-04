@@ -29,6 +29,13 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
                 row.with_value { status_tag[:value] }
               end
             end
+            
+            if (note = patient_session.latest_note&.body).present?
+              summary_list.with_row do |row|
+                row.with_key { "Notes" }
+                row.with_value { tag.blockquote(note) }
+              end
+            end
           end %>
 
       <% if context == :register && can_register_attendance? %>
