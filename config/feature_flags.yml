@@ -7,4 +7,7 @@ dev_tools: Developer tools useful for testing and debugging.
 
 mesh_jobs: Export vaccination records to MESH automatically.
 
+notes: Ability to add generic notes to patients which are later available to
+  view.
+
 offline_working: Prototype support for using Mavis offline.
