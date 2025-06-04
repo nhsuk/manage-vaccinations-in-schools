@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative "../../lib/mavis_cli"
+require_relative "../../app/lib/mavis_cli"
 
 describe "mavis generate consents" do
   it "generates consents" do

@@ -4,7 +4,7 @@ module MavisCLI
   extend Dry::CLI::Registry
 
   def self.load_rails
-    require File.expand_path("../config/environment", __dir__)
+    require_relative "../../config/environment"
   end
 end
 
