@@ -62,6 +62,7 @@ class Patient < ApplicationRecord
   has_many :consent_notifications
   has_many :consent_statuses
   has_many :consents
+  has_many :notes
   has_many :notify_log_entries
   has_many :parent_relationships, -> { order(:created_at) }
   has_many :patient_sessions
