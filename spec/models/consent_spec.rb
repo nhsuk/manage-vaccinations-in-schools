@@ -119,9 +119,12 @@ describe Consent do
 
       it "creates a parent" do
         expect(consent.parent).to have_attributes(
-          full_name: consent_form.parent_full_name,
+          contact_method_other_details:
+            consent_form.parent_contact_method_other_details,
+          contact_method_type: consent_form.parent_contact_method_type,
           email: consent_form.parent_email,
-          phone: Phonelib.parse(consent_form.parent_phone).national,
+          full_name: consent_form.parent_full_name,
+          phone: consent_form.parent_phone,
           phone_receive_updates: consent_form.parent_phone_receive_updates
         )
       end

@@ -349,6 +349,8 @@ class ConsentForm < ApplicationRecord
       ) || Parent.new
 
     parent.update!(
+      contact_method_other_details: parent_contact_method_other_details,
+      contact_method_type: parent_contact_method_type,
       email: parent_email,
       full_name: parent_full_name,
       phone: parent_phone,
