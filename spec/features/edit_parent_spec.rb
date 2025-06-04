@@ -86,7 +86,7 @@ describe "Edit parent" do
   end
 
   def and_i_change_the_relationship_of_the_parent_to_other
-    choose "Other"
+    choose "Other", match: :first
     fill_in "Relationship to the child", with: "Someone"
     click_on "Continue"
   end
@@ -98,11 +98,18 @@ describe "Edit parent" do
   def when_i_change_the_contact_details_of_the_parent
     fill_in "Email address", with: "selina@meyer.com"
     fill_in "Phone number", with: "07700 900 000"
+    check "Get updates by text message"
+    choose "They can only receive text messages"
     click_on "Continue"
   end
 
   def then_i_see_the_new_contact_details_of_the_parent
     expect(page).to have_content("selina@meyer.com")
     expect(page).to have_content("07700 900000")
+
+    # Communication preferences aren't shown in the UI
+    parent = Parent.last
+    expect(parent.phone_receive_updates).to be(true)
+    expect(parent.contact_method_type).to eq("text")
   end
 end

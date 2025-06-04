@@ -357,7 +357,7 @@ en:
             contact_method_type:
               inclusion: Choose a contact method
             contact_method_other_details:
-              blank: Enter details about how to contact you
+              blank: Enter details about how to contact the parent
               too_long: Enter details that are less than 300 characters long
             email:
               blank: Enter an email address
