@@ -78,8 +78,6 @@ variable "resource_name" {
   type = object(
     {
       dbsubnet_group           = string
-      db_cluster               = string
-      db_instance              = string
       rds_security_group       = string
       loadbalancer             = string
       lb_security_group        = string
@@ -228,11 +226,6 @@ locals {
 }
 
 ########## RDS configuration ##########
-
-variable "db_secret_arn" {
-  type        = string
-  description = "The ARN of the secret containing the DB credentials."
-}
 
 variable "backup_retention_period" {
   type        = number

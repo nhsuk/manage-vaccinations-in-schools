@@ -11,21 +11,6 @@ resource "aws_kms_key" "rds_cluster" {
         }
         Action   = "kms:*"
         Resource = "*"
-      },
-      {
-        Sid    = "AllowDMS"
-        Effect = "Allow"
-        Principal = {
-          AWS = module.dms_custom_kms_migration.dms_service_role_arn
-        }
-        Action = [
-          "kms:Encrypt",
-          "kms:Decrypt",
-          "kms:ReEncrypt*",
-          "kms:GenerateDataKey*",
-          "kms:DescribeKey"
-        ]
-        Resource = "*"
       }
     ]
   })
