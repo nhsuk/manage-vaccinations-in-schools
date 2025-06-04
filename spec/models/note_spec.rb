@@ -32,7 +32,7 @@ describe Note do
     it { should belong_to(:patient) }
     it { should belong_to(:session) }
 
-    it { should have_many(:programmes).through(:session) }
+    it { should have_one(:organisation).through(:session) }
   end
 
   describe "validations" do
@@ -40,5 +40,22 @@ describe Note do
 
     it { should validate_presence_of(:body) }
     it { should validate_length_of(:body).is_at_most(1000) }
+  end
+
+  describe "#programmes" do
+    subject(:programmes) { note.programmes }
+
+    let(:note) { create(:note, patient:, session:) }
+
+    let(:patient) { create(:patient, year_group: 8) }
+    let(:hpv_programme) { create(:programme, :hpv) }
+    let(:menacwy_programme) { create(:programme, :menacwy) }
+    let(:session) do
+      create(:session, programmes: [hpv_programme, menacwy_programme])
+    end
+
+    it "onlies show programmes valid for the patient at the time" do
+      expect(programmes).to contain_exactly(hpv_programme)
+    end
   end
 end

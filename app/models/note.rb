@@ -29,7 +29,15 @@ class Note < ApplicationRecord
   belongs_to :patient
   belongs_to :session
 
-  has_many :programmes, through: :session
+  has_one :organisation, through: :session
 
   validates :body, presence: true, length: { maximum: 1000 }
+
+  def programmes
+    session.programmes.select { it.year_groups.include?(year_group) }
+  end
+
+  private
+
+  def year_group = patient.year_group(now: created_at.to_date)
 end

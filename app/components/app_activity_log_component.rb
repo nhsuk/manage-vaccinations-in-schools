@@ -38,6 +38,13 @@ class AppActivityLogComponent < ViewComponent::Base
     @gillick_assessments =
       (patient || patient_session).gillick_assessments.includes(:performed_by)
 
+    @notes =
+      (patient || patient_session).notes.includes(
+        :created_by,
+        :patient,
+        session: :programmes
+      )
+
     @notify_log_entries = @patient.notify_log_entries.includes(:sent_by)
 
     @pre_screenings =
@@ -59,6 +66,7 @@ class AppActivityLogComponent < ViewComponent::Base
               :patient_sessions,
               :consents,
               :gillick_assessments,
+              :notes,
               :notify_log_entries,
               :pre_screenings,
               :session_attendances,
@@ -74,6 +82,7 @@ class AppActivityLogComponent < ViewComponent::Base
       attendance_events,
       consent_events,
       gillick_assessment_events,
+      note_events,
       notify_events,
       pre_screening_events,
       session_events,
@@ -152,6 +161,18 @@ class AppActivityLogComponent < ViewComponent::Base
         at: gillick_assessment.created_at,
         by: gillick_assessment.performed_by,
         programmes: programmes_for(gillick_assessment)
+      }
+    end
+  end
+
+  def note_events
+    notes.map do |note|
+      {
+        title: "Note",
+        body: note.body,
+        at: note.created_at,
+        by: note.created_by,
+        programmes: programmes_for(note)
       }
     end
   end
