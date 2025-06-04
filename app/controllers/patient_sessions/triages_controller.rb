@@ -1,13 +1,8 @@
 # frozen_string_literal: true
 
-class TriagesController < ApplicationController
-  include PatientSessionProgrammeConcern
+class PatientSessions::TriagesController < PatientSessions::BaseController
   include TriageMailerConcern
 
-  before_action :set_session
-  before_action :set_patient
-  before_action :set_patient_session
-  before_action :set_programme
   before_action :set_triage
 
   after_action :verify_authorized
@@ -32,12 +27,12 @@ class TriagesController < ApplicationController
         heading: "Triage outcome updated for",
         heading_link_text: @patient.full_name,
         heading_link_href:
-          session_patient_programme_path(patient_id: @patient.id)
+          session_patient_programme_path(@session, @patient, @programme)
       }
 
       redirect_to redirect_path
     else
-      render "patient_sessions/show", status: :unprocessable_entity
+      render "patient_sessions/programmes/show", status: :unprocessable_entity
     end
   end
 

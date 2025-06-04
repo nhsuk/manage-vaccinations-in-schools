@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
-class ConsentsController < ApplicationController
-  include PatientSessionProgrammeConcern
-
+class PatientSessions::ConsentsController < PatientSessions::BaseController
   before_action :set_consent, except: %i[create send_request]
   before_action :ensure_can_withdraw, only: %i[edit_withdraw update_withdraw]
   before_action :ensure_can_invalidate,
@@ -19,7 +17,7 @@ class ConsentsController < ApplicationController
     if @draft_consent.save
       redirect_to draft_consent_path(Wicked::FIRST_STEP)
     else
-      render "patient_sessions/show", status: :unprocessable_entity
+      render "patient_sessions/programmes/show", status: :unprocessable_entity
     end
   end
 

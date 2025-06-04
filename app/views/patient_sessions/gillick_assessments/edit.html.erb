@@ -1,5 +1,8 @@
 <% content_for :before_main do %>
-  <%= render AppBacklinkComponent.new(session_patient_programme_path(id: @patient.id), name: @patient.full_name) %>
+  <%= render AppBacklinkComponent.new(
+        session_patient_programme_path(@session, @patient, @programme),
+        name: @patient.full_name,
+      ) %>
 <% end %>
 
 <% page_title = @gillick_assessment.persisted? ? "Edit Gillick competence" : "Assess Gillick competence" %>

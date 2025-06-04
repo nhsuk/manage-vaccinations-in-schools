@@ -33,7 +33,7 @@
       <li class="app-action-list__item">
         <%= link_to(
               "Update attendance",
-              edit_session_patient_attendance_path(@session, @patient)
+              edit_session_patient_session_attendance_path(@session, @patient)
             ) %>
       </li>
     <% end %>
@@ -58,8 +58,8 @@
       end
     
       nav.with_item(
-        href: session_patient_log_path(@session, @patient, return_to: params[:return_to]),
+        href: session_patient_activity_path(@session, @patient, return_to: params[:return_to]),
         text: "Activity log",
-        selected: request.path.ends_with?("/log"),
+        selected: request.path.ends_with?("/activity"),
       )
     end %>

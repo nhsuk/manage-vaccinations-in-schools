@@ -1,18 +1,9 @@
 # frozen_string_literal: true
 
-class PatientSessionsController < ApplicationController
-  include PatientSessionProgrammeConcern
-
-  before_action :set_breadcrumb_item
-
-  before_action :record_access_log_entry, except: :record_already_vaccinated
-
-  layout "three_quarters"
+class PatientSessions::ProgrammesController < PatientSessions::BaseController
+  before_action :record_access_log_entry, only: :show
 
   def show
-  end
-
-  def log
   end
 
   def record_already_vaccinated
@@ -42,24 +33,5 @@ class PatientSessionsController < ApplicationController
 
   private
 
-  def set_breadcrumb_item
-    return_to = params[:return_to]
-    return nil if return_to.blank?
-
-    known_return_to = %w[consent triage register record outcome]
-    return unless return_to.in?(known_return_to)
-
-    @breadcrumb_item = {
-      text: t(return_to, scope: %i[sessions tabs]),
-      href: send(:"session_#{return_to}_path")
-    }
-  end
-
-  def record_access_log_entry
-    @patient.access_log_entries.create!(
-      user: current_user,
-      controller: "patient_sessions",
-      action: action_name
-    )
-  end
+  def access_log_entry_action = :show
 end

@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
-class VaccinationsController < ApplicationController
-  include PatientSessionProgrammeConcern
+class PatientSessions::VaccinationsController < PatientSessions::BaseController
   include TodaysBatchConcern
   include VaccinationMailerConcern
 
@@ -42,7 +41,7 @@ class VaccinationsController < ApplicationController
                     I18n.t(steps.first, scope: :wicked)
                   )
     else
-      render "patient_sessions/show", status: :unprocessable_entity
+      render "patient_sessions/programmes/show", status: :unprocessable_entity
     end
   end
 
