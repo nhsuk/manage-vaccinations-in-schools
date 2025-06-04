@@ -10,6 +10,7 @@ Overview of resources needed in addition to the DMS module for a successful migr
   - Target RDS cluster with custom parameter group to disable foreign key constraints.
   - Two DB instances in the **target** cluster.
   - Secret rotation configuration for the target database.
+  - Grant the ECS execution task role access to the target DB secret (in `aws_iam_policy_document.ecs_secrets_access`)
 - Removed after migration:
   - Customer parameter group for the **source** RDS cluster to allow logical replication.
   - All resources in [db_migration_config.tf.tpl](resources/db_migration_config.tf.tpl):
@@ -87,7 +88,8 @@ Details of resources needed in addition to the DMS module for a successful migra
       running application.
 2. Take snapshot of source DB
 3. DB failover (this ensures write instance has correct DB parameters)
-4. Shell into mavis-<ENV>-prepare_new_db service and run
+   1. The read instance will need to be rebooted first if it was not created in step 1.
+4. Shell into `mavis-<ENV>-prepare_new_db` service and run
    1. Run `bin/rails db:drop db:create db:schema:load` on `mavis-<ENV>-prepare_new_db` service
    2. Run `bin/rails dbconsole` and execute the following commands to prepare the target DB:
    ```postgresql
@@ -119,7 +121,7 @@ Steps to perform the migration of data and ECS services from source to target.
 8. Sync the target DB instances with changed parameter group
    1. Reboot target read instance
    2. Failover
-   3. Reboot the new target instance
+   3. Reboot the new read instance
 9. Stop good-job-service (by updating service and setting descried count to 0)
 10. Execute CodeDeploy deployment of web-service (after deploy it will point against new service)
 11. Terminate DMS migration task
@@ -141,3 +143,4 @@ the cleanup steps:
       running application.
    2. This should remove the migration-specific sources and apply post-migration changes like password rotation
       frequency.
+   3. The old source DB cluster and all its references should also be destroyed by this deployment.
