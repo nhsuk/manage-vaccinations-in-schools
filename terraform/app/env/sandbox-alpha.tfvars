@@ -1,11 +1,7 @@
 environment           = "sandbox-alpha"
 rails_master_key_path = "/copilot/mavis/secrets/STAGING_RAILS_MASTER_KEY"
-db_secret_arn         = null
 dns_certificate_arn   = null
 resource_name = {
-  dbsubnet_group           = "mavis-sandbox-alpha-rds-subnet"
-  db_cluster               = "mavis-sandbox-alpha-rds-cluster"
-  db_instance              = "mavis-sandbox-alpha-rds-instance"
   rds_security_group       = "mavis-sandbox-alpha-rds-sg"
   loadbalancer             = "mavis-sandbox-alpha-alb"
   lb_security_group        = "mavis-sandbox-alpha-alb-sg"
@@ -25,3 +21,4 @@ minimum_web_replicas = 1
 maximum_web_replicas = 2
 good_job_replicas    = 1
 
+image_digest = "sha256:59585aa10ec055bb2f64897fb046218012587185553705bfc335f5f4fae2e52c"
