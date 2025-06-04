@@ -30,7 +30,7 @@ class AppSearchComponent < ViewComponent::Base
         <% end %>
 
         <% if triage_statuses.any? %>
-          <%= f.govuk_radio_buttons_fieldset :triage_status, legend: { text: "Triage outcome", size: "s" } do %>
+          <%= f.govuk_radio_buttons_fieldset :triage_status, legend: { text: "Triage status", size: "s" } do %>
             <%= f.govuk_radio_button :triage_status, "", label: { text: "Any" } %>
             <% triage_statuses.each do |status| %>
               <%= f.govuk_radio_button :triage_status, status, label: { text: t(status, scope: %i[status triage label]) } %>
@@ -48,7 +48,7 @@ class AppSearchComponent < ViewComponent::Base
         <% end %>
 
         <% if session_statuses.any? %>
-          <%= f.govuk_radio_buttons_fieldset :session_status, legend: { text: "Vaccination status", size: "s" } do %>
+          <%= f.govuk_radio_buttons_fieldset :session_status, legend: { text: "Session outcome", size: "s" } do %>
             <%= f.govuk_radio_button :session_status, "", label: { text: "Any" } %>
             <% session_statuses.each do |status| %>
               <%= f.govuk_radio_button :session_status, status, label: { text: t(status, scope: %i[status session label]) } %>

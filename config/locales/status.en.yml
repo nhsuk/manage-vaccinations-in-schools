@@ -1,5 +1,10 @@
 en:
   status:
+    label:
+      consent: Consent status
+      triage: Triage status
+      register: Registration status
+      session: Session outcome
     consent:
       label:
         conflicts: Conflicting consent
