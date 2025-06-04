@@ -103,7 +103,7 @@ resource "aws_rds_cluster_parameter_group" "migration_target" {
 
   parameter {
     name         = "session_replication_role"
-    value        = "replica"
+    value        = "origin"
     apply_method = "immediate"
   }
 }
