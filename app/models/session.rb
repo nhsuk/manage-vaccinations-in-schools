@@ -32,6 +32,7 @@ class Session < ApplicationRecord
   belongs_to :location
 
   has_many :consent_notifications
+  has_many :notes
   has_many :patient_sessions
   has_many :session_dates, -> { order(:value) }
   has_many :session_notifications
