@@ -2,8 +2,8 @@
 
 class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
   erb_template <<-ERB
-    <%= render AppCardComponent.new(link_to:, patient: true) do |card| %>
-      <% card.with_heading { patient.full_name_with_known_as } %>
+    <%= render AppCardComponent.new(patient: true) do |card| %>
+      <% card.with_heading { link_to(patient.full_name_with_known_as, patient_path) } %>
 
       <%= govuk_summary_list do |summary_list|
             summary_list.with_row do |row|
@@ -27,6 +27,13 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
               summary_list.with_row do |row|
                 row.with_key { I18n.t(status_tag[:key], scope: %i[status label]) }
                 row.with_value { status_tag[:value] }
+              end
+            end
+
+            if (note = patient_session.latest_note)
+              summary_list.with_row do |row|
+                row.with_key { "Notes" }
+                row.with_value { render note_to_log_event(note) }
               end
             end
           end %>
@@ -67,7 +74,7 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
     helpers.policy(session_attendance).new?
   end
 
-  def link_to
+  def patient_path
     programme = patient_session.programmes.first
     session_patient_programme_path(
       session,
@@ -149,5 +156,26 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
           )
       }
     end
+  end
+
+  def note_to_log_event(note)
+    truncated_body = note.body.truncate_words(80, omission: "…")
+
+    continue_reading =
+      if truncated_body.include?("…")
+        tag.p(class: "nhsuk-u-margin-bottom-0") do
+          link_to(session_patient_activity_path(session, patient)) do
+            tag.span("Continue reading") +
+              tag.span(
+                "note for #{patient.full_name}",
+                class: "nhsuk-u-visually-hidden"
+              )
+          end
+        end
+      end
+
+    body = safe_join([truncated_body, continue_reading])
+
+    AppLogEventComponent.new(body:, at: note.created_at, by: note.created_by)
   end
 end

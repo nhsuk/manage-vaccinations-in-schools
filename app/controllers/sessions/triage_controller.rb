@@ -17,7 +17,7 @@ class Sessions::TriageController < ApplicationController
       @session
         .patient_sessions
         .includes_programmes
-        .includes(patient: :triage_statuses)
+        .includes(:latest_note, patient: :triage_statuses)
         .in_programmes(@programmes)
         .has_triage_status(@statuses, programme: @programmes)
 

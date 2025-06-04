@@ -40,6 +40,11 @@ class PatientSession < ApplicationRecord
 
   has_many :notes, -> { where(session_id: it.session_id) }, through: :patient
 
+  has_one :latest_note,
+          -> { where(session_id: it.session_id).order(created_at: :desc) },
+          through: :patient,
+          source: :notes
+
   has_many :session_notifications,
            -> { where(session_id: it.session_id) },
            through: :patient
