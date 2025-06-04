@@ -35,6 +35,10 @@ Rails/LexicallyScopedActionFilter:
   Exclude:
     - app/controllers/users/sessions_controller.rb
 
+Rails/Output:
+  Exclude:
+    - app/lib/mavis_cli/**/*.rb
+
 Rails/UnknownEnv:
   Environments:
     - development
