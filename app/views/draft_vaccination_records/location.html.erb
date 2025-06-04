@@ -14,7 +14,7 @@
                                                text: title } do %>
 
     <% @locations.each do |location| %>
-      <%= f.govuk_radio_button :location_name, "#{location.name}, #{format_address_single_line(location)}",
+      <%= f.govuk_radio_button :location_name, format_location_name_and_address_single_line(location),
                                label: { text: location.name },
                                hint: { text: format_address_single_line(location) } %>
     <% end %>
