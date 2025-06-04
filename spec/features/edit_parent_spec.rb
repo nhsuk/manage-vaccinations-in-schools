@@ -41,7 +41,8 @@ describe "Edit parent" do
     organisation = create(:organisation)
     @nurse = create(:nurse, organisation:)
 
-    @patient = create(:patient, organisation:)
+    session = create(:session, organisation:)
+    @patient = create(:patient, session:)
 
     @parent = create(:parent)
 
