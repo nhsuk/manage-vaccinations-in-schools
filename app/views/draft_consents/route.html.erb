@@ -9,7 +9,7 @@
   <%= f.govuk_error_summary %>
 
   <%= f.govuk_collection_radio_buttons :route,
-                                       Consent.routes.keys.excluding("online", "self_consent"),
+                                       Consent.verbal_routes.keys,
                                        ->(option) { option },
                                        ->(option) { Consent.human_enum_name(:route, option) },
                                        caption: { size: "l",

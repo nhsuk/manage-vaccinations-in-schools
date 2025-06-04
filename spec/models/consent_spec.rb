@@ -44,6 +44,14 @@ describe Consent do
     it { should validate_length_of(:notes).is_at_most(1000) }
   end
 
+  describe "#verbal_routes" do
+    subject(:verbal_routes) { described_class.verbal_routes }
+
+    it "does not include online or self-consent do" do
+      expect(verbal_routes.keys).to match_array(%w[phone paper in_person])
+    end
+  end
+
   describe "when consent given by parent or guardian, all health questions are no" do
     it "does not require triage" do
       response = build(:consent, :given)
