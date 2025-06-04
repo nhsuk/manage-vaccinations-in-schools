@@ -299,7 +299,7 @@ en:
               inclusion: Choose a relationship
             parent_relationship_other_name:
               blank: Enter your relationship
-              too_long: Enter a relationship that are less than 300 characters long
+              too_long: Enter a relationship that is less than 300 characters long
             parental_responsibility:
               inclusion: You need parental responsibility to give consent
             preferred_family_name:
@@ -363,6 +363,14 @@ en:
               blank: Enter an email address
             phone:
               blank: Enter a phone number
+        parent_relationship:
+          attributes:
+            type:
+              blank: Choose a relationship
+              inclusion: Choose a relationship
+            other_name:
+              blank: Enter a relationship
+              too_long: Enter a relationship that is less than 300 characters long
         patient:
           attributes:
             nhs_number:
