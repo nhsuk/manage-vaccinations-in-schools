@@ -33,14 +33,14 @@ resource "aws_db_subnet_group" "aurora_subnet_group" {
   }
 }
 
-resource "aws_rds_cluster_parameter_group" "custom" {
+resource "aws_rds_cluster_parameter_group" "migration_source" {
   name        = "${var.environment}-custom"
   family      = "aurora-postgresql16"
   description = "Custom parameter group for Aurora PostgreSQL cluster"
 
   parameter {
     name         = "rds.logical_replication"
-    value        = 1 #TODO: Set to 0 after DB migration
+    value        = 1
     apply_method = "pending-reboot"
   }
 }
@@ -62,7 +62,7 @@ resource "aws_rds_cluster" "aurora_cluster" {
   allow_major_version_upgrade     = true
   preferred_backup_window         = "01:00-01:30"
   preferred_maintenance_window    = "sun:02:30-sun:03:00"
-  db_cluster_parameter_group_name = aws_rds_cluster_parameter_group.custom.name
+  db_cluster_parameter_group_name = aws_rds_cluster_parameter_group.migration_source.name
 
   serverlessv2_scaling_configuration {
     max_capacity = var.max_aurora_capacity_units
@@ -96,14 +96,14 @@ resource "aws_rds_cluster_instance" "old_read_replica" {
 }
 
 
-resource "aws_rds_cluster_parameter_group" "migration_custom" {
+resource "aws_rds_cluster_parameter_group" "migration_target" {
   name        = "${var.environment}-disable-constraints"
   family      = "aurora-postgresql16"
   description = "Custom parameter group for Aurora PostgreSQL cluster"
 
   parameter {
     name         = "session_replication_role"
-    value        = "replica" #TODO: Change to "origin" after DB migration
+    value        = "replica"
     apply_method = "immediate"
   }
 }
@@ -127,11 +127,19 @@ resource "aws_rds_cluster" "core" {
   allow_major_version_upgrade     = true
   preferred_backup_window         = "01:00-01:30"
   preferred_maintenance_window    = "sun:02:30-sun:03:00"
-  db_cluster_parameter_group_name = aws_rds_cluster_parameter_group.migration_custom.name
+  db_cluster_parameter_group_name = aws_rds_cluster_parameter_group.migration_target.name
 
   serverlessv2_scaling_configuration {
     max_capacity = var.max_aurora_capacity_units
     min_capacity = 0.5
+  }
+}
+
+resource "aws_secretsmanager_secret_rotation" "target" {
+  secret_id          = aws_rds_cluster.core.master_user_secret[0].secret_arn
+  rotate_immediately = false
+  rotation_rules {
+    schedule_expression = "rate(400 days)"
   }
 }
 

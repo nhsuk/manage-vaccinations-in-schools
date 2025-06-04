@@ -2,12 +2,11 @@ module "dms_custom_kms_migration" {
   source      = "./modules/dms"
   environment = var.environment
 
-  ecs_sg_ids            = concat(local.ecs_sg_ids, [module.prepare_new_db_service.security_group_id])
-  source_endpoint       = aws_rds_cluster.aurora_cluster.endpoint
-  source_port           = aws_rds_cluster.aurora_cluster.port
-  source_database_name  = aws_rds_cluster.aurora_cluster.database_name
-  source_db_secret_arn  = var.db_secret_arn == null ? aws_rds_cluster.aurora_cluster.master_user_secret[0].secret_arn : var.db_secret_arn
-  source_managed_secret = var.db_secret_arn == null
+  ecs_sg_ids           = concat(local.ecs_sg_ids, [module.prepare_new_db_service.security_group_id])
+  source_endpoint      = aws_rds_cluster.aurora_cluster.endpoint
+  source_port          = aws_rds_cluster.aurora_cluster.port
+  source_database_name = aws_rds_cluster.aurora_cluster.database_name
+  source_db_secret_arn = var.db_secret_arn == null ? aws_rds_cluster.aurora_cluster.master_user_secret[0].secret_arn : var.db_secret_arn
 
   target_endpoint      = aws_rds_cluster.core.endpoint
   target_port          = aws_rds_cluster.core.port
@@ -91,4 +90,13 @@ resource "aws_security_group_rule" "db_prepare_access_to_db" {
   source_security_group_id = module.prepare_new_db_service.security_group_id
 
   description = "Allow access from the prepare_new_db ECS service to the core RDS cluster"
+}
+
+resource "aws_secretsmanager_secret_rotation" "source" {
+  count              = var.db_secret_arn == null ? 1 : 0
+  secret_id          = var.db_secret_arn == null ? aws_rds_cluster.aurora_cluster.master_user_secret[0].secret_arn : var.db_secret_arn
+  rotate_immediately = false
+  rotation_rules {
+    schedule_expression = "rate(400 days)"
+  }
 }
