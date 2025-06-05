@@ -1365,6 +1365,77 @@ describe ImmunisationImportRow do
 
         it { should eq("A Clinic") }
       end
+
+      context "with an existing community clinic" do
+        let(:data) do
+          valid_data.merge(
+            "CLINIC_NAME" => "A clinic",
+            "CARE_SETTING" => "2",
+            "SESSION_ID" => session.id.to_s,
+            )
+        end
+
+        let(:session) do
+          create(:session, organisation:, programmes:)
+        end
+
+        let!(:clinic) do
+          create(:community_clinic, name:"A clinic", organisation:)
+        end
+
+        it "is matching" do
+          immunisation_import_row.valid?
+          expect(immunisation_import_row.errors.full_messages).not_to include(a_string_including("Enter a clinic name"))
+        end
+      end
+
+      context "with incorrect casing for an existing clinic" do
+        let(:data) do
+          valid_data.merge(
+            "CLINIC_NAME" => "A clinic",
+            "CARE_SETTING" => "2",
+            "SESSION_ID" => session.id.to_s,
+            )
+        end
+
+        let(:session) do
+          create(:session, organisation:, programmes:)
+        end
+
+        let!(:clinic) do
+          create(:community_clinic, name:"A clinic", organisation:)
+        end
+
+        it "is case insensitive" do
+          immunisation_import_row.valid?
+          expect(immunisation_import_row.errors.full_messages).not_to include(a_string_including("Enter a clinic name"))
+        end
+
+      end
+
+      context "with a non-existent clinic" do
+        let(:data) do
+          valid_data.merge(
+            "CLINIC_NAME" => "A wrong clinic",
+            "CARE_SETTING" => "2",
+            "SESSION_ID" => session.id.to_s,
+            )
+        end
+
+        let(:session) do
+          create(:session, organisation:, programmes:)
+        end
+
+        let!(:clinic) do
+          create(:community_clinic, name:"A clinic", organisation:)
+        end
+
+        it "has errors" do
+          expect(immunisation_import_row).to be_invalid
+          expect(immunisation_import_row.errors.full_messages).to include(a_string_including("Enter a clinic name"))
+        end
+
+      end
     end
 
     describe "#notes" do
