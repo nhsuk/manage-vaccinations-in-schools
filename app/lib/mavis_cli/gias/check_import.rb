@@ -20,6 +20,7 @@ module MavisCLI
               .joins(sessions: :session_dates)
               .where("session_dates.value >= ?", Time.zone.today)
               .pluck(:urn)
+              .compact
           )
         existing_locations = Set.new(Location.pluck(:urn))
         organisation_locations = Set.new(Location.joins(:team).pluck(:urn))
@@ -28,7 +29,6 @@ module MavisCLI
         closing_locations_with_future_sessions = Set.new
         closed_locations_without_future_sessions = Set.new
         closing_locations_without_future_sessions = Set.new
-        Set.new
         new_locations = Set.new
 
         Zip::File.open(input_file) do |zip|
