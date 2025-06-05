@@ -77,6 +77,8 @@
         "elasticloadbalancing:ModifyLoadBalancerAttributes",
         "elasticloadbalancing:ModifyRule",
         "elasticloadbalancing:ModifyTargetGroupAttributes",
+        "elasticloadbalancing:AddListenerCertificates",
+        "elasticloadbalancing:RemoveListenerCertificates",
         "iam:AttachRolePolicy",
         "iam:CreatePolicyVersion",
         "iam:PassRole",
