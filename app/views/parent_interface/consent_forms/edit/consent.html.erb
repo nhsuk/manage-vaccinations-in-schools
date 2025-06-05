@@ -17,13 +17,13 @@
     <% if @consent_form.programmes.count > 1 %>
       <%= f.govuk_radio_button :response, "given_one",
                                label: { text: "I agree to them having one of the vaccinations" } do %>
-        <%= f.govuk_radio_buttons_fieldset :chosen_vaccine,
+        <%= f.govuk_radio_buttons_fieldset :chosen_programme,
                                            legend: {
                                              size: "s",
                                              text: "Which vaccinations do you give consent for?",
                                            } do %>
           <% @consent_form.programmes.each do |programme| %>
-            <%= f.govuk_radio_button :chosen_vaccine, programme.type,
+            <%= f.govuk_radio_button :chosen_programme, programme.type,
                                      label: { text: programme.name } %>
           <% end %>
         <% end %>

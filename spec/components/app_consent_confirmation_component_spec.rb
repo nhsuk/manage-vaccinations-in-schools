@@ -19,16 +19,14 @@ describe AppConsentConfirmationComponent do
       create(
         :session,
         dates: [Date.yesterday, Date.tomorrow],
-        programmes: [create(:programme, :menacwy)]
+        programmes: [create(:programme, :menacwy), create(:programme, :td_ipv)]
       )
     end
-    let(:consent_form) do
-      create(
-        :consent_form,
-        response: "given_one",
-        chosen_vaccine: "menacwy",
-        session:
-      )
+    let(:consent_form) { create(:consent_form, :given, session:) }
+
+    before do
+      consent_form.consent_form_programmes.first.update!(response: "given")
+      consent_form.consent_form_programmes.second.update!(response: "refused")
     end
 
     it { should have_text("Consent for the MenACWY vaccination confirmed") }

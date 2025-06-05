@@ -10,7 +10,6 @@
 #  address_postcode                    :string
 #  address_town                        :string
 #  archived_at                         :datetime
-#  chosen_vaccine                      :string
 #  date_of_birth                       :date
 #  education_setting                   :integer
 #  family_name                         :text
@@ -31,7 +30,6 @@
 #  reason                              :integer
 #  reason_notes                        :text
 #  recorded_at                         :datetime
-#  response                            :integer
 #  school_confirmed                    :boolean
 #  use_preferred_name                  :boolean
 #  created_at                          :datetime         not null
@@ -61,13 +59,15 @@ require_relative "../../lib/faker/address"
 
 FactoryBot.define do
   factory :consent_form do
-    transient { session { association :session } }
+    transient do
+      session { association :session }
+      response { "given" }
+    end
 
     given_name { Faker::Name.first_name }
     family_name { Faker::Name.last_name }
     use_preferred_name { false }
     date_of_birth { Faker::Date.birthday(min_age: 3, max_age: 9) }
-    response { "given" }
     address_line_1 { Faker::Address.street_address }
     address_town { Faker::Address.city }
     address_postcode { Faker::Address.uk_postcode }
@@ -112,10 +112,20 @@ FactoryBot.define do
       archived_at { Time.current }
     end
 
+    trait :given do
+      response { "given" }
+    end
+
     trait :refused do
-      response { :refused }
+      response { "refused" }
       reason { :personal_choice }
       health_answers { [] }
+    end
+
+    after(:create) do |consent_form, evaluator|
+      consent_form.consent_form_programmes.update_all(
+        response: evaluator.response
+      )
     end
 
     trait :with_health_answers_no_branching do
