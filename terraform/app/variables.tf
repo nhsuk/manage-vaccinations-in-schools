@@ -157,6 +157,12 @@ variable "enable_splunk" {
   nullable    = false
 }
 
+variable "app_version" {
+  type        = string
+  description = "The version identifier for the MAVIS application deployment"
+  nullable    = false
+}
+
 locals {
   is_production = var.environment == "production"
   parameter_store_variables = tomap({
@@ -202,6 +208,10 @@ locals {
     {
       name  = "MAVIS__SPLUNK__ENABLED"
       value = var.enable_splunk ? "true" : "false"
+    },
+    {
+      name  = "APP_VERSION"
+      value = var.app_version
     }
   ]
   task_secrets = concat([

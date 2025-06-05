@@ -20,6 +20,10 @@ on:
         description: Docker image tag to deploy
         required: false
         type: string
+      git_ref_to_deploy:
+        required: true
+        type: string
+
   workflow_call:
     inputs:
       environment:
@@ -28,6 +32,9 @@ on:
         type: string
       image_tag:
         required: false
+        type: string
+      git_ref_to_deploy:
+        required: true
         type: string
 
 permissions: {}
@@ -141,12 +148,15 @@ jobs:
         run: sudo snap install --classic aws-cli
       - name: Check if any deployments are running
         run: ../scripts/check-for-running-deployments.sh ${{ inputs.environment }}
+      - name: Set Mavis app version
+        run: |
+          echo "APP_VERSION=${{ inputs.git_ref_to_deploy }}" >> $GITHUB_ENV
       - name: Terraform Plan
         id: plan
         run: |
           set -e
           terraform init -backend-config="env/${{ inputs.environment }}-backend.hcl" -upgrade
-          terraform plan -var="image_digest=$DIGEST" -var-file="env/${{ inputs.environment }}.tfvars" \
+          terraform plan -var="image_digest=$DIGEST" -var="app_version=$APP_VERSION" -var-file="env/${{ inputs.environment }}.tfvars" \
           -out ${{ runner.temp }}/tfplan | tee ${{ runner.temp }}/tf_stdout
       - name: Validate the changes
         run: |

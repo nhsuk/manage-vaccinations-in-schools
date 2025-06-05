@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
-path = Rails.root.join("public/ref")
+version = ENV["APP_VERSION"]
+if Rails.env.production? && version.present? &&
+     !version.match?(/\Av\d+(\.\d+)+\z/)
+  version = nil
+end
 
-version = File.read(path).strip if File.exist?(path)
 APP_VERSION = version.presence

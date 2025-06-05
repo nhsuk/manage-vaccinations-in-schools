@@ -85,6 +85,7 @@ jobs:
     with:
       environment: ${{ inputs.environment }}
       image_tag: ${{ needs.determine-git-sha.outputs.git-sha }}
+      git_ref_to_deploy: ${{ inputs.git_ref_to_deploy || github.ref_name }}
   deploy-application:
     permissions:
       id-token: write
