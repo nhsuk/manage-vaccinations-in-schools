@@ -15,6 +15,7 @@
 #
 class Programme < ApplicationRecord
   include GelatineVaccinesConcern
+  include ProgrammeFHIRConcern
 
   self.inheritance_column = nil
 
@@ -136,5 +137,20 @@ class Programme < ApplicationRecord
 
   def snomed_procedure_term
     SNOMED_PROCEDURE_TERMS.fetch(type)
+  end
+
+  SNOMED_TARGET_DISEASE_CODES = { "hpv" => "240532009", "flu" => "6142004" }
+
+  def snomed_target_disease_code
+    SNOMED_TARGET_DISEASE_CODES.fetch(type)
+  end
+
+  SNOMED_TARGET_DISEASE_TERMS = {
+    "hpv" => "Human papillomavirus infection (disorder)",
+    "flu" => "Influenza (disorder)"
+  }
+
+  def snomed_target_disease_term
+    SNOMED_TARGET_DISEASE_TERMS.fetch(type)
   end
 end
