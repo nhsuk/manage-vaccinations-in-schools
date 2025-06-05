@@ -14,22 +14,22 @@ module MavisCLI
 
         require "zip"
 
-        existing_locations_with_future_sessions =
+        existing_schools_with_future_sessions =
           Set.new(
             Location
+              .school
               .joins(sessions: :session_dates)
               .where("session_dates.value >= ?", Time.zone.today)
               .pluck(:urn)
-              .compact
           )
-        existing_locations = Set.new(Location.pluck(:urn))
-        organisation_locations = Set.new(Location.joins(:team).pluck(:urn))
+        existing_schools = Set.new(Location.school.pluck(:urn))
+        organisation_schools = Set.new(Location.school.joins(:team).pluck(:urn))
 
-        closed_locations_with_future_sessions = Set.new
-        closing_locations_with_future_sessions = Set.new
-        closed_locations_without_future_sessions = Set.new
-        closing_locations_without_future_sessions = Set.new
-        new_locations = Set.new
+        closed_schools_with_future_sessions = Set.new
+        closing_schools_with_future_sessions = Set.new
+        closed_schools_without_future_sessions = Set.new
+        closing_schools_without_future_sessions = Set.new
+        new_schools = Set.new
 
         Zip::File.open(input_file) do |zip|
           csv_entry = zip.glob("edubasealldata*.csv").first
@@ -46,54 +46,54 @@ module MavisCLI
             urn = row["URN"]
             new_status = row["EstablishmentStatus (name)"]
 
-            if urn.in?(existing_locations_with_future_sessions)
+            if urn.in?(existing_schools_with_future_sessions)
               if new_status == "Closed"
-                closed_locations_with_future_sessions << urn
+                closed_schools_with_future_sessions << urn
               elsif new_status == "Open, but proposed to close"
-                closing_locations_with_future_sessions << urn
+                closing_schools_with_future_sessions << urn
               end
-            elsif urn.in?(organisation_locations)
+            elsif urn.in?(organisation_schools)
               if new_status == "Closed"
-                closed_locations_without_future_sessions << urn
+                closed_schools_without_future_sessions << urn
               elsif new_status == "Open, but proposed to close"
-                closing_locations_without_future_sessions << urn
+                closing_schools_without_future_sessions << urn
               end
-            elsif !urn.in?(existing_locations) &&
+            elsif !urn.in?(existing_schools) &&
                   new_status.in?(["Open", "Open, but proposed to close"])
-              new_locations << urn
+              new_schools << urn
             end
           end
         end
 
-        closed_locations_count =
-          closed_locations_without_future_sessions.count +
-            closed_locations_with_future_sessions.count
-        closing_locations_count =
-          closing_locations_without_future_sessions.count +
-            closing_locations_with_future_sessions.count
+        closed_schools_count =
+          closed_schools_without_future_sessions.count +
+            closed_schools_with_future_sessions.count
+        closing_schools_count =
+          closing_schools_without_future_sessions.count +
+            closing_schools_with_future_sessions.count
 
-        closed_locations_with_future_sessions_pct =
-          closed_locations_with_future_sessions.count.to_f /
-            existing_locations_with_future_sessions.count
+        closed_schools_with_future_sessions_pct =
+          closed_schools_with_future_sessions.count.to_f /
+            existing_schools_with_future_sessions.count
 
-        closing_locations_with_future_sessions_pct =
-          closing_locations_with_future_sessions.count.to_f /
-            existing_locations_with_future_sessions.count
+        closing_schools_with_future_sessions_pct =
+          closing_schools_with_future_sessions.count.to_f /
+            existing_schools_with_future_sessions.count
 
         puts <<~OUTPUT
-                  New locations (total): #{new_locations.count}
-               Closed locations (total): #{closed_locations_count}
-Proposed to be closed locations (total): #{closing_locations_count}
+                  New schools (total): #{new_schools.count}
+               Closed schools (total): #{closed_schools_count}
+Proposed to be closed schools (total): #{closing_schools_count}
 
- Existing locations with future sessions: #{existing_locations_with_future_sessions.count}
-               That are closed in import: #{closed_locations_with_future_sessions.count} (#{closed_locations_with_future_sessions_pct * 100}%)
-That are proposed to be closed in import: #{closing_locations_with_future_sessions.count} (#{closing_locations_with_future_sessions_pct * 100}%)
+ Existing schools with future sessions: #{existing_schools_with_future_sessions.count}
+               That are closed in import: #{closed_schools_with_future_sessions.count} (#{closed_schools_with_future_sessions_pct * 100}%)
+That are proposed to be closed in import: #{closing_schools_with_future_sessions.count} (#{closing_schools_with_future_sessions_pct * 100}%)
         OUTPUT
 
-        puts <<~OUTPUT if closed_locations_with_future_sessions.any?
+        puts <<~OUTPUT if closed_schools_with_future_sessions.any?
 
-URNs of closed locations with future sessions:
-  #{closed_locations_with_future_sessions.to_a.sort.join("\n  ")}
+URNs of closed schools with future sessions:
+  #{closed_schools_with_future_sessions.to_a.sort.join("\n  ")}
           OUTPUT
       end
     end
