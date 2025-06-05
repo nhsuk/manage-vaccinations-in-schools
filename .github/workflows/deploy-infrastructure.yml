@@ -156,11 +156,13 @@ jobs:
         run: |
           set -e
           terraform init -backend-config="env/${{ inputs.environment }}-backend.hcl" -upgrade
-          terraform plan -var="image_digest=$DIGEST" -var="app_version=$APP_VERSION" -var-file="env/${{ inputs.environment }}.tfvars" \
-          -out ${{ runner.temp }}/tfplan | tee ${{ runner.temp }}/tf_stdout
-      - name: Validate the changes
-        run: |
-          set -e
+          terraform plan -var="image_digest=$DIGEST" -var-file="env/${{ inputs.environment }}.tfvars" \
+          -out ${{ runner.temp }}/tfplan &> ${{ runner.temp }}/tf_stdout
+          TF_EXIT_CODE=$?
+          cat ${{ runner.temp }}/tf_stdout
+          if [ $TF_EXIT_CODE -eq 1 ]; then
+              exit $TF_EXIT_CODE
+          fi
           ../scripts/validate_plan.sh ${{ runner.temp }}/tf_stdout
       - name: Upload artifact
         uses: actions/upload-artifact@v4
