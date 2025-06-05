@@ -98,7 +98,7 @@ class AppSearchComponent < ViewComponent::Base
           <% if show_buttons_in_details? %>
             <div class="app-button-group">
               <%= f.govuk_submit "Update results", secondary: true, class: "app-button--small" %>
-              <%= govuk_button_link_to "Clear filters", clear_filters_path, class: "app-button--small app-button--secondary" %>
+              <%= govuk_button_link_to "Clear filters", clear_filters_path, secondary: true, class: "app-button--small" %>
             </div>
           <% end %>
         <% end %>
@@ -106,7 +106,7 @@ class AppSearchComponent < ViewComponent::Base
         <% unless show_buttons_in_details? %>
           <div class="app-button-group">
             <%= f.govuk_submit "Update results", secondary: true, class: "app-button--small" %>
-            <%= govuk_button_link_to "Clear filters", clear_filters_path, class: "app-button--small app-button--secondary" %>
+            <%= govuk_button_link_to "Clear filters", clear_filters_path, secondary: true, class: "app-button--small" %>
           </div>
         <% end %>
       <% end %>
