@@ -2,12 +2,7 @@
 
 describe "clinics:create" do
   def capture_rake_task_output(task_name, *args)
-    stdout = StringIO.new
-    $stdout = stdout
-    Rake::Task[task_name].invoke(*args)
-    $stdout = STDOUT
-    Rake.application[task_name].reenable
-    stdout.string
+    capture_output { Rake::Task[task_name].invoke(*args) }
   end
 
   let(:organisation) { create(:organisation, ods_code: "ABC123") }

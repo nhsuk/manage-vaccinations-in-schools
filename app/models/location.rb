@@ -51,7 +51,7 @@ class Location < ApplicationRecord
 
   # This is based on the school statuses from the DfE GIAS data.
   enum :status,
-       { unknown: 0, open: 1, closed: 2, opening: 3, closing: 4 },
+       { unknown: 0, open: 1, closed: 2, closing: 3, opening: 4 },
        default: :unknown
 
   enum :type,
