@@ -12,23 +12,33 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - name: Determine if rails tests are needed
         id: check-rails-relevant-changes
+        continue-on-error: true
         run: |
           if [ ${{ github.event_name }} == "pull_request" ]; then
-            git fetch origin || { echo "Fetch failed, running all tests"; \
-            echo "RUN_RAILS_TESTS=true" > $GITHUB_OUTPUT; exit 0; };
-            RELEVANT_DIRS=$(git diff ${{ github.event.pull_request.base.sha }} origin/${{ github.event.pull_request.head.ref }}  --name-only)
+            git fetch origin
+            RELEVANT_DIRS=$(git diff origin/${{ github.event.pull_request.base.ref }}...HEAD --name-only)
             if [ -z "$(echo "$RELEVANT_DIRS" | egrep -v "^(.github|adr|aws|docs|storage|terraform|tests|tests-examples)/")" ]; then
               echo "No relevant changes detected, skipping rails tests"
-              echo "RUN_RAILS_TESTS=false" >> $GITHUB_OUTPUT
+              echo "RUN_RAILS_TESTS=false" >> $GITHUB_ENV
               exit 0
             fi
           fi
           echo "Not a pull request or detected relevant changes: Running rails tests"
-          echo "RUN_RAILS_TESTS=true" >> $GITHUB_OUTPUT
+          echo "RUN_RAILS_TESTS=true" >> $GITHUB_ENV
+      - name: Run rails tests if diff check fails
+        id: check-rails-relevant-changes-failure
+        run: |
+          if [[ ${{ steps.check-rails-relevant-changes.outcome }} == failure ]]; then
+            echo "RUN_RAILS_TESTS=true" >> $GITHUB_OUTPUT
+          else
+            echo "RUN_RAILS_TESTS=$RUN_RAILS_TESTS" >> $GITHUB_OUTPUT
+          fi
     outputs:
-      run-rails-tests: ${{ steps.check-rails-relevant-changes.outputs.RUN_RAILS_TESTS }}
+      run-rails-tests: ${{ steps.check-rails-relevant-changes-failure.outputs.RUN_RAILS_TESTS }}
 
   rails:
     name: Rails
