@@ -1371,46 +1371,41 @@ describe ImmunisationImportRow do
           valid_data.merge(
             "CLINIC_NAME" => "A clinic",
             "CARE_SETTING" => "2",
-            "SESSION_ID" => session.id.to_s,
-            )
+            "SESSION_ID" => session.id.to_s
+          )
         end
 
-        let(:session) do
-          create(:session, organisation:, programmes:)
-        end
+        let(:session) { create(:session, organisation:, programmes:) }
 
-        let!(:clinic) do
-          create(:community_clinic, name:"A clinic", organisation:)
-        end
+        before { create(:community_clinic, name: "A clinic", organisation:) }
 
         it "is matching" do
           immunisation_import_row.valid?
-          expect(immunisation_import_row.errors.full_messages).not_to include(a_string_including("Enter a clinic name"))
+          expect(immunisation_import_row.errors.full_messages).not_to include(
+            a_string_including("Enter a clinic name")
+          )
         end
       end
 
       context "with incorrect casing for an existing clinic" do
         let(:data) do
           valid_data.merge(
-            "CLINIC_NAME" => "A clinic",
+            "CLINIC_NAME" => "a cLinIC",
             "CARE_SETTING" => "2",
-            "SESSION_ID" => session.id.to_s,
-            )
+            "SESSION_ID" => session.id.to_s
+          )
         end
 
-        let(:session) do
-          create(:session, organisation:, programmes:)
-        end
+        let(:session) { create(:session, organisation:, programmes:) }
 
-        let!(:clinic) do
-          create(:community_clinic, name:"A clinic", organisation:)
-        end
+        before { create(:community_clinic, name: "A clinic", organisation:) }
 
         it "is case insensitive" do
           immunisation_import_row.valid?
-          expect(immunisation_import_row.errors.full_messages).not_to include(a_string_including("Enter a clinic name"))
+          expect(immunisation_import_row.errors.full_messages).not_to include(
+            a_string_including("Enter a clinic name")
+          )
         end
-
       end
 
       context "with a non-existent clinic" do
@@ -1418,23 +1413,20 @@ describe ImmunisationImportRow do
           valid_data.merge(
             "CLINIC_NAME" => "A wrong clinic",
             "CARE_SETTING" => "2",
-            "SESSION_ID" => session.id.to_s,
-            )
+            "SESSION_ID" => session.id.to_s
+          )
         end
 
-        let(:session) do
-          create(:session, organisation:, programmes:)
-        end
+        let(:session) { create(:session, organisation:, programmes:) }
 
-        let!(:clinic) do
-          create(:community_clinic, name:"A clinic", organisation:)
-        end
+        before { create(:community_clinic, name: "A clinic", organisation:) }
 
         it "has errors" do
           expect(immunisation_import_row).to be_invalid
-          expect(immunisation_import_row.errors.full_messages).to include(a_string_including("Enter a clinic name"))
+          expect(immunisation_import_row.errors.full_messages).to include(
+            a_string_including("Enter a clinic name")
+          )
         end
-
       end
     end
 
