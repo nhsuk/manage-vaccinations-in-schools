@@ -90,7 +90,7 @@ Details of resources needed in addition to the DMS module for a successful migra
 3. DB failover (this ensures write instance has correct DB parameters)
    1. The read instance will need to be rebooted first if it was not created in step 1.
 4. Shell into `mavis-<ENV>-prepare_new_db` service and run
-   1. Run `bin/rails db:drop db:create db:schema:load` on `mavis-<ENV>-prepare_new_db` service
+   1. Run `bin/rails db:drop db:create db:schema:load` on `mavis-<ENV>-prepare_new_db` service. This will drop any existing data while still maintaining the database schema.
    2. Run `bin/rails dbconsole` and execute the following commands to prepare the target DB:
    ```postgresql
    TRUNCATE public.schema_migrations;
@@ -118,18 +118,11 @@ Steps to perform the migration of data and ECS services from source to target.
       running application.
    2. Note that this also changes the DB session_replication_role to the default "origin"), which is crucial to ensure
       data consistency on the target DB after the migration.
-8. Sync the target DB instances with changed parameter group
-   1. Reboot target read instance
-   2. Failover
-   3. Reboot the new read instance
+8. Validate that the target DB has `session_replication_role` set to `origin` in the DB cluster parameter group.
 9. Stop good-job-service (by updating service and setting descried count to 0)
 10. Execute CodeDeploy deployment of web-service (after deploy it will point against new service)
 11. Terminate DMS migration task
 12. Execute ECS deployment of good-job-service
-13. Shut down read/write instances on old DB (but leave cluster up)
-    1. This persists the pre-migrated data in a "hot" state where we just need to start the instances again
-    2. This allows us to roll back quickly if needed, but with the cost of loosing any data accumulated since the ECS
-       switchover
 
 ### Post-Migration cleanup:
 
