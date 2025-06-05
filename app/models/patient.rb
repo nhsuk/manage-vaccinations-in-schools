@@ -118,25 +118,78 @@ class Patient < ApplicationRecord
 
   scope :search_by_name,
         ->(query) do
-          # Trigram matching requires at least 3 characters
-          if query.length < 3
-            where(
-              "given_name ILIKE :like_query OR family_name ILIKE :like_query",
-              like_query: "#{query}%"
-            )
-          else
-            where(
-              "SIMILARITY(CONCAT(given_name, ' ', family_name), :query) > 0.3 OR " \
-                "SIMILARITY(CONCAT(family_name, ' ', given_name), :query) > 0.3",
-              query:
-            ).order(
-              Arel.sql(
-                "GREATEST(SIMILARITY(CONCAT(given_name, ' ', family_name), :query), " \
-                  "SIMILARITY(CONCAT(family_name, ' ', given_name), :query)) DESC",
-                query:
-              )
-            )
-          end
+          return none if query.blank?
+
+          terms =
+            query
+              .gsub(",", " ")
+              .normalise_whitespace
+              .split(/\s+/)
+              .reject(&:blank?)
+              .map(&:downcase)
+          return none if terms.empty?
+
+          where_conditions =
+            terms.map do |term|
+              sanitized_term = ActiveRecord::Base.connection.quote(term)
+              sanitized_term_prefix =
+                ActiveRecord::Base.connection.quote("#{term}%")
+              sanitized_term_mid =
+                ActiveRecord::Base.connection.quote("%#{term}%")
+
+              if term.length < 3
+                "LOWER(family_name) = #{sanitized_term} OR " \
+                  "LOWER(given_name) = #{sanitized_term} OR " \
+                  "LOWER(family_name) ILIKE #{sanitized_term_prefix} OR " \
+                  "LOWER(given_name) ILIKE #{sanitized_term_prefix}"
+              else
+                "(LOWER(family_name) = #{sanitized_term} OR " \
+                  "LOWER(given_name) = #{sanitized_term} OR " \
+                  "LOWER(family_name) ILIKE #{sanitized_term_prefix} OR " \
+                  "LOWER(given_name) ILIKE #{sanitized_term_prefix} OR " \
+                  "LOWER(family_name) ILIKE #{sanitized_term_mid} OR " \
+                  "LOWER(given_name) ILIKE #{sanitized_term_mid} OR " \
+                  "SIMILARITY(LOWER(family_name), #{sanitized_term}) > 0.3 OR " \
+                  "SIMILARITY(LOWER(given_name), #{sanitized_term}) > 0.3)"
+              end
+            end
+
+          score_cases =
+            terms.map do |term|
+              sanitized_term = ActiveRecord::Base.connection.quote(term)
+              sanitized_term_prefix =
+                ActiveRecord::Base.connection.quote("#{term}%")
+              sanitized_term_mid =
+                ActiveRecord::Base.connection.quote("%#{term}%")
+
+              "CASE " \
+                "WHEN LOWER(family_name) = #{sanitized_term} " \
+                "THEN 3.001 " \
+                "WHEN LOWER(given_name) = #{sanitized_term} " \
+                "THEN 3 " \
+                "WHEN LOWER(family_name) ILIKE #{sanitized_term_prefix} " \
+                "THEN SIMILARITY(LOWER(family_name), #{sanitized_term}) + 2.001 " \
+                "WHEN LOWER(given_name) ILIKE #{sanitized_term_prefix} " \
+                "THEN SIMILARITY(LOWER(given_name), #{sanitized_term}) + 2 " \
+                "WHEN LOWER(family_name) ILIKE #{sanitized_term_mid} " \
+                "THEN SIMILARITY(LOWER(family_name), #{sanitized_term}) + 1.001 " \
+                "WHEN LOWER(given_name) ILIKE #{sanitized_term_mid} " \
+                "THEN SIMILARITY(LOWER(given_name), #{sanitized_term}) + 1 " \
+                "WHEN SIMILARITY(LOWER(family_name), #{sanitized_term}) > 0.3 " \
+                "THEN SIMILARITY(LOWER(family_name), #{sanitized_term}) + 0.001 " \
+                "WHEN SIMILARITY(LOWER(given_name), #{sanitized_term}) > 0.3 " \
+                "THEN SIMILARITY(LOWER(given_name), #{sanitized_term}) + 0 " \
+                "ELSE 0 " \
+                "END"
+            end
+          # Combine all score cases with addition
+          total_score_sql = score_cases.map { |sc| "(#{sc})" }.join(" + ")
+
+          where(where_conditions.join(" OR ")).order(
+            Arel.sql("(#{total_score_sql}) DESC")
+          ).order_by_name
+
+          # TODO: implement a simpler match/order for v short search terms which will have lots of results
         end
 
   scope :search_by_year_groups,

@@ -54,60 +54,336 @@ describe Patient do
     describe "#search_by_name" do
       subject(:scope) { described_class.search_by_name(query) }
 
-      let(:patient_a) do
-        # exact match comes first
-        create(:patient, given_name: "Harry", family_name: "Potter")
-      end
-      let(:patient_b) do
-        # similar match comes next
-        create(:patient, given_name: "Hari", family_name: "Potte")
-      end
-      let(:patient_c) do
-        # least similar match comes last
-        create(:patient, given_name: "Arry", family_name: "Pott")
-      end
-      let(:patient_d) do
-        # no match isn't returned
-        create(:patient, given_name: "Ron", family_name: "Weasley")
-      end
+      describe "case insensitivity" do
+        let!(:patient_mixed_case) do
+          create(:patient, given_name: "JoHn", family_name: "SmItH")
+        end
 
-      context "with full name, in `given_name family_name` format" do
-        let(:query) { "Harry Potter" }
+        context "with lowercase query" do
+          let(:query) { "john smith" }
 
-        it "returns the patients in the correct order" do
-          expect(scope).to eq([patient_a, patient_b, patient_c])
+          it "finds the patient regardless of case" do
+            expect(scope).to include(patient_mixed_case)
+          end
+        end
+
+        context "with uppercase query" do
+          let(:query) { "JOHN SMITH" }
+
+          it "finds the patient regardless of case" do
+            expect(scope).to include(patient_mixed_case)
+          end
+        end
+
+        context "with mixed case query" do
+          let(:query) { "JoHn SmITh" }
+
+          it "finds the patient regardless of case" do
+            expect(scope).to include(patient_mixed_case)
+          end
         end
       end
 
-      context "with exact name, in `FAMILY_NAME, given_name` format" do
-        let(:query) { "POTTER, Harry" }
+      describe "comma handling" do
+        let!(:patient_comma_test) do
+          create(:patient, given_name: "Sarah", family_name: "Connor")
+        end
 
-        it "returns the patients in the correct order" do
-          expect(scope).to eq([patient_a, patient_b, patient_c])
+        context "with comma-separated query 'Connor, Sarah'" do
+          let(:query) { "Connor, Sarah" }
+
+          it "finds the patient by treating comma as name separator" do
+            expect(scope).to include(patient_comma_test)
+          end
+        end
+
+        context "with comma-separated query with extra spaces 'Connor, Sarah'" do
+          let(:query) { "Connor,  Sarah" }
+
+          it "finds the patient by treating comma as name separator" do
+            expect(scope).to include(patient_comma_test)
+          end
+        end
+
+        context "with comma-separated query 'CONNOR, sarah'" do
+          let(:query) { "CONNOR, sarah" }
+
+          it "finds the patient with case insensitive comma handling" do
+            expect(scope).to include(patient_comma_test)
+          end
         end
       end
 
-      context "with exact name, in `family_name given_name` format" do
-        let(:query) { "Potter Harry" }
-
-        it "returns the patients in the correct order" do
-          expect(scope).to eq([patient_a, patient_b, patient_c])
+      describe "comprehensive search ordering with all match types" do
+        let(:expected_order) do
+          [
+            perfect_full_given_family,
+            perfect_family_only,
+            perfect_given_only,
+            prefix_family,
+            prefix_given,
+            mid_family,
+            mid_given,
+            similar_given_in_family,
+            similar_given,
+            similar_family,
+            similar_family_in_given
+          ]
         end
-      end
 
-      context "with last name only" do
-        let(:query) { "Potter" }
-
-        it "returns the patients in the correct order" do
-          expect(scope).to eq([patient_a, patient_b, patient_c])
+        let!(:perfect_full_given_family) do
+          create(:patient, given_name: "Emma", family_name: "Watson")
         end
-      end
+        let!(:perfect_family_only) do
+          create(:patient, given_name: "David", family_name: "Watson")
+        end
+        let!(:perfect_given_only) do
+          create(:patient, given_name: "Emma", family_name: "Thompson")
+        end
+        let!(:prefix_family) do
+          create(:patient, given_name: "Michael", family_name: "Watsonville")
+        end
+        let!(:prefix_given) do
+          create(:patient, given_name: "Emmanuel", family_name: "Davis")
+        end
+        let!(:mid_family) do
+          create(:patient, given_name: "Sarah", family_name: "Swatson")
+        end
+        let!(:mid_given) do
+          create(:patient, given_name: "Lemma", family_name: "Johnson")
+        end
+        let!(:similar_family) do
+          create(:patient, given_name: "James", family_name: "Watsan")
+        end
+        let!(:similar_family_in_given) do
+          create(:patient, given_name: "Watsan", family_name: "Champagne")
+        end
+        let!(:similar_given) do
+          create(:patient, given_name: "Ema", family_name: "Parsons")
+        end
+        let!(:similar_given_in_family) do
+          create(:patient, given_name: "Kyle", family_name: "Ema")
+        end
 
-      context "with first name only" do
-        let(:query) { "Harry" }
+        before do
+          create(:patient, given_name: "Daniel", family_name: "Radcliffe")
+        end
 
-        it "returns the patients in the correct order" do
-          expect(scope).to eq([patient_a])
+        context "with full name search" do
+          [
+            "Emma Watson",
+            "Watson Emma",
+            "WATSON, Emma",
+            "Watson,   Emma"
+          ].each do |query_string|
+            context "with query '#{query_string}'" do
+              let(:query) { query_string }
+
+              it "returns all matching patients in correct priority order" do
+                expect(scope).to eq(expected_order)
+              end
+            end
+          end
+        end
+
+        context "with single prefect name" do
+          context "with query of perfect given name only" do
+            let(:query) { "Emma" }
+
+            it "returns all matching patients in correct priority order, then by similarity" do
+              expected_order = [
+                perfect_given_only,
+                perfect_full_given_family,
+                prefix_given,
+                mid_given,
+                similar_given_in_family,
+                similar_given
+              ]
+              expect(scope).to eq(expected_order)
+            end
+          end
+
+          context "with query of perfect family name only" do
+            let(:query) { "Watson" }
+
+            it "returns all matching patients in correct priority order, then by similarity" do
+              expected_order = [
+                perfect_family_only,
+                perfect_full_given_family,
+                prefix_family,
+                mid_family,
+                similar_family,
+                similar_family_in_given
+              ]
+              expect(scope).to eq(expected_order)
+            end
+          end
+        end
+
+        context "with prefixes" do
+          context "with query of prefix given name only (short)" do
+            let(:query) { "Em" }
+
+            it "returns all matching patients in correct priority order, then by similarity" do
+              expected_order = [
+                similar_given_in_family,
+                similar_given,
+                perfect_given_only,
+                perfect_full_given_family,
+                prefix_given
+              ]
+              expect(scope).to eq(expected_order)
+            end
+          end
+
+          context "with query of prefix given name only (long)" do
+            let(:query) { "Emm" }
+
+            it "returns all matching patients in correct priority order, then by similarity" do
+              expected_order = [
+                perfect_given_only,
+                perfect_full_given_family,
+                prefix_given,
+                mid_given,
+                similar_given_in_family,
+                similar_given
+              ]
+              expect(scope).to eq(expected_order)
+            end
+          end
+
+          context "with query of prefix family name only (short)" do
+            let(:query) { "Wa" }
+
+            it "returns all matching patients in correct priority order, then by similarity" do
+              expected_order = [
+                similar_family,
+                perfect_family_only,
+                perfect_full_given_family,
+                similar_family_in_given,
+                prefix_family
+              ]
+              expect(scope).to eq(expected_order)
+            end
+          end
+
+          context "with query of prefix family name only (long)" do
+            let(:query) { "Wats" }
+
+            it "returns all matching patients in correct priority order, then by similarity" do
+              expected_order = [
+                similar_family,
+                perfect_family_only,
+                perfect_full_given_family,
+                similar_family_in_given,
+                prefix_family,
+                mid_family
+              ]
+              expect(scope).to eq(expected_order)
+            end
+          end
+        end
+
+        context "with multiple prefix terms" do
+          context "with query of prefix_family (short) prefix_given (short)" do
+            let(:query) { "em wa" }
+
+            it "returns all matching patients in correct priority order, then by similarity" do
+              expected_order = [
+                perfect_full_given_family,
+                similar_given_in_family,
+                similar_given,
+                perfect_given_only,
+                similar_family,
+                perfect_family_only,
+                similar_family_in_given,
+                prefix_given,
+                prefix_family
+              ]
+              expect(scope).to eq(expected_order)
+            end
+          end
+
+          context "with query of prefix_family (long) prefix_given (long)" do
+            let(:query) { "emm wats" }
+
+            it "returns all matching patients in correct priority order, then by similarity" do
+              expected_order = [
+                perfect_full_given_family,
+                similar_family,
+                perfect_family_only,
+                similar_family_in_given,
+                perfect_given_only,
+                prefix_family,
+                prefix_given,
+                mid_family,
+                mid_given,
+                similar_given_in_family,
+                similar_given
+              ]
+              expect(scope).to eq(expected_order)
+            end
+          end
+
+          context "with query of prefix_given (short) prefix_family (short)" do
+            let(:query) { "wa em" }
+
+            it "returns all matching patients in correct priority order, then by similarity" do
+              expected_order = [
+                perfect_full_given_family,
+                similar_given_in_family,
+                similar_given,
+                perfect_given_only,
+                similar_family,
+                perfect_family_only,
+                similar_family_in_given,
+                prefix_given,
+                prefix_family
+              ]
+              expect(scope).to eq(expected_order)
+            end
+          end
+
+          context "with query of prefix_given (long) prefix_family (long)" do
+            let(:query) { "wats emm" }
+
+            it "returns all matching patients in correct priority order, then by similarity" do
+              expected_order = [
+                perfect_full_given_family,
+                similar_family,
+                perfect_family_only,
+                similar_family_in_given,
+                perfect_given_only,
+                prefix_family,
+                prefix_given,
+                mid_family,
+                mid_given,
+                similar_given_in_family,
+                similar_given
+              ]
+              expect(scope).to eq(expected_order)
+            end
+          end
+
+          context "with query of prefix_given (long) prefix_family (v short)" do
+            let(:query) { "emm w" }
+
+            it "returns all matching patients in correct priority order, then by similarity" do
+              expected_order = [
+                perfect_full_given_family,
+                perfect_given_only,
+                prefix_given,
+                similar_family,
+                perfect_family_only,
+                similar_family_in_given,
+                prefix_family,
+                mid_given,
+                similar_given_in_family,
+                similar_given
+              ]
+              expect(scope).to eq(expected_order)
+            end
+          end
         end
       end
     end
