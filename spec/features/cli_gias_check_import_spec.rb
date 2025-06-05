@@ -2,11 +2,11 @@
 
 require_relative "../../app/lib/mavis_cli"
 
-describe "mavis gias check_update" do
+describe "mavis gias check_import" do
   it "counts the number of locations closed that have future sessions" do
     given_an_organisation_exists
     and_there_are_locations_with_future_sessions
-    when_i_run_the_check_update_command
+    when_i_run_the_check_import_command
     then_i_should_see_the_correct_counts
   end
 
@@ -47,14 +47,14 @@ describe "mavis gias check_update" do
       )
   end
 
-  def when_i_run_the_check_update_command
+  def when_i_run_the_check_import_command
     # This will exit if the command is not found. We could mock out Kernel.exit
     @output =
       capture_output do
         Dry::CLI.new(MavisCLI).call(
           arguments: %w[
             gias
-            check-update
+            check-import
             -i
             spec/fixtures/files/dfe-schools.zip
           ]
