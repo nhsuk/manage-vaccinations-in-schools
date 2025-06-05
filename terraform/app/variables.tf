@@ -160,6 +160,7 @@ variable "enable_splunk" {
 variable "app_version" {
   type        = string
   description = "The version identifier for the MAVIS application deployment"
+  default     = "Unknown"
   nullable    = false
 }
 
