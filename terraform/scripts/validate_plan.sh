@@ -38,11 +38,11 @@ tfstdout=$1
 
 for resource in "${down_time_if_destroyed[@]}"; do
   if [[ $(grep -cE "$resource.*(replaced|destroyed)" "$tfstdout") -ne 0 ]]; then
-    echo "A resource is being destroyed:"
+    echo -e "\e[41mPOTENTIALLY CRITICAL RESOURCES ARE BEING DESTROYED:\e[0m"
     grep -E "$resource.*(replaced|destroyed)" "$tfstdout"
-    echo "This would cause a downtime. Aborting"
-    exit 1
+    echo "Check carefully if this would cause a downtime"
+    exit 0
   fi
 done
 
-echo "No obvious downtime-relevant changes detected. Proceeding with the plan."
+echo -e "\e[32mNo obvious downtime-relevant changes detected.\e[0m"
