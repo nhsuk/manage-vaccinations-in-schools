@@ -2,8 +2,8 @@
 
 module MavisCLI
   module GIAS
-    class CheckUpdate < Dry::CLI::Command
-      desc "Check what changes will be introduced with a GIAS update"
+    class CheckImport < Dry::CLI::Command
+      desc "Check what changes will be introduced with a GIAS import"
 
       option :input_file,
              aliases: ["-i"],
@@ -100,6 +100,6 @@ URNs of closed locations with future sessions:
   end
 
   register "gias" do |prefix|
-    prefix.register "check-update", GIAS::CheckUpdate
+    prefix.register "check-import", GIAS::CheckImport
   end
 end

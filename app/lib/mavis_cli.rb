@@ -21,5 +21,5 @@ end
 require_relative "mavis_cli/generate/cohort_imports"
 require_relative "mavis_cli/generate/consents"
 require_relative "mavis_cli/generate/vaccination_records"
-require_relative "mavis_cli/gias/check_update"
+require_relative "mavis_cli/gias/check_import"
 require_relative "mavis_cli/gias/import"
