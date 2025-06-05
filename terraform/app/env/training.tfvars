@@ -1,8 +1,8 @@
 environment   = "training"
 db_secret_arn = "arn:aws:secretsmanager:eu-west-2:393416225559:secret:dbAuroraSecret-3bG6y4wn5Enz-YvireA"
 dns_certificate_arn = [
-  "arn:aws:acm:eu-west-2:393416225559:certificate/6225e0bb-7365-4dce-9cad-4112b1e3fcc0",
-  "arn:aws:acm:eu-west-2:393416225559:certificate/0ee8635d-d358-46fc-96d7-0288413dbc0e",
+  "arn:aws:acm:eu-west-2:393416225559:certificate/368edbcb-37c5-4146-9087-ff011bef5e05",
+  "arn:aws:acm:eu-west-2:393416225559:certificate/e93e3912-eee4-4f6e-826d-c628bff58527",
 ]
 enable_autoscaling = false
 docker_image       = "mavis/webapp"
