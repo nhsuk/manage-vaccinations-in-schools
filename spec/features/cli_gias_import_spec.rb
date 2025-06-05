@@ -14,9 +14,11 @@ describe "mavis gias import" do
   end
 
   def when_i_run_the_import_command
-    Dry::CLI.new(MavisCLI).call(
-      arguments: %w[gias import -i spec/fixtures/files/dfe-schools.zip]
-    )
+    capture_output do
+      Dry::CLI.new(MavisCLI).call(
+        arguments: %w[gias import -i spec/fixtures/files/dfe-schools.zip]
+      )
+    end
   end
 
   def then_schools_are_imported_correctly
