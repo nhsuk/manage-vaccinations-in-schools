@@ -529,7 +529,7 @@ class ImmunisationImportRow
           "is greater than #{MAX_FIELD_LENGTH} characters long"
         )
       elsif clinic_name_required &&
-            !organisation.community_clinics.exists?(name: clinic_name.to_s)
+            !organisation.community_clinics.any? { |clinic| clinic.name.downcase == clinic_name.to_s.downcase }
         errors.add(clinic_name.header, "Enter a clinic name")
       end
     elsif clinic_name_required
