@@ -21,7 +21,7 @@ on:
         required: false
         type: string
       git_ref_to_deploy:
-        required: true
+        required: false
         type: string
 
   workflow_call:
@@ -48,6 +48,7 @@ env:
     || 'arn:aws:iam::393416225559:role/GithubDeployMavisAndInfrastructure' }}
   aws_account_id: ${{ inputs.environment == 'production'
     && '820242920762' || '393416225559' }}
+  git_ref_to_deploy: ${{ inputs.git_ref_to_deploy || github.ref_name }}
 
 defaults:
   run:
@@ -63,7 +64,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.image_tag || github.sha }}
+          ref: ${{ env.git_ref_to_deploy }}
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -88,7 +89,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.image_tag || github.sha }}
+          ref: ${{ env.git_ref_to_deploy }}
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -115,7 +116,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.image_tag || github.sha }}
+          ref: ${{ env.git_ref_to_deploy }}
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -148,15 +149,13 @@ jobs:
         run: sudo snap install --classic aws-cli
       - name: Check if any deployments are running
         run: ../scripts/check-for-running-deployments.sh ${{ inputs.environment }}
-      - name: Set Mavis app version
-        run: |
-          echo "APP_VERSION=${{ inputs.git_ref_to_deploy }}" >> $GITHUB_ENV
       - name: Terraform Plan
         id: plan
         run: |
           set -e
           terraform init -backend-config="env/${{ inputs.environment }}-backend.hcl" -upgrade
-          terraform plan -var="image_digest=$DIGEST" -var-file="env/${{ inputs.environment }}.tfvars" \
+          terraform plan -var="image_digest=$DIGEST" -var="app_version=${{ env.git_ref_to_deploy }}"  \
+          -var-file="env/${{ inputs.environment }}.tfvars" \
           -out ${{ runner.temp }}/tfplan &> ${{ runner.temp }}/tf_stdout
           TF_EXIT_CODE=$?
           cat ${{ runner.temp }}/tf_stdout
@@ -182,7 +181,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.image_tag || github.sha }}
+          ref: ${{ env.git_ref_to_deploy }}
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
