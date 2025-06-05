@@ -156,8 +156,8 @@ jobs:
           terraform init -backend-config="env/${{ inputs.environment }}-backend.hcl" -upgrade
           terraform plan -var="image_digest=$DIGEST" -var="app_version=${{ env.git_ref_to_deploy }}"  \
           -var-file="env/${{ inputs.environment }}.tfvars" \
-          -out ${{ runner.temp }}/tfplan &> ${{ runner.temp }}/tf_stdout
-          TF_EXIT_CODE=$?
+          -out ${{ runner.temp }}/tfplan | tee ${{ runner.temp }}/tf_stdout
+          TF_EXIT_CODE=${PIPESTATUS[0]}
           cat ${{ runner.temp }}/tf_stdout
           if [ $TF_EXIT_CODE -eq 1 ]; then
               exit $TF_EXIT_CODE
