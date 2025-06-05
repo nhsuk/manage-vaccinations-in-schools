@@ -9,7 +9,10 @@ module RSpec
         output = StringIO.new
         original_stdout = $stdout
         $stdout = output
+        stub_const("ProgressBar::Output::DEFAULT_OUTPUT_STREAM", output)
+
         yield
+
         output.string
       rescue SystemExit
         output.string
