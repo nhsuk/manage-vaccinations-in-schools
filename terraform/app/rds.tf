@@ -34,7 +34,7 @@ resource "aws_db_subnet_group" "aurora_subnet_group" {
 }
 
 resource "aws_rds_cluster_parameter_group" "migration_source" {
-  name        = "${var.environment}-custom"
+  name        = "${var.environment}-enable-logical-replication"
   family      = "aurora-postgresql16"
   description = "Custom parameter group for Aurora PostgreSQL cluster"
 
@@ -95,6 +95,14 @@ resource "aws_rds_cluster_instance" "old_read_replica" {
   promotion_tier       = 1
 }
 
+resource "aws_db_subnet_group" "core" {
+  name        = "mavis-${var.environment}-core"
+  subnet_ids  = [aws_subnet.private_subnet_a.id, aws_subnet.private_subnet_b.id]
+  description = "Private subnets for the core aurora RDS cluster"
+  tags = {
+    name = "mavis-${var.environment}-core"
+  }
+}
 
 resource "aws_rds_cluster_parameter_group" "migration_target" {
   name        = "${var.environment}-disable-constraints"
@@ -117,7 +125,7 @@ resource "aws_rds_cluster" "core" {
   master_username                 = "postgres"
   backup_retention_period         = var.backup_retention_period
   skip_final_snapshot             = !local.is_production
-  db_subnet_group_name            = aws_db_subnet_group.aurora_subnet_group.name
+  db_subnet_group_name            = aws_db_subnet_group.core.name
   vpc_security_group_ids          = [aws_security_group.rds_security_group.id]
   kms_key_id                      = aws_kms_key.rds_cluster.arn
   storage_encrypted               = true
@@ -150,6 +158,6 @@ resource "aws_rds_cluster_instance" "core" {
   instance_class       = "db.serverless"
   engine               = aws_rds_cluster.core.engine
   engine_version       = aws_rds_cluster.core.engine_version
-  db_subnet_group_name = aws_db_subnet_group.aurora_subnet_group.name
+  db_subnet_group_name = aws_db_subnet_group.core.name
   promotion_tier       = each.value["promotion_tier"]
 }
