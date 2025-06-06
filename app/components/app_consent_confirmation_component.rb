@@ -4,10 +4,6 @@ class AppConsentConfirmationComponent < ViewComponent::Base
   erb_template <<-ERB
     <%= govuk_panel(title_text: title, text: panel_text) %>
 
-    <% if @consent_form.contact_injection %>
-      <p>Someone will be in touch to discuss them having an injection instead.</p>
-    <% end %>
-
     <p>We've sent a confirmation to <%= parent_email %></p>
   ERB
 
@@ -18,20 +14,16 @@ class AppConsentConfirmationComponent < ViewComponent::Base
   end
 
   def title
-    if @consent_form.contact_injection
-      "Your child will not get a nasal flu vaccination at school"
+    case response
+    when "given"
+      "Consent confirmed"
+    when "given_one"
+      chosen_programme = chosen_programmes.first.name
+      "Consent for the #{chosen_programme} vaccination confirmed"
+    when "refused"
+      "Consent refused"
     else
-      case response
-      when "given"
-        "Consent confirmed"
-      when "given_one"
-        chosen_programme = chosen_programmes.first.name
-        "Consent for the #{chosen_programme} vaccination confirmed"
-      when "refused"
-        "Consent refused"
-      else
-        raise "unrecognised consent response: #{response}"
-      end
+      raise "unrecognised consent response: #{response}"
     end
   end
 

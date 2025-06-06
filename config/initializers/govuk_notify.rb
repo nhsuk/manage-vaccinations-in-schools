@@ -4,7 +4,6 @@ GOVUK_NOTIFY_EMAIL_TEMPLATES = {
   consent_clinic_request: "14e88a09-4281-4257-9574-6afeaeb42715",
   consent_confirmation_clinic: "f2921e23-4b73-4e44-abbb-38b0e235db8e",
   consent_confirmation_given: "7cda7ae5-99a2-4c40-9a3e-1863e23f7a73",
-  consent_confirmation_injection: "4d09483a-8181-4acb-8ba3-7abd6c8644cd",
   consent_confirmation_refused: "5a676dac-3385-49e4-98c2-fc6b45b5a851",
   consent_confirmation_triage: "604ee667-c996-471e-b986-79ab98d0767c",
   consent_school_initial_reminder_doubles:

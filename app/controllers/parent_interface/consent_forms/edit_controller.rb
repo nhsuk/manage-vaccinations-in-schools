@@ -97,7 +97,6 @@ module ParentInterface
         consent: %i[response chosen_vaccine],
         reason: %i[reason],
         reason_notes: %i[reason_notes],
-        injection: %i[contact_injection],
         address: %i[address_line_1 address_line_2 address_town address_postcode]
       }.fetch(current_step)
 

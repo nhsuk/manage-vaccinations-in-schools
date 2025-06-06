@@ -11,7 +11,6 @@
 #  address_town                        :string
 #  archived_at                         :datetime
 #  chosen_vaccine                      :string
-#  contact_injection                   :boolean
 #  date_of_birth                       :date
 #  education_setting                   :integer
 #  family_name                         :text

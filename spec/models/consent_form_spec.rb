@@ -11,7 +11,6 @@
 #  address_town                        :string
 #  archived_at                         :datetime
 #  chosen_vaccine                      :string
-#  contact_injection                   :boolean
 #  date_of_birth                       :date
 #  education_setting                   :integer
 #  family_name                         :text
@@ -194,29 +193,6 @@ describe ConsentForm do
       it { should validate_presence_of(:reason_notes).on(:update) }
     end
 
-    context "when wizard_step is :injection" do
-      # currently injection alternative only offered during flu programme
-      let(:programmes) { [build(:programme, :flu)] }
-
-      let(:response) { "refused" }
-      let(:reason) { "contains_gelatine" }
-      let(:wizard_step) { :injection }
-
-      context "runs validations from previous steps" do
-        it { should validate_presence_of(:given_name).on(:update) }
-        it { should validate_presence_of(:date_of_birth).on(:update) }
-        it { should validate_presence_of(:reason).on(:update) }
-      end
-
-      # This prints a warning because boolean fields always get converted to
-      # false when they are blank. As such we can't check for this validation.
-      # it do
-      #   should validate_inclusion_of(:contact_injection).in_array(
-      #            [true, false]
-      #          ).on(:update)
-      # end
-    end
-
     context "when wizard_step is :address" do
       let(:response) { "given" }
       let(:wizard_step) { :address }
@@ -322,49 +298,6 @@ describe ConsentForm do
     it "does not ask for reason for refusal when patient gives consent" do
       consent_form = build(:consent_form, response: "given")
       expect(consent_form.wizard_steps).not_to include(:reason)
-      expect(consent_form.wizard_steps).not_to include(:injection)
-    end
-
-    context "for a flu programme, when patient refuses consent" do
-      let(:programmes) { [build(:programme, :flu)] }
-
-      it "offers an injection alternative if the child hasn't received vaccine elsewhere" do
-        consent_form =
-          build(
-            :consent_form,
-            response: "refused",
-            reason: "contains_gelatine",
-            programmes:
-          )
-        expect(consent_form.wizard_steps).to include(:reason)
-        expect(consent_form.wizard_steps).to include(:injection)
-      end
-
-      it "doesn't offer an injection alternative if the child has already received vaccine" do
-        consent_form =
-          build(
-            :consent_form,
-            response: "refused",
-            reason: "already_vaccinated",
-            programmes:
-          )
-        expect(consent_form.wizard_steps).to include(:reason)
-        expect(consent_form.wizard_steps).not_to include(:injection)
-      end
-    end
-
-    context "for an HPV programme, when patient refuses consent" do
-      it "does not offer an injection alternative" do
-        # this assumes that the HPV programme does not offer nasal spray vaccines, which is true in 2024
-        consent_form =
-          build(
-            :consent_form,
-            programmes: [build(:programme, :hpv)],
-            response: "refused",
-            reason: "medical_reasons"
-          )
-        expect(consent_form.wizard_steps).not_to include(:injection)
-      end
     end
 
     it "asks for details when patient refuses for a few different reasons" do
@@ -620,11 +553,7 @@ describe ConsentForm do
         response: nil
       )
 
-    consent_form.update!(
-      response: "refused",
-      reason: "personal_choice",
-      contact_injection: false
-    )
+    consent_form.update!(response: "refused", reason: "personal_choice")
     consent_form.reload
 
     expect(consent_form.health_answers).to be_empty

@@ -43,26 +43,12 @@ RSpec.feature "Parental consent change answers" do
     then_i_see_the_needs_triage_confirmation_page
   end
 
-  scenario "Offer an injection instead" do
-    when_i_go_to_a_prefilled_consent_form
-    then_i_see_the_consent_form_confirmation_page
-
-    when_i_change_my_consent_to_refused
-    and_say_the_reason_is_that_the_vaccine_contains_gelatine
-    and_agree_to_be_contacted_by_a_nurse
-    then_i_see_the_consent_form_confirmation_page
-
-    when_i_click_the_confirm_button
-    then_i_see_the_injection_confirmation_page
-  end
-
   scenario "Consent refused" do
     when_i_go_to_a_prefilled_consent_form
     then_i_see_the_consent_form_confirmation_page
 
     when_i_change_my_consent_to_refused
     and_say_the_reason_is_that_the_vaccine_contains_gelatine
-    and_do_not_agree_to_be_contacted_by_a_nurse
     then_i_see_the_consent_form_confirmation_page
 
     when_i_change_my_consent_to_accepted
@@ -242,22 +228,6 @@ RSpec.feature "Parental consent change answers" do
     click_button "Continue"
   end
 
-  def and_agree_to_be_contacted_by_a_nurse
-    expect(page).to have_content(
-      "Your child may be able to have an injection instead"
-    )
-    choose "Yes, I am happy for someone to contact me"
-    click_button "Continue"
-  end
-
-  def and_do_not_agree_to_be_contacted_by_a_nurse
-    expect(page).to have_content(
-      "Your child may be able to have an injection instead"
-    )
-    choose "No"
-    click_button "Continue"
-  end
-
   def when_i_click_the_confirm_button
     click_button "Confirm"
   end
@@ -279,15 +249,6 @@ RSpec.feature "Parental consent change answers" do
   def then_i_see_the_given_confirmation_page
     expect(page).to have_content(
       "is due to get the nasal flu vaccination at school"
-    )
-  end
-
-  def then_i_see_the_injection_confirmation_page
-    expect(page).to have_content(
-      "Your child will not get a nasal flu vaccination at school"
-    )
-    expect(page).to have_content(
-      "Someone will be in touch to discuss them having an injection instead."
     )
   end
 
