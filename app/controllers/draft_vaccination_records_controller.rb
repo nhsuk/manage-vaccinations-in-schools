@@ -121,8 +121,6 @@ class DraftVaccinationRecordsController < ApplicationController
 
     send_vaccination_confirmation(@vaccination_record) if should_notify_parents
 
-    @vaccination_record.triage_patient_as_do_not_vaccinate!
-
     # In case the user navigates back to try and edit the newly created
     # vaccination record.
     @draft_vaccination_record.update!(editing_id: @vaccination_record.id)
