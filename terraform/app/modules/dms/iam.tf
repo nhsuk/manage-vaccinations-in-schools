@@ -1,9 +1,6 @@
-resource "aws_iam_service_linked_role" "dms_service_linked_role" {
-  aws_service_name = "dms.amazonaws.com"
-}
 
 resource "aws_iam_role" "secret_access" {
-  name = "dms_secret_manager_access_role_${var.environment}"
+  name = "dms-secret-manager-access-role-${var.environment}"
   assume_role_policy = templatefile(
     local.assume_role_policy_template,
     { service_name = "dms.eu-west-2.amazonaws.com" }
@@ -25,7 +22,7 @@ data "aws_iam_policy_document" "db_secret_access" {
 }
 
 resource "aws_iam_policy" "db_secret_access" {
-  name   = "dms_secret_manager_access_policy_${var.environment}"
+  name   = "dms-secret-manager-access-policy-${var.environment}"
   policy = data.aws_iam_policy_document.db_secret_access.json
 }
 
@@ -37,7 +34,7 @@ resource "aws_iam_role_policy_attachment" "dms_secret_access" {
 ##################
 
 resource "aws_iam_role" "dms_vpc_role" {
-  name = "dms-vpc-role"
+  name = "dms-vpc-role-${var.environment}"
   assume_role_policy = templatefile(
     local.assume_role_policy_template,
     { service_name = "dms.eu-west-2.amazonaws.com" }
@@ -51,7 +48,7 @@ resource "aws_iam_role_policy_attachment" "dms_vpc_policy" {
 
 # IAM Role for DMS CloudWatch Logs
 resource "aws_iam_role" "dms_cloudwatch_logs_role" {
-  name = "dms-cloudwatch-logs-role"
+  name = "dms-cloudwatch-logs-role-${var.environment}"
   assume_role_policy = templatefile(
     local.assume_role_policy_template,
     { service_name = "dms.eu-west-2.amazonaws.com" }

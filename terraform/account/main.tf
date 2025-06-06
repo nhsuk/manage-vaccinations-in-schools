@@ -41,3 +41,10 @@ resource "aws_iam_policy" "data_replication_access" {
     ]
   })
 }
+
+
+### Service linked role for Database Migration Service (DMS) ###
+
+resource "aws_iam_service_linked_role" "dms_service_linked_role" {
+  aws_service_name = "dms.amazonaws.com"
+}
