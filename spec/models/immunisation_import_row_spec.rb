@@ -1601,20 +1601,6 @@ describe ImmunisationImportRow do
         include_examples "with a value", "PERSON_GENDER"
         include_examples "with a value", "Sex"
       end
-
-      describe "#organisation" do
-        subject { patient.organisation }
-
-        let(:data) { valid_data }
-
-        it { should be_nil }
-
-        context "with an existing patient in the cohort" do
-          let(:patient) { create(:patient, nhs_number:) }
-
-          it { should eq(patient.organisation) }
-        end
-      end
     end
 
     describe "#performed_at" do

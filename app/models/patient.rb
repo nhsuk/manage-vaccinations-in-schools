@@ -28,7 +28,6 @@
 #  created_at                :datetime         not null
 #  updated_at                :datetime         not null
 #  gp_practice_id            :bigint
-#  organisation_id           :bigint
 #  school_id                 :bigint
 #
 # Indexes
@@ -39,13 +38,11 @@
 #  index_patients_on_names_family_first   (family_name,given_name)
 #  index_patients_on_names_given_first    (given_name,family_name)
 #  index_patients_on_nhs_number           (nhs_number) UNIQUE
-#  index_patients_on_organisation_id      (organisation_id)
 #  index_patients_on_school_id            (school_id)
 #
 # Foreign Keys
 #
 #  fk_rails_...  (gp_practice_id => locations.id)
-#  fk_rails_...  (organisation_id => organisations.id)
 #  fk_rails_...  (school_id => locations.id)
 #
 class Patient < ApplicationRecord
@@ -56,11 +53,10 @@ class Patient < ApplicationRecord
   include PendingChangesConcern
   include Schoolable
 
-  audited associated_with: :organisation
+  audited
   has_associated_audits
 
   belongs_to :gp_practice, class_name: "Location", optional: true
-  belongs_to :organisation, optional: true
 
   has_many :access_log_entries
   has_many :consent_notifications
@@ -77,11 +73,12 @@ class Patient < ApplicationRecord
   has_many :vaccination_records, -> { kept }
   has_many :vaccination_statuses
 
-  has_many :parents, through: :parent_relationships
   has_many :gillick_assessments, through: :patient_sessions
+  has_many :parents, through: :parent_relationships
   has_many :pre_screenings, through: :patient_sessions
   has_many :session_attendances, through: :patient_sessions
   has_many :sessions, through: :patient_sessions
+  has_many :organisations, through: :sessions
 
   has_many :sessions_for_current_academic_year,
            -> { for_current_academic_year },
@@ -354,6 +351,8 @@ class Patient < ApplicationRecord
     update_column(:invalidated_at, Time.current)
   end
 
+  def not_in_organisation? = patient_sessions.empty?
+
   def dup_for_pending_changes
     dup.tap do |new_patient|
       new_patient.nhs_number = nil
@@ -385,7 +384,6 @@ class Patient < ApplicationRecord
       given_name: consent_form.given_name,
       home_educated: consent_form.home_educated,
       nhs_number: consent_form.nhs_number,
-      organisation: consent_form.organisation,
       preferred_family_name: consent_form.preferred_family_name,
       preferred_given_name: consent_form.preferred_given_name,
       school: consent_form.school

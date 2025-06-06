@@ -43,10 +43,14 @@ class Patients::EditController < ApplicationController
   def existing_patient
     @existing_patient ||=
       if nhs_number.present?
-        policy_scope(Patient)
-          .or(Patient.where(organisation: nil))
-          .includes(parent_relationships: :parent)
-          .find_by(nhs_number:)
+        policy_scope(Patient).includes(parent_relationships: :parent).find_by(
+          nhs_number:
+        ) ||
+          Patient
+            .where
+            .missing(:patient_sessions)
+            .includes(parent_relationships: :parent)
+            .find_by(nhs_number:)
       end
   end
 

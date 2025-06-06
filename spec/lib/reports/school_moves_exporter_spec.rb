@@ -92,7 +92,8 @@ describe Reports::SchoolMovesExporter do
 
     context "when moving to home education" do
       before do
-        patient = create(:patient, :home_educated, organisation:)
+        session = create(:session, organisation:)
+        patient = create(:patient, :home_educated, session:)
         create(:school_move_log_entry, :home_educated, patient:)
       end
 
@@ -103,7 +104,8 @@ describe Reports::SchoolMovesExporter do
 
     context "when moving to an unknown school" do
       before do
-        patient = create(:patient, school: nil, organisation:)
+        session = create(:session, organisation:)
+        patient = create(:patient, school: nil, session:)
         create(:school_move_log_entry, :unknown_school, patient:)
       end
 
@@ -123,7 +125,8 @@ describe Reports::SchoolMovesExporter do
         create(:school, :secondary, organisation: organisation_b)
       end
 
-      let(:patient) { create(:patient, organisation: organisation_b) }
+      let(:session) { create(:session, organisation: organisation_b) }
+      let(:patient) { create(:patient, session:) }
 
       let(:created_at_a) { 1.week.ago }
       let(:created_at_b) { Time.current }

@@ -9,7 +9,7 @@ describe SchoolMoveExport do
   let(:current_user) { organisation.users.first }
   let(:organisation) { create(:organisation, :with_one_nurse) }
 
-  describe ".request_session_key" do
+  describe "#request_session_key" do
     it "returns the correct session key" do
       expect(described_class.request_session_key).to eq("school_move_export")
     end

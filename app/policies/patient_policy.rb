@@ -7,29 +7,31 @@ class PatientPolicy < ApplicationPolicy
 
       return scope.none if organisation.nil?
 
-      school_moves =
-        SchoolMove.where(organisation:).or(
-          SchoolMove.where(school: organisation.schools)
+      scope_with_joins =
+        scope.left_outer_joins(
+          :patient_sessions,
+          :school_moves,
+          :vaccination_records
         )
 
-      vaccination_records =
-        VaccinationRecord
-          .left_outer_joins(:session)
-          .where(session: { organisation: })
-          .or(
-            VaccinationRecord.where(performed_ods_code: organisation.ods_code)
-          )
-
-      scope
-        .where(organisation:)
+      scope_with_joins
+        .where(patient_sessions: { session: organisation.sessions })
+        .or(scope_with_joins.where(school_moves: { organisation: }))
         .or(
-          scope.where(
-            school_moves.where("patient_id = patients.id").arel.exists
+          scope_with_joins.where(school_moves: { school: organisation.schools })
+        )
+        .or(
+          scope_with_joins.where(
+            vaccination_records: {
+              session: organisation.sessions
+            }
           )
         )
         .or(
-          scope.where(
-            vaccination_records.where("patient_id = patients.id").arel.exists
+          scope_with_joins.where(
+            vaccination_records: {
+              performed_ods_code: organisation.ods_code
+            }
           )
         )
     end

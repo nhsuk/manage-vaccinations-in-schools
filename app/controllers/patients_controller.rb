@@ -32,19 +32,14 @@ class PatientsController < ApplicationController
   end
 
   def update
-    old_organisation = @patient.organisation
-
     organisation_id = params.dig(:patient, :organisation_id).presence
 
     ActiveRecord::Base.transaction do
-      @patient.update!(organisation_id:)
-
-      if organisation_id.nil?
-        @patient
-          .patient_sessions
-          .where(session: old_organisation.sessions)
-          .destroy_all_if_safe
-      end
+      @patient
+        .patient_sessions
+        .joins(:session)
+        .where(session: { organisation_id: })
+        .destroy_all_if_safe
     end
 
     path =
@@ -68,7 +63,6 @@ class PatientsController < ApplicationController
     @patient =
       policy_scope(Patient).includes(
         :gp_practice,
-        :organisation,
         :school,
         consents: %i[parent patient],
         parent_relationships: :parent,

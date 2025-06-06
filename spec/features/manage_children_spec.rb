@@ -5,7 +5,6 @@ describe "Manage children" do
 
   scenario "Viewing children" do
     given_patients_exist
-    and_the_patient_belongs_to_a_session
     and_the_patient_is_vaccinated
 
     when_i_click_on_children
@@ -82,7 +81,6 @@ describe "Manage children" do
 
   scenario "Removing a child from a cohort" do
     given_patients_exist
-    and_the_patient_belongs_to_a_session
 
     when_i_click_on_children
     and_i_click_on_a_child
@@ -140,60 +138,76 @@ describe "Manage children" do
 
   def given_patients_exist
     school = create(:school, organisation: @organisation)
+
+    session =
+      create(
+        :session,
+        location: school,
+        organisation: @organisation,
+        programmes: [@programme]
+      )
+
     @patient =
       create(
         :patient,
-        organisation: @organisation,
+        session:,
         given_name: "John",
         family_name: "Smith",
         school:
       )
-    create_list(:patient, 9, organisation: @organisation, school:)
+    create_list(:patient, 9, session:)
+
+    another_session =
+      create(:session, organisation: @organisation, programmes: [@programme])
 
     @existing_patient =
       create(
         :patient,
+        session: another_session,
         given_name: "Jane",
-        family_name: "Doe",
-        organisation: @organisation
+        family_name: "Doe"
       )
   end
 
   def given_an_invalidated_patient_exists
+    session =
+      create(:session, organisation: @organisation, programmes: [@programme])
+
     @patient =
       create(
         :patient,
         :invalidated,
-        organisation: @organisation,
+        session:,
         given_name: "John",
         family_name: "Smith"
       )
 
-    create(:patient, organisation: @organisation, nhs_number: nil)
+    create(:patient, session:, nhs_number: nil)
   end
 
   def and_the_patient_is_vaccinated
     create(:vaccination_record, patient: @patient, programme: @programme)
   end
 
-  def and_the_patient_belongs_to_a_session
+  def when_a_deceased_patient_exists
     session =
       create(:session, organisation: @organisation, programmes: [@programme])
-    create(:patient_session, session:, patient: @patient)
-  end
 
-  def when_a_deceased_patient_exists
-    @deceased_patient = create(:patient, :deceased, organisation: @organisation)
+    @deceased_patient = create(:patient, :deceased, session:)
   end
 
   def when_an_invalidated_patient_exists
-    @invalidated_patient =
-      create(:patient, :invalidated, organisation: @organisation)
+    session =
+      create(:session, organisation: @organisation, programmes: [@programme])
+
+    @invalidated_patient = create(:patient, :invalidated, session:)
   end
 
   def when_a_restricted_patient_exists
-    @restricted_patient =
-      create(:patient, :restricted, organisation: @organisation)
+    session =
+      create(:session, organisation: @organisation, programmes: [@programme])
+
+    @restricted_patient = create(:patient, :restricted, session:)
   end
 
   def when_i_click_on_children
