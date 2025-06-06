@@ -161,7 +161,7 @@ class PatientImportRow
   def parent_2_phone = @data[:parent_2_phone]
 
   def nhs_number_value
-    nhs_number&.to_s&.gsub(/\s/, "")
+    nhs_number&.to_s&.gsub(/\s|\?|_/, "")
   end
 
   attr_reader :organisation, :year_groups

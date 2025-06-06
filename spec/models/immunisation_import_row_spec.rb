@@ -1856,6 +1856,16 @@ describe ImmunisationImportRow do
     it { should eq("Smith") }
   end
 
+  describe "#patient_nhs_number" do
+    subject { immunisation_import_row.patient_nhs_number&.to_s }
+
+    context "with an NHS_NUMBER field" do
+      let(:data) { { "NHS_NUMBER" => "546 142 4058" } }
+
+      it { should eq("546 142 4058") }
+    end
+  end
+
   describe "#school_name" do
     subject { immunisation_import_row.school_name&.to_s }
 
