@@ -247,6 +247,13 @@ variable "enable_backup_to_vault" {
   nullable    = false
 }
 
+variable "backup_account_id" {
+  type        = string
+  default     = "904214613099"
+  description = "The AWS account ID of the dedicated account for storing remote backups."
+  nullable    = false
+}
+
 locals {
   db_instances = {
     "primary-1" = {
@@ -258,7 +265,7 @@ locals {
   }
 }
 
-########## ESC/Scaling Configuration ##########
+########## ECS/Scaling Configuration ##########
 
 variable "container_insights" {
   default     = "enabled"
