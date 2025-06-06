@@ -229,10 +229,19 @@ You can generate an example programme by seeding the database with `rails db:see
 
 #### Adding a test user
 
-You can add a new user to an environment using the `users:create` rake task:
+You can add a new user to an environment using the `users:create` [rake task](docs/rake-tasks.md#userscreateemailpasswordgiven_namefamily_nameorganisation_ods_code):
 
 ```shell
-rails users:create['user@example.com','password123','John Doe',1]
+
+# With no arguments, it will prompt you for all the information it needs:
+rails users:create
+
+# Or, create a user belonging to the organisation with ODS code 'R1L' (this is created in db/seeds.rb):
+rails users:create['user@example.com','password123','John', 'Doe','R1L']
+
+# Note that on some Mac machines, this syntax can throw an error saying something like 'zsh: bad pattern', in which case you may need to remove the single quotes and escape the square brackets:
+rails users:create\[user@example.com,password123,John,Doe,R1L\]
+
 ```
 
 ### Previewing view components

@@ -76,6 +76,7 @@ This creates a new team within an organisation.
 - `given_name` - The first name of the new user.
 - `family_name` - The last name of the new user.
 - `organisation_ods_code` - The ODS code for the organisation they belong to.
+- `fallback_role` - _(optional)_ - The role they will have if the application is not connecting to CIS2. Defaults to "nurse"
 
 If none of the arguments are provided (`rake users:create`), the user will be prompted for responses.
 
