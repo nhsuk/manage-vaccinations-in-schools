@@ -27,7 +27,9 @@
           <% batches.each do |batch| %>
             <% body.with_row do |row| %>
               <% row.with_cell(text: batch.name) do %>
-                <%= batch.name %>
+                <span class="nhsuk-u-text-break-word">
+                  <%= batch.name %>
+                </span>
                 <% if batch.id == @todays_batch_id_by_programme[vaccine.programme] %>
                   <br>
                   <span class="nhsuk-caption-m">
