@@ -12,11 +12,34 @@ module RequestSessionPersistable
     @request_session = request_session
     @current_user = current_user
 
-    super(
-      (@request_session[self.class.request_session_key] || {}).merge(attributes)
-    )
+    stored_attributes = @request_session[self.class.request_session_key] || {}
+
+    super(stored_attributes.merge(attributes))
 
     clear_changes_information
+
+    # When we call `clear_changes_information` we seem to lose time zone
+    # information. This happens somewhere in the Rails internals, and
+    # it seems to be easier to undo this here.
+
+    self.attributes.each do |key, value|
+      self[key] = value.in_time_zone if value.is_a?(Time)
+    end
+  end
+
+  def assign_attributes(new_attributes)
+    super(new_attributes)
+
+    # When assigning multi-parameter dates, time zone information is lost and
+    # the date ends up being assigned with the right values but in UTC. This
+    # converts the time to local time (Europe/London) but keeping the time
+    # components the same. For example: 12:00 UTC -> 12:00 BST.
+
+    attributes.each do |key, value|
+      self[key] = Time.zone.local_to_utc(value).in_time_zone if value.is_a?(
+        Time
+      )
+    end
   end
 
   def save(context: :update)
