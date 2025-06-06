@@ -100,11 +100,22 @@ class SessionNotification < ApplicationRecord
         sent_by: current_user
       }
 
-      EmailDeliveryJob.perform_later(:"session_#{type}", **params)
+      template_name = compute_template_name(type, session.organisation)
+
+      EmailDeliveryJob.perform_later(template_name, **params)
 
       next if type == :school_reminder && !parent.phone_receive_updates
 
-      SMSDeliveryJob.perform_later(:"session_#{type}", **params)
+      SMSDeliveryJob.perform_later(template_name, **params)
     end
+  end
+
+  def self.compute_template_name(type, organisation)
+    template_names = [
+      :"session_#{type}_#{organisation.ods_code.downcase}",
+      :"session_#{type}"
+    ]
+
+    template_names.find { GOVUK_NOTIFY_EMAIL_TEMPLATES.key?(it) }
   end
 end
