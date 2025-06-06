@@ -6,6 +6,7 @@
 #
 #  id              :bigint           not null, primary key
 #  response        :integer
+#  vaccine_method  :integer
 #  consent_form_id :bigint           not null
 #  programme_id    :bigint           not null
 #

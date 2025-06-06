@@ -33,6 +33,7 @@ class DraftConsent
   attribute :route, :string
   attribute :triage_notes, :string
   attribute :triage_status, :string
+  attribute :vaccine_method, :string
 
   def wizard_steps
     [
@@ -297,8 +298,8 @@ class DraftConsent
   def parent_relationship
     parent
       &.parent_relationships
-      &.find { _1.patient_id == patient_id }
-      .tap { _1&.patient = patient } # acts as preload
+      &.find { it.patient_id == patient_id }
+      .tap { it&.patient = patient } # acts as preload
   end
 
   private
@@ -319,6 +320,7 @@ class DraftConsent
       response
       route
       organisation_id
+      vaccine_method
     ]
   end
 

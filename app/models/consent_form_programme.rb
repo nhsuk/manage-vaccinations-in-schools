@@ -6,6 +6,7 @@
 #
 #  id              :bigint           not null, primary key
 #  response        :integer
+#  vaccine_method  :integer
 #  consent_form_id :bigint           not null
 #  programme_id    :bigint           not null
 #
@@ -26,6 +27,7 @@ class ConsentFormProgramme < ApplicationRecord
   scope :ordered, -> { joins(:programme).order(:"programme.type") }
 
   enum :response, { given: 0, refused: 1 }, prefix: true
+  enum :vaccine_method, { injection: 0, nasal: 1 }, prefix: true
 
   def vaccines
     Vaccine.active.where(programme_id: programme_id)
