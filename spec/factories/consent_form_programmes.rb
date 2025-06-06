@@ -25,6 +25,14 @@ FactoryBot.define do
     consent_form
     programme
 
-    traits_for_enum :response
+    trait :given do
+      response { "given" }
+      vaccine_method { "injection" }
+    end
+
+    trait :refused do
+      response { "refused" }
+      vaccine_method { nil }
+    end
   end
 end

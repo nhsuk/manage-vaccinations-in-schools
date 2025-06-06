@@ -70,7 +70,12 @@ class Consent < ApplicationRecord
        { website: 0, phone: 1, paper: 2, in_person: 3, self_consent: 4 },
        prefix: "via",
        validate: true
-  enum :vaccine_method, { injection: 0, nasal: 1 }, prefix: true
+  enum :vaccine_method,
+       { injection: 0, nasal: 1 },
+       prefix: true,
+       validate: {
+         if: :response_given?
+       }
 
   enum :reason_for_refusal,
        {
