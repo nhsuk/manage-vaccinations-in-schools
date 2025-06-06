@@ -210,7 +210,6 @@ en:
           right_arm_lower_position: Right arm (lower position)
           right_arm_upper_position: Right arm (upper position)
         outcomes:
-          absent_from_school: Absent from school
           absent_from_session: Absent from session
           administered: Vaccinated
           already_had: Already had the vaccine
@@ -584,7 +583,6 @@ en:
         will_be_vaccinated_elsewhere: they will be given the vaccine elsewhere
     vaccination_mailer:
       reasons_did_not_vaccinate:
-        absent_from_school: they were off school
         absent_from_session: they were not in the vaccination session
         already_had: they've already had the vaccine
         contraindications: they had contraindications
