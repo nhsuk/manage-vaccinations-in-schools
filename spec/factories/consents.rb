@@ -13,6 +13,7 @@
 #  response            :integer          not null
 #  route               :integer          not null
 #  submitted_at        :datetime         not null
+#  vaccine_methods     :integer          default([]), not null, is an Array
 #  withdrawn_at        :datetime
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null

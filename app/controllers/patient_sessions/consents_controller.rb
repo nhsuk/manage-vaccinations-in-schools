@@ -123,7 +123,8 @@ class PatientSessions::ConsentsController < PatientSessions::BaseController
     {
       patient_session: @patient_session,
       programme: @programme,
-      recorded_by: current_user
+      recorded_by: current_user,
+      vaccine_methods: %w[injection]
     }
   end
 

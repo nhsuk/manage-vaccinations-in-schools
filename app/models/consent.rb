@@ -13,6 +13,7 @@
 #  response            :integer          not null
 #  route               :integer          not null
 #  submitted_at        :datetime         not null
+#  vaccine_methods     :integer          default([]), not null, is an Array
 #  withdrawn_at        :datetime
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null
@@ -42,6 +43,7 @@
 class Consent < ApplicationRecord
   include Invalidatable
   include HasHealthAnswers
+  include HasVaccineMethods
 
   audited associated_with: :patient
 
@@ -187,7 +189,8 @@ class Consent < ApplicationRecord
               recorded_by: current_user,
               response: consent_form_programme.response,
               route: "website",
-              submitted_at: consent_form.recorded_at
+              submitted_at: consent_form.recorded_at,
+              vaccine_methods: consent_form_programme.vaccine_methods
             )
           end
 

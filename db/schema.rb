@@ -156,6 +156,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_09_112437) do
     t.bigint "programme_id", null: false
     t.bigint "consent_form_id", null: false
     t.integer "response"
+    t.integer "vaccine_methods", default: [], null: false, array: true
     t.index ["consent_form_id"], name: "index_consent_form_programmes_on_consent_form_id"
     t.index ["programme_id", "consent_form_id"], name: "idx_on_programme_id_consent_form_id_2113cb7f37", unique: true
   end
@@ -236,6 +237,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_09_112437) do
     t.datetime "invalidated_at"
     t.boolean "notify_parents"
     t.datetime "submitted_at", null: false
+    t.integer "vaccine_methods", default: [], null: false, array: true
     t.index ["organisation_id"], name: "index_consents_on_organisation_id"
     t.index ["parent_id"], name: "index_consents_on_parent_id"
     t.index ["patient_id"], name: "index_consents_on_patient_id"
