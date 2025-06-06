@@ -76,6 +76,8 @@ FactoryBot.define do
 
     submitted_at { consent_form&.recorded_at || Time.current }
 
+    traits_for_enum :vaccine_method
+
     trait :given_verbally do
       given
       route { "phone" }

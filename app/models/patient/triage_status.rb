@@ -99,11 +99,14 @@ class Patient::TriageStatus < ApplicationRecord
 
     return false if latest_consents.empty?
 
+    # FIXME: This logic is duplicated from `ConsentStatus`.
     consent_given =
       if (self_consents = latest_consents.select(&:via_self_consent?)).any?
-        self_consents.all?(&:response_given?)
+        self_consents.all?(&:response_given?) &&
+          self_consents.map(&:vaccine_method).uniq.count == 1
       else
-        latest_consents.all?(&:response_given?)
+        latest_consents.all?(&:response_given?) &&
+          latest_consents.map(&:vaccine_method).uniq.count == 1
       end
 
     return false unless consent_given

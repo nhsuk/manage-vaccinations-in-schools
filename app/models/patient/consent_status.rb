@@ -49,9 +49,11 @@ class Patient::ConsentStatus < ApplicationRecord
 
   def status_should_be_given?
     if self_consents.any?
-      self_consents.all?(&:response_given?)
+      self_consents.all?(&:response_given?) &&
+        self_consents.map(&:vaccine_method).uniq.count == 1
     else
-      parental_consents.any? && parental_consents.all?(&:response_given?)
+      parental_consents.any? && parental_consents.all?(&:response_given?) &&
+        parental_consents.map(&:vaccine_method).uniq.count == 1
     end
   end
 
@@ -60,13 +62,15 @@ class Patient::ConsentStatus < ApplicationRecord
   end
 
   def status_should_be_conflicts?
-    if self_consents.any?
-      self_consents.any?(&:response_refused?) &&
-        self_consents.any?(&:response_given?)
-    else
-      parental_consents.any?(&:response_refused?) &&
-        parental_consents.any?(&:response_given?)
+    consents_to_check = (self_consents.any? ? self_consents : parental_consents)
+
+    if consents_to_check.any?(&:response_refused?) &&
+         consents_to_check.any?(&:response_given?)
+      return true
     end
+
+    # This works because when refused, the `vaccine_method` will be `nil`.
+    consents_to_check.map(&:vaccine_method).uniq.count > 1
   end
 
   def self_consents
