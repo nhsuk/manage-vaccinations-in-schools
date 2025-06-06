@@ -9,7 +9,7 @@
 <% content_for :page_title, title %>
 
 <%= form_with model: @session_attendance,
-              url: session_patient_attendance_path(patient_id: @patient.id),
+              url: session_patient_session_attendance_path(@session, @patient),
               method: :put do |f| %>
   <%= f.govuk_error_summary %>
   <%= f.govuk_radio_buttons_fieldset(:attending,

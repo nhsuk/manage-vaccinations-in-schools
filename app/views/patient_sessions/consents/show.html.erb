@@ -1,7 +1,7 @@
 <% content_for :before_main do %>
   <%= render AppBacklinkComponent.new(
-        session_patient_programme_path(patient_id: @consent.patient_id),
-        name: @consent.patient.full_name,
+        session_patient_programme_path(@session, @patient, @programme),
+        name: @patient.full_name,
       ) %>
 <% end %>
 

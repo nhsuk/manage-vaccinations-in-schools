@@ -1,13 +1,8 @@
 # frozen_string_literal: true
 
-class SessionAttendancesController < ApplicationController
-  before_action :set_session
-  before_action :set_patient
-  before_action :set_patient_session
+class PatientSessions::SessionAttendancesController < PatientSessions::BaseController
   before_action :set_session_date
   before_action :set_session_attendance
-
-  layout "three_quarters"
 
   def edit
   end
@@ -35,8 +30,9 @@ class SessionAttendancesController < ApplicationController
       end
 
       redirect_to session_patient_programme_path(
-                    patient_id: @patient.id,
-                    programme_type: @patient_session.programmes.first.type
+                    @session,
+                    @patient,
+                    @patient_session.programmes.first
                   )
     else
       render :edit, status: :unprocessable_entity
@@ -44,19 +40,6 @@ class SessionAttendancesController < ApplicationController
   end
 
   private
-
-  def set_session
-    @session = policy_scope(Session).find_by!(slug: params[:session_slug])
-  end
-
-  def set_patient
-    @patient = policy_scope(Patient).find(params[:patient_id])
-  end
-
-  def set_patient_session
-    @patient_session =
-      PatientSession.find_by!(patient: @patient, session: @session)
-  end
 
   def set_session_date
     @session_date = @session.session_dates.find_by!(value: Date.current)

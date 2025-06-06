@@ -271,20 +271,16 @@ Rails.application.routes.draw do
 
     resource :dates, controller: "session_dates", only: %i[show update]
 
-    resources :patient_sessions, path: "patients", as: :patient, only: [] do
-      get "log"
+    resources :patient_sessions,
+              path: "patients",
+              as: :patient,
+              only: [],
+              module: :patient_sessions do
+      resource :activity, only: :show
+      resource :session_attendance, path: "attendance", only: %i[edit update]
 
-      resource :attendance,
-               controller: "session_attendances",
-               only: %i[edit update]
-
-      resources :programmes, path: "", param: :type, only: [] do
-        get "", as: "", controller: :patient_sessions, action: :show
-
-        get "record-already-vaccinated",
-            as: "record_already_vaccinated",
-            controller: :patient_sessions,
-            action: :record_already_vaccinated
+      resources :programmes, path: "", param: :type, only: :show do
+        get "record-already-vaccinated"
 
         resources :consents, only: %i[index create show] do
           post "send-request", on: :collection, action: :send_request

@@ -117,7 +117,7 @@
                           destroy_programme_vaccination_record_path(
                             programme,
                             vaccination_record,
-                            return_to: session_patient_programme_path(patient_id: patient.id),
+                            return_to: session_patient_programme_path(session, patient, programme),
                           ) %>
       <% end %>
     </div>

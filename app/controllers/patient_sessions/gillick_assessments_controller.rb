@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
-class GillickAssessmentsController < ApplicationController
-  include PatientSessionProgrammeConcern
-
+class PatientSessions::GillickAssessmentsController < PatientSessions::BaseController
   before_action :set_gillick_assessment
 
   def edit
