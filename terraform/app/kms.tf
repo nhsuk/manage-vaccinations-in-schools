@@ -7,7 +7,7 @@ resource "aws_kms_key" "rds_cluster" {
         Sid    = "AllowAccount"
         Effect = "Allow"
         Principal = {
-          AWS = "arn:aws:iam::${var.account_id}:root"
+          AWS = ["arn:aws:iam::${var.account_id}:root", "arn:aws:iam::${var.backup_account_id}:root"]
         }
         Action   = "kms:*"
         Resource = "*"
