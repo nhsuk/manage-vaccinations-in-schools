@@ -7,33 +7,41 @@ class PatientPolicy < ApplicationPolicy
 
       return scope.none if organisation.nil?
 
-      scope_with_joins =
-        scope.left_outer_joins(
-          :patient_sessions,
-          :school_moves,
-          :vaccination_records
-        )
+      patient_session_exists =
+        PatientSession
+          .where("patient_sessions.patient_id = patients.id")
+          .where(session: organisation.sessions)
+          .arel
+          .exists
 
-      scope_with_joins
-        .where(patient_sessions: { session: organisation.sessions })
-        .or(scope_with_joins.where(school_moves: { organisation: }))
-        .or(
-          scope_with_joins.where(school_moves: { school: organisation.schools })
-        )
-        .or(
-          scope_with_joins.where(
-            vaccination_records: {
-              session: organisation.sessions
-            }
+      school_move_exists =
+        SchoolMove
+          .where("school_moves.patient_id = patients.id")
+          .where(organisation:)
+          .or(
+            SchoolMove.where("school_moves.patient_id = patients.id").where(
+              school: organisation.schools
+            )
           )
-        )
-        .or(
-          scope_with_joins.where(
-            vaccination_records: {
-              performed_ods_code: organisation.ods_code
-            }
+          .arel
+          .exists
+
+      vaccination_record_exists =
+        VaccinationRecord
+          .where("vaccination_records.patient_id = patients.id")
+          .where(session: organisation.sessions)
+          .or(
+            VaccinationRecord.where(
+              "vaccination_records.patient_id = patients.id"
+            ).where(performed_ods_code: organisation.ods_code)
           )
-        )
+          .arel
+          .exists
+
+      scope
+        .where(patient_session_exists)
+        .or(scope.where(school_move_exists))
+        .or(scope.where(vaccination_record_exists))
     end
   end
 end
