@@ -123,8 +123,11 @@ FactoryBot.define do
     end
 
     after(:create) do |consent_form, evaluator|
+      vaccine_methods = evaluator.response == "given" ? %w[injection] : []
+
       consent_form.consent_form_programmes.update_all(
-        response: evaluator.response
+        response: evaluator.response,
+        vaccine_methods:
       )
     end
 

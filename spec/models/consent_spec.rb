@@ -43,6 +43,18 @@
 describe Consent do
   describe "validations" do
     it { should validate_length_of(:notes).is_at_most(1000) }
+
+    context "when response is given" do
+      subject { build(:consent, :given) }
+
+      it { should validate_presence_of(:vaccine_methods) }
+    end
+
+    context "when response is refused" do
+      subject { build(:consent, :refused) }
+
+      it { should_not validate_presence_of(:vaccine_methods) }
+    end
   end
 
   describe "#verbal_routes" do
@@ -202,8 +214,14 @@ describe Consent do
       end
 
       before do
-        consent_form.consent_form_programmes.first.update!(response: "given")
-        consent_form.consent_form_programmes.second.update!(response: "refused")
+        consent_form.consent_form_programmes.first.update!(
+          response: "given",
+          vaccine_methods: %w[injection]
+        )
+        consent_form.consent_form_programmes.second.update!(
+          response: "refused",
+          vaccine_methods: []
+        )
       end
 
       it "creates a consent per programme" do
