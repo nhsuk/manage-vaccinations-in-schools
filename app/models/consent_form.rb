@@ -11,7 +11,6 @@
 #  address_town                        :string
 #  archived_at                         :datetime
 #  chosen_vaccine                      :string
-#  contact_injection                   :boolean
 #  date_of_birth                       :date
 #  education_setting                   :integer
 #  family_name                         :text
@@ -245,10 +244,6 @@ class ConsentForm < ApplicationRecord
     validates :reason_notes, presence: true
   end
 
-  on_wizard_step :injection do
-    validates :contact_injection, inclusion: { in: [true, false] }
-  end
-
   on_wizard_step :address do
     validates :address_line_1, presence: true
     validates :address_town, presence: true
@@ -271,7 +266,6 @@ class ConsentForm < ApplicationRecord
       :consent,
       (:reason if consent_refused?),
       (:reason_notes if consent_refused? && reason_notes_must_be_provided?),
-      (:injection if injection_offered_as_alternative?),
       (:address if consent_given? || consent_given_one?),
       (:health_question if consent_given? || consent_given_one?),
       (:reason if consent_given_one?),
@@ -499,24 +493,6 @@ class ConsentForm < ApplicationRecord
     created_at.to_date.academic_year
   end
 
-  def refused_and_not_had_it_already?
-    consent_refused? && !refused_because_will_be_vaccinated_elsewhere? &&
-      !refused_because_already_vaccinated?
-  end
-
-  def injection_offered_as_alternative?
-    refused_and_not_had_it_already? && programmes.any?(&:flu?)
-    # checking for flu here is a simplification
-    # the actual logic is: if the parent has refused a nasal vaccine AND the session is for a nasal vaccine
-    # AND the SAIS organisation offers an alternative injection vaccine, then show the injection step
-    #
-    # we currently don't track what type of vaccine was refused.
-    # currently HPV is only offered as an injection, so we don't need to check for it
-    #
-    # so a more true-to-life implementation would be:
-    # refused_nasal? && not_had_it_already? && injection_offered_as_alternative?
-  end
-
   def health_answers_valid?
     if health_question_number.present?
       unless health_answers[health_question_number].valid?
@@ -576,8 +552,6 @@ class ConsentForm < ApplicationRecord
       self.reason = nil
       self.reason_notes = nil
     end
-
-    self.contact_injection = nil if consent_given? || consent_given_one?
 
     if school_confirmed
       self.education_setting = "school"

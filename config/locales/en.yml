@@ -256,8 +256,6 @@ en:
             address_town:
               blank: Enter a town or city
               too_long: Enter a town or city that is less than 300 characters long
-            contact_injection:
-              inclusion: Choose if you want to be contacted
             date_of_birth:
               blank: Enter their date of birth
               greater_than_or_equal_to: The child cannot be older than 22. Enter a date after %{count}.
@@ -694,7 +692,6 @@ en:
     file_format: file-format
     gp: gp
     health_question: health-question
-    injection: injection
     location: location
     name: name
     notes: notes

@@ -4,12 +4,7 @@ module ConsentFormMailerConcern
   extend ActiveSupport::Concern
 
   def send_consent_form_confirmation(consent_form)
-    if consent_form.contact_injection?
-      EmailDeliveryJob.perform_later(
-        :consent_confirmation_injection,
-        consent_form:
-      )
-    elsif consent_form.consent_refused?
+    if consent_form.consent_refused?
       send_consent_form_confirmation_refused(consent_form)
     else
       ProgrammeGrouper

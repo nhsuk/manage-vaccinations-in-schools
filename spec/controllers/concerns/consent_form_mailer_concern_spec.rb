@@ -22,20 +22,6 @@ describe ConsentFormMailerConcern do
       ).with(consent_form:, programmes: consent_form.programmes)
     end
 
-    context "when user agrees to be contacted about injections" do
-      before { consent_form.contact_injection = true }
-
-      it "sends an injection confirmation email" do
-        expect { send_consent_form_confirmation }.to have_delivered_email(
-          :consent_confirmation_injection
-        ).with(consent_form:)
-      end
-
-      it "doesn't send a text" do
-        expect { send_consent_form_confirmation }.not_to have_delivered_sms
-      end
-    end
-
     context "when user refuses consent" do
       before { consent_form.response = :refused }
 
