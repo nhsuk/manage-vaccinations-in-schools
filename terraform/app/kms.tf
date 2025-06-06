@@ -1,3 +1,7 @@
+data "aws_iam_role" "dms_service_linked_role" {
+  name = "AWSServiceRoleForDMSServerless"
+}
+
 resource "aws_kms_key" "rds_cluster" {
   description = "Custom KMS key for new Aurora cluster"
   policy = jsonencode({
@@ -16,7 +20,7 @@ resource "aws_kms_key" "rds_cluster" {
         Sid    = "AllowDMS"
         Effect = "Allow"
         Principal = {
-          AWS = module.dms_custom_kms_migration.dms_service_role_arn
+          AWS = data.aws_iam_role.dms_service_linked_role.arn
         }
         Action = [
           "kms:Encrypt",
