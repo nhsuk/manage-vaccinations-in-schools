@@ -31,16 +31,111 @@ namespace :vaccines do
       next if vaccine.health_questions.exists?
 
       ActiveRecord::Base.transaction do
-        if programme.hpv?
+        if programme.flu?
+          create_flu_health_questions(vaccine)
+        elsif programme.hpv?
           create_hpv_health_questions(vaccine)
         elsif programme.menacwy?
           create_menacwy_health_questions(vaccine)
         elsif programme.td_ipv?
           create_td_ipv_health_questions(vaccine)
+        else
+          raise "Unknown programme: #{programme.name}"
         end
       end
     end
   end
+end
+
+def create_flu_health_questions(vaccine)
+  asthma =
+    vaccine.health_questions.create!(
+      title: "Has your child been diagnosed with asthma?"
+    )
+
+  asthma_steroids =
+    vaccine.health_questions.create!(
+      title: "Does your child take steroid tablets for their asthma?"
+    )
+
+  asthma_intensive_care =
+    vaccine.health_questions.create!(
+      title:
+        "Has your child ever been admitted to intensive care because of their asthma?"
+    )
+
+  immune_system =
+    vaccine.health_questions.create!(
+      title:
+        "Does your child have a disease or treatment that severely affects their immune system?"
+    )
+
+  household_immune_system =
+    vaccine.health_questions.create!(
+      title:
+        "Is anyone in your child’s household currently having treatment that severely affects their immune system?"
+    )
+
+  egg_allergy =
+    vaccine.health_questions.create!(
+      title:
+        "Has your child ever been admitted to intensive care due to an allergic reaction to egg?"
+    )
+
+  allergies =
+    vaccine.health_questions.create!(
+      title: "Does your child have any allergies to medication?"
+    )
+
+  medical_conditions =
+    vaccine.health_questions.create!(
+      title:
+        "Does your child have any medical conditions for which they receive treatment?"
+    )
+
+  aspirin =
+    vaccine.health_questions.create!(
+      title: "Does your child take regular aspirin?",
+      hint: "Also known as Salicylate therapy"
+    )
+
+  flu_previously =
+    vaccine.health_questions.create!(
+      title: "Has your child had a flu vaccination in the last 3 months?"
+    )
+
+  extra_support =
+    vaccine.health_questions.create!(
+      title: "Does your child need extra support during vaccination sessions?",
+      hint: "For example, they’re autistic, or extremely anxious"
+    )
+
+  injection_instead =
+    if vaccine.nasal?
+      vaccine.health_questions.create!(
+        title:
+          "If your child cannot have the nasal spray, do you agree to them having the injected vaccine instead?",
+        hint:
+          "We may decide the nasal spray vaccine is not suitable. In this case, we may offer the injected vaccine instead."
+      )
+    end
+
+  asthma.update!(
+    follow_up_question: asthma_steroids,
+    next_question: immune_system
+  )
+  asthma_steroids.update!(next_question: asthma_intensive_care)
+  asthma_intensive_care.update!(next_question: immune_system)
+
+  immune_system.update!(next_question: household_immune_system)
+  household_immune_system.update!(next_question: egg_allergy)
+  egg_allergy.update!(next_question: allergies)
+  allergies.update!(next_question: medical_conditions)
+  medical_conditions.update!(next_question: aspirin)
+  aspirin.update!(next_question: flu_previously)
+  flu_previously.update!(next_question: extra_support)
+
+  extra_support.update!(next_question: injection_instead) if injection_instead
 end
 
 def create_hpv_health_questions(vaccine)

@@ -48,9 +48,7 @@ class Programme < ApplicationRecord
 
   def to_param = type
 
-  def name
-    human_enum_name(:type)
-  end
+  def name = human_enum_name(:type)
 
   def doubles? = menacwy? || td_ipv?
 
