@@ -6,6 +6,7 @@
 #
 #  id              :bigint           not null, primary key
 #  response        :integer
+#  vaccine_method  :integer
 #  consent_form_id :bigint           not null
 #  programme_id    :bigint           not null
 #
@@ -24,6 +25,14 @@ FactoryBot.define do
     consent_form
     programme
 
-    traits_for_enum :response
+    trait :given do
+      response { "given" }
+      vaccine_method { "injection" }
+    end
+
+    trait :refused do
+      response { "refused" }
+      vaccine_method { nil }
+    end
   end
 end
