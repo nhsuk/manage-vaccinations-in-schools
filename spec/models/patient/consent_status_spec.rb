@@ -93,6 +93,22 @@ describe Patient::ConsentStatus do
       it { should be(:conflicts) }
     end
 
+    context "with two given consents with different methods" do
+      before do
+        create(:consent, :given, :injection, patient:, programme:)
+        create(
+          :consent,
+          :given,
+          :nasal,
+          patient:,
+          programme:,
+          parent: create(:parent)
+        )
+      end
+
+      it { should be(:conflicts) }
+    end
+
     context "with an invalidated refused and given consent" do
       before do
         create(:consent, :refused, :invalidated, patient:, programme:)
