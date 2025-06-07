@@ -46,9 +46,7 @@ class Programme < ApplicationRecord
        { flu: "flu", hpv: "hpv", menacwy: "menacwy", td_ipv: "td_ipv" },
        validate: true
 
-  def to_param
-    type
-  end
+  def to_param = type
 
   def doubles?
     menacwy? || td_ipv?
