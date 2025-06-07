@@ -388,6 +388,29 @@ describe AppActivityLogComponent do
                      programme: "Td/IPV"
   end
 
+  describe "notes" do
+    let(:programmes) { [create(:programme, :hpv)] }
+    let(:session) { create(:session, programmes:) }
+
+    before do
+      create(
+        :note,
+        created_by: user,
+        patient:,
+        session:,
+        body: "A note.",
+        created_at: Time.zone.local(2025, 6, 1, 12)
+      )
+    end
+
+    include_examples "card",
+                     title: "Note",
+                     notes: "A note.",
+                     date: "1 June 2025 at 12:00pm",
+                     by: "JOY, Nurse",
+                     programme: "HPV"
+  end
+
   describe "pre-screenings" do
     let(:patient_session) { create(:patient_session, patient:, programmes:) }
 

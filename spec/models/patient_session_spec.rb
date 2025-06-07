@@ -27,8 +27,18 @@ describe PatientSession do
   let(:programme) { create(:programme) }
   let(:session) { create(:session, programmes: [programme]) }
 
-  it { should have_many(:gillick_assessments) }
-  it { should have_many(:pre_screenings) }
+  describe "associations" do
+    it { should have_many(:gillick_assessments) }
+    it { should have_many(:pre_screenings) }
+
+    it do
+      expect(patient_session).to have_one(:latest_note)
+        .through(:patient)
+        .source(:notes)
+        .conditions(session_id: session.id)
+        .order(created_at: :desc)
+    end
+  end
 
   describe "#safe_to_destroy?" do
     subject(:safe_to_destroy?) { patient_session.safe_to_destroy? }
