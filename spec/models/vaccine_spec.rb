@@ -57,22 +57,6 @@ describe Vaccine do
     end
   end
 
-  describe "#seasonal?" do
-    subject { vaccine.seasonal? }
-
-    context "with a Flu vaccine" do
-      let(:vaccine) { build(:vaccine, :flu) }
-
-      it { should be(true) }
-    end
-
-    context "with an HPV vaccine" do
-      let(:vaccine) { build(:vaccine, :hpv) }
-
-      it { should be(false) }
-    end
-  end
-
   describe "#available_delivery_methods" do
     subject { vaccine.available_delivery_methods }
 

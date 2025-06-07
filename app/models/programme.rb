@@ -46,17 +46,15 @@ class Programme < ApplicationRecord
        { flu: "flu", hpv: "hpv", menacwy: "menacwy", td_ipv: "td_ipv" },
        validate: true
 
-  def to_param
-    type
-  end
-
-  def doubles?
-    menacwy? || td_ipv?
-  end
+  def to_param = type
 
   def name
     human_enum_name(:type)
   end
+
+  def doubles? = menacwy? || td_ipv?
+
+  def seasonal? = flu?
 
   YEAR_GROUPS_BY_TYPE = {
     "flu" => (0..11).to_a,
