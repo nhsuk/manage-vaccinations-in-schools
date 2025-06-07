@@ -72,7 +72,7 @@ FactoryBot.define do
 
     vaccine do
       if session
-        programme.vaccines.active.first || association(:vaccine, programme:)
+        programme.vaccines.active.sample || association(:vaccine, programme:)
       end
     end
 

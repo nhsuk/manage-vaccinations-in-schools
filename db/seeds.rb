@@ -19,16 +19,14 @@ def create_gp_practices
   FactoryBot.create_list(:gp_practice, 30)
 end
 
-def create_organisation(ods_code:, programme_types: %w[hpv menacwy td_ipv])
+def create_organisation(ods_code:)
   organisation =
     Organisation.find_by(ods_code:) ||
       FactoryBot.create(:organisation, :with_generic_clinic, ods_code:)
 
-  programme_types
-    .map { Programme.find_by!(type: it) }
-    .each do |programme|
-      FactoryBot.create(:organisation_programme, organisation:, programme:)
-    end
+  Programme.all.find_each do |programme|
+    FactoryBot.create(:organisation_programme, organisation:, programme:)
+  end
 
   organisation
 end
@@ -85,14 +83,10 @@ def create_session(
 )
   year_groups ||= programmes.flat_map(&:year_groups).uniq
 
-  programmes.each do |programme|
-    FactoryBot.create_list(
-      :batch,
-      3,
-      organisation:,
-      vaccine: programme.vaccines.active.first
-    )
-  end
+  Vaccine
+    .active
+    .where(programme: programmes)
+    .find_each { |vaccine| FactoryBot.create(:batch, organisation:, vaccine:) }
 
   location = FactoryBot.create(:school, organisation:, year_groups:)
   date = completed ? 1.week.ago.to_date : Date.current
@@ -232,9 +226,14 @@ def create_school_moves(organisation)
 end
 
 def create_organisation_sessions(user, organisation)
+  flu = Programme.find_by!(type: "flu")
   hpv = Programme.find_by!(type: "hpv")
   menacwy = Programme.find_by!(type: "menacwy")
   td_ipv = Programme.find_by!(type: "td_ipv")
+
+  # Flu-only sessions
+  create_session(user, organisation, programmes: [flu], completed: false)
+  create_session(user, organisation, programmes: [hpv], completed: true)
 
   # HPV-only sessions
   create_session(user, organisation, programmes: [hpv], completed: false)
