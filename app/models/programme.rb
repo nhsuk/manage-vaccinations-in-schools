@@ -79,15 +79,6 @@ class Programme < ApplicationRecord
     vaccines.flat_map(&:available_delivery_sites).uniq
   end
 
-  def common_delivery_sites
-    if hpv? || menacwy? || td_ipv?
-      %w[left_arm_upper_position right_arm_upper_position]
-    else
-      raise NotImplementedError,
-            "Common delivery sites not implemented for #{type} vaccines."
-    end
-  end
-
   DOSE_SEQUENCES = {
     "flu" => 1,
     "hpv" => 1,
