@@ -87,7 +87,7 @@ describe "Triage" do
   def then_i_see_one_patient_needing_consent
     click_on "Consent"
 
-    choose "No response"
+    check "No response"
     click_on "Update results"
 
     expect(page).to have_content("Showing 1 to 1 of 1 children")
