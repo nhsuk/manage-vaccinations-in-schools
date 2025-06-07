@@ -41,6 +41,7 @@ class DraftVaccinationRecord
       (:outcome if can_change_outcome?),
       (:delivery if administered?),
       (:batch if administered?),
+      (:dose if administered? && can_be_half_dose?),
       (:location if location&.generic_clinic?),
       :confirm
     ].compact
@@ -71,6 +72,10 @@ class DraftVaccinationRecord
 
   on_wizard_step :batch, exact: true do
     validates :batch_id, presence: true
+  end
+
+  on_wizard_step :dose, exact: true do
+    validates :full_dose, inclusion: [true, false]
   end
 
   on_wizard_step :location, exact: true do
@@ -175,6 +180,7 @@ class DraftVaccinationRecord
   end
 
   delegate :vaccine, to: :batch, allow_nil: true
+  delegate :can_be_half_dose?, to: :vaccine, allow_nil: true
 
   delegate :id, to: :vaccine, prefix: true, allow_nil: true
 
@@ -187,10 +193,13 @@ class DraftVaccinationRecord
   end
 
   def reset_unused_fields
-    unless administered?
+    if administered?
+      self.full_dose = true unless can_be_half_dose?
+    else
       self.batch_id = nil
       self.delivery_method = nil
       self.delivery_site = nil
+      self.full_dose = nil
     end
   end
 

@@ -12,6 +12,10 @@ en:
           keep_both: The new and existing records will both be kept.
 
     label:
+      draft_vaccination_record:
+        full_dose_options:
+          true: Yes, they got the full dose
+          false: No, they got half a dose
       import_duplicate_form:
         apply_changes_options:
           apply: Use duplicate record

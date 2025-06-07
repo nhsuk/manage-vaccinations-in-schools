@@ -72,6 +72,8 @@ en:
             delivery_site:
               blank: Choose a delivery site
               inclusion: Choose a delivery site
+            full_dose:
+              inclusion: Choose whether they got the full dose
             location_name:
               blank: Enter where the vaccination was given
             notes:
@@ -686,6 +688,7 @@ en:
     date_of_birth: date-of-birth
     dates: dates
     delivery: delivery
+    dose: dose
     education_setting: education-setting
     file_format: file-format
     gp: gp

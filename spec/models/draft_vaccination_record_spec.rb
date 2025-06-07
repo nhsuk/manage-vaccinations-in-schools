@@ -84,6 +84,16 @@ describe DraftVaccinationRecord do
   describe "#reset_unused_fields" do
     subject(:save!) { draft_vaccination_record.save! }
 
+    context "when administered" do
+      let(:attributes) { valid_administered_attributes.except(:full_dose) }
+
+      it "sets full dose to true if half doses cannot be recorded" do
+        expect { save! }.to change(draft_vaccination_record, :full_dose).to(
+          true
+        )
+      end
+    end
+
     context "when not administered" do
       let(:attributes) do
         valid_not_administered_attributes.merge(
