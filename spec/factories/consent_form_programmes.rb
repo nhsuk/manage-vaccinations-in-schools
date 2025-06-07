@@ -19,15 +19,11 @@
 #  fk_rails_...  (consent_form_id => consent_forms.id)
 #  fk_rails_...  (programme_id => programmes.id)
 #
-class ConsentFormProgramme < ApplicationRecord
-  belongs_to :consent_form
-  belongs_to :programme
+FactoryBot.define do
+  factory :consent_form_programmes do
+    consent_form
+    programme
 
-  scope :ordered, -> { joins(:programme).order(:"programme.type") }
-
-  enum :response, { given: 0, refused: 1 }, prefix: true
-
-  def vaccines
-    Vaccine.active.where(programme_id: programme_id)
+    traits_for_enum :response
   end
 end

@@ -155,6 +155,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_06_070424) do
   create_table "consent_form_programmes", force: :cascade do |t|
     t.bigint "programme_id", null: false
     t.bigint "consent_form_id", null: false
+    t.integer "response"
     t.index ["consent_form_id"], name: "index_consent_form_programmes_on_consent_form_id"
     t.index ["programme_id", "consent_form_id"], name: "idx_on_programme_id_consent_form_id_2113cb7f37", unique: true
   end
@@ -167,7 +168,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_06_070424) do
     t.text "family_name"
     t.boolean "use_preferred_name"
     t.date "date_of_birth"
-    t.integer "response"
     t.integer "reason"
     t.text "reason_notes"
     t.string "address_line_1"
@@ -194,7 +194,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_06_070424) do
     t.string "nhs_number"
     t.datetime "archived_at"
     t.text "notes", default: "", null: false
-    t.string "chosen_vaccine"
     t.index ["consent_id"], name: "index_consent_forms_on_consent_id"
     t.index ["location_id"], name: "index_consent_forms_on_location_id"
     t.index ["nhs_number"], name: "index_consent_forms_on_nhs_number"
