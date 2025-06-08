@@ -4,10 +4,11 @@
 #
 # Table name: patient_consent_statuses
 #
-#  id           :bigint           not null, primary key
-#  status       :integer          default("no_response"), not null
-#  patient_id   :bigint           not null
-#  programme_id :bigint           not null
+#  id              :bigint           not null, primary key
+#  status          :integer          default("no_response"), not null
+#  vaccine_methods :integer          default([]), not null, is an Array
+#  patient_id      :bigint           not null
+#  programme_id    :bigint           not null
 #
 # Indexes
 #
@@ -25,5 +26,10 @@ FactoryBot.define do
     programme
 
     traits_for_enum :status
+
+    trait :given do
+      status { "given" }
+      vaccine_methods { %w[injection] }
+    end
   end
 end
