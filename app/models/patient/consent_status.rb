@@ -58,6 +58,8 @@ class Patient::ConsentStatus < ApplicationRecord
       end
   end
 
+  def vaccine_method_nasal? = vaccine_methods.include?("nasal")
+
   private
 
   def status_should_be_given?
