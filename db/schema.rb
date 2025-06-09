@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_06_070424) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_09_112437) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -714,7 +714,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_06_070424) do
     t.integer "days_before_consent_reminders"
     t.string "slug", null: false
     t.date "send_invitations_at"
-    t.index ["organisation_id", "location_id", "academic_year"], name: "idx_on_organisation_id_location_id_academic_year_3496b72d0c", unique: true
+    t.index ["location_id"], name: "index_sessions_on_location_id"
+    t.index ["organisation_id", "location_id"], name: "index_sessions_on_organisation_id_and_location_id"
   end
 
   create_table "teams", force: :cascade do |t|
