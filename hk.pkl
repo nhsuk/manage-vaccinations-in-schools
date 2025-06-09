@@ -1,5 +1,5 @@
-amends "package://github.com/jdx/hk/releases/download/v1.0.0/hk@1.0.0#/Config.pkl"
-import "package://github.com/jdx/hk/releases/download/v1.0.0/hk@1.0.0#/Builtins.pkl"
+amends "package://github.com/jdx/hk/releases/download/v1.1.2/hk@1.1.2#/Config.pkl"
+import "package://github.com/jdx/hk/releases/download/v1.1.2/hk@1.1.2#/Builtins.pkl"
 
 local linters = new Mapping<String, Group> {
     ["all"] = new Group {
