@@ -4,15 +4,14 @@ module ParentInterface
   class ConsentForms::EditController < ConsentForms::BaseController
     include WizardControllerConcern
 
-    before_action :validate_params, only: %i[update]
+    before_action :validate_params, only: :update
     before_action :set_health_answer, if: :is_health_question_step?
-    before_action :set_follow_up_changes_start_page, only: %i[show]
+    before_action :set_response, if: :is_response_step?, only: :show
+    before_action :set_follow_up_changes_start_page, only: :show
 
     HOME_EDUCATED_SCHOOL_ID = "home-educated"
 
     def show
-      set_response if current_step == :consent
-
       render_wizard
     end
 
@@ -48,7 +47,7 @@ module ParentInterface
              @consent_form.parent_phone.present?
           jump_to("contact-method", skip_to_confirm: true)
         end
-      elsif current_step == :consent
+      elsif is_response_step?
         @consent_form.update_programme_responses
         @consent_form.seed_health_questions
       end
@@ -97,9 +96,11 @@ module ParentInterface
           parent_contact_method_type
           parent_contact_method_other_details
         ],
-        consent: %i[response chosen_programme],
         reason: %i[reason],
         reason_notes: %i[reason_notes],
+        response_doubles: %i[response chosen_programme],
+        response_flu: %i[response],
+        response_hpv: %i[response],
         address: %i[address_line_1 address_line_2 address_town address_postcode]
       }.fetch(current_step)
 
@@ -154,9 +155,9 @@ module ParentInterface
       end
     end
 
-    def is_health_question_step?
-      step == "health-question"
-    end
+    def is_response_step? = step.start_with?("response-")
+
+    def is_health_question_step? = step == "health-question"
 
     def current_health_answer
       index = step.split("-").last.to_i - 1

@@ -247,7 +247,14 @@ class ConsentForm < ApplicationRecord
     validates :parent_contact_method_type, presence: true
   end
 
-  on_wizard_step :consent, exact: true do
+  on_wizard_step :response_doubles, exact: true do
+    validates :response, presence: true
+    validates :chosen_programme,
+              presence: true,
+              if: -> { response == "given_one" }
+  end
+
+  on_wizard_step :response_hpv, exact: true do
     validates :response, presence: true
   end
 
@@ -273,6 +280,9 @@ class ConsentForm < ApplicationRecord
     refused_and_not_given = response_refused? && !response_given?
     refused_and_given = response_refused? && response_given?
 
+    response_steps =
+      ProgrammeGrouper.call(programmes).keys.map { :"response_#{it}" }
+
     [
       :name,
       :date_of_birth,
@@ -280,17 +290,20 @@ class ConsentForm < ApplicationRecord
       (:education_setting if location_is_clinic?),
       (:school if choose_school?),
       :parent,
-      (:contact_method if parent_phone.present?),
-      :consent,
-      (:reason if refused_and_not_given),
-      (
-        :reason_notes if refused_and_not_given && reason_notes_must_be_provided?
-      ),
-      (:address if response_given?),
-      (:health_question if response_given?),
-      (:reason if refused_and_given),
-      (:reason_notes if refused_and_given && reason_notes_must_be_provided?)
-    ].compact
+      (:contact_method if parent_phone.present?)
+    ].compact + response_steps +
+      [
+        (:reason if refused_and_not_given),
+        (
+          if refused_and_not_given && reason_notes_must_be_provided?
+            :reason_notes
+          end
+        ),
+        (:address if response_given?),
+        (:health_question if response_given?),
+        (:reason if refused_and_given),
+        (:reason_notes if refused_and_given && reason_notes_must_be_provided?)
+      ].compact
   end
 
   def recorded? = recorded_at != nil

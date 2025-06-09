@@ -75,8 +75,8 @@ describe ConsentForm do
     let(:parent_phone_receive_updates) { false }
     let(:reason) { nil }
     let(:response) { nil }
-    let(:session) { create(:session) }
-    let(:programmes) { session.programmes }
+    let(:session) { create(:session, programmes:) }
+    let(:programmes) { [create(:programme, :hpv)] }
     let(:use_preferred_name) { false }
     let(:wizard_step) { nil }
 
@@ -154,8 +154,23 @@ describe ConsentForm do
       end
     end
 
-    context "when wizard_step is :consent" do
-      let(:wizard_step) { :consent }
+    context "when wizard_step is :response_doubles" do
+      let(:wizard_step) { :response_doubles }
+
+      let(:programmes) do
+        [create(:programme, :menacwy), create(:programme, :td_ipv)]
+      end
+
+      context "runs validations from previous steps" do
+        it { should validate_presence_of(:given_name).on(:update) }
+        it { should validate_presence_of(:date_of_birth).on(:update) }
+      end
+
+      it { should validate_presence_of(:response).on(:update) }
+    end
+
+    context "when wizard_step is :response_hpv" do
+      let(:wizard_step) { :response_hpv }
 
       context "runs validations from previous steps" do
         it { should validate_presence_of(:given_name).on(:update) }
@@ -479,25 +494,25 @@ describe ConsentForm do
     subject { consent_form.vaccine_may_contain_gelatine? }
 
     let(:consent_form) do
-      create(:consent_form, session: create(:session, programmes: [programme]))
+      create(:consent_form, session: create(:session, programmes:))
     end
 
     before { consent_form.strict_loading!(false) }
 
     context "if the flu programme offers both injection and nasal vaccines" do
-      let(:programme) { create(:programme, :flu) }
+      let(:programmes) { [create(:programme, :flu)] }
 
       it { should be(true) }
     end
 
     context "if the flu programme only offers injection vaccines" do
-      let(:programme) { create(:programme, :flu_nasal_only) }
+      let(:programmes) { [create(:programme, :flu_nasal_only)] }
 
       it { should be(true) }
     end
 
     context "for an HPV programme" do
-      let(:programme) { create(:programme, :hpv) }
+      let(:programmes) { [create(:programme, :hpv)] }
 
       it { should be(false) }
     end
