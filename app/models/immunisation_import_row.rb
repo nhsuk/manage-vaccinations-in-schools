@@ -485,7 +485,9 @@ class ImmunisationImportRow
     if administered
       if batch_name.present?
         if batch_name.to_s.length > 100
-          errors.add(batch_name.header, "is greater than 100 characters long")
+          errors.add(batch_name.header, "must be at most 100 characters long")
+        elsif batch_name.to_s.length < 2
+          errors.add(batch_name.header, "must be at least 2 characters long")
         elsif batch_name.to_s !~ Batch::NAME_FORMAT
           errors.add(batch_name.header, "must be only letters and numbers")
         end
