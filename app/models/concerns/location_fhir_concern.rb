@@ -8,10 +8,10 @@ module LocationFHIRConcern
 
   def fhir_reference
     if school?
-      value = urn || "X9999"
+      value = urn || "X99999"
       system = "https://fhir.hl7.org.uk/Id/urn-school-number"
     elsif clinic?
-      value = ods_code || "X9999"
+      value = ods_code || "X99999"
       system = "https://fhir.nhs.uk/Id/ods-organization-code"
     else
       raise UnknownValueError, "Unsupported location type: #{type}"
