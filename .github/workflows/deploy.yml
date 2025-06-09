@@ -44,6 +44,9 @@ on:
           - none
         default: all
 
+env:
+  account_id: ${{ inputs.environment == 'production' && '820242920762' || '393416225559' }}
+
 jobs:
   validate-inputs:
     runs-on: ubuntu-latest
@@ -94,13 +97,13 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: ${{ env.aws_role }}
+          role-to-assume: arn:aws:iam::${{ env.account_id }}:role/GithubDeployMavisAndInfrastructure
           aws-region: eu-west-2
       - name: Compare permissions
         id: compare-permissions
         run: |
           source ./scripts/validate-github-actions-policy.sh
-          validate_policies arn:aws:iam::${{ env.aws_account_id }}:policy/DeployMavisResources ./resources/github_actions_policy.json
+          validate_policies arn:aws:iam::${{ env.account_id }}:policy/DeployMavisResources ./resources/github_actions_policy.json
           exit $?
   update-permissions:
     runs-on: ubuntu-latest
@@ -120,14 +123,20 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: ${{ env.aws_role }}
+          role-to-assume: arn:aws:iam::${{ env.account_id }}:role/GithubDeployMavisAndInfrastructure
           aws-region: eu-west-2
       - name: Update IAM policy
-        run: ./scripts/update-github-actions-policy.sh arn:aws:iam::${{ env.aws_account_id }}:policy/DeployMavisResources ./resources/github_actions_policy.json
+        run: ./scripts/update-github-actions-policy.sh arn:aws:iam::${{ env.account_id }}:policy/DeployMavisResources ./resources/github_actions_policy.json
   deploy-infrastructure:
     permissions:
       id-token: write
-    needs: [build-and-push-image, determine-git-sha, validate-permissions]
+    needs:
+      [
+        build-and-push-image,
+        determine-git-sha,
+        validate-permissions,
+        update-permissions,
+      ]
     if: always() &&
       ((inputs.environment != 'production' && inputs.environment != 'preview') ||
       needs.validate-permissions.result == 'success' || needs.update-permissions.result == 'success')

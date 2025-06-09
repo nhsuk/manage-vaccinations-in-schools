@@ -15,7 +15,7 @@ function validate_policies() {
   jq -S . deployed_policy.json > deployed_policy_sorted.json
   jq -S . "$POLICY_FILE" > github_actions_policy_sorted.json
 
-  POLICY_DIFF=$(diff --unified deployed_policy_sorted.json github_actions_policy_sorted.json)
+  POLICY_DIFF=$(diff --unified deployed_policy_sorted.json github_actions_policy_sorted.json) || true
   if [ -n "$POLICY_DIFF" ]; then
     echo "Policy mismatch detected: $POLICY_DIFF"
     return 1
