@@ -15,32 +15,24 @@ module PatientFHIRConcern
             system: "https://fhir.nhs.uk/Id/nhs-number",
             value: nhs_number
           )
-        ]
-        # FIXME: Do we need the following fields or is NHS number enough?
-        # name: [FHIR::HumanName.new(family: family_name, given: given_name)],
-        # birthDate: birth_date,
-        # gender: gender_fhir_value,
-        # address: [
-        #   FHIR::Address.new(
-        #     line: [address_line_1, address_line_2],
-        #     city: address_town,
-        #     postalCode: address_postcode
-        #   )
-        # ]
+        ],
+        name: [FHIR::HumanName.new(family: family_name, given: given_name)],
+        birthDate: date_of_birth&.strftime("%Y-%m-%d"),
+        gender: gender_fhir_value,
+        address: [FHIR::Address.new(postalCode: address_postcode)]
       )
     end
 
-    # FIXME: Only necessary if we need to send this through.
-    # def gender_fhir_value
-    #   case gender
-    #   when :not_known
-    #     "unknown"
-    #   when :not_specified
-    #     "other"
-    #   else
-    #     gender
-    #   end
-    # end
+    def gender_fhir_value
+      case gender_code
+      when "not_known"
+        "unknown"
+      when "not_specified"
+        "other"
+      else
+        gender_code
+      end
+    end
 
     def fhir_id
       "Patient/#{id}"
