@@ -44,6 +44,7 @@ gem "govuk_design_system_formbuilder"
 gem "govuk_markdown"
 gem "jsonb_accessor"
 gem "jwt"
+gem "mechanize"
 gem "notifications-ruby-client"
 gem "okcomputer"
 gem "omniauth_openid_connect"
@@ -85,7 +86,6 @@ group :development do
   gem "aws-sdk-rds", "~> 1"
   gem "aws-sdk-s3", "~> 1"
   gem "hotwire-livereload"
-  gem "mechanize"
   gem "prettier_print", require: false
   gem "rladr"
   gem "rubocop-govuk", require: false
