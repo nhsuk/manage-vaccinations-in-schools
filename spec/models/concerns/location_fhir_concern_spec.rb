@@ -23,6 +23,12 @@ describe LocationFHIRConcern do
           should eq "https://fhir.nhs.uk/Id/ods-organization-code"
         end
         its(:value) { should eq "918273" }
+
+        context "ods code is not set" do
+          let(:location) { create(:community_clinic, ods_code: nil) }
+
+          its(:value) { should eq "X99999" }
+        end
       end
     end
   end
