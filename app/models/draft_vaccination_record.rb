@@ -82,8 +82,13 @@ class DraftVaccinationRecord
     validates :location_name, presence: true
   end
 
+  on_wizard_step :notes, exact: true do
+    validates :notes, length: { maximum: 1000 }
+  end
+
   on_wizard_step :confirm, exact: true do
     validates :outcome, presence: true
+    validates :notes, length: { maximum: 1000 }
   end
 
   with_options on: :update,

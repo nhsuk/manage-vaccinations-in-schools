@@ -77,7 +77,7 @@ en:
             location_name:
               blank: Enter where the vaccination was given
             notes:
-              too_long: Enter notes that are less than 1000 characters long
+              too_long: Enter notes that are less than %{count} characters long
             outcome:
               inclusion: Choose an outcome
             performed_at:
