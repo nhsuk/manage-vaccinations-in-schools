@@ -261,7 +261,7 @@ describe VaccinationRecordFHIRConcern do
     end
 
     describe "protocolApplied" do
-      subject(:protocol_applied) { immunisation_fhir.protocolApplied }
+      subject(:protocol_applied) { immunisation_fhir.protocolApplied.sole }
 
       it { should be_a FHIR::Immunization::ProtocolApplied }
 
