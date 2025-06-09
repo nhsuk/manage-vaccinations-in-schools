@@ -6,12 +6,20 @@ module ParentInterface
 
     before_action :validate_params, only: :update
     before_action :set_health_answer, if: :is_health_question_step?
-    before_action :set_response, if: :is_response_step?, only: :show
     before_action :set_follow_up_changes_start_page, only: :show
 
     HOME_EDUCATED_SCHOOL_ID = "home-educated"
 
     def show
+      case current_step
+      when :response_doubles
+        set_response_doubles
+      when :response_flu
+        set_response_flu
+      when :response_hpv
+        set_response_hpv
+      end
+
       render_wizard
     end
 
@@ -126,12 +134,34 @@ module ParentInterface
       @health_answer = @consent_form.health_answers[@question_number]
     end
 
-    def set_response
+    def set_response_doubles
       if @consent_form.response_given? && @consent_form.response_refused?
         @consent_form.response = "given_one"
         @consent_form.chosen_programme =
-          @consent_form.given_programmes.first&.type
+          @consent_form.given_programmes.first.type
       elsif @consent_form.response_given?
+        @consent_form.response = "given"
+      elsif @consent_form.response_refused?
+        @consent_form.response = "refused"
+      end
+    end
+
+    def set_response_flu
+      if @consent_form.response_given?
+        method =
+          @consent_form
+            .given_consent_form_programmes
+            .first
+            .vaccine_methods
+            .first
+        @consent_form.response = "given_#{method}"
+      elsif @consent_form.response_refused?
+        @consent_form.response = "refused"
+      end
+    end
+
+    def set_response_hpv
+      if @consent_form.response_given?
         @consent_form.response = "given"
       elsif @consent_form.response_refused?
         @consent_form.response = "refused"

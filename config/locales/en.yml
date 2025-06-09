@@ -303,7 +303,7 @@ en:
                 Enter details for refusing that are less than 1000 characters
                 long
             response:
-              blank: Choose if you agree
+              inclusion: Choose if you agree
             school_confirmed:
               inclusion: Tell us if this is their school
             school_id:

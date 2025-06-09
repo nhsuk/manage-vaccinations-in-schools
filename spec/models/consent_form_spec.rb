@@ -166,7 +166,28 @@ describe ConsentForm do
         it { should validate_presence_of(:date_of_birth).on(:update) }
       end
 
-      it { should validate_presence_of(:response).on(:update) }
+      it do
+        expect(consent_form).to validate_inclusion_of(:response).on(
+          :update
+        ).in_array(%w[given given_one refused])
+      end
+    end
+
+    context "when wizard_step is :response_flu" do
+      let(:wizard_step) { :response_flu }
+
+      let(:programmes) { [create(:programme, :flu)] }
+
+      context "runs validations from previous steps" do
+        it { should validate_presence_of(:given_name).on(:update) }
+        it { should validate_presence_of(:date_of_birth).on(:update) }
+      end
+
+      it do
+        expect(consent_form).to validate_inclusion_of(:response).on(
+          :update
+        ).in_array(%w[given_injection given_nasal refused])
+      end
     end
 
     context "when wizard_step is :response_hpv" do
@@ -177,7 +198,11 @@ describe ConsentForm do
         it { should validate_presence_of(:date_of_birth).on(:update) }
       end
 
-      it { should validate_presence_of(:response).on(:update) }
+      it do
+        expect(consent_form).to validate_inclusion_of(:response).on(
+          :update
+        ).in_array(%w[given refused])
+      end
     end
 
     context "when wizard_step is :reason" do
@@ -556,7 +581,10 @@ describe ConsentForm do
         response: "refused"
       )
 
-    consent_form.consent_form_programmes.update!(response: "given")
+    consent_form.consent_form_programmes.update!(
+      response: "given",
+      vaccine_methods: %w[injection]
+    )
     consent_form.update!(
       address_line_1: "123 Fake St",
       address_town: "London",
@@ -615,7 +643,10 @@ describe ConsentForm do
         response: "refused"
       )
 
-    consent_form.consent_form_programmes.second.update!(response: "given")
+    consent_form.consent_form_programmes.second.update!(
+      response: "given",
+      vaccine_methods: %w[injection]
+    )
     consent_form.update!(
       reason: "personal_choice",
       address_line_1: "123 Fake St",
