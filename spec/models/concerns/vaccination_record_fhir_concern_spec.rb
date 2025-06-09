@@ -156,13 +156,13 @@ describe VaccinationRecordFHIRConcern do
     describe "occurenceDateTime" do
       subject { immunisation_fhir.occurrenceDateTime }
 
-      it { should eq vaccination_record.performed_at.iso8601 }
+      it { should eq vaccination_record.performed_at.iso8601(3) }
     end
 
     describe "recorded" do
       subject { immunisation_fhir.recorded }
 
-      it { should eq vaccination_record.created_at.iso8601 }
+      it { should eq vaccination_record.created_at.iso8601(3) }
     end
 
     describe "primarySource" do

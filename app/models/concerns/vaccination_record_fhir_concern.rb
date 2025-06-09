@@ -21,8 +21,8 @@ module VaccinationRecordFHIRConcern
       immunisation.vaccineCode = vaccine.fhir_codeable_concept
 
       immunisation.patient = FHIR::Reference.new(reference: patient.fhir_id)
-      immunisation.occurrenceDateTime = performed_at.iso8601
-      immunisation.recorded = created_at.iso8601
+      immunisation.occurrenceDateTime = performed_at.iso8601(3)
+      immunisation.recorded = created_at.iso8601(3)
       immunisation.primarySource = recorded_in_service?
       immunisation.manufacturer = vaccine.fhir_manufacturer_reference
 
