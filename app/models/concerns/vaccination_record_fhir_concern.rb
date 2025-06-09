@@ -113,8 +113,8 @@ module VaccinationRecordFHIRConcern
         coding: [
           FHIR::Coding.new(
             system: "http://snomed.info/sct",
-            code: "78421000",
-            display: "Intramuscular route (qualifier value)"
+            code: delivery_method_snomed_code,
+            display: delivery_method_snomed_term
           )
         ]
       )
