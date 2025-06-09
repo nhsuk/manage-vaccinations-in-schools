@@ -2,7 +2,6 @@ resource "aws_dms_replication_subnet_group" "dms_subnet_group" {
   replication_subnet_group_id          = "dms-subnet-group-${var.environment}"
   replication_subnet_group_description = "Subnet group for DMS replication instance"
   subnet_ids                           = var.subnet_ids
-  depends_on                           = [aws_iam_role.dms_vpc_role]
 }
 
 resource "aws_dms_replication_instance" "dms_instance" {
