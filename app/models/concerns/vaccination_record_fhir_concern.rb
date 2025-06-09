@@ -122,7 +122,7 @@ module VaccinationRecordFHIRConcern
 
     def fhir_dose_quantity
       FHIR::Quantity.new(
-        value: dose_volume_ml,
+        value: dose_volume_ml.to_f,
         unit: "milliliter",
         system: "http://unitsofmeasure.org",
         code: "ml"
