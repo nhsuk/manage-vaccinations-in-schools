@@ -63,6 +63,22 @@ describe DraftVaccinationRecord do
         )
       end
     end
+
+    context "on notes step" do
+      let(:attributes) { valid_administered_attributes }
+
+      before { draft_vaccination_record.wizard_step = :notes }
+
+      it { should validate_length_of(:notes).is_at_most(1000).on(:update) }
+    end
+
+    context "on confirm step" do
+      let(:attributes) { valid_administered_attributes }
+
+      before { draft_vaccination_record.wizard_step = :confirm }
+
+      it { should validate_length_of(:notes).is_at_most(1000).on(:update) }
+    end
   end
 
   describe "#write_to!" do
