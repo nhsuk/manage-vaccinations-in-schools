@@ -19,9 +19,9 @@ module MavisCLI
 
           total_rows = CSV.parse(csv_content).count - 1 # Subtract 1 for header
           batch_size = 1000
-          locations = []
+          schools = []
 
-          puts "Starting schools import. Total locations to import: #{total_rows}"
+          puts "Starting import of #{total_rows} schools."
           progress_bar = MavisCLI.progress_bar(total_rows)
 
           CSV.parse(
@@ -32,7 +32,7 @@ module MavisCLI
             gias_establishment_number = row["EstablishmentNumber"]
             next if gias_establishment_number.blank? # closed school that never opened
 
-            locations << Location.new(
+            schools << Location.new(
               type: :school,
               urn: row["URN"],
               gias_local_authority_code: row["LA (code)"],
@@ -50,20 +50,20 @@ module MavisCLI
               year_groups: process_year_groups(row)
             )
 
-            if locations.size >= batch_size
-              import_locations(locations)
-              locations.clear
+            if schools.size >= batch_size
+              import_schools(schools)
+              schools.clear
             end
 
             progress_bar.increment
           end
 
-          import_locations(locations) unless locations.empty?
+          import_schools(schools) unless schools.empty?
         end
       end
 
-      def import_locations(locations)
-        Location.import! locations,
+      def import_schools(schools)
+        Location.import! schools,
                          on_duplicate_key_update: {
                            conflict_target: [:urn],
                            columns: %i[
