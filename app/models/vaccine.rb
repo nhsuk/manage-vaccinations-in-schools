@@ -51,22 +51,19 @@ class Vaccine < ApplicationRecord
 
   delegate :first_health_question, to: :health_questions
 
-  def active?
-    !discontinued
-  end
+  def active? = !discontinued
 
-  def contains_gelatine?
-    programme.flu? && nasal?
-  end
-
-  def seasonal?
-    programme.flu?
-  end
+  def contains_gelatine? = programme.flu? && nasal?
 
   AVAILABLE_DELIVERY_SITES = {
-    "injection" =>
-      VaccinationRecord.delivery_sites.keys -
-        %w[left_buttock right_buttock nose],
+    "injection" => %w[
+      left_arm_upper_position
+      left_arm_lower_position
+      right_arm_upper_position
+      right_arm_lower_position
+      left_thigh
+      right_thigh
+    ],
     "nasal" => %w[nose]
   }.freeze
 

@@ -38,6 +38,34 @@ describe Programme do
     end
   end
 
+  describe "#seasonal?" do
+    subject { programme.seasonal? }
+
+    context "with a Flu programme" do
+      let(:programme) { build(:programme, :flu) }
+
+      it { should be(true) }
+    end
+
+    context "with an HPV programme" do
+      let(:programme) { build(:programme, :hpv) }
+
+      it { should be(false) }
+    end
+
+    context "with an MenACWY programme" do
+      let(:programme) { build(:programme, :menacwy) }
+
+      it { should be(false) }
+    end
+
+    context "with an Td/IPV programme" do
+      let(:programme) { build(:programme, :td_ipv) }
+
+      it { should be(false) }
+    end
+  end
+
   describe "#year_groups" do
     subject(:year_groups) { programme.year_groups }
 
@@ -82,38 +110,8 @@ describe Programme do
     end
   end
 
-  describe "#common_delivery_sites" do
-    subject(:common_delivery_sites) { programme.common_delivery_sites }
-
-    context "with a Flu programme" do
-      let(:programme) { build(:programme, :flu) }
-
-      it "raises an error" do
-        expect { common_delivery_sites }.to raise_error(NotImplementedError)
-      end
-    end
-
-    context "with an HPV programme" do
-      let(:programme) { build(:programme, :hpv) }
-
-      it { should eq(%w[left_arm_upper_position right_arm_upper_position]) }
-    end
-
-    context "with an MenACWY programme" do
-      let(:programme) { build(:programme, :menacwy) }
-
-      it { should eq(%w[left_arm_upper_position right_arm_upper_position]) }
-    end
-
-    context "with an Td/IPV programme" do
-      let(:programme) { build(:programme, :td_ipv) }
-
-      it { should eq(%w[left_arm_upper_position right_arm_upper_position]) }
-    end
-  end
-
   describe "#vaccinated_dose_sequence" do
-    subject(:vaccinated_dose_sequence) { programme.vaccinated_dose_sequence }
+    subject { programme.vaccinated_dose_sequence }
 
     context "with a Flu programme" do
       let(:programme) { build(:programme, :flu) }

@@ -39,15 +39,7 @@ FactoryBot.define do
       vaccines do
         [
           association(:vaccine, :adjuvanted_quadrivalent, programme: instance),
-          association(:vaccine, :cell_quadrivalent, programme: instance),
-          association(:vaccine, :fluenz_tetra, programme: instance),
-          association(:vaccine, :quadrivalent_influenza, programme: instance),
-          association(
-            :vaccine,
-            :quadrivalent_influvac_tetra,
-            programme: instance
-          ),
-          association(:vaccine, :supemtek, programme: instance)
+          association(:vaccine, :fluenz_tetra, programme: instance)
         ]
       end
     end

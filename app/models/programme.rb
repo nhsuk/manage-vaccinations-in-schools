@@ -46,17 +46,15 @@ class Programme < ApplicationRecord
        { flu: "flu", hpv: "hpv", menacwy: "menacwy", td_ipv: "td_ipv" },
        validate: true
 
-  def to_param
-    type
-  end
-
-  def doubles?
-    menacwy? || td_ipv?
-  end
+  def to_param = type
 
   def name
     human_enum_name(:type)
   end
+
+  def doubles? = menacwy? || td_ipv?
+
+  def seasonal? = flu?
 
   YEAR_GROUPS_BY_TYPE = {
     "flu" => (0..11).to_a,
@@ -79,15 +77,6 @@ class Programme < ApplicationRecord
 
   def available_delivery_sites
     vaccines.flat_map(&:available_delivery_sites).uniq
-  end
-
-  def common_delivery_sites
-    if hpv? || menacwy? || td_ipv?
-      %w[left_arm_upper_position right_arm_upper_position]
-    else
-      raise NotImplementedError,
-            "Common delivery sites not implemented for #{type} vaccines."
-    end
   end
 
   DOSE_SEQUENCES = {

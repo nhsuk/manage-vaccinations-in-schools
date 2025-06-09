@@ -16,6 +16,7 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
 
     @batch = vaccination_record.batch
     @patient = vaccination_record.patient
+    @programme = vaccination_record.programme
     @vaccine = vaccination_record.vaccine
   end
 
@@ -218,10 +219,7 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
   end
 
   def programme_value
-    highlight_if(
-      @vaccination_record.programme.name,
-      @vaccination_record.programme_id_changed?
-    )
+    highlight_if(@programme.name, @vaccination_record.programme_id_changed?)
   end
 
   def vaccine_value
@@ -318,7 +316,7 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
   end
 
   def dose_number
-    return nil if @vaccine&.seasonal?
+    return nil if @programme.seasonal?
 
     dose_sequence = @vaccination_record.dose_sequence
 

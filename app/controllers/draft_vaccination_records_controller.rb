@@ -199,7 +199,7 @@ class DraftVaccinationRecordsController < ApplicationController
 
     method =
       if @draft_vaccination_record.delivery_method == "nasal_spray"
-        "nasal_spray"
+        "nasal"
       else
         "injection"
       end

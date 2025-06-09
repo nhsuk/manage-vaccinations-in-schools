@@ -27,22 +27,37 @@ class AppVaccinateFormComponent < ViewComponent::Base
   end
 
   def delivery_method
-    :intramuscular
+    # TODO: Check which method has been consented to.
+    programme.flu? ? :nasal_spray : :intramuscular
   end
 
   def dose_sequence
     programme.default_dose_sequence
   end
 
-  def common_delivery_sites_options
-    options =
-      programme.common_delivery_sites.map do
-        OpenStruct.new(
-          value: it,
-          label: VaccinationRecord.human_enum_name(:delivery_site, it)
-        )
-      end
+  COMMON_DELIVERY_SITES = {
+    intramuscular: %w[left_arm_upper_position right_arm_upper_position],
+    nasal_spray: %w[nose]
+  }.freeze
 
-    options + [OpenStruct.new(value: "other", label: "Other")]
+  CommonDeliverySite = Struct.new(:value, :label)
+
+  def common_delivery_sites_options
+    @common_delivery_sites_options ||=
+      begin
+        options =
+          COMMON_DELIVERY_SITES
+            .fetch(delivery_method)
+            .map do |value|
+              label = VaccinationRecord.human_enum_name(:delivery_site, value)
+              CommonDeliverySite.new(value:, label:)
+            end
+
+        if delivery_method == :intramuscular
+          options << CommonDeliverySite.new(value: "other", label: "Other")
+        end
+
+        options
+      end
   end
 end
