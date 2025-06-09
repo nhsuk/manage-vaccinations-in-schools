@@ -1,7 +1,6 @@
 environment         = "production"
 db_secret_arn       = "arn:aws:secretsmanager:eu-west-2:820242920762:secret:dbAuroraSecret-zjL6LdCCIV5c-oSfy6Y"
 dns_certificate_arn = ["arn:aws:acm:eu-west-2:820242920762:certificate/dd00edc0-b305-45bd-83aa-7c7f298b0a68"]
-enable_autoscaling  = false
 docker_image        = "mavis/webapp"
 resource_name = {
   dbsubnet_group           = "mavis-production-addonsstack-h6b1986bq928-dbdbsubnetgroup-1dpsuyglv1es"

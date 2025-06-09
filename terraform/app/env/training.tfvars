@@ -4,8 +4,7 @@ dns_certificate_arn = [
   "arn:aws:acm:eu-west-2:393416225559:certificate/368edbcb-37c5-4146-9087-ff011bef5e05",
   "arn:aws:acm:eu-west-2:393416225559:certificate/e93e3912-eee4-4f6e-826d-c628bff58527",
 ]
-enable_autoscaling = false
-docker_image       = "mavis/webapp"
+docker_image = "mavis/webapp"
 resource_name = {
   dbsubnet_group           = "mavis-training-addonsstack-1jzsxp7p84221-dbdbsubnetgroup-ybdt5wfbx9jl"
   db_cluster               = "mavis-training-addonsstack-1jzsxp7p842-dbdbcluster-dojxjwailzmh"
