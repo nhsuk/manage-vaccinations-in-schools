@@ -41,7 +41,11 @@ on:
           - all
           - web
           - good-job
+          - none
         default: all
+
+env:
+  account_id: ${{ inputs.environment == 'production' && '820242920762' || '393416225559' }}
 
 jobs:
   validate-inputs:
@@ -77,10 +81,65 @@ jobs:
     uses: ./.github/workflows/build-and-push-image.yml
     with:
       git-sha: ${{ needs.determine-git-sha.outputs.git-sha }}
+  validate-permissions:
+    needs: validate-inputs
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./terraform
+    permissions:
+      id-token: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::${{ env.account_id }}:role/GithubDeployMavisAndInfrastructure
+          aws-region: eu-west-2
+      - name: Compare permissions
+        id: compare-permissions
+        run: |
+          source ./scripts/validate-github-actions-policy.sh
+          validate_policies arn:aws:iam::${{ env.account_id }}:policy/DeployMavisResources ./resources/github_actions_policy.json
+          exit $?
+  update-permissions:
+    runs-on: ubuntu-latest
+    needs: validate-permissions
+    if: always() && (inputs.environment == 'production' || inputs.environment == 'preview') && needs.validate-permissions.result == 'failure'
+    environment: ${{ inputs.environment }}
+    defaults:
+      run:
+        working-directory: ./terraform
+    permissions:
+      id-token: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::${{ env.account_id }}:role/GithubDeployMavisAndInfrastructure
+          aws-region: eu-west-2
+      - name: Update IAM policy
+        run: ./scripts/update-github-actions-policy.sh arn:aws:iam::${{ env.account_id }}:policy/DeployMavisResources ./resources/github_actions_policy.json
   deploy-infrastructure:
     permissions:
       id-token: write
-    needs: [build-and-push-image, determine-git-sha]
+    needs:
+      [
+        build-and-push-image,
+        determine-git-sha,
+        validate-permissions,
+        update-permissions,
+      ]
+    if: always() &&
+      ((inputs.environment != 'production' && inputs.environment != 'preview') ||
+      needs.validate-permissions.result == 'success' || needs.update-permissions.result == 'success')
     uses: ./.github/workflows/deploy-infrastructure.yml
     with:
       environment: ${{ inputs.environment }}
@@ -90,6 +149,7 @@ jobs:
     permissions:
       id-token: write
     needs: [deploy-infrastructure, determine-git-sha]
+    if: always() && inputs.server_types != 'none' && needs.deploy-infrastructure.result == 'success'
     uses: ./.github/workflows/deploy-application.yml
     with:
       environment: ${{ inputs.environment }}

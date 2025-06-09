@@ -2,28 +2,6 @@ name: Deploy infrastructure
 run-name: Deploy infrastructure for ${{ inputs.environment }}
 
 on:
-  workflow_dispatch:
-    inputs:
-      environment:
-        description: Deployment environment
-        required: true
-        type: choice
-        options:
-          - qa
-          - test
-          - preview
-          - training
-          - production
-          - sandbox-alpha
-          - sandbox-beta
-      image_tag:
-        description: Docker image tag to deploy
-        required: false
-        type: string
-      git_ref_to_deploy:
-        required: false
-        type: string
-
   workflow_call:
     inputs:
       environment:
@@ -55,61 +33,9 @@ defaults:
     working-directory: terraform/app
 
 jobs:
-  validate-permissions:
-    name: Validate permissions
-    runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ env.git_ref_to_deploy }}
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: ${{ env.aws_role }}
-          aws-region: eu-west-2
-      - name: Compare permissions
-        id: compare-permissions
-        run: |
-          source ../scripts/validate-github-actions-policy.sh
-          validate_policies arn:aws:iam::${{ env.aws_account_id }}:policy/DeployMavisResources ../resources/github_actions_policy.json
-          exit $?
-
-  update-permissions:
-    name: Update permissions
-    runs-on: ubuntu-latest
-    needs: validate-permissions
-    if: always() && (inputs.environment == 'production' || inputs.environment == 'preview') && needs.validate-permissions.result == 'failure'
-    environment: ${{ inputs.environment }}
-    permissions:
-      id-token: write
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ env.git_ref_to_deploy }}
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: ${{ env.aws_role }}
-          aws-region: eu-west-2
-      - name: Update IAM policy
-        run: |
-          ../scripts/update-github-actions-policy.sh arn:aws:iam::${{ env.aws_account_id }}:policy/DeployMavisResources ../resources/github_actions_policy.json
-
   plan:
     name: Terraform plan
     runs-on: ubuntu-latest
-    needs: [validate-permissions, update-permissions]
-    if: >
-      always() &&
-      (
-      (inputs.environment != 'production' && inputs.environment != 'preview') ||
-      needs.validate-permissions.result == 'success' ||
-      needs.update-permissions.result == 'success'
-      )
     permissions:
       id-token: write
     steps:
@@ -173,7 +99,6 @@ jobs:
     name: Terraform apply
     runs-on: ubuntu-latest
     needs: plan
-    if: always() && needs.plan.result == 'success'
     environment: ${{ inputs.environment }}
     permissions:
       id-token: write
