@@ -216,7 +216,7 @@ RSpec.feature "Parental consent change answers" do
 
   def when_i_change_my_consent_to_accepted
     click_link "Change decision"
-    choose "Yes"
+    choose "Yes, I agree to them having the nasal spray vaccine"
     click_button "Continue"
   end
 
