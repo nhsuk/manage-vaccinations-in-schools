@@ -44,7 +44,7 @@ describe VaccinationRecordFHIRConcern do
     describe "patient reference" do
       subject { immunisation_fhir.patient.reference }
 
-      it { should eq patient.fhir_id }
+      it { should eq "##{patient.fhir_id}" }
     end
 
     describe "contained performing practitioner" do
@@ -62,7 +62,7 @@ describe VaccinationRecordFHIRConcern do
           .reference
       end
 
-      it { should eq user.fhir_id }
+      it { should eq "##{user.fhir_id}" }
     end
 
     describe "identifier" do
@@ -237,7 +237,7 @@ describe VaccinationRecordFHIRConcern do
       describe "user actor" do
         subject { performer.find { |p| p.actor.type != "Organization" }.actor }
 
-        its(:reference) { should eq user.fhir_id }
+        its(:reference) { should eq "##{user.fhir_id}" }
       end
 
       describe "organisation actor" do
