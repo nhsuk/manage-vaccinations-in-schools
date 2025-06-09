@@ -139,6 +139,14 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
           summary_list.with_row do |row|
             row.with_key { "Dose volume" }
             row.with_value { dose_volume_value }
+
+            if (href = @change_links[:dose_volume])
+              row.with_action(
+                text: "Change",
+                href:,
+                visually_hidden_text: "dose volume"
+              )
+            end
           end
         end
 
