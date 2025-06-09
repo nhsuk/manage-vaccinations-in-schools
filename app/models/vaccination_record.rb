@@ -175,6 +175,14 @@ class VaccinationRecord < ApplicationRecord
     performed_at.to_date.academic_year
   end
 
+  def delivery_method_snomed_code
+    DELIVERY_METHOD_SNOMED_CODES_AND_TERMS.fetch(delivery_method).first
+  end
+
+  def delivery_method_snomed_term
+    DELIVERY_METHOD_SNOMED_CODES_AND_TERMS.fetch(delivery_method).second
+  end
+
   private
 
   def requires_location_name?
