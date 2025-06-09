@@ -1,9 +1,17 @@
+resource "time_sleep" "target_secret_creation" {
+  create_duration = "360s" # Avoid race condition with secret rotation on db creation
+  triggers = {
+    secret_arn = var.target_db_rotation_arn
+  }
+}
+
 ephemeral "aws_secretsmanager_secret_version" "source_db_secret" {
   secret_id = var.source_db_secret_arn
 }
 
 ephemeral "aws_secretsmanager_secret_version" "target_db_secret" {
-  secret_id = var.target_db_secret_arn
+  secret_id  = var.target_db_secret_arn
+  depends_on = [time_sleep.target_secret_creation]
 }
 
 locals {

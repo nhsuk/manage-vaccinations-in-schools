@@ -43,6 +43,11 @@ resource "aws_rds_cluster_parameter_group" "migration_source" {
     value        = 1
     apply_method = "pending-reboot"
   }
+  parameter {
+    name         = "max_wal_senders"
+    value        = 20
+    apply_method = "pending-reboot"
+  }
 }
 
 resource "aws_rds_cluster" "aurora_cluster" {

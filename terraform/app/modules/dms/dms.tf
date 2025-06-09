@@ -1,5 +1,5 @@
 resource "aws_dms_replication_subnet_group" "dms_subnet_group" {
-  replication_subnet_group_id          = "dms-subnet-group"
+  replication_subnet_group_id          = "dms-subnet-group-${var.environment}"
   replication_subnet_group_description = "Subnet group for DMS replication instance"
   subnet_ids                           = var.subnet_ids
   depends_on                           = [aws_iam_role.dms_vpc_role]
@@ -14,7 +14,7 @@ resource "aws_dms_replication_instance" "dms_instance" {
 }
 
 resource "aws_dms_endpoint" "source" {
-  endpoint_id                     = "source-endpoint"
+  endpoint_id                     = "source-endpoint-${var.environment}"
   endpoint_type                   = "source"
   engine_name                     = var.engine_name
   database_name                   = var.source_database_name
@@ -28,7 +28,7 @@ resource "aws_dms_endpoint" "source" {
 }
 
 resource "aws_dms_endpoint" "target" {
-  endpoint_id                     = "target-endpoint"
+  endpoint_id                     = "target-endpoint-${var.environment}"
   endpoint_type                   = "target"
   engine_name                     = var.engine_name
   database_name                   = var.target_database_name
@@ -39,7 +39,7 @@ resource "aws_dms_endpoint" "target" {
 }
 
 resource "aws_dms_replication_task" "migration_task" {
-  replication_task_id      = "migration-task"
+  replication_task_id      = "migration-task-${var.environment}"
   migration_type           = "full-load-and-cdc"
   source_endpoint_arn      = aws_dms_endpoint.source.endpoint_arn
   target_endpoint_arn      = aws_dms_endpoint.target.endpoint_arn
@@ -69,16 +69,17 @@ resource "aws_dms_replication_task" "migration_task" {
     ]
   })
   replication_task_settings = jsonencode({
-    "TargetMetadata" : {
-      "TargetSchema" : "",
-      "SupportLobs" : true,
-      "FullLobMode" : false,
-      "LobChunkSize" : 0,
-      "LimitedSizeLobMode" : true,
-      "LobMaxSize" : 32
+    TargetMetadata = {
+      TargetSchema       = "",
+      SupportLobs        = true,
+      FullLobMode        = false,
+      LobChunkSize       = 0,
+      LimitedSizeLobMode = true,
+      LobMaxSize         = 32
     },
-    "FullLoadSettings" : {
-      "TargetTablePrepMode" : "DO_NOTHING",
-    }
+    FullLoadSettings : {
+      TargetTablePrepMode : "DO_NOTHING",
+    },
+    EnableLogging : true
   })
 }

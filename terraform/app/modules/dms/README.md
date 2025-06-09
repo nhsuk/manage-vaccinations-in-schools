@@ -44,7 +44,7 @@ Details of resources needed in addition to the DMS module for a successful migra
     secret_id          = aws_rds_cluster.core.master_user_secret[0].secret_arn
     rotate_immediately = false
     rotation_rules {
-      schedule_expression = "rate(400 days)" # Change to e.g. "rate(7 days)" after migration is complete
+      schedule_expression = "rate(400 days)" # Change to e.g. "cron(0 8 ? * WED *)" after migration is complete
     }
   }
   ```
