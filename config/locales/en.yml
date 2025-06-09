@@ -243,6 +243,8 @@ en:
             address_town:
               blank: Enter a town or city
               too_long: Enter a town or city that is less than 300 characters long
+            chosen_programme:
+              blank: Choose which programme you agree to
             date_of_birth:
               blank: Enter their date of birth
               greater_than_or_equal_to: The child cannot be older than 22. Enter a date after %{count}.
@@ -301,7 +303,7 @@ en:
                 Enter details for refusing that are less than 1000 characters
                 long
             response:
-              blank: Choose if you consent
+              blank: Choose if you agree
             school_confirmed:
               inclusion: Tell us if this is their school
             school_id:
@@ -452,28 +454,12 @@ en:
       title_short: Unmatched responses
     confirm:
       consent_card_title:
+        doubles: Consent for the MenACWY and Td/IPV vaccinations
         flu: Consent for the flu vaccination
         hpv: Consent for the HPV vaccination
         menacwy: Consent for the MenACWY vaccination
         td_ipv: Consent for the Td/IPV vaccination
-        menacwy_td_ipv: Consent for the MenACWY and Td/IPV vaccinations
       i_agree: Consent given
-    consent:
-      hint:
-        flu: The nasal flu spray contains gelatine which comes from pigs.
-        hpv: ""
-        menacwy: ""
-        td_ipv: ""
-      i_agree:
-        flu: Yes, I agree to them having a nasal vaccine
-        hpv: Yes, I agree
-        menacwy: Yes, I agree to them having both vaccinations
-        td_ipv: Yes, I agree to them having both vaccinations
-      title:
-        flu: Do you agree to your child having the nasal flu vaccination?
-        hpv: Do you agree to your child having the Human papillomavirus (HPV) vaccination?
-        menacwy: Do you agree to your child having the MenACWY and Td/IPV (3-in-1 teenage booster) vaccinations?
-        td_ipv: Do you agree to your child having the MenACWY and Td/IPV (3-in-1 teenage booster) vaccinations?
     reason_notes:
       title:
         already_vaccinated: Where did your child get their vaccination?
@@ -668,7 +654,6 @@ en:
     cohort: cohort
     confirm: confirm
     confirm_school: confirm-school
-    consent: consent
     contact_method: contact-method
     date_and_time: date-and-time
     date_of_birth: date-of-birth
@@ -689,6 +674,9 @@ en:
     questions: questions
     reason: reason
     reason_notes: reason-notes
+    response_doubles: response-doubles
+    response_flu: response-flu
+    response_hpv: response-hpv
     route: route
     school: school
     session: session
