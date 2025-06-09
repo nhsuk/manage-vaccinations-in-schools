@@ -248,14 +248,18 @@ class ConsentForm < ApplicationRecord
   end
 
   on_wizard_step :response_doubles, exact: true do
-    validates :response, presence: true
+    validates :response, inclusion: %w[given given_one refused]
     validates :chosen_programme,
               presence: true,
               if: -> { response == "given_one" }
   end
 
+  on_wizard_step :response_flu, exact: true do
+    validates :response, inclusion: %w[given_injection given_nasal refused]
+  end
+
   on_wizard_step :response_hpv, exact: true do
-    validates :response, presence: true
+    validates :response, inclusion: %w[given refused]
   end
 
   on_wizard_step :reason do
@@ -466,10 +470,15 @@ class ConsentForm < ApplicationRecord
 
   def update_programme_responses
     case response
-    when "given"
+    when "given", "given_injection"
       consent_form_programmes.each do
         it.response = "given"
         it.vaccine_methods = %w[injection]
+      end
+    when "given_nasal"
+      consent_form_programmes.each do
+        it.response = "given"
+        it.vaccine_methods = %w[nasal]
       end
     when "given_one"
       consent_form_programmes.each do |consent_form_programme|

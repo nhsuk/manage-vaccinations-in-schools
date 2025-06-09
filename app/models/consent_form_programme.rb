@@ -31,6 +31,6 @@ class ConsentFormProgramme < ApplicationRecord
   enum :response, { given: 0, refused: 1 }, prefix: true
 
   def vaccines
-    Vaccine.active.where(programme_id: programme_id)
+    Vaccine.active.where(programme_id:, method: vaccine_methods)
   end
 end

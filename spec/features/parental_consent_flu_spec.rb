@@ -62,7 +62,7 @@ describe "Parental consent" do
     click_button "Continue"
 
     # Do you agree?
-    choose "Yes, I agree"
+    choose "Yes, I agree to them having the nasal spray vaccine"
     click_button "Continue"
 
     # Home address
