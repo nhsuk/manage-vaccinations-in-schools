@@ -685,7 +685,7 @@ describe ImmunisationImportRow do
         expect(immunisation_import_row).to be_invalid
 
         expect(immunisation_import_row.errors["BATCH_NUMBER"]).to include(
-          "is greater than 100 characters long"
+          "must be at most 100 characters long"
         )
         expect(immunisation_import_row.errors["CLINIC_NAME"]).to include(
           "is greater than 300 characters long"
@@ -698,6 +698,18 @@ describe ImmunisationImportRow do
         )
         expect(immunisation_import_row.errors["SCHOOL_NAME"]).to include(
           "is greater than 300 characters long"
+        )
+      end
+    end
+
+    context "batch number fewer than 2 characters" do
+      let(:data) { { "VACCINATED" => "Y", "BATCH_NUMBER" => "a" } }
+
+      it "has errors" do
+        expect(immunisation_import_row).to be_invalid
+
+        expect(immunisation_import_row.errors["BATCH_NUMBER"]).to include(
+          "must be at least 2 characters long"
         )
       end
     end
