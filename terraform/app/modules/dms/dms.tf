@@ -69,16 +69,18 @@ resource "aws_dms_replication_task" "migration_task" {
   })
   replication_task_settings = jsonencode({
     TargetMetadata = {
-      TargetSchema       = "",
+      TargetSchema       = "public",
       SupportLobs        = true,
-      FullLobMode        = false,
-      LobChunkSize       = 0,
-      LimitedSizeLobMode = true,
-      LobMaxSize         = 32
+      FullLobMode        = true,
+      LimitedSizeLobMode = false,
+      InlineLobMaxSize   = 32,
+      LobChunkSize       = 64,
     },
     FullLoadSettings : {
       TargetTablePrepMode : "DO_NOTHING",
     },
-    EnableLogging : true
+    Logging = {
+      EnableLogging : true
+    }
   })
 }

@@ -119,6 +119,11 @@ resource "aws_rds_cluster_parameter_group" "migration_target" {
     value        = "replica"
     apply_method = "immediate"
   }
+  parameter {
+    name         = "max_wal_senders"
+    value        = 20
+    apply_method = "pending-reboot"
+  }
 }
 
 resource "aws_rds_cluster" "core" {
