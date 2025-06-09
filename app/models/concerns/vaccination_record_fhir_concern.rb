@@ -35,7 +35,7 @@ module VaccinationRecordFHIRConcern
       immunisation.doseQuantity = fhir_dose_quantity
       immunisation.performer = [fhir_user_performer, fhir_org_performer]
       immunisation.reasonCode = [fhir_reason_code]
-      immunisation.protocolApplied = fhir_protocol_applied
+      immunisation.protocolApplied = [fhir_protocol_applied]
 
       immunisation
     end
