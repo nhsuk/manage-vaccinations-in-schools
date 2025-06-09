@@ -1,7 +1,6 @@
 environment         = "test"
 db_secret_arn       = "arn:aws:secretsmanager:eu-west-2:393416225559:secret:dbAuroraSecret-LwdZBGzdPMq6-PkAjKC"
 dns_certificate_arn = ["arn:aws:acm:eu-west-2:393416225559:certificate/7e80f006-e9d8-488f-b950-d97f3cc41e4f"]
-enable_autoscaling  = false
 docker_image        = "mavis/webapp"
 resource_name = {
   dbsubnet_group           = "mavis-test-addonsstack-gb8z9lqvo8of-dbdbsubnetgroup-8hrfkmuyp4c4"

@@ -10,6 +10,7 @@ terraform {
   backend "s3" {
     region         = "eu-west-2"
     dynamodb_table = "mavis-terraform-state-lock"
+    use_lockfile   = true
     encrypt        = true
   }
 }

@@ -12,7 +12,8 @@ terraform {
   }
 
   backend "s3" {
-    encrypt = true
+    encrypt      = true
+    use_lockfile = true
   }
 }
 
