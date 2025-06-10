@@ -13,7 +13,7 @@
 #  new_record_count             :integer
 #  processed_at                 :datetime
 #  rows_count                   :integer
-#  serialized_errors            :json
+#  serialized_errors            :jsonb
 #  status                       :integer          default("pending_import"), not null
 #  year_groups                  :integer          default([]), not null, is an Array
 #  created_at                   :datetime         not null
