@@ -15,5 +15,17 @@ module ProgrammeFHIRConcern
         ]
       )
     end
+
+    def fhir_procedure_coding
+      FHIR::CodeableConcept.new(
+        coding: [
+          FHIR::Coding.new(
+            system: "http://snomed.info/sct",
+            code: snomed_procedure_code,
+            display: snomed_procedure_term
+          )
+        ]
+      )
+    end
   end
 end

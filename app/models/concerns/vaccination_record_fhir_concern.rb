@@ -58,18 +58,7 @@ module VaccinationRecordFHIRConcern
       FHIR::Extension.new(
         url:
           "https://fhir.hl7.org.uk/StructureDefinition/Extension-UKCore-VaccinationProcedure",
-        valueCodeableConcept:
-          FHIR::CodeableConcept.new(
-            coding: [
-              FHIR::Coding.new(
-                system: "http://snomed.info/sct",
-                code: "1324681000000101",
-                display:
-                  "Administration of first dose of severe acute" \
-                    " respiratory syndrome coronavirus 2 vaccine (procedure)"
-              )
-            ]
-          )
+        valueCodeableConcept: programme.fhir_procedure_coding
       )
     end
 
