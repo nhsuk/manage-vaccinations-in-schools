@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 describe UserFHIRConcern do
-  include FHIRHelper
-
   let(:user) { create(:user) }
 
   describe "#to_fhir_practitioner" do
