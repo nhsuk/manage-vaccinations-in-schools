@@ -26,7 +26,6 @@ describe NHS::ImmunisationsAPI do
   let(:user) do
     create(
       :user,
-      id: 31_337,
       organisation:,
       family_name: "Nightingale",
       given_name: "Florence"

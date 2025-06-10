@@ -6,7 +6,7 @@ describe PatientFHIRConcern do
   let(:patient) { create(:patient, gender_code: :female) }
 
   describe "#to_fhir" do
-    subject(:patient_record) { patient.to_fhir }
+    subject(:patient_record) { patient.to_fhir(reference_id: "Patient/42") }
 
     it "adds the NHS number" do
       expect(
@@ -15,8 +15,8 @@ describe PatientFHIRConcern do
       expect(patient_record.identifier[0].value).to eq patient.nhs_number
     end
 
-    it "sets the fhir_id" do
-      expect(patient_record.id).to eq "Patient/#{patient.id}"
+    it "sets the reference id" do
+      expect(patient_record.id).to eq "Patient/42"
     end
 
     describe "name" do
@@ -36,12 +36,6 @@ describe PatientFHIRConcern do
       subject { patient_record.gender }
 
       it { should eq patient.gender_code }
-    end
-  end
-
-  describe "#fhir_id" do
-    it "returns the correct FHIR ID" do
-      expect(patient.fhir_id).to eq "Patient/#{patient.id}"
     end
   end
 

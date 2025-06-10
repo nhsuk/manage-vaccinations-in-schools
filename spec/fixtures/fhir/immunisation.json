@@ -1,7 +1,7 @@
 {
   "contained": [
     {
-      "id": "User/31337",
+      "id": "Practitioner/1",
       "name": [
         {
           "family": "Nightingale",
@@ -13,7 +13,7 @@
       "resourceType": "Practitioner"
     },
     {
-      "id": "Patient/31337",
+      "id": "Patient/1",
       "identifier": [
         {
           "system": "https://fhir.nhs.uk/Id/nhs-number",
@@ -69,7 +69,7 @@
     ]
   },
   "patient": {
-    "reference": "#Patient/31337"
+    "reference": "#Patient/1"
   },
   "occurrenceDateTime": "2021-02-07T13:28:17.271+00:00",
   "recorded": "2021-02-07T13:28:17.271+00:00",
@@ -112,7 +112,7 @@
   "performer": [
     {
       "actor": {
-        "reference": "#User/31337"
+        "reference": "#Practitioner/1"
       }
     },
     {

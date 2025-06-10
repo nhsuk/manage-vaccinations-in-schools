@@ -4,7 +4,9 @@ describe UserFHIRConcern do
   let(:user) { create(:user) }
 
   describe "#to_fhir_practitioner" do
-    subject(:practitioner_record) { user.to_fhir_practitioner }
+    subject(:practitioner_record) do
+      user.to_fhir_practitioner(reference_id: "Practitioner/42")
+    end
 
     it "adds the family name" do
       expect(practitioner_record.name.first.family).to eq user.family_name
@@ -15,13 +17,7 @@ describe UserFHIRConcern do
     end
 
     it "sets the id" do
-      expect(practitioner_record.id).to eq "User/#{user.id}"
-    end
-  end
-
-  describe "#fhir_id" do
-    it "returns the correct FHIR ID" do
-      expect(user.fhir_id).to eq "User/#{user.id}"
+      expect(practitioner_record.id).to eq "Practitioner/42"
     end
   end
 end
