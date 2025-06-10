@@ -80,6 +80,7 @@ module "prepare_new_db_service" {
     region               = var.region
     health_check_command = ["CMD-SHELL", "echo 'alive' || exit 1"]
   }
+  depends_on = [aws_rds_cluster_instance.core]
 }
 
 resource "aws_security_group_rule" "db_prepare_access_to_db" {
