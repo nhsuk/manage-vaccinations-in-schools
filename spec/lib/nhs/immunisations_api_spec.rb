@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 describe NHS::ImmunisationsAPI do
-  include FHIRHelper
-
   let(:organisation) { create(:organisation, ods_code: "A9A5A") }
   let(:patient) do
     create(

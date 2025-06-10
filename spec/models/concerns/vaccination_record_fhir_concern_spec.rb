@@ -4,8 +4,6 @@
 # the VaccinationRecord and has a lot of dependencies on it, so not really
 # worth it.
 describe VaccinationRecordFHIRConcern do
-  include FHIRHelper
-
   let(:organisation) { create(:organisation, programmes: [programme]) }
   let(:programme) { create(:programme, :hpv) }
   let(:patient_session) do

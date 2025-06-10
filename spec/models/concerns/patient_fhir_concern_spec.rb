@@ -3,8 +3,6 @@
 # Normally we test this concern in isolation, but in this case it's bespoke to
 # the PatientRecord and has a lot of dependencies on it, so not really worth it.
 describe PatientFHIRConcern do
-  include FHIRHelper
-
   let(:patient) { create(:patient, gender_code: :female) }
 
   describe "#to_fhir" do

@@ -4,8 +4,6 @@
 # the VaccinationRecord and has a lot of dependencies on it, so not really
 # worth it.
 describe OrganisationFHIRConcern do
-  include FHIRHelper
-
   let(:ods_code) { "A9A5A" }
 
   describe ".fhir_reference" do
