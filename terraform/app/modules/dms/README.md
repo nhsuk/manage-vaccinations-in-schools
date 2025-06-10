@@ -118,10 +118,12 @@ Steps to perform the migration of data and ECS services from source to target.
       running application.
    2. Note that this also changes the DB session_replication_role to the default "origin"), which is crucial to ensure
       data consistency on the target DB after the migration.
-8. Validate that the target DB has `session_replication_role` set to `origin` in the DB cluster parameter group.
+8. Validate that the target DB has `session_replication_role` set to `origin` in the DB cluster parameter group and is in sync0.
+   1. This will requrie a DB instance reboot to apply the parameter change. Reboot the read instance first to avoid
+      any downtime, afterward failover and reboot the other DB instance
 9. Stop good-job-service (by updating service and setting descried count to 0)
 10. Execute CodeDeploy deployment of web-service (after deploy it will point against new service)
-11. Terminate DMS migration task
+11. Stop DMS migration task
 12. Execute ECS deployment of good-job-service
 
 ### Post-Migration cleanup:
