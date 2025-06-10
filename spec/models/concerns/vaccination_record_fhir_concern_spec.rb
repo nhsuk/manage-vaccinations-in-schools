@@ -189,6 +189,18 @@ describe VaccinationRecordFHIRConcern do
       it { should eq vaccination_record.location.fhir_reference }
     end
 
+    describe "lotNumber" do
+      subject { immunisation_fhir.lotNumber }
+
+      it { should eq vaccination_record.batch.name }
+    end
+
+    describe "expirationDate" do
+      subject { immunisation_fhir.expirationDate }
+
+      it { should eq vaccination_record.batch.expiry.to_s }
+    end
+
     describe "site" do
       subject(:site) { immunisation_fhir.site }
 
