@@ -103,6 +103,7 @@
         "rds:DeleteDBCluster",
         "rds:DeleteDBInstance",
         "rds:DeleteDBSubnetGroup",
+        "rds:DeleteDBClusterParameterGroup",
         "rds:ModifyDBCluster",
         "rds:ModifyCurrentDBClusterCapacity",
         "rds:ModifyDBInstance",
@@ -128,6 +129,7 @@
         "secretsmanager:UpdateSecret",
         "secretsmanager:GetSecretValue",
         "secretsmanager:RotateSecret",
+        "secretsmanager:DeleteSecret",
         "ssm:DeleteParameter",
         "ssm:DeleteParameters",
         "ssm:PutParameter"
