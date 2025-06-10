@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_09_112437) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_10_154510) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -83,7 +83,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_09_112437) do
     t.integer "exact_duplicate_record_count"
     t.integer "new_record_count"
     t.datetime "processed_at"
-    t.json "serialized_errors"
+    t.jsonb "serialized_errors"
     t.integer "status", default: 0, null: false
     t.bigint "organisation_id", null: false
     t.bigint "session_id", null: false
