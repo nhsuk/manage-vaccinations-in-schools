@@ -186,7 +186,7 @@ GEM
     crass (1.0.6)
     cssbundling-rails (1.4.1)
       railties (>= 6.0.0)
-    csv (3.3.4)
+    csv (3.3.5)
     cuprite (0.15.1)
       capybara (~> 3.0)
       ferrum (~> 0.15.0)
