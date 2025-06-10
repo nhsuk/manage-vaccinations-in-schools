@@ -28,8 +28,8 @@ module VaccinationRecordFHIRConcern
       immunisation.manufacturer = vaccine.fhir_manufacturer_reference
 
       immunisation.location = (location || Location.school.new).fhir_reference
-      immunisation.lotNumber = "4120Z001"
-      immunisation.expirationDate = "2021-07-02"
+      immunisation.lotNumber = batch.name
+      immunisation.expirationDate = batch.expiry.to_s
       immunisation.site = fhir_site
       immunisation.route = fhir_route
       immunisation.doseQuantity = fhir_dose_quantity

@@ -17,6 +17,9 @@ describe NHS::ImmunisationsAPI do
   let(:programme) { create(:programme, :hpv) }
   let(:location) { create(:community_clinic, organisation:, ods_code: nil) }
   let(:vaccine) { create(:vaccine, :gardasil, programme:) }
+  let(:batch) do
+    create(:batch, vaccine:, expiry: "2023-03-20", name: "X8U375AL")
+  end
   let(:session) do
     create(:session, organisation:, programmes: [programme], location:)
   end
@@ -38,6 +41,7 @@ describe NHS::ImmunisationsAPI do
       programme:,
       location:,
       vaccine:,
+      batch:,
       session:,
       performed_by_user: user,
       performed_at: Time.zone.parse("2021-02-07T13:28:17.271+00:00"),
