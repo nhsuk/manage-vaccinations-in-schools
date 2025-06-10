@@ -107,6 +107,7 @@
         "rds:ModifyCurrentDBClusterCapacity",
         "rds:ModifyDBInstance",
         "rds:ModifyDBClusterParameterGroup",
+        "rds:ResetDBClusterParameterGroup",
         "resource-groups:CreateGroup",
         "resource-groups:DeleteGroup",
         "route53:ChangeResourceRecordSets",
