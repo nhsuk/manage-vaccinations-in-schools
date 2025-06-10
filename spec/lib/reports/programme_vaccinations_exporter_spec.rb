@@ -522,6 +522,12 @@ describe Reports::ProgrammeVaccinationsExporter do
     end
   end
 
+  context "Flu programme" do
+    let(:programme) { create(:programme, :flu) }
+
+    include_examples "generates a report"
+  end
+
   context "HPV programme" do
     let(:programme) { create(:programme, :hpv) }
 

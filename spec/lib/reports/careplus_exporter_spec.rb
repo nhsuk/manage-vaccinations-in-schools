@@ -10,11 +10,6 @@ describe Reports::CareplusExporter do
     )
   end
 
-  let(:delivery_method) { :intramuscular }
-  let(:expected_vaccine_code) do
-    described_class::PROGRAMME_TYPE_TO_VACCINE_CODE.fetch(programme.type)
-  end
-
   shared_examples "generates a report" do
     let(:programmes) { [programme] }
     let(:organisation) do
@@ -249,19 +244,15 @@ describe Reports::CareplusExporter do
     end
   end
 
-  context "HPV programme" do
-    let(:programme) { create(:programme, :hpv) }
-
-    include_examples "generates a report"
-  end
-
-  context "FLU programme" do
+  context "Flu programme" do
     let(:programme) { create(:programme, :flu) }
+    let(:delivery_method) { :intramuscular }
+    let(:expected_vaccine_code) { "FLU" }
 
     include_examples "generates a report"
   end
 
-  context "FLU programme using nasal spray" do
+  context "Flu programme using nasal spray" do
     let(:programme) { create(:programme, :flu) }
     let(:delivery_method) { :nasal_spray }
     let(:expected_vaccine_code) { "FLUENZ" }
@@ -269,14 +260,26 @@ describe Reports::CareplusExporter do
     include_examples "generates a report"
   end
 
+  context "HPV programme" do
+    let(:programme) { create(:programme, :hpv) }
+    let(:delivery_method) { :intramuscular }
+    let(:expected_vaccine_code) { "HPV" }
+
+    include_examples "generates a report"
+  end
+
   context "MenACWY programme" do
     let(:programme) { create(:programme, :menacwy) }
+    let(:delivery_method) { :intramuscular }
+    let(:expected_vaccine_code) { "ACWYX14" }
 
     include_examples "generates a report"
   end
 
   context "Td/IPV programme" do
     let(:programme) { create(:programme, :td_ipv) }
+    let(:delivery_method) { :intramuscular }
+    let(:expected_vaccine_code) { "3IN1" }
 
     include_examples "generates a report"
   end
