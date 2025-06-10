@@ -5,11 +5,11 @@ module PatientFHIRConcern
   extend ActiveSupport::Concern
 
   included do
-    def to_fhir
+    def to_fhir(reference_id: nil)
       FHIR::Patient.new(
         # The id may be optional, but it's currently needed by the immunisation
         # record so setting it by default for now.
-        id: fhir_id,
+        id: reference_id,
         identifier: [
           FHIR::Identifier.new(
             system: "https://fhir.nhs.uk/Id/nhs-number",
@@ -32,10 +32,6 @@ module PatientFHIRConcern
       else
         gender_code
       end
-    end
-
-    def fhir_id
-      "Patient/#{id}"
     end
   end
 end
