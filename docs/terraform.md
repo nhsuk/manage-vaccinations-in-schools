@@ -40,7 +40,6 @@ export AWS_PROFILE=default
 This repo contains 2 folders with terraform configuration.
 
 - The `bootstrap` folder stores the AWS resources required for remote state management of the app infrastructure.
-  For that purpose, it just contains an S3 bucket and a DynamoDB.
 - The `app` folder contains the actual infrastructure config for the app.
 
 #### Bootstrap -- Pre-requisites for creating a new environment:

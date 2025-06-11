@@ -83,5 +83,3 @@ jobs:
           set -e
           TF_STATE_FILE=nhse-mavis-terraform-state/terraform-${{ inputs.environment }}.tfstate
           aws s3 rm s3://$TF_STATE_FILE
-          aws dynamodb delete-item --table-name mavis-terraform-state-lock \
-          --key "{\"LockID\": {\"S\": \"$TF_STATE_FILE-md5\"}}"

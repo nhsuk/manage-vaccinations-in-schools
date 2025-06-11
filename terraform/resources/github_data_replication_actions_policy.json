@@ -22,9 +22,7 @@
       "Action": ["*"],
       "NotResource": [
         "arn:aws:s3:::nhse-mavis-terraform-state-production",
-        "arn:aws:s3:::nhse-mavis-terraform-state",
-        "arn:aws:dynamodb:eu-west-2:820242920762:table/mavis-terraform-state-lock",
-        "arn:aws:dynamodb:eu-west-2:393416225559:table/mavis-terraform-state-lock"
+        "arn:aws:s3:::nhse-mavis-terraform-state"
       ],
       "Condition": {
         "StringEquals": {
