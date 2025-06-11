@@ -169,7 +169,7 @@ locals {
   parameter_store_variables = tomap({
     MAVIS__PDS__ENQUEUE_BULK_UPDATES = var.enable_pds_enqueue_bulk_updates ? "true" : "false"
     MAVIS__PDS__WAIT_BETWEEN_JOBS    = 0.5
-    GOOD_JOB_MAX_THREADS             = 5
+    SIDEKIQ_CONCURRENCY              = 5
   })
   parameter_store_config_list = [for key, value in local.parameter_store_variables : {
     name      = key
@@ -213,7 +213,11 @@ locals {
     {
       name  = "APP_VERSION"
       value = var.app_version
-    }
+    },
+    {
+      name  = "SIDEKIQ_REDIS_URL"
+      value = "rediss://${aws_elasticache_replication_group.valkey.primary_endpoint_address}:${var.valkey_port}"
+    },
   ]
   task_secrets = concat([
     {
@@ -278,6 +282,12 @@ variable "good_job_replicas" {
   description = "Amount of replicas for the good-job service"
 }
 
+variable "sidekiq_replicas" {
+  type        = number
+  default     = 2
+  description = "Amount of replicas for the sidekiq service"
+}
+
 variable "max_aurora_capacity_units" {
   type        = number
   default     = 8
@@ -294,7 +304,70 @@ variable "active_lb_target_group" {
   }
 }
 
+########## Valkey Configuration ##########
+
+variable "valkey_port" {
+  type        = number
+  default     = 6379
+  description = "Port number for Valkey cluster"
+  nullable    = false
+  validation {
+    condition     = var.valkey_port > 0 && var.valkey_port <= 65535
+    error_message = "Port must be between 1 and 65535."
+  }
+}
+
+variable "valkey_engine_version" {
+  type        = string
+  default     = "8.0"
+  description = "Valkey engine version"
+  nullable    = false
+}
+
+variable "valkey_node_type" {
+  type        = string
+  default     = "cache.r7g.large"
+  description = "ElastiCache node type for Valkey (use cache.t3.micro for sandbox, cache.r6g.large+ for production)"
+  nullable    = false
+}
+
+variable "valkey_snapshot_retention_limit" {
+  type        = number
+  default     = 7
+  description = "Number of days to retain Valkey snapshots"
+  nullable    = false
+  validation {
+    condition     = var.valkey_snapshot_retention_limit >= 0 && var.valkey_snapshot_retention_limit <= 35
+    error_message = "Snapshot retention must be between 0 and 35 days."
+  }
+}
+
+variable "valkey_snapshot_window" {
+  type        = string
+  default     = "03:00-05:00"
+  description = "Daily snapshot window for Valkey (HH:MM-HH:MM format, UTC)"
+  nullable    = false
+}
+
+variable "valkey_maintenance_window" {
+  type        = string
+  default     = "sun:05:00-sun:06:00"
+  description = "Weekly maintenance window for Valkey (ddd:HH:MM-ddd:HH:MM format, UTC)"
+  nullable    = false
+}
+
+variable "valkey_log_retention_days" {
+  type        = number
+  default     = 14
+  description = "Number of days to retain Valkey logs (minimum 3 for sandbox, 14+ for production)"
+  nullable    = false
+  validation {
+    condition     = var.valkey_log_retention_days >= 1 && var.valkey_log_retention_days <= 365
+    error_message = "Log retention must be between 1 and 365 days."
+  }
+}
+
 locals {
   ecs_initial_lb_target_group = var.active_lb_target_group == "green" ? aws_lb_target_group.green.arn : aws_lb_target_group.blue.arn
-  ecs_sg_ids                  = [module.web_service.security_group_id, module.good_job_service.security_group_id]
+  ecs_sg_ids                  = [module.web_service.security_group_id, module.good_job_service.security_group_id, module.sidekiq_service.security_group_id]
 }
