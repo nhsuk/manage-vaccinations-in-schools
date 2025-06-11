@@ -158,42 +158,42 @@ class Consent < ApplicationRecord
       parent =
         consent_form.find_or_create_parent_with_relationship_to!(patient:)
 
-      consent_given =
-        consent_form.given_programmes.map do |programme|
-          patient.consents.create!(
-            consent_form:,
-            organisation: consent_form.organisation,
-            programme:,
-            parent:,
-            notes: "",
-            response: "given",
-            route: "website",
-            health_answers: consent_form.health_answers,
-            recorded_by: current_user,
-            submitted_at: consent_form.recorded_at
-          )
-        end
+      consents =
+        consent_form
+          .consent_form_programmes
+          .includes(:programme)
+          .map do |consent_form_programme|
+            notes =
+              if consent_form_programme.response_given?
+                ""
+              else
+                consent_form.reason_notes.presence || ""
+              end
+            reason_for_refusal =
+              if consent_form_programme.response_given?
+                nil
+              else
+                consent_form.reason
+              end
 
-      consent_refused =
-        consent_form.refused_programmes.map do |programme|
-          patient.consents.create!(
-            consent_form:,
-            organisation: consent_form.organisation,
-            programme:,
-            parent:,
-            reason_for_refusal: consent_form.reason,
-            notes: consent_form.reason_notes.presence || "",
-            response: "refused",
-            route: "website",
-            health_answers: consent_form.health_answers,
-            recorded_by: current_user,
-            submitted_at: consent_form.recorded_at
-          )
-        end
+            patient.consents.create!(
+              consent_form:,
+              health_answers: consent_form.health_answers,
+              notes:,
+              organisation: consent_form.organisation,
+              parent:,
+              programme: consent_form_programme.programme,
+              reason_for_refusal:,
+              recorded_by: current_user,
+              response: consent_form_programme.response,
+              route: "website",
+              submitted_at: consent_form.recorded_at
+            )
+          end
 
       StatusUpdater.call(patient:)
 
-      consent_given + consent_refused
+      consents
     end
   end
 
