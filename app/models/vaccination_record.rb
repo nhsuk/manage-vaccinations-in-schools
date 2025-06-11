@@ -174,6 +174,10 @@ class VaccinationRecord < ApplicationRecord
     performed_at.to_date.academic_year
   end
 
+  def performed_this_academic_year?
+    academic_year == Date.current.academic_year
+  end
+
   private
 
   def requires_location_name?

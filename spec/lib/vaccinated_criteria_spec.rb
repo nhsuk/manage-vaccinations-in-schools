@@ -2,9 +2,7 @@
 
 describe VaccinatedCriteria do
   describe "#call" do
-    subject(:call) do
-      described_class.call(programme:, patient:, vaccination_records:)
-    end
+    subject { described_class.call(programme:, patient:, vaccination_records:) }
 
     let(:patient) { create(:patient, date_of_birth: 15.years.ago.to_date) }
     let(:vaccination_records) { [] }
@@ -44,6 +42,39 @@ describe VaccinatedCriteria do
         end
 
         it { should be(true) }
+      end
+
+      context "with an administered vaccination record from last year" do
+        let(:vaccination_records) do
+          [
+            create(
+              :vaccination_record,
+              :administered,
+              patient:,
+              programme:,
+              performed_at: 1.year.ago
+            )
+          ]
+        end
+
+        it { should be(false) }
+      end
+
+      context "with an already had vaccination record from last year" do
+        let(:vaccination_records) do
+          [
+            create(
+              :vaccination_record,
+              :not_administered,
+              :already_had,
+              patient:,
+              programme:,
+              performed_at: 1.year.ago
+            )
+          ]
+        end
+
+        it { should be(false) }
       end
     end
 
