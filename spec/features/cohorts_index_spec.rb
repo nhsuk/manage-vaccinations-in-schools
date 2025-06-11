@@ -6,11 +6,15 @@ describe "Cohorts index" do
   scenario "Viewing cohorts for a programme" do
     given_an_hpv_programme_is_underway
     and_there_are_patients_in_different_year_groups
+
     when_i_visit_the_cohorts_page
     then_i_should_see_the_cohorts_in_the_correct_order
     and_i_should_see_the_correct_patient_counts
     and_the_cards_should_be_clickable_when_there_are_patients
     and_the_cards_should_not_be_clickable_when_there_are_no_patients
+
+    when_i_click_on_the_year_9_cohort
+    then_i_see_the_patients_in_year_9
   end
 
   def given_an_hpv_programme_is_underway
@@ -24,8 +28,8 @@ describe "Cohorts index" do
     session =
       create(:session, organisation: @organisation, programmes: [@programme])
 
-    create(:patient, session:, year_group: 9)
-    create(:patient, session:, year_group: 9)
+    @patient1 = create(:patient, session:, year_group: 9)
+    @patient2 = create(:patient, session:, year_group: 9)
     create(:patient, session:, year_group: 10)
   end
 
@@ -74,5 +78,14 @@ describe "Cohorts index" do
       "Year 11",
       href: programme_cohort_path(@programme, 2007)
     )
+  end
+
+  def when_i_click_on_the_year_9_cohort
+    click_on "Year 9"
+  end
+
+  def then_i_see_the_patients_in_year_9
+    expect(page).to have_content(@patient1.full_name).once
+    expect(page).to have_content(@patient2.full_name).once
   end
 end
