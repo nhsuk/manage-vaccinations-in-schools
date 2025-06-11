@@ -52,6 +52,20 @@ namespace :schools do
 
     raise "Could not find one or both schools." if old_loc.nil? || new_loc.nil?
 
+    unless PatientSession
+             .joins(:patient, :session)
+             .where(
+               patient: {
+                 school: old_loc
+               },
+               session: {
+                 location: old_loc
+               }
+             )
+             .all?(&:safe_to_destroy?)
+      raise "Some patient sessions at #{old_loc.urn} are not safe to destroy. Cannot complete transfer."
+    end
+
     if !new_loc.team_id.nil? && new_loc.team_id != old_loc.team_id
       raise "#{new_loc.urn} belongs to #{new_loc.team.name}. Could not complete transfer."
     end
