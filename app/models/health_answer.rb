@@ -11,10 +11,12 @@ class HealthAnswer
                 :next_question,
                 :follow_up_question
 
-  validates :notes, length: { maximum: 1000 }
-
   validates :response, inclusion: { in: %w[yes no] }
-  validates :notes, presence: true, if: -> { response == "yes" }
+
+  validates :notes,
+            presence: true,
+            if: -> { requires_notes? && response == "yes" }
+  validates :notes, length: { maximum: 1000 }
 
   def attributes
     %i[
@@ -40,6 +42,8 @@ class HealthAnswer
     attrs = attrs.except("notes") if attrs["response"] == "no"
     super(attrs)
   end
+
+  def requires_notes? = follow_up_question.nil?
 
   def self.from_health_questions(health_questions)
     hq_id_map = Hash[health_questions.map.with_index { |hq, i| [hq.id, i] }]

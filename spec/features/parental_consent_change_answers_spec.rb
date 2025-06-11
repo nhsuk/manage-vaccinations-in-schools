@@ -163,7 +163,6 @@ RSpec.feature "Parental consent change answers" do
 
   def when_i_change_my_answer_to_yes_for_the_asthma_question
     choose "Yes"
-    fill_in "Give details", with: "He has had asthma since he was 2"
     click_button "Continue"
   end
 
@@ -192,8 +191,6 @@ RSpec.feature "Parental consent change answers" do
   end
 
   def and_i_see_the_answer_i_changed_is_yes
-    expect(page).to have_content("Yes – He has had asthma since he was 2")
-
     expect(page).to have_content("Yes – Follow up details")
     expect(page).to have_content("Yes – Even more follow up details")
   end
