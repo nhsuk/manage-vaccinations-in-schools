@@ -141,8 +141,6 @@ jobs:
         with:
           role-to-assume: ${{ env.aws-role }}
           aws-region: eu-west-2
-      - name: Install AWS CLI
-        run: sudo snap install --classic aws-cli
       - name: Trigger ECS Deployment
         run: |
           set -e
