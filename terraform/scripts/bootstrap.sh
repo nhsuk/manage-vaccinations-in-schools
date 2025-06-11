@@ -85,8 +85,6 @@ create_environment_files () {
   cat << EOF > "$ENV-backend.hcl" || { echo "Failed backend file creation"; exit 1; }
 bucket         = "nhse-mavis-terraform-state"
 key            = "terraform-$ENV.tfstate"
-region         = "$REGION"
-dynamodb_table = "mavis-terraform-state-lock"
 EOF
   cat << EOF > "$ENV.tfvars" || { echo "Failed environment variables file creation"; exit 1; }
 environment           = "$ENV"
@@ -118,12 +116,11 @@ EOF
 }
 
 ENV="$1"
-REGION=eu-west-2
 
 if [ "$#" == 0 ] || [ "$#" -gt 2 ] ; then
   echo "Usage: $0 <Environment name> [options]"
   echo "Options:"
-  echo "  --environment-only  Skips creation of dynamodb table and S3 bucket (e.g. if these resources already exist)"
+  echo "  --environment-only  Skips creation of S3 bucket for terraform state (e.g. if it already exists)"
   exit 1
 elif [ -n "$(echo "$ENV" | tr -d 'a-z0-9-')" ] ; then
  echo "Invalid environment string. Only lowercase alphanumeric characters and '-' are allowed"

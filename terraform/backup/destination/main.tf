@@ -8,11 +8,10 @@ terraform {
   }
 
   backend "s3" {
-    bucket         = "mavisbackup-terraform-state"
-    region         = "eu-west-2"
-    dynamodb_table = "mavisbackup-terraform-state-lock"
-    use_lockfile   = true
-    encrypt        = true
+    bucket       = "mavisbackup-terraform-state"
+    region       = "eu-west-2"
+    use_lockfile = true
+    encrypt      = true
   }
 }
 

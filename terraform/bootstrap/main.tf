@@ -144,19 +144,3 @@ resource "aws_s3_bucket_policy" "logs" {
     ]
   })
 }
-
-#### Dynamo DB table for terraform state locking
-resource "aws_dynamodb_table" "dynamodb_lock_table" {
-  name         = "mavis-terraform-state-lock"
-  hash_key     = "LockID"
-  billing_mode = "PAY_PER_REQUEST"
-
-  attribute {
-    name = "LockID"
-    type = "S"
-  }
-
-  server_side_encryption {
-    enabled = true
-  }
-}
