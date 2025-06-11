@@ -21,3 +21,5 @@ http_hosts = {
 appspec_bucket       = "nhse-mavis-appspec-bucket-test"
 minimum_web_replicas = 2
 maximum_web_replicas = 4
+
+max_aurora_capacity_units = 32

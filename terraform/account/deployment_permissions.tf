@@ -45,3 +45,15 @@ resource "aws_iam_role_policy_attachment" "data_replication" {
   role       = aws_iam_role.data_replication_deploy.name
   policy_arn = each.value
 }
+
+################ DMS Policies ################
+
+resource "aws_iam_policy" "dms" {
+  name   = "DMSGithubPolicy"
+  policy = file("resources/iam_policy_DMSGithubPolicy.json")
+}
+
+resource "aws_iam_role_policy_attachment" "mavis_dms" {
+  role       = aws_iam_role.mavis_deploy.name
+  policy_arn = aws_iam_policy.dms.arn
+}
