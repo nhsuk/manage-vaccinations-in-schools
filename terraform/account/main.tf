@@ -19,8 +19,8 @@ provider "aws" {
 }
 
 resource "aws_iam_policy" "data_replication_access" {
-  name        = "DataReplicationAccess"
-  description = "Allows shell access to Data Replication ECS tasks"
+  name = "DataReplicationAccess"
+  # description = "Allows shell access to Data Replication ECS tasks"
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -42,4 +42,40 @@ resource "aws_iam_policy" "data_replication_access" {
   lifecycle {
     ignore_changes = [description]
   }
+}
+
+
+### Service linked role for Database Migration Service (DMS) ###
+
+resource "aws_iam_service_linked_role" "dms_service_linked_role" {
+  aws_service_name = "dms.amazonaws.com"
+}
+
+
+### Unique IAM roles
+resource "aws_iam_role" "dms_vpc_role" {
+  name = "dms-vpc-role"
+  assume_role_policy = templatefile(
+    "../app/templates/iam_assume_role.json.tpl",
+    { service_name = "dms.eu-west-2.amazonaws.com" }
+  )
+}
+
+resource "aws_iam_role_policy_attachment" "dms_vpc_policy" {
+  role       = aws_iam_role.dms_vpc_role.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonDMSVPCManagementRole"
+}
+
+# IAM Role for DMS CloudWatch Logs
+resource "aws_iam_role" "dms_cloudwatch_logs_role" {
+  name = "dms-cloudwatch-logs-role"
+  assume_role_policy = templatefile(
+    "../app/templates/iam_assume_role.json.tpl",
+    { service_name = "dms.eu-west-2.amazonaws.com" }
+  )
+}
+
+resource "aws_iam_role_policy_attachment" "dms_cloudwatch_logs_policy" {
+  role       = aws_iam_role.dms_cloudwatch_logs_role.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonDMSCloudWatchLogsRole"
 }
