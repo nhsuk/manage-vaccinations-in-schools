@@ -180,11 +180,11 @@ locals {
   task_envs = [
     {
       name  = "DB_HOST"
-      value = aws_rds_cluster.aurora_cluster.endpoint
+      value = aws_rds_cluster.core.endpoint
     },
     {
       name  = "DB_NAME"
-      value = aws_rds_cluster.aurora_cluster.database_name
+      value = aws_rds_cluster.core.database_name
     },
     {
       name  = "RAILS_ENV"
@@ -217,8 +217,8 @@ locals {
   ]
   task_secrets = concat([
     {
-      name      = var.db_secret_arn == null ? "DB_CREDENTIALS" : "DB_SECRET"
-      valueFrom = var.db_secret_arn == null ? aws_rds_cluster.aurora_cluster.master_user_secret[0].secret_arn : var.db_secret_arn
+      name      = "DB_CREDENTIALS"
+      valueFrom = aws_rds_cluster.core.master_user_secret[0].secret_arn
     },
     {
       name      = "RAILS_MASTER_KEY"
