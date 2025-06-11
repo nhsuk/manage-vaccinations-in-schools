@@ -27,7 +27,7 @@ class CohortsController < ApplicationController
       patients_in_organisation
         .where(birth_academic_year: @birth_academic_year)
         .not_deceased
-        .includes(:school)
+        .eager_load(:school)
         .order_by_name
 
     @pagy, @patients = pagy(patients)
