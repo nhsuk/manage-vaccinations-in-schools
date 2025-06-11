@@ -77,9 +77,6 @@ locals {
 variable "resource_name" {
   type = object(
     {
-      dbsubnet_group           = string
-      db_cluster               = string
-      db_instance              = string
       rds_security_group       = string
       loadbalancer             = string
       lb_security_group        = string
@@ -229,11 +226,6 @@ locals {
 
 ########## RDS configuration ##########
 
-variable "db_secret_arn" {
-  type        = string
-  description = "The ARN of the secret containing the DB credentials."
-}
-
 variable "backup_retention_period" {
   type        = number
   default     = 7
@@ -244,13 +236,6 @@ variable "enable_backup_to_vault" {
   type        = bool
   default     = false
   description = "Enable backup to vault for the RDS cluster."
-  nullable    = false
-}
-
-variable "backup_account_id" {
-  type        = string
-  default     = "904214613099"
-  description = "The AWS account ID of the dedicated account for storing remote backups."
   nullable    = false
 }
 
