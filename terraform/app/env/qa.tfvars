@@ -24,7 +24,7 @@ http_hosts = {
 appspec_bucket            = "nhse-mavis-appspec-bucket-qa"
 minimum_web_replicas      = 2
 maximum_web_replicas      = 4
-max_aurora_capacity_units = 16
+max_aurora_capacity_units = 32
 container_insights        = "enhanced"
 
 enable_backup_to_vault = true
