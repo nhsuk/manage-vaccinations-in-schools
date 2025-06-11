@@ -214,7 +214,8 @@ namespace :schools do
   end
 
   desc "Transfer child records from one school to another."
-  task :move_patients, %i[old_urn new_urn] => :environment do |_task, args|
+  task :move_patients,
+       %i[old_urn new_urn change_date] => :environment do |_task, args|
     old_loc = Location.school.find_by(urn: args[:old_urn])
     new_loc = Location.school.find_by(urn: args[:new_urn])
 
@@ -225,12 +226,23 @@ namespace :schools do
     end
     new_loc.update!(team: old_loc.team)
 
+    change_date =
+      begin
+        Date.parse(args[:change_date])
+      rescue StandardError
+        raise "Invalid date format. Use YYYY-MM-DD." if change_date.nil?
+      end
+
     Session.where(location_id: old_loc.id).update_all(location_id: new_loc.id)
     Patient.where(school_id: old_loc.id).update_all(school_id: new_loc.id)
-    ConsentForm.where(location_id: old_loc.id).update_all(
-      location_id: new_loc.id
-    )
-    ConsentForm.where(school_id: old_loc.id).update_all(school_id: new_loc.id)
+    ConsentForm
+      .where(location_id: old_loc.id)
+      .where("created_at >= ?", change_date)
+      .update_all(location_id: new_loc.id)
+    ConsentForm
+      .where(school_id: old_loc.id)
+      .where("created_at >= ?", change_date)
+      .update_all(school_id: new_loc.id)
     SchoolMove.where(school_id: old_loc.id).update_all(school_id: new_loc.id)
     Patient
       .where(school_id: new_loc.id)
