@@ -297,8 +297,12 @@ class DraftConsent
   def parent_relationship
     parent
       &.parent_relationships
-      &.find { _1.patient_id == patient_id }
-      .tap { _1&.patient = patient } # acts as preload
+      &.find { it.patient_id == patient_id }
+      &.tap do
+        it.patient = patient # acts as preload
+        it.type = parent_relationship_type
+        it.other_name = parent_relationship_other_name
+      end
   end
 
   private

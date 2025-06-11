@@ -6,11 +6,17 @@ describe "Verbal consent" do
 
     when_i_get_consent_for_the_patient
     and_i_choose_the_parent
-    and_i_fill_out_the_consent_details(parent_name: @parent.full_name)
+    and_i_fill_out_the_consent_details(
+      parent_name: @parent.full_name,
+      relationship: "Mum"
+    )
     then_i_see_the_confirmation_page
 
     when_i_click_on_change_name
-    and_i_fill_out_the_consent_details(parent_name: "New parent name")
+    and_i_fill_out_the_consent_details(
+      parent_name: "New parent name",
+      relationship: "Dad"
+    )
     then_i_see_the_confirmation_page
   end
 
@@ -23,7 +29,10 @@ describe "Verbal consent" do
     @session = create(:session, organisation:, programmes:)
 
     @parent = create(:parent)
-    @patient = create(:patient, session: @session, parents: [@parent])
+    @patient = create(:patient, session: @session)
+
+    @parent_relationship =
+      create(:parent_relationship, :mother, patient: @patient, parent: @parent)
   end
 
   def when_i_get_consent_for_the_patient
@@ -39,16 +48,15 @@ describe "Verbal consent" do
       "Choose who you are trying to get consent from"
     )
 
-    choose "#{@parent.full_name} (#{@patient.parent_relationships.first.label})"
+    choose "#{@parent.full_name} (Mum)"
     click_button "Continue"
   end
 
-  def and_i_fill_out_the_consent_details(parent_name:)
-    expect(page).to have_content(
-      "Details for #{parent_name} (#{@patient.parent_relationships.first.label})"
-    )
+  def and_i_fill_out_the_consent_details(parent_name:, relationship:)
+    expect(page).to have_content("Details for #{parent_name} (#{relationship})")
 
     fill_in "Full name", with: "New parent name"
+    choose "Dad"
     click_button "Continue"
 
     choose "By phone"
@@ -69,6 +77,8 @@ describe "Verbal consent" do
 
   def then_i_see_the_confirmation_page
     expect(page).to have_content("Check and confirm answers")
+    expect(page).to have_content("New parent name")
+    expect(page).to have_content("Dad")
   end
 
   def when_i_click_on_change_name

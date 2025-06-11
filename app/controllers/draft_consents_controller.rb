@@ -57,7 +57,11 @@ class DraftConsentsController < ApplicationController
     ActiveRecord::Base.transaction do
       @triage&.save! if @draft_consent.response_given?
 
-      @consent.parent&.save!
+      if (parent = @consent.parent)
+        parent.save! if parent.changed?
+        parent.parent_relationships.select(&:changed?).each(&:save!)
+      end
+
       @consent.save!
 
       StatusUpdater.call(patient: @patient)

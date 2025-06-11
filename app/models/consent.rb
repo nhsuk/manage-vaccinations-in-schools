@@ -132,7 +132,7 @@ class Consent < ApplicationRecord
   end
 
   def parent_relationship
-    patient.parent_relationships.find { _1.parent_id == parent_id }
+    patient.parent_relationships.find { it.parent_id == parent_id }
   end
 
   def health_answers_require_follow_up?
