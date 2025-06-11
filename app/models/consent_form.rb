@@ -72,7 +72,8 @@ class ConsentForm < ApplicationRecord
   attr_accessor :health_question_number,
                 :parental_responsibility,
                 :response,
-                :chosen_programme
+                :chosen_programme,
+                :injection_alternative
 
   audited associated_with: :consent
   has_associated_audits
@@ -262,6 +263,10 @@ class ConsentForm < ApplicationRecord
     validates :response, inclusion: %w[given refused]
   end
 
+  on_wizard_step :injection_alternative, exact: true do
+    validates :injection_alternative, inclusion: %w[true false]
+  end
+
   on_wizard_step :reason do
     validates :reason, presence: true
   end
@@ -305,6 +310,7 @@ class ConsentForm < ApplicationRecord
         ),
         (:address if response_given?),
         (:health_question if response_given?),
+        (:injection_alternative if can_offer_injection_as_alternative?),
         (:reason if refused_and_given),
         (:reason_notes if refused_and_given && reason_notes_must_be_provided?)
       ].compact
@@ -337,6 +343,12 @@ class ConsentForm < ApplicationRecord
 
   def needs_triage?
     health_answers.select(&:counts_for_triage?).any?(&:response_yes?)
+  end
+
+  def can_offer_injection_as_alternative?
+    consent_form_programmes.select(&:response_given?).any?(
+      &:vaccine_method_nasal?
+    )
   end
 
   def reason_notes_must_be_provided?
@@ -492,6 +504,21 @@ class ConsentForm < ApplicationRecord
       end
     when "refused"
       consent_form_programmes.each { it.response = "refused" }
+    end
+  end
+
+  def update_injection_alternative
+    vaccine_methods =
+      if ActiveModel::Type::Boolean.new.cast(injection_alternative)
+        %w[nasal injection]
+      else
+        %w[nasal]
+      end
+
+    consent_form_programmes.each do |consent_form_programme|
+      if consent_form_programme.vaccine_method_nasal?
+        consent_form_programme.vaccine_methods = vaccine_methods
+      end
     end
   end
 
