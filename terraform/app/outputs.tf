@@ -30,8 +30,12 @@ output "ecs_variables" {
       service_name    = module.good_job_service.service.name
       task_definition = module.good_job_service.task_definition
     }
+    sidekiq = {
+      service_name    = module.sidekiq_service.service.name
+      task_definition = module.sidekiq_service.task_definition
+    }
   }
-  description = "Essential attributes of the ECS service"
+  description = "Essential attributes of the ECS services"
 }
 
 output "db_secret_arn" {
