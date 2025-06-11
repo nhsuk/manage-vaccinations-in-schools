@@ -1,0 +1,19 @@
+<% content_for :before_main do %>
+  <%= render AppBacklinkComponent.new(backlink_path) %>
+<% end %>
+
+<% legend = "If your child cannot have the nasal spray, do you agree to them having the injected vaccine instead?" %>
+<% content_for :page_title, legend %>
+
+<%= form_with model: @consent_form, url: wizard_path, method: :put do |f| %>
+  <%= f.govuk_error_summary %>
+
+  <%= f.govuk_radio_buttons_fieldset :injection_alternative,
+                                     legend: { size: "l", text: legend, tag: "h1" },
+                                     hint: { text: "We may decide the nasal spray vaccine is not suitable. In this case, we may offer the injected vaccine instead." } do %>
+    <%= f.govuk_radio_button :injection_alternative, :true, label: { text: "Yes" }, link_errors: true %>
+    <%= f.govuk_radio_button :injection_alternative, :false, label: { text: "No" } %>
+  <% end %>
+
+  <%= f.govuk_submit "Continue" %>
+<% end %>

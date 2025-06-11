@@ -18,6 +18,8 @@ module ParentInterface
         set_response_flu
       when :response_hpv
         set_response_hpv
+      when :injection_alternative
+        set_injection_alternative
       end
 
       render_wizard
@@ -55,6 +57,8 @@ module ParentInterface
              @consent_form.parent_phone.present?
           jump_to("contact-method", skip_to_confirm: true)
         end
+      elsif current_step == :injection_alternative
+        @consent_form.update_injection_alternative
       elsif is_response_step?
         @consent_form.update_programme_responses
         @consent_form.seed_health_questions
@@ -109,6 +113,7 @@ module ParentInterface
         response_doubles: %i[response chosen_programme],
         response_flu: %i[response],
         response_hpv: %i[response],
+        injection_alternative: %i[injection_alternative],
         address: %i[address_line_1 address_line_2 address_town address_postcode]
       }.fetch(current_step)
 
@@ -165,6 +170,14 @@ module ParentInterface
         @consent_form.response = "given"
       elsif @consent_form.response_refused?
         @consent_form.response = "refused"
+      end
+    end
+
+    def set_injection_alternative
+      if @consent_form.consent_form_programmes.any?(
+           &:vaccine_method_injection_and_nasal?
+         )
+        @consent_form.injection_alternative = "true"
       end
     end
 
