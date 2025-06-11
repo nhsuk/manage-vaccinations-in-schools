@@ -619,6 +619,7 @@ en:
     file_format: file-format
     gp: gp
     health_question: health-question
+    injection_alternative: injection-alternative
     location: location
     name: name
     notes: notes
