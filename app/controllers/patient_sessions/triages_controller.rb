@@ -12,7 +12,11 @@ class PatientSessions::TriagesController < PatientSessions::BaseController
   end
 
   def create
-    @triage.assign_attributes(triage_params.merge(performed_by: current_user))
+    @triage.assign_attributes(
+      **triage_params,
+      performed_by: current_user,
+      vaccine_method: "injection"
+    )
 
     authorize @triage
 
