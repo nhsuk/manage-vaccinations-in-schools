@@ -2,7 +2,7 @@
 
 class AppPatientCardComponent < ViewComponent::Base
   erb_template <<-ERB
-    <%= render AppCardComponent.new do |card| %>
+    <%= render AppCardComponent.new(section: true) do |card| %>
       <% card.with_heading { "Child’s details" } %>
 
       <% if patient.date_of_death.present? %>

@@ -201,13 +201,17 @@ describe "HPV vaccination" do
   end
 
   def and_i_see_the_vaccination_details
-    expect(page).to have_content("Vaccination details").once
+    expect(page).to have_content("Vaccinations")
+    click_on Date.current.to_fs(:long)
+
+    expect(page).to have_content("Vaccination details")
     expect(page).to have_content("Dose numberFirst")
   end
 
   def when_i_go_to_the_register_tab
-    click_link @session.location.name
-    click_link "Register"
+    click_on "Sessions"
+    click_on @session.location.name
+    click_on "Register"
   end
 
   def and_i_filter_by_completed_session
