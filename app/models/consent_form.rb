@@ -319,11 +319,7 @@ class ConsentForm < ApplicationRecord
   end
 
   def needs_triage?
-    any_health_answers_truthy?
-  end
-
-  def any_health_answers_truthy?
-    health_answers.any? { it.response == "yes" }
+    health_answers.select(&:counts_for_triage?).any?(&:response_yes?)
   end
 
   def reason_notes_must_be_provided?
