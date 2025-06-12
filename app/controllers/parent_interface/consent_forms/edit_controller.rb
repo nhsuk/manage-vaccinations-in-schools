@@ -11,6 +11,8 @@ module ParentInterface
     HOME_EDUCATED_SCHOOL_ID = "home-educated"
 
     def show
+      set_response if current_step == :consent
+
       render_wizard
     end
 
@@ -47,6 +49,7 @@ module ParentInterface
           jump_to("contact-method", skip_to_confirm: true)
         end
       elsif current_step == :consent
+        @consent_form.update_programme_responses
         @consent_form.seed_health_questions
       end
 
@@ -94,7 +97,7 @@ module ParentInterface
           parent_contact_method_type
           parent_contact_method_other_details
         ],
-        consent: %i[response chosen_vaccine],
+        consent: %i[response chosen_programme],
         reason: %i[reason],
         reason_notes: %i[reason_notes],
         address: %i[address_line_1 address_line_2 address_town address_postcode]
@@ -120,6 +123,18 @@ module ParentInterface
       @question_number = params.fetch(:question_number, "0").to_i
 
       @health_answer = @consent_form.health_answers[@question_number]
+    end
+
+    def set_response
+      if @consent_form.response_given? && @consent_form.response_refused?
+        @consent_form.response = "given_one"
+        @consent_form.chosen_programme =
+          @consent_form.given_programmes.first&.type
+      elsif @consent_form.response_given?
+        @consent_form.response = "given"
+      elsif @consent_form.response_refused?
+        @consent_form.response = "refused"
+      end
     end
 
     def validate_params
