@@ -40,7 +40,7 @@ namespace :vaccines do
         elsif programme.td_ipv?
           create_td_ipv_health_questions(vaccine)
         else
-          raise "Unknown programme: #{programme.name}"
+          raise UnsupportedProgramme, programme
         end
       end
     end
