@@ -1,11 +1,10 @@
 # frozen_string_literal: true
 
 class ProcessImportJob < ApplicationJob
-  include GoodJob::ActiveJobExtensions::Concurrency
-
   queue_as :imports
 
-  good_job_control_concurrency_with perform_limit: 1
+  # Sidekiq handles concurrency through queue configuration
+  # Only one import should be processed at a time
 
   def perform(import)
     import.parse_rows!

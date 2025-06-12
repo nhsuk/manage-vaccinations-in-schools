@@ -1,0 +1,23 @@
+# Sidekiq configuration
+:concurrency: 5
+:timeout: 25
+:verbose: false
+
+# Queue configuration
+:queues:
+  - default
+  - mailers
+  - nhs_api
+  - mesh
+  - pds
+
+# Retry configuration
+:retry: 25
+
+# Dead job retention
+:dead_timeout_in_seconds: 180
+
+# Scheduler (if using sidekiq-cron)
+:scheduler:
+  :enabled: true
+  :dynamic: true

@@ -2,4 +2,6 @@
 
 require_relative "production"
 
-Rails.application.configure { config.good_job.cron = CRON_JOBS }
+Rails.application.configure do
+  # Cron jobs will be handled by sidekiq-cron gem or external scheduler
+end

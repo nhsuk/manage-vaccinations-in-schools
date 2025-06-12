@@ -83,6 +83,6 @@ ENTRYPOINT ["/rails/bin/docker-entrypoint"]
 # Start web server by default, this can be overwritten by environment variable
 EXPOSE 4000
 ENV HTTP_PORT=4000
-ENV GOOD_JOB_PROBE_PORT=4000
+ENV SIDEKIQ_PROBE_PORT=4000
 ENV SERVER_TYPE=web
 CMD ["./bin/docker-start"]

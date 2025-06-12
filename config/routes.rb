@@ -36,7 +36,7 @@ Rails.application.routes.draw do
 
   root to: redirect("/start")
 
-  mount GoodJob::Engine => "/good-job"
+  mount Sidekiq::Web => "/sidekiq"
 
   get "/start", to: "pages#start"
   get "/dashboard", to: "dashboard#index"

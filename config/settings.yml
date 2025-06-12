@@ -75,7 +75,8 @@ nhs_api:
 pds:
   enqueue_bulk_updates: true
   raise_unknown_gp_practice: true
-  wait_between_jobs: 2.0
+  # NHS API rate limit: 5 requests/second = 0.2 seconds between jobs
+  wait_between_jobs: 0.2
 
 splunk:
   enabled: true

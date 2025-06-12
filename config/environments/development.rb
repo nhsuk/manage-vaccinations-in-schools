@@ -81,8 +81,7 @@ Rails.application.configure do
   # Prevent health checks from clogging up the logs.
   config.silence_healthcheck_path = "/up"
 
-  # Set up GoodJob for async execution in development mode
-  config.good_job.execution_mode = :async
+  # Sidekiq runs in a separate process in development
 
   # Enable strict loading to catch N+1 problems.
   config.active_record.strict_loading_by_default = true

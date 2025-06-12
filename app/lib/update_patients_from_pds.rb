@@ -10,26 +10,22 @@ class UpdatePatientsFromPDS
   def call
     return unless enqueue?
 
-    GoodJob::Bulk.enqueue do
-      patients.find_each.with_index do |patient, index|
-        # Schedule with a delay to preemptively handle rate limit issues.
-        # This shouldn't be necessary, but we're finding that Good Job
-        # has occasional race condition issues, and spreading out the jobs
-        # should reduce the risk of this.
+    patients.find_each.with_index do |patient, index|
+      # Schedule with a delay to handle NHS API rate limiting.
+      # Jobs are spaced out to ensure we don't exceed 5 requests per second.
 
-        if patient.nhs_number.nil?
-          PatientNHSNumberLookupJob.set(
-            priority:,
-            queue:,
-            wait: index * wait_between_jobs
-          ).perform_later(patient)
-        else
-          PatientUpdateFromPDSJob.set(
-            priority:,
-            queue:,
-            wait: index * wait_between_jobs
-          ).perform_later(patient)
-        end
+      if patient.nhs_number.nil?
+        PatientNHSNumberLookupJob.set(
+          priority:,
+          queue:,
+          wait: index * wait_between_jobs
+        ).perform_later(patient)
+      else
+        PatientUpdateFromPDSJob.set(
+          priority:,
+          queue:,
+          wait: index * wait_between_jobs
+        ).perform_later(patient)
       end
     end
   end
