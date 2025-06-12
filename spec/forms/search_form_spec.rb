@@ -4,8 +4,9 @@ describe SearchForm do
   subject(:form) { described_class.new(**params, session:, request_path:) }
 
   let(:session) { {} }
-  let(:empty_params) { {} }
-  let(:consent_status) { nil }
+  let(:request_path) { "/a-path" }
+
+  let(:consent_statuses) { nil }
   let(:date_of_birth_day) { Date.current.day }
   let(:date_of_birth_month) { Date.current.month }
   let(:date_of_birth_year) { Date.current.year }
@@ -16,11 +17,10 @@ describe SearchForm do
   let(:session_status) { nil }
   let(:triage_status) { nil }
   let(:year_groups) { %w[8 9 10 11] }
-  let(:request_path) { "/a-path" }
 
   let(:params) do
     {
-      consent_status:,
+      consent_statuses:,
       date_of_birth_day:,
       date_of_birth_month:,
       date_of_birth_year:,
@@ -34,6 +34,8 @@ describe SearchForm do
     }
   end
 
+  let(:empty_params) { {} }
+
   context "for patients" do
     let(:scope) { Patient.all }
 
@@ -42,7 +44,7 @@ describe SearchForm do
     end
 
     context "filtering on date of birth" do
-      let(:consent_status) { nil }
+      let(:consent_statuses) { nil }
       let(:date_of_birth_day) { nil }
       let(:date_of_birth_month) { nil }
       let(:date_of_birth_year) { nil }
@@ -92,7 +94,7 @@ describe SearchForm do
     end
 
     context "filtering on programme status" do
-      let(:consent_status) { nil }
+      let(:consent_statuses) { nil }
       let(:date_of_birth_day) { nil }
       let(:date_of_birth_month) { nil }
       let(:date_of_birth_year) { nil }
@@ -113,7 +115,7 @@ describe SearchForm do
     end
 
     context "searching on name" do
-      let(:consent_status) { nil }
+      let(:consent_statuses) { nil }
       let(:date_of_birth_day) { nil }
       let(:date_of_birth_month) { nil }
       let(:date_of_birth_year) { nil }
@@ -169,7 +171,7 @@ describe SearchForm do
     end
 
     context "filtering on consent status" do
-      let(:consent_status) { "given" }
+      let(:consent_statuses) { %w[given refused] }
       let(:date_of_birth_day) { nil }
       let(:date_of_birth_month) { nil }
       let(:date_of_birth_year) { nil }
@@ -183,18 +185,25 @@ describe SearchForm do
       let(:programme) { create(:programme) }
 
       it "filters on consent status" do
-        patient_session =
+        patient_session_given =
           create(
             :patient_session,
             :consent_given_triage_not_needed,
             programmes: [programme]
           )
-        expect(form.apply(scope, programme:)).to include(patient_session)
+
+        patient_session_refused =
+          create(:patient_session, :consent_refused, programmes: [programme])
+
+        expect(form.apply(scope, programme:)).to contain_exactly(
+          patient_session_given,
+          patient_session_refused
+        )
       end
     end
 
     context "filtering on session status" do
-      let(:consent_status) { nil }
+      let(:consent_statuses) { nil }
       let(:date_of_birth_day) { nil }
       let(:date_of_birth_month) { nil }
       let(:date_of_birth_year) { nil }
@@ -216,7 +225,7 @@ describe SearchForm do
     end
 
     context "filtering on register status" do
-      let(:consent_status) { nil }
+      let(:consent_statuses) { nil }
       let(:date_of_birth_day) { nil }
       let(:date_of_birth_month) { nil }
       let(:date_of_birth_year) { nil }
@@ -235,7 +244,7 @@ describe SearchForm do
     end
 
     context "filtering on triage status" do
-      let(:consent_status) { nil }
+      let(:consent_statuses) { nil }
       let(:date_of_birth_day) { nil }
       let(:date_of_birth_month) { nil }
       let(:date_of_birth_year) { nil }
@@ -303,16 +312,21 @@ describe SearchForm do
       end
 
       it "overrides session filters when 'Any' option is selected (empty string)" do
-        described_class.new(consent_status: "given", session:, request_path:)
+        described_class.new(
+          consent_statuses: %w[given],
+          session:,
+          request_path:
+        )
 
         form1 = described_class.new(**empty_params, session:, request_path:)
-        expect(form1.consent_status).to eq("given")
+        expect(form1.consent_statuses).to eq(%w[given])
 
-        form2 = described_class.new(consent_status: "", session:, request_path:)
-        expect(form2.consent_status).to eq("")
+        form2 =
+          described_class.new(consent_statuses: nil, session:, request_path:)
+        expect(form2.consent_statuses).to eq([])
 
         form3 = described_class.new(**empty_params, session:, request_path:)
-        expect(form3.consent_status).to eq("")
+        expect(form3.consent_statuses).to eq([])
       end
     end
 
@@ -321,7 +335,7 @@ describe SearchForm do
         described_class.new(
           q: "John",
           year_groups: %w[8 11],
-          consent_status: "given",
+          consent_statuses: %w[given],
           session:,
           request_path:
         )
@@ -332,7 +346,7 @@ describe SearchForm do
 
         expect(form.q).to eq("John")
         expect(form.year_groups).to eq([8, 11])
-        expect(form.consent_status).to eq("given")
+        expect(form.consent_statuses).to eq(%w[given])
       end
     end
 

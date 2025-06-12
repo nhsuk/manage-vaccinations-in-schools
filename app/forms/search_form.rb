@@ -8,7 +8,7 @@ class SearchForm
   SESSION_KEY = "search_filters"
 
   attribute :clear_filters, :boolean
-  attribute :consent_status, :string
+  attribute :consent_statuses, array: true
   attribute :date_of_birth_day, :integer
   attribute :date_of_birth_month, :integer
   attribute :date_of_birth_year, :integer
@@ -25,6 +25,10 @@ class SearchForm
   def initialize(params = {})
     super(params)
     handle_session_filters
+  end
+
+  def consent_statuses=(values)
+    super(values&.compact_blank || [])
   end
 
   def year_groups=(values)
@@ -50,8 +54,8 @@ class SearchForm
 
     scope = scope.search_by_nhs_number(nil) if missing_nhs_number.present?
 
-    if (status = consent_status).present?
-      scope = scope.has_consent_status(status, programme:)
+    if (statuses = consent_statuses).present?
+      scope = scope.has_consent_status(statuses, programme:)
     end
 
     if (status = programme_status&.to_sym).present?
@@ -114,7 +118,7 @@ class SearchForm
     attributes
       .except(:clear_filters)
       .values
-      .any? { |value| value.present? || value == "" }
+      .any? { it.present? || it == "" || it == [] }
   end
 
   def path_key
