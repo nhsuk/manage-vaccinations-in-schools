@@ -274,6 +274,7 @@ class DraftConsent
       triage.performed_by_user_id = recorded_by_user_id
       triage.programme = programme
       triage.status = triage_status
+      triage.vaccine_method = "injection"
     end
   end
 
