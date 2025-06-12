@@ -103,19 +103,19 @@ module PDSExperiments
         }
 
         query["family"] = if surname
-          "#{patient.family_name.first(3)}*"
+          "#{patient.family_name&.first(3)}*"
         else
           patient.family_name
         end
 
         query["given"] = if given_name
-          "#{patient.given_name.first(3)}*"
+          "#{patient.given_name&.first(3)}*"
         else
           patient.given_name
         end
 
         query["address-postalcode"] = if postcode
-          "#{patient.address_postcode.first(2)}*"
+          "#{patient.address_postcode&.first(2)}*"
         else
           patient.address_postcode
         end

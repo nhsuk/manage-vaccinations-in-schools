@@ -9,9 +9,17 @@ module PDSExperiments
       too_many_matches_errors
       other_errors
       nhs_number_discrepancies
+      nhs_number_discrepancy_ids
+      nhs_number_discrepancy_patients
       family_name_discrepancies
       date_of_birth_discrepancies
       bad_requests
+      family_name_discrepancy_ids
+      family_name_discrepancy_patients
+      avg_time
+      total_time
+      count
+      bad_request_ids
     ].freeze
 
     def initialize(experiment_name)
@@ -40,15 +48,27 @@ module PDSExperiments
         date_of_birth_discrepancies:
           counters["date_of_birth_discrepancies"] || 0,
         bad_requests: counters["bad_requests"] || 0,
+        total_time: counters["total_time"] || 0,
+        avg_time: counters["avg_time"] || 0,
+        count: counters["count"] || 0,
+        bad_request_ids: counters["bad_request_ids"] || [],
+        family_name_discrepancy_ids:
+          counters["family_name_discrepancy_ids"] || [],
+        nhs_number_discrepancy_ids:
+          counters["nhs_number_discrepancy_ids"] || [],
+        nhs_number_discrepancy_patients:
+          counters["nhs_number_discrepancy_patients"] || [],
+        family_name_discrepancy_patients:
+          counters["family_name_discrepancy_patients"] || [],
         summary:
           generate_summary(counters, total, successful, coverage_percentage)
       }
     end
 
     def self.analyze_all_experiments
-      PDSExperiments::PDSExperimentRunner::EXPERIMENTS
-        .keys
-        .map { |experiment_name| new(experiment_name).analyze }
+      PDSExperiments::PDSExperimentRunner::EXPERIMENTS.map do |experiment_name|
+        new(experiment_name).analyze
+      end
     end
 
     def self.compare_experiments
