@@ -8,6 +8,7 @@
 #  invalidated_at       :datetime
 #  notes                :text             default(""), not null
 #  status               :integer          not null
+#  vaccine_method       :integer
 #  created_at           :datetime         not null
 #  updated_at           :datetime         not null
 #  organisation_id      :bigint           not null
@@ -52,6 +53,12 @@ class Triage < ApplicationRecord
          delay_vaccination: 3
        },
        validate: true
+
+  enum :vaccine_method,
+       { injection: 0, nasal: 1 },
+       validate: {
+         if: :ready_to_vaccinate?
+       }
 
   encrypts :notes
 
