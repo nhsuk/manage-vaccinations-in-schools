@@ -110,10 +110,7 @@ describe "HPV vaccination" do
   end
 
   def and_i_fill_in_pre_screening_questions
-    check "know what the vaccination is for, and are happy to have it"
-    check "have not already had the vaccination"
-    check "are feeling well"
-    check "have no allergies which would prevent vaccination"
+    check "has confirmed the above statements are true"
   end
 
   def and_i_record_that_the_patient_has_been_vaccinated(where)

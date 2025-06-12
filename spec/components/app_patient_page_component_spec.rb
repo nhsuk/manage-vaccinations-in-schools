@@ -14,7 +14,7 @@ describe AppPatientPageComponent do
     patient_session.strict_loading!(false)
   end
 
-  let(:programmes) { [create(:programme, :hpv)] }
+  let(:programmes) { [create(:programme, :hpv), create(:programme, :menacwy)] }
   let(:vaccine) { programme.vaccines.first }
 
   let(:component) do
@@ -126,78 +126,67 @@ describe AppPatientPageComponent do
     end
   end
 
-  context "when a pre_screening from today's session date is present" do
+  describe "#default_vaccinate_form" do
     subject(:vaccinate_form) { component.default_vaccinate_form }
 
-    let(:today) { Date.current }
-    let(:patient_session) do
-      create(:patient_session, :session_in_progress, programmes:)
-    end
-    let(:session_date_today) { SessionDate.find_or_create_by(value: today) }
-    let!(:pre_screening_today) do
-      create(
-        :pre_screening,
-        patient_session: patient_session,
-        session_date: session_date_today,
-        feeling_well: true,
-        knows_vaccination: false,
-        no_allergies: true,
-        not_already_had: false,
-        not_pregnant: true,
-        not_taking_medication: true,
-        notes: "Today's prescreening"
-      )
+    let(:patient_session) { create(:patient_session, programmes:) }
+
+    context "when a pre-screening from today's session and programme exists" do
+      before do
+        create(
+          :pre_screening,
+          patient_session:,
+          programme: programmes.first,
+          notes: "Today's prescreening"
+        )
+      end
+
+      it "pre-checks the confirmation" do
+        expect(vaccinate_form.pre_screening_confirmed).to be(true)
+      end
+
+      it "doesn't pre-fill the notes" do
+        expect(vaccinate_form.pre_screening_notes).to be_nil
+      end
     end
 
-    it "initializes VaccinateForm with today's pre_screening data" do
-      expect(vaccinate_form.feeling_well).to be(
-        pre_screening_today.feeling_well
-      )
-      expect(vaccinate_form.not_pregnant).to be(
-        pre_screening_today.not_pregnant
-      )
+    context "when a pre-screening from today's session and different programme exists" do
+      before do
+        create(
+          :pre_screening,
+          patient_session:,
+          programme: programmes.second,
+          notes: "Today's prescreening"
+        )
+      end
+
+      it "doesn't pre-check the confirmation" do
+        expect(vaccinate_form.pre_screening_confirmed).to be(false)
+      end
+
+      it "doesn't pre-fill the notes" do
+        expect(vaccinate_form.pre_screening_notes).to be_nil
+      end
     end
 
-    it "does not copy over vaccine-dependent responses to VaccinateForm" do
-      expect(vaccinate_form.knows_vaccination).to be_nil
-      expect(vaccinate_form.no_allergies).to be_nil
-      expect(vaccinate_form.not_already_had).to be_nil
-      expect(vaccinate_form.not_taking_medication).to be_nil
-      expect(vaccinate_form.pre_screening_notes).to be_nil
-    end
-  end
+    context "when a pre-screening from yesterday's session and programme exists" do
+      before do
+        create(
+          :pre_screening,
+          patient_session:,
+          programme: programmes.first,
+          created_at: 1.day.ago,
+          notes: "Yesterday's prescreening"
+        )
+      end
 
-  context "when no pre_screening from today's session date is present" do
-    subject(:vaccinate_form) { component.default_vaccinate_form }
+      it "doesn't pre-check the confirmation" do
+        expect(vaccinate_form.pre_screening_confirmed).to be(false)
+      end
 
-    let(:today) { Date.current }
-    let(:patient_session) do
-      create(:patient_session, :session_in_progress, programmes:)
-    end
-    let(:session_date_yesterday) { create(:session_date, value: today - 1) }
-    let(:pre_screening_yesterday) do
-      create(
-        :pre_screening,
-        patient_session: patient_session,
-        session_date: session_date_yesterday,
-        feeling_well: true,
-        knows_vaccination: true,
-        no_allergies: true,
-        not_already_had: true,
-        not_pregnant: true,
-        not_taking_medication: true,
-        notes: "Yesterday's prescreening"
-      )
-    end
-
-    it "initializes VaccinateForm with blank pre_screening data" do
-      expect(vaccinate_form.feeling_well).to be_nil
-      expect(vaccinate_form.knows_vaccination).to be_nil
-      expect(vaccinate_form.no_allergies).to be_nil
-      expect(vaccinate_form.not_already_had).to be_nil
-      expect(vaccinate_form.not_pregnant).to be_nil
-      expect(vaccinate_form.not_taking_medication).to be_nil
-      expect(vaccinate_form.pre_screening_notes).to be_nil
+      it "doesn't pre-fill the notes" do
+        expect(vaccinate_form.pre_screening_notes).to be_nil
+      end
     end
   end
 end

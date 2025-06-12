@@ -6,12 +6,7 @@ class VaccinateForm
 
   attr_accessor :patient_session, :programme, :current_user, :todays_batch
 
-  attribute :knows_vaccination, :boolean
-  attribute :not_already_had, :boolean
-  attribute :feeling_well, :boolean
-  attribute :no_allergies, :boolean
-  attribute :not_taking_medication, :boolean
-  attribute :not_pregnant, :boolean
+  attribute :pre_screening_confirmed, :boolean
   attribute :pre_screening_notes, :string
 
   attribute :administered, :boolean
@@ -24,20 +19,7 @@ class VaccinateForm
   validates :pre_screening_notes, length: { maximum: 1000 }
 
   with_options if: :administered do
-    validates :knows_vaccination, presence: true
-    validates :not_already_had, presence: true
-    validates :no_allergies, presence: true
-  end
-
-  with_options if: -> { administered && ask_not_taking_medication? } do
-    validates :not_taking_medication, presence: true
-  end
-
-  with_options if: -> { administered && ask_not_pregnant? } do
-    validates :not_pregnant, presence: true
-  end
-
-  with_options if: :administered do
+    validates :pre_screening_confirmed, presence: true
     validates :delivery_method, presence: true
     validates :delivery_site, presence: true
   end
@@ -81,20 +63,9 @@ class VaccinateForm
   def pre_screening
     @pre_screening ||=
       patient_session.pre_screenings.build(
-        feeling_well: feeling_well || false,
-        knows_vaccination: knows_vaccination || false,
-        no_allergies: no_allergies || false,
-        not_already_had: not_already_had || false,
-        not_pregnant: not_pregnant || false,
-        not_taking_medication: not_taking_medication || false,
         notes: pre_screening_notes,
         performed_by: current_user,
-        programme:,
-        session_date_id:
+        programme:
       )
-  end
-
-  def session_date_id
-    patient_session.session.session_dates.today.first&.id
   end
 end

@@ -71,11 +71,7 @@ describe "MenACWY and Td/IPV vaccination" do
   end
 
   def and_i_fill_out_pre_screening_questions
-    check "know what the vaccination is for, and are happy to have it"
-    check "have not already had the vaccination"
-    check "are feeling well"
-    check "have no allergies which would prevent vaccination"
-    check "are not taking any medication which prevents vaccination"
+    check "has confirmed the above statements are true"
   end
 
   def and_i_record_the_vaccination(batch)
@@ -113,11 +109,7 @@ describe "MenACWY and Td/IPV vaccination" do
   end
 
   def and_i_check_the_pre_screening_questions_again
-    check "know what the vaccination is for, and are happy to have it"
-    check "have not already had the vaccination"
-    check "have no allergies which would prevent vaccination"
-    check "are not taking any medication which prevents vaccination"
-    check "are not pregnant"
+    check "has confirmed the above statements are true"
   end
 
   def then_i_see_the_patient_is_vaccinated_for_td_ipv
