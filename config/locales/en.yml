@@ -162,10 +162,6 @@ en:
           other: Other
           personal_choice: Personal choice
           will_be_vaccinated_elsewhere: Vaccine will be given elsewhere
-        responses:
-          given: Consent given
-          given_one: Partial consent given
-          refused: Consent refused
       notify_log_entry:
         types:
           email: Email

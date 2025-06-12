@@ -4,11 +4,9 @@ module ConsentFormMailerConcern
   extend ActiveSupport::Concern
 
   def send_consent_form_confirmation(consent_form)
-    if consent_form.consent_refused?
-      send_consent_form_confirmation_refused(consent_form)
-    else
+    if consent_form.response_given?
       ProgrammeGrouper
-        .call(consent_form.chosen_programmes)
+        .call(consent_form.given_programmes)
         .each_value do |programmes|
           if consent_form.needs_triage?
             EmailDeliveryJob.perform_later(
@@ -41,10 +39,12 @@ module ConsentFormMailerConcern
         end
 
       ProgrammeGrouper
-        .call(consent_form.not_chosen_programmes)
+        .call(consent_form.refused_programmes)
         .each_value do |programmes|
           send_consent_form_confirmation_refused(consent_form, programmes:)
         end
+    else
+      send_consent_form_confirmation_refused(consent_form)
     end
   end
 

@@ -119,7 +119,7 @@ describe Consent do
             consent_form:,
             reason_for_refusal: consent_form.reason,
             notes: "",
-            response: consent_form.response,
+            response: "given",
             route: "website"
           )
         )
@@ -174,6 +174,8 @@ describe Consent do
       let(:programmes) do
         [create(:programme, :menacwy), create(:programme, :td_ipv)]
       end
+      let(:patient) { create(:patient) }
+      let(:current_user) { create(:user) }
       let(:organisation) { create(:organisation, programmes:) }
       let(:session) { create(:session, organisation:, programmes:) }
       let(:consent_form) do
@@ -181,15 +183,15 @@ describe Consent do
           :consent_form,
           :recorded,
           session:,
-          response: :given_one,
           reason: :personal_choice,
-          reason_notes: "Personal reasons.",
-          chosen_vaccine: "menacwy"
+          reason_notes: "Personal reasons."
         )
       end
 
-      let(:patient) { create(:patient) }
-      let(:current_user) { create(:user) }
+      before do
+        consent_form.consent_form_programmes.first.update!(response: "given")
+        consent_form.consent_form_programmes.second.update!(response: "refused")
+      end
 
       it "creates a consent per programme" do
         expect(consents.map(&:programme)).to eq(programmes)
