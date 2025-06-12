@@ -130,6 +130,23 @@ describe ClassImportRow do
     end
   end
 
+  describe "#to_school_move" do
+    subject { class_import_row.to_school_move(patient) }
+
+    let(:data) { valid_data }
+    let(:patient) { class_import_row.to_patient }
+
+    context "Without a date of death" do
+      it { should_not be_nil }
+    end
+
+    context "With a date of death" do
+      before { travel_to(today) { patient.update!(date_of_death: today) } }
+
+      it { should be_nil }
+    end
+  end
+
   describe "#to_parents" do
     subject(:parents) { class_import_row.to_parents }
 
