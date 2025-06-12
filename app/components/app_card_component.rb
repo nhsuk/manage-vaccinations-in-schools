@@ -2,7 +2,7 @@
 
 class AppCardComponent < ViewComponent::Base
   erb_template <<-ERB
-    <div class="<%= card_classes %>">
+    <<%= top_level_tag %> class="<%= card_classes %>">
       <div class="<%= content_classes %>">
         <% if heading.present? %>
           <h2 class="<%= heading_classes %>">
@@ -22,7 +22,7 @@ class AppCardComponent < ViewComponent::Base
 
         <%= content %>
       </div>
-    </div>
+    </<%= top_level_tag %>>
   ERB
 
   renders_one :heading
@@ -34,7 +34,8 @@ class AppCardComponent < ViewComponent::Base
     secondary: false,
     data: false,
     patient: false,
-    filters: false
+    filters: false,
+    section: false
   )
     super
 
@@ -44,11 +45,14 @@ class AppCardComponent < ViewComponent::Base
     @data = data
     @patient = patient
     @filters = filters
+    @section = section
 
     @feature = (colour.present? && !data) || filters
   end
 
   private
+
+  def top_level_tag = @section ? "section" : "div"
 
   def card_classes
     [
