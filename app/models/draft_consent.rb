@@ -174,13 +174,23 @@ class DraftConsent
     parent.phone = parent_phone
     parent.phone_receive_updates = parent_phone_receive_updates
 
-    parent
-      .parent_relationships
-      .find_or_initialize_by(patient:)
-      .assign_attributes(
-        type: parent_relationship_type,
-        other_name: parent_relationship_other_name
-      )
+    # We can't use find_or_initialize_by here because we need the object to
+    # remain attached to the parent so we can save the parent with its
+    # relationships.
+
+    parent_relationship =
+      parent.parent_relationships.find { it.patient_id == patient_id } ||
+        parent.parent_relationships.build(patient_id:)
+
+    parent_relationship.assign_attributes(
+      patient:, # acts as preload
+      type: parent_relationship_type,
+      other_name: parent_relationship_other_name
+    )
+
+    if parent_relationship.new_record?
+      parent.parent_relationships << parent_relationship
+    end
 
     parent
   end
