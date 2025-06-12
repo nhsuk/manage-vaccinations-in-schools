@@ -36,10 +36,6 @@ class Reports::OfflineSessionExporter
 
   delegate :location, :organisation, to: :session
 
-  def associations
-    @associations ||= Reports::Associations.new(patient_sessions:)
-  end
-
   def add_vaccinations_sheet(package)
     workbook = package.workbook
 

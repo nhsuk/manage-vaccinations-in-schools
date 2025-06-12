@@ -14,24 +14,22 @@ class AppConsentConfirmationComponent < ViewComponent::Base
   end
 
   def title
-    case response
-    when "given"
-      "Consent confirmed"
-    when "given_one"
-      chosen_programme = chosen_programmes.first.name
-      "Consent for the #{chosen_programme} vaccination confirmed"
-    when "refused"
-      "Consent refused"
+    if response_given?
+      if refused_programmes.empty?
+        "Consent confirmed"
+      else
+        "Consent for the #{given_vaccinations} confirmed"
+      end
     else
-      raise "unrecognised consent response: #{response}"
+      "Consent refused"
     end
   end
 
   private
 
-  delegate :chosen_programmes,
-           :not_chosen_programmes,
-           :response,
+  delegate :given_programmes,
+           :refused_programmes,
+           :response_given?,
            :parent_email,
            to: :@consent_form
 
@@ -40,33 +38,26 @@ class AppConsentConfirmationComponent < ViewComponent::Base
   end
 
   def panel_text
-    case response
-    when "given", "given_one"
+    if response_given?
       if @consent_form.needs_triage?
         <<-END_OF_TEXT
           As you answered ‘yes’ to some of the health questions, we need to check
-          the #{chosen_vaccinations_are} suitable for #{full_name}. We’ll review
+          the #{given_vaccinations_are} suitable for #{full_name}. We’ll review
           your answers and get in touch again soon.
         END_OF_TEXT
       else
-        "#{full_name} is due to get the #{chosen_vaccinations} at school" +
+        "#{full_name} is due to get the #{given_vaccinations} at school" +
           (session_dates.present? ? " on #{session_dates}" : "")
       end
-    when "refused"
-      "You’ve told us that you do not want #{full_name} to get the" \
-        " #{not_chosen_vaccinations} at school"
     else
-      raise "unrecognised consent response: #{response}"
+      "You’ve told us that you do not want #{full_name} to get the" \
+        " #{refused_vaccinations} at school"
     end
   end
 
-  def chosen_vaccinations
-    vaccinations_text(chosen_programmes)
-  end
+  def given_vaccinations = vaccinations_text(given_programmes)
 
-  def not_chosen_vaccinations
-    vaccinations_text(not_chosen_programmes)
-  end
+  def refused_vaccinations = vaccinations_text(refused_programmes)
 
   def vaccinations_text(programmes)
     programme_names =
@@ -79,8 +70,8 @@ class AppConsentConfirmationComponent < ViewComponent::Base
     )
   end
 
-  def chosen_vaccinations_are
-    "#{chosen_vaccinations} #{chosen_programmes.one? ? "is" : "are"}"
+  def given_vaccinations_are
+    "#{given_vaccinations} #{given_programmes.one? ? "is" : "are"}"
   end
 
   def session_dates

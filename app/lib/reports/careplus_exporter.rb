@@ -1,13 +1,6 @@
 # frozen_string_literal: true
 
 class Reports::CareplusExporter
-  PROGRAMME_TYPE_TO_VACCINE_CODE = {
-    "flu" => "FLU",
-    "hpv" => "HPV",
-    "td_ipv" => "3IN1",
-    "menacwy" => "ACWYX4"
-  }.freeze
-
   def initialize(organisation:, programme:, start_date:, end_date:)
     @organisation = organisation
     @programme = programme
@@ -213,13 +206,20 @@ class Reports::CareplusExporter
   end
 
   def vaccine_code(vaccination_record)
-    code =
-      PROGRAMME_TYPE_TO_VACCINE_CODE.fetch(vaccination_record.programme.type)
+    programme = vaccination_record.programme
 
-    if code == "FLU" && vaccination_record.delivery_method == "nasal_spray"
-      return "FLUENZ"
+    if programme.flu? && vaccination_record.delivery_method_nasal_spray?
+      "FLUENZ"
+    elsif programme.flu?
+      "FLU"
+    elsif programme.hpv?
+      "HPV"
+    elsif programme.menacwy?
+      "ACWYX14"
+    elsif programme.td_ipv?
+      "3IN1"
+    else
+      raise "Unknown programme: #{programme.type}"
     end
-
-    code
   end
 end
