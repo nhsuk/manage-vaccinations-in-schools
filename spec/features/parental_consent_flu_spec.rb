@@ -91,7 +91,6 @@ describe "Parental consent" do
     click_link "Change your answer to health question 1"
 
     choose "Yes"
-    fill_in "Give details", with: "They have asthma"
     click_button "Continue"
   end
 
