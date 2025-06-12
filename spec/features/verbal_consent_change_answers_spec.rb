@@ -18,6 +18,10 @@ describe "Verbal consent" do
       relationship: "Dad"
     )
     then_i_see_the_confirmation_page
+
+    when_i_confirm_the_consent
+    and_i_click_on_the_patient
+    then_i_see_the_new_parent_details
   end
 
   def given_a_patient_is_in_an_hpv_programme
@@ -83,5 +87,18 @@ describe "Verbal consent" do
 
   def when_i_click_on_change_name
     click_link "Change name"
+  end
+
+  def when_i_confirm_the_consent
+    click_button "Confirm"
+  end
+
+  def and_i_click_on_the_patient
+    click_link @patient.full_name, match: :first
+  end
+
+  def then_i_see_the_new_parent_details
+    expect(page).to have_content("New parent name")
+    expect(page).to have_content("Dad")
   end
 end
