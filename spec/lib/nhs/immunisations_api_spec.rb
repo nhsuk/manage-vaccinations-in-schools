@@ -56,7 +56,7 @@ describe NHS::ImmunisationsAPI do
       stubbed_request =
         stub_request(
           :post,
-          "https://sandbox.api.service.nhs.uk/immunisation-fhir-api/FHIR/R4/Immunization/"
+          "https://sandbox.api.service.nhs.uk/immunisation-fhir-api/FHIR/R4/Immunization"
         )
           .with do |request|
             expect(request.headers["Accept"]).to eq "application/fhir+json"

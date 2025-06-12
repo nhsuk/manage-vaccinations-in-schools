@@ -7,7 +7,7 @@ module NHS::ImmunisationsAPI
   class << self
     def record_immunisation(vaccination_record)
       NHS::API.connection.post(
-        "/immunisation-fhir-api/FHIR/R4/Immunization/",
+        "/immunisation-fhir-api/FHIR/R4/Immunization",
         vaccination_record.to_fhir.to_json,
         "Content-Type" => "application/fhir+json"
       )
