@@ -1,11 +1,10 @@
 <%= h1 t(".title"), size: "xl" %>
 
 <% @vaccines.each do |vaccine| %>
-  <%= render AppCardComponent.new do |c| %>
-    <% c.with_heading { link_to(vaccine_heading(vaccine), vaccine_path(vaccine)) } %>
-    <p>
-      <%= vaccine.manufacturer %>
-    </p>
+  <%= render AppCardComponent.new(section: true) do |card| %>
+    <% card.with_heading { link_to(vaccine_heading(vaccine), vaccine_path(vaccine)) } %>
+
+    <p><%= vaccine.manufacturer %></p>
 
     <%= govuk_button_link_to "Add a new batch",
                              new_vaccine_batch_path(vaccine),
