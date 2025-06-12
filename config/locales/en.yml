@@ -243,6 +243,8 @@ en:
             address_town:
               blank: Enter a town or city
               too_long: Enter a town or city that is less than 300 characters long
+            chosen_programme:
+              blank: Choose which programme you agree to
             date_of_birth:
               blank: Enter their date of birth
               greater_than_or_equal_to: The child cannot be older than 22. Enter a date after %{count}.
@@ -301,7 +303,7 @@ en:
                 Enter details for refusing that are less than 1000 characters
                 long
             response:
-              blank: Choose if you consent
+              inclusion: Choose if you agree
             school_confirmed:
               inclusion: Tell us if this is their school
             school_id:
@@ -452,28 +454,12 @@ en:
       title_short: Unmatched responses
     confirm:
       consent_card_title:
+        doubles: Consent for the MenACWY and Td/IPV vaccinations
         flu: Consent for the flu vaccination
         hpv: Consent for the HPV vaccination
         menacwy: Consent for the MenACWY vaccination
         td_ipv: Consent for the Td/IPV vaccination
-        menacwy_td_ipv: Consent for the MenACWY and Td/IPV vaccinations
       i_agree: Consent given
-    consent:
-      hint:
-        flu: The nasal flu spray contains gelatine which comes from pigs.
-        hpv: ""
-        menacwy: ""
-        td_ipv: ""
-      i_agree:
-        flu: Yes, I agree to them having a nasal vaccine
-        hpv: Yes, I agree
-        menacwy: Yes, I agree to them having both vaccinations
-        td_ipv: Yes, I agree to them having both vaccinations
-      title:
-        flu: Do you agree to your child having the nasal flu vaccination?
-        hpv: Do you agree to your child having the Human papillomavirus (HPV) vaccination?
-        menacwy: Do you agree to your child having the MenACWY and Td/IPV (3-in-1 teenage booster) vaccinations?
-        td_ipv: Do you agree to your child having the MenACWY and Td/IPV (3-in-1 teenage booster) vaccinations?
     reason_notes:
       title:
         already_vaccinated: Where did your child get their vaccination?
@@ -483,51 +469,6 @@ en:
         personal_choice: Tell us why you don’t agree
         will_be_vaccinated_elsewhere: Where will your child get their vaccination?
     start:
-      vaccines:
-        flu:
-          title: Flu
-          description:
-            - >-
-              The vaccination helps to protect children against flu. It also
-              protects others who are vulnerable to flu, such as babies and
-              older people.
-        hpv:
-          title: HPV
-          description:
-            - >-
-              The HPV vaccine helps to prevent HPV related cancers from
-              developing in boys and girls.
-            - >-
-              The number of doses you need depends on your age and how well your
-              immune system works. Young people usually only need 1 dose.
-            - >-
-              <a href="https://www.nhs.uk/conditions/vaccinations/hpv-human-papillomavirus-vaccine/">Find
-              out more about the HPV vaccine</a>
-        menacwy:
-          title: MenACWY
-          description:
-            - >-
-              The MenACWY vaccine helps protect against meningitis and sepsis.
-              It is recommended for all teenagers. Most people only need one
-              dose of the vaccine.
-            - >-
-              <a href="https://www.nhs.uk/vaccinations/menacwy-vaccine/">Find
-              out more about the MenACWY vaccine</a>
-        td_ipv:
-          title: Td/IPV (3-in-1 teenage booster)
-          description:
-            - >-
-              The Td/IPV vaccine (also called the 3-in-1 teenage booster) helps
-              protect against tetanus, diphtheria and polio.
-            - >-
-              It boosts the protection provided by the
-              <a href="https://www.nhs.uk/vaccinations/6-in-1-vaccine/">6-in-1
-              vaccine</a> and
-              <a href="https://www.nhs.uk/vaccinations/4-in-1-preschool-booster-vaccine/">4-in-1
-              pre-school booster vaccine</a>.
-            - >-
-              <a href="https://www.nhs.uk/vaccinations/td-ipv-vaccine-3-in-1-teenage-booster/">Find
-              out more about the Td/IPV vaccine</a>
       title: Give or refuse consent for vaccinations
   dashboard:
     index:
@@ -668,7 +609,6 @@ en:
     cohort: cohort
     confirm: confirm
     confirm_school: confirm-school
-    consent: consent
     contact_method: contact-method
     date_and_time: date-and-time
     date_of_birth: date-of-birth
@@ -679,6 +619,7 @@ en:
     file_format: file-format
     gp: gp
     health_question: health-question
+    injection_alternative: injection-alternative
     location: location
     name: name
     notes: notes
@@ -689,6 +630,9 @@ en:
     questions: questions
     reason: reason
     reason_notes: reason-notes
+    response_doubles: response-doubles
+    response_flu: response-flu
+    response_hpv: response-hpv
     route: route
     school: school
     session: session
