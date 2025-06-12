@@ -21,13 +21,13 @@ class Sessions::RegisterController < ApplicationController
         .patient_sessions
         .includes_programmes
         .includes(
+          :latest_note,
           :registration_status,
           patient: %i[consent_statuses triage_statuses vaccination_statuses]
         )
         .in_programmes(@session.programmes)
 
     patient_sessions = @form.apply(scope)
-
     @pagy, @patient_sessions = pagy(patient_sessions)
   end
 

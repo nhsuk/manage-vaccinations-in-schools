@@ -19,6 +19,7 @@ class Sessions::RecordController < ApplicationController
       @session
         .patient_sessions
         .includes(
+          :latest_note,
           patient: %i[consent_statuses triage_statuses vaccination_statuses]
         )
         .in_programmes(@session.programmes)
