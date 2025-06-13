@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_06_070424) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_12_083140) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -739,6 +739,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_06_070424) do
     t.bigint "patient_id", null: false
     t.bigint "organisation_id", null: false
     t.datetime "invalidated_at"
+    t.integer "vaccine_method"
     t.index ["organisation_id"], name: "index_triage_on_organisation_id"
     t.index ["patient_id"], name: "index_triage_on_patient_id"
     t.index ["performed_by_user_id"], name: "index_triage_on_performed_by_user_id"
