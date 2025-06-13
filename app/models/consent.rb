@@ -136,7 +136,7 @@ class Consent < ApplicationRecord
   end
 
   def health_answers_require_follow_up?
-    health_answers.any? { |question| question.response&.downcase == "yes" }
+    health_answers.select(&:counts_for_triage?).any?(&:response_yes?)
   end
 
   def matched_manually?

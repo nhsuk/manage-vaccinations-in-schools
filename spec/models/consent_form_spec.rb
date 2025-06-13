@@ -445,21 +445,32 @@ describe ConsentForm do
     end
   end
 
-  describe "#any_health_answers_truthy?" do
+  describe "#needs_triage?" do
+    subject { consent_form.needs_triage? }
+
     let(:consent_form) do
       build(:consent_form, :with_health_answers_no_branching)
     end
 
-    context "no responses are yes" do
-      it "returns false" do
-        expect(consent_form.any_health_answers_truthy?).to be(false)
-      end
-    end
+    it { should be(false) }
 
     context "some responses are yes" do
-      it "returns true" do
-        consent_form.health_answers[0].response = "yes"
-        expect(consent_form.any_health_answers_truthy?).to be(true)
+      before { consent_form.health_answers[0].response = "yes" }
+
+      it { should be(true) }
+    end
+
+    context "with follow-up questions" do
+      let(:consent_form) do
+        build(:consent_form, :with_health_answers_asthma_branching)
+      end
+
+      it { should be(false) }
+
+      context "when follow-up question is yes" do
+        before { consent_form.health_answers[1].response = "yes" }
+
+        it { should be(true) }
       end
     end
   end

@@ -13,9 +13,7 @@ class HealthAnswer
 
   validates :response, inclusion: { in: %w[yes no] }
 
-  validates :notes,
-            presence: true,
-            if: -> { requires_notes? && response == "yes" }
+  validates :notes, presence: true, if: -> { requires_notes? && response_yes? }
   validates :notes, length: { maximum: 1000 }
 
   def attributes
@@ -31,11 +29,7 @@ class HealthAnswer
   end
 
   def next_health_answer_index
-    if response == "no"
-      next_question
-    else
-      follow_up_question || next_question
-    end
+    response_no? ? next_question : follow_up_question || next_question
   end
 
   def assign_attributes(attrs)
@@ -43,7 +37,13 @@ class HealthAnswer
     super(attrs)
   end
 
-  def requires_notes? = follow_up_question.nil?
+  def counts_for_triage? = follow_up_question.nil?
+
+  def requires_notes? = counts_for_triage?
+
+  def response_yes? = response == "yes"
+
+  def response_no? = response == "no"
 
   def self.from_health_questions(health_questions)
     hq_id_map = Hash[health_questions.map.with_index { |hq, i| [hq.id, i] }]
