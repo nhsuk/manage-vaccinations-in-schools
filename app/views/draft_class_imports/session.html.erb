@@ -13,7 +13,7 @@
     <%= tag.option "", value: "" %>
 
     <% @session_options.each do |session| %>
-      <%= tag.option session.location.name,
+      <%= tag.option "#{session.location.name} (URN: #{session.location.urn})",
                      value: session.id,
                      selected: session.id == @draft_class_import.session_id %>
     <% end %>
