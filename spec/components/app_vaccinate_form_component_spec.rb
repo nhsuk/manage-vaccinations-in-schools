@@ -47,8 +47,12 @@ describe AppVaccinateFormComponent do
 
     it { should have_css(".nhsuk-card") }
 
-    context "with a Flu programme" do
+    context "with a Flu programme and consent to nasal spray" do
       let(:programme) { create(:programme, :flu) }
+
+      before do
+        patient.consent_status(programme:).update!(vaccine_methods: %w[nasal])
+      end
 
       it { should have_heading("Is Hari ready for their Flu vaccination?") }
 

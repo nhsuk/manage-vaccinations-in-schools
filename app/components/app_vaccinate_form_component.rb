@@ -27,8 +27,11 @@ class AppVaccinateFormComponent < ViewComponent::Base
   end
 
   def delivery_method
-    # TODO: Check which method has been consented to.
-    programme.flu? ? :nasal_spray : :intramuscular
+    if patient.consent_status(programme:).vaccine_method_nasal?
+      :nasal_spray
+    else
+      :intramuscular
+    end
   end
 
   def dose_sequence
