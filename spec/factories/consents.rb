@@ -13,6 +13,7 @@
 #  response            :integer          not null
 #  route               :integer          not null
 #  submitted_at        :datetime         not null
+#  vaccine_methods     :integer          default([]), not null, is an Array
 #  withdrawn_at        :datetime
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null
@@ -64,6 +65,7 @@ FactoryBot.define do
     end
 
     response { "given" }
+    vaccine_methods { %w[injection] }
     route { "website" }
 
     health_answers do
@@ -73,8 +75,6 @@ FactoryBot.define do
     end
 
     submitted_at { consent_form&.recorded_at || Time.current }
-
-    traits_for_enum :response
 
     trait :given_verbally do
       given
@@ -93,10 +93,16 @@ FactoryBot.define do
     end
 
     trait :refused do
-      response { :refused }
-      reason_for_refusal { :personal_choice }
+      response { "refused" }
+      reason_for_refusal { "personal_choice" }
       health_answers { [] }
       notes { "Refused." }
+      vaccine_methods { [] }
+    end
+
+    trait :not_provided do
+      response { "not_provided" }
+      vaccine_methods { [] }
     end
 
     trait :from_mum do

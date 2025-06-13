@@ -13,6 +13,7 @@
 #  response            :integer          not null
 #  route               :integer          not null
 #  submitted_at        :datetime         not null
+#  vaccine_methods     :integer          default([]), not null, is an Array
 #  withdrawn_at        :datetime
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null
@@ -42,6 +43,18 @@
 describe Consent do
   describe "validations" do
     it { should validate_length_of(:notes).is_at_most(1000) }
+
+    context "when response is given" do
+      subject { build(:consent, :given) }
+
+      it { should validate_presence_of(:vaccine_methods) }
+    end
+
+    context "when response is refused" do
+      subject { build(:consent, :refused) }
+
+      it { should_not validate_presence_of(:vaccine_methods) }
+    end
   end
 
   describe "#verbal_routes" do
@@ -94,7 +107,7 @@ describe Consent do
   end
 
   describe "#from_consent_form!" do
-    describe "the created consent object" do
+    context "with on programme" do
       subject(:consent) do
         described_class.from_consent_form!(
           consent_form,
@@ -111,7 +124,7 @@ describe Consent do
         expect(consent.recorded_by).to eq(current_user)
       end
 
-      it "copies over attributes from consent_form" do
+      it "copies over attributes from consent form" do
         expect(consent).to(
           have_attributes(
             programme: consent_form.programmes.first,
@@ -160,9 +173,21 @@ describe Consent do
           )
         end
       end
+
+      context "when consenting to nasal spray" do
+        before do
+          consent_form.consent_form_programmes.first.update!(
+            vaccine_methods: %w[nasal]
+          )
+        end
+
+        it "stores this preference on the consent" do
+          expect(consent.vaccine_methods).to contain_exactly("nasal")
+        end
+      end
     end
 
-    context "when only consenting to one programme" do
+    context "with multiple programmes" do
       subject(:consents) do
         described_class.from_consent_form!(
           consent_form,
@@ -189,8 +214,14 @@ describe Consent do
       end
 
       before do
-        consent_form.consent_form_programmes.first.update!(response: "given")
-        consent_form.consent_form_programmes.second.update!(response: "refused")
+        consent_form.consent_form_programmes.first.update!(
+          response: "given",
+          vaccine_methods: %w[injection]
+        )
+        consent_form.consent_form_programmes.second.update!(
+          response: "refused",
+          vaccine_methods: []
+        )
       end
 
       it "creates a consent per programme" do
