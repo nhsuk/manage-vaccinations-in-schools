@@ -94,6 +94,50 @@ describe Patient::ConsentStatus do
       it { should be(:conflicts) }
     end
 
+    context "with two given consents with different methods" do
+      before do
+        create(
+          :consent,
+          :given,
+          patient:,
+          programme:,
+          vaccine_methods: %w[injection]
+        )
+        create(
+          :consent,
+          :given,
+          patient:,
+          programme:,
+          vaccine_methods: %w[nasal],
+          parent: create(:parent)
+        )
+      end
+
+      it { should be(:conflicts) }
+    end
+
+    context "with two given consents, one both and one with injection only" do
+      before do
+        create(
+          :consent,
+          :given,
+          patient:,
+          programme:,
+          vaccine_methods: %w[injection]
+        )
+        create(
+          :consent,
+          :given,
+          patient:,
+          programme:,
+          vaccine_methods: %w[nasal injection],
+          parent: create(:parent)
+        )
+      end
+
+      it { should be(:given) }
+    end
+
     context "with an invalidated refused and given consent" do
       before do
         create(:consent, :refused, :invalidated, patient:, programme:)
