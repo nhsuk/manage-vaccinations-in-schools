@@ -116,7 +116,8 @@ def create_flu_health_questions(vaccine)
         title:
           "If your child cannot have the nasal spray, do you agree to them having the injected vaccine instead?",
         hint:
-          "We may decide the nasal spray vaccine is not suitable. In this case, we may offer the injected vaccine instead."
+          "We may decide the nasal spray vaccine is not suitable. " \
+            "In this case, we may offer the injected vaccine instead."
       )
     end
 
