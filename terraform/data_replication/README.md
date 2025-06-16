@@ -11,8 +11,8 @@ It creates
 
 ## Setup
 
-This module is managed via a GitHub Actions workflow. To separate it from the rest of the infrastructure, the workflow uses a dedicated IAM role. To set up everything from scratch, manually create the role
-`GithubDeployDataReplicationInfrastructure` based on the policy template `github_data_replication_actions_policy.json` and the trust policy `github_role_<ENVIRONMENT>_trust_policy.json`.
+This module is managed via a GitHub Actions workflow. To separate it from the rest of the infrastructure, the workflow uses a dedicated IAM role called `GithubDeployDataReplicationInfrastructure`.
+It is managed in the `terraform/account` module.
 
 ## Usage
 
