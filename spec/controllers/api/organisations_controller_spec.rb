@@ -64,8 +64,11 @@ describe API::OrganisationsController do
 
     it "deletes associated data" do
       expect { delete :destroy, params: { ods_code: "r1l" } }.to(
-        change(CohortImport, :count)
+        change(Organisation, :count)
           .by(-1)
+          .and(change(Team, :count).by(-2))
+          .and(change(Session, :count).by(-1))
+          .and(change(CohortImport, :count).by(-1))
           .and(change(ImmunisationImport, :count).by(-1))
           .and(change(NotifyLogEntry, :count).by(-3))
           .and(change(Parent, :count).by(-4))
@@ -74,6 +77,28 @@ describe API::OrganisationsController do
           .and(change(VaccinationRecord, :count).by(-11))
           .and(change(SessionDate, :count).by(-1))
       )
+    end
+
+    context "when keeping itself" do
+      subject(:call) do
+        delete :destroy, params: { ods_code: "r1l", keep_itself: "true" }
+      end
+
+      it "deletes associated data" do
+        expect { call }.to(
+          not_change(Organisation, :count)
+            .and(not_change(Team, :count))
+            .and(not_change(Session, :count))
+            .and(change(CohortImport, :count).by(-1))
+            .and(change(ImmunisationImport, :count).by(-1))
+            .and(change(NotifyLogEntry, :count).by(-3))
+            .and(change(Parent, :count).by(-4))
+            .and(change(Patient, :count).by(-3))
+            .and(change(PatientSession, :count).by(-3))
+            .and(change(VaccinationRecord, :count).by(-11))
+            .and(change(SessionDate, :count).by(-1))
+        )
+      end
     end
   end
 end
