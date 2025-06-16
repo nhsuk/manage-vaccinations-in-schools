@@ -62,10 +62,11 @@ describe API::OrganisationsController do
       create(:pre_screening, patient_session: PatientSession.first)
     end
 
-    it "deletes associated data" do
+    it "deletes the organisation and associated data" do
       expect { delete :destroy, params: { ods_code: "r1l" } }.to(
-        change(CohortImport, :count)
+        change(Organisation, :count)
           .by(-1)
+          .and(change(CohortImport, :count).by(-1))
           .and(change(ImmunisationImport, :count).by(-1))
           .and(change(NotifyLogEntry, :count).by(-3))
           .and(change(Parent, :count).by(-4))

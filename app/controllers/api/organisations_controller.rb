@@ -11,59 +11,59 @@ class API::OrganisationsController < API::BaseController
 
     @start_time = Time.zone.now
 
-    Organisation.with_advisory_lock("reset-organisation-#{organisation.id}") do
-      ActiveRecord::Base.transaction do
-        log_destroy(CohortImport.where(organisation:))
-        log_destroy(ImmunisationImport.where(organisation:))
+    ActiveRecord::Base.transaction do
+      log_destroy(CohortImport.where(organisation:))
+      log_destroy(ImmunisationImport.where(organisation:))
 
-        sessions = Session.where(organisation:)
+      sessions = Session.where(organisation:)
 
-        log_destroy(ClassImport.where(session: sessions))
+      log_destroy(ClassImport.where(session: sessions))
 
-        log_destroy(ConsentNotification.where(session: sessions))
-        log_destroy(SessionNotification.where(session: sessions))
-        log_destroy(VaccinationRecord.where(session: sessions))
+      log_destroy(ConsentNotification.where(session: sessions))
+      log_destroy(SessionNotification.where(session: sessions))
+      log_destroy(VaccinationRecord.where(session: sessions))
 
-        patient_ids = organisation.patients.pluck(:id)
+      patient_ids = organisation.patients.pluck(:id)
 
-        patient_sessions = PatientSession.where(session: sessions)
-        log_destroy(GillickAssessment.where(patient_session: patient_sessions))
-        log_destroy(PreScreening.where(patient_session: patient_sessions))
-        patient_sessions.in_batches { log_destroy(it) }
+      patient_sessions = PatientSession.where(session: sessions)
+      log_destroy(GillickAssessment.where(patient_session: patient_sessions))
+      log_destroy(PreScreening.where(patient_session: patient_sessions))
+      patient_sessions.in_batches { log_destroy(it) }
 
-        log_destroy(SessionDate.where(session: sessions))
-        log_destroy(sessions)
+      log_destroy(SessionDate.where(session: sessions))
+      log_destroy(sessions)
 
-        organisation.patients
+      log_destroy(SchoolMove.where(patient_id: patient_ids))
+      log_destroy(SchoolMove.where(organisation:))
+      log_destroy(SchoolMoveLogEntry.where(patient_id: patient_ids))
+      log_destroy(AccessLogEntry.where(patient_id: patient_ids))
+      log_destroy(NotifyLogEntry.where(patient_id: patient_ids))
+      # In local dev we can end up with NotifyLogEntries without a patient
+      log_destroy(NotifyLogEntry.where(patient_id: nil))
+      log_destroy(VaccinationRecord.where(patient_id: patient_ids))
 
-        log_destroy(SchoolMove.where(patient_id: patient_ids))
-        log_destroy(SchoolMove.where(organisation:))
-        log_destroy(SchoolMoveLogEntry.where(patient_id: patient_ids))
-        log_destroy(AccessLogEntry.where(patient_id: patient_ids))
-        log_destroy(NotifyLogEntry.where(patient_id: patient_ids))
-        # In local dev we can end up with NotifyLogEntries without a patient
-        log_destroy(NotifyLogEntry.where(patient_id: nil))
-        log_destroy(VaccinationRecord.where(patient_id: patient_ids))
+      log_destroy(ConsentForm.where(organisation:))
+      log_destroy(Consent.where(organisation:))
+      log_destroy(Triage.where(organisation:))
 
-        log_destroy(ConsentForm.where(organisation:))
-        log_destroy(Consent.where(organisation:))
-        log_destroy(Triage.where(organisation:))
+      Patient
+        .where(id: patient_ids)
+        .includes(:parents)
+        .in_batches { log_destroy(it) }
 
-        Patient
-          .where(id: patient_ids)
-          .includes(:parents)
-          .in_batches { log_destroy(it) }
+      batches = Batch.where(organisation:)
+      log_destroy(VaccinationRecord.where(batch: batches))
+      log_destroy(batches)
 
-        batches = Batch.where(organisation:)
-        log_destroy(VaccinationRecord.where(batch: batches))
-        log_destroy(batches)
+      log_destroy(
+        VaccinationRecord.where(performed_ods_code: organisation.ods_code)
+      )
 
-        log_destroy(
-          VaccinationRecord.where(performed_ods_code: organisation.ods_code)
-        )
+      Location.where(team: Team.where(organisation:)).update_all(team_id: nil)
+      log_destroy(Team.where(organisation:))
 
-        UnscheduledSessionsFactory.new.call
-      end
+      log_destroy(OrganisationProgramme.where(organisation:))
+      log_destroy(Organisation.where(id: organisation.id))
     end
 
     response.stream.write "Done"
