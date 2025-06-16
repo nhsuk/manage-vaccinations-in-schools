@@ -136,7 +136,7 @@ class Consent < ApplicationRecord
   end
 
   def health_answers_require_follow_up?
-    health_answers.any? { |question| question.response&.downcase == "yes" }
+    health_answers.select(&:counts_for_triage?).any?(&:response_yes?)
   end
 
   def matched_manually?
@@ -159,7 +159,7 @@ class Consent < ApplicationRecord
         consent_form.find_or_create_parent_with_relationship_to!(patient:)
 
       consent_given =
-        consent_form.chosen_programmes.map do |programme|
+        consent_form.given_programmes.map do |programme|
           patient.consents.create!(
             consent_form:,
             organisation: consent_form.organisation,
@@ -175,7 +175,7 @@ class Consent < ApplicationRecord
         end
 
       consent_refused =
-        consent_form.not_chosen_programmes.map do |programme|
+        consent_form.refused_programmes.map do |programme|
           patient.consents.create!(
             consent_form:,
             organisation: consent_form.organisation,

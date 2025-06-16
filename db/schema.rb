@@ -155,6 +155,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_06_070424) do
   create_table "consent_form_programmes", force: :cascade do |t|
     t.bigint "programme_id", null: false
     t.bigint "consent_form_id", null: false
+    t.integer "response"
     t.index ["consent_form_id"], name: "index_consent_form_programmes_on_consent_form_id"
     t.index ["programme_id", "consent_form_id"], name: "idx_on_programme_id_consent_form_id_2113cb7f37", unique: true
   end
@@ -167,7 +168,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_06_070424) do
     t.text "family_name"
     t.boolean "use_preferred_name"
     t.date "date_of_birth"
-    t.integer "response"
     t.integer "reason"
     t.text "reason_notes"
     t.string "address_line_1"
@@ -194,7 +194,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_06_070424) do
     t.string "nhs_number"
     t.datetime "archived_at"
     t.text "notes", default: "", null: false
-    t.string "chosen_vaccine"
     t.index ["consent_id"], name: "index_consent_forms_on_consent_id"
     t.index ["location_id"], name: "index_consent_forms_on_location_id"
     t.index ["nhs_number"], name: "index_consent_forms_on_nhs_number"
@@ -629,21 +628,13 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_06_070424) do
   create_table "pre_screenings", force: :cascade do |t|
     t.bigint "patient_session_id", null: false
     t.bigint "performed_by_user_id", null: false
-    t.boolean "knows_vaccination", null: false
-    t.boolean "not_already_had", null: false
-    t.boolean "feeling_well", null: false
-    t.boolean "no_allergies", null: false
     t.text "notes", default: "", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "programme_id", null: false
-    t.boolean "not_taking_medication", null: false
-    t.boolean "not_pregnant", null: false
-    t.bigint "session_date_id", null: false
     t.index ["patient_session_id"], name: "index_pre_screenings_on_patient_session_id"
     t.index ["performed_by_user_id"], name: "index_pre_screenings_on_performed_by_user_id"
     t.index ["programme_id"], name: "index_pre_screenings_on_programme_id"
-    t.index ["session_date_id"], name: "index_pre_screenings_on_session_date_id"
   end
 
   create_table "programmes", force: :cascade do |t|
@@ -908,7 +899,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_06_070424) do
   add_foreign_key "patients", "locations", column: "school_id"
   add_foreign_key "pre_screenings", "patient_sessions"
   add_foreign_key "pre_screenings", "programmes"
-  add_foreign_key "pre_screenings", "session_dates"
   add_foreign_key "pre_screenings", "users", column: "performed_by_user_id"
   add_foreign_key "school_move_log_entries", "locations", column: "school_id"
   add_foreign_key "school_move_log_entries", "patients"

@@ -394,7 +394,6 @@ describe AppActivityLogComponent do
     before do
       create(
         :pre_screening,
-        :allows_vaccination,
         performed_by: user,
         patient_session:,
         notes: "Some notes",

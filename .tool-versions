@@ -5,4 +5,4 @@ awscli      2.13.31
 terraform   1.11.4
 tflint      0.55.1
 pkl         0.28.1
-hk          1.0.0
+hk          1.1.2

@@ -10,7 +10,6 @@
 #  address_postcode                    :string
 #  address_town                        :string
 #  archived_at                         :datetime
-#  chosen_vaccine                      :string
 #  date_of_birth                       :date
 #  education_setting                   :integer
 #  family_name                         :text
@@ -31,7 +30,6 @@
 #  reason                              :integer
 #  reason_notes                        :text
 #  recorded_at                         :datetime
-#  response                            :integer
 #  school_confirmed                    :boolean
 #  use_preferred_name                  :boolean
 #  created_at                          :datetime         not null
@@ -71,7 +69,10 @@ class ConsentForm < ApplicationRecord
   scope :unmatched, -> { where(consent_id: nil) }
   scope :recorded, -> { where.not(recorded_at: nil) }
 
-  attr_accessor :health_question_number, :parental_responsibility
+  attr_accessor :health_question_number,
+                :parental_responsibility,
+                :response,
+                :chosen_programme
 
   audited associated_with: :consent
   has_associated_audits
@@ -83,16 +84,30 @@ class ConsentForm < ApplicationRecord
 
   has_many :notify_log_entries
   has_many :consent_form_programmes,
-           -> { joins(:programme).order(:"programme.type") },
-           dependent: :destroy
+           -> { ordered },
+           dependent: :destroy,
+           autosave: true
+
+  has_many :given_consent_form_programmes,
+           -> { ordered.response_given },
+           class_name: "ConsentFormProgramme"
+  has_many :refused_consent_form_programmes,
+           -> { ordered.response_refused },
+           class_name: "ConsentFormProgramme"
+
+  has_many :programmes, through: :consent_form_programmes
+  has_many :given_programmes,
+           through: :given_consent_form_programmes,
+           source: :programme
+  has_many :refused_programmes,
+           through: :refused_consent_form_programmes,
+           source: :programme
 
   has_one :team, through: :location
 
-  has_many :programmes, through: :consent_form_programmes
   has_many :eligible_schools, through: :organisation, source: :schools
   has_many :vaccines, through: :programmes
 
-  enum :response, { given: 0, refused: 1, given_one: 2 }, prefix: "consent"
   enum :reason,
        {
          contains_gelatine: 0,
@@ -209,7 +224,7 @@ class ConsentForm < ApplicationRecord
   on_wizard_step :school do
     validates :school_id,
               inclusion: {
-                in: -> { _1.eligible_schools.pluck(:id) }
+                in: -> { it.eligible_schools.pluck(:id) }
               },
               unless: -> { education_setting_home? || education_setting_none? }
   end
@@ -232,7 +247,7 @@ class ConsentForm < ApplicationRecord
     validates :parent_contact_method_type, presence: true
   end
 
-  on_wizard_step :consent do
+  on_wizard_step :consent, exact: true do
     validates :response, presence: true
   end
 
@@ -255,6 +270,9 @@ class ConsentForm < ApplicationRecord
   end
 
   def wizard_steps
+    refused_and_not_given = response_refused? && !response_given?
+    refused_and_given = response_refused? && response_given?
+
     [
       :name,
       :date_of_birth,
@@ -264,18 +282,22 @@ class ConsentForm < ApplicationRecord
       :parent,
       (:contact_method if parent_phone.present?),
       :consent,
-      (:reason if consent_refused?),
-      (:reason_notes if consent_refused? && reason_notes_must_be_provided?),
-      (:address if consent_given? || consent_given_one?),
-      (:health_question if consent_given? || consent_given_one?),
-      (:reason if consent_given_one?),
-      (:reason_notes if consent_given_one? && reason_notes_must_be_provided?)
+      (:reason if refused_and_not_given),
+      (
+        :reason_notes if refused_and_not_given && reason_notes_must_be_provided?
+      ),
+      (:address if response_given?),
+      (:health_question if response_given?),
+      (:reason if refused_and_given),
+      (:reason_notes if refused_and_given && reason_notes_must_be_provided?)
     ].compact
   end
 
-  def recorded?
-    recorded_at != nil
-  end
+  def recorded? = recorded_at != nil
+
+  def response_given? = consent_form_programmes.any?(&:response_given?)
+
+  def response_refused? = consent_form_programmes.any?(&:response_refused?)
 
   def each_health_answer
     return if health_answers.empty?
@@ -297,11 +319,7 @@ class ConsentForm < ApplicationRecord
   end
 
   def needs_triage?
-    any_health_answers_truthy?
-  end
-
-  def any_health_answers_truthy?
-    health_answers.any? { _1.response == "yes" }
+    health_answers.select(&:counts_for_triage?).any?(&:response_yes?)
   end
 
   def reason_notes_must_be_provided?
@@ -363,7 +381,13 @@ class ConsentForm < ApplicationRecord
   end
 
   def summary_with_route
-    "#{human_enum_name(:response).capitalize} (online)"
+    if response_given? && response_refused?
+      "Partial consent given (online)"
+    elsif response_given?
+      "Consent given (online)"
+    elsif response_refused?
+      "Consent refused (online)"
+    end
   end
 
   def parent
@@ -427,32 +451,26 @@ class ConsentForm < ApplicationRecord
     education_setting_changed?
   end
 
-  def chosen_programmes
-    return [] if consent_refused?
-
-    if chosen_vaccine.present?
-      programmes.where(type: chosen_vaccine)
-    else
-      programmes
-    end
-  end
-
-  def not_chosen_programmes
-    programmes - chosen_programmes
-  end
-
-  def chosen_vaccines
-    return [] if consent_refused?
-
-    if consent_given_one? && chosen_vaccine.present?
-      programmes.find_by(type: chosen_vaccine).vaccines.active
-    else
-      vaccines.active
+  def update_programme_responses
+    case response
+    when "given"
+      consent_form_programmes.each { it.response = "given" }
+    when "given_one"
+      consent_form_programmes.each do |consent_form_programme|
+        consent_form_programme.response =
+          if consent_form_programme.programme.type == chosen_programme
+            "given"
+          else
+            "refused"
+          end
+      end
+    when "refused"
+      consent_form_programmes.each { it.response = "refused" }
     end
   end
 
   def seed_health_questions
-    return unless consent_given? || consent_given_one?
+    return unless response_given?
 
     # If the health answers change due to the chosen vaccines changing, we
     # want to try and keep as much as what the parents already wrote intact.
@@ -467,9 +485,12 @@ class ConsentForm < ApplicationRecord
         }
       end
 
+    vaccines =
+      consent_form_programmes.select(&:response_given?).flat_map(&:vaccines)
+
     self.health_answers =
       HealthAnswersDeduplicator
-        .call(vaccines: chosen_vaccines)
+        .call(vaccines:)
         .map do |health_answer|
           if (
                existing_health_answer =
@@ -526,12 +547,14 @@ class ConsentForm < ApplicationRecord
   # sometimes get set with values that then have to be deleted if the user
   # changes their mind and goes down a different path.
   def reset_unused_fields
+    update_programme_responses
+
     unless use_preferred_name
       self.preferred_given_name = nil
       self.preferred_family_name = nil
     end
 
-    if consent_refused?
+    if response_refused? && !response_given?
       self.address_line_1 = nil
       self.address_line_2 = nil
       self.address_town = nil
@@ -546,9 +569,7 @@ class ConsentForm < ApplicationRecord
 
     self.parent_relationship_other_name = nil unless parent_relationship_other?
 
-    self.chosen_vaccine = nil unless consent_given_one?
-
-    if consent_given?
+    if response_given? && !response_refused?
       self.reason = nil
       self.reason_notes = nil
     end
