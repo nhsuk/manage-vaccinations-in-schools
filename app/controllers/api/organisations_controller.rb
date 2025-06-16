@@ -32,9 +32,6 @@ class API::OrganisationsController < API::BaseController
         patient_sessions.in_batches { log_destroy(it) }
 
         log_destroy(SessionDate.where(session: sessions))
-        log_destroy(sessions)
-
-        organisation.patients
 
         log_destroy(SchoolMove.where(patient_id: patient_ids))
         log_destroy(SchoolMove.where(organisation:))
@@ -61,8 +58,6 @@ class API::OrganisationsController < API::BaseController
         log_destroy(
           VaccinationRecord.where(performed_ods_code: organisation.ods_code)
         )
-
-        UnscheduledSessionsFactory.new.call
       end
     end
 
