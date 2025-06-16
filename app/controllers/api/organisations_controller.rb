@@ -7,6 +7,7 @@ class API::OrganisationsController < API::BaseController
     response.headers["Content-Type"] = "text/event-stream"
     response.headers["Cache-Control"] = "no-cache"
 
+    keep_itself = ActiveModel::Type::Boolean.new.cast(params[:keep_itself])
     organisation = Organisation.find_by!(ods_code: params[:ods_code])
 
     @start_time = Time.zone.now
@@ -32,9 +33,6 @@ class API::OrganisationsController < API::BaseController
         patient_sessions.in_batches { log_destroy(it) }
 
         log_destroy(SessionDate.where(session: sessions))
-        log_destroy(sessions)
-
-        organisation.patients
 
         log_destroy(SchoolMove.where(patient_id: patient_ids))
         log_destroy(SchoolMove.where(organisation:))
@@ -62,7 +60,18 @@ class API::OrganisationsController < API::BaseController
           VaccinationRecord.where(performed_ods_code: organisation.ods_code)
         )
 
-        UnscheduledSessionsFactory.new.call
+        unless keep_itself
+          log_destroy(SessionProgramme.where(session: sessions))
+          log_destroy(sessions)
+
+          teams = Team.where(organisation:)
+          Location.where(team: teams).update_all(team_id: nil)
+
+          log_destroy(teams)
+
+          log_destroy(OrganisationProgramme.where(organisation:))
+          log_destroy(Organisation.where(id: organisation.id))
+        end
       end
     end
 

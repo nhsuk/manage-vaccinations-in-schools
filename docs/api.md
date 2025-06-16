@@ -40,3 +40,7 @@ See [onboarding documentation](onboarding.md).
 ## `DELETE /organisations/:ods_code`
 
 Resets an organisation by deleting all associated records.
+
+### Parameters
+
+- `keep_itself` - `true` or `false`, whether to keep the organisation itself and only delete associated information
