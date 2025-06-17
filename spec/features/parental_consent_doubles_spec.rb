@@ -182,7 +182,7 @@ describe "Parental consent" do
   end
 
   def when_i_change_my_consent_response
-    click_on "Change consent", match: :first
+    click_on "Change decision", match: :first
   end
 
   def then_i_see_the_consent_page

@@ -209,14 +209,14 @@ RSpec.feature "Parental consent change answers" do
   end
 
   def when_i_change_my_consent_to_refused
-    click_link "Change consent"
+    click_link "Change decision"
     choose "No"
     click_button "Continue"
   end
 
   def when_i_change_my_consent_to_accepted
-    click_link "Change consent"
-    choose "Yes"
+    click_link "Change decision"
+    choose "Yes, I agree to them having the nasal spray vaccine"
     click_button "Continue"
   end
 
