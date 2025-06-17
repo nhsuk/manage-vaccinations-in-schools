@@ -45,11 +45,20 @@ class PatientSessions::TriagesController < PatientSessions::BaseController
   private
 
   def set_triage
+    previous_triage =
+      @patient
+        .triages
+        .not_invalidated
+        .order(created_at: :desc)
+        .find_by(programme: @programme)
+
     @triage =
       Triage.new(
         patient: @patient,
         programme: @programme,
-        organisation: @session.organisation
+        organisation: @session.organisation,
+        status: previous_triage&.status,
+        vaccine_method: previous_triage&.vaccine_method
       )
   end
 
