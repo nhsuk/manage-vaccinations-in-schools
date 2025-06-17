@@ -72,7 +72,8 @@ class ConsentForm < ApplicationRecord
   attr_accessor :health_question_number,
                 :parental_responsibility,
                 :response,
-                :chosen_programme
+                :chosen_programme,
+                :injection_alternative
 
   audited associated_with: :consent
   has_associated_audits
@@ -247,8 +248,23 @@ class ConsentForm < ApplicationRecord
     validates :parent_contact_method_type, presence: true
   end
 
-  on_wizard_step :consent, exact: true do
-    validates :response, presence: true
+  on_wizard_step :response_doubles, exact: true do
+    validates :response, inclusion: %w[given given_one refused]
+    validates :chosen_programme,
+              presence: true,
+              if: -> { response == "given_one" }
+  end
+
+  on_wizard_step :response_flu, exact: true do
+    validates :response, inclusion: %w[given_injection given_nasal refused]
+  end
+
+  on_wizard_step :response_hpv, exact: true do
+    validates :response, inclusion: %w[given refused]
+  end
+
+  on_wizard_step :injection_alternative, exact: true do
+    validates :injection_alternative, inclusion: %w[true false]
   end
 
   on_wizard_step :reason do
@@ -273,6 +289,9 @@ class ConsentForm < ApplicationRecord
     refused_and_not_given = response_refused? && !response_given?
     refused_and_given = response_refused? && response_given?
 
+    response_steps =
+      ProgrammeGrouper.call(programmes).keys.map { :"response_#{it}" }
+
     [
       :name,
       :date_of_birth,
@@ -280,17 +299,21 @@ class ConsentForm < ApplicationRecord
       (:education_setting if location_is_clinic?),
       (:school if choose_school?),
       :parent,
-      (:contact_method if parent_phone.present?),
-      :consent,
-      (:reason if refused_and_not_given),
-      (
-        :reason_notes if refused_and_not_given && reason_notes_must_be_provided?
-      ),
-      (:address if response_given?),
-      (:health_question if response_given?),
-      (:reason if refused_and_given),
-      (:reason_notes if refused_and_given && reason_notes_must_be_provided?)
-    ].compact
+      (:contact_method if parent_phone.present?)
+    ].compact + response_steps +
+      [
+        (:reason if refused_and_not_given),
+        (
+          if refused_and_not_given && reason_notes_must_be_provided?
+            :reason_notes
+          end
+        ),
+        (:address if response_given?),
+        (:health_question if response_given?),
+        (:injection_alternative if can_offer_injection_as_alternative?),
+        (:reason if refused_and_given),
+        (:reason_notes if refused_and_given && reason_notes_must_be_provided?)
+      ].compact
   end
 
   def recorded? = recorded_at != nil
@@ -320,6 +343,12 @@ class ConsentForm < ApplicationRecord
 
   def needs_triage?
     health_answers.select(&:counts_for_triage?).any?(&:response_yes?)
+  end
+
+  def can_offer_injection_as_alternative?
+    consent_form_programmes.select(&:response_given?).any?(
+      &:vaccine_method_nasal?
+    )
   end
 
   def reason_notes_must_be_provided?
@@ -453,8 +482,16 @@ class ConsentForm < ApplicationRecord
 
   def update_programme_responses
     case response
-    when "given"
-      consent_form_programmes.each { it.response = "given" }
+    when "given", "given_injection"
+      consent_form_programmes.each do
+        it.response = "given"
+        it.vaccine_methods = %w[injection]
+      end
+    when "given_nasal"
+      consent_form_programmes.each do
+        it.response = "given"
+        it.vaccine_methods = %w[nasal]
+      end
     when "given_one"
       consent_form_programmes.each do |consent_form_programme|
         consent_form_programme.response =
@@ -463,9 +500,25 @@ class ConsentForm < ApplicationRecord
           else
             "refused"
           end
+        consent_form_programme.vaccine_methods = %w[injection]
       end
     when "refused"
       consent_form_programmes.each { it.response = "refused" }
+    end
+  end
+
+  def update_injection_alternative
+    vaccine_methods =
+      if ActiveModel::Type::Boolean.new.cast(injection_alternative)
+        %w[nasal injection]
+      else
+        %w[nasal]
+      end
+
+    consent_form_programmes.each do |consent_form_programme|
+      if consent_form_programme.vaccine_method_nasal?
+        consent_form_programme.vaccine_methods = vaccine_methods
+      end
     end
   end
 

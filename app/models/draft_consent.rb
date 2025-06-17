@@ -33,6 +33,7 @@ class DraftConsent
   attribute :route, :string
   attribute :triage_notes, :string
   attribute :triage_status, :string
+  attribute :vaccine_methods, array: true, default: []
 
   def wizard_steps
     [
@@ -333,6 +334,7 @@ class DraftConsent
       response
       route
       organisation_id
+      vaccine_methods
     ]
   end
 

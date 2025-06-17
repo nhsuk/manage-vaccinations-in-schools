@@ -100,8 +100,10 @@ GEM
     addressable (2.8.7)
       public_suffix (>= 2.0.2, < 7.0)
     aes_key_wrap (1.1.0)
-    amazing_print (1.7.2)
+    amazing_print (1.8.1)
     annotaterb (4.14.0)
+    array_enum (1.6.0)
+      activemodel
     asciidoctor (2.0.23)
     asciidoctor-diagram (3.0.0)
       asciidoctor (>= 1.5.7, < 3.x)
@@ -109,11 +111,11 @@ GEM
     ast (2.4.3)
     attr_required (1.0.2)
     aws-eventstream (1.4.0)
-    aws-partitions (1.1114.0)
+    aws-partitions (1.1116.0)
     aws-sdk-accessanalyzer (1.72.0)
       aws-sdk-core (~> 3, >= 3.225.0)
       aws-sigv4 (~> 1.5)
-    aws-sdk-core (3.225.1)
+    aws-sdk-core (3.225.2)
       aws-eventstream (~> 1, >= 1.3.0)
       aws-partitions (~> 1, >= 1.992.0)
       aws-sigv4 (~> 1.9)
@@ -126,20 +128,20 @@ GEM
     aws-sdk-ecr (1.103.0)
       aws-sdk-core (~> 3, >= 3.225.0)
       aws-sigv4 (~> 1.5)
-    aws-sdk-iam (1.120.0)
-      aws-sdk-core (~> 3, >= 3.216.0)
+    aws-sdk-iam (1.123.0)
+      aws-sdk-core (~> 3, >= 3.225.0)
       aws-sigv4 (~> 1.5)
     aws-sdk-kms (1.101.0)
       aws-sdk-core (~> 3, >= 3.216.0)
       aws-sigv4 (~> 1.5)
-    aws-sdk-rds (1.277.0)
-      aws-sdk-core (~> 3, >= 3.216.0)
+    aws-sdk-rds (1.280.0)
+      aws-sdk-core (~> 3, >= 3.225.0)
       aws-sigv4 (~> 1.5)
     aws-sdk-s3 (1.186.0)
       aws-sdk-core (~> 3, >= 3.216.0)
       aws-sdk-kms (~> 1)
       aws-sigv4 (~> 1.5)
-    aws-sigv4 (1.12.0)
+    aws-sigv4 (1.12.1)
       aws-eventstream (~> 1, >= 1.0.2)
     backport (1.2.0)
     base64 (0.3.0)
@@ -575,7 +577,8 @@ GEM
     rubocop-rspec (3.5.0)
       lint_roller (~> 1.1)
       rubocop (~> 1.72, >= 1.72.1)
-    ruby-prof (1.7.1)
+    ruby-prof (1.7.2)
+      base64
     ruby-progressbar (1.13.0)
     rubyXL (3.4.33)
       nokogiri (>= 1.10.8)
@@ -590,10 +593,10 @@ GEM
     securerandom (0.4.1)
     semantic_logger (4.16.1)
       concurrent-ruby (~> 1.0)
-    sentry-rails (5.24.0)
+    sentry-rails (5.25.0)
       railties (>= 5.0)
-      sentry-ruby (~> 5.24.0)
-    sentry-ruby (5.24.0)
+      sentry-ruby (~> 5.25.0)
+    sentry-ruby (5.25.0)
       bigdecimal
       concurrent-ruby (~> 1.0, >= 1.0.2)
     shoulda-matchers (6.5.0)
@@ -713,6 +716,7 @@ DEPENDENCIES
   activerecord-session_store
   amazing_print
   annotaterb
+  array_enum
   asciidoctor
   asciidoctor-diagram
   audited!

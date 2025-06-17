@@ -10,6 +10,7 @@ describe "Parental consent" do
     then_i_see_the_first_health_question
 
     when_i_answer_no_to_all_health_questions
+    and_i_answer_yes_to_alternative_injection
     then_i_see_the_confirmation_page
 
     when_i_change_my_answer_to_the_first_health_question
@@ -62,7 +63,7 @@ describe "Parental consent" do
     click_button "Continue"
 
     # Do you agree?
-    choose "Yes, I agree"
+    choose "Yes, I agree to them having the nasal spray vaccine"
     click_button "Continue"
 
     # Home address
@@ -81,6 +82,15 @@ describe "Parental consent" do
       choose "No"
       click_button "Continue"
     end
+  end
+
+  def and_i_answer_yes_to_alternative_injection
+    expect(page).to have_content(
+      "do you agree to them having the injected vaccine instead?"
+    )
+
+    choose "Yes"
+    click_button "Continue"
   end
 
   def then_i_see_the_confirmation_page

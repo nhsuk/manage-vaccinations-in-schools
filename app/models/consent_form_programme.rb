@@ -6,6 +6,7 @@
 #
 #  id              :bigint           not null, primary key
 #  response        :integer
+#  vaccine_methods :integer          default([]), not null, is an Array
 #  consent_form_id :bigint           not null
 #  programme_id    :bigint           not null
 #
@@ -20,6 +21,8 @@
 #  fk_rails_...  (programme_id => programmes.id)
 #
 class ConsentFormProgramme < ApplicationRecord
+  include HasVaccineMethods
+
   belongs_to :consent_form
   belongs_to :programme
 
@@ -27,7 +30,15 @@ class ConsentFormProgramme < ApplicationRecord
 
   enum :response, { given: 0, refused: 1 }, prefix: true
 
+  def vaccine_method_injection? = vaccine_methods.include?("injection")
+
+  def vaccine_method_nasal? = vaccine_methods.include?("nasal")
+
+  def vaccine_method_injection_and_nasal?
+    vaccine_method_injection? && vaccine_method_nasal?
+  end
+
   def vaccines
-    Vaccine.active.where(programme_id: programme_id)
+    Vaccine.active.where(programme_id:, method: vaccine_methods)
   end
 end
