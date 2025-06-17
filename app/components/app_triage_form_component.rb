@@ -28,11 +28,28 @@ class AppTriageFormComponent < ViewComponent::Base
 
   def fieldset_options
     text = "Is it safe to vaccinate #{patient.given_name}?"
+    hint =
+      if programme.has_multiple_delivery_methods?
+        if triage_form.consented_to_injection?
+          "The parent has consented to the injected vaccine being offered instead"
+        else
+          "The parent has not given consent for the injected vaccine"
+        end
+      end
 
     if heading
-      { legend: { text:, tag: :h2 } }
+      { legend: { text:, tag: :h2 }, hint: { text: hint } }
     else
-      { legend: { text:, size: "s", class: "app-fieldset__legend--reset" } }
+      {
+        legend: {
+          text:,
+          size: "s",
+          class: "app-fieldset__legend--reset"
+        },
+        hint: {
+          text: hint
+        }
+      }
     end
   end
 end
