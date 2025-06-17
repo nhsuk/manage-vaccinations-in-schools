@@ -3,9 +3,7 @@
 describe AppPatientSessionTriageComponent do
   subject { render_inline(component) }
 
-  let(:component) do
-    described_class.new(patient_session, programme:, triage: nil)
-  end
+  let(:component) { described_class.new(patient_session, programme:) }
 
   let(:programme) { create(:programme) }
   let(:session) { create(:session, programmes: [programme]) }

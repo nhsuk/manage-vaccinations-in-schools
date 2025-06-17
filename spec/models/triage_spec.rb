@@ -35,9 +35,6 @@ describe Triage do
   subject { build(:triage) }
 
   describe "validations" do
-    it { should_not validate_presence_of(:notes) }
-    it { should validate_length_of(:notes).is_at_most(1000) }
-
     context "when safe to vaccinate" do
       subject(:triage) { build(:triage, :ready_to_vaccinate) }
 

@@ -1,21 +1,28 @@
 # frozen_string_literal: true
 
 class AppTriageFormComponent < ViewComponent::Base
-  def initialize(model:, url:, method: :post, heading: true, prefix: false)
+  def initialize(
+    triage_form,
+    url:,
+    method: :post,
+    heading: true,
+    continue: false
+  )
     super
 
-    @model = model
+    @triage_form = triage_form
     @url = url
     @method = method
     @heading = heading
-    @prefix = prefix
+    @continue = continue
   end
 
   private
 
-  attr_reader :model, :url, :method, :heading, :prefix
+  attr_reader :triage_form, :url, :method, :heading, :continue
 
-  delegate :patient, :programme, to: :model
+  delegate :patient_session, :programme, to: :triage_form
+  delegate :patient, :session, to: :patient_session
 
   def builder = GOVUKDesignSystemFormBuilder::FormBuilder
 
@@ -28,8 +35,4 @@ class AppTriageFormComponent < ViewComponent::Base
       { legend: { text:, size: "s", class: "app-fieldset__legend--reset" } }
     end
   end
-
-  def status_field = prefix ? :triage_status : :status
-
-  def notes_field = prefix ? :triage_notes : :notes
 end

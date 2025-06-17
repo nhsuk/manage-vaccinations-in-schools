@@ -3,12 +3,13 @@
 describe AppTriageFormComponent do
   subject { render_inline(component) }
 
-  let(:component) { described_class.new(model:, url:) }
+  let(:component) { described_class.new(triage_form, url:) }
 
-  let(:patient) { create(:patient) }
   let(:programme) { create(:programme) }
+  let(:patient_session) { create(:patient_session, programmes: [programme]) }
+  let(:patient) { patient_session.patient }
 
-  let(:model) { Triage.new(patient:, programme:) }
+  let(:triage_form) { TriageForm.new(patient_session:, programme:) }
   let(:url) { "/triage" }
 
   it { should have_css("h2") }
@@ -16,7 +17,7 @@ describe AppTriageFormComponent do
   it { should_not have_css(".app-fieldset__legend--reset") }
 
   describe "without a heading" do
-    let(:component) { described_class.new(model:, url:, heading: false) }
+    let(:component) { described_class.new(triage_form, url:, heading: false) }
 
     it { should have_css(".app-fieldset__legend--reset") }
   end
