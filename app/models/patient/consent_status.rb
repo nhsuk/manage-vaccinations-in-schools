@@ -49,13 +49,7 @@ class Patient::ConsentStatus < ApplicationRecord
         :no_response
       end
 
-    self.vaccine_methods =
-      if status_should_be_given?
-        consents_for_status
-          .select(&:response_given?)
-          .map(&:vaccine_methods)
-          .inject(&:intersection)
-      end
+    self.vaccine_methods = (agreed_vaccine_methods if status_should_be_given?)
   end
 
   def vaccine_method_nasal? = vaccine_methods.include?("nasal")
@@ -63,7 +57,8 @@ class Patient::ConsentStatus < ApplicationRecord
   private
 
   def status_should_be_given?
-    consents_for_status.any? && consents_for_status.all?(&:response_given?)
+    consents_for_status.any? && consents_for_status.all?(&:response_given?) &&
+      agreed_vaccine_methods.present?
   end
 
   def status_should_be_refused?
@@ -71,12 +66,26 @@ class Patient::ConsentStatus < ApplicationRecord
   end
 
   def status_should_be_conflicts?
-    consents_for_status.any?(&:response_refused?) &&
-      consents_for_status.any?(&:response_given?)
+    consents_for_status =
+      (self_consents.any? ? self_consents : parental_consents)
+
+    if consents_for_status.any?(&:response_refused?) &&
+         consents_for_status.any?(&:response_given?)
+      return true
+    end
+
+    consents_for_status.any? && consents_for_status.all?(&:response_given?) &&
+      agreed_vaccine_methods.blank?
+  end
+
+  def agreed_vaccine_methods
+    @agreed_vaccine_methods ||=
+      consents_for_status.map(&:vaccine_methods).inject(&:intersection)
   end
 
   def consents_for_status
-    self_consents.any? ? self_consents : parental_consents
+    @consents_for_status ||=
+      self_consents.any? ? self_consents : parental_consents
   end
 
   def self_consents
