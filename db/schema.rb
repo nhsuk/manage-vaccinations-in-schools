@@ -549,6 +549,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_09_112437) do
     t.bigint "patient_id", null: false
     t.bigint "programme_id", null: false
     t.integer "status", default: 0, null: false
+    t.integer "vaccine_methods", default: [], null: false, array: true
     t.index ["patient_id", "programme_id"], name: "index_patient_consent_statuses_on_patient_id_and_programme_id", unique: true
     t.index ["status"], name: "index_patient_consent_statuses_on_status"
   end
