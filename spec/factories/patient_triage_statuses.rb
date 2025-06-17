@@ -4,10 +4,11 @@
 #
 # Table name: patient_triage_statuses
 #
-#  id           :bigint           not null, primary key
-#  status       :integer          default("not_required"), not null
-#  patient_id   :bigint           not null
-#  programme_id :bigint           not null
+#  id             :bigint           not null, primary key
+#  status         :integer          default("not_required"), not null
+#  vaccine_method :integer
+#  patient_id     :bigint           not null
+#  programme_id   :bigint           not null
 #
 # Indexes
 #
@@ -25,5 +26,10 @@ FactoryBot.define do
     programme
 
     traits_for_enum :status
+
+    trait :safe_to_vaccinate do
+      status { "safe_to_vaccinate" }
+      vaccine_method { "injection" }
+    end
   end
 end
