@@ -23,6 +23,12 @@ describe ConsolidatedHealthAnswers do
         answer: "Yes",
         notes: "Notes"
       )
+      consolidated_health_answers.add_answer(
+        responder: nil,
+        question: "Follow up question?",
+        answer: nil,
+        notes: nil
+      )
     end
 
     it do
