@@ -4,10 +4,11 @@
 #
 # Table name: patient_triage_statuses
 #
-#  id           :bigint           not null, primary key
-#  status       :integer          default("not_required"), not null
-#  patient_id   :bigint           not null
-#  programme_id :bigint           not null
+#  id             :bigint           not null, primary key
+#  status         :integer          default("not_required"), not null
+#  vaccine_method :integer
+#  patient_id     :bigint           not null
+#  programme_id   :bigint           not null
 #
 # Indexes
 #
@@ -46,6 +47,13 @@ class Patient::TriageStatus < ApplicationRecord
        default: :not_required,
        validate: true
 
+  enum :vaccine_method,
+       { injection: 0, nasal: 1 },
+       prefix: true,
+       validate: {
+         if: :safe_to_vaccinate?
+       }
+
   def assign_status
     self.status =
       if status_should_be_safe_to_vaccinate?
@@ -59,6 +67,8 @@ class Patient::TriageStatus < ApplicationRecord
       else
         :not_required
       end
+
+    self.vaccine_method = latest_triage&.vaccine_method
   end
 
   def consent_requires_triage?
