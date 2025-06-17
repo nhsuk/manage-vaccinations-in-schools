@@ -97,9 +97,9 @@ class DraftConsentsController < ApplicationController
     @triage_form.assign_attributes(triage_form_params)
 
     @draft_consent.assign_attributes(
-      triage_status: @triage_form.status,
-      triage_notes: @triage_form.notes,
       triage_form_valid: @triage_form.valid?,
+      triage_notes: @triage_form.notes,
+      triage_status_and_vaccine_method: @triage_form.status_and_vaccine_method,
       wizard_step: :triage
     )
   end
@@ -134,7 +134,9 @@ class DraftConsentsController < ApplicationController
       .merge(wizard_step: current_step)
   end
 
-  def triage_form_params = params.expect(triage_form: %i[status notes])
+  def triage_form_params
+    params.expect(triage_form: %i[status_and_vaccine_method notes])
+  end
 
   def set_draft_consent
     @draft_consent = DraftConsent.new(request_session: session, current_user:)
@@ -180,7 +182,8 @@ class DraftConsentsController < ApplicationController
           notes: @draft_consent.triage_notes,
           patient_session: @patient_session,
           programme: @programme,
-          status: @draft_consent.triage_status
+          status_and_vaccine_method:
+            @draft_consent.triage_status_and_vaccine_method
         )
       end
   end

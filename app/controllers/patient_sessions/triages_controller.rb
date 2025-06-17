@@ -19,7 +19,7 @@ class PatientSessions::TriagesController < PatientSessions::BaseController
       TriageForm.new(
         patient_session: @patient_session,
         programme: @programme,
-        status: previous_triage&.status
+        triage: previous_triage
       )
   end
 
@@ -58,7 +58,9 @@ class PatientSessions::TriagesController < PatientSessions::BaseController
 
   private
 
-  def triage_form_params = params.expect(triage_form: %i[status notes])
+  def triage_form_params
+    params.expect(triage_form: %i[status_and_vaccine_method notes])
+  end
 
   def redirect_path
     if session[:current_section] == "vaccinations"
