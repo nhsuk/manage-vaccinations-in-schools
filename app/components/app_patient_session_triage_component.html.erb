@@ -16,7 +16,7 @@
 
     <% if helpers.policy(Triage).new? %>
       <%= render AppTriageFormComponent.new(
-            model: triage,
+            triage_form,
             url: session_patient_programme_triages_path(session, patient, programme),
           ) %>
     <% end %>

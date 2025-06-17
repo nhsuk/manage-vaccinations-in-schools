@@ -1,26 +1,26 @@
-<%= form_with model:, url:, method:, builder: do |f| %>
+<%= form_with model: triage_form, url:, method:, builder: do |f| %>
   <% content_for(:before_content) { f.govuk_error_summary } %>
 
-  <%= f.govuk_radio_buttons_fieldset status_field, **fieldset_options do %>
-    <%= f.govuk_radio_button status_field, :ready_to_vaccinate,
+  <%= f.govuk_radio_buttons_fieldset :status, **fieldset_options do %>
+    <%= f.govuk_radio_button :status, :ready_to_vaccinate,
                              label: { text: "Yes, it’s safe to vaccinate" },
                              link_errors: true %>
 
     <%= f.govuk_radio_divider %>
 
-    <%= f.govuk_radio_button status_field, :do_not_vaccinate,
+    <%= f.govuk_radio_button :status, :do_not_vaccinate,
                              label: { text: "No, do not vaccinate" } %>
 
-    <%= f.govuk_radio_button status_field, :delay_vaccination,
+    <%= f.govuk_radio_button :status, :delay_vaccination,
                              label: { text: "No, delay vaccination (and invite to clinic)" } %>
 
-    <%= f.govuk_radio_button status_field, :needs_follow_up,
+    <%= f.govuk_radio_button :status, :needs_follow_up,
                              label: { text: "No, keep in triage" } %>
   <% end %>
 
-  <%= f.govuk_text_area notes_field,
+  <%= f.govuk_text_area :notes,
                         label: { text: "Triage notes (optional)" },
                         rows: 5 %>
 
-  <%= f.govuk_submit @model.is_a?(DraftConsent) ? "Continue" : "Save triage" %>
+  <%= f.govuk_submit continue ? "Continue" : "Save triage" %>
 <% end %>

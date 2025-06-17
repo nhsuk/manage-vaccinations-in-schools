@@ -61,6 +61,4 @@ class Triage < ApplicationRecord
        }
 
   encrypts :notes
-
-  validates :notes, length: { maximum: 1000 }
 end

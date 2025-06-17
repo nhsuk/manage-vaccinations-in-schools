@@ -4,9 +4,4 @@
 
 <% content_for :page_title, "Is it safe to vaccinate?" %>
 
-<%= render AppTriageFormComponent.new(
-      model: @draft_consent,
-      url: wizard_path,
-      method: :put,
-      prefix: true,
-    ) %>
+<%= render AppTriageFormComponent.new(@triage_form, url: wizard_path, method: :put, continue: true) %>
