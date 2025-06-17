@@ -1,46 +1,35 @@
 # frozen_string_literal: true
 
 class AppTriageFormComponent < ViewComponent::Base
-  def initialize(patient_session:, programme:, triage: nil, legend: nil)
+  def initialize(model:, url:, method: :post, heading: true, prefix: false)
     super
 
-    @patient_session = patient_session
-    @programme = programme
-    @triage = triage || default_triage
-    @legend = legend
+    @model = model
+    @url = url
+    @method = method
+    @heading = heading
+    @prefix = prefix
   end
 
   private
 
-  attr_reader :patient_session, :programme, :triage, :legend
+  attr_reader :model, :url, :method, :heading, :prefix
 
-  delegate :patient, :session, to: :patient_session
+  delegate :patient, :programme, to: :model
 
-  def url
-    session_patient_programme_triages_path(session, patient, programme, triage)
-  end
+  def builder = GOVUKDesignSystemFormBuilder::FormBuilder
 
   def fieldset_options
     text = "Is it safe to vaccinate #{patient.given_name}?"
 
-    case legend
-    when :bold
+    if heading
       { legend: { text:, tag: :h2 } }
-    when :hidden
-      { legend: { text:, hidden: true } }
     else
       { legend: { text:, size: "s", class: "app-fieldset__legend--reset" } }
     end
   end
 
-  def default_triage
-    previous_triage =
-      patient
-        .triages
-        .not_invalidated
-        .order(created_at: :desc)
-        .find_by(programme:)
+  def status_field = prefix ? :triage_status : :status
 
-    Triage.new(status: previous_triage&.status)
-  end
+  def notes_field = prefix ? :triage_notes : :notes
 end
