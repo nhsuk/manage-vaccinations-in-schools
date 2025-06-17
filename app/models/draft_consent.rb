@@ -33,7 +33,7 @@ class DraftConsent
   attribute :response, :string
   attribute :route, :string
   attribute :triage_notes, :string
-  attribute :triage_status, :string
+  attribute :triage_status_and_vaccine_method, :string
   attribute :vaccine_methods, array: true, default: []
 
   def wizard_steps
@@ -270,7 +270,7 @@ class DraftConsent
     if triage_allowed? && response_given?
       triage_form.notes = triage_notes || ""
       triage_form.current_user = recorded_by
-      triage_form.status = triage_status
+      triage_form.status_and_vaccine_method = triage_status_and_vaccine_method
     end
   end
 
@@ -345,6 +345,10 @@ class DraftConsent
 
   def triage_allowed?
     TriagePolicy.new(@current_user, Triage).new?
+  end
+
+  def triage_status_and_vaccine_method_options
+    Triage.new(patient:, programme:).status_and_vaccine_method_options
   end
 
   def health_answers_are_valid

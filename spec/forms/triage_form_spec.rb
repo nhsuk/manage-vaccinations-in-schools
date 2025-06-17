@@ -1,17 +1,17 @@
 # frozen_string_literal: true
 
 describe TriageForm do
-  subject(:form) { described_class.new }
+  subject(:form) { described_class.new(patient_session:, programme:) }
+
+  let(:programme) { create(:programme) }
+  let(:patient_session) { create(:patient_session, programmes: [programme]) }
 
   describe "validations" do
     it do
-      expect(form).to validate_inclusion_of(:status).in_array(
-        %w[
-          ready_to_vaccinate
-          do_not_vaccinate
-          needs_follow_up
-          delay_vaccination
-        ]
+      expect(form).to validate_inclusion_of(
+        :status_and_vaccine_method
+      ).in_array(
+        %w[safe_to_vaccinate do_not_vaccinate keep_in_triage delay_vaccination]
       )
     end
 
