@@ -8,6 +8,8 @@ class ConsolidatedHealthAnswers
   end
 
   def add_answer(responder:, question:, answer:, notes: nil)
+    return if answer.nil?
+
     @answers[question] ||= []
     @answers[question] << { responder:, answer:, notes: }
   end
