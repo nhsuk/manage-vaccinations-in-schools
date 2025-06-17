@@ -39,4 +39,7 @@ resource "aws_iam_policy" "data_replication_access" {
       }
     ]
   })
+  lifecycle {
+    ignore_changes = [description]
+  }
 }
