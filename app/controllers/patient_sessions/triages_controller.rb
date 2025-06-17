@@ -3,24 +3,38 @@
 class PatientSessions::TriagesController < PatientSessions::BaseController
   include TriageMailerConcern
 
-  before_action :set_triage
-
   after_action :verify_authorized
 
   def new
-    authorize @triage
+    authorize Triage
+
+    previous_triage =
+      @patient
+        .triages
+        .not_invalidated
+        .order(created_at: :desc)
+        .find_by(programme: @programme)
+
+    @triage_form =
+      TriageForm.new(
+        patient_session: @patient_session,
+        programme: @programme,
+        status: previous_triage&.status
+      )
   end
 
   def create
-    @triage.assign_attributes(
-      **triage_params,
-      performed_by: current_user,
-      vaccine_method: "injection"
-    )
+    authorize Triage
 
-    authorize @triage
+    @triage_form =
+      TriageForm.new(
+        current_user:,
+        patient_session: @patient_session,
+        programme: @programme,
+        **triage_form_params
+      )
 
-    if @triage.save(context: :consent)
+    if @triage_form.save
       StatusUpdater.call(patient: @patient)
 
       ConsentGrouper
@@ -44,27 +58,7 @@ class PatientSessions::TriagesController < PatientSessions::BaseController
 
   private
 
-  def set_triage
-    previous_triage =
-      @patient
-        .triages
-        .not_invalidated
-        .order(created_at: :desc)
-        .find_by(programme: @programme)
-
-    @triage =
-      Triage.new(
-        patient: @patient,
-        programme: @programme,
-        organisation: @session.organisation,
-        status: previous_triage&.status,
-        vaccine_method: previous_triage&.vaccine_method
-      )
-  end
-
-  def triage_params
-    params.expect(triage: %i[status notes])
-  end
+  def triage_form_params = params.expect(triage_form: %i[status notes])
 
   def redirect_path
     if session[:current_section] == "vaccinations"
