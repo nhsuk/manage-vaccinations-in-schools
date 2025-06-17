@@ -23,7 +23,7 @@ class AppConsentTableComponent < ViewComponent::Base
       patient
         .consents
         .where(programme:)
-        .includes(:consent_form, :parent)
+        .includes(:consent_form, :parent, :programme)
         .order(created_at: :desc)
   end
 end
