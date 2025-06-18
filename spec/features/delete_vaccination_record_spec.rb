@@ -7,6 +7,7 @@ describe "Delete vaccination record" do
 
     when_i_sign_in_as_a_superuser
     and_i_go_to_a_patient_that_is_vaccinated_in_the_session
+    and_i_click_on_the_vaccination_record
     and_i_click_on_delete_vaccination_record
     then_i_see_the_delete_vaccination_page
 
@@ -21,13 +22,16 @@ describe "Delete vaccination record" do
 
     when_i_sign_in_as_a_superuser
     and_i_go_to_a_patient_that_is_vaccinated_in_the_session
+    and_i_click_on_the_vaccination_record
     and_i_click_on_delete_vaccination_record
     then_i_see_the_delete_vaccination_page
 
     when_i_delete_the_vaccination_record
     then_i_see_the_patient
     and_i_see_a_successful_message
-    and_they_can_be_vaccinated
+
+    when_i_click_on_the_session
+    then_i_see_the_patient_can_be_vaccinated
 
     when_i_click_on_the_log
     then_i_see_the_delete_vaccination
@@ -39,13 +43,16 @@ describe "Delete vaccination record" do
 
     when_i_sign_in_as_a_superuser
     and_i_go_to_a_patient_that_is_vaccinated_in_the_session
+    and_i_click_on_the_vaccination_record
     and_i_click_on_delete_vaccination_record
     then_i_see_the_delete_vaccination_page
 
     when_i_delete_the_vaccination_record
     then_i_see_the_patient
     and_i_see_a_successful_message
-    and_they_can_be_vaccinated
+
+    when_i_click_on_the_session
+    then_i_see_the_patient_can_be_vaccinated
 
     when_i_click_on_the_log
     then_i_see_the_delete_vaccination
@@ -59,13 +66,16 @@ describe "Delete vaccination record" do
 
     when_i_sign_in_as_a_superuser
     and_i_go_to_a_patient_that_is_vaccinated_in_the_session
+    and_i_click_on_the_vaccination_record
     and_i_click_on_delete_vaccination_record
     then_i_see_the_delete_vaccination_page
 
     when_i_delete_the_vaccination_record
     then_i_see_the_patient
     and_i_see_a_successful_message
-    and_they_can_be_vaccinated
+
+    when_i_click_on_the_session
+    then_i_see_the_patient_can_be_vaccinated
 
     when_i_click_on_the_log
     then_i_see_the_delete_vaccination
@@ -78,6 +88,7 @@ describe "Delete vaccination record" do
 
     when_i_sign_in_as_a_superuser
     and_i_go_to_a_patient_that_is_vaccinated_via_all_children
+    and_i_click_on_the_vaccination_record
     and_i_click_on_delete_vaccination_record
     then_i_see_the_delete_vaccination_page
 
@@ -93,6 +104,7 @@ describe "Delete vaccination record" do
 
     when_i_sign_in
     and_i_go_to_a_patient_that_is_vaccinated_in_the_session
+    and_i_click_on_the_vaccination_record
     then_i_cant_click_on_delete_vaccination_record
   end
 
@@ -162,13 +174,16 @@ describe "Delete vaccination record" do
     visit session_outcome_path(@session)
     choose "Vaccinated"
     click_on "Update results"
-    click_link @patient.full_name
+    click_on @patient.full_name
+  end
+
+  def and_i_click_on_the_vaccination_record
+    click_on Date.current.to_fs(:long)
   end
 
   def and_i_go_to_a_patient_that_is_vaccinated_via_all_children
     visit patients_path
-    click_link @patient.full_name
-    click_link "Gardasil 9 (HPV)"
+    click_on @patient.full_name
   end
 
   def and_i_click_on_delete_vaccination_record
@@ -201,7 +216,11 @@ describe "Delete vaccination record" do
     expect(page).to have_content("Vaccination record deleted")
   end
 
-  def and_they_can_be_vaccinated
+  def when_i_click_on_the_session
+    click_on @session.location.name
+  end
+
+  def then_i_see_the_patient_can_be_vaccinated
     expect(page).to have_content("Safe to vaccinate")
     expect(page).not_to have_content("Vaccinated")
   end
