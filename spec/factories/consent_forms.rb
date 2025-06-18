@@ -165,7 +165,8 @@ FactoryBot.define do
             next_question: 2,
             follow_up_question: 1,
             response: "yes",
-            notes: "Notes"
+            notes: "Notes",
+            would_require_triage: false
           ),
           HealthAnswer.new(
             id: 1,

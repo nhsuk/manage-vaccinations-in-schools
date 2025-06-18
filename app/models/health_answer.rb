@@ -9,7 +9,8 @@ class HealthAnswer
                 :notes,
                 :hint,
                 :next_question,
-                :follow_up_question
+                :follow_up_question,
+                :would_require_triage
 
   validates :response, inclusion: { in: %w[yes no] }
 
@@ -25,6 +26,7 @@ class HealthAnswer
       hint
       next_question
       follow_up_question
+      would_require_triage
     ].index_with { |attr| send(attr) }
   end
 
@@ -37,9 +39,12 @@ class HealthAnswer
     super(attrs)
   end
 
-  def counts_for_triage? = follow_up_question.nil?
+  def would_require_triage?
+    # `nil` to support historical health answers without this attribute
+    [nil, true].include?(would_require_triage)
+  end
 
-  def requires_notes? = counts_for_triage?
+  def requires_notes? = follow_up_question.nil?
 
   def response_yes? = response == "yes"
 
@@ -56,7 +61,8 @@ class HealthAnswer
         notes: nil,
         hint: hq.hint,
         next_question: hq_id_map[hq.next_question_id],
-        follow_up_question: hq_id_map[hq.follow_up_question_id]
+        follow_up_question: hq_id_map[hq.follow_up_question_id],
+        would_require_triage: hq.would_require_triage
       )
     end
   end
