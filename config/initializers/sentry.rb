@@ -7,7 +7,7 @@ Sentry.init do |config|
 
   config.breadcrumbs_logger = %i[active_support_logger http_logger]
 
-  config.traces_sample_rate = 0.2
+  config.traces_sample_rate = 0.01
 
   config.before_send_transaction =
     lambda do |event, _hint|

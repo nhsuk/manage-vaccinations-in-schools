@@ -10,4 +10,12 @@ module HasVaccineMethods
 
     validates :vaccine_methods, subset: %w[injection nasal]
   end
+
+  def vaccine_method_injection? = vaccine_methods.include?("injection")
+
+  def vaccine_method_nasal? = vaccine_methods.include?("nasal")
+
+  def vaccine_method_injection_and_nasal?
+    vaccine_method_injection? && vaccine_method_nasal?
+  end
 end

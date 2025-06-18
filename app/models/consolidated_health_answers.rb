@@ -8,6 +8,8 @@ class ConsolidatedHealthAnswers
   end
 
   def add_answer(responder:, question:, answer:, notes: nil)
+    return if answer.nil?
+
     @answers[question] ||= []
     @answers[question] << { responder:, answer:, notes: }
   end
@@ -33,7 +35,7 @@ class ConsolidatedHealthAnswers
       add_answer(
         responder: model.who_responded,
         question: health_question.question,
-        answer: health_question.response.humanize.presence,
+        answer: health_question.response&.humanize.presence,
         notes: health_question.notes.presence
       )
     end
