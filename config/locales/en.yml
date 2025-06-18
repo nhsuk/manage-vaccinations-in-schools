@@ -119,6 +119,14 @@ en:
               inclusion: Choose if they are ready to vaccinate
             delivery_site:
               blank: Choose where the injection will be given
+            identity_check_confirmed_by_other_name:
+              blank: Enter the person’s name
+              too_long: Enter a name that is less than %{count} characters long
+            identity_check_confirmed_by_other_relationship:
+              blank: Enter the person’s relationship
+              too_long: Enter a relationship that is less than %{count} characters long
+            identity_check_confirmed_by_patient:
+              inclusion: Choose whether the child confirmed their identity
             pre_screening_confirmed:
               blank: Select if the child has confirmed all pre-screening statements are true
             pre_screening_notes:
