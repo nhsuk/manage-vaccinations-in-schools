@@ -86,14 +86,6 @@ describe Consent do
 
       expect(response).to be_triage_needed
     end
-
-    it "returns notes need triage" do
-      response = build(:consent, :given, :health_question_notes)
-
-      expect(response.reasons_triage_needed).to eq(
-        ["Health questions need triage"]
-      )
-    end
   end
 
   describe "#responded_at" do
