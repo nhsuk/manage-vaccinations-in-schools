@@ -249,6 +249,28 @@ describe AppVaccinationRecordSummaryComponent do
     end
   end
 
+  describe "identity check row" do
+    it do
+      expect(rendered).not_to have_css(
+        ".nhsuk-summary-list__row",
+        text: "Child identified by"
+      )
+    end
+
+    context "with an identity check" do
+      before do
+        create(:identity_check, :confirmed_by_patient, vaccination_record:)
+      end
+
+      it do
+        expect(rendered).to have_css(
+          ".nhsuk-summary-list__row",
+          text: "Child identified by\nThe child"
+        )
+      end
+    end
+  end
+
   describe "location row" do
     it do
       expect(rendered).to have_css(
