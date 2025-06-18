@@ -72,6 +72,12 @@ en:
               injection_cannot_be_nose: Site cannot be nose for intramuscular or subcutaneous injections
             full_dose:
               inclusion: Choose whether they got the full dose
+            identity_check_confirmed_by_other_name:
+              blank: Enter the person’s name
+            identity_check_confirmed_by_other_relationship:
+              blank: Enter the person’s relationship
+            identity_check_confirmed_by_patient:
+              inclusion: Choose who confirmed their child’s identity
             location_name:
               blank: Enter where the vaccination was given
             notes:
@@ -631,6 +637,7 @@ en:
     file_format: file-format
     gp: gp
     health_question: health-question
+    identity: identity
     injection_alternative: injection-alternative
     location: location
     name: name

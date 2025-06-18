@@ -90,7 +90,7 @@ class VaccinationRecord < ApplicationRecord
   belongs_to :patient
   belongs_to :session, optional: true
 
-  has_one :identity_check, dependent: :destroy
+  has_one :identity_check, autosave: true, dependent: :destroy
   has_one :location, through: :session
   has_one :organisation, through: :session
   has_one :team, through: :session

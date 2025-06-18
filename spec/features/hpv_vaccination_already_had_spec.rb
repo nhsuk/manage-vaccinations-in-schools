@@ -49,10 +49,15 @@ describe "HPV vaccination" do
   end
 
   def and_i_record_that_the_patient_wasnt_vaccinated
-    check "has confirmed the above statements are true"
+    within all("section")[0] do
+      choose "Yes"
+      check "has confirmed the above statements are true"
+    end
 
-    choose "No"
-    click_button "Continue"
+    within all("section")[1] do
+      choose "No"
+      click_button "Continue"
+    end
   end
 
   def and_i_select_the_reason_why
