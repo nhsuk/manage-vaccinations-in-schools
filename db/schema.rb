@@ -394,6 +394,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_02_142922) do
     t.bigint "follow_up_question_id"
     t.bigint "next_question_id"
     t.boolean "would_require_triage", default: true, null: false
+    t.string "give_details_hint"
     t.index ["follow_up_question_id"], name: "index_health_questions_on_follow_up_question_id"
     t.index ["next_question_id"], name: "index_health_questions_on_next_question_id"
     t.index ["vaccine_id"], name: "index_health_questions_on_vaccine_id"

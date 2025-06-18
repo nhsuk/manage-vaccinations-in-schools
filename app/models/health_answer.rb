@@ -10,7 +10,8 @@ class HealthAnswer
                 :hint,
                 :next_question,
                 :follow_up_question,
-                :would_require_triage
+                :would_require_triage,
+                :give_details_hint
 
   validates :response, inclusion: { in: %w[yes no] }
 
@@ -27,6 +28,7 @@ class HealthAnswer
       next_question
       follow_up_question
       would_require_triage
+      give_details_hint
     ].index_with { |attr| send(attr) }
   end
 
@@ -62,7 +64,8 @@ class HealthAnswer
         hint: hq.hint,
         next_question: hq_id_map[hq.next_question_id],
         follow_up_question: hq_id_map[hq.follow_up_question_id],
-        would_require_triage: hq.would_require_triage
+        would_require_triage: hq.would_require_triage,
+        give_details_hint: hq.give_details_hint
       )
     end
   end
