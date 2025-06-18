@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_09_112437) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_18_190014) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -396,6 +396,16 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_09_112437) do
     t.index ["follow_up_question_id"], name: "index_health_questions_on_follow_up_question_id"
     t.index ["next_question_id"], name: "index_health_questions_on_next_question_id"
     t.index ["vaccine_id"], name: "index_health_questions_on_vaccine_id"
+  end
+
+  create_table "identity_checks", force: :cascade do |t|
+    t.boolean "confirmed_by_patient", null: false
+    t.string "confirmed_by_other_name", default: "", null: false
+    t.string "confirmed_by_other_relationship", default: "", null: false
+    t.bigint "vaccination_record_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["vaccination_record_id"], name: "index_identity_checks_on_vaccination_record_id"
   end
 
   create_table "immunisation_imports", force: :cascade do |t|
@@ -869,6 +879,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_09_112437) do
   add_foreign_key "health_questions", "health_questions", column: "follow_up_question_id"
   add_foreign_key "health_questions", "health_questions", column: "next_question_id"
   add_foreign_key "health_questions", "vaccines"
+  add_foreign_key "identity_checks", "vaccination_records", on_delete: :cascade
   add_foreign_key "immunisation_imports", "organisations"
   add_foreign_key "immunisation_imports", "users", column: "uploaded_by_user_id"
   add_foreign_key "immunisation_imports_patient_sessions", "immunisation_imports"
