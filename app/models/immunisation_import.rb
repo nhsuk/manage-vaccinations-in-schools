@@ -41,18 +41,20 @@ class ImmunisationImport < ApplicationRecord
   private
 
   def check_rows_are_unique
-    # Immunisation uniqueness check will be based on a composite key of patient, programme, vaccine, batch and date of vaccination
-    composite_keys = rows.map do |row|
-      next nil unless row.valid?
-      next nil if row.uuid.present?
-      [
-        row.patient_nhs_number,
-        row.programme_name,
-        row.vaccine_name,
-        row.dose_sequence,
-        row.date_of_vaccination,
-      ]
-    end
+    # Immunisation uniqueness check will be based on a composite key of
+    # patient, programme, vaccine, batch and date of vaccination
+    composite_keys =
+      rows.map do |row|
+        next nil unless row.valid?
+        next nil if row.uuid.present?
+        [
+          row.patient_nhs_number,
+          row.programme_name,
+          row.vaccine_name,
+          row.dose_sequence,
+          row.date_of_vaccination
+        ]
+      end
 
     composite_keys.compact.tally.each do |key, count|
       next if count <= 1
@@ -66,7 +68,7 @@ class ImmunisationImport < ApplicationRecord
           row.programme_name,
           row.vaccine_name,
           row.dose_sequence,
-          row.date_of_vaccination,
+          row.date_of_vaccination
         ]
 
         next unless row_key == key
