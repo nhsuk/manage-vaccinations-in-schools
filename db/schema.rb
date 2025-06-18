@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_18_115858) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_18_133600) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -394,6 +394,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_18_115858) do
     t.bigint "follow_up_question_id"
     t.bigint "next_question_id"
     t.boolean "would_require_triage", default: true, null: false
+    t.string "give_details_hint"
     t.index ["follow_up_question_id"], name: "index_health_questions_on_follow_up_question_id"
     t.index ["next_question_id"], name: "index_health_questions_on_next_question_id"
     t.index ["vaccine_id"], name: "index_health_questions_on_vaccine_id"
