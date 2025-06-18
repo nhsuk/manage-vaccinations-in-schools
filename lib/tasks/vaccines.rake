@@ -49,55 +49,98 @@ end
 
 def create_flu_health_questions(vaccine)
   asthma =
-    vaccine.health_questions.create!(
-      title: "Has your child been diagnosed with asthma?"
-    )
+    if vaccine.nasal?
+      vaccine.health_questions.create!(
+        title: "Has your child been diagnosed with asthma?",
+        would_require_triage: false
+      )
+    end
 
   asthma_steroids =
-    vaccine.health_questions.create!(
-      title: "Does your child take steroid tablets for their asthma?"
-    )
+    if vaccine.nasal?
+      vaccine.health_questions.create!(
+        title: "Does your child take oral steroids for their asthma?",
+        hint: "This does not include medicine taken through an inhaler",
+        give_details_hint:
+          "Include the steroid name, dose and end date of the course"
+      )
+    end
 
   asthma_intensive_care =
-    vaccine.health_questions.create!(
-      title:
-        "Has your child ever been admitted to intensive care because of their asthma?"
-    )
+    if vaccine.nasal?
+      vaccine.health_questions.create!(
+        title:
+          "Has your child ever been admitted to intensive care because of their asthma?",
+        hint:
+          "This does not include visits to A&E or stays in hospital wards outside the intensive care unit"
+      )
+    end
 
   immune_system =
-    vaccine.health_questions.create!(
-      title:
-        "Does your child have a disease or treatment that severely affects their immune system?"
-    )
+    if vaccine.nasal?
+      vaccine.health_questions.create!(
+        title:
+          "Does your child have a disease or treatment that severely affects their immune system?"
+      )
+    end
 
   household_immune_system =
+    if vaccine.nasal?
+      vaccine.health_questions.create!(
+        title:
+          "Is your child in regular close contact with anyone currently " \
+            "having treatment that severely affects their immune system?",
+        give_details_hint:
+          "Let us know if they are able to avoid contact with the immunocompromised person for 2 weeks"
+      )
+    end
+
+  # TODO: This is only relevant for injected vaccines, but we don't know if the parents have consented to injection
+  #  until after the health questions have been given.
+  bleeding_disorder =
     vaccine.health_questions.create!(
       title:
-        "Is anyone in your child’s household currently having treatment that severely affects their immune system?"
+        "Does your child have a bleeding disorder or are they taking anticoagulant therapy?"
     )
 
   egg_allergy =
-    vaccine.health_questions.create!(
-      title:
-        "Has your child ever been admitted to intensive care due to an allergic reaction to egg?"
-    )
+    if vaccine.nasal?
+      vaccine.health_questions.create!(
+        title:
+          "Has your child ever been admitted to intensive care due to a severe allergic reaction (anaphylaxis) to egg?"
+      )
+    end
 
-  allergies =
-    vaccine.health_questions.create!(
-      title: "Does your child have any allergies to medication?"
-    )
+  severe_allergic_reaction =
+    if vaccine.nasal?
+      vaccine.health_questions.create!(
+        title:
+          "Has your child had a severe allergic reaction (anaphylaxis) to a " \
+            "previous dose of the nasal flu vaccine, or any ingredient of the vaccine?",
+        hint: "This includes gelatine, neomycin or gentamicin"
+      )
+    else
+      vaccine.health_questions.create!(
+        title:
+          "Has your child had a severe allergic reaction (anaphylaxis) to a " \
+            "previous dose of the injected flu vaccine, or any component of the vaccine?"
+      )
+    end
 
   medical_conditions =
     vaccine.health_questions.create!(
       title:
-        "Does your child have any medical conditions for which they receive treatment?"
+        "Does your child have any other medical conditions the immunisation team should be aware of?",
+      would_require_triage: false
     )
 
   aspirin =
-    vaccine.health_questions.create!(
-      title: "Does your child take regular aspirin?",
-      hint: "Also known as Salicylate therapy"
-    )
+    if vaccine.nasal?
+      vaccine.health_questions.create!(
+        title: "Does your child take regular aspirin?",
+        hint: "Also known as Salicylate therapy"
+      )
+    end
 
   flu_previously =
     vaccine.health_questions.create!(
@@ -107,23 +150,34 @@ def create_flu_health_questions(vaccine)
   extra_support =
     vaccine.health_questions.create!(
       title: "Does your child need extra support during vaccination sessions?",
-      hint: "For example, they’re autistic, or extremely anxious"
+      hint: "For example, they’re autistic, or extremely anxious",
+      would_require_triage: false
     )
 
-  asthma.update!(
-    follow_up_question: asthma_steroids,
-    next_question: immune_system
-  )
-  asthma_steroids.update!(next_question: asthma_intensive_care)
-  asthma_intensive_care.update!(next_question: immune_system)
+  post_asthma_questions = [
+    immune_system,
+    household_immune_system,
+    bleeding_disorder,
+    egg_allergy,
+    severe_allergic_reaction,
+    medical_conditions,
+    aspirin,
+    flu_previously,
+    extra_support
+  ].compact
 
-  immune_system.update!(next_question: household_immune_system)
-  household_immune_system.update!(next_question: egg_allergy)
-  egg_allergy.update!(next_question: allergies)
-  allergies.update!(next_question: medical_conditions)
-  medical_conditions.update!(next_question: aspirin)
-  aspirin.update!(next_question: flu_previously)
-  flu_previously.update!(next_question: extra_support)
+  asthma&.update!(
+    follow_up_question: asthma_steroids,
+    next_question: post_asthma_questions.first
+  )
+  asthma_steroids&.update!(next_question: asthma_intensive_care)
+  asthma_intensive_care&.update!(next_question: post_asthma_questions.first)
+
+  post_asthma_questions.each_with_index do |question, i|
+    if (next_question = post_asthma_questions[i + 1])
+      question.update!(next_question:)
+    end
+  end
 end
 
 def create_hpv_health_questions(vaccine)
