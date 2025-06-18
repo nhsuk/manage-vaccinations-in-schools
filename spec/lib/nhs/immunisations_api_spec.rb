@@ -73,4 +73,63 @@ describe NHS::ImmunisationsAPI do
       expect(stubbed_request).to have_been_made
     end
   end
+
+  describe "extract_error_info" do
+    subject(:error_info) { described_class.extract_error_info(response) }
+
+    context "response body has an error" do
+      let(:response) do
+        {
+          issue: [
+            {
+              severity: "error",
+              code: "invalid",
+              diagnostics: "Invalid patient ID"
+            }
+          ]
+        }.to_json
+      end
+
+      its([:code]) { should eq "invalid" }
+      its([:diagnostics]) { should eq "Invalid patient ID" }
+    end
+
+    context "when the response body is empty" do
+      let(:response) { nil }
+
+      its([:code]) { is_expected.to be_nil }
+      its([:diagnostics]) { should eq "No response body" }
+    end
+
+    context "when the response body has no issue attribute" do
+      let(:response) { "{}" }
+
+      its([:code]) { should be_nil }
+      its([:diagnostics]) { should eq "No response body" }
+    end
+
+    context "when the response body has no issues" do
+      let(:response) { '{"issues": [] }' }
+
+      its([:code]) { should be_nil }
+      its([:diagnostics]) { should eq "No issues in response" }
+    end
+
+    context "the issue severity is not 'error'" do
+      let(:response) do
+        {
+          issue: [
+            {
+              severity: "warning",
+              code: "not-found",
+              diagnostics: "Patient not found"
+            }
+          ]
+        }.to_json
+      end
+
+      its([:code]) { should be_nil }
+      its([:diagnostics]) { should eq "Issue is not an error" }
+    end
+  end
 end
