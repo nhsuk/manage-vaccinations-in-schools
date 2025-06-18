@@ -69,7 +69,7 @@ describe Consent do
     it "does not require triage" do
       response = build(:consent, :given)
 
-      expect(response).not_to be_triage_needed
+      expect(response).not_to be_requires_triage
     end
   end
 
@@ -84,7 +84,7 @@ describe Consent do
       ]
       response = build(:consent, :given, health_answers:)
 
-      expect(response).to be_triage_needed
+      expect(response).to be_requires_triage
     end
   end
 

@@ -8,7 +8,7 @@ module ConsentFormMailerConcern
       ProgrammeGrouper
         .call(consent_form.given_programmes)
         .each_value do |programmes|
-          if consent_form.needs_triage?
+          if consent_form.health_answers_require_triage?
             EmailDeliveryJob.perform_later(
               :consent_confirmation_triage,
               consent_form:,
