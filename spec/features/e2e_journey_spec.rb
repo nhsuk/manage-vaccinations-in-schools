@@ -174,6 +174,7 @@ describe "End-to-end journey" do
   end
 
   def then_i_see_the_childs_details_including_the_updated_nhs_number
+    click_on "View full child record"
     expect(page).to have_content(/NHS number.*999.*888.*6678/)
   end
 
@@ -183,7 +184,12 @@ describe "End-to-end journey" do
   end
 
   def when_i_register_verbal_consent_and_triage
-    click_button "Get consent"
+    click_link "Sessions"
+    click_link "Pilot School"
+    click_link "Register"
+    click_link "TABLES, Bobby"
+
+    click_button "Get verbal consent"
 
     choose "Big Daddy Tests"
     click_button "Continue"

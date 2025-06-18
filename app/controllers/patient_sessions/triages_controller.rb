@@ -32,7 +32,9 @@ class PatientSessions::TriagesController < PatientSessions::BaseController
 
       redirect_to redirect_path
     else
-      render "patient_sessions/programmes/show", status: :unprocessable_entity
+      render "patient_sessions/programmes/show",
+             layout: "full",
+             status: :unprocessable_entity
     end
   end
 

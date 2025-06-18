@@ -25,7 +25,7 @@ describe "Verbal consent" do
   def when_i_record_that_verbal_consent_was_given
     visit session_consent_path(@session)
     click_link @patient.full_name
-    click_button "Get consent"
+    click_button "Get verbal consent"
 
     # Who are you trying to get consent from?
     click_button "Continue"

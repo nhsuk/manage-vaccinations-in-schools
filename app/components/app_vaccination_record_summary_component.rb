@@ -270,17 +270,7 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
   end
 
   def location_value
-    if (location = @vaccination_record.location)
-      if location.generic_clinic?
-        @vaccination_record.location_name
-      elsif @vaccination_record.already_had?
-        "Unknown"
-      else
-        location.name
-      end
-    else
-      @vaccination_record.location_name
-    end
+    helpers.vaccination_record_location(@vaccination_record)
   end
 
   def date_value
