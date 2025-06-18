@@ -10,11 +10,11 @@ module VaccinationRecordFHIRConcern
 
       if performed_by_user.present?
         immunisation.contained << performed_by_user.to_fhir_practitioner(
-          reference_id: "Practitioner/1"
+          reference_id: "Practitioner1"
         )
       end
 
-      immunisation.contained << patient.to_fhir(reference_id: "Patient/1")
+      immunisation.contained << patient.to_fhir(reference_id: "Patient1")
 
       immunisation.extension = [fhir_vaccination_procedure_extension]
       immunisation.identifier = [fhir_identifier]
@@ -22,7 +22,7 @@ module VaccinationRecordFHIRConcern
       immunisation.status = fhir_status
       immunisation.vaccineCode = vaccine.fhir_codeable_concept
 
-      immunisation.patient = FHIR::Reference.new(reference: "#Patient/1")
+      immunisation.patient = FHIR::Reference.new(reference: "#Patient1")
       immunisation.occurrenceDateTime = performed_at.iso8601(3)
       immunisation.recorded = created_at.iso8601(3)
       immunisation.primarySource = recorded_in_service?
@@ -35,7 +35,7 @@ module VaccinationRecordFHIRConcern
       immunisation.route = fhir_route
       immunisation.doseQuantity = fhir_dose_quantity
       immunisation.performer = [
-        fhir_user_performer(reference_id: "Practitioner/1"),
+        fhir_user_performer(reference_id: "Practitioner1"),
         fhir_org_performer
       ]
       immunisation.reasonCode = [fhir_reason_code]
