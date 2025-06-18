@@ -34,6 +34,7 @@
             form: @form,
             url: session_record_path(@session),
             year_groups: @session.year_groups,
+            vaccine_methods: @session.vaccine_methods.then { it.length > 1 ? it : [] },
           ) %>
     </div>
 

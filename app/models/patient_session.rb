@@ -154,6 +154,31 @@ class PatientSession < ApplicationRecord
           )
         end
 
+  scope :has_vaccine_method,
+        ->(vaccine_method, programme:) do
+          where(
+            Patient::TriageStatus
+              .where("patient_id = patient_sessions.patient_id")
+              .where(vaccine_method:, programme:)
+              .arel
+              .exists
+          ).or(
+            where(
+              Patient::TriageStatus
+                .where("patient_id = patient_sessions.patient_id")
+                .where(status: "not_required", programme:)
+                .arel
+                .exists
+            ).where(
+              Patient::ConsentStatus
+                .where("patient_id = patient_sessions.patient_id")
+                .has_vaccine_method(vaccine_method)
+                .arel
+                .exists
+            )
+          )
+        end
+
   scope :destroy_all_if_safe,
         -> do
           includes(
