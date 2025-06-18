@@ -10,7 +10,7 @@ module HasHealthAnswers
   end
 
   def health_answers_require_triage?
-    health_answers.select(&:counts_for_triage?).any?(&:response_yes?)
+    health_answers.any? { it.response_yes? && it.would_require_triage? }
   end
 
   def who_responded
