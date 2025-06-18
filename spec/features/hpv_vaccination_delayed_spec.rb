@@ -55,8 +55,14 @@ describe "HPV vaccination" do
   end
 
   def and_i_record_that_the_patient_was_unwell
-    choose "No"
-    click_button "Continue"
+    within all("section")[0] do
+      choose "Yes"
+    end
+
+    within all("section")[1] do
+      choose "No"
+      click_button "Continue"
+    end
 
     choose "They were not well enough"
     click_button "Continue"
