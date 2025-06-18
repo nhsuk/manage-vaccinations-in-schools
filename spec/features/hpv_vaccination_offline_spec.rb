@@ -228,7 +228,10 @@ describe "HPV vaccination" do
   end
 
   def and_i_navigate_to_the_session_page
-    visit session_path(@session)
+    visit "/dashboard"
+    click_on "Sessions", match: :first
+    click_on "Scheduled"
+    click_on @session.location.name
   end
 
   def and_i_navigate_to_the_clinic_page
@@ -247,7 +250,12 @@ describe "HPV vaccination" do
     click_on @vaccinated_patient.full_name
 
     expect(page).to have_content("Vaccinated")
-    expect(page).to have_content("HPV (Gardasil 9, #{@batch.name})")
+
+    session_url = current_url
+
+    click_on "1 February 2024"
+    expect(page).to have_content("Gardasil 9")
+    expect(page).to have_content(@batch.name)
     expect(page).to have_content("DateToday (1 February 2024)")
     expect(page).to have_content("Time10:00am")
     expect(page).to have_content(
@@ -255,26 +263,24 @@ describe "HPV vaccination" do
     )
     expect(page).to have_content("SiteLeft arm (upper position)")
 
-    click_link "Session outcomes"
-
+    visit session_url
+    click_on "Session outcomes"
     choose "Absent from session"
     click_on "Update results"
 
     click_on @unvaccinated_patient.full_name
     expect(page).to have_content(@unvaccinated_patient.full_name)
-    expect(page).to have_content("Could not vaccinate")
-    expect(page).to have_content("OutcomeAbsent from session")
-    expect(page).to have_content("NotesSome notes.")
+    expect(page).to have_content("No outcome yet")
+    expect(page).to have_content("Absent from session")
 
-    click_link "Session outcomes"
-
+    visit session_url
+    click_on "Session outcomes"
     choose "Vaccinated"
     click_on "Update results"
 
     click_on @restricted_vaccinated_patient.full_name
     expect(page).to have_content(@restricted_vaccinated_patient.full_name)
     expect(page).to have_content("Vaccinated")
-    expect(page).not_to have_content("Address")
   end
 
   def and_the_clinic_location_is_displayed

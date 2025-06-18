@@ -4,6 +4,7 @@ class PatientSessions::ProgrammesController < PatientSessions::BaseController
   before_action :record_access_log_entry, only: :show
 
   def show
+    render layout: "full"
   end
 
   def record_already_vaccinated
