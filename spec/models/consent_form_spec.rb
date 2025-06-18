@@ -485,8 +485,8 @@ describe ConsentForm do
     end
   end
 
-  describe "#needs_triage?" do
-    subject { consent_form.needs_triage? }
+  describe "#health_answers_require_triage?" do
+    subject { consent_form.health_answers_require_triage? }
 
     let(:consent_form) do
       build(:consent_form, :with_health_answers_no_branching)
