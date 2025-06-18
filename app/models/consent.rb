@@ -147,14 +147,6 @@ class Consent < ApplicationRecord
     !consent_form.nil? && !recorded_by_user_id.nil?
   end
 
-  def reasons_triage_needed
-    reasons = []
-    if health_answers_require_follow_up?
-      reasons << "Health questions need triage"
-    end
-    reasons
-  end
-
   def self.from_consent_form!(consent_form, patient:, current_user:)
     raise ConsentFormNotRecorded unless consent_form.recorded?
 
