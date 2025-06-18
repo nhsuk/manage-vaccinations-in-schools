@@ -90,26 +90,8 @@ class ImmunisationImportRow
     @organisation = organisation
   end
 
-  def vaccination_record_duplicate?
-    return false unless administered
-    return false if uuid.present? # Skip check for updates to existing records
-
-    VaccinationRecord
-      .kept
-      .where(
-        patient_id: patient&.id,
-        programme_id: programme&.id,
-        vaccine_id: vaccine&.id,
-        dose_sequence: dose_sequence_value,
-        outcome: "administered"
-      )
-      .where("DATE(performed_at) = ?", date_of_vaccination.to_date)
-      .exists?
-  end
-
   def to_vaccination_record
     return unless valid?
-    # return if vaccination_record_duplicate?
 
     outcome = (administered ? "administered" : reason_not_administered_value)
 
