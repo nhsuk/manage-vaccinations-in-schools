@@ -90,8 +90,26 @@ class ImmunisationImportRow
     @organisation = organisation
   end
 
+  def vaccination_record_duplicate?
+    return false unless administered
+    return false if uuid.present? # Skip check for updates to existing records
+
+    VaccinationRecord
+      .kept
+      .where(
+        patient_id: patient&.id,
+        programme_id: programme&.id,
+        vaccine_id: vaccine&.id,
+        dose_sequence: dose_sequence_value,
+        outcome: "administered"
+      )
+      .where("DATE(performed_at) = ?", date_of_vaccination.to_date)
+      .exists?
+  end
+
   def to_vaccination_record
     return unless valid?
+    # return if vaccination_record_duplicate?
 
     outcome = (administered ? "administered" : reason_not_administered_value)
 
@@ -122,10 +140,10 @@ class ImmunisationImportRow
           .find_by!(organisations: { id: organisation.id }, uuid: uuid.to_s)
           .tap { _1.assign_attributes(attributes) }
       else
-        VaccinationRecord.find_or_initialize_by(attributes)
+        VaccinationRecord.with_discarded.find_or_initialize_by(attributes)
       end
 
-    if vaccination_record.persisted?
+    if vaccination_record.persisted? && !vaccination_record.discarded?
       vaccination_record.stage_changes(
         batch_id: batch&.id,
         delivery_method: delivery_method_value,
@@ -134,8 +152,12 @@ class ImmunisationImportRow
         vaccine_id: vaccine&.id
       )
     else
-      # Postgres UUID generation is skipped in bulk import
-      vaccination_record.uuid = SecureRandom.uuid
+      if vaccination_record.discarded?
+        vaccination_record.undiscard!
+      else
+        # Postgres UUID generation is skipped in bulk import
+        vaccination_record.uuid = SecureRandom.uuid
+      end
 
       vaccination_record.batch = batch
       vaccination_record.delivery_method = delivery_method_value
