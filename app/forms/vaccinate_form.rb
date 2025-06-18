@@ -6,6 +6,10 @@ class VaccinateForm
 
   attr_accessor :patient_session, :programme, :current_user, :todays_batch
 
+  attribute :identity_check_confirmed_by_other_name, :string
+  attribute :identity_check_confirmed_by_other_relationship, :string
+  attribute :identity_check_confirmed_by_patient, :boolean
+
   attribute :pre_screening_confirmed, :boolean
   attribute :pre_screening_notes, :string
 
@@ -14,6 +18,19 @@ class VaccinateForm
   attribute :delivery_site, :string
   attribute :dose_sequence, :integer
   attribute :programme_id, :integer
+
+  validates :identity_check_confirmed_by_patient,
+            inclusion: {
+              in: [true, false]
+            }
+  validates :identity_check_confirmed_by_other_name,
+            :identity_check_confirmed_by_other_relationship,
+            presence: {
+              if: -> { identity_check_confirmed_by_patient == false }
+            },
+            length: {
+              maximum: 300
+            }
 
   validates :administered, inclusion: [true, false]
   validates :pre_screening_notes, length: { maximum: 1000 }
@@ -42,6 +59,12 @@ class VaccinateForm
 
     draft_vaccination_record.batch_id = todays_batch&.id
     draft_vaccination_record.dose_sequence = dose_sequence
+    draft_vaccination_record.identity_check_confirmed_by_other_name =
+      identity_check_confirmed_by_other_name
+    draft_vaccination_record.identity_check_confirmed_by_other_relationship =
+      identity_check_confirmed_by_other_relationship
+    draft_vaccination_record.identity_check_confirmed_by_patient =
+      identity_check_confirmed_by_patient
     draft_vaccination_record.patient_id = patient_session.patient_id
     draft_vaccination_record.performed_at = Time.current
     draft_vaccination_record.performed_by_user = current_user
