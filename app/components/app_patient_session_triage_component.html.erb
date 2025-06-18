@@ -30,7 +30,7 @@
       <% if helpers.policy(Triage).new? %>
         <%= govuk_button_link_to "Update triage outcome",
                                  new_session_patient_programme_triages_path(session, patient, programme),
-                                 class: "app-button--secondary" %>
+                                 secondary: true %>
       <% end %>
     </div>
   <% end %>
