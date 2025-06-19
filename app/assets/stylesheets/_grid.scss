@@ -1,16 +1,35 @@
-// Search filters and results
-.app-grid-column-filters .nhsuk-card--feature.app-filters,
-.app-grid-column-results > .nhsuk-card--feature,
-.app-grid-column-results > .nhsuk-warning-callout {
-  margin-top: nhsuk-spacing(3);
+// Patient session and record
+.app-grid-column-patient-session {
+  @include nhsuk-grid-column(
+    three-quarters,
+    $float: right,
+    $at: large-desktop,
+    $class: false
+  );
 }
 
+.app-grid-column-patient-record {
+  @include nhsuk-grid-column(
+    one-quarter,
+    $float: right,
+    $at: large-desktop,
+    $class: false
+  );
+}
+
+// Search filters and results
 .app-grid-column-filters {
   @include nhsuk-grid-column(filters, $at: large-desktop, $class: false);
 }
 
 .app-grid-column-results {
   @include nhsuk-grid-column(results, $at: large-desktop, $class: false);
+}
+
+.app-grid-column-filters .nhsuk-card--feature.app-filters,
+.app-grid-column-results > .nhsuk-card--feature,
+.app-grid-column-results > .nhsuk-warning-callout {
+  margin-top: nhsuk-spacing(3);
 }
 
 // Sticky column
