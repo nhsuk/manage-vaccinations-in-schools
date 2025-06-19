@@ -19,6 +19,8 @@ This means that the reporting interface will be a separate process to the rest o
 1. The user should only have to sign in once, regardless of which application they visit first.
 2. The authentication mechanism should work in the same way across all environments.
 
+## Options
+
 ### Option 1 : Both apps share the same cookie
 
 On a deployed environment, both apps would be running on the same domain behind an ECS Application Load Balancer acting as an ingress controller. This would make it possible for the same cookie to be read by both applications, if both apps could be made to use the same encryption mechanism and encryption secret.
@@ -37,13 +39,13 @@ Cons:
 
 ### Option 2 : A second integration with NHS CIS2
 
-We would need to duplicate all of the existing work on local authentication & CIS 2 integration in Python.
-This approach would probably need a seconds CIS 2 onboarding process for the new application. This process is known to take a long time - around 3 months - and require careful shepherding through the approval process. We may also need a more rigorous assurance process for this approach.
+We would need to duplicate all of the existing work on local authentication & CIS2 integration in Python.
+This approach would probably need a second CIS2 onboarding process for the new application. This process is known to take a long time - around 3 months - and require careful shepherding through the approval process. We may also need a more rigorous assurance process for this approach.
 If the user first logs in via CIS2 on one application and then visits the other, we may not be able to sufficiently hide the second roundtrip to CIS2 from them. This could be confusing for the users.
 
 Pros:
 
-- Most robust implmentation
+- Most robust implementation
 - Conceptually cleanest - uses CIS2 as an SSO mechanism, as intended
 
 Cons:
@@ -91,7 +93,7 @@ Pros:
 - Transparent to the user - only existing user journeys needed.
 - Works in the same way across all environments
 - Does not require duplication of work already done
-- Should be easier to assure than full re-implementation of CIS integration
+- Should be easier to assure than full re-implementation of CIS2 integration
 
 Cons:
 
@@ -104,4 +106,4 @@ We propose Option 3, as it provides the best combination of user experience, rob
 
 ## Consequences
 
-We will need to enage early with potential assurance decision-makers for guidance regarding assurance needs.
+We will need to engage early with potential assurance decision-makers for guidance regarding assurance needs.
