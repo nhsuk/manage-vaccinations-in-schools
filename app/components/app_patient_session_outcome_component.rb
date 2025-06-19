@@ -8,8 +8,8 @@ class AppPatientSessionOutcomeComponent < ViewComponent::Base
       <% card.with_heading { heading } %>
       <%= render AppPatientVaccinationTableComponent.new(
             patient,
-            show_caption: true,
-            show_programme: false,
+            programme:,
+            show_caption: true
           ) %>
     <% end %>
   ERB
