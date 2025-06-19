@@ -20,7 +20,7 @@ class UnscheduledSessionsFactory
               organisation.programmes
             elsif location.school?
               organisation.programmes.select do
-                _1.year_groups.intersect?(location.year_groups)
+                it.year_groups.intersect?(location.year_groups)
               end
             else
               [] # don't create sessions for unhandled location types
@@ -40,6 +40,10 @@ class UnscheduledSessionsFactory
           .each(&:destroy!)
       end
   end
+
+  def self.call(...) = new(...).call
+
+  private_class_method :new
 
   private
 

@@ -27,7 +27,7 @@ namespace :schools do
       location.update!(team:)
     end
 
-    UnscheduledSessionsFactory.new.call
+    UnscheduledSessionsFactory.call
   end
 
   desc "Create a school for smoke testing in production."
