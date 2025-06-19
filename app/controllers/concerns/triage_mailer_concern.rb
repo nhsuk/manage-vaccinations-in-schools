@@ -18,7 +18,7 @@ module TriageMailerConcern
       EmailDeliveryJob.perform_later(:triage_vaccination_wont_happen, **params)
     elsif vaccination_at_clinic?(patient, consent)
       EmailDeliveryJob.perform_later(:triage_vaccination_at_clinic, **params)
-    elsif consent.triage_needed?
+    elsif consent.requires_triage?
       EmailDeliveryJob.perform_later(:consent_confirmation_triage, **params)
     elsif consent.response_refused?
       EmailDeliveryJob.perform_later(:consent_confirmation_refused, **params)
@@ -39,19 +39,19 @@ module TriageMailerConcern
 
   def vaccination_will_happen?(patient, consent)
     programme_id = consent.programme_id
-    consent.triage_needed? &&
+    consent.requires_triage? &&
       patient.triage_status(programme_id:).safe_to_vaccinate?
   end
 
   def vaccination_wont_happen?(patient, consent)
     programme_id = consent.programme_id
-    consent.triage_needed? &&
+    consent.requires_triage? &&
       patient.triage_status(programme_id:).do_not_vaccinate?
   end
 
   def vaccination_at_clinic?(patient, consent)
     programme_id = consent.programme_id
-    consent.triage_needed? &&
+    consent.requires_triage? &&
       patient.triage_status(programme_id:).delay_vaccination?
   end
 end

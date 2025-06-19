@@ -5,9 +5,11 @@
 # Table name: health_questions
 #
 #  id                    :bigint           not null, primary key
+#  give_details_hint     :string
 #  hint                  :string
 #  metadata              :jsonb            not null
 #  title                 :string           not null
+#  would_require_triage  :boolean          default(TRUE), not null
 #  created_at            :datetime         not null
 #  updated_at            :datetime         not null
 #  follow_up_question_id :bigint
@@ -30,6 +32,10 @@ FactoryBot.define do
   factory :health_question do
     vaccine
     title { Faker::Lorem.question }
+
+    trait :wouldnt_require_triage do
+      would_require_triage { false }
+    end
 
     trait :severe_allergies do
       title { "Does your child have any severe allergies?" }
@@ -80,6 +86,7 @@ FactoryBot.define do
 
     trait :asthma do
       title { "Has your child been diagnosed with asthma?" }
+      wouldnt_require_triage # has follow up questions
     end
 
     trait :steroids do

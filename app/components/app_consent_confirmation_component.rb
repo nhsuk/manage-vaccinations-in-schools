@@ -39,7 +39,7 @@ class AppConsentConfirmationComponent < ViewComponent::Base
 
   def panel_text
     if response_given?
-      if @consent_form.needs_triage?
+      if @consent_form.health_answers_require_triage?
         <<-END_OF_TEXT
           As you answered ‘yes’ to some of the health questions, we need to check
           the #{given_vaccinations_are} suitable for #{full_name}. We’ll review
