@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_17_205704) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_27_131500) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -441,6 +441,23 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_17_205704) do
     t.index ["immunisation_import_id", "vaccination_record_id"], name: "idx_on_immunisation_import_id_vaccination_record_id_588e859772", unique: true
   end
 
+  create_table "instructions", force: :cascade do |t|
+    t.bigint "created_by_user_id", null: false
+    t.bigint "patient_id", null: false
+    t.bigint "programme_id", null: false
+    t.bigint "vaccine_id", null: false
+    t.string "vaccine_method", null: false
+    t.string "delivery_site", null: false
+    t.boolean "full_dose", null: false
+    t.string "protocol", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_by_user_id"], name: "index_instructions_on_created_by_user_id"
+    t.index ["patient_id"], name: "index_instructions_on_patient_id"
+    t.index ["programme_id"], name: "index_instructions_on_programme_id"
+    t.index ["vaccine_id"], name: "index_instructions_on_vaccine_id"
+  end
+
   create_table "locations", force: :cascade do |t|
     t.text "name", null: false
     t.text "address_line_1"
@@ -590,6 +607,23 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_17_205704) do
     t.index ["session_id"], name: "index_patient_sessions_on_session_id"
   end
 
+  create_table "patient_specific_directions", force: :cascade do |t|
+    t.bigint "created_by_user_id", null: false
+    t.bigint "patient_id", null: false
+    t.bigint "programme_id", null: false
+    t.bigint "vaccine_id", null: false
+    t.string "vaccine_method", null: false
+    t.string "delivery_site", null: false
+    t.boolean "full_dose", null: false
+    t.string "protocol", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_by_user_id"], name: "index_patient_specific_directions_on_created_by_user_id"
+    t.index ["patient_id"], name: "index_patient_specific_directions_on_patient_id"
+    t.index ["programme_id"], name: "index_patient_specific_directions_on_programme_id"
+    t.index ["vaccine_id"], name: "index_patient_specific_directions_on_vaccine_id"
+  end
+
   create_table "patient_triage_statuses", force: :cascade do |t|
     t.bigint "patient_id", null: false
     t.bigint "programme_id", null: false
@@ -730,6 +764,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_17_205704) do
     t.integer "days_before_consent_reminders"
     t.string "slug", null: false
     t.date "send_invitations_at"
+    t.boolean "requires_registration", default: true, null: false
     t.index ["location_id"], name: "index_sessions_on_location_id"
     t.index ["organisation_id", "location_id"], name: "index_sessions_on_organisation_id_and_location_id"
   end
@@ -893,6 +928,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_17_205704) do
   add_foreign_key "immunisation_imports_sessions", "sessions"
   add_foreign_key "immunisation_imports_vaccination_records", "immunisation_imports"
   add_foreign_key "immunisation_imports_vaccination_records", "vaccination_records"
+  add_foreign_key "instructions", "patients"
+  add_foreign_key "instructions", "programmes"
+  add_foreign_key "instructions", "users", column: "created_by_user_id"
+  add_foreign_key "instructions", "vaccines"
   add_foreign_key "locations", "teams"
   add_foreign_key "notes", "patients"
   add_foreign_key "notes", "sessions"
@@ -912,6 +951,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_17_205704) do
   add_foreign_key "patient_session_session_statuses", "programmes"
   add_foreign_key "patient_sessions", "patients"
   add_foreign_key "patient_sessions", "sessions"
+  add_foreign_key "patient_specific_directions", "patients"
+  add_foreign_key "patient_specific_directions", "programmes"
+  add_foreign_key "patient_specific_directions", "users", column: "created_by_user_id"
+  add_foreign_key "patient_specific_directions", "vaccines"
   add_foreign_key "patient_triage_statuses", "patients", on_delete: :cascade
   add_foreign_key "patient_triage_statuses", "programmes"
   add_foreign_key "patient_vaccination_statuses", "patients", on_delete: :cascade
