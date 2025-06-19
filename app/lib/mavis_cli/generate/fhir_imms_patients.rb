@@ -1,18 +1,40 @@
-#!/usr/bin/env ruby
 # frozen_string_literal: true
 
-require_relative "../config/environment"
-require "csv"
-require "ruby-progressbar"
+require_relative "../../mavis_cli"
 
-# Script to create all patients from the test cohort CSV file and add vaccination records
-# for every available programme for each patient.
+module MavisCLI
+  module Generate
+    class FhirImmsPatients < Dry::CLI::Command
+      desc "Generate FHIR IMMS test patients with vaccination records from CSV data"
+      option :organisation,
+             aliases: ["-o"],
+             default: "R1L",
+             desc: "ODS code of organisation to create patients for"
 
-class TestPatientCreator
-  CSV_FILE_PATH = "script/All test patients cohort upload.csv"
+      def call(organisation:, **)
+        MavisCLI.load_rails
 
-  def initialize
-    @organisation = find_or_create_organisation
+        org = Organisation.find_by(ods_code: organisation)
+        unless org
+          puts "Error: Organisation with ODS code '#{organisation}' not found"
+          exit 1
+        end
+
+        FhirImmsPatientCreator.new(org).call
+      end
+    end
+  end
+
+  register "generate", aliases: ["g"] do |prefix|
+    prefix.register "fhir-imms-patients", Generate::FhirImmsPatients
+  end
+end
+
+class FhirImmsPatientCreator
+  CSV_FILE_PATH = File.join(__dir__, "../data/fhir_imms_patients.csv")
+  
+  def initialize(organisation)
+    @organisation = organisation
     @programmes = Programme.all.to_a
     @created_patients = []
     @created_vaccination_records = []
@@ -22,19 +44,14 @@ class TestPatientCreator
   end
 
   def call
-    puts "Starting patient creation from #{CSV_FILE_PATH}"
+    puts "Starting FHIR IMMS patient creation from CSV data"
     puts "Organisation: #{@organisation.name} (#{@organisation.ods_code})"
     puts "Available programmes: #{@programmes.map(&:name).join(', ')}"
     puts
 
     csv_data = read_csv_file
     
-    progress_bar = ProgressBar.create(
-      total: csv_data.size,
-      format: "%a %b\u{15E7}%i %p%% %t",
-      progress_mark: " ",
-      remainder_mark: "\u{FF65}"
-    )
+    progress_bar = MavisCLI.progress_bar(csv_data.size)
 
     csv_data.each do |row|
       create_patient_from_row(row)
@@ -48,26 +65,6 @@ class TestPatientCreator
 
   private
 
-  def find_or_create_organisation
-    # Try to find an existing organisation, or create a default one
-    Organisation.find_by(ods_code: "R1L") || 
-    Organisation.find_by(ods_code: "A9A5A") ||
-    Organisation.first ||
-    create_default_organisation
-  end
-
-  def create_default_organisation
-    Organisation.create!(
-      name: "Test Organisation",
-      ods_code: "TEST1",
-      careplus_venue_code: "TEST001",
-      email: "test@example.com",
-      phone: "01234567890",
-      privacy_notice_url: "https://example.com/privacy",
-      privacy_policy_url: "https://example.com/policy"
-    )
-  end
-
   def ensure_organisation_has_user
     return if @organisation.users.any?
 
@@ -78,7 +75,7 @@ class TestPatientCreator
       family_name: "User",
       uid: SecureRandom.uuid
     )
-
+    
     @organisation.users << user
   end
 
@@ -90,7 +87,7 @@ class TestPatientCreator
     # Read the file and remove BOM if present
     content = File.read(CSV_FILE_PATH, encoding: "UTF-8")
     content = content.gsub(/\A\uFEFF/, '') # Remove BOM
-
+    
     CSV.parse(content, headers: true, encoding: "UTF-8")
   rescue => e
     puts "Error reading CSV file: #{e.message}"
@@ -105,7 +102,6 @@ class TestPatientCreator
     preferred_given_name = row["CHILD_PREFERRED_FIRST_NAME"]&.strip
     date_of_birth = parse_date(row["CHILD_DATE_OF_BIRTH"])
     gender = parse_gender(row["CHILD_GENDER"])
-    year_group = row["CHILD_YEAR_GROUP"]&.to_i
     
     # Address fields
     address_line_1 = row["CHILD_ADDRESS_LINE_1"]&.strip
@@ -196,7 +192,7 @@ class TestPatientCreator
 
   def create_vaccination_records_for_all_patients
     puts "\nCreating vaccination records for #{@created_patients.size} patients..."
-    
+
     total_records = @created_patients.size * @programmes.size
     progress_bar = ProgressBar.create(
       total: total_records,
@@ -283,10 +279,10 @@ class TestPatientCreator
       programmes: [programme],
       academic_year: Date.current.academic_year
     )
-
+    
     # Create session date
     session.session_dates.create!(value: session_date)
-
+    
     session
   end
 
@@ -304,34 +300,29 @@ class TestPatientCreator
 
   def print_summary
     puts "\n" + "="*50
-    puts "SUMMARY"
+    puts "FHIR IMMS PATIENTS GENERATION SUMMARY"
     puts "="*50
     puts "Patients created: #{@created_patients.size}"
     puts "Patients skipped: #{@skipped_patients.size}"
     puts "Vaccination records created: #{@created_vaccination_records.size}"
     puts "Errors encountered: #{@errors.size}"
-
+    
     if @skipped_patients.any?
       puts "\nSkipped patients:"
       @skipped_patients.each { |patient| puts "  - #{patient}" }
     end
-
+    
     if @errors.any?
       puts "\nErrors:"
       @errors.each { |error| puts "  - #{error}" }
     end
-
+    
     puts "\nBreakdown by programme:"
     @programmes.each do |programme|
       count = @created_vaccination_records.count { |vr| vr.programme == programme }
       puts "  #{programme.name}: #{count} records"
     end
-
-    puts "\nScript completed successfully!"
+    
+    puts "\nFHIR IMMS patients generation completed successfully!"
   end
-end
-
-# Run the script
-if __FILE__ == $0
-  TestPatientCreator.new.call
 end
