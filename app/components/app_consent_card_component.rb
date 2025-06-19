@@ -31,8 +31,11 @@ class AppConsentCardComponent < ViewComponent::Base
   end
 
   def consent_status
-    @consent_status ||=
-      patient.consent_statuses.find_or_initialize_by(programme:)
+    @consent_status ||= patient.consent_status(programme:)
+  end
+
+  def vaccination_status
+    @vaccination_status ||= patient.vaccination_status(programme:)
   end
 
   def can_send_consent_request?

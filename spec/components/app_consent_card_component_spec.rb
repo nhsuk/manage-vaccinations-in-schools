@@ -29,6 +29,16 @@ describe AppConsentCardComponent do
     end
   end
 
+  context "when vaccinated" do
+    before do
+      create(:patient_vaccination_status, :vaccinated, patient:, programme:)
+    end
+
+    it { should_not have_css("p", text: "No requests have been sent.") }
+    it { should_not have_css("button", text: "Get verbal consent") }
+    it { should_not have_css("button", text: "Assess Gillick competence") }
+  end
+
   context "with refused consent" do
     let!(:consent) { create(:consent, :refused, patient:, programme:) }
 
