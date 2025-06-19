@@ -36,6 +36,51 @@ describe Session do
     let(:today_session) { create(:session, :today, programmes:) }
     let(:unscheduled_session) { create(:session, :unscheduled, programmes:) }
 
+    describe "#has_programmes" do
+      subject(:scope) { described_class.has_programmes(programmes) }
+
+      context "with a session matching the search" do
+        let(:programmes) { [create(:programme)] }
+        let(:session) { create(:session, programmes:) }
+
+        it { should include(session) }
+      end
+
+      context "with a session not matching the search" do
+        let(:programmes) { [create(:programme, :hpv)] }
+        let(:session) do
+          create(:session, programmes: [create(:programme, :flu)])
+        end
+
+        it { should_not include(session) }
+      end
+
+      context "with a session with multiple programmes" do
+        let(:programmes) do
+          [create(:programme, :menacwy), create(:programme, :td_ipv)]
+        end
+        let(:session) { create(:session, programmes:) }
+
+        it { should include(session) }
+      end
+
+      context "with a session with at least all the search programmes" do
+        let(:session) do
+          create(
+            :session,
+            programmes: [
+              create(:programme, :hpv),
+              create(:programme, :menacwy),
+              create(:programme, :td_ipv)
+            ]
+          )
+        end
+        let(:programmes) { [session.programmes.first] }
+
+        it { should include(session) }
+      end
+    end
+
     describe "#for_current_academic_year" do
       subject(:scope) { described_class.for_current_academic_year }
 
