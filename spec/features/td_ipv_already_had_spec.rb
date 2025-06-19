@@ -103,6 +103,16 @@ describe "Td/IPV" do
 
   def and_a_patient_is_in_the_session
     @patient = create(:patient, session: @session)
+
+    @patient_session =
+      PatientSession.find_by(patient: @patient, session: @session)
+
+    @registration_status =
+      create(
+        :patient_session_registration_status,
+        patient_session: @patient_session,
+        status: :attending
+      )
   end
 
   def and_the_patient_doesnt_need_triage

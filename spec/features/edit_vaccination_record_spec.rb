@@ -247,6 +247,16 @@ describe "Edit vaccination record" do
         team: @team,
         session: @session
       )
+
+    @patient_session =
+      PatientSession.find_by(patient: @patient, session: @session)
+
+    @registration_status =
+      create(
+        :patient_session_registration_status,
+        patient_session: @patient_session,
+        status: :attending
+      )
   end
 
   def given_i_am_signed_in
