@@ -64,6 +64,15 @@ class AppSearchComponent < ViewComponent::Base
           <% end %>
         <% end %>
 
+        <% if vaccine_methods.any? %>
+          <%= f.govuk_radio_buttons_fieldset :vaccine_method, legend: { text: "Vaccination method", size: "s" } do %>
+            <%= f.govuk_radio_button :vaccine_method, "", label: { text: "Any" } %>
+            <% vaccine_methods.each do |vaccine_method| %>
+              <%= f.govuk_radio_button :vaccine_method, vaccine_method, label: { text: Vaccine.human_enum_name(:vaccine_method, vaccine_method) } %>
+            <% end %>
+          <% end %>
+        <% end %>
+
         <% if year_groups.any? %>
           <%= f.govuk_check_boxes_fieldset :year_groups, legend: { text: "Year group", size: "s" } do %>
             <% year_groups.each do |year_group| %>
@@ -120,6 +129,7 @@ class AppSearchComponent < ViewComponent::Base
     register_statuses: [],
     session_statuses: [],
     triage_statuses: [],
+    vaccine_methods: [],
     year_groups: []
   )
     super
@@ -132,6 +142,7 @@ class AppSearchComponent < ViewComponent::Base
     @register_statuses = register_statuses
     @session_statuses = session_statuses
     @triage_statuses = triage_statuses
+    @vaccine_methods = vaccine_methods
     @year_groups = year_groups
   end
 
@@ -144,6 +155,7 @@ class AppSearchComponent < ViewComponent::Base
               :register_statuses,
               :session_statuses,
               :triage_statuses,
+              :vaccine_methods,
               :year_groups
 
   def open_details?

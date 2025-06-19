@@ -67,7 +67,7 @@ describe Programme do
   end
 
   describe "#year_groups" do
-    subject(:year_groups) { programme.year_groups }
+    subject { programme.year_groups }
 
     context "with a Flu programme" do
       let(:programme) { build(:programme, :flu) }
@@ -79,6 +79,22 @@ describe Programme do
       let(:programme) { build(:programme, :hpv) }
 
       it { should eq([8, 9, 10, 11]) }
+    end
+  end
+
+  describe "#vaccine_methods" do
+    subject { programme.vaccine_methods }
+
+    context "with a Flu programme" do
+      let(:programme) { build(:programme, :flu) }
+
+      it { should contain_exactly("injection", "nasal") }
+    end
+
+    context "with an HPV programme" do
+      let(:programme) { build(:programme, :hpv) }
+
+      it { should contain_exactly("injection") }
     end
   end
 

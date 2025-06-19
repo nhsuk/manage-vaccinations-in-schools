@@ -30,6 +30,14 @@ class Patient::ConsentStatus < ApplicationRecord
            -> { not_invalidated.response_provided.includes(:parent, :patient) },
            through: :patient
 
+  scope :has_vaccine_method,
+        ->(vaccine_method) do
+          where(
+            "vaccine_methods @> ARRAY[?]::integer[]",
+            vaccine_methods.fetch(vaccine_method)
+          )
+        end
+
   enum :status,
        { no_response: 0, given: 1, refused: 2, conflicts: 3 },
        default: :no_response,
