@@ -47,7 +47,7 @@ module Generate
                 .sessions
                 .eager_load(:location)
                 .merge(Location.school)
-                .has_programme(programme)
+                .has_programmes([programme])
             end
 
           sessions.flat_map do |session|
@@ -76,7 +76,7 @@ module Generate
           .sessions
           .eager_load(:location)
           .merge(Location.school)
-          .has_programme(programme)
+          .has_programmes([programme])
           .sample
     end
 
