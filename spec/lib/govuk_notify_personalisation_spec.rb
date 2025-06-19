@@ -73,7 +73,8 @@ describe GovukNotifyPersonalisation do
         team_email: "organisation@example.com",
         team_name: "Organisation",
         team_phone: "01234 567890 (option 1)",
-        vaccination: "HPV vaccination"
+        vaccination: "HPV vaccination",
+        vaccine_side_effects: ""
       }
     )
   end
@@ -237,6 +238,21 @@ describe GovukNotifyPersonalisation do
           today_or_date_of_vaccination: "1 January 2024",
           outcome_administered: "no",
           outcome_not_administered: "yes"
+        )
+      )
+    end
+  end
+
+  context "with vaccine side effects" do
+    before do
+      programmes.first.vaccines.first.update!(side_effects: %w[swelling unwell])
+    end
+
+    it do
+      expect(to_h).to match(
+        hash_including(
+          vaccine_side_effects:
+            "- generally feeling unwell\n- swelling or pain where the injection was given"
         )
       )
     end
