@@ -275,6 +275,13 @@ describe "Edit vaccination record" do
 
     @patient_session =
       create(:patient_session, patient: @patient, session: @session)
+
+    @registration_status =
+      create(
+        :patient_session_registration_status,
+        patient_session: @patient_session,
+        status: :completed
+      )
   end
 
   def and_an_administered_vaccination_record_exists
