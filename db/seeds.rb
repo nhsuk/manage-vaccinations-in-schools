@@ -314,7 +314,7 @@ create_patients(organisation)
 create_imports(user, organisation)
 create_school_moves(organisation)
 
-UnscheduledSessionsFactory.new.call
+UnscheduledSessionsFactory.call
 
 Rake::Task["status:update:all"].execute
 Rake::Task["gp_practices:smoke"].execute

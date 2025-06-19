@@ -2,7 +2,7 @@
 
 describe UnscheduledSessionsFactory do
   describe "#call" do
-    subject(:call) { described_class.new.call }
+    subject(:call) { described_class.call }
 
     let(:programmes) { [create(:programme, :hpv)] }
     let(:organisation) { create(:organisation, programmes:) }

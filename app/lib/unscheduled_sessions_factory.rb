@@ -49,6 +49,10 @@ class UnscheduledSessionsFactory
       end
   end
 
+  def self.call(...) = new(...).call
+
+  private_class_method :new
+
   private
 
   attr_reader :academic_year

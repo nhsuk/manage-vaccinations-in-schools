@@ -122,7 +122,7 @@ class Onboarding
       GenericClinicFactory.call(organisation: organisation.reload)
 
       @users.each { |user| user.organisations << organisation }
-      UnscheduledSessionsFactory.new.call
+      UnscheduledSessionsFactory.call
     end
   end
 
