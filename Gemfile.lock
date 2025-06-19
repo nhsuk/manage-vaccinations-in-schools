@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/citizensadvice/capybara_accessible_selectors
-  revision: a55fca198e43a3c81981ae46412c678a57f4f2f5
+  revision: b60eebb9673b20dd472afb3d724340a6f6132bcb
   branch: main
   specs:
     capybara_accessible_selectors (0.11.0)
@@ -342,7 +342,7 @@ GEM
       net-pop
       net-smtp
     marcel (1.0.4)
-    matrix (0.4.2)
+    matrix (0.4.3)
     mechanize (2.14.0)
       addressable (~> 2.8)
       base64
