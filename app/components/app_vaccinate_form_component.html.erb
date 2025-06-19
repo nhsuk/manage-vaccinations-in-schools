@@ -9,9 +9,9 @@
 
   <div class="nhsuk-card__content">
     <section>
-      <h2 class="nhsuk-card__heading nhsuk-heading-m">
+      <h3 class="nhsuk-card__heading nhsuk-heading-s">
         Pre-screening checks
-      </h2>
+      </h3>
 
       <p><%= patient.given_name %> has confirmed that they:</p>
 
@@ -39,9 +39,9 @@
     <hr class="nhsuk-section-break nhsuk-section-break--visible nhsuk-section-break--l">
 
     <section>
-      <h2 class="nhsuk-card__heading nhsuk-heading-m">
+      <h3 class="nhsuk-card__heading nhsuk-heading-s">
         Is <%= patient.given_name %> ready for their <%= programme.name %> vaccination?
-      </h2>
+      </h3>
 
       <% hint = "Pre-screening checks must be completed for vaccination to go ahead" %>
 
@@ -68,7 +68,7 @@
       <%= f.hidden_field :dose_sequence, value: dose_sequence %>
       <%= f.hidden_field :programme_id, value: programme.id %>
 
-      <%= f.govuk_submit "Continue" %>
+      <%= f.govuk_submit "Continue", class: "nhsuk-u-margin-bottom-0" %>
     </section>
   </div>
 <% end %>
