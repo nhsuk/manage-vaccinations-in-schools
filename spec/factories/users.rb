@@ -86,6 +86,10 @@ FactoryBot.define do
       fallback_role { :superuser }
     end
 
+    trait :healthcare_assistant do
+      fallback_role { :healthcare_assistant }
+    end
+
     trait :signed_in do
       current_sign_in_at { Time.current }
       current_sign_in_ip { "127.0.0.1" }
