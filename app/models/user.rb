@@ -81,11 +81,12 @@ class User < ApplicationRecord
         uid: userinfo[:uid]
       )
 
-    user.family_name = userinfo[:extra][:raw_info][:family_name]
-    user.given_name = userinfo[:extra][:raw_info][:given_name]
-    user.email = userinfo[:info][:email]
-    user.session_token =
-      userinfo[:extra][:raw_info][:sid].presence || Devise.friendly_token
+    raw_info = userinfo[:extra][:raw_info]
+
+    user.assign_attributes(
+      raw_info.slice(:email, :family_name, :given_name).to_h
+    )
+    user.session_token = raw_info[:sid].presence || Devise.friendly_token
 
     user.tap(&:save!)
   end
