@@ -26,6 +26,8 @@ namespace :vaccines do
       vaccine.snomed_product_term = data["snomed_product_term"]
       vaccine.programme = programme
 
+      vaccine.side_effects = side_effects_for(programme, data["method"])
+
       vaccine.save!
 
       next if vaccine.health_questions.exists?
@@ -44,6 +46,33 @@ namespace :vaccines do
         end
       end
     end
+  end
+end
+
+def side_effects_for(programme, method)
+  if programme.flu?
+    if method == "nasal"
+      %w[runny_blocked_nose headache tiredness loss_of_appetite]
+    else
+      %w[swelling raised_temperature aching]
+    end
+  elsif programme.hpv?
+    %w[swelling high_temperature feeling_sick pain_in_arms]
+  elsif programme.menacwy?
+    %w[
+      drowsy
+      feeling_sick
+      headache
+      irritable
+      loss_of_appetite
+      rash
+      swelling
+      unwell
+    ]
+  elsif programme.td_ipv?
+    %w[dizziness feeling_sick headache high_temperature swelling]
+  else
+    raise UnsupportedProgramme, programme
   end
 end
 
