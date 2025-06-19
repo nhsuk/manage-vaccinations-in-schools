@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_09_112437) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_18_160357) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -717,6 +717,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_09_112437) do
     t.integer "days_before_consent_reminders"
     t.string "slug", null: false
     t.date "send_invitations_at"
+    t.boolean "requires_registration", default: true, null: false
     t.index ["location_id"], name: "index_sessions_on_location_id"
     t.index ["organisation_id", "location_id"], name: "index_sessions_on_organisation_id_and_location_id"
   end

@@ -22,7 +22,10 @@ class Sessions::RecordController < ApplicationController
           patient: %i[consent_statuses triage_statuses vaccination_statuses]
         )
         .in_programmes(@session.programmes)
-        .has_registration_status(%w[attending completed])
+
+    if @session.requires_registration?
+      scope = scope.has_registration_status(%w[attending completed])
+    end
 
     scope = @form.apply(scope)
 
