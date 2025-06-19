@@ -117,7 +117,7 @@ class StatusUpdater
           batch.select(&:changed?),
           on_duplicate_key_update: {
             conflict_target: [:id],
-            columns: %i[status]
+            columns: %i[status vaccine_method]
           }
         )
       end

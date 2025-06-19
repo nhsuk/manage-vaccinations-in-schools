@@ -53,6 +53,21 @@ FactoryBot.define do
       vaccine_method { "injection" }
     end
 
+    trait :do_not_vaccinate do
+      status { "do_not_vaccinate" }
+      vaccine_method { nil }
+    end
+
+    trait :needs_follow_up do
+      status { "needs_follow_up" }
+      vaccine_method { nil }
+    end
+
+    trait :delay_vaccination do
+      status { "delay_vaccination" }
+      vaccine_method { nil }
+    end
+
     trait :invalidated do
       invalidated_at { Time.current }
     end
