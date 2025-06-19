@@ -43,7 +43,7 @@ module MavisCLI
           location.update!(team:)
         end
 
-        UnscheduledSessionsFactory.new.call
+        UnscheduledSessionsFactory.call
       end
     end
   end
