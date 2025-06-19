@@ -1,21 +1,24 @@
 # frozen_string_literal: true
 
 class AppPatientVaccinationTableComponent < ViewComponent::Base
-  def initialize(patient, show_caption:, show_programme:)
+  def initialize(patient, programme: nil, show_caption: false)
     super
 
     @patient = patient
+    @programme = programme
     @show_caption = show_caption
-    @show_programme = show_programme
   end
 
   private
 
-  attr_reader :patient, :show_caption, :show_programme
+  attr_reader :patient, :programme, :show_caption
+
+  def show_programme = programme.nil?
 
   def vaccination_records
     patient
       .vaccination_records
+      .then { programme ? it.where(programme:) : it }
       .includes(:location, :programme)
       .order(performed_at: :desc)
   end
