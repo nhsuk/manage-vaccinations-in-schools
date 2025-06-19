@@ -24,6 +24,8 @@ describe AppPatientVaccinationTableComponent do
 
     let(:vaccination_record_programme) { create(:programme, :hpv) }
 
+    let(:performed_at) { Time.zone.local(2024, 1, 1) }
+
     before do
       create(
         :vaccination_record,
@@ -35,7 +37,7 @@ describe AppPatientVaccinationTableComponent do
             programmes: [vaccination_record_programme]
           ),
         programme: vaccination_record_programme,
-        performed_at: Time.zone.local(2024, 1, 1)
+        performed_at:
       )
     end
 
@@ -60,6 +62,18 @@ describe AppPatientVaccinationTableComponent do
       it { should_not have_content("Waterloo Road, London, SE1 8TY") }
       it { should_not have_content("Vaccinated") }
       it { should_not have_content("HPV") }
+    end
+
+    context "with a Flu vaccination record from a previous year" do
+      let(:vaccination_record_programme) { create(:programme, :flu) }
+      let(:programme) { vaccination_record_programme }
+      let(:performed_at) { Time.zone.local(2022, 1, 1) }
+
+      it { should_not have_link("1 January 2022") }
+      it { should_not have_content("Test School") }
+      it { should_not have_content("Waterloo Road, London, SE1 8TY") }
+      it { should_not have_content("Vaccinated") }
+      it { should_not have_content("Flu") }
     end
   end
 end
