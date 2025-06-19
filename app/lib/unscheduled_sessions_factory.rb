@@ -37,20 +37,31 @@ class UnscheduledSessionsFactory
   end
 
   def create_school_sessions!(organisation)
-    ActiveRecord::Base.transaction do
-      organisation.schools.find_each do |location|
-        next if organisation.sessions.exists?(academic_year:, location:)
+    schools_and_programmes(organisation).each do |location, programmes|
+      eligible_programmes =
+        programmes.select { it.year_groups.intersect?(location.year_groups) }
 
-        programmes =
-          organisation.programmes.select do
-            it.year_groups.intersect?(location.year_groups)
-          end
+      next if eligible_programmes.empty?
 
-        next if programmes.empty?
-
-        Session.create!(academic_year:, location:, programmes:, organisation:)
+      if organisation
+           .sessions
+           .has_programmes(eligible_programmes)
+           .exists?(academic_year:, location:)
+        next
       end
+
+      organisation.sessions.create!(
+        academic_year:,
+        location:,
+        programmes: eligible_programmes
+      )
     end
+  end
+
+  def schools_and_programmes(organisation)
+    schools = organisation.schools
+    programmes = ProgrammeGrouper.call(organisation.programmes).values
+    schools.to_a.product(programmes.to_a)
   end
 
   def destroy_orphaned_sessions!(organisation)
