@@ -10,7 +10,7 @@ Proposed
 
 The Mavis application currently supports two authentication methods - an integration with NHS CIS2 for use in production, and a locally-stored email/password for environments where CIS2 is not available, such as development on a local laptop.
 
-To meet the reporting needs of the NHS commissioners and SAIS teams, a phase of work is underway to develop a reporting interface. This will be developed in Python, which is currently an 'MAINSTREAM' technology on the [NHSDigital Tech Radar](https://github.com/NHSDigital/tech-radar/blob/main/site/data/data.js#L150), as opposed to Ruby which is merely '[PROPOSED](https://github.com/NHSDigital/tech-radar/blob/main/site/data/data.js#L157)'.
+To meet the reporting needs of the NHS commissioners and SAIS teams, a phase of work is underway to develop a reporting interface. This will be developed in Python, which is currently a 'MAINSTREAM' technology on the [NHSDigital Tech Radar](https://github.com/NHSDigital/tech-radar/blob/main/site/data/data.js#L150), as opposed to Ruby which is merely '[PROPOSED](https://github.com/NHSDigital/tech-radar/blob/main/site/data/data.js#L157)'.
 
 This means that the reporting interface will be a separate process to the rest of the application, with its own distinct cookies. We will therefore need to establish a mechanism for user authentication which works transparently between the two processes.
 
