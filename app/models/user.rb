@@ -69,7 +69,7 @@ class User < ApplicationRecord
 
   delegate :fhir_practitioner, to: :fhir_mapper
 
-  def self.find_or_create_from_cis2_oidc(userinfo)
+  def self.find_or_create_from_cis2_oidc(userinfo, organisation)
     user =
       User.find_or_initialize_by(
         provider: userinfo[:provider],
@@ -83,13 +83,23 @@ class User < ApplicationRecord
     )
     user.session_token = raw_info[:sid].presence || Devise.friendly_token
 
-    user.tap(&:save!)
+    ActiveRecord::Base.transaction do
+      user.save!
+
+      unless user.organisations.include?(organisation)
+        user.organisations << organisation
+      end
+
+      user
+    end
   end
 
   def selected_organisation
     @selected_organisation ||=
       if cis2_info.present?
-        Organisation.find_by(ods_code: cis2_info.dig("selected_org", "code"))
+        organisations.includes(:programmes).find_by(
+          ods_code: cis2_info.dig("selected_org", "code")
+        )
       end
   end
 
