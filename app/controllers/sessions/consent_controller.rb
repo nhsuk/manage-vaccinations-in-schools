@@ -11,16 +11,13 @@ class Sessions::ConsentController < ApplicationController
 
   def show
     @statuses = Patient::ConsentStatus.statuses.keys
-    @programmes = @session.programmes
 
     scope =
-      @session
-        .patient_sessions
-        .includes_programmes
-        .includes(patient: :consent_statuses)
-        .in_programmes(@programmes)
+      @session.patient_sessions.includes_programmes.includes(
+        patient: :consent_statuses
+      )
 
-    patient_sessions = @form.apply(scope, programme: @programmes)
+    patient_sessions = @form.apply(scope)
     @pagy, @patient_sessions = pagy(patient_sessions)
   end
 
