@@ -241,11 +241,16 @@ describe "End-to-end journey" do
 
     expect(page).to have_content("Update attendance")
 
-    check "has confirmed the above statements are true"
+    within all("section")[0] do
+      choose "Yes"
+      check "has confirmed the above statements are true"
+    end
 
-    choose "Yes"
-    choose "Left arm (upper position)"
-    click_button "Continue"
+    within all("section")[1] do
+      choose "Yes"
+      choose "Left arm (upper position)"
+      click_button "Continue"
+    end
 
     choose @batch.name
     click_button "Continue"

@@ -147,6 +147,11 @@ class DraftVaccinationRecordsController < ApplicationController
       date_and_time: %i[performed_at],
       delivery: %i[delivery_site delivery_method],
       dose: %i[full_dose],
+      identity: %i[
+        identity_check_confirmed_by_patient
+        identity_check_confirmed_by_other_name
+        identity_check_confirmed_by_other_relationship
+      ],
       location: %i[location_name],
       notes: %i[notes],
       outcome: %i[outcome]

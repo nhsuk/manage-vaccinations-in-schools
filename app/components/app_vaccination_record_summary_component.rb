@@ -15,6 +15,7 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
     @show_notes = show_notes
 
     @batch = vaccination_record.batch
+    @identity_check = vaccination_record.identity_check
     @patient = vaccination_record.patient
     @programme = vaccination_record.programme
     @vaccine = vaccination_record.vaccine
@@ -154,6 +155,20 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
           summary_list.with_row do |row|
             row.with_key { "Dose number" }
             row.with_value { dose_number_value }
+          end
+        end
+      end
+
+      if @identity_check
+        summary_list.with_row do |row|
+          row.with_key { "Child identified by" }
+          row.with_value { helpers.identity_check_label(@identity_check) }
+          if (href = @change_links[:identity])
+            row.with_action(
+              text: "Change",
+              href:,
+              visually_hidden_text: "child identified by"
+            )
           end
         end
       end

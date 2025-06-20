@@ -33,6 +33,9 @@ describe AppVaccinateFormComponent do
       patient.consent_status(programme:).update!(vaccine_methods: %w[nasal])
     end
 
+    it { should have_content("Has Hari confirmed their identity?") }
+    it { should have_field("No, it was confirmed by somebody else") }
+
     it { should have_heading("Is Hari ready for their Flu vaccination?") }
 
     it { should have_field("Yes") }
@@ -47,6 +50,9 @@ describe AppVaccinateFormComponent do
   context "with a Flu programme" do
     let(:programme) { create(:programme, :flu) }
 
+    it { should have_content("Has Hari confirmed their identity?") }
+    it { should have_field("No, it was confirmed by somebody else") }
+
     it { should have_heading("Is Hari ready for their Flu vaccination?") }
 
     it { should have_field("Yes") }
@@ -60,6 +66,9 @@ describe AppVaccinateFormComponent do
 
   context "with a HPV programme" do
     let(:programme) { create(:programme, :hpv) }
+
+    it { should have_content("Has Hari confirmed their identity?") }
+    it { should have_field("No, it was confirmed by somebody else") }
 
     it { should have_heading("Is Hari ready for their HPV vaccination?") }
 

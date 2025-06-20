@@ -1,0 +1,28 @@
+<% content_for :before_main do %>
+  <%= render AppBacklinkComponent.new(@back_link_path) %>
+<% end %>
+
+<% legend = "Who confirmed #{@patient.given_name}’s identity?" %>
+<% content_for :page_title, legend %>
+
+<%= form_with model: @draft_vaccination_record, url: wizard_path, method: :put do |f| %>
+  <% content_for(:before_content) { f.govuk_error_summary } %>
+
+  <%= f.govuk_radio_buttons_fieldset :identity_check_confirmed_by_patient,
+                                     legend: { text: legend, tag: "h1", size: "l" },
+                                     caption: { text: @patient.full_name, size: "l" } do %>
+
+    <%= f.govuk_radio_button :identity_check_confirmed_by_patient, true, label: { text: "The child" }, link_errors: true %>
+
+    <%= f.govuk_radio_button :identity_check_confirmed_by_patient, false, label: { text: "Someone else" } do %>
+      <%= f.govuk_text_field :identity_check_confirmed_by_other_name,
+                             label: { text: "What is the person’s name?" } %>
+
+      <%= f.govuk_text_field :identity_check_confirmed_by_other_relationship,
+                             label: { text: "What is their relationship to the child?" },
+                             hint: { text: "For example, parent, teacher or teaching assistant" } %>
+    <% end %>
+  <% end %>
+
+  <%= f.govuk_submit %>
+<% end %>
