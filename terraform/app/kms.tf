@@ -11,6 +11,20 @@ resource "aws_kms_key" "rds_cluster" {
         }
         Action   = "kms:*"
         Resource = "*"
+        }, {
+        Sid    = "AllowBackupAccount"
+        Effect = "Allow"
+        Principal = {
+          AWS = ["arn:aws:iam::904214613099:root"]
+        }
+        "Action" : [
+          "kms:Encrypt",
+          "kms:Decrypt",
+          "kms:ReEncrypt*",
+          "kms:GenerateDataKey*",
+          "kms:DescribeKey"
+        ],
+        "Resource" : "*"
       }
     ]
   })
