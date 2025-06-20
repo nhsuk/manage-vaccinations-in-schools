@@ -11,6 +11,33 @@ resource "aws_kms_key" "rds_cluster" {
         }
         Action   = "kms:*"
         Resource = "*"
+        }, {
+        Sid    = "AllowBackupAccount"
+        Effect = "Allow"
+        Principal = {
+          AWS = ["arn:aws:iam::${var.backup_account_id}:root"]
+        }
+        "Action" : [
+          "kms:Encrypt",
+          "kms:Decrypt",
+          "kms:ReEncrypt*",
+          "kms:GenerateDataKey*",
+          "kms:DescribeKey"
+        ],
+        "Resource" : "*"
+        }, {
+        Sid    = "Allow attachment of persistent resources"
+        Effect = "Allow"
+        Principal = {
+          AWS = ["arn:aws:iam::${var.backup_account_id}:root"]
+        }
+        "Action" : [
+          "kms:CreateGrant",
+          "kms:ListGrants",
+          "kms:RevokeGrant"
+        ],
+        "Resource" : "*",
+        "Condition" : { "Bool" : { "kms:GrantIsForAWSResource" : true } }
       }
     ]
   })
