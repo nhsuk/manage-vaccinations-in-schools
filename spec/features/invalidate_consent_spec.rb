@@ -74,11 +74,17 @@ describe "Invalidate consent" do
 
   def and_triaged_as_safe_to_vaccinate
     create(:triage, patient: @patient, programme: @programme)
+    create(
+      :patient_triage_status,
+      :safe_to_vaccinate,
+      patient: @patient,
+      programme: @programme
+    )
   end
 
   def when_i_go_to_the_patient
     visit session_consent_path(@session)
-    choose "Consent given"
+    check "Consent given"
     click_on "Update results"
     click_link @patient.full_name
   end
@@ -94,7 +100,7 @@ describe "Invalidate consent" do
   alias_method :and_i_see_the_consent, :then_i_see_the_consent
 
   def and_the_patient_is_ready_for_the_nurse
-    expect(page).to have_content("Ready for nurse")
+    expect(page).to have_content("ready for the vaccinator")
   end
 
   def and_the_patient_is_safe_to_vaccinate

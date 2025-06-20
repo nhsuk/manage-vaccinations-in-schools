@@ -19,7 +19,7 @@ class AppConsentSummaryComponent < ViewComponent::Base
 
       summary_list.with_row do |row|
         row.with_key { "Decision" }
-        row.with_value { helpers.consent_decision(@consent) }
+        row.with_value { helpers.consent_status_tag(@consent) }
         if (href = @change_links[:response])
           row.with_action(
             text: "Change",

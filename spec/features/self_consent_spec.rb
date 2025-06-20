@@ -72,7 +72,7 @@ describe "Self-consent" do
     click_on @school.name
     click_on "Consent"
 
-    choose "No response"
+    check "No response"
     click_on "Update results"
 
     expect(page).to have_content("Showing 1 to 1 of 1 children")
@@ -141,7 +141,7 @@ describe "Self-consent" do
   end
 
   def and_the_child_cannot_give_their_own_consent
-    click_on "Get consent"
+    click_on "Get verbal consent"
     expect(page).not_to have_content("Child (Gillick competent)")
     click_on "Back"
   end
@@ -213,7 +213,7 @@ describe "Self-consent" do
   end
 
   def and_the_nurse_records_consent_for_the_child
-    click_on "Get consent"
+    click_on "Get verbal consent"
 
     # who
     choose "Child (Gillick competent)"
@@ -267,17 +267,15 @@ describe "Self-consent" do
   end
 
   def then_they_see_that_the_child_has_consent_from_themselves
+    expect(page).to have_content("Consent given")
     expect(page).to have_content(
       "#{@patient.full_name} Child (Gillick competent)"
     )
-    expect(page).to have_content("Consent given")
   end
 
   def then_they_see_that_the_child_has_consent_from_the_parent
-    expect(page).to have_content(
-      "Consent given\nNameResponse dateDecision #{@parent.full_name}"
-    )
     expect(page).to have_content("Consent given")
+    expect(page).to have_content("Decision #{@parent.full_name}")
   end
 
   def and_the_child_should_be_safe_to_vaccinate

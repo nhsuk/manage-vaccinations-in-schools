@@ -131,9 +131,9 @@ en:
           personal_choice: Personal choice
           will_be_vaccinated_elsewhere: Vaccine will be given elsewhere
         responses:
-          given: consent given
-          not_provided: not provided
-          refused: consent refused
+          given: Consent given
+          not_provided: Not provided
+          refused: Consent refused
         routes:
           in_person: In person
           paper: Paper

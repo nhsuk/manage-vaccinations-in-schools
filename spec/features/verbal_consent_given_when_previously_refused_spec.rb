@@ -52,10 +52,10 @@ feature "Verbal consent" do
     end
     click_on "Pilot School"
     click_on "Consent"
-    choose "Consent refused"
+    check "Consent refused"
     click_on "Update results"
     click_on @child.full_name
-    click_on "Get consent"
+    click_on "Get verbal consent"
 
     # contacting the same parent who refused
     choose @refusing_parent.full_name
@@ -99,7 +99,7 @@ feature "Verbal consent" do
   end
 
   def and_the_child_is_shown_as_having_consent_given
-    choose "Consent given"
+    check "Consent given"
     click_on "Update results"
 
     expect(page).to have_content(@child.full_name)

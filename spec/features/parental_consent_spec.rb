@@ -59,7 +59,7 @@ describe "Parental consent" do
   def then_there_should_be_no_consent_for_my_child
     expect(page).to have_content("No response")
 
-    choose "No response"
+    check "No response"
     click_on "Update results"
 
     expect(page).to have_content(@child.full_name)
@@ -156,7 +156,7 @@ describe "Parental consent" do
 
   def then_they_see_that_the_child_has_consent
     expect(page).to have_content("Consent given")
-    choose "Consent given"
+    check "Consent given"
     click_on "Update results"
     expect(page).to have_content(@child.full_name)
   end
@@ -198,6 +198,8 @@ describe "Parental consent" do
   def then_the_patient_should_be_ready_to_vaccinate
     expect(page).to have_content(@child.full_name)
     click_on @child.full_name
-    expect(page).to have_content("#{@child.full_name} is ready for the nurse")
+    expect(page).to have_content(
+      "#{@child.full_name} is ready for the vaccinator"
+    )
   end
 end

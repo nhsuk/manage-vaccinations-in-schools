@@ -1,35 +1,18 @@
 # frozen_string_literal: true
 
 class AppSessionSummaryComponent < ViewComponent::Base
+  erb_template <<-ERB
+    <h3 class="nhsuk-heading-s nhsuk-u-margin-top-5">
+      <%= @session.location.name %>
+    </h3>
+
+     <%= govuk_summary_list(rows:, classes:) %>
+  ERB
+
   def initialize(session)
     super
 
     @session = session
-  end
-
-  def call
-    govuk_summary_list(
-      classes: %w[nhsuk-summary-list--no-border app-summary-list--full-width]
-    ) do |summary_list|
-      if (urn = location.urn).present?
-        summary_list.with_row do |row|
-          row.with_key { "School URN" }
-          row.with_value { urn }
-        end
-      end
-
-      if location.has_address?
-        summary_list.with_row do |row|
-          row.with_key { "Address" }
-          row.with_value { helpers.format_address_multi_line(location) }
-        end
-      end
-
-      summary_list.with_row do |row|
-        row.with_key { "Consent forms" }
-        row.with_value { consent_form_links }
-      end
-    end
   end
 
   private
@@ -38,7 +21,34 @@ class AppSessionSummaryComponent < ViewComponent::Base
 
   delegate :location, to: :session
 
-  def consent_form_links
+  def classes
+    %w[nhsuk-summary-list--no-border app-summary-list--full-width]
+  end
+
+  def rows
+    [school_urn_row, address_row, consent_forms_row].compact
+  end
+
+  def school_urn_row
+    if (text = location.urn).present?
+      { key: { text: "School URN" }, value: { text: } }
+    end
+  end
+
+  def address_row
+    if location.has_address?
+      {
+        key: {
+          text: "Address"
+        },
+        value: {
+          text: helpers.format_address_multi_line(location)
+        }
+      }
+    end
+  end
+
+  def consent_forms_row
     online_consent_links =
       if session.open_for_consent?
         ProgrammeGrouper
@@ -67,6 +77,14 @@ class AppSessionSummaryComponent < ViewComponent::Base
 
     links = online_consent_links + download_consent_links
 
-    tag.ul(class: "nhsuk-list") { safe_join(links.map { tag.li(it) }) }
+    {
+      key: {
+        text: "Consent forms"
+      },
+      value: {
+        text:
+          tag.ul(class: "nhsuk-list") { safe_join(links.map { tag.li(it) }) }
+      }
+    }
   end
 end
