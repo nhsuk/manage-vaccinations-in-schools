@@ -230,7 +230,7 @@ describe "Delete vaccination record" do
   end
 
   def when_i_click_on_the_log
-    click_on "Activity log"
+    click_on "Session activity and notes"
   end
 
   def then_i_see_the_delete_vaccination

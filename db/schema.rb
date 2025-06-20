@@ -463,6 +463,18 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_09_112437) do
     t.index ["urn"], name: "index_locations_on_urn", unique: true
   end
 
+  create_table "notes", force: :cascade do |t|
+    t.bigint "created_by_user_id", null: false
+    t.bigint "patient_id", null: false
+    t.bigint "session_id", null: false
+    t.text "body", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_by_user_id"], name: "index_notes_on_created_by_user_id"
+    t.index ["patient_id"], name: "index_notes_on_patient_id"
+    t.index ["session_id"], name: "index_notes_on_session_id"
+  end
+
   create_table "notify_log_entries", force: :cascade do |t|
     t.integer "type", null: false
     t.uuid "template_id", null: false
@@ -880,6 +892,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_09_112437) do
   add_foreign_key "immunisation_imports_vaccination_records", "immunisation_imports"
   add_foreign_key "immunisation_imports_vaccination_records", "vaccination_records"
   add_foreign_key "locations", "teams"
+  add_foreign_key "notes", "patients"
+  add_foreign_key "notes", "sessions"
+  add_foreign_key "notes", "users", column: "created_by_user_id"
   add_foreign_key "notify_log_entries", "consent_forms"
   add_foreign_key "notify_log_entries", "parents", on_delete: :nullify
   add_foreign_key "notify_log_entries", "patients"

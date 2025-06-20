@@ -172,7 +172,7 @@ describe "Manage attendance" do
   end
 
   def when_i_go_to_the_activity_log
-    click_link "Activity log"
+    click_link "Session activity and notes"
   end
 
   def then_i_see_the_attendance_event

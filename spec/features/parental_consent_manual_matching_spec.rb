@@ -113,7 +113,7 @@ describe "Parental consent manual matching" do
   end
 
   def when_i_click_on_the_activity_log
-    click_on "Activity log"
+    click_on "Session activity and notes"
   end
 
   def then_i_see_the_consent_was_matched_manually

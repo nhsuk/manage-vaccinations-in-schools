@@ -276,7 +276,7 @@ Rails.application.routes.draw do
               as: :patient,
               only: [],
               module: :patient_sessions do
-      resource :activity, only: :show
+      resource :activity, only: %i[show create]
       resource :session_attendance, path: "attendance", only: %i[edit update]
 
       resources :programmes, path: "", param: :type, only: :show do
