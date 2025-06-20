@@ -25,7 +25,7 @@ class ProgrammesController < ApplicationController
   def sessions
     @sessions =
       policy_scope(Session)
-        .has_programme(@programme)
+        .has_programmes([@programme])
         .for_current_academic_year
         .includes(:location, :session_dates)
         .order("locations.name")
