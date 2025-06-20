@@ -73,6 +73,10 @@ class Programme < ApplicationRecord
     vaccines.flat_map(&:available_delivery_methods).uniq
   end
 
+  def has_multiple_delivery_methods?
+    available_delivery_methods.length > 1
+  end
+
   def available_delivery_sites
     vaccines.flat_map(&:available_delivery_sites).uniq
   end
