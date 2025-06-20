@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_09_112437) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_19_125105) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -816,6 +816,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_09_112437) do
     t.text "nivs_name", null: false
     t.boolean "discontinued", default: false, null: false
     t.bigint "programme_id", null: false
+    t.integer "side_effects", default: [], null: false, array: true
     t.index ["manufacturer", "brand"], name: "index_vaccines_on_manufacturer_and_brand", unique: true
     t.index ["nivs_name"], name: "index_vaccines_on_nivs_name", unique: true
     t.index ["programme_id"], name: "index_vaccines_on_programme_id"
