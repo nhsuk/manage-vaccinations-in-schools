@@ -89,6 +89,7 @@ class DraftVaccinationRecord
   on_wizard_step :confirm, exact: true do
     validates :outcome, presence: true
     validates :notes, length: { maximum: 1000 }
+    validate :patient_attended_session
   end
 
   with_options on: :update,
@@ -210,5 +211,22 @@ class DraftVaccinationRecord
 
   def can_change_outcome?
     outcome != "already_had" || editing? || session.nil? || session.today?
+  end
+
+  def patient_attended_session
+    unless PatientSession::RegistrationStatus
+             .for_patient_session(patient, session)
+             .allows_recording_vaccination
+             .exists?
+      date = performed_at.to_date
+      errors.add(
+        :session_id,
+        :patient_not_attending,
+        patient_full_name: patient.full_name,
+        display_date:
+          date.today? ? "Today (#{date.to_fs(:long)})" : date.to_fs(:long),
+        location_name: location[:name]
+      )
+    end
   end
 end
