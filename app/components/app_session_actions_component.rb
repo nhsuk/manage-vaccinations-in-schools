@@ -49,7 +49,7 @@ class AppSessionActionsComponent < ViewComponent::Base
     return nil if count.zero?
 
     href =
-      session_consent_path(session, search_form: { consent_status: status })
+      session_consent_path(session, search_form: { consent_statuses: [status] })
 
     {
       key: {

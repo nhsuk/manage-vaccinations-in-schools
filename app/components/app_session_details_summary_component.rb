@@ -41,7 +41,7 @@ class AppSessionDetailsSummaryComponent < ViewComponent::Base
       patient_sessions.has_consent_status(status, programme: programmes).count
 
     href =
-      session_consent_path(session, search_form: { consent_status: status })
+      session_consent_path(session, search_form: { consent_statuses: [status] })
 
     {
       key: {
