@@ -116,6 +116,25 @@ class ImmunisationImport < ApplicationRecord
     vaccination_records = @vaccination_records_batch.to_a
     patient_sessions = @patient_sessions_batch.to_a
 
+    vaccination_records_by_key = {}
+
+    vaccination_records.reject! do |record|
+      key = [
+        record.patient&.nhs_number,
+        record.programme&.id,
+        record.vaccine&.id,
+        record.dose_sequence,
+        record.performed_at
+      ]
+
+      if vaccination_records_by_key[key]
+        next true
+      else
+        vaccination_records_by_key[key] = record
+        next false
+      end
+    end
+
     VaccinationRecord.import(vaccination_records, on_duplicate_key_update: :all)
     PatientSession.import(patient_sessions, on_duplicate_key_ignore: :all)
 
