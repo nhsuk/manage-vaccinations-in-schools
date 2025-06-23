@@ -50,7 +50,9 @@ class AppSessionDetailsSummaryComponent < ViewComponent::Base
       value: {
         text: I18n.t("children", count:)
       },
-      actions: [{ text: "Review", href: }]
+      actions: [
+        { text: "Review", visually_hidden_text: "consent refused", href: }
+      ]
     }
   end
 
@@ -78,7 +80,7 @@ class AppSessionDetailsSummaryComponent < ViewComponent::Base
       value: {
         text: safe_join(texts, tag.br)
       },
-      actions: [{ text: "Review", href: }]
+      actions: [{ text: "Review", visually_hidden_text: "vaccinated", href: }]
     }
   end
 end

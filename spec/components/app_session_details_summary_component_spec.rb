@@ -22,5 +22,8 @@ describe AppSessionDetailsSummaryComponent do
     it { should have_text("Cohort\n3 children") }
     it { should have_text("Consent refused\n1 child") }
     it { should have_text("Vaccinated\n1 vaccination given for HPV") }
+    it { should have_link("Import class lists") }
+    it { should have_link("Review consent refused") }
+    it { should have_link("Review vaccinated") }
   end
 end
