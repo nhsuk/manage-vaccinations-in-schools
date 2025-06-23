@@ -205,3 +205,4 @@ concerns on the server.
 * Programme operations and vaccination recording
 * Offline support - Browser-based component
 * FHIR server synchronisation
+* Reporting (in development)
