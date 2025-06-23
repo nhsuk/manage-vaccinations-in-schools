@@ -3,7 +3,6 @@
 This directory contains documentation for the Manage vaccinations in schools service.
 
 - [Architecture](architecture.adoc)
-- [Deployment](deployment.adoc)
 - [Offline Support](offline-support.adoc)
 - [Offline CSRF Security](offline-csrf-security.adoc)
 
