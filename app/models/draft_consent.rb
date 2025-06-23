@@ -13,6 +13,7 @@ class DraftConsent
   end
 
   attr_reader :new_or_existing_contact
+  attr_accessor :triage_form_valid
 
   attribute :health_answers, array: true, default: []
   attribute :notes, :string
@@ -32,7 +33,7 @@ class DraftConsent
   attribute :response, :string
   attribute :route, :string
   attribute :triage_notes, :string
-  attribute :triage_status, :string
+  attribute :triage_status_and_vaccine_method, :string
   attribute :vaccine_methods, array: true, default: []
 
   def wizard_steps
@@ -123,8 +124,7 @@ class DraftConsent
   end
 
   on_wizard_step :triage, exact: true do
-    validates :triage_status, inclusion: { in: Triage.statuses.keys }
-    validates :triage_notes, length: { maximum: 1000 }
+    validates :triage_form_valid, presence: true
   end
 
   on_wizard_step :notes, exact: true do
@@ -261,19 +261,16 @@ class DraftConsent
     self.programme_id = value.id
   end
 
-  def write_to!(consent, triage:)
+  def write_to!(consent, triage_form:)
     super(consent)
 
     consent.parent = parent
     consent.submitted_at ||= Time.current
 
     if triage_allowed? && response_given?
-      triage.notes = triage_notes || ""
-      triage.organisation = organisation
-      triage.patient = patient
-      triage.performed_by_user_id = recorded_by_user_id
-      triage.programme = programme
-      triage.status = triage_status
+      triage_form.notes = triage_notes || ""
+      triage_form.current_user = recorded_by
+      triage_form.status_and_vaccine_method = triage_status_and_vaccine_method
     end
   end
 
@@ -348,6 +345,10 @@ class DraftConsent
 
   def triage_allowed?
     TriagePolicy.new(@current_user, Triage).new?
+  end
+
+  def triage_status_and_vaccine_method_options
+    Triage.new(patient:, programme:).status_and_vaccine_method_options
   end
 
   def health_answers_are_valid

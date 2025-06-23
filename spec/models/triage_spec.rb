@@ -8,6 +8,7 @@
 #  invalidated_at       :datetime
 #  notes                :text             default(""), not null
 #  status               :integer          not null
+#  vaccine_method       :integer
 #  created_at           :datetime         not null
 #  updated_at           :datetime         not null
 #  organisation_id      :bigint           not null
@@ -31,10 +32,17 @@
 #
 
 describe Triage do
-  subject(:triage) { create(:triage) }
+  subject { build(:triage) }
 
   describe "validations" do
-    it { should_not validate_presence_of(:notes) }
-    it { should validate_length_of(:notes).is_at_most(1000) }
+    context "when safe to vaccinate" do
+      subject(:triage) { build(:triage, :ready_to_vaccinate) }
+
+      it do
+        expect(triage).to validate_inclusion_of(:vaccine_method).in_array(
+          %w[injection nasal]
+        )
+      end
+    end
   end
 end

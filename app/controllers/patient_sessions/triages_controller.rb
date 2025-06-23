@@ -3,20 +3,38 @@
 class PatientSessions::TriagesController < PatientSessions::BaseController
   include TriageMailerConcern
 
-  before_action :set_triage
-
   after_action :verify_authorized
 
   def new
-    authorize @triage
+    authorize Triage
+
+    previous_triage =
+      @patient
+        .triages
+        .not_invalidated
+        .order(created_at: :desc)
+        .find_by(programme: @programme)
+
+    @triage_form =
+      TriageForm.new(
+        patient_session: @patient_session,
+        programme: @programme,
+        triage: previous_triage
+      )
   end
 
   def create
-    @triage.assign_attributes(triage_params.merge(performed_by: current_user))
+    authorize Triage
 
-    authorize @triage
+    @triage_form =
+      TriageForm.new(
+        current_user:,
+        patient_session: @patient_session,
+        programme: @programme,
+        **triage_form_params
+      )
 
-    if @triage.save(context: :consent)
+    if @triage_form.save
       StatusUpdater.call(patient: @patient)
 
       ConsentGrouper
@@ -40,17 +58,8 @@ class PatientSessions::TriagesController < PatientSessions::BaseController
 
   private
 
-  def set_triage
-    @triage =
-      Triage.new(
-        patient: @patient,
-        programme: @programme,
-        organisation: @session.organisation
-      )
-  end
-
-  def triage_params
-    params.expect(triage: %i[status notes])
+  def triage_form_params
+    params.expect(triage_form: %i[status_and_vaccine_method notes])
   end
 
   def redirect_path

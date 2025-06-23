@@ -11,7 +11,7 @@
 <% end %>
 
 <%= render AppTriageFormComponent.new(
-      patient_session: @patient_session,
-      programme: @programme,
-      triage: @triage,
+      @triage_form,
+      url: session_patient_programme_triages_path(@session, @patient, @programme),
+      heading: false,
     ) %>
