@@ -1,0 +1,302 @@
+# PII Anonymization Configuration
+# This file defines which database fields contain personally identifiable information (PII)
+# and how they should be anonymized while preserving database relationships.
+#
+# Processing Strategy:
+# Instead of processing entire tables, we process by information type in batches.
+# Each batch processes 1000 primary records and all their related records in a single transaction.
+# This prevents deadlocks and ensures consistency across foreign key relationships.
+
+# Configuration for each information type and the tables it affects
+information_types:
+  # Process names across all tables that contain them
+  names:
+    description: "First names, last names, and preferred names across all models"
+    primary_table: users  # Start with users as the primary driver
+    primary_key: id
+    batch_size: 1000
+
+    # All tables and fields that will be updated in each batch transaction
+    tables:
+      users:
+        primary_key: id
+        fields:
+          given_name:
+            type: first_name
+            faker_method: "Faker::Name.first_name"
+            encrypted: true
+          family_name:
+            type: last_name
+            faker_method: "Faker::Name.last_name"
+            encrypted: true
+
+      patients:
+        # No foreign key to users - process all patients in each batch
+        primary_key: id
+        batch_strategy: all_records
+        fields:
+          given_name:
+            type: first_name
+            faker_method: "Faker::Name.first_name"
+            encrypted: false
+          family_name:
+            type: last_name
+            faker_method: "Faker::Name.last_name"
+            encrypted: false
+          preferred_given_name:
+            type: first_name
+            faker_method: "Faker::Name.first_name"
+            encrypted: true
+            nullable: true
+          preferred_family_name:
+            type: last_name
+            faker_method: "Faker::Name.last_name"
+            encrypted: true
+            nullable: true
+
+      consent_forms:
+        # No direct foreign key to users - process all consent forms in each batch
+        primary_key: id
+        batch_strategy: all_records
+        fields:
+          given_name:
+            type: first_name
+            faker_method: "Faker::Name.first_name"
+            encrypted: false
+            nullable: true
+          family_name:
+            type: last_name
+            faker_method: "Faker::Name.last_name"
+            encrypted: false
+            nullable: true
+          preferred_given_name:
+            type: first_name
+            faker_method: "Faker::Name.first_name"
+            encrypted: false
+            nullable: true
+          preferred_family_name:
+            type: last_name
+            faker_method: "Faker::Name.last_name"
+            encrypted: false
+            nullable: true
+          parent_full_name:
+            type: full_name
+            faker_method: "PIIAnonymizer::FakeDataGenerators.full_name"
+            encrypted: false
+            nullable: true
+
+  # Process contact information (emails and phones)
+  contact_info:
+    description: "Email addresses and phone numbers across all models"
+    primary_table: parents  # Start with parents as they drive most contact relationships
+    primary_key: id
+    batch_size: 1000
+
+    tables:
+      parents:
+        primary_key: id
+        fields:
+          email:
+            type: email
+            faker_method: "PIIAnonymizer::FakeDataGenerators.email"
+            encrypted: true
+            unique: true
+            nullable: true
+          phone:
+            type: phone
+            faker_method: "PIIAnonymizer::FakeDataGenerators.uk_phone"
+            encrypted: true
+            nullable: true
+          contact_method_other_details:
+            type: text
+            faker_method: "PIIAnonymizer::FakeDataGenerators.contact_method_description"
+            encrypted: true
+            nullable: true
+
+      users:
+        # No direct foreign key to parents - process all users in each batch
+        primary_key: id
+        batch_strategy: all_records
+        fields:
+          email:
+            type: email
+            faker_method: "PIIAnonymizer::FakeDataGenerators.email"
+            encrypted: true
+            unique: true
+
+      consent_forms:
+        # No direct foreign key to parents - process all consent forms in each batch
+        primary_key: id
+        batch_strategy: all_records
+        fields:
+          parent_email:
+            type: email
+            faker_method: "PIIAnonymizer::FakeDataGenerators.email"
+            encrypted: false
+            nullable: true
+          parent_phone:
+            type: phone
+            faker_method: "PIIAnonymizer::FakeDataGenerators.uk_phone"
+            encrypted: false
+            nullable: true
+          parent_contact_method_other_details:
+            type: text
+            faker_method: "PIIAnonymizer::FakeDataGenerators.contact_method_description"
+            encrypted: false
+            nullable: true
+
+  # Process NHS numbers (unique identifiers)
+  nhs_numbers:
+    description: "NHS numbers and other unique patient identifiers"
+    primary_table: patients  # NHS numbers are primarily on patients
+    primary_key: id
+    batch_size: 1000
+
+    tables:
+      patients:
+        primary_key: id
+        fields:
+          nhs_number:
+            type: nhs_number
+            faker_method: "PIIAnonymizer::FakeDataGenerators.nhs_number"
+            encrypted: true
+            unique: true
+            nullable: true
+
+  # Process addresses
+  addresses:
+    description: "Address information across all models"
+    primary_table: patients  # Patients are the primary source of addresses
+    primary_key: id
+    batch_size: 1000
+
+    tables:
+      patients:
+        primary_key: id
+        fields:
+          address_line_1:
+            type: address_line
+            faker_method: "PIIAnonymizer::FakeDataGenerators.uk_address_line"
+            encrypted: true
+            nullable: true
+          address_line_2:
+            type: address_line
+            faker_method: "Faker::Address.secondary_address"
+            encrypted: true
+            nullable: true
+          address_town:
+            type: town
+            faker_method: "PIIAnonymizer::FakeDataGenerators.uk_town"
+            encrypted: true
+            nullable: true
+          address_postcode:
+            type: postcode
+            faker_method: "PIIAnonymizer::FakeDataGenerators.uk_postcode"
+            encrypted: true
+            nullable: true
+
+      consent_forms:
+        # No direct foreign key to patients - process all consent forms in each batch
+        primary_key: id
+        batch_strategy: all_records
+        fields:
+          address_line_1:
+            type: address_line
+            faker_method: "PIIAnonymizer::FakeDataGenerators.uk_address_line"
+            encrypted: true
+            nullable: true
+          address_line_2:
+            type: address_line
+            faker_method: "Faker::Address.secondary_address"
+            encrypted: true
+            nullable: true
+          address_town:
+            type: town
+            faker_method: "PIIAnonymizer::FakeDataGenerators.uk_town"
+            encrypted: true
+            nullable: true
+          address_postcode:
+            type: postcode
+            faker_method: "PIIAnonymizer::FakeDataGenerators.uk_postcode"
+            encrypted: true
+            nullable: true
+
+  # Process other text fields and relationship descriptions
+  other_pii:
+    description: "Other PII text fields and relationship descriptions"
+    primary_table: parents  # Start with parents for relationship data
+    primary_key: id
+    batch_size: 1000
+
+    tables:
+      parents:
+        primary_key: id
+        fields:
+          full_name:
+            type: full_name
+            faker_method: "PIIAnonymizer::FakeDataGenerators.full_name"
+            encrypted: true
+            nullable: true
+
+      consent_forms:
+        # No direct foreign key to parents - process all consent forms in each batch
+        primary_key: id
+        batch_strategy: all_records
+        fields:
+          parent_relationship_other_name:
+            type: text
+            faker_method: "PIIAnonymizer::FakeDataGenerators.relationship_description"
+            encrypted: false
+            nullable: true
+
+# Audit tables that may contain PII in their audited_changes column
+audit_tables:
+  audits:
+    table_name: audits
+    jsonb_columns:
+      audited_changes:
+        # This column contains JSON with field changes
+        # We'll need to anonymize any PII field names that appear in the JSON
+        pii_field_patterns:
+          - given_name
+          - family_name
+          - preferred_given_name
+          - preferred_family_name
+          - nhs_number
+          - email
+          - phone
+          - full_name
+          - address_line_1
+          - address_line_2
+          - address_town
+          - address_postcode
+          - parent_full_name
+          - parent_email
+          - parent_phone
+          - contact_method_other_details
+
+# Processing configuration
+processing:
+  # Default batch size (can be overridden per information type)
+  default_batch_size: 1000
+  parallel_threads: 4
+
+  # Order of processing information types
+  # Each type processes all related tables in a single transaction
+  processing_order:
+    - names           # Process all names first
+    - contact_info    # Then contact information
+    - nhs_numbers     # Then unique identifiers
+    - addresses       # Then addresses
+    - other_pii       # Finally other PII fields
+    - audits          # Process audit tables last
+
+# Backup configuration
+backup:
+  required: true
+  tables_to_backup:
+    - patients
+    - parents
+    - users
+    - consent_forms
+    - audits
