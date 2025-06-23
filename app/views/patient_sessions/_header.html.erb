@@ -59,7 +59,7 @@
     
       nav.with_item(
         href: session_patient_activity_path(@session, @patient, return_to: params[:return_to]),
-        text: "Activity log",
+        text: "Session activity and notes",
         selected: request.path.ends_with?("/activity"),
       )
     end %>

@@ -108,8 +108,10 @@ module CIS2AuthHelper
       workgroups:
     )
 
-    if page.driver.respond_to? :get
+    if try(:page)&.driver.respond_to?(:get)
       page.driver.get "/users/auth/cis2/callback"
+    elsif defined?(:get)
+      get "/users/auth/cis2/callback"
     else
       visit "/users/auth/cis2/callback"
     end

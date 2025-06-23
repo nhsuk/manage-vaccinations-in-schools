@@ -25,7 +25,7 @@ describe "Access log" do
   scenario "View patient's activity log in a session" do
     when_i_go_to_the_session
     and_i_go_to_a_patient
-    and_i_click_on_activity_log
+    and_i_click_on_session_activity_and_notes
     then_i_am_recorded_in_the_access_log_twice(controller: "patient_sessions")
   end
 
@@ -69,6 +69,10 @@ describe "Access log" do
 
   def and_i_click_on_activity_log
     click_on "Activity log"
+  end
+
+  def and_i_click_on_session_activity_and_notes
+    click_on "Session activity and notes"
   end
 
   def then_i_am_recorded_in_the_access_log(controller:)

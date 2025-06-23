@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 describe AppPatientSessionSearchResultCardComponent do
-  subject { render_inline(component) }
+  subject(:rendered) { render_inline(component) }
 
   let(:component) { described_class.new(patient_session, context:) }
 
@@ -28,6 +28,37 @@ describe AppPatientSessionSearchResultCardComponent do
   it { should have_link("SELDON, Hari", href:) }
   it { should have_text("Year 8") }
   it { should have_text("Consent status") }
+
+  context "when patient session has notes" do
+    let(:note) { create(:note, patient:, session:) }
+
+    it { should have_text(note.body) }
+    it { should_not have_link("Continue reading") }
+  end
+
+  context "when patient session has a long note" do
+    before { create(:note, patient:, session:, body: "a long note " * 50) }
+
+    it do
+      expect(rendered).to have_text(
+        "a long note a long note a long note a long note a long note a long note " \
+          "a long note a long note a long note a long note a long note a long note " \
+          "a long note a long note a long note a long note a long note a long note " \
+          "a long note a long note a long note a long note a long note a long note " \
+          "a long note a long note a long…"
+      )
+    end
+
+    it { should have_link("Continue reading") }
+  end
+
+  context "when patient has notes from a different session" do
+    let(:other_session) { create(:session, programmes: [programme]) }
+    let(:note) { create(:note, patient:, session: other_session) }
+
+    it { should_not have_text(note.body) }
+    it { should_not have_link("Continue reading") }
+  end
 
   context "when context is register" do
     let(:context) { :register }

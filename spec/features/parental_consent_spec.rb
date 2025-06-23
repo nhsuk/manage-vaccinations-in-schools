@@ -181,7 +181,7 @@ describe "Parental consent" do
 
     click_on "Back to #{@child.full_name}"
 
-    click_on "Activity log"
+    click_on "Session activity and notes"
     expect(page).to have_content("Consent given")
     expect(page).not_to have_content(
       "Consent response manually matched with child record"

@@ -1,3 +1,5 @@
 <%= render "patient_sessions/header" %>
 
+<%= render AppCreateNoteComponent.new(@note, open: action_name == "create") %>
+
 <%= render AppActivityLogComponent.new(patient_session: @patient_session) %>

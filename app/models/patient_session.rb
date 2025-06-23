@@ -38,12 +38,19 @@ class PatientSession < ApplicationRecord
   has_one :organisation, through: :session
   has_many :session_attendances, dependent: :destroy
 
+  has_many :notes, -> { where(session_id: it.session_id) }, through: :patient
+
+  has_one :latest_note,
+          -> { where(session_id: it.session_id).order(created_at: :desc) },
+          through: :patient,
+          source: :notes
+
   has_many :session_notifications,
-           -> { where(session_id: _1.session_id) },
+           -> { where(session_id: it.session_id) },
            through: :patient
 
   has_many :vaccination_records,
-           -> { where(session_id: _1.session_id) },
+           -> { where(session_id: it.session_id) },
            through: :patient
 
   has_and_belongs_to_many :immunisation_imports
