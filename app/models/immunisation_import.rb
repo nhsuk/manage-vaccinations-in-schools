@@ -41,7 +41,43 @@ class ImmunisationImport < ApplicationRecord
   private
 
   def check_rows_are_unique
-    # there is no uniqueness check for immunisations
+    # Immunisation uniqueness check will be based on a composite key of
+    # patient, programme, vaccine, batch and date of vaccination
+    composite_keys =
+      rows.map do |row|
+        next nil unless row.valid?
+        next nil if row.uuid.present?
+        [
+          row.patient_nhs_number,
+          row.programme_name,
+          row.vaccine_name,
+          row.dose_sequence,
+          row.date_of_vaccination
+        ]
+      end
+
+    composite_keys.compact.tally.each do |key, count|
+      next if count <= 1
+
+      rows.each do |row|
+        next unless row.valid?
+        next if row.uuid.present?
+
+        row_key = [
+          row.patient_nhs_number,
+          row.programme_name,
+          row.vaccine_name,
+          row.dose_sequence,
+          row.date_of_vaccination
+        ]
+
+        next unless row_key == key
+        row.errors.add(
+          :base,
+          "The same vaccination record appears multiple times in this file."
+        )
+      end
+    end
   end
 
   def parse_row(data)
@@ -79,6 +115,25 @@ class ImmunisationImport < ApplicationRecord
     # objects to add IDs to any new records.
     vaccination_records = @vaccination_records_batch.to_a
     patient_sessions = @patient_sessions_batch.to_a
+
+    vaccination_records_by_key = {}
+
+    vaccination_records.reject! do |record|
+      key = [
+        record.patient&.nhs_number,
+        record.programme&.id,
+        record.vaccine&.id,
+        record.dose_sequence,
+        record.performed_at
+      ]
+
+      if vaccination_records_by_key[key]
+        next true
+      else
+        vaccination_records_by_key[key] = record
+        next false
+      end
+    end
 
     VaccinationRecord.import(vaccination_records, on_duplicate_key_update: :all)
     PatientSession.import(patient_sessions, on_duplicate_key_ignore: :all)
