@@ -58,12 +58,6 @@ class SessionsController < ApplicationController
     redirect_to layout: "full", flash: { success: "Session is now in progress" }
   end
 
-  def send_extra_consent_reminders
-    SendSchoolConsentRemindersJob.perform_now(@session)
-
-    redirect_to edit_session_path(@session), flash: { success: "Consent reminders sent." }
-  end
-
   private
 
   def set_session

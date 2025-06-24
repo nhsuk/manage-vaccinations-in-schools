@@ -605,6 +605,33 @@ en:
       register: Register
       record: Record vaccinations
       outcome: Session outcomes
+    dates:
+      label: Session dates
+    reminders:
+      label: "Send reminders"
+      title: "Manage consent reminders"
+      description: >
+        Mavis automatically sends email and text reminders to parents who have not
+        responded to the initial consent request.
+
+        Automatic reminders are sent 14, 7 and 3 days before a session.
+
+        You can also send reminders manually. Mavis will then skip the next automatic
+        reminder if it's due to be sent within 3 days.
+      reminder_dates:
+        label: "Automatic consent reminder schedule"
+        description: "Reminders will be sent automatically on these dates:"
+      patients_to_get_consent:
+        label: "Parents who need to give consent"
+        status: "%{count} parents out of %{total} have not responded yet"
+      next_reminder_date:
+        label: "Next reminder"
+        text: "The next automatic consent reminder will be sent on %{date}"
+        none: "There are no more automatic consent reminders to be sent"
+      preConfirm: "Mavis will skip the next automatic reminder if it's scheduled to be sent within 3 days."
+      confirm: "Send manual consent reminders"
+      success: "Manual consent reminders sent"
+
   table:
     no_filtered_results: We couldn’t find any children that matched your filters.
     no_results: No results

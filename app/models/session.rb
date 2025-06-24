@@ -240,6 +240,78 @@ class Session < ApplicationRecord
     close_consent_at&.today? || close_consent_at&.future? || false
   end
 
+  # Get dates reminders to give consent are sent
+  def reminder_dates
+    return [] if dates.empty? || days_before_consent_reminders.nil?
+
+    dates.map { |date| date - days_before_consent_reminders.days }
+  end
+
+  # Get future reminder dates
+  def future_reminder_dates
+    reminder_dates.select(&:future?)
+  end
+
+  # Get the next reminder date
+  def next_reminder_date
+    future_reminder_dates.first
+  end
+
+  # Get patients to record count by programme
+  def patients_to_record_by_programme
+    result = {}
+
+    programmes.each do |programme|
+      count =
+        patient_sessions.has_session_status(
+          :ready_to_vaccinate,
+          programme: programme
+        ).count
+      result[programme.name] = count
+    end
+
+    result
+  end
+
+  # Get vaccinated patients count by programme
+  def patients_vaccinated_by_programme
+    result = {}
+
+    programmes.each do |programme|
+      count =
+        patient_sessions.has_session_status(
+          :vaccinated,
+          programme: programme
+        ).count
+      result[programme.name] = count
+    end
+
+    result
+  end
+
+  # Get total patients to record count
+  def patients_to_record_count
+    patient_sessions.has_session_status(:ready_to_vaccinate).count
+  end
+
+  # Get count of patients with no consent response
+  def patients_with_no_consent_response_count
+    # Count patients with no consent response across all programmes
+    programmes
+      .map do |programme|
+        patient_sessions.has_consent_status(
+          :no_response,
+          programme: programme
+        ).count
+      end
+      .max || 0
+  end
+
+  # Get total patient count
+  def total_patients_count
+    patient_sessions.count
+  end
+
   private
 
   def set_slug

@@ -58,11 +58,6 @@
   </div>
 </div>
 
-<%= button_to "Send extra consent reminders",
-              send_extra_consent_reminders_session_path(@session),
-              method: :post,
-              class: "nhsuk-button nhsuk-button--secondary" %>
-
 <% content_for :after_main do %>
   <%= render(AppDevToolsComponent.new) do %>
     <p class="nhsuk-u-reading-width">

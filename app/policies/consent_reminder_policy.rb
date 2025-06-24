@@ -1,7 +1,11 @@
 # frozen_string_literal: true
 
-class SessionPolicy < ApplicationPolicy
-  def make_in_progress?
+class ConsentReminderPolicy < ApplicationPolicy
+  def show?
+    user.is_nurse? || user.is_admin?
+  end
+
+  def create?
     user.is_nurse? || user.is_admin?
   end
 
