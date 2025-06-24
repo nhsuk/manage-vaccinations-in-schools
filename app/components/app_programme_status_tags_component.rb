@@ -12,11 +12,9 @@ class AppProgrammeStatusTagsComponent < ViewComponent::Base
     safe_join(
       programme_statuses.map do |programme, hash|
         status = hash[:status]
-        vaccine_method =
-          if programme.has_multiple_delivery_methods?
-            hash[:vaccine_methods]&.first
-          end
-        programme_status_tag(programme, status, vaccine_method)
+        vaccine_methods =
+          (hash[:vaccine_methods] if programme.has_multiple_delivery_methods?)
+        programme_status_tag(programme, status, vaccine_methods)
       end
     )
   end
@@ -25,7 +23,7 @@ class AppProgrammeStatusTagsComponent < ViewComponent::Base
 
   attr_reader :programme_statuses, :outcome
 
-  def programme_status_tag(programme, status, vaccine_method)
+  def programme_status_tag(programme, status, vaccine_methods)
     programme_tag =
       tag.strong(
         programme.name,
@@ -38,9 +36,9 @@ class AppProgrammeStatusTagsComponent < ViewComponent::Base
     status_tag = tag.strong(label, class: "nhsuk-tag nhsuk-tag--#{colour}")
 
     vaccine_methods_span =
-      if vaccine_method.present?
+      if vaccine_methods.present?
         tag.span(
-          Vaccine.human_enum_name(:method, vaccine_method),
+          Vaccine.human_enum_name(:method, vaccine_methods.join("_")),
           class: "nhsuk-u-secondary-text-color"
         )
       end
