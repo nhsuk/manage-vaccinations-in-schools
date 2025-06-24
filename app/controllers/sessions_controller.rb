@@ -55,7 +55,13 @@ class SessionsController < ApplicationController
   def make_in_progress
     @session.session_dates.find_or_create_by!(value: Date.current)
 
-    redirect_to session_path, flash: { success: "Session is now in progress" }
+    redirect_to layout: "full", flash: { success: "Session is now in progress" }
+  end
+
+  def send_extra_consent_reminders
+    SendSchoolConsentRemindersJob.perform_now(@session)
+
+    redirect_to edit_session_path(@session), flash: { success: "Consent reminders sent." }
   end
 
   private

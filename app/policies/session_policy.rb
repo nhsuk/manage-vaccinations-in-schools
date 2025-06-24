@@ -5,6 +5,10 @@ class SessionPolicy < ApplicationPolicy
     user.is_nurse? || user.is_admin?
   end
 
+  def send_extra_consent_reminders?
+    update?
+  end
+
   class Scope < ApplicationPolicy::Scope
     def resolve
       scope.where(organisation: user.selected_organisation)

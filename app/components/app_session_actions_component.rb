@@ -35,30 +35,47 @@ class AppSessionActionsComponent < ViewComponent::Base
   end
 
   def no_consent_response_row
-    consent_row("No consent response", status: "no_response")
-  end
+    status = "no_response"
 
-  def conflicting_consent_row
-    consent_row("Conflicting consent", status: "conflicts")
-  end
-
-  def consent_row(text, status:)
     count =
       patient_sessions.has_consent_status(status, programme: programmes).count
 
     return nil if count.zero?
 
     href =
-      session_consent_path(session, search_form: { consent_statuses: [status] })
+      session_consent_path(session, search_form: { consent_status: [status] })
 
     {
       key: {
-        text: text
+        text: "No consent response"
       },
       value: {
-        text: I18n.t("children", count:)
+        text: helpers.link_to(I18n.t(:children_with_no_consent_response, count:), href:).html_safe
       },
-      actions: [{ text: "Review", visually_hidden_text: text.downcase, href: }]
+      actions: [
+        { text: "Send reminders", href: }
+      ]
+    }
+  end
+
+  def conflicting_consent_row
+    status = "conflicts"
+
+    count =
+      patient_sessions.has_consent_status(status, programme: programmes).count
+
+    return nil if count.zero?
+
+    href =
+      session_consent_path(session, search_form: { consent_status: [status] })
+
+    {
+      key: {
+        text: "Conflicting consent"
+      },
+      value: {
+        text: helpers.link_to(I18n.t(:children_with_conflicting_consent_response, count:), href:).html_safe
+      },
     }
   end
 
@@ -77,11 +94,8 @@ class AppSessionActionsComponent < ViewComponent::Base
         text: "Triage needed"
       },
       value: {
-        text: I18n.t("children", count:)
-      },
-      actions: [
-        { text: "Review", visually_hidden_text: "triage needed", href: }
-      ]
+        text: helpers.link_to(I18n.t(:children_requiring_triage, count:), href).html_safe
+      }
     }
   end
 
@@ -100,11 +114,8 @@ class AppSessionActionsComponent < ViewComponent::Base
         text: "Register attendance"
       },
       value: {
-        text: I18n.t("children", count:)
-      },
-      actions: [
-        { text: "Review", visually_hidden_text: "register attendance", href: }
-      ]
+        text: helpers.link_to(I18n.t(:children_to_register, count:), href).html_safe
+      }
     }
   end
 
@@ -129,7 +140,7 @@ class AppSessionActionsComponent < ViewComponent::Base
 
     texts =
       counts_by_programme.map do |programme, count|
-        "#{I18n.t("children", count:)} for #{programme.name}"
+        I18n.t(:children_for_programme, count:, programme: programme.name)
       end
 
     href = session_record_path(session)
