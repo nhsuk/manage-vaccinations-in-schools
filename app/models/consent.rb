@@ -223,6 +223,29 @@ class Consent < ApplicationRecord
     end
   end
 
+  def create_or_update_reportable_consent_event
+    re =
+      ReportableConsentEvent.find_or_initialize_by(
+        source_id: self.id,
+        source_type: self.class.name
+      )
+    re.event_timestamp = self.consent_form&.recorded_at || self.submitted_at
+    re.event_type = self.response
+        
+    re.copy_attributes_from_references(
+      patient: self.patient,
+      parent: self.parent,
+      parent_relationship: self.patient.parent_relationships.find_by(parent_id: self.parent_id),
+      consent: self,
+      programme: self.programme,
+      organisation: self.organisation 
+    )
+
+    re.save!
+    re
+  end
+
+
   class ConsentFormNotRecorded < StandardError
   end
 end

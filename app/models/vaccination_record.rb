@@ -207,6 +207,29 @@ class VaccinationRecord < ApplicationRecord
 
   delegate :snomed_procedure_term, to: :vaccine, allow_nil: true
 
+  def create_or_update_reportable_vaccination_event
+    re =
+      ReportableVaccinationEvent.find_or_initialize_by(
+        source_id: self.id,
+        source_type: self.class.name
+      )
+    re.event_timestamp = self.performed_at
+    re.event_type = self.outcome
+
+    re.copy_attributes_from_references(
+      patient: self.patient.reload,
+      school: self.location,
+      vaccination_record: self,
+      vaccine: self.vaccine,
+      team: self.team,
+      organisation: self.team&.organisation,
+      programme: self.programme
+    )
+
+    re.save!
+    re
+  end
+
   private
 
   def requires_location_name? = location.nil?
