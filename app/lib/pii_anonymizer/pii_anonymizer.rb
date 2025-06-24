@@ -81,8 +81,14 @@ class PIIAnonymizer
       log_info "Creating backup: #{table_name} -> #{backup_table_name}"
 
       next if dry_run
+
+      quoted_backup_table =
+        ActiveRecord::Base.connection.quote_table_name(backup_table_name)
+      quoted_table_name =
+        ActiveRecord::Base.connection.quote_table_name(table_name)
+
       ActiveRecord::Base.connection.execute(
-        "CREATE TABLE #{backup_table_name} AS SELECT * FROM #{table_name}"
+        "CREATE TABLE #{quoted_backup_table} AS SELECT * FROM #{quoted_table_name}"
       )
     end
   end
@@ -253,14 +259,21 @@ class PIIAnonymizer
     return if updates.empty?
 
     # Build SQL to update records in the current batch
-    where_clause = if table_name == primary_table
-      # Update the primary table records directly
-      "#{primary_key} IN
-(SELECT #{primary_key} FROM #{table_name} ORDER BY #{primary_key} LIMIT #{batch_size} OFFSET #{offset})"
-    else
-      # Update all records in related tables (since we're processing by information type)
-      "1=1" # Update all records
-                   end
+    where_clause =
+      if table_name == primary_table
+        # Update the primary table records directly
+        quoted_primary_key =
+          ActiveRecord::Base.connection.quote_column_name(primary_key)
+        quoted_table_name =
+          ActiveRecord::Base.connection.quote_table_name(table_name)
+
+        "#{quoted_primary_key} IN " \
+          "(SELECT #{quoted_primary_key} FROM #{quoted_table_name} " \
+          "ORDER BY #{quoted_primary_key} LIMIT #{batch_size} OFFSET #{offset})"
+      else
+        # Update all records in related tables (since we're processing by information type)
+        "1=1" # Update all records
+      end
 
     update_sql = build_update_sql(table_name, updates, where_clause)
     log_info "Executing SQL: #{update_sql}" if dry_run
@@ -282,13 +295,16 @@ class PIIAnonymizer
   def build_update_sql(table_name, updates, where_clause = "1=1")
     set_clauses =
       updates
-        .map { |field, value|
+        .map do |field, value|
+          quoted_field = ActiveRecord::Base.connection.quote_column_name(field)
           quoted_value = ActiveRecord::Base.connection.quote(value)
-          "#{field} = #{quoted_value}"
-        }
+          "#{quoted_field} = #{quoted_value}"
+        end
         .join(", ")
 
-    "UPDATE #{table_name} SET #{set_clauses} WHERE #{where_clause}"
+    quoted_table_name =
+      ActiveRecord::Base.connection.quote_table_name(table_name)
+    "UPDATE #{quoted_table_name} SET #{set_clauses} WHERE #{where_clause}"
   end
 
   def generate_fake_value(field_config)
@@ -309,8 +325,10 @@ class PIIAnonymizer
   end
 
   def get_table_count(table_name)
+    quoted_table_name =
+      ActiveRecord::Base.connection.quote_table_name(table_name)
     ActiveRecord::Base.connection.select_value(
-      "SELECT COUNT(*) FROM #{table_name}"
+      "SELECT COUNT(*) FROM #{quoted_table_name}"
     )
   end
 

@@ -62,9 +62,9 @@ describe PIIAnonymizer do
       updates = { "given_name" => "John", "family_name" => "Doe" }
       sql = anonymizer.send(:build_update_sql, "users", updates)
 
-      expect(sql).to include("UPDATE users SET")
-      expect(sql).to include("given_name = 'John'")
-      expect(sql).to include("family_name = 'Doe'")
+      expect(sql).to include('UPDATE "users" SET')
+      expect(sql).to include('"given_name" = \'John\'')
+      expect(sql).to include('"family_name" = \'Doe\'')
     end
 
     it "properly quotes values to prevent SQL injection" do
