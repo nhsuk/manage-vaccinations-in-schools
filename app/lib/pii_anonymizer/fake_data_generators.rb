@@ -2,6 +2,7 @@
 
 require "faker"
 require "concurrent"
+require "active_support/core_ext/module/delegation"
 
 class PIIAnonymizer
   module FakeDataGenerators
@@ -18,14 +19,18 @@ class PIIAnonymizer
         # Validate that a generated value meets field requirements
         def validate_value(value, requirements = {})
           return false if value.nil? && !requirements[:nullable]
-          if value.present? && requirements[:max_length] &&
+
+          # Check length requirements (including empty strings)
+          if !value.nil? && requirements[:max_length] &&
                value.length > requirements[:max_length]
             return false
           end
-          if value.present? && requirements[:min_length] &&
+          if !value.nil? && requirements[:min_length] &&
                value.length < requirements[:min_length]
             return false
           end
+
+          # Check format requirements (only for non-empty strings)
           if requirements[:format] && value.respond_to?(:match?) &&
                !value.match?(requirements[:format])
             return false
@@ -452,45 +457,45 @@ class PIIAnonymizer
     # Main interface - delegates to specific generator classes
     class << self
       # Name generation methods
-      delegate :first_name, to: :NameGenerator
+      delegate :first_name, to: NameGenerator
 
-      delegate :last_name, to: :NameGenerator
+      delegate :last_name, to: NameGenerator
 
-      delegate :full_name, to: :NameGenerator
+      delegate :full_name, to: NameGenerator
 
       # Contact generation methods
-      delegate :email, to: :ContactGenerator
+      delegate :email, to: ContactGenerator
 
-      delegate :uk_phone, to: :ContactGenerator
+      delegate :uk_phone, to: ContactGenerator
 
-      delegate :contact_method_description, to: :ContactGenerator
+      delegate :contact_method_description, to: ContactGenerator
 
       # Address generation methods
-      delegate :uk_address_line, to: :AddressGenerator
+      delegate :uk_address_line, to: AddressGenerator
 
-      delegate :uk_town, to: :AddressGenerator
+      delegate :uk_town, to: AddressGenerator
 
-      delegate :uk_postcode, to: :AddressGenerator
+      delegate :uk_postcode, to: AddressGenerator
 
       # Identifier generation methods
-      delegate :nhs_number, to: :IdentifierGenerator
+      delegate :nhs_number, to: IdentifierGenerator
 
       # Text generation methods
-      delegate :relationship_description, to: :TextGenerator
+      delegate :relationship_description, to: TextGenerator
 
       def generic_text(max_length = 100)
         TextGenerator.generic_text(max_length)
       end
 
-      # Safely parse and call Faker methods without eval
+      # Use Rails' constantize for safer method calling
       def parse_and_call_faker_method(method_string)
         # Parse "Faker::Name.first_name" into class and method
-        if method_string =~ /^Faker::([A-Za-z]+)\.([a-z_]+)$/
-          class_name = ::Regexp.last_match(1)
+        if method_string =~ /^(Faker::[A-Za-z]+)\.([a-z_]+)$/
+          class_path = ::Regexp.last_match(1)
           method_name = ::Regexp.last_match(2)
 
-          # Safely get the Faker class
-          faker_class = Faker.const_get(class_name)
+          # Use Rails' constantize for safe class resolution
+          faker_class = class_path.constantize
 
           # Call the method if it exists
           if faker_class.respond_to?(method_name)
