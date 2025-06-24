@@ -322,5 +322,85 @@ describe ImmunisationImport do
         expect(existing_patient.reload.pending_changes).to be_empty
       end
     end
+
+    context "with duplicate records in the same file" do
+      let(:file) { "duplicate_vaccination_records.csv" }
+      let(:programmes) { [create(:programme, :hpv_all_vaccines)] }
+
+      it "creates the correct number of records based on unique composite keys" do
+        immunisation_import.load_data!
+        immunisation_import.parse_rows!
+        unique_keys =
+          immunisation_import
+            .rows
+            .select(&:valid?)
+            .map { |row|
+              [
+                row.patient_nhs_number.to_s,
+                row.programme_name.to_s,
+                row.vaccine_name.to_s,
+                row.dose_sequence.to_s,
+                row.date_of_vaccination&.to_date
+              ]
+            }
+            .uniq
+
+        process!
+
+        expect(immunisation_import.vaccination_records.count).to eq(
+          unique_keys.count
+        )
+      end
+    end
+
+    context "when discarded vaccination records are re-imported" do
+      let(:file) { "valid_flu.csv" }
+      let(:programmes) { [create(:programme, :flu_all_vaccines)] }
+
+      let(:first_import) do
+        create(
+          :immunisation_import,
+          organisation: organisation,
+          csv: csv,
+          uploaded_by: uploaded_by
+        ).tap(&:process!)
+      end
+
+      let(:vaccination_records) do
+        first_import.vaccination_records.includes(
+          :patient,
+          :programme,
+          :vaccine,
+          :batch
+        )
+      end
+
+      let(:record_count) { vaccination_records.count }
+
+      before do
+        vaccination_records.each(&:discard!)
+
+        csv.rewind
+      end
+
+      it "un-discards the matching vaccination records" do
+        expect { process! }.to change(VaccinationRecord.kept, :count).by(
+          record_count
+        ).and change(VaccinationRecord.discarded, :count).by(-record_count)
+
+        vaccination_records.each do |record|
+          expect(record.reload).not_to be_discarded
+        end
+      end
+
+      it "counts the un-discarded records as exact duplicates" do
+        process!
+
+        expect(immunisation_import.new_record_count).to eq(0)
+        expect(immunisation_import.exact_duplicate_record_count).to eq(
+          record_count
+        )
+      end
+    end
   end
 end
