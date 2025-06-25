@@ -8,7 +8,12 @@ class DummyClass
                 :school_address_postcode
       
   def self.attribute_names
-    [:patient_nhs_number, :patient_date_of_birth, :patient_date_of_death, :school_name, :school_address_postcode]
+    %w[ patient_nhs_number
+        patient_date_of_birth 
+        patient_date_of_death 
+        school_name 
+        school_address_postcode
+      ]
   end
 
   def has_attribute?(attr)
@@ -74,6 +79,26 @@ RSpec.describe DenormalizingConcern do
 
         it 'does not raise an error' do
           expect{ DummyClass.new(attrs) }.not_to raise_error
+        end
+      end
+    end
+  end
+
+  describe '#copy_attributes_from_references' do
+    context 'when an instance already has scoped attributes populated' do
+      subject(:instance){ DummyClass.new(attrs) }
+
+      let(:patient) { build(:patient, date_of_birth: '2018-02-03'.to_date, date_of_death: '2022-03-04'.to_date) }
+      let(:attrs) do
+        {
+          patient: patient,
+        }
+      end
+
+      describe 'passing the scope with a nil value' do
+        it 'sets all attributes starting with that scope to nil' do
+          instance.copy_attributes_from_references( patient: nil )
+          expect( instance ).to have_attributes( patient_date_of_birth: nil, patient_date_of_death: nil )
         end
       end
     end

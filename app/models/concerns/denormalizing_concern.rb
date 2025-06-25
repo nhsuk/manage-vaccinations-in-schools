@@ -20,13 +20,20 @@ module DenormalizingConcern
   included do
     def initialize(attrs={})
       references = attrs.to_h.select{ |_key,value| value.is_a?(ApplicationRecord)}
+      copy_attributes_from_references(references)
+
       simple_attrs = attrs.except(*references.keys)
       
-      # default initialization with simple values
-      super( simple_attrs.to_h.select{ has_attribute?(it.to_sym) } )
+      super( simple_attrs.to_h.select { self.class.attribute_names.include?(it.to_s) } )
+    end
 
+    def copy_attributes_from_references(references={})
       references.each_key do |name|
-        copy_scoped_attributes(name, attrs[name])
+        if references[name]
+          copy_scoped_attributes(name, references[name])
+        else
+          self.class.attribute_names.select{|k,v| k.start_with?(name.to_s + '_')}.each{|k| self[k] = nil }
+        end
       end
     end
 
@@ -35,10 +42,10 @@ module DenormalizingConcern
     # on self, prefixed with the prefix
     # e.g. self.school_address_postcode = obj.postcode and so on
     def copy_scoped_attributes(prefix, obj)
-      obj.attributes.each_key do |key|
+      obj.attributes&.each_key do |key|
         this_attr_name = [prefix, key].join('_')
         
-        if has_attribute?(this_attr_name)
+        if self.class.attribute_names.include?(this_attr_name.to_s)
           self[this_attr_name] = obj.attributes[key]
         end
       end
