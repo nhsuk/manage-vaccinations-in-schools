@@ -27,6 +27,9 @@ class AddReportableEvents < ActiveRecord::Migration[8.0]
       t.string  :gp_practice_address_town
       t.string  :gp_practice_address_postcode
 
+      t.bigint  :team_id
+      t.string  :team_name
+      t.bigint  :organisation_id
       t.string  :organisation_ods_code
       t.string  :organisation_name
 
