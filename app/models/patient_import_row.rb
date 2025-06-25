@@ -40,21 +40,26 @@ class PatientImportRow
   end
 
   def to_school_move(patient)
-    if patient.new_record? || patient.school != school ||
-         patient.home_educated != home_educated || patient.not_in_organisation?
-      school_move =
-        if school
-          SchoolMove.find_or_initialize_by(patient:, school:)
-        else
-          SchoolMove.find_or_initialize_by(
-            patient:,
-            home_educated:,
-            organisation:
-          )
-        end
+    return if patient.deceased?
 
-      school_move.tap { it.source = school_move_source }
+    unless patient.new_record? || patient.school != school ||
+             patient.home_educated != home_educated ||
+             patient.not_in_organisation?
+      return
     end
+
+    school_move =
+      if school
+        SchoolMove.find_or_initialize_by(patient:, school:)
+      else
+        SchoolMove.find_or_initialize_by(
+          patient:,
+          home_educated:,
+          organisation:
+        )
+      end
+
+    school_move.tap { it.source = school_move_source }
   end
 
   def to_parents
