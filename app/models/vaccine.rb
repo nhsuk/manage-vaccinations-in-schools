@@ -50,6 +50,9 @@ class Vaccine < ApplicationRecord
   scope :discontinued, -> { where(discontinued: true) }
 
   delegate :first_health_question, to: :health_questions
+  delegate :fhir_codeable_concept,
+           :fhir_manufacturer_reference,
+           to: :fhir_mapper
 
   def active? = !discontinued
 
@@ -81,4 +84,8 @@ class Vaccine < ApplicationRecord
   def available_delivery_methods
     AVAILABLE_DELIVERY_METHODS.fetch(method)
   end
+
+  private
+
+  def fhir_mapper = @fhir_mapper ||= FHIRMapper::Vaccine.new(self)
 end
