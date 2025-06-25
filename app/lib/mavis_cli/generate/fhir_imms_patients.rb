@@ -244,6 +244,7 @@ class FhirImmsPatientCreator
         outcome: "administered",
         performed_at: session_date + rand(8..16).hours,
         performed_by_user: @organisation.users.first,
+        performed_ods_code: @organisation.ods_code,
         dose_sequence:
           programme.default_dose_sequence || programme.vaccinated_dose_sequence,
         delivery_method: "intramuscular",
