@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: reportable_events
@@ -21,6 +23,7 @@
 #  patient_gender_code                         :integer
 #  patient_home_educated                       :boolean
 #  patient_nhs_number                          :string
+#  programme_type                              :string
 #  school_address_postcode                     :string
 #  school_address_town                         :string
 #  school_name                                 :string
@@ -47,6 +50,7 @@
 #  gp_practice_id                              :bigint
 #  organisation_id                             :bigint
 #  patient_id                                  :bigint
+#  programme_id                                :bigint
 #  school_id                                   :bigint
 #  source_id                                   :bigint
 #  team_id                                     :bigint
@@ -66,16 +70,16 @@ class ReportableEvent < ApplicationRecord
 
   belongs_to :source, polymorphic: true
 
-  enum :event_type, 
-      {
+  enum :event_type,
+       {
          vaccination_not_well: "not_well",
          vaccination_administered: "vaccination_administered",
          consent_request_sent: "consent_request_sent",
          consent_given: "consent_given",
-         consent_refused: "consent_refused",
+         consent_refused: "consent_refused"
        },
        validate: true
-  
+
   before_validation :set_event_timestamp_date_part_attributes
 
   protected
