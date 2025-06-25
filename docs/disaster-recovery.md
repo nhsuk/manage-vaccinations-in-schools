@@ -45,15 +45,14 @@ Deploy to your restored environment as described in [Terraform: Local deployment
 
 - In the AWS Backup console, go to the Vaults page and select a suitable recovery point.
 - Copy the arn of the DB snapshot and add it to the `snapshot_identifier` in the `aws_rds_cluster core` resource block in
-  `terraform/app/rds.tf`.
+  [rds.tf](../terraform/app/rds.tf).
 - Recreate the infrastructure by running `terraform apply`.
 - After the infrastructure is created, remove the `snapshot_identifier` line from the `aws_rds_cluster core` resource block again
 
 ## Restoring a production database from a vault backup in the backup account
 
-- Verify that the AWS Backup vault still exists in the production account. If it doesn't, you will need to restore the vault first.
-  - sdf
-  - asdf
+- Verify that the AWS Backup vault still exists in the production account.
+  - If it doesn't, you will need to restore the vault first by running [deploy-backup-infrastructure.yml](../.github/workflows/deploy-backup-infrastructure.yml) workflow.
 - Go to the AWS Backup console in the backup account and select a recovery point to be restored.
 - Click on Actions > Copy > Copy back to source account.
 - Once it's copied back to the source account, follow [Restoring a production database from a vault in the same account](#restoring-a-production-database-from-a-vault-backup-in-the-same-account) to restore the database from the copied snapshot.
@@ -64,11 +63,12 @@ If you need to recreate the infrastructure from scratch in a new AWS account, fo
 
 - In the new account, create a new terraform environment, following [Terraform: Creating a new
   environment](terraform.md#creating-a-new-environment).
+  - Potentially, you might need to change the S3 bucket name
+- Update AWS account IDs in all environment variables terraform files and in the GitHub workflows.
+- Create the required IAM resources for the GitHub workflows by running `terraform apply` for the `terraform/accounts` module.
+- Create a new AWS Backup vault by running [deploy-backup-infrastructure.yml](../.github/workflows/deploy-backup-infrastructure.yml) workflow.
 - From the AWS console, copy over the latest snapshot of the production database to the new account. Select the new account as target for the copy action.
 - Follow [Restoring a production database from a vault in the same account](#restoring-a-production-database-from-a-vault-backup-in-the-same-account) to restore the database from the copied snapshot.
-- Update AWS account IDs in the terraform `variables.tf` files and in the GitHub workflows.
-- Create the required IAM resources for the GitHub workflows by running `terraform apply` for the `terraform/accounts` module.
-- Run the `deploy.yml` workflow to deploy the new infrastructure into the new account.
 
 ## Getting a local dump of an Aurora DB
 
