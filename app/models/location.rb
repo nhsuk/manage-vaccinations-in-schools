@@ -87,6 +87,8 @@ class Location < ApplicationRecord
 
   normalizes :urn, with: -> { _1.blank? ? nil : _1.strip }
 
+  delegate :fhir_reference, to: :fhir_mapper
+
   def clinic?
     generic_clinic? || community_clinic?
   end
@@ -106,4 +108,6 @@ class Location < ApplicationRecord
   def organisation_ods_code
     [team&.organisation&.ods_code]
   end
+
+  def fhir_mapper = @fhir_mapper ||= FHIRMapper::Location.new(self)
 end
