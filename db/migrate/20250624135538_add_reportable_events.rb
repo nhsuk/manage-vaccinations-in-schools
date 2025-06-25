@@ -60,6 +60,9 @@ class AddReportableEvents < ActiveRecord::Migration[8.0]
       t.boolean :vaccine_discontinued, default: false
       t.bigint  :vaccine_programme_id
       t.boolean :vaccine_full_dose
+
+      t.bigint  :programme_id
+      t.string  :programme_type
       
       t.timestamps
     end

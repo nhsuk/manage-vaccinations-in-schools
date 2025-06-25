@@ -21,6 +21,7 @@
 #  patient_gender_code                         :integer
 #  patient_home_educated                       :boolean
 #  patient_nhs_number                          :string
+#  programme_type                              :string
 #  school_address_postcode                     :string
 #  school_address_town                         :string
 #  school_name                                 :string
@@ -47,6 +48,7 @@
 #  gp_practice_id                              :bigint
 #  organisation_id                             :bigint
 #  patient_id                                  :bigint
+#  programme_id                                :bigint
 #  school_id                                   :bigint
 #  source_id                                   :bigint
 #  team_id                                     :bigint

@@ -27,6 +27,7 @@ namespace :events do
         vaccine: vaccination.vaccine,
         team: vaccination.team,
         organisation: vaccination.team&.organisation,
+        programme: vaccination.programme,
       )
 
       re.save!

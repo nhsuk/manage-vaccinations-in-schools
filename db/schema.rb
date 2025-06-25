@@ -711,6 +711,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_24_135538) do
     t.boolean "vaccine_discontinued", default: false
     t.bigint "vaccine_programme_id"
     t.boolean "vaccine_full_dose"
+    t.bigint "programme_id"
+    t.string "programme_type"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["source_type", "source_id"], name: "index_reportable_events_on_source"
