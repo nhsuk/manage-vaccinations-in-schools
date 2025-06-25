@@ -19,12 +19,12 @@ describe AppProgrammeStatusTagsComponent do
       },
       flu_programme => {
         status: :given,
-        vaccine_methods: %w[injection]
+        vaccine_methods: %w[nasal injection]
       }
     }
   end
 
   it { should have_content("MenACWYConsent given") }
   it { should have_content("Td/IPVConsent refused") }
-  it { should have_content("FluConsent givenInjection") }
+  it { should have_content("FluConsent givenNasal spray (or injection)") }
 end

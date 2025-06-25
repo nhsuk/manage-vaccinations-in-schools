@@ -24,7 +24,7 @@ module ConsentsHelper
       if consent.vaccine_methods.present? &&
            consent.programme.has_multiple_delivery_methods?
         tag.span(
-          Vaccine.human_enum_name(:method, consent.vaccine_methods.first),
+          Vaccine.human_enum_name(:method, consent.vaccine_methods.join("_")),
           class: "nhsuk-u-secondary-text-color"
         )
       end
