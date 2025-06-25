@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'byebug'
-
 namespace :events do
   desc "Clear all reportable events"
   task clear: :environment do
