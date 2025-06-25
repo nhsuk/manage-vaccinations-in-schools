@@ -186,7 +186,7 @@ describe DPSExportRow do
     end
 
     it "has site_of_vaccination_term" do
-      expect(array[25]).to eq "Structure of left upper arm (body structure)"
+      expect(array[25]).to eq "Left upper arm structure"
     end
 
     context "when the vaccine is a nasal spray" do
@@ -208,7 +208,7 @@ describe DPSExportRow do
       end
 
       it "has route_of_vaccination_term" do
-        expect(array[27]).to eq "Nasal route (qualifier value)"
+        expect(array[27]).to eq "Nasal"
       end
     end
 
@@ -220,7 +220,7 @@ describe DPSExportRow do
       end
 
       it "has route_of_vaccination_term" do
-        expect(array[27]).to eq "Intramuscular route (qualifier value)"
+        expect(array[27]).to eq "Intramuscular"
       end
     end
 
