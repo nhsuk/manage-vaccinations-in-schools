@@ -71,12 +71,18 @@ jobs:
           if [ -z "${{ inputs.db_snapshot_arn }}" ]; then
               echo "No snapshot ARN provided, fetching the latest snapshot"
               SNAPSHOT_ARN=$(aws rds describe-db-cluster-snapshots \
-              --query 'DBClusterSnapshots[?contains(DBClusterSnapshotIdentifier, `${{ inputs.environment}}`)].[DBClusterSnapshotArn, SnapshotCreateTime]' \
+              --query "DBClusterSnapshots[?DBClusterIdentifier=='mavis-${{ inputs.environment }}'].[DBClusterSnapshotArn, SnapshotCreateTime]" \
               --output text | sort -k2 -r | head -n 1 | cut -f1)
+          
+              if [ -z "$SNAPSHOT_ARN" ]; then
+                  echo "No snapshots found for mavis-${{ inputs.environment }}"
+                  exit 1
+              fi
           else
               echo "Using provided snapshot ARN: ${{ inputs.db_snapshot_arn }}"
               SNAPSHOT_ARN="${{ inputs.db_snapshot_arn }}"
           fi
+          echo "Using snapshot ARN: $SNAPSHOT_ARN"
           echo "SNAPSHOT_ARN=$SNAPSHOT_ARN" >> $GITHUB_OUTPUT
       - name: Install terraform
         uses: hashicorp/setup-terraform@v3
