@@ -232,7 +232,7 @@ describe VaccinationRecord do
         build(:vaccination_record, delivery_method: :intramuscular)
       end
 
-      it { should eq "Intramuscular route (qualifier value)" }
+      it { should eq "Intramuscular" }
     end
 
     context "when delivery_method is subcutaneous" do
@@ -240,7 +240,7 @@ describe VaccinationRecord do
         build(:vaccination_record, delivery_method: :subcutaneous)
       end
 
-      it { should eq "Subcutaneous route (qualifier value)" }
+      it { should eq "Subcutaneous" }
     end
 
     context "when delivery_method is nasal spray" do
@@ -248,7 +248,7 @@ describe VaccinationRecord do
         build(:vaccination_record, delivery_method: :nasal_spray)
       end
 
-      it { should eq "Nasal route (qualifier value)" }
+      it { should eq "Nasal" }
     end
 
     context "when delivery_method is not set" do
