@@ -64,6 +64,12 @@ class Organisation < ApplicationRecord
   validates :privacy_notice_url, presence: true
   validates :privacy_policy_url, presence: true
 
+  delegate :fhir_reference, to: :fhir_mapper
+
+  class << self
+    delegate :fhir_reference, to: FHIRMapper::Organisation
+  end
+
   def year_groups
     programmes.flat_map(&:year_groups).uniq.sort
   end
@@ -117,4 +123,8 @@ class Organisation < ApplicationRecord
   def weeks_before_invitations=(value)
     self.days_before_invitations = value * 7
   end
+
+  private
+
+  def fhir_mapper = @fhir_mapper ||= FHIRMapper::Organisation.new(self)
 end
