@@ -44,15 +44,16 @@ Deploy to your restored environment as described in [Terraform: Local deployment
 ## Restoring a production database from a vault backup in the same account
 
 - In the AWS Backup console, go to the Vaults page and select a suitable recovery point.
-- Click on Actions > Restore
-- As DB cluster identifier, enter the desired name for the new cluster. It must match the `cluster_identifier` in the
-  `terraform/app/rds.tf` file.
-- Restore the backup to a new RDS cluster and wait until the cluster is available.
-- Modify the new cluster to use AWS managed credentials instead of self-managed credentials.
-- Import the newly created cluster into Terraform by running `terraform import aws_rds_cluster.core CLUSTER_ID_OF_NEW_CLUSTER`.
+- Copy the arn of the DB snapshot and add it to the `snapshot_identifier` in the `aws_rds_cluster core` resource block in
+  `terraform/app/rds.tf`.
+- Recreate the infrastructure by running `terraform apply`.
+- After the infrastructure is created, remove the `snapshot_identifier` line from the `aws_rds_cluster core` resource block again
 
 ## Restoring a production database from a vault backup in the backup account
 
+- Verify that the AWS Backup vault still exists in the production account. If it doesn't, you will need to restore the vault first.
+  - sdf
+  - asdf
 - Go to the AWS Backup console in the backup account and select a recovery point to be restored.
 - Click on Actions > Copy > Copy back to source account.
 - Once it's copied back to the source account, follow [Restoring a production database from a vault in the same account](#restoring-a-production-database-from-a-vault-backup-in-the-same-account) to restore the database from the copied snapshot.
