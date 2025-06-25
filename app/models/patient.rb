@@ -191,6 +191,8 @@ class Patient < ApplicationRecord
 
   before_destroy :destroy_childless_parents
 
+  delegate :fhir_record, to: :fhir_mapper
+
   def self.match_existing(
     nhs_number:,
     given_name:,
@@ -424,4 +426,6 @@ class Patient < ApplicationRecord
       session: sessions_for_current_academic_year
     ).destroy_all_if_safe
   end
+
+  def fhir_mapper = @fhir_mapper ||= FHIRMapper::Patient.new(self)
 end
