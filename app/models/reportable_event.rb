@@ -70,16 +70,16 @@ class ReportableEvent < ApplicationRecord
 
   belongs_to :source, polymorphic: true
 
-  enum :event_type, 
-      {
+  enum :event_type,
+       {
          vaccination_not_well: "not_well",
          vaccination_administered: "vaccination_administered",
          consent_request_sent: "consent_request_sent",
          consent_given: "consent_given",
-         consent_refused: "consent_refused",
+         consent_refused: "consent_refused"
        },
        validate: true
-  
+
   before_validation :set_event_timestamp_date_part_attributes
 
   protected
