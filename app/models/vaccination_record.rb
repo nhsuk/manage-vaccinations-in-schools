@@ -153,6 +153,8 @@ class VaccinationRecord < ApplicationRecord
               less_than_or_equal_to: -> { Time.current }
             }
 
+  delegate :fhir_record, to: :fhir_mapper
+
   def not_administered?
     !administered?
   end
@@ -192,4 +194,6 @@ class VaccinationRecord < ApplicationRecord
   end
 
   delegate :maximum_dose_sequence, to: :programme
+
+  def fhir_mapper = @fhir_mapper ||= FHIRMapper::VaccinationRecord.new(self)
 end
