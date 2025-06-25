@@ -178,6 +178,22 @@ describe CohortImportRow do
         )
       end
     end
+
+    context "when uploading different caps name" do
+      let(:capitalised_parent_2_data) do
+        {
+          "PARENT_2_EMAIL" => "jenny@example.com",
+          "PARENT_2_NAME" => "Jenny Smith"
+        }
+      end
+      let(:data) { valid_data.merge(capitalised_parent_2_data) }
+
+      let!(:existing_parent) do
+        create(:parent, full_name: "JENNY SMITH", email: "jenny@example.com")
+      end
+
+      it { should eq([existing_parent]) }
+    end
   end
 
   describe "#to_patient" do
@@ -242,6 +258,7 @@ describe CohortImportRow do
           family_name: "Smith",
           gender_code: "not_known",
           given_name: "Jimmy",
+          preferred_given_name: "Jim",
           nhs_number: "9990000018",
           address_line_1: "10 Downing Street",
           address_line_2: "",
@@ -267,14 +284,15 @@ describe CohortImportRow do
       let!(:existing_patient) do
         create(
           :patient,
-          address_postcode: "SW1A 1AA",
-          family_name: "Smith",
-          gender_code: "female",
-          given_name: "Jimmy",
-          nhs_number: "9990000018",
           address_line_1: "10 Downing Street",
           address_line_2: "",
           address_town: "London",
+          address_postcode: "SW1A 1AA",
+          given_name: "Jimmy",
+          family_name: "Smith",
+          preferred_given_name: "Jim",
+          gender_code: "female",
+          nhs_number: "9990000018",
           birth_academic_year: 2009,
           date_of_birth: Date.new(2010, 1, 1),
           registration: "8AB"
@@ -366,6 +384,7 @@ describe CohortImportRow do
           :patient,
           family_name: "Smith",
           given_name: "Jimmy",
+          preferred_given_name: "Jim",
           gender_code: "male",
           nhs_number: "9990000018",
           birth_academic_year: 2009,
@@ -400,6 +419,7 @@ describe CohortImportRow do
           :patient,
           family_name: "Smith",
           given_name: "Jimmy",
+          preferred_given_name: "Jim",
           gender_code: "male",
           nhs_number: "9990000018",
           birth_academic_year: 2009,
@@ -463,6 +483,60 @@ describe CohortImportRow do
           "address_postcode" => "SW1A 1AA",
           "address_town" => "London"
         )
+      end
+    end
+
+    context "with an existing patient with different capitalisation" do
+      let(:data) do
+        {
+          "CHILD_ADDRESS_LINE_1" => "10 Downing Street",
+          "CHILD_PREFERRED_FIRST_NAME" => "Jim",
+          "CHILD_DATE_OF_BIRTH" => "2010-01-01",
+          "CHILD_FIRST_NAME" => "Jimmy",
+          "CHILD_GENDER" => "Male",
+          "CHILD_LAST_NAME" => "Smith",
+          "CHILD_PREFERRED_LAST_NAME" => "Smithy",
+          "CHILD_NHS_NUMBER" => "9990000018",
+          "CHILD_POSTCODE" => "sw1a 1aa",
+          "CHILD_SCHOOL_URN" => school_urn,
+          "CHILD_TOWN" => "London"
+        }
+      end
+
+      let!(:existing_patient) do
+        create(
+          :patient,
+          address_postcode: "SW1A 1AA",
+          family_name: "SMITH",
+          gender_code: "male",
+          given_name: "JIMMY",
+          nhs_number: "9990000018",
+          address_line_1: "10 DOWNING STREET",
+          preferred_given_name: "JIM",
+          preferred_family_name: "SMITHY",
+          date_of_birth: Date.new(2010, 1, 1),
+          address_town: "LONDON"
+        )
+      end
+
+      it { should eq(existing_patient) }
+
+      it "saves the incoming values" do
+        expect(patient).to have_attributes(
+          address_postcode: "SW1A 1AA",
+          family_name: "Smith",
+          gender_code: "male",
+          given_name: "Jimmy",
+          nhs_number: "9990000018",
+          address_line_1: "10 Downing Street",
+          preferred_given_name: "Jim",
+          preferred_family_name: "Smithy",
+          address_town: "London"
+        )
+      end
+
+      it "doesn't stage the capitalisation differences" do
+        expect(patient.pending_changes).to be_empty
       end
     end
   end
