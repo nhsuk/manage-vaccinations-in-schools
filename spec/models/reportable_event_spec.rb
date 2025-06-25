@@ -4,6 +4,9 @@
 #
 #  id                                          :bigint           not null, primary key
 #  event_timestamp                             :datetime
+#  event_timestamp_day                         :integer
+#  event_timestamp_month                       :integer
+#  event_timestamp_year                        :integer
 #  event_type                                  :string
 #  gp_practice_address_postcode                :string
 #  gp_practice_address_town                    :string
@@ -22,6 +25,7 @@
 #  school_address_town                         :string
 #  school_name                                 :string
 #  source_type                                 :string
+#  team_name                                   :string
 #  vaccination_record_delivery_method          :integer
 #  vaccination_record_dose_sequence            :integer
 #  vaccination_record_outcome                  :integer
@@ -41,9 +45,11 @@
 #  created_at                                  :datetime         not null
 #  updated_at                                  :datetime         not null
 #  gp_practice_id                              :bigint
+#  organisation_id                             :bigint
 #  patient_id                                  :bigint
 #  school_id                                   :bigint
 #  source_id                                   :bigint
+#  team_id                                     :bigint
 #  vaccination_record_batch_id                 :bigint
 #  vaccination_record_performed_by_user_id     :bigint
 #  vaccination_record_programme_id             :bigint
@@ -58,6 +64,34 @@
 require 'spec_helper'
 
 RSpec.describe ReportableEvent do
+  describe 'populating the timestamp date part fields' do
+    context 'given an event_timestamp' do
+      subject(:instance) { described_class.new(attrs) }
 
-  
+      let(:source) { create(:vaccination_record) }
+      let(:attrs) do
+        {
+          event_type: 'vaccination_administered',
+          event_timestamp: Time.new(2002, 4, 11, 3, 7, 28, '+00:00'),
+          source_id: source.id,
+          source_type: source.class.name,
+        }
+      end
+
+
+      describe 'saving the record' do
+        before do
+          instance.save!
+        end
+
+        it 'populates the event_timestamp_year, _month and _day fields' do
+          expect(instance).to have_attributes(
+            event_timestamp_day: 11,
+            event_timestamp_month: 4,
+            event_timestamp_year: 2002
+          )
+        end
+      end
+    end
+  end
 end

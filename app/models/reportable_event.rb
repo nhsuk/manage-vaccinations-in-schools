@@ -4,6 +4,9 @@
 #
 #  id                                          :bigint           not null, primary key
 #  event_timestamp                             :datetime
+#  event_timestamp_day                         :integer
+#  event_timestamp_month                       :integer
+#  event_timestamp_year                        :integer
 #  event_type                                  :string
 #  gp_practice_address_postcode                :string
 #  gp_practice_address_town                    :string
@@ -22,6 +25,7 @@
 #  school_address_town                         :string
 #  school_name                                 :string
 #  source_type                                 :string
+#  team_name                                   :string
 #  vaccination_record_delivery_method          :integer
 #  vaccination_record_dose_sequence            :integer
 #  vaccination_record_outcome                  :integer
@@ -41,9 +45,11 @@
 #  created_at                                  :datetime         not null
 #  updated_at                                  :datetime         not null
 #  gp_practice_id                              :bigint
+#  organisation_id                             :bigint
 #  patient_id                                  :bigint
 #  school_id                                   :bigint
 #  source_id                                   :bigint
+#  team_id                                     :bigint
 #  vaccination_record_batch_id                 :bigint
 #  vaccination_record_performed_by_user_id     :bigint
 #  vaccination_record_programme_id             :bigint
@@ -62,10 +68,21 @@ class ReportableEvent < ApplicationRecord
 
   enum :event_type, 
       {
-         vaccination_performed: "vaccination_performed",
+         vaccination_not_well: "not_well",
+         vaccination_administered: "vaccination_administered",
          consent_request_sent: "consent_request_sent",
          consent_given: "consent_given",
          consent_refused: "consent_refused",
        },
        validate: true
+  
+  before_validation :set_event_timestamp_date_part_attributes
+
+  protected
+
+  def set_event_timestamp_date_part_attributes
+    self.event_timestamp_day = event_timestamp&.day
+    self.event_timestamp_month = event_timestamp&.month
+    self.event_timestamp_year = event_timestamp&.year
+  end
 end

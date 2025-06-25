@@ -3,6 +3,10 @@ class AddReportableEvents < ActiveRecord::Migration[8.0]
     create_table :reportable_events do |t|
       t.string      :event_type
       t.datetime    :event_timestamp
+      t.integer     :event_timestamp_year
+      t.integer     :event_timestamp_month
+      t.integer     :event_timestamp_day
+      
 
       t.references  :source, polymorphic: true
 

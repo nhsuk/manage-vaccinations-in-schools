@@ -22,7 +22,7 @@ module DenormalizingConcern
       references = attrs.to_h.select{ |_key,value| value.is_a?(ApplicationRecord)}
       copy_attributes_from_references(references)
 
-      simple_attrs = attrs.except(*references.keys)
+      simple_attrs = attrs.to_h.except(*references.keys)
       
       super( simple_attrs.to_h.select { self.class.attribute_names.include?(it.to_s) } )
     end
