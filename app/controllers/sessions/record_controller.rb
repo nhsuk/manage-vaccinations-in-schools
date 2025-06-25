@@ -15,6 +15,8 @@ class Sessions::RecordController < ApplicationController
   before_action :set_batches, except: :show
 
   def show
+    @programmes = @session.programmes
+
     scope =
       @session
         .patient_sessions
@@ -25,7 +27,7 @@ class Sessions::RecordController < ApplicationController
         .in_programmes(@session.programmes)
         .has_registration_status(%w[attending completed])
 
-    scope = @form.apply(scope)
+    scope = @form.apply(scope, programme: @programmes)
 
     patient_sessions =
       scope.select do |patient_session|
@@ -72,7 +74,10 @@ class Sessions::RecordController < ApplicationController
   private
 
   def set_session
-    @session = policy_scope(Session).find_by!(slug: params[:session_slug])
+    @session =
+      policy_scope(Session).includes(programmes: :vaccines).find_by!(
+        slug: params[:session_slug]
+      )
   end
 
   def set_todays_batches

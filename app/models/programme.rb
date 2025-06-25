@@ -69,8 +69,14 @@ class Programme < ApplicationRecord
     year_groups.map(&:to_birth_academic_year)
   end
 
+  def vaccine_methods = vaccines.map(&:method).uniq
+
   def available_delivery_methods
     vaccines.flat_map(&:available_delivery_methods).uniq
+  end
+
+  def has_multiple_delivery_methods?
+    available_delivery_methods.length > 1
   end
 
   def available_delivery_sites

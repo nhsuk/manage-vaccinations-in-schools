@@ -16,6 +16,7 @@ describe SearchForm do
   let(:register_status) { nil }
   let(:session_status) { nil }
   let(:triage_status) { nil }
+  let(:vaccine_method) { nil }
   let(:year_groups) { %w[8 9 10 11] }
 
   let(:params) do
@@ -30,6 +31,7 @@ describe SearchForm do
       register_status:,
       session_status:,
       triage_status:,
+      vaccine_method:,
       year_groups:
     }
   end
@@ -266,6 +268,45 @@ describe SearchForm do
             programmes: [programme]
           )
         expect(form.apply(scope, programme:)).to include(patient_session)
+      end
+    end
+
+    context "filtering on vaccine method" do
+      let(:consent_statuses) { nil }
+      let(:date_of_birth_day) { nil }
+      let(:date_of_birth_month) { nil }
+      let(:date_of_birth_year) { nil }
+      let(:missing_nhs_number) { nil }
+      let(:programme_status) { nil }
+      let(:q) { nil }
+      let(:register_status) { nil }
+      let(:triage_status) { nil }
+      let(:vaccine_method) { "nasal" }
+      let(:year_groups) { nil }
+
+      let(:programme) { create(:programme) }
+
+      it "filters on vaccine method" do
+        nasal_patient_session =
+          create(
+            :patient_session,
+            :consent_given_triage_not_needed,
+            programmes: [programme]
+          )
+
+        nasal_patient_session.patient.consent_statuses.first.update!(
+          vaccine_methods: %w[nasal injection]
+        )
+
+        create(
+          :patient_session,
+          :consent_given_triage_not_needed,
+          programmes: [programme]
+        )
+
+        expect(form.apply(scope, programme:)).to contain_exactly(
+          nasal_patient_session
+        )
       end
     end
   end

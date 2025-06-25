@@ -160,6 +160,10 @@ class Session < ApplicationRecord
     programmes.flat_map(&:year_groups).uniq.sort
   end
 
+  def vaccine_methods
+    programmes.flat_map(&:vaccine_methods).uniq.sort
+  end
+
   def dates
     session_dates.map(&:value).compact
   end
