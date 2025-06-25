@@ -12,6 +12,7 @@
 #  dose_sequence            :integer
 #  full_dose                :boolean
 #  location_name            :string
+#  nhse_synced_at           :datetime
 #  notes                    :text
 #  outcome                  :integer          not null
 #  pending_changes          :jsonb            not null
