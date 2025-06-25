@@ -180,6 +180,7 @@ class DraftConsentsController < ApplicationController
       if policy(Triage).new?
         TriageForm.new(
           notes: @draft_consent.triage_notes,
+          vaccine_methods: @draft_consent.vaccine_methods,
           patient_session: @patient_session,
           programme: @programme,
           status_and_vaccine_method:

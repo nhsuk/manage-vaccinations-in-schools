@@ -8,6 +8,7 @@ class TriageForm
 
   attribute :status_and_vaccine_method, :string
   attribute :notes, :string
+  attribute :vaccine_methods, array: true, default: []
 
   validates :status_and_vaccine_method,
             inclusion: {
@@ -42,6 +43,8 @@ class TriageForm
     safe_to_vaccinate_choices =
       if consented_vaccine_methods.length > 1
         consented_vaccine_methods.map { "safe_to_vaccinate_#{it}" }
+      elsif consented_to_injection?
+        ["safe_to_vaccinate_injection"]
       else
         ["safe_to_vaccinate"]
       end
@@ -58,7 +61,8 @@ class TriageForm
 
   def consented_vaccine_methods
     @consented_vaccine_methods ||=
-      patient.consent_status(programme:).vaccine_methods
+      vaccine_methods.presence ||
+        patient.consent_status(programme:).vaccine_methods
   end
 
   def triage_attributes
