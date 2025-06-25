@@ -59,58 +59,5 @@ require 'spec_helper'
 
 RSpec.describe ReportableEvent do
 
-  describe '#initialize' do
-    context 'given some attributes' do
-      subject{ described_class.new(attrs) }
-
-      context 'which are simple values' do
-        let(:attrs) do 
-          {
-            patient_nhs_number: '12345678',
-            school_name: 'Headlands Comprehensive',
-            patient_date_of_death: '2021-01-02'.to_date,
-          }
-        end
-
-        it 'copies the given attribute values to the corresponding attribute' do
-          expect(subject).to have_attributes(attrs)
-        end
-      end
-
-      context 'which are ApplicationRecord instances' do
-        let(:patient) { build(:patient, date_of_birth: '2018-02-03'.to_date, date_of_death: '2022-03-04'.to_date) }
-        let(:school) { build(:school) }
-
-        let(:attrs) do 
-          {
-            patient: patient,
-            school: school,
-          }
-        end
-
-        it 'copies the given instances attributes to the corresponding prefixed attributes' do
-          expect(subject).to have_attributes(
-            {
-              patient_date_of_birth: '2018-02-03'.to_date, 
-              patient_date_of_death: '2022-03-04'.to_date,
-              school_name: school.name,
-              school_address_postcode: school.address_postcode,
-            }
-          )
-        end
-      end
-
-      context 'which do not exist in the ReportableEvent attributes' do
-        let(:attrs) do
-          {
-            unknown_attribute_name: 'some value'
-          }
-        end
-
-        it 'does not raise an error' do
-          expect{ described_class.new(attrs) }.not_to raise_error
-        end
-      end
-    end
-  end
+  
 end

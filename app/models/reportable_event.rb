@@ -56,29 +56,16 @@
 #  index_reportable_events_on_source  (source_type,source_id)
 #
 class ReportableEvent < ApplicationRecord
-  
-  def initialize(attrs={})
-    references = attrs.to_h.select{ |_key,value| value.is_a?(ApplicationRecord)}
-    simple_attrs = attrs.except(*references.keys)
-    
-    super( simple_attrs.to_h.select{ self.class.attribute_names.include?(it.to_s) } )
+  include DenormalizingConcern
 
-    references.each_key do |name|
-      copy_scoped_attributes(name, attrs[name])
-    end
-  end
+  belongs_to :source, polymorphic: true
 
-  # given a prefix and object like :school, (School object)
-  # copy each attribute from the given object to an attribute
-  # on self, prefixed with the prefix
-  # e.g. self.school_address_postcode = obj.postcode and so on
-  def copy_scoped_attributes(prefix, obj)
-    obj.attributes.each_key do |key|
-      this_attr_name = [prefix, key].join('_')
-      
-      if has_attribute?(this_attr_name)
-        send("#{this_attr_name}=", obj.attributes[key])
-      end
-    end
-  end
+  enum :event_type, 
+      {
+         vaccination_performed: "vaccination_performed",
+         consent_request_sent: "consent_request_sent",
+         consent_given: "consent_given",
+         consent_refused: "consent_refused",
+       },
+       validate: true
 end
