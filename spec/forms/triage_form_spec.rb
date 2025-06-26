@@ -10,9 +10,7 @@ describe TriageForm do
     it do
       expect(form).to validate_inclusion_of(
         :status_and_vaccine_method
-      ).in_array(
-        %w[safe_to_vaccinate do_not_vaccinate keep_in_triage delay_vaccination]
-      )
+      ).in_array(form.status_and_vaccine_method_options)
     end
 
     it { should_not validate_presence_of(:notes) }
