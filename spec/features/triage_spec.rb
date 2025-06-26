@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 describe "Triage" do
-  scenario "nurse can triage a patient" do
+  scenario "nurse can triage a patient for an HPV programme" do
     given_a_programme_with_a_running_session
     and_a_patient_who_needs_triage_exists
     and_a_patient_who_doesnt_need_triage_exists
@@ -28,8 +28,45 @@ describe "Triage" do
     and_vaccination_will_happen_emails_are_sent_to_both_parents
   end
 
+  scenario "nurse can triage a patient for a flu programme (injection only)" do
+    given_a_flu_programme_with_a_running_session
+    and_a_patient_who_needs_triage_for_flu_exists
+
+    when_i_go_to_the_session_triage_tab
+    then_i_see_the_patient_who_needs_triage
+
+    when_i_go_to_the_patient_that_needs_triage
+    then_i_see_the_triage_options_with_vaccine_method
+
+    when_i_save_the_triage_without_choosing_an_option
+    then_i_see_a_validation_error
+
+    when_i_record_that_they_need_triage_for_flu
+    then_i_see_the_triage_page
+    and_needs_triage_emails_are_sent_to_both_parents
+
+    when_i_record_that_they_are_safe_to_vaccinate_with_injection
+    then_i_see_the_update_triage_link
+    and_vaccination_will_happen_emails_are_sent_to_both_parents
+    and_the_vaccine_method_is_recorded_as_injection
+  end
+
   def given_a_programme_with_a_running_session
     programmes = [create(:programme, :hpv)]
+    @organisation = create(:organisation, :with_one_nurse, programmes:)
+
+    @batch =
+      create(
+        :batch,
+        organisation: @organisation,
+        vaccine: programmes.first.vaccines.first
+      )
+
+    @session = create(:session, organisation: @organisation, programmes:)
+  end
+
+  def given_a_flu_programme_with_a_running_session
+    programmes = [create(:programme, :flu)]
     @organisation = create(:organisation, :with_one_nurse, programmes:)
 
     @batch =
@@ -53,6 +90,26 @@ describe "Triage" do
     create(
       :consent,
       :given,
+      :health_question_notes,
+      :from_granddad,
+      patient: @patient_triage_needed,
+      programme: @session.programmes.first
+    )
+
+    @patient_triage_needed.reload # Make sure both consents are accessible
+  end
+
+  def and_a_patient_who_needs_triage_for_flu_exists
+    @patient_triage_needed =
+      create(
+        :patient_session,
+        :consent_given_triage_needed,
+        session: @session
+      ).patient
+
+    create(
+      :consent,
+      :given_injection,
       :health_question_notes,
       :from_granddad,
       patient: @patient_triage_needed,
@@ -90,12 +147,20 @@ describe "Triage" do
     click_link @patient_triage_needed.full_name
   end
 
-  def when_i_go_to_the_patient
-    click_link @patient_triage_needed.full_name, match: :first
-  end
-
   def then_i_see_the_triage_options
     expect(page).to have_selector :heading, "Is it safe to vaccinate"
+  end
+
+  def then_i_see_the_triage_options_with_vaccine_method
+    expect(page).to have_selector :heading,
+                  "Is it safe to vaccinate #{@patient_triage_needed.given_name}?"
+    expect(page).to have_content(
+      "The parent has consented to the injected vaccine only"
+    )
+    expect(page).to have_field(
+      "Yes, it’s safe to vaccinate with injected vaccine",
+      type: "radio"
+    )
   end
 
   def when_i_record_that_they_need_triage
@@ -103,9 +168,19 @@ describe "Triage" do
     click_button "Save triage"
   end
 
+  def when_i_record_that_they_need_triage_for_flu
+    choose "No, keep in triage"
+    click_button "Save triage"
+  end
+
   def when_i_record_that_they_are_safe_to_vaccinate
     click_link "Update triage"
     choose "Yes, it’s safe to vaccinate"
+    click_button "Save triage"
+  end
+
+  def when_i_record_that_they_are_safe_to_vaccinate_with_injection
+    choose "Yes, it’s safe to vaccinate with injected vaccine"
     click_button "Save triage"
   end
 
@@ -126,6 +201,10 @@ describe "Triage" do
     expect(page).to have_link "Update triage"
   end
 
+  def then_i_see_the_triage_page
+    expect(page).to have_selector :heading, "Is it safe to vaccinate"
+  end
+
   def and_needs_triage_emails_are_sent_to_both_parents
     @patient_triage_needed.parents.each do |parent|
       expect_email_to parent.email, :consent_confirmation_triage, :any
@@ -142,5 +221,10 @@ describe "Triage" do
     @patient_triage_needed.parents.each do |parent|
       expect_email_to parent.email, :triage_vaccination_will_happen, :any
     end
+  end
+
+  def and_the_vaccine_method_is_recorded_as_injection
+    triage = @patient_triage_needed.triages.last
+    expect(triage.vaccine_method).to eq("injection")
   end
 end
