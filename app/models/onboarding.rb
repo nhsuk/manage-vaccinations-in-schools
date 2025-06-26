@@ -119,7 +119,7 @@ class Onboarding
       models.each(&:save!)
       organisation.generic_clinic
       @users.each { |user| user.organisations << organisation }
-      UnscheduledSessionsFactory.new.call
+      UnscheduledSessionsFactory.call
     end
   end
 
