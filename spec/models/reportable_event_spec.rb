@@ -65,30 +65,27 @@
 #
 #  index_reportable_events_on_source  (source_type,source_id)
 #
-require 'spec_helper'
+require "spec_helper"
 
 RSpec.describe ReportableEvent do
-  describe 'populating the timestamp date part fields' do
-    context 'given an event_timestamp' do
+  describe "populating the timestamp date part fields" do
+    context "given an event_timestamp" do
       subject(:instance) { described_class.new(attrs) }
 
       let(:source) { create(:vaccination_record) }
       let(:attrs) do
         {
-          event_type: 'vaccination_administered',
-          event_timestamp: Time.new(2002, 4, 11, 3, 7, 28, '+00:00'),
+          event_type: "vaccination_administered",
+          event_timestamp: Time.new(2002, 4, 11, 3, 7, 28, "+00:00"),
           source_id: source.id,
-          source_type: source.class.name,
+          source_type: source.class.name
         }
       end
 
+      describe "saving the record" do
+        before { instance.save! }
 
-      describe 'saving the record' do
-        before do
-          instance.save!
-        end
-
-        it 'populates the event_timestamp_year, _month and _day fields' do
+        it "populates the event_timestamp_year, _month and _day fields" do
           expect(instance).to have_attributes(
             event_timestamp_day: 11,
             event_timestamp_month: 4,
