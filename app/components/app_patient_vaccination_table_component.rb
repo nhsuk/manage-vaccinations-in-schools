@@ -21,5 +21,6 @@ class AppPatientVaccinationTableComponent < ViewComponent::Base
       .then { programme ? it.where(programme:) : it }
       .includes(:location, :programme)
       .order(performed_at: :desc)
+      .select(&:show_this_academic_year?)
   end
 end
