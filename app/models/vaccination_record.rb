@@ -64,7 +64,7 @@ class VaccinationRecord < ApplicationRecord
     right_arm_upper_position: ["368209003", "Right upper arm structure"],
     left_buttock: ["723979003", "Structure of left buttock"],
     right_buttock: ["723980000", "Structure of right buttock"],
-    nose: ["279549004", " Nasal cavity structure"]
+    nose: ["279549004", "Nasal cavity structure"]
   }.with_indifferent_access
 
   DELIVERY_METHOD_SNOMED_CODES_AND_TERMS = {
