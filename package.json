@@ -34,7 +34,7 @@
     "mutationobserver-shim": "^0.3.7",
     "officecrypto-tool": "^0.0.18",
     "playwright-core": "^1.53.1",
-    "prettier": "^3.6.0"
+    "prettier": "^3.6.1"
   },
   "jest": {
     "collectCoverage": true,
