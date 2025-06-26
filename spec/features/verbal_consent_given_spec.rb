@@ -2,8 +2,8 @@
 
 describe "Verbal consent" do
   scenario "Given" do
-    given_i_am_signed_in
-
+    given_an_hpv_programme_is_underway
+    and_i_am_signed_in
     when_i_record_that_verbal_consent_was_given
     then_an_email_is_sent_to_the_parent_confirming_their_consent
     and_a_text_is_sent_to_the_parent_confirming_their_consent
@@ -11,18 +11,51 @@ describe "Verbal consent" do
     and_i_can_see_the_consent_response_details
   end
 
-  def given_i_am_signed_in
-    programmes = [create(:programme, :hpv)]
-    organisation = create(:organisation, :with_one_nurse, programmes:)
-    @session = create(:session, organisation:, programmes:)
+  scenario "Given flu nasal consent" do
+    given_an_flu_programme_is_underway
+    and_i_am_signed_in
+    when_i_record_that_verbal_nasal_consent_was_given
+  end
+
+  def given_an_hpv_programme_is_underway
+    create_programme(:hpv)
+  end
+
+  def given_an_flu_programme_is_underway
+    create_programme(:flu)
+  end
+
+  def and_i_am_signed_in
+    sign_in @organisation.users.first
+  end
+
+  def create_programme(programme_type)
+    @programme = create(:programme, programme_type)
+    programmes = [@programme]
+    @organisation = create(:organisation, :with_one_nurse, programmes:)
+    @session = create(:session, organisation: @organisation, programmes:)
 
     @parent = create(:parent)
     @patient = create(:patient, session: @session, parents: [@parent])
-
-    sign_in organisation.users.first
   end
 
   def when_i_record_that_verbal_consent_was_given
+    record_that_verbal_consent_was_given(consent_option: "Yes, they agree")
+  end
+
+  def when_i_record_that_verbal_nasal_consent_was_given
+    record_that_verbal_consent_was_given(
+      consent_option: "Yes, for the nasal spray",
+      triage_option: "Yes, it’s safe to vaccinate with nasal spray",
+      injective_alternative: true
+    )
+  end
+
+  def record_that_verbal_consent_was_given(
+    consent_option:,
+    triage_option: "Yes, it’s safe to vaccinate",
+    injective_alternative: false
+  )
     visit session_consent_path(@session)
     click_link @patient.full_name
     click_button "Get verbal consent"
@@ -48,17 +81,21 @@ describe "Verbal consent" do
     click_button "Continue"
 
     # Do they agree?
-    choose "Yes, they agree"
+    choose consent_option
+    if consent_option.include?("nasal")
+      choose injective_alternative ? "Yes" : "No"
+    end
+
     click_button "Continue"
 
-    # Health questions
-    find_all(".nhsuk-fieldset")[0].choose "No"
-    find_all(".nhsuk-fieldset")[1].choose "No"
-    find_all(".nhsuk-fieldset")[2].choose "No"
-    find_all(".nhsuk-fieldset")[3].choose "No"
+    # assumes all vaccines in the programme have the same questions
+    @programme.vaccines.first.health_questions.size.times do |index|
+      find_all(".nhsuk-fieldset")[index].choose "No"
+    end
+
     click_button "Continue"
 
-    choose "Yes, it’s safe to vaccinate"
+    choose triage_option
     click_button "Continue"
 
     # Confirm
