@@ -30,10 +30,12 @@ class AppTriageFormComponent < ViewComponent::Base
     text = "Is it safe to vaccinate #{patient.given_name}?"
     hint =
       if programme.has_multiple_delivery_methods?
-        if triage_form.consented_to_injection?
-          "The parent has consented to the injected vaccine being offered instead"
+        if triage_form.consented_to_injection_only?
+          "The parent has consented to the injected vaccine only"
+        elsif triage_form.consented_to_injection?
+          "The parent has consented to the injected vaccine being offered if the nasal spray is not suitable"
         else
-          "The parent has not given consent for the injected vaccine"
+          "The parent has consented to the nasal spray only"
         end
       end
 
