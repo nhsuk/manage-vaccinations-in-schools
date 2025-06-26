@@ -39,7 +39,6 @@ Rel(parents, mavis, "Responds to consent requests", "HTML, JS")
 Rel(mavis, notify, "Send notifications to user", "REST API")
 Rel(notify, parents, "Sends notifications to", "Email, SMS")
 Rel(mavis, pds, "Gets NHS numbers from", "FHIR REST API")
-Rel(mavis, dps, "Sends vaccination records to", "MESH")
 Rel(mavis, mavis_db, "Reads from and writes to", "Postgres, TLS")
 Rel(mavis_reporting, mavis, "Reads data from", "private REST API")
 
