@@ -8,6 +8,7 @@
 #  invalidated_at       :datetime
 #  notes                :text             default(""), not null
 #  status               :integer          not null
+#  vaccine_method       :integer
 #  created_at           :datetime         not null
 #  updated_at           :datetime         not null
 #  organisation_id      :bigint           not null
@@ -38,9 +39,19 @@ FactoryBot.define do
     organisation { performed_by.organisations.first }
 
     notes { "" }
-    status { :ready_to_vaccinate }
+
+    # TODO: Remove this default and require users of this factory to be
+    #  explicit about the status they want.
+    status { "ready_to_vaccinate" }
+    vaccine_method { "injection" }
 
     traits_for_enum :status
+    traits_for_enum :vaccine_method
+
+    trait :ready_to_vaccinate do
+      status { "ready_to_vaccinate" }
+      vaccine_method { "injection" }
+    end
 
     trait :invalidated do
       invalidated_at { Time.current }

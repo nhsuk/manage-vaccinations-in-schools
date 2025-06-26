@@ -98,9 +98,9 @@ class DraftVaccinationRecord
     validates :batch_id,
               :delivery_method,
               :delivery_site,
-              :full_dose,
               :performed_at,
               presence: true
+    validates :full_dose, inclusion: { in: [true, false] }
   end
 
   def administered?

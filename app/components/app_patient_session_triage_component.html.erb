@@ -15,7 +15,10 @@
     <% end %>
 
     <% if helpers.policy(Triage).new? %>
-      <%= render AppTriageFormComponent.new(patient_session:, programme:, triage:, legend: :bold) %>
+      <%= render AppTriageFormComponent.new(
+            triage_form,
+            url: session_patient_programme_triages_path(session, patient, programme),
+          ) %>
     <% end %>
   <% elsif latest_triage %>
     <% if latest_triage.ready_to_vaccinate? %>

@@ -54,10 +54,10 @@ describe DraftConsent do
   end
 
   describe "#write_to" do
-    subject(:write_to) { draft_consent.write_to!(consent, triage:) }
+    subject(:write_to) { draft_consent.write_to!(consent, triage_form:) }
 
     let(:consent) { Consent.new }
-    let(:triage) { Triage.new }
+    let(:triage_form) { TriageForm.new }
 
     let(:attributes) { valid_given_attributes }
 

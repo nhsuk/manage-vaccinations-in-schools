@@ -123,7 +123,10 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
           render(
             AppProgrammeStatusTagsComponent.new(
               patient_session.programmes.index_with do |programme|
-                patient.consent_status(programme:).status
+                patient.consent_status(programme:).slice(
+                  :status,
+                  :vaccine_methods
+                )
               end,
               outcome: :consent
             )
@@ -136,7 +139,7 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
           render(
             AppProgrammeStatusTagsComponent.new(
               patient_session.programmes.index_with do |programme|
-                patient.triage_status(programme:).status
+                patient.triage_status(programme:).slice(:status)
               end,
               outcome: :triage
             )
@@ -149,7 +152,7 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
           render(
             AppProgrammeStatusTagsComponent.new(
               patient_session.programmes.index_with do |programme|
-                patient_session.session_status(programme:).status
+                patient_session.session_status(programme:).slice(:status)
               end,
               outcome: :session
             )

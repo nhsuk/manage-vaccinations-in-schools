@@ -22,7 +22,9 @@
       "Action": ["*"],
       "NotResource": [
         "arn:aws:s3:::nhse-mavis-terraform-state-production",
-        "arn:aws:s3:::nhse-mavis-terraform-state"
+        "arn:aws:s3:::nhse-mavis-terraform-state",
+        "arn:aws:kms:eu-west-2:*:key/*",
+        "arn:aws:rds:eu-west-2:*:cluster-snapshot:*"
       ],
       "Condition": {
         "StringEquals": {
@@ -37,6 +39,21 @@
           ]
         }
       }
+    },
+    {
+      "Effect": "Deny",
+      "Action": [
+        "kms:Delete*",
+        "kms:ScheduleKeyDeletion",
+        "kms:Revoke*",
+        "kms:Disable*",
+        "kms:CreateGrant",
+        "kms:CancelKeyDeletion",
+        "kms:PutKeyPolicy",
+        "kms:ReplicateKey",
+        "kms:RetireGrant"
+      ],
+      "Resource": "*"
     },
     {
       "Effect": "Allow",

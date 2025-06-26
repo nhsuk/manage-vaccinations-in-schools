@@ -56,12 +56,6 @@ en:
               inclusion: Choose if they consent
             route:
               inclusion: Choose how the response was given
-            triage_notes:
-              blank: Enter triage notes
-              too_long: Enter triage notes that are less than 1000 characters long
-            triage_status:
-              blank: Choose a status
-              inclusion: Choose a status
         draft_vaccination_record:
           attributes:
             batch_id:
@@ -107,6 +101,14 @@ en:
             programme_ids:
               blank: Choose which programmes this session is part of
               inclusion: You cannot remove a programme from the session once it has been added
+        triage_form:
+          attributes:
+            notes:
+              blank: Enter triage notes
+              too_long: Enter triage notes that are less than 1000 characters long
+            status_and_vaccine_method:
+              blank: Choose a status
+              inclusion: Choose a status
         vaccinate_form:
           attributes:
             administered:
@@ -208,6 +210,7 @@ en:
         methods:
           injection: Injection
           nasal: Nasal spray
+          nasal_injection: Nasal spray (or injection)
     errors:
       models:
         class_import:
@@ -411,14 +414,6 @@ en:
               taken: Enter a different date to the other session dates
               greater_than_or_equal_to: Enter a date on or after the start of the school year (%{count})
               less_than_or_equal_to: Enter a date on or before the end of the current school year (%{count})
-        triage:
-          attributes:
-            notes:
-              blank: Enter triage notes
-              too_long: Enter triage notes that are less than 1000 characters long
-            status:
-              blank: Choose a status
-              inclusion: Choose a status
         user:
           attributes:
             email:

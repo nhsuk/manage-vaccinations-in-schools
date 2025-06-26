@@ -240,6 +240,7 @@ variable "enable_backup_to_vault" {
 }
 
 locals {
+  rds_cluster = "mavis-${var.environment}"
   db_instances = {
     "primary-1" = {
       promotion_tier = 1
