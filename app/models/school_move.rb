@@ -49,33 +49,20 @@ class SchoolMove < ApplicationRecord
             }
 
   def confirm!(user: nil)
-    ActiveRecord::Base.transaction do
-      update_patient!
-      update_sessions!
-      create_log_entry!(user:)
-      SchoolMove.where(patient:).destroy_all if persisted?
-    end
+    SchoolMovesConfirmer.call([self], user:)
   end
 
   def ignore!
     destroy! if persisted?
   end
 
+  def sessions = [school_session, generic_clinic_session].compact
+
+  def to_log_entry(user:)
+    SchoolMoveLogEntry.new(home_educated:, patient:, school:, user:)
+  end
+
   private
-
-  def update_patient!
-    patient.update!(home_educated:, school:)
-  end
-
-  def update_sessions!
-    patient.patient_sessions.destroy_all_if_safe
-
-    [school_session, generic_clinic_session].compact.each do |session|
-      PatientSession.find_or_create_by!(patient:, session:)
-    end
-
-    StatusUpdater.call(patient:)
-  end
 
   def school_session
     @school_session ||=
@@ -91,9 +78,5 @@ class SchoolMove < ApplicationRecord
   def generic_clinic_session
     @generic_clinic_session ||=
       (school&.organisation || organisation)&.generic_clinic_session
-  end
-
-  def create_log_entry!(user:)
-    SchoolMoveLogEntry.create!(home_educated:, patient:, school:, user:)
   end
 end
