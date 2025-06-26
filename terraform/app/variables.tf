@@ -239,6 +239,13 @@ variable "enable_backup_to_vault" {
   nullable    = false
 }
 
+variable "backup_account_id" {
+  type        = string
+  default     = "904214613099"
+  description = "The AWS account ID of the backup account"
+  nullable    = false
+}
+
 locals {
   rds_cluster = "mavis-${var.environment}"
   db_instances = {
