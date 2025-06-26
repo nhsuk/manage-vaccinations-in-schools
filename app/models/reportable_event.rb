@@ -1,0 +1,92 @@
+# frozen_string_literal: true
+
+# == Schema Information
+#
+# Table name: reportable_events
+#
+#  id                                          :bigint           not null, primary key
+#  event_timestamp                             :datetime
+#  event_timestamp_day                         :integer
+#  event_timestamp_month                       :integer
+#  event_timestamp_year                        :integer
+#  event_type                                  :string
+#  gp_practice_address_postcode                :string
+#  gp_practice_address_town                    :string
+#  gp_practice_name                            :string
+#  organisation_name                           :string
+#  organisation_ods_code                       :string
+#  patient_address_postcode                    :string
+#  patient_address_town                        :string
+#  patient_birth_academic_year                 :integer
+#  patient_date_of_birth                       :date
+#  patient_date_of_death                       :date
+#  patient_gender_code                         :integer
+#  patient_home_educated                       :boolean
+#  patient_nhs_number                          :string
+#  programme_type                              :string
+#  school_address_postcode                     :string
+#  school_address_town                         :string
+#  school_name                                 :string
+#  source_type                                 :string
+#  team_name                                   :string
+#  vaccination_record_delivery_method          :integer
+#  vaccination_record_dose_sequence            :integer
+#  vaccination_record_outcome                  :integer
+#  vaccination_record_performed_at             :datetime
+#  vaccination_record_performed_by_family_name :string
+#  vaccination_record_performed_by_given_name  :string
+#  vaccination_record_uuid                     :uuid
+#  vaccine_brand                               :text
+#  vaccine_discontinued                        :boolean          default(FALSE)
+#  vaccine_dose_volume_ml                      :decimal(, )
+#  vaccine_full_dose                           :boolean
+#  vaccine_manufacturer                        :text
+#  vaccine_method                              :integer
+#  vaccine_nivs_name                           :text
+#  vaccine_snomed_product_code                 :string
+#  vaccine_snomed_product_term                 :string
+#  created_at                                  :datetime         not null
+#  updated_at                                  :datetime         not null
+#  gp_practice_id                              :bigint
+#  organisation_id                             :bigint
+#  patient_id                                  :bigint
+#  programme_id                                :bigint
+#  school_id                                   :bigint
+#  source_id                                   :bigint
+#  team_id                                     :bigint
+#  vaccination_record_batch_id                 :bigint
+#  vaccination_record_performed_by_user_id     :bigint
+#  vaccination_record_programme_id             :bigint
+#  vaccination_record_session_id               :bigint
+#  vaccine_id                                  :bigint
+#  vaccine_programme_id                        :bigint
+#
+# Indexes
+#
+#  index_reportable_events_on_source  (source_type,source_id)
+#
+class ReportableEvent < ApplicationRecord
+  include DenormalizingConcern
+
+  belongs_to :source, polymorphic: true
+
+  enum :event_type,
+       {
+         vaccination_not_well: "not_well",
+         vaccination_administered: "vaccination_administered",
+         consent_request_sent: "consent_request_sent",
+         consent_given: "consent_given",
+         consent_refused: "consent_refused"
+       },
+       validate: true
+
+  before_validation :set_event_timestamp_date_part_attributes
+
+  protected
+
+  def set_event_timestamp_date_part_attributes
+    self.event_timestamp_day = event_timestamp&.day
+    self.event_timestamp_month = event_timestamp&.month
+    self.event_timestamp_year = event_timestamp&.year
+  end
+end
