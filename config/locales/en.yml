@@ -56,6 +56,8 @@ en:
               inclusion: Choose if they consent
             route:
               inclusion: Choose how the response was given
+            injection_alternative:
+              inclusion: Select yes or no
         draft_vaccination_record:
           attributes:
             batch_id:
