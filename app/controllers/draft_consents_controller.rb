@@ -110,7 +110,7 @@ class DraftConsentsController < ApplicationController
 
   def update_params
     permitted_attributes = {
-      agree: %i[response],
+      agree: %i[response injection_alternative],
       notes: %i[notes],
       notify_parents: %i[notify_parents],
       parent_details: %i[
@@ -180,6 +180,7 @@ class DraftConsentsController < ApplicationController
       if policy(Triage).new?
         TriageForm.new(
           notes: @draft_consent.triage_notes,
+          vaccine_methods: @draft_consent.vaccine_methods,
           patient_session: @patient_session,
           programme: @programme,
           status_and_vaccine_method:

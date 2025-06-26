@@ -14,6 +14,7 @@ describe TriageForm do
     end
 
     it { should_not validate_presence_of(:notes) }
+    it { should_not validate_presence_of(:vaccine_methods) }
     it { should validate_length_of(:notes).is_at_most(1000) }
   end
 end

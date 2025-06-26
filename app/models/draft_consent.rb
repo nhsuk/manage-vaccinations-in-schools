@@ -35,6 +35,9 @@ class DraftConsent
   attribute :triage_notes, :string
   attribute :triage_status_and_vaccine_method, :string
   attribute :vaccine_methods, array: true, default: []
+  attribute :injection_alternative, :boolean
+
+  FLU_RESPONSES = %w[given_nasal given_injection].freeze
 
   def wizard_steps
     [
@@ -105,7 +108,15 @@ class DraftConsent
   end
 
   on_wizard_step :agree, exact: true do
-    validates :response, inclusion: { in: Consent.responses.keys }
+    validates :response,
+              inclusion: {
+                in: Consent.responses.keys + FLU_RESPONSES
+              }
+    validates :injection_alternative,
+              inclusion: {
+                in: [true, false]
+              },
+              if: -> { response == "given_nasal" }
   end
 
   on_wizard_step :notify_parents, exact: true do
@@ -163,6 +174,24 @@ class DraftConsent
 
   def consent=(value)
     self.editing_id = value.id
+  end
+
+  def update_vaccine_methods
+    if flu_response?
+      if response == "given_nasal"
+        self.vaccine_methods = ["nasal"]
+        vaccine_methods << "injection" if injection_alternative
+      elsif response == "given_injection"
+        self.vaccine_methods = ["injection"]
+        self.injection_alternative = nil
+      end
+    elsif response_given?
+      self.vaccine_methods = ["injection"]
+      self.injection_alternative = nil
+    else
+      self.vaccine_methods = []
+      self.injection_alternative = nil
+    end
   end
 
   def parent
@@ -262,6 +291,7 @@ class DraftConsent
   end
 
   def write_to!(consent, triage_form:)
+    self.response = "given" if flu_response?
     super(consent)
 
     consent.parent = parent
@@ -278,8 +308,12 @@ class DraftConsent
     route == "self_consent"
   end
 
+  def flu_response?
+    FLU_RESPONSES.include?(response)
+  end
+
   def response_given?
-    response == "given"
+    response == "given" || FLU_RESPONSES.include?(response)
   end
 
   def response_refused?
@@ -364,6 +398,8 @@ class DraftConsent
   end
 
   def reset_unused_fields
+    update_vaccine_methods
+
     self.reason_for_refusal = nil unless response_refused?
     self.notes = "" unless notes_required?
 
