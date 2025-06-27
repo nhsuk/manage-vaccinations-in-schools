@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_24_135538) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_26_162928) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -659,7 +659,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_24_135538) do
     t.index ["type"], name: "index_programmes_on_type", unique: true
   end
 
-  create_table "reportable_events", force: :cascade do |t|
+  create_table "reportable_vaccination_events", force: :cascade do |t|
     t.string "event_type"
     t.datetime "event_timestamp"
     t.integer "event_timestamp_year"
@@ -676,6 +676,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_24_135538) do
     t.boolean "patient_home_educated"
     t.date "patient_date_of_death"
     t.integer "patient_birth_academic_year"
+    t.integer "patient_year_group"
     t.bigint "school_id"
     t.string "school_name"
     t.string "school_address_town"
