@@ -141,7 +141,7 @@ describe "Self-consent" do
   end
 
   def and_the_child_cannot_give_their_own_consent
-    click_on "Get verbal consent"
+    click_on "Record a new consent response"
     expect(page).not_to have_content("Child (Gillick competent)")
     click_on "Back"
   end
@@ -213,7 +213,7 @@ describe "Self-consent" do
   end
 
   def and_the_nurse_records_consent_for_the_child
-    click_on "Get verbal consent"
+    click_on "Record a new consent response"
 
     # who
     choose "Child (Gillick competent)"
