@@ -2,7 +2,7 @@
 
 module FHIRMapper
   class Location
-    delegate_missing_to :@location
+    delegate :school?, :clinic?, :type, :urn, :ods_code, to: :@location
 
     def initialize(location)
       @location = location
