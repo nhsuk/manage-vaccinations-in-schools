@@ -31,7 +31,7 @@ module "web_service" {
     task_role_arn        = aws_iam_role.ecs_task_role.arn
     log_group_name       = aws_cloudwatch_log_group.ecs_log_group.name
     region               = var.region
-    health_check_command = ["CMD-SHELL", "curl -f http://localhost:4000/health/database || exit 1"]
+    health_check_command = ["CMD-SHELL", "./bin/internal_healthcheck http://localhost:4000/health/database"]
   }
   network_params = {
     subnets = [aws_subnet.private_subnet_a.id, aws_subnet.private_subnet_b.id]
@@ -70,7 +70,7 @@ module "good_job_service" {
     task_role_arn        = aws_iam_role.ecs_task_role.arn
     log_group_name       = aws_cloudwatch_log_group.ecs_log_group.name
     region               = var.region
-    health_check_command = ["CMD-SHELL", "curl -f http://localhost:4000/status/connected || exit 1"]
+    health_check_command = ["CMD-SHELL", "./bin/internal_healthcheck http://localhost:4000/status/connected"]
   }
   network_params = {
     subnets = [aws_subnet.private_subnet_a.id, aws_subnet.private_subnet_b.id]
