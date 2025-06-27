@@ -19,6 +19,7 @@
 #  performed_by_family_name :string
 #  performed_by_given_name  :string
 #  performed_ods_code       :string
+#  synced_at                :datetime
 #  uuid                     :uuid             not null
 #  created_at               :datetime         not null
 #  updated_at               :datetime         not null
