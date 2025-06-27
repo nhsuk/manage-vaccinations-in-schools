@@ -189,7 +189,7 @@ describe "End-to-end journey" do
     click_link "Register"
     click_link "TABLES, Bobby"
 
-    click_button "Get verbal consent"
+    click_button "Record a new consent response"
 
     choose "Big Daddy Tests"
     click_button "Continue"
