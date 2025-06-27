@@ -59,6 +59,7 @@ module NHS::API
     def oauth_connection
       Faraday.new(headers:) do |f|
         f.request :url_encoded
+        f.response :logger if Rails.env.development?
         f.response :json
         f.response :raise_error
       end
@@ -70,6 +71,7 @@ module NHS::API
         headers: headers.merge(accept: "application/fhir+json")
       ) do |f|
         f.request :url_encoded
+        f.response :logger if Rails.env.development?
         f.response :json,
                    content_type: %w[application/json application/fhir+json]
         f.response :raise_error

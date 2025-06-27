@@ -152,6 +152,8 @@ class VaccinationRecord < ApplicationRecord
               less_than_or_equal_to: -> { Time.current }
             }
 
+  delegate :fhir_record, to: :fhir_mapper
+
   def not_administered?
     !administered?
   end
@@ -172,6 +174,14 @@ class VaccinationRecord < ApplicationRecord
     academic_year == Date.current.academic_year
   end
 
+  def delivery_method_snomed_code
+    DELIVERY_METHOD_SNOMED_CODES_AND_TERMS.fetch(delivery_method).first
+  end
+
+  def delivery_method_snomed_term
+    DELIVERY_METHOD_SNOMED_CODES_AND_TERMS.fetch(delivery_method).second
+  end
+
   private
 
   def requires_location_name?
@@ -179,4 +189,6 @@ class VaccinationRecord < ApplicationRecord
   end
 
   delegate :maximum_dose_sequence, to: :programme
+
+  def fhir_mapper = @fhir_mapper ||= FHIRMapper::VaccinationRecord.new(self)
 end
