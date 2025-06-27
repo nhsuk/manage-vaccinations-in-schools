@@ -66,10 +66,7 @@ describe "Triage" do
   end
 
   def then_i_see_an_alert_saying_the_record_was_saved
-    expect(page).to have_alert(
-      "Success",
-      text: "Triage outcome updated for #{@patient.full_name}"
-    )
+    expect(page).to have_alert("Success", text: "Triage outcome updated")
   end
 
   def and_a_vaccination_at_clinic_email_is_sent_to_the_parent
@@ -78,6 +75,7 @@ describe "Triage" do
   end
 
   def when_i_filter_by_delay_vaccination
+    click_on "Triage"
     choose "Delay vaccination"
     click_on "Update results"
   end

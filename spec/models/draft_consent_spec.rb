@@ -27,6 +27,17 @@ describe DraftConsent do
     }
   end
 
+  let(:valid_given_nasal_attributes) do
+    valid_given_attributes.merge(
+      response: "given_nasal",
+      injection_alternative: false
+    )
+  end
+
+  let(:valid_given_injection_attributes) do
+    valid_given_attributes.merge(response: "given_injection")
+  end
+
   let(:valid_refused_attributes) do
     {
       response: "refused",
@@ -46,6 +57,20 @@ describe DraftConsent do
       it { should be_valid }
     end
 
+    context "when given nasal" do
+      let(:attributes) { valid_given_nasal_attributes }
+
+      it { should be_valid }
+    end
+
+    context "when given injection" do
+      let(:attributes) do
+        valid_given_attributes.merge(response: "given_injection")
+      end
+
+      it { should be_valid }
+    end
+
     context "when refused" do
       let(:attributes) { valid_refused_attributes }
 
@@ -54,10 +79,10 @@ describe DraftConsent do
   end
 
   describe "#write_to" do
-    subject(:write_to) { draft_consent.write_to!(consent, triage:) }
+    subject(:write_to) { draft_consent.write_to!(consent, triage_form:) }
 
     let(:consent) { Consent.new }
-    let(:triage) { Triage.new }
+    let(:triage_form) { TriageForm.new }
 
     let(:attributes) { valid_given_attributes }
 
@@ -66,6 +91,18 @@ describe DraftConsent do
         expect { write_to }.to change(consent, :submitted_at).from(nil).to(
           Time.current
         )
+      end
+    end
+
+    context "when given nasal" do
+      let(:attributes) { valid_given_nasal_attributes }
+
+      it "sets the response to given" do
+        freeze_time do
+          expect { write_to }.to change(consent, :response).from(nil).to(
+            "given"
+          )
+        end
       end
     end
   end
@@ -91,13 +128,71 @@ describe DraftConsent do
       end
     end
 
+    context "when given flu via nasal" do
+      let(:attributes) { valid_given_nasal_attributes }
+
+      it "sets vaccine_methods to nasal" do
+        expect { save! }.to change(draft_consent, :vaccine_methods).to(
+          %w[nasal]
+        )
+      end
+
+      context "when injection allowed as an alternative" do
+        let(:attributes) do
+          valid_given_nasal_attributes.merge(injection_alternative: true)
+        end
+
+        it "sets vaccine_methods to nasal and injection" do
+          expect { save! }.to change(draft_consent, :vaccine_methods).to(
+            %w[nasal injection]
+          )
+        end
+      end
+
+      context "when rejecting injection alternative" do
+        let(:attributes) do
+          valid_given_nasal_attributes.merge(injection_alternative: false)
+        end
+
+        it "sets vaccine_methods to nasal and injection" do
+          expect { save! }.to change(draft_consent, :vaccine_methods).to(
+            %w[nasal]
+          )
+        end
+      end
+    end
+
+    context "when given flu injection" do
+      let(:attributes) { valid_given_injection_attributes }
+
+      it "sets vaccine_methods to injection" do
+        expect { save! }.to change(draft_consent, :vaccine_methods).to(
+          %w[injection]
+        )
+      end
+    end
+
     context "when refused" do
       let(:attributes) do
-        valid_refused_attributes.merge(health_answers: [{ "id" => "0" }])
+        valid_refused_attributes.merge(
+          health_answers: [{ "id" => "0" }],
+          vaccine_methods: %w[nasal],
+          injection_alternative: true
+        )
       end
 
       it "clears the health answers" do
         expect { save! }.to change(draft_consent, :health_answers).to([])
+      end
+
+      it "clears the vaccine methods" do
+        expect { save! }.to change(draft_consent, :vaccine_methods).to([])
+      end
+
+      it "clears injection_alternative" do
+        expect { save! }.to change(draft_consent, :injection_alternative).to(
+          nil
+        )
       end
     end
 

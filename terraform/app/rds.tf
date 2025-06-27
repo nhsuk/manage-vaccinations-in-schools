@@ -34,7 +34,7 @@ resource "aws_db_subnet_group" "core" {
 }
 
 resource "aws_rds_cluster" "core" {
-  cluster_identifier              = "mavis-${var.environment}"
+  cluster_identifier              = local.rds_cluster
   engine                          = "aurora-postgresql"
   engine_mode                     = "provisioned"
   engine_version                  = "16.8"
@@ -42,6 +42,7 @@ resource "aws_rds_cluster" "core" {
   master_username                 = "postgres"
   backup_retention_period         = var.backup_retention_period
   skip_final_snapshot             = !local.is_production
+  final_snapshot_identifier       = "${local.rds_cluster}-final-snapshot"
   db_subnet_group_name            = aws_db_subnet_group.core.name
   vpc_security_group_ids          = [aws_security_group.rds_security_group.id]
   kms_key_id                      = aws_kms_key.rds_cluster.arn
@@ -69,14 +70,15 @@ resource "aws_secretsmanager_secret_rotation" "target" {
   secret_id          = aws_rds_cluster.core.master_user_secret[0].secret_arn
   rotate_immediately = false
   rotation_rules {
-    schedule_expression = "cron(0 8 ? * WED *)"
+    schedule_expression = "cron(0 2 ? * WED#4 *)"
+    duration            = "1h"
   }
 }
 
 resource "aws_rds_cluster_instance" "core" {
   for_each             = local.db_instances
   cluster_identifier   = aws_rds_cluster.core.id
-  identifier           = "mavis-${var.environment}-${each.key}"
+  identifier           = "${local.rds_cluster}-${each.key}"
   instance_class       = "db.serverless"
   engine               = aws_rds_cluster.core.engine
   engine_version       = aws_rds_cluster.core.engine_version

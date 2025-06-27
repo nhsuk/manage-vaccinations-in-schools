@@ -20,22 +20,33 @@ module ConsentsHelper
         "blue"
       end
 
+    vaccine_method =
+      if consent.vaccine_methods.present? &&
+           consent.programme.has_multiple_delivery_methods?
+        tag.span(
+          Vaccine.human_enum_name(:method, consent.vaccine_methods.join("_")),
+          class: "nhsuk-u-secondary-text-color"
+        )
+      end
+
     if consent.invalidated?
       safe_join(
         [
           govuk_tag(text: tag.s(text), colour:),
+          vaccine_method,
           tag.span("Invalid", class: "nhsuk-u-secondary-text-color")
-        ]
+        ].compact
       )
     elsif consent.withdrawn?
       safe_join(
         [
           govuk_tag(text: tag.s(text), colour:),
+          vaccine_method,
           tag.span("Withdrawn", class: "nhsuk-u-secondary-text-color")
-        ]
+        ].compact
       )
     else
-      govuk_tag(text:, colour:)
+      safe_join([govuk_tag(text:, colour:), vaccine_method].compact)
     end
   end
 end

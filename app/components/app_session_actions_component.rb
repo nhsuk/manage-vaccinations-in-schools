@@ -49,7 +49,7 @@ class AppSessionActionsComponent < ViewComponent::Base
     return nil if count.zero?
 
     href =
-      session_consent_path(session, search_form: { consent_status: status })
+      session_consent_path(session, search_form: { consent_statuses: [status] })
 
     {
       key: {
@@ -58,7 +58,7 @@ class AppSessionActionsComponent < ViewComponent::Base
       value: {
         text: I18n.t("children", count:)
       },
-      actions: [{ text: "Review", href: }]
+      actions: [{ text: "Review", visually_hidden_text: text.downcase, href: }]
     }
   end
 
@@ -79,7 +79,9 @@ class AppSessionActionsComponent < ViewComponent::Base
       value: {
         text: I18n.t("children", count:)
       },
-      actions: [{ text: "Review", href: }]
+      actions: [
+        { text: "Review", visually_hidden_text: "triage needed", href: }
+      ]
     }
   end
 
@@ -100,7 +102,9 @@ class AppSessionActionsComponent < ViewComponent::Base
       value: {
         text: I18n.t("children", count:)
       },
-      actions: [{ text: "Review", href: }]
+      actions: [
+        { text: "Review", visually_hidden_text: "register attendance", href: }
+      ]
     }
   end
 
@@ -137,7 +141,9 @@ class AppSessionActionsComponent < ViewComponent::Base
       value: {
         text: safe_join(texts, tag.br)
       },
-      actions: [{ text: "Review", href: }]
+      actions: [
+        { text: "Review", visually_hidden_text: "ready for vaccinator", href: }
+      ]
     }
   end
 end

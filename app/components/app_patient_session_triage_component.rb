@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
 class AppPatientSessionTriageComponent < ViewComponent::Base
-  def initialize(patient_session, programme:, triage:)
+  def initialize(patient_session, programme:, triage_form: nil)
     super
 
     @patient_session = patient_session
     @programme = programme
-    @triage = triage
+    @triage_form = triage_form || default_triage_form
   end
 
   def render?
@@ -15,7 +15,7 @@ class AppPatientSessionTriageComponent < ViewComponent::Base
 
   private
 
-  attr_reader :patient_session, :programme, :triage
+  attr_reader :patient_session, :programme, :triage_form
 
   delegate :patient, :session, to: :patient_session
 
@@ -35,6 +35,8 @@ class AppPatientSessionTriageComponent < ViewComponent::Base
         .find_by(programme:)
   end
 
+  delegate :status, to: :triage_status
+
   def latest_triage
     @latest_triage ||=
       patient
@@ -45,5 +47,5 @@ class AppPatientSessionTriageComponent < ViewComponent::Base
         .find_by(programme:)
   end
 
-  delegate :status, to: :triage_status
+  def default_triage_form = TriageForm.new(patient_session:, programme:)
 end

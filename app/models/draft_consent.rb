@@ -13,6 +13,7 @@ class DraftConsent
   end
 
   attr_reader :new_or_existing_contact
+  attr_accessor :triage_form_valid
 
   attribute :health_answers, array: true, default: []
   attribute :notes, :string
@@ -32,8 +33,11 @@ class DraftConsent
   attribute :response, :string
   attribute :route, :string
   attribute :triage_notes, :string
-  attribute :triage_status, :string
+  attribute :triage_status_and_vaccine_method, :string
   attribute :vaccine_methods, array: true, default: []
+  attribute :injection_alternative, :boolean
+
+  FLU_RESPONSES = %w[given_nasal given_injection].freeze
 
   def wizard_steps
     [
@@ -104,7 +108,15 @@ class DraftConsent
   end
 
   on_wizard_step :agree, exact: true do
-    validates :response, inclusion: { in: Consent.responses.keys }
+    validates :response,
+              inclusion: {
+                in: Consent.responses.keys + FLU_RESPONSES
+              }
+    validates :injection_alternative,
+              inclusion: {
+                in: [true, false]
+              },
+              if: -> { response == "given_nasal" }
   end
 
   on_wizard_step :notify_parents, exact: true do
@@ -123,8 +135,7 @@ class DraftConsent
   end
 
   on_wizard_step :triage, exact: true do
-    validates :triage_status, inclusion: { in: Triage.statuses.keys }
-    validates :triage_notes, length: { maximum: 1000 }
+    validates :triage_form_valid, presence: true
   end
 
   on_wizard_step :notes, exact: true do
@@ -163,6 +174,24 @@ class DraftConsent
 
   def consent=(value)
     self.editing_id = value.id
+  end
+
+  def update_vaccine_methods
+    if flu_response?
+      if response == "given_nasal"
+        self.vaccine_methods = ["nasal"]
+        vaccine_methods << "injection" if injection_alternative
+      elsif response == "given_injection"
+        self.vaccine_methods = ["injection"]
+        self.injection_alternative = nil
+      end
+    elsif response_given?
+      self.vaccine_methods = ["injection"]
+      self.injection_alternative = nil
+    else
+      self.vaccine_methods = []
+      self.injection_alternative = nil
+    end
   end
 
   def parent
@@ -261,19 +290,17 @@ class DraftConsent
     self.programme_id = value.id
   end
 
-  def write_to!(consent, triage:)
+  def write_to!(consent, triage_form:)
+    self.response = "given" if flu_response?
     super(consent)
 
     consent.parent = parent
     consent.submitted_at ||= Time.current
 
     if triage_allowed? && response_given?
-      triage.notes = triage_notes || ""
-      triage.organisation = organisation
-      triage.patient = patient
-      triage.performed_by_user_id = recorded_by_user_id
-      triage.programme = programme
-      triage.status = triage_status
+      triage_form.notes = triage_notes || ""
+      triage_form.current_user = recorded_by
+      triage_form.status_and_vaccine_method = triage_status_and_vaccine_method
     end
   end
 
@@ -281,8 +308,12 @@ class DraftConsent
     route == "self_consent"
   end
 
+  def flu_response?
+    FLU_RESPONSES.include?(response)
+  end
+
   def response_given?
-    response == "given"
+    response == "given" || FLU_RESPONSES.include?(response)
   end
 
   def response_refused?
@@ -350,6 +381,10 @@ class DraftConsent
     TriagePolicy.new(@current_user, Triage).new?
   end
 
+  def triage_status_and_vaccine_method_options
+    Triage.new(patient:, programme:).status_and_vaccine_method_options
+  end
+
   def health_answers_are_valid
     return if health_answers.map(&:valid?).all?
 
@@ -363,6 +398,8 @@ class DraftConsent
   end
 
   def reset_unused_fields
+    update_vaccine_methods
+
     self.reason_for_refusal = nil unless response_refused?
     self.notes = "" unless notes_required?
 
