@@ -24,7 +24,7 @@ describe "Verbal consent recorded by admin" do
   def when_i_record_that_consent_was_given_but_keep_in_triage
     visit session_consent_path(@session)
     click_link @patient.full_name
-    click_button "Get verbal consent"
+    click_button "Record a new consent response"
 
     # Who are you trying to get consent from?
     choose @parent.full_name
