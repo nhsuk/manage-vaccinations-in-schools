@@ -31,5 +31,15 @@ FactoryBot.define do
       status { "given" }
       vaccine_methods { %w[injection] }
     end
+
+    trait :given_injection_only do
+      status { "given" }
+      vaccine_methods { %w[injection] }
+    end
+
+    trait :given_nasal_only do
+      status { "given" }
+      vaccine_methods { %w[nasal] }
+    end
   end
 end

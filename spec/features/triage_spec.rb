@@ -113,18 +113,19 @@ describe "Triage" do
   end
 
   def and_patients_with_different_flu_consent_types_exist
-    @patient_injection_only, @patient_nasal_only =
-      create_list(
+    @patient_injection_only =
+      create(
         :patient_session,
-        2,
-        :consent_given_triage_needed,
+        :consent_given_injection_only_triage_needed,
         session: @session
-      ).map(&:patient)
+      ).patient
 
-    @patient_injection_only.consents.first.update(vaccine_methods: %w[injection])
-    @patient_injection_only.consent_statuses.first.update(vaccine_methods: %w[injection])
-    @patient_nasal_only.consents.first.update(vaccine_methods: %w[nasal])
-    @patient_nasal_only.consent_statuses.first.update(vaccine_methods: %w[nasal])
+    @patient_nasal_only =
+      create(
+        :patient_session,
+        :consent_given_nasal_only_triage_needed,
+        session: @session
+      ).patient
 
     @patient_injection_only.reload
     @patient_nasal_only.reload
@@ -215,28 +216,32 @@ describe "Triage" do
   end
 
   def and_needs_triage_emails_are_sent_to_both_parents
-    current_patient = @patient_triage_needed || @patient_injection_only || @patient_nasal_only
+    current_patient =
+      @patient_triage_needed || @patient_injection_only || @patient_nasal_only
     current_patient.parents.each do |parent|
       expect_email_to parent.email, :consent_confirmation_triage, :any
     end
   end
 
   def and_vaccination_wont_happen_emails_are_sent_to_both_parents
-    current_patient = @patient_triage_needed || @patient_injection_only || @patient_nasal_only
+    current_patient =
+      @patient_triage_needed || @patient_injection_only || @patient_nasal_only
     current_patient.parents.each do |parent|
       expect_email_to parent.email, :triage_vaccination_wont_happen, :any
     end
   end
 
   def and_vaccination_will_happen_emails_are_sent_to_both_parents
-    current_patient = @patient_triage_needed || @patient_injection_only || @patient_nasal_only
+    current_patient =
+      @patient_triage_needed || @patient_injection_only || @patient_nasal_only
     current_patient.parents.each do |parent|
       expect_email_to parent.email, :triage_vaccination_will_happen, :any
     end
   end
 
   def and_the_vaccine_method_is_recorded_as_injection
-    current_patient = @patient_triage_needed || @patient_injection_only || @patient_nasal_only
+    current_patient =
+      @patient_triage_needed || @patient_injection_only || @patient_nasal_only
     triage = current_patient.triages.last
     expect(triage.vaccine_method).to eq("injection")
   end
