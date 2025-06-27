@@ -2,7 +2,7 @@
 
 module FHIRMapper
   class Organisation
-    delegate_missing_to :@organisation
+    delegate :ods_code, :name, :type, to: :@organisation
 
     def initialize(organisation)
       @organisation = organisation

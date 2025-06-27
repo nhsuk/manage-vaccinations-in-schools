@@ -2,7 +2,7 @@
 
 module FHIRMapper
   class User
-    delegate_missing_to :@user
+    delegate :family_name, :given_name, to: :@user
 
     def initialize(user)
       @user = user

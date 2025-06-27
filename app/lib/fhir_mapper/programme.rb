@@ -2,7 +2,11 @@
 
 module FHIRMapper
   class Programme
-    delegate_missing_to :@programme
+    delegate :snomed_target_disease_code,
+             :snomed_target_disease_term,
+             :snomed_procedure_code,
+             :snomed_procedure_term,
+             to: :@programme
 
     def initialize(programme)
       @programme = programme
