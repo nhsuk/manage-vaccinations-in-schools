@@ -37,6 +37,13 @@ class PatientSession::RegistrationStatus < ApplicationRecord
        default: :unknown,
        validate: true
 
+  scope :for_patient_session,
+        ->(patient, session) do
+          joins(:patient_session).where(patient_session: { patient:, session: })
+        end
+
+  scope :allows_recording_vaccination, -> { attending.or(completed) }
+
   def assign_status
     self.status =
       if status_should_be_completed?
