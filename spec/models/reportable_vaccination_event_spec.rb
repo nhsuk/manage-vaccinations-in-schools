@@ -2,10 +2,11 @@
 
 # == Schema Information
 #
-# Table name: reportable_events
+# Table name: reportable_vaccination_events
 #
 #  id                                          :bigint           not null, primary key
 #  event_timestamp                             :datetime
+#  event_timestamp_academic_year               :integer
 #  event_timestamp_day                         :integer
 #  event_timestamp_month                       :integer
 #  event_timestamp_year                        :integer
@@ -23,6 +24,7 @@
 #  patient_gender_code                         :integer
 #  patient_home_educated                       :boolean
 #  patient_nhs_number                          :string
+#  patient_year_group                          :integer
 #  programme_type                              :string
 #  school_address_postcode                     :string
 #  school_address_town                         :string
@@ -65,28 +67,34 @@
 #
 #  index_reportable_events_on_source  (source_type,source_id)
 #
-class ReportableEvent < ApplicationRecord
-  include DenormalizingConcern
+require "spec_helper"
 
-  belongs_to :source, polymorphic: true
+RSpec.describe ReportableVaccinationEvent do
+  describe "populating the timestamp date part fields" do
+    context "given an event_timestamp" do
+      subject(:instance) { described_class.new(attrs) }
 
-  enum :event_type,
-       {
-         vaccination_not_well: "not_well",
-         vaccination_administered: "vaccination_administered",
-         consent_request_sent: "consent_request_sent",
-         consent_given: "consent_given",
-         consent_refused: "consent_refused"
-       },
-       validate: true
+      let(:source) { create(:vaccination_record) }
+      let(:attrs) do
+        {
+          event_type: "vaccination_administered",
+          event_timestamp: Time.new(2002, 4, 11, 3, 7, 28, "+00:00"),
+          source_id: source.id,
+          source_type: source.class.name
+        }
+      end
 
-  before_validation :set_event_timestamp_date_part_attributes
+      describe "saving the record" do
+        before { instance.save! }
 
-  protected
-
-  def set_event_timestamp_date_part_attributes
-    self.event_timestamp_day = event_timestamp&.day
-    self.event_timestamp_month = event_timestamp&.month
-    self.event_timestamp_year = event_timestamp&.year
+        it "populates the event_timestamp_year, _month and _day fields" do
+          expect(instance).to have_attributes(
+            event_timestamp_day: 11,
+            event_timestamp_month: 4,
+            event_timestamp_year: 2002
+          )
+        end
+      end
+    end
   end
 end

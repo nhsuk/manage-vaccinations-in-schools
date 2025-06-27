@@ -181,4 +181,31 @@ describe VaccinationRecord do
       it { should be_nil }
     end
   end
+
+  describe '#create_or_update_reportable_vaccination_event' do
+    let!(:vaccination_record) do
+      create(
+        :vaccination_record,
+        :performed_by_not_user,
+        performed_by_given_name: "John",
+        performed_by_family_name: "Smith"
+      )
+    end
+
+    context 'when no ReportableVaccinationEvent record exists for this VaccinationRecord' do
+      it 'creates a new ReportableVaccinationEvent' do
+        expect(vaccination_record.create_or_update_reportable_vaccination_event).to change(ReportableVaccinationEvent, :count).by(1)
+      end
+    end
+
+    context 'when a ReportableVaccinationEvent exists for this VaccinationRecord' do
+      before do
+        ReportableVaccinationEvent.create!(source_id: vaccination_record.id, source_type: 'VaccinationRecord')
+      end
+
+      it 'does not create a new ReportableVaccinationEvent' do
+        expect(vaccination_record.create_or_update_reportable_vaccination_event).not_to change(ReportableVaccinationEvent, :count).by(1)
+      end
+    end
+  end
 end

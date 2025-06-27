@@ -2,10 +2,11 @@
 
 # == Schema Information
 #
-# Table name: reportable_events
+# Table name: reportable_vaccination_events
 #
 #  id                                          :bigint           not null, primary key
 #  event_timestamp                             :datetime
+#  event_timestamp_academic_year               :integer
 #  event_timestamp_day                         :integer
 #  event_timestamp_month                       :integer
 #  event_timestamp_year                        :integer
@@ -23,6 +24,7 @@
 #  patient_gender_code                         :integer
 #  patient_home_educated                       :boolean
 #  patient_nhs_number                          :string
+#  patient_year_group                          :integer
 #  programme_type                              :string
 #  school_address_postcode                     :string
 #  school_address_town                         :string
@@ -65,34 +67,14 @@
 #
 #  index_reportable_events_on_source  (source_type,source_id)
 #
-require "spec_helper"
-
-RSpec.describe ReportableEvent do
-  describe "populating the timestamp date part fields" do
-    context "given an event_timestamp" do
-      subject(:instance) { described_class.new(attrs) }
-
-      let(:source) { create(:vaccination_record) }
-      let(:attrs) do
+class ReportableVaccinationEvent < ApplicationRecord
+  include DenormalizingConcern
+  include ReportableEventMethods
+  
+  enum :event_type,
         {
-          event_type: "vaccination_administered",
-          event_timestamp: Time.new(2002, 4, 11, 3, 7, 28, "+00:00"),
-          source_id: source.id,
-          source_type: source.class.name
-        }
-      end
-
-      describe "saving the record" do
-        before { instance.save! }
-
-        it "populates the event_timestamp_year, _month and _day fields" do
-          expect(instance).to have_attributes(
-            event_timestamp_day: 11,
-            event_timestamp_month: 4,
-            event_timestamp_year: 2002
-          )
-        end
-      end
-    end
-  end
+          vaccination_not_well: "not_well",
+          vaccination_administered: "vaccination_administered",
+        },
+        validate: true
 end

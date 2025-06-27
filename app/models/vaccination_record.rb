@@ -178,6 +178,29 @@ class VaccinationRecord < ApplicationRecord
     academic_year == Date.current.academic_year
   end
 
+  def create_or_update_reportable_vaccination_event
+    re =
+      ReportableVaccinationEvent.find_or_initialize_by(
+        event_timestamp: self.performed_at,
+        event_type: ["vaccination", self.outcome].join("_"),
+        source_id: self.id,
+        source_type: self.class.name
+      )
+
+    re.copy_attributes_from_references(
+      patient: self.patient,
+      school: self.location,
+      vaccination_record: vaccination,
+      vaccine: self.vaccine,
+      team: self.team,
+      organisation: self.team&.organisation,
+      programme: self.programme
+    )
+
+    re.save!
+    re
+  end
+
   private
 
   def requires_location_name?

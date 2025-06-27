@@ -8,7 +8,8 @@ class AddReportableEvents < ActiveRecord::Migration[8.0]
       t.integer :event_timestamp_year
       t.integer :event_timestamp_month
       t.integer :event_timestamp_day
-
+      t.integer :event_timestamp_academic_year
+      
       t.references :source, polymorphic: true
 
       t.bigint :patient_id
@@ -21,6 +22,7 @@ class AddReportableEvents < ActiveRecord::Migration[8.0]
       t.boolean :patient_home_educated
       t.date :patient_date_of_death
       t.integer :patient_birth_academic_year
+      t.integer :patient_year_group
 
       t.bigint :school_id
       t.string :school_name

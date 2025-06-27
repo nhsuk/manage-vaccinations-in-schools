@@ -1,36 +1,39 @@
 # frozen_string_literal: true
 
 namespace :events do
-  desc "Clear all reportable events"
-  task clear: :environment do
-    ReportableEvent.delete_all
-  end
+  namespace :vaccinations do
+    desc "Clear all reportable vaccination events"
+    task clear: :environment do
+      ReportableVaccinationEvent.delete_all
+    end
 
-  desc "Write all VaccinationRecord events"
-  task write_vaccination_records: :environment do
-    puts "#{VaccinationRecord.count} vaccination records"
-    puts "#{ReportableEvent.count} reportable events"
+    desc "Write reportable vaccination events for all VaccinationRecords"
+    task write_all: :environment do
+      puts "#{VaccinationRecord.count} vaccination records"
 
-    VaccinationRecord.all.find_each do |vaccination|
-      re =
-        ReportableEvent.find_or_initialize_by(
-          event_timestamp: vaccination.performed_at,
-          event_type: ["vaccination", vaccination.outcome].join("_"),
-          source_id: vaccination.id,
-          source_type: vaccination.class.name
-        )
+      VaccinationRecord.all.find_each do |vaccination|
+        vaccination.create_or_update_reportable_vaccination_event
+      end
 
-      re.copy_attributes_from_references(
-        patient: vaccination.patient,
-        school: vaccination.location,
-        vaccination_record: vaccination,
-        vaccine: vaccination.vaccine,
-        team: vaccination.team,
-        organisation: vaccination.team&.organisation,
-        programme: vaccination.programme
-      )
-
-      re.save!
+      puts "#{ReportableVaccinationEvent.count} reportable events"
     end
   end
+
+  namespace :consents do
+    desc "Clear all reportable consent events"
+    task clear: :environment do
+      ReportableConsentEvent.delete_all
+    end
+
+    desc "Write reportable consent events for all Consent records"
+    task write_all: :environment do
+      puts "#{Consent.count} consent records"
+      
+      Consent.all.find_each do |consent|
+        consent.create_or_update_reportable_consent_event
+      end
+      puts "#{ReportableConsentEvent.count} reportable events"
+    end
+  end
+  
 end

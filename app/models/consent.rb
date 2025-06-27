@@ -207,6 +207,29 @@ class Consent < ApplicationRecord
       (response_refused? && !reason_for_refusal_personal_choice?)
   end
 
+  def create_or_update_reportable_consent_event
+    re =
+      ReportableConsentEvent.find_or_initialize_by(
+        event_timestamp: self.consent_form&.recorded_at || self.submitted_at,
+        event_type: ["consent", self.response].join("_"),
+        source_id: self.id,
+        source_type: self.class.name
+      )
+
+    re.copy_attributes_from_references(
+      patient: self.patient,
+      parent: self.parent,
+      parent_relationship: self.patient.parent_relationships.find_by(parent_id: self.parent_id),
+      consent: self,
+      programme: self.programme,
+      organisation: self.organisation 
+    )
+
+    re.save!
+    re
+  end
+
+
   class ConsentFormNotRecorded < StandardError
   end
 end
