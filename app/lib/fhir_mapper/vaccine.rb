@@ -2,7 +2,10 @@
 
 module FHIRMapper
   class Vaccine
-    delegate_missing_to :@vaccine
+    delegate :snomed_product_code,
+             :snomed_product_term,
+             :manufacturer,
+             to: :@vaccine
 
     def initialize(vaccine)
       @vaccine = vaccine
