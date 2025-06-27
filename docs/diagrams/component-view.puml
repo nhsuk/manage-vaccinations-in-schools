@@ -19,6 +19,9 @@ Enterprise_Boundary(nhs, "NHS England Digital") {
       Component(webapp, "Web Application")
       Component(bgjobs, "Background Jobs")
     }
+    Container_Boundary(mavis_reporting_app, "Mavis Reporting UI", Python) {
+      Component(mavis_reporting, "Reporting interface", "Python")
+    }
     ContainerDb(database, "Database", "PostgreSQL")
   }
 
@@ -36,14 +39,15 @@ Rel(webapp, cis, "Gets user info", "OIDC")
 Rel(sais, webapp, "Uses system", "HTML, JS")
 Rel(sais, poc, "Gets vaccination records from")
 Rel(sais, webapp, "Uploads vaccination records", "CSV")
+Rel(sais, mavis_reporting, "Generates reports", "CSV")
 Rel(parents, webapp, "Responds to consent requests", "HTML, JS")
 Rel(webapp, database, "Read and write data", "Postgres, TLS")
+Rel(mavis_reporting, webapp, "Reads data from", "private REST API")
 Rel(webapp, bgjobs, "Queues jobs")
 Rel(bgjobs, database, "Read and write data", "Postgres, TLS")
 Rel(bgjobs, notify, "Send notifications to user", "REST API")
 Rel(notify, parents, "Sends notifications to", "Email, SMS")
 Rel(bgjobs, pds, "Gets NHS numbers from", "FHIR REST API")
-Rel(bgjobs, dps, "Sends vaccination records to", "MESH")
 
 
 SHOW_FLOATING_LEGEND()

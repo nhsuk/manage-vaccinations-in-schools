@@ -16,6 +16,7 @@ System_Ext(poc, "Point of care systems")
 Enterprise_Boundary(nhs, "NHS England Digital") {
   System_Boundary(manage, "Mavis") {
     Container(mavis, "Server Application", "Ruby on Rails")
+    Container(mavis_reporting, "Reporting interface", "Python")
     ContainerDb(mavis_db, "Database", "PostgreSQL")
   }
 
@@ -33,12 +34,13 @@ Rel(mavis, cis, "Gets user info", "OIDC API")
 Rel(sais, mavis, "Uses system", "HTML, JS")
 Rel(sais, poc, "Gets vaccination records from")
 Rel(sais, mavis, "Uploads vaccination records", "CSV")
+Rel(sais, mavis_reporting, "Generates reports", "CSV")
 Rel(parents, mavis, "Responds to consent requests", "HTML, JS")
 Rel(mavis, notify, "Send notifications to user", "REST API")
 Rel(notify, parents, "Sends notifications to", "Email, SMS")
 Rel(mavis, pds, "Gets NHS numbers from", "FHIR REST API")
-Rel(mavis, dps, "Sends vaccination records to", "MESH")
 Rel(mavis, mavis_db, "Reads from and writes to", "Postgres, TLS")
+Rel(mavis_reporting, mavis, "Reads data from", "private REST API")
 
 SHOW_FLOATING_LEGEND()
 
