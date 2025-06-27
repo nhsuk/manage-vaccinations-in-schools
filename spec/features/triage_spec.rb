@@ -50,7 +50,7 @@ describe "Triage" do
 
     # Second patient - nasal only consent
     when_i_go_to_the_session_triage_tab
-    when_i_go_to_the_second_patient_that_needs_triage
+    and_i_go_to_the_second_patient_that_needs_triage
     then_i_see_the_triage_options_for_nasal_only_consent
 
     when_i_record_that_they_need_triage_for_flu
@@ -264,7 +264,7 @@ describe "Triage" do
     )
   end
 
-  def when_i_go_to_the_second_patient_that_needs_triage
+  def and_i_go_to_the_second_patient_that_needs_triage
     choose "Needs triage"
     click_on "Update results"
     click_link @patient_nasal_only.full_name
@@ -289,7 +289,6 @@ describe "Triage" do
 
   def and_the_vaccine_method_is_recorded_as_nasal
     triage = @patient_nasal_only.triages.last
-    skip "Bug: should be nasal but currently injection"
-    expect(triage.vaccine_method).to eq("injection")
+    expect(triage.vaccine_method).to eq("nasal")
   end
 end
