@@ -103,6 +103,32 @@ FactoryBot.define do
       end
     end
 
+    trait :consent_given_injection_only_triage_needed do
+      patient do
+        association :patient,
+                    :consent_given_injection_only_triage_needed,
+                    performed_by: user,
+                    programmes: session.programmes,
+                    organisation:,
+                    school:,
+                    home_educated:,
+                    year_group:
+      end
+    end
+
+    trait :consent_given_nasal_only_triage_needed do
+      patient do
+        association :patient,
+                    :consent_given_nasal_only_triage_needed,
+                    performed_by: user,
+                    programmes: session.programmes,
+                    organisation:,
+                    school:,
+                    home_educated:,
+                    year_group:
+      end
+    end
+
     trait :consent_refused do
       patient do
         association :patient,

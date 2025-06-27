@@ -73,7 +73,7 @@ class TriageForm
       performed_by: current_user,
       programme:,
       status:,
-      vaccine_method: "injection"
+      vaccine_method:
     }
   end
 
