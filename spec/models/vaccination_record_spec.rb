@@ -237,12 +237,31 @@ describe VaccinationRecord do
     end
 
     context 'when a ReportableVaccinationEvent exists for this VaccinationRecord' do
-      before do
-        ReportableVaccinationEvent.create!(source_id: vaccination_record.id, source_type: 'VaccinationRecord', event_timestamp: Time.current - 1.day)
-      end
+      let!(:existing_event) { ReportableVaccinationEvent.create!(source_id: vaccination_record.id, source_type: 'VaccinationRecord', event_timestamp: Time.current - 1.day) }
 
       it 'does not create a new ReportableVaccinationEvent' do
         expect{ vaccination_record.create_or_update_reportable_vaccination_event }.not_to change(ReportableVaccinationEvent, :count)
+      end
+
+      context 'when attributes have changed on related records' do
+        before do
+          patient.update!(date_of_birth: Date.new(2012, 8, 21), birth_academic_year: 2011)
+          vaccination_record.create_or_update_reportable_vaccination_event
+        end
+
+        it "updates any changed attributes" do
+          expect(existing_event.reload.patient_date_of_birth).to eq(Date.new(2012, 8, 21))
+        end
+
+        it "updates any derived attributes based on the changed attributes" do
+          expect(existing_event.reload).to have_attributes(
+            { 
+              patient_birth_academic_year: 2011,
+              patient_year_group: 8,
+            }
+          ) 
+
+        end
       end
     end
   end

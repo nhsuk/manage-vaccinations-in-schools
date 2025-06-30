@@ -186,9 +186,9 @@ class VaccinationRecord < ApplicationRecord
       )
     re.event_timestamp = self.performed_at
     re.event_type = self.outcome
-    
+
     re.copy_attributes_from_references(
-      patient: self.patient,
+      patient: self.patient.reload,
       school: self.location,
       vaccination_record: self,
       vaccine: self.vaccine,
