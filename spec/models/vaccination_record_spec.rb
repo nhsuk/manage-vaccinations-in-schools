@@ -183,10 +183,14 @@ describe VaccinationRecord do
   end
 
   describe '#create_or_update_reportable_vaccination_event' do
+    let!(:patient) { create(:patient, date_of_birth: Date.new(2011, 8, 21) ) }
+
     let!(:vaccination_record) do
       create(
         :vaccination_record,
         :performed_by_not_user,
+        patient: patient,
+        performed_at: Time.new(2024, 9, 10, 8, 55, 1),
         performed_by_given_name: "John",
         performed_by_family_name: "Smith"
       )
@@ -194,17 +198,51 @@ describe VaccinationRecord do
 
     context 'when no ReportableVaccinationEvent record exists for this VaccinationRecord' do
       it 'creates a new ReportableVaccinationEvent' do
-        expect(vaccination_record.create_or_update_reportable_vaccination_event).to change(ReportableVaccinationEvent, :count).by(1)
+        expect{ vaccination_record.create_or_update_reportable_vaccination_event }.to change(ReportableVaccinationEvent, :count).by(1)
+      end
+
+      describe "the new record" do
+        let(:new_record) { vaccination_record.create_or_update_reportable_vaccination_event }
+
+        it "has this vaccination_record as source" do
+          expect(new_record.source).to eq(vaccination_record)
+        end
+
+        it "has the performed_at as event_timestamp" do
+          expect(new_record.event_timestamp).to eq(vaccination_record.performed_at)
+        end
+
+        it "has the outcome as the event_type" do
+          expect(new_record.event_type).to eq(vaccination_record.outcome)
+        end
+
+        it "has a copy of the patient attributes" do
+          %w[
+            address_postcode
+            address_town
+            birth_academic_year
+            date_of_birth
+            date_of_death
+            home_educated
+            nhs_number
+          ].each do |attr_name|
+            expect( new_record[["patient", attr_name].join("_")] ).to eq(vaccination_record.patient[attr_name])
+          end
+        end
+
+        it "calculates the correct year_group for the patient" do
+          expect(new_record.patient_year_group).to eq(9)
+        end
       end
     end
 
     context 'when a ReportableVaccinationEvent exists for this VaccinationRecord' do
       before do
-        ReportableVaccinationEvent.create!(source_id: vaccination_record.id, source_type: 'VaccinationRecord')
+        ReportableVaccinationEvent.create!(source_id: vaccination_record.id, source_type: 'VaccinationRecord', event_timestamp: Time.current - 1.day)
       end
 
       it 'does not create a new ReportableVaccinationEvent' do
-        expect(vaccination_record.create_or_update_reportable_vaccination_event).not_to change(ReportableVaccinationEvent, :count).by(1)
+        expect{ vaccination_record.create_or_update_reportable_vaccination_event }.not_to change(ReportableVaccinationEvent, :count)
       end
     end
   end

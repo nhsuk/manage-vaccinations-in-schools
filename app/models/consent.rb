@@ -210,12 +210,12 @@ class Consent < ApplicationRecord
   def create_or_update_reportable_consent_event
     re =
       ReportableConsentEvent.find_or_initialize_by(
-        event_timestamp: self.consent_form&.recorded_at || self.submitted_at,
-        event_type: ["consent", self.response].join("_"),
         source_id: self.id,
         source_type: self.class.name
       )
-
+    re.event_timestamp = self.consent_form&.recorded_at || self.submitted_at
+    re.event_type = self.response
+        
     re.copy_attributes_from_references(
       patient: self.patient,
       parent: self.parent,

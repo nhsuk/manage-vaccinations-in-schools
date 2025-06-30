@@ -70,11 +70,6 @@
 class ReportableVaccinationEvent < ApplicationRecord
   include DenormalizingConcern
   include ReportableEventMethods
-  
-  enum :event_type,
-        {
-          vaccination_not_well: "not_well",
-          vaccination_administered: "vaccination_administered",
-        },
-        validate: true
+
+  # enum :event_type, VaccinationRecord.outcomes,  validate: true
 end

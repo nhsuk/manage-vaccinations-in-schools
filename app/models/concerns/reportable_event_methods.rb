@@ -3,7 +3,7 @@ module ReportableEventMethods
 
   included do
     belongs_to :source, polymorphic: true
-    belongs_to :patient
+    belongs_to :patient, optional: true
 
     before_validation :set_event_timestamp_date_part_attributes, :set_patient_year_group
 
@@ -18,7 +18,7 @@ module ReportableEventMethods
       self.event_timestamp_month = event_timestamp&.month
       self.event_timestamp_year = event_timestamp&.year
 
-      self.event_timestamp_academic_year = event_timestamp.to_date.academic_year
+      self.event_timestamp_academic_year = event_timestamp.to_date&.academic_year
     end
   end
 end

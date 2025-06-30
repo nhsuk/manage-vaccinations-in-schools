@@ -273,4 +273,9 @@ describe Consent do
     expect(consent.health_answers.first.response).to eq("no")
     expect(consent.health_answers.first.notes).to be_nil
   end
+
+
+  describe "#create_or_update_reportable_consent_event" do
+  
+  end 
 end
