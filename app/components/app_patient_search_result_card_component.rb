@@ -5,6 +5,7 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
     patient,
     link_to:,
     programme: nil,
+    triage_status: nil,
     show_parents: false,
     show_postcode: false,
     show_school: false,
@@ -15,6 +16,7 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
     @patient = patient
     @link_to = link_to
     @programme = programme
+    @triage_status = triage_status
 
     @show_parents = show_parents
     @show_postcode = show_postcode
@@ -57,6 +59,16 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
         end
         if @programme
           summary_list.with_row do |row|
+            row.with_key { "Consent status" }
+            row.with_value { consent_status_tag }
+          end
+          if display_triage_status?
+            summary_list.with_row do |row|
+              row.with_key { "Triage status" }
+              row.with_value { triage_status_tag }
+            end
+          end
+          summary_list.with_row do |row|
             row.with_key { "Programme outcome" }
             row.with_value { programme_outcome_tag }
           end
@@ -68,10 +80,32 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
   private
 
   def programme_outcome_tag
-    status = @patient.vaccination_status(programme: @programme).status
+    render_status_tag(:vaccination, :programme)
+  end
+
+  def consent_status_tag
+    render_status_tag(:consent, :consent)
+  end
+
+  def triage_status_tag
+    render_status_tag(:triage, :triage)
+  end
+
+  def render_status_tag(status_type, outcome)
+    status =
+      @patient.public_send(
+        "#{status_type}_status",
+        programme: @programme
+      ).status
     render AppProgrammeStatusTagsComponent.new(
              { @programme => { status: } },
-             outcome: :programme
+             outcome: outcome
            )
+  end
+
+  def display_triage_status?
+    return true if @triage_status.present?
+
+    @patient.triage_status(programme: @programme).required?
   end
 end
