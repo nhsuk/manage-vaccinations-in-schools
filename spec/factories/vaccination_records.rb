@@ -24,6 +24,7 @@
 #  created_at               :datetime         not null
 #  updated_at               :datetime         not null
 #  batch_id                 :bigint
+#  nhse_id                  :string
 #  patient_id               :bigint
 #  performed_by_user_id     :bigint
 #  programme_id             :bigint           not null
