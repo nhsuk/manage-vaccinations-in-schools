@@ -84,6 +84,16 @@ FactoryBot.define do
       recorded_by
     end
 
+    trait :given_injection do
+      given
+      vaccine_methods { %w[injection] }
+    end
+
+    trait :given_nasal do
+      given
+      vaccine_methods { %w[nasal] }
+    end
+
     trait :self_consent do
       route { "self_consent" }
       parent { nil }

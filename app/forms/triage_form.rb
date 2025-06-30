@@ -8,6 +8,7 @@ class TriageForm
 
   attribute :status_and_vaccine_method, :string
   attribute :notes, :string
+  attribute :vaccine_methods, array: true, default: []
 
   validates :status_and_vaccine_method,
             inclusion: {
@@ -60,7 +61,8 @@ class TriageForm
 
   def consented_vaccine_methods
     @consented_vaccine_methods ||=
-      patient.consent_status(programme:).vaccine_methods
+      vaccine_methods.presence ||
+        patient.consent_status(programme:).vaccine_methods
   end
 
   def triage_attributes
@@ -71,7 +73,7 @@ class TriageForm
       performed_by: current_user,
       programme:,
       status:,
-      vaccine_method: "injection"
+      vaccine_method:
     }
   end
 

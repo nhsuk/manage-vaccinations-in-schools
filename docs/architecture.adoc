@@ -198,10 +198,6 @@ service using a standard login page, and as is standard with Ruby on Rails apps,
 resources are exposed with REST-like paths using an MVC approach to separate
 concerns on the server.
 
-== Deployment
-
-include::deployment.adoc[leveloffset=+1,lines=24..-1]
-
 == Components
 
 * Authentication
@@ -209,3 +205,4 @@ include::deployment.adoc[leveloffset=+1,lines=24..-1]
 * Programme operations and vaccination recording
 * Offline support - Browser-based component
 * FHIR server synchronisation
+* Reporting (in development)

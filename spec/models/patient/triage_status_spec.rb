@@ -4,10 +4,11 @@
 #
 # Table name: patient_triage_statuses
 #
-#  id           :bigint           not null, primary key
-#  status       :integer          default("not_required"), not null
-#  patient_id   :bigint           not null
-#  programme_id :bigint           not null
+#  id             :bigint           not null, primary key
+#  status         :integer          default("not_required"), not null
+#  vaccine_method :integer
+#  patient_id     :bigint           not null
+#  programme_id   :bigint           not null
 #
 # Indexes
 #
@@ -27,6 +28,8 @@ describe Patient::TriageStatus do
   let(:patient) { create(:patient, year_group: 9) }
   let(:programme) { create(:programme) }
 
+  before { patient.strict_loading!(false) }
+
   it { should belong_to(:patient) }
   it { should belong_to(:programme) }
 
@@ -43,9 +46,7 @@ describe Patient::TriageStatus do
   end
 
   describe "#status" do
-    subject { patient_triage_status.assign_status }
-
-    before { patient.strict_loading!(false) }
+    subject { patient_triage_status.tap(&:assign_status).status.to_sym }
 
     context "with no triage" do
       it { should be(:not_required) }
@@ -148,6 +149,74 @@ describe Patient::TriageStatus do
           let(:triage_trait) { :delay_vaccination }
         end
       end
+    end
+  end
+
+  describe "#vaccine_method" do
+    subject { patient_triage_status.tap(&:assign_status).vaccine_method }
+
+    context "with no triage" do
+      it { should be_nil }
+    end
+
+    context "with a consent that needs triage" do
+      before { create(:consent, :needing_triage, patient:, programme:) }
+
+      it { should be_nil }
+    end
+
+    context "with a historical vaccination that needs triage" do
+      let(:programme) { create(:programme, :td_ipv) }
+
+      before do
+        create(:vaccination_record, patient:, programme:, dose_sequence: 1)
+      end
+
+      it { should be_nil }
+
+      context "when consent is given" do
+        before { create(:consent, :given, patient:, programme:) }
+
+        it { should be_nil }
+      end
+
+      context "when consent is refused" do
+        before { create(:consent, :refused, patient:, programme:) }
+
+        it { should be_nil }
+      end
+    end
+
+    context "with a safe to vaccinate triage" do
+      before { create(:triage, :ready_to_vaccinate, patient:, programme:) }
+
+      it { should eq("injection") }
+    end
+
+    context "with a do not vaccinate triage" do
+      before { create(:triage, :do_not_vaccinate, patient:, programme:) }
+
+      it { should be_nil }
+    end
+
+    context "with a needs follow up triage" do
+      before { create(:triage, :needs_follow_up, patient:, programme:) }
+
+      it { should be_nil }
+    end
+
+    context "with a delay vaccination triage" do
+      before { create(:triage, :delay_vaccination, patient:, programme:) }
+
+      it { should be_nil }
+    end
+
+    context "with an invalidated safe to vaccinate triage" do
+      before do
+        create(:triage, :ready_to_vaccinate, :invalidated, patient:, programme:)
+      end
+
+      it { should be_nil }
     end
   end
 end

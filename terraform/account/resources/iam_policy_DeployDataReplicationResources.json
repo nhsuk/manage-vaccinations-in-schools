@@ -47,7 +47,6 @@
         "kms:ScheduleKeyDeletion",
         "kms:Revoke*",
         "kms:Disable*",
-        "kms:CreateGrant",
         "kms:CancelKeyDeletion",
         "kms:PutKeyPolicy",
         "kms:ReplicateKey",

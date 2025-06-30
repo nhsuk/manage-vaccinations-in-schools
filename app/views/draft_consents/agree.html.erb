@@ -13,8 +13,23 @@
                                      legend: { size: "l",
                                                tag: "h1",
                                                text: title }) do %>
-    <%= f.govuk_radio_button :response, "given",
-                             label: { text: "Yes, they agree" }, link_errors: true %>
+    <% if @draft_consent.programme.flu? %>
+      <%= f.govuk_radio_button :response, "given_nasal",
+                               label: { text: "Yes, for the nasal spray" }, link_errors: true do %>
+        <%= f.govuk_radio_buttons_fieldset :action,
+                                           legend: { text: "Do they also agree to the injected vaccine if the nasal spray is not suitable?", size: "s" },
+                                           hint: { text: "For example, if the child is heavily congested on the day of the vaccination", size: "s" } do %>
+          <%= f.govuk_radio_button :injection_alternative, "true", label: { text: "Yes" } %>
+          <%= f.govuk_radio_button :injection_alternative, "false", label: { text: "No" } %>
+        <% end %>
+      <% end %>
+      <%= f.govuk_radio_button :response, "given_injection",
+                               label: { text: "Yes, for the injected vaccine only" } %>
+    <% else %>
+      <%= f.govuk_radio_button :response, "given",
+                               label: { text: "Yes, they agree" }, link_errors: true %>
+    <% end %>
+
     <%= f.govuk_radio_button :response, "refused",
                              label: { text: "No, they do not agree" } %>
     <% unless @draft_consent.via_self_consent? %>

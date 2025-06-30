@@ -226,10 +226,6 @@ working.
 
 include::offline-support.adoc[leveloffset=+2,lines=24..-1]
 
-== Deployment
-
-include::deployment.adoc[leveloffset=+1,lines=24..-1]
-
 == Components
 
 * Authentication

@@ -41,14 +41,7 @@ class PatientSessions::TriagesController < PatientSessions::BaseController
         .call(@patient.reload.consents, programme: @programme)
         .each { send_triage_confirmation(@patient_session, it) }
 
-      flash[:success] = {
-        heading: "Triage outcome updated for",
-        heading_link_text: @patient.full_name,
-        heading_link_href:
-          session_patient_programme_path(@session, @patient, @programme)
-      }
-
-      redirect_to redirect_path
+      redirect_to redirect_path, flash: { success: "Triage outcome updated" }
     else
       render "patient_sessions/programmes/show",
              layout: "full",
@@ -63,12 +56,11 @@ class PatientSessions::TriagesController < PatientSessions::BaseController
   end
 
   def redirect_path
-    if session[:current_section] == "vaccinations"
-      session_record_path(@session)
-    elsif session[:current_section] == "consents"
-      session_consent_path(@session)
-    else # if current_section is triage or anything else
-      session_triage_path(@session)
-    end
+    session_patient_programme_path(
+      @session,
+      @patient,
+      @programme,
+      return_to: "triage"
+    )
   end
 end

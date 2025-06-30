@@ -28,13 +28,13 @@
     "@types/jest": "^30.0.0",
     "esbuild-jest": "^0.5.0",
     "fake-indexeddb": "^4.0.2",
-    "jest": "^30.0.0",
+    "jest": "^30.0.3",
     "jest-environment-jsdom": "^30.0.2",
     "jest-fetch-mock": "^3.0.3",
     "mutationobserver-shim": "^0.3.7",
     "officecrypto-tool": "^0.0.18",
     "playwright-core": "^1.53.1",
-    "prettier": "^3.6.0"
+    "prettier": "^3.6.1"
   },
   "jest": {
     "collectCoverage": true,
