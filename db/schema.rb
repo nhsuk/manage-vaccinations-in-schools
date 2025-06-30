@@ -821,8 +821,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_02_162254) do
     t.bigint "vaccine_id"
     t.boolean "full_dose"
     t.datetime "nhs_immunisations_api_synced_at"
+    t.string "nhs_immunisations_api_id"
     t.index ["batch_id"], name: "index_vaccination_records_on_batch_id"
     t.index ["discarded_at"], name: "index_vaccination_records_on_discarded_at"
+    t.index ["nhs_immunisations_api_id"], name: "index_vaccination_records_on_nhs_immunisations_api_id", unique: true
     t.index ["patient_id"], name: "index_vaccination_records_on_patient_id"
     t.index ["performed_by_user_id"], name: "index_vaccination_records_on_performed_by_user_id"
     t.index ["programme_id"], name: "index_vaccination_records_on_programme_id"
