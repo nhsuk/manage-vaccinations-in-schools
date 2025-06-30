@@ -33,6 +33,7 @@
       <%= render AppSearchComponent.new(
             form: @form,
             url: session_record_path(@session),
+            programmes: @session.programmes,
             year_groups: @session.year_groups,
             vaccine_methods: @session.vaccine_methods.then { it.length > 1 ? it : [] },
           ) %>
@@ -41,7 +42,9 @@
     <div class="app-grid-column-results">
       <%= render AppSearchResultsComponent.new(@pagy) do %>
         <% @patient_sessions.each do |patient_session| %>
-          <%= render AppPatientSessionSearchResultCardComponent.new(patient_session, context: :record) %>
+          <%= render AppPatientSessionSearchResultCardComponent.new(
+                patient_session, context: :record, programmes: @form.programmes,
+              ) %>
         <% end %>
       <% end %>
     </div>
