@@ -276,6 +276,83 @@ describe Consent do
 
 
   describe "#create_or_update_reportable_consent_event" do
-  
+    let!(:patient) { create(:patient, date_of_birth: Date.new(2011, 8, 21) ) }
+
+    let!(:consent) do
+      create(
+        :consent,
+        patient: patient,
+        submitted_at: Time.new(2024, 9, 10, 8, 55, 1)
+      )
+    end
+
+    context 'when no ReportableConsentEvent record exists for this Consent' do
+      it 'creates a new ReportableConsentEvent' do
+        expect{ consent.create_or_update_reportable_consent_event }.to change(ReportableConsentEvent, :count).by(1)
+      end
+
+      describe "the new record" do
+        let(:new_record) { consent.create_or_update_reportable_consent_event }
+
+        it "has this consent as source" do
+          expect(new_record.source).to eq(consent)
+        end
+
+        it "has the submitted_at as event_timestamp" do
+          expect(new_record.event_timestamp).to eq(consent.submitted_at)
+        end
+
+        it "has the response as the event_type" do
+          expect(new_record.event_type).to eq(consent.response)
+        end
+
+        it "has a copy of the patient attributes" do
+          %w[
+            address_postcode
+            address_town
+            birth_academic_year
+            date_of_birth
+            date_of_death
+            home_educated
+            nhs_number
+          ].each do |attr_name|
+            expect( new_record[["patient", attr_name].join("_")] ).to eq(consent.patient[attr_name])
+          end
+        end
+
+        it "calculates the correct year_group for the patient" do
+          expect(new_record.patient_year_group).to eq(9)
+        end
+      end
+    end
+
+    context 'when a ReportableConsentEvent exists for this Consent' do
+      let!(:existing_event) { ReportableConsentEvent.create!(source_id: consent.id, source_type: 'Consent', event_timestamp: Time.current - 1.day) }
+
+      it 'does not create a new ReportableConsentEvent' do
+        expect{ consent.create_or_update_reportable_consent_event }.not_to change(ReportableConsentEvent, :count)
+      end
+
+      context 'when attributes have changed on related records' do
+        before do
+          patient.update!(date_of_birth: Date.new(2012, 8, 21), birth_academic_year: 2011)
+          consent.create_or_update_reportable_consent_event
+        end
+
+        it "updates any changed attributes" do
+          expect(existing_event.reload.patient_date_of_birth).to eq(Date.new(2012, 8, 21))
+        end
+
+        it "updates any derived attributes based on the changed attributes" do
+          expect(existing_event.reload).to have_attributes(
+            { 
+              patient_birth_academic_year: 2011,
+              patient_year_group: 8,
+            }
+          ) 
+
+        end
+      end
+    end
   end 
 end
