@@ -18,6 +18,7 @@ class SearchForm
   attribute :register_status, :string
   attribute :session_status, :string
   attribute :triage_status, :string
+  attribute :vaccine_method, :string
   attribute :year_groups, array: true
 
   attr_accessor :session, :request_path
@@ -72,6 +73,10 @@ class SearchForm
 
     if (status = triage_status&.to_sym).present?
       scope = scope.has_triage_status(status, programme:)
+    end
+
+    if vaccine_method.present?
+      scope = scope.has_vaccine_method(vaccine_method, programme:)
     end
 
     scope.order_by_name
