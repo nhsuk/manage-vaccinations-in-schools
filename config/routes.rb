@@ -208,6 +208,10 @@ Rails.application.routes.draw do
   end
 
   resources :sessions, only: %i[edit index show], param: :slug do
+    resource :manage_consent_reminders,
+             only: %i[show create],
+             controller: "sessions/manage_consent_reminders"
+
     resource :consent, only: :show, controller: "sessions/consent"
     resource :triage, only: :show, controller: "sessions/triage"
     resource :register, only: :show, controller: "sessions/register" do
