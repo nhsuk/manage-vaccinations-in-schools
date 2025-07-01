@@ -4,7 +4,7 @@ resource "aws_grafana_workspace" "this" {
   account_access_type      = "CURRENT_ACCOUNT"
   authentication_providers = ["SAML", "AWS_SSO"]
   permission_type          = "SERVICE_MANAGED"
-  role_arn                 = aws_iam_role.assume.arn
+  role_arn                 = aws_iam_role.grafana.arn
   configuration = jsonencode({
     unifiedAlerting = {
       enabled = true

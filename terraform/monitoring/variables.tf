@@ -7,6 +7,13 @@ variable "environment" {
     error_message = "Valid values for environment: development, production."
   }
 }
+
+variable "region" {
+  type        = string
+  default     = "eu-west-2"
+  description = "AWS region"
+}
+
 locals {
   group_ids = {
     AWS-Mavis-Admins     = "96f2a2a4-3031-70a2-01be-db6c0030cb03"

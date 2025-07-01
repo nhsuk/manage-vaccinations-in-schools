@@ -22,8 +22,3 @@ terraform {
 provider "aws" {
   region = "eu-west-2"
 }
-
-provider "grafana" {
-  url  = aws_grafana_workspace.this.endpoint
-  auth = aws_grafana_workspace_service_account_token.grafana_provider_key.key
-}
