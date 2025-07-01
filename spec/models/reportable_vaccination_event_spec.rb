@@ -31,9 +31,10 @@
 #  school_name                                 :string
 #  source_type                                 :string
 #  team_name                                   :string
-#  vaccination_record_delivery_method          :integer
+#  vaccination_record_delivery_method          :string
+#  vaccination_record_delivery_site            :string
 #  vaccination_record_dose_sequence            :integer
-#  vaccination_record_outcome                  :integer
+#  vaccination_record_outcome                  :string
 #  vaccination_record_performed_at             :datetime
 #  vaccination_record_performed_by_family_name :string
 #  vaccination_record_performed_by_given_name  :string
@@ -65,7 +66,11 @@
 #
 # Indexes
 #
-#  index_reportable_events_on_source  (source_type,source_id)
+#  index_reportable_events_on_source                     (source_type,source_id)
+#  ix_rpt_vaccination_event_ac_year_month                (event_timestamp_academic_year,event_timestamp_month)
+#  ix_rpt_vaccination_event_tstamp                       (event_timestamp)
+#  ix_rpt_vaccination_event_tstamp_year_month_prog_type  (event_timestamp_academic_year,event_timestamp_month,programme_id,event_type)
+#  ix_rpt_vaccination_source_type_id                     (source_type,source_id)
 #
 require "spec_helper"
 

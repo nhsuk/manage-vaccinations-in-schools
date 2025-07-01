@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_27_081633) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_01_090133) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -678,10 +678,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_27_081633) do
     t.date "patient_date_of_death"
     t.integer "patient_birth_academic_year"
     t.integer "patient_year_group"
-    t.integer "consent_response"
-    t.integer "consent_reason_for_refusal"
+    t.string "consent_response"
+    t.string "consent_reason_for_refusal"
     t.text "consent_notes"
-    t.integer "consent_route"
+    t.string "consent_route"
     t.jsonb "consent_health_answers"
     t.bigint "consent_recorded_by_user_id"
     t.bigint "consent_parent_id"
@@ -719,7 +719,11 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_27_081633) do
     t.string "programme_type"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["event_timestamp"], name: "ix_rpt_consent_event_tstamp"
+    t.index ["event_timestamp_academic_year", "event_timestamp_month", "programme_id", "event_type"], name: "ix_rpt_consent_event_tstamp_year_month_prog_type"
+    t.index ["event_timestamp_academic_year", "event_timestamp_month"], name: "ix_rpt_consent_event_ac_year_month"
     t.index ["source_type", "source_id"], name: "index_reportable_consent_events_on_source"
+    t.index ["source_type", "source_id"], name: "ix_rpt_consent_source_type_id"
   end
 
   create_table "reportable_vaccination_events", force: :cascade do |t|
@@ -754,9 +758,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_27_081633) do
     t.bigint "organisation_id"
     t.string "organisation_ods_code"
     t.string "organisation_name"
-    t.integer "vaccination_record_outcome"
+    t.string "vaccination_record_outcome"
     t.bigint "vaccination_record_batch_id"
-    t.integer "vaccination_record_delivery_method"
+    t.string "vaccination_record_delivery_method"
     t.bigint "vaccination_record_performed_by_user_id"
     t.string "vaccination_record_performed_by_given_name"
     t.string "vaccination_record_performed_by_family_name"
@@ -780,7 +784,12 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_27_081633) do
     t.string "programme_type"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "vaccination_record_delivery_site"
+    t.index ["event_timestamp"], name: "ix_rpt_vaccination_event_tstamp"
+    t.index ["event_timestamp_academic_year", "event_timestamp_month", "programme_id", "event_type"], name: "ix_rpt_vaccination_event_tstamp_year_month_prog_type"
+    t.index ["event_timestamp_academic_year", "event_timestamp_month"], name: "ix_rpt_vaccination_event_ac_year_month"
     t.index ["source_type", "source_id"], name: "index_reportable_events_on_source"
+    t.index ["source_type", "source_id"], name: "ix_rpt_vaccination_source_type_id"
   end
 
   create_table "school_move_log_entries", force: :cascade do |t|
