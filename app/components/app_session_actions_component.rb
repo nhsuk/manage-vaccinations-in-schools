@@ -50,8 +50,13 @@ class AppSessionActionsComponent < ViewComponent::Base
     count =
       patient_sessions.has_consent_status(status, programme: programmes).count
     href = session_consent_path(session, consent_statuses: [status])
-
-    generate_row(:children_with_no_consent_response, count:, href:)
+    actions = [
+      {
+        text: "Send reminders",
+        href: session_manage_consent_reminders_path(session)
+      }
+    ]
+    generate_row(:children_with_no_consent_response, count:, href:, actions:)
   end
 
   def conflicting_consent_row
@@ -140,7 +145,7 @@ class AppSessionActionsComponent < ViewComponent::Base
     }
   end
 
-  def generate_row(key, count:, href: nil)
+  def generate_row(key, count:, href: nil, actions: nil)
     return nil if count.zero?
 
     {
@@ -150,7 +155,8 @@ class AppSessionActionsComponent < ViewComponent::Base
       value: {
         text:
           (href ? helpers.link_to(I18n.t(key, count:), href).html_safe : text)
-      }
+      },
+      actions:
     }
   end
 end
