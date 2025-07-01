@@ -48,11 +48,11 @@ describe AppSessionActionsComponent do
   it { should have_text("Register attendance\n3 child") }
   it { should have_text("Ready for vaccinator\n1 child for HPV") }
 
-  it { should have_link("Review no consent response") }
-  it { should have_link("Review conflicting consent") }
-  it { should have_link("Review triage needed") }
-  it { should have_link("Review register attendance") }
-  it { should have_link("Review ready for vaccinator") }
+  it { should have_link("1 child with no response") }
+  it { should have_link("1 child with conflicting response") }
+  it { should have_link("1 child requiring triage") }
+  it { should have_link("3 children to register") }
+  it { should have_link("1 child for HPV") }
 
   context "session requires no registration" do
     let(:session) { create(:session, :requires_no_registration, programmes:) }
