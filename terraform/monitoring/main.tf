@@ -5,6 +5,11 @@ terraform {
       source  = "hashicorp/aws"
       version = "~> 5.87"
     }
+
+    grafana = {
+      source  = "grafana/grafana"
+      version = "~> 3.25.4"
+    }
   }
 
   backend "s3" {
@@ -16,4 +21,9 @@ terraform {
 
 provider "aws" {
   region = "eu-west-2"
+}
+
+provider "grafana" {
+  url  = aws_grafana_workspace.this.endpoint
+  auth = aws_grafana_workspace_service_account_token.grafana_provider_key.key
 }
