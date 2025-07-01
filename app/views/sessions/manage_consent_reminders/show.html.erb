@@ -27,7 +27,7 @@
       <% end %>
     </ul>
 
-    <% if @session.reminder_dates.present? %>
+    <% if @session.send_consent_reminders_at.present? %>
       <details class="nhsuk-details">
         <summary class="nhsuk-details__summary">
           <span class="nhsuk-details__summary-text">
@@ -38,7 +38,7 @@
           <p class="nhsuk-body"><%= t("sessions.reminders.reminder_dates.description") %></p>
 
           <ul class="nhsuk-list app-list--spaced">
-            <% @session.reminder_dates.each do |date| %>
+            <% @session.send_consent_reminders_at.each do |date| %>
               <li><%= date.to_fs(:long_day_of_week) %></li>
             <% end %>
           </ul>
@@ -50,12 +50,12 @@
       <p class="nhsuk-body nhsuk-u-font-weight-bold nhsuk-u-margin-bottom-2">
         <%= t("sessions.reminders.patients_to_get_consent.status",
               count: @session.patients_with_no_consent_response_count,
-              total: @session.total_patients_count) %>
+              total: @session.patients.count) %>
       </p>
 
       <p class="nhsuk-body nhsuk-u-margin-bottom-0">
         <%= t("sessions.reminders.next_reminder_date.text",
-              count: @session.next_reminder_date ? 1 : 0,
+              count: @session.send_consent_reminders_at.nil? ? 0 : 1,
               date: @session.next_reminder_date.try(:to_fs, :long_day_of_week)) %>
       </p>
 
