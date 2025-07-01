@@ -306,6 +306,15 @@ class Session < ApplicationRecord
     close_consent_at&.today? || close_consent_at&.future? || false
   end
 
+  def next_reminder_date = next_reminder_dates.first
+
+  def patients_with_no_consent_response_count
+    patient_sessions.has_consent_status(
+      "no_response",
+      programme: programmes
+    ).count
+  end
+
   private
 
   def set_slug
