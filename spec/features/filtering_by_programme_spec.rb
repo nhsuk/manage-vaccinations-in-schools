@@ -4,7 +4,7 @@ describe "Filtering" do
   around { |example| travel_to(Time.zone.local(2024, 2, 1)) { example.run } }
 
   scenario "By programme" do
-    given_a_session_exists
+    given_a_session_exists_with_programmes(%i[hpv menacwy])
     and_patients_are_in_the_session
 
     when_i_visit_the_session_outcomes
@@ -20,12 +20,20 @@ describe "Filtering" do
     and_i_see_only_the_menacwy_statuses
   end
 
-  def given_a_session_exists
-    programmes = [create(:programme, :hpv), create(:programme, :menacwy)]
+  scenario "With only one programme in session" do
+    given_a_session_exists_with_programmes([:hpv])
+    and_patients_are_in_the_session
 
+    when_i_visit_the_session_outcomes
+    then_i_see_all_the_patients
+    and_i_dont_see_programme_filter_checkboxes
+    and_i_see_only_hpv_statuses_for_all_patients
+  end
+
+  def given_a_session_exists_with_programmes(programme_types)
+    programmes = programme_types.map { |type| create(:programme, type) }
     organisation = create(:organisation, programmes:)
     @nurse = create(:nurse, organisation:)
-
     @session = create(:session, organisation:, programmes:)
   end
 
@@ -52,6 +60,16 @@ describe "Filtering" do
   def and_i_see_all_the_statuses
     expect(page).to have_content("HPVNo outcome yet").twice
     expect(page).to have_content("MenACWYNo outcome yet").once
+  end
+
+  def and_i_dont_see_programme_filter_checkboxes
+    expect(page).not_to have_field("HPV", type: "checkbox")
+    expect(page).not_to have_field("MenACWY", type: "checkbox")
+  end
+
+  def and_i_see_only_hpv_statuses_for_all_patients
+    expect(page).to have_content("HPVNo outcome yet").twice
+    expect(page).not_to have_content("MenACWYNo outcome yet")
   end
 
   def when_i_filter_on_hpv
