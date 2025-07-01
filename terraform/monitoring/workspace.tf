@@ -1,4 +1,6 @@
 resource "aws_grafana_workspace" "this" {
+  name                     = "grafana-${var.environment}"
+  description              = "Grafana workspace for ${var.environment} environment"
   account_access_type      = "CURRENT_ACCOUNT"
   authentication_providers = ["SAML", "AWS_SSO"]
   permission_type          = "SERVICE_MANAGED"
@@ -11,6 +13,7 @@ resource "aws_grafana_workspace" "this" {
       pluginAdminEnabled = true
     }
   })
+  data_sources = ["CLOUDWATCH"]
 }
 
 resource "aws_grafana_role_association" "grafana_admin" {

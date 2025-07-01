@@ -1,3 +1,12 @@
+variable "environment" {
+  type        = string
+  description = "Environment name"
+  nullable    = false
+  validation {
+    condition     = contains(["development", "production"], var.environment)
+    error_message = "Valid values for environment: development, production."
+  }
+}
 locals {
   group_ids = {
     AWS-Mavis-Admins     = "96f2a2a4-3031-70a2-01be-db6c0030cb03"
