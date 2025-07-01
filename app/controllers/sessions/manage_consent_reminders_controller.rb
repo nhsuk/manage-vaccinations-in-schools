@@ -7,6 +7,16 @@ class Sessions::ManageConsentRemindersController < ApplicationController
     authorize :consent_reminder, :show?
   end
 
+  def create
+    authorize :consent_reminder, :create?
+    SendSchoolConsentRemindersJob.perform_now(@session)
+
+    redirect_to session_path(@session),
+                flash: {
+                  success: "Manual consent reminders sent."
+                }
+  end
+
   private
 
   def set_session

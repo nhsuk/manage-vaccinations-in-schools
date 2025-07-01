@@ -55,5 +55,17 @@
       </p>
 
     </div>
+
+    <h2 class="nhsuk-heading-m nhsuk-u-margin-bottom-2">Send parents a manual consent reminder</h2>
+    <p class="nhsuk-body">
+      <%= t("sessions.reminders.preConfirm") %>
+    </p>
+
+    <% if @session.today_or_future_dates.present? %>
+      <%= button_to t("sessions.reminders.confirm"),
+                    session_manage_consent_reminders_path(@session),
+                    method: :post,
+                    class: "nhsuk-button" %>
+  <% end %>
   </div>
 </div>
