@@ -65,7 +65,9 @@ class User < ApplicationRecord
   scope :recently_active,
         -> { where(last_sign_in_at: 1.week.ago..Time.current) }
 
-  enum :fallback_role, { nurse: 0, admin: 1, superuser: 2 }, prefix: true
+  enum :fallback_role,
+       { nurse: 0, admin: 1, superuser: 2, healthcare_assistant: 3 },
+       prefix: true
 
   def self.find_or_create_from_cis2_oidc(userinfo)
     user =
@@ -115,6 +117,13 @@ class User < ApplicationRecord
       false
   end
 
+  def is_healthcare_assistant?
+    # TODO: How do we determine this from CIS2?
+    return false if Settings.cis2.enabled
+
+    fallback_role_healthcare_assistant?
+  end
+
   def role_description
     role =
       if is_admin?
@@ -125,6 +134,14 @@ class User < ApplicationRecord
         "Unknown"
       end
 
-    is_superuser? ? "#{role} (superuser)" : role
+    if is_healthcare_assistant? && is_superuser?
+      "#{role} (Healthcare assistant and superuser)"
+    elsif is_healthcare_assistant?
+      "#{role} (Healthcare assistant)"
+    elsif is_superuser?
+      "#{role} (Superuser)"
+    else
+      role
+    end
   end
 end
