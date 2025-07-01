@@ -225,6 +225,11 @@ Rails.application.routes.draw do
       post "batch/:programme_type/:vaccine_method", action: :update_batch
     end
 
+    resource :manage_consent_reminders,
+             path: "manage-consent-reminders",
+             only: %i[show create],
+             controller: "sessions/manage_consent_reminders"
+
     resource :invite_to_clinic,
              path: "invite-to-clinic",
              only: %i[edit update],
