@@ -31,6 +31,7 @@ describe "Filter states" do
     given_i_am_signed_in
 
     when_i_visit_the_session_overview_page
+
     and_i_click_the_consent_refused_link
     then_the_consent_refused_filter_is_applied
 
@@ -103,27 +104,34 @@ describe "Filter states" do
   end
 
   def and_i_click_the_no_consent_response_link
-    click_on "Review no consent response"
+    click_on "1 child with no response"
   end
 
   def and_i_click_the_conflicting_consent_link
-    click_on "Review conflicting consent"
+    click_on "1 child with conflicting response"
   end
 
   def and_i_click_the_triage_needed_link
-    click_on "Review triage needed"
+    click_on "1 child requiring triage"
   end
 
   def and_i_click_the_register_attendance_link
-    click_on "Review register attendance"
+    click_on "1 child to register"
   end
 
   def and_i_click_the_ready_for_vaccinator_link
-    click_on "Review ready for vaccinator"
+    click_on sprintf "1 child for %s", @programme.name
   end
 
   def then_i_should_be_on_the_record_page
-    expect(page).to have_current_path(session_record_path(@session))
+    expect(page).to have_current_path(
+      session_record_path(
+        @session,
+        search_form: {
+          programme_types: [@programme.type]
+        }
+      )
+    )
   end
 
   def then_the_vaccinated_filter_is_applied
