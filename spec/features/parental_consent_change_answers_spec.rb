@@ -239,7 +239,7 @@ RSpec.feature "Parental consent change answers" do
 
   def then_i_see_the_refused_confirmation_page
     expect(page).to have_content(
-      "Your child will not get a nasal flu vaccination at school"
+      "Your child will not get the flu vaccination at school"
     )
   end
 
