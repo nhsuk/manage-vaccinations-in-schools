@@ -60,14 +60,11 @@ class DraftVaccinationRecord
   end
 
   on_wizard_step :delivery, exact: true do
-    validates :delivery_site,
-              inclusion: {
-                in: VaccinationRecord.delivery_sites.keys
-              }
     validates :delivery_method,
               inclusion: {
                 in: VaccinationRecord.delivery_methods.keys
               }
+    validate :delivery_site_matches_delivery_method
   end
 
   on_wizard_step :batch, exact: true do
@@ -210,5 +207,29 @@ class DraftVaccinationRecord
 
   def can_change_outcome?
     outcome != "already_had" || editing? || session.nil? || session.today?
+  end
+
+  def delivery_site_matches_delivery_method
+    return if delivery_method.blank?
+
+    if delivery_site.blank?
+      errors.add(:delivery_site, :blank)
+      return
+    end
+
+    case delivery_method
+    when "nasal_spray"
+      if delivery_site != "nose"
+        errors.add(:delivery_site, :nasal_spray_must_be_nose)
+      end
+    when "intramuscular", "subcutaneous"
+      if delivery_site == "nose"
+        errors.add(:delivery_site, :injection_cannot_be_nose)
+      end
+    end
+
+    unless VaccinationRecord.delivery_sites.keys.include?(delivery_site)
+      errors.add(:delivery_site, :inclusion)
+    end
   end
 end

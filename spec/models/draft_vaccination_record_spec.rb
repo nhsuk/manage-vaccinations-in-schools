@@ -79,6 +79,104 @@ describe DraftVaccinationRecord do
 
       it { should validate_length_of(:notes).is_at_most(1000).on(:update) }
     end
+
+    context "on delivery step" do
+      let(:attributes) { valid_administered_attributes }
+
+      before { draft_vaccination_record.wizard_step = :delivery }
+
+      context "when delivery site is blank" do
+        let(:attributes) do
+          valid_administered_attributes.merge(
+            delivery_method: "intramuscular",
+            delivery_site: nil
+          )
+        end
+
+        it "has an error for blank delivery site" do
+          expect(draft_vaccination_record.save(context: :update)).to be(false)
+          expect(draft_vaccination_record.errors[:delivery_site]).to include(
+            "Choose a delivery site"
+          )
+        end
+      end
+
+      context "when delivery method is nasal spray" do
+        let(:attributes) do
+          valid_administered_attributes.merge(
+            delivery_method: "nasal_spray",
+            delivery_site: "left_arm_upper_position"
+          )
+        end
+
+        it "has an error when delivery site is not nose" do
+          expect(draft_vaccination_record.save(context: :update)).to be(false)
+          expect(draft_vaccination_record.errors[:delivery_site]).to include(
+            "Site must be nose if the nasal spray was given"
+          )
+        end
+      end
+
+      context "when delivery method is nasal spray and delivery site is nose" do
+        let(:attributes) do
+          valid_administered_attributes.merge(
+            delivery_method: "nasal_spray",
+            delivery_site: "nose"
+          )
+        end
+
+        it "is valid" do
+          expect(draft_vaccination_record.save(context: :update)).to be(true)
+          expect(draft_vaccination_record.errors[:delivery_site]).to be_empty
+        end
+      end
+
+      context "when delivery method is intramuscular" do
+        let(:attributes) do
+          valid_administered_attributes.merge(
+            delivery_method: "intramuscular",
+            delivery_site: "nose"
+          )
+        end
+
+        it "has an error when delivery site is nose" do
+          expect(draft_vaccination_record.save(context: :update)).to be(false)
+          expect(draft_vaccination_record.errors[:delivery_site]).to include(
+            "Site cannot be nose for intramuscular or subcutaneous injections"
+          )
+        end
+      end
+
+      context "when delivery method is subcutaneous" do
+        let(:attributes) do
+          valid_administered_attributes.merge(
+            delivery_method: "subcutaneous",
+            delivery_site: "nose"
+          )
+        end
+
+        it "has an error when delivery site is nose" do
+          expect(draft_vaccination_record.save(context: :update)).to be(false)
+          expect(draft_vaccination_record.errors[:delivery_site]).to include(
+            "Site cannot be nose for intramuscular or subcutaneous injections"
+          )
+        end
+      end
+
+      context "when delivery method is intramuscular and delivery site is not nose" do
+        let(:attributes) do
+          valid_administered_attributes.merge(
+            delivery_method: "intramuscular",
+            delivery_site: "left_arm_upper_position"
+          )
+        end
+
+        it "is valid" do
+          expect(draft_vaccination_record.save(context: :update)).to be(true)
+          expect(draft_vaccination_record.errors[:delivery_site]).to be_empty
+        end
+      end
+    end
   end
 
   describe "#write_to!" do
