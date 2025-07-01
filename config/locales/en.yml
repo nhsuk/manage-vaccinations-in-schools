@@ -716,6 +716,8 @@ en:
             zero: "There are no more automatic consent reminders to be sent"
             one: "The next automatic consent reminder will be sent on %{date}"
         session_dates:  Session dates
+        pre_confirm: "Mavis will skip the next automatic reminder if it's scheduled to be sent within 3 days."
+        confirm: "Send manual consent reminders"
   table:
     no_filtered_results: We couldn’t find any children that matched your filters.
     no_results: No results

@@ -59,5 +59,17 @@
               date: @session.next_reminder_date.try(:to_fs, :long_day_of_week)) %>
       </p>
     </div>
+
+    <h2 class="nhsuk-heading-m nhsuk-u-margin-bottom-2">Send parents a manual consent reminder</h2>
+    <p class="nhsuk-body">
+      <%= t(".pre_confirm") %>
+    </p>
+
+    <% if @session.today_or_future_dates.present? %>
+      <%= button_to t(".confirm"),
+                    session_manage_consent_reminders_path(@session),
+                    method: :post,
+                    class: "nhsuk-button" %>
+  <% end %>
   </div>
 </div>
