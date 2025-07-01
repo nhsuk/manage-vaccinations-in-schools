@@ -70,8 +70,7 @@ resource "aws_secretsmanager_secret_rotation" "target" {
   secret_id          = aws_rds_cluster.core.master_user_secret[0].secret_arn
   rotate_immediately = false
   rotation_rules {
-    schedule_expression = "cron(0 2 ? * WED#4 *)"
-    duration            = "1h"
+    schedule_expression = "cron(0 8 ? * WED *)"
   }
 }
 
