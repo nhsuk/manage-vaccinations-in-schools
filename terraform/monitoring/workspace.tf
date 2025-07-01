@@ -39,10 +39,3 @@ resource "aws_grafana_workspace_service_account" "grafana_provider" {
   grafana_role = "ADMIN"
   workspace_id = aws_grafana_workspace.this.id
 }
-
-resource "aws_grafana_workspace_service_account_token" "grafana_provider_key" {
-  name               = "grafana-provider-key-${timestamp()}"
-  service_account_id = aws_grafana_workspace_service_account.grafana_provider.service_account_id
-  seconds_to_live    = 600
-  workspace_id       = aws_grafana_workspace.this.id
-}
