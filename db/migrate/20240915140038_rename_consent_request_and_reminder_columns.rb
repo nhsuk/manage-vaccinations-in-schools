@@ -9,7 +9,7 @@ class RenameConsentRequestAndReminderColumns < ActiveRecord::Migration[7.2]
 
     change_table :sessions, bulk: true do |t|
       t.rename :send_consent_at, :send_consent_requests_at
-      t.rename :send_reminders_at, :send_consent_reminders_at
+      t.rename :send_reminders_at, :next_reminder_dates
     end
   end
 end
