@@ -47,10 +47,9 @@ jobs:
         run: |
           set -e
           terraform init -backend-config="env/${{ inputs.environment }}-backend.hcl" -upgrade
-          if terraform state list | grep -q 'aws_rds_cluster.aurora_cluster'; then
-            echo "DB cluster exsits: removing delete protection"
-            CLUSTER_IDENTIFIER=$(grep -oP 'db_cluster\s*=\s*"\K[^"]+' env/${{ inputs.environment }}.tfvars)
-            aws rds modify-db-cluster --db-cluster-identifier "$CLUSTER_IDENTIFIER" --no-deletion-protection
+          if terraform state list | grep -q 'aws_rds_cluster.core'; then
+            echo "DB cluster exists: removing delete protection"
+            aws rds modify-db-cluster --db-cluster-identifier mavis-${{ inputs.environment }} --no-deletion-protection
             echo "DB cluster delete protection removed: proceeding to delete stage"
           else
             echo "DB cluster not in state: proceeding to delete stage"
