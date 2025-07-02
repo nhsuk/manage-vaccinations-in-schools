@@ -3,7 +3,7 @@
 describe "Vaccination" do
   around { |example| travel_to(Time.zone.local(2024, 2, 1)) { example.run } }
 
-  scenario "Today's batch" do
+  scenario "Today's batch across programmes" do
     given_i_am_signed_in
 
     when_i_vaccinate_a_patient_with_hpv
@@ -21,6 +21,25 @@ describe "Vaccination" do
 
     when_i_vaccinate_a_patient_with_menacwy
     then_i_am_required_to_choose_a_batch
+  end
+
+  scenario "Today's batch across vaccine methods" do
+    given_i_am_signed_in_with_flu_programme
+
+    when_i_vaccinate_a_patient_with_flu_injection
+    then_i_see_the_default_batch_banner_with_batch_1_for_injection
+
+    when_i_vaccinate_a_patient_with_flu_nasal
+    then_i_see_the_default_batch_banner_with_batch_1_for_nasal
+
+    when_i_click_the_change_batch_link
+    then_i_see_the_change_batch_page
+
+    when_i_choose_the_second_batch
+    then_i_see_the_default_batch_banner_with_batch_2_for_injection
+
+    when_i_vaccinate_a_patient_with_flu_nasal
+    then_i_see_the_default_batch_banner_with_batch_2_for_nasal
   end
 
   def given_i_am_signed_in
@@ -61,6 +80,38 @@ describe "Vaccination" do
     sign_in organisation.users.first
   end
 
+  def given_i_am_signed_in_with_flu_programme
+    @programme = create(:programme, :flu)
+    @organisation = create(:organisation, :with_one_nurse, programmes: [@programme])
+    @session = create(:session, organisation: @organisation, programmes: [@programme])
+
+    # Use the existing vaccines from the programme
+    @nasal_vaccine = @programme.vaccines.find_by(method: :nasal)
+    @injection_vaccine = @programme.vaccines.find_by(method: :injection)
+
+    # Create batches for each vaccine method
+    @nasal_batch = create(:batch, :not_expired, organisation: @organisation, vaccine: @nasal_vaccine)
+    @nasal_batch2 = create(:batch, :not_expired, organisation: @organisation, vaccine: @nasal_vaccine)
+    @injection_batch = create(:batch, :not_expired, organisation: @organisation, vaccine: @injection_vaccine)
+    @injection_batch2 = create(:batch, :not_expired, organisation: @organisation, vaccine: @injection_vaccine)
+
+    # Create patients
+    @nasal_patient = create(
+      :patient,
+      :consent_given_nasal_only_triage_not_needed,
+      :in_attendance,
+      session: @session
+    )
+    @injection_patient = create(
+      :patient,
+      :consent_given_injection_only_triage_not_needed,
+      :in_attendance,
+      session: @session
+    )
+
+    sign_in @organisation.users.first
+  end
+
   def when_i_vaccinate_a_patient_with_hpv
     visit session_record_path(@session)
 
@@ -76,6 +127,63 @@ describe "Vaccination" do
 
     # Find the selected radio button element
     selected_radio_button = find(:radio_button, @hpv_batch.name, checked: true)
+
+    # Find the "Default to this batch for this session" checkbox immediately below and check it
+    checkbox_below =
+      selected_radio_button.find(
+        :xpath,
+        'following::input[@type="checkbox"][1]'
+      )
+    checkbox_below.check
+    click_button "Continue"
+
+    click_button "Confirm"
+
+    # back to session
+    click_on "Record vaccinations"
+  end
+
+  def when_i_vaccinate_a_patient_with_flu_injection
+    visit session_record_path(@session)
+    click_link @injection_patient.full_name
+
+    check "has confirmed the above statements are true"
+    choose "Yes"
+    choose "Left arm (upper position)"
+    click_button "Continue"
+
+    choose @injection_batch.name
+
+    # Find the selected radio button element
+    selected_radio_button = find(:radio_button, @injection_batch.name, checked: true)
+
+    # Find the "Default to this batch for this session" checkbox immediately below and check it
+    checkbox_below =
+      selected_radio_button.find(
+        :xpath,
+        'following::input[@type="checkbox"][1]'
+      )
+    checkbox_below.check
+    click_button "Continue"
+
+    click_button "Confirm"
+
+    # back to session
+    click_on "Record vaccinations"
+  end
+
+  def when_i_vaccinate_a_patient_with_flu_nasal
+    visit session_record_path(@session)
+    click_link @nasal_patient.full_name
+
+    check "has confirmed the above statements are true"
+    choose "Yes"
+    click_button "Continue"
+
+    choose @nasal_batch.name
+
+    # Find the selected radio button element
+    selected_radio_button = find(:radio_button, @nasal_batch.name, checked: true)
 
     # Find the "Default to this batch for this session" checkbox immediately below and check it
     checkbox_below =
@@ -110,6 +218,22 @@ describe "Vaccination" do
 
   def then_i_see_the_default_batch_banner_with_batch_2
     expect(page).to have_content("Gardasil 9 (HPV): #{@hpv_batch2.name}")
+  end
+
+  def then_i_see_the_default_batch_banner_with_batch_1_for_injection
+    expect(page).to have_content("#{@injection_batch.vaccine.brand} (Flu): #{@injection_batch.name}")
+  end
+
+  def then_i_see_the_default_batch_banner_with_batch_1_for_nasal
+    expect(page).to have_content("#{@nasal_batch.vaccine.brand} (Flu): #{@nasal_batch.name}")
+  end
+
+  def then_i_see_the_default_batch_banner_with_batch_2_for_injection
+    expect(page).to have_content("#{@injection_batch2.vaccine.brand} (Flu): #{@injection_batch2.name}")
+  end
+
+  def then_i_see_the_default_batch_banner_with_batch_2_for_nasal
+    expect(page).to have_content("#{@nasal_batch2.vaccine.brand} (Flu): #{@nasal_batch2.name}")
   end
 
   def when_i_click_the_change_batch_link
