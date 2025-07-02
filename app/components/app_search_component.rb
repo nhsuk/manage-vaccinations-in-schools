@@ -20,7 +20,7 @@ class AppSearchComponent < ViewComponent::Base
           </button>
         </div>
         
-        <% if programmes.any? %>
+        <% if programmes.size > 1 %>
           <%= f.govuk_check_boxes_fieldset :programme_types, legend: { text: "Programme", size: "s" } do %>
             <% programmes.each do |programme| %>
               <%= f.govuk_check_box :programme_types, programme.type, label: { text: programme.name } %>
