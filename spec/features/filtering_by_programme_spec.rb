@@ -20,6 +20,15 @@ describe "Filtering" do
     and_i_see_only_the_menacwy_statuses
   end
 
+  scenario "By year group" do
+    given_a_session_exists_with_programmes([:hpv])
+    and_patients_are_in_the_session
+
+    when_i_visit_the_session_outcomes
+    and_i_filter_on_year_group_eight
+    the_i_should_only_see_patients_for_year_eight
+  end
+
   scenario "With only one programme in session" do
     given_a_session_exists_with_programmes([:hpv])
     and_patients_are_in_the_session
@@ -98,5 +107,17 @@ describe "Filtering" do
   def and_i_see_only_the_menacwy_statuses
     expect(page).not_to have_content("HPVNo outcome yet")
     expect(page).to have_content("MenACWYNo outcome yet").once
+  end
+
+  def and_i_filter_on_year_group_eight
+    check "Year 8"
+    click_on "Update results"
+  end
+
+  def the_i_should_only_see_patients_for_year_eight
+    expect(page).to have_content(@patient_eligible_for_hpv.full_name)
+    expect(page).not_to have_content(
+      @patient_eligible_for_hpv_and_menacwy.full_name
+    )
   end
 end
