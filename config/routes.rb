@@ -318,6 +318,12 @@ Rails.application.routes.draw do
     resource :organisations, only: %i[new create]
   end
 
+  # for commissioner reporting app
+  get "/tokens/:token", controller: :one_time_tokens, action: "verify"
+  namespace :reporting do
+    get "totals", controller: :totals, action: :index
+  end
+
   scope via: :all do
     get "/404", to: "errors#not_found"
     get "/422", to: "errors#unprocessable_entity"

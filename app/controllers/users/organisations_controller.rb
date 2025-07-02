@@ -27,7 +27,7 @@ class Users::OrganisationsController < ApplicationController
         }
       }
 
-      redirect_to dashboard_path
+      redirect_after_choosing_org
     else
       @organisations = current_user.organisations
       render :new, status: :unprocessable_entity
