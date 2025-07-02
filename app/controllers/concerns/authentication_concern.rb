@@ -8,6 +8,15 @@ module AuthenticationConcern
   included do
     private
 
+    # only return true if the given URL is part of this domain (relative or absolute)
+    # or part of the mavis reporting app, or localhost (to allow devs some leeway)
+    def is_valid_redirect?(url)
+      url.start_with?('/') || \
+        url.start_with?(request.base_url) || \
+        url.start_with?(Settings.mavis_reporting_app.root_url || "http://localhost")
+
+    end
+
     def authenticate_user!
       if !user_signed_in?
         if request.path != start_path
@@ -57,6 +66,12 @@ module AuthenticationConcern
         !request.xhr? && !turbo_frame_request?
     end
 
+    def store_redirect_after_login!
+      if params.has_key?(:redirect_after_login)
+        session[:redirect_after_login] = params.fetch(:redirect_after_login)
+      end
+    end
+
     def store_user_location!
       return unless user_signed_in?
       return unless storable_location?
@@ -81,7 +96,7 @@ module AuthenticationConcern
     end
 
     def after_sign_in_path_for(scope)
-      stored_location_for(scope) || dashboard_path
+      [session[:redirect_after_login], stored_location_for(scope), dashboard_path].compact.find{ is_valid_redirect?(it) }
     end
 
     def user_signed_in?
