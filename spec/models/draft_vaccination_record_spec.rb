@@ -247,4 +247,57 @@ describe DraftVaccinationRecord do
       it { should eq(vaccine.dose_volume_ml * 0.5) }
     end
   end
+
+  describe "#delivery_method=" do
+    context "when setting delivery method for the first time" do
+      let(:attributes) do
+        valid_administered_attributes.except(:delivery_method)
+      end
+
+      it "does not clear the batch_id" do
+        expect {
+          draft_vaccination_record.delivery_method = "intramuscular"
+        }.not_to change(draft_vaccination_record, :batch_id)
+      end
+    end
+
+    shared_examples "clears batch when switching delivery methods" do |from_method, to_method|
+      context "when changing from #{from_method} to #{to_method}" do
+        let(:attributes) do
+          valid_administered_attributes.merge(delivery_method: from_method)
+        end
+
+        it "clears the batch_id" do
+          expect {
+            draft_vaccination_record.delivery_method = to_method
+          }.to change(draft_vaccination_record, :batch_id).to(nil)
+        end
+      end
+    end
+
+    include_examples "clears batch when switching delivery methods",
+                     "intramuscular",
+                     "nasal_spray"
+    include_examples "clears batch when switching delivery methods",
+                     "subcutaneous",
+                     "nasal_spray"
+    include_examples "clears batch when switching delivery methods",
+                     "nasal_spray",
+                     "intramuscular"
+    include_examples "clears batch when switching delivery methods",
+                     "nasal_spray",
+                     "subcutaneous"
+
+    context "when changing between injection methods" do
+      let(:attributes) do
+        valid_administered_attributes.merge(delivery_method: "intramuscular")
+      end
+
+      it "does not clear the batch_id" do
+        expect {
+          draft_vaccination_record.delivery_method = "subcutaneous"
+        }.not_to change(draft_vaccination_record, :batch_id)
+      end
+    end
+  end
 end

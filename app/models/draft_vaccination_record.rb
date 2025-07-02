@@ -181,6 +181,24 @@ class DraftVaccinationRecord
     self.editing_id = value.id
   end
 
+  def delivery_method=(value)
+    super
+    return if delivery_method_was.nil? # Don't clear batch on first set
+
+    previous_method =
+      (
+        if delivery_method_was&.in?(%w[intramuscular subcutaneous])
+          "injection"
+        else
+          "nasal_spray"
+        end
+      )
+    new_method =
+      value&.in?(%w[intramuscular subcutaneous]) ? "injection" : "nasal_spray"
+
+    self.batch_id = nil unless previous_method == new_method
+  end
+
   delegate :vaccine, to: :batch, allow_nil: true
   delegate :can_be_half_dose?, to: :vaccine, allow_nil: true
 
