@@ -97,3 +97,33 @@ case "$ACTION" in
     exit 1
     ;;
 esac
+
+# Cleanup expired tokens
+REGION="eu-west-2"
+CURRENT_DATE=$(date -u +%s)
+TOKENS=$(aws grafana list-workspace-service-account-tokens \
+    --workspace-id "$WORKSPACE_ID" \
+    --service-account-id "$SERVICE_ACCOUNT_ID" \
+    --region "$REGION" \
+    --query 'serviceAccountTokens[*].[id,name,expiresAt]' \
+    --output json)
+
+for token in $(echo "$TOKENS" | jq -c '.[]'); do
+    TOKEN_ID=$(echo "$token" | jq -r '.[0]')
+    TOKEN_NAME=$(echo "$token" | jq -r '.[1]')
+    EXPIRATION=$(echo "$token" | jq -r '.[2]')
+    # Check if token is expired
+    if [ "$EXPIRATION" != "null" ]; then
+        EXPIRATION_DATE=$(date -d "$EXPIRATION" +%s 2>/dev/null || true)
+        if [ -n "$EXPIRATION_DATE" ] && [ "$EXPIRATION_DATE" -lt "$CURRENT_DATE" ]; then
+            aws grafana delete-workspace-service-account-token \
+                --workspace-id "$WORKSPACE_ID" \
+                --service-account-id "$SERVICE_ACCOUNT_ID" \
+                --token-id "$TOKEN_ID" \
+                --region "$REGION" >/dev/null
+            echo "Deleted expired token (ID: $TOKEN_ID, NAME: $TOKEN_NAME)"
+        fi
+    else
+        echo -e "\e[33m WARN: Token had no expiration data and was skipped (ID: $TOKEN_ID, NAME: $TOKEN_NAME)\e[0m"
+    fi
+done
