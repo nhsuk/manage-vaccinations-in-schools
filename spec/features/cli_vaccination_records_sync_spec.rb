@@ -70,7 +70,14 @@ describe "mavis vaccination-records sync" do
           "Content-Type" => "application/fhir+json",
           "Accept" => "application/fhir+json"
         }
-      ).to_return(status: 200, body: "", headers: {})
+      ).to_return(
+        status: 201,
+        body: "",
+        headers: {
+          location:
+            "https://sandbox.api.service.nhs.uk/immunisation-fhir-api/Immunization/11112222-3333-4444-5555-666677778888"
+        }
+      )
   end
 
   def when_i_run_the_sync_command

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_02_142922) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_02_162254) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -822,6 +822,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_02_142922) do
     t.boolean "full_dose"
     t.datetime "nhse_synced_at"
     t.string "nhse_id"
+    t.string "nhse_etag"
     t.index ["batch_id"], name: "index_vaccination_records_on_batch_id"
     t.index ["discarded_at"], name: "index_vaccination_records_on_discarded_at"
     t.index ["patient_id"], name: "index_vaccination_records_on_patient_id"
