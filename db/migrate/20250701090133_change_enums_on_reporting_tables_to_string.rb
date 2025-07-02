@@ -8,6 +8,5 @@ class ChangeEnumsOnReportingTablesToString < ActiveRecord::Migration[8.0]
     change_column :reportable_consent_events, :consent_response, :string
     change_column :reportable_consent_events, :consent_reason_for_refusal, :string
     change_column :reportable_consent_events, :consent_route, :string
-    
   end
 end
