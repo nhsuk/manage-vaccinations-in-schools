@@ -79,3 +79,43 @@ resource "aws_iam_role_policy_attachment" "dms_cloudwatch_logs_policy" {
   role       = aws_iam_role.dms_cloudwatch_logs_role.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonDMSCloudWatchLogsRole"
 }
+
+
+#### Registries & Repository
+
+
+resource "aws_ecr_registry_scanning_configuration" "this" {
+  scan_type = "BASIC"
+
+  rule {
+    scan_frequency = "SCAN_ON_PUSH"
+    repository_filter {
+      filter      = "*"
+      filter_type = "WILDCARD"
+    }
+  }
+}
+
+resource "aws_ecr_repository" "mavis" {
+  name                 = "mavis/webapp"
+  image_tag_mutability = "MUTABLE"
+}
+
+
+#### Access Analyzer
+
+resource "aws_accessanalyzer_analyzer" "unused" {
+  analyzer_name = "UnusedAccess-ConsoleAnalyzer-eu-west-2"
+  type          = "ACCOUNT_UNUSED_ACCESS"
+  configuration {
+    unused_access {
+      unused_access_age = 90
+    }
+  }
+
+}
+
+resource "aws_accessanalyzer_analyzer" "external" {
+  analyzer_name = "ExternalAccess-ConsoleAnalyzer-eu-west-2"
+  type          = "ACCOUNT"
+}
