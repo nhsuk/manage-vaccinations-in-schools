@@ -1,0 +1,151 @@
+name: Deploy monitoring stack
+run-name: Deploy monitoring stack for ${{ inputs.environment }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Deployment environment
+        required: true
+        type: choice
+        options:
+          - development
+          - production
+      git_ref_to_deploy:
+        description: Git reference to deploy
+        required: false
+        type: string
+
+permissions: {}
+
+concurrency:
+  group: deploy-monitoring-${{ inputs.environment }}
+
+env:
+  aws_role: ${{ inputs.environment == 'production'
+    && 'arn:aws:iam::820242920762:role/GithubDeployMonitoring'
+    || 'arn:aws:iam::393416225559:role/GithubDeployMonitoring' }}
+  aws_account_id: ${{ inputs.environment == 'production'
+    && '820242920762' || '393416225559' }}
+  git_ref_to_deploy: ${{ inputs.git_ref_to_deploy || github.ref_name }}
+
+jobs:
+  plan-aws:
+    name: Terraform plan (AWS)
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+    outputs:
+      has_changes: ${{ steps.plan.outputs.has_changes }}
+    defaults:
+      run:
+        working-directory: terraform/monitoring/aws
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.git_ref_to_deploy }}
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ env.aws_role }}
+          aws-region: eu-west-2
+      - name: Install terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.11.4
+      - name: Terraform Plan
+        id: plan
+        run: |
+          set -e
+          terraform init -backend-config="env/${{ inputs.environment }}-backend.hcl" -upgrade
+          terraform plan -var-file="env/${{ inputs.environment }}.tfvars" \
+          -out ${{ runner.temp }}/tfplan-aws | tee ${{ runner.temp }}/tf_stdout_aws
+          TF_EXIT_CODE=${PIPESTATUS[0]}
+          cat ${{ runner.temp }}/tf_stdout_aws
+          if [ $TF_EXIT_CODE -eq 1 ]; then
+              exit $TF_EXIT_CODE
+          fi
+
+          # Check if there are changes to apply
+          if grep -q "Your infrastructure matches the configuration." ${{ runner.temp }}/tf_stdout_aws; then
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+            echo "No infrastructure changes detected"
+          else
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+            echo "Infrastructure changes detected"
+          fi
+      - name: Upload AWS plan artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: tfplan_monitoring_aws-${{ inputs.environment }}
+          path: ${{ runner.temp }}/tfplan-aws
+
+  apply-aws:
+    name: Terraform apply (AWS)
+    runs-on: ubuntu-latest
+    needs: plan-aws
+    if: needs.plan-aws.outputs.has_changes == 'true'
+    environment: ${{ inputs.environment }}
+    permissions:
+      id-token: write
+    defaults:
+      run:
+        working-directory: terraform/monitoring/aws
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.git_ref_to_deploy }}
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ env.aws_role }}
+          aws-region: eu-west-2
+      - name: Download AWS plan artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: tfplan_monitoring_aws-${{ inputs.environment }}
+          path: ${{ runner.temp }}
+      - name: Install terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.11.4
+      - name: Apply AWS changes
+        run: |
+          set -e
+          terraform init -backend-config="env/${{ inputs.environment }}-backend.hcl" -upgrade
+          terraform apply ${{ runner.temp }}/tfplan-aws
+
+  apply-grafana:
+    name: Terraform apply (Grafana)
+    runs-on: ubuntu-latest
+    needs: [plan-aws, apply-aws]
+    if: always() && needs.plan-aws.result == 'success'
+    permissions:
+      id-token: write
+    defaults:
+      run:
+        working-directory: terraform/monitoring
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.git_ref_to_deploy }}
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ env.aws_role }}
+          aws-region: eu-west-2
+      - name: Install terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.11.4
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y jq uuid-runtime
+      - name: Deploy Grafana using tf_grafana.sh
+        run: |
+          ./tf_grafana.sh ${{ inputs.environment }} plan --plan-file ${{ runner.temp }}/out
+          ./tf_grafana.sh ${{ inputs.environment }} apply --plan-file ${{ runner.temp }}/out

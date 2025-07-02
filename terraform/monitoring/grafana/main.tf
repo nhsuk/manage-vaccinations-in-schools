@@ -27,5 +27,5 @@ resource "grafana_data_source" "cloudwatch" {
     authType      = "default"
     defaultRegion = var.region
   })
+  uid = "cloudwatch"
 }
-

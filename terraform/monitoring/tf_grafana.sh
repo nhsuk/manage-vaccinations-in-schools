@@ -3,7 +3,8 @@
 set -euo pipefail
 
 usage() {
-  echo "Usage: $0 [plan|apply|destroy] [--plan-file PLAN_FILE]"
+  echo "Usage: $0 <environment> [plan|apply|destroy] [--plan-file PLAN_FILE]"
+  echo "  environment               Environment to deploy to (development|production)"
   echo "  plan                      Run terraform plan for Grafana configuration"
   echo "  apply                     Run terraform apply for Grafana configuration"
   echo "  apply --plan-file FILE    Apply using a specific plan file"
@@ -11,7 +12,17 @@ usage() {
   echo "  -h, --help                Show this help message"
 }
 
-if [[ $# -lt 1 ]]; then
+if [[ $# -lt 2 ]]; then
+  usage
+  exit 1
+fi
+
+ENVIRONMENT="$1"
+shift
+
+# Validate environment parameter
+if [[ "$ENVIRONMENT" != "development" && "$ENVIRONMENT" != "production" ]]; then
+  echo "Error: Environment must be 'development' or 'production'"
   usage
   exit 1
 fi
@@ -51,6 +62,7 @@ if [[ -z "$ACTION" ]]; then
   usage
   exit 1
 fi
+terraform -chdir="./aws" init -backend-config="env/${ENVIRONMENT}-backend.hcl" -reconfigure
 GRAFANA_ENDPOINT="https://$(terraform -chdir="./aws" output -raw grafana_endpoint)"
 WORKSPACE_ID=$(terraform -chdir="./aws" output -raw grafana_workspace_id)
 SERVICE_ACCOUNT_ID=$(terraform -chdir="./aws" output -raw service_account_id)
@@ -68,25 +80,25 @@ fi
 
 
 if [[ -z "$GRAFANA_ENDPOINT" ]] || [[ -z "$SERVICE_ACCOUNT_ID" ]]; then
-  echo "Terraform variables are not set. Please run 'terraform -chdir=./aws apply -var-file=env/<account>-backend.hcl' first."
+  echo "Terraform variables are not set. Please run 'terraform -chdir=./aws apply -var-file=env/${ENVIRONMENT}-backend.hcl' first."
   exit 1
 fi
 
-terraform -chdir="./grafana" init -backend-config="env/development-backend.hcl" -reconfigure
+terraform -chdir="./grafana" init -backend-config="env/${ENVIRONMENT}-backend.hcl" -reconfigure
 
 case "$ACTION" in
   plan)
     if [[ -n "$PLAN_FILE" ]]; then
       terraform -chdir="./grafana" plan -var="workspace_url=$GRAFANA_ENDPOINT" -var="service_account_token=$SERVICE_ACCOUNT_TOKEN" -out="$PLAN_FILE"
+    else
+      terraform -chdir="./grafana" plan -var="workspace_url=$GRAFANA_ENDPOINT" -var="service_account_token=$SERVICE_ACCOUNT_TOKEN"
     fi
-    terraform -chdir="./grafana" plan -var="workspace_url=$GRAFANA_ENDPOINT" -var="service_account_token=$SERVICE_ACCOUNT_TOKEN"
     ;;
   apply)
     if [[ -n "$PLAN_FILE" ]]; then
       terraform -chdir="./grafana" apply "$PLAN_FILE"
     else
       terraform -chdir="./grafana" apply -var="workspace_url=$GRAFANA_ENDPOINT" -var="service_account_token=$SERVICE_ACCOUNT_TOKEN"
-#      terraform -chdir="./grafana" apply -var="workspace_url=$GRAFANA_ENDPOINT" -var="service_account_token=$SERVICE_ACCOUNT_TOKEN" -auto-approve
     fi
     ;;
   destroy)
