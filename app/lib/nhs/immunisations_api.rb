@@ -1,9 +1,6 @@
 # frozen_string_literal: true
 
 module NHS::ImmunisationsAPI
-  class PatientNotFound < StandardError
-  end
-
   class << self
     def record_immunisation(vaccination_record)
       NHS::API.connection.post(
@@ -11,33 +8,28 @@ module NHS::ImmunisationsAPI
         vaccination_record.fhir_record.to_json,
         "Content-Type" => "application/fhir+json"
       )
-    rescue Faraday::Error => e
-      info = extract_error_info(e.response[:body])
-      Rails.logger.error(
-        "Error recording vaccination record (#{vaccination_record.id}):" \
-          " [#{info[:code]}] #{info[:diagnostics]}"
-      )
-      raise e
+    rescue Faraday::ClientError => e
+      if (diagnostics = extract_error_diagnostics(e&.response)).present?
+        raise "Error syncing vaccination #{vaccination_record.id} record to" \
+                " Immunisations API: #{diagnostics}"
+      else
+        raise
+      end
     end
 
-    def extract_error_info(response_body)
-      return { code: nil, diagnostics: "No response body" } unless response_body
+    private
 
-      response = JSON.parse(response_body, symbolize_names: true)
+    def extract_error_diagnostics(response)
+      return nil if response.nil? || response[:body].blank?
 
-      if response.empty?
-        { code: nil, diagnostics: "No response body" }
-      elsif response[:issue].blank?
-        { code: nil, diagnostics: "No issues in response" }
-      elsif response[:issue].first[:severity] != "error"
-        { code: nil, diagnostics: "Issue is not an error" }
-      else
-        diagnostics = response[:issue].first[:diagnostics]
-        if diagnostics.match?(/NHS Number: \d{10} is invalid.*/)
-          diagnostics.replace("NHS Number is invalid or it doesn't exist")
-        end
-
-        { code: response[:issue].first[:code], diagnostics: diagnostics }
+      begin
+        JSON.parse(response[:body], symbolize_names: true).dig(
+          :issue,
+          0,
+          :diagnostics
+        )
+      rescue JSON::ParserError
+        nil
       end
     end
   end
