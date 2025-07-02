@@ -2,8 +2,8 @@ resource "aws_grafana_workspace" "this" {
   name                     = "grafana-${var.environment}"
   description              = "Grafana workspace for ${var.environment} environment"
   account_access_type      = "CURRENT_ACCOUNT"
-  authentication_providers = ["SAML", "AWS_SSO"]
-  permission_type          = "SERVICE_MANAGED"
+  authentication_providers = ["AWS_SSO"]
+  permission_type          = "CUSTOMER_MANAGED"
   role_arn                 = aws_iam_role.grafana.arn
   configuration = jsonencode({
     unifiedAlerting = {
