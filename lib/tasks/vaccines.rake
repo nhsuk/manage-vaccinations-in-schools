@@ -123,7 +123,7 @@ def create_flu_health_questions(vaccine)
       vaccine.health_questions.create!(
         title:
           "Has your child had a severe allergic reaction (anaphylaxis) to a " \
-            "previous dose of the injected flu vaccine, or any component of the vaccine?"
+            "previous dose of the injected flu vaccine, or any ingredient of the vaccine?"
       )
     end
 
