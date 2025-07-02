@@ -45,8 +45,12 @@ class User < ApplicationRecord
 
   has_many :programmes, through: :teams
 
+<<<<<<< HEAD
   has_one :reporting_api_one_time_token,
           class_name: "ReportingAPI::OneTimeToken"
+=======
+  has_one :one_time_token
+>>>>>>> 072a1a4e6 (Add support for redirecting back to the reporting app after successful login via CIS2, and specs for same.)
 
   encrypts :email, deterministic: true
   encrypts :family_name, :given_name

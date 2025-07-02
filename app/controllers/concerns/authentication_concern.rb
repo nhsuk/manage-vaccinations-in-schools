@@ -104,6 +104,22 @@ module AuthenticationConcern
       end
     end
 
+    def add_token_to(url, user)
+      uri = Addressable::URI.parse(url)
+      user_token =
+        OneTimeToken.find_or_generate_for!(
+          user_id: user.id,
+          cis2_info: session["cis2_info"]
+        ).token
+      uri.query_values = (uri.query_values || {}).merge("token" => user_token)
+      uri.to_s
+    end
+
+    def reporting_app_redirect_url_with_token_for(user)
+      url = session["redirect_after_login"]
+      url.present? ? add_token_to(url, user) : nil
+    end
+
     def after_sign_in_path_for(scope)
       urls = []
       if Flipper.enabled?(:reporting_api)

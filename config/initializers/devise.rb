@@ -417,5 +417,13 @@ Devise.setup do |config|
       # and you're using the example user created in db/seeds)
       User.where(id: user.id).update_all(reporting_api_session_token: nil)
     end
+  else
+    Warden::Manager.after_authentication do |user, _auth, _opts|
+      user&.pwd_auth_session_token = SecureRandom.hex(32)
+    end
+
+    Warden::Manager.before_logout do |user, _auth, _opts|
+      user&.update_attribute(:pwd_auth_session_token, nil)
+    end
   end
 end
