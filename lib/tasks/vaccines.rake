@@ -80,7 +80,10 @@ def create_flu_health_questions(vaccine)
     if vaccine.nasal?
       vaccine.health_questions.create!(
         title:
-          "Does your child have a disease or treatment that severely affects their immune system?"
+          "Does your child have a disease or treatment that severely affects their immune system?",
+        hint:
+          "The nasal spray flu vaccine is a live vaccine. " \
+            "It is not suitable for people who are severely immunocompromised."
       )
     end
 
@@ -107,7 +110,9 @@ def create_flu_health_questions(vaccine)
     if vaccine.nasal?
       vaccine.health_questions.create!(
         title:
-          "Has your child ever been admitted to intensive care due to a severe allergic reaction (anaphylaxis) to egg?"
+          "Has your child ever been admitted to intensive care due to a severe allergic reaction (anaphylaxis) to egg?",
+        hint:
+          "This does not include visits to A&E or stays in hospital wards outside the intensive care unit"
       )
     end
 
