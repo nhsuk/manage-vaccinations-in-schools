@@ -17,11 +17,20 @@
     </h2>
 
     <ul class="nhsuk-list nhsuk-list--bullet">
-      <% @todays_batches.each do |programme, batch| %>
-        <li>
-          <%= batch.vaccine.brand %> (<%= programme.name %>): <span class="app-u-monospace"><%= batch.name %></span>
-          <a class="nhsuk-link nhsuk-u-margin-left-2" href="<%= batch_session_record_path(@session, programme) %>">Change default batch<span class="nhsuk-u-visually-hidden"> for <%= batch.vaccine.brand %></span></a>
-        </li>
+      <% @todays_batches.each do |programme, batches| %>
+        <% if batches.is_a?(Hash) %>
+          <% batches.each do |vaccine_method, batch| %>
+            <li>
+              <%= batch.vaccine.brand %> (<%= programme.name %>, <%= vaccine_method.to_s.humanize %>): <span class="app-u-monospace"><%= batch.name %></span>
+              <a class="nhsuk-link nhsuk-u-margin-left-2" href="<%= batch_session_record_path(@session, programme) %>">Change default batch<span class="nhsuk-u-visually-hidden"> for <%= batch.vaccine.brand %></span></a>
+            </li>
+          <% end %>
+        <% else %>
+          <li>
+            <%= batches.vaccine.brand %> (<%= programme.name %>): <span class="app-u-monospace"><%= batches.name %></span>
+            <a class="nhsuk-link nhsuk-u-margin-left-2" href="<%= batch_session_record_path(@session, programme) %>">Change default batch<span class="nhsuk-u-visually-hidden"> for <%= batches.vaccine.brand %></span></a>
+          </li>
+        <% end %>
       <% end %>
     </ul>
   <% end %>

@@ -42,7 +42,7 @@ class Sessions::RecordController < ApplicationController
 
   def edit_batch
     @todays_batch =
-      authorize @batches.find_by(id: todays_batch_id(programme: @programme)),
+      authorize @batches.find_by(id: todays_batch_id(programme: @programme, vaccine_method: @programme.vaccines.first.method)),
                 :edit?
 
     render :batch
@@ -80,11 +80,20 @@ class Sessions::RecordController < ApplicationController
   def set_todays_batches
     all_batches =
       @session.programmes.index_with do |programme|
-        policy_scope(Batch)
-          .where(vaccine: @session.vaccines)
-          .not_archived
-          .not_expired
-          .find_by(id: todays_batch_id(programme:))
+        vaccine_methods = programme.vaccines.index_with do |vaccine|
+          policy_scope(Batch)
+            .where(vaccine: vaccine)
+            .not_archived
+            .not_expired
+            .find_by(id: todays_batch_id(programme:, vaccine_method: vaccine.method))
+        end.compact
+
+        # If there's only one vaccine method, flatten the structure for backward compatibility
+        if vaccine_methods.size == 1
+          vaccine_methods.values.first
+        else
+          vaccine_methods
+        end
       end
 
     @todays_batches = all_batches.compact

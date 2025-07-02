@@ -64,11 +64,17 @@ class PatientSessions::VaccinationsController < PatientSessions::BaseController
   end
 
   def set_todays_batch
+    vaccine_method = if vaccinate_form_params[:vaccine_id].present?
+                       Vaccine.find(vaccinate_form_params[:vaccine_id]).method
+                     else
+                       @programme.vaccines.first.method
+                     end
+
     @todays_batch =
       policy_scope(Batch)
         .where(vaccine: @session.vaccines)
         .not_archived
         .not_expired
-        .find_by(id: todays_batch_id(programme: @programme))
+        .find_by(id: todays_batch_id(programme: @programme, vaccine_method:))
   end
 end
