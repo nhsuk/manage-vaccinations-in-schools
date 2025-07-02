@@ -6,6 +6,10 @@
   <%= f.govuk_email_field :email, autocomplete: "email", label: { text: "Email address" } %>
   <%= f.govuk_password_field :password, autocomplete: "current-password", label: { text: "Password" } %>
 
+  <%- if params.has_key?(:redirect_after_login) %>
+    <%= hidden_field_tag :redirect_after_login, params.fetch(:redirect_after_login, '') %>
+  <%- end %>
+
   <% if devise_mapping.rememberable? %>
     <%= f.govuk_check_boxes_fieldset :remember_me, multiple: false, legend: nil do %>
       <%= f.govuk_check_box :remember_me, 1, 0, multiple: false, link_errors: true, small: true, label: { text: "Remember me?" } %>
