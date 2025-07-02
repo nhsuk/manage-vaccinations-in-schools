@@ -42,6 +42,15 @@ describe AppConsentConfirmationComponent do
 
       it { should have_text("is due to get the flu injection vaccination") }
     end
+
+    context "consent refused" do
+      before do
+        consent_form_programme.update!(response: "refused", vaccine_methods: [])
+      end
+
+      it { should have_text("You’ve told us that you do not want") }
+      it { should have_text("to get the flu vaccination at school") }
+    end
   end
 
   context "consent for only MenACWY" do
