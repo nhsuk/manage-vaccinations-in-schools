@@ -77,6 +77,7 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     signed_out =
       (Devise.sign_out_all_scopes ? sign_out : sign_out(resource_name))
     flash[:notice] = "You have been logged out" if signed_out
+
     redirect_to after_sign_out_path_for(resource_name)
   end
 

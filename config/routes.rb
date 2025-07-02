@@ -113,6 +113,10 @@ Rails.application.routes.draw do
         get "totals", controller: :totals, action: :index
       end
     end
+    namespace :reporting do
+      post "authorize", to: "one_time_tokens#authorize"
+      get "totals", controller: :totals, action: :index
+    end
   end
 
   resources :class_imports, path: "class-imports", except: %i[index destroy]

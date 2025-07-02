@@ -1,3 +1,8 @@
+
+reporting_api: Enables the Commissioner reporting component to authenticate to Mavis via OAUTH 2.0 
+  Authorization Code Flow (https://datatracker.ietf.org/doc/html/rfc6749#section-4.1), and retrieve 
+  statistics from /api/reporting/
+
 basic_auth: Require users to sign in with basic authentication before they
   can use the service.
 

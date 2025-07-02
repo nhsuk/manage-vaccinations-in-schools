@@ -8,6 +8,19 @@ describe AuthenticationConcern do
     Class
       .new do # rubocop:disable Style/BlockDelimiters
         include AuthenticationConcern
+        attr_accessor :request, :session
+
+        def initialize(request: nil, session: {})
+          @request = request
+          @session = session
+        end
+
+        def params
+          {}
+        end
+
+        def render(content = {}, args = {})
+        end
 
         attr_accessor :request, :session
 

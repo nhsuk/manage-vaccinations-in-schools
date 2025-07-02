@@ -10,6 +10,10 @@
     <%= hidden_field_tag :redirect_uri, params.fetch(:redirect_uri, "") %>
   <% end %>
 
+  <% if params.has_key?(:redirect_uri) %>
+    <%= hidden_field_tag :redirect_uri, params.fetch(:redirect_uri, "") %>
+  <% end %>
+
   <% if devise_mapping.rememberable? %>
     <%= f.govuk_check_boxes_fieldset :remember_me, multiple: false, legend: nil do %>
       <%= f.govuk_check_box :remember_me, 1, 0, multiple: false, link_errors: true, small: true, label: { text: "Remember me?" } %>

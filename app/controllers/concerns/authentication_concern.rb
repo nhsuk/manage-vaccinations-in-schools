@@ -105,6 +105,24 @@ module AuthenticationConcern
       end
     end
 
+    def add_auth_code_to(url, user)
+      uri = Addressable::URI.parse(url)
+      auth_code =
+        ReportingAPI::OneTimeToken.find_or_generate_for!(
+          user:,
+          cis2_info: session["cis2_info"]
+        ).token
+      uri.query_values = (uri.query_values || {}).merge("code" => auth_code)
+      uri.to_s
+    end
+
+    def reporting_app_redirect_uri_with_auth_code_for(user)
+      if Flipper.enabled?(:reporting_api)
+        url = session["redirect_uri"]
+        url.present? ? add_auth_code_to(url, user) : nil
+      end
+    end
+
     def after_sign_in_path_for(scope)
       urls = []
       if Flipper.enabled?(:reporting_api)
