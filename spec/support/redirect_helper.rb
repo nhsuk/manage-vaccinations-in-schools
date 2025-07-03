@@ -15,6 +15,10 @@ module RedirectHelper
     expect(page.driver.browser.current_url).to eq(url)
   end
 
+  def then_i_am_redirected_to_a_url_matching(url_pattern)
+    expect(page.driver.browser.current_url).to match( Regexp.escape(url_pattern) )
+  end
+
   def mavis_reporting_app_url(path='/')
     root = Settings.mavis_reporting_app.root_url || 'http://localhost:5000/'
     URI.join(root, path).to_s

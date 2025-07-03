@@ -1,5 +1,10 @@
 api: Basic API useful for automated testing.
 
+auth_token_by_param: Allow authentication to the token verification 
+  endpoint by providing a token= param
+auth_token_by_header: Allow authentication to the token verification
+  endpoint by providing an Authorization header
+  
 basic_auth: Require users to sign in with basic authentication before they
   can use the service.
 

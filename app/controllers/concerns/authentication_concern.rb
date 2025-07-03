@@ -95,8 +95,31 @@ module AuthenticationConcern
       end
     end
 
+    def authenticate_by_token!
+      possible_tokens = []
+      possible_tokens << params[:auth] if Flipper.enabled?(:auth_token_by_param)
+      possible_tokens << request.headers["Authorization"] if Flipper.enabled?(:auth_token_by_header)
+
+      unless possible_tokens.find{ it == Settings.mavis_reporting_app.secret }
+        render json: 'Forbidden', status: :forbidden and return
+      end
+    end
+
+    def reporting_app_redirect_url
+      url = session[:redirect_after_login]
+    end
+
+    def reporting_app_redirect_url_with_token_for(user) 
+      if url = reporting_app_redirect_url
+        uri = Addressable::URI.parse(url)
+        user_token = OneTimeToken.find_or_generate_for!(user_id: user.id, cis2_info: session['cis2_info']).token
+        uri.query_values = (uri.query_values || {}).merge('token' => user_token)
+        uri.to_s
+      end
+    end
+
     def after_sign_in_path_for(scope)
-      [session[:redirect_after_login], stored_location_for(scope), dashboard_path].compact.find{ is_valid_redirect?(it) }
+      [reporting_app_redirect_url_with_token_for(current_user), stored_location_for(scope), dashboard_path].compact.find{ is_valid_redirect?(it) }
     end
 
     def user_signed_in?

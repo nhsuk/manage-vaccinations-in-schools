@@ -46,6 +46,9 @@
         <div class="nhsuk-width-container">
           <h2 class="nhsuk-u-visually-hidden">Support links</h2>
           <div class="nhsuk-footer">
+            <p>
+              session[:redirect_after_login] = <%= session[:redirect_after_login] %>
+            </p>
             <ul class="nhsuk-footer__list">
               <li class="nhsuk-footer__list-item nhsuk-footer-default__list-item">
                 <%= link_to "Accessibility statement", :accessibility_statement, classes: "nhsuk-footer__list-item-link" %>

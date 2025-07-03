@@ -42,6 +42,8 @@ class User < ApplicationRecord
 
   has_many :programmes, through: :organisations
 
+  has_one :one_time_token
+  
   encrypts :email, deterministic: true
   encrypts :family_name, :given_name
 
