@@ -47,18 +47,32 @@ class SendAutomaticSchoolConsentRemindersJob < SendSchoolConsentRemindersJob
     session_dates_after_request =
       session.dates.select { it > initial_request_date }
 
+    session_dates_that_should_have_reminders =
+      session_dates_after_request.select do |date|
+        # Check that no manual reminder was sent for this date
+        patient.consent_notifications.none? do |notification|
+          notification.manual_reminder? &&
+            notification.programmes.include?(programme) &&
+            date - (session.days_before_consent_reminders + 3).days <
+              notification.sent_at.to_date &&
+            notification.sent_at.to_date <
+              date - session.days_before_consent_reminders.days
+        end
+      end
+
     date_index_to_send_reminder_for =
       patient
         .consent_notifications
         .select { it.automated_reminder? && it.programmes.include?(programme) }
         .length
 
-    if date_index_to_send_reminder_for >= session_dates_after_request.length
+    if date_index_to_send_reminder_for >=
+         session_dates_that_should_have_reminders.length
       return nil
     end
 
     date_to_send_reminder_for =
-      session_dates_after_request[date_index_to_send_reminder_for]
+      session_dates_that_should_have_reminders[date_index_to_send_reminder_for]
 
     date_to_send_reminder_for - session.days_before_consent_reminders.days
   end
