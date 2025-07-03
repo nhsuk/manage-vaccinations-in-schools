@@ -19,13 +19,3 @@ provider "grafana" {
   url  = var.workspace_url
   auth = var.service_account_token
 }
-
-resource "grafana_data_source" "cloudwatch" {
-  name = "CloudWatch"
-  type = "cloudwatch"
-  json_data_encoded = jsonencode({
-    authType      = "default"
-    defaultRegion = var.region
-  })
-}
-
