@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 describe "User password authentication", :local_users do
+  # include RedirectHelper
+
   before { given_the_cis2_feature_flag_is_disabled }
 
   scenario "going through the start page then signing out" do
@@ -87,4 +89,5 @@ describe "User password authentication", :local_users do
     expect(page).to have_current_path sessions_path, ignore_query: true
     expect(page).to have_content "Sessions"
   end
+
 end
