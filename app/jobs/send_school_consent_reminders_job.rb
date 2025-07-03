@@ -11,12 +11,14 @@ class SendSchoolConsentRemindersJob < ApplicationJob
       .includes_programmes
       .includes(patient: %i[consent_notifications consents vaccination_records])
       .find_each do |patient_session|
+        patient = patient_session.patient
+        session = patient_session.session
         ProgrammeGrouper
           .call(patient_session.programmes)
           .each_value do |programmes|
-            next unless should_send_notification?(patient_session:, programmes:)
-
-            patient = patient_session.patient
+            unless should_send_notification?(patient:, session:, programmes:)
+              next
+            end
 
             sent_initial_reminder =
               programmes.all? do |programme|
@@ -37,11 +39,8 @@ class SendSchoolConsentRemindersJob < ApplicationJob
       end
   end
 
-  def should_send_notification?(patient_session:, programmes:)
-    patient = patient_session.patient
-
+  def should_send_notification?(patient:, session:, programmes:)
     return false unless patient.send_notifications?
-
     academic_year = patient_session.academic_year
 
     suitable_programmes =
@@ -50,41 +49,55 @@ class SendSchoolConsentRemindersJob < ApplicationJob
           patient.vaccination_status(programme:, academic_year:).none_yet?
       end
 
+    # TODO: I think we can get rid of this check the .any? later should be enough
     return false if suitable_programmes.empty?
 
-    session = patient_session.session
-
     suitable_programmes.any? do |programme|
-      request_consent_notification =
-        patient
-          .consent_notifications
-          .sort_by(&:sent_at)
-          .find { it.request? && it.programmes.include?(programme) }
+      initial_request = initial_request(patient:, programme:)
+      return false if initial_request.nil?
 
-      return false if request_consent_notification.nil?
+      date_to_send_reminder =
+        earliest_date_to_send_reminder(
+          patient:,
+          session:,
+          programme:,
+          initial_request_date: initial_request.sent_at.to_date
+        )
+      next false if date_to_send_reminder.nil?
 
-      session_dates_after_request =
-        session.dates.select do
-          it > request_consent_notification.sent_at.to_date
-        end
-
-      date_index_to_send_reminder_for =
-        patient
-          .consent_notifications
-          .select { it.reminder? && it.programmes.include?(programme) }
-          .length
-
-      if date_index_to_send_reminder_for >= session_dates_after_request.length
-        next false
-      end
-
-      date_to_send_reminder_for =
-        session_dates_after_request[date_index_to_send_reminder_for]
-
-      earliest_date_to_send_reminder =
-        date_to_send_reminder_for - session.days_before_consent_reminders.days
-
-      Date.current >= earliest_date_to_send_reminder
+      Date.current >= date_to_send_reminder
     end
+  end
+
+  def initial_request(patient:, programme:)
+    patient
+      .consent_notifications
+      .sort_by(&:sent_at)
+      .find { it.request? && it.programmes.include?(programme) }
+  end
+
+  def earliest_date_to_send_reminder(
+    patient:,
+    session:,
+    programme:,
+    initial_request_date:
+  )
+    session_dates_after_request =
+      session.dates.select { it > initial_request_date }
+
+    date_index_to_send_reminder_for =
+      patient
+        .consent_notifications
+        .select { it.reminder? && it.programmes.include?(programme) }
+        .length
+
+    if date_index_to_send_reminder_for >= session_dates_after_request.length
+      return nil
+    end
+
+    date_to_send_reminder_for =
+      session_dates_after_request[date_index_to_send_reminder_for]
+
+    date_to_send_reminder_for - session.days_before_consent_reminders.days
   end
 end
