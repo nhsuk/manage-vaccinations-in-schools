@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe SendSchoolConsentRemindersJob do
+describe SendAutomaticSchoolConsentRemindersJob do
   subject(:perform_now) { described_class.perform_now(session) }
 
   let(:programmes) { [create(:programme)] }
@@ -89,7 +89,8 @@ describe SendSchoolConsentRemindersJob do
         patient: patient_not_sent_reminder,
         programmes:,
         session:,
-        type: :initial_reminder
+        type: :initial_reminder,
+        current_user: nil
       )
       perform_now
     end
@@ -153,21 +154,24 @@ describe SendSchoolConsentRemindersJob do
         patient: patient_not_sent_reminder,
         programmes:,
         session:,
-        type: :initial_reminder
+        type: :initial_reminder,
+        current_user: nil
       )
 
       expect(ConsentNotification).to receive(:create_and_send!).once.with(
         patient: patient_not_sent_reminder_joined_after_first_date,
         programmes:,
         session:,
-        type: :initial_reminder
+        type: :initial_reminder,
+        current_user: nil
       )
 
       expect(ConsentNotification).to receive(:create_and_send!).once.with(
         patient: patient_with_initial_reminder_sent,
         programmes:,
         session:,
-        type: :subsequent_reminder
+        type: :subsequent_reminder,
+        current_user: nil
       )
 
       perform_now
