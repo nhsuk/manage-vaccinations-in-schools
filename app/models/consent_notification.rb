@@ -52,6 +52,10 @@ class ConsentNotification < ApplicationRecord
     sent_by.nil? && (initial_reminder? || subsequent_reminder?)
   end
 
+  def manual_reminder?
+    !sent_by.nil? && (initial_reminder? || subsequent_reminder?)
+  end
+
   def self.create_and_send!(
     patient:,
     programmes:,
