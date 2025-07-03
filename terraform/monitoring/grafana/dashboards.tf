@@ -1,6 +1,9 @@
-resource "grafana_dashboard" "database_dashboard" {
-  config_json = templatefile("${path.module}/resources/database-dashboard.json", {
-    grafana_data_source_cloudwatch_uid = grafana_data_source.cloudwatch.uid
-    region                             = var.region
-  })
+locals {
+  dashboard_path  = "${path.module}/resources/dashboards"
+  dashboard_files = fileset(local.dashboard_path, "*.json")
+}
+
+resource "grafana_dashboard" "mavis" {
+  for_each    = local.dashboard_files
+  config_json = file("${local.dashboard_path}/${each.value}")
 }
