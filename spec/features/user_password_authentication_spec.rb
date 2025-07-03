@@ -89,5 +89,4 @@ describe "User password authentication", :local_users do
     expect(page).to have_current_path sessions_path, ignore_query: true
     expect(page).to have_content "Sessions"
   end
-
 end

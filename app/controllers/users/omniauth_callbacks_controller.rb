@@ -27,11 +27,11 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
       # even if the same user is logging in.
       sign_in @user, event: :authentication, force: true
       # We have to split sign_in and redirect methods up, so we can supply the
-      # allow_other_host param to the redirect. This is so that we can 
+      # allow_other_host param to the redirect. This is so that we can
       # redirect to the reporting app which will be running on another host/port
-      # Note that safety checks on the host are now done in the 
+      # Note that safety checks on the host are now done in the
       # after_sign_in_path_for method, so this doesn't allow arbitrary URLs
-      redirect_to after_sign_in_path_for(@user), allow_other_host: true
+      redirect_after_choosing_org
     end
   rescue StandardError => e
     unless Rails.env.production?

@@ -26,14 +26,8 @@ class Users::OrganisationsController < ApplicationController
           "workgroups" => ["schoolagedimmunisations"]
         }
       }
-      
-      stored_url = session.fetch(:redirect_after_login, nil)
-      if stored_url && is_valid_redirect?(stored_url)
-        url = session.delete(:redirect_after_login)
-        redirect_to url
-      else
-        redirect_to dashboard_path
-      end
+
+      redirect_after_choosing_org
     else
       @organisations = current_user.organisations
       render :new, status: :unprocessable_entity

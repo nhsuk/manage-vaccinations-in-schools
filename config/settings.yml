@@ -84,3 +84,5 @@ splunk:
 
 mavis_reporting_app:
   root_url: http://localhost:5000/
+  # secret:
+  token_ttl_seconds: 300
