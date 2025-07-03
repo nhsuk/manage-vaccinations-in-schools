@@ -68,6 +68,8 @@ en:
             delivery_site:
               blank: Choose a delivery site
               inclusion: Choose a delivery site
+              nasal_spray_must_be_nose: Site must be nose if the nasal spray was given
+              injection_cannot_be_nose: Site cannot be nose for intramuscular or subcutaneous injections
             full_dose:
               inclusion: Choose whether they got the full dose
             location_name:

@@ -19,6 +19,14 @@ class AppSearchComponent < ViewComponent::Base
             </svg>
           </button>
         </div>
+        
+        <% if programmes.size > 1 %>
+          <%= f.govuk_check_boxes_fieldset :programme_types, legend: { text: "Programme", size: "s" } do %>
+            <% programmes.each do |programme| %>
+              <%= f.govuk_check_box :programme_types, programme.type, label: { text: programme.name } %>
+            <% end %>
+          <% end %>
+        <% end %>
 
         <% if consent_statuses.any? %>
           <%= f.govuk_check_boxes_fieldset :consent_statuses, legend: { text: "Consent status", size: "s" } do %>
@@ -60,6 +68,15 @@ class AppSearchComponent < ViewComponent::Base
             <%= f.govuk_radio_button :programme_status, "", label: { text: "Any" } %>
             <% programme_statuses.each do |status| %>
               <%= f.govuk_radio_button :programme_status, status, label: { text: t(status, scope: %i[status programme label]) } %>
+            <% end %>
+          <% end %>
+        <% end %>
+
+        <% if vaccine_methods.any? %>
+          <%= f.govuk_radio_buttons_fieldset :vaccine_method, legend: { text: "Vaccination method", size: "s" } do %>
+            <%= f.govuk_radio_button :vaccine_method, "", label: { text: "Any" } %>
+            <% vaccine_methods.each do |vaccine_method| %>
+              <%= f.govuk_radio_button :vaccine_method, vaccine_method, label: { text: Vaccine.human_enum_name(:vaccine_method, vaccine_method) } %>
             <% end %>
           <% end %>
         <% end %>
@@ -115,11 +132,13 @@ class AppSearchComponent < ViewComponent::Base
   def initialize(
     form:,
     url:,
+    programmes: [],
     consent_statuses: [],
     programme_statuses: [],
     register_statuses: [],
     session_statuses: [],
     triage_statuses: [],
+    vaccine_methods: [],
     year_groups: []
   )
     super
@@ -127,11 +146,13 @@ class AppSearchComponent < ViewComponent::Base
     @form = form
     @url = url
 
+    @programmes = programmes
     @consent_statuses = consent_statuses
     @programme_statuses = programme_statuses
     @register_statuses = register_statuses
     @session_statuses = session_statuses
     @triage_statuses = triage_statuses
+    @vaccine_methods = vaccine_methods
     @year_groups = year_groups
   end
 
@@ -139,11 +160,13 @@ class AppSearchComponent < ViewComponent::Base
 
   attr_reader :form,
               :url,
+              :programmes,
               :consent_statuses,
               :programme_statuses,
               :register_statuses,
               :session_statuses,
               :triage_statuses,
+              :vaccine_methods,
               :year_groups
 
   def open_details?

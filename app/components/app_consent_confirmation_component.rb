@@ -15,7 +15,7 @@ class AppConsentConfirmationComponent < ViewComponent::Base
 
   def title
     if response_given?
-      if refused_programmes.empty?
+      if refused_consent_form_programmes.empty?
         "Consent confirmed"
       else
         "Consent for the #{given_vaccinations} confirmed"
@@ -27,8 +27,8 @@ class AppConsentConfirmationComponent < ViewComponent::Base
 
   private
 
-  delegate :given_programmes,
-           :refused_programmes,
+  delegate :given_consent_form_programmes,
+           :refused_consent_form_programmes,
            :response_given?,
            :parent_email,
            to: :@consent_form
@@ -55,15 +55,29 @@ class AppConsentConfirmationComponent < ViewComponent::Base
     end
   end
 
-  def given_vaccinations = vaccinations_text(given_programmes)
+  def given_vaccinations = vaccinations_text(given_consent_form_programmes)
 
-  def refused_vaccinations = vaccinations_text(refused_programmes)
+  def refused_vaccinations = vaccinations_text(refused_consent_form_programmes)
 
-  def vaccinations_text(programmes)
+  def vaccinations_text(consent_form_programmes)
     programme_names =
-      programmes.map do |programme|
-        programme.type == "flu" ? "nasal flu" : programme.name
-      end
+      consent_form_programmes
+        .includes(:programme)
+        .map do |consent_form_programme|
+          programme = consent_form_programme.programme
+
+          if programme.flu?
+            if consent_form_programme.vaccine_method_nasal?
+              "nasal flu"
+            elsif consent_form_programme.vaccine_method_injection?
+              "flu injection"
+            else
+              programme.name.downcase
+            end
+          else
+            programme.name
+          end
+        end
 
     "#{programme_names.to_sentence} vaccination".pluralize(
       programme_names.count
@@ -71,7 +85,7 @@ class AppConsentConfirmationComponent < ViewComponent::Base
   end
 
   def given_vaccinations_are
-    "#{given_vaccinations} #{given_programmes.one? ? "is" : "are"}"
+    "#{given_vaccinations} #{given_consent_form_programmes.one? ? "is" : "are"}"
   end
 
   def session_dates

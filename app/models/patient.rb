@@ -104,11 +104,28 @@ class Patient < ApplicationRecord
 
   scope :with_notice, -> { deceased.or(restricted).or(invalidated) }
 
+  scope :eligible_for_programmes,
+        ->(programmes) do
+          birth_academic_years =
+            programmes.flat_map(&:birth_academic_years).sort.uniq
+
+          Patient
+            .where("patients.id = patient_sessions.patient_id")
+            .where(birth_academic_year: birth_academic_years)
+            .arel
+            .exists
+        end
+
   scope :in_programmes,
         ->(programmes) do
           where(
-            birth_academic_year:
-              programmes.flat_map(&:birth_academic_years).sort.uniq
+            PatientSession
+              .joins(session: :session_programmes)
+              .where(session_programmes: { programme: programmes })
+              .where("patient_sessions.patient_id = patients.id")
+              .where(eligible_for_programmes(programmes))
+              .arel
+              .exists
           )
         end
 
@@ -157,6 +174,28 @@ class Patient < ApplicationRecord
         ->(status, programme:) do
           where(
             Patient::VaccinationStatus
+              .where("patient_id = patients.id")
+              .where(status:, programme:)
+              .arel
+              .exists
+          )
+        end
+
+  scope :has_consent_status,
+        ->(status, programme:) do
+          where(
+            Patient::ConsentStatus
+              .where("patient_id = patients.id")
+              .where(status:, programme:)
+              .arel
+              .exists
+          )
+        end
+
+  scope :has_triage_status,
+        ->(status, programme:) do
+          where(
+            Patient::TriageStatus
               .where("patient_id = patients.id")
               .where(status:, programme:)
               .arel

@@ -37,8 +37,9 @@ class ProgrammesController < ApplicationController
         [@programme]
       )
 
-    patients = @form.apply(scope, programme: @programme)
+    @form.programme_types = [@programme.type]
 
+    patients = @form.apply(scope)
     @pagy, @patients = pagy(patients)
   end
 

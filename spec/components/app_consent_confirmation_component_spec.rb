@@ -14,6 +14,45 @@ describe AppConsentConfirmationComponent do
     )
   end
 
+  context "with Flu programme" do
+    let(:programme) { create(:programme, :flu) }
+    let(:session) { create(:session, programmes: [programme]) }
+    let(:consent_form) { create(:consent_form, :given, session:) }
+
+    let(:consent_form_programme) { consent_form.consent_form_programmes.first }
+
+    context "consent for nasal Flu" do
+      before do
+        consent_form_programme.update!(
+          response: "given",
+          vaccine_methods: %w[nasal injection]
+        )
+      end
+
+      it { should have_text("is due to get the nasal flu vaccination") }
+    end
+
+    context "consent for injected Flu" do
+      before do
+        consent_form_programme.update!(
+          response: "given",
+          vaccine_methods: %w[injection]
+        )
+      end
+
+      it { should have_text("is due to get the flu injection vaccination") }
+    end
+
+    context "consent refused" do
+      before do
+        consent_form_programme.update!(response: "refused", vaccine_methods: [])
+      end
+
+      it { should have_text("You’ve told us that you do not want") }
+      it { should have_text("to get the flu vaccination at school") }
+    end
+  end
+
   context "consent for only MenACWY" do
     let(:session) do
       create(

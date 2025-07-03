@@ -36,9 +36,9 @@ clinics:
       ods_code: # Unique ODS code
 ```
 
-An example configuration file used for [the Coventry model office can be found in the repo][coventry-model-office].
+[Example configuration files can be found in the repo][config-onboarding].
 
-[coventry-model-office]: /config/onboarding/coventry-model-office.yaml
+[config-onboarding]: /config/onboarding
 
 ## Rake task
 

@@ -6,7 +6,7 @@
     "@hotwired/turbo-rails": "^8.0.16",
     "accessible-autocomplete": "^3.0.1",
     "esbuild": "^0.25.5",
-    "govuk-frontend": "^5.10.2",
+    "govuk-frontend": "^5.11.0",
     "idb": "^8.0.3",
     "nhsuk-frontend": "9.6.1",
     "sass": "^1.89.2",
@@ -34,7 +34,7 @@
     "mutationobserver-shim": "^0.3.7",
     "officecrypto-tool": "^0.0.18",
     "playwright-core": "^1.53.1",
-    "prettier": "^3.6.1"
+    "prettier": "^3.6.2"
   },
   "jest": {
     "collectCoverage": true,

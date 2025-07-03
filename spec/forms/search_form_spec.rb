@@ -1,10 +1,13 @@
 # frozen_string_literal: true
 
 describe SearchForm do
-  subject(:form) { described_class.new(**params, session:, request_path:) }
+  subject(:form) do
+    described_class.new(**params, request_session:, request_path:, session:)
+  end
 
-  let(:session) { {} }
+  let(:request_session) { {} }
   let(:request_path) { "/a-path" }
+  let(:session) { nil }
 
   let(:consent_statuses) { nil }
   let(:date_of_birth_day) { Date.current.day }
@@ -12,10 +15,12 @@ describe SearchForm do
   let(:date_of_birth_year) { Date.current.year }
   let(:missing_nhs_number) { true }
   let(:programme_status) { nil }
+  let(:programme_types) { nil }
   let(:q) { "query" }
   let(:register_status) { nil }
   let(:session_status) { nil }
   let(:triage_status) { nil }
+  let(:vaccine_method) { nil }
   let(:year_groups) { %w[8 9 10 11] }
 
   let(:params) do
@@ -26,10 +31,12 @@ describe SearchForm do
       date_of_birth_year:,
       missing_nhs_number:,
       programme_status:,
+      programme_types:,
       q:,
       register_status:,
       session_status:,
       triage_status:,
+      vaccine_method:,
       year_groups:
     }
   end
@@ -93,6 +100,44 @@ describe SearchForm do
       end
     end
 
+    context "filtering on programmes" do
+      let(:consent_status) { nil }
+      let(:date_of_birth_day) { nil }
+      let(:date_of_birth_month) { nil }
+      let(:date_of_birth_year) { nil }
+      let(:missing_nhs_number) { nil }
+      let(:programme_status) { nil }
+      let(:programme_types) { [programme.type] }
+      let(:q) { nil }
+      let(:register_status) { nil }
+      let(:session_status) { nil }
+      let(:triage_status) { nil }
+      let(:year_groups) { nil }
+
+      let(:programme) { create(:programme, :menacwy) }
+
+      context "with a patient eligible for the programme" do
+        let(:patient) do
+          create(:patient, programmes: [programme]).tap do |patient|
+            session = create(:session, programmes: [programme])
+            create(:patient_session, patient:, session:)
+          end
+        end
+
+        it "is included" do
+          expect(form.apply(scope)).to include(patient)
+        end
+      end
+
+      context "with a patient not eligible for the programme" do
+        let(:patient) { create(:patient, year_group: 8) }
+
+        it "is not included" do
+          expect(form.apply(scope)).not_to include(patient)
+        end
+      end
+    end
+
     context "filtering on programme status" do
       let(:consent_statuses) { nil }
       let(:date_of_birth_day) { nil }
@@ -100,6 +145,7 @@ describe SearchForm do
       let(:date_of_birth_year) { nil }
       let(:missing_nhs_number) { nil }
       let(:programme_status) { "vaccinated" }
+      let(:programme_types) { [programme.type] }
       let(:q) { nil }
       let(:register_status) { nil }
       let(:session_status) { nil }
@@ -110,7 +156,10 @@ describe SearchForm do
 
       it "filters on session status" do
         patient = create(:patient, :vaccinated, programmes: [programme])
-        expect(form.apply(scope, programme:)).to include(patient)
+        session = create(:session, programmes: [programme])
+        create(:patient_session, patient:, session:)
+
+        expect(form.apply(scope)).to include(patient)
       end
     end
 
@@ -170,6 +219,47 @@ describe SearchForm do
       expect { form.apply(scope) }.not_to raise_error
     end
 
+    context "filtering on programmes" do
+      let(:consent_status) { nil }
+      let(:date_of_birth_day) { nil }
+      let(:date_of_birth_month) { nil }
+      let(:date_of_birth_year) { nil }
+      let(:missing_nhs_number) { nil }
+      let(:programme_status) { nil }
+      let(:programme_types) { [programme.type] }
+      let(:q) { nil }
+      let(:register_status) { nil }
+      let(:session_status) { nil }
+      let(:triage_status) { nil }
+      let(:year_groups) { nil }
+
+      let(:programme) { create(:programme, :menacwy) }
+
+      context "with a patient session eligible for the programme" do
+        let(:patient) { create(:patient, year_group: 9) }
+
+        let(:patient_session) do
+          create(:patient_session, patient:, programmes: [programme])
+        end
+
+        it "is included" do
+          expect(form.apply(scope)).to include(patient_session)
+        end
+      end
+
+      context "with a patient session not eligible for the programme" do
+        let(:patient) { create(:patient, year_group: 8) }
+
+        let(:patient_session) do
+          create(:patient_session, patient:, programmes: [programme])
+        end
+
+        it "is not included" do
+          expect(form.apply(scope)).not_to include(patient_session)
+        end
+      end
+    end
+
     context "filtering on consent status" do
       let(:consent_statuses) { %w[given refused] }
       let(:date_of_birth_day) { nil }
@@ -177,6 +267,7 @@ describe SearchForm do
       let(:date_of_birth_year) { nil }
       let(:missing_nhs_number) { nil }
       let(:programme_status) { nil }
+      let(:programme_types) { [programme.type] }
       let(:q) { nil }
       let(:register_status) { nil }
       let(:triage_status) { nil }
@@ -195,7 +286,7 @@ describe SearchForm do
         patient_session_refused =
           create(:patient_session, :consent_refused, programmes: [programme])
 
-        expect(form.apply(scope, programme:)).to contain_exactly(
+        expect(form.apply(scope)).to contain_exactly(
           patient_session_given,
           patient_session_refused
         )
@@ -209,6 +300,7 @@ describe SearchForm do
       let(:date_of_birth_year) { nil }
       let(:missing_nhs_number) { nil }
       let(:programme_status) { nil }
+      let(:programme_types) { [programme.type] }
       let(:q) { nil }
       let(:register_status) { nil }
       let(:session_status) { "vaccinated" }
@@ -220,7 +312,7 @@ describe SearchForm do
       it "filters on session status" do
         patient_session =
           create(:patient_session, :vaccinated, programmes: [programme])
-        expect(form.apply(scope, programme:)).to include(patient_session)
+        expect(form.apply(scope)).to include(patient_session)
       end
     end
 
@@ -250,6 +342,7 @@ describe SearchForm do
       let(:date_of_birth_year) { nil }
       let(:missing_nhs_number) { nil }
       let(:programme_status) { nil }
+      let(:programme_types) { [programme.type] }
       let(:q) { nil }
       let(:register_status) { nil }
       let(:session_status) { nil }
@@ -265,7 +358,45 @@ describe SearchForm do
             :consent_given_triage_needed,
             programmes: [programme]
           )
-        expect(form.apply(scope, programme:)).to include(patient_session)
+        expect(form.apply(scope)).to include(patient_session)
+      end
+    end
+
+    context "filtering on vaccine method" do
+      let(:consent_statuses) { nil }
+      let(:date_of_birth_day) { nil }
+      let(:date_of_birth_month) { nil }
+      let(:date_of_birth_year) { nil }
+      let(:missing_nhs_number) { nil }
+      let(:programme_status) { nil }
+      let(:programme_types) { [programme.type] }
+      let(:q) { nil }
+      let(:register_status) { nil }
+      let(:triage_status) { nil }
+      let(:vaccine_method) { "nasal" }
+      let(:year_groups) { nil }
+
+      let(:programme) { create(:programme) }
+
+      it "filters on vaccine method" do
+        nasal_patient_session =
+          create(
+            :patient_session,
+            :consent_given_triage_not_needed,
+            programmes: [programme]
+          )
+
+        nasal_patient_session.patient.consent_statuses.first.update!(
+          vaccine_methods: %w[nasal injection]
+        )
+
+        create(
+          :patient_session,
+          :consent_given_triage_not_needed,
+          programmes: [programme]
+        )
+
+        expect(form.apply(scope)).to contain_exactly(nasal_patient_session)
       end
     end
   end
@@ -275,57 +406,65 @@ describe SearchForm do
 
     context "when clear_filters param is present" do
       it "only clears filters for the current path" do
-        described_class.new(q: "John", session:, request_path:)
-        described_class.new(q: "Jane", session:, request_path: another_path)
+        described_class.new(q: "John", request_session:, request_path:)
+        described_class.new(
+          q: "Jane",
+          request_session:,
+          request_path: another_path
+        )
 
-        described_class.new(clear_filters: "true", session:, request_path:)
+        described_class.new(
+          clear_filters: "true",
+          request_session:,
+          request_path:
+        )
 
-        form1 = described_class.new(**empty_params, session:, request_path:)
+        form1 = described_class.new(request_session:, request_path:)
         expect(form1.q).to be_nil
 
         form2 =
-          described_class.new(
-            **empty_params,
-            session:,
-            request_path: another_path
-          )
+          described_class.new(request_session:, request_path: another_path)
         expect(form2.q).to eq("Jane")
       end
     end
 
     context "when filters are present in params" do
       it "persists filters to be loaded in subsequent requests" do
-        described_class.new(q: "John", session:, request_path:)
+        described_class.new(q: "John", request_session:, request_path:)
 
-        form = described_class.new(**empty_params, session:, request_path:)
+        form = described_class.new(request_session:, request_path:)
         expect(form.q).to eq("John")
       end
 
       it "overwrites previously stored filters" do
-        described_class.new(q: "John", session:, request_path:)
+        described_class.new(q: "John", request_session:, request_path:)
 
-        form1 = described_class.new(q: "Jane", session:, request_path:)
+        form1 = described_class.new(q: "Jane", request_session:, request_path:)
         expect(form1.q).to eq("Jane")
 
-        form2 = described_class.new(**empty_params, session:, request_path:)
+        form2 = described_class.new(request_session:, request_path:)
         expect(form2.q).to eq("Jane")
       end
 
       it "overrides session filters when 'Any' option is selected (empty string)" do
         described_class.new(
           consent_statuses: %w[given],
-          session:,
+          request_session:,
           request_path:
         )
 
-        form1 = described_class.new(**empty_params, session:, request_path:)
+        form1 = described_class.new(request_session:, request_path:)
         expect(form1.consent_statuses).to eq(%w[given])
 
         form2 =
-          described_class.new(consent_statuses: nil, session:, request_path:)
+          described_class.new(
+            consent_statuses: nil,
+            request_session:,
+            request_path:
+          )
         expect(form2.consent_statuses).to eq([])
 
-        form3 = described_class.new(**empty_params, session:, request_path:)
+        form3 = described_class.new(request_session:, request_path:)
         expect(form3.consent_statuses).to eq([])
       end
     end
@@ -336,13 +475,13 @@ describe SearchForm do
           q: "John",
           year_groups: %w[8 11],
           consent_statuses: %w[given],
-          session:,
+          request_session:,
           request_path:
         )
       end
 
       it "loads filters from the session" do
-        form = described_class.new(**empty_params, session:, request_path:)
+        form = described_class.new(request_session:, request_path:)
 
         expect(form.q).to eq("John")
         expect(form.year_groups).to eq([8, 11])
@@ -352,18 +491,18 @@ describe SearchForm do
 
     context "with path-specific filters" do
       it "maintains separate filters for different paths" do
-        described_class.new(q: "John", session:, request_path:)
-        described_class.new(q: "Jane", session:, request_path: another_path)
+        described_class.new(q: "John", request_session:, request_path:)
+        described_class.new(
+          q: "Jane",
+          request_session:,
+          request_path: another_path
+        )
 
-        form1 = described_class.new(**empty_params, session:, request_path:)
+        form1 = described_class.new(request_session:, request_path:)
         expect(form1.q).to eq("John")
 
         form2 =
-          described_class.new(
-            **empty_params,
-            session:,
-            request_path: another_path
-          )
+          described_class.new(request_session:, request_path: another_path)
         expect(form2.q).to eq("Jane")
       end
     end
