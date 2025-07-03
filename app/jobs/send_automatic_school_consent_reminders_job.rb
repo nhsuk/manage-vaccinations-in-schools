@@ -53,23 +53,49 @@ class SendAutomaticSchoolConsentRemindersJob < ApplicationJob
     session_dates_after_request =
       session.dates.select { it > initial_request_date }
 
-    date_index_to_send_reminder_for =
-      patient
-        .consent_notifications
-        .select { it.automated_reminder? && it.programmes.include?(programme) }
-        .length
+    scheduled_automatic_reminder_dates =
+      session_dates_after_request.map do
+        it - session.days_before_consent_reminders.days
+      end
 
-    if date_index_to_send_reminder_for >= session_dates_after_request.length
+    date_index_to_send_reminder_for =
+      already_sent_automatic_consent_reminders_count(patient:, programme:) +
+        manual_consent_reminders_replacing_automatic_count(
+          patient:,
+          programme:,
+          scheduled_automatic_reminder_dates:
+        )
+
+    if date_index_to_send_reminder_for >=
+         scheduled_automatic_reminder_dates.length
       return nil
     end
 
-    date_to_send_reminder_for =
-      session_dates_after_request[date_index_to_send_reminder_for]
-
-    date_to_send_reminder_for - session.days_before_consent_reminders.days
+    scheduled_automatic_reminder_dates[date_index_to_send_reminder_for]
   end
 
   def notification_type(patient:, programmes:)
     reminder_notification_type(patient:, programmes:)
+  end
+
+  def already_sent_automatic_consent_reminders_count(patient:, programme:)
+    patient.consent_notifications.count do
+      it.automated_reminder? && it.programmes.include?(programme)
+    end
+  end
+
+  def manual_consent_reminders_replacing_automatic_count(
+    patient:,
+    programme:,
+    scheduled_automatic_reminder_dates:
+  )
+    patient.consent_notifications.count do |notification|
+      notification.manual_reminder? &&
+        notification.programmes.include?(programme) &&
+        scheduled_automatic_reminder_dates.any? do |scheduled_automatic_reminder_date|
+          notification.sent_at < scheduled_automatic_reminder_date &&
+            notification.sent_at >= scheduled_automatic_reminder_date - 3.days
+        end
+    end
   end
 end
