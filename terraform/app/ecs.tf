@@ -34,7 +34,7 @@ module "web_service" {
     health_check_command = ["CMD-SHELL", "curl -f http://localhost:4000/health/database || exit 1"]
   }
   network_params = {
-    subnets = [aws_subnet.private_subnet_a.id, aws_subnet.private_subnet_b.id]
+    subnets = local.private_subnet_ids
     vpc_id  = aws_vpc.application_vpc.id
   }
   loadbalancer = {
@@ -73,7 +73,7 @@ module "good_job_service" {
     health_check_command = ["CMD-SHELL", "curl -f http://localhost:4000/status/connected || exit 1"]
   }
   network_params = {
-    subnets = [aws_subnet.private_subnet_a.id, aws_subnet.private_subnet_b.id]
+    subnets = local.private_subnet_ids
     vpc_id  = aws_vpc.application_vpc.id
   }
   minimum_replica_count = var.good_job_replicas

@@ -30,7 +30,7 @@ module "prepare_new_db_service" {
   maximum_replica_count = 1
   minimum_replica_count = 1
   network_params = {
-    subnets = [aws_subnet.private_subnet_a.id, aws_subnet.private_subnet_b.id]
+    subnets = local.private_subnet_ids
     vpc_id  = <VPC in which source RDS cluster is deployed>
   }
   server_type      = "none"

@@ -26,7 +26,7 @@ resource "aws_security_group_rule" "rds_ecs_ingress" {
 
 resource "aws_db_subnet_group" "core" {
   name        = "mavis-${var.environment}-core"
-  subnet_ids  = [aws_subnet.private_subnet_a.id, aws_subnet.private_subnet_b.id]
+  subnet_ids  = local.private_subnet_ids
   description = "Private subnets for the core aurora RDS cluster"
   tags = {
     name = "mavis-${var.environment}-core"
@@ -34,26 +34,27 @@ resource "aws_db_subnet_group" "core" {
 }
 
 resource "aws_rds_cluster" "core" {
-  cluster_identifier              = local.rds_cluster
-  engine                          = "aurora-postgresql"
-  engine_mode                     = "provisioned"
-  engine_version                  = "16.8"
-  database_name                   = "manage_vaccinations"
-  master_username                 = "postgres"
-  backup_retention_period         = var.backup_retention_period
-  skip_final_snapshot             = !local.is_production
-  final_snapshot_identifier       = "${local.rds_cluster}-final-snapshot"
-  db_subnet_group_name            = aws_db_subnet_group.core.name
-  vpc_security_group_ids          = [aws_security_group.rds_security_group.id]
-  kms_key_id                      = aws_kms_key.rds_cluster.arn
-  storage_encrypted               = true
-  manage_master_user_password     = true
-  enable_http_endpoint            = true
-  deletion_protection             = true
-  allow_major_version_upgrade     = true
-  preferred_backup_window         = "01:00-01:30"
-  preferred_maintenance_window    = "sun:02:30-sun:03:00"
-  db_cluster_parameter_group_name = "default.aurora-postgresql16"
+  cluster_identifier                  = local.rds_cluster
+  engine                              = "aurora-postgresql"
+  engine_mode                         = "provisioned"
+  engine_version                      = "16.8"
+  database_name                       = "manage_vaccinations"
+  master_username                     = "postgres"
+  backup_retention_period             = var.backup_retention_period
+  skip_final_snapshot                 = !local.is_production
+  final_snapshot_identifier           = "${local.rds_cluster}-final-snapshot"
+  db_subnet_group_name                = aws_db_subnet_group.core.name
+  vpc_security_group_ids              = [aws_security_group.rds_security_group.id]
+  kms_key_id                          = aws_kms_key.rds_cluster.arn
+  storage_encrypted                   = true
+  manage_master_user_password         = true
+  enable_http_endpoint                = true
+  deletion_protection                 = true
+  allow_major_version_upgrade         = true
+  preferred_backup_window             = "01:00-01:30"
+  preferred_maintenance_window        = "sun:02:30-sun:03:00"
+  db_cluster_parameter_group_name     = "default.aurora-postgresql16"
+  iam_database_authentication_enabled = true
 
   serverlessv2_scaling_configuration {
     max_capacity = var.max_aurora_capacity_units
@@ -84,4 +85,61 @@ resource "aws_rds_cluster_instance" "core" {
   engine_version       = aws_rds_cluster.core.engine_version
   db_subnet_group_name = aws_db_subnet_group.core.name
   promotion_tier       = each.value["promotion_tier"]
+}
+
+
+resource "aws_iam_user" "grafana_db_reader" {
+  name = "mavis-${var.environment}-grafana-db-reader"
+}
+
+resource "aws_iam_policy" "db_ro" {
+  name        = "readonly-policy"
+  description = "Policy for read-only access to Aurora RDS"
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "rds:DescribeDBInstances",
+          "rds:ListTagsForResource",
+          "rds:DescribeDBClusters",
+          "rds:DescribeDBClusterParameters",
+          "rds:DescribeDBEngineVersions",
+          "rds:DescribeEventCategories",
+          "rds:DescribeEvents"
+          # Add specific database read actions as needed
+        ]
+        Resource = "*"
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "secretsmanager:GetSecretValue",
+          "secretsmanager:DescribeSecret"
+        ]
+        Resource = "arn:aws:secretsmanager:${var.region}:${var.account_id}:secret:rds-db-credentials/cluster-*"
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "rds-data:ExecuteStatement",
+          "rds-data:BatchExecuteStatement",
+        ]
+        Resource = aws_rds_cluster.core.arn
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "rds-db:connect"
+        ]
+        Resource = "arn:aws:rds-db:${var.region}:${var.account_id}:dbuser:${aws_rds_cluster_instance.core["primary-1"].dbi_resource_id}/grafana_ro"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_user_policy_attachment" "grafana_db_reader" {
+  user       = aws_iam_user.grafana_db_reader.name
+  policy_arn = aws_iam_policy.db_ro.arn
 }

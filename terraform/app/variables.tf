@@ -301,4 +301,5 @@ variable "active_lb_target_group" {
 locals {
   ecs_initial_lb_target_group = var.active_lb_target_group == "green" ? aws_lb_target_group.green.arn : aws_lb_target_group.blue.arn
   ecs_sg_ids                  = [module.web_service.security_group_id, module.good_job_service.security_group_id]
+  private_subnet_ids          = [aws_subnet.private_subnet_a.id, aws_subnet.private_subnet_b.id]
 }
