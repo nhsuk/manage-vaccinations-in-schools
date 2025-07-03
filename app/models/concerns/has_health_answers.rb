@@ -9,6 +9,10 @@ module HasHealthAnswers
     encrypts :health_answers if respond_to?(:encrypts)
   end
 
+  def health_answers_require_triage?
+    health_answers.any? { it.response_yes? && it.would_require_triage? }
+  end
+
   def who_responded
     if via_self_consent?
       "Child (Gillick competent)"

@@ -72,7 +72,7 @@ class Patient::TriageStatus < ApplicationRecord
   end
 
   def consent_requires_triage?
-    latest_consents.any?(&:triage_needed?)
+    latest_consents.any?(&:requires_triage?)
   end
 
   def vaccination_history_requires_triage?

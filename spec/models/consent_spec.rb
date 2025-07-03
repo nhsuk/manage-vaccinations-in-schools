@@ -69,7 +69,7 @@ describe Consent do
     it "does not require triage" do
       response = build(:consent, :given)
 
-      expect(response).not_to be_triage_needed
+      expect(response).not_to be_requires_triage
     end
   end
 
@@ -84,15 +84,7 @@ describe Consent do
       ]
       response = build(:consent, :given, health_answers:)
 
-      expect(response).to be_triage_needed
-    end
-
-    it "returns notes need triage" do
-      response = build(:consent, :given, :health_question_notes)
-
-      expect(response.reasons_triage_needed).to eq(
-        ["Health questions need triage"]
-      )
+      expect(response).to be_requires_triage
     end
   end
 

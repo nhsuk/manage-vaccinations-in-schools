@@ -17,7 +17,7 @@
                                      hint: { text: @health_answer.hint } do %>
     <% if @health_answer.requires_notes? %>
       <%= f.govuk_radio_button :response, "yes", label: { text: "Yes" }, link_errors: true do %>
-        <%= f.govuk_text_area :notes, label: { text: "Give details" } %>
+        <%= f.govuk_text_area :notes, label: { text: "Give details" }, hint: { text: @health_answer.give_details_hint } %>
       <% end %>
     <% else %>
       <%= f.govuk_radio_button :response, "yes", label: { text: "Yes" }, link_errors: true %>

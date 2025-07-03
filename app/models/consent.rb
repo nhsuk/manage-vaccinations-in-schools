@@ -131,28 +131,16 @@ class Consent < ApplicationRecord
     invalidated_at || withdrawn_at || submitted_at
   end
 
-  def triage_needed?
-    response_given? && health_answers_require_follow_up?
+  def requires_triage?
+    response_given? && health_answers_require_triage?
   end
 
   def parent_relationship
     patient.parent_relationships.find { it.parent_id == parent_id }
   end
 
-  def health_answers_require_follow_up?
-    health_answers.select(&:counts_for_triage?).any?(&:response_yes?)
-  end
-
   def matched_manually?
     !consent_form.nil? && !recorded_by_user_id.nil?
-  end
-
-  def reasons_triage_needed
-    reasons = []
-    if health_answers_require_follow_up?
-      reasons << "Health questions need triage"
-    end
-    reasons
   end
 
   def self.from_consent_form!(consent_form, patient:, current_user:)
