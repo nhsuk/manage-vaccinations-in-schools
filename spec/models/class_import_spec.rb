@@ -74,7 +74,7 @@ describe ClassImport do
 
       it "removes the BOM" do
         expect(class_import).to be_valid
-        expect(class_import.rows.first.to_patient[:given_name]).to eq("Lena")
+        expect(class_import.rows.first.first_name.to_s).to eq("Lena")
       end
     end
 
@@ -104,21 +104,19 @@ describe ClassImport do
 
       it "accepts NHS numbers with spaces, removes spaces" do
         expect(class_import).to be_valid
-        expect(class_import.rows.second.to_patient[:nhs_number]).to eq(
-          "9990000026"
-        )
+        expect(class_import.rows.second.nhs_number.to_s).to eq("999 000 0026")
       end
 
       it "parses dates in the ISO8601 format" do
         expect(class_import).to be_valid
-        expect(class_import.rows.first.to_patient[:date_of_birth]).to eq(
+        expect(class_import.rows.first.date_of_birth.to_date).to eq(
           Date.new(2010, 1, 1)
         )
       end
 
       it "parses dates in the DD/MM/YYYY format" do
         expect(class_import).to be_valid
-        expect(class_import.rows.second.to_patient[:date_of_birth]).to eq(
+        expect(class_import.rows.second.date_of_birth.to_date).to eq(
           Date.new(2010, 1, 2)
         )
       end
@@ -131,16 +129,18 @@ describe ClassImport do
         expect(class_import).to be_valid
         expect(class_import.rows.count).to eq(1)
 
-        patient = class_import.rows.first.to_patient
-        expect(patient).to have_attributes(
+        processed_patient_data =
+          PatientImporter::DataProcessor.call(class_import.rows.first.to_h)
+
+        expect(processed_patient_data.patient).to have_attributes(
           given_name: "Jennifer",
           family_name: "Clarke",
           date_of_birth: Date.new(2010, 1, 1)
         )
 
-        expect(
-          class_import.rows.first.to_school_move(patient)
-        ).to have_attributes(school: location)
+        expect(processed_patient_data.school_move).to have_attributes(
+          school: location
+        )
       end
     end
   end
@@ -297,7 +297,7 @@ describe ClassImport do
       end
 
       context "with an existing parent" do
-        let!(:parent) do
+        before do
           create(
             :parent,
             full_name: "John Smith",
@@ -308,10 +308,10 @@ describe ClassImport do
 
         it "doesn't create an additional patient" do
           expect { process! }.to change(Parent, :count).by(4)
+        end
 
-          parent_relationship = patient.reload.parent_relationships.first
-          expect(parent_relationship.parent_id).to eq(parent.id)
-          expect(parent_relationship).to be_father
+        it "doesn't create an parent relationship until duplicate patient is reviewed" do
+          expect(patient.reload.parent_relationships).to be_empty
         end
       end
     end
@@ -342,24 +342,19 @@ describe ClassImport do
         )
       end
 
-      it "proposes a school move for the child" do
-        expect(patient.school_moves).to be_empty
-
-        expect { process! }.to change { patient.reload.school_moves.count }.by(
-          1
-        )
-
-        school_move = patient.school_moves.first
-        expect(school_move.school_id).to eq(session.location_id)
+      it "doesn't create a school move" do
+        expect { process! }.to not_change(patient.reload, :school_moves)
       end
 
-      it "doesn't stage school changes" do
-        expect { process! }.not_to change(patient, :pending_changes)
-        expect(patient.pending_changes.keys).not_to include(
-          :cohort_id,
-          :home_educated,
-          :organisation_id,
-          :school_id
+      it "stores the school move details until duplicate patient is manually reviewed" do
+        expect { process! }.to change { patient.reload.pending_changes }.from(
+          {}
+        ).to(
+          include(
+            "school_move_home_educated",
+            "school_move_organisation_id",
+            "school_move_school_id"
+          )
         )
       end
     end
@@ -448,12 +443,14 @@ describe ClassImport do
         expect { process! }.to change { twin.reload.pending_changes }.from(
           {}
         ).to(
-          {
-            "given_name" => "Jennifer",
-            "preferred_given_name" => "Jenny",
-            "nhs_number" => "9990000018",
-            "registration" => "ABC"
-          }
+          including(
+            {
+              "given_name" => "Jennifer",
+              "preferred_given_name" => "Jenny",
+              "nhs_number" => "9990000018",
+              "registration" => "ABC"
+            }
+          )
         ).and not_change(twin, :given_name).and not_change(
                       twin,
                       :preferred_given_name
