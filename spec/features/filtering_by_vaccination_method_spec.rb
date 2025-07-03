@@ -9,13 +9,13 @@ describe "Filtering" do
 
     when_i_visit_the_record_vaccinations_tab
     then_the_any_vaccination_method_filter_is_selected
-    and_i_see_all_the_patients_in_flu_hpv_session
+    then_i_see_patients(@all_flu_hpv_patients)
 
-    when_i_filter_on_nasal
-    then_i_see_only_the_patients_eligible_for_nasal
+    when_i_filter_on("Nasal")
+    then_i_see_patients(@nasal_eligible_patients)
 
-    when_i_filter_on_injection
-    then_i_see_only_the_patients_eligible_for_injection
+    when_i_filter_on("Injection")
+    then_i_see_patients(@injection_eligible_patients)
   end
 
   scenario "With no flu programme in session" do
@@ -23,7 +23,7 @@ describe "Filtering" do
     and_patients_are_in_the_doubles_session
 
     when_i_visit_the_record_vaccinations_tab
-    then_i_see_all_the_patients_in_doubles_session
+    then_i_see_patients(@all_doubles_patients)
     and_i_dont_see_vaccination_method_filter_radios
   end
 
@@ -32,18 +32,34 @@ describe "Filtering" do
     and_patients_are_in_the_flu_hpv_session
 
     when_i_visit_the_record_vaccinations_tab
-    and_i_filter_on_flu_and_nasal
-    then_i_see_only_flu_patients_eligible_for_nasal
 
-    when_i_filter_on_hpv_and_injection
-    then_i_see_only_hpv_patients_eligible_for_injection
+    when_i_filter_on_programme_and_method("Flu", "Nasal")
+    then_i_see_patients(@flu_nasal_patients)
 
-    when_i_filter_on_flu_and_injection
-    then_i_see_only_flu_patients_eligible_for_injection
+    when_i_filter_on_programme_and_method("HPV", "Injection")
+    then_i_see_patients(@hpv_injection_patients)
 
-    when_i_filter_on_hpv_and_nasal
+    when_i_filter_on_programme_and_method("Flu", "Injection")
+    then_i_see_patients(@flu_injection_patients)
+
+    when_i_filter_on_programme_and_method("HPV", "Nasal")
     then_i_see_no_patients
   end
+
+  scenario "With patient consented for nasal and injection" do
+    given_a_session_exists_with_programmes(%i[flu])
+    and_patient_with_consent_for_nasal_and_injection_is_in_the_session
+
+    when_i_visit_the_record_vaccinations_tab
+
+    when_i_filter_on("Nasal")
+    then_i_see_patients([@patient_consented_for_nasal_and_injection])
+
+    when_i_filter_on("Injection")
+    then_i_see_no_patients
+  end
+
+  private
 
   def given_a_session_exists_with_programmes(programme_types)
     programmes = programme_types.map { |type| create(:programme, type) }
@@ -54,62 +70,87 @@ describe "Filtering" do
 
   def and_patients_are_in_the_flu_hpv_session
     @patient_consented_for_flu_nasal =
-      create(
-        :patient,
+      create_patient(
         :consent_given_nasal_only_triage_not_needed,
-        :in_attendance,
-        programmes: [@session.programmes.first],
-        year_group: 3,
-        session: @session
+        3,
+        [@session.programmes.first]
       )
 
     @patient_consented_for_flu_injection =
-      create(
-        :patient,
+      create_patient(
         :consent_given_triage_not_needed,
-        :in_attendance,
-        programmes: [@session.programmes.first],
-        year_group: 4,
-        session: @session
+        3,
+        [@session.programmes.first]
       )
 
     @patient_consented_for_flu_both_triaged_nasal =
-      create(
-        :patient,
+      create_patient(
         :consent_given_injection_and_nasal_triage_safe_to_vaccinate_nasal,
-        :in_attendance,
-        programmes: [@session.programmes.first],
-        year_group: 5,
-        session: @session
+        5,
+        [@session.programmes.first]
       )
-
     @patient_consented_for_hpv_and_flu_injection =
-      create(
-        :patient,
-        :consent_given_triage_not_needed,
-        :in_attendance,
-        year_group: 8,
-        session: @session
-      )
+      create_patient(:consent_given_triage_not_needed, 8, @session.programmes)
+
+    @all_flu_hpv_patients = [
+      @patient_consented_for_flu_nasal,
+      @patient_consented_for_flu_injection,
+      @patient_consented_for_flu_both_triaged_nasal,
+      @patient_consented_for_hpv_and_flu_injection
+    ]
+    @nasal_eligible_patients = [
+      @patient_consented_for_flu_nasal,
+      @patient_consented_for_flu_both_triaged_nasal
+    ]
+    @injection_eligible_patients = [
+      @patient_consented_for_hpv_and_flu_injection,
+      @patient_consented_for_flu_injection
+    ]
+    @flu_nasal_patients = [
+      @patient_consented_for_flu_nasal,
+      @patient_consented_for_flu_both_triaged_nasal
+    ]
+    @hpv_injection_patients = [@patient_consented_for_hpv_and_flu_injection]
+    @flu_injection_patients = [
+      @patient_consented_for_flu_injection,
+      @patient_consented_for_hpv_and_flu_injection
+    ]
   end
 
   def and_patients_are_in_the_doubles_session
     @patient_consented_for_doubles =
-      create(
-        :patient,
-        :consent_given_triage_not_needed,
-        :in_attendance,
-        year_group: 9,
-        session: @session
-      )
+      create_patient(:consent_given_triage_not_needed, 9, @session.programmes)
     @patient_consented_for_doubles_triaged_safe_to_vaccinate =
-      create(
-        :patient,
+      create_patient(
         :consent_given_triage_safe_to_vaccinate,
-        :in_attendance,
-        year_group: 10,
-        session: @session
+        10,
+        @session.programmes
       )
+
+    @all_doubles_patients = [
+      @patient_consented_for_doubles,
+      @patient_consented_for_doubles_triaged_safe_to_vaccinate
+    ]
+  end
+
+  def and_patient_with_consent_for_nasal_and_injection_is_in_the_session
+    @patient_consented_for_nasal_and_injection =
+      create_patient(
+        :consent_given_nasal_or_injection_triage_not_needed,
+        3,
+        @session.programmes
+      )
+  end
+
+  def create_patient(trait, year_group, programmes)
+    create(
+      :patient,
+      trait,
+      :in_attendance,
+      year_group: year_group,
+      session: @session,
+      programmes:
+    )
   end
 
   def when_i_visit_the_record_vaccinations_tab
@@ -117,22 +158,40 @@ describe "Filtering" do
     visit session_record_path(@session)
   end
 
-  def and_i_see_all_the_patients_in_flu_hpv_session
-    expect(page).to have_content(@patient_consented_for_flu_nasal.full_name)
-    expect(page).to have_content(@patient_consented_for_flu_injection.full_name)
-    expect(page).to have_content(
-      @patient_consented_for_flu_both_triaged_nasal.full_name
-    )
-    expect(page).to have_content(
-      @patient_consented_for_hpv_and_flu_injection.full_name
-    )
+  def when_i_filter_on(method)
+    choose method
+    click_on "Update results"
   end
 
-  def then_i_see_all_the_patients_in_doubles_session
-    expect(page).to have_content(@patient_consented_for_doubles.full_name)
-    expect(page).to have_content(
-      @patient_consented_for_doubles_triaged_safe_to_vaccinate.full_name
-    )
+  def when_i_filter_on_programme_and_method(programme, method)
+    uncheck "Flu" if page.has_checked_field?("Flu")
+    uncheck "HPV" if page.has_checked_field?("HPV")
+
+    check programme
+    choose method
+    click_on "Update results"
+  end
+
+  def then_i_see_patients(patients)
+    patients.each { |patient| expect(page).to have_content(patient.full_name) }
+
+    all_test_patients = [
+      @patient_consented_for_flu_nasal,
+      @patient_consented_for_flu_injection,
+      @patient_consented_for_flu_both_triaged_nasal,
+      @patient_consented_for_hpv_and_flu_injection,
+      @patient_consented_for_doubles,
+      @patient_consented_for_doubles_triaged_safe_to_vaccinate,
+      @patient_consented_for_nasal_and_injection
+    ].compact
+
+    (all_test_patients - patients).each do |patient|
+      expect(page).not_to have_content(patient.full_name)
+    end
+  end
+
+  def then_i_see_no_patients
+    expect(page).to have_content("No children matching search criteria found")
   end
 
   def and_i_dont_see_vaccination_method_filter_radios
@@ -140,110 +199,7 @@ describe "Filtering" do
     expect(page).not_to have_field("Injection", type: "radio")
   end
 
-  def when_i_filter_on_nasal
-    choose "Nasal"
-    click_on "Update results"
-  end
-
-  def when_i_filter_on_injection
-    choose "Injection"
-    click_on "Update results"
-  end
-
-  def then_i_see_only_the_patients_eligible_for_nasal
-    expect(page).not_to have_content(
-      @patient_consented_for_hpv_and_flu_injection.full_name
-    )
-    expect(page).not_to have_content(
-      @patient_consented_for_flu_injection.full_name
-    )
-    expect(page).to have_content(@patient_consented_for_flu_nasal.full_name)
-    expect(page).to have_content(
-      @patient_consented_for_flu_both_triaged_nasal.full_name
-    )
-  end
-
-  def then_i_see_only_the_patients_eligible_for_injection
-    expect(page).to have_content(
-      @patient_consented_for_hpv_and_flu_injection.full_name
-    )
-    expect(page).to have_content(@patient_consented_for_flu_injection.full_name)
-    expect(page).not_to have_content(@patient_consented_for_flu_nasal.full_name)
-    expect(page).not_to have_content(
-      @patient_consented_for_flu_both_triaged_nasal.full_name
-    )
-  end
-
   def then_the_any_vaccination_method_filter_is_selected
     expect(page).to have_checked_field("Any")
-  end
-
-  def and_i_filter_on_flu_and_nasal
-    check "Flu"
-    uncheck "HPV"
-    choose "Nasal"
-    click_on "Update results"
-  end
-
-  def when_i_filter_on_hpv_and_injection
-    uncheck "Flu"
-    check "HPV"
-    choose "Injection"
-    click_on "Update results"
-  end
-
-  def when_i_filter_on_flu_and_injection
-    check "Flu"
-    uncheck "HPV"
-    choose "Injection"
-    click_on "Update results"
-  end
-
-  def when_i_filter_on_hpv_and_nasal
-    check "HPV"
-    uncheck "Flu"
-    choose "Nasal"
-    click_on "Update results"
-  end
-
-  def then_i_see_only_flu_patients_eligible_for_nasal
-    expect(page).to have_content(@patient_consented_for_flu_nasal.full_name)
-    expect(page).to have_content(
-      @patient_consented_for_flu_both_triaged_nasal.full_name
-    )
-    expect(page).not_to have_content(
-      @patient_consented_for_flu_injection.full_name
-    )
-    expect(page).not_to have_content(
-      @patient_consented_for_hpv_and_flu_injection.full_name
-    )
-  end
-
-  def then_i_see_only_hpv_patients_eligible_for_injection
-    expect(page).to have_content(
-      @patient_consented_for_hpv_and_flu_injection.full_name
-    )
-    expect(page).not_to have_content(@patient_consented_for_flu_nasal.full_name)
-    expect(page).not_to have_content(
-      @patient_consented_for_flu_injection.full_name
-    )
-    expect(page).not_to have_content(
-      @patient_consented_for_flu_both_triaged_nasal.full_name
-    )
-  end
-
-  def then_i_see_only_flu_patients_eligible_for_injection
-    expect(page).to have_content(@patient_consented_for_flu_injection.full_name)
-    expect(page).to have_content(
-      @patient_consented_for_hpv_and_flu_injection.full_name
-    )
-    expect(page).not_to have_content(@patient_consented_for_flu_nasal.full_name)
-    expect(page).not_to have_content(
-      @patient_consented_for_flu_both_triaged_nasal.full_name
-    )
-  end
-
-  def then_i_see_no_patients
-    expect(page).to have_content("No children matching search criteria found")
   end
 end
