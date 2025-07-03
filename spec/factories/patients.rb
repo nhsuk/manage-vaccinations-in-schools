@@ -269,6 +269,60 @@ FactoryBot.define do
       end
     end
 
+    trait :consent_given_nasal_only_triage_not_needed do
+      triage_not_required
+
+      consents do
+        programmes.map do |programme|
+          association(
+            :consent,
+            :given_nasal,
+            :from_mum,
+            patient: instance,
+            organisation:,
+            programme:
+          )
+        end
+      end
+      consent_statuses do
+        programmes.map do |programme|
+          association(
+            :patient_consent_status,
+            :given_nasal_only,
+            patient: instance,
+            programme:
+          )
+        end
+      end
+    end
+
+    trait :consent_given_nasal_or_injection_triage_not_needed do
+      triage_not_required
+
+      consents do
+        programmes.map do |programme|
+          association(
+            :consent,
+            :given_nasal_or_injection,
+            :from_mum,
+            patient: instance,
+            organisation:,
+            programme:
+          )
+        end
+      end
+      consent_statuses do
+        programmes.map do |programme|
+          association(
+            :patient_consent_status,
+            :given_nasal_or_injection,
+            patient: instance,
+            programme:
+          )
+        end
+      end
+    end
+
     trait :consent_given_triage_needed do
       triage_required
 
@@ -366,6 +420,82 @@ FactoryBot.define do
           association(
             :patient_triage_status,
             :required,
+            patient: instance,
+            programme:
+          )
+        end
+      end
+    end
+
+    trait :consent_given_triage_safe_to_vaccinate do
+      consents do
+        programmes.map do |programme|
+          association(
+            :consent,
+            :given,
+            :from_mum,
+            :health_question_notes,
+            patient: instance,
+            organisation:,
+            programme:
+          )
+        end
+      end
+
+      consent_statuses do
+        programmes.map do |programme|
+          association(
+            :patient_consent_status,
+            :given,
+            patient: instance,
+            programme:
+          )
+        end
+      end
+
+      triage_statuses do
+        programmes.map do |programme|
+          association(
+            :patient_triage_status,
+            :safe_to_vaccinate,
+            patient: instance,
+            programme:
+          )
+        end
+      end
+    end
+
+    trait :consent_given_injection_and_nasal_triage_safe_to_vaccinate_nasal do
+      consents do
+        programmes.map do |programme|
+          association(
+            :consent,
+            :given_nasal,
+            :from_mum,
+            :health_question_notes,
+            patient: instance,
+            organisation:,
+            programme:
+          )
+        end
+      end
+
+      consent_statuses do
+        programmes.map do |programme|
+          association(
+            :patient_consent_status,
+            :given_nasal_or_injection,
+            patient: instance,
+            programme:
+          )
+        end
+      end
+
+      triage_statuses do
+        programmes.map do |programme|
+          association(
+            :patient_triage_status,
+            :safe_to_vaccinate_nasal,
             patient: instance,
             programme:
           )
