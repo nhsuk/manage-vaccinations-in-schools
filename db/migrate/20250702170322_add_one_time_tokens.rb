@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AddOneTimeTokens < ActiveRecord::Migration[8.0]
   def change
     create_table :one_time_tokens, id: false do |t|
@@ -8,5 +10,7 @@ class AddOneTimeTokens < ActiveRecord::Migration[8.0]
 
     add_index :one_time_tokens, :token, unique: true
     add_index :one_time_tokens, :created_at
+    remove_index :one_time_tokens, :user_id
+    add_index :one_time_tokens, :user_id, unique: true
   end
 end

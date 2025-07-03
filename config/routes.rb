@@ -322,7 +322,7 @@ Rails.application.routes.draw do
     resource :organisations, only: %i[new create]
   end
 
-  get '/tokens/:token', controller: :one_time_tokens, action: "verify"
+  get "/tokens/:token", controller: :one_time_tokens, action: "verify"
 
   scope via: :all do
     get "/404", to: "errors#not_found"

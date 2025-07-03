@@ -508,7 +508,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_03_111056) do
     t.jsonb "cis2_info"
     t.index ["created_at"], name: "index_one_time_tokens_on_created_at"
     t.index ["token"], name: "index_one_time_tokens_on_token", unique: true
-    t.index ["user_id"], name: "index_one_time_tokens_on_user_id"
+    t.index ["user_id"], name: "index_one_time_tokens_on_user_id", unique: true
   end
 
   create_table "organisation_programmes", force: :cascade do |t|

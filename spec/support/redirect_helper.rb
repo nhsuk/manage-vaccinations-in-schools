@@ -1,14 +1,14 @@
-module RedirectHelper
-  def without_following_redirects &block
-    begin
-      options = page.driver.instance_variable_get(:@options)
-      prev_value = options[:follow_redirects]
-      options[:follow_redirects] = false
+# frozen_string_literal: true
 
-      yield
-    ensure
-      options[:follow_redirects] = prev_value
-    end
+module RedirectHelper
+  def without_following_redirects
+    options = page.driver.instance_variable_get(:@options)
+    prev_value = options[:follow_redirects]
+    options[:follow_redirects] = false
+
+    yield
+  ensure
+    options[:follow_redirects] = prev_value
   end
 
   def then_i_am_redirected_to(url)
@@ -16,11 +16,11 @@ module RedirectHelper
   end
 
   def then_i_am_redirected_to_a_url_matching(url_pattern)
-    expect(page.driver.browser.current_url).to match( Regexp.escape(url_pattern) )
+    expect(page.driver.browser.current_url).to match(Regexp.escape(url_pattern))
   end
 
-  def mavis_reporting_app_url(path='/')
-    root = Settings.mavis_reporting_app.root_url || 'http://localhost:5000/'
+  def mavis_reporting_app_url(path = "/")
+    root = Settings.mavis_reporting_app.root_url || "http://localhost:5000/"
     URI.join(root, path).to_s
   end
 end

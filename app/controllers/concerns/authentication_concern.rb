@@ -11,10 +11,10 @@ module AuthenticationConcern
     # only return true if the given URL is part of this domain (relative or absolute)
     # or part of the mavis reporting app, or localhost (to allow devs some leeway)
     def is_valid_redirect?(url)
-      url.start_with?('/') || \
-        url.start_with?(request.base_url) || \
-        url.start_with?(Settings.mavis_reporting_app.root_url || "http://localhost")
-
+      url.start_with?("/") || url.start_with?(request.base_url) ||
+        url.start_with?(
+          Settings.mavis_reporting_app.root_url || "http://localhost"
+        )
     end
 
     def authenticate_user!
@@ -67,7 +67,7 @@ module AuthenticationConcern
     end
 
     def store_redirect_after_login!
-      if params.has_key?(:redirect_after_login)
+      if params.key?(:redirect_after_login)
         session[:redirect_after_login] = params.fetch(:redirect_after_login)
       end
     end
@@ -98,28 +98,38 @@ module AuthenticationConcern
     def authenticate_by_token!
       possible_tokens = []
       possible_tokens << params[:auth] if Flipper.enabled?(:auth_token_by_param)
-      possible_tokens << request.headers["Authorization"] if Flipper.enabled?(:auth_token_by_header)
+      if Flipper.enabled?(:auth_token_by_header)
+        possible_tokens << request.headers["Authorization"]
+      end
 
-      unless possible_tokens.find{ it == Settings.mavis_reporting_app.secret }
-        render json: 'Forbidden', status: :forbidden and return
+      unless possible_tokens.find { it == Settings.mavis_reporting_app.secret }
+        render json: "Forbidden", status: :forbidden and return
       end
     end
 
     def reporting_app_redirect_url
-      url = session[:redirect_after_login]
+      session[:redirect_after_login]
     end
 
-    def reporting_app_redirect_url_with_token_for(user) 
-      if url = reporting_app_redirect_url
+    def reporting_app_redirect_url_with_token_for(user)
+      if (url = reporting_app_redirect_url)
         uri = Addressable::URI.parse(url)
-        user_token = OneTimeToken.find_or_generate_for!(user_id: user.id, cis2_info: session['cis2_info']).token
-        uri.query_values = (uri.query_values || {}).merge('token' => user_token)
+        user_token =
+          OneTimeToken.find_or_generate_for!(
+            user_id: user.id,
+            cis2_info: session["cis2_info"]
+          ).token
+        uri.query_values = (uri.query_values || {}).merge("token" => user_token)
         uri.to_s
       end
     end
 
     def after_sign_in_path_for(scope)
-      [reporting_app_redirect_url_with_token_for(current_user), stored_location_for(scope), dashboard_path].compact.find{ is_valid_redirect?(it) }
+      [
+        reporting_app_redirect_url_with_token_for(current_user),
+        stored_location_for(scope),
+        dashboard_path
+      ].compact.find { is_valid_redirect?(it) }
     end
 
     def user_signed_in?

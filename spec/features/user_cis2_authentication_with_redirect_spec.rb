@@ -16,7 +16,7 @@ describe "User CIS2 authentication" do
   scenario "being redirected to sign-in from the reporting UI" do
     given_a_test_organisation_is_setup_in_mavis_and_cis2
     when_i_go_to_the_start_page_with_a_redirect_after_login_param_that_matches_the_reporting_app
-    
+
     when_i_click_the_cis2_login_button
     then_i_am_redirected_to_the_previously_stored_redirect_after_login_param
     and_the_return_url_has_a_token_param_added_to_it
@@ -25,7 +25,7 @@ describe "User CIS2 authentication" do
   scenario "someone has supplied their own external redirect url" do
     given_a_test_organisation_is_setup_in_mavis_and_cis2
     when_i_go_to_the_start_page_with_a_redirect_after_login_param_that_does_not_match_the_reporting_app
-    
+
     when_i_click_the_cis2_login_button
     then_i_see_the_dashboard
   end
@@ -42,13 +42,16 @@ describe "User CIS2 authentication" do
     )
   end
 
-
   def return_url_on_mavis_reporting_app
-    mavis_reporting_app_url('/some/reporting/path?month=6&school_id=123&search=some search string')
+    mavis_reporting_app_url(
+      "/some/reporting/path?month=6&school_id=123&search=some search string"
+    )
   end
 
   def return_url_on_mavis_reporting_app_with_token_added
-    mavis_reporting_app_url('/some/reporting/path?month=6&school_id=123&search=some search string&token=mylonghextoken')
+    mavis_reporting_app_url(
+      "/some/reporting/path?month=6&school_id=123&search=some search string&token=mylonghextoken"
+    )
   end
 
   def when_i_go_to_the_start_page_with_a_redirect_after_login_param_that_matches_the_reporting_app
@@ -70,7 +73,7 @@ describe "User CIS2 authentication" do
   end
 
   def and_the_return_url_has_a_token_param_added_to_it
-    expect(page.driver.browser.current_url).to match( /token=[a-gA-g0-9]{32}/)
+    expect(page.driver.browser.current_url).to match(/token=[a-gA-g0-9]{32}/)
   end
 
   def when_i_go_to_the_sessions_page

@@ -26,7 +26,7 @@ class Users::OrganisationsController < ApplicationController
           "workgroups" => ["schoolagedimmunisations"]
         }
       }
-      
+
       redirect_after_choosing_org
     else
       @organisations = current_user.organisations
