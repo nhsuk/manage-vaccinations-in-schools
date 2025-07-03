@@ -3,6 +3,14 @@
 module NHS::ImmunisationsAPI
   class << self
     def record_immunisation(vaccination_record)
+      unless Flipper.enabled?(:immunisations_fhir_api_integration)
+        Rails.logger.info(
+          "Not syncing vaccination record to immunisations API as the feature" \
+            " flag is disabled: #{vaccination_record.id}"
+        )
+        return
+      end
+
       response =
         NHS::API.connection.post(
           "/immunisation-fhir-api/FHIR/R4/Immunization",
@@ -25,7 +33,7 @@ module NHS::ImmunisationsAPI
       end
     rescue Faraday::ClientError => e
       if (diagnostics = extract_error_diagnostics(e&.response)).present?
-        raise "Error syncing vaccination #{vaccination_record.id} record to" \
+        raise "Error syncing vaccination record #{vaccination_record.id} to" \
                 " Immunisations API: #{diagnostics}"
       else
         raise

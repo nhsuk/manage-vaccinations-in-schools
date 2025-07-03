@@ -47,21 +47,22 @@ describe NHS::ImmunisationsAPI do
       created_at: Time.zone.parse("2021-02-07T13:28:17.271+00:00")
     )
   end
+  let!(:stubbed_request) do
+    stub_request(
+      :post,
+      "https://sandbox.api.service.nhs.uk/immunisation-fhir-api/FHIR/R4/Immunization"
+    ).to_return(
+      status: 201,
+      body: "",
+      headers: {
+        location:
+          "https://sandbox.api.service.nhs.uk/immunisation-fhir-api/Immunization/ffff1111-eeee-2222-dddd-3333eeee4444"
+      }
+    )
+  end
 
   describe "record_immunisation" do
-    before do
-      stub_request(
-        :post,
-        "https://sandbox.api.service.nhs.uk/immunisation-fhir-api/FHIR/R4/Immunization"
-      ).to_return(
-        status: 201,
-        body: "",
-        headers: {
-          location:
-            "https://sandbox.api.service.nhs.uk/immunisation-fhir-api/Immunization/ffff1111-eeee-2222-dddd-3333eeee4444"
-        }
-      )
-    end
+    before { Flipper.enable(:immunisations_fhir_api_integration) }
 
     it "sends the correct JSON payload" do
       expected_body =
@@ -169,13 +170,14 @@ describe NHS::ImmunisationsAPI do
 
       context "4XX error" do
         let(:status) { 404 }
+        let(:diagnostics) { "Invalid patient ID" }
 
         it "raises an error with the diagnostic message" do
           expect {
             described_class.record_immunisation(vaccination_record)
           }.to raise_error(
             StandardError,
-            "Error syncing vaccination #{vaccination_record.id} record to" \
+            "Error syncing vaccination record #{vaccination_record.id} to" \
               " Immunisations API: Invalid patient ID"
           )
         end
@@ -194,6 +196,16 @@ describe NHS::ImmunisationsAPI do
             described_class.record_immunisation(vaccination_record)
           }.to raise_error(Faraday::Error)
         end
+      end
+    end
+
+    context "the immunisations_fhir_api_integration feature flag is disabled" do
+      before { Flipper.disable(:immunisations_fhir_api_integration) }
+
+      it "does not make a request to the NHS API" do
+        described_class.record_immunisation(vaccination_record)
+
+        expect(stubbed_request).not_to have_been_made
       end
     end
   end
