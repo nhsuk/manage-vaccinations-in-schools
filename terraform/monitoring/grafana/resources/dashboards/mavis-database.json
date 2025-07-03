@@ -783,49 +783,28 @@
       {
         "current": {
           "selected": true,
-          "text": ["qa"],
-          "value": ["qa"]
+          "text": "qa",
+          "value": "qa"
         },
+        "definition": "",
         "hide": 0,
         "includeAll": false,
         "multi": false,
         "name": "environment",
-        "options": [
-          {
-            "selected": false,
-            "text": "sandbox-alpha",
-            "value": "sandbox-alpha"
-          },
-          {
-            "selected": false,
-            "text": "sandbox-beta",
-            "value": "sandbox-beta"
-          },
-          {
-            "selected": true,
-            "text": "qa",
-            "value": "qa"
-          },
-          {
-            "selected": false,
-            "text": "test",
-            "value": "test"
-          },
-          {
-            "selected": false,
-            "text": "training",
-            "value": "training"
-          },
-          {
-            "selected": false,
-            "text": "preview",
-            "value": "preview"
-          }
-        ],
-        "query": "sandbox-alpha, sandbox-beta, qa, test, training, preview",
-        "queryValue": "",
+        "options": [],
+        "query": {
+          "dimensionKey": "DBClusterIdentifier",
+          "metricName": "CPUUtilization",
+          "namespace": "AWS/RDS",
+          "queryType": "dimensionValues",
+          "refId": "CloudWatchVariableQueryEditor-VariableQuery",
+          "region": "default"
+        },
+        "refresh": 1,
+        "regex": "mavis-(.+)",
         "skipUrlSync": false,
-        "type": "custom"
+        "sort": 0,
+        "type": "query"
       }
     ]
   },
@@ -837,6 +816,6 @@
   "timezone": "",
   "title": "Database Dashboard",
   "uid": "aurora-postgresql-dashboard",
-  "version": 35,
+  "version": 37,
   "weekStart": ""
 }
