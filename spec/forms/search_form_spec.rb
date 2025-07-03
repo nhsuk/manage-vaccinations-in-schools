@@ -117,7 +117,12 @@ describe SearchForm do
       let(:programme) { create(:programme, :menacwy) }
 
       context "with a patient eligible for the programme" do
-        let(:patient) { create(:patient, year_group: 9) }
+        let(:patient) do
+          create(:patient, programmes: [programme]).tap do |patient|
+            session = create(:session, programmes: [programme])
+            create(:patient_session, patient:, session:)
+          end
+        end
 
         it "is included" do
           expect(form.apply(scope)).to include(patient)
@@ -151,6 +156,9 @@ describe SearchForm do
 
       it "filters on session status" do
         patient = create(:patient, :vaccinated, programmes: [programme])
+        session = create(:session, programmes: [programme])
+        create(:patient_session, patient:, session:)
+
         expect(form.apply(scope)).to include(patient)
       end
     end
