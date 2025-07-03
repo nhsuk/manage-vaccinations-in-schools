@@ -31,5 +31,10 @@ FactoryBot.define do
       status { "safe_to_vaccinate" }
       vaccine_method { "injection" }
     end
+
+    trait :safe_to_vaccinate_nasal do
+      status { "safe_to_vaccinate" }
+      vaccine_method { "nasal" }
+    end
   end
 end
