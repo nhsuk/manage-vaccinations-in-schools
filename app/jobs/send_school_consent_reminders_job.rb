@@ -44,8 +44,11 @@ class SendSchoolConsentRemindersJob < ApplicationJob
 
     has_consent_or_vaccinated =
       programmes.all? do |programme|
-        patient.consents.any? { it.programme_id == programme.id } ||
-          patient.vaccination_records.any? { it.programme_id == programme.id }
+        VaccinatedCriteria.call(
+          programme:,
+          patient:,
+          vaccination_records: patient.vaccination_records
+        ) || ConsentedCriteria.call(programme:, patient:)
       end
 
     return false if has_consent_or_vaccinated

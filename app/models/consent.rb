@@ -195,6 +195,10 @@ class Consent < ApplicationRecord
       (response_refused? && !reason_for_refusal_personal_choice?)
   end
 
+  def submitted_this_academic_year?
+    submitted_at.to_date.academic_year == Date.current.academic_year
+  end
+
   class ConsentFormNotRecorded < StandardError
   end
 end
