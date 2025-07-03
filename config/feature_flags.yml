@@ -8,3 +8,6 @@ dev_tools: Developer tools useful for testing and debugging.
 mesh_jobs: Export vaccination records to MESH automatically.
 
 offline_working: Prototype support for using Mavis offline.
+
+immunisations_fhir_api_integration: Master switch to control communications with
+  NHS Immunistaions FHIR API.

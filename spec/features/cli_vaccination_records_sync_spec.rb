@@ -78,6 +78,8 @@ describe "mavis vaccination-records sync" do
             "https://sandbox.api.service.nhs.uk/immunisation-fhir-api/Immunization/11112222-3333-4444-5555-666677778888"
         }
       )
+
+    Flipper.enable :immunisations_fhir_api_integration
   end
 
   def when_i_run_the_sync_command
