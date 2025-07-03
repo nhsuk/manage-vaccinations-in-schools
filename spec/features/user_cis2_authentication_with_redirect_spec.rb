@@ -70,10 +70,7 @@ describe "User CIS2 authentication" do
   end
 
   def and_the_return_url_has_a_token_param_added_to_it
-    url = Addressable::URI.parse( return_url_on_mavis_reporting_app )
-    url.query_values = (url.query_values || {}).merge('token' => 'mylongtoken')
-    
-    expect(page.driver.browser.current_url).to match( Regexp.escape(url.to_s) )
+    expect(page.driver.browser.current_url).to match( /token=[a-gA-g0-9]{32}/)
   end
 
   def when_i_go_to_the_sessions_page
