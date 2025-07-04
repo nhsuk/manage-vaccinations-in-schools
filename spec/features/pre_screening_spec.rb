@@ -98,10 +98,6 @@ describe "Pre-screening" do
   end
 
   def and_i_record_vaccination_without_pre_screening_checks
-    within all("section")[0] do
-      choose "Yes"
-    end
-
     within all("section")[1] do
       choose "Yes"
       choose "Left arm (upper position)"

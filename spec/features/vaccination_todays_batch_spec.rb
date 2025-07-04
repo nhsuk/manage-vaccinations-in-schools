@@ -67,7 +67,6 @@ describe "Vaccination" do
     click_link @patient.full_name
 
     within all("section")[0] do
-      choose "Yes"
       check "has confirmed the above statements are true"
     end
 
@@ -103,7 +102,6 @@ describe "Vaccination" do
     click_link @patient2.full_name
 
     within all("section")[0] do
-      choose "Yes"
       check "has confirmed the above statements are true"
     end
 
@@ -158,7 +156,6 @@ describe "Vaccination" do
     click_on "MenACWY"
 
     within all("section")[0] do
-      choose "Yes"
       check "has confirmed the above statements are true"
     end
 
