@@ -18,7 +18,7 @@ class AppVaccinationRecordTableComponent < ViewComponent::Base
   def allowed_ids
     @allowed_ids ||=
       VaccinationRecordPolicy::Scope
-        .new(@current_user, VaccinationRecord)
+        .new(@current_user, VaccinationRecord.where(outcome: :administered))
         .resolve
         .ids
   end

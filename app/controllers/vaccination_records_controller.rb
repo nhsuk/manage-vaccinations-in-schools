@@ -80,7 +80,7 @@ class VaccinationRecordsController < ApplicationController
           session: %i[session_dates],
           vaccine: :programme
         )
-        .where(programme:)
+        .where(programme:, outcome: :administered)
         .order(:performed_at)
   end
 
