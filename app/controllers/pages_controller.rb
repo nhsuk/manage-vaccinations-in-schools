@@ -7,6 +7,6 @@ class PagesController < ApplicationController
   before_action :store_redirect_after_login!, only: :start
 
   def start
-    redirect_to dashboard_path if current_user
+    redirect_after_choosing_org if current_user
   end
 end

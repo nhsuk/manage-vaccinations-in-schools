@@ -132,6 +132,12 @@ module AuthenticationConcern
       ].compact.find { is_valid_redirect?(it) }
     end
 
+    def redirect_after_choosing_org
+      url = after_sign_in_path_for(current_user)
+      session.delete(:redirect_after_login)
+      redirect_to url, allow_other_host: is_valid_redirect?(url)
+    end
+
     def user_signed_in?
       super && (Settings.cis2.enabled ? cis2_session? : true)
     end
