@@ -507,4 +507,50 @@ describe SearchForm do
       end
     end
   end
+
+  context "using PatientPolicy scope" do
+    let(:q) { nil }
+    let(:date_of_birth_day) { nil }
+    let(:date_of_birth_month) { nil }
+    let(:date_of_birth_year) { nil }
+    let(:year_groups) { nil }
+    let(:missing_nhs_number) { false }
+    let(:programme_types) { [programme.type] }
+
+    let(:organisation) { create(:organisation) }
+    let(:programme) { create(:programme, :flu) }
+    let(:team) { create(:team, organisation:) }
+    let(:user) { create(:user, organisation:) }
+    let(:patient) { create(:patient) }
+    let(:scope) { PatientPolicy::Scope.new(user, Patient).resolve }
+
+    context "when patient has a school move but is not part of the programme" do
+      before do
+        create(
+          :school_move,
+          :to_school,
+          patient:,
+          school: create(:school, team:)
+        )
+      end
+
+      it "does not include the patient" do
+        expect(form.apply(scope)).not_to include(patient)
+      end
+    end
+
+    context "when patient has a vaccination record not associated with the programme" do
+      before do
+        create(
+          :vaccination_record,
+          patient:,
+          performed_ods_code: organisation.ods_code
+        )
+      end
+
+      it "does not include the patient" do
+        expect(form.apply(scope)).not_to include(patient)
+      end
+    end
+  end
 end
