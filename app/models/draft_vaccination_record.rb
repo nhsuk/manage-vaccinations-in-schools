@@ -16,6 +16,9 @@ class DraftVaccinationRecord
   attribute :delivery_site, :string
   attribute :dose_sequence, :integer
   attribute :full_dose, :boolean
+  attribute :identity_check_confirmed_by_other_name, :string
+  attribute :identity_check_confirmed_by_other_relationship, :string
+  attribute :identity_check_confirmed_by_patient, :boolean
   attribute :location_name, :string
   attribute :notes, :string
   attribute :outcome, :string
@@ -37,6 +40,7 @@ class DraftVaccinationRecord
   def wizard_steps
     [
       :notes,
+      :identity,
       :date_and_time,
       (:outcome if can_change_outcome?),
       (:delivery if administered?),
@@ -73,6 +77,15 @@ class DraftVaccinationRecord
 
   on_wizard_step :dose, exact: true do
     validates :full_dose, inclusion: [true, false]
+  end
+
+  on_wizard_step :identity, exact: true do
+    validates :identity_check_confirmed_by_patient, inclusion: [true, false]
+    validates :identity_check_confirmed_by_other_name,
+              :identity_check_confirmed_by_other_relationship,
+              presence: {
+                if: -> { identity_check_confirmed_by_patient == false }
+              }
   end
 
   on_wizard_step :location, exact: true do
@@ -188,10 +201,57 @@ class DraftVaccinationRecord
 
   def vaccine_id_changed? = batch_id_changed?
 
+  def identity_check
+    return nil if identity_check_confirmed_by_patient.nil?
+
+    (
+      vaccination_record&.identity_check || IdentityCheck.new
+    ).tap do |identity_check|
+      identity_check.assign_attributes(
+        confirmed_by_patient: identity_check_confirmed_by_patient,
+        confirmed_by_other_name: identity_check_confirmed_by_other_name,
+        confirmed_by_other_relationship:
+          identity_check_confirmed_by_other_relationship
+      )
+    end
+  end
+
+  def identity_check=(identity_check)
+    self.identity_check_confirmed_by_patient =
+      identity_check&.confirmed_by_patient
+    self.identity_check_confirmed_by_other_name =
+      identity_check&.confirmed_by_other_name
+    self.identity_check_confirmed_by_other_relationship =
+      identity_check&.confirmed_by_other_relationship
+  end
+
   private
 
+  def readable_attribute_names
+    writable_attribute_names - %w[vaccine_id]
+  end
+
   def writable_attribute_names
-    super + %w[vaccine_id]
+    %w[
+      batch_id
+      delivery_method
+      delivery_site
+      dose_sequence
+      full_dose
+      identity_check
+      location_name
+      notes
+      outcome
+      patient_id
+      performed_at
+      performed_by_family_name
+      performed_by_given_name
+      performed_by_user_id
+      performed_ods_code
+      programme_id
+      session_id
+      vaccine_id
+    ]
   end
 
   def reset_unused_fields
@@ -202,6 +262,11 @@ class DraftVaccinationRecord
       self.delivery_method = nil
       self.delivery_site = nil
       self.full_dose = nil
+    end
+
+    if identity_check_confirmed_by_patient
+      self.identity_check_confirmed_by_other_name = ""
+      self.identity_check_confirmed_by_other_relationship = ""
     end
   end
 

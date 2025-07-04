@@ -66,11 +66,16 @@ describe "Vaccination" do
 
     click_link @patient.full_name
 
-    check "has confirmed the above statements are true"
+    within all("section")[0] do
+      choose "Yes"
+      check "has confirmed the above statements are true"
+    end
 
-    choose "Yes"
-    choose "Left arm (upper position)"
-    click_button "Continue"
+    within all("section")[1] do
+      choose "Yes"
+      choose "Left arm (upper position)"
+      click_button "Continue"
+    end
 
     choose @hpv_batch.name
 
@@ -97,11 +102,16 @@ describe "Vaccination" do
 
     click_link @patient2.full_name
 
-    check "has confirmed the above statements are true"
+    within all("section")[0] do
+      choose "Yes"
+      check "has confirmed the above statements are true"
+    end
 
-    choose "Yes"
-    choose "Left arm (upper position)"
-    click_button "Continue"
+    within all("section")[1] do
+      choose "Yes"
+      choose "Left arm (upper position)"
+      click_button "Continue"
+    end
   end
 
   def then_i_see_the_default_batch_banner_with_batch_1
@@ -147,11 +157,16 @@ describe "Vaccination" do
     click_link @patient.full_name
     click_on "MenACWY"
 
-    check "has confirmed the above statements are true"
+    within all("section")[0] do
+      choose "Yes"
+      check "has confirmed the above statements are true"
+    end
 
-    choose "Yes"
-    choose "Left arm (upper position)"
-    click_button "Continue"
+    within all("section")[1] do
+      choose "Yes"
+      choose "Left arm (upper position)"
+      click_button "Continue"
+    end
   end
 
   def then_i_am_required_to_choose_a_batch

@@ -27,6 +27,7 @@ class PatientSessions::VaccinationsController < PatientSessions::BaseController
       steps = draft_vaccination_record.wizard_steps
 
       steps.delete(:notes) # this is on the confirmation page
+      steps.delete(:identity) # this is on the confirmation page
 
       steps.delete(:date_and_time)
       steps.delete(:outcome) if draft_vaccination_record.administered?
@@ -56,6 +57,9 @@ class PatientSessions::VaccinationsController < PatientSessions::BaseController
         delivery_method
         delivery_site
         dose_sequence
+        identity_check_confirmed_by_other_name
+        identity_check_confirmed_by_other_relationship
+        identity_check_confirmed_by_patient
         pre_screening_confirmed
         pre_screening_notes
         vaccine_id

@@ -53,6 +53,10 @@
 describe VaccinationRecord do
   subject(:vaccination_record) { build(:vaccination_record) }
 
+  describe "associations" do
+    it { should have_one(:identity_check).autosave(true).dependent(:destroy) }
+  end
+
   describe "validations" do
     context "when administered" do
       it { should allow_values(true, false).for(:full_dose) }
