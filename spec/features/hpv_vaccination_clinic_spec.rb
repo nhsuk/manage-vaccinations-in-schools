@@ -64,7 +64,6 @@ describe "HPV vaccination" do
 
   def and_i_record_that_the_patient_has_been_vaccinated
     within all("section")[0] do
-      choose "Yes"
       check "has confirmed the above statements are true"
     end
 

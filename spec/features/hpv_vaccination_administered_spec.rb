@@ -7,7 +7,6 @@ describe "HPV vaccination" do
     given_i_am_signed_in
 
     when_i_go_to_a_patient_that_is_ready_to_vaccinate
-    and_i_confirm_the_identity
     and_i_fill_in_pre_screening_questions
     and_i_record_that_the_patient_has_been_vaccinated(
       "Left arm (upper position)"
@@ -61,7 +60,6 @@ describe "HPV vaccination" do
     given_i_am_signed_in
 
     when_i_go_to_a_patient_that_is_ready_to_vaccinate
-    and_i_confirm_the_identity
     and_i_fill_in_pre_screening_questions
     and_i_record_that_the_patient_has_been_vaccinated("Other")
     and_i_select_the_delivery
@@ -109,12 +107,6 @@ describe "HPV vaccination" do
   def when_i_go_to_a_patient_that_is_ready_to_vaccinate
     visit session_record_path(@session)
     click_link @patient.full_name
-  end
-
-  def and_i_confirm_the_identity
-    within all("section")[0] do
-      choose "Yes"
-    end
   end
 
   def and_i_fill_in_pre_screening_questions
