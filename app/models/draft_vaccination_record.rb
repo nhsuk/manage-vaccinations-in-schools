@@ -37,6 +37,9 @@ class DraftVaccinationRecord
               if: :performed_by_user
             }
 
+  INJECTION_DELIVERY_METHODS =
+    Vaccine::AVAILABLE_DELIVERY_METHODS["injection"].freeze
+
   def wizard_steps
     [
       :notes,
@@ -194,6 +197,16 @@ class DraftVaccinationRecord
     self.editing_id = value.id
   end
 
+  def delivery_method=(value)
+    super
+    return if delivery_method_was.nil? # Don't clear batch on first set
+
+    previous_value = compute_vaccine_method(delivery_method_was)
+    new_value = compute_vaccine_method(value)
+
+    self.batch_id = nil unless previous_value == new_value
+  end
+
   delegate :vaccine, to: :batch, allow_nil: true
   delegate :can_be_half_dose?, to: :vaccine, allow_nil: true
 
@@ -226,6 +239,16 @@ class DraftVaccinationRecord
   end
 
   private
+
+  def compute_vaccine_method(delivery_method)
+    return nil if delivery_method.nil?
+
+    if delivery_method.in?(INJECTION_DELIVERY_METHODS)
+      "injection"
+    else
+      "nasal_spray"
+    end
+  end
 
   def readable_attribute_names
     writable_attribute_names - %w[vaccine_id]
@@ -287,7 +310,7 @@ class DraftVaccinationRecord
       if delivery_site != "nose"
         errors.add(:delivery_site, :nasal_spray_must_be_nose)
       end
-    when "intramuscular", "subcutaneous"
+    when *INJECTION_DELIVERY_METHODS
       if delivery_site == "nose"
         errors.add(:delivery_site, :injection_cannot_be_nose)
       end
