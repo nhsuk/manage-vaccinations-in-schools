@@ -17,7 +17,9 @@ class VaccinesController < ApplicationController
 
     @todays_batch_id_by_programme =
       policy_scope(Programme).index_with do |programme|
-        todays_batch_id(programme:)
+        programme.vaccine_methods.index_with do |vaccine_method|
+          todays_batch_id(programme:, vaccine_method:)
+        end
       end
   end
 

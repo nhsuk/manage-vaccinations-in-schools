@@ -80,11 +80,13 @@ class Sessions::RecordController < ApplicationController
   def set_todays_batches
     all_batches =
       @session.programmes.index_with do |programme|
-        policy_scope(Batch)
-          .where(vaccine: @session.vaccines)
-          .not_archived
-          .not_expired
-          .find_by(id: todays_batch_id(programme:))
+        programme.vaccine_methods.index_with do |vaccine_method|
+          policy_scope(Batch)
+            .where(vaccine: @session.vaccines)
+            .not_archived
+            .not_expired
+            .find_by(id: todays_batch_id(programme:, vaccine_method:))
+        end.compact
       end
 
     @todays_batches = all_batches.compact

@@ -68,7 +68,7 @@ class PatientSessions::VaccinationsController < PatientSessions::BaseController
   end
 
   def set_todays_batch
-    @todays_batch =
+    @todays_batches =
       policy_scope(Batch)
         .where(vaccine: @session.vaccines)
         .not_archived
