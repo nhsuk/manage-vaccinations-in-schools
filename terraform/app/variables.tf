@@ -244,9 +244,11 @@ locals {
   db_instances = {
     "primary-1" = {
       promotion_tier = 1
+      port           = 5432
     },
     "primary-2" = {
       promotion_tier = 1
+      port           = 5433
     }
   }
 }
