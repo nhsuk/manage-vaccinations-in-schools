@@ -211,7 +211,9 @@ en:
           ready_to_vaccinate: Safe to vaccinate
       vaccination_record:
         delivery_methods:
-          intranasal: Intramuscular (IM)
+          intramuscular: Intramuscular (IM) injection
+          subcutaneous: Subcutaneous injection
+          nasal_spray: Nasal spray
         delivery_sites:
           left_arm_lower_position: Left arm (lower position)
           left_arm_upper_position: Left arm (upper position)
