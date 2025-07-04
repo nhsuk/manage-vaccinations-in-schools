@@ -12,6 +12,8 @@
 #  dose_sequence            :integer
 #  full_dose                :boolean
 #  location_name            :string
+#  nhse_etag                :string
+#  nhse_synced_at           :datetime
 #  notes                    :text
 #  outcome                  :integer          not null
 #  pending_changes          :jsonb            not null
@@ -23,6 +25,7 @@
 #  created_at               :datetime         not null
 #  updated_at               :datetime         not null
 #  batch_id                 :bigint
+#  nhse_id                  :string
 #  patient_id               :bigint
 #  performed_by_user_id     :bigint
 #  programme_id             :bigint           not null

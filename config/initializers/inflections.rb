@@ -26,6 +26,7 @@ ActiveSupport::Inflector.inflections(:en) do |inflect|
   inflect.acronym "JWKS"
   inflect.acronym "MESH"
   inflect.acronym "NHS"
+  inflect.acronym "NHSE"
   inflect.acronym "OAuth2"
   inflect.acronym "ODS"
   inflect.acronym "OpenID"
