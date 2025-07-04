@@ -11,7 +11,7 @@ class VaccinatedCriteria
     vaccination_records_for_programme =
       vaccination_records.select { it.programme_id == programme.id }
 
-    if programme.flu?
+    if programme.seasonal?
       vaccination_records_for_programme
         .select { it.administered? || it.already_had? }
         .any?(&:performed_this_academic_year?)
