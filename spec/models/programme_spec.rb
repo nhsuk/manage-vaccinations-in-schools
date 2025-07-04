@@ -160,7 +160,7 @@ describe Programme do
     context "with a Flu programme" do
       let(:programme) { build(:programme, :flu) }
 
-      it { should be_nil }
+      it { should eq(1) }
     end
 
     context "with an HPV programme" do

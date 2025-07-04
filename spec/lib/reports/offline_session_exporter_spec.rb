@@ -955,7 +955,7 @@ describe Reports::OfflineSessionExporter do
   context "Flu programme" do
     let(:programme) { create(:programme, :flu) }
     let(:expected_programme) { "Flu" }
-    let(:expected_dose_sequence) { nil }
+    let(:expected_dose_sequence) { 1 }
 
     include_examples "generates a report"
   end
