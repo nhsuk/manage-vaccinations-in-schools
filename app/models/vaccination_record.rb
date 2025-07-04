@@ -58,25 +58,19 @@ class VaccinationRecord < ApplicationRecord
   audited associated_with: :patient
 
   DELIVERY_SITE_SNOMED_CODES_AND_TERMS = {
-    left_thigh: ["61396006", "Structure of left thigh (body structure)"],
-    right_thigh: ["11207009", "Structure of right thigh (body structure)"],
-    left_arm_upper_position: [
-      "368208006",
-      "Structure of left upper arm (body structure)"
-    ],
-    right_arm_upper_position: [
-      "368209003",
-      "Structure of right upper arm (body structure)"
-    ],
-    left_buttock: ["723979003", "Structure of left buttock (body structure)"],
-    right_buttock: ["723980000", "Structure of right buttock (body structure)"],
-    nose: ["279549004", "Nasal cavity structure (body structure)"]
+    left_thigh: ["61396006", "Structure of left thigh"],
+    right_thigh: ["11207009", "Structure of right thigh"],
+    left_arm_upper_position: ["368208006", "Left upper arm structure"],
+    right_arm_upper_position: ["368209003", "Right upper arm structure"],
+    left_buttock: ["723979003", "Structure of left buttock"],
+    right_buttock: ["723980000", "Structure of right buttock"],
+    nose: ["279549004", "Nasal cavity structure"]
   }.with_indifferent_access
 
   DELIVERY_METHOD_SNOMED_CODES_AND_TERMS = {
-    intramuscular: ["78421000", "Intramuscular route (qualifier value)"],
-    subcutaneous: ["34206005", "Subcutaneous route (qualifier value)"],
-    nasal_spray: ["46713006", "Nasal route (qualifier value)"]
+    intramuscular: %w[78421000 Intramuscular],
+    subcutaneous: %w[34206005 Subcutaneous],
+    nasal_spray: %w[46713006 Nasal]
   }.with_indifferent_access
 
   belongs_to :batch, optional: true
@@ -159,6 +153,8 @@ class VaccinationRecord < ApplicationRecord
               less_than_or_equal_to: -> { Time.current }
             }
 
+  delegate :fhir_record, to: :fhir_mapper
+
   def not_administered?
     !administered?
   end
@@ -183,6 +179,14 @@ class VaccinationRecord < ApplicationRecord
     programme.seasonal? ? performed_this_academic_year? : true
   end
 
+  def delivery_method_snomed_code
+    DELIVERY_METHOD_SNOMED_CODES_AND_TERMS.fetch(delivery_method).first
+  end
+
+  def delivery_method_snomed_term
+    DELIVERY_METHOD_SNOMED_CODES_AND_TERMS.fetch(delivery_method).second
+  end
+
   private
 
   def requires_location_name?
@@ -190,4 +194,6 @@ class VaccinationRecord < ApplicationRecord
   end
 
   delegate :maximum_dose_sequence, to: :programme
+
+  def fhir_mapper = @fhir_mapper ||= FHIRMapper::VaccinationRecord.new(self)
 end
