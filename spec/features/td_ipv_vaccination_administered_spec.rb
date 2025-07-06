@@ -5,6 +5,7 @@ describe "Td/IPV vaccination" do
 
   scenario "Administered" do
     given_i_am_signed_in
+    and_sync_vaccination_records_to_nhse_on_create_feature_is_enabled
 
     when_i_go_to_a_patient_that_is_ready_to_vaccinate
     and_i_record_that_the_patient_has_been_vaccinated
@@ -37,6 +38,7 @@ describe "Td/IPV vaccination" do
     when_i_confirm_the_details
     then_i_see_a_success_message
     and_i_no_longer_see_the_patient_in_the_record_tab
+    and_the_vaccination_record_is_not_synced_to_nhse
 
     when_i_go_back
     and_i_save_changes
@@ -80,6 +82,10 @@ describe "Td/IPV vaccination" do
       )
 
     sign_in organisation.users.first
+  end
+
+  def and_sync_vaccination_records_to_nhse_on_create_feature_is_enabled
+    Flipper.enable(:sync_vaccination_records_to_nhse_on_create)
   end
 
   def when_i_go_to_a_patient_that_is_ready_to_vaccinate
@@ -199,5 +205,9 @@ describe "Td/IPV vaccination" do
       @patient.consents.last.parent.phone,
       :vaccination_administered_td_ipv
     )
+  end
+
+  def and_the_vaccination_record_is_not_synced_to_nhse
+    assert_no_enqueued_jobs(only: SyncVaccinationRecordToNHSEJob)
   end
 end
