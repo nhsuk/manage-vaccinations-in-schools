@@ -11,3 +11,7 @@ offline_working: Prototype support for using Mavis offline.
 
 immunisations_fhir_api_integration: Master switch to control communications with
   NHS Immunistaions FHIR API.
+
+sync_vaccination_records_to_nhse_on_create:
+  Send new vaccinations recorded by nurses to
+  NHS Immunisations FHIR API.
