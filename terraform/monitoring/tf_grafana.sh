@@ -62,6 +62,7 @@ if [[ -z "$ACTION" ]]; then
   usage
   exit 1
 fi
+terraform -chdir="./aws" init -backend-config="env/${ENVIRONMENT}-backend.hcl" -reconfigure
 GRAFANA_ENDPOINT="https://$(terraform -chdir="./aws" output -raw grafana_endpoint)"
 WORKSPACE_ID=$(terraform -chdir="./aws" output -raw grafana_workspace_id)
 SERVICE_ACCOUNT_ID=$(terraform -chdir="./aws" output -raw service_account_id)
@@ -89,15 +90,15 @@ case "$ACTION" in
   plan)
     if [[ -n "$PLAN_FILE" ]]; then
       terraform -chdir="./grafana" plan -var="workspace_url=$GRAFANA_ENDPOINT" -var="service_account_token=$SERVICE_ACCOUNT_TOKEN" -out="$PLAN_FILE"
+    else
+      terraform -chdir="./grafana" plan -var="workspace_url=$GRAFANA_ENDPOINT" -var="service_account_token=$SERVICE_ACCOUNT_TOKEN"
     fi
-    terraform -chdir="./grafana" plan -var="workspace_url=$GRAFANA_ENDPOINT" -var="service_account_token=$SERVICE_ACCOUNT_TOKEN"
     ;;
   apply)
     if [[ -n "$PLAN_FILE" ]]; then
       terraform -chdir="./grafana" apply "$PLAN_FILE"
     else
       terraform -chdir="./grafana" apply -var="workspace_url=$GRAFANA_ENDPOINT" -var="service_account_token=$SERVICE_ACCOUNT_TOKEN"
-#      terraform -chdir="./grafana" apply -var="workspace_url=$GRAFANA_ENDPOINT" -var="service_account_token=$SERVICE_ACCOUNT_TOKEN" -auto-approve
     fi
     ;;
   destroy)

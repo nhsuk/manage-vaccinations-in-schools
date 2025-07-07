@@ -3,19 +3,20 @@
   "Statement": [
     {
       "Action": [
-        "grafana:ListWorkspaceServiceAccounts",
         "grafana:ListVersions",
         "grafana:ListPermissions",
         "grafana:CreateWorkspace",
         "grafana:DeleteWorkspace",
-        "grafana:DeleteWorkspaceServiceAccount",
+        "grafana:ListWorkspaceServiceAccounts",
         "grafana:CreateWorkspaceServiceAccount",
+        "grafana:DeleteWorkspaceServiceAccount",
         "grafana:UpdateWorkspace",
         "grafana:UpdateWorkspaceConfiguration",
         "grafana:UpdateWorkspaceAuthentication",
         "grafana:UpdatePermissions",
-        "grafana:DeleteWorkspaceServiceAccountToken",
+        "grafana:ListWorkspaceServiceAccountTokens",
         "grafana:CreateWorkspaceServiceAccountToken",
+        "grafana:DeleteWorkspaceServiceAccountToken",
         "iam:AttachRolePolicy",
         "iam:CreatePolicyVersion",
         "iam:CreateRole",
