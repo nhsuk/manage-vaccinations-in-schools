@@ -116,7 +116,7 @@ describe "HPV vaccination" do
   end
 
   def and_i_fill_in_pre_screening_questions
-    check "has confirmed the above statements are true"
+    check "I have checked that the above statements are true"
   end
 
   def and_i_record_that_the_patient_has_been_vaccinated(where)

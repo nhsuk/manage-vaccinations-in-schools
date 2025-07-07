@@ -50,7 +50,7 @@ describe "HPV vaccination" do
 
   def and_i_record_that_the_patient_wasnt_vaccinated
     within all("section")[0] do
-      check "has confirmed the above statements are true"
+      check "I have checked that the above statements are true"
     end
 
     within all("section")[1] do
