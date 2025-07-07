@@ -37,7 +37,7 @@
     {
       "datasource": {
         "type": "cloudwatch",
-        "uid": "feqpmdec4ye4gb"
+        "uid": "cloudwatch"
       },
       "fieldConfig": {
         "defaults": {
@@ -117,7 +117,7 @@
         {
           "datasource": {
             "type": "cloudwatch",
-            "uid": "feqpmdec4ye4gb"
+            "uid": "cloudwatch"
           },
           "dimensions": {
             "AvailabilityZone": "$availability_zone",
@@ -146,7 +146,7 @@
     {
       "datasource": {
         "type": "cloudwatch",
-        "uid": "feqpmdec4ye4gb"
+        "uid": "cloudwatch"
       },
       "fieldConfig": {
         "defaults": {
@@ -225,7 +225,7 @@
         {
           "datasource": {
             "type": "cloudwatch",
-            "uid": "feqpmdec4ye4gb"
+            "uid": "cloudwatch"
           },
           "dimensions": {
             "LoadBalancer": "$loadbalancer",
@@ -263,7 +263,7 @@
     {
       "datasource": {
         "type": "cloudwatch",
-        "uid": "feqpmdec4ye4gb"
+        "uid": "cloudwatch"
       },
       "fieldConfig": {
         "defaults": {
@@ -311,7 +311,7 @@
         {
           "datasource": {
             "type": "cloudwatch",
-            "uid": "feqpmdec4ye4gb"
+            "uid": "cloudwatch"
           },
           "dimensions": {
             "LoadBalancer": "$loadbalancer"
@@ -336,7 +336,7 @@
         {
           "datasource": {
             "type": "cloudwatch",
-            "uid": "feqpmdec4ye4gb"
+            "uid": "cloudwatch"
           },
           "dimensions": {
             "LoadBalancer": "$loadbalancer"
@@ -360,7 +360,7 @@
         {
           "datasource": {
             "type": "cloudwatch",
-            "uid": "feqpmdec4ye4gb"
+            "uid": "cloudwatch"
           },
           "dimensions": {
             "LoadBalancer": "$loadbalancer"
@@ -385,7 +385,7 @@
         {
           "datasource": {
             "type": "cloudwatch",
-            "uid": "feqpmdec4ye4gb"
+            "uid": "cloudwatch"
           },
           "dimensions": {
             "LoadBalancer": "$loadbalancer"
@@ -410,7 +410,7 @@
         {
           "datasource": {
             "type": "cloudwatch",
-            "uid": "feqpmdec4ye4gb"
+            "uid": "cloudwatch"
           },
           "dimensions": {
             "LoadBalancer": "$loadbalancer"
@@ -439,7 +439,7 @@
     {
       "datasource": {
         "type": "cloudwatch",
-        "uid": "feqpmdec4ye4gb"
+        "uid": "cloudwatch"
       },
       "fieldConfig": {
         "defaults": {
@@ -518,7 +518,7 @@
         {
           "datasource": {
             "type": "cloudwatch",
-            "uid": "feqpmdec4ye4gb"
+            "uid": "cloudwatch"
           },
           "dimensions": {
             "LoadBalancer": "$loadbalancer",
@@ -543,7 +543,7 @@
         {
           "datasource": {
             "type": "cloudwatch",
-            "uid": "feqpmdec4ye4gb"
+            "uid": "cloudwatch"
           },
           "dimensions": {
             "LoadBalancer": "$loadbalancer",
@@ -582,7 +582,7 @@
     {
       "datasource": {
         "type": "cloudwatch",
-        "uid": "feqpmdec4ye4gb"
+        "uid": "cloudwatch"
       },
       "fieldConfig": {
         "defaults": {
@@ -629,7 +629,7 @@
         {
           "datasource": {
             "type": "cloudwatch",
-            "uid": "feqpmdec4ye4gb"
+            "uid": "cloudwatch"
           },
           "dimensions": {
             "LoadBalancer": "$loadbalancer",
@@ -654,7 +654,7 @@
         {
           "datasource": {
             "type": "cloudwatch",
-            "uid": "feqpmdec4ye4gb"
+            "uid": "cloudwatch"
           },
           "dimensions": {
             "$target_group": "*",
@@ -721,7 +721,7 @@
     {
       "datasource": {
         "type": "cloudwatch",
-        "uid": "feqpmdec4ye4gb"
+        "uid": "cloudwatch"
       },
       "fieldConfig": {
         "defaults": {
@@ -808,7 +808,7 @@
         {
           "datasource": {
             "type": "cloudwatch",
-            "uid": "feqpmdec4ye4gb"
+            "uid": "cloudwatch"
           },
           "dimensions": {},
           "expression": "fields @timestamp, action\n| filter ispresent(action)\n| stats sum(action = \"REJECT\")/count() as rejection_ratio by bin(1m)",
@@ -841,7 +841,7 @@
     {
       "datasource": {
         "type": "cloudwatch",
-        "uid": "feqpmdec4ye4gb"
+        "uid": "cloudwatch"
       },
       "fieldConfig": {
         "defaults": {
@@ -920,7 +920,7 @@
         {
           "datasource": {
             "type": "cloudwatch",
-            "uid": "feqpmdec4ye4gb"
+            "uid": "cloudwatch"
           },
           "dimensions": {},
           "expression": "fields @timestamp, action\n| stats count() as connections by bin(1m)",
@@ -963,7 +963,7 @@
         },
         "datasource": {
           "type": "cloudwatch",
-          "uid": "feqpmdec4ye4gb"
+          "uid": "cloudwatch"
         },
         "definition": "",
         "hide": 0,
@@ -996,7 +996,7 @@
         },
         "datasource": {
           "type": "cloudwatch",
-          "uid": "feqpmdec4ye4gb"
+          "uid": "cloudwatch"
         },
         "definition": "",
         "hide": 0,
@@ -1026,7 +1026,7 @@
         },
         "datasource": {
           "type": "cloudwatch",
-          "uid": "feqpmdec4ye4gb"
+          "uid": "cloudwatch"
         },
         "definition": "",
         "hide": 0,
@@ -1054,7 +1054,7 @@
         },
         "datasource": {
           "type": "cloudwatch",
-          "uid": "feqpmdec4ye4gb"
+          "uid": "cloudwatch"
         },
         "definition": "",
         "hide": 2,
@@ -1082,7 +1082,7 @@
   "timepicker": {},
   "timezone": "browser",
   "title": "Networking",
-  "uid": "aeqx4drkqj9c0e",
+  "uid": "aeqx4drkqj9abc",
   "version": 9,
   "weekStart": ""
 }

@@ -24,7 +24,7 @@
     {
       "datasource": {
         "type": "cloudwatch",
-        "uid": "feqpmdec4ye4gb"
+        "uid": "cloudwatch"
       },
       "fieldConfig": {
         "defaults": {
@@ -103,7 +103,7 @@
         {
           "datasource": {
             "type": "cloudwatch",
-            "uid": "feqpmdec4ye4gb"
+            "uid": "cloudwatch"
           },
           "dimensions": {},
           "expression": "",
@@ -129,7 +129,7 @@
     {
       "datasource": {
         "type": "cloudwatch",
-        "uid": "feqpmdec4ye4gb"
+        "uid": "cloudwatch"
       },
       "fieldConfig": {
         "defaults": {
@@ -208,7 +208,7 @@
         {
           "datasource": {
             "type": "cloudwatch",
-            "uid": "feqpmdec4ye4gb"
+            "uid": "cloudwatch"
           },
           "dimensions": {
             "ClusterName": "mavis-$environment"
@@ -310,7 +310,7 @@
     {
       "datasource": {
         "type": "cloudwatch",
-        "uid": "feqpmdec4ye4gb"
+        "uid": "cloudwatch"
       },
       "fieldConfig": {
         "defaults": {
@@ -390,7 +390,7 @@
         {
           "datasource": {
             "type": "cloudwatch",
-            "uid": "feqpmdec4ye4gb"
+            "uid": "cloudwatch"
           },
           "dimensions": {
             "ClusterName": "mavis-$environment",
@@ -417,7 +417,7 @@
         {
           "datasource": {
             "type": "cloudwatch",
-            "uid": "feqpmdec4ye4gb"
+            "uid": "cloudwatch"
           },
           "dimensions": {
             "ClusterName": "mavis-$environment",
@@ -468,7 +468,7 @@
     {
       "datasource": {
         "type": "cloudwatch",
-        "uid": "feqpmdec4ye4gb"
+        "uid": "cloudwatch"
       },
       "fieldConfig": {
         "defaults": {
@@ -549,7 +549,7 @@
         {
           "datasource": {
             "type": "cloudwatch",
-            "uid": "feqpmdec4ye4gb"
+            "uid": "cloudwatch"
           },
           "dimensions": {
             "ClusterName": "mavis-$environment",
@@ -576,7 +576,7 @@
         {
           "datasource": {
             "type": "cloudwatch",
-            "uid": "feqpmdec4ye4gb"
+            "uid": "cloudwatch"
           },
           "dimensions": {
             "ClusterName": "mavis-$environment",
@@ -627,7 +627,7 @@
     {
       "datasource": {
         "type": "cloudwatch",
-        "uid": "feqpmdec4ye4gb"
+        "uid": "cloudwatch"
       },
       "fieldConfig": {
         "defaults": {
@@ -707,7 +707,7 @@
         {
           "datasource": {
             "type": "cloudwatch",
-            "uid": "feqpmdec4ye4gb"
+            "uid": "cloudwatch"
           },
           "dimensions": {
             "ClusterName": "mavis-$environment",
@@ -733,7 +733,7 @@
         {
           "datasource": {
             "type": "cloudwatch",
-            "uid": "feqpmdec4ye4gb"
+            "uid": "cloudwatch"
           },
           "dimensions": {
             "ClusterName": "mavis-$environment",
@@ -783,7 +783,7 @@
     {
       "datasource": {
         "type": "cloudwatch",
-        "uid": "feqpmdec4ye4gb"
+        "uid": "cloudwatch"
       },
       "fieldConfig": {
         "defaults": {
@@ -863,7 +863,7 @@
         {
           "datasource": {
             "type": "cloudwatch",
-            "uid": "feqpmdec4ye4gb"
+            "uid": "cloudwatch"
           },
           "dimensions": {
             "ClusterName": "mavis-$environment",
@@ -889,7 +889,7 @@
         {
           "datasource": {
             "type": "cloudwatch",
-            "uid": "feqpmdec4ye4gb"
+            "uid": "cloudwatch"
           },
           "dimensions": {
             "ClusterName": "mavis-$environment",
@@ -939,7 +939,7 @@
     {
       "datasource": {
         "type": "cloudwatch",
-        "uid": "feqpmdec4ye4gb"
+        "uid": "cloudwatch"
       },
       "fieldConfig": {
         "defaults": {
@@ -1018,7 +1018,7 @@
         {
           "datasource": {
             "type": "cloudwatch",
-            "uid": "feqpmdec4ye4gb"
+            "uid": "cloudwatch"
           },
           "dimensions": {},
           "expression": "fields @timestamp\n| parse message /Performed (?<job_type>[^ ]*)/\n| display @timestamp\n| filter ispresent(job_type)\n| stats count() as rate by bin(1m),job_type",
@@ -1050,7 +1050,7 @@
     {
       "datasource": {
         "type": "cloudwatch",
-        "uid": "feqpmdec4ye4gb"
+        "uid": "cloudwatch"
       },
       "fieldConfig": {
         "defaults": {
@@ -1130,7 +1130,7 @@
         {
           "datasource": {
             "type": "cloudwatch",
-            "uid": "feqpmdec4ye4gb"
+            "uid": "cloudwatch"
           },
           "dimensions": {},
           "expression": "fields @timestamp\n| filter level like /(?i)error/ \n| filter ispresent(payload.job_class)\n| stats count() as rate by bin(1m),job_class",
@@ -1175,7 +1175,7 @@
     {
       "datasource": {
         "type": "cloudwatch",
-        "uid": "feqpmdec4ye4gb"
+        "uid": "cloudwatch"
       },
       "fieldConfig": {
         "defaults": {
@@ -1257,7 +1257,7 @@
         {
           "datasource": {
             "type": "cloudwatch",
-            "uid": "feqpmdec4ye4gb"
+            "uid": "cloudwatch"
           },
           "dimensions": {},
           "expression": "fields @timestamp, path, remote_addr, user_agent\n | sort @timestamp desc\n | filter ispresent(status)\n | stats count() as rate by bin(1m),status",
@@ -1289,7 +1289,7 @@
     {
       "datasource": {
         "type": "cloudwatch",
-        "uid": "feqpmdec4ye4gb"
+        "uid": "cloudwatch"
       },
       "fieldConfig": {
         "defaults": {
@@ -1371,7 +1371,7 @@
         {
           "datasource": {
             "type": "cloudwatch",
-            "uid": "feqpmdec4ye4gb"
+            "uid": "cloudwatch"
           },
           "dimensions": {},
           "expression": "fields @timestamp\n| filter ispresent(path)\n| parse path /(?<main_path>\\/[^\\/]*)/\n| stats count() by bin(1m),main_path",
@@ -1403,7 +1403,7 @@
     {
       "datasource": {
         "type": "cloudwatch",
-        "uid": "feqpmdec4ye4gb"
+        "uid": "cloudwatch"
       },
       "fieldConfig": {
         "defaults": {
@@ -1485,7 +1485,7 @@
         {
           "datasource": {
             "type": "cloudwatch",
-            "uid": "feqpmdec4ye4gb"
+            "uid": "cloudwatch"
           },
           "dimensions": {},
           "expression": "fields @timestamp\n| filter ispresent(path)\n| stats sum(method='GET') as GET,\n        sum(method='HEAD') as HEAD,\n        sum(method='OPTIONS') as OPTIONS,\n        sum(method='TRACE') as TRACE,\n        sum(method='PUT') as PUT,\n        sum(method='DELETE') as DELETE,\n        sum(method='POST') as POST,\n        sum(method='PATCH') as PATCH,\n        sum(method='CONNECT') as CONNECT\n        by bin(1m)",
@@ -1517,7 +1517,7 @@
     {
       "datasource": {
         "type": "cloudwatch",
-        "uid": "feqpmdec4ye4gb"
+        "uid": "cloudwatch"
       },
       "fieldConfig": {
         "defaults": {
@@ -1599,7 +1599,7 @@
         {
           "datasource": {
             "type": "cloudwatch",
-            "uid": "feqpmdec4ye4gb"
+            "uid": "cloudwatch"
           },
           "dimensions": {},
           "expression": "fields @timestamp\n| filter ispresent(path)\n| filter status like /5/\n| stats sum(method='GET') as GET,\n        sum(method='HEAD') as HEAD,\n        sum(method='OPTIONS') as OPTIONS,\n        sum(method='TRACE') as TRACE,\n        sum(method='PUT') as PUT,\n        sum(method='DELETE') as DELETE,\n        sum(method='POST') as POST,\n        sum(method='PATCH') as PATCH,\n        sum(method='CONNECT') as CONNECT\n        by bin(1m)",
@@ -1631,7 +1631,7 @@
     {
       "datasource": {
         "type": "cloudwatch",
-        "uid": "feqpmdec4ye4gb"
+        "uid": "cloudwatch"
       },
       "fieldConfig": {
         "defaults": {
@@ -1713,7 +1713,7 @@
         {
           "datasource": {
             "type": "cloudwatch",
-            "uid": "feqpmdec4ye4gb"
+            "uid": "cloudwatch"
           },
           "dimensions": {},
           "expression": "fields @timestamp\n| filter ispresent(path)\n| filter status like /5/\n| parse path /(?<main_path>\\/[^\\/]*)/\n| stats count() as rate by bin(1m),main_path",
@@ -1757,7 +1757,7 @@
         },
         "datasource": {
           "type": "cloudwatch",
-          "uid": "feqpmdec4ye4gb"
+          "uid": "cloudwatch"
         },
         "definition": "",
         "hide": 0,
@@ -1786,7 +1786,7 @@
         },
         "datasource": {
           "type": "cloudwatch",
-          "uid": "feqpmdec4ye4gb"
+          "uid": "cloudwatch"
         },
         "definition": "",
         "hide": 2,

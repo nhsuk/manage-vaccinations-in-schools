@@ -24,7 +24,7 @@
     {
       "datasource": {
         "type": "cloudwatch",
-        "uid": "feqpmdec4ye4gb"
+        "uid": "cloudwatch"
       },
       "fieldConfig": {
         "defaults": {
@@ -108,7 +108,7 @@
         {
           "datasource": {
             "type": "cloudwatch",
-            "uid": "feqpmdec4ye4gb"
+            "uid": "cloudwatch"
           },
           "dimensions": {
             "DBClusterIdentifier": "mavis-$environment",
@@ -194,7 +194,7 @@
     {
       "datasource": {
         "type": "cloudwatch",
-        "uid": "feqpmdec4ye4gb"
+        "uid": "cloudwatch"
       },
       "fieldConfig": {
         "defaults": {
@@ -270,7 +270,7 @@
         {
           "datasource": {
             "type": "cloudwatch",
-            "uid": "feqpmdec4ye4gb"
+            "uid": "cloudwatch"
           },
           "dimensions": {
             "DBClusterIdentifier": "mavis-$environment",
@@ -298,7 +298,7 @@
     {
       "datasource": {
         "type": "cloudwatch",
-        "uid": "feqpmdec4ye4gb"
+        "uid": "cloudwatch"
       },
       "fieldConfig": {
         "defaults": {
@@ -378,7 +378,7 @@
         {
           "datasource": {
             "type": "cloudwatch",
-            "uid": "feqpmdec4ye4gb"
+            "uid": "cloudwatch"
           },
           "dimensions": {
             "DBClusterIdentifier": "mavis-$environment",
@@ -406,7 +406,7 @@
     {
       "datasource": {
         "type": "cloudwatch",
-        "uid": "feqpmdec4ye4gb"
+        "uid": "cloudwatch"
       },
       "fieldConfig": {
         "defaults": {
@@ -486,7 +486,7 @@
         {
           "datasource": {
             "type": "cloudwatch",
-            "uid": "feqpmdec4ye4gb"
+            "uid": "cloudwatch"
           },
           "dimensions": {
             "DBClusterIdentifier": "mavis-$environment",
@@ -514,7 +514,7 @@
     {
       "datasource": {
         "type": "cloudwatch",
-        "uid": "feqpmdec4ye4gb"
+        "uid": "cloudwatch"
       },
       "fieldConfig": {
         "defaults": {
@@ -594,7 +594,7 @@
         {
           "datasource": {
             "type": "cloudwatch",
-            "uid": "feqpmdec4ye4gb"
+            "uid": "cloudwatch"
           },
           "dimensions": {
             "DBClusterIdentifier": "mavis-$environment",
@@ -618,7 +618,7 @@
         {
           "datasource": {
             "type": "cloudwatch",
-            "uid": "feqpmdec4ye4gb"
+            "uid": "cloudwatch"
           },
           "dimensions": {
             "DBClusterIdentifier": "mavis-$environment",
@@ -646,7 +646,7 @@
     {
       "datasource": {
         "type": "cloudwatch",
-        "uid": "feqpmdec4ye4gb"
+        "uid": "cloudwatch"
       },
       "fieldConfig": {
         "defaults": {
@@ -726,7 +726,7 @@
         {
           "datasource": {
             "type": "cloudwatch",
-            "uid": "feqpmdec4ye4gb"
+            "uid": "cloudwatch"
           },
           "dimensions": {
             "DBClusterIdentifier": "mavis-$environment",
@@ -750,7 +750,7 @@
         {
           "datasource": {
             "type": "cloudwatch",
-            "uid": "feqpmdec4ye4gb"
+            "uid": "cloudwatch"
           },
           "dimensions": {
             "DBClusterIdentifier": "mavis-$environment",
