@@ -323,4 +323,124 @@ describe ImmunisationImport do
       end
     end
   end
+
+  describe "#postprocess_row!" do
+    subject(:immunisation_import) do
+      create(
+        :immunisation_import,
+        organisation:,
+        vaccination_records: [
+          flu_record,
+          hpv_record,
+          td_ipv_record,
+          menacwy_record
+        ]
+      )
+    end
+
+    before { Flipper.enable :sync_vaccination_records_to_nhs_on_create }
+
+    let(:hpv_programme) { Programme.hpv.first || create(:programme, :hpv) }
+    let(:flu_programme) { Programme.flu.first || create(:programme, :flu) }
+    let(:menacwy_programme) { create(:programme, :menacwy) }
+    let(:td_ipv_programme) { create(:programme, :td_ipv) }
+    let(:organisation) do
+      create(
+        :organisation,
+        :with_generic_clinic,
+        ods_code: "R1L",
+        programmes: [
+          hpv_programme,
+          flu_programme,
+          menacwy_programme,
+          td_ipv_programme
+        ]
+      )
+    end
+    let(:session) do
+      create(
+        :session,
+        programmes: [
+          hpv_programme,
+          flu_programme,
+          menacwy_programme,
+          td_ipv_programme
+        ]
+      )
+    end
+
+    let(:flu_record) do
+      create(:vaccination_record, programme: flu_programme, session:)
+    end
+    let(:hpv_record) do
+      create(:vaccination_record, programme: hpv_programme, session:)
+    end
+    let(:td_ipv_record) do
+      create(:vaccination_record, programme: td_ipv_programme, session:)
+    end
+    let(:menacwy_record) do
+      create(:vaccination_record, programme: menacwy_programme, session:)
+    end
+    let(:historic_flu_record) do
+      create(:vaccination_record, programme: flu_programme)
+    end
+    let(:refused_hpv_record) do
+      create(
+        :vaccination_record,
+        programme: hpv_programme,
+        session:,
+        outcome: "refused"
+      )
+    end
+
+    it "syncs the flu vaccination record to the NHS Immunisations API" do
+      expect {
+        immunisation_import.send(:postprocess_rows!)
+      }.to have_enqueued_job(SyncVaccinationRecordToNHSJob)
+        .with(flu_record)
+        .once
+        .on_queue(:immunisation_api)
+    end
+
+    it "syncs the hpv vaccination record to the NHS Immunisations API" do
+      expect {
+        immunisation_import.send(:postprocess_rows!)
+      }.to have_enqueued_job(SyncVaccinationRecordToNHSJob)
+        .with(hpv_record)
+        .once
+        .on_queue(:immunisation_api)
+    end
+
+    it "does not sync the menacwy vaccination record to the NHS Immunisations API" do
+      expect {
+        immunisation_import.send(:postprocess_rows!)
+      }.not_to have_enqueued_job(SyncVaccinationRecordToNHSJob).with(
+        menacwy_record
+      )
+    end
+
+    it "does not sync the td_ipv vaccination record to the NHS Immunisations API" do
+      expect {
+        immunisation_import.send(:postprocess_rows!)
+      }.not_to have_enqueued_job(SyncVaccinationRecordToNHSJob).with(
+        td_ipv_record
+      )
+    end
+
+    it "does not sync the historic flu vaccination record to the NHS Immunisations API" do
+      expect {
+        immunisation_import.send(:postprocess_rows!)
+      }.not_to have_enqueued_job(SyncVaccinationRecordToNHSJob).with(
+        historic_flu_record
+      )
+    end
+
+    it "does not sync the refused hpv vaccination record to the NHS Immunisations API" do
+      expect {
+        immunisation_import.send(:postprocess_rows!)
+      }.not_to have_enqueued_job(SyncVaccinationRecordToNHSJob).with(
+        refused_hpv_record
+      )
+    end
+  end
 end

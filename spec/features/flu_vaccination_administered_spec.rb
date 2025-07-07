@@ -7,13 +7,13 @@ describe "Flu vaccination" do
     given_i_am_signed_in_with_flu_programme
     and_there_is_a_flu_session_today_with_two_patients_ready_to_vaccinate
     and_there_are_nasal_and_injection_batches
-    and_sync_vaccination_records_to_nhse_on_create_feature_is_enabled
+    and_sync_vaccination_records_to_nhs_on_create_feature_is_enabled
 
     when_i_go_to_the_nasal_only_patient
     and_i_record_that_the_patient_has_been_vaccinated_with_nasal_spray
     then_i_see_the_check_and_confirm_page_for_nasal_spray
     and_i_get_confirmation_after_recording
-    and_the_vaccination_record_is_synced_to_nhse
+    and_the_vaccination_record_is_synced_to_nhs
   end
 
   scenario "Administered with injection" do
@@ -93,8 +93,8 @@ describe "Flu vaccination" do
       )
   end
 
-  def and_sync_vaccination_records_to_nhse_on_create_feature_is_enabled
-    Flipper.enable(:sync_vaccination_records_to_nhse_on_create)
+  def and_sync_vaccination_records_to_nhs_on_create_feature_is_enabled
+    Flipper.enable(:sync_vaccination_records_to_nhs_on_create)
   end
 
   def when_i_go_to_the_nasal_only_patient
@@ -177,7 +177,7 @@ describe "Flu vaccination" do
     click_button "Continue"
   end
 
-  def and_the_vaccination_record_is_synced_to_nhse
-    assert_enqueued_with(job: SyncVaccinationRecordToNHSEJob)
+  def and_the_vaccination_record_is_synced_to_nhs
+    assert_enqueued_with(job: SyncVaccinationRecordToNHSJob)
   end
 end

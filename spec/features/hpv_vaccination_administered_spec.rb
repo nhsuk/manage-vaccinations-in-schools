@@ -5,7 +5,7 @@ describe "HPV vaccination" do
 
   scenario "Administered with common delivery site" do
     given_i_am_signed_in
-    and_sync_vaccination_records_to_nhse_on_create_feature_is_enabled
+    and_sync_vaccination_records_to_nhs_on_create_feature_is_enabled
 
     when_i_go_to_a_patient_that_is_ready_to_vaccinate
     and_i_fill_in_pre_screening_questions
@@ -42,7 +42,7 @@ describe "HPV vaccination" do
     then_i_see_a_success_message
     and_i_can_no_longer_vaccinate_the_patient
     and_i_no_longer_see_the_patient_in_the_record_tab
-    and_the_vaccination_record_is_synced_to_nhse
+    and_the_vaccination_record_is_synced_to_nhs
 
     when_i_go_back
     and_i_save_changes
@@ -106,8 +106,8 @@ describe "HPV vaccination" do
     sign_in organisation.users.first
   end
 
-  def and_sync_vaccination_records_to_nhse_on_create_feature_is_enabled
-    Flipper.enable(:sync_vaccination_records_to_nhse_on_create)
+  def and_sync_vaccination_records_to_nhs_on_create_feature_is_enabled
+    Flipper.enable(:sync_vaccination_records_to_nhs_on_create)
   end
 
   def when_i_go_to_a_patient_that_is_ready_to_vaccinate
@@ -249,7 +249,7 @@ describe "HPV vaccination" do
     )
   end
 
-  def and_the_vaccination_record_is_synced_to_nhse
-    assert_enqueued_with(job: SyncVaccinationRecordToNHSEJob)
+  def and_the_vaccination_record_is_synced_to_nhs
+    assert_enqueued_with(job: SyncVaccinationRecordToNHSJob)
   end
 end
