@@ -63,11 +63,15 @@ describe "HPV vaccination" do
   end
 
   def and_i_record_that_the_patient_has_been_vaccinated
-    check "has confirmed the above statements are true"
+    within all("section")[0] do
+      check "has confirmed the above statements are true"
+    end
 
-    choose "Yes"
-    choose "Left arm (upper position)"
-    click_button "Continue"
+    within all("section")[1] do
+      choose "Yes"
+      choose "Left arm (upper position)"
+      click_button "Continue"
+    end
   end
 
   def and_i_select_the_batch

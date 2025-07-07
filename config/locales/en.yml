@@ -72,6 +72,12 @@ en:
               injection_cannot_be_nose: Site cannot be nose for intramuscular or subcutaneous injections
             full_dose:
               inclusion: Choose whether they got the full dose
+            identity_check_confirmed_by_other_name:
+              blank: Enter the person’s name
+            identity_check_confirmed_by_other_relationship:
+              blank: Enter the person’s relationship
+            identity_check_confirmed_by_patient:
+              inclusion: Choose who confirmed their child’s identity
             location_name:
               blank: Enter where the vaccination was given
             notes:
@@ -119,6 +125,14 @@ en:
               inclusion: Choose if they are ready to vaccinate
             delivery_site:
               blank: Choose where the injection will be given
+            identity_check_confirmed_by_other_name:
+              blank: Enter the person’s name
+              too_long: Enter a name that is less than %{count} characters long
+            identity_check_confirmed_by_other_relationship:
+              blank: Enter the person’s relationship
+              too_long: Enter a relationship that is less than %{count} characters long
+            identity_check_confirmed_by_patient:
+              inclusion: Choose whether the child confirmed their identity
             pre_screening_confirmed:
               blank: Select if the child has confirmed all pre-screening statements are true
             pre_screening_notes:
@@ -197,7 +211,9 @@ en:
           ready_to_vaccinate: Safe to vaccinate
       vaccination_record:
         delivery_methods:
-          intranasal: Intramuscular (IM)
+          intramuscular: Intramuscular (IM) injection
+          subcutaneous: Subcutaneous injection
+          nasal_spray: Nasal spray
         delivery_sites:
           left_arm_lower_position: Left arm (lower position)
           left_arm_upper_position: Left arm (upper position)
@@ -623,6 +639,7 @@ en:
     file_format: file-format
     gp: gp
     health_question: health-question
+    identity: identity
     injection_alternative: injection-alternative
     location: location
     name: name

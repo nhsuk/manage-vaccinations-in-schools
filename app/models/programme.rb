@@ -46,6 +46,8 @@ class Programme < ApplicationRecord
        { flu: "flu", hpv: "hpv", menacwy: "menacwy", td_ipv: "td_ipv" },
        validate: true
 
+  delegate :fhir_target_disease_coding, :fhir_procedure_coding, to: :fhir_mapper
+
   def to_param = type
 
   def name = human_enum_name(:type)
@@ -149,4 +151,26 @@ class Programme < ApplicationRecord
   def snomed_procedure_term
     SNOMED_PROCEDURE_TERMS.fetch(type)
   end
+
+  SNOMED_TARGET_DISEASE_CODES = {
+    "hpv" => "240532009",
+    "flu" => "6142004"
+  }.freeze
+
+  def snomed_target_disease_code
+    SNOMED_TARGET_DISEASE_CODES.fetch(type)
+  end
+
+  SNOMED_TARGET_DISEASE_TERMS = {
+    "hpv" => "Human papillomavirus infection",
+    "flu" => "Influenza"
+  }.freeze
+
+  def snomed_target_disease_term
+    SNOMED_TARGET_DISEASE_TERMS.fetch(type)
+  end
+
+  private
+
+  def fhir_mapper = @fhir_mapper ||= FHIRMapper::Programme.new(self)
 end

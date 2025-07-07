@@ -341,10 +341,6 @@ class ConsentForm < ApplicationRecord
     end
   end
 
-  def needs_triage?
-    health_answers.select(&:counts_for_triage?).any?(&:response_yes?)
-  end
-
   def can_offer_injection_as_alternative?
     consent_form_programmes.select(&:response_given?).any?(
       &:vaccine_method_nasal?
@@ -463,7 +459,7 @@ class ConsentForm < ApplicationRecord
       Consent
         .from_consent_form!(self, patient:, current_user:)
         .each do |consent|
-          if consent.triage_needed?
+          if consent.requires_triage?
             patient.triages.where(programme: consent.programme).invalidate_all
           end
         end

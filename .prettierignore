@@ -39,3 +39,4 @@ terraform/.terraform
 *.tfstate
 *.tfstate.backup
 scratchpad
+spec/fixtures/fhir/immunisation.json

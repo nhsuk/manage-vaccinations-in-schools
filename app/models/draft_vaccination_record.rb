@@ -16,6 +16,9 @@ class DraftVaccinationRecord
   attribute :delivery_site, :string
   attribute :dose_sequence, :integer
   attribute :full_dose, :boolean
+  attribute :identity_check_confirmed_by_other_name, :string
+  attribute :identity_check_confirmed_by_other_relationship, :string
+  attribute :identity_check_confirmed_by_patient, :boolean
   attribute :location_name, :string
   attribute :notes, :string
   attribute :outcome, :string
@@ -34,9 +37,13 @@ class DraftVaccinationRecord
               if: :performed_by_user
             }
 
+  INJECTION_DELIVERY_METHODS =
+    Vaccine::AVAILABLE_DELIVERY_METHODS["injection"].freeze
+
   def wizard_steps
     [
       :notes,
+      :identity,
       :date_and_time,
       (:outcome if can_change_outcome?),
       (:delivery if administered?),
@@ -73,6 +80,15 @@ class DraftVaccinationRecord
 
   on_wizard_step :dose, exact: true do
     validates :full_dose, inclusion: [true, false]
+  end
+
+  on_wizard_step :identity, exact: true do
+    validates :identity_check_confirmed_by_patient, inclusion: [true, false]
+    validates :identity_check_confirmed_by_other_name,
+              :identity_check_confirmed_by_other_relationship,
+              presence: {
+                if: -> { identity_check_confirmed_by_patient == false }
+              }
   end
 
   on_wizard_step :location, exact: true do
@@ -181,6 +197,16 @@ class DraftVaccinationRecord
     self.editing_id = value.id
   end
 
+  def delivery_method=(value)
+    super
+    return if delivery_method_was.nil? # Don't clear batch on first set
+
+    previous_value = compute_vaccine_method(delivery_method_was)
+    new_value = compute_vaccine_method(value)
+
+    self.batch_id = nil unless previous_value == new_value
+  end
+
   delegate :vaccine, to: :batch, allow_nil: true
   delegate :can_be_half_dose?, to: :vaccine, allow_nil: true
 
@@ -188,10 +214,67 @@ class DraftVaccinationRecord
 
   def vaccine_id_changed? = batch_id_changed?
 
+  def identity_check
+    return nil if identity_check_confirmed_by_patient.nil?
+
+    (
+      vaccination_record&.identity_check || IdentityCheck.new
+    ).tap do |identity_check|
+      identity_check.assign_attributes(
+        confirmed_by_patient: identity_check_confirmed_by_patient,
+        confirmed_by_other_name: identity_check_confirmed_by_other_name,
+        confirmed_by_other_relationship:
+          identity_check_confirmed_by_other_relationship
+      )
+    end
+  end
+
+  def identity_check=(identity_check)
+    self.identity_check_confirmed_by_patient =
+      identity_check&.confirmed_by_patient
+    self.identity_check_confirmed_by_other_name =
+      identity_check&.confirmed_by_other_name
+    self.identity_check_confirmed_by_other_relationship =
+      identity_check&.confirmed_by_other_relationship
+  end
+
   private
 
+  def compute_vaccine_method(delivery_method)
+    return nil if delivery_method.nil?
+
+    if delivery_method.in?(INJECTION_DELIVERY_METHODS)
+      "injection"
+    else
+      "nasal_spray"
+    end
+  end
+
+  def readable_attribute_names
+    writable_attribute_names - %w[vaccine_id]
+  end
+
   def writable_attribute_names
-    super + %w[vaccine_id]
+    %w[
+      batch_id
+      delivery_method
+      delivery_site
+      dose_sequence
+      full_dose
+      identity_check
+      location_name
+      notes
+      outcome
+      patient_id
+      performed_at
+      performed_by_family_name
+      performed_by_given_name
+      performed_by_user_id
+      performed_ods_code
+      programme_id
+      session_id
+      vaccine_id
+    ]
   end
 
   def reset_unused_fields
@@ -202,6 +285,11 @@ class DraftVaccinationRecord
       self.delivery_method = nil
       self.delivery_site = nil
       self.full_dose = nil
+    end
+
+    if identity_check_confirmed_by_patient
+      self.identity_check_confirmed_by_other_name = ""
+      self.identity_check_confirmed_by_other_relationship = ""
     end
   end
 
@@ -222,7 +310,7 @@ class DraftVaccinationRecord
       if delivery_site != "nose"
         errors.add(:delivery_site, :nasal_spray_must_be_nose)
       end
-    when "intramuscular", "subcutaneous"
+    when *INJECTION_DELIVERY_METHODS
       if delivery_site == "nose"
         errors.add(:delivery_site, :injection_cannot_be_nose)
       end

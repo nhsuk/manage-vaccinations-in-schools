@@ -53,6 +53,10 @@
 describe VaccinationRecord do
   subject(:vaccination_record) { build(:vaccination_record) }
 
+  describe "associations" do
+    it { should have_one(:identity_check).autosave(true).dependent(:destroy) }
+  end
+
   describe "validations" do
     context "when administered" do
       it { should allow_values(true, false).for(:full_dose) }
@@ -179,6 +183,86 @@ describe VaccinationRecord do
       end
 
       it { should be_nil }
+    end
+  end
+
+  describe "delivery_method_snomed_code" do
+    subject(:delivery_method_snomed_code) do
+      vaccination_record.delivery_method_snomed_code
+    end
+
+    context "when delivery_method is intramuscular" do
+      let(:vaccination_record) do
+        build(:vaccination_record, delivery_method: :intramuscular)
+      end
+
+      it { should eq "78421000" }
+    end
+
+    context "when delivery_method is subcutaneous" do
+      let(:vaccination_record) do
+        build(:vaccination_record, delivery_method: :subcutaneous)
+      end
+
+      it { should eq "34206005" }
+    end
+
+    context "when delivery_method is nasal spray" do
+      let(:vaccination_record) do
+        build(:vaccination_record, delivery_method: :nasal_spray)
+      end
+
+      it { should eq "46713006" }
+    end
+
+    context "when delivery_method is not set" do
+      let(:vaccination_record) do
+        build(:vaccination_record, delivery_method: nil)
+      end
+
+      it "raises an error" do
+        expect { delivery_method_snomed_code }.to raise_error(StandardError)
+      end
+    end
+  end
+
+  describe "delivery_method_snomed_term" do
+    subject(:delivery_method_snomed_term) do
+      vaccination_record.delivery_method_snomed_term
+    end
+
+    context "when delivery_method is intramuscular" do
+      let(:vaccination_record) do
+        build(:vaccination_record, delivery_method: :intramuscular)
+      end
+
+      it { should eq "Intramuscular" }
+    end
+
+    context "when delivery_method is subcutaneous" do
+      let(:vaccination_record) do
+        build(:vaccination_record, delivery_method: :subcutaneous)
+      end
+
+      it { should eq "Subcutaneous" }
+    end
+
+    context "when delivery_method is nasal spray" do
+      let(:vaccination_record) do
+        build(:vaccination_record, delivery_method: :nasal_spray)
+      end
+
+      it { should eq "Nasal" }
+    end
+
+    context "when delivery_method is not set" do
+      let(:vaccination_record) do
+        build(:vaccination_record, delivery_method: nil)
+      end
+
+      it "raises an error" do
+        expect { delivery_method_snomed_term }.to raise_error(StandardError)
+      end
     end
   end
 end

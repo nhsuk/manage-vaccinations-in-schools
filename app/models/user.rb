@@ -67,6 +67,8 @@ class User < ApplicationRecord
 
   enum :fallback_role, { nurse: 0, admin: 1, superuser: 2 }, prefix: true
 
+  delegate :fhir_practitioner, to: :fhir_mapper
+
   def self.find_or_create_from_cis2_oidc(userinfo)
     user =
       User.find_or_initialize_by(
@@ -127,4 +129,8 @@ class User < ApplicationRecord
 
     is_superuser? ? "#{role} (superuser)" : role
   end
+
+  private
+
+  def fhir_mapper = @fhir_mapper ||= FHIRMapper::User.new(self)
 end

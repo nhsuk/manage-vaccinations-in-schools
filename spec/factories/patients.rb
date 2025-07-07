@@ -296,6 +296,34 @@ FactoryBot.define do
       end
     end
 
+    trait :consent_given_injection_only_triage_not_needed do
+      triage_not_required
+
+      consents do
+        programmes.map do |programme|
+          association(
+            :consent,
+            :given_injection,
+            :from_mum,
+            :health_question_notes,
+            patient: instance,
+            organisation:,
+            programme:
+          )
+        end
+      end
+      consent_statuses do
+        programmes.map do |programme|
+          association(
+            :patient_consent_status,
+            :given_injection_only,
+            patient: instance,
+            programme:
+          )
+        end
+      end
+    end
+
     trait :consent_given_nasal_or_injection_triage_not_needed do
       triage_not_required
 

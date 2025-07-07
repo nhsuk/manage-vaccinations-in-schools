@@ -114,9 +114,11 @@ describe "HPV vaccination" do
   end
 
   def and_i_record_that_the_patient_has_been_vaccinated(where)
-    choose "Yes"
-    choose where
-    click_button "Continue"
+    within all("section")[1] do
+      choose "Yes"
+      choose where
+      click_button "Continue"
+    end
   end
 
   def and_i_see_only_not_expired_batches

@@ -13,6 +13,23 @@
         Pre-screening checks
       </h3>
 
+      <%= f.govuk_radio_buttons_fieldset :identity_check_confirmed_by_patient,
+                                         legend: { text: "Has #{patient.given_name} confirmed their identity?", size: nil } do %>
+
+        <%= f.govuk_radio_button :identity_check_confirmed_by_patient, true, label: { text: "Yes" }, checked: true, link_errors: true %>
+
+        <%= f.govuk_radio_button :identity_check_confirmed_by_patient, false,
+                                 label: { text: "No, it was confirmed by somebody else" } do %>
+
+          <%= f.govuk_text_field :identity_check_confirmed_by_other_name,
+                                 label: { text: "What is the person’s name?" } %>
+
+          <%= f.govuk_text_field :identity_check_confirmed_by_other_relationship,
+                                 label: { text: "What is their relationship to the child?" },
+                                 hint: { text: "For example, parent, teacher or teaching assistant" } %>
+        <% end %>
+      <% end %>
+
       <p><%= patient.given_name %> has confirmed that they:</p>
 
       <ul class="nhsuk-list nhsuk-list--bullet">

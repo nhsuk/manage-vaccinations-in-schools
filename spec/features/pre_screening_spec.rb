@@ -98,9 +98,11 @@ describe "Pre-screening" do
   end
 
   def and_i_record_vaccination_without_pre_screening_checks
-    choose "Yes"
-    choose "Left arm (upper position)"
-    click_button "Continue"
+    within all("section")[1] do
+      choose "Yes"
+      choose "Left arm (upper position)"
+      click_button "Continue"
+    end
   end
 
   def then_i_see_an_error_message
