@@ -187,10 +187,7 @@ Rails.application.routes.draw do
       get "destroy", action: :confirm_destroy, on: :member, as: "destroy"
 
       collection do
-        post "export-dps"
-        constraints -> { Flipper.enabled?(:dev_tools) } do
-          post "reset-dps-export"
-        end
+        # DPS export routes removed
       end
     end
 
