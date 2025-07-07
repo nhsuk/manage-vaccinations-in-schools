@@ -3,7 +3,8 @@
 set -euo pipefail
 
 usage() {
-  echo "Usage: $0 [plan|apply|destroy] [--plan-file PLAN_FILE]"
+  echo "Usage: $0 <environment> [plan|apply|destroy] [--plan-file PLAN_FILE]"
+  echo "  environment               Environment to deploy to (development|production)"
   echo "  plan                      Run terraform plan for Grafana configuration"
   echo "  apply                     Run terraform apply for Grafana configuration"
   echo "  apply --plan-file FILE    Apply using a specific plan file"
@@ -11,7 +12,17 @@ usage() {
   echo "  -h, --help                Show this help message"
 }
 
-if [[ $# -lt 1 ]]; then
+if [[ $# -lt 2 ]]; then
+  usage
+  exit 1
+fi
+
+ENVIRONMENT="$1"
+shift
+
+# Validate environment parameter
+if [[ "$ENVIRONMENT" != "development" && "$ENVIRONMENT" != "production" ]]; then
+  echo "Error: Environment must be 'development' or 'production'"
   usage
   exit 1
 fi
@@ -68,11 +79,11 @@ fi
 
 
 if [[ -z "$GRAFANA_ENDPOINT" ]] || [[ -z "$SERVICE_ACCOUNT_ID" ]]; then
-  echo "Terraform variables are not set. Please run 'terraform -chdir=./aws apply -var-file=env/<account>-backend.hcl' first."
+  echo "Terraform variables are not set. Please run 'terraform -chdir=./aws apply -var-file=env/${ENVIRONMENT}-backend.hcl' first."
   exit 1
 fi
 
-terraform -chdir="./grafana" init -backend-config="env/development-backend.hcl" -reconfigure
+terraform -chdir="./grafana" init -backend-config="env/${ENVIRONMENT}-backend.hcl" -reconfigure
 
 case "$ACTION" in
   plan)
