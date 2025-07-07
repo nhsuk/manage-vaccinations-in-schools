@@ -380,7 +380,7 @@ class Patient < ApplicationRecord
         self.date_of_death_recorded_at = Time.current
       end
 
-      # If we've got a response from DPS we know the patient is valid,
+      # If we've got a response from PDS we know the patient is valid,
       # otherwise PDS will return a 404 status.
       self.invalidated_at = nil if invalidated?
 

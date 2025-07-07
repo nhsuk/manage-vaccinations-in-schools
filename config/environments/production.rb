@@ -98,10 +98,5 @@ Rails.application.configure do
   # config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
 
   config.good_job.enable_cron = true
-  config.good_job.cron =
-    CRON_JOBS.except(
-      :mesh_dps_export,
-      :mesh_track_dps_exports,
-      :mesh_validate_mailbox
-    )
+  config.good_job.cron = CRON_JOBS
 end

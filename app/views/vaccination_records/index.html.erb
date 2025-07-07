@@ -18,8 +18,3 @@
 
 <%= govuk_pagination(pagy: @pagy) %>
 
-<% content_for :after_main do %>
-  <%= render(AppDevToolsComponent.new) do %>
-    <!-- DPS export buttons removed -->
-  <% end %>
-<% end %>

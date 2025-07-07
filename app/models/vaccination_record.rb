@@ -87,7 +87,6 @@ class VaccinationRecord < ApplicationRecord
   belongs_to :performed_by_user, class_name: "User", optional: true
   belongs_to :programme
 
-  # has_and_belongs_to_many :dps_exports # REMOVED - MESH integration
   has_and_belongs_to_many :immunisation_imports
 
   belongs_to :patient
@@ -99,7 +98,6 @@ class VaccinationRecord < ApplicationRecord
   has_one :team, through: :session
 
   scope :recorded_in_service, -> { where.not(session_id: nil) }
-  # scope :unexported, -> { where.missing(:dps_exports) } # REMOVED - MESH integration
 
   scope :with_pending_changes,
         -> do

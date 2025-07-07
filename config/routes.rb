@@ -185,10 +185,6 @@ Rails.application.routes.draw do
               path: "vaccination-records",
               only: %i[index show update destroy] do
       get "destroy", action: :confirm_destroy, on: :member, as: "destroy"
-
-      collection do
-        # DPS export routes removed
-      end
     end
 
     resources :vaccination_reports,

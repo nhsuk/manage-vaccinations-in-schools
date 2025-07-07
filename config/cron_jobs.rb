@@ -12,7 +12,6 @@ CRON_JOBS = {
     description:
       "Invalidate all self-consents and associated triage for the previous day"
   },
-  # MESH jobs removed as part of MESH integration removal
   remove_import_csv: {
     cron: "every day at 1am",
     class: "RemoveImportCSVJob",

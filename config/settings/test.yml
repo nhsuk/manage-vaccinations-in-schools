@@ -11,8 +11,6 @@ govuk_notify:
   enabled: false
   mode: test
 
-# MESH configuration removed as part of MESH integration removal
-
 nhs_api:
   base_url: "https://sandbox.api.service.nhs.uk"
   disable_authentication: true

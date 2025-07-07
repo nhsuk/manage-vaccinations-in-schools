@@ -12,8 +12,6 @@ govuk_notify:
   mode: test
   callback_bearer_token: dev-bearer-token
 
-# MESH configuration removed as part of MESH integration removal
-
 nhs_api:
   base_url: "https://sandbox.api.service.nhs.uk"
   disable_authentication: true
