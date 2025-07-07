@@ -98,6 +98,7 @@ module AuthenticationConcern
     def authenticate_by_token!
       possible_tokens = []
       possible_tokens << params[:auth] if Flipper.enabled?(:auth_token_by_param)
+      
       if Flipper.enabled?(:auth_token_by_header)
         possible_tokens << request.headers["Authorization"]
       end
