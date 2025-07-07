@@ -23,8 +23,8 @@ concurrency:
 
 env:
   aws_role: ${{ inputs.environment == 'production'
-    && 'arn:aws:iam::820242920762:role/GithubDeployMavisAndInfrastructure'
-    || 'arn:aws:iam::393416225559:role/GithubDeployMavisAndInfrastructure' }}
+    && 'arn:aws:iam::820242920762:role/GithubDeployMonitoring'
+    || 'arn:aws:iam::393416225559:role/GithubDeployMonitoring' }}
   aws_account_id: ${{ inputs.environment == 'production'
     && '820242920762' || '393416225559' }}
   git_ref_to_deploy: ${{ inputs.git_ref_to_deploy || github.ref_name }}
