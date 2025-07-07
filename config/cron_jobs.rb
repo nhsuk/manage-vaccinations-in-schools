@@ -12,21 +12,7 @@ CRON_JOBS = {
     description:
       "Invalidate all self-consents and associated triage for the previous day"
   },
-  mesh_dps_export: {
-    cron: "every day at 2am",
-    class: "MESHDPSExportJob",
-    description: "Export DPS data via MESH"
-  },
-  mesh_track_dps_exports: {
-    cron: "every day at 3am",
-    class: "MESHTrackDPSExportsJob",
-    description: "Track the status of DPS exports"
-  },
-  mesh_validate_mailbox: {
-    cron: "every day at 1am",
-    class: "MESHValidateMailboxJob",
-    description: "Validate MESH mailbox"
-  },
+  # MESH jobs removed as part of MESH integration removal
   remove_import_csv: {
     cron: "every day at 1am",
     class: "RemoveImportCSVJob",
