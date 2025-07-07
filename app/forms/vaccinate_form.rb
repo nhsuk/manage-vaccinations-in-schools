@@ -75,10 +75,6 @@ class VaccinateForm
     draft_vaccination_record.save # rubocop:disable Rails/SaveBang
   end
 
-  def ask_not_taking_medication? = programme.doubles?
-
-  def ask_not_pregnant? = programme.td_ipv?
-
   private
 
   delegate :organisation, to: :patient_session

@@ -34,11 +34,14 @@
 
       <ul class="nhsuk-list nhsuk-list--bullet">
         <li>is not acutely unwell</li>
-        <% if vaccinate_form.ask_not_pregnant? %>
+        <% if ask_not_pregnant? %>
           <li>is not pregnant</li>
         <% end %>
-        <% if vaccinate_form.ask_not_taking_medication? %>
+        <% if ask_not_taking_medication? %>
           <li>is not taking any medication which prevents vaccination</li>
+        <% end %>
+        <% if ask_asthma_flare_up? %>
+          <li>if they have asthma, has not had a flare-up of symptoms in the past 72 hours, including wheezing or needing to use a reliever inhaler more than usual</li>
         <% end %>
         <li>has no allergies which would prevent vaccination</li>
         <li>has not already had this vaccination</li>
