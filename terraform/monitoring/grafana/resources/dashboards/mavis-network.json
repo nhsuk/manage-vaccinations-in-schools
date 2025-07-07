@@ -89,113 +89,6 @@
                 "value": 80
               }
             ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 1
-      },
-      "id": 2,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "cloudwatch",
-            "uid": "feqpmdec4ye4gb"
-          },
-          "dimensions": {
-            "LoadBalancer": "$loadbalancer"
-          },
-          "expression": "",
-          "id": "",
-          "label": "",
-          "logGroups": [],
-          "matchExact": true,
-          "metricEditorMode": 0,
-          "metricName": "RequestCount",
-          "metricQueryType": 0,
-          "namespace": "AWS/ApplicationELB",
-          "period": "",
-          "queryMode": "Metrics",
-          "refId": "A",
-          "region": "default",
-          "sqlExpression": "",
-          "statistic": "Average"
-        }
-      ],
-      "title": "Request Count",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "cloudwatch",
-        "uid": "feqpmdec4ye4gb"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
           },
           "unit": "s"
         },
@@ -203,8 +96,8 @@
       },
       "gridPos": {
         "h": 8,
-        "w": 12,
-        "x": 12,
+        "w": 24,
+        "x": 0,
         "y": 1
       },
       "id": 1,
@@ -352,7 +245,7 @@
           "refId": "A",
           "region": "default",
           "sqlExpression": "",
-          "statistic": "Sum"
+          "statistic": "SampleCount"
         }
       ],
       "title": "Request Count per target",
@@ -833,6 +726,126 @@
       "fieldConfig": {
         "defaults": {
           "color": {
+            "fixedColor": "blue",
+            "mode": "fixed",
+            "seriesBy": "min"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "line"
+            }
+          },
+          "fieldMinMax": false,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "#EAB839",
+                "value": 0.1
+              },
+              {
+                "color": "dark-red",
+                "value": 0.2
+              }
+            ]
+          },
+          "unit": "percentunit"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 26
+      },
+      "id": 12,
+      "options": {
+        "legend": {
+          "calcs": ["max"],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "cloudwatch",
+            "uid": "feqpmdec4ye4gb"
+          },
+          "dimensions": {},
+          "expression": "fields @timestamp, action\n| filter ispresent(action)\n| stats sum(action = \"REJECT\")/count() as rejection_ratio by bin(1m)",
+          "hide": false,
+          "id": "",
+          "label": "",
+          "logGroups": [
+            {
+              "arn": "$log_group",
+              "name": "$log_group"
+            }
+          ],
+          "matchExact": true,
+          "metricEditorMode": 0,
+          "metricName": "",
+          "metricQueryType": 0,
+          "namespace": "",
+          "period": "",
+          "queryMode": "Logs",
+          "refId": "A",
+          "region": "default",
+          "sqlExpression": "",
+          "statistic": "Average",
+          "statsGroups": ["bin(1m)"]
+        }
+      ],
+      "title": "Connection rejection ratio",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "cloudwatch",
+        "uid": "feqpmdec4ye4gb"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
             "mode": "palette-classic"
           },
           "custom": {
@@ -887,13 +900,13 @@
       "gridPos": {
         "h": 8,
         "w": 12,
-        "x": 0,
+        "x": 12,
         "y": 26
       },
-      "id": 4,
+      "id": 11,
       "options": {
         "legend": {
-          "calcs": [],
+          "calcs": ["max"],
           "displayMode": "list",
           "placement": "bottom",
           "showLegend": true
@@ -910,7 +923,7 @@
             "uid": "feqpmdec4ye4gb"
           },
           "dimensions": {},
-          "expression": "fields @timestamp, action\n| filter action = \"REJECT\"\n| stats count() as rejected_connections by bin(1m)",
+          "expression": "fields @timestamp, action\n| stats count() as connections by bin(1m)",
           "id": "",
           "label": "",
           "logGroups": [
@@ -933,120 +946,11 @@
           "statsGroups": ["bin(1m)"]
         }
       ],
-      "title": "Rejected connections per minute",
+      "title": "Connections per minute",
       "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "cloudwatch",
-        "uid": "feqpmdec4ye4gb"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "fillOpacity": 80,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineWidth": 1,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 26
-      },
-      "id": 7,
-      "options": {
-        "barRadius": 0,
-        "barWidth": 0.97,
-        "fullHighlight": false,
-        "groupWidth": 0.7,
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "orientation": "auto",
-        "showValue": "auto",
-        "stacking": "none",
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        },
-        "xTickLabelRotation": -90,
-        "xTickLabelSpacing": 0
-      },
-      "pluginVersion": "10.4.1",
-      "targets": [
-        {
-          "datasource": {
-            "type": "cloudwatch",
-            "uid": "feqpmdec4ye4gb"
-          },
-          "dimensions": {},
-          "expression": "fields srcAddr\n| stats count() as request_count by srcAddr\n| sort request_count desc\n| limit 20",
-          "id": "",
-          "label": "",
-          "logGroups": [
-            {
-              "arn": "$log_group",
-              "name": "$log_group"
-            }
-          ],
-          "matchExact": true,
-          "metricEditorMode": 0,
-          "metricName": "",
-          "metricQueryType": 0,
-          "namespace": "",
-          "period": "",
-          "queryMode": "Logs",
-          "refId": "A",
-          "region": "default",
-          "sqlExpression": "",
-          "statistic": "Average",
-          "statsGroups": ["srcAddr"]
-        }
-      ],
-      "title": "Top IP source adresses",
-      "type": "barchart"
     }
   ],
+  "refresh": "",
   "schemaVersion": 39,
   "tags": [],
   "templating": {
@@ -1179,6 +1083,6 @@
   "timezone": "browser",
   "title": "Networking",
   "uid": "aeqx4drkqj9c0e",
-  "version": 3,
+  "version": 9,
   "weekStart": ""
 }
