@@ -205,7 +205,7 @@ class AppActivityLogComponent < ViewComponent::Base
     patient_sessions.map do |patient_session|
       [
         {
-          title: "Invited to the session at #{patient_session.location.name}",
+          title: "Added to the session at #{patient_session.location.name}",
           at: patient_session.created_at,
           programmes: programmes_for(patient_session)
         }
