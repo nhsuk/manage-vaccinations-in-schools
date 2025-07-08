@@ -47,6 +47,7 @@ describe "Flu vaccination" do
     when_i_change_the_vaccine_method_to_injection
     and_i_pick_a_batch_for_injection
     then_i_see_the_check_and_confirm_page_for_injection
+    and_i_am_warned_that_the_vaccine_method_does_not_match_the_consent_and_triage
   end
 
   def given_i_am_signed_in_with_flu_programme
@@ -183,6 +184,14 @@ describe "Flu vaccination" do
     expect(page).not_to have_checked_field
     choose @injection_batch.name
     click_button "Continue"
+  end
+
+  def and_i_am_warned_that_the_vaccine_method_does_not_match_the_consent_and_triage
+    expect(page).to have_content("Incorrect vaccine given")
+    expect(page).to have_content(
+      "The vaccine given does not match that determined by the child’s " \
+        "consent or triage outcome"
+    )
   end
 
   def and_the_vaccination_record_is_synced_to_nhs
