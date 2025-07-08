@@ -17,7 +17,7 @@ GOVUK_NOTIFY_EMAIL_TEMPLATES = {
     "6410145f-dac1-46ba-82f3-a49cad0f66a6",
   session_clinic_initial_invitation: "fc99ac81-9eeb-4df8-9aa0-04f0eb48e37f",
   session_clinic_subsequent_invitation: "eee59c1b-3af4-4ccd-8653-940887066390",
-  session_school_reminder: "79e131b2-7816-46d0-9c74-ae14956dd77d",
+  session_school_reminder: "8b8a9566-bb03-4b3c-8abc-5bd5a4b8797d",
   triage_vaccination_at_clinic: "9faef718-bd76-4c30-93ea-fbe8584388a6",
   triage_vaccination_will_happen: "fa3c8dd5-4688-4b93-960a-1d422c4e5597",
   triage_vaccination_wont_happen: "d1faf47e-ccc3-4481-975b-1ec34211a21f",
