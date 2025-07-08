@@ -1,9 +1,11 @@
 # frozen_string_literal: true
 
-class RemoveDpsExports < ActiveRecord::Migration[7.1]
+class RemoveDPSExportTables < ActiveRecord::Migration[8.0]
   def up
     # Drop the join table first (due to foreign key constraints)
-    drop_table :dps_exports_vaccination_records if table_exists?(:dps_exports_vaccination_records)
+    if table_exists?(:dps_exports_vaccination_records)
+      drop_table :dps_exports_vaccination_records
+    end
 
     # Drop the main dps_exports table
     drop_table :dps_exports if table_exists?(:dps_exports)
