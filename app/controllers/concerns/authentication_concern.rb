@@ -107,6 +107,22 @@ module AuthenticationConcern
       render json: "Forbidden", status: :forbidden and return unless token
     end
 
+    def jwt_if_given
+      params[:jwt] || request.headers['Authorization'].gsub(/Bearer\s+([:alnum:]*)/, '\1')
+    end
+
+    def authenticate_user_by_jwt!
+      jwt_info = decode_jwt( jwt_if_given )
+      if jwt_info
+        data = jwt_info.first['data']
+        @current_user = User.find(data['user']['id'])
+        session['user'] = data['user']
+        session['cis2_info'] = data['cis2_info']
+
+        authenticate_user!
+      end
+    end
+
     def reporting_app_redirect_url
       session[:redirect_after_login]
     end
@@ -129,7 +145,7 @@ module AuthenticationConcern
         reporting_app_redirect_url_with_token_for(current_user),
         stored_location_for(scope),
         dashboard_path
-      ].compact.find { is_valid_redirect?(it) }
+      ].compact.find { is_valid_redirect?(it) && !(it == request.fullpath) }
     end
 
     def redirect_after_choosing_org
@@ -140,6 +156,14 @@ module AuthenticationConcern
 
     def user_signed_in?
       super && (Settings.cis2.enabled ? cis2_session? : true)
+    end
+
+    def decode_jwt(jwt)
+      if jwt
+        JWT.decode(jwt, Settings.mavis_reporting_app.secret, true, { algorithm: 'HS512' })
+      else
+        nil
+      end
     end
 
     def set_user_cis2_info
