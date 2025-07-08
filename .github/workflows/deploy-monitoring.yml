@@ -121,7 +121,7 @@ jobs:
     name: Terraform apply (Grafana)
     runs-on: ubuntu-latest
     needs: [plan-aws, apply-aws]
-    if: always() && needs.plan-aws.result == 'success'
+    if: always() && needs.plan-aws-aws.result == 'success' && (needs.apply-aws.result == 'success' || needs.apply-aws.result == 'skipped')
     permissions:
       id-token: write
     defaults:
