@@ -16,22 +16,11 @@ resource "aws_grafana_workspace" "this" {
   data_sources = ["CLOUDWATCH"]
 }
 
-resource "aws_grafana_role_association" "grafana_admin" {
+resource "aws_grafana_role_association" "role" {
+  for_each     = local.group_ids
   workspace_id = aws_grafana_workspace.this.id
-  role         = "ADMIN"
-  group_ids    = [local.group_ids["AWS-Mavis-Admins"]]
-}
-
-resource "aws_grafana_role_association" "grafana_editor" {
-  workspace_id = aws_grafana_workspace.this.id
-  role         = "EDITOR"
-  group_ids    = [local.group_ids["AWS-Mavis-Developers"]]
-}
-
-resource "aws_grafana_role_association" "grafana_viewer" {
-  workspace_id = aws_grafana_workspace.this.id
-  role         = "VIEWER"
-  group_ids    = [local.group_ids["AWS-Mavis-ReadOnly"]]
+  role         = each.key
+  group_ids    = values(merge(each.value, lookup(var.sso_group_ids, each.key, {})))
 }
 
 resource "aws_grafana_workspace_service_account" "grafana_provider" {
