@@ -65,7 +65,8 @@ class GovukNotifyPersonalisation
       team_name:,
       team_phone:,
       today_or_date_of_vaccination:,
-      vaccination:
+      vaccination:,
+      vaccine_side_effects:
     }.compact
   end
 
@@ -285,5 +286,21 @@ class GovukNotifyPersonalisation
       programme_name,
       programmes.count == 1 ? "vaccination" : "vaccinations"
     ].join(" ")
+  end
+
+  def vaccine_side_effects
+    side_effects =
+      if vaccination_record
+        vaccination_record.vaccine&.side_effects
+      elsif programmes.present?
+        Vaccine.where(programme: programmes).flat_map(&:side_effects)
+      end
+
+    return if side_effects.nil?
+
+    descriptions =
+      side_effects.map { Vaccine.human_enum_name(:side_effect, it) }.sort.uniq
+
+    descriptions.map { "- #{it}" }.join("\n")
   end
 end
