@@ -19,7 +19,7 @@ module AuthenticationConcern
 
     def authenticate_user!
       if !user_signed_in?
-        if request.path != start_path
+        if request.path != start_path && request.path != new_users_organisations_path
           store_location_for(:user, request.fullpath)
         end
 
