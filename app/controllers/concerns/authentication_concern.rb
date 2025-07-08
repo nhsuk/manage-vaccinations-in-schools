@@ -95,7 +95,7 @@ module AuthenticationConcern
       end
     end
 
-    def authenticate_by_token!
+    def authenticate_app_by_token!
       possible_tokens = []
       possible_tokens << params[:auth] if Flipper.enabled?(:auth_token_by_param)
       
@@ -103,9 +103,8 @@ module AuthenticationConcern
         possible_tokens << request.headers["Authorization"]
       end
 
-      unless possible_tokens.find { it == Settings.mavis_reporting_app.secret }
-        render json: "Forbidden", status: :forbidden and return
-      end
+      token = possible_tokens.find { it == Settings.mavis_reporting_app.secret }
+      render json: "Forbidden", status: :forbidden and return unless token
     end
 
     def reporting_app_redirect_url
