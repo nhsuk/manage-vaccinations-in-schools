@@ -1854,6 +1854,35 @@ describe ImmunisationImportRow do
     it { should eq("Smith") }
   end
 
+  describe "#patient_nhs_number" do
+    subject { immunisation_import_row.patient_nhs_number&.to_s }
+
+    context "with an NHS_NUMBER field" do
+      let(:data) { { "NHS_NUMBER" => "546 142 4058" } }
+
+      it { should eq("546 142 4058") }
+    end
+  end
+
+  describe "#patient_nhs_number_value" do
+    context "when the row is validated" do
+      let(:data) { { "NHS_NUMBER" => "546 ?142 _4058" } }
+
+      it "sanitizes the NHS number before validation" do
+        validator_mock = instance_double(NHSNumberValidator)
+        allow(validator_mock).to receive(:validate_each)
+        allow(NHSNumberValidator).to receive(:new).and_return(validator_mock)
+
+        immunisation_import_row.valid?
+        expect(validator_mock).to have_received(:validate_each).with(
+          immunisation_import_row,
+          immunisation_import_row.patient_nhs_number.header,
+          "5461424058"
+        )
+      end
+    end
+  end
+
   describe "#school_name" do
     subject { immunisation_import_row.school_name&.to_s }
 
