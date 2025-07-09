@@ -1,6 +1,17 @@
 # frozen_string_literal: true
 
-class SendSchoolConsentRequestsJob < SendSchoolConsentNotificationJob
+class SendManualSchoolConsentRemindersJob < SendSchoolConsentRemindersJob
+  attr_writer :current_user
+  def current_user
+    @current_user || nil
+  end
+
+  def perform(session, current_user:)
+    self.current_user = current_user
+
+    super(session)
+  end
+
   def should_send_notification?(patient:, session:, programmes:)
     return false unless patient.send_notifications?
 
@@ -10,16 +21,6 @@ class SendSchoolConsentRequestsJob < SendSchoolConsentNotificationJob
           patient.vaccination_records.any? { it.programme_id == programme.id }
       end
 
-    return false if has_consent_or_vaccinated
-
-    programmes.any? do |programme|
-      patient.consent_notifications.none? do
-        it.request? && it.programmes.include?(programme)
-      end
-    end
-  end
-
-  def notification_type(patient:, programmes:)
-    :request
+    !has_consent_or_vaccinated
   end
 end

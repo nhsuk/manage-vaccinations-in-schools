@@ -54,7 +54,8 @@ describe SendSchoolConsentRequestsJob do
         patient: patient_not_sent_request,
         programmes:,
         session:,
-        type: :request
+        type: :request,
+        current_user: nil
       )
       perform_now
     end
@@ -69,6 +70,7 @@ describe SendSchoolConsentRequestsJob do
           patient: patient_not_sent_request,
           programmes:,
           session:,
+          current_user: nil,
           type: :request
         )
         perform_now
@@ -92,6 +94,7 @@ describe SendSchoolConsentRequestsJob do
             patient: patient_not_sent_request,
             programmes: [hpv_programme],
             session:,
+            current_user: nil,
             type: :request
           )
           perform_now
@@ -108,13 +111,15 @@ describe SendSchoolConsentRequestsJob do
             patient: patient_not_sent_request,
             programmes: [hpv_programme],
             session:,
-            type: :request
+            type: :request,
+            current_user: nil
           )
           expect(ConsentNotification).to receive(:create_and_send!).with(
             patient: patient_not_sent_request,
             programmes: [menacwy_programme, td_ipv_programme],
             session:,
-            type: :request
+            type: :request,
+            current_user: nil
           )
           perform_now
         end

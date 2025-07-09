@@ -62,7 +62,7 @@ describe ConsentNotification do
         expect { create_and_send! }.to change(described_class, :count).by(1)
 
         consent_notification = described_class.last
-        expect(consent_notification).not_to be_reminder
+        expect(consent_notification).not_to be_an_automated_reminder
         expect(consent_notification.programmes).to eq(programmes)
         expect(consent_notification.patient).to eq(patient)
         expect(consent_notification.sent_at).to be_today
@@ -149,7 +149,7 @@ describe ConsentNotification do
         expect { create_and_send! }.to change(described_class, :count).by(1)
 
         consent_notification = described_class.last
-        expect(consent_notification).not_to be_reminder
+        expect(consent_notification).not_to be_an_automated_reminder
         expect(consent_notification.programmes).to eq(programmes)
         expect(consent_notification.patient).to eq(patient)
         expect(consent_notification.sent_at).to be_today
@@ -217,7 +217,7 @@ describe ConsentNotification do
         expect { create_and_send! }.to change(described_class, :count).by(1)
 
         consent_notification = described_class.last
-        expect(consent_notification).to be_reminder
+        expect(consent_notification).to be_an_automated_reminder
         expect(consent_notification.programmes).to eq(programmes)
         expect(consent_notification.patient).to eq(patient)
         expect(consent_notification.sent_at).to be_today
@@ -303,7 +303,7 @@ describe ConsentNotification do
         expect { create_and_send! }.to change(described_class, :count).by(1)
 
         consent_notification = described_class.last
-        expect(consent_notification).to be_reminder
+        expect(consent_notification).to be_an_automated_reminder
         expect(consent_notification.programmes).to eq(programmes)
         expect(consent_notification.patient).to eq(patient)
         expect(consent_notification.sent_at).to be_today
