@@ -201,9 +201,7 @@ class PatientSession < ApplicationRecord
     !session.today? && patient.vaccination_status(programme:).none_yet?
   end
 
-  def programmes
-    session.programmes.select { it.year_groups.include?(patient.year_group) }
-  end
+  def programmes = session.eligible_programmes_for(patient:)
 
   def session_status(programme:)
     session_statuses.find { it.programme_id == programme.id } ||

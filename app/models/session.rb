@@ -164,6 +164,11 @@ class Session < ApplicationRecord
     programmes.flat_map(&:vaccine_methods).uniq.sort
   end
 
+  def eligible_programmes_for(patient: nil, year_group: nil)
+    year_group ||= patient.year_group
+    programmes.select { it.year_groups.include?(year_group) }
+  end
+
   def dates
     session_dates.map(&:value).compact
   end
