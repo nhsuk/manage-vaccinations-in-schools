@@ -36,14 +36,16 @@ module Generate
                 :programme,
                 :urns,
                 :patient_count,
-                :school_year_groups
+                :school_year_groups,
+                :progress_bar
 
     def initialize(
       ods_code: "A9A5A",
       programme: "hpv",
       urns: nil,
       school_year_groups: nil,
-      patient_count: 10
+      patient_count: 10,
+      progress_bar: nil
     )
       @organisation = Organisation.find_by(ods_code:)
       @programme = Programme.find_by(type: programme)
@@ -56,6 +58,7 @@ module Generate
             .pluck(:urn)
       @school_year_groups = school_year_groups
       @patient_count = patient_count
+      @progress_bar = progress_bar
       @nhs_numbers = Set.new
     end
 
@@ -121,6 +124,7 @@ module Generate
             patient.parent_relationships.second&.type,
             patient.school.urn
           ]
+          progress_bar&.increment
         end
       end
       cohort_import_csv_filepath.to_s
