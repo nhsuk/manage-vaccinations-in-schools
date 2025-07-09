@@ -1,43 +1,67 @@
 # frozen_string_literal: true
 
 module NHS::ImmunisationsAPI
-  class PatientNotFound < StandardError
-  end
-
   class << self
     def record_immunisation(vaccination_record)
-      NHS::API.connection.post(
-        "/immunisation-fhir-api/FHIR/R4/Immunization",
-        vaccination_record.fhir_record.to_json,
-        "Content-Type" => "application/fhir+json"
-      )
-    rescue Faraday::Error => e
-      info = extract_error_info(e.response[:body])
-      Rails.logger.error(
-        "Error recording vaccination record (#{vaccination_record.id}):" \
-          " [#{info[:code]}] #{info[:diagnostics]}"
-      )
-      raise e
+      unless Flipper.enabled?(:immunisations_fhir_api_integration)
+        Rails.logger.info(
+          "Not syncing vaccination record to immunisations API as the feature" \
+            " flag is disabled: #{vaccination_record.id}"
+        )
+        return
+      end
+
+      response =
+        NHS::API.connection.post(
+          "/immunisation-fhir-api/FHIR/R4/Immunization",
+          vaccination_record.fhir_record.to_json,
+          "Content-Type" => "application/fhir+json"
+        )
+
+      if response.status == 201
+        vaccination_record.update!(
+          nhs_immunisations_api_id:
+            extract_nhs_id(response.headers.fetch("location")),
+          nhs_immunisations_api_synced_at: Time.current,
+          # We would normally retrieve this from the API response, but the NHS
+          # Immunisations API does not return this to us, yet.
+          nhs_immunisations_api_etag: 1
+        )
+      else
+        raise "Error syncing vaccination record #{vaccination_record.id} to" \
+                " Immunisations API: unexpected response status" \
+                " #{response.status}"
+      end
+    rescue Faraday::ClientError => e
+      if (diagnostics = extract_error_diagnostics(e&.response)).present?
+        raise "Error syncing vaccination record #{vaccination_record.id} to" \
+                " Immunisations API: #{diagnostics}"
+      else
+        raise
+      end
     end
 
-    def extract_error_info(response_body)
-      return { code: nil, diagnostics: "No response body" } unless response_body
+    private
 
-      response = JSON.parse(response_body, symbolize_names: true)
+    def extract_error_diagnostics(response)
+      return nil if response.nil? || response[:body].blank?
 
-      if response.empty?
-        { code: nil, diagnostics: "No response body" }
-      elsif response[:issue].blank?
-        { code: nil, diagnostics: "No issues in response" }
-      elsif response[:issue].first[:severity] != "error"
-        { code: nil, diagnostics: "Issue is not an error" }
+      begin
+        JSON.parse(response[:body], symbolize_names: true).dig(
+          :issue,
+          0,
+          :diagnostics
+        )
+      rescue JSON::ParserError
+        nil
+      end
+    end
+
+    def extract_nhs_id(location)
+      if (match = location.match(%r{Immunization/([a-f0-9-]+)}))
+        match[1]
       else
-        diagnostics = response[:issue].first[:diagnostics]
-        if diagnostics.match?(/NHS Number: \d{10} is invalid.*/)
-          diagnostics.replace("NHS Number is invalid or it doesn't exist")
-        end
-
-        { code: response[:issue].first[:code], diagnostics: diagnostics }
+        raise UnrecognisedLocation, location
       end
     end
   end
