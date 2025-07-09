@@ -14,7 +14,8 @@ module MavisCLI
              aliases: ["-p"],
              type: :integer,
              default: 50,
-             desc: "Percentage of patients to create vaccination records for (0-100)"
+             desc:
+               "Percentage of patients to create vaccination records for (0-100)"
 
       def call(organisation:, vaccination_percentage: 50, **)
         MavisCLI.load_rails
@@ -22,13 +23,16 @@ module MavisCLI
         org = Organisation.find_by(ods_code: organisation)
         unless org
           puts "Error: Organisation with ODS code '#{organisation}' not found"
-          exit 1
+          return 1
         end
 
         # Ensure vaccination_percentage is within valid range
         vaccination_percentage = [[0, vaccination_percentage.to_i].max, 100].min
 
-        FhirImmsPatientCreator.new(org, vaccination_percentage: vaccination_percentage).call
+        FhirImmsPatientCreator.new(
+          org,
+          vaccination_percentage: vaccination_percentage
+        ).call
       end
     end
   end
@@ -44,11 +48,15 @@ class FhirImmsPatientCreator
   # Default percentage of vaccination records to create (50%)
   DEFAULT_VACCINATION_PERCENTAGE = 50
 
-  def initialize(organisation, vaccination_percentage: DEFAULT_VACCINATION_PERCENTAGE)
+  def initialize(
+    organisation,
+    vaccination_percentage: DEFAULT_VACCINATION_PERCENTAGE
+  )
     @organisation = organisation
     @programmes = Programme.all.to_a
     @created_patients = []
     @created_vaccination_records = []
+    @created_consents = []
     @errors = []
     @skipped_patients = []
     @vaccination_percentage = vaccination_percentage
@@ -103,7 +111,7 @@ class FhirImmsPatientCreator
     content = content.gsub(/\A\uFEFF/, "") # Remove BOM
 
     CSV.parse(content, headers: true, encoding: "UTF-8")
-  rescue => e
+  rescue StandardError => e
     puts "Error reading CSV file: #{e.message}"
     raise
   end
@@ -111,9 +119,9 @@ class FhirImmsPatientCreator
   def create_patient_from_row(row)
     # Parse the CSV row data
     nhs_number = row["CHILD_NHS_NUMBER"]&.strip
-    given_name = row["CHILD_FIRST_NAME"]&.strip
-    family_name = row["CHILD_LAST_NAME"]&.strip
-    preferred_given_name = row["CHILD_PREFERRED_FIRST_NAME"]&.strip
+    given_name = row["CHILD_FIRST_NAME"]&.strip&.titleize
+    family_name = row["CHILD_LAST_NAME"]&.strip&.titleize
+    preferred_given_name = row["CHILD_PREFERRED_FIRST_NAME"]&.strip&.titleize
     date_of_birth = parse_date(row["CHILD_DATE_OF_BIRTH"])
     gender = parse_gender(row["CHILD_GENDER"])
 
@@ -169,7 +177,7 @@ class FhirImmsPatientCreator
       )
 
     @created_patients << patient
-  rescue => e
+  rescue StandardError => e
     @errors << "Error creating patient from row #{row.to_h}: #{e.message}"
   end
 
@@ -210,7 +218,7 @@ class FhirImmsPatientCreator
 
     total_records = @created_patients.size * @programmes.size
     progress_bar =
-      ProgressBar.create(
+      ProgressBar.create!(
         total: total_records,
         format: "%a %b\u{15E7}%i %p%% %t",
         progress_mark: " ",
@@ -226,9 +234,6 @@ class FhirImmsPatientCreator
   end
 
   def create_vaccination_record_for_patient(patient, programme)
-    # Randomly skip creating vaccination records based on the configured percentage
-    return if rand(100) >= @vaccination_percentage
-
     # Check if patient is in the right year group for this programme
     patient_year_group = calculate_year_group(patient.date_of_birth)
     unless programme.year_groups.include?(patient_year_group)
@@ -239,9 +244,21 @@ class FhirImmsPatientCreator
     session = find_or_create_session(programme)
 
     # Create patient session
-    patient_session =
-      PatientSession.find_or_create_by!(patient: patient, session: session)
+    PatientSession.find_or_create_by!(patient: patient, session: session)
 
+    # Randomly decide whether to create a vaccination record or a consent record
+    if rand(100) < @vaccination_percentage
+      # Create vaccination record
+      create_vaccination_record(patient, programme, session)
+    else
+      # Create consent record instead
+      create_consent_record(patient, programme)
+    end
+  rescue StandardError => e
+    @errors << "Error processing patient #{patient.id}, programme #{programme.type}: #{e.message}"
+  end
+
+  def create_vaccination_record(patient, programme, session)
     # Get a vaccine and batch for this programme
     vaccine = programme.vaccines.active.first
     return unless vaccine # Skip if no active vaccine available
@@ -271,8 +288,30 @@ class FhirImmsPatientCreator
       )
 
     @created_vaccination_records << vaccination_record
-  rescue => e
+  rescue StandardError => e
     @errors << "Error creating vaccination record for patient #{patient.id}, programme #{programme.type}: #{e.message}"
+  end
+
+  def create_consent_record(patient, programme)
+    # Create a consent record with 'given' response
+    # Using self_consent route which doesn't require a parent
+    consent =
+      Consent.create!(
+        patient: patient,
+        programme: programme,
+        organisation: @organisation,
+        response: "given",
+        route: "self_consent", # Changed from paper to self_consent to avoid parent requirement
+        submitted_at: Time.current,
+        health_answers: [], # Empty array for health_answers is valid
+        recorded_by: @organisation.users.first,
+        notes: "", # Empty notes is valid
+        vaccine_methods: ["injection"] # Required for 'given' response
+      )
+
+    @created_consents << consent
+  rescue StandardError => e
+    @errors << "Error creating consent record for patient #{patient.id}, programme #{programme.type}: #{e.message}"
   end
 
   def calculate_year_group(date_of_birth)
@@ -322,13 +361,14 @@ class FhirImmsPatientCreator
   end
 
   def print_summary
-    puts "\n" + "=" * 50
+    puts "\n#{"=" * 50}"
     puts "FHIR IMMS PATIENTS GENERATION SUMMARY"
     puts "=" * 50
     puts "Vaccination records creation percentage: #{@vaccination_percentage}%"
     puts "Patients created: #{@created_patients.size}"
     puts "Patients skipped: #{@skipped_patients.size}"
     puts "Vaccination records created: #{@created_vaccination_records.size}"
+    puts "Consent records created: #{@created_consents.size}"
     puts "Errors encountered: #{@errors.size}"
 
     if @skipped_patients.any?
@@ -343,9 +383,10 @@ class FhirImmsPatientCreator
 
     puts "\nBreakdown by programme:"
     @programmes.each do |programme|
-      count =
+      vax_count =
         @created_vaccination_records.count { |vr| vr.programme == programme }
-      puts "  #{programme.name}: #{count} records"
+      consent_count = @created_consents.count { |c| c.programme == programme }
+      puts "  #{programme.name}: #{vax_count} vaccination records, #{consent_count} consent records"
     end
 
     puts "\nFHIR IMMS patients generation completed successfully!"
