@@ -429,7 +429,7 @@ GEM
       ast (~> 2.4.1)
       racc
     pg (1.5.9)
-    phonelib (0.10.9)
+    phonelib (0.10.10)
     pp (0.6.2)
       prettyprint
     prettier_print (1.2.1)
