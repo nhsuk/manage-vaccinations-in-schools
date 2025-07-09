@@ -120,6 +120,8 @@ class DraftVaccinationRecordsController < ApplicationController
 
     send_vaccination_confirmation(@vaccination_record) if should_notify_parents
 
+    EnqueueSyncVaccinationRecordToNHS.call(@vaccination_record)
+
     # In case the user navigates back to try and edit the newly created
     # vaccination record.
     @draft_vaccination_record.update!(editing_id: @vaccination_record.id)
