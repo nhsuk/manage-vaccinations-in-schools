@@ -1,37 +1,10 @@
 # frozen_string_literal: true
 
-class SendSchoolConsentRequestsJob < ApplicationJob
-  queue_as :notifications
-
-  def perform(session)
-    return unless session.school? && session.open_for_consent?
-
-    session
-      .patient_sessions
-      .includes_programmes
-      .includes(patient: %i[consent_notifications consents vaccination_records])
-      .find_each do |patient_session|
-        ProgrammeGrouper
-          .call(patient_session.programmes)
-          .each_value do |programmes|
-            next unless should_send_notification?(patient_session:, programmes:)
-
-            ConsentNotification.create_and_send!(
-              patient: patient_session.patient,
-              programmes:,
-              session:,
-              type: :request
-            )
-          end
-      end
-  end
-
-  def should_send_notification?(patient_session:, programmes:)
-    patient = patient_session.patient
-
+class SendSchoolConsentRequestsJob < SendSchoolConsentNotificationJob
+  def should_send_notification?(patient:, session:, programmes:)
     return false unless patient.send_notifications?
 
-    academic_year = patient_session.academic_year
+    academic_year = session.academic_year
 
     suitable_programmes =
       programmes.select do |programme|
@@ -46,5 +19,9 @@ class SendSchoolConsentRequestsJob < ApplicationJob
         it.request? && it.programmes.include?(programme)
       end
     end
+  end
+
+  def notification_type(patient:, programmes:) # rubocop:disable Lint/UnusedMethodArgument
+    :request
   end
 end
