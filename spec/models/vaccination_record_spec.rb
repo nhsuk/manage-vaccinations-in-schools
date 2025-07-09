@@ -21,6 +21,7 @@
 #  performed_by_family_name        :string
 #  performed_by_given_name         :string
 #  performed_ods_code              :string
+#  protocol                        :integer
 #  uuid                            :uuid             not null
 #  created_at                      :datetime         not null
 #  updated_at                      :datetime         not null
@@ -62,6 +63,8 @@ describe VaccinationRecord do
   end
 
   describe "validations" do
+    it { should validate_inclusion_of(:protocol).in_array(%w[pgd psd]) }
+
     context "when administered" do
       it { should allow_values(true, false).for(:full_dose) }
       it { should_not allow_values(nil).for(:full_dose) }

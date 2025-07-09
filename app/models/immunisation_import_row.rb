@@ -98,6 +98,7 @@ class ImmunisationImportRow
     attributes = {
       dose_sequence: dose_sequence_value,
       full_dose: true,
+      protocol: :pgd,
       location_name:,
       outcome:,
       patient:,
