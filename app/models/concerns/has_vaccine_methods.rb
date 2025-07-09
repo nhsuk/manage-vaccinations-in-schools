@@ -8,7 +8,7 @@ module HasVaccineMethods
 
     array_enum vaccine_methods: { injection: 0, nasal: 1 }
 
-    validates :vaccine_methods, subset: %w[injection nasal]
+    validates :vaccine_methods, subset: vaccine_methods.keys
   end
 
   def vaccine_method_injection? = vaccine_methods.include?("injection")

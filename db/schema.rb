@@ -842,6 +842,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_02_142922) do
     t.text "nivs_name", null: false
     t.boolean "discontinued", default: false, null: false
     t.bigint "programme_id", null: false
+    t.integer "side_effects", default: [], null: false, array: true
     t.index ["manufacturer", "brand"], name: "index_vaccines_on_manufacturer_and_brand", unique: true
     t.index ["nivs_name"], name: "index_vaccines_on_nivs_name", unique: true
     t.index ["programme_id"], name: "index_vaccines_on_programme_id"

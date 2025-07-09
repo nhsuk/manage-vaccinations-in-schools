@@ -231,6 +231,22 @@ en:
           injection: Injection
           nasal: Nasal spray
           nasal_injection: Nasal spray (or injection)
+        side_effects:
+          aching: an aching body
+          dizziness: dizziness
+          drowsy: feeling drowsy
+          feeling_sick: feeling sick
+          headache: a headache
+          high_temperature: a high temperature
+          irritable: feeling irritable
+          loss_of_appetite: loss of appetite
+          pain_in_arms: pain in the arms, hands, fingers
+          raised_temperature: a slightly raised temperature
+          rash: a rash
+          runny_blocked_nose: a runny or blocked nose
+          swelling: swelling or pain where the injection was given
+          tiredness: general tiredness
+          unwell: generally feeling unwell
     errors:
       models:
         class_import:
