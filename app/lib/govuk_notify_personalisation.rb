@@ -30,6 +30,10 @@ class GovukNotifyPersonalisation
         consent&.organisation || vaccination_record&.organisation
     @team = session&.team || consent_form&.team || vaccination_record&.team
     @vaccination_record = vaccination_record
+
+    if @programmes.empty? && @session.present? && @patient.present?
+      @programmes = @session.eligible_programmes_for(patient: @patient)
+    end
   end
 
   def to_h
