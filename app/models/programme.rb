@@ -103,7 +103,7 @@ class Programme < ApplicationRecord
   end
 
   def default_dose_sequence
-    hpv? ? vaccinated_dose_sequence : nil
+    hpv? || flu? ? vaccinated_dose_sequence : nil
   end
 
   def maximum_dose_sequence

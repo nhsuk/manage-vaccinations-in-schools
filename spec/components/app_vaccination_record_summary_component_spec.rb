@@ -151,9 +151,9 @@ describe AppVaccinationRecordSummaryComponent do
       let(:programme) { create(:programme, :flu) }
 
       it do
-        expect(rendered).not_to have_css(
+        expect(rendered).to have_css(
           ".nhsuk-summary-list__row",
-          text: "Dose number"
+          text: "Dose number\nFirst"
         )
       end
     end
