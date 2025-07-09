@@ -12,6 +12,7 @@
 #  dose_sequence                   :integer
 #  full_dose                       :boolean
 #  location_name                   :string
+#  nhs_immunisations_api_etag      :string
 #  nhs_immunisations_api_synced_at :datetime
 #  notes                           :text
 #  outcome                         :integer          not null
