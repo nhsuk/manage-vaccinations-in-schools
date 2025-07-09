@@ -39,6 +39,7 @@ class GovukNotifyPersonalisation
   def to_h
     {
       batch_name:,
+      can_self_consent:,
       catch_up:,
       consent_deadline:,
       consent_link:,
@@ -88,6 +89,11 @@ class GovukNotifyPersonalisation
 
   def batch_name
     vaccination_record&.batch&.name
+  end
+
+  def can_self_consent
+    return nil if patient.nil?
+    patient.year_group >= 7 ? "yes" : "no"
   end
 
   def catch_up
