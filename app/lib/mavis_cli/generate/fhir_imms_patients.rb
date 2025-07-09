@@ -5,19 +5,13 @@ require_relative "../../mavis_cli"
 module MavisCLI
   module Generate
     class FhirImmsPatients < Dry::CLI::Command
-      desc "Generate FHIR IMMS test patients with vaccination records from CSV data"
+      desc "Generate FHIR IMMS test patients from CSV data"
       option :organisation,
              aliases: ["-o"],
              default: "R1L",
              desc: "ODS code of organisation to create patients for"
-      option :vaccination_percentage,
-             aliases: ["-p"],
-             type: :integer,
-             default: 50,
-             desc:
-               "Percentage of patients to create vaccination records for (0-100)"
 
-      def call(organisation:, vaccination_percentage: 50, **)
+      def call(organisation:, **)
         MavisCLI.load_rails
 
         org = Organisation.find_by(ods_code: organisation)
@@ -26,13 +20,7 @@ module MavisCLI
           return 1
         end
 
-        # Ensure vaccination_percentage is within valid range
-        vaccination_percentage = [[0, vaccination_percentage.to_i].max, 100].min
-
-        FhirImmsPatientCreator.new(
-          org,
-          vaccination_percentage: vaccination_percentage
-        ).call
+        FhirImmsPatientCreator.new(org).call
       end
     end
   end
@@ -45,29 +33,19 @@ end
 class FhirImmsPatientCreator
   CSV_FILE_PATH = File.join(__dir__, "../data/fhir_imms_patients.csv")
 
-  # Default percentage of vaccination records to create (50%)
-  DEFAULT_VACCINATION_PERCENTAGE = 50
-
-  def initialize(
-    organisation,
-    vaccination_percentage: DEFAULT_VACCINATION_PERCENTAGE
-  )
+  def initialize(organisation)
     @organisation = organisation
-    @programmes = Programme.all.to_a
     @created_patients = []
-    @created_vaccination_records = []
-    @created_consents = []
     @errors = []
     @skipped_patients = []
-    @vaccination_percentage = vaccination_percentage
+    @sessions_patients_count = Hash.new(0)
     ensure_organisation_has_user
+    @sessions = find_sessions
   end
 
   def call
     puts "Starting FHIR IMMS patient creation from CSV data"
     puts "Organisation: #{@organisation.name} (#{@organisation.ods_code})"
-    puts "Available programmes: #{@programmes.map(&:name).join(", ")}"
-    puts "Vaccination records creation percentage: #{@vaccination_percentage}%"
     puts
 
     csv_data = read_csv_file
@@ -78,8 +56,6 @@ class FhirImmsPatientCreator
       create_patient_from_row(row)
       progress_bar.increment
     end
-
-    create_vaccination_records_for_all_patients
 
     print_summary
   end
@@ -176,6 +152,15 @@ class FhirImmsPatientCreator
         home_educated: nil # Always nil since we have a school
       )
 
+    # Randomly select a session for this patient
+    session = @sessions.sample
+
+    # Associate the patient with the randomly selected session
+    PatientSession.create!(patient: patient, session: session)
+
+    # Track which session this patient was added to
+    @sessions_patients_count[session.id] += 1
+
     @created_patients << patient
   rescue StandardError => e
     @errors << "Error creating patient from row #{row.to_h}: #{e.message}"
@@ -213,163 +198,33 @@ class FhirImmsPatientCreator
     Location.find_by(urn: urn, type: "school")
   end
 
-  def create_vaccination_records_for_all_patients
-    puts "\nCreating vaccination records for #{@created_patients.size} patients..."
+  def find_sessions
+    # Find all existing sessions for the organisation
+    sessions = Session.where(organisation_id: @organisation.id).to_a
 
-    total_records = @created_patients.size * @programmes.size
-    progress_bar =
-      ProgressBar.create!(
-        total: total_records,
-        format: "%a %b\u{15E7}%i %p%% %t",
-        progress_mark: " ",
-        remainder_mark: "\u{FF65}"
-      )
-
-    @created_patients.each do |patient|
-      @programmes.each do |programme|
-        create_vaccination_record_for_patient(patient, programme)
-        progress_bar.increment
-      end
-    end
-  end
-
-  def create_vaccination_record_for_patient(patient, programme)
-    # Check if patient is in the right year group for this programme
-    patient_year_group = calculate_year_group(patient.date_of_birth)
-    unless programme.year_groups.include?(patient_year_group)
-      return # Skip if patient is not in the right year group for this programme
+    if sessions.empty?
+      puts "No existing sessions found for organisation #{@organisation.name}. Please create at least one session first."
+      raise "No existing sessions found"
     end
 
-    # Find or create a session for this programme
-    session = find_or_create_session(programme)
-
-    # Create patient session
-    PatientSession.find_or_create_by!(patient: patient, session: session)
-
-    # Randomly decide whether to create a vaccination record or a consent record
-    if rand(100) < @vaccination_percentage
-      # Create vaccination record
-      create_vaccination_record(patient, programme, session)
-    else
-      # Create consent record instead
-      create_consent_record(patient, programme)
-    end
-  rescue StandardError => e
-    @errors << "Error processing patient #{patient.id}, programme #{programme.type}: #{e.message}"
+    puts "Found #{sessions.size} existing sessions for distribution"
+    sessions
   end
 
-  def create_vaccination_record(patient, programme, session)
-    # Get a vaccine and batch for this programme
-    vaccine = programme.vaccines.active.first
-    return unless vaccine # Skip if no active vaccine available
-
-    batch = find_or_create_batch(vaccine)
-
-    # Create vaccination record
-    session_date = session.dates.first || Date.current
-    vaccination_record =
-      VaccinationRecord.create!(
-        patient: patient,
-        programme: programme,
-        session: session,
-        vaccine: vaccine,
-        batch: batch,
-        outcome: "administered",
-        performed_at: session_date + rand(8..16).hours,
-        performed_by_user: @organisation.users.first,
-        performed_ods_code: @organisation.ods_code,
-        dose_sequence:
-          programme.default_dose_sequence || programme.vaccinated_dose_sequence,
-        delivery_method: "intramuscular",
-        delivery_site: "left_arm_upper_position",
-        full_dose: true,
-        location_name:
-          session.location.generic_clinic? ? "Community Clinic" : nil
-      )
-
-    @created_vaccination_records << vaccination_record
-  rescue StandardError => e
-    @errors << "Error creating vaccination record for patient #{patient.id}, programme #{programme.type}: #{e.message}"
-  end
-
-  def create_consent_record(patient, programme)
-    # Create a consent record with 'given' response
-    # Using self_consent route which doesn't require a parent
-    consent =
-      Consent.create!(
-        patient: patient,
-        programme: programme,
-        organisation: @organisation,
-        response: "given",
-        route: "self_consent", # Changed from paper to self_consent to avoid parent requirement
-        submitted_at: Time.current,
-        health_answers: [], # Empty array for health_answers is valid
-        recorded_by: @organisation.users.first,
-        notes: "", # Empty notes is valid
-        vaccine_methods: ["injection"] # Required for 'given' response
-      )
-
-    @created_consents << consent
-  rescue StandardError => e
-    @errors << "Error creating consent record for patient #{patient.id}, programme #{programme.type}: #{e.message}"
-  end
-
-  def calculate_year_group(date_of_birth)
-    current_academic_year = Date.current.academic_year
-    birth_academic_year = date_of_birth.academic_year
-    current_academic_year - birth_academic_year - 5
-  end
-
-  def find_or_create_session(programme)
-    # Try to find an existing session for this programme
-    existing_session =
-      @organisation
-        .sessions
-        .includes(:session_dates, :location)
-        .joins(:programmes)
-        .where(programmes: { id: programme.id })
-        .first
-
-    return existing_session if existing_session
-
-    # Create a new session
-    session_date = Date.current + rand(1..30).days
-    session =
-      Session.create!(
-        organisation: @organisation,
-        location: @organisation.generic_clinic,
-        programmes: [programme],
-        academic_year: Date.current.academic_year
-      )
-
-    # Create session date
-    session.session_dates.create!(value: session_date)
-
-    session
-  end
-
-  def find_or_create_batch(vaccine)
-    existing_batch = vaccine.batches.where(organisation: @organisation).first
-    return existing_batch if existing_batch
-
-    Batch.create!(
-      name: "BATCH#{rand(1000..9999)}",
-      expiry: Date.current + 1.year,
-      vaccine: vaccine,
-      organisation: @organisation
-    )
-  end
 
   def print_summary
     puts "\n#{"=" * 50}"
     puts "FHIR IMMS PATIENTS GENERATION SUMMARY"
     puts "=" * 50
-    puts "Vaccination records creation percentage: #{@vaccination_percentage}%"
     puts "Patients created: #{@created_patients.size}"
     puts "Patients skipped: #{@skipped_patients.size}"
-    puts "Vaccination records created: #{@created_vaccination_records.size}"
-    puts "Consent records created: #{@created_consents.size}"
     puts "Errors encountered: #{@errors.size}"
+
+    # Display distribution of patients across sessions
+    puts "\nPatients distribution across sessions:"
+    @sessions_patients_count.each do |session_id, count|
+      puts "  - Session #{session_id}: #{count} patients"
+    end
 
     if @skipped_patients.any?
       puts "\nSkipped patients:"
@@ -381,14 +236,6 @@ class FhirImmsPatientCreator
       @errors.each { |error| puts "  - #{error}" }
     end
 
-    puts "\nBreakdown by programme:"
-    @programmes.each do |programme|
-      vax_count =
-        @created_vaccination_records.count { |vr| vr.programme == programme }
-      consent_count = @created_consents.count { |c| c.programme == programme }
-      puts "  #{programme.name}: #{vax_count} vaccination records, #{consent_count} consent records"
-    end
-
-    puts "\nFHIR IMMS patients generation completed successfully!"
+    puts "\nPatients have been created successfully and distributed across sessions!"
   end
 end
