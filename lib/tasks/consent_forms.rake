@@ -30,81 +30,51 @@ namespace :consent_forms do
       exit 1
     end
 
-    patients = session.patient_sessions.all.filter(&:no_consent?).map(&:patient)
+    patient_sessions = session.patient_sessions.includes(patient: [:consent_statuses, :vaccination_statuses])
 
-    puts "Found #{patients.count} patients without consent forms"
+    patients = patient_sessions.map(&:patient)
+
+    puts "Found #{patients.count} patients in the session"
     puts "Generating consent forms..."
 
+    create_consent_forms = lambda do |patients, percentage, session, *traits|
+      patients
+        .sample((patients.count * percentage).ceil)
+        .each do |patient|
+          eligible_programmes = session.programmes.select do |programme|
+            patient.consent_status(programme: programme).no_response? && 
+            !patient.vaccination_status(programme: programme).vaccinated?
+          end
+
+          next if eligible_programmes.empty?
+
+          consent_form =
+            FactoryBot.create(
+              :consent_form,
+              *traits,
+              :recorded,
+              session:,
+              given_name: patient.given_name,
+              family_name: patient.family_name,
+              date_of_birth: patient.date_of_birth,
+              address_postcode: patient.address_postcode,
+              programmes: eligible_programmes
+            )
+          consent_form.match_with_patient!(patient, current_user: nil)
+        end
+    end
+
     # 10% refused
-    patients
-      .sample(patients.count * 0.1)
-      .each do |patient|
-        consent_form =
-          FactoryBot.create(
-            :consent_form,
-            :refused,
-            :recorded,
-            session:,
-            given_name: patient.given_name,
-            family_name: patient.family_name,
-            date_of_birth: patient.date_of_birth,
-            address_postcode: patient.address_postcode
-          )
-        consent_form.match_with_patient!(patient, current_user: nil)
-      end
+    create_consent_forms.call(patients, 0.1, session, :refused)
 
     # 50% given
-    patients
-      .sample(patients.count * 0.5)
-      .each do |patient|
-        consent_form =
-          FactoryBot.create(
-            :consent_form,
-            :recorded,
-            session:,
-            given_name: patient.given_name,
-            family_name: patient.family_name,
-            date_of_birth: patient.date_of_birth,
-            address_postcode: patient.address_postcode
-          )
-        consent_form.match_with_patient!(patient, current_user: nil)
-      end
+    create_consent_forms.call(patients, 0.5, session)
 
     # 20% given with health questions
-    patients
-      .sample(patients.count * 0.2)
-      .each do |patient|
-        consent_form =
-          FactoryBot.create(
-            :consent_form,
-            :with_health_answers_no_branching,
-            :recorded,
-            session:,
-            given_name: patient.given_name,
-            family_name: patient.family_name,
-            date_of_birth: patient.date_of_birth,
-            address_postcode: patient.address_postcode
-          )
-        consent_form.match_with_patient!(patient, current_user: nil)
-      end
+    create_consent_forms.call(patients, 0.2, session, :with_health_answers_no_branching)
 
     # 10% given with health answers branching
-    patients
-      .sample(patients.count * 0.10)
-      .each do |patient|
-        consent_form =
-          FactoryBot.create(
-            :consent_form,
-            :with_health_answers_no_branching,
-            :recorded,
-            session:,
-            given_name: patient.given_name,
-            family_name: patient.family_name,
-            date_of_birth: patient.date_of_birth,
-            address_postcode: patient.address_postcode
-          )
-        consent_form.match_with_patient!(patient, current_user: nil)
-      end
+    create_consent_forms.call(patients, 0.1, session, :with_health_answers_asthma_branching)
 
     puts "Successfully generated consent forms"
   end
