@@ -34,12 +34,12 @@ class PatientSessions::TriagesController < PatientSessions::BaseController
         **triage_form_params
       )
 
-    if @triage_form.save
+    if (triage = @triage_form.save)
       StatusUpdater.call(patient: @patient)
 
       ConsentGrouper
         .call(@patient.reload.consents, programme: @programme)
-        .each { send_triage_confirmation(@patient_session, it) }
+        .each { send_triage_confirmation(@patient_session, it, triage) }
 
       redirect_to redirect_path, flash: { success: "Triage outcome updated" }
     else

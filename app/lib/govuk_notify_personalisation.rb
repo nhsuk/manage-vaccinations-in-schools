@@ -13,6 +13,7 @@ class GovukNotifyPersonalisation
     patient: nil,
     programmes: nil,
     session: nil,
+    triage: nil,
     vaccination_record: nil
   )
     @consent = consent
@@ -25,6 +26,7 @@ class GovukNotifyPersonalisation
     @session =
       session || consent_form&.actual_session ||
         consent_form&.original_session || vaccination_record&.session
+    @triage = triage
     @organisation =
       session&.organisation || consent_form&.organisation ||
         consent&.organisation || vaccination_record&.organisation
@@ -77,6 +79,7 @@ class GovukNotifyPersonalisation
               :programmes,
               :session,
               :team,
+              :triage,
               :organisation,
               :vaccination_record
 

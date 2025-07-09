@@ -10,6 +10,7 @@ class SMSDeliveryJob < NotifyDeliveryJob
     programmes: [],
     sent_by: nil,
     session: nil,
+    triage: nil,
     vaccination_record: nil
   )
     template_id = GOVUK_NOTIFY_SMS_TEMPLATES[template_name.to_sym]
@@ -17,12 +18,13 @@ class SMSDeliveryJob < NotifyDeliveryJob
 
     personalisation =
       GovukNotifyPersonalisation.new(
-        session:,
         consent:,
         consent_form:,
         parent:,
         patient:,
         programmes:,
+        session:,
+        triage:,
         vaccination_record:
       )
 

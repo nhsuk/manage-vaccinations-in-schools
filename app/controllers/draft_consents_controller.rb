@@ -58,7 +58,7 @@ class DraftConsentsController < ApplicationController
     @draft_consent.write_to!(@consent, triage_form: @triage_form)
 
     ActiveRecord::Base.transaction do
-      @triage_form&.save! if @draft_consent.response_given?
+      @triage = @triage_form&.save! if @draft_consent.response_given?
 
       if (parent = @consent.parent)
         parent.save! if parent.changed?
@@ -72,7 +72,7 @@ class DraftConsentsController < ApplicationController
 
     set_patient_session # reload with new statuses
 
-    send_triage_confirmation(@patient_session, @consent)
+    send_triage_confirmation(@patient_session, @consent, @triage)
 
     heading_link_href =
       session_patient_programme_path(@session, @patient, @programme)

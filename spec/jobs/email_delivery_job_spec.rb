@@ -36,6 +36,7 @@ describe EmailDeliveryJob do
         patient:,
         programmes:,
         sent_by:,
+        triage:,
         vaccination_record:
       )
     end
@@ -55,6 +56,7 @@ describe EmailDeliveryJob do
     let(:consent_form) { nil }
     let(:patient) { create(:patient) }
     let(:sent_by) { create(:user) }
+    let(:triage) { create(:triage, programme: programmes.first) }
     let(:vaccination_record) { nil }
 
     it "generates personalisation" do
@@ -65,6 +67,7 @@ describe EmailDeliveryJob do
         parent:,
         patient:,
         programmes:,
+        triage:,
         vaccination_record:
       ).and_call_original
       perform_now

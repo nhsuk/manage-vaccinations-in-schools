@@ -23,11 +23,12 @@ describe TriageMailerConcern do
 
   describe "#send_triage_confirmation" do
     subject(:send_triage_confirmation) do
-      sample.send_triage_confirmation(patient_session, consent)
+      sample.send_triage_confirmation(patient_session, consent, triage)
     end
 
     let(:session) { create(:session, programmes: [programme]) }
     let(:consent) { patient.consents.first }
+    let(:triage) { patient.triages.first }
 
     context "when the parents agree, triage is required and it is safe to vaccinate" do
       let(:patient_session) do
@@ -37,7 +38,7 @@ describe TriageMailerConcern do
       it "sends an email saying triage was needed and vaccination will happen" do
         expect { send_triage_confirmation }.to have_delivered_email(
           :triage_vaccination_will_happen
-        ).with(consent:, session:, sent_by: current_user)
+        ).with(consent:, session:, sent_by: current_user, triage:)
       end
 
       it "doesn't send a text message" do
@@ -53,7 +54,7 @@ describe TriageMailerConcern do
       it "sends an email saying triage was needed but vaccination won't happen" do
         expect { send_triage_confirmation }.to have_delivered_email(
           :triage_vaccination_wont_happen
-        ).with(consent:, session:, sent_by: current_user)
+        ).with(consent:, session:, sent_by: current_user, triage:)
       end
 
       it "doesn't send a text message" do
@@ -69,7 +70,7 @@ describe TriageMailerConcern do
       it "sends an email saying triage was needed but vaccination won't happen" do
         expect { send_triage_confirmation }.to have_delivered_email(
           :triage_vaccination_at_clinic
-        ).with(consent:, session:, sent_by: current_user)
+        ).with(consent:, session:, sent_by: current_user, triage:)
       end
 
       it "doesn't send a text message" do

@@ -3,20 +3,24 @@
 module TriageMailerConcern
   extend ActiveSupport::Concern
 
-  def send_triage_confirmation(patient_session, consent)
+  def send_triage_confirmation(patient_session, consent, triage)
     session = patient_session.session
     patient = patient_session.patient
 
     return unless patient.send_notifications?
     return if consent.via_self_consent?
 
-    params = { consent:, session:, sent_by: current_user }
+    if triage && consent.programme_id != triage.programme_id
+      raise "Consent and triage programmes don't match."
+    end
 
-    if vaccination_will_happen?(patient, consent)
+    params = { consent:, session:, sent_by: current_user, triage: }.compact
+
+    if consent.requires_triage? && triage&.ready_to_vaccinate?
       EmailDeliveryJob.perform_later(:triage_vaccination_will_happen, **params)
-    elsif vaccination_wont_happen?(patient, consent)
+    elsif consent.requires_triage? && triage&.do_not_vaccinate?
       EmailDeliveryJob.perform_later(:triage_vaccination_wont_happen, **params)
-    elsif vaccination_at_clinic?(patient, consent)
+    elsif consent.requires_triage? && triage&.delay_vaccination?
       EmailDeliveryJob.perform_later(:triage_vaccination_at_clinic, **params)
     elsif consent.requires_triage?
       EmailDeliveryJob.perform_later(:consent_confirmation_triage, **params)
@@ -33,25 +37,5 @@ module TriageMailerConcern
         SMSDeliveryJob.perform_later(:consent_confirmation_given, **params)
       end
     end
-  end
-
-  private
-
-  def vaccination_will_happen?(patient, consent)
-    programme_id = consent.programme_id
-    consent.requires_triage? &&
-      patient.triage_status(programme_id:).safe_to_vaccinate?
-  end
-
-  def vaccination_wont_happen?(patient, consent)
-    programme_id = consent.programme_id
-    consent.requires_triage? &&
-      patient.triage_status(programme_id:).do_not_vaccinate?
-  end
-
-  def vaccination_at_clinic?(patient, consent)
-    programme_id = consent.programme_id
-    consent.requires_triage? &&
-      patient.triage_status(programme_id:).delay_vaccination?
   end
 end
