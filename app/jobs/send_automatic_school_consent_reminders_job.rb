@@ -1,19 +1,26 @@
 # frozen_string_literal: true
 
-class SendAutomaticSchoolConsentRemindersJob < SendSchoolConsentRemindersJob
+class SendAutomaticSchoolConsentRemindersJob < ApplicationJob
+  include SendSchoolConsentNotificationConcern
+
+  def perform(session)
+    patient_programmes_eligible_for_notification(
+      session:
+    ) do |patient, programmes|
+      next unless should_send_notification?(patient:, session:, programmes:)
+
+      ConsentNotification.create_and_send!(
+        patient:,
+        session:,
+        programmes:,
+        type: notification_type(patient:, programmes:),
+        current_user: nil
+      )
+    end
+  end
+
   def should_send_notification?(patient:, session:, programmes:)
-    return false unless patient.send_notifications?
-    academic_year = session.academic_year
-
-    suitable_programmes =
-      programmes.select do |programme|
-        patient.consent_status(programme:, academic_year:).no_response? &&
-          patient.vaccination_status(programme:, academic_year:).none_yet?
-      end
-
-    return false if suitable_programmes.empty?
-
-    suitable_programmes.any? do |programme|
+    programmes.any? do |programme|
       initial_request = initial_request(patient:, programme:)
       return false if initial_request.nil?
 
@@ -60,5 +67,9 @@ class SendAutomaticSchoolConsentRemindersJob < SendSchoolConsentRemindersJob
       session_dates_after_request[date_index_to_send_reminder_for]
 
     date_to_send_reminder_for - session.days_before_consent_reminders.days
+  end
+
+  def notification_type(patient:, programmes:)
+    reminder_notification_type(patient:, programmes:)
   end
 end

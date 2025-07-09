@@ -1,28 +1,23 @@
 # frozen_string_literal: true
 
-class SendManualSchoolConsentRemindersJob < SendSchoolConsentRemindersJob
-  attr_writer :current_user
-  def current_user
-    @current_user.presence ||
-      raise("current_user must be set before sending manual reminders")
-  end
+class SendManualSchoolConsentRemindersJob < ApplicationJob
+  include SendSchoolConsentNotificationConcern
 
   def perform(session, current_user:)
-    self.current_user = current_user
-
-    super(session)
+    patient_programmes_eligible_for_notification(
+      session:
+    ) do |patient, programmes|
+      ConsentNotification.create_and_send!(
+        patient:,
+        session:,
+        programmes:,
+        type: notification_type(patient:, programmes:),
+        current_user:
+      )
+    end
   end
 
-  def should_send_notification?(patient:, session:, programmes:)
-    return false unless patient.send_notifications?
-    academic_year = session.academic_year
-
-    suitable_programmes =
-      programmes.select do |programme|
-        patient.consent_status(programme:, academic_year:).no_response? &&
-          patient.vaccination_status(programme:, academic_year:).none_yet?
-      end
-
-    !suitable_programmes.empty?
+  def notification_type(patient:, programmes:)
+    reminder_notification_type(patient:, programmes:)
   end
 end
