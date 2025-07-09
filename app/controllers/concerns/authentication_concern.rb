@@ -95,57 +95,33 @@ module AuthenticationConcern
       end
     end
 
-    def authenticate_app_by_token!
-      possible_tokens = []
-      possible_tokens << params[:auth] if Flipper.enabled?(:auth_token_by_param)
-      
-      if Flipper.enabled?(:auth_token_by_header)
-        possible_tokens << request.headers["Authorization"]
-      end
-
-      token = possible_tokens.find { it == Settings.mavis_reporting_app.secret }
-      render json: "Forbidden", status: :forbidden and return unless token
-    end
-
-    def jwt_if_given
-      params[:jwt] || request.headers['Authorization'].gsub(/Bearer\s+([:alnum:]*)/, '\1')
-    end
-
-    def authenticate_user_by_jwt!
-      jwt_info = decode_jwt( jwt_if_given )
-      if jwt_info
-        data = jwt_info.first['data']
-        @current_user = User.find(data['user']['id'])
-        session['user'] = data['user']
-        session['cis2_info'] = data['cis2_info']
-
-        authenticate_user!
-      end
-    end
-
-    def reporting_app_redirect_url
-      session[:redirect_after_login]
+    def add_token_to(url, user)
+      uri = Addressable::URI.parse(url)
+      user_token =
+        OneTimeToken.find_or_generate_for!(
+          user_id: user.id,
+          cis2_info: session["cis2_info"]
+        ).token
+      uri.query_values = (uri.query_values || {}).merge("token" => user_token)
+      uri.to_s
     end
 
     def reporting_app_redirect_url_with_token_for(user)
-      if (url = reporting_app_redirect_url)
-        uri = Addressable::URI.parse(url)
-        user_token =
-          OneTimeToken.find_or_generate_for!(
-            user_id: user.id,
-            cis2_info: session["cis2_info"]
-          ).token
-        uri.query_values = (uri.query_values || {}).merge("token" => user_token)
-        uri.to_s
+      url = session["redirect_after_login"]
+      if url.present?
+        add_token_to(url, user)
+      else
+        nil
       end
     end
 
     def after_sign_in_path_for(scope)
-      [
+      urls = [
         reporting_app_redirect_url_with_token_for(current_user),
         stored_location_for(scope),
         dashboard_path
-      ].compact.find { is_valid_redirect?(it) && !(it == request.fullpath) }
+      ]
+      urls.compact.find { is_valid_redirect?(it) && (it != request.fullpath) && (it != new_users_organisations_path) }
     end
 
     def redirect_after_choosing_org
@@ -156,14 +132,6 @@ module AuthenticationConcern
 
     def user_signed_in?
       super && (Settings.cis2.enabled ? cis2_session? : true)
-    end
-
-    def decode_jwt(jwt)
-      if jwt
-        JWT.decode(jwt, Settings.mavis_reporting_app.secret, true, { algorithm: 'HS512' })
-      else
-        nil
-      end
     end
 
     def set_user_cis2_info

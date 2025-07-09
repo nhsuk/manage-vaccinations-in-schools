@@ -406,5 +406,13 @@ Devise.setup do |config|
     Warden::Manager.before_logout do |user, _warden, _opts|
       user&.update!(session_token: nil)
     end
+  else
+    Warden::Manager.after_authentication do |user,auth,opts|
+      user&.pwd_auth_session_token = SecureRandom.hex(32)
+    end
+
+    Warden::Manager.before_logout do |user,auth,opts|
+      user.update_attribute(:pwd_auth_session_token, nil)
+    end
   end
 end

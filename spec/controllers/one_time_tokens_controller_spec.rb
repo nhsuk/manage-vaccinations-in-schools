@@ -4,6 +4,7 @@ RSpec.describe OneTimeTokensController do
   let(:user) { create(:user) }
   let(:mock_cis2_info) { {'some_key' => 'some value'} }
   let(:valid_token) { OneTimeToken.find_or_generate_for!(user_id: user.id, cis2_info: mock_cis2_info) }
+  let(:invalid_token) { SecureRandom.hex(32) }
 
   describe "#verify" do
     context "given a valid auth header when auth-by-header is enable" do
@@ -69,6 +70,21 @@ RSpec.describe OneTimeTokensController do
               end
             end
           end
+        end
+      end
+
+      context "and a OneTimeToken in the token param which can't be found in the users table" do
+        let(:do_the_request) { get :verify, params: { token: invalid_token }, format: :json }
+        let(:response_json) { JSON.parse(response.body) }
+
+        it "returns 404" do
+          do_the_request
+          expect(response.status).to eq(404)
+        end
+
+        it "returns an error in the body" do
+          do_the_request
+          expect(response_json).to eq( {"errors" => "Not found"} )
         end
       end
     end

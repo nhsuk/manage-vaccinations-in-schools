@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 class OneTimeTokensController < ApplicationController
-  include AuthenticationConcern
-
+  include TokenAuthenticationConcern
+  
   skip_before_action :authenticate_user!
   before_action :authenticate_app_by_token!
 
@@ -17,6 +17,8 @@ class OneTimeTokensController < ApplicationController
       }
     )
     render json: json_data
+  rescue ActiveRecord::RecordNotFound => e
+    render json: {errors: 'Not found'}, status: 404
   end
 
   private
