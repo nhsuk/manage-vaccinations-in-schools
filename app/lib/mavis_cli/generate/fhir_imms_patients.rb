@@ -10,8 +10,13 @@ module MavisCLI
              aliases: ["-o"],
              default: "R1L",
              desc: "ODS code of organisation to create patients for"
+      option :vaccination_percentage,
+             aliases: ["-p"],
+             type: :integer,
+             default: 50,
+             desc: "Percentage of patients to create vaccination records for (0-100)"
 
-      def call(organisation:, **)
+      def call(organisation:, vaccination_percentage: 50, **)
         MavisCLI.load_rails
 
         org = Organisation.find_by(ods_code: organisation)
@@ -20,7 +25,10 @@ module MavisCLI
           exit 1
         end
 
-        FhirImmsPatientCreator.new(org).call
+        # Ensure vaccination_percentage is within valid range
+        vaccination_percentage = [[0, vaccination_percentage.to_i].max, 100].min
+
+        FhirImmsPatientCreator.new(org, vaccination_percentage: vaccination_percentage).call
       end
     end
   end
@@ -33,13 +41,17 @@ end
 class FhirImmsPatientCreator
   CSV_FILE_PATH = File.join(__dir__, "../data/fhir_imms_patients.csv")
 
-  def initialize(organisation)
+  # Default percentage of vaccination records to create (50%)
+  DEFAULT_VACCINATION_PERCENTAGE = 50
+
+  def initialize(organisation, vaccination_percentage: DEFAULT_VACCINATION_PERCENTAGE)
     @organisation = organisation
     @programmes = Programme.all.to_a
     @created_patients = []
     @created_vaccination_records = []
     @errors = []
     @skipped_patients = []
+    @vaccination_percentage = vaccination_percentage
     ensure_organisation_has_user
   end
 
@@ -47,6 +59,7 @@ class FhirImmsPatientCreator
     puts "Starting FHIR IMMS patient creation from CSV data"
     puts "Organisation: #{@organisation.name} (#{@organisation.ods_code})"
     puts "Available programmes: #{@programmes.map(&:name).join(", ")}"
+    puts "Vaccination records creation percentage: #{@vaccination_percentage}%"
     puts
 
     csv_data = read_csv_file
@@ -213,6 +226,9 @@ class FhirImmsPatientCreator
   end
 
   def create_vaccination_record_for_patient(patient, programme)
+    # Randomly skip creating vaccination records based on the configured percentage
+    return if rand(100) >= @vaccination_percentage
+
     # Check if patient is in the right year group for this programme
     patient_year_group = calculate_year_group(patient.date_of_birth)
     unless programme.year_groups.include?(patient_year_group)
@@ -309,6 +325,7 @@ class FhirImmsPatientCreator
     puts "\n" + "=" * 50
     puts "FHIR IMMS PATIENTS GENERATION SUMMARY"
     puts "=" * 50
+    puts "Vaccination records creation percentage: #{@vaccination_percentage}%"
     puts "Patients created: #{@created_patients.size}"
     puts "Patients skipped: #{@skipped_patients.size}"
     puts "Vaccination records created: #{@created_vaccination_records.size}"
