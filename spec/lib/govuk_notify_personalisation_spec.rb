@@ -75,6 +75,7 @@ describe GovukNotifyPersonalisation do
         team_name: "Organisation",
         team_phone: "01234 567890 (option 1)",
         vaccination: "HPV vaccination",
+        vaccination_and_method: "HPV vaccination",
         vaccine_is_injection: "no",
         vaccine_is_nasal: "no",
         vaccine_side_effects: ""
@@ -406,6 +407,48 @@ describe GovukNotifyPersonalisation do
             vaccine_side_effects:
               "- generally feeling unwell\n- swelling or pain where the injection was given"
           )
+        )
+      end
+    end
+  end
+
+  context "with the flu programme" do
+    let(:programmes) { [create(:programme, :flu)] }
+
+    it do
+      expect(to_h).to include(
+        vaccination: "Flu vaccination",
+        vaccination_and_method: "flu vaccination"
+      )
+    end
+
+    context "with an administered injected vaccination record" do
+      let(:vaccination_record) do
+        create(:vaccination_record, patient:, programme: programmes.first)
+      end
+
+      it do
+        expect(to_h).to include(
+          vaccination: "Flu vaccination",
+          vaccination_and_method: "injected flu vaccination"
+        )
+      end
+    end
+
+    context "with an administered nasal spray vaccination record" do
+      let(:vaccination_record) do
+        create(
+          :vaccination_record,
+          patient:,
+          programme: programmes.first,
+          delivery_method: "nasal_spray"
+        )
+      end
+
+      it do
+        expect(to_h).to include(
+          vaccination: "Flu vaccination",
+          vaccination_and_method: "nasal spray flu vaccination"
         )
       end
     end
