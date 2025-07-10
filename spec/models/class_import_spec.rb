@@ -297,7 +297,7 @@ describe ClassImport do
       end
 
       context "with an existing parent" do
-        let!(:parent) do
+        before do
           create(
             :parent,
             full_name: "John Smith",
@@ -308,10 +308,10 @@ describe ClassImport do
 
         it "doesn't create an additional patient" do
           expect { process! }.to change(Parent, :count).by(4)
+        end
 
-          parent_relationship = patient.reload.parent_relationships.first
-          expect(parent_relationship.parent_id).to eq(parent.id)
-          expect(parent_relationship).to be_father
+        it "doesn't create an parent relationship until duplicate patient is reviewed" do
+          expect(patient.reload.parent_relationships).to be_empty
         end
       end
     end
@@ -448,12 +448,14 @@ describe ClassImport do
         expect { process! }.to change { twin.reload.pending_changes }.from(
           {}
         ).to(
-          {
-            "given_name" => "Jennifer",
-            "preferred_given_name" => "Jenny",
-            "nhs_number" => "9990000018",
-            "registration" => "ABC"
-          }
+          including(
+            {
+              "given_name" => "Jennifer",
+              "preferred_given_name" => "Jenny",
+              "nhs_number" => "9990000018",
+              "registration" => "ABC"
+            }
+          )
         ).and not_change(twin, :given_name).and not_change(
                       twin,
                       :preferred_given_name

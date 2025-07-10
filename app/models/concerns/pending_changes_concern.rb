@@ -49,7 +49,8 @@ module PendingChangesConcern
 
   def apply_pending_changes_to_new_record!
     ActiveRecord::Base.transaction do
-      dup_for_pending_changes.tap(&:apply_pending_changes!)
+      new_record = dup_for_pending_changes.tap(&:apply_pending_changes!)
+      yield(pending_changes, new_record) if block_given?
       discard_pending_changes!
     end
   end

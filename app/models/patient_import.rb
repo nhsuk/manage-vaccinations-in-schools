@@ -27,12 +27,13 @@ class PatientImport < ApplicationRecord
     processed_patient_data =
       PatientImporter::DataProcessor.call(
         row.to_h,
+        bulk_import: true,
         stage_registration: row.stage_registration?
       )
 
     patient = processed_patient_data.patient
-    parents = row.to_parents
-    parent_relationships = row.to_parent_relationships(parents, patient)
+    parents = processed_patient_data.parents
+    parent_relationships = processed_patient_data.parent_relationships
 
     @school_moves_to_confirm ||= Set.new
     @school_moves_to_save ||= Set.new
