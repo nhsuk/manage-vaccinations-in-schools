@@ -147,13 +147,13 @@ describe "MenACWY and Td/IPV vaccination" do
   def and_a_text_is_sent_to_the_parent_confirming_the_vaccinations
     expect_sms_to(
       @patient.consents.last.parent.phone,
-      :vaccination_administered_menacwy,
+      :vaccination_administered,
       :any
     )
 
     expect_sms_to(
       @patient.consents.last.parent.phone,
-      :vaccination_administered_td_ipv,
+      :vaccination_administered,
       :any
     )
   end

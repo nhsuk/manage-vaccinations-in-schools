@@ -7,19 +7,24 @@ module VaccinationMailerConcern
     parents = parents_for_vaccination_mailer(vaccination_record)
     return if parents.empty?
 
-    programme_type = vaccination_record.programme.type
-
     template_name =
       if vaccination_record.administered?
-        :"vaccination_administered_#{programme_type}"
+        :vaccination_administered
       else
         :vaccination_not_administered
+      end
+
+    email_template_name =
+      if vaccination_record.administered?
+        :"#{template_name}_#{vaccination_record.programme.type}"
+      else
+        template_name
       end
 
     parents.each do |parent|
       params = { parent:, vaccination_record:, sent_by: try(:current_user) }
 
-      EmailDeliveryJob.perform_later(template_name, **params)
+      EmailDeliveryJob.perform_later(email_template_name, **params)
 
       if parent.phone_receive_updates
         SMSDeliveryJob.perform_later(template_name, **params)

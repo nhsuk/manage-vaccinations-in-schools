@@ -38,9 +38,6 @@ GOVUK_NOTIFY_SMS_TEMPLATES = {
   session_clinic_initial_invitation: "8ef5712f-bb7f-4911-8f3b-19df6f8a7179",
   session_clinic_subsequent_invitation: "018f146d-e7b7-4b63-ae26-bb07ca6fe2f9",
   session_school_reminder: "6e4c514d-fcc9-4bc8-b7eb-e222a1445681",
-  vaccination_administered_flu: "395a3ea1-df07-4dd6-8af1-64cc597ef383",
-  vaccination_administered_hpv: "69612d3a-d6eb-4f04-8b99-ed14212e7245",
-  vaccination_administered_menacwy: "16ae7602-c2b1-4731-bb74-fd4f1357feca",
-  vaccination_administered_td_ipv: "4c616b22-eee8-423f-84d6-bd5710f744fd",
+  vaccination_administered: "395a3ea1-df07-4dd6-8af1-64cc597ef383",
   vaccination_not_administered: "aae061e0-b847-4d4c-a87a-12508f95a302"
 }.freeze
