@@ -108,7 +108,7 @@ module AuthenticationConcern
     end
 
     def jwt_if_given
-      params[:jwt] || request.headers['Authorization'].gsub(/Bearer\s+([:alnum:]*)/, '\1')
+      params[:jwt] || request.headers['Authorization']&.gsub(/Bearer\s+([:alnum:]*)/, '\1')
     end
 
     def authenticate_user_by_jwt!
@@ -117,6 +117,7 @@ module AuthenticationConcern
         data = jwt_info.first['data']
         @current_user = User.find_by(
           id: data['user']['id'],
+          session_token: data['user']['session_token'],
           pwd_auth_session_token: data['user']['pwd_auth_session_token']
         )
         if @current_user
