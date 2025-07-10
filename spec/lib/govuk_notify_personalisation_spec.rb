@@ -1,17 +1,15 @@
 # frozen_string_literal: true
 
 describe GovukNotifyPersonalisation do
-  subject(:to_h) { described_class.new(**params).to_h }
-
-  let(:params) do
-    {
+  subject(:to_h) do
+    described_class.new(
       patient:,
       session:,
       consent:,
       consent_form:,
       programmes:,
       vaccination_record:
-    }
+    ).to_h
   end
 
   let(:programmes) { [create(:programme, :hpv)] }
@@ -257,21 +255,6 @@ describe GovukNotifyPersonalisation do
             "- generally feeling unwell\n- swelling or pain where the injection was given"
         )
       )
-    end
-
-    context "when programmes comes from the session" do
-      let(:params) do
-        { patient:, session:, consent:, consent_form:, vaccination_record: }
-      end
-
-      it do
-        expect(to_h).to match(
-          hash_including(
-            vaccine_side_effects:
-              "- generally feeling unwell\n- swelling or pain where the injection was given"
-          )
-        )
-      end
     end
   end
 end
