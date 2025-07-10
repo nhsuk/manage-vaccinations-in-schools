@@ -53,7 +53,6 @@ class GovukNotifyPersonalisation
       outcome_administered:,
       outcome_not_administered:,
       patient_date_of_birth:,
-      programme_name:,
       reason_did_not_vaccinate:,
       reason_for_refusal:,
       short_patient_name:,
@@ -203,10 +202,6 @@ class GovukNotifyPersonalisation
     patient&.date_of_birth&.to_fs(:long)
   end
 
-  def programme_name
-    programmes.map(&:name).to_sentence
-  end
-
   def reason_did_not_vaccinate
     return if vaccination_record.nil? || vaccination_record.administered?
 
@@ -285,7 +280,7 @@ class GovukNotifyPersonalisation
 
   def vaccination
     [
-      programme_name,
+      programmes.map(&:name).to_sentence,
       programmes.count == 1 ? "vaccination" : "vaccinations"
     ].join(" ")
   end
