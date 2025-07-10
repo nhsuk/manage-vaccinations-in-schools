@@ -2,8 +2,8 @@
 
 class GovukNotifyPersonalisation
   include Rails.application.routes.url_helpers
-  include PhoneHelper
 
+  include PhoneHelper
   include VaccinationRecordsHelper
 
   def initialize(
@@ -66,6 +66,8 @@ class GovukNotifyPersonalisation
       team_phone:,
       today_or_date_of_vaccination:,
       vaccination:,
+      vaccine_is_injection:,
+      vaccine_is_nasal:,
       vaccine_side_effects:
     }.compact
   end
@@ -288,6 +290,30 @@ class GovukNotifyPersonalisation
     ].join(" ")
   end
 
+  def vaccine_is_injection = vaccine_is?("injection")
+
+  def vaccine_is_nasal = vaccine_is?("nasal")
+
+  def vaccine_is?(method)
+    if vaccination_record
+      vaccination_record.vaccine&.method == method ? "yes" : "no"
+    elsif programmes.present?
+      any_vaccines_with_method =
+        if patient
+          programmes.any? do |programme|
+            # We pick the first method as it's the one most likely to be used
+            # to vaccinate the patient. For example, in the case of Flu, the
+            # parents will approve nasal (and then optionally injection).
+            patient.approved_vaccine_methods(programme:).first == method
+          end
+        else
+          Vaccine.where(programme: programmes, method:).exists?
+        end
+
+      any_vaccines_with_method ? "yes" : "no"
+    end
+  end
+
   def vaccine_side_effects
     side_effects =
       if vaccination_record
@@ -299,7 +325,6 @@ class GovukNotifyPersonalisation
             # to vaccinate the patient. For example, in the case of Flu, the
             # parents will approve nasal (and then optionally injection).
             method = patient.approved_vaccine_methods(programme:).first
-
             Vaccine.where(programme:, method:).flat_map(&:side_effects)
           end
         else
