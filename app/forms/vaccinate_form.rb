@@ -65,6 +65,7 @@ class VaccinateForm
       identity_check_confirmed_by_other_relationship
     draft_vaccination_record.identity_check_confirmed_by_patient =
       identity_check_confirmed_by_patient
+    draft_vaccination_record.location_id = patient_session.session.location_id
     draft_vaccination_record.patient_id = patient_session.patient_id
     draft_vaccination_record.performed_at = Time.current
     draft_vaccination_record.performed_by_user = current_user

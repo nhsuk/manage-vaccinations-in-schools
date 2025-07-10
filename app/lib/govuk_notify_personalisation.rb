@@ -3,7 +3,6 @@
 class GovukNotifyPersonalisation
   include Rails.application.routes.url_helpers
   include PhoneHelper
-
   include VaccinationRecordsHelper
 
   def initialize(

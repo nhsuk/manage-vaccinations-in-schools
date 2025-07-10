@@ -25,6 +25,7 @@
 #  created_at                      :datetime         not null
 #  updated_at                      :datetime         not null
 #  batch_id                        :bigint
+#  location_id                     :bigint
 #  nhs_immunisations_api_id        :string
 #  patient_id                      :bigint
 #  performed_by_user_id            :bigint
@@ -36,6 +37,7 @@
 #
 #  index_vaccination_records_on_batch_id                  (batch_id)
 #  index_vaccination_records_on_discarded_at              (discarded_at)
+#  index_vaccination_records_on_location_id               (location_id)
 #  index_vaccination_records_on_nhs_immunisations_api_id  (nhs_immunisations_api_id) UNIQUE
 #  index_vaccination_records_on_patient_id                (patient_id)
 #  index_vaccination_records_on_performed_by_user_id      (performed_by_user_id)
@@ -53,7 +55,6 @@
 #  fk_rails_...  (session_id => sessions.id)
 #  fk_rails_...  (vaccine_id => vaccines.id)
 #
-
 describe VaccinationRecord do
   subject(:vaccination_record) { build(:vaccination_record) }
 
