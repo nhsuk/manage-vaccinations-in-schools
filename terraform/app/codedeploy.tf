@@ -111,17 +111,17 @@ resource "aws_s3_bucket_public_access_block" "s3_bucket_access" {
   restrict_public_buckets = true
 }
 
-resource "aws_s3_object" "appspec_object" {
-  bucket = aws_s3_bucket.code_deploy_bucket.bucket
-  key    = "appspec.yaml"
-  acl    = "private"
-  content = templatefile("templates/appspec.yaml.tpl", {
-    task_definition_arn = module.web_service.task_definition.arn
-    container_name      = module.web_service.task_definition.container_name
-    container_port      = aws_lb_target_group.blue.port
-  })
-
-  tags = {
-    UseWithCodeDeploy = true
-  }
-}
+# resource "aws_s3_object" "appspec_object" {
+#   bucket = aws_s3_bucket.code_deploy_bucket.bucket
+#   key    = "appspec.yaml"
+#   acl    = "private"
+#   content = templatefile("templates/appspec.yaml.tpl", {
+#     task_definition_arn = module.web_service.task_definition.arn
+#     container_name      = module.web_service.task_definition.container_name
+#     container_port      = aws_lb_target_group.blue.port
+#   })
+#
+#   tags = {
+#     UseWithCodeDeploy = true
+#   }
+# }
