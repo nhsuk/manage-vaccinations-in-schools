@@ -89,20 +89,20 @@ terraform -chdir="./grafana" init -backend-config="env/${ENVIRONMENT}-backend.hc
 case "$ACTION" in
   plan)
     if [[ -n "$PLAN_FILE" ]]; then
-      terraform -chdir="./grafana" plan -var="workspace_url=$GRAFANA_ENDPOINT" -var="service_account_token=$SERVICE_ACCOUNT_TOKEN" -out="$PLAN_FILE"
+      terraform -chdir="./grafana" plan -var="workspace_url=$GRAFANA_ENDPOINT" -var="service_account_token=$SERVICE_ACCOUNT_TOKEN" -var-file="env/${ENVIRONMENT}.tfvars" -out="$PLAN_FILE"
     else
-      terraform -chdir="./grafana" plan -var="workspace_url=$GRAFANA_ENDPOINT" -var="service_account_token=$SERVICE_ACCOUNT_TOKEN"
+      terraform -chdir="./grafana" plan -var="workspace_url=$GRAFANA_ENDPOINT" -var="service_account_token=$SERVICE_ACCOUNT_TOKEN" -var-file="env/${ENVIRONMENT}.tfvars"
     fi
     ;;
   apply)
     if [[ -n "$PLAN_FILE" ]]; then
       terraform -chdir="./grafana" apply "$PLAN_FILE"
     else
-      terraform -chdir="./grafana" apply -var="workspace_url=$GRAFANA_ENDPOINT" -var="service_account_token=$SERVICE_ACCOUNT_TOKEN"
+      terraform -chdir="./grafana" apply -var="workspace_url=$GRAFANA_ENDPOINT" -var="service_account_token=$SERVICE_ACCOUNT_TOKEN" -var-file="env/${ENVIRONMENT}.tfvars"
     fi
     ;;
   destroy)
-    terraform -chdir="./grafana" destroy -var="workspace_url=$GRAFANA_ENDPOINT" -var="service_account_token=$SERVICE_ACCOUNT_TOKEN"
+    terraform -chdir="./grafana" destroy -var="workspace_url=$GRAFANA_ENDPOINT" -var="service_account_token=$SERVICE_ACCOUNT_TOKEN" -var-file="env/${ENVIRONMENT}.tfvars"
     ;;
   *)
     usage

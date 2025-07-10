@@ -10,6 +10,13 @@ variable "workspace_url" {
   nullable    = false
 }
 
+variable "dns_hosted_zone" {
+  type        = string
+  description = "DNS hosted zone for custom DNS record for Grafana workspace."
+  default     = ""
+  nullable    = false
+}
+
 variable "region" {
   type        = string
   default     = "eu-west-2"

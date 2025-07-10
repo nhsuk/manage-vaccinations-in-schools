@@ -5,6 +5,10 @@ terraform {
       source  = "grafana/grafana"
       version = "~> 3.25.4"
     }
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 6.2"
+    }
   }
 
   backend "s3" {
@@ -18,6 +22,10 @@ terraform {
 provider "grafana" {
   url  = var.workspace_url
   auth = var.service_account_token
+}
+
+provider "aws" {
+  region = "us-east-1"
 }
 
 resource "grafana_data_source" "cloudwatch" {
