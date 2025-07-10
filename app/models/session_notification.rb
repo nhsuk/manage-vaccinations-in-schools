@@ -82,8 +82,23 @@ class SessionNotification < ApplicationRecord
       sent_by: current_user
     )
 
+    programmes =
+      if type == :school_reminder
+        patient_session.programmes.select do |programme|
+          patient.consent_given_and_safe_to_vaccinate?(programme:)
+        end
+      else
+        patient_session.programmes
+      end
+
     parents.each do |parent|
-      params = { parent:, patient:, session:, sent_by: current_user }
+      params = {
+        parent:,
+        patient:,
+        programmes:,
+        session:,
+        sent_by: current_user
+      }
 
       EmailDeliveryJob.perform_later(:"session_#{type}", **params)
 
