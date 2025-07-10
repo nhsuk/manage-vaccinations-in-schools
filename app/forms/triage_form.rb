@@ -39,16 +39,20 @@ class TriageForm
     Triage.create!(triage_attributes)
   end
 
-  def status_and_vaccine_method_options
-    safe_to_vaccinate_choices =
-      if programme.has_multiple_vaccine_methods?
-        consented_vaccine_methods.map { |method| "safe_to_vaccinate_#{method}" }
-      else
-        ["safe_to_vaccinate"]
-      end
+  def safe_to_vaccinate_options
+    if programme.has_multiple_vaccine_methods?
+      consented_vaccine_methods.map { |method| "safe_to_vaccinate_#{method}" }
+    else
+      ["safe_to_vaccinate"]
+    end
+  end
 
-    safe_to_vaccinate_choices +
-      %w[keep_in_triage delay_vaccination do_not_vaccinate]
+  def other_options
+    %w[keep_in_triage delay_vaccination do_not_vaccinate]
+  end
+
+  def status_and_vaccine_method_options
+    safe_to_vaccinate_options + other_options
   end
 
   def consented_to_injection? = consented_vaccine_methods.include?("injection")
