@@ -69,6 +69,8 @@ class GovukNotifyPersonalisation
       today_or_date_of_vaccination:,
       vaccination:,
       vaccination_and_method:,
+      vaccine:,
+      vaccine_and_method:,
       vaccine_brand:,
       vaccine_is_injection:,
       vaccine_is_nasal:,
@@ -85,8 +87,6 @@ class GovukNotifyPersonalisation
               :team,
               :organisation,
               :vaccination_record
-
-  private
 
   def batch_name
     vaccination_record&.batch&.name
@@ -217,13 +217,9 @@ class GovukNotifyPersonalisation
       .to_sentence(last_word_connector: ", or ", two_words_connector: " or ")
   end
 
-  def organisation_privacy_notice_url
-    organisation.privacy_notice_url
-  end
+  delegate :privacy_notice_url, to: :organisation, prefix: true
 
-  def organisation_privacy_policy_url
-    organisation.privacy_policy_url
-  end
+  delegate :privacy_policy_url, to: :organisation, prefix: true
 
   def outcome_administered
     return if vaccination_record.nil?
@@ -316,36 +312,25 @@ class GovukNotifyPersonalisation
   end
 
   def vaccination
-    names = programmes.map(&:name)
-    "#{names.to_sentence} vaccination".pluralize(names.length)
+    "#{programme_names.to_sentence} vaccination".pluralize(
+      programme_names.length
+    )
   end
 
   def vaccination_and_method
-    names =
-      programmes.map do |programme|
-        next programme.name unless programme.flu?
+    "#{programme_names_and_methods.to_sentence} vaccination".pluralize(
+      programme_names_and_methods.length
+    )
+  end
 
-        if vaccination_record
-          if vaccination_record.delivery_method_nasal_spray?
-            "nasal spray flu"
-          else
-            "injected flu"
-          end
-        elsif patient &&
-              (
-                vaccine_methods = patient.approved_vaccine_methods(programme:)
-              ).present?
-          if vaccine_methods.first == "nasal"
-            "nasal spray flu"
-          else
-            "injected flu"
-          end
-        else
-          "flu"
-        end
-      end
+  def vaccine
+    "#{programme_names.to_sentence} vaccine".pluralize(programme_names.length)
+  end
 
-    "#{names.to_sentence} vaccination".pluralize(names.length)
+  def vaccine_and_method
+    "#{programme_names_and_methods.to_sentence} vaccine".pluralize(
+      programme_names_and_methods.length
+    )
   end
 
   def vaccine_brand
@@ -400,5 +385,37 @@ class GovukNotifyPersonalisation
       side_effects.map { Vaccine.human_enum_name(:side_effect, it) }.sort.uniq
 
     descriptions.map { "- #{it}" }.join("\n")
+  end
+
+  private
+
+  def programme_names
+    @programme_names ||= programmes.map(&:name)
+  end
+
+  def programme_names_and_methods
+    @programme_names_and_methods ||=
+      programmes.map do |programme|
+        next programme.name unless programme.flu?
+
+        if vaccination_record
+          if vaccination_record.delivery_method_nasal_spray?
+            "nasal spray flu"
+          else
+            "injected flu"
+          end
+        elsif patient &&
+              (
+                vaccine_methods = patient.approved_vaccine_methods(programme:)
+              ).present?
+          if vaccine_methods.first == "nasal"
+            "nasal spray flu"
+          else
+            "injected flu"
+          end
+        else
+          "flu"
+        end
+      end
   end
 end

@@ -76,6 +76,8 @@ describe GovukNotifyPersonalisation do
         team_phone: "01234 567890 (option 1)",
         vaccination: "HPV vaccination",
         vaccination_and_method: "HPV vaccination",
+        vaccine: "HPV vaccine",
+        vaccine_and_method: "HPV vaccine",
         vaccine_is_injection: "no",
         vaccine_is_nasal: "no",
         vaccine_side_effects: ""
@@ -418,7 +420,9 @@ describe GovukNotifyPersonalisation do
     it do
       expect(to_h).to include(
         vaccination: "Flu vaccination",
-        vaccination_and_method: "flu vaccination"
+        vaccination_and_method: "flu vaccination",
+        vaccine: "Flu vaccine",
+        vaccine_and_method: "flu vaccine"
       )
     end
 
@@ -430,7 +434,9 @@ describe GovukNotifyPersonalisation do
       it do
         expect(to_h).to include(
           vaccination: "Flu vaccination",
-          vaccination_and_method: "injected flu vaccination"
+          vaccination_and_method: "injected flu vaccination",
+          vaccine: "Flu vaccine",
+          vaccine_and_method: "injected flu vaccine"
         )
       end
     end
@@ -448,7 +454,9 @@ describe GovukNotifyPersonalisation do
       it do
         expect(to_h).to include(
           vaccination: "Flu vaccination",
-          vaccination_and_method: "nasal spray flu vaccination"
+          vaccination_and_method: "nasal spray flu vaccination",
+          vaccine: "Flu vaccine",
+          vaccine_and_method: "nasal spray flu vaccine"
         )
       end
     end
