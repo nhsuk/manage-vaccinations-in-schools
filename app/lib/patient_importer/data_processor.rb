@@ -18,14 +18,15 @@ module PatientImporter
       registration
     ].freeze
 
-    ProcessedPatientData = Struct.new(:patient)
+    ProcessedPatientData = Struct.new(:patient, :parents, :parent_relationships)
 
     PATIENT_ATTRIBUTES.each do |attr|
       define_method(attr) { patient_attributes[attr] }
     end
 
-    def initialize(row_data, stage_registration: false)
+    def initialize(row_data, stage_registration: false, bulk_import: false)
       @row_data = row_data.symbolize_keys
+      @bulk_import = bulk_import
       @stage_registration = stage_registration
       @patient_attributes = @row_data.slice(*PATIENT_ATTRIBUTES)
     end
@@ -40,7 +41,23 @@ module PatientImporter
           )
         end
 
-      ProcessedPatientData.new(patient)
+      family_relationship_factory =
+        ParentRelationshipFactory.new(row_data, patient, bulk_import:)
+
+      if patient.pending_changes.any?
+        patient.pending_changes.merge!(
+          family_relationship_factory.parent_attributes
+        )
+      end
+
+      family_connections =
+        family_relationship_factory.establish_family_connections
+
+      ProcessedPatientData.new(
+        patient,
+        family_connections.parents,
+        family_connections.parent_relationships
+      )
     end
 
     def self.call(...) = new(...).call
@@ -49,7 +66,10 @@ module PatientImporter
 
     private
 
-    attr_reader :row_data, :patient_attributes, :stage_registration
+    attr_reader :row_data,
+                :bulk_import,
+                :patient_attributes,
+                :stage_registration
 
     def existing_patients
       return if given_name.blank? || family_name.blank? || date_of_birth.blank?

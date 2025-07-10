@@ -43,6 +43,23 @@ describe "Class list imports duplicates" do
     and_a_fourth_record_should_exist
   end
 
+  scenario "User reviews twin records and selects keep both records" do
+    given_i_am_signed_in
+    and_an_hpv_programme_is_underway
+    and_existing_patient_records_exist
+
+    when_i_visit_a_session_page_for_another_school
+    and_i_start_adding_children_to_the_session
+    and_i_select_the_year_groups
+    and_i_upload_a_file_with_a_twin_record
+
+    when_i_review_the_first_duplicate_record
+    and_i_choose_to_keep_both_records
+    and_i_confirm_my_selection
+    and_the_existing_patient_parent_relationship_should_not_change
+    and_the_twin_patient_parent_relationship_exist
+  end
+
   def given_i_am_signed_in
     @organisation = create(:organisation, :with_one_nurse)
     sign_in @organisation.users.first
@@ -58,6 +75,13 @@ describe "Class list imports duplicates" do
         name: "Waterloo Road",
         organisation: @organisation
       )
+    @another_location =
+      create(
+        :school,
+        :secondary,
+        name: "Crestwood Academy",
+        organisation: @organisation
+      )
     @session =
       create(
         :session,
@@ -66,12 +90,21 @@ describe "Class list imports duplicates" do
         location: @location,
         programmes:
       )
+    @another_session =
+      create(
+        :session,
+        :unscheduled,
+        organisation: @organisation,
+        location: @another_location,
+        programmes:
+      )
   end
 
   def and_existing_patient_records_exist
     @existing_patient =
       create(
         :patient,
+        parents: [create(:parent, full_name: "Joe Smith")],
         given_name: "Jimmy",
         family_name: "Smith",
         nhs_number: "9990000018",
@@ -119,6 +152,13 @@ describe "Class list imports duplicates" do
     click_on "Waterloo Road"
   end
 
+  def when_i_visit_a_session_page_for_another_school
+    visit "/dashboard"
+    click_on "Sessions", match: :first
+    click_on "Unscheduled"
+    click_on "Crestwood Academy"
+  end
+
   def and_i_start_adding_children_to_the_session
     click_on "Import class lists"
   end
@@ -136,6 +176,11 @@ describe "Class list imports duplicates" do
       "class_import[csv]",
       "spec/fixtures/class_import/duplicates.csv"
     )
+    click_on "Continue"
+  end
+
+  def and_i_upload_a_file_with_a_twin_record
+    attach_file("class_import[csv]", "spec/fixtures/class_import/twin.csv")
     click_on "Continue"
   end
 
@@ -174,6 +219,8 @@ describe "Class list imports duplicates" do
   def when_i_choose_to_keep_both_records
     choose "Keep both records"
   end
+  alias_method :and_i_choose_to_keep_both_records,
+               :when_i_choose_to_keep_both_records
 
   def then_i_should_see_a_success_message
     expect(page).to have_content("Record updated")
@@ -222,5 +269,14 @@ describe "Class list imports duplicates" do
 
     fourth_patient = Patient.find_by(nhs_number: nil)
     expect(fourth_patient.given_name).to eq("Rebecca")
+  end
+
+  def and_the_existing_patient_parent_relationship_should_not_change
+    expect(@existing_patient.parents.first.full_name).to eq("Joe Smith")
+  end
+
+  def and_the_twin_patient_parent_relationship_exist
+    twin = Patient.find_by(given_name: "David", family_name: "Smith")
+    expect(twin.parents.first.full_name).to eq("Mary Smith")
   end
 end

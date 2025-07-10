@@ -39,7 +39,15 @@ class PatientImportRow
       nhs_number: nhs_number_value,
       preferred_family_name: preferred_last_name&.to_s,
       preferred_given_name: preferred_first_name&.to_s,
-      registration: registration&.to_s
+      registration: registration&.to_s,
+      parent_1_name: parent_1_name&.to_s,
+      parent_1_relationship: parent_1_relationship&.to_s,
+      parent_1_email: parent_1_email_value,
+      parent_1_phone: parent_1_phone_value,
+      parent_2_name: parent_2_name&.to_s,
+      parent_2_relationship: parent_2_relationship&.to_s,
+      parent_2_email: parent_2_email_value,
+      parent_2_phone: parent_2_phone_value
     }.compact_blank
   end
 
@@ -59,69 +67,6 @@ class PatientImportRow
 
       school_move.tap { it.source = school_move_source }
     end
-  end
-
-  def to_parents
-    return unless valid?
-
-    parents = [
-      if parent_1_exists?
-        {
-          email: parent_1_email_value,
-          full_name: parent_1_name&.to_s,
-          phone: parent_1_phone_value
-        }
-      end,
-      if parent_2_exists?
-        {
-          email: parent_2_email_value,
-          full_name: parent_2_name&.to_s,
-          phone: parent_2_phone_value
-        }
-      end
-    ].compact
-
-    parents.map do |attributes|
-      email = attributes[:email]
-      phone = attributes[:phone]
-      full_name = attributes[:full_name]
-
-      parent =
-        Parent.match_existing(
-          patient: existing_patients.first,
-          email:,
-          phone:,
-          full_name:
-        ) || Parent.new
-
-      parent.email = attributes[:email] if attributes[:email]
-      parent.full_name = attributes[:full_name] if attributes[:full_name]
-      parent.phone = attributes[:phone] if attributes[:phone]
-      parent.phone_receive_updates = false if parent.phone.blank?
-
-      parent
-    end
-  end
-
-  def to_parent_relationships(parents, patient)
-    return unless valid?
-
-    parent_relationships = [
-      if parent_1_exists?
-        parent_relationship_attributes(parent_1_relationship&.to_s)
-      end,
-      if parent_2_exists?
-        parent_relationship_attributes(parent_2_relationship&.to_s)
-      end
-    ].compact
-
-    parents
-      .zip(parent_relationships)
-      .map do |parent, attributes|
-        ParentRelationship
-          .find_or_initialize_by(parent:, patient:)
-          .tap { it.assign_attributes(attributes) }
-      end
   end
 
   def nhs_number = @data[:child_nhs_number]
@@ -180,21 +125,6 @@ class PatientImportRow
 
   def parent_2_exists?
     [parent_2_name, parent_2_email, parent_2_phone].any?(&:present?)
-  end
-
-  def parent_relationship_attributes(relationship)
-    case relationship&.downcase
-    when nil, "unknown"
-      { type: "unknown" }
-    when "mother", "mum"
-      { type: "mother" }
-    when "father", "dad"
-      { type: "father" }
-    when "guardian"
-      { type: "guardian" }
-    else
-      { type: "other", other_name: relationship }
-    end
   end
 
   def existing_patients

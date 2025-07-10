@@ -37,9 +37,17 @@ class ImportDuplicateForm
   end
 
   def apply_pending_changes!
-    object.patient.apply_pending_changes! if object.respond_to?(:patient)
+    if object.respond_to?(:patient)
+      object.patient.apply_pending_changes! do |pending_changes, record|
+        update_patient_family_associations(pending_changes, record)
+      end
+    end
 
-    object.apply_pending_changes!
+    object.apply_pending_changes! do |pending_changes, record|
+      if object.is_a?(Patient)
+        update_patient_family_associations(pending_changes, record)
+      end
+    end
   end
 
   def discard_pending_changes!
@@ -49,6 +57,19 @@ class ImportDuplicateForm
   end
 
   def keep_both_changes!
-    object.apply_pending_changes_to_new_record! if can_keep_both?
+    if can_keep_both?
+      object.apply_pending_changes_to_new_record! do |pending_changes, new_record|
+        update_patient_family_associations(pending_changes, new_record)
+      end
+    end
+  end
+
+  def update_patient_family_associations(pending_changes, new_record)
+    family_connections =
+      PatientImporter::ParentRelationshipFactory.new(
+        pending_changes,
+        new_record
+      ).establish_family_connections
+    family_connections.save!
   end
 end
