@@ -293,7 +293,18 @@ class GovukNotifyPersonalisation
       if vaccination_record
         vaccination_record.vaccine&.side_effects
       elsif programmes.present?
-        Vaccine.where(programme: programmes).flat_map(&:side_effects)
+        if patient
+          programmes.flat_map do |programme|
+            # We pick the first method as it's the one most likely to be used
+            # to vaccinate the patient. For example, in the case of Flu, the
+            # parents will approve nasal (and then optionally injection).
+            method = patient.approved_vaccine_methods(programme:).first
+
+            Vaccine.where(programme:, method:).flat_map(&:side_effects)
+          end
+        else
+          Vaccine.where(programme: programmes).flat_map(&:side_effects)
+        end
       end
 
     return if side_effects.nil?
