@@ -108,3 +108,15 @@ resource "aws_ecs_task_definition" "this" {
     }
   ])
 }
+
+resource "aws_ssm_parameter" "container_variables" {
+  name = "/${var.environment}/ecs/${local.server_type_name}/container_variables"
+  type = "String"
+
+  value = jsonencode({
+    task_envs          = concat(var.task_config.environment, [{ name = "SERVER_TYPE", value = var.server_type }])
+    task_secrets       = var.task_config.secrets
+    execution_role_arn = var.task_config.execution_role_arn
+    task_role_arn      = var.task_config.task_role_arn
+  })
+}

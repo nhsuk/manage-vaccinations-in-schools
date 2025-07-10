@@ -25,6 +25,10 @@ on:
           - web
           - good-job
         default: all
+      git_sha_to_deploy:
+        description: The git commit SHA to deploy.
+        required: false
+        type: string
   workflow_call:
     inputs:
       environment:
@@ -38,15 +42,20 @@ on:
         required: true
         type: string
 
-permissions: {}
+permissions: { }
 
 concurrency:
-  group: deploy-application-${{ inputs.environment }}
+  group: deploy-mavis-${{ inputs.environment }}
 
 env:
   aws-role: ${{ inputs.environment == 'production'
     && 'arn:aws:iam::820242920762:role/GithubDeployMavisAndInfrastructure'
     || 'arn:aws:iam::393416225559:role/GithubDeployMavisAndInfrastructure' }}
+  web_codedeploy_application: mavis-${{ inputs.environment }}
+  web_codedeploy_group: blue-green-group-${{ inputs.environment }}
+  cluster_name: mavis-${{ inputs.environment }}
+  good_job_service: mavis-${{ inputs.environment }}-good-job
+  web_service: mavis-${{ inputs.environment }}-web
 
 jobs:
   prepare-deployment:
@@ -58,111 +67,126 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        with:
-          ref: ${{ inputs.git_sha_to_deploy || github.sha }}
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ env.aws-role }}
           aws-region: eu-west-2
-      - name: Install terraform
-        uses: hashicorp/setup-terraform@v3
-        with:
-          terraform_version: 1.11.4
-      - name: Get terraform output
-        id: terraform-output
-        working-directory: terraform/app
+      - name: Get image digest from ECR
+        id: get-image-digest
         run: |
-          set -e
-          terraform init -backend-config=env/${{ inputs.environment }}-backend.hcl -reconfigure
-          terraform output -json | jq -r '
-          "s3_bucket=" + .s3_bucket.value,
-          "s3_key=" + .s3_key.value,
-          "application=" + .codedeploy_application_name.value,
-          "application_group=" + .codedeploy_deployment_group_name.value,
-          "cluster_name=" + .ecs_variables.value.cluster_name,
-          "good_job_service=" + .ecs_variables.value.good_job.service_name,
-          "good_job_task_definition=" + .ecs_variables.value.good_job.task_definition.arn
-          ' > ${{ runner.temp }}/DEPLOYMENT_ENVS
-      - name: Upload Artifact
+          # Get AWS account ID and construct repository URI
+          AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+          REPOSITORY_URI="${AWS_ACCOUNT_ID}.dkr.ecr.eu-west-2.amazonaws.com/mavis/webapp"
+
+          # Get the image digest for the git SHA
+          IMAGE_DIGEST=$(aws ecr describe-images \
+            --repository-name mavis/webapp \
+            --image-ids imageTag=${{ inputs.git_sha_to_deploy || github.sha }} \
+            --query 'imageDetails[0].imageDigest' \
+            --output text)
+
+          NEW_IMAGE_URI="${REPOSITORY_URI}@${IMAGE_DIGEST}"
+          echo "new-image-uri=${NEW_IMAGE_URI}" >> $GITHUB_OUTPUT
+          echo "New image URI: ${NEW_IMAGE_URI}"
+      - name: Populate web task definition
+        if: inputs.server_types == 'web' || inputs.server_types == 'all'
+        id: render-web-task-definition
+        run: |
+          ./script/populate_task_definition.sh ${{ inputs.environment }} web \
+            -i "${{ steps.get-image-digest.outputs.new-image-uri }}" \
+            -o web-task-definition.json
+          cat web-task-definition.json
+      - name: Populate good-job task definition
+        if: inputs.server_types == 'good-job' || inputs.server_types == 'all'
+        id: render-good-job-task-definition
+        run: |
+          ./script/populate_task_definition.sh ${{ inputs.environment }} good-job \
+            -i "${{ steps.get-image-digest.outputs.new-image-uri }}" \
+            -o good-job-task-definition.json
+          cat good-job-task-definition.json
+      - name: Make artifact for web task definition
         uses: actions/upload-artifact@v4
         with:
-          name: DEPLOYMENT_ENVS-${{ inputs.environment }}
-          path: ${{ runner.temp }}/DEPLOYMENT_ENVS
+          name: ${{ inputs.environment }}-web-task-definition
+          path: web-task-definition.json
+      - name: Make artifact for good-job task definition
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ inputs.environment }}-good-job-task-definition
+          path: good-job-task-definition.json
+    outputs:
+      new-image-uri: ${{ steps.get-image-digest.outputs.new-image-uri }}
 
-  create-web-deployment:
-    name: Create web deployment
+  deploy-web:
+    name: Deploy web service
     runs-on: ubuntu-latest
-    needs: prepare-deployment
     if: inputs.server_types == 'web' || inputs.server_types == 'all'
-    permissions:
-      id-token: write
-    steps:
-      - name: Download artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: DEPLOYMENT_ENVS-${{ inputs.environment }}
-          path: ${{ runner.temp }}
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: ${{ env.aws-role }}
-          aws-region: eu-west-2
-      - name: Trigger CodeDeploy deployment
-        run: |
-          set -e
-          source ${{ runner.temp }}/DEPLOYMENT_ENVS
-          deployment_id=$(aws deploy create-deployment \
-          --application-name "$application" --deployment-group-name "$application_group" \
-          --s3-location bucket="$s3_bucket",key="$s3_key",bundleType=yaml | jq -r .deploymentId)
-          echo "Deployment started: $deployment_id"
-          echo "deployment_id=$deployment_id" >> $GITHUB_ENV
-      - name: Wait up to 30 minutes for deployment to complete
-        run: |
-          set -e
-          aws deploy wait deployment-successful --deployment-id "$deployment_id"
-          echo "Deployment successful"
-
-  create-good-job-deployment:
-    name: Create good-job deployment
-    runs-on: ubuntu-latest
     needs: prepare-deployment
-    if: inputs.server_types == 'good-job' || inputs.server_types == 'all'
+    environment: ${{ inputs.environment }}
     permissions:
       id-token: write
     steps:
-      - name: Download Artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: DEPLOYMENT_ENVS-${{ inputs.environment }}
-          path: ${{ runner.temp }}
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ env.aws-role }}
           aws-region: eu-west-2
-      - name: Trigger ECS Deployment
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Download web task definition artifact
+        uses: actions/download-artifact@v4
+        with:
+          path: ${{ runner.temp }}
+          name: ${{ inputs.environment }}-web-task-definition
+      - name: Register web task definition
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
+        with:
+          task-definition: ${{ runner.temp }}/web-task-definition.json
+      - name: Create appspec.yml
         run: |
-          set -e
-          source ${{ runner.temp }}/DEPLOYMENT_ENVS
-          DEPLOYMENT_ID=$(aws ecs update-service --cluster $cluster_name --service $good_job_service \
-          --task-definition $good_job_task_definition --force-new-deployment \
-          --query 'service.deployments[?rolloutState==`IN_PROGRESS`].[id][0]' --output text)
-          echo "Deployment started: $DEPLOYMENT_ID"
-          echo "deployment_id=$DEPLOYMENT_ID" >> $GITHUB_ENV
+          cp config/templates/appspec.yaml.tpl appspec.yaml
+          sed -i 's|<TASK_DEFINITION_ARN>|${{ needs.prepare-deployment.outputs.web-task-definition-arn }}|g' appspec.yaml
+      - name: Deploy web service with CodeDeploy
+        id: deploy-web-service
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
+        with:
+          task-definition: ${{ runner.temp }}/web-task-definition.json
+          codedeploy-appspec: appspec.yaml
+          cluster: ${{ env.cluster_name }}
+          service: ${{ env.web_service }}
+          codedeploy-application: ${{ env.web_codedeploy_application }}
+          codedeploy-deployment-group: ${{ env.web_codedeploy_group }}
       - name: Wait for deployment to complete
         run: |
-          set -e
-          source ${{ runner.temp }}/DEPLOYMENT_ENVS
-          DEPLOYMENT_STATE=IN_PROGRESS
-          while [ "$DEPLOYMENT_STATE" == "IN_PROGRESS" ]; do
-            echo "Waiting for deployment to complete..."
-            sleep 30
-            DEPLOYMENT_STATE="$(aws ecs describe-services --cluster $cluster_name --services $good_job_service \
-            --query "services[0].deployments[?id == \`$deployment_id\`].[rolloutState][0]" --output text)"
-          done
-          if [ "$DEPLOYMENT_STATE" != "COMPLETED" ]; then
-            echo "Deployment failed with state: $DEPLOYMENT_STATE"
-            exit 1
-          fi
+          echo "Waiting for CodeDeploy deployment ${{ steps.deploy-web-service.outputs.codedeploy-deployment-id }} to complete..."
+          aws deploy wait deployment-successful --deployment-id "${{ steps.deploy-web-service.outputs.codedeploy-deployment-id }}"
           echo "Deployment successful"
+
+  deploy-good-job:
+    name: Deploy good-job service
+    runs-on: ubuntu-latest
+    if: inputs.server_types == 'good-job' || inputs.server_types == 'all'
+    needs: prepare-deployment
+    environment: ${{ inputs.environment }}
+    permissions:
+      id-token: write
+    steps:
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ env.aws-role }}
+          aws-region: eu-west-2
+      - name: Download good-job task definition artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ inputs.environment }}-good-job-task-definition
+          path: ${{ runner.temp }}
+      - name: Deploy good-job service
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
+        with:
+          task-definition: ${{ runner.temp }}/good-job-task-definition.json
+          cluster: ${{ env.cluster_name }}
+          service: ${{ env.good_job_service }}
+          force-new-deployment: true
+          wait-for-service-stability: true
