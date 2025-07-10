@@ -29,7 +29,7 @@
       <%= render AppRegisterStatusTagComponent.new(@patient_session.registration_status&.status || "unknown") %>
     </li>
 
-    <% if policy(session_attendance).edit? %>
+    <% if policy(session_attendance).edit? && @session.requires_registration? %>
       <li class="app-action-list__item">
         <%= link_to(
               "Update attendance",
