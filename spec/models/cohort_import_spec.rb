@@ -90,21 +90,19 @@ describe CohortImport do
 
       it "accepts NHS numbers with spaces, removes spaces" do
         expect(cohort_import).to be_valid
-        expect(cohort_import.rows.second.to_patient[:nhs_number]).to eq(
-          "9990000026"
-        )
+        expect(cohort_import.rows.second.nhs_number.to_s).to eq("999 000 0026")
       end
 
       it "parses dates in the ISO8601 format" do
         expect(cohort_import).to be_valid
-        expect(cohort_import.rows.first.to_patient[:date_of_birth]).to eq(
+        expect(cohort_import.rows.first.date_of_birth.to_date).to eq(
           Date.new(2010, 1, 1)
         )
       end
 
       it "parses dates in the DD/MM/YYYY format" do
         expect(cohort_import).to be_valid
-        expect(cohort_import.rows.second.to_patient[:date_of_birth]).to eq(
+        expect(cohort_import.rows.second.date_of_birth.to_date).to eq(
           Date.new(2010, 1, 2)
         )
       end
@@ -117,15 +115,19 @@ describe CohortImport do
         expect(cohort_import).to be_valid
         expect(cohort_import.rows.count).to eq(1)
 
-        patient = cohort_import.rows.first.to_patient
-        expect(patient).to have_attributes(
+        processed_patient_data =
+          PatientImporter::DataProcessor.call(cohort_import.rows.first.to_h)
+
+        expect(processed_patient_data.patient).to have_attributes(
           given_name: "Jennifer",
           family_name: "Clarke",
           date_of_birth: Date.new(2010, 1, 1)
         )
 
         expect(
-          cohort_import.rows.first.to_school_move(patient)
+          cohort_import.rows.first.to_school_move(
+            processed_patient_data.patient
+          )
         ).to have_attributes(school: location)
       end
     end

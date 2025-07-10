@@ -9,7 +9,12 @@ module PendingChangesConcern
     new_pending_changes =
       attributes.each_with_object({}) do |(attr, new_value), staged_changes|
         current_value = public_send(attr)
-        staged_changes[attr.to_s] = new_value if new_value != current_value
+        normalised_new_value =
+          current_value.is_a?(Date) ? new_value.to_date : new_value
+
+        if normalised_new_value != current_value
+          staged_changes[attr.to_s] = new_value
+        end
       end
 
     if new_pending_changes.any?
@@ -24,13 +29,16 @@ module PendingChangesConcern
     becomes(self.class).tap do |record|
       record.clear_changes_information
       pending_changes.each do |attr, value|
-        record.public_send("#{attr}=", value)
+        record.public_send("#{attr}=", value) if record.respond_to?(attr)
       end
     end
   end
 
   def apply_pending_changes!
-    pending_changes.each { |attr, value| public_send("#{attr}=", value) }
+    pending_changes.each do |attr, value|
+      public_send("#{attr}=", value) if respond_to?(attr)
+    end
+    yield(pending_changes, self) if block_given?
     discard_pending_changes!
   end
 
@@ -41,9 +49,8 @@ module PendingChangesConcern
 
   def apply_pending_changes_to_new_record!
     ActiveRecord::Base.transaction do
-      new_record = dup_for_pending_changes.tap(&:apply_pending_changes!)
+      dup_for_pending_changes.tap(&:apply_pending_changes!)
       discard_pending_changes!
-      new_record
     end
   end
 end

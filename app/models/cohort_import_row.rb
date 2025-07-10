@@ -12,11 +12,11 @@ class CohortImportRow < PatientImportRow
 
   def school_urn = @data[:child_school_urn]
 
-  private
-
   def stage_registration?
     true
   end
+
+  private
 
   def school_move_source
     :cohort_import

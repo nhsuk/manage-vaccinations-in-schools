@@ -24,8 +24,14 @@ class PatientImport < ApplicationRecord
   end
 
   def process_row(row)
+    processed_patient_data =
+      PatientImporter::DataProcessor.call(
+        row.to_h,
+        stage_registration: row.stage_registration?
+      )
+
+    patient = processed_patient_data.patient
     parents = row.to_parents
-    patient = row.to_patient
     parent_relationships = row.to_parent_relationships(parents, patient)
 
     @school_moves_to_confirm ||= Set.new
