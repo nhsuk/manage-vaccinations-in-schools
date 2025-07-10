@@ -66,6 +66,7 @@ class GovukNotifyPersonalisation
       team_phone:,
       today_or_date_of_vaccination:,
       vaccination:,
+      vaccine_brand:,
       vaccine_is_injection:,
       vaccine_is_nasal:,
       vaccine_side_effects:
@@ -288,6 +289,10 @@ class GovukNotifyPersonalisation
       programme_name,
       programmes.count == 1 ? "vaccination" : "vaccinations"
     ].join(" ")
+  end
+
+  def vaccine_brand
+    vaccination_record&.vaccine&.brand
   end
 
   def vaccine_is_injection = vaccine_is?("injection")

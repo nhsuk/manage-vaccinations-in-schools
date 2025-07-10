@@ -221,7 +221,35 @@ describe GovukNotifyPersonalisation do
     end
   end
 
-  context "with a vaccination record" do
+  context "with an administered vaccination record" do
+    let(:vaccine) do
+      create(:vaccine, brand: "Vaccine", programme: programmes.first)
+    end
+
+    let(:vaccination_record) do
+      create(
+        :vaccination_record,
+        :administered,
+        programme: programmes.first,
+        performed_at: Date.new(2024, 1, 1),
+        vaccine:
+      )
+    end
+
+    it do
+      expect(to_h).to match(
+        hash_including(
+          day_month_year_of_vaccination: "01/01/2024",
+          today_or_date_of_vaccination: "1 January 2024",
+          outcome_administered: "yes",
+          outcome_not_administered: "no",
+          vaccine_brand: "Vaccine"
+        )
+      )
+    end
+  end
+
+  context "with a not-administered vaccination record" do
     let(:vaccination_record) do
       create(
         :vaccination_record,
