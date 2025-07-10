@@ -14,6 +14,10 @@ describe "Flu vaccination" do
     then_i_see_the_check_and_confirm_page_for_nasal_spray
     and_i_get_confirmation_after_recording
     and_the_vaccination_record_is_synced_to_nhs
+
+    when_vaccination_confirmations_are_sent
+    then_an_email_is_sent_to_the_parent_confirming_the_vaccination
+    and_a_text_is_sent_to_the_parent_confirming_the_vaccination
   end
 
   scenario "Administered with injection" do
@@ -25,6 +29,10 @@ describe "Flu vaccination" do
     and_i_record_that_the_patient_has_been_vaccinated_with_injection
     then_i_see_the_check_and_confirm_page_for_injection
     and_i_get_confirmation_after_recording
+
+    when_vaccination_confirmations_are_sent
+    then_an_email_is_sent_to_the_parent_confirming_the_vaccination
+    and_a_text_is_sent_to_the_parent_confirming_the_vaccination
   end
 
   scenario "Switching between nasal and injection" do
@@ -179,5 +187,23 @@ describe "Flu vaccination" do
 
   def and_the_vaccination_record_is_synced_to_nhs
     assert_enqueued_with(job: SyncVaccinationRecordToNHSJob)
+  end
+
+  def when_vaccination_confirmations_are_sent
+    SendVaccinationConfirmationsJob.perform_now
+  end
+
+  def then_an_email_is_sent_to_the_parent_confirming_the_vaccination
+    expect_email_to(
+      @patient.consents.last.parent.email,
+      :vaccination_administered_flu
+    )
+  end
+
+  def and_a_text_is_sent_to_the_parent_confirming_the_vaccination
+    expect_sms_to(
+      @patient.consents.last.parent.phone,
+      :vaccination_administered_flu
+    )
   end
 end
