@@ -115,15 +115,23 @@ module AuthenticationConcern
       jwt_info = decode_jwt( jwt_if_given )
       if jwt_info
         data = jwt_info.first['data']
-        @current_user = User.find(data['user']['id'])
-        session['user'] = data['user']
-        session['cis2_info'] = data['cis2_info']
-
-        authenticate_user!
+        @current_user = User.find_by(
+          id: data['user']['id'],
+          pwd_auth_session_token: data['user']['pwd_auth_session_token']
+        )
+        if @current_user
+          session['user'] = data['user']
+          session['cis2_info'] = data['cis2_info']
+          authenticate_user!
+        else
+          session.clear!
+          logger.warn "Couldnt find user id #{data['user']['id']} and given pwd_auth_session_token"
+          render json: {errors: ['Unauthorized']}, status: :unauthorized and return
+        end
       end
     rescue JWT::DecodeError, NoMethodError => e
       logger.warn "invalid JWT"
-      render json: ['Unauthorized'], status: :unauthorized and return
+      render json: {errors: ['Unauthorized']}, status: :unauthorized and return
     end
 
     def reporting_app_redirect_url
