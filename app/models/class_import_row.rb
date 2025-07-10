@@ -8,13 +8,13 @@ class ClassImportRow < PatientImportRow
     @school = session.location
   end
 
-  private
-
-  attr_reader :school
-
   def stage_registration?
     false
   end
+
+  private
+
+  attr_reader :school
 
   def school_move_source
     :class_list_import
