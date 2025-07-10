@@ -248,13 +248,27 @@ describe GovukNotifyPersonalisation do
       programmes.first.vaccines.first.update!(side_effects: %w[swelling unwell])
     end
 
-    it do
-      expect(to_h).to match(
-        hash_including(
-          vaccine_side_effects:
-            "- generally feeling unwell\n- swelling or pain where the injection was given"
+    it { should include(vaccine_side_effects: "") }
+
+    context "with injection as an approved vaccine method" do
+      before do
+        create(
+          :patient_triage_status,
+          :safe_to_vaccinate,
+          :injection,
+          patient:,
+          programme: programmes.first
         )
-      )
+      end
+
+      it do
+        expect(to_h).to match(
+          hash_including(
+            vaccine_side_effects:
+              "- generally feeling unwell\n- swelling or pain where the injection was given"
+          )
+        )
+      end
     end
   end
 end

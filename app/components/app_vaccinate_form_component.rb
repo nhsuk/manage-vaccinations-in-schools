@@ -19,16 +19,11 @@ class AppVaccinateFormComponent < ViewComponent::Base
   end
 
   def delivery_method
-    triage_status = patient.triage_status(programme:)
-
-    status =
-      if triage_status.not_required?
-        patient.consent_status(programme:)
-      else
-        triage_status
-      end
-
-    status.vaccine_method_nasal? ? :nasal_spray : :intramuscular
+    if patient.approved_vaccine_methods(programme:).include?("nasal")
+      :nasal_spray
+    else
+      :intramuscular
+    end
   end
 
   def dose_sequence
