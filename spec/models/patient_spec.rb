@@ -321,6 +321,57 @@ describe Patient do
     it { should eq("JD") }
   end
 
+  describe "#approved_vaccine_methods" do
+    subject(:approved_vaccine_methods) do
+      patient.approved_vaccine_methods(programme:)
+    end
+
+    let(:patient) { create(:patient) }
+    let(:programme) { create(:programme) }
+
+    it { should be_empty }
+
+    context "when consent given and triage not required" do
+      before do
+        create(
+          :patient_consent_status,
+          :given,
+          patient:,
+          programme:,
+          vaccine_methods: %w[nasal injection]
+        )
+      end
+
+      it { should eq(%w[nasal injection]) }
+    end
+
+    context "when consent given and triage required" do
+      before do
+        create(
+          :patient_consent_status,
+          :given,
+          patient:,
+          programme:,
+          vaccine_methods: %w[nasal injection]
+        )
+        create(:patient_triage_status, :required, patient:, programme:)
+      end
+
+      it { should be_empty }
+
+      context "and when triaged" do
+        before do
+          patient.triage_status(programme:).update!(
+            status: "safe_to_vaccinate",
+            vaccine_method: "nasal"
+          )
+        end
+
+        it { should eq(%w[nasal]) }
+      end
+    end
+  end
+
   describe "#update_from_pds!" do
     subject(:update_from_pds!) { patient.update_from_pds!(pds_patient) }
 

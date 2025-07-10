@@ -338,6 +338,16 @@ class Patient < ApplicationRecord
       )
   end
 
+  def approved_vaccine_methods(programme:)
+    triage_status = triage_status(programme:)
+
+    if triage_status.not_required?
+      consent_status(programme:).vaccine_methods
+    else
+      [triage_status.vaccine_method].compact
+    end
+  end
+
   def deceased?
     date_of_death != nil
   end
