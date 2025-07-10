@@ -6,10 +6,6 @@
   <% if latest_triage.nil? || latest_triage.needs_follow_up? %>
     <p>You need to decide if it’s safe to vaccinate.</p>
 
-    <% if triage_status&.consent_requires_triage? %>
-      <p>Responses to health questions need triage.</p>
-    <% end %>
-
     <% if triage_status&.vaccination_history_requires_triage? %>
       <p>Incomplete vaccination history for <%= programme.name_in_sentence %>. Check if the child needs another dose.</p>
     <% end %>
@@ -22,11 +18,15 @@
     <% end %>
   <% elsif latest_triage %>
     <% if latest_triage.ready_to_vaccinate? %>
-      <p><%= latest_triage.performed_by.full_name %> decided that <%= patient.full_name %> is safe to vaccinate.</p>
+      <% if latest_triage.vaccine_method.present? && programme.has_multiple_vaccine_methods? %>
+        <p><%= latest_triage.performed_by.full_name %> decided that <%= patient.full_name %> is safe to vaccinate using the <%= vaccination_method %> vaccine only.</p>
+      <% else %>
+        <p><%= latest_triage.performed_by.full_name %> decided that <%= patient.full_name %> is safe to vaccinate.</p>
+      <% end %>
     <% elsif latest_triage.do_not_vaccinate? %>
       <p><%= latest_triage.performed_by.full_name %> decided that <%= patient.full_name %> should not be vaccinated.</p>
-    <% elsif latest_triage.do_not_vaccinate? %>
-      <p><%= latest_triage.performed_by.full_name %> decided that <%= patient.full_name %>’s vaccination should be delayed.</p>
+    <% elsif latest_triage.delay_vaccination? %>
+      <p><%= latest_triage.performed_by.full_name %> decided that <%= patient.full_name %>'s vaccination should be delayed.</p>
     <% end %>
 
     <div class="app-button-group nhsuk-u-margin-bottom-4">
