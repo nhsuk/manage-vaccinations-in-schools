@@ -55,4 +55,10 @@ class AppVaccinateFormComponent < ViewComponent::Base
         options
       end
   end
+
+  def vaccination_name
+    return "#{programme.name} vaccination" unless programme.flu?
+
+    delivery_method == :nasal_spray ? "flu nasal spray" : "flu injection"
+  end
 end
