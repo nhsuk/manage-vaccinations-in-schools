@@ -95,24 +95,33 @@ module AuthenticationConcern
       end
     end
 
+    def token_error!(token)
+      if token.blank?
+        render json: {errors: "Unauthorized"}, status: :unauthorized and return
+      else
+        render json: {errors: "Forbidden"}, status: :forbidden and return
+      end
+    end
+
     def authenticate_app_by_token!
       possible_tokens = []
+      # auth_token_by_param means tokens could appear in logs => it's for dev environments only
+      # hence making it controlled by feature flag
       possible_tokens << params[:auth] if Flipper.enabled?(:auth_token_by_param)
+      # auth_token_by_header is safer, hence having its own feature flag
+      possible_tokens << request.headers["Authorization"] if Flipper.enabled?(:auth_token_by_header)
       
-      if Flipper.enabled?(:auth_token_by_header)
-        possible_tokens << request.headers["Authorization"]
-      end
-
       token = possible_tokens.find { it == Settings.mavis_reporting_app.secret }
-      render json: "Forbidden", status: :forbidden and return unless token
+      token_error!(token) unless token
     end
 
     def jwt_if_given
-      params[:jwt] || request.headers['Authorization']&.gsub(/Bearer\s+([:alnum:]*)/, '\1')
+      params[:jwt] || request.headers['Authorization']&.gsub(/(Bearer\s+)?([:alnum:]*)/, '\2')
     end
 
     def authenticate_user_by_jwt!
-      jwt_info = decode_jwt( jwt_if_given )
+      jwt = jwt_if_given
+      jwt_info = decode_jwt( jwt )
       if jwt_info
         data = jwt_info.first['data']
         @current_user = User.find_by(
@@ -126,29 +135,32 @@ module AuthenticationConcern
           authenticate_user!
         else
           session.clear!
-          logger.warn "Couldnt find user id #{data['user']['id']} and given pwd_auth_session_token"
-          render json: {errors: ['Unauthorized']}, status: :unauthorized and return
+          Rails.logger.warn "Couldn't find user id #{data['user']['id']} with given session_token and pwd_auth_session_token"
+          token_error!(jwt)
         end
       end
     rescue JWT::DecodeError, NoMethodError => e
-      logger.warn "invalid JWT"
-      render json: {errors: ['Unauthorized']}, status: :unauthorized and return
+      Rails.logger.warn "invalid JWT"
+      token_error!(jwt)
     end
 
-    def reporting_app_redirect_url
-      session[:redirect_after_login]
+    def add_token_to(url, user)
+      uri = Addressable::URI.parse(url)
+      user_token =
+        OneTimeToken.find_or_generate_for!(
+          user_id: user.id,
+          cis2_info: session["cis2_info"]
+        ).token
+      uri.query_values = (uri.query_values || {}).merge("token" => user_token)
+      uri.to_s
     end
 
     def reporting_app_redirect_url_with_token_for(user)
-      if (url = reporting_app_redirect_url)
-        uri = Addressable::URI.parse(url)
-        user_token =
-          OneTimeToken.find_or_generate_for!(
-            user_id: user.id,
-            cis2_info: session["cis2_info"]
-          ).token
-        uri.query_values = (uri.query_values || {}).merge("token" => user_token)
-        uri.to_s
+      url = session["redirect_after_login"]
+      if url.present?
+        add_token_to(url, user)
+      else
+        nil
       end
     end
 

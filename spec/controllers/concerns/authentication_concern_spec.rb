@@ -18,6 +18,8 @@ describe AuthenticationConcern do
           {}
         end
 
+        def render( content={}, args={} ); end
+
         def current_user
           @user
         end
@@ -76,6 +78,84 @@ describe AuthenticationConcern do
         it "returns nil" do
           expect(sample_class.send(:jwt_if_given)).to be_nil
         end
+      end
+    end
+  end
+
+  describe "#authenticate_app_by_token!" do
+    let(:token) { "sometoken" }
+
+    context "when the :auth_token_by_param feature flag is enabled" do
+      before do
+        Flipper.enable(:auth_token_by_param)
+      end
+
+      context "and the :auth param is provided" do
+        before do
+          allow(sample_class).to receive(:params).and_return( {auth: token} )
+        end
+
+        context "and the auth param contains the reporting app's secret" do
+          let(:token) { Settings.mavis_reporting_app.secret }
+
+          it "does not cause a token error" do
+            expect(sample_class).not_to receive(:token_error!)
+            sample_class.send(:authenticate_app_by_token!)
+          end
+        end
+
+        context "and the auth param does not contain the reporting app secret" do
+          it "causes a token error" do
+            expect(sample_class).to receive(:token_error!)
+            sample_class.send(:authenticate_app_by_token!)
+          end
+        end
+      end
+    end
+    context "when the :auth_token_by_header feature flag is enabled" do
+      before do
+        Flipper.enable(:auth_token_by_header)
+      end
+      context "and the Authorization header is provided" do
+        before do
+          sample_class.request = instance_double('request', headers: {'Authorization' => token} )
+        end
+
+        context "and the Authorization header contains the reporting app's secret" do
+          let(:token) { Settings.mavis_reporting_app.secret }
+
+          it "does not cause a token error" do
+            expect(sample_class).not_to receive(:token_error!)
+            sample_class.send(:authenticate_app_by_token!)
+          end
+        end
+
+        context "and the Authorization header does not contain the reporting app secret" do
+          it "causes a token error" do
+            expect(sample_class).to receive(:token_error!)
+            sample_class.send(:authenticate_app_by_token!)
+          end
+        end
+      end
+    end
+  end
+
+  describe "#token_error!" do
+    context "given a token" do
+      let(:token) { "sometoken" }
+
+      it "renders a forbidden error, with status :forbidden" do
+        expect(sample_class).to receive(:render).with( json: {errors: "Forbidden"}, status: :forbidden )
+        sample_class.send(:token_error!, token)
+      end
+    end
+
+    context "given an empty token" do
+      let(:token) { "" }
+
+      it "renders a Unauthorized error, with status :unauthorized" do
+        expect(sample_class).to receive(:render).with( json: {errors: "Unauthorized"}, status: :unauthorized )
+        sample_class.send(:token_error!, token)
       end
     end
   end

@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 class Reporting::TotalsController < ApplicationController
-  include AuthenticationConcern
-
   skip_before_action :authenticate_user!
   before_action :authenticate_user_by_jwt!
 
