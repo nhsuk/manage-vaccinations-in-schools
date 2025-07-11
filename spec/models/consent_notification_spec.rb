@@ -104,6 +104,22 @@ describe ConsentNotification do
         end
       end
 
+      context "with the Flu programme" do
+        let(:programmes) { [create(:programme, :flu)] }
+
+        it "enqueues an email per parent" do
+          expect { create_and_send! }.to have_delivered_email(
+            :consent_school_request_flu
+          ).with(
+            parent: parents.first,
+            patient:,
+            programmes:,
+            session:,
+            sent_by: current_user
+          )
+        end
+      end
+
       it "enqueues a text per parent" do
         expect { create_and_send! }.to have_delivered_sms(
           :consent_school_request
@@ -259,6 +275,22 @@ describe ConsentNotification do
         end
       end
 
+      context "with the Flu programme" do
+        let(:programmes) { [create(:programme, :flu)] }
+
+        it "enqueues an email per parent" do
+          expect { create_and_send! }.to have_delivered_email(
+            :consent_school_initial_reminder_flu
+          ).with(
+            parent: parents.first,
+            patient:,
+            programmes:,
+            session:,
+            sent_by: current_user
+          )
+        end
+      end
+
       it "enqueues a text per parent" do
         expect { create_and_send! }.to have_delivered_sms(
           :consent_school_reminder
@@ -337,6 +369,22 @@ describe ConsentNotification do
         it "enqueues an email per parent" do
           expect { create_and_send! }.to have_delivered_email(
             :consent_school_subsequent_reminder_doubles
+          ).with(
+            parent: parents.first,
+            patient:,
+            programmes:,
+            session:,
+            sent_by: current_user
+          )
+        end
+      end
+
+      context "with the Flu programme" do
+        let(:programmes) { [create(:programme, :flu)] }
+
+        it "enqueues an email per parent" do
+          expect { create_and_send! }.to have_delivered_email(
+            :consent_school_subsequent_reminder_flu
           ).with(
             parent: parents.first,
             patient:,
