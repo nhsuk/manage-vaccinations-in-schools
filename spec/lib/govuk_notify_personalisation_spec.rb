@@ -50,6 +50,7 @@ describe GovukNotifyPersonalisation do
   it do
     expect(to_h).to eq(
       {
+        can_self_consent: "yes",
         catch_up: "no",
         consent_deadline: "Wednesday 31 December",
         consent_link:
@@ -80,6 +81,12 @@ describe GovukNotifyPersonalisation do
         vaccine_side_effects: ""
       }
     )
+  end
+
+  context "with a patient in primary school" do
+    let(:patient) { create(:patient, year_group: 6) }
+
+    it { should include(can_self_consent: "no") }
   end
 
   context "when the session is today" do
