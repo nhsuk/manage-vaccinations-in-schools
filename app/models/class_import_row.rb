@@ -3,6 +3,8 @@
 class ClassImportRow < PatientImportRow
   validate :validate_address_postcode
 
+  attr_reader :school
+
   def initialize(data:, session:, year_groups:)
     super(data:, organisation: session.organisation, year_groups:)
     @school = session.location
@@ -13,8 +15,6 @@ class ClassImportRow < PatientImportRow
   end
 
   private
-
-  attr_reader :school
 
   def school_move_source
     :class_list_import

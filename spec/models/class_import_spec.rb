@@ -138,9 +138,9 @@ describe ClassImport do
           date_of_birth: Date.new(2010, 1, 1)
         )
 
-        expect(
-          class_import.rows.first.to_school_move(processed_patient_data.patient)
-        ).to have_attributes(school: location)
+        expect(processed_patient_data.school_move).to have_attributes(
+          school: location
+        )
       end
     end
   end
@@ -342,24 +342,19 @@ describe ClassImport do
         )
       end
 
-      it "proposes a school move for the child" do
-        expect(patient.school_moves).to be_empty
-
-        expect { process! }.to change { patient.reload.school_moves.count }.by(
-          1
-        )
-
-        school_move = patient.school_moves.first
-        expect(school_move.school_id).to eq(session.location_id)
+      it "doesn't create a school move" do
+        expect { process! }.to not_change(patient.reload, :school_moves)
       end
 
-      it "doesn't stage school changes" do
-        expect { process! }.not_to change(patient, :pending_changes)
-        expect(patient.pending_changes.keys).not_to include(
-          :cohort_id,
-          :home_educated,
-          :organisation_id,
-          :school_id
+      it "stores the school move details until duplicate patient is manually reviewed" do
+        expect { process! }.to change { patient.reload.pending_changes }.from(
+          {}
+        ).to(
+          include(
+            "school_move_home_educated",
+            "school_move_organisation_id",
+            "school_move_school_id"
+          )
         )
       end
     end

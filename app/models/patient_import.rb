@@ -28,17 +28,19 @@ class PatientImport < ApplicationRecord
       PatientImporter::DataProcessor.call(
         row.to_h,
         bulk_import: true,
+        school: row.school,
+        organisation: row.organisation,
         stage_registration: row.stage_registration?
       )
-
     patient = processed_patient_data.patient
     parents = processed_patient_data.parents
     parent_relationships = processed_patient_data.parent_relationships
+    school_move = processed_patient_data.school_move
 
     @school_moves_to_confirm ||= Set.new
     @school_moves_to_save ||= Set.new
 
-    if (school_move = row.to_school_move(patient))
+    if school_move
       if (patient.school.nil? && !patient.home_educated) ||
            patient.not_in_organisation?
         @school_moves_to_confirm.add(school_move)

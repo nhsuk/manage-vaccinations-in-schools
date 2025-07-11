@@ -114,9 +114,9 @@ describe CohortImport do
       it "is valid" do
         expect(cohort_import).to be_valid
         expect(cohort_import.rows.count).to eq(1)
+        row = cohort_import.rows.first
 
-        processed_patient_data =
-          PatientImporter::DataProcessor.call(cohort_import.rows.first.to_h)
+        processed_patient_data = PatientImporter::DataProcessor.call(row.to_h)
 
         expect(processed_patient_data.patient).to have_attributes(
           given_name: "Jennifer",
@@ -124,11 +124,9 @@ describe CohortImport do
           date_of_birth: Date.new(2010, 1, 1)
         )
 
-        expect(
-          cohort_import.rows.first.to_school_move(
-            processed_patient_data.patient
-          )
-        ).to have_attributes(school: location)
+        expect(processed_patient_data.school_move).to have_attributes(
+          school: location
+        )
       end
     end
 
@@ -318,9 +316,12 @@ describe CohortImport do
         create(
           :patient,
           given_name: "Jimmy",
-          family_name: "smith",
+          family_name: "Smith",
+          address_line_1: "10 Downing Street",
+          address_postcode: "SW1A 1AA",
+          address_town: "London",
           date_of_birth: Date.new(2010, 1, 2),
-          nhs_number: nil,
+          nhs_number: "9990000026",
           organisation: nil
         )
       end
