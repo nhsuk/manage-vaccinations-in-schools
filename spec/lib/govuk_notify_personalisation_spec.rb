@@ -55,6 +55,7 @@ describe GovukNotifyPersonalisation do
         consent_link:
           "http://localhost:4000/consents/#{session.slug}/hpv/start",
         full_and_preferred_patient_name: "John Smith",
+        has_multiple_dates: "no",
         location_name: "Hogwarts",
         next_or_today_session_date: "Thursday 1 January",
         next_or_today_session_dates: "Thursday 1 January",
@@ -128,6 +129,7 @@ describe GovukNotifyPersonalisation do
       expect(to_h).to match(
         hash_including(
           consent_deadline: "Wednesday 31 December",
+          has_multiple_dates: "yes",
           next_or_today_session_date: "Thursday 1 January",
           next_or_today_session_dates:
             "Thursday 1 January and Friday 2 January",

@@ -40,6 +40,7 @@ class GovukNotifyPersonalisation
       consent_link:,
       day_month_year_of_vaccination:,
       full_and_preferred_patient_name:,
+      has_multiple_dates:,
       location_name:,
       next_or_today_session_date:,
       next_or_today_session_dates:,
@@ -130,6 +131,16 @@ class GovukNotifyPersonalisation
 
   def full_and_preferred_patient_name
     (consent_form || patient).full_name_with_known_as(context: :parents)
+  end
+
+  def has_multiple_dates
+    return nil if session.nil?
+
+    if session.today_or_future_dates.length > 1
+      "yes"
+    else
+      "no"
+    end
   end
 
   def host
