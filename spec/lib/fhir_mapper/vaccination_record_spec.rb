@@ -13,6 +13,7 @@ describe FHIRMapper::VaccinationRecord do
   let(:session) { patient_session.session }
   let(:vaccination_outcome) { :administered }
   let(:vaccine) { vaccination_record.vaccine }
+  let(:nhs_immunisations_api_id) { nil }
   let(:vaccination_record) do
     create(
       :vaccination_record,
@@ -21,7 +22,8 @@ describe FHIRMapper::VaccinationRecord do
       programme:,
       session:,
       vaccine: programme.active_vaccines.first,
-      outcome: vaccination_outcome
+      outcome: vaccination_outcome,
+      nhs_immunisations_api_id:
     )
   end
   let(:user) { vaccination_record.performed_by_user }
@@ -32,6 +34,20 @@ describe FHIRMapper::VaccinationRecord do
     # it "produces the correct record" do
     #   expect(immunisation_fhir.to_hash).to eq fhir_immunisation_json(patient:)
     # end
+
+    describe "id" do
+      subject { immunisation_fhir.id }
+
+      context "when the vaccination record no UUID" do
+        it { should be_nil }
+      end
+
+      context "when the vaccination record has a UUID" do
+        let(:nhs_immunisations_api_id) { "1212-1212-1212-121212121212" }
+
+        it { should eq "1212-1212-1212-121212121212" }
+      end
+    end
 
     describe "contained patient" do
       subject { immunisation_fhir.contained.find { it.id == "Patient1" } }

@@ -9,7 +9,7 @@ module FHIRMapper
     end
 
     def fhir_record
-      immunisation = FHIR::Immunization.new
+      immunisation = FHIR::Immunization.new(id: nhs_immunisations_api_id)
 
       if performed_by_user.present?
         immunisation.contained << performed_by_user.fhir_practitioner(
