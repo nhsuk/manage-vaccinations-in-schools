@@ -38,6 +38,7 @@ class GovukNotifyPersonalisation
       catch_up:,
       consent_deadline:,
       consent_link:,
+      consented_vaccine_methods_message:,
       day_month_year_of_vaccination:,
       full_and_preferred_patient_name:,
       has_multiple_dates:,
@@ -124,6 +125,23 @@ class GovukNotifyPersonalisation
         session,
         programmes.map(&:to_param).join("-")
       )
+  end
+
+  def consented_vaccine_methods_message
+    return if consent_form.nil? || consent_form.programmes.none?(&:flu?)
+
+    consent_form_programmes = consent_form.consent_form_programmes
+
+    consented_vaccine_methods =
+      if consent_form_programmes.any?(&:vaccine_method_injection_and_nasal?)
+        "nasal spray flu vaccine, or the injected flu vaccine if the nasal spray is not suitable"
+      elsif consent_form_programmes.any?(&:vaccine_method_nasal?)
+        "nasal spray flu vaccine"
+      else
+        "injected flu vaccine"
+      end
+
+    "You’ve agreed that #{short_patient_name} can have the #{consented_vaccine_methods}."
   end
 
   def day_month_year_of_vaccination

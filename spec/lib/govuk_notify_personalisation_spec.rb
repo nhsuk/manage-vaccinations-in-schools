@@ -190,7 +190,8 @@ describe GovukNotifyPersonalisation do
         :consent_form,
         :refused,
         session:,
-        recorded_at: Date.new(2024, 1, 1)
+        recorded_at: Date.new(2024, 1, 1),
+        given_name: "Tom"
       )
     end
 
@@ -220,6 +221,48 @@ describe GovukNotifyPersonalisation do
       before { create(:session, location: school, programmes:, organisation:) }
 
       it { should include(location_name: "Waterloo Road") }
+    end
+
+    context "for the flu programme" do
+      let(:programmes) { [create(:programme, :flu)] }
+
+      it do
+        expect(to_h).to include(
+          consented_vaccine_methods_message:
+            "You’ve agreed that Tom can have the injected flu vaccine."
+        )
+      end
+
+      context "when consented to both nasal and injection" do
+        before do
+          consent_form.consent_form_programmes.update!(
+            vaccine_methods: %w[nasal injection]
+          )
+        end
+
+        it do
+          expect(to_h).to include(
+            consented_vaccine_methods_message:
+              "You’ve agreed that Tom can have the nasal spray flu vaccine, " \
+                "or the injected flu vaccine if the nasal spray is not suitable."
+          )
+        end
+      end
+
+      context "when consented only to nasal" do
+        before do
+          consent_form.consent_form_programmes.update!(
+            vaccine_methods: %w[nasal]
+          )
+        end
+
+        it do
+          expect(to_h).to include(
+            consented_vaccine_methods_message:
+              "You’ve agreed that Tom can have the nasal spray flu vaccine."
+          )
+        end
+      end
     end
   end
 
