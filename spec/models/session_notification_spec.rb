@@ -175,6 +175,36 @@ describe SessionNotification do
               )
       end
 
+      context "when the organisation is Coventry & Warwickshire Partnership NHS Trust (CWPT)" do
+        let(:organisation) do
+          create(:organisation, ods_code: "RYG", programmes:)
+        end
+
+        it "enqueues an email using the CWPT-specific template" do
+          expect { create_and_send! }.to have_delivered_email(
+            :session_clinic_initial_invitation_ryg
+          ).with(
+            parent: parents.first,
+            patient: patient,
+            programmes:,
+            session: session,
+            sent_by: current_user
+          )
+        end
+
+        it "enqueues an SMS using the CWPT-specific template" do
+          expect { create_and_send! }.to have_delivered_sms(
+            :session_clinic_initial_invitation_ryg
+          ).with(
+            parent: parents.first,
+            patient: patient,
+            programmes:,
+            session: session,
+            sent_by: current_user
+          )
+        end
+      end
+
       context "when parent doesn't want to receive updates by text" do
         let(:parent) { parents.first }
 
