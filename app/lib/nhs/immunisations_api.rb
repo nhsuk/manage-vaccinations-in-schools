@@ -5,8 +5,8 @@ module NHS::ImmunisationsAPI
     def record_immunisation(vaccination_record)
       unless Flipper.enabled?(:immunisations_fhir_api_integration)
         Rails.logger.info(
-          "Not syncing vaccination record to immunisations API as the feature" \
-            " flag is disabled: #{vaccination_record.id}"
+          "Not recording vaccination record to immunisations API as the" \
+            " feature flag is disabled: #{vaccination_record.id}"
         )
         return
       end
@@ -28,13 +28,13 @@ module NHS::ImmunisationsAPI
           nhs_immunisations_api_etag: 1
         )
       else
-        raise "Error syncing vaccination record #{vaccination_record.id} to" \
+        raise "Error recording vaccination record #{vaccination_record.id} to" \
                 " Immunisations API: unexpected response status" \
                 " #{response.status}"
       end
     rescue Faraday::ClientError => e
       if (diagnostics = extract_error_diagnostics(e&.response)).present?
-        raise "Error syncing vaccination record #{vaccination_record.id} to" \
+        raise "Error recording vaccination record #{vaccination_record.id} to" \
                 " Immunisations API: #{diagnostics}"
       else
         raise

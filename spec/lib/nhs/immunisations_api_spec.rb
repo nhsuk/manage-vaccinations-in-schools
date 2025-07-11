@@ -164,7 +164,7 @@ describe NHS::ImmunisationsAPI do
           expect {
             described_class.record_immunisation(vaccination_record)
           }.to raise_error(
-            "Error syncing vaccination record #{vaccination_record.id} to" \
+            "Error recording vaccination record #{vaccination_record.id} to" \
               " Immunisations API: unexpected response status 200"
           )
         end
@@ -179,7 +179,7 @@ describe NHS::ImmunisationsAPI do
             described_class.record_immunisation(vaccination_record)
           }.to raise_error(
             StandardError,
-            "Error syncing vaccination record #{vaccination_record.id} to" \
+            "Error recording vaccination record #{vaccination_record.id} to" \
               " Immunisations API: Invalid patient ID"
           )
         end
