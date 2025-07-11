@@ -68,6 +68,7 @@ class GovukNotifyPersonalisation
       team_phone:,
       today_or_date_of_vaccination:,
       vaccination:,
+      vaccination_and_method:,
       vaccine_brand:,
       vaccine_is_injection:,
       vaccine_is_nasal:,
@@ -315,10 +316,36 @@ class GovukNotifyPersonalisation
   end
 
   def vaccination
-    [
-      programmes.map(&:name).to_sentence,
-      programmes.count == 1 ? "vaccination" : "vaccinations"
-    ].join(" ")
+    names = programmes.map(&:name)
+    "#{names.to_sentence} vaccination".pluralize(names.length)
+  end
+
+  def vaccination_and_method
+    names =
+      programmes.map do |programme|
+        next programme.name unless programme.flu?
+
+        if vaccination_record
+          if vaccination_record.delivery_method_nasal_spray?
+            "nasal spray flu"
+          else
+            "injected flu"
+          end
+        elsif patient &&
+              (
+                vaccine_methods = patient.approved_vaccine_methods(programme:)
+              ).present?
+          if vaccine_methods.first == "nasal"
+            "nasal spray flu"
+          else
+            "injected flu"
+          end
+        else
+          "flu"
+        end
+      end
+
+    "#{names.to_sentence} vaccination".pluralize(names.length)
   end
 
   def vaccine_brand
