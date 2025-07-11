@@ -68,7 +68,6 @@ describe GovukNotifyPersonalisation do
         organisation_privacy_notice_url: "https://example.com/privacy-notice",
         organisation_privacy_policy_url: "https://example.com/privacy-policy",
         patient_date_of_birth: "1 February 2012",
-        programme_name: "HPV",
         short_patient_name: "John",
         short_patient_name_apos: "John’s",
         subsequent_session_dates_offered_message: "",
