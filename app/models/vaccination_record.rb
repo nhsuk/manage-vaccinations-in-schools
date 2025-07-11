@@ -21,6 +21,7 @@
 #  performed_by_family_name        :string
 #  performed_by_given_name         :string
 #  performed_ods_code              :string
+#  protocol                        :integer
 #  uuid                            :uuid             not null
 #  created_at                      :datetime         not null
 #  updated_at                      :datetime         not null
@@ -105,9 +106,12 @@ class VaccinationRecord < ApplicationRecord
           )
         end
 
+  enum :protocol, { pgd: 0, psd: 1 }, validate: true
+
   enum :delivery_method,
        { intramuscular: 0, subcutaneous: 1, nasal_spray: 2 },
        prefix: true
+
   enum :delivery_site,
        {
          left_arm_upper_position: 2,

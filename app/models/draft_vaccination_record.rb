@@ -16,6 +16,7 @@ class DraftVaccinationRecord
   attribute :delivery_site, :string
   attribute :dose_sequence, :integer
   attribute :full_dose, :boolean
+  attribute :protocol, :string
   attribute :identity_check_confirmed_by_other_name, :string
   attribute :identity_check_confirmed_by_other_relationship, :string
   attribute :identity_check_confirmed_by_patient, :boolean
@@ -112,6 +113,7 @@ class DraftVaccinationRecord
               :delivery_method,
               :delivery_site,
               :performed_at,
+              :protocol,
               presence: true
     validates :full_dose, inclusion: { in: [true, false] }
   end
@@ -128,6 +130,10 @@ class DraftVaccinationRecord
 
   # So that a form error matches to a field in this model
   alias_method :administered, :administered?
+
+  def protocol
+    :pgd
+  end
 
   def batch
     return nil if batch_id.nil?
@@ -261,6 +267,7 @@ class DraftVaccinationRecord
       delivery_site
       dose_sequence
       full_dose
+      protocol
       identity_check
       location_name
       notes
