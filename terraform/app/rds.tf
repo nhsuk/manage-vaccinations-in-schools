@@ -48,7 +48,6 @@ resource "aws_rds_cluster" "core" {
   kms_key_id                      = aws_kms_key.rds_cluster.arn
   storage_encrypted               = true
   manage_master_user_password     = true
-  enable_http_endpoint            = true
   deletion_protection             = true
   allow_major_version_upgrade     = true
   preferred_backup_window         = "01:00-01:30"

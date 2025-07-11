@@ -1179,7 +1179,8 @@ describe ImmunisationImportRow do
             "DATE_OF_VACCINATION" => session.dates.first.strftime("%Y%m%d"),
             "SESSION_ID" => session.id.to_s,
             "ORGANISATION_CODE" => organisation.ods_code,
-            "PERFORMING_PROFESSIONAL_EMAIL" => create(:user).email
+            "PERFORMING_PROFESSIONAL_EMAIL" => create(:user).email,
+            "DOSE_SEQUENCE" => "1"
           )
         end
 

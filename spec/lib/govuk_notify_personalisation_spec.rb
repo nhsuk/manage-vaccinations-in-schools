@@ -73,7 +73,10 @@ describe GovukNotifyPersonalisation do
         team_email: "organisation@example.com",
         team_name: "Organisation",
         team_phone: "01234 567890 (option 1)",
-        vaccination: "HPV vaccination"
+        vaccination: "HPV vaccination",
+        vaccine_is_injection: "no",
+        vaccine_is_nasal: "no",
+        vaccine_side_effects: ""
       }
     )
   end
@@ -239,6 +242,93 @@ describe GovukNotifyPersonalisation do
           outcome_not_administered: "yes"
         )
       )
+    end
+  end
+
+  context "with vaccine methods" do
+    context "and an injection-only programme" do
+      before do
+        create(
+          :patient_consent_status,
+          :given,
+          patient:,
+          programme: programmes.first
+        )
+      end
+
+      it { should include(vaccine_is_injection: "yes", vaccine_is_nasal: "no") }
+    end
+
+    context "and a nasal spray programme" do
+      let(:programmes) { [create(:programme, :flu)] }
+
+      before do
+        create(
+          :patient_consent_status,
+          :given,
+          patient:,
+          programme: programmes.first,
+          vaccine_methods: %w[nasal injection]
+        )
+      end
+
+      it { should include(vaccine_is_injection: "no", vaccine_is_nasal: "yes") }
+    end
+
+    context "and multiple programmes" do
+      let(:programmes) { [create(:programme, :hpv), create(:programme, :flu)] }
+
+      before do
+        create(
+          :patient_consent_status,
+          :given,
+          patient:,
+          programme: programmes.first,
+          vaccine_methods: %w[nasal injection]
+        )
+        create(
+          :patient_consent_status,
+          :given,
+          patient:,
+          programme: programmes.second
+        )
+      end
+
+      it do
+        expect(to_h).to include(
+          vaccine_is_injection: "yes",
+          vaccine_is_nasal: "yes"
+        )
+      end
+    end
+  end
+
+  context "with vaccine side effects" do
+    before do
+      programmes.first.vaccines.first.update!(side_effects: %w[swelling unwell])
+    end
+
+    it { should include(vaccine_side_effects: "") }
+
+    context "with injection as an approved vaccine method" do
+      before do
+        create(
+          :patient_triage_status,
+          :safe_to_vaccinate,
+          :injection,
+          patient:,
+          programme: programmes.first
+        )
+      end
+
+      it do
+        expect(to_h).to match(
+          hash_including(
+            vaccine_side_effects:
+              "- generally feeling unwell\n- swelling or pain where the injection was given"
+          )
+        )
+      end
     end
   end
 end

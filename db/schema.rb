@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_02_142922) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_02_162254) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -820,8 +820,12 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_02_142922) do
     t.string "performed_ods_code"
     t.bigint "vaccine_id"
     t.boolean "full_dose"
+    t.datetime "nhs_immunisations_api_synced_at"
+    t.string "nhs_immunisations_api_id"
+    t.string "nhs_immunisations_api_etag"
     t.index ["batch_id"], name: "index_vaccination_records_on_batch_id"
     t.index ["discarded_at"], name: "index_vaccination_records_on_discarded_at"
+    t.index ["nhs_immunisations_api_id"], name: "index_vaccination_records_on_nhs_immunisations_api_id", unique: true
     t.index ["patient_id"], name: "index_vaccination_records_on_patient_id"
     t.index ["performed_by_user_id"], name: "index_vaccination_records_on_performed_by_user_id"
     t.index ["programme_id"], name: "index_vaccination_records_on_programme_id"
@@ -842,6 +846,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_02_142922) do
     t.text "nivs_name", null: false
     t.boolean "discontinued", default: false, null: false
     t.bigint "programme_id", null: false
+    t.integer "side_effects", default: [], null: false, array: true
     t.index ["manufacturer", "brand"], name: "index_vaccines_on_manufacturer_and_brand", unique: true
     t.index ["nivs_name"], name: "index_vaccines_on_nivs_name", unique: true
     t.index ["programme_id"], name: "index_vaccines_on_programme_id"

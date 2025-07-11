@@ -329,8 +329,6 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
   end
 
   def dose_number
-    return nil if @programme.seasonal?
-
     dose_sequence = @vaccination_record.dose_sequence
 
     if dose_sequence.nil?

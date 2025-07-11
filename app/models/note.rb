@@ -33,9 +33,7 @@ class Note < ApplicationRecord
 
   validates :body, presence: true, length: { maximum: 1000 }
 
-  def programmes
-    session.programmes.select { it.year_groups.include?(year_group) }
-  end
+  def programmes = session.eligible_programmes_for(year_group:)
 
   private
 

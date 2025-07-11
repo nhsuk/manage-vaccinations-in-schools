@@ -109,5 +109,7 @@ class ImmunisationImport < ApplicationRecord
 
   def postprocess_rows!
     StatusUpdater.call(patient: patients)
+
+    EnqueueSyncVaccinationRecordToNHS.call(vaccination_records)
   end
 end

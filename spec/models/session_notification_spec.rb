@@ -42,11 +42,10 @@ describe SessionNotification do
     let(:parents) { create_list(:parent, 2) }
     let(:patient) { create(:patient, parents:, year_group: 10) }
     let(:programme) { create(:programme, :td_ipv) }
-    let(:organisation) { create(:organisation, programmes: [programme]) }
+    let(:programmes) { [programme] }
+    let(:organisation) { create(:organisation, programmes:) }
     let(:location) { create(:school, organisation:) }
-    let(:session) do
-      create(:session, location:, programmes: [programme], organisation:)
-    end
+    let(:session) { create(:session, location:, programmes:, organisation:) }
     let(:session_date) { session.dates.min }
     let(:patient_session) { create(:patient_session, patient:, session:) }
     let(:current_user) { create(:user) }
@@ -58,7 +57,10 @@ describe SessionNotification do
 
       let(:parent) { parents.first }
 
-      before { create(:consent, :given, patient:, parent:, programme:) }
+      before do
+        create(:consent, :given, patient:, parent:, programme:)
+        create(:patient_consent_status, :given, patient:, programme:)
+      end
 
       it "creates a record" do
         expect { create_and_send! }.to change(described_class, :count).by(1)
@@ -73,20 +75,53 @@ describe SessionNotification do
       it "enqueues an email per parent who gave consent" do
         expect { create_and_send! }.to have_delivered_email(
           :session_school_reminder
-        ).with(parent:, patient:, session:, sent_by: current_user)
+        ).with(parent:, patient:, programmes:, session:, sent_by: current_user)
       end
 
       it "enqueues a text per parent" do
         expect { create_and_send! }.to have_delivered_sms(
           :session_school_reminder
-        ).with(parent:, patient:, session:, sent_by: current_user)
+        ).with(parent:, patient:, programmes:, session:, sent_by: current_user)
       end
 
       context "when parent doesn't want to receive updates by text" do
-        before { parents.each { _1.update!(phone_receive_updates: false) } }
+        before { parents.each { it.update!(phone_receive_updates: false) } }
 
         it "doesn't enqueues a text" do
           expect { create_and_send! }.not_to have_delivered_sms
+        end
+      end
+
+      context "with multiple programmes but only one eligible for vaccination" do
+        let(:consented_programmes) { [programme] }
+
+        # No consent for MenACWY
+        let(:programmes) do
+          consented_programmes + [create(:programme, :menacwy)]
+        end
+
+        it "enqueues an email per parent who gave consent" do
+          expect { create_and_send! }.to have_delivered_email(
+            :session_school_reminder
+          ).with(
+            parent:,
+            patient:,
+            programmes: consented_programmes,
+            session:,
+            sent_by: current_user
+          )
+        end
+
+        it "enqueues a text per parent" do
+          expect { create_and_send! }.to have_delivered_sms(
+            :session_school_reminder
+          ).with(
+            parent:,
+            patient:,
+            programmes: consented_programmes,
+            session:,
+            sent_by: current_user
+          )
         end
       end
     end
@@ -110,11 +145,13 @@ describe SessionNotification do
         ).with(
           parent: parents.first,
           patient:,
+          programmes:,
           session:,
           sent_by: current_user
         ).and have_delivered_email(:session_clinic_initial_invitation).with(
                 parent: parents.second,
                 patient:,
+                programmes:,
                 session:,
                 sent_by: current_user
               )
@@ -126,11 +163,13 @@ describe SessionNotification do
         ).with(
           parent: parents.first,
           patient:,
+          programmes:,
           session:,
           sent_by: current_user
         ).and have_delivered_sms(:session_clinic_initial_invitation).with(
                 parent: parents.second,
                 patient:,
+                programmes:,
                 session:,
                 sent_by: current_user
               )
@@ -144,7 +183,13 @@ describe SessionNotification do
         it "still enqueues a text" do
           expect { create_and_send! }.to have_delivered_sms(
             :session_clinic_initial_invitation
-          ).with(parent:, patient:, session:, sent_by: current_user)
+          ).with(
+            parent:,
+            patient:,
+            programmes:,
+            session:,
+            sent_by: current_user
+          )
         end
       end
     end
@@ -168,11 +213,13 @@ describe SessionNotification do
         ).with(
           parent: parents.first,
           patient:,
+          programmes:,
           session:,
           sent_by: current_user
         ).and have_delivered_email(:session_clinic_subsequent_invitation).with(
                 parent: parents.second,
                 patient:,
+                programmes:,
                 session:,
                 sent_by: current_user
               )
@@ -184,11 +231,13 @@ describe SessionNotification do
         ).with(
           parent: parents.first,
           patient:,
+          programmes:,
           session:,
           sent_by: current_user
         ).and have_delivered_sms(:session_clinic_subsequent_invitation).with(
                 parent: parents.second,
                 patient:,
+                programmes:,
                 session:,
                 sent_by: current_user
               )
@@ -202,7 +251,13 @@ describe SessionNotification do
         it "still enqueues a text" do
           expect { create_and_send! }.to have_delivered_sms(
             :session_clinic_subsequent_invitation
-          ).with(parent:, patient:, session:, sent_by: current_user)
+          ).with(
+            parent:,
+            patient:,
+            programmes:,
+            session:,
+            sent_by: current_user
+          )
         end
       end
     end

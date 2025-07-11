@@ -17,7 +17,7 @@ resource "aws_security_group_rule" "rds_inbound" {
 }
 
 resource "aws_rds_cluster" "cluster" {
-  cluster_identifier     = "${local.name_prefix}-rds"
+  cluster_identifier     = "${local.name_prefix}-rds-${formatdate("hh-mm-ss", timestamp())}"
   engine                 = "aurora-postgresql"
   engine_mode            = "provisioned"
   database_name          = "manage_vaccinations"
@@ -34,14 +34,22 @@ resource "aws_rds_cluster" "cluster" {
     max_capacity = var.max_aurora_capacity_units
     min_capacity = 0.5
   }
+
+  lifecycle {
+    ignore_changes = [cluster_identifier]
+  }
 }
 
 resource "aws_rds_cluster_instance" "instance" {
   cluster_identifier   = aws_rds_cluster.cluster.id
-  identifier           = "${local.name_prefix}-rds-instance"
+  identifier           = "${local.name_prefix}-rds-instance-${formatdate("hh-mm-ss", timestamp())}"
   instance_class       = "db.serverless"
   engine               = aws_rds_cluster.cluster.engine
   engine_version       = aws_rds_cluster.cluster.engine_version
   db_subnet_group_name = aws_db_subnet_group.dbsg.name
   promotion_tier       = 1
+
+  lifecycle {
+    ignore_changes = [identifier]
+  }
 }

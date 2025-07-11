@@ -3,7 +3,7 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 5.87"
+      version = "~> 6.2"
     }
   }
 
@@ -111,10 +111,9 @@ module "source" {
     ],
     "rules" : [
       {
-        # Cross-account copying will be enabled in MAV-1158
-        # "copy_action" : {
-        #   "delete_after" : 60
-        # },
+        "copy_action" : {
+          "delete_after" : var.backup_retention_period
+        },
         "lifecycle" : {
           "delete_after" : var.backup_retention_period
         },
