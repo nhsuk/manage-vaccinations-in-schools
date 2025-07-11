@@ -65,7 +65,9 @@ class VaccinationRecord < ApplicationRecord
     left_thigh: ["61396006", "Structure of left thigh"],
     right_thigh: ["11207009", "Structure of right thigh"],
     left_arm_upper_position: ["368208006", "Left upper arm structure"],
+    left_arm_lower_position: ["368208006", "Left upper arm structure"],
     right_arm_upper_position: ["368209003", "Right upper arm structure"],
+    right_arm_lower_position: ["368209003", "Right upper arm structure"],
     left_buttock: ["723979003", "Structure of left buttock"],
     right_buttock: ["723980000", "Structure of right buttock"],
     nose: ["279549004", "Nasal cavity structure"]
