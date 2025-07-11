@@ -47,50 +47,40 @@ describe NHS::ImmunisationsAPI do
       created_at: Time.zone.parse("2021-02-07T13:28:17.271+00:00")
     )
   end
-  let!(:stubbed_request) do
-    stub_request(
-      :post,
-      "https://sandbox.api.service.nhs.uk/immunisation-fhir-api/FHIR/R4/Immunization"
-    ).to_return(
-      status: 201,
-      body: "",
-      headers: {
-        location:
-          "https://sandbox.api.service.nhs.uk/immunisation-fhir-api/Immunization/ffff1111-eeee-2222-dddd-3333eeee4444"
-      }
-    )
-  end
 
   describe "record_immunisation" do
-    before { Flipper.enable(:immunisations_fhir_api_integration) }
+    let!(:request_stub) do
+      stub_request(
+        :post,
+        "https://sandbox.api.service.nhs.uk/immunisation-fhir-api/FHIR/R4/Immunization"
+      ).to_return(
+        status: 201,
+        body: "",
+        headers: {
+          location:
+            "https://sandbox.api.service.nhs.uk/immunisation-fhir-api/Immunization/ffff1111-eeee-2222-dddd-3333eeee4444"
+        }
+      )
+    end
 
     it "sends the correct JSON payload" do
       expected_body =
         File.read(Rails.root.join("spec/fixtures/fhir/immunisation.json")).chomp
 
-      # stree-ignore
-      stubbed_request =
-        stub_request(
-          :post, "https://sandbox.api.service.nhs.uk/immunisation-fhir-api/FHIR/R4/Immunization"
+      request_stub.with do |request|
+        expect(request.headers).to include(
+          {
+            "Accept" => "application/fhir+json",
+            "Content-Type" => "application/fhir+json"
+          }
         )
-          .with { |request|
-        expect(request.headers["Accept"]).to eq "application/fhir+json"
-        expect(
-          request.headers["Content-Type"]
-        ).to eq "application/fhir+json"
         expect(request.body).to eq expected_body
         true
-      }
-          .to_return(status: 201,
-                     body: "",
-                     headers: {
-                       location:
-                         "https://sandbox.api.service.nhs.uk/immunisation-fhir-api/Immunization/ffff1111-eeee-2222-dddd-3333eeee4444"
-                     })
+      end
 
       described_class.record_immunisation(vaccination_record)
 
-      expect(stubbed_request).to have_been_made
+      expect(request_stub).to have_been_made
     end
 
     it "stores the id from the response" do
