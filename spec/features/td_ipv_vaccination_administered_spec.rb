@@ -203,7 +203,7 @@ describe "Td/IPV vaccination" do
   def and_a_text_is_sent_to_the_parent_confirming_the_vaccination
     expect_sms_to(
       @patient.consents.last.parent.phone,
-      :vaccination_administered_td_ipv
+      :vaccination_administered
     )
   end
 

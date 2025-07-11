@@ -43,7 +43,7 @@ describe VaccinationMailerConcern do
 
       it "sends a text message" do
         expect { send_vaccination_confirmation }.to have_delivered_sms(
-          :vaccination_administered_hpv
+          :vaccination_administered
         ).with(parent:, vaccination_record:, sent_by: current_user)
       end
     end
@@ -99,7 +99,7 @@ describe VaccinationMailerConcern do
 
         it "sends a text message" do
           expect { send_vaccination_confirmation }.to have_delivered_sms(
-            :vaccination_administered_hpv
+            :vaccination_administered
           ).with(parent:, vaccination_record:, sent_by: current_user)
         end
       end
