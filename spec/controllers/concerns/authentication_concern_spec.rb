@@ -8,10 +8,11 @@ describe AuthenticationConcern do
     Class
       .new do # rubocop:disable Style/BlockDelimiters
         include AuthenticationConcern
-        attr_accessor :request
+        attr_accessor :request, :session
 
-        def initialize(request: nil)
+        def initialize(request: nil, session: {})
           @request = request
+          @session = session
         end
 
         def params
@@ -156,6 +157,130 @@ describe AuthenticationConcern do
       it "renders a Unauthorized error, with status :unauthorized" do
         expect(sample_class).to receive(:render).with( json: {errors: "Unauthorized"}, status: :unauthorized )
         sample_class.send(:token_error!, token)
+      end
+    end
+  end
+
+  describe '#authenticate_user_by_jwt!' do
+    let(:jwt) { "" }
+    let(:user_id) { 0 }
+    let(:session_token) { '123456abcdef' }
+    let(:pwd_auth_session_token) { '0987654321123456abcdef' }
+    
+    let(:user) { create(:user, session_token: session_token, pwd_auth_session_token: pwd_auth_session_token) }
+    
+    before do
+      sample_class.request = instance_double('request', headers: {'Authorization' => jwt} )
+    end
+
+    context "when a valid jwt is given" do
+      let(:jwt) { "validjwt" }
+      let(:user_info) do
+        [
+          {
+            'data' => {
+              'user' => {
+                'id' => user_id,
+                'session_token' => session_token,
+                'pwd_auth_session_token' => pwd_auth_session_token,
+              },
+              'cis2_info' => {
+                'some_key' => 'some value',
+              }
+            },
+          }
+        ]
+      end
+
+      before do
+        allow(sample_class).to receive(:decode_jwt).with(jwt).and_return(user_info)
+        allow(sample_class).to receive(:authenticate_user!)
+      end
+
+      it 'decodes the JWT' do
+        expect(sample_class).to receive(:decode_jwt).with(jwt).and_return(user_info)
+        sample_class.send(:authenticate_user_by_jwt!)
+      end
+
+      context 'when a User exists with the values of id, session_token and pwd_auth_session_token' do
+        let(:user_id) { user.id }
+
+        it "copies the user key into session['user']" do
+          sample_class.send(:authenticate_user_by_jwt!)
+          expect(sample_class.session['user']).to eq(user_info.first['data']['user'])
+        end
+
+        it "copies the cis2_info key into session['cis2_info']" do
+          sample_class.send(:authenticate_user_by_jwt!)
+          expect(sample_class.session['cis2_info']).to eq(user_info.first['data']['cis2_info'])
+        end
+
+        it "calls authenticate_user!" do
+          expect(sample_class).to receive(:authenticate_user!)
+          sample_class.send(:authenticate_user_by_jwt!)
+        end
+      end
+
+      context 'when a User does not exist with the values of id, session_token and pwd_auth_session_token' do
+        let(:user_id) { user.id }
+        before do
+          user.update(session_token: 'someothersessiontoken', pwd_auth_session_token: 'someotherpwdauthsessiontoken')
+          sample_class.session  = { 'user_id': user.id, 'some_other_session_var': 'some value' }
+        end
+
+        it "clears the session" do
+          sample_class.send(:authenticate_user_by_jwt!)
+          expect(sample_class.session).to be_empty
+        end
+
+        it "calls token_error!" do
+          expect(sample_class).to receive(:token_error!)
+          sample_class.send(:authenticate_user_by_jwt!)
+        end
+      end
+    end
+
+    context "when a valid jwt is not given" do
+      it "causes a token_error!" do
+        expect(sample_class).to receive(:token_error!)
+        sample_class.send(:authenticate_user_by_jwt!)
+      end
+    end
+    
+  end
+
+# The commented out code block you provided is a pending RSpec example group for a method called
+# `#add_token_to`. This method is expected to find or generate a `OneTimeToken` for a given user with
+# the `cis2_info` from the current session. The example group contains two contexts:
+  describe "#add_token_to" do
+    let(:user) { create(:user) }
+    let(:token) { build(:one_time_token, user: user, token: "mytoken") }
+    let(:url) { "/some/relative/path.json" }
+    let(:session_cis2_info) { {'some_key' => 'some value'} }
+
+    before do
+      sample_class.session = {'cis2_info' => session_cis2_info}
+      allow(OneTimeToken).to receive(:find_or_generate_for!).with(user_id: user.id, cis2_info: session_cis2_info).and_return(token)
+    end
+    
+    it "finds or generates a OneTimeToken for the given user with the cis2_info from the current session" do
+      expect(OneTimeToken).to receive(:find_or_generate_for!).with(user_id: user.id, cis2_info: session_cis2_info).and_return(token)
+      sample_class.send(:add_token_to, url, user)
+    end
+
+    context "given a url with no params" do
+      let(:url) { "/some/relative/path.json" }
+
+      it "adds the token param as a query string" do
+        expect(sample_class.send(:add_token_to, url, user)).to eq("/some/relative/path.json?token=mytoken")
+      end
+    end
+
+    context "given a url with some params already" do
+      let(:url) { "/some/relative/path.json?q=some%20search" }
+
+      it "adds the token param as a query string" do
+        expect(sample_class.send(:add_token_to, url, user)).to eq("/some/relative/path.json?q=some%20search&token=mytoken")
       end
     end
   end

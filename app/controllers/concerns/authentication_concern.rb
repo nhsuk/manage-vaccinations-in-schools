@@ -134,7 +134,7 @@ module AuthenticationConcern
           session['cis2_info'] = data['cis2_info']
           authenticate_user!
         else
-          session.clear!
+          session.clear
           Rails.logger.warn "Couldn't find user id #{data['user']['id']} with given session_token and pwd_auth_session_token"
           token_error!(jwt)
         end
