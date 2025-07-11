@@ -244,7 +244,22 @@ class DraftVaccinationRecord
       identity_check&.confirmed_by_other_relationship
   end
 
+  def vaccine_method_matches_consent_and_triage?
+    return true if delivery_method.blank? || !administered?
+
+    approved_methods = patient.approved_vaccine_methods(programme:)
+    vaccine_method = delivery_method_to_vaccine_method(delivery_method)
+
+    approved_methods.include?(vaccine_method)
+  end
+
   private
+
+  def delivery_method_to_vaccine_method(delivery_method)
+    return nil if delivery_method.nil?
+
+    delivery_method.in?(INJECTION_DELIVERY_METHODS) ? "injection" : "nasal"
+  end
 
   def compute_vaccine_method(delivery_method)
     return nil if delivery_method.nil?

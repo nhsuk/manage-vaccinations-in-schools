@@ -301,4 +301,102 @@ describe DraftVaccinationRecord do
       end
     end
   end
+
+  describe "#vaccine_method_matches_consent_and_triage" do
+    subject do
+      draft_vaccination_record.vaccine_method_matches_consent_and_triage?
+    end
+
+    let(:programme) { create(:programme, :flu) }
+
+    context "when vaccination is not administered" do
+      let(:attributes) { valid_not_administered_attributes }
+
+      it { should be true }
+    end
+
+    context "when delivery method is nasal_spray" do
+      let(:attributes) do
+        valid_administered_attributes.merge(delivery_method: "nasal_spray")
+      end
+
+      context "when consent is given for nasal" do
+        let(:patient) do
+          create(
+            :patient,
+            :consent_given_nasal_only_triage_not_needed,
+            session:
+          )
+        end
+
+        it { should be true }
+      end
+
+      context "when consent is given for injection" do
+        let(:patient) do
+          create(
+            :patient,
+            :consent_given_injection_only_triage_needed,
+            session:
+          )
+        end
+
+        it { should be false }
+      end
+
+      context "when triage is safe for nasal" do
+        let(:patient) do
+          create(:patient, :triage_safe_to_vaccinate_nasal, session:)
+        end
+
+        it { should be true }
+      end
+
+      context "when triage is safe for injection" do
+        let(:patient) { create(:patient, :triage_safe_to_vaccinate, session:) }
+
+        it { should be false }
+      end
+    end
+
+    context "when delivery method is intramuscular" do
+      let(:attributes) do
+        valid_administered_attributes.merge(delivery_method: "intramuscular")
+      end
+
+      context "when consent is given for injection" do
+        let(:patient) do
+          create(
+            :patient,
+            :consent_given_injection_only_triage_not_needed,
+            session:
+          )
+        end
+
+        it { should be true }
+      end
+
+      context "when consent is given for nasal" do
+        let(:patient) do
+          create(:patient, :consent_given_nasal_only_triage_needed, session:)
+        end
+
+        it { should be false }
+      end
+
+      context "when triage is safe for injection" do
+        let(:patient) { create(:patient, :triage_safe_to_vaccinate, session:) }
+
+        it { should be true }
+      end
+
+      context "when triage is safe for nasal" do
+        let(:patient) do
+          create(:patient, :triage_safe_to_vaccinate_nasal, session:)
+        end
+
+        it { should be false }
+      end
+    end
+  end
 end
