@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_02_162254) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_08_131033) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -602,6 +602,22 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_02_162254) do
     t.index ["session_id"], name: "index_patient_sessions_on_session_id"
   end
 
+  create_table "patient_specific_directions", force: :cascade do |t|
+    t.bigint "created_by_user_id", null: false
+    t.bigint "patient_id", null: false
+    t.bigint "programme_id", null: false
+    t.bigint "vaccine_id", null: false
+    t.integer "vaccine_method", null: false
+    t.integer "delivery_site", null: false
+    t.boolean "full_dose", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_by_user_id"], name: "index_patient_specific_directions_on_created_by_user_id"
+    t.index ["patient_id"], name: "index_patient_specific_directions_on_patient_id"
+    t.index ["programme_id"], name: "index_patient_specific_directions_on_programme_id"
+    t.index ["vaccine_id"], name: "index_patient_specific_directions_on_vaccine_id"
+  end
+
   create_table "patient_triage_statuses", force: :cascade do |t|
     t.bigint "patient_id", null: false
     t.bigint "programme_id", null: false
@@ -930,6 +946,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_02_162254) do
   add_foreign_key "patient_session_session_statuses", "programmes"
   add_foreign_key "patient_sessions", "patients"
   add_foreign_key "patient_sessions", "sessions"
+  add_foreign_key "patient_specific_directions", "patients"
+  add_foreign_key "patient_specific_directions", "programmes"
+  add_foreign_key "patient_specific_directions", "users", column: "created_by_user_id"
+  add_foreign_key "patient_specific_directions", "vaccines"
   add_foreign_key "patient_triage_statuses", "patients", on_delete: :cascade
   add_foreign_key "patient_triage_statuses", "programmes"
   add_foreign_key "patient_vaccination_statuses", "patients", on_delete: :cascade
