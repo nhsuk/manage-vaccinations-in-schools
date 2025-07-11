@@ -2,7 +2,7 @@
 
 class AppPatientSessionRecordComponent < ViewComponent::Base
   erb_template <<-ERB
-    <h2 class="nhsuk-heading-m">Record vaccination</h2>
+    <h2 class="nhsuk-heading-m"><%= heading %></h2>
     
     <% if helpers.policy(VaccinationRecord).new? %>
       <%= render AppVaccinateFormComponent.new(vaccinate_form) %>
@@ -35,5 +35,18 @@ class AppPatientSessionRecordComponent < ViewComponent::Base
     pre_screening_confirmed = patient.pre_screenings.today.exists?(programme:)
 
     VaccinateForm.new(patient_session:, programme:, pre_screening_confirmed:)
+  end
+
+  def heading
+    return "Record #{programme.name} vaccination" unless programme.flu?
+
+    if PatientSession
+         .where(patient_id: patient.id)
+         .has_vaccine_method(:nasal, programme:)
+         .exists?
+      "Record flu vaccination with nasal spray"
+    else
+      "Record flu vaccination with injection"
+    end
   end
 end
