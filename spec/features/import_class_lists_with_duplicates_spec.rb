@@ -58,6 +58,9 @@ describe "Class list imports duplicates" do
     and_i_confirm_my_selection
     and_the_existing_patient_parent_relationship_should_not_change
     and_the_twin_patient_parent_relationship_exist
+
+    when_i_go_school_moves
+    then_i_should_see_no_school_moves
   end
 
   def given_i_am_signed_in
@@ -278,5 +281,13 @@ describe "Class list imports duplicates" do
   def and_the_twin_patient_parent_relationship_exist
     twin = Patient.find_by(given_name: "David", family_name: "Smith")
     expect(twin.parents.first.full_name).to eq("Mary Smith")
+  end
+
+  def then_i_should_see_no_school_moves
+    expect(page).to have_content("There are currently no school moves.")
+  end
+
+  def when_i_go_school_moves
+    visit school_moves_path
   end
 end

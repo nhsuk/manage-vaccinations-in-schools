@@ -16,18 +16,18 @@ class CohortImportRow < PatientImportRow
     true
   end
 
-  private
-
-  def school_move_source
-    :cohort_import
-  end
-
   def school
     @school ||=
       if (urn = school_urn&.to_s).present? &&
            ![SCHOOL_URN_HOME_EDUCATED, SCHOOL_URN_UNKNOWN].include?(urn)
         Location.school.find_by!(urn:)
       end
+  end
+
+  private
+
+  def school_move_source
+    :cohort_import
   end
 
   def home_educated

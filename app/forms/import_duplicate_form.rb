@@ -71,5 +71,16 @@ class ImportDuplicateForm
         new_record
       ).establish_family_connections
     family_connections.save!
+
+    # If the duplicate record already has a school,
+    # there's no need to create a school move.
+    if new_record.school.nil?
+      school_move =
+        PatientImporter::SchoolMoveFactory.new(
+          pending_changes,
+          new_record
+        ).resolve_school_move
+      school_move&.confirm!
+    end
   end
 end

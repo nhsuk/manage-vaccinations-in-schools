@@ -124,39 +124,38 @@ describe CohortImportRow do
     end
   end
 
-  describe "#to_school_move" do
-    subject(:school_move) { cohort_import_row.to_school_move(patient) }
+  describe "#school" do
+    subject(:school) { cohort_import_row.school }
 
     let(:data) { valid_data }
-
     let(:patient) { create(:patient, school: create(:school)) }
 
-    it { should_not be_nil }
+    context "with a school location" do
+      let(:school_urn) { "123456" }
 
-    describe "#school" do
-      subject(:school) { school_move.school }
-
-      context "with a school location" do
-        let(:school_urn) { "123456" }
-
-        it { should eq(Location.first) }
-      end
-
-      context "with an unknown school" do
-        let(:school_urn) { "888888" }
-
-        it { should be_nil }
-      end
-
-      context "when home educated" do
-        let(:school_urn) { "999999" }
-
-        it { should be_nil }
-      end
+      it { should eq(Location.first) }
     end
 
-    describe "#home_educated" do
-      subject(:home_educated) { school_move.home_educated }
+    context "with an unknown school" do
+      let(:school_urn) { "888888" }
+
+      it { should be_nil }
+    end
+
+    context "when home educated" do
+      let(:school_urn) { "999999" }
+
+      it { should be_nil }
+    end
+  end
+
+  describe "#to_h" do
+    describe "school_move_home_educated" do
+      subject(:home_educated) do
+        cohort_import_row.to_h[:school_move_home_educated]
+      end
+
+      let(:data) { valid_data }
 
       context "with a school location" do
         let(:school_urn) { "123456" }
@@ -175,29 +174,6 @@ describe CohortImportRow do
 
         it { should be(true) }
       end
-    end
-
-    context "with an existing patient that was previously removed from cohort" do
-      subject(:school_move) do
-        cohort_import_row.to_school_move(existing_patient)
-      end
-
-      let!(:existing_patient) do
-        create(
-          :patient,
-          address_postcode: "SW1A 1AA",
-          family_name: "Smith",
-          gender_code: "male",
-          given_name: "Jimmy",
-          nhs_number: "9990000018",
-          organisation: nil,
-          school: Location.first
-        )
-      end
-
-      let(:data) { valid_data }
-
-      it { should_not be_nil }
     end
   end
 end

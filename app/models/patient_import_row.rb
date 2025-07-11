@@ -47,26 +47,11 @@ class PatientImportRow
       parent_2_name: parent_2_name&.to_s,
       parent_2_relationship: parent_2_relationship&.to_s,
       parent_2_email: parent_2_email_value,
-      parent_2_phone: parent_2_phone_value
-    }.compact_blank
-  end
-
-  def to_school_move(patient)
-    if patient.new_record? || patient.school != school ||
-         patient.home_educated != home_educated || patient.not_in_organisation?
-      school_move =
-        if school
-          SchoolMove.find_or_initialize_by(patient:, school:)
-        else
-          SchoolMove.find_or_initialize_by(
-            patient:,
-            home_educated:,
-            organisation:
-          )
-        end
-
-      school_move.tap { it.source = school_move_source }
-    end
+      parent_2_phone: parent_2_phone_value,
+      school_move_source:,
+      school_move_school_id: school&.id,
+      school_move_organisation_id: organisation&.id
+    }.compact_blank.merge(school_move_home_educated: home_educated)
   end
 
   def nhs_number = @data[:child_nhs_number]
