@@ -68,6 +68,9 @@ class API::OrganisationsController < API::BaseController
           Location.where(team: teams).update_all(team_id: nil)
 
           log_destroy(teams)
+          log_destroy(
+            Location.generic_clinic.where(ods_code: organisation.ods_code)
+          )
 
           log_destroy(OrganisationProgramme.where(organisation:))
           log_destroy(Organisation.where(id: organisation.id))
