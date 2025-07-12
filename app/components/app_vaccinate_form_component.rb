@@ -61,4 +61,10 @@ class AppVaccinateFormComponent < ViewComponent::Base
 
     delivery_method == :nasal_spray ? "flu nasal spray" : "flu injection"
   end
+
+  def ask_not_taking_medication? = programme.doubles? || programme.flu?
+
+  def ask_not_pregnant? = programme.td_ipv?
+
+  def ask_asthma_flare_up? = programme.flu? && delivery_method == :nasal_spray
 end

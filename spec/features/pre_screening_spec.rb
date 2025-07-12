@@ -21,6 +21,7 @@ describe "Pre-screening" do
     then_i_see_the_pre_screening_questions
     and_i_see_the_medication_question
     and_i_dont_see_the_pregnancy_question
+    and_i_dont_see_the_asthma_flare_up_question
     and_i_record_vaccination_without_pre_screening_checks
     then_i_see_an_error_message
   end
@@ -32,11 +33,36 @@ describe "Pre-screening" do
     then_i_see_the_pre_screening_questions
     and_i_see_the_medication_question
     and_i_see_the_pregnancy_question
+    and_i_dont_see_the_asthma_flare_up_question
     and_i_record_vaccination_without_pre_screening_checks
     then_i_see_an_error_message
   end
 
-  def given_a_session_exists(programme_type)
+  scenario "must be confirmed before vaccinating flu injection" do
+    given_a_session_exists(:flu)
+
+    when_i_go_to_a_patient_that_is_ready_to_vaccinate
+    then_i_see_the_pre_screening_questions
+    and_i_see_the_medication_question
+    and_i_dont_see_the_asthma_flare_up_question
+    and_i_dont_see_the_pregnancy_question
+    and_i_record_vaccination_without_pre_screening_checks
+    then_i_see_an_error_message
+  end
+
+  scenario "must be confirmed before vaccinating flu nasal" do
+    given_a_session_exists(:flu, vaccine_method: "nasal")
+
+    when_i_go_to_a_patient_that_is_ready_to_vaccinate
+    then_i_see_the_pre_screening_questions
+    and_i_see_the_medication_question
+    and_i_see_the_asthma_flare_up_question
+    and_i_dont_see_the_pregnancy_question
+    and_i_record_vaccination_without_pre_screening_checks
+    then_i_see_an_error_message
+  end
+
+  def given_a_session_exists(programme_type, vaccine_method: "injection")
     programme = create(:programme, programme_type)
     organisation = create(:organisation, programmes: [programme])
 
@@ -51,13 +77,23 @@ describe "Pre-screening" do
       )
 
     @patient =
-      create(
-        :patient,
-        :consent_given_triage_not_needed,
-        :in_attendance,
-        session: @session,
-        year_group: programme.year_groups.first
-      )
+      if vaccine_method == "nasal"
+        create(
+          :patient,
+          :consent_given_nasal_only_triage_not_needed,
+          :in_attendance,
+          session: @session,
+          year_group: programme.year_groups.first
+        )
+      else
+        create(
+          :patient,
+          :consent_given_triage_not_needed,
+          :in_attendance,
+          session: @session,
+          year_group: programme.year_groups.first
+        )
+      end
   end
 
   def when_i_go_to_a_patient_that_is_ready_to_vaccinate
@@ -89,6 +125,20 @@ describe "Pre-screening" do
     )
   end
 
+  def and_i_see_the_asthma_flare_up_question
+    expect(page).to have_content(
+      "if they have asthma, has not had a flare-up of symptoms in the past 72 hours, " \
+        "including wheezing or needing to use a reliever inhaler more than usual"
+    )
+  end
+
+  def and_i_dont_see_the_asthma_flare_up_question
+    expect(page).not_to have_content(
+      "if they have asthma, has not had a flare-up of symptoms in the past 72 hours, " \
+        "including wheezing or needing to use a reliever inhaler more than usual"
+    )
+  end
+
   def and_i_see_the_pregnancy_question
     expect(page).to have_content("is not pregnant")
   end
@@ -100,7 +150,9 @@ describe "Pre-screening" do
   def and_i_record_vaccination_without_pre_screening_checks
     within all("section")[1] do
       choose "Yes"
-      choose "Left arm (upper position)"
+      if has_field?("Left arm (upper position)", wait: 0)
+        choose("Left arm (upper position)")
+      end
       click_button "Continue"
     end
   end
