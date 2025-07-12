@@ -41,7 +41,7 @@ class TriageForm
 
   def status_and_vaccine_method_options
     safe_to_vaccinate_choices =
-      if programme.has_multiple_delivery_methods?
+      if programme.has_multiple_vaccine_methods?
         consented_vaccine_methods.map { |method| "safe_to_vaccinate_#{method}" }
       else
         ["safe_to_vaccinate"]

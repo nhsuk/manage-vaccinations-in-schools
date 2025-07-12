@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-describe "Vaccination" do
+describe "Today’s batch" do
   around { |example| travel_to(Time.zone.local(2024, 2, 1)) { example.run } }
 
-  scenario "Today's batch" do
+  scenario "HPV injection" do
     given_i_am_signed_in
 
     when_i_vaccinate_a_patient_with_hpv
@@ -21,6 +21,10 @@ describe "Vaccination" do
 
     when_i_vaccinate_a_patient_with_menacwy
     then_i_am_required_to_choose_a_batch
+  end
+
+  scenario "flu nasal and injection" do
+
   end
 
   def given_i_am_signed_in
