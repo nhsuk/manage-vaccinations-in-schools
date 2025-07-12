@@ -91,6 +91,17 @@ class Vaccine < ApplicationRecord
     AVAILABLE_DELIVERY_METHODS.fetch(method)
   end
 
+  def self.delivery_method_to_vaccine_method(delivery_method)
+    return nil if delivery_method.nil?
+
+    suitable_delivery_methods =
+      AVAILABLE_DELIVERY_METHODS.select do |_key, value|
+        delivery_method.in?(value)
+      end
+
+    suitable_delivery_methods.keys.first
+  end
+
   private
 
   def fhir_mapper = @fhir_mapper ||= FHIRMapper::Vaccine.new(self)

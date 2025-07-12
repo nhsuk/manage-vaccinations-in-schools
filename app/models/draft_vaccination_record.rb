@@ -204,8 +204,9 @@ class DraftVaccinationRecord
     super
     return if delivery_method_was.nil? # Don't clear batch on first set
 
-    previous_value = delivery_method_to_vaccine_method(delivery_method_was)
-    new_value = delivery_method_to_vaccine_method(value)
+    previous_value =
+      Vaccine.delivery_method_to_vaccine_method(delivery_method_was)
+    new_value = Vaccine.delivery_method_to_vaccine_method(value)
 
     self.batch_id = nil unless previous_value == new_value
   end
@@ -245,22 +246,12 @@ class DraftVaccinationRecord
     return true if delivery_method.blank? || !administered?
 
     approved_methods = patient.approved_vaccine_methods(programme:)
-    vaccine_method = delivery_method_to_vaccine_method(delivery_method)
+    vaccine_method = Vaccine.delivery_method_to_vaccine_method(delivery_method)
 
     approved_methods.include?(vaccine_method)
   end
 
   private
-
-  def delivery_method_to_vaccine_method(delivery_method)
-    return nil if delivery_method.nil?
-
-    if delivery_method.in?(Vaccine::INJECTION_DELIVERY_METHODS)
-      "injection"
-    else
-      "nasal"
-    end
-  end
 
   def readable_attribute_names
     writable_attribute_names - %w[vaccine_id]
