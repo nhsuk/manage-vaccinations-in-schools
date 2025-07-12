@@ -38,9 +38,6 @@ class DraftVaccinationRecord
               if: :performed_by_user
             }
 
-  INJECTION_DELIVERY_METHODS =
-    Vaccine::AVAILABLE_DELIVERY_METHODS["injection"].freeze
-
   def wizard_steps
     [
       :notes,
@@ -207,8 +204,8 @@ class DraftVaccinationRecord
     super
     return if delivery_method_was.nil? # Don't clear batch on first set
 
-    previous_value = compute_vaccine_method(delivery_method_was)
-    new_value = compute_vaccine_method(value)
+    previous_value = delivery_method_to_vaccine_method(delivery_method_was)
+    new_value = delivery_method_to_vaccine_method(value)
 
     self.batch_id = nil unless previous_value == new_value
   end
@@ -258,16 +255,10 @@ class DraftVaccinationRecord
   def delivery_method_to_vaccine_method(delivery_method)
     return nil if delivery_method.nil?
 
-    delivery_method.in?(INJECTION_DELIVERY_METHODS) ? "injection" : "nasal"
-  end
-
-  def compute_vaccine_method(delivery_method)
-    return nil if delivery_method.nil?
-
-    if delivery_method.in?(INJECTION_DELIVERY_METHODS)
+    if delivery_method.in?(Vaccine::INJECTION_DELIVERY_METHODS)
       "injection"
     else
-      "nasal_spray"
+      "nasal"
     end
   end
 
@@ -328,11 +319,11 @@ class DraftVaccinationRecord
     end
 
     case delivery_method
-    when "nasal_spray"
+    when *Vaccine::NASAL_DELIVERY_METHODS
       if delivery_site != "nose"
         errors.add(:delivery_site, :nasal_spray_must_be_nose)
       end
-    when *INJECTION_DELIVERY_METHODS
+    when *Vaccine::INJECTION_DELIVERY_METHODS
       if delivery_site == "nose"
         errors.add(:delivery_site, :injection_cannot_be_nose)
       end
