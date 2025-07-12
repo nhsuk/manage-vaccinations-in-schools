@@ -214,8 +214,10 @@ Rails.application.routes.draw do
       post ":patient_id/:status", as: :create, action: :create
     end
     resource :record, only: :show, controller: "sessions/record" do
-      get "batch/:programme_type", action: :edit_batch, as: :batch
-      post "batch/:programme_type", action: :update_batch
+      get "batch/:programme_type/:vaccine_method",
+          action: :edit_batch,
+          as: :batch
+      post "batch/:programme_type/:vaccine_method", action: :update_batch
     end
     resource :outcome, only: :show, controller: "sessions/outcome"
 

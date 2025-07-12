@@ -17,11 +17,15 @@
     </h2>
 
     <ul class="nhsuk-list nhsuk-list--bullet">
-      <% @todays_batches.each do |programme, batch| %>
-        <li>
-          <%= batch.vaccine.brand %> (<%= programme.name %>): <span class="app-u-monospace"><%= batch.name %></span>
-          <a class="nhsuk-link nhsuk-u-margin-left-2" href="<%= batch_session_record_path(@session, programme) %>">Change default batch<span class="nhsuk-u-visually-hidden"> for <%= batch.vaccine.brand %></span></a>
-        </li>
+      <% @todays_batches.each do |programme, batches| %>
+        <% batches.each do |batch| %>
+          <li>
+            <%= batch.vaccine.brand %> (<%= programme.name %>): <span class="app-u-monospace"><%= batch.name %></span>
+            <a class="nhsuk-link nhsuk-u-margin-left-2" href="<%= batch_session_record_path(@session, programme, batch.vaccine.method) %>">
+              Change default batch<span class="nhsuk-u-visually-hidden"> for <%= batch.vaccine.brand %></span>
+            </a>
+          </li>
+        <% end %>
       <% end %>
     </ul>
   <% end %>

@@ -27,7 +27,7 @@
             <% body.with_row do |row| %>
               <% row.with_cell(text: batch.name) do %>
                 <%= batch.name %>
-                <% if batch.id == @todays_batch_id_by_programme[vaccine.programme] %>
+                <% if batch.id == @todays_batch_id_by_programme_and_vaccine_methods[vaccine.programme][vaccine.method] %>
                   <br>
                   <span class="nhsuk-caption-m">
                     (Your default)
