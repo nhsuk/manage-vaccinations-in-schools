@@ -68,33 +68,33 @@ describe "Pre-screening" do
 
   def then_i_see_the_pre_screening_questions
     expect(page).to have_content(
-      "know what the vaccination is for, and are happy to have it"
+      "knows what the vaccination is for, and is happy to have it"
     )
-    expect(page).to have_content("have not already had this vaccination")
-    expect(page).to have_content("are not acutely unwell")
+    expect(page).to have_content("has not already had this vaccination")
+    expect(page).to have_content("is not acutely unwell")
     expect(page).to have_content(
-      "have no allergies which would prevent vaccination"
+      "has no allergies which would prevent vaccination"
     )
   end
 
   def and_i_see_the_medication_question
     expect(page).to have_content(
-      "are not taking any medication which prevents vaccination"
+      "is not taking any medication which prevents vaccination"
     )
   end
 
   def and_i_dont_see_the_medication_question
     expect(page).not_to have_content(
-      "are not taking any medication which prevents vaccination"
+      "is not taking any medication which prevents vaccination"
     )
   end
 
   def and_i_see_the_pregnancy_question
-    expect(page).to have_content("are not pregnant")
+    expect(page).to have_content("is not pregnant")
   end
 
   def and_i_dont_see_the_pregnancy_question
-    expect(page).not_to have_content("are not pregnancy")
+    expect(page).not_to have_content("is not pregnant")
   end
 
   def and_i_record_vaccination_without_pre_screening_checks
@@ -107,7 +107,7 @@ describe "Pre-screening" do
 
   def then_i_see_an_error_message
     expect(page).to have_content(
-      "Select if the child has confirmed all pre-screening statements are true"
+      "Confirm you’ve checked the pre-screening statements are true"
     )
   end
 end

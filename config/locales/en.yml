@@ -134,7 +134,7 @@ en:
             identity_check_confirmed_by_patient:
               inclusion: Choose whether the child confirmed their identity
             pre_screening_confirmed:
-              blank: Select if the child has confirmed all pre-screening statements are true
+              blank: Confirm you’ve checked the pre-screening statements are true
             pre_screening_notes:
               too_long: Enter notes that are less than %{count} characters long
         vaccination_report:

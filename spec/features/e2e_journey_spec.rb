@@ -242,7 +242,7 @@ describe "End-to-end journey" do
     expect(page).to have_content("Update attendance")
 
     within all("section")[0] do
-      check "has confirmed the above statements are true"
+      check "I have checked that the above statements are true"
     end
 
     within all("section")[1] do
