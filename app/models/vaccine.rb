@@ -79,9 +79,12 @@ class Vaccine < ApplicationRecord
     AVAILABLE_DELIVERY_SITES.fetch(method)
   end
 
+  NASAL_DELIVERY_METHODS = %w[nasal_spray].freeze
+  INJECTION_DELIVERY_METHODS = %w[intramuscular subcutaneous].freeze
+
   AVAILABLE_DELIVERY_METHODS = {
-    "nasal" => %w[nasal_spray],
-    "injection" => %w[intramuscular subcutaneous]
+    "nasal" => NASAL_DELIVERY_METHODS,
+    "injection" => INJECTION_DELIVERY_METHODS
   }.freeze
 
   def available_delivery_methods
