@@ -208,6 +208,13 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
         end
       end
 
+      if @vaccination_record.protocol.present?
+        summary_list.with_row do |row|
+          row.with_key { "Protocol" }
+          row.with_value { protocol_value }
+        end
+      end
+
       if @show_notes
         summary_list.with_row do |row|
           row.with_key { "Notes" }
@@ -317,6 +324,16 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
       @vaccination_record.performed_by_family_name_changed? ||
         @vaccination_record.performed_by_given_name_changed? ||
         @vaccination_record.performed_by_user_id_changed?
+    )
+  end
+
+  def protocol_value
+    highlight_if(
+      VaccinationRecord.human_enum_name(
+        :protocol,
+        @vaccination_record.protocol
+      ),
+      @vaccination_record.protocol_changed?
     )
   end
 
