@@ -226,6 +226,8 @@ en:
           contraindications: Had contraindications
           not_well: Unwell
           refused: Refused vaccine
+        protocols:
+          pgd: Patient Group Direction (PGD)
       vaccine:
         methods:
           injection: Injection
