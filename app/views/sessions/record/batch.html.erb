@@ -14,11 +14,16 @@
     <% @batches.each_with_index do |batch, index| %>
       <% label = proc do %>
         <span class="app-u-monospace"><%= batch.name %></span>
+        (<%= batch.vaccine.brand %>)
+      <% end %>
+
+      <% hint = proc do %>
         <% if (expiry = batch.expiry) %>
-          (expires <%= expiry.to_fs(:long) %>)
+          Expires <%= expiry.to_fs(:long) %>
         <% end %>
       <% end %>
-      <%= f.govuk_radio_button :id, batch.id, label:, link_errors: index.zero? %>
+
+      <%= f.govuk_radio_button :id, batch.id, label:, hint:, link_errors: index.zero? %>
     <% end %>
   <% end %>
 
