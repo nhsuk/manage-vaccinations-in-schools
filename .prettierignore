@@ -40,3 +40,4 @@ terraform/.terraform
 *.tfstate.backup
 scratchpad
 spec/fixtures/fhir/immunisation-create.json
+spec/fixtures/fhir/immunisation-update.json

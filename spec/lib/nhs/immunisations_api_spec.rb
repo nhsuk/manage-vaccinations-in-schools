@@ -206,4 +206,104 @@ describe NHS::ImmunisationsAPI do
 
     include_examples "an immunisations_fhir_api_integration feature flag check"
   end
+
+  describe "update immunisations" do
+    subject(:perform_request) do
+      described_class.update_immunisation(vaccination_record)
+    end
+
+    let(:status) { 200 }
+    let(:body) { "" }
+    let!(:request_stub) do
+      stub_request(
+        :put,
+        "https://sandbox.api.service.nhs.uk/immunisation-fhir-api/FHIR/R4/Immunization/ffff1111-eeee-2222-dddd-3333eeee4444"
+      ).to_return(status:, body:)
+    end
+
+    before do
+      vaccination_record.update(
+        nhs_immunisations_api_id: "ffff1111-eeee-2222-dddd-3333eeee4444",
+        nhs_immunisations_api_synced_at: Date.yesterday,
+        nhs_immunisations_api_etag: 1
+      )
+    end
+
+    it "sends the correct JSON payload" do
+      expected_body =
+        File.read(
+          Rails.root.join("spec/fixtures/fhir/immunisation-update.json")
+        ).chomp
+
+      request_stub.with do |request|
+        expect(request.headers).to include(
+          {
+            "Accept" => "application/fhir+json",
+            "Content-Type" => "application/fhir+json",
+            "E-Tag" => "1"
+          }
+        )
+        expect(request.body).to eq expected_body
+        true
+      end
+
+      perform_request
+
+      expect(request_stub).to have_been_made
+    end
+
+    include_examples "an immunisations_fhir_api_integration feature flag check"
+
+    it "sets the nhs_immunisations_api_synced_at" do
+      freeze_time do
+        perform_request
+
+        expect(
+          vaccination_record.nhs_immunisations_api_synced_at
+        ).to eq Time.current
+      end
+    end
+
+    it "increments the etag" do
+      perform_request
+
+      expect(vaccination_record.nhs_immunisations_api_etag).to eq "2"
+    end
+
+    context "an error is returned by the api" do
+      let(:code) { nil }
+      let(:diagnostics) { nil }
+
+      let(:body) do
+        {
+          resourceType: "OperationOutcome",
+          id: "bc2c3c82-4392-4314-9d6b-a7345f82d923",
+          meta: {
+            profile: [
+              "https://simplifier.net/guide/UKCoreDevelopment2/ProfileUKCore-OperationOutcome"
+            ]
+          },
+          issue: [
+            {
+              severity: "error",
+              code: "invalid",
+              details: {
+                coding: [
+                  {
+                    system: "https://fhir.nhs.uk/Codesystem/http-error-codes",
+                    code:
+                  }
+                ]
+              },
+              diagnostics:
+            }
+          ]
+        }.to_json
+      end
+
+      include_examples "unexpected response status", 201, "updating"
+      include_examples "client error (4XX) handling", "updating"
+      include_examples "generic error handling"
+    end
+  end
 end
