@@ -3,7 +3,7 @@
 GOVUK_NOTIFY_EMAIL_TEMPLATES = {
   consent_clinic_request: "14e88a09-4281-4257-9574-6afeaeb42715",
   consent_confirmation_clinic: "f2921e23-4b73-4e44-abbb-38b0e235db8e",
-  consent_confirmation_given: "7cda7ae5-99a2-4c40-9a3e-1863e23f7a73",
+  consent_confirmation_given: "c6c8dbfc-b429-4468-bd0b-176e771b5a8e",
   consent_confirmation_refused: "5a676dac-3385-49e4-98c2-fc6b45b5a851",
   consent_confirmation_triage: "604ee667-c996-471e-b986-79ab98d0767c",
   consent_school_initial_reminder_doubles:
@@ -35,7 +35,7 @@ GOVUK_NOTIFY_EMAIL_TEMPLATES = {
 
 GOVUK_NOTIFY_SMS_TEMPLATES = {
   consent_clinic_request: "03a0d572-ca5b-417e-87c3-838872a9eabc",
-  consent_confirmation_given: "25473aa7-2d7c-4d1d-b0c6-2ac492f737c3",
+  consent_confirmation_given: "3179b434-4f44-4d47-a8ba-651b58c235fd",
   consent_confirmation_refused: "eb34f3ab-0c58-4e56-b6b1-2c179270dfc3",
   consent_school_reminder: "ee3d36b1-4682-4eb0-a74a-7e0f6c9d0598",
   consent_school_request: "c7bd8150-d09e-4607-817d-db75c9a6a966",
