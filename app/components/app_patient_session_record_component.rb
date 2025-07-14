@@ -39,15 +39,11 @@ class AppPatientSessionRecordComponent < ViewComponent::Base
 
   def heading
     vaccination =
-      if programme.flu?
-        if PatientSession
-             .where(patient_id: patient.id)
-             .has_vaccine_method(:nasal, programme:)
-             .exists?
-          "vaccination with nasal spray"
-        else
-          "vaccination with injection"
-        end
+      if programme.has_multiple_vaccine_methods?
+        vaccine_method = patient.approved_vaccine_methods(programme:).first
+        method_string =
+          Vaccine.human_enum_name(:method, vaccine_method).downcase
+        "vaccination with #{method_string}"
       else
         "vaccination"
       end

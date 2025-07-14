@@ -2,7 +2,13 @@
   <%= render AppBacklinkComponent.new(session_record_path(@session), name: "record") %>
 <% end %>
 
-<% page_title = "Select a default batch for this session" %>
+<% programme_name_and_method = if @programme.has_multiple_vaccine_methods?
+       "#{@programme.name_in_sentence} #{Vaccine.human_enum_name(:vaccine_method, @vaccine_method)}.downcase"
+     else
+       "#{@programme.name_in_sentence}"
+     end %>
+
+<% page_title = "Select a default #{programme_name_and_method} batch for this session" %>
 <% content_for :page_title, page_title %>
 
 <%= form_with model: @todays_batch, url: batch_session_record_path(@session, @programme), method: :post do |f| %>
@@ -14,11 +20,16 @@
     <% @batches.each_with_index do |batch, index| %>
       <% label = proc do %>
         <span class="app-u-monospace"><%= batch.name %></span>
+        (<%= batch.vaccine.brand %>)
+      <% end %>
+
+      <% hint = proc do %>
         <% if (expiry = batch.expiry) %>
-          (expires <%= expiry.to_fs(:long) %>)
+          Expires <%= expiry.to_fs(:long) %>
         <% end %>
       <% end %>
-      <%= f.govuk_radio_button :id, batch.id, label:, link_errors: index.zero? %>
+
+      <%= f.govuk_radio_button :id, batch.id, label:, hint:, link_errors: index.zero? %>
     <% end %>
   <% end %>
 

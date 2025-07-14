@@ -29,7 +29,7 @@ describe AppConsentConfirmationComponent do
         )
       end
 
-      it { should have_text("is due to get the nasal flu vaccination") }
+      it { should have_text("is due to get the nasal spray flu vaccination") }
     end
 
     context "consent for injected Flu" do
@@ -40,7 +40,7 @@ describe AppConsentConfirmationComponent do
         )
       end
 
-      it { should have_text("is due to get the flu injection vaccination") }
+      it { should have_text("is due to get the injected flu vaccination") }
     end
 
     context "consent refused" do

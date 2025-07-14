@@ -1,12 +1,13 @@
 # frozen_string_literal: true
 
-describe "Vaccination" do
+describe "Today’s batch" do
   around { |example| travel_to(Time.zone.local(2024, 2, 1)) { example.run } }
 
-  scenario "Today's batch" do
-    given_i_am_signed_in
+  before { given_i_am_signed_in }
 
+  scenario "injection only" do
     when_i_vaccinate_a_patient_with_hpv
+    and_i_choose_a_default_batch(@hpv_batch)
     then_i_see_the_default_batch_banner_with_batch_1
 
     when_i_click_the_change_batch_link
@@ -19,12 +20,27 @@ describe "Vaccination" do
     then_i_see_the_default_batch_on_the_confirmation_page
     and_i_see_the_default_batch_on_the_patient_page
 
-    when_i_vaccinate_a_patient_with_menacwy
+    when_i_vaccinate_a_patient_with_flu
     then_i_am_required_to_choose_a_batch
   end
 
+  scenario "nasal spray and injection" do
+    when_i_vaccinate_a_patient_with_flu
+    then_i_dont_see_the_batch(@flu_nasal_batch)
+    and_i_choose_a_default_batch(@flu_injection_batch)
+
+    when_i_vaccinate_a_second_patient_with_flu
+    then_i_am_required_to_choose_a_batch
+    and_i_dont_see_the_batch(@flu_injection_batch)
+    and_i_choose_a_default_batch(@flu_nasal_batch)
+    then_i_see_the_default_flu_batches_banner
+  end
+
   def given_i_am_signed_in
-    programmes = [create(:programme, :hpv), create(:programme, :menacwy)]
+    flu_programme = create(:programme, :flu)
+    hpv_programme = create(:programme, :hpv)
+
+    programmes = [hpv_programme, flu_programme]
 
     organisation = create(:organisation, :with_one_nurse, programmes:)
 
@@ -37,6 +53,8 @@ describe "Vaccination" do
 
     @hpv_batch = batches.first.first
     @hpv_batch2 = batches.first.second
+    @flu_injection_batch = batches.second.find { it.vaccine.injection? }
+    @flu_nasal_batch = batches.second.find { it.vaccine.nasal? }
 
     @session = create(:session, organisation:, programmes:)
 
@@ -58,6 +76,10 @@ describe "Vaccination" do
         year_group: 8
       )
 
+    @patient2.consent_status(programme: flu_programme).update!(
+      vaccine_methods: %w[nasal]
+    )
+
     sign_in organisation.users.first
   end
 
@@ -65,6 +87,7 @@ describe "Vaccination" do
     visit session_record_path(@session)
 
     click_link @patient.full_name
+    click_on "HPV"
 
     within all("section")[0] do
       check "I have checked that the above statements are true"
@@ -75,11 +98,19 @@ describe "Vaccination" do
       choose "Left arm (upper position)"
       click_button "Continue"
     end
+  end
 
-    choose @hpv_batch.name
+  def then_i_dont_see_the_batch(batch)
+    expect(page).not_to have_content(batch.name)
+  end
+
+  alias_method :and_i_dont_see_the_batch, :then_i_dont_see_the_batch
+
+  def and_i_choose_a_default_batch(batch)
+    choose batch.name
 
     # Find the selected radio button element
-    selected_radio_button = find(:radio_button, @hpv_batch.name, checked: true)
+    selected_radio_button = find(:radio_button, batch.name, checked: true)
 
     # Find the "Default to this batch for this session" checkbox immediately below and check it
     checkbox_below =
@@ -100,6 +131,7 @@ describe "Vaccination" do
     visit session_record_path(@session)
 
     click_link @patient2.full_name
+    click_on "HPV"
 
     within all("section")[0] do
       check "I have checked that the above statements are true"
@@ -125,7 +157,7 @@ describe "Vaccination" do
   end
 
   def then_i_see_the_change_batch_page
-    expect(page).to have_content("Select a default batch for this session")
+    expect(page).to have_content("Select a default HPV batch for this session")
     expect(page).to have_selector(:label, @hpv_batch.name)
     expect(page).to have_selector(:label, @hpv_batch2.name)
   end
@@ -149,11 +181,11 @@ describe "Vaccination" do
     expect(page).to have_content(@hpv_batch2.name)
   end
 
-  def when_i_vaccinate_a_patient_with_menacwy
+  def when_i_vaccinate_a_patient_with_flu
     visit session_record_path(@session)
 
     click_link @patient.full_name
-    click_on "MenACWY"
+    click_on "Flu"
 
     within all("section")[0] do
       check "I have checked that the above statements are true"
@@ -166,7 +198,32 @@ describe "Vaccination" do
     end
   end
 
+  def when_i_vaccinate_a_second_patient_with_flu
+    visit session_record_path(@session)
+
+    click_link @patient2.full_name
+    click_on "Flu"
+
+    within all("section")[0] do
+      check "I have checked that the above statements are true"
+    end
+
+    within all("section")[1] do
+      choose "Yes"
+      click_button "Continue"
+    end
+  end
+
   def then_i_am_required_to_choose_a_batch
     expect(page).to have_content("Which batch did you use?")
+  end
+
+  def then_i_see_the_default_flu_batches_banner
+    expect(page).to have_content(
+      "Adjuvanted Quadrivalent - aQIV (flu injection): #{@flu_injection_batch.name}"
+    )
+    expect(page).to have_content(
+      "Fluenz Tetra - LAIV (flu nasal spray): #{@flu_nasal_batch.name}"
+    )
   end
 end
