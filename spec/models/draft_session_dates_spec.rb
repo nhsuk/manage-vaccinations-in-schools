@@ -78,6 +78,33 @@ describe DraftSessionDates do
           "Session dates must be unique"
         )
       end
+
+      it "validates uniqueness of dates" do
+        # First validate to trigger the validation
+        draft_session_dates.valid?(:update)
+
+        # Check that the validation was triggered
+        expect(draft_session_dates.errors[:base]).to include(
+          "Session dates must be unique"
+        )
+
+        # Now change one of the dates to make them unique
+        draft_session_dates.session_dates_attributes = {
+          "0" => {
+            "value(1i)" => "2024",
+            "value(2i)" => "10",
+            "value(3i)" => "15"
+          },
+          "1" => {
+            "value(1i)" => "2024",
+            "value(2i)" => "10",
+            "value(3i)" => "16" # Changed day from 15 to 16
+          }
+        }
+
+        # Validate again
+        expect(draft_session_dates.valid?(:update)).to be true
+      end
     end
 
     context "with no dates" do

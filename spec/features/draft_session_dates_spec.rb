@@ -20,7 +20,7 @@ describe "Edit session dates" do
     then_i_see_the_session_dates_page_with_original_dates
 
     when_i_modify_the_first_date_to_a_different_value
-    and_i_click_confirm
+    and_i_click_continue
     then_i_should_be_back_on_session_edit_page
     and_the_dates_should_be_updated
   end
@@ -36,7 +36,7 @@ describe "Edit session dates" do
     when_i_add_a_new_date
     and_i_click_add_another_date
     when_i_add_a_second_date
-    and_i_click_confirm
+    and_i_click_continue
     then_i_should_be_back_on_session_edit_page
     and_i_should_see_both_new_dates
   end
@@ -47,7 +47,7 @@ describe "Edit session dates" do
     and_i_click_add_session_dates
 
     when_i_add_an_invalid_date
-    and_i_click_confirm
+    and_i_click_continue
     then_i_should_see_invalid_date_error
   end
 
@@ -72,7 +72,7 @@ describe "Edit session dates" do
     and_i_delete_the_new_first_date_too
     then_i_should_only_see_the_third_date
 
-    and_i_click_confirm
+    and_i_click_continue
     then_i_should_be_back_on_session_edit_page
     and_only_the_third_date_should_remain
   end
@@ -92,7 +92,7 @@ describe "Edit session dates" do
     when_i_delete_the_newly_added_fourth_date
     then_i_should_see_original_three_dates_only
 
-    and_i_click_confirm
+    and_i_click_continue
     then_i_should_be_back_on_session_edit_page
     and_the_original_dates_should_be_unchanged
   end
@@ -233,8 +233,8 @@ describe "Edit session dates" do
     click_link "Back"
   end
 
-  def and_i_click_confirm
-    click_button "Confirm"
+  def and_i_click_continue
+    click_button "Continue"
   end
 
   def and_i_click_add_another_date
