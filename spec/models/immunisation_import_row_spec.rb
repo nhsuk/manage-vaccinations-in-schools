@@ -14,7 +14,7 @@ describe ImmunisationImportRow do
     end
   end
 
-  let(:programmes) { [create(:programme, :flu)] }
+  let(:programmes) { [create(:programme, :hpv)] }
   let(:organisation) { create(:organisation, ods_code: "abc", programmes:) }
 
   let(:nhs_number) { "9990000018" }
@@ -58,7 +58,7 @@ describe ImmunisationImportRow do
       "CARE_SETTING" => "1"
     )
   end
-  let(:valid_data) { valid_flu_data }
+  let(:valid_data) { valid_hpv_data }
 
   let!(:location) { create(:school, urn: "123456", name: "Waterloo Road") }
 
@@ -569,6 +569,8 @@ describe ImmunisationImportRow do
     end
 
     context "Flu vaccination in previous academic year, no vaccinator details provided" do
+      let(:programmes) { [create(:programme, :flu)] }
+
       let(:data) do
         valid_flu_data.except(
           "PERFORMING_PROFESSIONAL_EMAIL",
@@ -739,27 +741,7 @@ describe ImmunisationImportRow do
     context "with valid fields for Flu" do
       let(:programmes) { [create(:programme, :flu)] }
 
-      let(:data) do
-        {
-          "ORGANISATION_CODE" => "abc",
-          "VACCINATED" => "Y",
-          "BATCH_EXPIRY_DATE" => "20210101",
-          "BATCH_NUMBER" => "123",
-          "ANATOMICAL_SITE" => "nasal",
-          "SCHOOL_NAME" => "Hogwarts",
-          "SCHOOL_URN" => "123456",
-          "PERSON_FORENAME" => "Harry",
-          "PERSON_SURNAME" => "Potter",
-          "PERSON_DOB" => "20120101",
-          "PERSON_POSTCODE" => "SW1A 1AA",
-          "PERSON_GENDER_CODE" => "Male",
-          "DATE_OF_VACCINATION" => "20240101",
-          "PROGRAMME" => "Flu",
-          "VACCINE_GIVEN" => "AstraZeneca Fluenz Tetra LAIV",
-          "PERFORMING_PROFESSIONAL_FORENAME" => "John",
-          "PERFORMING_PROFESSIONAL_SURNAME" => "Smith"
-        }
-      end
+      let(:data) { valid_flu_data }
 
       it { should be_valid }
 
@@ -782,26 +764,7 @@ describe ImmunisationImportRow do
     context "with valid fields for HPV" do
       let(:programmes) { [create(:programme, :hpv)] }
 
-      let(:data) do
-        {
-          "ORGANISATION_CODE" => "abc",
-          "BATCH_EXPIRY_DATE" => "20210101",
-          "BATCH_NUMBER" => "123",
-          "ANATOMICAL_SITE" => "left thigh",
-          "SCHOOL_NAME" => "Hogwarts",
-          "SCHOOL_URN" => "123456",
-          "PERSON_FORENAME" => "Harry",
-          "PERSON_SURNAME" => "Potter",
-          "PERSON_DOB" => "20120101",
-          "PERSON_POSTCODE" => "SW1A 1AA",
-          "PERSON_GENDER_CODE" => "Male",
-          "DATE_OF_VACCINATION" => "20240101",
-          "PROGRAMME" => "HPV",
-          "VACCINE_GIVEN" => "Gardasil9",
-          "DOSE_SEQUENCE" => "1",
-          "CARE_SETTING" => "1"
-        }
-      end
+      let(:data) { valid_hpv_data }
 
       it { should be_valid }
     end
@@ -824,13 +787,6 @@ describe ImmunisationImportRow do
     end
 
     it { should be_administered }
-
-    it "has a vaccinator" do
-      expect(vaccination_record.performed_by).to have_attributes(
-        given_name: "John",
-        family_name: "Smith"
-      )
-    end
 
     it "sets the administered at time" do
       expect(vaccination_record.performed_at).to eq(
@@ -884,6 +840,19 @@ describe ImmunisationImportRow do
       it "sets the administered at time" do
         expect(vaccination_record.performed_at).to eq(
           Time.new(2024, 1, 1, 10, 30, 0, "+00:00")
+        )
+      end
+    end
+
+    context "with the flu programme" do
+      let(:programmes) { [create(:programme, :flu)] }
+
+      let(:data) { valid_flu_data }
+
+      it "has a vaccinator" do
+        expect(vaccination_record.performed_by).to have_attributes(
+          given_name: "John",
+          family_name: "Smith"
         )
       end
     end
@@ -1041,7 +1010,11 @@ describe ImmunisationImportRow do
         let(:programmes) { [create(:programme, :hpv)] }
 
         let(:data) do
-          valid_data.merge("PROGRAMME" => "HPV", "VACCINE_GIVEN" => "Gardasil9")
+          valid_data.merge(
+            "PROGRAMME" => "HPV",
+            "VACCINE_GIVEN" => "Gardasil9",
+            "DOSE_SEQUENCE" => ""
+          )
         end
 
         it { should eq(1) }
@@ -1053,7 +1026,8 @@ describe ImmunisationImportRow do
         let(:data) do
           valid_data.merge(
             "PROGRAMME" => "3-in-1",
-            "VACCINE_GIVEN" => "Revaxis"
+            "VACCINE_GIVEN" => "Revaxis",
+            "DOSE_SEQUENCE" => ""
           )
         end
 
@@ -1066,7 +1040,8 @@ describe ImmunisationImportRow do
         let(:data) do
           valid_data.merge(
             "PROGRAMME" => "MenACWY",
-            "VACCINE_GIVEN" => "MenQuadfi"
+            "VACCINE_GIVEN" => "MenQuadfi",
+            "DOSE_SEQUENCE" => ""
           )
         end
 
@@ -1172,6 +1147,8 @@ describe ImmunisationImportRow do
 
     describe "#location_name" do
       subject { vaccination_record.location_name }
+
+      let(:valid_data) { valid_hpv_data.except("CARE_SETTING") }
 
       context "with a school session that exists" do
         let(:data) do
