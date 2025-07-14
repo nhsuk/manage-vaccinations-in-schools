@@ -104,6 +104,7 @@ describe GovukNotifyPersonalisation do
 
     it "doesn't show today's date in next date" do
       expect(to_h).to include(
+        has_multiple_dates: "no",
         next_or_today_session_date: Date.current.to_fs(:short_day_of_week),
         next_session_date: Date.tomorrow.to_fs(:short_day_of_week)
       )
