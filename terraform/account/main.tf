@@ -101,6 +101,11 @@ resource "aws_ecr_repository" "mavis" {
   image_tag_mutability = "MUTABLE"
 }
 
+resource "aws_ecr_repository" "mavis_reporting" {
+  name                 = "mavis/reporting"
+  image_tag_mutability = "MUTABLE"
+}
+
 
 #### Access Analyzer
 
