@@ -1,0 +1,67 @@
+# Container Variables Configuration
+# This file specifies environment-specific variables that will be added to or override
+# the environment variables extracted from terraform configuration
+
+environments:
+  production:
+    RAILS_ENV: production
+    SENTRY_ENVIRONMENT: production
+    MAVIS__SPLUNK__ENABLED: true
+    MAVIS__CIS2__ENABLED: true
+    MAVIS__PDS__ENQUEUE_BULK_UPDATES: true
+    MAVIS__PDS__WAIT_BETWEEN_JOBS: 0.5
+    GOOD_JOB_MAX_THREADS: 5
+
+  qa:
+    RAILS_ENV: staging
+    SENTRY_ENVIRONMENT: qa
+    MAVIS__SPLUNK__ENABLED: true
+    MAVIS__CIS2__ENABLED: false
+    MAVIS__PDS__ENQUEUE_BULK_UPDATES: false
+    MAVIS__PDS__WAIT_BETWEEN_JOBS: 0.5
+    GOOD_JOB_MAX_THREADS: 5
+
+  test:
+    RAILS_ENV: staging
+    SENTRY_ENVIRONMENT: test
+    MAVIS__SPLUNK__ENABLED: true
+    MAVIS__CIS2__ENABLED: true
+    MAVIS__PDS__ENQUEUE_BULK_UPDATES: false
+    MAVIS__PDS__WAIT_BETWEEN_JOBS: 0.5
+    GOOD_JOB_MAX_THREADS: 5
+
+  preview:
+    RAILS_ENV: staging
+    SENTRY_ENVIRONMENT: preview
+    MAVIS__SPLUNK__ENABLED: false
+    MAVIS__CIS2__ENABLED: false
+    MAVIS__PDS__ENQUEUE_BULK_UPDATES: false
+    MAVIS__PDS__WAIT_BETWEEN_JOBS: 0.5
+    GOOD_JOB_MAX_THREADS: 5
+
+  training:
+    RAILS_ENV: staging
+    SENTRY_ENVIRONMENT: training
+    MAVIS__SPLUNK__ENABLED: false
+    MAVIS__CIS2__ENABLED: false
+    MAVIS__PDS__ENQUEUE_BULK_UPDATES: false
+    MAVIS__PDS__WAIT_BETWEEN_JOBS: 0.5
+    GOOD_JOB_MAX_THREADS: 5
+
+  sandbox-alpha:
+    RAILS_ENV: staging
+    SENTRY_ENVIRONMENT: sandbox-alpha
+    MAVIS__SPLUNK__ENABLED: false
+    MAVIS__CIS2__ENABLED: false
+    MAVIS__PDS__ENQUEUE_BULK_UPDATES: false
+    MAVIS__PDS__WAIT_BETWEEN_JOBS: 0.5
+    GOOD_JOB_MAX_THREADS: 5
+
+  sandbox-beta:
+    RAILS_ENV: staging
+    SENTRY_ENVIRONMENT: sandbox-beta
+    MAVIS__SPLUNK__ENABLED: false
+    MAVIS__CIS2__ENABLED: false
+    MAVIS__PDS__ENQUEUE_BULK_UPDATES: false
+    MAVIS__PDS__WAIT_BETWEEN_JOBS: 0.5
+    GOOD_JOB_MAX_THREADS: 5
