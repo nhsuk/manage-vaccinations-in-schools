@@ -15,7 +15,17 @@ module MavisCLI
       def call(patients:)
         MavisCLI.load_rails
 
-        ::Generate::CohortImports.call(patient_count: patients.to_i)
+        patient_count = patients.to_i
+        puts "Generating cohort import with #{patient_count} patients..."
+        progress_bar = MavisCLI.progress_bar(patient_count)
+
+        result =
+          ::Generate::CohortImports.call(
+            patient_count: patient_count,
+            progress_bar: progress_bar
+          )
+
+        puts "\nCohort import CSV generated: #{result}"
       end
     end
   end
