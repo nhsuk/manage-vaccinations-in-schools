@@ -5,7 +5,7 @@ describe "Flu vaccination" do
 
   scenario "Administered with nasal spray" do
     given_i_am_signed_in_with_flu_programme
-    and_there_is_a_flu_session_today_with_two_patients_ready_to_vaccinate
+    and_there_is_a_flu_session_today_with_patients_ready_to_vaccinate
     and_there_are_nasal_and_injection_batches
     and_sync_vaccination_records_to_nhs_on_create_feature_is_enabled
 
@@ -24,7 +24,7 @@ describe "Flu vaccination" do
 
   scenario "Administered with injection" do
     given_i_am_signed_in_with_flu_programme
-    and_there_is_a_flu_session_today_with_two_patients_ready_to_vaccinate
+    and_there_is_a_flu_session_today_with_patients_ready_to_vaccinate
     and_there_are_nasal_and_injection_batches
 
     when_i_go_to_the_injection_only_patient
@@ -39,9 +39,27 @@ describe "Flu vaccination" do
     and_a_text_is_sent_to_the_parent_confirming_the_vaccination
   end
 
+  scenario "Administered with injection instead of nasal" do
+    given_i_am_signed_in_with_flu_programme
+    and_there_is_a_flu_session_today_with_patients_ready_to_vaccinate
+    and_there_are_nasal_and_injection_batches
+
+    when_i_go_to_the_nasal_or_injection_patient
+    then_i_see_the_vaccination_form_for_nasal_spray
+    and_i_see_the_option_to_administer_injection
+
+    when_i_record_that_the_patient_has_been_vaccinated_with_injection_instead
+    then_i_see_the_check_and_confirm_page_for_injection
+    and_i_get_confirmation_after_recording
+
+    when_vaccination_confirmations_are_sent
+    then_an_email_is_sent_to_the_parent_confirming_the_vaccination
+    and_a_text_is_sent_to_the_parent_confirming_the_vaccination
+  end
+
   scenario "Switching between nasal and injection" do
     given_i_am_signed_in_with_flu_programme
-    and_there_is_a_flu_session_today_with_two_patients_ready_to_vaccinate
+    and_there_is_a_flu_session_today_with_patients_ready_to_vaccinate
     and_there_are_nasal_and_injection_batches
 
     when_i_go_to_the_nasal_only_patient
@@ -71,11 +89,18 @@ describe "Flu vaccination" do
     sign_in @organisation.users.first
   end
 
-  def and_there_is_a_flu_session_today_with_two_patients_ready_to_vaccinate
-    @nasal_patient =
+  def and_there_is_a_flu_session_today_with_patients_ready_to_vaccinate
+    @nasal_only_patient =
       create(
         :patient,
         :consent_given_nasal_only_triage_not_needed,
+        :in_attendance,
+        session: @session
+      )
+    @nasal_or_injection_patient =
+      create(
+        :patient,
+        :consent_given_nasal_or_injection_triage_not_needed,
         :in_attendance,
         session: @session
       )
@@ -120,7 +145,13 @@ describe "Flu vaccination" do
 
   def when_i_go_to_the_nasal_only_patient
     visit session_record_path(@session)
-    @patient = @nasal_patient
+    @patient = @nasal_only_patient
+    click_link @patient.full_name
+  end
+
+  def when_i_go_to_the_nasal_or_injection_patient
+    visit session_record_path(@session)
+    @patient = @nasal_or_injection_patient
     click_link @patient.full_name
   end
 
@@ -141,6 +172,12 @@ describe "Flu vaccination" do
     expect(page).to have_content("Record flu vaccination with injection")
     expect(page).to have_content(
       "Is #{@patient.given_name} ready for their flu injection?"
+    )
+  end
+
+  def and_i_see_the_option_to_administer_injection
+    expect(page).to have_content(
+      "No — but they can have the injected flu instead"
     )
   end
 
@@ -167,6 +204,21 @@ describe "Flu vaccination" do
 
     within all("section")[1] do
       choose "Yes"
+      choose "Left arm (upper position)"
+      click_button "Continue"
+    end
+
+    choose @injection_batch.name
+    click_button "Continue"
+  end
+
+  def when_i_record_that_the_patient_has_been_vaccinated_with_injection_instead
+    within all("section")[0] do
+      check "I have checked that the above statements are true"
+    end
+
+    within all("section")[1] do
+      choose "No — but they can have the injected flu instead"
       choose "Left arm (upper position)"
       click_button "Continue"
     end

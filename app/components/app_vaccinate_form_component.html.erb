@@ -66,22 +66,40 @@
       <% hint = "Pre-screening checks must be completed for vaccination to go ahead" %>
 
       <%= f.govuk_radio_buttons_fieldset :vaccine_method, legend: nil do %>
-        <% if common_delivery_sites_options.length > 1 %>
-          <%= f.govuk_radio_button :vaccine_method, vaccine_method, label: { text: "Yes" }, hint: { text: hint }, link_errors: true do %>
-            <%= f.govuk_collection_radio_buttons :delivery_site,
-                                                 common_delivery_sites_options,
-                                                 :value,
-                                                 :label,
-                                                 legend: {
-                                                   text: "Where will the injection be given?",
-                                                   size: "s",
-                                                 } %>
+        <% vaccine_methods.each_with_index do |vaccine_method, index| %>
+          <% if index == 1 %>
+            <%= f.govuk_radio_divider %>
           <% end %>
-        <% else %>
-          <%= f.govuk_radio_button :vaccine_method, vaccine_method, label: { text: "Yes" }, hint: { text: hint }, link_errors: true %>
-          <%= f.hidden_field :delivery_site, value: common_delivery_sites_options.first.value %>
+
+          <% label = if index.zero?
+                 "Yes"
+               else
+                 "No — but they can have the #{Vaccine.human_enum_name(:method_prefix, vaccine_method)} #{programme.name_in_sentence} instead"
+               end %>
+
+          <% options = common_delivery_site_options(vaccine_method) %>
+
+          <% if options.length > 1 %>
+            <%= f.govuk_radio_button :vaccine_method, vaccine_method, label: { text: label }, hint: { text: hint }, link_errors: index.zero? do %>
+              <%= f.govuk_collection_radio_buttons :delivery_site,
+                                                   options,
+                                                   :value,
+                                                   :label,
+                                                   legend: {
+                                                     text: "Where will the #{Vaccine.human_enum_name(:method, vaccine_method).downcase} be given?",
+                                                     size: "s",
+                                                   } %>
+            <% end %>
+          <% else %>
+            <%= f.govuk_radio_button :vaccine_method, vaccine_method, label: { text: label }, hint: { text: hint }, link_errors: index.zero? do %>
+              <%= f.hidden_field :delivery_site, value: options.first.value %>
+            <% end %>
+          <% end %>
+
+          <% if index.zero? %>
+            <%= f.govuk_radio_button :vaccine_method, "none", label: { text: "No" } %>
+          <% end %>
         <% end %>
-        <%= f.govuk_radio_button :vaccine_method, "none", label: { text: "No" } %>
       <% end %>
 
       <%= f.hidden_field :dose_sequence, value: dose_sequence %>
