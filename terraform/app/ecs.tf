@@ -111,7 +111,16 @@ module "good_job_service" {
 module "reporting_service" {
   source = "./modules/ecs_service"
   task_config = {
-    environment          = []
+    environment = [
+      {
+        name  = "VALKEY_ADDRESS"
+        value = aws_elasticache_serverless_cache.reporting_service.endpoint[0].address
+      },
+      {
+        name  = "VALKEY_PORT"
+        value = aws_elasticache_serverless_cache.reporting_service.endpoint[0].port
+      }
+    ]
     secrets              = []
     cpu                  = 1024
     memory               = 2048
