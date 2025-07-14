@@ -111,7 +111,7 @@ resource "aws_ecs_task_definition" "this" {
 }
 
 resource "aws_ssm_parameter" "container_variables" {
-  name = "/${var.environment}/ecs/${local.server_type_name}/container_variables"
+  name = "/${var.environment}/mavis/ecs/${local.server_type_name}/container_variables"
   type = "String"
 
   value = jsonencode({
