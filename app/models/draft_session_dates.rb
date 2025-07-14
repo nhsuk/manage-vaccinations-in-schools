@@ -3,13 +3,14 @@
 class DraftSessionDates
   include RequestSessionPersistable
   include WizardStepConcern
+  include ActiveRecord::AttributeMethods::Serialization
 
   def self.request_session_key
     "session_dates"
   end
 
   attribute :session_id, :integer
-  attribute :session_dates_attributes_json, :string, default: "{}"
+  serialize :session_dates_attributes_json, coder: JSON
 
   def wizard_steps
     %i[dates]
@@ -44,7 +45,7 @@ class DraftSessionDates
 
   def session_dates_attributes=(attributes)
     @session_dates_attributes = attributes
-    self.session_dates_attributes_json = attributes.to_json
+    self.session_dates_attributes_json = attributes
     @session_dates = nil # Reset cached session dates
   end
 
