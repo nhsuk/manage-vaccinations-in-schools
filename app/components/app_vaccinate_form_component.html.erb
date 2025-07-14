@@ -65,9 +65,9 @@
 
       <% hint = "Pre-screening checks must be completed for vaccination to go ahead" %>
 
-      <%= f.govuk_radio_buttons_fieldset :administered, legend: nil do %>
+      <%= f.govuk_radio_buttons_fieldset :vaccine_method, legend: nil do %>
         <% if common_delivery_sites_options.length > 1 %>
-          <%= f.govuk_radio_button :administered, true, label: { text: "Yes" }, hint: { text: hint }, link_errors: true do %>
+          <%= f.govuk_radio_button :vaccine_method, vaccine_method, label: { text: "Yes" }, hint: { text: hint }, link_errors: true do %>
             <%= f.govuk_collection_radio_buttons :delivery_site,
                                                  common_delivery_sites_options,
                                                  :value,
@@ -78,13 +78,12 @@
                                                  } %>
           <% end %>
         <% else %>
-          <%= f.govuk_radio_button :administered, true, label: { text: "Yes" }, hint: { text: hint }, link_errors: true %>
+          <%= f.govuk_radio_button :vaccine_method, vaccine_method, label: { text: "Yes" }, hint: { text: hint }, link_errors: true %>
           <%= f.hidden_field :delivery_site, value: common_delivery_sites_options.first.value %>
         <% end %>
-        <%= f.govuk_radio_button :administered, false, label: { text: "No" } %>
+        <%= f.govuk_radio_button :vaccine_method, "none", label: { text: "No" } %>
       <% end %>
 
-      <%= f.hidden_field :delivery_method, value: delivery_method %>
       <%= f.hidden_field :dose_sequence, value: dose_sequence %>
       <%= f.hidden_field :programme_id, value: programme.id %>
 

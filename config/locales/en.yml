@@ -121,8 +121,6 @@ en:
               inclusion: Choose a status
         vaccinate_form:
           attributes:
-            administered:
-              inclusion: Choose if they are ready to vaccinate
             delivery_site:
               blank: Choose where the injection will be given
             identity_check_confirmed_by_other_name:
@@ -137,6 +135,8 @@ en:
               blank: Confirm you’ve checked the pre-screening statements are true
             pre_screening_notes:
               too_long: Enter notes that are less than %{count} characters long
+            vaccine_method:
+              inclusion: Choose if they are ready to vaccinate
         vaccination_report:
           attributes:
             file_format:

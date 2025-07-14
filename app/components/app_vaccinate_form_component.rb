@@ -22,10 +22,6 @@ class AppVaccinateFormComponent < ViewComponent::Base
     patient.approved_vaccine_methods(programme:).first
   end
 
-  def delivery_method
-    Vaccine::AVAILABLE_DELIVERY_METHODS.fetch(vaccine_method).first
-  end
-
   def dose_sequence
     programme.default_dose_sequence
   end

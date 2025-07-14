@@ -13,8 +13,7 @@ class VaccinateForm
   attribute :pre_screening_confirmed, :boolean
   attribute :pre_screening_notes, :string
 
-  attribute :administered, :boolean
-  attribute :delivery_method, :string
+  attribute :vaccine_method, :string
   attribute :delivery_site, :string
   attribute :dose_sequence, :integer
   attribute :programme_id, :integer
@@ -32,12 +31,11 @@ class VaccinateForm
               maximum: 300
             }
 
-  validates :administered, inclusion: [true, false]
+  validates :vaccine_method, inclusion: { in: :vaccine_method_options }
   validates :pre_screening_notes, length: { maximum: 1000 }
 
-  with_options if: :administered do
+  with_options if: :administered? do
     validates :pre_screening_confirmed, presence: true
-    validates :delivery_method, presence: true
     validates :delivery_site, presence: true
   end
 
@@ -48,7 +46,7 @@ class VaccinateForm
 
     draft_vaccination_record.reset!
 
-    if administered
+    if administered?
       draft_vaccination_record.outcome = "administered"
 
       if delivery_site != "other"
@@ -79,6 +77,18 @@ class VaccinateForm
   private
 
   delegate :organisation, to: :patient_session
+
+  def administered? = vaccine_method != "none"
+
+  def vaccine_method_options
+    programme.vaccine_methods + ["none"]
+  end
+
+  def delivery_method
+    if administered?
+      Vaccine::AVAILABLE_DELIVERY_METHODS.fetch(vaccine_method).first
+    end
+  end
 
   def pre_screening
     @pre_screening ||=
