@@ -51,9 +51,9 @@ data "aws_iam_policy_document" "ecs_secrets_access" {
   statement {
     sid     = "railsKeySid"
     actions = ["ssm:GetParameters"]
-    resources = concat([
+    resources = [
       "arn:aws:ssm:${var.region}:${var.account_id}:parameter${var.rails_master_key_path}"
-    ], local.parameter_store_arns)
+    ]
     effect = "Allow"
   }
   statement {

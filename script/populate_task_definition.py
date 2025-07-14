@@ -129,8 +129,8 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  %(prog)s sandbox-alpha web -i 123456789.dkr.ecr.eu-west-2.amazonaws.com/mavis/webapp:latest
-  %(prog)s sandbox-alpha good-job -i 123456789.dkr.ecr.eu-west-2.amazonaws.com/mavis/webapp:latest -o good-job-task-definition.json
+  %(prog)s sandbox-alpha web -i latest
+  %(prog)s sandbox-alpha good-job -i latest -o web-task-definition.json
         """
     )
 
@@ -200,7 +200,7 @@ Examples:
         'MEMORY': args.memory,
         'ENVIRONMENT_VARIABLES': merged_env_vars,
         'SECRETS': filtered_secrets,
-        'IMAGE_URI': image_uri #TODO: Replace with full URI
+        'IMAGE_URI': image_uri
     }
 
     # Populate template
