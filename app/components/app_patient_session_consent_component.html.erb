@@ -1,3 +1,5 @@
+<h2 class="nhsuk-heading-m">Consent</h2>
+
 <%= render AppCardComponent.new(colour:) do |card| %>
   <% card.with_heading { heading } %>
 
@@ -37,4 +39,12 @@
   <% end %>
 
   <%= render AppConsentTableComponent.new(patient_session:, programme:) %>
+
+  <% if show_health_answers? %>
+    <hr class="nhsuk-section-break nhsuk-section-break--visible nhsuk-section-break--l">
+
+    <h3 class="nhsuk-heading-s">All answers to health questions</h3>
+
+    <%= render AppHealthAnswersSummaryComponent.new(consents) %>
+  <% end %>
 <% end %>

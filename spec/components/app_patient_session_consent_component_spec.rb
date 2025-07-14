@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-describe AppConsentCardComponent do
+describe AppPatientSessionConsentComponent do
   subject { render_inline(component) }
 
-  let(:component) { described_class.new(patient_session:, programme:) }
+  let(:component) { described_class.new(patient_session, programme:) }
 
   let(:programme) { create(:programme) }
   let(:session) { create(:session, programmes: [programme]) }

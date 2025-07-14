@@ -1,19 +1,6 @@
 # frozen_string_literal: true
 
 class AppPatientSessionConsentComponent < ViewComponent::Base
-  erb_template <<-ERB
-    <h2 class="nhsuk-heading-m">Consent</h2>
-    
-    <%= render AppConsentCardComponent.new(patient_session:, programme:) %>
-
-    <% if show_health_answers? %>
-      <%= render AppHealthAnswersCardComponent.new(
-        consents,
-        heading: "All answers to health questions",
-      ) %>
-    <% end %>
-  ERB
-
   def initialize(patient_session, programme:)
     super
 
@@ -25,7 +12,42 @@ class AppPatientSessionConsentComponent < ViewComponent::Base
 
   attr_reader :patient_session, :programme
 
-  delegate :patient, to: :patient_session
+  delegate :patient, :session, to: :patient_session
+
+  def colour
+    I18n.t(status, scope: %i[status consent colour])
+  end
+
+  def heading
+    "#{programme.name}: #{I18n.t(status, scope: %i[status consent label])}"
+  end
+
+  def latest_consent_request
+    @latest_consent_request ||=
+      patient
+        .consent_notifications
+        .request
+        .has_programme(programme)
+        .order(sent_at: :desc)
+        .first
+  end
+
+  def consent_status
+    @consent_status ||= patient.consent_status(programme:)
+  end
+
+  def vaccination_status
+    @vaccination_status ||= patient.vaccination_status(programme:)
+  end
+
+  def can_send_consent_request?
+    consent_status.no_response? && patient.send_notifications? &&
+      session.open_for_consent? && patient.parents.any?
+  end
+
+  def who_refused
+    consents.find(&:response_refused?)&.who_responded
+  end
 
   def consents
     @consents ||= ConsentGrouper.call(patient.consents, programme:)
@@ -34,4 +56,6 @@ class AppPatientSessionConsentComponent < ViewComponent::Base
   def show_health_answers?
     consents.any?(&:response_given?)
   end
+
+  delegate :status, to: :consent_status
 end
