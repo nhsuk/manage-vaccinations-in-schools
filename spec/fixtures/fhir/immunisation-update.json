@@ -1,0 +1,156 @@
+{
+  "id": "ffff1111-eeee-2222-dddd-3333eeee4444",
+  "contained": [
+    {
+      "id": "Practitioner1",
+      "name": [
+        {
+          "family": "Nightingale",
+          "given": [
+            "Florence"
+          ]
+        }
+      ],
+      "resourceType": "Practitioner"
+    },
+    {
+      "id": "Patient1",
+      "identifier": [
+        {
+          "system": "https://fhir.nhs.uk/Id/nhs-number",
+          "value": "9449310475"
+        }
+      ],
+      "name": [
+        {
+          "family": "Taylor",
+          "given": [
+            "Sarah"
+          ]
+        }
+      ],
+      "gender": "unknown",
+      "birthDate": "2011-09-09",
+      "address": [
+        {
+          "postalCode": "EC1A 1BB"
+        }
+      ],
+      "resourceType": "Patient"
+    }
+  ],
+  "extension": [
+    {
+      "url": "https://fhir.hl7.org.uk/StructureDefinition/Extension-UKCore-VaccinationProcedure",
+      "valueCodeableConcept": {
+        "coding": [
+          {
+            "system": "http://snomed.info/sct",
+            "code": "761841000",
+            "display": "Administration of vaccine product containing only Human papillomavirus antigen (procedure)"
+          }
+        ]
+      }
+    }
+  ],
+  "identifier": [
+    {
+      "system": "http://manage-vaccinations-in-schools.nhs.uk/vaccination_records",
+      "value": "11112222-3333-4444-5555-666677778888"
+    }
+  ],
+  "status": "completed",
+  "vaccineCode": {
+    "coding": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "10880211000001104",
+        "display": "Gardasil vaccine suspension for injection 0.5ml pre-filled syringes (Merck Sharp & Dohme (UK) Ltd) (product)"
+      }
+    ]
+  },
+  "patient": {
+    "reference": "#Patient1"
+  },
+  "occurrenceDateTime": "2021-02-07T13:28:17.271+00:00",
+  "recorded": "2021-02-07T13:28:17.271+00:00",
+  "primarySource": true,
+  "location": {
+    "identifier": {
+      "system": "https://fhir.nhs.uk/Id/ods-organization-code",
+      "value": "X99999"
+    }
+  },
+  "manufacturer": {
+    "display": "Merck Sharp & Dohme"
+  },
+  "lotNumber": "X8U375AL",
+  "expirationDate": "2023-03-20",
+  "site": {
+    "coding": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "368208006",
+        "display": "Left upper arm structure"
+      }
+    ]
+  },
+  "route": {
+    "coding": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "78421000",
+        "display": "Intramuscular"
+      }
+    ]
+  },
+  "doseQuantity": {
+    "value": 0.5,
+    "unit": "ml",
+    "system": "http://snomed.info/sct",
+    "code": "258773002"
+  },
+  "performer": [
+    {
+      "actor": {
+        "reference": "#Practitioner1"
+      }
+    },
+    {
+      "actor": {
+        "type": "Organization",
+        "identifier": {
+          "system": "https://fhir.nhs.uk/Id/ods-organization-code",
+          "value": "A9A5A"
+        }
+      }
+    }
+  ],
+  "reasonCode": [
+    {
+      "coding": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "723620004"
+        }
+      ]
+    }
+  ],
+  "protocolApplied": [
+    {
+      "targetDisease": [
+        {
+          "coding": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "240532009",
+              "display": "Human papillomavirus infection"
+            }
+          ]
+        }
+      ],
+      "doseNumberPositiveInt": 1
+    }
+  ],
+  "resourceType": "Immunization"
+}

@@ -11,11 +11,12 @@ module EnqueueSyncVaccinationRecordToNHS
         vaccination_record
           .recorded_in_service
           .administered
+          .kept
           .where(programmes: { type: PROGRAMME_TYPES })
           .includes(:programme)
       elsif vaccination_record.programme.type.in?(PROGRAMME_TYPES) &&
             vaccination_record.administered? &&
-            vaccination_record.recorded_in_service?
+            vaccination_record.recorded_in_service? && vaccination_record.kept?
         Array(vaccination_record)
       else
         return
