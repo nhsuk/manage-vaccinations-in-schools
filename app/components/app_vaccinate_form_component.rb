@@ -59,11 +59,9 @@ class AppVaccinateFormComponent < ViewComponent::Base
   def vaccination_name
     vaccination =
       if programme.has_multiple_vaccine_methods?
-        if delivery_method.in?(Vaccine::NASAL_DELIVERY_METHODS)
-          "nasal spray"
-        else
-          "injection"
-        end
+        vaccine_method =
+          Vaccine.delivery_method_to_vaccine_method(delivery_method)
+        Vaccine.human_enum_name(:method, vaccine_method).downcase
       else
         "vaccination"
       end

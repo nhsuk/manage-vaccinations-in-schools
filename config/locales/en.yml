@@ -233,6 +233,9 @@ en:
           injection: Injection
           nasal: Nasal spray
           nasal_injection: Nasal spray (or injection)
+        method_prefixes:
+          injection: injected
+          nasal: nasal spray
         side_effects:
           aching: an aching body
           dizziness: dizziness

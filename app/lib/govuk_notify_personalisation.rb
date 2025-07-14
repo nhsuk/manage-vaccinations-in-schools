@@ -396,25 +396,21 @@ class GovukNotifyPersonalisation
   def programme_names_and_methods
     @programme_names_and_methods ||=
       programmes.map do |programme|
-        next programme.name unless programme.flu?
+        if programme.has_multiple_vaccine_methods?
+          vaccine_method =
+            if vaccination_record
+              Vaccine.delivery_method_to_vaccine_method(
+                vaccination_record.delivery_method
+              )
+            elsif patient
+              patient.approved_vaccine_methods(programme:).first
+            end
 
-        if vaccination_record
-          if vaccination_record.delivery_method_nasal_spray?
-            "nasal spray flu"
-          else
-            "injected flu"
-          end
-        elsif patient &&
-              (
-                vaccine_methods = patient.approved_vaccine_methods(programme:)
-              ).present?
-          if vaccine_methods.first == "nasal"
-            "nasal spray flu"
-          else
-            "injected flu"
-          end
+          method_prefix =
+            Vaccine.human_enum_name(:method_prefix, vaccine_method)
+          "#{method_prefix} #{programme.name_in_sentence}".lstrip
         else
-          "flu"
+          programme.name_in_sentence
         end
       end
   end
