@@ -206,9 +206,10 @@ describe GovukNotifyPersonalisation do
 
     it do
       expect(to_h).to include(
+        consented_vaccine_methods_message: "",
+        location_name: "Hogwarts",
         reason_for_refusal: "of personal choice",
-        survey_deadline_date: "8 January 2024",
-        location_name: "Hogwarts"
+        survey_deadline_date: "8 January 2024"
       )
     end
 
