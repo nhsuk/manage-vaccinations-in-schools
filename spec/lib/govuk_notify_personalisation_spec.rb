@@ -194,10 +194,45 @@ describe GovukNotifyPersonalisation do
     it do
       expect(to_h).to match(
         hash_including(
+          consented_vaccine_methods_message: "",
           reason_for_refusal: "of personal choice",
           survey_deadline_date: "8 January 2024"
         )
       )
+    end
+
+    context "for the flu programme" do
+      let(:programmes) { [create(:programme, :flu)] }
+
+      it do
+        expect(to_h).to include(
+          consented_vaccine_methods_message:
+            "You’ve agreed that John can have the injected flu vaccine."
+        )
+      end
+
+      context "when consented to both nasal and injection" do
+        before { consent.update!(vaccine_methods: %w[nasal injection]) }
+
+        it do
+          expect(to_h).to include(
+            consented_vaccine_methods_message:
+              "You’ve agreed that John can have the nasal spray flu vaccine, " \
+                "or the injected flu vaccine if the nasal spray is not suitable."
+          )
+        end
+      end
+
+      context "when consented only to nasal" do
+        before { consent.update!(vaccine_methods: %w[nasal]) }
+
+        it do
+          expect(to_h).to include(
+            consented_vaccine_methods_message:
+              "You’ve agreed that John can have the nasal spray flu vaccine."
+          )
+        end
+      end
     end
   end
 
