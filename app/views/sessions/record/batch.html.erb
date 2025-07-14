@@ -2,7 +2,13 @@
   <%= render AppBacklinkComponent.new(session_record_path(@session), name: "record") %>
 <% end %>
 
-<% page_title = "Select a default batch for this session" %>
+<% programme_name_and_method = if @programme.has_multiple_vaccine_methods?
+       "#{@programme.name_in_sentence} #{Vaccine.human_enum_name(:vaccine_method, @vaccine_method)}.downcase"
+     else
+       "#{@programme.name_in_sentence}"
+     end %>
+
+<% page_title = "Select a default #{programme_name_and_method} batch for this session" %>
 <% content_for :page_title, page_title %>
 
 <%= form_with model: @todays_batch, url: batch_session_record_path(@session, @programme), method: :post do |f| %>

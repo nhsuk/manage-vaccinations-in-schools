@@ -157,7 +157,7 @@ describe "Today’s batch" do
   end
 
   def then_i_see_the_change_batch_page
-    expect(page).to have_content("Select a default batch for this session")
+    expect(page).to have_content("Select a default HPV batch for this session")
     expect(page).to have_selector(:label, @hpv_batch.name)
     expect(page).to have_selector(:label, @hpv_batch2.name)
   end
@@ -220,10 +220,10 @@ describe "Today’s batch" do
 
   def then_i_see_the_default_flu_batches_banner
     expect(page).to have_content(
-      "Adjuvanted Quadrivalent - aQIV (Flu): #{@flu_injection_batch.name}"
+      "Adjuvanted Quadrivalent - aQIV (flu injection): #{@flu_injection_batch.name}"
     )
     expect(page).to have_content(
-      "Fluenz Tetra - LAIV (Flu): #{@flu_nasal_batch.name}"
+      "Fluenz Tetra - LAIV (flu nasal spray): #{@flu_nasal_batch.name}"
     )
   end
 end
