@@ -48,9 +48,16 @@ describe GovukNotifyPersonalisation do
   let(:vaccination_record) { nil }
 
   it do
-    expect(to_h).to eq(
+    expect(to_h).to match(
       {
-        can_self_consent: "yes",
+        talk_to_your_child_message:
+          "## Talk to your child about what they want\n\n" \
+            "We suggest you talk to your child about the vaccine before you " \
+            "respond to us.\n\nYoung people have the right to refuse " \
+            "vaccinations. Those who show " \
+            "[‘Gillick competence’](https://www.nhs.uk/conditions/consent-to-treatment/children/) " \
+            "have the right to consent to vaccinations themselves. Our team " \
+            "may assess Gillick competence during vaccination sessions.",
         catch_up: "no",
         consent_deadline: "Wednesday 31 December",
         consent_link:
@@ -88,7 +95,7 @@ describe GovukNotifyPersonalisation do
   context "with a patient in primary school" do
     let(:patient) { create(:patient, year_group: 6) }
 
-    it { should include(can_self_consent: "no") }
+    it { should include(talk_to_your_child_message: "") }
   end
 
   context "when the session is today" do
