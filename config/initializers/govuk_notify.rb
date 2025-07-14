@@ -5,7 +5,7 @@ GOVUK_NOTIFY_EMAIL_TEMPLATES = {
   consent_confirmation_clinic: "f2921e23-4b73-4e44-abbb-38b0e235db8e",
   consent_confirmation_given: "c6c8dbfc-b429-4468-bd0b-176e771b5a8e",
   consent_confirmation_refused: "5a676dac-3385-49e4-98c2-fc6b45b5a851",
-  consent_confirmation_triage: "279c517c-4c52-4a69-96cb-31355bfa4e21",
+  consent_confirmation_triage: "604ee667-c996-471e-b986-79ab98d0767c",
   consent_school_initial_reminder_doubles:
     "3523d4b8-530b-42dd-8b9b-7fed8d1dfff1",
   consent_school_initial_reminder_flu: "7f85a5b4-5240-4ae9-94f7-43913852943c",
@@ -23,7 +23,7 @@ GOVUK_NOTIFY_EMAIL_TEMPLATES = {
   session_clinic_subsequent_invitation: "eee59c1b-3af4-4ccd-8653-940887066390",
   session_school_reminder: "8b8a9566-bb03-4b3c-8abc-5bd5a4b8797d",
   triage_vaccination_at_clinic: "9faef718-bd76-4c30-93ea-fbe8584388a6",
-  triage_vaccination_will_happen: "fa3c8dd5-4688-4b93-960a-1d422c4e5597",
+  triage_vaccination_will_happen: "279c517c-4c52-4a69-96cb-31355bfa4e21",
   triage_vaccination_wont_happen: "d1faf47e-ccc3-4481-975b-1ec34211a21f",
   vaccination_administered_flu: "7238ee27-5840-40e5-b9b9-3130ba4cd4fa",
   vaccination_administered_hpv: "8a65d7b5-045c-4f26-8f76-6e593c14cb6d",
@@ -54,7 +54,6 @@ GOVUK_NOTIFY_UNUSED_TEMPLATES = {
   "4c616b22-eee8-423f-84d6-bd5710f744fd" => :vaccination_administered_td_ipv,
   "55d35c86-7365-406b-909f-1b7b78529ea8" =>
     :consent_school_subsequent_reminder_doubles,
-  "604ee667-c996-471e-b986-79ab98d0767c" => :consent_confirmation_triage,
   "6410145f-dac1-46ba-82f3-a49cad0f66a6" =>
     :consent_school_subsequent_reminder_hpv,
   "69612d3a-d6eb-4f04-8b99-ed14212e7245" => :vaccination_administered_hpv,
@@ -65,5 +64,6 @@ GOVUK_NOTIFY_UNUSED_TEMPLATES = {
     :consent_school_initial_reminder_doubles,
   "ceefd526-d44c-4561-b0d2-c9ef4ccaba4f" =>
     :consent_school_initial_reminder_hpv,
-  "e9aa7f0f-986f-49be-a1ee-6d1d1c13e9ec" => :consent_school_request_doubles
+  "e9aa7f0f-986f-49be-a1ee-6d1d1c13e9ec" => :consent_school_request_doubles,
+  "fa3c8dd5-4688-4b93-960a-1d422c4e5597" => :triage_vaccination_will_happen
 }.freeze
