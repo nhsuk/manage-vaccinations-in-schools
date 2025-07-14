@@ -52,6 +52,8 @@ class Programme < ApplicationRecord
 
   def name = human_enum_name(:type)
 
+  def name_in_sentence = flu? ? name.downcase : name
+
   def doubles? = menacwy? || td_ipv?
 
   def seasonal? = flu?

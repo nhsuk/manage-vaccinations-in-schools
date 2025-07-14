@@ -4,7 +4,7 @@
 
 <% editing = @draft_vaccination_record.editing? || @draft_vaccination_record.outcome.present? %>
 
-<% title = editing ? "Vaccination outcome" : "Why was the #{@programme.name} vaccination not given?" %>
+<% title = editing ? "Vaccination outcome" : "Why was the #{@programme.name_in_sentence} vaccination not given?" %>
 <% content_for :page_title, title %>
 
 <%= form_with model: @draft_vaccination_record, url: wizard_path, method: :put do |f| %>

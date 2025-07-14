@@ -57,9 +57,14 @@ class AppVaccinateFormComponent < ViewComponent::Base
   end
 
   def vaccination_name
-    return "#{programme.name} vaccination" unless programme.flu?
+    vaccination =
+      if programme.flu?
+        delivery_method == :nasal_spray ? "nasal spray" : "injection"
+      else
+        "vaccination"
+      end
 
-    delivery_method == :nasal_spray ? "flu nasal spray" : "flu injection"
+    "#{programme.name_in_sentence} #{vaccination}"
   end
 
   def ask_not_taking_medication? = programme.doubles? || programme.flu?

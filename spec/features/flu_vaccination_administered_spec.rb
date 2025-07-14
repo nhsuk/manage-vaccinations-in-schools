@@ -179,7 +179,7 @@ describe "Flu vaccination" do
 
   def and_i_get_confirmation_after_recording
     click_button "Confirm"
-    expect(page).to have_content("Vaccination outcome recorded for Flu")
+    expect(page).to have_content("Vaccination outcome recorded for flu")
   end
 
   def then_i_see_the_check_and_confirm_page_for_injection

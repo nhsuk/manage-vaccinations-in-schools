@@ -72,10 +72,10 @@ class AppConsentConfirmationComponent < ViewComponent::Base
             elsif consent_form_programme.vaccine_method_injection?
               "flu injection"
             else
-              programme.name.downcase
+              programme.name_in_sentence
             end
           else
-            programme.name
+            programme.name_in_sentence
           end
         end
 

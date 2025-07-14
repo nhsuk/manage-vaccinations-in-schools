@@ -6,7 +6,7 @@
   <%= f.govuk_error_summary %>
 
   <span class="nhsuk-caption-l"><%= @patient.full_name %></span>
-  <%= h1 "When was the #{@programme.name} vaccination given?" %>
+  <%= h1 "When was the #{@programme.name_in_sentence} vaccination given?" %>
 
   <%= f.govuk_date_field :performed_at,
                          legend: { text: "Date" },

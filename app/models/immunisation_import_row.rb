@@ -941,7 +941,7 @@ class ImmunisationImportRow
       if programme && vaccine.programme_id != programme.id
         errors.add(
           field.header,
-          "is not given in the #{programme.name} programme"
+          "is not given in the #{programme.name_in_sentence} programme"
         )
       end
     elsif vaccine_nivs_name.present?
