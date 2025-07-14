@@ -129,10 +129,15 @@ class GovukNotifyPersonalisation
   end
 
   def consented_vaccine_methods_message
-    return nil if consent_form.nil?
-    return "" if consent_form.programmes.none?(&:flu?)
+    return nil if consent.nil? && consent_form.nil?
 
-    consent_form_programmes = consent_form.consent_form_programmes
+    if (consent && !consent.programme.flu?) ||
+         (consent_form && consent_form.programmes.none?(&:flu?))
+      return ""
+    end
+
+    consent_form_programmes =
+      consent ? [consent] : consent_form.consent_form_programmes
 
     consented_vaccine_methods =
       if consent_form_programmes.any?(&:vaccine_method_injection_and_nasal?)
