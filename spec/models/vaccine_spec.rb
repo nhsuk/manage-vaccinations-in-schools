@@ -58,28 +58,6 @@ describe Vaccine do
     end
   end
 
-  describe "#can_be_half_dose?" do
-    subject { vaccine.can_be_half_dose? }
-
-    context "with a nasal Flu vaccine" do
-      let(:vaccine) { build(:vaccine, :fluenz_tetra) }
-
-      it { should be(true) }
-    end
-
-    context "with an injected Flu vaccine" do
-      let(:vaccine) { build(:vaccine, :quadrivalent_influenza) }
-
-      it { should be(false) }
-    end
-
-    context "with an HPV vaccine" do
-      let(:vaccine) { build(:vaccine, :gardasil_9) }
-
-      it { should be(false) }
-    end
-  end
-
   describe "#available_delivery_methods" do
     subject { vaccine.available_delivery_methods }
 

@@ -89,7 +89,13 @@ describe "Flu vaccination" do
   end
 
   def and_there_are_nasal_and_injection_batches
-    @nasal_vaccine = create(:vaccine, programme: @programme, method: :nasal)
+    @nasal_vaccine =
+      create(
+        :vaccine,
+        programme: @programme,
+        method: :nasal,
+        dose_volume_ml: 0.2
+      )
     @nasal_batch =
       create(
         :batch,
@@ -150,6 +156,8 @@ describe "Flu vaccination" do
 
     choose @nasal_batch.name
     click_button "Continue"
+
+    expect(page).not_to have_content("Did they get the full dose?")
   end
 
   def when_i_record_that_the_patient_has_been_vaccinated_with_injection
@@ -173,6 +181,7 @@ describe "Flu vaccination" do
     expect(page).to have_content(@nasal_batch.name)
     expect(page).to have_content("Nasal spray")
     expect(page).to have_content("Nose")
+    expect(page).to have_content("Dose volume0.2 ml")
     expect(page).to have_content(@location.name)
     expect(page).to have_content("Vaccinated")
   end

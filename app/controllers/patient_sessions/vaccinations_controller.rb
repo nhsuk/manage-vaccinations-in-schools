@@ -27,7 +27,8 @@ class PatientSessions::VaccinationsController < PatientSessions::BaseController
       steps = draft_vaccination_record.wizard_steps
 
       steps.delete(:notes) # this is on the confirmation page
-      steps.delete(:identity) # this is on the confirmation page
+      steps.delete(:identity) # this can only be changed from confirmation page
+      steps.delete(:dose) # this can only be changed from confirmation page
 
       steps.delete(:date_and_time)
       steps.delete(:outcome) if draft_vaccination_record.administered?

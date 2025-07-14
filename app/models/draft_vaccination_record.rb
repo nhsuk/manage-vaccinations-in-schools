@@ -40,13 +40,13 @@ class DraftVaccinationRecord
 
   def wizard_steps
     [
-      :notes,
       :identity,
+      :notes,
       :date_and_time,
       (:outcome if can_change_outcome?),
       (:delivery if administered?),
-      (:batch if administered?),
       (:dose if administered? && can_be_half_dose?),
+      (:batch if administered?),
       (:location if location&.generic_clinic?),
       :confirm
     ].compact
@@ -212,7 +212,6 @@ class DraftVaccinationRecord
   end
 
   delegate :vaccine, to: :batch, allow_nil: true
-  delegate :can_be_half_dose?, to: :vaccine, allow_nil: true
 
   delegate :id, to: :vaccine, prefix: true, allow_nil: true
 
@@ -295,6 +294,10 @@ class DraftVaccinationRecord
       self.identity_check_confirmed_by_other_name = ""
       self.identity_check_confirmed_by_other_relationship = ""
     end
+  end
+
+  def can_be_half_dose?
+    delivery_method.in?(Vaccine::NASAL_DELIVERY_METHODS)
   end
 
   def can_change_outcome?

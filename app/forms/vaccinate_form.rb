@@ -59,6 +59,7 @@ class VaccinateForm
 
     draft_vaccination_record.batch_id = todays_batch&.id
     draft_vaccination_record.dose_sequence = dose_sequence
+    draft_vaccination_record.full_dose = true
     draft_vaccination_record.identity_check_confirmed_by_other_name =
       identity_check_confirmed_by_other_name
     draft_vaccination_record.identity_check_confirmed_by_other_relationship =

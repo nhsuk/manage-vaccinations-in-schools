@@ -61,8 +61,6 @@ class Vaccine < ApplicationRecord
 
   def contains_gelatine? = programme.flu? && nasal?
 
-  def can_be_half_dose? = nasal?
-
   AVAILABLE_DELIVERY_SITES = {
     "injection" => %w[
       left_arm_upper_position
