@@ -162,11 +162,7 @@ class GovukNotifyPersonalisation
   def has_multiple_dates
     return nil if session.nil?
 
-    if session.today_or_future_dates.length > 1
-      "yes"
-    else
-      "no"
-    end
+    session.future_dates.length > 1 ? "yes" : "no"
   end
 
   def host
