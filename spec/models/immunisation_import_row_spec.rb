@@ -36,26 +36,28 @@ describe ImmunisationImportRow do
       "PERSON_DOB" => date_of_birth,
       "PERSON_POSTCODE" => address_postcode,
       "PERSON_GENDER_CODE" => "Male",
-      "NHS_NUMBER" => nhs_number,
-      "DATE_OF_VACCINATION" => "20240101"
+      "NHS_NUMBER" => nhs_number
     }
   end
   let(:valid_flu_data) do
     valid_common_data.deep_dup.merge(
-      "PROGRAMME" => "Flu",
-      "VACCINE_GIVEN" => "AstraZeneca Fluenz Tetra LAIV",
       "ANATOMICAL_SITE" => "nasal",
+      "BATCH_EXPIRY_DATE" => Date.tomorrow.iso8601,
+      "DATE_OF_VACCINATION" => Date.current.iso8601,
       "PERFORMING_PROFESSIONAL_FORENAME" => "John",
-      "PERFORMING_PROFESSIONAL_SURNAME" => "Smith"
+      "PERFORMING_PROFESSIONAL_SURNAME" => "Smith",
+      "PROGRAMME" => "Flu",
+      "VACCINE_GIVEN" => "AstraZeneca Fluenz Tetra LAIV"
     )
   end
   let(:valid_hpv_data) do
     valid_common_data.deep_dup.merge(
-      "PROGRAMME" => "HPV",
-      "VACCINE_GIVEN" => "Gardasil9",
       "ANATOMICAL_SITE" => "Left Upper Arm",
+      "CARE_SETTING" => "1",
+      "DATE_OF_VACCINATION" => "20240101",
       "DOSE_SEQUENCE" => "1",
-      "CARE_SETTING" => "1"
+      "PROGRAMME" => "HPV",
+      "VACCINE_GIVEN" => "Gardasil9"
     )
   end
   let(:valid_data) { valid_hpv_data }
@@ -565,6 +567,19 @@ describe ImmunisationImportRow do
         expect(
           immunisation_import_row.errors["PERFORMING_PROFESSIONAL_EMAIL"]
         ).to include("Enter a valid email address")
+      end
+    end
+
+    context "Flu vaccination in previous academic year" do
+      let(:programmes) { [create(:programme, :flu)] }
+
+      let(:data) { valid_flu_data.merge("DATE_OF_VACCINATION" => "20240101") }
+
+      it "is invalid" do
+        expect(immunisation_import_row).to be_invalid
+        expect(
+          immunisation_import_row.errors["DATE_OF_VACCINATION"]
+        ).to contain_exactly("must be in the current academic year")
       end
     end
 
