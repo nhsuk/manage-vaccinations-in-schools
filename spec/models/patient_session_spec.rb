@@ -40,6 +40,68 @@ describe PatientSession do
     end
   end
 
+  describe "scopes" do
+    describe "#consent_given_and_ready_to_vaccinate" do
+      subject(:scope) do
+        described_class.consent_given_and_ready_to_vaccinate(
+          programmes:,
+          vaccine_method:
+        )
+      end
+
+      let(:programmes) { [create(:programme, :flu), create(:programme, :hpv)] }
+      let(:vaccine_method) { nil }
+
+      it { should be_empty }
+
+      context "with a patient eligible for vaccination" do
+        let(:patient_session) do
+          create(
+            :patient_session,
+            :consent_given_triage_not_needed,
+            programmes:
+          )
+        end
+
+        it { should include(patient_session) }
+      end
+
+      context "when filtering on nasal spray" do
+        let(:vaccine_method) { "nasal" }
+
+        context "with a patient eligible for vaccination" do
+          let(:patient_session) do
+            create(
+              :patient_session,
+              :consent_given_triage_not_needed,
+              programmes:
+            )
+          end
+
+          before do
+            patient_session
+              .patient
+              .consent_status(programme: programmes.first)
+              .update!(vaccine_methods: %w[nasal injection])
+          end
+
+          it { should include(patient_session) }
+
+          context "when the patient has been vaccinated for flu" do
+            before do
+              patient_session
+                .patient
+                .vaccination_status(programme: programmes.first)
+                .vaccinated!
+            end
+
+            it { should_not include(patient_session) }
+          end
+        end
+      end
+    end
+  end
+
   describe "#safe_to_destroy?" do
     subject(:safe_to_destroy?) { patient_session.safe_to_destroy? }
 

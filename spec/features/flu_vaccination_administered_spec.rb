@@ -10,7 +10,7 @@ describe "Flu vaccination" do
     and_sync_vaccination_records_to_nhs_on_create_feature_is_enabled
 
     when_i_go_to_the_nasal_only_patient
-    then_i_see_the_vacciantion_form_for_nasal_spray
+    then_i_see_the_vaccination_form_for_nasal_spray
 
     when_i_record_that_the_patient_has_been_vaccinated_with_nasal_spray
     then_i_see_the_check_and_confirm_page_for_nasal_spray
@@ -28,7 +28,7 @@ describe "Flu vaccination" do
     and_there_are_nasal_and_injection_batches
 
     when_i_go_to_the_injection_only_patient
-    then_i_see_the_vacciantion_form_for_injection
+    then_i_see_the_vaccination_form_for_injection
 
     when_i_record_that_the_patient_has_been_vaccinated_with_injection
     then_i_see_the_check_and_confirm_page_for_injection
@@ -45,7 +45,7 @@ describe "Flu vaccination" do
     and_there_are_nasal_and_injection_batches
 
     when_i_go_to_the_nasal_only_patient
-    then_i_see_the_vacciantion_form_for_nasal_spray
+    then_i_see_the_vaccination_form_for_nasal_spray
 
     when_i_record_that_the_patient_has_been_vaccinated_with_nasal_spray
     then_i_see_the_check_and_confirm_page_for_nasal_spray
@@ -124,14 +124,14 @@ describe "Flu vaccination" do
     click_link @patient.full_name
   end
 
-  def then_i_see_the_vacciantion_form_for_nasal_spray
+  def then_i_see_the_vaccination_form_for_nasal_spray
     expect(page).to have_content("Record flu vaccination with nasal spray")
     expect(page).to have_content(
       "Is #{@patient.given_name} ready for their flu nasal spray?"
     )
   end
 
-  def then_i_see_the_vacciantion_form_for_injection
+  def then_i_see_the_vaccination_form_for_injection
     expect(page).to have_content("Record flu vaccination with injection")
     expect(page).to have_content(
       "Is #{@patient.given_name} ready for their flu injection?"

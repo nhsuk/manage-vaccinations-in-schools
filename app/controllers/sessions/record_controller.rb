@@ -25,16 +25,11 @@ class Sessions::RecordController < ApplicationController
         )
         .has_registration_status(%w[attending completed])
 
-    scope = @form.apply(scope)
-
     patient_sessions =
-      scope.select do |patient_session|
-        @form.programmes.any? do |programme|
-          patient_session.patient.consent_given_and_safe_to_vaccinate?(
-            programme:
-          )
-        end
-      end
+      @form.apply(scope).consent_given_and_ready_to_vaccinate(
+        programmes: @form.programmes,
+        vaccine_method: @form.vaccine_method
+      )
 
     @pagy, @patient_sessions = pagy_array(patient_sessions)
 
