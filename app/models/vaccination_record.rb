@@ -59,6 +59,7 @@ class VaccinationRecord < ApplicationRecord
   include HasDoseVolume
   include PendingChangesConcern
   include VaccinationRecordPerformedByConcern
+  include VaccinationRecordSyncToNHSImmunisationsAPIConcern
 
   audited associated_with: :patient
 
