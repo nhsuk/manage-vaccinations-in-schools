@@ -70,5 +70,17 @@ describe NotifyLogEntry do
 
       it { should eq("Unknown SMS") }
     end
+
+    context "with a template no longer in use" do
+      let(:notify_log_entry) do
+        build(
+          :notify_log_entry,
+          :email,
+          template_id: "25473aa7-2d7c-4d1d-b0c6-2ac492f737c3"
+        )
+      end
+
+      it { should eq("Consent confirmation given") }
+    end
   end
 end

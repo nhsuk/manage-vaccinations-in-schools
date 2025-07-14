@@ -45,3 +45,25 @@ GOVUK_NOTIFY_SMS_TEMPLATES = {
   vaccination_administered: "395a3ea1-df07-4dd6-8af1-64cc597ef383",
   vaccination_not_administered: "aae061e0-b847-4d4c-a87a-12508f95a302"
 }.freeze
+
+# Here we track email and SMS templates that we used to send but no longer
+# do. We need these to be able to display the names of the templates.
+GOVUK_NOTIFY_UNUSED_TEMPLATES = {
+  "16ae7602-c2b1-4731-bb74-fd4f1357feca" => :vaccination_administered_menacwy,
+  "25473aa7-2d7c-4d1d-b0c6-2ac492f737c3" => :consent_confirmation_given,
+  "4c616b22-eee8-423f-84d6-bd5710f744fd" => :vaccination_administered_td_ipv,
+  "55d35c86-7365-406b-909f-1b7b78529ea8" =>
+    :consent_school_subsequent_reminder_doubles,
+  "604ee667-c996-471e-b986-79ab98d0767c" => :consent_confirmation_triage,
+  "6410145f-dac1-46ba-82f3-a49cad0f66a6" =>
+    :consent_school_subsequent_reminder_hpv,
+  "69612d3a-d6eb-4f04-8b99-ed14212e7245" => :vaccination_administered_hpv,
+  "6aa04f0d-94c2-4a6b-af97-a7369a12f681" => :consent_school_request_hpv,
+  "79e131b2-7816-46d0-9c74-ae14956dd77d" => :session_school_reminder,
+  "7cda7ae5-99a2-4c40-9a3e-1863e23f7a73" => :consent_confirmation_given,
+  "8835575d-be69-442f-846e-14d41eb214c7" =>
+    :consent_school_initial_reminder_doubles,
+  "ceefd526-d44c-4561-b0d2-c9ef4ccaba4f" =>
+    :consent_school_initial_reminder_hpv,
+  "e9aa7f0f-986f-49be-a1ee-6d1d1c13e9ec" => :consent_school_request_doubles
+}.freeze
