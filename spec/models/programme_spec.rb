@@ -23,12 +23,28 @@ describe Programme do
   end
 
   describe "#name" do
-    subject(:name) { programme.name }
+    subject { programme.name }
 
-    context "with a Flu programme" do
+    context "with a flu programme" do
       let(:programme) { build(:programme, :flu) }
 
       it { should eq("Flu") }
+    end
+
+    context "with an HPV programme" do
+      let(:programme) { build(:programme, :hpv) }
+
+      it { should eq("HPV") }
+    end
+  end
+
+  describe "#name_in_sentence" do
+    subject(:name) { programme.name_in_sentence }
+
+    context "with a flu programme" do
+      let(:programme) { build(:programme, :flu) }
+
+      it { should eq("flu") }
     end
 
     context "with an HPV programme" do

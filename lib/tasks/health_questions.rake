@@ -23,7 +23,7 @@ namespace :health_questions do
     raise "Vaccine not found for the given programme" if vaccine.nil?
 
     existing_health_questions = vaccine.health_questions.in_order
-    puts "Existing health questions for #{programme.name}'s vaccine #{vaccine.brand}"
+    puts "Existing health questions for #{programme.name_in_sentence}'s vaccine #{vaccine.brand}"
     if existing_health_questions.any?
       existing_health_questions.each do |health_question|
         puts Rainbow("  #{health_question.title}").yellow
@@ -62,7 +62,7 @@ namespace :health_questions do
       next
     end
 
-    puts "\nThese will be the health questions for #{programme.name}'s vaccine #{vaccine.brand}:"
+    puts "\nThese will be the health questions for #{programme.name_in_sentence}'s vaccine #{vaccine.brand}:"
     unless replace
       existing_health_questions.each do |health_question|
         puts Rainbow("  [old] #{health_question.title}").black

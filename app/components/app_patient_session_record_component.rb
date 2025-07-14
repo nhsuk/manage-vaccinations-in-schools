@@ -38,15 +38,20 @@ class AppPatientSessionRecordComponent < ViewComponent::Base
   end
 
   def heading
-    return "Record #{programme.name} vaccination" unless programme.flu?
+    vaccination =
+      if programme.flu?
+        if PatientSession
+             .where(patient_id: patient.id)
+             .has_vaccine_method(:nasal, programme:)
+             .exists?
+          "vaccination with nasal spray"
+        else
+          "vaccination with injection"
+        end
+      else
+        "vaccination"
+      end
 
-    if PatientSession
-         .where(patient_id: patient.id)
-         .has_vaccine_method(:nasal, programme:)
-         .exists?
-      "Record flu vaccination with nasal spray"
-    else
-      "Record flu vaccination with injection"
-    end
+    "Record #{programme.name_in_sentence} #{vaccination}"
   end
 end

@@ -129,7 +129,7 @@ class AppSessionActionsComponent < ViewComponent::Base
 
     texts =
       counts_by_programme.map do |programme, count|
-        "#{I18n.t("children", count:)} for #{programme.name}"
+        "#{I18n.t("children", count:)} for #{programme.name_in_sentence}"
       end
 
     href = session_record_path(session)
