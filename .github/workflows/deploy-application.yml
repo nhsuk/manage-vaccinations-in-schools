@@ -80,7 +80,7 @@ jobs:
         run: python3 -m pip install -r script/requirements.txt
       - name: Populate web task definition
         if: inputs.server_types == 'web' || inputs.server_types == 'all'
-        id: render-web-task-definition
+        id: create-web-task-definition
         run: |
           python3 script/populate_task_definition.py ${{ inputs.environment }} web \
             -i "${{ inputs.git_sha_to_deploy || github.sha }}" \
@@ -88,7 +88,7 @@ jobs:
           cat web-task-definition.json
       - name: Populate good-job task definition
         if: inputs.server_types == 'good-job' || inputs.server_types == 'all'
-        id: render-good-job-task-definition
+        id: create-good-job-task-definition
         run: |
           python3 script/populate_task_definition.py ${{ inputs.environment }} good-job \
             -i "${{ inputs.git_sha_to_deploy || github.sha }}" \
@@ -104,8 +104,6 @@ jobs:
         with:
           name: ${{ inputs.environment }}-good-job-task-definition
           path: good-job-task-definition.json
-    outputs:
-      new-image-uri: ${{ steps.get-image-digest.outputs.new-image-uri }}
 
   approve-deployments:
     name: Approve deployments
@@ -142,7 +140,7 @@ jobs:
       - name: Create appspec.yml
         run: |
           cp config/templates/appspec.yaml.tpl appspec.yaml
-          sed -i 's|<TASK_DEFINITION_ARN>|${{ needs.prepare-deployment.outputs.web-task-definition-arn }}|g' appspec.yaml
+          sed -i 's|<TASK_DEFINITION_ARN>||g' appspec.yaml
       - name: Deploy web service with CodeDeploy
         id: deploy-web-service
         uses: aws-actions/amazon-ecs-deploy-task-definition@v2

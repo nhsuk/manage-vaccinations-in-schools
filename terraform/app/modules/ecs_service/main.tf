@@ -107,6 +107,9 @@ resource "aws_ecs_task_definition" "this" {
       }
     }
   ])
+  lifecycle {
+    ignore_changes = all
+  }
 }
 
 resource "aws_ssm_parameter" "container_variables" {

@@ -23,12 +23,6 @@ variable "access_logs_bucket" {
   description = "Name of the S3 bucket which stores access logs for various resources"
 }
 
-variable "appspec_bucket" {
-  type        = string
-  description = "Name of the S3 bucket which stores appspec files"
-  nullable    = false
-}
-
 variable "account_id" {
   type        = string
   default     = "393416225559"
@@ -102,16 +96,6 @@ variable "vpc_log_retention_days" {
 
 ########## Task definition configuration ##########
 
-variable "rails_env" {
-  type        = string
-  default     = "staging"
-  description = "The rails environment configuration to use for the mavis application"
-  nullable    = false
-  validation {
-    condition     = contains(["staging", "production"], var.rails_env)
-    error_message = "Incorrect rails environment, allowed values are: {staging, production}"
-  }
-}
 
 variable "rails_master_key_path" {
   type        = string
@@ -133,47 +117,15 @@ variable "image_digest" {
   nullable    = false
 }
 
-variable "enable_cis2" {
-  type        = bool
-  default     = true
-  description = "Boolean toggle to determine whether the CIS2 feature should be enabled."
-  nullable    = false
-}
-
-variable "enable_pds_enqueue_bulk_updates" {
-  type        = bool
-  default     = true
-  description = "Whether PDS jobs that update patients in bulk should execute or not. This is disabled in non-production environments to avoid making unnecessary requests to PDS."
-  nullable    = false
-}
-
-variable "enable_splunk" {
-  type        = bool
-  default     = true
-  description = "Boolean toggle to determine whether the Splunk feature should be enabled."
-  nullable    = false
-}
-
-variable "app_version" {
-  type        = string
-  description = "The version identifier for the MAVIS application deployment"
-  default     = "Unknown"
-  nullable    = false
-}
-
 locals {
   is_production = var.environment == "production"
-  parameter_store_variables = tomap({
-    MAVIS__PDS__ENQUEUE_BULK_UPDATES                              = var.enable_pds_enqueue_bulk_updates ? "true" : "false"
-    MAVIS__PDS__WAIT_BETWEEN_JOBS                                 = 0.5
-    MAVIS__NUMBER_OF_PREPARATION_DAYS_BEFORE_ACADEMIC_YEAR_STARTS = 31
-    GOOD_JOB_MAX_THREADS                                          = 5
+  parameter_store_variables = tomap({ #TODO: Remove this once all variables are sourced from application config
+    MAVIS__PDS__ENQUEUE_BULK_UPDATES                              = ""
+    MAVIS__PDS__WAIT_BETWEEN_JOBS                                 = ""
+    MAVIS__NUMBER_OF_PREPARATION_DAYS_BEFORE_ACADEMIC_YEAR_STARTS = ""
+    GOOD_JOB_MAX_THREADS                                          = ""
   })
-  parameter_store_config_list = [for key, value in local.parameter_store_variables : {
-    name      = key
-    valueFrom = aws_ssm_parameter.environment_config[key].arn
-  }]
-  parameter_store_arns = [for key, value in local.parameter_store_variables : aws_ssm_parameter.environment_config[key].arn]
+  parameter_store_arns = [for key, value in aws_ssm_parameter.environment_config : value.arn]
 
   task_envs = [
     {
@@ -185,35 +137,15 @@ locals {
       value = aws_rds_cluster.core.database_name
     },
     {
-      name  = "RAILS_ENV"
-      value = var.rails_env
-    },
-    {
-      name  = "SENTRY_ENVIRONMENT"
-      value = var.environment
-    },
-    {
       name  = "MAVIS__HOST"
       value = var.http_hosts.MAVIS__HOST
     },
     {
       name  = "MAVIS__GIVE_OR_REFUSE_CONSENT_HOST"
       value = var.http_hosts.MAVIS__GIVE_OR_REFUSE_CONSENT_HOST
-    },
-    {
-      name  = "MAVIS__CIS2__ENABLED"
-      value = var.enable_cis2 ? "true" : "false"
-    },
-    {
-      name  = "MAVIS__SPLUNK__ENABLED"
-      value = var.enable_splunk ? "true" : "false"
-    },
-    {
-      name  = "APP_VERSION"
-      value = var.app_version
     }
   ]
-  task_secrets = concat([
+  task_secrets = [
     {
       name      = "DB_CREDENTIALS"
       valueFrom = aws_rds_cluster.core.master_user_secret[0].secret_arn
@@ -222,7 +154,7 @@ locals {
       name      = "RAILS_MASTER_KEY"
       valueFrom = var.rails_master_key_path
     }
-  ], local.parameter_store_config_list)
+  ]
 }
 
 ########## RDS configuration ##########
