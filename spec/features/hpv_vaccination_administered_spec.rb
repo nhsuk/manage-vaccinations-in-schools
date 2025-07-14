@@ -112,6 +112,7 @@ describe "HPV vaccination" do
 
   def when_i_go_to_a_patient_that_is_ready_to_vaccinate
     visit session_record_path(@session)
+    expect(page).not_to have_content("Default batches")
     click_link @patient.full_name
   end
 

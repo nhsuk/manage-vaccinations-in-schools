@@ -92,7 +92,7 @@ class Sessions::RecordController < ApplicationController
         end
       end
 
-    @todays_batches = all_batches.compact
+    @todays_batches = all_batches.compact_blank
   end
 
   def set_programme
