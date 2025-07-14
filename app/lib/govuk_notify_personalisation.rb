@@ -35,7 +35,6 @@ class GovukNotifyPersonalisation
   def to_h
     {
       batch_name:,
-      can_self_consent:,
       catch_up:,
       consent_deadline:,
       consent_link:,
@@ -63,6 +62,7 @@ class GovukNotifyPersonalisation
       show_additional_instructions:,
       subsequent_session_dates_offered_message:,
       survey_deadline_date:,
+      talk_to_your_child_message:,
       team_email:,
       team_name:,
       team_phone:,
@@ -90,11 +90,6 @@ class GovukNotifyPersonalisation
 
   def batch_name
     vaccination_record&.batch&.name
-  end
-
-  def can_self_consent
-    return nil if patient.nil?
-    patient.year_group >= 7 ? "yes" : "no"
   end
 
   def catch_up
@@ -288,6 +283,20 @@ class GovukNotifyPersonalisation
     return if recorded_at.nil?
 
     (recorded_at + 7.days).to_date.to_fs(:long)
+  end
+
+  def talk_to_your_child_message
+    return nil if patient.nil?
+    return "" if patient.year_group <= 6
+
+    [
+      "## Talk to your child about what they want",
+      "We suggest you talk to your child about the vaccine before you respond to us.",
+      "Young people have the right to refuse vaccinations. " \
+        "Those who show [‘Gillick competence’](https://www.nhs.uk/conditions/consent-to-treatment/children/) " \
+        "have the right to consent to vaccinations themselves. " \
+        "Our team may assess Gillick competence during vaccination sessions."
+    ].join("\n\n")
   end
 
   def team_email
