@@ -13,7 +13,7 @@ class AppProgrammeStatusTagsComponent < ViewComponent::Base
       programme_statuses.map do |programme, hash|
         status = hash[:status]
         vaccine_methods =
-          (hash[:vaccine_methods] if programme.has_multiple_delivery_methods?)
+          (hash[:vaccine_methods] if programme.has_multiple_vaccine_methods?)
         programme_status_tag(programme, status, vaccine_methods)
       end
     )

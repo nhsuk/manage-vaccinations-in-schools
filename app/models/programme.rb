@@ -75,22 +75,22 @@ class Programme < ApplicationRecord
 
   def vaccine_methods = vaccines.map(&:method).uniq
 
+  def has_multiple_vaccine_methods?
+    # TODO: Ideally this would work as below, however that doesn't work well
+    #  in a list as it results in N+1 issues, without deeply pre-fetching
+    #  the vaccines which is a lot of data.
+
+    # vaccine_methods.length > 1
+
+    flu?
+  end
+
   def available_delivery_methods
     vaccines.flat_map(&:available_delivery_methods).uniq
   end
 
   def available_delivery_sites
     vaccines.flat_map(&:available_delivery_sites).uniq
-  end
-
-  def has_multiple_delivery_methods?
-    # TODO: Ideally this would work as below, however that doesn't work well
-    #  in a list as it results in N+1 issues, without deeply pre-fetching
-    #  the vaccines which is a lot of data.
-
-    # available_delivery_methods.length > 1
-
-    flu?
   end
 
   DOSE_SEQUENCES = {
