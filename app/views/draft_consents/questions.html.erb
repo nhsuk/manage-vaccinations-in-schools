@@ -16,9 +16,9 @@
 
   <% @draft_consent.health_answers.each_with_index do |health_answer, index| %>
     <%= f.fields_for "question_#{index}", health_answer do |ff| %>
-      <%= ff.govuk_radio_buttons_fieldset(:question,
+      <%= ff.govuk_radio_buttons_fieldset :question,
                                           legend: { size: "s", text: health_answer.question },
-                                          hint: { text: health_answer.hint }) do %>
+                                          hint: { text: health_answer.hint } do %>
         <%= ff.govuk_radio_button :response, "yes",
                                   label: { text: "Yes" },
                                   link_errors: true do %>

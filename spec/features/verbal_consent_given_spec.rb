@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
 describe "Verbal consent" do
-  scenario "Given" do
+  scenario "Given HPV" do
     given_an_hpv_programme_is_underway
     and_i_am_signed_in
+
     when_i_record_that_verbal_consent_was_given
     then_an_email_is_sent_to_the_parent_confirming_their_consent
     and_a_text_is_sent_to_the_parent_confirming_their_consent
@@ -11,11 +12,19 @@ describe "Verbal consent" do
     and_i_can_see_the_consent_response_details
   end
 
-  scenario "Given flu nasal consent" do
+  scenario "Given flu nasal spray" do
     given_an_flu_programme_is_underway
     and_i_am_signed_in
+
     when_i_record_that_verbal_nasal_consent_was_given
     and_the_patients_status_is_safe_to_vaccinate_with_nasal_spray
+  end
+
+  scenario "Given flu nasal spray and injection" do
+    given_an_flu_programme_is_underway
+    and_i_am_signed_in
+
+    when_i_record_that_verbal_nasal_and_injection_consent_was_given
   end
 
   def given_an_hpv_programme_is_underway
@@ -41,12 +50,24 @@ describe "Verbal consent" do
   end
 
   def when_i_record_that_verbal_consent_was_given
-    record_that_verbal_consent_was_given(consent_option: "Yes, they agree")
+    record_that_verbal_consent_was_given(
+      consent_option: "Yes, they agree",
+      number_of_health_questions: 4
+    )
   end
 
   def when_i_record_that_verbal_nasal_consent_was_given
     record_that_verbal_consent_was_given(
       consent_option: "Yes, for the nasal spray",
+      number_of_health_questions: 10,
+      triage_option: "Yes, it’s safe to vaccinate with nasal spray"
+    )
+  end
+
+  def when_i_record_that_verbal_nasal_and_injection_consent_was_given
+    record_that_verbal_consent_was_given(
+      consent_option: "Yes, for the nasal spray",
+      number_of_health_questions: 11,
       triage_option: "Yes, it’s safe to vaccinate with nasal spray",
       injective_alternative: true
     )
@@ -54,6 +75,7 @@ describe "Verbal consent" do
 
   def record_that_verbal_consent_was_given(
     consent_option:,
+    number_of_health_questions:,
     triage_option: "Yes, it’s safe to vaccinate",
     injective_alternative: false
   )
@@ -86,11 +108,9 @@ describe "Verbal consent" do
     if consent_option.include?("nasal")
       choose injective_alternative ? "Yes" : "No"
     end
-
     click_button "Continue"
 
-    # assumes all vaccines in the programme have the same questions
-    @programme.vaccines.first.health_questions.size.times do |index|
+    number_of_health_questions.times do |index|
       find_all(".nhsuk-fieldset")[index].choose "No"
     end
 

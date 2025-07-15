@@ -42,6 +42,8 @@ class DraftConsentsController < ApplicationController
       @draft_consent.assign_attributes(update_params)
     end
 
+    @draft_consent.seed_health_questions if current_step == :agree
+
     jump_to("confirm") if @draft_consent.editing? && current_step != :confirm
 
     set_steps

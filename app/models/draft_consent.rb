@@ -355,6 +355,40 @@ class DraftConsent
 
   def vaccine_method_nasal? = vaccine_methods.include?("nasal")
 
+  def seed_health_questions
+    return unless response_given?
+
+    # If the health answers change due to the chosen vaccines changing, we
+    # want to try and keep as much as what the parents already wrote intact.
+    # We do this be saving the answers to the question title (as the IDs
+    # and ordering can change).
+
+    existing_health_answers =
+      health_answers.each_with_object({}) do |health_answer, memo|
+        memo[health_answer.question] = {
+          response: health_answer.response,
+          notes: health_answer.notes
+        }
+      end
+
+    vaccines = programme.vaccines.where(method: vaccine_methods)
+
+    self.health_answers =
+      HealthAnswersDeduplicator
+        .call(vaccines:)
+        .map do |health_answer|
+          if (
+               existing_health_answer =
+                 existing_health_answers[health_answer.question]
+             )
+            health_answer.response = existing_health_answer[:response]
+            health_answer.notes = existing_health_answer[:notes]
+          end
+
+          health_answer
+        end
+  end
+
   private
 
   def readable_attribute_names
@@ -408,10 +442,7 @@ class DraftConsent
     self.notes = "" unless notes_required?
 
     if response_given?
-      if health_answers.empty?
-        vaccine = programme.vaccines.first # assumes all vaccines in the programme have the same questions
-        self.health_answers = vaccine.health_questions.to_health_answers
-      end
+      seed_health_questions if health_answers.empty?
     else
       self.health_answers = []
     end
