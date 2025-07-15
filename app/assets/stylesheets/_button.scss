@@ -9,18 +9,6 @@ $_button-shadow-size: $nhsuk-border-width-form-element * 2;
   }
 }
 
-.nhsuk-button--login {
-  align-items: center;
-  display: inline-flex;
-  gap: nhsuk-spacing(3);
-
-  & span {
-    @include nhsuk-media-query($until: desktop) {
-      @include visually-hidden;
-    }
-  }
-}
-
 .app-button--secondary-warning {
   @extend .nhsuk-button--secondary;
 
