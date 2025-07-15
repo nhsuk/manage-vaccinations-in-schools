@@ -1,0 +1,7 @@
+// govuk-frontend dynamically inserts the govuk-visually-hidden class.
+// Meanwhile, govuk-components replaces `govuk-` with `nhsuk-`, but
+// NHS.UK frontend uses nhsuk-u-visually-hidden. So we need to shim both 
+.govuk-visually-hidden,
+.nhsuk-visually-hidden {
+  @include govuk-visually-hidden;
+}

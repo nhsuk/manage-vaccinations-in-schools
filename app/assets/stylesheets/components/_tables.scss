@@ -26,8 +26,3 @@
   background-color: $color_nhsuk-grey-5;
   color: $nhsuk-secondary-text-color;
 }
-
-// Don't show a grey background when hovering over table rows.
-.nhsuk-table__row:hover {
-  background: none;
-}

@@ -10,13 +10,9 @@ $govuk-global-styles: false;
 $govuk-new-organisation-colours: true;
 $govuk-assets-path: "/";
 
-@import "govuk-frontend/dist/govuk/base";
-@import "govuk-frontend/dist/govuk/components/checkboxes";
-@import "govuk-frontend/dist/govuk/components/file-upload";
-@import "govuk-frontend/dist/govuk/components/notification-banner";
-@import "govuk-frontend/dist/govuk/components/pagination";
+@import "vendor/govuk-frontend";
 
-// Configure and import NHS.UK Frontend
+// Configure and import NHS.UK frontend
 $nhsuk-fonts-path: "/";
 $nhsuk-grid-widths: (
   one-quarter: 25%,
@@ -29,7 +25,7 @@ $nhsuk-grid-widths: (
   results: 70%,
 );
 
-@import "nhsuk-frontend/packages/nhsuk";
+@import "vendor/nhsuk-frontend";
 
 // App options
 $app-page-width: 1100px;
@@ -38,29 +34,37 @@ $color_app-dark-orange: color.scale(
   $lightness: -10%
 );
 
-// Application components
-@import "action-list";
-@import "add-another";
-@import "autocomplete";
-@import "button";
-@import "button-group";
-@import "card";
-@import "count";
-@import "dev-tools";
-@import "environment";
-@import "file-upload";
-@import "filters";
-@import "grid";
-@import "header";
-@import "heading-group";
-@import "highlight";
-@import "overrides";
-@import "password-input";
-@import "search-input";
-@import "secondary-navigation";
-@import "status";
-@import "summary-list";
-@import "table";
-@import "tag";
-@import "typography";
-@import "utilities";
+// Import GOV.UK Frontend components (updated to use NHS.UK frontend styles)
+@import "vendor/govuk-frontend/components/file-upload";
+@import "vendor/govuk-frontend/components/password-input";
+
+// App-specific components
+@import "core";
+@import "components";
+
+// `$nhsuk-page-width` isn’t globally editable, so need to apply manually
+.app-signed-in {
+  .nhsuk-width-container,
+  .nhsuk-header__container,
+  .nhsuk-navigation {
+    max-width: $app-page-width;
+
+    @include nhsuk-media-query($from: desktop) {
+      margin: 0 $nhsuk-gutter;
+    }
+
+    @include nhsuk-media-query(
+      $and: "(min-width: #{($app-page-width + $nhsuk-gutter * 2)})"
+    ) {
+      margin: 0 auto;
+    }
+  }
+}
+
+// govuk_design_system_formbuilder's fieldset legend always adds a sizing class
+// which bolds the font and overrides the margin. Rather than monkey patch that
+// component to not add the sizing class, we can override the two rules in CSS.
+.app-fieldset__legend--reset {
+  font-weight: normal;
+  margin-bottom: nhsuk-spacing(2);
+}
