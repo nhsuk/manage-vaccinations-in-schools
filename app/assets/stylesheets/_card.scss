@@ -49,6 +49,10 @@
     }
   }
 
+  &--offset {
+    background-color: rgba($color_nhsuk-grey-5, 0.5);
+  }
+
   &--data {
     display: flex;
 
@@ -130,5 +134,24 @@
 
   &:active .nhsuk-card__heading {
     color: $nhsuk-link-active-color;
+  }
+}
+
+.app-card--compact {
+  @include nhsuk-responsive-margin(3, "bottom");
+
+  .app-button-group {
+    gap: nhsuk-spacing(2);
+    margin-bottom: nhsuk-spacing(1);
+    margin-top: nhsuk-spacing(-4);
+  }
+
+  .nhsuk-card__heading {
+    @include nhsuk-responsive-margin(1, "bottom");
+  }
+
+  .nhsuk-card__content {
+    @include nhsuk-responsive-padding(4);
+    @include nhsuk-responsive-padding(3, "bottom");
   }
 }
