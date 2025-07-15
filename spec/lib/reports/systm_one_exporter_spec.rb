@@ -56,7 +56,7 @@ describe Reports::SystmOneExporter do
         "Reason" => "Routine",
         "Site" => "Left deltoid",
         "Method" => "Intramuscular",
-        "Notes" => vaccination_record.notes
+        "Notes" => "Administered by: Test User"
       }
     )
   end
