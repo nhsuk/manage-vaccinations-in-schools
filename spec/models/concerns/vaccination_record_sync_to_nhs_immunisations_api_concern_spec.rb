@@ -17,6 +17,15 @@ describe VaccinationRecordSyncToNHSImmunisationsAPIConcern do
       }.to have_enqueued_job(SyncVaccinationRecordToNHSJob)
     end
 
+    it "sets nhs_immunistaions_api_sync_pending_at" do
+      freeze_time do
+        expect { vaccination_record.sync_to_nhs_immunisations_api }.to change(
+          vaccination_record,
+          :nhs_immunisations_api_sync_pending_at
+        ).from(nil).to(Time.current)
+      end
+    end
+
     context "when the vaccination record isn't syncable" do
       before do
         allow(vaccination_record).to receive(
@@ -29,6 +38,15 @@ describe VaccinationRecordSyncToNHSImmunisationsAPIConcern do
           vaccination_record.sync_to_nhs_immunisations_api
         }.not_to have_enqueued_job(SyncVaccinationRecordToNHSJob)
       end
+
+      it "does not set nhs_immunistaions_api_sync_pending_at" do
+        expect {
+          vaccination_record.sync_to_nhs_immunisations_api
+        }.not_to change(
+          vaccination_record,
+          :nhs_immunisations_api_sync_pending_at
+        )
+      end
     end
 
     context "when the feature flag is disabled" do
@@ -40,6 +58,15 @@ describe VaccinationRecordSyncToNHSImmunisationsAPIConcern do
         expect {
           vaccination_record.sync_to_nhs_immunisations_api
         }.not_to have_enqueued_job(SyncVaccinationRecordToNHSJob)
+      end
+
+      it "does not set nhs_immunistaions_api_sync_pending_at" do
+        expect {
+          vaccination_record.sync_to_nhs_immunisations_api
+        }.not_to change(
+          vaccination_record,
+          :nhs_immunisations_api_sync_pending_at
+        )
       end
     end
   end

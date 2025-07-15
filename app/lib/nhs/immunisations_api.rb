@@ -9,7 +9,11 @@ module NHS::ImmunisationsAPI
 
       last_synced_at = vaccination_record.nhs_immunisations_api_synced_at
       if last_synced_at.present?
-        if last_synced_at > vaccination_record.updated_at
+        sync_pending_at =
+          vaccination_record.nhs_immunisations_api_sync_pending_at ||
+            vaccination_record.updated_at
+
+        if last_synced_at > sync_pending_at
           Rails.logger.info(
             "Vaccination record already synced: #{vaccination_record.id}"
           )

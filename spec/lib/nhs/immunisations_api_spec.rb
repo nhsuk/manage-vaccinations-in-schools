@@ -35,6 +35,7 @@ describe NHS::ImmunisationsAPI do
   end
   let(:nhs_immunisations_api_synced_at) { nil }
   let(:nhs_immunisations_api_etag) { nil }
+  let(:nhs_immunisations_api_sync_pending_at) { nil }
   let(:vaccination_record) do
     create(
       :vaccination_record,
@@ -50,7 +51,8 @@ describe NHS::ImmunisationsAPI do
       performed_at: Time.zone.parse("2021-02-07T13:28:17.271+00:00"),
       created_at: Time.zone.parse("2021-02-07T13:28:17.271+00:00"),
       nhs_immunisations_api_synced_at:,
-      nhs_immunisations_api_etag:
+      nhs_immunisations_api_etag:,
+      nhs_immunisations_api_sync_pending_at:
     )
   end
 
@@ -125,6 +127,25 @@ describe NHS::ImmunisationsAPI do
 
     context "the vaccination record has been synced before" do
       let(:nhs_immunisations_api_synced_at) { 2.seconds.ago }
+      let(:nhs_immunisations_api_sync_pending_at) { 1.second.ago }
+
+      it "updates the vaccination record with the NHS Immunisations API" do
+        perform_now
+
+        expect(described_class).to have_received(:update_immunisation)
+      end
+
+      it "does not change the sync pending at timestamp" do
+        expect { perform_now }.not_to change(
+          vaccination_record,
+          :nhs_immunisations_api_sync_pending_at
+        )
+      end
+    end
+
+    context "the sync pending is nil but sync has been done previously" do
+      let(:nhs_immunisations_api_synced_at) { 2.seconds.ago }
+      let(:nhs_immunisations_api_sync_pending_at) { nil }
 
       it "updates the vaccination record with the NHS Immunisations API" do
         perform_now
@@ -134,7 +155,8 @@ describe NHS::ImmunisationsAPI do
     end
 
     context "the vaccination record is already in-sync" do
-      let(:nhs_immunisations_api_synced_at) { 1.second.from_now }
+      let(:nhs_immunisations_api_synced_at) { 1.second.ago }
+      let(:nhs_immunisations_api_sync_pending_at) { 2.seconds.ago }
 
       it "does not send the vaccination record to the NHS Immunisations API" do
         perform_now
@@ -149,6 +171,13 @@ describe NHS::ImmunisationsAPI do
 
         expect(Rails.logger).to have_received(:info).with(
           "Vaccination record already synced: #{vaccination_record.id}"
+        )
+      end
+
+      it "does not change the sync pending at timestamp" do
+        expect { perform_now }.not_to change(
+          vaccination_record,
+          :nhs_immunisations_api_sync_pending_at
         )
       end
     end
