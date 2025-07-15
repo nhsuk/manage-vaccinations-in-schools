@@ -38,9 +38,6 @@ $color_app-dark-orange: color.scale(
   $lightness: -10%
 );
 
-// Helpers
-@import "helpers/link";
-
 // Application components
 @import "action_list";
 @import "add_another";
@@ -53,7 +50,6 @@ $color_app-dark-orange: color.scale(
 @import "environment";
 @import "file-upload";
 @import "filters";
-@import "globals";
 @import "grid";
 @import "header";
 @import "heading-group";
@@ -65,17 +61,6 @@ $color_app-dark-orange: color.scale(
 @import "status";
 @import "summary-list";
 @import "table";
-@import "tabs";
 @import "tag";
 @import "typography";
 @import "utilities";
-
-// Fix checkbox check sizing
-.nhsuk-checkboxes__label::after {
-  box-sizing: border-box;
-}
-
-// Ensure consistent margin for small fieldset legend
-.nhsuk-fieldset__legend--s {
-  margin-bottom: nhsuk-spacing(2);
-}

@@ -45,7 +45,7 @@
     }
 
     .nhsuk-card__link {
-      @include app-link-style-inverse;
+      @include nhsuk-link-style-white;
     }
   }
 
@@ -68,6 +68,7 @@
 
     .nhsuk-card__description {
       margin-top: auto;
+
       @include nhsuk-font-size(48);
       @include nhsuk-typography-weight-bold;
     }

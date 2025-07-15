@@ -3,6 +3,10 @@
   @include nhsuk-responsive-padding(2, bottom);
   @include nhsuk-responsive-padding(2, top);
 
+  .nhsuk-link {
+    color: inherit;
+  }
+
   .nhsuk-width-container {
     align-items: baseline;
     display: flex;

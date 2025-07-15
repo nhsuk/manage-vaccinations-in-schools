@@ -1,3 +1,5 @@
+@use "sass:color";
+
 .app-header__content {
   display: flex;
   flex-flow: column wrap;
@@ -43,6 +45,7 @@
     padding-bottom: 3px;
     padding-top: 5px;
     text-decoration: none;
+
     @include nhsuk-font(14, $line-height: 1);
   }
 }
@@ -89,12 +92,8 @@
   &:focus {
     background-color: $nhsuk-focus-color;
     border-bottom: $nhsuk-focus-width solid $nhsuk-focus-text-color;
-    color: $color_nhsuk-black;
+    color: $nhsuk-focus-text-color;
     padding-bottom: nhsuk-spacing(1);
-  }
-
-  &:hover:not(:active):not(:focus) {
-    color: $color_nhsuk-white;
   }
 }
 

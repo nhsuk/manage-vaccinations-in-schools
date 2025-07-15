@@ -2,7 +2,7 @@
 // govuk-visually-hidden class. So we need to shim both namespaces.
 .govuk-visually-hidden,
 .nhsuk-visually-hidden {
-  @include visually-hidden;
+  @include nhsuk-visually-hidden;
 }
 
 .app-u-monospace {

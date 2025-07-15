@@ -12,6 +12,7 @@
   );
   background-size: nhsuk-spacing(2) nhsuk-spacing(2);
   background-repeat: repeat-x;
+
   @include nhsuk-clearfix();
   @include nhsuk-print-hide();
   @include nhsuk-responsive-padding(5, bottom);

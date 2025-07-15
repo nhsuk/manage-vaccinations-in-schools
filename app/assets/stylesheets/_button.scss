@@ -1,6 +1,10 @@
 @use "sass:color";
 
 $_button-shadow-size: $nhsuk-border-width-form-element * 2;
+$_secondary-warning-button-hover-color: color.change(
+  $nhsuk-warning-button-color,
+  $alpha: 0.1
+);
 
 .nhsuk-button {
   .button_to &,
@@ -10,6 +14,7 @@ $_button-shadow-size: $nhsuk-border-width-form-element * 2;
 }
 
 .app-button--secondary-warning {
+  // stylelint-disable-next-line scss/at-extend-no-missing-placeholder
   @extend .nhsuk-button--secondary;
 
   &,
@@ -20,12 +25,14 @@ $_button-shadow-size: $nhsuk-border-width-form-element * 2;
     color: $nhsuk-warning-button-color;
   }
 
-  &:hover {
-    background-color: color.change($nhsuk-warning-button-color, $alpha: 0.1);
+  &:hover,
+  &:hover:visited {
+    background-color: $_secondary-warning-button-hover-color;
+    color: $nhsuk-warning-button-color;
   }
 
   &:active {
-    background-color: color.change($nhsuk-warning-button-color, $alpha: 0.1);
+    background-color: $_secondary-warning-button-hover-color;
     border-color: $nhsuk-warning-button-color;
   }
 
@@ -40,6 +47,7 @@ $_button-shadow-size: $nhsuk-border-width-form-element * 2;
 
 .app-button--small {
   padding: nhsuk-spacing(2) 12px nhsuk-spacing(1);
+
   @include nhsuk-font-size(16);
 }
 

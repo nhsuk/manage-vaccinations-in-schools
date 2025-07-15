@@ -1,3 +1,5 @@
+@use "sass:color";
+
 .app-count {
   background-color: color.scale(
     color.scale($nhsuk-link-color, $lightness: -50%),
@@ -10,6 +12,7 @@
   padding-left: nhsuk-spacing(2);
   padding-right: nhsuk-spacing(2);
   text-align: center;
+
   @include nhsuk-font(16);
 
   :focus & {
