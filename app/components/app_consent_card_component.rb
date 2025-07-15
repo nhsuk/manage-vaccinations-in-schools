@@ -59,6 +59,20 @@ class AppConsentCardComponent < ViewComponent::Base
           text: helpers.consent_status_tag(consent)
         }
       }
-    ].compact
+    ].compact +
+      consent
+        .vaccine_methods
+        .drop(1)
+        .map do |vaccine_method|
+          method_name = Vaccine.human_enum_name(:method_prefix, vaccine_method)
+          {
+            key: {
+              text: "Consent also given for #{method_name} vaccine?"
+            },
+            value: {
+              text: "Yes"
+            }
+          }
+        end
   end
 end

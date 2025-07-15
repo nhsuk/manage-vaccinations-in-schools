@@ -70,11 +70,9 @@ describe "Verbal consent" do
   def and_i_can_see_the_consent_response_details
     click_link @parent.full_name
 
-    expect(page).to have_content(
-      ["Response date", Date.current.to_fs(:long)].join
-    )
+    expect(page).to have_content(["Date", Date.current.to_fs(:long)].join)
     expect(page).to have_content(["Decision", "Consent refused"].join)
-    expect(page).to have_content(["Response method", "By phone"].join)
+    expect(page).to have_content(["Method", "By phone"].join)
     expect(page).to have_content(["Reason for refusal", "Medical reasons"].join)
     expect(page).to have_content(
       ["Notes", "They have a medical condition"].join

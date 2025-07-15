@@ -59,7 +59,7 @@ describe "Verbal consent" do
 
     # Confirm
     expect(page).to have_content("Check and confirm answers")
-    expect(page).to have_content(["Response method", "By phone"].join)
+    expect(page).to have_content(["Method", "By phone"].join)
     click_button "Confirm"
 
     # Back on the consent responses page
