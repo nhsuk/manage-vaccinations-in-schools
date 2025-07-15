@@ -33,24 +33,3 @@
     }
   }
 }
-
-.app-button-group--table {
-  gap: nhsuk-spacing(2);
-  justify-content: end;
-  margin-top: nhsuk-spacing(-1);
-  width: 100%;
-  @include nhsuk-responsive-margin(1, "bottom");
-
-  @include nhsuk-media-query($from: mobile) {
-    flex-direction: row;
-
-    .nhsuk-button {
-      width: auto;
-    }
-  }
-
-  @include nhsuk-media-query($from: desktop) {
-    flex-wrap: nowrap;
-    justify-content: start;
-  }
-}
