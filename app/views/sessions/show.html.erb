@@ -16,7 +16,7 @@
 
       <% if (dates = @session.dates).present? %>
         <h3 class="nhsuk-heading-s nhsuk-u-margin-bottom-2">Session dates</h3>
-        <%= tag.ul(class: "nhsuk-list app-list--spaced") do %>
+        <%= tag.ul(class: "nhsuk-list") do %>
           <% dates.each do |date| %>
             <%= tag.li(date.to_fs(:long_day_of_week)) %>
           <% end %>

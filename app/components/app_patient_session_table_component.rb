@@ -24,7 +24,7 @@ class AppPatientSessionTableComponent < ViewComponent::Base
 
                 <% row.with_cell do %>
                   <span class="nhsuk-table-responsive__heading">Session dates</span>
-                  <ul class="nhsuk-list app-list--spaced">
+                  <ul class="nhsuk-list">
                     <% patient_session.session.dates.each do |date| %>
                       <li><%= date.to_fs(:long) %></li>
                     <% end %>
