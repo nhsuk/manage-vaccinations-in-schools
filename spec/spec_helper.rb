@@ -222,4 +222,5 @@ RSpec.configure do |config|
   config.include SMSExpectations, type: :feature
   config.include ViewComponent::TestHelpers, type: :component
   config.include AuthorisationHelper
+  config.include ImmunisationsAPIHelper, type: :feature
 end
