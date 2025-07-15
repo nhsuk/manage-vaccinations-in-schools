@@ -18,12 +18,8 @@ class AppVaccinateFormComponent < ViewComponent::Base
     session_patient_programme_vaccinations_path(session, patient, programme)
   end
 
-  def delivery_method
-    if patient.approved_vaccine_methods(programme:).include?("nasal")
-      "nasal_spray"
-    else
-      "intramuscular"
-    end
+  def vaccine_methods
+    patient.approved_vaccine_methods(programme:)
   end
 
   def dose_sequence
@@ -31,37 +27,32 @@ class AppVaccinateFormComponent < ViewComponent::Base
   end
 
   COMMON_DELIVERY_SITES = {
-    "intramuscular" => %w[left_arm_upper_position right_arm_upper_position],
-    "nasal_spray" => %w[nose]
+    "injection" => %w[left_arm_upper_position right_arm_upper_position],
+    "nasal" => %w[nose]
   }.freeze
 
   CommonDeliverySite = Struct.new(:value, :label)
 
-  def common_delivery_sites_options
-    @common_delivery_sites_options ||=
-      begin
-        options =
-          COMMON_DELIVERY_SITES
-            .fetch(delivery_method)
-            .map do |value|
-              label = VaccinationRecord.human_enum_name(:delivery_site, value)
-              CommonDeliverySite.new(value:, label:)
-            end
-
-        if delivery_method.in?(Vaccine::INJECTION_DELIVERY_METHODS)
-          options << CommonDeliverySite.new(value: "other", label: "Other")
+  def common_delivery_site_options(vaccine_method)
+    options =
+      COMMON_DELIVERY_SITES
+        .fetch(vaccine_method)
+        .map do |value|
+          label = VaccinationRecord.human_enum_name(:delivery_site, value)
+          CommonDeliverySite.new(value:, label:)
         end
 
-        options
-      end
+    if vaccine_method == "injection"
+      options << CommonDeliverySite.new(value: "other", label: "Other")
+    end
+
+    options
   end
 
   def vaccination_name
     vaccination =
       if programme.has_multiple_vaccine_methods?
-        vaccine_method =
-          Vaccine.delivery_method_to_vaccine_method(delivery_method)
-        Vaccine.human_enum_name(:method, vaccine_method).downcase
+        Vaccine.human_enum_name(:method, vaccine_methods.first).downcase
       else
         "vaccination"
       end
@@ -73,6 +64,5 @@ class AppVaccinateFormComponent < ViewComponent::Base
 
   def ask_not_pregnant? = programme.td_ipv?
 
-  def ask_asthma_flare_up? =
-    delivery_method.in?(Vaccine::NASAL_DELIVERY_METHODS)
+  def ask_asthma_flare_up? = vaccine_methods.include?("nasal")
 end

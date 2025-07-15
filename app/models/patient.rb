@@ -333,7 +333,6 @@ class Patient < ApplicationRecord
     return false unless consent_status(programme:).given?
 
     unless triage_status(programme:).safe_to_vaccinate? ||
-             triage_status(programme:).delay_vaccination? ||
              triage_status(programme:).not_required?
       return false
     end

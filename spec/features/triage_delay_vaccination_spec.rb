@@ -19,7 +19,8 @@ describe "Triage" do
 
     when_i_view_the_child_record
     then_they_should_have_the_status_banner_delay_vaccination
-    and_i_am_able_to_record_a_vaccination
+    and_i_am_not_able_to_record_a_vaccination
+    and_i_am_able_to_update_the_triage
   end
 
   def given_a_programme_with_a_running_session
@@ -99,7 +100,11 @@ describe "Triage" do
     expect(page).to have_content("Delay vaccination")
   end
 
-  def and_i_am_able_to_record_a_vaccination
-    expect(page).to have_content("ready for their HPV vaccination?")
+  def and_i_am_not_able_to_record_a_vaccination
+    expect(page).not_to have_content("ready for their HPV vaccination?")
+  end
+
+  def and_i_am_able_to_update_the_triage
+    expect(page).to have_content("Update triage outcome")
   end
 end
