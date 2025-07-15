@@ -33,6 +33,8 @@ describe NHS::ImmunisationsAPI do
       given_name: "Florence"
     )
   end
+  let(:nhs_immunisations_api_synced_at) { nil }
+  let(:nhs_immunisations_api_etag) { nil }
   let(:vaccination_record) do
     create(
       :vaccination_record,
@@ -46,7 +48,9 @@ describe NHS::ImmunisationsAPI do
       session:,
       performed_by_user: user,
       performed_at: Time.zone.parse("2021-02-07T13:28:17.271+00:00"),
-      created_at: Time.zone.parse("2021-02-07T13:28:17.271+00:00")
+      created_at: Time.zone.parse("2021-02-07T13:28:17.271+00:00"),
+      nhs_immunisations_api_synced_at:,
+      nhs_immunisations_api_etag:
     )
   end
 
@@ -97,6 +101,100 @@ describe NHS::ImmunisationsAPI do
 
       it "raises an error with the diagnostic message" do
         expect { perform_request }.to raise_error(Faraday::Error)
+      end
+    end
+  end
+
+  describe "sync_immunisation" do
+    subject(:perform_now) do
+      described_class.sync_immunisation(vaccination_record)
+    end
+
+    before do
+      allow(described_class).to receive(:record_immunisation)
+      allow(described_class).to receive(:update_immunisation)
+    end
+
+    context "the vaccination record has not been synced" do
+      it "records the vaccination record with the NHS Immunisations API" do
+        perform_now
+
+        expect(described_class).to have_received(:record_immunisation)
+      end
+    end
+
+    context "the vaccination record has been synced before" do
+      let(:nhs_immunisations_api_synced_at) { 2.seconds.ago }
+
+      it "updates the vaccination record with the NHS Immunisations API" do
+        perform_now
+
+        expect(described_class).to have_received(:update_immunisation)
+      end
+    end
+
+    context "the vaccination record is already in-sync" do
+      let(:nhs_immunisations_api_synced_at) { 1.second.from_now }
+
+      it "does not send the vaccination record to the NHS Immunisations API" do
+        perform_now
+
+        expect(described_class).not_to have_received(:record_immunisation)
+      end
+
+      it "logs that the record has already been synced" do
+        allow(Rails.logger).to receive(:info)
+
+        perform_now
+
+        expect(Rails.logger).to have_received(:info).with(
+          "Vaccination record already synced: #{vaccination_record.id}"
+        )
+      end
+    end
+
+    context "the vaccination record has been discarded" do
+      let(:vaccination_record) do
+        create(:vaccination_record, :discarded, id: 123)
+      end
+
+      it "does not send the vaccination record to the NHS Immunisations API" do
+        begin
+          perform_now
+        rescue StandardError
+          nil
+        end
+
+        expect(described_class).not_to have_received(:record_immunisation)
+      end
+
+      it "raises an error" do
+        expect { perform_now }.to raise_error(StandardError)
+      end
+    end
+
+    VaccinationRecord.defined_enums["outcome"].each_key do |outcome|
+      next if outcome == "administered"
+
+      context "the vaccination record outcome is #{outcome}" do
+        let(:vaccination_record) do
+          create(:vaccination_record, id: 123, outcome:)
+        end
+
+        it "does not send the vaccination record to the NHS Immunisations API" do
+          begin
+            perform_now
+          rescue StandardError
+            nil
+          end
+
+          expect(described_class).not_to have_received(:record_immunisation)
+          expect(described_class).not_to have_received(:update_immunisation)
+        end
+
+        it "raises an error" do
+          expect { perform_now }.to raise_error(StandardError)
+        end
       end
     end
   end
