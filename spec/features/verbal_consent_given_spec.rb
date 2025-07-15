@@ -59,7 +59,7 @@ describe "Verbal consent" do
   def when_i_record_that_verbal_nasal_consent_was_given
     record_that_verbal_consent_was_given(
       consent_option: "Yes, for the nasal spray",
-      number_of_health_questions: 10,
+      number_of_health_questions: 9,
       triage_option: "Yes, it’s safe to vaccinate with nasal spray"
     )
   end
@@ -67,7 +67,7 @@ describe "Verbal consent" do
   def when_i_record_that_verbal_nasal_and_injection_consent_was_given
     record_that_verbal_consent_was_given(
       consent_option: "Yes, for the nasal spray",
-      number_of_health_questions: 11,
+      number_of_health_questions: 10,
       triage_option: "Yes, it’s safe to vaccinate with nasal spray",
       injective_alternative: true
     )

@@ -87,9 +87,13 @@ class DraftConsentsController < ApplicationController
   end
 
   def handle_questions
-    questions_attrs = update_params.except(:wizard_step).values
-    @draft_consent.health_answers.each_with_index do |ha, index|
-      ha.assign_attributes(questions_attrs[index])
+    questions_attrs = update_params.except(:wizard_step)
+
+    @draft_consent.health_answers.each_with_index do |health_answer, index|
+      attributes = questions_attrs["question_#{index}"]
+      if health_answer.requires_notes?
+        health_answer.assign_attributes(attributes)
+      end
     end
 
     @draft_consent.assign_attributes(wizard_step: current_step)
