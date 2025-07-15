@@ -28,4 +28,9 @@ locals {
     data_replication_deploy = aws_iam_policy.data_replication_deploy.arn
     mavis_deploy            = aws_iam_policy.mavis_deploy.arn
   })
+
+  ecs_deploy_policies = {
+    ecr_read           = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
+    deploy_ecs_service = aws_iam_policy.deploy_ecs_service.arn
+  }
 }

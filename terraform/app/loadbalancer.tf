@@ -109,7 +109,7 @@ resource "aws_lb_target_group" "green" {
 
 resource "aws_lb_target_group" "reporting_blue" {
   name        = "mavis-rep-blue-${var.environment}"
-  port        = 4000
+  port        = 5000
   protocol    = "HTTP"
   vpc_id      = aws_vpc.application_vpc.id
   target_type = "ip"
@@ -127,7 +127,7 @@ resource "aws_lb_target_group" "reporting_blue" {
 
 resource "aws_lb_target_group" "reporting_green" {
   name        = "mavis-rep-green-${var.environment}"
-  port        = 4000
+  port        = 5000
   protocol    = "HTTP"
   vpc_id      = aws_vpc.application_vpc.id
   target_type = "ip"

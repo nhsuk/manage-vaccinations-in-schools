@@ -129,7 +129,7 @@ module "reporting_service" {
     task_role_arn        = aws_iam_role.ecs_task_role.arn
     log_group_name       = aws_cloudwatch_log_group.ecs_log_group.name
     region               = var.region
-    health_check_command = ["CMD-SHELL", "curl -f http://localhost:4000/reporting || exit 1"]
+    health_check_command = ["CMD-SHELL", "curl -f http://localhost:5000/healthcheck || exit 1"]
   }
   network_params = {
     subnets = [aws_subnet.private_subnet_a.id, aws_subnet.private_subnet_b.id]
@@ -137,7 +137,7 @@ module "reporting_service" {
   }
   loadbalancer = {
     target_group_arn = local.reporting_initial_lb_target_group
-    container_port   = 4000
+    container_port   = 5000
   }
   autoscaling_policies = tomap({
     cpu = {
