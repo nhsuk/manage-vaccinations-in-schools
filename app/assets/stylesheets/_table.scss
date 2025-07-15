@@ -12,7 +12,7 @@
   }
 
   i {
-    color: shade($color_nhsuk-red, 50%);
+    color: nhsuk-shade($color_nhsuk-red, 50%);
     font-family: ui-monospace, monospace;
     font-style: normal;
     font-weight: 500;

@@ -37,11 +37,11 @@
 
   &--reversed {
     background-color: $color_nhsuk-blue;
-    border-color: shade($nhsuk-link-color, 25%);
+    border-color: nhsuk-shade($nhsuk-link-color, 25%);
     color: $color_nhsuk-white;
 
     &:active {
-      border-color: shade($nhsuk-link-color, 50%);
+      border-color: nhsuk-shade($nhsuk-link-color, 50%);
     }
 
     .nhsuk-card__link {

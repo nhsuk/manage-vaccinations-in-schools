@@ -1,8 +1,8 @@
 .nhsuk-tag {
   &--dark-orange {
-    background-color: tint($color_app-dark-orange, 80%);
-    border-color: shade($color_app-dark-orange, 50%);
-    color: shade($color_app-dark-orange, 50%);
+    background-color: nhsuk-tint($color_app-dark-orange, 80%);
+    border-color: nhsuk-shade($color_app-dark-orange, 50%);
+    color: nhsuk-shade($color_app-dark-orange, 50%);
   }
 
   &--transparent {
