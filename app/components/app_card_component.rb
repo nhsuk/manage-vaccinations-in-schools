@@ -33,7 +33,6 @@ class AppCardComponent < ViewComponent::Base
     link_to: nil,
     secondary: false,
     data: false,
-    patient: false,
     compact: false,
     filters: false,
     section: false
@@ -44,7 +43,6 @@ class AppCardComponent < ViewComponent::Base
     @colour = colour
     @secondary = secondary
     @data = data
-    @patient = patient
     @compact = compact
     @filters = filters
     @section = section
@@ -65,7 +63,6 @@ class AppCardComponent < ViewComponent::Base
       ("nhsuk-card--clickable" if @link_to.present?),
       ("nhsuk-card--secondary" if @secondary),
       ("app-card--data" if @data),
-      ("app-card--patient" if @patient),
       ("app-card--compact" if @compact),
       ("app-filters" if @filters)
     ].compact.join(" ")
@@ -83,7 +80,7 @@ class AppCardComponent < ViewComponent::Base
   def heading_size
     if @data
       "xs"
-    elsif @feature || @secondary || @patient || @compact
+    elsif @feature || @secondary || @compact
       "s"
     else
       "m"
