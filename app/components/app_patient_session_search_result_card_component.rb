@@ -22,6 +22,13 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
                 row.with_value { action_required }
               end
             end
+            
+            if vaccination_method
+              summary_list.with_row do |row|
+                row.with_key { "Vaccination method" }
+                row.with_value { vaccination_method }
+              end
+            end
 
             if status_tag
               summary_list.with_row do |row|
@@ -104,6 +111,14 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
     tag.ul(class: "nhsuk-list nhsuk-list--bullet") do
       safe_join(next_activities.map { tag.li(it) })
     end
+  end
+
+  def vaccination_method
+    vaccine_method =
+      programmes
+        .flat_map { |programme| patient.approved_vaccine_methods(programme:) }
+        .first
+    Vaccine.human_enum_name(:method, vaccine_method).presence
   end
 
   def status_tag

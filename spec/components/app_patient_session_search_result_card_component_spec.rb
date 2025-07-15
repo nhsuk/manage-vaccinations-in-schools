@@ -10,11 +10,13 @@ describe AppPatientSessionSearchResultCardComponent do
   let(:patient) do
     create(
       :patient,
+      :triage_safe_to_vaccinate_nasal,
       given_name: "Hari",
       family_name: "Seldon",
       address_postcode: "SW11 1AA",
       year_group: 8,
-      school: build(:school, name: "Streeling University")
+      school: build(:school, name: "Streeling University"),
+      programmes: [programme]
     )
   end
 
@@ -30,6 +32,7 @@ describe AppPatientSessionSearchResultCardComponent do
   it { should have_link("SELDON, Hari", href:) }
   it { should have_text("Year 8") }
   it { should have_text("Consent status") }
+  it { should have_text("Nasal") }
 
   context "when patient session has notes" do
     let(:note) { create(:note, patient:, session:) }
