@@ -45,9 +45,9 @@ describe AppPatientSessionConsentComponent do
     before { create(:patient_consent_status, :refused, patient:, programme:) }
 
     it { should have_css(".app-card--red", text: "Consent refused") }
-    it { should have_css("tr", text: /#{consent.parent.full_name}/) }
-    it { should have_css("tr", text: /#{consent.parent_relationship.label}/) }
-    it { should have_css("table tr", text: /Consent refused/) }
+    it { should have_content(consent.parent.full_name) }
+    it { should have_content(consent.parent_relationship.label) }
+    it { should have_content("Consent refused") }
     it { should_not have_css("details", text: "Responses to health questions") }
   end
 

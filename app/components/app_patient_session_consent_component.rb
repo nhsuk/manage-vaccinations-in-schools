@@ -32,6 +32,15 @@ class AppPatientSessionConsentComponent < ViewComponent::Base
         .first
   end
 
+  def consents
+    @consents ||=
+      patient
+        .consents
+        .where(programme:)
+        .includes(:consent_form, :parent, :programme)
+        .order(created_at: :desc)
+  end
+
   def consent_status
     @consent_status ||= patient.consent_status(programme:)
   end
@@ -45,16 +54,16 @@ class AppPatientSessionConsentComponent < ViewComponent::Base
       session.open_for_consent? && patient.parents.any?
   end
 
-  def who_refused
-    consents.find(&:response_refused?)&.who_responded
+  def grouped_consents
+    @grouped_consents ||= ConsentGrouper.call(consents, programme:)
   end
 
-  def consents
-    @consents ||= ConsentGrouper.call(patient.consents, programme:)
+  def who_refused
+    grouped_consents.find(&:response_refused?)&.who_responded
   end
 
   def show_health_answers?
-    consents.any?(&:response_given?)
+    grouped_consents.any?(&:response_given?)
   end
 
   delegate :status, to: :consent_status
