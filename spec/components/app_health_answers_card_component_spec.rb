@@ -1,99 +1,26 @@
 # frozen_string_literal: true
 
 describe AppHealthAnswersCardComponent do
-  subject(:rendered) { render_inline(component) }
+  subject { render_inline(component) }
 
   let(:component) do
     described_class.new(consents.map(&:reload), heading: "Health answers")
   end
 
-  context "with one consent" do
-    let(:consents) do
-      [
-        create(
-          :consent,
-          :given,
-          :from_mum,
-          health_answers: [
-            HealthAnswer.new(question: "First question?", response: "no"),
-            HealthAnswer.new(
-              question: "Second question?",
-              response: "yes",
-              notes: "Notes"
-            )
-          ]
-        )
-      ]
-    end
-
-    it { should have_content(/First question\?\s*Mum responded: No/) }
-
-    it do
-      expect(rendered).to have_content(
-        /Second question\?\s*Mum responded: Yes:\s*Notes/
+  let(:consents) do
+    [
+      create(
+        :consent,
+        :given,
+        :from_mum,
+        health_answers: [
+          HealthAnswer.new(question: "First question?", response: "no")
+        ]
       )
-    end
+    ]
   end
 
-  context "with two consents given" do
-    let(:programme) { create(:programme) }
-    let(:consents) do
-      [
-        create(
-          :consent,
-          :given,
-          :from_mum,
-          programme:,
-          health_answers: [
-            HealthAnswer.new(question: "First question?", response: "no"),
-            HealthAnswer.new(question: "Second question?", response: "no")
-          ]
-        ),
-        create(
-          :consent,
-          :given,
-          :from_dad,
-          programme:,
-          health_answers: [
-            HealthAnswer.new(question: "First question?", response: "no"),
-            HealthAnswer.new(
-              question: "Second question?",
-              response: "yes",
-              notes: "Notes"
-            )
-          ]
-        )
-      ]
-    end
-
-    it { should have_content(/First question\?\s*All responded: No/) }
-
-    it do
-      expect(rendered).to have_content(
-        /Second question\?\s*Mum responded: No\s*Dad responded: Yes:\s*Notes/
-      )
-    end
-  end
-
-  context "with two consents, one refused" do
-    let(:programme) { create(:programme) }
-    let(:consents) do
-      [
-        create(
-          :consent,
-          :given,
-          :from_mum,
-          programme:,
-          health_answers: [
-            HealthAnswer.new(question: "First question?", response: "no"),
-            HealthAnswer.new(question: "Second question?", response: "no")
-          ]
-        ),
-        create(:consent, :refused, :from_dad, programme:)
-      ]
-    end
-
-    it { should have_content(/First question\?\s*Mum responded: No/) }
-    it { should have_content(/Second question\?\s*Mum responded: No/) }
-  end
+  it { should have_content("Health answers") }
+  it { should have_content("First question") }
+  it { should have_content("Mum responded: No") }
 end

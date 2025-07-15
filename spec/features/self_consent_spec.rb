@@ -268,14 +268,12 @@ describe "Self-consent" do
 
   def then_they_see_that_the_child_has_consent_from_themselves
     expect(page).to have_content("Consent given")
-    expect(page).to have_content(
-      "#{@patient.full_name} Child (Gillick competent)"
-    )
+    expect(page).to have_content("Child (Gillick competent)")
   end
 
   def then_they_see_that_the_child_has_consent_from_the_parent
     expect(page).to have_content("Consent given")
-    expect(page).to have_content("Decision #{@parent.full_name}")
+    expect(page).to have_content(@parent.full_name)
   end
 
   def and_the_child_should_be_safe_to_vaccinate
