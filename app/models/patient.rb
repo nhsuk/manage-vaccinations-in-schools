@@ -327,15 +327,23 @@ class Patient < ApplicationRecord
       vaccination_statuses.build(programme:)
   end
 
-  def consent_given_and_safe_to_vaccinate?(programme:)
+  def consent_given_and_safe_to_vaccinate?(programme:, vaccine_method: nil)
     return false if vaccination_status(programme:).vaccinated?
 
-    consent_status(programme:).given? &&
-      (
-        triage_status(programme:).safe_to_vaccinate? ||
-          triage_status(programme:).delay_vaccination? ||
-          triage_status(programme:).not_required?
-      )
+    return false unless consent_status(programme:).given?
+
+    unless triage_status(programme:).safe_to_vaccinate? ||
+             triage_status(programme:).delay_vaccination? ||
+             triage_status(programme:).not_required?
+      return false
+    end
+
+    if vaccine_method &&
+         !approved_vaccine_methods(programme:).include?(vaccine_method)
+      return false
+    end
+
+    true
   end
 
   def approved_vaccine_methods(programme:)
