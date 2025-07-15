@@ -8,7 +8,7 @@
     "esbuild": "^0.25.6",
     "govuk-frontend": "^5.11.0",
     "idb": "^8.0.3",
-    "nhsuk-frontend": "9.6.1",
+    "nhsuk-frontend": "^9.6.4",
     "sass": "^1.89.2",
     "stimulus": "^3.2.2",
     "workbox-build": "^7.3.0"
