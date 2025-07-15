@@ -66,16 +66,13 @@ class AppConsentConfirmationComponent < ViewComponent::Base
         .map do |consent_form_programme|
           programme = consent_form_programme.programme
 
-          if programme.flu?
-            if consent_form_programme.vaccine_method_nasal?
-              "nasal flu"
-            elsif consent_form_programme.vaccine_method_injection?
-              "flu injection"
-            else
-              programme.name.downcase
-            end
+          if programme.has_multiple_vaccine_methods?
+            vaccine_method = consent_form_programme.vaccine_methods.first
+            method_prefix =
+              Vaccine.human_enum_name(:method_prefix, vaccine_method)
+            "#{method_prefix} #{programme.name_in_sentence}".lstrip
           else
-            programme.name
+            programme.name_in_sentence
           end
         end
 

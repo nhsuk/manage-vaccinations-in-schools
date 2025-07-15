@@ -96,7 +96,7 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
         status = patient_session.next_activity(programme:)
         next if status.nil?
 
-        "#{I18n.t(status, scope: :activity)} for #{programme.name}"
+        "#{I18n.t(status, scope: :activity)} for #{programme.name_in_sentence}"
       end
 
     return if next_activities.empty?

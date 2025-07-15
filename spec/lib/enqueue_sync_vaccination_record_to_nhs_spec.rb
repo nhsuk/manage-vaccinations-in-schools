@@ -31,6 +31,16 @@ describe EnqueueSyncVaccinationRecordToNHS do
       end
     end
 
+    context "with a discarded vaccination record" do
+      before { vaccination_record.discard! }
+
+      it "does not enqueue the job" do
+        expect {
+          described_class.call(vaccination_record)
+        }.not_to have_enqueued_job(SyncVaccinationRecordToNHSJob)
+      end
+    end
+
     VaccinationRecord.defined_enums["outcome"].each_key do |outcome|
       next if outcome == "administered"
 
@@ -79,6 +89,8 @@ describe EnqueueSyncVaccinationRecordToNHS do
           next if outcome == "administered"
           create(:vaccination_record, outcome:, session:, programme:)
         end
+
+        create(:vaccination_record, :discarded, outcome:, session:, programme:)
       end
 
       let(:flu_programme) { Programme.flu.first || create(:programme, :flu) }

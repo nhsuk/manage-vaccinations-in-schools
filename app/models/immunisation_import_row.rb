@@ -98,6 +98,7 @@ class ImmunisationImportRow
     attributes = {
       dose_sequence: dose_sequence_value,
       full_dose: true,
+      protocol: :pgd,
       location_name:,
       outcome:,
       patient:,
@@ -940,7 +941,7 @@ class ImmunisationImportRow
       if programme && vaccine.programme_id != programme.id
         errors.add(
           field.header,
-          "is not given in the #{programme.name} programme"
+          "is not given in the #{programme.name_in_sentence} programme"
         )
       end
     elsif vaccine_nivs_name.present?

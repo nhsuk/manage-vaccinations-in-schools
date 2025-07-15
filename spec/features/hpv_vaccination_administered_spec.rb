@@ -112,11 +112,12 @@ describe "HPV vaccination" do
 
   def when_i_go_to_a_patient_that_is_ready_to_vaccinate
     visit session_record_path(@session)
+    expect(page).not_to have_content("Default batches")
     click_link @patient.full_name
   end
 
   def and_i_fill_in_pre_screening_questions
-    check "has confirmed the above statements are true"
+    check "I have checked that the above statements are true"
   end
 
   def and_i_record_that_the_patient_has_been_vaccinated(where)
@@ -245,7 +246,7 @@ describe "HPV vaccination" do
   def and_a_text_is_sent_to_the_parent_confirming_the_vaccination
     expect_sms_to(
       @patient.consents.last.parent.phone,
-      :vaccination_administered_hpv
+      :vaccination_administered
     )
   end
 

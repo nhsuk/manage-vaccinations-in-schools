@@ -126,7 +126,9 @@ class DraftVaccinationRecordsController < ApplicationController
     # vaccination record.
     @draft_vaccination_record.update!(editing_id: @vaccination_record.id)
 
-    flash[:success] = "Vaccination outcome recorded for #{@programme.name}"
+    flash[
+      :success
+    ] = "Vaccination outcome recorded for #{@programme.name_in_sentence}"
   end
 
   def finish_wizard_path

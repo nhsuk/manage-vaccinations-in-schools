@@ -183,7 +183,7 @@ describe AppActivityLogComponent do
                      programme: "HPV"
 
     include_examples "card",
-                     title: "Invited to the session at Hogwarts",
+                     title: "Added to the session at Hogwarts",
                      date: "29 May 2024 at 12:00pm"
 
     include_examples "card",

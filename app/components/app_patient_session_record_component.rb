@@ -2,7 +2,7 @@
 
 class AppPatientSessionRecordComponent < ViewComponent::Base
   erb_template <<-ERB
-    <h2 class="nhsuk-heading-m">Record vaccination</h2>
+    <h2 class="nhsuk-heading-m"><%= heading %></h2>
     
     <% if helpers.policy(VaccinationRecord).new? %>
       <%= render AppVaccinateFormComponent.new(vaccinate_form) %>
@@ -35,5 +35,19 @@ class AppPatientSessionRecordComponent < ViewComponent::Base
     pre_screening_confirmed = patient.pre_screenings.today.exists?(programme:)
 
     VaccinateForm.new(patient_session:, programme:, pre_screening_confirmed:)
+  end
+
+  def heading
+    vaccination =
+      if programme.has_multiple_vaccine_methods?
+        vaccine_method = patient.approved_vaccine_methods(programme:).first
+        method_string =
+          Vaccine.human_enum_name(:method, vaccine_method).downcase
+        "vaccination with #{method_string}"
+      else
+        "vaccination"
+      end
+
+    "Record #{programme.name_in_sentence} #{vaccination}"
   end
 end

@@ -21,6 +21,7 @@
 #  performed_by_family_name        :string
 #  performed_by_given_name         :string
 #  performed_ods_code              :string
+#  protocol                        :integer
 #  uuid                            :uuid             not null
 #  created_at                      :datetime         not null
 #  updated_at                      :datetime         not null
@@ -99,6 +100,7 @@ FactoryBot.define do
 
     dose_sequence { programme.vaccinated_dose_sequence }
     full_dose { true }
+    protocol { "pgd" }
 
     uuid { SecureRandom.uuid }
 

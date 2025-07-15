@@ -62,7 +62,7 @@ class AppSessionDetailsSummaryComponent < ViewComponent::Base
         count =
           patient_sessions.has_session_status(:vaccinated, programme:).count
 
-        "#{I18n.t("vaccinations_given", count:)} for #{programme.name}"
+        "#{I18n.t("vaccinations_given", count:)} for #{programme.name_in_sentence}"
       end
 
     href =

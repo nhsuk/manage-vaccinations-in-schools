@@ -24,6 +24,7 @@ describe AppVaccinationRecordSummaryComponent do
   end
   let(:notes) { "Some notes." }
   let(:location_name) { nil }
+  let(:protocol) { :pgd }
 
   let(:vaccination_record) do
     create(
@@ -39,6 +40,7 @@ describe AppVaccinationRecordSummaryComponent do
       delivery_site: :left_arm_upper_position,
       notes:,
       location_name:,
+      protocol:,
       pending_changes: {
         batch_id: other_batch&.id,
         delivery_method: :nasal_spray,
@@ -289,6 +291,15 @@ describe AppVaccinationRecordSummaryComponent do
           text: "Location\nHogwarts"
         )
       end
+    end
+  end
+
+  describe "protocol row" do
+    it do
+      expect(rendered).to have_css(
+        ".nhsuk-summary-list__row",
+        text: "Protocol\nPatient Group Direction (PGD)"
+      )
     end
   end
 

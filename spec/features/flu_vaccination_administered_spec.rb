@@ -10,10 +10,16 @@ describe "Flu vaccination" do
     and_sync_vaccination_records_to_nhs_on_create_feature_is_enabled
 
     when_i_go_to_the_nasal_only_patient
-    and_i_record_that_the_patient_has_been_vaccinated_with_nasal_spray
+    then_i_see_the_vacciantion_form_for_nasal_spray
+
+    when_i_record_that_the_patient_has_been_vaccinated_with_nasal_spray
     then_i_see_the_check_and_confirm_page_for_nasal_spray
     and_i_get_confirmation_after_recording
     and_the_vaccination_record_is_synced_to_nhs
+
+    when_vaccination_confirmations_are_sent
+    then_an_email_is_sent_to_the_parent_confirming_the_vaccination
+    and_a_text_is_sent_to_the_parent_confirming_the_vaccination
   end
 
   scenario "Administered with injection" do
@@ -22,9 +28,15 @@ describe "Flu vaccination" do
     and_there_are_nasal_and_injection_batches
 
     when_i_go_to_the_injection_only_patient
-    and_i_record_that_the_patient_has_been_vaccinated_with_injection
+    then_i_see_the_vacciantion_form_for_injection
+
+    when_i_record_that_the_patient_has_been_vaccinated_with_injection
     then_i_see_the_check_and_confirm_page_for_injection
     and_i_get_confirmation_after_recording
+
+    when_vaccination_confirmations_are_sent
+    then_an_email_is_sent_to_the_parent_confirming_the_vaccination
+    and_a_text_is_sent_to_the_parent_confirming_the_vaccination
   end
 
   scenario "Switching between nasal and injection" do
@@ -33,12 +45,15 @@ describe "Flu vaccination" do
     and_there_are_nasal_and_injection_batches
 
     when_i_go_to_the_nasal_only_patient
-    and_i_record_that_the_patient_has_been_vaccinated_with_nasal_spray
+    then_i_see_the_vacciantion_form_for_nasal_spray
+
+    when_i_record_that_the_patient_has_been_vaccinated_with_nasal_spray
     then_i_see_the_check_and_confirm_page_for_nasal_spray
 
     when_i_change_the_vaccine_method_to_injection
     and_i_pick_a_batch_for_injection
     then_i_see_the_check_and_confirm_page_for_injection
+    and_i_am_warned_that_the_vaccine_method_does_not_match_the_consent_and_triage
   end
 
   def given_i_am_signed_in_with_flu_programme
@@ -109,9 +124,23 @@ describe "Flu vaccination" do
     click_link @patient.full_name
   end
 
-  def and_i_record_that_the_patient_has_been_vaccinated_with_nasal_spray
+  def then_i_see_the_vacciantion_form_for_nasal_spray
+    expect(page).to have_content("Record flu vaccination with nasal spray")
+    expect(page).to have_content(
+      "Is #{@patient.given_name} ready for their flu nasal spray?"
+    )
+  end
+
+  def then_i_see_the_vacciantion_form_for_injection
+    expect(page).to have_content("Record flu vaccination with injection")
+    expect(page).to have_content(
+      "Is #{@patient.given_name} ready for their flu injection?"
+    )
+  end
+
+  def when_i_record_that_the_patient_has_been_vaccinated_with_nasal_spray
     within all("section")[0] do
-      check "has confirmed the above statements are true"
+      check "I have checked that the above statements are true"
     end
 
     within all("section")[1] do
@@ -123,9 +152,9 @@ describe "Flu vaccination" do
     click_button "Continue"
   end
 
-  def and_i_record_that_the_patient_has_been_vaccinated_with_injection
+  def when_i_record_that_the_patient_has_been_vaccinated_with_injection
     within all("section")[0] do
-      check "has confirmed the above statements are true"
+      check "I have checked that the above statements are true"
     end
 
     within all("section")[1] do
@@ -150,7 +179,7 @@ describe "Flu vaccination" do
 
   def and_i_get_confirmation_after_recording
     click_button "Confirm"
-    expect(page).to have_content("Vaccination outcome recorded for Flu")
+    expect(page).to have_content("Vaccination outcome recorded for flu")
   end
 
   def then_i_see_the_check_and_confirm_page_for_injection
@@ -177,7 +206,33 @@ describe "Flu vaccination" do
     click_button "Continue"
   end
 
+  def and_i_am_warned_that_the_vaccine_method_does_not_match_the_consent_and_triage
+    expect(page).to have_content("Incorrect vaccine given")
+    expect(page).to have_content(
+      "The vaccine given does not match that determined by the child’s " \
+        "consent or triage outcome"
+    )
+  end
+
   def and_the_vaccination_record_is_synced_to_nhs
     assert_enqueued_with(job: SyncVaccinationRecordToNHSJob)
+  end
+
+  def when_vaccination_confirmations_are_sent
+    SendVaccinationConfirmationsJob.perform_now
+  end
+
+  def then_an_email_is_sent_to_the_parent_confirming_the_vaccination
+    expect_email_to(
+      @patient.consents.last.parent.email,
+      :vaccination_administered_flu
+    )
+  end
+
+  def and_a_text_is_sent_to_the_parent_confirming_the_vaccination
+    expect_sms_to(
+      @patient.consents.last.parent.phone,
+      :vaccination_administered
+    )
   end
 end

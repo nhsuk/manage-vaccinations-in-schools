@@ -229,6 +229,19 @@ FactoryBot.define do
       end
     end
 
+    trait :triage_safe_to_vaccinate_nasal do
+      triage_statuses do
+        programmes.map do |programme|
+          association(
+            :patient_triage_status,
+            :safe_to_vaccinate_nasal,
+            patient: instance,
+            programme:
+          )
+        end
+      end
+    end
+
     trait :triage_required do
       triage_statuses do
         programmes.map do |programme|

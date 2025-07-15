@@ -36,7 +36,7 @@ describe AppVaccinateFormComponent do
     it { should have_content("Has Hari confirmed their identity?") }
     it { should have_field("No, it was confirmed by somebody else") }
 
-    it { should have_heading("Is Hari ready for their Flu vaccination?") }
+    it { should have_heading("Is Hari ready for their flu nasal spray?") }
 
     it { should have_field("Yes") }
     it { should have_field("No") }
@@ -53,7 +53,7 @@ describe AppVaccinateFormComponent do
     it { should have_content("Has Hari confirmed their identity?") }
     it { should have_field("No, it was confirmed by somebody else") }
 
-    it { should have_heading("Is Hari ready for their Flu vaccination?") }
+    it { should have_heading("Is Hari ready for their flu injection?") }
 
     it { should have_field("Yes") }
     it { should have_field("No") }
@@ -77,7 +77,7 @@ describe AppVaccinateFormComponent do
       )
     end
 
-    it { should have_heading("Is Hari ready for their Flu vaccination?") }
+    it { should have_heading("Is Hari ready for their flu injection?") }
 
     it { should have_field("Yes") }
     it { should have_field("No") }

@@ -11,7 +11,7 @@
     <% end %>
 
     <% if triage_status&.vaccination_history_requires_triage? %>
-      <p>Incomplete vaccination history for <%= programme.name %>. Check if the child needs another dose.</p>
+      <p>Incomplete vaccination history for <%= programme.name_in_sentence %>. Check if the child needs another dose.</p>
     <% end %>
 
     <% if helpers.policy(Triage).new? %>

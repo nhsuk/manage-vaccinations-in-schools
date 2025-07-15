@@ -21,6 +21,7 @@
 #  performed_by_family_name        :string
 #  performed_by_given_name         :string
 #  performed_ods_code              :string
+#  protocol                        :integer
 #  uuid                            :uuid             not null
 #  created_at                      :datetime         not null
 #  updated_at                      :datetime         not null
@@ -65,7 +66,9 @@ class VaccinationRecord < ApplicationRecord
     left_thigh: ["61396006", "Structure of left thigh"],
     right_thigh: ["11207009", "Structure of right thigh"],
     left_arm_upper_position: ["368208006", "Left upper arm structure"],
+    left_arm_lower_position: ["368208006", "Left upper arm structure"],
     right_arm_upper_position: ["368209003", "Right upper arm structure"],
+    right_arm_lower_position: ["368209003", "Right upper arm structure"],
     left_buttock: ["723979003", "Structure of left buttock"],
     right_buttock: ["723980000", "Structure of right buttock"],
     nose: ["279549004", "Nasal cavity structure"]
@@ -103,9 +106,12 @@ class VaccinationRecord < ApplicationRecord
           )
         end
 
+  enum :protocol, { pgd: 0, psd: 1 }, validate: true
+
   enum :delivery_method,
        { intramuscular: 0, subcutaneous: 1, nasal_spray: 2 },
        prefix: true
+
   enum :delivery_site,
        {
          left_arm_upper_position: 2,

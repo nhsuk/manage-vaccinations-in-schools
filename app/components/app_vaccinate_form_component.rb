@@ -20,9 +20,9 @@ class AppVaccinateFormComponent < ViewComponent::Base
 
   def delivery_method
     if patient.approved_vaccine_methods(programme:).include?("nasal")
-      :nasal_spray
+      "nasal_spray"
     else
-      :intramuscular
+      "intramuscular"
     end
   end
 
@@ -31,8 +31,8 @@ class AppVaccinateFormComponent < ViewComponent::Base
   end
 
   COMMON_DELIVERY_SITES = {
-    intramuscular: %w[left_arm_upper_position right_arm_upper_position],
-    nasal_spray: %w[nose]
+    "intramuscular" => %w[left_arm_upper_position right_arm_upper_position],
+    "nasal_spray" => %w[nose]
   }.freeze
 
   CommonDeliverySite = Struct.new(:value, :label)
@@ -48,11 +48,31 @@ class AppVaccinateFormComponent < ViewComponent::Base
               CommonDeliverySite.new(value:, label:)
             end
 
-        if delivery_method == :intramuscular
+        if delivery_method.in?(Vaccine::INJECTION_DELIVERY_METHODS)
           options << CommonDeliverySite.new(value: "other", label: "Other")
         end
 
         options
       end
   end
+
+  def vaccination_name
+    vaccination =
+      if programme.has_multiple_vaccine_methods?
+        vaccine_method =
+          Vaccine.delivery_method_to_vaccine_method(delivery_method)
+        Vaccine.human_enum_name(:method, vaccine_method).downcase
+      else
+        "vaccination"
+      end
+
+    "#{programme.name_in_sentence} #{vaccination}"
+  end
+
+  def ask_not_taking_medication? = programme.doubles? || programme.flu?
+
+  def ask_not_pregnant? = programme.td_ipv?
+
+  def ask_asthma_flare_up? =
+    delivery_method.in?(Vaccine::NASAL_DELIVERY_METHODS)
 end

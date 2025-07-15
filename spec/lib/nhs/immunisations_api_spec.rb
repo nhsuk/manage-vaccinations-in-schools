@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 describe NHS::ImmunisationsAPI do
+  before { Flipper.enable(:immunisations_fhir_api_integration) }
+
   let(:organisation) { create(:organisation, ods_code: "A9A5A") }
   let(:patient) do
     create(
@@ -47,63 +49,112 @@ describe NHS::ImmunisationsAPI do
       created_at: Time.zone.parse("2021-02-07T13:28:17.271+00:00")
     )
   end
-  let!(:stubbed_request) do
-    stub_request(
-      :post,
-      "https://sandbox.api.service.nhs.uk/immunisation-fhir-api/FHIR/R4/Immunization"
-    ).to_return(
-      status: 201,
-      body: "",
-      headers: {
-        location:
-          "https://sandbox.api.service.nhs.uk/immunisation-fhir-api/Immunization/ffff1111-eeee-2222-dddd-3333eeee4444"
-      }
-    )
+
+  shared_examples "an immunisations_fhir_api_integration feature flag check" do
+    context "the immunisations_fhir_api_integration feature flag is disabled" do
+      before { Flipper.disable(:immunisations_fhir_api_integration) }
+
+      it "does not make a request to the NHS API" do
+        perform_request
+
+        expect(request_stub).not_to have_been_made
+      end
+    end
+  end
+
+  shared_examples "unexpected response status" do |unexpected_status, action|
+    context "unexpected response status" do
+      let(:status) { unexpected_status }
+      let(:response) { "" }
+
+      it "raises an error saying the response is unexpected" do
+        expect { perform_request }.to raise_error(
+          "Error #{action} vaccination record #{vaccination_record.id} to" \
+            " Immunisations API: unexpected response status #{status}"
+        )
+      end
+    end
+  end
+
+  shared_examples "client error (4XX) handling" do |action|
+    context "4XX error" do
+      let(:status) { 404 }
+      let(:diagnostics) { "Invalid patient ID" }
+
+      it "raises an error with the diagnostic message" do
+        expect { perform_request }.to raise_error(
+          StandardError,
+          "Error #{action} vaccination record #{vaccination_record.id} to" \
+            " Immunisations API: Invalid patient ID"
+        )
+      end
+    end
+  end
+
+  shared_examples "generic error handling" do
+    context "generic error" do
+      let(:status) { 500 }
+
+      it "raises an error with the diagnostic message" do
+        expect { perform_request }.to raise_error(Faraday::Error)
+      end
+    end
   end
 
   describe "record_immunisation" do
-    before { Flipper.enable(:immunisations_fhir_api_integration) }
+    subject(:perform_request) do
+      described_class.record_immunisation(vaccination_record)
+    end
+
+    let!(:request_stub) do
+      stub_request(
+        :post,
+        "https://sandbox.api.service.nhs.uk/immunisation-fhir-api/FHIR/R4/Immunization"
+      ).to_return(status:, body:, headers:)
+    end
+
+    let(:status) { 201 }
+    let(:body) { "" }
+    let(:headers) do
+      {
+        location:
+          "https://sandbox.api.service.nhs.uk/immunisation-fhir-api/Immunization/ffff1111-eeee-2222-dddd-3333eeee4444"
+      }
+    end
 
     it "sends the correct JSON payload" do
       expected_body =
-        File.read(Rails.root.join("spec/fixtures/fhir/immunisation.json")).chomp
+        File.read(
+          Rails.root.join("spec/fixtures/fhir/immunisation-create.json")
+        ).chomp
 
-      # stree-ignore
-      stubbed_request =
-        stub_request(
-          :post, "https://sandbox.api.service.nhs.uk/immunisation-fhir-api/FHIR/R4/Immunization"
+      request_stub.with do |request|
+        expect(request.headers).to include(
+          {
+            "Accept" => "application/fhir+json",
+            "Content-Type" => "application/fhir+json"
+          }
         )
-          .with { |request|
-        expect(request.headers["Accept"]).to eq "application/fhir+json"
-        expect(
-          request.headers["Content-Type"]
-        ).to eq "application/fhir+json"
         expect(request.body).to eq expected_body
         true
-      }
-          .to_return(status: 201,
-                     body: "",
-                     headers: {
-                       location:
-                         "https://sandbox.api.service.nhs.uk/immunisation-fhir-api/Immunization/ffff1111-eeee-2222-dddd-3333eeee4444"
-                     })
+      end
 
-      described_class.record_immunisation(vaccination_record)
+      perform_request
 
-      expect(stubbed_request).to have_been_made
+      expect(request_stub).to have_been_made
     end
 
     it "stores the id from the response" do
-      described_class.record_immunisation(vaccination_record)
+      perform_request
 
       expect(
         vaccination_record.nhs_immunisations_api_id
       ).to eq "ffff1111-eeee-2222-dddd-3333eeee4444"
     end
 
-    it "stores the nhs_immunisations_api_synced_at from the response" do
+    it "sets the nhs_immunisations_api_synced_at" do
       freeze_time do
-        described_class.record_immunisation(vaccination_record)
+        perform_request
 
         expect(
           vaccination_record.nhs_immunisations_api_synced_at
@@ -112,24 +163,16 @@ describe NHS::ImmunisationsAPI do
     end
 
     it "initialises the etag to 1" do
-      described_class.record_immunisation(vaccination_record)
+      perform_request
 
       expect(vaccination_record.nhs_immunisations_api_etag).to eq "1"
     end
 
     context "an error is returned by the api" do
-      before do
-        stub_request(
-          :post,
-          "https://sandbox.api.service.nhs.uk/immunisation-fhir-api/FHIR/R4/Immunization"
-        ).to_return(status: status, body: response, headers: {})
-      end
-
-      let(:status) { 201 }
       let(:code) { nil }
       let(:diagnostics) { nil }
-
-      let(:response) do
+      let(:headers) { {} }
+      let(:body) do
         {
           resourceType: "OperationOutcome",
           id: "bc2c3c82-4392-4314-9d6b-a7345f82d923",
@@ -156,59 +199,111 @@ describe NHS::ImmunisationsAPI do
         }.to_json
       end
 
-      context "unexpected response status" do
-        let(:status) { 200 }
-        let(:response) { "" }
+      include_examples "unexpected response status", 200, "recording"
+      include_examples "client error (4XX) handling", "recording"
+      include_examples "generic error handling"
+    end
 
-        it "raises an error saying the response is unexpected" do
-          expect {
-            described_class.record_immunisation(vaccination_record)
-          }.to raise_error(
-            "Error syncing vaccination record #{vaccination_record.id} to" \
-              " Immunisations API: unexpected response status 200"
-          )
-        end
+    include_examples "an immunisations_fhir_api_integration feature flag check"
+  end
+
+  describe "update immunisations" do
+    subject(:perform_request) do
+      described_class.update_immunisation(vaccination_record)
+    end
+
+    let(:status) { 200 }
+    let(:body) { "" }
+    let!(:request_stub) do
+      stub_request(
+        :put,
+        "https://sandbox.api.service.nhs.uk/immunisation-fhir-api/FHIR/R4/Immunization/ffff1111-eeee-2222-dddd-3333eeee4444"
+      ).to_return(status:, body:)
+    end
+
+    before do
+      vaccination_record.update(
+        nhs_immunisations_api_id: "ffff1111-eeee-2222-dddd-3333eeee4444",
+        nhs_immunisations_api_synced_at: Date.yesterday,
+        nhs_immunisations_api_etag: 1
+      )
+    end
+
+    it "sends the correct JSON payload" do
+      expected_body =
+        File.read(
+          Rails.root.join("spec/fixtures/fhir/immunisation-update.json")
+        ).chomp
+
+      request_stub.with do |request|
+        expect(request.headers).to include(
+          {
+            "Accept" => "application/fhir+json",
+            "Content-Type" => "application/fhir+json",
+            "E-Tag" => "1"
+          }
+        )
+        expect(request.body).to eq expected_body
+        true
       end
 
-      context "4XX error" do
-        let(:status) { 404 }
-        let(:diagnostics) { "Invalid patient ID" }
+      perform_request
 
-        it "raises an error with the diagnostic message" do
-          expect {
-            described_class.record_immunisation(vaccination_record)
-          }.to raise_error(
-            StandardError,
-            "Error syncing vaccination record #{vaccination_record.id} to" \
-              " Immunisations API: Invalid patient ID"
-          )
-        end
-      end
+      expect(request_stub).to have_been_made
+    end
 
-      context "generic error" do
-        before do
-          stub_request(
-            :post,
-            "https://sandbox.api.service.nhs.uk/immunisation-fhir-api/FHIR/R4/Immunization"
-          ).to_return(status: 500, body: nil, headers: {})
-        end
+    include_examples "an immunisations_fhir_api_integration feature flag check"
 
-        it "raises an error with the diagnostic message" do
-          expect {
-            described_class.record_immunisation(vaccination_record)
-          }.to raise_error(Faraday::Error)
-        end
+    it "sets the nhs_immunisations_api_synced_at" do
+      freeze_time do
+        perform_request
+
+        expect(
+          vaccination_record.nhs_immunisations_api_synced_at
+        ).to eq Time.current
       end
     end
 
-    context "the immunisations_fhir_api_integration feature flag is disabled" do
-      before { Flipper.disable(:immunisations_fhir_api_integration) }
+    it "increments the etag" do
+      perform_request
 
-      it "does not make a request to the NHS API" do
-        described_class.record_immunisation(vaccination_record)
+      expect(vaccination_record.nhs_immunisations_api_etag).to eq "2"
+    end
 
-        expect(stubbed_request).not_to have_been_made
+    context "an error is returned by the api" do
+      let(:code) { nil }
+      let(:diagnostics) { nil }
+
+      let(:body) do
+        {
+          resourceType: "OperationOutcome",
+          id: "bc2c3c82-4392-4314-9d6b-a7345f82d923",
+          meta: {
+            profile: [
+              "https://simplifier.net/guide/UKCoreDevelopment2/ProfileUKCore-OperationOutcome"
+            ]
+          },
+          issue: [
+            {
+              severity: "error",
+              code: "invalid",
+              details: {
+                coding: [
+                  {
+                    system: "https://fhir.nhs.uk/Codesystem/http-error-codes",
+                    code:
+                  }
+                ]
+              },
+              diagnostics:
+            }
+          ]
+        }.to_json
       end
+
+      include_examples "unexpected response status", 201, "updating"
+      include_examples "client error (4XX) handling", "updating"
+      include_examples "generic error handling"
     end
   end
 end

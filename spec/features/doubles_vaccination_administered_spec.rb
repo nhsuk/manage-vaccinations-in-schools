@@ -71,7 +71,7 @@ describe "MenACWY and Td/IPV vaccination" do
   end
 
   def and_i_fill_out_pre_screening_questions
-    check "has confirmed the above statements are true"
+    check "I have checked that the above statements are true"
   end
 
   def and_i_record_the_vaccination(batch)
@@ -111,7 +111,7 @@ describe "MenACWY and Td/IPV vaccination" do
   end
 
   def and_i_check_the_pre_screening_questions_again
-    check "has confirmed the above statements are true"
+    check "I have checked that the above statements are true"
   end
 
   def then_i_see_the_patient_is_vaccinated_for_td_ipv
@@ -147,13 +147,13 @@ describe "MenACWY and Td/IPV vaccination" do
   def and_a_text_is_sent_to_the_parent_confirming_the_vaccinations
     expect_sms_to(
       @patient.consents.last.parent.phone,
-      :vaccination_administered_menacwy,
+      :vaccination_administered,
       :any
     )
 
     expect_sms_to(
       @patient.consents.last.parent.phone,
-      :vaccination_administered_td_ipv,
+      :vaccination_administered,
       :any
     )
   end

@@ -239,7 +239,7 @@ describe "Manage children" do
   end
 
   def then_i_see_the_activity_log
-    expect(page).to have_content("Invited to the session")
+    expect(page).to have_content("Added to the session")
     expect(page).to have_content("Vaccinated")
   end
 

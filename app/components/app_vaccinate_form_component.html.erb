@@ -30,24 +30,27 @@
         <% end %>
       <% end %>
 
-      <p><%= patient.given_name %> has confirmed that they:</p>
+      <p>Have you checked that <%= patient.given_name %>:</p>
 
       <ul class="nhsuk-list nhsuk-list--bullet">
-        <li>are not acutely unwell</li>
-        <% if vaccinate_form.ask_not_pregnant? %>
-          <li>are not pregnant</li>
+        <li>is not acutely unwell</li>
+        <% if ask_not_pregnant? %>
+          <li>is not pregnant</li>
         <% end %>
-        <% if vaccinate_form.ask_not_taking_medication? %>
-          <li>are not taking any medication which prevents vaccination</li>
+        <% if ask_not_taking_medication? %>
+          <li>is not taking any medication which prevents vaccination</li>
         <% end %>
-        <li>have no allergies which would prevent vaccination</li>
-        <li>have not already had this vaccination</li>
-        <li>know what the vaccination is for, and are happy to have it</li>
+        <% if ask_asthma_flare_up? %>
+          <li>if they have asthma, has not had a flare-up of symptoms in the past 72 hours, including wheezing or needing to use a reliever inhaler more than usual</li>
+        <% end %>
+        <li>has no allergies which would prevent vaccination</li>
+        <li>has not already had this vaccination</li>
+        <li>knows what the vaccination is for, and is happy to have it</li>
       </ul>
 
       <%= f.govuk_check_boxes_fieldset :pre_screening_confirmed, multiple: false, legend: nil do %>
         <%= f.govuk_check_box :pre_screening_confirmed, 1, 0, multiple: false, link_errors: true,
-                                                              label: { text: "#{patient.given_name} has confirmed the above statements are true" } %>
+                                                              label: { text: "I have checked that the above statements are true" } %>
       <% end %>
 
       <%= f.govuk_text_area :pre_screening_notes, label: { text: "Pre-screening notes (optional)" }, rows: 3 %>
@@ -57,7 +60,7 @@
 
     <section>
       <h3 class="nhsuk-card__heading nhsuk-heading-s">
-        Is <%= patient.given_name %> ready for their <%= programme.name %> vaccination?
+        Is <%= patient.given_name %> ready for their <%= vaccination_name %>?
       </h3>
 
       <% hint = "Pre-screening checks must be completed for vaccination to go ahead" %>
