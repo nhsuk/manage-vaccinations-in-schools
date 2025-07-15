@@ -69,11 +69,9 @@ describe "Verbal consent" do
     parent = @patient.parents.first
     click_link parent.full_name
 
-    expect(page).to have_content(
-      ["Response date", Time.zone.today.to_fs(:long)].join
-    )
+    expect(page).to have_content(["Date", Time.zone.today.to_fs(:long)].join)
     expect(page).to have_content(["Decision", "Consent refused"].join)
-    expect(page).to have_content(["Response method", "By phone"].join)
+    expect(page).to have_content(["Method", "By phone"].join)
     expect(page).to have_content(["Reason for refusal", "Personal choice"].join)
     expect(page).not_to have_content("Notes")
 

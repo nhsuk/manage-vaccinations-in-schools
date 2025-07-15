@@ -236,7 +236,7 @@ describe "Self-consent" do
   end
 
   def and_the_child_can_give_their_own_consent_that_the_nurse_records
-    click_on "Change response method"
+    click_on "Change method"
     choose "Child (Gillick competent)"
     5.times { click_on "Continue" }
 
@@ -246,7 +246,7 @@ describe "Self-consent" do
   end
 
   def and_changes_the_response_method_to_the_parent
-    click_on "Change response method"
+    click_on "Change method"
     choose @parent.full_name
     click_on "Continue"
 

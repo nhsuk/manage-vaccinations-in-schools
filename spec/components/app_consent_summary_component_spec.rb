@@ -7,13 +7,14 @@ describe AppConsentSummaryComponent do
 
   let(:consent) { create(:consent) }
 
+  it { should have_content("Programme") }
+  it { should have_content("Method") }
   it { should have_content("Decision") }
-  it { should have_content("Response method") }
 
   context "when recorded" do
     let(:consent) { create(:consent) }
 
-    it { should have_content("Response date") }
+    it { should have_content("Date") }
   end
 
   context "when refused" do
@@ -32,5 +33,20 @@ describe AppConsentSummaryComponent do
     let(:consent) { create(:consent, :refused, notes: "Some notes.") }
 
     it { should have_content("Notes") }
+  end
+
+  it { should_not have_content("Consent also given for injected vaccine?") }
+
+  context "when consenting to multiple vaccine methods" do
+    let(:programme) { create(:programme, :flu) }
+    let(:consent) do
+      create(:consent, programme:, vaccine_methods: %w[nasal injection])
+    end
+
+    it { should have_content("Decision") }
+    it { should have_content("Consent givenNasal spray") }
+
+    it { should have_content("Consent also given for injected vaccine?") }
+    it { should have_content("Yes") }
   end
 end

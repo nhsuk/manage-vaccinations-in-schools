@@ -100,7 +100,7 @@ describe "Verbal consent" do
 
     # Confirm
     expect(page).to have_content("Check and confirm answers")
-    expect(page).to have_content(["Response method", "By phone"].join)
+    expect(page).to have_content(["Method", "By phone"].join)
     click_button "Confirm"
 
     # Back on the consent responses page
@@ -116,11 +116,9 @@ describe "Verbal consent" do
     click_link @parent.full_name
 
     expect(page).to have_content("Consent response from #{@parent.full_name}")
-    expect(page).to have_content(
-      ["Response date", Date.current.to_fs(:long)].join
-    )
+    expect(page).to have_content(["Date", Date.current.to_fs(:long)].join)
     expect(page).to have_content(["Decision", "Consent given"].join)
-    expect(page).to have_content(["Response method", "By phone"].join)
+    expect(page).to have_content(["Method", "By phone"].join)
 
     expect(page).to have_content(["Full name", @patient.full_name].join)
     expect(page).to have_content(
