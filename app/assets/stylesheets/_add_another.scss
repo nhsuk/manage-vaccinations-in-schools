@@ -28,8 +28,4 @@ $_counter-size: 2rem;
     position: absolute;
     width: $_counter-size;
   }
-
-  .app-button--small.app-button--secondary-warning:active {
-    margin-bottom: nhsuk-spacing(6) - 4px;
-  }
 }
