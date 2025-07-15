@@ -39,8 +39,8 @@ $color_app-dark-orange: color.scale(
 );
 
 // Application components
-@import "action_list";
-@import "add_another";
+@import "action-list";
+@import "add-another";
 @import "autocomplete";
 @import "button";
 @import "button-group";
