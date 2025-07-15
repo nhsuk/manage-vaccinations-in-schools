@@ -11,10 +11,10 @@ resource "aws_iam_role" "grafana" {
         Action = "sts:AssumeRole"
         Condition = {
           StringEquals = {
-            "aws:SourceAccount" = "393416225559"
+            "aws:SourceAccount" = var.account_id
           }
           StringLike = {
-            "aws:SourceArn" = "arn:aws:grafana:eu-west-2:393416225559:/workspaces/*"
+            "aws:SourceArn" = "arn:aws:grafana:eu-west-2:${var.account_id}:/workspaces/*"
           }
         }
       }

@@ -8,6 +8,12 @@ variable "environment" {
   }
 }
 
+variable "account_id" {
+  type        = number
+  description = "AWS account ID"
+  nullable    = false
+}
+
 variable "sso_group_ids" {
   type        = map(map(string))
   description = "Map of SSO group names to their IDs"
