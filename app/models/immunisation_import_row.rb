@@ -572,6 +572,15 @@ class ImmunisationImportRow
         end
       end
 
+      if programme&.flu? &&
+           date_of_vaccination.to_date.academic_year !=
+             Date.current.academic_year
+        errors.add(
+          date_of_vaccination.header,
+          "must be in the current academic year"
+        )
+      end
+
       if offline_recording? && session &&
            !session.dates.include?(date_of_vaccination.to_date)
         errors.add(
