@@ -141,6 +141,9 @@ describe "Flu vaccination" do
 
   def and_sync_vaccination_records_to_nhs_on_create_feature_is_enabled
     Flipper.enable(:sync_vaccination_records_to_nhs_on_create)
+    Flipper.enable(:immunisations_fhir_api_integration)
+
+    @stubbed_post_request = stub_immunisations_api_post
   end
 
   def when_i_go_to_the_nasal_only_patient
@@ -291,7 +294,8 @@ describe "Flu vaccination" do
   end
 
   def and_the_vaccination_record_is_synced_to_nhs
-    assert_enqueued_with(job: SyncVaccinationRecordToNHSJob)
+    perform_enqueued_jobs
+    expect(@stubbed_post_request).to have_been_requested
   end
 
   def when_vaccination_confirmations_are_sent

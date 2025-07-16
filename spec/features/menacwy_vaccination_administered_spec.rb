@@ -86,6 +86,9 @@ describe "MenACWY vaccination" do
 
   def and_sync_vaccination_records_to_nhs_on_create_feature_is_enabled
     Flipper.enable(:sync_vaccination_records_to_nhs_on_create)
+    Flipper.enable(:immunisations_fhir_api_integration)
+
+    @stubbed_post_request = stub_immunisations_api_post
   end
 
   def when_i_go_to_a_patient_that_is_ready_to_vaccinate
@@ -208,6 +211,7 @@ describe "MenACWY vaccination" do
   end
 
   def and_the_vaccination_record_is_not_synced_to_nhs
-    assert_no_enqueued_jobs(only: SyncVaccinationRecordToNHSJob)
+    perform_enqueued_jobs
+    expect(@stubbed_post_request).not_to have_been_requested
   end
 end

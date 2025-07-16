@@ -4,34 +4,35 @@
 #
 # Table name: vaccination_records
 #
-#  id                              :bigint           not null, primary key
-#  confirmation_sent_at            :datetime
-#  delivery_method                 :integer
-#  delivery_site                   :integer
-#  discarded_at                    :datetime
-#  dose_sequence                   :integer
-#  full_dose                       :boolean
-#  location_name                   :string
-#  nhs_immunisations_api_etag      :string
-#  nhs_immunisations_api_synced_at :datetime
-#  notes                           :text
-#  outcome                         :integer          not null
-#  pending_changes                 :jsonb            not null
-#  performed_at                    :datetime         not null
-#  performed_by_family_name        :string
-#  performed_by_given_name         :string
-#  performed_ods_code              :string
-#  protocol                        :integer
-#  uuid                            :uuid             not null
-#  created_at                      :datetime         not null
-#  updated_at                      :datetime         not null
-#  batch_id                        :bigint
-#  nhs_immunisations_api_id        :string
-#  patient_id                      :bigint
-#  performed_by_user_id            :bigint
-#  programme_id                    :bigint           not null
-#  session_id                      :bigint
-#  vaccine_id                      :bigint
+#  id                                    :bigint           not null, primary key
+#  confirmation_sent_at                  :datetime
+#  delivery_method                       :integer
+#  delivery_site                         :integer
+#  discarded_at                          :datetime
+#  dose_sequence                         :integer
+#  full_dose                             :boolean
+#  location_name                         :string
+#  nhs_immunisations_api_etag            :string
+#  nhs_immunisations_api_sync_pending_at :datetime
+#  nhs_immunisations_api_synced_at       :datetime
+#  notes                                 :text
+#  outcome                               :integer          not null
+#  pending_changes                       :jsonb            not null
+#  performed_at                          :datetime         not null
+#  performed_by_family_name              :string
+#  performed_by_given_name               :string
+#  performed_ods_code                    :string
+#  protocol                              :integer
+#  uuid                                  :uuid             not null
+#  created_at                            :datetime         not null
+#  updated_at                            :datetime         not null
+#  batch_id                              :bigint
+#  nhs_immunisations_api_id              :string
+#  patient_id                            :bigint
+#  performed_by_user_id                  :bigint
+#  programme_id                          :bigint           not null
+#  session_id                            :bigint
+#  vaccine_id                            :bigint
 #
 # Indexes
 #
@@ -59,6 +60,7 @@ class VaccinationRecord < ApplicationRecord
   include HasDoseVolume
   include PendingChangesConcern
   include VaccinationRecordPerformedByConcern
+  include VaccinationRecordSyncToNHSImmunisationsAPIConcern
 
   audited associated_with: :patient
 
