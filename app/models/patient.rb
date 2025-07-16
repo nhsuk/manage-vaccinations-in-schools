@@ -228,6 +228,7 @@ class Patient < ApplicationRecord
                it.blank? ? nil : it.normalise_whitespace.gsub(/\s/, "")
              end
 
+  after_update :sync_vaccinations_to_nhs_immunisations_api
   before_destroy :destroy_childless_parents
 
   delegate :fhir_record, to: :fhir_mapper
@@ -484,4 +485,12 @@ class Patient < ApplicationRecord
   end
 
   def fhir_mapper = @fhir_mapper ||= FHIRMapper::Patient.new(self)
+
+  def sync_vaccinations_to_nhs_immunisations_api
+    if nhs_number_previously_changed?
+      vaccination_records.syncable_to_nhs_immunisations_api.find_each(
+        &:sync_to_nhs_immunisations_api
+      )
+    end
+  end
 end
