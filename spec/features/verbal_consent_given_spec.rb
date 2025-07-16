@@ -15,6 +15,7 @@ describe "Verbal consent" do
     given_an_flu_programme_is_underway
     and_i_am_signed_in
     when_i_record_that_verbal_nasal_consent_was_given
+    and_the_patients_status_is_safe_to_vaccinate_with_nasal_spray
   end
 
   def given_an_hpv_programme_is_underway
@@ -110,6 +111,11 @@ describe "Verbal consent" do
   def and_the_patients_status_is_safe_to_vaccinate
     click_link @patient.full_name, match: :first
     expect(page).to have_content("Safe to vaccinate")
+  end
+
+  def and_the_patients_status_is_safe_to_vaccinate_with_nasal_spray
+    click_link @patient.full_name, match: :first
+    expect(page).to have_content("Safe to vaccinate with nasal spray")
   end
 
   def and_i_can_see_the_consent_response_details

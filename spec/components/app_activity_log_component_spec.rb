@@ -5,7 +5,7 @@ describe AppActivityLogComponent do
 
   let(:component) { described_class.new(patient_session:) }
 
-  let(:programmes) { [create(:programme, :hpv)] }
+  let(:programmes) { [create(:programme, :hpv), create(:programme, :flu)] }
   let(:organisation) { create(:organisation, programmes:) }
   let(:patient_session) do
     create(
@@ -46,12 +46,21 @@ describe AppActivityLogComponent do
     it "renders card '#{title}'" do
       expect(rendered).to have_css(".nhsuk-card h3", text: title)
 
-      card = page.find(".nhsuk-card h3", text: title).ancestor(".nhsuk-card")
+      card =
+        if programme
+          page
+            .all(".nhsuk-card")
+            .find do |card_element|
+              card_element.has_css?("h3", text: title) &&
+                card_element.has_css?("strong", text: programme)
+            end
+        else
+          page.find(".nhsuk-card h3", text: title).ancestor(".nhsuk-card")
+        end
 
       expect(card).to have_css("p", text: date)
       expect(card).to have_css("blockquote", text: notes) if notes
       expect(card).to have_css("p", text: by) if by
-      expect(card).to have_css("strong", text: programme) if programme
     end
   end
 
@@ -74,6 +83,15 @@ describe AppActivityLogComponent do
         parent: dad,
         submitted_at: Time.zone.parse("2024-05-30 13:00")
       )
+      create(
+        :consent,
+        :given,
+        programme: programmes.second,
+        patient:,
+        parent: dad,
+        submitted_at: Time.zone.parse("2024-05-30 13:00"),
+        vaccine_methods: ["nasal"]
+      )
 
       create(
         :triage,
@@ -91,6 +109,16 @@ describe AppActivityLogComponent do
         patient:,
         created_at: Time.zone.parse("2024-05-30 14:30"),
         performed_by: user
+      )
+      create(
+        :triage,
+        :ready_to_vaccinate,
+        programme: programmes.second,
+        patient:,
+        created_at: Time.zone.parse("2024-05-30 14:35"),
+        notes: "Some notes",
+        performed_by: user,
+        vaccine_method: "nasal"
       )
 
       create(
@@ -142,7 +170,7 @@ describe AppActivityLogComponent do
     end
 
     it "has cards" do
-      expect(rendered).to have_css(".nhsuk-card", count: 8)
+      expect(rendered).to have_css(".nhsuk-card", count: 10)
     end
 
     include_examples "card",
@@ -170,6 +198,14 @@ describe AppActivityLogComponent do
                      notes: "Some notes",
                      by: "JOY, Nurse",
                      programme: "HPV"
+
+    include_examples "card",
+                     title:
+                       "Triaged decision: Safe to vaccinate with nasal spray",
+                     date: "30 May 2024 at 2:35pm",
+                     notes: "Some notes",
+                     by: "JOY, Nurse",
+                     programme: "Flu"
 
     include_examples "card",
                      title: "Consent refused by John Doe (Dad)",

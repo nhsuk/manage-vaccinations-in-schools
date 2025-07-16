@@ -1,10 +1,15 @@
 <%= form_with model: triage_form, url:, method:, builder: do |f| %>
   <% content_for(:before_content) { f.govuk_error_summary } %>
 
-  <%= f.govuk_collection_radio_buttons :status_and_vaccine_method,
-                                       triage_form.status_and_vaccine_method_options,
-                                       :itself,
-                                       **fieldset_options %>
+    <%= f.govuk_radio_buttons_fieldset :status_and_vaccine_method, **fieldset_options do %>
+      <% triage_form.safe_to_vaccinate_options.each do |option| %>
+        <%= f.govuk_radio_button :status_and_vaccine_method, option %>
+      <% end %>
+      <%= f.govuk_radio_divider %>
+      <% triage_form.other_options.each do |option| %>
+        <%= f.govuk_radio_button :status_and_vaccine_method, option %>
+      <% end %>
+    <% end %>
 
   <%= f.govuk_text_area :notes, label: { text: "Triage notes (optional)" }, rows: 5 %>
 

@@ -35,6 +35,10 @@ class AppPatientSessionTriageComponent < ViewComponent::Base
         .find_by(programme:)
   end
 
+  def vaccination_method
+    Vaccine.human_enum_name(:method_prefix, triage_status.vaccine_method)
+  end
+
   delegate :status, to: :triage_status
 
   def latest_triage
