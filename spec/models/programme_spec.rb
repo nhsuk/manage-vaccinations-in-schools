@@ -82,10 +82,10 @@ describe Programme do
     end
   end
 
-  describe "#year_groups" do
-    subject { programme.year_groups }
+  describe "#default_year_groups" do
+    subject { programme.default_year_groups }
 
-    context "with a Flu programme" do
+    context "with a flu programme" do
       let(:programme) { build(:programme, :flu) }
 
       it { should eq([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]) }
@@ -95,6 +95,46 @@ describe Programme do
       let(:programme) { build(:programme, :hpv) }
 
       it { should eq([8, 9, 10, 11]) }
+    end
+
+    context "with a MenACWY programme" do
+      let(:programme) { build(:programme, :menacwy) }
+
+      it { should eq([9, 10, 11]) }
+    end
+
+    context "with an Td/IPV programme" do
+      let(:programme) { build(:programme, :td_ipv) }
+
+      it { should eq([9, 10, 11]) }
+    end
+  end
+
+  describe "#year_groups" do
+    subject { programme.year_groups }
+
+    context "with a flu programme" do
+      let(:programme) { build(:programme, :flu) }
+
+      it { should eq([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]) }
+    end
+
+    context "with an HPV programme" do
+      let(:programme) { build(:programme, :hpv) }
+
+      it { should eq([8, 9, 10, 11]) }
+    end
+
+    context "with a MenACWY programme" do
+      let(:programme) { build(:programme, :menacwy) }
+
+      it { should eq([9, 10, 11]) }
+    end
+
+    context "with an Td/IPV programme" do
+      let(:programme) { build(:programme, :td_ipv) }
+
+      it { should eq([9, 10, 11]) }
     end
   end
 
