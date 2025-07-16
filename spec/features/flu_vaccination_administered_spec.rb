@@ -144,20 +144,35 @@ describe "Flu vaccination" do
   end
 
   def when_i_go_to_the_nasal_only_patient
-    visit session_record_path(@session)
     @patient = @nasal_only_patient
+
+    visit session_record_path(@session)
+
+    choose "Nasal"
+    click_on "Update results"
+
     click_link @patient.full_name
   end
 
   def when_i_go_to_the_nasal_or_injection_patient
-    visit session_record_path(@session)
     @patient = @nasal_or_injection_patient
+
+    visit session_record_path(@session)
+
+    choose "Any"
+    click_on "Update results"
+
     click_link @patient.full_name
   end
 
   def when_i_go_to_the_injection_only_patient
-    visit session_record_path(@session)
     @patient = @injection_patient
+
+    visit session_record_path(@session)
+
+    choose "Injection"
+    click_on "Update results"
+
     click_link @patient.full_name
   end
 

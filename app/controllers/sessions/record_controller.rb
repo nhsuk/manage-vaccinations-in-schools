@@ -28,7 +28,7 @@ class Sessions::RecordController < ApplicationController
     patient_sessions =
       @form.apply(scope).consent_given_and_ready_to_vaccinate(
         programmes: @form.programmes,
-        vaccine_method: @form.vaccine_method
+        vaccine_method: @form.vaccine_method.presence
       )
 
     @pagy, @patient_sessions = pagy_array(patient_sessions)
