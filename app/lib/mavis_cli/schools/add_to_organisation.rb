@@ -28,19 +28,24 @@ module MavisCLI
           return
         end
 
-        urns.each do |urn|
-          location = Location.school.find_by(urn:)
+        ActiveRecord::Base.transaction do
+          urns.each do |urn|
+            location = Location.school.find_by(urn:)
 
-          if location.nil?
-            warn "Could not find location: #{urn}"
-            next
+            if location.nil?
+              warn "Could not find location: #{urn}"
+              next
+            end
+
+            if !location.team_id.nil? && location.team_id != team.id
+              warn "#{urn} previously belonged to #{location.team.name}"
+            end
+
+            location.update!(team:)
+            location.create_default_programme_year_groups!(
+              organisation.programmes
+            )
           end
-
-          if !location.team_id.nil? && location.team_id != team.id
-            warn "#{urn} previously belonged to #{location.team.name}"
-          end
-
-          location.update!(team:)
         end
 
         UnscheduledSessionsFactory.new.call
