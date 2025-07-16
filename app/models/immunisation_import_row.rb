@@ -123,10 +123,10 @@ class ImmunisationImportRow
           .find_by!(organisations: { id: organisation.id }, uuid: uuid.to_s)
           .tap { _1.assign_attributes(attributes) }
       else
-        VaccinationRecord.find_or_initialize_by(attributes)
+        VaccinationRecord.with_discarded.find_or_initialize_by(attributes)
       end
 
-    if vaccination_record.persisted?
+    if vaccination_record.persisted? && !vaccination_record.discarded?
       vaccination_record.stage_changes(
         batch_id: batch&.id,
         delivery_method: delivery_method_value,
@@ -135,8 +135,12 @@ class ImmunisationImportRow
         vaccine_id: vaccine&.id
       )
     else
-      # Postgres UUID generation is skipped in bulk import
-      vaccination_record.uuid = SecureRandom.uuid
+      if vaccination_record.discarded?
+        vaccination_record.undiscard!
+      else
+        # Postgres UUID generation is skipped in bulk import
+        vaccination_record.uuid = SecureRandom.uuid
+      end
 
       vaccination_record.batch = batch
       vaccination_record.delivery_method = delivery_method_value
