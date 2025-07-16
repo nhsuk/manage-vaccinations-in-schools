@@ -158,6 +158,10 @@ module NHS::ImmunisationsAPI
       if vaccination_record.discarded?
         raise "Vaccination record is discarded: #{vaccination_record.id}"
       end
+
+      if vaccination_record.patient.nhs_number.blank?
+        raise "PatientVaccination record is discarded: #{vaccination_record.id}"
+      end
     end
   end
 end
