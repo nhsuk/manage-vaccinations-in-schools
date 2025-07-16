@@ -45,6 +45,7 @@ class Location < ApplicationRecord
 
   has_many :consent_forms
   has_many :patients, foreign_key: :school_id
+  has_many :programme_year_groups
   has_many :sessions
 
   has_one :organisation, through: :team

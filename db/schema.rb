@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_14_170610) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_16_151841) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -433,6 +433,15 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_14_170610) do
     t.bigint "immunisation_import_id", null: false
     t.bigint "vaccination_record_id", null: false
     t.index ["immunisation_import_id", "vaccination_record_id"], name: "idx_on_immunisation_import_id_vaccination_record_id_588e859772", unique: true
+  end
+
+  create_table "location_programme_year_groups", force: :cascade do |t|
+    t.bigint "location_id", null: false
+    t.bigint "programme_id", null: false
+    t.integer "year_group", null: false
+    t.index ["location_id", "programme_id", "year_group"], name: "idx_on_location_id_programme_id_year_group_4bee220488", unique: true
+    t.index ["location_id"], name: "index_location_programme_year_groups_on_location_id"
+    t.index ["programme_id"], name: "index_location_programme_year_groups_on_programme_id"
   end
 
   create_table "locations", force: :cascade do |t|
@@ -910,6 +919,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_14_170610) do
   add_foreign_key "immunisation_imports_sessions", "sessions"
   add_foreign_key "immunisation_imports_vaccination_records", "immunisation_imports"
   add_foreign_key "immunisation_imports_vaccination_records", "vaccination_records"
+  add_foreign_key "location_programme_year_groups", "locations", on_delete: :cascade
+  add_foreign_key "location_programme_year_groups", "programmes", on_delete: :cascade
   add_foreign_key "locations", "teams"
   add_foreign_key "notes", "patients"
   add_foreign_key "notes", "sessions"
