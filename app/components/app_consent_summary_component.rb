@@ -47,17 +47,12 @@ class AppConsentSummaryComponent < ViewComponent::Base
         end
       end
 
-      consent
-        .vaccine_methods
-        .drop(1)
-        .each do |vaccine_method|
-          method_name = Vaccine.human_enum_name(:method_prefix, vaccine_method)
-
-          summary_list.with_row do |row|
-            row.with_key { "Consent also given for #{method_name} vaccine?" }
-            row.with_value { "Yes" }
-          end
+      if consent.vaccine_method_nasal?
+        summary_list.with_row do |row|
+          row.with_key { "Consent also given for injected vaccine?" }
+          row.with_value { consent.vaccine_method_injection? ? "Yes" : "No" }
         end
+      end
 
       if consent.reason_for_refusal.present?
         summary_list.with_row do |row|

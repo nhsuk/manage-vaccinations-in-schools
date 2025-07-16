@@ -351,6 +351,10 @@ class DraftConsent
     Consent.human_enum_name(attribute, send(attribute))
   end
 
+  def vaccine_method_injection? = vaccine_methods.include?("injection")
+
+  def vaccine_method_nasal? = vaccine_methods.include?("nasal")
+
   private
 
   def readable_attribute_names
