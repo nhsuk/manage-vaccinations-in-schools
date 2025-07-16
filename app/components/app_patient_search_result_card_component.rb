@@ -92,13 +92,19 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
   end
 
   def render_status_tag(status_type, outcome)
-    status =
-      @patient.public_send(
-        "#{status_type}_status",
-        programme: @programme
-      ).status
+    status_model =
+      @patient.public_send("#{status_type}_status", programme: @programme)
+
+    status_key =
+      if status_type == :triage && status_model.vaccine_method.present? &&
+           @programme.has_multiple_vaccine_methods?
+        "#{status_model.status}_#{status_model.vaccine_method}"
+      else
+        status_model.status
+      end
+
     render AppProgrammeStatusTagsComponent.new(
-             { @programme => { status: } },
+             { @programme => { status: status_key } },
              outcome: outcome
            )
   end

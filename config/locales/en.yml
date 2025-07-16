@@ -209,6 +209,8 @@ en:
           do_not_vaccinate: Do not vaccinate in programme
           needs_follow_up: Keep in triage
           ready_to_vaccinate: Safe to vaccinate
+          ready_to_vaccinate_injection: Safe to vaccinate with injection  
+          ready_to_vaccinate_nasal: Safe to vaccinate with nasal spray
         vaccine_methods:
           injection: injection
           nasal: nasal spray

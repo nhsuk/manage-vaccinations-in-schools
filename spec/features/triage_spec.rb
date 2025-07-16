@@ -26,6 +26,7 @@ describe "Triage" do
     when_i_record_that_they_are_safe_to_vaccinate
     then_i_see_the_update_triage_link
     and_i_see_the_safe_triage_decision
+    and_i_see_the_triage_status_tag
     and_vaccination_will_happen_emails_are_sent_to_both_parents
   end
 
@@ -47,6 +48,7 @@ describe "Triage" do
     when_i_record_that_they_are_safe_to_vaccinate_with_injection
     then_i_see_the_update_triage_link
     and_i_see_the_safe_triage_decision_with_method("injected")
+    and_i_see_the_triage_status_tag(method: "injection")
     and_vaccination_will_happen_emails_are_sent_to_both_parents
     and_the_vaccine_method_is_recorded_as_injection
 
@@ -63,6 +65,7 @@ describe "Triage" do
     and_i_record_that_they_are_safe_to_vaccinate_with_nasal
     then_i_see_the_update_triage_link
     and_i_see_the_safe_triage_decision_with_method("nasal spray")
+    and_i_see_the_triage_status_tag(method: "nasal spray")
     and_vaccination_will_happen_emails_are_sent_to_both_parents
     and_the_vaccine_method_is_recorded_as_nasal
   end
@@ -219,6 +222,14 @@ describe "Triage" do
     expect(page).to have_content(
       "#{@user.full_name} decided that #{@patient_triage_needed.full_name} is safe to vaccinate."
     )
+  end
+
+  def and_i_see_the_triage_status_tag(method: nil)
+    if method.present?
+      expect(page).to have_content("Safe to vaccinate with #{method}")
+    else
+      expect(page).to have_content("Safe to vaccinate")
+    end
   end
 
   def and_i_see_the_safe_triage_decision_with_method(method)

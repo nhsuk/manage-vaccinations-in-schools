@@ -2,7 +2,15 @@
 
 module TriagesHelper
   def triage_status_tag(triage)
-    text = triage.human_enum_name(:status)
+    status_method =
+      if triage.programme.has_multiple_vaccine_methods? &&
+           triage.vaccine_method.present?
+        triage.status + "_#{triage.vaccine_method}"
+      else
+        triage.status
+      end
+
+    text = Triage.human_enum_name(:status, status_method)
 
     colour =
       if triage.invalidated?

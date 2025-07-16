@@ -158,7 +158,7 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
           render(
             AppProgrammeStatusTagsComponent.new(
               programmes.index_with do |programme|
-                patient.triage_status(programme:).slice(:status)
+                triage_status_tag(patient.triage_status(programme:), programme)
               end,
               outcome: :triage
             )
@@ -178,6 +178,18 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
           )
       }
     end
+  end
+
+  def triage_status_tag(triage_status, programme)
+    status =
+      if triage_status.vaccine_method.present? &&
+           programme.has_multiple_vaccine_methods?
+        triage_status.status + "_#{triage_status.vaccine_method}"
+      else
+        triage_status.status
+      end
+
+    { status: status }
   end
 
   def note_to_log_event(note)
