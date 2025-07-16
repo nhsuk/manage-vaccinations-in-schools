@@ -90,9 +90,7 @@ class Location < ApplicationRecord
 
   delegate :fhir_reference, to: :fhir_mapper
 
-  def clinic?
-    generic_clinic? || community_clinic?
-  end
+  def clinic? = generic_clinic? || community_clinic?
 
   def dfe_number
     "#{gias_local_authority_code}#{gias_establishment_number}" if school?
@@ -102,6 +100,23 @@ class Location < ApplicationRecord
     super.except("created_at", "updated_at", "team_id").merge(
       "is_attached_to_organisation" => !team_id.nil?
     )
+  end
+
+  def create_default_programme_year_groups!(programmes)
+    ActiveRecord::Base.transaction do
+      rows =
+        programmes.flat_map do |programme|
+          programme.default_year_groups.filter_map do |year_group|
+            [id, programme.id, year_group] if year_group.in?(year_groups)
+          end
+        end
+
+      Location::ProgrammeYearGroup.import!(
+        %i[location_id programme_id year_group],
+        rows,
+        on_duplicate_key_ignore: true
+      )
+    end
   end
 
   private
