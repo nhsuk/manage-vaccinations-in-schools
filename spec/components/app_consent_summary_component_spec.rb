@@ -37,16 +37,23 @@ describe AppConsentSummaryComponent do
 
   it { should_not have_content("Consent also given for injected vaccine?") }
 
-  context "when consenting to multiple vaccine methods" do
+  context "with the flu programme" do
     let(:programme) { create(:programme, :flu) }
-    let(:consent) do
-      create(:consent, programme:, vaccine_methods: %w[nasal injection])
-    end
-
-    it { should have_content("Decision") }
-    it { should have_content("Consent givenNasal spray") }
+    let(:consent) { create(:consent, programme:, vaccine_methods: %w[nasal]) }
 
     it { should have_content("Consent also given for injected vaccine?") }
-    it { should have_content("Yes") }
+    it { should have_content("No") }
+
+    context "and consenting to multiple vaccine methods" do
+      let(:consent) do
+        create(:consent, programme:, vaccine_methods: %w[nasal injection])
+      end
+
+      it { should have_content("Decision") }
+      it { should have_content("Consent givenNasal spray") }
+
+      it { should have_content("Consent also given for injected vaccine?") }
+      it { should have_content("Yes") }
+    end
   end
 end
