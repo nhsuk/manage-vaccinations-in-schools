@@ -37,7 +37,7 @@ FactoryBot.define do
     academic_year { (date || Date.current).academic_year }
     programmes { [association(:programme)] }
     organisation { association(:organisation, programmes:) }
-    location { association :school, team: }
+    location { association(:school, team:, programmes:) }
 
     days_before_consent_reminders do
       if date && !location.generic_clinic?
