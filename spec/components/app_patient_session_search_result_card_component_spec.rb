@@ -32,7 +32,13 @@ describe AppPatientSessionSearchResultCardComponent do
   it { should have_link("SELDON, Hari", href:) }
   it { should have_text("Year 8") }
   it { should have_text("Consent status") }
-  it { should have_text("Nasal") }
+  it { should_not have_text("Vaccination method") }
+
+  context "programme is flu" do
+    let(:programme) { create(:programme, :flu) }
+
+    it { should have_text("Nasal") }
+  end
 
   context "when patient session has notes" do
     let(:note) { create(:note, patient:, session:) }
