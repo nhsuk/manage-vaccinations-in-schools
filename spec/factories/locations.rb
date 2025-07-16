@@ -37,7 +37,10 @@ require_relative "../../lib/faker/address"
 
 FactoryBot.define do
   factory :location do
-    transient { organisation { nil } }
+    transient do
+      organisation { nil }
+      programmes { team&.organisation&.programmes || [] }
+    end
 
     address_line_1 { Faker::Address.street_address }
     address_town { Faker::Address.city }
@@ -53,6 +56,10 @@ FactoryBot.define do
 
     traits_for_enum :status
 
+    after(:create) do |location, evaluator|
+      location.create_default_programme_year_groups!(evaluator.programmes)
+    end
+
     factory :community_clinic do
       type { :community_clinic }
       name { "#{Faker::University.name} Clinic" }
@@ -65,6 +72,8 @@ FactoryBot.define do
     factory :generic_clinic do
       type { :generic_clinic }
       name { "Community clinics" }
+
+      year_groups { (0..11).to_a }
 
       ods_code { team&.organisation&.ods_code }
     end
@@ -83,6 +92,8 @@ FactoryBot.define do
       sequence(:gias_establishment_number, 1)
       sequence(:gias_local_authority_code, 1)
       sequence(:urn, 100_000, &:to_s)
+
+      year_groups { (0..11).to_a }
 
       trait :primary do
         year_groups { (0..6).to_a }
