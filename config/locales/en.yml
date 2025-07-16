@@ -209,6 +209,9 @@ en:
           do_not_vaccinate: Do not vaccinate in programme
           needs_follow_up: Keep in triage
           ready_to_vaccinate: Safe to vaccinate
+        vaccine_methods:
+          injection: injection
+          nasal: nasal spray
       vaccination_record:
         delivery_methods:
           intramuscular: Intramuscular (IM) injection

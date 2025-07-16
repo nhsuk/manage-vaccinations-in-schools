@@ -215,12 +215,17 @@ class AppActivityLogComponent < ViewComponent::Base
 
   def triage_events
     triages.map do |triage|
+      programmes = programmes_for(triage)
+      title = "Triaged decision: #{triage.human_enum_name(:status)}"
+      title +=
+        " with #{triage.human_enum_name(:vaccine_method)}" if triage.vaccine_method.present? &&
+        programmes.first.has_multiple_vaccine_methods?
       {
-        title: "Triaged decision: #{triage.human_enum_name(:status)}",
+        title:,
         body: triage.notes,
         at: triage.created_at,
         by: triage.performed_by,
-        programmes: programmes_for(triage)
+        programmes:
       }
     end
   end
