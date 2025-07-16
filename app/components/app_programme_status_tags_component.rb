@@ -38,7 +38,7 @@ class AppProgrammeStatusTagsComponent < ViewComponent::Base
     vaccine_methods_span =
       if vaccine_methods.present?
         tag.span(
-          Vaccine.human_enum_name(:method, vaccine_methods.join("_")),
+          Vaccine.human_enum_name(:method, vaccine_methods.first),
           class: "nhsuk-u-secondary-text-color"
         )
       end

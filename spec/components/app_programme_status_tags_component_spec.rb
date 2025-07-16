@@ -26,5 +26,5 @@ describe AppProgrammeStatusTagsComponent do
 
   it { should have_content("MenACWYConsent given") }
   it { should have_content("Td/IPVConsent refused") }
-  it { should have_content("FluConsent givenNasal spray (or injection)") }
+  it { should have_content("FluConsent givenNasal spray") }
 end
