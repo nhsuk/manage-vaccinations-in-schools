@@ -211,7 +211,9 @@ RSpec.feature "Parental consent change answers" do
   end
 
   def then_i_see_the_last_health_question
-    expect(page).to have_content("Does you child take regular aspirin?")
+    expect(page).to have_content(
+      "Has your child had a flu vaccination in the last 5 months?"
+    )
   end
 
   def and_i_answer_no_to_the_last_health_question
