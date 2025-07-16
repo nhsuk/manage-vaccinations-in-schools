@@ -52,6 +52,9 @@ RSpec.feature "Parental consent change answers" do
     then_i_see_the_consent_form_confirmation_page
 
     when_i_change_my_consent_to_accepted
+    then_i_see_the_injection_alternative_page
+
+    when_i_input_the_injection_alternative
     then_i_see_the_address_page
 
     when_i_input_my_address
@@ -247,6 +250,17 @@ RSpec.feature "Parental consent change answers" do
     expect(page).to have_content(
       "is due to get the injected flu vaccination at school"
     )
+  end
+
+  def then_i_see_the_injection_alternative_page
+    expect(page).to have_content(
+      "If your child cannot have the nasal spray, do you agree to them having the injected vaccine instead?"
+    )
+  end
+
+  def when_i_input_the_injection_alternative
+    choose "Yes"
+    click_button "Continue"
   end
 
   def then_i_see_the_address_page

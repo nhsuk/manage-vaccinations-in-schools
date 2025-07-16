@@ -308,9 +308,9 @@ class ConsentForm < ApplicationRecord
             :reason_notes
           end
         ),
+        (:injection_alternative if can_offer_injection_as_alternative?),
         (:address if response_given?),
         (:health_question if response_given?),
-        (:injection_alternative if can_offer_injection_as_alternative?),
         (:reason if refused_and_given),
         (:reason_notes if refused_and_given && reason_notes_must_be_provided?)
       ].compact
