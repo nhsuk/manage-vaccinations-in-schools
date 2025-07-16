@@ -71,6 +71,7 @@ describe Reports::ProgrammeVaccinationsExporter do
             ANATOMICAL_SITE
             ROUTE_OF_VACCINATION
             DOSE_SEQUENCE
+            DOSE_VOLUME
             REASON_NOT_VACCINATED
             LOCAL_PATIENT_ID
             SNOMED_PROCEDURE_CODE
@@ -130,6 +131,7 @@ describe Reports::ProgrammeVaccinationsExporter do
                 "CONSENT_STATUS" => "",
                 "DATE_OF_VACCINATION" => "2024-01-01",
                 "DOSE_SEQUENCE" => vaccination_record.dose_sequence.to_s,
+                "DOSE_VOLUME" => vaccination_record.dose_volume_ml.to_s,
                 "GILLICK_ASSESSED_BY" => "",
                 "GILLICK_ASSESSMENT_DATE" => "",
                 "GILLICK_ASSESSMENT_NOTES" => "",
@@ -282,6 +284,7 @@ describe Reports::ProgrammeVaccinationsExporter do
                 "CONSENT_STATUS" => "",
                 "DATE_OF_VACCINATION" => "2024-01-01",
                 "DOSE_SEQUENCE" => vaccination_record.dose_sequence.to_s,
+                "DOSE_VOLUME" => vaccination_record.dose_volume_ml.to_s,
                 "GILLICK_ASSESSED_BY" => "",
                 "GILLICK_ASSESSMENT_DATE" => "",
                 "GILLICK_ASSESSMENT_NOTES" => "",
