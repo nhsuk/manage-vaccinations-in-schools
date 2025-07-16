@@ -81,7 +81,7 @@ class Onboarding
         .fetch(:schools, {})
         .flat_map do |team_name, school_urns|
           team = teams_by_name[team_name]
-          school_urns.map { |urn| ExistingSchool.new(urn:, team:) }
+          school_urns.map { |urn| ExistingSchool.new(urn:, team:, programmes:) }
         end
 
     @clinics =
@@ -117,7 +117,9 @@ class Onboarding
   def save!
     ActiveRecord::Base.transaction do
       models.each(&:save!)
-      organisation.generic_clinic
+      organisation.generic_clinic.create_default_programme_year_groups!(
+        programmes.map(&:programme)
+      )
       @users.each { |user| user.organisations << organisation }
       UnscheduledSessionsFactory.new.call
     end
@@ -165,7 +167,7 @@ class Onboarding
   class ExistingSchool
     include ActiveModel::Model
 
-    attr_accessor :urn, :team
+    attr_accessor :urn, :team, :programmes
 
     validates :existing_team, absence: true
     validates :location, presence: true
@@ -184,6 +186,9 @@ class Onboarding
 
     def save!
       location.update!(team:)
+      location.create_default_programme_year_groups!(
+        programmes.map(&:programme)
+      )
     end
   end
 end

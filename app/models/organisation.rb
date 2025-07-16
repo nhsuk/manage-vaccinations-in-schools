@@ -86,7 +86,8 @@ class Organisation < ApplicationRecord
         name: "Community clinics",
         team: generic_team,
         ods_code:,
-        type: :generic_clinic
+        type: :generic_clinic,
+        year_groups:
       )
   end
 
