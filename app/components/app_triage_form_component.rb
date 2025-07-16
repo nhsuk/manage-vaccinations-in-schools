@@ -42,16 +42,7 @@ class AppTriageFormComponent < ViewComponent::Base
     if heading
       { legend: { text:, tag: :h2 }, hint: { text: hint } }
     else
-      {
-        legend: {
-          text:,
-          size: "s",
-          class: "app-fieldset__legend--reset"
-        },
-        hint: {
-          text: hint
-        }
-      }
+      { legend: { text: }, hint: { text: hint } }
     end
   end
 end
