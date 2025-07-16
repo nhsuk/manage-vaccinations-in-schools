@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 describe "User CIS2 authentication" do
+  include RedirectHelper
+
   scenario "with redirect" do
     given_a_test_organisation_is_setup_in_mavis_and_cis2
     when_i_go_to_the_sessions_page
@@ -9,6 +11,23 @@ describe "User CIS2 authentication" do
     when_i_click_the_cis2_login_button
     then_i_see_the_sessions_page
     and_i_am_logged_in
+  end
+
+  scenario "being redirected to sign-in from the reporting UI" do
+    given_a_test_organisation_is_setup_in_mavis_and_cis2
+    when_i_go_to_the_start_page_with_a_redirect_after_login_param_that_matches_the_reporting_app
+
+    when_i_click_the_cis2_login_button
+    then_i_am_redirected_to_the_previously_stored_redirect_after_login_param
+    and_the_return_url_has_a_token_param_added_to_it
+  end
+
+  scenario "someone has supplied their own external redirect url" do
+    given_a_test_organisation_is_setup_in_mavis_and_cis2
+    when_i_go_to_the_start_page_with_a_redirect_after_login_param_that_does_not_match_the_reporting_app
+
+    when_i_click_the_cis2_login_button
+    then_i_see_the_dashboard
   end
 
   def given_a_test_organisation_is_setup_in_mavis_and_cis2
@@ -21,6 +40,40 @@ describe "User CIS2 authentication" do
       org_code: @organisation.ods_code,
       org_name: @organisation.name
     )
+  end
+
+  def return_url_on_mavis_reporting_app
+    mavis_reporting_app_url(
+      "/some/reporting/path?month=6&school_id=123&search=some search string"
+    )
+  end
+
+  def return_url_on_mavis_reporting_app_with_token_added
+    mavis_reporting_app_url(
+      "/some/reporting/path?month=6&school_id=123&search=some search string&token=mylonghextoken"
+    )
+  end
+
+  def when_i_go_to_the_start_page_with_a_redirect_after_login_param_that_matches_the_reporting_app
+    uri = URI.encode_uri_component(return_url_on_mavis_reporting_app)
+    visit [start_path, "redirect_after_login=#{uri}"].join("?")
+  end
+
+  def redirect_elsewhere_url
+    "https://some.example.com/redirect/elsewhere"
+  end
+
+  def when_i_go_to_the_start_page_with_a_redirect_after_login_param_that_does_not_match_the_reporting_app
+    uri = URI.encode_uri_component(redirect_elsewhere_url)
+    visit [start_path, "redirect_after_login=#{uri}"].join("?")
+  end
+
+  def then_i_am_redirected_to_the_previously_stored_redirect_after_login_param
+    then_i_am_redirected_to_a_url_matching return_url_on_mavis_reporting_app
+  end
+
+  def and_the_return_url_has_a_token_param_added_to_it
+    expect(page.driver.browser.current_url).to match(/token=[a-gA-G0-9]{32}/)
   end
 
   def when_i_go_to_the_sessions_page
@@ -62,5 +115,9 @@ describe "User CIS2 authentication" do
 
   def and_there_is_no_change_role_button
     expect(page).not_to have_button "Change role"
+  end
+
+  def then_i_see_the_dashboard
+    expect(page).to have_current_path dashboard_path
   end
 end

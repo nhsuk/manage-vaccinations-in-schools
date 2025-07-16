@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_09_133232) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_10_112449) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -513,6 +513,16 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_09_133232) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "one_time_tokens", primary_key: "token", id: :string, force: :cascade do |t|
+    t.bigint "user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.jsonb "cis2_info"
+    t.index ["created_at"], name: "index_one_time_tokens_on_created_at"
+    t.index ["token"], name: "index_one_time_tokens_on_token", unique: true
+    t.index ["user_id"], name: "index_one_time_tokens_on_user_id", unique: true
+  end
+
   create_table "organisation_programmes", force: :cascade do |t|
     t.bigint "organisation_id", null: false
     t.bigint "programme_id", null: false
@@ -688,6 +698,139 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_09_133232) do
     t.index ["type"], name: "index_programmes_on_type", unique: true
   end
 
+  create_table "reportable_consent_events", force: :cascade do |t|
+    t.string "event_type"
+    t.datetime "event_timestamp"
+    t.integer "event_timestamp_year"
+    t.integer "event_timestamp_month"
+    t.integer "event_timestamp_day"
+    t.integer "event_timestamp_academic_year"
+    t.string "source_type"
+    t.bigint "source_id"
+    t.bigint "patient_id"
+    t.date "patient_date_of_birth"
+    t.string "patient_nhs_number"
+    t.string "patient_address_town"
+    t.string "patient_address_postcode"
+    t.string "patient_gender_code"
+    t.boolean "patient_home_educated"
+    t.date "patient_date_of_death"
+    t.integer "patient_birth_academic_year"
+    t.integer "patient_year_group"
+    t.string "consent_response"
+    t.string "consent_reason_for_refusal"
+    t.text "consent_notes"
+    t.string "consent_route"
+    t.jsonb "consent_health_answers"
+    t.bigint "consent_recorded_by_user_id"
+    t.bigint "consent_parent_id"
+    t.bigint "consent_organisation_id"
+    t.datetime "consent_withdrawn_at"
+    t.datetime "consent_invalidated_at"
+    t.boolean "consent_notify_parents"
+    t.datetime "consent_submitted_at"
+    t.integer "consent_vaccine_methods", array: true
+    t.string "parent_full_name"
+    t.string "parent_email"
+    t.string "parent_phone"
+    t.text "parent_contact_method_other_details"
+    t.datetime "parent_created_at"
+    t.datetime "parent_updated_at"
+    t.string "parent_contact_method_type"
+    t.boolean "parent_phone_receive_updates"
+    t.string "parent_relationship_type"
+    t.string "parent_relationship_other_name"
+    t.string "consent_recorded_by_user_email"
+    t.string "consent_recorded_by_user_given_name"
+    t.string "consent_recorded_by_user_family_name"
+    t.bigint "vaccine_id"
+    t.text "vaccine_brand"
+    t.integer "vaccine_method"
+    t.text "vaccine_manufacturer"
+    t.decimal "vaccine_dose_volume_ml"
+    t.string "vaccine_snomed_product_code"
+    t.string "vaccine_snomed_product_term"
+    t.text "vaccine_nivs_name"
+    t.boolean "vaccine_discontinued"
+    t.bigint "vaccine_programme_id"
+    t.boolean "vaccine_full_dose"
+    t.bigint "programme_id"
+    t.string "programme_type"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["event_timestamp"], name: "ix_rpt_consent_event_tstamp"
+    t.index ["event_timestamp_academic_year", "event_timestamp_month", "programme_id", "event_type"], name: "ix_rpt_consent_event_tstamp_year_month_prog_type"
+    t.index ["event_timestamp_academic_year", "event_timestamp_month"], name: "ix_rpt_consent_event_ac_year_month"
+    t.index ["source_type", "source_id"], name: "index_reportable_consent_events_on_source"
+    t.index ["source_type", "source_id"], name: "ix_rpt_consent_source_type_id"
+  end
+
+  create_table "reportable_vaccination_events", force: :cascade do |t|
+    t.string "event_type"
+    t.datetime "event_timestamp"
+    t.integer "event_timestamp_year"
+    t.integer "event_timestamp_month"
+    t.integer "event_timestamp_day"
+    t.integer "event_timestamp_academic_year"
+    t.string "source_type"
+    t.bigint "source_id"
+    t.bigint "patient_id"
+    t.date "patient_date_of_birth"
+    t.string "patient_nhs_number"
+    t.string "patient_address_town"
+    t.string "patient_address_postcode"
+    t.integer "patient_gender_code"
+    t.boolean "patient_home_educated"
+    t.date "patient_date_of_death"
+    t.integer "patient_birth_academic_year"
+    t.integer "patient_year_group"
+    t.bigint "school_id"
+    t.string "school_name"
+    t.string "school_address_town"
+    t.string "school_address_postcode"
+    t.bigint "gp_practice_id"
+    t.string "gp_practice_name"
+    t.string "gp_practice_address_town"
+    t.string "gp_practice_address_postcode"
+    t.bigint "team_id"
+    t.string "team_name"
+    t.bigint "organisation_id"
+    t.string "organisation_ods_code"
+    t.string "organisation_name"
+    t.string "vaccination_record_outcome"
+    t.bigint "vaccination_record_batch_id"
+    t.string "vaccination_record_delivery_method"
+    t.bigint "vaccination_record_performed_by_user_id"
+    t.string "vaccination_record_performed_by_given_name"
+    t.string "vaccination_record_performed_by_family_name"
+    t.integer "vaccination_record_dose_sequence"
+    t.uuid "vaccination_record_uuid"
+    t.datetime "vaccination_record_performed_at"
+    t.bigint "vaccination_record_programme_id"
+    t.bigint "vaccination_record_session_id"
+    t.bigint "vaccine_id"
+    t.text "vaccine_brand"
+    t.integer "vaccine_method"
+    t.text "vaccine_manufacturer"
+    t.decimal "vaccine_dose_volume_ml"
+    t.string "vaccine_snomed_product_code"
+    t.string "vaccine_snomed_product_term"
+    t.text "vaccine_nivs_name"
+    t.boolean "vaccine_discontinued", default: false
+    t.bigint "vaccine_programme_id"
+    t.boolean "vaccine_full_dose"
+    t.bigint "programme_id"
+    t.string "programme_type"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "vaccination_record_delivery_site"
+    t.index ["event_timestamp"], name: "ix_rpt_vaccination_event_tstamp"
+    t.index ["event_timestamp_academic_year", "event_timestamp_month", "programme_id", "event_type"], name: "ix_rpt_vaccination_event_tstamp_year_month_prog_type"
+    t.index ["event_timestamp_academic_year", "event_timestamp_month"], name: "ix_rpt_vaccination_event_ac_year_month"
+    t.index ["source_type", "source_id"], name: "index_reportable_events_on_source"
+    t.index ["source_type", "source_id"], name: "ix_rpt_vaccination_source_type_id"
+  end
+
   create_table "school_move_log_entries", force: :cascade do |t|
     t.bigint "patient_id", null: false
     t.bigint "user_id"
@@ -808,6 +951,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_09_133232) do
     t.string "family_name", null: false
     t.string "session_token"
     t.integer "fallback_role", default: 0, null: false
+    t.string "pwd_auth_session_token"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["provider", "uid"], name: "index_users_on_provider_and_uid", unique: true
   end
@@ -936,6 +1080,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_09_133232) do
   add_foreign_key "notify_log_entries", "parents", on_delete: :nullify
   add_foreign_key "notify_log_entries", "patients"
   add_foreign_key "notify_log_entries", "users", column: "sent_by_user_id"
+  add_foreign_key "one_time_tokens", "users"
   add_foreign_key "organisation_programmes", "organisations"
   add_foreign_key "organisation_programmes", "programmes"
   add_foreign_key "parent_relationships", "parents"

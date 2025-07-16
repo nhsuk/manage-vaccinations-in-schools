@@ -8,9 +8,18 @@ module AuthenticationConcern
   included do
     private
 
+    # only return true if the given URL is part of this domain (relative or absolute)
+    # or part of the mavis reporting app, or localhost (to allow devs some leeway)
+    def is_valid_redirect?(url)
+      url.start_with?("/") || url.start_with?(request.base_url) ||
+        url.start_with?(
+          Settings.mavis_reporting_app.root_url || "http://localhost"
+        )
+    end
+
     def authenticate_user!
       if !user_signed_in?
-        if request.path != start_path
+        if request.path != start_path && request.path != new_users_organisations_path
           store_location_for(:user, request.fullpath)
         end
 
@@ -57,6 +66,12 @@ module AuthenticationConcern
         !request.xhr? && !turbo_frame_request?
     end
 
+    def store_redirect_after_login!
+      if params.key?(:redirect_after_login)
+        session[:redirect_after_login] = params.fetch(:redirect_after_login)
+      end
+    end
+
     def store_user_location!
       return unless user_signed_in?
       return unless storable_location?
@@ -80,8 +95,39 @@ module AuthenticationConcern
       end
     end
 
+    def add_token_to(url, user)
+      uri = Addressable::URI.parse(url)
+      user_token =
+        OneTimeToken.find_or_generate_for!(
+          user_id: user.id,
+          cis2_info: session["cis2_info"]
+        ).token
+      uri.query_values = (uri.query_values || {}).merge("token" => user_token)
+      uri.to_s
+    end
+
+    def reporting_app_redirect_url_with_token_for(user)
+      url = session["redirect_after_login"]
+      if url.present?
+        add_token_to(url, user)
+      else
+        nil
+      end
+    end
+
     def after_sign_in_path_for(scope)
-      stored_location_for(scope) || dashboard_path
+      urls = [
+        reporting_app_redirect_url_with_token_for(current_user),
+        stored_location_for(scope),
+        dashboard_path
+      ]
+      urls.compact.find { is_valid_redirect?(it) && (it != request.fullpath) && (it != new_users_organisations_path) }
+    end
+
+    def redirect_after_choosing_org
+      url = after_sign_in_path_for(current_user)
+      session.delete(:redirect_after_login)
+      redirect_to url, allow_other_host: is_valid_redirect?(url)
     end
 
     def user_signed_in?
