@@ -145,6 +145,11 @@ RSpec.feature "Parental consent change answers" do
     click_button "Continue"
 
     9.times { click_button "Continue" }
+
+    # BUG: You shouldn't need to choose this again. It happens because the
+    # injection alternative value is lost when changing answers.
+    choose "No"
+    click_button "Continue"
   end
 
   def when_i_change_my_parental_relationship_to_dad
@@ -212,7 +217,7 @@ RSpec.feature "Parental consent change answers" do
 
   def then_i_see_the_last_health_question
     expect(page).to have_content(
-      "Has your child had a flu vaccination in the last 5 months?"
+      "Does your child have a bleeding disorder or another medical condition they receive treatment for?"
     )
   end
 

@@ -57,8 +57,9 @@ module ParentInterface
              @consent_form.parent_phone.present?
           jump_to("contact-method", skip_to_confirm: true)
         end
-      elsif current_step == :injection_alternative
+      elsif is_injection_alternative_step?
         @consent_form.update_injection_alternative
+        @consent_form.seed_health_questions
       elsif is_response_step?
         @consent_form.update_programme_responses
         @consent_form.seed_health_questions
@@ -199,6 +200,8 @@ module ParentInterface
     end
 
     def is_response_step? = step.start_with?("response-")
+
+    def is_injection_alternative_step? = step == "injection-alternative"
 
     def is_health_question_step? = step == "health-question"
 
