@@ -1,9 +1,15 @@
+@use "../../base" as *;
+@use "../../../../vendor/nhsuk-frontend" as nhsuk;
+
+// Use @import as GOV.UK Frontend is not compatible with Sass modules
+@import "pkg:govuk-frontend/dist/govuk/components/file-upload";
+
 .nhsuk-file-upload {
-  color: $nhsuk-text-color;
-  margin-left: nhsuk-spacing(-1);
+  color: nhsuk.$nhsuk-text-color;
+  margin-left: nhsuk.nhsuk-spacing(-1);
   max-width: 100%;
-  padding: nhsuk-spacing(1);
-  @include nhsuk-font($size: 19);
+  padding: nhsuk.nhsuk-spacing(1);
+  @include nhsuk.nhsuk-font($size: 19);
 
   // The default file upload button in Safari does not support setting a
   // custom font-size. Set `-webkit-appearance` to `button` to drop out of the
@@ -16,11 +22,11 @@
   }
 
   &:focus {
-    outline: $nhsuk-focus-width solid $nhsuk-focus-color;
+    outline: nhsuk.$nhsuk-focus-width solid nhsuk.$nhsuk-focus-color;
     // Use `box-shadow` to add border instead of changing `border-width`
     // (which changes element size) and since `outline` is already used for
     // the yellow focus state.
-    box-shadow: inset 0 0 0 4px $nhsuk-form-border-color;
+    box-shadow: inset 0 0 0 4px nhsuk.$nhsuk-form-border-color;
   }
 
   // Set "focus-within" to fix https://bugzil.la/1430196 so that component
@@ -29,8 +35,8 @@
   // to recognise `focus-within` and don't set any styles from the block
   // when it's a selector.
   &:focus-within {
-    box-shadow: inset 0 0 0 4px $nhsuk-form-border-color;
-    outline: $nhsuk-focus-width solid $nhsuk-focus-color;
+    box-shadow: inset 0 0 0 4px nhsuk.$nhsuk-form-border-color;
+    outline: nhsuk.$nhsuk-focus-width solid nhsuk.$nhsuk-focus-color;
   }
 
   &:disabled {

@@ -1,3 +1,5 @@
+@use "../vendor/nhsuk-frontend" as *;
+
 .app-secondary-navigation {
   margin-left: #{$nhsuk-gutter-half * -1};
   margin-right: #{$nhsuk-gutter-half * -1};

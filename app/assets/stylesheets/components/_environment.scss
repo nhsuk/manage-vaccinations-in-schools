@@ -1,3 +1,5 @@
+@use "../vendor/nhsuk-frontend" as *;
+
 .app-environment {
   @include nhsuk-font-size(14);
   @include nhsuk-responsive-padding(2, bottom);

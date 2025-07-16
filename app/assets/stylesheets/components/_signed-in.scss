@@ -1,0 +1,20 @@
+@use "../vendor/nhsuk-frontend" as *;
+@use "../core" as app;
+
+.app-signed-in {
+  .nhsuk-width-container,
+  .nhsuk-header__container,
+  .nhsuk-navigation {
+    max-width: app.$page-width;
+
+    @include nhsuk-media-query($from: desktop) {
+      margin: 0 $nhsuk-gutter;
+    }
+
+    @include nhsuk-media-query(
+      $and: "(min-width: #{(app.$page-width + $nhsuk-gutter * 2)})"
+    ) {
+      margin: 0 auto;
+    }
+  }
+}

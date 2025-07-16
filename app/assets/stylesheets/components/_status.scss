@@ -1,3 +1,6 @@
+@use "../vendor/nhsuk-frontend" as *;
+@use "../core" as app;
+
 .app-status {
   align-items: start;
   display: flex;
@@ -18,7 +21,7 @@
   }
 
   &--dark-orange {
-    color: $color_app-dark-orange;
+    color: app.$color_dark-orange;
   }
 
   &--green {

@@ -1,4 +1,6 @@
-$_button-shadow-size: $nhsuk-border-width-form-element * 2;
+@use "../../../../vendor/nhsuk-frontend" as nhsuk;
+
+$_button-shadow-size: nhsuk.$nhsuk-border-width-form-element * 2;
 
 .nhsuk-password-input__input {
   // IE 11 and Microsoft Edge comes with its own password reveal function. We
@@ -19,7 +21,7 @@ $_button-shadow-size: $nhsuk-border-width-form-element * 2;
   margin-bottom: $_button-shadow-size;
 
   // Add margin to top so that button doesn’t obscure input’s focus style
-  margin-top: nhsuk-spacing(1);
+  margin-top: nhsuk.nhsuk-spacing(1);
 
   // Make full width at smaller breakpoints
   width: 100%;
@@ -29,11 +31,11 @@ $_button-shadow-size: $nhsuk-border-width-form-element * 2;
     display: none;
   }
 
-  @include nhsuk-media-query($from: mobile) {
+  @include nhsuk.nhsuk-media-query($from: mobile) {
     flex: 1 0 5em;
 
     // Move spacing from top to the left
-    margin-left: nhsuk-spacing(1);
+    margin-left: nhsuk.nhsuk-spacing(1);
     margin-top: 0;
 
     // Remove padding to account for height of password input

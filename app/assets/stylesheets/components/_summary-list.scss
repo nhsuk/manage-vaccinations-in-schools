@@ -1,4 +1,5 @@
-// Full width summary list
+@use "../vendor/nhsuk-frontend" as *;
+
 .app-summary-list--full-width {
   .nhsuk-summary-list__row {
     display: block;

@@ -1,4 +1,5 @@
 @use "sass:color";
+@use "../vendor/nhsuk-frontend" as *;
 
 $_button-shadow-size: $nhsuk-border-width-form-element * 2;
 $_secondary-warning-button-hover-color: color.change(

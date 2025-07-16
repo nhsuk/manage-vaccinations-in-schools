@@ -1,3 +1,5 @@
+@use "../../vendor/nhsuk-frontend" as *;
+
 // Patient session and record
 .app-grid-column-patient-session {
   @include nhsuk-grid-column(

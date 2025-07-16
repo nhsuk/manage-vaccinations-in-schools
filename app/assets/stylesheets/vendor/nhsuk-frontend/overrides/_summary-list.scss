@@ -1,4 +1,5 @@
 @use "sass:color";
+@use "../core" as *;
 
 // Ensure border colour inside warning callout can be seen and matches
 .nhsuk-warning-callout {

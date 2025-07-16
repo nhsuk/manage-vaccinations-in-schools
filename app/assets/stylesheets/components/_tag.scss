@@ -1,8 +1,11 @@
+@use "../vendor/nhsuk-frontend" as *;
+@use "../core" as app;
+
 .nhsuk-tag {
   &--dark-orange {
-    background-color: nhsuk-tint($color_app-dark-orange, 80%);
-    border-color: nhsuk-shade($color_app-dark-orange, 50%);
-    color: nhsuk-shade($color_app-dark-orange, 50%);
+    background-color: nhsuk-tint(app.$color_dark-orange, 80%);
+    border-color: nhsuk-shade(app.$color_dark-orange, 50%);
+    color: nhsuk-shade(app.$color_dark-orange, 50%);
   }
 
   &--transparent {

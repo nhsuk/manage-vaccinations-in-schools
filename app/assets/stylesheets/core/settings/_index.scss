@@ -1,0 +1,9 @@
+@use "sass:color";
+@use "../../vendor/nhsuk-frontend" as *;
+
+$page-width: 1100px;
+// stylelint-disable-next-line scss/dollar-variable-pattern
+$color_dark-orange: color.scale(
+  color.mix($color_nhsuk-red, $color_nhsuk-yellow, 60%),
+  $lightness: -10%
+);

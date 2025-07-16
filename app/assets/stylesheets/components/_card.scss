@@ -1,3 +1,6 @@
+@use "../vendor/nhsuk-frontend" as *;
+@use "../core" as app;
+
 .app-card {
   &--aqua-green {
     .nhsuk-card__heading--feature {
@@ -7,7 +10,7 @@
 
   &--dark-orange {
     .nhsuk-card__heading--feature {
-      background-color: $color_app-dark-orange;
+      background-color: app.$color_dark-orange;
     }
   }
 

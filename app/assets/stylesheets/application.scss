@@ -1,62 +1,10 @@
 @use "sass:color";
 
-// Configure and import GOV.UK Frontend
-$govuk-font-family: "Frutiger W01", Arial, sans-serif;
-$govuk-border-colour: #d8dde0;
-$govuk-brand-colour: #005eb8;
-$govuk-error-colour: #d5281b;
-$govuk-success-colour: #007f3b;
-$govuk-global-styles: false;
-$govuk-new-organisation-colours: true;
-$govuk-assets-path: "/";
+// NHS.UK frontend components
+@forward "vendor/nhsuk-frontend";
 
-@import "vendor/govuk-frontend";
-
-// Configure and import NHS.UK frontend
-$nhsuk-fonts-path: "/";
-$nhsuk-grid-widths: (
-  one-quarter: 25%,
-  one-third: 33.3333%,
-  one-half: 50%,
-  two-thirds: 66.6666%,
-  three-quarters: 75%,
-  full: 100%,
-  filters: 30%,
-  results: 70%,
-);
-
-@import "vendor/nhsuk-frontend";
-
-// App options
-$app-page-width: 1100px;
-$color_app-dark-orange: color.scale(
-  color.mix($color_nhsuk-red, $color_nhsuk-warm-yellow, 55%),
-  $lightness: -10%
-);
-
-// Import GOV.UK Frontend components (updated to use NHS.UK frontend styles)
-@import "vendor/govuk-frontend/components/file-upload";
-@import "vendor/govuk-frontend/components/password-input";
+// GOV.UK Frontend components
+@forward "vendor/govuk-frontend";
 
 // App-specific components
-@import "core";
-@import "components";
-
-// `$nhsuk-page-width` isn’t globally editable, so need to apply manually
-.app-signed-in {
-  .nhsuk-width-container,
-  .nhsuk-header__container,
-  .nhsuk-navigation {
-    max-width: $app-page-width;
-
-    @include nhsuk-media-query($from: desktop) {
-      margin: 0 $nhsuk-gutter;
-    }
-
-    @include nhsuk-media-query(
-      $and: "(min-width: #{($app-page-width + $nhsuk-gutter * 2)})"
-    ) {
-      margin: 0 auto;
-    }
-  }
-}
+@forward "components";

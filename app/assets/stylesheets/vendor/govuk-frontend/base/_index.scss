@@ -1,1 +1,39 @@
-@import "pkg:govuk-frontend/dist/govuk/base";
+@use "../../../vendor/nhsuk-frontend" as nhsuk;
+
+// Configure GOV.UK Frontend to use NHS.UK frontend variables
+@forward "pkg:govuk-frontend/dist/govuk/base" with (
+  $govuk-text-colour: nhsuk.$nhsuk-text-color,
+  $govuk-secondary-text-colour: nhsuk.$nhsuk-secondary-text-color,
+  $govuk-body-background-colour: nhsuk.$color_nhsuk-grey-5,
+  $govuk-border-colour: nhsuk.$nhsuk-border-color,
+  $govuk-border-width: nhsuk.$nhsuk-border-width,
+  $govuk-focus-colour: nhsuk.$nhsuk-focus-color,
+  $govuk-focus-text-colour: nhsuk.$nhsuk-focus-text-color,
+  $govuk-focus-width: nhsuk.$nhsuk-focus-width,
+  $govuk-font-family: nhsuk.$nhsuk-font,
+  $govuk-global-styles: false,
+  $govuk-input-border-colour: nhsuk.$nhsuk-form-border-color,
+  $govuk-new-organisation-colours: true,
+  $govuk-colours: (
+    "red": nhsuk.$color_nhsuk-red,
+    "yellow": nhsuk.$color_nhsuk-yellow,
+    "green": nhsuk.$color_nhsuk-green,
+    "blue": nhsuk.$color_nhsuk-blue,
+    "dark-blue": #003087,
+    "light-blue": #41b6e6,
+    "purple": nhsuk.$color_nhsuk-purple,
+    "black": nhsuk.$color_nhsuk-black,
+    "dark-grey": nhsuk.$color_nhsuk-grey-1,
+    "mid-grey": nhsuk.$color_nhsuk-grey-3,
+    "light-grey": nhsuk.$color_nhsuk-grey-5,
+    "white": nhsuk.$color_nhsuk-white,
+    "light-purple": #6f72af,
+    "bright-purple": #912b88,
+    "pink": nhsuk.$color_nhsuk-pink,
+    "light-pink": #f499be,
+    "orange": nhsuk.$color_nhsuk-orange,
+    "brown": #b58840,
+    "light-green": #78be20,
+    "turquoise": nhsuk.$color_nhsuk-aqua-green
+  )
+);

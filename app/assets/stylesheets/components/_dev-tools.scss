@@ -1,3 +1,5 @@
+@use "../vendor/nhsuk-frontend" as *;
+
 .app-dev-tools {
   background-color: $color_nhsuk-pale-yellow;
   background-image: linear-gradient(
