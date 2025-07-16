@@ -27,7 +27,7 @@ class HealthAnswersDeduplicator
   def add_unique_health_answers(vaccine)
     vaccine_health_answers = vaccine.health_questions.to_health_answers
 
-    vaccine_health_answers.each do |health_answer|
+    vaccine_health_answers.deep_dup.each do |health_answer|
       existing_index = existing_question_index(health_answer.question)
 
       # This doesn't work very well if the question already exists but is
@@ -43,16 +43,33 @@ class HealthAnswersDeduplicator
 
       if (index = health_answer.next_question).present?
         health_answer.next_question =
-          vaccine_health_answers.find { it.id == index }.question
+          find_new_next_question(vaccine_health_answers, index)
       end
 
       if (index = health_answer.follow_up_question).present?
         health_answer.follow_up_question =
-          vaccine_health_answers.find { it.id == index }.question
+          find_new_follow_up_question(vaccine_health_answers, index)
       end
 
       @health_answers << health_answer
     end
+  end
+
+  def find_new_next_question(vaccine_health_answers, index)
+    loop do
+      health_answer_to_check = vaccine_health_answers.find { it.id == index }
+      break if health_answer_to_check.nil?
+
+      if existing_question_index(health_answer_to_check.question).nil?
+        break health_answer_to_check.question
+      end
+
+      index = health_answer_to_check.next_question
+    end
+  end
+
+  def find_new_follow_up_question(vaccine_health_answers, index)
+    vaccine_health_answers.find { it.id == index }.question
   end
 
   def existing_question_index(question)

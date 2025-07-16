@@ -136,7 +136,20 @@ RSpec.feature "Parental consent change answers" do
     # BUG: The page should be the consent confirm page, but because we
     # encountered a validation error, the skip_to_confirm flag gets lost and we
     # end up on the next page in the wizard.
-    10.times { click_button "Continue" }
+
+    click_button "Continue"
+
+    # BUG: You shouldn't need to select again if injection is accepted as an
+    # alternative.
+    choose "Yes"
+    click_button "Continue"
+
+    9.times { click_button "Continue" }
+
+    # BUG: You shouldn't need to choose this again. It happens because the
+    # injection alternative value is lost when changing answers.
+    choose "No"
+    click_button "Continue"
   end
 
   def when_i_change_my_parental_relationship_to_dad
@@ -203,7 +216,9 @@ RSpec.feature "Parental consent change answers" do
   end
 
   def then_i_see_the_last_health_question
-    expect(page).to have_content("Does you child take regular aspirin?")
+    expect(page).to have_content(
+      "Does your child have a bleeding disorder or another medical condition they receive treatment for?"
+    )
   end
 
   def and_i_answer_no_to_the_last_health_question
@@ -235,8 +250,8 @@ RSpec.feature "Parental consent change answers" do
   def then_i_see_the_needs_triage_confirmation_page
     expect(page).to have_content("Consent confirmed")
     expect(page).to have_content(
-      "As you answered ‘yes’ to some of the health questions, " \
-        "we need to check the injected flu vaccination is suitable for Joe Test."
+      "As you answered ‘yes’ to some of the health questions, we need to " \
+        "check the nasal spray flu vaccination is suitable for Joe Test."
     )
   end
 
@@ -248,7 +263,7 @@ RSpec.feature "Parental consent change answers" do
 
   def then_i_see_the_given_confirmation_page
     expect(page).to have_content(
-      "is due to get the injected flu vaccination at school"
+      "is due to get the nasal spray flu vaccination at school"
     )
   end
 

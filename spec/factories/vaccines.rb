@@ -54,29 +54,41 @@ FactoryBot.define do
       type { "flu" }
 
       after(:create) do |vaccine|
-        asthma = create(:health_question, :asthma, vaccine:)
-        steroids = create(:health_question, :steroids, vaccine:)
-        intensive_care = create(:health_question, :intensive_care, vaccine:)
-        flu_vaccination = create(:health_question, :flu_vaccination, vaccine:)
-        immune_system = create(:health_question, :immune_system, vaccine:)
-        household_immune_system =
-          create(:health_question, :household_immune_system, vaccine:)
-        egg_allergy = create(:health_question, :egg_allergy, vaccine:)
-        allergies = create(:health_question, :allergies, vaccine:)
-        reaction = create(:health_question, :reaction, vaccine:)
-        aspirin = create(:health_question, :aspirin, vaccine:)
+        if vaccine.nasal?
+          asthma = create(:health_question, :asthma, vaccine:)
+          steroids = create(:health_question, :steroids, vaccine:)
+          intensive_care = create(:health_question, :intensive_care, vaccine:)
+          immune_system = create(:health_question, :immune_system, vaccine:)
+          household_immune_system =
+            create(:health_question, :household_immune_system, vaccine:)
+          egg_allergy = create(:health_question, :egg_allergy, vaccine:)
+          allergies = create(:health_question, :allergies, vaccine:)
+          reaction = create(:health_question, :reaction, vaccine:)
+          aspirin = create(:health_question, :aspirin, vaccine:)
+          flu_vaccination = create(:health_question, :flu_vaccination, vaccine:)
 
-        asthma.update! next_question: flu_vaccination
-        asthma.update! follow_up_question: steroids
-        steroids.update! next_question: intensive_care
-        intensive_care.update! next_question: flu_vaccination
+          asthma.update! next_question: immune_system
+          asthma.update! follow_up_question: steroids
+          steroids.update! next_question: intensive_care
+          intensive_care.update! next_question: immune_system
 
-        flu_vaccination.update! next_question: immune_system
-        immune_system.update! next_question: household_immune_system
-        household_immune_system.update! next_question: egg_allergy
-        egg_allergy.update! next_question: allergies
-        allergies.update! next_question: reaction
-        reaction.update! next_question: aspirin
+          immune_system.update! next_question: household_immune_system
+          household_immune_system.update! next_question: egg_allergy
+          egg_allergy.update! next_question: allergies
+          allergies.update! next_question: reaction
+          reaction.update! next_question: aspirin
+          aspirin.update! next_question: flu_vaccination
+        else
+          bleeding_disorder =
+            create(:health_question, :bleeding_disorder, vaccine:)
+          allergies = create(:health_question, :allergies, vaccine:)
+          reaction = create(:health_question, :reaction, vaccine:)
+          flu_vaccination = create(:health_question, :flu_vaccination, vaccine:)
+
+          bleeding_disorder.update! next_question: allergies
+          allergies.update! next_question: reaction
+          reaction.update! next_question: flu_vaccination
+        end
       end
     end
 

@@ -81,7 +81,7 @@ describe "Parental consent" do
   end
 
   def when_i_answer_no_to_all_health_questions
-    8.times do
+    9.times do
       choose "No"
       click_button "Continue"
     end
