@@ -42,14 +42,6 @@ This adds a programme to an existing organisation. Normally this would be handle
 
 ## Schools
 
-### `schools:add_to_organisation[ods_code,team_name,urn,...]`
-
-- `ods_code` - The ODS code of the organisation.
-- `team_name` - The name of the team in the organisation.
-- `urn` - The URN of the school to add, can be added multiple times.
-
-This adds a school or schools to the list of schools that a particular organisation manages.
-
 ### `schools:smoke`
 
 Creates a school location suitable for smoke testing in production.

@@ -340,7 +340,6 @@ See the [releasing documentation](docs/releasing.md) for more information.
 - `access_log:for_patient[id]`
 - `access_log:for_user[id]`
 - `clinics:create[name,address,town,postcode,ods_code,organisation_ods_code]`
-- `schools:add_to_organisation[ods_code,team_name,urn,...]`
 - `teams:create[ods_code,name,email,phone]`
 - `users:create[email,password,given_name,family_name,organisation_ods_code]`
 - `vaccines:seed[type]`
