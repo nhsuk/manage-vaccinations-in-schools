@@ -11,7 +11,7 @@
 
 <%= render AppProgrammeNavigationComponent.new(@programme, active: :overview) %>
 
-<%= govuk_button_to "Download vaccination report", programme_vaccination_reports_path(@programme), secondary: true, class: "nhsuk-u-margin-bottom-5" %>
+<%= govuk_button_to "Download vaccination report", programme_reports_path(@programme), secondary: true, class: "nhsuk-u-margin-bottom-5" %>
 
 <%= render AppProgrammeStatsComponent.new(programme: @programme) %>
 

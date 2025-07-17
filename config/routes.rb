@@ -124,12 +124,6 @@ Rails.application.routes.draw do
            only: %i[show update],
            path: "draft-vaccination-record/:id"
 
-  resource :vaccination_report,
-           only: %i[show update],
-           path: "draft-vaccination-report/:id" do
-    get "download", on: :member
-  end
-
   resources :immunisation_imports,
             path: "immunisation-imports",
             except: %i[index destroy]
@@ -180,11 +174,8 @@ Rails.application.routes.draw do
     end
 
     resources :cohorts, only: %i[index show], controller: "programmes/cohorts"
+    resources :reports, only: :create, controller: "programmes/reports"
     resources :vaccinations, only: :index, controller: "programmes/vaccinations"
-
-    resources :vaccination_reports,
-              path: "vaccination-reports",
-              only: %i[create]
   end
 
   resources :school_moves, path: "school-moves", only: %i[index show update]
@@ -297,6 +288,12 @@ Rails.application.routes.draw do
             path: "vaccination-records",
             only: %i[show update destroy] do
     get "destroy", action: :confirm_destroy, on: :member, as: "destroy"
+  end
+
+  resource :vaccination_report,
+           only: %i[show update],
+           path: "vaccination-report/:id" do
+    get "download", on: :member
   end
 
   resources :vaccines, only: %i[index show] do
