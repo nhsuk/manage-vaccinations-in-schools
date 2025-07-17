@@ -338,7 +338,7 @@ class Patient < ApplicationRecord
     end
 
     if vaccine_method &&
-         !approved_vaccine_methods(programme:).include?(vaccine_method)
+         approved_vaccine_methods(programme:).first != vaccine_method
       return false
     end
 
