@@ -54,7 +54,7 @@ describe "Td/IPV vaccination" do
     programme = create(:programme, :td_ipv)
     organisation =
       create(:organisation, :with_one_nurse, programmes: [programme])
-    location = create(:school)
+    location = create(:school, organisation:)
 
     programme.vaccines.discontinued.each do |vaccine|
       create(:batch, organisation:, vaccine:)

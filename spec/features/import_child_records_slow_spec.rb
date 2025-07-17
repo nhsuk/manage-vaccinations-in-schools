@@ -28,7 +28,7 @@ describe "Import child records" do
     programme = create(:programme, :hpv)
     @organisation =
       create(:organisation, :with_one_nurse, programmes: [programme])
-    create(:school, urn: "141939")
+    create(:school, urn: "141939", organisation: @organisation)
     @user = @organisation.users.first
   end
 

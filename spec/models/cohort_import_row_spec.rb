@@ -57,7 +57,7 @@ describe CohortImportRow do
     }
   end
 
-  before { create(:school, urn: "123456") }
+  before { create(:school, urn: "123456", organisation:) }
 
   describe "validations" do
     let(:data) { valid_data }
