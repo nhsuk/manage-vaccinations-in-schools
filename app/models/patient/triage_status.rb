@@ -68,7 +68,8 @@ class Patient::TriageStatus < ApplicationRecord
         :not_required
       end
 
-    self.vaccine_method = latest_triage&.vaccine_method
+    self.vaccine_method =
+      (latest_triage&.vaccine_method if status_should_be_safe_to_vaccinate?)
   end
 
   def consent_requires_triage?
