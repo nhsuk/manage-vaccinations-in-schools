@@ -586,6 +586,9 @@ en:
         title: Cohorts
     index:
       title: Programmes
+    patients:
+      index:
+        title: Children
     sessions:
       table_headings:
         completed: All sessions completed

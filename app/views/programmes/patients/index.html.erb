@@ -1,4 +1,4 @@
-<%= content_for :page_title, "#{@programme.name} – #{t("patients.index.title")}" %>
+<%= content_for :page_title, "#{@programme.name} – #{t(".title")}" %>
 
 <% content_for :before_main do %>
   <%= render AppBreadcrumbComponent.new(items: [
@@ -20,7 +20,7 @@
   <div class="app-grid-column-filters">
     <%= render AppSearchComponent.new(
           form: @form,
-          url: patients_programme_path(@programme),
+          url: programme_patients_path(@programme),
           programme_statuses: Patient::VaccinationStatus.statuses.keys,
           consent_statuses: Patient::ConsentStatus.statuses.keys,
           triage_statuses: %w[required delay_vaccination do_not_vaccinate safe_to_vaccinate],

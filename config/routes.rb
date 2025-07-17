@@ -168,12 +168,12 @@ Rails.application.routes.draw do
   resources :programmes, only: %i[index show], param: :type do
     member do
       get "sessions"
-      get "patients"
 
       get "consent-form", action: "consent_form"
     end
 
     resources :cohorts, only: %i[index show], controller: "programmes/cohorts"
+    resources :patients, only: :index, controller: "programmes/patients"
     resources :reports, only: :create, controller: "programmes/reports"
     resources :vaccinations, only: :index, controller: "programmes/vaccinations"
   end

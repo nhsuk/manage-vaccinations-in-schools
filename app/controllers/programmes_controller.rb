@@ -1,13 +1,7 @@
 # frozen_string_literal: true
 
-require "pagy/extras/array"
-
 class ProgrammesController < ApplicationController
-  include Pagy::Backend
-  include SearchFormConcern
-
   before_action :set_programme, except: :index
-  before_action :set_search_form, only: :patients
 
   layout "full"
 
@@ -29,18 +23,6 @@ class ProgrammesController < ApplicationController
         .for_current_academic_year
         .includes(:location, :session_dates)
         .order("locations.name")
-  end
-
-  def patients
-    scope =
-      policy_scope(Patient).includes(:vaccination_statuses).in_programmes(
-        [@programme]
-      )
-
-    @form.programme_types = [@programme.type]
-
-    patients = @form.apply(scope)
-    @pagy, @patients = pagy(patients)
   end
 
   def consent_form
