@@ -68,12 +68,6 @@ class Programme < ApplicationRecord
     DEFAULT_YEAR_GROUPS_BY_TYPE.fetch(type)
   end
 
-  alias_method :year_groups, :default_year_groups
-
-  def birth_academic_years
-    year_groups.map(&:to_birth_academic_year)
-  end
-
   def vaccine_methods = vaccines.map(&:method).uniq
 
   def has_multiple_vaccine_methods?
