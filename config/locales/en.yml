@@ -590,10 +590,8 @@ en:
       index:
         title: Children
     sessions:
-      table_headings:
-        completed: All sessions completed
-        scheduled: Sessions scheduled
-        unscheduled: No sessions scheduled
+      index:
+        title: Sessions
     vaccinations:
       index:
         title: Vaccinations

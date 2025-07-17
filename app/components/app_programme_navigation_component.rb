@@ -16,33 +16,19 @@ class AppProgrammeNavigationComponent < ViewComponent::Base
         selected: active == :overview
       )
 
-      nav.with_item(
-        href: programme_cohorts_path(programme),
-        text: I18n.t("programmes.cohorts.index.title"),
-        selected: active == :cohorts
-      )
-
-      nav.with_item(
-        href: sessions_programme_path(programme),
-        text: I18n.t("sessions.index.title"),
-        selected: active == :sessions
-      )
-
-      nav.with_item(
-        href: programme_patients_path(programme),
-        text: I18n.t("programmes.patients.index.title"),
-        selected: active == :patients
-      )
-
-      nav.with_item(
-        href: programme_vaccinations_path(programme),
-        text: I18n.t("programmes.vaccinations.index.title"),
-        selected: active == :vaccinations
-      )
+      SECTIONS.each do |section|
+        nav.with_item(
+          href: public_send("programme_#{section}_path", programme),
+          text: I18n.t("title", scope: [:programmes, section, :index]),
+          selected: active == session
+        )
+      end
     end
   end
 
   private
 
   attr_reader :programme, :active
+
+  SECTIONS = %i[cohorts sessions patients vaccinations].freeze
 end

@@ -166,16 +166,15 @@ Rails.application.routes.draw do
   end
 
   resources :programmes, only: %i[index show], param: :type do
-    member do
-      get "sessions"
+    get "consent-form", on: :member
 
-      get "consent-form", action: "consent_form"
+    scope module: :programmes do
+      resources :cohorts, only: %i[index show]
+      resources :patients, only: :index
+      resources :reports, only: :create
+      resources :sessions, only: :index
+      resources :vaccinations, only: :index
     end
-
-    resources :cohorts, only: %i[index show], controller: "programmes/cohorts"
-    resources :patients, only: :index, controller: "programmes/patients"
-    resources :reports, only: :create, controller: "programmes/reports"
-    resources :vaccinations, only: :index, controller: "programmes/vaccinations"
   end
 
   resources :school_moves, path: "school-moves", only: %i[index show update]

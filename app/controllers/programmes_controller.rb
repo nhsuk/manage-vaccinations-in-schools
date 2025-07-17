@@ -16,15 +16,6 @@ class ProgrammesController < ApplicationController
       policy_scope(Consent).where(patient: patients, programme: @programme)
   end
 
-  def sessions
-    @sessions =
-      policy_scope(Session)
-        .has_programme(@programme)
-        .for_current_academic_year
-        .includes(:location, :session_dates)
-        .order("locations.name")
-  end
-
   def consent_form
     send_file(
       "public/consent_forms/#{@programme.type}.pdf",
