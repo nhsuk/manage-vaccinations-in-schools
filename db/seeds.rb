@@ -20,15 +20,13 @@ def create_gp_practices
 end
 
 def create_organisation(ods_code:)
-  organisation =
-    Organisation.find_by(ods_code:) ||
-      FactoryBot.create(:organisation, :with_generic_clinic, ods_code:)
-
-  Programme.all.find_each do |programme|
-    FactoryBot.create(:organisation_programme, organisation:, programme:)
-  end
-
-  organisation
+  Organisation.find_by(ods_code:) ||
+    FactoryBot.create(
+      :organisation,
+      :with_generic_clinic,
+      ods_code:,
+      programmes: Programme.all
+    )
 end
 
 def create_user(organisation:, email: nil, uid: nil, fallback_role: :nurse)
