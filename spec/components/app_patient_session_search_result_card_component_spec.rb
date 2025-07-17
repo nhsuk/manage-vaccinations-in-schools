@@ -34,12 +34,6 @@ describe AppPatientSessionSearchResultCardComponent do
   it { should have_text("Consent status") }
   it { should_not have_text("Vaccination method") }
 
-  context "programme is flu" do
-    let(:programme) { create(:programme, :flu) }
-
-    it { should have_text("Nasal") }
-  end
-
   context "when patient session has notes" do
     let(:note) { create(:note, patient:, session:) }
 
@@ -71,6 +65,28 @@ describe AppPatientSessionSearchResultCardComponent do
     it { should_not have_link("Continue reading") }
   end
 
+  context "when context is consent" do
+    let(:context) { :consent }
+
+    context "and the programme is flu" do
+      let(:programme) { create(:programme, :flu) }
+
+      it { should have_text("Vaccination method") }
+      it { should have_text("Nasal") }
+    end
+  end
+
+  context "when context is triage" do
+    let(:context) { :triage }
+
+    context "and the programme is flu" do
+      let(:programme) { create(:programme, :flu) }
+
+      it { should have_text("Vaccination method") }
+      it { should have_text("Nasal") }
+    end
+  end
+
   context "when context is register" do
     let(:context) { :register }
 
@@ -80,6 +96,13 @@ describe AppPatientSessionSearchResultCardComponent do
       it { should have_text("Action required\nGet consent for HPV") }
       it { should have_button("Attending") }
       it { should have_button("Absent") }
+
+      context "and the programme is flu" do
+        let(:programme) { create(:programme, :flu) }
+
+        it { should have_text("Vaccination method") }
+        it { should have_text("Nasal") }
+      end
     end
 
     context "when not allowed to record attendance" do
@@ -88,6 +111,13 @@ describe AppPatientSessionSearchResultCardComponent do
       it { should have_text("Action required\nGet consent for HPV") }
       it { should_not have_button("Attending") }
       it { should_not have_button("Absent") }
+
+      context "and the programme is flu" do
+        let(:programme) { create(:programme, :flu) }
+
+        it { should have_text("Vaccination method") }
+        it { should have_text("Nasal") }
+      end
     end
   end
 
@@ -95,5 +125,22 @@ describe AppPatientSessionSearchResultCardComponent do
     let(:context) { :record }
 
     it { should have_text("Action required\nGet consent for HPV") }
+
+    context "and the programme is flu" do
+      let(:programme) { create(:programme, :flu) }
+
+      it { should have_text("Vaccination method") }
+      it { should have_text("Nasal") }
+    end
+  end
+
+  context "when context is outcome" do
+    let(:context) { :outcome }
+
+    context "and the programme is flu" do
+      let(:programme) { create(:programme, :flu) }
+
+      it { should_not have_text("Vaccination method") }
+    end
   end
 end
