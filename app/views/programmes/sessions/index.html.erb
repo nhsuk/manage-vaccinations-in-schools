@@ -4,7 +4,7 @@
   <%= render AppBreadcrumbComponent.new(items: [
                                           { text: t("dashboard.index.title"), href: dashboard_path },
                                           { text: t("programmes.index.title"), href: programmes_path },
-                                          { text: @programme.name, href: programme_path(@programme) },
+                                          { text: @programme.name, href: programme_overview_path(@programme) },
                                         ]) %>
 <% end %>
 

@@ -10,17 +10,13 @@ class AppProgrammeNavigationComponent < ViewComponent::Base
 
   def call
     render AppSecondaryNavigationComponent.new do |nav|
-      nav.with_item(
-        href: programme_path(programme),
-        text: "Overview",
-        selected: active == :overview
-      )
-
       SECTIONS.each do |section|
+        action = section == :overview ? :show : :index
+
         nav.with_item(
           href: public_send("programme_#{section}_path", programme),
-          text: I18n.t("title", scope: [:programmes, section, :index]),
-          selected: active == session
+          text: I18n.t("title", scope: [:programmes, section, action]),
+          selected: active == section
         )
       end
     end
@@ -30,5 +26,5 @@ class AppProgrammeNavigationComponent < ViewComponent::Base
 
   attr_reader :programme, :active
 
-  SECTIONS = %i[cohorts sessions patients vaccinations].freeze
+  SECTIONS = %i[overview cohorts sessions patients vaccinations].freeze
 end

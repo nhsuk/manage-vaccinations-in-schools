@@ -165,10 +165,11 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :programmes, only: %i[index show], param: :type do
+  resources :programmes, only: :index, param: :type do
     get "consent-form", on: :member
 
     scope module: :programmes do
+      resource :overview, path: "", only: :show, controller: :overview
       resources :cohorts, only: %i[index show]
       resources :patients, only: :index
       resources :reports, only: :create

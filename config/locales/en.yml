@@ -586,6 +586,9 @@ en:
         title: Cohorts
     index:
       title: Programmes
+    overview:
+      show:
+        title: Overview
     patients:
       index:
         title: Children
