@@ -113,7 +113,8 @@ describe Reports::CareplusExporter do
       let(:location) { create(:generic_clinic, organisation:) }
 
       it "includes clinic location details" do
-        patient = create(:patient, year_group: programme.year_groups.first)
+        patient =
+          create(:patient, year_group: programme.default_year_groups.first)
 
         create(
           :patient_session,

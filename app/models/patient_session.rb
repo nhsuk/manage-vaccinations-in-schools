@@ -108,7 +108,13 @@ class PatientSession < ApplicationRecord
           )
         end
 
-  scope :includes_programmes, -> { preload(:patient, session: :programmes) }
+  scope :includes_programmes,
+        -> do
+          preload(
+            :patient,
+            session: %i[programmes location_programme_year_groups]
+          )
+        end
 
   scope :has_consent_status,
         ->(status, programme:) do

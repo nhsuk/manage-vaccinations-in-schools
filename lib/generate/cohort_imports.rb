@@ -144,13 +144,15 @@ module Generate
                 .where(urn: urns)
                 .includes(:organisation, :sessions)
             end
-          locations.select { (it.year_groups & programme.year_groups).any? }
+          locations.select do
+            (it.year_groups & programme.default_year_groups).any?
+          end
         end
     end
 
     def build_patient
       school = schools_with_year_groups.sample
-      year_group ||= (school.year_groups & programme.year_groups).sample
+      year_group ||= (school.year_groups & programme.default_year_groups).sample
       nhs_number = nil
       loop do
         nhs_number = Faker::NationalHealthService.british_number.gsub(" ", "")
