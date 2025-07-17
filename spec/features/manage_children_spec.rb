@@ -19,6 +19,8 @@ describe "Manage children" do
 
   scenario "Adding an NHS number" do
     given_patients_exist
+    and_the_patient_is_vaccinated
+    and_sync_vaccination_records_to_nhs_on_create_feature_is_enabled
 
     when_i_click_on_children
     and_i_click_on_a_child
@@ -34,12 +36,16 @@ describe "Manage children" do
     then_i_see_the_edit_child_record_page
     and_i_see_the_nhs_number
 
+    when_i_wait_for_the_sync_to_complete
+    then_the_vaccination_record_is_created_with_the_nhs
+
     when_i_click_on_change_nhs_number
     and_i_enter_an_existing_nhs_number
     then_i_see_the_merge_record_page
 
     when_i_click_on_merge_records
     then_i_see_the_merged_edit_child_record_page
+    and_the_vaccination_record_is_updated_with_the_nhs
   end
 
   scenario "Adding an NHS number to an invalidated patient" do
@@ -139,7 +145,7 @@ describe "Manage children" do
   def given_patients_exist
     school = create(:school, organisation: @organisation)
 
-    session =
+    @session =
       create(
         :session,
         location: school,
@@ -150,12 +156,12 @@ describe "Manage children" do
     @patient =
       create(
         :patient,
-        session:,
+        session: @session,
         given_name: "John",
         family_name: "Smith",
         school:
       )
-    create_list(:patient, 9, session:)
+    create_list(:patient, 9, session: @session)
 
     another_session =
       create(:session, organisation: @organisation, programmes: [@programme])
@@ -186,7 +192,21 @@ describe "Manage children" do
   end
 
   def and_the_patient_is_vaccinated
-    create(:vaccination_record, patient: @patient, programme: @programme)
+    create(
+      :vaccination_record,
+      patient: @patient,
+      programme: @programme,
+      session: @session
+    )
+  end
+
+  def and_sync_vaccination_records_to_nhs_on_create_feature_is_enabled
+    Flipper.enable(:sync_vaccination_records_to_nhs_on_create)
+    Flipper.enable(:immunisations_fhir_api_integration)
+
+    immunisation_uuid = Random.uuid
+    @stubbed_post_request = stub_immunisations_api_post(uuid: immunisation_uuid)
+    @stubbed_put_request = stub_immunisations_api_put(uuid: immunisation_uuid)
   end
 
   def when_a_deceased_patient_exists
@@ -333,6 +353,10 @@ describe "Manage children" do
     visit "/imports"
   end
 
+  def when_i_wait_for_the_sync_to_complete
+    perform_enqueued_jobs(only: SyncVaccinationRecordToNHSJob)
+  end
+
   def then_i_cannot_see_notices
     expect(page).not_to have_content("Notices")
   end
@@ -371,5 +395,14 @@ describe "Manage children" do
     expect(page).to have_content("Important notices ( 1 )")
     expect(page).to have_content(@restricted_patient.full_name)
     expect(page).to have_content("Record flagged as sensitive")
+  end
+
+  def then_the_vaccination_record_is_created_with_the_nhs
+    expect(@stubbed_post_request).to have_been_requested
+  end
+
+  def and_the_vaccination_record_is_updated_with_the_nhs
+    perform_enqueued_jobs
+    expect(@stubbed_put_request).to have_been_requested
   end
 end

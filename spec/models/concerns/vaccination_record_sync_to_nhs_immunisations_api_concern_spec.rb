@@ -94,6 +94,16 @@ describe VaccinationRecordSyncToNHSImmunisationsAPIConcern do
 
       create(:vaccination_record, :discarded, outcome:, session:, programme:)
       create(:vaccination_record, outcome:, session: nil, programme:)
+
+      patient_without_nhs_number =
+        create(:patient, nhs_number: nil, school: session.location)
+      create(
+        :vaccination_record,
+        programme: flu_programme,
+        session:,
+        outcome: :administered,
+        patient: patient_without_nhs_number
+      )
     end
 
     let(:flu_programme) { Programme.flu.first || create(:programme, :flu) }
@@ -137,6 +147,17 @@ describe VaccinationRecordSyncToNHSImmunisationsAPIConcern do
 
     context "a vaccination record not recorded in Mavis" do
       let(:session) { nil }
+
+      it { should be false }
+    end
+
+    context "a patient without an nhs number" do
+      let(:patient) do
+        create(:patient, nhs_number: nil, school: session.location)
+      end
+      let(:vaccination_record) do
+        create(:vaccination_record, outcome:, programme:, session:, patient:)
+      end
 
       it { should be false }
     end

@@ -166,6 +166,13 @@ describe PatientMerger do
       )
     end
 
+    it "enqueues sync jobs for vaccination records" do
+      Flipper.enable(:sync_vaccination_records_to_nhs_on_create)
+      expect { call }.to have_enqueued_job(SyncVaccinationRecordToNHSJob).with(
+        vaccination_record
+      )
+    end
+
     context "when parent is already associated with patient to keep" do
       before do
         create(

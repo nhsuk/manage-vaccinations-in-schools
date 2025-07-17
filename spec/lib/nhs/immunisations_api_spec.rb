@@ -202,6 +202,27 @@ describe NHS::ImmunisationsAPI do
       end
     end
 
+    context "the patient has no NHS number" do
+      let(:patient) do
+        create(:patient, school: session.location, nhs_number: nil)
+      end
+      let(:vaccination_record) { create(:vaccination_record, patient:) }
+
+      it "does not send the vaccination record to the NHS Immunisations API" do
+        begin
+          perform_now
+        rescue StandardError
+          nil
+        end
+
+        expect(described_class).not_to have_received(:record_immunisation)
+      end
+
+      it "raises an error" do
+        expect { perform_now }.to raise_error(StandardError)
+      end
+    end
+
     VaccinationRecord.defined_enums["outcome"].each_key do |outcome|
       next if outcome == "administered"
 

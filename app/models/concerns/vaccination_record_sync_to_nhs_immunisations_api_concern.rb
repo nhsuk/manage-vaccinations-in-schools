@@ -13,16 +13,18 @@ module VaccinationRecordSyncToNHSImmunisationsAPIConcern
               .administered
               .kept
               .where(
-              programmes: {
-                type: NHS_IMMUNISATIONS_API_PROGRAMME_TYPES
-              }
-            )
+                programmes: {
+                  type: NHS_IMMUNISATIONS_API_PROGRAMME_TYPES
+                }
+              )
+              .where.not(patient: { nhs_number: nil })
           end
   end
 
   def syncable_to_nhs_immunisations_api?
     kept? && recorded_in_service? && administered? &&
-      programme.type.in?(NHS_IMMUNISATIONS_API_PROGRAMME_TYPES)
+      programme.type.in?(NHS_IMMUNISATIONS_API_PROGRAMME_TYPES) &&
+      patient.nhs_number.present?
   end
 
   def sync_to_nhs_immunisations_api
