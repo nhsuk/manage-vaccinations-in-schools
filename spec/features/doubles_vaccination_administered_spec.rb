@@ -28,7 +28,7 @@ describe "MenACWY and Td/IPV vaccination" do
     programmes = [create(:programme, :menacwy), create(:programme, :td_ipv)]
 
     organisation = create(:organisation, programmes:)
-    location = create(:school)
+    location = create(:school, organisation:)
 
     @menacwy_batch =
       create(

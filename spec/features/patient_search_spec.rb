@@ -59,10 +59,11 @@ describe "Patient search" do
   end
 
   def given_that_i_am_signed_in
-    organisation = create(:organisation, :with_one_nurse)
+    programmes = [create(:programme, :hpv)]
+    organisation = create(:organisation, :with_one_nurse, programmes:)
 
-    location = create(:school, name: "Waterloo Road")
-    @session = create(:session, location:, organisation:)
+    location = create(:school, name: "Waterloo Road", organisation:)
+    @session = create(:session, location:, organisation:, programmes:)
 
     [
       %w[Aaron Smith],

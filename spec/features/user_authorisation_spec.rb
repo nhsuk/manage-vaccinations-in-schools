@@ -28,8 +28,10 @@ describe "User authorisation" do
     @other_organisation =
       create(:organisation, :with_one_nurse, programmes: [@programme])
 
-    location = create(:school, name: "Pilot School")
-    other_location = create(:school, name: "Other School")
+    location =
+      create(:school, name: "Pilot School", organisation: @organisation)
+    other_location =
+      create(:school, name: "Other School", organisation: @other_organisation)
     @session =
       create(
         :session,
