@@ -14,7 +14,8 @@ class Programmes::PatientsController < Programmes::BaseController
 
     scope =
       policy_scope(Patient).includes(:vaccination_statuses).in_programmes(
-        [@programme]
+        [@programme],
+        academic_year: @academic_year
       )
 
     @form.programme_types = [@programme.type]

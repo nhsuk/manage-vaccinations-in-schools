@@ -4,21 +4,21 @@
   <%= render AppBreadcrumbComponent.new(items: [
                                           { text: t("dashboard.index.title"), href: dashboard_path },
                                           { text: t("programmes.index.title"), href: programmes_path },
-                                          { text: @programme.name, href: programme_overview_path(@programme) },
+                                          { text: @programme.name, href: programme_overview_path(@programme, @academic_year) },
                                         ]) %>
 <% end %>
 
 <h1 class="nhsuk-heading-l"><%= @programme.name %></h1>
 
-<%= render AppProgrammeNavigationComponent.new(@programme, active: :cohorts) %>
+<%= render AppProgrammeNavigationComponent.new(@programme, @academic_year, active: :cohorts) %>
 
 <%= govuk_button_link_to "Import child records", new_cohort_import_path, secondary: true %>
 
 <ul class="nhsuk-grid-row nhsuk-card-group">
   <% @patient_count_by_birth_academic_year.sort_by { |year, _| -year }.each do |birth_academic_year, patient_count| %>
     <li class="nhsuk-grid-column-one-quarter nhsuk-card-group__item">
-      <%= render AppCardComponent.new(link_to: patient_count > 0 ? programme_cohort_path(@programme, birth_academic_year) : nil) do |card| %>
-        <% card.with_heading { format_year_group(birth_academic_year.to_year_group) } %>
+      <%= render AppCardComponent.new(link_to: patient_count > 0 ? programme_cohort_path(@programme, @academic_year, birth_academic_year) : nil) do |card| %>
+        <% card.with_heading { format_year_group(birth_academic_year.to_year_group(academic_year: @academic_year)) } %>
         <% card.with_description { t("children", count: patient_count) } %>
       <% end %>
     </li>
