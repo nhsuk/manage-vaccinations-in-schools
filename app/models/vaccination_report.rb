@@ -16,6 +16,7 @@ class VaccinationReport
   attribute :date_to, :date
   attribute :file_format, :string
   attribute :programme_id, :integer
+  attribute :academic_year, :integer
 
   def wizard_steps
     %i[dates file_format]
