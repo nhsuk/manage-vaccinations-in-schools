@@ -23,11 +23,13 @@
         selected: request.path == session_triage_path(@session),
       )
     
-      nav.with_item(
-        href: session_register_path(@session),
-        text: t("sessions.tabs.register"),
-        selected: request.path == session_register_path(@session),
-      )
+      if @session.requires_registration?
+        nav.with_item(
+          href: session_register_path(@session),
+          text: t("sessions.tabs.register"),
+          selected: request.path == session_register_path(@session),
+        )
+      end
     
       nav.with_item(
         href: session_record_path(@session),

@@ -72,6 +72,21 @@ describe "HPV vaccination" do
     then_i_see_a_success_message
   end
 
+  scenario "Administered without registration" do
+    given_registrations_are_not_required
+    and_i_am_signed_in
+
+    when_i_go_to_a_patient_that_is_ready_to_vaccinate
+    and_i_fill_in_pre_screening_questions
+    and_i_record_that_the_patient_has_been_vaccinated("Other")
+    and_i_select_the_delivery
+    and_i_select_the_batch
+    then_i_see_the_confirmation_page
+
+    when_i_confirm_the_details
+    then_i_see_a_success_message
+  end
+
   def given_i_am_signed_in
     programme = create(:programme, :hpv_all_vaccines)
     organisation =
@@ -93,8 +108,16 @@ describe "HPV vaccination" do
       build(:batch, :expired, organisation:, vaccine: @active_vaccine)
     @expired_batch.save!(validate: false)
 
+    session_traits =
+      @registrations_are_not_required ? [:requires_no_registration] : []
     @session =
-      create(:session, organisation:, programmes: [programme], location:)
+      create(
+        :session,
+        *session_traits,
+        organisation:,
+        programmes: [programme],
+        location:
+      )
     @patient =
       create(
         :patient,
@@ -104,6 +127,12 @@ describe "HPV vaccination" do
       )
 
     sign_in organisation.users.first
+  end
+
+  alias_method :and_i_am_signed_in, :given_i_am_signed_in
+
+  def given_registrations_are_not_required
+    @registrations_are_not_required = true
   end
 
   def and_enqueue_sync_vaccination_records_to_nhs_feature_is_enabled

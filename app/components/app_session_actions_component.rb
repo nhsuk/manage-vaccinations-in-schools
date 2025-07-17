@@ -27,7 +27,7 @@ class AppSessionActionsComponent < ViewComponent::Base
       no_consent_response_row,
       conflicting_consent_row,
       triage_required_row,
-      register_attendance_row,
+      (register_attendance_row if session.requires_registration?),
       ready_for_vaccinator_row
     ].compact
   end

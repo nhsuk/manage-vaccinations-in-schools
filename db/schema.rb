@@ -752,6 +752,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_18_090719) do
     t.integer "days_before_consent_reminders"
     t.string "slug", null: false
     t.date "send_invitations_at"
+    t.boolean "requires_registration", default: true, null: false
     t.index ["location_id"], name: "index_sessions_on_location_id"
     t.index ["organisation_id", "location_id"], name: "index_sessions_on_organisation_id_and_location_id"
   end
