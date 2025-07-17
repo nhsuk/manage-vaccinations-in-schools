@@ -24,7 +24,6 @@ class Programme < ApplicationRecord
   has_many :consent_forms
   has_many :consent_notification_programmes
   has_many :consents
-  has_many :dps_exports
   has_many :gillick_assessments
   has_many :immunisation_imports
   has_many :organisation_programmes

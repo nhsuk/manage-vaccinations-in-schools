@@ -245,24 +245,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_14_170610) do
     t.index ["recorded_by_user_id"], name: "index_consents_on_recorded_by_user_id"
   end
 
-  create_table "dps_exports", force: :cascade do |t|
-    t.string "message_id"
-    t.string "status", default: "pending", null: false
-    t.string "filename", null: false
-    t.datetime "sent_at", precision: nil
-    t.bigint "programme_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["programme_id"], name: "index_dps_exports_on_programme_id"
-  end
-
-  create_table "dps_exports_vaccination_records", id: false, force: :cascade do |t|
-    t.bigint "dps_export_id", null: false
-    t.bigint "vaccination_record_id", null: false
-    t.index ["dps_export_id", "vaccination_record_id"], name: "index_dps_exports_vaccination_records_uniqueness", unique: true
-    t.index ["vaccination_record_id", "dps_export_id"], name: "index_vaccination_records_dps_exports"
-  end
-
   create_table "flipper_features", force: :cascade do |t|
     t.string "key", null: false
     t.datetime "created_at", null: false
@@ -911,7 +893,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_14_170610) do
   add_foreign_key "consents", "patients"
   add_foreign_key "consents", "programmes"
   add_foreign_key "consents", "users", column: "recorded_by_user_id"
-  add_foreign_key "dps_exports", "programmes"
   add_foreign_key "gillick_assessments", "patient_sessions"
   add_foreign_key "gillick_assessments", "programmes"
   add_foreign_key "gillick_assessments", "users", column: "performed_by_user_id"

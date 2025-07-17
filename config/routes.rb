@@ -185,13 +185,6 @@ Rails.application.routes.draw do
               path: "vaccination-records",
               only: %i[index show update destroy] do
       get "destroy", action: :confirm_destroy, on: :member, as: "destroy"
-
-      collection do
-        post "export-dps"
-        constraints -> { Flipper.enabled?(:dev_tools) } do
-          post "reset-dps-export"
-        end
-      end
     end
 
     resources :vaccination_reports,
