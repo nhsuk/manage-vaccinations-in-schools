@@ -193,6 +193,15 @@ describe Patient::TriageStatus do
       it { should eq("injection") }
     end
 
+    context "with a safe to vaccinate triage and vaccinated" do
+      before do
+        create(:triage, :ready_to_vaccinate, patient:, programme:)
+        create(:vaccination_record, patient:, programme:)
+      end
+
+      it { should be_nil }
+    end
+
     context "with a do not vaccinate triage" do
       before { create(:triage, :do_not_vaccinate, patient:, programme:) }
 
