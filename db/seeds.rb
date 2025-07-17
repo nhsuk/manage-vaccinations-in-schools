@@ -79,7 +79,7 @@ def create_session(
   completed: false,
   year_groups: nil
 )
-  year_groups ||= programmes.flat_map(&:year_groups).uniq
+  year_groups ||= programmes.flat_map(&:default_year_groups).uniq
 
   Vaccine
     .active

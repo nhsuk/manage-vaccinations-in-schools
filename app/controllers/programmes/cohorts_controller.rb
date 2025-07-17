@@ -4,7 +4,11 @@ class Programmes::CohortsController < Programmes::BaseController
   include Pagy::Backend
 
   def index
-    birth_academic_years = @programme.birth_academic_years
+    birth_academic_years =
+      policy_scope(Location::ProgrammeYearGroup)
+        .where(programme: @programme)
+        .pluck_year_groups
+        .map(&:to_birth_academic_year)
 
     @patient_count_by_birth_academic_year =
       patients_in_organisation

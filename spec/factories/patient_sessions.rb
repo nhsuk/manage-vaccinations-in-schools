@@ -26,7 +26,9 @@ FactoryBot.define do
       organisation { session.organisation }
       programmes { [association(:programme)] }
       user { association :user, organisation: }
-      year_group { session.programmes.flat_map(&:year_groups).sort.uniq.first }
+      year_group do
+        session.programmes.flat_map(&:default_year_groups).sort.uniq.first
+      end
       school { session.location.school? ? session.location : nil }
       home_educated { school.present? ? nil : false }
       location_name do

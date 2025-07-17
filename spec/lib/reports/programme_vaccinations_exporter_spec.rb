@@ -171,7 +171,7 @@ describe Reports::ProgrammeVaccinationsExporter do
                 "TRIAGE_STATUS" => "",
                 "VACCINATED" => "Y",
                 "VACCINE_GIVEN" => vaccination_record.vaccine.nivs_name,
-                "YEAR_GROUP" => programme.year_groups.first.to_s
+                "YEAR_GROUP" => patient.year_group.to_s
               }
             )
           end
@@ -324,7 +324,7 @@ describe Reports::ProgrammeVaccinationsExporter do
                 "TRIAGE_STATUS" => "",
                 "VACCINATED" => "Y",
                 "VACCINE_GIVEN" => vaccination_record.vaccine.nivs_name,
-                "YEAR_GROUP" => programme.year_groups.first.to_s
+                "YEAR_GROUP" => patient.year_group.to_s
               }
             )
           end

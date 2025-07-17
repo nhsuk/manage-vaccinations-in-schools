@@ -104,7 +104,7 @@ describe Reports::OfflineSessionExporter do
         end
         let(:patient_session) { create(:patient_session, patient:, session:) }
         let(:patient) do
-          create(:patient, year_group: programme.year_groups.first)
+          create(:patient, year_group: programme.default_year_groups.first)
         end
 
         it { should be_empty }
@@ -764,7 +764,7 @@ describe Reports::OfflineSessionExporter do
           let(:patient) do
             create(
               :patient,
-              year_group: programme.year_groups.first,
+              year_group: programme.default_year_groups.first,
               school: create(:school, urn: "123456", name: "Waterloo Road")
             )
           end
