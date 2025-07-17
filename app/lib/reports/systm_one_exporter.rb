@@ -22,7 +22,14 @@ class Reports::SystmOneExporter
     left_thigh: "Left lateral thigh",
     right_arm_upper_position: "Right deltoid",
     right_arm_lower_position: "Right anterior forearm",
-    right_thigh: "Right lateral thigh"
+    right_thigh: "Right lateral thigh",
+    nose: "Nasal"
+  }.with_indifferent_access.freeze
+
+  DELIVERY_METHOD_MAPPINGS = {
+    intramuscular: "Intramuscular",
+    subcutaneous: "Subcutaneous",
+    nasal_spray: "Nasal"
   }.with_indifferent_access.freeze
 
   def initialize(organisation:, programme:, start_date:, end_date:)
@@ -80,7 +87,7 @@ class Reports::SystmOneExporter
         .vaccination_records
         .administered
         .where(programme:)
-        .includes(:batch, :location, :vaccine, :patient)
+        .includes(:batch, :location, :vaccine, :patient, :performed_by_user)
 
     if start_date.present?
       scope =
@@ -134,8 +141,8 @@ class Reports::SystmOneExporter
       vaccination_record.dose_volume_ml, # Dose
       reason(vaccination_record), # Reason (not specified)
       site(vaccination_record), # Site
-      vaccination_record.delivery_method, # Method
-      vaccination_record.notes # Notes
+      method(vaccination_record), # Method
+      notes(vaccination_record) # Notes
     ]
   end
 
@@ -180,5 +187,22 @@ class Reports::SystmOneExporter
     return if vaccination_record.not_administered?
 
     DELIVERY_SITE_MAPPINGS.fetch(vaccination_record.delivery_site)
+  end
+
+  def method(vaccination_record)
+    return if vaccination_record.not_administered?
+
+    DELIVERY_METHOD_MAPPINGS.fetch(vaccination_record.delivery_method)
+  end
+
+  def notes(vaccination_record)
+    notes = vaccination_record.notes.to_s
+    if vaccination_record.performed_by
+      notes += (notes.empty? ? "" : "\n ")
+      notes +=
+        "Administered by: #{vaccination_record.performed_by.given_name}" \
+          " #{vaccination_record.performed_by.family_name}"
+    end
+    notes
   end
 end
