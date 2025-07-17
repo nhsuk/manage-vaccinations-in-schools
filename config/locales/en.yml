@@ -591,6 +591,9 @@ en:
         completed: All sessions completed
         scheduled: Sessions scheduled
         unscheduled: No sessions scheduled
+    vaccinations:
+      index:
+        title: Vaccinations
   school_moves:
     index:
       title: School moves
@@ -633,9 +636,6 @@ en:
   organisations:
     show:
       title: Your organisation
-  vaccination_records:
-    index:
-      title: Vaccinations
   vaccines:
     index:
       title: Vaccines

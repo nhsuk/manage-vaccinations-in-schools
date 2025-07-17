@@ -1,17 +1,10 @@
 # frozen_string_literal: true
 
 class VaccinationRecordsController < ApplicationController
-  include Pagy::Backend
   include VaccinationMailerConcern
 
-  before_action :set_vaccination_record, except: :index
+  before_action :set_vaccination_record
   before_action :set_return_to, only: %i[confirm_destroy destroy]
-
-  def index
-    @pagy, @vaccination_records = pagy(vaccination_records)
-
-    render layout: "full"
-  end
 
   def show
   end
@@ -48,31 +41,21 @@ class VaccinationRecordsController < ApplicationController
 
   private
 
-  def programme
-    @programme ||=
-      policy_scope(Programme).find_by!(type: params[:programme_type])
-  end
-
-  def vaccination_records
-    @vaccination_records ||=
-      policy_scope(VaccinationRecord)
-        .includes(
-          :batch,
-          :immunisation_imports,
-          :location,
-          :performed_by_user,
-          :programme,
-          patient: [:gp_practice, :school, { parent_relationships: :parent }],
-          session: %i[session_dates],
-          vaccine: :programme
-        )
-        .where(programme:)
-        .order(:performed_at)
-  end
-
   def set_vaccination_record
-    @vaccination_record = vaccination_records.find(params[:id])
+    @vaccination_record =
+      policy_scope(VaccinationRecord).includes(
+        :batch,
+        :immunisation_imports,
+        :location,
+        :performed_by_user,
+        :programme,
+        patient: [:gp_practice, :school, { parent_relationships: :parent }],
+        session: %i[session_dates],
+        vaccine: :programme
+      ).find(params[:id])
+
     @patient = @vaccination_record.patient
+    @programme = @vaccination_record.programme
     @session = @vaccination_record.session
   end
 

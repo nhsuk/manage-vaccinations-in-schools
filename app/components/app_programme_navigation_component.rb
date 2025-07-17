@@ -35,9 +35,9 @@ class AppProgrammeNavigationComponent < ViewComponent::Base
       )
 
       nav.with_item(
-        href: programme_vaccination_records_path(programme),
-        text: I18n.t("vaccination_records.index.title"),
-        selected: active == :vaccination_records
+        href: programme_vaccinations_path(programme),
+        text: I18n.t("programmes.vaccinations.index.title"),
+        selected: active == :vaccinations
       )
     end
   end

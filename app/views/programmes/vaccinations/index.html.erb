@@ -1,4 +1,4 @@
-<% content_for :page_title, "#{@programme.name} – #{t("vaccination_records.index.title")}" %>
+<% content_for :page_title, "#{@programme.name} – #{t(".title")}" %>
 
 <% content_for :before_main do %>
   <%= render AppBreadcrumbComponent.new(items: [
@@ -10,11 +10,10 @@
 
 <h1 class="nhsuk-heading-l"><%= @programme.name %></h1>
 
-<%= render AppProgrammeNavigationComponent.new(@programme, active: :vaccination_records) %>
+<%= render AppProgrammeNavigationComponent.new(@programme, active: :vaccinations) %>
 
 <%= govuk_button_link_to "Import vaccination records", new_immunisation_import_path, secondary: true, class: "nhsuk-u-margin-bottom-0" %>
 
 <%= render AppVaccinationRecordTableComponent.new(@vaccination_records, current_user:, count: @pagy.count) %>
 
 <%= govuk_pagination(pagy: @pagy) %>
-

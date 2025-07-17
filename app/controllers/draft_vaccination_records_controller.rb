@@ -143,7 +143,7 @@ class DraftVaccinationRecordsController < ApplicationController
         return_to: "record"
       )
     else
-      programme_vaccination_record_path(@programme, @vaccination_record)
+      vaccination_record_path(@vaccination_record)
     end
   end
 
@@ -231,7 +231,7 @@ class DraftVaccinationRecordsController < ApplicationController
     @back_link_path =
       if @draft_vaccination_record.editing?
         if current_step == :confirm
-          programme_vaccination_record_path(@programme, @vaccination_record)
+          vaccination_record_path(@vaccination_record)
         else
           wizard_path("confirm")
         end

@@ -180,12 +180,7 @@ Rails.application.routes.draw do
     end
 
     resources :cohorts, only: %i[index show], controller: "programmes/cohorts"
-
-    resources :vaccination_records,
-              path: "vaccination-records",
-              only: %i[index show update destroy] do
-      get "destroy", action: :confirm_destroy, on: :member, as: "destroy"
-    end
+    resources :vaccinations, only: :index, controller: "programmes/vaccinations"
 
     resources :vaccination_reports,
               path: "vaccination-reports",
@@ -297,6 +292,12 @@ Rails.application.routes.draw do
   end
 
   resource :organisation, only: %i[show]
+
+  resources :vaccination_records,
+            path: "vaccination-records",
+            only: %i[show update destroy] do
+    get "destroy", action: :confirm_destroy, on: :member, as: "destroy"
+  end
 
   resources :vaccines, only: %i[index show] do
     resources :batches, only: %i[create edit new update] do
