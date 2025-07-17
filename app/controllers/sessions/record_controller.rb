@@ -17,13 +17,14 @@ class Sessions::RecordController < ApplicationController
 
   def show
     scope =
-      @session
-        .patient_sessions
-        .includes(
-          :latest_note,
-          patient: %i[consent_statuses triage_statuses vaccination_statuses]
-        )
-        .has_registration_status(%w[attending completed])
+      @session.patient_sessions.includes(
+        :latest_note,
+        patient: %i[consent_statuses triage_statuses vaccination_statuses]
+      )
+
+    if @session.requires_registration?
+      scope = scope.has_registration_status(%w[attending completed])
+    end
 
     patient_sessions =
       @form.apply(scope).consent_given_and_ready_to_vaccinate(
