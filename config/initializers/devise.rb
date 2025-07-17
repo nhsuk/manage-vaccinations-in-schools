@@ -412,7 +412,7 @@ Devise.setup do |config|
     end
 
     Warden::Manager.before_logout do |user, _auth, _opts|
-      user&.update!(:pwd_auth_session_token, nil)
+      user&.update_attribute(:pwd_auth_session_token, nil)
     end
   end
 end
