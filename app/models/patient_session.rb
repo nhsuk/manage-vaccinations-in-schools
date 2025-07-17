@@ -172,6 +172,7 @@ class PatientSession < ApplicationRecord
             ).where(
               Patient::ConsentStatus
                 .where("patient_id = patient_sessions.patient_id")
+                .where(programme:)
                 .has_vaccine_method(vaccine_method)
                 .arel
                 .exists
