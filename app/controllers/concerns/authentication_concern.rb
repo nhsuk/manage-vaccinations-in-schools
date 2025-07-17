@@ -19,7 +19,8 @@ module AuthenticationConcern
 
     def authenticate_user!
       if !user_signed_in?
-        if request.path != start_path && request.path != new_users_organisations_path
+        if request.path != start_path &&
+             request.path != new_users_organisations_path
           store_location_for(:user, request.fullpath)
         end
 
@@ -108,11 +109,7 @@ module AuthenticationConcern
 
     def reporting_app_redirect_url_with_token_for(user)
       url = session["redirect_after_login"]
-      if url.present?
-        add_token_to(url, user)
-      else
-        nil
-      end
+      url.present? ? add_token_to(url, user) : nil
     end
 
     def after_sign_in_path_for(scope)
@@ -121,7 +118,10 @@ module AuthenticationConcern
         stored_location_for(scope),
         dashboard_path
       ]
-      urls.compact.find { is_valid_redirect?(it) && (it != request.fullpath) && (it != new_users_organisations_path) }
+      urls.compact.find do
+        is_valid_redirect?(it) && (it != request.fullpath) &&
+          (it != new_users_organisations_path)
+      end
     end
 
     def redirect_after_choosing_org

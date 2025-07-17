@@ -58,7 +58,7 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     if validate_logout_token(logout_token)
       if @sid.blank? || @user.session_token == @sid
         @user.update!(session_token: nil, pwd_auth_session_token: nil)
-      end  
+      end
 
       render json: {}, status: :ok
     else
