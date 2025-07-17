@@ -1,13 +1,10 @@
 # frozen_string_literal: true
 
-class Programmes::PatientsController < ApplicationController
+class Programmes::PatientsController < Programmes::BaseController
   include Pagy::Backend
   include SearchFormConcern
 
-  before_action :set_programme
   before_action :set_search_form
-
-  layout "full"
 
   def index
     scope =
@@ -19,11 +16,5 @@ class Programmes::PatientsController < ApplicationController
 
     patients = @form.apply(scope)
     @pagy, @patients = pagy(patients)
-  end
-
-  private
-
-  def set_programme
-    @programme = policy_scope(Programme).find_by!(type: params[:programme_type])
   end
 end

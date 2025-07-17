@@ -1,11 +1,7 @@
 # frozen_string_literal: true
 
-class Programmes::VaccinationsController < ApplicationController
+class Programmes::VaccinationsController < Programmes::BaseController
   include Pagy::Backend
-
-  before_action :set_programme
-
-  layout "full"
 
   def index
     scope =
@@ -15,11 +11,5 @@ class Programmes::VaccinationsController < ApplicationController
         .order(:performed_at)
 
     @pagy, @vaccination_records = pagy(scope)
-  end
-
-  private
-
-  def set_programme
-    @programme = policy_scope(Programme).find_by!(type: params[:programme_type])
   end
 end

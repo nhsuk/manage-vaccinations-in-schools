@@ -1,11 +1,7 @@
 # frozen_string_literal: true
 
-class Programmes::CohortsController < ApplicationController
+class Programmes::CohortsController < Programmes::BaseController
   include Pagy::Backend
-
-  before_action :set_programme
-
-  layout "full"
 
   def index
     birth_academic_years = @programme.birth_academic_years
@@ -34,10 +30,6 @@ class Programmes::CohortsController < ApplicationController
   end
 
   private
-
-  def set_programme
-    @programme = policy_scope(Programme).find_by!(type: params[:programme_type])
-  end
 
   def patients_in_organisation
     current_user.selected_organisation.patients

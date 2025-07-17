@@ -166,7 +166,7 @@ Rails.application.routes.draw do
   end
 
   resources :programmes, only: :index, param: :type do
-    get "consent-form", on: :member
+    get "consent-form", on: :member, action: :consent_form
 
     scope module: :programmes do
       resource :overview, path: "", only: :show, controller: :overview
