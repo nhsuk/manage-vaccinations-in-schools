@@ -73,6 +73,16 @@ describe "Filtering" do
         session: @session
       )
 
+    @patient_consented_for_flu_both =
+      create(
+        :patient,
+        :consent_given_nasal_or_injection_triage_not_needed,
+        :in_attendance,
+        programmes: [@session.programmes.first],
+        year_group: 5,
+        session: @session
+      )
+
     @patient_consented_for_flu_both_triaged_nasal =
       create(
         :patient,
@@ -158,6 +168,7 @@ describe "Filtering" do
       @patient_consented_for_flu_injection.full_name
     )
     expect(page).to have_content(@patient_consented_for_flu_nasal.full_name)
+    expect(page).to have_content(@patient_consented_for_flu_both.full_name)
     expect(page).to have_content(
       @patient_consented_for_flu_both_triaged_nasal.full_name
     )
@@ -169,6 +180,7 @@ describe "Filtering" do
     )
     expect(page).to have_content(@patient_consented_for_flu_injection.full_name)
     expect(page).not_to have_content(@patient_consented_for_flu_nasal.full_name)
+    expect(page).not_to have_content(@patient_consented_for_flu_both.full_name)
     expect(page).not_to have_content(
       @patient_consented_for_flu_both_triaged_nasal.full_name
     )
