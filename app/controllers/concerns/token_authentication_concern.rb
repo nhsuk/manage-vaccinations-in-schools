@@ -51,8 +51,8 @@ module TokenAuthenticationConcern
           authenticate_user!
         else
           session.clear
-          Rails.logger.warn "Couldn't find user id #{data["user"]["id"]} with given session_token and pwd_auth_session_token"
           token_error!(jwt)
+          Rails.logger.warn "Couldn't find user id #{data["user"]["id"]} with tokens"
         end
       end
     rescue JWT::DecodeError, NoMethodError

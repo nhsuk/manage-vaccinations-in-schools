@@ -2,12 +2,12 @@
 
 describe TokenAuthenticationConcern do
   let(:user) { @user = build(:user) }
-  let(:mock_request) { instance_double(request, headers: {}) }
+  let(:mock_request) { instance_double("request", headers: {}) }
   let(:sample_class) do
     Class
       .new do # rubocop:disable Style/BlockDelimiters
         include TokenAuthenticationConcern
-        attr_accessor :request, :session
+        attr_accessor :"request", :session
 
         def authenticate_user!
         end
@@ -47,7 +47,7 @@ describe TokenAuthenticationConcern do
         before do
           sample_class.request =
             instance_double(
-              request,
+              "request",
               headers: {
                 "Authorization" => "Bearer myjwt"
               }
@@ -103,7 +103,7 @@ describe TokenAuthenticationConcern do
       context "and the Authorization header is provided" do
         before do
           sample_class.request =
-            instance_double(request, headers: { "Authorization" => token })
+            instance_double("request", headers: { "Authorization" => token })
         end
 
         context "and the Authorization header contains the reporting app's secret" do
@@ -171,7 +171,7 @@ describe TokenAuthenticationConcern do
 
     before do
       sample_class.request =
-        instance_double(request, headers: { "Authorization" => jwt })
+        instance_double("request", headers: { "Authorization" => jwt })
     end
 
     context "when a valid jwt is given" do
@@ -298,7 +298,7 @@ describe TokenAuthenticationConcern do
 
       context "when decoding does not work" do
         it "raises an exception" do
-          expect { sample_class.send(:decode_jwt!, jwt) }.to raise_error
+          expect { sample_class.send(:decode_jwt!, jwt) }.to raise_error(JWT::DecodeError)
         end
       end
     end
