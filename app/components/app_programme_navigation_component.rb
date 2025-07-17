@@ -18,7 +18,7 @@ class AppProgrammeNavigationComponent < ViewComponent::Base
 
       nav.with_item(
         href: programme_cohorts_path(programme),
-        text: I18n.t("cohorts.index.title"),
+        text: I18n.t("programmes.cohorts.index.title"),
         selected: active == :cohorts
       )
 

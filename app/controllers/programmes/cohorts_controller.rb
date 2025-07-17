@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class CohortsController < ApplicationController
+class Programmes::CohortsController < ApplicationController
   include Pagy::Backend
 
   before_action :set_programme

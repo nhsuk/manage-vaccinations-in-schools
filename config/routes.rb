@@ -179,7 +179,7 @@ Rails.application.routes.draw do
       get "consent-form", action: "consent_form"
     end
 
-    resources :cohorts, only: %i[index show]
+    resources :cohorts, only: %i[index show], controller: "programmes/cohorts"
 
     resources :vaccination_records,
               path: "vaccination-records",

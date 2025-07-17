@@ -490,9 +490,6 @@ en:
     zero: No children
     one: 1 child
     other: "%{count} children"
-  cohorts:
-    index:
-      title: Cohorts
   consent_forms:
     index:
       title: Unmatched consent responses
@@ -584,6 +581,9 @@ en:
     index:
       title: Children
   programmes:
+    cohorts:
+      index:
+        title: Cohorts
     index:
       title: Programmes
     sessions:
