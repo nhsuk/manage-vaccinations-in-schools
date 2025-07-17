@@ -114,11 +114,14 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
   end
 
   def vaccination_method
+    return if context == :outcome
+
     vaccine_method =
       programmes
         .select(&:has_multiple_vaccine_methods?)
         .flat_map { |programme| patient.approved_vaccine_methods(programme:) }
         .first
+
     Vaccine.human_enum_name(:method, vaccine_method).presence
   end
 
