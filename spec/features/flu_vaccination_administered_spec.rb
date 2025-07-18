@@ -39,6 +39,24 @@ describe "Flu vaccination" do
     and_a_text_is_sent_to_the_parent_confirming_the_vaccination
   end
 
+  scenario "Administered with nasal where injection is an option" do
+    given_i_am_signed_in_with_flu_programme
+    and_there_is_a_flu_session_today_with_patients_ready_to_vaccinate
+    and_there_are_nasal_and_injection_batches
+
+    when_i_go_to_the_nasal_or_injection_patient
+    then_i_see_the_vaccination_form_for_nasal_spray
+    and_i_see_the_option_to_administer_injection
+
+    when_i_record_that_the_patient_has_been_vaccinated_with_nasal_spray
+    then_i_see_the_check_and_confirm_page_for_nasal_spray
+    and_i_get_confirmation_after_recording
+
+    when_vaccination_confirmations_are_sent
+    then_an_email_is_sent_to_the_parent_confirming_the_vaccination
+    and_a_text_is_sent_to_the_parent_confirming_the_vaccination
+  end
+
   scenario "Administered with injection instead of nasal" do
     given_i_am_signed_in_with_flu_programme
     and_there_is_a_flu_session_today_with_patients_ready_to_vaccinate

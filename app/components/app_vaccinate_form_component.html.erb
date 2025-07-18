@@ -91,9 +91,7 @@
                                                    } %>
             <% end %>
           <% else %>
-            <%= f.govuk_radio_button :vaccine_method, vaccine_method, label: { text: label }, hint: { text: hint }, link_errors: index.zero? do %>
-              <%= f.hidden_field :delivery_site, value: options.first.value %>
-            <% end %>
+            <%= f.govuk_radio_button :vaccine_method, vaccine_method, label: { text: label }, hint: { text: hint }, link_errors: index.zero? %>
           <% end %>
 
           <% if index.zero? %>

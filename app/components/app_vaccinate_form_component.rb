@@ -34,15 +34,21 @@ class AppVaccinateFormComponent < ViewComponent::Base
   CommonDeliverySite = Struct.new(:value, :label)
 
   def common_delivery_site_options(vaccine_method)
-    options =
-      COMMON_DELIVERY_SITES
-        .fetch(vaccine_method)
-        .map do |value|
-          label = VaccinationRecord.human_enum_name(:delivery_site, value)
-          CommonDeliverySite.new(value:, label:)
-        end
+    common_delivery_sites = COMMON_DELIVERY_SITES.fetch(vaccine_method)
 
-    if vaccine_method == "injection"
+    options =
+      common_delivery_sites.map do |value|
+        label = VaccinationRecord.human_enum_name(:delivery_site, value)
+        CommonDeliverySite.new(value:, label:)
+      end
+
+    has_more_delivery_sites =
+      (
+        Vaccine::AVAILABLE_DELIVERY_SITES.fetch(vaccine_method) -
+          common_delivery_sites
+      ).present?
+
+    if has_more_delivery_sites
       options << CommonDeliverySite.new(value: "other", label: "Other")
     end
 
