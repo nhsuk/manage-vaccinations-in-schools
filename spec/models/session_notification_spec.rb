@@ -69,7 +69,7 @@ describe SessionNotification do
         expect(session_notification).to be_school_reminder
         expect(session_notification.session).to eq(session)
         expect(session_notification.patient).to eq(patient)
-        expect(session_notification.sent_at).to be_today
+        expect(session_notification.sent_at).to eq(today)
       end
 
       it "enqueues an email per parent who gave consent" do
@@ -136,7 +136,7 @@ describe SessionNotification do
         expect(session_notification).to be_clinic_initial_invitation
         expect(session_notification.session).to eq(session)
         expect(session_notification.patient).to eq(patient)
-        expect(session_notification.sent_at).to be_today
+        expect(session_notification.sent_at).to eq(today)
       end
 
       it "enqueues an email per parent" do
@@ -234,7 +234,7 @@ describe SessionNotification do
         expect(session_notification).to be_clinic_subsequent_invitation
         expect(session_notification.session).to eq(session)
         expect(session_notification.patient).to eq(patient)
-        expect(session_notification.sent_at).to be_today
+        expect(session_notification.sent_at).to eq(today)
       end
 
       it "enqueues an email per parent" do

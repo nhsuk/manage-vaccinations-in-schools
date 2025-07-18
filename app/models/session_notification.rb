@@ -79,6 +79,7 @@ class SessionNotification < ApplicationRecord
       session:,
       session_date:,
       type:,
+      sent_at: Time.current,
       sent_by: current_user
     )
 

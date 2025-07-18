@@ -65,7 +65,7 @@ describe ConsentNotification do
         expect(consent_notification).not_to be_reminder
         expect(consent_notification.programmes).to eq(programmes)
         expect(consent_notification.patient).to eq(patient)
-        expect(consent_notification.sent_at).to be_today
+        expect(consent_notification.sent_at).to eq(today)
       end
 
       it "enqueues an email per parent" do
@@ -168,7 +168,7 @@ describe ConsentNotification do
         expect(consent_notification).not_to be_reminder
         expect(consent_notification.programmes).to eq(programmes)
         expect(consent_notification.patient).to eq(patient)
-        expect(consent_notification.sent_at).to be_today
+        expect(consent_notification.sent_at).to eq(today)
       end
 
       it "enqueues an email per parent" do
@@ -236,7 +236,7 @@ describe ConsentNotification do
         expect(consent_notification).to be_reminder
         expect(consent_notification.programmes).to eq(programmes)
         expect(consent_notification.patient).to eq(patient)
-        expect(consent_notification.sent_at).to be_today
+        expect(consent_notification.sent_at).to eq(today)
       end
 
       it "enqueues an email per parent" do
@@ -338,7 +338,7 @@ describe ConsentNotification do
         expect(consent_notification).to be_reminder
         expect(consent_notification.programmes).to eq(programmes)
         expect(consent_notification.patient).to eq(patient)
-        expect(consent_notification.sent_at).to be_today
+        expect(consent_notification.sent_at).to eq(today)
       end
 
       it "enqueues an email per parent" do
