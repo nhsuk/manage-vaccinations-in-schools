@@ -114,7 +114,7 @@ resource "aws_lb_target_group" "reporting_blue" {
   vpc_id      = aws_vpc.application_vpc.id
   target_type = "ip"
   health_check {
-    path                = "/"
+    path                = "/healthcheck"
     protocol            = "HTTP"
     port                = "traffic-port"
     matcher             = "200"
@@ -132,7 +132,7 @@ resource "aws_lb_target_group" "reporting_green" {
   vpc_id      = aws_vpc.application_vpc.id
   target_type = "ip"
   health_check {
-    path                = "/"
+    path                = "/healthcheck"
     protocol            = "HTTP"
     port                = "traffic-port"
     matcher             = "200"
@@ -257,4 +257,76 @@ module "dns_route53" {
   zone_id      = aws_lb.app_lb.zone_id
   zone_name    = var.zone_name
   domain_names = tolist(toset(values(var.http_hosts)))
+}
+
+
+############# Internal Load Balancer #############
+
+resource "aws_security_group" "internal_lb_for_web_service" {
+  name        = "mavis-internal-lb-${var.environment}"
+  description = "Security Group for Internal Load Balancer"
+  vpc_id      = aws_vpc.application_vpc.id
+  lifecycle {
+    ignore_changes = [description]
+  }
+}
+
+resource "aws_security_group_rule" "ingress_reporting_service" {
+  type                     = "ingress"
+  from_port                = 443
+  to_port                  = 443
+  protocol                 = "tcp"
+  security_group_id        = aws_security_group.internal_lb_for_web_service.id
+  source_security_group_id = module.reporting_service.security_group_id
+}
+
+resource "aws_security_group_rule" "internal_lb_web_service_ingress" {
+  type                     = "egress"
+  from_port                = 4000
+  to_port                  = 4000
+  protocol                 = "tcp"
+  security_group_id        = module.web_service.security_group_id
+  source_security_group_id = aws_security_group.internal_lb_for_web_service.id
+}
+
+resource "aws_lb" "internal_web_service" {
+  name               = "mavis-reporting-${var.environment}"
+  internal           = true
+  load_balancer_type = "application"
+  access_logs {
+    bucket  = var.access_logs_bucket
+    prefix  = "web-lb-access-logs-${var.environment}"
+    enabled = true
+  }
+  subnets    = [aws_subnet.private_subnet_a.id, aws_subnet.private_subnet_b.id]
+  depends_on = [aws_security_group_rule.internal_lb_web_service_ingress]
+}
+
+resource "aws_lb_target_group" "web_internal" {
+  name        = "mavis-web-internal-${var.environment}"
+  port        = 4000
+  protocol    = "HTTP"
+  vpc_id      = aws_vpc.application_vpc.id
+  target_type = "ip"
+  health_check {
+    path                = "/up"
+    protocol            = "HTTP"
+    port                = "traffic-port"
+    matcher             = "200"
+    interval            = 5
+    timeout             = 4
+    healthy_threshold   = 2
+    unhealthy_threshold = 2
+  }
+}
+
+resource "aws_lb_listener" "internal_web_service_http" {
+  load_balancer_arn = aws_lb.internal_web_service.arn
+  port              = 80
+  protocol          = "HTTP"
+
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.web_internal.arn
+  }
 }

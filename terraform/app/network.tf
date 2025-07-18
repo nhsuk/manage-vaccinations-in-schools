@@ -165,3 +165,31 @@ resource "aws_nat_gateway" "nat_gateway_b" {
   connectivity_type = "public"
   depends_on        = [aws_internet_gateway.internet_gateway]
 }
+
+################################# Zones #################################
+
+resource "aws_route53_zone" "internal" {
+  name    = "${var.environment}.aws-int"
+  comment = "Internal zone for mavis in environment ${var.environment}"
+
+  vpc {
+    vpc_id = aws_vpc.application_vpc.id
+  }
+
+  tags = {
+    Name  = "${var.environment}.aws-int"
+    Scope = "Internal"
+  }
+}
+
+resource "aws_route53_record" "lb_alias" {
+  zone_id = aws_route53_zone.internal.zone_id
+  name    = "web"
+  type    = "A"
+
+  alias {
+    name                   = aws_lb.internal_web_service.dns_name
+    zone_id                = aws_lb.internal_web_service.zone_id
+    evaluate_target_health = false
+  }
+}

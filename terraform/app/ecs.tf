@@ -1,3 +1,4 @@
+
 resource "aws_security_group_rule" "web_service_alb_ingress" {
   type                     = "ingress"
   from_port                = 4000
@@ -10,10 +11,21 @@ resource "aws_security_group_rule" "web_service_alb_ingress" {
   }
 }
 
-resource "aws_security_group_rule" "reporting_service_alb_ingress" {
+resource "aws_security_group_rule" "web_service_internal_alb_ingress" {
   type                     = "ingress"
   from_port                = 4000
   to_port                  = 4000
+  protocol                 = "tcp"
+  security_group_id        = module.web_service.security_group_id
+  source_security_group_id = aws_security_group.internal_lb_for_web_service.id
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+resource "aws_security_group_rule" "reporting_service_alb_ingress" {
+  type                     = "ingress"
+  from_port                = 5000
+  to_port                  = 5000
   protocol                 = "tcp"
   security_group_id        = module.reporting_service.security_group_id
   source_security_group_id = aws_security_group.lb_service_sg.id
@@ -129,7 +141,7 @@ module "reporting_service" {
     task_role_arn        = aws_iam_role.ecs_task_role.arn
     log_group_name       = aws_cloudwatch_log_group.ecs_log_group.name
     region               = var.region
-    health_check_command = ["CMD-SHELL", "curl -f http://localhost:5000/healthcheck || exit 1"]
+    health_check_command = ["CMD-SHELL", "wget -f http://localhost:5000/healthcheck || exit 1"]
   }
   network_params = {
     subnets = [aws_subnet.private_subnet_a.id, aws_subnet.private_subnet_b.id]
@@ -147,6 +159,7 @@ module "reporting_service" {
       scale_out_cooldown     = 300
     }
   })
+  container_port        = 5000
   minimum_replica_count = var.minimum_reporting_replicas
   maximum_replica_count = var.maximum_reporting_replicas
   cluster_id            = aws_ecs_cluster.cluster.id

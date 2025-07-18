@@ -84,8 +84,8 @@ resource "aws_ecs_task_definition" "this" {
       essential = true
       portMappings = [
         {
-          containerPort = 4000
-          hostPort      = 4000
+          containerPort = var.container_port
+          hostPort      = var.host_port == null ? var.container_port : var.host_port
         }
       ]
       environment = concat(var.task_config.environment, [{ name = "SERVER_TYPE", value = var.server_type }])

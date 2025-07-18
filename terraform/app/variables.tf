@@ -264,9 +264,6 @@ locals {
   }
 }
 
-########## Valkey Configuration ##########
-
-
 ########## ECS/Scaling Configuration ##########
 
 variable "container_insights" {
