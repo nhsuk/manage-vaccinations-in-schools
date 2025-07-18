@@ -244,7 +244,9 @@ class DraftVaccinationRecord
   def vaccine_method_matches_consent_and_triage?
     return true if delivery_method.blank? || !administered?
 
-    approved_methods = patient.approved_vaccine_methods(programme:)
+    academic_year = session&.academic_year || performed_at.academic_year
+    approved_methods =
+      patient.approved_vaccine_methods(programme:, academic_year:)
     vaccine_method = Vaccine.delivery_method_to_vaccine_method(delivery_method)
 
     approved_methods.include?(vaccine_method)

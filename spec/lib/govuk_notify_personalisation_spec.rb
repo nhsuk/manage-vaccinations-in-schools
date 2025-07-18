@@ -378,6 +378,7 @@ describe GovukNotifyPersonalisation do
           :patient_consent_status,
           :given,
           patient:,
+          academic_year: session.academic_year,
           programme: programmes.first
         )
       end
@@ -394,6 +395,7 @@ describe GovukNotifyPersonalisation do
           :given,
           patient:,
           programme: programmes.first,
+          academic_year: session.academic_year,
           vaccine_methods: %w[nasal injection]
         )
       end
@@ -410,13 +412,15 @@ describe GovukNotifyPersonalisation do
           :given,
           patient:,
           programme: programmes.first,
+          academic_year: session.academic_year,
           vaccine_methods: %w[nasal injection]
         )
         create(
           :patient_consent_status,
           :given,
           patient:,
-          programme: programmes.second
+          programme: programmes.second,
+          academic_year: session.academic_year
         )
       end
 
@@ -443,7 +447,8 @@ describe GovukNotifyPersonalisation do
           :safe_to_vaccinate,
           :injection,
           patient:,
-          programme: programmes.first
+          programme: programmes.first,
+          academic_year: session.academic_year
         )
       end
 

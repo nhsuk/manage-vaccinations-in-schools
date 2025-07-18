@@ -21,7 +21,7 @@ module SendClinicInvitationsConcern
 
     already_sent_notification =
       patient_session.session_notifications.any? do
-        _1.session_date == session_date
+        it.session_date == session_date
       end
 
     return false if already_sent_notification
@@ -30,9 +30,11 @@ module SendClinicInvitationsConcern
 
     return false if eligible_programmes.empty?
 
+    academic_year = session_date.academic_year
+
     eligible_programmes.any? do |programme|
-      !patient.vaccination_status(programme:).vaccinated? &&
-        !patient.consent_status(programme:).refused?
+      !patient.vaccination_status(programme:, academic_year:).vaccinated? &&
+        !patient.consent_status(programme:, academic_year:).refused?
     end
   end
 

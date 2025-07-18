@@ -42,10 +42,12 @@ class SendSchoolConsentRemindersJob < ApplicationJob
 
     return false unless patient.send_notifications?
 
+    academic_year = patient_session.academic_year
+
     suitable_programmes =
       programmes.select do |programme|
-        patient.consent_status(programme:).no_response? &&
-          patient.vaccination_status(programme:).none_yet?
+        patient.consent_status(programme:, academic_year:).no_response? &&
+          patient.vaccination_status(programme:, academic_year:).none_yet?
       end
 
     return false if suitable_programmes.empty?

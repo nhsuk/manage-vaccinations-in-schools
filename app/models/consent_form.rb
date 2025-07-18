@@ -319,6 +319,8 @@ class ConsentForm < ApplicationRecord
       ].compact
   end
 
+  def academic_year = created_at.to_date.academic_year
+
   def recorded? = recorded_at != nil
 
   def response_given? = consent_form_programmes.any?(&:response_given?)

@@ -50,6 +50,7 @@ describe PatientSession do
       end
 
       let(:programmes) { [create(:programme, :flu), create(:programme, :hpv)] }
+      let(:academic_year) { Date.current.academic_year }
       let(:vaccine_method) { nil }
 
       it { should be_empty }
@@ -81,7 +82,7 @@ describe PatientSession do
           before do
             patient_session
               .patient
-              .consent_status(programme: programmes.first)
+              .consent_status(programme: programmes.first, academic_year:)
               .update!(vaccine_methods: %w[nasal injection])
           end
 
@@ -91,7 +92,7 @@ describe PatientSession do
             before do
               patient_session
                 .patient
-                .vaccination_status(programme: programmes.first)
+                .vaccination_status(programme: programmes.first, academic_year:)
                 .vaccinated!
             end
 

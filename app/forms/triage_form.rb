@@ -61,12 +61,13 @@ class TriageForm
 
   private
 
-  delegate :organisation, :patient, to: :patient_session
+  delegate :organisation, :patient, :session, to: :patient_session
+  delegate :academic_year, to: :session
 
   def consented_vaccine_methods
     @consented_vaccine_methods ||=
       vaccine_methods.presence ||
-        patient.consent_status(programme:).vaccine_methods
+        patient.consent_status(programme:, academic_year:).vaccine_methods
   end
 
   def triage_attributes

@@ -77,6 +77,8 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
 
   attr_reader :patient_session, :patient, :session, :context, :programmes
 
+  delegate :academic_year, to: :session
+
   def can_register_attendance?
     session_attendance =
       SessionAttendance.new(
@@ -122,8 +124,11 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
 
     vaccine_methods =
       programmes_to_check.flat_map do |programme|
-        if patient.consent_given_and_safe_to_vaccinate?(programme:)
-          patient.approved_vaccine_methods(programme:)
+        if patient.consent_given_and_safe_to_vaccinate?(
+             programme:,
+             academic_year:
+           )
+          patient.approved_vaccine_methods(programme:, academic_year:)
         else
           []
         end
@@ -155,7 +160,7 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
           render(
             AppProgrammeStatusTagsComponent.new(
               programmes.index_with do |programme|
-                patient.consent_status(programme:).slice(
+                patient.consent_status(programme:, academic_year:).slice(
                   :status,
                   :vaccine_methods
                 )
@@ -171,7 +176,10 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
           render(
             AppProgrammeStatusTagsComponent.new(
               programmes.index_with do |programme|
-                triage_status_tag(patient.triage_status(programme:), programme)
+                triage_status_tag(
+                  patient.triage_status(programme:, academic_year:),
+                  programme
+                )
               end,
               outcome: :triage
             )

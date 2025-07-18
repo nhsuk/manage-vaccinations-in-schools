@@ -112,6 +112,8 @@ class Consent < ApplicationRecord
     via_self_consent? ? patient.full_name : parent.label
   end
 
+  def academic_year = submitted_at.to_date.academic_year
+
   def response_provided? = !response_not_provided?
 
   def withdrawn?
