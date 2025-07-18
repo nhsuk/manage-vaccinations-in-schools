@@ -60,7 +60,7 @@ class Session < ApplicationRecord
   scope :today, -> { has_date(Date.current) }
 
   scope :for_current_academic_year,
-        -> { where(academic_year: Date.current.academic_year) }
+        -> { where(academic_year: AcademicYear.current) }
 
   scope :unscheduled,
         -> do

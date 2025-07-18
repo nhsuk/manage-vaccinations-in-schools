@@ -91,7 +91,7 @@ class Organisation < ApplicationRecord
   end
 
   def generic_clinic_session
-    academic_year = Date.current.academic_year
+    academic_year = AcademicYear.current
     location = generic_clinic
 
     sessions

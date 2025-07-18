@@ -180,17 +180,13 @@ module Generate
         end
     end
 
-    def date_of_birth_for_year(
-      year_group,
-      academic_year: Date.current.academic_year
-    )
-      academic_year = academic_year.to_s
-      year_group = year_group.to_i
-
+    def date_of_birth_for_year(year_group, academic_year: AcademicYear.current)
       if year_group < 12
-        start_date = Date.new(academic_year.to_i - (year_group.to_i + 5), 9, 1)
-        end_date = Date.new(academic_year.to_i - (year_group.to_i + 4), 8, 31)
-        rand(start_date..end_date)
+        rand(
+          year_group.to_birth_academic_year(
+            academic_year:
+          ).to_academic_year_date_range
+        )
       else
         raise "Unknown year group: #{year_group}"
       end

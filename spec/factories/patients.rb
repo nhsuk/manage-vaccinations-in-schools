@@ -90,7 +90,7 @@ FactoryBot.define do
 
     date_of_birth do
       if year_group
-        academic_year_start = Date.new(Date.current.academic_year, 9, 1)
+        academic_year_start = Date.new(AcademicYear.current, 9, 1)
         start_date = academic_year_start - (5 + year_group).years
         end_date = start_date + 1.year - 1.day
         Faker::Date.between(from: end_date, to: start_date)

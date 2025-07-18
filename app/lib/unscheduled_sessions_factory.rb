@@ -2,7 +2,7 @@
 
 class UnscheduledSessionsFactory
   def initialize(academic_year: nil)
-    @academic_year = academic_year || Date.current.academic_year
+    @academic_year = academic_year || AcademicYear.current
   end
 
   def call
