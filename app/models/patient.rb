@@ -314,10 +314,9 @@ class Patient < ApplicationRecord
       consent_statuses.build(programme:)
   end
 
-  def triage_status(programme: nil, programme_id: nil)
-    programme_id ||= programme.id
-    triage_statuses.find { it.programme_id == programme_id } ||
-      triage_statuses.build(programme_id:)
+  def triage_status(programme:)
+    triage_statuses.find { it.programme_id == programme.id } ||
+      triage_statuses.build(programme:)
   end
 
   def vaccination_status(programme:)
