@@ -168,33 +168,33 @@ class Patient < ApplicationRecord
   scope :search_by_nhs_number, ->(nhs_number) { where(nhs_number:) }
 
   scope :has_vaccination_status,
-        ->(status, programme:) do
+        ->(status, programme:, academic_year:) do
           where(
             Patient::VaccinationStatus
               .where("patient_id = patients.id")
-              .where(status:, programme:)
+              .where(status:, programme:, academic_year:)
               .arel
               .exists
           )
         end
 
   scope :has_consent_status,
-        ->(status, programme:) do
+        ->(status, programme:, academic_year:) do
           where(
             Patient::ConsentStatus
               .where("patient_id = patients.id")
-              .where(status:, programme:)
+              .where(status:, programme:, academic_year:)
               .arel
               .exists
           )
         end
 
   scope :has_triage_status,
-        ->(status, programme:) do
+        ->(status, programme:, academic_year:) do
           where(
             Patient::TriageStatus
               .where("patient_id = patients.id")
-              .where(status:, programme:)
+              .where(status:, programme:, academic_year:)
               .arel
               .exists
           )

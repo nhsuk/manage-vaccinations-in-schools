@@ -120,9 +120,10 @@ class PatientSession < ApplicationRecord
 
   scope :has_consent_status,
         ->(status, programme:) do
-          where(
+          joins(:session).where(
             Patient::ConsentStatus
               .where("patient_id = patient_sessions.patient_id")
+              .where("academic_year = sessions.academic_year")
               .where(status:, programme:)
               .arel
               .exists
@@ -153,9 +154,10 @@ class PatientSession < ApplicationRecord
 
   scope :has_triage_status,
         ->(status, programme:) do
-          where(
+          joins(:session).where(
             Patient::TriageStatus
               .where("patient_id = patient_sessions.patient_id")
+              .where("academic_year = sessions.academic_year")
               .where(status:, programme:)
               .arel
               .exists
@@ -164,22 +166,25 @@ class PatientSession < ApplicationRecord
 
   scope :has_vaccine_method,
         ->(vaccine_method, programme:) do
-          where(
+          joins(:session).where(
             Patient::TriageStatus
               .where("patient_id = patient_sessions.patient_id")
+              .where("academic_year = sessions.academic_year")
               .where(vaccine_method:, programme:)
               .arel
               .exists
           ).or(
-            where(
+            joins(:session).where(
               Patient::TriageStatus
                 .where("patient_id = patient_sessions.patient_id")
+                .where("academic_year = sessions.academic_year")
                 .where(status: "not_required", programme:)
                 .arel
                 .exists
             ).where(
               Patient::ConsentStatus
                 .where("patient_id = patient_sessions.patient_id")
+                .where("academic_year = sessions.academic_year")
                 .where(programme:)
                 .has_vaccine_method(vaccine_method)
                 .arel
