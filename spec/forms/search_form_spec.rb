@@ -2,7 +2,13 @@
 
 describe SearchForm do
   subject(:form) do
-    described_class.new(**params, request_session:, request_path:, session:)
+    described_class.new(
+      **params,
+      request_session:,
+      request_path:,
+      session:,
+      academic_year:
+    )
   end
 
   let(:request_session) { {} }
@@ -22,6 +28,7 @@ describe SearchForm do
   let(:triage_status) { nil }
   let(:vaccine_method) { nil }
   let(:year_groups) { %w[8 9 10 11] }
+  let(:academic_year) { nil }
 
   let(:params) do
     {
@@ -153,8 +160,9 @@ describe SearchForm do
       let(:year_groups) { nil }
 
       let(:programme) { create(:programme) }
+      let(:academic_year) { AcademicYear.current }
 
-      it "filters on session status" do
+      it "filters on programme status" do
         patient = create(:patient, :vaccinated, programmes: [programme])
         session = create(:session, programmes: [programme])
         create(:patient_session, patient:, session:)

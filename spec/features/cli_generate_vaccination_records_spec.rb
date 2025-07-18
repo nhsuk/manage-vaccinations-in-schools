@@ -2,8 +2,8 @@
 
 require_relative "../../app/lib/mavis_cli"
 
-describe "mavis generate vaccination_records" do
-  it "generates consents" do
+describe "mavis generate vaccination-records" do
+  it "generates vaccination records" do
     given_an_organisation_exists
     and_there_is_a_patient_in_a_session
     when_i_run_the_generate_vaccination_records_command
@@ -64,7 +64,11 @@ describe "mavis generate vaccination_records" do
       @organisation
         .reload
         .patients
-        .has_vaccination_status(:vaccinated, programme: @programme)
+        .has_vaccination_status(
+          :vaccinated,
+          programme: @programme,
+          academic_year: AcademicYear.current
+        )
         .count
     ).to eq 1
   end
