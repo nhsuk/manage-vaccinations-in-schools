@@ -2,19 +2,20 @@
 
 class VaccinationReportsController < ApplicationController
   before_action :set_vaccination_report
-  before_action :set_programme, only: %i[show update]
+  before_action :set_programme
 
   include WizardControllerConcern
 
-  skip_after_action :verify_policy_scoped, only: %i[show update download]
+  skip_after_action :verify_policy_scoped
 
-  def create
-    @programme = policy_scope(Programme).find_by(type: params[:programme_type])
+  def show
+    render_wizard
+  end
 
-    @vaccination_report.reset!
-    @vaccination_report.update!(programme: @programme)
+  def update
+    @vaccination_report.assign_attributes(update_params)
 
-    redirect_to vaccination_report_path(Wicked::FIRST_STEP)
+    render_wizard @vaccination_report
   end
 
   def download
@@ -26,16 +27,6 @@ class VaccinationReportsController < ApplicationController
     else
       redirect_to vaccination_report_path(Wicked::FIRST_STEP)
     end
-  end
-
-  def show
-    render_wizard
-  end
-
-  def update
-    @vaccination_report.assign_attributes(update_params)
-
-    render_wizard @vaccination_report
   end
 
   private

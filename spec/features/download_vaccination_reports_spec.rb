@@ -117,7 +117,7 @@ describe "Download vaccination reports" do
 
   def when_i_go_to_the_programme
     sign_in @organisation.users.first
-    visit programme_path(@programme)
+    visit programme_overview_path(@programme)
   end
 
   def and_i_click_on_download_vaccination_report

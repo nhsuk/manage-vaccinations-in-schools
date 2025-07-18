@@ -490,9 +490,6 @@ en:
     zero: No children
     one: 1 child
     other: "%{count} children"
-  cohorts:
-    index:
-      title: Cohorts
   consent_forms:
     index:
       title: Unmatched consent responses
@@ -584,13 +581,23 @@ en:
     index:
       title: Children
   programmes:
+    cohorts:
+      index:
+        title: Cohorts
     index:
       title: Programmes
+    overview:
+      show:
+        title: Overview
+    patients:
+      index:
+        title: Children
     sessions:
-      table_headings:
-        completed: All sessions completed
-        scheduled: Sessions scheduled
-        unscheduled: No sessions scheduled
+      index:
+        title: Sessions
+    vaccinations:
+      index:
+        title: Vaccinations
   school_moves:
     index:
       title: School moves
@@ -633,9 +640,6 @@ en:
   organisations:
     show:
       title: Your organisation
-  vaccination_records:
-    index:
-      title: Vaccinations
   vaccines:
     index:
       title: Vaccines

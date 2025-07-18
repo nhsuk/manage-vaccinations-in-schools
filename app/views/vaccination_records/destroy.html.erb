@@ -11,7 +11,7 @@
   <%= page_title %>
 <% end %>
 
-<%= form_with url: programme_vaccination_record_path, method: :delete do |f| %>
+<%= form_with url: vaccination_record_path, method: :delete do |f| %>
   <%= f.hidden_field :return_to, value: @return_to %>
   <div class="app-button-group">
     <%= f.govuk_submit "Yes, delete this vaccination record", warning: true %>
