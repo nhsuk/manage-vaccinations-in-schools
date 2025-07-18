@@ -5,6 +5,7 @@
 # Table name: patient_triage_statuses
 #
 #  id             :bigint           not null, primary key
+#  academic_year  :integer          not null
 #  status         :integer          default("not_required"), not null
 #  vaccine_method :integer
 #  patient_id     :bigint           not null
@@ -12,8 +13,8 @@
 #
 # Indexes
 #
-#  index_patient_triage_statuses_on_patient_id_and_programme_id  (patient_id,programme_id) UNIQUE
-#  index_patient_triage_statuses_on_status                       (status)
+#  idx_on_patient_id_programme_id_academic_year_6cf32349df  (patient_id,programme_id,academic_year) UNIQUE
+#  index_patient_triage_statuses_on_status                  (status)
 #
 # Foreign Keys
 #
