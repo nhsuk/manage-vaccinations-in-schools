@@ -52,6 +52,46 @@ describe Patient::TriageStatus do
       it { should be(:not_required) }
     end
 
+    context "with conflicting consent" do
+      before do
+        create(:consent, :given, patient:, programme:)
+        create(
+          :consent,
+          :refused,
+          :needing_triage,
+          patient:,
+          programme:,
+          parent: create(:parent)
+        )
+      end
+
+      it { should be(:not_required) }
+    end
+
+    context "with two given consents with different methods" do
+      before do
+        create(
+          :consent,
+          :given,
+          :needing_triage,
+          patient:,
+          programme:,
+          vaccine_methods: %w[injection]
+        )
+        create(
+          :consent,
+          :given,
+          :needing_triage,
+          patient:,
+          programme:,
+          vaccine_methods: %w[nasal],
+          parent: create(:parent)
+        )
+      end
+
+      it { should be(:not_required) }
+    end
+
     context "with a consent that needs triage" do
       before { create(:consent, :needing_triage, patient:, programme:) }
 
