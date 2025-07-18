@@ -309,44 +309,46 @@ class Patient < ApplicationRecord
     birth_academic_year_changed?
   end
 
-  def consent_status(programme:)
-    consent_statuses.find { it.programme_id == programme.id } ||
-      consent_statuses.build(programme:)
+  def consent_status(programme:, academic_year:)
+    patient_status(consent_statuses, programme:, academic_year:)
   end
 
-  def triage_status(programme:)
-    triage_statuses.find { it.programme_id == programme.id } ||
-      triage_statuses.build(programme:)
+  def triage_status(programme:, academic_year:)
+    patient_status(triage_statuses, programme:, academic_year:)
   end
 
-  def vaccination_status(programme:)
-    vaccination_statuses.find { it.programme_id == programme.id } ||
-      vaccination_statuses.build(programme:)
+  def vaccination_status(programme:, academic_year:)
+    patient_status(vaccination_statuses, programme:, academic_year:)
   end
 
-  def consent_given_and_safe_to_vaccinate?(programme:, vaccine_method: nil)
-    return false if vaccination_status(programme:).vaccinated?
+  def consent_given_and_safe_to_vaccinate?(
+    programme:,
+    academic_year:,
+    vaccine_method: nil
+  )
+    return false if vaccination_status(programme:, academic_year:).vaccinated?
 
-    return false unless consent_status(programme:).given?
+    return false unless consent_status(programme:, academic_year:).given?
 
-    unless triage_status(programme:).safe_to_vaccinate? ||
-             triage_status(programme:).not_required?
+    unless triage_status(programme:, academic_year:).safe_to_vaccinate? ||
+             triage_status(programme:, academic_year:).not_required?
       return false
     end
 
     if vaccine_method &&
-         approved_vaccine_methods(programme:).first != vaccine_method
+         approved_vaccine_methods(programme:, academic_year:).first !=
+           vaccine_method
       return false
     end
 
     true
   end
 
-  def approved_vaccine_methods(programme:)
-    triage_status = triage_status(programme:)
+  def approved_vaccine_methods(programme:, academic_year:)
+    triage_status = triage_status(programme:, academic_year:)
 
     if triage_status.not_required?
-      consent_status(programme:).vaccine_methods
+      consent_status(programme:, academic_year:).vaccine_methods
     else
       [triage_status.vaccine_method].compact
     end
@@ -455,6 +457,12 @@ class Patient < ApplicationRecord
   end
 
   private
+
+  def patient_status(association, programme:, academic_year:)
+    association.find do
+      it.programme_id == programme.id && it.academic_year == academic_year
+    end || association.build(programme:, academic_year:)
+  end
 
   def gp_practice_is_correct_type
     location = gp_practice

@@ -46,17 +46,26 @@ module TriageMailerConcern
 
   def vaccination_will_happen?(patient, programme, consent)
     consent.requires_triage? &&
-      patient.triage_status(programme:).safe_to_vaccinate?
+      patient.triage_status(
+        programme:,
+        academic_year: consent.academic_year
+      ).safe_to_vaccinate?
   end
 
   def vaccination_wont_happen?(patient, programme, consent)
     consent.requires_triage? &&
-      patient.triage_status(programme:).do_not_vaccinate?
+      patient.triage_status(
+        programme:,
+        academic_year: consent.academic_year
+      ).do_not_vaccinate?
   end
 
   def vaccination_at_clinic?(patient, programme, consent)
     consent.requires_triage? &&
-      patient.triage_status(programme:).delay_vaccination?
+      patient.triage_status(
+        programme:,
+        academic_year: consent.academic_year
+      ).delay_vaccination?
   end
 
   def resolve_email_template(template_name, organisation)

@@ -85,10 +85,15 @@ class SessionNotification < ApplicationRecord
       sent_by: current_user
     )
 
+    academic_year = session_date.academic_year
+
     programmes =
       if type == :school_reminder
         patient_session.programmes.select do |programme|
-          patient.consent_given_and_safe_to_vaccinate?(programme:)
+          patient.consent_given_and_safe_to_vaccinate?(
+            programme:,
+            academic_year:
+          )
         end
       else
         patient_session.programmes

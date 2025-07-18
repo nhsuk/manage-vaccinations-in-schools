@@ -33,7 +33,7 @@ class AppPatientSessionTriageComponent < ViewComponent::Base
       patient
         .triage_statuses
         .includes(:consents, :programme, :vaccination_records)
-        .find_by(programme:)
+        .find_by(programme:, academic_year:)
   end
 
   def vaccination_method

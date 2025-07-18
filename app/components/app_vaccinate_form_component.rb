@@ -13,13 +13,14 @@ class AppVaccinateFormComponent < ViewComponent::Base
 
   delegate :patient_session, :programme, to: :vaccinate_form
   delegate :patient, :session, to: :patient_session
+  delegate :academic_year, to: :session
 
   def url
     session_patient_programme_vaccinations_path(session, patient, programme)
   end
 
   def vaccine_methods
-    patient.approved_vaccine_methods(programme:)
+    patient.approved_vaccine_methods(programme:, academic_year:)
   end
 
   def dose_sequence

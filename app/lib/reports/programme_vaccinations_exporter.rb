@@ -191,6 +191,7 @@ class Reports::ProgrammeVaccinationsExporter
     grouped_consents = consents.fetch(patient.id, [])
     triage = triages[patient.id]
     gillick_assessment = gillick_assessments.dig(patient.id, session.id)
+    academic_year = session.academic_year
 
     [
       organisation.ods_code,
@@ -210,7 +211,7 @@ class Reports::ProgrammeVaccinationsExporter
       nhs_number_status_code(patient:),
       patient.gp_practice&.ods_code || "",
       patient.gp_practice&.name || "",
-      consent_status(patient:, programme:),
+      consent_status(patient:, programme:, academic_year:),
       consent_details(consents: grouped_consents),
       health_question_answers(consents: grouped_consents),
       triage&.status&.humanize || "",

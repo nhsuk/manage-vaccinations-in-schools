@@ -46,7 +46,7 @@ class AppPatientSessionOutcomeComponent < ViewComponent::Base
 
   def vaccination_status
     @vaccination_status ||=
-      patient.vaccination_statuses.find_or_initialize_by(programme:)
+      patient.vaccination_status(programme:, academic_year:)
   end
 
   delegate :status, to: :vaccination_status

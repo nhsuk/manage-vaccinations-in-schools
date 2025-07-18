@@ -29,6 +29,7 @@ class AppPatientSessionConsentComponent < ViewComponent::Base
         .consent_notifications
         .request
         .has_programme(programme)
+        .for_academic_year(academic_year)
         .order(sent_at: :desc)
         .first
   end
@@ -38,16 +39,18 @@ class AppPatientSessionConsentComponent < ViewComponent::Base
       patient
         .consents
         .where(programme:)
+        .for_academic_year(academic_year)
         .includes(:consent_form, :parent, :programme)
         .order(created_at: :desc)
   end
 
   def consent_status
-    @consent_status ||= patient.consent_status(programme:)
+    @consent_status ||= patient.consent_status(programme:, academic_year:)
   end
 
   def vaccination_status
-    @vaccination_status ||= patient.vaccination_status(programme:)
+    @vaccination_status ||=
+      patient.vaccination_status(programme:, academic_year:)
   end
 
   def can_send_consent_request?

@@ -18,7 +18,7 @@ class AppPatientSessionRecordComponent < ViewComponent::Base
   end
 
   def render?
-    patient.consent_given_and_safe_to_vaccinate?(programme:) &&
+    patient.consent_given_and_safe_to_vaccinate?(programme:, academic_year:) &&
       (
         patient_session.registration_status&.attending? ||
           patient_session.registration_status&.completed? || false
@@ -29,7 +29,8 @@ class AppPatientSessionRecordComponent < ViewComponent::Base
 
   attr_reader :patient_session, :programme, :vaccinate_form
 
-  delegate :patient, to: :patient_session
+  delegate :patient, :session, to: :patient_session
+  delegate :academic_year, to: :session
 
   def default_vaccinate_form
     pre_screening_confirmed = patient.pre_screenings.today.exists?(programme:)
@@ -40,7 +41,8 @@ class AppPatientSessionRecordComponent < ViewComponent::Base
   def heading
     vaccination =
       if programme.has_multiple_vaccine_methods?
-        vaccine_method = patient.approved_vaccine_methods(programme:).first
+        vaccine_method =
+          patient.approved_vaccine_methods(programme:, academic_year:).first
         method_string =
           Vaccine.human_enum_name(:method, vaccine_method).downcase
         "vaccination with #{method_string}"
