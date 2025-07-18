@@ -31,6 +31,7 @@
 #  fk_rails_...  (programme_id => programmes.id)
 #
 class Triage < ApplicationRecord
+  include BelongsToAcademicYear
   include Invalidatable
 
   self.table_name = "triage"
@@ -61,4 +62,6 @@ class Triage < ApplicationRecord
        }
 
   encrypts :notes
+
+  academic_year_attribute :created_at
 end

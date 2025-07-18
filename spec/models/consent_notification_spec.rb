@@ -24,6 +24,10 @@
 #  fk_rails_...  (session_id => sessions.id)
 #
 describe ConsentNotification do
+  it_behaves_like "a model that belongs to an academic year", :sent_at do
+    subject { build(:consent_notification, :request) }
+  end
+
   describe "#create_and_send!" do
     subject(:create_and_send!) do
       travel_to(today) do

@@ -41,6 +41,7 @@
 #
 
 class Consent < ApplicationRecord
+  include BelongsToAcademicYear
   include Invalidatable
   include HasHealthAnswers
   include HasVaccineMethods
@@ -87,6 +88,8 @@ class Consent < ApplicationRecord
        }
 
   encrypts :notes
+
+  academic_year_attribute :submitted_at
 
   validates :notes,
             presence: {
