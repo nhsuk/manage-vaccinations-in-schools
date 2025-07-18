@@ -10,7 +10,7 @@ describe AppPatientSessionSearchResultCardComponent do
   let(:patient) do
     create(
       :patient,
-      :triage_safe_to_vaccinate_nasal,
+      :consent_given_injection_and_nasal_triage_safe_to_vaccinate_nasal,
       given_name: "Hari",
       family_name: "Seldon",
       address_postcode: "SW11 1AA",
@@ -93,7 +93,7 @@ describe AppPatientSessionSearchResultCardComponent do
     context "when allowed to record attendance" do
       before { stub_authorization(allowed: true) }
 
-      it { should have_text("Action required\nGet consent for HPV") }
+      it { should have_text("Action required\nRecord vaccination for HPV") }
       it { should have_button("Attending") }
       it { should have_button("Absent") }
 
@@ -108,7 +108,7 @@ describe AppPatientSessionSearchResultCardComponent do
     context "when not allowed to record attendance" do
       before { stub_authorization(allowed: false) }
 
-      it { should have_text("Action required\nGet consent for HPV") }
+      it { should have_text("Action required\nRecord vaccination for HPV") }
       it { should_not have_button("Attending") }
       it { should_not have_button("Absent") }
 
@@ -124,13 +124,19 @@ describe AppPatientSessionSearchResultCardComponent do
   context "when context is record" do
     let(:context) { :record }
 
-    it { should have_text("Action required\nGet consent for HPV") }
+    it { should have_text("Action required\nRecord vaccination for HPV") }
 
     context "and the programme is flu" do
       let(:programme) { create(:programme, :flu) }
 
       it { should have_text("Vaccination method") }
       it { should have_text("Nasal") }
+
+      context "and once vaccinated" do
+        before { patient.vaccination_status(programme:).vaccinated! }
+
+        it { should_not have_text("Vaccination method") }
+      end
     end
   end
 

@@ -116,13 +116,22 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
   def vaccination_method
     return if context == :outcome
 
-    vaccine_method =
-      programmes
-        .select(&:has_multiple_vaccine_methods?)
-        .flat_map { |programme| patient.approved_vaccine_methods(programme:) }
-        .first
+    programmes_to_check = programmes.select(&:has_multiple_vaccine_methods?)
 
-    Vaccine.human_enum_name(:method, vaccine_method).presence
+    return if programmes_to_check.empty?
+
+    vaccine_methods =
+      programmes_to_check.flat_map do |programme|
+        if patient.consent_given_and_safe_to_vaccinate?(programme:)
+          patient.approved_vaccine_methods(programme:)
+        else
+          []
+        end
+      end
+
+    return if vaccine_methods.empty?
+
+    Vaccine.human_enum_name(:method, vaccine_methods.first)
   end
 
   def status_tag
