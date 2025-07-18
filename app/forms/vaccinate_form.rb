@@ -34,9 +34,16 @@ class VaccinateForm
   validates :vaccine_method, inclusion: { in: :vaccine_method_options }
   validates :pre_screening_notes, length: { maximum: 1000 }
 
-  with_options if: :administered? do
-    validates :pre_screening_confirmed, presence: true
-    validates :delivery_site, presence: true
+  validates :pre_screening_confirmed, presence: true, if: :administered?
+  validates :delivery_site,
+            inclusion: {
+              in: :delivery_site_options
+            },
+            if: -> { administered? && vaccine_method.present? }
+
+  def delivery_site=(value)
+    # This is an optional field and ensures that "" comes in as nil.
+    super(value.presence)
   end
 
   def save(draft_vaccination_record:)
@@ -49,7 +56,11 @@ class VaccinateForm
     if administered?
       draft_vaccination_record.outcome = "administered"
 
-      if delivery_site != "other"
+      if delivery_site.nil?
+        draft_vaccination_record.delivery_method = delivery_method
+        draft_vaccination_record.delivery_site =
+          Vaccine::AVAILABLE_DELIVERY_SITES.fetch(vaccine_method).first
+      elsif delivery_site != "other"
         draft_vaccination_record.delivery_method = delivery_method
         draft_vaccination_record.delivery_site = delivery_site
       end
@@ -82,6 +93,19 @@ class VaccinateForm
 
   def vaccine_method_options
     programme.vaccine_methods + ["none"]
+  end
+
+  def delivery_site_options
+    return [nil] if vaccine_method.blank? || vaccine_method == "none"
+
+    available_delivery_sites =
+      Vaccine::AVAILABLE_DELIVERY_SITES.fetch(vaccine_method)
+
+    if available_delivery_sites.length == 1
+      [nil] + available_delivery_sites
+    else
+      available_delivery_sites + ["other"]
+    end
   end
 
   def delivery_method

@@ -122,7 +122,7 @@ en:
         vaccinate_form:
           attributes:
             delivery_site:
-              blank: Choose where the injection will be given
+              inclusion: Choose where the injection will be given
             identity_check_confirmed_by_other_name:
               blank: Enter the person’s name
               too_long: Enter a name that is less than %{count} characters long
