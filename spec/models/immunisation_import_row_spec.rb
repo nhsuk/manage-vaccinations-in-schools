@@ -163,7 +163,7 @@ describe ImmunisationImportRow do
         valid_data.merge(
           {
             "VACCINE_GIVEN" => "",
-            "DATE_OF_VACCINATION" => "#{Date.current.academic_year}0901",
+            "DATE_OF_VACCINATION" => "#{AcademicYear.current}0901",
             "SESSION_ID" => session.id.to_s
           }
         )
@@ -304,7 +304,7 @@ describe ImmunisationImportRow do
       context "when importing for an existing session" do
         let(:data) do
           {
-            "DATE_OF_VACCINATION" => "#{Date.current.academic_year}0901",
+            "DATE_OF_VACCINATION" => "#{AcademicYear.current}0901",
             "SESSION_ID" => session.id.to_s
           }
         end
@@ -463,7 +463,7 @@ describe ImmunisationImportRow do
           "PERFORMING_PROFESSIONAL_FORENAME",
           "PERFORMING_PROFESSIONAL_SURNAME"
         ).merge(
-          "DATE_OF_VACCINATION" => "#{Date.current.academic_year}0901",
+          "DATE_OF_VACCINATION" => "#{AcademicYear.current}0901",
           "VACCINATED" => "Y",
           "SESSION_ID" => session.id.to_s
         )
@@ -484,7 +484,7 @@ describe ImmunisationImportRow do
         valid_data.except("PERFORMING_PROFESSIONAL_EMAIL").merge(
           "PERFORMING_PROFESSIONAL_FORENAME" => "John",
           "PERFORMING_PROFESSIONAL_SURNAME" => "Smith",
-          "DATE_OF_VACCINATION" => "#{Date.current.academic_year}0901",
+          "DATE_OF_VACCINATION" => "#{AcademicYear.current}0901",
           "VACCINATED" => "Y",
           "SESSION_ID" => session.id.to_s
         )
@@ -606,7 +606,7 @@ describe ImmunisationImportRow do
           "ANATOMICAL_SITE" => "nasal",
           "VACCINATED" => "Y",
           "VACCINE_GIVEN" => "Gardasil9",
-          "DATE_OF_VACCINATION" => "#{Date.current.academic_year}0901",
+          "DATE_OF_VACCINATION" => "#{AcademicYear.current}0901",
           "SESSION_ID" => session.id.to_s
         )
       end
@@ -647,7 +647,7 @@ describe ImmunisationImportRow do
           "VACCINATED" => "Y",
           "PROGRAMME" => "Flu",
           "VACCINE_GIVEN" => "AstraZeneca Fluenz Tetra LAIV",
-          "DATE_OF_VACCINATION" => "#{Date.current.academic_year}0901",
+          "DATE_OF_VACCINATION" => "#{AcademicYear.current}0901",
           "SESSION_ID" => session.id.to_s
         }
       end
@@ -667,7 +667,7 @@ describe ImmunisationImportRow do
         {
           "VACCINATED" => "Y",
           "PROGRAMME" => "Flu",
-          "DATE_OF_VACCINATION" => "#{Date.current.academic_year}0901",
+          "DATE_OF_VACCINATION" => "#{AcademicYear.current}0901",
           "SESSION_ID" => session.id.to_s
         }
       end
@@ -738,7 +738,7 @@ describe ImmunisationImportRow do
         {
           "VACCINATED" => "Y",
           "PROGRAMME" => "Flu",
-          "DATE_OF_VACCINATION" => "#{Date.current.academic_year}0901",
+          "DATE_OF_VACCINATION" => "#{AcademicYear.current}0901",
           "SESSION_ID" => session.id.to_s
         }
       end

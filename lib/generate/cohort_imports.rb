@@ -180,10 +180,7 @@ module Generate
         end
     end
 
-    def date_of_birth_for_year(
-      year_group,
-      academic_year: Date.current.academic_year
-    )
+    def date_of_birth_for_year(year_group, academic_year: AcademicYear.current)
       if year_group < 12
         rand(
           year_group.to_birth_academic_year(

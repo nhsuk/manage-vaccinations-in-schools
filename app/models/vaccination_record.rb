@@ -182,7 +182,7 @@ class VaccinationRecord < ApplicationRecord
   end
 
   def performed_this_academic_year?
-    academic_year == Date.current.academic_year
+    academic_year == AcademicYear.current
   end
 
   def show_this_academic_year?
