@@ -24,6 +24,7 @@ FactoryBot.define do
   factory :patient_vaccination_status, class: "Patient::VaccinationStatus" do
     patient
     programme
+    academic_year { Date.current.academic_year }
 
     traits_for_enum :status
   end

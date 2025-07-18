@@ -28,7 +28,7 @@ class StatusUpdater
 
   def update_consent_statuses!
     Patient::ConsentStatus.import!(
-      %i[patient_id programme_id],
+      %i[patient_id programme_id academic_year],
       patient_statuses_to_import,
       on_duplicate_key_ignore: true
     )
@@ -102,7 +102,7 @@ class StatusUpdater
 
   def update_triage_statuses!
     Patient::TriageStatus.import!(
-      %i[patient_id programme_id],
+      %i[patient_id programme_id academic_year],
       patient_statuses_to_import,
       on_duplicate_key_ignore: true
     )
@@ -125,7 +125,7 @@ class StatusUpdater
 
   def update_vaccination_statuses!
     Patient::VaccinationStatus.import!(
-      %i[patient_id programme_id],
+      %i[patient_id programme_id academic_year],
       patient_statuses_to_import,
       on_duplicate_key_ignore: true
     )
@@ -146,6 +146,10 @@ class StatusUpdater
       end
   end
 
+  def academic_years
+    @academic_years ||= AcademicYear.all
+  end
+
   def patient_statuses_to_import
     @patient_statuses_to_import ||=
       patient_sessions
@@ -153,9 +157,13 @@ class StatusUpdater
         .pluck(:patient_id, :"patients.birth_academic_year")
         .uniq
         .flat_map do |patient_id, birth_academic_year|
-          programme_ids_per_year_group
-            .fetch(birth_academic_year.to_year_group, [])
-            .map { [patient_id, it] }
+          academic_years.flat_map do |academic_year|
+            year_group = birth_academic_year.to_year_group(academic_year:)
+
+            programme_ids_per_year_group
+              .fetch(year_group, [])
+              .map { |programme_id| [patient_id, programme_id, academic_year] }
+          end
         end
   end
 
@@ -163,11 +171,18 @@ class StatusUpdater
     @patient_session_statuses_to_import ||=
       patient_sessions
         .joins(:patient, :session)
-        .pluck(:id, :"session.location_id", :"patients.birth_academic_year")
-        .flat_map do |patient_session_id, location_id, birth_academic_year|
+        .pluck(
+          :id,
+          :"session.location_id",
+          :"session.academic_year",
+          :"patients.birth_academic_year"
+        )
+        .flat_map do |patient_session_id, location_id, academic_year, birth_academic_year|
+          year_group = birth_academic_year.to_year_group(academic_year:)
+
           programme_ids_per_location_id_and_year_group
             .fetch(location_id, {})
-            .fetch(birth_academic_year.to_year_group, [])
+            .fetch(year_group, [])
             .map { [patient_session_id, it] }
         end
   end
