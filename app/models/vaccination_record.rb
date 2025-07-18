@@ -163,6 +163,9 @@ class VaccinationRecord < ApplicationRecord
               less_than_or_equal_to: -> { Time.current }
             }
 
+  after_save :sync_to_nhs_immunisations_api,
+             if: :changes_need_to_be_synced_to_nhs_immunisations_api?
+
   delegate :fhir_record, to: :fhir_mapper
 
   def not_administered?
@@ -206,4 +209,11 @@ class VaccinationRecord < ApplicationRecord
   delegate :maximum_dose_sequence, to: :programme
 
   def fhir_mapper = @fhir_mapper ||= FHIRMapper::VaccinationRecord.new(self)
+
+  def changes_need_to_be_synced_to_nhs_immunisations_api?
+    saved_changes.present? && !saved_change_to_nhs_immunisations_api_etag? &&
+      !saved_change_to_nhs_immunisations_api_sync_pending_at? &&
+      !saved_change_to_nhs_immunisations_api_synced_at? &&
+      !saved_change_to_nhs_immunisations_api_id?
+  end
 end

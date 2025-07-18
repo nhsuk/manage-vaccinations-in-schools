@@ -2,7 +2,7 @@
 
 describe VaccinationRecordSyncToNHSImmunisationsAPIConcern do
   let(:vaccination_record) do
-    create(:vaccination_record, outcome:, programme:, session:)
+    build(:vaccination_record, outcome:, programme:, session:)
   end
   let(:outcome) { "administered" }
   let(:programme) { create(:programme, type: "flu") }

@@ -273,4 +273,83 @@ describe VaccinationRecord do
       end
     end
   end
+
+  describe "#changes_need_to_be_synced_to_nhs_immunisations_api?" do
+    subject do
+      vaccination_record.send(
+        :changes_need_to_be_synced_to_nhs_immunisations_api?
+      )
+    end
+
+    let(:vaccination_record) { create(:vaccination_record) }
+
+    context "when the update doesn't change any attributes" do
+      before { vaccination_record.update!(notes: vaccination_record.notes) }
+
+      it { should be_falsy }
+    end
+
+    context "when regular fields have been changed" do
+      before { vaccination_record.update!(notes: "Updated notes") }
+
+      it { should be_truthy }
+    end
+
+    context "when only nhs_immunisations_api_etag has been changed" do
+      before do
+        vaccination_record.update!(nhs_immunisations_api_etag: "new-etag")
+      end
+
+      it { should be_falsy }
+    end
+
+    context "when only nhs_immunisations_api_sync_pending_at has been changed" do
+      before do
+        vaccination_record.update!(
+          nhs_immunisations_api_sync_pending_at: Time.current
+        )
+      end
+
+      it { should be_falsy }
+    end
+
+    context "when only nhs_immunisations_api_synced_at has been changed" do
+      before do
+        vaccination_record.update!(
+          nhs_immunisations_api_synced_at: Time.current
+        )
+      end
+
+      it { should be_falsy }
+    end
+
+    context "when only nhs_immunisations_api_id has been changed" do
+      before { vaccination_record.update!(nhs_immunisations_api_id: "new-id") }
+
+      it { should be_falsy }
+    end
+
+    context "when both regular fields and nhs_immunisations_api fields have been changed" do
+      before do
+        vaccination_record.update!(
+          notes: "Updated notes",
+          nhs_immunisations_api_etag: "new-etag"
+        )
+      end
+
+      it { should be_falsy }
+    end
+
+    context "when a regular field and multiple nhs_immunisations_api fields have been changed" do
+      before do
+        vaccination_record.update!(
+          outcome: :refused,
+          nhs_immunisations_api_etag: "new-etag",
+          nhs_immunisations_api_sync_pending_at: Time.current
+        )
+      end
+
+      it { should be_falsy }
+    end
+  end
 end
