@@ -39,7 +39,7 @@ class PatientSessions::TriagesController < PatientSessions::BaseController
 
       ConsentGrouper
         .call(@patient.reload.consents, programme: @programme)
-        .each { send_triage_confirmation(@patient_session, it) }
+        .each { send_triage_confirmation(@patient_session, @programme, it) }
 
       redirect_to redirect_path, flash: { success: "Triage outcome updated" }
     else
