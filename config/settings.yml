@@ -5,6 +5,9 @@ allow_dev_phone_numbers: false
 disallow_database_seeding: true
 web_concurrency: 2
 
+# Preparation normally starts on the 1st August.
+number_of_preparation_days_before_academic_year_starts: 31
+
 # NHS Care Identity Service OIDC integration configuration, used by Omniauth via
 # Devise.
 cis2:
