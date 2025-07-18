@@ -30,7 +30,7 @@ describe StatusUpdater do
     end
   end
 
-  context "with an Flu session and eligible patient" do
+  context "with an flu session and eligible patient" do
     let(:programmes) { [create(:programme, :flu)] }
     let(:patient) { create(:patient, year_group: 8) }
 

@@ -7,6 +7,11 @@ class Programmes::PatientsController < Programmes::BaseController
   before_action :set_search_form
 
   def index
+    @year_groups =
+      policy_scope(Location::ProgrammeYearGroup).where(
+        programme: @programme
+      ).pluck_year_groups
+
     scope =
       policy_scope(Patient).includes(:vaccination_statuses).in_programmes(
         [@programme]

@@ -96,7 +96,7 @@ describe "Flu vaccination" do
     @programme = create(:programme, :flu)
     @organisation =
       create(:organisation, :with_one_nurse, programmes: [@programme])
-    @location = create(:school)
+    @location = create(:school, organisation: @organisation)
     @session =
       create(
         :session,

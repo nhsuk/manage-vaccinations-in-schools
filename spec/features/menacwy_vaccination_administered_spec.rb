@@ -54,7 +54,7 @@ describe "MenACWY vaccination" do
     programme = create(:programme, :menacwy_all_vaccines)
     organisation =
       create(:organisation, :with_one_nurse, programmes: [programme])
-    location = create(:school)
+    location = create(:school, organisation:)
 
     programme.vaccines.discontinued.each do |vaccine|
       create(:batch, organisation:, vaccine:)

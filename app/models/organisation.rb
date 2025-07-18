@@ -51,6 +51,12 @@ class Organisation < ApplicationRecord
   has_many :vaccination_records, through: :sessions
   has_many :vaccines, through: :programmes
 
+  has_many :location_programme_year_groups,
+           -> { where(programme: it.programmes) },
+           through: :locations,
+           source: :programme_year_groups,
+           class_name: "Location::ProgrammeYearGroup"
+
   has_and_belongs_to_many :users
 
   normalizes :email, with: EmailAddressNormaliser.new
@@ -71,7 +77,7 @@ class Organisation < ApplicationRecord
   end
 
   def year_groups
-    programmes.flat_map(&:year_groups).uniq.sort
+    @year_groups ||= location_programme_year_groups.pluck_year_groups
   end
 
   def generic_team
@@ -82,12 +88,17 @@ class Organisation < ApplicationRecord
 
   def generic_clinic
     locations.find_by(ods_code:, type: :generic_clinic) ||
-      Location.create!(
-        name: "Community clinics",
-        team: generic_team,
-        ods_code:,
-        type: :generic_clinic
-      )
+      ActiveRecord::Base.transaction do
+        Location
+          .create!(
+            name: "Community clinics",
+            team: generic_team,
+            ods_code:,
+            type: :generic_clinic,
+            year_groups: programmes.flat_map(&:default_year_groups).uniq.sort
+          )
+          .tap { it.create_default_programme_year_groups!(programmes) }
+      end
   end
 
   def generic_clinic_session

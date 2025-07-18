@@ -11,8 +11,8 @@ describe "mavis generate vaccination_records" do
   end
 
   def given_an_organisation_exists
-    @organisation = create(:organisation)
     @programme = create(:programme, type: "hpv")
+    @organisation = create(:organisation, programmes: [@programme])
   end
 
   def and_there_is_a_patient_in_a_session

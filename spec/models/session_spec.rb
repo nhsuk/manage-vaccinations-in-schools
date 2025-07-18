@@ -140,7 +140,7 @@ describe Session do
   end
 
   describe "#year_groups" do
-    subject(:year_groups) { session.year_groups }
+    subject { session.year_groups }
 
     let(:flu_programme) { create(:programme, :flu) }
     let(:hpv_programme) { create(:programme, :hpv) }

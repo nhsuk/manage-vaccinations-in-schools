@@ -68,9 +68,11 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
     @context = context
 
     @programmes =
-      programmes
-        .select { it.year_groups.include?(patient.year_group) }
-        .presence || patient_session.programmes
+      if programmes.present?
+        patient_session.programmes.select { it.in?(programmes) }
+      else
+        patient_session.programmes
+      end
   end
 
   private

@@ -73,7 +73,10 @@ describe "/api/locations" do
 
         locations = JSON.parse(response.body)
 
-        expect(locations).to eq([primary_school.as_json])
+        expect(locations).to contain_exactly(
+          primary_school.as_json,
+          generic_clinic.as_json
+        )
       end
 
       context "with multiple year groups" do
@@ -88,7 +91,10 @@ describe "/api/locations" do
 
           locations = JSON.parse(response.body)
 
-          expect(locations).to eq([secondary_school.as_json])
+          expect(locations).to contain_exactly(
+            secondary_school.as_json,
+            generic_clinic.as_json
+          )
         end
       end
     end

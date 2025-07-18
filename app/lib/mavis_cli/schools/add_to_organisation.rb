@@ -4,6 +4,7 @@ module MavisCLI
   module Schools
     class AddToOrganisation < Dry::CLI::Command
       desc "Add an existing school to an organisation"
+
       argument :ods_code,
                required: true,
                desc: "The ODS code of the organisation"
@@ -13,7 +14,7 @@ module MavisCLI
                required: true,
                desc: "The URN of the school"
 
-      def call(ods_code:, team:, urns:)
+      def call(ods_code:, team:, urns:, **)
         organisation = Organisation.find_by(ods_code:)
 
         if organisation.nil?
@@ -28,19 +29,24 @@ module MavisCLI
           return
         end
 
-        urns.each do |urn|
-          location = Location.school.find_by(urn:)
+        ActiveRecord::Base.transaction do
+          urns.each do |urn|
+            location = Location.school.find_by(urn:)
 
-          if location.nil?
-            warn "Could not find location: #{urn}"
-            next
+            if location.nil?
+              warn "Could not find location: #{urn}"
+              next
+            end
+
+            if !location.team_id.nil? && location.team_id != team.id
+              warn "#{urn} previously belonged to #{location.team.name}"
+            end
+
+            location.update!(team:)
+            location.create_default_programme_year_groups!(
+              organisation.programmes
+            )
           end
-
-          if !location.team_id.nil? && location.team_id != team.id
-            warn "#{urn} previously belonged to #{location.team.name}"
-          end
-
-          location.update!(team:)
         end
 
         UnscheduledSessionsFactory.new.call

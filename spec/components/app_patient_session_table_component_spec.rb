@@ -12,13 +12,14 @@ describe AppPatientSessionTableComponent do
   end
 
   context "with a session" do
-    let(:location) { create(:school, name: "Waterloo Road") }
-    let(:programme) { create(:programme, :hpv) }
+    let(:programmes) { [create(:programme, :hpv)] }
+
+    let(:location) { create(:school, name: "Waterloo Road", programmes:) }
     let(:session) do
       create(
         :session,
         location:,
-        programmes: [programme],
+        programmes:,
         academic_year: 2024,
         date: Date.new(2025, 1, 1)
       )

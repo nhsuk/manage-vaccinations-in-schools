@@ -35,8 +35,8 @@ describe API::OrganisationsController do
         end
       end
 
-      create(:school, urn: "123456", organisation:) # to match cohort_import/valid.csv
-      create(:school, urn: "110158", organisation:) # to match valid_hpv.csv
+      create(:school, urn: "123456", organisation:, programmes:) # to match cohort_import/valid.csv
+      create(:school, urn: "110158", organisation:, programmes:) # to match valid_hpv.csv
 
       cohort_import.process!
       immunisation_import.process!

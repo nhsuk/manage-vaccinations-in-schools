@@ -55,7 +55,7 @@ describe "HPV vaccination identity check" do
     programmes = [create(:programme, :hpv)]
     @organisation = create(:organisation, :with_one_nurse, programmes:)
 
-    location = create(:school)
+    location = create(:school, organisation: @organisation)
     @batch =
       create(
         :batch,

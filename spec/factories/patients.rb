@@ -57,7 +57,7 @@ FactoryBot.define do
       performed_by { association(:user) }
       programmes { session&.programmes || [] }
       session { nil }
-      year_group { programmes.flat_map(&:year_groups).sort.uniq.first }
+      year_group { programmes.flat_map(&:default_year_groups).sort.uniq.first }
       location_name { nil }
       in_attendance { false }
       random_nhs_number { false }

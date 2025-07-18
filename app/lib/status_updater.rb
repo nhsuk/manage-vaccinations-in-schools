@@ -153,8 +153,8 @@ class StatusUpdater
         .pluck(:patient_id, :"patients.birth_academic_year")
         .uniq
         .flat_map do |patient_id, birth_academic_year|
-          programme_ids_per_birth_academic_year
-            .fetch(birth_academic_year, [])
+          programme_ids_per_year_group
+            .fetch(birth_academic_year.to_year_group, [])
             .map { [patient_id, it] }
         end
   end
@@ -162,36 +162,41 @@ class StatusUpdater
   def patient_session_statuses_to_import
     @patient_session_statuses_to_import ||=
       patient_sessions
-        .joins(:patient)
-        .pluck(:id, :"patients.birth_academic_year")
-        .flat_map do |patient_session_id, birth_academic_year|
-          programme_ids_per_birth_academic_year
-            .fetch(birth_academic_year, [])
+        .joins(:patient, :session)
+        .pluck(:id, :"session.location_id", :"patients.birth_academic_year")
+        .flat_map do |patient_session_id, location_id, birth_academic_year|
+          programme_ids_per_location_id_and_year_group
+            .fetch(location_id, {})
+            .fetch(birth_academic_year.to_year_group, [])
             .map { [patient_session_id, it] }
         end
   end
 
   def registration_statuses_to_import
     @registration_statuses_to_import ||=
-      patient_sessions
-        .joins(:patient)
-        .pluck(:id, :"patients.birth_academic_year")
-        .filter_map do |patient_session_id, birth_academic_year|
-          if programme_ids_per_birth_academic_year.key?(birth_academic_year)
-            [patient_session_id]
-          end
+      patient_session_statuses_to_import.map { [it.first] }.uniq
+  end
+
+  def programme_ids_per_year_group
+    @programme_ids_per_year_group ||=
+      Location::ProgrammeYearGroup
+        .distinct
+        .pluck(:programme_id, :year_group)
+        .each_with_object({}) do |(programme_id, year_group), hash|
+          hash[year_group] ||= []
+          hash[year_group] << programme_id
         end
   end
 
-  def programme_ids_per_birth_academic_year
-    @programme_ids_per_birth_academic_year ||=
-      Programme
-        .all
-        .each_with_object({}) do |programme, hash|
-          programme.birth_academic_years.each do |year_group|
-            hash[year_group] ||= []
-            hash[year_group] << programme.id
-          end
+  def programme_ids_per_location_id_and_year_group
+    @programme_ids_per_location_id_and_year_group ||=
+      Location::ProgrammeYearGroup
+        .distinct
+        .pluck(:location_id, :programme_id, :year_group)
+        .each_with_object({}) do |(location_id, programme_id, year_group), hash|
+          hash[location_id] ||= {}
+          hash[location_id][year_group] ||= []
+          hash[location_id][year_group] << programme_id
         end
   end
 end

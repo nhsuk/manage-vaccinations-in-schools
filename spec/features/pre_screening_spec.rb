@@ -82,16 +82,14 @@ describe "Pre-screening" do
           :patient,
           :consent_given_nasal_only_triage_not_needed,
           :in_attendance,
-          session: @session,
-          year_group: programme.year_groups.first
+          session: @session
         )
       else
         create(
           :patient,
           :consent_given_triage_not_needed,
           :in_attendance,
-          session: @session,
-          year_group: programme.year_groups.first
+          session: @session
         )
       end
   end
