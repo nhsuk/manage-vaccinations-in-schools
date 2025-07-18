@@ -11,6 +11,17 @@ module AcademicYear
     # when changing the date in tests).
     def first = [2024, current].min
 
-    def last = current
+    def last = preparation? ? current + 1 : current
+
+    def preparation? = Date.current >= preparation_start_date
+
+    private
+
+    def preparation_start_date
+      start_date = (current + 1).to_academic_year_date_range.first
+      days_of_preparation =
+        Settings.number_of_preparation_days_before_academic_year_starts.to_i
+      start_date - days_of_preparation.days
+    end
   end
 end
