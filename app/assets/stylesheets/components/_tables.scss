@@ -1,0 +1,29 @@
+@use "sass:color";
+@use "../vendor/nhsuk-frontend" as *;
+
+.app-table--csv {
+  th,
+  td {
+    @include nhsuk-font-size(16);
+    @include nhsuk-responsive-padding(2, "bottom");
+    @include nhsuk-responsive-padding(3, "right");
+    @include nhsuk-responsive-padding(2, "top");
+  }
+
+  caption {
+    @include nhsuk-font($size: 19, $weight: bold);
+  }
+
+  i {
+    color: nhsuk-shade($color_nhsuk-red, 50%);
+    font-family: ui-monospace, monospace;
+    font-style: normal;
+    font-weight: 500;
+    padding: 2px;
+  }
+}
+
+.app-table__cell--muted {
+  background-color: $color_nhsuk-grey-5;
+  color: $nhsuk-secondary-text-color;
+}

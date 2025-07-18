@@ -1,0 +1,13 @@
+@forward "pkg:nhsuk-frontend/packages/core" with (
+  $nhsuk-fonts-path: "/",
+  $nhsuk-grid-widths: (
+    one-quarter: 25%,
+    one-third: 33.3333%,
+    one-half: 50%,
+    two-thirds: 66.6666%,
+    three-quarters: 75%,
+    full: 100%,
+    filters: 30%,
+    results: 70%,
+  )
+);

@@ -1,83 +1,10 @@
 @use "sass:color";
 
-// Configure and import GOV.UK Frontend
-$govuk-font-family: "Frutiger W01", Arial, sans-serif;
-$govuk-border-colour: #d8dde0;
-$govuk-brand-colour: #005eb8;
-$govuk-error-colour: #d5281b;
-$govuk-success-colour: #007f3b;
-$govuk-global-styles: false;
-$govuk-new-organisation-colours: true;
-$govuk-assets-path: "/";
+// NHS.UK frontend components
+@forward "vendor/nhsuk-frontend";
 
-@import "govuk-frontend/dist/govuk/base";
-@import "govuk-frontend/dist/govuk/components/checkboxes";
-@import "govuk-frontend/dist/govuk/components/file-upload";
-@import "govuk-frontend/dist/govuk/components/notification-banner";
-@import "govuk-frontend/dist/govuk/components/pagination";
+// GOV.UK Frontend components
+@forward "vendor/govuk-frontend";
 
-// Configure and import NHS.UK Frontend
-$nhsuk-fonts-path: "/";
-$nhsuk-grid-widths: (
-  one-quarter: 25%,
-  one-third: 33.3333%,
-  one-half: 50%,
-  two-thirds: 66.6666%,
-  three-quarters: 75%,
-  full: 100%,
-  filters: 30%,
-  results: 70%,
-);
-
-@import "nhsuk-frontend/packages/nhsuk";
-
-// App options
-$app-page-width: 1100px;
-$color_app-dark-orange: color.scale(
-  color.mix($color_nhsuk-red, $color_nhsuk-warm-yellow, 55%),
-  $lightness: -10%
-);
-
-// Helpers
-@import "helpers/link";
-
-// Application components
-@import "action_list";
-@import "add_another";
-@import "autocomplete";
-@import "button";
-@import "button-group";
-@import "card";
-@import "count";
-@import "dev-tools";
-@import "environment";
-@import "file-upload";
-@import "filters";
-@import "globals";
-@import "grid";
-@import "header";
-@import "heading-group";
-@import "highlight";
-@import "list";
-@import "overrides";
-@import "panel";
-@import "password-input";
-@import "search-input";
-@import "secondary-navigation";
-@import "status";
-@import "summary-list";
-@import "table";
-@import "tabs";
-@import "tag";
-@import "typography";
-@import "utilities";
-
-// Fix checkbox check sizing
-.nhsuk-checkboxes__label::after {
-  box-sizing: border-box;
-}
-
-// Ensure consistent margin for small fieldset legend
-.nhsuk-fieldset__legend--s {
-  margin-bottom: nhsuk-spacing(2);
-}
+// App-specific components
+@forward "components";

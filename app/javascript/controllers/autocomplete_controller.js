@@ -14,7 +14,7 @@ const suggestion = (value, options) => {
   if (option) {
     const html = option.append ? `${value} – ${option.append}` : value;
     return option.hint
-      ? `${html}<br><span class="autocomplete__option-hint">${option.hint}</span>`
+      ? `${html}<br><span class="app-autocomplete__option-hint">${option.hint}</span>`
       : html;
   } else {
     return "No results found";
@@ -33,8 +33,10 @@ const autocomplete = ($module) => {
 
   accessibleAutocomplete.enhanceSelectElement({
     autoselect: params.autoselect === "true",
+    cssNamespace: "app-autocomplete",
     defaultValue: params.defaultValue || "",
     displayMenu: params.displayMenu,
+    inputClasses: "nhsuk-input",
     minLength: params.minLength ? parseInt(params.minLength) : 0,
     selectElement: $module,
     showAllValues: params.showAllValues === "true",
