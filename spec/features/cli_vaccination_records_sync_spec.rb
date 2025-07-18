@@ -6,6 +6,7 @@ describe "mavis vaccination-records sync" do
   context "when the vaccination record exists and has not been synced" do
     it "syncs the vaccination record to the NHS API" do
       given_a_vaccination_record_exists
+      and_the_immunisations_fhir_api_integration_is_enabled
       and_the_nhs_api_is_available
       when_i_run_the_sync_command
       then_the_vaccination_record_is_synced_to_the_immunisations_api
@@ -14,6 +15,7 @@ describe "mavis vaccination-records sync" do
 
   context "when the vaccination record does not exist" do
     it "displays an error message" do
+      given_the_immunisations_fhir_api_integration_is_enabled
       when_i_run_the_sync_command_with_an_invalid_id
       then_an_error_message_is_displayed
     end
@@ -22,8 +24,18 @@ describe "mavis vaccination-records sync" do
   context "when the vaccination record has already been synced" do
     it "displays a message indicating it has already been synced" do
       given_a_synced_vaccination_record_exists
+      and_the_immunisations_fhir_api_integration_is_enabled
       when_i_run_the_sync_command_for_synced_record
       then_the_already_synced_message_is_displayed
+    end
+  end
+
+  context "when the immunisations_fhir_api_integration feature flag is disabled" do
+    it "displays a message indicating the feature flag is disabled" do
+      given_a_vaccination_record_exists
+      and_the_immunisations_fhir_api_integration_feature_flag_is_disabled
+      when_i_run_the_sync_command
+      then_the_feature_flag_disabled_message_is_displayed
     end
   end
 
@@ -60,6 +72,18 @@ describe "mavis vaccination-records sync" do
       )
   end
 
+  def given_the_immunisations_fhir_api_integration_is_enabled
+    Flipper.enable :immunisations_fhir_api_integration
+  end
+
+  def and_the_immunisations_fhir_api_integration_is_enabled
+    given_the_immunisations_fhir_api_integration_is_enabled
+  end
+
+  def and_the_immunisations_fhir_api_integration_feature_flag_is_disabled
+    Flipper.disable :immunisations_fhir_api_integration
+  end
+
   def and_the_nhs_api_is_available
     @nhs_api_request =
       stub_request(
@@ -78,8 +102,6 @@ describe "mavis vaccination-records sync" do
             "https://sandbox.api.service.nhs.uk/immunisation-fhir-api/Immunization/11112222-3333-4444-5555-666677778888"
         }
       )
-
-    Flipper.enable :immunisations_fhir_api_integration
   end
 
   def when_i_run_the_sync_command
@@ -126,5 +148,11 @@ describe "mavis vaccination-records sync" do
 
   def then_the_already_synced_message_is_displayed
     expect(@output).to include("has already been synced at")
+  end
+
+  def then_the_feature_flag_disabled_message_is_displayed
+    expect(@output).to include(
+      "Cannot sync vaccination record: the `immunisations_fhir_api_integration` feature flag is disabled"
+    )
   end
 end
