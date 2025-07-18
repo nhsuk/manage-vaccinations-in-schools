@@ -4,6 +4,7 @@ module MavisCLI
   module Schools
     class AddToOrganisation < Dry::CLI::Command
       desc "Add an existing school to an organisation"
+
       argument :ods_code,
                required: true,
                desc: "The ODS code of the organisation"
@@ -13,7 +14,7 @@ module MavisCLI
                required: true,
                desc: "The URN of the school"
 
-      def call(ods_code:, team:, urns:)
+      def call(ods_code:, team:, urns:, **)
         organisation = Organisation.find_by(ods_code:)
 
         if organisation.nil?
