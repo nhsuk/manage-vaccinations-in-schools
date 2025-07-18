@@ -42,17 +42,17 @@ class SendSchoolConsentRemindersJob < ApplicationJob
 
     return false unless patient.send_notifications?
 
-    has_consent_or_vaccinated =
-      programmes.all? do |programme|
-        patient.consents.any? { it.programme_id == programme.id } ||
-          patient.vaccination_records.any? { it.programme_id == programme.id }
+    suitable_programmes =
+      programmes.select do |programme|
+        patient.consent_status(programme:).no_response? &&
+          patient.vaccination_status(programme:).none_yet?
       end
 
-    return false if has_consent_or_vaccinated
+    return false if suitable_programmes.empty?
 
     session = patient_session.session
 
-    programmes.any? do |programme|
+    suitable_programmes.any? do |programme|
       request_consent_notification =
         patient
           .consent_notifications
