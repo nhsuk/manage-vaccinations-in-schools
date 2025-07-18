@@ -126,6 +126,52 @@ module NHS::ImmunisationsAPI
       end
     end
 
+    def delete_immunisation(vaccination_record)
+      unless Flipper.enabled?(:immunisations_fhir_api_integration)
+        Rails.logger.info(
+          "Not deleting vaccination record from immunisations API as the" \
+            " feature flag is disabled: #{vaccination_record.id}"
+        )
+        return
+      end
+
+      if vaccination_record.nhs_immunisations_api_id.blank?
+        raise "Vaccination record #{vaccination_record.id} missing NHS Immunisation ID"
+      end
+
+      nhs_id = vaccination_record.nhs_immunisations_api_id
+      response =
+        NHS::API.connection.delete(
+          "/immunisation-fhir-api/FHIR/R4/Immunization/#{nhs_id}",
+          nil,
+          {
+            "Accept" => "application/fhir+json",
+            "E-Tag" => vaccination_record.nhs_immunisations_api_etag
+          }
+        )
+
+      if response.status == 204
+        # It's not entirely clear if the e-tag should be changed here, but
+        # experiments show (by deletind and then re-creating a vaccination
+        # record with an "update") that it appears that the e-tag is incremented
+        # on the reviving update.
+        vaccination_record.update!(
+          nhs_immunisations_api_synced_at: Time.current
+        )
+      else
+        raise "Error deleting vaccination record #{vaccination_record.id} from" \
+                " Immunisations API: unexpected response status" \
+                " #{response.status}"
+      end
+    rescue Faraday::ClientError => e
+      if (diagnostics = extract_error_diagnostics(e&.response)).present?
+        raise "Error deleting vaccination record #{vaccination_record.id} from" \
+                " Immunisations API: #{diagnostics}"
+      else
+        raise
+      end
+    end
+
     private
 
     def extract_error_diagnostics(response)
@@ -160,7 +206,7 @@ module NHS::ImmunisationsAPI
       end
 
       if vaccination_record.patient.nhs_number.blank?
-        raise "PatientVaccination record is discarded: #{vaccination_record.id}"
+        raise "Patient nhs number is missing: #{vaccination_record.id}"
       end
     end
   end
