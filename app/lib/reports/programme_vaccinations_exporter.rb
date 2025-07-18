@@ -70,6 +70,7 @@ class Reports::ProgrammeVaccinationsExporter
       ANATOMICAL_SITE
       ROUTE_OF_VACCINATION
       DOSE_SEQUENCE
+      DOSE_VOLUME
       REASON_NOT_VACCINATED
       LOCAL_PATIENT_ID
       SNOMED_PROCEDURE_CODE
@@ -219,6 +220,7 @@ class Reports::ProgrammeVaccinationsExporter
       anatomical_site(vaccination_record:),
       route_of_vaccination(vaccination_record:),
       dose_sequence(vaccination_record:),
+      vaccination_record.dose_volume_ml,
       reason_not_vaccinated(vaccination_record:),
       patient.id,
       programme.snomed_procedure_code,
