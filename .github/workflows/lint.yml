@@ -26,6 +26,5 @@ jobs:
       - run: tflint --chdir=terraform --init
       - uses: jdx/mise-action@v2
         with:
-          version: v2025.7.12
           install_args: hk pkl
       - run: hk check --all
