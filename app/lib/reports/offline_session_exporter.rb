@@ -34,7 +34,7 @@ class Reports::OfflineSessionExporter
 
   attr_reader :session
 
-  delegate :location, :organisation, to: :session
+  delegate :academic_year, :location, :organisation, to: :session
 
   def add_vaccinations_sheet(package)
     workbook = package.workbook
@@ -151,11 +151,15 @@ class Reports::OfflineSessionExporter
         .not_invalidated
         .includes(:parent, patient: { parent_relationships: :parent })
         .group_by(&:patient_id)
-        .transform_values do
-          it
+        .transform_values do |consents_for_patient|
+          consents_for_patient
             .group_by(&:programme_id)
             .each_with_object({}) do |(programme_id, consents), hash|
-              hash[programme_id] = ConsentGrouper.call(consents, programme_id:)
+              hash[programme_id] = ConsentGrouper.call(
+                consents,
+                programme_id:,
+                academic_year:
+              )
             end
         end
   end

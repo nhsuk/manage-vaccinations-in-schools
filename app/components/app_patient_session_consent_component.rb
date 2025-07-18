@@ -13,6 +13,7 @@ class AppPatientSessionConsentComponent < ViewComponent::Base
   attr_reader :patient_session, :programme
 
   delegate :patient, :session, to: :patient_session
+  delegate :academic_year, to: :session
 
   def colour
     I18n.t(status, scope: %i[status consent colour])
@@ -55,7 +56,8 @@ class AppPatientSessionConsentComponent < ViewComponent::Base
   end
 
   def grouped_consents
-    @grouped_consents ||= ConsentGrouper.call(consents, programme:)
+    @grouped_consents ||=
+      ConsentGrouper.call(consents, programme_id: programme.id, academic_year:)
   end
 
   def who_refused

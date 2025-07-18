@@ -18,6 +18,7 @@ class AppPatientSessionTriageComponent < ViewComponent::Base
   attr_reader :patient_session, :programme, :triage_form
 
   delegate :patient, :session, to: :patient_session
+  delegate :academic_year, to: :session
 
   def colour
     I18n.t(status, scope: %i[status triage colour])
@@ -43,12 +44,11 @@ class AppPatientSessionTriageComponent < ViewComponent::Base
 
   def latest_triage
     @latest_triage ||=
-      patient
-        .triages
-        .not_invalidated
-        .includes(:performed_by)
-        .order(created_at: :desc)
-        .find_by(programme:)
+      TriageFinder.call(
+        patient.triages.includes(:performed_by),
+        programme_id: programme.id,
+        academic_year:
+      )
   end
 
   def default_triage_form = TriageForm.new(patient_session:, programme:)

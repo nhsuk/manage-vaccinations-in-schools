@@ -46,6 +46,7 @@ class VaccinationReport
     exporter_class.call(
       organisation: @current_user.selected_organisation,
       programme:,
+      academic_year:,
       start_date: date_from,
       end_date: date_to
     )

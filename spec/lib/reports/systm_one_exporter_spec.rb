@@ -9,11 +9,13 @@ describe Reports::SystmOneExporter do
     described_class.call(
       organisation:,
       programme:,
+      academic_year:,
       start_date: 1.month.ago.to_date,
       end_date: Date.current
     )
   end
   let(:programme) { create(:programme, :hpv, organisations: [organisation]) }
+  let(:academic_year) { AcademicYear.current }
   let(:organisation) { create(:organisation, ods_code: "ABC123") }
   let(:location) { create(:school) }
   let(:session) do
