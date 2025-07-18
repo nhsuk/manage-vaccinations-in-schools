@@ -24,6 +24,7 @@ class PatientSession::SessionStatus < ApplicationRecord
   belongs_to :programme
 
   has_one :patient, through: :patient_session
+  has_one :session, through: :patient_session
 
   has_many :consents,
            -> { not_invalidated.response_provided.includes(:parent, :patient) },
@@ -76,6 +77,8 @@ class PatientSession::SessionStatus < ApplicationRecord
 
   private
 
+  delegate :academic_year, to: :session
+
   def status_should_be_vaccinated?
     vaccination_record&.administered?
   end
@@ -103,17 +106,18 @@ class PatientSession::SessionStatus < ApplicationRecord
   end
 
   def latest_consents
-    @latest_consents ||= ConsentGrouper.call(consents, programme_id:)
+    @latest_consents ||=
+      ConsentGrouper.call(consents, programme_id:, academic_year:)
   end
 
   def triage
-    @triage ||= triages.reverse.find { it.programme_id == programme_id }
+    @triage ||= TriageFinder.call(triages, programme_id:, academic_year:)
   end
 
   def vaccination_record
     @vaccination_record ||=
       vaccination_records.find do
-        it.programme_id == programme_id &&
+        it.programme_id == programme.id &&
           it.session_id == patient_session.session_id
       end
   end

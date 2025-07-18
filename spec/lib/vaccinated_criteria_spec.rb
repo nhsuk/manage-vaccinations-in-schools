@@ -2,8 +2,16 @@
 
 describe VaccinatedCriteria do
   describe "#call" do
-    subject { described_class.call(programme:, patient:, vaccination_records:) }
+    subject do
+      described_class.call(
+        programme:,
+        academic_year:,
+        patient:,
+        vaccination_records:
+      )
+    end
 
+    let(:academic_year) { AcademicYear.current }
     let(:patient) { create(:patient, date_of_birth: 15.years.ago.to_date) }
     let(:vaccination_records) { [] }
 

@@ -55,14 +55,21 @@ class Patient::VaccinationStatus < ApplicationRecord
   private
 
   def status_should_be_vaccinated?
-    VaccinatedCriteria.call(programme:, patient:, vaccination_records:)
+    VaccinatedCriteria.call(
+      programme:,
+      academic_year:,
+      patient:,
+      vaccination_records:
+    )
   end
 
   def status_should_be_could_not_vaccinate?
-    if ConsentGrouper.call(consents, programme_id:).any?(&:response_refused?)
+    if ConsentGrouper.call(consents, programme_id:, academic_year:).any?(
+         &:response_refused?
+       )
       return true
     end
 
-    triages.select { it.programme_id == programme_id }.last&.do_not_vaccinate?
+    TriageFinder.call(triages, programme_id:, academic_year:)&.do_not_vaccinate?
   end
 end

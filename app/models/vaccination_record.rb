@@ -183,12 +183,12 @@ class VaccinationRecord < ApplicationRecord
     session_id != nil
   end
 
-  def performed_this_academic_year?
-    academic_year == AcademicYear.current
-  end
-
-  def show_this_academic_year?
-    programme.seasonal? ? performed_this_academic_year? : true
+  def show_in_academic_year?(current_academic_year)
+    if programme.seasonal?
+      academic_year == current_academic_year
+    else
+      academic_year >= current_academic_year
+    end
   end
 
   def delivery_method_snomed_code

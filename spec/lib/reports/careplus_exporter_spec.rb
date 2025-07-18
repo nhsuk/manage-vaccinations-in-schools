@@ -5,10 +5,13 @@ describe Reports::CareplusExporter do
     described_class.call(
       organisation:,
       programme:,
+      academic_year:,
       start_date: 1.month.ago.to_date,
       end_date: Date.current
     )
   end
+
+  let(:academic_year) { AcademicYear.current }
 
   shared_examples "generates a report" do
     let(:programmes) { [programme] }

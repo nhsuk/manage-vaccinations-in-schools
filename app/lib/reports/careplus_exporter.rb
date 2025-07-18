@@ -1,9 +1,16 @@
 # frozen_string_literal: true
 
 class Reports::CareplusExporter
-  def initialize(organisation:, programme:, start_date:, end_date:)
+  def initialize(
+    organisation:,
+    programme:,
+    academic_year:,
+    start_date:,
+    end_date:
+  )
     @organisation = organisation
     @programme = programme
+    @academic_year = academic_year
     @start_date = start_date
     @end_date = end_date
   end
@@ -24,7 +31,7 @@ class Reports::CareplusExporter
 
   private
 
-  attr_reader :organisation, :programme, :start_date, :end_date
+  attr_reader :organisation, :programme, :academic_year, :start_date, :end_date
 
   def headers
     [
@@ -69,6 +76,7 @@ class Reports::CareplusExporter
       VaccinationRecord
         .kept
         .where(session: { organisation: }, programme:)
+        .for_academic_year(academic_year)
         .administered
         .order(:performed_at)
         .includes(:batch, :patient, :vaccine, session: :location)
@@ -107,6 +115,7 @@ class Reports::CareplusExporter
       Consent
         .select("DISTINCT ON (patient_id) consents.*")
         .where(patient: vaccination_records.select(:patient_id), programme:)
+        .for_academic_year(academic_year)
         .not_invalidated
         .response_given
         .order(:patient_id, created_at: :desc)

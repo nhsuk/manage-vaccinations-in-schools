@@ -38,7 +38,11 @@ class PatientSessions::TriagesController < PatientSessions::BaseController
       StatusUpdater.call(patient: @patient)
 
       ConsentGrouper
-        .call(@patient.reload.consents, programme: @programme)
+        .call(
+          @patient.reload.consents,
+          programme_id: @programme.id,
+          academic_year: @academic_year
+        )
         .each { send_triage_confirmation(@patient_session, @programme, it) }
 
       redirect_to redirect_path, flash: { success: "Triage outcome updated" }

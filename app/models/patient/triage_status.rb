@@ -78,16 +78,26 @@ class Patient::TriageStatus < ApplicationRecord
   end
 
   def vaccination_history_requires_triage?
-    vaccination_records.any? do
-      it.programme_id == programme_id && it.administered?
-    end && !vaccinated?
+    existing_records =
+      vaccination_records.select { it.programme_id == programme_id }
+
+    if programme.seasonal?
+      existing_records.select! { it.academic_year == academic_year }
+    end
+
+    existing_records.any?(&:administered?) && !vaccinated?
   end
 
   private
 
   def vaccinated?
     @vaccinated ||=
-      VaccinatedCriteria.call(programme:, patient:, vaccination_records:)
+      VaccinatedCriteria.call(
+        programme:,
+        academic_year:,
+        patient:,
+        vaccination_records:
+      )
   end
 
   def status_should_be_safe_to_vaccinate?
@@ -115,18 +125,22 @@ class Patient::TriageStatus < ApplicationRecord
       (consent_requires_triage? || vaccination_history_requires_triage?)
   end
 
-  def latest_consents
-    @latest_consents ||= ConsentGrouper.call(consents, programme_id:)
-  end
-
   def consent_status
     @consent_status ||=
-      Patient::ConsentStatus.new(patient_id:, programme_id:, consents:).tap(
-        &:assign_status
-      )
+      Patient::ConsentStatus.new(
+        patient_id:,
+        programme_id:,
+        academic_year:,
+        consents:
+      ).tap(&:assign_status)
+  end
+
+  def latest_consents
+    @latest_consents ||=
+      ConsentGrouper.call(consents, programme_id:, academic_year:)
   end
 
   def latest_triage
-    @latest_triage ||= triages.find { it.programme_id == programme_id }
+    @latest_triage ||= TriageFinder.call(triages, programme_id:, academic_year:)
   end
 end

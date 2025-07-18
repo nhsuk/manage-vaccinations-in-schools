@@ -103,6 +103,7 @@ class Patient::ConsentStatus < ApplicationRecord
   end
 
   def latest_consents
-    @latest_consents ||= ConsentGrouper.call(consents, programme_id:)
+    @latest_consents ||=
+      ConsentGrouper.call(consents, programme_id:, academic_year:)
   end
 end
