@@ -68,8 +68,8 @@ class Programme < ApplicationRecord
     YEAR_GROUPS_BY_TYPE.fetch(type)
   end
 
-  def birth_academic_years
-    year_groups.map(&:to_birth_academic_year)
+  def birth_academic_years(academic_year: nil)
+    year_groups.map { it.to_birth_academic_year(academic_year:) }
   end
 
   def vaccine_methods = vaccines.map(&:method).uniq

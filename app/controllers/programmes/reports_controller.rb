@@ -6,7 +6,10 @@ class Programmes::ReportsController < Programmes::BaseController
       VaccinationReport.new(request_session: session, current_user:)
 
     vaccination_report.reset!
-    vaccination_report.update!(programme: @programme)
+    vaccination_report.update!(
+      programme: @programme,
+      academic_year: @academic_year
+    )
 
     redirect_to vaccination_report_path(Wicked::FIRST_STEP)
   end

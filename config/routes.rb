@@ -169,12 +169,15 @@ Rails.application.routes.draw do
     get "consent-form", on: :member, action: :consent_form
 
     scope module: :programmes do
-      resource :overview, path: "", only: :show, controller: :overview
-      resources :cohorts, only: %i[index show]
-      resources :patients, only: :index
-      resources :reports, only: :create
-      resources :sessions, only: :index
-      resources :vaccinations, only: :index
+      resource :overview,
+               path: ":academic_year",
+               only: :show,
+               controller: :overview
+      resources :cohorts, path: ":academic_year/cohorts", only: %i[index show]
+      resources :patients, path: ":academic_year/patients", only: :index
+      resources :reports, path: ":academic_year/reports", only: :create
+      resources :sessions, path: ":academic_year/sessions", only: :index
+      resources :vaccinations, path: ":academic_year/vaccinations", only: :index
     end
   end
 
