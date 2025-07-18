@@ -228,6 +228,7 @@ class Patient < ApplicationRecord
                it.blank? ? nil : it.normalise_whitespace.gsub(/\s/, "")
              end
 
+  after_update :sync_vaccinations_to_nhs_immunisations_api
   before_destroy :destroy_childless_parents
 
   delegate :fhir_record, to: :fhir_mapper
@@ -327,15 +328,22 @@ class Patient < ApplicationRecord
       vaccination_statuses.build(programme:)
   end
 
-  def consent_given_and_safe_to_vaccinate?(programme:)
+  def consent_given_and_safe_to_vaccinate?(programme:, vaccine_method: nil)
     return false if vaccination_status(programme:).vaccinated?
 
-    consent_status(programme:).given? &&
-      (
-        triage_status(programme:).safe_to_vaccinate? ||
-          triage_status(programme:).delay_vaccination? ||
-          triage_status(programme:).not_required?
-      )
+    return false unless consent_status(programme:).given?
+
+    unless triage_status(programme:).safe_to_vaccinate? ||
+             triage_status(programme:).not_required?
+      return false
+    end
+
+    if vaccine_method &&
+         approved_vaccine_methods(programme:).first != vaccine_method
+      return false
+    end
+
+    true
   end
 
   def approved_vaccine_methods(programme:)
@@ -373,7 +381,7 @@ class Patient < ApplicationRecord
         self.date_of_death_recorded_at = Time.current
       end
 
-      # If we've got a response from DPS we know the patient is valid,
+      # If we've got a response from PDS we know the patient is valid,
       # otherwise PDS will return a 404 status.
       self.invalidated_at = nil if invalidated?
 
@@ -477,4 +485,12 @@ class Patient < ApplicationRecord
   end
 
   def fhir_mapper = @fhir_mapper ||= FHIRMapper::Patient.new(self)
+
+  def sync_vaccinations_to_nhs_immunisations_api
+    if nhs_number_previously_changed?
+      vaccination_records.syncable_to_nhs_immunisations_api.find_each(
+        &:sync_to_nhs_immunisations_api
+      )
+    end
+  end
 end

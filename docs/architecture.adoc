@@ -90,7 +90,6 @@ non-functional requirements which have been, where possible, de-emphasised.
 * The service will be available on the public internet with no IP address
   range restrictions
 
-<<<<
 == Architecture Constraints
 
 * The system must protect patient data and comply with all applicable laws and
@@ -100,10 +99,8 @@ non-functional requirements which have been, where possible, de-emphasised.
 * The system must be deployed to a cloud platform, but also be platform agnostic
   and not constrained to run on any one cloud platform.
 * The system must be deployed to NHS approved platforms.
-* Integration with NHS DPS is via MESH using background batched jobs.
 * Integration with NHS PDS is via FHIR API using background jobs.
 
-<<<<
 == System Scope and Context
 
 ifdef::env-github[]
@@ -129,7 +126,6 @@ Used to lookup NHS numbers and confirm information entered / uploaded.
 
 NHS Data Processing Service (DPS)::
 Upstream recipient of vaccination records.
-
 
 == Solution strategy
 

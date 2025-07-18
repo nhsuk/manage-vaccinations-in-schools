@@ -155,13 +155,13 @@ def create_flu_health_questions(vaccine)
       )
     end
 
-  # TODO: This is only relevant for injected vaccines, but we don't know if the parents have consented to injection
-  #  until after the health questions have been given.
   bleeding_disorder =
-    vaccine.health_questions.create!(
-      title:
-        "Does your child have a bleeding disorder or are they taking anticoagulant therapy?"
-    )
+    if vaccine.injection?
+      vaccine.health_questions.create!(
+        title:
+          "Does your child have a bleeding disorder or are they taking anticoagulant therapy?"
+      )
+    end
 
   egg_allergy =
     if vaccine.nasal?

@@ -27,7 +27,8 @@ class PatientSessions::VaccinationsController < PatientSessions::BaseController
       steps = draft_vaccination_record.wizard_steps
 
       steps.delete(:notes) # this is on the confirmation page
-      steps.delete(:identity) # this is on the confirmation page
+      steps.delete(:identity) # this can only be changed from confirmation page
+      steps.delete(:dose) # this can only be changed from confirmation page
 
       steps.delete(:date_and_time)
       steps.delete(:outcome) if draft_vaccination_record.administered?
@@ -53,8 +54,6 @@ class PatientSessions::VaccinationsController < PatientSessions::BaseController
   def vaccinate_form_params
     params.expect(
       vaccinate_form: %i[
-        administered
-        delivery_method
         delivery_site
         dose_sequence
         identity_check_confirmed_by_other_name
@@ -63,15 +62,13 @@ class PatientSessions::VaccinationsController < PatientSessions::BaseController
         pre_screening_confirmed
         pre_screening_notes
         vaccine_id
+        vaccine_method
       ]
     )
   end
 
   def set_todays_batch
-    vaccine_method =
-      Vaccine.delivery_method_to_vaccine_method(
-        vaccinate_form_params[:delivery_method]
-      )
+    vaccine_method = vaccinate_form_params[:vaccine_method]
     return if vaccine_method.nil?
 
     id = todays_batch_id(programme: @programme, vaccine_method:)

@@ -6,6 +6,7 @@ module TriageMailerConcern
   def send_triage_confirmation(patient_session, consent)
     session = patient_session.session
     patient = patient_session.patient
+    organisation = patient_session.organisation
 
     return unless patient.send_notifications?
     return if consent.via_self_consent?
@@ -17,7 +18,9 @@ module TriageMailerConcern
     elsif vaccination_wont_happen?(patient, consent)
       EmailDeliveryJob.perform_later(:triage_vaccination_wont_happen, **params)
     elsif vaccination_at_clinic?(patient, consent)
-      EmailDeliveryJob.perform_later(:triage_vaccination_at_clinic, **params)
+      email_template =
+        resolve_email_template(:triage_vaccination_at_clinic, organisation)
+      EmailDeliveryJob.perform_later(email_template, **params)
     elsif consent.requires_triage?
       EmailDeliveryJob.perform_later(:consent_confirmation_triage, **params)
     elsif consent.response_refused?
@@ -53,5 +56,13 @@ module TriageMailerConcern
     programme_id = consent.programme_id
     consent.requires_triage? &&
       patient.triage_status(programme_id:).delay_vaccination?
+  end
+
+  def resolve_email_template(template_name, organisation)
+    template_names = [
+      :"#{template_name}_#{organisation.ods_code.downcase}",
+      template_name
+    ]
+    template_names.find { GOVUK_NOTIFY_EMAIL_TEMPLATES.key?(it) }
   end
 end

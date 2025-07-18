@@ -49,6 +49,9 @@ class DraftVaccinationRecordsController < ApplicationController
       jump_to("confirm")
     end
 
+    set_steps
+    setup_wizard_translated
+
     render_wizard @draft_vaccination_record
   end
 
@@ -120,7 +123,7 @@ class DraftVaccinationRecordsController < ApplicationController
 
     send_vaccination_confirmation(@vaccination_record) if should_notify_parents
 
-    EnqueueSyncVaccinationRecordToNHS.call(@vaccination_record)
+    @vaccination_record.sync_to_nhs_immunisations_api
 
     # In case the user navigates back to try and edit the newly created
     # vaccination record.

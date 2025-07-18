@@ -121,10 +121,8 @@ en:
               inclusion: Choose a status
         vaccinate_form:
           attributes:
-            administered:
-              inclusion: Choose if they are ready to vaccinate
             delivery_site:
-              blank: Choose where the injection will be given
+              inclusion: Choose where the injection will be given
             identity_check_confirmed_by_other_name:
               blank: Enter the person’s name
               too_long: Enter a name that is less than %{count} characters long
@@ -137,6 +135,8 @@ en:
               blank: Confirm you’ve checked the pre-screening statements are true
             pre_screening_notes:
               too_long: Enter notes that are less than %{count} characters long
+            vaccine_method:
+              inclusion: Choose if they are ready to vaccinate
         vaccination_report:
           attributes:
             file_format:
@@ -209,6 +209,11 @@ en:
           do_not_vaccinate: Do not vaccinate in programme
           needs_follow_up: Keep in triage
           ready_to_vaccinate: Safe to vaccinate
+          ready_to_vaccinate_injection: Safe to vaccinate with injection
+          ready_to_vaccinate_nasal: Safe to vaccinate with nasal spray
+        vaccine_methods:
+          injection: injection
+          nasal: nasal spray
       vaccination_record:
         delivery_methods:
           intramuscular: Intramuscular (IM) injection
@@ -232,7 +237,6 @@ en:
         methods:
           injection: Injection
           nasal: Nasal spray
-          nasal_injection: Nasal spray (or injection)
         method_prefixes:
           injection: injected
           nasal: nasal spray

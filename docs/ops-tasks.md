@@ -39,7 +39,7 @@ SchoolMove.new(patient:, school: patient.school).confirm!
 
 Normally patients are added to a location on import. However, their may be cases when they need to be added to a location after they've been imported, for example if their school was not added to the organisation at the time the patients were imported. At the time of writing, re-importing the patients does not add them to the location's session or to the organisation's cohorts.
 
-To fix this, ensure the location has been added to the school using the [`schools:add_to_organisation` Rake task](rake-tasks.md#schoolsadd_to_organisationods_codeteam_nameurn).
+To fix this, ensure the location has been added to the school using the `bin/mavis schools add-to-organisation` command line tool.
 
 The following console commands will manually add an existing patient to the location's session and the organisation's cohorts by using the logic in `SchoolMove`.
 

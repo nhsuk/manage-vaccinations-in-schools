@@ -376,7 +376,7 @@ describe SearchForm do
       let(:vaccine_method) { "nasal" }
       let(:year_groups) { nil }
 
-      let(:programme) { create(:programme) }
+      let(:programme) { create(:programme, :flu) }
 
       it "filters on vaccine method" do
         nasal_patient_session =
@@ -390,10 +390,29 @@ describe SearchForm do
           vaccine_methods: %w[nasal injection]
         )
 
-        create(
-          :patient_session,
-          :consent_given_triage_not_needed,
-          programmes: [programme]
+        _nasal_only_different_programme_patient =
+          create(
+            :patient_session,
+            :consent_given_triage_not_needed,
+            programmes: [create(:programme, :hpv)]
+          )
+
+        _injection_only_patient =
+          create(
+            :patient_session,
+            :consent_given_triage_not_needed,
+            programmes: [programme]
+          )
+
+        injection_primary_patient =
+          create(
+            :patient_session,
+            :consent_given_triage_not_needed,
+            programmes: [programme]
+          )
+
+        injection_primary_patient.patient.consent_statuses.first.update!(
+          vaccine_methods: %w[injection nasal]
         )
 
         expect(form.apply(scope)).to contain_exactly(nasal_patient_session)

@@ -141,7 +141,7 @@ describe "Self-consent" do
   end
 
   def and_the_child_cannot_give_their_own_consent
-    click_on "Get verbal consent"
+    click_on "Record a new consent response"
     expect(page).not_to have_content("Child (Gillick competent)")
     click_on "Back"
   end
@@ -213,7 +213,7 @@ describe "Self-consent" do
   end
 
   def and_the_nurse_records_consent_for_the_child
-    click_on "Get verbal consent"
+    click_on "Record a new consent response"
 
     # who
     choose "Child (Gillick competent)"
@@ -236,7 +236,7 @@ describe "Self-consent" do
   end
 
   def and_the_child_can_give_their_own_consent_that_the_nurse_records
-    click_on "Change response method"
+    click_on "Change method"
     choose "Child (Gillick competent)"
     5.times { click_on "Continue" }
 
@@ -246,7 +246,7 @@ describe "Self-consent" do
   end
 
   def and_changes_the_response_method_to_the_parent
-    click_on "Change response method"
+    click_on "Change method"
     choose @parent.full_name
     click_on "Continue"
 
@@ -268,14 +268,12 @@ describe "Self-consent" do
 
   def then_they_see_that_the_child_has_consent_from_themselves
     expect(page).to have_content("Consent given")
-    expect(page).to have_content(
-      "#{@patient.full_name} Child (Gillick competent)"
-    )
+    expect(page).to have_content("Child (Gillick competent)")
   end
 
   def then_they_see_that_the_child_has_consent_from_the_parent
     expect(page).to have_content("Consent given")
-    expect(page).to have_content("Decision #{@parent.full_name}")
+    expect(page).to have_content(@parent.full_name)
   end
 
   def and_the_child_should_be_safe_to_vaccinate

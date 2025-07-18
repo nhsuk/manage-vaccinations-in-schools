@@ -23,7 +23,7 @@ describe "Verbal consent" do
   def when_i_start_recording_consent_from_a_new_parental_contact
     visit session_consent_path(@session)
     click_link @patient.full_name
-    click_button "Get verbal consent"
+    click_button "Record a new consent response"
 
     # Who are you trying to get consent from?
     choose "Add a new parental contact"
@@ -59,7 +59,7 @@ describe "Verbal consent" do
 
     # Confirm
     expect(page).to have_content("Check and confirm answers")
-    expect(page).to have_content(["Response method", "By phone"].join)
+    expect(page).to have_content(["Method", "By phone"].join)
     click_button "Confirm"
 
     # Back on the consent responses page

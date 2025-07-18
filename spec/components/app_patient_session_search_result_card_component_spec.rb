@@ -10,11 +10,13 @@ describe AppPatientSessionSearchResultCardComponent do
   let(:patient) do
     create(
       :patient,
+      :consent_given_injection_and_nasal_triage_safe_to_vaccinate_nasal,
       given_name: "Hari",
       family_name: "Seldon",
       address_postcode: "SW11 1AA",
       year_group: 8,
-      school: build(:school, name: "Streeling University")
+      school: build(:school, name: "Streeling University"),
+      programmes: [programme]
     )
   end
 
@@ -30,6 +32,7 @@ describe AppPatientSessionSearchResultCardComponent do
   it { should have_link("SELDON, Hari", href:) }
   it { should have_text("Year 8") }
   it { should have_text("Consent status") }
+  it { should_not have_text("Vaccination method") }
 
   context "when patient session has notes" do
     let(:note) { create(:note, patient:, session:) }
@@ -62,29 +65,88 @@ describe AppPatientSessionSearchResultCardComponent do
     it { should_not have_link("Continue reading") }
   end
 
+  context "when context is consent" do
+    let(:context) { :consent }
+
+    context "and the programme is flu" do
+      let(:programme) { create(:programme, :flu) }
+
+      it { should have_text("Vaccination method") }
+      it { should have_text("Nasal") }
+    end
+  end
+
+  context "when context is triage" do
+    let(:context) { :triage }
+
+    context "and the programme is flu" do
+      let(:programme) { create(:programme, :flu) }
+
+      it { should have_text("Vaccination method") }
+      it { should have_text("Nasal") }
+    end
+  end
+
   context "when context is register" do
     let(:context) { :register }
 
     context "when allowed to record attendance" do
       before { stub_authorization(allowed: true) }
 
-      it { should have_text("Action required\nGet consent for HPV") }
+      it { should have_text("Action required\nRecord vaccination for HPV") }
       it { should have_button("Attending") }
       it { should have_button("Absent") }
+
+      context "and the programme is flu" do
+        let(:programme) { create(:programme, :flu) }
+
+        it { should have_text("Vaccination method") }
+        it { should have_text("Nasal") }
+      end
     end
 
     context "when not allowed to record attendance" do
       before { stub_authorization(allowed: false) }
 
-      it { should have_text("Action required\nGet consent for HPV") }
+      it { should have_text("Action required\nRecord vaccination for HPV") }
       it { should_not have_button("Attending") }
       it { should_not have_button("Absent") }
+
+      context "and the programme is flu" do
+        let(:programme) { create(:programme, :flu) }
+
+        it { should have_text("Vaccination method") }
+        it { should have_text("Nasal") }
+      end
     end
   end
 
   context "when context is record" do
     let(:context) { :record }
 
-    it { should have_text("Action required\nGet consent for HPV") }
+    it { should have_text("Action required\nRecord vaccination for HPV") }
+
+    context "and the programme is flu" do
+      let(:programme) { create(:programme, :flu) }
+
+      it { should have_text("Vaccination method") }
+      it { should have_text("Nasal") }
+
+      context "and once vaccinated" do
+        before { patient.vaccination_status(programme:).vaccinated! }
+
+        it { should_not have_text("Vaccination method") }
+      end
+    end
+  end
+
+  context "when context is outcome" do
+    let(:context) { :outcome }
+
+    context "and the programme is flu" do
+      let(:programme) { create(:programme, :flu) }
+
+      it { should_not have_text("Vaccination method") }
+    end
   end
 end

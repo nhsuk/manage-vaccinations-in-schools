@@ -52,6 +52,46 @@ describe Patient::TriageStatus do
       it { should be(:not_required) }
     end
 
+    context "with conflicting consent" do
+      before do
+        create(:consent, :given, patient:, programme:)
+        create(
+          :consent,
+          :refused,
+          :needing_triage,
+          patient:,
+          programme:,
+          parent: create(:parent)
+        )
+      end
+
+      it { should be(:not_required) }
+    end
+
+    context "with two given consents with different methods" do
+      before do
+        create(
+          :consent,
+          :given,
+          :needing_triage,
+          patient:,
+          programme:,
+          vaccine_methods: %w[injection]
+        )
+        create(
+          :consent,
+          :given,
+          :needing_triage,
+          patient:,
+          programme:,
+          vaccine_methods: %w[nasal],
+          parent: create(:parent)
+        )
+      end
+
+      it { should be(:not_required) }
+    end
+
     context "with a consent that needs triage" do
       before { create(:consent, :needing_triage, patient:, programme:) }
 
@@ -191,6 +231,15 @@ describe Patient::TriageStatus do
       before { create(:triage, :ready_to_vaccinate, patient:, programme:) }
 
       it { should eq("injection") }
+    end
+
+    context "with a safe to vaccinate triage and vaccinated" do
+      before do
+        create(:triage, :ready_to_vaccinate, patient:, programme:)
+        create(:vaccination_record, patient:, programme:)
+      end
+
+      it { should be_nil }
     end
 
     context "with a do not vaccinate triage" do

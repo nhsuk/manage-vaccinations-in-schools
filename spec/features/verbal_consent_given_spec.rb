@@ -15,6 +15,7 @@ describe "Verbal consent" do
     given_an_flu_programme_is_underway
     and_i_am_signed_in
     when_i_record_that_verbal_nasal_consent_was_given
+    and_the_patients_status_is_safe_to_vaccinate_with_nasal_spray
   end
 
   def given_an_hpv_programme_is_underway
@@ -58,7 +59,7 @@ describe "Verbal consent" do
   )
     visit session_consent_path(@session)
     click_link @patient.full_name
-    click_button "Get verbal consent"
+    click_button "Record a new consent response"
 
     # Who are you trying to get consent from?
     click_button "Continue"
@@ -100,7 +101,7 @@ describe "Verbal consent" do
 
     # Confirm
     expect(page).to have_content("Check and confirm answers")
-    expect(page).to have_content(["Response method", "By phone"].join)
+    expect(page).to have_content(["Method", "By phone"].join)
     click_button "Confirm"
 
     # Back on the consent responses page
@@ -112,15 +113,18 @@ describe "Verbal consent" do
     expect(page).to have_content("Safe to vaccinate")
   end
 
+  def and_the_patients_status_is_safe_to_vaccinate_with_nasal_spray
+    click_link @patient.full_name, match: :first
+    expect(page).to have_content("Safe to vaccinate with nasal spray")
+  end
+
   def and_i_can_see_the_consent_response_details
     click_link @parent.full_name
 
     expect(page).to have_content("Consent response from #{@parent.full_name}")
-    expect(page).to have_content(
-      ["Response date", Date.current.to_fs(:long)].join
-    )
+    expect(page).to have_content(["Date", Date.current.to_fs(:long)].join)
     expect(page).to have_content(["Decision", "Consent given"].join)
-    expect(page).to have_content(["Response method", "By phone"].join)
+    expect(page).to have_content(["Method", "By phone"].join)
 
     expect(page).to have_content(["Full name", @patient.full_name].join)
     expect(page).to have_content(

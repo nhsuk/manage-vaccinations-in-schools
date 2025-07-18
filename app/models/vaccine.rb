@@ -61,8 +61,6 @@ class Vaccine < ApplicationRecord
 
   def contains_gelatine? = programme.flu? && nasal?
 
-  def can_be_half_dose? = nasal?
-
   AVAILABLE_DELIVERY_SITES = {
     "injection" => %w[
       left_arm_upper_position
@@ -79,12 +77,9 @@ class Vaccine < ApplicationRecord
     AVAILABLE_DELIVERY_SITES.fetch(method)
   end
 
-  NASAL_DELIVERY_METHODS = %w[nasal_spray].freeze
-  INJECTION_DELIVERY_METHODS = %w[intramuscular subcutaneous].freeze
-
   AVAILABLE_DELIVERY_METHODS = {
-    "nasal" => NASAL_DELIVERY_METHODS,
-    "injection" => INJECTION_DELIVERY_METHODS
+    "nasal" => %w[nasal_spray].freeze,
+    "injection" => %w[intramuscular subcutaneous].freeze
   }.freeze
 
   def available_delivery_methods

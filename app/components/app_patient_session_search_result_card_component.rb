@@ -22,6 +22,13 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
                 row.with_value { action_required }
               end
             end
+            
+            if vaccination_method
+              summary_list.with_row do |row|
+                row.with_key { "Vaccination method" }
+                row.with_value { vaccination_method }
+              end
+            end
 
             if status_tag
               summary_list.with_row do |row|
@@ -106,6 +113,27 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
     end
   end
 
+  def vaccination_method
+    return if context == :outcome
+
+    programmes_to_check = programmes.select(&:has_multiple_vaccine_methods?)
+
+    return if programmes_to_check.empty?
+
+    vaccine_methods =
+      programmes_to_check.flat_map do |programme|
+        if patient.consent_given_and_safe_to_vaccinate?(programme:)
+          patient.approved_vaccine_methods(programme:)
+        else
+          []
+        end
+      end
+
+    return if vaccine_methods.empty?
+
+    Vaccine.human_enum_name(:method, vaccine_methods.first)
+  end
+
   def status_tag
     return if context == :record
 
@@ -143,7 +171,7 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
           render(
             AppProgrammeStatusTagsComponent.new(
               programmes.index_with do |programme|
-                patient.triage_status(programme:).slice(:status)
+                triage_status_tag(patient.triage_status(programme:), programme)
               end,
               outcome: :triage
             )
@@ -163,6 +191,18 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
           )
       }
     end
+  end
+
+  def triage_status_tag(triage_status, programme)
+    status =
+      if triage_status.vaccine_method.present? &&
+           programme.has_multiple_vaccine_methods?
+        triage_status.status + "_#{triage_status.vaccine_method}"
+      else
+        triage_status.status
+      end
+
+    { status: status }
   end
 
   def note_to_log_event(note)

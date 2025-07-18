@@ -46,20 +46,6 @@ class VaccinationRecordsController < ApplicationController
     redirect_to @return_to, flash: { success: "Vaccination record deleted" }
   end
 
-  def export_dps
-    send_data(dps_export.csv, filename: dps_export.filename)
-  end
-
-  def reset_dps_export
-    programme.dps_exports.destroy_all
-
-    flash[:success] = {
-      heading: "DPS exports have been reset for the programme"
-    }
-
-    redirect_to programme_vaccination_records_path(programme)
-  end
-
   private
 
   def programme
@@ -82,10 +68,6 @@ class VaccinationRecordsController < ApplicationController
         )
         .where(programme:)
         .order(:performed_at)
-  end
-
-  def dps_export
-    @dps_export ||= DPSExport.create!(programme:)
   end
 
   def set_vaccination_record

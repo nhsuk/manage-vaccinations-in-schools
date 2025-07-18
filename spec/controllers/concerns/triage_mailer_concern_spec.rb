@@ -75,6 +75,19 @@ describe TriageMailerConcern do
       it "doesn't send a text message" do
         expect { send_triage_confirmation }.not_to have_delivered_sms
       end
+
+      context "when the organisation is Coventry & Warwickshire Partnership NHS Trust (CWPT)" do
+        let(:session) do
+          create(:session, programmes: [programme], organisation:)
+        end
+        let(:organisation) { create(:organisation, ods_code: "RYG") }
+
+        it "enqueues an email using the CWPT-specific template" do
+          expect { send_triage_confirmation }.to have_delivered_email(
+            :triage_vaccination_at_clinic_ryg
+          ).with(consent:, session:, sent_by: current_user)
+        end
+      end
     end
 
     context "when the parents agree and triage is not required" do

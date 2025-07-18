@@ -5,6 +5,7 @@ describe "Edit vaccination record" do
     given_i_am_signed_in
     and_an_hpv_programme_is_underway
     and_an_administered_vaccination_record_exists
+    and_sync_vaccination_records_to_nhs_on_create_feature_is_enabled
 
     when_i_go_to_the_vaccination_records_page
     then_i_should_see_the_vaccination_records
@@ -44,6 +45,7 @@ describe "Edit vaccination record" do
 
     when_i_click_on_save_changes
     then_the_parent_doesnt_receive_an_email
+    and_the_vaccination_record_is_synced_to_nhs
   end
 
   scenario "User edits a vaccination record that already received confirmation" do
@@ -288,6 +290,13 @@ describe "Edit vaccination record" do
       )
   end
 
+  def and_sync_vaccination_records_to_nhs_on_create_feature_is_enabled
+    Flipper.enable(:sync_vaccination_records_to_nhs_on_create)
+    Flipper.enable(:immunisations_fhir_api_integration)
+
+    @stubbed_post_request = stub_immunisations_api_post
+  end
+
   def and_an_historical_administered_vaccination_record_exists
     @vaccination_record =
       create(
@@ -517,5 +526,10 @@ describe "Edit vaccination record" do
 
   def when_i_go_back_to_the_confirm_page
     visit draft_vaccination_record_path(id: "confirm")
+  end
+
+  def and_the_vaccination_record_is_synced_to_nhs
+    perform_enqueued_jobs
+    expect(@stubbed_post_request).to have_been_requested
   end
 end

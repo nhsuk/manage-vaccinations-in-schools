@@ -172,11 +172,26 @@ class PatientSession < ApplicationRecord
             ).where(
               Patient::ConsentStatus
                 .where("patient_id = patient_sessions.patient_id")
+                .where(programme:)
                 .has_vaccine_method(vaccine_method)
                 .arel
                 .exists
             )
           )
+        end
+
+  scope :consent_given_and_ready_to_vaccinate,
+        ->(programmes:, vaccine_method:) do
+          select do |patient_session|
+            patient = patient_session.patient
+
+            programmes.any? do |programme|
+              patient.consent_given_and_safe_to_vaccinate?(
+                programme:,
+                vaccine_method:
+              )
+            end
+          end
         end
 
   scope :destroy_all_if_safe,

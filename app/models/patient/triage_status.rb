@@ -68,7 +68,8 @@ class Patient::TriageStatus < ApplicationRecord
         :not_required
       end
 
-    self.vaccine_method = latest_triage&.vaccine_method
+    self.vaccine_method =
+      (latest_triage&.vaccine_method if status_should_be_safe_to_vaccinate?)
   end
 
   def consent_requires_triage?
@@ -109,22 +110,19 @@ class Patient::TriageStatus < ApplicationRecord
 
     return false if latest_consents.empty?
 
-    # FIXME: This logic is duplicated from `ConsentStatus`.
-    consent_given =
-      if (self_consents = latest_consents.select(&:via_self_consent?)).any?
-        self_consents.all?(&:response_given?)
-      else
-        latest_consents.all?(&:response_given?) &&
-          latest_consents.map(&:vaccine_methods).inject(&:intersection).present?
-      end
-
-    return false unless consent_given
-
-    consent_requires_triage? || vaccination_history_requires_triage?
+    consent_status.given? &&
+      (consent_requires_triage? || vaccination_history_requires_triage?)
   end
 
   def latest_consents
     @latest_consents ||= ConsentGrouper.call(consents, programme_id:)
+  end
+
+  def consent_status
+    @consent_status ||=
+      Patient::ConsentStatus.new(patient_id:, programme_id:, consents:).tap(
+        &:assign_status
+      )
   end
 
   def latest_triage

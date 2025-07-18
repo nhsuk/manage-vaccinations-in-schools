@@ -1,35 +1,6 @@
 # frozen_string_literal: true
 
 namespace :schools do
-  desc "Add a school to a organisation."
-  task :add_to_organisation,
-       %i[ods_code team_name] => :environment do |_task, args|
-    organisation = Organisation.find_by(ods_code: args[:ods_code])
-
-    raise "Could not find organisation." if organisation.nil?
-
-    team = organisation.teams.find_by(name: args[:team_name])
-
-    raise "Could not find team." if team.nil?
-
-    args.extras.each do |urn|
-      location = Location.school.find_by(urn:)
-
-      if location.nil?
-        puts "Could not find location: #{urn}"
-        next
-      end
-
-      if !location.team_id.nil? && location.team_id != team.id
-        puts "#{urn} previously belonged to #{location.team.name}"
-      end
-
-      location.update!(team:)
-    end
-
-    UnscheduledSessionsFactory.new.call
-  end
-
   desc "Create a school for smoke testing in production."
   task smoke: :environment do
     Location.find_or_create_by!(

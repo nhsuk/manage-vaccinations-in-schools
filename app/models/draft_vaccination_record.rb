@@ -40,13 +40,13 @@ class DraftVaccinationRecord
 
   def wizard_steps
     [
-      :notes,
       :identity,
+      :notes,
       :date_and_time,
       (:outcome if can_change_outcome?),
       (:delivery if administered?),
-      (:batch if administered?),
       (:dose if administered? && can_be_half_dose?),
+      (:batch if administered?),
       (:location if location&.generic_clinic?),
       :confirm
     ].compact
@@ -212,7 +212,6 @@ class DraftVaccinationRecord
   end
 
   delegate :vaccine, to: :batch, allow_nil: true
-  delegate :can_be_half_dose?, to: :vaccine, allow_nil: true
 
   delegate :id, to: :vaccine, prefix: true, allow_nil: true
 
@@ -297,6 +296,12 @@ class DraftVaccinationRecord
     end
   end
 
+  def vaccine_method
+    Vaccine.delivery_method_to_vaccine_method(delivery_method)
+  end
+
+  def can_be_half_dose? = vaccine_method == "nasal"
+
   def can_change_outcome?
     outcome != "already_had" || editing? || session.nil? || session.today?
   end
@@ -309,14 +314,14 @@ class DraftVaccinationRecord
       return
     end
 
-    case delivery_method
-    when *Vaccine::NASAL_DELIVERY_METHODS
-      if delivery_site != "nose"
-        errors.add(:delivery_site, :nasal_spray_must_be_nose)
-      end
-    when *Vaccine::INJECTION_DELIVERY_METHODS
-      if delivery_site == "nose"
+    allowed_delivery_sites =
+      Vaccine::AVAILABLE_DELIVERY_SITES.fetch(vaccine_method)
+
+    unless delivery_site.in?(allowed_delivery_sites)
+      if vaccine_method == "injection"
         errors.add(:delivery_site, :injection_cannot_be_nose)
+      else
+        errors.add(:delivery_site, :nasal_spray_must_be_nose)
       end
     end
 
