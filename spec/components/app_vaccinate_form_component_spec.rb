@@ -26,11 +26,14 @@ describe AppVaccinateFormComponent do
 
   it { should have_css(".nhsuk-card") }
 
-  context "with a Flu programme and consent to nasal spray" do
+  context "with a flu programme and consent to nasal spray" do
     let(:programme) { create(:programme, :flu) }
+    let(:academic_year) { Date.current.academic_year }
 
     before do
-      patient.consent_status(programme:).update!(vaccine_methods: %w[nasal])
+      patient.consent_status(programme:, academic_year:).update!(
+        vaccine_methods: %w[nasal]
+      )
     end
 
     it { should have_content("Has Hari confirmed their identity?") }
@@ -64,14 +67,15 @@ describe AppVaccinateFormComponent do
     it { should have_field("Other") }
   end
 
-  context "with a Flu programme, consent to nasal spray, but triaged for injection" do
+  context "with a flu programme, consent to nasal spray, but triaged for injection" do
     let(:programme) { create(:programme, :flu) }
+    let(:academic_year) { Date.current.academic_year }
 
     before do
-      patient.consent_status(programme:).update!(
+      patient.consent_status(programme:, academic_year:).update!(
         vaccine_methods: %w[nasal injection]
       )
-      patient.triage_status(programme:).update!(
+      patient.triage_status(programme:, academic_year:).update!(
         status: "safe_to_vaccinate",
         vaccine_method: "injection"
       )

@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
 class VaccinatedCriteria
-  def initialize(programme:, patient:, vaccination_records:)
+  def initialize(programme:, academic_year:, patient:, vaccination_records:)
     @programme = programme
+    @academic_year = academic_year
     @patient = patient
     @vaccination_records = vaccination_records
   end
@@ -13,8 +14,8 @@ class VaccinatedCriteria
 
     if programme.seasonal?
       vaccination_records_for_programme
-        .select { it.administered? || it.already_had? }
-        .any?(&:performed_this_academic_year?)
+        .select { it.academic_year == academic_year }
+        .any? { it.administered? || it.already_had? }
     else
       return true if vaccination_records_for_programme.any?(&:already_had?)
 
@@ -44,5 +45,5 @@ class VaccinatedCriteria
 
   private
 
-  attr_reader :programme, :patient, :vaccination_records
+  attr_reader :programme, :academic_year, :patient, :vaccination_records
 end

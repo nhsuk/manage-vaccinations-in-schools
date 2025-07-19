@@ -128,12 +128,15 @@ describe AppPatientSessionSearchResultCardComponent do
 
     context "and the programme is flu" do
       let(:programme) { create(:programme, :flu) }
+      let(:academic_year) { Date.current.academic_year }
 
       it { should have_text("Vaccination method") }
       it { should have_text("Nasal") }
 
       context "and once vaccinated" do
-        before { patient.vaccination_status(programme:).vaccinated! }
+        before do
+          patient.vaccination_status(programme:, academic_year:).vaccinated!
+        end
 
         it { should_not have_text("Vaccination method") }
       end

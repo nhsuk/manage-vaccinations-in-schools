@@ -20,9 +20,7 @@ class AppSessionActionsComponent < ViewComponent::Base
 
   attr_reader :session
 
-  delegate :patient_sessions, to: :session
-
-  delegate :programmes, to: :session
+  delegate :academic_year, :patient_sessions, :programmes, to: :session
 
   def rows
     @rows ||= [
@@ -120,7 +118,8 @@ class AppSessionActionsComponent < ViewComponent::Base
           )
           .count do |patient_session|
             patient_session.patient.consent_given_and_safe_to_vaccinate?(
-              programme:
+              programme:,
+              academic_year:
             )
           end
       end

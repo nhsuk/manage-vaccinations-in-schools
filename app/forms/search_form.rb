@@ -22,7 +22,7 @@ class SearchForm
   attribute :vaccine_method, :string
   attribute :year_groups, array: true
 
-  attr_accessor :request_path, :request_session, :session
+  attr_accessor :request_path, :request_session, :session, :academic_year
 
   def initialize(params = {})
     super(params)
@@ -72,11 +72,29 @@ class SearchForm
     scope = scope.in_programmes(programmes) if programmes.present?
 
     if (statuses = consent_statuses).present?
-      scope = scope.has_consent_status(statuses, programme: programmes)
+      scope =
+        if academic_year
+          scope.has_consent_status(
+            statuses,
+            programme: programmes,
+            academic_year:
+          )
+        else
+          scope.has_consent_status(statuses, programme: programmes)
+        end
     end
 
     if (status = programme_status&.to_sym).present?
-      scope = scope.has_vaccination_status(status, programme: programmes)
+      scope =
+        if academic_year
+          scope.has_vaccination_status(
+            status,
+            programme: programmes,
+            academic_year:
+          )
+        else
+          scope.has_vaccination_status(status, programme: programmes)
+        end
     end
 
     if (status = session_status&.to_sym).present?
@@ -88,7 +106,12 @@ class SearchForm
     end
 
     if (status = triage_status&.to_sym).present?
-      scope = scope.has_triage_status(status, programme: programmes)
+      scope =
+        if academic_year
+          scope.has_triage_status(status, programme: programmes, academic_year:)
+        else
+          scope.has_triage_status(status, programme: programmes)
+        end
     end
 
     if vaccine_method.present?

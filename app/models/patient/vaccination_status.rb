@@ -4,15 +4,16 @@
 #
 # Table name: patient_vaccination_statuses
 #
-#  id           :bigint           not null, primary key
-#  status       :integer          default("none_yet"), not null
-#  patient_id   :bigint           not null
-#  programme_id :bigint           not null
+#  id            :bigint           not null, primary key
+#  academic_year :integer          not null
+#  status        :integer          default("none_yet"), not null
+#  patient_id    :bigint           not null
+#  programme_id  :bigint           not null
 #
 # Indexes
 #
-#  idx_on_patient_id_programme_id_e876faade2     (patient_id,programme_id) UNIQUE
-#  index_patient_vaccination_statuses_on_status  (status)
+#  idx_on_patient_id_programme_id_academic_year_fc0b47b743  (patient_id,programme_id,academic_year) UNIQUE
+#  index_patient_vaccination_statuses_on_status             (status)
 #
 # Foreign Keys
 #
@@ -54,14 +55,21 @@ class Patient::VaccinationStatus < ApplicationRecord
   private
 
   def status_should_be_vaccinated?
-    VaccinatedCriteria.call(programme:, patient:, vaccination_records:)
+    VaccinatedCriteria.call(
+      programme:,
+      academic_year:,
+      patient:,
+      vaccination_records:
+    )
   end
 
   def status_should_be_could_not_vaccinate?
-    if ConsentGrouper.call(consents, programme_id:).any?(&:response_refused?)
+    if ConsentGrouper.call(consents, programme_id:, academic_year:).any?(
+         &:response_refused?
+       )
       return true
     end
 
-    triages.select { it.programme_id == programme_id }.last&.do_not_vaccinate?
+    TriageFinder.call(triages, programme_id:, academic_year:)&.do_not_vaccinate?
   end
 end

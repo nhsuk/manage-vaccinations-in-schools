@@ -59,6 +59,7 @@ class ConsentForm < ApplicationRecord
   include AddressConcern
   include AgeConcern
   include Archivable
+  include BelongsToAcademicYear
   include FullNameConcern
   include GelatineVaccinesConcern
   include HasHealthAnswers
@@ -192,6 +193,8 @@ class ConsentForm < ApplicationRecord
 
   normalizes :nhs_number, with: -> { _1.blank? ? nil : _1.gsub(/\s/, "") }
 
+  academic_year_attribute :created_at
+
   on_wizard_step :name do
     validates :given_name, presence: true
     validates :family_name, presence: true
@@ -315,6 +318,8 @@ class ConsentForm < ApplicationRecord
         (:reason_notes if refused_and_given && reason_notes_must_be_provided?)
       ].compact
   end
+
+  def academic_year = created_at.to_date.academic_year
 
   def recorded? = recorded_at != nil
 
@@ -557,10 +562,6 @@ class ConsentForm < ApplicationRecord
 
   def via_self_consent?
     false
-  end
-
-  def academic_year
-    created_at.to_date.academic_year
   end
 
   def health_answers_valid?

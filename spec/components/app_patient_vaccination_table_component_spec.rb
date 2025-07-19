@@ -3,9 +3,12 @@
 describe AppPatientVaccinationTableComponent do
   subject { render_inline(component) }
 
-  let(:component) { described_class.new(patient, programme:, show_caption:) }
+  let(:component) do
+    described_class.new(patient, academic_year:, programme:, show_caption:)
+  end
 
   let(:patient) { create(:patient) }
+  let(:academic_year) { 2023 }
   let(:programme) { nil }
   let(:show_caption) { false }
 

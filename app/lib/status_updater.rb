@@ -28,7 +28,7 @@ class StatusUpdater
 
   def update_consent_statuses!
     Patient::ConsentStatus.import!(
-      %i[patient_id programme_id],
+      %i[patient_id programme_id academic_year],
       patient_statuses_to_import,
       on_duplicate_key_ignore: true
     )
@@ -86,7 +86,13 @@ class StatusUpdater
 
     PatientSession::SessionStatus
       .where(patient_session_id: patient_sessions.select(:id))
-      .includes(:consents, :triages, :vaccination_records, :session_attendance)
+      .includes(
+        :consents,
+        :session,
+        :triages,
+        :vaccination_records,
+        :session_attendance
+      )
       .find_in_batches(batch_size: 10_000) do |batch|
         batch.each(&:assign_status)
 
@@ -102,7 +108,7 @@ class StatusUpdater
 
   def update_triage_statuses!
     Patient::TriageStatus.import!(
-      %i[patient_id programme_id],
+      %i[patient_id programme_id academic_year],
       patient_statuses_to_import,
       on_duplicate_key_ignore: true
     )
@@ -125,7 +131,7 @@ class StatusUpdater
 
   def update_vaccination_statuses!
     Patient::VaccinationStatus.import!(
-      %i[patient_id programme_id],
+      %i[patient_id programme_id academic_year],
       patient_statuses_to_import,
       on_duplicate_key_ignore: true
     )
@@ -146,6 +152,10 @@ class StatusUpdater
       end
   end
 
+  def academic_years
+    @academic_years ||= AcademicYear.all
+  end
+
   def patient_statuses_to_import
     @patient_statuses_to_import ||=
       patient_sessions
@@ -155,7 +165,11 @@ class StatusUpdater
         .flat_map do |patient_id, birth_academic_year|
           programme_ids_per_birth_academic_year
             .fetch(birth_academic_year, [])
-            .map { [patient_id, it] }
+            .flat_map do |programme_id|
+              academic_years.map do |academic_year|
+                [patient_id, programme_id, academic_year]
+              end
+            end
         end
   end
 

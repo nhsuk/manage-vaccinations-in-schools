@@ -76,9 +76,10 @@ describe "Today’s batch" do
         year_group: 8
       )
 
-    @patient2.consent_status(programme: flu_programme).update!(
-      vaccine_methods: %w[nasal]
-    )
+    @patient2.consent_status(
+      programme: flu_programme,
+      academic_year: Date.current.academic_year
+    ).update!(vaccine_methods: %w[nasal])
 
     sign_in organisation.users.first
   end

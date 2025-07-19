@@ -13,6 +13,7 @@ class Programmes::PatientsController < Programmes::BaseController
       )
 
     @form.programme_types = [@programme.type]
+    @form.academic_year = AcademicYear.current
 
     patients = @form.apply(scope)
     @pagy, @patients = pagy(patients)

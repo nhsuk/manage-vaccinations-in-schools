@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_14_170610) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_18_090719) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -556,7 +556,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_14_170610) do
     t.bigint "programme_id", null: false
     t.integer "status", default: 0, null: false
     t.integer "vaccine_methods", default: [], null: false, array: true
-    t.index ["patient_id", "programme_id"], name: "index_patient_consent_statuses_on_patient_id_and_programme_id", unique: true
+    t.integer "academic_year", null: false
+    t.index ["patient_id", "programme_id", "academic_year"], name: "idx_on_patient_id_programme_id_academic_year_1d3170e398", unique: true
     t.index ["status"], name: "index_patient_consent_statuses_on_status"
   end
 
@@ -605,7 +606,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_14_170610) do
     t.bigint "programme_id", null: false
     t.integer "status", default: 0, null: false
     t.integer "vaccine_method"
-    t.index ["patient_id", "programme_id"], name: "index_patient_triage_statuses_on_patient_id_and_programme_id", unique: true
+    t.integer "academic_year", null: false
+    t.index ["patient_id", "programme_id", "academic_year"], name: "idx_on_patient_id_programme_id_academic_year_6cf32349df", unique: true
     t.index ["status"], name: "index_patient_triage_statuses_on_status"
   end
 
@@ -613,7 +615,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_14_170610) do
     t.bigint "patient_id", null: false
     t.bigint "programme_id", null: false
     t.integer "status", default: 0, null: false
-    t.index ["patient_id", "programme_id"], name: "idx_on_patient_id_programme_id_e876faade2", unique: true
+    t.integer "academic_year", null: false
+    t.index ["patient_id", "programme_id", "academic_year"], name: "idx_on_patient_id_programme_id_academic_year_fc0b47b743", unique: true
     t.index ["status"], name: "index_patient_vaccination_statuses_on_status"
   end
 

@@ -56,6 +56,7 @@
 #  fk_rails_...  (vaccine_id => vaccines.id)
 #
 class VaccinationRecord < ApplicationRecord
+  include BelongsToAcademicYear
   include Discard::Model
   include HasDoseVolume
   include PendingChangesConcern
@@ -139,6 +140,8 @@ class VaccinationRecord < ApplicationRecord
 
   encrypts :notes
 
+  academic_year_attribute :performed_at
+
   validates :notes, length: { maximum: 1000 }
 
   validates :location_name,
@@ -180,16 +183,12 @@ class VaccinationRecord < ApplicationRecord
     session_id != nil
   end
 
-  def academic_year
-    performed_at.to_date.academic_year
-  end
-
-  def performed_this_academic_year?
-    academic_year == AcademicYear.current
-  end
-
-  def show_this_academic_year?
-    programme.seasonal? ? performed_this_academic_year? : true
+  def show_in_academic_year?(current_academic_year)
+    if programme.seasonal?
+      academic_year == current_academic_year
+    else
+      academic_year >= current_academic_year
+    end
   end
 
   def delivery_method_snomed_code

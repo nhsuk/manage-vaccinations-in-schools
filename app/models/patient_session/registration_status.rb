@@ -52,6 +52,8 @@ class PatientSession::RegistrationStatus < ApplicationRecord
 
   private
 
+  delegate :academic_year, to: :session
+
   def status_should_be_completed?
     patient_session.programmes.all? do |programme|
       vaccination_records.any? do
