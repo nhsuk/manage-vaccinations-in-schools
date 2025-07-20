@@ -1,5 +1,5 @@
 <% content_for :before_main do %>
-  <%= render AppBacklinkComponent.new(@back_link_path) %>
+  <%= govuk_back_link(href: @back_link_path) %>
 <% end %>
 
 <% title = t(@draft_consent.programme.type, scope: "draft_consents.agree.title") %>

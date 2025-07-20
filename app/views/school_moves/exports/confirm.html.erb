@@ -1,5 +1,5 @@
 <% content_for :before_main do %>
-  <%= render AppBacklinkComponent.new(wizard_path(:dates), name: "school_moves_export") %>
+  <%= govuk_back_link(href: wizard_path(:dates)) %>
 <% end %>
 
 <span class="nhsuk-caption-l">School moves</span>

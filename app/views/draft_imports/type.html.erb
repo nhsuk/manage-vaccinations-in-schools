@@ -1,5 +1,5 @@
 <% content_for :before_main do %>
-  <%= render AppBacklinkComponent.new(imports_path, name: "imports") %>
+  <%= govuk_back_link(href: imports_path) %>
 <% end %>
 
 <% legend = "What type of records are you importing?" %>

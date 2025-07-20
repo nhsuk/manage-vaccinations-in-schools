@@ -11,7 +11,7 @@ class AppCountComponent < ViewComponent::Base
     tag.span(class: "app-count") do
       safe_join(
         [
-          tag.span("(", class: "nhsuk-u-visually-hidden"),
+          tag.span(" (", class: "nhsuk-u-visually-hidden"),
           @count.to_s,
           tag.span(")", class: "nhsuk-u-visually-hidden")
         ]

@@ -1,7 +1,5 @@
 <% content_for :before_main do %>
-  <%= render AppBacklinkComponent.new(
-        health_question_backlink_path(@consent_form, @health_answer)
-      ) %>
+  <%= govuk_back_link(href: health_question_backlink_path(@consent_form, @health_answer)) %>
 <% end %>
 
 <% title = @health_answer.question %>

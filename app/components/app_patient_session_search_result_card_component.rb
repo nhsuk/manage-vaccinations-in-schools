@@ -46,7 +46,7 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
           end %>
 
       <% if context == :register && can_register_attendance? %>
-        <div class="app-button-group">
+        <div class="nhsuk-button-group">
           <%= helpers.govuk_button_to "Attending", create_session_register_path(session, patient, "present"), secondary: true, class: "app-button--small" %>
           <%= helpers.govuk_button_to "Absent", create_session_register_path(session, patient, "absent"), class: "app-button--secondary-warning app-button--small" %>
         </div>

@@ -1,5 +1,5 @@
 <% content_for :before_main do %>
-  <%= render AppBacklinkComponent.new(edit_patient_path(@patient), name: "edit patient") %>
+  <%= govuk_back_link(href: edit_patient_path(@patient)) %>
 <% end %>
 
 <% legend = "What is the child’s NHS number?" %>

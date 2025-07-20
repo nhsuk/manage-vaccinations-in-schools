@@ -1,5 +1,5 @@
 <% content_for :before_main do %>
-  <%= render AppBacklinkComponent.new(consent_form_path(@consent_form), name: "consent page") %>
+  <%= govuk_back_link(href: consent_form_path(@consent_form)) %>
 <% end %>
 
 <%= form_with model: @consent_form, url: archive_consent_form_path, method: :post do |f| %>
