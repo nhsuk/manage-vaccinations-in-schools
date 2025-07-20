@@ -1,5 +1,5 @@
 <% content_for :before_main do %>
-  <%= render AppBacklinkComponent.new(backlink_path) %>
+  <%= govuk_back_link(href: backlink_path) %>
 <% end %>
 
 <% title = "Phone contact method" %>
