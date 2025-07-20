@@ -15,12 +15,14 @@ blockquote {
 }
 
 // Highlight code within body copy
-li code,
-p code,
-td code {
-  background-color: $color_nhsuk-white;
-  color: $color_nhsuk-red;
-  font-family: ui-monospace, monospace;
-  font-weight: 500;
-  padding: 2px;
+main {
+  li code,
+  p code,
+  td code {
+    background-color: $color_nhsuk-white;
+    color: $color_nhsuk-red;
+    font-family: ui-monospace, monospace;
+    font-weight: 500;
+    padding: 2px;
+  }
 }

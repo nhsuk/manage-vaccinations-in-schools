@@ -1,5 +1,5 @@
 <% content_for :before_main do %>
-  <%= render AppBacklinkComponent.new(draft_import_path("type")) %>
+  <%= govuk_back_link(href: draft_import_path("type")) %>
 <% end %>
 
 <% title = "Import child records" %>

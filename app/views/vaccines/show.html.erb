@@ -1,5 +1,5 @@
 <% content_for :before_main do %>
-  <%= render AppBacklinkComponent.new(vaccines_path, name: "vaccines page") %>
+  <%= govuk_back_link(href: vaccines_path) %>
 <% end %>
 
 <%= h1 vaccine_heading(@vaccine), size: "l" %>

@@ -1,5 +1,5 @@
 <% content_for :before_main do %>
-  <%= render AppBacklinkComponent.new(session_path(@session), name: @session.location.name) %>
+  <%= govuk_back_link(href: session_path(@session)) %>
 <% end %>
 
 <%= h1 "Edit session" do %>

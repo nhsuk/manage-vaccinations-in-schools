@@ -1,29 +1,11 @@
 import { Controller } from "@hotwired/stimulus";
-import NhsukRadios from "nhsuk-frontend/packages/components/radios/radios";
+import { Radios } from "nhsuk-frontend";
 
-// Connects to data-module="nhsuk-radios"
-export default class extends Controller {
-  connect() {
-    this.addConditionalClassIfNeeded();
-    this.promoteAriaControlsAttribute();
-
-    NhsukRadios();
-  }
-
-  // We use govuk-frontend radio button HTML, which doesn't use a --conditional
-  // modifier on the root element. NHSUK Radios require this in order to set up
-  // and initialise.
-  addConditionalClassIfNeeded() {
-    if (!this.element.querySelectorAll(".nhsuk-radios__conditional").length)
-      return;
-
-    this.element.classList.add("nhsuk-radios--conditional");
-  }
-
-  // Promote data-aria-controls attribute to a aria-controls attribute as per
-  // https://github.com/alphagov/govuk-frontend/blob/88fea750b5eb9c9d9f661405e68bfb59e59754b2/packages/govuk-frontend/src/govuk/components/radios/radios.mjs#L33-L34
-  promoteAriaControlsAttribute() {
-    const $inputs = this.element.querySelectorAll('input[type="radio"]');
+class UpgradedRadios extends Radios {
+  constructor($root) {
+    // Promote data-aria-controls attribute to a aria-controls attribute as per
+    // https://github.com/alphagov/govuk-frontend/blob/88fea750b5eb9c9d9f661405e68bfb59e59754b2/packages/govuk-frontend/src/govuk/components/radios/radios.mjs#L33-L34
+    const $inputs = $root.querySelectorAll('input[type="radio"]');
 
     $inputs.forEach(($input) => {
       const targetId = $input.getAttribute("data-aria-controls");
@@ -39,5 +21,14 @@ export default class extends Controller {
       $input.setAttribute("aria-controls", targetId);
       $input.removeAttribute("data-aria-controls");
     });
+
+    super($root);
+  }
+}
+
+// Connects to data-module="nhsuk-radios"
+export default class extends Controller {
+  connect() {
+    return new UpgradedRadios(this.element);
   }
 }

@@ -81,9 +81,7 @@
 .app-card--compact {
   @include nhsuk-responsive-margin(3, "bottom");
 
-  .app-button-group {
-    gap: nhsuk-spacing(2);
-    margin-bottom: nhsuk-spacing(1);
+  .nhsuk-button-group {
     margin-top: nhsuk-spacing(-4);
   }
 

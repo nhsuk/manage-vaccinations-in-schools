@@ -1,9 +1,9 @@
 import { Controller } from "@hotwired/stimulus";
-import NhsukHeader from "nhsuk-frontend/packages/components/header/header";
+import { Header } from "nhsuk-frontend";
 
 // Connects to data-module="nhsuk-header"
 export default class extends Controller {
   connect() {
-    NhsukHeader();
+    return new Header(this.element);
   }
 }

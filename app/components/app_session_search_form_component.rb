@@ -69,7 +69,7 @@ class AppSessionSearchFormComponent < ViewComponent::Base
           <% end %>
         <% end %>
 
-        <div class="app-button-group">
+        <div class="nhsuk-button-group">
           <%= f.govuk_submit "Update results", secondary: true, class: "app-button--small" %>
           <%= govuk_button_link_to "Clear filters", clear_filters_path, secondary: true, class: "app-button--small" %>
         </div>

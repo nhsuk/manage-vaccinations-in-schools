@@ -1,89 +1,80 @@
-<header>
+<header class="nhsuk-header app-header" data-module="nhsuk-header">
   <%= render AppHostingEnvironmentComponent.new %>
-
-  <div class="nhsuk-header app-header" data-module="nhsuk-header">
-    <div class="nhsuk-header__container">
-      <div class="nhsuk-header__logo">
-        <a class="nhsuk-header__link nhsuk-header__link--service"
-           href="<%= @header_path %>"
-           aria-label="<%= @service_name %>">
-          <svg class="nhsuk-logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 16" height="40" width="100">
-            <path class="nhsuk-logo__background" fill="#005eb8" d="M0 0h40v16H0z"></path>
-            <path class="nhsuk-logo__text" fill="#fff" d="M3.9 1.5h4.4l2.6 9h.1l1.8-9h3.3l-2.8 13H9l-2.7-9h-.1l-1.8 9H1.1M17.3 1.5h3.6l-1 4.9h4L25 1.5h3.5l-2.7 13h-3.5l1.1-5.6h-4.1l-1.2 5.6h-3.4M37.7 4.4c-.7-.3-1.6-.6-2.9-.6-1.4 0-2.5.2-2.5 1.3 0 1.8 5.1 1.2 5.1 5.1 0 3.6-3.3 4.5-6.4 4.5-1.3 0-2.9-.3-4-.7l.8-2.7c.7.4 2.1.7 3.2.7s2.8-.2 2.8-1.5c0-2.1-5.1-1.3-5.1-5 0-3.4 2.9-4.4 5.8-4.4 1.6 0 3.1.2 4 .6"></path>
-          </svg>
-          <span class="nhsuk-header__service-name">
-            <%= @service_name %>
-          </span>
-        </a>
-      </div>
-      <% if @show_navigation %>
-        <div class="nhsuk-header__content app-header__content">
-          <div class="app-header__account">
-            <span class="app-header__account-item">
-              <svg class="app-header__account-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
-                <path fill="currentColor" d="M8 0c4.4 0 8 3.6 8 8s-3.6 8-8 8-8-3.6-8-8 3.6-8 8-8Zm0 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1Zm-1.5 9h3a2.5 2.5 0 0 1 2.5 2.5V14a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-1.5A2.5 2.5 0 0 1 6.5 10ZM8 9C6.368 9 5 7.684 5 6s1.316-3 3-3c1.632 0 3 1.316 3 3S9.632 9 8 9"></path>
-              </svg>
-              <%= current_user.full_name %> <%= (role_description = current_user.role_description) ? " (#{role_description})" : "" %>
-            </span>
-            <% if Settings.cis2.enabled %>
-              <span class="app-header__account-item">
-                <%= button_to "Change role", user_cis2_omniauth_authorize_path, class: "app-header__account-button", params: { change_role: true } %>
-              </span>
-            <% end %>
-            <span class="app-header__account-item">
-              <%= button_to "Log out", logout_path,
-                            class: "app-header__account-button", method: :delete %>
-            </span>
-          </div>
-        </div>
-      <% end %>
+  <div class="nhsuk-header__container nhsuk-width-container">
+    <div class="nhsuk-header__service">
+      <a class="nhsuk-header__service-logo" href="<%= @header_path %>">
+        <svg class="nhsuk-header__logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 80" height="40" width="100" focusable="false" role="img" aria-label="NHS">
+          <title>NHS</title>
+          <path fill="currentColor" d="M200 0v80H0V0h200Zm-27.5 5.5c-14.5 0-29 5-29 22 0 10.2 7.7 13.5 14.7 16.3l.7.3c5.4 2 10.1 3.9 10.1 8.4 0 6.5-8.5 7.5-14 7.5s-12.5-1.5-16-3.5L135 70c5.5 2 13.5 3.5 20 3.5 15.5 0 32-4.5 32-22.5 0-19.5-25.5-16.5-25.5-25.5 0-5.5 5.5-6.5 12.5-6.5a35 35 0 0 1 14.5 3l4-13.5c-4.5-2-12-3-20-3Zm-131 2h-22l-14 65H22l9-45h.5l13.5 45h21.5l14-65H64l-9 45h-.5l-13-45Zm63 0h-18l-13 65h17l6-28H117l-5.5 28H129l13.5-65H125L119.5 32h-20l5-24.5Z"/>
+        </svg>
+        <span class="nhsuk-header__service-name">
+          <%= @service_name %>
+        </span>
+      </a>
     </div>
-
     <% if @show_navigation %>
-      <div class="nhsuk-navigation-container">
-        <nav class="nhsuk-navigation" role="navigation" aria-label="Primary navigation">
-          <ul class="nhsuk-header__navigation-list nhsuk-header__navigation-list--left-aligned">
-            <%= render AppHeaderNavigationItemComponent.new(t("programmes.index.title"), programmes_path, request_path: request.path) %>
-            <%= render AppHeaderNavigationItemComponent.new(t("sessions.index.title"), sessions_path, request_path: request.path) %>
-            <%= render AppHeaderNavigationItemComponent.new(t("patients.index.title"), patients_path, request_path: request.path) %>
-
-            <%= render AppHeaderNavigationItemComponent.new(
-              t("consent_forms.index.title_short"),
-              consent_forms_path,
-              request_path: request.path,
-              count: policy_scope(ConsentForm).unmatched.recorded.not_archived.count
-            ) %>
-
-            <%= render AppHeaderNavigationItemComponent.new(
-              t("school_moves.index.title"),
-              school_moves_path,
-              request_path: request.path,
-              count: policy_scope(SchoolMove).count
-            ) %>
-
-            <%= render AppHeaderNavigationItemComponent.new(t("vaccines.index.title"), vaccines_path, request_path: request.path) %>
-
-            <%= render AppHeaderNavigationItemComponent.new(
-              t("imports.index.title_short"),
-              imports_path,
-              request_path: request.path,
-              count: import_issues_count
-            ) %>
-
-            <%= render AppHeaderNavigationItemComponent.new(t("teams.show.title"), team_path, request_path: request.path) %>
-
-            <li class="nhsuk-mobile-menu-container">
-              <button class="nhsuk-header__menu-toggle nhsuk-header__navigation-link" id="toggle-menu" aria-expanded="false">
-                <span class="nhsuk-u-visually-hidden">Browse</span>
-                More
-                <svg class="nhsuk-icon nhsuk-icon__chevron-down" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                  <path d="M15.5 12a1 1 0 0 1-.29.71l-5 5a1 1 0 0 1-1.42-1.42l4.3-4.29-4.3-4.29a1 1 0 0 1 1.42-1.42l5 5a1 1 0 0 1 .29.71z"></path>
-                </svg>
-              </button>
+      <nav class="nhsuk-header__account" aria-label="Account">
+        <ul class="nhsuk-header__account-list">
+          <li class="nhsuk-header__account-item">
+            <svg class="nhsuk-icon nhsuk-icon--user" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="32" height="32" focusable="false" aria-hidden="true">
+              <path d="M12 1a11 11 0 1 1 0 22 11 11 0 0 1 0-22Zm0 2a9 9 0 0 0-5 16.5V18a4 4 0 0 1 4-4h2a4 4 0 0 1 4 4v1.5A9 9 0 0 0 12 3Zm0 3a3.5 3.5 0 1 1-3.5 3.5A3.4 3.4 0 0 1 12 6Z"/>
+            </svg>
+            <%= current_user.full_name %> <%= (role_description = current_user.role_description) ? " (#{role_description})" : "" %>
+          </li>
+          <% if Settings.cis2.enabled %>
+            <li class="nhsuk-header__account-item">
+              <%= button_to "Change role", user_cis2_omniauth_authorize_path, class: "nhsuk-header__account-button", params: { change_role: true } %>
             </li>
-          </ul>
-        </nav>
-      </div>
+          <% end %>
+          <li class="nhsuk-header__account-item">
+            <%= button_to "Log out", logout_path, class: "nhsuk-header__account-button", method: :delete %>
+          </li>
+        </ul>
+      </nav>
     <% end %>
   </div>
+
+  <% if @show_navigation %>
+    <nav class="nhsuk-header__navigation" aria-label="Menu">
+      <div class="nhsuk-header__navigation-container nhsuk-width-container">
+        <ul class="nhsuk-header__navigation-list">
+          <%= render AppHeaderNavigationItemComponent.new(t("programmes.index.title"), programmes_path, request_path: request.path) %>
+          <%= render AppHeaderNavigationItemComponent.new(t("sessions.index.title"), sessions_path, request_path: request.path) %>
+          <%= render AppHeaderNavigationItemComponent.new(t("patients.index.title"), patients_path, request_path: request.path) %>
+
+          <%= render AppHeaderNavigationItemComponent.new(
+            t("consent_forms.index.title_short"),
+            consent_forms_path,
+            request_path: request.path,
+            count: policy_scope(ConsentForm).unmatched.recorded.not_archived.count
+          ) %>
+
+          <%= render AppHeaderNavigationItemComponent.new(
+            t("school_moves.index.title"),
+            school_moves_path,
+            request_path: request.path,
+            count: policy_scope(SchoolMove).count
+          ) %>
+
+          <%= render AppHeaderNavigationItemComponent.new(t("vaccines.index.title"), vaccines_path, request_path: request.path) %>
+
+          <%= render AppHeaderNavigationItemComponent.new(
+            t("imports.index.title_short"),
+            imports_path,
+            request_path: request.path,
+            count: import_issues_count
+          ) %>
+
+          <%= render AppHeaderNavigationItemComponent.new(t("teams.show.title"), team_path, request_path: request.path) %>
+
+          <li class="nhsuk-header__menu" hidden>
+            <button class="nhsuk-header__menu-toggle nhsuk-header__navigation-link" id="toggle-menu" aria-expanded="false">
+              <span class="nhsuk-u-visually-hidden">Browse</span>
+              More
+            </button>
+          </li>
+        </ul>
+      </div>
+    </nav>
+  <% end %>
 </header>

@@ -2,30 +2,20 @@
 
 // Patient session and record
 .app-grid-column-patient-session {
-  @include nhsuk-grid-column(
-    three-quarters,
-    $float: right,
-    $at: large-desktop,
-    $class: false
-  );
+  @include nhsuk-grid-column(three-quarters, $float: right, $at: large-desktop);
 }
 
 .app-grid-column-patient-record {
-  @include nhsuk-grid-column(
-    one-quarter,
-    $float: right,
-    $at: large-desktop,
-    $class: false
-  );
+  @include nhsuk-grid-column(one-quarter, $float: right, $at: large-desktop);
 }
 
 // Search filters and results
 .app-grid-column-filters {
-  @include nhsuk-grid-column(filters, $at: large-desktop, $class: false);
+  @include nhsuk-grid-column(filters, $at: large-desktop);
 }
 
 .app-grid-column-results {
-  @include nhsuk-grid-column(results, $at: large-desktop, $class: false);
+  @include nhsuk-grid-column(results, $at: large-desktop);
 }
 
 .app-grid-column-filters .nhsuk-card--feature.app-filters,

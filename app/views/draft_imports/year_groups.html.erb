@@ -1,5 +1,5 @@
 <% content_for :before_main do %>
-  <%= render AppBacklinkComponent.new(previous_wizard_path) %>
+  <%= govuk_back_link(href: previous_wizard_path) %>
 <% end %>
 
 <% title = "Which year groups do you want to import class list records for?" %>

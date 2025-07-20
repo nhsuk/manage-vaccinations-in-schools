@@ -1,5 +1,5 @@
 <% content_for :before_main do %>
-  <%= render AppBacklinkComponent.new(session_record_path(@session), name: "record") %>
+  <%= govuk_back_link(href: session_record_path(@session)) %>
 <% end %>
 
 <% programme_name_and_method = if @programme.has_multiple_vaccine_methods?

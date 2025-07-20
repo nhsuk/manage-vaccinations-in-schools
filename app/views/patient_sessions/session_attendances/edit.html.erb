@@ -1,8 +1,5 @@
 <% content_for :before_main do %>
-  <%= render AppBacklinkComponent.new(
-        session_patient_programme_path(@session, @patient, @patient_session.programmes.first),
-        name: "patient",
-      ) %>
+  <%= govuk_back_link(href: session_patient_programme_path(@session, @patient, @patient_session.programmes.first)) %>
 <% end %>
 
 <% title = "Is #{@patient.full_name} attending today’s session?" %>
