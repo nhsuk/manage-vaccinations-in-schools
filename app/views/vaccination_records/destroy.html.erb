@@ -13,7 +13,7 @@
 
 <%= form_with url: vaccination_record_path, method: :delete do |f| %>
   <%= f.hidden_field :return_to, value: @return_to %>
-  <div class="app-button-group">
+  <div class="nhsuk-button-group">
     <%= f.govuk_submit "Yes, delete this vaccination record", warning: true %>
     <%= govuk_link_to "No, return to patient", @return_to %>
   </div>

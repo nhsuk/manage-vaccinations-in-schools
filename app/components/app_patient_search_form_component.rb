@@ -153,7 +153,7 @@ class AppPatientSearchFormComponent < ViewComponent::Base
           <% end %>
 
           <% if show_buttons_in_details? %>
-            <div class="app-button-group">
+            <div class="nhsuk-button-group">
               <%= f.govuk_submit "Update results", secondary: true, class: "app-button--small" %>
               <%= govuk_button_link_to "Clear filters", clear_filters_path, secondary: true, class: "app-button--small" %>
             </div>
@@ -161,7 +161,7 @@ class AppPatientSearchFormComponent < ViewComponent::Base
         <% end %>
 
         <% unless show_buttons_in_details? %>
-          <div class="app-button-group">
+          <div class="nhsuk-button-group">
             <%= f.govuk_submit "Update results", secondary: true, class: "app-button--small" %>
             <%= govuk_button_link_to "Clear filters", clear_filters_path, secondary: true, class: "app-button--small" %>
           </div>

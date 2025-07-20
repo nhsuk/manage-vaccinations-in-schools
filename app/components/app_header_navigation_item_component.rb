@@ -29,7 +29,7 @@ class AppHeaderNavigationItemComponent < ViewComponent::Base
   def classes
     [
       "nhsuk-header__navigation-item",
-      ("app-header__navigation-item--current" if current?),
+      ("nhsuk-header__navigation-item--current" if current?),
       ("app-header__navigation-item--with-count" if show_count?)
     ].compact.join(" ")
   end
