@@ -36,7 +36,7 @@
       <% else %>
         <%= render AppSessionActionsComponent.new(@session) %>
 
-        <div class="app-button-group">
+        <div class="nhsuk-button-group">
           <% if policy(@session).edit? %>
             <%= govuk_button_link_to "Edit session", edit_session_path(@session), secondary: true %>
           <% end %>
