@@ -539,7 +539,7 @@ en:
   imports:
     index:
       title: Import records
-      title_short: Import
+      title_short: Imports
     notices:
       index:
         no_results: There are currently no important notices.
@@ -640,6 +640,7 @@ en:
   organisations:
     show:
       title: Your organisation
+      title_short: Organisation
   vaccines:
     index:
       title: Vaccines

@@ -19,7 +19,7 @@
       <p><%= patient.full_name %> is ready for the vaccinator.</p>
     <% end %>
 
-    <div class="app-button-group nhsuk-u-margin-bottom-4">
+    <div class="nhsuk-button-group">
       <% if can_send_consent_request? %>
         <%= govuk_button_to "Send consent request",
                             send_request_session_patient_programme_consents_path(
