@@ -14,7 +14,11 @@ module MavisCLI
                required: true,
                desc: "The URN of the school"
 
-      def call(ods_code:, team:, urns:, **)
+      option :programmes,
+             type: :array,
+             desc: "The programmes administered at the school"
+
+      def call(ods_code:, team:, urns:, programmes: [], **)
         organisation = Organisation.find_by(ods_code:)
 
         if organisation.nil?
@@ -28,6 +32,13 @@ module MavisCLI
           warn "Could not find team."
           return
         end
+
+        programmes =
+          if programmes.empty?
+            organisation.programmes
+          else
+            Programme.where(type: programmes)
+          end
 
         ActiveRecord::Base.transaction do
           urns.each do |urn|
@@ -43,9 +54,7 @@ module MavisCLI
             end
 
             location.update!(team:)
-            location.create_default_programme_year_groups!(
-              organisation.programmes
-            )
+            location.create_default_programme_year_groups!(programmes)
           end
         end
 
