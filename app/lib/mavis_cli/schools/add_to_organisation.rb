@@ -19,6 +19,8 @@ module MavisCLI
              desc: "The programmes administered at the school"
 
       def call(ods_code:, team:, urns:, programmes: [], **)
+        MavisCLI.load_rails
+
         organisation = Organisation.find_by(ods_code:)
 
         if organisation.nil?
