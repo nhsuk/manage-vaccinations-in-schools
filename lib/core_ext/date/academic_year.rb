@@ -8,4 +8,11 @@ class Date
       year - 1
     end
   end
+  def self.academic_year_range(academic_year)
+    Date.new(academic_year, 9, 1).beginning_of_day..Date.new(
+      academic_year + 1,
+      8,
+      31
+    ).end_of_day
+  end
 end

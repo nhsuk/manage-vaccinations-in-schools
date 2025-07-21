@@ -28,12 +28,14 @@ class AppActivityLogComponent < ViewComponent::Base
       patient_session ? [patient_session] : patient.patient_sessions
 
     @consents =
-      @patient.consents.includes(
-        :consent_form,
-        :parent,
-        :recorded_by,
-        patient: :parent_relationships
-      )
+      @patient
+        .consents
+        .includes(
+          :consent_form,
+          :parent,
+          :recorded_by,
+          patient: :parent_relationships
+        )
 
     @gillick_assessments =
       (patient || patient_session).gillick_assessments.includes(:performed_by)
