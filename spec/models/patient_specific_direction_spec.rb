@@ -32,7 +32,9 @@
 #  fk_rails_...  (vaccine_id => vaccines.id)
 #
 describe PatientSpecificDirection, type: :model do
-  subject(:patient_specific_direction) { described_class.new }
+  subject(:patient_specific_direction) { build(:patient_specific_direction) }
+
+  it_behaves_like "a model that belongs to an academic year", :academic_year
 
   describe "associations" do
     it do
