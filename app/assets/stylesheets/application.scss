@@ -1,10 +1,20 @@
-@use "sass:color";
-
 // NHS.UK frontend components
-@forward "vendor/nhsuk-frontend";
+@forward "vendor/nhsuk-frontend" with (
+  $nhsuk-page-width: 1100px,
+  $nhsuk-grid-widths: (
+    one-quarter: 25%,
+    one-third: 33.3333%,
+    one-half: 50%,
+    two-thirds: 66.6666%,
+    three-quarters: 75%,
+    full: 100%,
+    filters: 30%,
+    results: 70%,
+  )
+);
 
 // GOV.UK Frontend components
 @forward "vendor/govuk-frontend";
 
-// App-specific components
+// Application components
 @forward "components";
