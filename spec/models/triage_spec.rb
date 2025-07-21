@@ -36,7 +36,7 @@
 describe Triage do
   subject { build(:triage) }
 
-  it_behaves_like "a model that belongs to an academic year", :created_at
+  it_behaves_like "a model that belongs to an academic year", :academic_year
 
   describe "validations" do
     context "when safe to vaccinate" do
