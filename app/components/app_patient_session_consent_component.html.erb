@@ -28,11 +28,13 @@
                             secondary: true %>
       <% end %>
 
-      <%= govuk_button_to "Record a new consent response",
-                          session_patient_programme_consents_path(
-                            session, patient, programme
-                          ),
-                          secondary: true %>
+      <% if can_record_new_response? %>
+        <%= govuk_button_to "Record a new consent response",
+                            session_patient_programme_consents_path(
+                              session, patient, programme
+                            ),
+                            secondary: true %>
+      <% end %>
     </div>
 
     <%= render AppGillickAssessmentComponent.new(patient_session:, programme:) %>
