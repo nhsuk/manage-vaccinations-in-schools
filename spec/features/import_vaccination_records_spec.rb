@@ -170,7 +170,6 @@ describe "Immunisation imports" do
 
   def when_i_click_on_cohorts
     click_on "HPV"
-    click_on "Cohorts"
   end
 
   def then_i_should_see_no_children_in_the_cohorts
@@ -181,7 +180,6 @@ describe "Immunisation imports" do
   end
 
   def when_i_click_on_vaccination_records
-    click_on "HPV"
     click_on "Vaccinations", match: :first
   end
 
