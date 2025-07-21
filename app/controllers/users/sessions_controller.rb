@@ -5,6 +5,6 @@ class Users::SessionsController < Devise::SessionsController
 
   skip_after_action :verify_policy_scoped
 
-  before_action :store_redirect_after_login!, only: :new
+  before_action :store_redirect_uri!, only: :new
   layout "one_half"
 end

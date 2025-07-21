@@ -63,9 +63,9 @@ module AuthenticationConcern
         !request.xhr? && !turbo_frame_request?
     end
 
-    def store_redirect_after_login!
-      if params.key?(:redirect_after_login)
-        session[:redirect_after_login] = params.fetch(:redirect_after_login)
+    def store_redirect_uri!
+      if params.key?(:redirect_uri)
+        session[:redirect_uri] = params.fetch(:redirect_uri)
       end
     end
 
@@ -92,25 +92,25 @@ module AuthenticationConcern
       end
     end
 
-    def add_token_to(url, user)
+    def add_auth_code_to(url, user)
       uri = Addressable::URI.parse(url)
-      user_token =
+      auth_code =
         OneTimeToken.find_or_generate_for!(
           user_id: user.id,
           cis2_info: session["cis2_info"]
         ).token
-      uri.query_values = (uri.query_values || {}).merge("token" => user_token)
+      uri.query_values = (uri.query_values || {}).merge("code" => auth_code)
       uri.to_s
     end
 
-    def reporting_app_redirect_url_with_token_for(user)
-      url = session["redirect_after_login"]
-      url.present? ? add_token_to(url, user) : nil
+    def reporting_app_redirect_url_with_auth_code_for(user)
+      url = session["redirect_uri"]
+      url.present? ? add_auth_code_to(url, user) : nil
     end
 
     def after_sign_in_path_for(scope)
       urls = [
-        reporting_app_redirect_url_with_token_for(current_user),
+        reporting_app_redirect_url_with_auth_code_for(current_user),
         stored_location_for(scope),
         dashboard_path
       ]
@@ -122,7 +122,7 @@ module AuthenticationConcern
 
     def redirect_after_choosing_org
       url = after_sign_in_path_for(current_user)
-      session.delete(:redirect_after_login)
+      session.delete(:redirect_uri)
       redirect_to url, allow_other_host: is_valid_redirect?(url)
     end
 

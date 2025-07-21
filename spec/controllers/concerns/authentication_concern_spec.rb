@@ -54,9 +54,9 @@ describe AuthenticationConcern do
   end
 
   # The commented out code block you provided is a pending RSpec example group for a method called
-  # `#add_token_to`. This method is expected to find or generate a `OneTimeToken` for a given user with
+  # `#add_auth_code_to`. This method is expected to find or generate a `OneTimeToken` for a given user with
   # the `cis2_info` from the current session. The example group contains two contexts:
-  describe "#add_token_to" do
+  describe "#add_auth_code_to" do
     let(:user) { create(:user) }
     let(:token) { build(:one_time_token, user: user, token: "mytoken") }
     let(:url) { "/some/relative/path.json" }
@@ -75,15 +75,15 @@ describe AuthenticationConcern do
         user_id: user.id,
         cis2_info: session_cis2_info
       ).and_return(token)
-      sample_class.send(:add_token_to, url, user)
+      sample_class.send(:add_auth_code_to, url, user)
     end
 
     context "given a url with no params" do
       let(:url) { "/some/relative/path.json" }
 
-      it "adds the token param as a query string" do
-        expect(sample_class.send(:add_token_to, url, user)).to eq(
-          "/some/relative/path.json?token=mytoken"
+      it "adds the code param as a query string" do
+        expect(sample_class.send(:add_auth_code_to, url, user)).to eq(
+          "/some/relative/path.json?code=mytoken"
         )
       end
     end
@@ -91,42 +91,42 @@ describe AuthenticationConcern do
     context "given a url with some params already" do
       let(:url) { "/some/relative/path.json?q=some%20search" }
 
-      it "adds the token param as a query string" do
-        expect(sample_class.send(:add_token_to, url, user)).to eq(
-          "/some/relative/path.json?q=some%20search&token=mytoken"
+      it "adds the code param as a query string" do
+        expect(sample_class.send(:add_auth_code_to, url, user)).to eq(
+          "/some/relative/path.json?code=mytoken&q=some%20search"
         )
       end
     end
   end
 
-  describe "reporting_app_redirect_url_with_token_for" do
+  describe "reporting_app_redirect_url_with_auth_code_for" do
     let(:session_cis2_info) { { "some_key" => "some value" } }
     let(:token) { build(:one_time_token, user: user, token: "mytoken") }
     let(:result) do
-      sample_class.send(:reporting_app_redirect_url_with_token_for, user)
+      sample_class.send(:reporting_app_redirect_url_with_auth_code_for, user)
     end
 
-    context "when there is a redirect_after_login key in session" do
+    context "when there is a redirect_uri key in session" do
       before do
         allow(OneTimeToken).to receive(:find_or_generate_for!).with(
           user_id: user.id,
           cis2_info: session_cis2_info
         ).and_return(token)
         sample_class.session = {
-          "redirect_after_login" =>
+          "redirect_uri" =>
             "http://reporting.mavis:5555/path?some_param=some%20value",
           "cis2_info" => session_cis2_info
         }
       end
 
-      it "returns that URL with a token added to it for the given user" do
+      it "returns that URL with a code added to it for the given user" do
         expect(result).to eq(
-          "http://reporting.mavis:5555/path?some_param=some%20value&token=mytoken"
+          "http://reporting.mavis:5555/path?code=mytoken&some_param=some%20value"
         )
       end
     end
 
-    context "when there is no redirect_after_login key in session" do
+    context "when there is no redirect_uri key in session" do
       before { sample_class.session = { "cis2_info" => session_cis2_info } }
 
       it "returns nil" do

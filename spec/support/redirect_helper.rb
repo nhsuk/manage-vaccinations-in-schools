@@ -16,7 +16,15 @@ module RedirectHelper
   end
 
   def then_i_am_redirected_to_a_url_matching(url_pattern)
-    expect(page.driver.browser.current_url).to match(Regexp.escape(url_pattern))
+    expected_uri = URI(url_pattern)
+    current_uri = URI(page.driver.browser.current_url)
+
+    expect(current_uri.path).to eq(expected_uri.path)
+    expect(current_uri.host).to eq(expected_uri.host)
+    expected_params = Rack::Utils.parse_query(expected_uri.query)
+    current_params = Rack::Utils.parse_query(current_uri.query)
+    # we may get an extra param, but that's fine in this case
+    expect(current_params).to include(expected_params)
   end
 
   def mavis_reporting_app_url(path = "/")
