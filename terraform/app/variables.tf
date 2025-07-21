@@ -136,8 +136,7 @@ variable "image_digest" {
 variable "reporting_digest" {
   type        = string
   description = "The docker image digest for the reporting container in the task definition."
-  default     = null
-  nullable    = true
+  nullable    = false
 }
 
 variable "enable_cis2" {
