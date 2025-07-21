@@ -57,7 +57,7 @@
           <% if show_consent_period %>
             <% row.with_cell do %>
               <span class="nhsuk-table-responsive__heading">Consent period</span>
-              <%= helpers.session_consent_period(session, in_sentence: false) %>
+              <%= helpers.session_consent_period(session) %>
             <% end %>
           <% end %>
 

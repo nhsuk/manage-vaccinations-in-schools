@@ -44,7 +44,7 @@
 
                   <br />
 
-                  Consent period <%= helpers.session_consent_period(session, in_sentence: true) %>
+                  Consent period <%= helpers.session_consent_period(session).downcase_first %>
                 <% end %>
               </p>
             </div>

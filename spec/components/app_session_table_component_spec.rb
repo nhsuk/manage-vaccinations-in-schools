@@ -71,12 +71,6 @@ describe AppSessionTableComponent do
     let(:component) { described_class.new(sessions, show_consent_period: true) }
 
     it { should have_css(".nhsuk-table__header", text: "Consent period") }
-
-    it do
-      expect(rendered).to have_css(
-        ".nhsuk-table__cell",
-        text: "Open until 30 September"
-      )
-    end
+    it { should have_css(".nhsuk-table__cell", text: "Opens 10 September") }
   end
 end
