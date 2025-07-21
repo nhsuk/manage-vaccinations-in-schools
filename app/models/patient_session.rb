@@ -72,8 +72,10 @@ class PatientSession < ApplicationRecord
         end
 
   scope :in_programmes,
-        ->(programmes) do
-          joins(:patient).merge(Patient.in_programmes(programmes))
+        ->(programmes, academic_year:) do
+          joins(:patient).merge(
+            Patient.in_programmes(programmes, academic_year:)
+          )
         end
 
   scope :search_by_name,

@@ -8,7 +8,7 @@ class Programmes::CohortsController < Programmes::BaseController
       policy_scope(Location::ProgrammeYearGroup)
         .where(programme: @programme)
         .pluck_year_groups
-        .map(&:to_birth_academic_year)
+        .map { it.to_birth_academic_year(academic_year: @academic_year) }
 
     @patient_count_by_birth_academic_year =
       patients_in_organisation

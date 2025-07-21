@@ -3,6 +3,7 @@
 class VaccinationReportsController < ApplicationController
   before_action :set_vaccination_report
   before_action :set_programme
+  before_action :set_academic_year
 
   include WizardControllerConcern
 
@@ -38,6 +39,11 @@ class VaccinationReportsController < ApplicationController
 
   def set_programme
     @programme = @vaccination_report.programme
+    redirect_to dashboard_path if @programme.nil?
+  end
+
+  def set_academic_year
+    @academic_year = @vaccination_report.academic_year
     redirect_to dashboard_path if @programme.nil?
   end
 

@@ -18,6 +18,7 @@ describe "Cohorts index" do
   end
 
   def given_an_hpv_programme_is_underway
+    @academic_year = Date.current.academic_year
     @programme = create(:programme, :hpv)
     @organisation =
       create(:organisation, :with_one_nurse, programmes: [@programme])
@@ -60,11 +61,11 @@ describe "Cohorts index" do
     # Year 9 and 10 cards should be clickable
     expect(page).to have_link(
       "Year 9",
-      href: programme_cohort_path(@programme, 2009)
+      href: programme_cohort_path(@programme, @academic_year, 2009)
     )
     expect(page).to have_link(
       "Year 10",
-      href: programme_cohort_path(@programme, 2008)
+      href: programme_cohort_path(@programme, @academic_year, 2008)
     )
   end
 
@@ -72,11 +73,11 @@ describe "Cohorts index" do
     # Year 8 and 11 cards should not be clickable
     expect(page).not_to have_link(
       "Year 8",
-      href: programme_cohort_path(@programme, 2010)
+      href: programme_cohort_path(@programme, @academic_year, 2010)
     )
     expect(page).not_to have_link(
       "Year 11",
-      href: programme_cohort_path(@programme, 2007)
+      href: programme_cohort_path(@programme, @academic_year, 2007)
     )
   end
 

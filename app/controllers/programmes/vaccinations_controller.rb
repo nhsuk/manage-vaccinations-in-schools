@@ -6,7 +6,10 @@ class Programmes::VaccinationsController < Programmes::BaseController
   def index
     scope =
       policy_scope(VaccinationRecord)
-        .where(programme: @programme)
+        .where(
+          programme: @programme,
+          performed_at: @academic_year.to_academic_year_date_range
+        )
         .includes(:patient, :programme)
         .order(:performed_at)
 

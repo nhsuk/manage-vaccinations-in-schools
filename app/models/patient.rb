@@ -105,9 +105,7 @@ class Patient < ApplicationRecord
   scope :with_notice, -> { deceased.or(restricted).or(invalidated) }
 
   scope :in_programmes,
-        ->(programmes, academic_year: nil) do
-          academic_year ||= Date.current.academic_year
-
+        ->(programmes, academic_year:) do
           location_programme_year_groups =
             Location::ProgrammeYearGroup
               .where("location_id = sessions.location_id")
