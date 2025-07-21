@@ -152,7 +152,7 @@ module "reporting_service" {
     secrets              = []
     cpu                  = 1024
     memory               = 2048
-    docker_image         = "${var.account_id}.dkr.ecr.eu-west-2.amazonaws.com/mavis/reporting@${var.reporting_digest}"
+    docker_image         = local.reporting_image
     execution_role_arn   = aws_iam_role.ecs_task_execution_role.arn
     task_role_arn        = aws_iam_role.ecs_task_role.arn
     log_group_name       = aws_cloudwatch_log_group.ecs_log_group.name
@@ -183,4 +183,19 @@ module "reporting_service" {
   environment           = var.environment
   server_type           = "reporting"
   deployment_controller = "CODE_DEPLOY"
+}
+
+# Fetch the task definition for the reporting service if it exists, as it has a separate deployment process/pipeline
+# TODO: Remove this workaround when extracting infrastructure from the monorepo is complete
+data "aws_ecs_task_definition" "reporting" {
+  count           = var.reporting_digest == null ? 1 : 0
+  task_definition = "arn:aws:ecs:${var.region}:${var.account_id}:task-definition/mavis-reporting-task-definition-${var.environment}"
+}
+
+locals {
+  reporting_image = (
+    var.reporting_digest == null ?
+    jsondecode(data.aws_ecs_task_definition.reporting[0].container_definitions)[0]["image"] :
+    "${var.account_id}.dkr.ecr.eu-west-2.amazonaws.com/mavis/reporting@${var.reporting_digest}"
+  )
 }
