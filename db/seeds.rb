@@ -65,11 +65,11 @@ def attach_sample_of_schools_to(organisation)
     .where(team_id: nil)
     .order("RANDOM()")
     .limit(50)
-    .update_all(team_id: organisation.generic_team.id)
+    .update_all(team_id: organisation.teams.first.id)
 end
 
 def attach_specific_school_to_organisation_if_present(organisation:, urn:)
-  Location.where(urn:).update_all(team_id: organisation.generic_team.id)
+  Location.where(urn:).update_all(team_id: organisation.teams.first.id)
 end
 
 def create_session(

@@ -34,7 +34,9 @@ describe CohortImport do
   subject(:cohort_import) { create(:cohort_import, csv:, organisation:) }
 
   let(:programmes) { [create(:programme)] }
-  let(:organisation) { create(:organisation, programmes:) }
+  let(:organisation) do
+    create(:organisation, :with_generic_clinic, programmes:)
+  end
 
   let(:file) { "valid.csv" }
   let(:csv) { fixture_file_upload("spec/fixtures/cohort_import/#{file}") }

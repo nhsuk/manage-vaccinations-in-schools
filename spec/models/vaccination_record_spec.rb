@@ -92,7 +92,9 @@ describe VaccinationRecord do
       end
 
       let(:programme) { create(:programme) }
-      let(:organisation) { create(:organisation, programmes: [programme]) }
+      let(:organisation) do
+        create(:organisation, :with_generic_clinic, programmes: [programme])
+      end
       let(:session) { organisation.generic_clinic_session }
 
       it { should validate_presence_of(:location_name) }

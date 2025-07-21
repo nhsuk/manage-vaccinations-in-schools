@@ -32,8 +32,11 @@ describe Onboarding do
       )
       expect(organisation.careplus_venue_code).to eq("EXAMPLE")
       expect(organisation.programmes).to contain_exactly(programme)
-      expect(organisation.generic_clinic.year_groups).to eq([8, 9, 10, 11])
-      expect(organisation.generic_clinic.programme_year_groups.count).to eq(4)
+
+      expect(organisation.locations.generic_clinic.count).to eq(1)
+      generic_clinic = organisation.locations.generic_clinic.first
+      expect(generic_clinic.year_groups).to eq([8, 9, 10, 11])
+      expect(generic_clinic.programme_year_groups.count).to eq(4)
 
       team1 = organisation.teams.includes(:schools).find_by!(name: "Team 1")
       expect(team1.email).to eq("team-1@trust.nhs.uk")

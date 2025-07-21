@@ -71,7 +71,7 @@ describe "Td/IPV" do
     location =
       (
         if clinic
-          organisation.generic_clinic
+          create(:generic_clinic, organisation:)
         else
           create(:school, :secondary, urn: 123_456, organisation:)
         end

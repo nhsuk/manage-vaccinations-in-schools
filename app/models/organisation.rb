@@ -80,30 +80,9 @@ class Organisation < ApplicationRecord
     @year_groups ||= location_programme_year_groups.pluck_year_groups
   end
 
-  def generic_team
-    teams.create_with(email:, phone:, phone_instructions:).find_or_create_by!(
-      name:
-    )
-  end
-
-  def generic_clinic
-    locations.find_by(ods_code:, type: :generic_clinic) ||
-      ActiveRecord::Base.transaction do
-        Location
-          .create!(
-            name: "Community clinics",
-            team: generic_team,
-            ods_code:,
-            type: :generic_clinic,
-            year_groups: programmes.flat_map(&:default_year_groups).uniq.sort
-          )
-          .tap { it.create_default_programme_year_groups!(programmes) }
-      end
-  end
-
   def generic_clinic_session
     academic_year = AcademicYear.current
-    location = generic_clinic
+    location = locations.generic_clinic.first
 
     sessions
       .includes(:location, :programmes, :session_dates)

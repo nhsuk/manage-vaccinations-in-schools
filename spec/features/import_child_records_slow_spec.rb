@@ -27,7 +27,12 @@ describe "Import child records" do
   def given_the_app_is_setup
     programme = create(:programme, :hpv)
     @organisation =
-      create(:organisation, :with_one_nurse, programmes: [programme])
+      create(
+        :organisation,
+        :with_one_nurse,
+        :with_generic_clinic,
+        programmes: [programme]
+      )
     create(:school, urn: "141939", organisation: @organisation)
     @user = @organisation.users.first
   end

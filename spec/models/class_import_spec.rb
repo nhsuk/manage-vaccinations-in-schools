@@ -40,7 +40,9 @@ describe ClassImport do
   end
 
   let(:programmes) { [create(:programme, :hpv)] }
-  let(:organisation) { create(:organisation, programmes:) }
+  let(:organisation) do
+    create(:organisation, :with_generic_clinic, programmes:)
+  end
   let(:location) { create(:school, organisation:) }
   let(:session) { create(:session, location:, programmes:, organisation:) }
 

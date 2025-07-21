@@ -92,7 +92,9 @@ describe ConsentFormMailerConcern do
 
     context "when there are no upcoming sessions" do
       let(:programmes) { [create(:programme)] }
-      let(:organisation) { create(:organisation, programmes:) }
+      let(:organisation) do
+        create(:organisation, :with_generic_clinic, programmes:)
+      end
       let(:consent_form) do
         create(
           :consent_form,

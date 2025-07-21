@@ -117,9 +117,10 @@ class Onboarding
   def save!
     ActiveRecord::Base.transaction do
       models.each(&:save!)
-      organisation.generic_clinic.create_default_programme_year_groups!(
-        programmes.map(&:programme)
-      )
+
+      # Reload to ensure the programmes are loaded.
+      GenericClinicFactory.call(organisation: organisation.reload)
+
       @users.each { |user| user.organisations << organisation }
       UnscheduledSessionsFactory.new.call
     end

@@ -7,11 +7,13 @@ task create_default_programme_year_groups: :environment do
     .find_each do |organisation|
       year_groups =
         organisation.programmes.flat_map(&:default_year_groups).uniq.sort
-      organisation.generic_clinic.update!(year_groups:)
 
-      organisation.generic_clinic.create_default_programme_year_groups!(
-        organisation.programmes
-      )
+      organisation.locations.generic_clinic.find_each do |generic_clinic|
+        generic_clinic.update_all(year_groups:)
+        generic_clinic.create_default_programme_year_groups!(
+          organisation.programmes
+        )
+      end
 
       organisation.schools.find_each do |school|
         school.create_default_programme_year_groups!(organisation.programmes)
