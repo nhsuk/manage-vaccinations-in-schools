@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class AppSearchComponent < ViewComponent::Base
+class AppPatientSearchFormComponent < ViewComponent::Base
   erb_template <<-ERB
     <%= form_with model: form, url:, method: :get, builder: GOVUKDesignSystemFormBuilder::FormBuilder do |f| %>
       <%= render AppCardComponent.new(heading_level:, filters: true) do |card| %>
@@ -130,7 +130,7 @@ class AppSearchComponent < ViewComponent::Base
   ERB
 
   def initialize(
-    form:,
+    form,
     url:,
     programmes: [],
     consent_statuses: [],

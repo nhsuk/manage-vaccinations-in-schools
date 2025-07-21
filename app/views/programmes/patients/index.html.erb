@@ -18,8 +18,8 @@
 
 <div class="nhsuk-grid-row">
   <div class="app-grid-column-filters">
-    <%= render AppSearchComponent.new(
-          form: @form,
+    <%= render AppPatientSearchFormComponent.new(
+          @form,
           url: programme_patients_path(@programme),
           programme_statuses: Patient::VaccinationStatus.statuses.keys,
           consent_statuses: Patient::ConsentStatus.statuses.keys,
