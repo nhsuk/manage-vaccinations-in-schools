@@ -22,6 +22,7 @@ class AppTriageTableComponent < ViewComponent::Base
     @triages ||=
       patient
         .triages
+        .for_academic_year(session.academic_year)
         .includes(:performed_by, :programme)
         .where(programme:)
         .order(created_at: :desc)
