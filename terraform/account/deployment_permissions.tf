@@ -74,6 +74,32 @@ resource "aws_iam_role_policy_attachment" "deploy_ecs_service" {
   policy_arn = each.value
 }
 
+################# Deploy Monitoring ################
+
+resource "aws_iam_role" "deploy_ecs_service" {
+  name        = "GithubDeployECSService"
+  description = "Role allowing terraform deployment of ECS services from github workflows"
+  assume_role_policy = templatefile("resources/iam_role_github_trust_policy_${var.environment}.json.tftpl", {
+    account_id = var.account_id,
+    repository = "NHSDigital/mavis-reporting-prototype"
+  })
+}
+
+resource "aws_iam_policy" "deploy_ecs_service" {
+  name        = "DeployECSServiceResources"
+  description = "Permissions for GithubDeployECSService role"
+  policy      = file("resources/iam_policy_DeployECSServiceResources.json")
+  lifecycle {
+    ignore_changes = [description]
+  }
+}
+
+resource "aws_iam_role_policy_attachment" "deploy_ecs_service" {
+  for_each   = local.ecs_deploy_policies
+  role       = aws_iam_role.deploy_ecs_service.name
+  policy_arn = each.value
+}
+
 ################ DMS Policies ################
 
 resource "aws_iam_policy" "dms" {
