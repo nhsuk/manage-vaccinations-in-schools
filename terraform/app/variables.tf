@@ -133,6 +133,12 @@ variable "image_digest" {
   nullable    = false
 }
 
+variable "reporting_digest" {
+  type        = string
+  description = "The docker image digest for the reporting container in the task definition."
+  nullable    = false
+}
+
 variable "enable_cis2" {
   type        = bool
   default     = true
@@ -290,6 +296,18 @@ variable "good_job_replicas" {
   description = "Amount of replicas for the good-job service"
 }
 
+variable "minimum_reporting_replicas" {
+  type        = number
+  default     = 2
+  description = "Minimum amount of allowed replicas for reporting service. Also the replica count when creating the service."
+}
+
+variable "maximum_reporting_replicas" {
+  type        = number
+  default     = 4
+  description = "Maximum amount of allowed replicas for reporting service"
+}
+
 variable "max_aurora_capacity_units" {
   type        = number
   default     = 8
@@ -306,7 +324,15 @@ variable "active_lb_target_group" {
   }
 }
 
+variable "reporting_endpoints" {
+  type        = list(string)
+  description = "List of endpoints for the loadbalancer to forward to the reporting service"
+  default     = ["/reporting", "/reporting/*"]
+  nullable    = false
+}
+
 locals {
-  ecs_initial_lb_target_group = var.active_lb_target_group == "green" ? aws_lb_target_group.green.arn : aws_lb_target_group.blue.arn
-  ecs_sg_ids                  = [module.web_service.security_group_id, module.good_job_service.security_group_id]
+  ecs_initial_lb_target_group       = var.active_lb_target_group == "green" ? aws_lb_target_group.green.arn : aws_lb_target_group.blue.arn
+  reporting_initial_lb_target_group = var.active_lb_target_group == "green" ? aws_lb_target_group.reporting_green.arn : aws_lb_target_group.reporting_blue.arn
+  db_access_sg_ids                  = [module.web_service.security_group_id, module.good_job_service.security_group_id]
 }
