@@ -10,21 +10,6 @@ Displays the access log for a particular patient identified by their ID.
 
 Displays the access log for a particular user identified by an email address.
 
-## Clinics
-
-### `clinics:create[name,address,town,postcode,ods_code,organisation_ods_code]`
-
-- `name` - The name of the clinic.
-- `address` - The first line of the address.
-- `town` - The town of the clinic.
-- `postcode` - The postcode of the clinic.
-- `ods_code` - The ODS code of the clinic.
-- `organisation_ods_code` - The ODS code of the organisation.
-
-If none of the arguments are provided (`rake clinics:create`), the user will be prompted for responses.
-
-This creates a new clinic location and attaches it to a organisation.
-
 ## GP Practices
 
 ### `gp_practices:smoke`

@@ -83,7 +83,7 @@ class Location < ApplicationRecord
     validates :urn, presence: true
   end
 
-  normalizes :urn, with: -> { _1.blank? ? nil : _1.strip }
+  normalizes :urn, with: -> { it.blank? ? nil : it.strip }
 
   delegate :fhir_reference, to: :fhir_mapper
 

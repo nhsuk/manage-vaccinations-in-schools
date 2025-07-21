@@ -18,6 +18,8 @@ module MavisCLI
   end
 end
 
+require_relative "mavis_cli/clinics/add_to_organisation"
+require_relative "mavis_cli/clinics/create"
 require_relative "mavis_cli/generate/cohort_imports"
 require_relative "mavis_cli/generate/consents"
 require_relative "mavis_cli/generate/vaccination_records"
