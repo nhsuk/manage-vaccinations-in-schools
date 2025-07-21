@@ -600,9 +600,6 @@ en:
     sessions:
       index:
         title: Sessions
-    vaccinations:
-      index:
-        title: Vaccinations
   school_moves:
     index:
       title: School moves

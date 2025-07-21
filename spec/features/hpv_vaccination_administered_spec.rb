@@ -270,7 +270,7 @@ describe "HPV vaccination" do
   end
 
   def when_i_go_to_the_register_tab
-    click_on "Sessions"
+    click_on "Sessions", match: :first
     click_on @session.location.name
     click_on "Register"
   end

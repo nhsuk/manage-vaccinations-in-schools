@@ -177,7 +177,6 @@ Rails.application.routes.draw do
       resources :patients, path: ":academic_year/patients", only: :index
       resources :reports, path: ":academic_year/reports", only: :create
       resources :sessions, path: ":academic_year/sessions", only: :index
-      resources :vaccinations, path: ":academic_year/vaccinations", only: :index
     end
   end
 
