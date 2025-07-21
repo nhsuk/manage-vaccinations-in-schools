@@ -41,14 +41,6 @@ class AppPatientSessionConsentComponent < ViewComponent::Base
         .order(created_at: :desc)
   end
 
-  def gillick_assessment
-    @gillick_assessment ||=
-      patient_session
-        .gillick_assessments
-        .order(created_at: :desc)
-        .find_by(programme:)
-  end
-
   def consent_status
     @consent_status ||= patient.consent_status(programme:)
   end
@@ -60,10 +52,6 @@ class AppPatientSessionConsentComponent < ViewComponent::Base
   def can_send_consent_request?
     consent_status.no_response? && patient.send_notifications? &&
       session.open_for_consent? && patient.parents.any?
-  end
-
-  def can_record_new_response?
-    !consent_status.given? || gillick_assessment&.gillick_competent?
   end
 
   def grouped_consents

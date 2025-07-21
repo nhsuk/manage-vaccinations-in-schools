@@ -58,12 +58,5 @@ describe AppPatientSessionConsentComponent do
 
     it { should have_css(".app-card--aqua-green", text: "Consent given") }
     it { should_not have_css("a", text: "Contact #{consent.parent.full_name}") }
-    it { should_not have_css("button", text: "Record a new consent response") }
-
-    context "when patient is Gillick competent" do
-      before { create(:gillick_assessment, :competent, patient_session:) }
-
-      it { should have_css("button", text: "Record a new consent response") }
-    end
   end
 end
