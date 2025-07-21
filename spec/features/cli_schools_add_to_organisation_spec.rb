@@ -30,7 +30,7 @@ describe "mavis schools add-to-organisation" do
   end
 
   context "when the school exists" do
-    it "displays an error message" do
+    it "runs successfully" do
       given_the_organisation_exists
       and_the_team_exists
       and_the_school_exists

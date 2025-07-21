@@ -93,21 +93,13 @@ class GovukNotifyPersonalisation
   end
 
   def catch_up
-    return nil if patient.nil? || programmes.empty?
-    if patient.year_group == programmes.flat_map(&:year_groups).sort.uniq.first
-      "no"
-    else
-      "yes"
-    end
+    return nil if patient.nil? || administered_year_groups.empty?
+    patient.year_group == administered_year_groups.first ? "no" : "yes"
   end
 
   def not_catch_up
-    return nil if patient.nil? || programmes.empty?
-    if patient.year_group == programmes.flat_map(&:year_groups).sort.uniq.first
-      "yes"
-    else
-      "no"
-    end
+    return nil if patient.nil? || administered_year_groups.empty?
+    patient.year_group == administered_year_groups.first ? "yes" : "no"
   end
 
   def consent_deadline
@@ -399,6 +391,10 @@ class GovukNotifyPersonalisation
   end
 
   private
+
+  def administered_year_groups
+    session&.year_groups || programmes.flat_map(&:default_year_groups).sort.uniq
+  end
 
   def programme_names
     @programme_names ||= programmes.map(&:name)

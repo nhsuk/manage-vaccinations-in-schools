@@ -54,7 +54,7 @@ describe Note do
       create(:session, programmes: [hpv_programme, menacwy_programme])
     end
 
-    it "onlies show programmes valid for the patient at the time" do
+    it "only show programmes valid for the patient at the time" do
       expect(programmes).to contain_exactly(hpv_programme)
     end
   end

@@ -49,7 +49,7 @@ describe "Manage attendance" do
   end
 
   def and_there_is_a_vaccination_session_today_with_a_patient_ready_to_vaccinate
-    location = create(:school)
+    location = create(:school, organisation: @organisation)
     @session =
       create(
         :session,

@@ -61,7 +61,7 @@ describe "HPV vaccination" do
 
     @organisation =
       create(:organisation, :with_one_nurse, :with_generic_clinic, programmes:)
-    school = create(:school)
+    school = create(:school, organisation: @organisation)
     previous_date = 1.month.ago
 
     if clinic
@@ -133,7 +133,7 @@ describe "HPV vaccination" do
 
     @organisation =
       create(:organisation, :with_one_nurse, :with_generic_clinic, programmes:)
-    school = create(:school)
+    school = create(:school, organisation: @organisation)
     previous_date = 1.month.ago
 
     vaccine = programmes.first.vaccines.active.first

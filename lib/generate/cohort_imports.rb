@@ -130,10 +130,6 @@ module Generate
       cohort_import_csv_filepath.to_s
     end
 
-    def programme_year_groups
-      Programme::YEAR_GROUPS_BY_TYPE[programme.type]
-    end
-
     def schools_with_year_groups
       @schools_with_year_groups ||=
         begin
@@ -148,13 +144,15 @@ module Generate
                 .where(urn: urns)
                 .includes(:organisation, :sessions)
             end
-          locations.select { (it.year_groups & programme_year_groups).any? }
+          locations.select do
+            (it.year_groups & programme.default_year_groups).any?
+          end
         end
     end
 
     def build_patient
       school = schools_with_year_groups.sample
-      year_group ||= (school.year_groups & programme_year_groups).sample
+      year_group ||= (school.year_groups & programme.default_year_groups).sample
       nhs_number = nil
       loop do
         nhs_number = Faker::NationalHealthService.british_number.gsub(" ", "")

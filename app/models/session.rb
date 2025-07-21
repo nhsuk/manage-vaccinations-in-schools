@@ -49,6 +49,12 @@ class Session < ApplicationRecord
   has_many :patients, through: :patient_sessions
   has_many :vaccines, through: :programmes
 
+  has_many :location_programme_year_groups,
+           -> { where(programme: it.programmes) },
+           through: :location,
+           source: :programme_year_groups,
+           class_name: "Location::ProgrammeYearGroup"
+
   accepts_nested_attributes_for :session_dates, allow_destroy: true
 
   scope :has_date,
@@ -156,9 +162,7 @@ class Session < ApplicationRecord
     Date.current > dates.min
   end
 
-  def year_groups
-    programmes.flat_map(&:year_groups).uniq.sort
-  end
+  def year_groups = location_programme_year_groups.pluck_year_groups
 
   def vaccine_methods
     programmes.flat_map(&:vaccine_methods).uniq.sort
@@ -166,7 +170,12 @@ class Session < ApplicationRecord
 
   def eligible_programmes_for(patient: nil, year_group: nil)
     year_group ||= patient.year_group
-    programmes.select { it.year_groups.include?(year_group) }
+
+    programmes.select do |programme|
+      location_programme_year_groups.any? do
+        it.programme_id == programme.id && it.year_group == year_group
+      end
+    end
   end
 
   def dates

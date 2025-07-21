@@ -57,19 +57,15 @@ class Programme < ApplicationRecord
 
   def seasonal? = flu?
 
-  YEAR_GROUPS_BY_TYPE = {
+  DEFAULT_YEAR_GROUPS_BY_TYPE = {
     "flu" => (0..11).to_a,
     "hpv" => (8..11).to_a,
     "menacwy" => (9..11).to_a,
     "td_ipv" => (9..11).to_a
   }.freeze
 
-  def year_groups
-    YEAR_GROUPS_BY_TYPE.fetch(type)
-  end
-
-  def birth_academic_years
-    year_groups.map(&:to_birth_academic_year)
+  def default_year_groups
+    DEFAULT_YEAR_GROUPS_BY_TYPE.fetch(type)
   end
 
   def vaccine_methods = vaccines.map(&:method).uniq
