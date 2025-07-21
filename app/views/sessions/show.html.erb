@@ -22,7 +22,7 @@
           <% end %>
         <% end %>
 
-        <p class="nhsuk-body">Consent period <%= session_consent_period(@session, in_sentence: true) %></p>
+        <p class="nhsuk-body">Consent period <%= session_consent_period(@session).downcase_first %></p>
       <% end %>
 
       <h4 class="nhsuk-heading-s nhsuk-u-margin-bottom-2">Session details</h4>

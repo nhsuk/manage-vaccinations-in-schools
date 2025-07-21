@@ -254,6 +254,8 @@ class Session < ApplicationRecord
     reminder_dates.find(&:future?) || reminder_dates.last
   end
 
+  def open_consent_at = send_consent_requests_at
+
   def close_consent_at
     return nil if dates.empty?
     dates.max - 1.day
