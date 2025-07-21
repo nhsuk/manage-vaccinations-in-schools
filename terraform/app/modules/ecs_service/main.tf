@@ -57,6 +57,12 @@ resource "aws_ecs_service" "this" {
       container_port   = var.loadbalancer.container_port
     }
   }
+  dynamic "service_registries" {
+    for_each = var.service_discovery_service_arn != null ? [1] : []
+    content {
+      registry_arn = var.service_discovery_service_arn
+    }
+  }
   deployment_minimum_healthy_percent = 100
   deployment_maximum_percent         = 200
   lifecycle {
@@ -85,8 +91,8 @@ resource "aws_ecs_task_definition" "this" {
       readonlyRootFileSystem = true
       portMappings = [
         {
-          containerPort = 4000
-          hostPort      = 4000
+          containerPort = var.container_port
+          hostPort      = var.host_port == null ? var.container_port : var.host_port
         }
       ]
       environment = concat(var.task_config.environment, [{ name = "SERVER_TYPE", value = var.server_type }])
@@ -108,4 +114,16 @@ resource "aws_ecs_task_definition" "this" {
       }
     }
   ])
+}
+
+resource "aws_ssm_parameter" "container_variables" {
+  name = "/${var.environment}/mavis/ecs/${local.server_type_name}/container_variables"
+  type = "String"
+
+  value = jsonencode({
+    task_envs          = concat(var.task_config.environment, [{ name = "SERVER_TYPE", value = var.server_type }])
+    task_secrets       = var.task_config.secrets
+    execution_role_arn = var.task_config.execution_role_arn
+    task_role_arn      = var.task_config.task_role_arn
+  })
 }

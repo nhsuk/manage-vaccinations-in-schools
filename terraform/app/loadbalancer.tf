@@ -73,7 +73,7 @@ resource "aws_lb" "app_lb" {
 
 resource "aws_lb_target_group" "blue" {
   name        = "mavis-blue-${var.environment}"
-  port        = 4000
+  port        = local.container_ports.web
   protocol    = "HTTP"
   vpc_id      = aws_vpc.application_vpc.id
   target_type = "ip"
@@ -91,7 +91,7 @@ resource "aws_lb_target_group" "blue" {
 
 resource "aws_lb_target_group" "green" {
   name        = "mavis-green-${var.environment}"
-  port        = 4000
+  port        = local.container_ports.web
   protocol    = "HTTP"
   vpc_id      = aws_vpc.application_vpc.id
   target_type = "ip"
@@ -102,6 +102,42 @@ resource "aws_lb_target_group" "green" {
     matcher             = "200"
     interval            = 5
     timeout             = 4
+    healthy_threshold   = 2
+    unhealthy_threshold = 2
+  }
+}
+
+resource "aws_lb_target_group" "reporting_blue" {
+  name        = "mavis-rep-blue-${var.environment}"
+  port        = local.container_ports.reporting
+  protocol    = "HTTP"
+  vpc_id      = aws_vpc.application_vpc.id
+  target_type = "ip"
+  health_check {
+    path                = "/healthcheck"
+    protocol            = "HTTP"
+    port                = "traffic-port"
+    matcher             = "200"
+    interval            = 10
+    timeout             = 5
+    healthy_threshold   = 2
+    unhealthy_threshold = 2
+  }
+}
+
+resource "aws_lb_target_group" "reporting_green" {
+  name        = "mavis-rep-green-${var.environment}"
+  port        = local.container_ports.reporting
+  protocol    = "HTTP"
+  vpc_id      = aws_vpc.application_vpc.id
+  target_type = "ip"
+  health_check {
+    path                = "/healthcheck"
+    protocol            = "HTTP"
+    port                = "traffic-port"
+    matcher             = "200"
+    interval            = 10
+    timeout             = 5
     healthy_threshold   = 2
     unhealthy_threshold = 2
   }
@@ -155,6 +191,29 @@ resource "aws_lb_listener_rule" "forward_to_app" {
   condition {
     path_pattern {
       values = ["/*"]
+    }
+  }
+  condition {
+    host_header {
+      values = local.host_headers
+    }
+  }
+
+  lifecycle {
+    ignore_changes = [action]
+  }
+}
+
+resource "aws_lb_listener_rule" "forward_to_reporting" {
+  listener_arn = aws_lb_listener.app_listener_https.arn
+  priority     = 49000
+  action {
+    type             = "forward"
+    target_group_arn = local.reporting_initial_lb_target_group
+  }
+  condition {
+    path_pattern {
+      values = var.reporting_endpoints
     }
   }
   condition {
