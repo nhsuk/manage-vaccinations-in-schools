@@ -65,7 +65,7 @@ describe "Td/IPV" do
     @programme = create(:programme, :td_ipv)
     programmes = [@programme]
 
-    organisation = create(:organisation, programmes:)
+    organisation = create(:organisation, :with_generic_clinic, programmes:)
     @nurse = create(:nurse, organisations: [organisation])
 
     location =
