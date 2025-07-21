@@ -186,6 +186,6 @@ class AppSearchComponent < ViewComponent::Base
   end
 
   def clear_filters_path
-    "#{@url}?search_form[clear_filters]=true"
+    "#{@url}?patient_search_form[clear_filters]=true"
   end
 end

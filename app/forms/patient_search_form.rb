@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-class SearchForm
+class PatientSearchForm
   include ActiveModel::Model
   include ActiveModel::Attributes
   include ActiveRecord::AttributeAssignment
 
-  SESSION_KEY = "search_filters"
+  SESSION_KEY = "patient_search_form"
 
   attribute :clear_filters, :boolean
   attribute :consent_statuses, array: true

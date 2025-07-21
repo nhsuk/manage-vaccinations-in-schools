@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe SearchForm do
+describe PatientSearchForm do
   subject(:form) do
     described_class.new(**params, request_session:, request_path:, session:)
   end

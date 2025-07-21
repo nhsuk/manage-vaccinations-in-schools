@@ -1,22 +1,22 @@
 # frozen_string_literal: true
 
-module SearchFormConcern
+module PatientSearchFormConcern
   extend ActiveSupport::Concern
 
-  def set_search_form
+  def set_patient_search_form
     @form =
-      SearchForm.new(
+      PatientSearchForm.new(
         session: @session,
         request_path: request.path,
         request_session: session,
-        **search_form_params
+        **patient_search_form_params
       )
   end
 
   private
 
-  def search_form_params
-    params.fetch(:search_form, {}).permit(
+  def patient_search_form_params
+    params.fetch(:patient_search_form, {}).permit(
       :clear_filters,
       :date_of_birth_day,
       :date_of_birth_month,
