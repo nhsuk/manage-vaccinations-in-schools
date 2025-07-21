@@ -6,27 +6,22 @@ module TokenAuthenticationConcern
   included do
     private
 
-    def token_error!(token)
+    def client_id_error!(token)
       if token.blank?
-        render json: { errors: "Unauthorized" }, status: :unauthorized and
-          return
+        render json: { errors: "invalid_request" }, status: :unauthorized and return
       else
-        render json: { errors: "Forbidden" }, status: :forbidden and return
+        render json: { errors: "unauthorized_client" }, status: :forbidden and return
       end
     end
 
-    def authenticate_app_by_token!
-      possible_tokens = []
-      # auth_token_by_param means tokens could appear in logs => it's for dev environments only
-      # hence making it controlled by feature flag
-      possible_tokens << params[:auth] if Flipper.enabled?(:auth_token_by_param)
-      # auth_token_by_header is safer, hence having its own feature flag
-      if Flipper.enabled?(:auth_token_by_header)
-        possible_tokens << request.headers["Authorization"]
-      end
+    def authenticate_app_by_client_id!
+      possible_clients = []
 
-      token = possible_tokens.find { it == Settings.mavis_reporting_app.secret }
-      token_error!(token) unless token
+      if Flipper.enabled?(:reporting_app)
+        # ...as per the spec at https://datatracker.ietf.org/doc/html/rfc6749#section-4.1.3
+        given_client_id = params.fetch("client_id", nil)
+        client_id_error!(given_client_id) unless given_client_id == Settings.mavis_reporting_app.client_id
+      end
     end
 
     def jwt_if_given
@@ -43,7 +38,7 @@ module TokenAuthenticationConcern
           User.find_by(
             id: data.dig("user", "id"),
             session_token: data.dig("user", "session_token"),
-            pwd_auth_session_token: data.dig("user", "pwd_auth_session_token")
+            reporting_app_session_token: data.dig("user", "reporting_app_session_token")
           )
         if @current_user
           session["user"] = data["user"]
@@ -51,13 +46,13 @@ module TokenAuthenticationConcern
           authenticate_user!
         else
           session.clear
-          token_error!(jwt)
+          client_id_error!(jwt)
           Rails.logger.warn "Couldn't find user id #{data.dig("user", "id")} with tokens"
         end
       end
     rescue JWT::DecodeError, NoMethodError
       Rails.logger.warn "invalid JWT"
-      token_error!(jwt)
+      client_id_error!(jwt)
     end
   end
 

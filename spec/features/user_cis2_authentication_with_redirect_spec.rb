@@ -15,16 +15,16 @@ describe "User CIS2 authentication" do
 
   scenario "being redirected to sign-in from the reporting UI" do
     given_a_test_organisation_is_setup_in_mavis_and_cis2
-    when_i_go_to_the_start_page_with_a_redirect_after_login_param_that_matches_the_reporting_app
+    when_i_go_to_the_start_page_with_a_redirect_uri_param_that_matches_the_reporting_app
 
     when_i_click_the_cis2_login_button
-    then_i_am_redirected_to_the_previously_stored_redirect_after_login_param
+    then_i_am_redirected_to_the_previously_stored_redirect_uri_param
     and_the_return_url_has_a_token_param_added_to_it
   end
 
   scenario "someone has supplied their own external redirect url" do
     given_a_test_organisation_is_setup_in_mavis_and_cis2
-    when_i_go_to_the_start_page_with_a_redirect_after_login_param_that_does_not_match_the_reporting_app
+    when_i_go_to_the_start_page_with_a_redirect_uri_param_that_does_not_match_the_reporting_app
 
     when_i_click_the_cis2_login_button
     then_i_see_the_dashboard
@@ -50,30 +50,30 @@ describe "User CIS2 authentication" do
 
   def return_url_on_mavis_reporting_app_with_token_added
     mavis_reporting_app_url(
-      "/some/reporting/path?month=6&school_id=123&search=some search string&token=mylonghextoken"
+      "/some/reporting/path?code=mylonghextoken&month=6&school_id=123&search=some search string"
     )
   end
 
-  def when_i_go_to_the_start_page_with_a_redirect_after_login_param_that_matches_the_reporting_app
+  def when_i_go_to_the_start_page_with_a_redirect_uri_param_that_matches_the_reporting_app
     uri = URI.encode_uri_component(return_url_on_mavis_reporting_app)
-    visit [start_path, "redirect_after_login=#{uri}"].join("?")
+    visit [start_path, "redirect_uri=#{uri}"].join("?")
   end
 
   def redirect_elsewhere_url
     "https://some.example.com/redirect/elsewhere"
   end
 
-  def when_i_go_to_the_start_page_with_a_redirect_after_login_param_that_does_not_match_the_reporting_app
+  def when_i_go_to_the_start_page_with_a_redirect_uri_param_that_does_not_match_the_reporting_app
     uri = URI.encode_uri_component(redirect_elsewhere_url)
-    visit [start_path, "redirect_after_login=#{uri}"].join("?")
+    visit [start_path, "redirect_uri=#{uri}"].join("?")
   end
 
-  def then_i_am_redirected_to_the_previously_stored_redirect_after_login_param
+  def then_i_am_redirected_to_the_previously_stored_redirect_uri_param
     then_i_am_redirected_to_a_url_matching return_url_on_mavis_reporting_app
   end
 
   def and_the_return_url_has_a_token_param_added_to_it
-    expect(page.driver.browser.current_url).to match(/token=[a-gA-G0-9]{32}/)
+    expect(page.driver.browser.current_url).to match(/code=[a-gA-G0-9]{32}/)
   end
 
   def when_i_go_to_the_sessions_page
