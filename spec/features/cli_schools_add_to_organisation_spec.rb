@@ -40,6 +40,17 @@ describe "mavis schools add-to-organisation" do
     end
   end
 
+  context "when customising the programmes" do
+    it "runs successfully" do
+      given_the_organisation_exists
+      and_the_team_exists
+      and_the_school_exists
+
+      when_i_run_the_command_with_flu_only
+      then_the_school_is_added_to_the_organisation_with_flu_only
+    end
+  end
+
   private
 
   def command
@@ -48,8 +59,24 @@ describe "mavis schools add-to-organisation" do
     )
   end
 
+  def command_with_flu_only
+    Dry::CLI.new(MavisCLI).call(
+      arguments: %w[
+        schools
+        add-to-organisation
+        ABC
+        Team
+        123456
+        --programmes
+        flu
+      ]
+    )
+  end
+
   def given_the_organisation_exists
-    @organisation = create(:organisation, ods_code: "ABC")
+    @programmes = [create(:programme, :flu), create(:programme, :hpv)]
+    @organisation =
+      create(:organisation, ods_code: "ABC", programmes: @programmes)
   end
 
   def and_the_team_exists
@@ -57,11 +84,15 @@ describe "mavis schools add-to-organisation" do
   end
 
   def and_the_school_exists
-    @school = create(:school, name: "School", urn: "123456", team: @team)
+    @school = create(:school, name: "School", urn: "123456")
   end
 
   def when_i_run_the_command
     @output = capture_error { command }
+  end
+
+  def when_i_run_the_command_with_flu_only
+    @output = capture_error { command_with_flu_only }
   end
 
   def when_i_run_the_command_expecting_an_error
@@ -82,5 +113,11 @@ describe "mavis schools add-to-organisation" do
 
   def then_the_school_is_added_to_the_organisation
     expect(@organisation.schools).to include(@school)
+    expect(@school.programmes).to eq(@programmes)
+  end
+
+  def then_the_school_is_added_to_the_organisation_with_flu_only
+    expect(@organisation.schools).to include(@school)
+    expect(@school.programmes).to contain_exactly(@programmes.first)
   end
 end
