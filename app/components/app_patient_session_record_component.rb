@@ -2,7 +2,7 @@
 
 class AppPatientSessionRecordComponent < ViewComponent::Base
   erb_template <<-ERB
-    <h2 class="nhsuk-heading-m"><%= heading %></h2>
+    <h3 class="nhsuk-heading-m"><%= heading %></h3>
     
     <% if helpers.policy(VaccinationRecord).new? %>
       <%= render AppVaccinateFormComponent.new(vaccinate_form) %>

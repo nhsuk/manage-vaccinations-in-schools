@@ -1,11 +1,11 @@
 <%= h1 t(".title"), size: "xl" %>
 
-<%= render AppSearchComponent.new(form: @form, url: patients_path) %>
+<%= render AppSearchComponent.new(form: @form, url: patients_path, heading_level: 2) %>
 
 <% if @patients.any? %>
   <%= render AppPatientTableComponent.new(@patients, current_user:, count: @pagy.count) %>
 <% else %>
-  <%= render AppCardComponent.new(colour: "blue") do |card| %>
+  <%= render AppCardComponent.new(heading_level: 2, colour: "blue") do |card| %>
     <% card.with_heading { "No children" } %>
     <% card.with_description { "No children matching search criteria found." } %>
   <% end %>

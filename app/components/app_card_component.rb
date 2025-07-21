@@ -5,7 +5,7 @@ class AppCardComponent < ViewComponent::Base
     <<%= top_level_tag %> class="<%= card_classes %>">
       <div class="<%= content_classes %>">
         <% if heading.present? %>
-          <h2 class="<%= heading_classes %>">
+          <h<%= @heading_level %> class="<%= heading_classes %>">
             <% if @link_to.present? %>
               <%= link_to @link_to, class: "nhsuk-card__link" do %>
                 <%= heading %>
@@ -13,7 +13,7 @@ class AppCardComponent < ViewComponent::Base
             <% else %>
               <%= heading %>
             <% end %>
-          </h2>
+          </h<%= @heading_level %>>
         <% end %>
 
         <% if description.present? %>
@@ -31,6 +31,7 @@ class AppCardComponent < ViewComponent::Base
   def initialize(
     colour: nil,
     link_to: nil,
+    heading_level: 3,
     secondary: false,
     data: false,
     compact: false,
@@ -41,6 +42,7 @@ class AppCardComponent < ViewComponent::Base
 
     @link_to = link_to
     @colour = colour
+    @heading_level = heading_level
     @secondary = secondary
     @data = data
     @compact = compact
@@ -77,10 +79,10 @@ class AppCardComponent < ViewComponent::Base
     ].compact.join(" ")
   end
 
-  def heading_size
+  def heading_modifier
     if @data
       "xs"
-    elsif @feature || @secondary || @compact
+    elsif @secondary || @compact
       "s"
     else
       "m"
@@ -90,7 +92,7 @@ class AppCardComponent < ViewComponent::Base
   def heading_classes
     [
       "nhsuk-card__heading",
-      "nhsuk-heading-#{heading_size}",
+      "nhsuk-heading-#{heading_modifier}",
       ("nhsuk-card__heading--feature" if @feature)
     ].compact.join(" ")
   end

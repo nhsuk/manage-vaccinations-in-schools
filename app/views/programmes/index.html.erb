@@ -2,7 +2,7 @@
 
 <% AcademicYear.all.each do |academic_year| %>
   <div class="nhsuk-table__panel-with-heading-tab">
-    <h3 class="nhsuk-table__heading-tab"><%= format_academic_year(academic_year) %></h3>
+    <h2 class="nhsuk-table__heading-tab"><%= format_academic_year(academic_year) %></h2>
 
     <%= govuk_table(html_attributes: { class: "nhsuk-table-responsive" }) do |table| %>
       <% table.with_head do |head| %>
