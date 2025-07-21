@@ -651,7 +651,7 @@ describe Reports::OfflineSessionExporter do
     context "a clinic session" do
       subject(:workbook) { RubyXL::Parser.parse_buffer(call) }
 
-      let(:location) { organisation.generic_clinic }
+      let(:location) { organisation.locations.generic_clinic.first }
 
       it { should_not be_blank }
 
