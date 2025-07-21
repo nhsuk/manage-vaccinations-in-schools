@@ -65,8 +65,6 @@ FactoryBot.define do
       name { "#{Faker::University.name} Clinic" }
 
       sequence(:ods_code, 100) { "CL#{_1}" }
-
-      organisation
     end
 
     factory :generic_clinic do

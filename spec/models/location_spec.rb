@@ -175,7 +175,7 @@ describe Location do
           "gias_establishment_number" => nil,
           "gias_local_authority_code" => nil,
           "id" => location.id,
-          "is_attached_to_organisation" => true,
+          "is_attached_to_organisation" => false,
           "name" => location.name,
           "ods_code" => location.ods_code,
           "status" => "unknown",

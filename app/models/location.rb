@@ -64,16 +64,13 @@ class Location < ApplicationRecord
   validates :url, url: true, allow_nil: true
   validates :urn, uniqueness: true, allow_nil: true
 
-  with_options if: :clinic? do
-    validates :team, presence: true
-  end
-
   with_options if: :community_clinic? do
     validates :ods_code, exclusion: { in: :organisation_ods_code }
   end
 
   with_options if: :generic_clinic? do
     validates :ods_code, inclusion: { in: :organisation_ods_code }
+    validates :team, presence: true
   end
 
   with_options if: :gp_practice? do
@@ -121,9 +118,9 @@ class Location < ApplicationRecord
 
   private
 
-  def organisation_ods_code
-    [team&.organisation&.ods_code]
-  end
+  def organisation_ods_code = [team&.organisation&.ods_code].compact
 
-  def fhir_mapper = @fhir_mapper ||= FHIRMapper::Location.new(self)
+  def fhir_mapper
+    @fhir_mapper ||= FHIRMapper::Location.new(self)
+  end
 end
