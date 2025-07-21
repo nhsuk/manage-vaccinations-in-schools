@@ -82,13 +82,17 @@ class Organisation < ApplicationRecord
 
   def generic_clinic
     locations.find_by(ods_code:, type: :generic_clinic) ||
-      Location.create!(
-        name: "Community clinics",
-        team: generic_team,
-        ods_code:,
-        type: :generic_clinic,
-        year_groups:
-      )
+      ActiveRecord::Base.transaction do
+        Location
+          .create!(
+            name: "Community clinics",
+            team: generic_team,
+            ods_code:,
+            type: :generic_clinic,
+            year_groups:
+          )
+          .tap { it.create_default_programme_year_groups!(programmes) }
+      end
   end
 
   def generic_clinic_session
