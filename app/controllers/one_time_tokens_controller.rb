@@ -10,8 +10,7 @@ class OneTimeTokensController < ApplicationController
     skip_policy_scope
     @token = OneTimeToken.find_by!(token: params[:token])
     @token.delete # <- Tokens are one-time use
-    json_data =
-      @token.as_json.merge({ jwt: jwt(@token) })
+    json_data = { jwt: jwt(@token) }
     render json: json_data
   rescue ActiveRecord::RecordNotFound
     render json: { errors: "Not found" }, status: :not_found

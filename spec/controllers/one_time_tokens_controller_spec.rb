@@ -47,11 +47,6 @@ RSpec.describe OneTimeTokensController do
         describe "the response json" do
           let(:response_json) { JSON.parse(response.body) }
 
-          it "includes cis2_info" do
-            do_the_request
-            expect(response_json["cis2_info"]).to eq(mock_cis2_info)
-          end
-
           it "includes a JWT" do
             do_the_request
             expect(response_json["jwt"]).not_to be_empty
