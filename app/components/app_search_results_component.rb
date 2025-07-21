@@ -2,7 +2,7 @@
 
 class AppSearchResultsComponent < ViewComponent::Base
   erb_template <<-ERB
-    <h2 class="nhsuk-heading-m nhsuk-u-margin-bottom-2">Search results</h2>
+    <h3 class="nhsuk-heading-m nhsuk-u-margin-bottom-2">Search results</h3>
 
     <p class="nhsuk-body">
       <% if has_results? %>

@@ -1,6 +1,6 @@
-<h2 class="nhsuk-heading-m">Consent</h2>
+<h3 class="nhsuk-heading-m">Consent</h3>
 
-<%= render AppCardComponent.new(colour:) do |card| %>
+<%= render AppCardComponent.new(heading_level: 4, colour:) do |card| %>
   <% card.with_heading { heading } %>
 
   <% unless vaccination_status.vaccinated? %>
@@ -41,7 +41,7 @@
   <% end %>
 
   <% if consents.any? %>
-    <h3 class="nhsuk-heading-s">Consent responses</h3>
+    <h5 class="nhsuk-heading-s">Consent responses</h5>
 
     <% consents.each do |consent| %>
       <%= render AppConsentCardComponent.new(consent, session:) %>
@@ -51,7 +51,7 @@
   <% if show_health_answers? %>
     <hr class="nhsuk-section-break nhsuk-section-break--visible nhsuk-section-break--l">
 
-    <h3 class="nhsuk-heading-s">All answers to health questions</h3>
+    <h5 class="nhsuk-heading-s nhsuk-u-margin-bottom-2">All answers to health questions</h5>
 
     <%= render AppHealthAnswersSummaryComponent.new(grouped_consents) %>
   <% end %>

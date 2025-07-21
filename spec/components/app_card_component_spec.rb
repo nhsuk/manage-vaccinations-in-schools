@@ -10,7 +10,7 @@ describe AppCardComponent do
       render_inline(described_class.new) { it.with_heading { "Test" } }
     end
 
-    it { should have_css("h2.nhsuk-heading-m", text: "Test") }
+    it { should have_css("h3.nhsuk-heading-m", text: "Test") }
   end
 
   context "with a description" do

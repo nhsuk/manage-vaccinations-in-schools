@@ -11,7 +11,7 @@
               <%= item %>
             </strong>
           <% else %>
-              <%= item %>
+            <%= item %>
           <% end %>
 
           <% if item.ticked %>
@@ -24,3 +24,7 @@
     <% end %>
   </ul>
 </nav>
+
+<h2 class="nhsuk-u-visually-hidden">
+  <%= selected_item_text %>
+</h2>

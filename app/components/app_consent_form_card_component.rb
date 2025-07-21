@@ -8,7 +8,7 @@ class AppConsentFormCardComponent < ViewComponent::Base
   end
 
   def call
-    render AppCardComponent.new do |card|
+    render AppCardComponent.new(heading_level: 2) do |card|
       card.with_heading { "Consent response" }
 
       govuk_summary_list do |summary_list|

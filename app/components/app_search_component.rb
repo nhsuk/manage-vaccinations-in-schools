@@ -3,7 +3,7 @@
 class AppSearchComponent < ViewComponent::Base
   erb_template <<-ERB
     <%= form_with model: form, url:, method: :get, builder: GOVUKDesignSystemFormBuilder::FormBuilder do |f| %>
-      <%= render AppCardComponent.new(filters: true) do |card| %>
+      <%= render AppCardComponent.new(heading_level:, filters: true) do |card| %>
         <% card.with_heading { "Find children" } %>
 
         <div class="app-search-input" role="search">
@@ -139,7 +139,8 @@ class AppSearchComponent < ViewComponent::Base
     session_statuses: [],
     triage_statuses: [],
     vaccine_methods: [],
-    year_groups: []
+    year_groups: [],
+    heading_level: 3
   )
     super
 
@@ -154,6 +155,7 @@ class AppSearchComponent < ViewComponent::Base
     @triage_statuses = triage_statuses
     @vaccine_methods = vaccine_methods
     @year_groups = year_groups
+    @heading_level = heading_level
   end
 
   private
@@ -167,7 +169,8 @@ class AppSearchComponent < ViewComponent::Base
               :session_statuses,
               :triage_statuses,
               :vaccine_methods,
-              :year_groups
+              :year_groups,
+              :heading_level
 
   def open_details?
     @form.date_of_birth_year.present? || @form.date_of_birth_month.present? ||

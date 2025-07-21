@@ -11,7 +11,7 @@
   <%= render AppImportStatusComponent.new(import: import) %>
 </p>
 
-<%= render AppCardComponent.new do |card| %>
+<%= render AppCardComponent.new(heading_level: 2) do |card| %>
   <% card.with_heading { "Details" } %>
 
   <%= govuk_summary_list do |summary_list| %>

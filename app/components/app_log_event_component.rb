@@ -7,9 +7,9 @@ class AppLogEventComponent < ViewComponent::Base
     <% end %>
 
     <% if title.present? %>
-      <h3 class="<% if card %>nhsuk-card__heading <% end %>nhsuk-heading-s">
+      <h4 class="<% if card %>nhsuk-card__heading <% end %>nhsuk-heading-s">
         <%= invalidated ? tag.s(title) : title %>
-      </h3>
+      </h4>
     <% end %>
 
     <% if body.present? %>

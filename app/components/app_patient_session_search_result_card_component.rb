@@ -2,7 +2,7 @@
 
 class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
   erb_template <<-ERB
-    <%= render AppCardComponent.new(compact: true) do |card| %>
+    <%= render AppCardComponent.new(heading_level: 4, compact: true) do |card| %>
       <% card.with_heading { link_to(patient.full_name_with_known_as, patient_path) } %>
 
       <%= govuk_summary_list do |summary_list|

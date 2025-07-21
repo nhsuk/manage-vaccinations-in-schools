@@ -2,7 +2,7 @@
 
 class AppSessionActionsComponent < ViewComponent::Base
   erb_template <<-ERB
-    <h3 class="nhsuk-heading-s nhsuk-u-margin-bottom-2">Action required</h3>
+    <h4 class="nhsuk-heading-s nhsuk-u-margin-bottom-2">Action required</h4>
     <%= govuk_summary_list(rows:) %>
   ERB
 
