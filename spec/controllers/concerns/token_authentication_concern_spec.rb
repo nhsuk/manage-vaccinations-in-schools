@@ -68,89 +68,62 @@ describe TokenAuthenticationConcern do
     end
   end
 
-  describe "#authenticate_app_by_token!" do
-    let(:token) { "sometoken" }
+  describe "#authenticate_app_by_client_id!" do
+    let(:client_id) { "something" }
 
-    context "when the :auth_token_by_param feature flag is enabled" do
-      before { Flipper.enable(:auth_token_by_param) }
+    context "when the :reporting_app feature flag is enabled" do
+      before { Flipper.enable(:reporting_app) }
 
-      context "and the :auth param is provided" do
+      context "and the client_id param is provided" do
         before do
-          allow(sample_class).to receive(:params).and_return({ auth: token })
+          allow(sample_class).to receive(:params).and_return( {client_id: client_id}.with_indifferent_access )
         end
 
-        context "and the auth param contains the reporting app's secret" do
-          let(:token) { Settings.mavis_reporting_app.secret }
+        context "and the client_id param contains the reporting app's client_id" do
+          let(:client_id) { Settings.mavis_reporting_app.client_id }
 
           it "does not cause a token error" do
-            expect(sample_class).not_to receive(:token_error!)
-            sample_class.send(:authenticate_app_by_token!)
+            expect(sample_class).not_to receive(:client_id_error!)
+            sample_class.send(:authenticate_app_by_client_id!)
           end
         end
 
-        context "and the auth param does not contain the reporting app secret" do
+        context "and the client_id param does not contain the reporting app client_id" do
           it "causes a token error" do
-            expect(sample_class).to receive(:token_error!)
-            sample_class.send(:authenticate_app_by_token!)
-          end
-        end
-      end
-    end
-
-    context "when the :auth_token_by_header feature flag is enabled" do
-      before { Flipper.enable(:auth_token_by_header) }
-
-      context "and the Authorization header is provided" do
-        before do
-          sample_class.request =
-            instance_double("request", headers: { "Authorization" => token })
-        end
-
-        context "and the Authorization header contains the reporting app's secret" do
-          let(:token) { Settings.mavis_reporting_app.secret }
-
-          it "does not cause a token error" do
-            expect(sample_class).not_to receive(:token_error!)
-            sample_class.send(:authenticate_app_by_token!)
-          end
-        end
-
-        context "and the Authorization header does not contain the reporting app secret" do
-          it "causes a token error" do
-            expect(sample_class).to receive(:token_error!)
-            sample_class.send(:authenticate_app_by_token!)
+            expect(sample_class).to receive(:client_id_error!)
+            sample_class.send(:authenticate_app_by_client_id!)
           end
         end
       end
     end
   end
 
-  describe "#token_error!" do
-    context "given a token" do
-      let(:token) { "sometoken" }
-
-      it "renders a forbidden error, with status :forbidden" do
-        expect(sample_class).to receive(:render).with(
-          json: {
-            errors: "Forbidden"
-          },
-          status: :forbidden
-        )
-        sample_class.send(:token_error!, token)
-      end
-    end
-
+  describe "#client_id_error!" do
     context "given an empty token" do
       let(:token) { "" }
 
-      it "renders a Unauthorized error, with status :unauthorized" do
+      it "renders a invalid_request error, with status :unauthorized" do
         expect(sample_class).to receive(:render).with(
           json: {
-            errors: "Unauthorized"
+            errors: "invalid_request"
           },
           status: :unauthorized
         )
-        sample_class.send(:token_error!, token)
+        sample_class.send(:client_id_error!, token)
+      end
+    end
+
+    context "given a token that is not empty, but does not match the reporting app's client_id" do
+      let(:token) { "unmatched token" }
+
+      it "renders a unauthorized_client error, with status forbidden" do
+        expect(sample_class).to receive(:render).with(
+          json: {
+            errors: "unauthorized_client"
+          },
+          status: :forbidden
+        )
+        sample_class.send(:client_id_error!, token)
       end
     end
   end
@@ -159,13 +132,13 @@ describe TokenAuthenticationConcern do
     let(:jwt) { "" }
     let(:user_id) { 0 }
     let(:session_token) { "123456abcdef" }
-    let(:pwd_auth_session_token) { "0987654321123456abcdef" }
+    let(:reporting_app_session_token) { "0987654321123456abcdef" }
 
     let(:user) do
       create(
         :user,
         session_token: session_token,
-        pwd_auth_session_token: pwd_auth_session_token
+        reporting_app_session_token: reporting_app_session_token
       )
     end
 
@@ -183,7 +156,7 @@ describe TokenAuthenticationConcern do
               "user" => {
                 "id" => user_id,
                 "session_token" => session_token,
-                "pwd_auth_session_token" => pwd_auth_session_token
+                "reporting_app_session_token" => reporting_app_session_token
               },
               "cis2_info" => {
                 "some_key" => "some value"
@@ -207,7 +180,7 @@ describe TokenAuthenticationConcern do
         sample_class.send(:authenticate_user_by_jwt!)
       end
 
-      context "when a User exists with the values of id, session_token and pwd_auth_session_token" do
+      context "when a User exists with the values of id, session_token and reporting_app_session_token" do
         let(:user_id) { user.id }
 
         it "copies the user key into session['user']" do
@@ -230,13 +203,13 @@ describe TokenAuthenticationConcern do
         end
       end
 
-      context "when a User does not exist with the values of id, session_token and pwd_auth_session_token" do
+      context "when a User does not exist with the values of id, session_token and reporting_app_session_token" do
         let(:user_id) { user.id }
 
         before do
           user.update!(
             session_token: "someothersessiontoken",
-            pwd_auth_session_token: "someotherpwdauthsessiontoken"
+            reporting_app_session_token: "someotherpwdauthsessiontoken"
           )
           sample_class.session = {
             user_id: user.id,
@@ -249,16 +222,16 @@ describe TokenAuthenticationConcern do
           expect(sample_class.session).to be_empty
         end
 
-        it "calls token_error!" do
-          expect(sample_class).to receive(:token_error!)
+        it "calls client_id_error!" do
+          expect(sample_class).to receive(:client_id_error!)
           sample_class.send(:authenticate_user_by_jwt!)
         end
       end
     end
 
     context "when a valid jwt is not given" do
-      it "causes a token_error!" do
-        expect(sample_class).to receive(:token_error!)
+      it "causes a client_id_error!" do
+        expect(sample_class).to receive(:client_id_error!)
         sample_class.send(:authenticate_user_by_jwt!)
       end
     end

@@ -1,3 +1,7 @@
+reporting_api: Python app for Commissioner reporting. Enabling this enables the
+  reporting app to authenticate to Mavis via OAUTH 2.0 Authorization Code Flow
+  as defined at https://datatracker.ietf.org/doc/html/rfc6749#section-4.1
+
 basic_auth: Require users to sign in with basic authentication before they
   can use the service.
 

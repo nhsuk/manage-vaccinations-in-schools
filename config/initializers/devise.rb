@@ -419,11 +419,11 @@ Devise.setup do |config|
     end
   else
     Warden::Manager.after_authentication do |user, _auth, _opts|
-      user&.pwd_auth_session_token = SecureRandom.hex(32)
+      user&.reporting_app_session_token = SecureRandom.hex(32)
     end
 
     Warden::Manager.before_logout do |user, _auth, _opts|
-      user&.update_attribute(:pwd_auth_session_token, nil)
+      user&.update_attribute(:reporting_app_session_token, nil)
     end
   end
 end

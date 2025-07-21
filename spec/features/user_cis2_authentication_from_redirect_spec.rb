@@ -70,13 +70,13 @@ describe "User CIS2 authentication" do
 
   def return_url_on_mavis_reporting_app_with_token_added
     mavis_reporting_app_url(
-      "/some/reporting/path?month=6&school_id=123&search=some search string&token=mylonghextoken"
+      "/some/reporting/path?code=mylonghextoken&month=6&school_id=123&search=some search string"
     )
   end
 
-  def when_i_go_to_the_start_page_with_a_redirect_after_login_param_that_matches_the_reporting_app
+  def when_i_go_to_the_start_page_with_a_redirect_uri_param_that_matches_the_reporting_app
     uri = URI.encode_uri_component(return_url_on_mavis_reporting_app)
-    visit [start_path, "redirect_after_login=#{uri}"].join("?")
+    visit [start_path, "redirect_uri=#{uri}"].join("?")
   end
 
   def redirect_elsewhere_url

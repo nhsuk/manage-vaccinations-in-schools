@@ -10,8 +10,8 @@
     <%= hidden_field_tag :redirect_uri, params.fetch(:redirect_uri, "") %>
   <% end %>
 
-  <%- if params.has_key?(:redirect_after_login) %>
-    <%= hidden_field_tag :redirect_after_login, params.fetch(:redirect_after_login, '') %>
+  <%- if params.has_key?(:redirect_uri) %>
+    <%= hidden_field_tag :redirect_uri, params.fetch(:redirect_uri, '') %>
   <%- end %>
 
   <% if devise_mapping.rememberable? %>
