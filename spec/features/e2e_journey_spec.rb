@@ -118,8 +118,10 @@ describe "End-to-end journey" do
     visit "/dashboard"
     click_on "Programmes", match: :first
     click_on "HPV"
-    click_on "Cohort"
-    click_on "Import child records"
+    click_on "Import"
+    click_on "Import records"
+    choose "Child records"
+    click_on "Continue"
     attach_file "cohort_import[csv]", csv_file.path
     click_on "Continue"
     visit cohort_import_path(CohortImport.last)
