@@ -168,7 +168,7 @@ describe "Manage clinic sessions" do
 
   def then_i_see_the_confirmation_page
     expect(page).to have_content("Edit session")
-    expect(page).to have_content("InvitationsSend on Sunday 18 February 2024")
+    expect(page).to have_content("InvitationsSend on Sunday, 18 February 2024")
   end
 
   def when_i_click_on_change_invitations
