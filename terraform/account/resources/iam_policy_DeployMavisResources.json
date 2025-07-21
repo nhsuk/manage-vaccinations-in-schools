@@ -156,6 +156,12 @@
         "elasticache:ModifyCacheParameterGroup",
         "elasticache:ModifyCacheSubnetGroup",
         "elasticache:IncreaseReplicaCount"
+        "lambda:InvokeFunction",
+        "lambda:DeleteFunction",
+        "lambda:CreateFunction",
+        "lambda:CreateAlias",
+        "lambda:DeleteAlias",
+        "lambda:UpdateAlias"
       ],
       "Resource": ["*"]
     }

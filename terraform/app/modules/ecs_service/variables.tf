@@ -90,6 +90,13 @@ variable "network_params" {
   nullable    = false
 }
 
+variable "service_discovery_service_arn" {
+  type        = string
+  description = "Arn of the Service Discovery service for the ECS service. If this is not set, the service will not be discoverable via Cloud Map."
+  default     = null
+  nullable    = true
+}
+
 variable "loadbalancer" {
   type = object({
     target_group_arn = string
@@ -112,6 +119,20 @@ variable "container_name" {
   description = "Name of the essential container in the task. Also the container which is serviced by the load balancer if applicable."
   default     = "application"
   nullable    = false
+}
+
+variable "container_port" {
+  type        = number
+  description = "The port on the container that the service will bind to. If not specified, it defaults to 4000."
+  default     = 4000
+  nullable    = false
+}
+
+variable "host_port" {
+  type        = number
+  description = "The port on the host that the container will bind to. If not specified, it defaults to the same value as container_port."
+  default     = null
+  nullable    = true
 }
 
 locals {
