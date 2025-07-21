@@ -10,12 +10,63 @@ resource "aws_security_group_rule" "web_service_alb_ingress" {
   }
 }
 
+resource "aws_security_group_rule" "reporting_service_alb_ingress" {
+  type                     = "ingress"
+  from_port                = 5000
+  to_port                  = 5000
+  protocol                 = "tcp"
+  security_group_id        = module.reporting_service.security_group_id
+  source_security_group_id = aws_security_group.lb_service_sg.id
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+resource "aws_security_group_rule" "reporting_to_web_service" {
+  type                     = "ingress"
+  from_port                = 4000
+  to_port                  = 4000
+  protocol                 = "tcp"
+  security_group_id        = module.web_service.security_group_id
+  source_security_group_id = module.reporting_service.security_group_id
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
 resource "aws_ecs_cluster" "cluster" {
   name = "mavis-${var.environment}"
 
   setting {
     name  = "containerInsights"
     value = var.container_insights
+  }
+}
+
+resource "aws_service_discovery_private_dns_namespace" "internal" {
+  name        = "mavis.${var.environment}.aws-int"
+  description = "Private namespace for ECS service discovery"
+  vpc         = aws_vpc.application_vpc.id
+
+  tags = {
+    Name = "ecs-service-discovery-${var.environment}"
+  }
+}
+
+resource "aws_service_discovery_service" "web" {
+  name = "web"
+
+  dns_config {
+    namespace_id = aws_service_discovery_private_dns_namespace.internal.id
+    dns_records {
+      ttl  = 10 # TODO: Decide on optimal caching time for DNS records
+      type = "A"
+    }
+    routing_policy = "MULTIVALUE" # For multiple tasks; use "WEIGHTED" if custom weights needed
+  }
+
+  tags = {
+    Name = "maivs-${var.environment}-web"
   }
 }
 
@@ -49,13 +100,14 @@ module "web_service" {
       scale_out_cooldown     = 300
     }
   })
-  cluster_id            = aws_ecs_cluster.cluster.id
-  cluster_name          = aws_ecs_cluster.cluster.name
-  minimum_replica_count = var.minimum_web_replicas
-  maximum_replica_count = var.maximum_web_replicas
-  environment           = var.environment
-  server_type           = "web"
-  deployment_controller = "CODE_DEPLOY"
+  cluster_id                    = aws_ecs_cluster.cluster.id
+  cluster_name                  = aws_ecs_cluster.cluster.name
+  minimum_replica_count         = var.minimum_web_replicas
+  maximum_replica_count         = var.maximum_web_replicas
+  environment                   = var.environment
+  server_type                   = "web"
+  deployment_controller         = "CODE_DEPLOY"
+  service_discovery_service_arn = aws_service_discovery_service.web.arn
 }
 
 module "good_job_service" {
@@ -82,4 +134,53 @@ module "good_job_service" {
   cluster_name          = aws_ecs_cluster.cluster.name
   environment           = var.environment
   server_type           = "good-job"
+}
+
+module "reporting_service" {
+  source = "./modules/ecs_service"
+  task_config = {
+    environment = [
+      {
+        name  = "VALKEY_ADDRESS"
+        value = aws_elasticache_serverless_cache.reporting_service.endpoint[0].address
+      },
+      {
+        name  = "VALKEY_PORT"
+        value = aws_elasticache_serverless_cache.reporting_service.endpoint[0].port
+      }
+    ]
+    secrets              = []
+    cpu                  = 1024
+    memory               = 2048
+    docker_image         = "${var.account_id}.dkr.ecr.eu-west-2.amazonaws.com/mavis/reporting@${var.reporting_digest}"
+    execution_role_arn   = aws_iam_role.ecs_task_execution_role.arn
+    task_role_arn        = aws_iam_role.ecs_task_role.arn
+    log_group_name       = aws_cloudwatch_log_group.ecs_log_group.name
+    region               = var.region
+    health_check_command = ["CMD-SHELL", "wget http://localhost:5000/healthcheck || exit 0"] #TODO: Fix healthcheck and change to exit 1
+  }
+  network_params = {
+    subnets = [aws_subnet.private_subnet_a.id, aws_subnet.private_subnet_b.id]
+    vpc_id  = aws_vpc.application_vpc.id
+  }
+  loadbalancer = {
+    target_group_arn = local.reporting_initial_lb_target_group
+    container_port   = 5000
+  }
+  autoscaling_policies = tomap({
+    cpu = {
+      predefined_metric_type = "ECSServiceAverageCPUUtilization"
+      target_value           = 60
+      scale_in_cooldown      = 600
+      scale_out_cooldown     = 300
+    }
+  })
+  container_port        = 5000
+  minimum_replica_count = var.minimum_reporting_replicas
+  maximum_replica_count = var.maximum_reporting_replicas
+  cluster_id            = aws_ecs_cluster.cluster.id
+  cluster_name          = aws_ecs_cluster.cluster.name
+  environment           = var.environment
+  server_type           = "reporting"
+  deployment_controller = "CODE_DEPLOY"
 }
