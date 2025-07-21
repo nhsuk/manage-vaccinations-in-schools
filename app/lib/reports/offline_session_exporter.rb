@@ -147,6 +147,7 @@ class Reports::OfflineSessionExporter
   def consents
     @consents ||=
       Consent
+        .for_academic_year(academic_year)
         .where(patient_id: patient_sessions.select(:patient_id))
         .not_invalidated
         .includes(:parent, patient: { parent_relationships: :parent })

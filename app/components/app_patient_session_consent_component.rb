@@ -38,6 +38,7 @@ class AppPatientSessionConsentComponent < ViewComponent::Base
     @consents ||=
       patient
         .consents
+        .for_academic_year(session.academic_year)
         .where(programme:)
         .for_academic_year(academic_year)
         .includes(:consent_form, :parent, :programme)
