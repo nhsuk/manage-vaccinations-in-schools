@@ -23,6 +23,8 @@ module MavisCLI
         address_postcode:,
         **
       )
+        MavisCLI.load_rails
+
         Location.create!(
           type: :community_clinic,
           name:,

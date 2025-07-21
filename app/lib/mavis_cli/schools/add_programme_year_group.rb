@@ -15,6 +15,8 @@ module MavisCLI
                desc: "The year groups to add"
 
       def call(urn:, programme_type:, year_groups:, **)
+        MavisCLI.load_rails
+
         location = Location.school.find_by(urn:)
 
         if location.nil?

@@ -15,6 +15,8 @@ module MavisCLI
                desc: "The ODS codes of the clinics"
 
       def call(organisation_ods_code:, team:, clinic_ods_codes:, **)
+        MavisCLI.load_rails
+
         organisation = Organisation.find_by(ods_code: organisation_ods_code)
 
         if organisation.nil?
