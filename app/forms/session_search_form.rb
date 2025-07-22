@@ -38,17 +38,8 @@ class SessionSearchForm < SearchForm
   end
 
   def filter_status(scope)
-    case status
-    when "in_progress"
-      scope.today
-    when "unscheduled"
-      scope.unscheduled
-    when "scheduled"
-      scope.scheduled
-    when "completed"
-      scope.completed
-    else
-      scope
-    end
+    status.in?(VALID_STATUS_SCOPES) ? scope.public_send(status) : scope
   end
+
+  VALID_STATUS_SCOPES = %w[in_progress unscheduled scheduled completed].freeze
 end
