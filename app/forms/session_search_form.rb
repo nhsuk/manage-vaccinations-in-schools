@@ -20,17 +20,11 @@ class SessionSearchForm < SearchForm
 
     scope = scope.joins(:location).where(locations: { type: }) if type.present?
 
-    case status
-    when "in_progress"
-      scope = scope.today
-    when "unscheduled"
-      scope = scope.unscheduled
-    when "scheduled"
-      scope = scope.scheduled
-    when "completed"
-      scope = scope.completed
-    end
+    scope = scope.public_send(status) if status.in?(VALID_STATUS_SCOPES)
 
     scope.sort
   end
+
+
+  VALID_STATUS_SCOPES = %w[in_progress unscheduled scheduled completed].freeze
 end
