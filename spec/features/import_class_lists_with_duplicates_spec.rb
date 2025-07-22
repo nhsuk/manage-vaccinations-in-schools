@@ -115,7 +115,8 @@ describe "Class list imports duplicates" do
   def when_i_visit_a_session_page_for_the_hpv_programme
     visit "/dashboard"
     click_on "Sessions", match: :first
-    click_on "Unscheduled"
+    choose "Unscheduled"
+    click_on "Update results"
     click_on "Waterloo Road"
   end
 
