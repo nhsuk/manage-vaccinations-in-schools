@@ -61,6 +61,20 @@ class Location < ApplicationRecord
   enum :type,
        { school: 0, generic_clinic: 1, community_clinic: 2, gp_practice: 3 }
 
+  scope :search_by_name,
+        ->(query) do
+          # Trigram matching requires at least 3 characters
+          if query.length < 3
+            where("locations.name ILIKE :like_query", like_query: "#{query}%")
+          else
+            where(
+              "SIMILARITY(locations.name, :query) > 0.3 OR " \
+                "SIMILARITY(locations.name, :query) > 0.3",
+              query:
+            )
+          end
+        end
+
   scope :clinic, -> { generic_clinic.or(community_clinic) }
 
   validates :name, presence: true

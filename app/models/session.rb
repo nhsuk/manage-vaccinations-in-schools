@@ -103,6 +103,9 @@ class Session < ApplicationRecord
           )
         end
 
+  scope :search_by_name,
+        ->(query) { joins(:location).merge(Location.search_by_name(query)) }
+
   scope :send_consent_requests,
         -> { scheduled.where("? >= send_consent_requests_at", Date.current) }
   scope :send_consent_reminders,
