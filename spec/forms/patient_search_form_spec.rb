@@ -2,11 +2,11 @@
 
 describe PatientSearchForm do
   subject(:form) do
-    described_class.new(**params, request_session:, request_path:, session:)
+    described_class.new(request_session:, request_path:, session:, **params)
   end
 
   let(:request_session) { {} }
-  let(:request_path) { "/a-path" }
+  let(:request_path) { "/patients" }
   let(:session) { nil }
 
   let(:consent_statuses) { nil }
