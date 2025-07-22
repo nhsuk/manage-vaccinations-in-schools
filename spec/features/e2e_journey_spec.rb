@@ -133,7 +133,8 @@ describe "End-to-end journey" do
 
   def when_i_start_creating_a_new_session_by_choosing_school_and_time
     click_on "Sessions"
-    click_on "Unscheduled"
+    choose "Unscheduled"
+    click_on "Update results"
     click_on "Pilot School"
     click_on "Schedule sessions"
 

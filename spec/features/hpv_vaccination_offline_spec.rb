@@ -189,8 +189,9 @@ describe "HPV vaccination" do
     sign_in @organisation.users.first
     visit "/dashboard"
     click_link "Sessions", match: :first
-    click_link "Scheduled"
-    click_on "Community clinic"
+    choose "Scheduled"
+    click_button "Update results"
+    click_link "Community clinic"
     click_link "Record offline"
   end
 
@@ -350,14 +351,16 @@ describe "HPV vaccination" do
   def when_i_navigate_to_the_session_page
     visit "/dashboard"
     click_on "Sessions", match: :first
-    click_on "Scheduled"
+    choose "Scheduled"
+    click_on "Update results"
     click_on @session.location.name
   end
 
   def when_i_navigate_to_the_clinic_page
     visit "/dashboard"
     click_on "Sessions", match: :first
-    click_on "Scheduled"
+    choose "Scheduled"
+    click_on "Update results"
     click_on "Community clinic"
   end
 

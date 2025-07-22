@@ -76,9 +76,8 @@ class Session < ApplicationRecord
 
   scope :today, -> { has_date(Date.current) }
 
-  scope :for_academic_year, ->(academic_year) { where(academic_year:) }
   scope :for_current_academic_year,
-        -> { for_academic_year(AcademicYear.current) }
+        -> { where(academic_year: AcademicYear.current) }
 
   scope :unscheduled,
         -> do
@@ -224,9 +223,18 @@ class Session < ApplicationRecord
     end
   end
 
+  FAR_FUTURE_DATE = Date.new(9999, 1, 1)
+
   def <=>(other)
-    [dates.first, location.type, location.name] <=>
-      [other.dates.first, other.location.type, other.location.name]
+    # We want sessions without dates to appear after sessions with dates. We
+    # can't compare a `Date` with `nil` so instead we can choose a date in the
+    # far future.
+    [dates.first || FAR_FUTURE_DATE, location.type, location.name] <=>
+      [
+        other.dates.first || FAR_FUTURE_DATE,
+        other.location.type,
+        other.location.name
+      ]
   end
 
   def set_notification_dates
