@@ -51,15 +51,15 @@ describe "Import child records" do
 
   def given_the_app_is_setup
     programme = create(:programme, :hpv)
-    @organisation =
+    @team =
       create(
-        :organisation,
+        :team,
         :with_generic_clinic,
         :with_one_nurse,
         programmes: [programme]
       )
-    create(:school, urn: "123456", organisation: @organisation)
-    @user = @organisation.users.first
+    create(:school, urn: "123456", team: @team)
+    @user = @team.users.first
   end
 
   def when_i_visit_the_cohort_page_for_the_hpv_programme

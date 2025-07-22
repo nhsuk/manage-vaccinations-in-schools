@@ -20,20 +20,19 @@ describe "Cohorts index" do
   def given_an_hpv_programme_is_underway
     @academic_year = Date.current.academic_year
     @programme = create(:programme, :hpv)
-    @organisation =
+    @team =
       create(
-        :organisation,
+        :team,
         :with_one_nurse,
         :with_generic_clinic,
         programmes: [@programme]
       )
 
-    sign_in @organisation.users.first
+    sign_in @team.users.first
   end
 
   def and_there_are_patients_in_different_year_groups
-    session =
-      create(:session, organisation: @organisation, programmes: [@programme])
+    session = create(:session, team: @team, programmes: [@programme])
 
     @patient1 = create(:patient, session:, year_group: 9)
     @patient2 = create(:patient, session:, year_group: 9)
@@ -41,11 +40,7 @@ describe "Cohorts index" do
 
     # To make it realistic we'll also add patients to clinics.
     Patient.find_each do |patient|
-      create(
-        :patient_session,
-        patient:,
-        session: @organisation.generic_clinic_session
-      )
+      create(:patient_session, patient:, session: @team.generic_clinic_session)
     end
   end
 

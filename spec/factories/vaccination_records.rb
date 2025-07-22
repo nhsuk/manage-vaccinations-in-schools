@@ -58,15 +58,14 @@
 FactoryBot.define do
   factory :vaccination_record do
     transient do
-      organisation do
-        programme.organisations.first ||
-          association(:organisation, programmes: [programme])
+      team do
+        programme.teams.first || association(:team, programmes: [programme])
       end
     end
 
     programme
 
-    performed_ods_code { organisation.ods_code }
+    performed_ods_code { team.ods_code }
 
     patient do
       association :patient,
@@ -84,13 +83,7 @@ FactoryBot.define do
 
     batch do
       if vaccine
-        association(
-          :batch,
-          :not_expired,
-          organisation:,
-          vaccine:,
-          strategy: :create
-        )
+        association(:batch, :not_expired, team:, vaccine:, strategy: :create)
       end
     end
 

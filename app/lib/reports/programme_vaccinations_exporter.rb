@@ -3,14 +3,8 @@
 class Reports::ProgrammeVaccinationsExporter
   include Reports::ExportFormatters
 
-  def initialize(
-    organisation:,
-    programme:,
-    academic_year:,
-    start_date:,
-    end_date:
-  )
-    @organisation = organisation
+  def initialize(team:, programme:, academic_year:, start_date:, end_date:)
+    @team = team
     @programme = programme
     @academic_year = academic_year
     @start_date = start_date
@@ -31,7 +25,7 @@ class Reports::ProgrammeVaccinationsExporter
 
   private
 
-  attr_reader :organisation, :programme, :academic_year, :start_date, :end_date
+  attr_reader :team, :programme, :academic_year, :start_date, :end_date
 
   def headers
     %w[
@@ -89,7 +83,7 @@ class Reports::ProgrammeVaccinationsExporter
 
   def vaccination_records
     scope =
-      organisation
+      team
         .vaccination_records
         .where(programme:)
         .for_academic_year(academic_year)
@@ -194,7 +188,7 @@ class Reports::ProgrammeVaccinationsExporter
     academic_year = session.academic_year
 
     [
-      organisation.ods_code,
+      team.ods_code,
       school_urn(location:, patient:),
       school_name(location:, patient:),
       care_setting(location:),

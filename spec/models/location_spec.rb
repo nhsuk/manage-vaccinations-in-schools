@@ -48,9 +48,9 @@ describe Location do
     it { should validate_presence_of(:name) }
 
     context "with a community clinic" do
-      subject(:location) { build(:community_clinic, organisation:) }
+      subject(:location) { build(:community_clinic, team:) }
 
-      let(:organisation) { create(:organisation) }
+      let(:team) { create(:team) }
 
       it { should_not validate_presence_of(:gias_establishment_number) }
       it { should_not validate_presence_of(:gias_local_authority_code) }
@@ -60,7 +60,7 @@ describe Location do
 
       it do
         expect(location).to validate_exclusion_of(:ods_code).in_array(
-          [organisation.ods_code]
+          [team.ods_code]
         )
       end
 
@@ -69,9 +69,9 @@ describe Location do
     end
 
     context "with a generic clinic" do
-      subject(:location) { build(:generic_clinic, organisation:) }
+      subject(:location) { build(:generic_clinic, team:) }
 
-      let(:organisation) { create(:organisation) }
+      let(:team) { create(:team) }
 
       it { should_not validate_presence_of(:gias_establishment_number) }
       it { should_not validate_presence_of(:gias_local_authority_code) }
@@ -81,7 +81,7 @@ describe Location do
 
       it do
         expect(location).to validate_inclusion_of(:ods_code).in_array(
-          [organisation.ods_code]
+          [team.ods_code]
         )
       end
 
@@ -185,7 +185,7 @@ describe Location do
           "gias_establishment_number" => nil,
           "gias_local_authority_code" => nil,
           "id" => location.id,
-          "is_attached_to_organisation" => false,
+          "is_attached_to_team" => false,
           "name" => location.name,
           "ods_code" => location.ods_code,
           "status" => "unknown",
@@ -197,10 +197,10 @@ describe Location do
       )
     end
 
-    context "when the location is not attached to an organisation" do
+    context "when the location is not attached to an team" do
       let(:location) { create(:school, subteam: nil) }
 
-      it { should include("is_attached_to_organisation" => false) }
+      it { should include("is_attached_to_team" => false) }
     end
   end
 

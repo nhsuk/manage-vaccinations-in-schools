@@ -11,8 +11,8 @@ class SchoolMovesController < ApplicationController
   def index
     school_moves =
       policy_scope(SchoolMove).includes(
-        :organisation,
-        school: :organisation,
+        :team,
+        school: :team,
         patient: :school
       ).order(:updated_at)
 

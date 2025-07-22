@@ -2,8 +2,8 @@
 
 describe Generate::Triages do
   let(:programme) { Programme.hpv&.first || create(:programme, :hpv) }
-  let(:organisation) { create(:organisation, programmes: [programme]) }
-  let(:user) { create(:user, organisation:) }
+  let(:team) { create(:team, programmes: [programme]) }
+  let(:user) { create(:user, team:) }
   let(:patient) do
     create(
       :patient,
@@ -12,7 +12,7 @@ describe Generate::Triages do
       session:
     )
   end
-  let(:session) { create(:session, organisation:, programmes: [programme]) }
+  let(:session) { create(:session, team:, programmes: [programme]) }
 
   describe "ready to vaccinate triages" do
     it "creates one consent response" do
@@ -20,7 +20,7 @@ describe Generate::Triages do
       patient
 
       described_class.call(
-        organisation:,
+        team:,
         programme:,
         session:,
         ready_to_vaccinate: 1,
@@ -36,7 +36,7 @@ describe Generate::Triages do
       patient
 
       described_class.call(
-        organisation:,
+        team:,
         programme:,
         session:,
         ready_to_vaccinate: 0,

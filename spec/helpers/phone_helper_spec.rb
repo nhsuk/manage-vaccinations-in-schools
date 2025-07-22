@@ -7,9 +7,9 @@ describe PhoneHelper do
     context "when phone instructions are present" do
       let(:entity) do
         create(
-          :organisation,
-          name: "Organisation",
-          email: "organisation@example.com",
+          :team,
+          name: "Team",
+          email: "team@example.com",
           phone: "01234 567890",
           phone_instructions: "option 1"
         )
@@ -21,9 +21,9 @@ describe PhoneHelper do
     context "when phone instructions are blank" do
       let(:entity) do
         create(
-          :organisation,
-          name: "Organisation",
-          email: "organisation@example.com",
+          :team,
+          name: "Team",
+          email: "team@example.com",
           phone: "01234 567890",
           phone_instructions: nil
         )
@@ -35,9 +35,9 @@ describe PhoneHelper do
     context "when phone instructions are an empty string" do
       let(:entity) do
         create(
-          :organisation,
-          name: "Organisation",
-          email: "organisation@example.com",
+          :team,
+          name: "Team",
+          email: "team@example.com",
           phone: "01234 567890",
           phone_instructions: ""
         )

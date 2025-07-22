@@ -2,7 +2,7 @@
 
 describe ImmunisationImportRow do
   subject(:immunisation_import_row) do
-    described_class.new(data: data_as_csv_row, organisation:)
+    described_class.new(data: data_as_csv_row, team:)
   end
 
   # FIXME: Don't re-implement behaviour of `CSVParser`.
@@ -15,14 +15,14 @@ describe ImmunisationImportRow do
   end
 
   let(:programmes) { [create(:programme, :hpv)] }
-  let(:organisation) { create(:organisation, ods_code: "abc", programmes:) }
+  let(:team) { create(:team, ods_code: "abc", programmes:) }
 
   let(:nhs_number) { "9990000018" }
   let(:given_name) { "Harry" }
   let(:family_name) { "Potter" }
   let(:date_of_birth) { "20120101" }
   let(:address_postcode) { "SW1A 1AA" }
-  let(:vaccinator) { create(:user, organisation:) }
+  let(:vaccinator) { create(:user, team:) }
   let(:valid_common_data) do
     {
       "ORGANISATION_CODE" => "abc",
@@ -166,7 +166,7 @@ describe ImmunisationImportRow do
         )
       end
 
-      let(:session) { create(:session, organisation:, programmes:) }
+      let(:session) { create(:session, team:, programmes:) }
 
       it "has errors" do
         expect(immunisation_import_row).to be_invalid
@@ -306,7 +306,7 @@ describe ImmunisationImportRow do
           }
         end
 
-        let(:session) { create(:session, organisation:, programmes:) }
+        let(:session) { create(:session, team:, programmes:) }
 
         it do
           expect(errors).to include(
@@ -403,7 +403,7 @@ describe ImmunisationImportRow do
         expect(immunisation_import_row).to be_invalid
         expect(immunisation_import_row.errors["SESSION_ID"]).to include(
           "The session ID is not recognised. Download the offline spreadsheet and copy the session ID " \
-            "for this row from there, or contact our support organisation."
+            "for this row from there, or contact our support team."
         )
       end
     end
@@ -415,15 +415,15 @@ describe ImmunisationImportRow do
         expect(immunisation_import_row).to be_invalid
         expect(immunisation_import_row.errors["SESSION_ID"]).to include(
           "The session ID is not recognised. Download the offline spreadsheet and copy the session ID " \
-            "for this row from there, or contact our support organisation."
+            "for this row from there, or contact our support team."
         )
       end
     end
 
-    context "vaccination in a session and no organisation provided" do
+    context "vaccination in a session and no team provided" do
       let(:data) { { "SESSION_ID" => session.id.to_s } }
 
-      let(:session) { create(:session, organisation:, programmes:) }
+      let(:session) { create(:session, team:, programmes:) }
 
       it "has errors" do
         expect(immunisation_import_row).to be_invalid
@@ -441,9 +441,7 @@ describe ImmunisationImportRow do
       let(:programmes) do
         [create(:programme, :hpv), create(:programme, :menacwy)]
       end
-      let(:session) do
-        create(:session, organisation:, programmes: [programmes.first])
-      end
+      let(:session) { create(:session, team:, programmes: [programmes.first]) }
 
       it "has errors" do
         expect(immunisation_import_row).to be_invalid
@@ -466,7 +464,7 @@ describe ImmunisationImportRow do
         )
       end
 
-      let(:session) { create(:session, organisation:, programmes:) }
+      let(:session) { create(:session, team:, programmes:) }
 
       it "has errors" do
         expect(immunisation_import_row).to be_invalid
@@ -487,7 +485,7 @@ describe ImmunisationImportRow do
         )
       end
 
-      let(:session) { create(:session, organisation:, programmes:) }
+      let(:session) { create(:session, team:, programmes:) }
 
       it "has errors" do
         expect(immunisation_import_row).to be_invalid
@@ -507,7 +505,7 @@ describe ImmunisationImportRow do
       end
 
       let(:programmes) { [create(:programme, :menacwy)] }
-      let(:session) { create(:session, organisation:, programmes:) }
+      let(:session) { create(:session, team:, programmes:) }
 
       it "has errors" do
         expect(immunisation_import_row).to be_invalid
@@ -527,7 +525,7 @@ describe ImmunisationImportRow do
       end
 
       let(:programmes) { [create(:programme, :td_ipv)] }
-      let(:session) { create(:session, organisation:, programmes:) }
+      let(:session) { create(:session, team:, programmes:) }
 
       it "has errors" do
         expect(immunisation_import_row).to be_invalid
@@ -596,7 +594,7 @@ describe ImmunisationImportRow do
 
     context "vaccination in a session, with a delivery site that is not appropriate for HPV" do
       let(:programmes) { [create(:programme, :hpv)] }
-      let(:session) { create(:session, organisation:, programmes:) }
+      let(:session) { create(:session, team:, programmes:) }
 
       let(:data) do
         valid_hpv_data.merge(
@@ -636,7 +634,7 @@ describe ImmunisationImportRow do
 
     context "vaccination in a session, with a delivery site that is not appropriate for flu" do
       let(:programmes) { [create(:programme, :flu)] }
-      let(:session) { create(:session, organisation:, programmes:) }
+      let(:session) { create(:session, team:, programmes:) }
 
       let(:data) do
         {
@@ -669,7 +667,7 @@ describe ImmunisationImportRow do
         }
       end
 
-      let(:session) { create(:session, organisation:, programmes:) }
+      let(:session) { create(:session, team:, programmes:) }
 
       it "has errors" do
         expect(immunisation_import_row).to be_invalid
@@ -740,7 +738,7 @@ describe ImmunisationImportRow do
         }
       end
 
-      let(:session) { create(:session, organisation:, programmes:) }
+      let(:session) { create(:session, team:, programmes:) }
 
       it "has errors" do
         expect(immunisation_import_row).to be_invalid
@@ -886,7 +884,7 @@ describe ImmunisationImportRow do
         create(
           :vaccination_record,
           programme: programmes.first,
-          session: create(:session, organisation:, programmes:)
+          session: create(:session, team:, programmes:)
         )
       end
 
@@ -1167,15 +1165,13 @@ describe ImmunisationImportRow do
           valid_data.merge(
             "DATE_OF_VACCINATION" => session.dates.first.strftime("%Y%m%d"),
             "SESSION_ID" => session.id.to_s,
-            "ORGANISATION_CODE" => organisation.ods_code,
+            "ORGANISATION_CODE" => team.ods_code,
             "PERFORMING_PROFESSIONAL_EMAIL" => create(:user).email,
             "DOSE_SEQUENCE" => "1"
           )
         end
 
-        let(:session) do
-          create(:session, organisation:, location:, programmes:)
-        end
+        let(:session) { create(:session, team:, location:, programmes:) }
 
         it { should be_nil }
       end

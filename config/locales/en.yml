@@ -642,9 +642,9 @@ en:
   table:
     no_filtered_results: We couldn’t find any children that matched your filters.
     no_results: No results
-  organisations:
+  teams:
     show:
-      title: Your organisation
+      title: Your team
   vaccines:
     index:
       title: Vaccines

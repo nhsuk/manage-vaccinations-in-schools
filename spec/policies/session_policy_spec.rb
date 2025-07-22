@@ -53,15 +53,13 @@ describe SessionPolicy do
     subject { SessionPolicy::Scope.new(user, Session).resolve }
 
     let(:programmes) { [create(:programme)] }
-    let(:organisation) { create(:organisation, programmes:) }
-    let(:user) { create(:user, organisation:) }
+    let(:team) { create(:team, programmes:) }
+    let(:user) { create(:user, team:) }
 
-    let(:users_organisations_session) do
-      create(:session, organisation:, programmes:)
-    end
-    let(:another_organisations_session) { create(:session, programmes:) }
+    let(:users_teams_session) { create(:session, team:, programmes:) }
+    let(:another_teams_session) { create(:session, programmes:) }
 
-    it { should include(users_organisations_session) }
-    it { should_not include(another_organisations_session) }
+    it { should include(users_teams_session) }
+    it { should_not include(another_teams_session) }
   end
 end

@@ -61,10 +61,8 @@ describe "Filter states" do
 
   def given_i_am_signed_in
     @programme = create(:programme, :hpv)
-    @organisation =
-      create(:organisation, :with_one_nurse, programmes: [@programme])
-    @session =
-      create(:session, organisation: @organisation, programmes: [@programme])
+    @team = create(:team, :with_one_nurse, programmes: [@programme])
+    @session = create(:session, team: @team, programmes: [@programme])
     create(:patient_session, :consent_no_response, session: @session)
     create(:patient_session, :consent_conflicting, session: @session)
     create(:patient_session, :consent_refused, session: @session)
@@ -78,7 +76,7 @@ describe "Filter states" do
     create(:patient_session, :unknown_attendance, session: @session)
     create(:patient_session, :vaccinated, session: @session)
 
-    sign_in @organisation.users.first
+    sign_in @team.users.first
   end
 
   def when_i_visit_the_consent_page

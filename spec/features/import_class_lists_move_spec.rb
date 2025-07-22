@@ -33,36 +33,18 @@ describe "Import class lists - Moving patients" do
   def given_an_hpv_programme_is_underway
     programmes = [create(:programme, :hpv)]
 
-    @organisation =
-      create(:organisation, :with_generic_clinic, :with_one_nurse, programmes:)
-    @user = @organisation.users.first
+    @team = create(:team, :with_generic_clinic, :with_one_nurse, programmes:)
+    @user = @team.users.first
 
-    location =
-      create(
-        :school,
-        :secondary,
-        name: "Waterloo Road",
-        organisation: @organisation
-      )
+    location = create(:school, :secondary, name: "Waterloo Road", team: @team)
     other_location =
-      create(
-        :school,
-        :secondary,
-        name: "Different Road",
-        organisation: @organisation
-      )
+      create(:school, :secondary, name: "Different Road", team: @team)
 
+    create(:session, :unscheduled, team: @team, location:, programmes:)
     create(
       :session,
       :unscheduled,
-      organisation: @organisation,
-      location:,
-      programmes:
-    )
-    create(
-      :session,
-      :unscheduled,
-      organisation: @organisation,
+      team: @team,
       location: other_location,
       programmes:
     )

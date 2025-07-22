@@ -14,15 +14,9 @@ describe AppSessionSummaryComponent do
       address_postcode: "SW1A 1AA"
     )
   end
-  let(:organisation) { create(:organisation, programmes:) }
+  let(:team) { create(:team, programmes:) }
   let(:session) do
-    create(
-      :session,
-      location:,
-      date: Date.new(2024, 1, 1),
-      programmes:,
-      organisation:
-    )
+    create(:session, location:, date: Date.new(2024, 1, 1), programmes:, team:)
   end
 
   it { should have_content("Streeling University") }

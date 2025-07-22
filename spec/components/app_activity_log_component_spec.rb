@@ -6,7 +6,7 @@ describe AppActivityLogComponent do
   let(:component) { described_class.new(patient_session:) }
 
   let(:programmes) { [create(:programme, :hpv), create(:programme, :flu)] }
-  let(:organisation) { create(:organisation, programmes:) }
+  let(:team) { create(:team, programmes:) }
   let(:patient_session) do
     create(
       :patient_session,
@@ -15,9 +15,7 @@ describe AppActivityLogComponent do
       created_at: Time.zone.parse("2024-05-29 12:00")
     )
   end
-  let(:user) do
-    create(:user, organisation:, family_name: "Joy", given_name: "Nurse")
-  end
+  let(:user) { create(:user, team:, family_name: "Joy", given_name: "Nurse") }
   let(:location) { create(:school, name: "Hogwarts") }
   let(:session) { create(:session, programmes:, location:) }
   let(:patient) do

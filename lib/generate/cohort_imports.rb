@@ -26,13 +26,13 @@ Faker::Config.locale = "en-GB"
 #
 # You can pull out the year groups with the following:
 #
-#     org = Organisation.find_by(ods_code: "A9A5A")
+#     org = Team.find_by(ods_code: "A9A5A")
 #     org.locations.school.pluck(:urn, :year_groups) .to_h
 #
 module Generate
   class CohortImports
     attr_reader :ods_code,
-                :organisation,
+                :team,
                 :programme,
                 :urns,
                 :patient_count,
@@ -47,15 +47,10 @@ module Generate
       patient_count: 10,
       progress_bar: nil
     )
-      @organisation = Organisation.find_by(ods_code:)
+      @team = Team.find_by(ods_code:)
       @programme = Programme.find_by(type: programme)
       @urns =
-        urns ||
-          @organisation
-            .locations
-            .select { it.urn.present? }
-            .sample(3)
-            .pluck(:urn)
+        urns || @team.locations.select { it.urn.present? }.sample(3).pluck(:urn)
       @school_year_groups = school_year_groups
       @patient_count = patient_count
       @progress_bar = progress_bar
@@ -76,7 +71,7 @@ module Generate
 
     def cohort_import_csv_filepath
       Rails.root.join(
-        "tmp/perf-test-cohort-import-#{organisation.ods_code}-#{programme.type}.csv"
+        "tmp/perf-test-cohort-import-#{team.ods_code}-#{programme.type}.csv"
       )
     end
 
@@ -139,10 +134,7 @@ module Generate
                 Location.new(urn:, year_groups: school_year_groups[urn])
               end
             else
-              organisation
-                .locations
-                .where(urn: urns)
-                .includes(:organisation, :sessions)
+              team.locations.where(urn: urns).includes(:team, :sessions)
             end
           locations.select do
             (it.year_groups & programme.default_year_groups).any?
@@ -164,7 +156,7 @@ module Generate
         .build(
           :patient,
           school:,
-          organisation:,
+          team:,
           date_of_birth: date_of_birth_for_year(year_group),
           nhs_number:
         )

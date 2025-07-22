@@ -36,23 +36,23 @@
 #  updated_at                          :datetime         not null
 #  consent_id                          :bigint
 #  location_id                         :bigint           not null
-#  organisation_id                     :bigint           not null
 #  school_id                           :bigint
+#  team_id                             :bigint           not null
 #
 # Indexes
 #
-#  index_consent_forms_on_consent_id       (consent_id)
-#  index_consent_forms_on_location_id      (location_id)
-#  index_consent_forms_on_nhs_number       (nhs_number)
-#  index_consent_forms_on_organisation_id  (organisation_id)
-#  index_consent_forms_on_school_id        (school_id)
+#  index_consent_forms_on_consent_id   (consent_id)
+#  index_consent_forms_on_location_id  (location_id)
+#  index_consent_forms_on_nhs_number   (nhs_number)
+#  index_consent_forms_on_school_id    (school_id)
+#  index_consent_forms_on_team_id      (team_id)
 #
 # Foreign Keys
 #
 #  fk_rails_...  (consent_id => consents.id)
 #  fk_rails_...  (location_id => locations.id)
-#  fk_rails_...  (organisation_id => organisations.id)
 #  fk_rails_...  (school_id => locations.id)
+#  fk_rails_...  (team_id => teams.id)
 #
 
 describe ConsentForm do
@@ -713,12 +713,12 @@ describe ConsentForm do
     end
 
     let(:programme) { create(:programme) }
-    let(:organisation) { create(:organisation, programmes: [programme]) }
+    let(:team) { create(:team, programmes: [programme]) }
 
     let(:school) { create(:school) }
     let(:location) { school }
     let(:session) do
-      create(:session, organisation:, programmes: [programme], location:)
+      create(:session, team:, programmes: [programme], location:)
     end
     let(:patient) { create(:patient, school:, session:) }
     let(:current_user) { create(:user) }
@@ -728,7 +728,7 @@ describe ConsentForm do
     end
 
     context "when the consent form is draft" do
-      let(:consent_form) { create(:consent_form, organisation:, session:) }
+      let(:consent_form) { create(:consent_form, team:, session:) }
 
       it "raises an error" do
         expect { match_with_patient! }.to raise_error(
@@ -742,7 +742,7 @@ describe ConsentForm do
         create(
           :consent_form,
           :recorded,
-          organisation:,
+          team:,
           session:,
           school_confirmed: true
         )
@@ -768,7 +768,7 @@ describe ConsentForm do
         create(
           :consent_form,
           recorded_at: 1.week.ago,
-          organisation:,
+          team:,
           session:,
           school_confirmed: true
         )
@@ -786,7 +786,7 @@ describe ConsentForm do
         create(
           :consent_form,
           :recorded,
-          organisation:,
+          team:,
           session:,
           school_confirmed: false,
           school: new_school
@@ -823,14 +823,14 @@ describe ConsentForm do
         create(
           :consent_form,
           :recorded,
-          organisation:,
+          team:,
           session:,
           school_confirmed: nil,
           education_setting: "home"
         )
       end
 
-      let(:new_location) { create(:generic_clinic, organisation:) }
+      let(:new_location) { create(:generic_clinic, team:) }
 
       it "creates a consent" do
         expect { match_with_patient! }.to change(Consent, :count).by(1)

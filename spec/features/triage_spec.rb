@@ -72,30 +72,22 @@ describe "Triage" do
 
   def given_a_programme_with_a_running_session
     programmes = [create(:programme, :hpv)]
-    @organisation = create(:organisation, :with_one_nurse, programmes:)
+    @team = create(:team, :with_one_nurse, programmes:)
 
     @batch =
-      create(
-        :batch,
-        organisation: @organisation,
-        vaccine: programmes.first.vaccines.first
-      )
+      create(:batch, team: @team, vaccine: programmes.first.vaccines.first)
 
-    @session = create(:session, organisation: @organisation, programmes:)
+    @session = create(:session, team: @team, programmes:)
   end
 
   def given_a_flu_programme_with_a_running_session
     programmes = [create(:programme, :flu)]
-    @organisation = create(:organisation, :with_one_nurse, programmes:)
+    @team = create(:team, :with_one_nurse, programmes:)
 
     @batch =
-      create(
-        :batch,
-        organisation: @organisation,
-        vaccine: programmes.first.vaccines.first
-      )
+      create(:batch, team: @team, vaccine: programmes.first.vaccines.first)
 
-    @session = create(:session, organisation: @organisation, programmes:)
+    @session = create(:session, team: @team, programmes:)
   end
 
   def and_a_patient_who_needs_triage_exists
@@ -147,7 +139,7 @@ describe "Triage" do
   end
 
   def when_i_go_to_the_session_triage_tab
-    @user = @organisation.users.first
+    @user = @team.users.first
     sign_in @user
     visit session_triage_path(@session)
   end

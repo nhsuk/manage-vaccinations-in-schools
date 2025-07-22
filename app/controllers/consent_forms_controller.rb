@@ -95,7 +95,7 @@ class ConsentFormsController < ApplicationController
           SchoolMove.new(
             patient:,
             home_educated: @consent_form.home_educated,
-            organisation: @consent_form.organisation
+            team: @consent_form.team
           )
         end
 

@@ -121,7 +121,7 @@ module FHIRMapper
 
     def fhir_org_performer
       FHIR::Immunization::Performer.new(
-        actor: Organisation.fhir_reference(ods_code: performed_ods_code)
+        actor: Team.fhir_reference(ods_code: performed_ods_code)
       )
     end
 

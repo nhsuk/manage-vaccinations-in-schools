@@ -19,7 +19,7 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     elsif !selected_cis2_role_is_valid?
       redirect_to users_role_not_found_path
     elsif !selected_cis2_org_is_registered?
-      redirect_to users_organisation_not_found_path
+      redirect_to users_team_not_found_path
     else
       @user = User.find_or_create_from_cis2_oidc(user_cis2_info)
 

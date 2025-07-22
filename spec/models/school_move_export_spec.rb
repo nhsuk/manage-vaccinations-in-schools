@@ -6,8 +6,8 @@ describe SchoolMoveExport do
   end
 
   let(:request_session) { {} }
-  let(:current_user) { organisation.users.first }
-  let(:organisation) { create(:organisation, :with_one_nurse) }
+  let(:current_user) { team.users.first }
+  let(:team) { create(:team, :with_one_nurse) }
 
   describe "#wizard_steps" do
     subject { school_move_export.wizard_steps }

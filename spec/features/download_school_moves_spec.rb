@@ -24,8 +24,8 @@ describe "Download school moves" do
   end
 
   def given_i_am_signed_in
-    organisation = create(:organisation, :with_one_nurse)
-    @session = create(:session, organisation:)
+    team = create(:team, :with_one_nurse)
+    @session = create(:session, team:)
     @patients =
       create_list(
         :patient,
@@ -35,7 +35,7 @@ describe "Download school moves" do
         session: @session
       )
 
-    sign_in organisation.users.first
+    sign_in team.users.first
   end
 
   def and_school_moves_exist

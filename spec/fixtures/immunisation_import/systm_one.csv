@@ -1,4 +1,4 @@
-Date of birth,NHS number,Vaccination area code,Vaccination batch number,Vaccination reason,Vaccination type,First name,Postcode,Sex,Surname,Event date,Event location type,Event time,Organisation ID,School,School code,Patient Count
+Date of birth,NHS number,Vaccination area code,Vaccination batch number,Vaccination reason,Vaccination type,First name,Postcode,Sex,Surname,Event date,Event location type,Event time,Team ID,School,School code,Patient Count
 20100912,7420180008,,123013325,,Cervarix 1,Chyna,LE3 2DA,Female,Pickle,20240514,School,,,Eton College,110158,
 20100913,,,123013325,,HPV,Renie,LE1 2DA,Female,Parrish,20240514,School,,,Eton College,110158,
 20100914,4146825652,,"",,MenACWY,Caden,LE1 2DA,Male,Attwater,20240514,School,,,Eton College,110158,

@@ -21,11 +21,9 @@ describe ClassImportRow do
   let(:today) { Date.new(2024, 12, 1) }
 
   let(:programmes) { [create(:programme)] }
-  let(:organisation) { create(:organisation, programmes:) }
-  let(:school) { create(:school, organisation:) }
-  let(:session) do
-    create(:session, organisation:, programmes:, location: school)
-  end
+  let(:team) { create(:team, programmes:) }
+  let(:school) { create(:school, team:) }
+  let(:session) { create(:session, team:, programmes:, location: school) }
 
   let(:valid_data) do
     {

@@ -1,21 +1,21 @@
 # frozen_string_literal: true
 
-describe API::OrganisationsController do
+describe API::TeamsController do
   before { Flipper.enable(:api) }
   after { Flipper.disable(:api) }
 
   describe "DELETE" do
     let(:programmes) { [create(:programme, :hpv_all_vaccines)] }
 
-    let(:organisation) do
-      create(:organisation, :with_generic_clinic, ods_code: "R1L", programmes:)
+    let(:team) do
+      create(:team, :with_generic_clinic, ods_code: "R1L", programmes:)
     end
 
     let(:cohort_import) do
       create(
         :cohort_import,
         csv: fixture_file_upload("spec/fixtures/cohort_import/valid.csv"),
-        organisation:
+        team:
       )
     end
 
@@ -26,19 +26,19 @@ describe API::OrganisationsController do
           fixture_file_upload(
             "spec/fixtures/immunisation_import/valid_hpv.csv"
           ),
-        organisation:
+        team:
       )
     end
 
     before do
       programmes.each do |programme|
         programme.vaccines.each do |vaccine|
-          create_list(:batch, 4, organisation:, vaccine:)
+          create_list(:batch, 4, team:, vaccine:)
         end
       end
 
-      create(:school, urn: "123456", organisation:, programmes:) # to match cohort_import/valid.csv
-      create(:school, urn: "110158", organisation:, programmes:) # to match valid_hpv.csv
+      create(:school, urn: "123456", team:, programmes:) # to match cohort_import/valid.csv
+      create(:school, urn: "110158", team:, programmes:) # to match valid_hpv.csv
 
       cohort_import.process!
       immunisation_import.process!
@@ -66,7 +66,7 @@ describe API::OrganisationsController do
 
     it "deletes associated data" do
       expect { delete :destroy, params: { ods_code: "r1l" } }.to(
-        change(Organisation, :count)
+        change(Team, :count)
           .by(-1)
           .and(change(Subteam, :count).by(-1))
           .and(change(Session, :count).by(-1))
@@ -88,7 +88,7 @@ describe API::OrganisationsController do
 
       it "deletes associated data" do
         expect { call }.to(
-          not_change(Organisation, :count)
+          not_change(Team, :count)
             .and(not_change(Subteam, :count))
             .and(not_change(Session, :count))
             .and(change(CohortImport, :count).by(-1))

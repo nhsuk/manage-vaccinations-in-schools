@@ -2,13 +2,11 @@
 
 module MavisCLI
   module Schools
-    class AddToOrganisation < Dry::CLI::Command
-      desc "Add an existing school to an organisation"
+    class AddToTeam < Dry::CLI::Command
+      desc "Add an existing school to an team"
 
-      argument :ods_code,
-               required: true,
-               desc: "The ODS code of the organisation"
-      argument :subteam, required: true, desc: "The subteam of the organisation"
+      argument :ods_code, required: true, desc: "The ODS code of the team"
+      argument :subteam, required: true, desc: "The subteam of the team"
       argument :urns,
                type: :array,
                required: true,
@@ -21,14 +19,14 @@ module MavisCLI
       def call(ods_code:, subteam:, urns:, programmes: [], **)
         MavisCLI.load_rails
 
-        organisation = Organisation.find_by(ods_code:)
+        team = Team.find_by(ods_code:)
 
-        if organisation.nil?
-          warn "Could not find organisation."
+        if team.nil?
+          warn "Could not find team."
           return
         end
 
-        subteam = organisation.subteams.find_by(name: subteam)
+        subteam = team.subteams.find_by(name: subteam)
 
         if subteam.nil?
           warn "Could not find subteam."
@@ -37,7 +35,7 @@ module MavisCLI
 
         programmes =
           if programmes.empty?
-            organisation.programmes
+            team.programmes
           else
             Programme.where(type: programmes)
           end
@@ -66,6 +64,6 @@ module MavisCLI
   end
 
   register "schools" do |prefix|
-    prefix.register "add-to-organisation", Schools::AddToOrganisation
+    prefix.register "add-to-team", Schools::AddToTeam
   end
 end

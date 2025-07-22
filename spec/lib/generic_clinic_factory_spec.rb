@@ -2,18 +2,18 @@
 
 describe GenericClinicFactory do
   describe "#call" do
-    subject(:call) { described_class.call(organisation:) }
+    subject(:call) { described_class.call(team:) }
 
     let(:programmes) { [create(:programme, :hpv), create(:programme, :flu)] }
 
-    context "with a new organisation" do
-      let(:organisation) { create(:organisation, programmes:) }
+    context "with a new team" do
+      let(:team) { create(:team, programmes:) }
 
       it "creates a generic clinic location" do
         expect { call }.to change(Location.generic_clinic, :count).by(1)
 
         location = Location.generic_clinic.first
-        expect(location.organisation).to eq(organisation)
+        expect(location.team).to eq(team)
         expect(location.year_groups).to contain_exactly(
           0,
           1,
@@ -31,13 +31,11 @@ describe GenericClinicFactory do
       end
     end
 
-    context "with an existing organisation" do
-      let(:organisation) do
-        create(:organisation, :with_generic_clinic, programmes:)
-      end
+    context "with an existing team" do
+      let(:team) { create(:team, :with_generic_clinic, programmes:) }
 
       it "doesn't create a generic clinic location" do
-        organisation
+        team
 
         expect { call }.not_to change(Location.generic_clinic, :count)
       end

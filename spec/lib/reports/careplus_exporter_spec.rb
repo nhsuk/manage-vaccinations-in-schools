@@ -3,7 +3,7 @@
 describe Reports::CareplusExporter do
   subject(:csv) do
     described_class.call(
-      organisation:,
+      team:,
       programme:,
       academic_year:,
       start_date: 1.month.ago.to_date,
@@ -15,9 +15,7 @@ describe Reports::CareplusExporter do
 
   shared_examples "generates a report" do
     let(:programmes) { [programme] }
-    let(:organisation) do
-      create(:organisation, careplus_venue_code: "ABC", programmes:)
-    end
+    let(:team) { create(:team, careplus_venue_code: "ABC", programmes:) }
     let(:location) do
       create(
         :school,
@@ -25,7 +23,7 @@ describe Reports::CareplusExporter do
         gias_establishment_number: 456
       )
     end
-    let(:session) { create(:session, organisation:, programmes:, location:) }
+    let(:session) { create(:session, team:, programmes:, location:) }
     let(:parsed_csv) { CSV.parse(csv) }
     let(:headers) { parsed_csv.first }
     let(:data_rows) { parsed_csv[1..] }
@@ -113,7 +111,7 @@ describe Reports::CareplusExporter do
     end
 
     context "in a community clinic" do
-      let(:location) { create(:generic_clinic, organisation:) }
+      let(:location) { create(:generic_clinic, team:) }
 
       it "includes clinic location details" do
         patient =
@@ -209,7 +207,7 @@ describe Reports::CareplusExporter do
       expect(data_rows.first).to be_nil
     end
 
-    context "with a session in a different organisation" do
+    context "with a session in a different team" do
       let(:session) { create(:session, programmes:, location:) }
 
       it "excludes the vaccination record" do

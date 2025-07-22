@@ -43,9 +43,9 @@ describe SessionNotification do
     let(:patient) { create(:patient, parents:, year_group: 10) }
     let(:programme) { create(:programme, :td_ipv) }
     let(:programmes) { [programme] }
-    let(:organisation) { create(:organisation, programmes:) }
-    let(:location) { create(:school, organisation:) }
-    let(:session) { create(:session, location:, programmes:, organisation:) }
+    let(:team) { create(:team, programmes:) }
+    let(:location) { create(:school, team:) }
+    let(:session) { create(:session, location:, programmes:, team:) }
     let(:session_date) { session.dates.min }
     let(:patient_session) { create(:patient_session, patient:, session:) }
     let(:current_user) { create(:user) }
@@ -175,10 +175,8 @@ describe SessionNotification do
               )
       end
 
-      context "when the organisation is Coventry & Warwickshire Partnership NHS Trust (CWPT)" do
-        let(:organisation) do
-          create(:organisation, ods_code: "RYG", programmes:)
-        end
+      context "when the team is Coventry & Warwickshire Partnership NHS Trust (CWPT)" do
+        let(:team) { create(:team, ods_code: "RYG", programmes:) }
 
         it "enqueues an email using the CWPT-specific template" do
           expect { create_and_send! }.to have_delivered_email(

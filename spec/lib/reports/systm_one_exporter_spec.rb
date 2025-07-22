@@ -7,20 +7,18 @@ describe Reports::SystmOneExporter do
 
   let(:csv) do
     described_class.call(
-      organisation:,
+      team:,
       programme:,
       academic_year:,
       start_date: 1.month.ago.to_date,
       end_date: Date.current
     )
   end
-  let(:programme) { create(:programme, :hpv, organisations: [organisation]) }
+  let(:programme) { create(:programme, :hpv) }
   let(:academic_year) { AcademicYear.current }
-  let(:organisation) { create(:organisation, ods_code: "ABC123") }
+  let(:team) { create(:team, ods_code: "ABC123", programmes: [programme]) }
   let(:location) { create(:school) }
-  let(:session) do
-    create(:session, organisation:, programmes: [programme], location:)
-  end
+  let(:session) { create(:session, team:, programmes: [programme], location:) }
   let(:patient) { create(:patient) }
   let(:vaccination_record) do
     create(
@@ -135,19 +133,13 @@ describe Reports::SystmOneExporter do
     it { should be_blank }
   end
 
-  context "with a session in a different organisation" do
-    let(:programme) do
-      create(:programme, :hpv, organisations: [other_organisation])
+  context "with a session in a different team" do
+    let(:other_team) do
+      create(:team, ods_code: "XYZ890", programmes: [programme])
     end
-    let(:other_organisation) { create(:organisation, ods_code: "XYZ890") }
 
     let(:session) do
-      create(
-        :session,
-        organisation: other_organisation,
-        programmes: [programme],
-        location:
-      )
+      create(:session, team: other_team, programmes: [programme], location:)
     end
 
     it { should be_blank }
@@ -274,9 +266,7 @@ describe Reports::SystmOneExporter do
     end
 
     context "for flu nasal" do
-      let(:programme) do
-        create(:programme, :flu, organisations: [organisation])
-      end
+      let(:programme) { create(:programme, :flu) }
       let(:vaccine) { Vaccine.find_by(brand: "Fluenz") }
       let(:delivery_method) { :nasal_spray }
       let(:delivery_site) { :nose }
@@ -295,9 +285,7 @@ describe Reports::SystmOneExporter do
     end
 
     context "for flu injection" do
-      let(:programme) do
-        create(:programme, :flu, organisations: [organisation])
-      end
+      let(:programme) { create(:programme, :flu) }
       let(:vaccine) do
         Vaccine.find_by(brand: "Cell-based Trivalent Influenza Vaccine Seqirus")
       end

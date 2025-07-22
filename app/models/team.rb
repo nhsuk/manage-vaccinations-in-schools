@@ -2,7 +2,7 @@
 
 # == Schema Information
 #
-# Table name: organisations
+# Table name: teams
 #
 #  id                            :bigint           not null, primary key
 #  careplus_venue_code           :string           not null
@@ -22,10 +22,10 @@
 #
 # Indexes
 #
-#  index_organisations_on_name      (name) UNIQUE
-#  index_organisations_on_ods_code  (ods_code) UNIQUE
+#  index_teams_on_name      (name) UNIQUE
+#  index_teams_on_ods_code  (ods_code) UNIQUE
 #
-class Organisation < ApplicationRecord
+class Team < ApplicationRecord
   include ODSCodeConcern
 
   audited
@@ -37,8 +37,7 @@ class Organisation < ApplicationRecord
   has_many :consents
   has_many :immunisation_records
   has_many :locations
-  has_many :organisation_programmes,
-           -> { joins(:programme).order(:"programmes.type") }
+  has_many :team_programmes, -> { joins(:programme).order(:"programmes.type") }
   has_many :sessions
   has_many :subteams
 
@@ -46,7 +45,7 @@ class Organisation < ApplicationRecord
   has_many :locations, through: :subteams
   has_many :patient_sessions, through: :sessions
   has_many :patients, -> { distinct }, through: :patient_sessions
-  has_many :programmes, through: :organisation_programmes
+  has_many :programmes, through: :team_programmes
   has_many :schools, through: :subteams
   has_many :vaccination_records, through: :sessions
   has_many :vaccines, through: :programmes
@@ -73,7 +72,7 @@ class Organisation < ApplicationRecord
   delegate :fhir_reference, to: :fhir_mapper
 
   class << self
-    delegate :fhir_reference, to: FHIRMapper::Organisation
+    delegate :fhir_reference, to: FHIRMapper::Team
   end
 
   def year_groups
@@ -116,5 +115,5 @@ class Organisation < ApplicationRecord
 
   private
 
-  def fhir_mapper = @fhir_mapper ||= FHIRMapper::Organisation.new(self)
+  def fhir_mapper = @fhir_mapper ||= FHIRMapper::Team.new(self)
 end

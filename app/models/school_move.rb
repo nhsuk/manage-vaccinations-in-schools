@@ -4,27 +4,27 @@
 #
 # Table name: school_moves
 #
-#  id              :bigint           not null, primary key
-#  home_educated   :boolean
-#  source          :integer          not null
-#  created_at      :datetime         not null
-#  updated_at      :datetime         not null
-#  organisation_id :bigint
-#  patient_id      :bigint           not null
-#  school_id       :bigint
+#  id            :bigint           not null, primary key
+#  home_educated :boolean
+#  source        :integer          not null
+#  created_at    :datetime         not null
+#  updated_at    :datetime         not null
+#  patient_id    :bigint           not null
+#  school_id     :bigint
+#  team_id       :bigint
 #
 # Indexes
 #
-#  idx_on_patient_id_home_educated_organisation_id_7c1b5f5066  (patient_id,home_educated,organisation_id) UNIQUE
-#  index_school_moves_on_organisation_id                       (organisation_id)
-#  index_school_moves_on_patient_id_and_school_id              (patient_id,school_id) UNIQUE
-#  index_school_moves_on_school_id                             (school_id)
+#  index_school_moves_on_patient_id_and_home_educated_and_team_id  (patient_id,home_educated,team_id) UNIQUE
+#  index_school_moves_on_patient_id_and_school_id                  (patient_id,school_id) UNIQUE
+#  index_school_moves_on_school_id                                 (school_id)
+#  index_school_moves_on_team_id                                   (team_id)
 #
 # Foreign Keys
 #
-#  fk_rails_...  (organisation_id => organisations.id)
 #  fk_rails_...  (patient_id => patients.id)
 #  fk_rails_...  (school_id => locations.id)
+#  fk_rails_...  (team_id => teams.id)
 #
 class SchoolMove < ApplicationRecord
   audited associated_with: :patient
@@ -33,14 +33,14 @@ class SchoolMove < ApplicationRecord
 
   belongs_to :patient
 
-  belongs_to :organisation, optional: true
+  belongs_to :team, optional: true
 
   enum :source,
        { parental_consent_form: 0, class_list_import: 1, cohort_import: 2 },
        prefix: true,
        validate: true
 
-  validates :organisation,
+  validates :team,
             presence: {
               if: -> { school.nil? }
             },
@@ -79,7 +79,7 @@ class SchoolMove < ApplicationRecord
 
   def school_session
     @school_session ||=
-      if (org = school&.organisation)
+      if (org = school&.team)
         org
           .sessions
           .includes(:location, :session_dates)
@@ -89,8 +89,7 @@ class SchoolMove < ApplicationRecord
   end
 
   def generic_clinic_session
-    @generic_clinic_session ||=
-      (school&.organisation || organisation)&.generic_clinic_session
+    @generic_clinic_session ||= (school&.team || team)&.generic_clinic_session
   end
 
   def create_log_entry!(user:)

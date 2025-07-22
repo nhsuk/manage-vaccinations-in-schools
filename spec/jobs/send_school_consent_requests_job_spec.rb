@@ -122,9 +122,9 @@ describe SendSchoolConsentRequestsJob do
     end
 
     context "when location is a generic clinic" do
-      let(:organisation) { create(:organisation, programmes:) }
-      let(:location) { create(:generic_clinic, organisation:) }
-      let(:session) { create(:session, patients:, programmes:, organisation:) }
+      let(:team) { create(:team, programmes:) }
+      let(:location) { create(:generic_clinic, team:) }
+      let(:session) { create(:session, patients:, programmes:, team:) }
 
       it "doesn't send any notifications" do
         expect(ConsentNotification).not_to receive(:create_and_send!)

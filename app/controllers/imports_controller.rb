@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class ImportsController < ApplicationController
-  before_action :set_organisation
+  before_action :set_team
 
   skip_after_action :verify_policy_scoped
 
@@ -31,7 +31,7 @@ class ImportsController < ApplicationController
 
   private
 
-  def set_organisation
-    @organisation = current_user.selected_organisation
+  def set_team
+    @team = current_user.selected_team
   end
 end

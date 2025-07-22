@@ -32,8 +32,7 @@ class PatientImport < ApplicationRecord
     @school_moves_to_save ||= Set.new
 
     if (school_move = row.to_school_move(patient))
-      if (patient.school.nil? && !patient.home_educated) ||
-           patient.not_in_organisation?
+      if (patient.school.nil? && !patient.home_educated) || patient.not_in_team?
         @school_moves_to_confirm.add(school_move)
       else
         @school_moves_to_save.add(school_move)

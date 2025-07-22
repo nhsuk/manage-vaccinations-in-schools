@@ -4,24 +4,24 @@ describe "Programmes index" do
   around { |example| travel_to(Date.new(2024, 5, 20)) { example.run } }
 
   scenario "Viewing all programmes" do
-    given_an_organisation_exists_that_administered_all_programmes
+    given_an_team_exists_that_administered_all_programmes
 
     when_i_visit_the_programmes_page
     then_i_see_the_programmes_in_alphabetical_order
   end
 
-  def given_an_organisation_exists_that_administered_all_programmes
+  def given_an_team_exists_that_administered_all_programmes
     programmes = [
       create(:programme, :hpv),
       create(:programme, :menacwy),
       create(:programme, :td_ipv)
     ]
 
-    @organisation = create(:organisation, programmes:)
+    @team = create(:team, programmes:)
   end
 
   def when_i_visit_the_programmes_page
-    user = create(:nurse, organisations: [@organisation])
+    user = create(:nurse, teams: [@team])
 
     sign_in user
     visit dashboard_path

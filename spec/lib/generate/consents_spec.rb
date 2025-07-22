@@ -2,9 +2,9 @@
 
 describe Generate::Consents do
   let(:programme) { Programme.hpv&.first || create(:programme, :hpv) }
-  let(:organisation) { create(:organisation, programmes: [programme]) }
-  let(:user) { create(:user, organisation:) }
-  let(:session) { create(:session, organisation:, programmes: [programme]) }
+  let(:team) { create(:team, programmes: [programme]) }
+  let(:user) { create(:user, team:) }
+  let(:session) { create(:session, team:, programmes: [programme]) }
   let(:parents) { [create(:parent)] }
   let(:patient) do
     create(:patient, programmes: [programme], session:, parents:)
@@ -17,7 +17,7 @@ describe Generate::Consents do
       patient
 
       described_class.call(
-        organisation:,
+        team:,
         programme:,
         session:,
         refused: 1,
@@ -37,7 +37,7 @@ describe Generate::Consents do
       patient
 
       described_class.call(
-        organisation:,
+        team:,
         programme:,
         session:,
         refused: 0,
@@ -56,7 +56,7 @@ describe Generate::Consents do
       patient
 
       described_class.call(
-        organisation:,
+        team:,
         programme:,
         session:,
         refused: 0,

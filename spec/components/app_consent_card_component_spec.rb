@@ -6,7 +6,7 @@ describe AppConsentCardComponent do
   let(:component) { described_class.new(consent, session:) }
 
   let(:programme) { create(:programme) }
-  let(:organisation) { create(:organisation, programmes: [programme]) }
+  let(:team) { create(:team, programmes: [programme]) }
 
   let(:consent) do
     create(
@@ -14,13 +14,13 @@ describe AppConsentCardComponent do
       patient:,
       parent:,
       programme:,
-      organisation:,
+      team:,
       submitted_at: Time.zone.local(2024, 1, 1)
     )
   end
-  let(:school) { create(:school, name: "Waterloo Road", organisation:) }
+  let(:school) { create(:school, name: "Waterloo Road", team:) }
   let(:session) do
-    create(:session, programmes: [programme], organisation:, location: school)
+    create(:session, programmes: [programme], team:, location: school)
   end
   let(:parent) { create(:parent) }
   let(:patient) { create(:patient) }

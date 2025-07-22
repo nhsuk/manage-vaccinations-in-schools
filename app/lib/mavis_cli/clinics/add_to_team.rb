@@ -2,29 +2,27 @@
 
 module MavisCLI
   module Clinics
-    class AddToOrganisation < Dry::CLI::Command
-      desc "Add an existing clinic to an organisation"
+    class AddToTeam < Dry::CLI::Command
+      desc "Add an existing clinic to an team"
 
-      argument :organisation_ods_code,
-               required: true,
-               desc: "The ODS code of the organisation"
-      argument :subteam, required: true, desc: "The subteam of the organisation"
+      argument :team_ods_code, required: true, desc: "The ODS code of the team"
+      argument :subteam, required: true, desc: "The subteam of the team"
       argument :clinic_ods_codes,
                type: :array,
                required: true,
                desc: "The ODS codes of the clinics"
 
-      def call(organisation_ods_code:, subteam:, clinic_ods_codes:, **)
+      def call(team_ods_code:, subteam:, clinic_ods_codes:, **)
         MavisCLI.load_rails
 
-        organisation = Organisation.find_by(ods_code: organisation_ods_code)
+        team = Team.find_by(ods_code: team_ods_code)
 
-        if organisation.nil?
-          warn "Could not find organisation."
+        if team.nil?
+          warn "Could not find team."
           return
         end
 
-        subteam = organisation.subteams.find_by(name: subteam)
+        subteam = team.subteams.find_by(name: subteam)
 
         if subteam.nil?
           warn "Could not find subteam."
@@ -52,6 +50,6 @@ module MavisCLI
   end
 
   register "clinics" do |prefix|
-    prefix.register "add-to-organisation", Clinics::AddToOrganisation
+    prefix.register "add-to-team", Clinics::AddToTeam
   end
 end
