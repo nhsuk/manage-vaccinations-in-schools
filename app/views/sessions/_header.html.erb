@@ -2,6 +2,7 @@
 
 <p class="nhsuk-caption-l nhsuk-u-margin-bottom-4">
   <%= @session.programmes.map(&:name).to_sentence %>
+  (<%= format_academic_year(@session.academic_year) %>)
 </p>
 
 <%= render AppSecondaryNavigationComponent.new do |nav|
