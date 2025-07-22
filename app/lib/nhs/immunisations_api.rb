@@ -3,25 +3,15 @@
 module NHS::ImmunisationsAPI
   class << self
     def sync_immunisation(vaccination_record)
-      if vaccination_record.not_administered? || vaccination_record.discarded?
-        raise "Vaccination record delete not supported yet: #{vaccination_record.id}"
-      end
-
-      last_synced_at = vaccination_record.nhs_immunisations_api_synced_at
-      if last_synced_at.present?
-        sync_pending_at =
-          vaccination_record.nhs_immunisations_api_sync_pending_at ||
-            vaccination_record.updated_at
-
-        if last_synced_at > sync_pending_at
-          Rails.logger.info(
-            "Vaccination record already synced: #{vaccination_record.id}"
-          )
-        else
-          update_immunisation(vaccination_record)
-        end
-      else
+      case next_sync_action(vaccination_record)
+      when :create
         record_immunisation(vaccination_record)
+      when :update
+        update_immunisation(vaccination_record)
+      else
+        Rails.logger.info(
+          "Vaccination record does not require syncing: #{vaccination_record.id}"
+        )
       end
     end
 
@@ -174,6 +164,29 @@ module NHS::ImmunisationsAPI
 
     private
 
+
+    def next_sync_action(vaccination_record)
+      if vaccination_record.not_administered? || vaccination_record.discarded?
+        raise "Vaccination record delete not supported yet: #{vaccination_record.id}"
+      end
+
+      sync_pending_at = vaccination_record.nhs_immunisations_api_sync_pending_at
+      if sync_pending_at.nil?
+        raise "Cannot sync vaccination record #{vaccination_record.id} has" \
+                " nhs_immunisations_api_sync_pending_at is nil"
+      end
+
+      last_synced_at = vaccination_record.nhs_immunisations_api_synced_at
+      if last_synced_at.present?
+        if last_synced_at < sync_pending_at
+          :update
+        else
+          nil
+        end
+      else
+        :create
+      end
+    end
     def extract_error_diagnostics(response)
       return nil if response.nil? || response[:body].blank?
 

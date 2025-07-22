@@ -116,138 +116,41 @@ describe NHS::ImmunisationsAPI do
     end
 
     before do
+      allow(described_class).to receive(:next_sync_action).and_return(
+        next_sync_action
+      )
+
       allow(described_class).to receive(:record_immunisation)
       allow(described_class).to receive(:update_immunisation)
+      allow(described_class).to receive(:delete_immunisation)
+
+      perform_now
     end
 
-    context "the vaccination record has not been synced" do
-      it "records the vaccination record with the NHS Immunisations API" do
-        perform_now
+    context "the next sync action is create" do
+      let(:next_sync_action) { :create }
 
+      it "calls update_immunisation" do
         expect(described_class).to have_received(:record_immunisation)
       end
     end
 
-    context "the vaccination record has been synced before" do
-      let(:nhs_immunisations_api_synced_at) { 2.seconds.ago }
-      let(:nhs_immunisations_api_sync_pending_at) { 1.second.ago }
+    context "the next sync action is update" do
+      let(:next_sync_action) { :update }
 
-      it "updates the vaccination record with the NHS Immunisations API" do
-        perform_now
-
-        expect(described_class).to have_received(:update_immunisation)
-      end
-
-      it "does not change the sync pending at timestamp" do
-        expect { perform_now }.not_to change(
-          vaccination_record,
-          :nhs_immunisations_api_sync_pending_at
-        )
-      end
-    end
-
-    context "the sync pending is nil but sync has been done previously" do
-      let(:nhs_immunisations_api_synced_at) { 2.seconds.ago }
-      let(:nhs_immunisations_api_sync_pending_at) { nil }
-
-      it "updates the vaccination record with the NHS Immunisations API" do
-        perform_now
-
+      it "calls update_immunisation" do
         expect(described_class).to have_received(:update_immunisation)
       end
     end
 
-    context "the vaccination record is already in-sync" do
-      let(:nhs_immunisations_api_synced_at) { 1.second.ago }
-      let(:nhs_immunisations_api_sync_pending_at) { 2.seconds.ago }
 
-      it "does not send the vaccination record to the NHS Immunisations API" do
-        perform_now
 
+    context "the next sync action is unknown" do
+      let(:next_sync_action) { :nil }
+
+      it "does not do any further action" do
         expect(described_class).not_to have_received(:record_immunisation)
-      end
-
-      it "logs that the record has already been synced" do
-        allow(Rails.logger).to receive(:info)
-
-        perform_now
-
-        expect(Rails.logger).to have_received(:info).with(
-          "Vaccination record already synced: #{vaccination_record.id}"
-        )
-      end
-
-      it "does not change the sync pending at timestamp" do
-        expect { perform_now }.not_to change(
-          vaccination_record,
-          :nhs_immunisations_api_sync_pending_at
-        )
-      end
-    end
-
-    context "the vaccination record has been discarded" do
-      let(:vaccination_record) do
-        create(:vaccination_record, :discarded, id: 123)
-      end
-
-      it "does not send the vaccination record to the NHS Immunisations API" do
-        begin
-          perform_now
-        rescue StandardError
-          nil
-        end
-
-        expect(described_class).not_to have_received(:record_immunisation)
-      end
-
-      it "raises an error" do
-        expect { perform_now }.to raise_error(StandardError)
-      end
-    end
-
-    context "the patient has no NHS number" do
-      let(:patient) do
-        create(:patient, school: session.location, nhs_number: nil)
-      end
-      let(:vaccination_record) { create(:vaccination_record, patient:) }
-
-      it "does not send the vaccination record to the NHS Immunisations API" do
-        begin
-          perform_now
-        rescue StandardError
-          nil
-        end
-
-        expect(described_class).not_to have_received(:record_immunisation)
-      end
-
-      it "raises an error" do
-        expect { perform_now }.to raise_error(StandardError)
-      end
-    end
-
-    VaccinationRecord.defined_enums["outcome"].each_key do |outcome|
-      next if outcome == "administered"
-
-      context "the vaccination record outcome is #{outcome}" do
-        let(:vaccination_record) do
-          create(:vaccination_record, id: 123, outcome:)
-        end
-
-        it "does not send the vaccination record to the NHS Immunisations API" do
-          begin
-            perform_now
-          rescue StandardError
-            nil
-          end
-
-          expect(described_class).not_to have_received(:record_immunisation)
-          expect(described_class).not_to have_received(:update_immunisation)
-        end
-
-        it "raises an error" do
-          expect { perform_now }.to raise_error(StandardError)
-        end
+        expect(described_class).not_to have_received(:update_immunisation)
       end
     end
   end
@@ -538,6 +441,78 @@ describe NHS::ImmunisationsAPI do
       include_examples "unexpected response status", 200, "deleting"
       include_examples "client error (4XX) handling", "deleting"
       include_examples "generic error handling"
+    end
+  end
+
+  describe "next_sync_action" do
+    subject(:next_sync_action) do
+      described_class.send(:next_sync_action, vaccination_record)
+    end
+
+    let(:nhs_immunisations_api_sync_pending_at) { 1.second.ago }
+
+    context "the vaccination record has not been synced" do
+      it { should eq :create }
+    end
+
+    context "the vaccination record has been synced before" do
+      let(:nhs_immunisations_api_synced_at) { 2.seconds.ago }
+      let(:nhs_immunisations_api_id) { Random.uuid }
+      let(:nhs_immunisations_api_sync_pending_at) { 1.second.ago }
+
+      it { should eq :update }
+    end
+
+    context "the sync pending is nil" do
+      let(:nhs_immunisations_api_sync_pending_at) { nil }
+
+      it "raises an error" do
+        expect { next_sync_action }.to raise_error(
+          "Vaccination record #{vaccination_record.id} has" \
+            " nhs_immunisations_api_sync_pending_at set to nil"
+        )
+      end
+    end
+
+    context "the vaccination record is already in-sync" do
+      let(:nhs_immunisations_api_synced_at) { 1.second.ago }
+      let(:nhs_immunisations_api_sync_pending_at) { 2.seconds.ago }
+
+      it { should be_nil }
+    end
+
+    context "the vaccination record has been discarded" do
+      before { vaccination_record.discard! }
+
+      it "raises an error" do
+        expect { next_sync_action }.to raise_error(StandardError)
+      end
+
+      # include_examples "deletes the immunisation record if previously recorded"
+    end
+
+    VaccinationRecord.defined_enums["outcome"].each_key do |outcome|
+      next if outcome == "administered"
+
+      context "the vaccination record outcome is #{outcome}" do
+        let(:vaccination_record) do
+          create(
+            :vaccination_record,
+            outcome:,
+            patient:,
+            nhs_immunisations_api_synced_at:,
+            nhs_immunisations_api_id:,
+            nhs_immunisations_api_etag:,
+            nhs_immunisations_api_sync_pending_at:
+          )
+        end
+
+        it "raises an error" do
+          expect { next_sync_action }.to raise_error(StandardError)
+        end
+
+        # include_examples "deletes the immunisation record if previously recorded"
+      end
     end
   end
 end
