@@ -50,7 +50,7 @@
     </div>
 
     <div class="app-grid-column-results">
-      <%= render AppSearchResultsComponent.new(@pagy) do %>
+      <%= render AppSearchResultsComponent.new(@pagy, label: "children") do %>
         <% @patient_sessions.each do |patient_session| %>
           <%= render AppPatientSessionSearchResultCardComponent.new(
                 patient_session, context: :record, programmes: @form.programmes,
