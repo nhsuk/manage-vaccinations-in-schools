@@ -9,16 +9,10 @@ describe SchoolMoveExport do
   let(:current_user) { organisation.users.first }
   let(:organisation) { create(:organisation, :with_one_nurse) }
 
-  describe "#request_session_key" do
-    it "returns the correct session key" do
-      expect(described_class.request_session_key).to eq("school_move_export")
-    end
-  end
-
   describe "#wizard_steps" do
-    it "returns an array of symbols for the wizard steps" do
-      expect(school_move_export.wizard_steps).to eq(%i[dates confirm])
-    end
+    subject { school_move_export.wizard_steps }
+
+    it { should eq(%i[dates confirm]) }
   end
 
   describe "dates formatted" do

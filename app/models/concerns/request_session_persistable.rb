@@ -12,7 +12,7 @@ module RequestSessionPersistable
     @request_session = request_session
     @current_user = current_user
 
-    stored_attributes = @request_session[self.class.request_session_key] || {}
+    stored_attributes = @request_session[request_session_key] || {}
 
     super(stored_attributes.merge(attributes))
 
@@ -46,9 +46,9 @@ module RequestSessionPersistable
     reset_unused_fields
     return false if invalid?(context)
 
-    @request_session[
-      self.class.request_session_key
-    ] = attributes.each_with_object({}) do |(key, value), hash|
+    @request_session[request_session_key] = attributes.each_with_object(
+      {}
+    ) do |(key, value), hash|
       type = self.class.type_for_attribute(key)
 
       hash[key] = if type.is_a?(ActiveRecord::Type::Serialized)

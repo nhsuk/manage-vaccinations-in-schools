@@ -7,10 +7,6 @@ class DraftVaccinationRecord
   include VaccinationRecordPerformedByConcern
   include WizardStepConcern
 
-  def self.request_session_key
-    "vaccination_record"
-  end
-
   attribute :batch_id, :integer
   attribute :delivery_method, :string
   attribute :delivery_site, :string
@@ -281,6 +277,8 @@ class DraftVaccinationRecord
       vaccine_id
     ]
   end
+
+  def request_session_key = "vaccination_record"
 
   def reset_unused_fields
     if administered?

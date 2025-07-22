@@ -8,11 +8,7 @@ class SchoolMoveExport
   attribute :date_to, :date
 
   def wizard_steps
-    %i[dates confirm].freeze
-  end
-
-  def self.request_session_key
-    "school_move_export"
+    %i[dates confirm]
   end
 
   delegate :csv_data, :row_count, to: :exporter
@@ -52,6 +48,8 @@ class SchoolMoveExport
         end_date: date_to
       )
   end
+
+  def request_session_key = "school_move_export"
 
   def reset_unused_fields
   end

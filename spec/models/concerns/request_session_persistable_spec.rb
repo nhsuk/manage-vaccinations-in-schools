@@ -5,14 +5,12 @@ describe RequestSessionPersistable do
     Class.new do
       include RequestSessionPersistable
 
-      def self.request_session_key
-        "key"
-      end
-
       attribute :string, :string
       attribute :datetime, :datetime
 
       validates :string, presence: true, on: :update
+
+      def request_session_key = "key"
 
       def reset_unused_fields
       end
