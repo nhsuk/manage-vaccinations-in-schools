@@ -12,11 +12,7 @@ class SessionsController < ApplicationController
     @programmes = current_user.selected_organisation.programmes
 
     scope =
-      policy_scope(Session).for_current_academic_year.includes(
-        :location,
-        :programmes,
-        :session_dates
-      )
+      policy_scope(Session).includes(:location, :programmes, :session_dates)
 
     sessions = @form.apply(scope)
 

@@ -32,6 +32,17 @@ class AppSessionSearchFormComponent < ViewComponent::Base
           <% end %>
         <% end %>
 
+        <% if academic_years && AcademicYear.pending != AcademicYear.current %>
+          <%= f.govuk_radio_buttons_fieldset :academic_year, legend: { text: "Academic year", size: "s" } do %>
+            <% [AcademicYear.pending, AcademicYear.current].each do |academic_year| %>
+              <%= f.govuk_radio_button :academic_year,
+                                       academic_year,
+                                       checked: form.academic_year == academic_year,
+                                       label: { text: helpers.format_academic_year(academic_year) } %>
+            <% end %>
+          <% end %>
+        <% end %>
+
         <%= f.govuk_radio_buttons_fieldset :status, legend: { text: "Status", size: "s" } do %>
           <%= f.govuk_radio_button :status, "",
                                    checked: form.status.blank?,
@@ -66,12 +77,13 @@ class AppSessionSearchFormComponent < ViewComponent::Base
     <% end %>
   ERB
 
-  def initialize(form, url:, programmes:)
+  def initialize(form, url:, programmes:, academic_years:)
     super
 
     @form = form
     @url = url
     @programmes = programmes
+    @academic_years = academic_years
   end
 
   private
@@ -83,7 +95,7 @@ class AppSessionSearchFormComponent < ViewComponent::Base
     "generic_clinic" => "Community clinic"
   }.freeze
 
-  attr_reader :form, :url, :programmes
+  attr_reader :form, :url, :programmes, :academic_years
 
   def clear_filters_path = "#{@url}?_clear=true"
 end
