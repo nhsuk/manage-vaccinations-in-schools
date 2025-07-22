@@ -82,8 +82,8 @@ class Patient < ApplicationRecord
   has_many :sessions, through: :patient_sessions
   has_many :organisations, -> { distinct }, through: :sessions
 
-  has_many :sessions_for_current_academic_year,
-           -> { for_current_academic_year },
+  has_many :pending_sessions,
+           -> { where(academic_year: AcademicYear.pending) },
            through: :patient_sessions,
            source: :session
 
@@ -369,7 +369,7 @@ class Patient < ApplicationRecord
       self.date_of_death = pds_patient.date_of_death
 
       if date_of_death_changed?
-        clear_sessions_for_current_academic_year! unless date_of_death.nil?
+        clear_pending_sessions! unless date_of_death.nil?
         self.date_of_death_recorded_at = Time.current
       end
 
@@ -411,7 +411,7 @@ class Patient < ApplicationRecord
     dup.tap do |new_patient|
       new_patient.nhs_number = nil
 
-      sessions_for_current_academic_year.each do |session|
+      pending_sessions.each do |session|
         new_patient.patient_sessions.build(session:)
       end
 
@@ -476,10 +476,8 @@ class Patient < ApplicationRecord
     end
   end
 
-  def clear_sessions_for_current_academic_year!
-    patient_sessions.where(
-      session: sessions_for_current_academic_year
-    ).destroy_all_if_safe
+  def clear_pending_sessions!
+    patient_sessions.where(session: pending_sessions).destroy_all_if_safe
   end
 
   def fhir_mapper = @fhir_mapper ||= FHIRMapper::Patient.new(self)

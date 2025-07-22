@@ -535,7 +535,13 @@ describe Patient do
       end
 
       context "when in an upcoming session" do
-        let(:session) { create(:session, :scheduled) }
+        let(:session) do
+          create(
+            :session,
+            academic_year: AcademicYear.pending,
+            date: AcademicYear.pending.to_academic_year_date_range.begin
+          )
+        end
 
         before { create(:patient_session, patient:, session:) }
 
@@ -693,7 +699,13 @@ describe Patient do
     end
 
     context "when the old patient has upcoming sessions" do
-      let(:session) { create(:session) }
+      let(:session) do
+        create(
+          :session,
+          academic_year: AcademicYear.pending,
+          date: AcademicYear.pending.to_academic_year_date_range.begin
+        )
+      end
 
       before { create(:patient_session, patient: old_patient, session:) }
 
