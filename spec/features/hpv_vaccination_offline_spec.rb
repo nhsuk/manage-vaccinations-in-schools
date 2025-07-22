@@ -14,7 +14,7 @@ describe "HPV vaccination" do
 
     when_i_record_vaccination_outcomes_to_the_spreadsheet_and_export_it_to_csv
     and_i_upload_the_modified_csv_file
-    then_i_see_there_are_previously_imported_records
+    then_i_see_there_are_no_previously_imported_records
     when_i_navigate_to_the_session_page
     then_i_see_the_uploaded_vaccination_outcomes_reflected_in_the_session
 
@@ -32,7 +32,7 @@ describe "HPV vaccination" do
 
     when_i_record_vaccination_outcomes_to_the_spreadsheet_and_export_it_to_csv
     and_i_upload_the_modified_csv_file
-    then_i_see_there_are_previously_imported_records
+    then_i_see_there_are_no_previously_imported_records
     when_i_navigate_to_the_clinic_page
     then_i_see_the_uploaded_vaccination_outcomes_reflected_in_the_session
     and_the_clinic_location_is_displayed
@@ -50,6 +50,9 @@ describe "HPV vaccination" do
     and_alter_an_existing_vaccination_record
     and_i_upload_the_modified_csv_file
     then_i_see_a_duplicate_record_needs_review
+
+    when_i_review_the_duplicate_record
+    then_i_should_see_the_changes
 
     when_i_choose_to_keep_the_duplicate_record
     then_i_should_see_a_success_message
@@ -189,7 +192,7 @@ describe "HPV vaccination" do
     @sheet = @workbook["Vaccinations"]
     @headers = @sheet[0].cells.map(&:value)
 
-    array = @workbook[0].to_a[1..].map(&:cells).map { _1.map(&:value) }
+    array = @workbook[0].to_a[1..].map(&:cells).map { it.map(&:value) }
     csv_table =
       CSV::Table.new(
         array.map do |row|
@@ -204,8 +207,21 @@ describe "HPV vaccination" do
     File.write("tmp/modified.csv", csv_table.to_csv)
   end
 
-  def when_i_choose_to_keep_the_duplicate_record
+  def when_i_review_the_duplicate_record
     click_on "Review"
+  end
+
+  def then_i_should_see_the_changes
+    expect(page).to have_css(
+      ".app-highlight",
+      text: "Right arm (upper position)"
+    )
+    expect(page).to have_css(".app-highlight", text: "Second")
+    expect(page).to have_css(".app-highlight", text: "1 January 2024")
+    expect(page).to have_css(".app-highlight", text: "10:00am")
+  end
+
+  def when_i_choose_to_keep_the_duplicate_record
     choose "Use duplicate record"
     click_on "Resolve duplicate"
   end
@@ -240,7 +256,7 @@ describe "HPV vaccination" do
     #
     # ideally we could drive Excel here (or similar) but the code below is better than nothing
 
-    array = @workbook[0].to_a[1..].map(&:cells).map { _1.map(&:value) }
+    array = @workbook[0].to_a[1..].map(&:cells).map { it.map(&:value) }
     csv_table =
       CSV::Table.new(
         array.map do |row|
@@ -398,10 +414,10 @@ describe "HPV vaccination" do
     )
   end
 
-  def then_i_see_there_are_previously_imported_records
+  def then_i_see_there_are_no_previously_imported_records
     expect(page).to have_content("Completed")
     expect(page).not_to have_content("Invalid")
-    expect(page).to have_content("2 previously imported records were omitted")
+    expect(page).to have_content("0 previously imported records were omitted")
   end
 
   def then_i_see_a_duplicate_record_needs_review
