@@ -33,6 +33,11 @@ class DraftConsent
   attribute :vaccine_methods, array: true, default: []
   attribute :injection_alternative, :boolean
 
+  def initialize(current_user:, **attributes)
+    @current_user = current_user
+    super(**attributes)
+  end
+
   FLU_RESPONSES = %w[given_nasal given_injection].freeze
 
   def wizard_steps

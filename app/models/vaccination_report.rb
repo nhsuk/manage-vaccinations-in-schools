@@ -16,6 +16,11 @@ class VaccinationReport
   attribute :programme_id, :integer
   attribute :academic_year, :integer
 
+  def initialize(current_user:, **attributes)
+    @current_user = current_user
+    super(**attributes)
+  end
+
   def wizard_steps
     %i[dates file_format]
   end

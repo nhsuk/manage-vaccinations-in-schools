@@ -7,6 +7,11 @@ class SchoolMoveExport
   attribute :date_from, :date
   attribute :date_to, :date
 
+  def initialize(current_user:, **attributes)
+    @current_user = current_user
+    super(**attributes)
+  end
+
   def wizard_steps
     %i[dates confirm]
   end

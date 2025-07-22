@@ -17,10 +17,9 @@ describe RequestSessionPersistable do
     end
   end
 
-  let(:model) { model_class.new(request_session:, current_user:, **attributes) }
+  let(:model) { model_class.new(request_session:, **attributes) }
 
   let(:request_session) { {} }
-  let(:current_user) { nil }
 
   describe "#initialize" do
     context "with a datetime attribute" do

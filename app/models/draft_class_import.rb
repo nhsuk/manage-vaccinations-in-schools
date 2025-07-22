@@ -7,6 +7,11 @@ class DraftClassImport
   attribute :session_id, :integer
   attribute :year_groups, array: true, default: []
 
+  def initialize(current_user:, **attributes)
+    @current_user = current_user
+    super(**attributes)
+  end
+
   def wizard_steps
     %i[session year_groups]
   end

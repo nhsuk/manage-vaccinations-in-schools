@@ -8,9 +8,8 @@ module RequestSessionPersistable
   include ActiveModel::Dirty
   include ActiveRecord::AttributeAssignment
 
-  def initialize(request_session:, current_user:, **attributes)
+  def initialize(request_session:, **attributes)
     @request_session = request_session
-    @current_user = current_user
 
     stored_attributes = @request_session[request_session_key] || {}
 
