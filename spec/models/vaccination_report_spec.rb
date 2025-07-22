@@ -15,5 +15,11 @@ describe VaccinationReport do
 
       it { should eq(%w[careplus mavis]) }
     end
+
+    context "when programme is flu" do
+      let(:programme) { create(:programme, :flu) }
+
+      it { should eq(%w[careplus mavis systm_one]) }
+    end
   end
 end
