@@ -1,16 +1,22 @@
 # frozen_string_literal: true
 
 class SessionSearchForm < SearchForm
+  attribute :academic_year, :integer
   attribute :programmes, array: true
   attribute :q, :string
   attribute :status, :string
   attribute :type, :string
+
+  def academic_year
+    super || AcademicYear.current
+  end
 
   def programmes=(values)
     super(values&.compact_blank || [])
   end
 
   def apply(scope)
+    scope = filter_academic_year(scope)
     scope = filter_programmes(scope)
     scope = filter_name(scope)
     scope = filter_type(scope)
@@ -20,6 +26,10 @@ class SessionSearchForm < SearchForm
   end
 
   private
+
+  def filter_academic_year(scope)
+    scope.where(academic_year:)
+  end
 
   def filter_programmes(scope)
     if programmes.present?

@@ -15,6 +15,34 @@ describe SessionSearchForm do
     expect { form.apply(scope) }.not_to raise_error
   end
 
+  context "when filtering by academic year" do
+    let(:params) { { "academic_year" => "2025" } }
+
+    let(:programmes) { [create(:programme)] }
+
+    let!(:session_to_include) do
+      create(
+        :session,
+        academic_year: 2025,
+        date: Date.new(2025, 9, 1),
+        programmes:
+      )
+    end
+
+    before do
+      create(
+        :session,
+        academic_year: 2024,
+        date: Date.new(2024, 9, 1),
+        programmes:
+      )
+    end
+
+    it "filters on the sessions" do
+      expect(form.apply(scope)).to contain_exactly(session_to_include)
+    end
+  end
+
   context "when filtering by programmes" do
     let(:params) { { "programmes" => %w[flu] } }
 
