@@ -237,10 +237,14 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
         end
       end
 
-      summary_list.with_row do |row|
-        row.with_key { "Synced with NHS England?" }
-        row.with_value do
-          helpers.vaccination_record_sync_status_tag(@vaccination_record)
+      if @vaccination_record.respond_to?(:sync_status)
+        summary_list.with_row do |row|
+          row.with_key { "Synced with NHS England?" }
+          row.with_value do
+            render AppVaccinationRecordAPISyncStatusComponent.new(
+                     @vaccination_record
+                   )
+          end
         end
       end
     end
