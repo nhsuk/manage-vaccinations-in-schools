@@ -31,7 +31,8 @@ class GovukNotifyPersonalisation
     @organisation =
       session&.organisation || consent_form&.organisation ||
         consent&.organisation || vaccination_record&.organisation
-    @team = session&.team || consent_form&.team || vaccination_record&.team
+    @subteam =
+      session&.subteam || consent_form&.subteam || vaccination_record&.subteam
     @vaccination_record = vaccination_record
   end
 
@@ -64,11 +65,14 @@ class GovukNotifyPersonalisation
       short_patient_name_apos:,
       show_additional_instructions:,
       subsequent_session_dates_offered_message:,
+      subteam_email:,
+      subteam_name:,
+      subteam_phone:,
       survey_deadline_date:,
       talk_to_your_child_message:,
-      team_email:,
-      team_name:,
-      team_phone:,
+      team_email: subteam_email,
+      team_name: subteam_name,
+      team_phone: subteam_phone,
       today_or_date_of_vaccination:,
       vaccination:,
       vaccination_and_method:,
@@ -88,7 +92,7 @@ class GovukNotifyPersonalisation
               :patient,
               :programmes,
               :session,
-              :team,
+              :subteam,
               :organisation,
               :vaccination_record
 
@@ -275,6 +279,18 @@ class GovukNotifyPersonalisation
     }."
   end
 
+  def subteam_email
+    (subteam || organisation).email
+  end
+
+  def subteam_name
+    (subteam || organisation).name
+  end
+
+  def subteam_phone
+    format_phone_with_instructions(subteam || organisation)
+  end
+
   def survey_deadline_date
     recorded_at = consent_form&.recorded_at || consent&.created_at
     return if recorded_at.nil?
@@ -294,18 +310,6 @@ class GovukNotifyPersonalisation
         "have the right to consent to vaccinations themselves. " \
         "Our team may assess Gillick competence during vaccination sessions."
     ].join("\n\n")
-  end
-
-  def team_email
-    (team || organisation).email
-  end
-
-  def team_name
-    (team || organisation).name
-  end
-
-  def team_phone
-    format_phone_with_instructions(team || organisation)
   end
 
   def today_or_date_of_vaccination

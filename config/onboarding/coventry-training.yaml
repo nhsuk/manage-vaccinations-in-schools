@@ -9,7 +9,7 @@ organisation:
 
 programmes: [hpv]
 
-teams:
+subteams:
   generic:
     name: Coventry and Warwickshire Partnership NHS Trust
     email: example@covwarkpt.nhs.uk

@@ -530,7 +530,7 @@ describe PatientSearchForm do
 
     let(:organisation) { create(:organisation) }
     let(:programme) { create(:programme, :flu) }
-    let(:team) { create(:team, organisation:) }
+    let(:subteam) { create(:subteam, organisation:) }
     let(:user) { create(:user, organisation:) }
     let(:patient) { create(:patient) }
     let(:scope) { PatientPolicy::Scope.new(user, Patient).resolve }
@@ -541,7 +541,7 @@ describe PatientSearchForm do
           :school_move,
           :to_school,
           patient:,
-          school: create(:school, team:)
+          school: create(:school, subteam:)
         )
       end
 

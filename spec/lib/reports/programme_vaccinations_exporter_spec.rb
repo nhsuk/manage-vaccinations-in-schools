@@ -28,7 +28,7 @@ describe Reports::ProgrammeVaccinationsExporter do
         organisation:
       )
     end
-    let(:team) { create(:team, organisation:) }
+    let(:subteam) { create(:subteam, organisation:) }
     let(:session) { create(:session, location:, organisation:, programmes:) }
 
     let(:start_date) { nil }
@@ -98,7 +98,7 @@ describe Reports::ProgrammeVaccinationsExporter do
       subject(:rows) { CSV.parse(call, headers: true) }
 
       context "a school session" do
-        let(:location) { create(:school, team:) }
+        let(:location) { create(:school, subteam:) }
 
         it { should be_empty }
 
@@ -250,7 +250,7 @@ describe Reports::ProgrammeVaccinationsExporter do
       end
 
       context "a clinic session" do
-        let(:location) { create(:generic_clinic, team:) }
+        let(:location) { create(:generic_clinic, subteam:) }
 
         it { should be_empty }
 

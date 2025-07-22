@@ -2,7 +2,7 @@
 
 # == Schema Information
 #
-# Table name: teams
+# Table name: subteams
 #
 #  id                 :bigint           not null, primary key
 #  email              :string           not null
@@ -16,15 +16,15 @@
 #
 # Indexes
 #
-#  index_teams_on_organisation_id_and_name  (organisation_id,name) UNIQUE
+#  index_subteams_on_organisation_id_and_name  (organisation_id,name) UNIQUE
 #
 # Foreign Keys
 #
 #  fk_rails_...  (organisation_id => organisations.id)
 #
 
-describe Team do
-  subject(:team) { build(:team) }
+describe Subteam do
+  subject(:subteam) { build(:subteam) }
 
   it_behaves_like "a model with a normalised email address"
   it_behaves_like "a model with a normalised phone number"

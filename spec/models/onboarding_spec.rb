@@ -38,30 +38,32 @@ describe Onboarding do
       expect(generic_clinic.year_groups).to eq([8, 9, 10, 11])
       expect(generic_clinic.programme_year_groups.count).to eq(4)
 
-      team1 = organisation.teams.includes(:schools).find_by!(name: "Team 1")
-      expect(team1.email).to eq("team-1@trust.nhs.uk")
-      expect(team1.phone).to eq("07700 900816")
-      expect(team1.phone_instructions).to eq("option 9")
-      expect(team1.reply_to_id).to eq("24af66c3-d6bd-4b9f-8067-3844f49e08d0")
+      subteam1 =
+        organisation.subteams.includes(:schools).find_by!(name: "Subteam 1")
+      expect(subteam1.email).to eq("subteam-1@trust.nhs.uk")
+      expect(subteam1.phone).to eq("07700 900816")
+      expect(subteam1.phone_instructions).to eq("option 9")
+      expect(subteam1.reply_to_id).to eq("24af66c3-d6bd-4b9f-8067-3844f49e08d0")
 
-      team2 = organisation.teams.includes(:schools).find_by!(name: "Team 2")
-      expect(team2.email).to eq("team-2@trust.nhs.uk")
-      expect(team2.phone).to eq("07700 900817")
-      expect(team2.reply_to_id).to be_nil
+      subteam2 =
+        organisation.subteams.includes(:schools).find_by!(name: "Subteam 2")
+      expect(subteam2.email).to eq("subteam-2@trust.nhs.uk")
+      expect(subteam2.phone).to eq("07700 900817")
+      expect(subteam2.reply_to_id).to be_nil
 
-      expect(team1.schools).to contain_exactly(school1, school2)
-      expect(team2.schools).to contain_exactly(school3, school4)
+      expect(subteam1.schools).to contain_exactly(school1, school2)
+      expect(subteam2.schools).to contain_exactly(school3, school4)
 
       expect(school1.programme_year_groups.count).to eq(4)
       expect(school2.programme_year_groups.count).to eq(4)
       expect(school3.programme_year_groups.count).to eq(4)
       expect(school4.programme_year_groups.count).to eq(4)
 
-      clinic1 = team1.community_clinics.find_by!(ods_code: nil)
+      clinic1 = subteam1.community_clinics.find_by!(ods_code: nil)
       expect(clinic1.name).to eq("10 Downing Street")
       expect(clinic1.address_postcode).to eq("SW1A 1AA")
 
-      clinic2 = team2.community_clinics.find_by!(ods_code: "SW1A11")
+      clinic2 = subteam2.community_clinics.find_by!(ods_code: "SW1A11")
       expect(clinic2.name).to eq("11 Downing Street")
       expect(clinic2.address_postcode).to eq("SW1A 1AA")
 
@@ -85,11 +87,11 @@ describe Onboarding do
           "organisation.phone": ["can't be blank", "is invalid"],
           "organisation.privacy_notice_url": ["can't be blank"],
           "organisation.privacy_policy_url": ["can't be blank"],
-          "school.0.team": ["can't be blank"],
-          "school.1.team": ["can't be blank"],
+          "school.0.subteam": ["can't be blank"],
+          "school.1.subteam": ["can't be blank"],
           "school.2.status": ["is not included in the list"],
-          "team.email": ["can't be blank"],
-          "team.name": ["can't be blank"],
+          "subteam.email": ["can't be blank"],
+          "subteam.name": ["can't be blank"],
           clinics: ["can't be blank"],
           programmes: ["can't be blank"]
         }

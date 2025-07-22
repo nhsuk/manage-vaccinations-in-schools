@@ -2,22 +2,22 @@
 
 require_relative "../task_helpers"
 
-namespace :teams do
+namespace :subteams do
   desc <<-DESC
-    Create a new team within an organisation.
+    Create a new subteam within an organisation.
 
     Usage:
-      rake team:create # Complete the prompts
-      rake team:create[ods_code,name,email,phone]
+      rake subteams:create # Complete the prompts
+      rake subteams:create[ods_code,name,email,phone]
   DESC
   task :create, %i[ods_code name email phone] => :environment do |_task, args|
     include TaskHelpers
 
     if args.to_a.empty? && $stdin.isatty && $stdout.isatty
       ods_code = prompt_user_for "Enter organisation ODS code:", required: true
-      name = prompt_user_for "Enter team name:", required: true
-      email = prompt_user_for "Enter team email:", required: true
-      phone = prompt_user_for "Enter team phone:", required: true
+      name = prompt_user_for "Enter subteam name:", required: true
+      email = prompt_user_for "Enter subteam email:", required: true
+      phone = prompt_user_for "Enter subteam phone:", required: true
     elsif args.to_a.size == 4
       ods_code = args[:ods_code]
       name = args[:name]
@@ -30,9 +30,9 @@ namespace :teams do
     ActiveRecord::Base.transaction do
       organisation = Organisation.find_by!(ods_code:)
 
-      organisation.teams.create!(name:, email:, phone:)
+      subteam = organisation.subteams.create!(name:, email:, phone:)
 
-      puts "New #{team.name} team with ID #{team.id} created."
+      puts "New #{subteam.name} subteam with ID #{subteam.id} created."
     end
   end
 end
