@@ -9,10 +9,13 @@ class Programmes::SessionsController < Programmes::BaseController
 
   def index
     scope =
-      policy_scope(Session)
-        .has_programmes([@programme])
-        .where(academic_year: @academic_year)
-        .includes(:location, :programmes, :session_dates)
+      policy_scope(Session).has_programmes([@programme]).includes(
+        :location,
+        :programmes,
+        :session_dates
+      )
+
+    @form.academic_year = @academic_year
 
     sessions = @form.apply(scope)
 

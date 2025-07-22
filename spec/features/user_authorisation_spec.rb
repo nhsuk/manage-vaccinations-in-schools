@@ -59,7 +59,7 @@ describe "User authorisation" do
   def and_i_go_to_the_consent_page
     visit "/dashboard"
     click_on "Programmes", match: :first
-    click_on "HPV"
+    click_on "HPV", match: :first
     within ".app-secondary-navigation" do
       click_on "Sessions"
     end

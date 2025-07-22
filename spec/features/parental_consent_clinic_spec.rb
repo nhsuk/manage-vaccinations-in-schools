@@ -263,7 +263,7 @@ describe "Parental consent school" do
 
   def when_the_nurse_checks_the_patient(in_the_school: false)
     click_on "Programmes", match: :first
-    click_on "HPV"
+    click_on "HPV", match: :first
     within ".app-secondary-navigation" do
       click_on "Sessions"
     end
