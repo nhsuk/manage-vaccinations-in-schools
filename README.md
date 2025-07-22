@@ -229,14 +229,14 @@ You can generate an example programme by seeding the database with `rails db:see
 
 #### Adding a test user
 
-You can add a new user to an environment using the `users:create` [rake task](docs/rake-tasks.md#userscreateemailpasswordgiven_namefamily_nameorganisation_ods_code):
+You can add a new user to an environment using the `users:create` [rake task](docs/rake-tasks.md#userscreateemailpasswordgiven_namefamily_nameteam_ods_code):
 
 ```shell
 
 # With no arguments, it will prompt you for all the information it needs:
 rails users:create
 
-# Or, create a user belonging to the organisation with ODS code 'R1L' (this is created in db/seeds.rb):
+# Or, create a user belonging to the team with ODS code 'R1L' (this is created in db/seeds.rb):
 rails users:create['user@example.com','password123','John', 'Doe','R1L']
 
 # Note that on some Mac machines, this syntax can throw an error saying something like 'zsh: bad pattern', in which case you may need to remove the single quotes and escape the square brackets:
@@ -279,7 +279,7 @@ because it's easier to work offline without it.
 
 GOV.UK Notify can store reply-to email addresses and use them when sending mail.
 Once you've added the reply-to email in GOV.UK Notify, get the UUID and add it to
-the organisation.
+the team.
 
 ### Care Identity Service (CIS2)
 
@@ -297,7 +297,7 @@ curl -s https://am.nhsint.auth-ptl.cis2.spineservices.nhs.uk/openam/oauth2/realm
 ```
 
 Clients in the INT environment can be configured via CIS2 Connection Manager,
-please contact other organisation members to get the details for that. Mavis can
+please contact other team members to get the details for that. Mavis can
 use either a client secret or a private key JWT when authenticating requests to
 CIS2, these are configured via the Connection Manager.
 
@@ -340,7 +340,7 @@ See the [releasing documentation](docs/releasing.md) for more information.
 - `access_log:for_patient[id]`
 - `access_log:for_user[id]`
 - `subteams:create[ods_code,name,email,phone]`
-- `users:create[email,password,given_name,family_name,organisation_ods_code]`
+- `users:create[email,password,given_name,family_name,team_ods_code]`
 - `vaccines:seed[type]`
 
 See the [Rake tasks documentation](docs/rake-tasks.md) for more information.

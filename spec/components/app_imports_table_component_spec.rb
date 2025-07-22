@@ -3,11 +3,11 @@
 describe AppImportsTableComponent do
   subject(:rendered) { render_inline(component) }
 
-  let(:component) { described_class.new(organisation:) }
+  let(:component) { described_class.new(team:) }
 
   let(:programmes) { [create(:programme)] }
-  let(:organisation) { create(:organisation, programmes:) }
-  let(:school) { create(:school, organisation:, name: "Test School") }
+  let(:team) { create(:team, programmes:) }
+  let(:school) { create(:school, team:, name: "Test School") }
   let(:session) { create(:session, programmes:, location: school) }
 
   before do
@@ -16,12 +16,12 @@ describe AppImportsTableComponent do
         create(
           :cohort_import,
           :processed,
-          organisation:,
+          team:,
           created_at: Date.new(2020, 1, 1),
           uploaded_by:
             create(:user, given_name: "Jennifer", family_name: "Smith")
         )
-      ] + create_list(:cohort_import, 4, :processed, organisation:)
+      ] + create_list(:cohort_import, 4, :processed, team:)
 
     cohort_imports.each do |cohort_import|
       create(:patient, cohort_imports: [cohort_import])
@@ -32,16 +32,16 @@ describe AppImportsTableComponent do
         create(
           :immunisation_import,
           :processed,
-          organisation:,
+          team:,
           created_at: Date.new(2020, 1, 1),
           uploaded_by: create(:user, given_name: "John", family_name: "Smith")
         )
-      ] + create_list(:immunisation_import, 4, :processed, organisation:)
+      ] + create_list(:immunisation_import, 4, :processed, team:)
 
     immunisation_imports.each do |immunisation_import|
       create(
         :vaccination_record,
-        organisation:,
+        team:,
         programme: programmes.first,
         immunisation_imports: [immunisation_import]
       )
@@ -50,7 +50,7 @@ describe AppImportsTableComponent do
     create(
       :class_import,
       :processed,
-      organisation:,
+      team:,
       created_at: Date.new(2020, 1, 1),
       uploaded_by: create(:user, given_name: "Jack", family_name: "Smith"),
       session:

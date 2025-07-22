@@ -7,21 +7,19 @@ describe VaccinationRecordPolicy do
     subject(:update?) { policy.update? }
 
     let(:programme) { create(:programme) }
-    let(:organisation) { create(:organisation, programmes: [programme]) }
+    let(:team) { create(:team, programmes: [programme]) }
 
     let(:vaccination_record) { create(:vaccination_record, programme:) }
 
     context "with an admin" do
-      let(:user) { build(:admin, organisations: [organisation]) }
+      let(:user) { build(:admin, teams: [team]) }
 
       it { should be(false) }
 
-      context "when vaccination record is managed by the organisation" do
-        let(:session) do
-          create(:session, organisation:, programmes: [programme])
-        end
+      context "when vaccination record is managed by the team" do
+        let(:session) { create(:session, team:, programmes: [programme]) }
         let(:vaccination_record) do
-          create(:vaccination_record, organisation:, programme:, session:)
+          create(:vaccination_record, team:, programme:, session:)
         end
 
         it { should be(false) }
@@ -29,16 +27,14 @@ describe VaccinationRecordPolicy do
     end
 
     context "with a nurse" do
-      let(:user) { build(:nurse, organisations: [organisation]) }
+      let(:user) { build(:nurse, teams: [team]) }
 
       it { should be(false) }
 
-      context "when vaccination record is managed by the organisation" do
-        let(:session) do
-          create(:session, organisation:, programmes: [programme])
-        end
+      context "when vaccination record is managed by the team" do
+        let(:session) { create(:session, team:, programmes: [programme]) }
         let(:vaccination_record) do
-          create(:vaccination_record, organisation:, programme:, session:)
+          create(:vaccination_record, team:, programme:, session:)
         end
 
         it { should be(true) }
@@ -82,10 +78,10 @@ describe VaccinationRecordPolicy do
     end
 
     let(:programme) { create(:programme) }
-    let(:organisation) { create(:organisation, programmes: [programme]) }
-    let(:user) { create(:user, organisation:) }
+    let(:team) { create(:team, programmes: [programme]) }
+    let(:user) { create(:user, team:) }
 
-    let(:session) { create(:session, organisation:, programmes: [programme]) }
+    let(:session) { create(:session, team:, programmes: [programme]) }
 
     let(:kept_vaccination_record) do
       create(:vaccination_record, session:, programme:)
@@ -93,12 +89,10 @@ describe VaccinationRecordPolicy do
     let(:discarded_vaccination_record) do
       create(:vaccination_record, :discarded, session:, programme:)
     end
-    let(:non_organisation_kept_batch) do
-      create(:vaccination_record, programme:)
-    end
+    let(:non_team_kept_batch) { create(:vaccination_record, programme:) }
 
     it { should include(kept_vaccination_record) }
     it { should_not include(discarded_vaccination_record) }
-    it { should_not include(non_organisation_kept_batch) }
+    it { should_not include(non_team_kept_batch) }
   end
 end

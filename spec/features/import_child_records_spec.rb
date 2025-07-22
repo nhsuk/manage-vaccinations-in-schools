@@ -65,15 +65,12 @@ describe "Import child records" do
       create(:programme, :td_ipv)
     ]
 
-    @organisation =
-      create(:organisation, :with_generic_clinic, :with_one_nurse, programmes:)
-    create(:school, urn: "123456", organisation: @organisation)
-    @user = @organisation.users.first
+    @team = create(:team, :with_generic_clinic, :with_one_nurse, programmes:)
 
-    OrganisationSessionsFactory.call(
-      @organisation,
-      academic_year: AcademicYear.current
-    )
+    create(:school, urn: "123456", team: @team)
+    @user = @team.users.first
+
+    TeamSessionsFactory.call(@team, academic_year: AcademicYear.current)
   end
 
   def when_i_visit_the_import_page

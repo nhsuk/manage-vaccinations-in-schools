@@ -26,14 +26,14 @@ class Programme < ApplicationRecord
   has_many :consents
   has_many :gillick_assessments
   has_many :immunisation_imports
-  has_many :organisation_programmes
+  has_many :team_programmes
   has_many :pre_screenings
   has_many :session_programmes
   has_many :triages
   has_many :vaccination_records, -> { kept }
   has_many :vaccines
 
-  has_many :organisations, through: :organisation_programmes
+  has_many :teams, through: :team_programmes
 
   enum :type,
        { flu: "flu", hpv: "hpv", menacwy: "menacwy", td_ipv: "td_ipv" },

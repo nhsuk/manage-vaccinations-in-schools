@@ -90,7 +90,7 @@ Rails.application.routes.draw do
     unless Rails.env.production?
       namespace :testing do
         resources :locations, only: :index
-        resources :organisations, only: :destroy, param: :ods_code
+        resources :teams, only: :destroy, param: :ods_code
         post "/onboard", to: "onboard#create"
       end
     end
@@ -276,7 +276,7 @@ Rails.application.routes.draw do
     end
   end
 
-  resource :organisation, only: %i[show]
+  resource :team, only: %i[show]
 
   resources :vaccination_records,
             path: "vaccination-records",
@@ -302,11 +302,11 @@ Rails.application.routes.draw do
   end
 
   namespace :users do
-    get "organisation-not-found", controller: :errors
+    get "team-not-found", controller: :errors
     get "workgroup-not-found", controller: :errors
     get "role-not-found", controller: :errors
 
-    resource :organisations, only: %i[new create]
+    resource :teams, only: %i[new create]
   end
 
   scope via: :all do

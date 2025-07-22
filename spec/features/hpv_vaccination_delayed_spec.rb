@@ -28,18 +28,13 @@ describe "HPV vaccination" do
 
   def given_i_am_signed_in
     programmes = [create(:programme, :hpv)]
-    @organisation = create(:organisation, :with_one_nurse, programmes:)
+    @team = create(:team, :with_one_nurse, programmes:)
 
-    location = create(:school, organisation: @organisation)
+    location = create(:school, team: @team)
     @batch =
-      create(
-        :batch,
-        organisation: @organisation,
-        vaccine: programmes.first.vaccines.first
-      )
+      create(:batch, team: @team, vaccine: programmes.first.vaccines.first)
 
-    @session =
-      create(:session, organisation: @organisation, programmes:, location:)
+    @session = create(:session, team: @team, programmes:, location:)
     @patient =
       create(
         :patient,
@@ -48,7 +43,7 @@ describe "HPV vaccination" do
         session: @session
       )
 
-    sign_in @organisation.users.first
+    sign_in @team.users.first
   end
 
   def when_i_go_to_a_patient_that_is_ready_to_vaccinate

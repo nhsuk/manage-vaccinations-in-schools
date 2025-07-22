@@ -603,11 +603,9 @@ describe Patient do
       end
 
       let(:programme) { create(:programme) }
-      let(:organisation) { create(:organisation, programmes: [programme]) }
-      let(:school) { create(:school, organisation:) }
-      let(:session) do
-        create(:session, location: school, organisation:, programme:)
-      end
+      let(:team) { create(:team, programmes: [programme]) }
+      let(:school) { create(:school, team:) }
+      let(:session) { create(:session, location: school, team:, programme:) }
 
       it "marks the patient as not invalidated" do
         expect { update_from_pds! }.to change(patient, :invalidated?).from(

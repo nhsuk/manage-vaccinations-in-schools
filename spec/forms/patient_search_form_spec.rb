@@ -506,10 +506,10 @@ describe PatientSearchForm do
     let(:missing_nhs_number) { false }
     let(:programme_types) { [programme.type] }
 
-    let(:organisation) { create(:organisation) }
+    let(:team) { create(:team) }
     let(:programme) { create(:programme, :flu) }
-    let(:subteam) { create(:subteam, organisation:) }
-    let(:user) { create(:user, organisation:) }
+    let(:subteam) { create(:subteam, team:) }
+    let(:user) { create(:user, team:) }
     let(:patient) { create(:patient) }
     let(:scope) { PatientPolicy::Scope.new(user, Patient).resolve }
 
@@ -533,7 +533,7 @@ describe PatientSearchForm do
         create(
           :vaccination_record,
           patient:,
-          performed_ods_code: organisation.ods_code,
+          performed_ods_code: team.ods_code,
           programme: create(:programme, :hpv)
         )
       end

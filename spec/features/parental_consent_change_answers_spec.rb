@@ -75,17 +75,9 @@ RSpec.feature "Parental consent change answers" do
 
   def given_a_flu_programme_is_underway
     programmes = [create(:programme, :flu)]
-    @organisation = create(:organisation, :with_one_nurse, programmes:)
-    location =
-      create(:school, name: "Pilot School", organisation: @organisation)
-    @session =
-      create(
-        :session,
-        :scheduled,
-        organisation: @organisation,
-        programmes:,
-        location:
-      )
+    @team = create(:team, :with_one_nurse, programmes:)
+    location = create(:school, name: "Pilot School", team: @team)
+    @session = create(:session, :scheduled, team: @team, programmes:, location:)
     @child = create(:patient, session: @session)
   end
 

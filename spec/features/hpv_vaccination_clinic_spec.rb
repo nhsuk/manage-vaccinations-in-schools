@@ -30,22 +30,19 @@ describe "HPV vaccination" do
 
   def given_i_am_signed_in
     programme = create(:programme, :hpv_all_vaccines)
-    organisation =
-      create(:organisation, :with_one_nurse, programmes: [programme])
-    location = create(:generic_clinic, organisation:)
+    team = create(:team, :with_one_nurse, programmes: [programme])
+    location = create(:generic_clinic, team:)
 
-    @community_clinic = create(:community_clinic, organisation:)
+    @community_clinic = create(:community_clinic, team:)
 
     programme.vaccines.discontinued.each do |vaccine|
-      create(:batch, organisation:, vaccine:)
+      create(:batch, team:, vaccine:)
     end
 
     active_vaccine = programme.vaccines.active.first
-    @active_batch =
-      create(:batch, :not_expired, organisation:, vaccine: active_vaccine)
+    @active_batch = create(:batch, :not_expired, team:, vaccine: active_vaccine)
 
-    @session =
-      create(:session, organisation:, programmes: [programme], location:)
+    @session = create(:session, team:, programmes: [programme], location:)
     @patient =
       create(
         :patient,
@@ -54,7 +51,7 @@ describe "HPV vaccination" do
         session: @session
       )
 
-    sign_in organisation.users.first
+    sign_in team.users.first
   end
 
   def when_i_go_to_a_patient_that_is_ready_to_vaccinate

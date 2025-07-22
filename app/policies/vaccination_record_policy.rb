@@ -11,7 +11,7 @@ class VaccinationRecordPolicy < ApplicationPolicy
 
   def edit?
     user.is_nurse? && record.session_id.present? &&
-      record.performed_ods_code == user.selected_organisation.ods_code
+      record.performed_ods_code == user.selected_team.ods_code
   end
 
   def update?
@@ -24,14 +24,14 @@ class VaccinationRecordPolicy < ApplicationPolicy
 
   class Scope < ApplicationPolicy::Scope
     def resolve
-      organisation = user.selected_organisation
-      return scope.none if organisation.nil?
+      team = user.selected_team
+      return scope.none if team.nil?
 
       scope
         .kept
-        .where(patient: organisation.patients)
-        .or(scope.kept.where(session: organisation.sessions))
-        .or(scope.kept.where(performed_ods_code: organisation.ods_code))
+        .where(patient: team.patients)
+        .or(scope.kept.where(session: team.sessions))
+        .or(scope.kept.where(performed_ods_code: team.ods_code))
     end
   end
 end

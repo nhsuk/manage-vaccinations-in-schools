@@ -4,22 +4,22 @@ class InvalidateSelfConsentsJob < ApplicationJob
   queue_as :consents
 
   def perform
-    organisation_ids = Organisation.pluck(:id)
+    team_ids = Team.pluck(:id)
     programme_ids = Programme.pluck(:id)
 
-    organisation_ids
+    team_ids
       .product(programme_ids)
-      .each do |organisation_id, programme_id|
+      .each do |team_id, programme_id|
         consents =
           Consent
             .via_self_consent
-            .where(organisation_id:, programme_id:)
+            .where(team_id:, programme_id:)
             .where("created_at < ?", Date.current.beginning_of_day)
             .not_withdrawn
 
         triages =
           Triage
-            .where(organisation_id:, programme_id:)
+            .where(team_id:, programme_id:)
             .where("created_at < ?", Date.current.beginning_of_day)
             .where(patient_id: consents.pluck(:patient_id))
 

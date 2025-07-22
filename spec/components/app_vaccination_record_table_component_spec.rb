@@ -64,7 +64,7 @@ describe AppVaccinationRecordTableComponent do
     expect(rendered).to have_css(".nhsuk-table__cell", text: "1 September 2020")
   end
 
-  context "with a vaccination record not performed by the organisation" do
+  context "with a vaccination record not performed by the team" do
     before do
       vaccination_records.first.patient.patient_sessions.destroy_all
       vaccination_records.first.update!(

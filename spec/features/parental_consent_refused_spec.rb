@@ -29,15 +29,13 @@ describe "Parental consent" do
 
   def given_an_hpv_programme_is_underway
     @programme = create(:programme, :hpv)
-    @organisation =
-      create(:organisation, :with_one_nurse, programmes: [@programme])
-    location =
-      create(:school, name: "Pilot School", organisation: @organisation)
+    @team = create(:team, :with_one_nurse, programmes: [@programme])
+    location = create(:school, name: "Pilot School", team: @team)
     @session =
       create(
         :session,
         :scheduled,
-        organisation: @organisation,
+        team: @team,
         programmes: [@programme],
         location:
       )
@@ -129,7 +127,7 @@ describe "Parental consent" do
   end
 
   def when_the_nurse_checks_the_consent_responses
-    sign_in @organisation.users.first
+    sign_in @team.users.first
 
     visit "/dashboard"
     click_on "Programmes", match: :first

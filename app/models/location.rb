@@ -48,7 +48,7 @@ class Location < ApplicationRecord
   has_many :programme_year_groups
   has_many :sessions
 
-  has_one :organisation, through: :subteam
+  has_one :team, through: :subteam
   has_many :programmes,
            -> { distinct.order(:type) },
            through: :programme_year_groups
@@ -80,11 +80,11 @@ class Location < ApplicationRecord
   validates :urn, uniqueness: true, allow_nil: true
 
   with_options if: :community_clinic? do
-    validates :ods_code, exclusion: { in: :organisation_ods_code }
+    validates :ods_code, exclusion: { in: :team_ods_code }
   end
 
   with_options if: :generic_clinic? do
-    validates :ods_code, inclusion: { in: :organisation_ods_code }
+    validates :ods_code, inclusion: { in: :team_ods_code }
     validates :subteam, presence: true
   end
 
@@ -110,7 +110,7 @@ class Location < ApplicationRecord
 
   def as_json
     super.except("created_at", "updated_at", "subteam_id").merge(
-      "is_attached_to_organisation" => !subteam_id.nil?
+      "is_attached_to_team" => !subteam_id.nil?
     )
   end
 
@@ -133,7 +133,7 @@ class Location < ApplicationRecord
 
   private
 
-  def organisation_ods_code = [subteam&.organisation&.ods_code].compact
+  def team_ods_code = [subteam&.team&.ods_code].compact
 
   def fhir_mapper
     @fhir_mapper ||= FHIRMapper::Location.new(self)

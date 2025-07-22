@@ -28,9 +28,9 @@ class GovukNotifyPersonalisation
     @session =
       session || consent_form&.actual_session ||
         consent_form&.original_session || vaccination_record&.session
-    @organisation =
-      session&.organisation || consent_form&.organisation ||
-        consent&.organisation || vaccination_record&.organisation
+    @team =
+      session&.team || consent_form&.team || consent&.team ||
+        vaccination_record&.team
     @subteam =
       session&.subteam || consent_form&.subteam || vaccination_record&.subteam
     @vaccination_record = vaccination_record
@@ -54,8 +54,8 @@ class GovukNotifyPersonalisation
       next_session_dates:,
       next_session_dates_or:,
       not_catch_up:,
-      organisation_privacy_notice_url:,
-      organisation_privacy_policy_url:,
+      organisation_privacy_notice_url: team_privacy_notice_url,
+      organisation_privacy_policy_url: team_privacy_policy_url,
       outcome_administered:,
       outcome_not_administered:,
       patient_date_of_birth:,
@@ -70,9 +70,8 @@ class GovukNotifyPersonalisation
       subteam_phone:,
       survey_deadline_date:,
       talk_to_your_child_message:,
-      team_email: subteam_email,
-      team_name: subteam_name,
-      team_phone: subteam_phone,
+      team_privacy_notice_url:,
+      team_privacy_policy_url:,
       today_or_date_of_vaccination:,
       vaccination:,
       vaccination_and_method:,
@@ -93,7 +92,7 @@ class GovukNotifyPersonalisation
               :programmes,
               :session,
               :subteam,
-              :organisation,
+              :team,
               :vaccination_record
 
   def batch_name
@@ -214,10 +213,6 @@ class GovukNotifyPersonalisation
       .to_sentence(last_word_connector: ", or ", two_words_connector: " or ")
   end
 
-  delegate :privacy_notice_url, to: :organisation, prefix: true
-
-  delegate :privacy_policy_url, to: :organisation, prefix: true
-
   def outcome_administered
     return if vaccination_record.nil?
     vaccination_record.administered? ? "yes" : "no"
@@ -280,15 +275,15 @@ class GovukNotifyPersonalisation
   end
 
   def subteam_email
-    (subteam || organisation).email
+    (subteam || team).email
   end
 
   def subteam_name
-    (subteam || organisation).name
+    (subteam || team).name
   end
 
   def subteam_phone
-    format_phone_with_instructions(subteam || organisation)
+    format_phone_with_instructions(subteam || team)
   end
 
   def survey_deadline_date
@@ -311,6 +306,8 @@ class GovukNotifyPersonalisation
         "Our team may assess Gillick competence during vaccination sessions."
     ].join("\n\n")
   end
+
+  delegate :privacy_notice_url, :privacy_policy_url, to: :team, prefix: true
 
   def today_or_date_of_vaccination
     return if vaccination_record.nil?

@@ -14,45 +14,43 @@
 #  created_at                    :datetime         not null
 #  updated_at                    :datetime         not null
 #  location_id                   :bigint           not null
-#  organisation_id               :bigint           not null
+#  team_id                       :bigint           not null
 #
 # Indexes
 #
-#  index_sessions_on_location_id                      (location_id)
-#  index_sessions_on_organisation_id_and_location_id  (organisation_id,location_id)
+#  index_sessions_on_location_id              (location_id)
+#  index_sessions_on_team_id_and_location_id  (team_id,location_id)
 #
 # Foreign Keys
 #
-#  fk_rails_...  (organisation_id => organisations.id)
+#  fk_rails_...  (team_id => teams.id)
 #
 FactoryBot.define do
   factory :session do
     transient do
       date { Date.current }
       dates { [] }
-      subteam { association(:subteam, organisation:) }
+      subteam { association(:subteam, team:) }
     end
 
     sequence(:slug) { |n| "session-#{n}" }
 
     academic_year { (date || Date.current).academic_year }
     programmes { [association(:programme)] }
-    organisation { association(:organisation, programmes:) }
+    team { association(:team, programmes:) }
     location { association(:school, subteam:, programmes:) }
 
     days_before_consent_reminders do
-      if date && !location.generic_clinic?
-        organisation.days_before_consent_reminders
-      end
+      team.days_before_consent_reminders if date && !location.generic_clinic?
     end
     send_consent_requests_at do
       if date && !location.generic_clinic?
-        (date - organisation.days_before_consent_requests.days)
+        (date - team.days_before_consent_requests.days)
       end
     end
     send_invitations_at do
       if date && location.generic_clinic?
-        (date - organisation.days_before_invitations.days)
+        (date - team.days_before_invitations.days)
       end
     end
 

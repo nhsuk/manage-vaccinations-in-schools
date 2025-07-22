@@ -6,10 +6,10 @@ describe SendClinicInitialInvitationsJob do
   end
 
   let(:programmes) { [create(:programme, :hpv)] }
-  let(:organisation) { create(:organisation, programmes:) }
+  let(:team) { create(:team, programmes:) }
   let(:parents) { create_list(:parent, 2) }
   let(:patient) { create(:patient, parents:, year_group: 9) }
-  let(:location) { create(:generic_clinic, organisation:) }
+  let(:location) { create(:generic_clinic, team:) }
 
   let(:session) do
     create(
@@ -17,7 +17,7 @@ describe SendClinicInitialInvitationsJob do
       programmes:,
       date: 3.weeks.from_now.to_date,
       location:,
-      organisation:
+      team:
     )
   end
   let!(:patient_session) { create(:patient_session, patient:, session:) }

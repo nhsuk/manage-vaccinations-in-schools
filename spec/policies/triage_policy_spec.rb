@@ -4,13 +4,13 @@ describe TriagePolicy do
   describe "Scope#resolve" do
     subject { TriagePolicy::Scope.new(user, Triage).resolve }
 
-    let(:organisation) { create(:organisation) }
-    let(:user) { create(:user, organisation:) }
+    let(:team) { create(:team) }
+    let(:user) { create(:user, team:) }
 
-    let(:organisation_batch) { create(:triage, organisation:) }
-    let(:non_organisation_batch) { create(:triage) }
+    let(:team_batch) { create(:triage, team:) }
+    let(:non_team_batch) { create(:triage) }
 
-    it { should include(organisation_batch) }
-    it { should_not include(non_organisation_batch) }
+    it { should include(team_batch) }
+    it { should_not include(non_team_batch) }
   end
 end

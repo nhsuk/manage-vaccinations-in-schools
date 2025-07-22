@@ -15,7 +15,7 @@ describe InvalidateSelfConsentsJob do
         create(
           :triage,
           created_at: 1.day.ago,
-          organisation: consent.organisation,
+          team: consent.team,
           programme: consent.programme,
           patient: consent.patient
         )
@@ -38,7 +38,7 @@ describe InvalidateSelfConsentsJob do
       let(:triage) do
         create(
           :triage,
-          organisation: consent.organisation,
+          team: consent.team,
           programme: consent.programme,
           patient: consent.patient
         )
@@ -64,7 +64,7 @@ describe InvalidateSelfConsentsJob do
         create(
           :triage,
           created_at: 1.day.ago,
-          organisation: consent.organisation,
+          team: consent.team,
           programme: consent.programme,
           patient: consent.patient
         )
@@ -89,7 +89,7 @@ describe InvalidateSelfConsentsJob do
       let(:triage) do
         create(
           :triage,
-          organisation: consent.organisation,
+          team: consent.team,
           programme: consent.programme,
           patient: consent.patient
         )
@@ -105,9 +105,7 @@ describe InvalidateSelfConsentsJob do
     let(:parent_programme) { create(:programme, :flu) }
     let(:self_programme) { create(:programme, :hpv) }
 
-    let(:organisation) do
-      create(:organisation, programmes: [parent_programme, self_programme])
-    end
+    let(:team) { create(:team, programmes: [parent_programme, self_programme]) }
 
     let(:patient) { create(:patient) }
 
@@ -118,7 +116,7 @@ describe InvalidateSelfConsentsJob do
         patient:,
         created_at: 1.day.ago,
         programme: self_programme,
-        organisation:
+        team:
       )
     end
     let!(:parent_consent) do
@@ -127,7 +125,7 @@ describe InvalidateSelfConsentsJob do
         patient:,
         created_at: 1.day.ago,
         programme: parent_programme,
-        organisation:
+        team:
       )
     end
 

@@ -26,15 +26,15 @@ describe "Import child records" do
 
   def given_the_app_is_setup
     programme = create(:programme, :hpv)
-    @organisation =
+    @team =
       create(
-        :organisation,
+        :team,
         :with_one_nurse,
         :with_generic_clinic,
         programmes: [programme]
       )
-    create(:school, urn: "141939", organisation: @organisation)
-    @user = @organisation.users.first
+    create(:school, urn: "141939", team: @team)
+    @user = @team.users.first
   end
 
   def when_i_visit_the_import_page

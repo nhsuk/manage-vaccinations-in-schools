@@ -72,25 +72,25 @@ describe "Td/IPV" do
     @programme = create(:programme, :td_ipv)
     programmes = [@programme]
 
-    organisation = create(:organisation, programmes:)
-    @nurse = create(:nurse, organisations: [organisation])
+    team = create(:team, programmes:)
+    @nurse = create(:nurse, teams: [team])
 
     location =
       (
         if clinic
-          create(:generic_clinic, organisation:)
+          create(:generic_clinic, team:)
         else
-          create(:school, :secondary, urn: 123_456, organisation:)
+          create(:school, :secondary, urn: 123_456, team:)
         end
       )
 
-    create(:community_clinic, name: "Waterloo Hospital", organisation:)
+    create(:community_clinic, name: "Waterloo Hospital", team:)
 
     @session =
       create(
         :session,
         date: 1.week.from_now.to_date,
-        organisation:,
+        team:,
         programmes:,
         location:
       )

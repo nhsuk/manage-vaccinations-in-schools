@@ -43,9 +43,9 @@ class User < ApplicationRecord
     devise :database_authenticatable, :trackable, :timeoutable
   end
 
-  has_and_belongs_to_many :organisations
+  has_and_belongs_to_many :teams
 
-  has_many :programmes, through: :organisations
+  has_many :programmes, through: :teams
 
   encrypts :email, deterministic: true
   encrypts :family_name, :given_name
@@ -90,10 +90,10 @@ class User < ApplicationRecord
     user.tap(&:save!)
   end
 
-  def selected_organisation
-    @selected_organisation ||=
+  def selected_team
+    @selected_team ||=
       if cis2_info.present?
-        Organisation.find_by(ods_code: cis2_info.dig("selected_org", "code"))
+        Team.find_by(ods_code: cis2_info.dig("selected_org", "code"))
       end
   end
 

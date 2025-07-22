@@ -214,13 +214,13 @@ Start the web server:
 RAILS_ENV=staging rails s
 ```
 
-## Exporting an organisation
+## Exporting an team
 
 Generate an export and encrypt it:
 
 ```sh
 RAILS_ENV=staging bin/bundle exec \
-  ruby script/organisation_export.rb <organisation_id>
+  ruby script/team_export.rb <team_id>
 EXPORT_PASSWORD=secure \
   node ./script/encrypt_xlsx.mjs <filename>
 ```

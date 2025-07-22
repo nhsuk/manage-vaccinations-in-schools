@@ -4,14 +4,14 @@ require_relative "../../app/lib/mavis_cli"
 
 describe "mavis gias check_import" do
   it "counts the number of schools closed that have future sessions" do
-    given_an_organisation_exists
+    given_an_team_exists
     and_there_are_schools_with_future_sessions
     when_i_run_the_check_import_command
     then_i_should_see_the_correct_counts
   end
 
-  def given_an_organisation_exists
-    @organisation = create(:organisation, ods_code: "A9A5A")
+  def given_an_team_exists
+    @team = create(:team, ods_code: "A9A5A")
     @programme = create(:programme, :hpv)
   end
 

@@ -5,9 +5,9 @@ describe PatientPolicy do
     subject { PatientPolicy::Scope.new(user, Patient).resolve }
 
     let(:programmes) { [create(:programme)] }
-    let(:organisation) { create(:organisation, programmes:) }
-    let(:another_organisation) { create(:organisation, programmes:) }
-    let(:user) { create(:user, organisation:) }
+    let(:team) { create(:team, programmes:) }
+    let(:another_team) { create(:team, programmes:) }
+    let(:user) { create(:user, team:) }
 
     context "when patient is in a session" do
       let(:patient_in_session) { create(:patient) }
@@ -17,13 +17,12 @@ describe PatientPolicy do
         create(
           :patient_session,
           patient: patient_in_session,
-          session: create(:session, organisation:, programmes:)
+          session: create(:session, team:, programmes:)
         )
         create(
           :patient_session,
           patient: patient_not_in_session,
-          session:
-            create(:session, organisation: another_organisation, programmes:)
+          session: create(:session, team: another_team, programmes:)
         )
       end
 
@@ -39,13 +38,13 @@ describe PatientPolicy do
           :school_move,
           :to_home_educated,
           patient: patient_with_move_in_cohort,
-          organisation:
+          team:
         )
         create(
           :school_move,
           :to_home_educated,
           patient: patient_with_move_in_another_cohort,
-          organisation: another_organisation
+          team: another_team
         )
       end
 
@@ -56,7 +55,7 @@ describe PatientPolicy do
       let(:patient_with_move_in_school) { create(:patient) }
       let!(:patient_with_move_in_another_school) { create(:patient) }
 
-      let(:school) { create(:school, organisation:) }
+      let(:school) { create(:school, team:) }
 
       before do
         create(
@@ -69,7 +68,7 @@ describe PatientPolicy do
           :school_move,
           :to_school,
           patient: patient_with_move_in_another_school,
-          school: create(:school, organisation: another_organisation)
+          school: create(:school, team: another_team)
         )
       end
 
@@ -84,7 +83,7 @@ describe PatientPolicy do
         create(
           :vaccination_record,
           patient: patient_with_vaccination_record,
-          performed_ods_code: organisation.ods_code,
+          performed_ods_code: team.ods_code,
           programme: programmes.first
         )
         create(

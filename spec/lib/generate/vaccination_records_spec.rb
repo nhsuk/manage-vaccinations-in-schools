@@ -2,9 +2,9 @@
 
 describe Generate::VaccinationRecords do
   let(:programme) { Programme.hpv&.first || create(:programme, :hpv) }
-  let(:organisation) { create(:organisation, programmes: [programme]) }
-  let(:session) { create(:session, organisation:, programmes: [programme]) }
-  let(:user) { create(:user, organisation:) }
+  let(:team) { create(:team, programmes: [programme]) }
+  let(:session) { create(:session, team:, programmes: [programme]) }
+  let(:user) { create(:user, team:) }
   let(:patient) do
     create(
       :patient,
@@ -21,7 +21,7 @@ describe Generate::VaccinationRecords do
       user
       patient
 
-      described_class.call(organisation:, administered: 1)
+      described_class.call(team:, administered: 1)
       expect(VaccinationRecord.administered.count).to eq 1
     end
 
@@ -30,16 +30,16 @@ describe Generate::VaccinationRecords do
         user
         patient
 
-        described_class.call(organisation:, session:, administered: 1)
+        described_class.call(team:, session:, administered: 1)
         expect(session.reload.vaccination_records.administered.count).to eq 1
       end
     end
 
     context "no patients without vaccinations" do
       it "raises an error" do
-        expect {
-          described_class.call(organisation:, administered: 1)
-        }.to raise_error(RuntimeError)
+        expect { described_class.call(team:, administered: 1) }.to raise_error(
+          RuntimeError
+        )
       end
     end
   end

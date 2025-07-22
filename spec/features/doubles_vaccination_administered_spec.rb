@@ -27,27 +27,27 @@ describe "MenACWY and Td/IPV vaccination" do
   def given_a_doubles_session_exists
     programmes = [create(:programme, :menacwy), create(:programme, :td_ipv)]
 
-    organisation = create(:organisation, programmes:)
-    location = create(:school, organisation:)
+    team = create(:team, programmes:)
+    location = create(:school, team:)
 
     @menacwy_batch =
       create(
         :batch,
         :not_expired,
-        organisation:,
+        team:,
         vaccine: programmes.first.vaccines.first
       )
     @td_ipv_batch =
       create(
         :batch,
         :not_expired,
-        organisation:,
+        team:,
         vaccine: programmes.second.vaccines.first
       )
 
-    @session = create(:session, organisation:, programmes:, location:)
+    @session = create(:session, team:, programmes:, location:)
 
-    @nurse = create(:nurse, organisation:)
+    @nurse = create(:nurse, team:)
   end
 
   def and_a_patient_is_ready_to_be_vaccinated

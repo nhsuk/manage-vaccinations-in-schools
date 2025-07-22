@@ -99,12 +99,9 @@ describe "/api/testing/locations" do
       end
     end
 
-    context "when filtering by attached to organisation" do
+    context "when filtering by attached to team" do
       it "includes only relevant locations" do
-        get "/api/testing/locations",
-            params: {
-              is_attached_to_organisation: "false"
-            }
+        get "/api/testing/locations", params: { is_attached_to_team: "false" }
 
         expect(response).to have_http_status(:ok)
 

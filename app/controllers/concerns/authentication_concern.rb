@@ -22,7 +22,7 @@ module AuthenticationConcern
         elsif !selected_cis2_role_is_valid?
           redirect_to users_role_not_found_path
         elsif !selected_cis2_org_is_registered?
-          redirect_to users_organisation_not_found_path
+          redirect_to users_team_not_found_path
         end
       end
     end
@@ -32,9 +32,7 @@ module AuthenticationConcern
     end
 
     def selected_cis2_org_is_registered?
-      Organisation.exists?(
-        ods_code: session["cis2_info"]["selected_org"]["code"]
-      )
+      Team.exists?(ods_code: session["cis2_info"]["selected_org"]["code"])
     end
 
     def selected_cis2_workgroup_is_valid?
