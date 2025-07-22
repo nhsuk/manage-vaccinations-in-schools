@@ -105,7 +105,7 @@ class ConsentForm < ApplicationRecord
            through: :refused_consent_form_programmes,
            source: :programme
 
-  has_one :team, through: :location
+  has_one :subteam, through: :location
 
   has_many :eligible_schools, through: :organisation, source: :schools
   has_many :vaccines, through: :programmes

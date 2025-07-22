@@ -4,22 +4,22 @@ describe "/api/testing/locations" do
   before { Flipper.enable(:testing_api) }
   after { Flipper.disable(:testing_api) }
 
-  let(:team) { create(:team) }
+  let(:subteam) { create(:subteam) }
 
   let!(:community_clinic) do
-    create(:community_clinic, :open, name: "Location A", team:)
+    create(:community_clinic, :open, name: "Location A", subteam:)
   end
   let!(:generic_clinic) do
-    create(:generic_clinic, :closed, name: "Location B", team:)
+    create(:generic_clinic, :closed, name: "Location B", subteam:)
   end
   let!(:gp_practice) do
-    create(:gp_practice, :closed, name: "Location C", team:)
+    create(:gp_practice, :closed, name: "Location C", subteam:)
   end
   let!(:primary_school) do
-    create(:school, :primary, :closed, name: "Location D", team: nil)
+    create(:school, :primary, :closed, name: "Location D", subteam: nil)
   end
   let!(:secondary_school) do
-    create(:school, :secondary, :closed, name: "Location E", team: nil)
+    create(:school, :secondary, :closed, name: "Location E", subteam: nil)
   end
 
   describe "GET" do

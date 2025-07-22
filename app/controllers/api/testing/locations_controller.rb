@@ -22,9 +22,9 @@ class API::Testing::LocationsController < API::Testing::BaseController
        ).present?
       @locations =
         if ActiveModel::Type::Boolean.new.cast(is_attached_to_organisation)
-          @locations.where.not(team_id: nil)
+          @locations.where.not(subteam_id: nil)
         else
-          @locations.where(team_id: nil)
+          @locations.where(subteam_id: nil)
         end
     end
 

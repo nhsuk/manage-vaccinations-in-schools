@@ -10,19 +10,19 @@ describe "mavis schools add-to-organisation" do
     end
   end
 
-  context "when the team doesn't exist" do
+  context "when the subteam doesn't exist" do
     it "displays an error message" do
       given_the_organisation_exists
 
       when_i_run_the_command_expecting_an_error
-      then_a_team_not_found_error_message_is_displayed
+      then_a_subteam_not_found_error_message_is_displayed
     end
   end
 
   context "when the school doesn't exist" do
     it "displays an error message" do
       given_the_organisation_exists
-      and_the_team_exists
+      and_the_subteam_exists
 
       when_i_run_the_command_expecting_an_error
       then_a_school_not_found_error_message_is_displayed
@@ -32,7 +32,7 @@ describe "mavis schools add-to-organisation" do
   context "when the school exists" do
     it "runs successfully" do
       given_the_organisation_exists
-      and_the_team_exists
+      and_the_subteam_exists
       and_the_school_exists
 
       when_i_run_the_command
@@ -43,7 +43,7 @@ describe "mavis schools add-to-organisation" do
   context "when customising the programmes" do
     it "runs successfully" do
       given_the_organisation_exists
-      and_the_team_exists
+      and_the_subteam_exists
       and_the_school_exists
 
       when_i_run_the_command_with_flu_only
@@ -79,8 +79,8 @@ describe "mavis schools add-to-organisation" do
       create(:organisation, ods_code: "ABC", programmes: @programmes)
   end
 
-  def and_the_team_exists
-    @team = create(:team, name: "Team", organisation: @organisation)
+  def and_the_subteam_exists
+    @subteam = create(:subteam, name: "Team", organisation: @organisation)
   end
 
   def and_the_school_exists
@@ -103,8 +103,8 @@ describe "mavis schools add-to-organisation" do
     expect(@output).to include("Could not find organisation.")
   end
 
-  def then_a_team_not_found_error_message_is_displayed
-    expect(@output).to include("Could not find team.")
+  def then_a_subteam_not_found_error_message_is_displayed
+    expect(@output).to include("Could not find subteam.")
   end
 
   def then_a_school_not_found_error_message_is_displayed

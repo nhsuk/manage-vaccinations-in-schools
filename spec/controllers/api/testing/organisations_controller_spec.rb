@@ -73,7 +73,7 @@ describe API::Testing::OrganisationsController do
       expect { delete :destroy, params: { ods_code: "r1l" } }.to(
         change(Organisation, :count)
           .by(-1)
-          .and(change(Team, :count).by(-1))
+          .and(change(Subteam, :count).by(-1))
           .and(change(Session, :count).by(-1))
           .and(change(CohortImport, :count).by(-1))
           .and(change(ImmunisationImport, :count).by(-1))
@@ -94,7 +94,7 @@ describe API::Testing::OrganisationsController do
       it "deletes associated data" do
         expect { call }.to(
           not_change(Organisation, :count)
-            .and(not_change(Team, :count))
+            .and(not_change(Subteam, :count))
             .and(not_change(Session, :count))
             .and(change(CohortImport, :count).by(-1))
             .and(change(ImmunisationImport, :count).by(-1))

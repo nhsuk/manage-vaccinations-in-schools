@@ -8,13 +8,13 @@ module MavisCLI
       argument :organisation_ods_code,
                required: true,
                desc: "The ODS code of the organisation"
-      argument :team, required: true, desc: "The team of the organisation"
+      argument :subteam, required: true, desc: "The subteam of the organisation"
       argument :clinic_ods_codes,
                type: :array,
                required: true,
                desc: "The ODS codes of the clinics"
 
-      def call(organisation_ods_code:, team:, clinic_ods_codes:, **)
+      def call(organisation_ods_code:, subteam:, clinic_ods_codes:, **)
         MavisCLI.load_rails
 
         organisation = Organisation.find_by(ods_code: organisation_ods_code)
@@ -24,10 +24,10 @@ module MavisCLI
           return
         end
 
-        team = organisation.teams.find_by(name: team)
+        subteam = organisation.subteams.find_by(name: subteam)
 
-        if team.nil?
-          warn "Could not find team."
+        if subteam.nil?
+          warn "Could not find subteam."
           return
         end
 
@@ -40,11 +40,11 @@ module MavisCLI
               next
             end
 
-            if !location.team_id.nil? && location.team_id != team.id
-              warn "#{ods_code} previously belonged to #{location.team.name}"
+            if !location.subteam_id.nil? && location.subteam_id != subteam.id
+              warn "#{ods_code} previously belonged to #{location.subteam.name}"
             end
 
-            location.update!(team:)
+            location.update!(subteam:)
           end
         end
       end
