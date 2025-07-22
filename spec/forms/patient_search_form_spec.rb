@@ -420,7 +420,7 @@ describe PatientSearchForm do
 
     context "when _clear param is present" do
       it "only clears filters for the current path" do
-        described_class.new(request_path:, request_session:, q: "John")
+        described_class.new(request_path:, request_session:, "q" => "John")
 
         described_class.new(
           request_path: another_path,
@@ -428,7 +428,7 @@ describe PatientSearchForm do
           q: "Jane"
         )
 
-        described_class.new(request_path:, request_session:, _clear: "true")
+        described_class.new(request_path:, request_session:, "_clear" => "true")
 
         form1 = described_class.new(request_session:, request_path:)
         expect(form1.q).to be_nil

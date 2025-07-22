@@ -6,9 +6,9 @@ module PatientSearchFormConcern
   def set_patient_search_form
     @form =
       PatientSearchForm.new(
-        session: @session,
         request_path: request.path,
         request_session: session,
+        session: @session,
         **patient_search_form_params
       )
   end
