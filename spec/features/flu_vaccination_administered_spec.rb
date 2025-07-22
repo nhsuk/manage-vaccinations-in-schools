@@ -48,7 +48,9 @@ describe "Flu vaccination" do
     then_i_see_the_vaccination_form_for_nasal_spray
     and_i_see_the_option_to_administer_injection
 
-    when_i_record_that_the_patient_has_been_vaccinated_with_nasal_spray
+    when_i_record_that_the_patient_has_been_vaccinated_with_nasal_spray(
+      check_injection_first: true
+    )
     then_i_see_the_check_and_confirm_page_for_nasal_spray
     and_i_get_confirmation_after_recording
 
@@ -217,9 +219,19 @@ describe "Flu vaccination" do
     )
   end
 
-  def when_i_record_that_the_patient_has_been_vaccinated_with_nasal_spray
+  def when_i_record_that_the_patient_has_been_vaccinated_with_nasal_spray(
+    check_injection_first: false
+  )
     within all("section")[0] do
       check "I have checked that the above statements are true"
+    end
+
+    # Check that I can change my mind injection to nasal.
+    if check_injection_first
+      within all("section")[1] do
+        choose "No — but they can have the injected flu instead"
+        choose "Left arm (upper position)"
+      end
     end
 
     within all("section")[1] do
