@@ -1,5 +1,5 @@
 import { Controller } from "@hotwired/stimulus";
-import NhsukRadios from "nhsuk-frontend/packages/components/radios/radios";
+import { initRadios } from "nhsuk-frontend";
 
 // Connects to data-module="nhsuk-radios"
 export default class extends Controller {
@@ -7,7 +7,7 @@ export default class extends Controller {
     this.addConditionalClassIfNeeded();
     this.promoteAriaControlsAttribute();
 
-    NhsukRadios();
+    initRadios();
   }
 
   // We use govuk-frontend radio button HTML, which doesn't use a --conditional

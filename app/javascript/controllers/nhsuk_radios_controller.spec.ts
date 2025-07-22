@@ -1,8 +1,8 @@
 import { application } from "./application";
 import NhsukRadiosController from "./nhsuk_radios_controller";
-import NhsukRadios from "nhsuk-frontend/packages/components/radios/radios";
+import { initRadios } from "nhsuk-frontend";
 
-jest.mock("nhsuk-frontend/packages/components/radios/radios");
+jest.mock("nhsuk-frontend");
 
 // Creating HTML body structure
 document.body.innerHTML = `
@@ -21,7 +21,7 @@ describe("NhsukRadiosController", () => {
   });
 
   test("should call NhsukRadios", () => {
-    expect(NhsukRadios).toHaveBeenCalledTimes(2);
+    expect(initRadios).toHaveBeenCalledTimes(2);
   });
 
   test("should add 'nhsuk-radios--conditional' class", () => {
@@ -31,8 +31,11 @@ describe("NhsukRadiosController", () => {
   });
 
   test("should promote 'data-aria-controls' to 'aria-controls'", () => {
-    const radioInput = document.querySelector('input[type="radio"]');
-    expect(radioInput.getAttribute("aria-controls")).toEqual("target-id");
-    expect(radioInput.getAttribute("data-aria-controls")).toBeNull();
+    const radios = document.querySelector('input[type="radio"]');
+    initRadios();
+    // @ts-ignore
+    expect(radios.getAttribute("aria-controls")).toEqual("target-id");
+    // @ts-ignore
+    expect(radios.getAttribute("data-aria-controls")).toBeNull();
   });
 });
