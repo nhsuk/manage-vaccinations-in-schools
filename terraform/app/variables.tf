@@ -245,6 +245,11 @@ locals {
       valueFrom = var.rails_master_key_path
     }
   ], local.parameter_store_config_list)
+  container_ports = {
+    web       = 4000
+    good_job  = 4000
+    reporting = 5000
+  }
 }
 
 ########## RDS configuration ##########

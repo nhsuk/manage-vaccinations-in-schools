@@ -1,7 +1,7 @@
 resource "aws_security_group_rule" "web_service_alb_ingress" {
   type                     = "ingress"
-  from_port                = 4000
-  to_port                  = 4000
+  from_port                = local.container_ports.web
+  to_port                  = local.container_ports.web
   protocol                 = "tcp"
   security_group_id        = module.web_service.security_group_id
   source_security_group_id = aws_security_group.lb_service_sg.id
@@ -12,8 +12,8 @@ resource "aws_security_group_rule" "web_service_alb_ingress" {
 
 resource "aws_security_group_rule" "reporting_service_alb_ingress" {
   type                     = "ingress"
-  from_port                = 5000
-  to_port                  = 5000
+  from_port                = local.container_ports.reporting
+  to_port                  = local.container_ports.reporting
   protocol                 = "tcp"
   security_group_id        = module.reporting_service.security_group_id
   source_security_group_id = aws_security_group.lb_service_sg.id
@@ -24,8 +24,8 @@ resource "aws_security_group_rule" "reporting_service_alb_ingress" {
 
 resource "aws_security_group_rule" "reporting_to_web_service" {
   type                     = "ingress"
-  from_port                = 4000
-  to_port                  = 4000
+  from_port                = local.container_ports.web
+  to_port                  = local.container_ports.web
   protocol                 = "tcp"
   security_group_id        = module.web_service.security_group_id
   source_security_group_id = module.reporting_service.security_group_id
@@ -82,7 +82,7 @@ module "web_service" {
     task_role_arn        = aws_iam_role.ecs_task_role.arn
     log_group_name       = aws_cloudwatch_log_group.ecs_log_group.name
     region               = var.region
-    health_check_command = ["CMD-SHELL", "./bin/internal_healthcheck http://localhost:4000/health/database"]
+    health_check_command = ["CMD-SHELL", "./bin/internal_healthcheck http://localhost:${local.container_ports.web}/health/database"]
   }
   network_params = {
     subnets = [aws_subnet.private_subnet_a.id, aws_subnet.private_subnet_b.id]
@@ -90,7 +90,7 @@ module "web_service" {
   }
   loadbalancer = {
     target_group_arn = local.ecs_initial_lb_target_group
-    container_port   = 4000
+    container_port   = local.container_ports.web
   }
   autoscaling_policies = tomap({
     cpu = {
@@ -122,7 +122,7 @@ module "good_job_service" {
     task_role_arn        = aws_iam_role.ecs_task_role.arn
     log_group_name       = aws_cloudwatch_log_group.ecs_log_group.name
     region               = var.region
-    health_check_command = ["CMD-SHELL", "./bin/internal_healthcheck http://localhost:4000/status/connected"]
+    health_check_command = ["CMD-SHELL", "./bin/internal_healthcheck http://localhost:${local.container_ports.good_job}/status/connected"]
   }
   network_params = {
     subnets = [aws_subnet.private_subnet_a.id, aws_subnet.private_subnet_b.id]
@@ -157,7 +157,7 @@ module "reporting_service" {
     task_role_arn        = aws_iam_role.ecs_task_role.arn
     log_group_name       = aws_cloudwatch_log_group.ecs_log_group.name
     region               = var.region
-    health_check_command = ["CMD-SHELL", "wget http://localhost:5000/healthcheck || exit 0"] #TODO: Fix healthcheck and change to exit 1
+    health_check_command = ["CMD-SHELL", "wget http://localhost:${local.container_ports.reporting}/healthcheck || exit 0"] #TODO: Fix healthcheck and change to exit 1
   }
   network_params = {
     subnets = [aws_subnet.private_subnet_a.id, aws_subnet.private_subnet_b.id]
@@ -165,7 +165,7 @@ module "reporting_service" {
   }
   loadbalancer = {
     target_group_arn = local.reporting_initial_lb_target_group
-    container_port   = 5000
+    container_port   = local.container_ports.reporting
   }
   autoscaling_policies = tomap({
     cpu = {
@@ -175,7 +175,7 @@ module "reporting_service" {
       scale_out_cooldown     = 300
     }
   })
-  container_port        = 5000
+  container_port        = local.container_ports.reporting
   minimum_replica_count = var.minimum_reporting_replicas
   maximum_replica_count = var.maximum_reporting_replicas
   cluster_id            = aws_ecs_cluster.cluster.id
