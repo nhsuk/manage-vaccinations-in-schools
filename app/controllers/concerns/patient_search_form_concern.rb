@@ -17,7 +17,7 @@ module PatientSearchFormConcern
 
   def patient_search_form_params
     params.fetch(:patient_search_form, {}).permit(
-      :clear_filters,
+      :_clear,
       :date_of_birth_day,
       :date_of_birth_month,
       :date_of_birth_year,

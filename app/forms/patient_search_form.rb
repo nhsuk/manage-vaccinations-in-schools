@@ -7,7 +7,7 @@ class PatientSearchForm
 
   SESSION_KEY = "patient_search_form"
 
-  attribute :clear_filters, :boolean
+  attribute :_clear, :boolean
   attribute :consent_statuses, array: true
   attribute :date_of_birth_day, :integer
   attribute :date_of_birth_month, :integer
@@ -127,7 +127,7 @@ class PatientSearchForm
   def academic_year = session&.academic_year || AcademicYear.current
 
   def handle_request_session_filters
-    if clear_filters
+    if _clear
       clear_from_request_session
     elsif has_filters?
       store_in_request_session
@@ -163,7 +163,7 @@ class PatientSearchForm
   def has_filters?
     # An empty string represents the "Any" option
     attributes
-      .except(:clear_filters)
+      .except(:_clear)
       .values
       .any? { it.present? || it == "" || it == [] }
   end

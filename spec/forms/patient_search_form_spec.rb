@@ -418,20 +418,17 @@ describe PatientSearchForm do
   describe "session filter persistence" do
     let(:another_path) { "/another-path" }
 
-    context "when clear_filters param is present" do
+    context "when _clear param is present" do
       it "only clears filters for the current path" do
-        described_class.new(q: "John", request_session:, request_path:)
-        described_class.new(
-          q: "Jane",
-          request_session:,
-          request_path: another_path
-        )
+        described_class.new(request_path:, request_session:, q: "John")
 
         described_class.new(
-          clear_filters: "true",
+          request_path: another_path,
           request_session:,
-          request_path:
+          q: "Jane"
         )
+
+        described_class.new(request_path:, request_session:, _clear: "true")
 
         form1 = described_class.new(request_session:, request_path:)
         expect(form1.q).to be_nil
