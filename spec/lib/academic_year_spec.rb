@@ -19,13 +19,13 @@ describe AcademicYear do
     context "preparing for 2025" do
       let(:today) { Date.new(2025, 8, 1) }
 
-      it { should eq([2024, 2025]) }
+      it { should eq([2025, 2024]) }
     end
 
     context "first day of 2025" do
       let(:today) { Date.new(2025, 9, 1) }
 
-      it { should eq([2024, 2025]) }
+      it { should eq([2025, 2024]) }
     end
   end
 
