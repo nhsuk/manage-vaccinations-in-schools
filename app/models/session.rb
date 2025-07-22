@@ -74,21 +74,15 @@ class Session < ApplicationRecord
           )
         end
 
-  scope :today, -> { has_date(Date.current) }
-
   scope :for_academic_year, ->(academic_year) { where(academic_year:) }
   scope :for_current_academic_year,
         -> { for_academic_year(AcademicYear.current) }
 
-  scope :unscheduled,
-        -> do
-          for_current_academic_year.where.not(
-            SessionDate.for_session.arel.exists
-          )
-        end
+  scope :in_progress, -> { has_date(Date.current) }
+  scope :unscheduled, -> { where.not(SessionDate.for_session.arel.exists) }
   scope :scheduled,
         -> do
-          for_current_academic_year.where(
+          where(
             "? <= (?)",
             Date.current,
             SessionDate.for_session.select("MAX(value)")
@@ -96,7 +90,7 @@ class Session < ApplicationRecord
         end
   scope :completed,
         -> do
-          for_current_academic_year.where(
+          where(
             "? > (?)",
             Date.current,
             SessionDate.for_session.select("MAX(value)")
