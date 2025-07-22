@@ -7,7 +7,7 @@ module NHS::ImmunisationsAPI
     def sync_immunisation(vaccination_record)
       case next_sync_action(vaccination_record)
       when :create
-        record_immunisation(vaccination_record)
+        create_immunisation(vaccination_record)
       when :update
         update_immunisation(vaccination_record)
       when :delete
@@ -19,7 +19,7 @@ module NHS::ImmunisationsAPI
       end
     end
 
-    def record_immunisation(vaccination_record)
+    def create_immunisation(vaccination_record)
       unless Flipper.enabled?(:immunisations_fhir_api_integration)
         Rails.logger.info(
           "Not recording vaccination record to immunisations API as the" \

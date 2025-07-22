@@ -141,7 +141,7 @@ describe NHS::ImmunisationsAPI do
         next_sync_action
       )
 
-      allow(described_class).to receive(:record_immunisation)
+      allow(described_class).to receive(:create_immunisation)
       allow(described_class).to receive(:update_immunisation)
       allow(described_class).to receive(:delete_immunisation)
 
@@ -152,7 +152,7 @@ describe NHS::ImmunisationsAPI do
       let(:next_sync_action) { :create }
 
       it "calls update_immunisation" do
-        expect(described_class).to have_received(:record_immunisation)
+        expect(described_class).to have_received(:create_immunisation)
       end
     end
 
@@ -176,16 +176,16 @@ describe NHS::ImmunisationsAPI do
       let(:next_sync_action) { :nil }
 
       it "does not do any further action" do
-        expect(described_class).not_to have_received(:record_immunisation)
+        expect(described_class).not_to have_received(:create_immunisation)
         expect(described_class).not_to have_received(:update_immunisation)
         expect(described_class).not_to have_received(:delete_immunisation)
       end
     end
   end
 
-  describe "record_immunisation" do
+  describe "create_immunisation" do
     subject(:perform_request) do
-      described_class.record_immunisation(vaccination_record)
+      described_class.create_immunisation(vaccination_record)
     end
 
     let!(:request_stub) do
