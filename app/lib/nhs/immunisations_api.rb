@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 module NHS::ImmunisationsAPI
+  PROGRAMME_TYPES = %w[flu hpv].freeze
+
   class << self
     def sync_immunisation(vaccination_record)
       case next_sync_action(vaccination_record)
@@ -8,6 +10,8 @@ module NHS::ImmunisationsAPI
         record_immunisation(vaccination_record)
       when :update
         update_immunisation(vaccination_record)
+      when :delete
+        delete_immunisation(vaccination_record)
       else
         Rails.logger.info(
           "Vaccination record does not require syncing: #{vaccination_record.id}"
@@ -164,29 +168,48 @@ module NHS::ImmunisationsAPI
 
     private
 
-
     def next_sync_action(vaccination_record)
-      if vaccination_record.not_administered? || vaccination_record.discarded?
-        raise "Vaccination record delete not supported yet: #{vaccination_record.id}"
-      end
-
       sync_pending_at = vaccination_record.nhs_immunisations_api_sync_pending_at
       if sync_pending_at.nil?
-        raise "Cannot sync vaccination record #{vaccination_record.id} has" \
+        raise "Cannot sync vaccination record #{vaccination_record.id}:" \
                 " nhs_immunisations_api_sync_pending_at is nil"
       end
 
-      last_synced_at = vaccination_record.nhs_immunisations_api_synced_at
-      if last_synced_at.present?
-        if last_synced_at < sync_pending_at
-          :update
-        else
-          nil
+      should_be_recorded = should_be_in_immunisations_api?(vaccination_record)
+      is_recorded = is_recorded_in_immunisations_api?(vaccination_record)
+
+      if is_recorded
+        last_synced_at = vaccination_record.nhs_immunisations_api_synced_at
+        if last_synced_at.nil?
+          raise "Cannot sync vaccination record #{vaccination_record.id}:" \
+                  " nhs_immunisations_api_synced_at is nil"
         end
-      else
+
+        return nil if last_synced_at >= sync_pending_at
+
+        if should_be_recorded && !is_recorded
+          :create
+        elsif should_be_recorded && is_recorded
+          :update
+        elsif is_recorded
+          :delete
+        end
+      elsif should_be_recorded
         :create
       end
     end
+
+    def should_be_in_immunisations_api?(vaccination_record)
+      vaccination_record.kept? && vaccination_record.recorded_in_service? &&
+        vaccination_record.administered? &&
+        vaccination_record.programme.type.in?(PROGRAMME_TYPES) &&
+        vaccination_record.patient.nhs_number.present?
+    end
+
+    def is_recorded_in_immunisations_api?(vaccination_record)
+      vaccination_record.nhs_immunisations_api_id.present?
+    end
+
     def extract_error_diagnostics(response)
       return nil if response.nil? || response[:body].blank?
 

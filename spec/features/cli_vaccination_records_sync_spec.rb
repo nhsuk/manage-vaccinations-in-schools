@@ -56,7 +56,8 @@ describe "mavis vaccination-records sync" do
         :vaccination_record,
         patient:,
         programme:,
-        nhs_immunisations_api_synced_at: Time.current
+        nhs_immunisations_api_synced_at: Time.current,
+        nhs_immunisations_api_id: Random.uuid
       )
   end
 

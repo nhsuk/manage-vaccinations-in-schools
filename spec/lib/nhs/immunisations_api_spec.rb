@@ -35,6 +35,7 @@ describe NHS::ImmunisationsAPI do
   end
   let(:nhs_immunisations_api_synced_at) { nil }
   let(:nhs_immunisations_api_etag) { nil }
+  let(:nhs_immunisations_api_id) { nil }
   let(:nhs_immunisations_api_sync_pending_at) { nil }
   let(:vaccination_record) do
     create(
@@ -51,6 +52,7 @@ describe NHS::ImmunisationsAPI do
       performed_at: Time.zone.parse("2021-02-07T13:28:17.271+00:00"),
       created_at: Time.zone.parse("2021-02-07T13:28:17.271+00:00"),
       nhs_immunisations_api_synced_at:,
+      nhs_immunisations_api_id:,
       nhs_immunisations_api_etag:,
       nhs_immunisations_api_sync_pending_at:
     )
@@ -110,6 +112,25 @@ describe NHS::ImmunisationsAPI do
     end
   end
 
+  shared_examples "deletes the immunisation record if previously recorded" do
+    context "the patient has no NHS number" do
+      before { patient.update(nhs_number: nil) }
+
+      context "the vaccination record has not been synced before" do
+        it { should be_nil }
+      end
+
+      context "the vaccination record has been synced before" do
+        let(:nhs_immunisations_api_id) { Random.uuid }
+        let(:nhs_immunisations_api_synced_at) { 2.seconds.ago }
+        let(:nhs_immunisations_api_sync_pending_at) { 1.second.ago }
+        let(:nhs_immunisations_api_etag) { "1" }
+
+        it { should eq :delete }
+      end
+    end
+  end
+
   describe "sync_immunisation" do
     subject(:perform_now) do
       described_class.sync_immunisation(vaccination_record)
@@ -143,7 +164,13 @@ describe NHS::ImmunisationsAPI do
       end
     end
 
+    context "the next sync action is delete" do
+      let(:next_sync_action) { :delete }
 
+      it "calls update_immunisation" do
+        expect(described_class).to have_received(:delete_immunisation)
+      end
+    end
 
     context "the next sync action is unknown" do
       let(:next_sync_action) { :nil }
@@ -151,6 +178,7 @@ describe NHS::ImmunisationsAPI do
       it "does not do any further action" do
         expect(described_class).not_to have_received(:record_immunisation)
         expect(described_class).not_to have_received(:update_immunisation)
+        expect(described_class).not_to have_received(:delete_immunisation)
       end
     end
   end
@@ -468,14 +496,15 @@ describe NHS::ImmunisationsAPI do
 
       it "raises an error" do
         expect { next_sync_action }.to raise_error(
-          "Vaccination record #{vaccination_record.id} has" \
-            " nhs_immunisations_api_sync_pending_at set to nil"
+          "Cannot sync vaccination record #{vaccination_record.id}:" \
+            " nhs_immunisations_api_sync_pending_at is nil"
         )
       end
     end
 
     context "the vaccination record is already in-sync" do
       let(:nhs_immunisations_api_synced_at) { 1.second.ago }
+      let(:nhs_immunisations_api_id) { Random.uuid }
       let(:nhs_immunisations_api_sync_pending_at) { 2.seconds.ago }
 
       it { should be_nil }
@@ -484,11 +513,13 @@ describe NHS::ImmunisationsAPI do
     context "the vaccination record has been discarded" do
       before { vaccination_record.discard! }
 
-      it "raises an error" do
-        expect { next_sync_action }.to raise_error(StandardError)
-      end
+      include_examples "deletes the immunisation record if previously recorded"
+    end
 
-      # include_examples "deletes the immunisation record if previously recorded"
+    context "the patient has no NHS number" do
+      before { patient.update(nhs_number: nil) }
+
+      include_examples "deletes the immunisation record if previously recorded"
     end
 
     VaccinationRecord.defined_enums["outcome"].each_key do |outcome|
@@ -507,11 +538,7 @@ describe NHS::ImmunisationsAPI do
           )
         end
 
-        it "raises an error" do
-          expect { next_sync_action }.to raise_error(StandardError)
-        end
-
-        # include_examples "deletes the immunisation record if previously recorded"
+        include_examples "deletes the immunisation record if previously recorded"
       end
     end
   end
