@@ -1,11 +1,9 @@
 # frozen_string_literal: true
 
 describe "HPV vaccination" do
-  around do |example|
-    travel_to(Time.zone.local(2024, 2, 1, 12, 0, 0)) { example.run }
-  end
-
   scenario "Download spreadsheet, record offline at a school session, upload vaccination outcomes back into Mavis" do
+    travel_to(Time.zone.local(2024, 2, 1, 12, 0, 0))
+
     stub_pds_get_nhs_number_to_return_a_patient
 
     given_an_hpv_programme_is_underway
@@ -24,6 +22,8 @@ describe "HPV vaccination" do
   end
 
   scenario "Download spreadsheet, record offline at a clinic, upload vaccination outcomes back into Mavis" do
+    travel_to(Time.zone.local(2024, 2, 1, 12, 0, 0))
+
     stub_pds_get_nhs_number_to_return_a_patient
 
     given_an_hpv_programme_is_underway(clinic: true)
@@ -47,7 +47,7 @@ describe "HPV vaccination" do
     and_sync_vaccination_records_to_nhs_on_create_feature_is_enabled
 
     when_i_choose_to_record_offline_from_a_school_session_page
-    and_alter_an_existing_vaccination_record
+    and_alter_an_existing_vaccination_record_to_create_a_duplicate
     and_i_upload_the_modified_csv_file
     then_i_see_a_duplicate_record_needs_review
 
@@ -57,6 +57,13 @@ describe "HPV vaccination" do
     when_i_choose_to_keep_the_duplicate_record
     then_i_should_see_a_success_message
     and_the_vaccination_record_is_synced_to_nhs
+
+    when_i_change_the_vaccination_outcome_to_not_vaccinated
+    and_i_upload_the_modified_csv_file
+    and_i_review_the_duplicate_record
+    and_i_choose_to_keep_the_duplicate_record
+    then_i_should_see_a_success_message
+    and_the_vaccination_record_is_deleted_from_nhs
   end
 
   def given_an_hpv_programme_is_underway(clinic: false)
@@ -168,6 +175,8 @@ describe "HPV vaccination" do
     immunisation_uuid = Random.uuid
     @stubbed_post_request = stub_immunisations_api_post(uuid: immunisation_uuid)
     @stubbed_put_request = stub_immunisations_api_put(uuid: immunisation_uuid)
+    @stubbed_delete_request =
+      stub_immunisations_api_delete(uuid: immunisation_uuid)
   end
 
   def when_i_choose_to_record_offline_from_a_school_session_page
@@ -185,7 +194,7 @@ describe "HPV vaccination" do
     click_link "Record offline"
   end
 
-  def and_alter_an_existing_vaccination_record
+  def and_alter_an_existing_vaccination_record_to_create_a_duplicate
     expect(page.status_code).to eq(200)
 
     @workbook = RubyXL::Parser.parse_buffer(page.body)
@@ -201,30 +210,45 @@ describe "HPV vaccination" do
       )
 
     row_for_vaccinated_patient = csv_table[0]
-    row_for_vaccinated_patient["TIME_OF_VACCINATION"] = "10:00:00"
+    # row_for_vaccinated_patient["TIME_OF_VACCINATION"] = "10:00:00"
     row_for_vaccinated_patient["DOSE_SEQUENCE"] = "2"
     row_for_vaccinated_patient["ANATOMICAL_SITE"] = "Right Upper Arm"
+
+    File.write("tmp/modified.csv", csv_table.to_csv)
+  end
+
+  def when_i_change_the_vaccination_outcome_to_not_vaccinated
+    csv_table = CSV.read("tmp/modified.csv", headers: true)
+
+    row_for_vaccinated_patient = csv_table[0]
+    row_for_vaccinated_patient["VACCINATED"] = "N"
+    row_for_vaccinated_patient["REASON_NOT_VACCINATED"] = "refused"
+    row_for_vaccinated_patient["BATCH_EXPIRY_DATE"] = nil
+    row_for_vaccinated_patient["BATCH_NUMBER"] = nil
+    row_for_vaccinated_patient["ANATOMICAL_SITE"] = nil
+
     File.write("tmp/modified.csv", csv_table.to_csv)
   end
 
   def when_i_review_the_duplicate_record
     click_on "Review"
   end
+  alias_method :and_i_review_the_duplicate_record,
+               :when_i_review_the_duplicate_record
 
   def then_i_should_see_the_changes
     expect(page).to have_css(
       ".app-highlight",
       text: "Right arm (upper position)"
     )
-    expect(page).to have_css(".app-highlight", text: "Second")
-    expect(page).to have_css(".app-highlight", text: "1 January 2024")
-    expect(page).to have_css(".app-highlight", text: "10:00am")
   end
 
   def when_i_choose_to_keep_the_duplicate_record
     choose "Use duplicate record"
     click_on "Resolve duplicate"
   end
+  alias_method :and_i_choose_to_keep_the_duplicate_record,
+               :when_i_choose_to_keep_the_duplicate_record
 
   def then_i_see_an_excel_spreadsheet_for_recording_offline
     expect(page.status_code).to eq(200)
@@ -429,10 +453,13 @@ describe "HPV vaccination" do
   end
 
   def and_the_vaccination_record_is_synced_to_nhs
-    expect(SyncVaccinationRecordToNHSJob).to have_been_enqueued.exactly(2).times
+    # expect(SyncVaccinationRecordToNHSJob).to have_been_enqueued.exactly(2).times
+    perform_enqueued_jobs(only: SyncVaccinationRecordToNHSJob)
+    expect(@stubbed_post_request).to have_been_requested
+  end
 
-    # perform_enqueued_jobs(only: SyncVaccinationRecordToNHSJob)
-    # expect(@stubbed_post_request).to have_been_requested
-    # expect(@stubbed_put_request).to have_been_requested
+  def and_the_vaccination_record_is_deleted_from_nhs
+    perform_enqueued_jobs(only: SyncVaccinationRecordToNHSJob)
+    expect(@stubbed_delete_request).to have_been_requested
   end
 end

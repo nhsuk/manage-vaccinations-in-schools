@@ -19,8 +19,8 @@ describe "Manage children" do
 
   scenario "Adding an NHS number" do
     given_patients_exist
+    and_sync_vaccination_records_to_nhs_feature_is_enabled
     and_the_patient_is_vaccinated
-    and_sync_vaccination_records_to_nhs_on_create_feature_is_enabled
 
     when_i_click_on_children
     and_i_click_on_a_child
@@ -69,6 +69,9 @@ describe "Manage children" do
 
   scenario "Removing an NHS number" do
     given_patients_exist
+    and_sync_vaccination_records_to_nhs_feature_is_enabled
+    and_the_patient_is_vaccinated
+    and_the_vaccination_has_been_synced_to_nhs
 
     when_i_click_on_children
     and_i_click_on_a_child
@@ -83,6 +86,7 @@ describe "Manage children" do
     when_i_enter_a_blank_nhs_number
     then_i_see_the_edit_child_record_page
     and_i_see_the_blank_nhs_number
+    and_the_vaccination_record_is_deleted_from_the_nhs
   end
 
   scenario "Removing a child from a cohort" do
@@ -200,13 +204,19 @@ describe "Manage children" do
     )
   end
 
-  def and_sync_vaccination_records_to_nhs_on_create_feature_is_enabled
+  def and_sync_vaccination_records_to_nhs_feature_is_enabled
     Flipper.enable(:sync_vaccination_records_to_nhs_on_create)
     Flipper.enable(:immunisations_fhir_api_integration)
 
     immunisation_uuid = Random.uuid
     @stubbed_post_request = stub_immunisations_api_post(uuid: immunisation_uuid)
     @stubbed_put_request = stub_immunisations_api_put(uuid: immunisation_uuid)
+    @stubbed_delete_request =
+      stub_immunisations_api_delete(uuid: immunisation_uuid)
+  end
+
+  def and_the_vaccination_has_been_synced_to_nhs
+    perform_enqueued_jobs(only: SyncVaccinationRecordToNHSJob)
   end
 
   def when_a_deceased_patient_exists
@@ -404,5 +414,10 @@ describe "Manage children" do
   def and_the_vaccination_record_is_updated_with_the_nhs
     perform_enqueued_jobs
     expect(@stubbed_put_request).to have_been_requested
+  end
+
+  def and_the_vaccination_record_is_deleted_from_the_nhs
+    perform_enqueued_jobs(only: SyncVaccinationRecordToNHSJob)
+    expect(@stubbed_delete_request).to have_been_requested
   end
 end
