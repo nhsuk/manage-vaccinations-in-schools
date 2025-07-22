@@ -2,7 +2,7 @@
 
 module AcademicYear
   class << self
-    def all = (first..last).to_a
+    def all = (first..last).to_a.reverse
 
     def current = Date.current.academic_year
 
