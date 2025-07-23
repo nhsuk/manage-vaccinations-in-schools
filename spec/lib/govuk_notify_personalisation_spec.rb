@@ -76,8 +76,6 @@ describe GovukNotifyPersonalisation do
         next_session_dates: "Thursday 1 January",
         next_session_dates_or: "Thursday 1 January",
         not_catch_up: "yes",
-        organisation_privacy_notice_url: "https://example.com/privacy-notice",
-        organisation_privacy_policy_url: "https://example.com/privacy-policy",
         patient_date_of_birth: "1 February 2012",
         short_patient_name: "John",
         short_patient_name_apos: "John’s",
