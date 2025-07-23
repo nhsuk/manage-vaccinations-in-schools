@@ -62,10 +62,9 @@ class API::Testing::TeamsController < API::Testing::BaseController
           log_destroy(sessions)
 
           subteams = Subteam.where(team:)
+          log_destroy(Location.generic_clinic.where(subteam: subteams))
           Location.where(subteam: subteams).update_all(subteam_id: nil)
-
           log_destroy(subteams)
-          log_destroy(Location.generic_clinic.where(ods_code: team.ods_code))
 
           log_destroy(TeamProgramme.where(team:))
           log_destroy(Team.where(id: team.id))
