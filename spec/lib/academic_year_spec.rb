@@ -1,34 +1,6 @@
 # frozen_string_literal: true
 
 describe AcademicYear do
-  describe "#all" do
-    subject { travel_to(today) { described_class.all } }
-
-    context "first day of 2024" do
-      let(:today) { Date.new(2024, 9, 1) }
-
-      it { should eq([2024]) }
-    end
-
-    context "last day of only 2024" do
-      let(:today) { Date.new(2025, 7, 31) }
-
-      it { should eq([2024]) }
-    end
-
-    context "preparing for 2025" do
-      let(:today) { Date.new(2025, 8, 1) }
-
-      it { should eq([2025, 2024]) }
-    end
-
-    context "first day of 2025" do
-      let(:today) { Date.new(2025, 9, 1) }
-
-      it { should eq([2025, 2024]) }
-    end
-  end
-
   describe "#current" do
     subject { travel_to(today) { described_class.current } }
 
@@ -36,6 +8,34 @@ describe AcademicYear do
       let(:today) { Date.new(2024, 9, 1) }
 
       it { should eq(2024) }
+    end
+
+    context "first day of 2025" do
+      let(:today) { Date.new(2025, 9, 1) }
+
+      it { should eq(2025) }
+    end
+  end
+
+  describe "#pending" do
+    subject { travel_to(today) { described_class.pending } }
+
+    context "first day of 2024" do
+      let(:today) { Date.new(2024, 9, 1) }
+
+      it { should eq(2024) }
+    end
+
+    context "last day of only 2024" do
+      let(:today) { Date.new(2025, 7, 31) }
+
+      it { should eq(2024) }
+    end
+
+    context "preparing for 2025" do
+      let(:today) { Date.new(2025, 8, 1) }
+
+      it { should eq(2025) }
     end
 
     context "first day of 2025" do
@@ -95,31 +95,31 @@ describe AcademicYear do
     end
   end
 
-  describe "#preparation?" do
-    subject { travel_to(today) { described_class.preparation? } }
+  describe "#all" do
+    subject { travel_to(today) { described_class.all } }
 
     context "first day of 2024" do
       let(:today) { Date.new(2024, 9, 1) }
 
-      it { should be(false) }
+      it { should eq([2024]) }
     end
 
     context "last day of only 2024" do
       let(:today) { Date.new(2025, 7, 31) }
 
-      it { should be(false) }
+      it { should eq([2024]) }
     end
 
     context "preparing for 2025" do
       let(:today) { Date.new(2025, 8, 1) }
 
-      it { should be(true) }
+      it { should eq([2025, 2024]) }
     end
 
     context "first day of 2025" do
       let(:today) { Date.new(2025, 9, 1) }
 
-      it { should be(false) }
+      it { should eq([2025, 2024]) }
     end
   end
 end
