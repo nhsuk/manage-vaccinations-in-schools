@@ -197,6 +197,99 @@ describe Patient::ConsentStatus do
         it { should be(:given) }
       end
     end
+
+    describe "academic year filtering" do
+      let(:current_academic_year) { Date.current.academic_year }
+      let(:previous_academic_year) { current_academic_year - 1 }
+      let(:patient) { create(:patient) }
+      let(:programme) { create(:programme) }
+      let(:parent) { create(:parent) }
+
+      describe "with consents from different academic years" do
+        subject(:status) do
+          patient_consent_status.tap(&:assign_status).status.to_sym
+        end
+
+        context "with a given consent from the current academic year" do
+          before do
+            create(
+              :consent,
+              :given,
+              patient: patient,
+              programme: programme,
+              parent: parent,
+              submitted_at: Date.new(current_academic_year, 10, 15).in_time_zone
+            )
+          end
+
+          it { should be(:given) }
+        end
+
+        context "with a given consent from a previous academic year" do
+          before do
+            create(
+              :consent,
+              :given,
+              patient: patient,
+              programme: programme,
+              parent: parent,
+              submitted_at:
+                Date.new(previous_academic_year, 10, 15).in_time_zone
+            )
+          end
+
+          it { should be(:no_response) }
+        end
+
+        context "with a given and refused consent from current and previous academic years" do
+          before do
+            create(
+              :consent,
+              :given,
+              patient: patient,
+              programme: programme,
+              parent: parent,
+              submitted_at: Date.new(current_academic_year, 10, 15).in_time_zone
+            )
+            create(
+              :consent,
+              :refused,
+              patient: patient,
+              programme: programme,
+              parent: create(:parent),
+              submitted_at:
+                Date.new(previous_academic_year, 10, 15).in_time_zone
+            )
+          end
+
+          it { should be(:given) }
+        end
+
+        context "with a refused and given consent from the current and previous academic years" do
+          before do
+            create(
+              :consent,
+              :refused,
+              patient: patient,
+              programme: programme,
+              parent: parent,
+              submitted_at: Date.new(current_academic_year, 10, 15).in_time_zone
+            )
+            create(
+              :consent,
+              :given,
+              patient: patient,
+              programme: programme,
+              parent: create(:parent),
+              submitted_at:
+                Date.new(previous_academic_year, 10, 15).in_time_zone
+            )
+          end
+
+          it { should be(:refused) }
+        end
+      end
+    end
   end
 
   describe "#vaccine_methods" do

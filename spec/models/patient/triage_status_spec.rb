@@ -269,4 +269,87 @@ describe Patient::TriageStatus do
       it { should be_nil }
     end
   end
+
+  describe "academic year filtering" do
+    let(:current_academic_year) { Date.current.academic_year }
+    let(:previous_academic_year) { current_academic_year - 1 }
+    let(:patient) { create(:patient) }
+    let(:programme) { create(:programme) }
+
+    describe "with triages from different academic years" do
+      subject(:status) do
+        patient_triage_status.tap(&:assign_status).status.to_sym
+      end
+
+      context "with a ready to vaccinate triage from the current academic year" do
+        before do
+          create(
+            :triage,
+            :ready_to_vaccinate,
+            patient: patient,
+            programme: programme,
+            created_at: Date.new(current_academic_year, 10, 15).in_time_zone
+          )
+        end
+
+        it { should be(:safe_to_vaccinate) }
+      end
+
+      context "with a ready to vaccinate triage from a previous academic year" do
+        before do
+          create(
+            :triage,
+            :ready_to_vaccinate,
+            patient: patient,
+            programme: programme,
+            created_at: Date.new(previous_academic_year, 10, 15).in_time_zone
+          )
+        end
+
+        it { should be(:not_required) }
+      end
+
+      context "with a ready to vaccinate and a do not vaccinate triage from the current and previous academic years" do
+        before do
+          create(
+            :triage,
+            :ready_to_vaccinate,
+            patient: patient,
+            programme: programme,
+            created_at: Date.new(current_academic_year, 10, 15).in_time_zone
+          )
+          create(
+            :triage,
+            :do_not_vaccinate,
+            patient: patient,
+            programme: programme,
+            created_at: Date.new(previous_academic_year, 10, 15).in_time_zone
+          )
+        end
+
+        it { should be(:safe_to_vaccinate) }
+      end
+
+      context "with a do not vaccinate and ready to vaccinate triage from the current and previous academic years" do
+        before do
+          create(
+            :triage,
+            :do_not_vaccinate,
+            patient: patient,
+            programme: programme,
+            created_at: Date.new(current_academic_year, 10, 15).in_time_zone
+          )
+          create(
+            :triage,
+            :ready_to_vaccinate,
+            patient: patient,
+            programme: programme,
+            created_at: Date.new(previous_academic_year, 10, 15).in_time_zone
+          )
+        end
+
+        it { should be(:do_not_vaccinate) }
+      end
+    end
+  end
 end
