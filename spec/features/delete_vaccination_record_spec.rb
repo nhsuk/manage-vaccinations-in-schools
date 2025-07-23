@@ -18,7 +18,7 @@ describe "Delete vaccination record" do
 
   scenario "User deletes a record and checks activity log" do
     given_an_hpv_programme_is_underway
-    and_sync_vaccination_records_to_nhs_on_create_feature_is_enabled
+    and_enqueue_sync_vaccination_records_to_nhs_feature_is_enabled
     and_an_administered_vaccination_record_exists
 
     when_i_sign_in_as_a_superuser
@@ -168,8 +168,8 @@ describe "Delete vaccination record" do
     @vaccination_record.update(confirmation_sent_at: Time.current)
   end
 
-  def and_sync_vaccination_records_to_nhs_on_create_feature_is_enabled
-    Flipper.enable(:sync_vaccination_records_to_nhs_on_create)
+  def and_enqueue_sync_vaccination_records_to_nhs_feature_is_enabled
+    Flipper.enable(:enqueue_sync_vaccination_records_to_nhs)
     Flipper.enable(:immunisations_fhir_api_integration)
 
     uuid = Random.uuid

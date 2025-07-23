@@ -333,7 +333,7 @@ describe ImmunisationImport do
       )
     end
 
-    before { Flipper.enable :sync_vaccination_records_to_nhs_on_create }
+    before { Flipper.enable :enqueue_sync_vaccination_records_to_nhs }
 
     let(:session) { create(:session, programmes:) }
     let(:vaccination_record) do
