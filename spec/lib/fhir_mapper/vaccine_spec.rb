@@ -6,6 +6,7 @@ describe FHIRMapper::Vaccine do
   let(:vaccine) do
     create(
       :vaccine,
+      :injection,
       snomed_product_code: "183817183",
       snomed_product_term: "This is one great vaccine!!!",
       manufacturer: "Merck Sharp & Dohme",
@@ -35,7 +36,9 @@ describe FHIRMapper::Vaccine do
   end
 
   describe "#fhir_procedure_coding" do
-    subject(:fhir_procedure_coding) { fhir_mapper.fhir_procedure_coding }
+    subject(:fhir_procedure_coding) do
+      fhir_mapper.fhir_procedure_coding(dose_sequence: nil)
+    end
 
     it { should be_a(FHIR::CodeableConcept) }
 

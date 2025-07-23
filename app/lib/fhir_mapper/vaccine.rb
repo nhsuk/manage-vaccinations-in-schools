@@ -29,12 +29,12 @@ module FHIRMapper
       FHIR::Reference.new(display: manufacturer)
     end
 
-    def fhir_procedure_coding
+    def fhir_procedure_coding(dose_sequence:)
       FHIR::CodeableConcept.new(
         coding: [
           FHIR::Coding.new(
             system: "http://snomed.info/sct",
-            code: snomed_procedure_code,
+            code: snomed_procedure_code(dose_sequence:),
             display: snomed_procedure_term
           )
         ]

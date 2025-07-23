@@ -200,6 +200,10 @@ class VaccinationRecord < ApplicationRecord
     DELIVERY_METHOD_SNOMED_CODES_AND_TERMS.fetch(delivery_method).second
   end
 
+  def snomed_procedure_code = vaccine&.snomed_procedure_code(dose_sequence:)
+
+  delegate :snomed_procedure_term, to: :vaccine, allow_nil: true
+
   private
 
   def requires_location_name?

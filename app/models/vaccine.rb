@@ -99,14 +99,24 @@ class Vaccine < ApplicationRecord
   end
 
   SNOMED_PROCEDURE_CODES = {
-    "flu" => "822851000000102",
-    "hpv" => "761841000",
-    "menacwy" => "871874000",
-    "td_ipv" => "866186002"
+    "flu" => {
+      "injection" => %w[985151000000100 985171000000109],
+      "nasal" => %w[884861000000100 884881000000109]
+    },
+    "hpv" => {
+      "injection" => "761841000"
+    },
+    "menacwy" => {
+      "injection" => "871874000"
+    },
+    "td_ipv" => {
+      "injection" => "866186002"
+    }
   }.freeze
 
-  def snomed_procedure_code
-    SNOMED_PROCEDURE_CODES.fetch(programme.type)
+  def snomed_procedure_code(dose_sequence:)
+    codes = SNOMED_PROCEDURE_CODES.fetch(programme.type).fetch(method)
+    codes.is_a?(Array) ? codes[dose_sequence - 1] : codes
   end
 
   SNOMED_PROCEDURE_TERMS = {

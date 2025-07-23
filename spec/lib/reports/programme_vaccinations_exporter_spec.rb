@@ -160,7 +160,8 @@ describe Reports::ProgrammeVaccinationsExporter do
                 "ROUTE_OF_VACCINATION" => "intramuscular",
                 "SCHOOL_NAME" => location.name,
                 "SCHOOL_URN" => location.urn,
-                "SNOMED_PROCEDURE_CODE" => vaccine.snomed_procedure_code,
+                "SNOMED_PROCEDURE_CODE" =>
+                  vaccination_record.snomed_procedure_code,
                 "TIME_OF_VACCINATION" => "12:05:20",
                 "TRIAGED_BY" => "",
                 "TRIAGE_DATE" => "",
@@ -310,7 +311,8 @@ describe Reports::ProgrammeVaccinationsExporter do
                 "ROUTE_OF_VACCINATION" => "intramuscular",
                 "SCHOOL_NAME" => "",
                 "SCHOOL_URN" => "888888",
-                "SNOMED_PROCEDURE_CODE" => vaccine.snomed_procedure_code,
+                "SNOMED_PROCEDURE_CODE" =>
+                  vaccination_record.snomed_procedure_code,
                 "TIME_OF_VACCINATION" => "12:05:20",
                 "TRIAGED_BY" => "",
                 "TRIAGE_DATE" => "",

@@ -73,4 +73,42 @@ describe Vaccine do
       it { should eq(%w[nasal_spray]) }
     end
   end
+
+  describe "#snomed_procedure_code" do
+    subject { vaccine.snomed_procedure_code(dose_sequence:) }
+
+    let(:dose_sequence) { nil }
+
+    context "with an injection flu vaccine" do
+      let(:vaccine) { build(:vaccine, :flu, :injection) }
+
+      context "and first dose" do
+        let(:dose_sequence) { 1 }
+
+        it { should eq("985151000000100") }
+      end
+
+      context "and second dose" do
+        let(:dose_sequence) { 2 }
+
+        it { should eq("985171000000109") }
+      end
+    end
+
+    context "with a nasal flu vaccine" do
+      let(:vaccine) { build(:vaccine, :flu, :nasal) }
+
+      context "and first dose" do
+        let(:dose_sequence) { 1 }
+
+        it { should eq("884861000000100") }
+      end
+
+      context "and second dose" do
+        let(:dose_sequence) { 2 }
+
+        it { should eq("884881000000109") }
+      end
+    end
+  end
 end

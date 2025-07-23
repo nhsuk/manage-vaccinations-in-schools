@@ -224,7 +224,7 @@ class Reports::ProgrammeVaccinationsExporter
       vaccination_record.dose_volume_ml,
       reason_not_vaccinated(vaccination_record:),
       patient.id,
-      vaccine&.snomed_procedure_code,
+      vaccination_record.snomed_procedure_code,
       reason_for_inclusion(vaccination_record:),
       record_created_at(vaccination_record:),
       record_updated_at(vaccination_record:)
