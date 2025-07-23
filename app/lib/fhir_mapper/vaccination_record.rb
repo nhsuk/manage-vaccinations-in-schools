@@ -61,7 +61,7 @@ module FHIRMapper
       FHIR::Extension.new(
         url:
           "https://fhir.hl7.org.uk/StructureDefinition/Extension-UKCore-VaccinationProcedure",
-        valueCodeableConcept: programme.fhir_procedure_coding
+        valueCodeableConcept: vaccine.fhir_procedure_coding(dose_sequence:)
       )
     end
 
@@ -75,18 +75,6 @@ module FHIRMapper
       else
         raise ArgumentError, "Unknown outcome: #{outcome}"
       end
-    end
-
-    def fhir_vaccine_code
-      FHIR::CodeableConcept.new(
-        coding: [
-          FHIR::Coding.new(
-            system: "http://snomed.info/sct",
-            code: vaccine.snomed_product_code,
-            display: vaccine.snomed_product_term
-          )
-        ]
-      )
     end
 
     def fhir_site

@@ -55,6 +55,7 @@ class Vaccine < ApplicationRecord
   delegate :first_health_question, to: :health_questions
   delegate :fhir_codeable_concept,
            :fhir_manufacturer_reference,
+           :fhir_procedure_coding,
            to: :fhir_mapper
 
   def active? = !discontinued
@@ -97,7 +98,48 @@ class Vaccine < ApplicationRecord
     suitable_delivery_methods.keys.first
   end
 
+  SNOMED_PROCEDURE_CODES = {
+    "flu" => {
+      "injection" => %w[985151000000100 985171000000109],
+      "nasal" => %w[884861000000100 884881000000109]
+    },
+    "hpv" => {
+      "injection" => "761841000"
+    },
+    "menacwy" => {
+      "injection" => "871874000"
+    },
+    "td_ipv" => {
+      "injection" => "866186002"
+    }
+  }.freeze
+
+  def snomed_procedure_code(dose_sequence:)
+    codes = SNOMED_PROCEDURE_CODES.fetch(programme.type).fetch(method)
+    codes.is_a?(Array) ? codes[dose_sequence - 1] : codes
+  end
+
+  SNOMED_PROCEDURE_TERMS = {
+    "flu" => "Seasonal influenza vaccination (procedure)",
+    "hpv" =>
+      "Administration of vaccine product containing only Human " \
+        "papillomavirus antigen (procedure)",
+    "menacwy" =>
+      "Administration of vaccine product containing only Neisseria " \
+        "meningitidis serogroup A, C, W135 and Y antigens (procedure)",
+    "td_ipv" =>
+      "Administration of vaccine product containing only Clostridium " \
+        "tetani and Corynebacterium diphtheriae and Human poliovirus " \
+        "antigens (procedure)"
+  }.freeze
+
+  def snomed_procedure_term
+    SNOMED_PROCEDURE_TERMS.fetch(programme.type)
+  end
+
   private
 
-  def fhir_mapper = @fhir_mapper ||= FHIRMapper::Vaccine.new(self)
+  def fhir_mapper
+    @fhir_mapper ||= FHIRMapper::Vaccine.new(self)
+  end
 end
