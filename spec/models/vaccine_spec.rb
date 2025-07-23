@@ -40,13 +40,13 @@ describe Vaccine do
     subject { vaccine.contains_gelatine? }
 
     context "with a nasal Flu vaccine" do
-      let(:vaccine) { build(:vaccine, :fluenz_tetra) }
+      let(:vaccine) { build(:vaccine, :fluenz) }
 
       it { should be(true) }
     end
 
     context "with an injected Flu vaccine" do
-      let(:vaccine) { build(:vaccine, :quadrivalent_influenza) }
+      let(:vaccine) { build(:vaccine, :vaxigrip) }
 
       it { should be(false) }
     end

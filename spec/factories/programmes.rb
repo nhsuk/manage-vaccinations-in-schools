@@ -38,8 +38,8 @@ FactoryBot.define do
       type { "flu" }
       vaccines do
         [
-          association(:vaccine, :adjuvanted_quadrivalent, programme: instance),
-          association(:vaccine, :fluenz_tetra, programme: instance)
+          association(:vaccine, :cell_based_trivalent, programme: instance),
+          association(:vaccine, :fluenz, programme: instance)
         ]
       end
     end
@@ -48,25 +48,16 @@ FactoryBot.define do
       flu
       vaccines do
         [
-          association(:vaccine, :adjuvanted_quadrivalent, programme: instance),
-          association(:vaccine, :cell_quadrivalent, programme: instance),
-          association(:vaccine, :fluad_tetra, programme: instance),
-          association(:vaccine, :flucelvax_tetra, programme: instance),
-          association(:vaccine, :fluenz_tetra, programme: instance),
-          association(:vaccine, :quadrivalent_influenza, programme: instance),
-          association(
-            :vaccine,
-            :quadrivalent_influvac_tetra,
-            programme: instance
-          ),
-          association(:vaccine, :supemtek, programme: instance)
+          association(:vaccine, :fluenz, programme: instance),
+          association(:vaccine, :cell_based_trivalent, programme: instance),
+          association(:vaccine, :vaxigrip, programme: instance)
         ]
       end
     end
 
     trait :flu_nasal_only do
       flu
-      vaccines { [association(:vaccine, :fluenz_tetra, programme: instance)] }
+      vaccines { [association(:vaccine, :fluenz, programme: instance)] }
     end
 
     trait :menacwy do
@@ -75,7 +66,7 @@ FactoryBot.define do
     end
 
     trait :menacwy_all_vaccines do
-      type { "menacwy" }
+      menacwy
       vaccines do
         [
           association(:vaccine, :menquadfi, programme: instance),
