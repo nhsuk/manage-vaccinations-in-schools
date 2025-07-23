@@ -3,28 +3,13 @@
 module VaccinationRecordSyncToNHSImmunisationsAPIConcern
   extend ActiveSupport::Concern
 
-  NHS_IMMUNISATIONS_API_PROGRAMME_TYPES = %w[flu hpv].freeze
-
   included do
     scope :syncable_to_nhs_immunisations_api,
-          -> do
-            includes(:programme, :patient)
-              .recorded_in_service
-              .administered
-              .kept
-              .where(
-                programmes: {
-                  type: NHS_IMMUNISATIONS_API_PROGRAMME_TYPES
-                }
-              )
-              .where.not(patient: { nhs_number: nil })
-          end
+          -> { includes(:patient).recorded_in_service }
   end
 
   def syncable_to_nhs_immunisations_api?
-    kept? && recorded_in_service? && administered? &&
-      programme.type.in?(NHS_IMMUNISATIONS_API_PROGRAMME_TYPES) &&
-      patient.nhs_number.present?
+    recorded_in_service?
   end
 
   def sync_to_nhs_immunisations_api

@@ -18,6 +18,7 @@ describe "Delete vaccination record" do
 
   scenario "User deletes a record and checks activity log" do
     given_an_hpv_programme_is_underway
+    and_sync_vaccination_records_to_nhs_on_create_feature_is_enabled
     and_an_administered_vaccination_record_exists
 
     when_i_sign_in_as_a_superuser
@@ -29,6 +30,7 @@ describe "Delete vaccination record" do
     when_i_delete_the_vaccination_record
     then_i_see_the_patient
     and_i_see_a_successful_message
+    and_the_vaccination_record_is_deleted_from_nhs
 
     when_i_click_on_the_session
     then_i_see_the_patient_can_be_vaccinated
@@ -156,10 +158,24 @@ describe "Delete vaccination record" do
       patient_session: @patient_session,
       programme: @programme
     )
+
+    if Flipper.enabled?(:immunisations_fhir_api_integration)
+      perform_enqueued_jobs(only: SyncVaccinationRecordToNHSJob)
+    end
   end
 
   def and_a_confirmation_email_has_been_sent
     @vaccination_record.update(confirmation_sent_at: Time.current)
+  end
+
+  def and_sync_vaccination_records_to_nhs_on_create_feature_is_enabled
+    Flipper.enable(:sync_vaccination_records_to_nhs_on_create)
+    Flipper.enable(:immunisations_fhir_api_integration)
+
+    uuid = Random.uuid
+    @stubbed_post_request = stub_immunisations_api_post(uuid:)
+    @stubbed_put_request = stub_immunisations_api_put(uuid:)
+    @stubbed_delete_request = stub_immunisations_api_delete(uuid:)
   end
 
   def when_i_sign_in
@@ -248,5 +264,10 @@ describe "Delete vaccination record" do
 
   def then_i_cant_click_on_delete_vaccination_record
     expect(page).not_to have_content("Delete vaccination record")
+  end
+
+  def and_the_vaccination_record_is_deleted_from_nhs
+    perform_enqueued_jobs(only: SyncVaccinationRecordToNHSJob)
+    expect(@stubbed_delete_request).to have_been_requested
   end
 end

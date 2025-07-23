@@ -72,64 +72,17 @@ describe VaccinationRecordSyncToNHSImmunisationsAPIConcern do
   end
 
   describe "syncable_to_nhs_immunisations_api scope" do
-    # The strategy is to create a vaccination record for each of the various
-    # variations, and test that only the correct ones are allowed through
+    subject { VaccinationRecord.syncable_to_nhs_immunisations_api }
 
-    before do
-      # Generate historic vaccination record (no session)
-      create(:vaccination_record, outcome:, programme:)
-
-      # Generate vaccination records for all programme types
-      Programme.defined_enums["type"].each_key do |programme_type|
-        next if programme_type == "flu"
-        programme = create(:programme, type: programme_type)
-        create(:vaccination_record, outcome: "refused", session:, programme:)
-      end
-
-      # Generate vaccination records for all outcomes
-      VaccinationRecord.defined_enums["outcome"].each_key do |outcome|
-        next if outcome == "administered"
-        create(:vaccination_record, outcome:, session:, programme:)
-      end
-
-      create(:vaccination_record, :discarded, outcome:, session:, programme:)
-      create(:vaccination_record, outcome:, session: nil, programme:)
-
-      patient_without_nhs_number =
-        create(:patient, nhs_number: nil, school: session.location)
-      create(
-        :vaccination_record,
-        programme: flu_programme,
-        session:,
-        outcome: :administered,
-        patient: patient_without_nhs_number
-      )
+    let!(:vaccination_record) do
+      create(:vaccination_record, programme:, session:)
+    end
+    let!(:vaccination_record_outside_of_session) do
+      create(:vaccination_record, programme:)
     end
 
-    let(:flu_programme) { Programme.flu.first || create(:programme, :flu) }
-    let(:hpv_programme) { Programme.hpv.first || create(:programme, :hpv) }
-    let!(:flu_vaccination_record) do
-      create(
-        :vaccination_record,
-        programme: flu_programme,
-        session:,
-        outcome: :administered
-      )
-    end
-    let!(:hpv_vaccination_record) do
-      create(
-        :vaccination_record,
-        programme: hpv_programme,
-        session:,
-        outcome: :administered
-      )
-    end
-
-    it "returns the eligible vaccination records" do
-      expect(VaccinationRecord.syncable_to_nhs_immunisations_api).to eq(
-        [flu_vaccination_record, hpv_vaccination_record]
-      )
-    end
+    it { should include(vaccination_record) }
+    it { should_not include(vaccination_record_outside_of_session) }
   end
 
   describe "#syncable_to_nhs_immunisations_api?" do
@@ -142,7 +95,7 @@ describe VaccinationRecordSyncToNHSImmunisationsAPIConcern do
     context "a discarded vaccination record" do
       before { vaccination_record.discard! }
 
-      it { should be false }
+      it { should be true }
     end
 
     context "a vaccination record not recorded in Mavis" do
@@ -159,7 +112,7 @@ describe VaccinationRecordSyncToNHSImmunisationsAPIConcern do
         create(:vaccination_record, outcome:, programme:, session:, patient:)
       end
 
-      it { should be false }
+      it { should be true }
     end
 
     VaccinationRecord.defined_enums["outcome"].each_key do |outcome|
@@ -168,7 +121,7 @@ describe VaccinationRecordSyncToNHSImmunisationsAPIConcern do
       context "when the vaccination record outcome is #{outcome}" do
         let(:outcome) { outcome }
 
-        it { should be false }
+        it { should be true }
       end
     end
 
@@ -178,7 +131,7 @@ describe VaccinationRecordSyncToNHSImmunisationsAPIConcern do
       context "when the programme type is #{programme_type}" do
         let(:programme) { create(:programme, type: programme_type) }
 
-        it { should be false }
+        it { should be true }
       end
     end
   end
