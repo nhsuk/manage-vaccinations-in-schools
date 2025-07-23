@@ -2,7 +2,9 @@
 
 module FHIRMapper
   class Vaccine
-    delegate :snomed_product_code,
+    delegate :snomed_procedure_code,
+             :snomed_procedure_term,
+             :snomed_product_code,
              :snomed_product_term,
              :manufacturer,
              to: :@vaccine
@@ -25,6 +27,18 @@ module FHIRMapper
 
     def fhir_manufacturer_reference
       FHIR::Reference.new(display: manufacturer)
+    end
+
+    def fhir_procedure_coding
+      FHIR::CodeableConcept.new(
+        coding: [
+          FHIR::Coding.new(
+            system: "http://snomed.info/sct",
+            code: snomed_procedure_code,
+            display: snomed_procedure_term
+          )
+        ]
+      )
     end
   end
 end

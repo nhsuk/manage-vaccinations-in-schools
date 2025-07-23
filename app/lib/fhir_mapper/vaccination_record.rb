@@ -61,7 +61,7 @@ module FHIRMapper
       FHIR::Extension.new(
         url:
           "https://fhir.hl7.org.uk/StructureDefinition/Extension-UKCore-VaccinationProcedure",
-        valueCodeableConcept: programme.fhir_procedure_coding
+        valueCodeableConcept: vaccine.fhir_procedure_coding
       )
     end
 

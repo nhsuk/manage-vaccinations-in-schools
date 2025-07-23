@@ -95,12 +95,9 @@ describe Reports::ProgrammeVaccinationsExporter do
 
         context "with a vaccinated patient" do
           let(:patient) { create(:patient, session:) }
+          let(:vaccine) { programme.vaccines.active.first }
           let(:batch) do
-            create(
-              :batch,
-              expiry: Date.new(2025, 12, 1),
-              vaccine: programme.vaccines.active.first
-            )
+            create(:batch, expiry: Date.new(2025, 12, 1), vaccine:)
           end
           let(:performed_at) { Time.zone.local(2024, 1, 1, 12, 5, 20) }
 
@@ -163,7 +160,7 @@ describe Reports::ProgrammeVaccinationsExporter do
                 "ROUTE_OF_VACCINATION" => "intramuscular",
                 "SCHOOL_NAME" => location.name,
                 "SCHOOL_URN" => location.urn,
-                "SNOMED_PROCEDURE_CODE" => programme.snomed_procedure_code,
+                "SNOMED_PROCEDURE_CODE" => vaccine.snomed_procedure_code,
                 "TIME_OF_VACCINATION" => "12:05:20",
                 "TRIAGED_BY" => "",
                 "TRIAGE_DATE" => "",
@@ -249,12 +246,9 @@ describe Reports::ProgrammeVaccinationsExporter do
 
         context "with a vaccinated patient" do
           let(:patient) { create(:patient, session:) }
+          let(:vaccine) { programmes.first.vaccines.active.first }
           let(:batch) do
-            create(
-              :batch,
-              expiry: Date.new(2025, 12, 1),
-              vaccine: programmes.first.vaccines.active.first
-            )
+            create(:batch, expiry: Date.new(2025, 12, 1), vaccine:)
           end
           let(:performed_at) { Time.zone.local(2024, 1, 1, 12, 5, 20) }
 
@@ -316,7 +310,7 @@ describe Reports::ProgrammeVaccinationsExporter do
                 "ROUTE_OF_VACCINATION" => "intramuscular",
                 "SCHOOL_NAME" => "",
                 "SCHOOL_URN" => "888888",
-                "SNOMED_PROCEDURE_CODE" => programme.snomed_procedure_code,
+                "SNOMED_PROCEDURE_CODE" => vaccine.snomed_procedure_code,
                 "TIME_OF_VACCINATION" => "12:05:20",
                 "TRIAGED_BY" => "",
                 "TRIAGE_DATE" => "",
