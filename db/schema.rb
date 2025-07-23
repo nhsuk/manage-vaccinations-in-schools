@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_18_090719) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_21_092502) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -238,6 +238,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_18_090719) do
     t.boolean "notify_parents"
     t.datetime "submitted_at", null: false
     t.integer "vaccine_methods", default: [], null: false, array: true
+    t.integer "academic_year", null: false
+    t.index ["academic_year"], name: "index_consents_on_academic_year"
     t.index ["organisation_id"], name: "index_consents_on_organisation_id"
     t.index ["parent_id"], name: "index_consents_on_parent_id"
     t.index ["patient_id"], name: "index_consents_on_patient_id"
@@ -604,6 +606,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_18_090719) do
     t.boolean "full_dose", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "academic_year", null: false
+    t.index ["academic_year"], name: "index_patient_specific_directions_on_academic_year"
     t.index ["created_by_user_id"], name: "index_patient_specific_directions_on_created_by_user_id"
     t.index ["patient_id"], name: "index_patient_specific_directions_on_patient_id"
     t.index ["programme_id"], name: "index_patient_specific_directions_on_programme_id"
@@ -780,6 +784,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_18_090719) do
     t.bigint "organisation_id", null: false
     t.datetime "invalidated_at"
     t.integer "vaccine_method"
+    t.integer "academic_year", null: false
+    t.index ["academic_year"], name: "index_triage_on_academic_year"
     t.index ["organisation_id"], name: "index_triage_on_organisation_id"
     t.index ["patient_id"], name: "index_triage_on_patient_id"
     t.index ["performed_by_user_id"], name: "index_triage_on_performed_by_user_id"
