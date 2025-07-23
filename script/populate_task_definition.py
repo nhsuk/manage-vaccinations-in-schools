@@ -57,13 +57,10 @@ def extract_config_env_vars(config: Dict[str, Any], environment: str) -> Dict[st
     """Extract environment variables from YAML config for given environment and server type."""
     env_vars = {}
 
-    # Get environment-specific variables
     if 'environments' in config and environment in config['environments']:
         env_config = config['environments'][environment]
-        # Filter out non-string values and convert all values to strings
         for key, value in env_config.items():
-            if isinstance(value, (str, int, float, bool)):
-                env_vars[key] = str(value)
+            env_vars[key] = str(value)
 
     return env_vars
 
