@@ -100,7 +100,11 @@ describe ImmunisationImport do
 
     context "with a SystmOne file" do
       let(:programmes) do
-        [create(:programme, :hpv_all_vaccines), create(:programme, :menacwy)]
+        [
+          create(:programme, :hpv_all_vaccines),
+          create(:programme, :menacwy),
+          create(:programme, :flu)
+        ]
       end
       let(:file) { "systm_one.csv" }
 
@@ -234,7 +238,11 @@ describe ImmunisationImport do
 
     context "with a SystmOne file format" do
       let(:programmes) do
-        [create(:programme, :hpv_all_vaccines), create(:programme, :menacwy)]
+        [
+          create(:programme, :hpv_all_vaccines),
+          create(:programme, :menacwy),
+          create(:programme, :flu)
+        ]
       end
       let(:file) { "systm_one.csv" }
 
@@ -242,8 +250,8 @@ describe ImmunisationImport do
         # stree-ignore
         expect { process! }
           .to change(immunisation_import, :processed_at).from(nil)
-          .and change(immunisation_import.vaccination_records, :count).by(3)
-          .and change(immunisation_import.patients, :count).by(3)
+          .and change(immunisation_import.vaccination_records, :count).by(4)
+          .and change(immunisation_import.patients, :count).by(4)
           .and change(immunisation_import.batches, :count).by(1)
           .and not_change(immunisation_import.patient_sessions, :count)
 
