@@ -11,36 +11,40 @@
 #  days_before_invitations       :integer          default(21), not null
 #  email                         :string
 #  name                          :text             not null
-#  ods_code                      :string           not null
 #  phone                         :string
 #  phone_instructions            :string
 #  privacy_notice_url            :string           not null
 #  privacy_policy_url            :string           not null
 #  created_at                    :datetime         not null
 #  updated_at                    :datetime         not null
+#  organisation_id               :bigint           not null
 #  reply_to_id                   :uuid
 #
 # Indexes
 #
-#  index_teams_on_name      (name) UNIQUE
-#  index_teams_on_ods_code  (ods_code) UNIQUE
+#  index_teams_on_name             (name) UNIQUE
+#  index_teams_on_organisation_id  (organisation_id)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (organisation_id => organisations.id)
 #
 
 describe Team do
   subject(:team) { build(:team) }
 
+  describe "associations" do
+    it { should belong_to(:organisation) }
+  end
+
   describe "validations" do
     it { should validate_presence_of(:email) }
     it { should validate_presence_of(:name) }
-    it { should validate_presence_of(:ods_code) }
     it { should validate_presence_of(:phone) }
     it { should validate_presence_of(:privacy_policy_url) }
 
     it { should validate_uniqueness_of(:name) }
-    it { should validate_uniqueness_of(:ods_code).ignoring_case_sensitivity }
   end
-
-  it { should normalize(:ods_code).from(" r1a ").to("R1A") }
 
   it_behaves_like "a model with a normalised email address"
   it_behaves_like "a model with a normalised phone number"

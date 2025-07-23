@@ -11,28 +11,36 @@
 #  days_before_invitations       :integer          default(21), not null
 #  email                         :string
 #  name                          :text             not null
-#  ods_code                      :string           not null
 #  phone                         :string
 #  phone_instructions            :string
 #  privacy_notice_url            :string           not null
 #  privacy_policy_url            :string           not null
 #  created_at                    :datetime         not null
 #  updated_at                    :datetime         not null
+#  organisation_id               :bigint           not null
 #  reply_to_id                   :uuid
 #
 # Indexes
 #
-#  index_teams_on_name      (name) UNIQUE
-#  index_teams_on_ods_code  (ods_code) UNIQUE
+#  index_teams_on_name             (name) UNIQUE
+#  index_teams_on_organisation_id  (organisation_id)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (organisation_id => organisations.id)
 #
 FactoryBot.define do
   factory :team do
-    transient { sequence(:identifier) }
+    transient do
+      sequence(:identifier)
+      ods_code { "U#{identifier}" }
+    end
+
+    organisation { association(:organisation, ods_code:) }
 
     name { "SAIS Team #{identifier}" }
     email { "sais-team-#{identifier}@example.com" }
     phone { "01234 567890" }
-    ods_code { "U#{identifier}" }
     careplus_venue_code { identifier.to_s }
     privacy_notice_url { "https://example.com/privacy-notice" }
     privacy_policy_url { "https://example.com/privacy-policy" }
