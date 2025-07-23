@@ -1,3 +1,5 @@
+# Flu
+
 adjuvanted_quadrivalent:
   brand: Adjuvanted Quadrivalent - aQIV
   type: flu
@@ -23,19 +25,6 @@ cell_quadrivalent:
     Cell-based quadrivalent influenza vaccine (surface antigen,
     inactivated) suspension for injection 0.5ml pre-filled syringes (Seqirus UK
     Ltd) (product)
-
-cervarix:
-  brand: Cervarix
-  type: hpv
-  discontinued: true
-  method: injection
-  manufacturer: GlaxoSmithKline
-  nivs_name: Cervarix
-  dose_volume_ml: 0.5
-  snomed_product_code: 12238911000001100
-  snomed_product_term:
-    Cervarix vaccine suspension for injection 0.5ml pre-filled
-    syringes (GlaxoSmithKline) (product)
 
 fluad_tetra:
   brand: Fluad Tetra - aQIV
@@ -73,6 +62,56 @@ fluenz_tetra:
   snomed_product_term: Fluenz Tetra vaccine nasal suspension 0.2ml unit dose
     (AstraZeneca UK Ltd) (product)
 
+quadrivalent_influenza:
+  brand: Quadrivalent Influenza vaccine - QIVe
+  type: flu
+  method: injection
+  manufacturer: Sanofi
+  nivs_name: Sanofi Pasteur QIVe
+  dose_volume_ml: 0.5
+  snomed_product_code: 34680411000001107
+  snomed_product_term:
+    Quadrivalent influenza vaccine (split virion, inactivated)
+    suspension for injection 0.5ml pre-filled syringes (Sanofi) (product)
+
+quadrivalent_influvac_tetra:
+  brand: Quadrivalent Influvac sub-unit Tetra - QIVe
+  type: flu
+  method: injection
+  manufacturer: Mylan
+  nivs_name: Mylan Influvac QIVe
+  dose_volume_ml: 0.5
+  snomed_product_code: 35727111000001109
+  snomed_product_term:
+    Influvac sub-unit Tetra vaccine suspension for injection 0.5ml
+    pre-filled syringes (Viatris UK Healthcare Ltd) (product)
+
+supemtek:
+  brand: Supemtek - QIVr
+  type: flu
+  method: injection
+  manufacturer: Sanofi
+  nivs_name: Sanofi Pasteur Supemtek QIVr
+  dose_volume_ml: 0.5
+  snomed_product_code: 39566211000001103
+  snomed_product_term: Supemtek Quadrivalent vaccine (recombinant) solution for
+    injection 0.5ml pre-filled syringes (Sanofi) (product)
+
+# HPV
+
+cervarix:
+  brand: Cervarix
+  type: hpv
+  discontinued: true
+  method: injection
+  manufacturer: GlaxoSmithKline
+  nivs_name: Cervarix
+  dose_volume_ml: 0.5
+  snomed_product_code: 12238911000001100
+  snomed_product_term:
+    Cervarix vaccine suspension for injection 0.5ml pre-filled
+    syringes (GlaxoSmithKline) (product)
+
 gardasil:
   brand: Gardasil
   type: hpv
@@ -97,6 +136,9 @@ gardasil_9:
   snomed_product_term:
     Gardasil 9 vaccine suspension for injection 0.5ml pre-filled
     syringes (Merck Sharp & Dohme (UK) Ltd) (product)
+
+# MenACWY
+
 
 menquadfi:
   brand: MenQuadfi
@@ -132,29 +174,7 @@ nimenrix:
     Nimenrix vaccine powder and solvent for solution for injection
     0.5ml pre-filled syringes (GlaxoSmithKline UK Ltd) (product)
 
-quadrivalent_influenza:
-  brand: Quadrivalent Influenza vaccine - QIVe
-  type: flu
-  method: injection
-  manufacturer: Sanofi
-  nivs_name: Sanofi Pasteur QIVe
-  dose_volume_ml: 0.5
-  snomed_product_code: 34680411000001107
-  snomed_product_term:
-    Quadrivalent influenza vaccine (split virion, inactivated)
-    suspension for injection 0.5ml pre-filled syringes (Sanofi) (product)
-
-quadrivalent_influvac_tetra:
-  brand: Quadrivalent Influvac sub-unit Tetra - QIVe
-  type: flu
-  method: injection
-  manufacturer: Mylan
-  nivs_name: Mylan Influvac QIVe
-  dose_volume_ml: 0.5
-  snomed_product_code: 35727111000001109
-  snomed_product_term:
-    Influvac sub-unit Tetra vaccine suspension for injection 0.5ml
-    pre-filled syringes (Viatris UK Healthcare Ltd) (product)
+# Td/IPV
 
 revaxis:
   brand: Revaxis
@@ -167,14 +187,3 @@ revaxis:
   snomed_product_term:
     Revaxis vaccine suspension for injection 0.5ml pre-filled syringes
     (Sanofi) 1 pre-filled disposable injection (product)
-
-supemtek:
-  brand: Supemtek - QIVr
-  type: flu
-  method: injection
-  manufacturer: Sanofi
-  nivs_name: Sanofi Pasteur Supemtek QIVr
-  dose_volume_ml: 0.5
-  snomed_product_code: 39566211000001103
-  snomed_product_term: Supemtek Quadrivalent vaccine (recombinant) solution for
-    injection 0.5ml pre-filled syringes (Sanofi) (product)
