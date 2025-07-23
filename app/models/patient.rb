@@ -299,10 +299,9 @@ class Patient < ApplicationRecord
     results
   end
 
-  def year_group(now: nil)
-    birth_academic_year.to_year_group(
-      academic_year: (now || Date.current).academic_year
-    )
+  def year_group(academic_year: nil)
+    academic_year ||= AcademicYear.current
+    birth_academic_year.to_year_group(academic_year:)
   end
 
   def year_group_changed?

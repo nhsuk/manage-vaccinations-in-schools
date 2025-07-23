@@ -37,5 +37,7 @@ class Note < ApplicationRecord
 
   private
 
-  def year_group = patient.year_group(now: created_at.to_date)
+  def academic_year = created_at.to_date.academic_year
+
+  def year_group = patient.year_group(academic_year:)
 end
