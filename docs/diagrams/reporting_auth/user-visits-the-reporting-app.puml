@@ -1,0 +1,49 @@
+@startuml
+title "User visits the Reporting app"
+|User|
+|CIS2|
+|Mavis|
+|Mavis Reporting|
+|User|
+start
+->GET /reporting/...;
+|Mavis Reporting|
+if (has JWT in cookie?) is (Y) then
+    :API call with JWT as \n Authorization header;
+    |Mavis|
+    if (JWT is valid?) is (Y) then
+        :get the user with the JWT's session token;
+        if (user with that session token exists?) then
+            :use that user to filter returned data;
+            :respond with 200 & data;
+            |Mavis Reporting|
+        else (N)
+            |Mavis|
+            :respond with 401;
+            |Mavis Reporting|
+        endif
+    else (N)
+        |Mavis|
+        :respond with 401;
+        |Mavis Reporting|
+    endif
+    if (response status is 200?) is (Y) then
+        :render html;
+        :respond with 200 & html;
+    else (N)
+        |Mavis Reporting|
+        :clear user session;
+        :redirect to Mavis start \nwith redirect_uri param;
+    endif
+else (N)
+    |Mavis Reporting|
+    :redirect to Mavis start \nwith redirect_uri param;
+    |User|
+endif
+|Mavis Reporting|
+->response;
+|User|
+:process response;
+stop
+
+@enduml
