@@ -22,4 +22,16 @@ class Organisation < ApplicationRecord
   has_many :teams
 
   validates :ods_code, presence: true
+
+  delegate :fhir_reference, to: :fhir_mapper
+
+  class << self
+    delegate :fhir_reference, to: FHIRMapper::Organisation
+  end
+
+  private
+
+  def fhir_mapper
+    @fhir_mapper ||= FHIRMapper::Organisation.new(self)
+  end
 end

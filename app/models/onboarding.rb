@@ -14,6 +14,8 @@ class Onboarding
     year_groups
   ].freeze
 
+  ORGANISATION_ATTRIBUTES = %i[ods_code].freeze
+
   TEAM_ATTRIBUTES = %i[
     careplus_venue_code
     days_before_consent_reminders
@@ -21,7 +23,6 @@ class Onboarding
     days_before_invitations
     email
     name
-    ods_code
     phone
     phone_instructions
     privacy_notice_url
@@ -54,7 +55,16 @@ class Onboarding
   def initialize(hash)
     config = hash.deep_symbolize_keys
 
-    @team = Team.new(config.fetch(:team, {}).slice(*TEAM_ATTRIBUTES))
+    @organisation =
+      Organisation.find_or_initialize_by(
+        config.fetch(:organisation, {}).slice(*ORGANISATION_ATTRIBUTES)
+      )
+
+    @team =
+      Team.new(
+        **config.fetch(:team, {}).slice(*TEAM_ATTRIBUTES),
+        organisation: @organisation
+      )
 
     @programmes =
       config
@@ -110,6 +120,7 @@ class Onboarding
 
   def errors
     super.tap do |errors|
+      merge_errors_from([organisation], errors:, name: "organisation")
       merge_errors_from([team], errors:, name: "team")
       merge_errors_from(programmes, errors:, name: "programme")
       merge_errors_from(subteams, errors:, name: "subteam")
@@ -138,12 +149,18 @@ class Onboarding
 
   private
 
-  attr_reader :team, :programmes, :subteams, :users, :schools, :clinics
+  attr_reader :organisation,
+              :team,
+              :programmes,
+              :subteams,
+              :users,
+              :schools,
+              :clinics
 
   def academic_year = AcademicYear.pending
 
   def models
-    [team] + programmes + subteams + users + schools + clinics
+    [organisation] + [team] + programmes + subteams + users + schools + clinics
   end
 
   def merge_errors_from(objects, errors:, name:)

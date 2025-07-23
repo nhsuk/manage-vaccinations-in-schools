@@ -4,7 +4,8 @@
 # the VaccinationRecord and has a lot of dependencies on it, so not really
 # worth it.
 describe FHIRMapper::VaccinationRecord do
-  let(:team) { create(:team, programmes: [programme]) }
+  let(:organisation) { create(:organisation) }
+  let(:team) { create(:team, organisation:, programmes: [programme]) }
   let(:programme) { create(:programme, :hpv) }
   let(:patient_session) do
     create(:patient_session, programmes: [programme], team:)
@@ -17,7 +18,7 @@ describe FHIRMapper::VaccinationRecord do
   let(:vaccination_record) do
     create(
       :vaccination_record,
-      performed_ods_code: team.ods_code,
+      performed_ods_code: organisation.ods_code,
       patient:,
       programme:,
       session:,
@@ -98,7 +99,7 @@ describe FHIRMapper::VaccinationRecord do
       its(:system) { should eq "http://snomed.info/sct" }
     end
 
-    describe "performing team" do
+    describe "performing organisation" do
       subject do
         immunisation_fhir
           .performer
@@ -106,11 +107,13 @@ describe FHIRMapper::VaccinationRecord do
           .actor
       end
 
-      let(:team_fhir_reference) do
-        Team.fhir_reference(ods_code: vaccination_record.performed_ods_code)
+      let(:organisation_fhir_reference) do
+        Organisation.fhir_reference(
+          ods_code: vaccination_record.performed_ods_code
+        )
       end
 
-      it { should eq team_fhir_reference }
+      it { should eq organisation_fhir_reference }
     end
 
     describe "status" do
@@ -254,10 +257,10 @@ describe FHIRMapper::VaccinationRecord do
         its(:reference) { should eq "#Practitioner1" }
       end
 
-      describe "team actor" do
+      describe "organisation actor" do
         subject { performer.find { |p| p.actor.type == "Organization" }.actor }
 
-        it { should eq team.fhir_reference }
+        it { should eq organisation.fhir_reference }
       end
     end
 

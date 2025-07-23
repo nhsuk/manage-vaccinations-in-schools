@@ -5,14 +5,25 @@ module MavisCLI
     class AddProgramme < Dry::CLI::Command
       desc "Adds a programme to a team"
 
-      argument :ods_code, required: true, desc: "The ODS code of the team"
+      argument :ods_code,
+               required: true,
+               desc: "The ODS code of the organisation"
+
+      argument :name, required: true, desc: "The name of the team"
 
       argument :type, required: true, desc: "The type of programme to add"
 
-      def call(ods_code:, type:)
+      def call(ods_code:, name:, type:)
         MavisCLI.load_rails
 
-        team = Team.find_by(ods_code:)
+        organisation = Organisation.find_by(ods_code:)
+
+        if organisation.nil?
+          warn "Could not find organisation."
+          return
+        end
+
+        team = organisation.teams.find_by(name:)
 
         if team.nil?
           warn "Could not find team."

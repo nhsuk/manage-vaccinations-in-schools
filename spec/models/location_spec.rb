@@ -60,7 +60,7 @@ describe Location do
 
       it do
         expect(location).to validate_exclusion_of(:ods_code).in_array(
-          [team.ods_code]
+          [team.organisation.ods_code]
         )
       end
 

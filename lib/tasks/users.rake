@@ -32,7 +32,13 @@ namespace :users do
       raise "Expected 5-6 arguments, got #{args.to_a.size}"
     end
 
-    team = Team.find_by!(ods_code: team_ods_code)
+    # TODO: Select the right team based on an identifier.
+    team =
+      Team.joins(:organisation).find_by!(
+        organisation: {
+          ods_code: team_ods_code
+        }
+      )
 
     user =
       User.create!(email:, password:, family_name:, given_name:, fallback_role:)

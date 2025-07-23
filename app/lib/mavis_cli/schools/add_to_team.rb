@@ -19,7 +19,8 @@ module MavisCLI
       def call(ods_code:, subteam:, urns:, programmes: [], **)
         MavisCLI.load_rails
 
-        team = Team.find_by(ods_code:)
+        # TODO: Select the right team based on an identifier.
+        team = Team.joins(:organisation).find_by(organisation: { ods_code: })
 
         if team.nil?
           warn "Could not find team."

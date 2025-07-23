@@ -39,7 +39,7 @@ describe "mavis generate vaccination-records" do
         "generate",
         "vaccination-records",
         "-o",
-        @team.ods_code.to_s,
+        @team.organisation.ods_code.to_s,
         "-p",
         @programme.type,
         "-s",

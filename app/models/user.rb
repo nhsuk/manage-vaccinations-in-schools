@@ -76,7 +76,7 @@ class User < ApplicationRecord
 
   delegate :fhir_practitioner, to: :fhir_mapper
 
-  def self.find_or_create_from_cis2_oidc(userinfo, team)
+  def self.find_or_create_from_cis2_oidc(userinfo, teams)
     user =
       User.find_or_initialize_by(
         provider: userinfo[:provider],
@@ -93,19 +93,23 @@ class User < ApplicationRecord
     ActiveRecord::Base.transaction do
       user.save!
 
-      user.teams << team unless user.teams.include?(team)
+      teams.each { |team| user.teams << team unless user.teams.include?(team) }
 
       user
     end
   end
 
-  def selected_team
-    @selected_team ||=
+  def selected_organisation
+    @selected_organisation ||=
       if cis2_info.present?
-        Team.includes(:programmes).find_by(
-          ods_code: cis2_info.dig("selected_org", "code")
-        )
+        Organisation.find_by(ods_code: cis2_info.dig("selected_org", "code"))
       end
+  end
+
+  def selected_team
+    # TODO: Select the right team based on the user's workgroup.
+    @selected_team ||=
+      Team.includes(:programmes).find_by(organisation: selected_organisation)
   end
 
   def requires_email_and_password?

@@ -3,6 +3,7 @@
 class PatientPolicy < ApplicationPolicy
   class Scope < ApplicationPolicy::Scope
     def resolve
+      organisation = user.selected_organisation
       team = user.selected_team
 
       return scope.none if team.nil?
@@ -33,7 +34,7 @@ class PatientPolicy < ApplicationPolicy
           .or(
             VaccinationRecord.where(
               "vaccination_records.patient_id = patients.id"
-            ).where(performed_ods_code: team.ods_code)
+            ).where(performed_ods_code: organisation.ods_code)
           )
           .arel
           .exists

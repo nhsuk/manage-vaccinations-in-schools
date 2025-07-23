@@ -60,13 +60,14 @@ FactoryBot.define do
   factory :vaccination_record do
     transient do
       team do
-        programme.teams.first || association(:team, programmes: [programme])
+        programme.teams.includes(:organisation).first ||
+          association(:team, programmes: [programme])
       end
     end
 
     programme
 
-    performed_ods_code { team.ods_code }
+    performed_ods_code { team.organisation.ods_code }
 
     patient do
       association :patient,

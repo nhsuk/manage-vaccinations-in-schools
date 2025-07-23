@@ -72,12 +72,6 @@ class Team < ApplicationRecord
   validates :privacy_notice_url, presence: true
   validates :privacy_policy_url, presence: true
 
-  delegate :fhir_reference, to: :fhir_mapper
-
-  class << self
-    delegate :fhir_reference, to: FHIRMapper::Team
-  end
-
   def year_groups
     @year_groups ||= location_programme_year_groups.pluck_year_groups
   end
@@ -114,8 +108,4 @@ class Team < ApplicationRecord
   def weeks_before_invitations=(value)
     self.days_before_invitations = value * 7
   end
-
-  private
-
-  def fhir_mapper = @fhir_mapper ||= FHIRMapper::Team.new(self)
 end

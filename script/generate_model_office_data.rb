@@ -185,7 +185,7 @@ def write_vaccination_records_to_file(vaccination_records)
         end
 
       csv << [
-        vaccination_record.team.ods_code,
+        vaccination_record.organisation.ods_code,
         school_urn(vaccination_record.patient),
         school_name,
         vaccination_record.patient.nhs_number,

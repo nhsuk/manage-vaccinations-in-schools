@@ -58,9 +58,9 @@ describe "/api/testing/onboard" do
         expect(errors).to eq(
           {
             "clinics" => ["can't be blank"],
+            "organisation.ods_code" => ["can't be blank"],
             "team.careplus_venue_code" => ["can't be blank"],
             "team.name" => ["can't be blank"],
-            "team.ods_code" => ["can't be blank"],
             "team.phone" => ["can't be blank", "is invalid"],
             "team.privacy_notice_url" => ["can't be blank"],
             "team.privacy_policy_url" => ["can't be blank"],
