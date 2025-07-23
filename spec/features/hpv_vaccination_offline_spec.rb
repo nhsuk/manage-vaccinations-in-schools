@@ -44,7 +44,7 @@ describe "HPV vaccination" do
 
   scenario "User uploads duplicates in an offline recording for a session" do
     given_an_hpv_programme_is_underway_with_a_single_patient
-    and_sync_vaccination_records_to_nhs_on_create_feature_is_enabled
+    and_enqueue_sync_vaccination_records_to_nhs_feature_is_enabled
 
     when_i_choose_to_record_offline_from_a_school_session_page
     and_alter_an_existing_vaccination_record_to_create_a_duplicate
@@ -168,8 +168,8 @@ describe "HPV vaccination" do
     )
   end
 
-  def and_sync_vaccination_records_to_nhs_on_create_feature_is_enabled
-    Flipper.enable(:sync_vaccination_records_to_nhs_on_create)
+  def and_enqueue_sync_vaccination_records_to_nhs_feature_is_enabled
+    Flipper.enable(:enqueue_sync_vaccination_records_to_nhs)
     Flipper.enable(:immunisations_fhir_api_integration)
 
     immunisation_uuid = Random.uuid

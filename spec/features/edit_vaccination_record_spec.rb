@@ -5,7 +5,7 @@ describe "Edit vaccination record" do
     given_i_am_signed_in
     and_an_hpv_programme_is_underway
     and_an_administered_vaccination_record_exists
-    and_sync_vaccination_records_to_nhs_on_create_feature_is_enabled
+    and_enqueue_sync_vaccination_records_to_nhs_feature_is_enabled
 
     when_i_go_to_the_vaccination_records_page
     then_i_should_see_the_vaccination_records
@@ -105,7 +105,7 @@ describe "Edit vaccination record" do
   scenario "Edit outcome to vaccinated" do
     given_i_am_signed_in
     and_an_hpv_programme_is_underway
-    and_sync_vaccination_records_to_nhs_on_create_feature_is_enabled
+    and_enqueue_sync_vaccination_records_to_nhs_feature_is_enabled
     and_a_not_administered_vaccination_record_exists
     and_the_vaccination_confirmation_was_already_sent
 
@@ -141,7 +141,7 @@ describe "Edit vaccination record" do
   scenario "Edit outcome to not vaccinated" do
     given_i_am_signed_in
     and_an_hpv_programme_is_underway
-    and_sync_vaccination_records_to_nhs_on_create_feature_is_enabled
+    and_enqueue_sync_vaccination_records_to_nhs_feature_is_enabled
     and_an_administered_vaccination_record_exists
     and_the_vaccination_confirmation_was_already_sent
 
@@ -298,8 +298,8 @@ describe "Edit vaccination record" do
     end
   end
 
-  def and_sync_vaccination_records_to_nhs_on_create_feature_is_enabled
-    Flipper.enable(:sync_vaccination_records_to_nhs_on_create)
+  def and_enqueue_sync_vaccination_records_to_nhs_feature_is_enabled
+    Flipper.enable(:enqueue_sync_vaccination_records_to_nhs)
     Flipper.enable(:immunisations_fhir_api_integration)
 
     uuid = Random.uuid

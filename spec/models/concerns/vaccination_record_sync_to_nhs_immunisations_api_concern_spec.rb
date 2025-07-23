@@ -9,7 +9,7 @@ describe VaccinationRecordSyncToNHSImmunisationsAPIConcern do
   let(:session) { create(:session, programmes: [programme]) }
 
   describe "#sync_to_nhs_immunisations_api" do
-    before { Flipper.enable(:sync_vaccination_records_to_nhs_on_create) }
+    before { Flipper.enable(:enqueue_sync_vaccination_records_to_nhs) }
 
     it "enqueues the job if the vaccination record is elligible to sync" do
       expect {
@@ -50,7 +50,7 @@ describe VaccinationRecordSyncToNHSImmunisationsAPIConcern do
     end
 
     context "when the feature flag is disabled" do
-      before { Flipper.disable(:sync_vaccination_records_to_nhs_on_create) }
+      before { Flipper.disable(:enqueue_sync_vaccination_records_to_nhs) }
 
       let(:vaccination_record) { create(:vaccination_record) }
 
