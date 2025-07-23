@@ -22,8 +22,13 @@ resource "aws_ecs_cluster" "cluster" {
 module "web_service" {
   source = "./modules/ecs_service"
   task_config = {
-    environment          = local.task_envs
-    secrets              = local.task_secrets
+    environment = local.task_envs
+    secrets = concat(
+      local.task_secrets,
+      [{
+        name      = "ENV_VARS"
+        valueFrom = aws_ssm_parameter.cloud_variables["web"].arn
+    }])
     cpu                  = 1024
     memory               = 2048
     docker_image         = "${var.account_id}.dkr.ecr.eu-west-2.amazonaws.com/${var.docker_image}@${var.image_digest}"
@@ -61,8 +66,13 @@ module "web_service" {
 module "good_job_service" {
   source = "./modules/ecs_service"
   task_config = {
-    environment          = local.task_envs
-    secrets              = local.task_secrets
+    environment = local.task_envs
+    secrets = concat(
+      local.task_secrets,
+      [{
+        name      = "ENV_VARS"
+        valueFrom = aws_ssm_parameter.cloud_variables["good-job"].arn
+    }])
     cpu                  = 1024
     memory               = 2048
     docker_image         = "${var.account_id}.dkr.ecr.eu-west-2.amazonaws.com/${var.docker_image}@${var.image_digest}"
