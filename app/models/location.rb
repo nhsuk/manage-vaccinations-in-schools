@@ -72,7 +72,7 @@ class Location < ApplicationRecord
   end
 
   with_options if: :generic_clinic? do
-    validates :ods_code, inclusion: { in: :team_ods_code }
+    validates :ods_code, absence: true
     validates :subteam, presence: true
   end
 
