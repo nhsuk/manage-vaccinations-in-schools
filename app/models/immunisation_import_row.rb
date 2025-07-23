@@ -784,24 +784,6 @@ class ImmunisationImportRow
       if performed_by_user.nil?
         errors.add(performed_by_email.header, "Enter a valid email address")
       end
-    elsif programme&.flu? # no validation required for HPV
-      if performed_by_given_name.nil?
-        errors.add(
-          :base,
-          "<code>PERFORMING_PROFESSIONAL_FORENAME</code> is required"
-        )
-      elsif performed_by_given_name.blank?
-        errors.add(performed_by_given_name.header, "Enter a first name.")
-      end
-
-      if performed_by_family_name.nil?
-        errors.add(
-          :base,
-          "<code>PERFORMING_PROFESSIONAL_SURNAME</code> is required"
-        )
-      elsif performed_by_family_name.blank?
-        errors.add(performed_by_family_name.header, "Enter a last name.")
-      end
     end
   end
 
