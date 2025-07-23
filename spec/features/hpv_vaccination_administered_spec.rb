@@ -13,6 +13,12 @@ describe "HPV vaccination" do
       "Left arm (upper position)"
     )
     and_i_see_only_not_expired_batches
+    when_i_click_back
+    then_i_see_the_patient_session_page
+
+    and_i_record_that_the_patient_has_been_vaccinated(
+      "Left arm (upper position)"
+    )
     and_i_select_the_batch
     then_i_see_the_confirmation_page
 
@@ -63,6 +69,10 @@ describe "HPV vaccination" do
 
     when_i_go_to_a_patient_that_is_ready_to_vaccinate
     and_i_fill_in_pre_screening_questions
+    and_i_record_that_the_patient_has_been_vaccinated("Other")
+    when_i_click_back
+    then_i_see_the_patient_session_page
+
     and_i_record_that_the_patient_has_been_vaccinated("Other")
     and_i_select_the_delivery
     and_i_select_the_batch
@@ -150,6 +160,10 @@ describe "HPV vaccination" do
     click_link @patient.full_name
   end
 
+  def when_i_click_back
+    click_on "Back"
+  end
+
   def and_i_fill_in_pre_screening_questions
     check "I have checked that the above statements are true"
   end
@@ -171,6 +185,10 @@ describe "HPV vaccination" do
   def and_i_select_the_batch
     choose @active_batch.name
     click_button "Continue"
+  end
+
+  def then_i_see_the_patient_session_page
+    expect(page).to have_content("Session activity and notes")
   end
 
   def then_i_see_the_confirmation_page

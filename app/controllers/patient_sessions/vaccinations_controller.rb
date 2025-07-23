@@ -39,6 +39,8 @@ class PatientSessions::VaccinationsController < PatientSessions::BaseController
       steps.delete(:vaccine) if draft_vaccination_record.vaccine.present?
       steps.delete(:batch) if draft_vaccination_record.batch.present?
 
+      draft_vaccination_record.update!(first_active_wizard_step: steps.first)
+
       redirect_to draft_vaccination_record_path(
                     I18n.t(steps.first, scope: :wicked)
                   )

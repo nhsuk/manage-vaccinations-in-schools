@@ -27,6 +27,7 @@ class DraftVaccinationRecord
   attribute :performed_ods_code, :string
   attribute :programme_id, :integer
   attribute :session_id, :integer
+  attribute :first_active_wizard_step, :string
 
   def initialize(current_user:, **attributes)
     @current_user = current_user

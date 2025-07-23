@@ -6,6 +6,10 @@ describe "HPV vaccination" do
 
     when_i_go_to_a_patient_that_is_ready_to_vaccinate
     and_i_record_that_the_patient_wasnt_vaccinated
+    when_i_click_back
+    then_i_see_the_patient_session_page
+
+    and_i_record_that_the_patient_wasnt_vaccinated
     and_i_select_the_reason_why
     then_i_see_the_confirmation_page
 
@@ -77,6 +81,14 @@ describe "HPV vaccination" do
 
   def when_i_confirm_the_details
     click_button "Confirm"
+  end
+
+  def when_i_click_back
+    click_on "Back"
+  end
+
+  def then_i_see_the_patient_session_page
+    expect(page).to have_content("Session activity and notes")
   end
 
   def then_i_see_a_success_message
