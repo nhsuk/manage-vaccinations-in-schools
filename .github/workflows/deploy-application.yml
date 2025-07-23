@@ -96,17 +96,24 @@ jobs:
             -i "${{ inputs.git_sha_to_deploy || github.sha }}" \
             -o good-job-task-definition.json
           cat good-job-task-definition.json
+      - name: Populate SSM parameters for web service
+        if: inputs.server_types == 'web' || inputs.server_types == 'all'
+        run: |
+          python3 script/populate_ssm_parameters.py ${{ inputs.environment }} web
       - name: Make artifact for web task definition
         uses: actions/upload-artifact@v4
         with:
           name: ${{ inputs.environment }}-web-task-definition
           path: web-task-definition.json
+      - name: Populate SSM parameters for good-job service
+        if: inputs.server_types == 'good-job' || inputs.server_types == 'all'
+        run: |
+          python3 script/populate_ssm_parameters.py ${{ inputs.environment }} good-job
       - name: Make artifact for good-job task definition
         uses: actions/upload-artifact@v4
         with:
           name: ${{ inputs.environment }}-good-job-task-definition
           path: good-job-task-definition.json
-
   approve-deployments:
     name: Approve deployments
     runs-on: ubuntu-latest

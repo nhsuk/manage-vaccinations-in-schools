@@ -8,3 +8,18 @@ resource "aws_ssm_parameter" "environment_config" { #TODO: Remove once all varia
     ignore_changes = all
   }
 }
+
+resource "aws_ssm_parameter" "cloud_variables" {
+  for_each = toset([
+    "web", "good-job"
+  ])
+  name  = "/${var.environment}/envs/${each.value}"
+  type  = "StringList"
+  value = "service=${each.value}"
+
+  lifecycle {
+    ignore_changes = [
+      value
+    ]
+  }
+}
