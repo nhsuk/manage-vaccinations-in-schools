@@ -47,7 +47,7 @@ describe ImmunisationImportRow do
       "PERFORMING_PROFESSIONAL_FORENAME" => "John",
       "PERFORMING_PROFESSIONAL_SURNAME" => "Smith",
       "PROGRAMME" => "Flu",
-      "VACCINE_GIVEN" => "AstraZeneca Fluenz Tetra LAIV"
+      "VACCINE_GIVEN" => "AstraZeneca Fluenz"
     )
   end
   let(:valid_hpv_data) do
@@ -136,10 +136,7 @@ describe ImmunisationImportRow do
 
     context "with an invalid vaccine for the programme" do
       let(:data) do
-        {
-          "PROGRAMME" => "HPV",
-          "VACCINE_GIVEN" => "AstraZeneca Fluenz Tetra LAIV"
-        }
+        { "PROGRAMME" => "HPV", "VACCINE_GIVEN" => "AstraZeneca Fluenz" }
       end
 
       let(:programmes) { [create(:programme, :flu), create(:programme, :hpv)] }
@@ -646,7 +643,7 @@ describe ImmunisationImportRow do
           "ANATOMICAL_SITE" => "left buttock",
           "VACCINATED" => "Y",
           "PROGRAMME" => "Flu",
-          "VACCINE_GIVEN" => "AstraZeneca Fluenz Tetra LAIV",
+          "VACCINE_GIVEN" => "AstraZeneca Fluenz",
           "DATE_OF_VACCINATION" => "#{AcademicYear.current}0901",
           "SESSION_ID" => session.id.to_s
         }

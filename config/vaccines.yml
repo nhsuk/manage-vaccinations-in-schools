@@ -1,101 +1,38 @@
 # Flu
 
-adjuvanted_quadrivalent:
-  brand: Adjuvanted Quadrivalent - aQIV
+cell_based_trivalent:
+  brand: Cell-based Trivalent Influenza Vaccine Seqirus
   type: flu
   method: injection
-  manufacturer: Seqirus
-  nivs_name: Seqirus Adjuvanted Quadrivalent aQIV
+  manufacturer: Sequirus
+  nivs_name: Sequirus Cell-based Trivalent
   dose_volume_ml: 0.5
-  snomed_product_code: 40085311000001103
-  snomed_product_term:
-    Adjuvanted quadrivalent influenza vaccine (surface antigen,
-    inactivated) suspension for injection 0.5ml pre-filled syringes (Seqirus UK
-    Ltd) (product)
+  snomed_product_code: 43207411000001105
+  snomed_product_term: Cell-based trivalent influenza vaccine (surface
+    antigen, inactivated) suspension for injection 0.5ml pre-filled syringes
+    (Seqirus UK Ltd)
 
-cell_quadrivalent:
-  brand: Cell-based Quadrivalent - QIVc
-  type: flu
-  method: injection
-  manufacturer: Seqirus
-  nivs_name: Seqirus Cell based Quadrivalent QIVc
-  dose_volume_ml: 0.5
-  snomed_product_code: 40085011000001101
-  snomed_product_term:
-    Cell-based quadrivalent influenza vaccine (surface antigen,
-    inactivated) suspension for injection 0.5ml pre-filled syringes (Seqirus UK
-    Ltd) (product)
-
-fluad_tetra:
-  brand: Fluad Tetra - aQIV
-  type: flu
-  discontinued: true
-  method: injection
-  manufacturer: Seqirus
-  nivs_name: Seqirus Fluad Tetra AQIV
-  dose_volume_ml: 0.5
-  snomed_product_code: 38973211000001108
-  snomed_product_term:
-    Fluad Tetra vaccine suspension for injection 0.5ml pre-filled
-    syringes (Seqirus UK Ltd) (product)
-
-flucelvax_tetra:
-  brand: Flucelvax Tetra - QIVc
-  type: flu
-  discontinued: true
-  method: injection
-  manufacturer: Seqirus
-  nivs_name: Seqirus Flucelvax Tetra QIVC
-  dose_volume_ml: 0.5
-  snomed_product_code: 36509011000001106
-  snomed_product_term: Flucelvax Tetra vaccine suspension for injection 0.5ml
-    pre-filled syringes (Seqirus UK Ltd) (product)
-
-fluenz_tetra:
-  brand: Fluenz Tetra - LAIV
+fluenz:
+  brand: Fluenz
   type: flu
   method: nasal
   manufacturer: AstraZeneca
-  nivs_name: AstraZeneca Fluenz Tetra LAIV
+  nivs_name: AstraZeneca Fluenz
   dose_volume_ml: 0.2
-  snomed_product_code: 27114211000001105
-  snomed_product_term: Fluenz Tetra vaccine nasal suspension 0.2ml unit dose
-    (AstraZeneca UK Ltd) (product)
+  snomed_product_code: 43208811000001106
+  snomed_product_term: Fluenz (trivalent) vaccine nasal suspension 0.2ml unit
+    dose (AstraZeneca UK Ltd) (product)
 
-quadrivalent_influenza:
-  brand: Quadrivalent Influenza vaccine - QIVe
+vaxigrip:
+  brand: Vaxigrip
   type: flu
   method: injection
   manufacturer: Sanofi
-  nivs_name: Sanofi Pasteur QIVe
+  nivs_name: Sanofi Vaxigrip
   dose_volume_ml: 0.5
-  snomed_product_code: 34680411000001107
-  snomed_product_term:
-    Quadrivalent influenza vaccine (split virion, inactivated)
-    suspension for injection 0.5ml pre-filled syringes (Sanofi) (product)
-
-quadrivalent_influvac_tetra:
-  brand: Quadrivalent Influvac sub-unit Tetra - QIVe
-  type: flu
-  method: injection
-  manufacturer: Mylan
-  nivs_name: Mylan Influvac QIVe
-  dose_volume_ml: 0.5
-  snomed_product_code: 35727111000001109
-  snomed_product_term:
-    Influvac sub-unit Tetra vaccine suspension for injection 0.5ml
-    pre-filled syringes (Viatris UK Healthcare Ltd) (product)
-
-supemtek:
-  brand: Supemtek - QIVr
-  type: flu
-  method: injection
-  manufacturer: Sanofi
-  nivs_name: Sanofi Pasteur Supemtek QIVr
-  dose_volume_ml: 0.5
-  snomed_product_code: 39566211000001103
-  snomed_product_term: Supemtek Quadrivalent vaccine (recombinant) solution for
-    injection 0.5ml pre-filled syringes (Sanofi) (product)
+  snomed_product_code: 45175511000001104
+  snomed_product_term: Vaxigrip Trivalent influenza vaccine (split virion,
+    inactivated) suspension for injection 0.5ml pre-filled syringes (Sanofi)
 
 # HPV
 

@@ -213,10 +213,10 @@ describe Reports::SystmOneExporter do
     end
 
     context "unknown vaccine and no dose sequence" do
-      let(:vaccine) { create(:vaccine, :fluad_tetra) }
+      let(:vaccine) { create(:vaccine, :fluenz) }
       let(:dose_sequence) { 1 }
 
-      it { should eq "Fluad Tetra - aQIV Part 1" }
+      it { should eq "Fluenz Part 1" }
     end
   end
 
@@ -275,12 +275,12 @@ describe Reports::SystmOneExporter do
       let(:programme) do
         create(:programme, :flu, organisations: [organisation])
       end
-      let(:vaccine) { Vaccine.find_by(brand: "Fluenz Tetra - LAIV") }
+      let(:vaccine) { Vaccine.find_by(brand: "Fluenz") }
       let(:delivery_method) { :nasal_spray }
       let(:delivery_site) { :nose }
 
       it "uses the generic SystmOne code" do
-        expect(csv_row["Vaccination"]).to eq "Fluenz Tetra - LAIV Part 1"
+        expect(csv_row["Vaccination"]).to eq "Fluenz Part 1"
       end
 
       it "uses 'Nasal' as the method" do
@@ -296,14 +296,16 @@ describe Reports::SystmOneExporter do
       let(:programme) do
         create(:programme, :flu, organisations: [organisation])
       end
-      let(:vaccine) { Vaccine.find_by(brand: "Adjuvanted Quadrivalent - aQIV") }
+      let(:vaccine) do
+        Vaccine.find_by(brand: "Cell-based Trivalent Influenza Vaccine Seqirus")
+      end
       let(:delivery_method) { :intramuscular }
       let(:delivery_site) { :right_arm_upper_position }
 
       it "uses the generic SystmOne code" do
         expect(
           csv_row["Vaccination"]
-        ).to eq "Adjuvanted Quadrivalent - aQIV Part 1"
+        ).to eq "Cell-based Trivalent Influenza Vaccine Seqirus Part 1"
       end
 
       it "uses 'Intramuscular' as the method" do
