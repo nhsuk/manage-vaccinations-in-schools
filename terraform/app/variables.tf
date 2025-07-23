@@ -175,6 +175,13 @@ variable "enable_splunk" {
   nullable    = false
 }
 
+variable "enable_enhanced_db_monitoring" {
+  type        = bool
+  default     = false
+  description = "Boolean toggle to determine whether enhanced DB monitoring should be enabled."
+  nullable    = false
+}
+
 variable "app_version" {
   type        = string
   description = "The version identifier for the MAVIS application deployment"
