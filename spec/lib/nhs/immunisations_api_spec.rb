@@ -516,6 +516,19 @@ describe NHS::ImmunisationsAPI do
       include_examples "deletes the immunisation record if previously recorded"
     end
 
+    context "the vaccination record is being discarded again" do
+      before do
+        vaccination_record.update!(
+          discarded_at: 3.seconds.ago,
+          nhs_immunisations_api_synced_at: 2.seconds.ago,
+          nhs_immunisations_api_sync_pending_at: 1.second.ago,
+          nhs_immunisations_api_id: Random.uuid
+        )
+      end
+
+      it { should be_nil }
+    end
+
     context "the patient has no NHS number" do
       before { patient.update(nhs_number: nil) }
 
