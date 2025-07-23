@@ -29,7 +29,7 @@
     "esbuild-jest": "^0.5.0",
     "fake-indexeddb": "^4.0.2",
     "jest": "^30.0.5",
-    "jest-environment-jsdom": "^30.0.4",
+    "jest-environment-jsdom": "^30.0.5",
     "jest-fetch-mock": "^3.0.3",
     "mutationobserver-shim": "^0.3.7",
     "officecrypto-tool": "^0.0.18",
