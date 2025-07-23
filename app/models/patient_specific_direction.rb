@@ -39,6 +39,11 @@ class PatientSpecificDirection < ApplicationRecord
   belongs_to :programme
   belongs_to :vaccine
 
+  scope :for_academic_year,
+        ->(academic_year) do
+          where(academic_year: academic_year)
+        end
+
   validates :full_dose, inclusion: { in: [true, false] }
 
   enum :delivery_site,

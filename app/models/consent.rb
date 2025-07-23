@@ -43,7 +43,6 @@
 #
 
 class Consent < ApplicationRecord
-  include BelongsToAcademicYear
   include Invalidatable
   include HasHealthAnswers
   include HasVaccineMethods
@@ -65,6 +64,9 @@ class Consent < ApplicationRecord
   scope :not_withdrawn, -> { where(withdrawn_at: nil) }
 
   scope :response_provided, -> { not_response_not_provided }
+
+  scope :for_academic_year,
+        ->(academic_year) { where(academic_year: academic_year) }
 
   enum :response,
        { given: 0, refused: 1, not_provided: 2 },
@@ -90,8 +92,6 @@ class Consent < ApplicationRecord
        }
 
   encrypts :notes
-
-  academic_year_attribute :submitted_at
 
   validates :notes,
             presence: {
@@ -160,34 +160,33 @@ class Consent < ApplicationRecord
           .consent_form_programmes
           .includes(:programme)
           .map do |consent_form_programme|
-            notes =
-              if consent_form_programme.response_given?
-                ""
-              else
-                consent_form.reason_notes.presence || ""
-              end
-            reason_for_refusal =
-              if consent_form_programme.response_given?
-                nil
-              else
-                consent_form.reason
-              end
+          notes =
+            if consent_form_programme.response_given?
+              ""
+            else
+              consent_form.reason_notes.presence || ""
+            end
+          reason_for_refusal =
+            if consent_form_programme.response_given?
+              nil
+            else
+              consent_form.reason
+            end
 
-            patient.consents.create!(
-              consent_form:,
-              health_answers: consent_form.health_answers,
-              notes:,
-              organisation: consent_form.organisation,
-              parent:,
-              programme: consent_form_programme.programme,
-              reason_for_refusal:,
-              recorded_by: current_user,
-              response: consent_form_programme.response,
-              route: "website",
-              submitted_at: consent_form.recorded_at,
-              vaccine_methods: consent_form_programme.vaccine_methods,
-            academic_year: consent_form.academic_year
-          )
+          patient.consents.create!(
+            consent_form:,
+            health_answers: consent_form.health_answers,
+            notes:,
+            organisation: consent_form.organisation,
+            parent:,
+            programme: consent_form_programme.programme,
+            reason_for_refusal:,
+            recorded_by: current_user,
+            response: consent_form_programme.response,
+            route: "website",
+            submitted_at: consent_form.recorded_at,
+            vaccine_methods: consent_form_programme.vaccine_methods,
+          academic_year: consent_form.academic_year)
         end
 
       StatusUpdater.call(patient:)
