@@ -12,7 +12,7 @@ describe "HPV vaccination" do
 
     when_i_record_vaccination_outcomes_to_the_spreadsheet_and_export_it_to_csv
     and_i_upload_the_modified_csv_file
-    then_i_see_there_are_no_previously_imported_records
+    then_i_see_the_successful_import
     when_i_navigate_to_the_session_page
     then_i_see_the_uploaded_vaccination_outcomes_reflected_in_the_session
 
@@ -32,7 +32,7 @@ describe "HPV vaccination" do
 
     when_i_record_vaccination_outcomes_to_the_spreadsheet_and_export_it_to_csv
     and_i_upload_the_modified_csv_file
-    then_i_see_there_are_no_previously_imported_records
+    then_i_see_the_successful_import
     when_i_navigate_to_the_clinic_page
     then_i_see_the_uploaded_vaccination_outcomes_reflected_in_the_session
     and_the_clinic_location_is_displayed
@@ -438,10 +438,12 @@ describe "HPV vaccination" do
     )
   end
 
-  def then_i_see_there_are_no_previously_imported_records
+  def then_i_see_the_successful_import
     expect(page).to have_content("Completed")
     expect(page).not_to have_content("Invalid")
-    expect(page).to have_content("0 previously imported records were omitted")
+
+    expect(page).to have_content("4 vaccination records")
+    expect(page).to have_content("2 previously imported records were omitted")
   end
 
   def then_i_see_a_duplicate_record_needs_review
