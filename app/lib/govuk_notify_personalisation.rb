@@ -54,8 +54,6 @@ class GovukNotifyPersonalisation
       next_session_dates:,
       next_session_dates_or:,
       not_catch_up:,
-      organisation_privacy_notice_url: team_privacy_notice_url,
-      organisation_privacy_policy_url: team_privacy_policy_url,
       outcome_administered:,
       outcome_not_administered:,
       patient_date_of_birth:,
