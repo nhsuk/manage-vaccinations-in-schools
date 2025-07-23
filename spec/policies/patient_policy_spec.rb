@@ -83,7 +83,7 @@ describe PatientPolicy do
         create(
           :vaccination_record,
           patient: patient_with_vaccination_record,
-          performed_ods_code: team.ods_code,
+          performed_ods_code: team.organisation.ods_code,
           programme: programmes.first
         )
         create(

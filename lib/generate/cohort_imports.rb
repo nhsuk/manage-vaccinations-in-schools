@@ -26,8 +26,9 @@ Faker::Config.locale = "en-GB"
 #
 # You can pull out the year groups with the following:
 #
-#     org = Team.find_by(ods_code: "A9A5A")
-#     org.locations.school.pluck(:urn, :year_groups) .to_h
+#     org = Organisation.find_by(ods_code: "A9A5A")
+#     team = org.teams.find_by(name: "")
+#     team.locations.school.pluck(:urn, :year_groups) .to_h
 #
 module Generate
   class CohortImports
@@ -47,7 +48,8 @@ module Generate
       patient_count: 10,
       progress_bar: nil
     )
-      @team = Team.find_by(ods_code:)
+      # TODO: Select the right team based on an identifier.
+      @team = Team.joins(:organisation).find_by(organisation: { ods_code: })
       @programme = Programme.find_by(type: programme)
       @urns =
         urns || @team.locations.select { it.urn.present? }.sample(3).pluck(:urn)
@@ -69,9 +71,11 @@ module Generate
 
     private
 
+    delegate :organisation, to: :team
+
     def cohort_import_csv_filepath
       Rails.root.join(
-        "tmp/perf-test-cohort-import-#{team.ods_code}-#{programme.type}.csv"
+        "tmp/perf-test-cohort-import-#{organisation.ods_code}-#{programme.type}.csv"
       )
     end
 

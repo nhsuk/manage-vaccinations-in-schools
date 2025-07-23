@@ -18,7 +18,8 @@ describe Reports::ProgrammeVaccinationsExporter do
 
   shared_examples "generates a report" do
     let(:programmes) { [programme] }
-    let(:team) { create(:team, programmes:) }
+    let(:organisation) { create(:organisation) }
+    let(:team) { create(:team, organisation:, programmes:) }
     let(:user) do
       create(
         :user,
@@ -149,7 +150,7 @@ describe Reports::ProgrammeVaccinationsExporter do
                 "LOCAL_PATIENT_ID" => patient.id.to_s,
                 "NHS_NUMBER" => patient.nhs_number,
                 "NHS_NUMBER_STATUS_CODE" => "02",
-                "ORGANISATION_CODE" => team.ods_code,
+                "ORGANISATION_CODE" => organisation.ods_code,
                 "PERFORMING_PROFESSIONAL_EMAIL" => "nurse@example.com",
                 "PERFORMING_PROFESSIONAL_FORENAME" => "Nurse",
                 "PERFORMING_PROFESSIONAL_SURNAME" => "Test",
@@ -300,7 +301,7 @@ describe Reports::ProgrammeVaccinationsExporter do
                 "LOCAL_PATIENT_ID" => patient.id.to_s,
                 "NHS_NUMBER" => patient.nhs_number,
                 "NHS_NUMBER_STATUS_CODE" => "02",
-                "ORGANISATION_CODE" => team.ods_code,
+                "ORGANISATION_CODE" => organisation.ods_code,
                 "PERFORMING_PROFESSIONAL_EMAIL" => "nurse@example.com",
                 "PERFORMING_PROFESSIONAL_FORENAME" => "Nurse",
                 "PERFORMING_PROFESSIONAL_SURNAME" => "Test",

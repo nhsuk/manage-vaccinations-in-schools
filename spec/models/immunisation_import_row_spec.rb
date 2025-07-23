@@ -1165,7 +1165,7 @@ describe ImmunisationImportRow do
           valid_data.merge(
             "DATE_OF_VACCINATION" => session.dates.first.strftime("%Y%m%d"),
             "SESSION_ID" => session.id.to_s,
-            "ORGANISATION_CODE" => team.ods_code,
+            "ORGANISATION_CODE" => team.organisation.ods_code,
             "PERFORMING_PROFESSIONAL_EMAIL" => create(:user).email,
             "DOSE_SEQUENCE" => "1"
           )

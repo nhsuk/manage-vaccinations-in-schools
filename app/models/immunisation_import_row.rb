@@ -221,6 +221,8 @@ class ImmunisationImportRow
 
   private
 
+  delegate :organisation, to: :team
+
   def location_name
     return unless session.nil? || session.location.generic_clinic?
 
@@ -790,7 +792,7 @@ class ImmunisationImportRow
         errors.add(:base, "<code>ORGANISATION_CODE</code> is required")
       elsif performed_ods_code.blank?
         errors.add(performed_ods_code.header, "Enter an team code.")
-      elsif performed_ods_code.to_s != team.ods_code
+      elsif performed_ods_code.to_s != organisation.ods_code
         errors.add(
           performed_ods_code.header,
           "Enter an team code that matches the current team."

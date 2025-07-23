@@ -9,17 +9,17 @@ class Users::TeamsController < ApplicationController
   layout "two_thirds"
 
   def new
-    @teams = current_user.teams
+    @teams = current_user.teams.includes(:organisation)
   end
 
   def create
-    team = current_user.teams.find(params[:team_id])
+    team = current_user.teams.includes(:organisation).find(params[:team_id])
 
     if team.present?
       session["cis2_info"] = {
         "selected_org" => {
           "name" => team.name,
-          "code" => team.ods_code
+          "code" => team.organisation.ods_code
         },
         "selected_role" => {
           "code" => valid_cis2_roles.first,
