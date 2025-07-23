@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_23_194813) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_23_202655) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -504,6 +504,13 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_23_194813) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "organisations", force: :cascade do |t|
+    t.string "ods_code", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["ods_code"], name: "index_organisations_on_ods_code", unique: true
+  end
+
   create_table "parent_relationships", force: :cascade do |t|
     t.bigint "parent_id", null: false
     t.bigint "patient_id", null: false
@@ -749,7 +756,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_23_194813) do
     t.datetime "updated_at", null: false
     t.string "email"
     t.string "privacy_policy_url", null: false
-    t.string "ods_code", null: false
     t.uuid "reply_to_id"
     t.string "phone"
     t.integer "days_before_consent_requests", default: 21, null: false
@@ -758,8 +764,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_23_194813) do
     t.string "careplus_venue_code", null: false
     t.string "privacy_notice_url", null: false
     t.string "phone_instructions"
+    t.bigint "organisation_id", null: false
     t.index ["name"], name: "index_teams_on_name", unique: true
-    t.index ["ods_code"], name: "index_teams_on_ods_code", unique: true
+    t.index ["organisation_id"], name: "index_teams_on_organisation_id"
   end
 
   create_table "teams_users", id: false, force: :cascade do |t|
@@ -836,8 +843,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_23_194813) do
     t.string "nhs_immunisations_api_etag"
     t.integer "protocol"
     t.datetime "nhs_immunisations_api_sync_pending_at"
+    t.bigint "location_id"
     t.index ["batch_id"], name: "index_vaccination_records_on_batch_id"
     t.index ["discarded_at"], name: "index_vaccination_records_on_discarded_at"
+    t.index ["location_id"], name: "index_vaccination_records_on_location_id"
     t.index ["nhs_immunisations_api_id"], name: "index_vaccination_records_on_nhs_immunisations_api_id", unique: true
     t.index ["patient_id"], name: "index_vaccination_records_on_patient_id"
     t.index ["performed_by_user_id"], name: "index_vaccination_records_on_performed_by_user_id"
@@ -973,6 +982,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_23_194813) do
   add_foreign_key "subteams", "teams"
   add_foreign_key "team_programmes", "programmes"
   add_foreign_key "team_programmes", "teams"
+  add_foreign_key "teams", "organisations"
   add_foreign_key "triage", "patients"
   add_foreign_key "triage", "programmes"
   add_foreign_key "triage", "teams"
