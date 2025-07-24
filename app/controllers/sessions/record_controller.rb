@@ -4,11 +4,11 @@ require "pagy/extras/array"
 
 class Sessions::RecordController < ApplicationController
   include Pagy::Backend
-  include SearchFormConcern
+  include PatientSearchFormConcern
   include TodaysBatchConcern
 
   before_action :set_session
-  before_action :set_search_form
+  before_action :set_patient_search_form
 
   before_action :set_todays_batches, only: :show
   before_action :set_programme, except: :show

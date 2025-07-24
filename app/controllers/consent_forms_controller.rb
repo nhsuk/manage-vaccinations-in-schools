@@ -2,9 +2,9 @@
 
 class ConsentFormsController < ApplicationController
   include Pagy::Backend
-  include SearchFormConcern
+  include PatientSearchFormConcern
 
-  before_action :set_search_form, only: :search
+  before_action :set_patient_search_form, only: :search
   before_action :set_consent_form, except: :index
   before_action :set_patient, only: %i[edit_match update_match]
 

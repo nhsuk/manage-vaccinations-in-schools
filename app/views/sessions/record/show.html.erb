@@ -40,8 +40,8 @@
 <% if @session.today? %>
   <div class="nhsuk-grid-row">
     <div class="app-grid-column-filters">
-      <%= render AppSearchComponent.new(
-            form: @form,
+      <%= render AppPatientSearchFormComponent.new(
+            @form,
             url: session_record_path(@session),
             programmes: @session.programmes,
             year_groups: @session.year_groups,
