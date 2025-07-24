@@ -59,7 +59,8 @@
 describe VaccinationRecord do
   subject(:vaccination_record) { build(:vaccination_record) }
 
-  it_behaves_like "a model that belongs to an academic year", :performed_at
+  it_behaves_like "a model that belongs to an academic year through a timestamp",
+                  :performed_at
 
   describe "associations" do
     it { should have_one(:identity_check).autosave(true).dependent(:destroy) }

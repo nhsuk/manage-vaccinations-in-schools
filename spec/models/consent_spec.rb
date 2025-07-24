@@ -46,7 +46,7 @@
 describe Consent do
   subject(:consent) { build(:consent) }
 
-  it_behaves_like "a model that belongs to an academic year", :academic_year
+  it_behaves_like "a model that belongs to an academic year"
 
   describe "validations" do
     it { should validate_length_of(:notes).is_at_most(1000) }

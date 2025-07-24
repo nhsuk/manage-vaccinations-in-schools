@@ -34,7 +34,7 @@
 describe PatientSpecificDirection, type: :model do
   subject(:patient_specific_direction) { build(:patient_specific_direction) }
 
-  it_behaves_like "a model that belongs to an academic year", :academic_year
+  it_behaves_like "a model that belongs to an academic year"
 
   describe "associations" do
     it do
