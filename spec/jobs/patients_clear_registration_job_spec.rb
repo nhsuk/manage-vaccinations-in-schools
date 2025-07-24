@@ -34,7 +34,10 @@ describe PatientsClearRegistrationJob do
     it "clears the patient with a known academic" do
       expect { perform }.to change {
         patient_with_known_academic_year.reload.registration
-      }.to(nil).and change(patient_with_known_academic_year, :registration_academic_year).to(nil)
+      }.to(nil).and change(
+              patient_with_known_academic_year,
+              :registration_academic_year
+            ).to(nil)
     end
 
     it "clears the patient with an unknown academic year" do
