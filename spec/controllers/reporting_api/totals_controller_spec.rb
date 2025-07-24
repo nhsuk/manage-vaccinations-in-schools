@@ -7,22 +7,22 @@ RSpec.describe ReportingAPI::TotalsController do
   let(:org) { user.organisations.first }
 
   let(:valid_payload) do
-      {
-        data: {
-          user: user.as_json,
-          cis2_info: {
-            selected_org: {
-              name: org.name,
-              code: org.ods_code
-            },
-            selected_role: {
-              code: "S8000:G8000:R8001",
-              workgroups: ["schoolagedimmunisations"]
-            }
+    {
+      data: {
+        user: user.as_json,
+        cis2_info: {
+          selected_org: {
+            name: org.name,
+            code: org.ods_code
+          },
+          selected_role: {
+            code: "S8000:G8000:R8001",
+            workgroups: ["schoolagedimmunisations"]
           }
         }
       }
-    end
+    }
+  end
 
   let(:invalid_payload) { { user: { id: -1 } } }
 
@@ -50,8 +50,10 @@ RSpec.describe ReportingAPI::TotalsController do
       end
     end
   end
+
   context "when the :reporting_app feature flag is enabled" do
     before { Flipper.enable(:reporting_app) }
+
     describe "#index" do
       context "when the request has a JWT param" do
         let(:params) { { jwt: jwt } }

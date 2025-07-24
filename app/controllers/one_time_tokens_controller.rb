@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
 class OneTimeTokensController < ApplicationController
+  protect_from_forgery unless: -> { request.format.json? }
   include TokenAuthenticationConcern
 
-  skip_before_action :authenticate_user!, :verify_authenticity_token
+  skip_before_action :authenticate_user!
   before_action :authenticate_app_by_client_id!, :verify_grant_type!
 
   def authorize
@@ -19,7 +20,10 @@ class OneTimeTokensController < ApplicationController
   private
 
   def verify_grant_type!
-    render json: { error: "unsupported_grant_type" }, status: :bad_request and return unless params['grant_type'] == 'authorization_code'
+    unless params["grant_type"] == "authorization_code"
+      render json: { error: "unsupported_grant_type" }, status: :bad_request and
+        return
+    end
   end
 
   def jwt_payload(token)

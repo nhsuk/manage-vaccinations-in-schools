@@ -15,15 +15,19 @@ RSpec.describe OneTimeTokensController do
 
   describe "#authorize" do
     context "given a valid client_id when reporting_app is enabled" do
-      before do
-        Flipper.enable(:reporting_app)
-      end
+      before { Flipper.enable(:reporting_app) }
 
       let(:client_id) { Settings.mavis_reporting_app.client_id }
-      let(:grant_type)  { "some_grant_type" }
+      let(:grant_type) { "some_grant_type" }
 
       let(:do_the_request) do
-        post :authorize, params: { code: token.token, grant_type: grant_type, client_id: client_id }, format: :json
+        post :authorize,
+             params: {
+               code: token.token,
+               grant_type: grant_type,
+               client_id: client_id
+             },
+             format: :json
       end
 
       context "and a valid OneTimeToken in the code param" do
@@ -47,6 +51,7 @@ RSpec.describe OneTimeTokensController do
           end
         end
       end
+
       context "and a grant_type of authorization_code" do
         # this param name and value is required by the OAUTH 2.0 spec
         # see https://datatracker.ietf.org/doc/html/rfc6749#section-4.1.3
@@ -122,7 +127,13 @@ RSpec.describe OneTimeTokensController do
 
         context "and a OneTimeToken in the code param which can't be found in the users table" do
           let(:do_the_request) do
-            post :authorize, params: { code: invalid_token, grant_type: grant_type, client_id: client_id  }, format: :json
+            post :authorize,
+                 params: {
+                   code: invalid_token,
+                   grant_type: grant_type,
+                   client_id: client_id
+                 },
+                 format: :json
           end
           let(:response_json) { JSON.parse(response.body) }
 

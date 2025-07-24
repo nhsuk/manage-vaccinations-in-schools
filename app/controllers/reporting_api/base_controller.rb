@@ -3,7 +3,7 @@
 class ReportingAPI::BaseController < ActionController::API
   # we need to still include the AuthenticationConcern even though
   # we're not using the authenticate_user! callback, because we call it
-  # explicitly after validating the users' JWT in order to use the 
+  # explicitly after validating the users' JWT in order to use the
   # CIS2 organisation/workgroup validation code
   include AuthenticationConcern
   include TokenAuthenticationConcern
