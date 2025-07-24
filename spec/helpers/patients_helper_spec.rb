@@ -81,21 +81,38 @@ describe PatientsHelper do
   end
 
   describe "#patient_year_group" do
-    subject(:patient_year_group) do
-      travel_to(today) { helper.patient_year_group(patient) }
+    subject do
+      travel_to(today) { helper.patient_year_group(patient, academic_year:) }
     end
 
     let(:patient) do
       create(:patient, date_of_birth: Date.new(2010, 1, 1), registration: nil)
     end
+
     let(:today) { Date.new(2024, 1, 1) }
 
-    it { should eq("Year 9") }
+    context "in the current academic year" do
+      let(:academic_year) { today.academic_year }
 
-    context "with a registration" do
-      before { patient.registration = "9AB" }
+      it { should eq("Year 9") }
 
-      it { should eq("Year 9 (9AB)") }
+      context "with a registration" do
+        before { patient.registration = "9AB" }
+
+        it { should eq("Year 9 (9AB)") }
+      end
+    end
+
+    context "in the next academic year" do
+      let(:academic_year) { today.academic_year + 1 }
+
+      it { should eq("Year 10 (2024 to 2025 academic year)") }
+
+      context "with a registration" do
+        before { patient.registration = "9AB" }
+
+        it { should eq("Year 10 (9AB) (2024 to 2025 academic year)") }
+      end
     end
   end
 end

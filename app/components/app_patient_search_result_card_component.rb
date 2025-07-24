@@ -42,7 +42,9 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
         if @show_year_group
           summary_list.with_row do |row|
             row.with_key { "Year group" }
-            row.with_value { helpers.patient_year_group(@patient) }
+            row.with_value do
+              helpers.patient_year_group(@patient, academic_year:)
+            end
           end
         end
         if @show_postcode && !@patient.restricted?
@@ -84,6 +86,8 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
   end
 
   private
+
+  def academic_year = AcademicYear.current
 
   def programme_outcome_tag
     render_status_tag(:vaccination, :programme)

@@ -2,7 +2,7 @@
 
 describe CohortsHelper do
   describe "#format_year_group" do
-    subject(:formatted_year_group) { helper.format_year_group(year_group) }
+    subject { helper.format_year_group(year_group) }
 
     context "when the year group is negative" do
       let(:year_group) { -1 }
