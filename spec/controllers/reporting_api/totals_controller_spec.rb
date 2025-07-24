@@ -1,0 +1,91 @@
+# frozen_string_literal: true
+
+require "spec_helper"
+
+RSpec.describe ReportingAPI::TotalsController do
+  let(:user) { create(:user) }
+  let(:org) { user.organisations.first }
+
+  let(:valid_payload) do
+      {
+        data: {
+          user: user.as_json,
+          cis2_info: {
+            selected_org: {
+              name: org.name,
+              code: org.ods_code
+            },
+            selected_role: {
+              code: "S8000:G8000:R8001",
+              workgroups: ["schoolagedimmunisations"]
+            }
+          }
+        }
+      }
+    end
+
+  let(:invalid_payload) { { user: { id: -1 } } }
+
+  context "when the :reporting_app feature flag is not enabled" do
+    before { Flipper.disable(:reporting_app) }
+
+    describe "#index" do
+      context "when the request has a JWT param" do
+        let(:params) { { jwt: jwt } }
+
+        context "which is valid" do
+          let(:jwt) do
+            JWT.encode(
+              valid_payload,
+              Settings.mavis_reporting_app.secret,
+              "HS512"
+            )
+          end
+
+          it "responds with status :forbidden" do
+            get :index, params: { jwt: jwt }
+            expect(response.status).to eq(403)
+          end
+        end
+      end
+    end
+  end
+  context "when the :reporting_app feature flag is enabled" do
+    before { Flipper.enable(:reporting_app) }
+    describe "#index" do
+      context "when the request has a JWT param" do
+        let(:params) { { jwt: jwt } }
+
+        context "which is valid" do
+          let(:jwt) do
+            JWT.encode(
+              valid_payload,
+              Settings.mavis_reporting_app.secret,
+              "HS512"
+            )
+          end
+
+          it "responds with status 200" do
+            get :index, params: { jwt: jwt }
+            expect(response.status).to eq(200)
+          end
+        end
+
+        context "which is not valid" do
+          let(:jwt) do
+            JWT.encode(
+              invalid_payload,
+              Settings.mavis_reporting_app.secret,
+              "HS512"
+            )
+          end
+
+          it "responds with status :forbidden" do
+            get :index, params: { jwt: jwt }
+            expect(response.status).to eq(403)
+          end
+        end
+      end
+    end
+  end
+end

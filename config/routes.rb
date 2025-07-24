@@ -320,7 +320,7 @@ Rails.application.routes.draw do
 
   # for commissioner reporting app
   post "/tokens/authorize", controller: :one_time_tokens, action: "authorize"
-  namespace :reporting do
+  namespace :reporting_api, path: '/reporting-api/' do
     get "totals", controller: :totals, action: :index
   end
 
