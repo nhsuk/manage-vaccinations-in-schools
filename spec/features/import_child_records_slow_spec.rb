@@ -5,7 +5,6 @@ describe "Import child records" do
 
   scenario "User uploads a large file" do
     given_the_app_is_setup
-    and_an_hpv_programme_is_underway
 
     when_i_visit_the_cohort_page_for_the_hpv_programme
     and_i_start_adding_children_to_the_cohort
@@ -26,14 +25,16 @@ describe "Import child records" do
   end
 
   def given_the_app_is_setup
-    @organisation = create(:organisation, :with_one_nurse)
-    create(:school, urn: "141939")
-    @user = @organisation.users.first
-  end
-
-  def and_an_hpv_programme_is_underway
     programme = create(:programme, :hpv)
-    create(:organisation_programme, organisation: @organisation, programme:)
+    @organisation =
+      create(
+        :organisation,
+        :with_one_nurse,
+        :with_generic_clinic,
+        programmes: [programme]
+      )
+    create(:school, urn: "141939", organisation: @organisation)
+    @user = @organisation.users.first
   end
 
   def when_i_visit_the_cohort_page_for_the_hpv_programme

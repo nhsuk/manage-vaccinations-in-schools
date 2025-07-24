@@ -30,7 +30,9 @@ describe Reports::OfflineSessionExporter do
   subject(:call) { described_class.call(session) }
 
   shared_examples "generates a report" do
-    let(:organisation) { create(:organisation, programmes: [programme]) }
+    let(:organisation) do
+      create(:organisation, :with_generic_clinic, programmes: [programme])
+    end
     let(:user) { create(:user, email: "nurse@example.com", organisation:) }
     let(:team) { create(:team, organisation:) }
     let(:session) do
@@ -104,7 +106,7 @@ describe Reports::OfflineSessionExporter do
         end
         let(:patient_session) { create(:patient_session, patient:, session:) }
         let(:patient) do
-          create(:patient, year_group: programme.year_groups.first)
+          create(:patient, year_group: programme.default_year_groups.first)
         end
 
         it { should be_empty }
@@ -649,7 +651,7 @@ describe Reports::OfflineSessionExporter do
     context "a clinic session" do
       subject(:workbook) { RubyXL::Parser.parse_buffer(call) }
 
-      let(:location) { create(:generic_clinic, team:) }
+      let(:location) { organisation.locations.generic_clinic.first }
 
       it { should_not be_blank }
 
@@ -764,7 +766,7 @@ describe Reports::OfflineSessionExporter do
           let(:patient) do
             create(
               :patient,
-              year_group: programme.year_groups.first,
+              year_group: programme.default_year_groups.first,
               school: create(:school, urn: "123456", name: "Waterloo Road")
             )
           end

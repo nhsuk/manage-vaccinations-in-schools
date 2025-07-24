@@ -48,7 +48,12 @@ describe "End-to-end journey" do
     programme = create(:programme, :hpv)
 
     @organisation =
-      create(:organisation, :with_one_nurse, programmes: [programme])
+      create(
+        :organisation,
+        :with_one_nurse,
+        :with_generic_clinic,
+        programmes: [programme]
+      )
     @school =
       create(
         :school,

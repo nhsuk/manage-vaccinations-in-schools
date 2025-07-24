@@ -25,7 +25,8 @@ class AppConsentCardComponent < ViewComponent::Base
     session_patient_programme_consent_path(session, patient, programme, consent)
   end
 
-  def card_options = { link_to:, colour: "offset", compact: true }
+  def card_options =
+    { link_to:, heading_level: 6, colour: "offset", compact: true }
 
   def heading
     if consent.via_self_consent?

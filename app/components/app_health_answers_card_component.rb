@@ -9,7 +9,7 @@ class AppHealthAnswersCardComponent < ViewComponent::Base
   end
 
   def call
-    render AppCardComponent.new do |card|
+    render AppCardComponent.new(heading_level: 2) do |card|
       card.with_heading { heading }
       render AppHealthAnswersSummaryComponent.new(objects)
     end

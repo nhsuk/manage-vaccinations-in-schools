@@ -9,9 +9,9 @@
 
 <% if @school_moves.any? %>
   <div class="nhsuk-table__panel-with-heading-tab">
-    <h3 class="nhsuk-table__heading-tab">
+    <h2 class="nhsuk-table__heading-tab">
       <%= pluralize(@pagy.count, "school move") %>
-    </h3>
+    </h2>
 
     <%= govuk_table(html_attributes: { class: "nhsuk-table-responsive" }) do |table| %>
       <% table.with_head do |head| %>

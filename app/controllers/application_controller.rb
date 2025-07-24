@@ -14,6 +14,7 @@ class ApplicationController < ActionController::Base
   before_action :set_service_guide_url
   before_action :set_show_navigation
   before_action :set_privacy_policy_url
+  before_action :set_sentry_user
   before_action :authenticate_basic
 
   after_action :verify_policy_scoped, if: -> { Rails.env.local? }
@@ -74,5 +75,9 @@ class ApplicationController < ActionController::Base
 
   def set_privacy_policy_url
     @privacy_policy_url = nil
+  end
+
+  def set_sentry_user
+    Sentry.set_user(id: current_user&.id)
   end
 end

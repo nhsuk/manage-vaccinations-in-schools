@@ -6,8 +6,7 @@
 
     <title><%= page_title(@service_name) %></title>
 
-    <%= stylesheet_link_tag "accessible-autocomplete.min", "data-turbo-track": Rails.env.development? ? "" : "reload" %>
-    <%= stylesheet_link_tag "application", "data-turbo-track": Rails.env.development? ? "" : "reload" %>
+    <%= stylesheet_link_tag current_user.present? ? "application" : "public", "data-turbo-track": Rails.env.development? ? "" : "reload" %>
     <%= javascript_include_tag "application", "data-turbo-track": Rails.env.development? ? "" : "reload", defer: true %>
 
     <%= csrf_meta_tags %>
@@ -17,7 +16,7 @@
     <%= yield :head %>
   </head>
 
-  <body class="nhsuk-template__body<%= ' app-signed-in' if current_user.present? %>">
+  <body class="nhsuk-template__body">
     <script>
       document.body.className += ' js-enabled' +
          ('noModule' in HTMLScriptElement.prototype

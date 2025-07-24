@@ -69,7 +69,8 @@ class SearchForm
 
     scope = scope.search_by_nhs_number(nil) if missing_nhs_number.present?
 
-    scope = scope.in_programmes(programmes) if programmes.present?
+    scope =
+      scope.in_programmes(programmes, academic_year:) if programmes.present?
 
     if (statuses = consent_statuses).present?
       scope = scope.has_consent_status(statuses, programme: programmes)
@@ -99,6 +100,8 @@ class SearchForm
   end
 
   private
+
+  def academic_year = session&.academic_year || AcademicYear.current
 
   def handle_request_session_filters
     if clear_filters

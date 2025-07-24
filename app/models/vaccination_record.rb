@@ -163,6 +163,9 @@ class VaccinationRecord < ApplicationRecord
               less_than_or_equal_to: -> { Time.current }
             }
 
+  after_save :sync_to_nhs_immunisations_api,
+             if: :changes_need_to_be_synced_to_nhs_immunisations_api?
+
   delegate :fhir_record, to: :fhir_mapper
 
   def not_administered?
@@ -182,7 +185,7 @@ class VaccinationRecord < ApplicationRecord
   end
 
   def performed_this_academic_year?
-    academic_year == Date.current.academic_year
+    academic_year == AcademicYear.current
   end
 
   def show_this_academic_year?
@@ -197,6 +200,10 @@ class VaccinationRecord < ApplicationRecord
     DELIVERY_METHOD_SNOMED_CODES_AND_TERMS.fetch(delivery_method).second
   end
 
+  def snomed_procedure_code = vaccine&.snomed_procedure_code(dose_sequence:)
+
+  delegate :snomed_procedure_term, to: :vaccine, allow_nil: true
+
   private
 
   def requires_location_name?
@@ -206,4 +213,11 @@ class VaccinationRecord < ApplicationRecord
   delegate :maximum_dose_sequence, to: :programme
 
   def fhir_mapper = @fhir_mapper ||= FHIRMapper::VaccinationRecord.new(self)
+
+  def changes_need_to_be_synced_to_nhs_immunisations_api?
+    saved_changes.present? && !saved_change_to_nhs_immunisations_api_etag? &&
+      !saved_change_to_nhs_immunisations_api_sync_pending_at? &&
+      !saved_change_to_nhs_immunisations_api_synced_at? &&
+      !saved_change_to_nhs_immunisations_api_id?
+  end
 end

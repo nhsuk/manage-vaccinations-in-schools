@@ -55,7 +55,7 @@ describe "HPV vaccination identity check" do
     programmes = [create(:programme, :hpv)]
     @organisation = create(:organisation, :with_one_nurse, programmes:)
 
-    location = create(:school)
+    location = create(:school, organisation: @organisation)
     @batch =
       create(
         :batch,
@@ -135,12 +135,13 @@ describe "HPV vaccination identity check" do
   end
 
   def and_i_return_to_the_confirmation_page
-    click_on "Continue" until page.has_content?("Check and confirm")
+    5.times { click_on "Continue" }
   end
 
   def and_i_click_continue
     click_button "Continue"
   end
+
   alias_method :when_i_click_continue, :and_i_click_continue
 
   def and_i_select_identity_confirmed_by_someone_else_but_leave_fields_blank

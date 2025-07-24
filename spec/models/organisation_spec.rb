@@ -49,7 +49,7 @@ describe Organisation do
     let(:clinic_locations) { create_list(:community_clinic, 3, organisation:) }
 
     it "returns the clinic locations" do
-      expect(organisation.community_clinics).to eq(clinic_locations)
+      expect(organisation.community_clinics).to match_array(clinic_locations)
     end
   end
 end

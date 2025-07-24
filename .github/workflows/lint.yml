@@ -21,11 +21,8 @@ jobs:
           cache: yarn
           node-version-file: .tool-versions
       - run: yarn install --immutable --immutable-cache --check-cache
-      - uses: hashicorp/setup-terraform@v3
-      - uses: terraform-linters/setup-tflint@v4
-      - run: tflint --chdir=terraform --init
       - uses: jdx/mise-action@v2
         with:
-          version: v2025.7.12
-          install_args: hk pkl
+          install_args: hk pkl tflint terraform
+      - run: tflint --chdir=terraform --init
       - run: hk check --all

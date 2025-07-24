@@ -1,31 +1,25 @@
 # frozen_string_literal: true
 
 module NHS::ImmunisationsAPI
+  PROGRAMME_TYPES = %w[flu hpv].freeze
+
   class << self
     def sync_immunisation(vaccination_record)
-      if vaccination_record.not_administered? || vaccination_record.discarded?
-        raise "Vaccination record delete not supported yet: #{vaccination_record.id}"
-      end
-
-      last_synced_at = vaccination_record.nhs_immunisations_api_synced_at
-      if last_synced_at.present?
-        sync_pending_at =
-          vaccination_record.nhs_immunisations_api_sync_pending_at ||
-            vaccination_record.updated_at
-
-        if last_synced_at > sync_pending_at
-          Rails.logger.info(
-            "Vaccination record already synced: #{vaccination_record.id}"
-          )
-        else
-          update_immunisation(vaccination_record)
-        end
+      case next_sync_action(vaccination_record)
+      when :create
+        create_immunisation(vaccination_record)
+      when :update
+        update_immunisation(vaccination_record)
+      when :delete
+        delete_immunisation(vaccination_record)
       else
-        record_immunisation(vaccination_record)
+        Rails.logger.info(
+          "Vaccination record does not require syncing: #{vaccination_record.id}"
+        )
       end
     end
 
-    def record_immunisation(vaccination_record)
+    def create_immunisation(vaccination_record)
       unless Flipper.enabled?(:immunisations_fhir_api_integration)
         Rails.logger.info(
           "Not recording vaccination record to immunisations API as the" \
@@ -126,7 +120,96 @@ module NHS::ImmunisationsAPI
       end
     end
 
+    def delete_immunisation(vaccination_record)
+      unless Flipper.enabled?(:immunisations_fhir_api_integration)
+        Rails.logger.info(
+          "Not deleting vaccination record from immunisations API as the" \
+            " feature flag is disabled: #{vaccination_record.id}"
+        )
+        return
+      end
+
+      if vaccination_record.nhs_immunisations_api_id.blank?
+        raise "Vaccination record #{vaccination_record.id} missing NHS Immunisation ID"
+      end
+
+      nhs_id = vaccination_record.nhs_immunisations_api_id
+      response =
+        NHS::API.connection.delete(
+          "/immunisation-fhir-api/FHIR/R4/Immunization/#{nhs_id}",
+          nil,
+          {
+            "Accept" => "application/fhir+json",
+            "E-Tag" => vaccination_record.nhs_immunisations_api_etag
+          }
+        )
+
+      if response.status == 204
+        # It's not entirely clear if the e-tag should be changed here, but
+        # experiments show (by deletind and then re-creating a vaccination
+        # record with an "update") that it appears that the e-tag is incremented
+        # on the reviving update.
+        vaccination_record.update!(
+          nhs_immunisations_api_synced_at: Time.current
+        )
+      else
+        raise "Error deleting vaccination record #{vaccination_record.id} from" \
+                " Immunisations API: unexpected response status" \
+                " #{response.status}"
+      end
+    rescue Faraday::ClientError => e
+      if (diagnostics = extract_error_diagnostics(e&.response)).present?
+        raise "Error deleting vaccination record #{vaccination_record.id} from" \
+                " Immunisations API: #{diagnostics}"
+      else
+        raise
+      end
+    end
+
     private
+
+    def next_sync_action(vaccination_record)
+      sync_pending_at = vaccination_record.nhs_immunisations_api_sync_pending_at
+      if sync_pending_at.nil?
+        raise "Cannot sync vaccination record #{vaccination_record.id}:" \
+                " nhs_immunisations_api_sync_pending_at is nil"
+      end
+
+      should_be_recorded = should_be_in_immunisations_api?(vaccination_record)
+      is_recorded = is_recorded_in_immunisations_api?(vaccination_record)
+
+      if is_recorded
+        last_synced_at = vaccination_record.nhs_immunisations_api_synced_at
+        if last_synced_at.nil?
+          raise "Cannot sync vaccination record #{vaccination_record.id}:" \
+                  " nhs_immunisations_api_synced_at is nil"
+        end
+
+        return nil if last_synced_at >= sync_pending_at
+
+        if should_be_recorded && !is_recorded
+          :create
+        elsif should_be_recorded && is_recorded
+          :update
+        elsif is_recorded
+          discarded_at = vaccination_record.discarded_at
+          :delete if discarded_at.nil? || last_synced_at < discarded_at
+        end
+      elsif should_be_recorded
+        :create
+      end
+    end
+
+    def should_be_in_immunisations_api?(vaccination_record)
+      vaccination_record.kept? && vaccination_record.recorded_in_service? &&
+        vaccination_record.administered? &&
+        vaccination_record.programme.type.in?(PROGRAMME_TYPES) &&
+        vaccination_record.patient.nhs_number.present?
+    end
+
+    def is_recorded_in_immunisations_api?(vaccination_record)
+      vaccination_record.nhs_immunisations_api_id.present?
+    end
 
     def extract_error_diagnostics(response)
       return nil if response.nil? || response[:body].blank?
@@ -160,7 +243,7 @@ module NHS::ImmunisationsAPI
       end
 
       if vaccination_record.patient.nhs_number.blank?
-        raise "PatientVaccination record is discarded: #{vaccination_record.id}"
+        raise "Patient nhs number is missing: #{vaccination_record.id}"
       end
     end
   end

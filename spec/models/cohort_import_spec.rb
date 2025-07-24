@@ -34,7 +34,9 @@ describe CohortImport do
   subject(:cohort_import) { create(:cohort_import, csv:, organisation:) }
 
   let(:programmes) { [create(:programme)] }
-  let(:organisation) { create(:organisation, programmes:) }
+  let(:organisation) do
+    create(:organisation, :with_generic_clinic, programmes:)
+  end
 
   let(:file) { "valid.csv" }
   let(:csv) { fixture_file_upload("spec/fixtures/cohort_import/#{file}") }
@@ -134,7 +136,8 @@ describe CohortImport do
       let(:file) { "valid_iso_8859_1_encoding.csv" }
 
       let(:location) do
-        Location.find_by(urn: "120026") || create(:school, urn: "120026")
+        Location.find_by(urn: "120026") ||
+          create(:school, urn: "120026", organisation:)
       end
 
       it "is valid" do

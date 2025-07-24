@@ -35,7 +35,7 @@ Gets locations held by the service.
 
 ### Body
 
-See [onboarding documentation](onboarding.md).
+See [onboarding documentation](managing-teams.md).
 
 ## `DELETE /organisations/:ods_code`
 

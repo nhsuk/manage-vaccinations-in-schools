@@ -44,18 +44,18 @@ describe AppActivityLogComponent do
 
   shared_examples "card" do |title:, date:, notes: nil, by: nil, programme: nil|
     it "renders card '#{title}'" do
-      expect(rendered).to have_css(".nhsuk-card h3", text: title)
+      expect(rendered).to have_css(".nhsuk-card__heading", text: title)
 
       card =
         if programme
           page
             .all(".nhsuk-card")
             .find do |card_element|
-              card_element.has_css?("h3", text: title) &&
+              card_element.has_css?("h4", text: title) &&
                 card_element.has_css?("strong", text: programme)
             end
         else
-          page.find(".nhsuk-card h3", text: title).ancestor(".nhsuk-card")
+          page.find(".nhsuk-card__heading", text: title).ancestor(".nhsuk-card")
         end
 
       expect(card).to have_css("p", text: date)
@@ -164,9 +164,9 @@ describe AppActivityLogComponent do
     end
 
     it "renders headings in correct order" do
-      expect(rendered).to have_css("h2:nth-of-type(1)", text: "31 May 2024")
-      expect(rendered).to have_css("h2:nth-of-type(2)", text: "30 May 2024")
-      expect(rendered).to have_css("h2:nth-of-type(3)", text: "29 May 2024")
+      expect(rendered).to have_css("h3:nth-of-type(1)", text: "31 May 2024")
+      expect(rendered).to have_css("h3:nth-of-type(2)", text: "30 May 2024")
+      expect(rendered).to have_css("h3:nth-of-type(3)", text: "29 May 2024")
     end
 
     it "has cards" do

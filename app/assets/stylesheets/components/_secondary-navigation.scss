@@ -1,0 +1,92 @@
+@use "../vendor/nhsuk-frontend" as *;
+
+.app-secondary-navigation {
+  margin-left: #{$nhsuk-gutter-half * -1};
+  margin-right: #{$nhsuk-gutter-half * -1};
+
+  @include nhsuk-font(19);
+  @include nhsuk-responsive-margin(5, "bottom");
+
+  @include nhsuk-media-query($from: tablet) {
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+.app-secondary-navigation--sticky {
+  background-color: $color_nhsuk-grey-5;
+  position: sticky;
+  top: 0;
+  z-index: 99;
+}
+
+.app-secondary-navigation__link {
+  display: block;
+  padding: nhsuk-spacing(2) $nhsuk-gutter-half;
+
+  &:link {
+    text-decoration: none;
+  }
+
+  @include nhsuk-link-style-default;
+  @include nhsuk-link-style-no-visited-state;
+
+  @include nhsuk-media-query($from: tablet) {
+    padding: nhsuk-spacing(3) 2px;
+  }
+
+  &[aria-current] {
+    box-shadow: inset $nhsuk-border-width 0 $color_nhsuk-blue;
+    color: $nhsuk-text-color;
+    text-decoration: none;
+
+    @include nhsuk-media-query($from: tablet) {
+      box-shadow: inset 0 ($nhsuk-border-width * -1) $color_nhsuk-blue;
+    }
+  }
+
+  &:focus {
+    box-shadow: inset $nhsuk-focus-width 0 $nhsuk-focus-text-color;
+
+    @include nhsuk-media-query($from: tablet) {
+      box-shadow: inset 0 ($nhsuk-focus-width * -1) $nhsuk-focus-text-color;
+    }
+  }
+}
+
+.app-secondary-navigation__current {
+  font-weight: inherit;
+}
+
+.app-secondary-navigation__link,
+.app-secondary-navigation__current {
+  align-items: center;
+  display: flex;
+  gap: nhsuk-spacing(1);
+
+  .nhsuk-icon {
+    height: 1.5rem;
+    width: 1.5rem;
+  }
+}
+
+.app-secondary-navigation__list {
+  // The list uses box-shadow rather than a border to set a 1px grey line at the
+  // bottom, so that the current item appears on top of the grey line.
+  box-shadow: inset 0 -1px 0 $nhsuk-border-color;
+  display: flex;
+  flex-flow: column;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+
+  @include nhsuk-media-query($from: tablet) {
+    flex-flow: row wrap;
+    gap: nhsuk-spacing(2) nhsuk-spacing(4);
+  }
+}
+
+.app-secondary-navigation__list-item {
+  margin-bottom: 0;
+}

@@ -45,9 +45,11 @@ class Location < ApplicationRecord
 
   has_many :consent_forms
   has_many :patients, foreign_key: :school_id
+  has_many :programme_year_groups
   has_many :sessions
 
   has_one :organisation, through: :team
+  has_many :programmes, -> { distinct }, through: :programme_year_groups
 
   # This is based on the school statuses from the DfE GIAS data.
   enum :status,
@@ -63,16 +65,13 @@ class Location < ApplicationRecord
   validates :url, url: true, allow_nil: true
   validates :urn, uniqueness: true, allow_nil: true
 
-  with_options if: :clinic? do
-    validates :team, presence: true
-  end
-
   with_options if: :community_clinic? do
     validates :ods_code, exclusion: { in: :organisation_ods_code }
   end
 
   with_options if: :generic_clinic? do
     validates :ods_code, inclusion: { in: :organisation_ods_code }
+    validates :team, presence: true
   end
 
   with_options if: :gp_practice? do
@@ -85,13 +84,11 @@ class Location < ApplicationRecord
     validates :urn, presence: true
   end
 
-  normalizes :urn, with: -> { _1.blank? ? nil : _1.strip }
+  normalizes :urn, with: -> { it.blank? ? nil : it.strip }
 
   delegate :fhir_reference, to: :fhir_mapper
 
-  def clinic?
-    generic_clinic? || community_clinic?
-  end
+  def clinic? = generic_clinic? || community_clinic?
 
   def dfe_number
     "#{gias_local_authority_code}#{gias_establishment_number}" if school?
@@ -103,11 +100,28 @@ class Location < ApplicationRecord
     )
   end
 
-  private
+  def create_default_programme_year_groups!(programmes)
+    ActiveRecord::Base.transaction do
+      rows =
+        programmes.flat_map do |programme|
+          programme.default_year_groups.filter_map do |year_group|
+            [id, programme.id, year_group] if year_group.in?(year_groups)
+          end
+        end
 
-  def organisation_ods_code
-    [team&.organisation&.ods_code]
+      Location::ProgrammeYearGroup.import!(
+        %i[location_id programme_id year_group],
+        rows,
+        on_duplicate_key_ignore: true
+      )
+    end
   end
 
-  def fhir_mapper = @fhir_mapper ||= FHIRMapper::Location.new(self)
+  private
+
+  def organisation_ods_code = [team&.organisation&.ods_code].compact
+
+  def fhir_mapper
+    @fhir_mapper ||= FHIRMapper::Location.new(self)
+  end
 end

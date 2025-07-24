@@ -1,0 +1,21 @@
+<% content_for :page_title, "#{@programme.name} – #{t(".title")}" %>
+
+<% content_for :before_main do %>
+  <%= render AppBreadcrumbComponent.new(items: [
+                                          { text: t("dashboard.index.title"), href: dashboard_path },
+                                          { text: t("programmes.index.title"), href: programmes_path },
+                                        ]) %>
+<% end %>
+
+<%= render "programmes/heading" %>
+
+<%= render AppProgrammeNavigationComponent.new(@programme, @academic_year, active: :overview) %>
+
+<%= govuk_button_to "Download vaccination report", programme_reports_path(@programme, @academic_year), secondary: true, class: "nhsuk-u-margin-bottom-5" %>
+
+<%= render AppProgrammeStatsComponent.new(@programme, academic_year: @academic_year) %>
+
+<%= render AppConsentRefusedTableComponent.new(
+      @consents,
+      vaccine_may_contain_gelatine: @programme.vaccine_may_contain_gelatine?,
+    ) %>

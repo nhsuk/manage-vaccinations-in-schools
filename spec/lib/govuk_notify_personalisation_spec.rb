@@ -23,6 +23,16 @@ describe GovukNotifyPersonalisation do
       programmes:
     )
   end
+  let(:team) do
+    create(
+      :team,
+      name: "Organisation",
+      email: "organisation@example.com",
+      phone: "01234 567890",
+      phone_instructions: "option 1",
+      organisation:
+    )
+  end
 
   let(:patient) do
     create(
@@ -33,7 +43,7 @@ describe GovukNotifyPersonalisation do
       year_group: 8
     )
   end
-  let(:location) { create(:school, name: "Hogwarts") }
+  let(:location) { create(:school, name: "Hogwarts", team:) }
   let(:session) do
     create(
       :session,

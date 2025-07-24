@@ -45,7 +45,7 @@ describe "Self-consent" do
     @organisation =
       create(:organisation, :with_one_nurse, programmes: [@programme])
 
-    @school = create(:school)
+    @school = create(:school, organisation: @organisation)
 
     @session =
       create(
@@ -237,6 +237,7 @@ describe "Self-consent" do
 
   def and_the_child_can_give_their_own_consent_that_the_nurse_records
     click_on "Change method"
+
     choose "Child (Gillick competent)"
     5.times { click_on "Continue" }
 

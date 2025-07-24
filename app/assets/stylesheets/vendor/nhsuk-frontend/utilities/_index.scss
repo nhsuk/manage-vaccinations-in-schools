@@ -1,0 +1,7 @@
+@use "../core" as *;
+
+// govuk-components replaces `govuk-` with `nhsuk-`, but NHS.UK frontend
+// uses nhsuk-u-visually-hidden.
+.nhsuk-visually-hidden {
+  @include nhsuk-visually-hidden;
+}

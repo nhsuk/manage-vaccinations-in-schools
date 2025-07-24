@@ -51,20 +51,26 @@ describe "Child record imports duplicates" do
   end
 
   def given_i_am_signed_in
-    @organisation = create(:organisation, :with_one_nurse)
+    @programme = create(:programme, :hpv)
+    @organisation =
+      create(
+        :organisation,
+        :with_generic_clinic,
+        :with_one_nurse,
+        programmes: [@programme]
+      )
     sign_in @organisation.users.first
   end
 
   def and_an_hpv_programme_is_underway
-    programme = create(:programme, :hpv, organisations: [@organisation])
-
     @school = create(:school, urn: "123456", organisation: @organisation)
+
     @session =
       create(
         :session,
         organisation: @organisation,
         location: @school,
-        programmes: [programme]
+        programmes: [@programme]
       )
   end
 

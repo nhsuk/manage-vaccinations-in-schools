@@ -7,7 +7,9 @@ describe API::OrganisationsController do
   describe "DELETE" do
     let(:programmes) { [create(:programme, :hpv_all_vaccines)] }
 
-    let(:organisation) { create(:organisation, ods_code: "R1L", programmes:) }
+    let(:organisation) do
+      create(:organisation, :with_generic_clinic, ods_code: "R1L", programmes:)
+    end
 
     let(:cohort_import) do
       create(
@@ -35,8 +37,8 @@ describe API::OrganisationsController do
         end
       end
 
-      create(:school, urn: "123456", organisation:) # to match cohort_import/valid.csv
-      create(:school, urn: "110158", organisation:) # to match valid_hpv.csv
+      create(:school, urn: "123456", organisation:, programmes:) # to match cohort_import/valid.csv
+      create(:school, urn: "110158", organisation:, programmes:) # to match valid_hpv.csv
 
       cohort_import.process!
       immunisation_import.process!
@@ -66,7 +68,7 @@ describe API::OrganisationsController do
       expect { delete :destroy, params: { ods_code: "r1l" } }.to(
         change(Organisation, :count)
           .by(-1)
-          .and(change(Team, :count).by(-2))
+          .and(change(Team, :count).by(-1))
           .and(change(Session, :count).by(-1))
           .and(change(CohortImport, :count).by(-1))
           .and(change(ImmunisationImport, :count).by(-1))

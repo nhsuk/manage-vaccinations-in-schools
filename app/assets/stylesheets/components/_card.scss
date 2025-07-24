@@ -1,0 +1,117 @@
+@use "../vendor/nhsuk-frontend" as *;
+@use "../core" as app;
+
+.app-card {
+  &--aqua-green {
+    .nhsuk-card__heading--feature {
+      background-color: $color_nhsuk-aqua-green;
+    }
+  }
+
+  &--dark-orange {
+    .nhsuk-card__heading--feature {
+      background-color: app.$color_dark-orange;
+    }
+  }
+
+  &--green {
+    .nhsuk-card__heading--feature {
+      background-color: $color_nhsuk-green;
+    }
+  }
+
+  &--grey {
+    .nhsuk-card__heading--feature {
+      background-color: $color_nhsuk-grey-1;
+    }
+  }
+
+  &--purple {
+    .nhsuk-card__heading--feature {
+      background-color: $color_nhsuk-purple;
+    }
+  }
+
+  &--red {
+    .nhsuk-card__heading--feature {
+      background-color: $color_nhsuk-red;
+    }
+  }
+
+  &--reversed {
+    background-color: $color_nhsuk-blue;
+    border-color: nhsuk-shade($nhsuk-link-color, 25%);
+    color: $color_nhsuk-white;
+
+    &:active {
+      border-color: nhsuk-shade($nhsuk-link-color, 50%);
+    }
+
+    .nhsuk-card__link {
+      @include nhsuk-link-style-white;
+    }
+  }
+
+  &--offset {
+    background-color: rgba($color_nhsuk-grey-5, 0.5);
+  }
+
+  &--data {
+    display: flex;
+
+    .nhsuk-card__content {
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+    }
+
+    .nhsuk-card__heading {
+      @include nhsuk-typography-weight-normal;
+    }
+
+    .nhsuk-card__description {
+      margin-top: auto;
+
+      @include nhsuk-font-size(48);
+      @include nhsuk-typography-weight-bold;
+    }
+  }
+}
+
+.app-card--compact {
+  @include nhsuk-responsive-margin(3, "bottom");
+
+  .app-button-group {
+    gap: nhsuk-spacing(2);
+    margin-bottom: nhsuk-spacing(1);
+    margin-top: nhsuk-spacing(-4);
+  }
+
+  .nhsuk-card__heading {
+    @include nhsuk-responsive-margin(1, "bottom");
+  }
+
+  .nhsuk-card__content {
+    @include nhsuk-responsive-padding(4);
+    @include nhsuk-responsive-padding(3, "bottom");
+  }
+}
+
+// Used only to simulate CIS2 role switcher
+// @link https://digital.nhs.uk/services/care-identity-service/applications-and-services/cis2-authentication/guidance-for-developers/detailed-guidance/role-selection
+.app-card--button {
+  text-align: left;
+
+  .nhsuk-card__heading {
+    color: $nhsuk-link-color;
+    text-decoration: underline;
+  }
+
+  &:hover .nhsuk-card__heading {
+    color: $nhsuk-link-hover-color;
+  }
+
+  &:active .nhsuk-card__heading {
+    color: $nhsuk-link-active-color;
+  }
+}

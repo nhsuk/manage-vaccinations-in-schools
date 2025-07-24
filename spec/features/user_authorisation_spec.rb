@@ -28,8 +28,10 @@ describe "User authorisation" do
     @other_organisation =
       create(:organisation, :with_one_nurse, programmes: [@programme])
 
-    location = create(:school, name: "Pilot School")
-    other_location = create(:school, name: "Other School")
+    location =
+      create(:school, name: "Pilot School", organisation: @organisation)
+    other_location =
+      create(:school, name: "Other School", organisation: @other_organisation)
     @session =
       create(
         :session,
@@ -91,7 +93,7 @@ describe "User authorisation" do
   end
 
   def when_i_go_to_the_sessions_page_filtered_by_programme
-    visit "/programmes/#{@programme.type}/sessions"
+    visit "/programmes/#{@programme.type}/#{Date.current.academic_year}/sessions"
   end
 
   def then_i_should_only_see_my_sessions

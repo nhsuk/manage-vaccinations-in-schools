@@ -9,9 +9,9 @@
 
   <div class="nhsuk-card__content">
     <section>
-      <h3 class="nhsuk-card__heading nhsuk-heading-s">
+      <h4 class="nhsuk-card__heading nhsuk-heading-s">
         Pre-screening checks
-      </h3>
+      </h4>
 
       <%= f.govuk_radio_buttons_fieldset :identity_check_confirmed_by_patient,
                                          legend: { text: "Has #{patient.given_name} confirmed their identity?", size: nil } do %>
@@ -59,9 +59,9 @@
     <hr class="nhsuk-section-break nhsuk-section-break--visible nhsuk-section-break--l">
 
     <section>
-      <h3 class="nhsuk-card__heading nhsuk-heading-s">
+      <h4 class="nhsuk-card__heading nhsuk-heading-s">
         Is <%= patient.given_name %> ready for their <%= vaccination_name %>?
-      </h3>
+      </h4>
 
       <% hint = "Pre-screening checks must be completed for vaccination to go ahead" %>
 

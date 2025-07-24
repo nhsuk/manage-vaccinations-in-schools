@@ -93,7 +93,7 @@ module Generate
           session: :session_dates,
           patient: %i[consent_statuses vaccination_statuses triage_statuses]
         )
-        .in_programmes([programme])
+        .in_programmes([programme], academic_year: AcademicYear.current)
         .has_consent_status("given", programme:)
         .select { it.patient.consent_given_and_safe_to_vaccinate?(programme:) }
     end

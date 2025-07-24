@@ -70,6 +70,7 @@ class Reports::ProgrammeVaccinationsExporter
       ANATOMICAL_SITE
       ROUTE_OF_VACCINATION
       DOSE_SEQUENCE
+      DOSE_VOLUME
       REASON_NOT_VACCINATED
       LOCAL_PATIENT_ID
       SNOMED_PROCEDURE_CODE
@@ -171,6 +172,7 @@ class Reports::ProgrammeVaccinationsExporter
     location = vaccination_record.location
     patient = vaccination_record.patient
     session = vaccination_record.session
+    vaccine = vaccination_record.vaccine
 
     grouped_consents = consents.fetch(patient.id, [])
     triage = triages[patient.id]
@@ -210,7 +212,7 @@ class Reports::ProgrammeVaccinationsExporter
       vaccination_record.performed_at.to_date.iso8601,
       vaccination_record.performed_at.strftime("%H:%M:%S"),
       programme.name,
-      vaccination_record.vaccine&.nivs_name || "",
+      vaccine&.nivs_name || "",
       vaccination_record.performed_by_user&.email || "",
       vaccination_record.performed_by&.given_name || "",
       vaccination_record.performed_by&.family_name || "",
@@ -219,9 +221,10 @@ class Reports::ProgrammeVaccinationsExporter
       anatomical_site(vaccination_record:),
       route_of_vaccination(vaccination_record:),
       dose_sequence(vaccination_record:),
+      vaccination_record.dose_volume_ml,
       reason_not_vaccinated(vaccination_record:),
       patient.id,
-      programme.snomed_procedure_code,
+      vaccination_record.snomed_procedure_code,
       reason_for_inclusion(vaccination_record:),
       record_created_at(vaccination_record:),
       record_updated_at(vaccination_record:)

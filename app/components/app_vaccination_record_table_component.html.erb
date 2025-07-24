@@ -18,8 +18,7 @@
             <span class="nhsuk-table-responsive__heading">Full name</span>
 
             <% if can_link_to?(vaccination_record) %>
-              <%= link_to vaccination_record.patient.full_name,
-                          programme_vaccination_record_path(vaccination_record.programme, vaccination_record) %>
+              <%= link_to vaccination_record.patient.full_name, vaccination_record_path(vaccination_record) %>
             <% else %>
               <%= vaccination_record.patient.full_name %>
             <% end %>

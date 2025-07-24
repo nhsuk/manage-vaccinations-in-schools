@@ -7,5 +7,7 @@ namespace :organisations do
     programme = Programme.find_by!(type: args[:type])
 
     OrganisationProgramme.find_or_create_by!(organisation:, programme:)
+
+    GenericClinicFactory.call(organisation: organisation.reload)
   end
 end

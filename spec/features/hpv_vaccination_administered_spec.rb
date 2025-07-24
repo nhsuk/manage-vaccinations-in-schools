@@ -5,7 +5,7 @@ describe "HPV vaccination" do
 
   scenario "Administered with common delivery site" do
     given_i_am_signed_in
-    and_sync_vaccination_records_to_nhs_on_create_feature_is_enabled
+    and_enqueue_sync_vaccination_records_to_nhs_feature_is_enabled
 
     when_i_go_to_a_patient_that_is_ready_to_vaccinate
     and_i_fill_in_pre_screening_questions
@@ -76,7 +76,7 @@ describe "HPV vaccination" do
     programme = create(:programme, :hpv_all_vaccines)
     organisation =
       create(:organisation, :with_one_nurse, programmes: [programme])
-    location = create(:school)
+    location = create(:school, organisation:)
 
     programme.vaccines.discontinued.each do |vaccine|
       create(:batch, organisation:, vaccine:)
@@ -106,8 +106,8 @@ describe "HPV vaccination" do
     sign_in organisation.users.first
   end
 
-  def and_sync_vaccination_records_to_nhs_on_create_feature_is_enabled
-    Flipper.enable(:sync_vaccination_records_to_nhs_on_create)
+  def and_enqueue_sync_vaccination_records_to_nhs_feature_is_enabled
+    Flipper.enable(:enqueue_sync_vaccination_records_to_nhs)
     Flipper.enable(:immunisations_fhir_api_integration)
 
     immunisation_uuid = Random.uuid

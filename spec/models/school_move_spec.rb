@@ -53,7 +53,9 @@ describe SchoolMove do
     let(:user) { create(:user) }
 
     let(:programmes) { [create(:programme)] }
-    let(:organisation) { create(:organisation, programmes:) }
+    let(:organisation) do
+      create(:organisation, :with_generic_clinic, programmes:)
+    end
     let(:generic_clinic_session) { organisation.generic_clinic_session }
 
     shared_examples "creates a log entry" do
@@ -275,7 +277,9 @@ describe SchoolMove do
             create(:school_move, :to_school, patient:, school:)
           end
 
-          let(:new_organisation) { create(:organisation, programmes:) }
+          let(:new_organisation) do
+            create(:organisation, :with_generic_clinic, programmes:)
+          end
           let(:school) { create(:school, organisation: new_organisation) }
           let(:new_session) do
             create(
@@ -304,7 +308,9 @@ describe SchoolMove do
             )
           end
 
-          let(:new_organisation) { create(:organisation, programmes:) }
+          let(:new_organisation) do
+            create(:organisation, :with_generic_clinic, programmes:)
+          end
           let(:generic_clinic_session) do
             new_organisation.generic_clinic_session
           end
@@ -387,7 +393,9 @@ describe SchoolMove do
             create(:school_move, :to_school, patient:, school:)
           end
 
-          let(:new_organisation) { create(:organisation, programmes:) }
+          let(:new_organisation) do
+            create(:organisation, :with_generic_clinic, programmes:)
+          end
           let(:school) { create(:school, organisation: new_organisation) }
           let(:new_session) do
             create(
@@ -415,7 +423,9 @@ describe SchoolMove do
             )
           end
 
-          let(:new_organisation) { create(:organisation, programmes:) }
+          let(:new_organisation) do
+            create(:organisation, :with_generic_clinic, programmes:)
+          end
           let(:generic_clinic_session) do
             new_organisation.generic_clinic_session
           end
@@ -499,7 +509,9 @@ describe SchoolMove do
             create(:school_move, :to_school, patient:, school:)
           end
 
-          let(:new_organisation) { create(:organisation, programmes:) }
+          let(:new_organisation) do
+            create(:organisation, :with_generic_clinic, programmes:)
+          end
           let(:school) { create(:school, organisation: new_organisation) }
           let(:new_session) do
             create(
@@ -534,7 +546,9 @@ describe SchoolMove do
               session: organisation.generic_clinic_session
             )
           end
-          let(:new_organisation) { create(:organisation, programmes:) }
+          let(:new_organisation) do
+            create(:organisation, :with_generic_clinic, programmes:)
+          end
           let(:generic_clinic_session) do
             new_organisation.generic_clinic_session
           end
@@ -622,7 +636,9 @@ describe SchoolMove do
             create(:school_move, :to_school, patient:, school:)
           end
 
-          let(:new_organisation) { create(:organisation, programmes:) }
+          let(:new_organisation) do
+            create(:organisation, :with_generic_clinic, programmes:)
+          end
           let(:school) { create(:school, organisation: new_organisation) }
           let(:new_session) do
             create(
@@ -657,7 +673,9 @@ describe SchoolMove do
               session: organisation.generic_clinic_session
             )
           end
-          let(:new_organisation) { create(:organisation, programmes:) }
+          let(:new_organisation) do
+            create(:organisation, :with_generic_clinic, programmes:)
+          end
 
           it "keeps the patient as home-schooled" do
             expect { confirm! }.not_to(change { patient.reload.home_educated })
@@ -738,7 +756,9 @@ describe SchoolMove do
             create(:school_move, :to_school, patient:, school:)
           end
 
-          let(:new_organisation) { create(:organisation, programmes:) }
+          let(:new_organisation) do
+            create(:organisation, :with_generic_clinic, programmes:)
+          end
           let(:school) { create(:school, organisation: new_organisation) }
           let(:new_session) do
             create(
@@ -773,7 +793,9 @@ describe SchoolMove do
               session: organisation.generic_clinic_session
             )
           end
-          let(:new_organisation) { create(:organisation, programmes:) }
+          let(:new_organisation) do
+            create(:organisation, :with_generic_clinic, programmes:)
+          end
           let(:generic_clinic_session) do
             new_organisation.generic_clinic_session
           end
@@ -856,7 +878,9 @@ describe SchoolMove do
             create(:school_move, :to_school, patient:, school:)
           end
 
-          let(:new_organisation) { create(:organisation, programmes:) }
+          let(:new_organisation) do
+            create(:organisation, :with_generic_clinic, programmes:)
+          end
           let(:school) { create(:school, organisation: new_organisation) }
           let(:new_session) do
             create(
@@ -891,7 +915,9 @@ describe SchoolMove do
               session: organisation.generic_clinic_session
             )
           end
-          let(:new_organisation) { create(:organisation, programmes:) }
+          let(:new_organisation) do
+            create(:organisation, :with_generic_clinic, programmes:)
+          end
 
           include_examples "creates a log entry"
           include_examples "sets the patient to home-schooled"

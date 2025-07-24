@@ -7,7 +7,7 @@ class AppRegisterStatusTagComponent < ViewComponent::Base
     @status = status
   end
 
-  def call = govuk_tag(text:, colour:)
+  def call = tag.strong(text, class: ["nhsuk-tag nhsuk-tag--#{colour}"])
 
   private
 

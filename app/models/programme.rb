@@ -45,7 +45,7 @@ class Programme < ApplicationRecord
        { flu: "flu", hpv: "hpv", menacwy: "menacwy", td_ipv: "td_ipv" },
        validate: true
 
-  delegate :fhir_target_disease_coding, :fhir_procedure_coding, to: :fhir_mapper
+  delegate :fhir_target_disease_coding, to: :fhir_mapper
 
   def to_param = type
 
@@ -57,19 +57,15 @@ class Programme < ApplicationRecord
 
   def seasonal? = flu?
 
-  YEAR_GROUPS_BY_TYPE = {
+  DEFAULT_YEAR_GROUPS_BY_TYPE = {
     "flu" => (0..11).to_a,
     "hpv" => (8..11).to_a,
     "menacwy" => (9..11).to_a,
     "td_ipv" => (9..11).to_a
   }.freeze
 
-  def year_groups
-    YEAR_GROUPS_BY_TYPE.fetch(type)
-  end
-
-  def birth_academic_years
-    year_groups.map(&:to_birth_academic_year)
+  def default_year_groups
+    DEFAULT_YEAR_GROUPS_BY_TYPE.fetch(type)
   end
 
   def vaccine_methods = vaccines.map(&:method).uniq
@@ -122,35 +118,6 @@ class Programme < ApplicationRecord
 
   def import_names
     IMPORT_NAMES.fetch(type)
-  end
-
-  SNOMED_PROCEDURE_CODES = {
-    "flu" => "822851000000102",
-    "hpv" => "761841000",
-    "menacwy" => "871874000",
-    "td_ipv" => "866186002"
-  }.freeze
-
-  def snomed_procedure_code
-    SNOMED_PROCEDURE_CODES.fetch(type)
-  end
-
-  SNOMED_PROCEDURE_TERMS = {
-    "flu" => "Seasonal influenza vaccination (procedure)",
-    "hpv" =>
-      "Administration of vaccine product containing only Human " \
-        "papillomavirus antigen (procedure)",
-    "menacwy" =>
-      "Administration of vaccine product containing only Neisseria " \
-        "meningitidis serogroup A, C, W135 and Y antigens (procedure)",
-    "td_ipv" =>
-      "Administration of vaccine product containing only Clostridium " \
-        "tetani and Corynebacterium diphtheriae and Human poliovirus " \
-        "antigens (procedure)"
-  }.freeze
-
-  def snomed_procedure_term
-    SNOMED_PROCEDURE_TERMS.fetch(type)
   end
 
   SNOMED_TARGET_DISEASE_CODES = {

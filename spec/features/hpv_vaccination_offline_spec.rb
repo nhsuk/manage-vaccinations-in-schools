@@ -1,11 +1,9 @@
 # frozen_string_literal: true
 
 describe "HPV vaccination" do
-  around do |example|
-    travel_to(Time.zone.local(2024, 2, 1, 12, 0, 0)) { example.run }
-  end
-
   scenario "Download spreadsheet, record offline at a school session, upload vaccination outcomes back into Mavis" do
+    travel_to(Time.zone.local(2024, 2, 1, 12, 0, 0))
+
     stub_pds_get_nhs_number_to_return_a_patient
 
     given_an_hpv_programme_is_underway
@@ -14,7 +12,8 @@ describe "HPV vaccination" do
 
     when_i_record_vaccination_outcomes_to_the_spreadsheet_and_export_it_to_csv
     and_i_upload_the_modified_csv_file
-    and_i_navigate_to_the_session_page
+    then_i_see_the_successful_import
+    when_i_navigate_to_the_session_page
     then_i_see_the_uploaded_vaccination_outcomes_reflected_in_the_session
 
     when_vaccination_confirmations_are_sent
@@ -23,6 +22,8 @@ describe "HPV vaccination" do
   end
 
   scenario "Download spreadsheet, record offline at a clinic, upload vaccination outcomes back into Mavis" do
+    travel_to(Time.zone.local(2024, 2, 1, 12, 0, 0))
+
     stub_pds_get_nhs_number_to_return_a_patient
 
     given_an_hpv_programme_is_underway(clinic: true)
@@ -31,7 +32,8 @@ describe "HPV vaccination" do
 
     when_i_record_vaccination_outcomes_to_the_spreadsheet_and_export_it_to_csv
     and_i_upload_the_modified_csv_file
-    and_i_navigate_to_the_clinic_page
+    then_i_see_the_successful_import
+    when_i_navigate_to_the_clinic_page
     then_i_see_the_uploaded_vaccination_outcomes_reflected_in_the_session
     and_the_clinic_location_is_displayed
 
@@ -40,12 +42,36 @@ describe "HPV vaccination" do
     and_a_text_is_sent_to_the_parent_confirming_the_vaccination
   end
 
+  scenario "User uploads duplicates in an offline recording for a session" do
+    given_an_hpv_programme_is_underway_with_a_single_patient
+    and_enqueue_sync_vaccination_records_to_nhs_feature_is_enabled
+
+    when_i_choose_to_record_offline_from_a_school_session_page
+    and_alter_an_existing_vaccination_record_to_create_a_duplicate
+    and_i_upload_the_modified_csv_file
+    then_i_see_a_duplicate_record_needs_review
+
+    when_i_review_the_duplicate_record
+    then_i_should_see_the_changes
+
+    when_i_choose_to_keep_the_duplicate_record
+    then_i_should_see_a_success_message
+    and_the_vaccination_record_is_synced_to_nhs
+
+    when_i_change_the_vaccination_outcome_to_not_vaccinated
+    and_i_upload_the_modified_csv_file
+    and_i_review_the_duplicate_record
+    and_i_choose_to_keep_the_duplicate_record
+    then_i_should_see_a_success_message
+    and_the_vaccination_record_is_deleted_from_nhs
+  end
+
   def given_an_hpv_programme_is_underway(clinic: false)
     programmes = [create(:programme, :hpv)]
 
     @organisation =
       create(:organisation, :with_one_nurse, :with_generic_clinic, programmes:)
-    school = create(:school)
+    school = create(:school, organisation: @organisation)
     previous_date = 1.month.ago
 
     if clinic
@@ -112,6 +138,47 @@ describe "HPV vaccination" do
       )
   end
 
+  def given_an_hpv_programme_is_underway_with_a_single_patient
+    programmes = [create(:programme, :hpv)]
+
+    @organisation =
+      create(:organisation, :with_one_nurse, :with_generic_clinic, programmes:)
+    school = create(:school, organisation: @organisation)
+    previous_date = 1.month.ago
+
+    vaccine = programmes.first.vaccines.active.first
+    @batch = create(:batch, :not_expired, organisation: @organisation, vaccine:)
+
+    @session =
+      create(
+        :session,
+        :today,
+        organisation: @organisation,
+        programmes:,
+        location: school
+      )
+
+    @session.session_dates.create!(value: previous_date)
+
+    @previously_vaccinated_patient =
+      create(:patient, :vaccinated, session: @session, school:, year_group: 8)
+    VaccinationRecord.last.update!(
+      performed_at: previous_date,
+      performed_by: @organisation.users.first
+    )
+  end
+
+  def and_enqueue_sync_vaccination_records_to_nhs_feature_is_enabled
+    Flipper.enable(:enqueue_sync_vaccination_records_to_nhs)
+    Flipper.enable(:immunisations_fhir_api_integration)
+
+    immunisation_uuid = Random.uuid
+    @stubbed_post_request = stub_immunisations_api_post(uuid: immunisation_uuid)
+    @stubbed_put_request = stub_immunisations_api_put(uuid: immunisation_uuid)
+    @stubbed_delete_request =
+      stub_immunisations_api_delete(uuid: immunisation_uuid)
+  end
+
   def when_i_choose_to_record_offline_from_a_school_session_page
     sign_in @organisation.users.first
     visit session_path(@session)
@@ -126,6 +193,62 @@ describe "HPV vaccination" do
     click_on "Community clinics"
     click_link "Record offline"
   end
+
+  def and_alter_an_existing_vaccination_record_to_create_a_duplicate
+    expect(page.status_code).to eq(200)
+
+    @workbook = RubyXL::Parser.parse_buffer(page.body)
+    @sheet = @workbook["Vaccinations"]
+    @headers = @sheet[0].cells.map(&:value)
+
+    array = @workbook[0].to_a[1..].map(&:cells).map { it.map(&:value) }
+    csv_table =
+      CSV::Table.new(
+        array.map do |row|
+          CSV::Row.new(@headers, row.map { |cell| excel_cell_to_csv(cell) })
+        end
+      )
+
+    row_for_vaccinated_patient = csv_table[0]
+    # row_for_vaccinated_patient["TIME_OF_VACCINATION"] = "10:00:00"
+    row_for_vaccinated_patient["DOSE_SEQUENCE"] = "2"
+    row_for_vaccinated_patient["ANATOMICAL_SITE"] = "Right Upper Arm"
+
+    File.write("tmp/modified.csv", csv_table.to_csv)
+  end
+
+  def when_i_change_the_vaccination_outcome_to_not_vaccinated
+    csv_table = CSV.read("tmp/modified.csv", headers: true)
+
+    row_for_vaccinated_patient = csv_table[0]
+    row_for_vaccinated_patient["VACCINATED"] = "N"
+    row_for_vaccinated_patient["REASON_NOT_VACCINATED"] = "refused"
+    row_for_vaccinated_patient["BATCH_EXPIRY_DATE"] = nil
+    row_for_vaccinated_patient["BATCH_NUMBER"] = nil
+    row_for_vaccinated_patient["ANATOMICAL_SITE"] = nil
+
+    File.write("tmp/modified.csv", csv_table.to_csv)
+  end
+
+  def when_i_review_the_duplicate_record
+    click_on "Review"
+  end
+  alias_method :and_i_review_the_duplicate_record,
+               :when_i_review_the_duplicate_record
+
+  def then_i_should_see_the_changes
+    expect(page).to have_css(
+      ".app-highlight",
+      text: "Right arm (upper position)"
+    )
+  end
+
+  def when_i_choose_to_keep_the_duplicate_record
+    choose "Use duplicate record"
+    click_on "Resolve duplicate"
+  end
+  alias_method :and_i_choose_to_keep_the_duplicate_record,
+               :when_i_choose_to_keep_the_duplicate_record
 
   def then_i_see_an_excel_spreadsheet_for_recording_offline
     expect(page.status_code).to eq(200)
@@ -157,7 +280,7 @@ describe "HPV vaccination" do
     #
     # ideally we could drive Excel here (or similar) but the code below is better than nothing
 
-    array = @workbook[0].to_a[1..].map(&:cells).map { _1.map(&:value) }
+    array = @workbook[0].to_a[1..].map(&:cells).map { it.map(&:value) }
     csv_table =
       CSV::Table.new(
         array.map do |row|
@@ -221,20 +344,16 @@ describe "HPV vaccination" do
 
     attach_file("immunisation_import[csv]", "tmp/modified.csv")
     click_on "Continue"
-
-    expect(page).to have_content("Completed")
-    expect(page).not_to have_content("Invalid")
-    expect(page).to have_content("2 previously imported records were omitted")
   end
 
-  def and_i_navigate_to_the_session_page
+  def when_i_navigate_to_the_session_page
     visit "/dashboard"
     click_on "Sessions", match: :first
     click_on "Scheduled"
     click_on @session.location.name
   end
 
-  def and_i_navigate_to_the_clinic_page
+  def when_i_navigate_to_the_clinic_page
     visit "/dashboard"
     click_on "Sessions", match: :first
     click_on "Scheduled"
@@ -317,5 +436,32 @@ describe "HPV vaccination" do
       :vaccination_not_administered,
       :any
     )
+  end
+
+  def then_i_see_the_successful_import
+    expect(page).to have_content("Completed")
+    expect(page).not_to have_content("Invalid")
+
+    expect(page).to have_content("4 vaccination records")
+    expect(page).to have_content("2 previously imported records were omitted")
+  end
+
+  def then_i_see_a_duplicate_record_needs_review
+    expect(page).to have_content("1 duplicate record needs review")
+  end
+
+  def then_i_should_see_a_success_message
+    expect(page).to have_content("Record updated")
+  end
+
+  def and_the_vaccination_record_is_synced_to_nhs
+    # expect(SyncVaccinationRecordToNHSJob).to have_been_enqueued.exactly(2).times
+    perform_enqueued_jobs(only: SyncVaccinationRecordToNHSJob)
+    expect(@stubbed_post_request).to have_been_requested
+  end
+
+  def and_the_vaccination_record_is_deleted_from_nhs
+    perform_enqueued_jobs(only: SyncVaccinationRecordToNHSJob)
+    expect(@stubbed_delete_request).to have_been_requested
   end
 end

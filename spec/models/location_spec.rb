@@ -175,7 +175,7 @@ describe Location do
           "gias_establishment_number" => nil,
           "gias_local_authority_code" => nil,
           "id" => location.id,
-          "is_attached_to_organisation" => true,
+          "is_attached_to_organisation" => false,
           "name" => location.name,
           "ods_code" => location.ods_code,
           "status" => "unknown",
@@ -191,6 +191,55 @@ describe Location do
       let(:location) { create(:school, team: nil) }
 
       it { should include("is_attached_to_organisation" => false) }
+    end
+  end
+
+  describe "#create_default_programme_year_groups!" do
+    subject(:create_default_programme_year_groups!) do
+      location.create_default_programme_year_groups!(programmes)
+    end
+
+    let(:programmes) { [create(:programme, :flu)] } # years 0 to 11
+
+    context "when the location has no year groups" do
+      let(:location) { create(:school, year_groups: []) }
+
+      it "doesn't create any programme year groups" do
+        expect { create_default_programme_year_groups! }.not_to change(
+          location.programme_year_groups,
+          :count
+        )
+      end
+    end
+
+    context "when the location has fewer year groups than the default" do
+      let(:location) { create(:school, year_groups: (0..3).to_a) }
+
+      it "creates only suitable year groups" do
+        expect { create_default_programme_year_groups! }.to change(
+          location.programme_year_groups,
+          :count
+        ).by(4)
+
+        expect(location.programme_year_groups.pluck(:year_group).sort).to eq(
+          (0..3).to_a
+        )
+      end
+    end
+
+    context "when the location has more year groups than the default" do
+      let(:location) { create(:school, year_groups: (-1..14).to_a) }
+
+      it "creates only suitable year groups" do
+        expect { create_default_programme_year_groups! }.to change(
+          location.programme_year_groups,
+          :count
+        ).by(12)
+
+        expect(location.programme_year_groups.pluck(:year_group).sort).to eq(
+          (0..11).to_a
+        )
+      end
     end
   end
 end

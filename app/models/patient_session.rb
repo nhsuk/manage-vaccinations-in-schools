@@ -72,8 +72,10 @@ class PatientSession < ApplicationRecord
         end
 
   scope :in_programmes,
-        ->(programmes) do
-          joins(:patient).merge(Patient.in_programmes(programmes))
+        ->(programmes, academic_year:) do
+          joins(:patient).merge(
+            Patient.in_programmes(programmes, academic_year:)
+          )
         end
 
   scope :search_by_name,
@@ -108,7 +110,13 @@ class PatientSession < ApplicationRecord
           )
         end
 
-  scope :includes_programmes, -> { preload(:patient, session: :programmes) }
+  scope :includes_programmes,
+        -> do
+          preload(
+            :patient,
+            session: %i[programmes location_programme_year_groups]
+          )
+        end
 
   scope :has_consent_status,
         ->(status, programme:) do

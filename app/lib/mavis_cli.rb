@@ -18,12 +18,16 @@ module MavisCLI
   end
 end
 
+require_relative "mavis_cli/clinics/add_to_organisation"
+require_relative "mavis_cli/clinics/create"
 require_relative "mavis_cli/generate/cohort_imports"
 require_relative "mavis_cli/generate/consents"
 require_relative "mavis_cli/generate/vaccination_records"
 require_relative "mavis_cli/gias/check_import"
 require_relative "mavis_cli/gias/download"
 require_relative "mavis_cli/gias/import"
+require_relative "mavis_cli/schools/add_programme_year_group"
 require_relative "mavis_cli/schools/add_to_organisation"
+require_relative "mavis_cli/schools/remove_programme_year_group"
 require_relative "mavis_cli/vaccination_records/generate_fhir"
 require_relative "mavis_cli/vaccination_records/sync"

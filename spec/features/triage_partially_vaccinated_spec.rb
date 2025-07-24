@@ -28,7 +28,8 @@ describe "Triage" do
   def given_a_td_ipv_programme_with_a_session
     @programme = create(:programme, :td_ipv)
 
-    organisation = create(:organisation, programmes: [@programme])
+    organisation =
+      create(:organisation, :with_generic_clinic, programmes: [@programme])
     @user = create(:nurse, organisations: [organisation])
 
     location = create(:school, :secondary, urn: 123_456, organisation:)

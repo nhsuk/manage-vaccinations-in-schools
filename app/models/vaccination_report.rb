@@ -9,13 +9,16 @@ class VaccinationReport
   end
 
   def self.file_formats(programme)
-    %w[careplus mavis].tap { it << "systm_one" if programme.hpv? }
+    %w[careplus mavis].tap do
+      it << "systm_one" if programme.hpv? || programme.flu?
+    end
   end
 
   attribute :date_from, :date
   attribute :date_to, :date
   attribute :file_format, :string
   attribute :programme_id, :integer
+  attribute :academic_year, :integer
 
   def wizard_steps
     %i[dates file_format]

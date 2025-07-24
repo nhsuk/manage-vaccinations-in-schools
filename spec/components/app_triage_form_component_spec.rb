@@ -14,12 +14,11 @@ describe AppTriageFormComponent do
 
   it { should have_css("h2") }
   it { should have_text("Is it safe to vaccinate") }
-  it { should_not have_css(".app-fieldset__legend--reset") }
 
   describe "without a heading" do
     let(:component) { described_class.new(triage_form, url:, heading: false) }
 
-    it { should have_css(".app-fieldset__legend--reset") }
+    it { should_not have_css("h2") }
   end
 
   describe "hint text and triage options for consented delivery method(s)" do

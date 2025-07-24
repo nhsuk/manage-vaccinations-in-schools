@@ -71,6 +71,7 @@ describe Reports::ProgrammeVaccinationsExporter do
             ANATOMICAL_SITE
             ROUTE_OF_VACCINATION
             DOSE_SEQUENCE
+            DOSE_VOLUME
             REASON_NOT_VACCINATED
             LOCAL_PATIENT_ID
             SNOMED_PROCEDURE_CODE
@@ -94,12 +95,9 @@ describe Reports::ProgrammeVaccinationsExporter do
 
         context "with a vaccinated patient" do
           let(:patient) { create(:patient, session:) }
+          let(:vaccine) { programme.vaccines.active.first }
           let(:batch) do
-            create(
-              :batch,
-              expiry: Date.new(2025, 12, 1),
-              vaccine: programme.vaccines.active.first
-            )
+            create(:batch, expiry: Date.new(2025, 12, 1), vaccine:)
           end
           let(:performed_at) { Time.zone.local(2024, 1, 1, 12, 5, 20) }
 
@@ -130,6 +128,7 @@ describe Reports::ProgrammeVaccinationsExporter do
                 "CONSENT_STATUS" => "",
                 "DATE_OF_VACCINATION" => "2024-01-01",
                 "DOSE_SEQUENCE" => vaccination_record.dose_sequence.to_s,
+                "DOSE_VOLUME" => vaccination_record.dose_volume_ml.to_s,
                 "GILLICK_ASSESSED_BY" => "",
                 "GILLICK_ASSESSMENT_DATE" => "",
                 "GILLICK_ASSESSMENT_NOTES" => "",
@@ -161,7 +160,8 @@ describe Reports::ProgrammeVaccinationsExporter do
                 "ROUTE_OF_VACCINATION" => "intramuscular",
                 "SCHOOL_NAME" => location.name,
                 "SCHOOL_URN" => location.urn,
-                "SNOMED_PROCEDURE_CODE" => programme.snomed_procedure_code,
+                "SNOMED_PROCEDURE_CODE" =>
+                  vaccination_record.snomed_procedure_code,
                 "TIME_OF_VACCINATION" => "12:05:20",
                 "TRIAGED_BY" => "",
                 "TRIAGE_DATE" => "",
@@ -169,7 +169,7 @@ describe Reports::ProgrammeVaccinationsExporter do
                 "TRIAGE_STATUS" => "",
                 "VACCINATED" => "Y",
                 "VACCINE_GIVEN" => vaccination_record.vaccine.nivs_name,
-                "YEAR_GROUP" => programme.year_groups.first.to_s
+                "YEAR_GROUP" => patient.year_group.to_s
               }
             )
           end
@@ -247,12 +247,9 @@ describe Reports::ProgrammeVaccinationsExporter do
 
         context "with a vaccinated patient" do
           let(:patient) { create(:patient, session:) }
+          let(:vaccine) { programmes.first.vaccines.active.first }
           let(:batch) do
-            create(
-              :batch,
-              expiry: Date.new(2025, 12, 1),
-              vaccine: programmes.first.vaccines.active.first
-            )
+            create(:batch, expiry: Date.new(2025, 12, 1), vaccine:)
           end
           let(:performed_at) { Time.zone.local(2024, 1, 1, 12, 5, 20) }
 
@@ -282,6 +279,7 @@ describe Reports::ProgrammeVaccinationsExporter do
                 "CONSENT_STATUS" => "",
                 "DATE_OF_VACCINATION" => "2024-01-01",
                 "DOSE_SEQUENCE" => vaccination_record.dose_sequence.to_s,
+                "DOSE_VOLUME" => vaccination_record.dose_volume_ml.to_s,
                 "GILLICK_ASSESSED_BY" => "",
                 "GILLICK_ASSESSMENT_DATE" => "",
                 "GILLICK_ASSESSMENT_NOTES" => "",
@@ -313,7 +311,8 @@ describe Reports::ProgrammeVaccinationsExporter do
                 "ROUTE_OF_VACCINATION" => "intramuscular",
                 "SCHOOL_NAME" => "",
                 "SCHOOL_URN" => "888888",
-                "SNOMED_PROCEDURE_CODE" => programme.snomed_procedure_code,
+                "SNOMED_PROCEDURE_CODE" =>
+                  vaccination_record.snomed_procedure_code,
                 "TIME_OF_VACCINATION" => "12:05:20",
                 "TRIAGED_BY" => "",
                 "TRIAGE_DATE" => "",
@@ -321,7 +320,7 @@ describe Reports::ProgrammeVaccinationsExporter do
                 "TRIAGE_STATUS" => "",
                 "VACCINATED" => "Y",
                 "VACCINE_GIVEN" => vaccination_record.vaccine.nivs_name,
-                "YEAR_GROUP" => programme.year_groups.first.to_s
+                "YEAR_GROUP" => patient.year_group.to_s
               }
             )
           end

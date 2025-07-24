@@ -124,12 +124,6 @@ Rails.application.routes.draw do
            only: %i[show update],
            path: "draft-vaccination-record/:id"
 
-  resource :vaccination_report,
-           only: %i[show update],
-           path: "draft-vaccination-report/:id" do
-    get "download", on: :member
-  end
-
   resources :immunisation_imports,
             path: "immunisation-imports",
             except: %i[index destroy]
@@ -171,25 +165,20 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :programmes, only: %i[index show], param: :type do
-    member do
-      get "sessions"
-      get "patients"
+  resources :programmes, only: :index, param: :type do
+    get "consent-form", on: :member, action: :consent_form
 
-      get "consent-form", action: "consent_form"
+    scope module: :programmes do
+      resource :overview,
+               path: ":academic_year",
+               only: :show,
+               controller: :overview
+      resources :cohorts, path: ":academic_year/cohorts", only: %i[index show]
+      resources :patients, path: ":academic_year/patients", only: :index
+      resources :reports, path: ":academic_year/reports", only: :create
+      resources :sessions, path: ":academic_year/sessions", only: :index
+      resources :vaccinations, path: ":academic_year/vaccinations", only: :index
     end
-
-    resources :cohorts, only: %i[index show]
-
-    resources :vaccination_records,
-              path: "vaccination-records",
-              only: %i[index show update destroy] do
-      get "destroy", action: :confirm_destroy, on: :member, as: "destroy"
-    end
-
-    resources :vaccination_reports,
-              path: "vaccination-reports",
-              only: %i[create]
   end
 
   resources :school_moves, path: "school-moves", only: %i[index show update]
@@ -297,6 +286,18 @@ Rails.application.routes.draw do
   end
 
   resource :organisation, only: %i[show]
+
+  resources :vaccination_records,
+            path: "vaccination-records",
+            only: %i[show update destroy] do
+    get "destroy", action: :confirm_destroy, on: :member, as: "destroy"
+  end
+
+  resource :vaccination_report,
+           only: %i[show update],
+           path: "vaccination-report/:id" do
+    get "download", on: :member
+  end
 
   resources :vaccines, only: %i[index show] do
     resources :batches, only: %i[create edit new update] do

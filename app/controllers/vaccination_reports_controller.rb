@@ -2,19 +2,21 @@
 
 class VaccinationReportsController < ApplicationController
   before_action :set_vaccination_report
-  before_action :set_programme, only: %i[show update]
+  before_action :set_programme
+  before_action :set_academic_year
 
   include WizardControllerConcern
 
-  skip_after_action :verify_policy_scoped, only: %i[show update download]
+  skip_after_action :verify_policy_scoped
 
-  def create
-    @programme = policy_scope(Programme).find_by(type: params[:programme_type])
+  def show
+    render_wizard
+  end
 
-    @vaccination_report.reset!
-    @vaccination_report.update!(programme: @programme)
+  def update
+    @vaccination_report.assign_attributes(update_params)
 
-    redirect_to vaccination_report_path(Wicked::FIRST_STEP)
+    render_wizard @vaccination_report
   end
 
   def download
@@ -28,16 +30,6 @@ class VaccinationReportsController < ApplicationController
     end
   end
 
-  def show
-    render_wizard
-  end
-
-  def update
-    @vaccination_report.assign_attributes(update_params)
-
-    render_wizard @vaccination_report
-  end
-
   private
 
   def set_vaccination_report
@@ -47,6 +39,11 @@ class VaccinationReportsController < ApplicationController
 
   def set_programme
     @programme = @vaccination_report.programme
+    redirect_to dashboard_path if @programme.nil?
+  end
+
+  def set_academic_year
+    @academic_year = @vaccination_report.academic_year
     redirect_to dashboard_path if @programme.nil?
   end
 

@@ -104,26 +104,23 @@ class Patient < ApplicationRecord
 
   scope :with_notice, -> { deceased.or(restricted).or(invalidated) }
 
-  scope :eligible_for_programmes,
-        ->(programmes) do
-          birth_academic_years =
-            programmes.flat_map(&:birth_academic_years).sort.uniq
-
-          Patient
-            .where("patients.id = patient_sessions.patient_id")
-            .where(birth_academic_year: birth_academic_years)
-            .arel
-            .exists
-        end
-
   scope :in_programmes,
-        ->(programmes) do
+        ->(programmes, academic_year:) do
+          location_programme_year_groups =
+            Location::ProgrammeYearGroup
+              .where("location_id = sessions.location_id")
+              .where("programme_id = session_programmes.programme_id")
+              .where(
+                "year_group = ? - patients.birth_academic_year - 5",
+                academic_year
+              )
+
           where(
             PatientSession
               .joins(session: :session_programmes)
               .where(session_programmes: { programme: programmes })
               .where("patient_sessions.patient_id = patients.id")
-              .where(eligible_for_programmes(programmes))
+              .where(location_programme_year_groups.arel.exists)
               .arel
               .exists
           )

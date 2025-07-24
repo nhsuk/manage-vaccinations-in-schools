@@ -55,7 +55,7 @@ describe Reports::SystmOneExporter do
         "Dose" => vaccination_record.dose_volume_ml.to_s,
         "Reason" => "Routine",
         "Site" => "Left deltoid",
-        "Method" => vaccination_record.delivery_method,
+        "Method" => "Intramuscular",
         "Notes" => vaccination_record.notes
       }
     )
@@ -213,10 +213,10 @@ describe Reports::SystmOneExporter do
     end
 
     context "unknown vaccine and no dose sequence" do
-      let(:vaccine) { create(:vaccine, :fluad_tetra) }
+      let(:vaccine) { create(:vaccine, :fluenz) }
       let(:dose_sequence) { 1 }
 
-      it { should eq "Fluad Tetra - aQIV Part 1" }
+      it { should eq "Fluenz Part 1" }
     end
   end
 
@@ -252,6 +252,68 @@ describe Reports::SystmOneExporter do
           "Town" => "",
           "Postcode" => ""
         )
+      end
+    end
+  end
+
+  describe "Flu vaccine records" do
+    let(:vaccination_record) do
+      create(
+        :vaccination_record,
+        programme:,
+        patient:,
+        session:,
+        performed_at: 1.week.ago,
+        vaccine:,
+        dose_sequence: 1,
+        delivery_method:,
+        delivery_site:
+      )
+    end
+
+    context "for flu nasal" do
+      let(:programme) do
+        create(:programme, :flu, organisations: [organisation])
+      end
+      let(:vaccine) { Vaccine.find_by(brand: "Fluenz") }
+      let(:delivery_method) { :nasal_spray }
+      let(:delivery_site) { :nose }
+
+      it "uses the generic SystmOne code" do
+        expect(csv_row["Vaccination"]).to eq "Fluenz Part 1"
+      end
+
+      it "uses 'Nasal' as the method" do
+        expect(csv_row["Method"]).to eq "Nasal"
+      end
+
+      it "uses 'Nasal' as the site" do
+        expect(csv_row["Site"]).to eq "Nasal"
+      end
+    end
+
+    context "for flu injection" do
+      let(:programme) do
+        create(:programme, :flu, organisations: [organisation])
+      end
+      let(:vaccine) do
+        Vaccine.find_by(brand: "Cell-based Trivalent Influenza Vaccine Seqirus")
+      end
+      let(:delivery_method) { :intramuscular }
+      let(:delivery_site) { :right_arm_upper_position }
+
+      it "uses the generic SystmOne code" do
+        expect(
+          csv_row["Vaccination"]
+        ).to eq "Cell-based Trivalent Influenza Vaccine Seqirus Part 1"
+      end
+
+      it "uses 'Intramuscular' as the method" do
+        expect(csv_row["Method"]).to eq "Intramuscular"
+      end
+
+      it "uses 'Right deltoid' as the site" do
+        expect(csv_row["Site"]).to eq "Right deltoid"
       end
     end
   end

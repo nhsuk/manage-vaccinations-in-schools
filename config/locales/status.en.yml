@@ -40,7 +40,7 @@ en:
         not_attending: Absent from session
         unknown: Not registered yet
       colour:
-        attending: blue
+        attending: aqua-green
         completed: green
         not_attending: red
         unknown: grey

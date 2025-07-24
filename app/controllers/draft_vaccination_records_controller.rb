@@ -123,8 +123,6 @@ class DraftVaccinationRecordsController < ApplicationController
 
     send_vaccination_confirmation(@vaccination_record) if should_notify_parents
 
-    @vaccination_record.sync_to_nhs_immunisations_api
-
     # In case the user navigates back to try and edit the newly created
     # vaccination record.
     @draft_vaccination_record.update!(editing_id: @vaccination_record.id)
@@ -143,7 +141,7 @@ class DraftVaccinationRecordsController < ApplicationController
         return_to: "record"
       )
     else
-      programme_vaccination_record_path(@programme, @vaccination_record)
+      vaccination_record_path(@vaccination_record)
     end
   end
 
@@ -231,7 +229,7 @@ class DraftVaccinationRecordsController < ApplicationController
     @back_link_path =
       if @draft_vaccination_record.editing?
         if current_step == :confirm
-          programme_vaccination_record_path(@programme, @vaccination_record)
+          vaccination_record_path(@vaccination_record)
         else
           wizard_path("confirm")
         end

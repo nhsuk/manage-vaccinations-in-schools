@@ -20,15 +20,13 @@ def create_gp_practices
 end
 
 def create_organisation(ods_code:)
-  organisation =
-    Organisation.find_by(ods_code:) ||
-      FactoryBot.create(:organisation, :with_generic_clinic, ods_code:)
-
-  Programme.all.find_each do |programme|
-    FactoryBot.create(:organisation_programme, organisation:, programme:)
-  end
-
-  organisation
+  Organisation.find_by(ods_code:) ||
+    FactoryBot.create(
+      :organisation,
+      :with_generic_clinic,
+      ods_code:,
+      programmes: Programme.all
+    )
 end
 
 def create_user(organisation:, email: nil, uid: nil, fallback_role: :nurse)
@@ -67,11 +65,11 @@ def attach_sample_of_schools_to(organisation)
     .where(team_id: nil)
     .order("RANDOM()")
     .limit(50)
-    .update_all(team_id: organisation.generic_team.id)
+    .update_all(team_id: organisation.teams.first.id)
 end
 
 def attach_specific_school_to_organisation_if_present(organisation:, urn:)
-  Location.where(urn:).update_all(team_id: organisation.generic_team.id)
+  Location.where(urn:).update_all(team_id: organisation.teams.first.id)
 end
 
 def create_session(
@@ -81,7 +79,7 @@ def create_session(
   completed: false,
   year_groups: nil
 )
-  year_groups ||= programmes.flat_map(&:year_groups).uniq
+  year_groups ||= programmes.flat_map(&:default_year_groups).uniq
 
   Vaccine
     .active

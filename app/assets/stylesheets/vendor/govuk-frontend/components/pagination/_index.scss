@@ -1,0 +1,4 @@
+@use "../../base" as *;
+
+// Use @import as GOV.UK Frontend is not compatible with Sass modules
+@import "pkg:govuk-frontend/dist/govuk/components/pagination";

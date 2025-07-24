@@ -12,7 +12,7 @@ class SendVaccinationConfirmationsJob < ApplicationJob
         .kept
         .where.not(confirmation_sent_at: nil)
         .maximum(:created_at) || 24.hours.ago
-    academic_year = Date.current.academic_year
+    academic_year = AcademicYear.current
 
     VaccinationRecord
       .includes(patient: { consents: :parent })
