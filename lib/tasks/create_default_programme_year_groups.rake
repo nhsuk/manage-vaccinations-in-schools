@@ -9,7 +9,7 @@ task create_default_programme_year_groups: :environment do
         organisation.programmes.flat_map(&:default_year_groups).uniq.sort
 
       organisation.locations.generic_clinic.find_each do |generic_clinic|
-        generic_clinic.update_all(year_groups:)
+        generic_clinic.update!(year_groups:)
         generic_clinic.create_default_programme_year_groups!(
           organisation.programmes
         )
