@@ -32,6 +32,10 @@
 describe GillickAssessment do
   subject(:gillick_assessment) { build(:gillick_assessment) }
 
+  it_behaves_like "a model that belongs to an academic year", :created_at do
+    subject { build(:gillick_assessment, :competent) }
+  end
+
   describe "validations" do
     it { should allow_values(true, false).for(:knows_consequences) }
     it { should allow_values(true, false).for(:knows_delivery) }

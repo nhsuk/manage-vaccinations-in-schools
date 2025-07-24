@@ -32,9 +32,16 @@ class Reports::SystmOneExporter
     nasal_spray: "Nasal"
   }.with_indifferent_access.freeze
 
-  def initialize(organisation:, programme:, start_date:, end_date:)
+  def initialize(
+    organisation:,
+    programme:,
+    academic_year:,
+    start_date:,
+    end_date:
+  )
     @organisation = organisation
     @programme = programme
+    @academic_year = academic_year
     @start_date = start_date
     @end_date = end_date
   end
@@ -53,7 +60,7 @@ class Reports::SystmOneExporter
 
   private
 
-  attr_reader :organisation, :programme, :start_date, :end_date
+  attr_reader :organisation, :programme, :academic_year, :start_date, :end_date
 
   def headers
     [
@@ -87,6 +94,7 @@ class Reports::SystmOneExporter
         .vaccination_records
         .administered
         .where(programme:)
+        .for_academic_year(academic_year)
         .includes(:batch, :location, :vaccine, :patient)
 
     if start_date.present?

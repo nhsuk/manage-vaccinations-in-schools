@@ -323,11 +323,12 @@ describe Patient do
 
   describe "#approved_vaccine_methods" do
     subject(:approved_vaccine_methods) do
-      patient.approved_vaccine_methods(programme:)
+      patient.approved_vaccine_methods(programme:, academic_year:)
     end
 
     let(:patient) { create(:patient) }
     let(:programme) { create(:programme) }
+    let(:academic_year) { Date.current.academic_year }
 
     it { should be_empty }
 
@@ -361,7 +362,7 @@ describe Patient do
 
       context "and when triaged" do
         before do
-          patient.triage_status(programme:).update!(
+          patient.triage_status(programme:, academic_year:).update!(
             status: "safe_to_vaccinate",
             vaccine_method: "nasal"
           )

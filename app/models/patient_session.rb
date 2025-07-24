@@ -120,9 +120,10 @@ class PatientSession < ApplicationRecord
 
   scope :has_consent_status,
         ->(status, programme:) do
-          where(
+          joins(:session).where(
             Patient::ConsentStatus
               .where("patient_id = patient_sessions.patient_id")
+              .where("academic_year = sessions.academic_year")
               .where(status:, programme:)
               .arel
               .exists
@@ -153,9 +154,10 @@ class PatientSession < ApplicationRecord
 
   scope :has_triage_status,
         ->(status, programme:) do
-          where(
+          joins(:session).where(
             Patient::TriageStatus
               .where("patient_id = patient_sessions.patient_id")
+              .where("academic_year = sessions.academic_year")
               .where(status:, programme:)
               .arel
               .exists
@@ -164,22 +166,25 @@ class PatientSession < ApplicationRecord
 
   scope :has_vaccine_method,
         ->(vaccine_method, programme:) do
-          where(
+          joins(:session).where(
             Patient::TriageStatus
               .where("patient_id = patient_sessions.patient_id")
+              .where("academic_year = sessions.academic_year")
               .where(vaccine_method:, programme:)
               .arel
               .exists
           ).or(
-            where(
+            joins(:session).where(
               Patient::TriageStatus
                 .where("patient_id = patient_sessions.patient_id")
+                .where("academic_year = sessions.academic_year")
                 .where(status: "not_required", programme:)
                 .arel
                 .exists
             ).where(
               Patient::ConsentStatus
                 .where("patient_id = patient_sessions.patient_id")
+                .where("academic_year = sessions.academic_year")
                 .where(programme:)
                 .has_vaccine_method(vaccine_method)
                 .arel
@@ -192,10 +197,12 @@ class PatientSession < ApplicationRecord
         ->(programmes:, vaccine_method:) do
           select do |patient_session|
             patient = patient_session.patient
+            session = patient_session.session
 
             programmes.any? do |programme|
               patient.consent_given_and_safe_to_vaccinate?(
                 programme:,
+                academic_year: session.academic_year,
                 vaccine_method:
               )
             end
@@ -211,6 +218,8 @@ class PatientSession < ApplicationRecord
           ).find_each(&:destroy_if_safe!)
         end
 
+  delegate :academic_year, to: :session
+
   def safe_to_destroy?
     vaccination_records.empty? && gillick_assessments.empty? &&
       session_attendances.none?(&:attending?)
@@ -221,7 +230,8 @@ class PatientSession < ApplicationRecord
   end
 
   def can_record_as_already_vaccinated?(programme:)
-    !session.today? && patient.vaccination_status(programme:).none_yet?
+    !session.today? &&
+      patient.vaccination_status(programme:, academic_year:).none_yet?
   end
 
   def programmes = session.eligible_programmes_for(patient:)
@@ -240,13 +250,19 @@ class PatientSession < ApplicationRecord
   end
 
   def next_activity(programme:)
-    return nil if patient.vaccination_status(programme:).vaccinated?
+    if patient.vaccination_status(programme:, academic_year:).vaccinated?
+      return nil
+    end
 
-    return :record if patient.consent_given_and_safe_to_vaccinate?(programme:)
+    if patient.consent_given_and_safe_to_vaccinate?(programme:, academic_year:)
+      return :record
+    end
 
-    return :triage if patient.triage_status(programme:).required?
+    if patient.triage_status(programme:, academic_year:).required?
+      return :triage
+    end
 
-    consent_status = patient.consent_status(programme:)
+    consent_status = patient.consent_status(programme:, academic_year:)
 
     return :consent if consent_status.no_response? || consent_status.conflicts?
 
@@ -268,7 +284,7 @@ class PatientSession < ApplicationRecord
 
     programmes.select do |programme|
       session_status(programme:).none_yet? &&
-        patient.consent_given_and_safe_to_vaccinate?(programme:)
+        patient.consent_given_and_safe_to_vaccinate?(programme:, academic_year:)
     end
   end
 end

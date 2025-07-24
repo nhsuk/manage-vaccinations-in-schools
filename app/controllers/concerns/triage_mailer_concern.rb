@@ -3,7 +3,11 @@
 module TriageMailerConcern
   extend ActiveSupport::Concern
 
-  def send_triage_confirmation(patient_session, consent)
+  def send_triage_confirmation(patient_session, programme, consent)
+    if consent.programme_id != programme.id
+      raise "Consent is for a different programme."
+    end
+
     session = patient_session.session
     patient = patient_session.patient
     organisation = patient_session.organisation
@@ -13,11 +17,11 @@ module TriageMailerConcern
 
     params = { consent:, session:, sent_by: current_user }
 
-    if vaccination_will_happen?(patient, consent)
+    if vaccination_will_happen?(patient, programme, consent)
       EmailDeliveryJob.perform_later(:triage_vaccination_will_happen, **params)
-    elsif vaccination_wont_happen?(patient, consent)
+    elsif vaccination_wont_happen?(patient, programme, consent)
       EmailDeliveryJob.perform_later(:triage_vaccination_wont_happen, **params)
-    elsif vaccination_at_clinic?(patient, consent)
+    elsif vaccination_at_clinic?(patient, programme, consent)
       email_template =
         resolve_email_template(:triage_vaccination_at_clinic, organisation)
       EmailDeliveryJob.perform_later(email_template, **params)
@@ -40,22 +44,28 @@ module TriageMailerConcern
 
   private
 
-  def vaccination_will_happen?(patient, consent)
-    programme_id = consent.programme_id
+  def vaccination_will_happen?(patient, programme, consent)
     consent.requires_triage? &&
-      patient.triage_status(programme_id:).safe_to_vaccinate?
+      patient.triage_status(
+        programme:,
+        academic_year: consent.academic_year
+      ).safe_to_vaccinate?
   end
 
-  def vaccination_wont_happen?(patient, consent)
-    programme_id = consent.programme_id
+  def vaccination_wont_happen?(patient, programme, consent)
     consent.requires_triage? &&
-      patient.triage_status(programme_id:).do_not_vaccinate?
+      patient.triage_status(
+        programme:,
+        academic_year: consent.academic_year
+      ).do_not_vaccinate?
   end
 
-  def vaccination_at_clinic?(patient, consent)
-    programme_id = consent.programme_id
+  def vaccination_at_clinic?(patient, programme, consent)
     consent.requires_triage? &&
-      patient.triage_status(programme_id:).delay_vaccination?
+      patient.triage_status(
+        programme:,
+        academic_year: consent.academic_year
+      ).delay_vaccination?
   end
 
   def resolve_email_template(template_name, organisation)

@@ -3,9 +3,16 @@
 class Reports::ProgrammeVaccinationsExporter
   include Reports::ExportFormatters
 
-  def initialize(organisation:, programme:, start_date:, end_date:)
+  def initialize(
+    organisation:,
+    programme:,
+    academic_year:,
+    start_date:,
+    end_date:
+  )
     @organisation = organisation
     @programme = programme
+    @academic_year = academic_year
     @start_date = start_date
     @end_date = end_date
   end
@@ -24,7 +31,7 @@ class Reports::ProgrammeVaccinationsExporter
 
   private
 
-  attr_reader :organisation, :programme, :start_date, :end_date
+  attr_reader :organisation, :programme, :academic_year, :start_date, :end_date
 
   def headers
     %w[
@@ -85,6 +92,7 @@ class Reports::ProgrammeVaccinationsExporter
       organisation
         .vaccination_records
         .where(programme:)
+        .for_academic_year(academic_year)
         .includes(
           :batch,
           :location,
@@ -129,8 +137,12 @@ class Reports::ProgrammeVaccinationsExporter
         .not_invalidated
         .includes(:parent, :patient)
         .group_by(&:patient_id)
-        .transform_values do
-          ConsentGrouper.call(it, programme_id: programme.id)
+        .transform_values do |consents_for_patient|
+          ConsentGrouper.call(
+            consents_for_patient,
+            programme_id: programme.id,
+            academic_year:
+          )
         end
   end
 
@@ -148,6 +160,7 @@ class Reports::ProgrammeVaccinationsExporter
           },
           programme:
         )
+        .for_academic_year(academic_year)
         .order(:patient_session_id, created_at: :desc)
         .includes(:performed_by)
         .group_by(&:patient_id)
@@ -161,6 +174,7 @@ class Reports::ProgrammeVaccinationsExporter
       Triage
         .select("DISTINCT ON (patient_id) triage.*")
         .where(patient_id: vaccination_records.select(:patient_id), programme:)
+        .for_academic_year(academic_year)
         .not_invalidated
         .order(:patient_id, created_at: :desc)
         .includes(:performed_by)
@@ -177,6 +191,7 @@ class Reports::ProgrammeVaccinationsExporter
     grouped_consents = consents.fetch(patient.id, [])
     triage = triages[patient.id]
     gillick_assessment = gillick_assessments.dig(patient.id, session.id)
+    academic_year = session.academic_year
 
     [
       organisation.ods_code,
@@ -196,7 +211,7 @@ class Reports::ProgrammeVaccinationsExporter
       nhs_number_status_code(patient:),
       patient.gp_practice&.ods_code || "",
       patient.gp_practice&.name || "",
-      consent_status(patient:, programme:),
+      consent_status(patient:, programme:, academic_year:),
       consent_details(consents: grouped_consents),
       health_question_answers(consents: grouped_consents),
       triage&.status&.humanize || "",

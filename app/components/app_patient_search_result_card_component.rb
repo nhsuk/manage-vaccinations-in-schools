@@ -5,6 +5,7 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
     patient,
     link_to:,
     programme: nil,
+    academic_year: nil,
     triage_status: nil,
     show_parents: false,
     show_postcode: false,
@@ -16,6 +17,7 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
     @patient = patient
     @link_to = link_to
     @programme = programme
+    @academic_year = academic_year
     @triage_status = triage_status
 
     @show_parents = show_parents
@@ -61,7 +63,7 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
             row.with_value { helpers.patient_parents(@patient) }
           end
         end
-        if @programme
+        if @programme && @academic_year
           summary_list.with_row do |row|
             row.with_key { "Consent status" }
             row.with_value { consent_status_tag }
@@ -97,7 +99,11 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
 
   def render_status_tag(status_type, outcome)
     status_model =
-      @patient.public_send("#{status_type}_status", programme: @programme)
+      @patient.public_send(
+        "#{status_type}_status",
+        programme: @programme,
+        academic_year: @academic_year
+      )
 
     status_key =
       if status_type == :triage && status_model.vaccine_method.present? &&
@@ -116,6 +122,9 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
   def display_triage_status?
     return true if @triage_status.present?
 
-    @patient.triage_status(programme: @programme).required?
+    @patient.triage_status(
+      programme: @programme,
+      academic_year: @academic_year
+    ).required?
   end
 end

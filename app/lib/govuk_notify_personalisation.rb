@@ -15,6 +15,9 @@ class GovukNotifyPersonalisation
     session: nil,
     vaccination_record: nil
   )
+    @academic_year =
+      consent&.academic_year || consent_form&.academic_year ||
+        session&.academic_year || vaccination_record&.academic_year
     @consent = consent
     @consent_form = consent_form
     @parent = parent || consent&.parent
@@ -78,7 +81,8 @@ class GovukNotifyPersonalisation
     }.compact
   end
 
-  attr_reader :consent,
+  attr_reader :academic_year,
+              :consent,
               :consent_form,
               :parent,
               :patient,
@@ -354,7 +358,10 @@ class GovukNotifyPersonalisation
             # We pick the first method as it's the one most likely to be used
             # to vaccinate the patient. For example, in the case of Flu, the
             # parents will approve nasal (and then optionally injection).
-            patient.approved_vaccine_methods(programme:).first == method
+            patient.approved_vaccine_methods(
+              programme:,
+              academic_year:
+            ).first == method
           end
         else
           Vaccine.where(programme: programmes, method:).exists?
@@ -374,7 +381,8 @@ class GovukNotifyPersonalisation
             # We pick the first method as it's the one most likely to be used
             # to vaccinate the patient. For example, in the case of Flu, the
             # parents will approve nasal (and then optionally injection).
-            method = patient.approved_vaccine_methods(programme:).first
+            method =
+              patient.approved_vaccine_methods(programme:, academic_year:).first
             Vaccine.where(programme:, method:).flat_map(&:side_effects)
           end
         else
@@ -410,7 +418,7 @@ class GovukNotifyPersonalisation
                 vaccination_record.delivery_method
               )
             elsif patient
-              patient.approved_vaccine_methods(programme:).first
+              patient.approved_vaccine_methods(programme:, academic_year:).first
             end
 
           method_prefix =

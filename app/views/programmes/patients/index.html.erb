@@ -35,6 +35,7 @@
               patient,
               link_to: patient_path(patient),
               programme: @programme,
+              academic_year: Date.current.academic_year,
               triage_status: @form.triage_status,
               show_year_group: true,
             ) %>

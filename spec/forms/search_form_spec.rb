@@ -154,7 +154,7 @@ describe SearchForm do
 
       let(:programme) { create(:programme) }
 
-      it "filters on session status" do
+      it "filters on programme status" do
         patient = create(:patient, :vaccinated, programmes: [programme])
         session = create(:session, programmes: [programme])
         create(:patient_session, patient:, session:)
@@ -274,17 +274,14 @@ describe SearchForm do
       let(:year_groups) { nil }
 
       let(:programme) { create(:programme) }
+      let(:session) { create(:session, programmes: [programme]) }
 
       it "filters on consent status" do
         patient_session_given =
-          create(
-            :patient_session,
-            :consent_given_triage_not_needed,
-            programmes: [programme]
-          )
+          create(:patient_session, :consent_given_triage_not_needed, session:)
 
         patient_session_refused =
-          create(:patient_session, :consent_refused, programmes: [programme])
+          create(:patient_session, :consent_refused, session:)
 
         expect(form.apply(scope)).to contain_exactly(
           patient_session_given,
@@ -350,14 +347,12 @@ describe SearchForm do
       let(:year_groups) { nil }
 
       let(:programme) { create(:programme) }
+      let(:session) { create(:session, programmes: [programme]) }
 
       it "filters on triage status" do
         patient_session =
-          create(
-            :patient_session,
-            :consent_given_triage_needed,
-            programmes: [programme]
-          )
+          create(:patient_session, :consent_given_triage_needed, session:)
+
         expect(form.apply(scope)).to include(patient_session)
       end
     end

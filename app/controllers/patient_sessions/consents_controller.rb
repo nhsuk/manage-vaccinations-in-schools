@@ -24,7 +24,12 @@ class PatientSessions::ConsentsController < PatientSessions::BaseController
   end
 
   def send_request
-    return unless @patient.consent_status(programme: @programme).no_response?
+    unless @patient.consent_status(
+             programme: @programme,
+             academic_year: @academic_year
+           ).no_response?
+      return
+    end
 
     # For programmes that are administered together we should send the consent request together.
     programmes =

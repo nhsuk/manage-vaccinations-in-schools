@@ -2,8 +2,19 @@
 
 describe Reports::ProgrammeVaccinationsExporter do
   subject(:call) do
-    described_class.call(organisation:, programme:, start_date:, end_date:)
+    described_class.call(
+      organisation:,
+      programme:,
+      academic_year:,
+      start_date:,
+      end_date:
+    )
   end
+
+  let(:today) { Time.zone.local(2024, 4, 1) }
+  let(:academic_year) { today.to_date.academic_year }
+
+  around { |example| travel_to(today) { example.run } }
 
   shared_examples "generates a report" do
     let(:programmes) { [programme] }
@@ -85,8 +96,6 @@ describe Reports::ProgrammeVaccinationsExporter do
 
     describe "rows" do
       subject(:rows) { CSV.parse(call, headers: true) }
-
-      around { |example| freeze_time { example.run } }
 
       context "a school session" do
         let(:location) { create(:school, team:) }

@@ -52,8 +52,11 @@ module VaccinationMailerConcern
     patient = vaccination_record.patient
     return [] unless patient.send_notifications?
 
-    programme = vaccination_record.programme
-    consents = ConsentGrouper.call(patient.consents, programme:)
+    programme_id = vaccination_record.programme_id
+    academic_year = vaccination_record.academic_year
+
+    consents =
+      ConsentGrouper.call(patient.consents, programme_id:, academic_year:)
 
     parents =
       if consents.any?(&:via_self_consent?)

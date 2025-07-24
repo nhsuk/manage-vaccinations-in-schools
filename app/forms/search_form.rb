@@ -73,11 +73,29 @@ class SearchForm
       scope.in_programmes(programmes, academic_year:) if programmes.present?
 
     if (statuses = consent_statuses).present?
-      scope = scope.has_consent_status(statuses, programme: programmes)
+      scope =
+        if session
+          scope.has_consent_status(statuses, programme: programmes)
+        else
+          scope.has_consent_status(
+            statuses,
+            programme: programmes,
+            academic_year:
+          )
+        end
     end
 
     if (status = programme_status&.to_sym).present?
-      scope = scope.has_vaccination_status(status, programme: programmes)
+      scope =
+        if session
+          scope.has_vaccination_status(status, programme: programmes)
+        else
+          scope.has_vaccination_status(
+            status,
+            programme: programmes,
+            academic_year:
+          )
+        end
     end
 
     if (status = session_status&.to_sym).present?
@@ -89,7 +107,12 @@ class SearchForm
     end
 
     if (status = triage_status&.to_sym).present?
-      scope = scope.has_triage_status(status, programme: programmes)
+      scope =
+        if session
+          scope.has_triage_status(status, programme: programmes)
+        else
+          scope.has_triage_status(status, programme: programmes, academic_year:)
+        end
     end
 
     if vaccine_method.present?
