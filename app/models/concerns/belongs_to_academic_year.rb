@@ -13,14 +13,20 @@ module BelongsToAcademicYear
   included do
     scope :for_academic_year,
           ->(academic_year) do
-            where(
-              academic_year_attribute =>
-                academic_year.to_academic_year_date_range
-            )
+            if academic_year_attribute
+              where(
+                academic_year_attribute =>
+                  academic_year.to_academic_year_date_range
+              )
+            else
+              where(academic_year:)
+            end
           end
 
-    def academic_year
-      __send__(self.class.academic_year_attribute).to_date.academic_year
+    unless attribute_method?(:academic_year)
+      def academic_year
+        __send__(self.class.academic_year_attribute).to_date.academic_year
+      end
     end
   end
 end

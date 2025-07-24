@@ -33,6 +33,7 @@
 #  fk_rails_...  (programme_id => programmes.id)
 #
 class Triage < ApplicationRecord
+  include BelongsToAcademicYear
   include Invalidatable
 
   audited associated_with: :patient
@@ -44,11 +45,6 @@ class Triage < ApplicationRecord
   belongs_to :performed_by,
              class_name: "User",
              foreign_key: :performed_by_user_id
-
-  scope :for_academic_year,
-        ->(academic_year) do
-          where(academic_year: academic_year)
-        end
 
   enum :status,
        {
