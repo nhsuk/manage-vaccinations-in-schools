@@ -108,11 +108,11 @@ describe "Manage clinic sessions" do
   end
 
   def when_i_click_on_the_community_clinic
-    click_link "Community clinics"
+    click_link "Community clinic"
   end
 
   def then_i_see_the_clinic_session
-    expect(page).to have_content("Community clinics")
+    expect(page).to have_content("Community clinic")
     expect(page).to have_content("No sessions scheduled")
     expect(page).to have_content("Schedule sessions")
   end
@@ -197,7 +197,7 @@ describe "Manage clinic sessions" do
   end
 
   def then_i_see_the_community_clinic
-    expect(page).to have_content("Community clinics")
+    expect(page).to have_content("Community clinic")
   end
 
   def when_the_patient_has_been_invited
@@ -211,7 +211,7 @@ describe "Manage clinic sessions" do
   end
 
   def and_i_click_on_the_community_clinic
-    click_on "Community clinics"
+    click_on "Community clinic"
   end
 
   def when_i_click_on_send_reminders

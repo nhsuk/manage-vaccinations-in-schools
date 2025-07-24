@@ -40,7 +40,7 @@ class GenericClinicFactory
       type: :generic_clinic
     ) ||
       Location.create!(
-        name: "Community clinics",
+        name: "Community clinic",
         ods_code: organisation.ods_code,
         team:,
         type: :generic_clinic
