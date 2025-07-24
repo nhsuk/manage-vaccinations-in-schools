@@ -10,6 +10,9 @@ resource_name = {
 rails_env             = "production"
 rails_master_key_path = "/copilot/mavis/production/secrets/RAILS_MASTER_KEY"
 
+# TODO: Change this to the default value of 31 once rollover is built.
+number_of_preparation_days_before_academic_year_starts = 1
+
 http_hosts = {
   MAVIS__HOST                        = "www.manage-vaccinations-in-schools.nhs.uk"
   MAVIS__GIVE_OR_REFUSE_CONSENT_HOST = "www.give-or-refuse-consent-for-vaccinations.nhs.uk"
