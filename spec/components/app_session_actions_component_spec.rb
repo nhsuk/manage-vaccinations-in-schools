@@ -47,4 +47,10 @@ describe AppSessionActionsComponent do
   it { should have_link("Review triage needed") }
   it { should have_link("Review register attendance") }
   it { should have_link("Review ready for vaccinator") }
+
+  context "session requires no registration" do
+    let(:session) { create(:session, :requires_no_registration, programmes:) }
+
+    it { should_not have_link("Review register attendance") }
+  end
 end

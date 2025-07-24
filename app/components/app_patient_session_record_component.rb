@@ -21,7 +21,8 @@ class AppPatientSessionRecordComponent < ViewComponent::Base
     patient.consent_given_and_safe_to_vaccinate?(programme:, academic_year:) &&
       (
         patient_session.registration_status&.attending? ||
-          patient_session.registration_status&.completed? || false
+          patient_session.registration_status&.completed? ||
+          !patient_session.session.requires_registration?
       )
   end
 

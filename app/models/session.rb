@@ -7,6 +7,7 @@
 #  id                            :bigint           not null, primary key
 #  academic_year                 :integer          not null
 #  days_before_consent_reminders :integer
+#  requires_registration         :boolean          default(TRUE), not null
 #  send_consent_requests_at      :date
 #  send_invitations_at           :date
 #  slug                          :string           not null
@@ -104,6 +105,8 @@ class Session < ApplicationRecord
         end
   scope :send_invitations,
         -> { scheduled.where("? >= send_invitations_at", Date.current) }
+
+  scope :registration_not_required, -> { where(requires_registration: false) }
 
   validates :send_consent_requests_at,
             presence: true,
