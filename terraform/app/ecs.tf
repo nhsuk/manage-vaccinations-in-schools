@@ -73,8 +73,14 @@ resource "aws_service_discovery_service" "web" {
 module "web_service" {
   source = "./modules/ecs_service"
   task_config = {
-    environment          = local.task_envs
-    secrets              = local.task_secrets
+    environment = local.task_envs
+    secrets = concat(
+      local.task_secrets,
+      [{
+        name      = "JSON_SIGNING_SECRET"
+        valueFrom = aws_secretsmanager_secret.jwt_sign.arn
+      }]
+    )
     cpu                  = 1024
     memory               = 2048
     docker_image         = "${var.account_id}.dkr.ecr.eu-west-2.amazonaws.com/${var.docker_image}@${var.image_digest}"
@@ -149,7 +155,10 @@ module "reporting_service" {
         value = aws_elasticache_serverless_cache.reporting_service.endpoint[0].port
       }
     ]
-    secrets              = []
+    secrets = [{
+      name      = "JSON_SIGNING_SECRET"
+      valueFrom = aws_secretsmanager_secret.jwt_sign.arn
+    }]
     cpu                  = 1024
     memory               = 2048
     docker_image         = local.reporting_image

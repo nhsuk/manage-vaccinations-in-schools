@@ -55,7 +55,7 @@ resource "aws_iam_role" "deploy_ecs_service" {
   description = "Role allowing terraform deployment of ECS services from github workflows"
   assume_role_policy = templatefile("resources/iam_role_github_trust_policy_${var.environment}.json.tftpl", {
     account_id = var.account_id,
-    repository = "NHSDigital/mavis-reporting-prototype"
+    repository = "NHSDigital/manage-vaccinations-in-schools-reporting"
   })
 }
 
@@ -80,7 +80,8 @@ resource "aws_iam_role" "monitoring_deploy" {
   name        = "GithubDeployMonitoring"
   description = "Role allowing terraform deployment of monitoring resources from github workflows"
   assume_role_policy = templatefile("resources/iam_role_github_trust_policy_${var.environment}.json.tftpl", {
-    account_id = var.account_id
+    account_id = var.account_id,
+    repository = "nhsuk/manage-vaccinations-in-schools"
   })
 }
 
