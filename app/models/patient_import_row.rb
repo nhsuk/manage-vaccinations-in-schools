@@ -28,8 +28,6 @@ class PatientImportRow
   def to_patient
     return unless valid?
 
-    import_attributes = build_patient_import_attributes
-
     if (existing_patient = existing_patients.first)
       prepare_patient_changes(existing_patient, import_attributes)
     else
@@ -170,8 +168,8 @@ class PatientImportRow
 
   private
 
-  def build_patient_import_attributes
-    {
+  def import_attributes
+    @import_attributes ||= {
       address_line_1: address_line_1&.to_s,
       address_line_2: address_line_2&.to_s,
       address_postcode: address_postcode&.to_postcode,
@@ -184,13 +182,17 @@ class PatientImportRow
       nhs_number: nhs_number_value,
       preferred_family_name: preferred_last_name&.to_s,
       preferred_given_name: preferred_first_name&.to_s,
-      registration: registration&.to_s
+      registration: registration&.to_s,
+      registration_academic_year:
     }.compact
   end
 
   def prepare_patient_changes(patient, import_attributes)
-    patient.registration =
-      import_attributes.delete(:registration) unless stage_registration?
+    unless stage_registration?
+      patient.registration = import_attributes.delete(:registration)
+      patient.registration_academic_year =
+        import_attributes.delete(:registration_academic_year)
+    end
 
     auto_accept_attributes_if_applicable(patient, import_attributes)
     handle_address_updates(patient, import_attributes)
@@ -340,6 +342,10 @@ class PatientImportRow
 
   def parent_2_phone_value
     parent_2_phone&.to_s&.gsub(/\s/, "")
+  end
+
+  def registration_academic_year
+    AcademicYear.pending if registration.present?
   end
 
   def validate_date_of_birth

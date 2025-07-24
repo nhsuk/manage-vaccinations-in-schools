@@ -208,6 +208,7 @@ describe ClassImportRow do
         gender_code: "not_known",
         home_educated: false,
         registration: "8AB",
+        registration_academic_year: AcademicYear.pending,
         school: nil,
         year_group: 10
       )
@@ -238,6 +239,7 @@ describe ClassImportRow do
 
       it "overwrites registration" do
         expect(patient.registration).to eq("8AB")
+        expect(patient.registration_academic_year).to eq(AcademicYear.pending)
         expect(patient.pending_changes).not_to have_key("registration")
       end
 

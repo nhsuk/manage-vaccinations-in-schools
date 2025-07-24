@@ -209,6 +209,7 @@ describe CohortImportRow do
         gender_code: "male",
         home_educated: false,
         registration: "8AB",
+        registration_academic_year: AcademicYear.pending,
         school: nil,
         year_group: 10
       )
@@ -236,7 +237,8 @@ describe CohortImportRow do
           family_name: "Smith",
           gender_code: "male",
           given_name: "Jimmy",
-          nhs_number: "9990000018"
+          nhs_number: "9990000018",
+          registration_academic_year: 2023
         )
       end
 
@@ -246,7 +248,13 @@ describe CohortImportRow do
 
       it "stages the registration" do
         expect(patient.registration).not_to eq("8AB")
-        expect(patient.pending_changes).to include("registration" => "8AB")
+        expect(patient.registration_academic_year).not_to eq(
+          AcademicYear.pending
+        )
+        expect(patient.pending_changes).to include(
+          "registration" => "8AB",
+          "registration_academic_year" => AcademicYear.pending
+        )
       end
     end
 
