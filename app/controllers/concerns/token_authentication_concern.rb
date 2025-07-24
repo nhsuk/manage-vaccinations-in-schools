@@ -8,19 +8,21 @@ module TokenAuthenticationConcern
 
     def client_id_error!(token)
       if token.blank?
-        render json: { errors: "invalid_request" }, status: :unauthorized and return
+        render json: { errors: "invalid_request" }, status: :unauthorized and
+          return
       else
-        render json: { errors: "unauthorized_client" }, status: :forbidden and return
+        render json: { errors: "unauthorized_client" }, status: :forbidden and
+          return
       end
     end
 
     def authenticate_app_by_client_id!
-      possible_clients = []
-
       if Flipper.enabled?(:reporting_app)
         # ...as per the spec at https://datatracker.ietf.org/doc/html/rfc6749#section-4.1.3
         given_client_id = params.fetch("client_id", nil)
-        client_id_error!(given_client_id) unless given_client_id == Settings.mavis_reporting_app.client_id
+        unless given_client_id == Settings.mavis_reporting_app.client_id
+          client_id_error!(given_client_id)
+        end
       end
     end
 
@@ -38,7 +40,8 @@ module TokenAuthenticationConcern
           User.find_by(
             id: data.dig("user", "id"),
             session_token: data.dig("user", "session_token"),
-            reporting_app_session_token: data.dig("user", "reporting_app_session_token")
+            reporting_app_session_token:
+              data.dig("user", "reporting_app_session_token")
           )
         if @current_user
           session["user"] = data["user"]

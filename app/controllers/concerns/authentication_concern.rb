@@ -103,14 +103,14 @@ module AuthenticationConcern
       uri.to_s
     end
 
-    def reporting_app_redirect_url_with_auth_code_for(user)
+    def reporting_app_redirect_uri_with_auth_code_for(user)
       url = session["redirect_uri"]
       url.present? ? add_auth_code_to(url, user) : nil
     end
 
     def after_sign_in_path_for(scope)
       urls = [
-        reporting_app_redirect_url_with_auth_code_for(current_user),
+        reporting_app_redirect_uri_with_auth_code_for(current_user),
         stored_location_for(scope),
         dashboard_path
       ]

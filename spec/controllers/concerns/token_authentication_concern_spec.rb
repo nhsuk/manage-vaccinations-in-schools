@@ -2,12 +2,12 @@
 
 describe TokenAuthenticationConcern do
   let(:user) { @user = build(:user) }
-  let(:mock_request) { instance_double("request", headers: {}) }
+  let(:mock_request) { instance_double(request.class, headers: {}) }
   let(:sample_class) do
     Class
       .new do # rubocop:disable Style/BlockDelimiters
         include TokenAuthenticationConcern
-        attr_accessor :"request", :session
+        attr_accessor :request, :session
 
         def authenticate_user!
         end
@@ -47,7 +47,7 @@ describe TokenAuthenticationConcern do
         before do
           sample_class.request =
             instance_double(
-              "request",
+              request.class,
               headers: {
                 "Authorization" => "Bearer myjwt"
               }
@@ -76,7 +76,9 @@ describe TokenAuthenticationConcern do
 
       context "and the client_id param is provided" do
         before do
-          allow(sample_class).to receive(:params).and_return( {client_id: client_id}.with_indifferent_access )
+          allow(sample_class).to receive(:params).and_return(
+            { client_id: client_id }.with_indifferent_access
+          )
         end
 
         context "and the client_id param contains the reporting app's client_id" do
@@ -144,7 +146,7 @@ describe TokenAuthenticationConcern do
 
     before do
       sample_class.request =
-        instance_double("request", headers: { "Authorization" => jwt })
+        instance_double(request.class, headers: { "Authorization" => jwt })
     end
 
     context "when a valid jwt is given" do
@@ -174,9 +176,7 @@ describe TokenAuthenticationConcern do
       end
 
       it "decodes the JWT" do
-        expect(sample_class).to receive(:decode_jwt!).with(jwt).and_return(
-          user_info
-        )
+        expect(sample_class).to receive(:decode_jwt!).with(jwt)
         sample_class.send(:authenticate_user_by_jwt!)
       end
 
@@ -250,7 +250,7 @@ describe TokenAuthenticationConcern do
           Settings.mavis_reporting_app.secret,
           true,
           { algorithm: "HS512" }
-        ).and_return(decoded_jwt)
+        ) #.and_return(decoded_jwt)
         sample_class.send(:decode_jwt!, jwt)
       end
 
@@ -271,7 +271,9 @@ describe TokenAuthenticationConcern do
 
       context "when decoding does not work" do
         it "raises an exception" do
-          expect { sample_class.send(:decode_jwt!, jwt) }.to raise_error(JWT::DecodeError)
+          expect { sample_class.send(:decode_jwt!, jwt) }.to raise_error(
+            JWT::DecodeError
+          )
         end
       end
     end

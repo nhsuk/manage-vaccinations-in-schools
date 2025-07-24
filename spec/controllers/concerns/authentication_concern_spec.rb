@@ -3,7 +3,7 @@
 # rubocop:disable RSpec/VerifiedDoubles
 describe AuthenticationConcern do
   let(:user) { @user = build(:user) }
-  let(:mock_request) { instance_double("request", headers: {}) }
+  let(:mock_request) { instance_double(request.class, headers: {}) }
   let(:sample_class) do
     Class
       .new do # rubocop:disable Style/BlockDelimiters
@@ -74,7 +74,7 @@ describe AuthenticationConcern do
       expect(OneTimeToken).to receive(:find_or_generate_for!).with(
         user_id: user.id,
         cis2_info: session_cis2_info
-      ).and_return(token)
+      )
       sample_class.send(:add_auth_code_to, url, user)
     end
 
@@ -99,11 +99,11 @@ describe AuthenticationConcern do
     end
   end
 
-  describe "reporting_app_redirect_url_with_auth_code_for" do
+  describe "reporting_app_redirect_uri_with_auth_code_for" do
     let(:session_cis2_info) { { "some_key" => "some value" } }
     let(:token) { build(:one_time_token, user: user, token: "mytoken") }
     let(:result) do
-      sample_class.send(:reporting_app_redirect_url_with_auth_code_for, user)
+      sample_class.send(:reporting_app_redirect_uri_with_auth_code_for, user)
     end
 
     context "when there is a redirect_uri key in session" do

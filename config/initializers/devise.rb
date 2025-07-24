@@ -412,7 +412,7 @@ Devise.setup do |config|
     end
 
     Warden::Manager.before_logout do |user, _auth, _opts|
-      user&.update_attribute(:reporting_app_session_token, nil)
+      user&.update_without_password(reporting_app_session_token: nil)
     end
   end
 end
