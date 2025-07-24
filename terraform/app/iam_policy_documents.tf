@@ -54,16 +54,21 @@ data "aws_iam_policy_document" "ecs_secrets_access" {
   statement {
     sid     = "railsKeySid"
     actions = ["ssm:GetParameters"]
-    resources = concat([
-      "arn:aws:ssm:${var.region}:${var.account_id}:parameter${var.rails_master_key_path}"
-    ], local.parameter_store_arns)
+    resources = concat(
+      [
+        "arn:aws:ssm:${var.region}:${var.account_id}:parameter${var.rails_master_key_path}",
+      ],
+      local.parameter_store_arns,
+
+    )
     effect = "Allow"
   }
   statement {
     sid     = "dbSecretSid"
     actions = ["secretsmanager:GetSecretValue"]
     resources = [
-      aws_rds_cluster.core.master_user_secret[0].secret_arn
+      aws_rds_cluster.core.master_user_secret[0].secret_arn,
+      aws_secretsmanager_secret.jwt_sign.arn
     ]
     effect = "Allow"
   }
