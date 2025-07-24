@@ -115,7 +115,7 @@ module AuthenticationConcern
       uri.to_s
     end
 
-    def reporting_app_redirect_url_with_auth_code_for(user)
+    def reporting_app_redirect_uri_with_auth_code_for(user)
       url = session["redirect_uri"]
       url.present? ? add_auth_code_to(url, user) : nil
     end
