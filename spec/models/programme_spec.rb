@@ -57,7 +57,7 @@ describe Programme do
   describe "#seasonal?" do
     subject { programme.seasonal? }
 
-    context "with a Flu programme" do
+    context "with a flu programme" do
       let(:programme) { build(:programme, :flu) }
 
       it { should be(true) }
@@ -113,7 +113,7 @@ describe Programme do
   describe "#vaccine_methods" do
     subject { programme.vaccine_methods }
 
-    context "with a Flu programme" do
+    context "with a flu programme" do
       let(:programme) { build(:programme, :flu) }
 
       it { should contain_exactly("injection", "nasal") }
@@ -129,7 +129,7 @@ describe Programme do
   describe "#vaccine_may_contain_gelatine?" do
     subject { programme.vaccine_may_contain_gelatine? }
 
-    context "with a Flu programme" do
+    context "with a flu programme" do
       let(:programme) { build(:programme, :flu) }
 
       it { should be(true) }
@@ -157,7 +157,7 @@ describe Programme do
   describe "#vaccinated_dose_sequence" do
     subject { programme.vaccinated_dose_sequence }
 
-    context "with a Flu programme" do
+    context "with a flu programme" do
       let(:programme) { build(:programme, :flu) }
 
       it { should eq(1) }
@@ -185,7 +185,7 @@ describe Programme do
   describe "#default_dose_sequence" do
     subject(:default_dose_sequence) { programme.default_dose_sequence }
 
-    context "with a Flu programme" do
+    context "with a flu programme" do
       let(:programme) { build(:programme, :flu) }
 
       it { should eq(1) }
@@ -213,10 +213,10 @@ describe Programme do
   describe "#maximum_dose_sequence" do
     subject(:maximum_dose_sequence) { programme.maximum_dose_sequence }
 
-    context "with a Flu programme" do
+    context "with a flu programme" do
       let(:programme) { build(:programme, :flu) }
 
-      it { should eq(1) }
+      it { should eq(2) }
     end
 
     context "with an HPV programme" do

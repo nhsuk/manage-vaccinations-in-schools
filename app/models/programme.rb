@@ -103,10 +103,15 @@ class Programme < ApplicationRecord
     hpv? || flu? ? vaccinated_dose_sequence : nil
   end
 
+  MAXIMUM_DOSE_SEQUENCES = {
+    "flu" => 2,
+    "hpv" => 3,
+    "menacwy" => 3,
+    "td_ipv" => 5
+  }.freeze
+
   def maximum_dose_sequence
-    # HPV is given 3 times to patients with a weakened immune system.
-    # MenACWY is sometimes given more frequently.
-    hpv? || menacwy? ? 3 : vaccinated_dose_sequence
+    MAXIMUM_DOSE_SEQUENCES.fetch(type)
   end
 
   IMPORT_NAMES = {
