@@ -19,9 +19,10 @@ class PatientImportRow
            :validate_parent_2_relationship,
            :validate_year_group
 
-  def initialize(data:, organisation:, year_groups:)
+  def initialize(data:, organisation:, academic_year:, year_groups:)
     @data = data
     @organisation = organisation
+    @academic_year = academic_year
     @year_groups = year_groups
   end
 
@@ -166,7 +167,7 @@ class PatientImportRow
     nhs_number&.to_s&.gsub(/\s/, "")
   end
 
-  attr_reader :organisation, :year_groups
+  attr_reader :organisation, :academic_year, :year_groups
 
   private
 
@@ -316,7 +317,7 @@ class PatientImportRow
 
   def birth_academic_year_value
     if year_group.present?
-      year_group.to_i&.to_birth_academic_year
+      year_group.to_i&.to_birth_academic_year(academic_year:)
     else
       date_of_birth&.to_date&.academic_year
     end
@@ -461,7 +462,7 @@ class PatientImportRow
   def validate_year_group
     field = year_group.presence || date_of_birth
 
-    year_group_value = birth_academic_year_value&.to_year_group
+    year_group_value = birth_academic_year_value&.to_year_group(academic_year:)
 
     if year_group_value.nil?
       # We only need to add a validation error here is the file had an
