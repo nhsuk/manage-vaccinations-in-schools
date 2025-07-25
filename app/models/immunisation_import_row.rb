@@ -98,6 +98,7 @@ class ImmunisationImportRow
     attributes = {
       dose_sequence: dose_sequence_value,
       full_dose: true,
+      location:,
       location_name:,
       outcome:,
       patient:,
@@ -221,8 +222,12 @@ class ImmunisationImportRow
 
   private
 
+  def location
+    session&.location unless session&.generic_clinic?
+  end
+
   def location_name
-    return unless session.nil? || session.location.generic_clinic?
+    return unless location.nil?
 
     if is_school_setting? || (is_unknown_setting? && clinic_name.blank?)
       school&.name || school_name&.to_s || "Unknown"

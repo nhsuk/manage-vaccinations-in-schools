@@ -19,15 +19,16 @@ class PatientSessions::ProgrammesController < PatientSessions::BaseController
 
     draft_vaccination_record.reset!
     draft_vaccination_record.update!(
+      first_active_wizard_step: :confirm,
+      location: nil,
+      location_name: "Unknown",
       outcome: :already_had,
       patient: @patient,
       performed_at: Time.current,
       performed_by_user_id: current_user.id,
-      programme: @programme,
-      session: @session,
-      location_name: @session.clinic? ? "Unknown" : nil,
       performed_ods_code: current_user.selected_organisation.ods_code,
-      first_active_wizard_step: :confirm
+      programme: @programme,
+      session: @session
     )
 
     redirect_to draft_vaccination_record_path("confirm")
