@@ -4,7 +4,7 @@ class SessionsController < ApplicationController
   before_action :set_session, except: %i[index scheduled unscheduled completed]
 
   def index
-    @sessions = sessions_scope.today.sort
+    @sessions = sessions_scope.in_progress.sort
 
     render layout: "full"
   end
