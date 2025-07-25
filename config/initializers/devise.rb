@@ -404,7 +404,15 @@ Devise.setup do |config|
     end
 
     Warden::Manager.before_logout do |user, _warden, _opts|
-      user&.update!(session_token: nil)
+      user&.update!(session_token: nil, reporting_app_session_token: nil)
+    end
+  else
+    Warden::Manager.after_authentication do |user, _auth, _opts|
+      user&.reporting_app_session_token = SecureRandom.hex(32)
+    end
+
+    Warden::Manager.before_logout do |user, _auth, _opts|
+      user&.update_without_password(reporting_app_session_token: nil)
     end
   end
 end

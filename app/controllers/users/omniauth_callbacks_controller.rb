@@ -23,9 +23,18 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     else
       @user = User.find_or_create_from_cis2_oidc(user_cis2_info)
 
+      # give them a session token for the reporting app also
+      @user.update!(reporting_app_session_token: SecureRandom.hex(32))
+
       # Force is set to true because the `session_token` might have changed
       # even if the same user is logging in.
-      sign_in_and_redirect @user, event: :authentication, force: true
+      sign_in @user, event: :authentication, force: true
+      # We have to split sign_in and redirect methods up, so we can supply the
+      # allow_other_host param to the redirect. This is so that we can
+      # redirect to the reporting app which will be running on another host/port
+      # Note that safety checks on the host are now done in the
+      # after_sign_in_path_for method, so this doesn't allow arbitrary URLs
+      redirect_after_choosing_org
     end
   rescue StandardError => e
     unless Rails.env.production?
@@ -51,7 +60,7 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
 
     if validate_logout_token(logout_token)
       if @sid.blank? || @user.session_token == @sid
-        @user.update!(session_token: nil)
+        @user.update!(session_token: nil, reporting_app_session_token: nil)
       end
 
       render json: {}, status: :ok
@@ -64,6 +73,7 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     signed_out =
       (Devise.sign_out_all_scopes ? sign_out : sign_out(resource_name))
     flash[:notice] = "You have been logged out" if signed_out
+
     redirect_to after_sign_out_path_for(resource_name)
   end
 
