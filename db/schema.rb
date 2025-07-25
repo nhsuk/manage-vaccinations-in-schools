@@ -526,10 +526,11 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_07_070516) do
   end
 
   create_table "one_time_tokens", primary_key: "token", id: :string, force: :cascade do |t|
-    t.bigint "user_id"
+    t.bigint "user_id", null: false
+    t.jsonb "cis2_info"
+    t.jsonb "jsonb"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.jsonb "cis2_info"
     t.index ["created_at"], name: "index_one_time_tokens_on_created_at"
     t.index ["token"], name: "index_one_time_tokens_on_token", unique: true
     t.index ["user_id"], name: "index_one_time_tokens_on_user_id", unique: true

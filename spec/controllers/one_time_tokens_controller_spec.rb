@@ -6,10 +6,7 @@ RSpec.describe OneTimeTokensController do
   let(:user) { create(:user) }
   let(:mock_cis2_info) { { "some_key" => "some value" } }
   let(:valid_token) do
-    OneTimeToken.find_or_generate_for!(
-      user_id: user.id,
-      cis2_info: mock_cis2_info
-    )
+    OneTimeToken.find_or_generate_for!(user:, cis2_info: mock_cis2_info)
   end
   let(:invalid_token) { SecureRandom.hex(32) }
 

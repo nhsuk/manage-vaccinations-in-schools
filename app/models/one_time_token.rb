@@ -5,10 +5,11 @@
 # Table name: one_time_tokens
 #
 #  cis2_info  :jsonb
+#  jsonb      :jsonb
 #  token      :string           not null, primary key
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
-#  user_id    :bigint
+#  user_id    :bigint           not null
 #
 # Indexes
 #
@@ -34,11 +35,11 @@ class OneTimeToken < ApplicationRecord
     Settings.mavis_reporting_app.token_ttl_seconds.seconds.ago
   end
 
-  def self.find_or_generate_for!(user_id:, cis2_info: {})
-    token = where(user_id: user_id).first
+  def self.find_or_generate_for!(user:, cis2_info: {})
+    token = where(user_id: user.id).first
     token.delete if token&.expired?
 
-    token || generate!(user_id: user_id, cis2_info: cis2_info)
+    token || generate!(user_id: user.id, cis2_info:)
   end
 
   def expired?

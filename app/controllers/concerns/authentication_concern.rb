@@ -96,7 +96,7 @@ module AuthenticationConcern
       uri = Addressable::URI.parse(url)
       auth_code =
         OneTimeToken.find_or_generate_for!(
-          user_id: user.id,
+          user:,
           cis2_info: session["cis2_info"]
         ).token
       uri.query_values = (uri.query_values || {}).merge("code" => auth_code)
@@ -104,16 +104,18 @@ module AuthenticationConcern
     end
 
     def reporting_app_redirect_uri_with_auth_code_for(user)
-      url = session["redirect_uri"]
-      url.present? ? add_auth_code_to(url, user) : nil
+      if Flipper.enabled?(:reporting_app)
+        url = session["redirect_uri"]
+        url.present? ? add_auth_code_to(url, user) : nil
+      end
     end
 
     def after_sign_in_path_for(scope)
-      urls = [
-        reporting_app_redirect_uri_with_auth_code_for(current_user),
-        stored_location_for(scope),
-        dashboard_path
-      ]
+      urls = []
+      if Flipper.enabled?(:reporting_app)
+        urls << reporting_app_redirect_uri_with_auth_code_for(current_user)
+      end
+      urls += [stored_location_for(scope), dashboard_path]
       urls.compact.find do
         is_valid_redirect?(it) && (it != request.fullpath) &&
           (it != new_users_organisations_path)

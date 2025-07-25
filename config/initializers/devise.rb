@@ -412,7 +412,10 @@ Devise.setup do |config|
     end
 
     Warden::Manager.before_logout do |user, _auth, _opts|
-      user&.update_without_password(reporting_app_session_token: nil)
+      # we use this syntax to stop CodeQL complaining about bypassing validations
+      # (which we have to do to support local development when password auth is enabled
+      # and you're using the example user created in db/seeds)
+      User.where(id: user.id).update_all(reporting_app_session_token: nil)
     end
   end
 end

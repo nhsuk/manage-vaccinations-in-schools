@@ -65,14 +65,14 @@ describe AuthenticationConcern do
     before do
       sample_class.session = { "cis2_info" => session_cis2_info }
       allow(OneTimeToken).to receive(:find_or_generate_for!).with(
-        user_id: user.id,
+        user: user,
         cis2_info: session_cis2_info
       ).and_return(token)
     end
 
     it "finds or generates a OneTimeToken for the given user with the cis2_info from the current session" do
       expect(OneTimeToken).to receive(:find_or_generate_for!).with(
-        user_id: user.id,
+        user: user,
         cis2_info: session_cis2_info
       )
       sample_class.send(:add_auth_code_to, url, user)
@@ -109,7 +109,7 @@ describe AuthenticationConcern do
     context "when there is a redirect_uri key in session" do
       before do
         allow(OneTimeToken).to receive(:find_or_generate_for!).with(
-          user_id: user.id,
+          user: user,
           cis2_info: session_cis2_info
         ).and_return(token)
         sample_class.session = {
@@ -119,10 +119,22 @@ describe AuthenticationConcern do
         }
       end
 
-      it "returns that URL with a code added to it for the given user" do
-        expect(result).to eq(
-          "http://reporting.mavis:5555/path?code=mytoken&some_param=some%20value"
-        )
+      context "and the reporting_app feature flag is enabled" do
+        before { Flipper.enable(:reporting_app) }
+
+        it "returns that URL with a code added to it for the given user" do
+          expect(result).to eq(
+            "http://reporting.mavis:5555/path?code=mytoken&some_param=some%20value"
+          )
+        end
+      end
+
+      context "and the reporting_app feature flag is disabled" do
+        before { Flipper.disable(:reporting_app) }
+
+        it "returns nil" do
+          expect(result).to be_nil
+        end
       end
     end
 
