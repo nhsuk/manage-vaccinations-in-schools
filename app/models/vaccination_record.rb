@@ -201,6 +201,10 @@ class VaccinationRecord < ApplicationRecord
 
   def snomed_procedure_code = vaccine&.snomed_procedure_code(dose_sequence:)
 
+  def notify_parents?
+    patient.consents.where(programme:).not_invalidated.not_withdrawn.any?(&:notify_parents?)
+  end
+
   delegate :snomed_procedure_term, to: :vaccine, allow_nil: true
 
   private
