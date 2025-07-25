@@ -35,7 +35,7 @@ describe "User CIS2 authentication", :cis2 do
       uid: "123",
       given_name: "Nurse",
       family_name: "Test",
-      org_code: @team.ods_code,
+      org_code: @team.organisation.ods_code,
       org_name: @team.name
     )
   end

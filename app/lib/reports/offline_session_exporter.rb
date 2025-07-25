@@ -34,7 +34,7 @@ class Reports::OfflineSessionExporter
 
   attr_reader :session
 
-  delegate :academic_year, :location, :team, to: :session
+  delegate :academic_year, :location, :organisation, :team, to: :session
 
   def add_vaccinations_sheet(package)
     workbook = package.workbook
@@ -249,7 +249,7 @@ class Reports::OfflineSessionExporter
     triage = triages.dig(patient.id, programme.id)
     academic_year = session.academic_year
 
-    row[:organisation_code] = team.ods_code
+    row[:organisation_code] = organisation.ods_code
     row[:person_forename] = patient.given_name
     row[:person_surname] = patient.family_name
     row[:person_dob] = patient.date_of_birth

@@ -119,7 +119,7 @@ module CIS2AuthHelper
 
   # Define a sign_in that is compatible with Devise's sign_in.
   def sign_in(user, role: :nurse, org_code: nil, superuser: false)
-    org_code ||= user.teams.first.ods_code
+    org_code ||= user.teams.first.organisation.ods_code
     cis2_sign_in(user, role:, org_code:, superuser:)
   end
 
@@ -148,7 +148,7 @@ module CIS2AuthHelper
 
     if user_only_has_one_role
       raw_info["nhsid_nrbac_roles"].select! do
-        _1["person_roleid"] == selected_roleid
+        it["person_roleid"] == selected_roleid
       end
     end
 

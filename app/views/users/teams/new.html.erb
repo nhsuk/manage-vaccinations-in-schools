@@ -8,7 +8,7 @@
                  class: "nhsuk-card nhsuk-card--clickable app-card--button nhsuk-u-margin-bottom-3" do %>
       <div class="nhsuk-card__content">
         <h2 class="nhsuk-card__heading nhsuk-heading-s nhsuk-u-margin-bottom-2">
-          <%= team.name %> (<%= team.ods_code %>)
+          <%= team.name %> (<%= team.organisation.ods_code %>)
         </h2>
 
         <% if current_user.is_admin? %>

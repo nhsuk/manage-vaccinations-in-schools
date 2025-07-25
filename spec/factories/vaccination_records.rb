@@ -27,6 +27,7 @@
 #  created_at                            :datetime         not null
 #  updated_at                            :datetime         not null
 #  batch_id                              :bigint
+#  location_id                           :bigint
 #  nhs_immunisations_api_id              :string
 #  patient_id                            :bigint
 #  performed_by_user_id                  :bigint
@@ -38,6 +39,7 @@
 #
 #  index_vaccination_records_on_batch_id                  (batch_id)
 #  index_vaccination_records_on_discarded_at              (discarded_at)
+#  index_vaccination_records_on_location_id               (location_id)
 #  index_vaccination_records_on_nhs_immunisations_api_id  (nhs_immunisations_api_id) UNIQUE
 #  index_vaccination_records_on_patient_id                (patient_id)
 #  index_vaccination_records_on_performed_by_user_id      (performed_by_user_id)
@@ -59,13 +61,14 @@ FactoryBot.define do
   factory :vaccination_record do
     transient do
       team do
-        programme.teams.first || association(:team, programmes: [programme])
+        programme.teams.includes(:organisation).first ||
+          association(:team, programmes: [programme])
       end
     end
 
     programme
 
-    performed_ods_code { team.ods_code }
+    performed_ods_code { team.organisation.ods_code }
 
     patient do
       association :patient,

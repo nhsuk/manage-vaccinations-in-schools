@@ -85,11 +85,16 @@ class User < ApplicationRecord
     user.tap(&:save!)
   end
 
-  def selected_team
-    @selected_team ||=
+  def selected_organisation
+    @selected_organisation ||=
       if cis2_info.present?
-        Team.find_by(ods_code: cis2_info.dig("selected_org", "code"))
+        Organisation.find_by(ods_code: cis2_info.dig("selected_org", "code"))
       end
+  end
+
+  def selected_team
+    # TODO: Select the right team based on the user's workgroup.
+    @selected_team ||= Team.find_by(organisation: selected_organisation)
   end
 
   def requires_email_and_password?
