@@ -6,7 +6,7 @@ describe "Import child records" do
   scenario "User uploads a large file" do
     given_the_app_is_setup
 
-    when_i_visit_the_cohort_page_for_the_hpv_programme
+    when_i_visit_the_import_page
     and_i_start_adding_children_to_the_cohort
     then_i_should_see_the_import_page
 
@@ -37,16 +37,16 @@ describe "Import child records" do
     @user = @organisation.users.first
   end
 
-  def when_i_visit_the_cohort_page_for_the_hpv_programme
+  def when_i_visit_the_import_page
     sign_in @user
     visit "/dashboard"
-    click_on "Programmes", match: :first
-    click_on "HPV"
-    click_on "Cohort"
+    click_on "Import", match: :first
   end
 
   def and_i_start_adding_children_to_the_cohort
-    click_on "Import child records"
+    click_on "Import records"
+    choose "Child records"
+    click_on "Continue"
   end
 
   def then_i_should_see_the_import_page
