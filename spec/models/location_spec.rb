@@ -34,6 +34,16 @@
 #
 
 describe Location do
+  subject(:location) { build(:location) }
+
+  describe "associations" do
+    it do
+      expect(location).to have_many(:programmes).through(
+        :programme_year_groups
+      ).order(:type)
+    end
+  end
+
   describe "validations" do
     it { should validate_presence_of(:name) }
 

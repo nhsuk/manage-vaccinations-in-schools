@@ -49,7 +49,9 @@ class Location < ApplicationRecord
   has_many :sessions
 
   has_one :organisation, through: :team
-  has_many :programmes, -> { distinct }, through: :programme_year_groups
+  has_many :programmes,
+           -> { distinct.order(:type) },
+           through: :programme_year_groups
 
   # This is based on the school statuses from the DfE GIAS data.
   enum :status,
