@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_21_092502) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_25_100700) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -773,7 +773,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_21_092502) do
     t.index ["organisation_id", "name"], name: "index_teams_on_organisation_id_and_name", unique: true
   end
 
-  create_table "triage", force: :cascade do |t|
+  create_table "triages", force: :cascade do |t|
     t.integer "status", null: false
     t.text "notes", default: "", null: false
     t.datetime "created_at", null: false
@@ -785,11 +785,11 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_21_092502) do
     t.datetime "invalidated_at"
     t.integer "vaccine_method"
     t.integer "academic_year", null: false
-    t.index ["academic_year"], name: "index_triage_on_academic_year"
-    t.index ["organisation_id"], name: "index_triage_on_organisation_id"
-    t.index ["patient_id"], name: "index_triage_on_patient_id"
-    t.index ["performed_by_user_id"], name: "index_triage_on_performed_by_user_id"
-    t.index ["programme_id"], name: "index_triage_on_programme_id"
+    t.index ["academic_year"], name: "index_triages_on_academic_year"
+    t.index ["organisation_id"], name: "index_triages_on_organisation_id"
+    t.index ["patient_id"], name: "index_triages_on_patient_id"
+    t.index ["performed_by_user_id"], name: "index_triages_on_performed_by_user_id"
+    t.index ["programme_id"], name: "index_triages_on_programme_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -979,10 +979,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_21_092502) do
   add_foreign_key "session_programmes", "sessions"
   add_foreign_key "sessions", "organisations"
   add_foreign_key "teams", "organisations"
-  add_foreign_key "triage", "organisations"
-  add_foreign_key "triage", "patients"
-  add_foreign_key "triage", "programmes"
-  add_foreign_key "triage", "users", column: "performed_by_user_id"
+  add_foreign_key "triages", "organisations"
+  add_foreign_key "triages", "patients"
+  add_foreign_key "triages", "programmes"
+  add_foreign_key "triages", "users", column: "performed_by_user_id"
   add_foreign_key "vaccination_records", "batches"
   add_foreign_key "vaccination_records", "patients"
   add_foreign_key "vaccination_records", "programmes"

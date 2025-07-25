@@ -184,7 +184,7 @@ class Reports::OfflineSessionExporter
     @triages ||=
       Triage
         .for_academic_year(AcademicYear.current)
-        .select("DISTINCT ON (patient_id, programme_id) triage.*")
+        .select("DISTINCT ON (patient_id, programme_id) triages.*")
         .where(patient_id: patient_sessions.select(:patient_id))
         .not_invalidated
         .order(:patient_id, :programme_id, created_at: :desc)
