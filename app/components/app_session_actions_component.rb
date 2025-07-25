@@ -46,13 +46,7 @@ class AppSessionActionsComponent < ViewComponent::Base
 
     return nil if count.zero?
 
-    href =
-      session_consent_path(
-        session,
-        patient_search_form: {
-          consent_statuses: [status]
-        }
-      )
+    href = session_consent_path(session, consent_statuses: [status])
 
     {
       key: {
@@ -73,13 +67,7 @@ class AppSessionActionsComponent < ViewComponent::Base
 
     return nil if count.zero?
 
-    href =
-      session_triage_path(
-        session,
-        patient_search_form: {
-          triage_status: status
-        }
-      )
+    href = session_triage_path(session, triage_status: status)
 
     {
       key: {
@@ -101,13 +89,7 @@ class AppSessionActionsComponent < ViewComponent::Base
 
     return nil if count.zero?
 
-    href =
-      session_register_path(
-        session,
-        patient_search_form: {
-          register_status: status
-        }
-      )
+    href = session_register_path(session, register_status: status)
 
     {
       key: {
