@@ -46,7 +46,7 @@ splunk:
   hec_token: <%= Rails.application.credentials.splunk&.hec_token %>
 
 mavis_reporting_app:
-  root_url: http://localhost:5000/
+  root_url: http://localhost:5001/
   # secret:
   # client_id:
   token_ttl_seconds: 300
