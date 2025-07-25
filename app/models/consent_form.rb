@@ -319,6 +319,8 @@ class ConsentForm < ApplicationRecord
       ].compact
   end
 
+  # TODO: For consent forms submitted during the preparation period, this
+  #  should be the next academic year.
   def academic_year = created_at.to_date.academic_year
 
   def recorded? = recorded_at != nil
@@ -372,12 +374,8 @@ class ConsentForm < ApplicationRecord
       (location_is_clinic? && original_session) ||
         (
           school &&
-            school
-              .sessions
-              .includes(:session_dates)
-              .for_current_academic_year
-              .first
-        ) || organisation.generic_clinic_session
+            school.sessions.includes(:session_dates).find_by(academic_year:)
+        ) || organisation.generic_clinic_session(academic_year:)
   end
 
   def find_or_create_parent_with_relationship_to!(patient:)

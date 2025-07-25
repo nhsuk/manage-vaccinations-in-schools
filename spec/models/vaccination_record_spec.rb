@@ -97,7 +97,9 @@ describe VaccinationRecord do
       let(:organisation) do
         create(:organisation, :with_generic_clinic, programmes: [programme])
       end
-      let(:session) { organisation.generic_clinic_session }
+      let(:session) do
+        organisation.generic_clinic_session(academic_year: AcademicYear.current)
+      end
 
       it { should validate_presence_of(:location_name) }
     end
