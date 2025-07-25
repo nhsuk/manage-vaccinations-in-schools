@@ -63,7 +63,7 @@ class SchoolMove < ApplicationRecord
 
   private
 
-  def academic_year = AcademicYear.current
+  def academic_year = AcademicYear.pending
 
   def update_patient!
     patient.update!(home_educated:, school:)
