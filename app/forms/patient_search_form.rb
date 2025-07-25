@@ -56,7 +56,11 @@ class PatientSearchForm
   def apply(scope)
     scope = scope.search_by_name(q) if q.present?
 
-    scope = scope.search_by_year_groups(year_groups) if year_groups.present?
+    scope =
+      scope.search_by_year_groups(
+        year_groups,
+        academic_year:
+      ) if year_groups.present?
 
     if date_of_birth_year.present?
       scope = scope.search_by_date_of_birth_year(date_of_birth_year)
