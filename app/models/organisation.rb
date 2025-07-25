@@ -45,7 +45,7 @@ class Organisation < ApplicationRecord
   has_many :community_clinics, through: :teams
   has_many :locations, through: :teams
   has_many :patient_sessions, through: :sessions
-  has_many :patients, through: :patient_sessions
+  has_many :patients, -> { distinct }, through: :patient_sessions
   has_many :programmes, through: :organisation_programmes
   has_many :schools, through: :teams
   has_many :vaccination_records, through: :sessions
