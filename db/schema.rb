@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_18_090719) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_25_113848) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -195,6 +195,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_18_090719) do
     t.string "nhs_number"
     t.datetime "archived_at"
     t.text "notes", default: "", null: false
+    t.integer "academic_year", null: false
+    t.index ["academic_year"], name: "index_consent_forms_on_academic_year"
     t.index ["consent_id"], name: "index_consent_forms_on_consent_id"
     t.index ["location_id"], name: "index_consent_forms_on_location_id"
     t.index ["nhs_number"], name: "index_consent_forms_on_nhs_number"
@@ -238,6 +240,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_18_090719) do
     t.boolean "notify_parents"
     t.datetime "submitted_at", null: false
     t.integer "vaccine_methods", default: [], null: false, array: true
+    t.integer "academic_year", null: false
+    t.index ["academic_year"], name: "index_consents_on_academic_year"
     t.index ["organisation_id"], name: "index_consents_on_organisation_id"
     t.index ["parent_id"], name: "index_consents_on_parent_id"
     t.index ["patient_id"], name: "index_consents_on_patient_id"
@@ -604,6 +608,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_18_090719) do
     t.boolean "full_dose", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "academic_year", null: false
+    t.index ["academic_year"], name: "index_patient_specific_directions_on_academic_year"
     t.index ["created_by_user_id"], name: "index_patient_specific_directions_on_created_by_user_id"
     t.index ["patient_id"], name: "index_patient_specific_directions_on_patient_id"
     t.index ["programme_id"], name: "index_patient_specific_directions_on_programme_id"
@@ -769,7 +775,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_18_090719) do
     t.index ["organisation_id", "name"], name: "index_teams_on_organisation_id_and_name", unique: true
   end
 
-  create_table "triage", force: :cascade do |t|
+  create_table "triages", force: :cascade do |t|
     t.integer "status", null: false
     t.text "notes", default: "", null: false
     t.datetime "created_at", null: false
@@ -780,10 +786,12 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_18_090719) do
     t.bigint "organisation_id", null: false
     t.datetime "invalidated_at"
     t.integer "vaccine_method"
-    t.index ["organisation_id"], name: "index_triage_on_organisation_id"
-    t.index ["patient_id"], name: "index_triage_on_patient_id"
-    t.index ["performed_by_user_id"], name: "index_triage_on_performed_by_user_id"
-    t.index ["programme_id"], name: "index_triage_on_programme_id"
+    t.integer "academic_year", null: false
+    t.index ["academic_year"], name: "index_triages_on_academic_year"
+    t.index ["organisation_id"], name: "index_triages_on_organisation_id"
+    t.index ["patient_id"], name: "index_triages_on_patient_id"
+    t.index ["performed_by_user_id"], name: "index_triages_on_performed_by_user_id"
+    t.index ["programme_id"], name: "index_triages_on_programme_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -973,10 +981,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_18_090719) do
   add_foreign_key "session_programmes", "sessions"
   add_foreign_key "sessions", "organisations"
   add_foreign_key "teams", "organisations"
-  add_foreign_key "triage", "organisations"
-  add_foreign_key "triage", "patients"
-  add_foreign_key "triage", "programmes"
-  add_foreign_key "triage", "users", column: "performed_by_user_id"
+  add_foreign_key "triages", "organisations"
+  add_foreign_key "triages", "patients"
+  add_foreign_key "triages", "programmes"
+  add_foreign_key "triages", "users", column: "performed_by_user_id"
   add_foreign_key "vaccination_records", "batches"
   add_foreign_key "vaccination_records", "patients"
   add_foreign_key "vaccination_records", "programmes"

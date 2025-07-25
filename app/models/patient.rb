@@ -80,6 +80,7 @@ class Patient < ApplicationRecord
   has_many :session_attendances, through: :patient_sessions
   has_many :sessions, through: :patient_sessions
   has_many :organisations, through: :sessions
+  has_many :patient_specific_directions
 
   has_many :sessions_for_current_academic_year,
            -> { for_current_academic_year },

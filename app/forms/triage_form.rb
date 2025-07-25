@@ -78,7 +78,8 @@ class TriageForm
       performed_by: current_user,
       programme:,
       status:,
-      vaccine_method:
+      vaccine_method:,
+      academic_year: session.academic_year
     }
   end
 

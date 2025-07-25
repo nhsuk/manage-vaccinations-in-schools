@@ -172,7 +172,7 @@ class Reports::ProgrammeVaccinationsExporter
   def triages
     @triages ||=
       Triage
-        .select("DISTINCT ON (patient_id) triage.*")
+        .select("DISTINCT ON (patient_id) triages.*")
         .where(patient_id: vaccination_records.select(:patient_id), programme:)
         .for_academic_year(academic_year)
         .not_invalidated

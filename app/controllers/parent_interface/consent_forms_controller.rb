@@ -19,7 +19,8 @@ module ParentInterface
         ConsentForm.create!(
           programmes: @programmes,
           organisation: @session.organisation,
-          location: @session.location
+          location: @session.location,
+          academic_year: @session.academic_year
         )
 
       session[:consent_form_id] = consent_form.id

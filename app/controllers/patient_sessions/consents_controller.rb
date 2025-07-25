@@ -103,6 +103,7 @@ class PatientSessions::ConsentsController < PatientSessions::BaseController
     @consent =
       @patient
         .consents
+        .for_academic_year(@session.academic_year)
         .includes(
           :consent_form,
           :parent,
@@ -113,7 +114,11 @@ class PatientSessions::ConsentsController < PatientSessions::BaseController
   end
 
   def update_patient_status
-    @patient.triages.where(programme_id: @consent.programme_id).invalidate_all
+    @patient
+      .triages
+      .for_academic_year(@session.academic_year)
+      .where(programme_id: @consent.programme_id)
+      .invalidate_all
 
     StatusUpdater.call(patient: @patient)
   end
