@@ -101,6 +101,27 @@ resource "aws_ecr_repository" "mavis" {
   image_tag_mutability = "MUTABLE"
 }
 
+resource "aws_ecr_lifecycle_policy" "mavis" {
+  repository = aws_ecr_repository.mavis.name
+  policy = jsonencode({
+    rules = [
+      {
+        rulePriority = 1,
+        description  = "Expire images older than 3 months",
+        selection = {
+          tagStatus   = "any",
+          countType   = "sinceImagePushed",
+          countUnit   = "days",
+          countNumber = 90,
+        },
+        action = {
+          type = "expire"
+        }
+      }
+    ]
+  })
+}
+
 
 #### Access Analyzer
 
