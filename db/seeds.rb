@@ -62,14 +62,14 @@ end
 def attach_sample_of_schools_to(organisation)
   Location
     .school
-    .where(team_id: nil)
+    .where(subteam_id: nil)
     .order("RANDOM()")
     .limit(50)
-    .update_all(team_id: organisation.teams.first.id)
+    .update_all(subteam_id: organisation.subteams.first.id)
 end
 
 def attach_specific_school_to_organisation_if_present(organisation:, urn:)
-  Location.where(urn:).update_all(team_id: organisation.teams.first.id)
+  Location.where(urn:).update_all(subteam_id: organisation.subteams.first.id)
 end
 
 def create_session(

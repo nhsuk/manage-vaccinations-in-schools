@@ -21,18 +21,18 @@ organisation:
 
 programmes: [] # A list of programmes (flu, hpv, menacwy, td_ipv)
 
-teams:
-  team1: # Identifier to link team with school and links below, not used in app
+subteams:
+  subteam1: # Identifier to link team with school and links below, not used in app
     name: # Name of the team
     email: # Contact email address
     phone: # Contact phone number
     reply_to_id: # Optional GOV.UK Notify Reply-To UUID
 
 schools:
-  team1: [] # URNs managed by a particular team
+  subteam1: [] # URNs managed by a particular team
 
 clinics:
-  team1:
+  subteam1:
     - name: # Name of the clinic
       address_line_1: # First line of the address
       address_town: # Town of the address
@@ -63,17 +63,17 @@ Once a team has been onboarding, the YAML configuration file can be deleted as i
 The command `schools add-to-organisation` is provided to add new schools to an existing organisation.
 
 ```sh
-$ bin/mavis schools add-to-organisation ODS_CODE TEAM URNS
+$ bin/mavis schools add-to-organisation ODS_CODE SUBTEAM URNS
 ```
 
 - `ODS_CODE` refers to the ODS code of the organisation
-- `TEAM` refers to the name of the team in the organisation
+- `SUBTEAM` refers to the name of the subteam in the organisation
 - `URNS` are the URNs of the schools to add
 
 Optionally, it's also possible to customise which programmes are administered at a particular school:
 
 ```sh
-$ bin/mavis schools add-to-organisation ODS_CODE TEAM URNS --programmes VALUE1,VALUE2,...
+$ bin/mavis schools add-to-organisation ODS_CODE SUBTEAM URNS --programmes VALUE1,VALUE2,...
 ```
 
 ### Changing administered year groups of a school

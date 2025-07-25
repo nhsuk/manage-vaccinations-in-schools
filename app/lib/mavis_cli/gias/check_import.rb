@@ -23,7 +23,8 @@ module MavisCLI
               .pluck(:urn)
           )
         existing_schools = Set.new(Location.school.pluck(:urn))
-        organisation_schools = Set.new(Location.school.joins(:team).pluck(:urn))
+        organisation_schools =
+          Set.new(Location.school.joins(:subteam).pluck(:urn))
 
         closed_schools_with_future_sessions = Set.new
         closing_schools_with_future_sessions = Set.new
