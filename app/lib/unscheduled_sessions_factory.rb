@@ -6,50 +6,78 @@ class UnscheduledSessionsFactory
   end
 
   def call
-    Organisation
-      .includes(
-        :locations,
-        :programmes,
-        :sessions,
-        locations: :programme_year_groups
-      )
-      .find_each do |organisation|
-        sessions =
-          organisation.sessions.select { it.academic_year == academic_year }
-
-        organisation.locations.find_each do |location|
-          next if sessions.any? { it.location_id == location.id }
-
-          programmes =
-            if location.generic_clinic?
-              organisation.programmes
-            elsif location.school?
-              organisation.programmes.select do |programme|
-                location.programme_year_groups.any? do
-                  it.programme_id == programme.id &&
-                    it.year_group.in?(location.year_groups)
-                end
-              end
-            else
-              [] # don't create sessions for unhandled location types
-            end
-
-          next if programmes.empty?
-
-          Session.create!(academic_year:, location:, programmes:, organisation:)
-        end
-
-        location_ids = organisation.locations.map(&:id)
-
-        sessions
-          .select(&:unscheduled?)
-          .reject { _1.location_id.in?(location_ids) }
-          .reject { _1.patients.exists? }
-          .each(&:destroy!)
-      end
+    Organisation.find_each { handle_organisation!(it) }
   end
+
+  def self.call(...) = new(...).call
+
+  private_class_method :new
 
   private
 
   attr_reader :academic_year
+
+  def handle_organisation!(organisation)
+    create_sessions_for_all_programmes!(organisation.locations.generic_clinic)
+    create_sessions_per_programme_group!(organisation.locations.school)
+
+    destroy_orphaned_sessions!(organisation)
+  end
+
+  def create_sessions_for_all_programmes!(locations)
+    locations
+      .includes(:organisation, :programmes)
+      .find_each do |location|
+        organisation = location.organisation
+        programmes = location.programmes.reorder(nil)
+
+        if organisation
+             .sessions
+             .has_programmes(programmes)
+             .exists?(academic_year:, location:)
+          next
+        end
+
+        organisation.sessions.create!(academic_year:, location:, programmes:)
+      end
+  end
+
+  def create_sessions_per_programme_group!(locations)
+    locations
+      .includes(:organisation, :programmes)
+      .find_each do |location|
+        organisation = location.organisation
+
+        ProgrammeGrouper
+          .call(location.programmes)
+          .each_value do |programmes|
+            if organisation
+                 .sessions
+                 .has_programmes(programmes)
+                 .exists?(academic_year:, location:)
+              next
+            end
+
+            organisation.sessions.create!(
+              academic_year:,
+              location:,
+              programmes:
+            )
+          end
+      end
+  end
+
+  def destroy_orphaned_sessions!(organisation)
+    ActiveRecord::Base.transaction do
+      organisation
+        .sessions
+        .includes(:location, :session_programmes)
+        .unscheduled
+        .where(academic_year:)
+        .where.not(location: organisation.locations)
+        .where
+        .missing(:patient_sessions)
+        .destroy_all
+    end
+  end
 end
