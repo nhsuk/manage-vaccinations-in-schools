@@ -166,6 +166,16 @@ module NHS::ImmunisationsAPI
       end
     end
 
+    def should_be_in_immunisations_api?(
+      vaccination_record,
+      ignore_nhs_number: false
+    )
+      vaccination_record.kept? && vaccination_record.recorded_in_service? &&
+        vaccination_record.administered? &&
+        vaccination_record.programme.type.in?(PROGRAMME_TYPES) &&
+        (ignore_nhs_number || vaccination_record.patient.nhs_number.present?)
+    end
+
     private
 
     def next_sync_action(vaccination_record)
@@ -198,13 +208,6 @@ module NHS::ImmunisationsAPI
       elsif should_be_recorded
         :create
       end
-    end
-
-    def should_be_in_immunisations_api?(vaccination_record)
-      vaccination_record.kept? && vaccination_record.recorded_in_service? &&
-        vaccination_record.administered? &&
-        vaccination_record.programme.type.in?(PROGRAMME_TYPES) &&
-        vaccination_record.patient.nhs_number.present?
     end
 
     def is_recorded_in_immunisations_api?(vaccination_record)
