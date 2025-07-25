@@ -432,7 +432,7 @@ class ImmunisationImportRow
   end
 
   def patient_nhs_number_value
-    patient_nhs_number&.to_s&.gsub(/\s/, "")
+    patient_nhs_number&.to_s&.gsub(/\s|\?|_/, "")
   end
 
   def reason_not_administered_value
