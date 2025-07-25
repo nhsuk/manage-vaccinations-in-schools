@@ -42,10 +42,7 @@ class Sessions::RegisterController < ApplicationController
       t("attendance_flash.absent", name:)
     end
 
-    redirect_to session_register_path(
-                  @session,
-                  **params.permit(patient_search_form: {})
-                )
+    redirect_to session_register_path(@session)
   end
 
   private

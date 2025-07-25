@@ -2,12 +2,13 @@
 
 class AppPatientSearchFormComponent < ViewComponent::Base
   erb_template <<-ERB
-    <%= form_with model: form, url:, method: :get, builder: GOVUKDesignSystemFormBuilder::FormBuilder do |f| %>
+    <%= form_with url:, method: :get, builder: GOVUKDesignSystemFormBuilder::FormBuilder do |f| %>
       <%= render AppCardComponent.new(heading_level:, filters: true) do |card| %>
         <% card.with_heading { "Find children" } %>
 
         <div class="app-search-input" role="search">
           <%= f.govuk_text_field :q,
+                                 value: form.q,
                                  label: { text: "Search", class: "nhsuk-u-visually-hidden" },
                                  autocomplete: "off",
                                  class: "app-search-input__input" %>
@@ -23,7 +24,10 @@ class AppPatientSearchFormComponent < ViewComponent::Base
         <% if programmes.size > 1 %>
           <%= f.govuk_check_boxes_fieldset :programme_types, legend: { text: "Programme", size: "s" } do %>
             <% programmes.each do |programme| %>
-              <%= f.govuk_check_box :programme_types, programme.type, label: { text: programme.name } %>
+              <%= f.govuk_check_box :programme_types,
+                                    programme.type,
+                                    checked: form.programme_types&.include?(programme.type),
+                                    label: { text: programme.name } %>
             <% end %>
           <% end %>
         <% end %>
@@ -31,52 +35,72 @@ class AppPatientSearchFormComponent < ViewComponent::Base
         <% if consent_statuses.any? %>
           <%= f.govuk_check_boxes_fieldset :consent_statuses, legend: { text: "Consent status", size: "s" } do %>
             <% consent_statuses.each do |status| %>
-              <%= f.govuk_check_box :consent_statuses, status, label: { text: t(status, scope: %i[status consent label]) } %>
+              <%= f.govuk_check_box :consent_statuses,
+                                    status,
+                                    checked: form.consent_statuses&.include?(status),
+                                    label: { text: t(status, scope: %i[status consent label]) } %>
             <% end %>
           <% end %>
         <% end %>
 
         <% if triage_statuses.any? %>
           <%= f.govuk_radio_buttons_fieldset :triage_status, legend: { text: "Triage status", size: "s" } do %>
-            <%= f.govuk_radio_button :triage_status, "", label: { text: "Any" } %>
+            <%= f.govuk_radio_button :triage_status, "", checked: form.triage_status.blank?, label: { text: "Any" } %>
             <% triage_statuses.each do |status| %>
-              <%= f.govuk_radio_button :triage_status, status, label: { text: t(status, scope: %i[status triage label]) } %>
+              <%= f.govuk_radio_button :triage_status,
+                                       status,
+                                       checked: form.triage_status == status,
+                                       label: { text: t(status, scope: %i[status triage label]) } %>
             <% end %>
           <% end %>
         <% end %>
 
         <% if register_statuses.any? %>
           <%= f.govuk_radio_buttons_fieldset :register_status, legend: { text: "Registration status", size: "s" } do %>
-            <%= f.govuk_radio_button :register_status, "", label: { text: "Any" } %>
+            <%= f.govuk_radio_button :register_status, "", checked: form.register_status.blank?, label: { text: "Any" } %>
             <% register_statuses.each do |status| %>
-              <%= f.govuk_radio_button :register_status, status, label: { text: t(status, scope: %i[status register label]) } %>
+              <%= f.govuk_radio_button :register_status,
+                                       status,
+                                       checked: form.register_status == status,
+                                       label: { text: t(status, scope: %i[status register label]) } %>
             <% end %>
           <% end %>
         <% end %>
 
         <% if session_statuses.any? %>
           <%= f.govuk_radio_buttons_fieldset :session_status, legend: { text: "Session outcome", size: "s" } do %>
-            <%= f.govuk_radio_button :session_status, "", label: { text: "Any" } %>
+            <%= f.govuk_radio_button :session_status, "", checked: form.session_status.blank?, label: { text: "Any" } %>
             <% session_statuses.each do |status| %>
-              <%= f.govuk_radio_button :session_status, status, label: { text: t(status, scope: %i[status session label]) } %>
+              <%= f.govuk_radio_button :session_status,
+                                       status,
+                                       checked: form.session_status == status,
+                                       label: { text: t(status, scope: %i[status session label]) } %>
             <% end %>
           <% end %>
         <% end %>
 
         <% if programme_statuses.any? %>
           <%= f.govuk_radio_buttons_fieldset :programme_status, legend: { text: "Programme outcome", size: "s" } do %>
-            <%= f.govuk_radio_button :programme_status, "", label: { text: "Any" } %>
+            <%= f.govuk_radio_button :programme_status, "", checked: form.programme_status.blank?, label: { text: "Any" } %>
+
             <% programme_statuses.each do |status| %>
-              <%= f.govuk_radio_button :programme_status, status, label: { text: t(status, scope: %i[status programme label]) } %>
+              <%= f.govuk_radio_button :programme_status,
+                                       status,
+                                       checked: form.programme_status == status,
+                                       label: { text: t(status, scope: %i[status programme label]) } %>
             <% end %>
           <% end %>
         <% end %>
 
         <% if vaccine_methods.any? %>
           <%= f.govuk_radio_buttons_fieldset :vaccine_method, legend: { text: "Vaccination method", size: "s" } do %>
-            <%= f.govuk_radio_button :vaccine_method, "", label: { text: "Any" } %>
+            <%= f.govuk_radio_button :vaccine_method, "", checked: form.vaccine_method.blank?, label: { text: "Any" } %>
+
             <% vaccine_methods.each do |vaccine_method| %>
-              <%= f.govuk_radio_button :vaccine_method, vaccine_method, label: { text: Vaccine.human_enum_name(:vaccine_method, vaccine_method) } %>
+              <%= f.govuk_radio_button :vaccine_method,
+                                       vaccine_method,
+                                       checked: form.vaccine_method == vaccine_method,
+                                       label: { text: Vaccine.human_enum_name(:vaccine_method, vaccine_method) } %>
             <% end %>
           <% end %>
         <% end %>
@@ -84,7 +108,10 @@ class AppPatientSearchFormComponent < ViewComponent::Base
         <% if year_groups.any? %>
           <%= f.govuk_check_boxes_fieldset :year_groups, legend: { text: "Year group", size: "s" } do %>
             <% year_groups.each do |year_group| %>
-              <%= f.govuk_check_box :year_groups, year_group, label: { text: helpers.format_year_group(year_group) } %>
+              <%= f.govuk_check_box :year_groups,
+                                    year_group,
+                                    checked: form.year_groups&.include?(year_group),
+                                    label: { text: helpers.format_year_group(year_group) } %>
             <% end %>
           <% end %>
         <% end %>
@@ -95,20 +122,34 @@ class AppPatientSearchFormComponent < ViewComponent::Base
               <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--s">Date of birth</legend>
               <div class="nhsuk-date-input">
                 <div class="nhsuk-date-input__item">
-                  <%= f.govuk_number_field :date_of_birth_day, label: { text: "Day" }, width: 2 %>
+                  <%= f.govuk_number_field :date_of_birth_day,
+                                           value: form.date_of_birth_day,
+                                           label: { text: "Day" },
+                                           width: 2 %>
                 </div>
                 <div class="nhsuk-date-input__item">
-                  <%= f.govuk_number_field :date_of_birth_month, label: { text: "Month" }, width: 2 %>
+                  <%= f.govuk_number_field :date_of_birth_month,
+                                           value: form.date_of_birth_month,
+                                           label: { text: "Month" },
+                                           width: 2 %>
                 </div>
                 <div class="nhsuk-date-input__item">
-                  <%= f.govuk_number_field :date_of_birth_year, label: { text: "Year" }, width: 4 %>
+                  <%= f.govuk_number_field :date_of_birth_year,
+                                           value: form.date_of_birth_year,
+                                           label: { text: "Year" },
+                                           width: 4 %>
                 </div>
               </div>
             </fieldset>
           </div>
 
           <%= f.govuk_check_boxes_fieldset :missing_nhs_number, multiple: false, legend: { text: "Options", size: "s" } do %>
-            <%= f.govuk_check_box :missing_nhs_number, 1, 0, multiple: false, link_errors: true, label: { text: "Missing NHS number" } %>
+            <%= f.govuk_check_box :missing_nhs_number,
+                                  1, 0,
+                                  checked: form.missing_nhs_number,
+                                  multiple: false,
+                                  link_errors: true,
+                                  label: { text: "Missing NHS number" } %>
           <% end %>
 
           <% if show_buttons_in_details? %>
@@ -185,5 +226,5 @@ class AppPatientSearchFormComponent < ViewComponent::Base
     )
   end
 
-  def clear_filters_path = "#{@url}?patient_search_form[_clear]=true"
+  def clear_filters_path = "#{@url}?_clear=true"
 end
