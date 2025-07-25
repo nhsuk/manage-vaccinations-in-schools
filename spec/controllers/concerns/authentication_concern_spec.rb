@@ -99,11 +99,11 @@ describe AuthenticationConcern do
     end
   end
 
-  describe "reporting_app_redirect_url_with_auth_code_for" do
+  describe "reporting_app_redirect_uri_with_auth_code_for" do
     let(:session_cis2_info) { { "some_key" => "some value" } }
     let(:token) { build(:one_time_token, user: user, token: "mytoken") }
     let(:result) do
-      sample_class.send(:reporting_app_redirect_url_with_auth_code_for, user)
+      sample_class.send(:reporting_app_redirect_uri_with_auth_code_for, user)
     end
 
     context "when there is a redirect_uri key in session" do
