@@ -90,7 +90,6 @@ en:
               missing_month: Enter a month
               missing_year: Enter a year
               invalid: Enter a valid date and time
-              less_than_or_equal_to: Enter a time in the past
         health_answer:
           attributes:
             notes:

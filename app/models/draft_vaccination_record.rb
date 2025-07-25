@@ -54,11 +54,8 @@ class DraftVaccinationRecord
   end
 
   on_wizard_step :date_and_time, exact: true do
-    validates :performed_at,
-              presence: true,
-              comparison: {
-                less_than_or_equal_to: -> { Time.current }
-              }
+    validates :performed_at, presence: true
+    validate :performed_at_within_range
   end
 
   on_wizard_step :outcome, exact: true do
@@ -298,6 +295,32 @@ class DraftVaccinationRecord
     if identity_check_confirmed_by_patient
       self.identity_check_confirmed_by_other_name = ""
       self.identity_check_confirmed_by_other_relationship = ""
+    end
+  end
+
+  def earliest_possible_value
+    session.academic_year.to_academic_year_date_range.first.beginning_of_day
+  end
+
+  def latest_possible_value
+    [
+      session.academic_year.to_academic_year_date_range.last.end_of_day,
+      Time.current
+    ].min
+  end
+
+  def performed_at_within_range
+    return if performed_at.nil? || session.nil?
+    if performed_at < earliest_possible_value
+      errors.add(
+        :performed_at,
+        "The vaccination cannot take place before #{earliest_possible_value.to_fs(:long)}"
+      )
+    elsif performed_at > latest_possible_value
+      errors.add(
+        :performed_at,
+        "The vaccination cannot take place after #{latest_possible_value.to_fs(:long)}"
+      )
     end
   end
 
