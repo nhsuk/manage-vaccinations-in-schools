@@ -12,6 +12,12 @@ CRON_JOBS = {
     description:
       "Invalidate all self-consents and associated triage for the previous day"
   },
+  patients_aged_out_of_school: {
+    cron: "every day at 5:00",
+    class: "PatientsAgedOutOfSchoolJob",
+    description:
+      "Moves patients who have aged out of their school to unknown school."
+  },
   remove_import_csv: {
     cron: "every day at 1am",
     class: "RemoveImportCSVJob",
