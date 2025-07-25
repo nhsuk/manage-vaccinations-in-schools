@@ -233,10 +233,15 @@ class DraftVaccinationRecordsController < ApplicationController
         else
           wizard_path("confirm")
         end
-      elsif current_step == @draft_vaccination_record.wizard_steps.first
+      elsif first_step_of_flow?
         session_patient_programme_path(@session, @patient, @programme)
       else
         previous_wizard_path
       end
+  end
+
+  def first_step_of_flow?
+    current_step.to_s == @draft_vaccination_record.first_active_wizard_step ||
+      current_step == @draft_vaccination_record.wizard_steps.first
   end
 end

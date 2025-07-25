@@ -11,7 +11,12 @@ describe "Td/IPV" do
     and_i_click_on_the_patient
     then_i_see_the_patient_needs_consent
 
-    when_i_record_the_patient_as_already_vaccinated
+    when_i_click_record_as_already_vaccinated
+    when_i_click_back
+    then_i_see_the_patient_session_page
+
+    when_i_click_record_as_already_vaccinated
+    and_i_confirm_the_details
     then_i_see_the_patient_is_already_vaccinated
     and_the_consent_requests_are_sent
     then_the_parent_doesnt_receive_a_consent_request
@@ -27,7 +32,8 @@ describe "Td/IPV" do
     and_i_click_on_the_patient
     then_i_see_the_patient_needs_consent
 
-    when_i_record_the_patient_as_already_vaccinated
+    when_i_click_record_as_already_vaccinated
+    and_i_confirm_the_details
     then_i_see_the_patient_is_already_vaccinated
     and_the_consent_requests_are_sent
     then_the_parent_doesnt_receive_a_consent_request
@@ -43,7 +49,8 @@ describe "Td/IPV" do
     and_i_click_on_the_patient
     then_i_see_the_patient_needs_triage
 
-    when_i_record_the_patient_as_already_vaccinated
+    when_i_click_record_as_already_vaccinated
+    and_i_confirm_the_details
     then_i_see_the_patient_is_already_vaccinated
     and_i_click_on_triage
     then_i_see_the_patient_doesnt_need_triage
@@ -171,9 +178,20 @@ describe "Td/IPV" do
     expect(page).to have_content("Needs triage")
   end
 
-  def when_i_record_the_patient_as_already_vaccinated
+  def when_i_click_record_as_already_vaccinated
     click_on "Record as already vaccinated"
+  end
+
+  def when_i_click_back
+    click_on "Back"
+  end
+
+  def and_i_confirm_the_details
     click_on "Confirm"
+  end
+
+  def then_i_see_the_patient_session_page
+    expect(page).to have_content("Session activity and notes")
   end
 
   def then_i_see_the_patient_is_already_vaccinated

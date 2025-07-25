@@ -26,7 +26,8 @@ class PatientSessions::ProgrammesController < PatientSessions::BaseController
       programme: @programme,
       session: @session,
       location_name: @session.clinic? ? "Unknown" : nil,
-      performed_ods_code: current_user.selected_organisation.ods_code
+      performed_ods_code: current_user.selected_organisation.ods_code,
+      first_active_wizard_step: :confirm
     )
 
     redirect_to draft_vaccination_record_path("confirm")
