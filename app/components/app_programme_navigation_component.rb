@@ -28,5 +28,5 @@ class AppProgrammeNavigationComponent < ViewComponent::Base
 
   attr_reader :programme, :active, :academic_year
 
-  SECTIONS = %i[overview cohorts sessions patients vaccinations].freeze
+  SECTIONS = %i[overview cohorts sessions patients].freeze
 end

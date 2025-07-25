@@ -6,7 +6,7 @@ describe "Immunisation imports duplicates" do
     and_an_existing_patient_record_exists
     and_i_am_signed_in
 
-    when_i_go_to_the_vaccinations_page
+    when_i_go_to_the_import_page
     and_i_click_on_the_upload_link
     and_i_upload_a_file_with_duplicate_records
     then_i_should_see_the_import_page_with_duplicate_records
@@ -139,17 +139,13 @@ describe "Immunisation imports duplicates" do
 
   def and_i_am_signed_in
     sign_in @organisation.users.first
-  end
-
-  def when_i_go_to_the_vaccinations_page
-    visit "/dashboard"
-    click_on "Programmes", match: :first
-    click_on "HPV"
-    click_on "Vaccinations", match: :first
+    visit dashboard_path
   end
 
   def and_i_click_on_the_upload_link
-    click_on "Import vaccination records"
+    click_on "Import records"
+    choose "Vaccination records"
+    click_on "Continue"
   end
 
   def and_i_upload_a_file_with_duplicate_records

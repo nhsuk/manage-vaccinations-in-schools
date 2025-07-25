@@ -4,6 +4,7 @@ class VaccinationRecordsController < ApplicationController
   include VaccinationMailerConcern
 
   before_action :set_vaccination_record
+  before_action :set_breadcrumb_items, only: :show
   before_action :set_return_to, only: %i[confirm_destroy destroy]
 
   def show
@@ -57,6 +58,46 @@ class VaccinationRecordsController < ApplicationController
     @patient = @vaccination_record.patient
     @programme = @vaccination_record.programme
     @session = @vaccination_record.session
+  end
+
+  def set_breadcrumb_items
+    @breadcrumb_items = [
+      { text: t("dashboard.index.title"), href: dashboard_path }
+    ]
+
+    if @session
+      @breadcrumb_items << {
+        text: t("sessions.index.title"),
+        href: sessions_path
+      }
+      @breadcrumb_items << {
+        text: @session.location.name,
+        href: session_path(@session)
+      }
+      @breadcrumb_items << {
+        text: t("sessions.tabs.outcome"),
+        href: session_outcome_path(@session)
+      }
+      @breadcrumb_items << {
+        text: @patient.full_name,
+        href:
+          session_patient_programme_path(
+            @session,
+            @patient,
+            @programme,
+            return_to: "outcome"
+          )
+      }
+    else
+      @breadcrumb_items << {
+        text: t("patients.index.title"),
+        href: patients_path
+      }
+      @breadcrumb_items << {
+        text: @patient.full_name,
+        href: patient_path(@patient)
+      }
+    end
   end
 
   def set_return_to
