@@ -117,8 +117,10 @@ class PatientSession < ApplicationRecord
         ->(name) { joins(:patient).merge(Patient.search_by_name(name)) }
 
   scope :search_by_year_groups,
-        ->(year_groups) do
-          joins(:patient).merge(Patient.search_by_year_groups(year_groups))
+        ->(year_groups, academic_year:) do
+          joins(:patient).merge(
+            Patient.search_by_year_groups(year_groups, academic_year:)
+          )
         end
 
   scope :search_by_date_of_birth_year,

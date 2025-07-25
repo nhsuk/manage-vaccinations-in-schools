@@ -66,7 +66,11 @@ class PatientSearchForm < SearchForm
   end
 
   def filter_year_groups(scope)
-    year_groups.present? ? scope.search_by_year_groups(year_groups) : scope
+    if year_groups.present?
+      scope.search_by_year_groups(year_groups, academic_year:)
+    else
+      scope
+    end
   end
 
   def filter_date_of_birth_year(scope)
