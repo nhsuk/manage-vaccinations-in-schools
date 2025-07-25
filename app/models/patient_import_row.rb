@@ -168,6 +168,8 @@ class PatientImportRow
 
   private
 
+  def academic_year = AcademicYear.pending
+
   def import_attributes
     @import_attributes ||= {
       address_line_1: address_line_1&.to_s,
@@ -318,7 +320,7 @@ class PatientImportRow
 
   def birth_academic_year_value
     if year_group.present?
-      year_group.to_i&.to_birth_academic_year
+      year_group.to_i&.to_birth_academic_year(academic_year:)
     else
       date_of_birth&.to_date&.academic_year
     end
@@ -345,7 +347,7 @@ class PatientImportRow
   end
 
   def registration_academic_year
-    AcademicYear.pending if registration.present?
+    academic_year if registration.present?
   end
 
   def validate_date_of_birth
@@ -467,7 +469,7 @@ class PatientImportRow
   def validate_year_group
     field = year_group.presence || date_of_birth
 
-    year_group_value = birth_academic_year_value&.to_year_group
+    year_group_value = birth_academic_year_value&.to_year_group(academic_year:)
 
     if year_group_value.nil?
       # We only need to add a validation error here is the file had an
