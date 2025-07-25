@@ -74,9 +74,9 @@
   </li>
 
   <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
-    <%= render AppCardComponent.new(link_to: organisation_path, heading_level: 2, secondary: true) do |card| %>
-      <% card.with_heading { t("organisations.show.title") } %>
-      <% card.with_description { "Manage your organisation’s settings" } %>
+    <%= render AppCardComponent.new(link_to: team_path, heading_level: 2, secondary: true) do |card| %>
+      <% card.with_heading { t("teams.show.title") } %>
+      <% card.with_description { "Manage your team’s settings" } %>
     <% end %>
   </li>
 

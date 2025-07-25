@@ -24,7 +24,7 @@ class PatientMerger
       patient_to_destroy.school_moves.find_each do |school_move|
         if patient_to_keep.school_moves.exists?(
              home_educated: school_move.home_educated,
-             organisation_id: school_move.organisation_id,
+             team_id: school_move.team_id,
              school_id: school_move.school_id
            )
           school_move.destroy!

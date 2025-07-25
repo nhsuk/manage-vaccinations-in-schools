@@ -19,10 +19,10 @@ describe "Parent relationships" do
   end
 
   def given_a_patient_with_a_parent_exists
-    organisation = create(:organisation)
-    @nurse = create(:nurse, organisation:)
+    team = create(:team)
+    @nurse = create(:nurse, team:)
 
-    session = create(:session, organisation:)
+    session = create(:session, team:)
     @patient = create(:patient, session:)
 
     @parent = create(:parent)

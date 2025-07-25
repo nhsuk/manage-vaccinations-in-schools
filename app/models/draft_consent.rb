@@ -254,7 +254,7 @@ class DraftConsent
   end
 
   delegate :location,
-           :organisation,
+           :team,
            :patient,
            :session,
            to: :patient_session,
@@ -264,8 +264,8 @@ class DraftConsent
     patient&.id
   end
 
-  def organisation_id
-    organisation&.id
+  def team_id
+    team&.id
   end
 
   def recorded_by
@@ -407,7 +407,7 @@ class DraftConsent
       recorded_by_user_id
       response
       route
-      organisation_id
+      team_id
       vaccine_methods
     ]
   end

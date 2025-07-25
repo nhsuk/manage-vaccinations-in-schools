@@ -12,13 +12,13 @@ describe "Verbal consent recorded by admin" do
 
   def given_i_am_signed_in_as_an_admin
     programmes = [create(:programme, :hpv)]
-    organisation = create(:organisation, :with_one_admin, programmes:)
-    @session = create(:session, organisation:, programmes:)
+    team = create(:team, :with_one_admin, programmes:)
+    @session = create(:session, team:, programmes:)
 
     @parent = create(:parent)
     @patient = create(:patient, session: @session, parents: [@parent])
 
-    sign_in organisation.users.first, role: :admin_staff
+    sign_in team.users.first, role: :admin_staff
   end
 
   def when_i_record_that_consent_was_given_but_keep_in_triage

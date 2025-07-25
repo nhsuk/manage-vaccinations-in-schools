@@ -11,22 +11,22 @@
 #  phone_instructions :string
 #  created_at         :datetime         not null
 #  updated_at         :datetime         not null
-#  organisation_id    :bigint           not null
 #  reply_to_id        :uuid
+#  team_id            :bigint           not null
 #
 # Indexes
 #
-#  index_subteams_on_organisation_id_and_name  (organisation_id,name) UNIQUE
+#  index_subteams_on_team_id_and_name  (team_id,name) UNIQUE
 #
 # Foreign Keys
 #
-#  fk_rails_...  (organisation_id => organisations.id)
+#  fk_rails_...  (team_id => teams.id)
 #
 FactoryBot.define do
   factory :subteam do
     transient { sequence(:identifier) }
 
-    organisation
+    team
 
     name { "SAIS Subteam #{identifier}" }
     email { "sais-subteam-#{identifier}@example.com" }

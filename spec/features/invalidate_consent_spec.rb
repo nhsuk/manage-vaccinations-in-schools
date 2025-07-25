@@ -52,12 +52,11 @@ describe "Invalidate consent" do
 
   def given_i_am_signed_in
     @programme = create(:programme, :hpv)
-    organisation =
-      create(:organisation, :with_one_nurse, programmes: [@programme])
-    @session = create(:session, organisation:, programmes: [@programme])
+    team = create(:team, :with_one_nurse, programmes: [@programme])
+    @session = create(:session, team:, programmes: [@programme])
     @patient = create(:patient, session: @session)
 
-    sign_in organisation.users.first
+    sign_in team.users.first
   end
 
   def and_consent_has_been_given

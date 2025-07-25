@@ -10,7 +10,7 @@ describe "User CIS2 authentication", :cis2 do
   end
 
   def given_i_am_setup_in_mavis_and_cis2_but_with_an_empty_role
-    @organisation = create :organisation, ods_code: "AB12"
+    @team = create :team, ods_code: "AB12"
 
     mock_cis2_auth(selected_roleid: "")
   end

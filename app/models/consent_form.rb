@@ -36,23 +36,23 @@
 #  updated_at                          :datetime         not null
 #  consent_id                          :bigint
 #  location_id                         :bigint           not null
-#  organisation_id                     :bigint           not null
 #  school_id                           :bigint
+#  team_id                             :bigint           not null
 #
 # Indexes
 #
-#  index_consent_forms_on_consent_id       (consent_id)
-#  index_consent_forms_on_location_id      (location_id)
-#  index_consent_forms_on_nhs_number       (nhs_number)
-#  index_consent_forms_on_organisation_id  (organisation_id)
-#  index_consent_forms_on_school_id        (school_id)
+#  index_consent_forms_on_consent_id   (consent_id)
+#  index_consent_forms_on_location_id  (location_id)
+#  index_consent_forms_on_nhs_number   (nhs_number)
+#  index_consent_forms_on_school_id    (school_id)
+#  index_consent_forms_on_team_id      (team_id)
 #
 # Foreign Keys
 #
 #  fk_rails_...  (consent_id => consents.id)
 #  fk_rails_...  (location_id => locations.id)
-#  fk_rails_...  (organisation_id => organisations.id)
 #  fk_rails_...  (school_id => locations.id)
+#  fk_rails_...  (team_id => teams.id)
 #
 
 class ConsentForm < ApplicationRecord
@@ -82,7 +82,7 @@ class ConsentForm < ApplicationRecord
   belongs_to :consent, optional: true
   belongs_to :location
   belongs_to :school, class_name: "Location", optional: true
-  belongs_to :organisation
+  belongs_to :team
 
   has_many :notify_log_entries
   has_many :consent_form_programmes,
@@ -107,7 +107,7 @@ class ConsentForm < ApplicationRecord
 
   has_one :subteam, through: :location
 
-  has_many :eligible_schools, through: :organisation, source: :schools
+  has_many :eligible_schools, through: :team, source: :schools
   has_many :vaccines, through: :programmes
 
   enum :reason,
@@ -364,7 +364,7 @@ class ConsentForm < ApplicationRecord
         .joins(:programmes)
         .where(programmes:)
         .preload(:programmes)
-        .find_by(academic_year:, location:, organisation:)
+        .find_by(academic_year:, location:, team:)
   end
 
   def actual_session
@@ -378,7 +378,7 @@ class ConsentForm < ApplicationRecord
               .includes(:session_dates)
               .for_current_academic_year
               .first
-        ) || organisation.generic_clinic_session
+        ) || team.generic_clinic_session
   end
 
   def find_or_create_parent_with_relationship_to!(patient:)
@@ -451,11 +451,7 @@ class ConsentForm < ApplicationRecord
           if school
             SchoolMove.find_or_initialize_by(patient:, school:)
           else
-            SchoolMove.find_or_initialize_by(
-              patient:,
-              home_educated:,
-              organisation:
-            )
+            SchoolMove.find_or_initialize_by(patient:, home_educated:, team:)
           end
 
         school_move.update!(source: :parental_consent_form)

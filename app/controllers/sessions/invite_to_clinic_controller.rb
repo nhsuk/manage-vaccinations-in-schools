@@ -44,7 +44,7 @@ class Sessions::InviteToClinicController < ApplicationController
 
   def set_generic_clinic_session
     @generic_clinic_session =
-      @session.clinic? ? @session : @session.organisation.generic_clinic_session
+      @session.clinic? ? @session : @session.team.generic_clinic_session
   end
 
   def set_invitations_to_send

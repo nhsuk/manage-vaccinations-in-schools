@@ -41,9 +41,9 @@ describe "Filtering" do
 
   def given_a_session_exists_with_programmes(programme_types)
     programmes = programme_types.map { |type| create(:programme, type) }
-    organisation = create(:organisation, programmes:)
-    @nurse = create(:nurse, organisation:)
-    @session = create(:session, organisation:, programmes:)
+    team = create(:team, programmes:)
+    @nurse = create(:nurse, team:)
+    @session = create(:session, team:, programmes:)
   end
 
   def and_patients_are_in_the_session

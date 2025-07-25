@@ -23,30 +23,26 @@ describe Onboarding do
     it "set up the models" do
       expect { onboarding.save! }.not_to raise_error
 
-      organisation = Organisation.find_by!(ods_code: "EXAMPLE")
-      expect(organisation.name).to eq("NHS Trust")
-      expect(organisation.email).to eq("example@trust.nhs.uk")
-      expect(organisation.phone).to eq("07700 900815")
-      expect(organisation.phone_instructions).to eq(
-        "option 1, followed by option 3"
-      )
-      expect(organisation.careplus_venue_code).to eq("EXAMPLE")
-      expect(organisation.programmes).to contain_exactly(programme)
+      team = Team.find_by!(ods_code: "EXAMPLE")
+      expect(team.name).to eq("NHS Trust")
+      expect(team.email).to eq("example@trust.nhs.uk")
+      expect(team.phone).to eq("07700 900815")
+      expect(team.phone_instructions).to eq("option 1, followed by option 3")
+      expect(team.careplus_venue_code).to eq("EXAMPLE")
+      expect(team.programmes).to contain_exactly(programme)
 
-      expect(organisation.locations.generic_clinic.count).to eq(1)
-      generic_clinic = organisation.locations.generic_clinic.first
+      expect(team.locations.generic_clinic.count).to eq(1)
+      generic_clinic = team.locations.generic_clinic.first
       expect(generic_clinic.year_groups).to eq([8, 9, 10, 11])
       expect(generic_clinic.programme_year_groups.count).to eq(4)
 
-      subteam1 =
-        organisation.subteams.includes(:schools).find_by!(name: "Subteam 1")
+      subteam1 = team.subteams.includes(:schools).find_by!(name: "Subteam 1")
       expect(subteam1.email).to eq("subteam-1@trust.nhs.uk")
       expect(subteam1.phone).to eq("07700 900816")
       expect(subteam1.phone_instructions).to eq("option 9")
       expect(subteam1.reply_to_id).to eq("24af66c3-d6bd-4b9f-8067-3844f49e08d0")
 
-      subteam2 =
-        organisation.subteams.includes(:schools).find_by!(name: "Subteam 2")
+      subteam2 = team.subteams.includes(:schools).find_by!(name: "Subteam 2")
       expect(subteam2.email).to eq("subteam-2@trust.nhs.uk")
       expect(subteam2.phone).to eq("07700 900817")
       expect(subteam2.reply_to_id).to be_nil
@@ -67,7 +63,7 @@ describe Onboarding do
       expect(clinic2.name).to eq("11 Downing Street")
       expect(clinic2.address_postcode).to eq("SW1A 1AA")
 
-      expect(organisation.sessions.count).to eq(5)
+      expect(team.sessions.count).to eq(5)
     end
   end
 
@@ -81,12 +77,12 @@ describe Onboarding do
 
       expect(onboarding.errors.messages).to eq(
         {
-          "organisation.careplus_venue_code": ["can't be blank"],
-          "organisation.name": ["can't be blank"],
-          "organisation.ods_code": ["can't be blank"],
-          "organisation.phone": ["can't be blank", "is invalid"],
-          "organisation.privacy_notice_url": ["can't be blank"],
-          "organisation.privacy_policy_url": ["can't be blank"],
+          "team.careplus_venue_code": ["can't be blank"],
+          "team.name": ["can't be blank"],
+          "team.ods_code": ["can't be blank"],
+          "team.phone": ["can't be blank", "is invalid"],
+          "team.privacy_notice_url": ["can't be blank"],
+          "team.privacy_policy_url": ["can't be blank"],
           "school.0.subteam": ["can't be blank"],
           "school.1.subteam": ["can't be blank"],
           "school.2.status": ["is not included in the list"],

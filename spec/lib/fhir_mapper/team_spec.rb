@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe FHIRMapper::Organisation do
+describe FHIRMapper::Team do
   let(:ods_code) { "A9A5A" }
 
   describe ".fhir_reference" do
@@ -16,11 +16,11 @@ describe FHIRMapper::Organisation do
   end
 
   describe "#fhir_reference" do
-    let(:organisation) { Organisation.new(ods_code:) }
-    let(:fhir_mapper) { described_class.new(organisation) }
+    let(:team) { Team.new(ods_code:) }
+    let(:fhir_mapper) { described_class.new(team) }
 
     it "returns a FHIR reference with the correct ODS code" do
-      reference = organisation.fhir_reference
+      reference = team.fhir_reference
 
       expect(reference.type).to eq "Organization"
       expect(

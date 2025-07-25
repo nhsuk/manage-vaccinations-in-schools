@@ -26,11 +26,11 @@ describe "Verbal consent" do
 
   def given_a_patient_is_in_an_hpv_programme
     programmes = [create(:programme, :hpv)]
-    organisation = create(:organisation, programmes:)
+    team = create(:team, programmes:)
 
-    @nurse = create(:nurse, organisation:)
+    @nurse = create(:nurse, team:)
 
-    @session = create(:session, organisation:, programmes:)
+    @session = create(:session, team:, programmes:)
 
     @parent = create(:parent)
     @patient = create(:patient, session: @session)

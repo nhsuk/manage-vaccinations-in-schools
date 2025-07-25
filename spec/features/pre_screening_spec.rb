@@ -64,16 +64,16 @@ describe "Pre-screening" do
 
   def given_a_session_exists(programme_type, vaccine_method: "injection")
     programme = create(:programme, programme_type)
-    organisation = create(:organisation, programmes: [programme])
+    team = create(:team, programmes: [programme])
 
-    @nurse = create(:nurse, organisations: [organisation])
+    @nurse = create(:nurse, teams: [team])
 
     @session =
       create(
         :session,
-        organisation:,
+        team:,
         programmes: [programme],
-        location: create(:school, organisation:)
+        location: create(:school, team:)
       )
 
     @patient =

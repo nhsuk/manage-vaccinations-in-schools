@@ -9,13 +9,13 @@ class ImmunisationImportsController < ApplicationController
 
   def new
     @immunisation_import =
-      ImmunisationImport.new(organisation: current_user.selected_organisation)
+      ImmunisationImport.new(team: current_user.selected_team)
   end
 
   def create
     @immunisation_import =
       ImmunisationImport.new(
-        organisation: current_user.selected_organisation,
+        team: current_user.selected_team,
         uploaded_by: current_user,
         **immunisation_import_params
       )

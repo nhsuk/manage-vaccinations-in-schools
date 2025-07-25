@@ -6,14 +6,12 @@ describe AppConsentPatientSummaryComponent do
   let(:component) { described_class.new(consent) }
 
   let(:programme) { create(:programme) }
-  let(:organisation) { create(:organisation, programmes: [programme]) }
+  let(:team) { create(:team, programmes: [programme]) }
 
-  let(:consent) do
-    create(:consent, patient:, consent_form:, programme:, organisation:)
-  end
-  let(:school) { create(:school, name: "Waterloo Road", organisation:) }
+  let(:consent) { create(:consent, patient:, consent_form:, programme:, team:) }
+  let(:school) { create(:school, name: "Waterloo Road", team:) }
   let(:session) do
-    create(:session, programmes: [programme], organisation:, location: school)
+    create(:session, programmes: [programme], team:, location: school)
   end
   let(:consent_form) { nil }
   let(:patient) { create(:patient) }
@@ -52,7 +50,7 @@ describe AppConsentPatientSummaryComponent do
         date_of_birth: Date.new(2000, 1, 1),
         address_postcode: "SW1A 1AA",
         school:,
-        organisation:
+        team:
       )
     end
 

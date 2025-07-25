@@ -42,12 +42,12 @@ describe "Today’s batch" do
 
     programmes = [hpv_programme, flu_programme]
 
-    organisation = create(:organisation, :with_one_nurse, programmes:)
+    team = create(:team, :with_one_nurse, programmes:)
 
     batches =
       programmes.map do |programme|
         programme.vaccines.flat_map do |vaccine|
-          create_list(:batch, 2, :not_expired, organisation:, vaccine:)
+          create_list(:batch, 2, :not_expired, team:, vaccine:)
         end
       end
 
@@ -56,7 +56,7 @@ describe "Today’s batch" do
     @flu_injection_batch = batches.second.find { it.vaccine.injection? }
     @flu_nasal_batch = batches.second.find { it.vaccine.nasal? }
 
-    @session = create(:session, organisation:, programmes:)
+    @session = create(:session, team:, programmes:)
 
     @patient =
       create(
@@ -81,7 +81,7 @@ describe "Today’s batch" do
       academic_year: Date.current.academic_year
     ).update!(vaccine_methods: %w[nasal])
 
-    sign_in organisation.users.first
+    sign_in team.users.first
   end
 
   def when_i_vaccinate_a_patient_with_hpv

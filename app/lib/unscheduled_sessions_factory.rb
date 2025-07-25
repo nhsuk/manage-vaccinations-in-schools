@@ -6,7 +6,7 @@ class UnscheduledSessionsFactory
   end
 
   def call
-    Organisation.find_each { handle_organisation!(it) }
+    Team.find_each { handle_team!(it) }
   end
 
   def self.call(...) = new(...).call
@@ -17,64 +17,60 @@ class UnscheduledSessionsFactory
 
   attr_reader :academic_year
 
-  def handle_organisation!(organisation)
-    create_sessions_for_all_programmes!(organisation.locations.generic_clinic)
-    create_sessions_per_programme_group!(organisation.locations.school)
+  def handle_team!(team)
+    create_sessions_for_all_programmes!(team.locations.generic_clinic)
+    create_sessions_per_programme_group!(team.locations.school)
 
-    destroy_orphaned_sessions!(organisation)
+    destroy_orphaned_sessions!(team)
   end
 
   def create_sessions_for_all_programmes!(locations)
     locations
-      .includes(:organisation, :programmes)
+      .includes(:team, :programmes)
       .find_each do |location|
-        organisation = location.organisation
+        team = location.team
         programmes = location.programmes.reorder(nil)
 
-        if organisation
+        if team
              .sessions
              .has_programmes(programmes)
              .exists?(academic_year:, location:)
           next
         end
 
-        organisation.sessions.create!(academic_year:, location:, programmes:)
+        team.sessions.create!(academic_year:, location:, programmes:)
       end
   end
 
   def create_sessions_per_programme_group!(locations)
     locations
-      .includes(:organisation, :programmes)
+      .includes(:team, :programmes)
       .find_each do |location|
-        organisation = location.organisation
+        team = location.team
 
         ProgrammeGrouper
           .call(location.programmes)
           .each_value do |programmes|
-            if organisation
+            if team
                  .sessions
                  .has_programmes(programmes)
                  .exists?(academic_year:, location:)
               next
             end
 
-            organisation.sessions.create!(
-              academic_year:,
-              location:,
-              programmes:
-            )
+            team.sessions.create!(academic_year:, location:, programmes:)
           end
       end
   end
 
-  def destroy_orphaned_sessions!(organisation)
+  def destroy_orphaned_sessions!(team)
     ActiveRecord::Base.transaction do
-      organisation
+      team
         .sessions
         .includes(:location, :session_programmes)
         .unscheduled
         .where(academic_year:)
-        .where.not(location: organisation.locations)
+        .where.not(location: team.locations)
         .where
         .missing(:patient_sessions)
         .destroy_all

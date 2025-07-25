@@ -11,22 +11,22 @@
 #  phone_instructions :string
 #  created_at         :datetime         not null
 #  updated_at         :datetime         not null
-#  organisation_id    :bigint           not null
 #  reply_to_id        :uuid
+#  team_id            :bigint           not null
 #
 # Indexes
 #
-#  index_subteams_on_organisation_id_and_name  (organisation_id,name) UNIQUE
+#  index_subteams_on_team_id_and_name  (team_id,name) UNIQUE
 #
 # Foreign Keys
 #
-#  fk_rails_...  (organisation_id => organisations.id)
+#  fk_rails_...  (team_id => teams.id)
 #
 class Subteam < ApplicationRecord
-  audited associated_with: :organisation
+  audited associated_with: :team
   has_associated_audits
 
-  belongs_to :organisation
+  belongs_to :team
 
   has_many :locations
 
@@ -36,7 +36,7 @@ class Subteam < ApplicationRecord
   normalizes :email, with: EmailAddressNormaliser.new
   normalizes :phone, with: PhoneNumberNormaliser.new
 
-  validates :name, presence: true, uniqueness: { scope: :organisation }
+  validates :name, presence: true, uniqueness: { scope: :team }
   validates :email, notify_safe_email: true
   validates :phone, presence: true, phone: true
 end

@@ -3,24 +3,24 @@
 class PatientPolicy < ApplicationPolicy
   class Scope < ApplicationPolicy::Scope
     def resolve
-      organisation = user.selected_organisation
+      team = user.selected_team
 
-      return scope.none if organisation.nil?
+      return scope.none if team.nil?
 
       patient_session_exists =
         PatientSession
           .where("patient_sessions.patient_id = patients.id")
-          .where(session: organisation.sessions)
+          .where(session: team.sessions)
           .arel
           .exists
 
       school_move_exists =
         SchoolMove
           .where("school_moves.patient_id = patients.id")
-          .where(organisation:)
+          .where(team:)
           .or(
             SchoolMove.where("school_moves.patient_id = patients.id").where(
-              school: organisation.schools
+              school: team.schools
             )
           )
           .arel
@@ -29,11 +29,11 @@ class PatientPolicy < ApplicationPolicy
       vaccination_record_exists =
         VaccinationRecord
           .where("vaccination_records.patient_id = patients.id")
-          .where(session: organisation.sessions)
+          .where(session: team.sessions)
           .or(
             VaccinationRecord.where(
               "vaccination_records.patient_id = patients.id"
-            ).where(performed_ods_code: organisation.ods_code)
+            ).where(performed_ods_code: team.ods_code)
           )
           .arel
           .exists

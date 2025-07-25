@@ -9,7 +9,7 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
 
   private
 
-  delegate :organisation, to: :@import
+  delegate :team, to: :@import
 
   def summary_text
     case @import
@@ -184,8 +184,7 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
   end
 
   def programme
-    programmes =
-      organisation.programmes.flat_map(&:import_names).map { tag.i(it) }
+    programmes = team.programmes.flat_map(&:import_names).map { tag.i(it) }
 
     programmes_sentence =
       programmes.to_sentence(
@@ -202,7 +201,7 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
   end
 
   def vaccine_and_batch
-    vaccines = organisation.vaccines.pluck(:nivs_name).map { tag.i(it) }
+    vaccines = team.vaccines.pluck(:nivs_name).map { tag.i(it) }
 
     vaccines_sentence =
       vaccines.to_sentence(

@@ -45,8 +45,8 @@ describe SendSchoolConsentRemindersJob do
 
   let(:dates) { [Date.new(2024, 2, 1), Date.new(2024, 3, 1)] }
 
-  let(:organisation) { create(:organisation, programmes:) }
-  let(:location) { create(:school, organisation:) }
+  let(:team) { create(:team, programmes:) }
+  let(:location) { create(:school, team:) }
 
   let!(:session) do
     create(
@@ -57,7 +57,7 @@ describe SendSchoolConsentRemindersJob do
       location:,
       patients:,
       programmes:,
-      organisation:
+      team:
     )
   end
 
@@ -99,7 +99,7 @@ describe SendSchoolConsentRemindersJob do
     end
 
     context "when location is a generic clinic" do
-      let(:location) { create(:generic_clinic, organisation:) }
+      let(:location) { create(:generic_clinic, team:) }
 
       it "doesn't send any notifications" do
         expect(ConsentNotification).not_to receive(:create_and_send!)

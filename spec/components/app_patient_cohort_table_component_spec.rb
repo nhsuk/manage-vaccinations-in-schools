@@ -14,8 +14,8 @@ describe AppPatientCohortTableComponent do
   end
 
   context "with a cohort" do
-    let(:organisation) { current_user.selected_organisation }
-    let(:session) { create(:session, organisation:) }
+    let(:team) { current_user.selected_team }
+    let(:session) { create(:session, team:) }
 
     let(:patient) { create(:patient, year_group: 8, session:) }
 

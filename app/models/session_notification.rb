@@ -108,7 +108,7 @@ class SessionNotification < ApplicationRecord
         sent_by: current_user
       }
 
-      template_name = compute_template_name(type, session.organisation)
+      template_name = compute_template_name(type, session.team)
 
       EmailDeliveryJob.perform_later(template_name, **params)
 
@@ -118,9 +118,9 @@ class SessionNotification < ApplicationRecord
     end
   end
 
-  def self.compute_template_name(type, organisation)
+  def self.compute_template_name(type, team)
     template_names = [
-      :"session_#{type}_#{organisation.ods_code.downcase}",
+      :"session_#{type}_#{team.ods_code.downcase}",
       :"session_#{type}"
     ]
 

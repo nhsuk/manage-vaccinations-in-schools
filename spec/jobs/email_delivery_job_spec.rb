@@ -42,14 +42,14 @@ describe EmailDeliveryJob do
 
     let(:template_name) { GOVUK_NOTIFY_EMAIL_TEMPLATES.keys.first }
     let(:programmes) { [create(:programme)] }
-    let(:organisation) do
+    let(:team) do
       create(
-        :organisation,
+        :team,
         reply_to_id: "54bf1d28-8851-43f2-893d-1853f43a50cd",
         programmes:
       )
     end
-    let(:session) { create(:session, programmes:, organisation:) }
+    let(:session) { create(:session, programmes:, team:) }
     let(:parent) { create(:parent, email: "test@example.com") }
     let(:consent) { nil }
     let(:consent_form) { nil }
@@ -81,7 +81,7 @@ describe EmailDeliveryJob do
     end
 
     context "without a reply-to id" do
-      let(:organisation) { create(:organisation, programmes:) }
+      let(:team) { create(:team, programmes:) }
 
       it "sends a text using GOV.UK Notify" do
         expect(notifications_client).to receive(:send_email).with(
@@ -136,7 +136,7 @@ describe EmailDeliveryJob do
       end
 
       context "without a reply-to id" do
-        let(:organisation) { create(:organisation, programmes:) }
+        let(:team) { create(:team, programmes:) }
 
         it "sends a text using GOV.UK Notify" do
           expect(notifications_client).to receive(:send_email).with(

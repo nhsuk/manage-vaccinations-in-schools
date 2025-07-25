@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
 module FHIRMapper
-  class Organisation
-    delegate :ods_code, :name, :type, to: :@organisation
+  class Team
+    delegate :ods_code, :name, :type, to: :@team
 
-    def initialize(organisation)
-      @organisation = organisation
+    def initialize(team)
+      @team = team
     end
 
     def self.fhir_reference(ods_code:)

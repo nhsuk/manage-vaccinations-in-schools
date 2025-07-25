@@ -79,7 +79,7 @@ class Patient < ApplicationRecord
   has_many :pre_screenings, through: :patient_sessions
   has_many :session_attendances, through: :patient_sessions
   has_many :sessions, through: :patient_sessions
-  has_many :organisations, through: :sessions
+  has_many :teams, through: :sessions
 
   has_many :sessions_for_current_academic_year,
            -> { for_current_academic_year },
@@ -411,7 +411,7 @@ class Patient < ApplicationRecord
     update!(invalidated_at: Time.current)
   end
 
-  def not_in_organisation? = patient_sessions.empty?
+  def not_in_team? = patient_sessions.empty?
 
   def dup_for_pending_changes
     dup.tap do |new_patient|
@@ -425,7 +425,7 @@ class Patient < ApplicationRecord
         new_patient.school_moves.build(
           home_educated: school_move.home_educated,
           source: school_move.source,
-          organisation_id: school_move.organisation_id,
+          team_id: school_move.team_id,
           school_id: school_move.school_id
         )
       end

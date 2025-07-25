@@ -143,7 +143,7 @@ describe PatientNHSNumberLookupJob do
   end
 
   context "with an NHS number already but invalidated" do
-    let(:organisation) { create(:organisation, programmes: [programme]) }
+    let(:team) { create(:team, programmes: [programme]) }
 
     let(:patient) do
       create(
@@ -154,7 +154,7 @@ describe PatientNHSNumberLookupJob do
         date_of_birth: Date.new(2014, 2, 18),
         address_postcode: "SW11 1AA",
         invalidated_at: Time.current,
-        organisation:
+        team:
       )
     end
 

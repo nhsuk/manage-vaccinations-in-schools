@@ -11,7 +11,7 @@ class Programmes::CohortsController < Programmes::BaseController
         .map { it.to_birth_academic_year(academic_year: @academic_year) }
 
     @patient_count_by_birth_academic_year =
-      patients_in_organisation
+      patients_in_team
         .where(birth_academic_year: birth_academic_years)
         .group(:birth_academic_year)
         .count
@@ -24,7 +24,7 @@ class Programmes::CohortsController < Programmes::BaseController
     @birth_academic_year = Integer(params[:id])
 
     patients =
-      patients_in_organisation
+      patients_in_team
         # This is needed because the scope has a `distinct` and therefore
         # anything in the ORDER BY needs to appear in the SELECT.
         .select(
@@ -42,7 +42,7 @@ class Programmes::CohortsController < Programmes::BaseController
 
   private
 
-  def patients_in_organisation
-    current_user.selected_organisation.patients
+  def patients_in_team
+    current_user.selected_team.patients
   end
 end

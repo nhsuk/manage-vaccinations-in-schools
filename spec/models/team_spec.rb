@@ -2,7 +2,7 @@
 
 # == Schema Information
 #
-# Table name: organisations
+# Table name: teams
 #
 #  id                            :bigint           not null, primary key
 #  careplus_venue_code           :string           not null
@@ -22,12 +22,12 @@
 #
 # Indexes
 #
-#  index_organisations_on_name      (name) UNIQUE
-#  index_organisations_on_ods_code  (ods_code) UNIQUE
+#  index_teams_on_name      (name) UNIQUE
+#  index_teams_on_ods_code  (ods_code) UNIQUE
 #
 
-describe Organisation do
-  subject(:organisation) { build(:organisation) }
+describe Team do
+  subject(:team) { build(:team) }
 
   describe "validations" do
     it { should validate_presence_of(:email) }
@@ -46,10 +46,10 @@ describe Organisation do
   it_behaves_like "a model with a normalised phone number"
 
   describe "#community_clinics" do
-    let(:clinic_locations) { create_list(:community_clinic, 3, organisation:) }
+    let(:clinic_locations) { create_list(:community_clinic, 3, team:) }
 
     it "returns the clinic locations" do
-      expect(organisation.community_clinics).to match_array(clinic_locations)
+      expect(team.community_clinics).to match_array(clinic_locations)
     end
   end
 end

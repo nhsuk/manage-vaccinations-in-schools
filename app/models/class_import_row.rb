@@ -4,7 +4,7 @@ class ClassImportRow < PatientImportRow
   validate :validate_address_postcode
 
   def initialize(data:, session:, year_groups:)
-    super(data:, organisation: session.organisation, year_groups:)
+    super(data:, team: session.team, year_groups:)
     @school = session.location
   end
 

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-class Users::OrganisationsController < ApplicationController
-  skip_before_action :set_selected_organisation
+class Users::TeamsController < ApplicationController
+  skip_before_action :set_selected_team
   skip_after_action :verify_policy_scoped
 
   before_action :redirect_to_dashboard_if_cis2_is_enabled
@@ -9,17 +9,17 @@ class Users::OrganisationsController < ApplicationController
   layout "two_thirds"
 
   def new
-    @organisations = current_user.organisations
+    @teams = current_user.teams
   end
 
   def create
-    organisation = current_user.organisations.find(params[:organisation_id])
+    team = current_user.teams.find(params[:team_id])
 
-    if organisation.present?
+    if team.present?
       session["cis2_info"] = {
         "selected_org" => {
-          "name" => organisation.name,
-          "code" => organisation.ods_code
+          "name" => team.name,
+          "code" => team.ods_code
         },
         "selected_role" => {
           "code" => valid_cis2_roles.first,
@@ -29,7 +29,7 @@ class Users::OrganisationsController < ApplicationController
 
       redirect_to dashboard_path
     else
-      @organisations = current_user.organisations
+      @teams = current_user.teams
       render :new, status: :unprocessable_entity
     end
   end

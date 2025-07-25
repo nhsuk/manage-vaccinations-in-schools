@@ -96,17 +96,16 @@ describe "Flu vaccination" do
 
   def given_i_am_signed_in_with_flu_programme
     @programme = create(:programme, :flu)
-    @organisation =
-      create(:organisation, :with_one_nurse, programmes: [@programme])
-    @location = create(:school, organisation: @organisation)
+    @team = create(:team, :with_one_nurse, programmes: [@programme])
+    @location = create(:school, team: @team)
     @session =
       create(
         :session,
-        organisation: @organisation,
+        team: @team,
         programmes: [@programme],
         location: @location
       )
-    sign_in @organisation.users.first
+    sign_in @team.users.first
   end
 
   def and_there_is_a_flu_session_today_with_patients_ready_to_vaccinate
@@ -142,21 +141,11 @@ describe "Flu vaccination" do
         dose_volume_ml: 0.2
       )
     @nasal_batch =
-      create(
-        :batch,
-        :not_expired,
-        organisation: @organisation,
-        vaccine: @nasal_vaccine
-      )
+      create(:batch, :not_expired, team: @team, vaccine: @nasal_vaccine)
     @injection_vaccine =
       create(:vaccine, programme: @programme, method: :injection)
     @injection_batch =
-      create(
-        :batch,
-        :not_expired,
-        organisation: @organisation,
-        vaccine: @injection_vaccine
-      )
+      create(:batch, :not_expired, team: @team, vaccine: @injection_vaccine)
   end
 
   def and_enqueue_sync_vaccination_records_to_nhs_feature_is_enabled

@@ -5,15 +5,13 @@ describe DraftConsent do
     described_class.new(request_session:, current_user:, **attributes)
   end
 
-  let(:organisation) do
-    create(:organisation, :with_one_nurse, programmes: [programme])
-  end
+  let(:team) { create(:team, :with_one_nurse, programmes: [programme]) }
 
   let(:request_session) { {} }
-  let(:current_user) { organisation.users.first }
+  let(:current_user) { team.users.first }
 
   let(:programme) { create(:programme, :hpv) }
-  let(:session) { create(:session, organisation:, programmes: [programme]) }
+  let(:session) { create(:session, team:, programmes: [programme]) }
 
   let(:patient_session) { create(:patient_session, session:) }
 

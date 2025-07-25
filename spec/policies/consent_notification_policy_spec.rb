@@ -2,23 +2,21 @@
 
 describe ConsentNotificationPolicy do
   let(:programmes) { [create(:programme, :hpv)] }
-  let(:organisation) { create(:organisation, programmes: programmes) }
+  let(:team) { create(:team, programmes: programmes) }
   let(:user) do
-    user = create(:user, organisation: organisation)
-    allow(user).to receive(:selected_organisation).and_return(organisation)
+    user = create(:user, team: team)
+    allow(user).to receive(:selected_team).and_return(team)
     user
   end
 
-  let(:session) { create(:session, organisation:, programmes:) }
+  let(:session) { create(:session, team:, programmes:) }
   let(:consent_notification) do
     create(:consent_notification, :request, session:)
   end
 
-  let(:other_organisation) { create(:organisation, programmes:) }
-  let(:other_session) do
-    create(:session, organisation: other_organisation, programmes:)
-  end
-  let(:another_organisations_consent_notification) do
+  let(:other_team) { create(:team, programmes:) }
+  let(:other_session) { create(:session, team: other_team, programmes:) }
+  let(:another_teams_consent_notification) do
     create(:consent_notification, :request, session: other_session)
   end
 
@@ -28,6 +26,6 @@ describe ConsentNotificationPolicy do
     end
 
     it { should include(consent_notification) }
-    it { should_not include(another_organisations_consent_notification) }
+    it { should_not include(another_teams_consent_notification) }
   end
 end

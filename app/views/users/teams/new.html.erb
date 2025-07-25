@@ -1,14 +1,14 @@
 <%= h1 "Select a role" %>
 
-<%= form_with url: users_organisations_path, method: :post do |f| %>
-  <% @organisations.each do |organisation| %>
+<%= form_with url: users_teams_path, method: :post do |f| %>
+  <% @teams.each do |team| %>
     <%= f.button type: :submit,
-                 name: :organisation_id,
-                 value: organisation.id,
+                 name: :team_id,
+                 value: team.id,
                  class: "nhsuk-card nhsuk-card--clickable app-card--button nhsuk-u-margin-bottom-3" do %>
       <div class="nhsuk-card__content">
         <h2 class="nhsuk-card__heading nhsuk-heading-s nhsuk-u-margin-bottom-2">
-          <%= organisation.name %> (<%= organisation.ods_code %>)
+          <%= team.name %> (<%= team.ods_code %>)
         </h2>
 
         <% if current_user.is_admin? %>

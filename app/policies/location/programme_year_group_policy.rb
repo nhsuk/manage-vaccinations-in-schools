@@ -5,7 +5,7 @@ class Location::ProgrammeYearGroupPolicy < ApplicationPolicy
     def resolve
       scope.joins(location: :subteam).where(
         subteams: {
-          organisation: user.selected_organisation
+          team: user.selected_team
         }
       )
     end

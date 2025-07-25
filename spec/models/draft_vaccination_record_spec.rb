@@ -5,18 +5,16 @@ describe DraftVaccinationRecord do
     described_class.new(request_session:, current_user:, **attributes)
   end
 
-  let(:organisation) do
-    create(:organisation, :with_one_nurse, programmes: [programme])
-  end
+  let(:team) { create(:team, :with_one_nurse, programmes: [programme]) }
 
   let(:request_session) { {} }
-  let(:current_user) { organisation.users.first }
+  let(:current_user) { team.users.first }
 
   let(:programme) { create(:programme, :hpv) }
-  let(:session) { create(:session, organisation:, programmes: [programme]) }
+  let(:session) { create(:session, team:, programmes: [programme]) }
   let(:patient) { create(:patient, session:) }
   let(:vaccine) { programme.vaccines.first }
-  let(:batch) { create(:batch, organisation:, vaccine:) }
+  let(:batch) { create(:batch, team:, vaccine:) }
 
   let(:valid_administered_attributes) do
     {
@@ -88,7 +86,7 @@ describe DraftVaccinationRecord do
       let(:session) do
         create(
           :session,
-          organisation:,
+          team:,
           programmes: [programme],
           date: Date.new(2023, 12, 1)
         )

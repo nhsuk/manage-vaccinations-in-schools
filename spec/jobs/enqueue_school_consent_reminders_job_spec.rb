@@ -4,8 +4,8 @@ describe EnqueueSchoolConsentRemindersJob do
   subject(:perform_now) { described_class.perform_now }
 
   let(:programmes) { [create(:programme)] }
-  let(:organisation) { create(:organisation, programmes:) }
-  let(:location) { create(:school, organisation:) }
+  let(:team) { create(:team, programmes:) }
+  let(:location) { create(:school, team:) }
 
   let(:dates) { [Date.new(2024, 1, 12), Date.new(2024, 1, 15)] }
 
@@ -17,7 +17,7 @@ describe EnqueueSchoolConsentRemindersJob do
       days_before_consent_reminders: 7,
       location:,
       programmes:,
-      organisation:
+      team:
     )
   end
 
@@ -43,7 +43,7 @@ describe EnqueueSchoolConsentRemindersJob do
     end
 
     context "when location is a generic clinic" do
-      let(:location) { create(:generic_clinic, organisation:) }
+      let(:location) { create(:generic_clinic, team:) }
 
       it "doesn't queue any jobs" do
         expect { perform_now }.not_to have_enqueued_job(
@@ -63,7 +63,7 @@ describe EnqueueSchoolConsentRemindersJob do
     end
 
     context "when location is a generic clinic" do
-      let(:location) { create(:generic_clinic, organisation:) }
+      let(:location) { create(:generic_clinic, team:) }
 
       it "doesn't queue any jobs" do
         expect { perform_now }.not_to have_enqueued_job(

@@ -1,4 +1,4 @@
-<% if organisation %>
+<% if team %>
   <%= govuk_table(html_attributes: {
                     class: "nhsuk-table-responsive",
                   }) do |table| %>
@@ -18,7 +18,7 @@
         <% row.with_cell do %>
           <span class="nhsuk-table-responsive__heading">Actions</span>
           <%= form_with model: @patient, builder: GOVUKDesignSystemFormBuilder::FormBuilder do |f| %>
-            <%= f.hidden_field :organisation_id, value: organisation.id %>
+            <%= f.hidden_field :team_id, value: team.id %>
             <%= f.govuk_submit "Remove from cohort", class: "app-button--secondary-warning app-button--small" %>
           <% end %>
         <% end %>

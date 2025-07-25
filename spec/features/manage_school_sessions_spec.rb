@@ -4,7 +4,7 @@ describe "Manage school sessions" do
   around { |example| travel_to(Time.zone.local(2024, 2, 18)) { example.run } }
 
   scenario "Adding a new session, closing consent, and closing the session" do
-    given_my_organisation_is_running_an_hpv_vaccination_programme
+    given_my_team_is_running_an_hpv_vaccination_programme
 
     when_i_go_to_todays_sessions_as_a_nurse
     then_i_see_no_sessions
@@ -72,22 +72,22 @@ describe "Manage school sessions" do
     and_the_parent_receives_an_invitation
   end
 
-  def given_my_organisation_is_running_an_hpv_vaccination_programme
+  def given_my_team_is_running_an_hpv_vaccination_programme
     @programme = create(:programme, :hpv)
-    @organisation =
+    @team =
       create(
-        :organisation,
+        :team,
         :with_one_nurse,
         :with_generic_clinic,
         programmes: [@programme]
       )
-    @location = create(:school, :secondary, organisation: @organisation)
+    @location = create(:school, :secondary, team: @team)
     @session =
       create(
         :session,
         :unscheduled,
         location: @location,
-        organisation: @organisation,
+        team: @team,
         programmes: [@programme]
       )
 
@@ -96,19 +96,19 @@ describe "Manage school sessions" do
     @patient =
       create(:patient, year_group: 8, session: @session, parents: [@parent])
 
-    @organisation.generic_clinic_session.session_dates.create!(
+    @team.generic_clinic_session.session_dates.create!(
       value: 1.month.from_now.to_date
     )
 
     create(
       :patient_session,
       patient: @patient,
-      session: @organisation.generic_clinic_session
+      session: @team.generic_clinic_session
     )
   end
 
   def when_i_go_to_todays_sessions_as_a_nurse
-    sign_in @organisation.users.first
+    sign_in @team.users.first
     visit "/dashboard"
     click_link "Sessions", match: :first
   end

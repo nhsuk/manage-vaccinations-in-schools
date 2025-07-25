@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 class GenericClinicFactory
-  def initialize(organisation:)
-    @organisation = organisation
+  def initialize(team:)
+    @team = team
   end
 
   def call
@@ -19,29 +19,26 @@ class GenericClinicFactory
 
   private
 
-  attr_reader :organisation
+  attr_reader :team
 
-  delegate :programmes, to: :organisation
+  delegate :programmes, to: :team
 
   def subteam
-    organisation
+    team
       .subteams
       .create_with(
-        email: organisation.email,
-        phone: organisation.phone,
-        phone_instructions: organisation.phone_instructions
+        email: team.email,
+        phone: team.phone,
+        phone_instructions: team.phone_instructions
       )
-      .find_or_create_by!(name: organisation.name)
+      .find_or_create_by!(name: team.name)
   end
 
   def location
-    organisation.locations.find_by(
-      ods_code: organisation.ods_code,
-      type: :generic_clinic
-    ) ||
+    team.locations.find_by(ods_code: team.ods_code, type: :generic_clinic) ||
       Location.create!(
         name: "Community clinic",
-        ods_code: organisation.ods_code,
+        ods_code: team.ods_code,
         subteam:,
         type: :generic_clinic
       )

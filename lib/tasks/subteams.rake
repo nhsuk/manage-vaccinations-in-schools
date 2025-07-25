@@ -4,7 +4,7 @@ require_relative "../task_helpers"
 
 namespace :subteams do
   desc <<-DESC
-    Create a new subteam within an organisation.
+    Create a new subteam within an team.
 
     Usage:
       rake subteams:create # Complete the prompts
@@ -14,7 +14,7 @@ namespace :subteams do
     include TaskHelpers
 
     if args.to_a.empty? && $stdin.isatty && $stdout.isatty
-      ods_code = prompt_user_for "Enter organisation ODS code:", required: true
+      ods_code = prompt_user_for "Enter team ODS code:", required: true
       name = prompt_user_for "Enter subteam name:", required: true
       email = prompt_user_for "Enter subteam email:", required: true
       phone = prompt_user_for "Enter subteam phone:", required: true
@@ -28,9 +28,9 @@ namespace :subteams do
     end
 
     ActiveRecord::Base.transaction do
-      organisation = Organisation.find_by!(ods_code:)
+      team = Team.find_by!(ods_code:)
 
-      subteam = organisation.subteams.create!(name:, email:, phone:)
+      subteam = team.subteams.create!(name:, email:, phone:)
 
       puts "New #{subteam.name} subteam with ID #{subteam.id} created."
     end
