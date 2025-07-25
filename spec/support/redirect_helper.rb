@@ -28,7 +28,7 @@ module RedirectHelper
   end
 
   def mavis_reporting_app_url(path = "/")
-    root = Settings.mavis_reporting_app.root_url || "http://localhost:5000/"
+    root = Settings.mavis_reporting_app.root_url || "http://localhost:5001/"
     URI.join(root, path).to_s
   end
 end
