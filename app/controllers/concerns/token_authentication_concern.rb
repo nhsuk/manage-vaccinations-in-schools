@@ -8,11 +8,9 @@ module TokenAuthenticationConcern
 
     def client_id_error!(token)
       if token.blank?
-        render json: { errors: "invalid_request" }, status: :unauthorized and
-          return
+        render json: { errors: "invalid_request" }, status: :unauthorized
       else
-        render json: { errors: "unauthorized_client" }, status: :forbidden and
-          return
+        render json: { errors: "unauthorized_client" }, status: :forbidden
       end
     end
 

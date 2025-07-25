@@ -5,7 +5,9 @@ class OneTimeTokensController < ApplicationController
   include TokenAuthenticationConcern
 
   skip_before_action :authenticate_user!
-  before_action :authenticate_app_by_client_id!, :verify_grant_type!
+  before_action :ensure_reporting_app_feature_enabled,
+                :authenticate_app_by_client_id!,
+                :verify_grant_type!
 
   def authorize
     skip_policy_scope
@@ -38,5 +40,9 @@ class OneTimeTokensController < ApplicationController
 
   def jwt(token)
     JWT.encode(jwt_payload(token), Settings.mavis_reporting_app.secret, "HS512")
+  end
+
+  def ensure_reporting_app_feature_enabled
+    render status: :forbidden and return unless Flipper.enabled?(:reporting_app)
   end
 end
