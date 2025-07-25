@@ -44,7 +44,10 @@ describe "Cohorts index" do
       create(
         :patient_session,
         patient:,
-        session: @organisation.generic_clinic_session
+        session:
+          @organisation.generic_clinic_session(
+            academic_year: AcademicYear.current
+          )
       )
     end
   end

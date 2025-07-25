@@ -75,7 +75,8 @@ describe "Manage clinic sessions" do
         programmes: [@programme]
       )
 
-    @session = @organisation.generic_clinic_session
+    @session =
+      @organisation.generic_clinic_session(academic_year: AcademicYear.current)
 
     @parent = create(:parent)
 

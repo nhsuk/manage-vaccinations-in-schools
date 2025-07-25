@@ -63,6 +63,8 @@ class SchoolMove < ApplicationRecord
 
   private
 
+  def academic_year = AcademicYear.pending
+
   def update_patient!
     patient.update!(home_educated:, school:)
   end
@@ -83,14 +85,16 @@ class SchoolMove < ApplicationRecord
         org
           .sessions
           .includes(:location, :session_dates)
-          .for_current_academic_year
+          .where(academic_year: academic_year)
           .find_by(location: school)
       end
   end
 
   def generic_clinic_session
     @generic_clinic_session ||=
-      (school&.organisation || organisation)&.generic_clinic_session
+      (school&.organisation || organisation)&.generic_clinic_session(
+        academic_year:
+      )
   end
 
   def create_log_entry!(user:)

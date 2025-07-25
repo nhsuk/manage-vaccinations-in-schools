@@ -96,14 +96,18 @@ describe "Manage school sessions" do
     @patient =
       create(:patient, year_group: 8, session: @session, parents: [@parent])
 
-    @organisation.generic_clinic_session.session_dates.create!(
-      value: 1.month.from_now.to_date
-    )
+    @organisation
+      .generic_clinic_session(academic_year: AcademicYear.current)
+      .session_dates
+      .create!(value: 1.month.from_now.to_date)
 
     create(
       :patient_session,
       patient: @patient,
-      session: @organisation.generic_clinic_session
+      session:
+        @organisation.generic_clinic_session(
+          academic_year: AcademicYear.current
+        )
     )
   end
 

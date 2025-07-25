@@ -42,18 +42,19 @@ class ClassImport < PatientImport
   has_and_belongs_to_many :parent_relationships
   has_and_belongs_to_many :parents
 
+  delegate :academic_year, to: :session
+
   private
 
   def parse_row(data)
     ClassImportRow.new(data:, session:, year_groups:)
   end
 
-  def birth_academic_years
-    year_groups.map(&:to_birth_academic_year)
-  end
-
   def postprocess_rows!
     # Remove patients already in the session but not in the class list.
+
+    birth_academic_years =
+      year_groups.map { it.to_birth_academic_year(academic_year:) }
 
     unknown_patients =
       session.patients.where(birth_academic_year: birth_academic_years) -

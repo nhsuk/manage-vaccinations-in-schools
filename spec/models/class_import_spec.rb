@@ -432,7 +432,10 @@ describe ClassImport do
       end
 
       it "doesn't propose a move if the patient is in a different year group" do
-        existing_patient.update!(birth_academic_year: 7.to_birth_academic_year)
+        academic_year = class_import.academic_year
+        existing_patient.update!(
+          birth_academic_year: 7.to_birth_academic_year(academic_year:)
+        )
 
         expect { process! }.not_to(
           change { existing_patient.reload.school_moves.count }

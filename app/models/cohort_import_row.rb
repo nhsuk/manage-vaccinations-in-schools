@@ -7,7 +7,12 @@ class CohortImportRow < PatientImportRow
   SCHOOL_URN_UNKNOWN = "888888"
 
   def initialize(data:, organisation:)
-    super(data:, organisation:, year_groups: organisation.year_groups)
+    super(
+      data:,
+      organisation:,
+      academic_year: AcademicYear.pending,
+      year_groups: organisation.year_groups
+    )
   end
 
   def school_urn = @data[:child_school_urn]
