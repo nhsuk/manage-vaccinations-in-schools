@@ -37,7 +37,10 @@ module PatientsHelper
   def patient_year_group(patient, academic_year:)
     parts = [
       format_year_group(patient.year_group(academic_year:)),
-      ("(#{patient.registration})" if patient.registration.present?),
+      if patient.registration_academic_year == academic_year &&
+           patient.registration.present?
+        "(#{patient.registration})"
+      end,
       if academic_year != AcademicYear.current
         "(#{format_academic_year(academic_year)} academic year)"
       end
