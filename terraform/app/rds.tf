@@ -53,6 +53,9 @@ resource "aws_rds_cluster" "core" {
   preferred_backup_window         = "01:00-01:30"
   preferred_maintenance_window    = "sun:02:30-sun:03:00"
   db_cluster_parameter_group_name = "default.aurora-postgresql16"
+  monitoring_interval             = var.enable_enhanced_db_monitoring ? 30 : 0
+  monitoring_role_arn             = var.enable_enhanced_db_monitoring ? aws_iam_role.enhanced_db_monitoring[0].arn : null
+  enabled_cloudwatch_logs_exports = ["postgresql", "instance"]
 
   serverlessv2_scaling_configuration {
     max_capacity = var.max_aurora_capacity_units
@@ -83,4 +86,20 @@ resource "aws_rds_cluster_instance" "core" {
   engine_version       = aws_rds_cluster.core.engine_version
   db_subnet_group_name = aws_db_subnet_group.core.name
   promotion_tier       = each.value["promotion_tier"]
+  monitoring_interval  = var.enable_enhanced_db_monitoring ? 30 : 0
+  monitoring_role_arn  = var.enable_enhanced_db_monitoring ? aws_iam_role.enhanced_db_monitoring[0].arn : null
+}
+
+resource "aws_iam_role" "enhanced_db_monitoring" {
+  count = var.enable_enhanced_db_monitoring ? 1 : 0
+  name  = "enhanced-db-monitoring-role-${var.environment}"
+  assume_role_policy = templatefile(
+    "../app/templates/iam_assume_role.json.tpl",
+  { service_name = "monitoring.rds.amazonaws.com" })
+}
+
+resource "aws_iam_role_policy_attachment" "enhanced_db_monitoring_policy" {
+  count      = var.enable_enhanced_db_monitoring ? 1 : 0
+  role       = aws_iam_role.enhanced_db_monitoring[0].name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonRDSEnhancedMonitoringRole"
 }
