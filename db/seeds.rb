@@ -159,7 +159,8 @@ def create_session(
 end
 
 def setup_clinic(organisation)
-  clinic_session = organisation.generic_clinic_session
+  academic_year = AcademicYear.current
+  clinic_session = organisation.generic_clinic_session(academic_year:)
 
   clinic_session.session_dates.create!(value: Date.current)
   clinic_session.session_dates.create!(value: Date.current - 1.day)

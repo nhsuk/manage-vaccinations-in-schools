@@ -56,7 +56,9 @@ describe SchoolMove do
     let(:organisation) do
       create(:organisation, :with_generic_clinic, programmes:)
     end
-    let(:generic_clinic_session) { organisation.generic_clinic_session }
+    let(:generic_clinic_session) do
+      organisation.generic_clinic_session(academic_year: AcademicYear.current)
+    end
 
     shared_examples "creates a log entry" do
       it "creates a log entry" do
@@ -312,7 +314,9 @@ describe SchoolMove do
             create(:organisation, :with_generic_clinic, programmes:)
           end
           let(:generic_clinic_session) do
-            new_organisation.generic_clinic_session
+            new_organisation.generic_clinic_session(
+              academic_year: AcademicYear.current
+            )
           end
 
           include_examples "creates a log entry"
@@ -427,7 +431,9 @@ describe SchoolMove do
             create(:organisation, :with_generic_clinic, programmes:)
           end
           let(:generic_clinic_session) do
-            new_organisation.generic_clinic_session
+            new_organisation.generic_clinic_session(
+              academic_year: AcademicYear.current
+            )
           end
 
           include_examples "creates a log entry"
@@ -543,14 +549,19 @@ describe SchoolMove do
             create(
               :patient,
               :home_educated,
-              session: organisation.generic_clinic_session
+              session:
+                organisation.generic_clinic_session(
+                  academic_year: AcademicYear.current
+                )
             )
           end
           let(:new_organisation) do
             create(:organisation, :with_generic_clinic, programmes:)
           end
           let(:generic_clinic_session) do
-            new_organisation.generic_clinic_session
+            new_organisation.generic_clinic_session(
+              academic_year: AcademicYear.current
+            )
           end
 
           it "keeps the patient as home-schooled" do
@@ -670,7 +681,10 @@ describe SchoolMove do
             create(
               :patient,
               :home_educated,
-              session: organisation.generic_clinic_session
+              session:
+                organisation.generic_clinic_session(
+                  academic_year: AcademicYear.current
+                )
             )
           end
           let(:new_organisation) do
@@ -790,14 +804,19 @@ describe SchoolMove do
             create(
               :patient,
               school: nil,
-              session: organisation.generic_clinic_session
+              session:
+                organisation.generic_clinic_session(
+                  academic_year: AcademicYear.current
+                )
             )
           end
           let(:new_organisation) do
             create(:organisation, :with_generic_clinic, programmes:)
           end
           let(:generic_clinic_session) do
-            new_organisation.generic_clinic_session
+            new_organisation.generic_clinic_session(
+              academic_year: AcademicYear.current
+            )
           end
 
           include_examples "creates a log entry"
@@ -912,7 +931,10 @@ describe SchoolMove do
             create(
               :patient,
               school: nil,
-              session: organisation.generic_clinic_session
+              session:
+                organisation.generic_clinic_session(
+                  academic_year: AcademicYear.current
+                )
             )
           end
           let(:new_organisation) do

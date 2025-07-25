@@ -76,7 +76,10 @@ describe "HPV vaccination" do
 
     if clinic
       [previous_date, Date.current].each do |date|
-        @organisation.generic_clinic_session.session_dates.create!(value: date)
+        @organisation
+          .generic_clinic_session(academic_year: AcademicYear.current)
+          .session_dates
+          .create!(value: date)
       end
 
       @physical_clinic_location =
@@ -108,7 +111,16 @@ describe "HPV vaccination" do
         :patient,
         2,
         :consent_given_triage_not_needed,
-        session: clinic ? @organisation.generic_clinic_session : @session,
+        session:
+          (
+            if clinic
+              @organisation.generic_clinic_session(
+                academic_year: AcademicYear.current
+              )
+            else
+              @session
+            end
+          ),
         school:,
         year_group: 8
       )
@@ -116,7 +128,16 @@ describe "HPV vaccination" do
       create(
         :patient,
         :vaccinated,
-        session: clinic ? @organisation.generic_clinic_session : @session,
+        session:
+          (
+            if clinic
+              @organisation.generic_clinic_session(
+                academic_year: AcademicYear.current
+              )
+            else
+              @session
+            end
+          ),
         school:,
         location_name: clinic ? @physical_clinic_location.name : nil,
         year_group: 8
@@ -131,7 +152,16 @@ describe "HPV vaccination" do
         :patient,
         :vaccinated,
         :restricted,
-        session: clinic ? @organisation.generic_clinic_session : @session,
+        session:
+          (
+            if clinic
+              @organisation.generic_clinic_session(
+                academic_year: AcademicYear.current
+              )
+            else
+              @session
+            end
+          ),
         school:,
         location_name: clinic ? @physical_clinic_location.name : nil,
         year_group: 8

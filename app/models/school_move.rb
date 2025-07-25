@@ -90,7 +90,9 @@ class SchoolMove < ApplicationRecord
 
   def generic_clinic_session
     @generic_clinic_session ||=
-      (school&.organisation || organisation)&.generic_clinic_session
+      (school&.organisation || organisation)&.generic_clinic_session(
+        academic_year: AcademicYear.current
+      )
   end
 
   def create_log_entry!(user:)
