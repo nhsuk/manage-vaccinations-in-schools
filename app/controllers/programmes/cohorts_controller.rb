@@ -25,6 +25,13 @@ class Programmes::CohortsController < Programmes::BaseController
 
     patients =
       patients_in_organisation
+        # This is needed because the scope has a `distinct` and therefore
+        # anything in the ORDER BY needs to appear in the SELECT.
+        .select(
+          "patients.*",
+          "LOWER(given_name) AS given_name",
+          "LOWER(family_name) AS family_name"
+        )
         .where(birth_academic_year: @birth_academic_year)
         .not_deceased
         .eager_load(:school)
