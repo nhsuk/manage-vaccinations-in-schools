@@ -13,7 +13,7 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
 
             summary_list.with_row do |row|
               row.with_key { "Year group" }
-              row.with_value { helpers.patient_year_group(patient) }
+              row.with_value { helpers.patient_year_group(patient, academic_year:) }
             end
 
             if action_required

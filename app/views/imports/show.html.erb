@@ -44,7 +44,7 @@
     <% if import.is_a?(ClassImport) %>
       <%= summary_list.with_row do |row| %>
         <%= row.with_key { "Year groups" } %>
-        <%= row.with_value { import.year_groups.map { format_year_group(_1) }.to_sentence } %>
+        <%= row.with_value { import.year_groups.map { format_year_group(it) }.to_sentence } %>
       <% end %>
     <% end %>
 
