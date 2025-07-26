@@ -3,6 +3,8 @@
 module PatientSearchFormConcern
   extend ActiveSupport::Concern
 
+  include Pagy::Backend
+
   def set_patient_search_form
     @form =
       PatientSearchForm.new(
