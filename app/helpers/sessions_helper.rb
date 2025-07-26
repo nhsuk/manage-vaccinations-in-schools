@@ -1,18 +1,18 @@
 # frozen_string_literal: true
 
 module SessionsHelper
-  def session_consent_period(session, in_sentence:)
-    if session.close_consent_at.nil?
-      in_sentence ? "not provided" : "Not provided"
+  def session_consent_period(session)
+    open_at = session.open_consent_at
+    close_at = session.close_consent_at
+
+    if open_at.nil? || close_at.nil?
+      "Not provided"
+    elsif open_at.future?
+      "Opens #{open_at.to_fs(:short)}"
+    elsif close_at.future?
+      "Open from #{open_at.to_fs(:short)} until #{close_at.to_fs(:short)}"
     else
-      [
-        if session.close_consent_at.past?
-          in_sentence ? "closed" : "Closed"
-        else
-          in_sentence ? "open until" : "Open until"
-        end,
-        session.close_consent_at.to_fs(:long)
-      ].join(" ")
+      "Closed #{close_at.to_fs(:short)}"
     end
   end
 

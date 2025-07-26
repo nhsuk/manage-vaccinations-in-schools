@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class Sessions::OutcomeController < ApplicationController
-  include Pagy::Backend
   include PatientSearchFormConcern
 
   before_action :set_session

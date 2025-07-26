@@ -71,7 +71,8 @@ describe "Triage" do
 
   def when_i_go_the_session
     click_on "Sessions", match: :first
-    click_on "Scheduled"
+    choose "Scheduled"
+    click_on "Update results"
     click_on @session.location.name
   end
 

@@ -76,9 +76,8 @@ class Session < ApplicationRecord
 
   scope :today, -> { has_date(Date.current) }
 
-  scope :for_academic_year, ->(academic_year) { where(academic_year:) }
   scope :for_current_academic_year,
-        -> { for_academic_year(AcademicYear.current) }
+        -> { where(academic_year: AcademicYear.current) }
 
   scope :unscheduled,
         -> do
@@ -102,6 +101,9 @@ class Session < ApplicationRecord
             SessionDate.for_session.select("MAX(value)")
           )
         end
+
+  scope :search_by_name,
+        ->(query) { joins(:location).merge(Location.search_by_name(query)) }
 
   scope :send_consent_requests,
         -> { scheduled.where("? >= send_consent_requests_at", Date.current) }
@@ -221,9 +223,18 @@ class Session < ApplicationRecord
     end
   end
 
+  FAR_FUTURE_DATE = Date.new(9999, 1, 1)
+
   def <=>(other)
-    [dates.first, location.type, location.name] <=>
-      [other.dates.first, other.location.type, other.location.name]
+    # We want sessions without dates to appear after sessions with dates. We
+    # can't compare a `Date` with `nil` so instead we can choose a date in the
+    # far future.
+    [dates.first || FAR_FUTURE_DATE, location.type, location.name] <=>
+      [
+        other.dates.first || FAR_FUTURE_DATE,
+        other.location.type,
+        other.location.name
+      ]
   end
 
   def set_notification_dates
@@ -253,6 +264,8 @@ class Session < ApplicationRecord
     reminder_dates = dates.map { _1 - days_before_consent_reminders.days }
     reminder_dates.find(&:future?) || reminder_dates.last
   end
+
+  def open_consent_at = send_consent_requests_at
 
   def close_consent_at
     return nil if dates.empty?

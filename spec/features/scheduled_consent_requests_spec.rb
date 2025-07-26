@@ -79,7 +79,8 @@ describe "Scheduled consent requests" do
 
   def when_i_schedule_a_session_4_weeks_away
     click_link "Sessions"
-    click_link "Unscheduled"
+    choose "Unscheduled"
+    click_button "Update results"
     click_link @location.name
     click_link "Schedule sessions"
     click_link "Add session dates"

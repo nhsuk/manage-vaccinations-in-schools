@@ -12,4 +12,22 @@
 
 <%= render AppProgrammeNavigationComponent.new(@programme, @academic_year, active: :sessions) %>
 
-<%= render AppProgrammeSessionTableComponent.new(@sessions, programme: @programme) %>
+<div class="nhsuk-grid-row">
+  <div class="app-grid-column-filters">
+    <%= render AppSessionSearchFormComponent.new(
+          @form,
+          url: programme_sessions_path,
+          programmes: @programmes,
+        ) %>
+  </div>
+
+  <div class="app-grid-column-results">
+    <%= render AppSearchResultsComponent.new(@pagy, label: "sessions") do %>
+      <% @sessions.each do |session| %>
+        <%= render AppSessionCardComponent.new(
+              session, patient_count: @patient_count_by_session_id.fetch(session.id, 0),
+            ) %>
+      <% end %>
+    <% end %>
+  </div>
+</div>
