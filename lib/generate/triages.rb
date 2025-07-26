@@ -33,7 +33,7 @@ module Generate
       (@session.presence || organisation)
         .patients
         .includes(:triage_statuses)
-        .in_programmes([programme], academic_year:)
+        .appear_in_programmes([programme], academic_year:)
         .select { it.triage_status(programme:, academic_year:).required? }
     end
 

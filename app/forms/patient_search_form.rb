@@ -73,7 +73,10 @@ class PatientSearchForm
     scope = scope.search_by_nhs_number(nil) if missing_nhs_number.present?
 
     scope =
-      scope.in_programmes(programmes, academic_year:) if programmes.present?
+      scope.appear_in_programmes(
+        programmes,
+        academic_year:
+      ) if programmes.present?
 
     if (statuses = consent_statuses).present?
       scope =

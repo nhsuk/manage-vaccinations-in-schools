@@ -104,7 +104,7 @@ class Patient < ApplicationRecord
 
   scope :with_notice, -> { deceased.or(restricted).or(invalidated) }
 
-  scope :in_programmes,
+  scope :appear_in_programmes,
         ->(programmes, academic_year:) do
           location_programme_year_groups =
             Location::ProgrammeYearGroup

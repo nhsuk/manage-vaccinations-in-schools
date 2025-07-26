@@ -29,7 +29,7 @@
 
             <% row.with_cell do %>
               <span class="nhsuk-table-responsive__heading">Children</span>
-              <%= policy_scope(Patient).in_programmes([programme], academic_year:).count %>
+              <%= policy_scope(Patient).appear_in_programmes([programme], academic_year:).count %>
             <% end %>
 
             <% row.with_cell do %>

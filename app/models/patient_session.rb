@@ -71,10 +71,10 @@ class PatientSession < ApplicationRecord
           )
         end
 
-  scope :in_programmes,
+  scope :appear_in_programmes,
         ->(programmes, academic_year:) do
           joins(:patient).merge(
-            Patient.in_programmes(programmes, academic_year:)
+            Patient.appear_in_programmes(programmes, academic_year:)
           )
         end
 
@@ -234,7 +234,7 @@ class PatientSession < ApplicationRecord
       patient.vaccination_status(programme:, academic_year:).none_yet?
   end
 
-  def programmes = session.eligible_programmes_for(patient:)
+  def programmes = session.programmes_for(patient:)
 
   def session_status(programme:)
     session_statuses.find { it.programme_id == programme.id } ||
