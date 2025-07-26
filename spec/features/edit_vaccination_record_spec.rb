@@ -355,7 +355,7 @@ describe "Edit vaccination record" do
     visit "/dashboard"
 
     click_on "Programmes", match: :first
-    click_on "HPV"
+    click_on "HPV", match: :first
     click_on "Vaccinations", match: :first
   end
 

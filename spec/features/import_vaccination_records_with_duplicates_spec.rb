@@ -144,7 +144,7 @@ describe "Immunisation imports duplicates" do
   def when_i_go_to_the_vaccinations_page
     visit "/dashboard"
     click_on "Programmes", match: :first
-    click_on "HPV"
+    click_on "HPV", match: :first
     click_on "Vaccinations", match: :first
   end
 
