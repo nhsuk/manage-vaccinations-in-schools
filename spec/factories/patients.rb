@@ -105,7 +105,9 @@ FactoryBot.define do
         date_of_birth.academic_year
       end
     end
+
     registration { Faker::Alphanumeric.alpha(number: 2).upcase }
+    registration_academic_year { AcademicYear.pending if registration.present? }
 
     school { session.location if session&.location&.school? }
     home_educated { school.present? ? nil : false }

@@ -97,7 +97,10 @@ describe PatientsHelper do
       it { should eq("Year 9") }
 
       context "with a registration" do
-        before { patient.registration = "9AB" }
+        before do
+          patient.registration = "9AB"
+          patient.registration_academic_year = today.academic_year
+        end
 
         it { should eq("Year 9 (9AB)") }
       end
@@ -109,9 +112,12 @@ describe PatientsHelper do
       it { should eq("Year 10 (2024 to 2025 academic year)") }
 
       context "with a registration" do
-        before { patient.registration = "9AB" }
+        before do
+          patient.registration = "9AB"
+          patient.registration_academic_year = today.academic_year
+        end
 
-        it { should eq("Year 10 (9AB) (2024 to 2025 academic year)") }
+        it { should eq("Year 10 (2024 to 2025 academic year)") }
       end
     end
   end

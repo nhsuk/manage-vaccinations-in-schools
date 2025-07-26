@@ -12,6 +12,12 @@ CRON_JOBS = {
     description:
       "Invalidate all self-consents and associated triage for the previous day"
   },
+  patients_clear_registration: {
+    cron: "every day at 5:00",
+    class: "PatientsClearRegistrationJob",
+    description:
+      "Clears the registration of patients for the previous academic year"
+  },
   remove_import_csv: {
     cron: "every day at 1am",
     class: "RemoveImportCSVJob",
