@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class Programmes::PatientsController < Programmes::BaseController
-  include Pagy::Backend
   include PatientSearchFormConcern
 
   before_action :set_patient_search_form

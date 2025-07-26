@@ -3,7 +3,6 @@
 require "pagy/extras/array"
 
 class Sessions::RecordController < ApplicationController
-  include Pagy::Backend
   include PatientSearchFormConcern
   include TodaysBatchConcern
 
