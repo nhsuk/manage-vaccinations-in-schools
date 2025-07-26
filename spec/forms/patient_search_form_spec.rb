@@ -215,6 +215,9 @@ describe PatientSearchForm do
   context "for patient sessions" do
     let(:scope) { PatientSession.all }
 
+    let(:session) { create(:session, programmes: [programme]) }
+    let(:programme) { create(:programme) }
+
     it "doesn't raise an error" do
       expect { form.apply(scope) }.not_to raise_error
     end
@@ -238,9 +241,7 @@ describe PatientSearchForm do
       context "with a patient session eligible for the programme" do
         let(:patient) { create(:patient, year_group: 9) }
 
-        let(:patient_session) do
-          create(:patient_session, patient:, programmes: [programme])
-        end
+        let(:patient_session) { create(:patient_session, patient:, session:) }
 
         it "is included" do
           expect(form.apply(scope)).to include(patient_session)
@@ -250,9 +251,7 @@ describe PatientSearchForm do
       context "with a patient session not eligible for the programme" do
         let(:patient) { create(:patient, year_group: 8) }
 
-        let(:patient_session) do
-          create(:patient_session, patient:, programmes: [programme])
-        end
+        let(:patient_session) { create(:patient_session, patient:, session:) }
 
         it "is not included" do
           expect(form.apply(scope)).not_to include(patient_session)
@@ -272,9 +271,6 @@ describe PatientSearchForm do
       let(:register_status) { nil }
       let(:triage_status) { nil }
       let(:year_groups) { nil }
-
-      let(:programme) { create(:programme) }
-      let(:session) { create(:session, programmes: [programme]) }
 
       it "filters on consent status" do
         patient_session_given =
@@ -304,11 +300,8 @@ describe PatientSearchForm do
       let(:triage_status) { nil }
       let(:year_groups) { nil }
 
-      let(:programme) { create(:programme) }
-
       it "filters on session status" do
-        patient_session =
-          create(:patient_session, :vaccinated, programmes: [programme])
+        patient_session = create(:patient_session, :vaccinated, session:)
         expect(form.apply(scope)).to include(patient_session)
       end
     end
@@ -327,7 +320,7 @@ describe PatientSearchForm do
       let(:year_groups) { nil }
 
       it "filters on register status" do
-        patient_session = create(:patient_session, :in_attendance)
+        patient_session = create(:patient_session, :in_attendance, session:)
         expect(form.apply(scope)).to include(patient_session)
       end
     end
@@ -345,9 +338,6 @@ describe PatientSearchForm do
       let(:session_status) { nil }
       let(:triage_status) { "required" }
       let(:year_groups) { nil }
-
-      let(:programme) { create(:programme) }
-      let(:session) { create(:session, programmes: [programme]) }
 
       it "filters on triage status" do
         patient_session =
@@ -375,11 +365,7 @@ describe PatientSearchForm do
 
       it "filters on vaccine method" do
         nasal_patient_session =
-          create(
-            :patient_session,
-            :consent_given_triage_not_needed,
-            programmes: [programme]
-          )
+          create(:patient_session, :consent_given_triage_not_needed, session:)
 
         nasal_patient_session.patient.consent_statuses.first.update!(
           vaccine_methods: %w[nasal injection]
@@ -393,18 +379,10 @@ describe PatientSearchForm do
           )
 
         _injection_only_patient =
-          create(
-            :patient_session,
-            :consent_given_triage_not_needed,
-            programmes: [programme]
-          )
+          create(:patient_session, :consent_given_triage_not_needed, session:)
 
         injection_primary_patient =
-          create(
-            :patient_session,
-            :consent_given_triage_not_needed,
-            programmes: [programme]
-          )
+          create(:patient_session, :consent_given_triage_not_needed, session:)
 
         injection_primary_patient.patient.consent_statuses.first.update!(
           vaccine_methods: %w[injection nasal]

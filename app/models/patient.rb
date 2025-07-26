@@ -106,21 +106,12 @@ class Patient < ApplicationRecord
 
   scope :appear_in_programmes,
         ->(programmes, academic_year:) do
-          location_programme_year_groups =
-            Location::ProgrammeYearGroup
-              .where("location_id = sessions.location_id")
-              .where("programme_id = session_programmes.programme_id")
-              .where(
-                "year_group = ? - patients.birth_academic_year - 5",
-                academic_year
-              )
-
           where(
             PatientSession
-              .joins(session: :session_programmes)
-              .where(session_programmes: { programme: programmes })
-              .where("patient_sessions.patient_id = patients.id")
-              .where(location_programme_year_groups.arel.exists)
+              .joins(:session)
+              .where(sessions: { academic_year: })
+              .where("patient_id = patients.id")
+              .appear_in_programmes(programmes)
               .arel
               .exists
           )

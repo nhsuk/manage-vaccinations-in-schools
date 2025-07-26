@@ -44,7 +44,12 @@ describe CohortImport do
   # Ensure location URN matches the URN in our fixture files
   let!(:location) { create(:school, urn: "123456", organisation:) }
 
-  before { UnscheduledSessionsFactory.call }
+  before do
+    OrganisationSessionsFactory.call(
+      organisation,
+      academic_year: AcademicYear.current
+    )
+  end
 
   it_behaves_like "a CSVImportable model"
 
