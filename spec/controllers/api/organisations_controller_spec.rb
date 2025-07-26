@@ -37,6 +37,8 @@ describe API::OrganisationsController do
         end
       end
 
+      UnscheduledSessionsFactory.call
+
       create(:school, urn: "123456", organisation:, programmes:) # to match cohort_import/valid.csv
       create(:school, urn: "110158", organisation:, programmes:) # to match valid_hpv.csv
 

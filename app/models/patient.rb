@@ -79,7 +79,7 @@ class Patient < ApplicationRecord
   has_many :pre_screenings, through: :patient_sessions
   has_many :session_attendances, through: :patient_sessions
   has_many :sessions, through: :patient_sessions
-  has_many :organisations, through: :sessions
+  has_many :organisations, -> { distinct }, through: :sessions
 
   has_many :sessions_for_current_academic_year,
            -> { for_current_academic_year },
