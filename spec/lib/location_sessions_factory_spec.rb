@@ -19,6 +19,53 @@ describe LocationSessionsFactory do
         expect(session.academic_year).to eq(academic_year)
         expect(session.programmes).to eq(programmes)
       end
+
+      context "with patients from a previous academic year" do
+        let(:previous_session_at_location) do
+          create(
+            :session,
+            location:,
+            programmes:,
+            organisation:,
+            academic_year: academic_year - 1,
+            date: Date.current - 1.year
+          )
+        end
+
+        let(:previous_session_at_different_location) do
+          create(
+            :session,
+            programmes:,
+            organisation:,
+            academic_year: academic_year - 1,
+            date: Date.current - 1.year
+          )
+        end
+
+        let!(:patient_at_location) do
+          create(
+            :patient,
+            school: location,
+            session: previous_session_at_location
+          )
+        end
+
+        let!(:patient_at_different_location) do
+          create(:patient, session: previous_session_at_different_location)
+        end
+
+        it "adds the patients to the new sessions" do
+          expect { call }.to change(organisation.sessions, :count).by(1)
+
+          session =
+            organisation
+              .sessions
+              .includes(:patients)
+              .find_by(location:, academic_year:)
+          expect(session.patients).to include(patient_at_location)
+          expect(session.patients).not_to include(patient_at_different_location)
+        end
+      end
     end
 
     context "with a generic clinic" do
@@ -31,6 +78,56 @@ describe LocationSessionsFactory do
         expect(session.location).to eq(location)
         expect(session.academic_year).to eq(academic_year)
         expect(session.programmes).to eq(programmes)
+      end
+
+      context "with patients from a previous academic year" do
+        let(:previous_session_at_location) do
+          create(
+            :session,
+            location:,
+            programmes:,
+            organisation:,
+            academic_year: academic_year - 1,
+            date: Date.current - 1.year
+          )
+        end
+
+        let(:school) { create(:school, :secondary, organisation:) }
+
+        let(:previous_session_at_school_location) do
+          create(
+            :session,
+            location: school,
+            programmes:,
+            organisation:,
+            academic_year: academic_year - 1,
+            date: Date.current - 1.year
+          )
+        end
+
+        let!(:patient_at_location) do
+          create(:patient, school: nil, session: previous_session_at_location)
+        end
+
+        let!(:patient_at_school_location) do
+          create(
+            :patient,
+            school:,
+            session: previous_session_at_school_location
+          )
+        end
+
+        it "adds the patients to the new sessions" do
+          expect { call }.to change(organisation.sessions, :count).by(1)
+
+          session =
+            organisation
+              .sessions
+              .includes(:patients)
+              .find_by(location:, academic_year:)
+          expect(session.patients).to include(patient_at_location)
+          expect(session.patients).to include(patient_at_school_location)
+        end
       end
     end
 
