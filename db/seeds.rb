@@ -315,7 +315,12 @@ create_patients(organisation)
 create_imports(user, organisation)
 create_school_moves(organisation)
 
-UnscheduledSessionsFactory.call
+Organisation.find_each do |organisation|
+  OrganisationSessionsFactory.call(
+    organisation,
+    academic_year: AcademicYear.current
+  )
+end
 
 Rake::Task["status:update:all"].execute
 Rake::Task["gp_practices:smoke"].execute
