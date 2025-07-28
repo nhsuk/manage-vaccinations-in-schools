@@ -55,19 +55,19 @@ describe "mavis schools add-to-team" do
 
   def command
     Dry::CLI.new(MavisCLI).call(
-      arguments: %w[schools add-to-team ABC Team 123456]
+      arguments: %w[schools add-to-team abc Team 123456]
     )
   end
 
   def command_with_flu_only
     Dry::CLI.new(MavisCLI).call(
-      arguments: %w[schools add-to-team ABC Team 123456 --programmes flu]
+      arguments: %w[schools add-to-team abc Team 123456 --programmes flu]
     )
   end
 
   def given_the_team_exists
     @programmes = [create(:programme, :flu), create(:programme, :hpv)]
-    @team = create(:team, ods_code: "ABC", programmes: @programmes)
+    @team = create(:team, workgroup: "abc", programmes: @programmes)
   end
 
   def and_the_subteam_exists

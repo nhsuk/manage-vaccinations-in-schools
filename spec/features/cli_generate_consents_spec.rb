@@ -35,8 +35,8 @@ describe "mavis generate consents" do
       arguments: [
         "generate",
         "consents",
-        "-o",
-        @team.organisation.ods_code.to_s,
+        "-w",
+        @team.workgroup,
         "-p",
         @programme.type,
         "-s",

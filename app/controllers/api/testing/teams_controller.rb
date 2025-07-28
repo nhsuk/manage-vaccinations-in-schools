@@ -9,13 +9,7 @@ class API::Testing::TeamsController < API::Testing::BaseController
 
     keep_itself = ActiveModel::Type::Boolean.new.cast(params[:keep_itself])
 
-    # TODO: Select the right team based on an identifier.
-    team =
-      Team.joins(:organisation).find_by!(
-        organisation: {
-          ods_code: params[:ods_code]
-        }
-      )
+    team = Team.find_by!(workgroup: params[:workgroup])
 
     @start_time = Time.zone.now
 

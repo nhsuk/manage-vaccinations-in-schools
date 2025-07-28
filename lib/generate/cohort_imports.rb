@@ -41,15 +41,14 @@ module Generate
                 :progress_bar
 
     def initialize(
-      ods_code: "A9A5A",
+      team_workgroup: "A9A5A",
       programme: "hpv",
       urns: nil,
       school_year_groups: nil,
       patient_count: 10,
       progress_bar: nil
     )
-      # TODO: Select the right team based on an identifier.
-      @team = Team.joins(:organisation).find_by(organisation: { ods_code: })
+      @team = Team.find_by(workgroup: team_workgroup)
       @programme = Programme.find_by(type: programme)
       @urns =
         urns || @team.locations.select { it.urn.present? }.sample(3).pluck(:urn)

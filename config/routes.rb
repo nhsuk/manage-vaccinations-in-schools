@@ -90,7 +90,7 @@ Rails.application.routes.draw do
     unless Rails.env.production?
       namespace :testing do
         resources :locations, only: :index
-        resources :teams, only: :destroy, param: :ods_code
+        resources :teams, only: :destroy, param: :workgroup
         post "/onboard", to: "onboard#create"
       end
     end

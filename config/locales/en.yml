@@ -131,8 +131,8 @@ en:
               inclusion: Choose whether to update the child’s record with this new information
         select_team_form:
           attributes:
-            organisation_id:
-              inclusion: Choose an organisation
+            team_id:
+              inclusion: Choose a team
         session_programmes_form:
           attributes:
             programme_ids:
