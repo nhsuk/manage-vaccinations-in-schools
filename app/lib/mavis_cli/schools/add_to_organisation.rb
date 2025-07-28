@@ -42,6 +42,8 @@ module MavisCLI
             Programme.where(type: programmes)
           end
 
+        academic_year = AcademicYear.pending
+
         ActiveRecord::Base.transaction do
           urns.each do |urn|
             location = Location.school.find_by(urn:)
@@ -57,10 +59,10 @@ module MavisCLI
 
             location.update!(team:)
             location.create_default_programme_year_groups!(programmes)
+
+            LocationSessionsFactory.call(location, academic_year:)
           end
         end
-
-        UnscheduledSessionsFactory.call
       end
     end
   end

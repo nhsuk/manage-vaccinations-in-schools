@@ -122,13 +122,16 @@ class Onboarding
       GenericClinicFactory.call(organisation: organisation.reload)
 
       @users.each { |user| user.organisations << organisation }
-      UnscheduledSessionsFactory.call
+
+      OrganisationSessionsFactory.call(organisation, academic_year:)
     end
   end
 
   private
 
   attr_reader :organisation, :programmes, :teams, :users, :schools, :clinics
+
+  def academic_year = AcademicYear.pending
 
   def models
     [organisation] + programmes + teams + users + schools + clinics

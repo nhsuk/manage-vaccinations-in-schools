@@ -1,11 +1,12 @@
 # frozen_string_literal: true
 
-describe UnscheduledSessionsFactory do
+describe OrganisationSessionsFactory do
   describe "#call" do
-    subject(:call) { described_class.call }
+    subject(:call) { described_class.call(organisation, academic_year:) }
 
     let(:programmes) { [create(:programme, :hpv)] }
     let(:organisation) { create(:organisation, programmes:) }
+    let(:academic_year) { AcademicYear.current }
 
     context "with a school that's eligible for the programme" do
       let!(:location) { create(:school, :secondary, organisation:) }
