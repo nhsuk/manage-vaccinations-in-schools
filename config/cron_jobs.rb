@@ -18,6 +18,12 @@ CRON_JOBS = {
     description:
       "Clears the registration of patients for the previous academic year"
   },
+  patients_refused_consent_already_vaccinated: {
+    cron: "every day at 5:30",
+    class: "PatientsRefusedConsentAlreadyVaccinatedJob",
+    description:
+      "Record already vaccinated for patients who refused consent in the previous academic year for that reason"
+  },
   remove_import_csv: {
     cron: "every day at 1am",
     class: "RemoveImportCSVJob",
