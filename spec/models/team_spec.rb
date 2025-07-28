@@ -15,6 +15,7 @@
 #  phone_instructions            :string
 #  privacy_notice_url            :string           not null
 #  privacy_policy_url            :string           not null
+#  workgroup                     :string           not null
 #  created_at                    :datetime         not null
 #  updated_at                    :datetime         not null
 #  organisation_id               :bigint           not null
@@ -24,6 +25,7 @@
 #
 #  index_teams_on_name             (name) UNIQUE
 #  index_teams_on_organisation_id  (organisation_id)
+#  index_teams_on_workgroup        (workgroup) UNIQUE
 #
 # Foreign Keys
 #
@@ -43,8 +45,10 @@ describe Team do
     it { should validate_presence_of(:name) }
     it { should validate_presence_of(:phone) }
     it { should validate_presence_of(:privacy_policy_url) }
+    it { should validate_presence_of(:workgroup) }
 
     it { should validate_uniqueness_of(:name) }
+    it { should validate_uniqueness_of(:workgroup) }
   end
 
   it_behaves_like "a model with a normalised email address"

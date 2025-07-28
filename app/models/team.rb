@@ -15,6 +15,7 @@
 #  phone_instructions            :string
 #  privacy_notice_url            :string           not null
 #  privacy_policy_url            :string           not null
+#  workgroup                     :string           not null
 #  created_at                    :datetime         not null
 #  updated_at                    :datetime         not null
 #  organisation_id               :bigint           not null
@@ -24,6 +25,7 @@
 #
 #  index_teams_on_name             (name) UNIQUE
 #  index_teams_on_organisation_id  (organisation_id)
+#  index_teams_on_workgroup        (workgroup) UNIQUE
 #
 # Foreign Keys
 #
@@ -73,6 +75,7 @@ class Team < ApplicationRecord
   validates :phone, presence: true, phone: true
   validates :privacy_notice_url, presence: true
   validates :privacy_policy_url, presence: true
+  validates :workgroup, presence: true, uniqueness: true
 
   def year_groups
     @year_groups ||= location_programme_year_groups.pluck_year_groups

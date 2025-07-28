@@ -15,6 +15,7 @@
 #  phone_instructions            :string
 #  privacy_notice_url            :string           not null
 #  privacy_policy_url            :string           not null
+#  workgroup                     :string           not null
 #  created_at                    :datetime         not null
 #  updated_at                    :datetime         not null
 #  organisation_id               :bigint           not null
@@ -24,6 +25,7 @@
 #
 #  index_teams_on_name             (name) UNIQUE
 #  index_teams_on_organisation_id  (organisation_id)
+#  index_teams_on_workgroup        (workgroup) UNIQUE
 #
 # Foreign Keys
 #
@@ -38,6 +40,7 @@ FactoryBot.define do
 
     organisation { association(:organisation, ods_code:) }
 
+    workgroup { "w#{identifier}" }
     name { "SAIS Team #{identifier}" }
     email { "sais-team-#{identifier}@example.com" }
     phone { "01234 567890" }

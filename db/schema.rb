@@ -790,8 +790,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_01_143843) do
     t.string "privacy_notice_url", null: false
     t.string "phone_instructions"
     t.bigint "organisation_id", null: false
+    t.string "workgroup", null: false
     t.index ["name"], name: "index_teams_on_name", unique: true
     t.index ["organisation_id"], name: "index_teams_on_organisation_id"
+    t.index ["workgroup"], name: "index_teams_on_workgroup", unique: true
   end
 
   create_table "teams_users", id: false, force: :cascade do |t|
