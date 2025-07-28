@@ -15,6 +15,22 @@ describe AcademicYear do
 
       it { should eq(2025) }
     end
+
+    context "when using the override setting" do
+      let(:today) { Date.current }
+
+      before do
+        Settings.academic_year_today_override = "2023-09-01"
+        described_class.instance_variable_set(:@override_current_date, nil)
+      end
+
+      after do
+        Settings.academic_year_today_override = nil
+        described_class.instance_variable_set(:@override_current_date, nil)
+      end
+
+      it { should eq(2023) }
+    end
   end
 
   describe "#pending" do
