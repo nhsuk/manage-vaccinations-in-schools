@@ -29,10 +29,19 @@ describe AcademicYear do
     end
 
     context "when using the override setting" do
-      let(:today) { Date.current }
-      let(:academic_year_today_override) { "2023-09-01" }
+      let(:today) { Date.new(2024, 9, 1) }
 
-      it { should eq(2023) }
+      context "when set to nil" do
+        let(:academic_year_today_override) { "nil" }
+
+        it { should eq(2024) }
+      end
+
+      context "when set to a specific date" do
+        let(:academic_year_today_override) { "2023-09-01" }
+
+        it { should eq(2023) }
+      end
     end
   end
 

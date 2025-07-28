@@ -149,7 +149,7 @@ variable "enable_pds_enqueue_bulk_updates" {
 
 variable "academic_year_today_override" {
   type        = string
-  default     = ""
+  default     = "nil"
   description = "A date that can be used to override today's date when calculating the current academic year."
   nullable    = false
 }
