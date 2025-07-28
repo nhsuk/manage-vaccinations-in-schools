@@ -147,7 +147,14 @@ variable "enable_pds_enqueue_bulk_updates" {
   nullable    = false
 }
 
-variable "number_of_preparation_days_before_academic_year_starts" {
+variable "academic_year_today_override" {
+  type        = string
+  default     = null
+  description = "A date that can be used to override today's date when calculating the current academic year."
+  nullable    = true
+}
+
+variable "academic_year_number_of_preparation_days" {
   type        = number
   default     = 31
   description = "How many days before the start of the academic year to start the preparation period."
@@ -171,10 +178,11 @@ variable "app_version" {
 locals {
   is_production = var.environment == "production"
   parameter_store_variables = tomap({
-    MAVIS__PDS__ENQUEUE_BULK_UPDATES                              = var.enable_pds_enqueue_bulk_updates ? "true" : "false"
-    MAVIS__PDS__WAIT_BETWEEN_JOBS                                 = 0.5
-    MAVIS__NUMBER_OF_PREPARATION_DAYS_BEFORE_ACADEMIC_YEAR_STARTS = var.number_of_preparation_days_before_academic_year_starts
-    GOOD_JOB_MAX_THREADS                                          = 5
+    MAVIS__PDS__ENQUEUE_BULK_UPDATES                = var.enable_pds_enqueue_bulk_updates ? "true" : "false"
+    MAVIS__PDS__WAIT_BETWEEN_JOBS                   = 0.5
+    MAVIS__ACADEMIC_YEAR_TODAY_OVERRIDE             = var.academic_year_today_override
+    MAVIS__ACADEMIC_YEAR_NUMBER_OF_PREPARATION_DAYS = var.academic_year_number_of_preparation_days
+    GOOD_JOB_MAX_THREADS                            = 5
   })
   parameter_store_config_list = [for key, value in local.parameter_store_variables : {
     name      = key
