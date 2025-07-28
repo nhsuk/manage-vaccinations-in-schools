@@ -87,16 +87,8 @@ jobs:
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: 1.11.4
-      - name: Get db secret arn
-        id: get-db-secret-arn
-        working-directory: terraform/app
-        run: |
-          terraform init -backend-config="env/${{ inputs.environment }}-backend.hcl" -upgrade
-          DB_SECRET_ARN=$(terraform output --raw db_secret_arn)
-          echo "DB_SECRET_ARN=$DB_SECRET_ARN" >> $GITHUB_OUTPUT
     outputs:
       SNAPSHOT_ARN: ${{ steps.get-latest-snapshot.outputs.SNAPSHOT_ARN }}
-      DB_SECRET_ARN: ${{ steps.get-db-secret-arn.outputs.DB_SECRET_ARN }}
 
   prepare-webapp:
     name: Prepare webapp
@@ -154,17 +146,24 @@ jobs:
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: 1.11.4
+      - name: Get db secret arn
+        id: get-db-secret-arn
+        working-directory: terraform/app
+        run: |
+          terraform init -backend-config="env/${{ inputs.environment }}-backend.hcl" -upgrade
+          DB_SECRET_ARN=$(terraform output --raw db_secret_arn)
+          echo "DB_SECRET_ARN=$DB_SECRET_ARN" >> $GITHUB_OUTPUT
       - name: Terraform Plan
         id: plan
         run: |
           set -eo pipefail
           terraform init -backend-config="env/${{ inputs.environment }}-backend.hcl" -upgrade
-          
+
           CIDR_BLOCKS='${{ inputs.egress_cidr }}'
           PLAN_ARGS=(
             "plan"
             "-var=image_digest=${{ env.DOCKER_DIGEST }}"
-            "-var=db_secret_arn=${{ env.DB_SECRET_ARN }}"
+            "-var=db_secret_arn=${{ steps.get-db-secret-arn.outputs.DB_SECRET_ARN }}"
             "-var=imported_snapshot=${{ env.SNAPSHOT_ARN }}"
             "-var-file=env/${{ inputs.environment }}.tfvars"
             "-var=allowed_egress_cidr_blocks=$CIDR_BLOCKS"
@@ -211,3 +210,10 @@ jobs:
           set -e
           terraform init -backend-config="env/${{ inputs.environment }}-backend.hcl" -upgrade
           terraform apply ${{ runner.temp }}/tfplan
+      - name: Deploy db-access-service
+        run: |
+          task_definition_arn=$(terraform output -raw task_definition_arn)
+          aws ecs update-service \
+            --cluster mavis-${{ inputs.environment }}-data-replication \
+            --service mavis-${{ inputs.environment }}-data-replication \
+            --task-definition $task_definition_arn
