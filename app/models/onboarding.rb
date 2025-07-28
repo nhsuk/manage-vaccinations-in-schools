@@ -131,7 +131,7 @@ class Onboarding
 
   attr_reader :organisation, :programmes, :teams, :users, :schools, :clinics
 
-  def academic_year = AcademicYear.pending
+  def academic_year = AcademicYear.current
 
   def models
     [organisation] + programmes + teams + users + schools + clinics
