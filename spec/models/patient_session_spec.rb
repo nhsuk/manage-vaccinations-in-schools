@@ -41,6 +41,51 @@ describe PatientSession do
   end
 
   describe "scopes" do
+    describe "#appear_in_programmes" do
+      subject(:scope) { described_class.appear_in_programmes(programmes) }
+
+      let(:programmes) { create_list(:programme, 1, :td_ipv) }
+      let(:session) { create(:session, programmes:) }
+
+      it { should be_empty }
+
+      context "in a session with the right year group" do
+        let(:patient_session) do
+          create(:patient_session, session:, year_group: 9)
+        end
+
+        it { should include(patient_session) }
+      end
+
+      context "in a session but the wrong year group" do
+        let(:patient_session) do
+          create(:patient_session, session:, year_group: 8)
+        end
+
+        it { should_not include(patient_session) }
+      end
+
+      context "in a session with the right year group for the programme but not the location" do
+        let(:location) { create(:school, :secondary) }
+        let(:session) { create(:session, location:, programmes:) }
+
+        let(:patient_session) { create(:patient, session:, year_group: 9) }
+
+        before do
+          programmes.each do |programme|
+            create(
+              :location_programme_year_group,
+              programme:,
+              location:,
+              year_group: 10
+            )
+          end
+        end
+
+        it { should_not include(patient_session) }
+      end
+    end
+
     describe "#consent_given_and_ready_to_vaccinate" do
       subject(:scope) do
         described_class.consent_given_and_ready_to_vaccinate(

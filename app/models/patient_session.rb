@@ -21,6 +21,22 @@
 #  fk_rails_...  (session_id => sessions.id)
 #
 
+# The patient session model represents a patient who goes to the school or
+# clinic location represented by the session. This doesn't necessarily mean
+# that the patient is eligible for any of the programmes administered in any
+# particular session they belong to.
+#
+# This is designed to support programmes being dynamically added or removed to
+# sessions without needing to also create or destroy patient session
+# instances. While also adding support for patients becoming eligible if year
+# groups are added or removed to locations, again without needing to also
+# create or destroy patient session instances.
+#
+# It also supports the scenario where a patient belongs to a session but is
+# only eligible for one of many programmes administered in the session. In
+# that case, the list of programmes they appear in won't be the same as the
+# complete list of programmes administered in the session.
+
 class PatientSession < ApplicationRecord
   audited associated_with: :patient
   has_associated_audits
@@ -71,10 +87,29 @@ class PatientSession < ApplicationRecord
           )
         end
 
-  scope :in_programmes,
-        ->(programmes, academic_year:) do
-          joins(:patient).merge(
-            Patient.in_programmes(programmes, academic_year:)
+  scope :appear_in_programmes,
+        ->(programmes) do
+          age_children_start_school = 5
+
+          # Is the patient eligible for any of those programmes by year group?
+          location_programme_year_groups =
+            Location::ProgrammeYearGroup
+              .where("programme_id = session_programmes.programme_id")
+              .where("location_id = sessions.location_id")
+              .where(
+                "year_group = sessions.academic_year " \
+                  "- patients.birth_academic_year " \
+                  "- #{age_children_start_school}"
+              )
+
+          # Are any of the programmes administered in the session?
+          joins(:patient, :session).where(
+            SessionProgramme
+              .where(programme: programmes)
+              .where("session_programmes.session_id = sessions.id")
+              .where(location_programme_year_groups.arel.exists)
+              .arel
+              .exists
           )
         end
 
@@ -234,7 +269,7 @@ class PatientSession < ApplicationRecord
       patient.vaccination_status(programme:, academic_year:).none_yet?
   end
 
-  def programmes = session.eligible_programmes_for(patient:)
+  def programmes = session.programmes_for(patient:, academic_year:)
 
   def session_status(programme:)
     session_statuses.find { it.programme_id == programme.id } ||
