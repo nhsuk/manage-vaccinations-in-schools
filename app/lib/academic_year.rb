@@ -31,7 +31,7 @@ module AcademicYear
     def preparation_start_date
       start_date = (current + 1).to_academic_year_date_range.first
       days_of_preparation =
-        Settings.number_of_preparation_days_before_academic_year_starts.to_i
+        Settings.academic_year_number_of_preparation_days.to_i
       start_date - days_of_preparation.days
     end
   end
