@@ -96,22 +96,3 @@
     @include nhsuk-responsive-padding(3, "bottom");
   }
 }
-
-// Used only to simulate CIS2 role switcher
-// @link https://digital.nhs.uk/services/care-identity-service/applications-and-services/cis2-authentication/guidance-for-developers/detailed-guidance/role-selection
-.app-card--button {
-  text-align: left;
-
-  .nhsuk-card__heading {
-    color: $nhsuk-link-color;
-    text-decoration: underline;
-  }
-
-  &:hover .nhsuk-card__heading {
-    color: $nhsuk-link-hover-color;
-  }
-
-  &:active .nhsuk-card__heading {
-    color: $nhsuk-link-active-color;
-  }
-}
