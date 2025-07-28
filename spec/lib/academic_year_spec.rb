@@ -1,6 +1,18 @@
 # frozen_string_literal: true
 
 describe AcademicYear do
+  before do
+    Settings.academic_year_today_override = academic_year_today_override
+    described_class.instance_variable_set(:@override_current_date, nil)
+  end
+
+  after do
+    Settings.academic_year_today_override = nil
+    described_class.instance_variable_set(:@override_current_date, nil)
+  end
+
+  let(:academic_year_today_override) { "" }
+
   describe "#current" do
     subject { travel_to(today) { described_class.current } }
 
@@ -18,16 +30,7 @@ describe AcademicYear do
 
     context "when using the override setting" do
       let(:today) { Date.current }
-
-      before do
-        Settings.academic_year_today_override = "2023-09-01"
-        described_class.instance_variable_set(:@override_current_date, nil)
-      end
-
-      after do
-        Settings.academic_year_today_override = nil
-        described_class.instance_variable_set(:@override_current_date, nil)
-      end
+      let(:academic_year_today_override) { "2023-09-01" }
 
       it { should eq(2023) }
     end
