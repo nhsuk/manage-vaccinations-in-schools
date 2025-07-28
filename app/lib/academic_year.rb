@@ -19,7 +19,8 @@ module AcademicYear
 
     def override_current_date
       @override_current_date ||=
-        if (value = Settings.academic_year_today_override).present?
+        if (value = Settings.academic_year_today_override).present? &&
+             value != "nil"
           Date.parse(value)
         end
     end
