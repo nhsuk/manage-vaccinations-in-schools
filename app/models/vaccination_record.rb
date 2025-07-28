@@ -107,7 +107,7 @@ class VaccinationRecord < ApplicationRecord
           )
         end
 
-  enum :protocol, { pgd: 0, psd: 1 }, validate: true
+  enum :protocol, { pgd: 0, psd: 1 }, validate: { allow_nil: true }
 
   enum :delivery_method,
        { intramuscular: 0, subcutaneous: 1, nasal_spray: 2 },
@@ -142,6 +142,11 @@ class VaccinationRecord < ApplicationRecord
 
   academic_year_attribute :performed_at
 
+  with_options if: :administered? do
+    validates :full_dose, inclusion: [true, false]
+    validates :protocol, presence: true
+  end
+
   validates :notes, length: { maximum: 1000 }
 
   validates :location_name,
@@ -158,8 +163,6 @@ class VaccinationRecord < ApplicationRecord
               less_than_or_equal_to: :maximum_dose_sequence,
               allow_nil: true
             }
-
-  validates :full_dose, inclusion: [true, false], if: :administered?
 
   validates :performed_at,
             comparison: {
