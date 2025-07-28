@@ -42,10 +42,34 @@ class PatientSearchForm < SearchForm
   end
 
   def apply(scope)
-    scope = scope.search_by_name(q) if q.present?
+    scope = filter_name(scope)
+    scope = filter_year_groups(scope)
+    scope = filter_date_of_birth_year(scope)
+    scope = filter_nhs_number(scope)
+    scope = filter_programmes(scope)
+    scope = filter_consent_statuses(scope)
+    scope = filter_vaccination_statuses(scope)
+    scope = filter_session_status(scope)
+    scope = filter_register_status(scope)
+    scope = filter_triage_status(scope)
+    scope = filter_vaccine_method(scope)
 
-    scope = scope.search_by_year_groups(year_groups) if year_groups.present?
+    scope.order_by_name
+  end
 
+  private
+
+  def academic_year = @session&.academic_year || AcademicYear.current
+
+  def filter_name(scope)
+    q.present? ? scope.search_by_name(q) : scope
+  end
+
+  def filter_year_groups(scope)
+    year_groups.present? ? scope.search_by_year_groups(year_groups) : scope
+  end
+
+  def filter_date_of_birth_year(scope)
     if date_of_birth_year.present?
       scope = scope.search_by_date_of_birth_year(date_of_birth_year)
     end
@@ -58,68 +82,90 @@ class PatientSearchForm < SearchForm
       scope = scope.search_by_date_of_birth_day(date_of_birth_day)
     end
 
-    scope = scope.search_by_nhs_number(nil) if missing_nhs_number.present?
-
-    if programmes.present?
-      scope =
-        if @session
-          scope.appear_in_programmes(programmes)
-        else
-          scope.appear_in_programmes(programmes, academic_year:)
-        end
-    end
-
-    if (statuses = consent_statuses).present?
-      scope =
-        if @session
-          scope.has_consent_status(statuses, programme: programmes)
-        else
-          scope.has_consent_status(
-            statuses,
-            programme: programmes,
-            academic_year:
-          )
-        end
-    end
-
-    if (status = programme_status&.to_sym).present?
-      scope =
-        if @session
-          scope.has_vaccination_status(status, programme: programmes)
-        else
-          scope.has_vaccination_status(
-            status,
-            programme: programmes,
-            academic_year:
-          )
-        end
-    end
-
-    if (status = session_status&.to_sym).present?
-      scope = scope.has_session_status(status, programme: programmes)
-    end
-
-    if (status = register_status&.to_sym).present?
-      scope = scope.has_registration_status(status)
-    end
-
-    if (status = triage_status&.to_sym).present?
-      scope =
-        if @session
-          scope.has_triage_status(status, programme: programmes)
-        else
-          scope.has_triage_status(status, programme: programmes, academic_year:)
-        end
-    end
-
-    if vaccine_method.present?
-      scope = scope.has_vaccine_method(vaccine_method, programme: programmes)
-    end
-
-    scope.order_by_name
+    scope
   end
 
-  private
+  def filter_nhs_number(scope)
+    missing_nhs_number.present? ? scope.search_by_nhs_number(nil) : scope
+  end
 
-  def academic_year = @session&.academic_year || AcademicYear.current
+  def filter_programmes(scope)
+    if programmes.present?
+      if @session
+        scope.appear_in_programmes(programmes)
+      else
+        scope.appear_in_programmes(programmes, academic_year:)
+      end
+    else
+      scope
+    end
+  end
+
+  def filter_consent_statuses(scope)
+    if (statuses = consent_statuses).present?
+      if @session
+        scope.has_consent_status(statuses, programme: programmes)
+      else
+        scope.has_consent_status(
+          statuses,
+          programme: programmes,
+          academic_year:
+        )
+      end
+    else
+      scope
+    end
+  end
+
+  def filter_vaccination_statuses(scope)
+    if (status = programme_status&.to_sym).present?
+      if @session
+        scope.has_vaccination_status(status, programme: programmes)
+      else
+        scope.has_vaccination_status(
+          status,
+          programme: programmes,
+          academic_year:
+        )
+      end
+    else
+      scope
+    end
+  end
+
+  def filter_session_status(scope)
+    if (status = session_status&.to_sym).present?
+      scope.has_session_status(status, programme: programmes)
+    else
+      scope
+    end
+  end
+
+  def filter_register_status(scope)
+    if (status = register_status&.to_sym).present?
+      scope.has_registration_status(status)
+    else
+      scope
+    end
+  end
+
+  def filter_triage_status(scope)
+    if (status = triage_status&.to_sym).present?
+      if @session
+        scope.has_triage_status(status, programme: programmes)
+      else
+        scope.has_triage_status(status, programme: programmes, academic_year:)
+      end
+    else
+      scope
+    end
+  end
+
+  def filter_vaccine_method(scope)
+    if vaccine_method.present?
+      scope.has_vaccine_method(vaccine_method, programme: programmes)
+    else
+      scope
+    end
+  end
 end
