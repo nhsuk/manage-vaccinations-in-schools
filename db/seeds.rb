@@ -299,6 +299,13 @@ unless Settings.cis2.enabled
   create_patients(organisation)
   create_imports(user, organisation)
   create_school_moves(organisation)
+
+  organisation_support = create_organisation(ods_code: "V0V8L")
+  create_user(
+    organisation: organisation_support,
+    email: "support@example.com",
+    fallback_role: "support"
+  )
 end
 
 # CIS2 organisation - the ODS code and user UID need to match the values in the CIS2 env
