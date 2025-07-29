@@ -10,17 +10,12 @@ resource_name = {
   lb_security_group        = "mavis-training-PublicHTTPLoadBalancerSecurityGroup-L8GOGS04ARYI"
   cloudwatch_vpc_log_group = "mavis-training-FlowLogs"
 }
-rails_env             = "staging"
 rails_master_key_path = "/copilot/mavis/secrets/STAGING_RAILS_MASTER_KEY"
-
-enable_splunk                   = false
-enable_cis2                     = false
-enable_pds_enqueue_bulk_updates = false
 
 http_hosts = {
   MAVIS__HOST                        = "training.manage-vaccinations-in-schools.nhs.uk"
   MAVIS__GIVE_OR_REFUSE_CONSENT_HOST = "training.give-or-refuse-consent-for-vaccinations.nhs.uk"
 }
-appspec_bucket       = "nhse-mavis-appspec-bucket-training"
+
 minimum_web_replicas = 2
 maximum_web_replicas = 4
