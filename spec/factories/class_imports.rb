@@ -18,25 +18,27 @@
 #  year_groups                  :integer          default([]), not null, is an Array
 #  created_at                   :datetime         not null
 #  updated_at                   :datetime         not null
+#  location_id                  :bigint           not null
 #  organisation_id              :bigint           not null
-#  session_id                   :bigint           not null
 #  uploaded_by_user_id          :bigint           not null
 #
 # Indexes
 #
+#  index_class_imports_on_location_id          (location_id)
 #  index_class_imports_on_organisation_id      (organisation_id)
-#  index_class_imports_on_session_id           (session_id)
 #  index_class_imports_on_uploaded_by_user_id  (uploaded_by_user_id)
 #
 # Foreign Keys
 #
+#  fk_rails_...  (location_id => locations.id)
 #  fk_rails_...  (organisation_id => organisations.id)
-#  fk_rails_...  (session_id => sessions.id)
 #  fk_rails_...  (uploaded_by_user_id => users.id)
 #
 FactoryBot.define do
   factory :class_import do
-    session
+    transient { session { association(:session) } }
+
+    location { session.location }
     organisation { session.organisation }
     uploaded_by
 

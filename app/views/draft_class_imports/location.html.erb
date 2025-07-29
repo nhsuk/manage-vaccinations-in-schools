@@ -1,0 +1,25 @@
+<% content_for :before_main do %>
+  <%= render AppBacklinkComponent.new(new_import_path) %>
+<% end %>
+
+<% title = "Which school is this class list for?" %>
+<% content_for :page_title, title %>
+
+<%= form_with model: @draft_class_import, url: wizard_path, method: :put do |f| %>
+  <%= f.govuk_error_summary %>
+
+  <%= f.govuk_select :location_id, label: { text: title, size: "l", tag: "h1" },
+                                   data: { module: "autocomplete" } do %>
+    <%= tag.option "", value: "" %>
+
+    <% @location_options.each do |location| %>
+      <% is_duplicate = @location_options.count { it.name == location.name } > 1 %>
+      <%= tag.option location_display_name(location, show_urn: is_duplicate),
+                     value: location.id,
+                     selected: location.id == @draft_class_import.location_id,
+                     data: { hint: format_address_single_line(location) } %>
+    <% end %>
+  <% end %>
+
+  <%= f.govuk_submit %>
+<% end %>

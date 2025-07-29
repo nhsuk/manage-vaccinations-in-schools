@@ -33,7 +33,7 @@ describe "Import class lists" do
     then_i_should_see_the_upload
     and_i_should_see_the_patients
 
-    when_i_follow_the_link_to_the_session
+    when_i_go_to_the_session
     then_i_should_see_the_children_added_to_the_session
   end
 
@@ -51,13 +51,14 @@ describe "Import class lists" do
       )
     @user = @organisation.users.first
 
-    create(
-      :session,
-      :unscheduled,
-      organisation: @organisation,
-      location:,
-      programmes:
-    )
+    @session =
+      create(
+        :session,
+        :unscheduled,
+        organisation: @organisation,
+        location:,
+        programmes:
+      )
   end
 
   def when_i_visit_a_session_page_for_the_hpv_programme
@@ -197,9 +198,7 @@ describe "Import class lists" do
     click_link ClassImport.last.created_at.to_fs(:long), match: :first
   end
 
-  def when_i_follow_the_link_to_the_session
-    within ".nhsuk-summary-list" do
-      click_link "Waterloo Road"
-    end
+  def when_i_go_to_the_session
+    visit session_path(@session)
   end
 end

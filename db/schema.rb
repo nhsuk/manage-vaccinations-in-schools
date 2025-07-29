@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_24_113511) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_29_115701) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -86,14 +86,14 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_24_113511) do
     t.jsonb "serialized_errors"
     t.integer "status", default: 0, null: false
     t.bigint "organisation_id", null: false
-    t.bigint "session_id", null: false
     t.bigint "uploaded_by_user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "rows_count"
     t.integer "year_groups", default: [], null: false, array: true
+    t.bigint "location_id", null: false
+    t.index ["location_id"], name: "index_class_imports_on_location_id"
     t.index ["organisation_id"], name: "index_class_imports_on_organisation_id"
-    t.index ["session_id"], name: "index_class_imports_on_session_id"
     t.index ["uploaded_by_user_id"], name: "index_class_imports_on_uploaded_by_user_id"
   end
 
@@ -874,8 +874,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_24_113511) do
   add_foreign_key "batches", "vaccines"
   add_foreign_key "batches_immunisation_imports", "batches"
   add_foreign_key "batches_immunisation_imports", "immunisation_imports"
+  add_foreign_key "class_imports", "locations"
   add_foreign_key "class_imports", "organisations"
-  add_foreign_key "class_imports", "sessions"
   add_foreign_key "class_imports", "users", column: "uploaded_by_user_id"
   add_foreign_key "class_imports_parent_relationships", "class_imports"
   add_foreign_key "class_imports_parent_relationships", "parent_relationships"

@@ -1,5 +1,5 @@
 <% content_for :before_main do %>
-  <%= render AppBacklinkComponent.new(session_path(@session)) %>
+  <%= render AppBacklinkComponent.new(previous_wizard_path) %>
 <% end %>
 
 <% title = "Which year groups do you want to import class list records for?" %>
@@ -10,7 +10,7 @@
 
   <%= f.govuk_collection_check_boxes :year_groups, @year_group_options, :value, :label,
                                      legend: { text: title, size: "l", tag: "h1" },
-                                     caption: { text: @session.location.name, size: "l" } %>
+                                     caption: { text: @location.name, size: "l" } %>
 
   <%= f.govuk_submit %>
 <% end %>

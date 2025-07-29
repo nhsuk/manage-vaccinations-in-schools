@@ -4,7 +4,8 @@ describe ClassImportRow do
   subject(:class_import_row) do
     described_class.new(
       data: data_as_csv_row,
-      session:,
+      organisation: session.organisation,
+      location: session.location,
       year_groups: session.year_groups
     )
   end
