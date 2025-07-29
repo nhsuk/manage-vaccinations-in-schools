@@ -27,8 +27,8 @@ module RedirectHelper
     expect(current_params).to include(expected_params)
   end
 
-  def mavis_reporting_app_url(path = "/")
-    root = Settings.mavis_reporting_app.root_url || "http://localhost:5001/"
+  def reporting_app_url(path = "/")
+    root = Settings.reporting_api.client_app.root_url || "http://localhost:5001/"
     URI.join(root, path).to_s
   end
 end

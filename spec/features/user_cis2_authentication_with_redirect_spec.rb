@@ -17,7 +17,7 @@ describe "User CIS2 authentication" do
     @team = create :team
   scenario "being redirected to sign-in from the reporting UI" do
     given_a_test_organisation_is_setup_in_mavis_and_cis2
-    and_the_reporting_app_feature_flag_is_enabled
+    and_the_reporting_api_feature_flag_is_enabled
     when_i_go_to_the_start_page_with_a_redirect_uri_param_that_matches_the_reporting_app
 
     when_i_click_the_cis2_login_button
@@ -27,7 +27,7 @@ describe "User CIS2 authentication" do
 
   scenario "being redirected after sign-in when the reporting app feature flag is disabled" do
     given_a_test_organisation_is_setup_in_mavis_and_cis2
-    and_the_reporting_app_feature_flag_is_not_enabled
+    and_the_reporting_api_feature_flag_is_not_enabled
     when_i_go_to_the_start_page_with_a_redirect_uri_param_that_matches_the_reporting_app
 
     when_i_click_the_cis2_login_button
@@ -54,28 +54,28 @@ describe "User CIS2 authentication" do
     )
   end
 
-  def and_the_reporting_app_feature_flag_is_enabled
-    Flipper.enable(:reporting_app)
+  def and_the_reporting_api_feature_flag_is_enabled
+    Flipper.enable(:reporting_api)
   end
 
-  def and_the_reporting_app_feature_flag_is_not_enabled
-    Flipper.disable(:reporting_app)
+  def and_the_reporting_api_feature_flag_is_not_enabled
+    Flipper.disable(:reporting_api)
   end
 
-  def return_url_on_mavis_reporting_app
-    mavis_reporting_app_url(
+  def return_url_on_reporting_app
+    reporting_app_url(
       "/some/reporting/path?month=6&school_id=123&search=some search string"
     )
   end
 
-  def return_url_on_mavis_reporting_app_with_token_added
-    mavis_reporting_app_url(
+  def return_url_on_mavis_reporting_ah_token_added
+    reporting_app_url(
       "/some/reporting/path?code=mylonghextoken&month=6&school_id=123&search=some search string"
     )
   end
 
   def when_i_go_to_the_start_page_with_a_redirect_uri_param_that_matches_the_reporting_app
-    uri = URI.encode_uri_component(return_url_on_mavis_reporting_app)
+    uri = URI.encode_uri_component(return_url_on_reporting_app)
     visit [start_path, "redirect_uri=#{uri}"].join("?")
   end
 
@@ -89,7 +89,7 @@ describe "User CIS2 authentication" do
   end
 
   def then_i_am_redirected_to_the_previously_stored_redirect_uri_param
-    then_i_am_redirected_to_a_url_matching return_url_on_mavis_reporting_app
+    then_i_am_redirected_to_a_url_matching return_url_on_reporting_app
   end
 
   def and_the_return_url_has_a_token_param_added_to_it

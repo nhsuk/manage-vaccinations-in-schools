@@ -11,7 +11,7 @@ module AuthenticationConcern
     def is_valid_redirect?(url)
       url.start_with?("/") || url.start_with?(request.base_url) ||
         url.start_with?(
-          Settings.mavis_reporting_app.root_url || "http://localhost"
+          Settings.reporting_api.client_app.root_url || "http://localhost"
         )
     end
 
@@ -95,7 +95,7 @@ module AuthenticationConcern
     def add_auth_code_to(url, user)
       uri = Addressable::URI.parse(url)
       auth_code =
-        OneTimeToken.find_or_generate_for!(
+        Reporting::OneTimeToken.find_or_generate_for!(
           user:,
           cis2_info: session["cis2_info"]
         ).token
@@ -104,7 +104,7 @@ module AuthenticationConcern
     end
 
     def reporting_app_redirect_uri_with_auth_code_for(user)
-      if Flipper.enabled?(:reporting_app)
+      if Flipper.enabled?(:reporting_api)
         url = session["redirect_uri"]
         url.present? ? add_auth_code_to(url, user) : nil
       end
@@ -112,7 +112,7 @@ module AuthenticationConcern
 
     def after_sign_in_path_for(scope)
       urls = []
-      if Flipper.enabled?(:reporting_app)
+      if Flipper.enabled?(:reporting_api)
         urls << reporting_app_redirect_uri_with_auth_code_for(current_user)
       end
       urls += [stored_location_for(scope), dashboard_path]

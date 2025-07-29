@@ -48,7 +48,7 @@ class User < ApplicationRecord
 
   has_many :programmes, through: :teams
 
-  has_one :one_time_token
+  has_one :one_time_token, class_name: "Reporting::OneTimeToken"
 
   encrypts :email, deterministic: true
   encrypts :family_name, :given_name

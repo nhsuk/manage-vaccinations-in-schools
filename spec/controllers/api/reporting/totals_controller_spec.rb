@@ -2,7 +2,7 @@
 
 require "spec_helper"
 
-RSpec.describe ReportingAPI::TotalsController do
+RSpec.describe API::Reporting::TotalsController do
   let(:user) { create(:user) }
   let(:org) { user.organisations.first }
 
@@ -26,8 +26,8 @@ RSpec.describe ReportingAPI::TotalsController do
 
   let(:invalid_payload) { { user: { id: -1 } } }
 
-  context "when the :reporting_app feature flag is not enabled" do
-    before { Flipper.disable(:reporting_app) }
+  context "when the :reporting_api feature flag is not enabled" do
+    before { Flipper.disable(:reporting_api) }
 
     describe "#index" do
       context "when the request has a JWT param" do
@@ -37,7 +37,7 @@ RSpec.describe ReportingAPI::TotalsController do
           let(:jwt) do
             JWT.encode(
               valid_payload,
-              Settings.mavis_reporting_app.secret,
+              Settings.reporting_api.client_app.secret,
               "HS512"
             )
           end
@@ -51,8 +51,8 @@ RSpec.describe ReportingAPI::TotalsController do
     end
   end
 
-  context "when the :reporting_app feature flag is enabled" do
-    before { Flipper.enable(:reporting_app) }
+  context "when the :reporting_api feature flag is enabled" do
+    before { Flipper.enable(:reporting_api) }
 
     describe "#index" do
       context "when the request has a JWT param" do
@@ -62,7 +62,7 @@ RSpec.describe ReportingAPI::TotalsController do
           let(:jwt) do
             JWT.encode(
               valid_payload,
-              Settings.mavis_reporting_app.secret,
+              Settings.reporting_api.client_app.secret,
               "HS512"
             )
           end
@@ -77,7 +77,7 @@ RSpec.describe ReportingAPI::TotalsController do
           let(:jwt) do
             JWT.encode(
               invalid_payload,
-              Settings.mavis_reporting_app.secret,
+              Settings.reporting_api.client_app.secret,
               "HS512"
             )
           end

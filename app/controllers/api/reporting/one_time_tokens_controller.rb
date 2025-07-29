@@ -1,17 +1,15 @@
 # frozen_string_literal: true
 
-class OneTimeTokensController < ApplicationController
-  protect_from_forgery unless: -> { request.format.json? }
+class API::Reporting::OneTimeTokensController < API::Reporting::BaseController
   include TokenAuthenticationConcern
 
-  skip_before_action :authenticate_user!
-  before_action :ensure_reporting_app_feature_enabled,
+  # skip_before_action :authenticate_user!
+  before_action :ensure_reporting_api_feature_enabled,
                 :authenticate_app_by_client_id!,
                 :verify_grant_type!
 
   def authorize
-    skip_policy_scope
-    @token = OneTimeToken.find_by!(token: params[:code])
+    @token = Reporting::OneTimeToken.find_by!(token: params[:code])
     @token.delete # <- Tokens are one-time use
     json_data = { jwt: jwt(@token) }
     render json: json_data
@@ -39,10 +37,10 @@ class OneTimeTokensController < ApplicationController
   end
 
   def jwt(token)
-    JWT.encode(jwt_payload(token), Settings.mavis_reporting_app.secret, "HS512")
+    JWT.encode(jwt_payload(token), Settings.reporting_api.client_app.secret, "HS512")
   end
 
-  def ensure_reporting_app_feature_enabled
-    render status: :forbidden and return unless Flipper.enabled?(:reporting_app)
+  def ensure_reporting_api_feature_enabled
+    render status: :forbidden and return unless Flipper.enabled?(:reporting_api)
   end
 end
