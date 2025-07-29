@@ -3,7 +3,7 @@
 class Inspect::Timeline::PatientsController < ApplicationController
   skip_after_action :verify_policy_scoped
   before_action :set_patient
-  before_action :record_access_log_entry
+  after_action :record_access_log_entry
 
   layout "full"
 
@@ -62,8 +62,9 @@ class Inspect::Timeline::PatientsController < ApplicationController
         TimelineRecords.new(
           @compare_patient,
           detail_config: build_details_config,
-          audit_config: audit_config
-        ).load_grouped_events(event_names)
+          audit_config: audit_config,
+              show_pii: @show_pii
+          ).load_grouped_events(event_names)
 
       @no_events_compare_message = true if @compare_patient_timeline.empty?
     end
@@ -141,25 +142,43 @@ class Inspect::Timeline::PatientsController < ApplicationController
   end
 
   def pii_accessed?
-    detail_config = build_details_config
-
-    detail_config.any? do |event_type, selected_fields|
-      pii_fields =
-        TimelineRecords::AVAILABLE_DETAILS_CONFIG_PII[event_type] || []
-      (selected_fields & pii_fields).any?
-    end
-  end
+    return false unless @show_pii
+        detail_config = build_details_config
+        detail_config.any? do |event_type, selected_fields|
+          pii_fields =
+            TimelineRecords::AVAILABLE_DETAILS_CONFIG_PII[event_type] || []
+          (selected_fields & pii_fields).any?
+        end
+      end
 
   def audit_pii_accessed?
     true if @show_pii && params[:event_names].include?("audits")
   end
 
   def record_access_log_entry
-    if pii_accessed? || audit_pii_accessed?
-      @patient.access_log_entries.create!(
-        user: current_user,
-        controller: "timeline",
-        action: "show_pii"
+    return unless pii_accessed? || audit_pii_accessed?
+
+        details_accessed = build_details_config.reverse_merge(params[:event_names].map { |key| [key.to_sym, []] }.to_h)
+        if details_accessed.key?(:audits)
+          details_accessed[:audits] = :accessed
+        end
+        # binding.irb
+
+        # Log access for main patient
+        @patient.access_log_entries.create!(
+          user: current_user,
+          controller: "timeline",
+          action: "show_pii",
+          request_details: details_accessed
+        )
+
+        # Log access for compare patient if it exists and is valid
+        if @compare_patient && @compare_patient != :invalid_patient
+          @compare_patient.access_log_entries.create!(
+            user: current_user,
+            controller: "timeline",
+            action: "show_pii",
+            request_details: details_accessed
       )
     end
   end
