@@ -50,7 +50,7 @@ class TimelineRecords
       year_groups
     ],
     parents: %i[],
-    patient_sessions: %i[],
+    patient_sessions: %i[session_id],
     gillick_assessments: %i[],
     parent_relationships: %i[],
     school_moves: %i[school_id source],
@@ -59,7 +59,6 @@ class TimelineRecords
 
   AVAILABLE_DETAILS_CONFIG_PII = {
     parents: %i[full_name email phone],
-    patient_sessions: %i[session_id],
     gillick_assessments: %i[
       knows_vaccination
       knows_disease
