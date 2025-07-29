@@ -72,7 +72,13 @@ class User < ApplicationRecord
         -> { where(last_sign_in_at: 1.week.ago..Time.current) }
 
   enum :fallback_role,
-       { nurse: 0, admin: 1, superuser: 2, healthcare_assistant: 3 },
+       {
+         nurse: 0,
+         admin: 1,
+         superuser: 2,
+         healthcare_assistant: 3,
+         support: 4
+       },
        prefix: true
 
   delegate :fhir_practitioner, to: :fhir_mapper
@@ -132,12 +138,18 @@ class User < ApplicationRecord
     end
   end
 
+  def is_support?
+    cis2_enabled? ? cis2_info.is_support? : fallback_role_support?
+  end
+
   def role_description
     role =
       if is_admin?
         "Administrator"
       elsif is_nurse?
         "Nurse"
+      elsif is_support?
+        "Support"
       else
         "Unknown"
       end
