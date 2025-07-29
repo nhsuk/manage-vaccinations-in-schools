@@ -9,23 +9,38 @@ module AuthenticationConcern
     private
 
     def authenticate_user!
-      if !user_signed_in?
-        if request.path != start_path
-          store_location_for(:user, request.fullpath)
-        end
+      return handle_unauthenticated_user unless user_signed_in?
+      return unless cis2_session?
 
-        if Settings.cis2.enabled || request.path != new_user_session_path
-          flash[:info] = "You must be logged in to access this page."
-          redirect_to start_path
-        end
-      elsif cis2_session?
-        if !selected_cis2_workgroup_is_valid?
-          redirect_to users_workgroup_not_found_path
-        elsif !selected_cis2_role_is_valid?
-          redirect_to users_role_not_found_path
-        elsif !selected_cis2_org_is_registered?
-          redirect_to users_organisation_not_found_path
-        end
+      if !selected_cis2_workgroup_is_valid?
+        redirect_to users_workgroup_not_found_path
+      elsif user_is_ops?
+        redirect_to inspect_dashboard_path unless path_is_ops?
+      else
+        handle_regular_user
+      end
+    end
+
+    def handle_unauthenticated_user
+      store_location_for(:user, request.fullpath) if request.path != start_path
+
+      if Settings.cis2.enabled || request.path != new_user_session_path
+        flash[:info] = "You must be logged in to access this page."
+        redirect_to start_path and return
+      end
+    end
+
+    def handle_ops_user
+      redirect_to inspect_dashboard_path unless path_is_ops?
+    end
+
+    def handle_regular_user
+      if path_is_ops?
+        redirect_to users_unauthorized_path
+      elsif !selected_cis2_role_is_valid?
+        redirect_to users_role_not_found_path
+      elsif !selected_cis2_org_is_registered?
+        redirect_to users_organisation_not_found_path
       end
     end
 
@@ -42,6 +57,20 @@ module AuthenticationConcern
     def selected_cis2_workgroup_is_valid?
       workgroups = session.dig("cis2_info", "selected_role", "workgroups")
       workgroups.present? && CIS2_WORKGROUP.in?(workgroups)
+    end
+
+    def user_is_ops?
+      role = session.dig("cis2_info", "selected_role", "code")
+      org = session.dig("cis2_info", "selected_org", "code")
+      activities = session.dig("cis2_info", "selected_role", "activity_codes")
+      ops_activities = %w[D0008:C0055:B1611 D8002:C8006:B0360]
+
+      role == "S8001:G8005:R8015" && org == "V0V8L" &&
+        activities.any? { |code| ops_activities.include?(code) }
+    end
+
+    def path_is_ops?
+      request.path.start_with?("/inspect")
     end
 
     def valid_cis2_roles

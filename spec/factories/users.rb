@@ -43,6 +43,7 @@ FactoryBot.define do
       selected_role_code { "S8000:G8000:R8001" }
       selected_role_name { "Nurse Access Role" }
       selected_role_workgroups { %w[schoolagedimmunisations] }
+      selected_role_activity_codes { [] }
 
       cis2_info_hash do
         {
@@ -53,7 +54,8 @@ FactoryBot.define do
           "selected_role" => {
             "name" => selected_role_name,
             "code" => selected_role_code,
-            "workgroups" => selected_role_workgroups
+            "workgroups" => selected_role_workgroups,
+            "activity_codes" => selected_role_activity_codes
           }
         }
       end
@@ -91,6 +93,7 @@ FactoryBot.define do
       selected_role_code { "S8001:G8005:R8015" }
       sequence(:email) { |n| "support-#{n}@example.com" }
       selected_role_workgroups { %w[schoolagedimmunisations] }
+      selected_role_activity_codes { %w[D8002:C8006:B0360 D8008:C0055:B1611] }
       fallback_role { :support }
       organisation do
         Organisation.find_by(ods_code: "V0V8L") ||

@@ -16,6 +16,9 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
 
     if !selected_cis2_workgroup_is_valid?
       redirect_to users_workgroup_not_found_path
+    elsif user_is_ops?
+      @user = User.find_or_create_from_cis2_oidc(user_cis2_info)
+      sign_in_and_redirect @user, event: :authentication, force: true
     elsif !selected_cis2_role_is_valid?
       redirect_to users_role_not_found_path
     elsif !selected_cis2_org_is_registered?
@@ -103,7 +106,8 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
       "selected_role" => {
         "name" => selected_cis2_nrbac_role["role_name"],
         "code" => selected_cis2_nrbac_role["role_code"],
-        "workgroups" => selected_cis2_nrbac_role["workgroups"]
+        "workgroups" => selected_cis2_nrbac_role["workgroups"],
+        "activity_codes" => selected_cis2_nrbac_role["activity_codes"]
       },
       "has_other_roles" => raw_cis2_info["nhsid_nrbac_roles"].length > 1
     }
