@@ -227,7 +227,7 @@ class ImmunisationImportRow
     if is_school_setting? || (is_unknown_setting? && clinic_name.blank?)
       school&.name || school_name&.to_s || "Unknown"
     else
-      clinic_name&.to_s || "Unknown"
+      clinic&.name || clinic_name&.to_s || "Unknown"
     end
   end
 
@@ -264,6 +264,16 @@ class ImmunisationImportRow
       if school_urn.present? && school_urn.to_s != SCHOOL_URN_HOME_EDUCATED &&
            school_urn.to_s != SCHOOL_URN_UNKNOWN
         Location.school.find_by(urn: school_urn.to_s)
+      end
+  end
+
+  def clinic
+    @clinic ||=
+      if clinic_name.present?
+        organisation.community_clinics.find_by(
+          "LOWER(locations.name) = ?",
+          clinic_name.to_s.downcase
+        )
       end
   end
 
@@ -528,9 +538,8 @@ class ImmunisationImportRow
           clinic_name.header,
           "is greater than #{MAX_FIELD_LENGTH} characters long"
         )
-      elsif clinic_name_required &&
-            !organisation.community_clinics.exists?(name: clinic_name.to_s)
-        errors.add(clinic_name.header, "Enter a clinic name")
+      elsif clinic_name_required && clinic.nil?
+        errors.add(clinic_name.header, "is not recognised")
       end
     elsif clinic_name_required
       if clinic_name.nil?
@@ -539,7 +548,7 @@ class ImmunisationImportRow
           "<code>CLINIC_NAME</code> or <code>Event done at</code> is required"
         )
       elsif clinic_name.blank?
-        errors.add(clinic_name.header, "Enter a clinic name")
+        errors.add(clinic_name.header, "is required")
       end
     end
   end
