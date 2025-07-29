@@ -5,11 +5,16 @@ class CIS2Info
 
   NURSE_ROLE = "S8000:G8000:R8001"
   MEDICAL_SECRETARY_ROLE = "S8000:G8001:R8006"
+  SUPPORT_ROLE = "S8001:G8005:R8015"
+
+  SUPPORT_WORKGROUP = "mavissupport"
+  SUPPORT_ORGANISATION = "X26"
 
   ACCESS_SENSITIVE_FLAGGED_RECORDS_ACTIVITY_CODE = "B1611"
   INDEPENDENT_PRESCRIBING_ACTIVITY_CODE = "B0420"
   LOCAL_SYSTEM_ADMINISTRATION_ACTIVITY_CODE = "B0062"
   PERSONAL_MEDICATION_ADMINISTRATION_ACTIVITY_CODE = "B0428"
+  VIEW_DETAILED_HEALTH_RECORDS_ACTIVITY_CODE = "B0360"
 
   attribute :organisation_name
   attribute :organisation_code
@@ -67,6 +72,16 @@ class CIS2Info
 
   def can_perform_local_system_administration?
     activity_codes.include?(LOCAL_SYSTEM_ADMINISTRATION_ACTIVITY_CODE)
+  end
+
+  def can_view_detailed_health_records?
+    activity_codes.include?(VIEW_DETAILED_HEALTH_RECORDS_ACTIVITY_CODE)
+  end
+
+  def is_support?
+    workgroups&.include?(SUPPORT_WORKGROUP) && role_code == SUPPORT_ROLE &&
+      organisation_code == SUPPORT_ORGANISATION &&
+      can_access_sensitive_flagged_records? && can_view_detailed_health_records?
   end
 
   private
