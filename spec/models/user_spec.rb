@@ -295,4 +295,72 @@ describe User do
       end
     end
   end
+
+  describe "#is_support?" do
+    subject(:is_support?) { user.is_support? }
+
+    context "cis2 is enabled", cis2: :enabled do
+      context "when the user is support" do
+        let(:user) { build(:support) }
+
+        it { should be true }
+      end
+
+      context "when the user is a nurse" do
+        let(:user) { build(:nurse) }
+
+        it { should be false }
+      end
+
+      context "when the user is a nurse and superuser" do
+        let(:user) { build(:nurse, :superuser) }
+
+        it { should be false }
+      end
+
+      context "when the user is an admin" do
+        let(:user) { build(:admin) }
+
+        it { should be false }
+      end
+
+      context "when the user is an admin and superuser" do
+        let(:user) { build(:admin, :superuser) }
+
+        it { should be false }
+      end
+    end
+
+    context "cis2 is disabled", cis2: :disabled do
+      context "when the user is support" do
+        let(:user) { build(:support) }
+
+        it { should be true }
+      end
+
+      context "when the user is an admin" do
+        let(:user) { build(:admin) }
+
+        it { should be false }
+      end
+
+      context "when the user is an admin and superuser" do
+        let(:user) { build(:admin, :superuser) }
+
+        it { should be false }
+      end
+
+      context "when the user is a nurse" do
+        let(:user) { build(:nurse) }
+
+        it { should be false }
+      end
+
+      context "when the user is a nurse and superuser" do
+        let(:user) { build(:nurse, :superuser) }
+
+        it { should be false }
+      end
+    end
+  end
 end
