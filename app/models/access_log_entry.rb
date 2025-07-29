@@ -4,13 +4,14 @@
 #
 # Table name: access_log_entries
 #
-#  id         :bigint           not null, primary key
-#  action     :integer          not null
-#  controller :integer          not null
-#  created_at :datetime         not null
-#  updated_at :datetime         not null
-#  patient_id :bigint           not null
-#  user_id    :bigint           not null
+#  id              :bigint           not null, primary key
+#  action          :integer          not null
+#  controller      :integer          not null
+#  request_details :jsonb
+#  created_at      :datetime         not null
+#  updated_at      :datetime         not null
+#  patient_id      :bigint           not null
+#  user_id         :bigint           not null
 #
 # Indexes
 #
