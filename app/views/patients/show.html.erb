@@ -22,6 +22,10 @@
 <% end %>
 
 <%= render AppCardComponent.new(section: true) do |card| %>
+  <%= render AppPatientProgrammesTableComponent.new(@patient, programmes: policy_scope(Programme)) %>
+<% end %>
+
+<%= render AppCardComponent.new(section: true) do |card| %>
   <% card.with_heading { "Sessions" } %>
   <%= render AppPatientSessionTableComponent.new(@patient_sessions) %>
 <% end %>
