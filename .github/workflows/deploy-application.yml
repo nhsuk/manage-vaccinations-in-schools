@@ -42,7 +42,7 @@ on:
         required: true
         type: string
 
-permissions: { }
+permissions: {}
 
 concurrency:
   group: deploy-mavis-${{ inputs.environment }}
@@ -99,6 +99,7 @@ jobs:
         run: |
           python3 script/populate_ssm_parameters.py ${{ inputs.environment }} web
       - name: Make artifact for web task definition
+        if: inputs.server_types == 'web' || inputs.server_types == 'all'
         uses: actions/upload-artifact@v4
         with:
           name: ${{ inputs.environment }}-web-task-definition
@@ -108,12 +109,13 @@ jobs:
         run: |
           python3 script/populate_ssm_parameters.py ${{ inputs.environment }} good-job
       - name: Make artifact for good-job task definition
+        if: inputs.server_types == 'good-job' || inputs.server_types == 'all'
         uses: actions/upload-artifact@v4
         with:
           name: ${{ inputs.environment }}-good-job-task-definition
           path: good-job-task-definition.json
   approve-deployments:
-    name: Approve deployments
+    name: Wait for approval if required
     runs-on: ubuntu-latest
     needs: prepare-deployment
     environment: ${{ inputs.environment }}

@@ -7,11 +7,7 @@ resource_name = {
   lb_security_group        = "mavis-qa-PublicHTTPLoadBalancerSecurityGroup-ml4lZT5ey5ih"
   cloudwatch_vpc_log_group = "mavis-qa-FlowLogs"
 }
-rails_env             = "staging"
 rails_master_key_path = "/copilot/mavis/secrets/STAGING_RAILS_MASTER_KEY"
-
-enable_cis2                     = false
-enable_pds_enqueue_bulk_updates = false
 
 http_hosts = {
   MAVIS__HOST                        = "qa.mavistesting.com"

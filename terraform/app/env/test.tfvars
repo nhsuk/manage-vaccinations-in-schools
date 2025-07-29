@@ -7,13 +7,12 @@ resource_name = {
   lb_security_group        = "mavis-test-PublicHTTPLoadBalancerSecurityGroup-15LE48D6JYPML"
   cloudwatch_vpc_log_group = "mavis-test-FlowLogs"
 }
-rails_env             = "staging"
 rails_master_key_path = "/copilot/mavis/secrets/STAGING_RAILS_MASTER_KEY"
 
 http_hosts = {
   MAVIS__HOST                        = "test.mavistesting.com"
   MAVIS__GIVE_OR_REFUSE_CONSENT_HOST = "test.mavistesting.com"
 }
-appspec_bucket       = "nhse-mavis-appspec-bucket-test"
+
 minimum_web_replicas = 2
 maximum_web_replicas = 4
