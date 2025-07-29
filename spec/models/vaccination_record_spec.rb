@@ -198,7 +198,57 @@ describe VaccinationRecord do
     end
   end
 
-  describe "delivery_method_snomed_code" do
+  describe "#show_in_academic_year?" do
+    subject { vaccination_record.show_in_academic_year?(academic_year) }
+
+    context "with a seasonal record performed in the 2023/24 academic year" do
+      let(:programme) { create(:programme, :flu) }
+      let(:vaccination_record) do
+        build(
+          :vaccination_record,
+          programme:,
+          performed_at: Time.zone.local(2023, 9, 1)
+        )
+      end
+
+      context "in the 2023/24 academic year" do
+        let(:academic_year) { 2023 }
+
+        it { should be(true) }
+      end
+
+      context "in the 2024/25 academic year" do
+        let(:academic_year) { 2024 }
+
+        it { should be(false) }
+      end
+    end
+
+    context "with a non-seasonal record performed in the 2023/24 academic year" do
+      let(:programme) { create(:programme, :hpv) }
+      let(:vaccination_record) do
+        build(
+          :vaccination_record,
+          programme:,
+          performed_at: Time.zone.local(2023, 9, 1)
+        )
+      end
+
+      context "in the 2023/24 academic year" do
+        let(:academic_year) { 2023 }
+
+        it { should be(true) }
+      end
+
+      context "in the 2024/25 academic year" do
+        let(:academic_year) { 2024 }
+
+        it { should be(true) }
+      end
+    end
+  end
+
+  describe "#delivery_method_snomed_code" do
     subject(:delivery_method_snomed_code) do
       vaccination_record.delivery_method_snomed_code
     end
@@ -238,7 +288,7 @@ describe VaccinationRecord do
     end
   end
 
-  describe "delivery_method_snomed_term" do
+  describe "#delivery_method_snomed_term" do
     subject(:delivery_method_snomed_term) do
       vaccination_record.delivery_method_snomed_term
     end

@@ -187,7 +187,7 @@ class VaccinationRecord < ApplicationRecord
     if programme.seasonal?
       academic_year == current_academic_year
     else
-      academic_year >= current_academic_year
+      academic_year <= current_academic_year
     end
   end
 
