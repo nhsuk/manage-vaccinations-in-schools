@@ -49,12 +49,13 @@ FactoryBot.define do
 
       cis2_info_hash do
         {
-          "organisation_code" => team.organisation.ods_code,
+          "organisation_code" => organisation_code,
           "organisation_name" => team.name,
           "role_code" => role_code,
           "activity_codes" => activity_codes,
           "team_workgroup" => team.workgroup,
-          "workgroups" => role_workgroups + [team.workgroup]
+          "workgroups" => role_workgroups + [team.workgroup],
+          "activity_codes" => activity_codes
         }
       end
     end
@@ -112,6 +113,15 @@ FactoryBot.define do
       show_in_suppliers { false }
     end
 
+    trait :support do
+      role_code { CIS2Info::SUPPORT_ROLE }
+      sequence(:email) { |n| "support-#{n}@example.com" }
+      role_workgroups { [CIS2Info::SUPPORT_WORKGROUP] }
+      fallback_role { :support }
+      organisation_code { CIS2Info::SUPPORT_ORGANISATION }
+      activity_codes { CIS2Info::SUPPORT_ACTIVITIES }
+    end
+
     trait :signed_in do
       current_sign_in_at { Time.current }
       current_sign_in_ip { "127.0.0.1" }
@@ -122,4 +132,5 @@ FactoryBot.define do
   factory :medical_secretary, parent: :user, traits: %i[medical_secretary]
   factory :prescriber, parent: :user, traits: %i[prescriber]
   factory :superuser, parent: :user, traits: %i[superuser]
+  factory :support, parent: :user, traits: %i[support]
 end
