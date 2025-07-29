@@ -86,22 +86,31 @@ jobs:
             --query 'imageDetails[0].imageDigest' \
             --output text)
           echo "digest=$digest" >> $GITHUB_OUTPUT
+      - name: Parse environment variables
+        id: parse-environment-variables
+        run: |
+          parsed_env_vars=$(yq -r '.environments.${{ inputs.environment }} | to_entries | .[] | .key + "=" + .value' config/container_variables.yml)
+          echo "parsed_env_vars=$parsed_env_vars" >> $GITHUB_OUTPUT
       - name: Populate web task definition
         if: inputs.server_types == 'web' || inputs.server_types == 'all'
         id: create-web-task-definition
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
-          task-definition: config/environments/${{ inputs.environment }}-web-task-definition.json
+          task-definition-family: "mavis-web-task-definition-${{ inputs.environment }}"
           container-name: "application"
           image: "${{ env.aws_account_id }}.dkr.ecr.eu-west-2.amazonaws.com/mavis/webapp@${{ steps.get-image-digest.outputs.digest }}"
+          environment-variables: ${{ steps.parse-environment-variables.outputs.parsed_env_vars }}
+          secrets: |  # We can define secrets here too if we want
+            RAILS_MASTER_KEY=/copilot/mavis/secrets/STAGING_RAILS_MASTER_KEY
       - name: Populate good-job task definition
         if: inputs.server_types == 'good-job' || inputs.server_types == 'all'
         id: create-good-job-task-definition
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
-          task-definition: config/environments/${{ inputs.environment }}-good-job-task-definition.json
+          task-definition-family: "mavis-good-job-task-definition-${{ inputs.environment }}"
           container-name: "application"
           image: "${{ env.aws_account_id }}.dkr.ecr.eu-west-2.amazonaws.com/mavis/webapp@${{ steps.get-image-digest.outputs.digest }}"
+          environment-variables: ${{ steps.parse-environment-variables.outputs.parsed_env_vars }}
       - name: Upload artifact for web task definition
         if: inputs.server_types == 'web' || inputs.server_types == 'all'
         uses: actions/upload-artifact@v4
