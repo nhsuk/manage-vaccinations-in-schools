@@ -7,7 +7,6 @@ resource_name = {
   lb_security_group        = "mavis-production-PublicHTTPLoadBalancerSecurityGroup-G7umbZTkvkwK"
   cloudwatch_vpc_log_group = "mavis-production-FlowLogs"
 }
-rails_env             = "production"
 rails_master_key_path = "/copilot/mavis/production/secrets/RAILS_MASTER_KEY"
 
 academic_year_number_of_preparation_days = 31
@@ -18,7 +17,6 @@ http_hosts = {
   MAVIS__GIVE_OR_REFUSE_CONSENT_HOST = "www.give-or-refuse-consent-for-vaccinations.nhs.uk"
 }
 
-appspec_bucket            = "nhse-mavis-appspec-bucket-production"
 account_id                = 820242920762
 vpc_log_retention_days    = 14
 ecs_log_retention_days    = 30
