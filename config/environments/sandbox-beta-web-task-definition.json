@@ -1,0 +1,94 @@
+{
+  "family": "mavis-web-task-definition-sandbox-beta",
+  "containerDefinitions": [
+    {
+      "name": "application",
+      "image": "<IMAGE_URI>",
+      "portMappings": [
+        {
+          "containerPort": 4000,
+          "protocol": "tcp"
+        }
+      ],
+      "essential": true,
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "mavis-sandbox-beta-ecs",
+          "awslogs-region": "eu-west-2",
+          "awslogs-stream-prefix": "web-logs"
+        }
+      },
+      "healthCheck": {
+        "command": [
+          "CMD-SHELL",
+          "./bin/internal_healthcheck http://localhost:4000/health/database"
+        ],
+        "interval": 30,
+        "timeout": 5,
+        "retries": 3,
+        "startPeriod": 10
+      },
+      "environment": [
+        {
+          "name": "DB_HOST",
+          "value": "mavis-sandbox-beta.cluster-cq7va0l4jkd0.eu-west-2.rds.amazonaws.com"
+        },
+        {
+          "name": "DB_NAME",
+          "value": "manage_vaccinations"
+        },
+        {
+          "name": "MAVIS__HOST",
+          "value": "sandbox-beta.mavistesting.com"
+        },
+        {
+          "name": "MAVIS__GIVE_OR_REFUSE_CONSENT_HOST",
+          "value": "sandbox-beta.mavistesting.com"
+        },
+        {
+          "name": "SERVER_TYPE",
+          "value": "web"
+        },
+        {
+          "name": "RAILS_ENV",
+          "value": "staging"
+        },
+        {
+          "name": "SENTRY_ENVIRONMENT",
+          "value": "sandbox-beta"
+        },
+        {
+          "name": "APP_VERSION",
+          "value": "Unknown"
+        }
+      ],
+      "secrets": [
+        {
+          "name": "DB_CREDENTIALS",
+          "valueFrom": "arn:aws:secretsmanager:eu-west-2:393416225559:secret:rds!cluster-9a8069bf-01a8-4a07-951b-4081a16e4996-rOFV7i"
+        },
+        {
+          "name": "RAILS_MASTER_KEY",
+          "valueFrom": "/copilot/mavis/secrets/STAGING_RAILS_MASTER_KEY"
+        },
+        {
+          "name": "ENV_VARS",
+          "valueFrom": "arn:aws:ssm:eu-west-2:393416225559:parameter/sandbox-beta/envs/web"
+        }
+      ]
+    }
+  ],
+  "taskRoleArn": "arn:aws:iam::393416225559:role/ecsTaskRole-sandbox-beta",
+  "executionRoleArn": "arn:aws:iam::393416225559:role/ecsTaskExecutionRole-sandbox-beta",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "1024",
+  "memory": "2048",
+  "tags": [
+    {
+      "key": "Environment",
+      "value": "sandbox-beta"
+    }
+  ]
+}

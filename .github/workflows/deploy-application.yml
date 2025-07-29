@@ -51,6 +51,7 @@ env:
   aws-role: ${{ inputs.environment == 'production'
     && 'arn:aws:iam::820242920762:role/GithubDeployMavisAndInfrastructure'
     || 'arn:aws:iam::393416225559:role/GithubDeployMavisAndInfrastructure' }}
+  aws_account_id: ${{ inputs.environment == 'production' && '820242920762' || '393416225559' }}
   web_codedeploy_application: mavis-${{ inputs.environment }}
   web_codedeploy_group: blue-green-group-${{ inputs.environment }}
   cluster_name: mavis-${{ inputs.environment }}
@@ -63,6 +64,9 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       id-token: write
+    outputs:
+      web-task-definition-path: ${{ steps.create-web-task-definition.outputs.task-definition }}
+      good-job-task-definition-path: ${{ steps.create-good-job-task-definition.outputs.task-definition }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
@@ -73,49 +77,43 @@ jobs:
         with:
           role-to-assume: ${{ env.aws-role }}
           aws-region: eu-west-2
-      - name: Setup python
-        uses: actions/setup-python@v4
-        with:
-          python-version: 3.12.3
-          cache: pip
-      - name: Install Python dependencies
-        run: python3 -m pip install -r script/requirements.txt
+      - name: Get image digest
+        id: get-image-digest
+        run: |
+          digest=$(aws ecr describe-images \
+            --repository-name mavis/webapp \
+            --image-ids imageTag=${{ inputs.git_sha_to_deploy || github.sha }} \
+            --query 'imageDetails[0].imageDigest' \
+            --output text)
+          echo "digest=$digest" >> $GITHUB_OUTPUT
       - name: Populate web task definition
         if: inputs.server_types == 'web' || inputs.server_types == 'all'
         id: create-web-task-definition
-        run: |
-          python3 script/populate_task_definition.py ${{ inputs.environment }} web \
-            -i "${{ inputs.git_sha_to_deploy || github.sha }}" \
-            -o web-task-definition.json
-          cat web-task-definition.json
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: config/environments/${{ inputs.environment }}-web-task-definition.json
+          container-name: "application"
+          image: "${{ env.aws_account_id }}.dkr.ecr.eu-west-2.amazonaws.com/mavis/webapp@${{ steps.get-image-digest.outputs.digest }}"
       - name: Populate good-job task definition
         if: inputs.server_types == 'good-job' || inputs.server_types == 'all'
         id: create-good-job-task-definition
-        run: |
-          python3 script/populate_task_definition.py ${{ inputs.environment }} good-job \
-            -i "${{ inputs.git_sha_to_deploy || github.sha }}" \
-            -o good-job-task-definition.json
-          cat good-job-task-definition.json
-      - name: Populate SSM parameters for web service
-        if: inputs.server_types == 'web' || inputs.server_types == 'all'
-        run: |
-          python3 script/populate_ssm_parameters.py ${{ inputs.environment }} web
-      - name: Make artifact for web task definition
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: config/environments/${{ inputs.environment }}-good-job-task-definition.json
+          container-name: "application"
+          image: "${{ env.aws_account_id }}.dkr.ecr.eu-west-2.amazonaws.com/mavis/webapp@${{ steps.get-image-digest.outputs.digest }}"
+      - name: Upload artifact for web task definition
         if: inputs.server_types == 'web' || inputs.server_types == 'all'
         uses: actions/upload-artifact@v4
         with:
           name: ${{ inputs.environment }}-web-task-definition
-          path: web-task-definition.json
-      - name: Populate SSM parameters for good-job service
-        if: inputs.server_types == 'good-job' || inputs.server_types == 'all'
-        run: |
-          python3 script/populate_ssm_parameters.py ${{ inputs.environment }} good-job
-      - name: Make artifact for good-job task definition
+          path: ${{ steps.create-web-task-definition.outputs.task-definition }}
+      - name: Upload artifact for good-job task definition
         if: inputs.server_types == 'good-job' || inputs.server_types == 'all'
         uses: actions/upload-artifact@v4
         with:
           name: ${{ inputs.environment }}-good-job-task-definition
-          path: good-job-task-definition.json
+          path: ${{ steps.create-good-job-task-definition.outputs.task-definition }}
   approve-deployments:
     name: Wait for approval if required
     runs-on: ubuntu-latest
@@ -147,7 +145,7 @@ jobs:
       - name: Register web task definition
         uses: aws-actions/amazon-ecs-deploy-task-definition@v2
         with:
-          task-definition: ${{ runner.temp }}/web-task-definition.json
+          task-definition: ${{ needs.prepare-deployment.outputs.web-task-definition-path }}
       - name: Create appspec.yml
         run: |
           cp config/templates/appspec.yaml.tpl appspec.yaml
@@ -156,7 +154,7 @@ jobs:
         id: deploy-web-service
         uses: aws-actions/amazon-ecs-deploy-task-definition@v2
         with:
-          task-definition: ${{ runner.temp }}/web-task-definition.json
+          task-definition: ${{ needs.prepare-deployment.outputs.web-task-definition-path }}
           codedeploy-appspec: appspec.yaml
           cluster: ${{ env.cluster_name }}
           service: ${{ env.web_service }}
@@ -189,7 +187,7 @@ jobs:
       - name: Deploy good-job service
         uses: aws-actions/amazon-ecs-deploy-task-definition@v2
         with:
-          task-definition: ${{ runner.temp }}/good-job-task-definition.json
+          task-definition: ${{ needs.prepare-deployment.outputs.good-job-task-definition-path }}
           cluster: ${{ env.cluster_name }}
           service: ${{ env.good_job_service }}
           force-new-deployment: true
