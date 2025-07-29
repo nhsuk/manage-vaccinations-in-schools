@@ -71,8 +71,8 @@ describe TokenAuthenticationConcern do
   describe "#authenticate_app_by_client_id!" do
     let(:client_id) { "something" }
 
-    context "when the :reporting_app feature flag is enabled" do
-      before { Flipper.enable(:reporting_app) }
+    context "when the :reporting_api feature flag is enabled" do
+      before { Flipper.enable(:reporting_api) }
 
       context "and the client_id param is provided" do
         before do
@@ -82,7 +82,7 @@ describe TokenAuthenticationConcern do
         end
 
         context "and the client_id param contains the reporting app's client_id" do
-          let(:client_id) { Settings.mavis_reporting_app.client_id }
+          let(:client_id) { Settings.reporting_api.client_app.client_id }
 
           it "does not cause a token error" do
             expect(sample_class).not_to receive(:client_id_error!)
@@ -247,7 +247,7 @@ describe TokenAuthenticationConcern do
       it "tries to decode it with the mavis reporting app secret" do
         expect(JWT).to receive(:decode).with(
           jwt,
-          Settings.mavis_reporting_app.secret,
+          Settings.reporting_api.client_app.secret,
           true,
           { algorithm: "HS512" }
         ) #.and_return(decoded_jwt)
@@ -258,7 +258,7 @@ describe TokenAuthenticationConcern do
         before do
           allow(JWT).to receive(:decode).with(
             jwt,
-            Settings.mavis_reporting_app.secret,
+            Settings.reporting_api.client_app.secret,
             true,
             { algorithm: "HS512" }
           ).and_return(decoded_jwt)

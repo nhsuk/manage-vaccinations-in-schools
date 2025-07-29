@@ -2,19 +2,22 @@
 
 require "spec_helper"
 
-RSpec.describe OneTimeTokensController do
+RSpec.describe API::Reporting::OneTimeTokensController do
   let(:user) { create(:user) }
   let(:mock_cis2_info) { { "some_key" => "some value" } }
   let(:valid_token) do
-    OneTimeToken.find_or_generate_for!(user:, cis2_info: mock_cis2_info)
+    Reporting::OneTimeToken.find_or_generate_for!(
+      user:,
+      cis2_info: mock_cis2_info
+    )
   end
   let(:invalid_token) { SecureRandom.hex(32) }
 
   describe "#authorize" do
-    context "given a valid client_id when reporting_app is enabled" do
-      before { Flipper.enable(:reporting_app) }
+    context "given a valid client_id when reporting_api is enabled" do
+      before { Flipper.enable(:reporting_api) }
 
-      let(:client_id) { Settings.mavis_reporting_app.client_id }
+      let(:client_id) { Settings.reporting_api.client_app.client_id }
       let(:grant_type) { "some_grant_type" }
 
       let(:do_the_request) do
@@ -64,7 +67,7 @@ RSpec.describe OneTimeTokensController do
 
           it "deletes the OneTimeToken" do
             do_the_request
-            expect(OneTimeToken.exists?(token.id)).to be(false)
+            expect(Reporting::OneTimeToken.exists?(token.id)).to be(false)
           end
 
           it "responds with json" do
@@ -90,7 +93,7 @@ RSpec.describe OneTimeTokensController do
                 expect {
                   JWT.decode(
                     response_json["jwt"],
-                    Settings.mavis_reporting_app.secret,
+                    Settings.reporting_api.client_app.secret,
                     true,
                     { algorithm: "HS512" }
                   )
@@ -101,7 +104,7 @@ RSpec.describe OneTimeTokensController do
                 let(:decoded_payload) do
                   JWT.decode(
                     response_json["jwt"],
-                    Settings.mavis_reporting_app.secret,
+                    Settings.reporting_api.client_app.secret,
                     true,
                     { algorithm: "HS512" }
                   )

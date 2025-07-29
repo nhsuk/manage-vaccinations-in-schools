@@ -1,6 +1,9 @@
-reporting_api: Python app for Commissioner reporting. Enabling this enables the
-  reporting app to authenticate to Mavis via OAUTH 2.0 Authorization Code Flow
-  as defined at https://datatracker.ietf.org/doc/html/rfc6749#section-4.1
+
+testing_api: Basic API useful for automated testing.
+
+reporting_api: Enables the Commissioner reporting component to authenticate to Mavis via OAUTH 2.0 
+  Authorization Code Flow (https://datatracker.ietf.org/doc/html/rfc6749#section-4.1), and retrieve 
+  statistics from /api/reporting/
 
 basic_auth: Require users to sign in with basic authentication before they
   can use the service.
@@ -17,5 +20,3 @@ import_choose_academic_year: Add an option to choose the academic year when
   importing patients during the preparation period.
 
 offline_working: Prototype support for using Mavis offline.
-
-testing_api: Basic API useful for automated testing.
