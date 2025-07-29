@@ -13,7 +13,9 @@ class DraftConsent
   attr_accessor :triage_form_valid
 
   attribute :health_answers, array: true, default: []
+  attribute :injection_alternative, :boolean
   attribute :notes, :string
+  attribute :notify_parent_on_refusal, :boolean
   attribute :notify_parents_on_vaccination, :boolean
   attribute :parent_email, :string
   attribute :parent_full_name, :string
@@ -32,7 +34,6 @@ class DraftConsent
   attribute :triage_notes, :string
   attribute :triage_status_and_vaccine_method, :string
   attribute :vaccine_methods, array: true, default: []
-  attribute :injection_alternative, :boolean
 
   def initialize(current_user:, **attributes)
     @current_user = current_user
@@ -51,6 +52,7 @@ class DraftConsent
       (:questions if response_given?),
       (:triage if triage_allowed? && response_given?),
       (:reason if response_refused?),
+      (:notify_parent_on_refusal if ask_notify_parent_on_refusal?),
       (:notes if notes_required?),
       :confirm
     ].compact
@@ -130,6 +132,10 @@ class DraftConsent
               inclusion: {
                 in: Consent.reason_for_refusals.keys
               }
+  end
+
+  on_wizard_step :notify_parent_on_refusal, exact: true do
+    validates :notify_parent_on_refusal, inclusion: { in: [true, false] }
   end
 
   on_wizard_step :questions, exact: true do
@@ -306,9 +312,9 @@ class DraftConsent
     end
   end
 
-  def via_self_consent?
-    route == "self_consent"
-  end
+  def via_self_consent? = route == "self_consent"
+
+  def send_confirmation? = notify_parent_on_refusal != false
 
   def flu_response?
     FLU_RESPONSES.include?(response)
@@ -415,6 +421,11 @@ class DraftConsent
 
   def vaccines = programme.vaccines
 
+  def ask_notify_parent_on_refusal?
+    response_refused? && reason_for_refusal == "personal_choice" &&
+      !via_self_consent?
+  end
+
   def notes_required?
     response_refused? &&
       reason_for_refusal.in?(Consent::REASON_FOR_REFUSAL_REQUIRES_NOTES)
@@ -447,8 +458,9 @@ class DraftConsent
   def reset_unused_fields
     update_vaccine_methods
 
-    self.reason_for_refusal = nil unless response_refused?
     self.notes = "" unless notes_required?
+    self.notify_parent_on_refusal = nil unless ask_notify_parent_on_refusal?
+    self.reason_for_refusal = nil unless response_refused?
 
     if response_given?
       seed_health_questions if health_answers.empty?

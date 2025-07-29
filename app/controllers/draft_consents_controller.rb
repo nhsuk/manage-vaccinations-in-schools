@@ -74,7 +74,9 @@ class DraftConsentsController < ApplicationController
 
     set_patient_session # reload with new statuses
 
-    send_triage_confirmation(@patient_session, @programme, @consent)
+    if @draft_consent.send_confirmation?
+      send_triage_confirmation(@patient_session, @programme, @consent)
+    end
 
     heading_link_href =
       session_patient_programme_path(@session, @patient, @programme)
@@ -118,6 +120,7 @@ class DraftConsentsController < ApplicationController
     permitted_attributes = {
       agree: %i[response injection_alternative],
       notes: %i[notes],
+      notify_parent_on_refusal: %i[notify_parent_on_refusal],
       notify_parents_on_vaccination: %i[notify_parents_on_vaccination],
       parent_details: %i[
         parent_email
