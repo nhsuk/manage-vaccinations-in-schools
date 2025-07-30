@@ -27,12 +27,14 @@ module Generate
 
     private
 
+    def academic_year = Date.current.academic_year
+
     def patients
       (@session.presence || organisation)
         .patients
         .includes(:triage_statuses)
-        .in_programmes([programme], academic_year: AcademicYear.current)
-        .select { it.triage_status(programme:).required? }
+        .appear_in_programmes([programme], academic_year:)
+        .select { it.triage_status(programme:, academic_year:).required? }
     end
 
     def random_patients(count)

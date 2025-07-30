@@ -40,5 +40,11 @@ describe AppPatientSessionRecordComponent do
 
       it { should be(false) }
     end
+
+    context "session requires no registration" do
+      let(:session) { create(:session, :requires_no_registration, programmes:) }
+
+      it { should be(true) }
+    end
   end
 end

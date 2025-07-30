@@ -11,7 +11,7 @@ class AppProgrammeStatsComponent < ViewComponent::Base
   def patients_count
     helpers
       .policy_scope(Patient)
-      .in_programmes([@programme], academic_year:)
+      .appear_in_programmes([@programme], academic_year:)
       .count
   end
 

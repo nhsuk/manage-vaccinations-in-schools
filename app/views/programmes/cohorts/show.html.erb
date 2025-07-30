@@ -7,7 +7,7 @@
                                         ]) %>
 <% end %>
 
-<%= h1 format_year_group(@birth_academic_year.to_year_group) %>
+<%= h1 format_year_group(@birth_academic_year.to_year_group(academic_year: @academic_year)) %>
 
 <%= render AppPatientTableComponent.new(@patients, current_user:, count: @pagy.count) %>
 

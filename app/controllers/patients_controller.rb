@@ -2,9 +2,9 @@
 
 class PatientsController < ApplicationController
   include Pagy::Backend
-  include SearchFormConcern
+  include PatientSearchFormConcern
 
-  before_action :set_search_form, only: :index
+  before_action :set_patient_search_form, only: :index
   before_action :set_patient, except: :index
   before_action :record_access_log_entry, only: %i[show log]
 

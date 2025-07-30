@@ -334,6 +334,21 @@ describe ClassImport do
       end
     end
 
+    context "with an existing parent matching the name but a different case" do
+      let!(:existing_parent) do
+        create(:parent, full_name: "JOHN smith", email: "john@example.com")
+      end
+
+      it "doesn't create an additional parent" do
+        expect { process! }.to change(Parent, :count).by(4)
+      end
+
+      it "changes the parent's name to the incoming version" do
+        process!
+        expect(existing_parent.reload.full_name).to eq("John Smith")
+      end
+    end
+
     context "with an existing patient in a different school" do
       let(:patient) do
         create(

@@ -13,6 +13,12 @@ describe "HPV vaccination" do
       "Left arm (upper position)"
     )
     and_i_see_only_not_expired_batches
+    when_i_click_back
+    then_i_see_the_patient_session_page
+
+    and_i_record_that_the_patient_has_been_vaccinated(
+      "Left arm (upper position)"
+    )
     and_i_select_the_batch
     then_i_see_the_confirmation_page
 
@@ -64,6 +70,25 @@ describe "HPV vaccination" do
     when_i_go_to_a_patient_that_is_ready_to_vaccinate
     and_i_fill_in_pre_screening_questions
     and_i_record_that_the_patient_has_been_vaccinated("Other")
+    when_i_click_back
+    then_i_see_the_patient_session_page
+
+    and_i_record_that_the_patient_has_been_vaccinated("Other")
+    and_i_select_the_delivery
+    and_i_select_the_batch
+    then_i_see_the_confirmation_page
+
+    when_i_confirm_the_details
+    then_i_see_a_success_message
+  end
+
+  scenario "Administered without registration" do
+    given_registrations_are_not_required
+    and_i_am_signed_in
+
+    when_i_go_to_a_patient_that_is_ready_to_vaccinate
+    and_i_fill_in_pre_screening_questions
+    and_i_record_that_the_patient_has_been_vaccinated("Other")
     and_i_select_the_delivery
     and_i_select_the_batch
     then_i_see_the_confirmation_page
@@ -93,8 +118,16 @@ describe "HPV vaccination" do
       build(:batch, :expired, organisation:, vaccine: @active_vaccine)
     @expired_batch.save!(validate: false)
 
+    session_traits =
+      @registrations_are_not_required ? [:requires_no_registration] : []
     @session =
-      create(:session, organisation:, programmes: [programme], location:)
+      create(
+        :session,
+        *session_traits,
+        organisation:,
+        programmes: [programme],
+        location:
+      )
     @patient =
       create(
         :patient,
@@ -104,6 +137,12 @@ describe "HPV vaccination" do
       )
 
     sign_in organisation.users.first
+  end
+
+  alias_method :and_i_am_signed_in, :given_i_am_signed_in
+
+  def given_registrations_are_not_required
+    @registrations_are_not_required = true
   end
 
   def and_enqueue_sync_vaccination_records_to_nhs_feature_is_enabled
@@ -119,6 +158,10 @@ describe "HPV vaccination" do
     visit session_record_path(@session)
     expect(page).not_to have_content("Default batches")
     click_link @patient.full_name
+  end
+
+  def when_i_click_back
+    click_on "Back"
   end
 
   def and_i_fill_in_pre_screening_questions
@@ -142,6 +185,10 @@ describe "HPV vaccination" do
   def and_i_select_the_batch
     choose @active_batch.name
     click_button "Continue"
+  end
+
+  def then_i_see_the_patient_session_page
+    expect(page).to have_content("Session activity and notes")
   end
 
   def then_i_see_the_confirmation_page

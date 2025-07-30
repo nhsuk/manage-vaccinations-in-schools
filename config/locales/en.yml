@@ -1,6 +1,5 @@
 en:
   activemodel:
-    attributes:
     errors:
       models:
         batch_form:
@@ -90,7 +89,6 @@ en:
               missing_month: Enter a month
               missing_year: Enter a year
               invalid: Enter a valid date and time
-              less_than_or_equal_to: Enter a time in the past
         health_answer:
           attributes:
             notes:
@@ -152,6 +150,8 @@ en:
           will_be_vaccinated_elsewhere: Vaccine will be given elsewhere
         responses:
           given: Consent given
+          given_injection: Consent given
+          given_nasal: Consent given
           not_provided: Not provided
           refused: Consent refused
         routes:
@@ -233,6 +233,12 @@ en:
           refused: Refused vaccine
         protocols:
           pgd: Patient Group Direction (PGD)
+        sync_statuses:
+          cannot_sync: Cannot sync
+          not_synced: Not synced
+          pending: Sync pending
+          synced: Synced
+          failed: Sync failed
       vaccine:
         methods:
           injection: Injection

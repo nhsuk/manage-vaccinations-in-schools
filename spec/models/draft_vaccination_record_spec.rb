@@ -60,7 +60,55 @@ describe DraftVaccinationRecord do
       it "has an error" do
         expect(draft_vaccination_record.save(context: :update)).to be(false)
         expect(draft_vaccination_record.errors[:performed_at]).to include(
-          "Enter a time in the past"
+          "The vaccination cannot take place after #{Time.current.to_fs(:long)}"
+        )
+      end
+    end
+
+    context "when performed_at is before the start of the academic year" do
+      let(:attributes) do
+        valid_administered_attributes.merge(
+          performed_at: Time.zone.local(2023, 8, 31, 12)
+        )
+      end
+
+      around { |example| freeze_time { example.run } }
+
+      before { draft_vaccination_record.wizard_step = :date_and_time }
+
+      it "has an error" do
+        expect(draft_vaccination_record.save(context: :update)).to be(false)
+        expect(draft_vaccination_record.errors[:performed_at]).to include(
+          "The vaccination cannot take place before 1 September 2024 at 12:00am"
+        )
+      end
+    end
+
+    context "when performed_at is after the end of a previous academic year session" do
+      let(:session) do
+        create(
+          :session,
+          organisation:,
+          programmes: [programme],
+          date: Date.new(2023, 12, 1)
+        )
+      end
+
+      let(:attributes) do
+        valid_administered_attributes.merge(
+          performed_at: Time.zone.local(2024, 9, 1, 12),
+          session_id: session.id
+        )
+      end
+
+      around { |example| freeze_time { example.run } }
+
+      before { draft_vaccination_record.wizard_step = :date_and_time }
+
+      it "has an error" do
+        expect(draft_vaccination_record.save(context: :update)).to be(false)
+        expect(draft_vaccination_record.errors[:performed_at]).to include(
+          "The vaccination cannot take place after 31 August 2024 at 11:59pm"
         )
       end
     end

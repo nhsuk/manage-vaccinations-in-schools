@@ -8,10 +8,6 @@ class DraftConsent
   include ActiveRecord::AttributeMethods::Serialization
   include HasHealthAnswers
 
-  def self.request_session_key
-    "consent"
-  end
-
   attr_reader :new_or_existing_contact
   attr_accessor :triage_form_valid
 
@@ -36,6 +32,11 @@ class DraftConsent
   attribute :triage_status_and_vaccine_method, :string
   attribute :vaccine_methods, array: true, default: []
   attribute :injection_alternative, :boolean
+
+  def initialize(current_user:, **attributes)
+    @current_user = current_user
+    super(**attributes)
+  end
 
   FLU_RESPONSES = %w[given_nasal given_injection].freeze
 
@@ -436,6 +437,8 @@ class DraftConsent
       end
     end
   end
+
+  def request_session_key = "consent"
 
   def reset_unused_fields
     update_vaccine_methods

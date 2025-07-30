@@ -472,6 +472,75 @@ describe NHS::ImmunisationsAPI do
     end
   end
 
+  describe "should_be_in_immunisations_api?" do
+    subject(:should_be_in_immunisations_api) do
+      described_class.should_be_in_immunisations_api?(
+        vaccination_record,
+        ignore_nhs_number:
+      )
+    end
+
+    let(:ignore_nhs_number) { false }
+
+    context "when all conditions are met" do
+      it { should be true }
+    end
+
+    context "when the vaccination record has been discarded" do
+      before { vaccination_record.discard! }
+
+      it { should be false }
+    end
+
+    context "when the vaccination record is not recorded in service" do
+      let(:session) { nil }
+
+      it { should be false }
+    end
+
+    VaccinationRecord.defined_enums["outcome"].each_key do |outcome|
+      next if outcome == "administered"
+
+      context "the vaccination record outcome is #{outcome}" do
+        let(:vaccination_record) do
+          create(
+            :vaccination_record,
+            outcome:,
+            patient:,
+            nhs_immunisations_api_synced_at:,
+            nhs_immunisations_api_id:,
+            nhs_immunisations_api_etag:,
+            nhs_immunisations_api_sync_pending_at:
+          )
+        end
+
+        it { should be false }
+      end
+    end
+
+    context "when the programme type is not one of those synced to the API" do
+      let(:programme) { create(:programme, :menacwy) }
+
+      it { should be false }
+    end
+
+    context "when the patient has no NHS number" do
+      before { patient.update(nhs_number: nil) }
+
+      context "and ignore_nhs_number is false" do
+        let(:ignore_nhs_number) { false }
+
+        it { should be false }
+      end
+
+      context "and ignore_nhs_number is true" do
+        let(:ignore_nhs_number) { true }
+
+        it { should be true }
+      end
+    end
+  end
+
   describe "next_sync_action" do
     subject(:next_sync_action) do
       described_class.send(:next_sync_action, vaccination_record)

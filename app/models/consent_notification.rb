@@ -24,6 +24,7 @@
 #  fk_rails_...  (session_id => sessions.id)
 #
 class ConsentNotification < ApplicationRecord
+  include BelongsToAcademicYear
   include Sendable
 
   self.inheritance_column = :nil
@@ -47,6 +48,8 @@ class ConsentNotification < ApplicationRecord
         ->(programme) { joins(:programmes).where(programmes: programme) }
 
   scope :reminder, -> { initial_reminder.or(subsequent_reminder) }
+
+  academic_year_attribute :sent_at
 
   def reminder?
     initial_reminder? || subsequent_reminder?
@@ -72,6 +75,7 @@ class ConsentNotification < ApplicationRecord
       patient:,
       session:,
       type:,
+      sent_at: Time.current,
       sent_by: current_user
     )
 

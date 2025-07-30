@@ -7,6 +7,7 @@
 #  id                            :bigint           not null, primary key
 #  academic_year                 :integer          not null
 #  days_before_consent_reminders :integer
+#  requires_registration         :boolean          default(TRUE), not null
 #  send_consent_requests_at      :date
 #  send_invitations_at           :date
 #  slug                          :string           not null
@@ -60,8 +61,18 @@ class Session < ApplicationRecord
   scope :has_date,
         ->(value) { where(SessionDate.for_session.where(value:).arel.exists) }
 
-  scope :has_programme,
-        ->(programme) { joins(:programmes).where(programmes: programme) }
+  scope :has_programmes,
+        ->(programmes) do
+          where(
+            "(?) >= ?",
+            SessionProgramme
+              .select("COUNT(session_programmes.id)")
+              .where("sessions.id = session_programmes.session_id")
+              .joins(:programme)
+              .where(programme: programmes),
+            programmes.count
+          )
+        end
 
   scope :today, -> { has_date(Date.current) }
 
@@ -104,6 +115,8 @@ class Session < ApplicationRecord
         end
   scope :send_invitations,
         -> { scheduled.where("? >= send_invitations_at", Date.current) }
+
+  scope :registration_not_required, -> { where(requires_registration: false) }
 
   validates :send_consent_requests_at,
             presence: true,
@@ -169,8 +182,8 @@ class Session < ApplicationRecord
     programmes.flat_map(&:vaccine_methods).uniq.sort
   end
 
-  def eligible_programmes_for(patient: nil, year_group: nil)
-    year_group ||= patient.year_group
+  def programmes_for(year_group: nil, patient: nil, academic_year: nil)
+    year_group ||= patient.year_group(academic_year:)
 
     programmes.select do |programme|
       location_programme_year_groups.any? do

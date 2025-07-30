@@ -9,6 +9,7 @@ class AppPatientSessionOutcomeComponent < ViewComponent::Base
       <%= render AppPatientVaccinationTableComponent.new(
             patient,
             programme:,
+            academic_year:,
             show_caption: true
           ) %>
     <% end %>
@@ -22,14 +23,18 @@ class AppPatientSessionOutcomeComponent < ViewComponent::Base
   end
 
   def render?
-    patient.vaccination_records.exists?
+    patient
+      .vaccination_records
+      .includes(:programme)
+      .any? { it.show_in_academic_year?(academic_year) }
   end
 
   private
 
   attr_reader :patient_session, :programme
 
-  delegate :patient, to: :patient_session
+  delegate :patient, :session, to: :patient_session
+  delegate :academic_year, to: :session
 
   def colour
     I18n.t(status, scope: %i[status programme colour])
@@ -41,7 +46,7 @@ class AppPatientSessionOutcomeComponent < ViewComponent::Base
 
   def vaccination_status
     @vaccination_status ||=
-      patient.vaccination_statuses.find_or_initialize_by(programme:)
+      patient.vaccination_status(programme:, academic_year:)
   end
 
   delegate :status, to: :vaccination_status

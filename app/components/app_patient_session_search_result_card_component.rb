@@ -13,7 +13,7 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
 
             summary_list.with_row do |row|
               row.with_key { "Year group" }
-              row.with_value { helpers.patient_year_group(patient) }
+              row.with_value { helpers.patient_year_group(patient, academic_year:) }
             end
 
             if action_required
@@ -47,8 +47,8 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
 
       <% if context == :register && can_register_attendance? %>
         <div class="app-button-group">
-          <%= helpers.govuk_button_to "Attending", create_session_register_path(session, patient, "present", search_form: params[:search_form]&.permit!), secondary: true, class: "app-button--small" %>
-          <%= helpers.govuk_button_to "Absent", create_session_register_path(session, patient, "absent", search_form: params[:search_form]&.permit!), class: "app-button--secondary-warning app-button--small" %>
+          <%= helpers.govuk_button_to "Attending", create_session_register_path(session, patient, "present"), secondary: true, class: "app-button--small" %>
+          <%= helpers.govuk_button_to "Absent", create_session_register_path(session, patient, "absent"), class: "app-button--secondary-warning app-button--small" %>
         </div>
       <% end %>
     <% end %>
@@ -78,6 +78,8 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
   private
 
   attr_reader :patient_session, :patient, :session, :context, :programmes
+
+  delegate :academic_year, to: :session
 
   def can_register_attendance?
     session_attendance =
@@ -124,8 +126,11 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
 
     vaccine_methods =
       programmes_to_check.flat_map do |programme|
-        if patient.consent_given_and_safe_to_vaccinate?(programme:)
-          patient.approved_vaccine_methods(programme:)
+        if patient.consent_given_and_safe_to_vaccinate?(
+             programme:,
+             academic_year:
+           )
+          patient.approved_vaccine_methods(programme:, academic_year:)
         else
           []
         end
@@ -157,7 +162,7 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
           render(
             AppProgrammeStatusTagsComponent.new(
               programmes.index_with do |programme|
-                patient.consent_status(programme:).slice(
+                patient.consent_status(programme:, academic_year:).slice(
                   :status,
                   :vaccine_methods
                 )
@@ -173,7 +178,10 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
           render(
             AppProgrammeStatusTagsComponent.new(
               programmes.index_with do |programme|
-                triage_status_tag(patient.triage_status(programme:), programme)
+                triage_status_tag(
+                  patient.triage_status(programme:, academic_year:),
+                  programme
+                )
               end,
               outcome: :triage
             )

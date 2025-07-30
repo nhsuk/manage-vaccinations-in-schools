@@ -2,6 +2,7 @@
 
 class PatientSessions::BaseController < ApplicationController
   before_action :set_session
+  before_action :set_academic_year
   before_action :set_patient
   before_action :set_patient_session
   before_action :set_programme
@@ -16,6 +17,10 @@ class PatientSessions::BaseController < ApplicationController
       policy_scope(Session).includes(:location, :programmes).find_by!(
         slug: params.fetch(:session_slug, params[:slug])
       )
+  end
+
+  def set_academic_year
+    @academic_year = @session.academic_year
   end
 
   def set_patient

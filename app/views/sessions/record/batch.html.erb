@@ -3,7 +3,7 @@
 <% end %>
 
 <% programme_name_and_method = if @programme.has_multiple_vaccine_methods?
-       "#{@programme.name_in_sentence} #{Vaccine.human_enum_name(:vaccine_method, @vaccine_method)}.downcase"
+       "#{@programme.name_in_sentence} #{Vaccine.human_enum_name(:vaccine_method, @vaccine_method).downcase}"
      else
        "#{@programme.name_in_sentence}"
      end %>

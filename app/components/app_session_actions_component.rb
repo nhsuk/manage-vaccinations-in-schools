@@ -20,16 +20,14 @@ class AppSessionActionsComponent < ViewComponent::Base
 
   attr_reader :session
 
-  delegate :patient_sessions, to: :session
-
-  delegate :programmes, to: :session
+  delegate :academic_year, :patient_sessions, :programmes, to: :session
 
   def rows
     @rows ||= [
       no_consent_response_row,
       conflicting_consent_row,
       triage_required_row,
-      register_attendance_row,
+      (register_attendance_row if session.requires_registration?),
       ready_for_vaccinator_row
     ].compact
   end
@@ -48,8 +46,7 @@ class AppSessionActionsComponent < ViewComponent::Base
 
     return nil if count.zero?
 
-    href =
-      session_consent_path(session, search_form: { consent_statuses: [status] })
+    href = session_consent_path(session, consent_statuses: [status])
 
     {
       key: {
@@ -70,7 +67,7 @@ class AppSessionActionsComponent < ViewComponent::Base
 
     return nil if count.zero?
 
-    href = session_triage_path(session, search_form: { triage_status: status })
+    href = session_triage_path(session, triage_status: status)
 
     {
       key: {
@@ -92,8 +89,7 @@ class AppSessionActionsComponent < ViewComponent::Base
 
     return nil if count.zero?
 
-    href =
-      session_register_path(session, search_form: { register_status: status })
+    href = session_register_path(session, register_status: status)
 
     {
       key: {
@@ -120,7 +116,8 @@ class AppSessionActionsComponent < ViewComponent::Base
           )
           .count do |patient_session|
             patient_session.patient.consent_given_and_safe_to_vaccinate?(
-              programme:
+              programme:,
+              academic_year:
             )
           end
       end

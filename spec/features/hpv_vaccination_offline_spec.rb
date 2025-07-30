@@ -190,7 +190,7 @@ describe "HPV vaccination" do
     visit "/dashboard"
     click_link "Sessions", match: :first
     click_link "Scheduled"
-    click_on "Community clinics"
+    click_on "Community clinic"
     click_link "Record offline"
   end
 
@@ -357,7 +357,7 @@ describe "HPV vaccination" do
     visit "/dashboard"
     click_on "Sessions", match: :first
     click_on "Scheduled"
-    click_on "Community clinics"
+    click_on "Community clinic"
   end
 
   def then_i_see_the_uploaded_vaccination_outcomes_reflected_in_the_session

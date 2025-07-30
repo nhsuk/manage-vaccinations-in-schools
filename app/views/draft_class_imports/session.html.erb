@@ -15,7 +15,8 @@
     <% @session_options.each do |session| %>
       <%= tag.option session.location.name,
                      value: session.id,
-                     selected: session.id == @draft_class_import.session_id %>
+                     selected: session.id == @draft_class_import.session_id,
+                     data: { hint: format_address_single_line(session.location) } %>
     <% end %>
   <% end %>
 

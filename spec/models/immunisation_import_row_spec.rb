@@ -1518,6 +1518,33 @@ describe ImmunisationImportRow do
         end
       end
 
+      context "with an existing matching patient but mismatching capitalisation, without NHS number" do
+        let(:data) do
+          valid_data.except("NHS_NUMBER").merge(
+            {
+              "PERSON_FORENAME" => "RON",
+              "PERSON_SURNAME" => "WEASLEY",
+              "PERSON_POSTCODE" => "sw1a 1aa"
+            }
+          )
+        end
+
+        let!(:existing_patient) do
+          create(
+            :patient,
+            given_name: "Ron",
+            family_name: "Weasley",
+            date_of_birth: Date.parse(date_of_birth),
+            address_postcode:,
+            nhs_number: "9990000018"
+          )
+        end
+
+        it "still matches to a patient" do
+          expect(patient).to eq(existing_patient)
+        end
+      end
+
       describe "#address_postcode" do
         subject { patient.address_postcode }
 

@@ -41,6 +41,7 @@
 #
 
 class Consent < ApplicationRecord
+  include BelongsToAcademicYear
   include Invalidatable
   include HasHealthAnswers
   include HasVaccineMethods
@@ -88,6 +89,8 @@ class Consent < ApplicationRecord
 
   encrypts :notes
 
+  academic_year_attribute :submitted_at
+
   validates :notes,
             presence: {
               if: :notes_required?
@@ -108,6 +111,8 @@ class Consent < ApplicationRecord
   def name
     via_self_consent? ? patient.full_name : parent.label
   end
+
+  def academic_year = submitted_at.to_date.academic_year
 
   def response_provided? = !response_not_provided?
 

@@ -164,6 +164,7 @@ def setup_clinic(organisation)
   clinic_session.session_dates.create!(value: Date.current)
   clinic_session.session_dates.create!(value: Date.current - 1.day)
   clinic_session.session_dates.create!(value: Date.current + 1.day)
+  clinic_session.update!(send_invitations_at: Date.current - 3.weeks)
 
   # All patients belong to the community clinic. This is normally
   # handled by school moves, but here we need to do it manually.
@@ -314,7 +315,12 @@ create_patients(organisation)
 create_imports(user, organisation)
 create_school_moves(organisation)
 
-UnscheduledSessionsFactory.new.call
+Organisation.find_each do |organisation|
+  OrganisationSessionsFactory.call(
+    organisation,
+    academic_year: AcademicYear.current
+  )
+end
 
 Rake::Task["status:update:all"].execute
 Rake::Task["gp_practices:smoke"].execute

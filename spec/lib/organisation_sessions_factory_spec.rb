@@ -1,11 +1,12 @@
 # frozen_string_literal: true
 
-describe UnscheduledSessionsFactory do
+describe OrganisationSessionsFactory do
   describe "#call" do
-    subject(:call) { described_class.new.call }
+    subject(:call) { described_class.call(organisation, academic_year:) }
 
     let(:programmes) { [create(:programme, :hpv)] }
     let(:organisation) { create(:organisation, programmes:) }
+    let(:academic_year) { AcademicYear.current }
 
     context "with a school that's eligible for the programme" do
       let!(:location) { create(:school, :secondary, organisation:) }
@@ -72,6 +73,49 @@ describe UnscheduledSessionsFactory do
 
       it "creates the missing unscheduled session" do
         expect { call }.to change(organisation.sessions, :count).by(1)
+      end
+    end
+
+    context "with all programmes" do
+      let(:doubles_programmes) do
+        [create(:programme, :menacwy), create(:programme, :td_ipv)]
+      end
+      let(:flu_programmes) { [create(:programme, :flu)] }
+      let(:hpv_programmes) { [create(:programme, :hpv)] }
+
+      let(:programmes) { flu_programmes + hpv_programmes + doubles_programmes }
+
+      context "with a generic clinic that's eligible for the programmes" do
+        let!(:location) { create(:generic_clinic, organisation:) }
+
+        it "creates missing unscheduled sessions for each programme group" do
+          expect { call }.to change(organisation.sessions, :count).by(1)
+
+          session =
+            organisation
+              .sessions
+              .includes(:location, :programmes)
+              .find_by(location:)
+          expect(session.programmes).to match_array(programmes)
+        end
+      end
+
+      context "with a school that's eligible for the programmes" do
+        let!(:location) { create(:school, :secondary, organisation:) }
+
+        it "creates missing unscheduled sessions for each programme group" do
+          expect { call }.to change(organisation.sessions, :count).by(3)
+
+          session =
+            organisation
+              .sessions
+              .order(:created_at)
+              .where(location:)
+              .includes(:programmes)
+          expect(session.first.programmes).to eq(flu_programmes)
+          expect(session.second.programmes).to eq(hpv_programmes)
+          expect(session.third.programmes).to eq(doubles_programmes)
+        end
       end
     end
 

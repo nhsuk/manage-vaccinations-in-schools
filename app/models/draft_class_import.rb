@@ -4,12 +4,13 @@ class DraftClassImport
   include RequestSessionPersistable
   include WizardStepConcern
 
-  def self.request_session_key
-    "class_import"
-  end
-
   attribute :session_id, :integer
   attribute :year_groups, array: true, default: []
+
+  def initialize(current_user:, **attributes)
+    @current_user = current_user
+    super(**attributes)
+  end
 
   def wizard_steps
     %i[session year_groups]
@@ -34,6 +35,8 @@ class DraftClassImport
   end
 
   private
+
+  def request_session_key = "class_import"
 
   def reset_unused_fields
   end

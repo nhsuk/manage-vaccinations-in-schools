@@ -7,12 +7,13 @@ class SchoolMoveExport
   attribute :date_from, :date
   attribute :date_to, :date
 
-  def wizard_steps
-    %i[dates confirm].freeze
+  def initialize(current_user:, **attributes)
+    @current_user = current_user
+    super(**attributes)
   end
 
-  def self.request_session_key
-    "school_move_export"
+  def wizard_steps
+    %i[dates confirm]
   end
 
   delegate :csv_data, :row_count, to: :exporter
@@ -52,6 +53,8 @@ class SchoolMoveExport
         end_date: date_to
       )
   end
+
+  def request_session_key = "school_move_export"
 
   def reset_unused_fields
   end

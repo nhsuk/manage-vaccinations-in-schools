@@ -6,6 +6,10 @@ resource "aws_vpc" "application_vpc" {
   }
 }
 
+resource "aws_default_security_group" "this" {
+  vpc_id = aws_vpc.application_vpc.id
+}
+
 resource "aws_subnet" "public_subnet_a" {
   vpc_id            = aws_vpc.application_vpc.id
   cidr_block        = "10.0.0.0/24"

@@ -33,16 +33,17 @@ class SendSchoolSessionRemindersJob < ApplicationJob
     return false unless patient.send_notifications?
 
     programmes = patient_session.programmes
+    academic_year = patient_session.academic_year
 
     all_vaccinated =
       programmes.all? do |programme|
-        patient.vaccination_status(programme:).vaccinated?
+        patient.vaccination_status(programme:, academic_year:).vaccinated?
       end
 
     return false if all_vaccinated
 
     programmes.any? do |programme|
-      patient.consent_given_and_safe_to_vaccinate?(programme:)
+      patient.consent_given_and_safe_to_vaccinate?(programme:, academic_year:)
     end
   end
 end

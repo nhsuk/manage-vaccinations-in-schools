@@ -46,6 +46,31 @@ resource "aws_iam_role_policy_attachment" "data_replication" {
   policy_arn = each.value
 }
 
+################# Deploy Monitoring ################
+
+resource "aws_iam_role" "monitoring_deploy" {
+  name        = "GithubDeployMonitoring"
+  description = "Role allowing terraform deployment of monitoring resources from github workflows"
+  assume_role_policy = templatefile("resources/iam_role_github_trust_policy_${var.environment}.json.tftpl", {
+    account_id = var.account_id
+  })
+}
+
+resource "aws_iam_policy" "monitoring_deploy" {
+  name        = "DeployMonitoringResources"
+  description = "Permissions for GithubDeployMonitoring role"
+  policy      = file("resources/iam_policy_DeployMonitoringResources.json")
+  lifecycle {
+    ignore_changes = [description]
+  }
+}
+
+resource "aws_iam_role_policy_attachment" "monitoring_deploy" {
+  for_each   = local.monitoring_policies
+  role       = aws_iam_role.monitoring_deploy.name
+  policy_arn = each.value
+}
+
 ################ DMS Policies ################
 
 resource "aws_iam_policy" "dms" {

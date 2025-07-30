@@ -2,9 +2,9 @@
 
 class Programmes::PatientsController < Programmes::BaseController
   include Pagy::Backend
-  include SearchFormConcern
+  include PatientSearchFormConcern
 
-  before_action :set_search_form
+  before_action :set_patient_search_form
 
   def index
     @year_groups =
@@ -13,10 +13,9 @@ class Programmes::PatientsController < Programmes::BaseController
       ).pluck_year_groups
 
     scope =
-      policy_scope(Patient).includes(:vaccination_statuses).in_programmes(
-        [@programme],
-        academic_year: @academic_year
-      )
+      policy_scope(Patient).includes(
+        :vaccination_statuses
+      ).appear_in_programmes([@programme], academic_year: @academic_year)
 
     @form.programme_types = [@programme.type]
 

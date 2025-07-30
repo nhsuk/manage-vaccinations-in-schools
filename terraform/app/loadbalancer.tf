@@ -66,9 +66,9 @@ resource "aws_lb" "app_lb" {
     prefix  = "lb-access-logs-${var.environment}"
     enabled = true
   }
-  security_groups = [aws_security_group.lb_service_sg.id]
-  subnets         = [aws_subnet.public_subnet_a.id, aws_subnet.public_subnet_b.id]
-  depends_on      = [aws_security_group_rule.lb_ingress_https] #TODO: Delete after migration
+  security_groups            = [aws_security_group.lb_service_sg.id]
+  subnets                    = [aws_subnet.public_subnet_a.id, aws_subnet.public_subnet_b.id]
+  drop_invalid_header_fields = true
 }
 
 resource "aws_lb_target_group" "blue" {

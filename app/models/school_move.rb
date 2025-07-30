@@ -63,34 +63,45 @@ class SchoolMove < ApplicationRecord
 
   private
 
+  def academic_year = AcademicYear.current
+
   def update_patient!
     patient.update!(home_educated:, school:)
   end
 
   def update_sessions!
-    patient.patient_sessions.destroy_all_if_safe
+    patient
+      .patient_sessions
+      .joins(:session)
+      .where(sessions: { academic_year: })
+      .destroy_all_if_safe
 
-    [school_session, generic_clinic_session].compact.each do |session|
+    sessions_to_add.find_each do |session|
       PatientSession.find_or_create_by!(patient:, session:)
     end
 
     StatusUpdater.call(patient:)
   end
 
-  def school_session
-    @school_session ||=
-      if (org = school&.organisation)
-        org
-          .sessions
-          .includes(:location, :session_dates)
-          .for_current_academic_year
-          .find_by(location: school)
-      end
-  end
+  def sessions_to_add
+    @sessions_to_add ||=
+      begin
+        scope =
+          Session.includes(:location, :session_dates).where(academic_year:)
 
-  def generic_clinic_session
-    @generic_clinic_session ||=
-      (school&.organisation || organisation)&.generic_clinic_session
+        if school
+          scope.where(organisation: school.organisation, location: school).or(
+            scope.where(
+              organisation: school.organisation,
+              locations: {
+                type: "generic_clinic"
+              }
+            )
+          )
+        else
+          scope.where(organisation:, locations: { type: "generic_clinic" })
+        end
+      end
   end
 
   def create_log_entry!(user:)

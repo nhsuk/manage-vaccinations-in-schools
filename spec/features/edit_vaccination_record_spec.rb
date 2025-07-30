@@ -400,9 +400,11 @@ describe "Edit vaccination record" do
   end
 
   def when_i_fill_in_a_valid_date_and_time
-    fill_in "Year", with: "2023"
-    fill_in "Month", with: "9"
-    fill_in "Day", with: "1"
+    @valid_date = Date.current - 1.day
+
+    fill_in "Year", with: @valid_date.year.to_s
+    fill_in "Month", with: @valid_date.month.to_s
+    fill_in "Day", with: @valid_date.day.to_s
 
     fill_in "Hour", with: "12"
     fill_in "Minute", with: "00"
@@ -437,7 +439,9 @@ describe "Edit vaccination record" do
   end
 
   def and_i_should_see_the_updated_date_time
-    expect(page).to have_content("Date1 September 2023")
+    formatted_date = @valid_date.strftime("%-d %B %Y")
+
+    expect(page).to have_content("Date#{formatted_date}")
     expect(page).to have_content("Time12:00pm")
   end
 

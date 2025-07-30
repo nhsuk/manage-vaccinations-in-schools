@@ -16,6 +16,7 @@ describe AppPatientSearchResultCardComponent do
 
   let(:link_to) { "/patient" }
   let(:programme) { nil }
+  let(:academic_year) { nil }
   let(:triage_status) { "" }
   let(:show_postcode) { false }
   let(:show_school) { false }
@@ -25,6 +26,7 @@ describe AppPatientSearchResultCardComponent do
       patient,
       link_to:,
       programme:,
+      academic_year:,
       triage_status:,
       show_postcode:,
       show_school:
@@ -50,6 +52,7 @@ describe AppPatientSearchResultCardComponent do
 
   context "when given a programme" do
     let(:programme) { create(:programme, :flu) }
+    let(:academic_year) { Date.current.academic_year }
 
     it { should have_text("Programme outcome\nFluNo outcome yet") }
     it { should_not have_text("Triage status") }

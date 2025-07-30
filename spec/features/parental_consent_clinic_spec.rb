@@ -271,7 +271,7 @@ describe "Parental consent school" do
     if in_the_school
       click_on @school.name
     else
-      click_on "Community clinics"
+      click_on "Community clinic"
     end
 
     click_on "Session outcome"

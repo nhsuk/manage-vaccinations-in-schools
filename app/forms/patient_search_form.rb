@@ -1,13 +1,8 @@
 # frozen_string_literal: true
 
-class SearchForm
-  include ActiveModel::Model
-  include ActiveModel::Attributes
-  include ActiveRecord::AttributeAssignment
+class PatientSearchForm
+  include RequestSessionPersistable
 
-  SESSION_KEY = "search_filters"
-
-  attribute :clear_filters, :boolean
   attribute :consent_statuses, array: true
   attribute :date_of_birth_day, :integer
   attribute :date_of_birth_month, :integer
@@ -22,11 +17,19 @@ class SearchForm
   attribute :vaccine_method, :string
   attribute :year_groups, array: true
 
-  attr_accessor :request_path, :request_session, :session
+  def initialize(request_path:, request_session:, session: nil, **attributes)
+    @request_path = request_path
+    @session = session
 
-  def initialize(params = {})
-    super(params)
-    handle_request_session_filters
+    # An empty string represents the "Any" option.
+    has_query_parameters =
+      attributes.any? { it.present? || it == "" || it == [] }
+
+    request_session[request_session_key] = {} if has_query_parameters
+
+    super(request_session:, **attributes.except("_clear"))
+
+    save! if has_query_parameters
   end
 
   def programme_types=(values)
@@ -46,7 +49,7 @@ class SearchForm
       if programme_types.present?
         Programme.where(type: programme_types)
       else
-        session&.programmes
+        @session&.programmes
       end
   end
 
@@ -69,15 +72,39 @@ class SearchForm
 
     scope = scope.search_by_nhs_number(nil) if missing_nhs_number.present?
 
-    scope =
-      scope.in_programmes(programmes, academic_year:) if programmes.present?
+    if programmes.present?
+      scope =
+        if @session
+          scope.appear_in_programmes(programmes)
+        else
+          scope.appear_in_programmes(programmes, academic_year:)
+        end
+    end
 
     if (statuses = consent_statuses).present?
-      scope = scope.has_consent_status(statuses, programme: programmes)
+      scope =
+        if @session
+          scope.has_consent_status(statuses, programme: programmes)
+        else
+          scope.has_consent_status(
+            statuses,
+            programme: programmes,
+            academic_year:
+          )
+        end
     end
 
     if (status = programme_status&.to_sym).present?
-      scope = scope.has_vaccination_status(status, programme: programmes)
+      scope =
+        if @session
+          scope.has_vaccination_status(status, programme: programmes)
+        else
+          scope.has_vaccination_status(
+            status,
+            programme: programmes,
+            academic_year:
+          )
+        end
     end
 
     if (status = session_status&.to_sym).present?
@@ -89,7 +116,12 @@ class SearchForm
     end
 
     if (status = triage_status&.to_sym).present?
-      scope = scope.has_triage_status(status, programme: programmes)
+      scope =
+        if @session
+          scope.has_triage_status(status, programme: programmes)
+        else
+          scope.has_triage_status(status, programme: programmes, academic_year:)
+        end
     end
 
     if vaccine_method.present?
@@ -101,53 +133,14 @@ class SearchForm
 
   private
 
-  def academic_year = session&.academic_year || AcademicYear.current
+  def academic_year = @session&.academic_year || AcademicYear.current
 
-  def handle_request_session_filters
-    if clear_filters
-      clear_from_request_session
-    elsif has_filters?
-      store_in_request_session
-    else
-      load_from_request_session
-    end
-  end
-
-  def store_in_request_session
-    return if request_session.nil?
-
-    if has_filters?
-      request_session[SESSION_KEY] ||= {}
-      request_session[SESSION_KEY][path_key] = attributes
-    end
-  end
-
-  def load_from_request_session
-    return if request_session.nil? || request_session[SESSION_KEY].blank?
-
-    stored_filters = request_session[SESSION_KEY][path_key]
-    return if stored_filters.blank?
-
-    assign_attributes(stored_filters)
-  end
-
-  def clear_from_request_session
-    return if request_session.nil? || request_session[SESSION_KEY].blank?
-
-    request_session[SESSION_KEY].delete(path_key)
-  end
-
-  def has_filters?
-    # An empty string represents the "Any" option
-    attributes
-      .except(:clear_filters)
-      .values
-      .any? { it.present? || it == "" || it == [] }
-  end
+  def request_session_key = "patient_search_form_#{path_key}"
 
   def path_key
-    # 8 should be more than enough to avoid collisions
-    # for the number of distinct paths.
-    Digest::MD5.hexdigest(request_path).first(8)
+    @path_key ||= Digest::MD5.hexdigest(@request_path).first(8)
+  end
+
+  def reset_unused_fields
   end
 end

@@ -46,6 +46,19 @@ class VaccinateForm
     super(value.presence)
   end
 
+  def delivery_site
+    if vaccine_method.present?
+      available_delivery_sites =
+        Vaccine::AVAILABLE_DELIVERY_SITES.fetch(vaccine_method)
+
+      if available_delivery_sites.length == 1
+        return available_delivery_sites.first
+      end
+    end
+
+    super
+  end
+
   def save(draft_vaccination_record:)
     return nil if invalid?
 

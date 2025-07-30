@@ -4,11 +4,11 @@ require "pagy/extras/array"
 
 class Sessions::RecordController < ApplicationController
   include Pagy::Backend
-  include SearchFormConcern
+  include PatientSearchFormConcern
   include TodaysBatchConcern
 
   before_action :set_session
-  before_action :set_search_form
+  before_action :set_patient_search_form
 
   before_action :set_todays_batches, only: :show
   before_action :set_programme, except: :show
@@ -17,13 +17,14 @@ class Sessions::RecordController < ApplicationController
 
   def show
     scope =
-      @session
-        .patient_sessions
-        .includes(
-          :latest_note,
-          patient: %i[consent_statuses triage_statuses vaccination_statuses]
-        )
-        .has_registration_status(%w[attending completed])
+      @session.patient_sessions.includes(
+        :latest_note,
+        patient: %i[consent_statuses triage_statuses vaccination_statuses]
+      )
+
+    if @session.requires_registration?
+      scope = scope.has_registration_status(%w[attending completed])
+    end
 
     patient_sessions =
       @form.apply(scope).consent_given_and_ready_to_vaccinate(

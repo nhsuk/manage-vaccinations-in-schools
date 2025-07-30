@@ -25,8 +25,8 @@ module Reports::ExportFormatters
     location.school? ? "" : vaccination_record.location_name
   end
 
-  def consent_status(patient:, programme:)
-    consent_status = patient.consent_status(programme:)
+  def consent_status(patient:, programme:, academic_year:)
+    consent_status = patient.consent_status(programme:, academic_year:)
     if consent_status.given?
       "Consent given"
     elsif consent_status.refused?

@@ -60,6 +60,11 @@ describe "Import child records" do
       )
     create(:school, urn: "123456", organisation: @organisation)
     @user = @organisation.users.first
+
+    OrganisationSessionsFactory.call(
+      @organisation,
+      academic_year: AcademicYear.current
+    )
   end
 
   def when_i_visit_the_cohort_page_for_the_hpv_programme

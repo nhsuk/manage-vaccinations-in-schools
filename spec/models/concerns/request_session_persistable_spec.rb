@@ -5,24 +5,21 @@ describe RequestSessionPersistable do
     Class.new do
       include RequestSessionPersistable
 
-      def self.request_session_key
-        "key"
-      end
-
       attribute :string, :string
       attribute :datetime, :datetime
 
       validates :string, presence: true, on: :update
+
+      def request_session_key = "key"
 
       def reset_unused_fields
       end
     end
   end
 
-  let(:model) { model_class.new(request_session:, current_user:, **attributes) }
+  let(:model) { model_class.new(request_session:, **attributes) }
 
   let(:request_session) { {} }
-  let(:current_user) { nil }
 
   describe "#initialize" do
     context "with a datetime attribute" do

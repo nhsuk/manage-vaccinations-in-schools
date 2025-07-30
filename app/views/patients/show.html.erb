@@ -30,5 +30,7 @@
 
 <%= render AppCardComponent.new(section: true) do |card| %>
   <% card.with_heading { "Vaccinations" } %>
-  <%= render AppPatientVaccinationTableComponent.new(@patient, show_caption: false) %>
+  <%= render AppPatientVaccinationTableComponent.new(
+        @patient, academic_year: AcademicYear.current, show_caption: false,
+      ) %>
 <% end %>

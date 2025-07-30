@@ -2,10 +2,10 @@
 
 class Sessions::OutcomeController < ApplicationController
   include Pagy::Backend
-  include SearchFormConcern
+  include PatientSearchFormConcern
 
   before_action :set_session
-  before_action :set_search_form
+  before_action :set_patient_search_form
 
   layout "full"
 

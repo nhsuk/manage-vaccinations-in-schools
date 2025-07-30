@@ -7,10 +7,6 @@ class DraftVaccinationRecord
   include VaccinationRecordPerformedByConcern
   include WizardStepConcern
 
-  def self.request_session_key
-    "vaccination_record"
-  end
-
   attribute :batch_id, :integer
   attribute :delivery_method, :string
   attribute :delivery_site, :string
@@ -31,6 +27,12 @@ class DraftVaccinationRecord
   attribute :performed_ods_code, :string
   attribute :programme_id, :integer
   attribute :session_id, :integer
+  attribute :first_active_wizard_step, :string
+
+  def initialize(current_user:, **attributes)
+    @current_user = current_user
+    super(**attributes)
+  end
 
   validates :performed_by_family_name,
             :performed_by_given_name,
@@ -53,11 +55,8 @@ class DraftVaccinationRecord
   end
 
   on_wizard_step :date_and_time, exact: true do
-    validates :performed_at,
-              presence: true,
-              comparison: {
-                less_than_or_equal_to: -> { Time.current }
-              }
+    validates :performed_at, presence: true
+    validate :performed_at_within_range
   end
 
   on_wizard_step :outcome, exact: true do
@@ -244,7 +243,9 @@ class DraftVaccinationRecord
   def vaccine_method_matches_consent_and_triage?
     return true if delivery_method.blank? || !administered?
 
-    approved_methods = patient.approved_vaccine_methods(programme:)
+    academic_year = session&.academic_year || performed_at.academic_year
+    approved_methods =
+      patient.approved_vaccine_methods(programme:, academic_year:)
     vaccine_method = Vaccine.delivery_method_to_vaccine_method(delivery_method)
 
     approved_methods.include?(vaccine_method)
@@ -280,6 +281,8 @@ class DraftVaccinationRecord
     ]
   end
 
+  def request_session_key = "vaccination_record"
+
   def reset_unused_fields
     if administered?
       self.full_dose = true unless can_be_half_dose?
@@ -293,6 +296,32 @@ class DraftVaccinationRecord
     if identity_check_confirmed_by_patient
       self.identity_check_confirmed_by_other_name = ""
       self.identity_check_confirmed_by_other_relationship = ""
+    end
+  end
+
+  def earliest_possible_value
+    session.academic_year.to_academic_year_date_range.first.beginning_of_day
+  end
+
+  def latest_possible_value
+    [
+      session.academic_year.to_academic_year_date_range.last.end_of_day,
+      Time.current
+    ].min
+  end
+
+  def performed_at_within_range
+    return if performed_at.nil? || session.nil?
+    if performed_at < earliest_possible_value
+      errors.add(
+        :performed_at,
+        "The vaccination cannot take place before #{earliest_possible_value.to_fs(:long)}"
+      )
+    elsif performed_at > latest_possible_value
+      errors.add(
+        :performed_at,
+        "The vaccination cannot take place after #{latest_possible_value.to_fs(:long)}"
+      )
     end
   end
 

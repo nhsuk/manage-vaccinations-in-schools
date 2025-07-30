@@ -3,7 +3,7 @@
 class Programmes::OverviewController < Programmes::BaseController
   def show
     patients =
-      policy_scope(Patient).in_programmes(
+      policy_scope(Patient).appear_in_programmes(
         [@programme],
         academic_year: @academic_year
       )

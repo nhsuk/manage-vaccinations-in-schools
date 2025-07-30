@@ -40,8 +40,7 @@ class AppSessionDetailsSummaryComponent < ViewComponent::Base
     count =
       patient_sessions.has_consent_status(status, programme: programmes).count
 
-    href =
-      session_consent_path(session, search_form: { consent_statuses: [status] })
+    href = session_consent_path(session, consent_statuses: [status])
 
     {
       key: {
@@ -65,13 +64,7 @@ class AppSessionDetailsSummaryComponent < ViewComponent::Base
         "#{I18n.t("vaccinations_given", count:)} for #{programme.name_in_sentence}"
       end
 
-    href =
-      session_outcome_path(
-        session,
-        search_form: {
-          session_status: "vaccinated"
-        }
-      )
+    href = session_outcome_path(session, session_status: "vaccinated")
 
     {
       key: {

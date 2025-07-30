@@ -18,8 +18,8 @@
 
 <div class="nhsuk-grid-row">
   <div class="app-grid-column-filters">
-    <%= render AppSearchComponent.new(
-          form: @form,
+    <%= render AppPatientSearchFormComponent.new(
+          @form,
           url: programme_patients_path(@programme),
           programme_statuses: Patient::VaccinationStatus.statuses.keys,
           consent_statuses: Patient::ConsentStatus.statuses.keys,
@@ -35,6 +35,7 @@
               patient,
               link_to: patient_path(patient),
               programme: @programme,
+              academic_year: Date.current.academic_year,
               triage_status: @form.triage_status,
               show_year_group: true,
             ) %>

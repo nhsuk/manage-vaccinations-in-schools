@@ -69,7 +69,7 @@ FactoryBot.define do
 
     factory :generic_clinic do
       type { :generic_clinic }
-      name { "Community clinics" }
+      name { "Community clinic" }
 
       year_groups { (0..11).to_a }
 

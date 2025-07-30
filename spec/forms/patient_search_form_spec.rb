@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe SearchForm do
+describe PatientSearchForm do
   subject(:form) do
     described_class.new(**params, request_session:, request_path:, session:)
   end
@@ -154,7 +154,7 @@ describe SearchForm do
 
       let(:programme) { create(:programme) }
 
-      it "filters on session status" do
+      it "filters on programme status" do
         patient = create(:patient, :vaccinated, programmes: [programme])
         session = create(:session, programmes: [programme])
         create(:patient_session, patient:, session:)
@@ -215,6 +215,9 @@ describe SearchForm do
   context "for patient sessions" do
     let(:scope) { PatientSession.all }
 
+    let(:session) { create(:session, programmes: [programme]) }
+    let(:programme) { create(:programme) }
+
     it "doesn't raise an error" do
       expect { form.apply(scope) }.not_to raise_error
     end
@@ -238,9 +241,7 @@ describe SearchForm do
       context "with a patient session eligible for the programme" do
         let(:patient) { create(:patient, year_group: 9) }
 
-        let(:patient_session) do
-          create(:patient_session, patient:, programmes: [programme])
-        end
+        let(:patient_session) { create(:patient_session, patient:, session:) }
 
         it "is included" do
           expect(form.apply(scope)).to include(patient_session)
@@ -250,9 +251,7 @@ describe SearchForm do
       context "with a patient session not eligible for the programme" do
         let(:patient) { create(:patient, year_group: 8) }
 
-        let(:patient_session) do
-          create(:patient_session, patient:, programmes: [programme])
-        end
+        let(:patient_session) { create(:patient_session, patient:, session:) }
 
         it "is not included" do
           expect(form.apply(scope)).not_to include(patient_session)
@@ -273,18 +272,12 @@ describe SearchForm do
       let(:triage_status) { nil }
       let(:year_groups) { nil }
 
-      let(:programme) { create(:programme) }
-
       it "filters on consent status" do
         patient_session_given =
-          create(
-            :patient_session,
-            :consent_given_triage_not_needed,
-            programmes: [programme]
-          )
+          create(:patient_session, :consent_given_triage_not_needed, session:)
 
         patient_session_refused =
-          create(:patient_session, :consent_refused, programmes: [programme])
+          create(:patient_session, :consent_refused, session:)
 
         expect(form.apply(scope)).to contain_exactly(
           patient_session_given,
@@ -307,11 +300,8 @@ describe SearchForm do
       let(:triage_status) { nil }
       let(:year_groups) { nil }
 
-      let(:programme) { create(:programme) }
-
       it "filters on session status" do
-        patient_session =
-          create(:patient_session, :vaccinated, programmes: [programme])
+        patient_session = create(:patient_session, :vaccinated, session:)
         expect(form.apply(scope)).to include(patient_session)
       end
     end
@@ -330,7 +320,7 @@ describe SearchForm do
       let(:year_groups) { nil }
 
       it "filters on register status" do
-        patient_session = create(:patient_session, :in_attendance)
+        patient_session = create(:patient_session, :in_attendance, session:)
         expect(form.apply(scope)).to include(patient_session)
       end
     end
@@ -349,15 +339,10 @@ describe SearchForm do
       let(:triage_status) { "required" }
       let(:year_groups) { nil }
 
-      let(:programme) { create(:programme) }
-
       it "filters on triage status" do
         patient_session =
-          create(
-            :patient_session,
-            :consent_given_triage_needed,
-            programmes: [programme]
-          )
+          create(:patient_session, :consent_given_triage_needed, session:)
+
         expect(form.apply(scope)).to include(patient_session)
       end
     end
@@ -380,11 +365,7 @@ describe SearchForm do
 
       it "filters on vaccine method" do
         nasal_patient_session =
-          create(
-            :patient_session,
-            :consent_given_triage_not_needed,
-            programmes: [programme]
-          )
+          create(:patient_session, :consent_given_triage_not_needed, session:)
 
         nasal_patient_session.patient.consent_statuses.first.update!(
           vaccine_methods: %w[nasal injection]
@@ -398,18 +379,10 @@ describe SearchForm do
           )
 
         _injection_only_patient =
-          create(
-            :patient_session,
-            :consent_given_triage_not_needed,
-            programmes: [programme]
-          )
+          create(:patient_session, :consent_given_triage_not_needed, session:)
 
         injection_primary_patient =
-          create(
-            :patient_session,
-            :consent_given_triage_not_needed,
-            programmes: [programme]
-          )
+          create(:patient_session, :consent_given_triage_not_needed, session:)
 
         injection_primary_patient.patient.consent_statuses.first.update!(
           vaccine_methods: %w[injection nasal]
@@ -423,20 +396,17 @@ describe SearchForm do
   describe "session filter persistence" do
     let(:another_path) { "/another-path" }
 
-    context "when clear_filters param is present" do
+    context "when _clear param is present" do
       it "only clears filters for the current path" do
-        described_class.new(q: "John", request_session:, request_path:)
-        described_class.new(
-          q: "Jane",
-          request_session:,
-          request_path: another_path
-        )
+        described_class.new(request_path:, request_session:, "q" => "John")
 
         described_class.new(
-          clear_filters: "true",
+          request_path: another_path,
           request_session:,
-          request_path:
+          q: "Jane"
         )
+
+        described_class.new(request_path:, request_session:, "_clear" => "true")
 
         form1 = described_class.new(request_session:, request_path:)
         expect(form1.q).to be_nil

@@ -33,9 +33,11 @@ class Note < ApplicationRecord
 
   validates :body, presence: true, length: { maximum: 1000 }
 
-  def programmes = session.eligible_programmes_for(year_group:)
+  def programmes = session.programmes_for(year_group:)
 
   private
 
-  def year_group = patient.year_group(now: created_at.to_date)
+  def academic_year = created_at.to_date.academic_year
+
+  def year_group = patient.year_group(academic_year:)
 end
