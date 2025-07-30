@@ -121,9 +121,7 @@ class PatientMerger
       .find_each(&:sync_to_nhs_immunisations_api)
   end
 
-  def self.call(*args, **kwargs)
-    new(*args, **kwargs).call
-  end
+  def self.call(...) = new(...).call
 
   private_class_method :new
 

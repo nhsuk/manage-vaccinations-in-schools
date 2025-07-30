@@ -108,6 +108,12 @@ en:
           attributes:
             apply_changes:
               inclusion: Choose which record to keep
+        patient_merge_form:
+          attributes:
+            nhs_number:
+              blank: Enter an NHS number
+              invalid: Enter a valid NHS number
+              wrong_length: Enter a valid NHS number with 10 characters
         school_move_form:
           attributes:
             action:

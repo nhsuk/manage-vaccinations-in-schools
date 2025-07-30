@@ -2,6 +2,8 @@
 
 class Patients::EditController < ApplicationController
   before_action :set_patient
+  before_action :set_patient_merge_form, except: :edit_nhs_number
+  before_action :set_existing_patient, except: :edit_nhs_number
 
   def edit_nhs_number
     render :nhs_number
@@ -12,7 +14,7 @@ class Patients::EditController < ApplicationController
 
     redirect_to edit_patient_path(@patient) and return unless @patient.changed?
 
-    render :nhs_number_merge and return if existing_patient
+    render :nhs_number_merge and return if @existing_patient
 
     @patient.invalidated_at = nil
 
@@ -26,9 +28,11 @@ class Patients::EditController < ApplicationController
   end
 
   def update_nhs_number_merge
-    PatientMerger.call(to_keep: existing_patient, to_destroy: @patient)
-
-    redirect_to edit_patient_path(existing_patient)
+    if @form.save
+      redirect_to edit_patient_path(@existing_patient)
+    else
+      render :nhs_number_merge, status: :unprocessable_entity
+    end
   end
 
   private
@@ -40,21 +44,16 @@ class Patients::EditController < ApplicationController
       )
   end
 
-  def existing_patient
-    @existing_patient ||=
-      if nhs_number.present?
-        policy_scope(Patient).includes(parent_relationships: :parent).find_by(
-          nhs_number:
-        ) ||
-          Patient
-            .where
-            .missing(:patient_sessions)
-            .includes(parent_relationships: :parent)
-            .find_by(nhs_number:)
-      end
+  def set_patient_merge_form
+    @form = PatientMergeForm.new(current_user:, patient: @patient, nhs_number:)
+  end
+
+  def set_existing_patient
+    @existing_patient = @form.existing_patient
   end
 
   def nhs_number
-    params.dig(:patient, :nhs_number)
+    params.dig(:patient, :nhs_number) ||
+      params.dig(:patient_merge_form, :nhs_number)
   end
 end
