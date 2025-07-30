@@ -303,16 +303,24 @@ class Patient < ApplicationRecord
       # to avoid an extra query to the database for each record.
       exact_results =
         results.select do
-          _1.given_name.downcase == given_name.downcase &&
-            _1.family_name.downcase == family_name.downcase &&
-            _1.date_of_birth == date_of_birth &&
-            _1.address_postcode == UKPostcode.parse(address_postcode).to_s
+          it.given_name.downcase == given_name.downcase &&
+            it.family_name.downcase == family_name.downcase &&
+            it.date_of_birth == date_of_birth &&
+            it.address_postcode == UKPostcode.parse(address_postcode).to_s
         end
 
       return exact_results if exact_results.length == 1
     end
 
     results
+  end
+
+  def archived?(team:)
+    archive_reasons.exists?(team:)
+  end
+
+  def not_archived?(team:)
+    !archive_reasons.exists?(team:)
   end
 
   def year_group(academic_year: nil)
