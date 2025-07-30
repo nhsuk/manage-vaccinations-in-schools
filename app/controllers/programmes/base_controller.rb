@@ -24,8 +24,9 @@ class Programmes::BaseController < ApplicationController
     # We do this instead of using `team.patients` as that has a `distinct` on
     # it which means we cannot apply ordering or grouping.
     @patients ||=
-      Patient.where(
-        id: current_team.patient_sessions.select(:patient_id).distinct
-      ).appear_in_programmes([@programme], academic_year: @academic_year)
+      Patient
+        .where(id: current_team.patient_sessions.select(:patient_id).distinct)
+        .appear_in_programmes([@programme], academic_year: @academic_year)
+        .not_archived(team: current_team)
   end
 end

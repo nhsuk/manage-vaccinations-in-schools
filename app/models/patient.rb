@@ -118,10 +118,8 @@ class Patient < ApplicationRecord
   scope :with_nhs_number, -> { where.not(nhs_number: nil) }
   scope :without_nhs_number, -> { where(nhs_number: nil) }
 
-  scope :not_deceased, -> { where(date_of_death: nil) }
   scope :deceased, -> { where.not(date_of_death: nil) }
-
-  scope :not_restricted, -> { where(restricted_at: nil) }
+  scope :not_deceased, -> { where(date_of_death: nil) }
   scope :restricted, -> { where.not(restricted_at: nil) }
 
   scope :with_notice, -> { deceased.or(restricted).or(invalidated) }
@@ -398,7 +396,11 @@ class Patient < ApplicationRecord
       self.date_of_death = pds_patient.date_of_death
 
       if date_of_death_changed?
-        clear_pending_sessions! unless date_of_death.nil?
+        if date_of_death.present?
+          archive_due_to_deceased!
+          clear_pending_sessions!
+        end
+
         self.date_of_death_recorded_at = Time.current
       end
 
@@ -508,6 +510,15 @@ class Patient < ApplicationRecord
 
   def clear_pending_sessions!
     patient_sessions.where(session: pending_sessions).destroy_all_if_safe
+  end
+
+  def archive_due_to_deceased!
+    archive_reasons =
+      teams.map do |team|
+        ArchiveReason.new(team:, patient: self, type: :deceased)
+      end
+
+    ArchiveReason.import!(archive_reasons, on_duplicate_key_update: :all)
   end
 
   def fhir_mapper = @fhir_mapper ||= FHIRMapper::Patient.new(self)

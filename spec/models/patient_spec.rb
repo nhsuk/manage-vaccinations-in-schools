@@ -646,6 +646,17 @@ describe Patient do
           update_from_pds!
           expect(session.patients).not_to include(patient)
         end
+
+        it "archives the patient" do
+          expect { update_from_pds! }.to change(
+            patient.archive_reasons,
+            :count
+          ).from(0).to(1)
+
+          archive_reason = patient.archive_reasons.first
+          expect(archive_reason).to be_deceased
+          expect(archive_reason.team_id).to eq(session.team_id)
+        end
       end
     end
 
