@@ -24,7 +24,8 @@ describe PatientMerger do
     let(:user) { create(:user) }
 
     let(:programme) { create(:programme, :hpv) }
-    let(:session) { create(:session, programmes: [programme]) }
+    let(:team) { create(:team, programmes: [programme]) }
+    let(:session) { create(:session, team:, programmes: [programme]) }
 
     let!(:patient_to_keep) { create(:patient, year_group: 8) }
     let!(:patient_to_destroy) { create(:patient, year_group: 8) }
@@ -187,6 +188,60 @@ describe PatientMerger do
         expect { parent_relationship.reload }.to raise_error(
           ActiveRecord::RecordNotFound
         )
+      end
+    end
+
+    context "when patient to keep is archived" do
+      before do
+        create(
+          :archive_reason,
+          :moved_out_of_area,
+          patient: patient_to_keep,
+          team:
+        )
+      end
+
+      it "removes the archive reasons from the patient" do
+        expect { call }.to change(ArchiveReason, :count).by(-1)
+        expect(patient_to_keep.archived?(team:)).to be(false)
+      end
+    end
+
+    context "when patient to destroy is archived" do
+      before do
+        create(
+          :archive_reason,
+          :moved_out_of_area,
+          patient: patient_to_destroy,
+          team:
+        )
+      end
+
+      it "removes the archive reason from the patient" do
+        expect { call }.to change(ArchiveReason, :count).by(-1)
+        expect(patient_to_keep.archived?(team:)).to be(false)
+      end
+    end
+
+    context "when both patients are archived" do
+      before do
+        create(
+          :archive_reason,
+          :moved_out_of_area,
+          patient: patient_to_keep,
+          team:
+        )
+        create(
+          :archive_reason,
+          :moved_out_of_area,
+          patient: patient_to_destroy,
+          team:
+        )
+      end
+
+      it "keeps the archive reason on the merged patient" do
+        expect { call }.to change(ArchiveReason, :count).by(-1)
+        expect(patient_to_keep.archived?(team:)).to be(true)
       end
     end
   end
