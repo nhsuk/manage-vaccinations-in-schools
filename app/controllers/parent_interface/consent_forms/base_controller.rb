@@ -71,8 +71,17 @@ module ParentInterface
         )
     end
 
+    def set_assets_name
+      @assets_name = "public"
+    end
+
     def set_service_name
       @service_name = "Give or refuse consent for vaccinations"
+    end
+
+    def set_service_url
+      @service_url =
+        "https://www.give-or-refuse-consent-for-vaccinations.nhs.uk"
     end
 
     def set_secondary_navigation
