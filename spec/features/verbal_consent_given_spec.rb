@@ -6,6 +6,9 @@ describe "Verbal consent" do
     and_i_am_signed_in
 
     when_i_record_that_verbal_consent_was_given
+    then_i_see_the_check_and_confirm_page
+
+    when_i_confirm_the_consent_response
     then_an_email_is_sent_to_the_parent_confirming_their_consent
     and_a_text_is_sent_to_the_parent_confirming_their_consent
     and_the_patients_status_is_safe_to_vaccinate
@@ -17,6 +20,12 @@ describe "Verbal consent" do
     and_i_am_signed_in
 
     when_i_record_that_verbal_nasal_consent_was_given
+    then_i_see_the_check_and_confirm_page
+    and_i_see_the_flu_nasal_consent_given
+
+    when_i_confirm_the_consent_response
+    then_an_email_is_sent_to_the_parent_confirming_their_consent
+    and_a_text_is_sent_to_the_parent_confirming_their_consent
     and_the_patients_status_is_safe_to_vaccinate_with_nasal_spray
   end
 
@@ -25,6 +34,12 @@ describe "Verbal consent" do
     and_i_am_signed_in
 
     when_i_record_that_verbal_nasal_and_injection_consent_was_given
+    then_i_see_the_check_and_confirm_page
+    and_i_see_the_flu_nasal_and_injection_consent_given
+
+    when_i_confirm_the_consent_response
+    then_an_email_is_sent_to_the_parent_confirming_their_consent
+    and_a_text_is_sent_to_the_parent_confirming_their_consent
   end
 
   def given_an_hpv_programme_is_underway
@@ -118,13 +133,25 @@ describe "Verbal consent" do
 
     choose triage_option
     click_button "Continue"
+  end
 
-    # Confirm
+  def then_i_see_the_check_and_confirm_page
     expect(page).to have_content("Check and confirm answers")
     expect(page).to have_content(["Method", "By phone"].join)
-    click_button "Confirm"
+  end
 
-    # Back on the consent responses page
+  def and_i_see_the_flu_nasal_consent_given
+    expect(page).to have_content("Given nasalNasal spray")
+    expect(page).to have_content("Consent also given for injected vaccine?No")
+  end
+
+  def and_i_see_the_flu_nasal_and_injection_consent_given
+    expect(page).to have_content("Given nasalNasal spray")
+    expect(page).to have_content("Consent also given for injected vaccine?Yes")
+  end
+
+  def when_i_confirm_the_consent_response
+    click_button "Confirm"
     expect(page).to have_content("Consent recorded for #{@patient.full_name}")
   end
 
