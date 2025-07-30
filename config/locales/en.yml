@@ -608,25 +608,6 @@ en:
   sessions:
     index:
       title: Sessions
-      table_heading:
-        zero: There are no sessions scheduled for today.
-        one: 1 session today
-        other: "%{count} sessions today"
-    completed:
-      table_heading:
-        zero: There are no locations with all sessions completed.
-        one: 1 location with all sessions completed
-        other: "%{count} locations with all sessions completed"
-    scheduled:
-      table_heading:
-        zero: There are no locations with sessions scheduled.
-        one: 1 location with sessions scheduled
-        other: "%{count} locations with sessions scheduled"
-    unscheduled:
-      table_heading:
-        zero: There are no locations with no sessions scheduled.
-        one: 1 location with no sessions scheduled
-        other: "%{count} locations with no sessions scheduled"
     tabs:
       overview: Overview
       consent: Consent

@@ -133,7 +133,8 @@ describe "End-to-end journey" do
 
   def when_i_start_creating_a_new_session_by_choosing_school_and_time
     click_on "Sessions"
-    click_on "Unscheduled"
+    choose "Unscheduled"
+    click_on "Update results"
     click_on "Pilot School"
     click_on "Schedule sessions"
 
@@ -150,14 +151,14 @@ describe "End-to-end journey" do
     expect(page).to have_content("Edit session")
 
     expect(page).to have_content("ProgrammesHPV")
-    expect(page).to have_content("Session datesFriday 1 March 2024")
+    expect(page).to have_content("Session datesFriday, 1 March 2024")
     expect(page).to have_content(
-      "Consent requestsSend on Friday 9 February 2024"
+      "Consent requestsSend on Friday, 9 February 2024"
     )
     expect(page).to have_content(
       "Consent remindersSend 1 week before each session"
     )
-    expect(page).to have_content("Next: Friday 23 February 2024")
+    expect(page).to have_content("Next: Friday, 23 February 2024")
 
     click_on "Continue"
   end

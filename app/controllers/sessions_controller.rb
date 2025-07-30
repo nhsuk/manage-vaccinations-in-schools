@@ -1,28 +1,28 @@
 # frozen_string_literal: true
 
+require "pagy/extras/array"
+
 class SessionsController < ApplicationController
-  before_action :set_session, except: %i[index scheduled unscheduled completed]
+  include SessionSearchFormConcern
+
+  before_action :set_session_search_form, only: :index
+  before_action :set_session, except: :index
 
   def index
-    @sessions = sessions_scope.today.sort
+    @programmes = current_user.selected_organisation.programmes
 
-    render layout: "full"
-  end
+    scope =
+      policy_scope(Session).includes(:location, :programmes, :session_dates)
 
-  def scheduled
-    @sessions = sessions_scope.scheduled.sort
+    sessions = @form.apply(scope)
 
-    render layout: "full"
-  end
+    @patient_count_by_session_id =
+      PatientSession
+        .where(session_id: sessions.map(&:id))
+        .group(:session_id)
+        .count
 
-  def unscheduled
-    @sessions = sessions_scope.unscheduled.sort
-
-    render layout: "full"
-  end
-
-  def completed
-    @sessions = sessions_scope.completed.sort
+    @pagy, @sessions = pagy_array(sessions)
 
     render layout: "full"
   end
@@ -61,10 +61,6 @@ class SessionsController < ApplicationController
   private
 
   def set_session
-    @session = authorize sessions_scope.find_by!(slug: params[:slug])
-  end
-
-  def sessions_scope
-    policy_scope(Session).includes(:location, :programmes, :session_dates)
+    @session = authorize policy_scope(Session).find_by!(slug: params[:slug])
   end
 end

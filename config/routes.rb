@@ -210,12 +210,6 @@ Rails.application.routes.draw do
              only: %i[edit update],
              controller: "sessions/invite_to_clinic"
 
-    collection do
-      get "completed"
-      get "scheduled"
-      get "unscheduled"
-    end
-
     member do
       get "edit/programmes",
           controller: "sessions/edit",

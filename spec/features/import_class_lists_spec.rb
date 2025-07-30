@@ -64,7 +64,8 @@ describe "Import class lists" do
     sign_in @user
     visit "/dashboard"
     click_on "Sessions", match: :first
-    click_on "Unscheduled"
+    choose "Unscheduled"
+    click_on "Update results"
     click_on "Waterloo Road"
   end
 

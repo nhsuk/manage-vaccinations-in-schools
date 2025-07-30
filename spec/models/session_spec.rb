@@ -93,8 +93,8 @@ describe Session do
       end
     end
 
-    describe "#today" do
-      subject(:scope) { described_class.today }
+    describe "#in_progress" do
+      subject(:scope) { described_class.in_progress }
 
       it { should contain_exactly(today_session) }
     end
@@ -103,14 +103,6 @@ describe Session do
       subject(:scope) { described_class.unscheduled }
 
       it { should contain_exactly(unscheduled_session) }
-
-      context "for a different academic year" do
-        let(:unscheduled_session) do
-          create(:session, :unscheduled, programmes:, academic_year: 2023)
-        end
-
-        it { should_not include(unscheduled_session) }
-      end
     end
 
     describe "#scheduled" do
@@ -123,14 +115,6 @@ describe Session do
       subject(:scope) { described_class.completed }
 
       it { should contain_exactly(completed_session) }
-
-      context "for a different academic year" do
-        let(:completed_session) do
-          create(:session, :completed, programmes:, date: Date.new(2023, 9, 1))
-        end
-
-        it { should_not include(completed_session) }
-      end
     end
   end
 

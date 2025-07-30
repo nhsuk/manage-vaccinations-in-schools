@@ -131,7 +131,7 @@ describe "Parental consent" do
 
     visit "/dashboard"
     click_on "Programmes", match: :first
-    click_on "HPV"
+    click_on "HPV", match: :first
     within ".app-secondary-navigation" do
       click_on "Sessions"
     end
@@ -155,7 +155,7 @@ describe "Parental consent" do
 
   def and_the_programme_outcome_is_could_not_vaccinate
     click_on "Programmes", match: :first
-    click_on "HPV"
+    click_on "HPV", match: :first
 
     within ".app-secondary-navigation" do
       click_on "Children"
