@@ -4,8 +4,7 @@ class ProgrammesController < ApplicationController
   layout "full"
 
   def index
-    @programmes =
-      policy_scope(Programme).order(:type).includes(:active_vaccines)
+    @programmes = policy_scope(Programme).order(:type)
   end
 
   def consent_form

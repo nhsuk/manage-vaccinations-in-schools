@@ -21,7 +21,7 @@ describe FHIRMapper::VaccinationRecord do
       patient:,
       programme:,
       session:,
-      vaccine: programme.active_vaccines.first,
+      vaccine: programme.vaccines.first,
       outcome: vaccination_outcome,
       nhs_immunisations_api_id:
     )
