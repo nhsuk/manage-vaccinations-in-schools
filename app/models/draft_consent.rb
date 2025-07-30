@@ -88,7 +88,7 @@ class DraftConsent
     validates :parent_full_name, presence: true
     validates :parent_relationship_type,
               inclusion: {
-                in: ParentRelationship.types.keys
+                in: ParentRelationship.types.keys - %w[unknown]
               }
   end
 
@@ -237,7 +237,7 @@ class DraftConsent
     self.parent_phone_receive_updates = value&.phone_receive_updates
     self.parent_relationship_type = parent_relationship&.type
     self.parent_relationship_other_name = parent_relationship&.other_name
-    self.parent_responsibility = true # if consent was submitted this must've been true
+    self.parent_responsibility = value ? true : nil
   end
 
   def patient_session

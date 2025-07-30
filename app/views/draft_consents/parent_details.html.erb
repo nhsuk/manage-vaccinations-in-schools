@@ -20,9 +20,9 @@
 
   <%= f.govuk_text_field :parent_full_name, label: { text: "Full name" } %>
 
-  <%= f.govuk_radio_buttons_fieldset(:parent_relationship_type,
+  <%= f.govuk_radio_buttons_fieldset :parent_relationship_type,
                                      legend: { size: "s",
-                                               text: "Relationship to the child" }) do %>
+                                               text: "Relationship to the child" } do %>
     <%= f.govuk_radio_button :parent_relationship_type, "mother",
                              label: { text: "Mum" }, link_errors: true %>
     <%= f.govuk_radio_button :parent_relationship_type, "father",
@@ -35,13 +35,14 @@
       <%= f.govuk_text_field :parent_relationship_other_name,
                              label: { text: "Relationship to the child" },
                              hint: { text: "For example, carer" } %>
-      <%= f.govuk_radio_buttons_fieldset(:parent_responsibility,
+
+      <%= f.govuk_radio_buttons_fieldset :parent_responsibility,
                                          legend: { size: "s",
                                                    text: "Do they have parental responsibility?" },
-                                         hint: { text: "They have the legal rights and duties relating to the child" }) do %>
-        <%= f.govuk_radio_button :parent_responsibility, "yes",
+                                         hint: { text: "They have the legal rights and duties relating to the child" } do %>
+        <%= f.govuk_radio_button :parent_responsibility, "true",
                                  label: { text: "Yes" }, link_errors: true %>
-        <%= f.govuk_radio_button :parent_responsibility, "no",
+        <%= f.govuk_radio_button :parent_responsibility, "false",
                                  label: { text: "No" } %>
       <% end %>
     <% end %>
