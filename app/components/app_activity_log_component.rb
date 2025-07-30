@@ -14,7 +14,7 @@ class AppActivityLogComponent < ViewComponent::Base
     <% end %>
   ERB
 
-  def initialize(patient: nil, patient_session: nil)
+  def initialize(team:, patient: nil, patient_session: nil)
     super
 
     if patient.nil? && patient_session.nil?
@@ -63,14 +63,17 @@ class AppActivityLogComponent < ViewComponent::Base
       )
 
     @patient_specific_directions = @patient.patient_specific_directions
+
+    @archive_reasons = @patient.archive_reasons.where(team:)
   end
 
-  attr_reader :patient,
-              :patient_sessions,
+  attr_reader :archive_reasons,
               :consents,
               :gillick_assessments,
               :notes,
               :notify_log_entries,
+              :patient,
+              :patient_sessions,
               :pre_screenings,
               :session_attendances,
               :triages,
@@ -83,6 +86,7 @@ class AppActivityLogComponent < ViewComponent::Base
 
   def all_events
     [
+      archive_events,
       attendance_events,
       consent_events,
       gillick_assessment_events,
@@ -94,6 +98,17 @@ class AppActivityLogComponent < ViewComponent::Base
       vaccination_events,
       decision_expiration_events
     ].flatten
+  end
+
+  def archive_events
+    archive_reasons.flat_map do |archive_reason|
+      {
+        title: "Record archived: #{archive_reason.human_enum_name(:type)}",
+        body: archive_reason.other_details,
+        at: archive_reason.created_at,
+        by: archive_reason.created_by
+      }
+    end
   end
 
   def consent_events

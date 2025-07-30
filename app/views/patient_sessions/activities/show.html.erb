@@ -2,4 +2,7 @@
 
 <%= render AppCreateNoteComponent.new(@note, open: action_name == "create") %>
 
-<%= render AppActivityLogComponent.new(patient_session: @patient_session) %>
+<%= render AppActivityLogComponent.new(
+      patient_session: @patient_session,
+      team: current_user.selected_team,
+    ) %>

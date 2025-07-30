@@ -3,7 +3,7 @@
 describe AppActivityLogComponent do
   subject(:rendered) { render_inline(component) }
 
-  let(:component) { described_class.new(patient_session:) }
+  let(:component) { described_class.new(patient_session:, team:) }
 
   let(:today) { Date.new(2026, 1, 1) }
 
@@ -64,6 +64,26 @@ describe AppActivityLogComponent do
       expect(card).to have_css("blockquote", text: notes) if notes
       expect(card).to have_css("p", text: by) if by
     end
+  end
+
+  describe "archive reasons" do
+    before do
+      create(
+        :archive_reason,
+        :other,
+        created_at: Time.zone.local(2024, 6, 1, 12),
+        created_by: user,
+        team:,
+        other_details: "Extra details",
+        patient:
+      )
+    end
+
+    include_examples "card",
+                     title: "Record archived: Other",
+                     notes: "Extra details",
+                     date: "1 June 2024 at 12:00pm",
+                     by: "JOY, Nurse"
   end
 
   describe "consent given by parents" do
