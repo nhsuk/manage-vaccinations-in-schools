@@ -11,10 +11,9 @@ module MavisCLI
 
       option :academic_year,
              type: :integer,
-             desc: "The academic year to create the sessions for",
-             default: AcademicYear.pending
+             desc: "The academic year to create the sessions for"
 
-      def call(ods_code:, academic_year:)
+      def call(ods_code:, academic_year: nil)
         MavisCLI.load_rails
 
         organisation = Organisation.find_by(ods_code:)
@@ -23,6 +22,8 @@ module MavisCLI
           warn "Could not find organisation."
           return
         end
+
+        academic_year ||= AcademicYear.pending
 
         OrganisationSessionsFactory.call(organisation, academic_year:)
       end
