@@ -587,9 +587,6 @@ en:
     index:
       title: Children
   programmes:
-    cohorts:
-      index:
-        title: Cohorts
     index:
       title: Programmes
     overview:

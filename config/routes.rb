@@ -177,7 +177,6 @@ Rails.application.routes.draw do
                path: ":academic_year",
                only: :show,
                controller: :overview
-      resources :cohorts, path: ":academic_year/cohorts", only: %i[index show]
       resources :patients, path: ":academic_year/patients", only: :index
       resources :reports, path: ":academic_year/reports", only: :create
       resources :sessions, path: ":academic_year/sessions", only: :index

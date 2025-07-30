@@ -19,4 +19,6 @@ class Programmes::BaseController < ApplicationController
       raise ActiveRecord::RecordNotFound
     end
   end
+
+  def organisation = current_user.selected_organisation
 end

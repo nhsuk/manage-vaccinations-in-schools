@@ -15,6 +15,19 @@
 
 <%= render AppProgrammeStatsComponent.new(@programme, academic_year: @academic_year) %>
 
+<h2 class="nhsuk-heading-m">Cohorts</h2>
+
+<ul class="nhsuk-grid-row nhsuk-card-group">
+  <% @patient_count_by_year_group.each do |year_group, patient_count| %>
+    <li class="nhsuk-grid-column-one-quarter nhsuk-card-group__item">
+      <%= render AppCardComponent.new(link_to: patient_count > 0 ? programme_patients_path(@programme, @academic_year, year_groups: [year_group]) : nil) do |card| %>
+        <% card.with_heading { format_year_group(year_group) } %>
+        <% card.with_description { t("children", count: patient_count) } %>
+      <% end %>
+    </li>
+  <% end %>
+</ul>
+
 <%= render AppConsentRefusedTableComponent.new(
       @consents,
       vaccine_may_contain_gelatine: @programme.vaccine_may_contain_gelatine?,

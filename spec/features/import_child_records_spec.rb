@@ -6,8 +6,8 @@ describe "Import child records" do
   scenario "User uploads a file" do
     given_the_app_is_setup
 
-    when_i_visit_the_cohort_page_for_the_hpv_programme
-    and_i_start_adding_children_to_the_cohort
+    when_i_visit_the_import_page
+    and_i_choose_to_import_child_records
     then_i_should_see_the_import_page
 
     when_i_continue_without_uploading_a_file
@@ -32,7 +32,7 @@ describe "Import child records" do
     then_i_should_see_the_upload
     and_i_should_see_the_patients
 
-    when_i_visit_the_cohort_page_for_the_hpv_programme
+    when_i_visit_the_hpv_programme_page
     then_i_should_see_the_cohorts
 
     when_i_click_on_the_cohort
@@ -67,16 +67,10 @@ describe "Import child records" do
     )
   end
 
-  def when_i_visit_the_cohort_page_for_the_hpv_programme
+  def when_i_visit_the_import_page
     sign_in @user
     visit "/dashboard"
-    click_on "Programmes", match: :first
-    click_on "HPV"
-    click_on "Cohort"
-  end
-
-  def and_i_start_adding_children_to_the_cohort
-    click_on "Import child records"
+    click_on "Import", match: :first
   end
 
   def and_i_choose_to_import_child_records
@@ -103,6 +97,7 @@ describe "Import child records" do
     expect(page).to have_content("Date of birth 1 January 2010")
     expect(page).to have_content("Postcode SW1A 1AA")
   end
+
   alias_method :and_i_should_see_the_patients, :then_i_should_see_the_patients
 
   def when_i_click_on_upload_records
@@ -122,6 +117,11 @@ describe "Import child records" do
     expect(page).to have_content("1 completed import")
   end
 
+  def when_i_visit_the_hpv_programme_page
+    click_on "Programmes", match: :first
+    click_on "HPV"
+  end
+
   def then_i_should_see_the_cohorts
     expect(page).to have_content("Year 8\n2 children")
     expect(page).to have_content("Year 9\n1 child")
@@ -135,14 +135,8 @@ describe "Import child records" do
 
   def then_i_should_see_the_children
     expect(page).to have_content("2 children")
-    expect(page).to have_content(
-      "Name and NHS numberPostcodeSchoolDate of birth"
-    )
-    expect(page).to have_content(
-      /Name.*and.*NHS.*number.*SMITH.*Jimmy.*999.*000.*0026/
-    )
-    expect(page).to have_content("Date of birth 2 January 2010")
-    expect(page).to have_content("Postcode SW1A 1AA")
+    expect(page).to have_content("DOE, Mark")
+    expect(page).to have_content("SMITH, Jimmy")
   end
 
   def when_i_continue_without_uploading_a_file
