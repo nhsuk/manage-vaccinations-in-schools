@@ -18,7 +18,8 @@
                      data: { module: "autocomplete" } do %>
         <%= tag.option "", value: "" %>
         <% @consent_form.eligible_schools.each do |school| %>
-          <%= tag.option(school.name,
+          <% is_duplicate = @consent_form.eligible_schools.count { |s| s.name == school.name } > 1 %>
+          <%= tag.option(location_display_name(school, show_postcode: is_duplicate),
                          value: school.id,
                          selected: school.id == @consent_form.school_id,
                          data: { hint: school.address_parts.join(", ") }) %>
