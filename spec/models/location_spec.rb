@@ -20,17 +20,17 @@
 #  year_groups               :integer          default([]), not null, is an Array
 #  created_at                :datetime         not null
 #  updated_at                :datetime         not null
-#  team_id                   :bigint
+#  subteam_id                :bigint
 #
 # Indexes
 #
-#  index_locations_on_ods_code  (ods_code) UNIQUE
-#  index_locations_on_team_id   (team_id)
-#  index_locations_on_urn       (urn) UNIQUE
+#  index_locations_on_ods_code    (ods_code) UNIQUE
+#  index_locations_on_subteam_id  (subteam_id)
+#  index_locations_on_urn         (urn) UNIQUE
 #
 # Foreign Keys
 #
-#  fk_rails_...  (team_id => teams.id)
+#  fk_rails_...  (subteam_id => subteams.id)
 #
 
 describe Location do
@@ -198,7 +198,7 @@ describe Location do
     end
 
     context "when the location is not attached to an organisation" do
-      let(:location) { create(:school, team: nil) }
+      let(:location) { create(:school, subteam: nil) }
 
       it { should include("is_attached_to_organisation" => false) }
     end

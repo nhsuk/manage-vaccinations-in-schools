@@ -10,7 +10,7 @@ organisation:
 
 programmes: [hpv]
 
-teams:
+subteams:
   generic:
     name: Leicestershire Partnership Trust School Aged Immunisation Service
     email: lpt.sais@nhs.net

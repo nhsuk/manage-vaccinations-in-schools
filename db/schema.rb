@@ -457,12 +457,12 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_24_113511) do
     t.integer "type", null: false
     t.string "ods_code"
     t.integer "year_groups", default: [], null: false, array: true
-    t.bigint "team_id"
+    t.bigint "subteam_id"
     t.integer "gias_local_authority_code"
     t.integer "gias_establishment_number"
     t.integer "status", default: 0, null: false
     t.index ["ods_code"], name: "index_locations_on_ods_code", unique: true
-    t.index ["team_id"], name: "index_locations_on_team_id"
+    t.index ["subteam_id"], name: "index_locations_on_subteam_id"
     t.index ["urn"], name: "index_locations_on_urn", unique: true
   end
 
@@ -758,7 +758,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_24_113511) do
     t.index ["organisation_id", "location_id"], name: "index_sessions_on_organisation_id_and_location_id"
   end
 
-  create_table "teams", force: :cascade do |t|
+  create_table "subteams", force: :cascade do |t|
     t.bigint "organisation_id", null: false
     t.string "name", null: false
     t.string "email", null: false
@@ -767,7 +767,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_24_113511) do
     t.datetime "updated_at", null: false
     t.uuid "reply_to_id"
     t.string "phone_instructions"
-    t.index ["organisation_id", "name"], name: "index_teams_on_organisation_id_and_name", unique: true
+    t.index ["organisation_id", "name"], name: "index_subteams_on_organisation_id_and_name", unique: true
   end
 
   create_table "triage", force: :cascade do |t|
@@ -926,7 +926,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_24_113511) do
   add_foreign_key "immunisation_imports_vaccination_records", "vaccination_records"
   add_foreign_key "location_programme_year_groups", "locations", on_delete: :cascade
   add_foreign_key "location_programme_year_groups", "programmes", on_delete: :cascade
-  add_foreign_key "locations", "teams"
+  add_foreign_key "locations", "subteams"
   add_foreign_key "notes", "patients"
   add_foreign_key "notes", "sessions"
   add_foreign_key "notes", "users", column: "created_by_user_id"
@@ -973,7 +973,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_24_113511) do
   add_foreign_key "session_programmes", "programmes"
   add_foreign_key "session_programmes", "sessions"
   add_foreign_key "sessions", "organisations"
-  add_foreign_key "teams", "organisations"
+  add_foreign_key "subteams", "organisations"
   add_foreign_key "triage", "organisations"
   add_foreign_key "triage", "patients"
   add_foreign_key "triage", "programmes"

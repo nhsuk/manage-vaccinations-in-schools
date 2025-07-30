@@ -64,10 +64,10 @@ class API::Testing::OrganisationsController < API::Testing::BaseController
           log_destroy(SessionProgramme.where(session: sessions))
           log_destroy(sessions)
 
-          teams = Team.where(organisation:)
-          Location.where(team: teams).update_all(team_id: nil)
+          subteams = Subteam.where(organisation:)
+          Location.where(subteam: subteams).update_all(subteam_id: nil)
 
-          log_destroy(teams)
+          log_destroy(subteams)
           log_destroy(
             Location.generic_clinic.where(ods_code: organisation.ods_code)
           )

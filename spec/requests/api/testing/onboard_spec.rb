@@ -59,14 +59,14 @@ describe "/api/testing/onboard" do
             "programmes" => ["can't be blank"],
             "school.0.location" => ["can't be blank"],
             "school.0.status" => ["is not included in the list"],
-            "school.0.team" => ["can't be blank"],
+            "school.0.subteam" => ["can't be blank"],
             "school.1.location" => ["can't be blank"],
             "school.1.status" => ["is not included in the list"],
-            "school.1.team" => ["can't be blank"],
+            "school.1.subteam" => ["can't be blank"],
             "school.2.location" => ["can't be blank"],
             "school.2.status" => ["is not included in the list"],
-            "team.email" => ["can't be blank"],
-            "team.name" => ["can't be blank"]
+            "subteam.email" => ["can't be blank"],
+            "subteam.name" => ["can't be blank"]
           }
         )
       end

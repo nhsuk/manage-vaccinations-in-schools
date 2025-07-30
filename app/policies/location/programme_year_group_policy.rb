@@ -3,8 +3,8 @@
 class Location::ProgrammeYearGroupPolicy < ApplicationPolicy
   class Scope < ApplicationPolicy::Scope
     def resolve
-      scope.joins(location: :team).where(
-        teams: {
+      scope.joins(location: :subteam).where(
+        subteams: {
           organisation: user.selected_organisation
         }
       )

@@ -427,8 +427,8 @@ class Reports::OfflineSessionExporter
     @clinic_name_values ||=
       Location
         .community_clinic
-        .joins(:team)
-        .where(team: { organisation: })
+        .joins(:subteam)
+        .where(subteam: { organisation: })
         .pluck(:name)
   end
 

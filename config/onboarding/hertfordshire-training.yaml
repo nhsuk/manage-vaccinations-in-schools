@@ -9,7 +9,7 @@ organisation:
 
 programmes: [hpv]
 
-teams:
+subteams:
   cambridgeshire-and-peterborough:
     name: Cambridgeshire and Peterborough Community and School Age Immunisation Service
     email: hct.csaiscambspb@nhs.net

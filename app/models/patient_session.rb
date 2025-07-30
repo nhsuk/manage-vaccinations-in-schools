@@ -50,7 +50,7 @@ class PatientSession < ApplicationRecord
   has_one :registration_status
 
   has_one :location, through: :session
-  has_one :team, through: :session
+  has_one :subteam, through: :session
   has_one :organisation, through: :session
   has_many :session_attendances, dependent: :destroy
 
