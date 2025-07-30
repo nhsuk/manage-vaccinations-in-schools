@@ -107,16 +107,12 @@ class Patient < ApplicationRecord
 
   scope :archived,
         ->(team:) do
-          joins_archive_reasons(team:).where(
-            "archive_reasons.id IS NOT NULL"
-          )
+          joins_archive_reasons(team:).where("archive_reasons.id IS NOT NULL")
         end
 
   scope :not_archived,
         ->(team:) do
-          joins_archive_reasons(team:).where(
-            "archive_reasons.id IS NULL"
-          )
+          joins_archive_reasons(team:).where("archive_reasons.id IS NULL")
         end
 
   scope :with_nhs_number, -> { where.not(nhs_number: nil) }

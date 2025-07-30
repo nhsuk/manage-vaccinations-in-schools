@@ -40,7 +40,8 @@ class PatientPolicy < ApplicationPolicy
           .exists
 
       scope
-        .where(patient_session_exists)
+        .archived(team:)
+        .or(scope.where(patient_session_exists))
         .or(scope.where(school_move_exists))
         .or(scope.where(vaccination_record_exists))
     end
