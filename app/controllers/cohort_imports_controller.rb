@@ -8,14 +8,13 @@ class CohortImportsController < ApplicationController
   skip_after_action :verify_policy_scoped, only: %i[new create]
 
   def new
-    @cohort_import =
-      CohortImport.new(organisation: current_user.selected_organisation)
+    @cohort_import = CohortImport.new(organisation: current_organisation)
   end
 
   def create
     @cohort_import =
       CohortImport.new(
-        organisation: current_user.selected_organisation,
+        organisation: current_organisation,
         uploaded_by: current_user,
         **cohort_import_params
       )

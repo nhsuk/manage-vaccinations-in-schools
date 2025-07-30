@@ -4,6 +4,6 @@ class OrganisationsController < ApplicationController
   skip_after_action :verify_policy_scoped
 
   def show
-    @organisation = current_user.selected_organisation
+    @organisation = current_organisation
   end
 end

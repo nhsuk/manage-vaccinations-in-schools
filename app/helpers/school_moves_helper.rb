@@ -5,7 +5,7 @@ module SchoolMovesHelper
     organisation = school_move.school&.organisation || school_move.organisation
 
     source =
-      if organisation == current_user.selected_organisation
+      if organisation == current_organisation
         school_move.human_enum_name(:source)
       else
         "Another SAIS organisation"

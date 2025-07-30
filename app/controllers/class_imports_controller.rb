@@ -9,15 +9,14 @@ class ClassImportsController < ApplicationController
   skip_after_action :verify_policy_scoped, only: %i[new create]
 
   def new
-    @class_import =
-      ClassImport.new(organisation: current_user.selected_organisation)
+    @class_import = ClassImport.new(organisation: current_organisation)
   end
 
   def create
     @class_import =
       ClassImport.new(
         session: @session,
-        organisation: current_user.selected_organisation,
+        organisation: current_organisation,
         uploaded_by: current_user,
         year_groups: @draft_class_import.year_groups,
         **class_import_params
