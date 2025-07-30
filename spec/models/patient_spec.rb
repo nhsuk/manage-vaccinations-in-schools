@@ -48,6 +48,10 @@
 #
 
 describe Patient do
+  describe "associations" do
+    it { should have_many(:archive_reasons) }
+  end
+
   describe "scopes" do
     describe "#appear_in_programmes" do
       subject(:scope) do

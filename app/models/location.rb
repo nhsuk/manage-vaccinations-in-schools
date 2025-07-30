@@ -36,7 +36,7 @@ class Location < ApplicationRecord
   include AddressConcern
   include ODSCodeConcern
 
-  self.inheritance_column = :nil
+  self.inheritance_column = nil
 
   audited associated_with: :subteam
   has_associated_audits

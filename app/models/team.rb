@@ -35,6 +35,7 @@ class Team < ApplicationRecord
 
   belongs_to :organisation
 
+  has_many :archive_reasons
   has_many :batches
   has_many :cohort_imports
   has_many :consent_forms
