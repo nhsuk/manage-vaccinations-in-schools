@@ -86,11 +86,13 @@ Rails.application.routes.draw do
     end
   end
 
-  unless Rails.env.production?
-    namespace :api do
-      resources :locations, only: :index
-      resources :organisations, only: :destroy, param: :ods_code
-      post "/onboard", to: "onboard#create"
+  namespace :api do
+    unless Rails.env.production?
+      namespace :testing do
+        resources :locations, only: :index
+        resources :organisations, only: :destroy, param: :ods_code
+        post "/onboard", to: "onboard#create"
+      end
     end
   end
 
