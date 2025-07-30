@@ -13,7 +13,8 @@
     <%= tag.option "", value: "" %>
 
     <% @session_options.each do |session| %>
-      <%= tag.option session.location.name,
+      <% is_duplicate = @session_options.count { |s| s.location.name == session.location.name } > 1 %>
+      <%= tag.option location_display_name(session.location, show_urn: is_duplicate),
                      value: session.id,
                      selected: session.id == @draft_class_import.session_id,
                      data: { hint: format_address_single_line(session.location) } %>
