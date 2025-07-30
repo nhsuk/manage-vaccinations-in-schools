@@ -44,4 +44,12 @@ or set it with content_for(:page_title)."
 
     nil
   end
+
+  def icon_link_tag(name, **options)
+    tag.link(href: asset_path(name), **options)
+  end
+
+  def opengraph_image_tag(service_url, name)
+    tag.meta(property: "og:image", content: "#{service_url}#{asset_path(name)}")
+  end
 end

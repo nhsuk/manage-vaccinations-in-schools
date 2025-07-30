@@ -42,6 +42,8 @@ Rails.application.routes.draw do
   get "/dashboard", to: "dashboard#index"
   get "/accessibility-statement", to: "content#accessibility_statement"
 
+  get "/manifest/:name.json", to: "manifest#show", as: :manifest
+
   get "/up", to: "rails/health#show", as: :rails_health_check
 
   flipper_app =
