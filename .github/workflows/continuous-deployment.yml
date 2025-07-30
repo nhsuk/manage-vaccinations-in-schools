@@ -21,3 +21,23 @@ jobs:
     with:
       environment: ${{ matrix.environment }}
       server_types: all
+  slack-notification:
+    needs: [deploy, test]
+    runs-on: ubuntu-latest
+    permissions: {}
+    if: ${{ !cancelled() }}
+    steps:
+      - name: Send Slack notification
+        if: needs.test.result == 'failure' || needs.deploy.result == 'failure'
+        uses: slackapi/slack-github-action@v2.1.1
+        with:
+          webhook: ${{ secrets.SLACK_MAVIS_TECH_WEBHOOK_URL }}
+          webhook-type: incoming-webhook
+          payload: |
+            text: ":rotating_light: Continuous Deployment failed :rotating_light:"
+            blocks:
+              - type: "section"
+                text:
+                  type: "mrkdwn"
+                  text: ":rotating_light: *Continuous Deployment failed* :rotating_light:\n\n \
+                          <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View workflow run>"
