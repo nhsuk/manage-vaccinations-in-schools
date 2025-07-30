@@ -144,6 +144,13 @@ class AppPatientSearchFormComponent < ViewComponent::Base
           </div>
 
           <%= f.govuk_check_boxes_fieldset :show_only, multiple: false, legend: { text: "Show only", size: "s" } do %>
+            <%= f.govuk_check_box :archived,
+                                  1, 0,
+                                  checked: form.archived,
+                                  multiple: false,
+                                  link_errors: true,
+                                  label: { text: "Archived records" } %>
+
             <%= f.govuk_check_box :missing_nhs_number,
                                   1, 0,
                                   checked: form.missing_nhs_number,
@@ -215,7 +222,8 @@ class AppPatientSearchFormComponent < ViewComponent::Base
 
   def open_details?
     @form.date_of_birth_year.present? || @form.date_of_birth_month.present? ||
-      @form.date_of_birth_day.present? || @form.missing_nhs_number
+      @form.date_of_birth_day.present? || @form.missing_nhs_number ||
+      @form.archived
   end
 
   def show_buttons_in_details?

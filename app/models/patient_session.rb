@@ -72,6 +72,10 @@ class PatientSession < ApplicationRecord
 
   has_and_belongs_to_many :immunisation_imports
 
+  scope :archived, ->(team:) { merge(Patient.archived(team:)) }
+
+  scope :not_archived, ->(team:) { merge(Patient.not_archived(team:)) }
+
   scope :notification_not_sent,
         ->(session_date) do
           where.not(

@@ -14,7 +14,7 @@
       nav.with_item(href: log_patient_path(@patient), text: "Activity log")
     end %>
 
-<%= render AppPatientCardComponent.new(@patient) do %>
+<%= render AppPatientCardComponent.new(@patient, team: current_team) do %>
   <%= govuk_button_link_to "Edit child record", edit_patient_path(@patient), secondary: true %>
 <% end %>
 

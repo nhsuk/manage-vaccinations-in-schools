@@ -1,8 +1,10 @@
 # frozen_string_literal: true
 
 class PatientSearchForm < SearchForm
+  attr_accessor :current_user
   attr_writer :academic_year
 
+  attribute :archived, :boolean
   attribute :consent_statuses, array: true
   attribute :date_of_birth_day, :integer
   attribute :date_of_birth_month, :integer
@@ -17,7 +19,8 @@ class PatientSearchForm < SearchForm
   attribute :vaccine_method, :string
   attribute :year_groups, array: true
 
-  def initialize(session: nil, **attributes)
+  def initialize(current_user:, session: nil, **attributes)
+    @current_user = current_user
     @session = session
     super(**attributes)
   end
@@ -46,6 +49,7 @@ class PatientSearchForm < SearchForm
   def apply(scope)
     scope = filter_name(scope)
     scope = filter_year_groups(scope)
+    scope = filter_archived(scope)
     scope = filter_date_of_birth_year(scope)
     scope = filter_nhs_number(scope)
     scope = filter_programmes(scope)
@@ -64,6 +68,8 @@ class PatientSearchForm < SearchForm
   def academic_year =
     @session&.academic_year || @academic_year || AcademicYear.current
 
+  def team = @current_user.selected_team
+
   def filter_name(scope)
     q.present? ? scope.search_by_name(q) : scope
   end
@@ -74,6 +80,10 @@ class PatientSearchForm < SearchForm
     else
       scope
     end
+  end
+
+  def filter_archived(scope)
+    archived ? scope.archived(team:) : scope
   end
 
   def filter_date_of_birth_year(scope)

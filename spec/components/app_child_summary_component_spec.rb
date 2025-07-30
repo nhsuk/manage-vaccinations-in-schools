@@ -105,4 +105,23 @@ describe AppChildSummaryComponent do
 
     it { should have_text("DOE, John") }
   end
+
+  context "when archived" do
+    let(:component) { described_class.new(patient, team:) }
+
+    let(:team) { create(:team) }
+
+    before do
+      create(
+        :archive_reason,
+        :other,
+        patient:,
+        team:,
+        other_details: "Some details."
+      )
+    end
+
+    it { should have_text("Archive reason") }
+    it { should have_text("Other: Some details.") }
+  end
 end
