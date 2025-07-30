@@ -96,6 +96,29 @@ class Patient < ApplicationRecord
   # https://www.datadictionary.nhs.uk/attributes/person_gender_code.html
   enum :gender_code, { not_known: 0, male: 1, female: 2, not_specified: 9 }
 
+  scope :joins_archive_reasons,
+        ->(team:) do
+          joins(
+            "LEFT JOIN archive_reasons " \
+              "ON archive_reasons.patient_id = patients.id " \
+              "AND archive_reasons.team_id = #{team.id}"
+          )
+        end
+
+  scope :archived,
+        ->(team:) do
+          joins_archive_reasons(team:).where(
+            "archive_reasons.id IS NOT NULL"
+          )
+        end
+
+  scope :not_archived,
+        ->(team:) do
+          joins_archive_reasons(team:).where(
+            "archive_reasons.id IS NULL"
+          )
+        end
+
   scope :with_nhs_number, -> { where.not(nhs_number: nil) }
   scope :without_nhs_number, -> { where(nhs_number: nil) }
 
