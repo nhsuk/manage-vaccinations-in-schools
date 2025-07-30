@@ -353,8 +353,7 @@ class ConsentForm < ApplicationRecord
   end
 
   def reason_notes_must_be_provided?
-    refused_because_other? || refused_because_will_be_vaccinated_elsewhere? ||
-      refused_because_medical_reasons? || refused_because_already_vaccinated?
+    reason.in?(Consent::REASON_FOR_REFUSAL_REQUIRES_NOTES)
   end
 
   def original_session

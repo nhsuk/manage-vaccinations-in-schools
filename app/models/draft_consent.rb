@@ -413,7 +413,8 @@ class DraftConsent
   end
 
   def notes_required?
-    response_refused? && reason_for_refusal != "personal_choice"
+    response_refused? &&
+      reason_for_refusal.in?(Consent::REASON_FOR_REFUSAL_REQUIRES_NOTES)
   end
 
   def triage_allowed?
