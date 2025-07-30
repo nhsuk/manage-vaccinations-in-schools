@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class API::OnboardController < API::BaseController
+class API::Testing::OnboardController < API::Testing::BaseController
   def create
     onboarding = Onboarding.new(params.to_unsafe_h)
 

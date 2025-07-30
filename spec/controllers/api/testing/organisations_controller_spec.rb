@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-describe API::OrganisationsController do
-  before { Flipper.enable(:api) }
-  after { Flipper.disable(:api) }
+describe API::Testing::OrganisationsController do
+  before { Flipper.enable(:testing_api) }
+  after { Flipper.disable(:testing_api) }
 
   describe "DELETE" do
     let(:programmes) { [create(:programme, :hpv_all_vaccines)] }

@@ -1,14 +1,14 @@
 # frozen_string_literal: true
 
-describe "/api/onboard" do
-  before { Flipper.enable(:api) }
-  after { Flipper.disable(:api) }
+describe "/api/testing/onboard" do
+  before { Flipper.enable(:testing_api) }
+  after { Flipper.disable(:testing_api) }
 
   let(:config) { YAML.safe_load(file_fixture(filename).read) }
 
   describe "POST" do
     subject(:request) do
-      post "/api/onboard",
+      post "/api/testing/onboard",
            params: config.to_json,
            headers: {
              "Content-Type" => "application/json"

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class API::OrganisationsController < API::BaseController
+class API::Testing::OrganisationsController < API::Testing::BaseController
   include ActionController::Live
 
   def destroy

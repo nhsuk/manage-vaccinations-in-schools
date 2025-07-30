@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-describe "/api/locations" do
-  before { Flipper.enable(:api) }
-  after { Flipper.disable(:api) }
+describe "/api/testing/locations" do
+  before { Flipper.enable(:testing_api) }
+  after { Flipper.disable(:testing_api) }
 
   let(:team) { create(:team) }
 
@@ -24,7 +24,7 @@ describe "/api/locations" do
 
   describe "GET" do
     it "includes all locations" do
-      get "/api/locations"
+      get "/api/testing/locations"
 
       expect(response).to have_http_status(:ok)
 
@@ -43,7 +43,7 @@ describe "/api/locations" do
 
     context "when filtering by status" do
       it "includes only relevant locations" do
-        get "/api/locations", params: { status: "open" }
+        get "/api/testing/locations", params: { status: "open" }
 
         expect(response).to have_http_status(:ok)
 
@@ -55,7 +55,7 @@ describe "/api/locations" do
 
     context "when filtering by type" do
       it "includes only relevant locations" do
-        get "/api/locations", params: { type: "gp_practice" }
+        get "/api/testing/locations", params: { type: "gp_practice" }
 
         expect(response).to have_http_status(:ok)
 
@@ -67,7 +67,7 @@ describe "/api/locations" do
 
     context "when filtering by year groups" do
       it "includes only relevant locations" do
-        get "/api/locations", params: { year_groups: [1] }
+        get "/api/testing/locations", params: { year_groups: [1] }
 
         expect(response).to have_http_status(:ok)
 
@@ -85,7 +85,7 @@ describe "/api/locations" do
         let!(:secondary_school) { create(:school, year_groups: [8, 9, 10]) }
 
         it "includes locations with all those year groups" do
-          get "/api/locations", params: { year_groups: [8, 9, 10] }
+          get "/api/testing/locations", params: { year_groups: [8, 9, 10] }
 
           expect(response).to have_http_status(:ok)
 
@@ -101,7 +101,10 @@ describe "/api/locations" do
 
     context "when filtering by attached to organisation" do
       it "includes only relevant locations" do
-        get "/api/locations", params: { is_attached_to_organisation: "false" }
+        get "/api/testing/locations",
+            params: {
+              is_attached_to_organisation: "false"
+            }
 
         expect(response).to have_http_status(:ok)
 
