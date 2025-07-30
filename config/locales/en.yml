@@ -1,6 +1,13 @@
 en:
   activemodel:
     attributes:
+      draft_consent:
+        responses:
+          given: Consent given
+          given_injection: Consent given
+          given_nasal: Consent given
+          not_provided: Not provided
+          refused: Consent refused
     errors:
       models:
         batch_form:
