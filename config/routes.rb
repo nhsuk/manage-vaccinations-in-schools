@@ -138,7 +138,7 @@ Rails.application.routes.draw do
 
   resources :notifications, only: :create
 
-  resources :patients, only: %i[index show edit update] do
+  resources :patients, only: %i[index show edit] do
     post "", action: :index, on: :collection
 
     resources :parent_relationships,

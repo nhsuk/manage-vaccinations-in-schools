@@ -89,19 +89,6 @@ describe "Manage children" do
     and_the_vaccination_record_is_deleted_from_the_nhs
   end
 
-  scenario "Removing a child from a cohort" do
-    given_patients_exist
-
-    when_i_click_on_children
-    and_i_click_on_a_child
-    then_i_see_the_child
-    and_i_see_the_cohort
-
-    when_i_click_on_remove_from_cohort
-    then_i_see_the_children
-    and_i_see_a_removed_from_cohort_message
-  end
-
   scenario "Viewing important notices" do
     when_i_go_to_the_imports_page
     then_i_cannot_see_notices
@@ -249,7 +236,6 @@ describe "Manage children" do
   def then_i_see_the_child
     expect(page).to have_title("JS")
     expect(page).to have_content("SMITH, John")
-    expect(page).to have_content("Cohorts")
     expect(page).to have_content("Sessions")
   end
 
@@ -324,14 +310,6 @@ describe "Manage children" do
   def and_i_see_the_cohort
     expect(page).not_to have_content("No cohorts")
     expect(page).not_to have_content("No sessions")
-  end
-
-  def when_i_click_on_remove_from_cohort
-    click_on "Remove from cohort"
-  end
-
-  def and_i_see_a_removed_from_cohort_message
-    expect(page).to have_content("removed from cohort")
   end
 
   def when_i_go_to_the_dashboard

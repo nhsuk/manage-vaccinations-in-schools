@@ -19,11 +19,6 @@
 <% end %>
 
 <%= render AppCardComponent.new(section: true) do |card| %>
-  <% card.with_heading { "Cohorts" } %>
-  <%= render AppPatientCohortTableComponent.new(@patient, current_user:) %>
-<% end %>
-
-<%= render AppCardComponent.new(section: true) do |card| %>
   <% card.with_heading { "Sessions" } %>
   <%= render AppPatientSessionTableComponent.new(@patient_sessions) %>
 <% end %>

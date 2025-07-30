@@ -30,32 +30,6 @@ class PatientsController < ApplicationController
     render layout: "full"
   end
 
-  def update
-    team_id = params.dig(:patient, :team_id).presence
-
-    ActiveRecord::Base.transaction do
-      @patient
-        .patient_sessions
-        .joins(:session)
-        .where(session: { team_id: })
-        .destroy_all_if_safe
-    end
-
-    path =
-      (
-        if policy_scope(Patient).include?(@patient)
-          patient_path(@patient)
-        else
-          patients_path
-        end
-      )
-
-    redirect_to path,
-                flash: {
-                  success: "#{@patient.full_name} removed from cohort"
-                }
-  end
-
   private
 
   def set_patient
