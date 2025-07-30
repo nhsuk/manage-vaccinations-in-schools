@@ -122,7 +122,17 @@ class Patient < ApplicationRecord
   scope :not_deceased, -> { where(date_of_death: nil) }
   scope :restricted, -> { where.not(restricted_at: nil) }
 
-  scope :with_notice, -> { deceased.or(restricted).or(invalidated) }
+  scope :gillick_no_notify,
+        -> do
+          joins(:vaccination_records).where(
+            vaccination_records: {
+              notify_parents: false
+            }
+          ).distinct
+        end
+
+  scope :with_notice,
+        -> { (deceased + restricted + invalidated + gillick_no_notify).uniq }
 
   scope :appear_in_programmes,
         ->(programmes, academic_year:) do
