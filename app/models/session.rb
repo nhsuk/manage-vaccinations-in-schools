@@ -74,8 +74,6 @@ class Session < ApplicationRecord
           )
         end
 
-  scope :today, -> { has_date(Date.current) }
-
   scope :for_current_academic_year,
         -> { where(academic_year: AcademicYear.current) }
 
