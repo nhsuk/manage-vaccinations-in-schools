@@ -11,6 +11,7 @@ class ApplicationController < ActionController::Base
   before_action :set_disable_cache_headers
   before_action :set_header_path
   before_action :set_service_name
+  before_action :set_theme_colour
   before_action :set_service_guide_url
   before_action :set_show_navigation
   before_action :set_privacy_policy_url
@@ -48,6 +49,10 @@ class ApplicationController < ActionController::Base
 
   def set_service_name
     @service_name = "Manage vaccinations in schools"
+  end
+
+  def set_theme_colour
+    @theme_colour = HostingEnvironment.theme_colour
   end
 
   def set_show_navigation
