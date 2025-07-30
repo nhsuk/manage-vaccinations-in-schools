@@ -5,11 +5,11 @@ class Users::OrganisationsController < ApplicationController
   skip_after_action :verify_policy_scoped
 
   before_action :redirect_to_dashboard_if_cis2_is_enabled
+  before_action :set_organisations
 
   layout "two_thirds"
 
   def new
-    @organisations = current_user.organisations
   end
 
   def create
@@ -29,7 +29,6 @@ class Users::OrganisationsController < ApplicationController
 
       redirect_to dashboard_path
     else
-      @organisations = current_user.organisations
       render :new, status: :unprocessable_entity
     end
   end
@@ -38,5 +37,9 @@ class Users::OrganisationsController < ApplicationController
 
   def redirect_to_dashboard_if_cis2_is_enabled
     redirect_to dashboard_path if Settings.cis2.enabled
+  end
+
+  def set_organisations
+    @organisations = current_user.organisations
   end
 end

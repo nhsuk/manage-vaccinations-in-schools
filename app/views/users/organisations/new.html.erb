@@ -1,22 +1,14 @@
-<%= h1 "Select a role" %>
+<% legend = "Select an organisation" %>
+
+<% content_for :page_title, legend %>
 
 <%= form_with url: users_organisations_path, method: :post do |f| %>
-  <% @organisations.each do |organisation| %>
-    <%= f.button type: :submit,
-                 name: :organisation_id,
-                 value: organisation.id,
-                 class: "nhsuk-card nhsuk-card--clickable app-card--button nhsuk-u-margin-bottom-3" do %>
-      <div class="nhsuk-card__content">
-        <h2 class="nhsuk-card__heading nhsuk-heading-s nhsuk-u-margin-bottom-2">
-          <%= organisation.name %> (<%= organisation.ods_code %>)
-        </h2>
+  <%= f.govuk_collection_radio_buttons :organisation_id,
+                                       @organisations,
+                                       :id,
+                                       :name,
+                                       :ods_code,
+                                       legend: { text: legend, size: "xl", tag: "h1" } %>
 
-        <% if current_user.is_admin? %>
-          <p class="nhsuk-card__description">Administrator</p>
-        <% elsif current_user.is_nurse? %>
-          <p class="nhsuk-card__description">Nurse</p>
-        <% end %>
-      </div>
-    <% end %>
-  <% end %>
+  <%= f.govuk_submit %>
 <% end %>
