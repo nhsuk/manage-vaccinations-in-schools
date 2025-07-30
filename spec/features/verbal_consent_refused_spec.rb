@@ -1,21 +1,48 @@
 # frozen_string_literal: true
 
 describe "Verbal consent" do
-  scenario "Refused" do
-    given_i_am_signed_in
+  scenario "Refused HPV" do
+    given_hpv_programme
+    and_i_am_signed_in
 
-    when_i_record_the_consent_refusal_and_reason
+    when_i_record_a_new_consent_response
+    and_i_record_the_refusal
+    then_i_see_reasons_suitable_for_hpv
 
+    when_i_record_the_reason_and_confirm
     then_an_email_is_sent_to_the_parent_confirming_the_refusal
     and_a_text_is_sent_to_the_parent_confirming_the_refusal
     and_the_patients_status_is_consent_refused
     and_i_can_see_the_consent_response_details
   end
 
-  def given_i_am_signed_in
-    programmes = [create(:programme, :hpv)]
-    organisation = create(:organisation, :with_one_nurse, programmes:)
-    @session = create(:session, organisation:, programmes:)
+  scenario "Refused Flu" do
+    given_flu_programme
+    and_i_am_signed_in
+
+    when_i_record_a_new_consent_response
+    and_i_record_the_refusal
+    then_i_see_reasons_suitable_for_flu
+
+    when_i_record_the_reason_and_confirm
+    then_an_email_is_sent_to_the_parent_confirming_the_refusal
+    and_a_text_is_sent_to_the_parent_confirming_the_refusal
+    and_the_patients_status_is_consent_refused
+    and_i_can_see_the_consent_response_details
+  end
+
+  def given_flu_programme
+    @programmes = [create(:programme, :flu)]
+  end
+
+  def given_hpv_programme
+    @programmes = [create(:programme, :hpv)]
+  end
+
+  def and_i_am_signed_in
+    organisation =
+      create(:organisation, :with_one_nurse, programmes: @programmes)
+    @session = create(:session, organisation:, programmes: @programmes)
 
     @parent = create(:parent)
     @patient = create(:patient, session: @session, parents: [@parent])
@@ -23,11 +50,13 @@ describe "Verbal consent" do
     sign_in organisation.users.first
   end
 
-  def when_i_record_the_consent_refusal_and_reason
+  def when_i_record_a_new_consent_response
     visit session_consent_path(@session)
     click_link @patient.full_name
     click_button "Record a new consent response"
+  end
 
+  def and_i_record_the_refusal
     # Who are you trying to get consent from?
     choose @parent.full_name
     click_button "Continue"
@@ -42,7 +71,17 @@ describe "Verbal consent" do
     # Do they agree?
     choose "No, they do not agree"
     click_button "Continue"
+  end
 
+  def then_i_see_reasons_suitable_for_flu
+    expect(page).to have_content("contains gelatine")
+  end
+
+  def then_i_see_reasons_suitable_for_hpv
+    expect(page).not_to have_content("contains gelatine")
+  end
+
+  def when_i_record_the_reason_and_confirm
     # Reason
     choose "Medical reasons"
     click_button "Continue"
