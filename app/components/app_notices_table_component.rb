@@ -21,9 +21,10 @@ class AppNoticesTableComponent < ViewComponent::Base
   private
 
   def notices
-    (deceased_notices + invalidated_notices + restricted_notices)
-      .sort_by { _1[:date] }
-      .reverse
+    (
+      deceased_notices + invalidated_notices + restricted_notices +
+        gillick_no_notify_notices
+    ).sort_by { _1[:date_time] }.reverse
   end
 
   def deceased_notices
