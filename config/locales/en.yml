@@ -108,6 +108,17 @@ en:
           attributes:
             apply_changes:
               inclusion: Choose which record to keep
+        patient_archive_form:
+          attributes:
+            other_details:
+              blank: Enter details
+              too_long: Enter details that is less than %{count} characters long
+            nhs_number:
+              blank: Enter an NHS number
+              invalid: Enter a valid NHS number
+              wrong_length: Enter a valid NHS number with 10 characters
+            type:
+              inclusion: Choose why you want to archive this record
         patient_merge_form:
           attributes:
             nhs_number:
