@@ -155,3 +155,17 @@ jobs:
       environment: ${{ inputs.environment }}
       server_types: ${{ inputs.server_types }}
       git_sha_to_deploy: ${{ needs.determine-git-sha.outputs.git-sha }}
+  slack-notify:
+    name: Notify deployment has finished
+    runs-on: ubuntu-latest
+    if: always() && inputs.environment == 'production'
+    needs: deploy-application
+    steps:
+      - name: Success notification
+        if: success()
+        uses: slackapi/slack-github-action@v2.1.1
+        with:
+          webhook: ${{ secrets.SLACK_DEPLOYMENT_BOT_WEBHOOK_URL }}
+          webhook-type: incoming-webhook
+          payload: |
+            text: ":rocket: Release ${{ inputs.git_ref_to_deploy || github.ref_name }} has been deployed to ${{ inputs.environment }} :rocket:"
