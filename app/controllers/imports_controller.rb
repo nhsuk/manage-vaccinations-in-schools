@@ -32,6 +32,6 @@ class ImportsController < ApplicationController
   private
 
   def set_organisation
-    @organisation = current_user.selected_organisation
+    @organisation = current_organisation
   end
 end
