@@ -337,10 +337,11 @@ describe "HPV vaccination" do
 
   def and_i_upload_the_modified_csv_file
     visit "/"
-    click_on "Programmes", match: :first
-    click_on "HPV"
-    click_on "Vaccinations", match: :first
-    click_on "Import vaccination records"
+
+    click_on "Import", match: :first
+    click_on "Import records"
+    choose "Vaccination records"
+    click_on "Continue"
 
     attach_file("immunisation_import[csv]", "tmp/modified.csv")
     click_on "Continue"
