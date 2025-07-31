@@ -1,0 +1,432 @@
+{
+  "resourceType": "Immunization",
+  "id": "11112222-3333-4444-5555-666677779999",
+  "contained": [
+    {
+      "resourceType": "Practitioner",
+      "id": "Pract1",
+      "name": [
+        {
+          "family": "Deadman",
+          "given": ["Florence"]
+        },
+        {
+          "use": "official",
+          "text": "hello pract1",
+          "family": "Smith",
+          "given": ["Steph", "Steph1", "Steph2"],
+          "period": {
+            "start": "2025-03-06T13:28:17.2567+01:00",
+            "end": "2025-03-06T13:28:20.2567+01:00"
+          }
+        },
+        {
+          "use": "home",
+          "text": "hello pract2",
+          "family": "Family2",
+          "given": ["Given2", "Given3", "Given4"],
+          "period": {
+            "start": "2025-03-06T13:28:15.2567+01:00",
+            "end": "2025-03-06T13:28:17.2567+01:00"
+          }
+        },
+        {
+          "use": "home",
+          "text": "hello pract3",
+          "family": "Family3",
+          "given": ["given3", "given4", "given5"],
+          "period": {
+            "start": "2025-03-06T13:28:15.2567+01:00",
+            "end": "2025-03-06T13:28:20.2567+01:00"
+          }
+        }
+      ]
+    },
+    {
+      "resourceType": "Patient",
+      "id": "Pat1",
+      "identifier": [
+        {
+          "system": "https://fhir.nhs.uk/Id/nhs-number",
+          "value": "9452372249"
+        }
+      ],
+      "name": [
+        {
+          "use": "official",
+          "text": "hello pat1",
+          "family": "test14",
+          "given": ["test15", "test16", "test17"],
+          "period": {
+            "start": "2025-03-06T13:28:17.2567+01:00",
+            "end": "2025-03-06T13:28:20.2567+01:00"
+          }
+        },
+        {
+          "use": "home",
+          "text": "hello pat2",
+          "family": "test18",
+          "given": ["test19", "test20", "test21"],
+          "period": {
+            "start": "2025-03-06T13:28:15.2567+01:00",
+            "end": "2025-03-06T13:28:17.2567+01:00"
+          }
+        },
+        {
+          "use": "home",
+          "text": "hello pat3",
+          "family": "test22",
+          "given": ["test23", "test24", "test25"],
+          "period": {
+            "start": "2025-03-06T13:28:15.2567+01:00",
+            "end": "2025-03-06T13:28:20.2567+01:00"
+          }
+        }
+      ],
+      "gender": "unknown",
+      "birthDate": "1960-01-01",
+      "address": [
+        {
+          "use": "home",
+          "type": "postal",
+          "text": "Validate Obf",
+          "line": ["1, obf_2"],
+          "city": "obf_3",
+          "district": "obf_4",
+          "state": "obf_5",
+          "postalCode": "LS01 1AB",
+          "country": "obf_7",
+          "period": {
+            "start": "2000-01-01",
+            "end": "2025-01-01"
+          }
+        },
+        {
+          "use": "home",
+          "type": "postal",
+          "text": "Validate Obf",
+          "line": ["1, obf_2"],
+          "city": "obf_3",
+          "district": "obf_4",
+          "state": "obf_5",
+          "postalCode": "LS02 1AB",
+          "country": "obf_7",
+          "period": {
+            "start": "2000-01-01",
+            "end": "2025-01-01"
+          }
+        },
+        {
+          "use": "home",
+          "type": "postal",
+          "text": "Validate Obf",
+          "line": ["1, obf_2"],
+          "city": "obf_3",
+          "district": "obf_4",
+          "state": "obf_5",
+          "postalCode": "LS03 1AB",
+          "country": "obf_7",
+          "period": {
+            "start": "2000-01-01",
+            "end": "2025-03-05"
+          }
+        },
+        {
+          "use": "home",
+          "type": "postal",
+          "text": "Validate Obf",
+          "line": ["1, obf_2"],
+          "city": "obf_3",
+          "district": "obf_4",
+          "state": "obf_5",
+          "postalCode": "LS04 1AB",
+          "country": "obf_7",
+          "period": {
+            "start": "2000-01-01",
+            "end": "2025-03-05"
+          }
+        }
+      ]
+    }
+  ],
+  "extension": [
+    {
+      "url": "https://fhir.hl7.org.uk/StructureDefinition/Extension-UKCore-VaccinationProcedure",
+      "valueCodeableConcept": {
+        "coding": [
+          {
+            "extension": [
+              {
+                "url": "https://fhir.hl7.org.uk/StructureDefinition/Extension-UKCore-CodingSCTDescDisplay",
+                "valueString": "Test Value string 123456 Flu vaccination"
+              },
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/coding-sctdescid",
+                "valueId": "5306706018"
+              }
+            ],
+            "system": "http://snomed.info/test",
+            "code": "955651000000100",
+            "display": "Seasonal influenza vaccination 111 given by other healthcare provider (situation)"
+          },
+          {
+            "system": "https://acme.lab/resultcodes",
+            "code": "NEG",
+            "display": "Negative"
+          },
+          {
+            "extension": [
+              {
+                "url": "https://fhir.hl7.org.uk/StructureDefinition/Extension-UKCore-CodingSCTDescDisplay",
+                "valueString": "Test Value string 56451 Flu vaccination"
+              },
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/coding-sctdescid",
+                "valueId": "5306706018"
+              }
+            ],
+            "system": "http://snomed.info/sct",
+            "code": "822851000000102",
+            "display": "Seasonal influenza vaccination 111 (procedure)"
+          },
+          {
+            "extension": [
+              {
+                "url": "https://fhir.hl7.org.uk/StructureDefinition/Extension-UKCore-CodingSCTDescDisplay",
+                "valueString": "Test Value string 8956 Flu vaccination"
+              },
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/coding-sctdescid",
+                "valueId": "5306706018"
+              }
+            ],
+            "system": "http://snomed.info/sct",
+            "code": "884861000000100",
+            "display": "Seasonal influenza vaccination 222 (procedure)"
+          }
+        ],
+        "text": "Negative for Chlamydia Trachomatis rRNA Flu"
+      }
+    }
+  ],
+  "identifier": [
+    {
+      "system": "https://supplierABC/identifiers/vacc",
+      "value": "aaaabbbb-0000-1111-3333-ffff77773333"
+    }
+  ],
+  "status": "completed",
+  "vaccineCode": {
+    "coding": [
+      {
+        "extension": [
+          {
+            "url": "https://fhir.hl7.org.uk/StructureDefinition/Extension-UKCore-CodingSCTDescDisplay",
+            "valueString": "Test Value string vaccineCode 12"
+          },
+          {
+            "url": "http://hl7.org/fhir/StructureDefinition/coding-sctdescid",
+            "valueId": "5306706018"
+          }
+        ],
+        "system": "http://snomed.info/test",
+        "code": "39114911000001105",
+        "display": "111 Quadrivalent influenza vaccine (split virion, inactivated) suspension for injection 0.5ml pre-filled syringes (Sanofi Pasteur)"
+      },
+      {
+        "extension": [
+          {
+            "url": "https://fhir.hl7.org.uk/StructureDefinition/Extension-UKCore-CodingSCTDescDisplay",
+            "valueString": "Test Value string vaccineCode 34"
+          },
+          {
+            "url": "http://hl7.org/fhir/StructureDefinition/coding-sctdescid",
+            "valueId": "5306706018"
+          }
+        ],
+        "system": "http://snomed.info/sct",
+        "code": "43207411000001105",
+        "display": "Cell-based trivalent influenza vaccine (surface antigen, inactivated) suspension for injection 0.5ml pre-filled syringes (Seqirus UK Ltd)"
+      }
+    ]
+  },
+  "patient": {
+    "reference": "#Pat1"
+  },
+  "occurrenceDateTime": "2025-04-06T23:59:50.2+01:00",
+  "recorded": "2025-03-12T13:28:17.12+00:00",
+  "primarySource": true,
+  "manufacturer": {
+    "display": "AstraZeneca Ltd"
+  },
+  "location": {
+    "identifier": {
+      "value": "X99999",
+      "system": "https://fhir.nhs.uk/Id/ods-organization-code",
+      "use": "official",
+      "type": {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+            "version": "Test version",
+            "code": "123456",
+            "display": "Location display",
+            "userSelected": true
+          }
+        ],
+        "text": "test string Location"
+      },
+      "period": {
+        "start": "2000-01-01",
+        "end": "2025-01-01"
+      }
+    }
+  },
+  "lotNumber": "4120Z001",
+  "expirationDate": "2026-07-02",
+  "site": {
+    "coding": [
+      {
+        "extension": [
+          {
+            "url": "https://fhir.hl7.org.uk/StructureDefinition/Extension-UKCore-CodingSCTDescDisplay",
+            "valueString": "Test Value string site 111"
+          },
+          {
+            "url": "http://hl7.org/fhir/StructureDefinition/coding-sctdescid",
+            "valueId": "5306706018"
+          }
+        ],
+        "system": "http://snomed.info/test",
+        "code": "368208006",
+        "display": "Left upper arm structure (body structure)"
+      },
+      {
+        "extension": [
+          {
+            "url": "https://fhir.hl7.org.uk/StructureDefinition/Extension-UKCore-CodingSCTDescDisplay",
+            "valueString": "Test Value string site 222"
+          },
+          {
+            "url": "http://hl7.org/fhir/StructureDefinition/coding-sctdescid",
+            "valueId": "5306706018"
+          }
+        ],
+        "system": "http://snomed.info/sct",
+        "code": "368208006",
+        "display": "Left upper arm structure"
+      }
+    ]
+  },
+  "route": {
+    "coding": [
+      {
+        "extension": [
+          {
+            "url": "https://fhir.hl7.org.uk/StructureDefinition/Extension-UKCore-CodingSCTDescDisplay",
+            "valueString": "Test Value string route 111"
+          },
+          {
+            "url": "http://hl7.org/fhir/StructureDefinition/coding-sctdescid",
+            "valueId": "5306706018"
+          }
+        ],
+        "system": "http://snomed.info/test",
+        "code": "78421000",
+        "display": "Intramuscular route (qualifier value)"
+      },
+      {
+        "extension": [
+          {
+            "url": "https://fhir.hl7.org.uk/StructureDefinition/Extension-UKCore-CodingSCTDescDisplay",
+            "valueString": "Test Value string route 222"
+          },
+          {
+            "url": "http://hl7.org/fhir/StructureDefinition/coding-sctdescid",
+            "valueId": "5306706018"
+          }
+        ],
+        "system": "http://snomed.info/sct",
+        "code": "78421000",
+        "display": "Intramuscular"
+      }
+    ]
+  },
+  "doseQuantity": {
+    "value": 0.5,
+    "unit": "milliliter",
+    "system": "http://unitsofmeasure.org",
+    "code": "ml"
+  },
+  "performer": [
+    {
+      "actor": {
+        "reference": "#Pract1"
+      }
+    },
+    {
+      "actor": {
+        "type": "Organization",
+        "display": "Acme Healthcare",
+        "identifier": {
+          "value": "B0C4P",
+          "system": "https://fhir.nhs.uk/Id/ods-organization-code",
+          "use": "usual",
+          "type": {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                "version": "Test version performer",
+                "code": "123456",
+                "display": "Test display performer",
+                "userSelected": true
+              }
+            ],
+            "text": "test string performer"
+          },
+          "period": {
+            "start": "2000-01-01",
+            "end": "2025-01-01"
+          }
+        }
+      }
+    }
+  ],
+  "reasonCode": [
+    {
+      "coding": [
+        {
+          "code": "123684005",
+          "system": "http://snomed.info/test",
+          "display": "Disease outbreak (event)"
+        },
+        {
+          "code": "453684005",
+          "system": "http://snomed.info/sct",
+          "display": "Disease outbreak (event)"
+        },
+        {
+          "code": "443684005",
+          "system": "http://snomed.info/sct",
+          "display": "Disease outbreak (event)"
+        }
+      ]
+    }
+  ],
+  "protocolApplied": [
+    {
+      "targetDisease": [
+        {
+          "coding": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "6142004",
+              "display": "Influenza caused by Influenza virus (disorder)"
+            }
+          ]
+        }
+      ],
+      "doseNumberPositiveInt": 1
+    }
+  ]
+}
