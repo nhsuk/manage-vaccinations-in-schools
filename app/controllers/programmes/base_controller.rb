@@ -20,5 +20,11 @@ class Programmes::BaseController < ApplicationController
     end
   end
 
-  def organisation = current_user.selected_organisation
+  def patients
+    @patients ||=
+      current_organisation.patients.appear_in_programmes(
+        [@programme],
+        academic_year: @academic_year
+      )
+  end
 end

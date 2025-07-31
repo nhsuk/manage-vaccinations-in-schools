@@ -11,10 +11,14 @@ class Programmes::PatientsController < Programmes::BaseController
         programme: @programme
       ).pluck_year_groups
 
+    # The select is needed because the association scope has a `distinct` and
+    # therefore anything in the ORDER BY needs to appear in the SELECT.
     scope =
-      policy_scope(Patient).includes(
-        :vaccination_statuses
-      ).appear_in_programmes([@programme], academic_year: @academic_year)
+      patients.select(
+        "patients.*",
+        "LOWER(given_name)",
+        "LOWER(family_name)"
+      ).includes(:consent_statuses, :triage_statuses, :vaccination_statuses)
 
     @form.programme_types = [@programme.type]
 
