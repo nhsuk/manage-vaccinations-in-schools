@@ -99,6 +99,26 @@ class Session < ApplicationRecord
   scope :search_by_name,
         ->(query) { joins(:location).merge(Location.search_by_name(query)) }
 
+  scope :join_earliest_date,
+        -> do
+          joins(
+            "LEFT JOIN (SELECT session_id, MIN(value) AS value " \
+              "FROM session_dates GROUP BY session_id) earliest_session_dates " \
+              "ON sessions.id = earliest_session_dates.session_id"
+          )
+        end
+
+  scope :order_by_earliest_date,
+        -> do
+          join_earliest_date.order(
+            Arel.sql(
+              "CASE WHEN earliest_session_dates.value >= ? THEN 1 ELSE 2 END",
+              Date.current
+            ),
+            "earliest_session_dates.value ASC NULLS LAST"
+          )
+        end
+
   scope :send_consent_requests,
         -> { scheduled.where("? >= send_consent_requests_at", Date.current) }
   scope :send_consent_reminders,
@@ -217,20 +237,6 @@ class Session < ApplicationRecord
           include_today: true
         )
     end
-  end
-
-  FAR_FUTURE_DATE = Date.new(9999, 1, 1)
-
-  def <=>(other)
-    # We want sessions without dates to appear after sessions with dates. We
-    # can't compare a `Date` with `nil` so instead we can choose a date in the
-    # far future.
-    [dates.first || FAR_FUTURE_DATE, location.type, location.name] <=>
-      [
-        other.dates.first || FAR_FUTURE_DATE,
-        other.location.type,
-        other.location.name
-      ]
   end
 
   def set_notification_dates

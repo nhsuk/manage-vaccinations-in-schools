@@ -116,6 +116,46 @@ describe Session do
 
       it { should contain_exactly(completed_session) }
     end
+
+    describe "#order_by_earliest_date" do
+      subject(:scope) { described_class.order_by_earliest_date }
+
+      around { |example| travel_to(today) { example.run } }
+
+      let(:today) { Date.new(2025, 1, 1) }
+
+      let(:programmes) { create_list(:programme, 1, :hpv) }
+
+      let(:first_session_before_today) do
+        create(:session, date: Date.new(2024, 12, 1), programmes:)
+      end
+      let(:second_session_before_today) do
+        create(:session, date: Date.new(2024, 12, 2), programmes:)
+      end
+      let(:session_today) do
+        create(:session, date: Date.new(2025, 1, 1), programmes:)
+      end
+      let(:first_session_after_today) do
+        create(:session, date: Date.new(2025, 1, 2), programmes:)
+      end
+      let(:second_session_after_today) do
+        create(:session, date: Date.new(2025, 1, 3), programmes:)
+      end
+      let(:session_without_dates) { create(:session, date: nil, programmes:) }
+
+      it do
+        expect(scope).to eq(
+          [
+            session_today,
+            first_session_after_today,
+            second_session_after_today,
+            first_session_before_today,
+            second_session_before_today,
+            session_without_dates
+          ]
+        )
+      end
+    end
   end
 
   describe "#programmes" do
