@@ -2,6 +2,7 @@
 
 class Programmes::OverviewController < Programmes::BaseController
   before_action :set_consents
+  before_action :set_patients
   before_action :set_patient_count_by_year_group
 
   def show
@@ -13,9 +14,12 @@ class Programmes::OverviewController < Programmes::BaseController
     @consents =
       policy_scope(Consent).where(
         patient: patients,
-        programme: @programme,
-        submitted_at: @academic_year.to_academic_year_date_range
-      )
+        programme: @programme
+      ).for_academic_year(@academic_year)
+  end
+
+  def set_patients
+    @patients = patients
   end
 
   def set_patient_count_by_year_group
@@ -33,13 +37,5 @@ class Programmes::OverviewController < Programmes::BaseController
           year_group.to_birth_academic_year(academic_year: @academic_year)
         patient_count_by_birth_academic_year[birth_academic_year] || 0
       end
-  end
-
-  def patients
-    @patients ||=
-      policy_scope(Patient).appear_in_programmes(
-        [@programme],
-        academic_year: @academic_year
-      )
   end
 end

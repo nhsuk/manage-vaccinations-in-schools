@@ -21,7 +21,7 @@ class AppSessionDetailsSummaryComponent < ViewComponent::Base
 
   def cohort_row
     count = patient_sessions.count
-    href = new_draft_class_import_path(session)
+    href = new_draft_class_import_path(session.location)
 
     {
       key: {

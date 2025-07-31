@@ -1,24 +1,21 @@
 # frozen_string_literal: true
 
 class AppProgrammeStatsComponent < ViewComponent::Base
-  def initialize(programme, academic_year:)
+  def initialize(programme, academic_year:, patients:)
     super
 
     @programme = programme
     @academic_year = academic_year
+    @patients = patients
   end
 
-  def patients_count
-    helpers
-      .policy_scope(Patient)
-      .appear_in_programmes([@programme], academic_year:)
-      .count
-  end
+  delegate :count, to: :patients, prefix: true
 
   def vaccinations_count
     helpers
       .policy_scope(VaccinationRecord)
-      .where(programme:, performed_at: academic_year_date_range)
+      .for_academic_year(academic_year)
+      .where(patient: patients, programme:)
       .count
   end
 
@@ -26,13 +23,12 @@ class AppProgrammeStatsComponent < ViewComponent::Base
     helpers
       .policy_scope(ConsentNotification)
       .has_programme(programme)
-      .where(sent_at: academic_year_date_range)
+      .for_academic_year(academic_year)
+      .where(patient: patients)
       .count
   end
 
   private
 
-  attr_reader :programme, :academic_year
-
-  def academic_year_date_range = academic_year.to_academic_year_date_range
+  attr_reader :programme, :academic_year, :patients
 end

@@ -16,10 +16,9 @@ class API::Testing::OrganisationsController < API::Testing::BaseController
       ActiveRecord::Base.transaction do
         log_destroy(CohortImport.where(organisation:))
         log_destroy(ImmunisationImport.where(organisation:))
+        log_destroy(ClassImport.where(organisation:))
 
         sessions = Session.where(organisation:)
-
-        log_destroy(ClassImport.where(session: sessions))
 
         log_destroy(ConsentNotification.where(session: sessions))
         log_destroy(SessionNotification.where(session: sessions))

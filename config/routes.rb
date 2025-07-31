@@ -117,7 +117,7 @@ Rails.application.routes.draw do
 
   resource :draft_class_import,
            only: :new,
-           path: "draft-class-import/:session_slug"
+           path: "draft-class-import/:location_id"
   resource :draft_class_import,
            only: %i[show update],
            path: "draft-class-import/:id"
