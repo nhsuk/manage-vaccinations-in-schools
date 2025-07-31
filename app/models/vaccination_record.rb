@@ -16,6 +16,7 @@
 #  nhs_immunisations_api_sync_pending_at :datetime
 #  nhs_immunisations_api_synced_at       :datetime
 #  notes                                 :text
+#  notify_parents                        :boolean
 #  outcome                               :integer          not null
 #  pending_changes                       :jsonb            not null
 #  performed_at                          :datetime         not null
@@ -211,15 +212,6 @@ class VaccinationRecord < ApplicationRecord
   delegate :snomed_procedure_term, to: :vaccine, allow_nil: true
 
   private
-
-  def notify_parents?
-    patient
-      .consents
-      .where(programme:)
-      .not_invalidated
-      .not_withdrawn
-      .all? { |consent| consent.notify_parents.nil? || consent.notify_parents? }
-  end
 
   def requires_location_name?
     session.nil? || location&.generic_clinic?

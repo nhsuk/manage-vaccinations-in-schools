@@ -16,6 +16,7 @@
 #  nhs_immunisations_api_sync_pending_at :datetime
 #  nhs_immunisations_api_synced_at       :datetime
 #  notes                                 :text
+#  notify_parents                        :boolean
 #  outcome                               :integer          not null
 #  pending_changes                       :jsonb            not null
 #  performed_at                          :datetime         not null
@@ -99,6 +100,8 @@ FactoryBot.define do
     uuid { SecureRandom.uuid }
 
     location_name { "Unknown" if session.nil? }
+
+    notify_parents { true }
 
     trait :not_administered do
       delivery_site { nil }
