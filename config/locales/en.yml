@@ -144,6 +144,7 @@ en:
       consent:
         reason_for_refusals:
           already_vaccinated: Vaccine already received
+          contains_gelatine: Vaccine contains gelatine from pigs
           medical: Medical reasons
           other: Other
           personal_choice: Personal choice
@@ -165,13 +166,6 @@ en:
           other: Other
           text: I can only receive text messages
           voice: I can only receive voice calls
-        reasons:
-          already_vaccinated: Vaccine already received
-          contains_gelatine: Vaccine contains gelatine from pigs
-          medical_reasons: Medical reasons
-          other: Other
-          personal_choice: Personal choice
-          will_be_vaccinated_elsewhere: Vaccine will be given elsewhere
       notify_log_entry:
         types:
           email: Email

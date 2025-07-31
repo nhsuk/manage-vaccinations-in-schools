@@ -10,24 +10,14 @@
 <%= form_with model: @consent_form, url: wizard_path, method: :put do |f| %>
   <%= f.govuk_error_summary %>
 
-  <%= f.govuk_radio_buttons_fieldset(:reason,
-                                     legend: { size: "l", text: title, tag: "h1" }) do %>
-    <% if @consent_form.vaccine_may_contain_gelatine? %>
-      <%= f.govuk_radio_button :reason, "contains_gelatine",
-                               label: { text: "Vaccine contains gelatine from pigs" },
-                               link_errors: true %>
+  <%= f.govuk_radio_buttons_fieldset :reason, legend: { size: "l", text: title, tag: "h1" } do %>
+    <% consent_refusal_reasons(@consent_form).each_with_index do |refusal_reason, index| %>
+      <%= f.govuk_radio_divider if refusal_reason.divider %>
+
+      <%= f.govuk_radio_button :reason, refusal_reason.value,
+                               label: { text: refusal_reason.label },
+                               link_errors: index.zero? %>
     <% end %>
-    <%= f.govuk_radio_button :reason, "already_vaccinated",
-                             label: { text: "Vaccine already received" } %>
-    <%= f.govuk_radio_button :reason, "will_be_vaccinated_elsewhere",
-                             label: { text: "Vaccine will be given elsewhere" } %>
-    <%= f.govuk_radio_button :reason, "medical_reasons",
-                             label: { text: "Medical reasons" } %>
-    <%= f.govuk_radio_button :reason, "personal_choice",
-                             label: { text: "Personal choice" } %>
-    <%= f.govuk_radio_divider %>
-    <%= f.govuk_radio_button :reason, "other",
-                             label: { text: "Other" } %>
   <% end %>
 
   <%= f.govuk_submit "Continue" %>

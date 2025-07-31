@@ -7,28 +7,18 @@
 
 <%= form_with model: @draft_consent, url: wizard_path, method: :put do |f| %>
   <%= f.govuk_error_summary %>
-  <%= f.govuk_radio_buttons_fieldset(:reason_for_refusal,
-                                     caption: { size: "l",
-                                                text: @patient.full_name },
-                                     legend: { size: "l",
-                                               tag: "h1",
-                                               text: title }) do %>
-    <% if @draft_consent.vaccine_may_contain_gelatine? %>
-      <%= f.govuk_radio_button :reason, "contains_gelatine",
-                               label: { text: "Vaccine contains gelatine from pigs" },
-                               link_errors: true %>
+
+  <%= f.govuk_radio_buttons_fieldset :reason_for_refusal,
+                                     caption: { size: "l", text: @patient.full_name },
+                                     legend: { size: "l", tag: "h1", text: title } do %>
+
+    <% consent_refusal_reasons(@draft_consent).each_with_index do |refusal_reason, index| %>
+      <%= f.govuk_radio_divider if refusal_reason.divider %>
+
+      <%= f.govuk_radio_button :reason_for_refusal, refusal_reason.value,
+                               label: { text: refusal_reason.label },
+                               link_errors: index.zero? %>
     <% end %>
-    <%= f.govuk_radio_button :reason_for_refusal, "already_vaccinated",
-                             label: { text: "Vaccine already received" }, link_errors: true %>
-    <%= f.govuk_radio_button :reason_for_refusal, "will_be_vaccinated_elsewhere",
-                             label: { text: "Vaccine will be given elsewhere" } %>
-    <%= f.govuk_radio_button :reason_for_refusal, "medical_reasons",
-                             label: { text: "Medical reasons" } %>
-    <%= f.govuk_radio_button :reason_for_refusal, "personal_choice",
-                             label: { text: "Personal choice" } %>
-    <%= f.govuk_radio_divider %>
-    <%= f.govuk_radio_button :reason_for_refusal, "other",
-                             label: { text: "Other" } %>
   <% end %>
 
   <%= f.govuk_submit "Continue" %>
