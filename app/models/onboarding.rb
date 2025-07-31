@@ -122,7 +122,7 @@ class Onboarding
     end
   end
 
-  def save!
+  def save!(create_sessions_for_previous_academic_year: false)
     ActiveRecord::Base.transaction do
       models.each(&:save!)
 
@@ -132,6 +132,13 @@ class Onboarding
       @users.each { |user| user.organisations << organisation }
 
       OrganisationSessionsFactory.call(organisation, academic_year:)
+
+      if create_sessions_for_previous_academic_year
+        OrganisationSessionsFactory.call(
+          organisation,
+          academic_year: academic_year - 1
+        )
+      end
     end
   end
 
