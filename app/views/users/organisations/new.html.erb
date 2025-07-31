@@ -2,9 +2,11 @@
 
 <% content_for :page_title, legend %>
 
-<%= form_with url: users_organisations_path, method: :post do |f| %>
+<%= form_with model: @form, url: users_organisations_path do |f| %>
+  <%= f.govuk_error_summary %>
+
   <%= f.govuk_collection_radio_buttons :organisation_id,
-                                       @organisations,
+                                       current_user.organisations,
                                        :id,
                                        :name,
                                        :ods_code,

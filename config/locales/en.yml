@@ -104,6 +104,10 @@ en:
           attributes:
             action:
               inclusion: Choose whether to update the child’s record with this new information
+        select_organisation_form:
+          attributes:
+            organisation_id:
+              inclusion: Choose an organisation
         session_programmes_form:
           attributes:
             programme_ids:
