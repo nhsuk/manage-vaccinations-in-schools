@@ -32,10 +32,6 @@ describe FHIRMapper::VaccinationRecord do
   describe "#fhir_record" do
     subject(:immunisation_fhir) { vaccination_record.fhir_record }
 
-    # it "produces the correct record" do
-    #   expect(immunisation_fhir.to_hash).to eq fhir_immunisation_json(patient:)
-    # end
-
     describe "id" do
       subject { immunisation_fhir.id }
 
@@ -292,6 +288,97 @@ describe FHIRMapper::VaccinationRecord do
         subject(:dose_number) { protocol_applied.doseNumberPositiveInt }
 
         it { should eq 1 }
+      end
+    end
+  end
+
+  describe "#from_fhir_record" do
+    subject(:record) do
+      VaccinationRecord.from_fhir_record(fhir_immunization, patient:, team:)
+    end
+
+    around { |example| travel_to(Date.new(2025, 5, 20)) { example.run } }
+
+    let(:programme) { create(:programme, :flu) }
+
+    shared_examples "a mapped vaccination record (common fields)" do
+      its(:persisted?) { should be false }
+
+      # TODO: add source to vaccination_record
+
+      its(:nhs_immunisations_api_id) do
+        should eq "11112222-3333-4444-5555-666677779999"
+      end
+
+      its(:source) { pending("implementation") || raise } # should eq "nhs_immunisations_api" }
+      its(:nhs_immunisations_api_synced_at) { should eq Time.current }
+      its(:performed_at) { should eq Time.parse("2025-04-06T23:59:50.2+01:00") }
+      its(:delivery_method) { should eq "intramuscular" }
+      its(:delivery_site) { should eq "left_arm_upper_position" }
+      its(:full_dose) { should be true }
+      its(:outcome) { should eq "administered" }
+      its(:location_name) { should eq "X99999" }
+      its(:performed_ods_code) { should eq "B0C4P" }
+
+      context "when the record is saved to the database" do
+        before { record.save! }
+
+        its(:persisted?) { should be true }
+        its(:uuid) { should be_present }
+      end
+    end
+
+    context "with a full fhir record" do
+      let(:fhir_immunization) do
+        FHIR.from_contents(
+          File.read(
+            Rails.root.join("spec/fixtures/fhir/from-fhir-record-full.json")
+          )
+        )
+      end
+
+      include_examples "a mapped vaccination record (common fields)"
+
+      its(:performed_by_given_name) { should eq "Steph" }
+      its(:performed_by_family_name) { should eq "Smith" }
+      its(:batch) { should have_attributes(name: "4120Z001") }
+
+      its(:vaccine) do
+        should have_attributes(snomed_product_code: "43207411000001105")
+      end
+    end
+
+    context "with a record that has an unknown vaccine" do
+      let(:fhir_immunization) do
+        FHIR.from_contents(
+          File.read(
+            Rails.root.join(
+              "spec/fixtures/fhir/from-fhir-record-unknown-vaccine.json"
+            )
+          )
+        )
+      end
+
+      include_examples "a mapped vaccination record (common fields)"
+
+      it do
+        expect(Sentry).to receive(:capture_exception).with(
+          an_instance_of(FHIRMapper::VaccinationRecord::UnknownVaccine)
+        )
+
+        record
+      end
+
+      its(:vaccine) { should be_nil }
+      its(:batch) { should be_nil }
+
+      its(:notes) do
+        should include(
+                 "SNOMED product code: 43207411000001106",
+                 "SNOMED description: Cell-based trivalent influenza vaccine",
+                 "Batch number: 4120Z001",
+                 "Batch expiry: 2026-07-02"
+               )
       end
     end
   end
