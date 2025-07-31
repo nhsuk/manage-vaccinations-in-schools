@@ -43,12 +43,8 @@ describe "Import class lists" do
       create(:organisation, :with_generic_clinic, :with_one_nurse, programmes:)
 
     location =
-      create(
-        :school,
-        :secondary,
-        name: "Waterloo Road",
-        organisation: @organisation
-      )
+      create(:school, name: "Waterloo Road", organisation: @organisation)
+
     @user = @organisation.users.first
 
     @session =
@@ -75,6 +71,16 @@ describe "Import class lists" do
   end
 
   def and_i_select_the_year_groups
+    expect(page).not_to have_content("Nursery")
+    expect(page).not_to have_content("Reception")
+    # Not testing for "Year 1" because it's included in "Year 10" and "Year 11".
+    expect(page).not_to have_content("Year 2")
+    expect(page).not_to have_content("Year 3")
+    expect(page).not_to have_content("Year 4")
+    expect(page).not_to have_content("Year 5")
+    expect(page).not_to have_content("Year 6")
+    expect(page).not_to have_content("Year 7")
+
     check "Year 8"
     check "Year 9"
     check "Year 10"

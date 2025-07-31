@@ -52,8 +52,14 @@ class DraftClassImportsController < ApplicationController
   end
 
   def set_year_group_options
+    year_groups =
+      @location
+        .programme_year_groups
+        .where(programme: current_organisation.programmes)
+        .pluck_year_groups
+
     @year_group_options =
-      @location.year_groups.map do |year_group|
+      year_groups.map do |year_group|
         OpenStruct.new(
           value: year_group,
           label: helpers.format_year_group(year_group)
