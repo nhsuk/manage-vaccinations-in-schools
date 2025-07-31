@@ -171,6 +171,10 @@ class VaccinationRecord < ApplicationRecord
 
   delegate :fhir_record, to: :fhir_mapper
 
+  class << self
+    delegate :from_fhir_record, to: FHIRMapper::VaccinationRecord
+  end
+
   def not_administered?
     !administered?
   end

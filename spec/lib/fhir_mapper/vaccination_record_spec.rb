@@ -31,10 +31,6 @@ describe FHIRMapper::VaccinationRecord do
   describe "#fhir_record" do
     subject(:immunisation_fhir) { vaccination_record.fhir_record }
 
-    # it "produces the correct record" do
-    #   expect(immunisation_fhir.to_hash).to eq fhir_immunisation_json(patient:)
-    # end
-
     describe "id" do
       subject { immunisation_fhir.id }
 
@@ -293,5 +289,40 @@ describe FHIRMapper::VaccinationRecord do
         it { should eq 1 }
       end
     end
+  end
+
+  describe "#from_fhir_record" do
+    let(:fhir_immunization) do
+      FHIR.from_contents(
+        # TODO: Can we get a flu example from the Imms people?
+        File.read(
+          Rails.root.join("spec/fixtures/fhir/immunisation-update.json")
+        )
+      )
+    end
+
+    subject(:record) { VaccinationRecord.from_fhir_record(fhir_immunization) }
+
+    its(:persisted?) { should be false }
+
+    its(:nhs_immunisations_api_id) do
+      should eq "ffff1111-eeee-2222-dddd-3333eeee4444"
+    end
+    # TODO: add source to vaccination_record
+    #       - is uuid optional depending on this? Or do we just slap one on?
+    its(:nhs_immunisations_synced_at) { pending("implementation") || fail }
+    its(:nhs_immunisations_etag) { pending("implementation") || fail }
+    its(:performed_at) { pending("implementation") || fail }
+    its(:performed_by_given_name) { pending("implementation") || fail }
+    its(:performed_by_family_name) { pending("implementation") || fail }
+    its(:delivery_method_at) { pending("implementation") || fail }
+    its(:delivery_site) { pending("implementation") || fail }
+    its(:full_dose) { pending("implementation") || fail }
+    its(:location_name) { pending("implementation") || fail }
+    its(:outcom) { pending("implementation") || fail }
+    its(:performed_ods_code) { pending("implementation") || fail }
+    its(:protocol) { pending("implementation") || fail }
+    its(:batch_id) { pending("implementation") || fail }
+    its(:vaccine_id) { pending("implementation") || fail }
   end
 end
