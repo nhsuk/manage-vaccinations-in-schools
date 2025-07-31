@@ -5,7 +5,7 @@
      success: success?,
    ) do |notification_banner| %>
   <% notification_banner.with_heading(
-       text: heading,
+       text: heading.html_safe,
        link_text: heading_link_text,
        link_href: heading_link_href,
      ) if heading.present? %>

@@ -7,7 +7,7 @@
   <span class="nhsuk-caption-l">
     <%= @vaccine.brand %>
   </span>
-  <%= page_title %>
+  Edit batch <span class="nhsuk-u-text-break-word"><%= @batch.name %></span>
 <% end %>
 
 <%= form_with model: @form, url: vaccine_batch_path(@vaccine, @batch), method: :put do |f| %>
