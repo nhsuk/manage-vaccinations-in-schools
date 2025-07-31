@@ -6,6 +6,7 @@ class DraftConsent
   include WizardStepConcern
 
   include ActiveRecord::AttributeMethods::Serialization
+  include GelatineVaccinesConcern
   include HasHealthAnswers
 
   attr_reader :new_or_existing_contact
@@ -411,6 +412,8 @@ class DraftConsent
       vaccine_methods
     ]
   end
+
+  def vaccines = programme.vaccines
 
   def notes_required?
     response_refused? &&

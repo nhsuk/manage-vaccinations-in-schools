@@ -13,6 +13,11 @@
                                      legend: { size: "l",
                                                tag: "h1",
                                                text: title }) do %>
+    <% if @draft_consent.vaccine_may_contain_gelatine? %>
+      <%= f.govuk_radio_button :reason, "contains_gelatine",
+                               label: { text: "Vaccine contains gelatine from pigs" },
+                               link_errors: true %>
+    <% end %>
     <%= f.govuk_radio_button :reason_for_refusal, "already_vaccinated",
                              label: { text: "Vaccine already received" }, link_errors: true %>
     <%= f.govuk_radio_button :reason_for_refusal, "will_be_vaccinated_elsewhere",

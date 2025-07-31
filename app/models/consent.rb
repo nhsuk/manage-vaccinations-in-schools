@@ -42,9 +42,10 @@
 
 class Consent < ApplicationRecord
   include BelongsToAcademicYear
-  include Invalidatable
+  include GelatineVaccinesConcern
   include HasHealthAnswers
   include HasVaccineMethods
+  include Invalidatable
 
   audited associated_with: :patient
 
@@ -58,6 +59,8 @@ class Consent < ApplicationRecord
              class_name: "User",
              optional: true,
              foreign_key: :recorded_by_user_id
+
+  has_many :vaccines, through: :programme
 
   scope :withdrawn, -> { where.not(withdrawn_at: nil) }
   scope :not_withdrawn, -> { where(withdrawn_at: nil) }
