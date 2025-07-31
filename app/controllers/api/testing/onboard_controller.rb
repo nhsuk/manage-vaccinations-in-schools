@@ -7,7 +7,7 @@ class API::Testing::OnboardController < API::Testing::BaseController
     if onboarding.invalid?
       render json: onboarding.errors, status: :unprocessable_entity
     else
-      onboarding.save!
+      onboarding.save!(create_sessions_for_previous_academic_year: true)
       render status: :created
     end
   end

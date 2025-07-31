@@ -35,6 +35,14 @@ describe "/api/testing/onboard" do
         request
         expect(Organisation.count).to eq(1)
       end
+
+      it "creates sessions for the current and previous academic years" do
+        request
+        expect(Session.count).to eq(10)
+        expect(Session.order(:academic_year).pluck(:academic_year).uniq).to eq(
+          [AcademicYear.pending - 1, AcademicYear.pending]
+        )
+      end
     end
 
     context "with an invalid configuration file" do
