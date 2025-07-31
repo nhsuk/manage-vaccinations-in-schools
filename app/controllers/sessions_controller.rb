@@ -53,9 +53,19 @@ class SessionsController < ApplicationController
   end
 
   def make_in_progress
-    @session.session_dates.find_or_create_by!(value: Date.current)
+    valid_date_range = @session.academic_year.to_academic_year_date_range
 
-    redirect_to session_path, flash: { success: "Session is now in progress" }
+    date = Date.current
+
+    if date.in?(valid_date_range)
+      @session.session_dates.find_or_create_by!(value: date)
+      redirect_to session_path, flash: { success: "Session is now in progress" }
+    else
+      redirect_to session_path,
+                  flash: {
+                    error: "Today is not a valid date for this session"
+                  }
+    end
   end
 
   private
