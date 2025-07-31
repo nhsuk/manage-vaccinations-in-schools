@@ -14,7 +14,7 @@ class AppProgrammeStatsComponent < ViewComponent::Base
   def vaccinations_count
     helpers
       .policy_scope(VaccinationRecord)
-      .for_academic_year(academic_year)
+      .administered
       .where(patient: patients, programme:)
       .count
   end

@@ -15,6 +15,8 @@
 
       <% table.with_body do |body| %>
         <% @programmes.each do |programme| %>
+          <% patients = current_organisation.patients.appear_in_programmes([programme], academic_year:) %>
+
           <% body.with_row do |row| %>
             <% row.with_cell do %>
               <span class="nhsuk-table-responsive__heading">Programme</span>
@@ -23,12 +25,12 @@
 
             <% row.with_cell do %>
               <span class="nhsuk-table-responsive__heading">Children</span>
-              <%= current_organisation.patients.appear_in_programmes([programme], academic_year:).count %>
+              <%= patients.count %>
             <% end %>
 
             <% row.with_cell do %>
               <span class="nhsuk-table-responsive__heading">Vaccinations</span>
-              <%= policy_scope(VaccinationRecord).where(programme:, performed_at: academic_year.to_academic_year_date_range).count %>
+              <%= policy_scope(VaccinationRecord).administered.where(patient: patients, programme:).count %>
             <% end %>
           <% end %>
         <% end %>
