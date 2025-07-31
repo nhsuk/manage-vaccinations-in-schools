@@ -13,8 +13,7 @@
     <%= tag.option "", value: "" %>
 
     <% @location_options.each do |location| %>
-      <% is_duplicate = @location_options.count { it.name == location.name } > 1 %>
-      <%= tag.option location_display_name(location, show_urn: is_duplicate),
+      <%= tag.option location_display_name(location, show_urn: true),
                      value: location.id,
                      selected: location.id == @draft_class_import.location_id,
                      data: { hint: format_address_single_line(location) } %>
