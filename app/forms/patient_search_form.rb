@@ -96,7 +96,7 @@ class PatientSearchForm < SearchForm
   def filter_programmes(scope)
     if programmes.present?
       if @session
-        scope.appear_in_programmes(programmes)
+        scope.joins(:patient, :session).appear_in_programmes(programmes)
       else
         scope.appear_in_programmes(programmes, academic_year:)
       end
