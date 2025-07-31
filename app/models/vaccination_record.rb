@@ -173,6 +173,10 @@ class VaccinationRecord < ApplicationRecord
 
   delegate :fhir_record, to: :fhir_mapper
 
+  class << self
+    delegate :from_fhir_record, to: FHIRMapper::VaccinationRecord
+  end
+
   def academic_year = performed_at.to_date.academic_year
 
   def not_administered?
