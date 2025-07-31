@@ -22,7 +22,7 @@ class SessionSearchForm < SearchForm
     scope = filter_type(scope)
     scope = filter_status(scope)
 
-    scope.sort
+    scope.order_by_earliest_date
   end
 
   private
