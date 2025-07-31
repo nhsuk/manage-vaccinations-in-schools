@@ -260,6 +260,6 @@ describe "Import child records" do
 
   def then_i_should_see_import_issues_with_the_count
     expect(page).to have_link("Import issues")
-    expect(page).to have_selector(".app-count", text: "( 1 )")
+    expect(page).to have_selector(".app-count", text: "(1)").twice
   end
 end

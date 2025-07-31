@@ -251,11 +251,11 @@ describe "Child record imports duplicates" do
 
   def then_i_should_see_import_issues_with_the_count
     expect(page).to have_link("Import issues")
-    expect(page).to have_selector(".app-count", text: "( 1 )")
+    expect(page).to have_selector(".app-count", text: "(1)")
   end
 
   def then_i_should_see_no_import_issues_with_the_count
     expect(page).to have_link("Import issues")
-    expect(page).to have_selector(".app-count", text: "( 0 )")
+    expect(page).to have_selector(".app-count", text: "(0)")
   end
 end

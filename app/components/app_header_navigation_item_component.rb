@@ -18,7 +18,7 @@ class AppHeaderNavigationItemComponent < ViewComponent::Base
         aria: {
           current: current? ? "true" : nil
         }
-      ) { safe_join([@title, count_tag], "") }
+      ) { safe_join([@title, count_tag].compact, " ") }
     end
   end
 
@@ -39,11 +39,6 @@ class AppHeaderNavigationItemComponent < ViewComponent::Base
   end
 
   def count_tag
-    return "" unless show_count?
-
-    tag.span(class: "app-count") do
-      tag.span(" (", class: "nhsuk-u-visually-hidden") + @count.to_s +
-        tag.span(")", class: "nhsuk-u-visually-hidden")
-    end
+    render AppCountComponent.new(@count) if show_count?
   end
 end

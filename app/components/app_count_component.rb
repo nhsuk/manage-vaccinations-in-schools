@@ -1,17 +1,21 @@
 # frozen_string_literal: true
 
 class AppCountComponent < ViewComponent::Base
-  erb_template <<-ERB
-    <span class="app-count">
-      <span class="nhsuk-u-visually-hidden">(</span>
-      <%= @count %>
-      <span class="nhsuk-u-visually-hidden">)</span>
-    </span>
-  ERB
-
-  def initialize(count:)
+  def initialize(count)
     super
 
     @count = count
+  end
+
+  def call
+    tag.span(class: "app-count") do
+      safe_join(
+        [
+          tag.span("(", class: "nhsuk-u-visually-hidden"),
+          @count.to_s,
+          tag.span(")", class: "nhsuk-u-visually-hidden")
+        ]
+      )
+    end
   end
 end
