@@ -47,6 +47,10 @@ module FHIRMapper
       immunisation
     end
 
+    def self.from_fhir_record(fhir_record)
+      ::VaccinationRecord.new(nhs_immunisations_api_id: fhir_record.id)
+    end
+
     private
 
     def fhir_identifier
