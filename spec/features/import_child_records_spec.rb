@@ -38,6 +38,9 @@ describe "Import child records" do
     when_i_click_on_the_cohort_for_hpv
     then_i_should_see_the_children_for_hpv
 
+    when_i_search_for_a_child
+    then_i_should_see_only_the_child
+
     when_i_visit_the_doubles_programme_page
     then_i_should_see_the_cohorts_for_doubles
 
@@ -149,6 +152,16 @@ describe "Import child records" do
     expect(page).to have_content("2 children")
     expect(page).to have_content("DOE, Mark")
     expect(page).to have_content("SMITH, Jimmy")
+  end
+
+  def when_i_search_for_a_child
+    fill_in "Search", with: "DOE, Mark"
+    click_on "Search"
+  end
+
+  def then_i_should_see_only_the_child
+    expect(page).to have_content("1 child")
+    expect(page).to have_content("DOE, Mark")
   end
 
   def then_i_should_see_the_cohorts_for_doubles
