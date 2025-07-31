@@ -42,7 +42,11 @@ describe PatientSession do
 
   describe "scopes" do
     describe "#appear_in_programmes" do
-      subject(:scope) { described_class.appear_in_programmes(programmes) }
+      subject(:scope) do
+        described_class.joins(:patient, :session).appear_in_programmes(
+          programmes
+        )
+      end
 
       let(:programmes) { create_list(:programme, 1, :td_ipv) }
       let(:session) { create(:session, programmes:) }

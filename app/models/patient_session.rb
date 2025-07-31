@@ -103,7 +103,7 @@ class PatientSession < ApplicationRecord
               )
 
           # Are any of the programmes administered in the session?
-          joins(:patient, :session).where(
+          where(
             SessionProgramme
               .where(programme: programmes)
               .where("session_programmes.session_id = sessions.id")
