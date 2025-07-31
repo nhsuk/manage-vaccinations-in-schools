@@ -212,6 +212,15 @@ class VaccinationRecord < ApplicationRecord
 
   private
 
+  def notify_parents?
+    patient
+      .consents
+      .where(programme:)
+      .not_invalidated
+      .not_withdrawn
+      .all? { |consent| consent.notify_parents.nil? || consent.notify_parents? }
+  end
+
   def requires_location_name?
     session.nil? || location&.generic_clinic?
   end

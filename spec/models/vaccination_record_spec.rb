@@ -449,4 +449,252 @@ describe VaccinationRecord do
       end
     end
   end
+
+  describe "#notify_parents?" do
+    subject(:notify_parents) { vaccination_record.send(:notify_parents?) }
+
+    let(:programme) { build(:programme) }
+    let(:patient) { create(:patient) }
+    let(:vaccination_record) do
+      build(:vaccination_record, patient:, programme:)
+    end
+
+    context "when patient has no consents" do
+      it { should be_truthy }
+    end
+
+    context "when patient has consents for different programmes" do
+      before do
+        other_programme_type = (Programme.types.keys - [programme.type]).sample
+        other_programme = create(:programme, type: other_programme_type)
+        create(
+          :consent,
+          patient:,
+          programme: other_programme,
+          notify_parents: false
+        )
+      end
+
+      it { should be_truthy }
+    end
+
+    context "when patient has one consent for the programme" do
+      context "with notify_parents true" do
+        before { create(:consent, patient:, programme:, notify_parents: true) }
+
+        it { should be_truthy }
+      end
+
+      context "with notify_parents false" do
+        before { create(:consent, patient:, programme:, notify_parents: false) }
+
+        it { should be_falsy }
+      end
+
+      context "with notify_parents nil" do
+        before { create(:consent, patient:, programme:, notify_parents: nil) }
+
+        it { should be_truthy }
+      end
+    end
+
+    context "when patient has multiple consents for the programme" do
+      context "when all consents have notify_parents true" do
+        before do
+          create(:consent, patient:, programme:, notify_parents: true)
+          create(:consent, patient:, programme:, notify_parents: true)
+        end
+
+        it { should be_truthy }
+      end
+
+      context "when some consents have notify_parents false" do
+        before do
+          create(:consent, patient:, programme:, notify_parents: true)
+          create(:consent, patient:, programme:, notify_parents: false)
+        end
+
+        it { should be_falsy }
+      end
+
+      context "when all consents have notify_parents false" do
+        before do
+          create(:consent, patient:, programme:, notify_parents: false)
+          create(:consent, patient:, programme:, notify_parents: false)
+        end
+
+        it { should be_falsy }
+      end
+
+      context "when some consents have notify_parents nil" do
+        before do
+          create(:consent, patient:, programme:, notify_parents: true)
+          create(:consent, patient:, programme:, notify_parents: nil)
+        end
+
+        it { should be_truthy }
+      end
+    end
+
+    context "when patient has invalidated consents" do
+      before do
+        create(
+          :consent,
+          patient:,
+          programme:,
+          notify_parents: false,
+          invalidated_at: 1.day.ago,
+          notes: "Invalidated consent"
+        )
+        create(:consent, patient:, programme:, notify_parents: true)
+      end
+
+      it "ignores invalidated consents" do
+        expect(notify_parents).to be_truthy
+      end
+    end
+
+    context "when patient has withdrawn consents" do
+      before do
+        create(
+          :consent,
+          patient:,
+          programme:,
+          notify_parents: false,
+          withdrawn_at: 1.day.ago,
+          notes: "Withdrawn consent",
+          reason_for_refusal: :personal_choice
+        )
+        create(:consent, patient:, programme:, notify_parents: true)
+      end
+
+      it "ignores withdrawn consents" do
+        expect(notify_parents).to be_truthy
+      end
+    end
+
+    context "when patient has both invalidated and withdrawn consents" do
+      before do
+        create(
+          :consent,
+          patient:,
+          programme:,
+          notify_parents: false,
+          invalidated_at: 1.day.ago,
+          notes: "Invalidated consent"
+        )
+        create(
+          :consent,
+          patient:,
+          programme:,
+          notify_parents: false,
+          withdrawn_at: 1.day.ago,
+          notes: "Withdrawn consent",
+          reason_for_refusal: :personal_choice
+        )
+        create(:consent, patient:, programme:, notify_parents: true)
+      end
+
+      it "ignores invalidated and withdrawn consents" do
+        expect(notify_parents).to be_truthy
+      end
+    end
+
+    context "when all valid consents are invalidated or withdrawn" do
+      before do
+        create(
+          :consent,
+          patient:,
+          programme:,
+          notify_parents: false,
+          invalidated_at: 1.day.ago,
+          notes: "Invalidated consent"
+        )
+        create(
+          :consent,
+          patient:,
+          programme:,
+          notify_parents: true,
+          withdrawn_at: 1.day.ago,
+          notes: "Withdrawn consent",
+          reason_for_refusal: :personal_choice
+        )
+      end
+
+      it "returns true when no valid consents remain" do
+        expect(notify_parents).to be_truthy
+      end
+    end
+
+    context "edge case: when patient has mix of valid and invalid consents" do
+      before do
+        # Valid consents
+        create(:consent, patient:, programme:, notify_parents: true)
+        create(:consent, patient:, programme:, notify_parents: true)
+
+        # Invalid consents (should be ignored)
+        create(
+          :consent,
+          patient:,
+          programme:,
+          notify_parents: false,
+          invalidated_at: 1.day.ago,
+          notes: "Invalidated consent"
+        )
+        create(
+          :consent,
+          patient:,
+          programme:,
+          notify_parents: false,
+          withdrawn_at: 1.day.ago,
+          notes: "Withdrawn consent",
+          reason_for_refusal: :personal_choice
+        )
+
+        # Consents for other programmes (should be ignored)
+        other_programme_type = (Programme.types.keys - [programme.type]).sample
+        other_programme = create(:programme, type: other_programme_type)
+        create(
+          :consent,
+          patient:,
+          programme: other_programme,
+          notify_parents: false
+        )
+      end
+
+      it "only considers valid consents for the specific programme" do
+        expect(notify_parents).to be_truthy
+      end
+    end
+
+    context "edge case: when patient has only one valid consent with notify_parents false among many invalid ones" do
+      before do
+        # One valid consent with notify_parents false
+        create(:consent, patient:, programme:, notify_parents: false)
+
+        # Many invalid consents with notify_parents true (should be ignored)
+        create(
+          :consent,
+          patient:,
+          programme:,
+          notify_parents: true,
+          invalidated_at: 1.day.ago,
+          notes: "Invalidated consent"
+        )
+        create(
+          :consent,
+          patient:,
+          programme:,
+          notify_parents: true,
+          withdrawn_at: 1.day.ago,
+          notes: "Withdrawn consent",
+          reason_for_refusal: :personal_choice
+        )
+      end
+
+      it "returns false based on the single valid consent" do
+        expect(notify_parents).to be_falsy
+      end
+    end
+  end
 end
