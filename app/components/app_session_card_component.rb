@@ -61,17 +61,19 @@ class AppSessionCardComponent < ViewComponent::Base
   end
 
   def dates_row
-    {
-      key: {
-        text: "Session dates"
-      },
-      value: {
-        text:
-          tag.ul(class: "nhsuk-list") do
-            safe_join(session.dates.map { tag.li(it.to_fs(:long_day_of_week)) })
-          end
-      }
-    }
+    dates = session.dates
+
+    text =
+      if dates.empty?
+        "No sessions scheduled"
+      elsif dates.length == 1
+        dates.min.to_fs(:long)
+      else
+        "#{dates.min.to_fs(:long)} – #{dates.max.to_fs(:long)} " \
+          "(#{dates.length} sessions)"
+      end
+
+    { key: { text: "Session dates" }, value: { text: } }
   end
 
   def consent_period_row
