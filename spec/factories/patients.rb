@@ -54,6 +54,7 @@ FactoryBot.define do
 
   factory :patient do
     transient do
+      academic_year { AcademicYear.pending }
       parents { [] }
       performed_by { association(:user) }
       programmes { session&.programmes || [] }
@@ -91,17 +92,18 @@ FactoryBot.define do
 
     date_of_birth do
       if year_group
-        academic_year_start = Date.new(AcademicYear.current, 9, 1)
-        start_date = academic_year_start - (5 + year_group).years
-        end_date = start_date + 1.year - 1.day
-        Faker::Date.between(from: end_date, to: start_date)
+        date_range =
+          year_group.to_birth_academic_year(
+            academic_year:
+          ).to_academic_year_date_range
+        Faker::Date.between(from: date_range.begin, to: date_range.end)
       else
         Faker::Date.birthday(min_age: 7, max_age: 16)
       end
     end
     birth_academic_year do
       if year_group
-        year_group.to_birth_academic_year
+        year_group.to_birth_academic_year(academic_year:)
       else
         date_of_birth.academic_year
       end

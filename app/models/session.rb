@@ -213,7 +213,9 @@ class Session < ApplicationRecord
       next_date(include_today: true) && !completed?
     else
       completed? &&
-        organisation.generic_clinic_session.next_date(include_today: true)
+        organisation.generic_clinic_session(academic_year:).next_date(
+          include_today: true
+        )
     end
   end
 

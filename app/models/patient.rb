@@ -144,8 +144,11 @@ class Patient < ApplicationRecord
         end
 
   scope :search_by_year_groups,
-        ->(year_groups) do
-          where(birth_academic_year: year_groups.map(&:to_birth_academic_year))
+        ->(year_groups, academic_year:) do
+          where(
+            birth_academic_year:
+              year_groups.map { it.to_birth_academic_year(academic_year:) }
+          )
         end
 
   scope :search_by_date_of_birth_year,

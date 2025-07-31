@@ -48,17 +48,20 @@ class ClassImport < PatientImport
     ClassImportRow.new(data:, organisation:, location:, year_groups:)
   end
 
+  def academic_year = AcademicYear.pending
+
   def postprocess_rows!
     # Remove patients already in the sessions but not in the class list.
 
-    birth_academic_year = year_groups.map(&:to_birth_academic_year)
+    birth_academic_years =
+      year_groups.map { it.to_birth_academic_year(academic_year:) }
 
     existing_patients =
-      Patient.where(birth_academic_year:).where(
+      Patient.where(birth_academic_year: birth_academic_years).where(
         PatientSession
           .joins(session: :location)
           .where("patient_id = patients.id")
-          .where(session: { location: })
+          .where(session: { academic_year:, location: })
           .arel
           .exists
       )

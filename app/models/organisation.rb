@@ -80,8 +80,7 @@ class Organisation < ApplicationRecord
     @year_groups ||= location_programme_year_groups.pluck_year_groups
   end
 
-  def generic_clinic_session
-    academic_year = AcademicYear.current
+  def generic_clinic_session(academic_year:)
     location = locations.generic_clinic.first
 
     sessions

@@ -402,7 +402,9 @@ describe CohortImport do
     end
 
     context "with a scheduled clinic session" do
-      let(:session) { organisation.generic_clinic_session }
+      let(:session) do
+        organisation.generic_clinic_session(academic_year: AcademicYear.current)
+      end
 
       it "adds all the patients to the session" do
         expect { process! }.to change(session.patients, :count).from(0).to(3)
