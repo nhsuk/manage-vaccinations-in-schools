@@ -165,6 +165,8 @@ describe CohortImport do
   describe "#process!" do
     subject(:process!) { cohort_import.process! }
 
+    around { |example| travel_to(Date.new(2025, 7, 31)) { example.run } }
+
     let(:file) { "valid.csv" }
 
     it "creates patients and parents" do

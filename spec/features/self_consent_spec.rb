@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 describe "Self-consent" do
+  around { |example| travel_to(Date.new(2025, 7, 31)) { example.run } }
+
   scenario "after Gillick assessment" do
     given_an_hpv_programme_is_underway
     and_there_is_a_child_without_parental_consent
@@ -131,6 +133,8 @@ describe "Self-consent" do
             with: "They didn't understand the benefits and risks of the vaccine"
 
     click_on "Complete your assessment"
+
+    travel 1.minute
   end
 
   def then_the_details_of_the_gillick_non_competence_assessment_are_visible
@@ -195,6 +199,8 @@ describe "Self-consent" do
             with: "They understand the benefits and risks of the vaccine"
 
     click_on "Update your assessment"
+
+    travel 1.minute
   end
 
   def then_the_details_of_the_gillick_competence_assessment_are_visible

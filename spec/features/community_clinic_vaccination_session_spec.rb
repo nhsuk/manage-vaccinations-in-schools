@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 describe "Community clinic vaccination session" do
+  around { |example| travel_to(Date.new(2025, 7, 31)) { example.run } }
+
   scenario "patient attended but refused" do
     given_i_am_signed_in_as_a_nurse
     and_a_patient_is_ready_for_vaccination_in_a_community_clinic

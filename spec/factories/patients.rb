@@ -54,7 +54,7 @@ FactoryBot.define do
 
   factory :patient do
     transient do
-      academic_year { AcademicYear.pending }
+      academic_year { AcademicYear.current }
       parents { [] }
       performed_by { association(:user) }
       programmes { session&.programmes || [] }
@@ -110,7 +110,7 @@ FactoryBot.define do
     end
 
     registration { Faker::Alphanumeric.alpha(number: 2).upcase }
-    registration_academic_year { AcademicYear.pending if registration.present? }
+    registration_academic_year { academic_year if registration.present? }
 
     school { session.location if session&.location&.school? }
     home_educated { school.present? ? nil : false }

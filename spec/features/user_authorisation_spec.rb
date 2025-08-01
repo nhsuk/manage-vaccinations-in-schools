@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 describe "User authorisation" do
+  around { |example| travel_to(Date.new(2025, 7, 31)) { example.run } }
+
   scenario "Users are unable to access other organisations' pages" do
     given_an_hpv_programme_is_underway_with_two_organisations
     when_i_sign_in_as_a_nurse_from_one_organisation
