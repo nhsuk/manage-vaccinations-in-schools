@@ -241,7 +241,12 @@ describe "HPV vaccination" do
       )
 
     row_for_vaccinated_patient = csv_table[0]
-    # row_for_vaccinated_patient["TIME_OF_VACCINATION"] = "10:00:00"
+
+    # Change details for the patient
+    row_for_vaccinated_patient["NHS_NUMBER"] = ""
+    row_for_vaccinated_patient["PERSON_FORENAME"] = "New name"
+
+    # Change details for the vaccination record
     row_for_vaccinated_patient["DOSE_SEQUENCE"] = "2"
     row_for_vaccinated_patient["ANATOMICAL_SITE"] = "Right Upper Arm"
 

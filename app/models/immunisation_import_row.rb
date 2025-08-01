@@ -100,7 +100,7 @@ class ImmunisationImportRow
       full_dose: true,
       location_name:,
       outcome:,
-      patient:,
+      patient_id: patient.id,
       performed_at:,
       performed_by_user:,
       performed_ods_code: performed_ods_code&.to_s,
