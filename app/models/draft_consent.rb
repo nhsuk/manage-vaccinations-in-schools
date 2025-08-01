@@ -407,6 +407,7 @@ class DraftConsent
     %w[
       health_answers
       notes
+      notify_parent_on_refusal
       notify_parents_on_vaccination
       patient_id
       programme_id

@@ -8,6 +8,7 @@
 #  health_answers                :jsonb            not null
 #  invalidated_at                :datetime
 #  notes                         :text             default(""), not null
+#  notify_parent_on_refusal      :boolean
 #  notify_parents_on_vaccination :boolean
 #  reason_for_refusal            :integer
 #  response                      :integer          not null
