@@ -652,7 +652,7 @@ en:
     location: location
     name: name
     notes: notes
-    notify_parents: notify-parents
+    notify_parents_on_vaccination: notify-parents-on-vaccination
     outcome: outcome
     parent: parent
     parent_details: parent-details

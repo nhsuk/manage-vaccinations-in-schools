@@ -14,7 +14,7 @@ class DraftConsent
 
   attribute :health_answers, array: true, default: []
   attribute :notes, :string
-  attribute :notify_parents, :boolean
+  attribute :notify_parents_on_vaccination, :boolean
   attribute :parent_email, :string
   attribute :parent_full_name, :string
   attribute :parent_id, :integer
@@ -47,7 +47,7 @@ class DraftConsent
       (:parent_details unless via_self_consent?),
       (:route unless via_self_consent?),
       :agree,
-      (:notify_parents if response_given? && via_self_consent?),
+      (:notify_parents_on_vaccination if response_given? && via_self_consent?),
       (:questions if response_given?),
       (:triage if triage_allowed? && response_given?),
       (:reason if response_refused?),
@@ -121,8 +121,8 @@ class DraftConsent
               if: -> { response == "given_nasal" }
   end
 
-  on_wizard_step :notify_parents, exact: true do
-    validates :notify_parents, inclusion: { in: [true, false] }
+  on_wizard_step :notify_parents_on_vaccination, exact: true do
+    validates :notify_parents_on_vaccination, inclusion: { in: [true, false] }
   end
 
   on_wizard_step :reason, exact: true do
@@ -401,7 +401,7 @@ class DraftConsent
     %w[
       health_answers
       notes
-      notify_parents
+      notify_parents_on_vaccination
       patient_id
       programme_id
       reason_for_refusal

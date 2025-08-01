@@ -85,7 +85,7 @@ describe VaccinationMailerConcern do
             :consent,
             :given,
             :self_consent,
-            :notify_parents,
+            :notify_parents_on_vaccination,
             patient:,
             programme:
           )

@@ -118,7 +118,7 @@ class DraftConsentsController < ApplicationController
     permitted_attributes = {
       agree: %i[response injection_alternative],
       notes: %i[notes],
-      notify_parents: %i[notify_parents],
+      notify_parents_on_vaccination: %i[notify_parents_on_vaccination],
       parent_details: %i[
         parent_email
         parent_full_name

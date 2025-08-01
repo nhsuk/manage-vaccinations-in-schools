@@ -263,7 +263,7 @@ class Reports::ProgrammeVaccinationsExporter
     return "" if gillick_assessment.nil?
 
     if (consent = consents[patient.id]&.find(&:via_self_consent?))
-      consent.notify_parents ? "Y" : "N"
+      consent.notify_parents_on_vaccination ? "Y" : "N"
     else
       ""
     end
