@@ -15,6 +15,10 @@ module ParentInterface
 
     private
 
+    def set_show_navigation
+      @show_navigation = false
+    end
+
     def set_consent_form
       @consent_form =
         ConsentForm.includes(:programmes, :vaccines).find(
