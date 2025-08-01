@@ -17,7 +17,7 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
     @patient = patient
     @link_to = link_to
     @programme = programme
-    @academic_year = academic_year
+    @academic_year = academic_year || AcademicYear.current
     @triage_status = triage_status
 
     @show_parents = show_parents
@@ -87,7 +87,7 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
 
   private
 
-  def academic_year = AcademicYear.current
+  attr_reader :academic_year
 
   def programme_outcome_tag
     render_status_tag(:vaccination, :programme)
