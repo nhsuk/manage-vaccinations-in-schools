@@ -18,6 +18,7 @@ class Programmes::PatientsController < Programmes::BaseController
         :vaccination_statuses
       )
 
+    @form.academic_year = @academic_year
     @form.programme_types = [@programme.type]
 
     patients = @form.apply(scope)

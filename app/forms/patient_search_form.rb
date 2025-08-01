@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class PatientSearchForm < SearchForm
+  attr_writer :academic_year
+
   attribute :consent_statuses, array: true
   attribute :date_of_birth_day, :integer
   attribute :date_of_birth_month, :integer
@@ -59,7 +61,8 @@ class PatientSearchForm < SearchForm
 
   private
 
-  def academic_year = @session&.academic_year || AcademicYear.current
+  def academic_year =
+    @session&.academic_year || @academic_year || AcademicYear.current
 
   def filter_name(scope)
     q.present? ? scope.search_by_name(q) : scope
