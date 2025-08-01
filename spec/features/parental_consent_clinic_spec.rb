@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
-describe "Parental consent school" do
+describe "Parental consent" do
+  around { |example| travel_to(Date.new(2025, 7, 31)) { example.run } }
+
   scenario "Child attending a clinic goes to a school" do
     stub_pds_search_to_return_no_patients
 

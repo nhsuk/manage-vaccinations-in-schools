@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 describe "Delete vaccination record" do
+  around { |example| travel_to(Date.new(2025, 7, 31)) { example.run } }
+
   scenario "User doesn't delete the record" do
     given_an_hpv_programme_is_underway
     and_an_administered_vaccination_record_exists
@@ -161,7 +163,10 @@ describe "Delete vaccination record" do
 
     if Flipper.enabled?(:immunisations_fhir_api_integration)
       perform_enqueued_jobs(only: SyncVaccinationRecordToNHSJob)
+      expect(@stubbed_post_request).to have_been_requested
     end
+
+    travel 1.hour
   end
 
   def and_a_confirmation_email_has_been_sent

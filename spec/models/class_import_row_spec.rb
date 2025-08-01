@@ -197,7 +197,9 @@ describe ClassImportRow do
   end
 
   describe "#to_patient" do
-    subject(:patient) { travel_to(today) { class_import_row.to_patient } }
+    subject(:patient) { class_import_row.to_patient }
+
+    around { |example| travel_to(today) { example.run } }
 
     let(:data) { valid_data }
 

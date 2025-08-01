@@ -4,6 +4,8 @@ describe API::Testing::OrganisationsController do
   before { Flipper.enable(:testing_api) }
   after { Flipper.disable(:testing_api) }
 
+  around { |example| travel_to(Date.new(2025, 7, 31)) { example.run } }
+
   describe "DELETE" do
     let(:programmes) { [create(:programme, :hpv_all_vaccines)] }
 
