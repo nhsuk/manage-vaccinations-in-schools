@@ -5,7 +5,7 @@
 <% title = "Which year groups do you want to import class list records for?" %>
 <% content_for :page_title, title %>
 
-<%= form_with model: @draft_class_import, url: wizard_path, method: :put do |f| %>
+<%= form_with model: @draft_import, url: wizard_path, method: :put do |f| %>
   <%= f.govuk_error_summary %>
 
   <%= f.govuk_collection_check_boxes :year_groups, @year_group_options, :value, :label,

@@ -52,6 +52,15 @@ class SessionsController < ApplicationController
   def edit
   end
 
+  def import
+    draft_import = DraftImport.new(request_session: session, current_user:)
+
+    draft_import.reset!
+    draft_import.update!(type: "class", location: @session.location)
+
+    redirect_to draft_import_path("year-groups")
+  end
+
   def make_in_progress
     valid_date_range = @session.academic_year.to_academic_year_date_range
 

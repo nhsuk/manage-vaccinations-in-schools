@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
-class DraftClassImport
+class DraftImport
   include RequestSessionPersistable
   include WizardStepConcern
 
+  attribute :type, :string
   attribute :location_id, :integer
   attribute :year_groups, array: true, default: []
 
@@ -13,7 +14,15 @@ class DraftClassImport
   end
 
   def wizard_steps
-    %i[location year_groups]
+    is_class_import? ? %i[type location year_groups] : %i[type]
+  end
+
+  def year_groups=(value)
+    super(value&.compact_blank || [])
+  end
+
+  on_wizard_step :type, exact: true do
+    validates :type, inclusion: %w[class cohort immunisation]
   end
 
   on_wizard_step :location, exact: true do
@@ -34,10 +43,18 @@ class DraftClassImport
     self.location_id = value.id
   end
 
+  def is_class_import? = type == "class"
+
+  def is_cohort_import? = type == "cohort"
+
   private
 
-  def request_session_key = "class_import"
+  def request_session_key = "import"
 
   def reset_unused_fields
+    unless is_class_import?
+      self.location_id = nil
+      self.year_groups = []
+    end
   end
 end

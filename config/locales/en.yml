@@ -17,12 +17,6 @@ en:
               invalid: Enter a batch with only letters and numbers
               too_short: Enter a batch that is more than %{count} characters long
               too_long: Enter a batch that is less than %{count} characters long
-        draft_class_import:
-          attributes:
-            session_id:
-              blank: Choose which school this class list for
-            year_groups:
-              blank: Choose which year groups you want to import class list records for
         draft_consent:
           attributes:
             new_or_existing_contact:
@@ -57,6 +51,14 @@ en:
               inclusion: Choose how the response was given
             injection_alternative:
               inclusion: Select yes or no
+        draft_import:
+          attributes:
+            location_id:
+              blank: Choose which school this class list for
+            type:
+              inclusion: Choose which type of records you are importing
+            year_groups:
+              blank: Choose which year groups you want to import class list records for
         draft_vaccination_record:
           attributes:
             batch_id:
@@ -667,6 +669,7 @@ en:
     session: session
     timeline: timeline
     triage: triage
+    type: type
     vaccine: vaccine
     when: when
     who: who

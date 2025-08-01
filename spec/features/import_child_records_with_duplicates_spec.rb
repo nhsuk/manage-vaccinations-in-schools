@@ -130,7 +130,7 @@ describe "Child record imports duplicates" do
   end
 
   def and_i_start_adding_children_to_the_cohort
-    click_link "Import records"
+    click_button "Import records"
     choose "Child records"
     click_button "Continue"
   end
