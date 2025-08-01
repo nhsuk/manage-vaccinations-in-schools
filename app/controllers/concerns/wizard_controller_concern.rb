@@ -15,4 +15,9 @@ module WizardControllerConcern
   def current_step
     @current_step ||= wizard_value(step)&.to_sym
   end
+
+  def reload_steps
+    set_steps
+    setup_wizard_translated
+  end
 end

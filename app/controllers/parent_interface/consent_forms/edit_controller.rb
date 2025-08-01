@@ -65,8 +65,7 @@ module ParentInterface
         @consent_form.seed_health_questions
       end
 
-      set_steps # The wizard_steps can change after certain attrs change
-      setup_wizard_translated # Next/previous steps can change after steps change
+      reload_steps
 
       skip_to_confirm_or_next_health_question
 

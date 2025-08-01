@@ -49,8 +49,7 @@ class DraftVaccinationRecordsController < ApplicationController
       jump_to("confirm")
     end
 
-    set_steps
-    setup_wizard_translated
+    reload_steps
 
     render_wizard @draft_vaccination_record
   end

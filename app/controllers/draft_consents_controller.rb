@@ -46,8 +46,7 @@ class DraftConsentsController < ApplicationController
 
     jump_to("confirm") if @draft_consent.editing? && current_step != :confirm
 
-    set_steps
-    setup_wizard_translated
+    reload_steps
 
     render_wizard @draft_consent
   end
