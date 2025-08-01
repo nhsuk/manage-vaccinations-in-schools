@@ -5,6 +5,7 @@
 # Table name: class_imports
 #
 #  id                           :bigint           not null, primary key
+#  academic_year                :integer          not null
 #  changed_record_count         :integer
 #  csv_data                     :text
 #  csv_filename                 :text
@@ -38,6 +39,7 @@ FactoryBot.define do
   factory :class_import do
     transient { session { association(:session) } }
 
+    academic_year { session.academic_year }
     location { session.location }
     team { session.team }
     uploaded_by

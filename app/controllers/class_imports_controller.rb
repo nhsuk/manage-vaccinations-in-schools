@@ -15,6 +15,7 @@ class ClassImportsController < ApplicationController
   def create
     @class_import =
       ClassImport.new(
+        academic_year: AcademicYear.pending,
         location: @location,
         team: current_team,
         uploaded_by: current_user,

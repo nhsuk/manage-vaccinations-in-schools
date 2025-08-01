@@ -14,6 +14,7 @@ class CohortImportsController < ApplicationController
   def create
     @cohort_import =
       CohortImport.new(
+        academic_year: AcademicYear.pending,
         team: current_team,
         uploaded_by: current_user,
         **cohort_import_params

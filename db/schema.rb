@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_01_142457) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_01_143843) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -92,6 +92,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_01_142457) do
     t.integer "rows_count"
     t.integer "year_groups", default: [], null: false, array: true
     t.bigint "location_id", null: false
+    t.integer "academic_year", null: false
     t.index ["location_id"], name: "index_class_imports_on_location_id"
     t.index ["team_id"], name: "index_class_imports_on_team_id"
     t.index ["uploaded_by_user_id"], name: "index_class_imports_on_uploaded_by_user_id"
@@ -130,6 +131,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_01_142457) do
     t.integer "status", default: 0, null: false
     t.jsonb "serialized_errors"
     t.integer "rows_count"
+    t.integer "academic_year", null: false
     t.index ["team_id"], name: "index_cohort_imports_on_team_id"
     t.index ["uploaded_by_user_id"], name: "index_cohort_imports_on_uploaded_by_user_id"
   end
@@ -676,6 +678,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_01_142457) do
     t.boolean "home_educated"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "academic_year", null: false
     t.index ["patient_id", "home_educated", "team_id"], name: "index_school_moves_on_patient_id_and_home_educated_and_team_id", unique: true
     t.index ["patient_id", "school_id"], name: "index_school_moves_on_patient_id_and_school_id", unique: true
     t.index ["school_id"], name: "index_school_moves_on_school_id"

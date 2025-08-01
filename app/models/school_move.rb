@@ -5,6 +5,7 @@
 # Table name: school_moves
 #
 #  id            :bigint           not null, primary key
+#  academic_year :integer          not null
 #  home_educated :boolean
 #  source        :integer          not null
 #  created_at    :datetime         not null
@@ -63,8 +64,6 @@ class SchoolMove < ApplicationRecord
 
   private
 
-  def academic_year = AcademicYear.pending
-
   def update_patient!
     patient.update!(home_educated:, school:)
   end
@@ -73,7 +72,7 @@ class SchoolMove < ApplicationRecord
     patient
       .patient_sessions
       .joins(:session)
-      .where(sessions: { academic_year: })
+      .where("academic_year >= ?", academic_year)
       .destroy_all_if_safe
 
     sessions_to_add.find_each do |session|
@@ -87,7 +86,10 @@ class SchoolMove < ApplicationRecord
     @sessions_to_add ||=
       begin
         scope =
-          Session.includes(:location, :session_dates).where(academic_year:)
+          Session.includes(:location, :session_dates).where(
+            "academic_year >= ?",
+            academic_year
+          )
 
         if school
           scope.where(team: school.team, location: school).or(

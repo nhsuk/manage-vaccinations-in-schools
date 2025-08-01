@@ -5,6 +5,7 @@
 # Table name: class_imports
 #
 #  id                           :bigint           not null, primary key
+#  academic_year                :integer          not null
 #  changed_record_count         :integer
 #  csv_data                     :text
 #  csv_filename                 :text
@@ -45,10 +46,8 @@ class ClassImport < PatientImport
   private
 
   def parse_row(data)
-    ClassImportRow.new(data:, team:, location:, year_groups:)
+    ClassImportRow.new(data:, team:, academic_year:, location:, year_groups:)
   end
-
-  def academic_year = AcademicYear.pending
 
   def postprocess_rows!
     # Remove patients already in the sessions but not in the class list.
@@ -71,9 +70,10 @@ class ClassImport < PatientImport
     school_moves =
       unknown_patients.map do |patient|
         SchoolMove.new(
-          patient:,
-          source: :class_list_import,
+          academic_year:,
           home_educated: false,
+          patient:,
+          source: "class_list_import",
           team:
         )
       end

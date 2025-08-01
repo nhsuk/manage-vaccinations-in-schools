@@ -5,6 +5,7 @@
 # Table name: cohort_imports
 #
 #  id                           :bigint           not null, primary key
+#  academic_year                :integer          not null
 #  changed_record_count         :integer
 #  csv_data                     :text
 #  csv_filename                 :text
@@ -39,7 +40,7 @@ class CohortImport < PatientImport
   private
 
   def parse_row(data)
-    CohortImportRow.new(data:, team:)
+    CohortImportRow.new(data:, team:, academic_year:)
   end
 
   def postprocess_rows!

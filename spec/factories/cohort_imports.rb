@@ -5,6 +5,7 @@
 # Table name: cohort_imports
 #
 #  id                           :bigint           not null, primary key
+#  academic_year                :integer          not null
 #  changed_record_count         :integer
 #  csv_data                     :text
 #  csv_filename                 :text
@@ -35,6 +36,7 @@ FactoryBot.define do
     team
     uploaded_by
 
+    academic_year { AcademicYear.pending }
     csv_data { "my,csv\n" }
     csv_filename { Faker::File.file_name(ext: "csv") }
     rows_count { rand(100..1000) }

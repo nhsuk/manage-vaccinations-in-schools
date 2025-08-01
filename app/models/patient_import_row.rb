@@ -19,9 +19,10 @@ class PatientImportRow
            :validate_parent_2_relationship,
            :validate_year_group
 
-  def initialize(data:, team:, year_groups:)
+  def initialize(data:, team:, academic_year:, year_groups:)
     @data = data
     @team = team
+    @academic_year = academic_year
     @year_groups = year_groups
   end
 
@@ -47,7 +48,10 @@ class PatientImportRow
           SchoolMove.find_or_initialize_by(patient:, home_educated:, team:)
         end
 
-      school_move.tap { it.source = school_move_source }
+      school_move.tap do
+        it.academic_year = academic_year
+        it.source = school_move_source
+      end
     end
   end
 
@@ -160,11 +164,9 @@ class PatientImportRow
     nhs_number&.to_s&.gsub(/\s/, "")
   end
 
-  attr_reader :team, :year_groups
+  attr_reader :team, :academic_year, :year_groups
 
   private
-
-  def academic_year = AcademicYear.pending
 
   def import_attributes
     @import_attributes ||= {

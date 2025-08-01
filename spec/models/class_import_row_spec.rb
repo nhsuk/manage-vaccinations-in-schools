@@ -5,6 +5,7 @@ describe ClassImportRow do
     described_class.new(
       data: data_as_csv_row,
       team: session.team,
+      academic_year:,
       location: session.location,
       year_groups: session.year_groups
     )
@@ -23,6 +24,7 @@ describe ClassImportRow do
 
   let(:programmes) { [create(:programme)] }
   let(:team) { create(:team, programmes:) }
+  let(:academic_year) { AcademicYear.pending }
   let(:school) { create(:school, team:) }
   let(:session) { create(:session, team:, programmes:, location: school) }
 
