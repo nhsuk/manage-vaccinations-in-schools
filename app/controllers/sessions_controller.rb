@@ -58,9 +58,13 @@ class SessionsController < ApplicationController
     draft_import = DraftImport.new(request_session: session, current_user:)
 
     draft_import.reset!
-    draft_import.update!(type: "class", location: @session.location)
+    draft_import.update!(location: @session.location, type: "class")
 
-    redirect_to draft_import_path("year-groups")
+    steps = draft_import.wizard_steps
+    steps.delete(:type)
+    steps.delete(:location)
+
+    redirect_to draft_import_path(I18n.t(steps.first, scope: :wicked))
   end
 
   def make_in_progress

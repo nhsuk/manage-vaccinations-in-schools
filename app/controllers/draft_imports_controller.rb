@@ -72,16 +72,16 @@ class DraftImportsController < ApplicationController
   end
 
   def update_params
-    step_params =
-      case current_step
-      when :type
-        { type: params.dig(:draft_import, :type) }
-      when :location
-        { location_id: params.dig(:draft_import, :location_id) }
-      when :year_groups
-        { year_groups: params.dig(:draft_import, :year_groups) }
+    step_param =
+      if current_step == :location
+        :location_id
+      else
+        current_step
       end
 
-    step_params.merge(wizard_step: current_step)
+    {
+      step_param => params.dig(:draft_import, step_param),
+      :wizard_step => current_step
+    }
   end
 end

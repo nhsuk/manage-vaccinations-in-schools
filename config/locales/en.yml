@@ -57,6 +57,8 @@ en:
               inclusion: Select yes or no
         draft_import:
           attributes:
+            academic_year:
+              inclusion: Choose which academic year
             location_id:
               blank: Choose which school this class list for
             type:
@@ -637,6 +639,7 @@ en:
     one: 1 vaccination given
     other: "%{count} vaccinations given"
   wicked:
+    academic_year: academic-year
     address: address
     agree: agree
     batch: batch
