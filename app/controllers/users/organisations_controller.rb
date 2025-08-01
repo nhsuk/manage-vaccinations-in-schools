@@ -23,7 +23,7 @@ class Users::OrganisationsController < ApplicationController
         },
         "selected_role" => {
           "code" => valid_cis2_roles.first,
-          "workgroups" => ["schoolagedimmunisations"]
+          "workgroups" => [User::CIS2_WORKGROUP]
         }
       }
 
