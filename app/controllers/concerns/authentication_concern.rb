@@ -3,8 +3,6 @@
 module AuthenticationConcern
   extend ActiveSupport::Concern
 
-  CIS2_WORKGROUP = "schoolagedimmunisations"
-
   included do
     private
 
@@ -41,12 +39,10 @@ module AuthenticationConcern
 
     def selected_cis2_workgroup_is_valid?
       workgroups = session.dig("cis2_info", "selected_role", "workgroups")
-      workgroups.present? && CIS2_WORKGROUP.in?(workgroups)
+      workgroups.present? && User::CIS2_WORKGROUP.in?(workgroups)
     end
 
-    def valid_cis2_roles
-      %w[S8000:G8000:R8001 S8000:G8001:R8006]
-    end
+    def valid_cis2_roles = [User::CIS2_NURSE_ROLE, User::CIS2_ADMIN_ROLE]
 
     def selected_cis2_role_is_valid?
       session["cis2_info"]["selected_role"]["code"].in? valid_cis2_roles

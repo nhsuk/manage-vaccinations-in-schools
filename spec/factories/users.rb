@@ -40,7 +40,7 @@ FactoryBot.define do
     transient do
       organisation { Organisation.first || create(:organisation) }
 
-      selected_role_code { "S8000:G8000:R8001" }
+      selected_role_code { User::CIS2_NURSE_ROLE }
       selected_role_name { "Nurse Access Role" }
       selected_role_workgroups { %w[schoolagedimmunisations] }
 
