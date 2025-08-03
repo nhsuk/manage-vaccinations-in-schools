@@ -458,6 +458,14 @@ class Patient < ApplicationRecord
     end
   end
 
+  def clear_pending_sessions!(team: nil)
+    sessions = pending_sessions
+
+    sessions = sessions.where(team_id: team.id) unless team.nil?
+
+    patient_sessions.where(session: sessions).destroy_all_if_safe
+  end
+
   def self.from_consent_form(consent_form)
     new(
       address_line_1: consent_form.address_line_1,
@@ -506,10 +514,6 @@ class Patient < ApplicationRecord
     parents_to_check.each do |parent|
       parent.destroy! if parent.parent_relationships.count.zero?
     end
-  end
-
-  def clear_pending_sessions!
-    patient_sessions.where(session: pending_sessions).destroy_all_if_safe
   end
 
   def archive_due_to_deceased!

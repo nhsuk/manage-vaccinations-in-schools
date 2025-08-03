@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
-class Patients::EditController < ApplicationController
-  before_action :set_patient
+class Patients::EditController < Patients::BaseController
   before_action :set_patient_merge_form, except: :edit_nhs_number
   before_action :set_existing_patient, except: :edit_nhs_number
 
@@ -36,13 +35,6 @@ class Patients::EditController < ApplicationController
   end
 
   private
-
-  def set_patient
-    @patient =
-      policy_scope(Patient).includes(parent_relationships: :parent).find(
-        params[:id]
-      )
-  end
 
   def set_patient_merge_form
     @form = PatientMergeForm.new(current_user:, patient: @patient, nhs_number:)

@@ -1,0 +1,36 @@
+<% content_for :before_main do %>
+  <%= render AppBacklinkComponent.new(patient_path(@patient), name: "patient") %>
+<% end %>
+
+<% legend = "Why do you want to archive this record?" %>
+<% content_for :page_title, legend %>
+
+<%= form_with model: @form, url: patient_archive_path(@patient) do |f| %>
+  <%= f.govuk_error_summary %>
+
+  <%= f.govuk_radio_buttons_fieldset :type,
+                                     legend: { text: legend, size: "l", tag: "h1" },
+                                     caption: { text: @patient.full_name } do %>
+    <%= f.govuk_radio_button :type,
+                             :duplicate,
+                             label: { text: "It’s a duplicate" }, link_errors: true do %>
+
+      <%= f.govuk_text_field :nhs_number,
+                             label: { text: "Enter the NHS number for the duplicate record" },
+                             hint: { text: "This will merge the duplicate records into a single record" } %>
+    <% end %>
+
+    <%= f.govuk_radio_button :type, :imported_in_error, label: { text: "It was imported in error" } %>
+
+    <%= f.govuk_radio_button :type, :moved_out_of_area, label: { text: "The child has moved out of the area" } %>
+
+    <%= f.govuk_radio_button :type, :other, label: { text: "Other" } do %>
+      <%= f.govuk_text_field :other_details, label: { text: "Give details" } %>
+    <% end %>
+  <% end %>
+
+  <div class="app-button-group">
+    <%= f.govuk_submit "Archive record", warning: true %>
+    <%= link_to "Return to child record", patient_path(@patient) %>
+  </div>
+<% end %>

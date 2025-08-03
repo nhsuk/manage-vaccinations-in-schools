@@ -141,6 +141,11 @@ Rails.application.routes.draw do
   resources :patients, only: %i[index show edit] do
     post "", action: :index, on: :collection
 
+    resource :archive,
+             path: "archive",
+             only: %i[new create],
+             controller: "patients/archive"
+
     resources :parent_relationships,
               path: "parents",
               only: %i[edit update destroy] do

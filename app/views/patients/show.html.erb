@@ -15,7 +15,12 @@
     end %>
 
 <%= render AppPatientCardComponent.new(@patient, team: current_team) do %>
-  <%= govuk_button_link_to "Edit child record", edit_patient_path(@patient), secondary: true %>
+  <% if @patient.not_archived?(team: current_user.selected_team) %>
+    <div class="app-button-group">
+      <%= govuk_button_link_to "Edit child record", edit_patient_path(@patient), secondary: true %>
+      <%= govuk_button_link_to "Archive child record", new_patient_archive_path(@patient), class: "app-button--secondary-warning" %>
+    <% end %>
+  </div>
 <% end %>
 
 <%= render AppCardComponent.new(section: true) do |card| %>

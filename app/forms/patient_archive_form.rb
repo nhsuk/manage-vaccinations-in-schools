@@ -27,10 +27,16 @@ class PatientArchiveForm
 
     if duplicate?
       super
-    elsif other?
-      archive_reason.update!(type:, other_details:)
     else
-      archive_reason.update!(type:, other_details: "")
+      ActiveRecord::Base.transaction do
+        if other?
+          archive_reason.update!(type:, other_details:)
+        else
+          archive_reason.update!(type:, other_details: "")
+        end
+
+        patient.clear_pending_sessions!(team:)
+      end
     end
   end
 
@@ -38,5 +44,5 @@ class PatientArchiveForm
 
   def other? = type == "other"
 
-  delegate :organisation, :patient, to: :archive_reason
+  delegate :team, :patient, to: :archive_reason
 end
