@@ -143,13 +143,13 @@ class AppPatientSearchFormComponent < ViewComponent::Base
             </fieldset>
           </div>
 
-          <%= f.govuk_check_boxes_fieldset :missing_nhs_number, multiple: false, legend: { text: "Options", size: "s" } do %>
+          <%= f.govuk_check_boxes_fieldset :show_only, multiple: false, legend: { text: "Show only", size: "s" } do %>
             <%= f.govuk_check_box :missing_nhs_number,
                                   1, 0,
                                   checked: form.missing_nhs_number,
                                   multiple: false,
                                   link_errors: true,
-                                  label: { text: "Missing NHS number" } %>
+                                  label: { text: "Children missing an NHS number" } %>
           <% end %>
 
           <% if show_buttons_in_details? %>
