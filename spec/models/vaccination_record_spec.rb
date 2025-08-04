@@ -69,11 +69,19 @@ describe VaccinationRecord do
     it { should validate_inclusion_of(:protocol).in_array(%w[pgd psd]) }
 
     context "when administered" do
+      before { vaccination_record.outcome = "administered" }
+
       it { should allow_values(true, false).for(:full_dose) }
       it { should_not allow_values(nil).for(:full_dose) }
+
+      it { should validate_presence_of(:protocol) }
     end
 
     context "when not administered" do
+      before { vaccination_record.outcome = "already_had" }
+
+      it { should_not validate_presence_of(:protocol) }
+
       it { should_not validate_presence_of(:full_dose) }
     end
 
