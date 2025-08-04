@@ -25,6 +25,7 @@ class VaccinationRecordPolicy < ApplicationPolicy
   class Scope < ApplicationPolicy::Scope
     def resolve
       organisation = user.selected_organisation
+      return scope.none if organisation.nil?
 
       scope
         .kept

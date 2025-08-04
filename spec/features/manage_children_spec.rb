@@ -390,19 +390,19 @@ describe "Manage children" do
   end
 
   def then_i_see_the_notice_of_date_of_death
-    expect(page).to have_content("Important notices ( 1 )")
+    expect(page).to have_content("Important notices (1)")
     expect(page).to have_content(@deceased_patient.full_name)
     expect(page).to have_content("Record updated with child’s date of death")
   end
 
   def then_i_see_the_notice_of_invalid
-    expect(page).to have_content("Important notices ( 1 )")
+    expect(page).to have_content("Important notices (1)")
     expect(page).to have_content(@invalidated_patient.full_name)
     expect(page).to have_content("Record flagged as invalid")
   end
 
   def then_i_see_the_notice_of_sensitive
-    expect(page).to have_content("Important notices ( 1 )")
+    expect(page).to have_content("Important notices (1)")
     expect(page).to have_content(@restricted_patient.full_name)
     expect(page).to have_content("Record flagged as sensitive")
   end

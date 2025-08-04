@@ -67,7 +67,7 @@
               t("imports.index.title_short"),
               imports_path,
               request_path: request.path,
-              count: policy_scope(ClassImport).count + policy_scope(CohortImport).count + policy_scope(ImmunisationImport).count
+              count: import_issues_count
             ) %>
 
             <%= render AppHeaderNavigationItemComponent.new(t("organisations.show.title"), organisation_path, request_path: request.path) %>

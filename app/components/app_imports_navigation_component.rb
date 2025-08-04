@@ -36,24 +36,18 @@ class AppImportsNavigationComponent < ViewComponent::Base
   attr_reader :active
 
   def issues_text
-    vaccination_records_with_issues =
-      helpers.policy_scope(VaccinationRecord).with_pending_changes.distinct
-
-    patients_with_issues = helpers.policy_scope(Patient).with_pending_changes
-
-    unique_import_issues =
-      (vaccination_records_with_issues + patients_with_issues).uniq do |record|
-        record.is_a?(VaccinationRecord) ? record.patient_id : record.id
-      end
-
-    count = unique_import_issues.count
-
-    safe_join(["Import issues", " ", render(AppCountComponent.new(count:))])
+    safe_join(
+      [
+        "Import issues",
+        " ",
+        render(AppCountComponent.new(helpers.import_issues_count))
+      ]
+    )
   end
 
   def notices_text
     count = helpers.policy_scope(Patient).with_notice.count
 
-    safe_join(["Important notices", " ", render(AppCountComponent.new(count:))])
+    safe_join(["Important notices", " ", render(AppCountComponent.new(count))])
   end
 end
