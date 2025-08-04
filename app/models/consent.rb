@@ -44,6 +44,7 @@
 #
 
 class Consent < ApplicationRecord
+  include BelongsToAcademicYear
   include GelatineVaccinesConcern
   include HasHealthAnswers
   include HasVaccineMethods
@@ -68,9 +69,6 @@ class Consent < ApplicationRecord
   scope :not_withdrawn, -> { where(withdrawn_at: nil) }
 
   scope :response_provided, -> { not_response_not_provided }
-
-  scope :for_academic_year,
-        ->(academic_year) { where(academic_year: academic_year) }
 
   enum :response,
        { given: 0, refused: 1, not_provided: 2 },

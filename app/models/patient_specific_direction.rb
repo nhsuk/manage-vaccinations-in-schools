@@ -32,15 +32,14 @@
 #  fk_rails_...  (vaccine_id => vaccines.id)
 #
 class PatientSpecificDirection < ApplicationRecord
+  include BelongsToAcademicYear
+
   audited associated_with: :patient
 
   belongs_to :created_by, class_name: "User", foreign_key: :created_by_user_id
   belongs_to :patient
   belongs_to :programme
   belongs_to :vaccine
-
-  scope :for_academic_year,
-        ->(academic_year) { where(academic_year: academic_year) }
 
   validates :full_dose, inclusion: { in: [true, false] }
 

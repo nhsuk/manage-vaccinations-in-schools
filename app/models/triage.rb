@@ -48,9 +48,6 @@ class Triage < ApplicationRecord
              class_name: "User",
              foreign_key: :performed_by_user_id
 
-  scope :for_academic_year,
-        ->(academic_year) { where(academic_year: academic_year) }
-
   enum :status,
        {
          ready_to_vaccinate: 0,
