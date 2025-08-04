@@ -26,4 +26,10 @@ describe AppSessionDetailsSummaryComponent do
     it { should have_link("Review consent refused") }
     it { should have_link("Review vaccinated") }
   end
+
+  context "when the patient is not eligible for the programme" do
+    before { create(:patient, session:, year_group: 7) }
+
+    it { should have_text("No children") }
+  end
 end
