@@ -32,6 +32,7 @@ class AppActivityLogComponent < ViewComponent::Base
         :consent_form,
         :parent,
         :recorded_by,
+        :programme,
         patient: :parent_relationships
       )
 
@@ -60,6 +61,8 @@ class AppActivityLogComponent < ViewComponent::Base
         :performed_by_user,
         :vaccine
       )
+
+    @patient_specific_directions = @patient.patient_specific_directions
   end
 
   attr_reader :patient,
@@ -71,7 +74,8 @@ class AppActivityLogComponent < ViewComponent::Base
               :pre_screenings,
               :session_attendances,
               :triages,
-              :vaccination_records
+              :vaccination_records,
+              :patient_specific_directions
 
   def events_by_day
     all_events.sort_by { -_1[:at].to_i }.group_by { _1[:at].to_date }
@@ -87,7 +91,8 @@ class AppActivityLogComponent < ViewComponent::Base
       pre_screening_events,
       session_events,
       triage_events,
-      vaccination_events
+      vaccination_events,
+      decision_expiration_events
     ].flatten
   end
 
@@ -293,5 +298,69 @@ class AppActivityLogComponent < ViewComponent::Base
 
   def programmes_by_id
     @programmes_by_id ||= Programme.all.index_by(&:id)
+  end
+
+  def decision_expiration_events
+    all_programmes = Programme.all.to_a
+
+    AcademicYear.all.filter_map do |academic_year|
+      next if Date.new(academic_year + 1, 8, 31) >= Date.current
+
+      vaccinated_programmes =
+        all_programmes.select do |programme|
+          patient.vaccination_status(programme:, academic_year:).vaccinated?
+        end
+
+      programmes_with_expired_consents =
+        consents
+          .select { it.academic_year == academic_year }
+          .flat_map { programmes_for(it) }
+          .reject { vaccinated_programmes.include?(it) }
+
+      programmes_with_expired_triages =
+        triages
+          .select { it.academic_year == academic_year }
+          .flat_map { programmes_for(it) }
+          .reject { vaccinated_programmes.include?(it) }
+
+      programmes_with_expired_psds =
+        patient_specific_directions
+          .select { it.academic_year == academic_year }
+          .flat_map { programmes_for(it) }
+          .reject { vaccinated_programmes.include?(it) }
+
+      unless programmes_with_expired_consents.any? ||
+               programmes_with_expired_triages.any? ||
+               programmes_with_expired_psds.any?
+        next
+      end
+
+      expired_items = []
+      expired_items << "consent" if programmes_with_expired_consents.any?
+      expired_items << "health information"
+      expired_items << "triage outcome" if programmes_with_expired_triages.any?
+      expired_items << "PSD status" if programmes_with_expired_psds.any?
+
+      programmes_with_expired_items = [
+        programmes_with_expired_consents,
+        programmes_with_expired_triages,
+        programmes_with_expired_psds
+      ].flatten.uniq
+
+      expired_items_sentence =
+        expired_items.to_sentence(
+          words_connector: ", ",
+          last_word_connector: " and "
+        )
+      capitalised_expired_items =
+        expired_items_sentence[0].upcase + expired_items_sentence[1..]
+
+      {
+        title: "#{capitalised_expired_items} expired",
+        body: "#{@patient.full_name} was not vaccinated.",
+        at: academic_year.to_academic_year_date_range.end.end_of_day - 1.second,
+        programmes: programmes_with_expired_items
+      }
+    end
   end
 end

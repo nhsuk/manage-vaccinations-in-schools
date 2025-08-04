@@ -5,6 +5,7 @@
 # Table name: consents
 #
 #  id                            :bigint           not null, primary key
+#  academic_year                 :integer          not null
 #  health_answers                :jsonb            not null
 #  invalidated_at                :datetime
 #  notes                         :text             default(""), not null
@@ -26,6 +27,7 @@
 #
 # Indexes
 #
+#  index_consents_on_academic_year        (academic_year)
 #  index_consents_on_parent_id            (parent_id)
 #  index_consents_on_patient_id           (patient_id)
 #  index_consents_on_programme_id         (programme_id)
@@ -42,7 +44,6 @@
 #
 
 class Consent < ApplicationRecord
-  include BelongsToAcademicYear
   include GelatineVaccinesConcern
   include HasHealthAnswers
   include HasVaccineMethods
@@ -93,8 +94,6 @@ class Consent < ApplicationRecord
 
   encrypts :notes
 
-  academic_year_attribute :submitted_at
-
   validates :notes,
             presence: {
               if: :notes_required?
@@ -115,8 +114,6 @@ class Consent < ApplicationRecord
   def name
     via_self_consent? ? patient.full_name : parent.label
   end
-
-  def academic_year = submitted_at.to_date.academic_year
 
   def response_provided? = !response_not_provided?
 
@@ -189,7 +186,8 @@ class Consent < ApplicationRecord
               response: consent_form_programme.response,
               route: "website",
               submitted_at: consent_form.recorded_at,
-              vaccine_methods: consent_form_programme.vaccine_methods
+              vaccine_methods: consent_form_programme.vaccine_methods,
+              academic_year: consent_form.academic_year
             )
           end
 

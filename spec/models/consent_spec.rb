@@ -5,6 +5,7 @@
 # Table name: consents
 #
 #  id                            :bigint           not null, primary key
+#  academic_year                 :integer          not null
 #  health_answers                :jsonb            not null
 #  invalidated_at                :datetime
 #  notes                         :text             default(""), not null
@@ -26,6 +27,7 @@
 #
 # Indexes
 #
+#  index_consents_on_academic_year        (academic_year)
 #  index_consents_on_parent_id            (parent_id)
 #  index_consents_on_patient_id           (patient_id)
 #  index_consents_on_programme_id         (programme_id)
@@ -43,8 +45,6 @@
 
 describe Consent do
   subject(:consent) { build(:consent) }
-
-  it_behaves_like "a model that belongs to an academic year", :submitted_at
 
   describe "validations" do
     it { should validate_length_of(:notes).is_at_most(1000) }
@@ -269,5 +269,80 @@ describe Consent do
 
     expect(consent.health_answers.first.response).to eq("no")
     expect(consent.health_answers.first.notes).to be_nil
+  end
+
+  describe "#for_academic_year" do
+    let(:current_academic_year) { Date.current.academic_year }
+    let(:previous_academic_year) { current_academic_year - 1 }
+    let(:next_academic_year) { current_academic_year + 1 }
+
+    let(:patient) { create(:patient) }
+    let(:programme) { create(:programme) }
+    let(:parent) { create(:parent) }
+
+    let!(:consent_current_year_start) do
+      create(
+        :consent,
+        patient: patient,
+        programme: programme,
+        parent: parent,
+        submitted_at: Date.new(current_academic_year, 9, 1).in_time_zone,
+        academic_year: current_academic_year
+      )
+    end
+
+    let!(:consent_current_year_middle) do
+      create(
+        :consent,
+        patient: create(:patient),
+        programme: programme,
+        parent: parent,
+        submitted_at: Date.new(current_academic_year + 1, 1, 15).in_time_zone,
+        academic_year: current_academic_year
+      )
+    end
+
+    let!(:consent_current_year_end) do
+      create(
+        :consent,
+        patient: create(:patient),
+        programme: programme,
+        parent: parent,
+        submitted_at: Date.new(current_academic_year + 1, 8, 31).in_time_zone,
+        academic_year: current_academic_year
+      )
+    end
+
+    let!(:consent_previous_year) do
+      create(
+        :consent,
+        patient: create(:patient),
+        programme: programme,
+        parent: parent,
+        submitted_at: Date.new(previous_academic_year, 10, 15).in_time_zone,
+        academic_year: previous_academic_year
+      )
+    end
+
+    let!(:consent_next_year) do
+      create(
+        :consent,
+        patient: create(:patient),
+        programme: programme,
+        parent: parent,
+        submitted_at: Date.new(next_academic_year, 10, 15).in_time_zone,
+        academic_year: next_academic_year
+      )
+    end
+
+    it "returns consents for the specified academic year" do
+      consents = described_class.where(academic_year: current_academic_year)
+
+      expect(consents).to include(consent_current_year_start)
+      expect(consents).to include(consent_current_year_middle)
+      expect(consents).to include(consent_current_year_end)
+      expect(consents).not_to include(consent_previous_year)
+      expect(consents).not_to include(consent_next_year)
+    end
   end
 end

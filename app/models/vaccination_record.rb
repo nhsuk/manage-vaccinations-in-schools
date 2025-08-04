@@ -56,7 +56,6 @@
 #  fk_rails_...  (vaccine_id => vaccines.id)
 #
 class VaccinationRecord < ApplicationRecord
-  include BelongsToAcademicYear
   include Discard::Model
   include HasDoseVolume
   include PendingChangesConcern
@@ -97,6 +96,11 @@ class VaccinationRecord < ApplicationRecord
   has_one :location, through: :session
   has_one :team, through: :session
   has_one :subteam, through: :session
+
+  scope :for_academic_year,
+        ->(academic_year) do
+          where(performed_at: academic_year.to_academic_year_date_range)
+        end
 
   scope :recorded_in_service, -> { where.not(session_id: nil) }
 
@@ -140,8 +144,6 @@ class VaccinationRecord < ApplicationRecord
 
   encrypts :notes
 
-  academic_year_attribute :performed_at
-
   with_options if: :administered? do
     validates :full_dose, inclusion: [true, false]
     validates :protocol, presence: true
@@ -173,6 +175,8 @@ class VaccinationRecord < ApplicationRecord
              if: :changes_need_to_be_synced_to_nhs_immunisations_api?
 
   delegate :fhir_record, to: :fhir_mapper
+
+  def academic_year = performed_at.to_date.academic_year
 
   def not_administered?
     !administered?

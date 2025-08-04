@@ -14,8 +14,9 @@ class Programmes::OverviewController < Programmes::BaseController
     @consents =
       policy_scope(Consent).where(
         patient: patients,
-        programme: @programme
-      ).for_academic_year(@academic_year)
+        programme: @programme,
+        academic_year: @academic_year
+      )
   end
 
   def set_patients

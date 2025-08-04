@@ -5,6 +5,7 @@
 # Table name: consents
 #
 #  id                            :bigint           not null, primary key
+#  academic_year                 :integer          not null
 #  health_answers                :jsonb            not null
 #  invalidated_at                :datetime
 #  notes                         :text             default(""), not null
@@ -26,6 +27,7 @@
 #
 # Indexes
 #
+#  index_consents_on_academic_year        (academic_year)
 #  index_consents_on_parent_id            (parent_id)
 #  index_consents_on_patient_id           (patient_id)
 #  index_consents_on_programme_id         (programme_id)
@@ -75,6 +77,7 @@ FactoryBot.define do
     end
 
     submitted_at { consent_form&.recorded_at || Time.current }
+    academic_year { submitted_at.to_date.academic_year }
 
     traits_for_enum :vaccine_method
 

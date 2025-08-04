@@ -5,6 +5,7 @@
 # Table name: consent_forms
 #
 #  id                                  :bigint           not null, primary key
+#  academic_year                       :integer          not null
 #  address_line_1                      :string
 #  address_line_2                      :string
 #  address_postcode                    :string
@@ -41,11 +42,12 @@
 #
 # Indexes
 #
-#  index_consent_forms_on_consent_id   (consent_id)
-#  index_consent_forms_on_location_id  (location_id)
-#  index_consent_forms_on_nhs_number   (nhs_number)
-#  index_consent_forms_on_school_id    (school_id)
-#  index_consent_forms_on_team_id      (team_id)
+#  index_consent_forms_on_academic_year  (academic_year)
+#  index_consent_forms_on_consent_id     (consent_id)
+#  index_consent_forms_on_location_id    (location_id)
+#  index_consent_forms_on_nhs_number     (nhs_number)
+#  index_consent_forms_on_school_id      (school_id)
+#  index_consent_forms_on_team_id        (team_id)
 #
 # Foreign Keys
 #
@@ -57,8 +59,6 @@
 
 describe ConsentForm do
   subject(:consent_form) { build(:consent_form) }
-
-  it_behaves_like "a model that belongs to an academic year", :created_at
 
   describe "validations" do
     subject(:consent_form) do

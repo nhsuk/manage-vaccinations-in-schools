@@ -77,6 +77,7 @@ class Patient < ApplicationRecord
 
   has_many :gillick_assessments, through: :patient_sessions
   has_many :parents, through: :parent_relationships
+  has_many :patient_specific_directions
   has_many :pre_screenings, through: :patient_sessions
   has_many :session_attendances, through: :patient_sessions
   has_many :sessions, through: :patient_sessions

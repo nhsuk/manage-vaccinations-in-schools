@@ -147,7 +147,7 @@ class Reports::OfflineSessionExporter
   def consents
     @consents ||=
       Consent
-        .where(patient_id: patient_sessions.select(:patient_id))
+        .where(academic_year:, patient_id: patient_sessions.select(:patient_id))
         .not_invalidated
         .includes(:parent, patient: { parent_relationships: :parent })
         .group_by(&:patient_id)
@@ -183,7 +183,7 @@ class Reports::OfflineSessionExporter
     @triages ||=
       Triage
         .select("DISTINCT ON (patient_id, programme_id) triage.*")
-        .where(patient_id: patient_sessions.select(:patient_id))
+        .where(academic_year:, patient_id: patient_sessions.select(:patient_id))
         .not_invalidated
         .order(:patient_id, :programme_id, created_at: :desc)
         .includes(:performed_by)

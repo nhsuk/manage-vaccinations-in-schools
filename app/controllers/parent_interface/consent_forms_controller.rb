@@ -17,9 +17,10 @@ module ParentInterface
     def create
       consent_form =
         ConsentForm.create!(
+          academic_year: @session.academic_year,
+          location: @session.location,
           programmes: @programmes,
-          team: @session.team,
-          location: @session.location
+          team: @session.team
         )
 
       session[:consent_form_id] = consent_form.id
