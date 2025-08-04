@@ -74,9 +74,6 @@ class Session < ApplicationRecord
           )
         end
 
-  scope :for_current_academic_year,
-        -> { where(academic_year: AcademicYear.current) }
-
   scope :in_progress, -> { has_date(Date.current) }
   scope :unscheduled, -> { where.not(SessionDate.for_session.arel.exists) }
   scope :scheduled,

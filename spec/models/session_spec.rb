@@ -81,18 +81,6 @@ describe Session do
       end
     end
 
-    describe "#for_current_academic_year" do
-      subject(:scope) { described_class.for_current_academic_year }
-
-      it do
-        expect(scope).to contain_exactly(
-          unscheduled_session,
-          today_session,
-          scheduled_session
-        )
-      end
-    end
-
     describe "#in_progress" do
       subject(:scope) { described_class.in_progress }
 

@@ -293,7 +293,7 @@ class ImmunisationImportRow
       if (id = session_id&.to_i)
         organisation
           .sessions
-          .for_current_academic_year
+          .where(academic_year: AcademicYear.current)
           .includes(:location, :programmes, :session_dates)
           .find_by(id:)
       end
@@ -891,9 +891,7 @@ class ImmunisationImportRow
             "and copy the session ID for this row from there, or " \
             "contact our support organisation."
         )
-      elsif !organisation.sessions.for_current_academic_year.exists?(
-            id: session_id.to_i
-          )
+      elsif session.nil?
         errors.add(
           session_id.header,
           "The session ID is not recognised. Download the offline spreadsheet " \
