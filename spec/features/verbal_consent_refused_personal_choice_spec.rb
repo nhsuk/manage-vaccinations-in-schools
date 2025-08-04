@@ -65,9 +65,11 @@ describe "Verbal consent" do
     expect(page).to have_content(["Name", @parent.full_name].join)
 
     if notify_parent
-      expect(page).to have_content("Confirmation of decision sent to parentYes")
+      expect(page).to have_content(
+        "Confirmation of decision sent to parent?Yes"
+      )
     else
-      expect(page).to have_content("Confirmation of decision sent to parentNo")
+      expect(page).to have_content("Confirmation of decision sent to parent?No")
     end
 
     click_button "Confirm"

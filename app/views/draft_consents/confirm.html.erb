@@ -16,6 +16,7 @@
   <%= render AppConsentSummaryComponent.new(@draft_consent, change_links: {
                                                               response: wizard_path("agree"),
                                                               route: wizard_path(@draft_consent.via_self_consent? ? "who" : "route"),
+                                                              notify_parents_on_vaccination: wizard_path("notify-parents-on-vaccination"),
                                                             }) %>
 <% end %>
 
