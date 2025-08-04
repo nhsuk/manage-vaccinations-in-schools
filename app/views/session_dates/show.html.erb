@@ -4,7 +4,7 @@
 
 <%= h1 "When will sessions be held?" %>
 
-<%= form_with model: @session, url: session_dates_path(@session), method: :put do |f| %>
+<%= form_with model: @draft_session_dates, url: session_dates_path(@session), method: :put do |f| %>
   <% content_for(:before_content) { f.govuk_error_summary } %>
 
   <div class="app-add-another">
@@ -23,14 +23,13 @@
                                         legend: { size: "m", text: "Session date" },
                                         hint: { text: "For example, 27 3 2024" } %>
 
-            <% if date_f.object.persisted? || @session.session_dates.length > 1 %>
-              <% button_class = "nhsuk-button app-add-another__delete app-button--secondary-warning app-button--small" %>
-
-              <% if date_f.object.new_record? %>
-                <%= link_to "Delete", session_dates_path(@session), class: button_class %>
-              <% else %>
-                <%= f.govuk_submit "Delete", name: "session[session_dates_attributes][#{date_f.index}][_destroy]", value: "true", class: button_class %>
-              <% end %>
+            <!-- DEBUG: object=<%= date_f.object.inspect %>, persisted=<%= date_f.object&.persisted? %>, length=<%= @draft_session_dates.session_dates.length %> -->
+            <% if date_f.object.persisted? || @draft_session_dates.session_dates.length > 1 %>
+              <%= f.govuk_submit "Delete",
+                                 name: "delete_date",
+                                 value: date_f.index,
+                                 warning: true,
+                                 class: "app-add-another__delete app-button--small" %>
             <% end %>
           <% end %>
         </li>
@@ -42,6 +41,5 @@
 
   <div class="app-button-group">
     <%= f.govuk_submit "Continue" %>
-    <%= govuk_link_to "Back", edit_session_path(@session) %>
   </div>
 <% end %>
