@@ -32,8 +32,7 @@
 describe GillickAssessment do
   subject(:gillick_assessment) { build(:gillick_assessment) }
 
-  it_behaves_like "a model that belongs to an academic year through a timestamp",
-                  :created_at do
+  it_behaves_like "a model that belongs to an academic year" do
     subject { build(:gillick_assessment, :competent) }
   end
 

@@ -40,6 +40,10 @@ class ConsentNotification < ApplicationRecord
 
   has_many :programmes, through: :consent_notification_programmes
 
+  delegate :academic_year, to: :session
+
+  scope :for_academic_year, ->(year) { where(session: { academic_year: year }) }
+
   enum :type,
        { request: 0, initial_reminder: 1, subsequent_reminder: 2 },
        validate: true
@@ -48,8 +52,6 @@ class ConsentNotification < ApplicationRecord
         ->(programme) { joins(:programmes).where(programmes: programme) }
 
   scope :reminder, -> { initial_reminder.or(subsequent_reminder) }
-
-  academic_year_attribute :sent_at
 
   def reminder?
     initial_reminder? || subsequent_reminder?

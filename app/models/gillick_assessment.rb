@@ -30,8 +30,6 @@
 #  fk_rails_...  (programme_id => programmes.id)
 #
 class GillickAssessment < ApplicationRecord
-  include BelongsToAcademicYear
-
   audited associated_with: :patient_session
 
   belongs_to :patient_session
@@ -45,9 +43,11 @@ class GillickAssessment < ApplicationRecord
   has_one :session, through: :patient_session
   has_one :location, through: :session
 
-  encrypts :notes
+  delegate :academic_year, to: :session
 
-  academic_year_attribute :created_at
+  scope :for_academic_year, ->(year) { where(session: { academic_year: year }) }
+
+  encrypts :notes
 
   validates :knows_consequences,
             :knows_delivery,

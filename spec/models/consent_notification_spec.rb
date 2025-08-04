@@ -24,8 +24,7 @@
 #  fk_rails_...  (session_id => sessions.id)
 #
 describe ConsentNotification do
-  it_behaves_like "a model that belongs to an academic year through a timestamp",
-                  :sent_at do
+  it_behaves_like "a model that belongs to an academic year" do
     subject { build(:consent_notification, :request) }
   end
 
