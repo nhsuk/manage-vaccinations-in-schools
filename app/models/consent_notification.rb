@@ -42,8 +42,6 @@ class ConsentNotification < ApplicationRecord
 
   delegate :academic_year, to: :session
 
-  scope :for_academic_year, ->(year) { where(session: { academic_year: year }) }
-
   enum :type,
        { request: 0, initial_reminder: 1, subsequent_reminder: 2 },
        validate: true

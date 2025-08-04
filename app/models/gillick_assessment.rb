@@ -45,8 +45,6 @@ class GillickAssessment < ApplicationRecord
 
   delegate :academic_year, to: :session
 
-  scope :for_academic_year, ->(year) { where(session: { academic_year: year }) }
-
   encrypts :notes
 
   validates :knows_consequences,

@@ -16,8 +16,7 @@ class TriageFinder
         .max_by(&:created_at)
     else
       triages
-        .where(programme_id:)
-        .for_academic_year(academic_year)
+        .where(programme_id:, academic_year:)
         .not_invalidated
         .order(created_at: :desc)
         .first

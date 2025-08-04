@@ -11,7 +11,7 @@ class PatientSessions::TriagesController < PatientSessions::BaseController
     previous_triage =
       @patient
         .triages
-        .for_academic_year(@session.academic_year)
+        .where(academic_year: @session.academic_year)
         .not_invalidated
         .order(created_at: :desc)
         .find_by(programme: @programme)

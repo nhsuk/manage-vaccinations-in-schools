@@ -338,7 +338,7 @@ describe Consent do
     end
 
     it "returns consents for the specified academic year" do
-      consents = described_class.for_academic_year(current_academic_year)
+      consents = described_class.where(academic_year: current_academic_year)
 
       expect(consents).to include(consent_current_year_start)
       expect(consents).to include(consent_current_year_middle)

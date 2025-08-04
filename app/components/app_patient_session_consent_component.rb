@@ -29,7 +29,8 @@ class AppPatientSessionConsentComponent < ViewComponent::Base
         .consent_notifications
         .request
         .has_programme(programme)
-        .for_academic_year(academic_year)
+        .joins(:session)
+        .where(session: { academic_year: })
         .order(sent_at: :desc)
         .first
   end
@@ -38,9 +39,7 @@ class AppPatientSessionConsentComponent < ViewComponent::Base
     @consents ||=
       patient
         .consents
-        .for_academic_year(session.academic_year)
-        .where(programme:)
-        .for_academic_year(academic_year)
+        .where(academic_year:, programme:)
         .includes(:consent_form, :parent, :programme)
         .order(created_at: :desc)
   end

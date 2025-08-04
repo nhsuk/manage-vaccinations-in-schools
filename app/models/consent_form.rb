@@ -456,8 +456,7 @@ class ConsentForm < ApplicationRecord
           next unless consent.requires_triage?
           patient
             .triages
-            .for_academic_year(academic_year)
-            .where(programme: consent.programme)
+            .where(academic_year:, programme: consent.programme)
             .invalidate_all
         end
     end

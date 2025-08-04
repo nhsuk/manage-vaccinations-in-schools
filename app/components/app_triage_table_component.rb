@@ -17,14 +17,14 @@ class AppTriageTableComponent < ViewComponent::Base
   attr_reader :patient_session, :programme
 
   delegate :patient, :session, to: :patient_session
+  delegate :academic_year, to: :session
 
   def triages
     @triages ||=
       patient
         .triages
-        .for_academic_year(session.academic_year)
         .includes(:performed_by, :programme)
-        .where(programme:)
+        .where(academic_year:, programme:)
         .order(created_at: :desc)
   end
 end
