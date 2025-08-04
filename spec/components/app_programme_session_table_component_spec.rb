@@ -6,7 +6,9 @@ describe AppProgrammeSessionTableComponent do
   let(:component) { described_class.new(sessions, programme:) }
 
   let(:programme) { create(:programme) }
-  let(:location) { create(:school, name: "Waterloo Road") }
+  let(:location) do
+    create(:school, name: "Waterloo Road", programmes: [programme])
+  end
   let(:session) { create(:session, programmes: [programme], location:) }
   let(:sessions) do
     [session] + create_list(:session, 2, programmes: [programme])
@@ -41,4 +43,11 @@ describe AppProgrammeSessionTableComponent do
   it { should have_content(/Cohort(\s+)5/) }
   it { should have_content(/No response(\s+)4(\s+)80%/) }
   it { should have_content(/Vaccinated(\s+)1(\s+)20%/) }
+
+  context "when the patient is not eligible for the programme" do
+    let(:programme) { create(:programme, :hpv) }
+    let(:patient) { create(:patient, session:, year_group: 7) }
+
+    it { should have_content(/Cohort(\s+)4/) }
+  end
 end

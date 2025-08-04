@@ -20,7 +20,11 @@ class AppSessionDetailsSummaryComponent < ViewComponent::Base
   delegate :programmes, to: :session
 
   def cohort_row
-    count = patient_sessions.count
+    count =
+      patient_sessions
+        .joins(:patient, :session)
+        .appear_in_programmes(programmes)
+        .count
     href = import_session_path(session)
 
     {

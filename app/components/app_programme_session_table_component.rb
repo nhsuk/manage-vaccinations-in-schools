@@ -13,7 +13,7 @@ class AppProgrammeSessionTableComponent < ViewComponent::Base
   attr_reader :sessions, :programme
 
   def cohort_count(session:)
-    format_number(session.patient_sessions.count)
+    format_number(patient_count(session:))
   end
 
   def no_response_scope(session:)
@@ -27,7 +27,7 @@ class AppProgrammeSessionTableComponent < ViewComponent::Base
   def no_response_percentage(session:)
     format_percentage(
       no_response_scope(session:).count,
-      session.patient_sessions.count
+      patient_count(session:)
     )
   end
 
@@ -46,10 +46,15 @@ class AppProgrammeSessionTableComponent < ViewComponent::Base
   end
 
   def vaccinated_percentage(session:)
-    format_percentage(
-      vaccinated_scope(session:).count,
-      session.patient_sessions.count
-    )
+    format_percentage(vaccinated_scope(session:).count, patient_count(session:))
+  end
+
+  def patient_count(session:)
+    session
+      .patient_sessions
+      .joins(:patient, :session)
+      .appear_in_programmes([programme])
+      .count
   end
 
   def format_number(count) = count.to_s
