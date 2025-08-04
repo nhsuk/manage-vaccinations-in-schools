@@ -197,11 +197,9 @@ module NHS::ImmunisationsAPI
 
         return nil if last_synced_at >= sync_pending_at
 
-        if should_be_recorded && !is_recorded
-          :create
-        elsif should_be_recorded && is_recorded
+        if should_be_recorded
           :update
-        elsif is_recorded
+        else
           discarded_at = vaccination_record.discarded_at
           :delete if discarded_at.nil? || last_synced_at < discarded_at
         end
