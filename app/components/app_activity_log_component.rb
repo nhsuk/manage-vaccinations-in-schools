@@ -308,7 +308,7 @@ class AppActivityLogComponent < ViewComponent::Base
 
       vaccinated_programmes =
         all_programmes.select do |programme|
-          patient.vaccination_status(programme:, academic_year:) == :vaccinated
+          patient.vaccination_status(programme:, academic_year:).vaccinated?
         end
 
       programmes_with_expired_consents =

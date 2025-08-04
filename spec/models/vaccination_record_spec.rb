@@ -32,7 +32,7 @@
 #  performed_by_user_id                  :bigint
 #  programme_id                          :bigint           not null
 #  session_id                            :bigint
-#  vaccine_id                            :bigint
+#  vaccine_id                   /         :bigint
 #
 # Indexes
 #
@@ -58,9 +58,6 @@
 
 describe VaccinationRecord do
   subject(:vaccination_record) { build(:vaccination_record) }
-
-  it_behaves_like "a model that belongs to an academic year through a timestamp",
-                  :performed_at
 
   describe "associations" do
     it { should have_one(:identity_check).autosave(true).dependent(:destroy) }
@@ -415,6 +412,41 @@ describe VaccinationRecord do
       end
 
       it { should be_falsy }
+    end
+  end
+
+  describe "#for_academic_year" do
+    before { vaccination_record.save! }
+
+    it "returns the correct records" do
+      academic_year = vaccination_record.academic_year
+
+      expect(described_class.for_academic_year(academic_year)).to include(
+        vaccination_record
+      )
+
+      expect(
+        described_class.for_academic_year(academic_year + 1)
+      ).not_to include(vaccination_record)
+    end
+  end
+
+  describe "#academic_year" do
+    let(:examples) do
+      {
+        Date.new(2020, 9, 1) => 2020,
+        Date.new(2021, 8, 31) => 2020,
+        Date.new(2021, 9, 1) => 2021,
+        Date.new(2022, 8, 31) => 2021
+      }
+    end
+
+    examples.each do |date, academic_year|
+      context "with #{date}" do
+        before { vaccination_record[attribute] = date }
+
+        it { expect(vaccination_record.academic_year).to eq(academic_year) }
+      end
     end
   end
 end

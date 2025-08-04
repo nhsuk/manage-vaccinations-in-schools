@@ -144,7 +144,8 @@ class Reports::ProgrammeVaccinationsExporter
     @gillick_assessments ||=
       GillickAssessment
         .select(
-          "DISTINCT ON (patient_session_id) gillick_assessments.*, patient_sessions.patient_id, patient_sessions.session_id"
+          "DISTINCT ON (patient_session_id) gillick_assessments.*, " \
+            "patient_sessions.patient_id, patient_sessions.session_id"
         )
         .joins(:patient_session)
         .joins(:session)
