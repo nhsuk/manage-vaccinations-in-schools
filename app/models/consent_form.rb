@@ -5,6 +5,7 @@
 # Table name: consent_forms
 #
 #  id                                  :bigint           not null, primary key
+#  academic_year                       :integer          not null
 #  address_line_1                      :string
 #  address_line_2                      :string
 #  address_postcode                    :string
@@ -41,11 +42,12 @@
 #
 # Indexes
 #
-#  index_consent_forms_on_consent_id   (consent_id)
-#  index_consent_forms_on_location_id  (location_id)
-#  index_consent_forms_on_nhs_number   (nhs_number)
-#  index_consent_forms_on_school_id    (school_id)
-#  index_consent_forms_on_team_id      (team_id)
+#  index_consent_forms_on_academic_year  (academic_year)
+#  index_consent_forms_on_consent_id     (consent_id)
+#  index_consent_forms_on_location_id    (location_id)
+#  index_consent_forms_on_nhs_number     (nhs_number)
+#  index_consent_forms_on_school_id      (school_id)
+#  index_consent_forms_on_team_id        (team_id)
 #
 # Foreign Keys
 #
@@ -193,8 +195,6 @@ class ConsentForm < ApplicationRecord
 
   normalizes :nhs_number, with: -> { _1.blank? ? nil : _1.gsub(/\s/, "") }
 
-  academic_year_attribute :created_at
-
   on_wizard_step :name do
     validates :given_name, presence: true
     validates :family_name, presence: true
@@ -318,10 +318,6 @@ class ConsentForm < ApplicationRecord
         (:reason_notes if refused_and_given && reason_notes_must_be_provided?)
       ].compact
   end
-
-  # TODO: For consent forms submitted during the preparation period, this
-  #  should be the next academic year.
-  def academic_year = created_at.to_date.academic_year
 
   def recorded? = recorded_at != nil
 

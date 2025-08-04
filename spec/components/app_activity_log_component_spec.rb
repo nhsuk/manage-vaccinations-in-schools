@@ -574,8 +574,7 @@ describe AppActivityLogComponent do
           programme: hpv_programme,
           patient:,
           session:,
-          performed_at:
-            Time.zone.parse("#2024-05-31 12:00"),
+          performed_at: Time.zone.parse("#2024-05-31 12:00"),
           performed_by: user
         )
 
