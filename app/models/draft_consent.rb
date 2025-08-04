@@ -12,6 +12,7 @@ class DraftConsent
   attr_reader :new_or_existing_contact
   attr_accessor :triage_form_valid
 
+  attribute :academic_year, :integer
   attribute :health_answers, array: true, default: []
   attribute :injection_alternative, :boolean
   attribute :notes, :string
@@ -258,6 +259,7 @@ class DraftConsent
 
   def patient_session=(value)
     self.patient_session_id = value.id
+    self.academic_year = value.academic_year
   end
 
   delegate :location,
@@ -304,6 +306,7 @@ class DraftConsent
 
     consent.parent = parent
     consent.submitted_at ||= Time.current
+    consent.academic_year = academic_year if academic_year.present?
 
     if triage_allowed? && response_given?
       triage_form.notes = triage_notes || ""

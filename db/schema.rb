@@ -239,6 +239,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_01_142457) do
     t.datetime "submitted_at", null: false
     t.integer "vaccine_methods", default: [], null: false, array: true
     t.boolean "notify_parent_on_refusal"
+    t.integer "academic_year", null: false
+    t.index ["academic_year"], name: "index_consents_on_academic_year"
     t.index ["parent_id"], name: "index_consents_on_parent_id"
     t.index ["patient_id"], name: "index_consents_on_patient_id"
     t.index ["programme_id"], name: "index_consents_on_programme_id"
@@ -572,6 +574,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_01_142457) do
     t.boolean "full_dose", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "academic_year", null: false
+    t.index ["academic_year"], name: "index_patient_specific_directions_on_academic_year"
     t.index ["created_by_user_id"], name: "index_patient_specific_directions_on_created_by_user_id"
     t.index ["patient_id"], name: "index_patient_specific_directions_on_patient_id"
     t.index ["programme_id"], name: "index_patient_specific_directions_on_programme_id"
@@ -782,6 +786,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_01_142457) do
     t.bigint "team_id", null: false
     t.datetime "invalidated_at"
     t.integer "vaccine_method"
+    t.integer "academic_year", null: false
+    t.index ["academic_year"], name: "index_triage_on_academic_year"
     t.index ["patient_id"], name: "index_triage_on_patient_id"
     t.index ["performed_by_user_id"], name: "index_triage_on_performed_by_user_id"
     t.index ["programme_id"], name: "index_triage_on_programme_id"

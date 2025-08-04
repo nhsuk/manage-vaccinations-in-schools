@@ -5,6 +5,7 @@
 # Table name: triage
 #
 #  id                   :bigint           not null, primary key
+#  academic_year        :integer          not null
 #  invalidated_at       :datetime
 #  notes                :text             default(""), not null
 #  status               :integer          not null
@@ -18,6 +19,7 @@
 #
 # Indexes
 #
+#  index_triage_on_academic_year         (academic_year)
 #  index_triage_on_patient_id            (patient_id)
 #  index_triage_on_performed_by_user_id  (performed_by_user_id)
 #  index_triage_on_programme_id          (programme_id)
