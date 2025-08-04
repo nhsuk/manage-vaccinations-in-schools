@@ -39,7 +39,7 @@ describe AppChildSummaryComponent do
   end
 
   it { should have_content("NHS number") }
-  it { should have_content("999\u00A0\u200D000\u00A0\u200D0018") }
+  it { should have_content("999 000 0018") }
 
   it { should have_content("Full name") }
   it { should have_content("DOE, John") }
