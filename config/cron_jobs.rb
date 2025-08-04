@@ -12,8 +12,14 @@ CRON_JOBS = {
     description:
       "Invalidate all self-consents and associated triage for the previous day"
   },
-  patients_clear_registration: {
+  patients_aged_out_of_school: {
     cron: "every day at 5:00",
+    class: "PatientsAgedOutOfSchoolJob",
+    description:
+      "Moves patients who have aged out of their school to unknown school."
+  },
+  patients_clear_registration: {
+    cron: "every day at 5:15",
     class: "PatientsClearRegistrationJob",
     description:
       "Clears the registration of patients for the previous academic year"
