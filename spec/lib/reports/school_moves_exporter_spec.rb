@@ -112,7 +112,7 @@ describe Reports::SchoolMovesExporter do
       end
     end
 
-    context "when a patient moves out of an team" do
+    context "when a patient moves out of a team" do
       let(:team_a) { create(:team) }
       let(:team_b) { create(:team) }
 

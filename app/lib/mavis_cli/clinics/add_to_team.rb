@@ -3,7 +3,7 @@
 module MavisCLI
   module Clinics
     class AddToTeam < Dry::CLI::Command
-      desc "Add an existing clinic to an team"
+      desc "Add an existing clinic to a team"
 
       argument :team_ods_code, required: true, desc: "The ODS code of the team"
       argument :subteam, required: true, desc: "The subteam of the team"

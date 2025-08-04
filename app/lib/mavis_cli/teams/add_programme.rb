@@ -3,7 +3,7 @@
 module MavisCLI
   module Teams
     class AddProgramme < Dry::CLI::Command
-      desc "Adds a programme to an team"
+      desc "Adds a programme to a team"
 
       argument :ods_code, required: true, desc: "The ODS code of the team"
 
