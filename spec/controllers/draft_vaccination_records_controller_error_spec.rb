@@ -1,10 +1,17 @@
 # frozen_string_literal: true
 
 feature "Draft vaccination controller errors", type: :feature do
-  scenario "Go to draft vaccination record confirm with no open draft vaccination" do
-    given_i_am_signed_in_with_flu_programme
-    when_i_visit_draft_vaccination_record_confirm_with_no_active_record
-    then_i_see_a_descriptive_error_message
+  [
+    "/draft-vaccination-record/batch",
+    "/draft-vaccination-record/date_and_time",
+    "/draft-vaccination-record/outcome",
+    "/draft-vaccination-record/confirm",
+  ].each do |url_path|
+    scenario "Go to #{url_path} with no open draft vaccination" do
+      given_i_am_signed_in_with_flu_programme
+      when_i_visit_draft_vaccination_record_with_no_active_record(url_path)
+      then_i_see_a_descriptive_error_message
+    end
   end
 
   def given_i_am_signed_in_with_flu_programme
@@ -14,8 +21,8 @@ feature "Draft vaccination controller errors", type: :feature do
     sign_in @organisation.users.first
   end
 
-  def when_i_visit_draft_vaccination_record_confirm_with_no_active_record
-    visit "/draft-vaccination-record/confirm"
+  def when_i_visit_draft_vaccination_record_with_no_active_record(url_path)
+    visit url_path
   end
 
   def then_i_see_a_descriptive_error_message

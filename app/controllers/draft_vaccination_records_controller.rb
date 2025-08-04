@@ -11,10 +11,10 @@ class DraftVaccinationRecordsController < ApplicationController
   before_action :set_session
   before_action :set_programme
   before_action :set_vaccination_record
+  before_action :validate_patient_id_present, only: :show
 
   include WizardControllerConcern
 
-  before_action :validate_patient_id, only: :show
   before_action :validate_params, only: :update
   before_action :set_batches, if: -> { current_step == :batch }
   before_action :set_locations, if: -> { current_step == :location }
@@ -58,8 +58,8 @@ class DraftVaccinationRecordsController < ApplicationController
 
   private
 
-  def validate_patient_id
-    if current_step == :confirm && @draft_vaccination_record.patient_id.nil?
+  def validate_patient_id_present
+    if @draft_vaccination_record.patient_id.nil?
       render 'errors/no_patient_with_draft_vaccination_record', status: :unprocessable_entity
     end
   end
