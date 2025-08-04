@@ -8,11 +8,11 @@ module PatientsHelper
       if patient.nhs_number.blank?
         "Not provided"
       else
-        tag.span(class: "app-u-monospace") do
+        tag.span(class: %w[app-u-monospace nhsuk-u-nowrap]) do
           patient
             .nhs_number
             .to_s
-            .gsub(/(\d{3})(\d{3})(\d{4})/, "\\1&nbsp;&zwj;\\2&nbsp;&zwj;\\3")
+            .gsub(/(\d{3})(\d{3})(\d{4})/, "\\1 \\2 \\3")
             .html_safe
         end
       end

@@ -296,7 +296,7 @@ describe "Manage children" do
   end
 
   def and_i_see_the_nhs_number
-    expect(page).to have_content("975 ‍862 ‍3168")
+    expect(page).to have_content("975 862 3168")
   end
 
   def and_the_patient_is_no_longer_invalidated
