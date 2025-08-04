@@ -32,6 +32,7 @@ class AppActivityLogComponent < ViewComponent::Base
         :consent_form,
         :parent,
         :recorded_by,
+        :programme,
         patient: :parent_relationships
       )
 
