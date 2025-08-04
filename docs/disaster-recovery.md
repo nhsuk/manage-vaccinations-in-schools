@@ -214,7 +214,7 @@ Start the web server:
 RAILS_ENV=staging rails s
 ```
 
-## Exporting an team
+## Exporting a team
 
 Generate an export and encrypt it:
 

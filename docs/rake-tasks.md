@@ -33,7 +33,7 @@ Creates a school location suitable for smoke testing in production.
 
 If none of the arguments are provided (`rake teams:create`), the user will be prompted for responses.
 
-This creates a new team within an team.
+This creates a new team within a team.
 
 ## Users
 

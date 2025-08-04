@@ -3,7 +3,7 @@
 module MavisCLI
   module Schools
     class AddToTeam < Dry::CLI::Command
-      desc "Add an existing school to an team"
+      desc "Add an existing school to a team"
 
       argument :ods_code, required: true, desc: "The ODS code of the team"
       argument :subteam, required: true, desc: "The subteam of the team"

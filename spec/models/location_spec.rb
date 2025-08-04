@@ -197,7 +197,7 @@ describe Location do
       )
     end
 
-    context "when the location is not attached to an team" do
+    context "when the location is not attached to a team" do
       let(:location) { create(:school, subteam: nil) }
 
       it { should include("is_attached_to_team" => false) }

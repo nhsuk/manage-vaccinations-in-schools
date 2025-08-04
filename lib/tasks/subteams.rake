@@ -4,7 +4,7 @@ require_relative "../task_helpers"
 
 namespace :subteams do
   desc <<-DESC
-    Create a new subteam within an team.
+    Create a new subteam within a team.
 
     Usage:
       rake subteams:create # Complete the prompts

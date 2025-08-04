@@ -798,11 +798,11 @@ class ImmunisationImportRow
       if performed_ods_code.nil?
         errors.add(:base, "<code>ORGANISATION_CODE</code> is required")
       elsif performed_ods_code.blank?
-        errors.add(performed_ods_code.header, "Enter an team code.")
+        errors.add(performed_ods_code.header, "Enter a team code.")
       elsif performed_ods_code.to_s != team.ods_code
         errors.add(
           performed_ods_code.header,
-          "Enter an team code that matches the current team."
+          "Enter a team code that matches the current team."
         )
       end
     end

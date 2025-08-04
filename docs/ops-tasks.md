@@ -35,7 +35,7 @@ patient = Patient.find(...)
 SchoolMove.new(patient:, school: patient.school).confirm!
 ```
 
-## Add a location to an team and add patients to the session
+## Add a location to a team and add patients to the session
 
 Normally patients are added to a location on import. However, their may be cases when they need to be added to a location after they've been imported, for example if their school was not added to the team at the time the patients were imported. At the time of writing, re-importing the patients does not add them to the location's session or to the team's cohorts.
 
