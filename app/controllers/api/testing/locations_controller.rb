@@ -17,11 +17,9 @@ class API::Testing::LocationsController < API::Testing::BaseController
         @locations.where("ARRAY[?]::integer[] <@ year_groups", year_groups)
     end
 
-    if (
-         is_attached_to_organisation = params[:is_attached_to_organisation]
-       ).present?
+    if (is_attached_to_team = params[:is_attached_to_team]).present?
       @locations =
-        if ActiveModel::Type::Boolean.new.cast(is_attached_to_organisation)
+        if ActiveModel::Type::Boolean.new.cast(is_attached_to_team)
           @locations.where.not(subteam_id: nil)
         else
           @locations.where(subteam_id: nil)

@@ -42,16 +42,10 @@ describe "Parental consent manual matching" do
   def given_the_app_is_setup
     programmes = [create(:programme, :hpv)]
 
-    @organisation = create(:organisation, :with_one_nurse, programmes:)
-    @user = @organisation.users.first
-    @school = create(:school, name: "Pilot School", organisation: @organisation)
-    @session =
-      create(
-        :session,
-        location: @school,
-        organisation: @organisation,
-        programmes:
-      )
+    @team = create(:team, :with_one_nurse, programmes:)
+    @user = @team.users.first
+    @school = create(:school, name: "Pilot School", team: @team)
+    @session = create(:session, location: @school, team: @team, programmes:)
     @consent_form =
       create(
         :consent_form,

@@ -27,11 +27,11 @@ describe "Verbal consent" do
 
   def given_i_am_signed_in
     programmes = [create(:programme, :hpv)]
-    organisation = create(:organisation, :with_one_nurse, programmes:)
-    @session = create(:session, organisation:, programmes:)
+    team = create(:team, :with_one_nurse, programmes:)
+    @session = create(:session, team:, programmes:)
     @patient = create(:patient, session: @session)
 
-    sign_in organisation.users.first
+    sign_in team.users.first
   end
 
   def when_i_start_recording_consent_from_a_new_parental_contact

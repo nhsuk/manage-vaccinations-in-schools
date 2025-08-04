@@ -52,27 +52,23 @@ describe "Td/IPV vaccination" do
 
   def given_i_am_signed_in
     programme = create(:programme, :td_ipv)
-    organisation =
-      create(:organisation, :with_one_nurse, programmes: [programme])
-    location = create(:school, organisation:)
+    team = create(:team, :with_one_nurse, programmes: [programme])
+    location = create(:school, team:)
 
     programme.vaccines.discontinued.each do |vaccine|
-      create(:batch, organisation:, vaccine:)
+      create(:batch, team:, vaccine:)
     end
 
     @active_vaccine = programme.vaccines.active.first
     @active_batch =
-      create(:batch, :not_expired, organisation:, vaccine: @active_vaccine)
-    @archived_batch =
-      create(:batch, :archived, organisation:, vaccine: @active_vaccine)
+      create(:batch, :not_expired, team:, vaccine: @active_vaccine)
+    @archived_batch = create(:batch, :archived, team:, vaccine: @active_vaccine)
 
     # To get around expiration date validation on the model.
-    @expired_batch =
-      build(:batch, :expired, organisation:, vaccine: @active_vaccine)
+    @expired_batch = build(:batch, :expired, team:, vaccine: @active_vaccine)
     @expired_batch.save!(validate: false)
 
-    @session =
-      create(:session, organisation:, programmes: [programme], location:)
+    @session = create(:session, team:, programmes: [programme], location:)
     @patient =
       create(
         :patient,
@@ -81,7 +77,7 @@ describe "Td/IPV vaccination" do
         session: @session
       )
 
-    sign_in organisation.users.first
+    sign_in team.users.first
   end
 
   def and_enqueue_sync_vaccination_records_to_nhs_feature_is_enabled

@@ -69,14 +69,13 @@ describe "HPV vaccination" do
   def given_an_hpv_programme_is_underway(clinic: false)
     programmes = [create(:programme, :hpv)]
 
-    @organisation =
-      create(:organisation, :with_one_nurse, :with_generic_clinic, programmes:)
-    school = create(:school, organisation: @organisation)
+    @team = create(:team, :with_one_nurse, :with_generic_clinic, programmes:)
+    school = create(:school, team: @team)
     previous_date = 1.month.ago
 
     if clinic
       [previous_date, Date.current].each do |date|
-        @organisation
+        @team
           .generic_clinic_session(academic_year: AcademicYear.current)
           .session_dates
           .create!(value: date)
@@ -86,23 +85,17 @@ describe "HPV vaccination" do
         create(
           :community_clinic,
           name: "Westfield Shopping Centre",
-          organisation: @organisation
+          team: @team
         )
     end
 
     vaccine = programmes.first.vaccines.active.first
-    @batch = create(:batch, :not_expired, organisation: @organisation, vaccine:)
+    @batch = create(:batch, :not_expired, team: @team, vaccine:)
 
     create(:gp_practice, ods_code: "Y12345")
 
     @session =
-      create(
-        :session,
-        :today,
-        organisation: @organisation,
-        programmes:,
-        location: school
-      )
+      create(:session, :today, team: @team, programmes:, location: school)
 
     @session.session_dates.create!(value: previous_date)
 
@@ -114,9 +107,7 @@ describe "HPV vaccination" do
         session:
           (
             if clinic
-              @organisation.generic_clinic_session(
-                academic_year: AcademicYear.current
-              )
+              @team.generic_clinic_session(academic_year: AcademicYear.current)
             else
               @session
             end
@@ -131,9 +122,7 @@ describe "HPV vaccination" do
         session:
           (
             if clinic
-              @organisation.generic_clinic_session(
-                academic_year: AcademicYear.current
-              )
+              @team.generic_clinic_session(academic_year: AcademicYear.current)
             else
               @session
             end
@@ -144,7 +133,7 @@ describe "HPV vaccination" do
       )
     VaccinationRecord.last.update!(
       performed_at: previous_date,
-      performed_by: @organisation.users.first
+      performed_by: @team.users.first
     )
 
     @restricted_vaccinated_patient =
@@ -155,9 +144,7 @@ describe "HPV vaccination" do
         session:
           (
             if clinic
-              @organisation.generic_clinic_session(
-                academic_year: AcademicYear.current
-              )
+              @team.generic_clinic_session(academic_year: AcademicYear.current)
             else
               @session
             end
@@ -171,22 +158,15 @@ describe "HPV vaccination" do
   def given_an_hpv_programme_is_underway_with_a_single_patient
     programmes = [create(:programme, :hpv)]
 
-    @organisation =
-      create(:organisation, :with_one_nurse, :with_generic_clinic, programmes:)
-    school = create(:school, organisation: @organisation)
+    @team = create(:team, :with_one_nurse, :with_generic_clinic, programmes:)
+    school = create(:school, team: @team)
     previous_date = 1.month.ago
 
     vaccine = programmes.first.vaccines.active.first
-    @batch = create(:batch, :not_expired, organisation: @organisation, vaccine:)
+    @batch = create(:batch, :not_expired, team: @team, vaccine:)
 
     @session =
-      create(
-        :session,
-        :today,
-        organisation: @organisation,
-        programmes:,
-        location: school
-      )
+      create(:session, :today, team: @team, programmes:, location: school)
 
     @session.session_dates.create!(value: previous_date)
 
@@ -194,7 +174,7 @@ describe "HPV vaccination" do
       create(:patient, :vaccinated, session: @session, school:, year_group: 8)
     VaccinationRecord.last.update!(
       performed_at: previous_date,
-      performed_by: @organisation.users.first
+      performed_by: @team.users.first
     )
   end
 
@@ -210,13 +190,13 @@ describe "HPV vaccination" do
   end
 
   def when_i_choose_to_record_offline_from_a_school_session_page
-    sign_in @organisation.users.first
+    sign_in @team.users.first
     visit session_path(@session)
     click_link "Record offline"
   end
 
   def when_i_choose_to_record_offline_from_a_clinic_page
-    sign_in @organisation.users.first
+    sign_in @team.users.first
     visit "/dashboard"
     click_link "Sessions", match: :first
     choose "Scheduled"
@@ -340,7 +320,7 @@ describe "HPV vaccination" do
       "%d/%m/%Y"
     )
     row_for_vaccinated_patient["ANATOMICAL_SITE"] = "Left Upper Arm"
-    row_for_vaccinated_patient["PERFORMING_PROFESSIONAL_EMAIL"] = @organisation
+    row_for_vaccinated_patient["PERFORMING_PROFESSIONAL_EMAIL"] = @team
       .users
       .first
       .email
@@ -361,9 +341,10 @@ describe "HPV vaccination" do
     row_for_unvaccinated_patient["VACCINE_GIVEN"] = "Gardasil9"
     row_for_unvaccinated_patient["REASON_NOT_VACCINATED"] = "did not attend"
     row_for_unvaccinated_patient["NOTES"] = "Some notes."
-    row_for_unvaccinated_patient[
-      "PERFORMING_PROFESSIONAL_EMAIL"
-    ] = @organisation.users.first.email
+    row_for_unvaccinated_patient["PERFORMING_PROFESSIONAL_EMAIL"] = @team
+      .users
+      .first
+      .email
     row_for_unvaccinated_patient[
       "CLINIC_NAME"
     ] = @physical_clinic_location.name if @physical_clinic_location
@@ -417,7 +398,7 @@ describe "HPV vaccination" do
     expect(page).to have_content("DateToday (1 February 2024)")
     expect(page).to have_content("Time10:00am")
     expect(page).to have_content(
-      "VaccinatorYou (#{@organisation.users.first.full_name})"
+      "VaccinatorYou (#{@team.users.first.full_name})"
     )
     expect(page).to have_content("SiteLeft arm (upper position)")
 

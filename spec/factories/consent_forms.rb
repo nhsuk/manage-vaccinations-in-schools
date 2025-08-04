@@ -36,23 +36,23 @@
 #  updated_at                          :datetime         not null
 #  consent_id                          :bigint
 #  location_id                         :bigint           not null
-#  organisation_id                     :bigint           not null
 #  school_id                           :bigint
+#  team_id                             :bigint           not null
 #
 # Indexes
 #
-#  index_consent_forms_on_consent_id       (consent_id)
-#  index_consent_forms_on_location_id      (location_id)
-#  index_consent_forms_on_nhs_number       (nhs_number)
-#  index_consent_forms_on_organisation_id  (organisation_id)
-#  index_consent_forms_on_school_id        (school_id)
+#  index_consent_forms_on_consent_id   (consent_id)
+#  index_consent_forms_on_location_id  (location_id)
+#  index_consent_forms_on_nhs_number   (nhs_number)
+#  index_consent_forms_on_school_id    (school_id)
+#  index_consent_forms_on_team_id      (team_id)
 #
 # Foreign Keys
 #
 #  fk_rails_...  (consent_id => consents.id)
 #  fk_rails_...  (location_id => locations.id)
-#  fk_rails_...  (organisation_id => organisations.id)
 #  fk_rails_...  (school_id => locations.id)
+#  fk_rails_...  (team_id => teams.id)
 #
 
 require_relative "../../lib/faker/address"
@@ -92,10 +92,10 @@ FactoryBot.define do
     parental_responsibility { "yes" }
 
     programmes { session.programmes }
-    organisation { session.organisation }
+    team { session.team }
 
     location { session.location }
-    school { location.school? ? location : association(:school, organisation:) }
+    school { location.school? ? location : association(:school, team:) }
     school_confirmed { true }
 
     health_answers do

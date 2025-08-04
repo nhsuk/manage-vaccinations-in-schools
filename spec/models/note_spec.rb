@@ -32,7 +32,7 @@ describe Note do
     it { should belong_to(:patient) }
     it { should belong_to(:session) }
 
-    it { should have_one(:organisation).through(:session) }
+    it { should have_one(:team).through(:session) }
   end
 
   describe "validations" do

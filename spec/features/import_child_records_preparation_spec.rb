@@ -42,13 +42,12 @@ describe "Import child records" do
       create(:programme, :td_ipv)
     ]
 
-    @organisation =
-      create(:organisation, :with_generic_clinic, :with_one_nurse, programmes:)
-    create(:school, urn: "123456", organisation: @organisation)
-    @user = @organisation.users.first
+    @team = create(:team, :with_generic_clinic, :with_one_nurse, programmes:)
+    create(:school, urn: "123456", team: @team)
+    @user = @team.users.first
 
     [AcademicYear.current, AcademicYear.pending].each do |academic_year|
-      OrganisationSessionsFactory.call(@organisation, academic_year:)
+      TeamSessionsFactory.call(@team, academic_year:)
     end
   end
 

@@ -31,9 +31,9 @@ describe "/api/testing/onboard" do
         expect(response).to have_http_status(:created)
       end
 
-      it "creates the organisation" do
+      it "creates the team" do
         request
-        expect(Organisation.count).to eq(1)
+        expect(Team.count).to eq(1)
       end
 
       it "creates sessions for the current and previous academic years" do
@@ -58,12 +58,12 @@ describe "/api/testing/onboard" do
         expect(errors).to eq(
           {
             "clinics" => ["can't be blank"],
-            "organisation.careplus_venue_code" => ["can't be blank"],
-            "organisation.name" => ["can't be blank"],
-            "organisation.ods_code" => ["can't be blank"],
-            "organisation.phone" => ["can't be blank", "is invalid"],
-            "organisation.privacy_notice_url" => ["can't be blank"],
-            "organisation.privacy_policy_url" => ["can't be blank"],
+            "team.careplus_venue_code" => ["can't be blank"],
+            "team.name" => ["can't be blank"],
+            "team.ods_code" => ["can't be blank"],
+            "team.phone" => ["can't be blank", "is invalid"],
+            "team.privacy_notice_url" => ["can't be blank"],
+            "team.privacy_policy_url" => ["can't be blank"],
             "programmes" => ["can't be blank"],
             "school.0.location" => ["can't be blank"],
             "school.0.status" => ["is not included in the list"],

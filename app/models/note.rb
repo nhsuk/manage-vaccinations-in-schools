@@ -29,7 +29,7 @@ class Note < ApplicationRecord
   belongs_to :patient
   belongs_to :session
 
-  has_one :organisation, through: :session
+  has_one :team, through: :session
 
   validates :body, presence: true, length: { maximum: 1000 }
 

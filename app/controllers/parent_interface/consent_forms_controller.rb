@@ -18,7 +18,7 @@ module ParentInterface
       consent_form =
         ConsentForm.create!(
           programmes: @programmes,
-          organisation: @session.organisation,
+          team: @session.team,
           location: @session.location
         )
 

@@ -9,7 +9,7 @@ class SessionPolicy < ApplicationPolicy
 
   class Scope < ApplicationPolicy::Scope
     def resolve
-      scope.where(organisation: user.selected_organisation)
+      scope.where(team: user.selected_team)
     end
   end
 end

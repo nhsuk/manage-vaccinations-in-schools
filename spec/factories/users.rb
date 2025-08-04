@@ -38,7 +38,7 @@ FactoryBot.define do
             uploaded_by
           ] do
     transient do
-      organisation { Organisation.first || create(:organisation) }
+      team { Team.first || create(:team) }
 
       selected_role_code { User::CIS2_NURSE_ROLE }
       selected_role_name { "Nurse Access Role" }
@@ -47,8 +47,8 @@ FactoryBot.define do
       cis2_info_hash do
         {
           "selected_org" => {
-            "name" => organisation.name,
-            "code" => organisation.ods_code
+            "name" => team.name,
+            "code" => team.ods_code
           },
           "selected_role" => {
             "name" => selected_role_name,
@@ -65,7 +65,7 @@ FactoryBot.define do
     given_name { "Test" }
     family_name { "User" }
 
-    organisations { [organisation] }
+    teams { [team] }
 
     # Don't set a password as this interferes with CIS2.
     # password { "power overwhelming!" }

@@ -2,17 +2,11 @@
 
 module Generate
   class VaccinationRecords
-    attr_reader :config, :organisation, :programme, :session, :administered
+    attr_reader :config, :team, :programme, :session, :administered
 
-    def initialize(
-      organisation:,
-      programme: nil,
-      session: nil,
-      administered: nil
-    )
-      @organisation = organisation
-      @programme =
-        programme || organisation.programmes.includes(:organisations).sample
+    def initialize(team:, programme: nil, session: nil, administered: nil)
+      @team = team
+      @programme = programme || team.programmes.includes(:teams).sample
       @session = session
       @administered = administered
     end
@@ -52,7 +46,7 @@ module Generate
           :administered,
           patient: patient_session.patient,
           programme:,
-          organisation:,
+          team:,
           performed_by:,
           session: patient_session.session,
           vaccine:,
@@ -84,7 +78,7 @@ module Generate
     end
 
     def patient_sessions
-      (session.presence || organisation)
+      (session.presence || team)
         .patient_sessions
         .joins(:patient)
         .includes(
@@ -112,9 +106,7 @@ module Generate
     end
 
     def performed_by
-      (
-        @organisation_users ||= organisation.users.includes(:organisations)
-      ).sample
+      (@team_users ||= team.users.includes(:teams)).sample
     end
   end
 end

@@ -40,14 +40,14 @@ describe User do
     it { should validate_length_of(:family_name).is_at_most(255) }
   end
 
-  describe "#selected_organisation" do
-    subject(:selected_organisation) { user.selected_organisation }
+  describe "#selected_team" do
+    subject(:selected_team) { user.selected_team }
 
     context "cis2 is enabled", cis2: :enabled do
-      let(:organisation) { create(:organisation) }
-      let(:user) { create(:user, organisation:) }
+      let(:team) { create(:team) }
+      let(:user) { create(:user, team:) }
 
-      it { should eq(organisation) }
+      it { should eq(team) }
     end
   end
 

@@ -8,7 +8,7 @@ module CSVImportable
 
     encrypts :csv_data
 
-    belongs_to :organisation
+    belongs_to :team
 
     belongs_to :uploaded_by,
                class_name: "User",

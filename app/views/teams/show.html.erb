@@ -1,0 +1,41 @@
+<%= h1 t(".title") do %>
+  <span class="nhsuk-caption-l"><%= @team.name %></span>
+  <%= t(".title") %>
+<% end %>
+
+<%= render AppCardComponent.new(heading_level: 2) do |card| %>
+  <% card.with_heading { "Contact details" } %>
+
+  <%= govuk_summary_list do |summary_list|
+        summary_list.with_row do |row|
+          row.with_key { "Email address" }
+          row.with_value { @team.email }
+        end
+      
+        summary_list.with_row do |row|
+          row.with_key { "Phone number" }
+          row.with_value { format_phone_with_instructions(@team) }
+        end
+      end %>
+<% end %>
+
+<%= render AppCardComponent.new(heading_level: 2) do |card| %>
+  <% card.with_heading { "Session defaults" } %>
+
+  <%= govuk_summary_list do |summary_list|
+        summary_list.with_row do |row|
+          row.with_key { "Consent requests" }
+          row.with_value { "Send #{pluralize(@team.weeks_before_consent_requests, "week")} before first session" }
+        end
+      
+        summary_list.with_row do |row|
+          row.with_key { "Consent reminders" }
+          row.with_value { "Send #{pluralize(@team.weeks_before_consent_reminders, "week")} before each session" }
+        end
+      
+        summary_list.with_row do |row|
+          row.with_key { "Invitations" }
+          row.with_value { "Send #{pluralize(@team.weeks_before_invitations, "week")} before first session" }
+        end
+      end %>
+<% end %>

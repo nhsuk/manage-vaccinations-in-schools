@@ -14,7 +14,7 @@ class Onboarding
     year_groups
   ].freeze
 
-  ORGANISATION_ATTRIBUTES = %i[
+  TEAM_ATTRIBUTES = %i[
     careplus_venue_code
     days_before_consent_reminders
     days_before_consent_requests
@@ -45,7 +45,7 @@ class Onboarding
     password
   ].freeze
 
-  validates :organisation, presence: true
+  validates :team, presence: true
   validates :programmes, presence: true
   validates :subteams, presence: true
   validates :schools, presence: true
@@ -54,21 +54,18 @@ class Onboarding
   def initialize(hash)
     config = hash.deep_symbolize_keys
 
-    @organisation =
-      Organisation.new(
-        config.fetch(:organisation, {}).slice(*ORGANISATION_ATTRIBUTES)
-      )
+    @team = Team.new(config.fetch(:team, {}).slice(*TEAM_ATTRIBUTES))
 
     @programmes =
       config
         .fetch(:programmes, [])
-        .map { |type| ExistingProgramme.new(type:, organisation:) }
+        .map { |type| ExistingProgramme.new(type:, team:) }
 
     subteams_by_name =
       config
         .fetch(:subteams, {})
         .transform_values { it.slice(*SUBTEAM_ATTRIBUTES) }
-        .transform_values { Subteam.new(**it, organisation:) }
+        .transform_values { Subteam.new(**it, team:) }
 
     @subteams = subteams_by_name.values
 
@@ -113,7 +110,7 @@ class Onboarding
 
   def errors
     super.tap do |errors|
-      merge_errors_from([organisation], errors:, name: "organisation")
+      merge_errors_from([team], errors:, name: "team")
       merge_errors_from(programmes, errors:, name: "programme")
       merge_errors_from(subteams, errors:, name: "subteam")
       merge_errors_from(users, errors:, name: "user")
@@ -127,29 +124,26 @@ class Onboarding
       models.each(&:save!)
 
       # Reload to ensure the programmes are loaded.
-      GenericClinicFactory.call(organisation: organisation.reload)
+      GenericClinicFactory.call(team: team.reload)
 
-      @users.each { |user| user.organisations << organisation }
+      @users.each { |user| user.teams << team }
 
-      OrganisationSessionsFactory.call(organisation, academic_year:)
+      TeamSessionsFactory.call(team, academic_year:)
 
       if create_sessions_for_previous_academic_year
-        OrganisationSessionsFactory.call(
-          organisation,
-          academic_year: academic_year - 1
-        )
+        TeamSessionsFactory.call(team, academic_year: academic_year - 1)
       end
     end
   end
 
   private
 
-  attr_reader :organisation, :programmes, :subteams, :users, :schools, :clinics
+  attr_reader :team, :programmes, :subteams, :users, :schools, :clinics
 
   def academic_year = AcademicYear.pending
 
   def models
-    [organisation] + programmes + subteams + users + schools + clinics
+    [team] + programmes + subteams + users + schools + clinics
   end
 
   def merge_errors_from(objects, errors:, name:)
@@ -170,7 +164,7 @@ class Onboarding
   class ExistingProgramme
     include ActiveModel::Model
 
-    attr_accessor :type, :organisation
+    attr_accessor :type, :team
 
     validates :programme, presence: true
 
@@ -179,7 +173,7 @@ class Onboarding
     end
 
     def save!
-      OrganisationProgramme.create!(organisation:, programme:)
+      TeamProgramme.create!(team:, programme:)
     end
   end
 

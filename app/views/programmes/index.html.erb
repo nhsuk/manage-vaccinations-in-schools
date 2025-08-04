@@ -15,7 +15,7 @@
 
       <% table.with_body do |body| %>
         <% @programmes.each do |programme| %>
-          <% patients = current_organisation.patients.appear_in_programmes([programme], academic_year:) %>
+          <% patients = current_team.patients.appear_in_programmes([programme], academic_year:) %>
 
           <% body.with_row do |row| %>
             <% row.with_cell do %>

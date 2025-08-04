@@ -215,29 +215,23 @@ describe "Edit vaccination record" do
   end
 
   def given_i_am_signed_in
-    @organisation = create(:organisation, :with_one_nurse, ods_code: "R1L")
-    sign_in @organisation.users.first
+    @team = create(:team, :with_one_nurse, ods_code: "R1L")
+    sign_in @team.users.first
   end
 
   def given_i_am_signed_in_as_an_admin
-    @organisation = create(:organisation, :with_one_admin, ods_code: "R1L")
-    sign_in @organisation.users.first, role: :admin_staff
+    @team = create(:team, :with_one_admin, ods_code: "R1L")
+    sign_in @team.users.first, role: :admin_staff
   end
 
   def and_an_hpv_programme_is_underway
-    @programme = create(:programme, :hpv, organisations: [@organisation])
+    @programme = create(:programme, :hpv, teams: [@team])
 
     @vaccine = @programme.vaccines.first
 
-    @original_batch =
-      create(:batch, organisation: @organisation, vaccine: @vaccine)
+    @original_batch = create(:batch, team: @team, vaccine: @vaccine)
     @replacement_batch =
-      create(
-        :batch,
-        :not_expired,
-        organisation: @organisation,
-        vaccine: @vaccine
-      )
+      create(:batch, :not_expired, team: @team, vaccine: @vaccine)
 
     location = create(:school)
 
@@ -245,7 +239,7 @@ describe "Edit vaccination record" do
       create(
         :session,
         :completed,
-        organisation: @organisation,
+        team: @team,
         programmes: [@programme],
         location:
       )
@@ -256,7 +250,7 @@ describe "Edit vaccination record" do
         :consent_given_triage_not_needed,
         given_name: "John",
         family_name: "Smith",
-        organisation: @organisation,
+        team: @team,
         programmes: [@programme]
       )
 

@@ -94,11 +94,11 @@ describe VaccinationRecord do
       end
 
       let(:programme) { create(:programme) }
-      let(:organisation) do
-        create(:organisation, :with_generic_clinic, programmes: [programme])
+      let(:team) do
+        create(:team, :with_generic_clinic, programmes: [programme])
       end
       let(:session) do
-        organisation.generic_clinic_session(academic_year: AcademicYear.current)
+        team.generic_clinic_session(academic_year: AcademicYear.current)
       end
 
       it { should validate_presence_of(:location_name) }

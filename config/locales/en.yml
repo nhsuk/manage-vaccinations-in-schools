@@ -110,7 +110,7 @@ en:
           attributes:
             action:
               inclusion: Choose whether to update the child’s record with this new information
-        select_organisation_form:
+        select_team_form:
           attributes:
             organisation_id:
               inclusion: Choose an organisation
@@ -622,9 +622,9 @@ en:
   table:
     no_filtered_results: We couldn’t find any children that matched your filters.
     no_results: No results
-  organisations:
+  teams:
     show:
-      title: Your organisation
+      title: Your team
   vaccines:
     index:
       title: Vaccines

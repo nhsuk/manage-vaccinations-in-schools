@@ -38,8 +38,8 @@ require_relative "../../lib/faker/address"
 FactoryBot.define do
   factory :location do
     transient do
-      organisation { nil }
-      programmes { subteam&.organisation&.programmes || [] }
+      team { nil }
+      programmes { subteam&.team&.programmes || [] }
     end
 
     address_line_1 { Faker::Address.street_address }
@@ -48,11 +48,7 @@ FactoryBot.define do
 
     url { Faker::Internet.url }
 
-    subteam do
-      if organisation
-        organisation.subteams.first || association(:subteam, organisation:)
-      end
-    end
+    subteam { team.subteams.first || association(:subteam, team:) if team }
 
     traits_for_enum :status
 
@@ -73,7 +69,7 @@ FactoryBot.define do
 
       year_groups { (0..11).to_a }
 
-      ods_code { subteam&.organisation&.ods_code }
+      ods_code { subteam&.team&.ods_code }
     end
 
     factory :gp_practice do

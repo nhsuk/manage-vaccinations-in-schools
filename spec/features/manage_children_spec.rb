@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 describe "Manage children" do
-  before { given_my_organisation_exists }
+  before { given_my_team_exists }
 
   scenario "Viewing children" do
     given_patients_exist
@@ -140,22 +140,16 @@ describe "Manage children" do
     then_i_see_the_notice_of_sensitive
   end
 
-  def given_my_organisation_exists
+  def given_my_team_exists
     @programme = create(:programme, :hpv)
-    @organisation =
-      create(:organisation, :with_one_nurse, programmes: [@programme])
+    @team = create(:team, :with_one_nurse, programmes: [@programme])
   end
 
   def given_patients_exist
-    school = create(:school, organisation: @organisation)
+    school = create(:school, team: @team)
 
     @session =
-      create(
-        :session,
-        location: school,
-        organisation: @organisation,
-        programmes: [@programme]
-      )
+      create(:session, location: school, team: @team, programmes: [@programme])
 
     @patient =
       create(
@@ -167,8 +161,7 @@ describe "Manage children" do
       )
     create_list(:patient, 9, session: @session)
 
-    another_session =
-      create(:session, organisation: @organisation, programmes: [@programme])
+    another_session = create(:session, team: @team, programmes: [@programme])
 
     @existing_patient =
       create(
@@ -180,8 +173,7 @@ describe "Manage children" do
   end
 
   def given_an_invalidated_patient_exists
-    session =
-      create(:session, organisation: @organisation, programmes: [@programme])
+    session = create(:session, team: @team, programmes: [@programme])
 
     @patient =
       create(
@@ -220,28 +212,25 @@ describe "Manage children" do
   end
 
   def when_a_deceased_patient_exists
-    session =
-      create(:session, organisation: @organisation, programmes: [@programme])
+    session = create(:session, team: @team, programmes: [@programme])
 
     @deceased_patient = create(:patient, :deceased, session:)
   end
 
   def when_an_invalidated_patient_exists
-    session =
-      create(:session, organisation: @organisation, programmes: [@programme])
+    session = create(:session, team: @team, programmes: [@programme])
 
     @invalidated_patient = create(:patient, :invalidated, session:)
   end
 
   def when_a_restricted_patient_exists
-    session =
-      create(:session, organisation: @organisation, programmes: [@programme])
+    session = create(:session, team: @team, programmes: [@programme])
 
     @restricted_patient = create(:patient, :restricted, session:)
   end
 
   def when_i_click_on_children
-    sign_in @organisation.users.first
+    sign_in @team.users.first
 
     visit "/dashboard"
     click_on "Children", match: :first
@@ -346,19 +335,19 @@ describe "Manage children" do
   end
 
   def when_i_go_to_the_dashboard
-    sign_in @organisation.users.first
+    sign_in @team.users.first
 
     visit "/dashboard"
   end
 
   def when_i_go_to_the_imports_page
-    sign_in @organisation.users.first
+    sign_in @team.users.first
 
     visit "/imports"
   end
 
   def when_i_go_to_the_imports_page_as_a_superuser
-    sign_in @organisation.users.first, superuser: true
+    sign_in @team.users.first, superuser: true
 
     visit "/imports"
   end

@@ -7,7 +7,7 @@ module ParentInterface
 
     prepend_before_action :set_subteam
     prepend_before_action :set_programmes
-    prepend_before_action :set_organisation
+    prepend_before_action :set_team
     prepend_before_action :set_session
     prepend_before_action :set_consent_form
     before_action :authenticate_consent_form_user!
@@ -34,12 +34,12 @@ module ParentInterface
       end
     end
 
-    def set_organisation
-      @organisation =
+    def set_team
+      @team =
         if @consent_form.present?
-          @consent_form.organisation
+          @consent_form.team
         elsif @session.present?
-          @session.organisation
+          @session.team
         end
     end
 
@@ -97,7 +97,7 @@ module ParentInterface
     end
 
     def set_privacy_policy_url
-      @privacy_policy_url = @organisation.privacy_policy_url
+      @privacy_policy_url = @team.privacy_policy_url
     end
   end
 end

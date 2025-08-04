@@ -4,23 +4,23 @@
 #
 # Table name: batches
 #
-#  id              :bigint           not null, primary key
-#  archived_at     :datetime
-#  expiry          :date
-#  name            :string           not null
-#  created_at      :datetime         not null
-#  updated_at      :datetime         not null
-#  organisation_id :bigint           not null
-#  vaccine_id      :bigint           not null
+#  id          :bigint           not null, primary key
+#  archived_at :datetime
+#  expiry      :date
+#  name        :string           not null
+#  created_at  :datetime         not null
+#  updated_at  :datetime         not null
+#  team_id     :bigint           not null
+#  vaccine_id  :bigint           not null
 #
 # Indexes
 #
-#  idx_on_organisation_id_name_expiry_vaccine_id_6d9ae30338  (organisation_id,name,expiry,vaccine_id) UNIQUE
-#  index_batches_on_vaccine_id                               (vaccine_id)
+#  index_batches_on_team_id_and_name_and_expiry_and_vaccine_id  (team_id,name,expiry,vaccine_id) UNIQUE
+#  index_batches_on_vaccine_id                                  (vaccine_id)
 #
 # Foreign Keys
 #
-#  fk_rails_...  (organisation_id => organisations.id)
+#  fk_rails_...  (team_id => teams.id)
 #  fk_rails_...  (vaccine_id => vaccines.id)
 #
 class Batch < ApplicationRecord
@@ -28,7 +28,7 @@ class Batch < ApplicationRecord
 
   audited associated_with: :vaccine
 
-  belongs_to :organisation
+  belongs_to :team
   belongs_to :vaccine
 
   has_and_belongs_to_many :immunisation_imports
@@ -56,7 +56,7 @@ class Batch < ApplicationRecord
 
   validates :expiry,
             uniqueness: {
-              scope: %i[organisation_id name vaccine_id],
+              scope: %i[team_id name vaccine_id],
               allow_nil: true
             }
 end

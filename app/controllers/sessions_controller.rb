@@ -9,7 +9,7 @@ class SessionsController < ApplicationController
   before_action :set_session, except: :index
 
   def index
-    @programmes = current_user.selected_organisation.programmes
+    @programmes = current_user.selected_team.programmes
 
     scope =
       policy_scope(Session).includes(:location, :programmes, :session_dates)

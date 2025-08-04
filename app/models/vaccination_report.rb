@@ -45,7 +45,7 @@ class VaccinationReport
 
   def csv_data
     exporter_class.call(
-      organisation: @current_user.selected_organisation,
+      team: @current_user.selected_team,
       programme:,
       academic_year:,
       start_date: date_from,

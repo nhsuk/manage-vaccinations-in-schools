@@ -95,7 +95,7 @@ class VaccinationRecord < ApplicationRecord
 
   has_one :identity_check, autosave: true, dependent: :destroy
   has_one :location, through: :session
-  has_one :organisation, through: :session
+  has_one :team, through: :session
   has_one :subteam, through: :session
 
   scope :recorded_in_service, -> { where.not(session_id: nil) }

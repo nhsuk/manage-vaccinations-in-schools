@@ -4,27 +4,27 @@
 #
 # Table name: school_moves
 #
-#  id              :bigint           not null, primary key
-#  home_educated   :boolean
-#  source          :integer          not null
-#  created_at      :datetime         not null
-#  updated_at      :datetime         not null
-#  organisation_id :bigint
-#  patient_id      :bigint           not null
-#  school_id       :bigint
+#  id            :bigint           not null, primary key
+#  home_educated :boolean
+#  source        :integer          not null
+#  created_at    :datetime         not null
+#  updated_at    :datetime         not null
+#  patient_id    :bigint           not null
+#  school_id     :bigint
+#  team_id       :bigint
 #
 # Indexes
 #
-#  idx_on_patient_id_home_educated_organisation_id_7c1b5f5066  (patient_id,home_educated,organisation_id) UNIQUE
-#  index_school_moves_on_organisation_id                       (organisation_id)
-#  index_school_moves_on_patient_id_and_school_id              (patient_id,school_id) UNIQUE
-#  index_school_moves_on_school_id                             (school_id)
+#  index_school_moves_on_patient_id_and_home_educated_and_team_id  (patient_id,home_educated,team_id) UNIQUE
+#  index_school_moves_on_patient_id_and_school_id                  (patient_id,school_id) UNIQUE
+#  index_school_moves_on_school_id                                 (school_id)
+#  index_school_moves_on_team_id                                   (team_id)
 #
 # Foreign Keys
 #
-#  fk_rails_...  (organisation_id => organisations.id)
 #  fk_rails_...  (patient_id => patients.id)
 #  fk_rails_...  (school_id => locations.id)
+#  fk_rails_...  (team_id => teams.id)
 #
 describe SchoolMove do
   describe "validations" do
@@ -53,12 +53,8 @@ describe SchoolMove do
     let(:today) { nil }
     let(:user) { create(:user) }
     let(:programmes) { [create(:programme)] }
-    let(:organisation) do
-      create(:organisation, :with_generic_clinic, programmes:)
-    end
-    let(:generic_clinic_session) do
-      organisation.generic_clinic_session(academic_year:)
-    end
+    let(:team) { create(:team, :with_generic_clinic, programmes:) }
+    let(:generic_clinic_session) { team.generic_clinic_session(academic_year:) }
 
     around { |example| travel_to(today) { example.run } }
 
@@ -158,21 +154,21 @@ describe SchoolMove do
       let(:academic_year) { AcademicYear.pending }
 
       context "with a patient in no sessions" do
-        let(:patient) { create(:patient, organisation: nil) }
+        let(:patient) { create(:patient, team: nil) }
 
         context "to a school with a scheduled session" do
           let(:school_move) do
             create(:school_move, :to_school, patient:, school:)
           end
 
-          let(:school) { create(:school, organisation:) }
+          let(:school) { create(:school, team:) }
           let(:new_sessions) do
             create_list(
               :session,
               2,
               date: session_date + 1.week,
               location: school,
-              organisation:,
+              team:,
               programmes:
             )
           end
@@ -188,14 +184,14 @@ describe SchoolMove do
             create(:school_move, :to_school, patient:, school:)
           end
 
-          let(:school) { create(:school, organisation:) }
+          let(:school) { create(:school, team:) }
           let(:new_sessions) do
             create_list(
               :session,
               2,
               date: session_date - 1.week,
               location: school,
-              organisation:,
+              team:,
               programmes:
             )
           end
@@ -208,7 +204,7 @@ describe SchoolMove do
 
         context "to home-schooled" do
           let(:school_move) do
-            create(:school_move, :to_home_educated, organisation:, patient:)
+            create(:school_move, :to_home_educated, team:, patient:)
           end
 
           include_examples "creates a log entry"
@@ -220,7 +216,7 @@ describe SchoolMove do
 
       context "with a patient in a school session" do
         let(:session) do
-          create(:session, date: session_date, organisation:, programmes:)
+          create(:session, date: session_date, team:, programmes:)
         end
         let(:patient) { create(:patient, session:) }
 
@@ -230,14 +226,14 @@ describe SchoolMove do
               create(:school_move, :to_school, patient:, school:)
             end
 
-            let(:school) { create(:school, organisation:) }
+            let(:school) { create(:school, team:) }
             let(:new_sessions) do
               create_list(
                 :session,
                 2,
                 date: session_date + 1.week,
                 location: school,
-                organisation:,
+                team:,
                 programmes:
               )
             end
@@ -254,14 +250,14 @@ describe SchoolMove do
               create(:school_move, :to_school, patient:, school:)
             end
 
-            let(:school) { create(:school, organisation:) }
+            let(:school) { create(:school, team:) }
             let(:new_sessions) do
               create_list(
                 :session,
                 2,
                 date: session_date - 1.week,
                 location: school,
-                organisation:,
+                team:,
                 programmes:
               )
             end
@@ -275,7 +271,7 @@ describe SchoolMove do
 
           context "to home-schooled" do
             let(:school_move) do
-              create(:school_move, :to_home_educated, organisation:, patient:)
+              create(:school_move, :to_home_educated, team:, patient:)
             end
 
             include_examples "creates a log entry"
@@ -285,22 +281,20 @@ describe SchoolMove do
             include_examples "destroys the school move"
           end
 
-          context "to a school in a different organisation" do
+          context "to a school in a different team" do
             let(:school_move) do
               create(:school_move, :to_school, patient:, school:)
             end
 
-            let(:new_organisation) do
-              create(:organisation, :with_generic_clinic, programmes:)
-            end
-            let(:school) { create(:school, organisation: new_organisation) }
+            let(:new_team) { create(:team, :with_generic_clinic, programmes:) }
+            let(:school) { create(:school, team: new_team) }
             let(:new_sessions) do
               create_list(
                 :session,
                 2,
                 date: session_date + 1.week,
                 location: school,
-                organisation: new_organisation,
+                team: new_team,
                 programmes:
               )
             end
@@ -312,21 +306,14 @@ describe SchoolMove do
             include_examples "destroys the school move"
           end
 
-          context "to home-schooled in a different organisation" do
+          context "to home-schooled in a different team" do
             let(:school_move) do
-              create(
-                :school_move,
-                :to_home_educated,
-                organisation: new_organisation,
-                patient:
-              )
+              create(:school_move, :to_home_educated, team: new_team, patient:)
             end
 
-            let(:new_organisation) do
-              create(:organisation, :with_generic_clinic, programmes:)
-            end
+            let(:new_team) { create(:team, :with_generic_clinic, programmes:) }
             let(:generic_clinic_session) do
-              new_organisation.generic_clinic_session(academic_year:)
+              new_team.generic_clinic_session(academic_year:)
             end
 
             include_examples "creates a log entry"
@@ -352,14 +339,14 @@ describe SchoolMove do
               create(:school_move, :to_school, patient:, school:)
             end
 
-            let(:school) { create(:school, organisation:) }
+            let(:school) { create(:school, team:) }
             let(:new_sessions) do
               create_list(
                 :session,
                 2,
                 date: session_date + 1.week,
                 location: school,
-                organisation:,
+                team:,
                 programmes:
               )
             end
@@ -375,14 +362,14 @@ describe SchoolMove do
               create(:school_move, :to_school, patient:, school:)
             end
 
-            let(:school) { create(:school, organisation:) }
+            let(:school) { create(:school, team:) }
             let(:new_sessions) do
               create_list(
                 :session,
                 2,
                 date: session_date - 1.week,
                 location: school,
-                organisation:,
+                team:,
                 programmes:
               )
             end
@@ -395,7 +382,7 @@ describe SchoolMove do
 
           context "to home-schooled" do
             let(:school_move) do
-              create(:school_move, :to_home_educated, organisation:, patient:)
+              create(:school_move, :to_home_educated, team:, patient:)
             end
 
             include_examples "creates a log entry"
@@ -404,22 +391,20 @@ describe SchoolMove do
             include_examples "destroys the school move"
           end
 
-          context "to a school in a different organisation" do
+          context "to a school in a different team" do
             let(:school_move) do
               create(:school_move, :to_school, patient:, school:)
             end
 
-            let(:new_organisation) do
-              create(:organisation, :with_generic_clinic, programmes:)
-            end
-            let(:school) { create(:school, organisation: new_organisation) }
+            let(:new_team) { create(:team, :with_generic_clinic, programmes:) }
+            let(:school) { create(:school, team: new_team) }
             let(:new_sessions) do
               create(
                 :session,
                 2,
                 date: session_date + 1.week,
                 location: school,
-                organisation: new_organisation,
+                team: new_team,
                 programmes:
               )
             end
@@ -430,21 +415,14 @@ describe SchoolMove do
             include_examples "destroys the school move"
           end
 
-          context "to home-schooled in a different organisation" do
+          context "to home-schooled in a different team" do
             let(:school_move) do
-              create(
-                :school_move,
-                :to_home_educated,
-                organisation: new_organisation,
-                patient:
-              )
+              create(:school_move, :to_home_educated, team: new_team, patient:)
             end
 
-            let(:new_organisation) do
-              create(:organisation, :with_generic_clinic, programmes:)
-            end
+            let(:new_team) { create(:team, :with_generic_clinic, programmes:) }
             let(:generic_clinic_session) do
-              new_organisation.generic_clinic_session(
+              new_team.generic_clinic_session(
                 academic_year: AcademicYear.current
               )
             end
@@ -468,14 +446,14 @@ describe SchoolMove do
               create(:school_move, :to_school, patient:, school:)
             end
 
-            let(:school) { create(:school, organisation:) }
+            let(:school) { create(:school, team:) }
             let!(:new_sessions) do # rubocop:disable RSpec/LetSetup
               create_list(
                 :session,
                 2,
                 date: session_date + 1.week,
                 location: school,
-                organisation:,
+                team:,
                 programmes:
               )
             end
@@ -492,14 +470,14 @@ describe SchoolMove do
               create(:school_move, :to_school, patient:, school:)
             end
 
-            let(:school) { create(:school, organisation:) }
+            let(:school) { create(:school, team:) }
             let!(:new_sessions) do # rubocop:disable RSpec/LetSetup
               create_list(
                 :session,
                 2,
                 date: session_date - 1.week,
                 location: school,
-                organisation:,
+                team:,
                 programmes:
               )
             end
@@ -513,7 +491,7 @@ describe SchoolMove do
 
           context "to home-schooled" do
             let(:school_move) do
-              create(:school_move, :to_home_educated, organisation:, patient:)
+              create(:school_move, :to_home_educated, team:, patient:)
             end
 
             it "keeps the patient as home-schooled" do
@@ -527,22 +505,20 @@ describe SchoolMove do
             include_examples "destroys the school move"
           end
 
-          context "to a school in a different organisation" do
+          context "to a school in a different team" do
             let(:school_move) do
               create(:school_move, :to_school, patient:, school:)
             end
 
-            let(:new_organisation) do
-              create(:organisation, :with_generic_clinic, programmes:)
-            end
-            let(:school) { create(:school, organisation: new_organisation) }
+            let(:new_team) { create(:team, :with_generic_clinic, programmes:) }
+            let(:school) { create(:school, team: new_team) }
             let(:new_sessions) do
               create_list(
                 :session,
                 2,
                 date: session_date + 1.week,
                 location: school,
-                organisation: new_organisation,
+                team: new_team,
                 programmes:
               )
             end
@@ -553,28 +529,21 @@ describe SchoolMove do
             include_examples "destroys the school move"
           end
 
-          context "to home-schooled in a different organisation" do
+          context "to home-schooled in a different team" do
             let(:school_move) do
-              create(
-                :school_move,
-                :to_home_educated,
-                organisation: new_organisation,
-                patient:
-              )
+              create(:school_move, :to_home_educated, team: new_team, patient:)
             end
 
             let(:patient) do
               create(
                 :patient,
                 :home_educated,
-                session: organisation.generic_clinic_session(academic_year:)
+                session: team.generic_clinic_session(academic_year:)
               )
             end
-            let(:new_organisation) do
-              create(:organisation, :with_generic_clinic, programmes:)
-            end
+            let(:new_team) { create(:team, :with_generic_clinic, programmes:) }
             let(:generic_clinic_session) do
-              new_organisation.generic_clinic_session(academic_year:)
+              new_team.generic_clinic_session(academic_year:)
             end
 
             it "keeps the patient as home-schooled" do
@@ -605,14 +574,14 @@ describe SchoolMove do
               create(:school_move, :to_school, patient:, school:)
             end
 
-            let(:school) { create(:school, organisation:) }
+            let(:school) { create(:school, team:) }
             let!(:new_sessions) do # rubocop:disable RSpec/LetSetup
               create_list(
                 :session,
                 2,
                 date: session_date + 1.week,
                 location: school,
-                organisation:,
+                team:,
                 programmes:
               )
             end
@@ -628,14 +597,14 @@ describe SchoolMove do
               create(:school_move, :to_school, patient:, school:)
             end
 
-            let(:school) { create(:school, organisation:) }
+            let(:school) { create(:school, team:) }
             let!(:new_sessions) do # rubocop:disable RSpec/LetSetup
               create_list(
                 :session,
                 2,
                 :completed,
                 location: school,
-                organisation:,
+                team:,
                 programmes:
               )
             end
@@ -648,7 +617,7 @@ describe SchoolMove do
 
           context "to home-schooled" do
             let(:school_move) do
-              create(:school_move, :to_home_educated, organisation:, patient:)
+              create(:school_move, :to_home_educated, team:, patient:)
             end
 
             it "keeps the patient as home-schooled" do
@@ -661,22 +630,20 @@ describe SchoolMove do
             include_examples "destroys the school move"
           end
 
-          context "to a school in a different organisation" do
+          context "to a school in a different team" do
             let(:school_move) do
               create(:school_move, :to_school, patient:, school:)
             end
 
-            let(:new_organisation) do
-              create(:organisation, :with_generic_clinic, programmes:)
-            end
-            let(:school) { create(:school, organisation: new_organisation) }
+            let(:new_team) { create(:team, :with_generic_clinic, programmes:) }
+            let(:school) { create(:school, team: new_team) }
             let(:new_sessions) do
               create_list(
                 :session,
                 2,
                 date: session_date + 1.week,
                 location: school,
-                organisation: new_organisation,
+                team: new_team,
                 programmes:
               )
             end
@@ -687,26 +654,19 @@ describe SchoolMove do
             include_examples "destroys the school move"
           end
 
-          context "to home-schooled in a different organisation" do
+          context "to home-schooled in a different team" do
             let(:school_move) do
-              create(
-                :school_move,
-                :to_home_educated,
-                organisation: new_organisation,
-                patient:
-              )
+              create(:school_move, :to_home_educated, team: new_team, patient:)
             end
 
             let(:patient) do
               create(
                 :patient,
                 :home_educated,
-                session: organisation.generic_clinic_session(academic_year:)
+                session: team.generic_clinic_session(academic_year:)
               )
             end
-            let(:new_organisation) do
-              create(:organisation, :with_generic_clinic, programmes:)
-            end
+            let(:new_team) { create(:team, :with_generic_clinic, programmes:) }
 
             it "keeps the patient as home-schooled" do
               expect { confirm! }.not_to(
@@ -732,14 +692,14 @@ describe SchoolMove do
               create(:school_move, :to_school, patient:, school:)
             end
 
-            let(:school) { create(:school, organisation:) }
+            let(:school) { create(:school, team:) }
             let!(:new_sessions) do # rubocop:disable RSpec/LetSetup
               create_list(
                 :session,
                 2,
                 date: session_date + 1.week,
                 location: school,
-                organisation:,
+                team:,
                 programmes:
               )
             end
@@ -756,14 +716,14 @@ describe SchoolMove do
               create(:school_move, :to_school, patient:, school:)
             end
 
-            let(:school) { create(:school, organisation:) }
+            let(:school) { create(:school, team:) }
             let!(:new_sessions) do # rubocop:disable RSpec/LetSetup
               create_list(
                 :session,
                 2,
                 date: session_date - 1.week,
                 location: school,
-                organisation:,
+                team:,
                 programmes:
               )
             end
@@ -777,7 +737,7 @@ describe SchoolMove do
 
           context "to home-schooled" do
             let(:school_move) do
-              create(:school_move, :to_home_educated, organisation:, patient:)
+              create(:school_move, :to_home_educated, team:, patient:)
             end
 
             include_examples "creates a log entry"
@@ -786,22 +746,20 @@ describe SchoolMove do
             include_examples "destroys the school move"
           end
 
-          context "to a school in a different organisation" do
+          context "to a school in a different team" do
             let(:school_move) do
               create(:school_move, :to_school, patient:, school:)
             end
 
-            let(:new_organisation) do
-              create(:organisation, :with_generic_clinic, programmes:)
-            end
-            let(:school) { create(:school, organisation: new_organisation) }
+            let(:new_team) { create(:team, :with_generic_clinic, programmes:) }
+            let(:school) { create(:school, team: new_team) }
             let(:new_sessions) do
               create_list(
                 :session,
                 2,
                 date: session_date + 1.week,
                 location: school,
-                organisation: new_organisation,
+                team: new_team,
                 programmes:
               )
             end
@@ -812,28 +770,21 @@ describe SchoolMove do
             include_examples "destroys the school move"
           end
 
-          context "to home-schooled in a different organisation" do
+          context "to home-schooled in a different team" do
             let(:school_move) do
-              create(
-                :school_move,
-                :to_home_educated,
-                organisation: new_organisation,
-                patient:
-              )
+              create(:school_move, :to_home_educated, team: new_team, patient:)
             end
 
             let(:patient) do
               create(
                 :patient,
                 school: nil,
-                session: organisation.generic_clinic_session(academic_year:)
+                session: team.generic_clinic_session(academic_year:)
               )
             end
-            let(:new_organisation) do
-              create(:organisation, :with_generic_clinic, programmes:)
-            end
+            let(:new_team) { create(:team, :with_generic_clinic, programmes:) }
             let(:generic_clinic_session) do
-              new_organisation.generic_clinic_session(academic_year:)
+              new_team.generic_clinic_session(academic_year:)
             end
 
             include_examples "creates a log entry"
@@ -859,14 +810,14 @@ describe SchoolMove do
               create(:school_move, :to_school, patient:, school:)
             end
 
-            let(:school) { create(:school, organisation:) }
+            let(:school) { create(:school, team:) }
             let!(:new_sessions) do # rubocop:disable RSpec/LetSetup
               create_list(
                 :session,
                 2,
                 date: session_date + 1.week,
                 location: school,
-                organisation:,
+                team:,
                 programmes:
               )
             end
@@ -882,14 +833,14 @@ describe SchoolMove do
               create(:school_move, :to_school, patient:, school:)
             end
 
-            let(:school) { create(:school, organisation:) }
+            let(:school) { create(:school, team:) }
             let!(:new_sessions) do # rubocop:disable RSpec/LetSetup
               create_list(
                 :session,
                 2,
                 date: session_date - 1.week,
                 location: school,
-                organisation:,
+                team:,
                 programmes:
               )
             end
@@ -902,7 +853,7 @@ describe SchoolMove do
 
           context "to home-schooled" do
             let(:school_move) do
-              create(:school_move, :to_home_educated, organisation:, patient:)
+              create(:school_move, :to_home_educated, team:, patient:)
             end
 
             include_examples "creates a log entry"
@@ -911,22 +862,20 @@ describe SchoolMove do
             include_examples "destroys the school move"
           end
 
-          context "to a school in a different organisation" do
+          context "to a school in a different team" do
             let(:school_move) do
               create(:school_move, :to_school, patient:, school:)
             end
 
-            let(:new_organisation) do
-              create(:organisation, :with_generic_clinic, programmes:)
-            end
-            let(:school) { create(:school, organisation: new_organisation) }
+            let(:new_team) { create(:team, :with_generic_clinic, programmes:) }
+            let(:school) { create(:school, team: new_team) }
             let(:new_sessions) do
               create_list(
                 :session,
                 2,
                 date: session_date + 1.week,
                 location: school,
-                organisation: new_organisation,
+                team: new_team,
                 programmes:
               )
             end
@@ -937,26 +886,19 @@ describe SchoolMove do
             include_examples "destroys the school move"
           end
 
-          context "to home-schooled in a different organisation" do
+          context "to home-schooled in a different team" do
             let(:school_move) do
-              create(
-                :school_move,
-                :to_home_educated,
-                organisation: new_organisation,
-                patient:
-              )
+              create(:school_move, :to_home_educated, team: new_team, patient:)
             end
 
             let(:patient) do
               create(
                 :patient,
                 school: nil,
-                session: organisation.generic_clinic_session(academic_year:)
+                session: team.generic_clinic_session(academic_year:)
               )
             end
-            let(:new_organisation) do
-              create(:organisation, :with_generic_clinic, programmes:)
-            end
+            let(:new_team) { create(:team, :with_generic_clinic, programmes:) }
 
             include_examples "creates a log entry"
             include_examples "sets the patient to home-schooled"

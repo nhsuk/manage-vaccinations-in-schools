@@ -31,13 +31,13 @@ class PatientsController < ApplicationController
   end
 
   def update
-    organisation_id = params.dig(:patient, :organisation_id).presence
+    team_id = params.dig(:patient, :team_id).presence
 
     ActiveRecord::Base.transaction do
       @patient
         .patient_sessions
         .joins(:session)
-        .where(session: { organisation_id: })
+        .where(session: { team_id: })
         .destroy_all_if_safe
     end
 

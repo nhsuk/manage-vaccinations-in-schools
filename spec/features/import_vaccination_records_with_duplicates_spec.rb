@@ -37,19 +37,14 @@ describe "Immunisation imports duplicates" do
 
   def given_an_hpv_programme_is_underway
     @programme = create(:programme, :hpv_all_vaccines)
-    @organisation =
-      create(
-        :organisation,
-        :with_one_nurse,
-        ods_code: "R1L",
-        programmes: [@programme]
-      )
+    @team =
+      create(:team, :with_one_nurse, ods_code: "R1L", programmes: [@programme])
 
     @location = create(:school, urn: "110158", name: "Eton College")
     @session =
       create(
         :session,
-        organisation: @organisation,
+        team: @team,
         programmes: [@programme],
         location: @location,
         date: Date.new(2024, 5, 14)
@@ -138,7 +133,7 @@ describe "Immunisation imports duplicates" do
   end
 
   def and_i_am_signed_in
-    sign_in @organisation.users.first
+    sign_in @team.users.first
     visit dashboard_path
   end
 
