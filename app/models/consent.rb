@@ -44,7 +44,6 @@
 #
 
 class Consent < ApplicationRecord
-  include BelongsToAcademicYear
   include GelatineVaccinesConcern
   include HasHealthAnswers
   include HasVaccineMethods

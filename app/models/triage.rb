@@ -33,7 +33,6 @@
 #  fk_rails_...  (team_id => teams.id)
 #
 class Triage < ApplicationRecord
-  include BelongsToAcademicYear
   include Invalidatable
 
   self.table_name = "triage"

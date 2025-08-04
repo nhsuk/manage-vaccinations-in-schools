@@ -36,8 +36,6 @@
 describe Triage do
   subject { build(:triage) }
 
-  it_behaves_like "a model that belongs to an academic year"
-
   describe "validations" do
     context "when safe to vaccinate" do
       subject(:triage) { build(:triage, :ready_to_vaccinate) }

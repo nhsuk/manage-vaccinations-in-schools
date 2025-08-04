@@ -61,7 +61,6 @@ class ConsentForm < ApplicationRecord
   include AddressConcern
   include AgeConcern
   include Archivable
-  include BelongsToAcademicYear
   include FullNameConcern
   include GelatineVaccinesConcern
   include HasHealthAnswers

@@ -60,8 +60,6 @@
 describe ConsentForm do
   subject(:consent_form) { build(:consent_form) }
 
-  it_behaves_like "a model that belongs to an academic year"
-
   describe "validations" do
     subject(:consent_form) do
       create(
