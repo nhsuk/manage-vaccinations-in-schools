@@ -65,8 +65,7 @@ module ParentInterface
         @consent_form.seed_health_questions
       end
 
-      set_steps # The wizard_steps can change after certain attrs change
-      setup_wizard_translated # Next/previous steps can change after steps change
+      reload_steps
 
       skip_to_confirm_or_next_health_question
 
@@ -126,11 +125,6 @@ module ParentInterface
     end
 
     def set_steps
-      # Translated steps are cached after running setup_wizard_translated.
-      # To allow us to run this method multiple times during a single action
-      # lifecycle, we need to clear the cache.
-      @wizard_translations = nil
-
       self.steps = @consent_form.wizard_steps
     end
 

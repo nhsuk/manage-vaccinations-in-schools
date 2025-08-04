@@ -9,24 +9,9 @@ class ImportsController < ApplicationController
     render layout: "full"
   end
 
-  def new
-  end
-
   def create
-    if params[:type] == "class-list"
-      DraftClassImport.new(request_session: session, current_user:).reset!
-      redirect_to draft_class_import_path(Wicked::FIRST_STEP)
-    else
-      redirect_to(
-        if params[:type] == "vaccinations"
-          new_immunisation_import_path
-        elsif params[:type] == "children"
-          new_cohort_import_path
-        else
-          new_import_path
-        end
-      )
-    end
+    DraftImport.new(request_session: session, current_user:).reset!
+    redirect_to draft_import_path(Wicked::FIRST_STEP)
   end
 
   private

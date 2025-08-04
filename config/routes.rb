@@ -115,15 +115,8 @@ Rails.application.routes.draw do
     end
   end
 
-  resource :draft_class_import,
-           only: :new,
-           path: "draft-class-import/:location_id"
-  resource :draft_class_import,
-           only: %i[show update],
-           path: "draft-class-import/:id"
-
+  resource :draft_import, only: %i[show update], path: "draft-import/:id"
   resource :draft_consent, only: %i[show update], path: "draft-consent/:id"
-
   resource :draft_vaccination_record,
            only: %i[show update],
            path: "draft-vaccination-record/:id"
@@ -132,7 +125,7 @@ Rails.application.routes.draw do
             path: "immunisation-imports",
             except: %i[index destroy]
 
-  resources :imports, only: %i[index new create]
+  resources :imports, only: %i[index create]
 
   namespace :imports do
     resources :issues, path: "issues", only: %i[index] do
@@ -211,6 +204,8 @@ Rails.application.routes.draw do
              controller: "sessions/invite_to_clinic"
 
     member do
+      get "import"
+
       get "edit/programmes",
           controller: "sessions/edit",
           action: "edit_programmes"

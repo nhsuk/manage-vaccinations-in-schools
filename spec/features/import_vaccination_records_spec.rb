@@ -65,7 +65,7 @@ describe "Immunisation imports" do
   end
 
   def then_i_should_see_the_upload_link
-    expect(page).to have_link("Import records")
+    expect(page).to have_button("Import records")
   end
 
   def when_i_click_on_the_upload_link

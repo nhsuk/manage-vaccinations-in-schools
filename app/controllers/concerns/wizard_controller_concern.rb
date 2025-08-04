@@ -15,4 +15,15 @@ module WizardControllerConcern
   def current_step
     @current_step ||= wizard_value(step)&.to_sym
   end
+
+  def reload_steps
+    # Translated steps are cached after running setup_wizard_translated.
+    # To allow us to run this method multiple times during a single action
+    # lifecycle, we need to clear the cache.
+    @wizard_translations = nil
+
+    set_steps
+
+    setup_wizard_translated
+  end
 end
