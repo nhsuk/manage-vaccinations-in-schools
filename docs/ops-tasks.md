@@ -62,7 +62,7 @@ loc.sessions.first.patients.count
 ## Get Gillick patients who don't want their parents notified
 
 ```rb
-Consent.where(notify_parents: false).pluck(:patient_id)
+Consent.where(notify_parents_on_vaccination: false).pluck(:patient_id)
 ```
 
 ## Consent response stats per school

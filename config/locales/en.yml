@@ -21,6 +21,10 @@ en:
           attributes:
             new_or_existing_contact:
               blank: Choose who you are trying to get consent from
+            notify_parent_on_refusal:
+              inclusion: Choose whether you want to send an email and text message confirming their decision
+            notify_parents_on_vaccination:
+              inclusion: Choose whether the child wants their parent or guardian to get confirmation of the vaccination
             reason_for_refusal:
               inclusion: Choose a reason
             notes:
@@ -654,7 +658,8 @@ en:
     location: location
     name: name
     notes: notes
-    notify_parents: notify-parents
+    notify_parent_on_refusal: notify-parent-on-refusal
+    notify_parents_on_vaccination: notify-parents-on-vaccination
     outcome: outcome
     parent: parent
     parent_details: parent-details

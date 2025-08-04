@@ -60,7 +60,7 @@ module VaccinationMailerConcern
 
     parents =
       if consents.any?(&:via_self_consent?)
-        consents.any?(&:notify_parents) ? patient.parents : []
+        consents.any?(&:notify_parents_on_vaccination) ? patient.parents : []
       else
         consents.select(&:response_given?).filter_map(&:parent)
       end

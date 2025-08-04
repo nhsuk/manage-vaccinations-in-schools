@@ -4,24 +4,25 @@
 #
 # Table name: consents
 #
-#  id                  :bigint           not null, primary key
-#  health_answers      :jsonb            not null
-#  invalidated_at      :datetime
-#  notes               :text             default(""), not null
-#  notify_parents      :boolean
-#  reason_for_refusal  :integer
-#  response            :integer          not null
-#  route               :integer          not null
-#  submitted_at        :datetime         not null
-#  vaccine_methods     :integer          default([]), not null, is an Array
-#  withdrawn_at        :datetime
-#  created_at          :datetime         not null
-#  updated_at          :datetime         not null
-#  organisation_id     :bigint           not null
-#  parent_id           :bigint
-#  patient_id          :bigint           not null
-#  programme_id        :bigint           not null
-#  recorded_by_user_id :bigint
+#  id                            :bigint           not null, primary key
+#  health_answers                :jsonb            not null
+#  invalidated_at                :datetime
+#  notes                         :text             default(""), not null
+#  notify_parent_on_refusal      :boolean
+#  notify_parents_on_vaccination :boolean
+#  reason_for_refusal            :integer
+#  response                      :integer          not null
+#  route                         :integer          not null
+#  submitted_at                  :datetime         not null
+#  vaccine_methods               :integer          default([]), not null, is an Array
+#  withdrawn_at                  :datetime
+#  created_at                    :datetime         not null
+#  updated_at                    :datetime         not null
+#  organisation_id               :bigint           not null
+#  parent_id                     :bigint
+#  patient_id                    :bigint           not null
+#  programme_id                  :bigint           not null
+#  recorded_by_user_id           :bigint
 #
 # Indexes
 #

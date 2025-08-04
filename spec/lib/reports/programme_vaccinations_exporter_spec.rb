@@ -478,7 +478,7 @@ describe Reports::ProgrammeVaccinationsExporter do
               :self_consent,
               patient:,
               programme:,
-              notify_parents: false
+              notify_parents_on_vaccination: false
             )
           end
 
@@ -496,7 +496,7 @@ describe Reports::ProgrammeVaccinationsExporter do
               :self_consent,
               patient:,
               programme:,
-              notify_parents: true
+              notify_parents_on_vaccination: true
             )
           end
 

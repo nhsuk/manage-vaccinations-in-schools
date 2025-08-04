@@ -61,6 +61,13 @@ class AppConsentSummaryComponent < ViewComponent::Base
         end
       end
 
+      unless consent.notify_parent_on_refusal.nil?
+        summary_list.with_row do |row|
+          row.with_key { "Confirmation of decision sent to parent" }
+          row.with_value { consent.notify_parent_on_refusal ? "Yes" : "No" }
+        end
+      end
+
       if consent.notes.present?
         summary_list.with_row do |row|
           row.with_key { "Notes" }
