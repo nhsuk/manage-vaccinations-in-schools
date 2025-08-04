@@ -42,9 +42,10 @@
 
 class Consent < ApplicationRecord
   include BelongsToAcademicYear
-  include Invalidatable
+  include GelatineVaccinesConcern
   include HasHealthAnswers
   include HasVaccineMethods
+  include Invalidatable
 
   audited associated_with: :patient
 
@@ -58,6 +59,8 @@ class Consent < ApplicationRecord
              class_name: "User",
              optional: true,
              foreign_key: :recorded_by_user_id
+
+  has_many :vaccines, through: :programme
 
   scope :withdrawn, -> { where.not(withdrawn_at: nil) }
   scope :not_withdrawn, -> { where(withdrawn_at: nil) }
@@ -195,9 +198,19 @@ class Consent < ApplicationRecord
     end
   end
 
+  REASON_FOR_REFUSAL_REQUIRES_NOTES = %w[
+    other
+    will_be_vaccinated_elsewhere
+    medical_reasons
+    already_vaccinated
+  ].freeze
+
   def notes_required?
     withdrawn? || invalidated? ||
-      (response_refused? && !reason_for_refusal_personal_choice?)
+      (
+        response_refused? &&
+          reason_for_refusal.in?(REASON_FOR_REFUSAL_REQUIRES_NOTES)
+      )
   end
 
   class ConsentFormNotRecorded < StandardError

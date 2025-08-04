@@ -1,6 +1,27 @@
 # frozen_string_literal: true
 
 module ConsentsHelper
+  ConsentRefusalOption = Struct.new(:value, :label, :divider)
+
+  def consent_refusal_reasons(consent)
+    reasons = %w[
+      already_vaccinated
+      will_be_vaccinated_elsewhere
+      medical_reasons
+      personal_choice
+      other
+    ]
+
+    if consent.vaccine_may_contain_gelatine?
+      reasons.insert(0, "contains_gelatine")
+    end
+
+    reasons.map do |value|
+      label = Consent.human_enum_name(:reason_for_refusal, value)
+      ConsentRefusalOption.new(value:, label:, divider: value == "other")
+    end
+  end
+
   def consent_status_tag(consent)
     text =
       if consent.withdrawn?

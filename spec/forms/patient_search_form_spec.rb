@@ -2,11 +2,11 @@
 
 describe PatientSearchForm do
   subject(:form) do
-    described_class.new(**params, request_session:, request_path:, session:)
+    described_class.new(request_session:, request_path:, session:, **params)
   end
 
   let(:request_session) { {} }
-  let(:request_path) { "/a-path" }
+  let(:request_path) { "/patients" }
   let(:session) { nil }
 
   let(:consent_statuses) { nil }
@@ -508,7 +508,7 @@ describe PatientSearchForm do
 
     let(:organisation) { create(:organisation) }
     let(:programme) { create(:programme, :flu) }
-    let(:team) { create(:team, organisation:) }
+    let(:subteam) { create(:subteam, organisation:) }
     let(:user) { create(:user, organisation:) }
     let(:patient) { create(:patient) }
     let(:scope) { PatientPolicy::Scope.new(user, Patient).resolve }
@@ -519,7 +519,7 @@ describe PatientSearchForm do
           :school_move,
           :to_school,
           patient:,
-          school: create(:school, team:)
+          school: create(:school, subteam:)
         )
       end
 

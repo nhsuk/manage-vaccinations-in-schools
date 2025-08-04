@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 describe "Parental consent" do
+  around { |example| travel_to(Date.new(2025, 7, 31)) { example.run } }
+
   scenario "Refused" do
     stub_pds_search_to_return_no_patients
 
@@ -131,7 +133,7 @@ describe "Parental consent" do
 
     visit "/dashboard"
     click_on "Programmes", match: :first
-    click_on "HPV"
+    click_on "HPV", match: :first
     within ".app-secondary-navigation" do
       click_on "Sessions"
     end
@@ -155,7 +157,7 @@ describe "Parental consent" do
 
   def and_the_programme_outcome_is_could_not_vaccinate
     click_on "Programmes", match: :first
-    click_on "HPV"
+    click_on "HPV", match: :first
 
     within ".app-secondary-navigation" do
       click_on "Children"

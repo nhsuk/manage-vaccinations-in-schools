@@ -18,20 +18,20 @@
 #  year_groups                  :integer          default([]), not null, is an Array
 #  created_at                   :datetime         not null
 #  updated_at                   :datetime         not null
+#  location_id                  :bigint           not null
 #  organisation_id              :bigint           not null
-#  session_id                   :bigint           not null
 #  uploaded_by_user_id          :bigint           not null
 #
 # Indexes
 #
+#  index_class_imports_on_location_id          (location_id)
 #  index_class_imports_on_organisation_id      (organisation_id)
-#  index_class_imports_on_session_id           (session_id)
 #  index_class_imports_on_uploaded_by_user_id  (uploaded_by_user_id)
 #
 # Foreign Keys
 #
+#  fk_rails_...  (location_id => locations.id)
 #  fk_rails_...  (organisation_id => organisations.id)
-#  fk_rails_...  (session_id => sessions.id)
 #  fk_rails_...  (uploaded_by_user_id => users.id)
 #
 describe ClassImport do
@@ -149,6 +149,8 @@ describe ClassImport do
 
   describe "#process!" do
     subject(:process!) { class_import.process! }
+
+    around { |example| travel_to(Date.new(2025, 7, 31)) { example.run } }
 
     let(:file) { "valid.csv" }
 
@@ -432,7 +434,11 @@ describe ClassImport do
       end
 
       it "doesn't propose a move if the patient is in a different year group" do
-        existing_patient.update!(birth_academic_year: 7.to_birth_academic_year)
+        academic_year = AcademicYear.pending
+
+        existing_patient.update!(
+          birth_academic_year: 7.to_birth_academic_year(academic_year:)
+        )
 
         expect { process! }.not_to(
           change { existing_patient.reload.school_moves.count }

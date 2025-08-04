@@ -3,6 +3,8 @@
 describe "Parental consent create patient" do
   before { given_the_app_is_setup }
 
+  around { |example| travel_to(Date.new(2025, 7, 31)) { example.run } }
+
   scenario "Consent form matches an NHS number" do
     stub_pds_search_to_return_a_patient
 
@@ -196,7 +198,7 @@ describe "Parental consent create patient" do
     visit "/dashboard"
 
     click_on "Programmes", match: :first
-    click_on "HPV"
+    click_on "HPV", match: :first
     within ".app-secondary-navigation" do
       click_on "Sessions"
     end

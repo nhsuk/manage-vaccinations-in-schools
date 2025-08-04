@@ -3,6 +3,8 @@
 describe StatusUpdater do
   subject(:call) { described_class.call }
 
+  around { |example| travel_to(Date.new(2025, 7, 31)) { example.run } }
+
   let!(:patient_session) { create(:patient_session, patient:, programmes:) }
 
   context "with an HPV session and ineligible patient" do

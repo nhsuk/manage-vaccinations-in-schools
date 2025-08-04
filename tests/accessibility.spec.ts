@@ -26,7 +26,8 @@ test("Accessibility", async ({ page }) => {
     .getByLabel("Password", { exact: true })
     .fill("nurse.joy@example.com");
   await page.getByRole("button", { name: "Log in" }).click();
-  await page.getByRole("button", { name: "R1L" }).click();
+  await page.getByRole("radio", { name: "SAIS Organisation 1" }).check();
+  await page.getByRole("button", { name: "Continue" }).click();
   await expect(page.locator("h1")).toContainText("Mavis");
   await checkAccessibility(page);
 

@@ -1,5 +1,5 @@
 <% content_for :before_main do %>
-  <%= render AppBacklinkComponent.new(draft_class_import_path("session")) %>
+  <%= render AppBacklinkComponent.new(draft_class_import_path("location")) %>
 <% end %>
 
 <% title = "Import class list records" %>
@@ -10,7 +10,7 @@
   <%= f.govuk_error_summary %>
 
   <h1 class="nhsuk-heading-l">
-    <span class="nhsuk-caption-l"><%= @session.location.name %></span>
+    <span class="nhsuk-caption-l"><%= @location.name %></span>
     <%= title %>
   </h1>
 

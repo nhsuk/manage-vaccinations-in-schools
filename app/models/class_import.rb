@@ -18,26 +18,26 @@
 #  year_groups                  :integer          default([]), not null, is an Array
 #  created_at                   :datetime         not null
 #  updated_at                   :datetime         not null
+#  location_id                  :bigint           not null
 #  organisation_id              :bigint           not null
-#  session_id                   :bigint           not null
 #  uploaded_by_user_id          :bigint           not null
 #
 # Indexes
 #
+#  index_class_imports_on_location_id          (location_id)
 #  index_class_imports_on_organisation_id      (organisation_id)
-#  index_class_imports_on_session_id           (session_id)
 #  index_class_imports_on_uploaded_by_user_id  (uploaded_by_user_id)
 #
 # Foreign Keys
 #
+#  fk_rails_...  (location_id => locations.id)
 #  fk_rails_...  (organisation_id => organisations.id)
-#  fk_rails_...  (session_id => sessions.id)
 #  fk_rails_...  (uploaded_by_user_id => users.id)
 #
 class ClassImport < PatientImport
   include CSVImportable
 
-  belongs_to :session
+  belongs_to :location
 
   has_and_belongs_to_many :parent_relationships
   has_and_belongs_to_many :parents
@@ -45,19 +45,28 @@ class ClassImport < PatientImport
   private
 
   def parse_row(data)
-    ClassImportRow.new(data:, session:, year_groups:)
+    ClassImportRow.new(data:, organisation:, location:, year_groups:)
   end
 
-  def birth_academic_years
-    year_groups.map(&:to_birth_academic_year)
-  end
+  def academic_year = AcademicYear.pending
 
   def postprocess_rows!
-    # Remove patients already in the session but not in the class list.
+    # Remove patients already in the sessions but not in the class list.
 
-    unknown_patients =
-      session.patients.where(birth_academic_year: birth_academic_years) -
-        patients
+    birth_academic_years =
+      year_groups.map { it.to_birth_academic_year(academic_year:) }
+
+    existing_patients =
+      Patient.where(birth_academic_year: birth_academic_years).where(
+        PatientSession
+          .joins(session: :location)
+          .where("patient_id = patients.id")
+          .where(session: { academic_year:, location: })
+          .arel
+          .exists
+      )
+
+    unknown_patients = existing_patients - patients
 
     school_moves =
       unknown_patients.map do |patient|

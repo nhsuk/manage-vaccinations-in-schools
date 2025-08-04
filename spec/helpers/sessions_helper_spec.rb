@@ -1,49 +1,32 @@
 # frozen_string_literal: true
 
 describe SessionsHelper do
-  let(:location) { create(:school, name: "Waterloo Road") }
-  let(:date) { nil }
-  let(:session) { create(:session, academic_year: 2024, date:, location:) }
-
   describe "#session_consent_period" do
-    subject(:session_consent_period) do
-      helper.session_consent_period(session, in_sentence:)
+    subject { travel_to(today) { helper.session_consent_period(session) } }
+
+    let(:today) { Date.new(2024, 10, 1) }
+
+    let(:date) { nil }
+    let(:session) { create(:session, academic_year: 2024, date:) }
+
+    it { should eq("Not provided") }
+
+    context "when in the past" do
+      let(:date) { Date.new(2024, 9, 1) }
+
+      it { should eq("Closed 31 August") }
     end
 
-    context "when in a sentence" do
-      let(:in_sentence) { true }
+    context "when in the near future" do
+      let(:date) { Date.new(2024, 10, 14) }
 
-      it { should eq("not provided") }
-
-      context "when in the past" do
-        let(:date) { Date.yesterday }
-
-        it { should start_with("closed ") }
-      end
-
-      context "when in the future" do
-        let(:date) { Date.tomorrow }
-
-        it { should start_with("open until ") }
-      end
+      it { should eq("Open from 23 September until 13 October") }
     end
 
-    context "when not in a sentence" do
-      let(:in_sentence) { false }
+    context "when in the far future" do
+      let(:date) { Date.new(2025, 1, 1) }
 
-      it { should eq("Not provided") }
-
-      context "when in the past" do
-        let(:date) { Date.yesterday }
-
-        it { should start_with("Closed ") }
-      end
-
-      context "when in the future" do
-        let(:date) { Date.tomorrow }
-
-        it { should start_with("Open until ") }
-      end
+      it { should eq("Opens 11 December") }
     end
   end
 

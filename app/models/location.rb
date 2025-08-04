@@ -20,17 +20,17 @@
 #  year_groups               :integer          default([]), not null, is an Array
 #  created_at                :datetime         not null
 #  updated_at                :datetime         not null
-#  team_id                   :bigint
+#  subteam_id                :bigint
 #
 # Indexes
 #
-#  index_locations_on_ods_code  (ods_code) UNIQUE
-#  index_locations_on_team_id   (team_id)
-#  index_locations_on_urn       (urn) UNIQUE
+#  index_locations_on_ods_code    (ods_code) UNIQUE
+#  index_locations_on_subteam_id  (subteam_id)
+#  index_locations_on_urn         (urn) UNIQUE
 #
 # Foreign Keys
 #
-#  fk_rails_...  (team_id => teams.id)
+#  fk_rails_...  (subteam_id => subteams.id)
 #
 class Location < ApplicationRecord
   include AddressConcern
@@ -38,17 +38,17 @@ class Location < ApplicationRecord
 
   self.inheritance_column = :nil
 
-  audited associated_with: :team
+  audited associated_with: :subteam
   has_associated_audits
 
-  belongs_to :team, optional: true
+  belongs_to :subteam, optional: true
 
   has_many :consent_forms
   has_many :patients, foreign_key: :school_id
   has_many :programme_year_groups
   has_many :sessions
 
-  has_one :organisation, through: :team
+  has_one :organisation, through: :subteam
   has_many :programmes,
            -> { distinct.order(:type) },
            through: :programme_year_groups
@@ -60,6 +60,18 @@ class Location < ApplicationRecord
 
   enum :type,
        { school: 0, generic_clinic: 1, community_clinic: 2, gp_practice: 3 }
+
+  scope :search_by_name,
+        ->(query) do
+          # Trigram matching requires at least 3 characters
+          if query.length < 3
+            where("locations.name ILIKE :like_query", like_query: "#{query}%")
+          else
+            where("SIMILARITY(locations.name, ?) > 0.3", query).order(
+              Arel.sql("SIMILARITY(locations.name, ?) DESC", query)
+            )
+          end
+        end
 
   scope :clinic, -> { generic_clinic.or(community_clinic) }
 
@@ -73,7 +85,7 @@ class Location < ApplicationRecord
 
   with_options if: :generic_clinic? do
     validates :ods_code, inclusion: { in: :organisation_ods_code }
-    validates :team, presence: true
+    validates :subteam, presence: true
   end
 
   with_options if: :gp_practice? do
@@ -97,8 +109,8 @@ class Location < ApplicationRecord
   end
 
   def as_json
-    super.except("created_at", "updated_at", "team_id").merge(
-      "is_attached_to_organisation" => !team_id.nil?
+    super.except("created_at", "updated_at", "subteam_id").merge(
+      "is_attached_to_organisation" => !subteam_id.nil?
     )
   end
 
@@ -121,7 +133,7 @@ class Location < ApplicationRecord
 
   private
 
-  def organisation_ods_code = [team&.organisation&.ods_code].compact
+  def organisation_ods_code = [subteam&.organisation&.ods_code].compact
 
   def fhir_mapper
     @fhir_mapper ||= FHIRMapper::Location.new(self)

@@ -42,6 +42,8 @@ Rails.application.routes.draw do
   get "/dashboard", to: "dashboard#index"
   get "/accessibility-statement", to: "content#accessibility_statement"
 
+  get "/manifest/:name.json", to: "manifest#show", as: :manifest
+
   get "/up", to: "rails/health#show", as: :rails_health_check
 
   flipper_app =
@@ -84,11 +86,13 @@ Rails.application.routes.draw do
     end
   end
 
-  unless Rails.env.production?
-    namespace :api do
-      resources :locations, only: :index
-      resources :organisations, only: :destroy, param: :ods_code
-      post "/onboard", to: "onboard#create"
+  namespace :api do
+    unless Rails.env.production?
+      namespace :testing do
+        resources :locations, only: :index
+        resources :organisations, only: :destroy, param: :ods_code
+        post "/onboard", to: "onboard#create"
+      end
     end
   end
 
@@ -113,7 +117,7 @@ Rails.application.routes.draw do
 
   resource :draft_class_import,
            only: :new,
-           path: "draft-class-import/:session_slug"
+           path: "draft-class-import/:location_id"
   resource :draft_class_import,
            only: %i[show update],
            path: "draft-class-import/:id"
@@ -173,11 +177,9 @@ Rails.application.routes.draw do
                path: ":academic_year",
                only: :show,
                controller: :overview
-      resources :cohorts, path: ":academic_year/cohorts", only: %i[index show]
       resources :patients, path: ":academic_year/patients", only: :index
       resources :reports, path: ":academic_year/reports", only: :create
       resources :sessions, path: ":academic_year/sessions", only: :index
-      resources :vaccinations, path: ":academic_year/vaccinations", only: :index
     end
   end
 
@@ -207,12 +209,6 @@ Rails.application.routes.draw do
              path: "invite-to-clinic",
              only: %i[edit update],
              controller: "sessions/invite_to_clinic"
-
-    collection do
-      get "completed"
-      get "scheduled"
-      get "unscheduled"
-    end
 
     member do
       get "edit/programmes",

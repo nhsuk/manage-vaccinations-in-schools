@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 feature "Verbal consent" do
+  around { |example| travel_to(Date.new(2025, 7, 31)) { example.run } }
+
   scenario "Given when previously refused" do
     given_an_hpv_programme_is_underway
     and_a_parent_has_refused_consent_for_their_child
@@ -47,7 +49,7 @@ feature "Verbal consent" do
 
     visit "/dashboard"
     click_on "Programmes", match: :first
-    click_on "HPV"
+    click_on "HPV", match: :first
     within ".app-secondary-navigation" do
       click_on "Sessions"
     end

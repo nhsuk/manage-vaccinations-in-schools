@@ -20,17 +20,17 @@
 #  year_groups               :integer          default([]), not null, is an Array
 #  created_at                :datetime         not null
 #  updated_at                :datetime         not null
-#  team_id                   :bigint
+#  subteam_id                :bigint
 #
 # Indexes
 #
-#  index_locations_on_ods_code  (ods_code) UNIQUE
-#  index_locations_on_team_id   (team_id)
-#  index_locations_on_urn       (urn) UNIQUE
+#  index_locations_on_ods_code    (ods_code) UNIQUE
+#  index_locations_on_subteam_id  (subteam_id)
+#  index_locations_on_urn         (urn) UNIQUE
 #
 # Foreign Keys
 #
-#  fk_rails_...  (team_id => teams.id)
+#  fk_rails_...  (subteam_id => subteams.id)
 #
 
 require_relative "../../lib/faker/address"
@@ -39,7 +39,7 @@ FactoryBot.define do
   factory :location do
     transient do
       organisation { nil }
-      programmes { team&.organisation&.programmes || [] }
+      programmes { subteam&.organisation&.programmes || [] }
     end
 
     address_line_1 { Faker::Address.street_address }
@@ -48,9 +48,9 @@ FactoryBot.define do
 
     url { Faker::Internet.url }
 
-    team do
+    subteam do
       if organisation
-        organisation.teams.first || association(:team, organisation:)
+        organisation.subteams.first || association(:subteam, organisation:)
       end
     end
 
@@ -73,7 +73,7 @@ FactoryBot.define do
 
       year_groups { (0..11).to_a }
 
-      ods_code { team&.organisation&.ods_code }
+      ods_code { subteam&.organisation&.ods_code }
     end
 
     factory :gp_practice do

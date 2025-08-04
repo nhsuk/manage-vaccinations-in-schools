@@ -19,4 +19,13 @@ class Programmes::BaseController < ApplicationController
       raise ActiveRecord::RecordNotFound
     end
   end
+
+  def patients
+    # We do this instead of using `organisation.patients` as that has a
+    # `distinct` on it which means we cannot apply ordering or grouping.
+    @patients ||=
+      Patient.where(
+        id: current_organisation.patient_sessions.select(:patient_id).distinct
+      ).appear_in_programmes([@programme], academic_year: @academic_year)
+  end
 end

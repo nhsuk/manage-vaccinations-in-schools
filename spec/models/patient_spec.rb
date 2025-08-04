@@ -4,31 +4,32 @@
 #
 # Table name: patients
 #
-#  id                        :bigint           not null, primary key
-#  address_line_1            :string
-#  address_line_2            :string
-#  address_postcode          :string
-#  address_town              :string
-#  birth_academic_year       :integer          not null
-#  date_of_birth             :date             not null
-#  date_of_death             :date
-#  date_of_death_recorded_at :datetime
-#  family_name               :string           not null
-#  gender_code               :integer          default("not_known"), not null
-#  given_name                :string           not null
-#  home_educated             :boolean
-#  invalidated_at            :datetime
-#  nhs_number                :string
-#  pending_changes           :jsonb            not null
-#  preferred_family_name     :string
-#  preferred_given_name      :string
-#  registration              :string
-#  restricted_at             :datetime
-#  updated_from_pds_at       :datetime
-#  created_at                :datetime         not null
-#  updated_at                :datetime         not null
-#  gp_practice_id            :bigint
-#  school_id                 :bigint
+#  id                         :bigint           not null, primary key
+#  address_line_1             :string
+#  address_line_2             :string
+#  address_postcode           :string
+#  address_town               :string
+#  birth_academic_year        :integer          not null
+#  date_of_birth              :date             not null
+#  date_of_death              :date
+#  date_of_death_recorded_at  :datetime
+#  family_name                :string           not null
+#  gender_code                :integer          default("not_known"), not null
+#  given_name                 :string           not null
+#  home_educated              :boolean
+#  invalidated_at             :datetime
+#  nhs_number                 :string
+#  pending_changes            :jsonb            not null
+#  preferred_family_name      :string
+#  preferred_given_name       :string
+#  registration               :string
+#  registration_academic_year :integer
+#  restricted_at              :datetime
+#  updated_from_pds_at        :datetime
+#  created_at                 :datetime         not null
+#  updated_at                 :datetime         not null
+#  gp_practice_id             :bigint
+#  school_id                  :bigint
 #
 # Indexes
 #
@@ -97,6 +98,56 @@ describe Patient do
         end
 
         it { should_not include(patient) }
+      end
+
+      context "in multiple sessions with the right year group for one programme" do
+        let(:flu_programme) { create(:programme, :flu) }
+        let(:hpv_programme) { create(:programme, :hpv) }
+
+        let(:location) do
+          create(:school, programmes: [flu_programme, hpv_programme])
+        end
+
+        # Year 4 is eligible for flu only.
+        let(:patient) { create(:patient, year_group: 4) }
+
+        # Year 9 is eligible for flu and HPV only.
+        let(:another_patient) { create(:patient, year_group: 9) }
+
+        let(:flu_session) do
+          create(:session, location:, programmes: [flu_programme])
+        end
+        let(:hpv_session) do
+          create(:session, location:, programmes: [hpv_programme])
+        end
+
+        before do
+          create(:patient_session, patient:, session: flu_session)
+          create(:patient_session, patient:, session: hpv_session)
+
+          create(
+            :patient_session,
+            patient: another_patient,
+            session: flu_session
+          )
+          create(
+            :patient_session,
+            patient: another_patient,
+            session: hpv_session
+          )
+        end
+
+        context "for the right programme" do
+          let(:programmes) { [flu_programme] }
+
+          it { should include(patient) }
+        end
+
+        context "for the wrong programme" do
+          let(:programmes) { [hpv_programme] }
+
+          it { should_not include(patient) }
+        end
       end
     end
 

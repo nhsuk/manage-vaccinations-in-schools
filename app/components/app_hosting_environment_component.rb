@@ -14,17 +14,5 @@ class AppHostingEnvironmentComponent < ViewComponent::Base
 
   def render? = !Rails.env.production?
 
-  delegate :title, :title_in_sentence, to: :HostingEnvironment
-
-  ENVIRONMENT_COLOR = {
-    development: "white",
-    review: "purple",
-    test: "red",
-    qa: "orange",
-    preview: "yellow"
-  }.freeze
-
-  def colour
-    ENVIRONMENT_COLOR[HostingEnvironment.name.to_sym]
-  end
+  delegate :title, :title_in_sentence, :colour, to: :HostingEnvironment
 end

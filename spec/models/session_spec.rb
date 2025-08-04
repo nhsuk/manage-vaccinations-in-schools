@@ -93,8 +93,8 @@ describe Session do
       end
     end
 
-    describe "#today" do
-      subject(:scope) { described_class.today }
+    describe "#in_progress" do
+      subject(:scope) { described_class.in_progress }
 
       it { should contain_exactly(today_session) }
     end
@@ -103,14 +103,6 @@ describe Session do
       subject(:scope) { described_class.unscheduled }
 
       it { should contain_exactly(unscheduled_session) }
-
-      context "for a different academic year" do
-        let(:unscheduled_session) do
-          create(:session, :unscheduled, programmes:, academic_year: 2023)
-        end
-
-        it { should_not include(unscheduled_session) }
-      end
     end
 
     describe "#scheduled" do
@@ -123,13 +115,45 @@ describe Session do
       subject(:scope) { described_class.completed }
 
       it { should contain_exactly(completed_session) }
+    end
 
-      context "for a different academic year" do
-        let(:completed_session) do
-          create(:session, :completed, programmes:, date: Date.new(2023, 9, 1))
-        end
+    describe "#order_by_earliest_date" do
+      subject(:scope) { described_class.order_by_earliest_date }
 
-        it { should_not include(completed_session) }
+      around { |example| travel_to(today) { example.run } }
+
+      let(:today) { Date.new(2025, 1, 1) }
+
+      let(:programmes) { create_list(:programme, 1, :hpv) }
+
+      let(:first_session_before_today) do
+        create(:session, date: Date.new(2024, 12, 1), programmes:)
+      end
+      let(:second_session_before_today) do
+        create(:session, date: Date.new(2024, 12, 2), programmes:)
+      end
+      let(:session_today) do
+        create(:session, date: Date.new(2025, 1, 1), programmes:)
+      end
+      let(:first_session_after_today) do
+        create(:session, date: Date.new(2025, 1, 2), programmes:)
+      end
+      let(:second_session_after_today) do
+        create(:session, date: Date.new(2025, 1, 3), programmes:)
+      end
+      let(:session_without_dates) { create(:session, date: nil, programmes:) }
+
+      it do
+        expect(scope).to eq(
+          [
+            session_today,
+            first_session_after_today,
+            second_session_after_today,
+            first_session_before_today,
+            second_session_before_today,
+            session_without_dates
+          ]
+        )
       end
     end
   end

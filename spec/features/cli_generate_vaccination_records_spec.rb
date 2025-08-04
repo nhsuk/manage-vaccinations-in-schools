@@ -16,8 +16,8 @@ describe "mavis generate vaccination-records" do
   end
 
   def and_there_is_a_patient_in_a_session
-    team = create(:team, organisation: @organisation)
-    location = create(:generic_clinic, team:)
+    subteam = create(:subteam, organisation: @organisation)
+    location = create(:generic_clinic, subteam:)
     @session =
       create(
         :session,

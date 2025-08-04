@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 describe "Access log" do
+  around { |example| travel_to(Date.new(2025, 7, 31)) { example.run } }
+
   before { given_i_am_signed_in }
 
   scenario "View patient" do
@@ -55,7 +57,7 @@ describe "Access log" do
   def when_i_go_to_the_session
     visit dashboard_path
     click_on "Programmes", match: :first
-    click_on "HPV"
+    click_on "HPV", match: :first
 
     within(".app-secondary-navigation") { click_on "Sessions" }
 

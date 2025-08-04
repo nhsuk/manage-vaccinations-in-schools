@@ -62,14 +62,14 @@ end
 def attach_sample_of_schools_to(organisation)
   Location
     .school
-    .where(team_id: nil)
+    .where(subteam_id: nil)
     .order("RANDOM()")
     .limit(50)
-    .update_all(team_id: organisation.teams.first.id)
+    .update_all(subteam_id: organisation.subteams.first.id)
 end
 
 def attach_specific_school_to_organisation_if_present(organisation:, urn:)
-  Location.where(urn:).update_all(team_id: organisation.teams.first.id)
+  Location.where(urn:).update_all(subteam_id: organisation.subteams.first.id)
 end
 
 def create_session(
@@ -159,7 +159,8 @@ def create_session(
 end
 
 def setup_clinic(organisation)
-  clinic_session = organisation.generic_clinic_session
+  academic_year = AcademicYear.current
+  clinic_session = organisation.generic_clinic_session(academic_year:)
 
   clinic_session.session_dates.create!(value: Date.current)
   clinic_session.session_dates.create!(value: Date.current - 1.day)
@@ -196,7 +197,7 @@ def create_imports(user, organisation)
       :class_import,
       status,
       organisation:,
-      session: organisation.sessions.includes(:programmes).first,
+      session: organisation.sessions.includes(:location, :programmes).first,
       uploaded_by: user
     )
   end

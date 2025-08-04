@@ -22,10 +22,10 @@ describe "Parental consent" do
     @organisation =
       create(:organisation, :with_one_nurse, programmes: [@programme])
 
-    team = create(:team, organisation: @organisation)
+    subteam = create(:subteam, organisation: @organisation)
 
-    @scheduled_school = create(:school, :secondary, name: "School 1", team:)
-    @completed_school = create(:school, :secondary, name: "School 2", team:)
+    @scheduled_school = create(:school, :secondary, name: "School 1", subteam:)
+    @completed_school = create(:school, :secondary, name: "School 2", subteam:)
 
     @scheduled_session =
       create(

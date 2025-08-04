@@ -6,8 +6,8 @@ describe "Import child records" do
   scenario "User uploads a file" do
     given_the_app_is_setup
 
-    when_i_visit_the_cohort_page_for_the_hpv_programme
-    and_i_start_adding_children_to_the_cohort
+    when_i_visit_the_import_page
+    and_i_choose_to_import_child_records
     then_i_should_see_the_import_page
 
     when_i_continue_without_uploading_a_file
@@ -32,17 +32,26 @@ describe "Import child records" do
     then_i_should_see_the_upload
     and_i_should_see_the_patients
 
-    when_i_visit_the_cohort_page_for_the_hpv_programme
-    then_i_should_see_the_cohorts
+    when_i_visit_the_hpv_programme_page
+    then_i_should_see_the_cohorts_for_hpv
 
-    when_i_click_on_the_cohort
-    then_i_should_see_the_children
+    when_i_click_on_the_cohort_for_hpv
+    then_i_should_see_the_children_for_hpv
+
+    when_i_search_for_a_child
+    then_i_should_see_only_the_child
+
+    when_i_visit_the_doubles_programme_page
+    then_i_should_see_the_cohorts_for_doubles
+
+    when_i_click_on_the_cohort_for_doubles
+    then_i_should_see_the_children_for_doubles
 
     when_i_click_on_the_imports_page
     and_i_choose_to_import_child_records
     then_i_should_see_the_import_page
 
-    travel_to 1.minute.from_now # to ensure the created_at is different for the import jobs
+    travel 1.minute # to ensure the created_at is different for the import jobs
 
     when_i_upload_a_valid_file_with_changes
     and_i_go_to_the_import_page
@@ -50,14 +59,14 @@ describe "Import child records" do
   end
 
   def given_the_app_is_setup
-    programme = create(:programme, :hpv)
+    programmes = [
+      create(:programme, :hpv),
+      create(:programme, :menacwy),
+      create(:programme, :td_ipv)
+    ]
+
     @organisation =
-      create(
-        :organisation,
-        :with_generic_clinic,
-        :with_one_nurse,
-        programmes: [programme]
-      )
+      create(:organisation, :with_generic_clinic, :with_one_nurse, programmes:)
     create(:school, urn: "123456", organisation: @organisation)
     @user = @organisation.users.first
 
@@ -67,16 +76,10 @@ describe "Import child records" do
     )
   end
 
-  def when_i_visit_the_cohort_page_for_the_hpv_programme
+  def when_i_visit_the_import_page
     sign_in @user
     visit "/dashboard"
-    click_on "Programmes", match: :first
-    click_on "HPV"
-    click_on "Cohort"
-  end
-
-  def and_i_start_adding_children_to_the_cohort
-    click_on "Import child records"
+    click_on "Import", match: :first
   end
 
   def and_i_choose_to_import_child_records
@@ -103,6 +106,7 @@ describe "Import child records" do
     expect(page).to have_content("Date of birth 1 January 2010")
     expect(page).to have_content("Postcode SW1A 1AA")
   end
+
   alias_method :and_i_should_see_the_patients, :then_i_should_see_the_patients
 
   def when_i_click_on_upload_records
@@ -122,27 +126,62 @@ describe "Import child records" do
     expect(page).to have_content("1 completed import")
   end
 
-  def then_i_should_see_the_cohorts
+  def when_i_visit_the_hpv_programme_page
+    click_on "Programmes", match: :first
+    click_on "HPV"
+  end
+
+  def when_i_visit_the_doubles_programme_page
+    click_on "Programmes", match: :first
+    click_on "MenACWY"
+  end
+
+  def then_i_should_see_the_cohorts_for_hpv
+    expect(page).to have_content("Children\n3")
     expect(page).to have_content("Year 8\n2 children")
     expect(page).to have_content("Year 9\n1 child")
     expect(page).to have_content("Year 10\nNo children")
     expect(page).to have_content("Year 11\nNo children")
   end
 
-  def when_i_click_on_the_cohort
+  def when_i_click_on_the_cohort_for_hpv
     click_on "Year 8"
   end
 
-  def then_i_should_see_the_children
+  def then_i_should_see_the_children_for_hpv
     expect(page).to have_content("2 children")
-    expect(page).to have_content(
-      "Name and NHS numberPostcodeSchoolDate of birth"
-    )
-    expect(page).to have_content(
-      /Name.*and.*NHS.*number.*SMITH.*Jimmy.*999.*000.*0026/
-    )
-    expect(page).to have_content("Date of birth 2 January 2010")
-    expect(page).to have_content("Postcode SW1A 1AA")
+    expect(page).to have_content("DOE, Mark")
+    expect(page).to have_content("SMITH, Jimmy")
+  end
+
+  def when_i_search_for_a_child
+    fill_in "Search", with: "DOE, Mark"
+    click_on "Search"
+  end
+
+  def then_i_should_see_only_the_child
+    expect(page).to have_content("1 child")
+    expect(page).to have_content("DOE, Mark")
+  end
+
+  def then_i_should_see_the_cohorts_for_doubles
+    expect(page).to have_content("Children\n1")
+    expect(page).not_to have_content("Year 8")
+    expect(page).to have_content("Year 9\n1 child")
+    expect(page).to have_content("Year 10\nNo children")
+    expect(page).to have_content("Year 11\nNo children")
+  end
+
+  def when_i_click_on_the_cohort_for_doubles
+    within all(".nhsuk-card")[0] do
+      click_on "Children"
+    end
+  end
+
+  def then_i_should_see_the_children_for_doubles
+    expect(page).not_to have_content("Year 8")
+    expect(page).to have_content("1 child")
+    expect(page).to have_content("CLARKE, Jennifer")
   end
 
   def when_i_continue_without_uploading_a_file

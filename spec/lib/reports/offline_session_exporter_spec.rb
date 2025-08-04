@@ -34,7 +34,7 @@ describe Reports::OfflineSessionExporter do
       create(:organisation, :with_generic_clinic, programmes: [programme])
     end
     let(:user) { create(:user, email: "nurse@example.com", organisation:) }
-    let(:team) { create(:team, organisation:) }
+    let(:subteam) { create(:subteam, organisation:) }
     let(:session) do
       create(:session, location:, organisation:, programmes: [programme])
     end
@@ -42,7 +42,7 @@ describe Reports::OfflineSessionExporter do
     context "a school session" do
       subject(:workbook) { RubyXL::Parser.parse_buffer(call) }
 
-      let(:location) { create(:school, team:) }
+      let(:location) { create(:school, subteam:) }
 
       it { should_not be_blank }
 
@@ -335,7 +335,11 @@ describe Reports::OfflineSessionExporter do
         end
 
         context "with a vaccinated patient outside the school session, but in a clinic" do
-          let(:clinic_session) { organisation.generic_clinic_session }
+          let(:clinic_session) do
+            organisation.generic_clinic_session(
+              academic_year: AcademicYear.current
+            )
+          end
 
           let!(:vaccination_record) do
             create(

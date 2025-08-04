@@ -29,13 +29,13 @@
   </div>
 
   <div class="app-grid-column-results">
-    <%= render AppSearchResultsComponent.new(@pagy) do %>
+    <%= render AppSearchResultsComponent.new(@pagy, label: "children") do %>
       <% @patients.each do |patient| %>
         <%= render AppPatientSearchResultCardComponent.new(
               patient,
               link_to: patient_path(patient),
               programme: @programme,
-              academic_year: Date.current.academic_year,
+              academic_year: @academic_year,
               triage_status: @form.triage_status,
               show_year_group: true,
             ) %>

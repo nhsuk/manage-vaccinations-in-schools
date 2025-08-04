@@ -40,14 +40,14 @@ class Organisation < ApplicationRecord
   has_many :organisation_programmes,
            -> { joins(:programme).order(:"programmes.type") }
   has_many :sessions
-  has_many :teams
+  has_many :subteams
 
-  has_many :community_clinics, through: :teams
-  has_many :locations, through: :teams
+  has_many :community_clinics, through: :subteams
+  has_many :locations, through: :subteams
   has_many :patient_sessions, through: :sessions
   has_many :patients, -> { distinct }, through: :patient_sessions
   has_many :programmes, through: :organisation_programmes
-  has_many :schools, through: :teams
+  has_many :schools, through: :subteams
   has_many :vaccination_records, through: :sessions
   has_many :vaccines, through: :programmes
 
@@ -80,8 +80,7 @@ class Organisation < ApplicationRecord
     @year_groups ||= location_programme_year_groups.pluck_year_groups
   end
 
-  def generic_clinic_session
-    academic_year = AcademicYear.current
+  def generic_clinic_session(academic_year:)
     location = locations.generic_clinic.first
 
     sessions

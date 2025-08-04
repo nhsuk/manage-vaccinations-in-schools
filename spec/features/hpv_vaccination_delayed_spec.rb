@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 describe "HPV vaccination" do
+  around { |example| travel_to(Date.new(2025, 7, 31)) { example.run } }
+
   scenario "Delayed (unwell)" do
     given_i_am_signed_in
 

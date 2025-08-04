@@ -5,7 +5,7 @@ class Programmes::SessionsController < Programmes::BaseController
     @sessions =
       policy_scope(Session)
         .has_programmes([@programme])
-        .for_academic_year(@academic_year)
+        .where(academic_year: @academic_year)
         .includes(:location, :session_dates)
         .order("locations.name")
   end

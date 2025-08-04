@@ -28,8 +28,6 @@ class PatientImportRow
   def to_patient
     return unless valid?
 
-    import_attributes = build_patient_import_attributes
-
     if (existing_patient = existing_patients.first)
       prepare_patient_changes(existing_patient, import_attributes)
     else
@@ -170,8 +168,10 @@ class PatientImportRow
 
   private
 
-  def build_patient_import_attributes
-    {
+  def academic_year = AcademicYear.pending
+
+  def import_attributes
+    @import_attributes ||= {
       address_line_1: address_line_1&.to_s,
       address_line_2: address_line_2&.to_s,
       address_postcode: address_postcode&.to_postcode,
@@ -184,13 +184,17 @@ class PatientImportRow
       nhs_number: nhs_number_value,
       preferred_family_name: preferred_last_name&.to_s,
       preferred_given_name: preferred_first_name&.to_s,
-      registration: registration&.to_s
+      registration: registration&.to_s,
+      registration_academic_year:
     }.compact
   end
 
   def prepare_patient_changes(patient, import_attributes)
-    patient.registration =
-      import_attributes.delete(:registration) unless stage_registration?
+    unless stage_registration?
+      patient.registration = import_attributes.delete(:registration)
+      patient.registration_academic_year =
+        import_attributes.delete(:registration_academic_year)
+    end
 
     auto_accept_attributes_if_applicable(patient, import_attributes)
     handle_address_updates(patient, import_attributes)
@@ -316,7 +320,7 @@ class PatientImportRow
 
   def birth_academic_year_value
     if year_group.present?
-      year_group.to_i&.to_birth_academic_year
+      year_group.to_i&.to_birth_academic_year(academic_year:)
     else
       date_of_birth&.to_date&.academic_year
     end
@@ -340,6 +344,10 @@ class PatientImportRow
 
   def parent_2_phone_value
     parent_2_phone&.to_s&.gsub(/\s/, "")
+  end
+
+  def registration_academic_year
+    academic_year if registration.present?
   end
 
   def validate_date_of_birth
@@ -461,7 +469,7 @@ class PatientImportRow
   def validate_year_group
     field = year_group.presence || date_of_birth
 
-    year_group_value = birth_academic_year_value&.to_year_group
+    year_group_value = birth_academic_year_value&.to_year_group(academic_year:)
 
     if year_group_value.nil?
       # We only need to add a validation error here is the file had an

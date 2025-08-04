@@ -28,7 +28,7 @@ class AppImportsTableComponent < ViewComponent::Base
       .select("class_imports.*", "COUNT(patients.id) AS record_count")
       .where(organisation:)
       .left_outer_joins(:patients)
-      .includes(:uploaded_by, session: :location)
+      .includes(:location, :uploaded_by)
       .group("class_imports.id")
   end
 

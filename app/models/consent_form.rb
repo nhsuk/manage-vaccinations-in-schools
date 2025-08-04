@@ -105,7 +105,7 @@ class ConsentForm < ApplicationRecord
            through: :refused_consent_form_programmes,
            source: :programme
 
-  has_one :team, through: :location
+  has_one :subteam, through: :location
 
   has_many :eligible_schools, through: :organisation, source: :schools
   has_many :vaccines, through: :programmes
@@ -319,6 +319,8 @@ class ConsentForm < ApplicationRecord
       ].compact
   end
 
+  # TODO: For consent forms submitted during the preparation period, this
+  #  should be the next academic year.
   def academic_year = created_at.to_date.academic_year
 
   def recorded? = recorded_at != nil
@@ -353,8 +355,7 @@ class ConsentForm < ApplicationRecord
   end
 
   def reason_notes_must_be_provided?
-    refused_because_other? || refused_because_will_be_vaccinated_elsewhere? ||
-      refused_because_medical_reasons? || refused_because_already_vaccinated?
+    reason.in?(Consent::REASON_FOR_REFUSAL_REQUIRES_NOTES)
   end
 
   def original_session
@@ -373,12 +374,8 @@ class ConsentForm < ApplicationRecord
       (location_is_clinic? && original_session) ||
         (
           school &&
-            school
-              .sessions
-              .includes(:session_dates)
-              .for_current_academic_year
-              .first
-        ) || organisation.generic_clinic_session
+            school.sessions.includes(:session_dates).find_by(academic_year:)
+        ) || organisation.generic_clinic_session(academic_year:)
   end
 
   def find_or_create_parent_with_relationship_to!(patient:)

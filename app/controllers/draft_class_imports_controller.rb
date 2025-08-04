@@ -2,13 +2,13 @@
 
 class DraftClassImportsController < ApplicationController
   before_action :set_draft_class_import
-  before_action :set_session
+  before_action :set_location
 
   include WizardControllerConcern
 
-  before_action :set_session_options,
+  before_action :set_location_options,
                 only: %i[show update],
-                if: -> { current_step == :session }
+                if: -> { current_step == :location }
   before_action :set_year_group_options,
                 only: %i[show update],
                 if: -> { current_step == :year_groups }
@@ -18,8 +18,8 @@ class DraftClassImportsController < ApplicationController
   def new
     @draft_class_import.reset!
 
-    if (session = policy_scope(Session).find_by(slug: params[:session_slug]))
-      @draft_class_import.update!(session:)
+    if (location = policy_scope(Location).find_by(id: params[:location_id]))
+      @draft_class_import.update!(location:)
       redirect_to draft_class_import_path("year-groups")
     else
       redirect_to draft_class_import_path(Wicked::FIRST_STEP)
@@ -43,21 +43,23 @@ class DraftClassImportsController < ApplicationController
       DraftClassImport.new(request_session: session, current_user:)
   end
 
-  def set_session
-    @session = @draft_class_import.session
+  def set_location
+    @location = @draft_class_import.location
   end
 
-  def set_session_options
-    @session_options =
-      policy_scope(Session)
-        .includes(:location)
-        .for_current_academic_year
-        .where(location: { type: :school })
+  def set_location_options
+    @location_options = policy_scope(Location).school
   end
 
   def set_year_group_options
+    year_groups =
+      @location
+        .programme_year_groups
+        .where(programme: current_organisation.programmes)
+        .pluck_year_groups
+
     @year_group_options =
-      (@session.year_groups & @session.location.year_groups).map do |year_group|
+      year_groups.map do |year_group|
         OpenStruct.new(
           value: year_group,
           label: helpers.format_year_group(year_group)
@@ -74,9 +76,9 @@ class DraftClassImportsController < ApplicationController
   end
 
   def update_params
-    if current_step == :session
+    if current_step == :location
       {
-        session_id: params.dig(:draft_class_import, :session_id),
+        location_id: params.dig(:draft_class_import, :location_id),
         wizard_step: current_step
       }
     elsif current_step == :year_groups

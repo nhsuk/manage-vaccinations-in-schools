@@ -33,7 +33,7 @@ describe "Import class lists" do
     then_i_should_see_the_upload
     and_i_should_see_the_patients
 
-    when_i_follow_the_link_to_the_session
+    when_i_go_to_the_session
     then_i_should_see_the_children_added_to_the_session
   end
 
@@ -43,28 +43,26 @@ describe "Import class lists" do
       create(:organisation, :with_generic_clinic, :with_one_nurse, programmes:)
 
     location =
-      create(
-        :school,
-        :secondary,
-        name: "Waterloo Road",
-        organisation: @organisation
-      )
+      create(:school, name: "Waterloo Road", organisation: @organisation)
+
     @user = @organisation.users.first
 
-    create(
-      :session,
-      :unscheduled,
-      organisation: @organisation,
-      location:,
-      programmes:
-    )
+    @session =
+      create(
+        :session,
+        :unscheduled,
+        organisation: @organisation,
+        location:,
+        programmes:
+      )
   end
 
   def when_i_visit_a_session_page_for_the_hpv_programme
     sign_in @user
     visit "/dashboard"
     click_on "Sessions", match: :first
-    click_on "Unscheduled"
+    choose "Unscheduled"
+    click_on "Update results"
     click_on "Waterloo Road"
   end
 
@@ -73,6 +71,16 @@ describe "Import class lists" do
   end
 
   def and_i_select_the_year_groups
+    expect(page).not_to have_content("Nursery")
+    expect(page).not_to have_content("Reception")
+    # Not testing for "Year 1" because it's included in "Year 10" and "Year 11".
+    expect(page).not_to have_content("Year 2")
+    expect(page).not_to have_content("Year 3")
+    expect(page).not_to have_content("Year 4")
+    expect(page).not_to have_content("Year 5")
+    expect(page).not_to have_content("Year 6")
+    expect(page).not_to have_content("Year 7")
+
     check "Year 8"
     check "Year 9"
     check "Year 10"
@@ -196,9 +204,7 @@ describe "Import class lists" do
     click_link ClassImport.last.created_at.to_fs(:long), match: :first
   end
 
-  def when_i_follow_the_link_to_the_session
-    within ".nhsuk-summary-list" do
-      click_link "Waterloo Road"
-    end
+  def when_i_go_to_the_session
+    visit session_path(@session)
   end
 end

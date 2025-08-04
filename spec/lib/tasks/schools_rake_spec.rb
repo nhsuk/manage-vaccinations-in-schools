@@ -6,9 +6,9 @@ describe "schools:move_patients" do
   end
 
   let(:organisation) { create(:organisation) }
-  let(:team) { create(:team, organisation:) }
-  let(:other_team) { create(:team, organisation:) }
-  let(:source_school) { create(:school, organisation: organisation, team:) }
+  let(:subteam) { create(:subteam, organisation:) }
+  let(:other_subteam) { create(:subteam, organisation:) }
+  let(:source_school) { create(:school, organisation: organisation, subteam:) }
   let(:target_school) { create(:school, organisation: organisation) }
   let(:programmes) { [create(:programme, :hpv)] }
   let!(:patient) { create(:patient, school: source_school) }
@@ -24,7 +24,7 @@ describe "schools:move_patients" do
       session:
     )
   end
-  let(:other_org_school) { create(:school, team: other_team) }
+  let(:other_org_school) { create(:school, subteam: other_subteam) }
 
   let(:source_urn) { source_school.urn.to_s }
   let(:target_urn) { target_school.urn.to_s }

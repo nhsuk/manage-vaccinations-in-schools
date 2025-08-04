@@ -16,7 +16,7 @@ describe "Verbal consent" do
   end
 
   scenario "Given flu injection" do
-    given_an_flu_programme_is_underway
+    given_a_flu_programme_is_underway
     and_i_am_signed_in
 
     when_i_record_that_verbal_injection_consent_was_given
@@ -29,7 +29,7 @@ describe "Verbal consent" do
   end
 
   scenario "Given flu nasal spray" do
-    given_an_flu_programme_is_underway
+    given_a_flu_programme_is_underway
     and_i_am_signed_in
 
     when_i_record_that_verbal_nasal_consent_was_given
@@ -43,7 +43,7 @@ describe "Verbal consent" do
   end
 
   scenario "Given flu nasal spray and injection" do
-    given_an_flu_programme_is_underway
+    given_a_flu_programme_is_underway
     and_i_am_signed_in
 
     when_i_record_that_verbal_nasal_and_injection_consent_was_given
@@ -59,7 +59,7 @@ describe "Verbal consent" do
     create_programme(:hpv)
   end
 
-  def given_an_flu_programme_is_underway
+  def given_a_flu_programme_is_underway
     create_programme(:flu)
   end
 

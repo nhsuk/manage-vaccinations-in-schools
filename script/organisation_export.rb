@@ -75,14 +75,14 @@ class OrganisationExport
 
   def patients
     Patient
-      .joins(school: { team: :organisation })
+      .joins(school: { subteam: :organisation })
       .where(teams: { organisation_id: @organisation.id })
       .includes(
         :consents,
         :triages,
         :cohort,
         patient_sessions: %i[gillick_assessment vaccination_records],
-        school: :team
+        school: :subteam
       )
   end
 

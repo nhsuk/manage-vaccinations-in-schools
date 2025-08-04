@@ -165,6 +165,8 @@ describe CohortImport do
   describe "#process!" do
     subject(:process!) { cohort_import.process! }
 
+    around { |example| travel_to(Date.new(2025, 7, 31)) { example.run } }
+
     let(:file) { "valid.csv" }
 
     it "creates patients and parents" do
@@ -402,7 +404,9 @@ describe CohortImport do
     end
 
     context "with a scheduled clinic session" do
-      let(:session) { organisation.generic_clinic_session }
+      let(:session) do
+        organisation.generic_clinic_session(academic_year: AcademicYear.current)
+      end
 
       it "adds all the patients to the session" do
         expect { process! }.to change(session.patients, :count).from(0).to(3)

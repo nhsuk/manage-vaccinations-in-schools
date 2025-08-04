@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_18_090719) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_29_115701) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -86,14 +86,14 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_18_090719) do
     t.jsonb "serialized_errors"
     t.integer "status", default: 0, null: false
     t.bigint "organisation_id", null: false
-    t.bigint "session_id", null: false
     t.bigint "uploaded_by_user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "rows_count"
     t.integer "year_groups", default: [], null: false, array: true
+    t.bigint "location_id", null: false
+    t.index ["location_id"], name: "index_class_imports_on_location_id"
     t.index ["organisation_id"], name: "index_class_imports_on_organisation_id"
-    t.index ["session_id"], name: "index_class_imports_on_session_id"
     t.index ["uploaded_by_user_id"], name: "index_class_imports_on_uploaded_by_user_id"
   end
 
@@ -457,12 +457,12 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_18_090719) do
     t.integer "type", null: false
     t.string "ods_code"
     t.integer "year_groups", default: [], null: false, array: true
-    t.bigint "team_id"
+    t.bigint "subteam_id"
     t.integer "gias_local_authority_code"
     t.integer "gias_establishment_number"
     t.integer "status", default: 0, null: false
     t.index ["ods_code"], name: "index_locations_on_ods_code", unique: true
-    t.index ["team_id"], name: "index_locations_on_team_id"
+    t.index ["subteam_id"], name: "index_locations_on_subteam_id"
     t.index ["urn"], name: "index_locations_on_urn", unique: true
   end
 
@@ -654,6 +654,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_18_090719) do
     t.datetime "updated_from_pds_at"
     t.bigint "gp_practice_id"
     t.integer "birth_academic_year", null: false
+    t.integer "registration_academic_year"
     t.index ["family_name", "given_name"], name: "index_patients_on_names_family_first"
     t.index ["family_name"], name: "index_patients_on_family_name_trigram", opclass: :gin_trgm_ops, using: :gin
     t.index ["given_name", "family_name"], name: "index_patients_on_names_given_first"
@@ -757,7 +758,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_18_090719) do
     t.index ["organisation_id", "location_id"], name: "index_sessions_on_organisation_id_and_location_id"
   end
 
-  create_table "teams", force: :cascade do |t|
+  create_table "subteams", force: :cascade do |t|
     t.bigint "organisation_id", null: false
     t.string "name", null: false
     t.string "email", null: false
@@ -766,7 +767,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_18_090719) do
     t.datetime "updated_at", null: false
     t.uuid "reply_to_id"
     t.string "phone_instructions"
-    t.index ["organisation_id", "name"], name: "index_teams_on_organisation_id_and_name", unique: true
+    t.index ["organisation_id", "name"], name: "index_subteams_on_organisation_id_and_name", unique: true
   end
 
   create_table "triage", force: :cascade do |t|
@@ -873,8 +874,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_18_090719) do
   add_foreign_key "batches", "vaccines"
   add_foreign_key "batches_immunisation_imports", "batches"
   add_foreign_key "batches_immunisation_imports", "immunisation_imports"
+  add_foreign_key "class_imports", "locations"
   add_foreign_key "class_imports", "organisations"
-  add_foreign_key "class_imports", "sessions"
   add_foreign_key "class_imports", "users", column: "uploaded_by_user_id"
   add_foreign_key "class_imports_parent_relationships", "class_imports"
   add_foreign_key "class_imports_parent_relationships", "parent_relationships"
@@ -925,7 +926,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_18_090719) do
   add_foreign_key "immunisation_imports_vaccination_records", "vaccination_records"
   add_foreign_key "location_programme_year_groups", "locations", on_delete: :cascade
   add_foreign_key "location_programme_year_groups", "programmes", on_delete: :cascade
-  add_foreign_key "locations", "teams"
+  add_foreign_key "locations", "subteams"
   add_foreign_key "notes", "patients"
   add_foreign_key "notes", "sessions"
   add_foreign_key "notes", "users", column: "created_by_user_id"
@@ -972,7 +973,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_18_090719) do
   add_foreign_key "session_programmes", "programmes"
   add_foreign_key "session_programmes", "sessions"
   add_foreign_key "sessions", "organisations"
-  add_foreign_key "teams", "organisations"
+  add_foreign_key "subteams", "organisations"
   add_foreign_key "triage", "organisations"
   add_foreign_key "triage", "patients"
   add_foreign_key "triage", "programmes"

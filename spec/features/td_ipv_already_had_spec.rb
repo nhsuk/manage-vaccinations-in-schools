@@ -136,7 +136,8 @@ describe "Td/IPV" do
     sign_in @nurse
     visit dashboard_path
     click_on "Sessions", match: :first
-    click_on "Scheduled"
+    choose "Scheduled"
+    click_on "Update results"
     click_on @session.location.name
   end
 
@@ -144,7 +145,8 @@ describe "Td/IPV" do
     sign_in @nurse, role: :admin_staff
     visit dashboard_path
     click_on "Sessions", match: :first
-    click_on "Scheduled"
+    choose "Scheduled"
+    click_on "Update results"
     click_on @session.location.name
   end
 
@@ -214,7 +216,8 @@ describe "Td/IPV" do
 
   def and_i_click_on_triage
     click_on "Sessions", match: :first
-    click_on "Scheduled"
+    choose "Scheduled"
+    click_on "Update results"
     click_on @session.location.name
     click_on "Triage"
   end

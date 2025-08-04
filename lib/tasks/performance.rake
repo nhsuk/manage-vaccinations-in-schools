@@ -18,12 +18,15 @@ namespace :performance do
     VaccinationRecord.delete_all
     Patient.delete_all
 
+    academic_year = AcademicYear.current
+
     Organisation.find_each do |organisation|
       puts "For organisation: #{organisation.name}"
 
       sessions_by_school_id =
         organisation
           .sessions
+          .where(academic_year:)
           .joins(:location)
           .merge(Location.school)
           .index_by(&:location_id)
@@ -44,7 +47,8 @@ namespace :performance do
       Patient.import!(patients)
 
       puts "Building patient sessions..."
-      generic_clinic_session = organisation.generic_clinic_session
+      generic_clinic_session =
+        organisation.generic_clinic_session(academic_year:)
 
       patient_sessions =
         patients.flat_map do |patient|

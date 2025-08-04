@@ -23,9 +23,9 @@ class GenericClinicFactory
 
   delegate :programmes, to: :organisation
 
-  def team
+  def subteam
     organisation
-      .teams
+      .subteams
       .create_with(
         email: organisation.email,
         phone: organisation.phone,
@@ -42,7 +42,7 @@ class GenericClinicFactory
       Location.create!(
         name: "Community clinic",
         ods_code: organisation.ods_code,
-        team:,
+        subteam:,
         type: :generic_clinic
       )
   end

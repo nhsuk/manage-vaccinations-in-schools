@@ -7,10 +7,7 @@ describe "Edit vaccination record" do
     and_an_administered_vaccination_record_exists
     and_enqueue_sync_vaccination_records_to_nhs_feature_is_enabled
 
-    when_i_go_to_the_vaccination_records_page
-    then_i_should_see_the_vaccination_records
-
-    when_i_click_on_the_vaccination_record
+    when_i_go_to_the_vaccination_record_for_the_patient
     then_i_should_see_the_vaccination_record
 
     when_i_click_on_edit_vaccination_record
@@ -54,10 +51,7 @@ describe "Edit vaccination record" do
     and_an_administered_vaccination_record_exists
     and_the_vaccination_confirmation_was_already_sent
 
-    when_i_go_to_the_vaccination_records_page
-    then_i_should_see_the_vaccination_records
-
-    when_i_click_on_the_vaccination_record
+    when_i_go_to_the_vaccination_record_for_the_patient
     then_i_should_see_the_vaccination_record
 
     when_i_click_on_edit_vaccination_record
@@ -85,10 +79,7 @@ describe "Edit vaccination record" do
     and_an_administered_vaccination_record_exists
     and_the_vaccination_confirmation_was_already_sent
 
-    when_i_go_to_the_vaccination_records_page
-    then_i_should_see_the_vaccination_records
-
-    when_i_click_on_the_vaccination_record
+    when_i_go_to_the_vaccination_record_for_the_patient
     then_i_should_see_the_vaccination_record
 
     when_i_click_on_edit_vaccination_record
@@ -109,10 +100,7 @@ describe "Edit vaccination record" do
     and_a_not_administered_vaccination_record_exists
     and_the_vaccination_confirmation_was_already_sent
 
-    when_i_go_to_the_vaccination_records_page
-    then_i_should_see_the_vaccination_records
-
-    when_i_click_on_the_vaccination_record
+    when_i_go_to_the_vaccination_record_for_the_patient
     then_i_should_see_the_vaccination_record
 
     when_i_click_on_edit_vaccination_record
@@ -145,10 +133,7 @@ describe "Edit vaccination record" do
     and_an_administered_vaccination_record_exists
     and_the_vaccination_confirmation_was_already_sent
 
-    when_i_go_to_the_vaccination_records_page
-    then_i_should_see_the_vaccination_records
-
-    when_i_click_on_the_vaccination_record
+    when_i_go_to_the_vaccination_record_for_the_patient
     then_i_should_see_the_vaccination_record
 
     when_i_click_on_edit_vaccination_record
@@ -171,8 +156,7 @@ describe "Edit vaccination record" do
     and_an_administered_vaccination_record_exists
     and_the_original_batch_has_been_archived
 
-    when_i_go_to_the_vaccination_records_page
-    and_i_click_on_the_vaccination_record
+    when_i_go_to_the_vaccination_record_for_the_patient
     and_i_click_on_edit_vaccination_record
     then_i_see_the_edit_vaccination_record_page
 
@@ -190,8 +174,7 @@ describe "Edit vaccination record" do
     and_an_administered_vaccination_record_exists
     and_the_original_batch_has_expired
 
-    when_i_go_to_the_vaccination_records_page
-    and_i_click_on_the_vaccination_record
+    when_i_go_to_the_vaccination_record_for_the_patient
     and_i_click_on_edit_vaccination_record
     then_i_see_the_edit_vaccination_record_page
 
@@ -208,8 +191,7 @@ describe "Edit vaccination record" do
     and_an_hpv_programme_is_underway
     and_an_administered_vaccination_record_exists
 
-    when_i_go_to_the_vaccination_records_page
-    and_i_click_on_the_vaccination_record
+    when_i_go_to_the_vaccination_record_for_the_patient
     then_i_should_not_be_able_to_edit_the_vaccination_record
   end
 
@@ -218,8 +200,7 @@ describe "Edit vaccination record" do
     and_an_hpv_programme_is_underway
     and_an_administered_vaccination_record_exists
 
-    when_i_go_to_the_vaccination_records_page
-    and_i_click_on_the_vaccination_record
+    when_i_go_to_the_vaccination_record_for_the_patient
     and_i_click_on_edit_vaccination_record
     then_i_see_the_edit_vaccination_record_page
 
@@ -351,25 +332,13 @@ describe "Edit vaccination record" do
     @original_batch.save!(validate: false)
   end
 
-  def when_i_go_to_the_vaccination_records_page
+  def when_i_go_to_the_vaccination_record_for_the_patient
     visit "/dashboard"
 
-    click_on "Programmes", match: :first
-    click_on "HPV"
-    click_on "Vaccinations", match: :first
+    click_on "Children", match: :first
+    click_on @patient.full_name
+    click_on Date.current.to_fs(:long)
   end
-
-  def then_i_should_see_the_vaccination_records
-    expect(page).to have_content("1 vaccination record")
-    expect(page).to have_content("SMITH, John")
-  end
-
-  def when_i_click_on_the_vaccination_record
-    click_on "SMITH, John"
-  end
-
-  alias_method :and_i_click_on_the_vaccination_record,
-               :when_i_click_on_the_vaccination_record
 
   def then_i_should_see_the_vaccination_record
     expect(page).to have_content("Full nameSMITH, John")

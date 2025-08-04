@@ -9,27 +9,20 @@ class Users::OrganisationsController < ApplicationController
   layout "two_thirds"
 
   def new
-    @organisations = current_user.organisations
+    @form = SelectOrganisationForm.new(current_user:)
   end
 
   def create
-    organisation = current_user.organisations.find(params[:organisation_id])
+    @form =
+      SelectOrganisationForm.new(
+        current_user:,
+        request_session: session,
+        organisation_id: params.dig(:select_organisation_form, :organisation_id)
+      )
 
-    if organisation.present?
-      session["cis2_info"] = {
-        "selected_org" => {
-          "name" => organisation.name,
-          "code" => organisation.ods_code
-        },
-        "selected_role" => {
-          "code" => valid_cis2_roles.first,
-          "workgroups" => ["schoolagedimmunisations"]
-        }
-      }
-
+    if @form.save
       redirect_to dashboard_path
     else
-      @organisations = current_user.organisations
       render :new, status: :unprocessable_entity
     end
   end

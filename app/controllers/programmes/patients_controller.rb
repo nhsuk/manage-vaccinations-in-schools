@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class Programmes::PatientsController < Programmes::BaseController
-  include Pagy::Backend
   include PatientSearchFormConcern
 
   before_action :set_patient_search_form
@@ -13,10 +12,13 @@ class Programmes::PatientsController < Programmes::BaseController
       ).pluck_year_groups
 
     scope =
-      policy_scope(Patient).includes(
+      patients.includes(
+        :consent_statuses,
+        :triage_statuses,
         :vaccination_statuses
-      ).appear_in_programmes([@programme], academic_year: @academic_year)
+      )
 
+    @form.academic_year = @academic_year
     @form.programme_types = [@programme.type]
 
     patients = @form.apply(scope)

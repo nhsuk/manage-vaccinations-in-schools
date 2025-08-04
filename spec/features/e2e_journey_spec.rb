@@ -118,8 +118,10 @@ describe "End-to-end journey" do
     visit "/dashboard"
     click_on "Programmes", match: :first
     click_on "HPV"
-    click_on "Cohort"
-    click_on "Import child records"
+    click_on "Import"
+    click_on "Import records"
+    choose "Child records"
+    click_on "Continue"
     attach_file "cohort_import[csv]", csv_file.path
     click_on "Continue"
     visit cohort_import_path(CohortImport.last)
@@ -131,7 +133,8 @@ describe "End-to-end journey" do
 
   def when_i_start_creating_a_new_session_by_choosing_school_and_time
     click_on "Sessions"
-    click_on "Unscheduled"
+    choose "Unscheduled"
+    click_on "Update results"
     click_on "Pilot School"
     click_on "Schedule sessions"
 
@@ -148,14 +151,14 @@ describe "End-to-end journey" do
     expect(page).to have_content("Edit session")
 
     expect(page).to have_content("ProgrammesHPV")
-    expect(page).to have_content("Session datesFriday 1 March 2024")
+    expect(page).to have_content("Session datesFriday, 1 March 2024")
     expect(page).to have_content(
-      "Consent requestsSend on Friday 9 February 2024"
+      "Consent requestsSend on Friday, 9 February 2024"
     )
     expect(page).to have_content(
       "Consent remindersSend 1 week before each session"
     )
-    expect(page).to have_content("Next: Friday 23 February 2024")
+    expect(page).to have_content("Next: Friday, 23 February 2024")
 
     click_on "Continue"
   end

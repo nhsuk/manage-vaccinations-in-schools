@@ -50,7 +50,7 @@ class PatientSession < ApplicationRecord
   has_one :registration_status
 
   has_one :location, through: :session
-  has_one :team, through: :session
+  has_one :subteam, through: :session
   has_one :organisation, through: :session
   has_many :session_attendances, dependent: :destroy
 
@@ -103,7 +103,7 @@ class PatientSession < ApplicationRecord
               )
 
           # Are any of the programmes administered in the session?
-          joins(:patient, :session).where(
+          where(
             SessionProgramme
               .where(programme: programmes)
               .where("session_programmes.session_id = sessions.id")
@@ -117,8 +117,10 @@ class PatientSession < ApplicationRecord
         ->(name) { joins(:patient).merge(Patient.search_by_name(name)) }
 
   scope :search_by_year_groups,
-        ->(year_groups) do
-          joins(:patient).merge(Patient.search_by_year_groups(year_groups))
+        ->(year_groups, academic_year:) do
+          joins(:patient).merge(
+            Patient.search_by_year_groups(year_groups, academic_year:)
+          )
         end
 
   scope :search_by_date_of_birth_year,

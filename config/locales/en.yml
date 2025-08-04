@@ -104,6 +104,10 @@ en:
           attributes:
             action:
               inclusion: Choose whether to update the child’s record with this new information
+        select_organisation_form:
+          attributes:
+            organisation_id:
+              inclusion: Choose an organisation
         session_programmes_form:
           attributes:
             programme_ids:
@@ -144,6 +148,7 @@ en:
       consent:
         reason_for_refusals:
           already_vaccinated: Vaccine already received
+          contains_gelatine: Vaccine contains gelatine from pigs
           medical: Medical reasons
           other: Other
           personal_choice: Personal choice
@@ -165,13 +170,6 @@ en:
           other: Other
           text: I can only receive text messages
           voice: I can only receive voice calls
-        reasons:
-          already_vaccinated: Vaccine already received
-          contains_gelatine: Vaccine contains gelatine from pigs
-          medical_reasons: Medical reasons
-          other: Other
-          personal_choice: Personal choice
-          will_be_vaccinated_elsewhere: Vaccine will be given elsewhere
       notify_log_entry:
         types:
           email: Email
@@ -587,9 +585,6 @@ en:
     index:
       title: Children
   programmes:
-    cohorts:
-      index:
-        title: Cohorts
     index:
       title: Programmes
     overview:
@@ -601,9 +596,6 @@ en:
     sessions:
       index:
         title: Sessions
-    vaccinations:
-      index:
-        title: Vaccinations
   school_moves:
     index:
       title: School moves
@@ -614,25 +606,6 @@ en:
   sessions:
     index:
       title: Sessions
-      table_heading:
-        zero: There are no sessions scheduled for today.
-        one: 1 session today
-        other: "%{count} sessions today"
-    completed:
-      table_heading:
-        zero: There are no locations with all sessions completed.
-        one: 1 location with all sessions completed
-        other: "%{count} locations with all sessions completed"
-    scheduled:
-      table_heading:
-        zero: There are no locations with sessions scheduled.
-        one: 1 location with sessions scheduled
-        other: "%{count} locations with sessions scheduled"
-    unscheduled:
-      table_heading:
-        zero: There are no locations with no sessions scheduled.
-        one: 1 location with no sessions scheduled
-        other: "%{count} locations with no sessions scheduled"
     tabs:
       overview: Overview
       consent: Consent

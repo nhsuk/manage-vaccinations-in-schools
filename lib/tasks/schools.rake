@@ -37,10 +37,10 @@ namespace :schools do
       raise "Some patient sessions at #{old_loc.urn} are not safe to destroy. Cannot complete transfer."
     end
 
-    if !new_loc.team_id.nil? && new_loc.team_id != old_loc.team_id
-      raise "#{new_loc.urn} belongs to #{new_loc.team.name}. Could not complete transfer."
+    if !new_loc.subteam_id.nil? && new_loc.subteam_id != old_loc.subteam_id
+      raise "#{new_loc.urn} belongs to #{new_loc.subteam.name}. Could not complete transfer."
     end
-    new_loc.update!(team: old_loc.team)
+    new_loc.update!(subteam: old_loc.subteam)
 
     Session.where(location_id: old_loc.id).update_all(location_id: new_loc.id)
     Patient.where(school_id: old_loc.id).update_all(school_id: new_loc.id)

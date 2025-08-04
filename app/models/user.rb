@@ -30,6 +30,11 @@
 class User < ApplicationRecord
   include FullNameConcern
 
+  CIS2_NURSE_ROLE = "S8000:G8000:R8001"
+  CIS2_ADMIN_ROLE = "S8000:G8001:R8006"
+
+  CIS2_WORKGROUP = "schoolagedimmunisations"
+
   attr_accessor :cis2_info
 
   if Settings.cis2.enabled

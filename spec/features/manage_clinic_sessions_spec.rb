@@ -75,7 +75,8 @@ describe "Manage clinic sessions" do
         programmes: [@programme]
       )
 
-    @session = @organisation.generic_clinic_session
+    @session =
+      @organisation.generic_clinic_session(academic_year: AcademicYear.current)
 
     @parent = create(:parent)
 
@@ -86,25 +87,32 @@ describe "Manage clinic sessions" do
   def when_i_go_to_todays_sessions_as_a_nurse
     sign_in @organisation.users.first
     visit "/dashboard"
+
     click_link "Sessions", match: :first
+
+    choose "In progress"
+    click_on "Update results"
   end
 
   def when_i_go_to_unscheduled_sessions
-    click_link "Unscheduled"
+    choose "Unscheduled"
+    click_on "Update results"
   end
 
   def when_i_go_to_scheduled_sessions
-    click_link "Scheduled"
+    choose "Scheduled"
+    click_on "Update results"
   end
 
   def when_i_go_to_completed_sessions
-    click_link "Completed"
+    choose "Completed"
+    click_on "Update results"
   end
 
   alias_method :and_i_go_to_completed_sessions, :when_i_go_to_completed_sessions
 
   def then_i_see_no_sessions
-    expect(page).to have_content(/There are no (sessions|locations)/)
+    expect(page).to have_content("No sessions matching search criteria found")
   end
 
   def when_i_click_on_the_community_clinic
@@ -168,7 +176,7 @@ describe "Manage clinic sessions" do
 
   def then_i_see_the_confirmation_page
     expect(page).to have_content("Edit session")
-    expect(page).to have_content("InvitationsSend on Sunday 18 February 2024")
+    expect(page).to have_content("InvitationsSend on Sunday, 18 February 2024")
   end
 
   def when_i_click_on_change_invitations

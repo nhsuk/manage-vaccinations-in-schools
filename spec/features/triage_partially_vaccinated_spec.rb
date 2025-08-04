@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 describe "Triage" do
+  around { |example| travel_to(Date.new(2025, 7, 31)) { example.run } }
+
   scenario "nurse can triage after importing historical vaccinations" do
     given_a_td_ipv_programme_with_a_session
     and_i_am_signed_in_as_a_nurse
@@ -71,7 +73,8 @@ describe "Triage" do
 
   def when_i_go_the_session
     click_on "Sessions", match: :first
-    click_on "Scheduled"
+    choose "Scheduled"
+    click_on "Update results"
     click_on @session.location.name
   end
 

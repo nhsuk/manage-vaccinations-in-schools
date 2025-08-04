@@ -51,6 +51,16 @@ describe DraftConsent do
   let(:invalid_attributes) { {} }
 
   describe "validations" do
+    context "on the parent step" do
+      let(:attributes) { { wizard_step: :parent_details } }
+
+      it do
+        expect(draft_consent).to validate_inclusion_of(
+          :parent_relationship_type
+        ).in_array(%w[father guardian mother other])
+      end
+    end
+
     context "when given" do
       let(:attributes) { valid_given_attributes }
 

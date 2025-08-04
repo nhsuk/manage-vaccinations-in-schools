@@ -76,7 +76,10 @@ describe "HPV vaccination" do
 
     if clinic
       [previous_date, Date.current].each do |date|
-        @organisation.generic_clinic_session.session_dates.create!(value: date)
+        @organisation
+          .generic_clinic_session(academic_year: AcademicYear.current)
+          .session_dates
+          .create!(value: date)
       end
 
       @physical_clinic_location =
@@ -108,7 +111,16 @@ describe "HPV vaccination" do
         :patient,
         2,
         :consent_given_triage_not_needed,
-        session: clinic ? @organisation.generic_clinic_session : @session,
+        session:
+          (
+            if clinic
+              @organisation.generic_clinic_session(
+                academic_year: AcademicYear.current
+              )
+            else
+              @session
+            end
+          ),
         school:,
         year_group: 8
       )
@@ -116,7 +128,16 @@ describe "HPV vaccination" do
       create(
         :patient,
         :vaccinated,
-        session: clinic ? @organisation.generic_clinic_session : @session,
+        session:
+          (
+            if clinic
+              @organisation.generic_clinic_session(
+                academic_year: AcademicYear.current
+              )
+            else
+              @session
+            end
+          ),
         school:,
         location_name: clinic ? @physical_clinic_location.name : nil,
         year_group: 8
@@ -131,7 +152,16 @@ describe "HPV vaccination" do
         :patient,
         :vaccinated,
         :restricted,
-        session: clinic ? @organisation.generic_clinic_session : @session,
+        session:
+          (
+            if clinic
+              @organisation.generic_clinic_session(
+                academic_year: AcademicYear.current
+              )
+            else
+              @session
+            end
+          ),
         school:,
         location_name: clinic ? @physical_clinic_location.name : nil,
         year_group: 8
@@ -189,8 +219,9 @@ describe "HPV vaccination" do
     sign_in @organisation.users.first
     visit "/dashboard"
     click_link "Sessions", match: :first
-    click_link "Scheduled"
-    click_on "Community clinic"
+    choose "Scheduled"
+    click_button "Update results"
+    click_link "Community clinic"
     click_link "Record offline"
   end
 
@@ -337,10 +368,11 @@ describe "HPV vaccination" do
 
   def and_i_upload_the_modified_csv_file
     visit "/"
-    click_on "Programmes", match: :first
-    click_on "HPV"
-    click_on "Vaccinations", match: :first
-    click_on "Import vaccination records"
+
+    click_on "Import", match: :first
+    click_on "Import records"
+    choose "Vaccination records"
+    click_on "Continue"
 
     attach_file("immunisation_import[csv]", "tmp/modified.csv")
     click_on "Continue"
@@ -349,14 +381,16 @@ describe "HPV vaccination" do
   def when_i_navigate_to_the_session_page
     visit "/dashboard"
     click_on "Sessions", match: :first
-    click_on "Scheduled"
+    choose "Scheduled"
+    click_on "Update results"
     click_on @session.location.name
   end
 
   def when_i_navigate_to_the_clinic_page
     visit "/dashboard"
     click_on "Sessions", match: :first
-    click_on "Scheduled"
+    choose "Scheduled"
+    click_on "Update results"
     click_on "Community clinic"
   end
 

@@ -44,7 +44,7 @@ class Session < ApplicationRecord
 
   has_and_belongs_to_many :immunisation_imports
 
-  has_one :team, through: :location
+  has_one :subteam, through: :location
   has_many :programmes, through: :session_programmes
   has_many :gillick_assessments, through: :patient_sessions
   has_many :patients, through: :patient_sessions
@@ -74,21 +74,14 @@ class Session < ApplicationRecord
           )
         end
 
-  scope :today, -> { has_date(Date.current) }
-
-  scope :for_academic_year, ->(academic_year) { where(academic_year:) }
   scope :for_current_academic_year,
-        -> { for_academic_year(AcademicYear.current) }
+        -> { where(academic_year: AcademicYear.current) }
 
-  scope :unscheduled,
-        -> do
-          for_current_academic_year.where.not(
-            SessionDate.for_session.arel.exists
-          )
-        end
+  scope :in_progress, -> { has_date(Date.current) }
+  scope :unscheduled, -> { where.not(SessionDate.for_session.arel.exists) }
   scope :scheduled,
         -> do
-          for_current_academic_year.where(
+          where(
             "? <= (?)",
             Date.current,
             SessionDate.for_session.select("MAX(value)")
@@ -96,10 +89,33 @@ class Session < ApplicationRecord
         end
   scope :completed,
         -> do
-          for_current_academic_year.where(
+          where(
             "? > (?)",
             Date.current,
             SessionDate.for_session.select("MAX(value)")
+          )
+        end
+
+  scope :search_by_name,
+        ->(query) { joins(:location).merge(Location.search_by_name(query)) }
+
+  scope :join_earliest_date,
+        -> do
+          joins(
+            "LEFT JOIN (SELECT session_id, MIN(value) AS value " \
+              "FROM session_dates GROUP BY session_id) earliest_session_dates " \
+              "ON sessions.id = earliest_session_dates.session_id"
+          )
+        end
+
+  scope :order_by_earliest_date,
+        -> do
+          join_earliest_date.order(
+            Arel.sql(
+              "CASE WHEN earliest_session_dates.value >= ? THEN 1 ELSE 2 END",
+              Date.current
+            ),
+            "earliest_session_dates.value ASC NULLS LAST"
           )
         end
 
@@ -217,13 +233,10 @@ class Session < ApplicationRecord
       next_date(include_today: true) && !completed?
     else
       completed? &&
-        organisation.generic_clinic_session.next_date(include_today: true)
+        organisation.generic_clinic_session(academic_year:).next_date(
+          include_today: true
+        )
     end
-  end
-
-  def <=>(other)
-    [dates.first, location.type, location.name] <=>
-      [other.dates.first, other.location.type, other.location.name]
   end
 
   def set_notification_dates
@@ -253,6 +266,8 @@ class Session < ApplicationRecord
     reminder_dates = dates.map { _1 - days_before_consent_reminders.days }
     reminder_dates.find(&:future?) || reminder_dates.last
   end
+
+  def open_consent_at = send_consent_requests_at
 
   def close_consent_at
     return nil if dates.empty?

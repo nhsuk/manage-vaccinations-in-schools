@@ -8,7 +8,7 @@ module MavisCLI
       argument :ods_code,
                required: true,
                desc: "The ODS code of the organisation"
-      argument :team, required: true, desc: "The team of the organisation"
+      argument :subteam, required: true, desc: "The subteam of the organisation"
       argument :urns,
                type: :array,
                required: true,
@@ -18,7 +18,7 @@ module MavisCLI
              type: :array,
              desc: "The programmes administered at the school"
 
-      def call(ods_code:, team:, urns:, programmes: [], **)
+      def call(ods_code:, subteam:, urns:, programmes: [], **)
         MavisCLI.load_rails
 
         organisation = Organisation.find_by(ods_code:)
@@ -28,10 +28,10 @@ module MavisCLI
           return
         end
 
-        team = organisation.teams.find_by(name: team)
+        subteam = organisation.subteams.find_by(name: subteam)
 
-        if team.nil?
-          warn "Could not find team."
+        if subteam.nil?
+          warn "Could not find subteam."
           return
         end
 
@@ -53,11 +53,11 @@ module MavisCLI
               next
             end
 
-            if !location.team_id.nil? && location.team_id != team.id
-              warn "#{urn} previously belonged to #{location.team.name}"
+            if !location.subteam_id.nil? && location.subteam_id != subteam.id
+              warn "#{urn} previously belonged to #{location.subteam.name}"
             end
 
-            location.update!(team:)
+            location.update!(subteam:)
             location.create_default_programme_year_groups!(programmes)
 
             LocationSessionsFactory.call(location, academic_year:)
