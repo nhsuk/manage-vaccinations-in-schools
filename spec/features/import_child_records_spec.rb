@@ -47,8 +47,8 @@ describe "Import child records" do
     when_i_click_on_the_cohort_for_doubles
     then_i_should_see_the_children_for_doubles
 
-    when_i_click_on_the_imports_page
-    and_i_choose_to_import_child_records
+    when_i_visit_the_hpv_programme_page
+    and_i_import_child_records_from_children_tab
     then_i_should_see_the_import_page
 
     travel 1.minute # to ensure the created_at is different for the import jobs
@@ -241,6 +241,13 @@ describe "Import child records" do
 
   def when_i_go_to_the_import_page
     click_link CohortImport.last.created_at.to_fs(:long), match: :first
+  end
+
+  def and_i_import_child_records_from_children_tab
+    within(".app-secondary-navigation") { click_on "Children" }
+
+    click_on "Import child records"
+    click_on "Continue"
   end
 
   def when_i_upload_a_valid_file_with_changes

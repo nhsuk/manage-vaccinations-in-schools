@@ -13,7 +13,7 @@
 <%= render AppProgrammeNavigationComponent.new(@programme, @academic_year, active: :patients) %>
 
 <%= govuk_button_link_to "Import child records",
-                         new_cohort_import_path,
+                         import_programme_patients_path,
                          secondary: true %>
 
 <div class="nhsuk-grid-row">
