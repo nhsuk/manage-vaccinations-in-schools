@@ -35,12 +35,8 @@ class SendClinicInitialInvitationsJob < ApplicationJob
       )
       .where(patient: { school: })
       .reject { it.session_notifications.any? }
-      .select do
-        should_send_notification?(
-          patient_session: it,
-          programmes:,
-          session_date:
-        )
+      .select do |patient_session|
+        should_send_notification?(patient_session:, programmes:, session_date:)
       end
   end
 end

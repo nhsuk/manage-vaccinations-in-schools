@@ -100,12 +100,6 @@ describe "Manage school sessions" do
       .generic_clinic_session(academic_year: AcademicYear.current)
       .session_dates
       .create!(value: 1.month.from_now.to_date)
-
-    create(
-      :patient_session,
-      patient: @patient,
-      session: @team.generic_clinic_session(academic_year: AcademicYear.current)
-    )
   end
 
   def when_i_go_to_todays_sessions_as_a_nurse
