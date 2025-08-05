@@ -170,7 +170,9 @@ Rails.application.routes.draw do
                path: ":academic_year",
                only: :show,
                controller: :overview
-      resources :patients, path: ":academic_year/patients", only: :index
+      resources :patients, path: ":academic_year/patients", only: :index do
+        get "import", on: :collection
+      end
       resources :reports, path: ":academic_year/reports", only: :create
       resources :sessions, path: ":academic_year/sessions", only: :index
     end
