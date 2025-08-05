@@ -561,6 +561,12 @@ describe CohortImportRow do
 
     it { should_not be_nil }
 
+    context "with a date of death" do
+      before { patient.update!(date_of_death: today) }
+
+      it { should be_nil }
+    end
+
     describe "#school" do
       subject(:school) { school_move.school }
 
