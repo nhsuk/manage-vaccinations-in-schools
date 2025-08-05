@@ -16,7 +16,7 @@ module DraftObjectValidatorConcern
 
   def validate_patient_id_present
       if draft_object.patient_id.nil?
-        render 'errors/no_draft_page_open', status: :unprocessable_entity
+        render 'errors/no_draft_page_open', status: :unprocessable_content
       end
   end
 end
