@@ -15,16 +15,17 @@ class AppSessionDetailsSummaryComponent < ViewComponent::Base
 
   attr_reader :session
 
-  delegate :patient_sessions, to: :session
-
   delegate :programmes, to: :session
 
+  def patient_sessions
+    session
+      .patient_sessions
+      .joins(:patient, :session)
+      .appear_in_programmes(programmes)
+  end
+
   def cohort_row
-    count =
-      patient_sessions
-        .joins(:patient, :session)
-        .appear_in_programmes(programmes)
-        .count
+    count = patient_sessions.count
     href = import_session_path(session)
 
     {

@@ -49,5 +49,7 @@ describe AppProgrammeSessionTableComponent do
     let(:patient) { create(:patient, session:, year_group: 7) }
 
     it { should have_content(/Cohort(\s+)4/) }
+    it { should have_content(/No response(\s+)4(\s+)100%/) }
+    it { should have_content(/Vaccinated(\s+)0(\s+)0%/) }
   end
 end
