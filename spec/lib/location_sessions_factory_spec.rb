@@ -120,7 +120,7 @@ describe LocationSessionsFactory do
           session =
             team.sessions.includes(:patients).find_by(location:, academic_year:)
           expect(session.patients).to include(patient_at_location)
-          expect(session.patients).to include(patient_at_school_location)
+          expect(session.patients).not_to include(patient_at_school_location)
         end
       end
     end
