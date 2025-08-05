@@ -188,7 +188,7 @@ module ParentInterface
 
         unless validator.date_params_valid?
           @consent_form.date_of_birth = validator.date_params_as_struct
-          render_wizard nil, status: :unprocessable_entity
+          render_wizard nil, status: :unprocessable_content
         end
       end
     end

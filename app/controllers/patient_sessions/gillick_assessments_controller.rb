@@ -14,7 +14,7 @@ class PatientSessions::GillickAssessmentsController < PatientSessions::BaseContr
 
       redirect_to session_patient_programme_path(@session, @patient, @programme)
     else
-      render :edit, status: :unprocessable_entity
+      render :edit, status: :unprocessable_content
     end
   end
 

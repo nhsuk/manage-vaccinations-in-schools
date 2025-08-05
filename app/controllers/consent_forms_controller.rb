@@ -68,7 +68,7 @@ class ConsentFormsController < ApplicationController
                       "Consent response from #{@consent_form.parent_full_name} archived"
                   }
     else
-      render :archive, status: :unprocessable_entity
+      render :archive, status: :unprocessable_content
     end
   end
 

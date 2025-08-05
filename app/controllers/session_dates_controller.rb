@@ -11,7 +11,7 @@ class SessionDatesController < ApplicationController
     @session.assign_attributes(remove_invalid_dates(session_params))
     @session.set_notification_dates
 
-    render :show, status: :unprocessable_entity and return if @session.invalid?
+    render :show, status: :unprocessable_content and return if @session.invalid?
 
     @session.save!
 

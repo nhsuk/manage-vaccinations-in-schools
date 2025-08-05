@@ -42,7 +42,7 @@ class SchoolMovesController < ApplicationController
 
       redirect_to school_moves_path, flash:
     else
-      render :show, status: :unprocessable_entity
+      render :show, status: :unprocessable_content
     end
   end
 

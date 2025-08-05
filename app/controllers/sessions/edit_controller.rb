@@ -19,7 +19,7 @@ class Sessions::EditController < ApplicationController
     if @form.save
       redirect_to edit_session_path(@session)
     else
-      render :programmes, status: :unprocessable_entity
+      render :programmes, status: :unprocessable_content
     end
   end
 
@@ -31,9 +31,9 @@ class Sessions::EditController < ApplicationController
     if !send_consent_requests_at_validator.date_params_valid?
       @session.send_consent_requests_at =
         send_consent_requests_at_validator.date_params_as_struct
-      render :send_consent_requests_at, status: :unprocessable_entity
+      render :send_consent_requests_at, status: :unprocessable_content
     elsif !@session.update(send_consent_requests_at_params)
-      render :send_consent_requests_at, status: :unprocessable_entity
+      render :send_consent_requests_at, status: :unprocessable_content
     else
       redirect_to edit_session_path(@session)
     end
@@ -47,9 +47,9 @@ class Sessions::EditController < ApplicationController
     if !send_invitations_at_validator.date_params_valid?
       @session.send_invitations_at =
         send_invitations_at_validator.date_params_as_struct
-      render :send_invitations_at, status: :unprocessable_entity
+      render :send_invitations_at, status: :unprocessable_content
     elsif !@session.update(send_invitations_at_params)
-      render :send_invitations_at, status: :unprocessable_entity
+      render :send_invitations_at, status: :unprocessable_content
     else
       redirect_to edit_session_path(@session)
     end
@@ -63,7 +63,7 @@ class Sessions::EditController < ApplicationController
     if @session.update(weeks_before_consent_reminders_params)
       redirect_to edit_session_path(@session)
     else
-      render :weeks_before_consent_reminders, status: :unprocessable_entity
+      render :weeks_before_consent_reminders, status: :unprocessable_content
     end
   end
 

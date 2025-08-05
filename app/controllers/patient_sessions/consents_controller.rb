@@ -19,7 +19,7 @@ class PatientSessions::ConsentsController < PatientSessions::BaseController
     else
       render "patient_sessions/programmes/show",
              layout: "full",
-             status: :unprocessable_entity
+             status: :unprocessable_content
     end
   end
 
@@ -70,7 +70,7 @@ class PatientSessions::ConsentsController < PatientSessions::BaseController
 
       redirect_to session_patient_programme_consent_path
     else
-      render :withdraw, status: :unprocessable_entity
+      render :withdraw, status: :unprocessable_content
     end
   end
 
@@ -93,7 +93,7 @@ class PatientSessions::ConsentsController < PatientSessions::BaseController
                       "Consent response from #{@consent.name} marked as invalid"
                   }
     else
-      render :invalidate, status: :unprocessable_entity
+      render :invalidate, status: :unprocessable_content
     end
   end
 

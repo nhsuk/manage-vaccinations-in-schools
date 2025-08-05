@@ -47,7 +47,7 @@ class PatientSessions::VaccinationsController < PatientSessions::BaseController
     else
       render "patient_sessions/programmes/show",
              layout: "full",
-             status: :unprocessable_entity
+             status: :unprocessable_content
     end
   end
 
