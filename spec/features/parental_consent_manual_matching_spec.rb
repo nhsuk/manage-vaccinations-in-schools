@@ -24,6 +24,27 @@ describe "Parental consent manual matching" do
     then_i_see_the_consent_was_matched_manually
   end
 
+  scenario "Consent isn't matched automatically, nurse matches it manually, patient is not eligible for programme" do
+    given_the_patient_has_aged_out_of_the_programme
+
+    when_i_go_to_the_dashboard
+    and_i_click_on_unmatched_consent_responses
+    then_i_am_on_the_unmatched_responses_page
+    and_i_see_one_response
+
+    when_i_choose_a_consent_response
+    then_i_am_on_the_consent_matching_page
+
+    when_i_search_for_the_child
+    and_i_select_the_child_record
+    then_i_can_review_the_match
+
+    when_i_link_the_response_with_the_record
+    and_i_click_on_the_patient
+    then_the_parent_consent_is_shown
+    and_the_patient_is_not_in_a_session
+  end
+
   scenario "Consent is marked as invalid" do
     when_i_go_to_the_dashboard
     and_i_click_on_unmatched_consent_responses
@@ -54,6 +75,11 @@ describe "Parental consent manual matching" do
         parent_full_name: "John Smith"
       )
     @patient = create(:patient, session: @session)
+  end
+
+  def given_the_patient_has_aged_out_of_the_programme
+    @consent_form.update!(date_of_birth: @consent_form.date_of_birth - 10.years)
+    @patient.update!(birth_academic_year: @patient.birth_academic_year - 10)
   end
 
   def when_i_go_to_the_dashboard
@@ -104,6 +130,10 @@ describe "Parental consent manual matching" do
 
   def then_the_parent_consent_is_shown
     expect(page).to have_content(@consent_form.parent_full_name)
+  end
+
+  def and_the_patient_is_not_in_a_session
+    expect(page).not_to have_content("Session activity and notes")
   end
 
   def when_i_click_on_the_activity_log
