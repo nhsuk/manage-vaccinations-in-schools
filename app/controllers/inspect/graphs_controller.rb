@@ -34,7 +34,7 @@ module Inspect
       @graph_params = build_graph_params
       set_pii_settings
 
-      @mermaid =
+      @graph_record =
         GraphRecords
           .new(
             traversals_config: build_traversals_config,
@@ -42,6 +42,8 @@ module Inspect
             clickable: true,
             show_pii: @show_pii
           )
+      @mermaid =
+        @graph_record
           .graph(**@graph_params)
           .join("\n")
     end
@@ -115,22 +117,49 @@ module Inspect
 
     def pii_accessed?
       return false unless @show_pii
-      additional_types = Array(params[:additional_ids].keys).map(&:to_sym)
-
-      additional_types.any? do |type|
-        GraphRecords::DETAIL_WHITELIST.keys.include?(type)
+      build_traversals_config.values.flatten.any? do |rel|
+        type = @primary_type.to_s.classify.constantize
+        rel_class = type.reflect_on_association(rel)&.klass
+        rel_class && GraphRecords::DETAIL_WHITELIST_PII.key?(rel_class.name.underscore.to_sym)
       end
     end
 
     def record_access_log_entry
-      if pii_accessed? && @primary_type == :patient
-        patient = Patient.find(@primary_id)
-        patient.access_log_entries.create!(
-          user: current_user,
-          controller: "graph",
-          action: "show_pii"
-        )
+      if pii_accessed?
+        @graph_record.patients_with_pii_in_graph.each do |patient|
+          request_details = build_request_details
+          additional_ids = params[:additional_ids].to_unsafe_h.each_with_object({}) do |(type, ids_string), result|
+            result[type.to_sym] = ids_string if ids_string.present?
+          end
+
+          patient.access_log_entries.create!(
+            user: current_user,
+            controller: "graph",
+            action: "show_pii",
+            request_details: {
+              primary_type: @primary_type,
+              primary_id: @primary_id,
+              additional_ids: additional_ids,
+              visible_fields: request_details
+            }
+          )
+        end
       end
+    end
+
+    def build_request_details
+      build_traversals_config.each_with_object({}) do |(_, relationships), details|
+        relationships.each do |rel|
+          add_fields_to_details(details, rel)
+        end
+      end
+    end
+
+    def add_fields_to_details(details, type_sym)
+      fields = []
+      fields.concat(GraphRecords::DETAIL_WHITELIST[type_sym] || [])
+      fields.concat(GraphRecords::DETAIL_WHITELIST_PII[type_sym] || [])
+      details[type_sym] = fields.uniq if fields.any?
     end
   end
 end

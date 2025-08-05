@@ -191,7 +191,7 @@ class GraphRecords
     organisation: %i[ods_code],
     team: %i[name workgroup],
     subteam: %i[name],
-    location: %i[type year_groups],
+    location: %i[name address_postcode type year_groups],
     cohort_import: %i[
       csv_filename
       processed_at
@@ -234,52 +234,7 @@ class GraphRecords
     parent_relationship: %i[type]
   }.freeze
 
-  DETAIL_WHITELIST_WITH_PII = {
-    consent: %i[
-      response
-      route
-      created_at
-      updated_at
-      withdrawn_at
-      invalidated_at
-    ],
-    session: %i[slug clinic? academic_year],
-    session_attendance: %i[attending created_at updated_at],
-    triage: %i[status created_at updated_at invalidated_at],
-    vaccination_record: %i[
-      outcome
-      performed_at
-      created_at
-      updated_at
-      discarded_at
-      uuid
-    ],
-    programme: %i[type],
-    vaccine: %i[nivs_name],
-    organisation: %i[ods_code],
-    location: %i[name address_postcode type year_groups],
-    cohort_import: %i[
-      csv_filename
-      processed_at
-      status
-      rows_count
-      new_record_count
-      exact_duplicate_record_count
-      changed_record_count
-    ],
-    class_import: %i[
-      csv_filename
-      processed_at
-      status
-      rows_count
-      new_record_count
-      exact_duplicate_record_count
-      changed_record_count
-      year_groups
-    ],
-    session_date: %i[value],
-    team: %i[name workgroup],
-    subteam: %i[name],
+  DETAIL_WHITELIST_PII = {
     patient: %i[
       nhs_number
       given_name
@@ -294,7 +249,6 @@ class GraphRecords
       pending_changes
     ],
     parent: %i[full_name email phone],
-    batch: %i[name expiry archived_at],
     user: %i[given_name family_name email fallback_role uid],
     consent_form: %i[given_name family_name address_postcode date_of_birth],
     parent_relationship: %i[other_name]
@@ -343,6 +297,11 @@ class GraphRecords
 
     objects.map do |klass, ids|
       class_name = klass.to_s.singularize
+      class_sym = class_name.to_sym
+
+      # Skip objects whose type is not in the traversal configuration
+      next unless traversals.key?(class_sym)
+
       associated_objects =
         load_association(class_name.classify.constantize.where(id: ids))
 
@@ -467,6 +426,29 @@ class GraphRecords
   def node_display_name(obj)
     klass = obj.class.name.underscore.humanize
     "#{klass} #{obj.id}"
+  end
+
+  def patients_with_pii_in_graph
+    result = Set.new(@nodes.select { |node| node.is_a?(Patient) })
+
+    @nodes.each do |node|
+      # Skip if not a type with potential PII
+      node_type = node.class.name.underscore.to_sym
+      next unless DETAIL_WHITELIST_PII.key?(node_type)
+      next if node.is_a?(Patient) # Already handled these
+
+      if node.respond_to?(:patient) && node.patient
+        result << node.patient
+      elsif node.respond_to?(:patient_session) && node.patient_session&.patient
+        result << node.patient_session.patient
+      elsif node.respond_to?(:consent) && node.consent&.patient
+        result << node.consent.patient
+      elsif node.respond_to?(:patients)
+        result.merge(node.patients.to_a)
+      end
+    end
+
+    result.to_a
   end
 
   def non_breaking_text(text)
