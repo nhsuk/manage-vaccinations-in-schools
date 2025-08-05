@@ -47,9 +47,11 @@ describe NHS::ImmunisationsAPI do
       nhs_immunisations_api_synced_at:,
       nhs_immunisations_api_id:,
       nhs_immunisations_api_etag:,
-      nhs_immunisations_api_sync_pending_at:
+      nhs_immunisations_api_sync_pending_at:,
+      notify_parents:
     )
   end
+  let(:notify_parents) { true }
 
   shared_examples "an immunisations_fhir_api_integration feature flag check" do
     context "the immunisations_fhir_api_integration feature flag is disabled" do
@@ -531,6 +533,23 @@ describe NHS::ImmunisationsAPI do
 
         it { should be true }
       end
+    end
+
+    context "when the patient has requested that their parents aren't notified" do
+      before do
+        create(
+          :consent,
+          :given,
+          :self_consent,
+          patient:,
+          programme:,
+          notify_parents_on_vaccination: false
+        )
+      end
+
+      let(:notify_parents) { false }
+
+      it { should be false }
     end
   end
 
