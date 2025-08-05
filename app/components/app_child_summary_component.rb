@@ -3,16 +3,18 @@
 class AppChildSummaryComponent < ViewComponent::Base
   def initialize(
     child,
-    team: nil,
+    current_team: nil,
     show_parents: false,
+    show_school_and_year_group: true,
     change_links: {},
     remove_links: {}
   )
     super
 
     @child = child
-    @team = team
+    @current_team = current_team
     @show_parents = show_parents
+    @show_school_and_year_group = show_school_and_year_group
     @change_links = change_links
     @remove_links = remove_links
   end
@@ -72,14 +74,16 @@ class AppChildSummaryComponent < ViewComponent::Base
           row.with_value { format_address }
         end
       end
-      summary_list.with_row do |row|
-        row.with_key { "School" }
-        row.with_value { format_school }
-      end
-      if @child.respond_to?(:year_group)
+      if @show_school_and_year_group
         summary_list.with_row do |row|
-          row.with_key { "Year group" }
-          row.with_value { format_year_group }
+          row.with_key { "School" }
+          row.with_value { format_school }
+        end
+        if @child.respond_to?(:year_group)
+          summary_list.with_row do |row|
+            row.with_key { "Year group" }
+            row.with_value { format_year_group }
+          end
         end
       end
       if (gp_practice = @child.try(:gp_practice))
@@ -129,7 +133,9 @@ class AppChildSummaryComponent < ViewComponent::Base
 
   def archive_reason
     @archive_reason ||=
-      (ArchiveReason.find_by(team: @team, patient: @child) if @team)
+      if @current_team
+        ArchiveReason.find_by(team: @current_team, patient: @child)
+      end
   end
 
   def format_nhs_number

@@ -98,7 +98,7 @@ class PatientSession < ApplicationRecord
 
           # Is the patient eligible for any of those programmes by year group?
           location_programme_year_groups =
-            Location::ProgrammeYearGroup
+            LocationProgrammeYearGroup
               .where("programme_id = session_programmes.programme_id")
               .where("location_id = sessions.location_id")
               .where(

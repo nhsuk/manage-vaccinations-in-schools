@@ -17,6 +17,6 @@
      end,
    } %>
 
-<%= render AppPatientCardComponent.new(@patient, change_links:, remove_links:, heading_level: 2) %>
+<%= render AppPatientCardComponent.new(@patient, current_team:, change_links:, remove_links:, heading_level: 2) %>
 
 <%= govuk_button_link_to "Continue", patient_path(@patient) %>

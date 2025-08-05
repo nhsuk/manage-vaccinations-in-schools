@@ -34,6 +34,7 @@
 #
 class Location < ApplicationRecord
   include AddressConcern
+  include HasProgrammeYearGroups
   include ODSCodeConcern
 
   self.inheritance_column = nil
@@ -44,14 +45,14 @@ class Location < ApplicationRecord
   belongs_to :subteam, optional: true
 
   has_many :consent_forms
+  has_many :location_programme_year_groups
   has_many :patients, foreign_key: :school_id
-  has_many :programme_year_groups
   has_many :sessions
 
   has_one :team, through: :subteam
   has_many :programmes,
            -> { distinct.order(:type) },
-           through: :programme_year_groups
+           through: :location_programme_year_groups
 
   # This is based on the school statuses from the DfE GIAS data.
   enum :status,
@@ -123,7 +124,7 @@ class Location < ApplicationRecord
           end
         end
 
-      Location::ProgrammeYearGroup.import!(
+      LocationProgrammeYearGroup.import!(
         %i[location_id programme_id year_group],
         rows,
         on_duplicate_key_ignore: true

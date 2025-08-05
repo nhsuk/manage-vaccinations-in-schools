@@ -21,8 +21,7 @@
 #  fk_rails_...  (programme_id => programmes.id) ON DELETE => cascade
 #
 FactoryBot.define do
-  factory :location_programme_year_group,
-          class: "Location::ProgrammeYearGroup" do
+  factory :location_programme_year_group do
     location
     programme
     year_group { (0..13).to_a.sample }

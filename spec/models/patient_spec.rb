@@ -512,8 +512,40 @@ describe Patient do
     end
   end
 
+  describe "#show_year_group?" do
+    subject { patient.show_year_group?(team:) }
+
+    let(:programmes) { [create(:programme, :flu), create(:programme, :hpv)] }
+    let(:team) { create(:team, programmes:) }
+    let(:school) { create(:school, team:) }
+
+    context "for a year 1" do
+      let(:patient) { create(:patient, school:, year_group: 1) }
+
+      it { should be(true) }
+    end
+
+    context "for a year 7" do
+      let(:patient) { create(:patient, school:, year_group: 7) }
+
+      it { should be(true) }
+    end
+
+    context "for a year 11" do
+      let(:patient) { create(:patient, school:, year_group: 11) }
+
+      it { should be(true) }
+    end
+
+    context "for a year 12" do
+      let(:patient) { create(:patient, school:, year_group: 12) }
+
+      it { should be(false) }
+    end
+  end
+
   describe "#initials" do
-    subject(:initials) { patient.initials }
+    subject { patient.initials }
 
     let(:patient) { create(:patient, given_name: "John", family_name: "Doe") }
 

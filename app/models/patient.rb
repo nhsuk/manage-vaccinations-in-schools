@@ -326,8 +326,16 @@ class Patient < ApplicationRecord
     birth_academic_year.to_year_group(academic_year:)
   end
 
-  def year_group_changed?
-    birth_academic_year_changed?
+  def year_group_changed? = birth_academic_year_changed?
+
+  def show_year_group?(team:, academic_year: nil)
+    year_group = self.year_group(academic_year:)
+    programme_year_groups =
+      school&.programme_year_groups || team.programme_year_groups
+
+    team.programmes.any? do |programme|
+      programme_year_groups[programme].include?(year_group)
+    end
   end
 
   def consent_status(programme:, academic_year:)

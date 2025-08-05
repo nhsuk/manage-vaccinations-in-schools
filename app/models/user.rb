@@ -109,7 +109,9 @@ class User < ApplicationRecord
   def selected_team
     # TODO: Select the right team based on the user's workgroup.
     @selected_team ||=
-      Team.includes(:programmes).find_by(organisation: selected_organisation)
+      Team.includes(:location_programme_year_groups, :programmes).find_by(
+        organisation: selected_organisation
+      )
   end
 
   def requires_email_and_password?

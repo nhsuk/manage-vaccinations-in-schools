@@ -30,6 +30,9 @@
 #  fk_rails_...  (organisation_id => organisations.id)
 #
 class Team < ApplicationRecord
+  include HasProgrammeYearGroups
+  include ODSCodeConcern
+
   audited associated_with: :organisation
   has_associated_audits
 
@@ -57,9 +60,7 @@ class Team < ApplicationRecord
 
   has_many :location_programme_year_groups,
            -> { where(programme: it.programmes) },
-           through: :locations,
-           source: :programme_year_groups,
-           class_name: "Location::ProgrammeYearGroup"
+           through: :locations
 
   has_and_belongs_to_many :users
 

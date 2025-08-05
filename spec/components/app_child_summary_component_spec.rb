@@ -107,7 +107,7 @@ describe AppChildSummaryComponent do
   end
 
   context "when archived" do
-    let(:component) { described_class.new(patient, team:) }
+    let(:component) { described_class.new(patient, current_team: team) }
 
     let(:team) { create(:team) }
 

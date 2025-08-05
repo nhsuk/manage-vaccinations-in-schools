@@ -13,7 +13,7 @@
   Updating the NHS number for <%= @patient.full_name %> will merge their record with an existing record:
 </p>
 
-<%= render AppPatientCardComponent.new(@existing_patient) %>
+<%= render AppPatientCardComponent.new(@existing_patient, current_team:) %>
 
 <%= form_with model: @form, url: edit_nhs_number_merge_patient_path(@patient), method: :put do |f| %>
   <%= f.hidden_field :nhs_number %>

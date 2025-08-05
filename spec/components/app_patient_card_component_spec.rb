@@ -5,16 +5,22 @@ describe AppPatientCardComponent do
 
   let(:component) do
     described_class.new(
-      Patient.includes(parent_relationships: :parent).find(patient.id)
+      Patient.includes(parent_relationships: :parent).find(patient.id),
+      current_team: team
     )
   end
 
-  let(:patient) { create(:patient) }
+  let(:programmes) { [create(:programme, :hpv)] }
+  let(:team) { create(:team, programmes:) }
+  let(:school) { create(:school, team:) }
+
+  let(:patient) { create(:patient, school:, year_group: 8) }
 
   it { should have_content("Child") }
 
   it { should have_content("Full name") }
   it { should have_content("Date of birth") }
+  it { should have_content("Year group") }
   it { should have_content("Address") }
 
   context "with a deceased patient" do
@@ -51,5 +57,11 @@ describe AppPatientCardComponent do
 
     it { should have_content("Jenny Smith") }
     it { should have_content("Mum") }
+  end
+
+  context "when patient is too old for any programmes" do
+    let(:patient) { create(:patient, year_group: 13) }
+
+    it { should_not have_content("Year group") }
   end
 end

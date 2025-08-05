@@ -64,7 +64,7 @@ describe "mavis schools add-programme-year-group" do
   def then_the_year_groups_are_added_to_the_school
     year_groups =
       @school
-        .programme_year_groups
+        .location_programme_year_groups
         .where(programme: @programme)
         .pluck(:year_group)
 
