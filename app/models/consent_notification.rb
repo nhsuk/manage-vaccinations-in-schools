@@ -31,13 +31,15 @@ class ConsentNotification < ApplicationRecord
   belongs_to :patient
   belongs_to :session
 
-  has_one :organisation, through: :session
+  has_one :team, through: :session
 
   has_many :consent_notification_programmes,
            -> { joins(:programme).order(:"programmes.type") },
            dependent: :destroy
 
   has_many :programmes, through: :consent_notification_programmes
+
+  delegate :academic_year, to: :session
 
   enum :type,
        { request: 0, initial_reminder: 1, subsequent_reminder: 2 },
@@ -72,6 +74,7 @@ class ConsentNotification < ApplicationRecord
       patient:,
       session:,
       type:,
+      sent_at: Time.current,
       sent_by: current_user
     )
 

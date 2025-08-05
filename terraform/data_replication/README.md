@@ -11,8 +11,8 @@ It creates
 
 ## Setup
 
-This module is managed via a GitHub Actions workflow. To separate it from the rest of the infrastructure, the workflow uses a dedicated IAM role. To set up everything from scratch, manually create the role
-`GithubDeployDataReplicationInfrastructure` based on the policy template `github_data_replication_actions_policy.json` and the trust policy `github_role_<ENVIRONMENT>_trust_policy.json`.
+This module is managed via a GitHub Actions workflow. To separate it from the rest of the infrastructure, the workflow uses a dedicated IAM role called `GithubDeployDataReplicationInfrastructure`.
+It is managed in the `terraform/account` module.
 
 ## Usage
 
@@ -30,3 +30,8 @@ To connect to the dedicated ECS task, run
 ```
 ./script/shell.sh <ENV>-data-replication
 ```
+
+### Enable egress
+
+To enable egress from the ECS task, e.g. for debugging purposes, simply do a `nslookup` for the required domains add the allowed CIDR ranges as input to the `data-replication-pipeline.yml`.
+Domains that have been used in the past are `api.service.nhs.uk` and `get-information-schools.service.gov.uk`.

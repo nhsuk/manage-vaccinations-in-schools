@@ -10,7 +10,7 @@ Date::DATE_FORMATS[:short] = "%-d %B" # 1 January
 Date::DATE_FORMATS[:short_day_of_week] = "%A %-d %B" # Monday 1 January
 
 Date::DATE_FORMATS[:long] = "%-d %B %Y" # 5 January 2023
-Date::DATE_FORMATS[:long_day_of_week] = "%A %-d %B %Y" # Wednesday 5 January 2023
+Date::DATE_FORMATS[:long_day_of_week] = "%A, %-d %B %Y" # Thursday, 5 January 2023
 
 Date::DATE_FORMATS[:uk_short] = "%d/%m/%Y" # 01/01/2020
 Date::DATE_FORMATS[:dps] = "%Y%m%d" # 20230105

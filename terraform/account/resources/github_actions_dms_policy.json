@@ -1,0 +1,28 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "Statement1",
+      "Effect": "Allow",
+      "Action": [
+        "dms:CreateDataMigration",
+        "dms:CreateEndpoint",
+        "dms:CreateReplicationConfig",
+        "dms:CreateReplicationInstance",
+        "dms:CreateReplicationSubnetGroup",
+        "dms:CreateReplicationTask",
+        "dms:DeleteEndpoint",
+        "dms:DeleteReplicationConfig",
+        "dms:DeleteReplicationInstance",
+        "dms:DeleteReplicationTask",
+        "dms:DeleteReplicationSubnetGroup",
+        "dms:ModifyEndpoint",
+        "dms:ModifyReplicationConfig",
+        "dms:ModifyReplicationTask",
+        "dms:ModifyReplicationInstance",
+        "dms:ModifyReplicationSubnetGroup"
+      ],
+      "Resource": ["*"]
+    }
+  ]
+}

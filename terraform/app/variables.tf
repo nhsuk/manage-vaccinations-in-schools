@@ -77,9 +77,6 @@ locals {
 variable "resource_name" {
   type = object(
     {
-      dbsubnet_group           = string
-      db_cluster               = string
-      db_instance              = string
       rds_security_group       = string
       loadbalancer             = string
       lb_security_group        = string
@@ -150,6 +147,20 @@ variable "enable_pds_enqueue_bulk_updates" {
   nullable    = false
 }
 
+variable "academic_year_today_override" {
+  type        = string
+  default     = "nil"
+  description = "A date that can be used to override today's date when calculating the current academic year."
+  nullable    = false
+}
+
+variable "academic_year_number_of_preparation_days" {
+  type        = number
+  default     = 31
+  description = "How many days before the start of the academic year to start the preparation period."
+  nullable    = false
+}
+
 variable "enable_splunk" {
   type        = bool
   default     = true
@@ -167,9 +178,11 @@ variable "app_version" {
 locals {
   is_production = var.environment == "production"
   parameter_store_variables = tomap({
-    MAVIS__PDS__ENQUEUE_BULK_UPDATES = var.enable_pds_enqueue_bulk_updates ? "true" : "false"
-    MAVIS__PDS__WAIT_BETWEEN_JOBS    = 0.5
-    GOOD_JOB_MAX_THREADS             = 5
+    MAVIS__PDS__ENQUEUE_BULK_UPDATES                = var.enable_pds_enqueue_bulk_updates ? "true" : "false"
+    MAVIS__PDS__WAIT_BETWEEN_JOBS                   = 0.5
+    MAVIS__ACADEMIC_YEAR_TODAY_OVERRIDE             = var.academic_year_today_override
+    MAVIS__ACADEMIC_YEAR_NUMBER_OF_PREPARATION_DAYS = var.academic_year_number_of_preparation_days
+    GOOD_JOB_MAX_THREADS                            = 5
   })
   parameter_store_config_list = [for key, value in local.parameter_store_variables : {
     name      = key
@@ -180,11 +193,11 @@ locals {
   task_envs = [
     {
       name  = "DB_HOST"
-      value = aws_rds_cluster.aurora_cluster.endpoint
+      value = aws_rds_cluster.core.endpoint
     },
     {
       name  = "DB_NAME"
-      value = aws_rds_cluster.aurora_cluster.database_name
+      value = aws_rds_cluster.core.database_name
     },
     {
       name  = "RAILS_ENV"
@@ -217,8 +230,8 @@ locals {
   ]
   task_secrets = concat([
     {
-      name      = var.db_secret_arn == null ? "DB_CREDENTIALS" : "DB_SECRET"
-      valueFrom = var.db_secret_arn == null ? aws_rds_cluster.aurora_cluster.master_user_secret[0].secret_arn : var.db_secret_arn
+      name      = "DB_CREDENTIALS"
+      valueFrom = aws_rds_cluster.core.master_user_secret[0].secret_arn
     },
     {
       name      = "RAILS_MASTER_KEY"
@@ -228,11 +241,6 @@ locals {
 }
 
 ########## RDS configuration ##########
-
-variable "db_secret_arn" {
-  type        = string
-  description = "The ARN of the secret containing the DB credentials."
-}
 
 variable "backup_retention_period" {
   type        = number
@@ -247,7 +255,26 @@ variable "enable_backup_to_vault" {
   nullable    = false
 }
 
-########## ESC/Scaling Configuration ##########
+variable "backup_account_id" {
+  type        = string
+  default     = "904214613099"
+  description = "The AWS account ID of the backup account"
+  nullable    = false
+}
+
+locals {
+  rds_cluster = "mavis-${var.environment}"
+  db_instances = {
+    "primary-1" = {
+      promotion_tier = 1
+    },
+    "primary-2" = {
+      promotion_tier = 1
+    }
+  }
+}
+
+########## ECS/Scaling Configuration ##########
 
 variable "container_insights" {
   default     = "enabled"

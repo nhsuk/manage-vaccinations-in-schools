@@ -23,7 +23,7 @@ describe ConsentFormMailerConcern do
     end
 
     context "when user refuses consent" do
-      before { consent_form.response = :refused }
+      before { consent_form.update!(response: "refused") }
 
       it "sends an confirmation refused email" do
         expect { send_consent_form_confirmation }.to have_delivered_email(
@@ -44,13 +44,11 @@ describe ConsentFormMailerConcern do
       let(:programmes) { [menacwy_programme, td_ipv_programme] }
       let(:session) { create(:session, programmes:) }
 
-      let(:consent_form) do
-        create(
-          :consent_form,
-          session:,
-          response: :given_one,
-          chosen_vaccine: "menacwy"
-        )
+      let(:consent_form) { create(:consent_form, session:) }
+
+      before do
+        consent_form.consent_form_programmes.first.update!(response: "given")
+        consent_form.consent_form_programmes.second.update!(response: "refused")
       end
 
       it "sends a confirmation given and a confirmation refused email" do
@@ -94,14 +92,14 @@ describe ConsentFormMailerConcern do
 
     context "when there are no upcoming sessions" do
       let(:programmes) { [create(:programme)] }
-      let(:organisation) { create(:organisation, programmes:) }
+      let(:team) { create(:team, :with_generic_clinic, programmes:) }
       let(:consent_form) do
         create(
           :consent_form,
-          organisation:,
+          team:,
           school_confirmed: false,
-          school: create(:school, organisation:),
-          session: create(:session, organisation:, programmes:)
+          school: create(:school, team:),
+          session: create(:session, team:, programmes:)
         )
       end
 

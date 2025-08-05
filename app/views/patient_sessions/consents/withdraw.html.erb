@@ -8,24 +8,19 @@
   <% page_title = "Withdraw consent" %>
   <%= h1 page_title: do %>
     <span class="nhsuk-caption-l">
-    Consent response from <%= @consent.name %>
-  </span>
+      Consent response from <%= @consent.name %>
+    </span>
     <%= page_title %>
   <% end %>
 
-  <%= f.govuk_radio_buttons_fieldset(:reason_for_refusal,
-                                     legend: { text: "Reason for refusal" }) do %>
-    <%= f.govuk_radio_button :reason_for_refusal, "already_vaccinated",
-                             label: { text: "Vaccine already received" }, link_errors: true %>
-    <%= f.govuk_radio_button :reason_for_refusal, "will_be_vaccinated_elsewhere",
-                             label: { text: "Vaccine will be given elsewhere" } %>
-    <%= f.govuk_radio_button :reason_for_refusal, "medical_reasons",
-                             label: { text: "Medical reasons" } %>
-    <%= f.govuk_radio_button :reason_for_refusal, "personal_choice",
-                             label: { text: "Personal choice" } %>
-    <%= f.govuk_radio_divider %>
-    <%= f.govuk_radio_button :reason_for_refusal, "other",
-                             label: { text: "Other" } %>
+  <%= f.govuk_radio_buttons_fieldset :reason_for_refusal, legend: { text: "Reason for refusal" } do %>
+    <% consent_refusal_reasons(@consent).each_with_index do |refusal_reason, index| %>
+      <%= f.govuk_radio_divider if refusal_reason.divider %>
+
+      <%= f.govuk_radio_button :reason_for_refusal, refusal_reason.value,
+                               label: { text: refusal_reason.label },
+                               link_errors: index.zero? %>
+    <% end %>
   <% end %>
 
   <%= f.govuk_text_area :notes, label: { text: "Notes", size: "m" } %>

@@ -49,6 +49,8 @@ class DraftVaccinationRecordsController < ApplicationController
       jump_to("confirm")
     end
 
+    reload_steps
+
     render_wizard @draft_vaccination_record
   end
 
@@ -101,6 +103,8 @@ class DraftVaccinationRecordsController < ApplicationController
   def handle_confirm
     return unless @draft_vaccination_record.save
 
+    is_new_record = @vaccination_record.new_record?
+
     performed_at_date_changed =
       @vaccination_record.performed_at&.to_date !=
         @draft_vaccination_record.performed_at.to_date
@@ -113,7 +117,12 @@ class DraftVaccinationRecordsController < ApplicationController
           @vaccination_record.outcome_changed? ||
             @vaccination_record.batch_id_changed? || performed_at_date_changed
         )
-
+    if is_new_record
+      @vaccination_record.notify_parents =
+        VaccinationNotificationCriteria.call(
+          vaccination_record: @vaccination_record
+        )
+    end
     @vaccination_record.save!
 
     StatusUpdater.call(patient: @patient)
@@ -124,7 +133,9 @@ class DraftVaccinationRecordsController < ApplicationController
     # vaccination record.
     @draft_vaccination_record.update!(editing_id: @vaccination_record.id)
 
-    flash[:success] = "Vaccination outcome recorded for #{@programme.name}"
+    flash[
+      :success
+    ] = "Vaccination outcome recorded for #{@programme.name_in_sentence}"
   end
 
   def finish_wizard_path
@@ -136,7 +147,7 @@ class DraftVaccinationRecordsController < ApplicationController
         return_to: "record"
       )
     else
-      programme_vaccination_record_path(@programme, @vaccination_record)
+      vaccination_record_path(@vaccination_record)
     end
   end
 
@@ -147,6 +158,11 @@ class DraftVaccinationRecordsController < ApplicationController
       date_and_time: %i[performed_at],
       delivery: %i[delivery_site delivery_method],
       dose: %i[full_dose],
+      identity: %i[
+        identity_check_confirmed_by_patient
+        identity_check_confirmed_by_other_name
+        identity_check_confirmed_by_other_relationship
+      ],
       location: %i[location_name],
       notes: %i[notes],
       outcome: %i[outcome]
@@ -181,11 +197,6 @@ class DraftVaccinationRecordsController < ApplicationController
   end
 
   def set_steps
-    # Translated steps are cached after running setup_wizard_translated.
-    # To allow us to run this method multiple times during a single action
-    # lifecycle, we need to clear the cache.
-    @wizard_translations = nil
-
     self.steps = @draft_vaccination_record.wizard_steps
   end
 
@@ -219,14 +230,19 @@ class DraftVaccinationRecordsController < ApplicationController
     @back_link_path =
       if @draft_vaccination_record.editing?
         if current_step == :confirm
-          programme_vaccination_record_path(@programme, @vaccination_record)
+          vaccination_record_path(@vaccination_record)
         else
           wizard_path("confirm")
         end
-      elsif current_step == @draft_vaccination_record.wizard_steps.first
+      elsif first_step_of_flow?
         session_patient_programme_path(@session, @patient, @programme)
       else
         previous_wizard_path
       end
+  end
+
+  def first_step_of_flow?
+    current_step.to_s == @draft_vaccination_record.first_active_wizard_step ||
+      current_step == @draft_vaccination_record.wizard_steps.first
   end
 end

@@ -4,7 +4,9 @@ describe ClassImportRow do
   subject(:class_import_row) do
     described_class.new(
       data: data_as_csv_row,
-      session:,
+      team: session.team,
+      academic_year:,
+      location: session.location,
       year_groups: session.year_groups
     )
   end
@@ -21,11 +23,10 @@ describe ClassImportRow do
   let(:today) { Date.new(2024, 12, 1) }
 
   let(:programmes) { [create(:programme)] }
-  let(:organisation) { create(:organisation, programmes:) }
-  let(:school) { create(:school, organisation:) }
-  let(:session) do
-    create(:session, organisation:, programmes:, location: school)
-  end
+  let(:team) { create(:team, programmes:) }
+  let(:academic_year) { AcademicYear.pending }
+  let(:school) { create(:school, team:) }
+  let(:session) { create(:session, team:, programmes:, location: school) }
 
   let(:valid_data) do
     {
@@ -194,10 +195,28 @@ describe ClassImportRow do
         expect(parents.first.full_name).to eq("John Smith")
       end
     end
+
+    context "when uploading different caps name" do
+      let!(:existing_parent) do
+        create(:parent, full_name: "JENNY SMITH", email: "jenny@example.com")
+      end
+
+      let(:capitalised_parent_2_data) do
+        {
+          "PARENT_2_EMAIL" => "jenny@example.com",
+          "PARENT_2_NAME" => "Jenny Smith"
+        }
+      end
+      let(:data) { valid_data.merge(capitalised_parent_2_data) }
+
+      it { should include(existing_parent) }
+    end
   end
 
   describe "#to_patient" do
-    subject(:patient) { travel_to(today) { class_import_row.to_patient } }
+    subject(:patient) { class_import_row.to_patient }
+
+    around { |example| travel_to(today) { example.run } }
 
     let(:data) { valid_data }
 
@@ -209,6 +228,7 @@ describe ClassImportRow do
         gender_code: "not_known",
         home_educated: false,
         registration: "8AB",
+        registration_academic_year: AcademicYear.pending,
         school: nil,
         year_group: 10
       )
@@ -239,6 +259,7 @@ describe ClassImportRow do
 
       it "overwrites registration" do
         expect(patient.registration).to eq("8AB")
+        expect(patient.registration_academic_year).to eq(AcademicYear.pending)
         expect(patient.pending_changes).not_to have_key("registration")
       end
 
@@ -525,6 +546,59 @@ describe ClassImportRow do
       end
 
       it "doesn't stage the address differences" do
+        expect(patient.pending_changes).to be_empty
+      end
+    end
+
+    context "with an existing patient with different capitalisation" do
+      let(:data) do
+        {
+          "CHILD_ADDRESS_LINE_1" => "10 Downing Street",
+          "CHILD_PREFERRED_FIRST_NAME" => "Jim",
+          "CHILD_DATE_OF_BIRTH" => "2010-01-01",
+          "CHILD_FIRST_NAME" => "Jimmy",
+          "CHILD_GENDER" => "Male",
+          "CHILD_LAST_NAME" => "Smith",
+          "CHILD_PREFERRED_LAST_NAME" => "Smithy",
+          "CHILD_NHS_NUMBER" => "9990000018",
+          "CHILD_POSTCODE" => "sw1a 1aa",
+          "CHILD_TOWN" => "London"
+        }
+      end
+
+      let!(:existing_patient) do
+        create(
+          :patient,
+          address_postcode: "SW1A 1AA",
+          family_name: "SMITH",
+          gender_code: "male",
+          given_name: "JIMMY",
+          nhs_number: "9990000018",
+          address_line_1: "10 DOWNING STREET",
+          preferred_given_name: "JIM",
+          preferred_family_name: "SMITHY",
+          date_of_birth: Date.new(2010, 1, 1),
+          address_town: "LONDON"
+        )
+      end
+
+      it { should eq(existing_patient) }
+
+      it "saves the incoming values" do
+        expect(patient).to have_attributes(
+          address_postcode: "SW1A 1AA",
+          family_name: "Smith",
+          gender_code: "male",
+          given_name: "Jimmy",
+          nhs_number: "9990000018",
+          address_line_1: "10 Downing Street",
+          preferred_given_name: "Jim",
+          preferred_family_name: "Smithy",
+          address_town: "London"
+        )
+      end
+
+      it "doesn't stage the capitalisation differences" do
         expect(patient.pending_changes).to be_empty
       end
     end

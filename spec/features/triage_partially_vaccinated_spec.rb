@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 describe "Triage" do
+  around { |example| travel_to(Date.new(2025, 7, 31)) { example.run } }
+
   scenario "nurse can triage after importing historical vaccinations" do
     given_a_td_ipv_programme_with_a_session
     and_i_am_signed_in_as_a_nurse
@@ -28,16 +30,16 @@ describe "Triage" do
   def given_a_td_ipv_programme_with_a_session
     @programme = create(:programme, :td_ipv)
 
-    organisation = create(:organisation, programmes: [@programme])
-    @user = create(:nurse, organisations: [organisation])
+    team = create(:team, :with_generic_clinic, programmes: [@programme])
+    @user = create(:nurse, teams: [team])
 
-    location = create(:school, :secondary, urn: 123_456, organisation:)
+    location = create(:school, :secondary, urn: 123_456, team:)
 
     @session =
       create(
         :session,
         date: 1.week.from_now.to_date,
-        organisation:,
+        team:,
         programmes: [@programme],
         location:
       )
@@ -70,7 +72,8 @@ describe "Triage" do
 
   def when_i_go_the_session
     click_on "Sessions", match: :first
-    click_on "Scheduled"
+    choose "Scheduled"
+    click_on "Update results"
     click_on @session.location.name
   end
 
@@ -87,7 +90,7 @@ describe "Triage" do
   def then_i_see_one_patient_needing_consent
     click_on "Consent"
 
-    choose "No response"
+    check "No response"
     click_on "Update results"
 
     expect(page).to have_content("Showing 1 to 1 of 1 children")

@@ -18,10 +18,9 @@ describe "Parental consent closed" do
 
   def given_an_hpv_programme_is_underway_with_a_backfilled_session
     @programme = create(:programme, :hpv)
-    @organisation =
-      create(:organisation, :with_one_nurse, programmes: [@programme])
-    @team = create(:team, organisation: @organisation)
-    location = create(:school, name: "Pilot School", team: @team)
+    @team = create(:team, :with_one_nurse, programmes: [@programme])
+    @subteam = create(:subteam, team: @team)
+    location = create(:school, name: "Pilot School", subteam: @subteam)
     @session =
       create(
         :session,
@@ -34,15 +33,14 @@ describe "Parental consent closed" do
 
   def given_an_hpv_programme_is_starting_soon
     @programme = create(:programme, :hpv)
-    @organisation =
-      create(:organisation, :with_one_nurse, programmes: [@programme])
-    @team = create(:team, organisation: @organisation)
-    location = create(:school, name: "Pilot School", team: @team)
+    @team = create(:team, :with_one_nurse, programmes: [@programme])
+    @subteam = create(:subteam, team: @team)
+    location = create(:school, name: "Pilot School", subteam: @subteam)
     @session =
       create(
         :session,
         :scheduled,
-        organisation: @organisation,
+        team: @team,
         programmes: [@programme],
         location:,
         date: Date.tomorrow
@@ -114,7 +112,7 @@ describe "Parental consent closed" do
   def then_i_see_that_consent_is_closed
     expect(page).to have_content("The deadline for responding has passed")
     expect(page).to have_content(
-      "Contact #{@team.email} to book a clinic appointment."
+      "Contact #{@subteam.email} to book a clinic appointment."
     )
   end
 end

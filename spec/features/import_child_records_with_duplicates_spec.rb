@@ -13,7 +13,7 @@ describe "Child record imports duplicates" do
     and_an_hpv_programme_is_underway
     and_an_existing_patient_record_exists
 
-    when_i_visit_the_cohort_page_for_the_hpv_programme
+    when_i_visit_the_import_page
     and_i_start_adding_children_to_the_cohort
     and_i_upload_a_file_with_duplicate_records
     then_i_should_see_the_import_page_with_duplicate_records
@@ -51,21 +51,22 @@ describe "Child record imports duplicates" do
   end
 
   def given_i_am_signed_in
-    @organisation = create(:organisation, :with_one_nurse)
-    sign_in @organisation.users.first
+    @programme = create(:programme, :hpv)
+    @team =
+      create(
+        :team,
+        :with_generic_clinic,
+        :with_one_nurse,
+        programmes: [@programme]
+      )
+    sign_in @team.users.first
   end
 
   def and_an_hpv_programme_is_underway
-    programme = create(:programme, :hpv, organisations: [@organisation])
+    @school = create(:school, urn: "123456", team: @team)
 
-    @school = create(:school, urn: "123456", organisation: @organisation)
     @session =
-      create(
-        :session,
-        organisation: @organisation,
-        location: @school,
-        programmes: [programme]
-      )
+      create(:session, team: @team, location: @school, programmes: [@programme])
   end
 
   def and_an_existing_patient_record_exists
@@ -118,15 +119,15 @@ describe "Child record imports duplicates" do
       )
   end
 
-  def when_i_visit_the_cohort_page_for_the_hpv_programme
+  def when_i_visit_the_import_page
     visit "/"
-    click_link "Programmes", match: :first
-    click_link "HPV"
-    click_link "Cohorts"
+    click_link "Import", match: :first
   end
 
   def and_i_start_adding_children_to_the_cohort
-    click_link "Import child records"
+    click_button "Import records"
+    choose "Child records"
+    click_button "Continue"
   end
 
   def and_i_upload_a_file_with_duplicate_records
@@ -245,11 +246,11 @@ describe "Child record imports duplicates" do
 
   def then_i_should_see_import_issues_with_the_count
     expect(page).to have_link("Import issues")
-    expect(page).to have_selector(".app-count", text: "( 1 )")
+    expect(page).to have_selector(".app-count", text: "(1)")
   end
 
   def then_i_should_see_no_import_issues_with_the_count
     expect(page).to have_link("Import issues")
-    expect(page).to have_selector(".app-count", text: "( 0 )")
+    expect(page).to have_selector(".app-count", text: "(0)")
   end
 end

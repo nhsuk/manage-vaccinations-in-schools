@@ -11,12 +11,6 @@ govuk_notify:
   enabled: false
   mode: test
 
-mesh:
-  base_url: https://localhost:8700
-  disable_ssl_verification: true
-  dps_mailbox: X26ABC3
-  mailbox: X26ABC1
-
 nhs_api:
   base_url: "https://sandbox.api.service.nhs.uk"
   disable_authentication: true

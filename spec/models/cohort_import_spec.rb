@@ -5,6 +5,7 @@
 # Table name: cohort_imports
 #
 #  id                           :bigint           not null, primary key
+#  academic_year                :integer          not null
 #  changed_record_count         :integer
 #  csv_data                     :text
 #  csv_filename                 :text
@@ -17,30 +18,32 @@
 #  status                       :integer          default("pending_import"), not null
 #  created_at                   :datetime         not null
 #  updated_at                   :datetime         not null
-#  organisation_id              :bigint           not null
+#  team_id                      :bigint           not null
 #  uploaded_by_user_id          :bigint           not null
 #
 # Indexes
 #
-#  index_cohort_imports_on_organisation_id      (organisation_id)
+#  index_cohort_imports_on_team_id              (team_id)
 #  index_cohort_imports_on_uploaded_by_user_id  (uploaded_by_user_id)
 #
 # Foreign Keys
 #
-#  fk_rails_...  (organisation_id => organisations.id)
+#  fk_rails_...  (team_id => teams.id)
 #  fk_rails_...  (uploaded_by_user_id => users.id)
 #
 describe CohortImport do
-  subject(:cohort_import) { create(:cohort_import, csv:, organisation:) }
+  subject(:cohort_import) { create(:cohort_import, csv:, team:) }
 
   let(:programmes) { [create(:programme)] }
-  let(:organisation) { create(:organisation, programmes:) }
+  let(:team) { create(:team, :with_generic_clinic, programmes:) }
 
   let(:file) { "valid.csv" }
   let(:csv) { fixture_file_upload("spec/fixtures/cohort_import/#{file}") }
 
   # Ensure location URN matches the URN in our fixture files
-  let!(:location) { create(:school, urn: "123456", organisation:) }
+  let!(:location) { create(:school, urn: "123456", team:) }
+
+  before { TeamSessionsFactory.call(team, academic_year: AcademicYear.current) }
 
   it_behaves_like "a CSVImportable model"
 
@@ -134,7 +137,7 @@ describe CohortImport do
       let(:file) { "valid_iso_8859_1_encoding.csv" }
 
       let(:location) do
-        Location.find_by(urn: "120026") || create(:school, urn: "120026")
+        Location.find_by(urn: "120026") || create(:school, urn: "120026", team:)
       end
 
       it "is valid" do
@@ -154,6 +157,8 @@ describe CohortImport do
 
   describe "#process!" do
     subject(:process!) { cohort_import.process! }
+
+    around { |example| travel_to(Date.new(2025, 7, 31)) { example.run } }
 
     let(:file) { "valid.csv" }
 
@@ -244,7 +249,7 @@ describe CohortImport do
     end
 
     it "ignores and counts duplicate records" do
-      create(:cohort_import, csv:, organisation:).process!
+      create(:cohort_import, csv:, team:).process!
       csv.rewind
 
       process!
@@ -285,7 +290,7 @@ describe CohortImport do
           family_name: "Smith",
           date_of_birth: Date.new(2010, 1, 2),
           nhs_number: nil,
-          organisation:
+          team:
         )
       end
 
@@ -295,19 +300,50 @@ describe CohortImport do
     end
 
     context "with an existing patient matching the name but a different case" do
-      before do
+      let!(:existing_patient) do
         create(
           :patient,
           given_name: "JIMMY",
           family_name: "smith",
           date_of_birth: Date.new(2010, 1, 2),
           nhs_number: nil,
-          organisation:
+          team:
         )
       end
 
       it "doesn't create an additional patient" do
         expect { process! }.to change(Patient, :count).by(2)
+      end
+
+      it "doesn't stage the changes to the names" do
+        process!
+        expect(existing_patient.reload.pending_changes).not_to have_key(
+          "given_name"
+        )
+        expect(existing_patient.reload.pending_changes).not_to have_key(
+          "family_name"
+        )
+      end
+
+      it "automatically accepts the incoming case differences" do
+        process!
+        expect(existing_patient.reload.given_name).to eq("Jimmy")
+        expect(existing_patient.reload.family_name).to eq("Smith")
+      end
+    end
+
+    context "with an existing parent matching the name but a different case" do
+      let!(:existing_parent) do
+        create(:parent, full_name: "JOHN smith", email: "john@example.com")
+      end
+
+      it "doesn't create an additional parent" do
+        expect { process! }.to change(Parent, :count).by(2)
+      end
+
+      it "changes the parent's name to the incoming version" do
+        process!
+        expect(existing_parent.reload.full_name).to eq("John Smith")
       end
     end
 
@@ -319,7 +355,7 @@ describe CohortImport do
           family_name: "smith",
           date_of_birth: Date.new(2010, 1, 2),
           nhs_number: nil,
-          organisation: nil
+          team: nil
         )
       end
 
@@ -328,9 +364,9 @@ describe CohortImport do
       end
 
       it "automatically re-adds the patient to the cohort" do
-        expect { process! }.to change {
-          existing_patient.reload.organisations
-        }.from([]).to([organisation])
+        expect { process! }.to change { existing_patient.reload.teams }.from(
+          []
+        ).to([team])
       end
 
       it "doesn't propose a school move" do
@@ -342,7 +378,7 @@ describe CohortImport do
 
     context "with an unscheduled session" do
       let(:session) do
-        create(:session, :unscheduled, organisation:, programmes:, location:)
+        create(:session, :unscheduled, team:, programmes:, location:)
       end
 
       it "adds the known school patients to the session" do
@@ -352,7 +388,7 @@ describe CohortImport do
 
     context "with a scheduled session" do
       let(:session) do
-        create(:session, :scheduled, organisation:, programmes:, location:)
+        create(:session, :scheduled, team:, programmes:, location:)
       end
 
       it "adds the known school patients to the session" do
@@ -361,7 +397,9 @@ describe CohortImport do
     end
 
     context "with a scheduled clinic session" do
-      let(:session) { organisation.generic_clinic_session }
+      let(:session) do
+        team.generic_clinic_session(academic_year: AcademicYear.current)
+      end
 
       it "adds all the patients to the session" do
         expect { process! }.to change(session.patients, :count).from(0).to(3)

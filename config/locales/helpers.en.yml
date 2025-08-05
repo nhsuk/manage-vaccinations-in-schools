@@ -21,19 +21,14 @@ en:
           apply: Use duplicate record
           discard: Keep previously uploaded record
           keep_both: Keep both records
-      vaccinate_form:
-        knows_vaccination_options:
-          true: know what the vaccination is for, and are happy to have it
-        not_already_had_options:
-          true: have not already had the vaccination
-        feeling_well_options:
-          true: are feeling well
-        no_allergies_options:
-          true: have no allergies which would prevent vaccination
-        not_taking_medication_options:
-          true: are not taking any medication which prevents vaccination
-        not_pregnant_options:
-          true: are not pregnant
+      triage_form:
+        status_and_vaccine_method_options:
+          delay_vaccination: No, delay vaccination (and invite to clinic)
+          do_not_vaccinate: No, do not vaccinate
+          keep_in_triage: No, keep in triage
+          safe_to_vaccinate: Yes, it’s safe to vaccinate
+          safe_to_vaccinate_injection: Yes, it’s safe to vaccinate with injected vaccine
+          safe_to_vaccinate_nasal: Yes, it’s safe to vaccinate with nasal spray
       vaccination_report:
         file_format_options:
           careplus: CarePlus

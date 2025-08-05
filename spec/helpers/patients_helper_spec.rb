@@ -11,7 +11,7 @@ describe PatientsHelper do
 
       it do
         expect(patient_nhs_number).to eq(
-          "<span class=\"app-u-monospace\">012&nbsp;&zwj;345&nbsp;&zwj;6789</span>"
+          "<span class=\"app-u-monospace nhsuk-u-nowrap\">012 345 6789</span>"
         )
       end
 
@@ -24,7 +24,7 @@ describe PatientsHelper do
 
         it do
           expect(patient_nhs_number).to eq(
-            "<s><span class=\"app-u-monospace\">012&nbsp;&zwj;345&nbsp;&zwj;6789</span></s>"
+            "<s><span class=\"app-u-monospace nhsuk-u-nowrap\">012 345 6789</span></s>"
           )
         end
       end
@@ -81,21 +81,44 @@ describe PatientsHelper do
   end
 
   describe "#patient_year_group" do
-    subject(:patient_year_group) do
-      travel_to(today) { helper.patient_year_group(patient) }
+    subject do
+      travel_to(today) { helper.patient_year_group(patient, academic_year:) }
     end
 
     let(:patient) do
       create(:patient, date_of_birth: Date.new(2010, 1, 1), registration: nil)
     end
+
     let(:today) { Date.new(2024, 1, 1) }
 
-    it { should eq("Year 9") }
+    context "in the current academic year" do
+      let(:academic_year) { today.academic_year }
 
-    context "with a registration" do
-      before { patient.registration = "9AB" }
+      it { should eq("Year 9") }
 
-      it { should eq("Year 9 (9AB)") }
+      context "with a registration" do
+        before do
+          patient.registration = "9AB"
+          patient.registration_academic_year = today.academic_year
+        end
+
+        it { should eq("Year 9 (9AB)") }
+      end
+    end
+
+    context "in the next academic year" do
+      let(:academic_year) { today.academic_year + 1 }
+
+      it { should eq("Year 10 (2024 to 2025 academic year)") }
+
+      context "with a registration" do
+        before do
+          patient.registration = "9AB"
+          patient.registration_academic_year = today.academic_year
+        end
+
+        it { should eq("Year 10 (2024 to 2025 academic year)") }
+      end
     end
   end
 end

@@ -11,6 +11,7 @@
 #  manufacturer        :text             not null
 #  method              :integer          not null
 #  nivs_name           :text             not null
+#  side_effects        :integer          default([]), not null, is an Array
 #  snomed_product_code :string           not null
 #  snomed_product_term :string           not null
 #  created_at          :datetime         not null
@@ -39,35 +40,13 @@ describe Vaccine do
     subject { vaccine.contains_gelatine? }
 
     context "with a nasal Flu vaccine" do
-      let(:vaccine) { build(:vaccine, :fluenz_tetra) }
+      let(:vaccine) { build(:vaccine, :fluenz) }
 
       it { should be(true) }
     end
 
     context "with an injected Flu vaccine" do
-      let(:vaccine) { build(:vaccine, :quadrivalent_influenza) }
-
-      it { should be(false) }
-    end
-
-    context "with an HPV vaccine" do
-      let(:vaccine) { build(:vaccine, :gardasil_9) }
-
-      it { should be(false) }
-    end
-  end
-
-  describe "#can_be_half_dose?" do
-    subject { vaccine.can_be_half_dose? }
-
-    context "with a nasal Flu vaccine" do
-      let(:vaccine) { build(:vaccine, :fluenz_tetra) }
-
-      it { should be(true) }
-    end
-
-    context "with an injected Flu vaccine" do
-      let(:vaccine) { build(:vaccine, :quadrivalent_influenza) }
+      let(:vaccine) { build(:vaccine, :vaxigrip) }
 
       it { should be(false) }
     end
@@ -92,6 +71,44 @@ describe Vaccine do
       let(:vaccine) { build(:vaccine, :nasal) }
 
       it { should eq(%w[nasal_spray]) }
+    end
+  end
+
+  describe "#snomed_procedure_code" do
+    subject { vaccine.snomed_procedure_code(dose_sequence:) }
+
+    let(:dose_sequence) { nil }
+
+    context "with an injection flu vaccine" do
+      let(:vaccine) { build(:vaccine, :flu, :injection) }
+
+      context "and first dose" do
+        let(:dose_sequence) { 1 }
+
+        it { should eq("985151000000100") }
+      end
+
+      context "and second dose" do
+        let(:dose_sequence) { 2 }
+
+        it { should eq("985171000000109") }
+      end
+    end
+
+    context "with a nasal flu vaccine" do
+      let(:vaccine) { build(:vaccine, :flu, :nasal) }
+
+      context "and first dose" do
+        let(:dose_sequence) { 1 }
+
+        it { should eq("884861000000100") }
+      end
+
+      context "and second dose" do
+        let(:dose_sequence) { 2 }
+
+        it { should eq("884881000000109") }
+      end
     end
   end
 end

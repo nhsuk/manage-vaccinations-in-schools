@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-desc "Onboard an organisation from a configuration file."
+desc "Onboard a team from a configuration file."
 task :onboard, [:filename] => :environment do |_, args|
   config = YAML.safe_load(File.read(args[:filename]))
 

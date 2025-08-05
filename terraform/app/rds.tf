@@ -24,33 +24,35 @@ resource "aws_security_group_rule" "rds_ecs_ingress" {
   }
 }
 
-resource "aws_db_subnet_group" "aurora_subnet_group" {
-  name        = var.resource_name.dbsubnet_group
-  description = "Group of private subnets for Aurora Serverless v2 cluster."
+resource "aws_db_subnet_group" "core" {
+  name        = "mavis-${var.environment}-core"
   subnet_ids  = [aws_subnet.private_subnet_a.id, aws_subnet.private_subnet_b.id]
+  description = "Private subnets for the core aurora RDS cluster"
   tags = {
-    Name = "aurora-subnet-group-${var.environment}"
+    name = "mavis-${var.environment}-core"
   }
 }
 
-resource "aws_rds_cluster" "aurora_cluster" {
-  cluster_identifier              = var.resource_name.db_cluster
+resource "aws_rds_cluster" "core" {
+  cluster_identifier              = local.rds_cluster
   engine                          = "aurora-postgresql"
   engine_mode                     = "provisioned"
   engine_version                  = "16.8"
   database_name                   = "manage_vaccinations"
   master_username                 = "postgres"
-  manage_master_user_password     = var.db_secret_arn == null
-  storage_encrypted               = true
   backup_retention_period         = var.backup_retention_period
   skip_final_snapshot             = !local.is_production
-  db_subnet_group_name            = aws_db_subnet_group.aurora_subnet_group.name
+  final_snapshot_identifier       = "${local.rds_cluster}-final-snapshot"
+  db_subnet_group_name            = aws_db_subnet_group.core.name
   vpc_security_group_ids          = [aws_security_group.rds_security_group.id]
+  kms_key_id                      = aws_kms_key.rds_cluster.arn
+  storage_encrypted               = true
+  manage_master_user_password     = true
   deletion_protection             = true
   allow_major_version_upgrade     = true
   preferred_backup_window         = "01:00-01:30"
   preferred_maintenance_window    = "sun:02:30-sun:03:00"
-  db_cluster_parameter_group_name = "default.aurora-postgresql16" # Remove this line after it's released. The default parameter group will then be handled internally by AWS.
+  db_cluster_parameter_group_name = "default.aurora-postgresql16"
 
   serverlessv2_scaling_configuration {
     max_capacity = var.max_aurora_capacity_units
@@ -63,12 +65,22 @@ resource "aws_rds_cluster" "aurora_cluster" {
   }
 }
 
-resource "aws_rds_cluster_instance" "aurora_instance" {
-  cluster_identifier   = aws_rds_cluster.aurora_cluster.id
-  identifier           = var.resource_name.db_instance
+resource "aws_secretsmanager_secret_rotation" "target" {
+  secret_id          = aws_rds_cluster.core.master_user_secret[0].secret_arn
+  rotate_immediately = false
+  rotation_rules {
+    schedule_expression = "cron(0 2 ? * WED#4 *)"
+    duration            = "1h"
+  }
+}
+
+resource "aws_rds_cluster_instance" "core" {
+  for_each             = local.db_instances
+  cluster_identifier   = aws_rds_cluster.core.id
+  identifier           = "${local.rds_cluster}-${each.key}"
   instance_class       = "db.serverless"
-  engine               = aws_rds_cluster.aurora_cluster.engine
-  engine_version       = aws_rds_cluster.aurora_cluster.engine_version
-  db_subnet_group_name = aws_db_subnet_group.aurora_subnet_group.name
-  promotion_tier       = 1
+  engine               = aws_rds_cluster.core.engine
+  engine_version       = aws_rds_cluster.core.engine_version
+  db_subnet_group_name = aws_db_subnet_group.core.name
+  promotion_tier       = each.value["promotion_tier"]
 }

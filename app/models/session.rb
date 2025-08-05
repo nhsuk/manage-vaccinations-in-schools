@@ -7,30 +7,33 @@
 #  id                            :bigint           not null, primary key
 #  academic_year                 :integer          not null
 #  days_before_consent_reminders :integer
+#  requires_registration         :boolean          default(TRUE), not null
 #  send_consent_requests_at      :date
 #  send_invitations_at           :date
 #  slug                          :string           not null
 #  created_at                    :datetime         not null
 #  updated_at                    :datetime         not null
 #  location_id                   :bigint           not null
-#  organisation_id               :bigint           not null
+#  team_id                       :bigint           not null
 #
 # Indexes
 #
-#  idx_on_organisation_id_location_id_academic_year_3496b72d0c  (organisation_id,location_id,academic_year) UNIQUE
+#  index_sessions_on_location_id              (location_id)
+#  index_sessions_on_team_id_and_location_id  (team_id,location_id)
 #
 # Foreign Keys
 #
-#  fk_rails_...  (organisation_id => organisations.id)
+#  fk_rails_...  (team_id => teams.id)
 #
 class Session < ApplicationRecord
   audited associated_with: :location
   has_associated_audits
 
-  belongs_to :organisation
+  belongs_to :team
   belongs_to :location
 
   has_many :consent_notifications
+  has_many :notes
   has_many :patient_sessions
   has_many :session_dates, -> { order(:value) }
   has_many :session_notifications
@@ -41,34 +44,41 @@ class Session < ApplicationRecord
 
   has_and_belongs_to_many :immunisation_imports
 
-  has_one :team, through: :location
+  has_one :subteam, through: :location
   has_many :programmes, through: :session_programmes
   has_many :gillick_assessments, through: :patient_sessions
   has_many :patients, through: :patient_sessions
   has_many :vaccines, through: :programmes
+
+  has_many :location_programme_year_groups,
+           -> { where(programme: it.programmes) },
+           through: :location,
+           source: :programme_year_groups,
+           class_name: "Location::ProgrammeYearGroup"
 
   accepts_nested_attributes_for :session_dates, allow_destroy: true
 
   scope :has_date,
         ->(value) { where(SessionDate.for_session.where(value:).arel.exists) }
 
-  scope :has_programme,
-        ->(programme) { joins(:programmes).where(programmes: programme) }
-
-  scope :today, -> { has_date(Date.current) }
-
-  scope :for_current_academic_year,
-        -> { where(academic_year: Date.current.academic_year) }
-
-  scope :unscheduled,
-        -> do
-          for_current_academic_year.where.not(
-            SessionDate.for_session.arel.exists
+  scope :has_programmes,
+        ->(programmes) do
+          where(
+            "(?) >= ?",
+            SessionProgramme
+              .select("COUNT(session_programmes.id)")
+              .where("sessions.id = session_programmes.session_id")
+              .joins(:programme)
+              .where(programme: programmes),
+            programmes.count
           )
         end
+
+  scope :in_progress, -> { has_date(Date.current) }
+  scope :unscheduled, -> { where.not(SessionDate.for_session.arel.exists) }
   scope :scheduled,
         -> do
-          for_current_academic_year.where(
+          where(
             "? <= (?)",
             Date.current,
             SessionDate.for_session.select("MAX(value)")
@@ -76,10 +86,33 @@ class Session < ApplicationRecord
         end
   scope :completed,
         -> do
-          for_current_academic_year.where(
+          where(
             "? > (?)",
             Date.current,
             SessionDate.for_session.select("MAX(value)")
+          )
+        end
+
+  scope :search_by_name,
+        ->(query) { joins(:location).merge(Location.search_by_name(query)) }
+
+  scope :join_earliest_date,
+        -> do
+          joins(
+            "LEFT JOIN (SELECT session_id, MIN(value) AS value " \
+              "FROM session_dates GROUP BY session_id) earliest_session_dates " \
+              "ON sessions.id = earliest_session_dates.session_id"
+          )
+        end
+
+  scope :order_by_earliest_date,
+        -> do
+          join_earliest_date.order(
+            Arel.sql(
+              "CASE WHEN earliest_session_dates.value >= ? THEN 1 ELSE 2 END",
+              Date.current
+            ),
+            "earliest_session_dates.value ASC NULLS LAST"
           )
         end
 
@@ -95,6 +128,8 @@ class Session < ApplicationRecord
         end
   scope :send_invitations,
         -> { scheduled.where("? >= send_invitations_at", Date.current) }
+
+  scope :registration_not_required, -> { where(requires_registration: false) }
 
   validates :send_consent_requests_at,
             presence: true,
@@ -154,8 +189,20 @@ class Session < ApplicationRecord
     Date.current > dates.min
   end
 
-  def year_groups
-    programmes.flat_map(&:year_groups).uniq.sort
+  def year_groups = location_programme_year_groups.pluck_year_groups
+
+  def vaccine_methods
+    programmes.flat_map(&:vaccine_methods).uniq.sort
+  end
+
+  def programmes_for(year_group: nil, patient: nil, academic_year: nil)
+    year_group ||= patient.year_group(academic_year:)
+
+    programmes.select do |programme|
+      location_programme_year_groups.any? do
+        it.programme_id == programme.id && it.year_group == year_group
+      end
+    end
   end
 
   def dates
@@ -183,13 +230,10 @@ class Session < ApplicationRecord
       next_date(include_today: true) && !completed?
     else
       completed? &&
-        organisation.generic_clinic_session.next_date(include_today: true)
+        team.generic_clinic_session(academic_year:).next_date(
+          include_today: true
+        )
     end
-  end
-
-  def <=>(other)
-    [dates.first, location.type, location.name] <=>
-      [other.dates.first, other.location.type, other.location.name]
   end
 
   def set_notification_dates
@@ -198,12 +242,11 @@ class Session < ApplicationRecord
         self.days_before_consent_reminders = nil
         self.send_consent_requests_at = nil
         self.send_invitations_at =
-          earliest_date - organisation.days_before_invitations.days
+          earliest_date - team.days_before_invitations.days
       else
-        self.days_before_consent_reminders =
-          organisation.days_before_consent_reminders
+        self.days_before_consent_reminders = team.days_before_consent_reminders
         self.send_consent_requests_at =
-          earliest_date - organisation.days_before_consent_requests.days
+          earliest_date - team.days_before_consent_requests.days
         self.send_invitations_at = nil
       end
     else
@@ -219,6 +262,8 @@ class Session < ApplicationRecord
     reminder_dates = dates.map { _1 - days_before_consent_reminders.days }
     reminder_dates.find(&:future?) || reminder_dates.last
   end
+
+  def open_consent_at = send_consent_requests_at
 
   def close_consent_at
     return nil if dates.empty?

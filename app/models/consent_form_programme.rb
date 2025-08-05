@@ -5,6 +5,8 @@
 # Table name: consent_form_programmes
 #
 #  id              :bigint           not null, primary key
+#  response        :integer
+#  vaccine_methods :integer          default([]), not null, is an Array
 #  consent_form_id :bigint           not null
 #  programme_id    :bigint           not null
 #
@@ -19,6 +21,18 @@
 #  fk_rails_...  (programme_id => programmes.id)
 #
 class ConsentFormProgramme < ApplicationRecord
+  include HasVaccineMethods
+
   belongs_to :consent_form
   belongs_to :programme
+
+  scope :ordered, -> { joins(:programme).order(:"programme.type") }
+
+  enum :response, { given: 0, refused: 1 }, prefix: true
+
+  def vaccines
+    vaccine_methods.flat_map do |method|
+      Vaccine.active.where(programme_id:, method:)
+    end
+  end
 end

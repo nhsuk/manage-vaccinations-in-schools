@@ -17,23 +17,23 @@
 #  status                       :integer          default("pending_import"), not null
 #  created_at                   :datetime         not null
 #  updated_at                   :datetime         not null
-#  organisation_id              :bigint           not null
+#  team_id                      :bigint           not null
 #  uploaded_by_user_id          :bigint           not null
 #
 # Indexes
 #
-#  index_immunisation_imports_on_organisation_id      (organisation_id)
+#  index_immunisation_imports_on_team_id              (team_id)
 #  index_immunisation_imports_on_uploaded_by_user_id  (uploaded_by_user_id)
 #
 # Foreign Keys
 #
-#  fk_rails_...  (organisation_id => organisations.id)
+#  fk_rails_...  (team_id => teams.id)
 #  fk_rails_...  (uploaded_by_user_id => users.id)
 #
 
 describe ImmunisationImport do
   subject(:immunisation_import) do
-    create(:immunisation_import, organisation:, csv:, uploaded_by:)
+    create(:immunisation_import, team:, csv:, uploaded_by:)
   end
 
   before do
@@ -43,13 +43,13 @@ describe ImmunisationImport do
   end
 
   let(:programmes) { [create(:programme, :flu_all_vaccines)] }
-  let(:organisation) do
-    create(:organisation, :with_generic_clinic, ods_code: "R1L", programmes:)
+  let(:team) do
+    create(:team, :with_generic_clinic, ods_code: "R1L", programmes:)
   end
 
   let(:file) { "valid_flu.csv" }
   let(:csv) { fixture_file_upload("spec/fixtures/immunisation_import/#{file}") }
-  let(:uploaded_by) { create(:user, organisation:) }
+  let(:uploaded_by) { create(:user, team:) }
 
   it_behaves_like "a CSVImportable model"
 
@@ -100,7 +100,11 @@ describe ImmunisationImport do
 
     context "with a SystmOne file" do
       let(:programmes) do
-        [create(:programme, :hpv_all_vaccines), create(:programme, :menacwy)]
+        [
+          create(:programme, :hpv_all_vaccines),
+          create(:programme, :menacwy),
+          create(:programme, :flu)
+        ]
       end
       let(:file) { "systm_one.csv" }
 
@@ -157,7 +161,7 @@ describe ImmunisationImport do
       end
 
       it "ignores and counts duplicate records" do
-        create(:immunisation_import, csv:, organisation:, uploaded_by:).process!
+        create(:immunisation_import, csv:, team:, uploaded_by:).process!
         csv.rewind
 
         process!
@@ -211,7 +215,7 @@ describe ImmunisationImport do
       end
 
       it "ignores and counts duplicate records" do
-        create(:immunisation_import, csv:, organisation:, uploaded_by:).process!
+        create(:immunisation_import, csv:, team:, uploaded_by:).process!
         csv.rewind
 
         process!
@@ -234,7 +238,11 @@ describe ImmunisationImport do
 
     context "with a SystmOne file format" do
       let(:programmes) do
-        [create(:programme, :hpv_all_vaccines), create(:programme, :menacwy)]
+        [
+          create(:programme, :hpv_all_vaccines),
+          create(:programme, :menacwy),
+          create(:programme, :flu)
+        ]
       end
       let(:file) { "systm_one.csv" }
 
@@ -242,8 +250,8 @@ describe ImmunisationImport do
         # stree-ignore
         expect { process! }
           .to change(immunisation_import, :processed_at).from(nil)
-          .and change(immunisation_import.vaccination_records, :count).by(3)
-          .and change(immunisation_import.patients, :count).by(3)
+          .and change(immunisation_import.vaccination_records, :count).by(4)
+          .and change(immunisation_import.patients, :count).by(4)
           .and change(immunisation_import.batches, :count).by(1)
           .and not_change(immunisation_import.patient_sessions, :count)
 
@@ -321,6 +329,32 @@ describe ImmunisationImport do
         expect { process! }.not_to change(Patient, :count)
         expect(existing_patient.reload.pending_changes).to be_empty
       end
+    end
+  end
+
+  describe "#postprocess_row!" do
+    subject(:immunisation_import) do
+      create(
+        :immunisation_import,
+        team:,
+        vaccination_records: [vaccination_record]
+      )
+    end
+
+    before { Flipper.enable :enqueue_sync_vaccination_records_to_nhs }
+
+    let(:session) { create(:session, programmes:) }
+    let(:vaccination_record) do
+      create(:vaccination_record, programme: programmes.first, session:)
+    end
+
+    it "syncs the flu vaccination record to the NHS Immunisations API" do
+      expect {
+        immunisation_import.send(:postprocess_rows!)
+      }.to have_enqueued_job(SyncVaccinationRecordToNHSJob)
+        .with(vaccination_record)
+        .once
+        .on_queue(:immunisation_api)
     end
   end
 end

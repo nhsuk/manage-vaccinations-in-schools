@@ -1,32 +1,39 @@
 # frozen_string_literal: true
 
 describe "Verbal consent" do
-  scenario "Refused personal choice (no notes)" do
-    given_i_am_signed_in
+  before { given_i_am_signed_in }
 
-    when_i_record_the_consent_refusal_and_reason
-
+  scenario "Refused with personal choice" do
+    when_i_record_the_consent_refusal_and_reason(notify_parent: true)
     then_an_email_is_sent_to_the_parent_confirming_the_refusal
     and_a_text_is_sent_to_the_parent_confirming_the_refusal
     and_the_patients_status_is_consent_refused
     and_i_can_see_the_consent_response_details
   end
 
+  scenario "Refused with personal choice and no notification" do
+    when_i_record_the_consent_refusal_and_reason(notify_parent: false)
+    then_an_email_isnt_sent_to_the_parent_confirming_the_refusal
+    and_a_text_isnt_sent_to_the_parent_confirming_the_refusal
+    and_the_patients_status_is_consent_refused
+    and_i_can_see_the_consent_response_details
+  end
+
   def given_i_am_signed_in
     programmes = [create(:programme, :hpv)]
-    organisation = create(:organisation, :with_one_nurse, programmes:)
-    @session = create(:session, organisation:, programmes:)
+    team = create(:team, :with_one_nurse, programmes:)
+    @session = create(:session, team:, programmes:)
 
     @parent = create(:parent)
     @patient = create(:patient, session: @session, parents: [@parent])
 
-    sign_in organisation.users.first
+    sign_in team.users.first
   end
 
-  def when_i_record_the_consent_refusal_and_reason
+  def when_i_record_the_consent_refusal_and_reason(notify_parent:)
     visit session_consent_path(@session)
     click_link @patient.full_name
-    click_button "Get consent"
+    click_button "Record a new consent response"
 
     # Who are you trying to get consent from?
     choose @parent.full_name
@@ -47,11 +54,22 @@ describe "Verbal consent" do
     choose "Personal choice"
     click_button "Continue"
 
+    # Notify parent
+    choose notify_parent ? "Yes" : "No"
+    click_button "Continue"
+
     # No notes are asked for
 
     # Confirm
     expect(page).to have_content(["Decision", "Consent refused"].join)
     expect(page).to have_content(["Name", @parent.full_name].join)
+
+    if notify_parent
+      expect(page).to have_content("Confirmation of decision sent to parentYes")
+    else
+      expect(page).to have_content("Confirmation of decision sent to parentNo")
+    end
+
     click_button "Confirm"
 
     expect(page).to have_content("Consent recorded for #{@patient.full_name}")
@@ -69,11 +87,9 @@ describe "Verbal consent" do
     parent = @patient.parents.first
     click_link parent.full_name
 
-    expect(page).to have_content(
-      ["Response date", Time.zone.today.to_fs(:long)].join
-    )
+    expect(page).to have_content(["Date", Time.zone.today.to_fs(:long)].join)
     expect(page).to have_content(["Decision", "Consent refused"].join)
-    expect(page).to have_content(["Response method", "By phone"].join)
+    expect(page).to have_content(["Method", "By phone"].join)
     expect(page).to have_content(["Reason for refusal", "Personal choice"].join)
     expect(page).not_to have_content("Notes")
 
@@ -99,5 +115,13 @@ describe "Verbal consent" do
 
   def and_a_text_is_sent_to_the_parent_confirming_the_refusal
     expect_sms_to @patient.parents.first.phone, :consent_confirmation_refused
+  end
+
+  def then_an_email_isnt_sent_to_the_parent_confirming_the_refusal
+    expect(email_deliveries).to be_empty
+  end
+
+  def and_a_text_isnt_sent_to_the_parent_confirming_the_refusal
+    expect(sms_deliveries).to be_empty
   end
 end

@@ -1,8 +1,8 @@
 nodejs      22.15.0
 postgres    17.2
 ruby        3.4.3
-awscli      2.13.31
+awscli      2.27.46
 terraform   1.11.4
 tflint      0.55.1
 pkl         0.28.1
-hk          1.0.0
+hk          1.1.2

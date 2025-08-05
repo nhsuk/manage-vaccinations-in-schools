@@ -1,10 +1,9 @@
 # frozen_string_literal: true
 
 class ConsentFormsController < ApplicationController
-  include Pagy::Backend
-  include SearchFormConcern
+  include PatientSearchFormConcern
 
-  before_action :set_search_form, only: :search
+  before_action :set_patient_search_form, only: :search
   before_action :set_consent_form, except: :index
   before_action :set_patient, only: %i[edit_match update_match]
 
@@ -36,9 +35,7 @@ class ConsentFormsController < ApplicationController
   def update_match
     @consent_form.match_with_patient!(@patient, current_user:)
 
-    session =
-      @patient.sessions_for_current_academic_year.first ||
-        @consent_form.original_session
+    session = @patient.pending_sessions.first || @consent_form.original_session
 
     patient_session =
       PatientSession.includes_programmes.find_by!(patient: @patient, session:)
@@ -88,14 +85,17 @@ class ConsentFormsController < ApplicationController
     ActiveRecord::Base.transaction do
       patient.save!
 
+      academic_year = @consent_form.academic_year
+
       school_move =
         if (school = @consent_form.school)
-          SchoolMove.new(patient:, school:)
+          SchoolMove.new(academic_year:, patient:, school:)
         else
           SchoolMove.new(
+            academic_year:,
             patient:,
             home_educated: @consent_form.home_educated,
-            organisation: @consent_form.organisation
+            team: @consent_form.team
           )
         end
 
@@ -130,7 +130,7 @@ class ConsentFormsController < ApplicationController
     @patient =
       policy_scope(Patient).includes(
         parent_relationships: :parent,
-        sessions_for_current_academic_year: :programmes
+        pending_sessions: :programmes
       ).find(params[:patient_id])
   end
 

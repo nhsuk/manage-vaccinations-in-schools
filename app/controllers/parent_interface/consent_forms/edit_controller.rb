@@ -4,13 +4,24 @@ module ParentInterface
   class ConsentForms::EditController < ConsentForms::BaseController
     include WizardControllerConcern
 
-    before_action :validate_params, only: %i[update]
+    before_action :validate_params, only: :update
     before_action :set_health_answer, if: :is_health_question_step?
-    before_action :set_follow_up_changes_start_page, only: %i[show]
+    before_action :set_follow_up_changes_start_page, only: :show
 
     HOME_EDUCATED_SCHOOL_ID = "home-educated"
 
     def show
+      case current_step
+      when :response_doubles
+        set_response_doubles
+      when :response_flu
+        set_response_flu
+      when :response_hpv
+        set_response_hpv
+      when :injection_alternative
+        set_injection_alternative
+      end
+
       render_wizard
     end
 
@@ -46,12 +57,15 @@ module ParentInterface
              @consent_form.parent_phone.present?
           jump_to("contact-method", skip_to_confirm: true)
         end
-      elsif current_step == :consent
+      elsif is_injection_alternative_step?
+        @consent_form.update_injection_alternative
+        @consent_form.seed_health_questions
+      elsif is_response_step?
+        @consent_form.update_programme_responses
         @consent_form.seed_health_questions
       end
 
-      set_steps # The wizard_steps can change after certain attrs change
-      setup_wizard_translated # Next/previous steps can change after steps change
+      reload_steps
 
       skip_to_confirm_or_next_health_question
 
@@ -94,9 +108,12 @@ module ParentInterface
           parent_contact_method_type
           parent_contact_method_other_details
         ],
-        consent: %i[response chosen_vaccine],
         reason: %i[reason],
         reason_notes: %i[reason_notes],
+        response_doubles: %i[response chosen_programme],
+        response_flu: %i[response],
+        response_hpv: %i[response],
+        injection_alternative: %i[injection_alternative],
         address: %i[address_line_1 address_line_2 address_town address_postcode]
       }.fetch(current_step)
 
@@ -108,11 +125,6 @@ module ParentInterface
     end
 
     def set_steps
-      # Translated steps are cached after running setup_wizard_translated.
-      # To allow us to run this method multiple times during a single action
-      # lifecycle, we need to clear the cache.
-      @wizard_translations = nil
-
       self.steps = @consent_form.wizard_steps
     end
 
@@ -120,6 +132,48 @@ module ParentInterface
       @question_number = params.fetch(:question_number, "0").to_i
 
       @health_answer = @consent_form.health_answers[@question_number]
+    end
+
+    def set_response_doubles
+      if @consent_form.response_given? && @consent_form.response_refused?
+        @consent_form.response = "given_one"
+        @consent_form.chosen_programme =
+          @consent_form.given_programmes.first.type
+      elsif @consent_form.response_given?
+        @consent_form.response = "given"
+      elsif @consent_form.response_refused?
+        @consent_form.response = "refused"
+      end
+    end
+
+    def set_response_flu
+      if @consent_form.response_given?
+        method =
+          @consent_form
+            .given_consent_form_programmes
+            .first
+            .vaccine_methods
+            .first
+        @consent_form.response = "given_#{method}"
+      elsif @consent_form.response_refused?
+        @consent_form.response = "refused"
+      end
+    end
+
+    def set_response_hpv
+      if @consent_form.response_given?
+        @consent_form.response = "given"
+      elsif @consent_form.response_refused?
+        @consent_form.response = "refused"
+      end
+    end
+
+    def set_injection_alternative
+      if @consent_form.consent_form_programmes.any?(
+           &:vaccine_method_injection_and_nasal?
+         )
+        @consent_form.injection_alternative = "true"
+      end
     end
 
     def validate_params
@@ -139,9 +193,11 @@ module ParentInterface
       end
     end
 
-    def is_health_question_step?
-      step == "health-question"
-    end
+    def is_response_step? = step.start_with?("response-")
+
+    def is_injection_alternative_step? = step == "injection-alternative"
+
+    def is_health_question_step? = step == "health-question"
 
     def current_health_answer
       index = step.split("-").last.to_i - 1

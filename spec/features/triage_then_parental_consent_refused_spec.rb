@@ -21,16 +21,10 @@ describe "Triage" do
 
   def given_a_programme_with_a_running_session
     @programme = create(:programme, :hpv)
-    @organisation =
-      create(:organisation, :with_one_nurse, programmes: [@programme])
+    @team = create(:team, :with_one_nurse, programmes: [@programme])
 
     @session =
-      create(
-        :session,
-        :scheduled,
-        organisation: @organisation,
-        programmes: [@programme]
-      )
+      create(:session, :scheduled, team: @team, programmes: [@programme])
 
     @patient =
       create(
@@ -42,7 +36,7 @@ describe "Triage" do
   end
 
   def when_i_go_to_the_patient_that_needs_triage
-    sign_in @organisation.users.first
+    sign_in @team.users.first
 
     visit session_triage_path(@session)
     choose "Needs triage"
@@ -57,7 +51,6 @@ describe "Triage" do
   end
 
   def then_i_see_the_patient_is_ready
-    click_on @patient.full_name, match: :first
     expect(page).to have_content("Safe to vaccinate")
   end
 
@@ -128,7 +121,7 @@ describe "Triage" do
 
   def and_i_go_to_the_patient_with_conflicting_consent
     visit session_consent_path(@session)
-    choose "Conflicting consent"
+    check "Conflicting consent"
     click_on "Update results"
 
     click_on @patient.full_name

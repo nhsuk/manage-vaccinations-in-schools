@@ -103,7 +103,7 @@ jobs:
         id: compare-permissions
         run: |
           source ./scripts/validate-github-actions-policy.sh
-          validate_policies arn:aws:iam::${{ env.account_id }}:policy/DeployMavisResources ./resources/github_actions_policy.json
+          validate_policies arn:aws:iam::${{ env.account_id }}:policy/DeployMavisResources ./account/resources/iam_policy_DeployMavisResources.json
           exit $?
   update-permissions:
     runs-on: ubuntu-latest
@@ -126,7 +126,7 @@ jobs:
           role-to-assume: arn:aws:iam::${{ env.account_id }}:role/GithubDeployMavisAndInfrastructure
           aws-region: eu-west-2
       - name: Update IAM policy
-        run: ./scripts/update-github-actions-policy.sh arn:aws:iam::${{ env.account_id }}:policy/DeployMavisResources ./resources/github_actions_policy.json
+        run: ./scripts/update-github-actions-policy.sh arn:aws:iam::${{ env.account_id }}:policy/DeployMavisResources ./account/resources/iam_policy_DeployMavisResources.json
   deploy-infrastructure:
     permissions:
       id-token: write

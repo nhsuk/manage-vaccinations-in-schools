@@ -1,4 +1,4 @@
-organisation:
+team:
   name: Hertfordshire and East Anglia Community School Age Immunisation Service
   email: hct.csaisherts@nhs.net
   phone: 0300 555 5055
@@ -9,7 +9,7 @@ organisation:
 
 programmes: [hpv]
 
-teams:
+subteams:
   cambridgeshire-and-peterborough:
     name: Cambridgeshire and Peterborough Community and School Age Immunisation Service
     email: hct.csaiscambspb@nhs.net

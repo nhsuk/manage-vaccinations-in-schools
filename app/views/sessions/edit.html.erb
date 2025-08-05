@@ -7,7 +7,7 @@
   Edit session
 <% end %>
 
-<%= render AppCardComponent.new do |card| %>
+<%= render AppCardComponent.new(heading_level: 2) do |card| %>
   <% card.with_heading { "Session details" } %>
 
   <%= govuk_summary_list do |summary_list|
@@ -22,7 +22,7 @@
       
           if (dates = @session.dates).present?
             row.with_value do
-              safe_join(dates.map { _1.to_fs(:long_day_of_week) }, tag.br)
+              safe_join(dates.map { it.to_fs(:long_day_of_week) }, tag.br)
             end
             row.with_action(text: "Change", href: session_dates_path(@session), visually_hidden_text: "session dates")
           else

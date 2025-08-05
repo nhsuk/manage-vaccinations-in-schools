@@ -47,7 +47,7 @@ shared_examples_for "a CSVImportable model" do
   end
 
   describe "#process!" do
-    let(:today) { Time.zone.local(2025, 1, 1) }
+    let(:today) { Time.zone.local(2025, 6, 1) }
 
     it "sets processed_at" do
       expect { travel_to(today) { subject.process! } }.to change(

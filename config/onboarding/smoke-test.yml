@@ -1,4 +1,4 @@
-organisation:
+team:
   name: XXX SMOKE TEST XXX
   email: england.mavis@nhs.net
   phone: "03003112233"
@@ -8,18 +8,18 @@ organisation:
 
 programmes: [hpv]
 
-teams:
-  team1:
+subteams:
+  subteam1:
     name: XXX SMOKE TEST XXX
     email: xxx.smoke.test.xxx@example.nhs.net
     phone: "03003112233"
 
 schools:
-  team1:
+  subteam1:
     - XXXXXX
 
 clinics:
-  team1:
+  subteam1:
     - name: Test Clinic
       address_line_1: 1 Clinic Test Street
       address_town: Clinic Test Town

@@ -1,13 +1,15 @@
 # frozen_string_literal: true
 
 class SessionPolicy < ApplicationPolicy
+  def import? = show?
+
   def make_in_progress?
     user.is_nurse? || user.is_admin?
   end
 
   class Scope < ApplicationPolicy::Scope
     def resolve
-      scope.where(organisation: user.selected_organisation)
+      scope.where(team: user.selected_team)
     end
   end
 end

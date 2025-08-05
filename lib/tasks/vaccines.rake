@@ -26,6 +26,8 @@ namespace :vaccines do
       vaccine.snomed_product_term = data["snomed_product_term"]
       vaccine.programme = programme
 
+      vaccine.side_effects = side_effects_for(programme, data["method"])
+
       vaccine.save!
 
       next if vaccine.health_questions.exists?
@@ -40,64 +42,167 @@ namespace :vaccines do
         elsif programme.td_ipv?
           create_td_ipv_health_questions(vaccine)
         else
-          raise "Unknown programme: #{programme.name}"
+          raise UnsupportedProgramme, programme
         end
       end
     end
   end
 end
 
+def side_effects_for(programme, method)
+  if programme.flu?
+    if method == "nasal"
+      %w[runny_blocked_nose headache tiredness loss_of_appetite]
+    else
+      %w[
+        swelling
+        headache
+        high_temperature
+        feeling_sick
+        irritable
+        drowsy
+        loss_of_appetite
+        unwell
+      ]
+    end
+  elsif programme.hpv?
+    %w[
+      swelling
+      headache
+      high_temperature
+      feeling_sick
+      irritable
+      drowsy
+      loss_of_appetite
+      unwell
+    ]
+  elsif programme.menacwy?
+    %w[
+      drowsy
+      feeling_sick
+      headache
+      high_temperature
+      irritable
+      loss_of_appetite
+      rash
+      swelling
+      unwell
+    ]
+  elsif programme.td_ipv?
+    %w[
+      drowsy
+      feeling_sick
+      headache
+      high_temperature
+      irritable
+      loss_of_appetite
+      swelling
+      unwell
+    ]
+  else
+    raise UnsupportedProgramme, programme
+  end
+end
+
 def create_flu_health_questions(vaccine)
   asthma =
-    vaccine.health_questions.create!(
-      title: "Has your child been diagnosed with asthma?"
-    )
+    if vaccine.nasal?
+      vaccine.health_questions.create!(
+        title: "Has your child been diagnosed with asthma?",
+        would_require_triage: false
+      )
+    end
 
   asthma_steroids =
-    vaccine.health_questions.create!(
-      title: "Does your child take steroid tablets for their asthma?"
-    )
+    if vaccine.nasal?
+      vaccine.health_questions.create!(
+        title: "Does your child take oral steroids for their asthma?",
+        hint: "This does not include medicine taken through an inhaler",
+        give_details_hint:
+          "Include the steroid name, dose and end date of the course"
+      )
+    end
 
   asthma_intensive_care =
-    vaccine.health_questions.create!(
-      title:
-        "Has your child ever been admitted to intensive care because of their asthma?"
-    )
+    if vaccine.nasal?
+      vaccine.health_questions.create!(
+        title:
+          "Has your child ever been admitted to intensive care because of their asthma?",
+        hint:
+          "This does not include visits to A&E or stays in hospital wards outside the intensive care unit"
+      )
+    end
 
   immune_system =
-    vaccine.health_questions.create!(
-      title:
-        "Does your child have a disease or treatment that severely affects their immune system?"
-    )
+    if vaccine.nasal?
+      vaccine.health_questions.create!(
+        title:
+          "Does your child have a disease or treatment that severely affects their immune system?",
+        hint:
+          "The nasal spray flu vaccine is a live vaccine. " \
+            "It is not suitable for people who are severely immunocompromised."
+      )
+    end
 
   household_immune_system =
-    vaccine.health_questions.create!(
-      title:
-        "Is anyone in your child’s household currently having treatment that severely affects their immune system?"
-    )
+    if vaccine.nasal?
+      vaccine.health_questions.create!(
+        title:
+          "Is your child in regular close contact with anyone currently " \
+            "having treatment that severely affects their immune system?",
+        give_details_hint:
+          "Let us know if they are able to avoid contact with the immunocompromised person for 2 weeks"
+      )
+    end
+
+  bleeding_disorder =
+    if vaccine.injection?
+      vaccine.health_questions.create!(
+        title:
+          "Does your child have a bleeding disorder or are they taking anticoagulant therapy?"
+      )
+    end
 
   egg_allergy =
-    vaccine.health_questions.create!(
-      title:
-        "Has your child ever been admitted to intensive care due to an allergic reaction to egg?"
-    )
+    if vaccine.nasal?
+      vaccine.health_questions.create!(
+        title:
+          "Has your child ever been admitted to intensive care due to a severe allergic reaction (anaphylaxis) to egg?",
+        hint:
+          "This does not include visits to A&E or stays in hospital wards outside the intensive care unit"
+      )
+    end
 
-  allergies =
-    vaccine.health_questions.create!(
-      title: "Does your child have any allergies to medication?"
-    )
+  severe_allergic_reaction =
+    if vaccine.nasal?
+      vaccine.health_questions.create!(
+        title:
+          "Has your child had a severe allergic reaction (anaphylaxis) to a " \
+            "previous dose of the nasal flu vaccine, or any ingredient of the vaccine?",
+        hint: "This includes gelatine, neomycin or gentamicin"
+      )
+    else
+      vaccine.health_questions.create!(
+        title:
+          "Has your child had a severe allergic reaction (anaphylaxis) to a " \
+            "previous dose of the injected flu vaccine, or any ingredient of the vaccine?"
+      )
+    end
 
   medical_conditions =
     vaccine.health_questions.create!(
       title:
-        "Does your child have any medical conditions for which they receive treatment?"
+        "Does your child have any other medical conditions the immunisation team should be aware of?",
+      would_require_triage: false
     )
 
   aspirin =
-    vaccine.health_questions.create!(
-      title: "Does your child take regular aspirin?",
-      hint: "Also known as Salicylate therapy"
-    )
+    if vaccine.nasal?
+      vaccine.health_questions.create!(
+        title: "Does your child take regular aspirin?",
+        hint: "Also known as Salicylate therapy"
+      )
+    end
 
   flu_previously =
     vaccine.health_questions.create!(
@@ -107,35 +212,34 @@ def create_flu_health_questions(vaccine)
   extra_support =
     vaccine.health_questions.create!(
       title: "Does your child need extra support during vaccination sessions?",
-      hint: "For example, they’re autistic, or extremely anxious"
+      hint: "For example, they’re autistic, or extremely anxious",
+      would_require_triage: false
     )
 
-  injection_instead =
-    if vaccine.nasal?
-      vaccine.health_questions.create!(
-        title:
-          "If your child cannot have the nasal spray, do you agree to them having the injected vaccine instead?",
-        hint:
-          "We may decide the nasal spray vaccine is not suitable. In this case, we may offer the injected vaccine instead."
-      )
-    end
+  post_asthma_questions = [
+    immune_system,
+    household_immune_system,
+    bleeding_disorder,
+    egg_allergy,
+    severe_allergic_reaction,
+    medical_conditions,
+    aspirin,
+    flu_previously,
+    extra_support
+  ].compact
 
-  asthma.update!(
+  asthma&.update!(
     follow_up_question: asthma_steroids,
-    next_question: immune_system
+    next_question: post_asthma_questions.first
   )
-  asthma_steroids.update!(next_question: asthma_intensive_care)
-  asthma_intensive_care.update!(next_question: immune_system)
+  asthma_steroids&.update!(next_question: asthma_intensive_care)
+  asthma_intensive_care&.update!(next_question: post_asthma_questions.first)
 
-  immune_system.update!(next_question: household_immune_system)
-  household_immune_system.update!(next_question: egg_allergy)
-  egg_allergy.update!(next_question: allergies)
-  allergies.update!(next_question: medical_conditions)
-  medical_conditions.update!(next_question: aspirin)
-  aspirin.update!(next_question: flu_previously)
-  flu_previously.update!(next_question: extra_support)
-
-  extra_support.update!(next_question: injection_instead) if injection_instead
+  post_asthma_questions.each_with_index do |question, i|
+    if (next_question = post_asthma_questions[i + 1])
+      question.update!(next_question:)
+    end
+  end
 end
 
 def create_hpv_health_questions(vaccine)

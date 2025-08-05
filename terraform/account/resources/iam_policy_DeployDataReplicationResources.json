@@ -1,0 +1,69 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Deny",
+      "Action": ["*"],
+      "Resource": "*",
+      "Condition": {
+        "ArnEquals": {
+          "ec2:Vpc": [
+            "arn:aws:ec2:eu-west-1:393416225559:vpc/vpc-029e1475034ab2fed",
+            "arn:aws:ec2:eu-west-1:393416225559:vpc/vpc-087d03fc1f439f7fd",
+            "arn:aws:ec2:eu-west-1:393416225559:vpc/vpc-0016fa51fbdfbf86e",
+            "arn:aws:ec2:eu-west-1:393416225559:vpc/vpc-038fc6883f3d93661",
+            "arn:aws:ec2:eu-west-1:820242920762:vpc/vpc-0abccf7c5d1538d12"
+          ]
+        }
+      }
+    },
+    {
+      "Effect": "Deny",
+      "Action": ["*"],
+      "NotResource": [
+        "arn:aws:s3:::nhse-mavis-terraform-state-production",
+        "arn:aws:s3:::nhse-mavis-terraform-state",
+        "arn:aws:kms:eu-west-2:*:key/*",
+        "arn:aws:rds:eu-west-2:*:cluster-snapshot:*"
+      ],
+      "Condition": {
+        "StringEquals": {
+          "aws:ResourceTag/Environment": [
+            "training",
+            "qa",
+            "test",
+            "preview",
+            "sandbox-alpha",
+            "sandbox-beta",
+            "production"
+          ]
+        }
+      }
+    },
+    {
+      "Effect": "Deny",
+      "Action": [
+        "kms:Delete*",
+        "kms:ScheduleKeyDeletion",
+        "kms:Revoke*",
+        "kms:Disable*",
+        "kms:CancelKeyDeletion",
+        "kms:PutKeyPolicy",
+        "kms:ReplicateKey",
+        "kms:RetireGrant"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "ec2:DescribeVpcEndpoints",
+        "ec2:CreateVpcEndpoint",
+        "ec2:ModifyVpcEndpoint",
+        "ec2:DeleteVpcEndpoints",
+        "rds:RestoreDBClusterFromSnapshot"
+      ],
+      "Resource": "*"
+    }
+  ]
+}

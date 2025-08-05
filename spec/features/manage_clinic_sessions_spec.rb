@@ -4,7 +4,7 @@ describe "Manage clinic sessions" do
   around { |example| travel_to(Time.zone.local(2024, 2, 18)) { example.run } }
 
   scenario "Adding dates to the session, sending reminders and closing consent" do
-    given_my_organisation_is_running_an_hpv_vaccination_programme
+    given_my_team_is_running_an_hpv_vaccination_programme
 
     when_i_go_to_todays_sessions_as_a_nurse
     then_i_see_no_sessions
@@ -65,17 +65,17 @@ describe "Manage clinic sessions" do
     then_i_see_the_community_clinic
   end
 
-  def given_my_organisation_is_running_an_hpv_vaccination_programme
+  def given_my_team_is_running_an_hpv_vaccination_programme
     @programme = create(:programme, :hpv)
-    @organisation =
+    @team =
       create(
-        :organisation,
+        :team,
         :with_one_nurse,
         :with_generic_clinic,
         programmes: [@programme]
       )
 
-    @session = @organisation.generic_clinic_session
+    @session = @team.generic_clinic_session(academic_year: AcademicYear.current)
 
     @parent = create(:parent)
 
@@ -84,35 +84,42 @@ describe "Manage clinic sessions" do
   end
 
   def when_i_go_to_todays_sessions_as_a_nurse
-    sign_in @organisation.users.first
+    sign_in @team.users.first
     visit "/dashboard"
+
     click_link "Sessions", match: :first
+
+    choose "In progress"
+    click_on "Update results"
   end
 
   def when_i_go_to_unscheduled_sessions
-    click_link "Unscheduled"
+    choose "Unscheduled"
+    click_on "Update results"
   end
 
   def when_i_go_to_scheduled_sessions
-    click_link "Scheduled"
+    choose "Scheduled"
+    click_on "Update results"
   end
 
   def when_i_go_to_completed_sessions
-    click_link "Completed"
+    choose "Completed"
+    click_on "Update results"
   end
 
   alias_method :and_i_go_to_completed_sessions, :when_i_go_to_completed_sessions
 
   def then_i_see_no_sessions
-    expect(page).to have_content(/There are no (sessions|locations)/)
+    expect(page).to have_content("No sessions matching search criteria found")
   end
 
   def when_i_click_on_the_community_clinic
-    click_link "Community clinics"
+    click_link "Community clinic"
   end
 
   def then_i_see_the_clinic_session
-    expect(page).to have_content("Community clinics")
+    expect(page).to have_content("Community clinic")
     expect(page).to have_content("No sessions scheduled")
     expect(page).to have_content("Schedule sessions")
   end
@@ -168,7 +175,7 @@ describe "Manage clinic sessions" do
 
   def then_i_see_the_confirmation_page
     expect(page).to have_content("Edit session")
-    expect(page).to have_content("InvitationsSend on Sunday 18 February 2024")
+    expect(page).to have_content("InvitationsSend on Sunday, 18 February 2024")
   end
 
   def when_i_click_on_change_invitations
@@ -197,7 +204,7 @@ describe "Manage clinic sessions" do
   end
 
   def then_i_see_the_community_clinic
-    expect(page).to have_content("Community clinics")
+    expect(page).to have_content("Community clinic")
   end
 
   def when_the_patient_has_been_invited
@@ -211,7 +218,7 @@ describe "Manage clinic sessions" do
   end
 
   def and_i_click_on_the_community_clinic
-    click_on "Community clinics"
+    click_on "Community clinic"
   end
 
   def when_i_click_on_send_reminders

@@ -12,19 +12,19 @@ describe "Verbal consent" do
 
   def given_i_am_signed_in
     programmes = [create(:programme, :hpv)]
-    organisation = create(:organisation, :with_one_nurse, programmes:)
-    @session = create(:session, organisation:, programmes:)
+    team = create(:team, :with_one_nurse, programmes:)
+    @session = create(:session, team:, programmes:)
 
     @parent = create(:parent)
     @patient = create(:patient, session: @session, parents: [@parent])
 
-    sign_in organisation.users.first
+    sign_in team.users.first
   end
 
   def when_i_record_that_verbal_consent_was_given_but_that_its_not_safe_to_vaccinate
     visit session_consent_path(@session)
     click_link @patient.full_name
-    click_button "Get consent"
+    click_button "Record a new consent response"
 
     # Who are you trying to get consent from?
     choose @parent.full_name
@@ -61,7 +61,7 @@ describe "Verbal consent" do
 
   def and_the_patients_status_is_do_not_vaccinate
     click_link @patient.full_name, match: :first
-    expect(page).to have_content("Could not vaccinate")
+    expect(page).to have_content("Do not vaccinate")
   end
 
   def then_an_email_is_sent_to_the_parent_that_the_vaccination_wont_happen

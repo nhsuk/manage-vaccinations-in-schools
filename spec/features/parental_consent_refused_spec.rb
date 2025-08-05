@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 describe "Parental consent" do
+  around { |example| travel_to(Date.new(2025, 7, 31)) { example.run } }
+
   scenario "Refused" do
     stub_pds_search_to_return_no_patients
 
@@ -27,14 +29,13 @@ describe "Parental consent" do
 
   def given_an_hpv_programme_is_underway
     @programme = create(:programme, :hpv)
-    @organisation =
-      create(:organisation, :with_one_nurse, programmes: [@programme])
-    location = create(:school, name: "Pilot School")
+    @team = create(:team, :with_one_nurse, programmes: [@programme])
+    location = create(:school, name: "Pilot School", team: @team)
     @session =
       create(
         :session,
         :scheduled,
-        organisation: @organisation,
+        team: @team,
         programmes: [@programme],
         location:
       )
@@ -126,11 +127,11 @@ describe "Parental consent" do
   end
 
   def when_the_nurse_checks_the_consent_responses
-    sign_in @organisation.users.first
+    sign_in @team.users.first
 
     visit "/dashboard"
     click_on "Programmes", match: :first
-    click_on "HPV"
+    click_on "HPV", match: :first
     within ".app-secondary-navigation" do
       click_on "Sessions"
     end
@@ -140,7 +141,7 @@ describe "Parental consent" do
 
   def then_they_see_that_the_child_has_consent_refused
     expect(page).to have_content("Consent refused")
-    choose "Consent refused"
+    check "Consent refused"
     click_on "Update results"
     expect(page).to have_content(@child.full_name)
   end
@@ -154,7 +155,7 @@ describe "Parental consent" do
 
   def and_the_programme_outcome_is_could_not_vaccinate
     click_on "Programmes", match: :first
-    click_on "HPV"
+    click_on "HPV", match: :first
 
     within ".app-secondary-navigation" do
       click_on "Children"

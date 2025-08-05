@@ -65,7 +65,7 @@ module CIS2AuthHelper
             },
             {
               "person_orgid" => "1234123412341234",
-              "person_roleid" => "wrong-organisation",
+              "person_roleid" => "wrong-team",
               "org_code" => "AB12",
               "role_name" =>
                 '"Clinical":"Clinical Provision":"Nurse Access Role"',
@@ -108,8 +108,10 @@ module CIS2AuthHelper
       workgroups:
     )
 
-    if page.driver.respond_to? :get
+    if try(:page)&.driver.respond_to?(:get)
       page.driver.get "/users/auth/cis2/callback"
+    elsif defined?(:get)
+      get "/users/auth/cis2/callback"
     else
       visit "/users/auth/cis2/callback"
     end
@@ -117,7 +119,7 @@ module CIS2AuthHelper
 
   # Define a sign_in that is compatible with Devise's sign_in.
   def sign_in(user, role: :nurse, org_code: nil, superuser: false)
-    org_code ||= user.organisations.first.ods_code
+    org_code ||= user.teams.first.ods_code
     cis2_sign_in(user, role:, org_code:, superuser:)
   end
 
@@ -151,8 +153,8 @@ module CIS2AuthHelper
     end
 
     role_code ||= {
-      nurse: "S8000:G8000:R8001",
-      admin_staff: "S8000:G8001:R8006"
+      nurse: User::CIS2_NURSE_ROLE,
+      admin_staff: User::CIS2_ADMIN_ROLE
     }.fetch(role)
 
     nhsid_nrbac_role = raw_info["nhsid_nrbac_roles"][0]

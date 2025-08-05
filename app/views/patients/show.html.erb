@@ -18,17 +18,19 @@
   <%= govuk_button_link_to "Edit child record", edit_patient_path(@patient), secondary: true %>
 <% end %>
 
-<%= render AppCardComponent.new do |c| %>
-  <% c.with_heading { "Cohorts" } %>
+<%= render AppCardComponent.new(section: true) do |card| %>
+  <% card.with_heading { "Cohorts" } %>
   <%= render AppPatientCohortTableComponent.new(@patient, current_user:) %>
 <% end %>
 
-<%= render AppCardComponent.new do |c| %>
-  <% c.with_heading { "Sessions" } %>
+<%= render AppCardComponent.new(section: true) do |card| %>
+  <% card.with_heading { "Sessions" } %>
   <%= render AppPatientSessionTableComponent.new(@patient_sessions) %>
 <% end %>
 
-<%= render AppCardComponent.new do |c| %>
-  <% c.with_heading { "Vaccinations" } %>
-  <%= render AppPatientVaccinationTableComponent.new(@patient) %>
+<%= render AppCardComponent.new(section: true) do |card| %>
+  <% card.with_heading { "Vaccinations" } %>
+  <%= render AppPatientVaccinationTableComponent.new(
+        @patient, academic_year: AcademicYear.current, show_caption: false,
+      ) %>
 <% end %>

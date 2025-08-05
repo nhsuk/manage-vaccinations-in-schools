@@ -47,20 +47,19 @@ describe "End-to-end journey" do
   def given_an_hpv_programme_is_underway
     programme = create(:programme, :hpv)
 
-    @organisation =
-      create(:organisation, :with_one_nurse, programmes: [programme])
-    @school =
+    @team =
       create(
-        :school,
-        :secondary,
-        organisation: @organisation,
-        name: "Pilot School"
+        :team,
+        :with_one_nurse,
+        :with_generic_clinic,
+        programmes: [programme]
       )
+    @school = create(:school, :secondary, team: @team, name: "Pilot School")
     @batch =
       create(
         :batch,
         expiry: Date.new(2024, 4, 1),
-        organisation: @organisation,
+        team: @team,
         vaccine: programme.vaccines.first
       )
 
@@ -68,17 +67,15 @@ describe "End-to-end journey" do
       :session,
       :unscheduled,
       location: @school,
-      organisation: @organisation,
+      team: @team,
       programmes: [programme]
     )
   end
 
   def and_i_am_a_nurse_signed_into_the_service
-    sign_in @organisation.users.first
+    sign_in @team.users.first
     visit "/dashboard"
-    expect(page).to have_content(
-      "#{@organisation.users.first.full_name} (Nurse)"
-    )
+    expect(page).to have_content("#{@team.users.first.full_name} (Nurse)")
   end
 
   def when_i_upload_the_cohort_import_containing_one_child
@@ -113,8 +110,10 @@ describe "End-to-end journey" do
     visit "/dashboard"
     click_on "Programmes", match: :first
     click_on "HPV"
-    click_on "Cohort"
-    click_on "Import child records"
+    click_on "Import"
+    click_on "Import records"
+    choose "Child records"
+    click_on "Continue"
     attach_file "cohort_import[csv]", csv_file.path
     click_on "Continue"
     visit cohort_import_path(CohortImport.last)
@@ -126,7 +125,8 @@ describe "End-to-end journey" do
 
   def when_i_start_creating_a_new_session_by_choosing_school_and_time
     click_on "Sessions"
-    click_on "Unscheduled"
+    choose "Unscheduled"
+    click_on "Update results"
     click_on "Pilot School"
     click_on "Schedule sessions"
 
@@ -143,14 +143,14 @@ describe "End-to-end journey" do
     expect(page).to have_content("Edit session")
 
     expect(page).to have_content("ProgrammesHPV")
-    expect(page).to have_content("Session datesFriday 1 March 2024")
+    expect(page).to have_content("Session datesFriday, 1 March 2024")
     expect(page).to have_content(
-      "Consent requestsSend on Friday 9 February 2024"
+      "Consent requestsSend on Friday, 9 February 2024"
     )
     expect(page).to have_content(
       "Consent remindersSend 1 week before each session"
     )
-    expect(page).to have_content("Next: Friday 23 February 2024")
+    expect(page).to have_content("Next: Friday, 23 February 2024")
 
     click_on "Continue"
   end
@@ -161,7 +161,7 @@ describe "End-to-end journey" do
 
   def when_i_look_at_children_that_need_consent_responses
     click_link "Consent"
-    choose "No response"
+    check "No response"
     click_on "Update results"
   end
 
@@ -174,16 +174,22 @@ describe "End-to-end journey" do
   end
 
   def then_i_see_the_childs_details_including_the_updated_nhs_number
+    click_on "View full child record"
     expect(page).to have_content(/NHS number.*999.*888.*6678/)
   end
 
   def given_the_day_of_the_session_comes
     travel_to(Time.zone.local(2024, 3, 1))
-    sign_in @organisation.users.first
+    sign_in @team.users.first
   end
 
   def when_i_register_verbal_consent_and_triage
-    click_button "Get consent"
+    click_link "Sessions"
+    click_link "Pilot School"
+    click_link "Register"
+    click_link "TABLES, Bobby"
+
+    click_button "Record a new consent response"
 
     choose "Big Daddy Tests"
     click_button "Continue"
@@ -235,16 +241,15 @@ describe "End-to-end journey" do
 
     expect(page).to have_content("Update attendance")
 
-    # pre-screening
-    check "know what the vaccination is for, and are happy to have it"
-    check "have not already had the vaccination"
-    check "are feeling well"
-    check "have no allergies which would prevent vaccination"
+    within all("section")[0] do
+      check "I have checked that the above statements are true"
+    end
 
-    # vaccination
-    choose "Yes"
-    choose "Left arm (upper position)"
-    click_button "Continue"
+    within all("section")[1] do
+      choose "Yes"
+      choose "Left arm (upper position)"
+      click_button "Continue"
+    end
 
     choose @batch.name
     click_button "Continue"
@@ -266,11 +271,11 @@ describe "End-to-end journey" do
   end
 
   def then_i_see_the_activity_log_link
-    expect(page).to have_link "Activity log"
+    expect(page).to have_link "Session activity and notes"
   end
 
   def when_i_go_to_the_activity_log
-    click_link "Activity log"
+    click_link "Session activity and notes"
   end
 
   def then_i_see_the_populated_activity_log

@@ -32,7 +32,7 @@ endif::[]
 
 This is the prototype a service to manage vaccinations in schools and during
 catch-up clinics. This service will provide e-consent, programme management and
-point-of-care services for SAIS organisations and parents. The goal is for this service
+point-of-care services for SAIS teams and parents. The goal is for this service
 to integrate with the national vaccination record to record vaccinations.
 However, integration with the national vaccination record will not be part of
 this phase.
@@ -76,9 +76,9 @@ non-functional requirements which have been, where possible, de-emphasised.
 
 .User authentication
 * Users are authenticated with the NHS Care Identity Service (CIS2)
-* Users are part of a SAIS organisation and have restricted access to only those
-  programme and session data owned by their organisation
-* User SAIS organisation information is retrieved from NHS CIS2
+* Users are part of a SAIS team and have restricted access to only those
+  programme and session data owned by their team
+* User SAIS team information is retrieved from NHS CIS2
 * Access to functionality will be tied to user's roles as defined in the
     national RBAC, fox example only nurses are authorised to record a
     vaccination
@@ -90,7 +90,6 @@ non-functional requirements which have been, where possible, de-emphasised.
 * The service will be available on the public internet with no IP address
   range restrictions
 
-<<<<
 == Architecture Constraints
 
 * The system must protect patient data and comply with all applicable laws and
@@ -100,10 +99,8 @@ non-functional requirements which have been, where possible, de-emphasised.
 * The system must be deployed to a cloud platform, but also be platform agnostic
   and not constrained to run on any one cloud platform.
 * The system must be deployed to NHS approved platforms.
-* Integration with NHS DPS is via MESH using background batched jobs.
 * Integration with NHS PDS is via FHIR API using background jobs.
 
-<<<<
 == System Scope and Context
 
 ifdef::env-github[]
@@ -117,8 +114,8 @@ include::diagrams/context-view.puml[]
 ----
 endif::[]
 
-SAIS Organisation::
-Organisation responsible for performing vaccinations on school-aged children.
+SAIS Team::
+Team responsible for performing vaccinations on school-aged children.
 
 Parents::
 Parents are notified of the planned vaccination programme and invited to give
@@ -129,7 +126,6 @@ Used to lookup NHS numbers and confirm information entered / uploaded.
 
 NHS Data Processing Service (DPS)::
 Upstream recipient of vaccination records.
-
 
 == Solution strategy
 
@@ -198,10 +194,6 @@ service using a standard login page, and as is standard with Ruby on Rails apps,
 resources are exposed with REST-like paths using an MVC approach to separate
 concerns on the server.
 
-== Deployment
-
-include::deployment.adoc[leveloffset=+1,lines=24..-1]
-
 == Components
 
 * Authentication
@@ -209,3 +201,4 @@ include::deployment.adoc[leveloffset=+1,lines=24..-1]
 * Programme operations and vaccination recording
 * Offline support - Browser-based component
 * FHIR server synchronisation
+* Reporting (in development)

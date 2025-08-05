@@ -30,6 +30,11 @@
 class User < ApplicationRecord
   include FullNameConcern
 
+  CIS2_NURSE_ROLE = "S8000:G8000:R8001"
+  CIS2_ADMIN_ROLE = "S8000:G8001:R8006"
+
+  CIS2_WORKGROUP = "schoolagedimmunisations"
+
   attr_accessor :cis2_info
 
   if Settings.cis2.enabled
@@ -38,9 +43,9 @@ class User < ApplicationRecord
     devise :database_authenticatable, :trackable, :timeoutable
   end
 
-  has_and_belongs_to_many :organisations
+  has_and_belongs_to_many :teams
 
-  has_many :programmes, through: :organisations
+  has_many :programmes, through: :teams
 
   encrypts :email, deterministic: true
   encrypts :family_name, :given_name
@@ -67,6 +72,8 @@ class User < ApplicationRecord
 
   enum :fallback_role, { nurse: 0, admin: 1, superuser: 2 }, prefix: true
 
+  delegate :fhir_practitioner, to: :fhir_mapper
+
   def self.find_or_create_from_cis2_oidc(userinfo)
     user =
       User.find_or_initialize_by(
@@ -83,10 +90,10 @@ class User < ApplicationRecord
     user.tap(&:save!)
   end
 
-  def selected_organisation
-    @selected_organisation ||=
+  def selected_team
+    @selected_team ||=
       if cis2_info.present?
-        Organisation.find_by(ods_code: cis2_info.dig("selected_org", "code"))
+        Team.find_by(ods_code: cis2_info.dig("selected_org", "code"))
       end
   end
 
@@ -127,4 +134,8 @@ class User < ApplicationRecord
 
     is_superuser? ? "#{role} (superuser)" : role
   end
+
+  private
+
+  def fhir_mapper = @fhir_mapper ||= FHIRMapper::User.new(self)
 end

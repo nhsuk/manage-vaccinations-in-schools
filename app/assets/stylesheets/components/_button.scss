@@ -1,0 +1,61 @@
+@use "sass:color";
+@use "../vendor/nhsuk-frontend" as *;
+
+$_button-shadow-size: $nhsuk-border-width-form-element * 2;
+$_secondary-warning-button-hover-color: color.change(
+  $nhsuk-warning-button-color,
+  $alpha: 0.1
+);
+
+.nhsuk-button {
+  .button_to &,
+  .nhsuk-table & {
+    margin-bottom: 0;
+  }
+}
+
+.app-button--secondary-warning {
+  // stylelint-disable-next-line scss/at-extend-no-missing-placeholder
+  @extend .nhsuk-button--secondary;
+
+  &,
+  &:link,
+  &:visited,
+  &:active,
+  &:hover {
+    color: $nhsuk-warning-button-color;
+  }
+
+  &:hover,
+  &:hover:visited {
+    background-color: $_secondary-warning-button-hover-color;
+    color: $nhsuk-warning-button-color;
+  }
+
+  &:active {
+    background-color: $_secondary-warning-button-hover-color;
+    border-color: $nhsuk-warning-button-color;
+  }
+
+  &:not(:focus):not(:active)::before {
+    border-color: $nhsuk-warning-button-color;
+  }
+
+  &:not(:focus):not(:active)::after {
+    box-shadow: 0 $_button-shadow-size 0 $nhsuk-warning-button-color;
+  }
+}
+
+.app-button--small {
+  padding: nhsuk-spacing(2) 12px nhsuk-spacing(1);
+
+  @include nhsuk-font-size(16);
+}
+
+.app-button--icon {
+  .nhsuk-icon {
+    display: block;
+    height: 28px;
+    width: 28px;
+  }
+}

@@ -19,16 +19,15 @@ class PatientImportRow
            :validate_parent_2_relationship,
            :validate_year_group
 
-  def initialize(data:, organisation:, year_groups:)
+  def initialize(data:, team:, academic_year:, year_groups:)
     @data = data
-    @organisation = organisation
+    @team = team
+    @academic_year = academic_year
     @year_groups = year_groups
   end
 
   def to_patient
     return unless valid?
-
-    import_attributes = build_patient_import_attributes
 
     if (existing_patient = existing_patients.first)
       prepare_patient_changes(existing_patient, import_attributes)
@@ -52,14 +51,13 @@ class PatientImportRow
       if school
         SchoolMove.find_or_initialize_by(patient:, school:)
       else
-        SchoolMove.find_or_initialize_by(
-          patient:,
-          home_educated:,
-          organisation:
-        )
+        SchoolMove.find_or_initialize_by(patient:, home_educated:, team:)
       end
 
-    school_move.tap { it.source = school_move_source }
+    school_move.tap do
+      it.academic_year = academic_year
+      it.source = school_move_source
+    end
   end
 
   def to_parents
@@ -171,12 +169,12 @@ class PatientImportRow
     nhs_number&.to_s&.gsub(/\s/, "")
   end
 
-  attr_reader :organisation, :year_groups
+  attr_reader :team, :academic_year, :year_groups
 
   private
 
-  def build_patient_import_attributes
-    {
+  def import_attributes
+    @import_attributes ||= {
       address_line_1: address_line_1&.to_s,
       address_line_2: address_line_2&.to_s,
       address_postcode: address_postcode&.to_postcode,
@@ -189,13 +187,17 @@ class PatientImportRow
       nhs_number: nhs_number_value,
       preferred_family_name: preferred_last_name&.to_s,
       preferred_given_name: preferred_first_name&.to_s,
-      registration: registration&.to_s
+      registration: registration&.to_s,
+      registration_academic_year:
     }.compact
   end
 
   def prepare_patient_changes(patient, import_attributes)
-    patient.registration =
-      import_attributes.delete(:registration) unless stage_registration?
+    unless stage_registration?
+      patient.registration = import_attributes.delete(:registration)
+      patient.registration_academic_year =
+        import_attributes.delete(:registration_academic_year)
+    end
 
     auto_accept_attributes_if_applicable(patient, import_attributes)
     handle_address_updates(patient, import_attributes)
@@ -321,7 +323,7 @@ class PatientImportRow
 
   def birth_academic_year_value
     if year_group.present?
-      year_group.to_i&.to_birth_academic_year
+      year_group.to_i&.to_birth_academic_year(academic_year:)
     else
       date_of_birth&.to_date&.academic_year
     end
@@ -345,6 +347,10 @@ class PatientImportRow
 
   def parent_2_phone_value
     parent_2_phone&.to_s&.gsub(/\s/, "")
+  end
+
+  def registration_academic_year
+    academic_year if registration.present?
   end
 
   def validate_date_of_birth
@@ -466,7 +472,7 @@ class PatientImportRow
   def validate_year_group
     field = year_group.presence || date_of_birth
 
-    year_group_value = birth_academic_year_value&.to_year_group
+    year_group_value = birth_academic_year_value&.to_year_group(academic_year:)
 
     if year_group_value.nil?
       # We only need to add a validation error here is the file had an

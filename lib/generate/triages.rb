@@ -2,17 +2,17 @@
 
 module Generate
   class Triages
-    attr_reader :config, :organisation, :programme
+    attr_reader :config, :team, :programme
 
     def initialize(
-      organisation:,
+      team:,
       programme: nil,
       session: nil,
       ready_to_vaccinate: 1,
       do_not_vaccinate: 1
     )
-      @organisation = organisation
-      @programme = programme || organisation.programmes.sample
+      @team = team
+      @programme = programme || team.programmes.sample
       @session = session
       @ready_to_vaccinate = ready_to_vaccinate
       @do_not_vaccinate = do_not_vaccinate
@@ -27,12 +27,14 @@ module Generate
 
     private
 
+    def academic_year = Date.current.academic_year
+
     def patients
-      (@session.presence || organisation)
+      (@session.presence || team)
         .patients
         .includes(:triage_statuses)
-        .in_programmes([programme])
-        .select { it.triage_status(programme:).required? }
+        .appear_in_programmes([programme], academic_year:)
+        .select { it.triage_status(programme:, academic_year:).required? }
     end
 
     def random_patients(count)
@@ -45,7 +47,7 @@ module Generate
     end
 
     def user
-      @user ||= organisation.users.includes(:organisations).sample
+      @user ||= team.users.includes(:teams).sample
     end
 
     def create_triage_with_status(status, count)
@@ -58,7 +60,7 @@ module Generate
           patient:,
           programme:,
           performed_by: user,
-          organisation:
+          team:
         )
       end
     end

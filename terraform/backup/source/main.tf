@@ -3,15 +3,14 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 5.87"
+      version = "~> 6.2"
     }
   }
 
   backend "s3" {
-    region         = "eu-west-2"
-    use_lockfile   = true
-    dynamodb_table = "mavis-terraform-state-lock"
-    encrypt        = true
+    region       = "eu-west-2"
+    use_lockfile = true
+    encrypt      = true
   }
 }
 
@@ -112,10 +111,9 @@ module "source" {
     ],
     "rules" : [
       {
-        # Cross-account copying will be enabled in MAV-1158
-        # "copy_action" : {
-        #   "delete_after" : 60
-        # },
+        "copy_action" : {
+          "delete_after" : var.backup_retention_period
+        },
         "lifecycle" : {
           "delete_after" : var.backup_retention_period
         },

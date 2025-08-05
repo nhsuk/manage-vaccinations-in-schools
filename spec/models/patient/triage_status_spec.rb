@@ -4,15 +4,17 @@
 #
 # Table name: patient_triage_statuses
 #
-#  id           :bigint           not null, primary key
-#  status       :integer          default("not_required"), not null
-#  patient_id   :bigint           not null
-#  programme_id :bigint           not null
+#  id             :bigint           not null, primary key
+#  academic_year  :integer          not null
+#  status         :integer          default("not_required"), not null
+#  vaccine_method :integer
+#  patient_id     :bigint           not null
+#  programme_id   :bigint           not null
 #
 # Indexes
 #
-#  index_patient_triage_statuses_on_patient_id_and_programme_id  (patient_id,programme_id) UNIQUE
-#  index_patient_triage_statuses_on_status                       (status)
+#  idx_on_patient_id_programme_id_academic_year_6cf32349df  (patient_id,programme_id,academic_year) UNIQUE
+#  index_patient_triage_statuses_on_status                  (status)
 #
 # Foreign Keys
 #
@@ -26,6 +28,8 @@ describe Patient::TriageStatus do
 
   let(:patient) { create(:patient, year_group: 9) }
   let(:programme) { create(:programme) }
+
+  before { patient.strict_loading!(false) }
 
   it { should belong_to(:patient) }
   it { should belong_to(:programme) }
@@ -43,11 +47,49 @@ describe Patient::TriageStatus do
   end
 
   describe "#status" do
-    subject { patient_triage_status.assign_status }
-
-    before { patient.strict_loading!(false) }
+    subject { patient_triage_status.tap(&:assign_status).status.to_sym }
 
     context "with no triage" do
+      it { should be(:not_required) }
+    end
+
+    context "with conflicting consent" do
+      before do
+        create(:consent, :given, patient:, programme:)
+        create(
+          :consent,
+          :refused,
+          :needing_triage,
+          patient:,
+          programme:,
+          parent: create(:parent)
+        )
+      end
+
+      it { should be(:not_required) }
+    end
+
+    context "with two given consents with different methods" do
+      before do
+        create(
+          :consent,
+          :given,
+          :needing_triage,
+          patient:,
+          programme:,
+          vaccine_methods: %w[injection]
+        )
+        create(
+          :consent,
+          :given,
+          :needing_triage,
+          patient:,
+          programme:,
+          vaccine_methods: %w[nasal],
+          parent: create(:parent)
+        )
+      end
+
       it { should be(:not_required) }
     end
 
@@ -147,6 +189,166 @@ describe Patient::TriageStatus do
         it_behaves_like "a vaccinated patient with any triage status" do
           let(:triage_trait) { :delay_vaccination }
         end
+      end
+    end
+  end
+
+  describe "#vaccine_method" do
+    subject { patient_triage_status.tap(&:assign_status).vaccine_method }
+
+    context "with no triage" do
+      it { should be_nil }
+    end
+
+    context "with a consent that needs triage" do
+      before { create(:consent, :needing_triage, patient:, programme:) }
+
+      it { should be_nil }
+    end
+
+    context "with a historical vaccination that needs triage" do
+      let(:programme) { create(:programme, :td_ipv) }
+
+      before do
+        create(:vaccination_record, patient:, programme:, dose_sequence: 1)
+      end
+
+      it { should be_nil }
+
+      context "when consent is given" do
+        before { create(:consent, :given, patient:, programme:) }
+
+        it { should be_nil }
+      end
+
+      context "when consent is refused" do
+        before { create(:consent, :refused, patient:, programme:) }
+
+        it { should be_nil }
+      end
+    end
+
+    context "with a safe to vaccinate triage" do
+      before { create(:triage, :ready_to_vaccinate, patient:, programme:) }
+
+      it { should eq("injection") }
+    end
+
+    context "with a safe to vaccinate triage and vaccinated" do
+      before do
+        create(:triage, :ready_to_vaccinate, patient:, programme:)
+        create(:vaccination_record, patient:, programme:)
+      end
+
+      it { should be_nil }
+    end
+
+    context "with a do not vaccinate triage" do
+      before { create(:triage, :do_not_vaccinate, patient:, programme:) }
+
+      it { should be_nil }
+    end
+
+    context "with a needs follow up triage" do
+      before { create(:triage, :needs_follow_up, patient:, programme:) }
+
+      it { should be_nil }
+    end
+
+    context "with a delay vaccination triage" do
+      before { create(:triage, :delay_vaccination, patient:, programme:) }
+
+      it { should be_nil }
+    end
+
+    context "with an invalidated safe to vaccinate triage" do
+      before do
+        create(:triage, :ready_to_vaccinate, :invalidated, patient:, programme:)
+      end
+
+      it { should be_nil }
+    end
+  end
+
+  describe "academic year filtering" do
+    let(:current_academic_year) { Date.current.academic_year }
+    let(:previous_academic_year) { current_academic_year - 1 }
+    let(:patient) { create(:patient) }
+    let(:programme) { create(:programme) }
+
+    describe "with triages from different academic years" do
+      subject(:status) do
+        patient_triage_status.tap(&:assign_status).status.to_sym
+      end
+
+      context "with a ready to vaccinate triage from the current academic year" do
+        before do
+          create(
+            :triage,
+            :ready_to_vaccinate,
+            patient: patient,
+            programme: programme,
+            created_at: Date.new(current_academic_year, 10, 15).in_time_zone
+          )
+        end
+
+        it { should be(:safe_to_vaccinate) }
+      end
+
+      context "with a ready to vaccinate triage from a previous academic year" do
+        before do
+          create(
+            :triage,
+            :ready_to_vaccinate,
+            patient: patient,
+            programme: programme,
+            created_at: Date.new(previous_academic_year, 10, 15).in_time_zone
+          )
+        end
+
+        it { should be(:not_required) }
+      end
+
+      context "with a ready to vaccinate and a do not vaccinate triage from the current and previous academic years" do
+        before do
+          create(
+            :triage,
+            :ready_to_vaccinate,
+            patient: patient,
+            programme: programme,
+            created_at: Date.new(current_academic_year, 10, 15).in_time_zone
+          )
+          create(
+            :triage,
+            :do_not_vaccinate,
+            patient: patient,
+            programme: programme,
+            created_at: Date.new(previous_academic_year, 10, 15).in_time_zone
+          )
+        end
+
+        it { should be(:safe_to_vaccinate) }
+      end
+
+      context "with a do not vaccinate and ready to vaccinate triage from the current and previous academic years" do
+        before do
+          create(
+            :triage,
+            :do_not_vaccinate,
+            patient: patient,
+            programme: programme,
+            created_at: Date.new(current_academic_year, 10, 15).in_time_zone
+          )
+          create(
+            :triage,
+            :ready_to_vaccinate,
+            patient: patient,
+            programme: programme,
+            created_at: Date.new(previous_academic_year, 10, 15).in_time_zone
+          )
+        end
+
+        it { should be(:do_not_vaccinate) }
       end
     end
   end

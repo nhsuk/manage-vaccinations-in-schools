@@ -1,0 +1,39 @@
+# frozen_string_literal: true
+
+module AcademicYear
+  class << self
+    def current = (override_current_date || Date.current).academic_year
+
+    def pending = preparation? ? current + 1 : current
+
+    # 2024 is the year Mavis went into private beta. Earlier years are
+    # supported only in the case where the service is running in an
+    # environment prior to 2024 (only used when changing the date in tests).
+    def first = [2024, current].min
+
+    alias_method :last, :pending
+
+    def all = (first..last).to_a.reverse
+
+    private
+
+    def override_current_date
+      @override_current_date ||=
+        if (value = Settings.academic_year_today_override).present? &&
+             value != "nil"
+          Date.parse(value)
+        end
+    end
+
+    def preparation?
+      (override_current_date || Date.current) >= preparation_start_date
+    end
+
+    def preparation_start_date
+      start_date = (current + 1).to_academic_year_date_range.first
+      days_of_preparation =
+        Settings.academic_year_number_of_preparation_days.to_i
+      start_date - days_of_preparation.days
+    end
+  end
+end

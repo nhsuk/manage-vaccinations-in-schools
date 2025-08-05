@@ -133,3 +133,9 @@ At this point the histories of the `release` and `main` branches will have
 diverged and it will not be possible to fast-forward the `release` branch when
 releasing. It will have to be reset to the latest release candidate as
 previously described.
+
+## Rollback
+
+A release can be rolled back by deploying the previous release tag using the regular GitHub workflow. This can be done on a per-service level or for all services.
+If the issue is spotted early and the CodeDeploy deployment is still in progress, the new deployment can still be aborted.
+To do this, go to the CodeDeploy console, select the deployment group, and click "Stop deployment".

@@ -3,9 +3,10 @@
 class Reports::ProgrammeVaccinationsExporter
   include Reports::ExportFormatters
 
-  def initialize(organisation:, programme:, start_date:, end_date:)
-    @organisation = organisation
+  def initialize(team:, programme:, academic_year:, start_date:, end_date:)
+    @team = team
     @programme = programme
+    @academic_year = academic_year
     @start_date = start_date
     @end_date = end_date
   end
@@ -24,7 +25,7 @@ class Reports::ProgrammeVaccinationsExporter
 
   private
 
-  attr_reader :organisation, :programme, :start_date, :end_date
+  attr_reader :team, :programme, :academic_year, :start_date, :end_date
 
   def headers
     %w[
@@ -70,6 +71,7 @@ class Reports::ProgrammeVaccinationsExporter
       ANATOMICAL_SITE
       ROUTE_OF_VACCINATION
       DOSE_SEQUENCE
+      DOSE_VOLUME
       REASON_NOT_VACCINATED
       LOCAL_PATIENT_ID
       SNOMED_PROCEDURE_CODE
@@ -81,9 +83,10 @@ class Reports::ProgrammeVaccinationsExporter
 
   def vaccination_records
     scope =
-      organisation
+      team
         .vaccination_records
         .where(programme:)
+        .for_academic_year(academic_year)
         .includes(
           :batch,
           :location,
@@ -128,8 +131,12 @@ class Reports::ProgrammeVaccinationsExporter
         .not_invalidated
         .includes(:parent, :patient)
         .group_by(&:patient_id)
-        .transform_values do
-          ConsentGrouper.call(it, programme_id: programme.id)
+        .transform_values do |consents_for_patient|
+          ConsentGrouper.call(
+            consents_for_patient,
+            programme_id: programme.id,
+            academic_year:
+          )
         end
   end
 
@@ -137,15 +144,20 @@ class Reports::ProgrammeVaccinationsExporter
     @gillick_assessments ||=
       GillickAssessment
         .select(
-          "DISTINCT ON (patient_session_id) gillick_assessments.*, patient_id, session_id"
+          "DISTINCT ON (patient_session_id) gillick_assessments.*, " \
+            "patient_sessions.patient_id, patient_sessions.session_id"
         )
         .joins(:patient_session)
+        .joins(:session)
         .where(
           patient_sessions: {
             patient_id: vaccination_records.select(:patient_id),
             session_id: vaccination_records.select(:session_id)
           },
-          programme:
+          programme:,
+          session: {
+            academic_year:
+          }
         )
         .order(:patient_session_id, created_at: :desc)
         .includes(:performed_by)
@@ -159,7 +171,11 @@ class Reports::ProgrammeVaccinationsExporter
     @triages ||=
       Triage
         .select("DISTINCT ON (patient_id) triage.*")
-        .where(patient_id: vaccination_records.select(:patient_id), programme:)
+        .where(
+          academic_year:,
+          patient_id: vaccination_records.select(:patient_id),
+          programme:
+        )
         .not_invalidated
         .order(:patient_id, created_at: :desc)
         .includes(:performed_by)
@@ -171,13 +187,15 @@ class Reports::ProgrammeVaccinationsExporter
     location = vaccination_record.location
     patient = vaccination_record.patient
     session = vaccination_record.session
+    vaccine = vaccination_record.vaccine
 
     grouped_consents = consents.fetch(patient.id, [])
     triage = triages[patient.id]
     gillick_assessment = gillick_assessments.dig(patient.id, session.id)
+    academic_year = session.academic_year
 
     [
-      organisation.ods_code,
+      team.ods_code,
       school_urn(location:, patient:),
       school_name(location:, patient:),
       care_setting(location:),
@@ -194,7 +212,7 @@ class Reports::ProgrammeVaccinationsExporter
       nhs_number_status_code(patient:),
       patient.gp_practice&.ods_code || "",
       patient.gp_practice&.name || "",
-      consent_status(patient:, programme:),
+      consent_status(patient:, programme:, academic_year:),
       consent_details(consents: grouped_consents),
       health_question_answers(consents: grouped_consents),
       triage&.status&.humanize || "",
@@ -210,7 +228,7 @@ class Reports::ProgrammeVaccinationsExporter
       vaccination_record.performed_at.to_date.iso8601,
       vaccination_record.performed_at.strftime("%H:%M:%S"),
       programme.name,
-      vaccination_record.vaccine&.nivs_name || "",
+      vaccine&.nivs_name || "",
       vaccination_record.performed_by_user&.email || "",
       vaccination_record.performed_by&.given_name || "",
       vaccination_record.performed_by&.family_name || "",
@@ -219,9 +237,10 @@ class Reports::ProgrammeVaccinationsExporter
       anatomical_site(vaccination_record:),
       route_of_vaccination(vaccination_record:),
       dose_sequence(vaccination_record:),
+      vaccination_record.dose_volume_ml,
       reason_not_vaccinated(vaccination_record:),
       patient.id,
-      programme.snomed_procedure_code,
+      vaccination_record.snomed_procedure_code,
       reason_for_inclusion(vaccination_record:),
       record_created_at(vaccination_record:),
       record_updated_at(vaccination_record:)
@@ -245,7 +264,7 @@ class Reports::ProgrammeVaccinationsExporter
     return "" if gillick_assessment.nil?
 
     if (consent = consents[patient.id]&.find(&:via_self_consent?))
-      consent.notify_parents ? "Y" : "N"
+      consent.notify_parents_on_vaccination ? "Y" : "N"
     else
       ""
     end

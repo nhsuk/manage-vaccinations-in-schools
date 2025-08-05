@@ -12,19 +12,19 @@ describe "Verbal consent" do
 
   def given_i_am_signed_in
     programmes = [create(:programme, :hpv)]
-    organisation = create(:organisation, :with_one_nurse, programmes:)
-    @session = create(:session, organisation:, programmes:)
+    team = create(:team, :with_one_nurse, programmes:)
+    @session = create(:session, team:, programmes:)
 
     @parent = create(:parent)
     @patient = create(:patient, session: @session, parents: [@parent])
 
-    sign_in organisation.users.first
+    sign_in team.users.first
   end
 
   def when_i_record_that_consent_was_given_but_keep_in_triage
     visit session_consent_path(@session)
     click_link @patient.full_name
-    click_button "Get consent"
+    click_button "Record a new consent response"
 
     # Who are you trying to get consent from?
     choose @parent.full_name

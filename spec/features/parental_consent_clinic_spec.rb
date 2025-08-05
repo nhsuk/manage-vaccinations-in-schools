@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
-describe "Parental consent school" do
+describe "Parental consent" do
+  around { |example| travel_to(Date.new(2025, 7, 31)) { example.run } }
+
   scenario "Child attending a clinic goes to a school" do
     stub_pds_search_to_return_no_patients
 
@@ -96,30 +98,29 @@ describe "Parental consent school" do
 
   def given_an_hpv_programme_is_underway
     @programme = create(:programme, :hpv)
-    @organisation =
-      create(:organisation, :with_one_nurse, programmes: [@programme])
+    @team = create(:team, :with_one_nurse, programmes: [@programme])
 
-    location = create(:generic_clinic, organisation: @organisation)
+    location = create(:generic_clinic, team: @team)
 
     @session =
       create(
         :session,
         :scheduled,
-        organisation: @organisation,
+        team: @team,
         programmes: [@programme],
         location:
       )
 
     @child = create(:patient, session: @session)
 
-    @school = create(:school, organisation: @organisation)
+    @school = create(:school, team: @team)
   end
 
   def and_an_upcoming_school_session_exists
     create(
       :session,
       :scheduled,
-      organisation: @organisation,
+      team: @team,
       programmes: [@programme],
       location: @school
     )
@@ -236,7 +237,7 @@ describe "Parental consent school" do
   end
 
   def when_the_nurse_checks_the_school_moves
-    sign_in @organisation.users.first
+    sign_in @team.users.first
     visit "/dashboard"
 
     within ".nhsuk-navigation" do
@@ -263,7 +264,7 @@ describe "Parental consent school" do
 
   def when_the_nurse_checks_the_patient(in_the_school: false)
     click_on "Programmes", match: :first
-    click_on "HPV"
+    click_on "HPV", match: :first
     within ".app-secondary-navigation" do
       click_on "Sessions"
     end
@@ -271,7 +272,7 @@ describe "Parental consent school" do
     if in_the_school
       click_on @school.name
     else
-      click_on "Community clinics"
+      click_on "Community clinic"
     end
 
     click_on "Session outcome"
@@ -279,14 +280,17 @@ describe "Parental consent school" do
   end
 
   def then_the_nurse_should_see_the_school
+    click_on "View full child record"
     expect(page).to have_content("School#{@school.name}")
   end
 
   def then_the_nurse_should_see_home_schooled
+    click_on "View full child record"
     expect(page).to have_content("SchoolHome-schooled")
   end
 
   def then_the_nurse_should_see_unknown_school
+    click_on "View full child record"
     expect(page).to have_content("SchoolUnknown")
   end
 end

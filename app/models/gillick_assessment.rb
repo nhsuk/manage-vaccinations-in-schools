@@ -43,6 +43,8 @@ class GillickAssessment < ApplicationRecord
   has_one :session, through: :patient_session
   has_one :location, through: :session
 
+  delegate :academic_year, to: :session
+
   encrypts :notes
 
   validates :knows_consequences,

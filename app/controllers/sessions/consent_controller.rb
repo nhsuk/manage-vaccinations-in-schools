@@ -1,26 +1,23 @@
 # frozen_string_literal: true
 
 class Sessions::ConsentController < ApplicationController
-  include Pagy::Backend
-  include SearchFormConcern
+  include PatientSearchFormConcern
 
   before_action :set_session
-  before_action :set_search_form
+  before_action :set_patient_search_form
 
   layout "full"
 
   def show
     @statuses = Patient::ConsentStatus.statuses.keys
-    @programmes = @session.programmes
 
     scope =
-      @session
-        .patient_sessions
-        .includes_programmes
-        .includes(patient: :consent_statuses)
-        .in_programmes(@programmes)
+      @session.patient_sessions.includes_programmes.includes(
+        :latest_note,
+        patient: :consent_statuses
+      )
 
-    patient_sessions = @form.apply(scope, programme: @programmes)
+    patient_sessions = @form.apply(scope)
     @pagy, @patient_sessions = pagy(patient_sessions)
   end
 

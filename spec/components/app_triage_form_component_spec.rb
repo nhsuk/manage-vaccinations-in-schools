@@ -3,59 +3,119 @@
 describe AppTriageFormComponent do
   subject(:rendered) { render_inline(component) }
 
-  let(:component) do
-    described_class.new(patient_session:, programme:, url: "#")
-  end
+  let(:component) { described_class.new(triage_form, url:) }
+  let(:url) { "/triage" }
 
   let(:programme) { create(:programme) }
   let(:patient_session) { create(:patient_session, programmes: [programme]) }
   let(:patient) { patient_session.patient }
 
+  let(:triage_form) { TriageForm.new(patient_session:, programme:) }
+
+  it { should have_css("h2") }
   it { should have_text("Is it safe to vaccinate") }
-  it { should have_css(".app-fieldset__legend--reset") }
 
-  describe "triage instance variable" do
-    subject(:triage) { component.instance_variable_get(:@triage) }
+  describe "without a heading" do
+    let(:component) { described_class.new(triage_form, url:, heading: false) }
 
-    context "patient_session has no existing triage" do
-      it { should be_a(Triage) }
+    it { should_not have_css("h2") }
+  end
+
+  describe "hint text and triage options for consented delivery method(s)" do
+    let(:programme) { create(:programme, :flu) }
+
+    context "when only injection is consented to" do
+      before do
+        create(
+          :patient_consent_status,
+          :given,
+          patient:,
+          programme:,
+          vaccine_methods: %w[injection]
+        )
+      end
+
+      it "shows the correct hint about injection only" do
+        expect(rendered).to have_text(
+          "The parent has consented to the injected vaccine only"
+        )
+      end
+
+      it "shows the correct safe triage option for injection only" do
+        expect(rendered).to have_text("safe to vaccinate with injected vaccine")
+        expect(rendered).not_to have_text("safe to vaccinate with nasal spray")
+      end
     end
 
-    context "patient_session has existing triage" do
-      before { create(:triage, :needs_follow_up, programme:, patient:) }
+    context "when both nasal and injection are consented to" do
+      before do
+        create(
+          :patient_consent_status,
+          :given,
+          patient:,
+          programme:,
+          vaccine_methods: %w[injection nasal]
+        )
+      end
 
-      it { should_not be_nil }
-      it { should be_needs_follow_up }
+      it "shows the correct hint about injection being offered" do
+        expect(rendered).to have_text(
+          "The parent has consented to the injected vaccine being offered if the nasal spray is not suitable"
+        )
+      end
+
+      it "shows the correct safe triage options for nasal and injection" do
+        expect(rendered).to have_text("safe to vaccinate with injected vaccine")
+        expect(rendered).to have_text("safe to vaccinate with nasal spray")
+      end
+    end
+
+    context "when only nasal is consented to" do
+      before do
+        create(
+          :patient_consent_status,
+          :given,
+          patient:,
+          programme:,
+          vaccine_methods: %w[nasal]
+        )
+      end
+
+      it "shows the correct hint about nasal spray only" do
+        expect(rendered).to have_text(
+          "The parent has consented to the nasal spray only"
+        )
+      end
+
+      it "shows the correct safe triage option for nasal only" do
+        expect(rendered).not_to have_text(
+          "safe to vaccinate with injected vaccine"
+        )
+        expect(rendered).to have_text("safe to vaccinate with nasal spray")
+      end
     end
   end
 
-  describe "with a bold legend" do
-    let(:component) do
-      described_class.new(patient_session:, programme:, url: "#", legend: :bold)
-    end
+  context "when programme does not have multiple delivery methods" do
+    let(:programme) { create(:programme, :hpv) }
 
-    it { should have_css("h2") }
-    it { should_not have_css(".app-fieldset__legend--reset") }
-  end
-
-  describe "with a hidden legend" do
-    let(:component) do
-      described_class.new(
-        patient_session:,
+    before do
+      create(
+        :patient_consent_status,
+        :given,
+        patient:,
         programme:,
-        url: "#",
-        legend: :hidden
+        vaccine_methods: %w[injection]
       )
     end
 
-    it { should have_css("legend.nhsuk-visually-hidden") }
-  end
-
-  describe "with the put method" do
-    let(:component) do
-      described_class.new(patient_session:, programme:, url: "#", method: :put)
+    it "shows only the generic safe to vaccinate option, and no hint" do
+      expect(rendered).to have_text("safe to vaccinate")
+      expect(rendered).not_to have_text(
+        "safe to vaccinate with injected vaccine"
+      )
+      expect(rendered).not_to have_text("safe to vaccinate with nasal spray")
+      expect(rendered).not_to have_text("The parent has consented to")
     end
-
-    it { should have_text("Continue") }
   end
 end

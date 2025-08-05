@@ -3,16 +3,15 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 5.87"
+      version = "~> 6.2"
     }
   }
 
   backend "s3" {
-    bucket         = "mavisbackup-terraform-state"
-    region         = "eu-west-2"
-    dynamodb_table = "mavisbackup-terraform-state-lock"
-    use_lockfile   = true
-    encrypt        = true
+    bucket       = "mavisbackup-terraform-state"
+    region       = "eu-west-2"
+    use_lockfile = true
+    encrypt      = true
   }
 }
 
@@ -43,6 +42,33 @@ resource "aws_kms_key" "destination_backup_key" {
         }
         Action   = "kms:*"
         Resource = "*"
+        }, {
+        Sid    = "AllowRestoreToSourceAccount"
+        Effect = "Allow"
+        Principal = {
+          AWS = ["arn:aws:iam::${var.source_account_id}:root"]
+        }
+        "Action" : [
+          "kms:Encrypt",
+          "kms:Decrypt",
+          "kms:ReEncrypt*",
+          "kms:GenerateDataKey*",
+          "kms:DescribeKey"
+        ],
+        "Resource" : "*"
+        }, {
+        Sid    = "Allow attachment of persistent resources"
+        Effect = "Allow"
+        Principal = {
+          AWS = ["arn:aws:iam::${var.source_account_id}:root"]
+        }
+        "Action" : [
+          "kms:CreateGrant",
+          "kms:ListGrants",
+          "kms:RevokeGrant"
+        ],
+        "Resource" : "*",
+        "Condition" : { "Bool" : { "kms:GrantIsForAWSResource" : true } }
       }
     ]
   })

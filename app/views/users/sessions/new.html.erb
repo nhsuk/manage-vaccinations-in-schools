@@ -4,7 +4,7 @@
   <%= h1 "Log in", size: "xl" %>
 
   <%= f.govuk_email_field :email, autocomplete: "email", label: { text: "Email address" } %>
-  <%= f.govuk_password_field :password, autocomplete: "current-password", label: { text: "Password" } %>
+  <%= f.govuk_text_field :password, autocomplete: "current-password", label: { text: "Password" }, type: "password" %>
 
   <% if devise_mapping.rememberable? %>
     <%= f.govuk_check_boxes_fieldset :remember_me, multiple: false, legend: nil do %>

@@ -4,41 +4,48 @@
 #
 # Table name: vaccination_records
 #
-#  id                       :bigint           not null, primary key
-#  confirmation_sent_at     :datetime
-#  delivery_method          :integer
-#  delivery_site            :integer
-#  discarded_at             :datetime
-#  dose_sequence            :integer
-#  full_dose                :boolean
-#  location_name            :string
-#  notes                    :text
-#  outcome                  :integer          not null
-#  pending_changes          :jsonb            not null
-#  performed_at             :datetime         not null
-#  performed_by_family_name :string
-#  performed_by_given_name  :string
-#  performed_ods_code       :string
-#  uuid                     :uuid             not null
-#  created_at               :datetime         not null
-#  updated_at               :datetime         not null
-#  batch_id                 :bigint
-#  patient_id               :bigint
-#  performed_by_user_id     :bigint
-#  programme_id             :bigint           not null
-#  session_id               :bigint
-#  vaccine_id               :bigint
+#  id                                    :bigint           not null, primary key
+#  confirmation_sent_at                  :datetime
+#  delivery_method                       :integer
+#  delivery_site                         :integer
+#  discarded_at                          :datetime
+#  dose_sequence                         :integer
+#  full_dose                             :boolean
+#  location_name                         :string
+#  nhs_immunisations_api_etag            :string
+#  nhs_immunisations_api_sync_pending_at :datetime
+#  nhs_immunisations_api_synced_at       :datetime
+#  notes                                 :text
+#  notify_parents                        :boolean
+#  outcome                               :integer          not null
+#  pending_changes                       :jsonb            not null
+#  performed_at                          :datetime         not null
+#  performed_by_family_name              :string
+#  performed_by_given_name               :string
+#  performed_ods_code                    :string
+#  protocol                              :integer
+#  uuid                                  :uuid             not null
+#  created_at                            :datetime         not null
+#  updated_at                            :datetime         not null
+#  batch_id                              :bigint
+#  nhs_immunisations_api_id              :string
+#  patient_id                            :bigint
+#  performed_by_user_id                  :bigint
+#  programme_id                          :bigint           not null
+#  session_id                            :bigint
+#  vaccine_id                            :bigint
 #
 # Indexes
 #
-#  index_vaccination_records_on_batch_id              (batch_id)
-#  index_vaccination_records_on_discarded_at          (discarded_at)
-#  index_vaccination_records_on_patient_id            (patient_id)
-#  index_vaccination_records_on_performed_by_user_id  (performed_by_user_id)
-#  index_vaccination_records_on_programme_id          (programme_id)
-#  index_vaccination_records_on_session_id            (session_id)
-#  index_vaccination_records_on_uuid                  (uuid) UNIQUE
-#  index_vaccination_records_on_vaccine_id            (vaccine_id)
+#  index_vaccination_records_on_batch_id                  (batch_id)
+#  index_vaccination_records_on_discarded_at              (discarded_at)
+#  index_vaccination_records_on_nhs_immunisations_api_id  (nhs_immunisations_api_id) UNIQUE
+#  index_vaccination_records_on_patient_id                (patient_id)
+#  index_vaccination_records_on_performed_by_user_id      (performed_by_user_id)
+#  index_vaccination_records_on_programme_id              (programme_id)
+#  index_vaccination_records_on_session_id                (session_id)
+#  index_vaccination_records_on_uuid                      (uuid) UNIQUE
+#  index_vaccination_records_on_vaccine_id                (vaccine_id)
 #
 # Foreign Keys
 #
@@ -53,13 +60,27 @@
 describe VaccinationRecord do
   subject(:vaccination_record) { build(:vaccination_record) }
 
+  describe "associations" do
+    it { should have_one(:identity_check).autosave(true).dependent(:destroy) }
+  end
+
   describe "validations" do
+    it { should validate_inclusion_of(:protocol).in_array(%w[pgd psd]) }
+
     context "when administered" do
+      before { vaccination_record.outcome = "administered" }
+
       it { should allow_values(true, false).for(:full_dose) }
       it { should_not allow_values(nil).for(:full_dose) }
+
+      it { should validate_presence_of(:protocol) }
     end
 
     context "when not administered" do
+      before { vaccination_record.outcome = "already_had" }
+
+      it { should_not validate_presence_of(:protocol) }
+
       it { should_not validate_presence_of(:full_dose) }
     end
 
@@ -80,8 +101,12 @@ describe VaccinationRecord do
       end
 
       let(:programme) { create(:programme) }
-      let(:organisation) { create(:organisation, programmes: [programme]) }
-      let(:session) { organisation.generic_clinic_session }
+      let(:team) do
+        create(:team, :with_generic_clinic, programmes: [programme])
+      end
+      let(:session) do
+        team.generic_clinic_session(academic_year: AcademicYear.current)
+      end
 
       it { should validate_presence_of(:location_name) }
     end
@@ -179,6 +204,250 @@ describe VaccinationRecord do
       end
 
       it { should be_nil }
+    end
+  end
+
+  describe "#show_in_academic_year?" do
+    subject { vaccination_record.show_in_academic_year?(academic_year) }
+
+    context "with a seasonal record performed in the 2023/24 academic year" do
+      let(:programme) { create(:programme, :flu) }
+      let(:vaccination_record) do
+        build(
+          :vaccination_record,
+          programme:,
+          performed_at: Time.zone.local(2023, 9, 1)
+        )
+      end
+
+      context "in the 2023/24 academic year" do
+        let(:academic_year) { 2023 }
+
+        it { should be(true) }
+      end
+
+      context "in the 2024/25 academic year" do
+        let(:academic_year) { 2024 }
+
+        it { should be(false) }
+      end
+    end
+
+    context "with a non-seasonal record performed in the 2023/24 academic year" do
+      let(:programme) { create(:programme, :hpv) }
+      let(:vaccination_record) do
+        build(
+          :vaccination_record,
+          programme:,
+          performed_at: Time.zone.local(2023, 9, 1)
+        )
+      end
+
+      context "in the 2023/24 academic year" do
+        let(:academic_year) { 2023 }
+
+        it { should be(true) }
+      end
+
+      context "in the 2024/25 academic year" do
+        let(:academic_year) { 2024 }
+
+        it { should be(true) }
+      end
+    end
+  end
+
+  describe "#delivery_method_snomed_code" do
+    subject(:delivery_method_snomed_code) do
+      vaccination_record.delivery_method_snomed_code
+    end
+
+    context "when delivery_method is intramuscular" do
+      let(:vaccination_record) do
+        build(:vaccination_record, delivery_method: :intramuscular)
+      end
+
+      it { should eq "78421000" }
+    end
+
+    context "when delivery_method is subcutaneous" do
+      let(:vaccination_record) do
+        build(:vaccination_record, delivery_method: :subcutaneous)
+      end
+
+      it { should eq "34206005" }
+    end
+
+    context "when delivery_method is nasal spray" do
+      let(:vaccination_record) do
+        build(:vaccination_record, delivery_method: :nasal_spray)
+      end
+
+      it { should eq "46713006" }
+    end
+
+    context "when delivery_method is not set" do
+      let(:vaccination_record) do
+        build(:vaccination_record, delivery_method: nil)
+      end
+
+      it "raises an error" do
+        expect { delivery_method_snomed_code }.to raise_error(StandardError)
+      end
+    end
+  end
+
+  describe "#delivery_method_snomed_term" do
+    subject(:delivery_method_snomed_term) do
+      vaccination_record.delivery_method_snomed_term
+    end
+
+    context "when delivery_method is intramuscular" do
+      let(:vaccination_record) do
+        build(:vaccination_record, delivery_method: :intramuscular)
+      end
+
+      it { should eq "Intramuscular" }
+    end
+
+    context "when delivery_method is subcutaneous" do
+      let(:vaccination_record) do
+        build(:vaccination_record, delivery_method: :subcutaneous)
+      end
+
+      it { should eq "Subcutaneous" }
+    end
+
+    context "when delivery_method is nasal spray" do
+      let(:vaccination_record) do
+        build(:vaccination_record, delivery_method: :nasal_spray)
+      end
+
+      it { should eq "Nasal" }
+    end
+
+    context "when delivery_method is not set" do
+      let(:vaccination_record) do
+        build(:vaccination_record, delivery_method: nil)
+      end
+
+      it "raises an error" do
+        expect { delivery_method_snomed_term }.to raise_error(StandardError)
+      end
+    end
+  end
+
+  describe "#changes_need_to_be_synced_to_nhs_immunisations_api?" do
+    subject do
+      vaccination_record.send(
+        :changes_need_to_be_synced_to_nhs_immunisations_api?
+      )
+    end
+
+    let(:vaccination_record) { create(:vaccination_record) }
+
+    context "when the update doesn't change any attributes" do
+      before { vaccination_record.update!(notes: vaccination_record.notes) }
+
+      it { should be_falsy }
+    end
+
+    context "when regular fields have been changed" do
+      before { vaccination_record.update!(notes: "Updated notes") }
+
+      it { should be_truthy }
+    end
+
+    context "when only nhs_immunisations_api_etag has been changed" do
+      before do
+        vaccination_record.update!(nhs_immunisations_api_etag: "new-etag")
+      end
+
+      it { should be_falsy }
+    end
+
+    context "when only nhs_immunisations_api_sync_pending_at has been changed" do
+      before do
+        vaccination_record.update!(
+          nhs_immunisations_api_sync_pending_at: Time.current
+        )
+      end
+
+      it { should be_falsy }
+    end
+
+    context "when only nhs_immunisations_api_synced_at has been changed" do
+      before do
+        vaccination_record.update!(
+          nhs_immunisations_api_synced_at: Time.current
+        )
+      end
+
+      it { should be_falsy }
+    end
+
+    context "when only nhs_immunisations_api_id has been changed" do
+      before { vaccination_record.update!(nhs_immunisations_api_id: "new-id") }
+
+      it { should be_falsy }
+    end
+
+    context "when both regular fields and nhs_immunisations_api fields have been changed" do
+      before do
+        vaccination_record.update!(
+          notes: "Updated notes",
+          nhs_immunisations_api_etag: "new-etag"
+        )
+      end
+
+      it { should be_falsy }
+    end
+
+    context "when a regular field and multiple nhs_immunisations_api fields have been changed" do
+      before do
+        vaccination_record.update!(
+          outcome: :refused,
+          nhs_immunisations_api_etag: "new-etag",
+          nhs_immunisations_api_sync_pending_at: Time.current
+        )
+      end
+
+      it { should be_falsy }
+    end
+  end
+
+  describe "#for_academic_year" do
+    before { vaccination_record.save! }
+
+    it "returns the correct records" do
+      academic_year = vaccination_record.academic_year
+
+      expect(described_class.for_academic_year(academic_year)).to include(
+        vaccination_record
+      )
+
+      expect(
+        described_class.for_academic_year(academic_year + 1)
+      ).not_to include(vaccination_record)
+    end
+  end
+
+  describe "#academic_year" do
+    let(:examples) do
+      {
+        Date.new(2020, 9, 1) => 2020,
+        Date.new(2021, 8, 31) => 2020,
+        Date.new(2021, 9, 1) => 2021,
+        Date.new(2022, 8, 31) => 2021
+      }
+    end
+
+    examples.each do |date, academic_year|
+      context "with #{date}" do
+        before { vaccination_record[attribute] = date }
+
+        it { expect(vaccination_record.academic_year).to eq(academic_year) }
+      end
     end
   end
 end

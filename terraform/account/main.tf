@@ -3,15 +3,14 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 5.87"
+      version = "~> 6.2"
     }
   }
 
   backend "s3" {
-    region         = "eu-west-2"
-    dynamodb_table = "mavis-terraform-state-lock"
-    use_lockfile   = true
-    encrypt        = true
+    region       = "eu-west-2"
+    use_lockfile = true
+    encrypt      = true
   }
 }
 
@@ -20,8 +19,8 @@ provider "aws" {
 }
 
 resource "aws_iam_policy" "data_replication_access" {
-  name        = "DataReplicationAccess"
-  description = "Allows shell access to Data Replication ECS tasks"
+  name = "DataReplicationAccess"
+  # description = "Allows shell access to Data Replication ECS tasks"
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -40,4 +39,104 @@ resource "aws_iam_policy" "data_replication_access" {
       }
     ]
   })
+  lifecycle {
+    ignore_changes = [description]
+  }
+}
+
+
+### Service linked role for Database Migration Service (DMS) ###
+
+resource "aws_iam_service_linked_role" "dms_service_linked_role" {
+  aws_service_name = "dms.amazonaws.com"
+}
+
+
+### Unique IAM roles
+resource "aws_iam_role" "dms_vpc_role" {
+  name = "dms-vpc-role"
+  assume_role_policy = templatefile(
+    "../app/templates/iam_assume_role.json.tpl",
+    { service_name = "dms.eu-west-2.amazonaws.com" }
+  )
+}
+
+resource "aws_iam_role_policy_attachment" "dms_vpc_policy" {
+  role       = aws_iam_role.dms_vpc_role.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonDMSVPCManagementRole"
+}
+
+# IAM Role for DMS CloudWatch Logs
+resource "aws_iam_role" "dms_cloudwatch_logs_role" {
+  name = "dms-cloudwatch-logs-role"
+  assume_role_policy = templatefile(
+    "../app/templates/iam_assume_role.json.tpl",
+    { service_name = "dms.eu-west-2.amazonaws.com" }
+  )
+}
+
+resource "aws_iam_role_policy_attachment" "dms_cloudwatch_logs_policy" {
+  role       = aws_iam_role.dms_cloudwatch_logs_role.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonDMSCloudWatchLogsRole"
+}
+
+
+#### Registries & Repository
+
+
+resource "aws_ecr_registry_scanning_configuration" "this" {
+  scan_type = "BASIC"
+
+  rule {
+    scan_frequency = "SCAN_ON_PUSH"
+    repository_filter {
+      filter      = "*"
+      filter_type = "WILDCARD"
+    }
+  }
+}
+
+resource "aws_ecr_repository" "mavis" {
+  name                 = "mavis/webapp"
+  image_tag_mutability = "MUTABLE"
+}
+
+resource "aws_ecr_lifecycle_policy" "mavis" {
+  repository = aws_ecr_repository.mavis.name
+  policy = jsonencode({
+    rules = [
+      {
+        rulePriority = 1,
+        description  = "Expire images older than 3 months",
+        selection = {
+          tagStatus   = "any",
+          countType   = "sinceImagePushed",
+          countUnit   = "days",
+          countNumber = 90,
+        },
+        action = {
+          type = "expire"
+        }
+      }
+    ]
+  })
+}
+
+
+#### Access Analyzer
+
+resource "aws_accessanalyzer_analyzer" "unused" {
+  analyzer_name = "UnusedAccess-ConsoleAnalyzer-eu-west-2"
+  type          = "ACCOUNT_UNUSED_ACCESS"
+  configuration {
+    unused_access {
+      unused_access_age = 90
+    }
+  }
+
+}
+
+resource "aws_accessanalyzer_analyzer" "external" {
+  analyzer_name = "ExternalAccess-ConsoleAnalyzer-eu-west-2"
+  type          = "ACCOUNT"
 }

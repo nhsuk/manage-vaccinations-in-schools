@@ -27,6 +27,8 @@ class PatientSessions::VaccinationsController < PatientSessions::BaseController
       steps = draft_vaccination_record.wizard_steps
 
       steps.delete(:notes) # this is on the confirmation page
+      steps.delete(:identity) # this can only be changed from confirmation page
+      steps.delete(:dose) # this can only be changed from confirmation page
 
       steps.delete(:date_and_time)
       steps.delete(:outcome) if draft_vaccination_record.administered?
@@ -37,11 +39,15 @@ class PatientSessions::VaccinationsController < PatientSessions::BaseController
       steps.delete(:vaccine) if draft_vaccination_record.vaccine.present?
       steps.delete(:batch) if draft_vaccination_record.batch.present?
 
+      draft_vaccination_record.update!(first_active_wizard_step: steps.first)
+
       redirect_to draft_vaccination_record_path(
                     I18n.t(steps.first, scope: :wicked)
                   )
     else
-      render "patient_sessions/programmes/show", status: :unprocessable_entity
+      render "patient_sessions/programmes/show",
+             layout: "full",
+             status: :unprocessable_entity
     end
   end
 
@@ -50,28 +56,31 @@ class PatientSessions::VaccinationsController < PatientSessions::BaseController
   def vaccinate_form_params
     params.expect(
       vaccinate_form: %i[
-        administered
-        delivery_method
         delivery_site
         dose_sequence
-        feeling_well
-        knows_vaccination
-        no_allergies
-        not_already_had
-        not_pregnant
-        not_taking_medication
+        identity_check_confirmed_by_other_name
+        identity_check_confirmed_by_other_relationship
+        identity_check_confirmed_by_patient
+        pre_screening_confirmed
         pre_screening_notes
         vaccine_id
+        vaccine_method
       ]
     )
   end
 
   def set_todays_batch
+    vaccine_method = vaccinate_form_params[:vaccine_method]
+    return if vaccine_method.nil?
+
+    id = todays_batch_id(programme: @programme, vaccine_method:)
+    return if id.nil?
+
     @todays_batch =
       policy_scope(Batch)
         .where(vaccine: @session.vaccines)
         .not_archived
         .not_expired
-        .find_by(id: todays_batch_id(programme: @programme))
+        .find_by(id:)
   end
 end

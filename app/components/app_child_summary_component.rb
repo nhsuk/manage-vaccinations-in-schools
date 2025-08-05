@@ -110,6 +110,8 @@ class AppChildSummaryComponent < ViewComponent::Base
 
   private
 
+  def academic_year = AcademicYear.current
+
   def format_nhs_number
     highlight_if(helpers.patient_nhs_number(@child), @child.nhs_number_changed?)
   end
@@ -162,7 +164,7 @@ class AppChildSummaryComponent < ViewComponent::Base
 
   def format_year_group
     highlight_if(
-      helpers.patient_year_group(@child),
+      helpers.patient_year_group(@child, academic_year:),
       @child.year_group_changed? || @child.registration_changed?
     )
   end

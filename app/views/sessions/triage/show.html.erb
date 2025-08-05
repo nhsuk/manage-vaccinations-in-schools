@@ -10,18 +10,21 @@
 
 <div class="nhsuk-grid-row">
   <div class="app-grid-column-filters">
-    <%= render AppSearchComponent.new(
-          form: @form,
+    <%= render AppPatientSearchFormComponent.new(
+          @form,
           url: session_triage_path(@session),
-          triage_statuses: %w[safe_to_vaccinate do_not_vaccinate delay_vaccination required],
+          programmes: @session.programmes,
+          triage_statuses: %w[required delay_vaccination do_not_vaccinate safe_to_vaccinate],
           year_groups: @session.year_groups,
         ) %>
   </div>
 
   <div class="app-grid-column-results">
-    <%= render AppSearchResultsComponent.new(@pagy) do %>
+    <%= render AppSearchResultsComponent.new(@pagy, label: "children") do %>
       <% @patient_sessions.each do |patient_session| %>
-        <%= render AppPatientSessionSearchResultCardComponent.new(patient_session, context: :triage) %>
+        <%= render AppPatientSessionSearchResultCardComponent.new(
+              patient_session, context: :triage, programmes: @form.programmes,
+            ) %>
       <% end %>
     <% end %>
   </div>

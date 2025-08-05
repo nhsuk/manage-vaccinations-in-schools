@@ -1,14 +1,10 @@
-environment   = "training"
-db_secret_arn = "arn:aws:secretsmanager:eu-west-2:393416225559:secret:dbAuroraSecret-3bG6y4wn5Enz-YvireA"
+environment = "training"
 dns_certificate_arn = [
   "arn:aws:acm:eu-west-2:393416225559:certificate/368edbcb-37c5-4146-9087-ff011bef5e05",
   "arn:aws:acm:eu-west-2:393416225559:certificate/e93e3912-eee4-4f6e-826d-c628bff58527",
 ]
 docker_image = "mavis/webapp"
 resource_name = {
-  dbsubnet_group           = "mavis-training-addonsstack-1jzsxp7p84221-dbdbsubnetgroup-ybdt5wfbx9jl"
-  db_cluster               = "mavis-training-addonsstack-1jzsxp7p842-dbdbcluster-dojxjwailzmh"
-  db_instance              = "mavis-training-addonsstack-1jzs-dbdbwriterinstance-pbl8rjktgtmp"
   rds_security_group       = "mavis-training-AddonsStack-1JZSXP7P84221-dbDBClusterSecurityGroup-A5NL1GFJ83LX"
   loadbalancer             = "mavis--Publi-w1wzc4E2jrl6"
   lb_security_group        = "mavis-training-PublicHTTPLoadBalancerSecurityGroup-L8GOGS04ARYI"

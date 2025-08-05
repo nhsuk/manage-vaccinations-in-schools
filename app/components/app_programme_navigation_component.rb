@@ -1,48 +1,32 @@
 # frozen_string_literal: true
 
 class AppProgrammeNavigationComponent < ViewComponent::Base
-  def initialize(programme, active:)
+  def initialize(programme, academic_year, active:)
     super
 
     @programme = programme
+    @academic_year = academic_year
     @active = active
   end
 
   def call
     render AppSecondaryNavigationComponent.new do |nav|
-      nav.with_item(
-        href: programme_path(programme),
-        text: "Overview",
-        selected: active == :overview
-      )
+      SECTIONS.each do |section|
+        action = section == :overview ? :show : :index
 
-      nav.with_item(
-        href: programme_cohorts_path(programme),
-        text: I18n.t("cohorts.index.title"),
-        selected: active == :cohorts
-      )
-
-      nav.with_item(
-        href: sessions_programme_path(programme),
-        text: I18n.t("sessions.index.title"),
-        selected: active == :sessions
-      )
-
-      nav.with_item(
-        href: patients_programme_path(programme),
-        text: I18n.t("patients.index.title"),
-        selected: active == :patients
-      )
-
-      nav.with_item(
-        href: programme_vaccination_records_path(programme),
-        text: I18n.t("vaccination_records.index.title"),
-        selected: active == :vaccination_records
-      )
+        nav.with_item(
+          href:
+            public_send("programme_#{section}_path", programme, academic_year),
+          text: I18n.t("title", scope: [:programmes, section, action]),
+          selected: active == section
+        )
+      end
     end
   end
 
   private
 
-  attr_reader :programme, :active
+  attr_reader :programme, :active, :academic_year
+
+  SECTIONS = %i[overview sessions patients].freeze
 end

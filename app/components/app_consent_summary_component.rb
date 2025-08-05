@@ -10,17 +10,35 @@ class AppConsentSummaryComponent < ViewComponent::Base
 
   def call
     govuk_summary_list(actions: @change_links.present?) do |summary_list|
-      if @consent.responded_at.present?
+      summary_list.with_row do |row|
+        row.with_key { "Programme" }
+        row.with_value do
+          tag.strong(
+            programme.name,
+            class: "nhsuk-tag app-tag--attached nhsuk-tag--white"
+          )
+        end
+      end
+
+      if consent.responded_at.present?
         summary_list.with_row do |row|
-          row.with_key { "Response date" }
-          row.with_value { @consent.responded_at.to_fs(:long) }
+          row.with_key { "Date" }
+          row.with_value { consent.responded_at.to_fs(:long) }
+        end
+      end
+
+      summary_list.with_row do |row|
+        row.with_key { "Method" }
+        row.with_value { consent.human_enum_name(:route).humanize }
+        if (href = change_links[:route])
+          row.with_action(text: "Change", visually_hidden_text: "method", href:)
         end
       end
 
       summary_list.with_row do |row|
         row.with_key { "Decision" }
-        row.with_value { helpers.consent_decision(@consent) }
-        if (href = @change_links[:response])
+        row.with_value { helpers.consent_status_tag(consent) }
+        if (href = change_links[:response])
           row.with_action(
             text: "Change",
             visually_hidden_text: "decision",
@@ -29,38 +47,39 @@ class AppConsentSummaryComponent < ViewComponent::Base
         end
       end
 
-      summary_list.with_row do |row|
-        row.with_key { "Response method" }
-        row.with_value do
-          Consent.human_enum_name(:route, @consent.route).humanize
-        end
-        if (href = @change_links[:route])
-          row.with_action(
-            text: "Change",
-            visually_hidden_text: "response method",
-            href:
-          )
+      if consent.vaccine_method_nasal?
+        summary_list.with_row do |row|
+          row.with_key { "Consent also given for injected vaccine?" }
+          row.with_value { consent.vaccine_method_injection? ? "Yes" : "No" }
         end
       end
 
-      if @consent.reason_for_refusal.present?
+      if consent.reason_for_refusal.present?
         summary_list.with_row do |row|
           row.with_key { "Reason for refusal" }
-          row.with_value do
-            Consent.human_enum_name(
-              :reason_for_refusal,
-              @consent.reason_for_refusal
-            )
-          end
+          row.with_value { consent.human_enum_name(:reason_for_refusal) }
         end
       end
 
-      if @consent.notes.present?
+      unless consent.notify_parent_on_refusal.nil?
+        summary_list.with_row do |row|
+          row.with_key { "Confirmation of decision sent to parent" }
+          row.with_value { consent.notify_parent_on_refusal ? "Yes" : "No" }
+        end
+      end
+
+      if consent.notes.present?
         summary_list.with_row do |row|
           row.with_key { "Notes" }
-          row.with_value { @consent.notes }
+          row.with_value { consent.notes }
         end
       end
     end
   end
+
+  private
+
+  attr_reader :consent, :change_links
+
+  delegate :programme, to: :consent
 end

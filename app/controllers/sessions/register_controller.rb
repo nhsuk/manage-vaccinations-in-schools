@@ -1,13 +1,10 @@
 # frozen_string_literal: true
 
-require "pagy/extras/array"
-
 class Sessions::RegisterController < ApplicationController
-  include Pagy::Backend
-  include SearchFormConcern
+  include PatientSearchFormConcern
 
   before_action :set_session
-  before_action :set_search_form, only: :show
+  before_action :set_patient_search_form, only: :show
   before_action :set_patient, only: :create
   before_action :set_patient_session, only: :create
 
@@ -17,17 +14,13 @@ class Sessions::RegisterController < ApplicationController
     @statuses = PatientSession::RegistrationStatus.statuses.keys
 
     scope =
-      @session
-        .patient_sessions
-        .includes_programmes
-        .includes(
-          :registration_status,
-          patient: %i[consent_statuses triage_statuses vaccination_statuses]
-        )
-        .in_programmes(@session.programmes)
+      @session.patient_sessions.includes_programmes.includes(
+        :latest_note,
+        :registration_status,
+        patient: %i[consent_statuses triage_statuses vaccination_statuses]
+      )
 
     patient_sessions = @form.apply(scope)
-
     @pagy, @patient_sessions = pagy(patient_sessions)
   end
 
@@ -48,10 +41,7 @@ class Sessions::RegisterController < ApplicationController
       t("attendance_flash.absent", name:)
     end
 
-    redirect_to session_register_path(
-                  @session,
-                  **params.permit(search_form: {})
-                )
+    redirect_to session_register_path(@session)
   end
 
   private

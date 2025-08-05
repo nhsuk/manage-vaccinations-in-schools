@@ -8,7 +8,7 @@ class AppConsentFormCardComponent < ViewComponent::Base
   end
 
   def call
-    render AppCardComponent.new do |card|
+    render AppCardComponent.new(heading_level: 2) do |card|
       card.with_heading { "Consent response" }
 
       govuk_summary_list do |summary_list|
@@ -43,18 +43,20 @@ class AppConsentFormCardComponent < ViewComponent::Base
 
   def refusal_reason
     {
-      reason: @consent_form.human_enum_name(:reason).presence,
+      title:
+        Consent.human_enum_name(
+          :reason_for_refusal,
+          @consent_form.reason
+        ).presence,
       notes: @consent_form.reason_notes
     }
   end
 
-  def show_refusal_row?
-    [refusal_reason[:reason], refusal_reason[:notes]].compact_blank.any?
-  end
+  def show_refusal_row? = refusal_reason.values.any?(&:present?)
 
   def refusal_reason_details
     safe_join(
-      [refusal_reason[:reason]&.capitalize, refusal_reason_notes].compact_blank,
+      [refusal_reason[:title], refusal_reason_notes].compact_blank,
       "\n"
     )
   end

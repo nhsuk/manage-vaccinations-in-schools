@@ -3,37 +3,33 @@
 require "pagy/extras/array"
 
 class Sessions::RecordController < ApplicationController
-  include Pagy::Backend
-  include SearchFormConcern
+  include PatientSearchFormConcern
   include TodaysBatchConcern
 
   before_action :set_session
-  before_action :set_search_form
+  before_action :set_patient_search_form
 
   before_action :set_todays_batches, only: :show
   before_action :set_programme, except: :show
+  before_action :set_vaccine_method, except: :show
   before_action :set_batches, except: :show
 
   def show
     scope =
-      @session
-        .patient_sessions
-        .includes(
-          patient: %i[consent_statuses triage_statuses vaccination_statuses]
-        )
-        .in_programmes(@session.programmes)
-        .has_registration_status(%w[attending completed])
+      @session.patient_sessions.includes(
+        :latest_note,
+        patient: %i[consent_statuses triage_statuses vaccination_statuses]
+      )
 
-    scope = @form.apply(scope)
+    if @session.requires_registration?
+      scope = scope.has_registration_status(%w[attending completed])
+    end
 
     patient_sessions =
-      scope.select do |patient_session|
-        patient_session.programmes.any? do |programme|
-          patient_session.patient.consent_given_and_safe_to_vaccinate?(
-            programme:
-          )
-        end
-      end
+      @form.apply(scope).consent_given_and_ready_to_vaccinate(
+        programmes: @form.programmes,
+        vaccine_method: @form.vaccine_method.presence
+      )
 
     @pagy, @patient_sessions = pagy_array(patient_sessions)
 
@@ -41,9 +37,8 @@ class Sessions::RecordController < ApplicationController
   end
 
   def edit_batch
-    @todays_batch =
-      authorize @batches.find_by(id: todays_batch_id(programme: @programme)),
-                :edit?
+    id = todays_batch_id(programme: @programme, vaccine_method: @vaccine_method)
+    @todays_batch = authorize @batches.find(id), :edit?
 
     render :batch
   end
@@ -71,30 +66,45 @@ class Sessions::RecordController < ApplicationController
   private
 
   def set_session
-    @session = policy_scope(Session).find_by!(slug: params[:session_slug])
+    @session =
+      policy_scope(Session).includes(programmes: :vaccines).find_by!(
+        slug: params[:session_slug]
+      )
   end
 
   def set_todays_batches
     all_batches =
       @session.programmes.index_with do |programme|
-        policy_scope(Batch)
-          .where(vaccine: @session.vaccines)
-          .not_archived
-          .not_expired
-          .find_by(id: todays_batch_id(programme:))
+        programme.vaccine_methods.filter_map do |vaccine_method|
+          id = todays_batch_id(programme:, vaccine_method:)
+          next if id.nil?
+
+          policy_scope(Batch)
+            .where(vaccine: @session.vaccines)
+            .not_archived
+            .not_expired
+            .find_by(id:)
+        end
       end
 
-    @todays_batches = all_batches.compact
+    @todays_batches = all_batches.compact_blank
   end
 
   def set_programme
     @programme = policy_scope(Programme).find_by!(type: params[:programme_type])
   end
 
+  def set_vaccine_method
+    @vaccine_method = params[:vaccine_method]
+  end
+
   def set_batches
+    vaccines =
+      @session.vaccines.where(programme: @programme, method: @vaccine_method)
+
     @batches =
       policy_scope(Batch)
-        .where(vaccine: @session.vaccines.where(programme: @programme))
+        .where(vaccine: vaccines)
         .not_archived
         .not_expired
         .order_by_name_and_expiration

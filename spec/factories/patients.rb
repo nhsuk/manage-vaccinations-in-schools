@@ -4,31 +4,32 @@
 #
 # Table name: patients
 #
-#  id                        :bigint           not null, primary key
-#  address_line_1            :string
-#  address_line_2            :string
-#  address_postcode          :string
-#  address_town              :string
-#  birth_academic_year       :integer          not null
-#  date_of_birth             :date             not null
-#  date_of_death             :date
-#  date_of_death_recorded_at :datetime
-#  family_name               :string           not null
-#  gender_code               :integer          default("not_known"), not null
-#  given_name                :string           not null
-#  home_educated             :boolean
-#  invalidated_at            :datetime
-#  nhs_number                :string
-#  pending_changes           :jsonb            not null
-#  preferred_family_name     :string
-#  preferred_given_name      :string
-#  registration              :string
-#  restricted_at             :datetime
-#  updated_from_pds_at       :datetime
-#  created_at                :datetime         not null
-#  updated_at                :datetime         not null
-#  gp_practice_id            :bigint
-#  school_id                 :bigint
+#  id                         :bigint           not null, primary key
+#  address_line_1             :string
+#  address_line_2             :string
+#  address_postcode           :string
+#  address_town               :string
+#  birth_academic_year        :integer          not null
+#  date_of_birth              :date             not null
+#  date_of_death              :date
+#  date_of_death_recorded_at  :datetime
+#  family_name                :string           not null
+#  gender_code                :integer          default("not_known"), not null
+#  given_name                 :string           not null
+#  home_educated              :boolean
+#  invalidated_at             :datetime
+#  nhs_number                 :string
+#  pending_changes            :jsonb            not null
+#  preferred_family_name      :string
+#  preferred_given_name       :string
+#  registration               :string
+#  registration_academic_year :integer
+#  restricted_at              :datetime
+#  updated_from_pds_at        :datetime
+#  created_at                 :datetime         not null
+#  updated_at                 :datetime         not null
+#  gp_practice_id             :bigint
+#  school_id                  :bigint
 #
 # Indexes
 #
@@ -53,19 +54,17 @@ FactoryBot.define do
 
   factory :patient do
     transient do
+      academic_year { AcademicYear.current }
       parents { [] }
       performed_by { association(:user) }
       programmes { session&.programmes || [] }
       session { nil }
-      year_group { programmes.flat_map(&:year_groups).sort.uniq.first }
+      year_group { programmes.flat_map(&:default_year_groups).sort.uniq.first }
       location_name { nil }
       in_attendance { false }
       random_nhs_number { false }
 
-      organisation do
-        session&.organisation || school&.organisation ||
-          create(:organisation, programmes:)
-      end
+      team { session&.team || school&.team || create(:team, programmes:) }
     end
 
     nhs_number do
@@ -90,22 +89,25 @@ FactoryBot.define do
 
     date_of_birth do
       if year_group
-        academic_year_start = Date.new(Date.current.academic_year, 9, 1)
-        start_date = academic_year_start - (5 + year_group).years
-        end_date = start_date + 1.year - 1.day
-        Faker::Date.between(from: end_date, to: start_date)
+        date_range =
+          year_group.to_birth_academic_year(
+            academic_year:
+          ).to_academic_year_date_range
+        Faker::Date.between(from: date_range.begin, to: date_range.end)
       else
         Faker::Date.birthday(min_age: 7, max_age: 16)
       end
     end
     birth_academic_year do
       if year_group
-        year_group.to_birth_academic_year
+        year_group.to_birth_academic_year(academic_year:)
       else
         date_of_birth.academic_year
       end
     end
+
     registration { Faker::Alphanumeric.alpha(number: 2).upcase }
+    registration_academic_year { academic_year if registration.present? }
 
     school { session.location if session&.location&.school? }
     home_educated { school.present? ? nil : false }
@@ -229,6 +231,19 @@ FactoryBot.define do
       end
     end
 
+    trait :triage_safe_to_vaccinate_nasal do
+      triage_statuses do
+        programmes.map do |programme|
+          association(
+            :patient_triage_status,
+            :safe_to_vaccinate_nasal,
+            patient: instance,
+            programme:
+          )
+        end
+      end
+    end
+
     trait :triage_required do
       triage_statuses do
         programmes.map do |programme|
@@ -252,7 +267,7 @@ FactoryBot.define do
             :given,
             :from_mum,
             patient: instance,
-            organisation:,
+            team:,
             programme:
           )
         end
@@ -262,6 +277,88 @@ FactoryBot.define do
           association(
             :patient_consent_status,
             :given,
+            patient: instance,
+            programme:
+          )
+        end
+      end
+    end
+
+    trait :consent_given_nasal_only_triage_not_needed do
+      triage_not_required
+
+      consents do
+        programmes.map do |programme|
+          association(
+            :consent,
+            :given_nasal,
+            :from_mum,
+            patient: instance,
+            team:,
+            programme:
+          )
+        end
+      end
+      consent_statuses do
+        programmes.map do |programme|
+          association(
+            :patient_consent_status,
+            :given_nasal_only,
+            patient: instance,
+            programme:
+          )
+        end
+      end
+    end
+
+    trait :consent_given_injection_only_triage_not_needed do
+      triage_not_required
+
+      consents do
+        programmes.map do |programme|
+          association(
+            :consent,
+            :given_injection,
+            :from_mum,
+            :health_question_notes,
+            patient: instance,
+            team:,
+            programme:
+          )
+        end
+      end
+      consent_statuses do
+        programmes.map do |programme|
+          association(
+            :patient_consent_status,
+            :given_injection_only,
+            patient: instance,
+            programme:
+          )
+        end
+      end
+    end
+
+    trait :consent_given_nasal_or_injection_triage_not_needed do
+      triage_not_required
+
+      consents do
+        programmes.map do |programme|
+          association(
+            :consent,
+            :given_nasal_or_injection,
+            :from_mum,
+            patient: instance,
+            team:,
+            programme:
+          )
+        end
+      end
+      consent_statuses do
+        programmes.map do |programme|
+          association(
+            :patient_consent_status,
+            :given_nasal_or_injection,
             patient: instance,
             programme:
           )
@@ -281,7 +378,7 @@ FactoryBot.define do
             :health_question_notes,
             patient: instance,
             programme:,
-            organisation:
+            team:
           )
         end
       end
@@ -290,6 +387,158 @@ FactoryBot.define do
           association(
             :patient_consent_status,
             :given,
+            patient: instance,
+            programme:
+          )
+        end
+      end
+    end
+
+    trait :consent_given_injection_only_triage_needed do
+      consents do
+        programmes.map do |programme|
+          association(
+            :consent,
+            :given_injection,
+            :from_mum,
+            :health_question_notes,
+            patient: instance,
+            team:,
+            programme:
+          )
+        end
+      end
+
+      consent_statuses do
+        programmes.map do |programme|
+          association(
+            :patient_consent_status,
+            :given_injection_only,
+            patient: instance,
+            programme:
+          )
+        end
+      end
+
+      triage_statuses do
+        programmes.map do |programme|
+          association(
+            :patient_triage_status,
+            :required,
+            patient: instance,
+            programme:
+          )
+        end
+      end
+    end
+
+    trait :consent_given_nasal_only_triage_needed do
+      consents do
+        programmes.map do |programme|
+          association(
+            :consent,
+            :given_nasal,
+            :from_mum,
+            :health_question_notes,
+            patient: instance,
+            team:,
+            programme:
+          )
+        end
+      end
+
+      consent_statuses do
+        programmes.map do |programme|
+          association(
+            :patient_consent_status,
+            :given_nasal_only,
+            patient: instance,
+            programme:
+          )
+        end
+      end
+
+      triage_statuses do
+        programmes.map do |programme|
+          association(
+            :patient_triage_status,
+            :required,
+            patient: instance,
+            programme:
+          )
+        end
+      end
+    end
+
+    trait :consent_given_triage_safe_to_vaccinate do
+      consents do
+        programmes.map do |programme|
+          association(
+            :consent,
+            :given,
+            :from_mum,
+            :health_question_notes,
+            patient: instance,
+            team:,
+            programme:
+          )
+        end
+      end
+
+      consent_statuses do
+        programmes.map do |programme|
+          association(
+            :patient_consent_status,
+            :given,
+            patient: instance,
+            programme:
+          )
+        end
+      end
+
+      triage_statuses do
+        programmes.map do |programme|
+          association(
+            :patient_triage_status,
+            :safe_to_vaccinate,
+            patient: instance,
+            programme:
+          )
+        end
+      end
+    end
+
+    trait :consent_given_injection_and_nasal_triage_safe_to_vaccinate_nasal do
+      consents do
+        programmes.map do |programme|
+          association(
+            :consent,
+            :given_nasal,
+            :from_mum,
+            :health_question_notes,
+            patient: instance,
+            team:,
+            programme:
+          )
+        end
+      end
+
+      consent_statuses do
+        programmes.map do |programme|
+          association(
+            :patient_consent_status,
+            :given_nasal_or_injection,
+            patient: instance,
+            programme:
+          )
+        end
+      end
+
+      triage_statuses do
+        programmes.map do |programme|
+          association(
+            :patient_triage_status,
+            :safe_to_vaccinate_nasal,
             patient: instance,
             programme:
           )
@@ -307,7 +556,7 @@ FactoryBot.define do
             :refused,
             :from_mum,
             patient: instance,
-            organisation:,
+            team:,
             programme:
           )
         end
@@ -334,7 +583,7 @@ FactoryBot.define do
             :refused,
             :from_mum,
             patient: instance,
-            organisation:,
+            team:,
             programme:,
             reason_for_refusal: "already_vaccinated",
             notes: "Already had the vaccine at the GP"
@@ -364,7 +613,7 @@ FactoryBot.define do
               :refused,
               :from_mum,
               patient: instance,
-              organisation:,
+              team:,
               programme:
             ),
             association(
@@ -372,7 +621,7 @@ FactoryBot.define do
               :given,
               :from_dad,
               patient: instance,
-              organisation:,
+              team:,
               programme:
             )
           ]
@@ -400,7 +649,7 @@ FactoryBot.define do
             :not_provided,
             :from_mum,
             patient: instance,
-            organisation:,
+            team:,
             programme:
           )
         end
@@ -435,7 +684,7 @@ FactoryBot.define do
             patient: instance,
             performed_by:,
             programme:,
-            organisation:,
+            team:,
             notes: "Okay to vaccinate"
           )
         end
@@ -451,7 +700,7 @@ FactoryBot.define do
             patient: instance,
             performed_by:,
             programme:,
-            organisation:,
+            team:,
             notes: "Do not vaccinate"
           )
         end
@@ -479,7 +728,7 @@ FactoryBot.define do
             patient: instance,
             performed_by:,
             programme:,
-            organisation:,
+            team:,
             notes: "Needs follow up"
           )
         end
@@ -495,7 +744,7 @@ FactoryBot.define do
             patient: instance,
             performed_by:,
             programme:,
-            organisation:,
+            team:,
             notes: "Delay vaccination"
           )
         end

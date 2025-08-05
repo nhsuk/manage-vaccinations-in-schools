@@ -1,0 +1,45 @@
+@use "../vendor/nhsuk-frontend" as *;
+@use "../core" as app;
+
+.app-status {
+  align-items: start;
+  display: flex;
+  font-weight: bold;
+  gap: nhsuk-spacing(1);
+
+  .nhsuk-icon {
+    margin-left: nhsuk-spacing(-1);
+    margin-top: nhsuk-spacing(-1);
+  }
+
+  &--aqua-green {
+    color: $color_nhsuk-aqua-green;
+  }
+
+  &--blue {
+    color: $color_nhsuk-blue;
+  }
+
+  &--dark-orange {
+    color: app.$color_dark-orange;
+  }
+
+  &--green {
+    color: $color_nhsuk-green;
+  }
+
+  &--red {
+    color: $color_nhsuk-red;
+  }
+}
+
+.app-status--small {
+  @include nhsuk-font(16, $weight: bold);
+
+  .nhsuk-icon {
+    height: 1.25em;
+    margin-left: -2px;
+    margin-top: 1px;
+    width: 1.25em;
+  }
+}

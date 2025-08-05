@@ -1,13 +1,7 @@
 <%= h1 t("consent_forms.start.title"), size: "xl" %>
 
 <% @programmes.each do |programme| %>
-  <h2 class="nhsuk-heading-m">
-    <%= t("consent_forms.start.vaccines.#{programme.type}.title") %>
-  </h2>
-
-  <% t("consent_forms.start.vaccines.#{programme.type}.description").each do %>
-    <p><%= _1.html_safe %></p>
-  <% end %>
+  <%= render "parent_interface/consent_forms/start/#{programme.type}" %>
 <% end %>
 
 <h2 class="nhsuk-heading-m">Give or refuse consent</h2>
@@ -18,7 +12,7 @@
   <%= f.govuk_submit "Start now", role: "link" %>
 <% end %>
 
-<h2 class="nhsuk-heading-m">Other ways to give consent</h2>
+<h3 class="nhsuk-heading-s">Other ways to give consent</h3>
 
 <p>
   The quickest way to give or refuse consent is online, using this service. This

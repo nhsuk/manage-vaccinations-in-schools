@@ -13,7 +13,7 @@ It will rarely change. In case of changes, terraform needs to be run manually.
 
 To set up the backup infrastructure from scratch, follow these steps:
 
-1. Bootstrap the destination backup account by running `terraform apply` in the `destination-bootstrap` directory. This will create an S3 bucket and a DynamoDB table for the Terraform state.
+1. Bootstrap the destination backup account by running `terraform apply` in the `destination-bootstrap` directory. This will create an S3 bucket for the Terraform state.
 2. Set up the **destination** account by running `terraform apply` in the `destination` directory. Pass the account_id of the source account as input.
    It returns the ARN of the destination vault that is created.
 3. Put the ARN of the destination vault in the \*.tfvars file in the `source` directory.

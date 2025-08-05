@@ -10,10 +10,8 @@ describe AppVaccinationRecordSummaryComponent do
   let(:outcome) { "administered" }
   let(:location) { create(:school, name: "Hogwarts") }
   let(:programme) { create(:programme, :hpv) }
-  let(:organisation) { create(:organisation, programmes: [programme]) }
-  let(:session) do
-    create(:session, programmes: [programme], location:, organisation:)
-  end
+  let(:team) { create(:team, programmes: [programme]) }
+  let(:session) { create(:session, programmes: [programme], location:, team:) }
   let(:patient) { create(:patient) }
   let(:vaccine) { programme.vaccines.first }
   let(:batch) do
@@ -24,6 +22,7 @@ describe AppVaccinationRecordSummaryComponent do
   end
   let(:notes) { "Some notes." }
   let(:location_name) { nil }
+  let(:protocol) { :pgd }
 
   let(:vaccination_record) do
     create(
@@ -39,6 +38,7 @@ describe AppVaccinationRecordSummaryComponent do
       delivery_site: :left_arm_upper_position,
       notes:,
       location_name:,
+      protocol:,
       pending_changes: {
         batch_id: other_batch&.id,
         delivery_method: :nasal_spray,
@@ -151,9 +151,9 @@ describe AppVaccinationRecordSummaryComponent do
       let(:programme) { create(:programme, :flu) }
 
       it do
-        expect(rendered).not_to have_css(
+        expect(rendered).to have_css(
           ".nhsuk-summary-list__row",
-          text: "Dose number"
+          text: "Dose number\nFirst"
         )
       end
     end
@@ -249,6 +249,28 @@ describe AppVaccinationRecordSummaryComponent do
     end
   end
 
+  describe "identity check row" do
+    it do
+      expect(rendered).not_to have_css(
+        ".nhsuk-summary-list__row",
+        text: "Child identified by"
+      )
+    end
+
+    context "with an identity check" do
+      before do
+        create(:identity_check, :confirmed_by_patient, vaccination_record:)
+      end
+
+      it do
+        expect(rendered).to have_css(
+          ".nhsuk-summary-list__row",
+          text: "Child identified by\nThe child"
+        )
+      end
+    end
+  end
+
   describe "location row" do
     it do
       expect(rendered).to have_css(
@@ -258,7 +280,7 @@ describe AppVaccinationRecordSummaryComponent do
     end
 
     context "when the location is a generic clinic" do
-      let(:location) { create(:generic_clinic, organisation:) }
+      let(:location) { create(:generic_clinic, team:) }
       let(:location_name) { "Hogwarts" }
 
       it do
@@ -267,6 +289,15 @@ describe AppVaccinationRecordSummaryComponent do
           text: "Location\nHogwarts"
         )
       end
+    end
+  end
+
+  describe "protocol row" do
+    it do
+      expect(rendered).to have_css(
+        ".nhsuk-summary-list__row",
+        text: "Protocol\nPatient Group Direction (PGD)"
+      )
     end
   end
 

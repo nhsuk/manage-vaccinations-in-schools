@@ -2,13 +2,13 @@
 
 module SchoolMovesHelper
   def school_move_source(school_move)
-    organisation = school_move.school&.organisation || school_move.organisation
+    team = school_move.school&.team || school_move.team
 
     source =
-      if organisation == current_user.selected_organisation
+      if team == current_team
         school_move.human_enum_name(:source)
       else
-        "Another SAIS organisation"
+        "Another SAIS team"
       end
 
     "#{source} updated"

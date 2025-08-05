@@ -1,20 +1,35 @@
 # frozen_string_literal: true
 
 class AppProgrammeStatsComponent < ViewComponent::Base
-  def initialize(programme:)
+  def initialize(programme, academic_year:, patients:)
     super
+
     @programme = programme
+    @academic_year = academic_year
+    @patients = patients
   end
 
-  def patients_count
-    helpers.policy_scope(Patient).in_programmes([@programme]).count
-  end
+  delegate :count, to: :patients, prefix: true
 
   def vaccinations_count
-    helpers.policy_scope(VaccinationRecord).where(programme: @programme).count
+    helpers
+      .policy_scope(VaccinationRecord)
+      .administered
+      .where(patient: patients, programme:)
+      .count
   end
 
   def consent_notifications_count
-    helpers.policy_scope(ConsentNotification).has_programme(@programme).count
+    helpers
+      .policy_scope(ConsentNotification)
+      .has_programme(programme)
+      .joins(:session)
+      .where(session: { academic_year: })
+      .where(patient: patients)
+      .count
   end
+
+  private
+
+  attr_reader :programme, :academic_year, :patients
 end

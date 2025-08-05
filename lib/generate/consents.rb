@@ -2,10 +2,10 @@
 
 module Generate
   class Consents
-    attr_reader :organisation, :programme
+    attr_reader :team, :programme
 
     def initialize(
-      organisation:,
+      team:,
       programme: nil,
       session: nil,
       refused: 0,
@@ -14,8 +14,8 @@ module Generate
     )
       validate_programme_and_session(programme, session) if programme
 
-      @organisation = organisation
-      @programme = programme || organisation.programmes.sample
+      @team = team
+      @programme = programme || team.programmes.sample
       @session = session
       @refused = refused
       @given = given
@@ -43,11 +43,11 @@ module Generate
             if @session
               [@session]
             else
-              organisation
+              team
                 .sessions
                 .eager_load(:location)
                 .merge(Location.school)
-                .has_programme(programme)
+                .has_programmes([programme])
             end
 
           sessions.flat_map do |session|
@@ -76,7 +76,7 @@ module Generate
           .sessions
           .eager_load(:location)
           .merge(Location.school)
-          .has_programme(programme)
+          .has_programmes([programme])
           .sample
     end
 
@@ -103,11 +103,11 @@ module Generate
             *traits,
             patient:,
             programme:,
-            organisation:,
+            team:,
             consent_form:
               FactoryBot.build(
                 :consent_form,
-                organisation:,
+                team:,
                 programmes: [programme],
                 session:,
                 school:,

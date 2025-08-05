@@ -2,7 +2,7 @@
 
 describe ImmunisationImportRow do
   subject(:immunisation_import_row) do
-    described_class.new(data: data_as_csv_row, organisation:)
+    described_class.new(data: data_as_csv_row, team:)
   end
 
   # FIXME: Don't re-implement behaviour of `CSVParser`.
@@ -14,15 +14,15 @@ describe ImmunisationImportRow do
     end
   end
 
-  let(:programmes) { [create(:programme, :flu)] }
-  let(:organisation) { create(:organisation, ods_code: "abc", programmes:) }
+  let(:programmes) { [create(:programme, :hpv)] }
+  let(:team) { create(:team, ods_code: "abc", programmes:) }
 
   let(:nhs_number) { "9990000018" }
   let(:given_name) { "Harry" }
   let(:family_name) { "Potter" }
   let(:date_of_birth) { "20120101" }
   let(:address_postcode) { "SW1A 1AA" }
-  let(:vaccinator) { create(:user, organisation:) }
+  let(:vaccinator) { create(:user, team:) }
   let(:valid_common_data) do
     {
       "ORGANISATION_CODE" => "abc",
@@ -36,29 +36,31 @@ describe ImmunisationImportRow do
       "PERSON_DOB" => date_of_birth,
       "PERSON_POSTCODE" => address_postcode,
       "PERSON_GENDER_CODE" => "Male",
-      "NHS_NUMBER" => nhs_number,
-      "DATE_OF_VACCINATION" => "20240101"
+      "NHS_NUMBER" => nhs_number
     }
   end
   let(:valid_flu_data) do
     valid_common_data.deep_dup.merge(
-      "PROGRAMME" => "Flu",
-      "VACCINE_GIVEN" => "AstraZeneca Fluenz Tetra LAIV",
       "ANATOMICAL_SITE" => "nasal",
+      "BATCH_EXPIRY_DATE" => Date.tomorrow.iso8601,
+      "DATE_OF_VACCINATION" => Date.current.iso8601,
       "PERFORMING_PROFESSIONAL_FORENAME" => "John",
-      "PERFORMING_PROFESSIONAL_SURNAME" => "Smith"
+      "PERFORMING_PROFESSIONAL_SURNAME" => "Smith",
+      "PROGRAMME" => "Flu",
+      "VACCINE_GIVEN" => "AstraZeneca Fluenz"
     )
   end
   let(:valid_hpv_data) do
     valid_common_data.deep_dup.merge(
-      "PROGRAMME" => "HPV",
-      "VACCINE_GIVEN" => "Gardasil9",
       "ANATOMICAL_SITE" => "Left Upper Arm",
+      "CARE_SETTING" => "1",
+      "DATE_OF_VACCINATION" => "20240101",
       "DOSE_SEQUENCE" => "1",
-      "CARE_SETTING" => "1"
+      "PROGRAMME" => "HPV",
+      "VACCINE_GIVEN" => "Gardasil9"
     )
   end
-  let(:valid_data) { valid_flu_data }
+  let(:valid_data) { valid_hpv_data }
 
   let!(:location) { create(:school, urn: "123456", name: "Waterloo Road") }
 
@@ -134,10 +136,7 @@ describe ImmunisationImportRow do
 
     context "with an invalid vaccine for the programme" do
       let(:data) do
-        {
-          "PROGRAMME" => "HPV",
-          "VACCINE_GIVEN" => "AstraZeneca Fluenz Tetra LAIV"
-        }
+        { "PROGRAMME" => "HPV", "VACCINE_GIVEN" => "AstraZeneca Fluenz" }
       end
 
       let(:programmes) { [create(:programme, :flu), create(:programme, :hpv)] }
@@ -161,13 +160,13 @@ describe ImmunisationImportRow do
         valid_data.merge(
           {
             "VACCINE_GIVEN" => "",
-            "DATE_OF_VACCINATION" => "#{Date.current.academic_year}0901",
+            "DATE_OF_VACCINATION" => "#{AcademicYear.current}0901",
             "SESSION_ID" => session.id.to_s
           }
         )
       end
 
-      let(:session) { create(:session, organisation:, programmes:) }
+      let(:session) { create(:session, team:, programmes:) }
 
       it "has errors" do
         expect(immunisation_import_row).to be_invalid
@@ -302,12 +301,12 @@ describe ImmunisationImportRow do
       context "when importing for an existing session" do
         let(:data) do
           {
-            "DATE_OF_VACCINATION" => "#{Date.current.academic_year}0901",
+            "DATE_OF_VACCINATION" => "#{AcademicYear.current}0901",
             "SESSION_ID" => session.id.to_s
           }
         end
 
-        let(:session) { create(:session, organisation:, programmes:) }
+        let(:session) { create(:session, team:, programmes:) }
 
         it do
           expect(errors).to include(
@@ -353,6 +352,52 @@ describe ImmunisationImportRow do
         expect(immunisation_import_row.errors["PERSON_DOB"]).to eq(
           ["Enter a date of birth in the past."]
         )
+      end
+    end
+
+    context "with clinic care setting" do
+      let(:valid_clinic_data) do
+        valid_data.merge(
+          "CARE_SETTING" => "2",
+          "DATE_OF_VACCINATION" => session.dates.first.strftime("%Y%m%d"),
+          "SESSION_ID" => session.id.to_s,
+          "ORGANISATION_CODE" => team.ods_code,
+          "PERFORMING_PROFESSIONAL_EMAIL" => create(:user).email
+        )
+      end
+
+      let(:session) { create(:session, team:, programmes:) }
+
+      before { create(:community_clinic, name: "A clinic", team:) }
+
+      context "with an existing community clinic" do
+        let(:data) { valid_clinic_data.merge("CLINIC_NAME" => "A clinic") }
+
+        it "is matching" do
+          expect(immunisation_import_row).to be_valid
+        end
+      end
+
+      context "with incorrect casing for an existing clinic" do
+        let(:data) { valid_clinic_data.merge("CLINIC_NAME" => "a cLinIC") }
+
+        it "is case insensitive" do
+          expect(immunisation_import_row).to be_valid
+        end
+      end
+
+      context "with a non-existent clinic" do
+        let(:data) do
+          valid_clinic_data.merge("CLINIC_NAME" => "A wrong clinic")
+        end
+
+        it "is invalid" do
+          expect(immunisation_import_row).to be_invalid
+
+          expect(
+            immunisation_import_row.errors["CLINIC_NAME"]
+          ).to contain_exactly("is not recognised")
+        end
       end
     end
 
@@ -404,7 +449,7 @@ describe ImmunisationImportRow do
         expect(immunisation_import_row).to be_invalid
         expect(immunisation_import_row.errors["SESSION_ID"]).to include(
           "The session ID is not recognised. Download the offline spreadsheet and copy the session ID " \
-            "for this row from there, or contact our support organisation."
+            "for this row from there, or contact our support team."
         )
       end
     end
@@ -416,15 +461,15 @@ describe ImmunisationImportRow do
         expect(immunisation_import_row).to be_invalid
         expect(immunisation_import_row.errors["SESSION_ID"]).to include(
           "The session ID is not recognised. Download the offline spreadsheet and copy the session ID " \
-            "for this row from there, or contact our support organisation."
+            "for this row from there, or contact our support team."
         )
       end
     end
 
-    context "vaccination in a session and no organisation provided" do
+    context "vaccination in a session and no team provided" do
       let(:data) { { "SESSION_ID" => session.id.to_s } }
 
-      let(:session) { create(:session, organisation:, programmes:) }
+      let(:session) { create(:session, team:, programmes:) }
 
       it "has errors" do
         expect(immunisation_import_row).to be_invalid
@@ -442,9 +487,7 @@ describe ImmunisationImportRow do
       let(:programmes) do
         [create(:programme, :hpv), create(:programme, :menacwy)]
       end
-      let(:session) do
-        create(:session, organisation:, programmes: [programmes.first])
-      end
+      let(:session) { create(:session, team:, programmes: [programmes.first]) }
 
       it "has errors" do
         expect(immunisation_import_row).to be_invalid
@@ -461,13 +504,13 @@ describe ImmunisationImportRow do
           "PERFORMING_PROFESSIONAL_FORENAME",
           "PERFORMING_PROFESSIONAL_SURNAME"
         ).merge(
-          "DATE_OF_VACCINATION" => "#{Date.current.academic_year}0901",
+          "DATE_OF_VACCINATION" => "#{AcademicYear.current}0901",
           "VACCINATED" => "Y",
           "SESSION_ID" => session.id.to_s
         )
       end
 
-      let(:session) { create(:session, organisation:, programmes:) }
+      let(:session) { create(:session, team:, programmes:) }
 
       it "has errors" do
         expect(immunisation_import_row).to be_invalid
@@ -482,13 +525,13 @@ describe ImmunisationImportRow do
         valid_data.except("PERFORMING_PROFESSIONAL_EMAIL").merge(
           "PERFORMING_PROFESSIONAL_FORENAME" => "John",
           "PERFORMING_PROFESSIONAL_SURNAME" => "Smith",
-          "DATE_OF_VACCINATION" => "#{Date.current.academic_year}0901",
+          "DATE_OF_VACCINATION" => "#{AcademicYear.current}0901",
           "VACCINATED" => "Y",
           "SESSION_ID" => session.id.to_s
         )
       end
 
-      let(:session) { create(:session, organisation:, programmes:) }
+      let(:session) { create(:session, team:, programmes:) }
 
       it "has errors" do
         expect(immunisation_import_row).to be_invalid
@@ -508,7 +551,7 @@ describe ImmunisationImportRow do
       end
 
       let(:programmes) { [create(:programme, :menacwy)] }
-      let(:session) { create(:session, organisation:, programmes:) }
+      let(:session) { create(:session, team:, programmes:) }
 
       it "has errors" do
         expect(immunisation_import_row).to be_invalid
@@ -528,7 +571,7 @@ describe ImmunisationImportRow do
       end
 
       let(:programmes) { [create(:programme, :td_ipv)] }
-      let(:session) { create(:session, organisation:, programmes:) }
+      let(:session) { create(:session, team:, programmes:) }
 
       it "has errors" do
         expect(immunisation_import_row).to be_invalid
@@ -568,7 +611,22 @@ describe ImmunisationImportRow do
       end
     end
 
+    context "Flu vaccination in previous academic year" do
+      let(:programmes) { [create(:programme, :flu)] }
+
+      let(:data) { valid_flu_data.merge("DATE_OF_VACCINATION" => "20240101") }
+
+      it "is invalid" do
+        expect(immunisation_import_row).to be_invalid
+        expect(
+          immunisation_import_row.errors["DATE_OF_VACCINATION"]
+        ).to contain_exactly("must be in the current academic year")
+      end
+    end
+
     context "Flu vaccination in previous academic year, no vaccinator details provided" do
+      let(:programmes) { [create(:programme, :flu)] }
+
       let(:data) do
         valid_flu_data.except(
           "PERFORMING_PROFESSIONAL_EMAIL",
@@ -582,14 +640,14 @@ describe ImmunisationImportRow do
 
     context "vaccination in a session, with a delivery site that is not appropriate for HPV" do
       let(:programmes) { [create(:programme, :hpv)] }
-      let(:session) { create(:session, organisation:, programmes:) }
+      let(:session) { create(:session, team:, programmes:) }
 
       let(:data) do
         valid_hpv_data.merge(
           "ANATOMICAL_SITE" => "nasal",
           "VACCINATED" => "Y",
           "VACCINE_GIVEN" => "Gardasil9",
-          "DATE_OF_VACCINATION" => "#{Date.current.academic_year}0901",
+          "DATE_OF_VACCINATION" => "#{AcademicYear.current}0901",
           "SESSION_ID" => session.id.to_s
         )
       end
@@ -622,15 +680,15 @@ describe ImmunisationImportRow do
 
     context "vaccination in a session, with a delivery site that is not appropriate for flu" do
       let(:programmes) { [create(:programme, :flu)] }
-      let(:session) { create(:session, organisation:, programmes:) }
+      let(:session) { create(:session, team:, programmes:) }
 
       let(:data) do
         {
           "ANATOMICAL_SITE" => "left buttock",
           "VACCINATED" => "Y",
           "PROGRAMME" => "Flu",
-          "VACCINE_GIVEN" => "AstraZeneca Fluenz Tetra LAIV",
-          "DATE_OF_VACCINATION" => "#{Date.current.academic_year}0901",
+          "VACCINE_GIVEN" => "AstraZeneca Fluenz",
+          "DATE_OF_VACCINATION" => "#{AcademicYear.current}0901",
           "SESSION_ID" => session.id.to_s
         }
       end
@@ -650,12 +708,12 @@ describe ImmunisationImportRow do
         {
           "VACCINATED" => "Y",
           "PROGRAMME" => "Flu",
-          "DATE_OF_VACCINATION" => "#{Date.current.academic_year}0901",
+          "DATE_OF_VACCINATION" => "#{AcademicYear.current}0901",
           "SESSION_ID" => session.id.to_s
         }
       end
 
-      let(:session) { create(:session, organisation:, programmes:) }
+      let(:session) { create(:session, team:, programmes:) }
 
       it "has errors" do
         expect(immunisation_import_row).to be_invalid
@@ -721,12 +779,12 @@ describe ImmunisationImportRow do
         {
           "VACCINATED" => "Y",
           "PROGRAMME" => "Flu",
-          "DATE_OF_VACCINATION" => "#{Date.current.academic_year}0901",
+          "DATE_OF_VACCINATION" => "#{AcademicYear.current}0901",
           "SESSION_ID" => session.id.to_s
         }
       end
 
-      let(:session) { create(:session, organisation:, programmes:) }
+      let(:session) { create(:session, team:, programmes:) }
 
       it "has errors" do
         expect(immunisation_import_row).to be_invalid
@@ -739,27 +797,7 @@ describe ImmunisationImportRow do
     context "with valid fields for Flu" do
       let(:programmes) { [create(:programme, :flu)] }
 
-      let(:data) do
-        {
-          "ORGANISATION_CODE" => "abc",
-          "VACCINATED" => "Y",
-          "BATCH_EXPIRY_DATE" => "20210101",
-          "BATCH_NUMBER" => "123",
-          "ANATOMICAL_SITE" => "nasal",
-          "SCHOOL_NAME" => "Hogwarts",
-          "SCHOOL_URN" => "123456",
-          "PERSON_FORENAME" => "Harry",
-          "PERSON_SURNAME" => "Potter",
-          "PERSON_DOB" => "20120101",
-          "PERSON_POSTCODE" => "SW1A 1AA",
-          "PERSON_GENDER_CODE" => "Male",
-          "DATE_OF_VACCINATION" => "20240101",
-          "PROGRAMME" => "Flu",
-          "VACCINE_GIVEN" => "AstraZeneca Fluenz Tetra LAIV",
-          "PERFORMING_PROFESSIONAL_FORENAME" => "John",
-          "PERFORMING_PROFESSIONAL_SURNAME" => "Smith"
-        }
-      end
+      let(:data) { valid_flu_data }
 
       it { should be_valid }
 
@@ -782,26 +820,7 @@ describe ImmunisationImportRow do
     context "with valid fields for HPV" do
       let(:programmes) { [create(:programme, :hpv)] }
 
-      let(:data) do
-        {
-          "ORGANISATION_CODE" => "abc",
-          "BATCH_EXPIRY_DATE" => "20210101",
-          "BATCH_NUMBER" => "123",
-          "ANATOMICAL_SITE" => "left thigh",
-          "SCHOOL_NAME" => "Hogwarts",
-          "SCHOOL_URN" => "123456",
-          "PERSON_FORENAME" => "Harry",
-          "PERSON_SURNAME" => "Potter",
-          "PERSON_DOB" => "20120101",
-          "PERSON_POSTCODE" => "SW1A 1AA",
-          "PERSON_GENDER_CODE" => "Male",
-          "DATE_OF_VACCINATION" => "20240101",
-          "PROGRAMME" => "HPV",
-          "VACCINE_GIVEN" => "Gardasil9",
-          "DOSE_SEQUENCE" => "1",
-          "CARE_SETTING" => "1"
-        }
-      end
+      let(:data) { valid_hpv_data }
 
       it { should be_valid }
     end
@@ -824,13 +843,6 @@ describe ImmunisationImportRow do
     end
 
     it { should be_administered }
-
-    it "has a vaccinator" do
-      expect(vaccination_record.performed_by).to have_attributes(
-        given_name: "John",
-        family_name: "Smith"
-      )
-    end
 
     it "sets the administered at time" do
       expect(vaccination_record.performed_at).to eq(
@@ -888,6 +900,19 @@ describe ImmunisationImportRow do
       end
     end
 
+    context "with the flu programme" do
+      let(:programmes) { [create(:programme, :flu)] }
+
+      let(:data) { valid_flu_data }
+
+      it "has a vaccinator" do
+        expect(vaccination_record.performed_by).to have_attributes(
+          given_name: "John",
+          family_name: "Smith"
+        )
+      end
+    end
+
     context "without a vaccine" do
       let(:data) { valid_data.except("VACCINE_GIVEN") }
 
@@ -905,7 +930,7 @@ describe ImmunisationImportRow do
         create(
           :vaccination_record,
           programme: programmes.first,
-          session: create(:session, organisation:, programmes:)
+          session: create(:session, team:, programmes:)
         )
       end
 
@@ -1041,7 +1066,11 @@ describe ImmunisationImportRow do
         let(:programmes) { [create(:programme, :hpv)] }
 
         let(:data) do
-          valid_data.merge("PROGRAMME" => "HPV", "VACCINE_GIVEN" => "Gardasil9")
+          valid_data.merge(
+            "PROGRAMME" => "HPV",
+            "VACCINE_GIVEN" => "Gardasil9",
+            "DOSE_SEQUENCE" => ""
+          )
         end
 
         it { should eq(1) }
@@ -1053,7 +1082,8 @@ describe ImmunisationImportRow do
         let(:data) do
           valid_data.merge(
             "PROGRAMME" => "3-in-1",
-            "VACCINE_GIVEN" => "Revaxis"
+            "VACCINE_GIVEN" => "Revaxis",
+            "DOSE_SEQUENCE" => ""
           )
         end
 
@@ -1066,7 +1096,8 @@ describe ImmunisationImportRow do
         let(:data) do
           valid_data.merge(
             "PROGRAMME" => "MenACWY",
-            "VACCINE_GIVEN" => "MenQuadfi"
+            "VACCINE_GIVEN" => "MenQuadfi",
+            "DOSE_SEQUENCE" => ""
           )
         end
 
@@ -1173,19 +1204,20 @@ describe ImmunisationImportRow do
     describe "#location_name" do
       subject { vaccination_record.location_name }
 
+      let(:valid_data) { valid_hpv_data.except("CARE_SETTING") }
+
       context "with a school session that exists" do
         let(:data) do
           valid_data.merge(
             "DATE_OF_VACCINATION" => session.dates.first.strftime("%Y%m%d"),
             "SESSION_ID" => session.id.to_s,
-            "ORGANISATION_CODE" => organisation.ods_code,
-            "PERFORMING_PROFESSIONAL_EMAIL" => create(:user).email
+            "ORGANISATION_CODE" => team.ods_code,
+            "PERFORMING_PROFESSIONAL_EMAIL" => create(:user).email,
+            "DOSE_SEQUENCE" => "1"
           )
         end
 
-        let(:session) do
-          create(:session, organisation:, location:, programmes:)
-        end
+        let(:session) { create(:session, team:, location:, programmes:) }
 
         it { should be_nil }
       end
@@ -1525,6 +1557,33 @@ describe ImmunisationImportRow do
         it "does not stage any changes as vaccs history data is potentially out of date" do
           create(:patient, nhs_number:, address_postcode: "CB1 1AA")
           expect(patient.pending_changes).to be_empty
+        end
+      end
+
+      context "with an existing matching patient but mismatching capitalisation, without NHS number" do
+        let(:data) do
+          valid_data.except("NHS_NUMBER").merge(
+            {
+              "PERSON_FORENAME" => "RON",
+              "PERSON_SURNAME" => "WEASLEY",
+              "PERSON_POSTCODE" => "sw1a 1aa"
+            }
+          )
+        end
+
+        let!(:existing_patient) do
+          create(
+            :patient,
+            given_name: "Ron",
+            family_name: "Weasley",
+            date_of_birth: Date.parse(date_of_birth),
+            address_postcode:,
+            nhs_number: "9990000018"
+          )
+        end
+
+        it "still matches to a patient" do
+          expect(patient).to eq(existing_patient)
         end
       end
 

@@ -2,7 +2,7 @@
 
 describe CohortImportRow do
   subject(:cohort_import_row) do
-    described_class.new(data: data_as_csv_row, organisation:)
+    described_class.new(data: data_as_csv_row, team:, academic_year:)
   end
 
   # FIXME: Don't re-implement behaviour of `CSVParser`.
@@ -17,7 +17,8 @@ describe CohortImportRow do
   let(:today) { Date.new(2024, 12, 1) }
 
   let(:programme) { create(:programme) }
-  let(:organisation) { create(:organisation, programmes: [programme]) }
+  let(:team) { create(:team, programmes: [programme]) }
+  let(:academic_year) { AcademicYear.pending }
 
   let(:school_urn) { "123456" }
 
@@ -57,7 +58,7 @@ describe CohortImportRow do
     }
   end
 
-  before { create(:school, urn: "123456") }
+  before { create(:school, urn: "123456", team:) }
 
   describe "validations" do
     let(:data) { valid_data }
@@ -106,7 +107,7 @@ describe CohortImportRow do
         expect(cohort_import_row.errors.size).to eq(1)
         expect(cohort_import_row.errors["CHILD_SCHOOL_URN"]).to contain_exactly(
           "The school URN is not recognised. If you’ve checked the URN, " \
-            "and you believe it’s valid, contact our support organisation."
+            "and you believe it’s valid, contact our support team."
         )
       end
     end
@@ -178,10 +179,28 @@ describe CohortImportRow do
         )
       end
     end
+
+    context "when uploading different caps name" do
+      let(:capitalised_parent_2_data) do
+        {
+          "PARENT_2_EMAIL" => "jenny@example.com",
+          "PARENT_2_NAME" => "Jenny Smith"
+        }
+      end
+      let(:data) { valid_data.merge(capitalised_parent_2_data) }
+
+      let!(:existing_parent) do
+        create(:parent, full_name: "JENNY SMITH", email: "jenny@example.com")
+      end
+
+      it { should eq([existing_parent]) }
+    end
   end
 
   describe "#to_patient" do
-    subject(:patient) { travel_to(today) { cohort_import_row.to_patient } }
+    subject(:patient) { cohort_import_row.to_patient }
+
+    around { |example| travel_to(today) { example.run } }
 
     let(:data) { valid_data }
 
@@ -193,6 +212,7 @@ describe CohortImportRow do
         gender_code: "male",
         home_educated: false,
         registration: "8AB",
+        registration_academic_year: AcademicYear.pending,
         school: nil,
         year_group: 10
       )
@@ -220,7 +240,8 @@ describe CohortImportRow do
           family_name: "Smith",
           gender_code: "male",
           given_name: "Jimmy",
-          nhs_number: "9990000018"
+          nhs_number: "9990000018",
+          registration_academic_year: 2023
         )
       end
 
@@ -230,7 +251,13 @@ describe CohortImportRow do
 
       it "stages the registration" do
         expect(patient.registration).not_to eq("8AB")
-        expect(patient.pending_changes).to include("registration" => "8AB")
+        expect(patient.registration_academic_year).not_to eq(
+          AcademicYear.pending
+        )
+        expect(patient.pending_changes).to include(
+          "registration" => "8AB",
+          "registration_academic_year" => AcademicYear.pending
+        )
       end
     end
 
@@ -242,6 +269,7 @@ describe CohortImportRow do
           family_name: "Smith",
           gender_code: "not_known",
           given_name: "Jimmy",
+          preferred_given_name: "Jim",
           nhs_number: "9990000018",
           address_line_1: "10 Downing Street",
           address_line_2: "",
@@ -267,14 +295,15 @@ describe CohortImportRow do
       let!(:existing_patient) do
         create(
           :patient,
-          address_postcode: "SW1A 1AA",
-          family_name: "Smith",
-          gender_code: "female",
-          given_name: "Jimmy",
-          nhs_number: "9990000018",
           address_line_1: "10 Downing Street",
           address_line_2: "",
           address_town: "London",
+          address_postcode: "SW1A 1AA",
+          given_name: "Jimmy",
+          family_name: "Smith",
+          preferred_given_name: "Jim",
+          gender_code: "female",
+          nhs_number: "9990000018",
           birth_academic_year: 2009,
           date_of_birth: Date.new(2010, 1, 1),
           registration: "8AB"
@@ -366,6 +395,7 @@ describe CohortImportRow do
           :patient,
           family_name: "Smith",
           given_name: "Jimmy",
+          preferred_given_name: "Jim",
           gender_code: "male",
           nhs_number: "9990000018",
           birth_academic_year: 2009,
@@ -400,6 +430,7 @@ describe CohortImportRow do
           :patient,
           family_name: "Smith",
           given_name: "Jimmy",
+          preferred_given_name: "Jim",
           gender_code: "male",
           nhs_number: "9990000018",
           birth_academic_year: 2009,
@@ -463,6 +494,60 @@ describe CohortImportRow do
           "address_postcode" => "SW1A 1AA",
           "address_town" => "London"
         )
+      end
+    end
+
+    context "with an existing patient with different capitalisation" do
+      let(:data) do
+        {
+          "CHILD_ADDRESS_LINE_1" => "10 Downing Street",
+          "CHILD_PREFERRED_FIRST_NAME" => "Jim",
+          "CHILD_DATE_OF_BIRTH" => "2010-01-01",
+          "CHILD_FIRST_NAME" => "Jimmy",
+          "CHILD_GENDER" => "Male",
+          "CHILD_LAST_NAME" => "Smith",
+          "CHILD_PREFERRED_LAST_NAME" => "Smithy",
+          "CHILD_NHS_NUMBER" => "9990000018",
+          "CHILD_POSTCODE" => "sw1a 1aa",
+          "CHILD_SCHOOL_URN" => school_urn,
+          "CHILD_TOWN" => "London"
+        }
+      end
+
+      let!(:existing_patient) do
+        create(
+          :patient,
+          address_postcode: "SW1A 1AA",
+          family_name: "SMITH",
+          gender_code: "male",
+          given_name: "JIMMY",
+          nhs_number: "9990000018",
+          address_line_1: "10 DOWNING STREET",
+          preferred_given_name: "JIM",
+          preferred_family_name: "SMITHY",
+          date_of_birth: Date.new(2010, 1, 1),
+          address_town: "LONDON"
+        )
+      end
+
+      it { should eq(existing_patient) }
+
+      it "saves the incoming values" do
+        expect(patient).to have_attributes(
+          address_postcode: "SW1A 1AA",
+          family_name: "Smith",
+          gender_code: "male",
+          given_name: "Jimmy",
+          nhs_number: "9990000018",
+          address_line_1: "10 Downing Street",
+          preferred_given_name: "Jim",
+          preferred_family_name: "Smithy",
+          address_town: "London"
+        )
+      end
+
+      it "doesn't stage the capitalisation differences" do
+        expect(patient.pending_changes).to be_empty
       end
     end
   end
@@ -533,7 +618,7 @@ describe CohortImportRow do
           gender_code: "male",
           given_name: "Jimmy",
           nhs_number: "9990000018",
-          organisation: nil,
+          team: nil,
           school: Location.first
         )
       end

@@ -3,7 +3,7 @@ run-name: Continuous deployment of ${{ github.ref_name }} to QA and Test
 
 on:
   push:
-    branches: [main]
+    branches: [next]
 
 jobs:
   test:

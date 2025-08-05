@@ -4,44 +4,62 @@
 #
 # Table name: consents
 #
-#  id                  :bigint           not null, primary key
-#  health_answers      :jsonb            not null
-#  invalidated_at      :datetime
-#  notes               :text             default(""), not null
-#  notify_parents      :boolean
-#  reason_for_refusal  :integer
-#  response            :integer          not null
-#  route               :integer          not null
-#  submitted_at        :datetime         not null
-#  withdrawn_at        :datetime
-#  created_at          :datetime         not null
-#  updated_at          :datetime         not null
-#  organisation_id     :bigint           not null
-#  parent_id           :bigint
-#  patient_id          :bigint           not null
-#  programme_id        :bigint           not null
-#  recorded_by_user_id :bigint
+#  id                            :bigint           not null, primary key
+#  academic_year                 :integer          not null
+#  health_answers                :jsonb            not null
+#  invalidated_at                :datetime
+#  notes                         :text             default(""), not null
+#  notify_parent_on_refusal      :boolean
+#  notify_parents_on_vaccination :boolean
+#  reason_for_refusal            :integer
+#  response                      :integer          not null
+#  route                         :integer          not null
+#  submitted_at                  :datetime         not null
+#  vaccine_methods               :integer          default([]), not null, is an Array
+#  withdrawn_at                  :datetime
+#  created_at                    :datetime         not null
+#  updated_at                    :datetime         not null
+#  parent_id                     :bigint
+#  patient_id                    :bigint           not null
+#  programme_id                  :bigint           not null
+#  recorded_by_user_id           :bigint
+#  team_id                       :bigint           not null
 #
 # Indexes
 #
-#  index_consents_on_organisation_id      (organisation_id)
+#  index_consents_on_academic_year        (academic_year)
 #  index_consents_on_parent_id            (parent_id)
 #  index_consents_on_patient_id           (patient_id)
 #  index_consents_on_programme_id         (programme_id)
 #  index_consents_on_recorded_by_user_id  (recorded_by_user_id)
+#  index_consents_on_team_id              (team_id)
 #
 # Foreign Keys
 #
-#  fk_rails_...  (organisation_id => organisations.id)
 #  fk_rails_...  (parent_id => parents.id)
 #  fk_rails_...  (patient_id => patients.id)
 #  fk_rails_...  (programme_id => programmes.id)
 #  fk_rails_...  (recorded_by_user_id => users.id)
+#  fk_rails_...  (team_id => teams.id)
 #
 
 describe Consent do
+  subject(:consent) { build(:consent) }
+
   describe "validations" do
     it { should validate_length_of(:notes).is_at_most(1000) }
+
+    context "when response is given" do
+      subject { build(:consent, :given) }
+
+      it { should validate_presence_of(:vaccine_methods) }
+    end
+
+    context "when response is refused" do
+      subject { build(:consent, :refused) }
+
+      it { should_not validate_presence_of(:vaccine_methods) }
+    end
   end
 
   describe "#verbal_routes" do
@@ -56,7 +74,7 @@ describe Consent do
     it "does not require triage" do
       response = build(:consent, :given)
 
-      expect(response).not_to be_triage_needed
+      expect(response).not_to be_requires_triage
     end
   end
 
@@ -71,15 +89,7 @@ describe Consent do
       ]
       response = build(:consent, :given, health_answers:)
 
-      expect(response).to be_triage_needed
-    end
-
-    it "returns notes need triage" do
-      response = build(:consent, :given, :health_question_notes)
-
-      expect(response.reasons_triage_needed).to eq(
-        ["Health questions need triage"]
-      )
+      expect(response).to be_requires_triage
     end
   end
 
@@ -94,7 +104,7 @@ describe Consent do
   end
 
   describe "#from_consent_form!" do
-    describe "the created consent object" do
+    context "with on programme" do
       subject(:consent) do
         described_class.from_consent_form!(
           consent_form,
@@ -111,7 +121,7 @@ describe Consent do
         expect(consent.recorded_by).to eq(current_user)
       end
 
-      it "copies over attributes from consent_form" do
+      it "copies over attributes from consent form" do
         expect(consent).to(
           have_attributes(
             programme: consent_form.programmes.first,
@@ -119,7 +129,7 @@ describe Consent do
             consent_form:,
             reason_for_refusal: consent_form.reason,
             notes: "",
-            response: consent_form.response,
+            response: "given",
             route: "website"
           )
         )
@@ -160,9 +170,21 @@ describe Consent do
           )
         end
       end
+
+      context "when consenting to nasal spray" do
+        before do
+          consent_form.consent_form_programmes.first.update!(
+            vaccine_methods: %w[nasal]
+          )
+        end
+
+        it "stores this preference on the consent" do
+          expect(consent.vaccine_methods).to contain_exactly("nasal")
+        end
+      end
     end
 
-    context "when only consenting to one programme" do
+    context "with multiple programmes" do
       subject(:consents) do
         described_class.from_consent_form!(
           consent_form,
@@ -174,22 +196,30 @@ describe Consent do
       let(:programmes) do
         [create(:programme, :menacwy), create(:programme, :td_ipv)]
       end
-      let(:organisation) { create(:organisation, programmes:) }
-      let(:session) { create(:session, organisation:, programmes:) }
+      let(:patient) { create(:patient) }
+      let(:current_user) { create(:user) }
+      let(:team) { create(:team, programmes:) }
+      let(:session) { create(:session, team:, programmes:) }
       let(:consent_form) do
         create(
           :consent_form,
           :recorded,
           session:,
-          response: :given_one,
           reason: :personal_choice,
-          reason_notes: "Personal reasons.",
-          chosen_vaccine: "menacwy"
+          reason_notes: "Personal reasons."
         )
       end
 
-      let(:patient) { create(:patient) }
-      let(:current_user) { create(:user) }
+      before do
+        consent_form.consent_form_programmes.first.update!(
+          response: "given",
+          vaccine_methods: %w[injection]
+        )
+        consent_form.consent_form_programmes.second.update!(
+          response: "refused",
+          vaccine_methods: []
+        )
+      end
 
       it "creates a consent per programme" do
         expect(consents.map(&:programme)).to eq(programmes)
@@ -239,5 +269,80 @@ describe Consent do
 
     expect(consent.health_answers.first.response).to eq("no")
     expect(consent.health_answers.first.notes).to be_nil
+  end
+
+  describe "#for_academic_year" do
+    let(:current_academic_year) { Date.current.academic_year }
+    let(:previous_academic_year) { current_academic_year - 1 }
+    let(:next_academic_year) { current_academic_year + 1 }
+
+    let(:patient) { create(:patient) }
+    let(:programme) { create(:programme) }
+    let(:parent) { create(:parent) }
+
+    let!(:consent_current_year_start) do
+      create(
+        :consent,
+        patient: patient,
+        programme: programme,
+        parent: parent,
+        submitted_at: Date.new(current_academic_year, 9, 1).in_time_zone,
+        academic_year: current_academic_year
+      )
+    end
+
+    let!(:consent_current_year_middle) do
+      create(
+        :consent,
+        patient: create(:patient),
+        programme: programme,
+        parent: parent,
+        submitted_at: Date.new(current_academic_year + 1, 1, 15).in_time_zone,
+        academic_year: current_academic_year
+      )
+    end
+
+    let!(:consent_current_year_end) do
+      create(
+        :consent,
+        patient: create(:patient),
+        programme: programme,
+        parent: parent,
+        submitted_at: Date.new(current_academic_year + 1, 8, 31).in_time_zone,
+        academic_year: current_academic_year
+      )
+    end
+
+    let!(:consent_previous_year) do
+      create(
+        :consent,
+        patient: create(:patient),
+        programme: programme,
+        parent: parent,
+        submitted_at: Date.new(previous_academic_year, 10, 15).in_time_zone,
+        academic_year: previous_academic_year
+      )
+    end
+
+    let!(:consent_next_year) do
+      create(
+        :consent,
+        patient: create(:patient),
+        programme: programme,
+        parent: parent,
+        submitted_at: Date.new(next_academic_year, 10, 15).in_time_zone,
+        academic_year: next_academic_year
+      )
+    end
+
+    it "returns consents for the specified academic year" do
+      consents = described_class.where(academic_year: current_academic_year)
+
+      expect(consents).to include(consent_current_year_start)
+      expect(consents).to include(consent_current_year_middle)
+      expect(consents).to include(consent_current_year_end)
+      expect(consents).not_to include(consent_previous_year)
+      expect(consents).not_to include(consent_next_year)
+    end
   end
 end

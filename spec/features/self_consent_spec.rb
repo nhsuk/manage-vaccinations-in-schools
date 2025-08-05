@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 describe "Self-consent" do
+  around { |example| travel_to(Date.new(2025, 7, 31)) { example.run } }
+
   scenario "after Gillick assessment" do
     given_an_hpv_programme_is_underway
     and_there_is_a_child_without_parental_consent
@@ -42,16 +44,15 @@ describe "Self-consent" do
   def given_an_hpv_programme_is_underway
     @programme = create(:programme, :hpv)
 
-    @organisation =
-      create(:organisation, :with_one_nurse, programmes: [@programme])
+    @team = create(:team, :with_one_nurse, programmes: [@programme])
 
-    @school = create(:school)
+    @school = create(:school, team: @team)
 
     @session =
       create(
         :session,
         :today,
-        organisation: @organisation,
+        team: @team,
         programmes: [@programme],
         location: @school
       )
@@ -60,19 +61,19 @@ describe "Self-consent" do
   end
 
   def and_there_is_a_child_without_parental_consent
-    sign_in @organisation.users.first
+    sign_in @team.users.first
 
     visit "/dashboard"
 
     click_on "Programmes", match: :first
-    click_on "HPV"
+    click_on "HPV", match: :first
     within ".app-secondary-navigation" do
       click_on "Sessions"
     end
     click_on @school.name
     click_on "Consent"
 
-    choose "No response"
+    check "No response"
     click_on "Update results"
 
     expect(page).to have_content("Showing 1 to 1 of 1 children")
@@ -93,7 +94,7 @@ describe "Self-consent" do
   end
 
   def when_the_nurse_goes_to_the_child
-    sign_in @organisation.users.first
+    sign_in @team.users.first
 
     visit session_patient_programme_path(@session, @patient, @programme)
   end
@@ -131,6 +132,8 @@ describe "Self-consent" do
             with: "They didn't understand the benefits and risks of the vaccine"
 
     click_on "Complete your assessment"
+
+    travel 1.minute
   end
 
   def then_the_details_of_the_gillick_non_competence_assessment_are_visible
@@ -141,7 +144,7 @@ describe "Self-consent" do
   end
 
   def and_the_child_cannot_give_their_own_consent
-    click_on "Get consent"
+    click_on "Record a new consent response"
     expect(page).not_to have_content("Child (Gillick competent)")
     click_on "Back"
   end
@@ -151,7 +154,7 @@ describe "Self-consent" do
   end
 
   def and_the_activity_log_shows_the_gillick_non_competence
-    click_on "Activity log"
+    click_on "Session activity and notes"
     expect(page).to have_content(
       "Completed Gillick assessment as not Gillick competent"
     )
@@ -195,6 +198,8 @@ describe "Self-consent" do
             with: "They understand the benefits and risks of the vaccine"
 
     click_on "Update your assessment"
+
+    travel 1.minute
   end
 
   def then_the_details_of_the_gillick_competence_assessment_are_visible
@@ -205,7 +210,7 @@ describe "Self-consent" do
   end
 
   def and_the_activity_log_shows_the_gillick_competence
-    click_on "Activity log"
+    click_on "Session activity and notes"
     expect(page).to have_content(
       "Updated Gillick assessment as Gillick competent"
     )
@@ -213,7 +218,7 @@ describe "Self-consent" do
   end
 
   def and_the_nurse_records_consent_for_the_child
-    click_on "Get consent"
+    click_on "Record a new consent response"
 
     # who
     choose "Child (Gillick competent)"
@@ -236,7 +241,8 @@ describe "Self-consent" do
   end
 
   def and_the_child_can_give_their_own_consent_that_the_nurse_records
-    click_on "Change response method"
+    click_on "Change method"
+
     choose "Child (Gillick competent)"
     5.times { click_on "Continue" }
 
@@ -246,7 +252,7 @@ describe "Self-consent" do
   end
 
   def and_changes_the_response_method_to_the_parent
-    click_on "Change response method"
+    click_on "Change method"
     choose @parent.full_name
     click_on "Continue"
 
@@ -267,17 +273,13 @@ describe "Self-consent" do
   end
 
   def then_they_see_that_the_child_has_consent_from_themselves
-    expect(page).to have_content(
-      "#{@patient.full_name} Child (Gillick competent)"
-    )
     expect(page).to have_content("Consent given")
+    expect(page).to have_content("Child (Gillick competent)")
   end
 
   def then_they_see_that_the_child_has_consent_from_the_parent
-    expect(page).to have_content(
-      "Consent given\nNameResponse dateDecision #{@parent.full_name}"
-    )
     expect(page).to have_content("Consent given")
+    expect(page).to have_content(@parent.full_name)
   end
 
   def and_the_child_should_be_safe_to_vaccinate

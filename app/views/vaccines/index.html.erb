@@ -1,11 +1,10 @@
 <%= h1 t(".title"), size: "xl" %>
 
 <% @vaccines.each do |vaccine| %>
-  <%= render AppCardComponent.new do |c| %>
-    <% c.with_heading { link_to(vaccine_heading(vaccine), vaccine_path(vaccine)) } %>
-    <p>
-      <%= vaccine.manufacturer %>
-    </p>
+  <%= render AppCardComponent.new(heading_level: 2, section: true) do |card| %>
+    <% card.with_heading { link_to(vaccine_heading(vaccine), vaccine_path(vaccine)) } %>
+
+    <p><%= vaccine.manufacturer %></p>
 
     <%= govuk_button_link_to "Add a new batch",
                              new_vaccine_batch_path(vaccine),
@@ -26,9 +25,12 @@
         <%= table.with_body do |body| %>
           <% batches.each do |batch| %>
             <% body.with_row do |row| %>
-              <% row.with_cell(text: batch.name) do %>
-                <%= batch.name %>
-                <% if batch.id == @todays_batch_id_by_programme[vaccine.programme] %>
+              <% row.with_cell do %>
+                <span class="nhsuk-u-text-break-word">
+                  <%= batch.name %>
+                </span>
+
+                <% if batch.id == @todays_batch_id_by_programme_and_vaccine_methods[vaccine.programme][vaccine.method] %>
                   <br>
                   <span class="nhsuk-caption-m">
                     (Your default)
@@ -40,10 +42,12 @@
               <% row.with_cell do %>
                 <ul class="app-action-list">
                   <li class="app-action-list__item">
-                    <%= link_to "Change", edit_vaccine_batch_path(vaccine, batch) %>
+                    <%= link_to "Change", edit_vaccine_batch_path(vaccine, batch),
+                                aria: { label: "Change #{batch.name} batch of #{vaccine.brand}" } %>
                   </li>
                   <li class="app-action-list__item">
-                    <%= link_to "Archive", archive_vaccine_batch_path(vaccine, batch) %>
+                    <%= link_to "Archive", archive_vaccine_batch_path(vaccine, batch),
+                                aria: { label: "Archive #{batch.name} batch of #{vaccine.brand}" } %>
                   </li>
                 </ul>
               <% end %>

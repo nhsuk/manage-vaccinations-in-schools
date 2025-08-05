@@ -4,15 +4,17 @@
 #
 # Table name: patient_consent_statuses
 #
-#  id           :bigint           not null, primary key
-#  status       :integer          default("no_response"), not null
-#  patient_id   :bigint           not null
-#  programme_id :bigint           not null
+#  id              :bigint           not null, primary key
+#  academic_year   :integer          not null
+#  status          :integer          default("no_response"), not null
+#  vaccine_methods :integer          default([]), not null, is an Array
+#  patient_id      :bigint           not null
+#  programme_id    :bigint           not null
 #
 # Indexes
 #
-#  index_patient_consent_statuses_on_patient_id_and_programme_id  (patient_id,programme_id) UNIQUE
-#  index_patient_consent_statuses_on_status                       (status)
+#  idx_on_patient_id_programme_id_academic_year_1d3170e398  (patient_id,programme_id,academic_year) UNIQUE
+#  index_patient_consent_statuses_on_status                 (status)
 #
 # Foreign Keys
 #
@@ -20,6 +22,8 @@
 #  fk_rails_...  (programme_id => programmes.id)
 #
 class Patient::ConsentStatus < ApplicationRecord
+  include HasVaccineMethods
+
   belongs_to :patient
   belongs_to :programme
 
@@ -27,10 +31,17 @@ class Patient::ConsentStatus < ApplicationRecord
            -> { not_invalidated.response_provided.includes(:parent, :patient) },
            through: :patient
 
+  scope :has_vaccine_method,
+        ->(vaccine_method) do
+          where("vaccine_methods[1] = ?", vaccine_methods.fetch(vaccine_method))
+        end
+
   enum :status,
        { no_response: 0, given: 1, refused: 2, conflicts: 3 },
        default: :no_response,
        validate: true
+
+  validates :vaccine_methods, presence: true, if: :given?
 
   def assign_status
     self.status =
@@ -43,16 +54,17 @@ class Patient::ConsentStatus < ApplicationRecord
       else
         :no_response
       end
+
+    self.vaccine_methods = (agreed_vaccine_methods if status_should_be_given?)
   end
+
+  def vaccine_method_nasal? = vaccine_methods.include?("nasal")
 
   private
 
   def status_should_be_given?
-    if self_consents.any?
-      self_consents.all?(&:response_given?)
-    else
-      parental_consents.any? && parental_consents.all?(&:response_given?)
-    end
+    consents_for_status.any? && consents_for_status.all?(&:response_given?) &&
+      agreed_vaccine_methods.present?
   end
 
   def status_should_be_refused?
@@ -60,13 +72,26 @@ class Patient::ConsentStatus < ApplicationRecord
   end
 
   def status_should_be_conflicts?
-    if self_consents.any?
-      self_consents.any?(&:response_refused?) &&
-        self_consents.any?(&:response_given?)
-    else
-      parental_consents.any?(&:response_refused?) &&
-        parental_consents.any?(&:response_given?)
+    consents_for_status =
+      (self_consents.any? ? self_consents : parental_consents)
+
+    if consents_for_status.any?(&:response_refused?) &&
+         consents_for_status.any?(&:response_given?)
+      return true
     end
+
+    consents_for_status.any? && consents_for_status.all?(&:response_given?) &&
+      agreed_vaccine_methods.blank?
+  end
+
+  def agreed_vaccine_methods
+    @agreed_vaccine_methods ||=
+      consents_for_status.map(&:vaccine_methods).inject(&:intersection)
+  end
+
+  def consents_for_status
+    @consents_for_status ||=
+      self_consents.any? ? self_consents : parental_consents
   end
 
   def self_consents
@@ -78,6 +103,7 @@ class Patient::ConsentStatus < ApplicationRecord
   end
 
   def latest_consents
-    @latest_consents ||= ConsentGrouper.call(consents, programme_id:)
+    @latest_consents ||=
+      ConsentGrouper.call(consents, programme_id:, academic_year:)
   end
 end

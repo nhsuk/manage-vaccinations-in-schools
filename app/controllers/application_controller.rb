@@ -6,14 +6,18 @@ class ApplicationController < ActionController::Base
 
   before_action :store_user_location!
   before_action :authenticate_user!
-  before_action :set_selected_organisation
+  before_action :set_selected_team
   before_action :set_user_cis2_info
   before_action :set_disable_cache_headers
   before_action :set_header_path
+  before_action :set_assets_name
+  before_action :set_theme_colour
   before_action :set_service_name
+  before_action :set_service_url
   before_action :set_service_guide_url
   before_action :set_show_navigation
   before_action :set_privacy_policy_url
+  before_action :set_sentry_user
   before_action :authenticate_basic
 
   after_action :verify_policy_scoped, if: -> { Rails.env.local? }
@@ -31,22 +35,38 @@ class ApplicationController < ActionController::Base
 
   rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
 
+  def current_team = current_user&.selected_team
+
+  helper_method :current_team
+
   private
 
-  def set_selected_organisation
+  def set_selected_team
     return if Settings.cis2.enabled
     return unless current_user
     return if session["cis2_info"].present?
 
-    redirect_to new_users_organisations_path
+    redirect_to new_users_teams_path
   end
 
   def set_header_path
     @header_path = dashboard_path
   end
 
+  def set_assets_name
+    @assets_name = "application"
+  end
+
+  def set_theme_colour
+    @theme_colour = HostingEnvironment.theme_colour
+  end
+
   def set_service_name
     @service_name = "Manage vaccinations in schools"
+  end
+
+  def set_service_url
+    @service_url = "https://www.manage-vaccinations-in-schools.nhs.uk"
   end
 
   def set_show_navigation
@@ -74,5 +94,9 @@ class ApplicationController < ActionController::Base
 
   def set_privacy_policy_url
     @privacy_policy_url = nil
+  end
+
+  def set_sentry_user
+    Sentry.set_user(id: current_user&.id)
   end
 end

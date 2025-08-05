@@ -2,121 +2,106 @@
   <%= render AppBacklinkComponent.new(@back_link_path, name: "edit consent page") %>
 <% end %>
 
-<% change_link = Proc.new do |attr, params = {}|
-     options = attr.in?(%i[consent reason]) ? {} : { skip_to_confirm: true }
+<% change_link = Proc.new do |step, params = {}|
+     options = (step == "reason" || step.start_with?("response-")) ? {} : { skip_to_confirm: true }
      parent_interface_consent_form_edit_path(
        @consent_form,
-       attr.to_s.dasherize,
+       step,
        options.merge(params)
      )
    end %>
 
 <%= h1 "Check and confirm" %>
 
-<% if @consent_form.consent_given_one? %>
-  <% if @consent_form.chosen_vaccine == "menacwy" %>
-    <%= render AppCardComponent.new do |c| %>
-      <% c.with_heading { t("consent_forms.confirm.consent_card_title.menacwy") } %>
+<% if @consent_form.response_given? && @consent_form.response_refused? %>
+  <% ProgrammeGrouper.call(@consent_form.given_programmes).each do |group, programmes| %>
+    <% programmes.each do |programme| %>
+      <%= render AppCardComponent.new do |card| %>
+        <% card.with_heading { t(programme.type, scope: %i[consent_forms confirm consent_card_title]) } %>
+
+        <%= govuk_summary_list do |summary_list|
+              summary_list.with_row do |row|
+                row.with_key { "Decision" }
+                row.with_value { "Consent given" }
+                row.with_action(text: "Change",
+                                href: change_link["response-#{group}"],
+                                visually_hidden_text: "decision")
+              end
+            end %>
+      <% end %>
+    <% end %>
+  <% end %>
+
+  <% ProgrammeGrouper.call(@consent_form.refused_programmes).each do |group, programmes| %>
+    <% programmes.each do |programme| %>
+      <%= render AppCardComponent.new do |card| %>
+        <% card.with_heading { t(programme.type, scope: %i[consent_forms confirm consent_card_title]) } %>
+
+        <%= govuk_summary_list do |summary_list|
+              summary_list.with_row do |row|
+                row.with_key { "Decision" }
+                row.with_value { "Consent refused" }
+                row.with_action(text: "Change",
+                                href: change_link["response-#{group}"],
+                                visually_hidden_text: "decision")
+              end
+            
+              reason_notes = @consent_form.reason_notes.present? ? "<br>".html_safe + @consent_form.reason_notes : ""
+              reason_for_refusal_text = Consent.human_enum_name(:reason_for_refusal, @consent_form.reason) + reason_notes
+            
+              summary_list.with_row do |row|
+                row.with_key { "Reason" }
+                row.with_value { reason_for_refusal_text.html_safe }
+                row.with_action(text: "Change",
+                                href: change_link["reason"],
+                                visually_hidden_text: "reason for refusal")
+              end
+            end %>
+      <% end %>
+    <% end %>
+  <% end %>
+<% elsif @consent_form.response_given? %>
+  <% ProgrammeGrouper.call(@consent_form.programmes).keys.each do |group| %>
+    <%= render AppCardComponent.new do |card| %>
+      <% card.with_heading { t(group, scope: %i[consent_forms confirm consent_card_title]) } %>
+
       <%= govuk_summary_list do |summary_list|
             summary_list.with_row do |row|
               row.with_key { "Decision" }
               row.with_value { "Consent given" }
               row.with_action(text: "Change",
-                              href: change_link[:consent],
-                              visually_hidden_text: "consent")
-            end
-          end %>
-    <% end %>
-
-    <%= render AppCardComponent.new do |c| %>
-      <% c.with_heading { t("consent_forms.confirm.consent_card_title.td_ipv") } %>
-      <%= govuk_summary_list do |summary_list|
-            summary_list.with_row do |row|
-              row.with_key { "Decision" }
-              row.with_value { "Consent refused" }
-              row.with_action(text: "Change",
-                              href: change_link[:consent],
-                              visually_hidden_text: "consent")
-            end
-          
-            reason_notes = @consent_form.reason_notes.present? ? "<br>".html_safe + @consent_form.reason_notes : ""
-            reason_for_refusal_text = @consent_form.human_enum_name(:reason) + reason_notes
-          
-            summary_list.with_row do |row|
-              row.with_key { "Reason" }
-              row.with_value { reason_for_refusal_text.html_safe }
-              row.with_action(text: "Change",
-                              href: change_link[:reason],
-                              visually_hidden_text: "reason for refusal")
-            end
-          end %>
-    <% end %>
-  <% else %>
-    <%= render AppCardComponent.new do |c| %>
-      <% c.with_heading { t("consent_forms.confirm.consent_card_title.td_ipv") } %>
-      <%= govuk_summary_list do |summary_list|
-            summary_list.with_row do |row|
-              row.with_key { "Decision" }
-              row.with_value { "Consent given" }
-              row.with_action(text: "Change",
-                              href: change_link[:consent],
-                              visually_hidden_text: "consent")
-            end
-          end %>
-    <% end %>
-
-    <%= render AppCardComponent.new do |c| %>
-      <% c.with_heading { t("consent_forms.confirm.consent_card_title.menacwy") } %>
-      <%= govuk_summary_list do |summary_list|
-            summary_list.with_row do |row|
-              row.with_key { "Decision" }
-              row.with_value { "Consent refused" }
-              row.with_action(text: "Change",
-                              href: change_link[:consent],
-                              visually_hidden_text: "consent")
-            end
-          
-            reason_notes = @consent_form.reason_notes.present? ? "<br>".html_safe + @consent_form.reason_notes : ""
-            reason_for_refusal_text = @consent_form.human_enum_name(:reason) + reason_notes
-          
-            summary_list.with_row do |row|
-              row.with_key { "Reason" }
-              row.with_value { reason_for_refusal_text.html_safe }
-              row.with_action(text: "Change",
-                              href: change_link[:reason],
-                              visually_hidden_text: "reason for refusal")
+                              href: change_link["response-#{group}"],
+                              visually_hidden_text: "decision")
             end
           end %>
     <% end %>
   <% end %>
 <% else %>
-  <%= render AppCardComponent.new do |c| %>
-    <% programme_type = @consent_form.programmes.first.type.in?(["menacwy", "td_ipv"]) ? "menacwy_td_ipv" : @consent_form.programmes.first.type %>
-    <% c.with_heading { t("consent_forms.confirm.consent_card_title.#{programme_type}") } %>
-    <%= govuk_summary_list do |summary_list|
-          summary_list.with_row do |row|
-            row.with_key { "Decision" }
-            row.with_value {
-              @consent_form.consent_given? ? "Consent given" : "Consent refused"
-            }
-            row.with_action(text: "Change",
-                            href: change_link[:consent],
-                            visually_hidden_text: "consent")
-          end
-        
-          if @consent_form.consent_refused?
+  <% ProgrammeGrouper.call(@consent_form.programmes).keys.each do |group| %>
+    <%= render AppCardComponent.new do |card| %>
+      <% card.with_heading { t(group, scope: %i[consent_forms confirm consent_card_title]) } %>
+
+      <%= govuk_summary_list do |summary_list|
+            summary_list.with_row do |row|
+              row.with_key { "Decision" }
+              row.with_value { "Consent refused" }
+              row.with_action(text: "Change",
+                              href: change_link["response-#{group}"],
+                              visually_hidden_text: "decision")
+            end
+          
             reason_notes = @consent_form.reason_notes.present? ? "<br>".html_safe + @consent_form.reason_notes : ""
-            reason_for_refusal_text = @consent_form.human_enum_name(:reason) + reason_notes
-        
+            reason_for_refusal_text = Consent.human_enum_name(:reason_for_refusal, @consent_form.reason) + reason_notes
+          
             summary_list.with_row do |row|
               row.with_key { "Reason" }
               row.with_value { reason_for_refusal_text.html_safe }
               row.with_action(text: "Change",
-                              href: change_link[:reason],
+                              href: change_link["reason"],
                               visually_hidden_text: "reason for refusal")
             end
-          end
-        end %>
+          end %>
+    <% end %>
   <% end %>
 <% end %>
 
@@ -127,7 +112,7 @@
           row.with_key { "Child’s name" }
           row.with_value { @consent_form.full_name(context: :parents) }
           row.with_action(text: "Change",
-                          href: change_link[:name],
+                          href: change_link["name"],
                           visually_hidden_text: "child’s name")
         end
       
@@ -136,7 +121,7 @@
             row.with_key { "Also known as" }
             row.with_value { @consent_form.preferred_full_name(context: :parents) }
             row.with_action(text: "Change",
-                            href: change_link[:name],
+                            href: change_link["name"],
                             visually_hidden_text: "common name")
           end
         end
@@ -146,18 +131,18 @@
           row.with_value { @consent_form.date_of_birth.to_fs(:long) }
           row.with_action(
             text: "Change",
-            href: change_link[:date_of_birth],
+            href: change_link["date-of-birth"],
             visually_hidden_text: "date of birth",
           )
         end
       
-        if @consent_form.consent_given? || @consent_form.consent_given_one?
+        if @consent_form.response_given?
           summary_list.with_row do |row|
             row.with_key { "Address" }
             row.with_value { format_address_multi_line(@consent_form) }
             row.with_action(
               text: "Change",
-              href: change_link[:address],
+              href: change_link["address"],
               visually_hidden_text: "address",
             )
           end
@@ -176,7 +161,7 @@
           row.with_value { school }
           row.with_action(
             text: "Change",
-            href: change_link[:school],
+            href: change_link["school"],
             visually_hidden_text: "school",
           )
         end
@@ -190,7 +175,7 @@
           row.with_key { "Your name" }
           row.with_value { @consent_form.parent_full_name }
           row.with_action(text: "Change",
-                          href: change_link[:parent],
+                          href: change_link["parent"],
                           visually_hidden_text: "your name")
         end
       
@@ -198,7 +183,7 @@
           row.with_key { "Relationship" }
           row.with_value { @consent_form.parent_relationship.label }
           row.with_action(text: "Change",
-                          href: change_link[:parent],
+                          href: change_link["parent"],
                           visually_hidden_text: "your relationship")
         end
       
@@ -206,7 +191,7 @@
           row.with_key { "Email address" }
           row.with_value { @consent_form.parent_email }
           row.with_action(text: "Change",
-                          href: change_link[:parent],
+                          href: change_link["parent"],
                           visually_hidden_text: "your email")
         end
       
@@ -215,7 +200,7 @@
             row.with_key { "Phone number" }
             row.with_value { @consent_form.parent_phone }
             row.with_action(text: "Change",
-                            href: change_link[:parent],
+                            href: change_link["parent"],
                             visually_hidden_text: "your phone")
           end
       
@@ -224,7 +209,7 @@
               row.with_key { "Phone contact method" }
               row.with_value { @consent_form.parent.contact_method_description }
               row.with_action(text: "Change",
-                              href: change_link[:contact_method],
+                              href: change_link["contact-method"],
                               visually_hidden_text: "your phone contact method")
             end
           end
@@ -233,14 +218,14 @@
             row.with_key { "Phone number" }
             row.with_value { "Not provided" }
             row.with_action(text: "Change",
-                            href: change_link[:parent],
+                            href: change_link["parent"],
                             visually_hidden_text: "your phone")
           end
         end
       end %>
 <% end %>
 
-<% if @consent_form.consent_given? || @consent_form.consent_given_one? %>
+<% if @consent_form.response_given? %>
   <%= render AppCardComponent.new do |c| %>
     <% c.with_heading { "Health questions" } %>
     <%= govuk_summary_list classes: "app-summary-list--full-width" do |summary_list|
@@ -249,7 +234,7 @@
               row.with_key { ha.question }
               row.with_value { health_answer_response(ha) }
               row.with_action(text: "Change",
-                              href: change_link[:health_question, question_number: ha.id],
+                              href: change_link["health-question", question_number: ha.id],
                               visually_hidden_text: "your answer to health question #{ha.id + 1}")
             end
           end

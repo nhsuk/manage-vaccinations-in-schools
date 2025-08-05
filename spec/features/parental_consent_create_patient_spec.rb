@@ -3,6 +3,8 @@
 describe "Parental consent create patient" do
   before { given_the_app_is_setup }
 
+  around { |example| travel_to(Date.new(2025, 7, 31)) { example.run } }
+
   scenario "Consent form matches an NHS number" do
     stub_pds_search_to_return_a_patient
 
@@ -59,15 +61,19 @@ describe "Parental consent create patient" do
 
   def given_the_app_is_setup
     @programme = create(:programme, :hpv)
-    @organisation =
-      create(:organisation, :with_one_nurse, programmes: [@programme])
-    location =
-      create(:school, name: "Pilot School", organisation: @organisation)
+    @team =
+      create(
+        :team,
+        :with_one_nurse,
+        :with_generic_clinic,
+        programmes: [@programme]
+      )
+    location = create(:school, name: "Pilot School", team: @team)
     @session =
       create(
         :session,
         :scheduled,
-        organisation: @organisation,
+        team: @team,
         programmes: [@programme],
         location:
       )
@@ -144,7 +150,7 @@ describe "Parental consent create patient" do
   end
 
   def when_the_nurse_checks_the_unmatched_consent_responses
-    sign_in @organisation.users.first
+    sign_in @team.users.first
     visit "/dashboard"
 
     expect(page).to have_content("Unmatched responses (1)")
@@ -191,7 +197,7 @@ describe "Parental consent create patient" do
     visit "/dashboard"
 
     click_on "Programmes", match: :first
-    click_on "HPV"
+    click_on "HPV", match: :first
     within ".app-secondary-navigation" do
       click_on "Sessions"
     end
@@ -203,7 +209,9 @@ describe "Parental consent create patient" do
   def then_the_patient_should_be_ready_to_vaccinate
     expect(page).to have_content(@child.full_name)
     click_on @child.full_name
-    expect(page).to have_content("#{@child.full_name} is ready for the nurse")
+    expect(page).to have_content(
+      "#{@child.full_name} is ready for the vaccinator"
+    )
     expect(Patient.last.birth_academic_year).to eq(
       @child.date_of_birth.academic_year
     )

@@ -18,12 +18,15 @@ namespace :performance do
     VaccinationRecord.delete_all
     Patient.delete_all
 
-    Organisation.find_each do |organisation|
-      puts "For organisation: #{organisation.name}"
+    academic_year = AcademicYear.current
+
+    Team.find_each do |team|
+      puts "For team: #{team.name}"
 
       sessions_by_school_id =
-        organisation
+        team
           .sessions
+          .where(academic_year:)
           .joins(:location)
           .merge(Location.school)
           .index_by(&:location_id)
@@ -33,9 +36,9 @@ namespace :performance do
         count.times.map do
           FactoryBot.build(
             :patient,
-            organisation:,
+            team:,
             school_id: sessions_by_school_id.keys.sample,
-            year_group: organisation.year_groups.sample,
+            year_group: team.year_groups.sample,
             home_educated: nil
           )
         end
@@ -44,7 +47,7 @@ namespace :performance do
       Patient.import!(patients)
 
       puts "Building patient sessions..."
-      generic_clinic_session = organisation.generic_clinic_session
+      generic_clinic_session = team.generic_clinic_session(academic_year:)
 
       patient_sessions =
         patients.flat_map do |patient|
@@ -62,16 +65,11 @@ namespace :performance do
 
       puts "Building vaccination records..."
       vaccination_records =
-        organisation.programmes.flat_map do |programme|
+        team.programmes.flat_map do |programme|
           patients
             .sample(count / 10)
             .map do |patient|
-              FactoryBot.build(
-                :vaccination_record,
-                patient:,
-                organisation:,
-                programme:
-              )
+              FactoryBot.build(:vaccination_record, patient:, team:, programme:)
             end
         end
 

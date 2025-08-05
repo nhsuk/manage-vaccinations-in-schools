@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+export PGPASSWORD="$(echo $DB_CREDENTIALS | jq -r .password)"
+psql -h "$DB_HOST" -d "$DB_NAME" -U "$(echo $DB_CREDENTIALS | jq -r .username)" -c "select 1" || {
+  echo "DB connection could not be established: Internal healthcheck failed."; exit 1;
+}
+curl -f "$1" || {
+  echo "DB connection could not be established, but $1 did not return a 200 response."; exit 2;
+}

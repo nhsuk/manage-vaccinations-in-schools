@@ -11,7 +11,7 @@
   <%= render AppImportStatusComponent.new(import: import) %>
 </p>
 
-<%= render AppCardComponent.new do |card| %>
+<%= render AppCardComponent.new(heading_level: 2) do |card| %>
   <% card.with_heading { "Details" } %>
 
   <%= govuk_summary_list do |summary_list| %>
@@ -34,17 +34,10 @@
           } %>
     <% end %>
 
-    <% if @session %>
-      <%= summary_list.with_row do |row| %>
-        <%= row.with_key { "School" } %>
-        <%= row.with_value { link_to @session.location.name, session_path(@session) } %>
-      <% end %>
-    <% end %>
-
     <% if import.is_a?(ClassImport) %>
       <%= summary_list.with_row do |row| %>
         <%= row.with_key { "Year groups" } %>
-        <%= row.with_value { import.year_groups.map { format_year_group(_1) }.to_sentence } %>
+        <%= row.with_value { import.year_groups.map { format_year_group(it) }.to_sentence } %>
       <% end %>
     <% end %>
 

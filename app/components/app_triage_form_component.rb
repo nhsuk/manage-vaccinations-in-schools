@@ -2,50 +2,47 @@
 
 class AppTriageFormComponent < ViewComponent::Base
   def initialize(
-    patient_session:,
-    programme:,
+    triage_form,
     url:,
     method: :post,
-    triage: nil,
-    legend: nil
+    heading: true,
+    continue: false
   )
     super
 
-    @patient_session = patient_session
-    @programme = programme
-    @triage = triage || default_triage
+    @triage_form = triage_form
     @url = url
     @method = method
-    @legend = legend
+    @heading = heading
+    @continue = continue
   end
 
   private
 
-  attr_reader :patient_session, :programme
+  attr_reader :triage_form, :url, :method, :heading, :continue
 
-  delegate :patient, to: :patient_session
+  delegate :patient_session, :programme, to: :triage_form
+  delegate :patient, :session, to: :patient_session
+
+  def builder = GOVUKDesignSystemFormBuilder::FormBuilder
 
   def fieldset_options
-    text = "Is it safe to vaccinate #{@patient_session.patient.given_name}?"
+    text = "Is it safe to vaccinate #{patient.given_name}?"
+    hint =
+      if programme.has_multiple_vaccine_methods?
+        if triage_form.consented_to_injection_only?
+          "The parent has consented to the injected vaccine only"
+        elsif triage_form.consented_to_injection?
+          "The parent has consented to the injected vaccine being offered if the nasal spray is not suitable"
+        else
+          "The parent has consented to the nasal spray only"
+        end
+      end
 
-    case @legend
-    when :bold
-      { legend: { text:, tag: :h2 } }
-    when :hidden
-      { legend: { text:, hidden: true } }
+    if heading
+      { legend: { text:, tag: :h2 }, hint: { text: hint } }
     else
-      { legend: { text:, size: "s", class: "app-fieldset__legend--reset" } }
+      { legend: { text: }, hint: { text: hint } }
     end
-  end
-
-  def default_triage
-    previous_triage =
-      patient
-        .triages
-        .not_invalidated
-        .order(created_at: :desc)
-        .find_by(programme:)
-
-    Triage.new(status: previous_triage&.status)
   end
 end

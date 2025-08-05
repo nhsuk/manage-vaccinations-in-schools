@@ -14,7 +14,7 @@ class Onboarding
     year_groups
   ].freeze
 
-  ORGANISATION_ATTRIBUTES = %i[
+  TEAM_ATTRIBUTES = %i[
     careplus_venue_code
     days_before_consent_reminders
     days_before_consent_requests
@@ -29,7 +29,13 @@ class Onboarding
     reply_to_id
   ].freeze
 
-  TEAM_ATTRIBUTES = %i[email name phone phone_instructions reply_to_id].freeze
+  SUBTEAM_ATTRIBUTES = %i[
+    email
+    name
+    phone
+    phone_instructions
+    reply_to_id
+  ].freeze
 
   USER_ATTRIBUTES = %i[
     email
@@ -39,32 +45,29 @@ class Onboarding
     password
   ].freeze
 
-  validates :organisation, presence: true
+  validates :team, presence: true
   validates :programmes, presence: true
-  validates :teams, presence: true
+  validates :subteams, presence: true
   validates :schools, presence: true
   validates :clinics, presence: true
 
   def initialize(hash)
     config = hash.deep_symbolize_keys
 
-    @organisation =
-      Organisation.new(
-        config.fetch(:organisation, {}).slice(*ORGANISATION_ATTRIBUTES)
-      )
+    @team = Team.new(config.fetch(:team, {}).slice(*TEAM_ATTRIBUTES))
 
     @programmes =
       config
         .fetch(:programmes, [])
-        .map { |type| ExistingProgramme.new(type:, organisation:) }
+        .map { |type| ExistingProgramme.new(type:, team:) }
 
-    teams_by_name =
+    subteams_by_name =
       config
-        .fetch(:teams, {})
-        .transform_values { it.slice(*TEAM_ATTRIBUTES) }
-        .transform_values { Team.new(**it, organisation:) }
+        .fetch(:subteams, {})
+        .transform_values { it.slice(*SUBTEAM_ATTRIBUTES) }
+        .transform_values { Subteam.new(**it, team:) }
 
-    @teams = teams_by_name.values
+    @subteams = subteams_by_name.values
 
     @users =
       config
@@ -80,18 +83,20 @@ class Onboarding
       config
         .fetch(:schools, {})
         .flat_map do |team_name, school_urns|
-          team = teams_by_name[team_name]
-          school_urns.map { |urn| ExistingSchool.new(urn:, team:) }
+          subteam = subteams_by_name[team_name]
+          school_urns.map do |urn|
+            ExistingSchool.new(urn:, subteam:, programmes:)
+          end
         end
 
     @clinics =
       config
         .fetch(:clinics, {})
         .flat_map do |team_name, clinic_configs|
-          team = teams_by_name[team_name]
+          subteam = subteams_by_name[team_name]
           clinic_configs
             .map { it.slice(*CLINIC_ATTRIBUTES) }
-            .map { Location.new(**it, type: :community_clinic, team:) }
+            .map { Location.new(**it, type: :community_clinic, subteam:) }
         end
   end
 
@@ -105,30 +110,40 @@ class Onboarding
 
   def errors
     super.tap do |errors|
-      merge_errors_from([organisation], errors:, name: "organisation")
+      merge_errors_from([team], errors:, name: "team")
       merge_errors_from(programmes, errors:, name: "programme")
-      merge_errors_from(teams, errors:, name: "team")
+      merge_errors_from(subteams, errors:, name: "subteam")
       merge_errors_from(users, errors:, name: "user")
       merge_errors_from(schools, errors:, name: "school")
       merge_errors_from(clinics, errors:, name: "clinic")
     end
   end
 
-  def save!
+  def save!(create_sessions_for_previous_academic_year: false)
     ActiveRecord::Base.transaction do
       models.each(&:save!)
-      organisation.generic_clinic
-      @users.each { |user| user.organisations << organisation }
-      UnscheduledSessionsFactory.new.call
+
+      # Reload to ensure the programmes are loaded.
+      GenericClinicFactory.call(team: team.reload)
+
+      @users.each { |user| user.teams << team }
+
+      TeamSessionsFactory.call(team, academic_year:)
+
+      if create_sessions_for_previous_academic_year
+        TeamSessionsFactory.call(team, academic_year: academic_year - 1)
+      end
     end
   end
 
   private
 
-  attr_reader :organisation, :programmes, :teams, :users, :schools, :clinics
+  attr_reader :team, :programmes, :subteams, :users, :schools, :clinics
+
+  def academic_year = AcademicYear.pending
 
   def models
-    [organisation] + programmes + teams + users + schools + clinics
+    [team] + programmes + subteams + users + schools + clinics
   end
 
   def merge_errors_from(objects, errors:, name:)
@@ -149,7 +164,7 @@ class Onboarding
   class ExistingProgramme
     include ActiveModel::Model
 
-    attr_accessor :type, :organisation
+    attr_accessor :type, :team
 
     validates :programme, presence: true
 
@@ -158,18 +173,18 @@ class Onboarding
     end
 
     def save!
-      OrganisationProgramme.create!(organisation:, programme:)
+      TeamProgramme.create!(team:, programme:)
     end
   end
 
   class ExistingSchool
     include ActiveModel::Model
 
-    attr_accessor :urn, :team
+    attr_accessor :urn, :subteam, :programmes
 
-    validates :existing_team, absence: true
+    validates :existing_subteam, absence: true
     validates :location, presence: true
-    validates :team, presence: true
+    validates :subteam, presence: true
     validates :status, inclusion: %w[open opening]
 
     def location
@@ -178,12 +193,15 @@ class Onboarding
 
     delegate :status, to: :location, allow_nil: true
 
-    def existing_team
-      location&.team
+    def existing_subteam
+      location&.subteam
     end
 
     def save!
-      location.update!(team:)
+      location.update!(subteam:)
+      location.create_default_programme_year_groups!(
+        programmes.map(&:programme)
+      )
     end
   end
 end

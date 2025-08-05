@@ -7,50 +7,50 @@
 #  id                            :bigint           not null, primary key
 #  academic_year                 :integer          not null
 #  days_before_consent_reminders :integer
+#  requires_registration         :boolean          default(TRUE), not null
 #  send_consent_requests_at      :date
 #  send_invitations_at           :date
 #  slug                          :string           not null
 #  created_at                    :datetime         not null
 #  updated_at                    :datetime         not null
 #  location_id                   :bigint           not null
-#  organisation_id               :bigint           not null
+#  team_id                       :bigint           not null
 #
 # Indexes
 #
-#  idx_on_organisation_id_location_id_academic_year_3496b72d0c  (organisation_id,location_id,academic_year) UNIQUE
+#  index_sessions_on_location_id              (location_id)
+#  index_sessions_on_team_id_and_location_id  (team_id,location_id)
 #
 # Foreign Keys
 #
-#  fk_rails_...  (organisation_id => organisations.id)
+#  fk_rails_...  (team_id => teams.id)
 #
 FactoryBot.define do
   factory :session do
     transient do
       date { Date.current }
       dates { [] }
-      team { association(:team, organisation:) }
+      subteam { association(:subteam, team:) }
     end
 
     sequence(:slug) { |n| "session-#{n}" }
 
     academic_year { (date || Date.current).academic_year }
     programmes { [association(:programme)] }
-    organisation { association(:organisation, programmes:) }
-    location { association :school, team: }
+    team { association(:team, programmes:) }
+    location { association(:school, subteam:, programmes:) }
 
     days_before_consent_reminders do
-      if date && !location.generic_clinic?
-        organisation.days_before_consent_reminders
-      end
+      team.days_before_consent_reminders if date && !location.generic_clinic?
     end
     send_consent_requests_at do
       if date && !location.generic_clinic?
-        (date - organisation.days_before_consent_requests.days)
+        (date - team.days_before_consent_requests.days)
       end
     end
     send_invitations_at do
       if date && location.generic_clinic?
-        (date - organisation.days_before_invitations.days)
+        (date - team.days_before_invitations.days)
       end
     end
 
@@ -78,6 +78,10 @@ FactoryBot.define do
 
     trait :completed do
       date { Date.current - 1.week }
+    end
+
+    trait :requires_no_registration do
+      requires_registration { false }
     end
   end
 end

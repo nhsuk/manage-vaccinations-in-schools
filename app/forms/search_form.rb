@@ -1,125 +1,30 @@
 # frozen_string_literal: true
 
 class SearchForm
-  include ActiveModel::Model
-  include ActiveModel::Attributes
-  include ActiveRecord::AttributeAssignment
+  include RequestSessionPersistable
 
-  SESSION_KEY = "search_filters"
+  def initialize(request_path:, request_session:, **attributes)
+    @request_path = request_path
 
-  attribute :clear_filters, :boolean
-  attribute :consent_status, :string
-  attribute :date_of_birth_day, :integer
-  attribute :date_of_birth_month, :integer
-  attribute :date_of_birth_year, :integer
-  attribute :missing_nhs_number, :boolean
-  attribute :programme_status, :string
-  attribute :q, :string
-  attribute :register_status, :string
-  attribute :session_status, :string
-  attribute :triage_status, :string
-  attribute :year_groups, array: true
+    # An empty string represents the "Any" option.
+    has_query_parameters =
+      attributes.any? { it.present? || it == "" || it == [] }
 
-  attr_accessor :session, :request_path
+    request_session[request_session_key] = {} if has_query_parameters
 
-  def initialize(params = {})
-    super(params)
-    handle_session_filters
-  end
+    super(request_session:, **attributes.except("_clear"))
 
-  def year_groups=(values)
-    super(values&.compact_blank&.map(&:to_i)&.compact || [])
-  end
-
-  def apply(scope, programme: nil)
-    scope = scope.search_by_name(q) if q.present?
-
-    scope = scope.search_by_year_groups(year_groups) if year_groups.present?
-
-    if date_of_birth_year.present?
-      scope = scope.search_by_date_of_birth_year(date_of_birth_year)
-    end
-
-    if date_of_birth_month.present?
-      scope = scope.search_by_date_of_birth_month(date_of_birth_month)
-    end
-
-    if date_of_birth_day.present?
-      scope = scope.search_by_date_of_birth_day(date_of_birth_day)
-    end
-
-    scope = scope.search_by_nhs_number(nil) if missing_nhs_number.present?
-
-    if (status = consent_status).present?
-      scope = scope.has_consent_status(status, programme:)
-    end
-
-    if (status = programme_status&.to_sym).present?
-      scope = scope.has_vaccination_status(status, programme:)
-    end
-
-    if (status = session_status&.to_sym).present?
-      scope = scope.has_session_status(status, programme:)
-    end
-
-    if (status = register_status&.to_sym).present?
-      scope = scope.has_registration_status(status)
-    end
-
-    if (status = triage_status&.to_sym).present?
-      scope = scope.has_triage_status(status, programme:)
-    end
-
-    scope.order_by_name
+    save! if has_query_parameters
   end
 
   private
 
-  def handle_session_filters
-    if clear_filters
-      clear_from_session
-    elsif has_filters?
-      store_in_session
-    else
-      load_from_session
-    end
-  end
-
-  def store_in_session
-    return if session.nil?
-
-    if has_filters?
-      session[SESSION_KEY] ||= {}
-      session[SESSION_KEY][path_key] = attributes
-    end
-  end
-
-  def load_from_session
-    return if session.nil? || session[SESSION_KEY].blank?
-
-    stored_filters = session[SESSION_KEY][path_key]
-    return if stored_filters.blank?
-
-    assign_attributes(stored_filters)
-  end
-
-  def clear_from_session
-    return if session.nil? || session[SESSION_KEY].blank?
-
-    session[SESSION_KEY].delete(path_key)
-  end
-
-  def has_filters?
-    # An empty string represents the "Any" option
-    attributes
-      .except(:clear_filters)
-      .values
-      .any? { |value| value.present? || value == "" }
-  end
+  def request_session_key = "search_form_#{path_key}"
 
   def path_key
-    # 8 should be more than enough to avoid collisions
-    # for the number of distinct paths.
-    Digest::MD5.hexdigest(request_path).first(8)
+    @path_key ||= Digest::MD5.hexdigest(@request_path).first(8)
+  end
+
+  def reset_unused_fields
   end
 end

@@ -1,0 +1,56 @@
+<h3 class="nhsuk-heading-m">Consent</h3>
+
+<%= render AppCardComponent.new(heading_level: 4, colour:) do |card| %>
+  <% card.with_heading { heading } %>
+
+  <% unless vaccination_status.vaccinated? %>
+    <% if consent_status.no_response? %>
+      <% if latest_consent_request %>
+        <p>No-one responded to our requests for consent.</p>
+        <p>A request was sent on <%= latest_consent_request.sent_at.to_fs(:long) %>.</p>
+      <% else %>
+        <p>No requests have been sent.</p>
+      <% end %>
+    <% elsif consent_status.conflicts? %>
+      <p>You can only vaccinate if all respondents give consent.</p>
+    <% elsif consent_status.refused? %>
+      <p><%= who_refused %> refused to give consent.</p>
+    <% elsif consent_status.given? %>
+      <p><%= patient.full_name %> is ready for the vaccinator.</p>
+    <% end %>
+
+    <div class="app-button-group nhsuk-u-margin-bottom-4">
+      <% if can_send_consent_request? %>
+        <%= govuk_button_to "Send consent request",
+                            send_request_session_patient_programme_consents_path(
+                              session, patient, programme
+                            ),
+                            secondary: true %>
+      <% end %>
+
+      <%= govuk_button_to "Record a new consent response",
+                          session_patient_programme_consents_path(
+                            session, patient, programme
+                          ),
+                          secondary: true %>
+    </div>
+
+    <%= render AppGillickAssessmentComponent.new(patient_session:, programme:) %>
+  <% end %>
+
+  <% if consents.any? %>
+    <h5 class="nhsuk-heading-s">Consent responses</h5>
+
+    <% consents.each do |consent| %>
+      <%= render AppConsentCardComponent.new(consent, session:) %>
+    <% end %>
+  <% end %>
+
+  <% if show_health_answers? %>
+    <hr class="nhsuk-section-break nhsuk-section-break--visible nhsuk-section-break--l">
+
+    <h5 class="nhsuk-heading-s nhsuk-u-margin-bottom-2">All answers to health questions</h5>
+
+    <%= render AppHealthAnswersSummaryComponent.new(grouped_consents) %>
+  <% end %>
+<% end %>

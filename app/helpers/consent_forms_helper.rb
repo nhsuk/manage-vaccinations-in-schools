@@ -2,8 +2,8 @@
 
 module ConsentFormsHelper
   def health_answer_response(health_answer)
-    if health_answer.response == "yes"
-      "Yes – #{health_answer.notes}"
+    if health_answer.response_yes?
+      ["Yes", health_answer.notes].compact_blank.join(" – ")
     else
       "No"
     end

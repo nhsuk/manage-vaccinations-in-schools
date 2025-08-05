@@ -19,19 +19,18 @@ describe "Parental consent" do
 
   def given_an_hpv_programme_is_underway
     @programme = create(:programme, :hpv)
-    @organisation =
-      create(:organisation, :with_one_nurse, programmes: [@programme])
+    @team = create(:team, :with_one_nurse, programmes: [@programme])
 
-    team = create(:team, organisation: @organisation)
+    subteam = create(:subteam, team: @team)
 
-    @scheduled_school = create(:school, :secondary, name: "School 1", team:)
-    @completed_school = create(:school, :secondary, name: "School 2", team:)
+    @scheduled_school = create(:school, :secondary, name: "School 1", subteam:)
+    @completed_school = create(:school, :secondary, name: "School 2", subteam:)
 
     @scheduled_session =
       create(
         :session,
         :scheduled,
-        organisation: @organisation,
+        team: @team,
         programmes: [@programme],
         location: @scheduled_school
       )
@@ -40,7 +39,7 @@ describe "Parental consent" do
       create(
         :session,
         :completed,
-        organisation: @organisation,
+        team: @team,
         programmes: [@programme],
         location: @completed_school
       )
@@ -49,7 +48,7 @@ describe "Parental consent" do
   end
 
   def when_a_nurse_checks_consent_responses
-    sign_in @organisation.users.first
+    sign_in @team.users.first
     visit "/dashboard"
 
     click_on "Programmes", match: :first
@@ -64,7 +63,7 @@ describe "Parental consent" do
   def then_there_should_be_no_consent_for_my_child
     expect(page).to have_content("No response")
 
-    choose "No response"
+    check "No response"
     click_on "Update results"
 
     expect(page).to have_content(@child.full_name)

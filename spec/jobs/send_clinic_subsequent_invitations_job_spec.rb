@@ -4,19 +4,13 @@ describe SendClinicSubsequentInvitationsJob do
   subject(:perform_now) { described_class.perform_now(session) }
 
   let(:programmes) { [create(:programme, :hpv)] }
-  let(:organisation) { create(:organisation, programmes:) }
+  let(:team) { create(:team, programmes:) }
   let(:parents) { create_list(:parent, 2) }
   let(:patient) { create(:patient, parents:, year_group: 8) }
-  let(:location) { create(:generic_clinic, organisation:) }
+  let(:location) { create(:generic_clinic, team:) }
 
   let(:session) do
-    create(
-      :session,
-      programmes:,
-      date: 1.week.ago.to_date,
-      location:,
-      organisation:
-    )
+    create(:session, programmes:, date: 1.week.ago.to_date, location:, team:)
   end
   let!(:patient_session) { create(:patient_session, patient:, session:) }
 

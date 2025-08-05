@@ -2,11 +2,11 @@
 
 describe "Immunisation imports duplicates" do
   scenario "User reviews and selects between duplicate records" do
-    given_i_am_signed_in
-    and_an_hpv_programme_is_underway
+    given_an_hpv_programme_is_underway
     and_an_existing_patient_record_exists
+    and_i_am_signed_in
 
-    when_i_go_to_the_vaccinations_page
+    when_i_go_to_the_import_page
     and_i_click_on_the_upload_link
     and_i_upload_a_file_with_duplicate_records
     then_i_should_see_the_import_page_with_duplicate_records
@@ -35,23 +35,16 @@ describe "Immunisation imports duplicates" do
     then_i_should_see_no_import_issues_with_the_count
   end
 
-  def given_i_am_signed_in
-    @organisation = create(:organisation, :with_one_nurse, ods_code: "R1L")
-    sign_in @organisation.users.first
-  end
-
-  def and_an_hpv_programme_is_underway
+  def given_an_hpv_programme_is_underway
     @programme = create(:programme, :hpv_all_vaccines)
-    create(
-      :organisation_programme,
-      organisation: @organisation,
-      programme: @programme
-    )
+    @team =
+      create(:team, :with_one_nurse, ods_code: "R1L", programmes: [@programme])
+
     @location = create(:school, urn: "110158", name: "Eton College")
     @session =
       create(
         :session,
-        organisation: @organisation,
+        team: @team,
         programmes: [@programme],
         location: @location,
         date: Date.new(2024, 5, 14)
@@ -139,15 +132,15 @@ describe "Immunisation imports duplicates" do
       )
   end
 
-  def when_i_go_to_the_vaccinations_page
-    visit "/dashboard"
-    click_on "Programmes", match: :first
-    click_on "HPV"
-    click_on "Vaccinations", match: :first
+  def and_i_am_signed_in
+    sign_in @team.users.first
+    visit dashboard_path
   end
 
   def and_i_click_on_the_upload_link
-    click_on "Import vaccination records"
+    click_on "Import records"
+    choose "Vaccination records"
+    click_on "Continue"
   end
 
   def and_i_upload_a_file_with_duplicate_records
@@ -257,11 +250,11 @@ describe "Immunisation imports duplicates" do
 
   def then_i_should_see_import_issues_with_the_count
     expect(page).to have_link("Import issues")
-    expect(page).to have_selector(".app-count", text: "( 1 )")
+    expect(page).to have_selector(".app-count", text: "(1)").twice
   end
 
   def then_i_should_see_no_import_issues_with_the_count
     expect(page).to have_link("Import issues")
-    expect(page).to have_selector(".app-count", text: "( 0 )")
+    expect(page).to have_selector(".app-count", text: "(0")
   end
 end

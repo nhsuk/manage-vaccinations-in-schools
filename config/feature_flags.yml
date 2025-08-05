@@ -1,10 +1,17 @@
-api: Basic API useful for automated testing.
-
 basic_auth: Require users to sign in with basic authentication before they
   can use the service.
 
 dev_tools: Developer tools useful for testing and debugging.
 
-mesh_jobs: Export vaccination records to MESH automatically.
+enqueue_sync_vaccination_records_to_nhs: Send new vaccinations recorded by
+  nurses to NHS Immunisations FHIR API.
+
+immunisations_fhir_api_integration: Master switch to control communications
+  with NHS Immunisations FHIR API.
+
+import_choose_academic_year: Add an option to choose the academic year when
+  importing patients during the preparation period.
 
 offline_working: Prototype support for using Mavis offline.
+
+testing_api: Basic API useful for automated testing.

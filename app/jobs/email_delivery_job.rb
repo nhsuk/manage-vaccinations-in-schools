@@ -39,8 +39,8 @@ class EmailDeliveryJob < NotifyDeliveryJob
 
     if (
          email_reply_to_id =
-           personalisation.team&.reply_to_id ||
-             personalisation.organisation.reply_to_id
+           personalisation.subteam&.reply_to_id ||
+             personalisation.team.reply_to_id
        )
       args[:email_reply_to_id] = email_reply_to_id
     end

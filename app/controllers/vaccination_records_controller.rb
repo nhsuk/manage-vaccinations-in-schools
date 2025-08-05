@@ -1,17 +1,11 @@
 # frozen_string_literal: true
 
 class VaccinationRecordsController < ApplicationController
-  include Pagy::Backend
   include VaccinationMailerConcern
 
-  before_action :set_vaccination_record, except: :index
+  before_action :set_vaccination_record
+  before_action :set_breadcrumb_items, only: :show
   before_action :set_return_to, only: %i[confirm_destroy destroy]
-
-  def index
-    @pagy, @vaccination_records = pagy(vaccination_records)
-
-    render layout: "full"
-  end
 
   def show
   end
@@ -46,52 +40,64 @@ class VaccinationRecordsController < ApplicationController
     redirect_to @return_to, flash: { success: "Vaccination record deleted" }
   end
 
-  def export_dps
-    send_data(dps_export.csv, filename: dps_export.filename)
-  end
-
-  def reset_dps_export
-    programme.dps_exports.destroy_all
-
-    flash[:success] = {
-      heading: "DPS exports have been reset for the programme"
-    }
-
-    redirect_to programme_vaccination_records_path(programme)
-  end
-
   private
 
-  def programme
-    @programme ||=
-      policy_scope(Programme).find_by!(type: params[:programme_type])
-  end
-
-  def vaccination_records
-    @vaccination_records ||=
-      policy_scope(VaccinationRecord)
-        .includes(
-          :batch,
-          :immunisation_imports,
-          :location,
-          :performed_by_user,
-          :programme,
-          patient: [:gp_practice, :school, { parent_relationships: :parent }],
-          session: %i[session_dates],
-          vaccine: :programme
-        )
-        .where(programme:)
-        .order(:performed_at)
-  end
-
-  def dps_export
-    @dps_export ||= DPSExport.create!(programme:)
-  end
-
   def set_vaccination_record
-    @vaccination_record = vaccination_records.find(params[:id])
+    @vaccination_record =
+      policy_scope(VaccinationRecord).includes(
+        :batch,
+        :immunisation_imports,
+        :location,
+        :performed_by_user,
+        :programme,
+        patient: [:gp_practice, :school, { parent_relationships: :parent }],
+        session: %i[session_dates],
+        vaccine: :programme
+      ).find(params[:id])
+
     @patient = @vaccination_record.patient
+    @programme = @vaccination_record.programme
     @session = @vaccination_record.session
+  end
+
+  def set_breadcrumb_items
+    @breadcrumb_items = [
+      { text: t("dashboard.index.title"), href: dashboard_path }
+    ]
+
+    if @session
+      @breadcrumb_items << {
+        text: t("sessions.index.title"),
+        href: sessions_path
+      }
+      @breadcrumb_items << {
+        text: @session.location.name,
+        href: session_path(@session)
+      }
+      @breadcrumb_items << {
+        text: t("sessions.tabs.outcome"),
+        href: session_outcome_path(@session)
+      }
+      @breadcrumb_items << {
+        text: @patient.full_name,
+        href:
+          session_patient_programme_path(
+            @session,
+            @patient,
+            @programme,
+            return_to: "outcome"
+          )
+      }
+    else
+      @breadcrumb_items << {
+        text: t("patients.index.title"),
+        href: patients_path
+      }
+      @breadcrumb_items << {
+        text: @patient.full_name,
+        href: patient_path(@patient)
+      }
+    end
   end
 
   def set_return_to

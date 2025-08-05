@@ -6,31 +6,44 @@ describe "Verbal consent" do
 
     when_i_get_consent_for_the_patient
     and_i_choose_the_parent
-    and_i_fill_out_the_consent_details(parent_name: @parent.full_name)
+    and_i_fill_out_the_consent_details(
+      parent_name: @parent.full_name,
+      relationship: "Mum"
+    )
     then_i_see_the_confirmation_page
 
     when_i_click_on_change_name
-    and_i_fill_out_the_consent_details(parent_name: "New parent name")
+    and_i_fill_out_the_consent_details(
+      parent_name: "New parent name",
+      relationship: "Dad"
+    )
     then_i_see_the_confirmation_page
+
+    when_i_confirm_the_consent
+    and_i_click_on_the_patient
+    then_i_see_the_new_parent_details
   end
 
   def given_a_patient_is_in_an_hpv_programme
     programmes = [create(:programme, :hpv)]
-    organisation = create(:organisation, programmes:)
+    team = create(:team, programmes:)
 
-    @nurse = create(:nurse, organisation:)
+    @nurse = create(:nurse, team:)
 
-    @session = create(:session, organisation:, programmes:)
+    @session = create(:session, team:, programmes:)
 
     @parent = create(:parent)
-    @patient = create(:patient, session: @session, parents: [@parent])
+    @patient = create(:patient, session: @session)
+
+    @parent_relationship =
+      create(:parent_relationship, :mother, patient: @patient, parent: @parent)
   end
 
   def when_i_get_consent_for_the_patient
     sign_in @nurse
     visit session_consent_path(@session)
     click_link @patient.full_name
-    click_button "Get consent"
+    click_button "Record a new consent response"
   end
 
   def and_i_choose_the_parent
@@ -39,16 +52,15 @@ describe "Verbal consent" do
       "Choose who you are trying to get consent from"
     )
 
-    choose "#{@parent.full_name} (#{@patient.parent_relationships.first.label})"
+    choose "#{@parent.full_name} (Mum)"
     click_button "Continue"
   end
 
-  def and_i_fill_out_the_consent_details(parent_name:)
-    expect(page).to have_content(
-      "Details for #{parent_name} (#{@patient.parent_relationships.first.label})"
-    )
+  def and_i_fill_out_the_consent_details(parent_name:, relationship:)
+    expect(page).to have_content("Details for #{parent_name} (#{relationship})")
 
     fill_in "Full name", with: "New parent name"
+    choose "Dad"
     click_button "Continue"
 
     choose "By phone"
@@ -69,9 +81,24 @@ describe "Verbal consent" do
 
   def then_i_see_the_confirmation_page
     expect(page).to have_content("Check and confirm answers")
+    expect(page).to have_content("New parent name")
+    expect(page).to have_content("Dad")
   end
 
   def when_i_click_on_change_name
     click_link "Change name"
+  end
+
+  def when_i_confirm_the_consent
+    click_button "Confirm"
+  end
+
+  def and_i_click_on_the_patient
+    click_link @patient.full_name, match: :first
+  end
+
+  def then_i_see_the_new_parent_details
+    expect(page).to have_content("New parent name")
+    expect(page).to have_content("Dad")
   end
 end

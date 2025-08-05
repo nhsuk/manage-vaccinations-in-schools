@@ -8,7 +8,7 @@
 
 <ul class="nhsuk-grid-row nhsuk-card-group">
   <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
-    <%= render AppCardComponent.new(link_to: programmes_path) do |card| %>
+    <%= render AppCardComponent.new(link_to: programmes_path, heading_level: 2) do |card| %>
       <% card.with_heading { t("programmes.index.title") } %>
       <p class="nhsuk-body">Use this area to:</p>
       <ul class="nhsuk-list nhsuk-list--bullet">
@@ -20,7 +20,7 @@
   </li>
 
   <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
-    <%= render AppCardComponent.new(link_to: sessions_path) do |card| %>
+    <%= render AppCardComponent.new(link_to: sessions_path, heading_level: 2) do |card| %>
       <% card.with_heading { t("sessions.index.title") } %>
       <p class="nhsuk-body">Use this area to:</p>
       <ul class="nhsuk-list nhsuk-list--bullet">
@@ -33,7 +33,7 @@
   </li>
 
   <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
-    <%= render AppCardComponent.new(link_to: patients_path) do |card| %>
+    <%= render AppCardComponent.new(link_to: patients_path, heading_level: 2) do |card| %>
       <% card.with_heading { t("patients.index.title") } %>
       <p class="nhsuk-body">Use this area to:</p>
       <ul class="nhsuk-list nhsuk-list--bullet">
@@ -46,42 +46,42 @@
 
 <ul class="nhsuk-grid-row nhsuk-card-group">
   <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
-    <%= render AppCardComponent.new(link_to: consent_forms_path, secondary: true) do |card| %>
+    <%= render AppCardComponent.new(link_to: consent_forms_path, heading_level: 2, secondary: true) do |card| %>
       <% card.with_heading { t("consent_forms.index.title") } %>
       <% card.with_description { "Review incoming consent responses that can’t be automatically matched" } %>
     <% end %>
   </li>
 
   <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
-    <%= render AppCardComponent.new(link_to: school_moves_path, secondary: true) do |card| %>
+    <%= render AppCardComponent.new(link_to: school_moves_path, heading_level: 2, secondary: true) do |card| %>
       <% card.with_heading { t("school_moves.index.title") } %>
       <% card.with_description { "Review children who have moved schools" } %>
     <% end %>
   </li>
 
   <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
-    <%= render AppCardComponent.new(link_to: imports_path, secondary: true) do |card| %>
+    <%= render AppCardComponent.new(link_to: imports_path, heading_level: 2, secondary: true) do |card| %>
       <% card.with_heading { t("imports.index.title") } %>
       <% card.with_description { "Import child, cohort and vaccination records and see important notices" } %>
     <% end %>
   </li>
 
   <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
-    <%= render AppCardComponent.new(link_to: vaccines_path, secondary: true) do |card| %>
+    <%= render AppCardComponent.new(link_to: vaccines_path, heading_level: 2, secondary: true) do |card| %>
       <% card.with_heading { t("vaccines.index.title") } %>
       <% card.with_description { "Add and edit vaccine batches" } %>
     <% end %>
   </li>
 
   <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
-    <%= render AppCardComponent.new(link_to: organisation_path, secondary: true) do |card| %>
-      <% card.with_heading { t("organisations.show.title") } %>
-      <% card.with_description { "Manage your organisation’s settings" } %>
+    <%= render AppCardComponent.new(link_to: team_path, heading_level: 2, secondary: true) do |card| %>
+      <% card.with_heading { t("teams.show.title") } %>
+      <% card.with_description { "Manage your team’s settings" } %>
     <% end %>
   </li>
 
   <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
-    <%= render AppCardComponent.new(link_to: @service_guide_url, secondary: true) do |card| %>
+    <%= render AppCardComponent.new(link_to: @service_guide_url, heading_level: 2, secondary: true) do |card| %>
       <% card.with_heading { t("service.guide.title") } %>
       <% card.with_description { "How to use this service" } %>
     <% end %>

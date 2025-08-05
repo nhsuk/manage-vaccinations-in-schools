@@ -1,28 +1,30 @@
 # frozen_string_literal: true
 
+require "pagy/extras/array"
+
 class SessionsController < ApplicationController
-  before_action :set_session, except: %i[index scheduled unscheduled completed]
+  include SessionSearchFormConcern
+
+  before_action :set_session_search_form, only: :index
+  before_action :set_session, except: :index
 
   def index
-    @sessions = sessions_scope.today.sort
+    @programmes = current_user.selected_team.programmes
 
-    render layout: "full"
-  end
+    scope =
+      policy_scope(Session).includes(:location, :programmes, :session_dates)
 
-  def scheduled
-    @sessions = sessions_scope.scheduled.sort
+    sessions = @form.apply(scope)
 
-    render layout: "full"
-  end
+    @patient_count_by_session_id =
+      PatientSession
+        .where(session_id: sessions.map(&:id))
+        .joins(:patient, :session)
+        .appear_in_programmes(@programmes)
+        .group(:session_id)
+        .count
 
-  def unscheduled
-    @sessions = sessions_scope.unscheduled.sort
-
-    render layout: "full"
-  end
-
-  def completed
-    @sessions = sessions_scope.completed.sort
+    @pagy, @sessions = pagy_array(sessions)
 
     render layout: "full"
   end
@@ -52,19 +54,38 @@ class SessionsController < ApplicationController
   def edit
   end
 
-  def make_in_progress
-    @session.session_dates.find_or_create_by!(value: Date.current)
+  def import
+    draft_import = DraftImport.new(request_session: session, current_user:)
 
-    redirect_to session_path, flash: { success: "Session is now in progress" }
+    draft_import.reset!
+    draft_import.update!(location: @session.location, type: "class")
+
+    steps = draft_import.wizard_steps
+    steps.delete(:type)
+    steps.delete(:location)
+
+    redirect_to draft_import_path(I18n.t(steps.first, scope: :wicked))
+  end
+
+  def make_in_progress
+    valid_date_range = @session.academic_year.to_academic_year_date_range
+
+    date = Date.current
+
+    if date.in?(valid_date_range)
+      @session.session_dates.find_or_create_by!(value: date)
+      redirect_to session_path, flash: { success: "Session is now in progress" }
+    else
+      redirect_to session_path,
+                  flash: {
+                    error: "Today is not a valid date for this session"
+                  }
+    end
   end
 
   private
 
   def set_session
-    @session = authorize sessions_scope.find_by!(slug: params[:slug])
-  end
-
-  def sessions_scope
-    policy_scope(Session).includes(:location, :programmes, :session_dates)
+    @session = authorize policy_scope(Session).find_by!(slug: params[:slug])
   end
 end

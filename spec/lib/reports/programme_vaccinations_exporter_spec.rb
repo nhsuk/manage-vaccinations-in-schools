@@ -2,23 +2,34 @@
 
 describe Reports::ProgrammeVaccinationsExporter do
   subject(:call) do
-    described_class.call(organisation:, programme:, start_date:, end_date:)
+    described_class.call(
+      team:,
+      programme:,
+      academic_year:,
+      start_date:,
+      end_date:
+    )
   end
+
+  let(:today) { Time.zone.local(2024, 4, 1) }
+  let(:academic_year) { today.to_date.academic_year }
+
+  around { |example| travel_to(today) { example.run } }
 
   shared_examples "generates a report" do
     let(:programmes) { [programme] }
-    let(:organisation) { create(:organisation, programmes:) }
+    let(:team) { create(:team, programmes:) }
     let(:user) do
       create(
         :user,
         email: "nurse@example.com",
         given_name: "Nurse",
         family_name: "Test",
-        organisation:
+        team:
       )
     end
-    let(:team) { create(:team, organisation:) }
-    let(:session) { create(:session, location:, organisation:, programmes:) }
+    let(:subteam) { create(:subteam, team:) }
+    let(:session) { create(:session, location:, team:, programmes:) }
 
     let(:start_date) { nil }
     let(:end_date) { nil }
@@ -71,6 +82,7 @@ describe Reports::ProgrammeVaccinationsExporter do
             ANATOMICAL_SITE
             ROUTE_OF_VACCINATION
             DOSE_SEQUENCE
+            DOSE_VOLUME
             REASON_NOT_VACCINATED
             LOCAL_PATIENT_ID
             SNOMED_PROCEDURE_CODE
@@ -85,21 +97,16 @@ describe Reports::ProgrammeVaccinationsExporter do
     describe "rows" do
       subject(:rows) { CSV.parse(call, headers: true) }
 
-      around { |example| freeze_time { example.run } }
-
       context "a school session" do
-        let(:location) { create(:school, team:) }
+        let(:location) { create(:school, subteam:) }
 
         it { should be_empty }
 
         context "with a vaccinated patient" do
           let(:patient) { create(:patient, session:) }
+          let(:vaccine) { programme.vaccines.active.first }
           let(:batch) do
-            create(
-              :batch,
-              expiry: Date.new(2025, 12, 1),
-              vaccine: programme.vaccines.active.first
-            )
+            create(:batch, expiry: Date.new(2025, 12, 1), vaccine:)
           end
           let(:performed_at) { Time.zone.local(2024, 1, 1, 12, 5, 20) }
 
@@ -130,6 +137,7 @@ describe Reports::ProgrammeVaccinationsExporter do
                 "CONSENT_STATUS" => "",
                 "DATE_OF_VACCINATION" => "2024-01-01",
                 "DOSE_SEQUENCE" => vaccination_record.dose_sequence.to_s,
+                "DOSE_VOLUME" => vaccination_record.dose_volume_ml.to_s,
                 "GILLICK_ASSESSED_BY" => "",
                 "GILLICK_ASSESSMENT_DATE" => "",
                 "GILLICK_ASSESSMENT_NOTES" => "",
@@ -141,7 +149,7 @@ describe Reports::ProgrammeVaccinationsExporter do
                 "LOCAL_PATIENT_ID" => patient.id.to_s,
                 "NHS_NUMBER" => patient.nhs_number,
                 "NHS_NUMBER_STATUS_CODE" => "02",
-                "ORGANISATION_CODE" => organisation.ods_code,
+                "ORGANISATION_CODE" => team.ods_code,
                 "PERFORMING_PROFESSIONAL_EMAIL" => "nurse@example.com",
                 "PERFORMING_PROFESSIONAL_FORENAME" => "Nurse",
                 "PERFORMING_PROFESSIONAL_SURNAME" => "Test",
@@ -161,7 +169,8 @@ describe Reports::ProgrammeVaccinationsExporter do
                 "ROUTE_OF_VACCINATION" => "intramuscular",
                 "SCHOOL_NAME" => location.name,
                 "SCHOOL_URN" => location.urn,
-                "SNOMED_PROCEDURE_CODE" => programme.snomed_procedure_code,
+                "SNOMED_PROCEDURE_CODE" =>
+                  vaccination_record.snomed_procedure_code,
                 "TIME_OF_VACCINATION" => "12:05:20",
                 "TRIAGED_BY" => "",
                 "TRIAGE_DATE" => "",
@@ -169,7 +178,7 @@ describe Reports::ProgrammeVaccinationsExporter do
                 "TRIAGE_STATUS" => "",
                 "VACCINATED" => "Y",
                 "VACCINE_GIVEN" => vaccination_record.vaccine.nivs_name,
-                "YEAR_GROUP" => programme.year_groups.first.to_s
+                "YEAR_GROUP" => patient.year_group.to_s
               }
             )
           end
@@ -241,18 +250,15 @@ describe Reports::ProgrammeVaccinationsExporter do
       end
 
       context "a clinic session" do
-        let(:location) { create(:generic_clinic, team:) }
+        let(:location) { create(:generic_clinic, subteam:) }
 
         it { should be_empty }
 
         context "with a vaccinated patient" do
           let(:patient) { create(:patient, session:) }
+          let(:vaccine) { programmes.first.vaccines.active.first }
           let(:batch) do
-            create(
-              :batch,
-              expiry: Date.new(2025, 12, 1),
-              vaccine: programmes.first.vaccines.active.first
-            )
+            create(:batch, expiry: Date.new(2025, 12, 1), vaccine:)
           end
           let(:performed_at) { Time.zone.local(2024, 1, 1, 12, 5, 20) }
 
@@ -282,6 +288,7 @@ describe Reports::ProgrammeVaccinationsExporter do
                 "CONSENT_STATUS" => "",
                 "DATE_OF_VACCINATION" => "2024-01-01",
                 "DOSE_SEQUENCE" => vaccination_record.dose_sequence.to_s,
+                "DOSE_VOLUME" => vaccination_record.dose_volume_ml.to_s,
                 "GILLICK_ASSESSED_BY" => "",
                 "GILLICK_ASSESSMENT_DATE" => "",
                 "GILLICK_ASSESSMENT_NOTES" => "",
@@ -293,7 +300,7 @@ describe Reports::ProgrammeVaccinationsExporter do
                 "LOCAL_PATIENT_ID" => patient.id.to_s,
                 "NHS_NUMBER" => patient.nhs_number,
                 "NHS_NUMBER_STATUS_CODE" => "02",
-                "ORGANISATION_CODE" => organisation.ods_code,
+                "ORGANISATION_CODE" => team.ods_code,
                 "PERFORMING_PROFESSIONAL_EMAIL" => "nurse@example.com",
                 "PERFORMING_PROFESSIONAL_FORENAME" => "Nurse",
                 "PERFORMING_PROFESSIONAL_SURNAME" => "Test",
@@ -313,7 +320,8 @@ describe Reports::ProgrammeVaccinationsExporter do
                 "ROUTE_OF_VACCINATION" => "intramuscular",
                 "SCHOOL_NAME" => "",
                 "SCHOOL_URN" => "888888",
-                "SNOMED_PROCEDURE_CODE" => programme.snomed_procedure_code,
+                "SNOMED_PROCEDURE_CODE" =>
+                  vaccination_record.snomed_procedure_code,
                 "TIME_OF_VACCINATION" => "12:05:20",
                 "TRIAGED_BY" => "",
                 "TRIAGE_DATE" => "",
@@ -321,7 +329,7 @@ describe Reports::ProgrammeVaccinationsExporter do
                 "TRIAGE_STATUS" => "",
                 "VACCINATED" => "Y",
                 "VACCINE_GIVEN" => vaccination_record.vaccine.nivs_name,
-                "YEAR_GROUP" => programme.year_groups.first.to_s
+                "YEAR_GROUP" => patient.year_group.to_s
               }
             )
           end
@@ -329,7 +337,7 @@ describe Reports::ProgrammeVaccinationsExporter do
       end
 
       context "with a deceased patient" do
-        let(:session) { create(:session, programmes:, organisation:) }
+        let(:session) { create(:session, programmes:, team:) }
 
         before do
           create(
@@ -350,7 +358,7 @@ describe Reports::ProgrammeVaccinationsExporter do
       end
 
       context "with a restricted patient" do
-        let(:session) { create(:session, programmes:, organisation:) }
+        let(:session) { create(:session, programmes:, team:) }
         let(:patient) { create(:patient, :restricted, session:) }
 
         before do
@@ -371,7 +379,7 @@ describe Reports::ProgrammeVaccinationsExporter do
       end
 
       context "with a traced NHS number" do
-        let(:session) { create(:session, programmes:, organisation:) }
+        let(:session) { create(:session, programmes:, team:) }
 
         before do
           create(
@@ -394,7 +402,7 @@ describe Reports::ProgrammeVaccinationsExporter do
         let(:gp_practice) do
           create(:gp_practice, name: "Practice", ods_code: "GP")
         end
-        let(:session) { create(:session, programmes:, organisation:) }
+        let(:session) { create(:session, programmes:, team:) }
 
         before do
           create(:patient, :vaccinated, gp_practice:, session:, programmes:)
@@ -409,7 +417,7 @@ describe Reports::ProgrammeVaccinationsExporter do
       end
 
       context "with consent" do
-        let(:session) { create(:session, programmes:, organisation:) }
+        let(:session) { create(:session, programmes:, team:) }
         let(:patient) { create(:patient, :vaccinated, session:) }
 
         let!(:consent) do
@@ -435,7 +443,7 @@ describe Reports::ProgrammeVaccinationsExporter do
       end
 
       context "with a gillick assessment" do
-        let(:session) { create(:session, programmes:, organisation:) }
+        let(:session) { create(:session, programmes:, team:) }
         let(:patient_session) do
           create(:patient_session, :vaccinated, session:)
         end
@@ -470,7 +478,7 @@ describe Reports::ProgrammeVaccinationsExporter do
               :self_consent,
               patient:,
               programme:,
-              notify_parents: false
+              notify_parents_on_vaccination: false
             )
           end
 
@@ -488,7 +496,7 @@ describe Reports::ProgrammeVaccinationsExporter do
               :self_consent,
               patient:,
               programme:,
-              notify_parents: true
+              notify_parents_on_vaccination: true
             )
           end
 
@@ -501,7 +509,7 @@ describe Reports::ProgrammeVaccinationsExporter do
       end
 
       context "with a triage assessment" do
-        let(:session) { create(:session, programmes:, organisation:) }
+        let(:session) { create(:session, programmes:, team:) }
         let(:performed_by) do
           create(:user, given_name: "Test", family_name: "Nurse")
         end
@@ -520,6 +528,12 @@ describe Reports::ProgrammeVaccinationsExporter do
         end
       end
     end
+  end
+
+  context "Flu programme" do
+    let(:programme) { create(:programme, :flu) }
+
+    include_examples "generates a report"
   end
 
   context "HPV programme" do

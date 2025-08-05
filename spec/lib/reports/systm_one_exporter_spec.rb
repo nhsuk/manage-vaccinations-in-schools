@@ -7,18 +7,18 @@ describe Reports::SystmOneExporter do
 
   let(:csv) do
     described_class.call(
-      organisation:,
+      team:,
       programme:,
+      academic_year:,
       start_date: 1.month.ago.to_date,
       end_date: Date.current
     )
   end
-  let(:programme) { create(:programme, :hpv, organisations: [organisation]) }
-  let(:organisation) { create(:organisation, ods_code: "ABC123") }
+  let(:programme) { create(:programme, :hpv) }
+  let(:academic_year) { AcademicYear.current }
+  let(:team) { create(:team, ods_code: "ABC123", programmes: [programme]) }
   let(:location) { create(:school) }
-  let(:session) do
-    create(:session, organisation:, programmes: [programme], location:)
-  end
+  let(:session) { create(:session, team:, programmes: [programme], location:) }
   let(:patient) { create(:patient) }
   let(:vaccination_record) do
     create(
@@ -55,8 +55,8 @@ describe Reports::SystmOneExporter do
         "Dose" => vaccination_record.dose_volume_ml.to_s,
         "Reason" => "Routine",
         "Site" => "Left deltoid",
-        "Method" => vaccination_record.delivery_method,
-        "Notes" => vaccination_record.notes
+        "Method" => "Intramuscular",
+        "Notes" => "Administered by: Test User"
       }
     )
   end
@@ -133,19 +133,13 @@ describe Reports::SystmOneExporter do
     it { should be_blank }
   end
 
-  context "with a session in a different organisation" do
-    let(:programme) do
-      create(:programme, :hpv, organisations: [other_organisation])
+  context "with a session in a different team" do
+    let(:other_team) do
+      create(:team, ods_code: "XYZ890", programmes: [programme])
     end
-    let(:other_organisation) { create(:organisation, ods_code: "XYZ890") }
 
     let(:session) do
-      create(
-        :session,
-        organisation: other_organisation,
-        programmes: [programme],
-        location:
-      )
+      create(:session, team: other_team, programmes: [programme], location:)
     end
 
     it { should be_blank }
@@ -213,10 +207,10 @@ describe Reports::SystmOneExporter do
     end
 
     context "unknown vaccine and no dose sequence" do
-      let(:vaccine) { create(:vaccine, :fluad_tetra) }
+      let(:vaccine) { create(:vaccine, :fluenz) }
       let(:dose_sequence) { 1 }
 
-      it { should eq "Fluad Tetra - aQIV Part 1" }
+      it { should eq "Fluenz Part 1" }
     end
   end
 
@@ -252,6 +246,64 @@ describe Reports::SystmOneExporter do
           "Town" => "",
           "Postcode" => ""
         )
+      end
+    end
+  end
+
+  describe "Flu vaccine records" do
+    let(:vaccination_record) do
+      create(
+        :vaccination_record,
+        programme:,
+        patient:,
+        session:,
+        performed_at: 1.week.ago,
+        vaccine:,
+        dose_sequence: 1,
+        delivery_method:,
+        delivery_site:
+      )
+    end
+
+    context "for flu nasal" do
+      let(:programme) { create(:programme, :flu) }
+      let(:vaccine) { Vaccine.find_by(brand: "Fluenz") }
+      let(:delivery_method) { :nasal_spray }
+      let(:delivery_site) { :nose }
+
+      it "uses the generic SystmOne code" do
+        expect(csv_row["Vaccination"]).to eq "Fluenz Part 1"
+      end
+
+      it "uses 'Nasal' as the method" do
+        expect(csv_row["Method"]).to eq "Nasal"
+      end
+
+      it "uses 'Nasal' as the site" do
+        expect(csv_row["Site"]).to eq "Nasal"
+      end
+    end
+
+    context "for flu injection" do
+      let(:programme) { create(:programme, :flu) }
+      let(:vaccine) do
+        Vaccine.find_by(brand: "Cell-based Trivalent Influenza Vaccine Seqirus")
+      end
+      let(:delivery_method) { :intramuscular }
+      let(:delivery_site) { :right_arm_upper_position }
+
+      it "uses the generic SystmOne code" do
+        expect(
+          csv_row["Vaccination"]
+        ).to eq "Cell-based Trivalent Influenza Vaccine Seqirus Part 1"
+      end
+
+      it "uses 'Intramuscular' as the method" do
+        expect(csv_row["Method"]).to eq "Intramuscular"
+      end
+
+      it "uses 'Right deltoid' as the site" do
+        expect(csv_row["Site"]).to eq "Right deltoid"
       end
     end
   end

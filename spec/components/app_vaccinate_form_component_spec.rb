@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 describe AppVaccinateFormComponent do
+  subject { render_inline(component) }
+
   let(:programme) { create(:programme) }
   let(:programmes) { [programme] }
   let(:session) { create(:session, :today, programmes:) }
@@ -22,57 +24,88 @@ describe AppVaccinateFormComponent do
 
   before { patient_session.strict_loading!(false) }
 
-  describe "#render?" do
-    subject(:render) { component.render? }
+  it { should have_css(".nhsuk-card") }
 
-    it { should be(true) }
+  context "with a flu programme and consent to nasal spray" do
+    let(:programme) { create(:programme, :flu) }
+    let(:academic_year) { Date.current.academic_year }
 
-    context "patient is not ready for vaccination" do
-      let(:patient) { create(:patient, programmes:, given_name: "Hari") }
-
-      it { should be(false) }
+    before do
+      patient.consent_status(programme:, academic_year:).update!(
+        vaccine_methods: %w[nasal]
+      )
     end
 
-    context "patient is not attending the session" do
-      let(:patient_session) do
-        create(:patient_session, programmes:, patient:, session:)
-      end
+    it { should have_content("Has Hari confirmed their identity?") }
+    it { should have_field("No, it was confirmed by somebody else") }
 
-      it { should be(false) }
-    end
+    it { should have_heading("Is Hari ready for their flu nasal spray?") }
+
+    it { should have_field("Yes") }
+    it { should have_field("No") }
+
+    it { should_not have_field("Left arm (upper position)") }
+    it { should_not have_field("Right arm (upper position)") }
+    it { should_not have_field("Nose") }
+    it { should_not have_field("Other") }
   end
 
-  describe "rendered content" do
-    subject { render_inline(component) }
+  context "with a Flu programme" do
+    let(:programme) { create(:programme, :flu) }
 
-    it { should have_css(".nhsuk-card") }
+    it { should have_content("Has Hari confirmed their identity?") }
+    it { should have_field("No, it was confirmed by somebody else") }
 
-    context "with a Flu programme" do
-      let(:programme) { create(:programme, :flu) }
+    it { should have_heading("Is Hari ready for their flu injection?") }
 
-      it { should have_heading("Is Hari ready for their Flu vaccination?") }
+    it { should have_field("Yes") }
+    it { should have_field("No") }
 
-      it { should have_field("Yes") }
-      it { should have_field("No") }
+    it { should have_field("Left arm (upper position)") }
+    it { should have_field("Right arm (upper position)") }
+    it { should_not have_field("Nose") }
+    it { should have_field("Other") }
+  end
 
-      it { should_not have_field("Left arm (upper position)") }
-      it { should_not have_field("Right arm (upper position)") }
-      it { should_not have_field("Nose") }
-      it { should_not have_field("Other") }
+  context "with a flu programme, consent to nasal spray, but triaged for injection" do
+    let(:programme) { create(:programme, :flu) }
+    let(:academic_year) { Date.current.academic_year }
+
+    before do
+      patient.consent_status(programme:, academic_year:).update!(
+        vaccine_methods: %w[nasal injection]
+      )
+      patient.triage_status(programme:, academic_year:).update!(
+        status: "safe_to_vaccinate",
+        vaccine_method: "injection"
+      )
     end
 
-    context "with an HPV programme" do
-      let(:programme) { create(:programme, :hpv) }
+    it { should have_heading("Is Hari ready for their flu injection?") }
 
-      it { should have_heading("Is Hari ready for their HPV vaccination?") }
+    it { should have_field("Yes") }
+    it { should have_field("No") }
 
-      it { should have_field("Yes") }
-      it { should have_field("No") }
+    it { should have_field("Left arm (upper position)") }
+    it { should have_field("Right arm (upper position)") }
+    it { should_not have_field("Nose") }
+    it { should have_field("Other") }
+  end
 
-      it { should have_field("Left arm (upper position)") }
-      it { should have_field("Right arm (upper position)") }
-      it { should_not have_field("Nose") }
-      it { should have_field("Other") }
-    end
+  context "with an HPV programme" do
+    let(:programme) { create(:programme, :hpv) }
+
+    it { should have_content("Has Hari confirmed their identity?") }
+    it { should have_field("No, it was confirmed by somebody else") }
+
+    it { should have_heading("Is Hari ready for their HPV vaccination?") }
+
+    it { should have_field("Yes") }
+    it { should have_field("No") }
+
+    it { should have_field("Left arm (upper position)") }
+    it { should have_field("Right arm (upper position)") }
+    it { should_not have_field("Nose") }
+    it { should have_field("Other") }
   end
 end

@@ -5,7 +5,7 @@
 If it's necessary to bulk remove patients from sessions (i.e. more than a few usages of "Remove from cohort" required), the following commands can be used in a Rails console:
 
 ```rb
-org = Organisation.find_by(ods_code: "")
+org = Team.find_by(ods_code: "")
 location = org.schools.find_by(name: "School name")
 session = org.sessions.find_by(location:)
 
@@ -35,13 +35,13 @@ patient = Patient.find(...)
 SchoolMove.new(patient:, school: patient.school).confirm!
 ```
 
-## Add a location to an organisation and add patients to the session
+## Add a location to a team and add patients to the session
 
-Normally patients are added to a location on import. However, their may be cases when they need to be added to a location after they've been imported, for example if their school was not added to the organisation at the time the patients were imported. At the time of writing, re-importing the patients does not add them to the location's session or to the organisation's cohorts.
+Normally patients are added to a location on import. However, their may be cases when they need to be added to a location after they've been imported, for example if their school was not added to the team at the time the patients were imported. At the time of writing, re-importing the patients does not add them to the location's session or to the team's cohorts.
 
-To fix this, ensure the location has been added to the school using the [`schools:add_to_organisation` Rake task](rake-tasks.md#schoolsadd_to_organisationods_codeteam_nameurn).
+To fix this, ensure the location has been added to the school using the `bin/mavis schools add-to-team` command line tool.
 
-The following console commands will manually add an existing patient to the location's session and the organisation's cohorts by using the logic in `SchoolMove`.
+The following console commands will manually add an existing patient to the location's session and the team's cohorts by using the logic in `SchoolMove`.
 
 ```rb
 # Find the location
@@ -62,22 +62,22 @@ loc.sessions.first.patients.count
 ## Get Gillick patients who don't want their parents notified
 
 ```rb
-Consent.where(notify_parents: false).pluck(:patient_id)
+Consent.where(notify_parents_on_vaccination: false).pluck(:patient_id)
 ```
 
 ## Consent response stats per school
 
 ```rb
-organisation = Organisation.find_by(ods_code: "...")
+team = Team.find_by(ods_code: "...")
 
 dates = {}
-sessions = organisation.sessions
+sessions = team.sessions
 
 sessions
   .eager_load(:location)
   .each do |session|
     Consent
-      .where(organisation:, patient: session.patients)
+      .where(team:, patient: session.patients)
       .each do |consent|
         dates[consent.responded_at.to_date] ||= {}
         dates[consent.responded_at.to_date][session.location] ||= 0

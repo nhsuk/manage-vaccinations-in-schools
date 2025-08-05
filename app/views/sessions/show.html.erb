@@ -15,17 +15,17 @@
       <p class="nhsuk-body"><%= session_status_tag(@session) %></p>
 
       <% if (dates = @session.dates).present? %>
-        <h3 class="nhsuk-heading-s nhsuk-u-margin-bottom-2">Session dates</h3>
-        <%= tag.ul(class: "nhsuk-list app-list--spaced") do %>
+        <h4 class="nhsuk-heading-s nhsuk-u-margin-bottom-2">Session dates</h4>
+        <%= tag.ul(class: "nhsuk-list") do %>
           <% dates.each do |date| %>
             <%= tag.li(date.to_fs(:long_day_of_week)) %>
           <% end %>
         <% end %>
 
-        <p class="nhsuk-body">Consent period <%= session_consent_period(@session, in_sentence: true) %></p>
+        <p class="nhsuk-body">Consent period <%= session_consent_period(@session).downcase_first %></p>
       <% end %>
 
-      <h3 class="nhsuk-heading-s nhsuk-u-margin-bottom-2">Session details</h3>
+      <h4 class="nhsuk-heading-s nhsuk-u-margin-bottom-2">Session details</h4>
 
       <%= render AppSessionDetailsSummaryComponent.new(@session) %>
 
@@ -54,10 +54,6 @@
   </div>
 
   <div class="nhsuk-grid-column-one-quarter">
-    <h3 class="nhsuk-heading-s nhsuk-u-margin-top-5">
-      <%= @session.location.name %>
-    </h3>
-
     <%= render AppSessionSummaryComponent.new(@session) %>
   </div>
 </div>

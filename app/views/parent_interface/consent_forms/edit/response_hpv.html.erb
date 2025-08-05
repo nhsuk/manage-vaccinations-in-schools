@@ -1,0 +1,17 @@
+<% content_for :before_main do %>
+  <%= render AppBacklinkComponent.new(backlink_path) %>
+<% end %>
+
+<% legend = "Do you agree to your child having the Human papillomavirus (HPV) vaccination?" %>
+<% content_for :page_title, legend %>
+
+<%= form_with model: @consent_form, url: wizard_path, method: :put do |f| %>
+  <%= f.govuk_error_summary %>
+
+  <%= f.govuk_radio_buttons_fieldset :response, legend: { size: "l", text: legend, tag: "h1" } do %>
+    <%= f.govuk_radio_button :response, "given", label: { text: "Yes, I agree" }, link_errors: true %>
+    <%= f.govuk_radio_button :response, "refused", label: { text: "No" } %>
+  <% end %>
+
+  <%= f.govuk_submit "Continue" %>
+<% end %>

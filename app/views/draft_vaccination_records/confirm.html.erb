@@ -19,6 +19,7 @@
      delivery_method: wizard_path("delivery"),
      delivery_site: wizard_path("delivery"),
      dose_volume: @draft_vaccination_record.wizard_steps.include?(:dose) ? wizard_path("dose") : nil,
+     identity: wizard_path("identity"),
      location: @draft_vaccination_record.wizard_steps.include?(:location) ? wizard_path("location") : nil,
      notes: wizard_path("notes"),
      outcome: @draft_vaccination_record.wizard_steps.include?(:outcome) ? wizard_path("outcome") : nil,
@@ -27,24 +28,28 @@
 
 <% show_notes = @draft_vaccination_record.editing? %>
 
+<% vaccination_summary = AppVaccinationRecordSummaryComponent.new(
+     @draft_vaccination_record,
+     current_user:,
+     change_links:,
+     show_notes:,
+   ) %>
+
 <% if @draft_vaccination_record.administered? %>
-  <%= render AppCardComponent.new do |card| %>
-    <% card.with_heading { "Vaccination details" } %>
-    <%= render AppVaccinationRecordSummaryComponent.new(
-          @draft_vaccination_record,
-          current_user:,
-          change_links:,
-          show_notes:,
-        ) %>
+  <% if @draft_vaccination_record.vaccine_method_matches_consent_and_triage? %>
+    <%= render AppCardComponent.new do |card| %>
+      <% card.with_heading { "Vaccination details" } %>
+      <%= render vaccination_summary %>
+    <% end %>
+  <% else %>
+    <%= render AppWarningCalloutComponent.new(heading: "Incorrect vaccine given") do %>
+      <p class="nhsuk-body">The vaccine given does not match that determined by the child’s consent or triage outcome</p>
+      <%= render vaccination_summary %>
+    <% end %>
   <% end %>
 <% else %>
   <%= render AppWarningCalloutComponent.new(heading: "Vaccination was not given") do %>
-    <%= render AppVaccinationRecordSummaryComponent.new(
-          @draft_vaccination_record,
-          current_user:,
-          change_links:,
-          show_notes:,
-        ) %>
+    <%= render vaccination_summary %>
   <% end %>
 <% end %>
 

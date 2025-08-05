@@ -4,31 +4,32 @@
 #
 # Table name: patients
 #
-#  id                        :bigint           not null, primary key
-#  address_line_1            :string
-#  address_line_2            :string
-#  address_postcode          :string
-#  address_town              :string
-#  birth_academic_year       :integer          not null
-#  date_of_birth             :date             not null
-#  date_of_death             :date
-#  date_of_death_recorded_at :datetime
-#  family_name               :string           not null
-#  gender_code               :integer          default("not_known"), not null
-#  given_name                :string           not null
-#  home_educated             :boolean
-#  invalidated_at            :datetime
-#  nhs_number                :string
-#  pending_changes           :jsonb            not null
-#  preferred_family_name     :string
-#  preferred_given_name      :string
-#  registration              :string
-#  restricted_at             :datetime
-#  updated_from_pds_at       :datetime
-#  created_at                :datetime         not null
-#  updated_at                :datetime         not null
-#  gp_practice_id            :bigint
-#  school_id                 :bigint
+#  id                         :bigint           not null, primary key
+#  address_line_1             :string
+#  address_line_2             :string
+#  address_postcode           :string
+#  address_town               :string
+#  birth_academic_year        :integer          not null
+#  date_of_birth              :date             not null
+#  date_of_death              :date
+#  date_of_death_recorded_at  :datetime
+#  family_name                :string           not null
+#  gender_code                :integer          default("not_known"), not null
+#  given_name                 :string           not null
+#  home_educated              :boolean
+#  invalidated_at             :datetime
+#  nhs_number                 :string
+#  pending_changes            :jsonb            not null
+#  preferred_family_name      :string
+#  preferred_given_name       :string
+#  registration               :string
+#  registration_academic_year :integer
+#  restricted_at              :datetime
+#  updated_from_pds_at        :datetime
+#  created_at                 :datetime         not null
+#  updated_at                 :datetime         not null
+#  gp_practice_id             :bigint
+#  school_id                  :bigint
 #
 # Indexes
 #
@@ -48,6 +49,108 @@
 
 describe Patient do
   describe "scopes" do
+    describe "#appear_in_programmes" do
+      subject(:scope) do
+        described_class.appear_in_programmes(programmes, academic_year:)
+      end
+
+      let(:programmes) { create_list(:programme, 1, :td_ipv) }
+      let(:academic_year) { AcademicYear.current }
+
+      it { should be_empty }
+
+      context "with a patient in no sessions" do
+        before { create(:patient) }
+
+        it { should be_empty }
+      end
+
+      context "in a session with the right year group" do
+        let(:session) { create(:session, programmes:) }
+
+        let(:patient) { create(:patient, session:, year_group: 9) }
+
+        it { should include(patient) }
+      end
+
+      context "in a session but the wrong year group" do
+        let(:session) { create(:session, programmes:) }
+
+        let(:patient) { create(:patient, session:, year_group: 8) }
+
+        it { should_not include(patient) }
+      end
+
+      context "in a session with the right year group for the programme but not the location" do
+        let(:location) { create(:school, :secondary) }
+        let(:patient) { create(:patient, session:, year_group: 9) }
+        let(:session) { create(:session, location:, programmes:) }
+
+        before do
+          programmes.each do |programme|
+            create(
+              :location_programme_year_group,
+              programme:,
+              location:,
+              year_group: 10
+            )
+          end
+        end
+
+        it { should_not include(patient) }
+      end
+
+      context "in multiple sessions with the right year group for one programme" do
+        let(:flu_programme) { create(:programme, :flu) }
+        let(:hpv_programme) { create(:programme, :hpv) }
+
+        let(:location) do
+          create(:school, programmes: [flu_programme, hpv_programme])
+        end
+
+        # Year 4 is eligible for flu only.
+        let(:patient) { create(:patient, year_group: 4) }
+
+        # Year 9 is eligible for flu and HPV only.
+        let(:another_patient) { create(:patient, year_group: 9) }
+
+        let(:flu_session) do
+          create(:session, location:, programmes: [flu_programme])
+        end
+        let(:hpv_session) do
+          create(:session, location:, programmes: [hpv_programme])
+        end
+
+        before do
+          create(:patient_session, patient:, session: flu_session)
+          create(:patient_session, patient:, session: hpv_session)
+
+          create(
+            :patient_session,
+            patient: another_patient,
+            session: flu_session
+          )
+          create(
+            :patient_session,
+            patient: another_patient,
+            session: hpv_session
+          )
+        end
+
+        context "for the right programme" do
+          let(:programmes) { [flu_programme] }
+
+          it { should include(patient) }
+        end
+
+        context "for the wrong programme" do
+          let(:programmes) { [hpv_programme] }
+
+          it { should_not include(patient) }
+        end
+      end
+    end
+
     describe "#search_by_name" do
       subject(:scope) { described_class.search_by_name(query) }
 
@@ -321,6 +424,58 @@ describe Patient do
     it { should eq("JD") }
   end
 
+  describe "#approved_vaccine_methods" do
+    subject(:approved_vaccine_methods) do
+      patient.approved_vaccine_methods(programme:, academic_year:)
+    end
+
+    let(:patient) { create(:patient) }
+    let(:programme) { create(:programme) }
+    let(:academic_year) { Date.current.academic_year }
+
+    it { should be_empty }
+
+    context "when consent given and triage not required" do
+      before do
+        create(
+          :patient_consent_status,
+          :given,
+          patient:,
+          programme:,
+          vaccine_methods: %w[nasal injection]
+        )
+      end
+
+      it { should eq(%w[nasal injection]) }
+    end
+
+    context "when consent given and triage required" do
+      before do
+        create(
+          :patient_consent_status,
+          :given,
+          patient:,
+          programme:,
+          vaccine_methods: %w[nasal injection]
+        )
+        create(:patient_triage_status, :required, patient:, programme:)
+      end
+
+      it { should be_empty }
+
+      context "and when triaged" do
+        before do
+          patient.triage_status(programme:, academic_year:).update!(
+            status: "safe_to_vaccinate",
+            vaccine_method: "nasal"
+          )
+        end
+
+        it { should eq(%w[nasal]) }
+      end
+    end
+  end
+
   describe "#update_from_pds!" do
     subject(:update_from_pds!) { patient.update_from_pds!(pds_patient) }
 
@@ -380,7 +535,13 @@ describe Patient do
       end
 
       context "when in an upcoming session" do
-        let(:session) { create(:session, :scheduled) }
+        let(:session) do
+          create(
+            :session,
+            academic_year: AcademicYear.pending,
+            date: AcademicYear.pending.to_academic_year_date_range.begin
+          )
+        end
 
         before { create(:patient_session, patient:, session:) }
 
@@ -442,11 +603,9 @@ describe Patient do
       end
 
       let(:programme) { create(:programme) }
-      let(:organisation) { create(:organisation, programmes: [programme]) }
-      let(:school) { create(:school, organisation:) }
-      let(:session) do
-        create(:session, location: school, organisation:, programme:)
-      end
+      let(:team) { create(:team, programmes: [programme]) }
+      let(:school) { create(:school, team:) }
+      let(:session) { create(:session, location: school, team:, programme:) }
 
       it "marks the patient as not invalidated" do
         expect { update_from_pds! }.to change(patient, :invalidated?).from(
@@ -472,19 +631,6 @@ describe Patient do
         expect { invalidate! }.to change(patient, :invalidated_at).from(nil).to(
           Time.current
         )
-      end
-    end
-
-    context "with an invalid NHS number" do
-      let(:patient) { create(:patient, nhs_number: nil) }
-
-      before do
-        patient.nhs_number = "1234567890"
-        patient.save!(validate: false)
-      end
-
-      it "doesn't raise an error" do
-        expect { invalidate! }.not_to raise_error
       end
     end
   end
@@ -551,7 +697,13 @@ describe Patient do
     end
 
     context "when the old patient has upcoming sessions" do
-      let(:session) { create(:session) }
+      let(:session) do
+        create(
+          :session,
+          academic_year: AcademicYear.pending,
+          date: AcademicYear.pending.to_academic_year_date_range.begin
+        )
+      end
 
       before { create(:patient_session, patient: old_patient, session:) }
 

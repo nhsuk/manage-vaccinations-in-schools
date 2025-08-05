@@ -1,5 +1,5 @@
 <% content_for :before_main do %>
-  <%= render AppBacklinkComponent.new(new_import_path, name: "import") %>
+  <%= render AppBacklinkComponent.new(draft_import_path("type")) %>
 <% end %>
 
 <% title = "Import child records" %>

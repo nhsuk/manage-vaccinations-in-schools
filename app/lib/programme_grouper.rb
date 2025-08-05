@@ -12,9 +12,7 @@ class ProgrammeGrouper
       .to_h
   end
 
-  def self.call(*args, **kwargs)
-    new(*args, **kwargs).call
-  end
+  def self.call(...) = new(...).call
 
   private_class_method :new
 
@@ -30,7 +28,7 @@ class ProgrammeGrouper
     elsif programme.doubles?
       :doubles
     else
-      raise "Unknown programme type #{programme.type}"
+      raise UnsupportedProgramme, programme
     end
   end
 end

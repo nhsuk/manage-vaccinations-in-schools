@@ -71,8 +71,6 @@ jobs:
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: 1.11.4
-      - name: Install AWS CLI
-        run: sudo snap install --classic aws-cli
       - name: Check if any deployments are running
         run: ../scripts/check-for-running-deployments.sh ${{ inputs.environment }}
       - name: Terraform Plan

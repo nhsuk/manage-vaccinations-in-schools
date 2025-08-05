@@ -2,10 +2,10 @@
 
 describe AppImportFormatDetailsComponent do
   let(:programme) { create(:programme, :hpv) }
-  let(:organisation) { create(:organisation, programmes: [programme]) }
+  let(:team) { create(:team, programmes: [programme]) }
 
   it "renders the correct summary text for ClassImport" do
-    import = ClassImport.new(organisation:)
+    import = ClassImport.new(team:)
     render_inline(described_class.new(import:))
     expect(page).to have_content(
       "How to format your Mavis CSV file for class lists"
@@ -13,7 +13,7 @@ describe AppImportFormatDetailsComponent do
   end
 
   it "renders the correct summary text for CohortImport" do
-    import = CohortImport.new(organisation:)
+    import = CohortImport.new(team:)
     render_inline(described_class.new(import:))
     expect(page).to have_content(
       "How to format your Mavis CSV file for child records"
@@ -21,7 +21,7 @@ describe AppImportFormatDetailsComponent do
   end
 
   it "renders the correct summary text for ImmunisationImport" do
-    import = ImmunisationImport.new(organisation:)
+    import = ImmunisationImport.new(team:)
     render_inline(described_class.new(import:))
     expect(page).to have_content(
       "How to format your Mavis CSV file for vaccination records"
@@ -37,7 +37,7 @@ describe AppImportFormatDetailsComponent do
   end
 
   it "renders the correct columns for ClassImport" do
-    import = ClassImport.new(organisation:)
+    import = ClassImport.new(team:)
     render_inline(described_class.new(import:))
     expect(page).to have_content("CHILD_FIRST_NAME")
     expect(page).to have_content("CHILD_LAST_NAME")
@@ -50,7 +50,7 @@ describe AppImportFormatDetailsComponent do
   end
 
   it "renders the correct columns for CohortImport" do
-    import = CohortImport.new(organisation:)
+    import = CohortImport.new(team:)
     render_inline(described_class.new(import:))
     expect(page).to have_content("CHILD_FIRST_NAME")
     expect(page).to have_content("CHILD_LAST_NAME")
@@ -64,7 +64,7 @@ describe AppImportFormatDetailsComponent do
   end
 
   it "renders the correct columns for ImmunisationImport" do
-    import = ImmunisationImport.new(organisation:)
+    import = ImmunisationImport.new(team:)
     render_inline(described_class.new(import:))
     expect(page).to have_content("ORGANISATION_CODE")
     expect(page).to have_content("SCHOOL_URN")

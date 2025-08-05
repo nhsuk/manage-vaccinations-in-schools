@@ -5,12 +5,12 @@
 # Table name: consent_forms
 #
 #  id                                  :bigint           not null, primary key
+#  academic_year                       :integer          not null
 #  address_line_1                      :string
 #  address_line_2                      :string
 #  address_postcode                    :string
 #  address_town                        :string
 #  archived_at                         :datetime
-#  chosen_vaccine                      :string
 #  date_of_birth                       :date
 #  education_setting                   :integer
 #  family_name                         :text
@@ -31,46 +31,49 @@
 #  reason                              :integer
 #  reason_notes                        :text
 #  recorded_at                         :datetime
-#  response                            :integer
 #  school_confirmed                    :boolean
 #  use_preferred_name                  :boolean
 #  created_at                          :datetime         not null
 #  updated_at                          :datetime         not null
 #  consent_id                          :bigint
 #  location_id                         :bigint           not null
-#  organisation_id                     :bigint           not null
 #  school_id                           :bigint
+#  team_id                             :bigint           not null
 #
 # Indexes
 #
-#  index_consent_forms_on_consent_id       (consent_id)
-#  index_consent_forms_on_location_id      (location_id)
-#  index_consent_forms_on_nhs_number       (nhs_number)
-#  index_consent_forms_on_organisation_id  (organisation_id)
-#  index_consent_forms_on_school_id        (school_id)
+#  index_consent_forms_on_academic_year  (academic_year)
+#  index_consent_forms_on_consent_id     (consent_id)
+#  index_consent_forms_on_location_id    (location_id)
+#  index_consent_forms_on_nhs_number     (nhs_number)
+#  index_consent_forms_on_school_id      (school_id)
+#  index_consent_forms_on_team_id        (team_id)
 #
 # Foreign Keys
 #
 #  fk_rails_...  (consent_id => consents.id)
 #  fk_rails_...  (location_id => locations.id)
-#  fk_rails_...  (organisation_id => organisations.id)
 #  fk_rails_...  (school_id => locations.id)
+#  fk_rails_...  (team_id => teams.id)
 #
 
 require_relative "../../lib/faker/address"
 
 FactoryBot.define do
   factory :consent_form do
-    transient { session { association :session } }
+    transient do
+      session { association :session }
+      response { "given" }
+    end
 
     given_name { Faker::Name.first_name }
     family_name { Faker::Name.last_name }
     use_preferred_name { false }
     date_of_birth { Faker::Date.birthday(min_age: 3, max_age: 9) }
-    response { "given" }
     address_line_1 { Faker::Address.street_address }
     address_town { Faker::Address.city }
     address_postcode { Faker::Address.uk_postcode }
+    academic_year { session.academic_year }
 
     parent_email { Faker::Internet.email }
     parent_full_name { "#{Faker::Name.first_name} #{family_name}" }
@@ -92,10 +95,10 @@ FactoryBot.define do
     parental_responsibility { "yes" }
 
     programmes { session.programmes }
-    organisation { session.organisation }
+    team { session.team }
 
     location { session.location }
-    school { location.school? ? location : association(:school, organisation:) }
+    school { location.school? ? location : association(:school, team:) }
     school_confirmed { true }
 
     health_answers do
@@ -112,10 +115,23 @@ FactoryBot.define do
       archived_at { Time.current }
     end
 
+    trait :given do
+      response { "given" }
+    end
+
     trait :refused do
-      response { :refused }
+      response { "refused" }
       reason { :personal_choice }
       health_answers { [] }
+    end
+
+    after(:create) do |consent_form, evaluator|
+      vaccine_methods = evaluator.response == "given" ? %w[injection] : []
+
+      consent_form.consent_form_programmes.update_all(
+        response: evaluator.response,
+        vaccine_methods:
+      )
     end
 
     trait :with_health_answers_no_branching do
@@ -152,7 +168,8 @@ FactoryBot.define do
             next_question: 2,
             follow_up_question: 1,
             response: "yes",
-            notes: "Notes"
+            notes: "Notes",
+            would_require_triage: false
           ),
           HealthAnswer.new(
             id: 1,

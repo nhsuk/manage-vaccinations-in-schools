@@ -5,6 +5,7 @@
 # Table name: class_imports
 #
 #  id                           :bigint           not null, primary key
+#  academic_year                :integer          not null
 #  changed_record_count         :integer
 #  csv_data                     :text
 #  csv_filename                 :text
@@ -13,36 +14,34 @@
 #  new_record_count             :integer
 #  processed_at                 :datetime
 #  rows_count                   :integer
-#  serialized_errors            :json
+#  serialized_errors            :jsonb
 #  status                       :integer          default("pending_import"), not null
 #  year_groups                  :integer          default([]), not null, is an Array
 #  created_at                   :datetime         not null
 #  updated_at                   :datetime         not null
-#  organisation_id              :bigint           not null
-#  session_id                   :bigint           not null
+#  location_id                  :bigint           not null
+#  team_id                      :bigint           not null
 #  uploaded_by_user_id          :bigint           not null
 #
 # Indexes
 #
-#  index_class_imports_on_organisation_id      (organisation_id)
-#  index_class_imports_on_session_id           (session_id)
+#  index_class_imports_on_location_id          (location_id)
+#  index_class_imports_on_team_id              (team_id)
 #  index_class_imports_on_uploaded_by_user_id  (uploaded_by_user_id)
 #
 # Foreign Keys
 #
-#  fk_rails_...  (organisation_id => organisations.id)
-#  fk_rails_...  (session_id => sessions.id)
+#  fk_rails_...  (location_id => locations.id)
+#  fk_rails_...  (team_id => teams.id)
 #  fk_rails_...  (uploaded_by_user_id => users.id)
 #
 describe ClassImport do
-  subject(:class_import) do
-    create(:class_import, csv:, session:, organisation:)
-  end
+  subject(:class_import) { create(:class_import, csv:, session:, team:) }
 
   let(:programmes) { [create(:programme, :hpv)] }
-  let(:organisation) { create(:organisation, programmes:) }
-  let(:location) { create(:school, organisation:) }
-  let(:session) { create(:session, location:, programmes:, organisation:) }
+  let(:team) { create(:team, :with_generic_clinic, programmes:) }
+  let(:location) { create(:school, team:) }
+  let(:session) { create(:session, location:, programmes:, team:) }
 
   let(:file) { "valid.csv" }
   let(:csv) { fixture_file_upload("spec/fixtures/class_import/#{file}") }
@@ -147,6 +146,8 @@ describe ClassImport do
 
   describe "#process!" do
     subject(:process!) { class_import.process! }
+
+    around { |example| travel_to(Date.new(2025, 7, 31)) { example.run } }
 
     let(:file) { "valid.csv" }
 
@@ -260,7 +261,7 @@ describe ClassImport do
     end
 
     it "ignores and counts duplicate records" do
-      create(:class_import, csv:, organisation:, session:).process!
+      create(:class_import, csv:, team:, session:).process!
       csv.rewind
 
       process!
@@ -332,6 +333,21 @@ describe ClassImport do
       end
     end
 
+    context "with an existing parent matching the name but a different case" do
+      let!(:existing_parent) do
+        create(:parent, full_name: "JOHN smith", email: "john@example.com")
+      end
+
+      it "doesn't create an additional parent" do
+        expect { process! }.to change(Parent, :count).by(4)
+      end
+
+      it "changes the parent's name to the incoming version" do
+        process!
+        expect(existing_parent.reload.full_name).to eq("John Smith")
+      end
+    end
+
     context "with an existing patient in a different school" do
       let(:patient) do
         create(
@@ -358,7 +374,7 @@ describe ClassImport do
         expect(patient.pending_changes.keys).not_to include(
           :cohort_id,
           :home_educated,
-          :organisation_id,
+          :team_id,
           :school_id
         )
       end
@@ -366,7 +382,7 @@ describe ClassImport do
 
     context "with an unscheduled session" do
       let(:session) do
-        create(:session, :unscheduled, organisation:, programmes:, location:)
+        create(:session, :unscheduled, team:, programmes:, location:)
       end
 
       it "adds the patients to the session" do
@@ -376,7 +392,7 @@ describe ClassImport do
 
     context "with a scheduled session" do
       let(:session) do
-        create(:session, :scheduled, organisation:, programmes:, location:)
+        create(:session, :scheduled, team:, programmes:, location:)
       end
 
       it "adds the patients to the session" do
@@ -406,7 +422,7 @@ describe ClassImport do
           :school_move,
           :to_unknown_school,
           patient: existing_patient,
-          organisation:
+          team:
         )
 
         expect { process! }.not_to(
@@ -415,7 +431,11 @@ describe ClassImport do
       end
 
       it "doesn't propose a move if the patient is in a different year group" do
-        existing_patient.update!(birth_academic_year: 7.to_birth_academic_year)
+        academic_year = AcademicYear.pending
+
+        existing_patient.update!(
+          birth_academic_year: 7.to_birth_academic_year(academic_year:)
+        )
 
         expect { process! }.not_to(
           change { existing_patient.reload.school_moves.count }

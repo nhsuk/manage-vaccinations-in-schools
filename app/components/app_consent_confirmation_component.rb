@@ -14,24 +14,22 @@ class AppConsentConfirmationComponent < ViewComponent::Base
   end
 
   def title
-    case response
-    when "given"
-      "Consent confirmed"
-    when "given_one"
-      chosen_programme = chosen_programmes.first.name
-      "Consent for the #{chosen_programme} vaccination confirmed"
-    when "refused"
-      "Consent refused"
+    if response_given?
+      if refused_consent_form_programmes.empty?
+        "Consent confirmed"
+      else
+        "Consent for the #{given_vaccinations} confirmed"
+      end
     else
-      raise "unrecognised consent response: #{response}"
+      "Consent refused"
     end
   end
 
   private
 
-  delegate :chosen_programmes,
-           :not_chosen_programmes,
-           :response,
+  delegate :given_consent_form_programmes,
+           :refused_consent_form_programmes,
+           :response_given?,
            :parent_email,
            to: :@consent_form
 
@@ -40,47 +38,51 @@ class AppConsentConfirmationComponent < ViewComponent::Base
   end
 
   def panel_text
-    case response
-    when "given", "given_one"
-      if @consent_form.needs_triage?
+    if response_given?
+      if @consent_form.health_answers_require_triage?
         <<-END_OF_TEXT
           As you answered ‘yes’ to some of the health questions, we need to check
-          the #{chosen_vaccinations_are} suitable for #{full_name}. We’ll review
+          the #{given_vaccinations_are} suitable for #{full_name}. We’ll review
           your answers and get in touch again soon.
         END_OF_TEXT
       else
-        "#{full_name} is due to get the #{chosen_vaccinations} at school" +
+        "#{full_name} is due to get the #{given_vaccinations} at school" +
           (session_dates.present? ? " on #{session_dates}" : "")
       end
-    when "refused"
-      "You’ve told us that you do not want #{full_name} to get the" \
-        " #{not_chosen_vaccinations} at school"
     else
-      raise "unrecognised consent response: #{response}"
+      "You’ve told us that you do not want #{full_name} to get the" \
+        " #{refused_vaccinations} at school"
     end
   end
 
-  def chosen_vaccinations
-    vaccinations_text(chosen_programmes)
-  end
+  def given_vaccinations = vaccinations_text(given_consent_form_programmes)
 
-  def not_chosen_vaccinations
-    vaccinations_text(not_chosen_programmes)
-  end
+  def refused_vaccinations = vaccinations_text(refused_consent_form_programmes)
 
-  def vaccinations_text(programmes)
+  def vaccinations_text(consent_form_programmes)
     programme_names =
-      programmes.map do |programme|
-        programme.type == "flu" ? "nasal flu" : programme.name
-      end
+      consent_form_programmes
+        .includes(:programme)
+        .map do |consent_form_programme|
+          programme = consent_form_programme.programme
+
+          if programme.has_multiple_vaccine_methods?
+            vaccine_method = consent_form_programme.vaccine_methods.first
+            method_prefix =
+              Vaccine.human_enum_name(:method_prefix, vaccine_method)
+            "#{method_prefix} #{programme.name_in_sentence}".lstrip
+          else
+            programme.name_in_sentence
+          end
+        end
 
     "#{programme_names.to_sentence} vaccination".pluralize(
       programme_names.count
     )
   end
 
-  def chosen_vaccinations_are
-    "#{chosen_vaccinations} #{chosen_programmes.one? ? "is" : "are"}"
+  def given_vaccinations_are
+    "#{given_vaccinations} #{given_consent_form_programmes.one? ? "is" : "are"}"
   end
 
   def session_dates

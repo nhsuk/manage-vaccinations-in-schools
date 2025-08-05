@@ -11,11 +11,11 @@ describe "MenACWY and Td/IPV vaccination" do
 
   def given_i_am_signed_in_as_an_admin
     programmes = [create(:programme, :menacwy), create(:programme, :td_ipv)]
-    organisation = create(:organisation, :with_one_admin, programmes:)
+    team = create(:team, :with_one_admin, programmes:)
 
-    location = create(:school)
+    location = create(:school, team:)
 
-    @session = create(:session, organisation:, programmes:, location:)
+    @session = create(:session, team:, programmes:, location:)
     @patient =
       create(:patient, :consent_given_triage_not_needed, session: @session)
 
@@ -32,12 +32,12 @@ describe "MenACWY and Td/IPV vaccination" do
       session: @session
     )
 
-    sign_in organisation.users.first, role: :admin_staff
+    sign_in team.users.first, role: :admin_staff
 
     visit "/"
 
     expect(page).to have_content(
-      "#{organisation.users.first.full_name} (Administrator)"
+      "#{team.users.first.full_name} (Administrator)"
     )
   end
 

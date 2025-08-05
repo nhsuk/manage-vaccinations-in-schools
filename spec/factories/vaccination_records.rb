@@ -4,41 +4,48 @@
 #
 # Table name: vaccination_records
 #
-#  id                       :bigint           not null, primary key
-#  confirmation_sent_at     :datetime
-#  delivery_method          :integer
-#  delivery_site            :integer
-#  discarded_at             :datetime
-#  dose_sequence            :integer
-#  full_dose                :boolean
-#  location_name            :string
-#  notes                    :text
-#  outcome                  :integer          not null
-#  pending_changes          :jsonb            not null
-#  performed_at             :datetime         not null
-#  performed_by_family_name :string
-#  performed_by_given_name  :string
-#  performed_ods_code       :string
-#  uuid                     :uuid             not null
-#  created_at               :datetime         not null
-#  updated_at               :datetime         not null
-#  batch_id                 :bigint
-#  patient_id               :bigint
-#  performed_by_user_id     :bigint
-#  programme_id             :bigint           not null
-#  session_id               :bigint
-#  vaccine_id               :bigint
+#  id                                    :bigint           not null, primary key
+#  confirmation_sent_at                  :datetime
+#  delivery_method                       :integer
+#  delivery_site                         :integer
+#  discarded_at                          :datetime
+#  dose_sequence                         :integer
+#  full_dose                             :boolean
+#  location_name                         :string
+#  nhs_immunisations_api_etag            :string
+#  nhs_immunisations_api_sync_pending_at :datetime
+#  nhs_immunisations_api_synced_at       :datetime
+#  notes                                 :text
+#  notify_parents                        :boolean
+#  outcome                               :integer          not null
+#  pending_changes                       :jsonb            not null
+#  performed_at                          :datetime         not null
+#  performed_by_family_name              :string
+#  performed_by_given_name               :string
+#  performed_ods_code                    :string
+#  protocol                              :integer
+#  uuid                                  :uuid             not null
+#  created_at                            :datetime         not null
+#  updated_at                            :datetime         not null
+#  batch_id                              :bigint
+#  nhs_immunisations_api_id              :string
+#  patient_id                            :bigint
+#  performed_by_user_id                  :bigint
+#  programme_id                          :bigint           not null
+#  session_id                            :bigint
+#  vaccine_id                            :bigint
 #
 # Indexes
 #
-#  index_vaccination_records_on_batch_id              (batch_id)
-#  index_vaccination_records_on_discarded_at          (discarded_at)
-#  index_vaccination_records_on_patient_id            (patient_id)
-#  index_vaccination_records_on_performed_by_user_id  (performed_by_user_id)
-#  index_vaccination_records_on_programme_id          (programme_id)
-#  index_vaccination_records_on_session_id            (session_id)
-#  index_vaccination_records_on_uuid                  (uuid) UNIQUE
-#  index_vaccination_records_on_vaccine_id            (vaccine_id)
+#  index_vaccination_records_on_batch_id                  (batch_id)
+#  index_vaccination_records_on_discarded_at              (discarded_at)
+#  index_vaccination_records_on_nhs_immunisations_api_id  (nhs_immunisations_api_id) UNIQUE
+#  index_vaccination_records_on_patient_id                (patient_id)
+#  index_vaccination_records_on_performed_by_user_id      (performed_by_user_id)
+#  index_vaccination_records_on_programme_id              (programme_id)
+#  index_vaccination_records_on_session_id                (session_id)
+#  index_vaccination_records_on_uuid                      (uuid) UNIQUE
+#  index_vaccination_records_on_vaccine_id                (vaccine_id)
 #
 # Foreign Keys
 #
@@ -52,15 +59,14 @@
 FactoryBot.define do
   factory :vaccination_record do
     transient do
-      organisation do
-        programme.organisations.first ||
-          association(:organisation, programmes: [programme])
+      team do
+        programme.teams.first || association(:team, programmes: [programme])
       end
     end
 
     programme
 
-    performed_ods_code { organisation.ods_code }
+    performed_ods_code { team.ods_code }
 
     patient do
       association :patient,
@@ -78,13 +84,7 @@ FactoryBot.define do
 
     batch do
       if vaccine
-        association(
-          :batch,
-          :not_expired,
-          organisation:,
-          vaccine:,
-          strategy: :create
-        )
+        association(:batch, :not_expired, team:, vaccine:, strategy: :create)
       end
     end
 
@@ -95,10 +95,13 @@ FactoryBot.define do
 
     dose_sequence { programme.vaccinated_dose_sequence }
     full_dose { true }
+    protocol { "pgd" }
 
     uuid { SecureRandom.uuid }
 
     location_name { "Unknown" if session.nil? }
+
+    notify_parents { true }
 
     trait :not_administered do
       delivery_site { nil }

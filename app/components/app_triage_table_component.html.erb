@@ -1,0 +1,29 @@
+<%= govuk_table do |table| %>
+  <% table.with_caption(text: "Triage notes", size: "s") %>
+
+  <% table.with_head do |head| %>
+    <% head.with_row do |row| %>
+      <% row.with_cell(text: "Date") %>
+      <% row.with_cell(text: "Note") %>
+      <% row.with_cell(text: "Outcome") %>
+    <% end %>
+  <% end %>
+
+  <% table.with_body do |body| %>
+    <% triages.each do |triage| %>
+      <% body.with_row do |row| %>
+        <% row.with_cell do %>
+          <%= triage.created_at.to_fs(:long) %>
+          <br />
+          <span class="nhsuk-u-secondary-text-color nhsuk-u-font-size-16">
+            <%= triage.performed_by.full_name %>
+          </span>
+        <% end %>
+
+        <% row.with_cell(text: triage.notes) %>
+
+        <% row.with_cell(text: helpers.triage_status_tag(triage)) %>
+      <% end %>
+    <% end %>
+  <% end %>
+<% end %>

@@ -1,16 +1,10 @@
 # frozen_string_literal: true
 
 class Reports::CareplusExporter
-  PROGRAMME_TYPE_TO_VACCINE_CODE = {
-    "flu" => "FLU",
-    "hpv" => "HPV",
-    "td_ipv" => "3IN1",
-    "menacwy" => "ACWYX4"
-  }.freeze
-
-  def initialize(organisation:, programme:, start_date:, end_date:)
-    @organisation = organisation
+  def initialize(team:, programme:, academic_year:, start_date:, end_date:)
+    @team = team
     @programme = programme
+    @academic_year = academic_year
     @start_date = start_date
     @end_date = end_date
   end
@@ -31,7 +25,7 @@ class Reports::CareplusExporter
 
   private
 
-  attr_reader :organisation, :programme, :start_date, :end_date
+  attr_reader :team, :programme, :academic_year, :start_date, :end_date
 
   def headers
     [
@@ -75,7 +69,8 @@ class Reports::CareplusExporter
     scope =
       VaccinationRecord
         .kept
-        .where(session: { organisation: }, programme:)
+        .where(session: { team: }, programme:)
+        .for_academic_year(academic_year)
         .administered
         .order(:performed_at)
         .includes(:batch, :patient, :vaccine, session: :location)
@@ -113,7 +108,11 @@ class Reports::CareplusExporter
     @consents ||=
       Consent
         .select("DISTINCT ON (patient_id) consents.*")
-        .where(patient: vaccination_records.select(:patient_id), programme:)
+        .where(
+          patient: vaccination_records.select(:patient_id),
+          programme:,
+          academic_year:
+        )
         .not_invalidated
         .response_given
         .order(:patient_id, created_at: :desc)
@@ -137,7 +136,7 @@ class Reports::CareplusExporter
           records.first.performed_at.strftime("%d/%m/%Y"),
           records.first.performed_at.strftime("%H:%M"),
           session.location.school? ? "SC" : "CL", # Venue Type
-          session.location.dfe_number || organisation.careplus_venue_code, # Venue Code
+          session.location.dfe_number || team.careplus_venue_code, # Venue Code
           "IN", # Staff Type
           "LW5PM", # Staff Code
           "Y", # Attended; Did not attends do not get recorded on GP systems
@@ -213,13 +212,20 @@ class Reports::CareplusExporter
   end
 
   def vaccine_code(vaccination_record)
-    code =
-      PROGRAMME_TYPE_TO_VACCINE_CODE.fetch(vaccination_record.programme.type)
+    programme = vaccination_record.programme
 
-    if code == "FLU" && vaccination_record.delivery_method == "nasal_spray"
-      return "FLUENZ"
+    if programme.flu? && vaccination_record.delivery_method_nasal_spray?
+      "FLUENZ"
+    elsif programme.flu?
+      "FLU"
+    elsif programme.hpv?
+      "HPV"
+    elsif programme.menacwy?
+      "ACWYX14"
+    elsif programme.td_ipv?
+      "3IN1"
+    else
+      raise "Unknown programme: #{programme.type}"
     end
-
-    code
   end
 end

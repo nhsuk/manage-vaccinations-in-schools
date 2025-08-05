@@ -12,17 +12,18 @@
 
   <%= hidden_field_tag "question_number", @question_number %>
 
-  <%= f.govuk_radio_buttons_fieldset(:response,
+  <%= f.govuk_radio_buttons_fieldset :response,
                                      legend: { size: "l", text: title, tag: "h1" },
-                                     hint: { text: @health_answer.hint }) do %>
-    <%= f.govuk_radio_button :response, "yes",
-                             label: { text: "Yes" },
-                             link_errors: true do %>
-      <%= f.govuk_text_area :notes,
-                            label: { text: "Give details" } %>
+                                     hint: { text: @health_answer.hint } do %>
+    <% if @health_answer.requires_notes? %>
+      <%= f.govuk_radio_button :response, "yes", label: { text: "Yes" }, link_errors: true do %>
+        <%= f.govuk_text_area :notes, label: { text: "Give details" }, hint: { text: @health_answer.give_details_hint } %>
+      <% end %>
+    <% else %>
+      <%= f.govuk_radio_button :response, "yes", label: { text: "Yes" }, link_errors: true %>
     <% end %>
-    <%= f.govuk_radio_button :response, "no",
-                             label: { text: "No" } %>
+
+    <%= f.govuk_radio_button :response, "no", label: { text: "No" } %>
   <% end %>
 
   <%= f.govuk_submit "Continue" %>

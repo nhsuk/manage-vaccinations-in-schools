@@ -3,11 +3,12 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 5.95"
+      version = "~> 6.2"
     }
   }
 
   backend "s3" {
+    region       = "eu-west-2"
     use_lockfile = true
     encrypt      = true
   }

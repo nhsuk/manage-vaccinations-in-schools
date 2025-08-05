@@ -5,9 +5,11 @@
 # Table name: health_questions
 #
 #  id                    :bigint           not null, primary key
+#  give_details_hint     :string
 #  hint                  :string
 #  metadata              :jsonb            not null
 #  title                 :string           not null
+#  would_require_triage  :boolean          default(TRUE), not null
 #  created_at            :datetime         not null
 #  updated_at            :datetime         not null
 #  follow_up_question_id :bigint

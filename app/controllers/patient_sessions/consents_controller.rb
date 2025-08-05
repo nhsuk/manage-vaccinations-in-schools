@@ -17,12 +17,19 @@ class PatientSessions::ConsentsController < PatientSessions::BaseController
     if @draft_consent.save
       redirect_to draft_consent_path(Wicked::FIRST_STEP)
     else
-      render "patient_sessions/programmes/show", status: :unprocessable_entity
+      render "patient_sessions/programmes/show",
+             layout: "full",
+             status: :unprocessable_entity
     end
   end
 
   def send_request
-    return unless @patient.consent_status(programme: @programme).no_response?
+    unless @patient.consent_status(
+             programme: @programme,
+             academic_year: @academic_year
+           ).no_response?
+      return
+    end
 
     # For programmes that are administered together we should send the consent request together.
     programmes =
@@ -96,17 +103,25 @@ class PatientSessions::ConsentsController < PatientSessions::BaseController
     @consent =
       @patient
         .consents
+        .where(academic_year: @session.academic_year)
         .includes(
           :consent_form,
           :parent,
           :programme,
+          :vaccines,
           patient: :parent_relationships
         )
         .find(params[:id])
   end
 
   def update_patient_status
-    @patient.triages.where(programme_id: @consent.programme_id).invalidate_all
+    @patient
+      .triages
+      .where(
+        academic_year: @session.academic_year,
+        programme_id: @consent.programme_id
+      )
+      .invalidate_all
 
     StatusUpdater.call(patient: @patient)
   end
@@ -123,7 +138,8 @@ class PatientSessions::ConsentsController < PatientSessions::BaseController
     {
       patient_session: @patient_session,
       programme: @programme,
-      recorded_by: current_user
+      recorded_by: current_user,
+      vaccine_methods: %w[injection]
     }
   end
 

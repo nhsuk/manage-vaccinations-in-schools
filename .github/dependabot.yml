@@ -5,15 +5,18 @@
 
 version: 2
 updates:
-  - package-ecosystem: "bundler"
-    directory: "/"
+  - package-ecosystem: bundler
+    directory: /
+    target-branch: next
     schedule:
-      interval: "weekly"
-  - package-ecosystem: "github-actions"
-    directory: "/"
+      interval: daily
+  - package-ecosystem: github-actions
+    directory: /
+    target-branch: next
     schedule:
-      interval: "weekly"
-  - package-ecosystem: "npm"
-    directory: "/"
+      interval: daily
+  - package-ecosystem: npm
+    directory: /
+    target-branch: next
     schedule:
-      interval: "weekly"
+      interval: daily

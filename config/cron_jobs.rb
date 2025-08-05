@@ -12,20 +12,23 @@ CRON_JOBS = {
     description:
       "Invalidate all self-consents and associated triage for the previous day"
   },
-  mesh_dps_export: {
-    cron: "every day at 2am",
-    class: "MESHDPSExportJob",
-    description: "Export DPS data via MESH"
+  patients_aged_out_of_school: {
+    cron: "every day at 5:00",
+    class: "PatientsAgedOutOfSchoolJob",
+    description:
+      "Moves patients who have aged out of their school to unknown school."
   },
-  mesh_track_dps_exports: {
-    cron: "every day at 3am",
-    class: "MESHTrackDPSExportsJob",
-    description: "Track the status of DPS exports"
+  patients_clear_registration: {
+    cron: "every day at 5:15",
+    class: "PatientsClearRegistrationJob",
+    description:
+      "Clears the registration of patients for the previous academic year"
   },
-  mesh_validate_mailbox: {
-    cron: "every day at 1am",
-    class: "MESHValidateMailboxJob",
-    description: "Validate MESH mailbox"
+  patients_refused_consent_already_vaccinated: {
+    cron: "every day at 5:30",
+    class: "PatientsRefusedConsentAlreadyVaccinatedJob",
+    description:
+      "Record already vaccinated for patients who refused consent in the previous academic year for that reason"
   },
   remove_import_csv: {
     cron: "every day at 1am",

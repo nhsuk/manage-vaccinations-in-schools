@@ -3,7 +3,7 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 5.87"
+      version = "~> 6.2"
     }
   }
 }
@@ -79,9 +79,10 @@ resource "aws_ecs_task_definition" "this" {
   task_role_arn            = var.task_config.task_role_arn
   container_definitions = jsonencode([
     {
-      name      = var.container_name
-      image     = var.task_config.docker_image
-      essential = true
+      name                   = var.container_name
+      image                  = var.task_config.docker_image
+      essential              = true
+      readonlyRootFileSystem = true
       portMappings = [
         {
           containerPort = 4000

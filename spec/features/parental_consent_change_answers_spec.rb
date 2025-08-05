@@ -52,6 +52,9 @@ RSpec.feature "Parental consent change answers" do
     then_i_see_the_consent_form_confirmation_page
 
     when_i_change_my_consent_to_accepted
+    then_i_see_the_injection_alternative_page
+
+    when_i_input_the_injection_alternative
     then_i_see_the_address_page
 
     when_i_input_my_address
@@ -72,17 +75,9 @@ RSpec.feature "Parental consent change answers" do
 
   def given_a_flu_programme_is_underway
     programmes = [create(:programme, :flu)]
-    @organisation = create(:organisation, :with_one_nurse, programmes:)
-    location =
-      create(:school, name: "Pilot School", organisation: @organisation)
-    @session =
-      create(
-        :session,
-        :scheduled,
-        organisation: @organisation,
-        programmes:,
-        location:
-      )
+    @team = create(:team, :with_one_nurse, programmes:)
+    location = create(:school, name: "Pilot School", team: @team)
+    @session = create(:session, :scheduled, team: @team, programmes:, location:)
     @child = create(:patient, session: @session)
   end
 
@@ -133,7 +128,20 @@ RSpec.feature "Parental consent change answers" do
     # BUG: The page should be the consent confirm page, but because we
     # encountered a validation error, the skip_to_confirm flag gets lost and we
     # end up on the next page in the wizard.
-    10.times { click_button "Continue" }
+
+    click_button "Continue"
+
+    # BUG: You shouldn't need to select again if injection is accepted as an
+    # alternative.
+    choose "Yes"
+    click_button "Continue"
+
+    9.times { click_button "Continue" }
+
+    # BUG: You shouldn't need to choose this again. It happens because the
+    # injection alternative value is lost when changing answers.
+    choose "No"
+    click_button "Continue"
   end
 
   def when_i_change_my_parental_relationship_to_dad
@@ -163,7 +171,6 @@ RSpec.feature "Parental consent change answers" do
 
   def when_i_change_my_answer_to_yes_for_the_asthma_question
     choose "Yes"
-    fill_in "Give details", with: "He has had asthma since he was 2"
     click_button "Continue"
   end
 
@@ -192,8 +199,6 @@ RSpec.feature "Parental consent change answers" do
   end
 
   def and_i_see_the_answer_i_changed_is_yes
-    expect(page).to have_content("Yes – He has had asthma since he was 2")
-
     expect(page).to have_content("Yes – Follow up details")
     expect(page).to have_content("Yes – Even more follow up details")
   end
@@ -203,7 +208,9 @@ RSpec.feature "Parental consent change answers" do
   end
 
   def then_i_see_the_last_health_question
-    expect(page).to have_content("Does you child take regular aspirin?")
+    expect(page).to have_content(
+      "Does your child have a bleeding disorder or another medical condition they receive treatment for?"
+    )
   end
 
   def and_i_answer_no_to_the_last_health_question
@@ -212,14 +219,14 @@ RSpec.feature "Parental consent change answers" do
   end
 
   def when_i_change_my_consent_to_refused
-    click_link "Change consent"
+    click_link "Change decision"
     choose "No"
     click_button "Continue"
   end
 
   def when_i_change_my_consent_to_accepted
-    click_link "Change consent"
-    choose "Yes"
+    click_link "Change decision"
+    choose "Yes, I agree to them having the nasal spray vaccine"
     click_button "Continue"
   end
 
@@ -235,21 +242,32 @@ RSpec.feature "Parental consent change answers" do
   def then_i_see_the_needs_triage_confirmation_page
     expect(page).to have_content("Consent confirmed")
     expect(page).to have_content(
-      "As you answered ‘yes’ to some of the health questions, " \
-        "we need to check the nasal flu vaccination is suitable for Joe Test."
+      "As you answered ‘yes’ to some of the health questions, we need to " \
+        "check the nasal spray flu vaccination is suitable for Joe Test."
     )
   end
 
   def then_i_see_the_refused_confirmation_page
     expect(page).to have_content(
-      "Your child will not get a nasal flu vaccination at school"
+      "Your child will not get the flu vaccination at school"
     )
   end
 
   def then_i_see_the_given_confirmation_page
     expect(page).to have_content(
-      "is due to get the nasal flu vaccination at school"
+      "is due to get the nasal spray flu vaccination at school"
     )
+  end
+
+  def then_i_see_the_injection_alternative_page
+    expect(page).to have_content(
+      "If your child cannot have the nasal spray, do you agree to them having the injected vaccine instead?"
+    )
+  end
+
+  def when_i_input_the_injection_alternative
+    choose "Yes"
+    click_button "Continue"
   end
 
   def then_i_see_the_address_page

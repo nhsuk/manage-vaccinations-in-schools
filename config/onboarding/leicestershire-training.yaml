@@ -1,4 +1,4 @@
-organisation:
+team:
   name: Leicestershire Partnership Trust School Aged Immunisation Service
   email: lpt.sais@nhs.net
   phone: 0300 3000 007
@@ -10,7 +10,7 @@ organisation:
 
 programmes: [hpv]
 
-teams:
+subteams:
   generic:
     name: Leicestershire Partnership Trust School Aged Immunisation Service
     email: lpt.sais@nhs.net
@@ -53,7 +53,7 @@ schools:
     - 138628
     - 140103
 
-# Organisations need at least 1 clinic, we're not sure right now
+# Teams need at least 1 clinic, we're not sure right now
 # if Leicestershire will be managing clinics on Mavis.
 clinics:
   generic:

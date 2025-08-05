@@ -60,11 +60,10 @@ describe "Download vaccination reports" do
   end
 
   def given_an_hpv_programme_is_underway
-    @organisation = create(:organisation, :with_one_nurse)
-    @programme = create(:programme, :hpv, organisations: [@organisation])
+    @team = create(:team, :with_one_nurse)
+    @programme = create(:programme, :hpv, teams: [@team])
 
-    @session =
-      create(:session, organisation: @organisation, programmes: [@programme])
+    @session = create(:session, team: @team, programmes: [@programme])
 
     @patient =
       create(
@@ -73,7 +72,7 @@ describe "Download vaccination reports" do
         given_name: "John",
         family_name: "Smith",
         programmes: [@programme],
-        organisation: @organisation
+        team: @team
       )
 
     @patient_session =
@@ -81,11 +80,10 @@ describe "Download vaccination reports" do
   end
 
   def given_a_menacwy_programme_is_underway
-    @organisation = create(:organisation, :with_one_nurse)
-    @programme = create(:programme, :menacwy, organisations: [@organisation])
+    @team = create(:team, :with_one_nurse)
+    @programme = create(:programme, :menacwy, teams: [@team])
 
-    @session =
-      create(:session, organisation: @organisation, programmes: [@programme])
+    @session = create(:session, team: @team, programmes: [@programme])
 
     @patient =
       create(
@@ -94,7 +92,7 @@ describe "Download vaccination reports" do
         given_name: "John",
         family_name: "Smith",
         programmes: [@programme],
-        organisation: @organisation
+        team: @team
       )
 
     @patient_session =
@@ -104,7 +102,7 @@ describe "Download vaccination reports" do
   def and_an_administered_vaccination_record_exists
     vaccine = @programme.vaccines.first
 
-    batch = create(:batch, organisation: @organisation, vaccine:)
+    batch = create(:batch, team: @team, vaccine:)
 
     create(
       :vaccination_record,
@@ -116,8 +114,8 @@ describe "Download vaccination reports" do
   end
 
   def when_i_go_to_the_programme
-    sign_in @organisation.users.first
-    visit programme_path(@programme)
+    sign_in @team.users.first
+    visit programme_overview_path(@programme, Date.current.academic_year)
   end
 
   def and_i_click_on_download_vaccination_report

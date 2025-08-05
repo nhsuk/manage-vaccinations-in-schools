@@ -4,11 +4,11 @@ describe "Scheduled consent requests" do
   around { |example| travel_to(Time.zone.local(2024, 2, 18)) { example.run } }
 
   scenario "Consent requests are sent automatically 3 weeks before session, by default" do
-    given_my_organisation_is_running_an_hpv_vaccination_programme
+    given_my_team_is_running_an_hpv_vaccination_programme
     and_one_unscheduled_session_exists_with_two_children_and_two_parents_each
     and_i_am_signed_in
 
-    when_i_go_to_my_organisation_page
+    when_i_go_to_my_team_page
     then_i_see_consent_requests_are_sent_3_weeks_before
 
     when_i_schedule_a_session_4_weeks_away
@@ -19,20 +19,19 @@ describe "Scheduled consent requests" do
     then_all_four_parents_received_consent_requests
   end
 
-  def given_my_organisation_is_running_an_hpv_vaccination_programme
+  def given_my_team_is_running_an_hpv_vaccination_programme
     programmes = [create(:programme, :hpv)]
-    @organisation =
-      create(:organisation, :with_one_nurse, :with_generic_clinic, programmes:)
-    @location = create(:school, :secondary, organisation: @organisation)
+    @team = create(:team, :with_one_nurse, :with_generic_clinic, programmes:)
+    @location = create(:school, :secondary, team: @team)
     @session =
       create(
         :session,
         :unscheduled,
         location: @location,
-        organisation: @organisation,
+        team: @team,
         programmes:
       )
-    @user = @organisation.users.first
+    @user = @team.users.first
   end
 
   def and_one_unscheduled_session_exists_with_two_children_and_two_parents_each
@@ -66,9 +65,9 @@ describe "Scheduled consent requests" do
     sign_in @user
   end
 
-  def when_i_go_to_my_organisation_page
+  def when_i_go_to_my_team_page
     visit "/"
-    click_link "Your organisation", match: :first
+    click_link "Your team", match: :first
   end
 
   def then_i_see_consent_requests_are_sent_3_weeks_before
@@ -79,7 +78,8 @@ describe "Scheduled consent requests" do
 
   def when_i_schedule_a_session_4_weeks_away
     click_link "Sessions"
-    click_link "Unscheduled"
+    choose "Unscheduled"
+    click_button "Update results"
     click_link @location.name
     click_link "Schedule sessions"
     click_link "Add session dates"

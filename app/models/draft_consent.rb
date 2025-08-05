@@ -6,17 +6,18 @@ class DraftConsent
   include WizardStepConcern
 
   include ActiveRecord::AttributeMethods::Serialization
+  include GelatineVaccinesConcern
   include HasHealthAnswers
 
-  def self.request_session_key
-    "consent"
-  end
-
   attr_reader :new_or_existing_contact
+  attr_accessor :triage_form_valid
 
+  attribute :academic_year, :integer
   attribute :health_answers, array: true, default: []
+  attribute :injection_alternative, :boolean
   attribute :notes, :string
-  attribute :notify_parents, :boolean
+  attribute :notify_parent_on_refusal, :boolean
+  attribute :notify_parents_on_vaccination, :boolean
   attribute :parent_email, :string
   attribute :parent_full_name, :string
   attribute :parent_id, :integer
@@ -32,7 +33,15 @@ class DraftConsent
   attribute :response, :string
   attribute :route, :string
   attribute :triage_notes, :string
-  attribute :triage_status, :string
+  attribute :triage_status_and_vaccine_method, :string
+  attribute :vaccine_methods, array: true, default: []
+
+  def initialize(current_user:, **attributes)
+    @current_user = current_user
+    super(**attributes)
+  end
+
+  FLU_RESPONSES = %w[given_nasal given_injection].freeze
 
   def wizard_steps
     [
@@ -40,10 +49,11 @@ class DraftConsent
       (:parent_details unless via_self_consent?),
       (:route unless via_self_consent?),
       :agree,
-      (:notify_parents if response_given? && via_self_consent?),
+      (:notify_parents_on_vaccination if response_given? && via_self_consent?),
       (:questions if response_given?),
       (:triage if triage_allowed? && response_given?),
       (:reason if response_refused?),
+      (:notify_parent_on_refusal if ask_notify_parent_on_refusal?),
       (:notes if notes_required?),
       :confirm
     ].compact
@@ -82,7 +92,7 @@ class DraftConsent
     validates :parent_full_name, presence: true
     validates :parent_relationship_type,
               inclusion: {
-                in: ParentRelationship.types.keys
+                in: ParentRelationship.types.keys - %w[unknown]
               }
   end
 
@@ -103,11 +113,19 @@ class DraftConsent
   end
 
   on_wizard_step :agree, exact: true do
-    validates :response, inclusion: { in: Consent.responses.keys }
+    validates :response,
+              inclusion: {
+                in: Consent.responses.keys + FLU_RESPONSES
+              }
+    validates :injection_alternative,
+              inclusion: {
+                in: [true, false]
+              },
+              if: -> { response == "given_nasal" }
   end
 
-  on_wizard_step :notify_parents, exact: true do
-    validates :notify_parents, inclusion: { in: [true, false] }
+  on_wizard_step :notify_parents_on_vaccination, exact: true do
+    validates :notify_parents_on_vaccination, inclusion: { in: [true, false] }
   end
 
   on_wizard_step :reason, exact: true do
@@ -117,13 +135,16 @@ class DraftConsent
               }
   end
 
+  on_wizard_step :notify_parent_on_refusal, exact: true do
+    validates :notify_parent_on_refusal, inclusion: { in: [true, false] }
+  end
+
   on_wizard_step :questions, exact: true do
     validate :health_answers_are_valid
   end
 
   on_wizard_step :triage, exact: true do
-    validates :triage_status, inclusion: { in: Triage.statuses.keys }
-    validates :triage_notes, length: { maximum: 1000 }
+    validates :triage_form_valid, presence: true
   end
 
   on_wizard_step :notes, exact: true do
@@ -164,6 +185,24 @@ class DraftConsent
     self.editing_id = value.id
   end
 
+  def update_vaccine_methods
+    if flu_response?
+      if response == "given_nasal"
+        self.vaccine_methods = ["nasal"]
+        vaccine_methods << "injection" if injection_alternative
+      elsif response == "given_injection"
+        self.vaccine_methods = ["injection"]
+        self.injection_alternative = nil
+      end
+    elsif response_given?
+      self.vaccine_methods = ["injection"]
+      self.injection_alternative = nil
+    else
+      self.vaccine_methods = []
+      self.injection_alternative = nil
+    end
+  end
+
   def parent
     return nil if via_self_consent?
 
@@ -174,13 +213,23 @@ class DraftConsent
     parent.phone = parent_phone
     parent.phone_receive_updates = parent_phone_receive_updates
 
-    parent
-      .parent_relationships
-      .find_or_initialize_by(patient:)
-      .assign_attributes(
-        type: parent_relationship_type,
-        other_name: parent_relationship_other_name
-      )
+    # We can't use find_or_initialize_by here because we need the object to
+    # remain attached to the parent so we can save the parent with its
+    # relationships.
+
+    parent_relationship =
+      parent.parent_relationships.find { it.patient_id == patient_id } ||
+        parent.parent_relationships.build(patient_id:)
+
+    parent_relationship.assign_attributes(
+      patient:, # acts as preload
+      type: parent_relationship_type,
+      other_name: parent_relationship_other_name
+    )
+
+    if parent_relationship.new_record?
+      parent.parent_relationships << parent_relationship
+    end
 
     parent
   end
@@ -196,7 +245,7 @@ class DraftConsent
     self.parent_phone_receive_updates = value&.phone_receive_updates
     self.parent_relationship_type = parent_relationship&.type
     self.parent_relationship_other_name = parent_relationship&.other_name
-    self.parent_responsibility = true # if consent was submitted this must've been true
+    self.parent_responsibility = value ? true : nil
   end
 
   def patient_session
@@ -210,10 +259,11 @@ class DraftConsent
 
   def patient_session=(value)
     self.patient_session_id = value.id
+    self.academic_year = value.academic_year
   end
 
   delegate :location,
-           :organisation,
+           :team,
            :patient,
            :session,
            to: :patient_session,
@@ -223,8 +273,8 @@ class DraftConsent
     patient&.id
   end
 
-  def organisation_id
-    organisation&.id
+  def team_id
+    team&.id
   end
 
   def recorded_by
@@ -250,28 +300,31 @@ class DraftConsent
     self.programme_id = value.id
   end
 
-  def write_to!(consent, triage:)
+  def write_to!(consent, triage_form:)
+    self.response = "given" if flu_response?
     super(consent)
 
     consent.parent = parent
     consent.submitted_at ||= Time.current
+    consent.academic_year = academic_year if academic_year.present?
 
     if triage_allowed? && response_given?
-      triage.notes = triage_notes || ""
-      triage.organisation = organisation
-      triage.patient = patient
-      triage.performed_by_user_id = recorded_by_user_id
-      triage.programme = programme
-      triage.status = triage_status
+      triage_form.notes = triage_notes || ""
+      triage_form.current_user = recorded_by
+      triage_form.status_and_vaccine_method = triage_status_and_vaccine_method
     end
   end
 
-  def via_self_consent?
-    route == "self_consent"
+  def via_self_consent? = route == "self_consent"
+
+  def send_confirmation? = notify_parent_on_refusal != false
+
+  def flu_response?
+    FLU_RESPONSES.include?(response)
   end
 
   def response_given?
-    response == "given"
+    response == "given" || FLU_RESPONSES.include?(response)
   end
 
   def response_refused?
@@ -297,8 +350,54 @@ class DraftConsent
   def parent_relationship
     parent
       &.parent_relationships
-      &.find { _1.patient_id == patient_id }
-      .tap { _1&.patient = patient } # acts as preload
+      &.find { it.patient_id == patient_id }
+      &.tap do
+        it.patient = patient # acts as preload
+        it.type = parent_relationship_type
+        it.other_name = parent_relationship_other_name
+      end
+  end
+
+  def human_enum_name(attribute)
+    Consent.human_enum_name(attribute, send(attribute))
+  end
+
+  def vaccine_method_injection? = vaccine_methods.include?("injection")
+
+  def vaccine_method_nasal? = vaccine_methods.include?("nasal")
+
+  def seed_health_questions
+    return unless response_given?
+
+    # If the health answers change due to the chosen vaccines changing, we
+    # want to try and keep as much as what the parents already wrote intact.
+    # We do this be saving the answers to the question title (as the IDs
+    # and ordering can change).
+
+    existing_health_answers =
+      health_answers.each_with_object({}) do |health_answer, memo|
+        memo[health_answer.question] = {
+          response: health_answer.response,
+          notes: health_answer.notes
+        }
+      end
+
+    vaccines = programme.vaccines.where(method: vaccine_methods)
+
+    self.health_answers =
+      HealthAnswersDeduplicator
+        .call(vaccines:)
+        .map do |health_answer|
+          if (
+               existing_health_answer =
+                 existing_health_answers[health_answer.question]
+             )
+            health_answer.response = existing_health_answer[:response]
+            health_answer.notes = existing_health_answer[:notes]
+          end
+
+          health_answer
+        end
   end
 
   private
@@ -311,29 +410,45 @@ class DraftConsent
     %w[
       health_answers
       notes
-      notify_parents
+      notify_parent_on_refusal
+      notify_parents_on_vaccination
       patient_id
       programme_id
       reason_for_refusal
       recorded_by_user_id
       response
       route
-      organisation_id
+      team_id
+      vaccine_methods
     ]
   end
 
+  def vaccines = programme.vaccines
+
+  def ask_notify_parent_on_refusal?
+    response_refused? && reason_for_refusal == "personal_choice" &&
+      !via_self_consent?
+  end
+
   def notes_required?
-    response_refused? && reason_for_refusal != "personal_choice"
+    response_refused? &&
+      reason_for_refusal.in?(Consent::REASON_FOR_REFUSAL_REQUIRES_NOTES)
   end
 
   def triage_allowed?
     TriagePolicy.new(@current_user, Triage).new?
   end
 
+  def triage_status_and_vaccine_method_options
+    Triage.new(patient:, programme:).status_and_vaccine_method_options
+  end
+
   def health_answers_are_valid
     return if health_answers.map(&:valid?).all?
 
     health_answers.each_with_index do |health_answer, index|
+      next unless health_answer.requires_notes?
+
       health_answer.errors.messages.each do |field, messages|
         messages.each do |message|
           errors.add("question-#{index}-#{field}", message)
@@ -342,15 +457,17 @@ class DraftConsent
     end
   end
 
+  def request_session_key = "consent"
+
   def reset_unused_fields
-    self.reason_for_refusal = nil unless response_refused?
+    update_vaccine_methods
+
     self.notes = "" unless notes_required?
+    self.notify_parent_on_refusal = nil unless ask_notify_parent_on_refusal?
+    self.reason_for_refusal = nil unless response_refused?
 
     if response_given?
-      if health_answers.empty?
-        vaccine = programme.vaccines.first # assumes all vaccines in the programme have the same questions
-        self.health_answers = vaccine.health_questions.to_health_answers
-      end
+      seed_health_questions if health_answers.empty?
     else
       self.health_answers = []
     end

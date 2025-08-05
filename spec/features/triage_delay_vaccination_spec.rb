@@ -19,17 +19,18 @@ describe "Triage" do
 
     when_i_view_the_child_record
     then_they_should_have_the_status_banner_delay_vaccination
-    and_i_am_able_to_record_a_vaccination
+    and_i_am_not_able_to_record_a_vaccination
+    and_i_am_able_to_update_the_triage
   end
 
   def given_a_programme_with_a_running_session
     programmes = [create(:programme, :hpv)]
-    @organisation = create(:organisation, :with_one_nurse, programmes:)
-    @school = create(:school)
+    @team = create(:team, :with_one_nurse, programmes:)
+    @school = create(:school, team: @team)
     session =
       create(
         :session,
-        organisation: @organisation,
+        team: @team,
         programmes:,
         location: @school,
         date: Time.zone.today
@@ -45,7 +46,7 @@ describe "Triage" do
   end
 
   def and_i_am_signed_in
-    sign_in @organisation.users.first
+    sign_in @team.users.first
   end
 
   def when_i_go_to_the_triage_page
@@ -66,10 +67,7 @@ describe "Triage" do
   end
 
   def then_i_see_an_alert_saying_the_record_was_saved
-    expect(page).to have_alert(
-      "Success",
-      text: "Triage outcome updated for #{@patient.full_name}"
-    )
+    expect(page).to have_alert("Success", text: "Triage outcome updated")
   end
 
   def and_a_vaccination_at_clinic_email_is_sent_to_the_parent
@@ -78,6 +76,7 @@ describe "Triage" do
   end
 
   def when_i_filter_by_delay_vaccination
+    click_on "Triage"
     choose "Delay vaccination"
     click_on "Update results"
   end
@@ -98,10 +97,14 @@ describe "Triage" do
   end
 
   def then_they_should_have_the_status_banner_delay_vaccination
-    expect(page).to have_content("Could not vaccinate")
+    expect(page).to have_content("Delay vaccination")
   end
 
-  def and_i_am_able_to_record_a_vaccination
-    expect(page).to have_content("ready for their HPV vaccination?")
+  def and_i_am_not_able_to_record_a_vaccination
+    expect(page).not_to have_content("ready for their HPV vaccination?")
+  end
+
+  def and_i_am_able_to_update_the_triage
+    expect(page).to have_content("Update triage outcome")
   end
 end

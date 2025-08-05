@@ -4,8 +4,9 @@ describe "Manage attendance" do
   around { |example| travel_to(Time.zone.local(2024, 2, 29)) { example.run } }
 
   scenario "Recording attendance for a patient" do
-    given_my_organisation_is_running_an_hpv_vaccination_programme
-    and_there_is_a_vaccination_session_today_with_a_patient_ready_to_vaccinate
+    given_my_team_is_running_an_hpv_vaccination_programme
+    and_there_is_a_vaccination_session_today
+    and_the_session_has_patients
 
     when_i_go_to_the_session
     and_i_click_on_the_register_tab
@@ -42,23 +43,44 @@ describe "Manage attendance" do
     then_i_see_the_attendance_event
   end
 
-  def given_my_organisation_is_running_an_hpv_vaccination_programme
-    @programmes = [create(:programme, :hpv_all_vaccines)]
-    @organisation =
-      create(:organisation, :with_one_nurse, programmes: @programmes)
+  scenario "Recording vaccinations where patient does not need registration" do
+    given_my_team_is_running_an_hpv_vaccination_programme
+    and_there_is_a_vaccination_session_today_that_requires_no_registration
+    and_the_session_has_patients
+
+    when_i_go_to_the_session
+    then_i_should_not_see_the_register_tab
+
+    when_i_go_to_the_session_outcomes
+    and_i_go_to_a_patient
+    then_i_should_not_see_link_to_update_attendance
   end
 
-  def and_there_is_a_vaccination_session_today_with_a_patient_ready_to_vaccinate
-    location = create(:school)
+  def given_my_team_is_running_an_hpv_vaccination_programme
+    @programmes = [create(:programme, :hpv_all_vaccines)]
+    @team = create(:team, :with_one_nurse, programmes: @programmes)
+  end
+
+  def and_there_is_a_vaccination_session_today
+    location = create(:school, team: @team)
+    @session =
+      create(:session, :today, programmes: @programmes, team: @team, location:)
+  end
+
+  def and_there_is_a_vaccination_session_today_that_requires_no_registration
+    location = create(:school, team: @team)
     @session =
       create(
         :session,
         :today,
+        :requires_no_registration,
         programmes: @programmes,
-        organisation: @organisation,
+        team: @team,
         location:
       )
+  end
 
+  def and_the_session_has_patients
     create_list(
       :patient_session,
       3,
@@ -69,7 +91,7 @@ describe "Manage attendance" do
   end
 
   def when_i_go_to_the_session
-    sign_in @organisation.users.first
+    sign_in @team.users.first
     visit dashboard_path
     click_link "Sessions", match: :first
     click_link @session.location.name
@@ -79,8 +101,24 @@ describe "Manage attendance" do
     click_link "Register"
   end
 
+  def when_i_click_on_the_record_vaccinations_tab
+    click_link "Record vaccinations"
+  end
+
+  def then_i_should_not_see_the_register_tab
+    expect(page).not_to have_content("Register")
+  end
+
+  def then_i_should_not_see_link_to_update_attendance
+    expect(page).not_to have_content("Update attendance")
+  end
+
   def then_i_see_the_register_tab
     expect(page).to have_content("Registration status")
+  end
+
+  def then_i_see_the_patient
+    expect(page).to have_content("Showing 1 to 1 of 1 children")
   end
 
   def and_i_see_the_actions_required
@@ -118,6 +156,8 @@ describe "Manage attendance" do
                  .patient
                  .full_name
   end
+
+  alias_method :and_i_go_to_a_patient, :when_i_go_to_a_patient
 
   def then_the_patient_is_not_registered_yet
     expect(page).to have_content("Not registered yet")
@@ -172,7 +212,7 @@ describe "Manage attendance" do
   end
 
   def when_i_go_to_the_activity_log
-    click_link "Activity log"
+    click_link "Session activity and notes"
   end
 
   def then_i_see_the_attendance_event

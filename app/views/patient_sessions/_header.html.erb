@@ -20,7 +20,7 @@
 </h1>
 
 <p class="nhsuk-caption-l nhsuk-u-margin-bottom-4">
-  <%= patient_year_group(@patient) %>
+  <%= patient_year_group(@patient, academic_year: @academic_year) %>
 </p>
 
 <ul class="app-action-list">
@@ -29,7 +29,7 @@
       <%= render AppRegisterStatusTagComponent.new(@patient_session.registration_status&.status || "unknown") %>
     </li>
 
-    <% if policy(session_attendance).edit? %>
+    <% if policy(session_attendance).edit? && @session.requires_registration? %>
       <li class="app-action-list__item">
         <%= link_to(
               "Update attendance",
@@ -53,13 +53,13 @@
           href: session_patient_programme_path(@session, @patient, programme, return_to: params[:return_to]),
           text: programme.name,
           selected: @programme == programme,
-          ticked: @patient.vaccination_status(programme:).vaccinated?,
+          ticked: @patient.vaccination_status(programme:, academic_year: @academic_year).vaccinated?,
         )
       end
     
       nav.with_item(
         href: session_patient_activity_path(@session, @patient, return_to: params[:return_to]),
-        text: "Activity log",
+        text: "Session activity and notes",
         selected: request.path.ends_with?("/activity"),
       )
     end %>

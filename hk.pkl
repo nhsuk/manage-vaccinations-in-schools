@@ -1,5 +1,5 @@
-amends "package://github.com/jdx/hk/releases/download/v1.0.0/hk@1.0.0#/Config.pkl"
-import "package://github.com/jdx/hk/releases/download/v1.0.0/hk@1.0.0#/Builtins.pkl"
+amends "package://github.com/jdx/hk/releases/download/v1.1.2/hk@1.1.2#/Config.pkl"
+import "package://github.com/jdx/hk/releases/download/v1.1.2/hk@1.1.2#/Builtins.pkl"
 
 local linters = new Mapping<String, Group> {
     ["all"] = new Group {
@@ -10,13 +10,14 @@ local linters = new Mapping<String, Group> {
 
             ["prettier"] = new Step {
                 batch = true
+                glob = List("*.rb", "*.rake", "*.md", "*.js", "*.html", "*.erb", "*.css", "*.ejs", "*.mjs", "*.scss", "*.yaml", "*.json")
                 check = "bin/prettier --check --ignore-unknown {{ files }}"
                 check_list_files = "bin/prettier --list-different --ignore-unknown {{ files }}"
                 fix = "bin/prettier --write --ignore-unknown {{ files }}"
             }
 
             ["rubocop"] = new Step {
-                glob = "*.rb"
+                glob = List("*.rb", "*.rake")
                 check = "bin/rubocop {{ files }}"
                 fix = "bin/rubocop --autocorrect-all {{ files }}"
             }

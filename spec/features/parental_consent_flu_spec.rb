@@ -21,8 +21,7 @@ describe "Parental consent" do
 
   def given_a_flu_programme_is_underway
     @programme = create(:programme, :flu)
-    @organisation =
-      create(:organisation, :with_one_nurse, programmes: [@programme])
+    @team = create(:team, :with_one_nurse, programmes: [@programme])
     location = create(:school, name: "Pilot School")
     @session = create(:session, :scheduled, programmes: [@programme], location:)
     @child = create(:patient, session: @session)
@@ -62,7 +61,11 @@ describe "Parental consent" do
     click_button "Continue"
 
     # Do you agree?
-    choose "Yes, I agree"
+    choose "Yes, I agree to them having the nasal spray vaccine"
+    click_button "Continue"
+
+    # Injection alternative
+    choose "Yes"
     click_button "Continue"
 
     # Home address
@@ -77,7 +80,7 @@ describe "Parental consent" do
   end
 
   def when_i_answer_no_to_all_health_questions
-    8.times do
+    9.times do
       choose "No"
       click_button "Continue"
     end
@@ -91,7 +94,6 @@ describe "Parental consent" do
     click_link "Change your answer to health question 1"
 
     choose "Yes"
-    fill_in "Give details", with: "They have asthma"
     click_button "Continue"
   end
 

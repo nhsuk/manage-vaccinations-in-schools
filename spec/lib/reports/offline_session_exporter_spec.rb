@@ -29,887 +29,960 @@ describe Reports::OfflineSessionExporter do
 
   subject(:call) { described_class.call(session) }
 
-  let(:programme) { create(:programme, :hpv) }
-  let(:organisation) { create(:organisation, programmes: [programme]) }
-  let(:user) { create(:user, email: "nurse@example.com", organisation:) }
-  let(:team) { create(:team, organisation:) }
-  let(:session) do
-    create(:session, location:, organisation:, programmes: [programme])
-  end
-
-  context "a school session" do
-    subject(:workbook) { RubyXL::Parser.parse_buffer(call) }
-
-    let(:location) { create(:school, team:) }
-
-    it { should_not be_blank }
-
-    describe "headers" do
-      subject(:headers) do
-        sheet = workbook.worksheets[0]
-        sheet[0].cells.map(&:value)
-      end
-
-      it do
-        expect(headers).to eq(
-          %w[
-            PERSON_FORENAME
-            PERSON_SURNAME
-            ORGANISATION_CODE
-            SCHOOL_NAME
-            CLINIC_NAME
-            CARE_SETTING
-            PERSON_DOB
-            YEAR_GROUP
-            PERSON_GENDER_CODE
-            PERSON_ADDRESS_LINE_1
-            PERSON_POSTCODE
-            NHS_NUMBER
-            CONSENT_STATUS
-            CONSENT_DETAILS
-            HEALTH_QUESTION_ANSWERS
-            TRIAGE_STATUS
-            TRIAGED_BY
-            TRIAGE_DATE
-            TRIAGE_NOTES
-            GILLICK_STATUS
-            GILLICK_ASSESSMENT_DATE
-            GILLICK_ASSESSED_BY
-            GILLICK_ASSESSMENT_NOTES
-            VACCINATED
-            DATE_OF_VACCINATION
-            TIME_OF_VACCINATION
-            PROGRAMME
-            VACCINE_GIVEN
-            PERFORMING_PROFESSIONAL_EMAIL
-            BATCH_NUMBER
-            BATCH_EXPIRY_DATE
-            ANATOMICAL_SITE
-            DOSE_SEQUENCE
-            REASON_NOT_VACCINATED
-            NOTES
-            SESSION_ID
-            UUID
-          ]
-        )
-      end
+  shared_examples "generates a report" do
+    let(:team) { create(:team, :with_generic_clinic, programmes: [programme]) }
+    let(:user) { create(:user, email: "nurse@example.com", team:) }
+    let(:subteam) { create(:subteam, team:) }
+    let(:session) do
+      create(:session, location:, team:, programmes: [programme])
     end
 
-    describe "rows" do
-      subject(:rows) { worksheet_to_hashes(workbook.worksheets[0]) }
+    context "a school session" do
+      subject(:workbook) { RubyXL::Parser.parse_buffer(call) }
 
-      let(:performed_at) { Time.zone.local(2024, 1, 1, 12, 5, 20) }
-      let(:batch) do
-        create(:batch, :not_expired, vaccine: programme.vaccines.active.first)
-      end
-      let(:patient_session) { create(:patient_session, patient:, session:) }
-      let(:patient) { create(:patient, year_group: 8) }
+      let(:location) { create(:school, subteam:) }
 
-      it { should be_empty }
+      it { should_not be_blank }
 
-      context "with a patient without an outcome" do
-        let!(:patient) { create(:patient, session:) }
-
-        it "adds a row to fill in" do
-          expect(rows.count).to eq(1)
-          expect(rows.first.except("PERSON_DOB")).to eq(
-            {
-              "ANATOMICAL_SITE" => "",
-              "BATCH_EXPIRY_DATE" => nil,
-              "BATCH_NUMBER" => "",
-              "CARE_SETTING" => 1,
-              "CLINIC_NAME" => "",
-              "CONSENT_DETAILS" => "",
-              "CONSENT_STATUS" => "",
-              "DATE_OF_VACCINATION" => nil,
-              "DOSE_SEQUENCE" => 1,
-              "GILLICK_ASSESSED_BY" => nil,
-              "GILLICK_ASSESSMENT_DATE" => nil,
-              "GILLICK_ASSESSMENT_NOTES" => nil,
-              "GILLICK_STATUS" => "",
-              "HEALTH_QUESTION_ANSWERS" => "",
-              "NHS_NUMBER" => patient.nhs_number,
-              "NOTES" => "",
-              "ORGANISATION_CODE" => organisation.ods_code,
-              "PERFORMING_PROFESSIONAL_EMAIL" => "",
-              "PERSON_ADDRESS_LINE_1" => patient.address_line_1,
-              "PERSON_FORENAME" => patient.given_name,
-              "PERSON_GENDER_CODE" => "Not known",
-              "PERSON_POSTCODE" => patient.address_postcode,
-              "PERSON_SURNAME" => patient.family_name,
-              "PROGRAMME" => "HPV",
-              "REASON_NOT_VACCINATED" => "",
-              "SCHOOL_NAME" => location.name,
-              "SESSION_ID" => session.id,
-              "TIME_OF_VACCINATION" => "",
-              "TRIAGED_BY" => nil,
-              "TRIAGE_DATE" => nil,
-              "TRIAGE_NOTES" => nil,
-              "TRIAGE_STATUS" => nil,
-              "VACCINATED" => "",
-              "VACCINE_GIVEN" => "",
-              "UUID" => "",
-              "YEAR_GROUP" => patient.year_group
-            }
-          )
-          expect(rows.first["PERSON_DOB"].to_date).to eq(patient.date_of_birth)
-        end
-      end
-
-      context "with a restricted patient" do
-        before { create(:patient, :restricted, session:) }
-
-        it "doesn't include the address or postcode" do
-          expect(rows.count).to eq(1)
-          expect(rows.first["PERSON_ADDRESS_LINE_1"]).to be_blank
-          expect(rows.first["PERSON_POSTCODE"]).to be_blank
-        end
-      end
-
-      context "with a vaccinated patient" do
-        before { create(:patient_session, patient:, session:) }
-
-        let!(:vaccination_record) do
-          create(
-            :vaccination_record,
-            performed_at:,
-            batch:,
-            patient:,
-            session:,
-            programme:,
-            performed_by: user,
-            notes: "Some notes."
-          )
+      describe "headers" do
+        subject(:headers) do
+          sheet = workbook.worksheets[0]
+          sheet[0].cells.map(&:value)
         end
 
-        it "adds a row with the vaccination details" do
-          expect(rows.count).to eq(1)
-          expect(
-            rows.first.except(
-              "BATCH_EXPIRY_DATE",
-              "PERSON_DOB",
-              "DATE_OF_VACCINATION"
-            )
-          ).to eq(
-            {
-              "ANATOMICAL_SITE" => "left upper arm",
-              "BATCH_NUMBER" => batch.name,
-              "CARE_SETTING" => 1,
-              "CLINIC_NAME" => "",
-              "CONSENT_DETAILS" => "",
-              "CONSENT_STATUS" => "",
-              "DOSE_SEQUENCE" => 1,
-              "GILLICK_ASSESSED_BY" => nil,
-              "GILLICK_ASSESSMENT_DATE" => nil,
-              "GILLICK_ASSESSMENT_NOTES" => nil,
-              "GILLICK_STATUS" => "",
-              "HEALTH_QUESTION_ANSWERS" => "",
-              "NHS_NUMBER" => patient.nhs_number,
-              "NOTES" => "Some notes.",
-              "ORGANISATION_CODE" => organisation.ods_code,
-              "PERFORMING_PROFESSIONAL_EMAIL" => "nurse@example.com",
-              "PERSON_ADDRESS_LINE_1" => patient.address_line_1,
-              "PERSON_FORENAME" => patient.given_name,
-              "PERSON_GENDER_CODE" => "Not known",
-              "PERSON_POSTCODE" => patient.address_postcode,
-              "PERSON_SURNAME" => patient.family_name,
-              "PROGRAMME" => "HPV",
-              "REASON_NOT_VACCINATED" => "",
-              "SCHOOL_NAME" => location.name,
-              "SESSION_ID" => session.id,
-              "TIME_OF_VACCINATION" => "12:05:20",
-              "TRIAGED_BY" => nil,
-              "TRIAGE_DATE" => nil,
-              "TRIAGE_NOTES" => nil,
-              "TRIAGE_STATUS" => nil,
-              "VACCINATED" => "Y",
-              "VACCINE_GIVEN" => "Gardasil9",
-              "UUID" => vaccination_record.uuid,
-              "YEAR_GROUP" => patient.year_group
-            }
-          )
-          expect(rows.first["BATCH_EXPIRY_DATE"].to_date).to eq(batch.expiry)
-          expect(rows.first["PERSON_DOB"].to_date).to eq(patient.date_of_birth)
-          expect(rows.first["DATE_OF_VACCINATION"].to_date).to eq(
-            performed_at.to_date
-          )
-        end
-
-        context "with lots of health answers" do
-          before do
-            create(
-              :consent,
-              :from_dad,
-              patient:,
-              programme:,
-              health_questions_list: ["First question?", "Second question?"]
-            )
-          end
-
-          it "separates the answers by new lines" do
-            expect(rows.first["HEALTH_QUESTION_ANSWERS"]).to eq(
-              "First question? No from Dad\nSecond question? No from Dad"
-            )
-          end
-        end
-      end
-
-      context "with a vaccinated patient outside the session" do
-        before { create(:patient_session, patient:, session:) }
-
-        let!(:vaccination_record) do
-          create(
-            :vaccination_record,
-            performed_at:,
-            batch:,
-            patient:,
-            programme:,
-            performed_by: user,
-            notes: "Some notes.",
-            location_name: "Waterloo Road"
-          )
-        end
-
-        it "adds a row with the vaccination details" do
-          expect(rows.count).to eq(1)
-          expect(
-            rows.first.except(
-              "BATCH_EXPIRY_DATE",
-              "PERSON_DOB",
-              "DATE_OF_VACCINATION"
-            )
-          ).to eq(
-            {
-              "ANATOMICAL_SITE" => "left upper arm",
-              "BATCH_NUMBER" => batch.name,
-              "CARE_SETTING" => nil,
-              "CLINIC_NAME" => "",
-              "CONSENT_DETAILS" => "",
-              "CONSENT_STATUS" => "",
-              "DOSE_SEQUENCE" => 1,
-              "GILLICK_ASSESSED_BY" => nil,
-              "GILLICK_ASSESSMENT_DATE" => nil,
-              "GILLICK_ASSESSMENT_NOTES" => nil,
-              "GILLICK_STATUS" => "",
-              "HEALTH_QUESTION_ANSWERS" => "",
-              "NHS_NUMBER" => patient.nhs_number,
-              "NOTES" => "Some notes.",
-              "ORGANISATION_CODE" => organisation.ods_code,
-              "PERFORMING_PROFESSIONAL_EMAIL" => "nurse@example.com",
-              "PERSON_ADDRESS_LINE_1" => patient.address_line_1,
-              "PERSON_FORENAME" => patient.given_name,
-              "PERSON_GENDER_CODE" => "Not known",
-              "PERSON_POSTCODE" => patient.address_postcode,
-              "PERSON_SURNAME" => patient.family_name,
-              "PROGRAMME" => "HPV",
-              "REASON_NOT_VACCINATED" => "",
-              "SCHOOL_NAME" => "Waterloo Road",
-              "SESSION_ID" => nil,
-              "TIME_OF_VACCINATION" => "12:05:20",
-              "TRIAGED_BY" => nil,
-              "TRIAGE_DATE" => nil,
-              "TRIAGE_NOTES" => nil,
-              "TRIAGE_STATUS" => nil,
-              "VACCINATED" => "Y",
-              "VACCINE_GIVEN" => nil,
-              "UUID" => vaccination_record.uuid,
-              "YEAR_GROUP" => patient.year_group
-            }
-          )
-          expect(rows.first["BATCH_EXPIRY_DATE"].to_date).to eq(batch.expiry)
-          expect(rows.first["PERSON_DOB"].to_date).to eq(patient.date_of_birth)
-          expect(rows.first["DATE_OF_VACCINATION"].to_date).to eq(
-            performed_at.to_date
+        it do
+          expect(headers).to eq(
+            %w[
+              PERSON_FORENAME
+              PERSON_SURNAME
+              ORGANISATION_CODE
+              SCHOOL_NAME
+              CLINIC_NAME
+              CARE_SETTING
+              PERSON_DOB
+              YEAR_GROUP
+              PERSON_GENDER_CODE
+              PERSON_ADDRESS_LINE_1
+              PERSON_POSTCODE
+              NHS_NUMBER
+              CONSENT_STATUS
+              CONSENT_DETAILS
+              HEALTH_QUESTION_ANSWERS
+              TRIAGE_STATUS
+              TRIAGED_BY
+              TRIAGE_DATE
+              TRIAGE_NOTES
+              GILLICK_STATUS
+              GILLICK_ASSESSMENT_DATE
+              GILLICK_ASSESSED_BY
+              GILLICK_ASSESSMENT_NOTES
+              VACCINATED
+              DATE_OF_VACCINATION
+              TIME_OF_VACCINATION
+              PROGRAMME
+              VACCINE_GIVEN
+              PERFORMING_PROFESSIONAL_EMAIL
+              BATCH_NUMBER
+              BATCH_EXPIRY_DATE
+              ANATOMICAL_SITE
+              DOSE_SEQUENCE
+              REASON_NOT_VACCINATED
+              NOTES
+              SESSION_ID
+              UUID
+            ]
           )
         end
       end
 
-      context "with a vaccinated patient outside the school session, but in a clinic" do
-        let(:clinic_session) { organisation.generic_clinic_session }
+      describe "rows" do
+        subject(:rows) { worksheet_to_hashes(workbook.worksheets[0]) }
 
-        let!(:vaccination_record) do
-          create(
-            :vaccination_record,
-            performed_at:,
-            batch:,
-            patient:,
-            session: clinic_session,
-            programme:,
-            performed_by: user,
-            notes: "Some notes.",
-            location_name: "Waterloo Hospital"
-          )
-        end
-
-        before do
-          create(:patient_session, patient:, session:)
-          create(:patient_session, patient:, session: clinic_session)
-        end
-
-        it "adds a row with the vaccination details" do
-          expect(rows.count).to eq(1)
-          expect(
-            rows.first.except(
-              "BATCH_EXPIRY_DATE",
-              "PERSON_DOB",
-              "DATE_OF_VACCINATION"
-            )
-          ).to eq(
-            {
-              "ANATOMICAL_SITE" => "left upper arm",
-              "BATCH_NUMBER" => batch.name,
-              "CARE_SETTING" => 2,
-              "CLINIC_NAME" => "Waterloo Hospital",
-              "CONSENT_DETAILS" => "",
-              "CONSENT_STATUS" => "",
-              "DOSE_SEQUENCE" => 1,
-              "GILLICK_ASSESSED_BY" => nil,
-              "GILLICK_ASSESSMENT_DATE" => nil,
-              "GILLICK_ASSESSMENT_NOTES" => nil,
-              "GILLICK_STATUS" => "",
-              "HEALTH_QUESTION_ANSWERS" => "",
-              "NHS_NUMBER" => patient.nhs_number,
-              "NOTES" => "Some notes.",
-              "ORGANISATION_CODE" => organisation.ods_code,
-              "PERFORMING_PROFESSIONAL_EMAIL" => "nurse@example.com",
-              "PERSON_ADDRESS_LINE_1" => patient.address_line_1,
-              "PERSON_FORENAME" => patient.given_name,
-              "PERSON_GENDER_CODE" => "Not known",
-              "PERSON_POSTCODE" => patient.address_postcode,
-              "PERSON_SURNAME" => patient.family_name,
-              "PROGRAMME" => "HPV",
-              "REASON_NOT_VACCINATED" => "",
-              "SCHOOL_NAME" => "",
-              "SESSION_ID" => clinic_session.id,
-              "TIME_OF_VACCINATION" => "12:05:20",
-              "TRIAGED_BY" => nil,
-              "TRIAGE_DATE" => nil,
-              "TRIAGE_NOTES" => nil,
-              "TRIAGE_STATUS" => nil,
-              "VACCINATED" => "Y",
-              "VACCINE_GIVEN" => "Gardasil9",
-              "UUID" => vaccination_record.uuid,
-              "YEAR_GROUP" => patient.year_group
-            }
-          )
-          expect(rows.first["BATCH_EXPIRY_DATE"].to_date).to eq(batch.expiry)
-          expect(rows.first["PERSON_DOB"].to_date).to eq(patient.date_of_birth)
-          expect(rows.first["DATE_OF_VACCINATION"].to_date).to eq(
-            performed_at.to_date
-          )
-        end
-      end
-
-      context "with a vaccinated patient for a different programme" do
-        before do
-          create(:patient_session, patient:, session:)
-          create(
-            :vaccination_record,
-            performed_at:,
-            batch:,
-            patient:,
-            programme: create(:programme, :menacwy),
-            performed_by: user,
-            notes: "Some notes.",
-            location_name: "Waterloo Road"
-          )
-        end
-
-        it "adds a row to fill in" do
-          expect(rows.count).to eq(1)
-          expect(rows.first.except("PERSON_DOB")).to eq(
-            {
-              "ANATOMICAL_SITE" => "",
-              "BATCH_EXPIRY_DATE" => nil,
-              "BATCH_NUMBER" => "",
-              "CARE_SETTING" => 1,
-              "CLINIC_NAME" => "",
-              "CONSENT_DETAILS" => "",
-              "CONSENT_STATUS" => "",
-              "DATE_OF_VACCINATION" => nil,
-              "DOSE_SEQUENCE" => 1,
-              "GILLICK_ASSESSED_BY" => nil,
-              "GILLICK_ASSESSMENT_DATE" => nil,
-              "GILLICK_ASSESSMENT_NOTES" => nil,
-              "GILLICK_STATUS" => "",
-              "HEALTH_QUESTION_ANSWERS" => "",
-              "NHS_NUMBER" => patient.nhs_number,
-              "NOTES" => "",
-              "ORGANISATION_CODE" => organisation.ods_code,
-              "PERFORMING_PROFESSIONAL_EMAIL" => "",
-              "PERSON_ADDRESS_LINE_1" => patient.address_line_1,
-              "PERSON_FORENAME" => patient.given_name,
-              "PERSON_GENDER_CODE" => "Not known",
-              "PERSON_POSTCODE" => patient.address_postcode,
-              "PERSON_SURNAME" => patient.family_name,
-              "PROGRAMME" => "HPV",
-              "REASON_NOT_VACCINATED" => "",
-              "SCHOOL_NAME" => location.name,
-              "SESSION_ID" => session.id,
-              "TIME_OF_VACCINATION" => "",
-              "TRIAGED_BY" => nil,
-              "TRIAGE_DATE" => nil,
-              "TRIAGE_NOTES" => nil,
-              "TRIAGE_STATUS" => nil,
-              "VACCINATED" => "",
-              "VACCINE_GIVEN" => "",
-              "UUID" => "",
-              "YEAR_GROUP" => patient.year_group
-            }
-          )
-          expect(rows.first["PERSON_DOB"].to_date).to eq(patient.date_of_birth)
-        end
-      end
-
-      context "with a patient who couldn't be vaccinated" do
-        before { create(:patient_session, patient:, session:) }
-
-        let!(:vaccination_record) do
-          create(
-            :vaccination_record,
-            :not_administered,
-            patient:,
-            session:,
-            programme:,
-            performed_at:,
-            performed_by: user,
-            notes: "Some notes."
-          )
-        end
-
-        it "adds a row to fill in" do
-          expect(rows.count).to eq(1)
-          expect(rows.first.except("DATE_OF_VACCINATION", "PERSON_DOB")).to eq(
-            {
-              "ANATOMICAL_SITE" => "",
-              "BATCH_EXPIRY_DATE" => nil,
-              "BATCH_NUMBER" => nil,
-              "CARE_SETTING" => 1,
-              "CLINIC_NAME" => "",
-              "CONSENT_DETAILS" => "",
-              "CONSENT_STATUS" => "",
-              "DOSE_SEQUENCE" => "",
-              "GILLICK_ASSESSED_BY" => nil,
-              "GILLICK_ASSESSMENT_DATE" => nil,
-              "GILLICK_ASSESSMENT_NOTES" => nil,
-              "GILLICK_STATUS" => "",
-              "HEALTH_QUESTION_ANSWERS" => "",
-              "NHS_NUMBER" => patient.nhs_number,
-              "NOTES" => "Some notes.",
-              "ORGANISATION_CODE" => organisation.ods_code,
-              "PERFORMING_PROFESSIONAL_EMAIL" => "nurse@example.com",
-              "PERSON_ADDRESS_LINE_1" => patient.address_line_1,
-              "PERSON_FORENAME" => patient.given_name,
-              "PERSON_GENDER_CODE" => "Not known",
-              "PERSON_POSTCODE" => patient.address_postcode,
-              "PERSON_SURNAME" => patient.family_name,
-              "PROGRAMME" => "HPV",
-              "REASON_NOT_VACCINATED" => "unwell",
-              "SCHOOL_NAME" => location.name,
-              "SESSION_ID" => session.id,
-              "TIME_OF_VACCINATION" => "12:05:20",
-              "TRIAGED_BY" => nil,
-              "TRIAGE_DATE" => nil,
-              "TRIAGE_NOTES" => nil,
-              "TRIAGE_STATUS" => nil,
-              "VACCINATED" => "N",
-              "VACCINE_GIVEN" => nil,
-              "UUID" => vaccination_record.uuid,
-              "YEAR_GROUP" => patient.year_group
-            }
-          )
-          expect(rows.first["DATE_OF_VACCINATION"].to_date).to eq(
-            performed_at.to_date
-          )
-          expect(rows.first["PERSON_DOB"].to_date).to eq(patient.date_of_birth)
-        end
-      end
-    end
-
-    describe "cell validations" do
-      subject(:worksheet) { workbook.worksheets[0] }
-
-      before do
-        # Without a patient no validation will be setup.
-        create(:patient, session:)
-      end
-
-      describe "performing professional email" do
-        subject(:validation) do
-          create(:user, organisation:, email: "vaccinator@example.com")
-          validation_formula(
-            worksheet:,
-            column_name: "performing_professional_email"
-          )
-        end
-
-        it { should eq "='Performing Professionals'!$A2:$A2" }
-      end
-
-      describe "batch number" do
-        subject(:validation) do
-          create(
-            :batch,
-            :not_expired,
-            name: "BATCH12345",
-            vaccine: programme.vaccines.active.first,
-            organisation:
-          )
-          validation_formula(worksheet:, column_name: "batch_number")
-        end
-
-        it { should eq "='hpv Batch Numbers'!$A2:$A2" }
-      end
-    end
-
-    describe "performing professionals sheet" do
-      subject(:worksheet) do
-        workbook.worksheets.find { it.sheet_name == "Performing Professionals" }
-      end
-
-      let!(:vaccinators) { create_list(:user, 2, organisation:) }
-
-      before do
-        create(:patient, session:)
-        create(
-          :user,
-          organisation: create(:organisation),
-          email: "vaccinator.other@example.com"
-        )
-      end
-
-      it "lists all the organisation users' emails" do
-        emails = worksheet[1..].map { it.cells.first.value }
-        expect(emails).to include(*vaccinators.map(&:email))
-      end
-
-      its(:state) { should eq "hidden" }
-      its(:sheet_protection) { should be_present }
-    end
-
-    describe "batch numbers sheet" do
-      subject(:worksheet) do
-        workbook.worksheets.find { it.sheet_name == "hpv Batch Numbers" }
-      end
-
-      let!(:batches) do
-        create_list(
-          :batch,
-          2,
-          :not_expired,
-          vaccine: programme.vaccines.active.first,
-          organisation:
-        )
-      end
-
-      before do
-        create(:patient, session:)
-        create(
-          :batch,
-          :not_expired,
-          name: "OTHERBATCH",
-          vaccine: create(:vaccine, :flu)
-        )
-      end
-
-      it "lists all the batch numbers for the programme" do
-        batch_numbers = worksheet[1..].map { it.cells.first.value }
-        expect(batch_numbers).to include(*batches.map(&:name))
-      end
-
-      its(:state) { should eq "hidden" }
-      its(:sheet_protection) { should be_present }
-    end
-  end
-
-  context "a clinic session" do
-    subject(:workbook) { RubyXL::Parser.parse_buffer(call) }
-
-    let(:location) { create(:generic_clinic, team:) }
-
-    it { should_not be_blank }
-
-    describe "headers" do
-      subject(:headers) do
-        sheet = workbook.worksheets[0]
-        sheet[0].cells.map(&:value)
-      end
-
-      it do
-        expect(headers).to eq(
-          %w[
-            PERSON_FORENAME
-            PERSON_SURNAME
-            ORGANISATION_CODE
-            SCHOOL_NAME
-            CLINIC_NAME
-            CARE_SETTING
-            PERSON_DOB
-            YEAR_GROUP
-            PERSON_GENDER_CODE
-            PERSON_ADDRESS_LINE_1
-            PERSON_POSTCODE
-            NHS_NUMBER
-            CONSENT_STATUS
-            CONSENT_DETAILS
-            HEALTH_QUESTION_ANSWERS
-            TRIAGE_STATUS
-            TRIAGED_BY
-            TRIAGE_DATE
-            TRIAGE_NOTES
-            GILLICK_STATUS
-            GILLICK_ASSESSMENT_DATE
-            GILLICK_ASSESSED_BY
-            GILLICK_ASSESSMENT_NOTES
-            VACCINATED
-            DATE_OF_VACCINATION
-            TIME_OF_VACCINATION
-            PROGRAMME
-            VACCINE_GIVEN
-            PERFORMING_PROFESSIONAL_EMAIL
-            BATCH_NUMBER
-            BATCH_EXPIRY_DATE
-            ANATOMICAL_SITE
-            DOSE_SEQUENCE
-            REASON_NOT_VACCINATED
-            NOTES
-            SESSION_ID
-            UUID
-          ]
-        )
-      end
-    end
-
-    describe "rows" do
-      subject(:rows) { worksheet_to_hashes(workbook.worksheets[0]) }
-
-      it { should be_empty }
-
-      context "with a patient without an outcome" do
-        let!(:patient) { create(:patient, session:) }
-
-        it "adds a row to fill in" do
-          expect(rows.count).to eq(1)
-          expect(rows.first.except("PERSON_DOB")).to eq(
-            {
-              "ANATOMICAL_SITE" => "",
-              "BATCH_EXPIRY_DATE" => nil,
-              "BATCH_NUMBER" => "",
-              "CARE_SETTING" => 2,
-              "CONSENT_DETAILS" => "",
-              "CONSENT_STATUS" => "",
-              "CLINIC_NAME" => "",
-              "DATE_OF_VACCINATION" => nil,
-              "DOSE_SEQUENCE" => 1,
-              "GILLICK_ASSESSED_BY" => nil,
-              "GILLICK_ASSESSMENT_DATE" => nil,
-              "GILLICK_ASSESSMENT_NOTES" => nil,
-              "GILLICK_STATUS" => "",
-              "HEALTH_QUESTION_ANSWERS" => "",
-              "NHS_NUMBER" => patient.nhs_number,
-              "NOTES" => "",
-              "ORGANISATION_CODE" => organisation.ods_code,
-              "PERFORMING_PROFESSIONAL_EMAIL" => "",
-              "PERSON_ADDRESS_LINE_1" => patient.address_line_1,
-              "PERSON_FORENAME" => patient.given_name,
-              "PERSON_GENDER_CODE" => "Not known",
-              "PERSON_POSTCODE" => patient.address_postcode,
-              "PERSON_SURNAME" => patient.family_name,
-              "PROGRAMME" => "HPV",
-              "REASON_NOT_VACCINATED" => "",
-              "SCHOOL_NAME" => "",
-              "SESSION_ID" => session.id,
-              "TIME_OF_VACCINATION" => "",
-              "TRIAGED_BY" => nil,
-              "TRIAGE_DATE" => nil,
-              "TRIAGE_NOTES" => nil,
-              "TRIAGE_STATUS" => nil,
-              "VACCINATED" => "",
-              "VACCINE_GIVEN" => "",
-              "UUID" => "",
-              "YEAR_GROUP" => patient.year_group
-            }
-          )
-          expect(rows.first["PERSON_DOB"].to_date).to eq(patient.date_of_birth)
-        end
-      end
-
-      context "with a vaccinated patient" do
-        let(:patient) do
-          create(
-            :patient,
-            year_group: 8,
-            school: create(:school, urn: "123456", name: "Waterloo Road")
-          )
-        end
+        let(:performed_at) { Time.zone.local(2024, 1, 1, 12, 5, 20) }
         let(:batch) do
           create(:batch, :not_expired, vaccine: programme.vaccines.active.first)
         end
-        let(:performed_at) { Time.zone.local(2024, 1, 1, 12, 5, 20) }
-        let!(:vaccination_record) do
-          create(
-            :vaccination_record,
-            performed_at:,
-            batch:,
-            patient:,
-            session:,
-            programme:,
-            location_name: "A Clinic",
-            performed_by: user,
-            notes: "Some notes."
-          )
+        let(:patient_session) { create(:patient_session, patient:, session:) }
+        let(:patient) do
+          create(:patient, year_group: programme.default_year_groups.first)
         end
 
-        before { create(:patient_session, patient:, session:) }
+        it { should be_empty }
 
-        it "adds a row to fill in" do
-          expect(rows.count).to eq(1)
-          expect(
-            rows.first.except(
-              "BATCH_EXPIRY_DATE",
-              "PERSON_DOB",
-              "DATE_OF_VACCINATION"
+        context "with a patient without an outcome" do
+          let!(:patient) { create(:patient, session:) }
+
+          it "adds a row to fill in" do
+            expect(rows.count).to eq(1)
+            expect(rows.first.except("PERSON_DOB")).to eq(
+              {
+                "ANATOMICAL_SITE" => "",
+                "BATCH_EXPIRY_DATE" => nil,
+                "BATCH_NUMBER" => "",
+                "CARE_SETTING" => 1,
+                "CLINIC_NAME" => "",
+                "CONSENT_DETAILS" => "",
+                "CONSENT_STATUS" => "",
+                "DATE_OF_VACCINATION" => nil,
+                "DOSE_SEQUENCE" => expected_dose_sequence,
+                "GILLICK_ASSESSED_BY" => nil,
+                "GILLICK_ASSESSMENT_DATE" => nil,
+                "GILLICK_ASSESSMENT_NOTES" => nil,
+                "GILLICK_STATUS" => "",
+                "HEALTH_QUESTION_ANSWERS" => "",
+                "NHS_NUMBER" => patient.nhs_number,
+                "NOTES" => "",
+                "ORGANISATION_CODE" => team.ods_code,
+                "PERFORMING_PROFESSIONAL_EMAIL" => "",
+                "PERSON_ADDRESS_LINE_1" => patient.address_line_1,
+                "PERSON_FORENAME" => patient.given_name,
+                "PERSON_GENDER_CODE" => "Not known",
+                "PERSON_POSTCODE" => patient.address_postcode,
+                "PERSON_SURNAME" => patient.family_name,
+                "PROGRAMME" => expected_programme,
+                "REASON_NOT_VACCINATED" => "",
+                "SCHOOL_NAME" => location.name,
+                "SESSION_ID" => session.id,
+                "TIME_OF_VACCINATION" => "",
+                "TRIAGED_BY" => nil,
+                "TRIAGE_DATE" => nil,
+                "TRIAGE_NOTES" => nil,
+                "TRIAGE_STATUS" => nil,
+                "VACCINATED" => "",
+                "VACCINE_GIVEN" => "",
+                "UUID" => "",
+                "YEAR_GROUP" => patient.year_group
+              }
             )
-          ).to eq(
-            {
-              "ANATOMICAL_SITE" => "left upper arm",
-              "BATCH_NUMBER" => batch.name,
-              "CARE_SETTING" => 2,
-              "CONSENT_DETAILS" => "",
-              "CONSENT_STATUS" => "",
-              "CLINIC_NAME" => "A Clinic",
-              "DOSE_SEQUENCE" => 1,
-              "GILLICK_ASSESSED_BY" => nil,
-              "GILLICK_ASSESSMENT_DATE" => nil,
-              "GILLICK_ASSESSMENT_NOTES" => nil,
-              "GILLICK_STATUS" => "",
-              "HEALTH_QUESTION_ANSWERS" => "",
-              "NHS_NUMBER" => patient.nhs_number,
-              "NOTES" => "Some notes.",
-              "ORGANISATION_CODE" => organisation.ods_code,
-              "PERFORMING_PROFESSIONAL_EMAIL" => "nurse@example.com",
-              "PERSON_ADDRESS_LINE_1" => patient.address_line_1,
-              "PERSON_FORENAME" => patient.given_name,
-              "PERSON_GENDER_CODE" => "Not known",
-              "PERSON_POSTCODE" => patient.address_postcode,
-              "PERSON_SURNAME" => patient.family_name,
-              "PROGRAMME" => "HPV",
-              "REASON_NOT_VACCINATED" => "",
-              "SCHOOL_NAME" => "Waterloo Road",
-              "SESSION_ID" => session.id,
-              "TIME_OF_VACCINATION" => "12:05:20",
-              "TRIAGED_BY" => nil,
-              "TRIAGE_DATE" => nil,
-              "TRIAGE_NOTES" => nil,
-              "TRIAGE_STATUS" => nil,
-              "VACCINATED" => "Y",
-              "VACCINE_GIVEN" => "Gardasil9",
-              "UUID" => vaccination_record.uuid,
-              "YEAR_GROUP" => patient.year_group
-            }
-          )
-          expect(rows.first["BATCH_EXPIRY_DATE"].to_date).to eq(batch.expiry)
-          expect(rows.first["PERSON_DOB"].to_date).to eq(patient.date_of_birth)
-          expect(rows.first["DATE_OF_VACCINATION"].to_date).to eq(
-            performed_at.to_date
-          )
-        end
-      end
-    end
-
-    describe "cell validations" do
-      subject(:worksheet) { workbook.worksheets[0] }
-
-      before do
-        create(:patient, session:)
-        create(:user, organisation:, email: "vaccinator@example.com")
-      end
-
-      describe "performing professional email" do
-        subject(:validation) do
-          worksheet = workbook.worksheets[0]
-          validation_formula(
-            worksheet:,
-            column_name: "performing_professional_email"
-          )
+            expect(rows.first["PERSON_DOB"].to_date).to eq(
+              patient.date_of_birth
+            )
+          end
         end
 
-        it { should eq "='Performing Professionals'!$A2:$A2" }
+        context "with a restricted patient" do
+          before { create(:patient, :restricted, session:) }
+
+          it "doesn't include the address or postcode" do
+            expect(rows.count).to eq(1)
+            expect(rows.first["PERSON_ADDRESS_LINE_1"]).to be_blank
+            expect(rows.first["PERSON_POSTCODE"]).to be_blank
+          end
+        end
+
+        context "with a vaccinated patient" do
+          before { create(:patient_session, patient:, session:) }
+
+          let!(:vaccination_record) do
+            create(
+              :vaccination_record,
+              performed_at:,
+              batch:,
+              patient:,
+              session:,
+              programme:,
+              performed_by: user,
+              notes: "Some notes."
+            )
+          end
+
+          it "adds a row with the vaccination details" do
+            expect(rows.count).to eq(1)
+            expect(
+              rows.first.except(
+                "BATCH_EXPIRY_DATE",
+                "PERSON_DOB",
+                "DATE_OF_VACCINATION"
+              )
+            ).to eq(
+              {
+                "ANATOMICAL_SITE" => "left upper arm",
+                "BATCH_NUMBER" => batch.name,
+                "CARE_SETTING" => 1,
+                "CLINIC_NAME" => "",
+                "CONSENT_DETAILS" => "",
+                "CONSENT_STATUS" => "",
+                "DOSE_SEQUENCE" => vaccination_record.dose_sequence,
+                "GILLICK_ASSESSED_BY" => nil,
+                "GILLICK_ASSESSMENT_DATE" => nil,
+                "GILLICK_ASSESSMENT_NOTES" => nil,
+                "GILLICK_STATUS" => "",
+                "HEALTH_QUESTION_ANSWERS" => "",
+                "NHS_NUMBER" => patient.nhs_number,
+                "NOTES" => "Some notes.",
+                "ORGANISATION_CODE" => team.ods_code,
+                "PERFORMING_PROFESSIONAL_EMAIL" => "nurse@example.com",
+                "PERSON_ADDRESS_LINE_1" => patient.address_line_1,
+                "PERSON_FORENAME" => patient.given_name,
+                "PERSON_GENDER_CODE" => "Not known",
+                "PERSON_POSTCODE" => patient.address_postcode,
+                "PERSON_SURNAME" => patient.family_name,
+                "PROGRAMME" => expected_programme,
+                "REASON_NOT_VACCINATED" => "",
+                "SCHOOL_NAME" => location.name,
+                "SESSION_ID" => session.id,
+                "TIME_OF_VACCINATION" => "12:05:20",
+                "TRIAGED_BY" => nil,
+                "TRIAGE_DATE" => nil,
+                "TRIAGE_NOTES" => nil,
+                "TRIAGE_STATUS" => nil,
+                "VACCINATED" => "Y",
+                "VACCINE_GIVEN" => vaccination_record.vaccine.nivs_name,
+                "UUID" => vaccination_record.uuid,
+                "YEAR_GROUP" => patient.year_group
+              }
+            )
+            expect(rows.first["BATCH_EXPIRY_DATE"].to_date).to eq(batch.expiry)
+            expect(rows.first["PERSON_DOB"].to_date).to eq(
+              patient.date_of_birth
+            )
+            expect(rows.first["DATE_OF_VACCINATION"].to_date).to eq(
+              performed_at.to_date
+            )
+          end
+
+          context "with lots of health answers" do
+            before do
+              create(
+                :consent,
+                :from_dad,
+                patient:,
+                programme:,
+                health_questions_list: ["First question?", "Second question?"]
+              )
+            end
+
+            it "separates the answers by new lines" do
+              expect(rows.first["HEALTH_QUESTION_ANSWERS"]).to eq(
+                "First question? No from Dad\nSecond question? No from Dad"
+              )
+            end
+          end
+        end
+
+        context "with a vaccinated patient outside the session" do
+          before { create(:patient_session, patient:, session:) }
+
+          let!(:vaccination_record) do
+            create(
+              :vaccination_record,
+              performed_at:,
+              batch:,
+              patient:,
+              programme:,
+              performed_by: user,
+              notes: "Some notes.",
+              location_name: "Waterloo Road"
+            )
+          end
+
+          it "adds a row with the vaccination details" do
+            expect(rows.count).to eq(1)
+            expect(
+              rows.first.except(
+                "BATCH_EXPIRY_DATE",
+                "PERSON_DOB",
+                "DATE_OF_VACCINATION"
+              )
+            ).to eq(
+              {
+                "ANATOMICAL_SITE" => "left upper arm",
+                "BATCH_NUMBER" => batch.name,
+                "CARE_SETTING" => nil,
+                "CLINIC_NAME" => "",
+                "CONSENT_DETAILS" => "",
+                "CONSENT_STATUS" => "",
+                "DOSE_SEQUENCE" => vaccination_record.dose_sequence,
+                "GILLICK_ASSESSED_BY" => nil,
+                "GILLICK_ASSESSMENT_DATE" => nil,
+                "GILLICK_ASSESSMENT_NOTES" => nil,
+                "GILLICK_STATUS" => "",
+                "HEALTH_QUESTION_ANSWERS" => "",
+                "NHS_NUMBER" => patient.nhs_number,
+                "NOTES" => "Some notes.",
+                "ORGANISATION_CODE" => team.ods_code,
+                "PERFORMING_PROFESSIONAL_EMAIL" => "nurse@example.com",
+                "PERSON_ADDRESS_LINE_1" => patient.address_line_1,
+                "PERSON_FORENAME" => patient.given_name,
+                "PERSON_GENDER_CODE" => "Not known",
+                "PERSON_POSTCODE" => patient.address_postcode,
+                "PERSON_SURNAME" => patient.family_name,
+                "PROGRAMME" => expected_programme,
+                "REASON_NOT_VACCINATED" => "",
+                "SCHOOL_NAME" => "Waterloo Road",
+                "SESSION_ID" => nil,
+                "TIME_OF_VACCINATION" => "12:05:20",
+                "TRIAGED_BY" => nil,
+                "TRIAGE_DATE" => nil,
+                "TRIAGE_NOTES" => nil,
+                "TRIAGE_STATUS" => nil,
+                "VACCINATED" => "Y",
+                "VACCINE_GIVEN" => nil,
+                "UUID" => vaccination_record.uuid,
+                "YEAR_GROUP" => patient.year_group
+              }
+            )
+            expect(rows.first["BATCH_EXPIRY_DATE"].to_date).to eq(batch.expiry)
+            expect(rows.first["PERSON_DOB"].to_date).to eq(
+              patient.date_of_birth
+            )
+            expect(rows.first["DATE_OF_VACCINATION"].to_date).to eq(
+              performed_at.to_date
+            )
+          end
+        end
+
+        context "with a vaccinated patient outside the school session, but in a clinic" do
+          let(:clinic_session) do
+            team.generic_clinic_session(academic_year: AcademicYear.current)
+          end
+
+          let!(:vaccination_record) do
+            create(
+              :vaccination_record,
+              performed_at:,
+              batch:,
+              patient:,
+              session: clinic_session,
+              programme:,
+              performed_by: user,
+              notes: "Some notes.",
+              location_name: "Waterloo Hospital"
+            )
+          end
+
+          before do
+            create(:patient_session, patient:, session:)
+            create(:patient_session, patient:, session: clinic_session)
+          end
+
+          it "adds a row with the vaccination details" do
+            expect(rows.count).to eq(1)
+            expect(
+              rows.first.except(
+                "BATCH_EXPIRY_DATE",
+                "PERSON_DOB",
+                "DATE_OF_VACCINATION"
+              )
+            ).to eq(
+              {
+                "ANATOMICAL_SITE" => "left upper arm",
+                "BATCH_NUMBER" => batch.name,
+                "CARE_SETTING" => 2,
+                "CLINIC_NAME" => "Waterloo Hospital",
+                "CONSENT_DETAILS" => "",
+                "CONSENT_STATUS" => "",
+                "DOSE_SEQUENCE" => vaccination_record.dose_sequence,
+                "GILLICK_ASSESSED_BY" => nil,
+                "GILLICK_ASSESSMENT_DATE" => nil,
+                "GILLICK_ASSESSMENT_NOTES" => nil,
+                "GILLICK_STATUS" => "",
+                "HEALTH_QUESTION_ANSWERS" => "",
+                "NHS_NUMBER" => patient.nhs_number,
+                "NOTES" => "Some notes.",
+                "ORGANISATION_CODE" => team.ods_code,
+                "PERFORMING_PROFESSIONAL_EMAIL" => "nurse@example.com",
+                "PERSON_ADDRESS_LINE_1" => patient.address_line_1,
+                "PERSON_FORENAME" => patient.given_name,
+                "PERSON_GENDER_CODE" => "Not known",
+                "PERSON_POSTCODE" => patient.address_postcode,
+                "PERSON_SURNAME" => patient.family_name,
+                "PROGRAMME" => expected_programme,
+                "REASON_NOT_VACCINATED" => "",
+                "SCHOOL_NAME" => "",
+                "SESSION_ID" => clinic_session.id,
+                "TIME_OF_VACCINATION" => "12:05:20",
+                "TRIAGED_BY" => nil,
+                "TRIAGE_DATE" => nil,
+                "TRIAGE_NOTES" => nil,
+                "TRIAGE_STATUS" => nil,
+                "VACCINATED" => "Y",
+                "VACCINE_GIVEN" => vaccination_record.vaccine.nivs_name,
+                "UUID" => vaccination_record.uuid,
+                "YEAR_GROUP" => patient.year_group
+              }
+            )
+            expect(rows.first["BATCH_EXPIRY_DATE"].to_date).to eq(batch.expiry)
+            expect(rows.first["PERSON_DOB"].to_date).to eq(
+              patient.date_of_birth
+            )
+            expect(rows.first["DATE_OF_VACCINATION"].to_date).to eq(
+              performed_at.to_date
+            )
+          end
+        end
+
+        context "with a vaccinated patient for a different programme" do
+          before do
+            create(:patient_session, patient:, session:)
+
+            other_programme = (Programme.types.keys - [programme.type]).sample
+            create(
+              :vaccination_record,
+              performed_at:,
+              batch:,
+              patient:,
+              programme: create(:programme, other_programme),
+              performed_by: user,
+              notes: "Some notes.",
+              location_name: "Waterloo Road"
+            )
+          end
+
+          it "adds a row to fill in" do
+            expect(rows.count).to eq(1)
+            expect(rows.first.except("PERSON_DOB")).to eq(
+              {
+                "ANATOMICAL_SITE" => "",
+                "BATCH_EXPIRY_DATE" => nil,
+                "BATCH_NUMBER" => "",
+                "CARE_SETTING" => 1,
+                "CLINIC_NAME" => "",
+                "CONSENT_DETAILS" => "",
+                "CONSENT_STATUS" => "",
+                "DATE_OF_VACCINATION" => nil,
+                "DOSE_SEQUENCE" => expected_dose_sequence,
+                "GILLICK_ASSESSED_BY" => nil,
+                "GILLICK_ASSESSMENT_DATE" => nil,
+                "GILLICK_ASSESSMENT_NOTES" => nil,
+                "GILLICK_STATUS" => "",
+                "HEALTH_QUESTION_ANSWERS" => "",
+                "NHS_NUMBER" => patient.nhs_number,
+                "NOTES" => "",
+                "ORGANISATION_CODE" => team.ods_code,
+                "PERFORMING_PROFESSIONAL_EMAIL" => "",
+                "PERSON_ADDRESS_LINE_1" => patient.address_line_1,
+                "PERSON_FORENAME" => patient.given_name,
+                "PERSON_GENDER_CODE" => "Not known",
+                "PERSON_POSTCODE" => patient.address_postcode,
+                "PERSON_SURNAME" => patient.family_name,
+                "PROGRAMME" => expected_programme,
+                "REASON_NOT_VACCINATED" => "",
+                "SCHOOL_NAME" => location.name,
+                "SESSION_ID" => session.id,
+                "TIME_OF_VACCINATION" => "",
+                "TRIAGED_BY" => nil,
+                "TRIAGE_DATE" => nil,
+                "TRIAGE_NOTES" => nil,
+                "TRIAGE_STATUS" => nil,
+                "VACCINATED" => "",
+                "VACCINE_GIVEN" => "",
+                "UUID" => "",
+                "YEAR_GROUP" => patient.year_group
+              }
+            )
+            expect(rows.first["PERSON_DOB"].to_date).to eq(
+              patient.date_of_birth
+            )
+          end
+        end
+
+        context "with a patient who couldn't be vaccinated" do
+          before { create(:patient_session, patient:, session:) }
+
+          let!(:vaccination_record) do
+            create(
+              :vaccination_record,
+              :not_administered,
+              patient:,
+              session:,
+              programme:,
+              performed_at:,
+              performed_by: user,
+              notes: "Some notes."
+            )
+          end
+
+          it "adds a row to fill in" do
+            expect(rows.count).to eq(1)
+            expect(
+              rows.first.except("DATE_OF_VACCINATION", "PERSON_DOB")
+            ).to eq(
+              {
+                "ANATOMICAL_SITE" => "",
+                "BATCH_EXPIRY_DATE" => nil,
+                "BATCH_NUMBER" => nil,
+                "CARE_SETTING" => 1,
+                "CLINIC_NAME" => "",
+                "CONSENT_DETAILS" => "",
+                "CONSENT_STATUS" => "",
+                "DOSE_SEQUENCE" => "",
+                "GILLICK_ASSESSED_BY" => nil,
+                "GILLICK_ASSESSMENT_DATE" => nil,
+                "GILLICK_ASSESSMENT_NOTES" => nil,
+                "GILLICK_STATUS" => "",
+                "HEALTH_QUESTION_ANSWERS" => "",
+                "NHS_NUMBER" => patient.nhs_number,
+                "NOTES" => "Some notes.",
+                "ORGANISATION_CODE" => team.ods_code,
+                "PERFORMING_PROFESSIONAL_EMAIL" => "nurse@example.com",
+                "PERSON_ADDRESS_LINE_1" => patient.address_line_1,
+                "PERSON_FORENAME" => patient.given_name,
+                "PERSON_GENDER_CODE" => "Not known",
+                "PERSON_POSTCODE" => patient.address_postcode,
+                "PERSON_SURNAME" => patient.family_name,
+                "PROGRAMME" => expected_programme,
+                "REASON_NOT_VACCINATED" => "unwell",
+                "SCHOOL_NAME" => location.name,
+                "SESSION_ID" => session.id,
+                "TIME_OF_VACCINATION" => "12:05:20",
+                "TRIAGED_BY" => nil,
+                "TRIAGE_DATE" => nil,
+                "TRIAGE_NOTES" => nil,
+                "TRIAGE_STATUS" => nil,
+                "VACCINATED" => "N",
+                "VACCINE_GIVEN" => nil,
+                "UUID" => vaccination_record.uuid,
+                "YEAR_GROUP" => patient.year_group
+              }
+            )
+            expect(rows.first["DATE_OF_VACCINATION"].to_date).to eq(
+              performed_at.to_date
+            )
+            expect(rows.first["PERSON_DOB"].to_date).to eq(
+              patient.date_of_birth
+            )
+          end
+        end
       end
 
-      describe "batch number" do
-        subject(:validation) do
+      describe "cell validations" do
+        subject(:worksheet) { workbook.worksheets[0] }
+
+        before do
+          # Without a patient no validation will be setup.
+          create(:patient, session:)
+        end
+
+        describe "performing professional email" do
+          subject(:validation) do
+            create(:user, team:, email: "vaccinator@example.com")
+            validation_formula(
+              worksheet:,
+              column_name: "performing_professional_email"
+            )
+          end
+
+          it { should eq "='Performing Professionals'!$A2:$A2" }
+        end
+
+        describe "batch number" do
+          subject(:validation) do
+            create(
+              :batch,
+              :not_expired,
+              name: "BATCH12345",
+              vaccine: programme.vaccines.active.first,
+              team:
+            )
+            validation_formula(worksheet:, column_name: "batch_number")
+          end
+
+          it { should eq "='#{programme.type} Batch Numbers'!$A2:$A2" }
+        end
+      end
+
+      describe "performing professionals sheet" do
+        subject(:worksheet) do
+          workbook.worksheets.find do
+            it.sheet_name == "Performing Professionals"
+          end
+        end
+
+        let!(:vaccinators) { create_list(:user, 2, team:) }
+
+        before do
+          create(:patient, session:)
+          create(
+            :user,
+            team: create(:team),
+            email: "vaccinator.other@example.com"
+          )
+        end
+
+        it "lists all the team users' emails" do
+          emails = worksheet[1..].map { it.cells.first.value }
+          expect(emails).to include(*vaccinators.map(&:email))
+        end
+
+        its(:state) { should eq "hidden" }
+        its(:sheet_protection) { should be_present }
+      end
+
+      describe "batch numbers sheet" do
+        subject(:worksheet) do
+          workbook.worksheets.find do
+            it.sheet_name == "#{programme.type} Batch Numbers"
+          end
+        end
+
+        let!(:batches) do
+          create_list(
+            :batch,
+            2,
+            :not_expired,
+            vaccine: programme.vaccines.active.first,
+            team:
+          )
+        end
+
+        before do
+          create(:patient, session:)
+
+          other_programme = (Programme.types.keys - [programme.type]).sample
           create(
             :batch,
             :not_expired,
-            name: "BATCH12345",
-            vaccine: programme.vaccines.active.first,
-            organisation:
+            name: "OTHERBATCH",
+            vaccine: create(:vaccine, other_programme)
           )
-          validation_formula(worksheet:, column_name: "batch_number")
         end
 
-        it { should eq "='hpv Batch Numbers'!$A2:$A2" }
+        it "lists all the batch numbers for the programme" do
+          batch_numbers = worksheet[1..].map { it.cells.first.value }
+          expect(batch_numbers).to include(*batches.map(&:name))
+        end
+
+        its(:state) { should eq "hidden" }
+        its(:sheet_protection) { should be_present }
       end
     end
 
-    describe "performing professionals sheet" do
-      subject(:worksheet) do
-        workbook.worksheets.find { it.sheet_name == "Performing Professionals" }
+    context "a clinic session" do
+      subject(:workbook) { RubyXL::Parser.parse_buffer(call) }
+
+      let(:location) { team.locations.generic_clinic.first }
+
+      it { should_not be_blank }
+
+      describe "headers" do
+        subject(:headers) do
+          sheet = workbook.worksheets[0]
+          sheet[0].cells.map(&:value)
+        end
+
+        it do
+          expect(headers).to eq(
+            %w[
+              PERSON_FORENAME
+              PERSON_SURNAME
+              ORGANISATION_CODE
+              SCHOOL_NAME
+              CLINIC_NAME
+              CARE_SETTING
+              PERSON_DOB
+              YEAR_GROUP
+              PERSON_GENDER_CODE
+              PERSON_ADDRESS_LINE_1
+              PERSON_POSTCODE
+              NHS_NUMBER
+              CONSENT_STATUS
+              CONSENT_DETAILS
+              HEALTH_QUESTION_ANSWERS
+              TRIAGE_STATUS
+              TRIAGED_BY
+              TRIAGE_DATE
+              TRIAGE_NOTES
+              GILLICK_STATUS
+              GILLICK_ASSESSMENT_DATE
+              GILLICK_ASSESSED_BY
+              GILLICK_ASSESSMENT_NOTES
+              VACCINATED
+              DATE_OF_VACCINATION
+              TIME_OF_VACCINATION
+              PROGRAMME
+              VACCINE_GIVEN
+              PERFORMING_PROFESSIONAL_EMAIL
+              BATCH_NUMBER
+              BATCH_EXPIRY_DATE
+              ANATOMICAL_SITE
+              DOSE_SEQUENCE
+              REASON_NOT_VACCINATED
+              NOTES
+              SESSION_ID
+              UUID
+            ]
+          )
+        end
       end
 
-      let!(:vaccinators) { create_list(:user, 2, organisation:) }
+      describe "rows" do
+        subject(:rows) { worksheet_to_hashes(workbook.worksheets[0]) }
 
-      before do
-        create(:patient, session:)
-        create(
-          :user,
-          organisation: create(:organisation),
-          email: "vaccinator.other@example.com"
-        )
+        it { should be_empty }
+
+        context "with a patient without an outcome" do
+          let!(:patient) { create(:patient, session:) }
+
+          it "adds a row to fill in" do
+            expect(rows.count).to eq(1)
+            expect(rows.first.except("PERSON_DOB")).to eq(
+              {
+                "ANATOMICAL_SITE" => "",
+                "BATCH_EXPIRY_DATE" => nil,
+                "BATCH_NUMBER" => "",
+                "CARE_SETTING" => 2,
+                "CONSENT_DETAILS" => "",
+                "CONSENT_STATUS" => "",
+                "CLINIC_NAME" => "",
+                "DATE_OF_VACCINATION" => nil,
+                "DOSE_SEQUENCE" => expected_dose_sequence,
+                "GILLICK_ASSESSED_BY" => nil,
+                "GILLICK_ASSESSMENT_DATE" => nil,
+                "GILLICK_ASSESSMENT_NOTES" => nil,
+                "GILLICK_STATUS" => "",
+                "HEALTH_QUESTION_ANSWERS" => "",
+                "NHS_NUMBER" => patient.nhs_number,
+                "NOTES" => "",
+                "ORGANISATION_CODE" => team.ods_code,
+                "PERFORMING_PROFESSIONAL_EMAIL" => "",
+                "PERSON_ADDRESS_LINE_1" => patient.address_line_1,
+                "PERSON_FORENAME" => patient.given_name,
+                "PERSON_GENDER_CODE" => "Not known",
+                "PERSON_POSTCODE" => patient.address_postcode,
+                "PERSON_SURNAME" => patient.family_name,
+                "PROGRAMME" => expected_programme,
+                "REASON_NOT_VACCINATED" => "",
+                "SCHOOL_NAME" => "",
+                "SESSION_ID" => session.id,
+                "TIME_OF_VACCINATION" => "",
+                "TRIAGED_BY" => nil,
+                "TRIAGE_DATE" => nil,
+                "TRIAGE_NOTES" => nil,
+                "TRIAGE_STATUS" => nil,
+                "VACCINATED" => "",
+                "VACCINE_GIVEN" => "",
+                "UUID" => "",
+                "YEAR_GROUP" => patient.year_group
+              }
+            )
+            expect(rows.first["PERSON_DOB"].to_date).to eq(
+              patient.date_of_birth
+            )
+          end
+        end
+
+        context "with a vaccinated patient" do
+          let(:patient) do
+            create(
+              :patient,
+              year_group: programme.default_year_groups.first,
+              school: create(:school, urn: "123456", name: "Waterloo Road")
+            )
+          end
+          let(:batch) do
+            create(
+              :batch,
+              :not_expired,
+              vaccine: programme.vaccines.active.first
+            )
+          end
+          let(:performed_at) { Time.zone.local(2024, 1, 1, 12, 5, 20) }
+          let!(:vaccination_record) do
+            create(
+              :vaccination_record,
+              performed_at:,
+              batch:,
+              patient:,
+              session:,
+              programme:,
+              location_name: "A Clinic",
+              performed_by: user,
+              notes: "Some notes."
+            )
+          end
+
+          before { create(:patient_session, patient:, session:) }
+
+          it "adds a row to fill in" do
+            expect(rows.count).to eq(1)
+            expect(
+              rows.first.except(
+                "BATCH_EXPIRY_DATE",
+                "PERSON_DOB",
+                "DATE_OF_VACCINATION"
+              )
+            ).to eq(
+              {
+                "ANATOMICAL_SITE" => "left upper arm",
+                "BATCH_NUMBER" => batch.name,
+                "CARE_SETTING" => 2,
+                "CONSENT_DETAILS" => "",
+                "CONSENT_STATUS" => "",
+                "CLINIC_NAME" => "A Clinic",
+                "DOSE_SEQUENCE" => vaccination_record.dose_sequence,
+                "GILLICK_ASSESSED_BY" => nil,
+                "GILLICK_ASSESSMENT_DATE" => nil,
+                "GILLICK_ASSESSMENT_NOTES" => nil,
+                "GILLICK_STATUS" => "",
+                "HEALTH_QUESTION_ANSWERS" => "",
+                "NHS_NUMBER" => patient.nhs_number,
+                "NOTES" => "Some notes.",
+                "ORGANISATION_CODE" => team.ods_code,
+                "PERFORMING_PROFESSIONAL_EMAIL" => "nurse@example.com",
+                "PERSON_ADDRESS_LINE_1" => patient.address_line_1,
+                "PERSON_FORENAME" => patient.given_name,
+                "PERSON_GENDER_CODE" => "Not known",
+                "PERSON_POSTCODE" => patient.address_postcode,
+                "PERSON_SURNAME" => patient.family_name,
+                "PROGRAMME" => expected_programme,
+                "REASON_NOT_VACCINATED" => "",
+                "SCHOOL_NAME" => "Waterloo Road",
+                "SESSION_ID" => session.id,
+                "TIME_OF_VACCINATION" => "12:05:20",
+                "TRIAGED_BY" => nil,
+                "TRIAGE_DATE" => nil,
+                "TRIAGE_NOTES" => nil,
+                "TRIAGE_STATUS" => nil,
+                "VACCINATED" => "Y",
+                "VACCINE_GIVEN" => vaccination_record.vaccine.nivs_name,
+                "UUID" => vaccination_record.uuid,
+                "YEAR_GROUP" => patient.year_group
+              }
+            )
+            expect(rows.first["BATCH_EXPIRY_DATE"].to_date).to eq(batch.expiry)
+            expect(rows.first["PERSON_DOB"].to_date).to eq(
+              patient.date_of_birth
+            )
+            expect(rows.first["DATE_OF_VACCINATION"].to_date).to eq(
+              performed_at.to_date
+            )
+          end
+        end
       end
 
-      it "lists all the organisation users' emails" do
-        emails = worksheet[1..].map { it.cells.first.value }
-        expect(emails).to match_array(vaccinators.map(&:email))
+      describe "cell validations" do
+        subject(:worksheet) { workbook.worksheets[0] }
+
+        before do
+          create(:patient, session:)
+          create(:user, team:, email: "vaccinator@example.com")
+        end
+
+        describe "performing professional email" do
+          subject(:validation) do
+            worksheet = workbook.worksheets[0]
+            validation_formula(
+              worksheet:,
+              column_name: "performing_professional_email"
+            )
+          end
+
+          it { should eq "='Performing Professionals'!$A2:$A2" }
+        end
+
+        describe "batch number" do
+          subject(:validation) do
+            create(
+              :batch,
+              :not_expired,
+              name: "BATCH12345",
+              vaccine: programme.vaccines.active.first,
+              team:
+            )
+            validation_formula(worksheet:, column_name: "batch_number")
+          end
+
+          it { should eq "='#{programme.type} Batch Numbers'!$A2:$A2" }
+        end
       end
 
-      its(:state) { should eq "hidden" }
-      its(:sheet_protection) { should be_present }
+      describe "performing professionals sheet" do
+        subject(:worksheet) do
+          workbook.worksheets.find do
+            it.sheet_name == "Performing Professionals"
+          end
+        end
+
+        let!(:vaccinators) { create_list(:user, 2, team:) }
+
+        before do
+          create(:patient, session:)
+          create(
+            :user,
+            team: create(:team),
+            email: "vaccinator.other@example.com"
+          )
+        end
+
+        it "lists all the team users' emails" do
+          emails = worksheet[1..].map { it.cells.first.value }
+          expect(emails).to match_array(vaccinators.map(&:email))
+        end
+
+        its(:state) { should eq "hidden" }
+        its(:sheet_protection) { should be_present }
+      end
+
+      describe "batch numbers sheet" do
+        subject(:worksheet) do
+          workbook.worksheets.find do
+            it.sheet_name == "#{programme.type} Batch Numbers"
+          end
+        end
+
+        let!(:batches) do
+          create_list(
+            :batch,
+            2,
+            :not_expired,
+            vaccine: programme.vaccines.active.first,
+            team:
+          )
+        end
+
+        before do
+          create(:patient, session:)
+
+          other_programme = (Programme.types.keys - [programme.type]).sample
+          create(
+            :batch,
+            :not_expired,
+            name: "OTHERBATCH",
+            vaccine: create(:vaccine, other_programme)
+          )
+        end
+
+        it "lists all the batch numbers for the programme" do
+          batch_numbers = worksheet[1..].map { it.cells.first.value }
+          expect(batch_numbers).to match_array(batches.map(&:name))
+        end
+
+        its(:state) { should eq "hidden" }
+        its(:sheet_protection) { should be_present }
+      end
     end
+  end
 
-    describe "batch numbers sheet" do
-      subject(:worksheet) do
-        workbook.worksheets.find { it.sheet_name == "hpv Batch Numbers" }
-      end
+  context "Flu programme" do
+    let(:programme) { create(:programme, :flu) }
+    let(:expected_programme) { "Flu" }
+    let(:expected_dose_sequence) { 1 }
 
-      let!(:batches) do
-        create_list(
-          :batch,
-          2,
-          :not_expired,
-          vaccine: programme.vaccines.active.first,
-          organisation:
-        )
-      end
+    include_examples "generates a report"
+  end
 
-      before do
-        create(:patient, session:)
-        create(
-          :batch,
-          :not_expired,
-          name: "OTHERBATCH",
-          vaccine: create(:vaccine, :flu)
-        )
-      end
+  context "HPV programme" do
+    let(:programme) { create(:programme, :hpv) }
+    let(:expected_programme) { "HPV" }
+    let(:expected_dose_sequence) { 1 }
 
-      it "lists all the batch numbers for the programme" do
-        batch_numbers = worksheet[1..].map { it.cells.first.value }
-        expect(batch_numbers).to match_array(batches.map(&:name))
-      end
+    include_examples "generates a report"
+  end
 
-      its(:state) { should eq "hidden" }
-      its(:sheet_protection) { should be_present }
-    end
+  context "MenACWY programme" do
+    let(:programme) { create(:programme, :menacwy) }
+    let(:expected_programme) { "ACWYX4" }
+    let(:expected_dose_sequence) { nil }
+
+    include_examples "generates a report"
+  end
+
+  context "Td/IPV programme" do
+    let(:programme) { create(:programme, :td_ipv) }
+    let(:expected_programme) { "3-in-1" }
+    let(:expected_dose_sequence) { nil }
+
+    include_examples "generates a report"
   end
 end

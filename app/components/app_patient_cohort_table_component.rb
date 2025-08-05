@@ -14,10 +14,10 @@ class AppPatientCohortTableComponent < ViewComponent::Base
 
   delegate :year_group, to: :patient
 
-  def organisation
-    @organisation ||=
-      if current_user.selected_organisation.patients.include?(patient)
-        current_user.selected_organisation
+  def team
+    @team ||=
+      if current_user.selected_team.patients.include?(patient)
+        current_user.selected_team
       end
   end
 end

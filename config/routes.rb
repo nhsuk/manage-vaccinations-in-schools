@@ -42,6 +42,8 @@ Rails.application.routes.draw do
   get "/dashboard", to: "dashboard#index"
   get "/accessibility-statement", to: "content#accessibility_statement"
 
+  get "/manifest/:name.json", to: "manifest#show", as: :manifest
+
   get "/up", to: "rails/health#show", as: :rails_health_check
 
   flipper_app =
@@ -84,11 +86,13 @@ Rails.application.routes.draw do
     end
   end
 
-  unless Rails.env.production?
-    namespace :api do
-      resources :locations, only: :index
-      resources :organisations, only: :destroy, param: :ods_code
-      post "/onboard", to: "onboard#create"
+  namespace :api do
+    unless Rails.env.production?
+      namespace :testing do
+        resources :locations, only: :index
+        resources :teams, only: :destroy, param: :ods_code
+        post "/onboard", to: "onboard#create"
+      end
     end
   end
 
@@ -111,30 +115,17 @@ Rails.application.routes.draw do
     end
   end
 
-  resource :draft_class_import,
-           only: :new,
-           path: "draft-class-import/:session_slug"
-  resource :draft_class_import,
-           only: %i[show update],
-           path: "draft-class-import/:id"
-
+  resource :draft_import, only: %i[show update], path: "draft-import/:id"
   resource :draft_consent, only: %i[show update], path: "draft-consent/:id"
-
   resource :draft_vaccination_record,
            only: %i[show update],
            path: "draft-vaccination-record/:id"
-
-  resource :vaccination_report,
-           only: %i[show update],
-           path: "draft-vaccination-report/:id" do
-    get "download", on: :member
-  end
 
   resources :immunisation_imports,
             path: "immunisation-imports",
             except: %i[index destroy]
 
-  resources :imports, only: %i[index new create]
+  resources :imports, only: %i[index create]
 
   namespace :imports do
     resources :issues, path: "issues", only: %i[index] do
@@ -171,32 +162,20 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :programmes, only: %i[index show], param: :type do
-    member do
-      get "sessions"
-      get "patients"
+  resources :programmes, only: :index, param: :type do
+    get "consent-form", on: :member, action: :consent_form
 
-      get "consent-form", action: "consent_form"
-    end
-
-    resources :cohorts, only: %i[index show]
-
-    resources :vaccination_records,
-              path: "vaccination-records",
-              only: %i[index show update destroy] do
-      get "destroy", action: :confirm_destroy, on: :member, as: "destroy"
-
-      collection do
-        post "export-dps"
-        constraints -> { Flipper.enabled?(:dev_tools) } do
-          post "reset-dps-export"
-        end
+    scope module: :programmes do
+      resource :overview,
+               path: ":academic_year",
+               only: :show,
+               controller: :overview
+      resources :patients, path: ":academic_year/patients", only: :index do
+        get "import", on: :collection
       end
+      resources :reports, path: ":academic_year/reports", only: :create
+      resources :sessions, path: ":academic_year/sessions", only: :index
     end
-
-    resources :vaccination_reports,
-              path: "vaccination-reports",
-              only: %i[create]
   end
 
   resources :school_moves, path: "school-moves", only: %i[index show update]
@@ -214,8 +193,10 @@ Rails.application.routes.draw do
       post ":patient_id/:status", as: :create, action: :create
     end
     resource :record, only: :show, controller: "sessions/record" do
-      get "batch/:programme_type", action: :edit_batch, as: :batch
-      post "batch/:programme_type", action: :update_batch
+      get "batch/:programme_type/:vaccine_method",
+          action: :edit_batch,
+          as: :batch
+      post "batch/:programme_type/:vaccine_method", action: :update_batch
     end
     resource :outcome, only: :show, controller: "sessions/outcome"
 
@@ -224,13 +205,9 @@ Rails.application.routes.draw do
              only: %i[edit update],
              controller: "sessions/invite_to_clinic"
 
-    collection do
-      get "completed"
-      get "scheduled"
-      get "unscheduled"
-    end
-
     member do
+      get "import"
+
       get "edit/programmes",
           controller: "sessions/edit",
           action: "edit_programmes"
@@ -276,7 +253,7 @@ Rails.application.routes.draw do
               as: :patient,
               only: [],
               module: :patient_sessions do
-      resource :activity, only: :show
+      resource :activity, only: %i[show create]
       resource :session_attendance, path: "attendance", only: %i[edit update]
 
       resources :programmes, path: "", param: :type, only: :show do
@@ -301,7 +278,19 @@ Rails.application.routes.draw do
     end
   end
 
-  resource :organisation, only: %i[show]
+  resource :team, only: %i[show]
+
+  resources :vaccination_records,
+            path: "vaccination-records",
+            only: %i[show update destroy] do
+    get "destroy", action: :confirm_destroy, on: :member, as: "destroy"
+  end
+
+  resource :vaccination_report,
+           only: %i[show update],
+           path: "vaccination-report/:id" do
+    get "download", on: :member
+  end
 
   resources :vaccines, only: %i[index show] do
     resources :batches, only: %i[create edit new update] do
@@ -315,11 +304,11 @@ Rails.application.routes.draw do
   end
 
   namespace :users do
-    get "organisation-not-found", controller: :errors
+    get "team-not-found", controller: :errors
     get "workgroup-not-found", controller: :errors
     get "role-not-found", controller: :errors
 
-    resource :organisations, only: %i[new create]
+    resource :teams, only: %i[new create]
   end
 
   scope via: :all do

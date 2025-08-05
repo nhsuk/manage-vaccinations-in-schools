@@ -3,23 +3,23 @@
 class ClassImportsController < ApplicationController
   include Pagy::Backend
 
-  before_action :set_draft_class_import, only: %i[new create]
+  before_action :set_draft_import, only: %i[new create]
   before_action :set_class_import, only: %i[show update]
 
   skip_after_action :verify_policy_scoped, only: %i[new create]
 
   def new
-    @class_import =
-      ClassImport.new(organisation: current_user.selected_organisation)
+    @class_import = ClassImport.new(team: current_team)
   end
 
   def create
     @class_import =
       ClassImport.new(
-        session: @session,
-        organisation: current_user.selected_organisation,
+        academic_year: @academic_year,
+        location: @location,
+        team: current_team,
         uploaded_by: current_user,
-        year_groups: @draft_class_import.year_groups,
+        year_groups: @draft_import.year_groups,
         **class_import_params
       )
 
@@ -61,16 +61,17 @@ class ClassImportsController < ApplicationController
 
   private
 
-  def set_draft_class_import
-    @draft_class_import =
-      DraftClassImport.new(request_session: session, current_user:)
-    @session = @draft_class_import.session
+  def set_draft_import
+    @draft_import = DraftImport.new(request_session: session, current_user:)
+    @location = @draft_import.location
+    @academic_year = @draft_import.academic_year
   end
 
   def set_class_import
     @class_import =
-      policy_scope(ClassImport).includes(:session).find(params[:id])
-    @session = @class_import.session
+      policy_scope(ClassImport).includes(:location).find(params[:id])
+    @location = @class_import.location
+    @academic_year = @class_import.academic_year
   end
 
   def class_import_params

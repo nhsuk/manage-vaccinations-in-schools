@@ -11,11 +11,12 @@ class DraftConsentsController < ApplicationController
   before_action :set_session
   before_action :set_programme
   before_action :set_parent
-  before_action :set_triage
   before_action :set_consent
 
   include WizardControllerConcern
 
+  before_action :set_triage_form,
+                if: -> { current_step.in?(%i[triage confirm]) }
   before_action :set_parent_options, if: -> { current_step == :who }
   before_action :set_back_link_path
 
@@ -31,18 +32,21 @@ class DraftConsentsController < ApplicationController
     authorize Consent
 
     case current_step
-    when :questions
-      handle_questions
     when :confirm
       handle_confirm
+    when :questions
+      handle_questions
+    when :triage
+      handle_triage
     else
       @draft_consent.assign_attributes(update_params)
     end
 
+    @draft_consent.seed_health_questions if current_step == :agree
+
     jump_to("confirm") if @draft_consent.editing? && current_step != :confirm
 
-    set_steps
-    setup_wizard_translated
+    reload_steps
 
     render_wizard @draft_consent
   end
@@ -52,12 +56,16 @@ class DraftConsentsController < ApplicationController
   def handle_confirm
     return unless @draft_consent.save
 
-    @draft_consent.write_to!(@consent, triage: @triage)
+    @draft_consent.write_to!(@consent, triage_form: @triage_form)
 
     ActiveRecord::Base.transaction do
-      @triage&.save! if @draft_consent.response_given?
+      @triage_form&.save! if @draft_consent.response_given?
 
-      @consent.parent&.save!
+      if (parent = @consent.parent)
+        parent.save! if parent.changed?
+        parent.parent_relationships.select(&:changed?).each(&:save!)
+      end
+
       @consent.save!
 
       StatusUpdater.call(patient: @patient)
@@ -65,7 +73,9 @@ class DraftConsentsController < ApplicationController
 
     set_patient_session # reload with new statuses
 
-    send_triage_confirmation(@patient_session, @consent)
+    if @draft_consent.send_confirmation?
+      send_triage_confirmation(@patient_session, @programme, @consent)
+    end
 
     heading_link_href =
       session_patient_programme_path(@session, @patient, @programme)
@@ -78,12 +88,27 @@ class DraftConsentsController < ApplicationController
   end
 
   def handle_questions
-    questions_attrs = update_params.except(:wizard_step).values
-    @draft_consent.health_answers.each_with_index do |ha, index|
-      ha.assign_attributes(questions_attrs[index])
+    questions_attrs = update_params.except(:wizard_step)
+
+    @draft_consent.health_answers.each_with_index do |health_answer, index|
+      attributes = questions_attrs["question_#{index}"]
+      if health_answer.requires_notes?
+        health_answer.assign_attributes(attributes)
+      end
     end
 
     @draft_consent.assign_attributes(wizard_step: current_step)
+  end
+
+  def handle_triage
+    @triage_form.assign_attributes(triage_form_params)
+
+    @draft_consent.assign_attributes(
+      triage_form_valid: @triage_form.valid?,
+      triage_notes: @triage_form.notes,
+      triage_status_and_vaccine_method: @triage_form.status_and_vaccine_method,
+      wizard_step: :triage
+    )
   end
 
   def finish_wizard_path
@@ -92,9 +117,10 @@ class DraftConsentsController < ApplicationController
 
   def update_params
     permitted_attributes = {
-      agree: %i[response],
+      agree: %i[response injection_alternative],
       notes: %i[notes],
-      notify_parents: %i[notify_parents],
+      notify_parent_on_refusal: %i[notify_parent_on_refusal],
+      notify_parents_on_vaccination: %i[notify_parents_on_vaccination],
       parent_details: %i[
         parent_email
         parent_full_name
@@ -107,14 +133,17 @@ class DraftConsentsController < ApplicationController
       questions: questions_params,
       reason: %i[reason_for_refusal],
       route: %i[route],
-      who: %i[new_or_existing_contact],
-      triage: %i[triage_status triage_notes]
+      who: %i[new_or_existing_contact]
     }.fetch(current_step)
 
     params
       .fetch(:draft_consent, {})
       .permit(permitted_attributes)
       .merge(wizard_step: current_step)
+  end
+
+  def triage_form_params
+    params.expect(triage_form: %i[status_and_vaccine_method notes])
   end
 
   def set_draft_consent
@@ -141,28 +170,26 @@ class DraftConsentsController < ApplicationController
     @parent = @draft_consent.parent
   end
 
-  def set_triage
-    @triage =
-      if policy(Triage).new?
-        Triage.not_invalidated.find_or_initialize_by(
-          patient: @patient,
-          programme: @draft_consent.programme,
-          organisation: @session.organisation
-        )
-      end
-  end
-
   def set_consent
     @consent = @draft_consent.consent || Consent.new
   end
 
   def set_steps
-    # Translated steps are cached after running setup_wizard_translated.
-    # To allow us to run this method multiple times during a single action
-    # lifecycle, we need to clear the cache.
-    @wizard_translations = nil
-
     self.steps = @draft_consent.wizard_steps
+  end
+
+  def set_triage_form
+    @triage_form =
+      if policy(Triage).new?
+        TriageForm.new(
+          notes: @draft_consent.triage_notes,
+          vaccine_methods: @draft_consent.vaccine_methods,
+          patient_session: @patient_session,
+          programme: @programme,
+          status_and_vaccine_method:
+            @draft_consent.triage_status_and_vaccine_method
+        )
+      end
   end
 
   def set_parent_options

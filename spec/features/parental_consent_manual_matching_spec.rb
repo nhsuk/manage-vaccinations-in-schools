@@ -42,16 +42,10 @@ describe "Parental consent manual matching" do
   def given_the_app_is_setup
     programmes = [create(:programme, :hpv)]
 
-    @organisation = create(:organisation, :with_one_nurse, programmes:)
-    @user = @organisation.users.first
-    @school = create(:school, name: "Pilot School")
-    @session =
-      create(
-        :session,
-        location: @school,
-        organisation: @organisation,
-        programmes:
-      )
+    @team = create(:team, :with_one_nurse, programmes:)
+    @user = @team.users.first
+    @school = create(:school, name: "Pilot School", team: @team)
+    @session = create(:session, location: @school, team: @team, programmes:)
     @consent_form =
       create(
         :consent_form,
@@ -113,7 +107,7 @@ describe "Parental consent manual matching" do
   end
 
   def when_i_click_on_the_activity_log
-    click_on "Activity log"
+    click_on "Session activity and notes"
   end
 
   def then_i_see_the_consent_was_matched_manually

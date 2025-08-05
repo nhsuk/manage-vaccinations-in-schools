@@ -23,7 +23,7 @@ module MavisCLI
               .pluck(:urn)
           )
         existing_schools = Set.new(Location.school.pluck(:urn))
-        organisation_schools = Set.new(Location.school.joins(:team).pluck(:urn))
+        team_schools = Set.new(Location.school.joins(:subteam).pluck(:urn))
 
         closed_schools_with_future_sessions = Set.new
         closing_schools_with_future_sessions = Set.new
@@ -52,7 +52,7 @@ module MavisCLI
               elsif new_status == "Open, but proposed to close"
                 closing_schools_with_future_sessions << urn
               end
-            elsif urn.in?(organisation_schools)
+            elsif urn.in?(team_schools)
               if new_status == "Closed"
                 closed_schools_without_future_sessions << urn
               elsif new_status == "Open, but proposed to close"

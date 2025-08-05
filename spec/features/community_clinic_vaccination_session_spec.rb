@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 describe "Community clinic vaccination session" do
+  around { |example| travel_to(Date.new(2025, 7, 31)) { example.run } }
+
   scenario "patient attended but refused" do
     given_i_am_signed_in_as_a_nurse
     and_a_patient_is_ready_for_vaccination_in_a_community_clinic
@@ -13,20 +15,14 @@ describe "Community clinic vaccination session" do
 
   def given_i_am_signed_in_as_a_nurse
     @programme = create(:programme, :hpv)
-    @organisation =
-      create(:organisation, :with_one_nurse, programmes: [@programme])
-    sign_in @organisation.users.first
+    @team = create(:team, :with_one_nurse, programmes: [@programme])
+    sign_in @team.users.first
   end
 
   def and_a_patient_is_ready_for_vaccination_in_a_community_clinic
-    location = create(:generic_clinic, organisation: @organisation)
+    location = create(:generic_clinic, team: @team)
     @session =
-      create(
-        :session,
-        organisation: @organisation,
-        programmes: [@programme],
-        location:
-      )
+      create(:session, team: @team, programmes: [@programme], location:)
     @patient =
       create(
         :patient,
@@ -34,15 +30,17 @@ describe "Community clinic vaccination session" do
         :in_attendance,
         session: @session
       )
-    @community_clinic = create(:community_clinic, organisation: @organisation)
+    @community_clinic = create(:community_clinic, team: @team)
   end
 
   def when_i_record_a_non_administered_vaccination_with_reason
     visit session_record_path(@session)
     click_link @patient.full_name
 
-    choose "No"
-    click_button "Continue"
+    within all("section")[1] do
+      choose "No"
+      click_button "Continue"
+    end
 
     choose "They refused"
     click_button "Continue"

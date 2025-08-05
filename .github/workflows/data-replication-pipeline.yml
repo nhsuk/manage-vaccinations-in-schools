@@ -1,5 +1,5 @@
 name: Data replication pipeline
-run-name: ${{ inputs.action }} data replication resources for ${{ inputs.environment }}
+run-name: ${{ inputs.deployment_type }} for data replication resources for ${{ inputs.environment }}
 
 on:
   workflow_dispatch:
@@ -15,18 +15,17 @@ on:
           - qa
           - sandbox-alpha
           - sandbox-beta
+      deployment_type:
+        description: Deployment type
+        required: true
+        type: choice
+        options:
+          - Deployment with DB recreation
+          - Application only deployment
       image_tag:
         description: Docker image tag to deploy
         required: false
         type: string
-      action:
-        description: Action to perform on data replication env
-        required: true
-        type: choice
-        options:
-          - Destroy
-          - Recreate
-        default: Recreate
       db_snapshot_arn:
         description: ARN of the DB snapshot to use (optional)
         required: false
@@ -50,8 +49,8 @@ concurrency:
   group: deploy-data-replica-${{ inputs.environment }}
 
 jobs:
-  prepare:
-    if: ${{ inputs.action == 'Recreate' }}
+  prepare-db-replica:
+    if: ${{ inputs.deployment_type == 'Deployment with DB recreation' }}
     name: Prepare data replica
     runs-on: ubuntu-latest
     permissions:
@@ -71,24 +70,39 @@ jobs:
           if [ -z "${{ inputs.db_snapshot_arn }}" ]; then
               echo "No snapshot ARN provided, fetching the latest snapshot"
               SNAPSHOT_ARN=$(aws rds describe-db-cluster-snapshots \
-              --query 'DBClusterSnapshots[?contains(DBClusterSnapshotIdentifier, `${{ inputs.environment}}`)].[DBClusterSnapshotArn, SnapshotCreateTime]' \
+              --query "DBClusterSnapshots[?DBClusterIdentifier=='mavis-${{ inputs.environment }}'].[DBClusterSnapshotArn, SnapshotCreateTime]" \
               --output text | sort -k2 -r | head -n 1 | cut -f1)
+          
+              if [ -z "$SNAPSHOT_ARN" ]; then
+                  echo "No snapshots found for mavis-${{ inputs.environment }}"
+                  exit 1
+              fi
           else
               echo "Using provided snapshot ARN: ${{ inputs.db_snapshot_arn }}"
               SNAPSHOT_ARN="${{ inputs.db_snapshot_arn }}"
           fi
+          echo "Using snapshot ARN: $SNAPSHOT_ARN"
           echo "SNAPSHOT_ARN=$SNAPSHOT_ARN" >> $GITHUB_OUTPUT
       - name: Install terraform
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: 1.11.4
-      - name: Get db secret arn
-        id: get-db-secret-arn
-        working-directory: terraform/app
-        run: |
-          terraform init -backend-config="env/${{ inputs.environment }}-backend.hcl" -upgrade
-          DB_SECRET_ARN=$(terraform output --raw db_secret_arn)
-          echo "DB_SECRET_ARN=$DB_SECRET_ARN" >> $GITHUB_OUTPUT
+    outputs:
+      SNAPSHOT_ARN: ${{ steps.get-latest-snapshot.outputs.SNAPSHOT_ARN }}
+
+  prepare-webapp:
+    name: Prepare webapp
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ env.aws_role }}
+          aws-region: eu-west-2
       - name: ECR login
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
@@ -102,81 +116,22 @@ jobs:
           DIGEST="${DOCKER_DIGEST#*@}"
           echo "DIGEST=$DIGEST" >> $GITHUB_OUTPUT
     outputs:
-      SNAPSHOT_ARN: ${{ steps.get-latest-snapshot.outputs.SNAPSHOT_ARN }}
-      DB_SECRET_ARN: ${{ steps.get-db-secret-arn.outputs.DB_SECRET_ARN }}
       DOCKER_DIGEST: ${{ steps.get-docker-image-digest.outputs.DIGEST }}
-
-  plan-destroy:
-    name: Plan destruction job
-    runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: ${{ env.aws_role }}
-          aws-region: eu-west-2
-      - name: Install terraform
-        uses: hashicorp/setup-terraform@v3
-        with:
-          terraform_version: 1.11.4
-      - name: Terraform Plan
-        run: |
-          set -e
-          terraform init -backend-config="env/${{ inputs.environment }}-backend.hcl" -upgrade
-          terraform plan -destroy -var-file="env/${{ inputs.environment }}.tfvars" -var="image_digest=filler_value" \
-          -var="db_secret_arn=filler_value" -var="imported_snapshot=filler_value" \
-          -out ${{ runner.temp }}/tfplan_destroy | tee ${{ runner.temp }}/tf_stdout
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: tfplan_destroy_infrastructure-${{ inputs.environment }}
-          path: ${{ runner.temp }}/tfplan_destroy
-
-  destroy:
-    name: Destroy data replication infrastructure
-    runs-on: ubuntu-latest
-    needs: plan-destroy
-    environment: ${{ inputs.environment }}
-    permissions:
-      id-token: write
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: ${{ env.aws_role }}
-          aws-region: eu-west-2
-      - name: Install terraform
-        uses: hashicorp/setup-terraform@v3
-        with:
-          terraform_version: 1.11.4
-      - name: Download artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: tfplan_destroy_infrastructure-${{ inputs.environment }}
-          path: ${{ runner.temp }}
-      - name: Terraform Destroy
-        id: destroy
-        run: |
-          set -e
-          terraform init -backend-config="env/${{ inputs.environment }}-backend.hcl" -upgrade
-          terraform apply ${{ runner.temp }}/tfplan_destroy
 
   plan:
     name: Terraform plan
     runs-on: ubuntu-latest
     needs:
-      - prepare
-      - destroy
+      - prepare-db-replica
+      - prepare-webapp
+    if: ${{ !cancelled() &&
+          (needs.prepare-db-replica.result == 'success' || needs.prepare-db-replica.result == 'skipped') &&
+          needs.prepare-webapp.result == 'success' }}
     env:
-      SNAPSHOT_ARN: ${{ needs.prepare.outputs.SNAPSHOT_ARN }}
-      DB_SECRET_ARN: ${{ needs.prepare.outputs.DB_SECRET_ARN }}
-      DOCKER_DIGEST: ${{ needs.prepare.outputs.DOCKER_DIGEST }}
+      SNAPSHOT_ARN: ${{ needs.prepare-db-replica.outputs.SNAPSHOT_ARN }}
+      DB_SECRET_ARN: ${{ needs.prepare-db-replica.outputs.DB_SECRET_ARN || 'arn:aws:secretsmanager:eu-west-2:000000000000:secret:placeholder' }}
+      DOCKER_DIGEST: ${{ needs.prepare-webapp.outputs.DOCKER_DIGEST }}
+      REPLACE_DB_CLUSTER: ${{ inputs.deployment_type == 'Deployment with DB recreation' }}
     permissions:
       id-token: write
     steps:
@@ -191,15 +146,34 @@ jobs:
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: 1.11.4
+      - name: Get db secret arn
+        id: get-db-secret-arn
+        working-directory: terraform/app
+        run: |
+          terraform init -backend-config="env/${{ inputs.environment }}-backend.hcl" -upgrade
+          DB_SECRET_ARN=$(terraform output --raw db_secret_arn)
+          echo "DB_SECRET_ARN=$DB_SECRET_ARN" >> $GITHUB_OUTPUT
       - name: Terraform Plan
         id: plan
         run: |
-          set -e
+          set -eo pipefail
           terraform init -backend-config="env/${{ inputs.environment }}-backend.hcl" -upgrade
-          terraform plan -var="image_digest=${{ env.DOCKER_DIGEST }}" -var="db_secret_arn=${{ env.DB_SECRET_ARN }}" \
-          -var="imported_snapshot=${{ env.SNAPSHOT_ARN }}" -var-file="env/${{ inputs.environment }}.tfvars" \
-          -var='allowed_egress_cidr_blocks=${{ inputs.egress_cidr }}' \
-          -out ${{ runner.temp }}/tfplan | tee ${{ runner.temp }}/tf_stdout
+
+          CIDR_BLOCKS='${{ inputs.egress_cidr }}'
+          PLAN_ARGS=(
+            "plan"
+            "-var=image_digest=${{ env.DOCKER_DIGEST }}"
+            "-var=db_secret_arn=${{ steps.get-db-secret-arn.outputs.DB_SECRET_ARN }}"
+            "-var=imported_snapshot=${{ env.SNAPSHOT_ARN }}"
+            "-var-file=env/${{ inputs.environment }}.tfvars"
+            "-var=allowed_egress_cidr_blocks=$CIDR_BLOCKS"
+            "-out=${{ runner.temp }}/tfplan"
+          )
+          
+          if [ "${{ env.REPLACE_DB_CLUSTER }}" = "true" ]; then
+            PLAN_ARGS+=("-replace" "aws_rds_cluster.cluster")
+          fi
+          terraform "${PLAN_ARGS[@]}" | tee ${{ runner.temp }}/tf_stdout
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
@@ -210,6 +184,7 @@ jobs:
     name: Terraform apply
     runs-on: ubuntu-latest
     needs: plan
+    if: ${{ !cancelled() && needs.plan.result == 'success' }}
     environment: ${{ inputs.environment }}
     permissions:
       id-token: write
@@ -235,3 +210,10 @@ jobs:
           set -e
           terraform init -backend-config="env/${{ inputs.environment }}-backend.hcl" -upgrade
           terraform apply ${{ runner.temp }}/tfplan
+      - name: Deploy db-access-service
+        run: |
+          task_definition_arn=$(terraform output -raw task_definition_arn)
+          aws ecs update-service \
+            --cluster mavis-${{ inputs.environment }}-data-replication \
+            --service mavis-${{ inputs.environment }}-data-replication \
+            --task-definition $task_definition_arn

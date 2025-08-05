@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 feature "Verbal consent" do
+  around { |example| travel_to(Date.new(2025, 7, 31)) { example.run } }
+
   scenario "Given when previously refused" do
     given_an_hpv_programme_is_underway
     and_a_parent_has_refused_consent_for_their_child
@@ -14,14 +16,13 @@ feature "Verbal consent" do
 
   def given_an_hpv_programme_is_underway
     @programme = create(:programme, :hpv)
-    @organisation =
-      create(:organisation, :with_one_nurse, programmes: [@programme])
-    location = create(:school, name: "Pilot School")
+    @team = create(:team, :with_one_nurse, programmes: [@programme])
+    location = create(:school, name: "Pilot School", team: @team)
     @session =
       create(
         :session,
         :scheduled,
-        organisation: @organisation,
+        team: @team,
         programmes: [@programme],
         location:
       )
@@ -38,7 +39,7 @@ feature "Verbal consent" do
   end
 
   def and_i_am_logged_in_as_a_nurse
-    sign_in @organisation.users.first
+    sign_in @team.users.first
   end
 
   def when_i_record_the_consent_given_for_that_child_from_the_same_parent
@@ -46,16 +47,16 @@ feature "Verbal consent" do
 
     visit "/dashboard"
     click_on "Programmes", match: :first
-    click_on "HPV"
+    click_on "HPV", match: :first
     within ".app-secondary-navigation" do
       click_on "Sessions"
     end
     click_on "Pilot School"
     click_on "Consent"
-    choose "Consent refused"
+    check "Consent refused"
     click_on "Update results"
     click_on @child.full_name
-    click_on "Get consent"
+    click_on "Record a new consent response"
 
     # contacting the same parent who refused
     choose @refusing_parent.full_name
@@ -99,7 +100,7 @@ feature "Verbal consent" do
   end
 
   def and_the_child_is_shown_as_having_consent_given
-    choose "Consent given"
+    check "Consent given"
     click_on "Update results"
 
     expect(page).to have_content(@child.full_name)

@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 describe "HPV vaccination" do
+  around { |example| travel_to(Date.new(2025, 7, 31)) { example.run } }
+
   scenario "Delayed (unwell)" do
     given_i_am_signed_in
 
@@ -26,18 +28,13 @@ describe "HPV vaccination" do
 
   def given_i_am_signed_in
     programmes = [create(:programme, :hpv)]
-    @organisation = create(:organisation, :with_one_nurse, programmes:)
+    @team = create(:team, :with_one_nurse, programmes:)
 
-    location = create(:school)
+    location = create(:school, team: @team)
     @batch =
-      create(
-        :batch,
-        organisation: @organisation,
-        vaccine: programmes.first.vaccines.first
-      )
+      create(:batch, team: @team, vaccine: programmes.first.vaccines.first)
 
-    @session =
-      create(:session, organisation: @organisation, programmes:, location:)
+    @session = create(:session, team: @team, programmes:, location:)
     @patient =
       create(
         :patient,
@@ -46,7 +43,7 @@ describe "HPV vaccination" do
         session: @session
       )
 
-    sign_in @organisation.users.first
+    sign_in @team.users.first
   end
 
   def when_i_go_to_a_patient_that_is_ready_to_vaccinate
@@ -55,14 +52,10 @@ describe "HPV vaccination" do
   end
 
   def and_i_record_that_the_patient_was_unwell
-    # pre-screening
-    check "know what the vaccination is for, and are happy to have it"
-    check "have not already had the vaccination"
-    check "have no allergies which would prevent vaccination"
-
-    # vaccination
-    choose "No"
-    click_button "Continue"
+    within all("section")[1] do
+      choose "No"
+      click_button "Continue"
+    end
 
     choose "They were not well enough"
     click_button "Continue"
@@ -93,7 +86,7 @@ describe "HPV vaccination" do
   end
 
   def then_i_see_that_the_status_is_delayed
-    expect(page).to have_content("Could not vaccinate")
+    expect(page).to have_content("No outcome yet")
     expect(page).not_to have_content("You still need to record an outcome")
   end
 

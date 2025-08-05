@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
 class AppImportsTableComponent < ViewComponent::Base
-  def initialize(organisation:)
+  def initialize(team:)
     super
 
-    @organisation = organisation
+    @team = team
   end
 
   def render?
@@ -13,7 +13,7 @@ class AppImportsTableComponent < ViewComponent::Base
 
   private
 
-  attr_reader :organisation
+  attr_reader :team
 
   def imports
     @imports ||=
@@ -26,16 +26,16 @@ class AppImportsTableComponent < ViewComponent::Base
   def class_import_records
     ClassImport
       .select("class_imports.*", "COUNT(patients.id) AS record_count")
-      .where(organisation:)
+      .where(team:)
       .left_outer_joins(:patients)
-      .includes(:uploaded_by, session: :location)
+      .includes(:location, :uploaded_by)
       .group("class_imports.id")
   end
 
   def cohort_import_records
     CohortImport
       .select("cohort_imports.*", "COUNT(patients.id) AS record_count")
-      .where(organisation:)
+      .where(team:)
       .left_outer_joins(:patients)
       .includes(:uploaded_by)
       .group("cohort_imports.id")
@@ -47,7 +47,7 @@ class AppImportsTableComponent < ViewComponent::Base
         "immunisation_imports.*",
         "COUNT(vaccination_records.id) AS record_count"
       )
-      .where(organisation:)
+      .where(team:)
       .left_outer_joins(:vaccination_records)
       .includes(:uploaded_by)
       .group("immunisation_imports.id")

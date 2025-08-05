@@ -3,7 +3,7 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 5.87"
+      version = "~> 6.2"
     }
   }
 }
@@ -20,7 +20,13 @@ resource "aws_vpc_endpoint" "this" {
 }
 
 resource "aws_security_group" "this" {
-  vpc_id = var.vpc_id
+  name        = "vpc-endpoint-${var.service_name}"
+  description = "Security group for a VPC endpoint"
+  vpc_id      = var.vpc_id
+
+  tags = {
+    Name = "${var.service_name}-VPC-Endpoint"
+  }
 }
 
 resource "aws_security_group_rule" "ingress" {

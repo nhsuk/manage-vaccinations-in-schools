@@ -10,7 +10,7 @@ WORKDIR /rails
 
 # Install base packages
 RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y curl libjemalloc2 libvips libicu-dev postgresql-client && \
+    apt-get install --no-install-recommends -y curl libjemalloc2 libvips libicu-dev postgresql-client jq && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
 # Set production environment
@@ -79,6 +79,8 @@ USER 1000:1000
 
 # Entrypoint prepares the database.
 ENTRYPOINT ["/rails/bin/docker-entrypoint"]
+
+VOLUME ["/rails/tmp", "rails/log", "/tmp", "/var/log", "/var/lib/amazon/ssm"]
 
 # Start web server by default, this can be overwritten by environment variable
 EXPOSE 4000

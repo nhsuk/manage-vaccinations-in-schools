@@ -27,27 +27,27 @@ describe "MenACWY and Td/IPV vaccination" do
   def given_a_doubles_session_exists
     programmes = [create(:programme, :menacwy), create(:programme, :td_ipv)]
 
-    organisation = create(:organisation, programmes:)
-    location = create(:school)
+    team = create(:team, programmes:)
+    location = create(:school, team:)
 
     @menacwy_batch =
       create(
         :batch,
         :not_expired,
-        organisation:,
+        team:,
         vaccine: programmes.first.vaccines.first
       )
     @td_ipv_batch =
       create(
         :batch,
         :not_expired,
-        organisation:,
+        team:,
         vaccine: programmes.second.vaccines.first
       )
 
-    @session = create(:session, organisation:, programmes:, location:)
+    @session = create(:session, team:, programmes:, location:)
 
-    @nurse = create(:nurse, organisation:)
+    @nurse = create(:nurse, team:)
   end
 
   def and_a_patient_is_ready_to_be_vaccinated
@@ -71,17 +71,15 @@ describe "MenACWY and Td/IPV vaccination" do
   end
 
   def and_i_fill_out_pre_screening_questions
-    check "know what the vaccination is for, and are happy to have it"
-    check "have not already had the vaccination"
-    check "are feeling well"
-    check "have no allergies which would prevent vaccination"
-    check "are not taking any medication which prevents vaccination"
+    check "I have checked that the above statements are true"
   end
 
   def and_i_record_the_vaccination(batch)
-    choose "Yes"
-    choose "Left arm (upper position)"
-    click_on "Continue"
+    within all("section")[1] do
+      choose "Yes"
+      choose "Left arm (upper position)"
+      click_button "Continue"
+    end
 
     choose batch.name
     click_on "Continue"
@@ -113,11 +111,7 @@ describe "MenACWY and Td/IPV vaccination" do
   end
 
   def and_i_check_the_pre_screening_questions_again
-    check "know what the vaccination is for, and are happy to have it"
-    check "have not already had the vaccination"
-    check "have no allergies which would prevent vaccination"
-    check "are not taking any medication which prevents vaccination"
-    check "are not pregnant"
+    check "I have checked that the above statements are true"
   end
 
   def then_i_see_the_patient_is_vaccinated_for_td_ipv
@@ -153,13 +147,13 @@ describe "MenACWY and Td/IPV vaccination" do
   def and_a_text_is_sent_to_the_parent_confirming_the_vaccinations
     expect_sms_to(
       @patient.consents.last.parent.phone,
-      :vaccination_administered_menacwy,
+      :vaccination_administered,
       :any
     )
 
     expect_sms_to(
       @patient.consents.last.parent.phone,
-      :vaccination_administered_td_ipv,
+      :vaccination_administered,
       :any
     )
   end

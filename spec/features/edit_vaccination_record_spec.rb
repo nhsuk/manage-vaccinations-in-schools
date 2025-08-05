@@ -5,11 +5,9 @@ describe "Edit vaccination record" do
     given_i_am_signed_in
     and_an_hpv_programme_is_underway
     and_an_administered_vaccination_record_exists
+    and_enqueue_sync_vaccination_records_to_nhs_feature_is_enabled
 
-    when_i_go_to_the_vaccination_records_page
-    then_i_should_see_the_vaccination_records
-
-    when_i_click_on_the_vaccination_record
+    when_i_go_to_the_vaccination_record_for_the_patient
     then_i_should_see_the_vaccination_record
 
     when_i_click_on_edit_vaccination_record
@@ -44,6 +42,7 @@ describe "Edit vaccination record" do
 
     when_i_click_on_save_changes
     then_the_parent_doesnt_receive_an_email
+    and_the_vaccination_record_is_synced_to_nhs
   end
 
   scenario "User edits a vaccination record that already received confirmation" do
@@ -52,10 +51,7 @@ describe "Edit vaccination record" do
     and_an_administered_vaccination_record_exists
     and_the_vaccination_confirmation_was_already_sent
 
-    when_i_go_to_the_vaccination_records_page
-    then_i_should_see_the_vaccination_records
-
-    when_i_click_on_the_vaccination_record
+    when_i_go_to_the_vaccination_record_for_the_patient
     then_i_should_see_the_vaccination_record
 
     when_i_click_on_edit_vaccination_record
@@ -83,10 +79,7 @@ describe "Edit vaccination record" do
     and_an_administered_vaccination_record_exists
     and_the_vaccination_confirmation_was_already_sent
 
-    when_i_go_to_the_vaccination_records_page
-    then_i_should_see_the_vaccination_records
-
-    when_i_click_on_the_vaccination_record
+    when_i_go_to_the_vaccination_record_for_the_patient
     then_i_should_see_the_vaccination_record
 
     when_i_click_on_edit_vaccination_record
@@ -103,13 +96,11 @@ describe "Edit vaccination record" do
   scenario "Edit outcome to vaccinated" do
     given_i_am_signed_in
     and_an_hpv_programme_is_underway
+    and_enqueue_sync_vaccination_records_to_nhs_feature_is_enabled
     and_a_not_administered_vaccination_record_exists
     and_the_vaccination_confirmation_was_already_sent
 
-    when_i_go_to_the_vaccination_records_page
-    then_i_should_see_the_vaccination_records
-
-    when_i_click_on_the_vaccination_record
+    when_i_go_to_the_vaccination_record_for_the_patient
     then_i_should_see_the_vaccination_record
 
     when_i_click_on_edit_vaccination_record
@@ -132,18 +123,17 @@ describe "Edit vaccination record" do
     when_i_click_on_save_changes
     then_i_should_see_the_vaccination_record
     and_the_parent_receives_an_administered_email
+    and_the_vaccination_record_is_synced_to_nhs
   end
 
   scenario "Edit outcome to not vaccinated" do
     given_i_am_signed_in
     and_an_hpv_programme_is_underway
+    and_enqueue_sync_vaccination_records_to_nhs_feature_is_enabled
     and_an_administered_vaccination_record_exists
     and_the_vaccination_confirmation_was_already_sent
 
-    when_i_go_to_the_vaccination_records_page
-    then_i_should_see_the_vaccination_records
-
-    when_i_click_on_the_vaccination_record
+    when_i_go_to_the_vaccination_record_for_the_patient
     then_i_should_see_the_vaccination_record
 
     when_i_click_on_edit_vaccination_record
@@ -157,6 +147,7 @@ describe "Edit vaccination record" do
     when_i_click_on_save_changes
     then_i_should_see_the_vaccination_record
     and_the_parent_receives_a_not_administered_email
+    and_the_vaccination_record_is_deleted_from_nhs
   end
 
   scenario "With an archived batch" do
@@ -165,8 +156,7 @@ describe "Edit vaccination record" do
     and_an_administered_vaccination_record_exists
     and_the_original_batch_has_been_archived
 
-    when_i_go_to_the_vaccination_records_page
-    and_i_click_on_the_vaccination_record
+    when_i_go_to_the_vaccination_record_for_the_patient
     and_i_click_on_edit_vaccination_record
     then_i_see_the_edit_vaccination_record_page
 
@@ -184,8 +174,7 @@ describe "Edit vaccination record" do
     and_an_administered_vaccination_record_exists
     and_the_original_batch_has_expired
 
-    when_i_go_to_the_vaccination_records_page
-    and_i_click_on_the_vaccination_record
+    when_i_go_to_the_vaccination_record_for_the_patient
     and_i_click_on_edit_vaccination_record
     then_i_see_the_edit_vaccination_record_page
 
@@ -202,8 +191,7 @@ describe "Edit vaccination record" do
     and_an_hpv_programme_is_underway
     and_an_administered_vaccination_record_exists
 
-    when_i_go_to_the_vaccination_records_page
-    and_i_click_on_the_vaccination_record
+    when_i_go_to_the_vaccination_record_for_the_patient
     then_i_should_not_be_able_to_edit_the_vaccination_record
   end
 
@@ -212,8 +200,7 @@ describe "Edit vaccination record" do
     and_an_hpv_programme_is_underway
     and_an_administered_vaccination_record_exists
 
-    when_i_go_to_the_vaccination_records_page
-    and_i_click_on_the_vaccination_record
+    when_i_go_to_the_vaccination_record_for_the_patient
     and_i_click_on_edit_vaccination_record
     then_i_see_the_edit_vaccination_record_page
 
@@ -228,29 +215,23 @@ describe "Edit vaccination record" do
   end
 
   def given_i_am_signed_in
-    @organisation = create(:organisation, :with_one_nurse, ods_code: "R1L")
-    sign_in @organisation.users.first
+    @team = create(:team, :with_one_nurse, ods_code: "R1L")
+    sign_in @team.users.first
   end
 
   def given_i_am_signed_in_as_an_admin
-    @organisation = create(:organisation, :with_one_admin, ods_code: "R1L")
-    sign_in @organisation.users.first, role: :admin_staff
+    @team = create(:team, :with_one_admin, ods_code: "R1L")
+    sign_in @team.users.first, role: :admin_staff
   end
 
   def and_an_hpv_programme_is_underway
-    @programme = create(:programme, :hpv, organisations: [@organisation])
+    @programme = create(:programme, :hpv, teams: [@team])
 
     @vaccine = @programme.vaccines.first
 
-    @original_batch =
-      create(:batch, organisation: @organisation, vaccine: @vaccine)
+    @original_batch = create(:batch, team: @team, vaccine: @vaccine)
     @replacement_batch =
-      create(
-        :batch,
-        :not_expired,
-        organisation: @organisation,
-        vaccine: @vaccine
-      )
+      create(:batch, :not_expired, team: @team, vaccine: @vaccine)
 
     location = create(:school)
 
@@ -258,7 +239,7 @@ describe "Edit vaccination record" do
       create(
         :session,
         :completed,
-        organisation: @organisation,
+        team: @team,
         programmes: [@programme],
         location:
       )
@@ -269,7 +250,7 @@ describe "Edit vaccination record" do
         :consent_given_triage_not_needed,
         given_name: "John",
         family_name: "Smith",
-        organisation: @organisation,
+        team: @team,
         programmes: [@programme]
       )
 
@@ -286,6 +267,20 @@ describe "Edit vaccination record" do
         session: @session,
         programme: @programme
       )
+
+    if Flipper.enabled?(:immunisations_fhir_api_integration)
+      perform_enqueued_jobs(only: SyncVaccinationRecordToNHSJob)
+    end
+  end
+
+  def and_enqueue_sync_vaccination_records_to_nhs_feature_is_enabled
+    Flipper.enable(:enqueue_sync_vaccination_records_to_nhs)
+    Flipper.enable(:immunisations_fhir_api_integration)
+
+    uuid = Random.uuid
+    @stubbed_post_request = stub_immunisations_api_post(uuid:)
+    @stubbed_put_request = stub_immunisations_api_put(uuid:)
+    @stubbed_delete_request = stub_immunisations_api_delete(uuid:)
   end
 
   def and_an_historical_administered_vaccination_record_exists
@@ -312,6 +307,10 @@ describe "Edit vaccination record" do
         session: @session,
         programme: @programme
       )
+
+    if Flipper.enabled?(:immunisations_fhir_api_integration)
+      perform_enqueued_jobs(only: SyncVaccinationRecordToNHSJob)
+    end
   end
 
   def and_the_vaccination_confirmation_was_already_sent
@@ -327,25 +326,13 @@ describe "Edit vaccination record" do
     @original_batch.save!(validate: false)
   end
 
-  def when_i_go_to_the_vaccination_records_page
+  def when_i_go_to_the_vaccination_record_for_the_patient
     visit "/dashboard"
 
-    click_on "Programmes", match: :first
-    click_on "HPV"
-    click_on "Vaccinations", match: :first
+    click_on "Children", match: :first
+    click_on @patient.full_name
+    click_on Date.current.to_fs(:long)
   end
-
-  def then_i_should_see_the_vaccination_records
-    expect(page).to have_content("1 vaccination record")
-    expect(page).to have_content("SMITH, John")
-  end
-
-  def when_i_click_on_the_vaccination_record
-    click_on "SMITH, John"
-  end
-
-  alias_method :and_i_click_on_the_vaccination_record,
-               :when_i_click_on_the_vaccination_record
 
   def then_i_should_see_the_vaccination_record
     expect(page).to have_content("Full nameSMITH, John")
@@ -376,9 +363,11 @@ describe "Edit vaccination record" do
   end
 
   def when_i_fill_in_a_valid_date_and_time
-    fill_in "Year", with: "2023"
-    fill_in "Month", with: "9"
-    fill_in "Day", with: "1"
+    @valid_date = Date.current - 1.day
+
+    fill_in "Year", with: @valid_date.year.to_s
+    fill_in "Month", with: @valid_date.month.to_s
+    fill_in "Day", with: @valid_date.day.to_s
 
     fill_in "Hour", with: "12"
     fill_in "Minute", with: "00"
@@ -413,7 +402,9 @@ describe "Edit vaccination record" do
   end
 
   def and_i_should_see_the_updated_date_time
-    expect(page).to have_content("Date1 September 2023")
+    formatted_date = @valid_date.strftime("%-d %B %Y")
+
+    expect(page).to have_content("Date#{formatted_date}")
     expect(page).to have_content("Time12:00pm")
   end
 
@@ -517,5 +508,15 @@ describe "Edit vaccination record" do
 
   def when_i_go_back_to_the_confirm_page
     visit draft_vaccination_record_path(id: "confirm")
+  end
+
+  def and_the_vaccination_record_is_synced_to_nhs
+    perform_enqueued_jobs(only: SyncVaccinationRecordToNHSJob)
+    expect(@stubbed_post_request).to have_been_requested
+  end
+
+  def and_the_vaccination_record_is_deleted_from_nhs
+    perform_enqueued_jobs(only: SyncVaccinationRecordToNHSJob)
+    expect(@stubbed_delete_request).to have_been_requested
   end
 end

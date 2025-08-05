@@ -4,18 +4,22 @@ class VaccinationReport
   include RequestSessionPersistable
   include WizardStepConcern
 
-  def self.request_session_key
-    "vaccination_report"
-  end
-
   def self.file_formats(programme)
-    %w[careplus mavis].tap { it << "systm_one" if programme.hpv? }
+    %w[careplus mavis].tap do
+      it << "systm_one" if programme.hpv? || programme.flu?
+    end
   end
 
   attribute :date_from, :date
   attribute :date_to, :date
   attribute :file_format, :string
   attribute :programme_id, :integer
+  attribute :academic_year, :integer
+
+  def initialize(current_user:, **attributes)
+    @current_user = current_user
+    super(**attributes)
+  end
 
   def wizard_steps
     %i[dates file_format]
@@ -41,8 +45,9 @@ class VaccinationReport
 
   def csv_data
     exporter_class.call(
-      organisation: @current_user.selected_organisation,
+      team: @current_user.selected_team,
       programme:,
+      academic_year:,
       start_date: date_from,
       end_date: date_to
     )
@@ -66,6 +71,8 @@ class VaccinationReport
       systm_one: Reports::SystmOneExporter
     }.fetch(file_format.to_sym)
   end
+
+  def request_session_key = "vaccination_report"
 
   def reset_unused_fields
   end

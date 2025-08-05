@@ -13,7 +13,7 @@ class BatchesController < ApplicationController
   def create
     batch =
       Batch.archived.find_or_initialize_by(
-        organisation: current_user.selected_organisation,
+        team: current_team,
         vaccine: @vaccine,
         **batch_form_params
       )
@@ -23,7 +23,11 @@ class BatchesController < ApplicationController
     @form = BatchForm.new(**batch_form_params, batch:)
 
     if expiry_validator.date_params_valid? && @form.save
-      redirect_to vaccines_path, flash: { success: "Batch #{batch.name} added" }
+      redirect_to vaccines_path,
+                  flash: {
+                    success:
+                      "Batch <span class=\"nhsuk-u-text-break-word\">#{batch.name}</span> added".html_safe
+                  }
     else
       @form.expiry = expiry_validator.date_params_as_struct
       render :new, status: :unprocessable_entity
@@ -46,7 +50,8 @@ class BatchesController < ApplicationController
     if expiry_validator.date_params_valid? && @form.save
       redirect_to vaccines_path,
                   flash: {
-                    success: "Batch #{@batch.name} updated"
+                    success:
+                      "Batch <span class=\"nhsuk-u-text-break-word\">#{@batch.name}</span> updated".html_safe
                   }
     else
       @form.expiry = expiry_validator.date_params_as_struct

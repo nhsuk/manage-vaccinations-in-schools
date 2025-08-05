@@ -21,11 +21,25 @@
 #  fk_rails_...  (session_id => sessions.id)
 #
 
+# The patient session model represents a patient who goes to the school or
+# clinic location represented by the session. This doesn't necessarily mean
+# that the patient is eligible for any of the programmes administered in any
+# particular session they belong to.
+#
+# This is designed to support programmes being dynamically added or removed to
+# sessions without needing to also create or destroy patient session
+# instances. While also adding support for patients becoming eligible if year
+# groups are added or removed to locations, again without needing to also
+# create or destroy patient session instances.
+#
+# It also supports the scenario where a patient belongs to a session but is
+# only eligible for one of many programmes administered in the session. In
+# that case, the list of programmes they appear in won't be the same as the
+# complete list of programmes administered in the session.
+
 class PatientSession < ApplicationRecord
   audited associated_with: :patient
   has_associated_audits
-
-  include PatientSessionStatusConcern
 
   belongs_to :patient
   belongs_to :session
@@ -36,16 +50,23 @@ class PatientSession < ApplicationRecord
   has_one :registration_status
 
   has_one :location, through: :session
+  has_one :subteam, through: :session
   has_one :team, through: :session
-  has_one :organisation, through: :session
   has_many :session_attendances, dependent: :destroy
 
+  has_many :notes, -> { where(session_id: it.session_id) }, through: :patient
+
+  has_one :latest_note,
+          -> { where(session_id: it.session_id).order(created_at: :desc) },
+          through: :patient,
+          source: :notes
+
   has_many :session_notifications,
-           -> { where(session_id: _1.session_id) },
+           -> { where(session_id: it.session_id) },
            through: :patient
 
   has_many :vaccination_records,
-           -> { where(session_id: _1.session_id) },
+           -> { where(session_id: it.session_id) },
            through: :patient
 
   has_and_belongs_to_many :immunisation_imports
@@ -66,17 +87,40 @@ class PatientSession < ApplicationRecord
           )
         end
 
-  scope :in_programmes,
+  scope :appear_in_programmes,
         ->(programmes) do
-          joins(:patient).merge(Patient.in_programmes(programmes))
+          age_children_start_school = 5
+
+          # Is the patient eligible for any of those programmes by year group?
+          location_programme_year_groups =
+            Location::ProgrammeYearGroup
+              .where("programme_id = session_programmes.programme_id")
+              .where("location_id = sessions.location_id")
+              .where(
+                "year_group = sessions.academic_year " \
+                  "- patients.birth_academic_year " \
+                  "- #{age_children_start_school}"
+              )
+
+          # Are any of the programmes administered in the session?
+          where(
+            SessionProgramme
+              .where(programme: programmes)
+              .where("session_programmes.session_id = sessions.id")
+              .where(location_programme_year_groups.arel.exists)
+              .arel
+              .exists
+          )
         end
 
   scope :search_by_name,
         ->(name) { joins(:patient).merge(Patient.search_by_name(name)) }
 
   scope :search_by_year_groups,
-        ->(year_groups) do
-          joins(:patient).merge(Patient.search_by_year_groups(year_groups))
+        ->(year_groups, academic_year:) do
+          joins(:patient).merge(
+            Patient.search_by_year_groups(year_groups, academic_year:)
+          )
         end
 
   scope :search_by_date_of_birth_year,
@@ -103,13 +147,20 @@ class PatientSession < ApplicationRecord
           )
         end
 
-  scope :includes_programmes, -> { preload(:patient, session: :programmes) }
+  scope :includes_programmes,
+        -> do
+          preload(
+            :patient,
+            session: %i[programmes location_programme_year_groups]
+          )
+        end
 
   scope :has_consent_status,
         ->(status, programme:) do
-          where(
+          joins(:session).where(
             Patient::ConsentStatus
               .where("patient_id = patient_sessions.patient_id")
+              .where("academic_year = sessions.academic_year")
               .where(status:, programme:)
               .arel
               .exists
@@ -140,13 +191,59 @@ class PatientSession < ApplicationRecord
 
   scope :has_triage_status,
         ->(status, programme:) do
-          where(
+          joins(:session).where(
             Patient::TriageStatus
               .where("patient_id = patient_sessions.patient_id")
+              .where("academic_year = sessions.academic_year")
               .where(status:, programme:)
               .arel
               .exists
           )
+        end
+
+  scope :has_vaccine_method,
+        ->(vaccine_method, programme:) do
+          joins(:session).where(
+            Patient::TriageStatus
+              .where("patient_id = patient_sessions.patient_id")
+              .where("academic_year = sessions.academic_year")
+              .where(vaccine_method:, programme:)
+              .arel
+              .exists
+          ).or(
+            joins(:session).where(
+              Patient::TriageStatus
+                .where("patient_id = patient_sessions.patient_id")
+                .where("academic_year = sessions.academic_year")
+                .where(status: "not_required", programme:)
+                .arel
+                .exists
+            ).where(
+              Patient::ConsentStatus
+                .where("patient_id = patient_sessions.patient_id")
+                .where("academic_year = sessions.academic_year")
+                .where(programme:)
+                .has_vaccine_method(vaccine_method)
+                .arel
+                .exists
+            )
+          )
+        end
+
+  scope :consent_given_and_ready_to_vaccinate,
+        ->(programmes:, vaccine_method:) do
+          select do |patient_session|
+            patient = patient_session.patient
+            session = patient_session.session
+
+            programmes.any? do |programme|
+              patient.consent_given_and_safe_to_vaccinate?(
+                programme:,
+                academic_year: session.academic_year,
+                vaccine_method:
+              )
+            end
+          end
         end
 
   scope :destroy_all_if_safe,
@@ -158,6 +255,8 @@ class PatientSession < ApplicationRecord
           ).find_each(&:destroy_if_safe!)
         end
 
+  delegate :academic_year, to: :session
+
   def safe_to_destroy?
     vaccination_records.empty? && gillick_assessments.empty? &&
       session_attendances.none?(&:attending?)
@@ -168,12 +267,11 @@ class PatientSession < ApplicationRecord
   end
 
   def can_record_as_already_vaccinated?(programme:)
-    !session.today? && patient.vaccination_status(programme:).none_yet?
+    !session.today? &&
+      patient.vaccination_status(programme:, academic_year:).none_yet?
   end
 
-  def programmes
-    session.programmes.select { it.year_groups.include?(patient.year_group) }
-  end
+  def programmes = session.programmes_for(patient:, academic_year:)
 
   def session_status(programme:)
     session_statuses.find { it.programme_id == programme.id } ||
@@ -189,13 +287,19 @@ class PatientSession < ApplicationRecord
   end
 
   def next_activity(programme:)
-    return nil if patient.vaccination_status(programme:).vaccinated?
+    if patient.vaccination_status(programme:, academic_year:).vaccinated?
+      return nil
+    end
 
-    return :record if patient.consent_given_and_safe_to_vaccinate?(programme:)
+    if patient.consent_given_and_safe_to_vaccinate?(programme:, academic_year:)
+      return :record
+    end
 
-    return :triage if patient.triage_status(programme:).required?
+    if patient.triage_status(programme:, academic_year:).required?
+      return :triage
+    end
 
-    consent_status = patient.consent_status(programme:)
+    consent_status = patient.consent_status(programme:, academic_year:)
 
     return :consent if consent_status.no_response? || consent_status.conflicts?
 
@@ -217,7 +321,7 @@ class PatientSession < ApplicationRecord
 
     programmes.select do |programme|
       session_status(programme:).none_yet? &&
-        patient.consent_given_and_safe_to_vaccinate?(programme:)
+        patient.consent_given_and_safe_to_vaccinate?(programme:, academic_year:)
     end
   end
 end

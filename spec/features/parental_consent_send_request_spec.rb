@@ -22,15 +22,15 @@ describe "Parental consent" do
   def given_a_patient_without_consent_exists
     programmes = [create(:programme, :hpv)]
 
-    @organisation = create(:organisation, :with_one_nurse, programmes:)
-    @user = @organisation.users.first
+    @team = create(:team, :with_one_nurse, programmes:)
+    @user = @team.users.first
 
-    location = create(:generic_clinic, organisation: @organisation)
+    location = create(:generic_clinic, team: @team)
 
     @session =
       create(
         :session,
-        organisation: @organisation,
+        team: @team,
         programmes:,
         location:,
         date: Date.current + 2.days
@@ -77,7 +77,7 @@ describe "Parental consent" do
   end
 
   def and_an_activity_log_entry_is_visible_for_the_email
-    click_on "Activity log"
+    click_on "Session activity and notes"
     expect(page).to have_content(
       "Consent clinic request sent\n#{@parent.email}\n" \
         "HPV   1 January 2024 at 12:00am · USER, Test"
@@ -85,7 +85,7 @@ describe "Parental consent" do
   end
 
   def and_an_activity_log_entry_is_visible_for_the_text
-    click_on "Activity log"
+    click_on "Session activity and notes"
     expect(page).to have_content(
       "Consent clinic request sent\n#{@parent.phone}\n" \
         "HPV   1 January 2024 at 12:00am · USER, Test"

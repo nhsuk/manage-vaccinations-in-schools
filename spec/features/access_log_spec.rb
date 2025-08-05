@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 describe "Access log" do
+  around { |example| travel_to(Date.new(2025, 7, 31)) { example.run } }
+
   before { given_i_am_signed_in }
 
   scenario "View patient" do
@@ -25,17 +27,17 @@ describe "Access log" do
   scenario "View patient's activity log in a session" do
     when_i_go_to_the_session
     and_i_go_to_a_patient
-    and_i_click_on_activity_log
+    and_i_click_on_session_activity_and_notes
     then_i_am_recorded_in_the_access_log_twice(controller: "patient_sessions")
   end
 
   def given_i_am_signed_in
     programmes = [create(:programme, :hpv)]
-    organisation = create(:organisation, :with_one_nurse, programmes:)
+    team = create(:team, :with_one_nurse, programmes:)
 
-    @user = organisation.users.first
+    @user = team.users.first
 
-    @session = create(:session, organisation:, programmes:)
+    @session = create(:session, team:, programmes:)
     @patient =
       create(
         :patient,
@@ -55,7 +57,7 @@ describe "Access log" do
   def when_i_go_to_the_session
     visit dashboard_path
     click_on "Programmes", match: :first
-    click_on "HPV"
+    click_on "HPV", match: :first
 
     within(".app-secondary-navigation") { click_on "Sessions" }
 
@@ -69,6 +71,10 @@ describe "Access log" do
 
   def and_i_click_on_activity_log
     click_on "Activity log"
+  end
+
+  def and_i_click_on_session_activity_and_notes
+    click_on "Session activity and notes"
   end
 
   def then_i_am_recorded_in_the_access_log(controller:)

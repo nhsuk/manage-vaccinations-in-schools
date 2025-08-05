@@ -4,15 +4,17 @@
 #
 # Table name: patient_consent_statuses
 #
-#  id           :bigint           not null, primary key
-#  status       :integer          default("no_response"), not null
-#  patient_id   :bigint           not null
-#  programme_id :bigint           not null
+#  id              :bigint           not null, primary key
+#  academic_year   :integer          not null
+#  status          :integer          default("no_response"), not null
+#  vaccine_methods :integer          default([]), not null, is an Array
+#  patient_id      :bigint           not null
+#  programme_id    :bigint           not null
 #
 # Indexes
 #
-#  index_patient_consent_statuses_on_patient_id_and_programme_id  (patient_id,programme_id) UNIQUE
-#  index_patient_consent_statuses_on_status                       (status)
+#  idx_on_patient_id_programme_id_academic_year_1d3170e398  (patient_id,programme_id,academic_year) UNIQUE
+#  index_patient_consent_statuses_on_status                 (status)
 #
 # Foreign Keys
 #
@@ -23,7 +25,28 @@ FactoryBot.define do
   factory :patient_consent_status, class: "Patient::ConsentStatus" do
     patient
     programme
+    academic_year { Date.current.academic_year }
 
     traits_for_enum :status
+
+    trait :given do
+      status { "given" }
+      vaccine_methods { %w[injection] }
+    end
+
+    trait :given_injection_only do
+      status { "given" }
+      vaccine_methods { %w[injection] }
+    end
+
+    trait :given_nasal_only do
+      status { "given" }
+      vaccine_methods { %w[nasal] }
+    end
+
+    trait :given_nasal_or_injection do
+      status { "given" }
+      vaccine_methods { %w[nasal injection] }
+    end
   end
 end

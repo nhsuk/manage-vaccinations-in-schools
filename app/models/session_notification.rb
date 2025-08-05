@@ -53,11 +53,13 @@ class SessionNotification < ApplicationRecord
     patient = patient_session.patient
     session = patient_session.session
 
+    academic_year = session.academic_year
+
     parents =
       if type == :school_reminder
         patient_session.programmes.flat_map do |programme|
           ConsentGrouper
-            .call(patient.consents, programme:)
+            .call(patient.consents, programme_id: programme.id, academic_year:)
             .select(&:response_given?)
             .filter_map(&:parent)
         end
@@ -79,17 +81,49 @@ class SessionNotification < ApplicationRecord
       session:,
       session_date:,
       type:,
+      sent_at: Time.current,
       sent_by: current_user
     )
 
-    parents.each do |parent|
-      params = { parent:, patient:, session:, sent_by: current_user }
+    academic_year = session_date.academic_year
 
-      EmailDeliveryJob.perform_later(:"session_#{type}", **params)
+    programmes =
+      if type == :school_reminder
+        patient_session.programmes.select do |programme|
+          patient.consent_given_and_safe_to_vaccinate?(
+            programme:,
+            academic_year:
+          )
+        end
+      else
+        patient_session.programmes
+      end
+
+    parents.each do |parent|
+      params = {
+        parent:,
+        patient:,
+        programmes:,
+        session:,
+        sent_by: current_user
+      }
+
+      template_name = compute_template_name(type, session.team)
+
+      EmailDeliveryJob.perform_later(template_name, **params)
 
       next if type == :school_reminder && !parent.phone_receive_updates
 
-      SMSDeliveryJob.perform_later(:"session_#{type}", **params)
+      SMSDeliveryJob.perform_later(template_name, **params)
     end
+  end
+
+  def self.compute_template_name(type, team)
+    template_names = [
+      :"session_#{type}_#{team.ods_code.downcase}",
+      :"session_#{type}"
+    ]
+
+    template_names.find { GOVUK_NOTIFY_EMAIL_TEMPLATES.key?(it) }
   end
 end

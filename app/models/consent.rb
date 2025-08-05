@@ -4,50 +4,56 @@
 #
 # Table name: consents
 #
-#  id                  :bigint           not null, primary key
-#  health_answers      :jsonb            not null
-#  invalidated_at      :datetime
-#  notes               :text             default(""), not null
-#  notify_parents      :boolean
-#  reason_for_refusal  :integer
-#  response            :integer          not null
-#  route               :integer          not null
-#  submitted_at        :datetime         not null
-#  withdrawn_at        :datetime
-#  created_at          :datetime         not null
-#  updated_at          :datetime         not null
-#  organisation_id     :bigint           not null
-#  parent_id           :bigint
-#  patient_id          :bigint           not null
-#  programme_id        :bigint           not null
-#  recorded_by_user_id :bigint
+#  id                            :bigint           not null, primary key
+#  academic_year                 :integer          not null
+#  health_answers                :jsonb            not null
+#  invalidated_at                :datetime
+#  notes                         :text             default(""), not null
+#  notify_parent_on_refusal      :boolean
+#  notify_parents_on_vaccination :boolean
+#  reason_for_refusal            :integer
+#  response                      :integer          not null
+#  route                         :integer          not null
+#  submitted_at                  :datetime         not null
+#  vaccine_methods               :integer          default([]), not null, is an Array
+#  withdrawn_at                  :datetime
+#  created_at                    :datetime         not null
+#  updated_at                    :datetime         not null
+#  parent_id                     :bigint
+#  patient_id                    :bigint           not null
+#  programme_id                  :bigint           not null
+#  recorded_by_user_id           :bigint
+#  team_id                       :bigint           not null
 #
 # Indexes
 #
-#  index_consents_on_organisation_id      (organisation_id)
+#  index_consents_on_academic_year        (academic_year)
 #  index_consents_on_parent_id            (parent_id)
 #  index_consents_on_patient_id           (patient_id)
 #  index_consents_on_programme_id         (programme_id)
 #  index_consents_on_recorded_by_user_id  (recorded_by_user_id)
+#  index_consents_on_team_id              (team_id)
 #
 # Foreign Keys
 #
-#  fk_rails_...  (organisation_id => organisations.id)
 #  fk_rails_...  (parent_id => parents.id)
 #  fk_rails_...  (patient_id => patients.id)
 #  fk_rails_...  (programme_id => programmes.id)
 #  fk_rails_...  (recorded_by_user_id => users.id)
+#  fk_rails_...  (team_id => teams.id)
 #
 
 class Consent < ApplicationRecord
-  include Invalidatable
+  include GelatineVaccinesConcern
   include HasHealthAnswers
+  include HasVaccineMethods
+  include Invalidatable
 
   audited associated_with: :patient
 
   belongs_to :patient
   belongs_to :programme
-  belongs_to :organisation
+  belongs_to :team
 
   has_one :consent_form
   belongs_to :parent, optional: true
@@ -55,6 +61,8 @@ class Consent < ApplicationRecord
              class_name: "User",
              optional: true,
              foreign_key: :recorded_by_user_id
+
+  has_many :vaccines, through: :programme
 
   scope :withdrawn, -> { where.not(withdrawn_at: nil) }
   scope :not_withdrawn, -> { where(withdrawn_at: nil) }
@@ -99,6 +107,8 @@ class Consent < ApplicationRecord
             presence: true,
             unless: -> { via_self_consent? || via_website? }
 
+  validates :vaccine_methods, presence: true, if: :response_given?
+
   def self.verbal_routes = routes.except("website", "self_consent")
 
   def name
@@ -127,28 +137,16 @@ class Consent < ApplicationRecord
     invalidated_at || withdrawn_at || submitted_at
   end
 
-  def triage_needed?
-    response_given? && health_answers_require_follow_up?
+  def requires_triage?
+    response_given? && health_answers_require_triage?
   end
 
   def parent_relationship
-    patient.parent_relationships.find { _1.parent_id == parent_id }
-  end
-
-  def health_answers_require_follow_up?
-    health_answers.any? { |question| question.response&.downcase == "yes" }
+    patient.parent_relationships.find { it.parent_id == parent_id }
   end
 
   def matched_manually?
     !consent_form.nil? && !recorded_by_user_id.nil?
-  end
-
-  def reasons_triage_needed
-    reasons = []
-    if health_answers_require_follow_up?
-      reasons << "Health questions need triage"
-    end
-    reasons
   end
 
   def self.from_consent_form!(consent_form, patient:, current_user:)
@@ -158,48 +156,60 @@ class Consent < ApplicationRecord
       parent =
         consent_form.find_or_create_parent_with_relationship_to!(patient:)
 
-      consent_given =
-        consent_form.chosen_programmes.map do |programme|
-          patient.consents.create!(
-            consent_form:,
-            organisation: consent_form.organisation,
-            programme:,
-            parent:,
-            notes: "",
-            response: "given",
-            route: "website",
-            health_answers: consent_form.health_answers,
-            recorded_by: current_user,
-            submitted_at: consent_form.recorded_at
-          )
-        end
+      consents =
+        consent_form
+          .consent_form_programmes
+          .includes(:programme)
+          .map do |consent_form_programme|
+            notes =
+              if consent_form_programme.response_given?
+                ""
+              else
+                consent_form.reason_notes.presence || ""
+              end
+            reason_for_refusal =
+              if consent_form_programme.response_given?
+                nil
+              else
+                consent_form.reason
+              end
 
-      consent_refused =
-        consent_form.not_chosen_programmes.map do |programme|
-          patient.consents.create!(
-            consent_form:,
-            organisation: consent_form.organisation,
-            programme:,
-            parent:,
-            reason_for_refusal: consent_form.reason,
-            notes: consent_form.reason_notes.presence || "",
-            response: "refused",
-            route: "website",
-            health_answers: consent_form.health_answers,
-            recorded_by: current_user,
-            submitted_at: consent_form.recorded_at
-          )
-        end
+            patient.consents.create!(
+              consent_form:,
+              health_answers: consent_form.health_answers,
+              notes:,
+              team: consent_form.team,
+              parent:,
+              programme: consent_form_programme.programme,
+              reason_for_refusal:,
+              recorded_by: current_user,
+              response: consent_form_programme.response,
+              route: "website",
+              submitted_at: consent_form.recorded_at,
+              vaccine_methods: consent_form_programme.vaccine_methods,
+              academic_year: consent_form.academic_year
+            )
+          end
 
       StatusUpdater.call(patient:)
 
-      consent_given + consent_refused
+      consents
     end
   end
 
+  REASON_FOR_REFUSAL_REQUIRES_NOTES = %w[
+    other
+    will_be_vaccinated_elsewhere
+    medical_reasons
+    already_vaccinated
+  ].freeze
+
   def notes_required?
     withdrawn? || invalidated? ||
-      (response_refused? && !reason_for_refusal_personal_choice?)
+      (
+        response_refused? &&
+          reason_for_refusal.in?(REASON_FOR_REFUSAL_REQUIRES_NOTES)
+      )
   end
 
   class ConsentFormNotRecorded < StandardError

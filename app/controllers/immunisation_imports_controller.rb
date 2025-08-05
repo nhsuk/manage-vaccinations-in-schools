@@ -8,14 +8,13 @@ class ImmunisationImportsController < ApplicationController
   skip_after_action :verify_policy_scoped, only: %i[new create]
 
   def new
-    @immunisation_import =
-      ImmunisationImport.new(organisation: current_user.selected_organisation)
+    @immunisation_import = ImmunisationImport.new(team: current_team)
   end
 
   def create
     @immunisation_import =
       ImmunisationImport.new(
-        organisation: current_user.selected_organisation,
+        team: current_team,
         uploaded_by: current_user,
         **immunisation_import_params
       )

@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 describe "Parental consent given with an inexact automatic match" do
+  around { |example| travel_to(Date.new(2025, 7, 31)) { example.run } }
+
   scenario "Consent form matches the cohort on three of four fields" do
     stub_pds_search_to_return_no_patients
 
@@ -14,14 +16,13 @@ describe "Parental consent given with an inexact automatic match" do
 
   def given_an_hpv_programme_is_underway
     @programme = create(:programme, :hpv)
-    @organisation =
-      create(:organisation, :with_one_nurse, programmes: [@programme])
-    location = create(:school, name: "Pilot School")
+    @team = create(:team, :with_one_nurse, programmes: [@programme])
+    location = create(:school, name: "Pilot School", team: @team)
     @session =
       create(
         :session,
         :scheduled,
-        organisation: @organisation,
+        team: @team,
         programmes: [@programme],
         location:
       )
@@ -91,11 +92,11 @@ describe "Parental consent given with an inexact automatic match" do
   def and_the_nurse_checks_the_consent_responses
     perform_enqueued_jobs
 
-    sign_in @organisation.users.first
+    sign_in @team.users.first
     visit "/dashboard"
 
     click_on "Programmes", match: :first
-    click_on "HPV"
+    click_on "HPV", match: :first
     within ".app-secondary-navigation" do
       click_on "Sessions"
     end
@@ -106,7 +107,7 @@ describe "Parental consent given with an inexact automatic match" do
   def then_they_see_that_the_child_has_consent
     expect(page).to have_content("Consent given")
 
-    choose "Consent given"
+    check "Consent given"
     click_on "Update results"
 
     expect(page).to have_content(@child.full_name)

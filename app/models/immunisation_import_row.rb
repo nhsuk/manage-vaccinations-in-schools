@@ -83,11 +83,11 @@ class ImmunisationImportRow
   SCHOOL_URN_HOME_EDUCATED = "999999"
   SCHOOL_URN_UNKNOWN = "888888"
 
-  attr_reader :organisation
+  attr_reader :team
 
-  def initialize(data:, organisation:)
+  def initialize(data:, team:)
     @data = data
-    @organisation = organisation
+    @team = team
   end
 
   def to_vaccination_record
@@ -100,11 +100,12 @@ class ImmunisationImportRow
       full_dose: true,
       location_name:,
       outcome:,
-      patient:,
+      patient_id: patient.id,
       performed_at:,
       performed_by_user:,
       performed_ods_code: performed_ods_code&.to_s,
       programme:,
+      protocol: "pgd",
       session:
     }
 
@@ -115,33 +116,35 @@ class ImmunisationImportRow
       )
     end
 
+    attributes.merge!(notify_parents: true) if session
+
+    attributes_to_stage_if_already_exists = {
+      batch_id: batch&.id,
+      delivery_method: delivery_method_value,
+      delivery_site: delivery_site_value,
+      notes: notes&.to_s,
+      vaccine_id: vaccine&.id
+    }
+
     vaccination_record =
       if uuid.present?
         VaccinationRecord
-          .joins(:organisation)
-          .find_by!(organisations: { id: organisation.id }, uuid: uuid.to_s)
-          .tap { _1.assign_attributes(attributes) }
+          .joins(:team)
+          .find_by!(teams: { id: team.id }, uuid: uuid.to_s)
+          .tap { it.stage_changes(attributes) }
       else
         VaccinationRecord.find_or_initialize_by(attributes)
       end
 
     if vaccination_record.persisted?
-      vaccination_record.stage_changes(
-        batch_id: batch&.id,
-        delivery_method: delivery_method_value,
-        delivery_site: delivery_site_value,
-        notes: notes&.to_s,
-        vaccine_id: vaccine&.id
-      )
+      vaccination_record.stage_changes(attributes_to_stage_if_already_exists)
     else
       # Postgres UUID generation is skipped in bulk import
       vaccination_record.uuid = SecureRandom.uuid
 
-      vaccination_record.batch = batch
-      vaccination_record.delivery_method = delivery_method_value
-      vaccination_record.delivery_site = delivery_site_value
-      vaccination_record.notes = notes&.to_s
-      vaccination_record.vaccine = vaccine
+      vaccination_record.assign_attributes(
+        attributes_to_stage_if_already_exists
+      )
     end
 
     vaccination_record
@@ -226,7 +229,7 @@ class ImmunisationImportRow
     if is_school_setting? || (is_unknown_setting? && clinic_name.blank?)
       school&.name || school_name&.to_s || "Unknown"
     else
-      clinic_name&.to_s || "Unknown"
+      clinic&.name || clinic_name&.to_s || "Unknown"
     end
   end
 
@@ -266,6 +269,16 @@ class ImmunisationImportRow
       end
   end
 
+  def clinic
+    @clinic ||=
+      if clinic_name.present?
+        team.community_clinics.find_by(
+          "LOWER(locations.name) = ?",
+          clinic_name.to_s.downcase
+        )
+      end
+  end
+
   def programme
     @programme ||=
       begin
@@ -280,9 +293,9 @@ class ImmunisationImportRow
   def session
     @session ||=
       if (id = session_id&.to_i)
-        organisation
+        team
           .sessions
-          .for_current_academic_year
+          .where(academic_year: AcademicYear.current)
           .includes(:location, :programmes, :session_dates)
           .find_by(id:)
       end
@@ -295,10 +308,7 @@ class ImmunisationImportRow
 
   def vaccine
     @vaccine ||=
-      organisation
-        .vaccines
-        .includes(:programme)
-        .find_by(nivs_name: vaccine_nivs_name)
+      team.vaccines.includes(:programme).find_by(nivs_name: vaccine_nivs_name)
   end
 
   def batch
@@ -309,7 +319,7 @@ class ImmunisationImportRow
         Batch.create_with(archived_at: Time.current).find_or_create_by!(
           expiry: batch_expiry&.to_date,
           name: batch_name.to_s,
-          organisation:,
+          team:,
           vaccine:
         )
       end
@@ -317,7 +327,7 @@ class ImmunisationImportRow
 
   def programmes_by_name
     @programmes_by_name ||=
-      (session || organisation)
+      (session || team)
         .programmes
         .each_with_object({}) do |programme, hash|
           programme.import_names.each { |name| hash[name] = programme }
@@ -527,9 +537,8 @@ class ImmunisationImportRow
           clinic_name.header,
           "is greater than #{MAX_FIELD_LENGTH} characters long"
         )
-      elsif clinic_name_required &&
-            !organisation.community_clinics.exists?(name: clinic_name.to_s)
-        errors.add(clinic_name.header, "Enter a clinic name")
+      elsif clinic_name_required && clinic.nil?
+        errors.add(clinic_name.header, "is not recognised")
       end
     elsif clinic_name_required
       if clinic_name.nil?
@@ -538,7 +547,7 @@ class ImmunisationImportRow
           "<code>CLINIC_NAME</code> or <code>Event done at</code> is required"
         )
       elsif clinic_name.blank?
-        errors.add(clinic_name.header, "Enter a clinic name")
+        errors.add(clinic_name.header, "is required")
       end
     end
   end
@@ -569,6 +578,14 @@ class ImmunisationImportRow
             "The vaccination date is before the date of birth."
           )
         end
+      end
+
+      if programme&.flu? &&
+           date_of_vaccination.to_date.academic_year != AcademicYear.current
+        errors.add(
+          date_of_vaccination.header,
+          "must be in the current academic year"
+        )
       end
 
       if offline_recording? && session &&
@@ -775,24 +792,6 @@ class ImmunisationImportRow
       if performed_by_user.nil?
         errors.add(performed_by_email.header, "Enter a valid email address")
       end
-    elsif programme&.flu? # no validation required for HPV
-      if performed_by_given_name.nil?
-        errors.add(
-          :base,
-          "<code>PERFORMING_PROFESSIONAL_FORENAME</code> is required"
-        )
-      elsif performed_by_given_name.blank?
-        errors.add(performed_by_given_name.header, "Enter a first name.")
-      end
-
-      if performed_by_family_name.nil?
-        errors.add(
-          :base,
-          "<code>PERFORMING_PROFESSIONAL_SURNAME</code> is required"
-        )
-      elsif performed_by_family_name.blank?
-        errors.add(performed_by_family_name.header, "Enter a last name.")
-      end
     end
   end
 
@@ -801,11 +800,11 @@ class ImmunisationImportRow
       if performed_ods_code.nil?
         errors.add(:base, "<code>ORGANISATION_CODE</code> is required")
       elsif performed_ods_code.blank?
-        errors.add(performed_ods_code.header, "Enter an organisation code.")
-      elsif performed_ods_code.to_s != organisation.ods_code
+        errors.add(performed_ods_code.header, "Enter a team code.")
+      elsif performed_ods_code.to_s != team.ods_code
         errors.add(
           performed_ods_code.header,
-          "Enter an organisation code that matches the current organisation."
+          "Enter a team code that matches the current team."
         )
       end
     end
@@ -877,7 +876,7 @@ class ImmunisationImportRow
       errors.add(
         school_urn.header,
         "The school URN is not recognised. If you’ve checked the URN, " \
-          "and you believe it’s valid, contact our support organisation."
+          "and you believe it’s valid, contact our support team."
       )
     end
   end
@@ -889,16 +888,14 @@ class ImmunisationImportRow
           session_id.header,
           "The session ID is not recognised. Download the offline spreadsheet " \
             "and copy the session ID for this row from there, or " \
-            "contact our support organisation."
+            "contact our support team."
         )
-      elsif !organisation.sessions.for_current_academic_year.exists?(
-            id: session_id.to_i
-          )
+      elsif session.nil?
         errors.add(
           session_id.header,
           "The session ID is not recognised. Download the offline spreadsheet " \
             "and copy the session ID for this row from there, or " \
-            "contact our support organisation."
+            "contact our support team."
         )
       end
     end
@@ -923,9 +920,9 @@ class ImmunisationImportRow
     return if uuid.blank?
 
     scope =
-      VaccinationRecord.joins(:organisation).where(
-        organisations: {
-          id: organisation.id
+      VaccinationRecord.joins(:team).where(
+        teams: {
+          id: team.id
         },
         uuid: uuid.to_s
       )
@@ -940,7 +937,7 @@ class ImmunisationImportRow
       if programme && vaccine.programme_id != programme.id
         errors.add(
           field.header,
-          "is not given in the #{programme.name} programme"
+          "is not given in the #{programme.name_in_sentence} programme"
         )
       end
     elsif vaccine_nivs_name.present?

@@ -15,13 +15,18 @@ class AppSessionDetailsSummaryComponent < ViewComponent::Base
 
   attr_reader :session
 
-  delegate :patient_sessions, to: :session
-
   delegate :programmes, to: :session
+
+  def patient_sessions
+    session
+      .patient_sessions
+      .joins(:patient, :session)
+      .appear_in_programmes(programmes)
+  end
 
   def cohort_row
     count = patient_sessions.count
-    href = new_draft_class_import_path(session)
+    href = import_session_path(session)
 
     {
       key: {
@@ -40,8 +45,7 @@ class AppSessionDetailsSummaryComponent < ViewComponent::Base
     count =
       patient_sessions.has_consent_status(status, programme: programmes).count
 
-    href =
-      session_consent_path(session, search_form: { consent_status: status })
+    href = session_consent_path(session, consent_statuses: [status])
 
     {
       key: {
@@ -50,7 +54,9 @@ class AppSessionDetailsSummaryComponent < ViewComponent::Base
       value: {
         text: I18n.t("children", count:)
       },
-      actions: [{ text: "Review", href: }]
+      actions: [
+        { text: "Review", visually_hidden_text: "consent refused", href: }
+      ]
     }
   end
 
@@ -60,16 +66,10 @@ class AppSessionDetailsSummaryComponent < ViewComponent::Base
         count =
           patient_sessions.has_session_status(:vaccinated, programme:).count
 
-        "#{I18n.t("vaccinations_given", count:)} for #{programme.name}"
+        "#{I18n.t("vaccinations_given", count:)} for #{programme.name_in_sentence}"
       end
 
-    href =
-      session_outcome_path(
-        session,
-        search_form: {
-          session_status: "vaccinated"
-        }
-      )
+    href = session_outcome_path(session, session_status: "vaccinated")
 
     {
       key: {
@@ -78,7 +78,7 @@ class AppSessionDetailsSummaryComponent < ViewComponent::Base
       value: {
         text: safe_join(texts, tag.br)
       },
-      actions: [{ text: "Review", href: }]
+      actions: [{ text: "Review", visually_hidden_text: "vaccinated", href: }]
     }
   end
 end

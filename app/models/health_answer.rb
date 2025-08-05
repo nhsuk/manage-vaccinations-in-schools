@@ -9,12 +9,14 @@ class HealthAnswer
                 :notes,
                 :hint,
                 :next_question,
-                :follow_up_question
-
-  validates :notes, length: { maximum: 1000 }
+                :follow_up_question,
+                :would_require_triage,
+                :give_details_hint
 
   validates :response, inclusion: { in: %w[yes no] }
-  validates :notes, presence: true, if: -> { response == "yes" }
+
+  validates :notes, presence: true, if: -> { requires_notes? && response_yes? }
+  validates :notes, length: { maximum: 1000 }
 
   def attributes
     %i[
@@ -25,21 +27,30 @@ class HealthAnswer
       hint
       next_question
       follow_up_question
+      would_require_triage
+      give_details_hint
     ].index_with { |attr| send(attr) }
   end
 
   def next_health_answer_index
-    if response == "no"
-      next_question
-    else
-      follow_up_question || next_question
-    end
+    response_no? ? next_question : follow_up_question || next_question
   end
 
   def assign_attributes(attrs)
     attrs = attrs.except("notes") if attrs["response"] == "no"
     super(attrs)
   end
+
+  def would_require_triage?
+    # `nil` to support historical health answers without this attribute
+    [nil, true].include?(would_require_triage)
+  end
+
+  def requires_notes? = follow_up_question.nil?
+
+  def response_yes? = response == "yes"
+
+  def response_no? = response == "no"
 
   def self.from_health_questions(health_questions)
     hq_id_map = Hash[health_questions.map.with_index { |hq, i| [hq.id, i] }]
@@ -52,7 +63,9 @@ class HealthAnswer
         notes: nil,
         hint: hq.hint,
         next_question: hq_id_map[hq.next_question_id],
-        follow_up_question: hq_id_map[hq.follow_up_question_id]
+        follow_up_question: hq_id_map[hq.follow_up_question_id],
+        would_require_triage: hq.would_require_triage,
+        give_details_hint: hq.give_details_hint
       )
     end
   end

@@ -4,31 +4,32 @@
 #
 # Table name: patients
 #
-#  id                        :bigint           not null, primary key
-#  address_line_1            :string
-#  address_line_2            :string
-#  address_postcode          :string
-#  address_town              :string
-#  birth_academic_year       :integer          not null
-#  date_of_birth             :date             not null
-#  date_of_death             :date
-#  date_of_death_recorded_at :datetime
-#  family_name               :string           not null
-#  gender_code               :integer          default("not_known"), not null
-#  given_name                :string           not null
-#  home_educated             :boolean
-#  invalidated_at            :datetime
-#  nhs_number                :string
-#  pending_changes           :jsonb            not null
-#  preferred_family_name     :string
-#  preferred_given_name      :string
-#  registration              :string
-#  restricted_at             :datetime
-#  updated_from_pds_at       :datetime
-#  created_at                :datetime         not null
-#  updated_at                :datetime         not null
-#  gp_practice_id            :bigint
-#  school_id                 :bigint
+#  id                         :bigint           not null, primary key
+#  address_line_1             :string
+#  address_line_2             :string
+#  address_postcode           :string
+#  address_town               :string
+#  birth_academic_year        :integer          not null
+#  date_of_birth              :date             not null
+#  date_of_death              :date
+#  date_of_death_recorded_at  :datetime
+#  family_name                :string           not null
+#  gender_code                :integer          default("not_known"), not null
+#  given_name                 :string           not null
+#  home_educated              :boolean
+#  invalidated_at             :datetime
+#  nhs_number                 :string
+#  pending_changes            :jsonb            not null
+#  preferred_family_name      :string
+#  preferred_given_name       :string
+#  registration               :string
+#  registration_academic_year :integer
+#  restricted_at              :datetime
+#  updated_from_pds_at        :datetime
+#  created_at                 :datetime         not null
+#  updated_at                 :datetime         not null
+#  gp_practice_id             :bigint
+#  school_id                  :bigint
 #
 # Indexes
 #
@@ -62,6 +63,7 @@ class Patient < ApplicationRecord
   has_many :consent_notifications
   has_many :consent_statuses
   has_many :consents
+  has_many :notes
   has_many :notify_log_entries
   has_many :parent_relationships, -> { order(:created_at) }
   has_many :patient_sessions
@@ -75,13 +77,14 @@ class Patient < ApplicationRecord
 
   has_many :gillick_assessments, through: :patient_sessions
   has_many :parents, through: :parent_relationships
+  has_many :patient_specific_directions
   has_many :pre_screenings, through: :patient_sessions
   has_many :session_attendances, through: :patient_sessions
   has_many :sessions, through: :patient_sessions
-  has_many :organisations, through: :sessions
+  has_many :teams, -> { distinct }, through: :sessions
 
-  has_many :sessions_for_current_academic_year,
-           -> { for_current_academic_year },
+  has_many :pending_sessions,
+           -> { where(academic_year: AcademicYear.pending) },
            through: :patient_sessions,
            source: :session
 
@@ -103,11 +106,16 @@ class Patient < ApplicationRecord
 
   scope :with_notice, -> { deceased.or(restricted).or(invalidated) }
 
-  scope :in_programmes,
-        ->(programmes) do
+  scope :appear_in_programmes,
+        ->(programmes, academic_year:) do
           where(
-            birth_academic_year:
-              programmes.flat_map(&:birth_academic_years).sort.uniq
+            PatientSession
+              .joins(:session)
+              .where(sessions: { academic_year: })
+              .where("patient_id = patients.id")
+              .appear_in_programmes(programmes)
+              .arel
+              .exists
           )
         end
 
@@ -137,8 +145,11 @@ class Patient < ApplicationRecord
         end
 
   scope :search_by_year_groups,
-        ->(year_groups) do
-          where(birth_academic_year: year_groups.map(&:to_birth_academic_year))
+        ->(year_groups, academic_year:) do
+          where(
+            birth_academic_year:
+              year_groups.map { it.to_birth_academic_year(academic_year:) }
+          )
         end
 
   scope :search_by_date_of_birth_year,
@@ -153,11 +164,33 @@ class Patient < ApplicationRecord
   scope :search_by_nhs_number, ->(nhs_number) { where(nhs_number:) }
 
   scope :has_vaccination_status,
-        ->(status, programme:) do
+        ->(status, programme:, academic_year:) do
           where(
             Patient::VaccinationStatus
               .where("patient_id = patients.id")
-              .where(status:, programme:)
+              .where(status:, programme:, academic_year:)
+              .arel
+              .exists
+          )
+        end
+
+  scope :has_consent_status,
+        ->(status, programme:, academic_year:) do
+          where(
+            Patient::ConsentStatus
+              .where("patient_id = patients.id")
+              .where(status:, programme:, academic_year:)
+              .arel
+              .exists
+          )
+        end
+
+  scope :has_triage_status,
+        ->(status, programme:, academic_year:) do
+          where(
+            Patient::TriageStatus
+              .where("patient_id = patients.id")
+              .where(status:, programme:, academic_year:)
               .arel
               .exists
           )
@@ -188,7 +221,10 @@ class Patient < ApplicationRecord
                it.blank? ? nil : it.normalise_whitespace.gsub(/\s/, "")
              end
 
+  after_update :sync_vaccinations_to_nhs_immunisations_api
   before_destroy :destroy_childless_parents
+
+  delegate :fhir_record, to: :fhir_mapper
 
   def self.match_existing(
     nhs_number:,
@@ -259,39 +295,58 @@ class Patient < ApplicationRecord
     results
   end
 
-  def year_group
-    birth_academic_year.to_year_group
+  def year_group(academic_year: nil)
+    academic_year ||= AcademicYear.current
+    birth_academic_year.to_year_group(academic_year:)
   end
 
   def year_group_changed?
     birth_academic_year_changed?
   end
 
-  def consent_status(programme:)
-    consent_statuses.find { it.programme_id == programme.id } ||
-      consent_statuses.build(programme:)
+  def consent_status(programme:, academic_year:)
+    patient_status(consent_statuses, programme:, academic_year:)
   end
 
-  def triage_status(programme: nil, programme_id: nil)
-    programme_id ||= programme.id
-    triage_statuses.find { it.programme_id == programme_id } ||
-      triage_statuses.build(programme_id:)
+  def triage_status(programme:, academic_year:)
+    patient_status(triage_statuses, programme:, academic_year:)
   end
 
-  def vaccination_status(programme:)
-    vaccination_statuses.find { it.programme_id == programme.id } ||
-      vaccination_statuses.build(programme:)
+  def vaccination_status(programme:, academic_year:)
+    patient_status(vaccination_statuses, programme:, academic_year:)
   end
 
-  def consent_given_and_safe_to_vaccinate?(programme:)
-    return false if vaccination_status(programme:).vaccinated?
+  def consent_given_and_safe_to_vaccinate?(
+    programme:,
+    academic_year:,
+    vaccine_method: nil
+  )
+    return false if vaccination_status(programme:, academic_year:).vaccinated?
 
-    consent_status(programme:).given? &&
-      (
-        triage_status(programme:).safe_to_vaccinate? ||
-          triage_status(programme:).delay_vaccination? ||
-          triage_status(programme:).not_required?
-      )
+    return false unless consent_status(programme:, academic_year:).given?
+
+    unless triage_status(programme:, academic_year:).safe_to_vaccinate? ||
+             triage_status(programme:, academic_year:).not_required?
+      return false
+    end
+
+    if vaccine_method &&
+         approved_vaccine_methods(programme:, academic_year:).first !=
+           vaccine_method
+      return false
+    end
+
+    true
+  end
+
+  def approved_vaccine_methods(programme:, academic_year:)
+    triage_status = triage_status(programme:, academic_year:)
+
+    if triage_status.not_required?
+      consent_status(programme:, academic_year:).vaccine_methods
+    else
+      [triage_status.vaccine_method].compact
+    end
   end
 
   def deceased?
@@ -315,11 +370,11 @@ class Patient < ApplicationRecord
       self.date_of_death = pds_patient.date_of_death
 
       if date_of_death_changed?
-        clear_sessions_for_current_academic_year! unless date_of_death.nil?
+        clear_pending_sessions! unless date_of_death.nil?
         self.date_of_death_recorded_at = Time.current
       end
 
-      # If we've got a response from DPS we know the patient is valid,
+      # If we've got a response from PDS we know the patient is valid,
       # otherwise PDS will return a 404 status.
       self.invalidated_at = nil if invalidated?
 
@@ -348,25 +403,26 @@ class Patient < ApplicationRecord
   def invalidate!
     return if invalidated?
 
-    update_column(:invalidated_at, Time.current)
+    update!(invalidated_at: Time.current)
   end
 
-  def not_in_organisation? = patient_sessions.empty?
+  def not_in_team? = patient_sessions.empty?
 
   def dup_for_pending_changes
     dup.tap do |new_patient|
       new_patient.nhs_number = nil
 
-      sessions_for_current_academic_year.each do |session|
+      pending_sessions.each do |session|
         new_patient.patient_sessions.build(session:)
       end
 
       school_moves.each do |school_move|
         new_patient.school_moves.build(
+          academic_year: school_move.academic_year,
           home_educated: school_move.home_educated,
+          school_id: school_move.school_id,
           source: school_move.source,
-          organisation_id: school_move.organisation_id,
-          school_id: school_move.school_id
+          team_id: school_move.team_id
         )
       end
     end
@@ -398,6 +454,12 @@ class Patient < ApplicationRecord
 
   private
 
+  def patient_status(association, programme:, academic_year:)
+    association.find do
+      it.programme_id == programme.id && it.academic_year == academic_year
+    end || association.build(programme:, academic_year:)
+  end
+
   def gp_practice_is_correct_type
     location = gp_practice
     if location && !location.gp_practice?
@@ -416,9 +478,17 @@ class Patient < ApplicationRecord
     end
   end
 
-  def clear_sessions_for_current_academic_year!
-    patient_sessions.where(
-      session: sessions_for_current_academic_year
-    ).destroy_all_if_safe
+  def clear_pending_sessions!
+    patient_sessions.where(session: pending_sessions).destroy_all_if_safe
+  end
+
+  def fhir_mapper = @fhir_mapper ||= FHIRMapper::Patient.new(self)
+
+  def sync_vaccinations_to_nhs_immunisations_api
+    if nhs_number_previously_changed?
+      vaccination_records.syncable_to_nhs_immunisations_api.find_each(
+        &:sync_to_nhs_immunisations_api
+      )
+    end
   end
 end

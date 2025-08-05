@@ -7,19 +7,24 @@ module VaccinationMailerConcern
     parents = parents_for_vaccination_mailer(vaccination_record)
     return if parents.empty?
 
-    programme_type = vaccination_record.programme.type
-
     template_name =
       if vaccination_record.administered?
-        :"vaccination_administered_#{programme_type}"
+        :vaccination_administered
       else
         :vaccination_not_administered
+      end
+
+    email_template_name =
+      if vaccination_record.administered?
+        :"#{template_name}_#{vaccination_record.programme.type}"
+      else
+        template_name
       end
 
     parents.each do |parent|
       params = { parent:, vaccination_record:, sent_by: try(:current_user) }
 
-      EmailDeliveryJob.perform_later(template_name, **params)
+      EmailDeliveryJob.perform_later(email_template_name, **params)
 
       if parent.phone_receive_updates
         SMSDeliveryJob.perform_later(template_name, **params)
@@ -45,14 +50,19 @@ module VaccinationMailerConcern
 
   def parents_for_vaccination_mailer(vaccination_record)
     patient = vaccination_record.patient
-    return [] unless patient.send_notifications?
+    unless patient.send_notifications? && vaccination_record.notify_parents
+      return []
+    end
 
-    programme = vaccination_record.programme
-    consents = ConsentGrouper.call(patient.consents, programme:)
+    programme_id = vaccination_record.programme_id
+    academic_year = vaccination_record.academic_year
+
+    consents =
+      ConsentGrouper.call(patient.consents, programme_id:, academic_year:)
 
     parents =
       if consents.any?(&:via_self_consent?)
-        consents.any?(&:notify_parents) ? patient.parents : []
+        patient.parents
       else
         consents.select(&:response_given?).filter_map(&:parent)
       end

@@ -2,7 +2,9 @@
 
 class GovukNotifyPersonalisation
   include Rails.application.routes.url_helpers
+
   include PhoneHelper
+  include VaccinationRecordsHelper
 
   def initialize(
     consent: nil,
@@ -13,6 +15,9 @@ class GovukNotifyPersonalisation
     session: nil,
     vaccination_record: nil
   )
+    @academic_year =
+      consent&.academic_year || consent_form&.academic_year ||
+        session&.academic_year || vaccination_record&.academic_year
     @consent = consent
     @consent_form = consent_form
     @parent = parent || consent&.parent
@@ -23,10 +28,11 @@ class GovukNotifyPersonalisation
     @session =
       session || consent_form&.actual_session ||
         consent_form&.original_session || vaccination_record&.session
-    @organisation =
-      session&.organisation || consent_form&.organisation ||
-        consent&.organisation || vaccination_record&.organisation
-    @team = session&.team || consent_form&.team || vaccination_record&.team
+    @team =
+      session&.team || consent_form&.team || consent&.team ||
+        vaccination_record&.team
+    @subteam =
+      session&.subteam || consent_form&.subteam || vaccination_record&.subteam
     @vaccination_record = vaccination_record
   end
 
@@ -36,8 +42,10 @@ class GovukNotifyPersonalisation
       catch_up:,
       consent_deadline:,
       consent_link:,
+      consented_vaccine_methods_message:,
       day_month_year_of_vaccination:,
       full_and_preferred_patient_name:,
+      has_multiple_dates:,
       location_name:,
       next_or_today_session_date:,
       next_or_today_session_dates:,
@@ -46,59 +54,59 @@ class GovukNotifyPersonalisation
       next_session_dates:,
       next_session_dates_or:,
       not_catch_up:,
-      organisation_privacy_notice_url:,
-      organisation_privacy_policy_url:,
+      organisation_privacy_notice_url: team_privacy_notice_url,
+      organisation_privacy_policy_url: team_privacy_policy_url,
       outcome_administered:,
       outcome_not_administered:,
       patient_date_of_birth:,
-      programme_name:,
       reason_did_not_vaccinate:,
       reason_for_refusal:,
       short_patient_name:,
       short_patient_name_apos:,
       show_additional_instructions:,
       subsequent_session_dates_offered_message:,
+      subteam_email:,
+      subteam_name:,
+      subteam_phone:,
       survey_deadline_date:,
-      team_email:,
-      team_name:,
-      team_phone:,
+      talk_to_your_child_message:,
+      team_privacy_notice_url:,
+      team_privacy_policy_url:,
       today_or_date_of_vaccination:,
-      vaccination:
+      vaccination:,
+      vaccination_and_method:,
+      vaccine:,
+      vaccine_and_method:,
+      vaccine_brand:,
+      vaccine_is_injection:,
+      vaccine_is_nasal:,
+      vaccine_side_effects:
     }.compact
   end
 
-  attr_reader :consent,
+  attr_reader :academic_year,
+              :consent,
               :consent_form,
               :parent,
               :patient,
               :programmes,
               :session,
+              :subteam,
               :team,
-              :organisation,
               :vaccination_record
-
-  private
 
   def batch_name
     vaccination_record&.batch&.name
   end
 
   def catch_up
-    return nil if patient.nil? || programmes.empty?
-    if patient.year_group == programmes.flat_map(&:year_groups).sort.uniq.first
-      "no"
-    else
-      "yes"
-    end
+    return nil if patient.nil? || administered_year_groups.empty?
+    patient.year_group == administered_year_groups.first ? "no" : "yes"
   end
 
   def not_catch_up
-    return nil if patient.nil? || programmes.empty?
-    if patient.year_group == programmes.flat_map(&:year_groups).sort.uniq.first
-      "yes"
-    else
-      "no"
-    end
+    return nil if patient.nil? || administered_year_groups.empty?
+    patient.year_group == administered_year_groups.first ? "yes" : "no"
   end
 
   def consent_deadline
@@ -119,12 +127,41 @@ class GovukNotifyPersonalisation
       )
   end
 
+  def consented_vaccine_methods_message
+    return nil if consent.nil? && consent_form.nil?
+
+    if (consent && !consent.programme.flu?) ||
+         (consent_form && consent_form.programmes.none?(&:flu?))
+      return ""
+    end
+
+    consent_form_programmes =
+      consent ? [consent] : consent_form.consent_form_programmes
+
+    consented_vaccine_methods =
+      if consent_form_programmes.any?(&:vaccine_method_injection_and_nasal?)
+        "nasal spray flu vaccine, or the injected flu vaccine if the nasal spray is not suitable"
+      elsif consent_form_programmes.any?(&:vaccine_method_nasal?)
+        "nasal spray flu vaccine"
+      else
+        "injected flu vaccine"
+      end
+
+    "You’ve agreed that #{short_patient_name} can have the #{consented_vaccine_methods}."
+  end
+
   def day_month_year_of_vaccination
     vaccination_record&.performed_at&.to_date&.to_fs(:uk_short)
   end
 
   def full_and_preferred_patient_name
     (consent_form || patient).full_name_with_known_as(context: :parents)
+  end
+
+  def has_multiple_dates
+    return nil if session.nil?
+
+    session.future_dates.length > 1 ? "yes" : "no"
   end
 
   def host
@@ -136,7 +173,11 @@ class GovukNotifyPersonalisation
   end
 
   def location_name
-    session.location.name
+    if vaccination_record
+      vaccination_record_location(vaccination_record)
+    else
+      session.location.name
+    end
   end
 
   def next_or_today_session_date
@@ -172,14 +213,6 @@ class GovukNotifyPersonalisation
       .to_sentence(last_word_connector: ", or ", two_words_connector: " or ")
   end
 
-  def organisation_privacy_notice_url
-    organisation.privacy_notice_url
-  end
-
-  def organisation_privacy_policy_url
-    organisation.privacy_policy_url
-  end
-
   def outcome_administered
     return if vaccination_record.nil?
     vaccination_record.administered? ? "yes" : "no"
@@ -192,10 +225,6 @@ class GovukNotifyPersonalisation
 
   def patient_date_of_birth
     patient&.date_of_birth&.to_fs(:long)
-  end
-
-  def programme_name
-    programmes.map(&:name).to_sentence
   end
 
   def reason_did_not_vaccinate
@@ -245,6 +274,18 @@ class GovukNotifyPersonalisation
     }."
   end
 
+  def subteam_email
+    (subteam || team).email
+  end
+
+  def subteam_name
+    (subteam || team).name
+  end
+
+  def subteam_phone
+    format_phone_with_instructions(subteam || team)
+  end
+
   def survey_deadline_date
     recorded_at = consent_form&.recorded_at || consent&.created_at
     return if recorded_at.nil?
@@ -252,17 +293,21 @@ class GovukNotifyPersonalisation
     (recorded_at + 7.days).to_date.to_fs(:long)
   end
 
-  def team_email
-    (team || organisation).email
+  def talk_to_your_child_message
+    return nil if patient.nil?
+    return "" if patient.year_group <= 6
+
+    [
+      "## Talk to your child about what they want",
+      "We suggest you talk to your child about the vaccine before you respond to us.",
+      "Young people have the right to refuse vaccinations. " \
+        "Those who show [‘Gillick competence’](https://www.nhs.uk/conditions/consent-to-treatment/children/) " \
+        "have the right to consent to vaccinations themselves. " \
+        "Our team may assess Gillick competence during vaccination sessions."
+    ].join("\n\n")
   end
 
-  def team_name
-    (team || organisation).name
-  end
-
-  def team_phone
-    format_phone_with_instructions(team || organisation)
-  end
+  delegate :privacy_notice_url, :privacy_policy_url, to: :team, prefix: true
 
   def today_or_date_of_vaccination
     return if vaccination_record.nil?
@@ -275,9 +320,114 @@ class GovukNotifyPersonalisation
   end
 
   def vaccination
-    [
-      programme_name,
-      programmes.count == 1 ? "vaccination" : "vaccinations"
-    ].join(" ")
+    "#{programme_names.to_sentence} vaccination".pluralize(
+      programme_names.length
+    )
+  end
+
+  def vaccination_and_method
+    "#{programme_names_and_methods.to_sentence} vaccination".pluralize(
+      programme_names_and_methods.length
+    )
+  end
+
+  def vaccine
+    "#{programme_names.to_sentence} vaccine".pluralize(programme_names.length)
+  end
+
+  def vaccine_and_method
+    "#{programme_names_and_methods.to_sentence} vaccine".pluralize(
+      programme_names_and_methods.length
+    )
+  end
+
+  def vaccine_brand
+    vaccination_record&.vaccine&.brand
+  end
+
+  def vaccine_is_injection = vaccine_is?("injection")
+
+  def vaccine_is_nasal = vaccine_is?("nasal")
+
+  def vaccine_is?(method)
+    if vaccination_record
+      vaccination_record.vaccine&.method == method ? "yes" : "no"
+    elsif programmes.present?
+      any_vaccines_with_method =
+        if patient
+          programmes.any? do |programme|
+            # We pick the first method as it's the one most likely to be used
+            # to vaccinate the patient. For example, in the case of Flu, the
+            # parents will approve nasal (and then optionally injection).
+            patient.approved_vaccine_methods(
+              programme:,
+              academic_year:
+            ).first == method
+          end
+        else
+          Vaccine.where(programme: programmes, method:).exists?
+        end
+
+      any_vaccines_with_method ? "yes" : "no"
+    end
+  end
+
+  def vaccine_side_effects
+    side_effects =
+      if vaccination_record
+        vaccination_record.vaccine&.side_effects
+      elsif programmes.present?
+        if patient
+          programmes.flat_map do |programme|
+            # We pick the first method as it's the one most likely to be used
+            # to vaccinate the patient. For example, in the case of Flu, the
+            # parents will approve nasal (and then optionally injection).
+            method =
+              patient.approved_vaccine_methods(programme:, academic_year:).first
+            Vaccine.where(programme:, method:).flat_map(&:side_effects)
+          end
+        else
+          Vaccine.where(programme: programmes).flat_map(&:side_effects)
+        end
+      end
+
+    return if side_effects.nil?
+
+    descriptions =
+      side_effects.map { Vaccine.human_enum_name(:side_effect, it) }.sort.uniq
+
+    descriptions.map { "- #{it}" }.join("\n")
+  end
+
+  private
+
+  def administered_year_groups
+    session&.year_groups || programmes.flat_map(&:default_year_groups).sort.uniq
+  end
+
+  def programme_names
+    @programme_names ||= programmes.map(&:name)
+  end
+
+  def programme_names_and_methods
+    @programme_names_and_methods ||=
+      programmes.map do |programme|
+        if programme.has_multiple_vaccine_methods?
+          vaccine_method =
+            if vaccination_record
+              Vaccine.delivery_method_to_vaccine_method(
+                vaccination_record.delivery_method
+              )
+            elsif patient
+              patient.approved_vaccine_methods(programme:, academic_year:).first
+            end
+
+          method_prefix =
+            Vaccine.human_enum_name(:method_prefix, vaccine_method)
+          "#{method_prefix} #{programme.name_in_sentence}".lstrip
+        else
+          programme.name_in_sentence
+        end
+      end
   end
 end

@@ -2,7 +2,7 @@
   <%= render AppBacklinkComponent.new(@back_link_path) %>
 <% end %>
 
-<% content_for :page_title, "Which batch did you use for the #{@programme.name} vaccination?" %>
+<% content_for :page_title, "Which batch did you use for the #{@programme.name_in_sentence} vaccination?" %>
 
 <%= form_with model: @draft_vaccination_record, url: wizard_path, method: :put do |f| %>
   <%= f.govuk_error_summary %>

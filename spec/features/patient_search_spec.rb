@@ -59,10 +59,11 @@ describe "Patient search" do
   end
 
   def given_that_i_am_signed_in
-    organisation = create(:organisation, :with_one_nurse)
+    programmes = [create(:programme, :hpv)]
+    team = create(:team, :with_one_nurse, programmes:)
 
-    location = create(:school, name: "Waterloo Road")
-    @session = create(:session, location:, organisation:)
+    location = create(:school, name: "Waterloo Road", team:)
+    @session = create(:session, location:, team:, programmes:)
 
     [
       %w[Aaron Smith],
@@ -90,7 +91,7 @@ describe "Patient search" do
       date_of_birth: Date.new(2013, 1, 1)
     )
 
-    sign_in organisation.users.first
+    sign_in team.users.first
   end
 
   def when_i_visit_the_patients_page

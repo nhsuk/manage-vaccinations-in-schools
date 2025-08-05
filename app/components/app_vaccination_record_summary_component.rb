@@ -15,6 +15,7 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
     @show_notes = show_notes
 
     @batch = vaccination_record.batch
+    @identity_check = vaccination_record.identity_check
     @patient = vaccination_record.patient
     @programme = vaccination_record.programme
     @vaccine = vaccination_record.vaccine
@@ -158,6 +159,20 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
         end
       end
 
+      if @identity_check
+        summary_list.with_row do |row|
+          row.with_key { "Child identified by" }
+          row.with_value { helpers.identity_check_label(@identity_check) }
+          if (href = @change_links[:identity])
+            row.with_action(
+              text: "Change",
+              href:,
+              visually_hidden_text: "child identified by"
+            )
+          end
+        end
+      end
+
       summary_list.with_row do |row|
         row.with_key { "Location" }
         row.with_value { location_value }
@@ -193,6 +208,13 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
         end
       end
 
+      if @vaccination_record.protocol.present?
+        summary_list.with_row do |row|
+          row.with_key { "Protocol" }
+          row.with_value { protocol_value }
+        end
+      end
+
       if @show_notes
         summary_list.with_row do |row|
           row.with_key { "Notes" }
@@ -211,6 +233,18 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
             row.with_value { link_to "Add notes", href }
           else
             row.with_value { "Not provided" }
+          end
+        end
+      end
+
+      if @vaccination_record.respond_to?(:sync_status) &&
+           Flipper.enabled?(:immunisations_fhir_api_integration)
+        summary_list.with_row do |row|
+          row.with_key { "Synced with NHS England?" }
+          row.with_value do
+            render AppVaccinationRecordAPISyncStatusComponent.new(
+                     @vaccination_record
+                   )
           end
         end
       end
@@ -270,17 +304,7 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
   end
 
   def location_value
-    if (location = @vaccination_record.location)
-      if location.generic_clinic?
-        @vaccination_record.location_name
-      elsif @vaccination_record.already_had?
-        "Unknown"
-      else
-        location.name
-      end
-    else
-      @vaccination_record.location_name
-    end
+    helpers.vaccination_record_location(@vaccination_record)
   end
 
   def date_value
@@ -315,6 +339,16 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
     )
   end
 
+  def protocol_value
+    highlight_if(
+      VaccinationRecord.human_enum_name(
+        :protocol,
+        @vaccination_record.protocol
+      ),
+      @vaccination_record.protocol_changed?
+    )
+  end
+
   def notes_value
     highlight_if(@vaccination_record.notes, @vaccination_record.notes_changed?)
   end
@@ -324,8 +358,6 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
   end
 
   def dose_number
-    return nil if @programme.seasonal?
-
     dose_sequence = @vaccination_record.dose_sequence
 
     if dose_sequence.nil?

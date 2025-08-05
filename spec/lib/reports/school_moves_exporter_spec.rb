@@ -1,11 +1,9 @@
 # frozen_string_literal: true
 
 describe Reports::SchoolMovesExporter do
-  subject(:exporter) do
-    described_class.new(organisation:, start_date:, end_date:)
-  end
+  subject(:exporter) { described_class.new(team:, start_date:, end_date:) }
 
-  let(:organisation) { create(:organisation) }
+  let(:team) { create(:team) }
   let(:start_date) { nil }
   let(:end_date) { nil }
 
@@ -15,11 +13,11 @@ describe Reports::SchoolMovesExporter do
     let(:one_day_ago) { 1.day.ago }
     let(:three_days_ago) { 3.days.ago }
 
-    let(:school) { create(:school, :secondary, organisation:) }
+    let(:school) { create(:school, :secondary, team:) }
 
     before do
       3.times do
-        patient = create(:patient, school:, organisation:)
+        patient = create(:patient, school:, team:)
         create(
           :school_move_log_entry,
           patient:,
@@ -29,7 +27,7 @@ describe Reports::SchoolMovesExporter do
       end
 
       2.times do
-        patient = create(:patient, school:, organisation:)
+        patient = create(:patient, school:, team:)
         create(
           :school_move_log_entry,
           patient:,
@@ -54,11 +52,11 @@ describe Reports::SchoolMovesExporter do
     let(:rows) { CSV.parse(csv_data, headers: true) }
 
     context "with a standard school move" do
-      let(:old_school) { create(:school, :secondary, organisation:) }
-      let(:new_school) { create(:school, :secondary, organisation:) }
+      let(:old_school) { create(:school, :secondary, team:) }
+      let(:new_school) { create(:school, :secondary, team:) }
 
       before do
-        patient = create(:patient, school: old_school, organisation:)
+        patient = create(:patient, school: old_school, team:)
         create(:school_move_log_entry, patient:, school: new_school)
       end
 
@@ -92,7 +90,7 @@ describe Reports::SchoolMovesExporter do
 
     context "when moving to home education" do
       before do
-        session = create(:session, organisation:)
+        session = create(:session, team:)
         patient = create(:patient, :home_educated, session:)
         create(:school_move_log_entry, :home_educated, patient:)
       end
@@ -104,7 +102,7 @@ describe Reports::SchoolMovesExporter do
 
     context "when moving to an unknown school" do
       before do
-        session = create(:session, organisation:)
+        session = create(:session, team:)
         patient = create(:patient, school: nil, session:)
         create(:school_move_log_entry, :unknown_school, patient:)
       end
@@ -114,18 +112,14 @@ describe Reports::SchoolMovesExporter do
       end
     end
 
-    context "when a patient moves out of an organisation" do
-      let(:organisation_a) { create(:organisation) }
-      let(:organisation_b) { create(:organisation) }
+    context "when a patient moves out of a team" do
+      let(:team_a) { create(:team) }
+      let(:team_b) { create(:team) }
 
-      let(:school_a) do
-        create(:school, :secondary, organisation: organisation_a)
-      end
-      let(:school_b) do
-        create(:school, :secondary, organisation: organisation_b)
-      end
+      let(:school_a) { create(:school, :secondary, team: team_a) }
+      let(:school_b) { create(:school, :secondary, team: team_b) }
 
-      let(:session) { create(:session, organisation: organisation_b) }
+      let(:session) { create(:session, team: team_b) }
       let(:patient) { create(:patient, session:) }
 
       let(:created_at_a) { 1.week.ago }
@@ -149,8 +143,8 @@ describe Reports::SchoolMovesExporter do
         )
       end
 
-      context "from the old organisation" do
-        let(:organisation) { organisation_a }
+      context "from the old team" do
+        let(:team) { team_a }
 
         it "includes two rows" do
           expect(rows.count).to eq(2)
@@ -177,8 +171,8 @@ describe Reports::SchoolMovesExporter do
         end
       end
 
-      context "from the new organisation" do
-        let(:organisation) { organisation_b }
+      context "from the new team" do
+        let(:team) { team_b }
 
         it "includes one row" do
           expect(rows.count).to eq(1)

@@ -2,6 +2,7 @@
 
 <p class="nhsuk-caption-l nhsuk-u-margin-bottom-4">
   <%= @session.programmes.map(&:name).to_sentence %>
+  (<%= format_academic_year(@session.academic_year) %>)
 </p>
 
 <%= render AppSecondaryNavigationComponent.new do |nav|
@@ -23,11 +24,13 @@
         selected: request.path == session_triage_path(@session),
       )
     
-      nav.with_item(
-        href: session_register_path(@session),
-        text: t("sessions.tabs.register"),
-        selected: request.path == session_register_path(@session),
-      )
+      if @session.requires_registration?
+        nav.with_item(
+          href: session_register_path(@session),
+          text: t("sessions.tabs.register"),
+          selected: request.path == session_register_path(@session),
+        )
+      end
     
       nav.with_item(
         href: session_record_path(@session),

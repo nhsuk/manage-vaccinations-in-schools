@@ -5,18 +5,16 @@ describe DraftVaccinationRecord do
     described_class.new(request_session:, current_user:, **attributes)
   end
 
-  let(:organisation) do
-    create(:organisation, :with_one_nurse, programmes: [programme])
-  end
+  let(:team) { create(:team, :with_one_nurse, programmes: [programme]) }
 
   let(:request_session) { {} }
-  let(:current_user) { organisation.users.first }
+  let(:current_user) { team.users.first }
 
   let(:programme) { create(:programme, :hpv) }
-  let(:session) { create(:session, organisation:, programmes: [programme]) }
+  let(:session) { create(:session, team:, programmes: [programme]) }
   let(:patient) { create(:patient, session:) }
   let(:vaccine) { programme.vaccines.first }
-  let(:batch) { create(:batch, organisation:, vaccine:) }
+  let(:batch) { create(:batch, team:, vaccine:) }
 
   let(:valid_administered_attributes) do
     {
@@ -26,6 +24,7 @@ describe DraftVaccinationRecord do
       delivery_site: "left_arm_upper_position",
       dose_sequence: 1,
       full_dose: true,
+      protocol: :pgd,
       notes: "Some notes.",
       outcome: "administered",
       patient_id: patient.id,
@@ -59,7 +58,55 @@ describe DraftVaccinationRecord do
       it "has an error" do
         expect(draft_vaccination_record.save(context: :update)).to be(false)
         expect(draft_vaccination_record.errors[:performed_at]).to include(
-          "Enter a time in the past"
+          "The vaccination cannot take place after #{Time.current.to_fs(:long)}"
+        )
+      end
+    end
+
+    context "when performed_at is before the start of the academic year" do
+      let(:attributes) do
+        valid_administered_attributes.merge(
+          performed_at: Time.zone.local(2023, 8, 31, 12)
+        )
+      end
+
+      around { |example| freeze_time { example.run } }
+
+      before { draft_vaccination_record.wizard_step = :date_and_time }
+
+      it "has an error" do
+        expect(draft_vaccination_record.save(context: :update)).to be(false)
+        expect(draft_vaccination_record.errors[:performed_at]).to include(
+          "The vaccination cannot take place before 1 September 2024 at 12:00am"
+        )
+      end
+    end
+
+    context "when performed_at is after the end of a previous academic year session" do
+      let(:session) do
+        create(
+          :session,
+          team:,
+          programmes: [programme],
+          date: Date.new(2023, 12, 1)
+        )
+      end
+
+      let(:attributes) do
+        valid_administered_attributes.merge(
+          performed_at: Time.zone.local(2024, 9, 1, 12),
+          session_id: session.id
+        )
+      end
+
+      around { |example| freeze_time { example.run } }
+
+      before { draft_vaccination_record.wizard_step = :date_and_time }
+
+      it "has an error" do
+        expect(draft_vaccination_record.save(context: :update)).to be(false)
+        expect(draft_vaccination_record.errors[:performed_at]).to include(
+          "The vaccination cannot take place after 31 August 2024 at 11:59pm"
         )
       end
     end
@@ -78,6 +125,104 @@ describe DraftVaccinationRecord do
       before { draft_vaccination_record.wizard_step = :confirm }
 
       it { should validate_length_of(:notes).is_at_most(1000).on(:update) }
+    end
+
+    context "on delivery step" do
+      let(:attributes) { valid_administered_attributes }
+
+      before { draft_vaccination_record.wizard_step = :delivery }
+
+      context "when delivery site is blank" do
+        let(:attributes) do
+          valid_administered_attributes.merge(
+            delivery_method: "intramuscular",
+            delivery_site: nil
+          )
+        end
+
+        it "has an error for blank delivery site" do
+          expect(draft_vaccination_record.save(context: :update)).to be(false)
+          expect(draft_vaccination_record.errors[:delivery_site]).to include(
+            "Choose a delivery site"
+          )
+        end
+      end
+
+      context "when delivery method is nasal spray" do
+        let(:attributes) do
+          valid_administered_attributes.merge(
+            delivery_method: "nasal_spray",
+            delivery_site: "left_arm_upper_position"
+          )
+        end
+
+        it "has an error when delivery site is not nose" do
+          expect(draft_vaccination_record.save(context: :update)).to be(false)
+          expect(draft_vaccination_record.errors[:delivery_site]).to include(
+            "Site must be nose if the nasal spray was given"
+          )
+        end
+      end
+
+      context "when delivery method is nasal spray and delivery site is nose" do
+        let(:attributes) do
+          valid_administered_attributes.merge(
+            delivery_method: "nasal_spray",
+            delivery_site: "nose"
+          )
+        end
+
+        it "is valid" do
+          expect(draft_vaccination_record.save(context: :update)).to be(true)
+          expect(draft_vaccination_record.errors[:delivery_site]).to be_empty
+        end
+      end
+
+      context "when delivery method is intramuscular" do
+        let(:attributes) do
+          valid_administered_attributes.merge(
+            delivery_method: "intramuscular",
+            delivery_site: "nose"
+          )
+        end
+
+        it "has an error when delivery site is nose" do
+          expect(draft_vaccination_record.save(context: :update)).to be(false)
+          expect(draft_vaccination_record.errors[:delivery_site]).to include(
+            "Site cannot be nose for intramuscular or subcutaneous injections"
+          )
+        end
+      end
+
+      context "when delivery method is subcutaneous" do
+        let(:attributes) do
+          valid_administered_attributes.merge(
+            delivery_method: "subcutaneous",
+            delivery_site: "nose"
+          )
+        end
+
+        it "has an error when delivery site is nose" do
+          expect(draft_vaccination_record.save(context: :update)).to be(false)
+          expect(draft_vaccination_record.errors[:delivery_site]).to include(
+            "Site cannot be nose for intramuscular or subcutaneous injections"
+          )
+        end
+      end
+
+      context "when delivery method is intramuscular and delivery site is not nose" do
+        let(:attributes) do
+          valid_administered_attributes.merge(
+            delivery_method: "intramuscular",
+            delivery_site: "left_arm_upper_position"
+          )
+        end
+
+        it "is valid" do
+          expect(draft_vaccination_record.save(context: :update)).to be(true)
+          expect(draft_vaccination_record.errors[:delivery_site]).to be_empty
+        end
+      end
     end
   end
 
@@ -147,6 +292,157 @@ describe DraftVaccinationRecord do
       let(:attributes) { valid_administered_attributes.merge(full_dose: false) }
 
       it { should eq(vaccine.dose_volume_ml * 0.5) }
+    end
+  end
+
+  describe "#delivery_method=" do
+    context "when setting delivery method for the first time" do
+      let(:attributes) do
+        valid_administered_attributes.except(:delivery_method)
+      end
+
+      it "does not clear the batch_id" do
+        expect {
+          draft_vaccination_record.delivery_method = "intramuscular"
+        }.not_to change(draft_vaccination_record, :batch_id)
+      end
+    end
+
+    shared_examples "clears batch when switching delivery methods" do |from_method, to_method|
+      context "when changing from #{from_method} to #{to_method}" do
+        let(:attributes) do
+          valid_administered_attributes.merge(delivery_method: from_method)
+        end
+
+        it "clears the batch_id" do
+          expect {
+            draft_vaccination_record.delivery_method = to_method
+          }.to change(draft_vaccination_record, :batch_id).to(nil)
+        end
+      end
+    end
+
+    include_examples "clears batch when switching delivery methods",
+                     "intramuscular",
+                     "nasal_spray"
+    include_examples "clears batch when switching delivery methods",
+                     "subcutaneous",
+                     "nasal_spray"
+    include_examples "clears batch when switching delivery methods",
+                     "nasal_spray",
+                     "intramuscular"
+    include_examples "clears batch when switching delivery methods",
+                     "nasal_spray",
+                     "subcutaneous"
+
+    context "when changing between injection methods" do
+      let(:attributes) do
+        valid_administered_attributes.merge(delivery_method: "intramuscular")
+      end
+
+      it "does not clear the batch_id" do
+        expect {
+          draft_vaccination_record.delivery_method = "subcutaneous"
+        }.not_to change(draft_vaccination_record, :batch_id)
+      end
+    end
+  end
+
+  describe "#vaccine_method_matches_consent_and_triage" do
+    subject do
+      draft_vaccination_record.vaccine_method_matches_consent_and_triage?
+    end
+
+    let(:programme) { create(:programme, :flu) }
+
+    context "when vaccination is not administered" do
+      let(:attributes) { valid_not_administered_attributes }
+
+      it { should be true }
+    end
+
+    context "when delivery method is nasal_spray" do
+      let(:attributes) do
+        valid_administered_attributes.merge(delivery_method: "nasal_spray")
+      end
+
+      context "when consent is given for nasal" do
+        let(:patient) do
+          create(
+            :patient,
+            :consent_given_nasal_only_triage_not_needed,
+            session:
+          )
+        end
+
+        it { should be true }
+      end
+
+      context "when consent is given for injection" do
+        let(:patient) do
+          create(
+            :patient,
+            :consent_given_injection_only_triage_needed,
+            session:
+          )
+        end
+
+        it { should be false }
+      end
+
+      context "when triage is safe for nasal" do
+        let(:patient) do
+          create(:patient, :triage_safe_to_vaccinate_nasal, session:)
+        end
+
+        it { should be true }
+      end
+
+      context "when triage is safe for injection" do
+        let(:patient) { create(:patient, :triage_safe_to_vaccinate, session:) }
+
+        it { should be false }
+      end
+    end
+
+    context "when delivery method is intramuscular" do
+      let(:attributes) do
+        valid_administered_attributes.merge(delivery_method: "intramuscular")
+      end
+
+      context "when consent is given for injection" do
+        let(:patient) do
+          create(
+            :patient,
+            :consent_given_injection_only_triage_not_needed,
+            session:
+          )
+        end
+
+        it { should be true }
+      end
+
+      context "when consent is given for nasal" do
+        let(:patient) do
+          create(:patient, :consent_given_nasal_only_triage_needed, session:)
+        end
+
+        it { should be false }
+      end
+
+      context "when triage is safe for injection" do
+        let(:patient) { create(:patient, :triage_safe_to_vaccinate, session:) }
+
+        it { should be true }
+      end
+
+      context "when triage is safe for nasal" do
+        let(:patient) do
+          create(:patient, :triage_safe_to_vaccinate_nasal, session:)
+        end
+
+        it { should be false }
+      end
     end
   end
 end

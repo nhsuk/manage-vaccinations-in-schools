@@ -6,9 +6,11 @@ class AppLogEventComponent < ViewComponent::Base
       <div class="nhsuk-card"><div class="nhsuk-card__content">
     <% end %>
 
-    <h3 class="<% if card %>nhsuk-card__heading <% end %>nhsuk-heading-s">
-      <%= invalidated ? tag.s(title) : title %>
-    </h3>
+    <% if title.present? %>
+      <h4 class="<% if card %>nhsuk-card__heading <% end %>nhsuk-heading-s">
+        <%= invalidated ? tag.s(title) : title %>
+      </h4>
+    <% end %>
 
     <% if body.present? %>
       <blockquote><p>
@@ -30,8 +32,8 @@ class AppLogEventComponent < ViewComponent::Base
   ERB
 
   def initialize(
-    title:,
-    at:,
+    title: nil,
+    at: nil,
     body: nil,
     by: nil,
     programmes: [],

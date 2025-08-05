@@ -7,28 +7,20 @@ class AppVaccinateFormComponent < ViewComponent::Base
     @vaccinate_form = vaccinate_form
   end
 
-  def render?
-    patient.consent_given_and_safe_to_vaccinate?(programme:) &&
-      (
-        patient_session.registration_status&.attending? ||
-          patient_session.registration_status&.completed? || false
-      )
-  end
-
   private
 
   attr_reader :vaccinate_form
 
   delegate :patient_session, :programme, to: :vaccinate_form
   delegate :patient, :session, to: :patient_session
+  delegate :academic_year, to: :session
 
   def url
     session_patient_programme_vaccinations_path(session, patient, programme)
   end
 
-  def delivery_method
-    # TODO: Check which method has been consented to.
-    programme.flu? ? :nasal_spray : :intramuscular
+  def vaccine_methods
+    patient.approved_vaccine_methods(programme:, academic_year:)
   end
 
   def dose_sequence
@@ -36,28 +28,48 @@ class AppVaccinateFormComponent < ViewComponent::Base
   end
 
   COMMON_DELIVERY_SITES = {
-    intramuscular: %w[left_arm_upper_position right_arm_upper_position],
-    nasal_spray: %w[nose]
+    "injection" => %w[left_arm_upper_position right_arm_upper_position],
+    "nasal" => %w[nose]
   }.freeze
 
   CommonDeliverySite = Struct.new(:value, :label)
 
-  def common_delivery_sites_options
-    @common_delivery_sites_options ||=
-      begin
-        options =
-          COMMON_DELIVERY_SITES
-            .fetch(delivery_method)
-            .map do |value|
-              label = VaccinationRecord.human_enum_name(:delivery_site, value)
-              CommonDeliverySite.new(value:, label:)
-            end
+  def common_delivery_site_options(vaccine_method)
+    common_delivery_sites = COMMON_DELIVERY_SITES.fetch(vaccine_method)
 
-        if delivery_method == :intramuscular
-          options << CommonDeliverySite.new(value: "other", label: "Other")
-        end
-
-        options
+    options =
+      common_delivery_sites.map do |value|
+        label = VaccinationRecord.human_enum_name(:delivery_site, value)
+        CommonDeliverySite.new(value:, label:)
       end
+
+    has_more_delivery_sites =
+      (
+        Vaccine::AVAILABLE_DELIVERY_SITES.fetch(vaccine_method) -
+          common_delivery_sites
+      ).present?
+
+    if has_more_delivery_sites
+      options << CommonDeliverySite.new(value: "other", label: "Other")
+    end
+
+    options
   end
+
+  def vaccination_name
+    vaccination =
+      if programme.has_multiple_vaccine_methods?
+        Vaccine.human_enum_name(:method, vaccine_methods.first).downcase
+      else
+        "vaccination"
+      end
+
+    "#{programme.name_in_sentence} #{vaccination}"
+  end
+
+  def ask_not_taking_medication? = programme.doubles? || programme.flu?
+
+  def ask_not_pregnant? = programme.td_ipv?
+
+  def ask_asthma_flare_up? = vaccine_methods.include?("nasal")
 end

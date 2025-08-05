@@ -7,21 +7,23 @@
 #  id                            :bigint           not null, primary key
 #  academic_year                 :integer          not null
 #  days_before_consent_reminders :integer
+#  requires_registration         :boolean          default(TRUE), not null
 #  send_consent_requests_at      :date
 #  send_invitations_at           :date
 #  slug                          :string           not null
 #  created_at                    :datetime         not null
 #  updated_at                    :datetime         not null
 #  location_id                   :bigint           not null
-#  organisation_id               :bigint           not null
+#  team_id                       :bigint           not null
 #
 # Indexes
 #
-#  idx_on_organisation_id_location_id_academic_year_3496b72d0c  (organisation_id,location_id,academic_year) UNIQUE
+#  index_sessions_on_location_id              (location_id)
+#  index_sessions_on_team_id_and_location_id  (team_id,location_id)
 #
 # Foreign Keys
 #
-#  fk_rails_...  (organisation_id => organisations.id)
+#  fk_rails_...  (team_id => teams.id)
 #
 
 describe Session do
@@ -34,20 +36,53 @@ describe Session do
     let(:today_session) { create(:session, :today, programmes:) }
     let(:unscheduled_session) { create(:session, :unscheduled, programmes:) }
 
-    describe "#for_current_academic_year" do
-      subject(:scope) { described_class.for_current_academic_year }
+    describe "#has_programmes" do
+      subject(:scope) { described_class.has_programmes(programmes) }
 
-      it do
-        expect(scope).to contain_exactly(
-          unscheduled_session,
-          today_session,
-          scheduled_session
-        )
+      context "with a session matching the search" do
+        let(:programmes) { [create(:programme)] }
+        let(:session) { create(:session, programmes:) }
+
+        it { should include(session) }
+      end
+
+      context "with a session not matching the search" do
+        let(:programmes) { [create(:programme, :hpv)] }
+        let(:session) do
+          create(:session, programmes: [create(:programme, :flu)])
+        end
+
+        it { should_not include(session) }
+      end
+
+      context "with a session with multiple programmes" do
+        let(:programmes) do
+          [create(:programme, :menacwy), create(:programme, :td_ipv)]
+        end
+        let(:session) { create(:session, programmes:) }
+
+        it { should include(session) }
+      end
+
+      context "with a session with at least all the search programmes" do
+        let(:session) do
+          create(
+            :session,
+            programmes: [
+              create(:programme, :hpv),
+              create(:programme, :menacwy),
+              create(:programme, :td_ipv)
+            ]
+          )
+        end
+        let(:programmes) { [session.programmes.first] }
+
+        it { should include(session) }
       end
     end
 
-    describe "#today" do
-      subject(:scope) { described_class.today }
+    describe "#in_progress" do
+      subject(:scope) { described_class.in_progress }
 
       it { should contain_exactly(today_session) }
     end
@@ -56,14 +91,6 @@ describe Session do
       subject(:scope) { described_class.unscheduled }
 
       it { should contain_exactly(unscheduled_session) }
-
-      context "for a different academic year" do
-        let(:unscheduled_session) do
-          create(:session, :unscheduled, programmes:, academic_year: 2023)
-        end
-
-        it { should_not include(unscheduled_session) }
-      end
     end
 
     describe "#scheduled" do
@@ -76,13 +103,45 @@ describe Session do
       subject(:scope) { described_class.completed }
 
       it { should contain_exactly(completed_session) }
+    end
 
-      context "for a different academic year" do
-        let(:completed_session) do
-          create(:session, :completed, programmes:, date: Date.new(2023, 9, 1))
-        end
+    describe "#order_by_earliest_date" do
+      subject(:scope) { described_class.order_by_earliest_date }
 
-        it { should_not include(completed_session) }
+      around { |example| travel_to(today) { example.run } }
+
+      let(:today) { Date.new(2025, 1, 1) }
+
+      let(:programmes) { create_list(:programme, 1, :hpv) }
+
+      let(:first_session_before_today) do
+        create(:session, date: Date.new(2024, 12, 1), programmes:)
+      end
+      let(:second_session_before_today) do
+        create(:session, date: Date.new(2024, 12, 2), programmes:)
+      end
+      let(:session_today) do
+        create(:session, date: Date.new(2025, 1, 1), programmes:)
+      end
+      let(:first_session_after_today) do
+        create(:session, date: Date.new(2025, 1, 2), programmes:)
+      end
+      let(:second_session_after_today) do
+        create(:session, date: Date.new(2025, 1, 3), programmes:)
+      end
+      let(:session_without_dates) { create(:session, date: nil, programmes:) }
+
+      it do
+        expect(scope).to eq(
+          [
+            session_today,
+            first_session_after_today,
+            second_session_after_today,
+            first_session_before_today,
+            second_session_before_today,
+            session_without_dates
+          ]
+        )
       end
     end
   end
@@ -139,7 +198,7 @@ describe Session do
   end
 
   describe "#year_groups" do
-    subject(:year_groups) { session.year_groups }
+    subject { session.year_groups }
 
     let(:flu_programme) { create(:programme, :flu) }
     let(:hpv_programme) { create(:programme, :hpv) }
@@ -149,6 +208,19 @@ describe Session do
     end
 
     it { should contain_exactly(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11) }
+  end
+
+  describe "#vaccine_methods" do
+    subject { session.vaccine_methods }
+
+    let(:flu_programme) { create(:programme, :flu) }
+    let(:hpv_programme) { create(:programme, :hpv) }
+
+    let(:session) do
+      create(:session, programmes: [flu_programme, hpv_programme])
+    end
+
+    it { should contain_exactly("injection", "nasal") }
   end
 
   describe "#today_or_future_dates" do

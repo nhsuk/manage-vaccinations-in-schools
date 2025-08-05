@@ -19,14 +19,15 @@ describe TriageMailerConcern do
   let(:current_user) { create(:user) }
 
   let(:programme) { create(:programme) }
+  let(:programmes) { [programme] }
   let(:patient) { patient_session.patient }
 
   describe "#send_triage_confirmation" do
     subject(:send_triage_confirmation) do
-      sample.send_triage_confirmation(patient_session, consent)
+      sample.send_triage_confirmation(patient_session, programme, consent)
     end
 
-    let(:session) { create(:session, programmes: [programme]) }
+    let(:session) { create(:session, programmes:) }
     let(:consent) { patient.consents.first }
 
     context "when the parents agree, triage is required and it is safe to vaccinate" do
@@ -74,6 +75,17 @@ describe TriageMailerConcern do
 
       it "doesn't send a text message" do
         expect { send_triage_confirmation }.not_to have_delivered_sms
+      end
+
+      context "when the team is Coventry & Warwickshire Partnership NHS Trust (CWPT)" do
+        let(:session) { create(:session, programmes: [programme], team:) }
+        let(:team) { create(:team, ods_code: "RYG") }
+
+        it "enqueues an email using the CWPT-specific template" do
+          expect { send_triage_confirmation }.to have_delivered_email(
+            :triage_vaccination_at_clinic_ryg
+          ).with(consent:, session:, sent_by: current_user)
+        end
       end
     end
 
@@ -165,7 +177,14 @@ describe TriageMailerConcern do
     end
 
     context "if the patient is deceased" do
-      let(:patient) { create(:patient, :deceased) }
+      let(:patient) do
+        create(
+          :patient,
+          :consent_given_triage_not_needed,
+          :deceased,
+          programmes:
+        )
+      end
       let(:patient_session) { create(:patient_session, patient:, session:) }
 
       it "doesn't send an email" do
@@ -178,7 +197,14 @@ describe TriageMailerConcern do
     end
 
     context "if the patient is invalid" do
-      let(:patient) { create(:patient, :invalidated) }
+      let(:patient) do
+        create(
+          :patient,
+          :consent_given_triage_not_needed,
+          :invalidated,
+          programmes:
+        )
+      end
       let(:patient_session) { create(:patient_session, patient:, session:) }
 
       it "doesn't send an email" do
@@ -191,7 +217,14 @@ describe TriageMailerConcern do
     end
 
     context "if the patient is restricted" do
-      let(:patient) { create(:patient, :restricted) }
+      let(:patient) do
+        create(
+          :patient,
+          :consent_given_triage_not_needed,
+          :restricted,
+          programmes:
+        )
+      end
       let(:patient_session) { create(:patient_session, patient:, session:) }
 
       it "doesn't send an email" do

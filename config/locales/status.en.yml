@@ -23,12 +23,16 @@ en:
         not_required: No triage needed
         required: Needs triage
         safe_to_vaccinate: Safe to vaccinate
+        safe_to_vaccinate_injection: Safe to vaccinate with injection
+        safe_to_vaccinate_nasal: Safe to vaccinate with nasal spray
       colour:
         delay_vaccination: dark-orange
         do_not_vaccinate: red
         not_required: grey
         required: blue
         safe_to_vaccinate: aqua-green
+        safe_to_vaccinate_injection: aqua-green
+        safe_to_vaccinate_nasal: aqua-green
     register:
       label:
         attending: Attending session
@@ -36,7 +40,7 @@ en:
         not_attending: Absent from session
         unknown: Not registered yet
       colour:
-        attending: blue
+        attending: aqua-green
         completed: green
         not_attending: red
         unknown: grey

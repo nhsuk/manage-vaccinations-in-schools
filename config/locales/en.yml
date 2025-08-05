@@ -1,6 +1,5 @@
 en:
   activemodel:
-    attributes:
     errors:
       models:
         batch_form:
@@ -18,16 +17,14 @@ en:
               invalid: Enter a batch with only letters and numbers
               too_short: Enter a batch that is more than %{count} characters long
               too_long: Enter a batch that is less than %{count} characters long
-        draft_class_import:
-          attributes:
-            session_id:
-              blank: Choose which school this class list for
-            year_groups:
-              blank: Choose which year groups you want to import class list records for
         draft_consent:
           attributes:
             new_or_existing_contact:
               blank: Choose who you are trying to get consent from
+            notify_parent_on_refusal:
+              inclusion: Choose whether you want to send an email and text message confirming their decision
+            notify_parents_on_vaccination:
+              inclusion: Choose whether the child wants their parent or guardian to get confirmation of the vaccination
             reason_for_refusal:
               inclusion: Choose a reason
             notes:
@@ -56,12 +53,18 @@ en:
               inclusion: Choose if they consent
             route:
               inclusion: Choose how the response was given
-            triage_notes:
-              blank: Enter triage notes
-              too_long: Enter triage notes that are less than 1000 characters long
-            triage_status:
-              blank: Choose a status
-              inclusion: Choose a status
+            injection_alternative:
+              inclusion: Select yes or no
+        draft_import:
+          attributes:
+            academic_year:
+              inclusion: Choose which academic year
+            location_id:
+              blank: Choose which school this class list for
+            type:
+              inclusion: Choose which type of records you are importing
+            year_groups:
+              blank: Choose which year groups you want to import class list records for
         draft_vaccination_record:
           attributes:
             batch_id:
@@ -72,8 +75,16 @@ en:
             delivery_site:
               blank: Choose a delivery site
               inclusion: Choose a delivery site
+              nasal_spray_must_be_nose: Site must be nose if the nasal spray was given
+              injection_cannot_be_nose: Site cannot be nose for intramuscular or subcutaneous injections
             full_dose:
               inclusion: Choose whether they got the full dose
+            identity_check_confirmed_by_other_name:
+              blank: Enter the person’s name
+            identity_check_confirmed_by_other_relationship:
+              blank: Enter the person’s relationship
+            identity_check_confirmed_by_patient:
+              inclusion: Choose who confirmed their child’s identity
             location_name:
               blank: Enter where the vaccination was given
             notes:
@@ -86,7 +97,6 @@ en:
               missing_month: Enter a month
               missing_year: Enter a year
               invalid: Enter a valid date and time
-              less_than_or_equal_to: Enter a time in the past
         health_answer:
           attributes:
             notes:
@@ -102,31 +112,41 @@ en:
           attributes:
             action:
               inclusion: Choose whether to update the child’s record with this new information
+        select_team_form:
+          attributes:
+            organisation_id:
+              inclusion: Choose an organisation
         session_programmes_form:
           attributes:
             programme_ids:
               blank: Choose which programmes this session is part of
               inclusion: You cannot remove a programme from the session once it has been added
+        triage_form:
+          attributes:
+            notes:
+              blank: Enter triage notes
+              too_long: Enter triage notes that are less than 1000 characters long
+            status_and_vaccine_method:
+              blank: Choose a status
+              inclusion: Choose a status
         vaccinate_form:
           attributes:
-            administered:
-              inclusion: Choose if they are ready to vaccinate
             delivery_site:
-              blank: Choose where the injection will be given
-            feeling_well:
-              blank: Confirm that they are feeling well
-            knows_vaccination:
-              blank: Confirm that they know what the vaccination is for, and are happy to have it
-            no_allergies:
-              blank: Confirm that they have no allergies which would prevent vaccination
-            not_already_had:
-              blank: Confirm that they have not already had the vaccination
-            not_pregnant:
-              blank: Confirm that they are not pregnant
-            not_taking_medication:
-              blank: Confirm that they are not taking any medication which prevents vaccination
+              inclusion: Choose where the injection will be given
+            identity_check_confirmed_by_other_name:
+              blank: Enter the person’s name
+              too_long: Enter a name that is less than %{count} characters long
+            identity_check_confirmed_by_other_relationship:
+              blank: Enter the person’s relationship
+              too_long: Enter a relationship that is less than %{count} characters long
+            identity_check_confirmed_by_patient:
+              inclusion: Choose whether the child confirmed their identity
+            pre_screening_confirmed:
+              blank: Confirm you’ve checked the pre-screening statements are true
             pre_screening_notes:
               too_long: Enter notes that are less than %{count} characters long
+            vaccine_method:
+              inclusion: Choose if they are ready to vaccinate
         vaccination_report:
           attributes:
             file_format:
@@ -136,14 +156,17 @@ en:
       consent:
         reason_for_refusals:
           already_vaccinated: Vaccine already received
+          contains_gelatine: Vaccine contains gelatine from pigs
           medical: Medical reasons
           other: Other
           personal_choice: Personal choice
           will_be_vaccinated_elsewhere: Vaccine will be given elsewhere
         responses:
-          given: consent given
-          not_provided: not provided
-          refused: consent refused
+          given: Consent given
+          given_injection: Consent given
+          given_nasal: Consent given
+          not_provided: Not provided
+          refused: Consent refused
         routes:
           in_person: In person
           paper: Paper
@@ -155,17 +178,6 @@ en:
           other: Other
           text: I can only receive text messages
           voice: I can only receive voice calls
-        reasons:
-          already_vaccinated: Vaccine already received
-          contains_gelatine: Vaccine contains gelatine from pigs
-          medical_reasons: Medical reasons
-          other: Other
-          personal_choice: Personal choice
-          will_be_vaccinated_elsewhere: Vaccine will be given elsewhere
-        responses:
-          given: Consent given
-          given_one: Partial consent given
-          refused: Consent refused
       notify_log_entry:
         types:
           email: Email
@@ -203,9 +215,16 @@ en:
           do_not_vaccinate: Do not vaccinate in programme
           needs_follow_up: Keep in triage
           ready_to_vaccinate: Safe to vaccinate
+          ready_to_vaccinate_injection: Safe to vaccinate with injection
+          ready_to_vaccinate_nasal: Safe to vaccinate with nasal spray
+        vaccine_methods:
+          injection: injection
+          nasal: nasal spray
       vaccination_record:
         delivery_methods:
-          intranasal: Intramuscular (IM)
+          intramuscular: Intramuscular (IM) injection
+          subcutaneous: Subcutaneous injection
+          nasal_spray: Nasal spray
         delivery_sites:
           left_arm_lower_position: Left arm (lower position)
           left_arm_upper_position: Left arm (upper position)
@@ -218,10 +237,37 @@ en:
           contraindications: Had contraindications
           not_well: Unwell
           refused: Refused vaccine
+        protocols:
+          pgd: Patient Group Direction (PGD)
+        sync_statuses:
+          cannot_sync: Cannot sync
+          not_synced: Not synced
+          pending: Sync pending
+          synced: Synced
+          failed: Sync failed
       vaccine:
         methods:
           injection: Injection
           nasal: Nasal spray
+        method_prefixes:
+          injection: injected
+          nasal: nasal spray
+        side_effects:
+          aching: an aching body
+          dizziness: dizziness
+          drowsy: feeling drowsy
+          feeling_sick: feeling sick
+          headache: a headache
+          high_temperature: a high temperature
+          irritable: feeling irritable
+          loss_of_appetite: loss of appetite
+          pain_in_arms: pain in the arms, hands, fingers
+          raised_temperature: a slightly raised temperature
+          rash: a rash
+          runny_blocked_nose: a runny or blocked nose
+          swelling: swelling or pain where the injection was given
+          tiredness: general tiredness
+          unwell: generally feeling unwell
     errors:
       models:
         class_import:
@@ -257,6 +303,8 @@ en:
             address_town:
               blank: Enter a town or city
               too_long: Enter a town or city that is less than 300 characters long
+            chosen_programme:
+              blank: Choose which programme you agree to
             date_of_birth:
               blank: Enter their date of birth
               greater_than_or_equal_to: The child cannot be older than 22. Enter a date after %{count}.
@@ -315,7 +363,7 @@ en:
                 Enter details for refusing that are less than 1000 characters
                 long
             response:
-              blank: Choose if you consent
+              inclusion: Choose if you agree
             school_confirmed:
               inclusion: Tell us if this is their school
             school_id:
@@ -343,6 +391,11 @@ en:
               blank: Choose a file
               empty: Choose a CSV file with at least one record
               invalid: Choose a CSV file in the correct format
+        note:
+          attributes:
+            body:
+              blank: Enter a note
+              too_long: Enter a note that is less than %{count} characters long
         offline_password:
           attributes:
             password:
@@ -418,14 +471,6 @@ en:
               taken: Enter a different date to the other session dates
               greater_than_or_equal_to: Enter a date on or after the start of the school year (%{count})
               less_than_or_equal_to: Enter a date on or before the end of the current school year (%{count})
-        triage:
-          attributes:
-            notes:
-              blank: Enter triage notes
-              too_long: Enter triage notes that are less than 1000 characters long
-            status:
-              blank: Choose a status
-              inclusion: Choose a status
         user:
           attributes:
             email:
@@ -457,37 +502,18 @@ en:
     zero: No children
     one: 1 child
     other: "%{count} children"
-  cohorts:
-    index:
-      title: Cohorts
   consent_forms:
     index:
       title: Unmatched consent responses
       title_short: Unmatched responses
     confirm:
       consent_card_title:
+        doubles: Consent for the MenACWY and Td/IPV vaccinations
         flu: Consent for the flu vaccination
         hpv: Consent for the HPV vaccination
         menacwy: Consent for the MenACWY vaccination
         td_ipv: Consent for the Td/IPV vaccination
-        menacwy_td_ipv: Consent for the MenACWY and Td/IPV vaccinations
       i_agree: Consent given
-    consent:
-      hint:
-        flu: The nasal flu spray contains gelatine which comes from pigs.
-        hpv: ""
-        menacwy: ""
-        td_ipv: ""
-      i_agree:
-        flu: Yes, I agree to them having a nasal vaccine
-        hpv: Yes, I agree
-        menacwy: Yes, I agree to them having both vaccinations
-        td_ipv: Yes, I agree to them having both vaccinations
-      title:
-        flu: Do you agree to your child having the nasal flu vaccination?
-        hpv: Do you agree to your child having the Human papillomavirus (HPV) vaccination?
-        menacwy: Do you agree to your child having the MenACWY and Td/IPV (3-in-1 teenage booster) vaccinations?
-        td_ipv: Do you agree to your child having the MenACWY and Td/IPV (3-in-1 teenage booster) vaccinations?
     reason_notes:
       title:
         already_vaccinated: Where did your child get their vaccination?
@@ -497,51 +523,6 @@ en:
         personal_choice: Tell us why you don’t agree
         will_be_vaccinated_elsewhere: Where will your child get their vaccination?
     start:
-      vaccines:
-        flu:
-          title: Flu
-          description:
-            - >-
-              The vaccination helps to protect children against flu. It also
-              protects others who are vulnerable to flu, such as babies and
-              older people.
-        hpv:
-          title: HPV
-          description:
-            - >-
-              The HPV vaccine helps to prevent HPV related cancers from
-              developing in boys and girls.
-            - >-
-              The number of doses you need depends on your age and how well your
-              immune system works. Young people usually only need 1 dose.
-            - >-
-              <a href="https://www.nhs.uk/conditions/vaccinations/hpv-human-papillomavirus-vaccine/">Find
-              out more about the HPV vaccine</a>
-        menacwy:
-          title: MenACWY
-          description:
-            - >-
-              The MenACWY vaccine helps protect against meningitis and sepsis.
-              It is recommended for all teenagers. Most people only need one
-              dose of the vaccine.
-            - >-
-              <a href="https://www.nhs.uk/vaccinations/menacwy-vaccine/">Find
-              out more about the MenACWY vaccine</a>
-        td_ipv:
-          title: Td/IPV (3-in-1 teenage booster)
-          description:
-            - >-
-              The Td/IPV vaccine (also called the 3-in-1 teenage booster) helps
-              protect against tetanus, diphtheria and polio.
-            - >-
-              It boosts the protection provided by the
-              <a href="https://www.nhs.uk/vaccinations/6-in-1-vaccine/">6-in-1
-              vaccine</a> and
-              <a href="https://www.nhs.uk/vaccinations/4-in-1-preschool-booster-vaccine/">4-in-1
-              pre-school booster vaccine</a>.
-            - >-
-              <a href="https://www.nhs.uk/vaccinations/td-ipv-vaccine-3-in-1-teenage-booster/">Find
-              out more about the Td/IPV vaccine</a>
       title: Give or refuse consent for vaccinations
   dashboard:
     index:
@@ -614,11 +595,15 @@ en:
   programmes:
     index:
       title: Programmes
+    overview:
+      show:
+        title: Overview
+    patients:
+      index:
+        title: Children
     sessions:
-      table_headings:
-        completed: All sessions completed
-        scheduled: Sessions scheduled
-        unscheduled: No sessions scheduled
+      index:
+        title: Sessions
   school_moves:
     index:
       title: School moves
@@ -629,25 +614,6 @@ en:
   sessions:
     index:
       title: Sessions
-      table_heading:
-        zero: There are no sessions scheduled for today.
-        one: 1 session today
-        other: "%{count} sessions today"
-    completed:
-      table_heading:
-        zero: There are no locations with all sessions completed.
-        one: 1 location with all sessions completed
-        other: "%{count} locations with all sessions completed"
-    scheduled:
-      table_heading:
-        zero: There are no locations with sessions scheduled.
-        one: 1 location with sessions scheduled
-        other: "%{count} locations with sessions scheduled"
-    unscheduled:
-      table_heading:
-        zero: There are no locations with no sessions scheduled.
-        one: 1 location with no sessions scheduled
-        other: "%{count} locations with no sessions scheduled"
     tabs:
       overview: Overview
       consent: Consent
@@ -658,12 +624,9 @@ en:
   table:
     no_filtered_results: We couldn’t find any children that matched your filters.
     no_results: No results
-  organisations:
+  teams:
     show:
-      title: Your organisation
-  vaccination_records:
-    index:
-      title: Vaccinations
+      title: Your team
   vaccines:
     index:
       title: Vaccines
@@ -676,13 +639,13 @@ en:
     one: 1 vaccination given
     other: "%{count} vaccinations given"
   wicked:
+    academic_year: academic-year
     address: address
     agree: agree
     batch: batch
     cohort: cohort
     confirm: confirm
     confirm_school: confirm-school
-    consent: consent
     contact_method: contact-method
     date_and_time: date-and-time
     date_of_birth: date-of-birth
@@ -693,21 +656,28 @@ en:
     file_format: file-format
     gp: gp
     health_question: health-question
+    identity: identity
+    injection_alternative: injection-alternative
     location: location
     name: name
     notes: notes
-    notify_parents: notify-parents
+    notify_parent_on_refusal: notify-parent-on-refusal
+    notify_parents_on_vaccination: notify-parents-on-vaccination
     outcome: outcome
     parent: parent
     parent_details: parent-details
     questions: questions
     reason: reason
     reason_notes: reason-notes
+    response_doubles: response-doubles
+    response_flu: response-flu
+    response_hpv: response-hpv
     route: route
     school: school
     session: session
     timeline: timeline
     triage: triage
+    type: type
     vaccine: vaccine
     when: when
     who: who

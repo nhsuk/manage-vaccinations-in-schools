@@ -22,7 +22,7 @@
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-one-half">
-    <%= render AppCardComponent.new(colour: "blue") do |c| %>
+    <%= render AppCardComponent.new(heading_level: 2, colour: "blue") do |c| %>
       <% c.with_heading { "Duplicate record" } %>
       <h3 class="nhsuk-heading-s">Duplicate child record</h3>
       <%= render AppChildSummaryComponent.new(@patient.with_pending_changes) %>
@@ -36,7 +36,7 @@
   </div>
 
   <div class="nhsuk-grid-column-one-half">
-    <%= render AppCardComponent.new(colour: "blue") do |c| %>
+    <%= render AppCardComponent.new(heading_level: 2, colour: "blue") do |c| %>
       <% c.with_heading { "Existing record" } %>
       <h3 class="nhsuk-heading-s">Existing child record</h3>
       <%= render AppChildSummaryComponent.new(@patient) %>

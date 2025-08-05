@@ -1,0 +1,20 @@
+@use "../vendor/nhsuk-frontend" as *;
+
+.app-heading-group {
+  display: flex;
+  flex-direction: column;
+  gap: nhsuk-spacing(4);
+  justify-content: space-between;
+
+  @include nhsuk-responsive-margin(7, "bottom");
+
+  @include nhsuk-media-query($from: tablet) {
+    align-items: center;
+    flex-direction: row;
+  }
+
+  > *,
+  button {
+    margin: 0;
+  }
+}

@@ -1,29 +1,20 @@
 # frozen_string_literal: true
 
 describe AppPatientVaccinationTableComponent do
-  subject(:rendered) { render_inline(component) }
+  subject { render_inline(component) }
 
-  let(:component) { described_class.new(patient) }
+  let(:component) do
+    described_class.new(patient, academic_year:, programme:, show_caption:)
+  end
 
   let(:patient) { create(:patient) }
+  let(:academic_year) { 2023 }
+  let(:programme) { nil }
+  let(:show_caption) { false }
 
-  before { patient.strict_loading!(false) }
-
-  context "without a vaccination record" do
-    let(:sessions) { [] }
-
-    it { should have_content("No vaccinations") }
-  end
-
-  context "with a not administered vaccination record" do
-    before { create(:vaccination_record, :not_administered, patient:) }
-
-    it { should have_content("No vaccinations") }
-  end
+  it { should have_content("No vaccinations") }
 
   context "with a vaccination record" do
-    let(:programme) { create(:programme, :hpv) }
-    let(:vaccine) { programme.vaccines.active.first }
     let(:location) do
       create(
         :school,
@@ -33,39 +24,59 @@ describe AppPatientVaccinationTableComponent do
         address_postcode: "SE1 8TY"
       )
     end
-    let(:session) { create(:session, location:, programmes: [programme]) }
 
-    context "with a vaccine" do
-      before do
-        create(
-          :vaccination_record,
-          patient:,
-          programme:,
-          session:,
-          performed_at: Time.zone.local(2024, 1, 1)
-        )
-      end
+    let(:vaccination_record_programme) { create(:programme, :hpv) }
 
-      it { should have_link("Gardasil 9 (HPV)") }
-      it { should have_content("Test School, Waterloo Road, London, SE1 8TY") }
-      it { should have_content("1 January 2024") }
+    let(:performed_at) { Time.zone.local(2024, 1, 1) }
+
+    before do
+      create(
+        :vaccination_record,
+        patient:,
+        session:
+          create(
+            :session,
+            location:,
+            programmes: [vaccination_record_programme]
+          ),
+        programme: vaccination_record_programme,
+        performed_at:
+      )
     end
 
-    context "without a vaccine" do
-      before do
-        create(
-          :vaccination_record,
-          patient:,
-          programme:,
-          session:,
-          performed_at: Time.zone.local(2024, 1, 1),
-          vaccine: nil
-        )
-      end
+    it { should have_link("1 January 2024") }
+    it { should have_content("Test School") }
+    it { should have_content("Waterloo Road, London, SE1 8TY") }
+    it { should have_content("Vaccinated") }
+    it { should have_content("HPV") }
 
-      it { should have_link("HPV") }
-      it { should have_content("Test School, Waterloo Road, London, SE1 8TY") }
-      it { should have_content("1 January 2024") }
+    context "when showing records from a specific programme" do
+      let(:programme) { vaccination_record_programme }
+
+      it { should_not have_content("HPV") }
+    end
+
+    context "with a vaccination record from a different programme" do
+      let(:programme) { create(:programme, :hpv) }
+      let(:vaccination_record_programme) { create(:programme, :flu) }
+
+      it { should_not have_link("1 January 2024") }
+      it { should_not have_content("Test School") }
+      it { should_not have_content("Waterloo Road, London, SE1 8TY") }
+      it { should_not have_content("Vaccinated") }
+      it { should_not have_content("HPV") }
+    end
+
+    context "with a Flu vaccination record from a previous year" do
+      let(:vaccination_record_programme) { create(:programme, :flu) }
+      let(:programme) { vaccination_record_programme }
+      let(:performed_at) { Time.zone.local(2022, 1, 1) }
+
+      it { should_not have_link("1 January 2022") }
+      it { should_not have_content("Test School") }
+      it { should_not have_content("Waterloo Road, London, SE1 8TY") }
+      it { should_not have_content("Vaccinated") }
+      it { should_not have_content("Flu") }
     end
   end
 end

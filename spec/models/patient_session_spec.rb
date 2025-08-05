@@ -27,8 +27,130 @@ describe PatientSession do
   let(:programme) { create(:programme) }
   let(:session) { create(:session, programmes: [programme]) }
 
-  it { should have_many(:gillick_assessments) }
-  it { should have_many(:pre_screenings) }
+  describe "associations" do
+    it { should have_many(:gillick_assessments) }
+    it { should have_many(:pre_screenings) }
+
+    it do
+      expect(patient_session).to have_one(:latest_note)
+        .through(:patient)
+        .source(:notes)
+        .conditions(session_id: session.id)
+        .order(created_at: :desc)
+    end
+  end
+
+  describe "scopes" do
+    describe "#appear_in_programmes" do
+      subject(:scope) do
+        described_class.joins(:patient, :session).appear_in_programmes(
+          programmes
+        )
+      end
+
+      let(:programmes) { create_list(:programme, 1, :td_ipv) }
+      let(:session) { create(:session, programmes:) }
+
+      it { should be_empty }
+
+      context "in a session with the right year group" do
+        let(:patient_session) do
+          create(:patient_session, session:, year_group: 9)
+        end
+
+        it { should include(patient_session) }
+      end
+
+      context "in a session but the wrong year group" do
+        let(:patient_session) do
+          create(:patient_session, session:, year_group: 8)
+        end
+
+        it { should_not include(patient_session) }
+      end
+
+      context "in a session with the right year group for the programme but not the location" do
+        let(:location) { create(:school, :secondary) }
+        let(:session) { create(:session, location:, programmes:) }
+
+        let(:patient_session) { create(:patient, session:, year_group: 9) }
+
+        before do
+          programmes.each do |programme|
+            create(
+              :location_programme_year_group,
+              programme:,
+              location:,
+              year_group: 10
+            )
+          end
+        end
+
+        it { should_not include(patient_session) }
+      end
+    end
+
+    describe "#consent_given_and_ready_to_vaccinate" do
+      subject(:scope) do
+        described_class.consent_given_and_ready_to_vaccinate(
+          programmes:,
+          vaccine_method:
+        )
+      end
+
+      let(:programmes) { [create(:programme, :flu), create(:programme, :hpv)] }
+      let(:academic_year) { Date.current.academic_year }
+      let(:vaccine_method) { nil }
+
+      it { should be_empty }
+
+      context "with a patient eligible for vaccination" do
+        let(:patient_session) do
+          create(
+            :patient_session,
+            :consent_given_triage_not_needed,
+            programmes:
+          )
+        end
+
+        it { should include(patient_session) }
+      end
+
+      context "when filtering on nasal spray" do
+        let(:vaccine_method) { "nasal" }
+
+        context "with a patient eligible for vaccination" do
+          let(:patient_session) do
+            create(
+              :patient_session,
+              :consent_given_triage_not_needed,
+              programmes:
+            )
+          end
+
+          before do
+            patient_session
+              .patient
+              .consent_status(programme: programmes.first, academic_year:)
+              .update!(vaccine_methods: %w[nasal injection])
+          end
+
+          it { should include(patient_session) }
+
+          context "when the patient has been vaccinated for flu" do
+            before do
+              patient_session
+                .patient
+                .vaccination_status(programme: programmes.first, academic_year:)
+                .vaccinated!
+            end
+
+            it { should_not include(patient_session) }
+          end
+        end
+      end
+    end
+  end
 
   describe "#safe_to_destroy?" do
     subject(:safe_to_destroy?) { patient_session.safe_to_destroy? }

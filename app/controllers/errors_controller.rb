@@ -1,7 +1,15 @@
 # frozen_string_literal: true
 
 class ErrorsController < ActionController::Base
+  before_action :set_assets_name
+
   layout "two_thirds"
+
+  private
+
+  def set_assets_name
+    @assets_name = "application"
+  end
 
   def not_found
     render "not_found", status: :not_found

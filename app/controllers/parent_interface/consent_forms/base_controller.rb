@@ -5,15 +5,19 @@ module ParentInterface
     skip_before_action :authenticate_user!
     skip_after_action :verify_policy_scoped
 
-    prepend_before_action :set_team
+    prepend_before_action :set_subteam
     prepend_before_action :set_programmes
-    prepend_before_action :set_organisation
+    prepend_before_action :set_team
     prepend_before_action :set_session
     prepend_before_action :set_consent_form
     before_action :authenticate_consent_form_user!
     before_action :set_privacy_policy_url
 
     private
+
+    def set_show_navigation
+      @show_navigation = false
+    end
 
     def set_consent_form
       @consent_form =
@@ -30,12 +34,12 @@ module ParentInterface
       end
     end
 
-    def set_organisation
-      @organisation =
+    def set_team
+      @team =
         if @consent_form.present?
-          @consent_form.organisation
+          @consent_form.team
         elsif @session.present?
-          @session.organisation
+          @session.team
         end
     end
 
@@ -48,12 +52,12 @@ module ParentInterface
         end
     end
 
-    def set_team
-      @team =
+    def set_subteam
+      @subteam =
         if @consent_form.present?
-          @consent_form.team
+          @consent_form.subteam
         elsif @session.present?
-          @session.team
+          @session.subteam
         end
     end
 
@@ -71,8 +75,17 @@ module ParentInterface
         )
     end
 
+    def set_assets_name
+      @assets_name = "public"
+    end
+
     def set_service_name
       @service_name = "Give or refuse consent for vaccinations"
+    end
+
+    def set_service_url
+      @service_url =
+        "https://www.give-or-refuse-consent-for-vaccinations.nhs.uk"
     end
 
     def set_secondary_navigation
@@ -84,7 +97,7 @@ module ParentInterface
     end
 
     def set_privacy_policy_url
-      @privacy_policy_url = @organisation.privacy_policy_url
+      @privacy_policy_url = @team.privacy_policy_url
     end
   end
 end

@@ -2,7 +2,7 @@
 
 class AppSessionActionsComponent < ViewComponent::Base
   erb_template <<-ERB
-    <h3 class="nhsuk-heading-s nhsuk-u-margin-bottom-2">Action required</h3>
+    <h4 class="nhsuk-heading-s nhsuk-u-margin-bottom-2">Action required</h4>
     <%= govuk_summary_list(rows:) %>
   ERB
 
@@ -12,24 +12,27 @@ class AppSessionActionsComponent < ViewComponent::Base
     @session = session
   end
 
-  def render?
-    rows.any?
-  end
+  def render? = rows.any?
 
   private
 
   attr_reader :session
 
-  delegate :patient_sessions, to: :session
+  delegate :academic_year, :programmes, to: :session
 
-  delegate :programmes, to: :session
+  def patient_sessions
+    session
+      .patient_sessions
+      .joins(:patient, :session)
+      .appear_in_programmes(programmes)
+  end
 
   def rows
     @rows ||= [
       no_consent_response_row,
       conflicting_consent_row,
       triage_required_row,
-      register_attendance_row,
+      (register_attendance_row if session.requires_registration?),
       ready_for_vaccinator_row
     ].compact
   end
@@ -48,8 +51,7 @@ class AppSessionActionsComponent < ViewComponent::Base
 
     return nil if count.zero?
 
-    href =
-      session_consent_path(session, search_form: { consent_status: status })
+    href = session_consent_path(session, consent_statuses: [status])
 
     {
       key: {
@@ -58,7 +60,7 @@ class AppSessionActionsComponent < ViewComponent::Base
       value: {
         text: I18n.t("children", count:)
       },
-      actions: [{ text: "Review", href: }]
+      actions: [{ text: "Review", visually_hidden_text: text.downcase, href: }]
     }
   end
 
@@ -70,7 +72,7 @@ class AppSessionActionsComponent < ViewComponent::Base
 
     return nil if count.zero?
 
-    href = session_triage_path(session, search_form: { triage_status: status })
+    href = session_triage_path(session, triage_status: status)
 
     {
       key: {
@@ -79,7 +81,9 @@ class AppSessionActionsComponent < ViewComponent::Base
       value: {
         text: I18n.t("children", count:)
       },
-      actions: [{ text: "Review", href: }]
+      actions: [
+        { text: "Review", visually_hidden_text: "triage needed", href: }
+      ]
     }
   end
 
@@ -90,8 +94,7 @@ class AppSessionActionsComponent < ViewComponent::Base
 
     return nil if count.zero?
 
-    href =
-      session_register_path(session, search_form: { register_status: status })
+    href = session_register_path(session, register_status: status)
 
     {
       key: {
@@ -100,7 +103,9 @@ class AppSessionActionsComponent < ViewComponent::Base
       value: {
         text: I18n.t("children", count:)
       },
-      actions: [{ text: "Review", href: }]
+      actions: [
+        { text: "Review", visually_hidden_text: "register attendance", href: }
+      ]
     }
   end
 
@@ -116,7 +121,8 @@ class AppSessionActionsComponent < ViewComponent::Base
           )
           .count do |patient_session|
             patient_session.patient.consent_given_and_safe_to_vaccinate?(
-              programme:
+              programme:,
+              academic_year:
             )
           end
       end
@@ -125,7 +131,7 @@ class AppSessionActionsComponent < ViewComponent::Base
 
     texts =
       counts_by_programme.map do |programme, count|
-        "#{I18n.t("children", count:)} for #{programme.name}"
+        "#{I18n.t("children", count:)} for #{programme.name_in_sentence}"
       end
 
     href = session_record_path(session)
@@ -137,7 +143,9 @@ class AppSessionActionsComponent < ViewComponent::Base
       value: {
         text: safe_join(texts, tag.br)
       },
-      actions: [{ text: "Review", href: }]
+      actions: [
+        { text: "Review", visually_hidden_text: "ready for vaccinator", href: }
+      ]
     }
   end
 end

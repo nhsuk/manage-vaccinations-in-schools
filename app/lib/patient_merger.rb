@@ -7,6 +7,8 @@ class PatientMerger
   end
 
   def call
+    vaccination_record_ids = []
+
     ActiveRecord::Base.transaction do
       patient_to_destroy.access_log_entries.update_all(
         patient_id: patient_to_keep.id
@@ -22,7 +24,7 @@ class PatientMerger
       patient_to_destroy.school_moves.find_each do |school_move|
         if patient_to_keep.school_moves.exists?(
              home_educated: school_move.home_educated,
-             organisation_id: school_move.organisation_id,
+             team_id: school_move.team_id,
              school_id: school_move.school_id
            )
           school_move.destroy!
@@ -39,6 +41,8 @@ class PatientMerger
         patient_id: patient_to_keep.id
       )
       patient_to_destroy.triages.update_all(patient_id: patient_to_keep.id)
+
+      vaccination_record_ids = patient_to_destroy.vaccination_records.ids
       patient_to_destroy.vaccination_records.update_all(
         patient_id: patient_to_keep.id
       )
@@ -99,6 +103,11 @@ class PatientMerger
 
       StatusUpdater.call(patient: patient_to_keep)
     end
+
+    VaccinationRecord
+      .where(id: vaccination_record_ids)
+      .syncable_to_nhs_immunisations_api
+      .find_each(&:sync_to_nhs_immunisations_api)
   end
 
   def self.call(*args, **kwargs)
