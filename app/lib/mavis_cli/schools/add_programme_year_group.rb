@@ -33,7 +33,11 @@ module MavisCLI
 
         ActiveRecord::Base.transaction do
           year_groups.each do |year_group|
-            location.programme_year_groups.create!(programme:, year_group:)
+            LocationProgrammeYearGroup.create!(
+              location:,
+              programme:,
+              year_group:
+            )
           end
         end
       end

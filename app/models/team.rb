@@ -57,9 +57,7 @@ class Team < ApplicationRecord
 
   has_many :location_programme_year_groups,
            -> { where(programme: it.programmes) },
-           through: :locations,
-           source: :programme_year_groups,
-           class_name: "Location::ProgrammeYearGroup"
+           through: :locations
 
   has_and_belongs_to_many :users
 

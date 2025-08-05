@@ -20,7 +20,7 @@
 #  fk_rails_...  (location_id => locations.id) ON DELETE => cascade
 #  fk_rails_...  (programme_id => programmes.id) ON DELETE => cascade
 #
-describe Location::ProgrammeYearGroup do
+describe LocationProgrammeYearGroup do
   subject { build(:location_programme_year_group) }
 
   describe "associations" do

@@ -36,7 +36,7 @@ describe Onboarding do
       expect(team.locations.generic_clinic.count).to eq(1)
       generic_clinic = team.locations.generic_clinic.first
       expect(generic_clinic.year_groups).to eq([8, 9, 10, 11])
-      expect(generic_clinic.programme_year_groups.count).to eq(4)
+      expect(generic_clinic.location_programme_year_groups.count).to eq(4)
 
       subteam1 = team.subteams.includes(:schools).find_by!(name: "Subteam 1")
       expect(subteam1.email).to eq("subteam-1@trust.nhs.uk")
@@ -52,10 +52,10 @@ describe Onboarding do
       expect(subteam1.schools).to contain_exactly(school1, school2)
       expect(subteam2.schools).to contain_exactly(school3, school4)
 
-      expect(school1.programme_year_groups.count).to eq(4)
-      expect(school2.programme_year_groups.count).to eq(4)
-      expect(school3.programme_year_groups.count).to eq(4)
-      expect(school4.programme_year_groups.count).to eq(4)
+      expect(school1.location_programme_year_groups.count).to eq(4)
+      expect(school2.location_programme_year_groups.count).to eq(4)
+      expect(school3.location_programme_year_groups.count).to eq(4)
+      expect(school4.location_programme_year_groups.count).to eq(4)
 
       clinic1 = subteam1.community_clinics.find_by!(ods_code: nil)
       expect(clinic1.name).to eq("10 Downing Street")

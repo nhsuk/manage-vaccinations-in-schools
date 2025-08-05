@@ -7,7 +7,7 @@ class Programmes::PatientsController < Programmes::BaseController
 
   def index
     @year_groups =
-      policy_scope(Location::ProgrammeYearGroup).where(
+      policy_scope(LocationProgrammeYearGroup).where(
         programme: @programme
       ).pluck_year_groups
 

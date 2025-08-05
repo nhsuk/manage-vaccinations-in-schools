@@ -34,7 +34,7 @@ module MavisCLI
         ActiveRecord::Base.transaction do
           year_groups.each do |year_group|
             location
-              .programme_year_groups
+              .location_programme_year_groups
               .find_by(programme:, year_group:)
               &.destroy!
           end

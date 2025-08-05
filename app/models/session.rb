@@ -53,9 +53,7 @@ class Session < ApplicationRecord
 
   has_many :location_programme_year_groups,
            -> { where(programme: it.programmes) },
-           through: :location,
-           source: :programme_year_groups,
-           class_name: "Location::ProgrammeYearGroup"
+           through: :location
 
   accepts_nested_attributes_for :session_dates, allow_destroy: true
 

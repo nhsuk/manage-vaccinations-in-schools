@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Location::ProgrammeYearGroupPolicy < ApplicationPolicy
+class LocationProgrammeYearGroupPolicy < ApplicationPolicy
   class Scope < ApplicationPolicy::Scope
     def resolve
       scope.joins(location: :subteam).where(
