@@ -329,17 +329,14 @@ class AppActivityLogComponent < ViewComponent::Base
           .flat_map { programmes_for(it) }
           .reject { vaccinated_programmes.include?(it) }
 
-      unless programmes_with_expired_consents.any? ||
-               programmes_with_expired_triages.any? ||
-               programmes_with_expired_psds.any?
-        next
-      end
-
       expired_items = []
-      expired_items << "consent" if programmes_with_expired_consents.any?
-      expired_items << "health information"
+      if programmes_with_expired_consents.any?
+        expired_items += ["consent", "health information"]
+      end
       expired_items << "triage outcome" if programmes_with_expired_triages.any?
       expired_items << "PSD status" if programmes_with_expired_psds.any?
+
+      next if expired_items.empty?
 
       programmes_with_expired_items = [
         programmes_with_expired_consents,

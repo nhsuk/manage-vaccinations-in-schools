@@ -552,7 +552,7 @@ describe AppActivityLogComponent do
       end
 
       include_examples "card",
-                       title: "Health information and PSD status expired",
+                       title: "PSD status expired",
                        date: "31 August 2025 at 11:59pm",
                        notes: "DOE, Sarah was not vaccinated.",
                        programme: "HPV"
@@ -589,7 +589,7 @@ describe AppActivityLogComponent do
       end
 
       include_examples "card",
-                       title: "Health information and PSD status expired",
+                       title: "PSD status expired",
                        date: "31 August 2025 at 11:59pm",
                        notes: "DOE, Sarah was not vaccinated.",
                        programme: "Flu"
