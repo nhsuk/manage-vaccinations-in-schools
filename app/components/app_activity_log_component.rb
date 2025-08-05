@@ -318,59 +318,87 @@ class AppActivityLogComponent < ViewComponent::Base
   def decision_expiration_events
     all_programmes = Programme.all.to_a
 
-    AcademicYear.all.filter_map do |academic_year|
-      next if academic_year >= AcademicYear.current
+    AcademicYear.all.flat_map do |academic_year|
+      next [] if academic_year >= AcademicYear.current
 
-      vaccinated_programmes =
-        all_programmes.select do |programme|
+      not_vaccinated_programmes =
+        all_programmes.reject do |programme|
           patient.vaccination_status(programme:, academic_year:).vaccinated?
         end
 
-      programmes_with_expired_consents =
-        consents
-          .select { it.academic_year == academic_year }
-          .flat_map { programmes_for(it) }
-          .reject { vaccinated_programmes.include?(it) }
+      vaccinated_but_seasonal_programmes =
+        all_programmes.select do |programme|
+          patient.vaccination_status(programme:, academic_year:).vaccinated? &&
+            programme.seasonal?
+        end
 
-      programmes_with_expired_triages =
-        triages
-          .select { it.academic_year == academic_year }
-          .flat_map { programmes_for(it) }
-          .reject { vaccinated_programmes.include?(it) }
+      expired_items =
+        {
+          vaccinated_but_seasonal: vaccinated_but_seasonal_programmes,
+          not_vaccinated: not_vaccinated_programmes
+        }.transform_values do |programmes|
+          get_expired_items(academic_year:, programmes:)
+        end
 
-      programmes_with_expired_psds =
-        patient_specific_directions
-          .select { it.academic_year == academic_year }
-          .flat_map { programmes_for(it) }
-          .reject { vaccinated_programmes.include?(it) }
+      expired_items.map do |category, expired_items_in_category|
+        expired_item_names = []
+        if expired_items_in_category[:consents].any?
+          expired_item_names += ["consent", "health information"]
+        end
+        if expired_items_in_category[:triages].any?
+          expired_item_names << "triage outcome"
+        end
+        if expired_items_in_category[:psds].any?
+          expired_item_names << "PSD status"
+        end
 
-      expired_items = []
-      if programmes_with_expired_consents.any?
-        expired_items += ["consent", "health information"]
+        next [] if expired_item_names.empty?
+
+        title =
+          "#{
+            expired_item_names.to_sentence(
+              words_connector: ", ",
+              last_word_connector: " and "
+            ).upcase_first
+          } expired"
+
+        body =
+          case category
+          when :not_vaccinated
+            "#{@patient.full_name} was not vaccinated."
+          when :vaccinated_but_seasonal
+            "#{@patient.full_name} was vaccinated."
+          end
+
+        programmes = expired_items_in_category.values.flatten.uniq
+
+        {
+          title:,
+          body:,
+          at:
+            academic_year.to_academic_year_date_range.end.end_of_day - 1.second,
+          programmes:
+        }
       end
-      expired_items << "triage outcome" if programmes_with_expired_triages.any?
-      expired_items << "PSD status" if programmes_with_expired_psds.any?
+    end
+  end
 
-      next if expired_items.empty?
+  private
 
-      programmes_with_expired_items = [
-        programmes_with_expired_consents,
-        programmes_with_expired_triages,
-        programmes_with_expired_psds
-      ].flatten.uniq
+  def filter_expired(items, academic_year:, programmes:)
+    items
+      .select { it.academic_year == academic_year }
+      .flat_map { programmes_for(it) }
+      .select { programmes.include?(it) }
+  end
 
-      expired_items_sentence =
-        expired_items.to_sentence(
-          words_connector: ", ",
-          last_word_connector: " and "
-        )
-
-      {
-        title: "#{expired_items_sentence.upcase_first} expired",
-        body: "#{@patient.full_name} was not vaccinated.",
-        at: academic_year.to_academic_year_date_range.end.end_of_day - 1.second,
-        programmes: programmes_with_expired_items
-      }
+  def get_expired_items(academic_year:, programmes:)
+    {
+      consents:,
+      triages:,
+      psds: patient_specific_directions
+    }.transform_values do |items|
+      filter_expired(items, academic_year:, programmes:)
     end
   end
 end
