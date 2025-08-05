@@ -116,6 +116,8 @@ class ImmunisationImportRow
       )
     end
 
+    attributes.merge!(notify_parents: true) if session
+
     attributes_to_stage_if_already_exists = {
       batch_id: batch&.id,
       delivery_method: delivery_method_value,

@@ -103,6 +103,8 @@ class DraftVaccinationRecordsController < ApplicationController
   def handle_confirm
     return unless @draft_vaccination_record.save
 
+    is_new_record = @vaccination_record.new_record?
+
     performed_at_date_changed =
       @vaccination_record.performed_at&.to_date !=
         @draft_vaccination_record.performed_at.to_date
@@ -115,7 +117,12 @@ class DraftVaccinationRecordsController < ApplicationController
           @vaccination_record.outcome_changed? ||
             @vaccination_record.batch_id_changed? || performed_at_date_changed
         )
-
+    if is_new_record
+      @vaccination_record.notify_parents =
+        VaccinationNotificationCriteria.call(
+          vaccination_record: @vaccination_record
+        )
+    end
     @vaccination_record.save!
 
     StatusUpdater.call(patient: @patient)

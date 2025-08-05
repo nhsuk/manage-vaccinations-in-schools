@@ -133,7 +133,8 @@ describe "HPV vaccination" do
       )
     VaccinationRecord.last.update!(
       performed_at: previous_date,
-      performed_by: @team.users.first
+      performed_by: @team.users.first,
+      notify_parents: true
     )
 
     @restricted_vaccinated_patient =
@@ -174,7 +175,8 @@ describe "HPV vaccination" do
       create(:patient, :vaccinated, session: @session, school:, year_group: 8)
     VaccinationRecord.last.update!(
       performed_at: previous_date,
-      performed_by: @team.users.first
+      performed_by: @team.users.first,
+      notify_parents: true
     )
   end
 

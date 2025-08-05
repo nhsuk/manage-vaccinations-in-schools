@@ -76,10 +76,18 @@ describe VaccinationMailerConcern do
 
     context "when the consent was done through gillick assessment" do
       let(:vaccination_record) do
-        create(:vaccination_record, programme:, patient:, session:)
+        create(
+          :vaccination_record,
+          programme:,
+          patient:,
+          session:,
+          notify_parents:
+        )
       end
 
       context "when child wants parents to be notified" do
+        let(:notify_parents) { true }
+
         before do
           create(
             :consent,
@@ -106,6 +114,8 @@ describe VaccinationMailerConcern do
 
       context "when child doesn't want a parent to be notified" do
         before { create(:consent, :given, :self_consent, patient:, programme:) }
+
+        let(:notify_parents) { false }
 
         it "doesn't send an email" do
           expect { send_vaccination_confirmation }.not_to have_delivered_email
