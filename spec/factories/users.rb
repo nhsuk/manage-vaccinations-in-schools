@@ -48,7 +48,7 @@ FactoryBot.define do
         {
           "selected_org" => {
             "name" => team.name,
-            "code" => team.ods_code
+            "code" => team.organisation.ods_code
           },
           "selected_role" => {
             "name" => selected_role_name,

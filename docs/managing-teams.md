@@ -10,10 +10,12 @@ When first onboarding a new SAIS team, there’s a lot of information to include
 
 ```yaml
 organisation:
+  ods_code: # ODS code of the organisation
+
+team:
   name: # Unique name of the organisation
   email: # Contact email address
   phone: # Contact phone number
-  ods_code: # Unique ODS code
   careplus_venue_code: # Venue code used in CarePlus exports
   privacy_notice_url: # URL of a privacy notice shown to parents
   privacy_policy_url: # URL of a privacy policy shown to parents

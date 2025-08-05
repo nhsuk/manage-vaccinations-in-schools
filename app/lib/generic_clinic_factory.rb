@@ -35,10 +35,9 @@ class GenericClinicFactory
   end
 
   def location
-    team.locations.find_by(ods_code: team.ods_code, type: :generic_clinic) ||
+    team.locations.find_by(type: :generic_clinic) ||
       Location.create!(
         name: "Community clinic",
-        ods_code: team.ods_code,
         subteam:,
         type: :generic_clinic
       )

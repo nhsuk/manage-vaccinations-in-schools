@@ -68,8 +68,6 @@ FactoryBot.define do
       name { "Community clinic" }
 
       year_groups { (0..11).to_a }
-
-      ods_code { subteam&.team&.ods_code }
     end
 
     factory :gp_practice do

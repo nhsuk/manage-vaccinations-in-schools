@@ -36,7 +36,7 @@ describe "mavis generate consents" do
         "generate",
         "consents",
         "-o",
-        @team.ods_code.to_s,
+        @team.organisation.ods_code.to_s,
         "-p",
         @programme.type,
         "-s",

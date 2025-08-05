@@ -511,6 +511,13 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_01_143843) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "organisations", force: :cascade do |t|
+    t.string "ods_code", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["ods_code"], name: "index_organisations_on_ods_code", unique: true
+  end
+
   create_table "parent_relationships", force: :cascade do |t|
     t.bigint "parent_id", null: false
     t.bigint "patient_id", null: false
@@ -760,7 +767,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_01_143843) do
     t.datetime "updated_at", null: false
     t.string "email"
     t.string "privacy_policy_url", null: false
-    t.string "ods_code", null: false
     t.uuid "reply_to_id"
     t.string "phone"
     t.integer "days_before_consent_requests", default: 21, null: false
@@ -769,8 +775,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_01_143843) do
     t.string "careplus_venue_code", null: false
     t.string "privacy_notice_url", null: false
     t.string "phone_instructions"
+    t.bigint "organisation_id", null: false
     t.index ["name"], name: "index_teams_on_name", unique: true
-    t.index ["ods_code"], name: "index_teams_on_ods_code", unique: true
+    t.index ["organisation_id"], name: "index_teams_on_organisation_id"
   end
 
   create_table "teams_users", id: false, force: :cascade do |t|
@@ -987,6 +994,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_01_143843) do
   add_foreign_key "subteams", "teams"
   add_foreign_key "team_programmes", "programmes"
   add_foreign_key "team_programmes", "teams"
+  add_foreign_key "teams", "organisations"
   add_foreign_key "triage", "patients"
   add_foreign_key "triage", "programmes"
   add_foreign_key "triage", "teams"

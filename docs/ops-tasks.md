@@ -5,7 +5,8 @@
 If it's necessary to bulk remove patients from sessions (i.e. more than a few usages of "Remove from cohort" required), the following commands can be used in a Rails console:
 
 ```rb
-org = Team.find_by(ods_code: "")
+org = Organisation.find_by(ods_code: "")
+team = org.teams.find_by(name: "")
 location = org.schools.find_by(name: "School name")
 session = org.sessions.find_by(location:)
 
@@ -68,7 +69,8 @@ Consent.where(notify_parents_on_vaccination: false).pluck(:patient_id)
 ## Consent response stats per school
 
 ```rb
-team = Team.find_by(ods_code: "...")
+org = Organisation.find_by(ods_code: "...")
+team = org.teams.find_by(name: "")
 
 dates = {}
 sessions = team.sessions

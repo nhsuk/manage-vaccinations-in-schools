@@ -6,10 +6,10 @@
   <%= f.govuk_error_summary %>
 
   <%= f.govuk_collection_radio_buttons :team_id,
-                                       current_user.teams,
+                                       current_user.teams.includes(:organisation),
                                        :id,
                                        :name,
-                                       :ods_code,
+                                       -> { _1.organisation.ods_code },
                                        legend: { text: legend, size: "xl", tag: "h1" } %>
 
   <%= f.govuk_submit %>

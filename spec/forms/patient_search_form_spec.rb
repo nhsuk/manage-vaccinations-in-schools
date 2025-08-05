@@ -533,7 +533,7 @@ describe PatientSearchForm do
         create(
           :vaccination_record,
           patient:,
-          performed_ods_code: team.ods_code,
+          performed_ods_code: team.organisation.ods_code,
           programme: create(:programme, :hpv)
         )
       end
