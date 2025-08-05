@@ -12,15 +12,20 @@ class AppSessionActionsComponent < ViewComponent::Base
     @session = session
   end
 
-  def render?
-    rows.any?
-  end
+  def render? = rows.any?
 
   private
 
   attr_reader :session
 
-  delegate :academic_year, :patient_sessions, :programmes, to: :session
+  delegate :academic_year, :programmes, to: :session
+
+  def patient_sessions
+    session
+      .patient_sessions
+      .joins(:patient, :session)
+      .appear_in_programmes(programmes)
+  end
 
   def rows
     @rows ||= [

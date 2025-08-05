@@ -27,9 +27,15 @@ describe AppSessionDetailsSummaryComponent do
     it { should have_link("Review vaccinated") }
   end
 
-  context "when the patient is not eligible for the programme" do
-    before { create(:patient, session:, year_group: 7) }
+  context "when the patients are not eligible for the programme" do
+    before do
+      create(:patient_session, session:, year_group: 7)
+      create(:patient_session, :consent_refused, session:, year_group: 7)
+      create(:patient_session, :vaccinated, session:, year_group: 7)
+    end
 
-    it { should have_text("No children") }
+    it { should have_text("Cohort\nNo children") }
+    it { should have_text("Consent refused\nNo children") }
+    it { should have_text("Vaccinated\nNo vaccinations given") }
   end
 end
