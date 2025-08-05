@@ -80,7 +80,7 @@ class ApplicationController < ActionController::Base
   end
 
   def handle_unprocessable_entity
-    render "errors/unprocessable_entity", status: :unprocessable_entity
+    render "errors/unprocessable_entity", status: :unprocessable_content
   end
 
   def user_not_authorized

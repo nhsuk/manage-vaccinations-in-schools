@@ -32,13 +32,13 @@ describe "Patient sessions activity" do
 
     it "validates the body is present" do
       post path, params: { note: { body: "" } }
-      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response).to have_http_status(:unprocessable_content)
       expect(response.body).to include("Enter a note")
     end
 
     it "validates the body isn't too long" do
       post path, params: { note: { body: "a" * 2000 } }
-      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response).to have_http_status(:unprocessable_content)
       expect(response.body).to include(
         "Enter a note that is less than 1000 characters long"
       )

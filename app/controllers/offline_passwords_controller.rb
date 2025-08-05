@@ -14,7 +14,7 @@ class OfflinePasswordsController < ApplicationController
                     success: "Campaign saved, you can now go offline"
                   }
     else
-      render :new, status: :unprocessable_entity
+      render :new, status: :unprocessable_content
     end
   end
 

@@ -13,7 +13,7 @@ class ParentRelationshipsController < ApplicationController
     if @parent_relationship.update(parent_relationship_params)
       redirect_to edit_patient_path(@patient)
     else
-      render :edit, status: :unprocessable_entity
+      render :edit, status: :unprocessable_content
     end
   end
 

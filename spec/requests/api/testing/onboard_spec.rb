@@ -51,7 +51,7 @@ describe "/api/testing/onboard" do
       it "responds with an error" do
         request
 
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
 
         errors = JSON.parse(response.body)
 

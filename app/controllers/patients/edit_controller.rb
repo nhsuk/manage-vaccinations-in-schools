@@ -21,7 +21,7 @@ class Patients::EditController < ApplicationController
 
       redirect_to edit_patient_path(@patient)
     else
-      render :nhs_number, status: :unprocessable_entity
+      render :nhs_number, status: :unprocessable_content
     end
   end
 

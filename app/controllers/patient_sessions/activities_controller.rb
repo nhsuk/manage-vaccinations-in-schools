@@ -15,7 +15,7 @@ class PatientSessions::ActivitiesController < PatientSessions::BaseController
                     success: "Note added"
                   }
     else
-      render :show, status: :unprocessable_entity
+      render :show, status: :unprocessable_content
     end
   end
 
