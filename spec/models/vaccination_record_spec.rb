@@ -33,7 +33,7 @@
 #  performed_by_user_id                  :bigint
 #  programme_id                          :bigint           not null
 #  session_id                            :bigint
-#  vaccine_id                   /         :bigint
+#  vaccine_id                            :bigint
 #
 # Indexes
 #
