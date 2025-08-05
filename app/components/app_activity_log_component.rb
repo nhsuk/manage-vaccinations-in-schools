@@ -304,7 +304,7 @@ class AppActivityLogComponent < ViewComponent::Base
     all_programmes = Programme.all.to_a
 
     AcademicYear.all.filter_map do |academic_year|
-      next if Date.new(academic_year + 1, 8, 31) >= Date.current
+      next if academic_year >= AcademicYear.current
 
       vaccinated_programmes =
         all_programmes.select do |programme|
