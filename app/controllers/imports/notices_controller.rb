@@ -9,6 +9,7 @@ class Imports::NoticesController < ApplicationController
     @deceased_patients = policy_scope(Patient).deceased
     @invalidated_patients = policy_scope(Patient).invalidated
     @restricted_patients = policy_scope(Patient).restricted
-    @gillick_no_notify_patients = policy_scope(Patient).gillick_no_notify
+    @has_vaccination_records_dont_notify_parents_patients =
+      policy_scope(Patient).has_vaccination_records_dont_notify_parents
   end
 end

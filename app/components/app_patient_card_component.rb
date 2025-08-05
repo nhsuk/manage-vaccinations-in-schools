@@ -4,23 +4,9 @@ class AppPatientCardComponent < ViewComponent::Base
   erb_template <<-ERB
     <%= render AppCardComponent.new(heading_level:, section: true) do |card| %>
       <% card.with_heading { "Child’s details" } %>
-
-      <% if patient.date_of_death.present? %>
-        <%= render AppStatusComponent.new(
-          text: "Record updated with child’s date of death"
-        ) %>
-      <% end %>
-
-      <% if patient.invalidated? %>
-        <%= render AppStatusComponent.new(
-          text: "Record flagged as invalid"
-        ) %>
-      <% end %>
-
-      <% if patient.restricted? %>
-        <%= render AppStatusComponent.new(
-          text: "Record flagged as sensitive"
-        ) %>
+      
+      <% helpers.patient_important_notices(patient).each do |notification| %>
+        <%= render AppStatusComponent.new(text: notification[:message]) %>
       <% end %>
 
       <%= render AppChildSummaryComponent.new(

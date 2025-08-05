@@ -4,12 +4,12 @@
 
 <%= render AppImportsNavigationComponent.new(active: :notices) %>
 
-<% if @deceased_patients.any? || @invalidated_patients.any? || @restricted_patients.any? || @gillick_no_notify_patients.any? %>
+<% if @deceased_patients.any? || @invalidated_patients.any? || @restricted_patients.any? || @has_vaccination_records_dont_notify_parents_patients.any? %>
   <%= render AppNoticesTableComponent.new(
         deceased_patients: @deceased_patients,
         invalidated_patients: @invalidated_patients,
         restricted_patients: @restricted_patients,
-        gillick_no_notify_patients: @gillick_no_notify_patients,
+        has_vaccination_records_dont_notify_parents_patients: @has_vaccination_records_dont_notify_parents_patients,
       ) %>
 <% else %>
   <p class="nhsuk-body"><%= t(".no_results") %></p>
