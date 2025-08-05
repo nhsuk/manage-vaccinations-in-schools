@@ -352,11 +352,9 @@ class AppActivityLogComponent < ViewComponent::Base
           words_connector: ", ",
           last_word_connector: " and "
         )
-      capitalised_expired_items =
-        expired_items_sentence[0].upcase + expired_items_sentence[1..]
 
       {
-        title: "#{capitalised_expired_items} expired",
+        title: "#{expired_items_sentence.upcase_first} expired",
         body: "#{@patient.full_name} was not vaccinated.",
         at: academic_year.to_academic_year_date_range.end.end_of_day - 1.second,
         programmes: programmes_with_expired_items
