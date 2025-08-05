@@ -26,6 +26,8 @@
 #  fk_rails_...  (team_id => teams.id)
 #
 class Session < ApplicationRecord
+  include HasProgrammeYearGroups
+
   audited associated_with: :location
   has_associated_audits
 
@@ -188,7 +190,9 @@ class Session < ApplicationRecord
     Date.current > dates.min
   end
 
-  def year_groups = location_programme_year_groups.pluck_year_groups
+  def year_groups
+    @year_groups ||= location_programme_year_groups.pluck_year_groups
+  end
 
   def vaccine_methods
     programmes.flat_map(&:vaccine_methods).uniq.sort

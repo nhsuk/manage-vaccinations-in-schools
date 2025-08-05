@@ -30,6 +30,9 @@
 #  fk_rails_...  (organisation_id => organisations.id)
 #
 class Team < ApplicationRecord
+  include HasProgrammeYearGroups
+  include ODSCodeConcern
+
   audited associated_with: :organisation
   has_associated_audits
 

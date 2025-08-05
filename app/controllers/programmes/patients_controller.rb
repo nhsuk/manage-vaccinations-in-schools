@@ -6,10 +6,7 @@ class Programmes::PatientsController < Programmes::BaseController
   before_action :set_patient_search_form
 
   def index
-    @year_groups =
-      policy_scope(LocationProgrammeYearGroup).where(
-        programme: @programme
-      ).pluck_year_groups
+    @year_groups = current_team.programme_year_groups[@programme]
 
     scope =
       patients.includes(

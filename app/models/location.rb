@@ -34,6 +34,7 @@
 #
 class Location < ApplicationRecord
   include AddressConcern
+  include HasProgrammeYearGroups
   include ODSCodeConcern
 
   self.inheritance_column = nil
@@ -44,8 +45,8 @@ class Location < ApplicationRecord
   belongs_to :subteam, optional: true
 
   has_many :consent_forms
-  has_many :patients, foreign_key: :school_id
   has_many :location_programme_year_groups
+  has_many :patients, foreign_key: :school_id
   has_many :sessions
 
   has_one :team, through: :subteam

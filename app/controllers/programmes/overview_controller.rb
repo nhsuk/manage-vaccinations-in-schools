@@ -24,10 +24,7 @@ class Programmes::OverviewController < Programmes::BaseController
   end
 
   def set_patient_count_by_year_group
-    year_groups =
-      policy_scope(LocationProgrammeYearGroup).where(
-        programme: @programme
-      ).pluck_year_groups
+    year_groups = current_team.programme_year_groups[@programme]
 
     patient_count_by_birth_academic_year =
       patients.group(:birth_academic_year).count
