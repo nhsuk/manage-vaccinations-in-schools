@@ -2,7 +2,7 @@
 
 desc "Migrate patients who were moved out of cohorts to ensure they're archived."
 task archive_moved_out_of_cohort_patients: :environment do
-  Organisation.find_each do |team|
+  Team.find_each do |team|
     user = OpenStruct.new(selected_team: team)
 
     patients_in_cohort = team.patients
