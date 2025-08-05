@@ -159,6 +159,9 @@ describe "Verbal consent" do
   def then_i_see_the_check_and_confirm_page
     expect(page).to have_content("Check and confirm answers")
     expect(page).to have_content(["Method", "By phone"].join)
+    expect(page).not_to have_content(
+      "Confirmation of vaccination sent to parent"
+    )
   end
 
   def and_i_see_the_flu_injection_consent_given

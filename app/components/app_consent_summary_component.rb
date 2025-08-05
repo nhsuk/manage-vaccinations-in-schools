@@ -54,6 +54,22 @@ class AppConsentSummaryComponent < ViewComponent::Base
         end
       end
 
+      unless consent.notify_parents_on_vaccination.nil?
+        summary_list.with_row do |row|
+          row.with_key { "Confirmation of vaccination sent to parent?" }
+          row.with_value do
+            consent.notify_parents_on_vaccination ? "Yes" : "No"
+          end
+          if (href = change_links[:notify_parents_on_vaccination])
+            row.with_action(
+              text: "Change",
+              visually_hidden_text: "decision",
+              href:
+            )
+          end
+        end
+      end
+
       if consent.reason_for_refusal.present?
         summary_list.with_row do |row|
           row.with_key { "Reason for refusal" }
@@ -63,7 +79,7 @@ class AppConsentSummaryComponent < ViewComponent::Base
 
       unless consent.notify_parent_on_refusal.nil?
         summary_list.with_row do |row|
-          row.with_key { "Confirmation of decision sent to parent" }
+          row.with_key { "Confirmation of decision sent to parent?" }
           row.with_value { consent.notify_parent_on_refusal ? "Yes" : "No" }
         end
       end

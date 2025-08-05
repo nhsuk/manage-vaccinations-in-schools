@@ -246,6 +246,8 @@ describe "Self-consent" do
     choose "Child (Gillick competent)"
     5.times { click_on "Continue" }
 
+    expect(page).to have_content("Confirmation of vaccination sent to parent")
+
     click_on "Confirm"
 
     expect(page).to have_content("Consent recorded for #{@patient.full_name}")
