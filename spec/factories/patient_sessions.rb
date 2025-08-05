@@ -325,16 +325,19 @@ FactoryBot.define do
             patient: patient_session.patient,
             programme:
           )
-          create(
-            :vaccination_record,
-            :not_administered,
-            patient: patient_session.patient,
-            session: patient_session.session,
-            programme:,
-            performed_by: evaluator.user,
-            location_name: evaluator.location_name,
-            outcome: :not_well
-          )
+          vaccination_record =
+            create(
+              :vaccination_record,
+              :not_administered,
+              patient: patient_session.patient,
+              session: patient_session.session,
+              programme:,
+              performed_by: evaluator.user,
+              location_name: evaluator.location_name,
+              outcome: :not_well
+            )
+          vaccination_record.notify_parents =
+            VaccinationNotificationCriteria.call(vaccination_record:)
         end
       end
     end
@@ -368,15 +371,18 @@ FactoryBot.define do
             patient: patient_session.patient,
             programme:
           )
-          create(
-            :vaccination_record,
-            :not_administered,
-            patient: patient_session.patient,
-            session: patient_session.session,
-            programme:,
-            performed_by: evaluator.user,
-            outcome: :not_well
-          )
+          vaccination_record =
+            create(
+              :vaccination_record,
+              :not_administered,
+              patient: patient_session.patient,
+              session: patient_session.session,
+              programme:,
+              performed_by: evaluator.user,
+              outcome: :not_well
+            )
+          vaccination_record.notify_parents =
+            VaccinationNotificationCriteria.call(vaccination_record:)
         end
       end
     end
@@ -412,14 +418,17 @@ FactoryBot.define do
             patient: patient_session.patient,
             programme:
           )
-          create(
-            :vaccination_record,
-            patient: patient_session.patient,
-            session: patient_session.session,
-            programme:,
-            performed_by: evaluator.user,
-            location_name: evaluator.location_name
-          )
+          vaccination_record =
+            create(
+              :vaccination_record,
+              patient: patient_session.patient,
+              session: patient_session.session,
+              programme:,
+              performed_by: evaluator.user,
+              location_name: evaluator.location_name
+            )
+          vaccination_record.notify_parents =
+            VaccinationNotificationCriteria.call(vaccination_record:)
         end
       end
     end
