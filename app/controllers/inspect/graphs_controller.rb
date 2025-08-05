@@ -3,6 +3,7 @@
 module Inspect
   class GraphsController < ApplicationController
     skip_after_action :verify_policy_scoped
+    after_action :record_access_log_entry
 
     layout "full"
 
@@ -32,16 +33,14 @@ module Inspect
       @graph_params = build_graph_params
       set_pii_settings
 
-      @mermaid =
-        GraphRecords
-          .new(
-            traversals_config: @traversals_config,
-            primary_type: @primary_type,
-            clickable: true,
-            show_pii: @show_pii
-          )
-          .graph(**@graph_params)
-          .join("\n")
+      @graph_record =
+        GraphRecords.new(
+          traversals_config: @traversals_config,
+          primary_type: @primary_type,
+          clickable: true,
+          show_pii: @show_pii
+        )
+      @mermaid = @graph_record.graph(**@graph_params).join("\n")
     end
 
     private
@@ -103,6 +102,67 @@ module Inspect
       singular_type = params[:object_type].downcase.singularize
       return nil unless GraphRecords::ALLOWED_TYPES.include?(singular_type)
       singular_type.to_sym
+    end
+
+    def pii_accessed?
+      return false unless @show_pii
+
+      build_traversals_config.any? do |from_type, rels|
+        GraphRecords::EXTRA_DETAIL_WHITELIST_WITH_PII.key?(
+          from_type.name.underscore.to_sym
+        ) ||
+          rels.any? do |rel|
+            from_class = from_type.to_s.classify.constantize
+            to_type = from_class.reflect_on_association(rel)&.klass
+            to_type &&
+              GraphRecords::EXTRA_DETAIL_WHITELIST_WITH_PII.key?(
+                to_type.name.underscore.to_sym
+              )
+          end
+      end
+    end
+
+    def record_access_log_entry
+      if pii_accessed?
+        @graph_record.patients_with_pii_in_graph.each do |patient|
+          request_details = build_request_details
+          additional_ids =
+            params[:additional_ids]
+              &.to_unsafe_h
+              &.each_with_object({}) do |(type, ids_string), result|
+                result[type.to_sym] = ids_string if ids_string.present?
+              end
+
+          patient.access_log_entries.create!(
+            user: current_user,
+            controller: "graph",
+            action: "show_pii",
+            request_details: {
+              primary_type: @primary_type,
+              primary_id: @primary_id,
+              additional_ids: additional_ids.presence,
+              visible_fields: request_details
+            }
+          )
+        end
+      end
+    end
+
+    def build_request_details
+      build_traversals_config.each_with_object(
+        {}
+      ) do |(_, relationships), details|
+        relationships.each { |rel| add_fields_to_details(details, rel) }
+      end
+    end
+
+    def add_fields_to_details(details, type_sym)
+      fields = []
+      fields.concat(GraphRecords::DETAIL_WHITELIST[type_sym] || [])
+      fields.concat(
+        GraphRecords::EXTRA_DETAIL_WHITELIST_WITH_PII[type_sym] || []
+      )
+      details[type_sym] = fields.uniq if fields.any?
     end
   end
 end
