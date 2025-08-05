@@ -2,7 +2,7 @@
 
 describe CohortImportRow do
   subject(:cohort_import_row) do
-    described_class.new(data: data_as_csv_row, team:)
+    described_class.new(data: data_as_csv_row, team:, academic_year:)
   end
 
   # FIXME: Don't re-implement behaviour of `CSVParser`.
@@ -18,6 +18,7 @@ describe CohortImportRow do
 
   let(:programme) { create(:programme) }
   let(:team) { create(:team, programmes: [programme]) }
+  let(:academic_year) { AcademicYear.pending }
 
   let(:school_urn) { "123456" }
 

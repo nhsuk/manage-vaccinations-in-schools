@@ -5,6 +5,7 @@
 # Table name: school_moves
 #
 #  id            :bigint           not null, primary key
+#  academic_year :integer          not null
 #  home_educated :boolean
 #  source        :integer          not null
 #  created_at    :datetime         not null
@@ -30,6 +31,7 @@ FactoryBot.define do
   factory :school_move do
     patient
 
+    academic_year { AcademicYear.pending }
     source { SchoolMove.sources.keys.sample }
 
     trait :to_school do

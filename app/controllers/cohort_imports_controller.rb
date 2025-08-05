@@ -3,6 +3,7 @@
 class CohortImportsController < ApplicationController
   include Pagy::Backend
 
+  before_action :set_draft_import, only: %i[new create]
   before_action :set_cohort_import, only: %i[show update]
 
   skip_after_action :verify_policy_scoped, only: %i[new create]
@@ -14,6 +15,7 @@ class CohortImportsController < ApplicationController
   def create
     @cohort_import =
       CohortImport.new(
+        academic_year: @academic_year,
         team: current_team,
         uploaded_by: current_user,
         **cohort_import_params
@@ -57,8 +59,14 @@ class CohortImportsController < ApplicationController
 
   private
 
+  def set_draft_import
+    @draft_import = DraftImport.new(request_session: session, current_user:)
+    @academic_year = @draft_import.academic_year
+  end
+
   def set_cohort_import
     @cohort_import = policy_scope(CohortImport).find(params[:id])
+    @academic_year = @cohort_import.academic_year
   end
 
   def cohort_import_params

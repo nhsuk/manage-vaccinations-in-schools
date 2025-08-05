@@ -85,11 +85,14 @@ class ConsentFormsController < ApplicationController
     ActiveRecord::Base.transaction do
       patient.save!
 
+      academic_year = @consent_form.academic_year
+
       school_move =
         if (school = @consent_form.school)
-          SchoolMove.new(patient:, school:)
+          SchoolMove.new(academic_year:, patient:, school:)
         else
           SchoolMove.new(
+            academic_year:,
             patient:,
             home_educated: @consent_form.home_educated,
             team: @consent_form.team

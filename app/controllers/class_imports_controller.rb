@@ -15,6 +15,7 @@ class ClassImportsController < ApplicationController
   def create
     @class_import =
       ClassImport.new(
+        academic_year: @academic_year,
         location: @location,
         team: current_team,
         uploaded_by: current_user,
@@ -63,12 +64,14 @@ class ClassImportsController < ApplicationController
   def set_draft_import
     @draft_import = DraftImport.new(request_session: session, current_user:)
     @location = @draft_import.location
+    @academic_year = @draft_import.academic_year
   end
 
   def set_class_import
     @class_import =
       policy_scope(ClassImport).includes(:location).find(params[:id])
     @location = @class_import.location
+    @academic_year = @class_import.academic_year
   end
 
   def class_import_params

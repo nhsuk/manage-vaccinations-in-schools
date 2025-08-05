@@ -446,7 +446,7 @@ class ConsentForm < ApplicationRecord
             SchoolMove.find_or_initialize_by(patient:, home_educated:, team:)
           end
 
-        school_move.update!(source: :parental_consent_form)
+        school_move.update!(academic_year:, source: :parental_consent_form)
       end
 
       Consent

@@ -5,6 +5,7 @@
 # Table name: school_moves
 #
 #  id            :bigint           not null, primary key
+#  academic_year :integer          not null
 #  home_educated :boolean
 #  source        :integer          not null
 #  created_at    :datetime         not null

@@ -5,6 +5,7 @@
 # Table name: class_imports
 #
 #  id                           :bigint           not null, primary key
+#  academic_year                :integer          not null
 #  changed_record_count         :integer
 #  csv_data                     :text
 #  csv_filename                 :text
