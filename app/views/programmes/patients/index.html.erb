@@ -37,7 +37,7 @@
               programme: @programme,
               academic_year: @academic_year,
               triage_status: @form.triage_status,
-              show_year_group: true,
+              show_year_group: patient.show_year_group?(team: current_team),
             ) %>
       <% end %>
     <% end %>

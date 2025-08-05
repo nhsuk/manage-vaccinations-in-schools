@@ -10,7 +10,7 @@
   <%= page_title %>
 <% end %>
 
-<%= render AppPatientCardComponent.new(@patient) %>
+<%= render AppPatientCardComponent.new(@patient, current_team:) %>
 
 <%= render AppConsentFormCardComponent.new(@consent_form) %>
 

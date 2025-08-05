@@ -12,7 +12,8 @@ class Programmes::PatientsController < Programmes::BaseController
       patients.includes(
         :consent_statuses,
         :triage_statuses,
-        :vaccination_statuses
+        :vaccination_statuses,
+        school: :location_programme_year_groups
       )
 
     @form.academic_year = @academic_year
