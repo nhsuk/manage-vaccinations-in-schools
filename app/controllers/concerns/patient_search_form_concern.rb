@@ -8,6 +8,7 @@ module PatientSearchFormConcern
   def set_patient_search_form
     @form =
       PatientSearchForm.new(
+        current_user:,
         request_path: request.path,
         request_session: session,
         session: @session,
@@ -20,6 +21,7 @@ module PatientSearchFormConcern
   def patient_search_form_params
     params.permit(
       :_clear,
+      :archived,
       :date_of_birth_day,
       :date_of_birth_month,
       :date_of_birth_year,

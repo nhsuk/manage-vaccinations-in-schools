@@ -1,10 +1,17 @@
 # frozen_string_literal: true
 
 class AppChildSummaryComponent < ViewComponent::Base
-  def initialize(child, show_parents: false, change_links: {}, remove_links: {})
+  def initialize(
+    child,
+    team: nil,
+    show_parents: false,
+    change_links: {},
+    remove_links: {}
+  )
     super
 
     @child = child
+    @team = team
     @show_parents = show_parents
     @change_links = change_links
     @remove_links = remove_links
@@ -25,6 +32,14 @@ class AppChildSummaryComponent < ViewComponent::Base
           )
         end
       end
+
+      if archive_reason
+        summary_list.with_row do |row|
+          row.with_key { "Archive reason" }
+          row.with_value { format_archive_reason }
+        end
+      end
+
       summary_list.with_row do |row|
         row.with_key { "Full name" }
         row.with_value { format_full_name }
@@ -112,8 +127,23 @@ class AppChildSummaryComponent < ViewComponent::Base
 
   def academic_year = AcademicYear.current
 
+  def archive_reason
+    @archive_reason ||=
+      (ArchiveReason.find_by(team: @team, patient: @child) if @team)
+  end
+
   def format_nhs_number
     highlight_if(helpers.patient_nhs_number(@child), @child.nhs_number_changed?)
+  end
+
+  def format_archive_reason
+    type_string = archive_reason.human_enum_name(:type)
+
+    if archive_reason.other?
+      "#{type_string}: #{archive_reason.other_details}"
+    else
+      type_string
+    end
   end
 
   def format_full_name

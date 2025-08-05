@@ -169,7 +169,7 @@ describe "Patient search" do
 
   def when_i_search_for_patients_without_nhs_numbers
     find(".nhsuk-details__summary").click
-    check "Missing NHS number"
+    check "Children missing an NHS number"
     click_button "Update results"
   end
 

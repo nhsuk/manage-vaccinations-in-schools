@@ -26,7 +26,7 @@
 class ConsentNotification < ApplicationRecord
   include Sendable
 
-  self.inheritance_column = :nil
+  self.inheritance_column = nil
 
   belongs_to :patient
   belongs_to :session

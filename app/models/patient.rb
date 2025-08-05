@@ -60,6 +60,7 @@ class Patient < ApplicationRecord
   belongs_to :gp_practice, class_name: "Location", optional: true
 
   has_many :access_log_entries
+  has_many :archive_reasons
   has_many :consent_notifications
   has_many :consent_statuses
   has_many :consents
@@ -95,13 +96,30 @@ class Patient < ApplicationRecord
   # https://www.datadictionary.nhs.uk/attributes/person_gender_code.html
   enum :gender_code, { not_known: 0, male: 1, female: 2, not_specified: 9 }
 
+  scope :joins_archive_reasons,
+        ->(team:) do
+          joins(
+            "LEFT JOIN archive_reasons " \
+              "ON archive_reasons.patient_id = patients.id " \
+              "AND archive_reasons.team_id = #{team.id}"
+          )
+        end
+
+  scope :archived,
+        ->(team:) do
+          joins_archive_reasons(team:).where("archive_reasons.id IS NOT NULL")
+        end
+
+  scope :not_archived,
+        ->(team:) do
+          joins_archive_reasons(team:).where("archive_reasons.id IS NULL")
+        end
+
   scope :with_nhs_number, -> { where.not(nhs_number: nil) }
   scope :without_nhs_number, -> { where(nhs_number: nil) }
 
-  scope :not_deceased, -> { where(date_of_death: nil) }
   scope :deceased, -> { where.not(date_of_death: nil) }
-
-  scope :not_restricted, -> { where(restricted_at: nil) }
+  scope :not_deceased, -> { where(date_of_death: nil) }
   scope :restricted, -> { where.not(restricted_at: nil) }
 
   scope :with_notice, -> { deceased.or(restricted).or(invalidated) }
@@ -283,16 +301,24 @@ class Patient < ApplicationRecord
       # to avoid an extra query to the database for each record.
       exact_results =
         results.select do
-          _1.given_name.downcase == given_name.downcase &&
-            _1.family_name.downcase == family_name.downcase &&
-            _1.date_of_birth == date_of_birth &&
-            _1.address_postcode == UKPostcode.parse(address_postcode).to_s
+          it.given_name.downcase == given_name.downcase &&
+            it.family_name.downcase == family_name.downcase &&
+            it.date_of_birth == date_of_birth &&
+            it.address_postcode == UKPostcode.parse(address_postcode).to_s
         end
 
       return exact_results if exact_results.length == 1
     end
 
     results
+  end
+
+  def archived?(team:)
+    archive_reasons.exists?(team:)
+  end
+
+  def not_archived?(team:)
+    !archive_reasons.exists?(team:)
   end
 
   def year_group(academic_year: nil)
@@ -370,7 +396,11 @@ class Patient < ApplicationRecord
       self.date_of_death = pds_patient.date_of_death
 
       if date_of_death_changed?
-        clear_pending_sessions! unless date_of_death.nil?
+        if date_of_death.present?
+          archive_due_to_deceased!
+          clear_pending_sessions!
+        end
+
         self.date_of_death_recorded_at = Time.current
       end
 
@@ -428,6 +458,14 @@ class Patient < ApplicationRecord
     end
   end
 
+  def clear_pending_sessions!(team: nil)
+    sessions = pending_sessions
+
+    sessions = sessions.where(team_id: team.id) unless team.nil?
+
+    patient_sessions.where(session: sessions).destroy_all_if_safe
+  end
+
   def self.from_consent_form(consent_form)
     new(
       address_line_1: consent_form.address_line_1,
@@ -478,8 +516,13 @@ class Patient < ApplicationRecord
     end
   end
 
-  def clear_pending_sessions!
-    patient_sessions.where(session: pending_sessions).destroy_all_if_safe
+  def archive_due_to_deceased!
+    archive_reasons =
+      teams.map do |team|
+        ArchiveReason.new(team:, patient: self, type: :deceased)
+      end
+
+    ArchiveReason.import!(archive_reasons, on_duplicate_key_update: :all)
   end
 
   def fhir_mapper = @fhir_mapper ||= FHIRMapper::Patient.new(self)

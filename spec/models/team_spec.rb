@@ -35,6 +35,7 @@ describe Team do
 
   describe "associations" do
     it { should belong_to(:organisation) }
+    it { should have_many(:archive_reasons) }
   end
 
   describe "validations" do
