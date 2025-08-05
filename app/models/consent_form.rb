@@ -369,7 +369,11 @@ class ConsentForm < ApplicationRecord
       (location_is_clinic? && original_session) ||
         (
           school &&
-            school.sessions.has_programmes(programmes).includes(:session_dates).find_by(academic_year:)
+            school
+              .sessions
+              .has_programmes(programmes)
+              .includes(:session_dates)
+              .find_by(academic_year:)
         ) || team.generic_clinic_session(academic_year:)
   end
 

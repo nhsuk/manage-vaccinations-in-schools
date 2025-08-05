@@ -547,7 +547,6 @@ describe SchoolMove do
 
             include_examples "creates a log entry"
             include_examples "sets the patient school"
-            include_examples "keeps the patient in the community clinic"
             include_examples "adds the patient to the new school sessions"
             include_examples "destroys the school move"
           end
@@ -571,7 +570,6 @@ describe SchoolMove do
 
             include_examples "creates a log entry"
             include_examples "sets the patient school"
-            include_examples "keeps the patient in the community clinic"
             include_examples "adds the patient to the new school sessions"
             include_examples "destroys the school move"
           end
@@ -795,7 +793,6 @@ describe SchoolMove do
 
             include_examples "creates a log entry"
             include_examples "sets the patient school"
-            include_examples "keeps the patient in the community clinic"
             include_examples "adds the patient to the new school sessions"
             include_examples "destroys the school move"
           end
@@ -819,7 +816,6 @@ describe SchoolMove do
 
             include_examples "creates a log entry"
             include_examples "sets the patient school"
-            include_examples "keeps the patient in the community clinic"
             include_examples "adds the patient to the new school sessions"
             include_examples "destroys the school move"
           end

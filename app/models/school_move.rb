@@ -113,14 +113,7 @@ class SchoolMove < ApplicationRecord
           )
 
         if school
-          scope.where(team: school.team, location: school).or(
-            scope.where(
-              team: school.team,
-              locations: {
-                type: "generic_clinic"
-              }
-            )
-          )
+          scope.where(team: school.team, location: school)
         else
           scope.where(team:, locations: { type: "generic_clinic" })
         end
