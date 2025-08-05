@@ -589,30 +589,15 @@ describe AppActivityLogComponent do
           created_at: Time.zone.parse("#2024-05-30 15:00")
         )
 
-        create(
-          :vaccination_record,
+        patient.vaccination_status(
           programme: hpv_programme,
-          patient:,
-          session:,
-          performed_at: Time.zone.parse("#2024-05-31 12:00"),
-          performed_by: user
-        )
-
-        create(
-          :patient_specific_direction,
-          programme: flu_programme,
-          patient:,
-          created_by: user,
-          academic_year: 2024,
-          created_at: Time.zone.parse("#2024-05-30 15:00")
-        )
+          academic_year: 2024
+        ).vaccinated!
       end
 
-      include_examples "card",
-                       title: "PSD status expired",
-                       date: "31 August 2025 at 11:59pm",
-                       notes: "DOE, Sarah was not vaccinated.",
-                       programme: "Flu"
+      it "does not render expired PSD card for vaccinated patient" do
+        expect(rendered).not_to have_content("expired")
+      end
     end
 
     context "with vaccinated but seasonal programme" do
