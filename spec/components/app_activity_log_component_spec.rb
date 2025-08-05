@@ -614,5 +614,50 @@ describe AppActivityLogComponent do
                        notes: "DOE, Sarah was not vaccinated.",
                        programme: "Flu"
     end
+
+    context "with vaccinated but seasonal programme" do
+      before do
+        create(
+          :consent,
+          :given,
+          programme: flu_programme,
+          patient:,
+          parent: mum,
+          academic_year: 2024,
+          submitted_at: Time.zone.parse("#2024-05-30 12:00")
+        )
+
+        create(
+          :triage,
+          :ready_to_vaccinate,
+          programme: flu_programme,
+          patient:,
+          academic_year: 2024,
+          created_at: Time.zone.parse("#2024-05-30 14:30"),
+          performed_by: user
+        )
+
+        create(
+          :patient_specific_direction,
+          programme: flu_programme,
+          patient:,
+          created_by: user,
+          academic_year: 2024,
+          created_at: Time.zone.parse("#2024-05-30 15:00")
+        )
+
+        patient.vaccination_status(
+          programme: flu_programme,
+          academic_year: 2024
+        ).vaccinated!
+      end
+
+      include_examples "card",
+                       title:
+                         "Consent, health information, triage outcome and PSD status expired",
+                       date: "31 August 2025 at 11:59pm",
+                       notes: "DOE, Sarah was vaccinated.",
+                       programme: "Flu"
+    end
   end
 end
