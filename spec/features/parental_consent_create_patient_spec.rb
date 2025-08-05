@@ -61,20 +61,19 @@ describe "Parental consent create patient" do
 
   def given_the_app_is_setup
     @programme = create(:programme, :hpv)
-    @organisation =
+    @team =
       create(
-        :organisation,
+        :team,
         :with_one_nurse,
         :with_generic_clinic,
         programmes: [@programme]
       )
-    location =
-      create(:school, name: "Pilot School", organisation: @organisation)
+    location = create(:school, name: "Pilot School", team: @team)
     @session =
       create(
         :session,
         :scheduled,
-        organisation: @organisation,
+        team: @team,
         programmes: [@programme],
         location:
       )
@@ -151,7 +150,7 @@ describe "Parental consent create patient" do
   end
 
   def when_the_nurse_checks_the_unmatched_consent_responses
-    sign_in @organisation.users.first
+    sign_in @team.users.first
     visit "/dashboard"
 
     expect(page).to have_content("Unmatched responses (1)")

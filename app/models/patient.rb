@@ -77,13 +77,14 @@ class Patient < ApplicationRecord
 
   has_many :gillick_assessments, through: :patient_sessions
   has_many :parents, through: :parent_relationships
+  has_many :patient_specific_directions
   has_many :pre_screenings, through: :patient_sessions
   has_many :session_attendances, through: :patient_sessions
   has_many :sessions, through: :patient_sessions
-  has_many :organisations, -> { distinct }, through: :sessions
+  has_many :teams, -> { distinct }, through: :sessions
 
-  has_many :sessions_for_current_academic_year,
-           -> { for_current_academic_year },
+  has_many :pending_sessions,
+           -> { where(academic_year: AcademicYear.pending) },
            through: :patient_sessions,
            source: :session
 
@@ -369,7 +370,7 @@ class Patient < ApplicationRecord
       self.date_of_death = pds_patient.date_of_death
 
       if date_of_death_changed?
-        clear_sessions_for_current_academic_year! unless date_of_death.nil?
+        clear_pending_sessions! unless date_of_death.nil?
         self.date_of_death_recorded_at = Time.current
       end
 
@@ -405,22 +406,23 @@ class Patient < ApplicationRecord
     update!(invalidated_at: Time.current)
   end
 
-  def not_in_organisation? = patient_sessions.empty?
+  def not_in_team? = patient_sessions.empty?
 
   def dup_for_pending_changes
     dup.tap do |new_patient|
       new_patient.nhs_number = nil
 
-      sessions_for_current_academic_year.each do |session|
+      pending_sessions.each do |session|
         new_patient.patient_sessions.build(session:)
       end
 
       school_moves.each do |school_move|
         new_patient.school_moves.build(
+          academic_year: school_move.academic_year,
           home_educated: school_move.home_educated,
+          school_id: school_move.school_id,
           source: school_move.source,
-          organisation_id: school_move.organisation_id,
-          school_id: school_move.school_id
+          team_id: school_move.team_id
         )
       end
     end
@@ -476,10 +478,8 @@ class Patient < ApplicationRecord
     end
   end
 
-  def clear_sessions_for_current_academic_year!
-    patient_sessions.where(
-      session: sessions_for_current_academic_year
-    ).destroy_all_if_safe
+  def clear_pending_sessions!
+    patient_sessions.where(session: pending_sessions).destroy_all_if_safe
   end
 
   def fhir_mapper = @fhir_mapper ||= FHIRMapper::Patient.new(self)

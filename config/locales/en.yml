@@ -17,16 +17,14 @@ en:
               invalid: Enter a batch with only letters and numbers
               too_short: Enter a batch that is more than %{count} characters long
               too_long: Enter a batch that is less than %{count} characters long
-        draft_class_import:
-          attributes:
-            session_id:
-              blank: Choose which school this class list for
-            year_groups:
-              blank: Choose which year groups you want to import class list records for
         draft_consent:
           attributes:
             new_or_existing_contact:
               blank: Choose who you are trying to get consent from
+            notify_parent_on_refusal:
+              inclusion: Choose whether you want to send an email and text message confirming their decision
+            notify_parents_on_vaccination:
+              inclusion: Choose whether the child wants their parent or guardian to get confirmation of the vaccination
             reason_for_refusal:
               inclusion: Choose a reason
             notes:
@@ -57,6 +55,16 @@ en:
               inclusion: Choose how the response was given
             injection_alternative:
               inclusion: Select yes or no
+        draft_import:
+          attributes:
+            academic_year:
+              inclusion: Choose which academic year
+            location_id:
+              blank: Choose which school this class list for
+            type:
+              inclusion: Choose which type of records you are importing
+            year_groups:
+              blank: Choose which year groups you want to import class list records for
         draft_vaccination_record:
           attributes:
             batch_id:
@@ -104,7 +112,7 @@ en:
           attributes:
             action:
               inclusion: Choose whether to update the child’s record with this new information
-        select_organisation_form:
+        select_team_form:
           attributes:
             organisation_id:
               inclusion: Choose an organisation
@@ -616,9 +624,9 @@ en:
   table:
     no_filtered_results: We couldn’t find any children that matched your filters.
     no_results: No results
-  organisations:
+  teams:
     show:
-      title: Your organisation
+      title: Your team
   vaccines:
     index:
       title: Vaccines
@@ -631,6 +639,7 @@ en:
     one: 1 vaccination given
     other: "%{count} vaccinations given"
   wicked:
+    academic_year: academic-year
     address: address
     agree: agree
     batch: batch
@@ -652,7 +661,8 @@ en:
     location: location
     name: name
     notes: notes
-    notify_parents: notify-parents
+    notify_parent_on_refusal: notify-parent-on-refusal
+    notify_parents_on_vaccination: notify-parents-on-vaccination
     outcome: outcome
     parent: parent
     parent_details: parent-details
@@ -667,6 +677,7 @@ en:
     session: session
     timeline: timeline
     triage: triage
+    type: type
     vaccine: vaccine
     when: when
     who: who

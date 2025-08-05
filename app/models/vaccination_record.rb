@@ -16,6 +16,7 @@
 #  nhs_immunisations_api_sync_pending_at :datetime
 #  nhs_immunisations_api_synced_at       :datetime
 #  notes                                 :text
+#  notify_parents                        :boolean
 #  outcome                               :integer          not null
 #  pending_changes                       :jsonb            not null
 #  performed_at                          :datetime         not null
@@ -56,7 +57,6 @@
 #  fk_rails_...  (vaccine_id => vaccines.id)
 #
 class VaccinationRecord < ApplicationRecord
-  include BelongsToAcademicYear
   include Discard::Model
   include HasDoseVolume
   include PendingChangesConcern
@@ -95,8 +95,13 @@ class VaccinationRecord < ApplicationRecord
 
   has_one :identity_check, autosave: true, dependent: :destroy
   has_one :location, through: :session
-  has_one :organisation, through: :session
+  has_one :team, through: :session
   has_one :subteam, through: :session
+
+  scope :for_academic_year,
+        ->(academic_year) do
+          where(performed_at: academic_year.to_academic_year_date_range)
+        end
 
   scope :recorded_in_service, -> { where.not(session_id: nil) }
 
@@ -107,7 +112,7 @@ class VaccinationRecord < ApplicationRecord
           )
         end
 
-  enum :protocol, { pgd: 0, psd: 1 }, validate: true
+  enum :protocol, { pgd: 0, psd: 1 }, validate: { allow_nil: true }
 
   enum :delivery_method,
        { intramuscular: 0, subcutaneous: 1, nasal_spray: 2 },
@@ -140,7 +145,10 @@ class VaccinationRecord < ApplicationRecord
 
   encrypts :notes
 
-  academic_year_attribute :performed_at
+  with_options if: :administered? do
+    validates :full_dose, inclusion: [true, false]
+    validates :protocol, presence: true
+  end
 
   validates :notes, length: { maximum: 1000 }
 
@@ -159,8 +167,6 @@ class VaccinationRecord < ApplicationRecord
               allow_nil: true
             }
 
-  validates :full_dose, inclusion: [true, false], if: :administered?
-
   validates :performed_at,
             comparison: {
               less_than_or_equal_to: -> { Time.current }
@@ -170,6 +176,8 @@ class VaccinationRecord < ApplicationRecord
              if: :changes_need_to_be_synced_to_nhs_immunisations_api?
 
   delegate :fhir_record, to: :fhir_mapper
+
+  def academic_year = performed_at.to_date.academic_year
 
   def not_administered?
     !administered?

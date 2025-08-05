@@ -13,11 +13,11 @@ describe GovukNotifyPersonalisation do
   end
 
   let(:programmes) { [create(:programme, :hpv)] }
-  let(:organisation) do
+  let(:team) do
     create(
-      :organisation,
-      name: "Organisation",
-      email: "organisation@example.com",
+      :team,
+      name: "Team",
+      email: "team@example.com",
       phone: "01234 567890",
       phone_instructions: "option 1",
       programmes:
@@ -26,11 +26,11 @@ describe GovukNotifyPersonalisation do
   let(:subteam) do
     create(
       :subteam,
-      name: "Organisation",
-      email: "organisation@example.com",
+      name: "Team",
+      email: "team@example.com",
       phone: "01234 567890",
       phone_instructions: "option 1",
-      organisation:
+      team:
     )
   end
 
@@ -45,13 +45,7 @@ describe GovukNotifyPersonalisation do
   end
   let(:location) { create(:school, name: "Hogwarts", subteam:) }
   let(:session) do
-    create(
-      :session,
-      location:,
-      organisation:,
-      programmes:,
-      date: Date.new(2026, 1, 1)
-    )
+    create(:session, location:, team:, programmes:, date: Date.new(2026, 1, 1))
   end
   let(:consent) { nil }
   let(:consent_form) { nil }
@@ -88,12 +82,11 @@ describe GovukNotifyPersonalisation do
         short_patient_name: "John",
         short_patient_name_apos: "John’s",
         subsequent_session_dates_offered_message: "",
-        subteam_email: "organisation@example.com",
-        subteam_name: "Organisation",
+        subteam_email: "team@example.com",
+        subteam_name: "Team",
         subteam_phone: "01234 567890 (option 1)",
-        team_email: "organisation@example.com",
-        team_name: "Organisation",
-        team_phone: "01234 567890 (option 1)",
+        team_privacy_notice_url: "https://example.com/privacy-notice",
+        team_privacy_policy_url: "https://example.com/privacy-policy",
         vaccination: "HPV vaccination",
         vaccination_and_method: "HPV vaccination",
         vaccine: "HPV vaccine",
@@ -116,7 +109,7 @@ describe GovukNotifyPersonalisation do
       create(
         :session,
         location:,
-        organisation:,
+        team:,
         programmes:,
         dates: [Date.current, Date.tomorrow]
       )
@@ -271,20 +264,20 @@ describe GovukNotifyPersonalisation do
 
     context "where the school is different" do
       let(:session) { nil }
-      let(:school) { create(:school, name: "Waterloo Road", organisation:) }
+      let(:school) { create(:school, name: "Waterloo Road", team:) }
 
       let(:consent_form) do
         create(
           :consent_form,
           :given,
           :recorded,
-          session: create(:session, location:, programmes:, organisation:),
+          session: create(:session, location:, programmes:, team:),
           school_confirmed: false,
           school:
         )
       end
 
-      before { create(:session, location: school, programmes:, organisation:) }
+      before { create(:session, location: school, programmes:, team:) }
 
       it { should include(location_name: "Waterloo Road") }
     end

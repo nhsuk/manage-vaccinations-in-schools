@@ -77,11 +77,9 @@ describe TriageMailerConcern do
         expect { send_triage_confirmation }.not_to have_delivered_sms
       end
 
-      context "when the organisation is Coventry & Warwickshire Partnership NHS Trust (CWPT)" do
-        let(:session) do
-          create(:session, programmes: [programme], organisation:)
-        end
-        let(:organisation) { create(:organisation, ods_code: "RYG") }
+      context "when the team is Coventry & Warwickshire Partnership NHS Trust (CWPT)" do
+        let(:session) { create(:session, programmes: [programme], team:) }
+        let(:team) { create(:team, ods_code: "RYG") }
 
         it "enqueues an email using the CWPT-specific template" do
           expect { send_triage_confirmation }.to have_delivered_email(

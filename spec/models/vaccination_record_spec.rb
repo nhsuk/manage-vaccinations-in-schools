@@ -16,6 +16,7 @@
 #  nhs_immunisations_api_sync_pending_at :datetime
 #  nhs_immunisations_api_synced_at       :datetime
 #  notes                                 :text
+#  notify_parents                        :boolean
 #  outcome                               :integer          not null
 #  pending_changes                       :jsonb            not null
 #  performed_at                          :datetime         not null
@@ -59,8 +60,6 @@
 describe VaccinationRecord do
   subject(:vaccination_record) { build(:vaccination_record) }
 
-  it_behaves_like "a model that belongs to an academic year", :performed_at
-
   describe "associations" do
     it { should have_one(:identity_check).autosave(true).dependent(:destroy) }
   end
@@ -69,11 +68,19 @@ describe VaccinationRecord do
     it { should validate_inclusion_of(:protocol).in_array(%w[pgd psd]) }
 
     context "when administered" do
+      before { vaccination_record.outcome = "administered" }
+
       it { should allow_values(true, false).for(:full_dose) }
       it { should_not allow_values(nil).for(:full_dose) }
+
+      it { should validate_presence_of(:protocol) }
     end
 
     context "when not administered" do
+      before { vaccination_record.outcome = "already_had" }
+
+      it { should_not validate_presence_of(:protocol) }
+
       it { should_not validate_presence_of(:full_dose) }
     end
 
@@ -94,11 +101,11 @@ describe VaccinationRecord do
       end
 
       let(:programme) { create(:programme) }
-      let(:organisation) do
-        create(:organisation, :with_generic_clinic, programmes: [programme])
+      let(:team) do
+        create(:team, :with_generic_clinic, programmes: [programme])
       end
       let(:session) do
-        organisation.generic_clinic_session(academic_year: AcademicYear.current)
+        team.generic_clinic_session(academic_year: AcademicYear.current)
       end
 
       it { should validate_presence_of(:location_name) }
@@ -406,6 +413,41 @@ describe VaccinationRecord do
       end
 
       it { should be_falsy }
+    end
+  end
+
+  describe "#for_academic_year" do
+    before { vaccination_record.save! }
+
+    it "returns the correct records" do
+      academic_year = vaccination_record.academic_year
+
+      expect(described_class.for_academic_year(academic_year)).to include(
+        vaccination_record
+      )
+
+      expect(
+        described_class.for_academic_year(academic_year + 1)
+      ).not_to include(vaccination_record)
+    end
+  end
+
+  describe "#academic_year" do
+    let(:examples) do
+      {
+        Date.new(2020, 9, 1) => 2020,
+        Date.new(2021, 8, 31) => 2020,
+        Date.new(2021, 9, 1) => 2021,
+        Date.new(2022, 8, 31) => 2021
+      }
+    end
+
+    examples.each do |date, academic_year|
+      context "with #{date}" do
+        before { vaccination_record[attribute] = date }
+
+        it { expect(vaccination_record.academic_year).to eq(academic_year) }
+      end
     end
   end
 end

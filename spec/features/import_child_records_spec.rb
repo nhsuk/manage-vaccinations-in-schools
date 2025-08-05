@@ -47,8 +47,8 @@ describe "Import child records" do
     when_i_click_on_the_cohort_for_doubles
     then_i_should_see_the_children_for_doubles
 
-    when_i_click_on_the_imports_page
-    and_i_choose_to_import_child_records
+    when_i_visit_the_hpv_programme_page
+    and_i_import_child_records_from_children_tab
     then_i_should_see_the_import_page
 
     travel 1.minute # to ensure the created_at is different for the import jobs
@@ -65,15 +65,12 @@ describe "Import child records" do
       create(:programme, :td_ipv)
     ]
 
-    @organisation =
-      create(:organisation, :with_generic_clinic, :with_one_nurse, programmes:)
-    create(:school, urn: "123456", organisation: @organisation)
-    @user = @organisation.users.first
+    @team = create(:team, :with_generic_clinic, :with_one_nurse, programmes:)
 
-    OrganisationSessionsFactory.call(
-      @organisation,
-      academic_year: AcademicYear.current
-    )
+    create(:school, urn: "123456", team: @team)
+    @user = @team.users.first
+
+    TeamSessionsFactory.call(@team, academic_year: AcademicYear.current)
   end
 
   def when_i_visit_the_import_page
@@ -246,6 +243,13 @@ describe "Import child records" do
     click_link CohortImport.last.created_at.to_fs(:long), match: :first
   end
 
+  def and_i_import_child_records_from_children_tab
+    within(".app-secondary-navigation") { click_on "Children" }
+
+    click_on "Import child records"
+    click_on "Continue"
+  end
+
   def when_i_upload_a_valid_file_with_changes
     attach_file(
       "cohort_import[csv]",
@@ -260,6 +264,6 @@ describe "Import child records" do
 
   def then_i_should_see_import_issues_with_the_count
     expect(page).to have_link("Import issues")
-    expect(page).to have_selector(".app-count", text: "( 1 )")
+    expect(page).to have_selector(".app-count", text: "(1)").twice
   end
 end

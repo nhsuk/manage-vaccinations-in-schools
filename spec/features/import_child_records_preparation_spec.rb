@@ -1,10 +1,11 @@
 # frozen_string_literal: true
 
 describe "Import child records" do
-  around { |example| travel_to(Date.new(2022, 8, 1)) { example.run } }
+  after { Flipper.disable(:import_choose_academic_year) }
 
   scenario "User uploads a file during preparation period" do
-    given_the_app_is_setup
+    given_today_is_the_start_of_the_2023_24_preparation_period
+    and_the_app_is_setup
     then_i_should_be_in_the_preparation_period
 
     when_i_visit_the_import_page
@@ -15,7 +16,7 @@ describe "Import child records" do
     then_i_should_see_the_upload
     and_i_should_see_the_patients
 
-    when_i_visit_the_hpv_programme_page
+    when_i_visit_the_hpv_programme_page_for_upcoming_year
     then_i_should_see_the_cohorts_for_hpv
 
     when_i_click_on_the_cohort_for_hpv
@@ -24,31 +25,98 @@ describe "Import child records" do
     when_i_search_for_a_child
     then_i_should_see_only_the_child
 
-    when_i_visit_the_doubles_programme_page
+    when_i_visit_the_doubles_programme_page_for_upcoming_year
     then_i_should_see_the_cohorts_for_doubles
 
     when_i_click_on_the_cohort_for_doubles
-    then_i_should_see_the_children_for_doubles
-
-    when_i_click_on_the_imports_page
-    and_i_choose_to_import_child_records
-    then_i_should_see_the_import_page
+    then_i_should_see_the_children_for_doubles_in_upcoming_academic_year
   end
 
-  def given_the_app_is_setup
+  scenario "User uploads a file during preparation period (not including current year)" do
+    given_today_is_the_start_of_the_2023_24_preparation_period
+    and_i_can_choose_the_academic_year_on_import
+    and_the_app_is_setup
+    then_i_should_be_in_the_preparation_period
+
+    when_i_visit_the_import_page
+    and_i_choose_to_import_child_records(choose_academic_year: true)
+    then_i_should_see_the_import_page
+
+    when_i_upload_a_valid_file
+    then_i_should_see_the_upload
+    and_i_should_see_the_patients
+
+    when_i_visit_the_hpv_programme_page_for_upcoming_year
+    then_i_should_see_the_cohorts_for_hpv
+
+    when_i_click_on_the_cohort_for_hpv
+    then_i_should_see_the_children_for_hpv
+
+    when_i_search_for_a_child
+    then_i_should_see_only_the_child
+
+    when_i_visit_the_doubles_programme_page_for_upcoming_year
+    then_i_should_see_the_cohorts_for_doubles
+
+    when_i_click_on_the_cohort_for_doubles
+    then_i_should_see_the_children_for_doubles_in_upcoming_academic_year
+  end
+
+  scenario "User uploads a file during preparation period (including current year)" do
+    given_today_is_the_start_of_the_2024_25_preparation_period
+    and_i_can_choose_the_academic_year_on_import
+    and_the_app_is_setup
+    then_i_should_be_in_the_preparation_period
+
+    when_i_visit_the_import_page
+    and_i_choose_to_import_child_records(choose_academic_year: true)
+    then_i_should_see_the_import_page
+
+    when_i_upload_a_valid_file
+    then_i_should_see_the_upload
+    and_i_should_see_the_patients
+
+    when_i_visit_the_hpv_programme_page_for_current_year
+    then_i_should_see_the_cohorts_for_hpv
+
+    when_i_click_on_the_cohort_for_hpv
+    then_i_should_see_the_children_for_hpv
+
+    when_i_search_for_a_child
+    then_i_should_see_only_the_child
+
+    when_i_visit_the_doubles_programme_page_for_current_year
+    then_i_should_see_the_cohorts_for_doubles
+
+    when_i_click_on_the_cohort_for_doubles
+    then_i_should_see_the_children_for_doubles_in_current_academic_year
+  end
+
+  def given_today_is_the_start_of_the_2023_24_preparation_period
+    travel_to(Date.new(2022, 8, 1))
+  end
+
+  def given_today_is_the_start_of_the_2024_25_preparation_period
+    travel_to(Date.new(2023, 8, 1))
+  end
+
+  def and_i_can_choose_the_academic_year_on_import
+    Flipper.enable(:import_choose_academic_year)
+  end
+
+  def and_the_app_is_setup
     programmes = [
       create(:programme, :hpv),
       create(:programme, :menacwy),
       create(:programme, :td_ipv)
     ]
 
-    @organisation =
-      create(:organisation, :with_generic_clinic, :with_one_nurse, programmes:)
-    create(:school, urn: "123456", organisation: @organisation)
-    @user = @organisation.users.first
+    @team = create(:team, :with_generic_clinic, :with_one_nurse, programmes:)
+    create(:school, urn: "123456", team: @team)
+    @user = @team.users.first
 
     [AcademicYear.current, AcademicYear.pending].each do |academic_year|
-      OrganisationSessionsFactory.call(@organisation, academic_year:)
+      TeamSessionsFactory.call(@team, academic_year:)
     end
   end
 
@@ -62,10 +130,18 @@ describe "Import child records" do
     click_on "Import", match: :first
   end
 
-  def and_i_choose_to_import_child_records
+  def and_i_choose_to_import_child_records(choose_academic_year: false)
     click_on "Import records"
+
+    # Type of records
     choose "Child records"
     click_on "Continue"
+
+    if choose_academic_year
+      # Include current academic year
+      choose "2022 to 2023"
+      click_on "Continue"
+    end
   end
 
   def then_i_should_see_the_import_page
@@ -98,26 +174,38 @@ describe "Import child records" do
     expect(page).to have_content("Imported byUSER, Test")
   end
 
-  def when_i_click_on_the_imports_page
-    click_on "Import", match: :first
-  end
-
   def then_i_should_see_the_import
     expect(page).to have_content("1 completed import")
   end
 
-  def when_i_visit_the_hpv_programme_page
+  def when_i_visit_the_hpv_programme_page_for_upcoming_year
     click_on "Programmes", match: :first
 
-    within all(".nhsuk-table__panel-with-heading-tab").first do
+    within all(".nhsuk-table__panel-with-heading-tab")[0] do
       click_on "HPV"
     end
   end
 
-  def when_i_visit_the_doubles_programme_page
+  def when_i_visit_the_doubles_programme_page_for_upcoming_year
     click_on "Programmes", match: :first
 
-    within all(".nhsuk-table__panel-with-heading-tab").first do
+    within all(".nhsuk-table__panel-with-heading-tab")[0] do
+      click_on "MenACWY"
+    end
+  end
+
+  def when_i_visit_the_hpv_programme_page_for_current_year
+    click_on "Programmes", match: :first
+
+    within all(".nhsuk-table__panel-with-heading-tab")[1] do
+      click_on "HPV"
+    end
+  end
+
+  def when_i_visit_the_doubles_programme_page_for_current_year
+    click_on "Programmes", match: :first
+
+    within all(".nhsuk-table__panel-with-heading-tab")[1] do
       click_on "MenACWY"
     end
   end
@@ -164,7 +252,13 @@ describe "Import child records" do
     end
   end
 
-  def then_i_should_see_the_children_for_doubles
+  def then_i_should_see_the_children_for_doubles_in_current_academic_year
+    expect(page).to have_content("1 child")
+    expect(page).to have_content("CLARKE, Jennifer")
+    expect(page).to have_content("Year 9")
+  end
+
+  def then_i_should_see_the_children_for_doubles_in_upcoming_academic_year
     expect(page).to have_content("1 child")
     expect(page).to have_content("CLARKE, Jennifer")
     expect(page).to have_content("Year 9 (2022 to 2023 academic year)")

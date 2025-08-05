@@ -6,6 +6,7 @@ class AppVaccinationRecordAPISyncStatusComponent < ViewComponent::Base
   delegate :nhs_immunisations_api_synced_at,
            :sync_status,
            :recorded_in_service?,
+           :notify_parents,
            to: :vaccination_record
 
   SYNC_STATUS_COLOURS = {
@@ -55,7 +56,10 @@ class AppVaccinationRecordAPISyncStatusComponent < ViewComponent::Base
           !vaccination_record.programme.type.in?(
             NHS::ImmunisationsAPI::PROGRAMME_TYPES
           )
-        if is_not_a_synced_programme
+        if !notify_parents
+          "The child gave consent under Gillick competence and does not want their parents to be notified. " \
+            "You must let the child’s GP know they were vaccinated."
+        elsif is_not_a_synced_programme
           "Records are currently not synced for this programme"
         elsif recorded_in_service?
           "Records are not synced if the vaccination was not given"

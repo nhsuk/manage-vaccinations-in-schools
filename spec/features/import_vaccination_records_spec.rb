@@ -35,21 +35,14 @@ describe "Immunisation imports" do
   end
 
   def given_i_am_signed_in
-    @organisation = create(:organisation, :with_one_nurse, ods_code: "R1L")
-    sign_in @organisation.users.first
+    @team = create(:team, :with_one_nurse, ods_code: "R1L")
+    sign_in @team.users.first
   end
 
   def and_an_hpv_programme_is_underway
-    programme =
-      create(:programme, :hpv_all_vaccines, organisations: [@organisation])
-    location = create(:school, organisation: @organisation)
-    @session =
-      create(
-        :session,
-        programmes: [programme],
-        location:,
-        organisation: @organisation
-      )
+    programme = create(:programme, :hpv_all_vaccines, teams: [@team])
+    location = create(:school, team: @team)
+    @session = create(:session, programmes: [programme], location:, team: @team)
   end
 
   def and_school_locations_exist
@@ -65,7 +58,7 @@ describe "Immunisation imports" do
   end
 
   def then_i_should_see_the_upload_link
-    expect(page).to have_link("Import records")
+    expect(page).to have_button("Import records")
   end
 
   def when_i_click_on_the_upload_link

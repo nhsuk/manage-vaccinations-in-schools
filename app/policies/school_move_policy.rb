@@ -3,13 +3,13 @@
 class SchoolMovePolicy < ApplicationPolicy
   class Scope < ApplicationPolicy::Scope
     def resolve
-      organisation = user.selected_organisation
-      return scope.none if organisation.nil?
+      team = user.selected_team
+      return scope.none if team.nil?
 
       scope
-        .where(school: organisation.schools)
-        .or(scope.where(organisation:))
-        .or(scope.where(patient: organisation.patients))
+        .where(school: team.schools)
+        .or(scope.where(team:))
+        .or(scope.where(patient: team.patients))
     end
   end
 end

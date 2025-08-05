@@ -2,7 +2,7 @@
 
 describe CohortImportRow do
   subject(:cohort_import_row) do
-    described_class.new(data: data_as_csv_row, organisation:)
+    described_class.new(data: data_as_csv_row, team:, academic_year:)
   end
 
   # FIXME: Don't re-implement behaviour of `CSVParser`.
@@ -17,7 +17,8 @@ describe CohortImportRow do
   let(:today) { Date.new(2024, 12, 1) }
 
   let(:programme) { create(:programme) }
-  let(:organisation) { create(:organisation, programmes: [programme]) }
+  let(:team) { create(:team, programmes: [programme]) }
+  let(:academic_year) { AcademicYear.pending }
 
   let(:school_urn) { "123456" }
 
@@ -57,7 +58,7 @@ describe CohortImportRow do
     }
   end
 
-  before { create(:school, urn: "123456", organisation:) }
+  before { create(:school, urn: "123456", team:) }
 
   describe "validations" do
     let(:data) { valid_data }
@@ -106,7 +107,7 @@ describe CohortImportRow do
         expect(cohort_import_row.errors.size).to eq(1)
         expect(cohort_import_row.errors["CHILD_SCHOOL_URN"]).to contain_exactly(
           "The school URN is not recognised. If you’ve checked the URN, " \
-            "and you believe it’s valid, contact our support organisation."
+            "and you believe it’s valid, contact our support team."
         )
       end
     end
@@ -617,7 +618,7 @@ describe CohortImportRow do
           gender_code: "male",
           given_name: "Jimmy",
           nhs_number: "9990000018",
-          organisation: nil,
+          team: nil,
           school: Location.first
         )
       end

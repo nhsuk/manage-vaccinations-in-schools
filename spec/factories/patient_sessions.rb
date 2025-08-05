@@ -23,23 +23,23 @@
 FactoryBot.define do
   factory :patient_session do
     transient do
-      organisation { session.organisation }
+      team { session.team }
       programmes { [association(:programme)] }
-      user { association :user, organisation: }
+      user { association :user, team: }
       year_group do
         session.programmes.flat_map(&:default_year_groups).sort.uniq.first
       end
       school { session.location.school? ? session.location : nil }
       home_educated { school.present? ? nil : false }
       location_name do
-        organisation.community_clinics.sample.name if session.location.clinic?
+        team.community_clinics.sample.name if session.location.clinic?
       end
     end
 
     session { association :session, programmes: }
 
     patient do
-      association :patient, organisation:, school:, home_educated:, year_group:
+      association :patient, team:, school:, home_educated:, year_group:
     end
 
     trait :unknown_attendance do
@@ -72,7 +72,7 @@ FactoryBot.define do
                     :consent_no_response,
                     performed_by: user,
                     programmes: session.programmes,
-                    organisation:,
+                    team:,
                     school:,
                     home_educated:,
                     year_group:
@@ -85,7 +85,7 @@ FactoryBot.define do
                     :consent_given_triage_not_needed,
                     performed_by: user,
                     programmes: session.programmes,
-                    organisation:,
+                    team:,
                     school:,
                     home_educated:,
                     year_group:
@@ -98,7 +98,7 @@ FactoryBot.define do
                     :consent_given_triage_needed,
                     performed_by: user,
                     programmes: session.programmes,
-                    organisation:,
+                    team:,
                     school:,
                     home_educated:,
                     year_group:
@@ -111,7 +111,7 @@ FactoryBot.define do
                     :consent_given_injection_only_triage_needed,
                     performed_by: user,
                     programmes: session.programmes,
-                    organisation:,
+                    team:,
                     school:,
                     home_educated:,
                     year_group:
@@ -124,7 +124,7 @@ FactoryBot.define do
                     :consent_given_nasal_only_triage_needed,
                     performed_by: user,
                     programmes: session.programmes,
-                    organisation:,
+                    team:,
                     school:,
                     home_educated:,
                     year_group:
@@ -137,7 +137,7 @@ FactoryBot.define do
                     :consent_refused,
                     performed_by: user,
                     programmes: session.programmes,
-                    organisation:,
+                    team:,
                     school:,
                     home_educated:,
                     year_group:
@@ -160,7 +160,7 @@ FactoryBot.define do
                     :consent_refused_with_notes,
                     performed_by: user,
                     programmes: session.programmes,
-                    organisation:,
+                    team:,
                     school:,
                     home_educated:,
                     year_group:
@@ -183,7 +183,7 @@ FactoryBot.define do
                     :consent_not_provided,
                     performed_by: user,
                     programmes: session.programmes,
-                    organisation:,
+                    team:,
                     school:,
                     home_educated:,
                     year_group:
@@ -196,7 +196,7 @@ FactoryBot.define do
                     :consent_conflicting,
                     performed_by: user,
                     programmes: session.programmes,
-                    organisation:,
+                    team:,
                     school:,
                     home_educated:,
                     year_group:
@@ -209,7 +209,7 @@ FactoryBot.define do
                     :partially_vaccinated_triage_needed,
                     performed_by: user,
                     programmes: session.programmes,
-                    organisation:,
+                    team:,
                     school:,
                     home_educated:,
                     year_group:
@@ -223,7 +223,7 @@ FactoryBot.define do
                     :triage_ready_to_vaccinate,
                     performed_by: user,
                     programmes: session.programmes,
-                    organisation:,
+                    team:,
                     school:,
                     home_educated:,
                     year_group:
@@ -237,7 +237,7 @@ FactoryBot.define do
                     :triage_do_not_vaccinate,
                     performed_by: user,
                     programmes: session.programmes,
-                    organisation:,
+                    team:,
                     school:,
                     home_educated:,
                     year_group:
@@ -261,7 +261,7 @@ FactoryBot.define do
                     :triage_needs_follow_up,
                     performed_by: user,
                     programmes: session.programmes,
-                    organisation:,
+                    team:,
                     school:,
                     home_educated:,
                     year_group:
@@ -275,7 +275,7 @@ FactoryBot.define do
                     :triage_delay_vaccination,
                     performed_by: user,
                     programmes: session.programmes,
-                    organisation:,
+                    team:,
                     school:,
                     home_educated:,
                     year_group:
@@ -288,7 +288,7 @@ FactoryBot.define do
                     :consent_given_triage_not_needed,
                     performed_by: user,
                     programmes: session.programmes,
-                    organisation:,
+                    team:,
                     school:,
                     home_educated:,
                     year_group:
@@ -302,7 +302,7 @@ FactoryBot.define do
                     :triage_ready_to_vaccinate,
                     performed_by: user,
                     programmes: session.programmes,
-                    organisation:,
+                    team:,
                     school:,
                     home_educated:,
                     year_group:
@@ -325,16 +325,19 @@ FactoryBot.define do
             patient: patient_session.patient,
             programme:
           )
-          create(
-            :vaccination_record,
-            :not_administered,
-            patient: patient_session.patient,
-            session: patient_session.session,
-            programme:,
-            performed_by: evaluator.user,
-            location_name: evaluator.location_name,
-            outcome: :not_well
-          )
+          vaccination_record =
+            create(
+              :vaccination_record,
+              :not_administered,
+              patient: patient_session.patient,
+              session: patient_session.session,
+              programme:,
+              performed_by: evaluator.user,
+              location_name: evaluator.location_name,
+              outcome: :not_well
+            )
+          vaccination_record.notify_parents =
+            VaccinationNotificationCriteria.call(vaccination_record:)
         end
       end
     end
@@ -345,7 +348,7 @@ FactoryBot.define do
                     :consent_given_triage_not_needed,
                     performed_by: user,
                     programmes: session.programmes,
-                    organisation:,
+                    team:,
                     school:,
                     home_educated:,
                     year_group:
@@ -368,15 +371,18 @@ FactoryBot.define do
             patient: patient_session.patient,
             programme:
           )
-          create(
-            :vaccination_record,
-            :not_administered,
-            patient: patient_session.patient,
-            session: patient_session.session,
-            programme:,
-            performed_by: evaluator.user,
-            outcome: :not_well
-          )
+          vaccination_record =
+            create(
+              :vaccination_record,
+              :not_administered,
+              patient: patient_session.patient,
+              session: patient_session.session,
+              programme:,
+              performed_by: evaluator.user,
+              outcome: :not_well
+            )
+          vaccination_record.notify_parents =
+            VaccinationNotificationCriteria.call(vaccination_record:)
         end
       end
     end
@@ -388,7 +394,7 @@ FactoryBot.define do
                     :triage_ready_to_vaccinate,
                     performed_by: user,
                     programmes: session.programmes,
-                    organisation:,
+                    team:,
                     school:,
                     home_educated:,
                     year_group:
@@ -412,14 +418,17 @@ FactoryBot.define do
             patient: patient_session.patient,
             programme:
           )
-          create(
-            :vaccination_record,
-            patient: patient_session.patient,
-            session: patient_session.session,
-            programme:,
-            performed_by: evaluator.user,
-            location_name: evaluator.location_name
-          )
+          vaccination_record =
+            create(
+              :vaccination_record,
+              patient: patient_session.patient,
+              session: patient_session.session,
+              programme:,
+              performed_by: evaluator.user,
+              location_name: evaluator.location_name
+            )
+          vaccination_record.notify_parents =
+            VaccinationNotificationCriteria.call(vaccination_record:)
         end
       end
     end

@@ -22,9 +22,9 @@ describe "CIS2 backchannel logout", :cis2 do
   end
 
   def given_the_app_is_setup
-    @organisation = create(:organisation, :with_one_nurse)
+    @team = create(:team, :with_one_nurse)
     create(:school, urn: "123456")
-    @user = @organisation.users.first
+    @user = @team.users.first
   end
 
   def and_that_i_am_signed_in

@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
 describe "Patient sessions activity" do
-  let(:organisation) { create(:organisation) }
-  let(:session) { create(:session, organisation:) }
+  let(:team) { create(:team) }
+  let(:session) { create(:session, team:) }
   let(:patient) { create(:patient, session:) }
-  let(:nurse) { create(:nurse, organisation:) }
+  let(:nurse) { create(:nurse, team:) }
 
   describe "creating notes" do
     let(:path) { "/sessions/#{session.slug}/patients/#{patient.id}/activity" }

@@ -48,7 +48,7 @@ class SchoolMoveExport
   def exporter
     @exporter ||=
       Reports::SchoolMovesExporter.new(
-        organisation: @current_user.selected_organisation,
+        team: @current_user.selected_team,
         start_date: date_from,
         end_date: date_to
       )

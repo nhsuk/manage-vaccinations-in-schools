@@ -14,22 +14,22 @@
 #  created_at                    :datetime         not null
 #  updated_at                    :datetime         not null
 #  location_id                   :bigint           not null
-#  organisation_id               :bigint           not null
+#  team_id                       :bigint           not null
 #
 # Indexes
 #
-#  index_sessions_on_location_id                      (location_id)
-#  index_sessions_on_organisation_id_and_location_id  (organisation_id,location_id)
+#  index_sessions_on_location_id              (location_id)
+#  index_sessions_on_team_id_and_location_id  (team_id,location_id)
 #
 # Foreign Keys
 #
-#  fk_rails_...  (organisation_id => organisations.id)
+#  fk_rails_...  (team_id => teams.id)
 #
 class Session < ApplicationRecord
   audited associated_with: :location
   has_associated_audits
 
-  belongs_to :organisation
+  belongs_to :team
   belongs_to :location
 
   has_many :consent_notifications
@@ -73,9 +73,6 @@ class Session < ApplicationRecord
             programmes.count
           )
         end
-
-  scope :for_current_academic_year,
-        -> { where(academic_year: AcademicYear.current) }
 
   scope :in_progress, -> { has_date(Date.current) }
   scope :unscheduled, -> { where.not(SessionDate.for_session.arel.exists) }
@@ -233,7 +230,7 @@ class Session < ApplicationRecord
       next_date(include_today: true) && !completed?
     else
       completed? &&
-        organisation.generic_clinic_session(academic_year:).next_date(
+        team.generic_clinic_session(academic_year:).next_date(
           include_today: true
         )
     end
@@ -245,12 +242,11 @@ class Session < ApplicationRecord
         self.days_before_consent_reminders = nil
         self.send_consent_requests_at = nil
         self.send_invitations_at =
-          earliest_date - organisation.days_before_invitations.days
+          earliest_date - team.days_before_invitations.days
       else
-        self.days_before_consent_reminders =
-          organisation.days_before_consent_reminders
+        self.days_before_consent_reminders = team.days_before_consent_reminders
         self.send_consent_requests_at =
-          earliest_date - organisation.days_before_consent_requests.days
+          earliest_date - team.days_before_consent_requests.days
         self.send_invitations_at = nil
       end
     else

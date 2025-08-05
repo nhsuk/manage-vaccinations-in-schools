@@ -535,7 +535,13 @@ describe Patient do
       end
 
       context "when in an upcoming session" do
-        let(:session) { create(:session, :scheduled) }
+        let(:session) do
+          create(
+            :session,
+            academic_year: AcademicYear.pending,
+            date: AcademicYear.pending.to_academic_year_date_range.begin
+          )
+        end
 
         before { create(:patient_session, patient:, session:) }
 
@@ -597,11 +603,9 @@ describe Patient do
       end
 
       let(:programme) { create(:programme) }
-      let(:organisation) { create(:organisation, programmes: [programme]) }
-      let(:school) { create(:school, organisation:) }
-      let(:session) do
-        create(:session, location: school, organisation:, programme:)
-      end
+      let(:team) { create(:team, programmes: [programme]) }
+      let(:school) { create(:school, team:) }
+      let(:session) { create(:session, location: school, team:, programme:) }
 
       it "marks the patient as not invalidated" do
         expect { update_from_pds! }.to change(patient, :invalidated?).from(
@@ -693,7 +697,13 @@ describe Patient do
     end
 
     context "when the old patient has upcoming sessions" do
-      let(:session) { create(:session) }
+      let(:session) do
+        create(
+          :session,
+          academic_year: AcademicYear.pending,
+          date: AcademicYear.pending.to_academic_year_date_range.begin
+        )
+      end
 
       before { create(:patient_session, patient: old_patient, session:) }
 

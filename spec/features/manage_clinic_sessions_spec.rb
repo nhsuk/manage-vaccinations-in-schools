@@ -4,7 +4,7 @@ describe "Manage clinic sessions" do
   around { |example| travel_to(Time.zone.local(2024, 2, 18)) { example.run } }
 
   scenario "Adding dates to the session, sending reminders and closing consent" do
-    given_my_organisation_is_running_an_hpv_vaccination_programme
+    given_my_team_is_running_an_hpv_vaccination_programme
 
     when_i_go_to_todays_sessions_as_a_nurse
     then_i_see_no_sessions
@@ -65,18 +65,17 @@ describe "Manage clinic sessions" do
     then_i_see_the_community_clinic
   end
 
-  def given_my_organisation_is_running_an_hpv_vaccination_programme
+  def given_my_team_is_running_an_hpv_vaccination_programme
     @programme = create(:programme, :hpv)
-    @organisation =
+    @team =
       create(
-        :organisation,
+        :team,
         :with_one_nurse,
         :with_generic_clinic,
         programmes: [@programme]
       )
 
-    @session =
-      @organisation.generic_clinic_session(academic_year: AcademicYear.current)
+    @session = @team.generic_clinic_session(academic_year: AcademicYear.current)
 
     @parent = create(:parent)
 
@@ -85,7 +84,7 @@ describe "Manage clinic sessions" do
   end
 
   def when_i_go_to_todays_sessions_as_a_nurse
-    sign_in @organisation.users.first
+    sign_in @team.users.first
     visit "/dashboard"
 
     click_link "Sessions", match: :first

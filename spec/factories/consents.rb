@@ -4,40 +4,43 @@
 #
 # Table name: consents
 #
-#  id                  :bigint           not null, primary key
-#  health_answers      :jsonb            not null
-#  invalidated_at      :datetime
-#  notes               :text             default(""), not null
-#  notify_parents      :boolean
-#  reason_for_refusal  :integer
-#  response            :integer          not null
-#  route               :integer          not null
-#  submitted_at        :datetime         not null
-#  vaccine_methods     :integer          default([]), not null, is an Array
-#  withdrawn_at        :datetime
-#  created_at          :datetime         not null
-#  updated_at          :datetime         not null
-#  organisation_id     :bigint           not null
-#  parent_id           :bigint
-#  patient_id          :bigint           not null
-#  programme_id        :bigint           not null
-#  recorded_by_user_id :bigint
+#  id                            :bigint           not null, primary key
+#  academic_year                 :integer          not null
+#  health_answers                :jsonb            not null
+#  invalidated_at                :datetime
+#  notes                         :text             default(""), not null
+#  notify_parent_on_refusal      :boolean
+#  notify_parents_on_vaccination :boolean
+#  reason_for_refusal            :integer
+#  response                      :integer          not null
+#  route                         :integer          not null
+#  submitted_at                  :datetime         not null
+#  vaccine_methods               :integer          default([]), not null, is an Array
+#  withdrawn_at                  :datetime
+#  created_at                    :datetime         not null
+#  updated_at                    :datetime         not null
+#  parent_id                     :bigint
+#  patient_id                    :bigint           not null
+#  programme_id                  :bigint           not null
+#  recorded_by_user_id           :bigint
+#  team_id                       :bigint           not null
 #
 # Indexes
 #
-#  index_consents_on_organisation_id      (organisation_id)
+#  index_consents_on_academic_year        (academic_year)
 #  index_consents_on_parent_id            (parent_id)
 #  index_consents_on_patient_id           (patient_id)
 #  index_consents_on_programme_id         (programme_id)
 #  index_consents_on_recorded_by_user_id  (recorded_by_user_id)
+#  index_consents_on_team_id              (team_id)
 #
 # Foreign Keys
 #
-#  fk_rails_...  (organisation_id => organisations.id)
 #  fk_rails_...  (parent_id => parents.id)
 #  fk_rails_...  (patient_id => patients.id)
 #  fk_rails_...  (programme_id => programmes.id)
 #  fk_rails_...  (recorded_by_user_id => users.id)
+#  fk_rails_...  (team_id => teams.id)
 #
 FactoryBot.define do
   factory :consent do
@@ -53,9 +56,8 @@ FactoryBot.define do
     end
 
     programme
-    organisation do
-      programme.organisations.first ||
-        association(:organisation, programmes: [programme])
+    team do
+      programme.teams.first || association(:team, programmes: [programme])
     end
 
     patient
@@ -75,6 +77,7 @@ FactoryBot.define do
     end
 
     submitted_at { consent_form&.recorded_at || Time.current }
+    academic_year { submitted_at.to_date.academic_year }
 
     traits_for_enum :vaccine_method
 
@@ -102,11 +105,11 @@ FactoryBot.define do
     trait :self_consent do
       route { "self_consent" }
       parent { nil }
-      notify_parents { false }
+      notify_parents_on_vaccination { false }
     end
 
-    trait :notify_parents do
-      notify_parents { true }
+    trait :notify_parents_on_vaccination do
+      notify_parents_on_vaccination { true }
     end
 
     trait :refused do

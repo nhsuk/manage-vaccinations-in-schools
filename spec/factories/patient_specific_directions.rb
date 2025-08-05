@@ -5,6 +5,7 @@
 # Table name: patient_specific_directions
 #
 #  id                 :bigint           not null, primary key
+#  academic_year      :integer          not null
 #  delivery_site      :integer          not null
 #  full_dose          :boolean          not null
 #  vaccine_method     :integer          not null
@@ -17,6 +18,7 @@
 #
 # Indexes
 #
+#  index_patient_specific_directions_on_academic_year       (academic_year)
 #  index_patient_specific_directions_on_created_by_user_id  (created_by_user_id)
 #  index_patient_specific_directions_on_patient_id          (patient_id)
 #  index_patient_specific_directions_on_programme_id        (programme_id)
@@ -34,11 +36,12 @@ FactoryBot.define do
     created_by
     patient
     programme
-    vaccine
+    vaccine { programme.vaccines.sample || association(:vaccine) }
 
     delivery_site { "left_arm_upper_position" }
     vaccine_method { "injection" }
     full_dose { true }
+    academic_year { Time.current.to_date.academic_year }
 
     trait :half_dose do
       full_dose { false }

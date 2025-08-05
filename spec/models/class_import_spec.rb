@@ -5,6 +5,7 @@
 # Table name: class_imports
 #
 #  id                           :bigint           not null, primary key
+#  academic_year                :integer          not null
 #  changed_record_count         :integer
 #  csv_data                     :text
 #  csv_filename                 :text
@@ -19,32 +20,28 @@
 #  created_at                   :datetime         not null
 #  updated_at                   :datetime         not null
 #  location_id                  :bigint           not null
-#  organisation_id              :bigint           not null
+#  team_id                      :bigint           not null
 #  uploaded_by_user_id          :bigint           not null
 #
 # Indexes
 #
 #  index_class_imports_on_location_id          (location_id)
-#  index_class_imports_on_organisation_id      (organisation_id)
+#  index_class_imports_on_team_id              (team_id)
 #  index_class_imports_on_uploaded_by_user_id  (uploaded_by_user_id)
 #
 # Foreign Keys
 #
 #  fk_rails_...  (location_id => locations.id)
-#  fk_rails_...  (organisation_id => organisations.id)
+#  fk_rails_...  (team_id => teams.id)
 #  fk_rails_...  (uploaded_by_user_id => users.id)
 #
 describe ClassImport do
-  subject(:class_import) do
-    create(:class_import, csv:, session:, organisation:)
-  end
+  subject(:class_import) { create(:class_import, csv:, session:, team:) }
 
   let(:programmes) { [create(:programme, :hpv)] }
-  let(:organisation) do
-    create(:organisation, :with_generic_clinic, programmes:)
-  end
-  let(:location) { create(:school, organisation:) }
-  let(:session) { create(:session, location:, programmes:, organisation:) }
+  let(:team) { create(:team, :with_generic_clinic, programmes:) }
+  let(:location) { create(:school, team:) }
+  let(:session) { create(:session, location:, programmes:, team:) }
 
   let(:file) { "valid.csv" }
   let(:csv) { fixture_file_upload("spec/fixtures/class_import/#{file}") }
@@ -264,7 +261,7 @@ describe ClassImport do
     end
 
     it "ignores and counts duplicate records" do
-      create(:class_import, csv:, organisation:, session:).process!
+      create(:class_import, csv:, team:, session:).process!
       csv.rewind
 
       process!
@@ -377,7 +374,7 @@ describe ClassImport do
         expect(patient.pending_changes.keys).not_to include(
           :cohort_id,
           :home_educated,
-          :organisation_id,
+          :team_id,
           :school_id
         )
       end
@@ -385,7 +382,7 @@ describe ClassImport do
 
     context "with an unscheduled session" do
       let(:session) do
-        create(:session, :unscheduled, organisation:, programmes:, location:)
+        create(:session, :unscheduled, team:, programmes:, location:)
       end
 
       it "adds the patients to the session" do
@@ -395,7 +392,7 @@ describe ClassImport do
 
     context "with a scheduled session" do
       let(:session) do
-        create(:session, :scheduled, organisation:, programmes:, location:)
+        create(:session, :scheduled, team:, programmes:, location:)
       end
 
       it "adds the patients to the session" do
@@ -425,7 +422,7 @@ describe ClassImport do
           :school_move,
           :to_unknown_school,
           patient: existing_patient,
-          organisation:
+          team:
         )
 
         expect { process! }.not_to(

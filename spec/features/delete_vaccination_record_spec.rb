@@ -113,14 +113,14 @@ describe "Delete vaccination record" do
   end
 
   def given_an_hpv_programme_is_underway
-    @organisation = create(:organisation, :with_one_nurse)
-    @programme = create(:programme, :hpv, organisations: [@organisation])
+    @team = create(:team, :with_one_nurse)
+    @programme = create(:programme, :hpv, teams: [@team])
 
     @session =
       create(
         :session,
         date: Date.yesterday,
-        organisation: @organisation,
+        team: @team,
         programmes: [@programme]
       )
 
@@ -133,7 +133,7 @@ describe "Delete vaccination record" do
         family_name: "Smith",
         year_group: 8,
         programmes: [@programme],
-        organisation: @organisation
+        team: @team
       )
 
     @patient_session =
@@ -143,7 +143,7 @@ describe "Delete vaccination record" do
   def and_an_administered_vaccination_record_exists
     vaccine = @programme.vaccines.first
 
-    batch = create(:batch, organisation: @organisation, vaccine:)
+    batch = create(:batch, team: @team, vaccine:)
 
     @vaccination_record =
       create(
@@ -184,11 +184,11 @@ describe "Delete vaccination record" do
   end
 
   def when_i_sign_in
-    sign_in @organisation.users.first
+    sign_in @team.users.first
   end
 
   def when_i_sign_in_as_a_superuser
-    sign_in @organisation.users.first, superuser: true
+    sign_in @team.users.first, superuser: true
   end
 
   def and_i_go_to_a_patient_that_is_vaccinated_in_the_session

@@ -23,7 +23,8 @@ class AppProgrammeStatsComponent < ViewComponent::Base
     helpers
       .policy_scope(ConsentNotification)
       .has_programme(programme)
-      .for_academic_year(academic_year)
+      .joins(:session)
+      .where(session: { academic_year: })
       .where(patient: patients)
       .count
   end

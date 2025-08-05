@@ -5,6 +5,7 @@
 # Table name: cohort_imports
 #
 #  id                           :bigint           not null, primary key
+#  academic_year                :integer          not null
 #  changed_record_count         :integer
 #  csv_data                     :text
 #  csv_filename                 :text
@@ -17,17 +18,17 @@
 #  status                       :integer          default("pending_import"), not null
 #  created_at                   :datetime         not null
 #  updated_at                   :datetime         not null
-#  organisation_id              :bigint           not null
+#  team_id                      :bigint           not null
 #  uploaded_by_user_id          :bigint           not null
 #
 # Indexes
 #
-#  index_cohort_imports_on_organisation_id      (organisation_id)
+#  index_cohort_imports_on_team_id              (team_id)
 #  index_cohort_imports_on_uploaded_by_user_id  (uploaded_by_user_id)
 #
 # Foreign Keys
 #
-#  fk_rails_...  (organisation_id => organisations.id)
+#  fk_rails_...  (team_id => teams.id)
 #  fk_rails_...  (uploaded_by_user_id => users.id)
 #
 class CohortImport < PatientImport
@@ -39,7 +40,7 @@ class CohortImport < PatientImport
   private
 
   def parse_row(data)
-    CohortImportRow.new(data:, organisation:)
+    CohortImportRow.new(data:, team:, academic_year:)
   end
 
   def postprocess_rows!

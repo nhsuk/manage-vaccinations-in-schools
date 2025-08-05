@@ -15,20 +15,14 @@ describe "Community clinic vaccination session" do
 
   def given_i_am_signed_in_as_a_nurse
     @programme = create(:programme, :hpv)
-    @organisation =
-      create(:organisation, :with_one_nurse, programmes: [@programme])
-    sign_in @organisation.users.first
+    @team = create(:team, :with_one_nurse, programmes: [@programme])
+    sign_in @team.users.first
   end
 
   def and_a_patient_is_ready_for_vaccination_in_a_community_clinic
-    location = create(:generic_clinic, organisation: @organisation)
+    location = create(:generic_clinic, team: @team)
     @session =
-      create(
-        :session,
-        organisation: @organisation,
-        programmes: [@programme],
-        location:
-      )
+      create(:session, team: @team, programmes: [@programme], location:)
     @patient =
       create(
         :patient,
@@ -36,7 +30,7 @@ describe "Community clinic vaccination session" do
         :in_attendance,
         session: @session
       )
-    @community_clinic = create(:community_clinic, organisation: @organisation)
+    @community_clinic = create(:community_clinic, team: @team)
   end
 
   def when_i_record_a_non_administered_vaccination_with_reason

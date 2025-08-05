@@ -48,7 +48,7 @@ class Sessions::InviteToClinicController < ApplicationController
         if @session.clinic?
           @session
         else
-          @session.organisation.generic_clinic_session(
+          @session.team.generic_clinic_session(
             academic_year: @session.academic_year
           )
         end

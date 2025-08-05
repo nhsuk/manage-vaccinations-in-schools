@@ -30,10 +30,10 @@ describe "mavis vaccination-records sync" do
   private
 
   def given_a_vaccination_record_exists
-    organisation = create(:organisation)
+    team = create(:team)
     programme = create(:programme, type: "hpv")
-    session = create(:session, programmes: [programme], organisation:)
-    patient = create(:patient, organisation:)
+    session = create(:session, programmes: [programme], team:)
+    patient = create(:patient, team:)
     vaccine = create(:vaccine, :gardasil, programme:)
     batch = create(:batch, vaccine:, expiry: "2023-03-20", name: "X8U375AL")
 
@@ -50,9 +50,9 @@ describe "mavis vaccination-records sync" do
   end
 
   def given_a_synced_vaccination_record_exists
-    organisation = create(:organisation)
+    team = create(:team)
     programme = create(:programme, type: "hpv")
-    patient = create(:patient, organisation:)
+    patient = create(:patient, team:)
     @synced_vaccination_record =
       create(
         :vaccination_record,

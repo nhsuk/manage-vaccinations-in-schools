@@ -23,17 +23,14 @@ class LocationSessionsFactory
 
   attr_reader :location, :academic_year
 
-  delegate :organisation, to: :location
+  delegate :team, to: :location
 
   def already_exists?(programmes:)
-    organisation
-      .sessions
-      .has_programmes(programmes)
-      .exists?(academic_year:, location:)
+    team.sessions.has_programmes(programmes).exists?(academic_year:, location:)
   end
 
   def create_session!(programmes:)
-    organisation.sessions.create!(academic_year:, location:, programmes:)
+    team.sessions.create!(academic_year:, location:, programmes:)
   end
 
   def add_patients!(session:)
@@ -56,9 +53,9 @@ class LocationSessionsFactory
   def patient_ids
     @patient_ids ||=
       if location.generic_clinic?
-        organisation.patients.pluck(:id)
+        team.patients.pluck(:id)
       else
-        organisation.patients.where(school: location).pluck(:id)
+        team.patients.where(school: location).pluck(:id)
       end
   end
 end

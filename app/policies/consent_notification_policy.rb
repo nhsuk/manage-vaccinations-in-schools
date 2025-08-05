@@ -3,11 +3,7 @@
 class ConsentNotificationPolicy < ApplicationPolicy
   class Scope < ApplicationPolicy::Scope
     def resolve
-      scope.joins(:session).where(
-        session: {
-          organisation: user.selected_organisation
-        }
-      )
+      scope.joins(:session).where(session: { team: user.selected_team })
     end
   end
 end

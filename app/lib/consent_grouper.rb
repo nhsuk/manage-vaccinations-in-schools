@@ -18,8 +18,7 @@ class ConsentGrouper
         .map { it.second.max_by(&:submitted_at) }
     else
       consents
-        .where(programme_id:)
-        .for_academic_year(academic_year)
+        .where(programme_id:, academic_year:)
         .not_invalidated
         .response_provided
         .includes(:parent)

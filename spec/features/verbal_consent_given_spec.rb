@@ -64,14 +64,14 @@ describe "Verbal consent" do
   end
 
   def and_i_am_signed_in
-    sign_in @organisation.users.first
+    sign_in @team.users.first
   end
 
   def create_programme(programme_type)
     @programme = create(:programme, programme_type)
     programmes = [@programme]
-    @organisation = create(:organisation, :with_one_nurse, programmes:)
-    @session = create(:session, organisation: @organisation, programmes:)
+    @team = create(:team, :with_one_nurse, programmes:)
+    @session = create(:session, team: @team, programmes:)
 
     @parent = create(:parent)
     @patient = create(:patient, session: @session, parents: [@parent])

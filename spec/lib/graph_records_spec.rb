@@ -4,10 +4,10 @@ describe GraphRecords do
   subject(:graph) { described_class.new.graph(patients: [patient]) }
 
   let!(:programmes) { [create(:programme, :hpv)] }
-  let!(:organisation) { create(:organisation, programmes:) }
-  let!(:session) { create(:session, organisation:, programmes:) }
+  let!(:team) { create(:team, programmes:) }
+  let!(:session) { create(:session, team:, programmes:) }
   let!(:class_import) { create(:class_import, session:) }
-  let!(:cohort_import) { create(:cohort_import, organisation:) }
+  let!(:cohort_import) { create(:cohort_import, team:) }
   let!(:parent) do
     create(
       :parent,
@@ -20,7 +20,7 @@ describe GraphRecords do
       :patient,
       parents: [parent],
       session:,
-      organisation:,
+      team:,
       programmes:,
       class_imports: [class_import],
       cohort_imports: [cohort_import]
@@ -32,7 +32,7 @@ describe GraphRecords do
       :given,
       patient:,
       parent:,
-      organisation:,
+      team:,
       programme: programmes.first
     )
   end

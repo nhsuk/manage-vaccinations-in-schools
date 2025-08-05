@@ -1,0 +1,21 @@
+<% content_for :before_main do %>
+  <%= render AppBacklinkComponent.new(@back_link_path) %>
+<% end %>
+
+<% title = "Do you want to send #{@parent.full_name} an email and text message confirming their decision?" %>
+<% content_for :page_title, title %>
+
+<%= form_with model: @draft_consent, url: wizard_path, method: :put do |f| %>
+  <%= f.govuk_error_summary %>
+
+  <%= f.govuk_radio_buttons_fieldset :notify_parent_on_refusal,
+                                     caption: { size: "l", text: @patient.full_name },
+                                     legend: { size: "l", tag: "h1", text: title } do %>
+    <%= f.govuk_radio_button :notify_parent_on_refusal, "true",
+                             label: { text: "Yes" }, link_errors: true %>
+    <%= f.govuk_radio_button :notify_parent_on_refusal, "false",
+                             label: { text: "No" } %>
+  <% end %>
+
+  <%= f.govuk_submit "Continue" %>
+<% end %>

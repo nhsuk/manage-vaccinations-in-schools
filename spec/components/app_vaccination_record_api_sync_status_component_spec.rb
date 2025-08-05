@@ -61,6 +61,22 @@ describe AppVaccinationRecordAPISyncStatusComponent do
           )
         end
       end
+
+      context "when child requested that parents aren't notified" do
+        before do
+          allow(vaccination_record).to receive_messages(
+            sync_status: :not_synced
+          )
+          vaccination_record.notify_parents = false
+        end
+
+        it do
+          expect(formatted_status).to include(
+            "The child gave consent under Gillick competence and does not want their parents to be notified. " \
+              "You must let the child’s GP know they were vaccinated."
+          )
+        end
+      end
     end
 
     context "when sync_status is :cannot_sync" do

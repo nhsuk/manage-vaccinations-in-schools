@@ -44,25 +44,19 @@ describe "Class list imports duplicates" do
   end
 
   def given_i_am_signed_in
-    @organisation = create(:organisation, :with_one_nurse)
-    sign_in @organisation.users.first
+    @team = create(:team, :with_one_nurse)
+    sign_in @team.users.first
   end
 
   def and_an_hpv_programme_is_underway
-    programmes = [create(:programme, :hpv, organisations: [@organisation])]
+    programmes = [create(:programme, :hpv, teams: [@team])]
 
-    @location =
-      create(
-        :school,
-        :secondary,
-        name: "Waterloo Road",
-        organisation: @organisation
-      )
+    @location = create(:school, :secondary, name: "Waterloo Road", team: @team)
     @session =
       create(
         :session,
         :unscheduled,
-        organisation: @organisation,
+        team: @team,
         location: @location,
         programmes:
       )

@@ -61,7 +61,7 @@ class TriageForm
 
   private
 
-  delegate :organisation, :patient, :session, to: :patient_session
+  delegate :team, :patient, :session, to: :patient_session
   delegate :academic_year, to: :session
 
   def consented_vaccine_methods
@@ -73,12 +73,13 @@ class TriageForm
   def triage_attributes
     {
       notes:,
-      organisation:,
+      team:,
       patient:,
       performed_by: current_user,
       programme:,
       status:,
-      vaccine_method:
+      vaccine_method:,
+      academic_year: session.academic_year
     }
   end
 

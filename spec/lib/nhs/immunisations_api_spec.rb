@@ -3,12 +3,12 @@
 describe NHS::ImmunisationsAPI do
   before { Flipper.enable(:immunisations_fhir_api_integration) }
 
-  let(:organisation) { create(:organisation, ods_code: "A9A5A") }
+  let(:team) { create(:team, ods_code: "A9A5A") }
   let(:patient) do
     create(
       :patient,
       id: 31_337,
-      organisation:,
+      team:,
       address_postcode: "EC1A 1BB",
       nhs_number: "9449310475",
       given_name: "Sarah",
@@ -17,21 +17,14 @@ describe NHS::ImmunisationsAPI do
     )
   end
   let(:programme) { create(:programme, :hpv) }
-  let(:location) { create(:community_clinic, organisation:, ods_code: nil) }
+  let(:location) { create(:community_clinic, team:, ods_code: nil) }
   let(:vaccine) { create(:vaccine, :gardasil, programme:) }
   let(:batch) do
     create(:batch, vaccine:, expiry: "2023-03-20", name: "X8U375AL")
   end
-  let(:session) do
-    create(:session, organisation:, programmes: [programme], location:)
-  end
+  let(:session) { create(:session, team:, programmes: [programme], location:) }
   let(:user) do
-    create(
-      :user,
-      organisation:,
-      family_name: "Nightingale",
-      given_name: "Florence"
-    )
+    create(:user, team:, family_name: "Nightingale", given_name: "Florence")
   end
   let(:nhs_immunisations_api_synced_at) { nil }
   let(:nhs_immunisations_api_etag) { nil }
@@ -41,7 +34,7 @@ describe NHS::ImmunisationsAPI do
     create(
       :vaccination_record,
       uuid: "11112222-3333-4444-5555-666677778888",
-      organisation:,
+      team:,
       patient:,
       programme:,
       location:,
@@ -54,9 +47,11 @@ describe NHS::ImmunisationsAPI do
       nhs_immunisations_api_synced_at:,
       nhs_immunisations_api_id:,
       nhs_immunisations_api_etag:,
-      nhs_immunisations_api_sync_pending_at:
+      nhs_immunisations_api_sync_pending_at:,
+      notify_parents:
     )
   end
+  let(:notify_parents) { true }
 
   shared_examples "an immunisations_fhir_api_integration feature flag check" do
     context "the immunisations_fhir_api_integration feature flag is disabled" do
@@ -538,6 +533,23 @@ describe NHS::ImmunisationsAPI do
 
         it { should be true }
       end
+    end
+
+    context "when the patient has requested that their parents aren't notified" do
+      before do
+        create(
+          :consent,
+          :given,
+          :self_consent,
+          patient:,
+          programme:,
+          notify_parents_on_vaccination: false
+        )
+      end
+
+      let(:notify_parents) { false }
+
+      it { should be false }
     end
   end
 

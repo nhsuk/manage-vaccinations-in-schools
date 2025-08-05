@@ -24,4 +24,18 @@ class Programmes::PatientsController < Programmes::BaseController
     patients = @form.apply(scope)
     @pagy, @patients = pagy(patients)
   end
+
+  def import
+    draft_import = DraftImport.new(request_session: session, current_user:)
+
+    draft_import.reset!
+    draft_import.update!(type: "cohort")
+
+    steps = draft_import.wizard_steps
+    steps.delete(:type)
+
+    next_step =
+      steps.present? ? I18n.t(steps.first, scope: :wicked) : Wicked::FINISH_STEP
+    redirect_to draft_import_path(next_step)
+  end
 end

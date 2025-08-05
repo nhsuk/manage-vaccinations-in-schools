@@ -49,8 +49,7 @@ class DraftVaccinationRecordsController < ApplicationController
       jump_to("confirm")
     end
 
-    set_steps
-    setup_wizard_translated
+    reload_steps
 
     render_wizard @draft_vaccination_record
   end
@@ -104,6 +103,8 @@ class DraftVaccinationRecordsController < ApplicationController
   def handle_confirm
     return unless @draft_vaccination_record.save
 
+    is_new_record = @vaccination_record.new_record?
+
     performed_at_date_changed =
       @vaccination_record.performed_at&.to_date !=
         @draft_vaccination_record.performed_at.to_date
@@ -116,7 +117,12 @@ class DraftVaccinationRecordsController < ApplicationController
           @vaccination_record.outcome_changed? ||
             @vaccination_record.batch_id_changed? || performed_at_date_changed
         )
-
+    if is_new_record
+      @vaccination_record.notify_parents =
+        VaccinationNotificationCriteria.call(
+          vaccination_record: @vaccination_record
+        )
+    end
     @vaccination_record.save!
 
     StatusUpdater.call(patient: @patient)
@@ -191,11 +197,6 @@ class DraftVaccinationRecordsController < ApplicationController
   end
 
   def set_steps
-    # Translated steps are cached after running setup_wizard_translated.
-    # To allow us to run this method multiple times during a single action
-    # lifecycle, we need to clear the cache.
-    @wizard_translations = nil
-
     self.steps = @draft_vaccination_record.wizard_steps
   end
 

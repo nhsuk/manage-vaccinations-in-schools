@@ -11,7 +11,7 @@ describe PatientsHelper do
 
       it do
         expect(patient_nhs_number).to eq(
-          "<span class=\"app-u-monospace\">012&nbsp;&zwj;345&nbsp;&zwj;6789</span>"
+          "<span class=\"app-u-monospace nhsuk-u-nowrap\">012 345 6789</span>"
         )
       end
 
@@ -24,7 +24,7 @@ describe PatientsHelper do
 
         it do
           expect(patient_nhs_number).to eq(
-            "<s><span class=\"app-u-monospace\">012&nbsp;&zwj;345&nbsp;&zwj;6789</span></s>"
+            "<s><span class=\"app-u-monospace nhsuk-u-nowrap\">012 345 6789</span></s>"
           )
         end
       end

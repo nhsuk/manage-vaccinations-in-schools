@@ -5,11 +5,11 @@ describe "schools:move_patients" do
     Rake::Task["schools:move_patients"].invoke(source_urn, target_urn)
   end
 
-  let(:organisation) { create(:organisation) }
-  let(:subteam) { create(:subteam, organisation:) }
-  let(:other_subteam) { create(:subteam, organisation:) }
-  let(:source_school) { create(:school, organisation: organisation, subteam:) }
-  let(:target_school) { create(:school, organisation: organisation) }
+  let(:team) { create(:team) }
+  let(:subteam) { create(:subteam, team:) }
+  let(:other_subteam) { create(:subteam, team:) }
+  let(:source_school) { create(:school, team: team, subteam:) }
+  let(:target_school) { create(:school, team: team) }
   let(:programmes) { [create(:programme, :hpv)] }
   let!(:patient) { create(:patient, school: source_school) }
   let!(:session) { create(:session, location: source_school, programmes:) }

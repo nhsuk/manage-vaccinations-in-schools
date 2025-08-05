@@ -10,10 +10,8 @@ describe AppVaccinationRecordSummaryComponent do
   let(:outcome) { "administered" }
   let(:location) { create(:school, name: "Hogwarts") }
   let(:programme) { create(:programme, :hpv) }
-  let(:organisation) { create(:organisation, programmes: [programme]) }
-  let(:session) do
-    create(:session, programmes: [programme], location:, organisation:)
-  end
+  let(:team) { create(:team, programmes: [programme]) }
+  let(:session) { create(:session, programmes: [programme], location:, team:) }
   let(:patient) { create(:patient) }
   let(:vaccine) { programme.vaccines.first }
   let(:batch) do
@@ -282,7 +280,7 @@ describe AppVaccinationRecordSummaryComponent do
     end
 
     context "when the location is a generic clinic" do
-      let(:location) { create(:generic_clinic, organisation:) }
+      let(:location) { create(:generic_clinic, team:) }
       let(:location_name) { "Hogwarts" }
 
       it do

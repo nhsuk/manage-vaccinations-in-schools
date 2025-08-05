@@ -57,14 +57,14 @@ describe AppVaccinationRecordTableComponent do
     expect(rendered).to have_css(".nhsuk-table__cell", text: "SMITH, John")
     expect(rendered).to have_link("SMITH, John")
     expect(rendered).to have_css(
-      ".nhsuk-table__cell",
-      text: "999\u00A0\u200D999\u00A0\u200D9999"
+      ".nhsuk-table__cell .nhsuk-u-nowrap",
+      text: "999 999 9999"
     )
     expect(rendered).to have_css(".nhsuk-table__cell", text: "28 May 2000")
     expect(rendered).to have_css(".nhsuk-table__cell", text: "1 September 2020")
   end
 
-  context "with a vaccination record not performed by the organisation" do
+  context "with a vaccination record not performed by the team" do
     before do
       vaccination_records.first.patient.patient_sessions.destroy_all
       vaccination_records.first.update!(

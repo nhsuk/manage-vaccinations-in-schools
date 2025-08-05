@@ -1,0 +1,53 @@
+# frozen_string_literal: true
+
+describe PatientsAgedOutOfSchoolJob do
+  subject(:perform) { described_class.new.perform }
+
+  around { |example| travel_to(today) { example.run } }
+
+  let(:programme) { create(:programme, :flu) }
+  let(:team) { create(:team, :with_generic_clinic, programmes: [programme]) }
+  let(:school) { create(:school, :secondary, team:) }
+
+  # This date of birth corresponds to year 11 in 2024/25.
+  let(:date_of_birth) { Date.new(2008, 1, 1) }
+
+  let!(:patient) { create(:patient, school:, date_of_birth:) }
+
+  context "on the last day of July" do
+    let(:today) { Date.new(2024, 7, 31) }
+
+    it "doesn't create any school moves" do
+      expect { perform }.not_to change(SchoolMove, :count)
+    end
+
+    it "doesn't create any school moves log entries" do
+      expect { perform }.not_to change(SchoolMoveLogEntry, :count)
+    end
+
+    it "doesn't move the patient to unknown school" do
+      expect { perform }.not_to(change { patient.reload.school })
+    end
+  end
+
+  context "on the first day of August" do
+    let(:today) { Date.new(2024, 8, 1) }
+
+    it "doesn't create any school moves" do
+      expect { perform }.not_to change(SchoolMove, :count)
+    end
+
+    it "creates a school move log entry" do
+      expect { perform }.to change(SchoolMoveLogEntry, :count).by(1)
+
+      school_move_log_entry = SchoolMoveLogEntry.first
+      expect(school_move_log_entry.patient).to eq(patient)
+      expect(school_move_log_entry.school).to be_nil
+      expect(school_move_log_entry.home_educated).to be(false)
+    end
+
+    it "moves the patient to unknown school" do
+      expect { perform }.to change { patient.reload.school }.to(nil)
+    end
+  end
+end

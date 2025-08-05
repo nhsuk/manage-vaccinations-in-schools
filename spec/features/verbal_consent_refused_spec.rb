@@ -40,14 +40,13 @@ describe "Verbal consent" do
   end
 
   def and_i_am_signed_in
-    organisation =
-      create(:organisation, :with_one_nurse, programmes: @programmes)
-    @session = create(:session, organisation:, programmes: @programmes)
+    team = create(:team, :with_one_nurse, programmes: @programmes)
+    @session = create(:session, team:, programmes: @programmes)
 
     @parent = create(:parent)
     @patient = create(:patient, session: @session, parents: [@parent])
 
-    sign_in organisation.users.first
+    sign_in team.users.first
   end
 
   def when_i_record_a_new_consent_response

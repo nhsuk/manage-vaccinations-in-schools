@@ -50,7 +50,9 @@ module VaccinationMailerConcern
 
   def parents_for_vaccination_mailer(vaccination_record)
     patient = vaccination_record.patient
-    return [] unless patient.send_notifications?
+    unless patient.send_notifications? && vaccination_record.notify_parents
+      return []
+    end
 
     programme_id = vaccination_record.programme_id
     academic_year = vaccination_record.academic_year
@@ -60,7 +62,7 @@ module VaccinationMailerConcern
 
     parents =
       if consents.any?(&:via_self_consent?)
-        consents.any?(&:notify_parents) ? patient.parents : []
+        patient.parents
       else
         consents.select(&:response_given?).filter_map(&:parent)
       end

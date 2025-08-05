@@ -90,7 +90,7 @@ Rails.application.routes.draw do
     unless Rails.env.production?
       namespace :testing do
         resources :locations, only: :index
-        resources :organisations, only: :destroy, param: :ods_code
+        resources :teams, only: :destroy, param: :ods_code
         post "/onboard", to: "onboard#create"
       end
     end
@@ -115,15 +115,8 @@ Rails.application.routes.draw do
     end
   end
 
-  resource :draft_class_import,
-           only: :new,
-           path: "draft-class-import/:location_id"
-  resource :draft_class_import,
-           only: %i[show update],
-           path: "draft-class-import/:id"
-
+  resource :draft_import, only: %i[show update], path: "draft-import/:id"
   resource :draft_consent, only: %i[show update], path: "draft-consent/:id"
-
   resource :draft_vaccination_record,
            only: %i[show update],
            path: "draft-vaccination-record/:id"
@@ -132,7 +125,7 @@ Rails.application.routes.draw do
             path: "immunisation-imports",
             except: %i[index destroy]
 
-  resources :imports, only: %i[index new create]
+  resources :imports, only: %i[index create]
 
   namespace :imports do
     resources :issues, path: "issues", only: %i[index] do
@@ -177,7 +170,9 @@ Rails.application.routes.draw do
                path: ":academic_year",
                only: :show,
                controller: :overview
-      resources :patients, path: ":academic_year/patients", only: :index
+      resources :patients, path: ":academic_year/patients", only: :index do
+        get "import", on: :collection
+      end
       resources :reports, path: ":academic_year/reports", only: :create
       resources :sessions, path: ":academic_year/sessions", only: :index
     end
@@ -211,6 +206,8 @@ Rails.application.routes.draw do
              controller: "sessions/invite_to_clinic"
 
     member do
+      get "import"
+
       get "edit/programmes",
           controller: "sessions/edit",
           action: "edit_programmes"
@@ -281,7 +278,7 @@ Rails.application.routes.draw do
     end
   end
 
-  resource :organisation, only: %i[show]
+  resource :team, only: %i[show]
 
   resources :vaccination_records,
             path: "vaccination-records",
@@ -307,11 +304,11 @@ Rails.application.routes.draw do
   end
 
   namespace :users do
-    get "organisation-not-found", controller: :errors
+    get "team-not-found", controller: :errors
     get "workgroup-not-found", controller: :errors
     get "role-not-found", controller: :errors
 
-    resource :organisations, only: %i[new create]
+    resource :teams, only: %i[new create]
   end
 
   scope via: :all do

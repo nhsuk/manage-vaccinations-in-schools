@@ -5,6 +5,7 @@
 # Table name: cohort_imports
 #
 #  id                           :bigint           not null, primary key
+#  academic_year                :integer          not null
 #  changed_record_count         :integer
 #  csv_data                     :text
 #  csv_filename                 :text
@@ -17,39 +18,32 @@
 #  status                       :integer          default("pending_import"), not null
 #  created_at                   :datetime         not null
 #  updated_at                   :datetime         not null
-#  organisation_id              :bigint           not null
+#  team_id                      :bigint           not null
 #  uploaded_by_user_id          :bigint           not null
 #
 # Indexes
 #
-#  index_cohort_imports_on_organisation_id      (organisation_id)
+#  index_cohort_imports_on_team_id              (team_id)
 #  index_cohort_imports_on_uploaded_by_user_id  (uploaded_by_user_id)
 #
 # Foreign Keys
 #
-#  fk_rails_...  (organisation_id => organisations.id)
+#  fk_rails_...  (team_id => teams.id)
 #  fk_rails_...  (uploaded_by_user_id => users.id)
 #
 describe CohortImport do
-  subject(:cohort_import) { create(:cohort_import, csv:, organisation:) }
+  subject(:cohort_import) { create(:cohort_import, csv:, team:) }
 
   let(:programmes) { [create(:programme)] }
-  let(:organisation) do
-    create(:organisation, :with_generic_clinic, programmes:)
-  end
+  let(:team) { create(:team, :with_generic_clinic, programmes:) }
 
   let(:file) { "valid.csv" }
   let(:csv) { fixture_file_upload("spec/fixtures/cohort_import/#{file}") }
 
   # Ensure location URN matches the URN in our fixture files
-  let!(:location) { create(:school, urn: "123456", organisation:) }
+  let!(:location) { create(:school, urn: "123456", team:) }
 
-  before do
-    OrganisationSessionsFactory.call(
-      organisation,
-      academic_year: AcademicYear.current
-    )
-  end
+  before { TeamSessionsFactory.call(team, academic_year: AcademicYear.current) }
 
   it_behaves_like "a CSVImportable model"
 
@@ -143,8 +137,7 @@ describe CohortImport do
       let(:file) { "valid_iso_8859_1_encoding.csv" }
 
       let(:location) do
-        Location.find_by(urn: "120026") ||
-          create(:school, urn: "120026", organisation:)
+        Location.find_by(urn: "120026") || create(:school, urn: "120026", team:)
       end
 
       it "is valid" do
@@ -256,7 +249,7 @@ describe CohortImport do
     end
 
     it "ignores and counts duplicate records" do
-      create(:cohort_import, csv:, organisation:).process!
+      create(:cohort_import, csv:, team:).process!
       csv.rewind
 
       process!
@@ -297,7 +290,7 @@ describe CohortImport do
           family_name: "Smith",
           date_of_birth: Date.new(2010, 1, 2),
           nhs_number: nil,
-          organisation:
+          team:
         )
       end
 
@@ -314,7 +307,7 @@ describe CohortImport do
           family_name: "smith",
           date_of_birth: Date.new(2010, 1, 2),
           nhs_number: nil,
-          organisation:
+          team:
         )
       end
 
@@ -362,7 +355,7 @@ describe CohortImport do
           family_name: "smith",
           date_of_birth: Date.new(2010, 1, 2),
           nhs_number: nil,
-          organisation: nil
+          team: nil
         )
       end
 
@@ -371,9 +364,9 @@ describe CohortImport do
       end
 
       it "automatically re-adds the patient to the cohort" do
-        expect { process! }.to change {
-          existing_patient.reload.organisations
-        }.from([]).to([organisation])
+        expect { process! }.to change { existing_patient.reload.teams }.from(
+          []
+        ).to([team])
       end
 
       it "doesn't propose a school move" do
@@ -385,7 +378,7 @@ describe CohortImport do
 
     context "with an unscheduled session" do
       let(:session) do
-        create(:session, :unscheduled, organisation:, programmes:, location:)
+        create(:session, :unscheduled, team:, programmes:, location:)
       end
 
       it "adds the known school patients to the session" do
@@ -395,7 +388,7 @@ describe CohortImport do
 
     context "with a scheduled session" do
       let(:session) do
-        create(:session, :scheduled, organisation:, programmes:, location:)
+        create(:session, :scheduled, team:, programmes:, location:)
       end
 
       it "adds the known school patients to the session" do
@@ -405,7 +398,7 @@ describe CohortImport do
 
     context "with a scheduled clinic session" do
       let(:session) do
-        organisation.generic_clinic_session(academic_year: AcademicYear.current)
+        team.generic_clinic_session(academic_year: AcademicYear.current)
       end
 
       it "adds all the patients to the session" do

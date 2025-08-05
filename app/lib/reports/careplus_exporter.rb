@@ -1,14 +1,8 @@
 # frozen_string_literal: true
 
 class Reports::CareplusExporter
-  def initialize(
-    organisation:,
-    programme:,
-    academic_year:,
-    start_date:,
-    end_date:
-  )
-    @organisation = organisation
+  def initialize(team:, programme:, academic_year:, start_date:, end_date:)
+    @team = team
     @programme = programme
     @academic_year = academic_year
     @start_date = start_date
@@ -31,7 +25,7 @@ class Reports::CareplusExporter
 
   private
 
-  attr_reader :organisation, :programme, :academic_year, :start_date, :end_date
+  attr_reader :team, :programme, :academic_year, :start_date, :end_date
 
   def headers
     [
@@ -75,7 +69,7 @@ class Reports::CareplusExporter
     scope =
       VaccinationRecord
         .kept
-        .where(session: { organisation: }, programme:)
+        .where(session: { team: }, programme:)
         .for_academic_year(academic_year)
         .administered
         .order(:performed_at)
@@ -114,8 +108,11 @@ class Reports::CareplusExporter
     @consents ||=
       Consent
         .select("DISTINCT ON (patient_id) consents.*")
-        .where(patient: vaccination_records.select(:patient_id), programme:)
-        .for_academic_year(academic_year)
+        .where(
+          patient: vaccination_records.select(:patient_id),
+          programme:,
+          academic_year:
+        )
         .not_invalidated
         .response_given
         .order(:patient_id, created_at: :desc)
@@ -139,7 +136,7 @@ class Reports::CareplusExporter
           records.first.performed_at.strftime("%d/%m/%Y"),
           records.first.performed_at.strftime("%H:%M"),
           session.location.school? ? "SC" : "CL", # Venue Type
-          session.location.dfe_number || organisation.careplus_venue_code, # Venue Code
+          session.location.dfe_number || team.careplus_venue_code, # Venue Code
           "IN", # Staff Type
           "LW5PM", # Staff Code
           "Y", # Attended; Did not attends do not get recorded on GP systems

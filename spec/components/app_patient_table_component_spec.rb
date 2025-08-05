@@ -55,8 +55,8 @@ describe AppPatientTableComponent do
     )
     expect(rendered).to have_css(".nhsuk-table__cell", text: "SMITH, John")
     expect(rendered).to have_css(
-      ".nhsuk-table__cell",
-      text: "999\u00A0\u200D100\u00A0\u200D0003"
+      ".nhsuk-table__cell .nhsuk-u-nowrap",
+      text: "999 100 0003"
     )
     expect(rendered).to have_css(".nhsuk-table__cell", text: "28 May 2000")
     expect(rendered).to have_css(".nhsuk-table__cell", text: "SW1A 1AA")
@@ -74,8 +74,8 @@ describe AppPatientTableComponent do
   end
 
   context "with a patient in the cohort" do
-    let(:organisation) { current_user.selected_organisation }
-    let(:session) { create(:session, organisation:) }
+    let(:team) { current_user.selected_team }
+    let(:session) { create(:session, team:) }
 
     before { create(:patient_session, patient: patients.first, session:) }
 

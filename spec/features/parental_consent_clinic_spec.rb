@@ -98,30 +98,29 @@ describe "Parental consent" do
 
   def given_an_hpv_programme_is_underway
     @programme = create(:programme, :hpv)
-    @organisation =
-      create(:organisation, :with_one_nurse, programmes: [@programme])
+    @team = create(:team, :with_one_nurse, programmes: [@programme])
 
-    location = create(:generic_clinic, organisation: @organisation)
+    location = create(:generic_clinic, team: @team)
 
     @session =
       create(
         :session,
         :scheduled,
-        organisation: @organisation,
+        team: @team,
         programmes: [@programme],
         location:
       )
 
     @child = create(:patient, session: @session)
 
-    @school = create(:school, organisation: @organisation)
+    @school = create(:school, team: @team)
   end
 
   def and_an_upcoming_school_session_exists
     create(
       :session,
       :scheduled,
-      organisation: @organisation,
+      team: @team,
       programmes: [@programme],
       location: @school
     )
@@ -238,7 +237,7 @@ describe "Parental consent" do
   end
 
   def when_the_nurse_checks_the_school_moves
-    sign_in @organisation.users.first
+    sign_in @team.users.first
     visit "/dashboard"
 
     within ".nhsuk-navigation" do

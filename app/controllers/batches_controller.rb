@@ -13,7 +13,7 @@ class BatchesController < ApplicationController
   def create
     batch =
       Batch.archived.find_or_initialize_by(
-        organisation: current_organisation,
+        team: current_team,
         vaccine: @vaccine,
         **batch_form_params
       )

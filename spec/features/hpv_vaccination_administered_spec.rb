@@ -99,23 +99,20 @@ describe "HPV vaccination" do
 
   def given_i_am_signed_in
     programme = create(:programme, :hpv_all_vaccines)
-    organisation =
-      create(:organisation, :with_one_nurse, programmes: [programme])
-    location = create(:school, organisation:)
+    team = create(:team, :with_one_nurse, programmes: [programme])
+    location = create(:school, team:)
 
     programme.vaccines.discontinued.each do |vaccine|
-      create(:batch, organisation:, vaccine:)
+      create(:batch, team:, vaccine:)
     end
 
     @active_vaccine = programme.vaccines.active.first
     @active_batch =
-      create(:batch, :not_expired, organisation:, vaccine: @active_vaccine)
-    @archived_batch =
-      create(:batch, :archived, organisation:, vaccine: @active_vaccine)
+      create(:batch, :not_expired, team:, vaccine: @active_vaccine)
+    @archived_batch = create(:batch, :archived, team:, vaccine: @active_vaccine)
 
     # To get around expiration date validation on the model.
-    @expired_batch =
-      build(:batch, :expired, organisation:, vaccine: @active_vaccine)
+    @expired_batch = build(:batch, :expired, team:, vaccine: @active_vaccine)
     @expired_batch.save!(validate: false)
 
     session_traits =
@@ -124,7 +121,7 @@ describe "HPV vaccination" do
       create(
         :session,
         *session_traits,
-        organisation:,
+        team:,
         programmes: [programme],
         location:
       )
@@ -136,7 +133,7 @@ describe "HPV vaccination" do
         session: @session
       )
 
-    sign_in organisation.users.first
+    sign_in team.users.first
   end
 
   alias_method :and_i_am_signed_in, :given_i_am_signed_in

@@ -14,16 +14,16 @@
 #  created_at                    :datetime         not null
 #  updated_at                    :datetime         not null
 #  location_id                   :bigint           not null
-#  organisation_id               :bigint           not null
+#  team_id                       :bigint           not null
 #
 # Indexes
 #
-#  index_sessions_on_location_id                      (location_id)
-#  index_sessions_on_organisation_id_and_location_id  (organisation_id,location_id)
+#  index_sessions_on_location_id              (location_id)
+#  index_sessions_on_team_id_and_location_id  (team_id,location_id)
 #
 # Foreign Keys
 #
-#  fk_rails_...  (organisation_id => organisations.id)
+#  fk_rails_...  (team_id => teams.id)
 #
 
 describe Session do
@@ -78,18 +78,6 @@ describe Session do
         let(:programmes) { [session.programmes.first] }
 
         it { should include(session) }
-      end
-    end
-
-    describe "#for_current_academic_year" do
-      subject(:scope) { described_class.for_current_academic_year }
-
-      it do
-        expect(scope).to contain_exactly(
-          unscheduled_session,
-          today_session,
-          scheduled_session
-        )
       end
     end
 

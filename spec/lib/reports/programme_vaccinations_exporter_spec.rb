@@ -3,7 +3,7 @@
 describe Reports::ProgrammeVaccinationsExporter do
   subject(:call) do
     described_class.call(
-      organisation:,
+      team:,
       programme:,
       academic_year:,
       start_date:,
@@ -18,18 +18,18 @@ describe Reports::ProgrammeVaccinationsExporter do
 
   shared_examples "generates a report" do
     let(:programmes) { [programme] }
-    let(:organisation) { create(:organisation, programmes:) }
+    let(:team) { create(:team, programmes:) }
     let(:user) do
       create(
         :user,
         email: "nurse@example.com",
         given_name: "Nurse",
         family_name: "Test",
-        organisation:
+        team:
       )
     end
-    let(:subteam) { create(:subteam, organisation:) }
-    let(:session) { create(:session, location:, organisation:, programmes:) }
+    let(:subteam) { create(:subteam, team:) }
+    let(:session) { create(:session, location:, team:, programmes:) }
 
     let(:start_date) { nil }
     let(:end_date) { nil }
@@ -149,7 +149,7 @@ describe Reports::ProgrammeVaccinationsExporter do
                 "LOCAL_PATIENT_ID" => patient.id.to_s,
                 "NHS_NUMBER" => patient.nhs_number,
                 "NHS_NUMBER_STATUS_CODE" => "02",
-                "ORGANISATION_CODE" => organisation.ods_code,
+                "ORGANISATION_CODE" => team.ods_code,
                 "PERFORMING_PROFESSIONAL_EMAIL" => "nurse@example.com",
                 "PERFORMING_PROFESSIONAL_FORENAME" => "Nurse",
                 "PERFORMING_PROFESSIONAL_SURNAME" => "Test",
@@ -300,7 +300,7 @@ describe Reports::ProgrammeVaccinationsExporter do
                 "LOCAL_PATIENT_ID" => patient.id.to_s,
                 "NHS_NUMBER" => patient.nhs_number,
                 "NHS_NUMBER_STATUS_CODE" => "02",
-                "ORGANISATION_CODE" => organisation.ods_code,
+                "ORGANISATION_CODE" => team.ods_code,
                 "PERFORMING_PROFESSIONAL_EMAIL" => "nurse@example.com",
                 "PERFORMING_PROFESSIONAL_FORENAME" => "Nurse",
                 "PERFORMING_PROFESSIONAL_SURNAME" => "Test",
@@ -337,7 +337,7 @@ describe Reports::ProgrammeVaccinationsExporter do
       end
 
       context "with a deceased patient" do
-        let(:session) { create(:session, programmes:, organisation:) }
+        let(:session) { create(:session, programmes:, team:) }
 
         before do
           create(
@@ -358,7 +358,7 @@ describe Reports::ProgrammeVaccinationsExporter do
       end
 
       context "with a restricted patient" do
-        let(:session) { create(:session, programmes:, organisation:) }
+        let(:session) { create(:session, programmes:, team:) }
         let(:patient) { create(:patient, :restricted, session:) }
 
         before do
@@ -379,7 +379,7 @@ describe Reports::ProgrammeVaccinationsExporter do
       end
 
       context "with a traced NHS number" do
-        let(:session) { create(:session, programmes:, organisation:) }
+        let(:session) { create(:session, programmes:, team:) }
 
         before do
           create(
@@ -402,7 +402,7 @@ describe Reports::ProgrammeVaccinationsExporter do
         let(:gp_practice) do
           create(:gp_practice, name: "Practice", ods_code: "GP")
         end
-        let(:session) { create(:session, programmes:, organisation:) }
+        let(:session) { create(:session, programmes:, team:) }
 
         before do
           create(:patient, :vaccinated, gp_practice:, session:, programmes:)
@@ -417,7 +417,7 @@ describe Reports::ProgrammeVaccinationsExporter do
       end
 
       context "with consent" do
-        let(:session) { create(:session, programmes:, organisation:) }
+        let(:session) { create(:session, programmes:, team:) }
         let(:patient) { create(:patient, :vaccinated, session:) }
 
         let!(:consent) do
@@ -443,7 +443,7 @@ describe Reports::ProgrammeVaccinationsExporter do
       end
 
       context "with a gillick assessment" do
-        let(:session) { create(:session, programmes:, organisation:) }
+        let(:session) { create(:session, programmes:, team:) }
         let(:patient_session) do
           create(:patient_session, :vaccinated, session:)
         end
@@ -478,7 +478,7 @@ describe Reports::ProgrammeVaccinationsExporter do
               :self_consent,
               patient:,
               programme:,
-              notify_parents: false
+              notify_parents_on_vaccination: false
             )
           end
 
@@ -496,7 +496,7 @@ describe Reports::ProgrammeVaccinationsExporter do
               :self_consent,
               patient:,
               programme:,
-              notify_parents: true
+              notify_parents_on_vaccination: true
             )
           end
 
@@ -509,7 +509,7 @@ describe Reports::ProgrammeVaccinationsExporter do
       end
 
       context "with a triage assessment" do
-        let(:session) { create(:session, programmes:, organisation:) }
+        let(:session) { create(:session, programmes:, team:) }
         let(:performed_by) do
           create(:user, given_name: "Test", family_name: "Nurse")
         end

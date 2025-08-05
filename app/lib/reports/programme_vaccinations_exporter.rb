@@ -3,14 +3,8 @@
 class Reports::ProgrammeVaccinationsExporter
   include Reports::ExportFormatters
 
-  def initialize(
-    organisation:,
-    programme:,
-    academic_year:,
-    start_date:,
-    end_date:
-  )
-    @organisation = organisation
+  def initialize(team:, programme:, academic_year:, start_date:, end_date:)
+    @team = team
     @programme = programme
     @academic_year = academic_year
     @start_date = start_date
@@ -31,7 +25,7 @@ class Reports::ProgrammeVaccinationsExporter
 
   private
 
-  attr_reader :organisation, :programme, :academic_year, :start_date, :end_date
+  attr_reader :team, :programme, :academic_year, :start_date, :end_date
 
   def headers
     %w[
@@ -89,7 +83,7 @@ class Reports::ProgrammeVaccinationsExporter
 
   def vaccination_records
     scope =
-      organisation
+      team
         .vaccination_records
         .where(programme:)
         .for_academic_year(academic_year)
@@ -150,17 +144,21 @@ class Reports::ProgrammeVaccinationsExporter
     @gillick_assessments ||=
       GillickAssessment
         .select(
-          "DISTINCT ON (patient_session_id) gillick_assessments.*, patient_id, session_id"
+          "DISTINCT ON (patient_session_id) gillick_assessments.*, " \
+            "patient_sessions.patient_id, patient_sessions.session_id"
         )
         .joins(:patient_session)
+        .joins(:session)
         .where(
           patient_sessions: {
             patient_id: vaccination_records.select(:patient_id),
             session_id: vaccination_records.select(:session_id)
           },
-          programme:
+          programme:,
+          session: {
+            academic_year:
+          }
         )
-        .for_academic_year(academic_year)
         .order(:patient_session_id, created_at: :desc)
         .includes(:performed_by)
         .group_by(&:patient_id)
@@ -173,8 +171,11 @@ class Reports::ProgrammeVaccinationsExporter
     @triages ||=
       Triage
         .select("DISTINCT ON (patient_id) triage.*")
-        .where(patient_id: vaccination_records.select(:patient_id), programme:)
-        .for_academic_year(academic_year)
+        .where(
+          academic_year:,
+          patient_id: vaccination_records.select(:patient_id),
+          programme:
+        )
         .not_invalidated
         .order(:patient_id, created_at: :desc)
         .includes(:performed_by)
@@ -194,7 +195,7 @@ class Reports::ProgrammeVaccinationsExporter
     academic_year = session.academic_year
 
     [
-      organisation.ods_code,
+      team.ods_code,
       school_urn(location:, patient:),
       school_name(location:, patient:),
       care_setting(location:),
@@ -263,7 +264,7 @@ class Reports::ProgrammeVaccinationsExporter
     return "" if gillick_assessment.nil?
 
     if (consent = consents[patient.id]&.find(&:via_self_consent?))
-      consent.notify_parents ? "Y" : "N"
+      consent.notify_parents_on_vaccination ? "Y" : "N"
     else
       ""
     end

@@ -9,7 +9,7 @@ class SessionsController < ApplicationController
   before_action :set_session, except: :index
 
   def index
-    @programmes = current_user.selected_organisation.programmes
+    @programmes = current_user.selected_team.programmes
 
     scope =
       policy_scope(Session).includes(:location, :programmes, :session_dates)
@@ -19,6 +19,8 @@ class SessionsController < ApplicationController
     @patient_count_by_session_id =
       PatientSession
         .where(session_id: sessions.map(&:id))
+        .joins(:patient, :session)
+        .appear_in_programmes(@programmes)
         .group(:session_id)
         .count
 
@@ -50,6 +52,19 @@ class SessionsController < ApplicationController
   end
 
   def edit
+  end
+
+  def import
+    draft_import = DraftImport.new(request_session: session, current_user:)
+
+    draft_import.reset!
+    draft_import.update!(location: @session.location, type: "class")
+
+    steps = draft_import.wizard_steps
+    steps.delete(:type)
+    steps.delete(:location)
+
+    redirect_to draft_import_path(I18n.t(steps.first, scope: :wicked))
   end
 
   def make_in_progress

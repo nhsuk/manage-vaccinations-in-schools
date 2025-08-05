@@ -30,13 +30,11 @@ describe Reports::OfflineSessionExporter do
   subject(:call) { described_class.call(session) }
 
   shared_examples "generates a report" do
-    let(:organisation) do
-      create(:organisation, :with_generic_clinic, programmes: [programme])
-    end
-    let(:user) { create(:user, email: "nurse@example.com", organisation:) }
-    let(:subteam) { create(:subteam, organisation:) }
+    let(:team) { create(:team, :with_generic_clinic, programmes: [programme]) }
+    let(:user) { create(:user, email: "nurse@example.com", team:) }
+    let(:subteam) { create(:subteam, team:) }
     let(:session) do
-      create(:session, location:, organisation:, programmes: [programme])
+      create(:session, location:, team:, programmes: [programme])
     end
 
     context "a school session" do
@@ -134,7 +132,7 @@ describe Reports::OfflineSessionExporter do
                 "HEALTH_QUESTION_ANSWERS" => "",
                 "NHS_NUMBER" => patient.nhs_number,
                 "NOTES" => "",
-                "ORGANISATION_CODE" => organisation.ods_code,
+                "ORGANISATION_CODE" => team.ods_code,
                 "PERFORMING_PROFESSIONAL_EMAIL" => "",
                 "PERSON_ADDRESS_LINE_1" => patient.address_line_1,
                 "PERSON_FORENAME" => patient.given_name,
@@ -212,7 +210,7 @@ describe Reports::OfflineSessionExporter do
                 "HEALTH_QUESTION_ANSWERS" => "",
                 "NHS_NUMBER" => patient.nhs_number,
                 "NOTES" => "Some notes.",
-                "ORGANISATION_CODE" => organisation.ods_code,
+                "ORGANISATION_CODE" => team.ods_code,
                 "PERFORMING_PROFESSIONAL_EMAIL" => "nurse@example.com",
                 "PERSON_ADDRESS_LINE_1" => patient.address_line_1,
                 "PERSON_FORENAME" => patient.given_name,
@@ -302,7 +300,7 @@ describe Reports::OfflineSessionExporter do
                 "HEALTH_QUESTION_ANSWERS" => "",
                 "NHS_NUMBER" => patient.nhs_number,
                 "NOTES" => "Some notes.",
-                "ORGANISATION_CODE" => organisation.ods_code,
+                "ORGANISATION_CODE" => team.ods_code,
                 "PERFORMING_PROFESSIONAL_EMAIL" => "nurse@example.com",
                 "PERSON_ADDRESS_LINE_1" => patient.address_line_1,
                 "PERSON_FORENAME" => patient.given_name,
@@ -336,9 +334,7 @@ describe Reports::OfflineSessionExporter do
 
         context "with a vaccinated patient outside the school session, but in a clinic" do
           let(:clinic_session) do
-            organisation.generic_clinic_session(
-              academic_year: AcademicYear.current
-            )
+            team.generic_clinic_session(academic_year: AcademicYear.current)
           end
 
           let!(:vaccination_record) do
@@ -384,7 +380,7 @@ describe Reports::OfflineSessionExporter do
                 "HEALTH_QUESTION_ANSWERS" => "",
                 "NHS_NUMBER" => patient.nhs_number,
                 "NOTES" => "Some notes.",
-                "ORGANISATION_CODE" => organisation.ods_code,
+                "ORGANISATION_CODE" => team.ods_code,
                 "PERFORMING_PROFESSIONAL_EMAIL" => "nurse@example.com",
                 "PERSON_ADDRESS_LINE_1" => patient.address_line_1,
                 "PERSON_FORENAME" => patient.given_name,
@@ -453,7 +449,7 @@ describe Reports::OfflineSessionExporter do
                 "HEALTH_QUESTION_ANSWERS" => "",
                 "NHS_NUMBER" => patient.nhs_number,
                 "NOTES" => "",
-                "ORGANISATION_CODE" => organisation.ods_code,
+                "ORGANISATION_CODE" => team.ods_code,
                 "PERFORMING_PROFESSIONAL_EMAIL" => "",
                 "PERSON_ADDRESS_LINE_1" => patient.address_line_1,
                 "PERSON_FORENAME" => patient.given_name,
@@ -518,7 +514,7 @@ describe Reports::OfflineSessionExporter do
                 "HEALTH_QUESTION_ANSWERS" => "",
                 "NHS_NUMBER" => patient.nhs_number,
                 "NOTES" => "Some notes.",
-                "ORGANISATION_CODE" => organisation.ods_code,
+                "ORGANISATION_CODE" => team.ods_code,
                 "PERFORMING_PROFESSIONAL_EMAIL" => "nurse@example.com",
                 "PERSON_ADDRESS_LINE_1" => patient.address_line_1,
                 "PERSON_FORENAME" => patient.given_name,
@@ -560,7 +556,7 @@ describe Reports::OfflineSessionExporter do
 
         describe "performing professional email" do
           subject(:validation) do
-            create(:user, organisation:, email: "vaccinator@example.com")
+            create(:user, team:, email: "vaccinator@example.com")
             validation_formula(
               worksheet:,
               column_name: "performing_professional_email"
@@ -577,7 +573,7 @@ describe Reports::OfflineSessionExporter do
               :not_expired,
               name: "BATCH12345",
               vaccine: programme.vaccines.active.first,
-              organisation:
+              team:
             )
             validation_formula(worksheet:, column_name: "batch_number")
           end
@@ -593,18 +589,18 @@ describe Reports::OfflineSessionExporter do
           end
         end
 
-        let!(:vaccinators) { create_list(:user, 2, organisation:) }
+        let!(:vaccinators) { create_list(:user, 2, team:) }
 
         before do
           create(:patient, session:)
           create(
             :user,
-            organisation: create(:organisation),
+            team: create(:team),
             email: "vaccinator.other@example.com"
           )
         end
 
-        it "lists all the organisation users' emails" do
+        it "lists all the team users' emails" do
           emails = worksheet[1..].map { it.cells.first.value }
           expect(emails).to include(*vaccinators.map(&:email))
         end
@@ -626,7 +622,7 @@ describe Reports::OfflineSessionExporter do
             2,
             :not_expired,
             vaccine: programme.vaccines.active.first,
-            organisation:
+            team:
           )
         end
 
@@ -655,7 +651,7 @@ describe Reports::OfflineSessionExporter do
     context "a clinic session" do
       subject(:workbook) { RubyXL::Parser.parse_buffer(call) }
 
-      let(:location) { organisation.locations.generic_clinic.first }
+      let(:location) { team.locations.generic_clinic.first }
 
       it { should_not be_blank }
 
@@ -738,7 +734,7 @@ describe Reports::OfflineSessionExporter do
                 "HEALTH_QUESTION_ANSWERS" => "",
                 "NHS_NUMBER" => patient.nhs_number,
                 "NOTES" => "",
-                "ORGANISATION_CODE" => organisation.ods_code,
+                "ORGANISATION_CODE" => team.ods_code,
                 "PERFORMING_PROFESSIONAL_EMAIL" => "",
                 "PERSON_ADDRESS_LINE_1" => patient.address_line_1,
                 "PERSON_FORENAME" => patient.given_name,
@@ -822,7 +818,7 @@ describe Reports::OfflineSessionExporter do
                 "HEALTH_QUESTION_ANSWERS" => "",
                 "NHS_NUMBER" => patient.nhs_number,
                 "NOTES" => "Some notes.",
-                "ORGANISATION_CODE" => organisation.ods_code,
+                "ORGANISATION_CODE" => team.ods_code,
                 "PERFORMING_PROFESSIONAL_EMAIL" => "nurse@example.com",
                 "PERSON_ADDRESS_LINE_1" => patient.address_line_1,
                 "PERSON_FORENAME" => patient.given_name,
@@ -860,7 +856,7 @@ describe Reports::OfflineSessionExporter do
 
         before do
           create(:patient, session:)
-          create(:user, organisation:, email: "vaccinator@example.com")
+          create(:user, team:, email: "vaccinator@example.com")
         end
 
         describe "performing professional email" do
@@ -882,7 +878,7 @@ describe Reports::OfflineSessionExporter do
               :not_expired,
               name: "BATCH12345",
               vaccine: programme.vaccines.active.first,
-              organisation:
+              team:
             )
             validation_formula(worksheet:, column_name: "batch_number")
           end
@@ -898,18 +894,18 @@ describe Reports::OfflineSessionExporter do
           end
         end
 
-        let!(:vaccinators) { create_list(:user, 2, organisation:) }
+        let!(:vaccinators) { create_list(:user, 2, team:) }
 
         before do
           create(:patient, session:)
           create(
             :user,
-            organisation: create(:organisation),
+            team: create(:team),
             email: "vaccinator.other@example.com"
           )
         end
 
-        it "lists all the organisation users' emails" do
+        it "lists all the team users' emails" do
           emails = worksheet[1..].map { it.cells.first.value }
           expect(emails).to match_array(vaccinators.map(&:email))
         end
@@ -931,7 +927,7 @@ describe Reports::OfflineSessionExporter do
             2,
             :not_expired,
             vaccine: programme.vaccines.active.first,
-            organisation:
+            team:
           )
         end
 

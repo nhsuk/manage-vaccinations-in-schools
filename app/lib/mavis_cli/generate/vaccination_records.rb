@@ -4,10 +4,10 @@ module MavisCLI
   module Generate
     class VaccinationRecords < Dry::CLI::Command
       desc "Generate vaccination records (and attendances if required)"
-      option :organisation,
+      option :team,
              aliases: ["-o"],
              default: "A9A5A",
-             desc: "ODS code of organisation to generate consents for"
+             desc: "ODS code of team to generate consents for"
       option :programme_type,
              aliases: ["-p"],
              default: "hpv",
@@ -17,27 +17,20 @@ module MavisCLI
              aliases: ["-s"],
              desc:
                "Generate consents for patients in a session, instead of" \
-                 " across the entire organisation"
+                 " across the entire team"
       option :administered,
              default: 0,
              aliases: ["-A"],
              desc: "Number of administered vaccination records to create"
 
-      def call(
-        organisation:,
-        programme_type:,
-        administered:,
-        session_id: nil,
-        **
-      )
+      def call(team:, programme_type:, administered:, session_id: nil, **)
         MavisCLI.load_rails
 
         session = Session.find(session_id) if session_id
 
         ::Generate::VaccinationRecords.call(
-          organisation: Organisation.find_by(ods_code: organisation),
-          programme:
-            Programme.includes(:organisations).find_by(type: programme_type),
+          team: Team.find_by(ods_code: team),
+          programme: Programme.includes(:teams).find_by(type: programme_type),
           session:,
           administered: administered.to_i
         )

@@ -6,8 +6,8 @@ class CohortImportRow < PatientImportRow
   SCHOOL_URN_HOME_EDUCATED = "999999"
   SCHOOL_URN_UNKNOWN = "888888"
 
-  def initialize(data:, organisation:)
-    super(data:, organisation:, year_groups: organisation.year_groups)
+  def initialize(data:, team:, academic_year:)
+    super(data:, team:, academic_year:, year_groups: team.year_groups)
   end
 
   def school_urn = @data[:child_school_urn]
@@ -58,7 +58,7 @@ class CohortImportRow < PatientImportRow
       errors.add(
         school_urn.header,
         "The school URN is not recognised. If you’ve checked the URN, " \
-          "and you believe it’s valid, contact our support organisation."
+          "and you believe it’s valid, contact our support team."
       )
     end
   end
