@@ -12,7 +12,7 @@ describe VaccinationRecordPolicy do
     let(:vaccination_record) { create(:vaccination_record, programme:) }
 
     context "with an admin" do
-      let(:user) { build(:admin, teams: [team]) }
+      let(:user) { create(:admin, teams: [team]) }
 
       it { should be(false) }
 
@@ -27,7 +27,7 @@ describe VaccinationRecordPolicy do
     end
 
     context "with a nurse" do
-      let(:user) { build(:nurse, teams: [team]) }
+      let(:user) { create(:nurse, teams: [team]) }
 
       it { should be(false) }
 
