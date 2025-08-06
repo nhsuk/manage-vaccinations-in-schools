@@ -9,14 +9,14 @@ class Users::TeamsController < ApplicationController
   layout "two_thirds"
 
   def new
-    @form = SelectTeamForm.new(current_user:)
+    @form = SelectTeamForm.new(cis2_info:, current_user:)
   end
 
   def create
     @form =
       SelectTeamForm.new(
+        cis2_info:,
         current_user:,
-        request_session: session,
         team_id: params.dig(:select_team_form, :team_id)
       )
 

@@ -103,18 +103,14 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   end
 
   def set_cis2_session_info
-    session["cis2_info"] = {
-      "selected_org" => {
-        "name" => selected_cis2_org["org_name"],
-        "code" => selected_cis2_org["org_code"]
-      },
-      "selected_role" => {
-        "name" => selected_cis2_nrbac_role["role_name"],
-        "code" => selected_cis2_nrbac_role["role_code"],
-        "workgroups" => selected_cis2_nrbac_role["workgroups"]
-      },
-      "has_other_roles" => raw_cis2_info["nhsid_nrbac_roles"].length > 1
-    }
+    cis2_info.update!(
+      organisation_name: selected_cis2_org["org_name"],
+      organisation_code: selected_cis2_org["org_code"],
+      role_name: selected_cis2_nrbac_role["role_name"],
+      role_code: selected_cis2_nrbac_role["role_code"],
+      workgroups: selected_cis2_nrbac_role["workgroups"],
+      has_other_roles: raw_cis2_info["nhsid_nrbac_roles"].length > 1
+    )
   end
 
   def after_omniauth_failure_path_for(_scope)
