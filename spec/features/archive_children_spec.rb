@@ -204,7 +204,7 @@ describe "Archive children" do
   end
 
   def and_i_see_a_success_message
-    expect(page).to have_content("Child record archived")
+    expect(page).to have_content("This record has been archived")
   end
 
   def and_i_see_an_archived_tag
