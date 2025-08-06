@@ -83,7 +83,13 @@ class PatientSearchForm < SearchForm
   end
 
   def filter_archived(scope)
-    archived ? scope.archived(team:) : scope
+    if archived
+      scope.archived(team:)
+    elsif @session
+      scope
+    else
+      scope.not_archived(team:)
+    end
   end
 
   def filter_date_of_birth_year(scope)

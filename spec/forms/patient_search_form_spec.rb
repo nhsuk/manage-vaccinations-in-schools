@@ -88,8 +88,8 @@ describe PatientSearchForm do
           expect(form.apply(scope)).to include(unarchived_patient)
         end
 
-        it "includes the archived patient" do
-          expect(form.apply(scope)).to include(archived_patient)
+        it "doesn't include the archived patient" do
+          expect(form.apply(scope)).not_to include(archived_patient)
         end
       end
 
