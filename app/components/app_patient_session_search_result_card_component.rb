@@ -87,6 +87,7 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
         patient_session:,
         session_date: SessionDate.new(value: Date.current)
       )
+
     helpers.policy(session_attendance).new?
   end
 
