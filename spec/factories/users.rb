@@ -40,17 +40,18 @@ FactoryBot.define do
             uploaded_by
           ] do
     transient do
-      team { Team.first || create(:team) }
+      team { Team.includes(:organisation).first || create(:team) }
 
       role_code { CIS2Info::NURSE_ROLE }
       role_workgroups { [CIS2Info::WORKGROUP] }
 
       cis2_info_hash do
         {
-          "organisation_name" => team.name,
           "organisation_code" => team.organisation.ods_code,
+          "organisation_name" => team.name,
           "role_code" => role_code,
-          "workgroups" => role_workgroups
+          "team_workgroup" => team.workgroup,
+          "workgroups" => (role_workgroups || []) + [team.workgroup]
         }
       end
     end

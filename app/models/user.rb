@@ -41,6 +41,7 @@ class User < ApplicationRecord
   end
 
   has_and_belongs_to_many :teams
+  has_many :organisations, -> { distinct }, through: :teams
 
   has_many :programmes, through: :teams
 
@@ -101,13 +102,7 @@ class User < ApplicationRecord
 
   def selected_organisation = cis2_info.organisation
 
-  def selected_team
-    # TODO: Select the right team based on the user's workgroup.
-    @selected_team ||=
-      Team.includes(:location_programme_year_groups, :programmes).find_by(
-        organisation: selected_organisation
-      )
-  end
+  def selected_team = cis2_info.team
 
   def requires_email_and_password?
     provider.blank? || uid.blank?

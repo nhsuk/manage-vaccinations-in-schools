@@ -93,9 +93,10 @@ module CIS2AuthHelper
     }
   end
 
-  def cis2_sign_in(user, role: :nurse, org_code: nil, superuser: false)
+  def cis2_sign_in(user, team:, role:, ods_code:, superuser:)
     workgroups =
-      %w[schoolagedimmunisations] + (superuser ? %w[mavissuperusers] : [])
+      %w[schoolagedimmunisations] + [team.workgroup] +
+        (superuser ? %w[mavissuperusers] : [])
 
     mock_cis2_auth(
       uid: user.uid,
@@ -103,24 +104,31 @@ module CIS2AuthHelper
       family_name: user.family_name,
       email: user.email,
       role:,
-      org_code:,
+      org_code: ods_code,
       sid: user.session_token,
       workgroups:
     )
 
-    if try(:page)&.driver.respond_to?(:get)
-      page.driver.get "/users/auth/cis2/callback"
-    elsif defined?(:get)
-      get "/users/auth/cis2/callback"
-    else
+    if respond_to?(:visit)
       visit "/users/auth/cis2/callback"
+    else
+      get "/users/auth/cis2/callback"
     end
   end
 
   # Define a sign_in that is compatible with Devise's sign_in.
-  def sign_in(user, role: :nurse, org_code: nil, superuser: false)
-    org_code ||= user.teams.first.organisation.ods_code
-    cis2_sign_in(user, role:, org_code:, superuser:)
+  def sign_in(user, team: nil, role: :nurse, ods_code: nil, superuser: false)
+    team ||= user.teams.first
+    ods_code ||= team.organisation.ods_code
+
+    cis2_sign_in(user, team:, role:, ods_code:, superuser:)
+
+    if respond_to?(:choose) && respond_to?(:click_on)
+      choose team.name
+      click_on "Continue"
+    else
+      post "/users/teams", params: { select_team_form: { team_id: team.id } }
+    end
   end
 
   def mock_cis2_auth(

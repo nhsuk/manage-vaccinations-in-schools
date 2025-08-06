@@ -12,11 +12,11 @@ module AuthenticationConcern
           store_location_for(:user, request.fullpath)
         end
 
-        if Settings.cis2.enabled || request.path != new_user_session_path
+        if cis2_enabled? || request.path != new_user_session_path
           flash[:info] = "You must be logged in to access this page."
           redirect_to start_path
         end
-      elsif cis2_session?
+      elsif cis2_enabled?
         if !selected_cis2_workgroup_is_valid?
           redirect_to users_workgroup_not_found_path
         elsif !selected_cis2_role_is_valid?
@@ -27,9 +27,9 @@ module AuthenticationConcern
       end
     end
 
-    def cis2_info = CIS2Info.new(request_session: session)
+    def cis2_enabled? = Settings.cis2.enabled
 
-    def cis2_session? = cis2_info.present?
+    def cis2_info = CIS2Info.new(request_session: session)
 
     def selected_cis2_org_is_registered?
       Organisation.exists?(ods_code: cis2_info.organisation_code)
@@ -76,7 +76,7 @@ module AuthenticationConcern
     end
 
     def user_signed_in?
-      super && (Settings.cis2.enabled ? cis2_session? : true)
+      super && (cis2_enabled? ? cis2_info.present? : true)
     end
 
     def set_user_cis2_info
