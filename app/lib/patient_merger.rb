@@ -53,8 +53,9 @@ class PatientMerger
       )
       patient_to_destroy.triages.update_all(patient_id: patient_to_keep.id)
 
-      vaccination_record_ids = patient_to_destroy.vaccination_records.ids
-      patient_to_destroy.vaccination_records.update_all(
+      vaccination_record_ids =
+        patient_to_destroy.vaccination_records.with_discarded.ids
+      patient_to_destroy.vaccination_records.with_discarded.update_all(
         patient_id: patient_to_keep.id
       )
 

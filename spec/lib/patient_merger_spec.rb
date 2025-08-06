@@ -80,6 +80,15 @@ describe PatientMerger do
         programme:
       )
     end
+    let(:discarded_vaccination_record) do
+      create(
+        :vaccination_record,
+        :discarded,
+        patient: patient_to_destroy,
+        session:,
+        programme:
+      )
+    end
 
     it "destroys one of the patients" do
       expect { call }.to change(Patient, :count).by(-1)
@@ -165,6 +174,12 @@ describe PatientMerger do
       expect { call }.to change { vaccination_record.reload.patient }.to(
         patient_to_keep
       )
+    end
+
+    it "moves discarded vaccination records" do
+      expect { call }.to change {
+        discarded_vaccination_record.reload.patient
+      }.to(patient_to_keep)
     end
 
     it "enqueues sync jobs for vaccination records" do
