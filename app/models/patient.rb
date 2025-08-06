@@ -137,6 +137,19 @@ class Patient < ApplicationRecord
           )
         end
 
+  scope :not_appear_in_programmes,
+        ->(programmes, academic_year:) do
+          where.not(
+            PatientSession
+              .joins(:session)
+              .where(sessions: { academic_year: })
+              .where("patient_id = patients.id")
+              .appear_in_programmes(programmes)
+              .arel
+              .exists
+          )
+        end
+
   scope :with_pending_changes, -> { where.not(pending_changes: {}) }
 
   scope :search_by_name,
