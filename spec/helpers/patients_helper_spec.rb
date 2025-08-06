@@ -123,9 +123,14 @@ describe PatientsHelper do
   end
 
   describe "patient_important_notices" do
-    subject(:notifications) { helper.patient_important_notices(patient) }
+    subject(:notifications) do
+      helper.patient_important_notices(patient_with_preloaded_associations)
+    end
 
     let(:patient) { create(:patient) }
+    let(:patient_with_preloaded_associations) do
+      Patient.includes(vaccination_records: :programme).find(patient.id)
+    end
     let(:programme) { create(:programme, :hpv) }
 
     context "when patient has no special status" do
