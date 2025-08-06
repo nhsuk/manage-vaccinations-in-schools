@@ -3,6 +3,7 @@
 class Users::ErrorsController < ::ApplicationController
   skip_before_action :store_user_location!
   skip_before_action :authenticate_user!
+  skip_before_action :ensure_team_is_selected
   skip_after_action :verify_policy_scoped
 
   before_action :set_cis2_info

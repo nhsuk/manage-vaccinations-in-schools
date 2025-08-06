@@ -14,6 +14,7 @@ class CIS2Info
   attribute :role_name
   attribute :role_code
   attribute :workgroups, array: true
+  attribute :team_workgroup
   attribute :has_other_roles, :boolean
 
   def present? = attributes.compact_blank.present?
@@ -22,6 +23,14 @@ class CIS2Info
     @organisation ||=
       if (ods_code = organisation_code).present?
         Organisation.find_by(ods_code:)
+      end
+  end
+
+  def team
+    @team ||=
+      if (workgroup = team_workgroup).present? &&
+           workgroups&.include?(workgroup)
+        Team.find_by(organisation:, workgroup:)
       end
   end
 

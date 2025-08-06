@@ -184,7 +184,7 @@ describe "End-to-end journey" do
   end
 
   def when_i_register_verbal_consent_and_triage
-    click_link "Sessions"
+    click_link "Sessions", match: :first
     click_link "Pilot School"
     click_link "Register"
     click_link "TABLES, Bobby"
