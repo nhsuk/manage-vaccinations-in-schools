@@ -74,8 +74,19 @@ module Generate
     delegate :organisation, to: :team
 
     def cohort_import_csv_filepath
+      timestamp = Time.current.strftime("%Y%m%d%H%M%S")
+      size =
+        ActiveSupport::NumberHelper.number_to_human(
+          @patient_count,
+          units: {
+            thousand: "k",
+            million: "m"
+          },
+          format: "%n%u"
+        )
       Rails.root.join(
-        "tmp/perf-test-cohort-import-#{organisation.ods_code}-#{programme.type}.csv"
+        "tmp/cohort-import-" \
+          "#{organisation.ods_code}-#{programme.type}-#{size}-#{timestamp}.csv"
       )
     end
 
@@ -174,7 +185,7 @@ module Generate
         end
     end
 
-    def date_of_birth_for_year(year_group, academic_year: AcademicYear.current)
+    def date_of_birth_for_year(year_group, academic_year: AcademicYear.pending)
       if year_group < 12
         rand(
           year_group.to_birth_academic_year(
