@@ -27,7 +27,7 @@ describe Patient::ConsentStatus do
   end
 
   let(:patient) { create(:patient) }
-  let(:programme) { create(:programme) }
+  let(:programme) { create(:programme, :hpv) }
 
   before { patient.strict_loading!(false) }
 
@@ -36,27 +36,41 @@ describe Patient::ConsentStatus do
 
   it do
     expect(patient_consent_status).to define_enum_for(:status).with_values(
-      %i[no_response given refused conflicts]
+      %i[no_response given refused conflicts not_required]
     )
   end
 
   describe "#status" do
     subject { patient_consent_status.tap(&:assign_status).status.to_sym }
 
+    shared_examples "when vaccinated" do
+      context "when vaccinated" do
+        before { create(:vaccination_record, patient:, programme:) }
+
+        it { should be(:not_required) }
+      end
+    end
+
     context "with no consent" do
       it { should be(:no_response) }
+
+      include_examples "when vaccinated"
     end
 
     context "with an invalidated consent" do
       before { create(:consent, :invalidated, patient:, programme:) }
 
       it { should be(:no_response) }
+
+      include_examples "when vaccinated"
     end
 
     context "with a not provided consent" do
       before { create(:consent, :not_provided, patient:, programme:) }
 
       it { should be(:no_response) }
+
+      include_examples "when vaccinated"
     end
 
     context "with both an invalidated and not provided consent" do
@@ -66,18 +80,24 @@ describe Patient::ConsentStatus do
       end
 
       it { should be(:no_response) }
+
+      include_examples "when vaccinated"
     end
 
     context "with a refused consent" do
       before { create(:consent, :refused, patient:, programme:) }
 
       it { should be(:refused) }
+
+      include_examples "when vaccinated"
     end
 
     context "with a given consent" do
       before { create(:consent, :given, patient:, programme:) }
 
       it { should be(:given) }
+
+      include_examples "when vaccinated"
     end
 
     context "with conflicting consent" do
@@ -93,6 +113,8 @@ describe Patient::ConsentStatus do
       end
 
       it { should be(:conflicts) }
+
+      include_examples "when vaccinated"
     end
 
     context "with two given consents with different methods" do
@@ -115,6 +137,8 @@ describe Patient::ConsentStatus do
       end
 
       it { should be(:conflicts) }
+
+      include_examples "when vaccinated"
     end
 
     context "with two given consents, one both and one with injection only" do
@@ -137,6 +161,8 @@ describe Patient::ConsentStatus do
       end
 
       it { should be(:given) }
+
+      include_examples "when vaccinated"
     end
 
     context "with an invalidated refused and given consent" do
@@ -146,6 +172,8 @@ describe Patient::ConsentStatus do
       end
 
       it { should be(:given) }
+
+      include_examples "when vaccinated"
     end
 
     context "with a refused and given consent from the same parent at different times" do
@@ -169,6 +197,8 @@ describe Patient::ConsentStatus do
       end
 
       it { should be(:given) }
+
+      include_examples "when vaccinated"
     end
 
     context "with self-consent" do
@@ -176,10 +206,14 @@ describe Patient::ConsentStatus do
 
       it { should be(:given) }
 
+      include_examples "when vaccinated"
+
       context "and refused parental consent" do
         before { create(:consent, :refused, patient:, programme:) }
 
         it { should be(:given) }
+
+        include_examples "when vaccinated"
       end
 
       context "and conflicting parental consent" do
@@ -195,6 +229,8 @@ describe Patient::ConsentStatus do
         end
 
         it { should be(:given) }
+
+        include_examples "when vaccinated"
       end
     end
 

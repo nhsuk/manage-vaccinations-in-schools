@@ -48,6 +48,7 @@ describe "HPV vaccination" do
     then_i_see_a_success_message
     and_i_can_no_longer_vaccinate_the_patient
     and_i_no_longer_see_the_patient_in_the_record_tab
+    and_i_no_longer_see_the_patient_in_the_consent_tab
     and_the_vaccination_record_is_synced_to_nhs
 
     when_i_go_back
@@ -244,6 +245,11 @@ describe "HPV vaccination" do
   def and_i_no_longer_see_the_patient_in_the_record_tab
     click_on "Record vaccinations"
     expect(page).to have_content("No children matching search criteria found")
+  end
+
+  def and_i_no_longer_see_the_patient_in_the_consent_tab
+    within(".app-secondary-navigation") { click_on "Consent" }
+    expect(page).not_to have_content(@patient.full_name)
   end
 
   def when_i_go_back

@@ -75,6 +75,8 @@ describe "Verbal consent" do
 
     @parent = create(:parent)
     @patient = create(:patient, session: @session, parents: [@parent])
+
+    StatusUpdater.call
   end
 
   def when_i_record_that_verbal_consent_was_given

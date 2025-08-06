@@ -11,11 +11,13 @@ en:
         conflicts: Conflicting consent
         given: Consent given
         no_response: No response
+        not_required: No consent needed
         refused: Consent refused
       colour:
         conflicts: dark-orange
         given: aqua-green
         no_response: grey
+        not_required: grey
         refused: red
     triage:
       label:

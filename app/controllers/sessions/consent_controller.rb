@@ -9,13 +9,14 @@ class Sessions::ConsentController < ApplicationController
   layout "full"
 
   def show
-    @statuses = Patient::ConsentStatus.statuses.keys
+    @statuses = Patient::ConsentStatus.statuses.keys - %w[not_required]
 
     scope =
-      @session.patient_sessions.includes_programmes.includes(
-        :latest_note,
-        patient: :consent_statuses
-      )
+      @session
+        .patient_sessions
+        .includes_programmes
+        .includes(:latest_note, patient: :consent_statuses)
+        .has_consent_status(@statuses, programme: @form.programmes)
 
     patient_sessions = @form.apply(scope)
     @pagy, @patient_sessions = pagy(patient_sessions)
