@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 
 describe SendClinicInitialInvitationsJob do
-  subject(:perform_now) do
-    described_class.perform_now(session, school: nil, programmes:)
-  end
+  subject(:perform_now) { described_class.perform_now(session) }
 
   let(:programmes) { [create(:programme, :hpv)] }
   let(:team) { create(:team, programmes:) }

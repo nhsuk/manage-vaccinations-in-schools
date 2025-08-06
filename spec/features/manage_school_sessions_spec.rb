@@ -96,10 +96,13 @@ describe "Manage school sessions" do
     @patient =
       create(:patient, year_group: 8, session: @session, parents: [@parent])
 
-    @team
-      .generic_clinic_session(academic_year: AcademicYear.current)
-      .session_dates
-      .create!(value: 1.month.from_now.to_date)
+    clinic_session =
+      @team.generic_clinic_session(academic_year: AcademicYear.current)
+
+    clinic_session.session_dates.create!(value: 1.month.from_now.to_date)
+
+    clinic_session.set_notification_dates
+    clinic_session.save!
   end
 
   def when_i_go_to_todays_sessions_as_a_nurse
@@ -291,11 +294,13 @@ describe "Manage school sessions" do
                :when_i_click_on_send_invitations
 
   def then_i_see_the_invitation_confirmation
-    expect(page).to have_content("Clinic invitations sent for 1 child")
+    expect(page).to have_content("1 child invited to the clinic")
   end
 
   def and_the_parent_receives_an_invitation
+    EnqueueClinicSessionInvitationsJob.perform_now
     perform_enqueued_jobs
+
     expect_email_to @parent.email, :session_clinic_initial_invitation
   end
 end

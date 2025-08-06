@@ -19,14 +19,9 @@ class Sessions::InviteToClinicController < ApplicationController
         on_duplicate_key_ignore: true
       )
 
-      SendClinicInitialInvitationsJob.perform_later(
-        @generic_clinic_session,
-        school: @session.location,
-        programmes: @session.programmes.to_a
-      )
       flash[
         :success
-      ] = "Clinic invitations sent for #{I18n.t("children", count: @invitations_to_send)}"
+      ] = "#{I18n.t("children", count: @invitations_to_send)} invited to the clinic"
     else
       SendClinicSubsequentInvitationsJob.perform_later(@session)
       flash[
@@ -67,7 +62,7 @@ class Sessions::InviteToClinicController < ApplicationController
 
       patient_sessions_in_clinic =
         patient_sessions_in_school.map do |patient_session|
-          PatientSession.find_or_initialize_by(
+          PatientSession.includes(:session_notifications).find_or_initialize_by(
             patient: patient_session.patient,
             session: @generic_clinic_session
           )
@@ -76,15 +71,13 @@ class Sessions::InviteToClinicController < ApplicationController
       programmes = @session.programmes.to_a
 
       @patient_sessions_to_invite =
-        patient_sessions_in_clinic
-          .reject { it.session_notifications.any? }
-          .select do |patient_session|
-            SendClinicInitialInvitationsJob.new.should_send_notification?(
-              patient_session:,
-              programmes:,
-              session_date:
-            )
-          end
+        patient_sessions_in_clinic.select do |patient_session|
+          SendClinicInitialInvitationsJob.new.should_send_notification?(
+            patient_session:,
+            programmes:,
+            session_date:
+          )
+        end
     else
       @patient_sessions_to_invite =
         SendClinicSubsequentInvitationsJob.new.patient_sessions(
