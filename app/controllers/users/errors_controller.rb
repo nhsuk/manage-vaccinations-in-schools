@@ -7,7 +7,7 @@ class Users::ErrorsController < ::ApplicationController
 
   before_action :set_cis2_info
 
-  def team_not_found
+  def organisation_not_found
     if @cis2_info.present?
       render status: :not_found
     else

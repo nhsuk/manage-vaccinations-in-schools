@@ -7,7 +7,7 @@ describe "User CIS2 authentication" do
     then_i_am_on_the_start_page
 
     when_i_click_the_cis2_login_button
-    then_i_see_the_team_not_found_error
+    then_i_see_the_organisation_not_found_error
 
     given_my_team_has_been_setup_in_mavis
     when_i_click_the_change_role_button
@@ -21,7 +21,7 @@ describe "User CIS2 authentication" do
       then_i_should_see_the_cis2_login_button
 
       when_i_click_the_cis2_login_button
-      then_i_see_the_team_not_found_error
+      then_i_see_the_organisation_not_found_error
       and_there_is_no_change_role_button
     end
   end
@@ -73,8 +73,10 @@ describe "User CIS2 authentication" do
     )
   end
 
-  def then_i_see_the_team_not_found_error
-    expect(page).to have_heading "Your team is not using this service yet"
+  def then_i_see_the_organisation_not_found_error
+    expect(page).to have_heading(
+      "Your organisation is not using this service yet"
+    )
   end
 
   def when_i_click_the_change_role_button
