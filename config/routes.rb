@@ -154,6 +154,7 @@ Rails.application.routes.draw do
 
     member do
       get "log"
+      post "invite-to-clinic"
 
       get "edit/nhs-number",
           controller: "patients/edit",
