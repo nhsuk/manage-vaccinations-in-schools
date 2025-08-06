@@ -16,7 +16,7 @@ class Patients::ArchiveController < Patients::BaseController
       )
 
     if @form.save
-      flash[:success] = "Child record archived"
+      flash[:success] = "This record has been archived"
       redirect_to patient_path(
                     @form.duplicate? ? @form.existing_patient : @patient
                   )

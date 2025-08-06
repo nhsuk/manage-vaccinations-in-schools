@@ -1,0 +1,11 @@
+<%= h1 page_title: @patient.initials do %>
+  <%= @patient.full_name %>
+<% end %>
+
+<ul class="app-action-list">
+  <li class="app-action-list__item">
+    <% if @patient.archived?(team: current_team) %>
+      <%= govuk_tag(text: "Archived", colour: "grey") %>
+    <% end %>
+  </li>
+</ul>
