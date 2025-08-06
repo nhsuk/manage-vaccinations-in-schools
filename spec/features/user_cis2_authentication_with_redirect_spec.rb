@@ -44,16 +44,14 @@ describe "User CIS2 authentication" do
     expect(page).to have_button("Log out")
   end
 
-  def then_i_see_the_team_not_found_error
-    expect(page).to have_heading("Your team is not using this service yet")
-  end
-
   def when_i_click_the_change_role_button
     click_button "Change role"
   end
 
-  def then_i_see_the_team_not_found_error
-    expect(page).to have_heading "Your team is not using this service yet"
+  def then_i_see_the_organisation_not_found_error
+    expect(page).to have_heading(
+      "Your organisation is not using this service yet"
+    )
   end
 
   def and_there_is_no_change_role_button

@@ -310,7 +310,7 @@ Rails.application.routes.draw do
   end
 
   namespace :users do
-    get "team-not-found", controller: :errors
+    get "organisation-not-found", controller: :errors
     get "workgroup-not-found", controller: :errors
     get "role-not-found", controller: :errors
 
