@@ -75,8 +75,8 @@ class VaccinationRecordsController < ApplicationController
         href: session_path(@session)
       }
       @breadcrumb_items << {
-        text: t("sessions.tabs.outcome"),
-        href: session_outcome_path(@session)
+        text: t("sessions.tabs.patients"),
+        href: session_patients_path(@session)
       }
       @breadcrumb_items << {
         text: @patient.full_name,

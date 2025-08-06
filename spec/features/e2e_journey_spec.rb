@@ -259,7 +259,7 @@ describe "End-to-end journey" do
 
   def then_i_see_that_the_child_is_vaccinated
     click_on "Pilot School"
-    click_on "Session outcomes"
+    within(".app-secondary-navigation") { click_on "Children" }
     choose "Vaccinated"
     click_on "Update results"
 

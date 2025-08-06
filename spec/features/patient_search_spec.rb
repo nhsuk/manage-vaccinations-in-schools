@@ -53,7 +53,7 @@ describe "Patient search" do
     and_i_search_for_a_name_that_doesnt_exist
     then_i_see_no_results
 
-    when_i_visit_the_session_outcome_tab
+    when_i_visit_the_session_patients_tab
     and_i_search_for_a_name_that_doesnt_exist
     then_i_see_no_results
   end
@@ -217,8 +217,8 @@ describe "Patient search" do
     visit session_record_path(@session)
   end
 
-  def when_i_visit_the_session_outcome_tab
-    visit session_outcome_path(@session)
+  def when_i_visit_the_session_patients_tab
+    visit session_patients_path(@session)
   end
 
   def and_i_search_for_a_name_that_doesnt_exist

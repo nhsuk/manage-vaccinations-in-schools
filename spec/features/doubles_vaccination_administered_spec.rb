@@ -121,7 +121,7 @@ describe "MenACWY and Td/IPV vaccination" do
     click_on "Record vaccinations"
     expect(page).to have_content("No children matching search criteria found")
 
-    click_on "Session outcomes"
+    within(".app-secondary-navigation") { click_on "Children" }
     click_on @patient.full_name
     expect(page).to have_content("Vaccinated")
   end

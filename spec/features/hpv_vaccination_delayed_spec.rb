@@ -96,7 +96,7 @@ describe "HPV vaccination" do
 
   def when_i_go_to_the_outcome_tab
     click_on @session.location.name
-    click_on "Session outcomes"
+    within(".app-secondary-navigation") { click_on "Children" }
   end
 
   def then_i_see_the_patient_has_no_outcome_yet

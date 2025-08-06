@@ -192,6 +192,7 @@ Rails.application.routes.draw do
   end
 
   resources :sessions, only: %i[edit index show], param: :slug do
+    resource :patients, only: :show, controller: "sessions/patients"
     resource :consent, only: :show, controller: "sessions/consent"
     resource :triage, only: :show, controller: "sessions/triage"
     resource :register, only: :show, controller: "sessions/register" do
@@ -203,7 +204,6 @@ Rails.application.routes.draw do
           as: :batch
       post "batch/:programme_type/:vaccine_method", action: :update_batch
     end
-    resource :outcome, only: :show, controller: "sessions/outcome"
 
     resource :invite_to_clinic,
              path: "invite-to-clinic",

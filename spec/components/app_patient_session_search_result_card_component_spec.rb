@@ -143,8 +143,8 @@ describe AppPatientSessionSearchResultCardComponent do
     end
   end
 
-  context "when context is outcome" do
-    let(:context) { :outcome }
+  context "when context is patients" do
+    let(:context) { :patients }
 
     context "and the programme is flu" do
       let(:programme) { create(:programme, :flu) }

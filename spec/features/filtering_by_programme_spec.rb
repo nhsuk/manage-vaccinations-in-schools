@@ -7,7 +7,7 @@ describe "Filtering" do
     given_a_session_exists_with_programmes(%i[hpv menacwy])
     and_patients_are_in_the_session
 
-    when_i_visit_the_session_outcomes
+    when_i_visit_the_session_patients
     then_i_see_all_the_patients
     and_i_see_all_the_statuses
 
@@ -24,7 +24,7 @@ describe "Filtering" do
     given_a_session_exists_with_programmes([:hpv])
     and_patients_are_in_the_session
 
-    when_i_visit_the_session_outcomes
+    when_i_visit_the_session_patients
     and_i_filter_on_year_group_eight
     the_i_should_only_see_patients_for_year_eight
   end
@@ -33,7 +33,7 @@ describe "Filtering" do
     given_a_session_exists_with_programmes([:hpv])
     and_patients_are_in_the_session
 
-    when_i_visit_the_session_outcomes
+    when_i_visit_the_session_patients
     then_i_see_all_the_patients
     and_i_dont_see_programme_filter_checkboxes
     and_i_see_only_hpv_statuses_for_all_patients
@@ -54,9 +54,9 @@ describe "Filtering" do
       create(:patient, year_group: 9, session: @session)
   end
 
-  def when_i_visit_the_session_outcomes
+  def when_i_visit_the_session_patients
     sign_in @nurse
-    visit session_outcome_path(@session)
+    visit session_patients_path(@session)
   end
 
   def then_i_see_all_the_patients

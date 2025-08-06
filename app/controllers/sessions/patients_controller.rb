@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Sessions::OutcomeController < ApplicationController
+class Sessions::PatientsController < ApplicationController
   include PatientSearchFormConcern
 
   before_action :set_session

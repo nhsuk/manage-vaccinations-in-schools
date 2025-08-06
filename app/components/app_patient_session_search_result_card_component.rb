@@ -57,7 +57,7 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
   def initialize(patient_session, context:, programmes: [])
     super
 
-    unless context.in?(%i[consent triage register record outcome])
+    unless context.in?(%i[patients consent triage register record])
       raise "Unknown context: #{context}"
     end
 
@@ -118,7 +118,7 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
   end
 
   def vaccination_method
-    return if context == :outcome
+    return if context == :patients
 
     programmes_to_check = programmes.select(&:has_multiple_vaccine_methods?)
 
