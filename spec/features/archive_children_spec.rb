@@ -63,6 +63,7 @@ describe "Archive children" do
     and_i_click_on_archive_record
     then_i_see_the_unarchived_patient_page
     and_i_see_a_success_message
+    and_i_see_an_archived_tag
     and_i_see_an_activity_log_entry
 
     when_i_visit_the_children_page
@@ -81,6 +82,7 @@ describe "Archive children" do
     and_i_click_on_archive_record
     then_i_see_the_unarchived_patient_page
     and_i_see_a_success_message
+    and_i_see_an_archived_tag
     and_i_see_an_activity_log_entry
 
     when_i_visit_the_children_page
@@ -203,6 +205,10 @@ describe "Archive children" do
 
   def and_i_see_a_success_message
     expect(page).to have_content("Child record archived")
+  end
+
+  def and_i_see_an_archived_tag
+    expect(page).to have_content("Archived")
   end
 
   def and_i_see_an_activity_log_entry
