@@ -42,7 +42,8 @@ class PatientImportRow
     return if patient.deceased?
 
     if patient.new_record? || patient.school != school ||
-         patient.home_educated != home_educated || patient.not_in_team?
+         patient.home_educated != home_educated || patient.not_in_team? ||
+         patient.archived?(team:)
       school_move =
         if school
           SchoolMove.find_or_initialize_by(patient:, school:)
