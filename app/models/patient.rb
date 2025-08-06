@@ -328,7 +328,8 @@ class Patient < ApplicationRecord
 
   def year_group_changed? = birth_academic_year_changed?
 
-  def show_year_group?(team:, academic_year: nil)
+  def show_year_group?(team:)
+    academic_year = AcademicYear.pending
     year_group = self.year_group(academic_year:)
     programme_year_groups =
       school&.programme_year_groups || team.programme_year_groups

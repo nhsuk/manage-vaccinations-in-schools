@@ -519,28 +519,60 @@ describe Patient do
     let(:team) { create(:team, programmes:) }
     let(:school) { create(:school, team:) }
 
-    context "for a year 1" do
-      let(:patient) { create(:patient, school:, year_group: 1) }
+    context "outside the preparation period" do
+      around { |example| travel_to(Date.new(2025, 7, 31)) { example.run } }
 
-      it { should be(true) }
+      context "for a year 1" do
+        let(:patient) { create(:patient, school:, year_group: 1) }
+
+        it { should be(true) }
+      end
+
+      context "for a year 7" do
+        let(:patient) { create(:patient, school:, year_group: 7) }
+
+        it { should be(true) }
+      end
+
+      context "for a year 11" do
+        let(:patient) { create(:patient, school:, year_group: 11) }
+
+        it { should be(true) }
+      end
+
+      context "for a year 12" do
+        let(:patient) { create(:patient, school:, year_group: 12) }
+
+        it { should be(false) }
+      end
     end
 
-    context "for a year 7" do
-      let(:patient) { create(:patient, school:, year_group: 7) }
+    context "inside the preparation period" do
+      around { |example| travel_to(Date.new(2025, 8, 1)) { example.run } }
 
-      it { should be(true) }
-    end
+      context "for a year 1" do
+        let(:patient) { create(:patient, school:, year_group: 1) }
 
-    context "for a year 11" do
-      let(:patient) { create(:patient, school:, year_group: 11) }
+        it { should be(true) }
+      end
 
-      it { should be(true) }
-    end
+      context "for a year 7" do
+        let(:patient) { create(:patient, school:, year_group: 7) }
 
-    context "for a year 12" do
-      let(:patient) { create(:patient, school:, year_group: 12) }
+        it { should be(true) }
+      end
 
-      it { should be(false) }
+      context "for a year 11" do
+        let(:patient) { create(:patient, school:, year_group: 11) }
+
+        it { should be(false) }
+      end
+
+      context "for a year 12" do
+        let(:patient) { create(:patient, school:, year_group: 12) }
+
+        it { should be(false) }
+      end
     end
   end
 
