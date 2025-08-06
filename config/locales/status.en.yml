@@ -2,9 +2,10 @@ en:
   status:
     label:
       consent: Consent status
-      triage: Triage status
+      programme: Programme outcome
       register: Registration status
       session: Session outcome
+      triage: Triage status
     consent:
       label:
         conflicts: Conflicting consent
@@ -68,5 +69,5 @@ en:
         vaccinated: Vaccinated
       colour:
         could_not_vaccinate: red
-        none_yet: grey
+        none_yet: white
         vaccinated: green

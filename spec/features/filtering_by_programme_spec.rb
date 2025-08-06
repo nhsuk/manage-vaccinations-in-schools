@@ -67,8 +67,8 @@ describe "Filtering" do
   end
 
   def and_i_see_all_the_statuses
-    expect(page).to have_content("HPVNo outcome yet").twice
-    expect(page).to have_content("MenACWYNo outcome yet").once
+    expect(page).to have_content("HPVNo outcome yet").exactly(4).times
+    expect(page).to have_content("MenACWYNo outcome yet").twice
   end
 
   def and_i_dont_see_programme_filter_checkboxes
@@ -77,7 +77,7 @@ describe "Filtering" do
   end
 
   def and_i_see_only_hpv_statuses_for_all_patients
-    expect(page).to have_content("HPVNo outcome yet").twice
+    expect(page).to have_content("HPVNo outcome yet").exactly(4).times
     expect(page).not_to have_content("MenACWYNo outcome yet")
   end
 
@@ -87,7 +87,7 @@ describe "Filtering" do
   end
 
   def and_i_see_only_the_hpv_statuses
-    expect(page).to have_content("HPVNo outcome yet").twice
+    expect(page).to have_content("HPVNo outcome yet").exactly(4).times
     expect(page).not_to have_content("MenACWYNo outcome yet")
   end
 
@@ -106,7 +106,7 @@ describe "Filtering" do
 
   def and_i_see_only_the_menacwy_statuses
     expect(page).not_to have_content("HPVNo outcome yet")
-    expect(page).to have_content("MenACWYNo outcome yet").once
+    expect(page).to have_content("MenACWYNo outcome yet").twice
   end
 
   def and_i_filter_on_year_group_eight

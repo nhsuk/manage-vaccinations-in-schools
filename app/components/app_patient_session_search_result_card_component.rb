@@ -30,7 +30,7 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
               end
             end
 
-            if status_tag
+            status_tags.each do |status_tag|
               summary_list.with_row do |row|
                 row.with_key { I18n.t(status_tag[:key], scope: %i[status label]) }
                 row.with_value { status_tag[:value] }
@@ -141,69 +141,102 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
     Vaccine.human_enum_name(:method, vaccine_methods.first)
   end
 
-  def status_tag
-    return if context == :record
-
+  def status_tags
     case context
+    when :record
+      []
     when :register
-      {
-        key: :register,
-        value:
-          render(
-            AppRegisterStatusTagComponent.new(
-              patient_session.registration_status&.status || "unknown"
-            )
-          )
-      }
+      [register_status_tag, programme_status_tag]
     when :consent
-      {
-        key: :consent,
-        value:
-          render(
-            AppProgrammeStatusTagsComponent.new(
-              programmes.index_with do |programme|
-                patient.consent_status(programme:, academic_year:).slice(
-                  :status,
-                  :vaccine_methods
-                )
-              end,
-              outcome: :consent
-            )
-          )
-      }
+      [consent_status_tag]
     when :triage
-      {
-        key: :triage,
-        value:
-          render(
-            AppProgrammeStatusTagsComponent.new(
-              programmes.index_with do |programme|
-                triage_status_tag(
-                  patient.triage_status(programme:, academic_year:),
-                  programme
-                )
-              end,
-              outcome: :triage
-            )
-          )
-      }
+      [triage_status_tag]
     else
-      {
-        key: :session,
-        value:
-          render(
-            AppProgrammeStatusTagsComponent.new(
-              programmes.index_with do |programme|
-                patient_session.session_status(programme:).slice(:status)
-              end,
-              outcome: :session
-            )
-          )
-      }
+      [programme_status_tag, session_status_tag]
     end
   end
 
-  def triage_status_tag(triage_status, programme)
+  def consent_status_tag
+    {
+      key: :consent,
+      value:
+        render(
+          AppProgrammeStatusTagsComponent.new(
+            programmes.index_with do |programme|
+              patient.consent_status(programme:, academic_year:).slice(
+                :status,
+                :vaccine_methods
+              )
+            end,
+            outcome: :consent
+          )
+        )
+    }
+  end
+
+  def programme_status_tag
+    {
+      key: :programme,
+      value:
+        render(
+          AppProgrammeStatusTagsComponent.new(
+            programmes.index_with do |programme|
+              patient.vaccination_status(programme:, academic_year:).slice(
+                :status
+              )
+            end,
+            outcome: :programme
+          )
+        )
+    }
+  end
+
+  def register_status_tag
+    {
+      key: :register,
+      value:
+        render(
+          AppRegisterStatusTagComponent.new(
+            patient_session.registration_status&.status || "unknown"
+          )
+        )
+    }
+  end
+
+  def session_status_tag
+    {
+      key: :session,
+      value:
+        render(
+          AppProgrammeStatusTagsComponent.new(
+            programmes.index_with do |programme|
+              patient_session.session_status(programme:).slice(:status)
+            end,
+            outcome: :session
+          )
+        )
+    }
+  end
+
+  def triage_status_tag
+    {
+      key: :triage,
+      value:
+        render(
+          AppProgrammeStatusTagsComponent.new(
+            programmes.index_with do |programme|
+              triage_status_value(
+                patient.triage_status(programme:, academic_year:),
+                programme
+              )
+            end,
+            outcome: :triage
+          )
+        )
+    }
+  end
+
+  def triage_status_value(triage_status, programme)
     status =
       if triage_status.vaccine_method.present? &&
            programme.has_multiple_vaccine_methods?

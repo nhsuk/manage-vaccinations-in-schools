@@ -384,7 +384,7 @@ describe "HPV vaccination" do
 
   def then_i_see_the_uploaded_vaccination_outcomes_reflected_in_the_session
     within(".app-secondary-navigation") { click_on "Children" }
-    choose "Vaccinated"
+    choose "Vaccinated", match: :first
     click_on "Update results"
 
     click_on @vaccinated_patient.full_name
@@ -415,7 +415,7 @@ describe "HPV vaccination" do
 
     visit patient_url
     within(".nhsuk-breadcrumb__list") { click_on "Children" }
-    choose "Vaccinated"
+    choose "Vaccinated", match: :first
     click_on "Update results"
 
     click_on @restricted_vaccinated_patient.full_name

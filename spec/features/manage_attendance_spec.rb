@@ -146,7 +146,7 @@ describe "Manage attendance" do
   end
 
   def when_i_go_to_a_patient
-    choose "Any"
+    choose "Any", match: :first
     click_on "Update results"
 
     click_link PatientSession
