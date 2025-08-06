@@ -27,25 +27,20 @@ module AuthenticationConcern
       end
     end
 
-    def cis2_session?
-      session.key?(:cis2_info)
-    end
+    def cis2_info = CIS2Info.new(request_session: session)
+
+    def cis2_session? = cis2_info.present?
 
     def selected_cis2_org_is_registered?
-      Organisation.exists?(
-        ods_code: session["cis2_info"]["selected_org"]["code"]
-      )
+      Organisation.exists?(ods_code: cis2_info.organisation_code)
     end
 
     def selected_cis2_workgroup_is_valid?
-      workgroups = session.dig("cis2_info", "selected_role", "workgroups")
-      workgroups.present? && User::CIS2_WORKGROUP.in?(workgroups)
+      cis2_info.has_workgroup?
     end
 
-    def valid_cis2_roles = [User::CIS2_NURSE_ROLE, User::CIS2_ADMIN_ROLE]
-
     def selected_cis2_role_is_valid?
-      session["cis2_info"]["selected_role"]["code"].in? valid_cis2_roles
+      cis2_info.is_nurse? || cis2_info.is_admin?
     end
 
     def storable_location?
@@ -61,7 +56,7 @@ module AuthenticationConcern
     end
 
     def authenticate_basic
-      if Flipper.enabled? :basic_auth
+      if Flipper.enabled?(:basic_auth)
         authenticated =
           authenticate_with_http_basic do |username, password|
             username == Rails.application.credentials.support_username &&
@@ -85,9 +80,7 @@ module AuthenticationConcern
     end
 
     def set_user_cis2_info
-      return unless current_user
-
-      current_user.cis2_info = session["cis2_info"]
+      current_user&.cis2_info = CIS2Info.new(request_session: session)
     end
 
     def selected_cis2_nrbac_role
@@ -95,7 +88,7 @@ module AuthenticationConcern
 
       @selected_cis2_nrbac_role ||=
         raw_cis2_info["nhsid_nrbac_roles"].find do
-          _1["person_roleid"] == raw_cis2_info["selected_roleid"]
+          it["person_roleid"] == raw_cis2_info["selected_roleid"]
         end
     end
 
@@ -104,7 +97,7 @@ module AuthenticationConcern
 
       @selected_cis2_org ||=
         raw_cis2_info["nhsid_user_orgs"].find do
-          _1["org_code"] == selected_cis2_nrbac_role["org_code"]
+          it["org_code"] == selected_cis2_nrbac_role["org_code"]
         end
     end
   end

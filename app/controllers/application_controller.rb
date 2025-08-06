@@ -44,7 +44,7 @@ class ApplicationController < ActionController::Base
   def set_selected_team
     return if Settings.cis2.enabled
     return unless current_user
-    return if session["cis2_info"].present?
+    return if cis2_info.signed_in?
 
     redirect_to new_users_teams_path
   end

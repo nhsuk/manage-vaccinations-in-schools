@@ -4,7 +4,7 @@ class SelectTeamForm
   include ActiveModel::Model
   include ActiveModel::Attributes
 
-  attr_accessor :current_user, :request_session
+  attr_accessor :cis2_info, :current_user
 
   attribute :team_id, :integer
 
@@ -13,16 +13,12 @@ class SelectTeamForm
   def save
     return false if invalid?
 
-    request_session["cis2_info"] = {
-      "selected_org" => {
-        "name" => team.name,
-        "code" => organisation.ods_code
-      },
-      "selected_role" => {
-        "code" => User::CIS2_NURSE_ROLE,
-        "workgroups" => [User::CIS2_WORKGROUP]
-      }
-    }
+    cis2_info.update!(
+      organisation_name: team.name,
+      organisation_code: organisation.ods_code,
+      role_code: CIS2Info::NURSE_ROLE,
+      workgroups: [CIS2Info::WORKGROUP]
+    )
 
     true
   end
