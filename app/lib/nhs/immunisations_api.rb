@@ -30,6 +30,11 @@ module NHS::ImmunisationsAPI
 
       check_vaccination_record_for_create_or_update(vaccination_record)
 
+      Rails.logger.info(
+        "Recording vaccination record to immunisations API:" \
+          " #{vaccination_record.id}"
+      )
+
       response =
         NHS::API.connection.post(
           "/immunisation-fhir-api/FHIR/R4/Immunization",
@@ -78,6 +83,11 @@ module NHS::ImmunisationsAPI
       if vaccination_record.nhs_immunisations_api_etag.blank?
         raise "Vaccination record #{vaccination_record.id} missing ETag"
       end
+
+      Rails.logger.info(
+        "Updating vaccination record in immunisations API:" \
+          " #{vaccination_record.id}"
+      )
 
       nhs_id = vaccination_record.nhs_immunisations_api_id
       response =
@@ -132,6 +142,11 @@ module NHS::ImmunisationsAPI
       if vaccination_record.nhs_immunisations_api_id.blank?
         raise "Vaccination record #{vaccination_record.id} missing NHS Immunisation ID"
       end
+
+      Rails.logger.info(
+        "Deleting vaccination record from immunisations API:" \
+          " #{vaccination_record.id}"
+      )
 
       nhs_id = vaccination_record.nhs_immunisations_api_id
       response =
