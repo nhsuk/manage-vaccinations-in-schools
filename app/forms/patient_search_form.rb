@@ -4,6 +4,7 @@ class PatientSearchForm < SearchForm
   attr_accessor :current_user
   attr_writer :academic_year
 
+  attribute :aged_out_of_programmes, :boolean
   attribute :archived, :boolean
   attribute :consent_statuses, array: true
   attribute :date_of_birth_day, :integer
@@ -84,7 +85,9 @@ class PatientSearchForm < SearchForm
   end
 
   def filter_aged_out_of_programmes(scope)
-    if @session || archived
+    if aged_out_of_programmes
+      scope.not_appear_in_programmes(team.programmes, academic_year:)
+    elsif @session || archived
       scope
     else
       # Archived patients won't appear in programmes, so we need to

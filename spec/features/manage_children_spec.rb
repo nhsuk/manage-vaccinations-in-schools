@@ -17,6 +17,17 @@ describe "Manage children" do
     then_i_see_the_activity_log
   end
 
+  scenario "Viewing children who have aged out" do
+    given_patients_exist
+    and_todays_date_is_in_the_far_future
+
+    when_i_click_on_children
+    then_i_see_no_children
+
+    when_i_click_on_view_aged_out_children
+    then_i_see_the_children
+  end
+
   scenario "Adding an NHS number" do
     given_patients_exist
     and_sync_vaccination_records_to_nhs_feature_is_enabled
@@ -198,6 +209,10 @@ describe "Manage children" do
     perform_enqueued_jobs(only: SyncVaccinationRecordToNHSJob)
   end
 
+  def and_todays_date_is_in_the_far_future
+    travel 13.years
+  end
+
   def when_a_deceased_patient_exists
     session = create(:session, team: @team, programmes: [@programme])
 
@@ -225,6 +240,16 @@ describe "Manage children" do
 
   def then_i_see_the_children
     expect(page).to have_content(/\d+ children/)
+  end
+
+  def then_i_see_no_children
+    expect(page).to have_content("No children")
+  end
+
+  def when_i_click_on_view_aged_out_children
+    find(".nhsuk-details__summary").click
+    check "Children aged out of programmes"
+    click_on "Search"
   end
 
   def when_i_click_on_a_child

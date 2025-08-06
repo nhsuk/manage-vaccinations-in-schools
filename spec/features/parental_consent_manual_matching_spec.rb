@@ -35,7 +35,7 @@ describe "Parental consent manual matching" do
     when_i_choose_a_consent_response
     then_i_am_on_the_consent_matching_page
 
-    when_i_search_for_the_child
+    when_i_search_for_the_aged_out_child
     and_i_select_the_child_record
     then_i_can_review_the_match
 
@@ -109,6 +109,13 @@ describe "Parental consent manual matching" do
 
   def when_i_search_for_the_child
     fill_in "Search", with: @patient.given_name
+    click_button "Search"
+  end
+
+  def when_i_search_for_the_aged_out_child
+    fill_in "Search", with: @patient.given_name
+    find(".nhsuk-details__summary").click
+    check "Children aged out of programmes"
     click_button "Search"
   end
 

@@ -157,6 +157,13 @@ class AppPatientSearchFormComponent < ViewComponent::Base
                                   multiple: false,
                                   link_errors: true,
                                   label: { text: "Children missing an NHS number" } %>
+
+            <%= f.govuk_check_box :aged_out_of_programmes,
+                                  1, 0,
+                                  checked: form.aged_out_of_programmes,
+                                  multiple: false,
+                                  link_errors: true,
+                                  label: { text: "Children aged out of programmes" } %>
           <% end %>
 
           <% if show_buttons_in_details? %>
@@ -223,7 +230,7 @@ class AppPatientSearchFormComponent < ViewComponent::Base
   def open_details?
     @form.date_of_birth_year.present? || @form.date_of_birth_month.present? ||
       @form.date_of_birth_day.present? || @form.missing_nhs_number ||
-      @form.archived
+      @form.archived || @form.aged_out_of_programmes
   end
 
   def show_buttons_in_details?

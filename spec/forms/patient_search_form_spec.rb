@@ -19,6 +19,7 @@ describe PatientSearchForm do
   let(:programmes) { [create(:programme, :flu)] }
   let(:team) { create(:team, programmes:) }
 
+  let(:aged_out_of_programmes) { nil }
   let(:archived) { nil }
   let(:consent_statuses) { nil }
   let(:date_of_birth_day) { Date.current.day }
@@ -36,6 +37,7 @@ describe PatientSearchForm do
 
   let(:params) do
     {
+      aged_out_of_programmes:,
       archived:,
       consent_statuses:,
       date_of_birth_day:,
@@ -62,6 +64,55 @@ describe PatientSearchForm do
 
     it "doesn't raise an error" do
       expect { form.apply(scope) }.not_to raise_error
+    end
+
+    context "filtering on aged out of programmes" do
+      let(:consent_statuses) { nil }
+      let(:date_of_birth_day) { nil }
+      let(:date_of_birth_month) { nil }
+      let(:date_of_birth_year) { nil }
+      let(:missing_nhs_number) { nil }
+      let(:programme_status) { nil }
+      let(:q) { nil }
+      let(:register_status) { nil }
+      let(:session_status) { nil }
+      let(:triage_status) { nil }
+      let(:year_groups) { nil }
+
+      let(:programmes) { [create(:programme, :flu)] }
+      let(:location) { create(:school, programmes:, year_groups: [11, 12]) }
+      let(:session_for_patients) { create(:session, location:, programmes:) }
+
+      let!(:aged_out_patient) do
+        create(:patient, session: session_for_patients, year_group: 12)
+      end
+      let!(:not_aged_out_patient) do
+        create(:patient, session: session_for_patients, year_group: 11)
+      end
+
+      context "when not filtering on aged out patients" do
+        let(:aged_out_of_programmes) { nil }
+
+        it "includes the not aged out patient" do
+          expect(form.apply(scope)).to include(not_aged_out_patient)
+        end
+
+        it "doesn't include the aged out patient" do
+          expect(form.apply(scope)).not_to include(aged_out_patient)
+        end
+      end
+
+      context "when filtering on aged out patients" do
+        let(:aged_out_of_programmes) { true }
+
+        it "doesn't include the not aged out patient" do
+          expect(form.apply(scope)).not_to include(not_aged_out_patient)
+        end
+
+        it "includes the aged out patient" do
+          expect(form.apply(scope)).to include(aged_out_patient)
+        end
+      end
     end
 
     context "filtering on archived" do

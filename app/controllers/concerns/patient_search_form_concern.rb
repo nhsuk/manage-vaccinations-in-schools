@@ -21,6 +21,7 @@ module PatientSearchFormConcern
   def patient_search_form_params
     params.permit(
       :_clear,
+      :aged_out_of_programmes,
       :archived,
       :date_of_birth_day,
       :date_of_birth_month,
