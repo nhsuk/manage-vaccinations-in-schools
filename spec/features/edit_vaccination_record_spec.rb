@@ -233,7 +233,7 @@ describe "Edit vaccination record" do
     @replacement_batch =
       create(:batch, :not_expired, team: @team, vaccine: @vaccine)
 
-    location = create(:school)
+    location = create(:school, team: @team)
 
     @session =
       create(

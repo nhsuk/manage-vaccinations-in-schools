@@ -16,7 +16,8 @@ describe PatientSearchForm do
   let(:request_path) { "/patients" }
   let(:session) { nil }
 
-  let(:team) { create(:team) }
+  let(:programmes) { [create(:programme, :flu)] }
+  let(:team) { create(:team, programmes:) }
 
   let(:archived) { nil }
   let(:consent_statuses) { nil }
@@ -57,6 +58,8 @@ describe PatientSearchForm do
   context "for patients" do
     let(:scope) { Patient.all }
 
+    let(:session_for_patients) { create(:session, team:, programmes:) }
+
     it "doesn't raise an error" do
       expect { form.apply(scope) }.not_to raise_error
     end
@@ -74,7 +77,9 @@ describe PatientSearchForm do
       let(:triage_status) { nil }
       let(:year_groups) { nil }
 
-      let!(:unarchived_patient) { create(:patient) }
+      let!(:unarchived_patient) do
+        create(:patient, session: session_for_patients)
+      end
       let!(:archived_patient) { create(:patient) }
 
       before do
@@ -100,7 +105,7 @@ describe PatientSearchForm do
           expect(form.apply(scope)).not_to include(unarchived_patient)
         end
 
-        it "includes the unarchived patient" do
+        it "includes the archived patient" do
           expect(form.apply(scope)).to include(archived_patient)
         end
       end
@@ -119,7 +124,13 @@ describe PatientSearchForm do
       let(:triage_status) { nil }
       let(:year_groups) { nil }
 
-      let(:patient) { create(:patient, date_of_birth: Date.new(2000, 1, 1)) }
+      let(:patient) do
+        create(
+          :patient,
+          session: session_for_patients,
+          date_of_birth: Date.new(2000, 1, 1)
+        )
+      end
 
       context "with only a year specified" do
         let(:date_of_birth_year) { 2000 }
@@ -163,7 +174,7 @@ describe PatientSearchForm do
       let(:date_of_birth_year) { nil }
       let(:missing_nhs_number) { nil }
       let(:programme_status) { nil }
-      let(:programme_types) { [programme.type] }
+      let(:programme_types) { programmes.map(&:type) }
       let(:q) { nil }
       let(:register_status) { nil }
       let(:session_status) { nil }
@@ -171,14 +182,10 @@ describe PatientSearchForm do
       let(:year_groups) { nil }
 
       let(:programme) { create(:programme, :menacwy) }
+      let(:programmes) { [programme] }
 
       context "with a patient eligible for the programme" do
-        let(:patient) do
-          create(:patient, programmes: [programme]).tap do |patient|
-            session = create(:session, programmes: [programme])
-            create(:patient_session, patient:, session:)
-          end
-        end
+        let(:patient) { create(:patient, session: session_for_patients) }
 
         it "is included" do
           expect(form.apply(scope)).to include(patient)
@@ -201,19 +208,21 @@ describe PatientSearchForm do
       let(:date_of_birth_year) { nil }
       let(:missing_nhs_number) { nil }
       let(:programme_status) { "vaccinated" }
-      let(:programme_types) { [programme.type] }
+      let(:programme_types) { programmes.map(&:type) }
       let(:q) { nil }
       let(:register_status) { nil }
       let(:session_status) { nil }
       let(:triage_status) { nil }
       let(:year_groups) { nil }
 
-      let(:programme) { create(:programme) }
-
       it "filters on programme status" do
-        patient = create(:patient, :vaccinated, programmes: [programme])
-        session = create(:session, programmes: [programme])
-        create(:patient_session, patient:, session:)
+        patient =
+          create(
+            :patient,
+            :vaccinated,
+            programmes:,
+            session: session_for_patients
+          )
 
         expect(form.apply(scope)).to include(patient)
       end
@@ -233,19 +242,44 @@ describe PatientSearchForm do
       let(:year_groups) { nil }
 
       let(:patient_a) do
-        create(:patient, given_name: "Harry", family_name: "Potter")
+        create(
+          :patient,
+          given_name: "Harry",
+          family_name: "Potter",
+          session: session_for_patients
+        )
       end
       let(:patient_b) do
-        create(:patient, given_name: "Hari", family_name: "Potter")
+        create(
+          :patient,
+          given_name: "Hari",
+          family_name: "Potter",
+          session: session_for_patients
+        )
       end
       let(:patient_c) do
-        create(:patient, given_name: "Arry", family_name: "Pott")
+        create(
+          :patient,
+          given_name: "Arry",
+          family_name: "Pott",
+          session: session_for_patients
+        )
       end
       let(:patient_d) do
-        create(:patient, given_name: "Ron", family_name: "Weasley")
+        create(
+          :patient,
+          given_name: "Ron",
+          family_name: "Weasley",
+          session: session_for_patients
+        )
       end
       let(:patient_e) do
-        create(:patient, given_name: "Ginny", family_name: "Weasley")
+        create(
+          :patient,
+          given_name: "Ginny",
+          family_name: "Weasley",
+          session: session_for_patients
+        )
       end
 
       context "with no search query" do
@@ -271,8 +305,7 @@ describe PatientSearchForm do
   context "for patient sessions" do
     let(:scope) { PatientSession.all }
 
-    let(:session) { create(:session, programmes: [programme]) }
-    let(:programme) { create(:programme) }
+    let(:session) { create(:session, programmes:) }
 
     it "doesn't raise an error" do
       expect { form.apply(scope) }.not_to raise_error
@@ -285,14 +318,14 @@ describe PatientSearchForm do
       let(:date_of_birth_year) { nil }
       let(:missing_nhs_number) { nil }
       let(:programme_status) { nil }
-      let(:programme_types) { [programme.type] }
+      let(:programme_types) { programmes.map(&:type) }
       let(:q) { nil }
       let(:register_status) { nil }
       let(:session_status) { nil }
       let(:triage_status) { nil }
       let(:year_groups) { nil }
 
-      let(:programme) { create(:programme, :menacwy) }
+      let(:programmes) { [create(:programme, :menacwy)] }
 
       context "with a patient session eligible for the programme" do
         let(:patient) { create(:patient, year_group: 9) }
@@ -322,7 +355,7 @@ describe PatientSearchForm do
       let(:date_of_birth_year) { nil }
       let(:missing_nhs_number) { nil }
       let(:programme_status) { nil }
-      let(:programme_types) { [programme.type] }
+      let(:programme_types) { programmes.map(&:type) }
       let(:q) { nil }
       let(:register_status) { nil }
       let(:triage_status) { nil }
@@ -349,7 +382,7 @@ describe PatientSearchForm do
       let(:date_of_birth_year) { nil }
       let(:missing_nhs_number) { nil }
       let(:programme_status) { nil }
-      let(:programme_types) { [programme.type] }
+      let(:programme_types) { programmes.map(&:type) }
       let(:q) { nil }
       let(:register_status) { nil }
       let(:session_status) { "vaccinated" }
@@ -388,7 +421,7 @@ describe PatientSearchForm do
       let(:date_of_birth_year) { nil }
       let(:missing_nhs_number) { nil }
       let(:programme_status) { nil }
-      let(:programme_types) { [programme.type] }
+      let(:programme_types) { programmes.map(&:type) }
       let(:q) { nil }
       let(:register_status) { nil }
       let(:session_status) { nil }
@@ -410,7 +443,7 @@ describe PatientSearchForm do
       let(:date_of_birth_year) { nil }
       let(:missing_nhs_number) { nil }
       let(:programme_status) { nil }
-      let(:programme_types) { [programme.type] }
+      let(:programme_types) { programmes.map(&:type) }
       let(:q) { nil }
       let(:register_status) { nil }
       let(:triage_status) { nil }
@@ -611,7 +644,7 @@ describe PatientSearchForm do
     let(:date_of_birth_year) { nil }
     let(:year_groups) { nil }
     let(:missing_nhs_number) { false }
-    let(:programme_types) { [programme.type] }
+    let(:programme_types) { programmes.map(&:type) }
 
     let(:team) { create(:team) }
     let(:programme) { create(:programme, :flu) }
