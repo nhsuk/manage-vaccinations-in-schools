@@ -7,6 +7,9 @@ class DraftVaccinationRecordsController < ApplicationController
   skip_after_action :verify_policy_scoped
 
   before_action :set_draft_vaccination_record
+
+  include DraftObjectValidatorConcern
+
   before_action :set_patient
   before_action :set_session
   before_action :set_programme
@@ -55,6 +58,10 @@ class DraftVaccinationRecordsController < ApplicationController
   end
 
   private
+
+  def draft_object
+    @draft_vaccination_record
+  end
 
   def validate_params
     if current_step == :date_and_time
