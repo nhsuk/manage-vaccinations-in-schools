@@ -519,6 +519,11 @@ en:
     zero: No children
     one: 1 child
     other: "%{count} children"
+  children_without_nhs_number:
+    title: No NHS number
+    zero: No children without an NHS number
+    one: 1 child without an NHS number
+    other: "%{count} children without an NHS number"
   children_with_no_consent_response:
     title: No consent response
     zero: No children with no response

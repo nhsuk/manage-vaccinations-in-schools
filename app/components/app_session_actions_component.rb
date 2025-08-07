@@ -29,12 +29,20 @@ class AppSessionActionsComponent < ViewComponent::Base
 
   def rows
     @rows ||= [
+      no_nhs_number_row,
       no_consent_response_row,
       conflicting_consent_row,
       triage_required_row,
       (register_attendance_row if session.requires_registration?),
       ready_for_vaccinator_row
     ].compact
+  end
+
+  def no_nhs_number_row
+    count = patient_sessions.merge(Patient.without_nhs_number).count
+    href = session_consent_path(session, missing_nhs_number: true)
+
+    generate_row(:children_without_nhs_number, count:, href:)
   end
 
   def no_consent_response_row
