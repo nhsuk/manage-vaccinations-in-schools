@@ -1,6 +1,7 @@
 <div style="<%= @primary_type == :patient ? "margin-bottom: 10px;" : "margin-bottom: 24px;" %>">
-  <%= h1 "Inspect #{@primary_type.to_s.classify} #{@primary_id}", size: "xl", style: "margin-bottom: 10px;" %>
-
+  <%= h1 page_title: "Inspect #{@primary_type.to_s.classify} #{@primary_id}" do %>
+    <%= "Inspect #{@primary_type.to_s.classify} #{@primary_id}" %>
+  <% end %>
   <code>
     <%= "#{@primary_type.to_s.classify}.find(#{@primary_id})" %>
   </code>
@@ -27,7 +28,17 @@
 <%= render AppDetailsComponent.new(summary: "Graph options", expander: true, open: false) do %>
   <%= form_with url: inspect_path(object_type: @primary_type.to_s.pluralize, object_id: @primary_id), method: :get, local: true do |form| %>
     <div class="nhsuk-form-group" style="padding: 5px; margin-bottom: 20px;">
-      <%= form.govuk_check_box :show_pii, 1, label: { text: "Show PII (Personally Identifiable Information)" }, checked: @show_pii, onchange: "this.form.submit();" %>
+      <% if @user_is_allowed_to_access_pii %>
+        <%= form.govuk_check_box :show_pii, true,
+                                 label: { text: "Show PII" },
+                                 checked: @show_pii,
+                                 "onchange": "this.form.submit();" %>
+      <% else %>
+        <%= form.govuk_check_box :show_pii, true,
+                                 label: { text: "Show PII (not allowed for this user)" },
+                                 checked: false,
+                                 "disabled": "true" %>
+      <% end %>
     </div>
 
     <% @traversals_config.keys.sort_by { |r| r.name.to_s.humanize }.each do |type| %>

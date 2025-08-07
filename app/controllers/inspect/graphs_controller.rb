@@ -6,6 +6,8 @@ module Inspect
 
     layout "full"
 
+    SHOW_PII_BY_DEFAULT = false
+
     def show
       @primary_type = safe_get_primary_type
       if @primary_type.nil?
@@ -28,7 +30,7 @@ module Inspect
 
       @traversals_config = build_traversals_config
       @graph_params = build_graph_params
-      @show_pii = get_show_pii
+      set_pii_settings
 
       @mermaid =
         GraphRecords
@@ -44,9 +46,11 @@ module Inspect
 
     private
 
-    def get_show_pii
-      return false unless user_is_support_with_pii_access?
-      params[:show_pii]&.first == "1"
+    def set_pii_settings
+      @user_is_allowed_to_access_pii = user_is_support_with_pii_access?
+      @show_pii =
+        @user_is_allowed_to_access_pii &&
+          (params[:show_pii] || SHOW_PII_BY_DEFAULT)
     end
 
     def build_traversals_config
