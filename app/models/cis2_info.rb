@@ -12,7 +12,8 @@ class CIS2Info
 
   SUPPORT_ORGANISATION = "X26"
 
-  SUPPORT_ACTIVITIES = %w[D0008:C0055:B1611 D8002:C8006:B0360].freeze
+  SUPPORT_ACTIVITIES = %w[D8000:C8000:B1570].freeze
+  SUPPORT_WITH_PII_ACCESS_ACTIVITIES = %w[D0008:C0055:B1611 D8002:C8006:B0360].freeze
 
   INDEPENDENT_PRESCRIBING_ACTIVITY_CODE = "B0420"
   PERSONAL_MEDICATION_ADMINISTRATION_ACTIVITY_CODE = "B0428"
@@ -38,13 +39,13 @@ class CIS2Info
 
   def team
     @team ||=
-      if (workgroup = team_workgroup).present? && workgroups.include?(workgroup)
+      if (workgroup = team_workgroup).present? &&
+         workgroups.include?(workgroup)
         Team.find_by(organisation:, workgroup:)
       end
   end
 
-  def has_valid_workgroup? =
-    organisation&.teams&.exists?(workgroup: workgroups) || false
+  def has_valid_workgroup? = organisation&.teams&.exists?(workgroup: workgroups) || false
 
   def is_medical_secretary?
     role_code == MEDICAL_SECRETARY_ROLE
@@ -73,6 +74,10 @@ class CIS2Info
         organisation_code == SUPPORT_ORGANISATION &&
         (SUPPORT_ACTIVITIES - activity_codes).empty?
     ) || false
+  end
+
+  def is_support_with_pii_access?
+    is_support? && (SUPPORT_WITH_PII_ACCESS_ACTIVITIES - activity_codes).empty?
   end
 
   private
