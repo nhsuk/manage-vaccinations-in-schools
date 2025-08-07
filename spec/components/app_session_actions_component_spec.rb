@@ -40,8 +40,12 @@ describe AppSessionActionsComponent do
       year_group:
     )
     create(:patient_session, :vaccinated, :in_attendance, session:, year_group:)
+
+    patient_no_nhs_number = create(:patient, nhs_number: nil)
+    create(:patient_session, session:, year_group:, patient: patient_no_nhs_number)
   end
 
+  it { should have_text("Add NHS number\n1 child") }
   it { should have_text("No consent response\n1 child") }
   it { should have_text("Conflicting consent\n1 child") }
   it { should have_text("Triage needed\n1 child") }
@@ -68,5 +72,13 @@ describe AppSessionActionsComponent do
     it { should_not have_text("Triage needed") }
     it { should_not have_text("Register attendance") }
     it { should_not have_text("Ready for vaccinator") }
+  end
+
+  context "when all patients have NHS numbers" do
+    before do
+      # TODO: Add NHS numbers to all patients
+    end
+
+    it { should_not have_text("Add NHS number") }
   end
 end

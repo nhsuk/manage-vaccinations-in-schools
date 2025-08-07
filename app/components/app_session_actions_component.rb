@@ -29,12 +29,36 @@ class AppSessionActionsComponent < ViewComponent::Base
 
   def rows
     @rows ||= [
+      add_nhs_number_row,
       no_consent_response_row,
       conflicting_consent_row,
       triage_required_row,
       (register_attendance_row if session.requires_registration?),
       ready_for_vaccinator_row
     ].compact
+  end
+
+  def add_nhs_number_row
+    status = "required"
+
+    count =
+      patient_sessions.where("patients.nhs_number IS NULL").count
+
+    return nil if count.zero?
+
+    href = session_consent_path(session, missing_nhs_number: true)
+
+    {
+      key: {
+        text: "Add NHS number"
+      },
+      value: {
+        text: I18n.t("children", count:)
+      },
+      actions: [
+        { text: "Review", visually_hidden_text: "add NHS numbers", href: }
+      ]
+    }
   end
 
   def no_consent_response_row
