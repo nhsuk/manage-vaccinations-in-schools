@@ -256,8 +256,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_07_070516) do
     t.boolean "notify_parents_on_vaccination"
     t.datetime "submitted_at", null: false
     t.integer "vaccine_methods", default: [], null: false, array: true
-    t.boolean "notify_parent_on_refusal"
     t.integer "academic_year", null: false
+    t.boolean "notify_parent_on_refusal"
     t.index ["academic_year"], name: "index_consents_on_academic_year"
     t.index ["parent_id"], name: "index_consents_on_parent_id"
     t.index ["patient_id"], name: "index_consents_on_patient_id"
@@ -534,13 +534,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_07_070516) do
     t.index ["created_at"], name: "index_one_time_tokens_on_created_at"
     t.index ["token"], name: "index_one_time_tokens_on_token", unique: true
     t.index ["user_id"], name: "index_one_time_tokens_on_user_id", unique: true
-  end
-
-  create_table "organisation_programmes", force: :cascade do |t|
-    t.bigint "organisation_id", null: false
-    t.bigint "programme_id", null: false
-    t.index ["organisation_id", "programme_id"], name: "idx_on_organisation_id_programme_id_892684ca8e", unique: true
-    t.index ["programme_id"], name: "index_organisation_programmes_on_programme_id"
   end
 
   create_table "organisations", force: :cascade do |t|
@@ -1004,8 +997,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_07_070516) do
   add_foreign_key "notify_log_entries", "patients"
   add_foreign_key "notify_log_entries", "users", column: "sent_by_user_id"
   add_foreign_key "one_time_tokens", "users"
-  add_foreign_key "organisation_programmes", "organisations"
-  add_foreign_key "organisation_programmes", "programmes"
   add_foreign_key "parent_relationships", "parents"
   add_foreign_key "parent_relationships", "patients"
   add_foreign_key "patient_consent_statuses", "patients", on_delete: :cascade
