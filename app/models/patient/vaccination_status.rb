@@ -4,11 +4,12 @@
 #
 # Table name: patient_vaccination_statuses
 #
-#  id            :bigint           not null, primary key
-#  academic_year :integer          not null
-#  status        :integer          default("none_yet"), not null
-#  patient_id    :bigint           not null
-#  programme_id  :bigint           not null
+#  id                    :bigint           not null, primary key
+#  academic_year         :integer          not null
+#  latest_session_status :integer          default("none_yet"), not null
+#  status                :integer          default("none_yet"), not null
+#  patient_id            :bigint           not null
+#  programme_id          :bigint           not null
 #
 # Indexes
 #
@@ -39,6 +40,12 @@ class Patient::VaccinationStatus < ApplicationRecord
   enum :status,
        { none_yet: 0, vaccinated: 1, could_not_vaccinate: 2 },
        default: :none_yet,
+       validate: true
+
+  enum :latest_session_status,
+       PatientSession::SessionStatus.statuses,
+       default: :none_yet,
+       prefix: true,
        validate: true
 
   def assign_status

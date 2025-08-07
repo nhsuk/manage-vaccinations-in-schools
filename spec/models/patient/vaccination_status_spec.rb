@@ -4,11 +4,12 @@
 #
 # Table name: patient_vaccination_statuses
 #
-#  id            :bigint           not null, primary key
-#  academic_year :integer          not null
-#  status        :integer          default("none_yet"), not null
-#  patient_id    :bigint           not null
-#  programme_id  :bigint           not null
+#  id                    :bigint           not null, primary key
+#  academic_year         :integer          not null
+#  latest_session_status :integer          default("none_yet"), not null
+#  status                :integer          default("none_yet"), not null
+#  patient_id            :bigint           not null
+#  programme_id          :bigint           not null
 #
 # Indexes
 #

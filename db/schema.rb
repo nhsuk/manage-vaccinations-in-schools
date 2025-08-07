@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_01_143843) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_07_070516) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -622,6 +622,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_01_143843) do
     t.bigint "programme_id", null: false
     t.integer "status", default: 0, null: false
     t.integer "academic_year", null: false
+    t.integer "latest_session_status", default: 0, null: false
     t.index ["patient_id", "programme_id", "academic_year"], name: "idx_on_patient_id_programme_id_academic_year_fc0b47b743", unique: true
     t.index ["status"], name: "index_patient_vaccination_statuses_on_status"
   end
@@ -868,8 +869,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_01_143843) do
     t.bigint "vaccine_id"
     t.boolean "full_dose"
     t.datetime "nhs_immunisations_api_synced_at"
-    t.string "nhs_immunisations_api_etag"
     t.string "nhs_immunisations_api_id"
+    t.string "nhs_immunisations_api_etag"
     t.integer "protocol"
     t.datetime "nhs_immunisations_api_sync_pending_at"
     t.boolean "notify_parents"
