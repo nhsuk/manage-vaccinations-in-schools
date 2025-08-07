@@ -28,6 +28,7 @@ class Onboarding
     privacy_notice_url
     privacy_policy_url
     reply_to_id
+    workgroup
   ].freeze
 
   SUBTEAM_ATTRIBUTES = %i[

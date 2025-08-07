@@ -5,7 +5,7 @@ module MavisCLI
     class AddToTeam < Dry::CLI::Command
       desc "Add an existing school to a team"
 
-      argument :ods_code, required: true, desc: "The ODS code of the team"
+      argument :workgroup, required: true, desc: "The ODS code of the team"
       argument :subteam, required: true, desc: "The subteam of the team"
       argument :urns,
                type: :array,
@@ -16,11 +16,10 @@ module MavisCLI
              type: :array,
              desc: "The programmes administered at the school"
 
-      def call(ods_code:, subteam:, urns:, programmes: [], **)
+      def call(workgroup:, subteam:, urns:, programmes: [], **)
         MavisCLI.load_rails
 
-        # TODO: Select the right team based on an identifier.
-        team = Team.joins(:organisation).find_by(organisation: { ods_code: })
+        team = Team.find_by(workgroup:)
 
         if team.nil?
           warn "Could not find team."

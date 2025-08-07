@@ -44,12 +44,12 @@ describe "mavis clinics add-to-team" do
 
   def command
     Dry::CLI.new(MavisCLI).call(
-      arguments: %w[clinics add-to-team ABC Team 123456]
+      arguments: %w[clinics add-to-team abc Team 123456]
     )
   end
 
   def given_the_team_exists
-    @team = create(:team, ods_code: "ABC")
+    @team = create(:team, workgroup: "abc")
   end
 
   def and_the_subteam_exists

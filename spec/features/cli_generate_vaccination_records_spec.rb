@@ -38,8 +38,8 @@ describe "mavis generate vaccination-records" do
       arguments: [
         "generate",
         "vaccination-records",
-        "-o",
-        @team.organisation.ods_code.to_s,
+        "-w",
+        @team.workgroup,
         "-p",
         @programme.type,
         "-s",
