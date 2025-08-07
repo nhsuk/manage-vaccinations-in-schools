@@ -33,4 +33,17 @@ module PDSHelper
       }
     )
   end
+
+  def stub_pds_get_nhs_number_to_return_an_invalidated_patient
+    stub_request(
+      :get,
+      "https://sandbox.api.service.nhs.uk/personal-demographics/FHIR/R4/Patient/#{@patient.nhs_number}"
+    ).to_return(
+      body: file_fixture("pds/invalid-patient-response.json"),
+      status: 404,
+      headers: {
+        "Content-Type" => "application/fhir+json"
+      }
+    )
+  end
 end
