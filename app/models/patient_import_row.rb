@@ -169,8 +169,6 @@ class PatientImportRow
 
   attr_reader :team, :academic_year, :year_groups
 
-  private
-
   def import_attributes
     @import_attributes ||= {
       address_line_1: address_line_1&.to_s,
@@ -189,6 +187,8 @@ class PatientImportRow
       registration_academic_year:
     }.compact
   end
+
+  private
 
   def prepare_patient_changes(patient, import_attributes)
     unless stage_registration?

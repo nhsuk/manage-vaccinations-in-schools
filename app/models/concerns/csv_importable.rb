@@ -126,6 +126,18 @@ module CSVImportable
     parse_rows! if rows.nil?
     return if invalid?
 
+    if Flipper.enabled? :pds_lookup_during_import
+      changesets =
+        rows.each_with_index.map do
+          PatientChangeset.from_import_row(
+            row: _1,
+            import: self,
+            row_number: _2
+          )
+        end
+      return
+    end
+
     counts = COUNT_COLUMNS.index_with(0)
 
     ActiveRecord::Base.transaction do
