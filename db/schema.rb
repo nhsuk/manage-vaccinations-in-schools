@@ -525,17 +525,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_13_073648) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "one_time_tokens", primary_key: "token", id: :string, force: :cascade do |t|
-    t.bigint "user_id", null: false
-    t.jsonb "cis2_info"
-    t.jsonb "jsonb"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["created_at"], name: "index_one_time_tokens_on_created_at"
-    t.index ["token"], name: "index_one_time_tokens_on_token", unique: true
-    t.index ["user_id"], name: "index_one_time_tokens_on_user_id", unique: true
-  end
-
   create_table "organisations", force: :cascade do |t|
     t.string "ods_code", null: false
     t.datetime "created_at", null: false
@@ -989,7 +978,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_13_073648) do
   add_foreign_key "notify_log_entries", "parents", on_delete: :nullify
   add_foreign_key "notify_log_entries", "patients"
   add_foreign_key "notify_log_entries", "users", column: "sent_by_user_id"
-  add_foreign_key "one_time_tokens", "users"
   add_foreign_key "parent_relationships", "parents"
   add_foreign_key "parent_relationships", "patients"
   add_foreign_key "patient_consent_statuses", "patients", on_delete: :cascade

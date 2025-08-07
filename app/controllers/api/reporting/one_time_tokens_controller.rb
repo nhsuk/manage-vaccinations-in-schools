@@ -9,7 +9,7 @@ class API::Reporting::OneTimeTokensController < API::Reporting::BaseController
                 :verify_grant_type!
 
   def authorize
-    @token = Reporting::OneTimeToken.find_by!(token: params[:code])
+    @token = ReportingAPI::OneTimeToken.find_by!(token: params[:code])
     @token.delete # <- Tokens are one-time use
     json_data = { jwt: jwt(@token) }
     render json: json_data
@@ -37,7 +37,11 @@ class API::Reporting::OneTimeTokensController < API::Reporting::BaseController
   end
 
   def jwt(token)
-    JWT.encode(jwt_payload(token), Settings.reporting_api.client_app.secret, "HS512")
+    JWT.encode(
+      jwt_payload(token),
+      Settings.reporting_api.client_app.secret,
+      "HS512"
+    )
   end
 
   def ensure_reporting_api_feature_enabled

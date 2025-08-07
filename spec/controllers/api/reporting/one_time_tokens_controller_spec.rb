@@ -6,7 +6,7 @@ RSpec.describe API::Reporting::OneTimeTokensController do
   let(:user) { create(:user) }
   let(:mock_cis2_info) { { "some_key" => "some value" } }
   let(:valid_token) do
-    Reporting::OneTimeToken.find_or_generate_for!(
+    ReportingAPI::OneTimeToken.find_or_generate_for!(
       user:,
       cis2_info: mock_cis2_info
     )
@@ -67,7 +67,7 @@ RSpec.describe API::Reporting::OneTimeTokensController do
 
           it "deletes the OneTimeToken" do
             do_the_request
-            expect(Reporting::OneTimeToken.exists?(token.id)).to be(false)
+            expect(ReportingAPI::OneTimeToken.exists?(token.id)).to be(false)
           end
 
           it "responds with json" do

@@ -134,13 +134,13 @@ describe TokenAuthenticationConcern do
     let(:jwt) { "" }
     let(:user_id) { 0 }
     let(:session_token) { "123456abcdef" }
-    let(:reporting_app_session_token) { "0987654321123456abcdef" }
+    let(:reporting_api_session_token) { "0987654321123456abcdef" }
 
     let(:user) do
       create(
         :user,
         session_token: session_token,
-        reporting_app_session_token: reporting_app_session_token
+        reporting_api_session_token: reporting_api_session_token
       )
     end
 
@@ -158,7 +158,7 @@ describe TokenAuthenticationConcern do
               "user" => {
                 "id" => user_id,
                 "session_token" => session_token,
-                "reporting_app_session_token" => reporting_app_session_token
+                "reporting_api_session_token" => reporting_api_session_token
               },
               "cis2_info" => {
                 "some_key" => "some value"
@@ -180,7 +180,7 @@ describe TokenAuthenticationConcern do
         sample_class.send(:authenticate_user_by_jwt!)
       end
 
-      context "when a User exists with the values of id, session_token and reporting_app_session_token" do
+      context "when a User exists with the values of id, session_token and reporting_api_session_token" do
         let(:user_id) { user.id }
 
         it "copies the user key into session['user']" do
@@ -203,13 +203,13 @@ describe TokenAuthenticationConcern do
         end
       end
 
-      context "when a User does not exist with the values of id, session_token and reporting_app_session_token" do
+      context "when a User does not exist with the values of id, session_token and reporting_api_session_token" do
         let(:user_id) { user.id }
 
         before do
           user.update!(
             session_token: "someothersessiontoken",
-            reporting_app_session_token: "someotherpwdauthsessiontoken"
+            reporting_api_session_token: "someotherpwdauthsessiontoken"
           )
           sample_class.session = {
             user_id: user.id,
