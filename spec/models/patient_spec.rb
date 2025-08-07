@@ -806,6 +806,43 @@ describe Patient do
     end
   end
 
+  describe "#should_sync_vaccinations_to_nhs_immunisations_api" do
+    subject(:should_sync_vaccinations_to_nhs_immunisations_api?) do
+      patient.send(:should_sync_vaccinations_to_nhs_immunisations_api?)
+    end
+
+    let(:patient) { create(:patient, nhs_number: "9449310475") }
+    let(:programme) { create(:programme, type: "hpv") }
+    let(:session) { create(:session, programmes: [programme]) }
+    let(:vaccination_record) do
+      create(:vaccination_record, patient:, programme:, session:)
+    end
+
+    context "when nhs_number changes" do
+      it "syncs vaccination records to NHS Immunisations API" do
+        patient.update!(nhs_number: "9449304130")
+
+        expect(should_sync_vaccinations_to_nhs_immunisations_api?).to be_truthy
+      end
+    end
+
+    context "when invalidated_at changes" do
+      it "syncs vaccination records to NHS Immunisations API" do
+        patient.update!(invalidated_at: Time.current)
+
+        expect(should_sync_vaccinations_to_nhs_immunisations_api?).to be_truthy
+      end
+    end
+
+    context "when other attributes change" do
+      it "does not sync vaccination records to NHS Immunisations API" do
+        patient.update!(given_name: "NewName")
+
+        expect(should_sync_vaccinations_to_nhs_immunisations_api?).to be_falsy
+      end
+    end
+  end
+
   describe "#stage_changes" do
     let(:patient) { create(:patient, given_name: "John", family_name: "Doe") }
 
