@@ -564,8 +564,12 @@ class Patient < ApplicationRecord
 
   def fhir_mapper = @fhir_mapper ||= FHIRMapper::Patient.new(self)
 
+  def should_sync_vaccinations_to_nhs_immunisations_api?
+    nhs_number_previously_changed? || invalidated_at_previously_changed?
+  end
+
   def sync_vaccinations_to_nhs_immunisations_api
-    if nhs_number_previously_changed?
+    if should_sync_vaccinations_to_nhs_immunisations_api?
       vaccination_records.syncable_to_nhs_immunisations_api.find_each(
         &:sync_to_nhs_immunisations_api
       )

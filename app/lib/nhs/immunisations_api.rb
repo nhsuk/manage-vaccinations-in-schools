@@ -189,7 +189,8 @@ module NHS::ImmunisationsAPI
         vaccination_record.administered? &&
         vaccination_record.programme.type.in?(PROGRAMME_TYPES) &&
         (ignore_nhs_number || vaccination_record.patient.nhs_number.present?) &&
-        vaccination_record.notify_parents
+        vaccination_record.notify_parents &&
+        vaccination_record.patient.not_invalidated?
     end
 
     private
