@@ -23,8 +23,10 @@ describe Onboarding do
     it "set up the models" do
       expect { onboarding.save! }.not_to raise_error
 
-      team = Team.find_by!(ods_code: "EXAMPLE")
-      expect(team.name).to eq("NHS Trust")
+      organisation = Organisation.find_by(ods_code: "EXAMPLE")
+      expect(organisation).not_to be_nil
+
+      team = Team.find_by(organisation:, name: "NHS Trust")
       expect(team.email).to eq("example@trust.nhs.uk")
       expect(team.phone).to eq("07700 900815")
       expect(team.phone_instructions).to eq("option 1, followed by option 3")
@@ -34,7 +36,7 @@ describe Onboarding do
       expect(team.locations.generic_clinic.count).to eq(1)
       generic_clinic = team.locations.generic_clinic.first
       expect(generic_clinic.year_groups).to eq([8, 9, 10, 11])
-      expect(generic_clinic.programme_year_groups.count).to eq(4)
+      expect(generic_clinic.location_programme_year_groups.count).to eq(4)
 
       subteam1 = team.subteams.includes(:schools).find_by!(name: "Subteam 1")
       expect(subteam1.email).to eq("subteam-1@trust.nhs.uk")
@@ -50,10 +52,10 @@ describe Onboarding do
       expect(subteam1.schools).to contain_exactly(school1, school2)
       expect(subteam2.schools).to contain_exactly(school3, school4)
 
-      expect(school1.programme_year_groups.count).to eq(4)
-      expect(school2.programme_year_groups.count).to eq(4)
-      expect(school3.programme_year_groups.count).to eq(4)
-      expect(school4.programme_year_groups.count).to eq(4)
+      expect(school1.location_programme_year_groups.count).to eq(4)
+      expect(school2.location_programme_year_groups.count).to eq(4)
+      expect(school3.location_programme_year_groups.count).to eq(4)
+      expect(school4.location_programme_year_groups.count).to eq(4)
 
       clinic1 = subteam1.community_clinics.find_by!(ods_code: nil)
       expect(clinic1.name).to eq("10 Downing Street")
@@ -77,9 +79,9 @@ describe Onboarding do
 
       expect(onboarding.errors.messages).to eq(
         {
+          "organisation.ods_code": ["can't be blank"],
           "team.careplus_venue_code": ["can't be blank"],
           "team.name": ["can't be blank"],
-          "team.ods_code": ["can't be blank"],
           "team.phone": ["can't be blank", "is invalid"],
           "team.privacy_notice_url": ["can't be blank"],
           "team.privacy_policy_url": ["can't be blank"],

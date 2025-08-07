@@ -17,6 +17,17 @@ describe "Manage children" do
     then_i_see_the_activity_log
   end
 
+  scenario "Viewing children who have aged out" do
+    given_patients_exist
+    and_todays_date_is_in_the_far_future
+
+    when_i_click_on_children
+    then_i_see_no_children
+
+    when_i_click_on_view_aged_out_children
+    then_i_see_the_children
+  end
+
   scenario "Adding an NHS number" do
     given_patients_exist
     and_sync_vaccination_records_to_nhs_feature_is_enabled
@@ -87,19 +98,6 @@ describe "Manage children" do
     then_i_see_the_edit_child_record_page
     and_i_see_the_blank_nhs_number
     and_the_vaccination_record_is_deleted_from_the_nhs
-  end
-
-  scenario "Removing a child from a cohort" do
-    given_patients_exist
-
-    when_i_click_on_children
-    and_i_click_on_a_child
-    then_i_see_the_child
-    and_i_see_the_cohort
-
-    when_i_click_on_remove_from_cohort
-    then_i_see_the_children
-    and_i_see_a_removed_from_cohort_message
   end
 
   scenario "Viewing important notices" do
@@ -211,6 +209,10 @@ describe "Manage children" do
     perform_enqueued_jobs(only: SyncVaccinationRecordToNHSJob)
   end
 
+  def and_todays_date_is_in_the_far_future
+    travel 13.years
+  end
+
   def when_a_deceased_patient_exists
     session = create(:session, team: @team, programmes: [@programme])
 
@@ -240,6 +242,16 @@ describe "Manage children" do
     expect(page).to have_content(/\d+ children/)
   end
 
+  def then_i_see_no_children
+    expect(page).to have_content("No children")
+  end
+
+  def when_i_click_on_view_aged_out_children
+    find(".nhsuk-details__summary").click
+    check "Children aged out of programmes"
+    click_on "Search"
+  end
+
   def when_i_click_on_a_child
     click_on "SMITH, John"
   end
@@ -249,7 +261,6 @@ describe "Manage children" do
   def then_i_see_the_child
     expect(page).to have_title("JS")
     expect(page).to have_content("SMITH, John")
-    expect(page).to have_content("Cohorts")
     expect(page).to have_content("Sessions")
   end
 
@@ -324,14 +335,6 @@ describe "Manage children" do
   def and_i_see_the_cohort
     expect(page).not_to have_content("No cohorts")
     expect(page).not_to have_content("No sessions")
-  end
-
-  def when_i_click_on_remove_from_cohort
-    click_on "Remove from cohort"
-  end
-
-  def and_i_see_a_removed_from_cohort_message
-    expect(page).to have_content("removed from cohort")
   end
 
   def when_i_go_to_the_dashboard

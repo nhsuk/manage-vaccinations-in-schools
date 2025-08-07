@@ -11,18 +11,25 @@ module MavisCLI
              required: true,
              default: 10,
              desc: "Number of patients to create"
+      option :ods_code,
+             type: :string,
+             default: "A9A5A",
+             desc: "ODS code of the organisation to use for the cohort import"
 
-      def call(patients:)
+      def call(patients:, ods_code:)
         MavisCLI.load_rails
 
         patient_count = patients.to_i
-        puts "Generating cohort import with #{patient_count} patients..."
         progress_bar = MavisCLI.progress_bar(patient_count)
+
+        puts "Generating cohort import for ods code #{ods_code} with" \
+               " #{patient_count} patients..."
 
         result =
           ::Generate::CohortImports.call(
-            patient_count: patient_count,
-            progress_bar: progress_bar
+            ods_code:,
+            patient_count:,
+            progress_bar:
           )
 
         puts "\nCohort import CSV generated: #{result}"

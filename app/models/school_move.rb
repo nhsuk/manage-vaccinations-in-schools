@@ -52,6 +52,7 @@ class SchoolMove < ApplicationRecord
   def confirm!(user: nil)
     ActiveRecord::Base.transaction do
       update_patient!
+      update_archive_reasons!(user:)
       update_sessions!
       create_log_entry!(user:)
       SchoolMove.where(patient:).destroy_all if persisted?
@@ -66,6 +67,26 @@ class SchoolMove < ApplicationRecord
 
   def update_patient!
     patient.update!(home_educated:, school:)
+  end
+
+  def update_archive_reasons!(user:)
+    new_team_id = school&.team&.id || team_id
+
+    patient.archive_reasons.where(team_id: new_team_id).destroy_all
+
+    archive_reasons =
+      patient.teams.find_each.filter_map do |team|
+        next if team.id == new_team_id
+
+        ArchiveReason.new(
+          patient_id:,
+          team_id: team.id,
+          type: "moved_out_of_area",
+          created_by: user
+        )
+      end
+
+    ArchiveReason.import!(archive_reasons, on_duplicate_key_ignore: true)
   end
 
   def update_sessions!

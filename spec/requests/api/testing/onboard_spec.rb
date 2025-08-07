@@ -51,16 +51,16 @@ describe "/api/testing/onboard" do
       it "responds with an error" do
         request
 
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
 
         errors = JSON.parse(response.body)
 
         expect(errors).to eq(
           {
             "clinics" => ["can't be blank"],
+            "organisation.ods_code" => ["can't be blank"],
             "team.careplus_venue_code" => ["can't be blank"],
             "team.name" => ["can't be blank"],
-            "team.ods_code" => ["can't be blank"],
             "team.phone" => ["can't be blank", "is invalid"],
             "team.privacy_notice_url" => ["can't be blank"],
             "team.privacy_policy_url" => ["can't be blank"],

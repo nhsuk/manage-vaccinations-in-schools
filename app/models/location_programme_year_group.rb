@@ -20,7 +20,7 @@
 #  fk_rails_...  (location_id => locations.id) ON DELETE => cascade
 #  fk_rails_...  (programme_id => programmes.id) ON DELETE => cascade
 #
-class Location::ProgrammeYearGroup < ApplicationRecord
+class LocationProgrammeYearGroup < ApplicationRecord
   audited associated_with: :location
 
   belongs_to :location

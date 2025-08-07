@@ -70,31 +70,48 @@ class User < ApplicationRecord
   scope :recently_active,
         -> { where(last_sign_in_at: 1.week.ago..Time.current) }
 
-  enum :fallback_role, { nurse: 0, admin: 1, superuser: 2 }, prefix: true
+  enum :fallback_role,
+       { nurse: 0, admin: 1, superuser: 2, healthcare_assistant: 3 },
+       prefix: true
 
   delegate :fhir_practitioner, to: :fhir_mapper
 
-  def self.find_or_create_from_cis2_oidc(userinfo)
+  def self.find_or_create_from_cis2_oidc(userinfo, teams)
     user =
       User.find_or_initialize_by(
         provider: userinfo[:provider],
         uid: userinfo[:uid]
       )
 
-    user.family_name = userinfo[:extra][:raw_info][:family_name]
-    user.given_name = userinfo[:extra][:raw_info][:given_name]
-    user.email = userinfo[:info][:email]
-    user.session_token =
-      userinfo[:extra][:raw_info][:sid].presence || Devise.friendly_token
+    raw_info = userinfo[:extra][:raw_info]
 
-    user.tap(&:save!)
+    user.assign_attributes(
+      raw_info.slice(:email, :family_name, :given_name).to_h
+    )
+    user.session_token = raw_info[:sid].presence || Devise.friendly_token
+
+    ActiveRecord::Base.transaction do
+      user.save!
+
+      teams.each { |team| user.teams << team unless user.teams.include?(team) }
+
+      user
+    end
+  end
+
+  def selected_organisation
+    @selected_organisation ||=
+      if cis2_info.present?
+        Organisation.find_by(ods_code: cis2_info.dig("selected_org", "code"))
+      end
   end
 
   def selected_team
+    # TODO: Select the right team based on the user's workgroup.
     @selected_team ||=
-      if cis2_info.present?
-        Team.find_by(ods_code: cis2_info.dig("selected_org", "code"))
-      end
+      Team.includes(:location_programme_year_groups, :programmes).find_by(
+        organisation: selected_organisation
+      )
   end
 
   def requires_email_and_password?
@@ -122,6 +139,13 @@ class User < ApplicationRecord
       false
   end
 
+  def is_healthcare_assistant?
+    # TODO: How do we determine this from CIS2?
+    return false if Settings.cis2.enabled
+
+    fallback_role_healthcare_assistant?
+  end
+
   def role_description
     role =
       if is_admin?
@@ -132,7 +156,15 @@ class User < ApplicationRecord
         "Unknown"
       end
 
-    is_superuser? ? "#{role} (superuser)" : role
+    if is_healthcare_assistant? && is_superuser?
+      "#{role} (Healthcare assistant and superuser)"
+    elsif is_healthcare_assistant?
+      "#{role} (Healthcare assistant)"
+    elsif is_superuser?
+      "#{role} (Superuser)"
+    else
+      role
+    end
   end
 
   private

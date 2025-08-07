@@ -30,7 +30,7 @@ class BatchesController < ApplicationController
                   }
     else
       @form.expiry = expiry_validator.date_params_as_struct
-      render :new, status: :unprocessable_entity
+      render :new, status: :unprocessable_content
     end
   end
 
@@ -55,7 +55,7 @@ class BatchesController < ApplicationController
                   }
     else
       @form.expiry = expiry_validator.date_params_as_struct
-      render :edit, status: :unprocessable_entity
+      render :edit, status: :unprocessable_content
     end
   end
 

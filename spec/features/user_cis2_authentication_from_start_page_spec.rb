@@ -9,6 +9,7 @@ describe "User CIS2 authentication", :cis2 do
     when_i_click_the_cis2_login_button
     then_i_see_the_dashboard
     and_i_am_logged_in
+    and_i_am_added_to_the_team
 
     when_i_click_the_change_role_button
     then_i_see_the_dashboard
@@ -26,6 +27,7 @@ describe "User CIS2 authentication", :cis2 do
     when_i_click_the_cis2_login_button
     then_i_see_the_sessions_page
     and_i_am_logged_in
+    and_i_am_added_to_the_team
   end
 
   def given_a_test_team_is_setup_in_mavis_and_cis2
@@ -35,7 +37,7 @@ describe "User CIS2 authentication", :cis2 do
       uid: "123",
       given_name: "Nurse",
       family_name: "Test",
-      org_code: @team.ods_code,
+      org_code: @team.organisation.ods_code,
       org_name: @team.name
     )
   end
@@ -59,6 +61,12 @@ describe "User CIS2 authentication", :cis2 do
   def and_i_am_logged_in
     expect(page).to have_content("TEST, Nurse")
     expect(page).to have_button "Log out"
+  end
+
+  def and_i_am_added_to_the_team
+    user = User.first
+    expect(user).not_to be_nil
+    expect(user.teams).to include(@team)
   end
 
   def when_i_click_the_change_role_button

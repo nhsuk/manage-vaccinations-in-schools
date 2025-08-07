@@ -95,6 +95,7 @@ class VaccinationRecord < ApplicationRecord
 
   has_one :identity_check, autosave: true, dependent: :destroy
   has_one :location, through: :session
+  has_one :organisation, through: :session
   has_one :team, through: :session
   has_one :subteam, through: :session
 
@@ -219,7 +220,9 @@ class VaccinationRecord < ApplicationRecord
 
   delegate :maximum_dose_sequence, to: :programme
 
-  def fhir_mapper = @fhir_mapper ||= FHIRMapper::VaccinationRecord.new(self)
+  def fhir_mapper
+    @fhir_mapper ||= FHIRMapper::VaccinationRecord.new(self)
+  end
 
   def changes_need_to_be_synced_to_nhs_immunisations_api?
     saved_changes.present? && !saved_change_to_nhs_immunisations_api_etag? &&

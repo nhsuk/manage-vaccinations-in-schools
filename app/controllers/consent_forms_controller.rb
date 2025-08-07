@@ -35,20 +35,28 @@ class ConsentFormsController < ApplicationController
   def update_match
     @consent_form.match_with_patient!(@patient, current_user:)
 
-    session = @patient.pending_sessions.first || @consent_form.original_session
+    session =
+      @patient
+        .pending_sessions
+        .has_programmes(@consent_form.programmes)
+        .first || @consent_form.original_session
 
     patient_session =
-      PatientSession.includes_programmes.find_by!(patient: @patient, session:)
+      PatientSession.includes_programmes.find_by(patient: @patient, session:)
+
+    programme = patient_session&.programmes&.first
+
+    heading_link_href =
+      if programme.nil?
+        patient_path(@patient)
+      else
+        session_patient_programme_path(session, @patient, programme)
+      end
 
     flash[:success] = {
       heading: "Consent matched for",
       heading_link_text: @patient.full_name,
       heading_link_href:
-        session_patient_programme_path(
-          session,
-          @patient,
-          patient_session.programmes.first
-        )
     }
 
     redirect_to action: :index
@@ -68,7 +76,7 @@ class ConsentFormsController < ApplicationController
                       "Consent response from #{@consent_form.parent_full_name} archived"
                   }
     else
-      render :archive, status: :unprocessable_entity
+      render :archive, status: :unprocessable_content
     end
   end
 

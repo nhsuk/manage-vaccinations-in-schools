@@ -35,6 +35,30 @@ describe AppConsentSummaryComponent do
     it { should have_content("Notes") }
   end
 
+  it { should_not have_content("Confirmation of vaccination sent to parent?") }
+
+  context "when the child doesn't want the parents to know about the vaccination" do
+    let(:consent) { create(:consent, :given, :self_consent) }
+
+    it do
+      expect(rendered).to have_content(
+        "Confirmation of vaccination sent to parent?\nNo"
+      )
+    end
+  end
+
+  context "when the child wants the parents to know about the vaccination" do
+    let(:consent) do
+      create(:consent, :given, :self_consent, :notify_parents_on_vaccination)
+    end
+
+    it do
+      expect(rendered).to have_content(
+        "Confirmation of vaccination sent to parent?\nYes"
+      )
+    end
+  end
+
   it { should_not have_content("Consent also given for injected vaccine?") }
 
   context "with the flu programme" do

@@ -5,22 +5,20 @@
                                         ]) %>
 <% end %>
 
-<%= h1 page_title: @patient.initials do %>
-  <%= @patient.full_name %>
-<% end %>
+<%= render "patients/header" %>
 
 <%= render AppSecondaryNavigationComponent.new do |nav|
       nav.with_item(href: patient_path(@patient), text: "Child record", selected: true)
       nav.with_item(href: log_patient_path(@patient), text: "Activity log")
     end %>
 
-<%= render AppPatientCardComponent.new(@patient) do %>
-  <%= govuk_button_link_to "Edit child record", edit_patient_path(@patient), secondary: true %>
-<% end %>
-
-<%= render AppCardComponent.new(section: true) do |card| %>
-  <% card.with_heading { "Cohorts" } %>
-  <%= render AppPatientCohortTableComponent.new(@patient, current_user:) %>
+<%= render AppPatientCardComponent.new(@patient, current_team:) do %>
+  <% if @patient.not_archived?(team: current_user.selected_team) %>
+    <div class="app-button-group">
+      <%= govuk_button_link_to "Edit child record", edit_patient_path(@patient), secondary: true %>
+      <%= govuk_button_link_to "Archive child record", new_patient_archive_path(@patient), class: "app-button--secondary-warning" %>
+    </div>
+  <% end %>
 <% end %>
 
 <%= render AppCardComponent.new(section: true) do |card| %>

@@ -136,6 +136,24 @@ describe SchoolMove do
       end
     end
 
+    shared_examples "unarchives the patient" do
+      it "unarchives the patient" do
+        expect(patient.archived?(team:)).to be(true)
+        confirm!
+        expect(patient.archived?(team:)).to be(false)
+      end
+    end
+
+    shared_examples "archives the patient in the original team" do
+      it "archives the patient in the original team" do
+        expect(patient.archived?(team:)).to be(false)
+        expect(patient.archived?(team: new_team)).to be(false)
+        confirm!
+        expect(patient.archived?(team:)).to be(true)
+        expect(patient.archived?(team: new_team)).to be(false)
+      end
+    end
+
     shared_examples "destroys the school move" do
       it "destroys the school move and any others" do
         other_school_move = create(:school_move, :to_school, patient:)
@@ -211,6 +229,72 @@ describe SchoolMove do
           include_examples "creates a log entry"
           include_examples "sets the patient to home-schooled"
           include_examples "adds the patient to the community clinic"
+          include_examples "destroys the school move"
+        end
+      end
+
+      context "with an archived patient" do
+        let(:patient) { create(:patient, team: nil) }
+
+        before { create(:archive_reason, :imported_in_error, patient:, team:) }
+
+        context "to a school with a scheduled session" do
+          let(:school_move) do
+            create(:school_move, :to_school, patient:, school:)
+          end
+
+          let(:school) { create(:school, team:) }
+          let(:new_sessions) do
+            create_list(
+              :session,
+              2,
+              date: session_date + 1.week,
+              location: school,
+              team:,
+              programmes:
+            )
+          end
+
+          include_examples "creates a log entry"
+          include_examples "sets the patient school"
+          include_examples "adds the patient to the new school sessions"
+          include_examples "unarchives the patient"
+          include_examples "destroys the school move"
+        end
+
+        context "to a school with a completed session" do
+          let(:school_move) do
+            create(:school_move, :to_school, patient:, school:)
+          end
+
+          let(:school) { create(:school, team:) }
+          let(:new_sessions) do
+            create_list(
+              :session,
+              2,
+              date: session_date - 1.week,
+              location: school,
+              team:,
+              programmes:
+            )
+          end
+
+          include_examples "creates a log entry"
+          include_examples "sets the patient school"
+          include_examples "adds the patient to the new school sessions"
+          include_examples "unarchives the patient"
+          include_examples "destroys the school move"
+        end
+
+        context "to home-schooled" do
+          let(:school_move) do
+            create(:school_move, :to_home_educated, team:, patient:)
+          end
+
+          include_examples "creates a log entry"
+          include_examples "sets the patient to home-schooled"
+          include_examples "adds the patient to the community clinic"
+          include_examples "unarchives the patient"
           include_examples "destroys the school move"
         end
       end
@@ -304,6 +388,7 @@ describe SchoolMove do
             include_examples "sets the patient school"
             include_examples "removes the patient from the old school sessions"
             include_examples "adds the patient to the new school sessions"
+            include_examples "archives the patient in the original team"
             include_examples "destroys the school move"
           end
 
@@ -413,6 +498,7 @@ describe SchoolMove do
             include_examples "creates a log entry"
             include_examples "sets the patient school"
             include_examples "keeps the patient in the old school sessions"
+            include_examples "archives the patient in the original team"
             include_examples "destroys the school move"
           end
 
@@ -527,6 +613,7 @@ describe SchoolMove do
             include_examples "creates a log entry"
             include_examples "sets the patient school"
             include_examples "removes the patient from the community clinic"
+            include_examples "archives the patient in the original team"
             include_examples "destroys the school move"
           end
 
@@ -652,6 +739,7 @@ describe SchoolMove do
             include_examples "creates a log entry"
             include_examples "sets the patient school"
             include_examples "keeps the patient in the community clinic"
+            include_examples "archives the patient in the original team"
             include_examples "destroys the school move"
           end
 
@@ -768,6 +856,7 @@ describe SchoolMove do
             include_examples "creates a log entry"
             include_examples "sets the patient school"
             include_examples "removes the patient from the community clinic"
+            include_examples "archives the patient in the original team"
             include_examples "destroys the school move"
           end
 
@@ -884,6 +973,7 @@ describe SchoolMove do
             include_examples "creates a log entry"
             include_examples "sets the patient school"
             include_examples "keeps the patient in the community clinic"
+            include_examples "archives the patient in the original team"
             include_examples "destroys the school move"
           end
 

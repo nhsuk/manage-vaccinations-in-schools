@@ -30,7 +30,15 @@ describe Reports::OfflineSessionExporter do
   subject(:call) { described_class.call(session) }
 
   shared_examples "generates a report" do
-    let(:team) { create(:team, :with_generic_clinic, programmes: [programme]) }
+    let(:organisation) { create(:organisation) }
+    let(:team) do
+      create(
+        :team,
+        :with_generic_clinic,
+        organisation:,
+        programmes: [programme]
+      )
+    end
     let(:user) { create(:user, email: "nurse@example.com", team:) }
     let(:subteam) { create(:subteam, team:) }
     let(:session) do
@@ -132,7 +140,7 @@ describe Reports::OfflineSessionExporter do
                 "HEALTH_QUESTION_ANSWERS" => "",
                 "NHS_NUMBER" => patient.nhs_number,
                 "NOTES" => "",
-                "ORGANISATION_CODE" => team.ods_code,
+                "ORGANISATION_CODE" => organisation.ods_code,
                 "PERFORMING_PROFESSIONAL_EMAIL" => "",
                 "PERSON_ADDRESS_LINE_1" => patient.address_line_1,
                 "PERSON_FORENAME" => patient.given_name,
@@ -210,7 +218,7 @@ describe Reports::OfflineSessionExporter do
                 "HEALTH_QUESTION_ANSWERS" => "",
                 "NHS_NUMBER" => patient.nhs_number,
                 "NOTES" => "Some notes.",
-                "ORGANISATION_CODE" => team.ods_code,
+                "ORGANISATION_CODE" => organisation.ods_code,
                 "PERFORMING_PROFESSIONAL_EMAIL" => "nurse@example.com",
                 "PERSON_ADDRESS_LINE_1" => patient.address_line_1,
                 "PERSON_FORENAME" => patient.given_name,
@@ -300,7 +308,7 @@ describe Reports::OfflineSessionExporter do
                 "HEALTH_QUESTION_ANSWERS" => "",
                 "NHS_NUMBER" => patient.nhs_number,
                 "NOTES" => "Some notes.",
-                "ORGANISATION_CODE" => team.ods_code,
+                "ORGANISATION_CODE" => organisation.ods_code,
                 "PERFORMING_PROFESSIONAL_EMAIL" => "nurse@example.com",
                 "PERSON_ADDRESS_LINE_1" => patient.address_line_1,
                 "PERSON_FORENAME" => patient.given_name,
@@ -380,7 +388,7 @@ describe Reports::OfflineSessionExporter do
                 "HEALTH_QUESTION_ANSWERS" => "",
                 "NHS_NUMBER" => patient.nhs_number,
                 "NOTES" => "Some notes.",
-                "ORGANISATION_CODE" => team.ods_code,
+                "ORGANISATION_CODE" => organisation.ods_code,
                 "PERFORMING_PROFESSIONAL_EMAIL" => "nurse@example.com",
                 "PERSON_ADDRESS_LINE_1" => patient.address_line_1,
                 "PERSON_FORENAME" => patient.given_name,
@@ -449,7 +457,7 @@ describe Reports::OfflineSessionExporter do
                 "HEALTH_QUESTION_ANSWERS" => "",
                 "NHS_NUMBER" => patient.nhs_number,
                 "NOTES" => "",
-                "ORGANISATION_CODE" => team.ods_code,
+                "ORGANISATION_CODE" => organisation.ods_code,
                 "PERFORMING_PROFESSIONAL_EMAIL" => "",
                 "PERSON_ADDRESS_LINE_1" => patient.address_line_1,
                 "PERSON_FORENAME" => patient.given_name,
@@ -514,7 +522,7 @@ describe Reports::OfflineSessionExporter do
                 "HEALTH_QUESTION_ANSWERS" => "",
                 "NHS_NUMBER" => patient.nhs_number,
                 "NOTES" => "Some notes.",
-                "ORGANISATION_CODE" => team.ods_code,
+                "ORGANISATION_CODE" => organisation.ods_code,
                 "PERFORMING_PROFESSIONAL_EMAIL" => "nurse@example.com",
                 "PERSON_ADDRESS_LINE_1" => patient.address_line_1,
                 "PERSON_FORENAME" => patient.given_name,
@@ -734,7 +742,7 @@ describe Reports::OfflineSessionExporter do
                 "HEALTH_QUESTION_ANSWERS" => "",
                 "NHS_NUMBER" => patient.nhs_number,
                 "NOTES" => "",
-                "ORGANISATION_CODE" => team.ods_code,
+                "ORGANISATION_CODE" => organisation.ods_code,
                 "PERFORMING_PROFESSIONAL_EMAIL" => "",
                 "PERSON_ADDRESS_LINE_1" => patient.address_line_1,
                 "PERSON_FORENAME" => patient.given_name,
@@ -818,7 +826,7 @@ describe Reports::OfflineSessionExporter do
                 "HEALTH_QUESTION_ANSWERS" => "",
                 "NHS_NUMBER" => patient.nhs_number,
                 "NOTES" => "Some notes.",
-                "ORGANISATION_CODE" => team.ods_code,
+                "ORGANISATION_CODE" => organisation.ods_code,
                 "PERFORMING_PROFESSIONAL_EMAIL" => "nurse@example.com",
                 "PERSON_ADDRESS_LINE_1" => patient.address_line_1,
                 "PERSON_FORENAME" => patient.given_name,

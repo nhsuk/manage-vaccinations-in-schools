@@ -27,6 +27,8 @@ class Reports::ProgrammeVaccinationsExporter
 
   attr_reader :team, :programme, :academic_year, :start_date, :end_date
 
+  delegate :organisation, to: :team
+
   def headers
     %w[
       ORGANISATION_CODE
@@ -195,7 +197,7 @@ class Reports::ProgrammeVaccinationsExporter
     academic_year = session.academic_year
 
     [
-      team.ods_code,
+      organisation.ods_code,
       school_urn(location:, patient:),
       school_name(location:, patient:),
       care_setting(location:),

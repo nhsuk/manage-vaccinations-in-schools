@@ -13,6 +13,17 @@ class PatientMerger
       patient_to_destroy.access_log_entries.update_all(
         patient_id: patient_to_keep.id
       )
+
+      patient_to_keep.archive_reasons.find_each do |archive_reason|
+        unless patient_to_destroy.archive_reasons.exists?(
+                 team_id: archive_reason.team_id
+               )
+          archive_reason.destroy!
+        end
+      end
+
+      patient_to_destroy.archive_reasons.destroy_all
+
       patient_to_destroy.consent_notifications.update_all(
         patient_id: patient_to_keep.id
       )
@@ -42,8 +53,9 @@ class PatientMerger
       )
       patient_to_destroy.triages.update_all(patient_id: patient_to_keep.id)
 
-      vaccination_record_ids = patient_to_destroy.vaccination_records.ids
-      patient_to_destroy.vaccination_records.update_all(
+      vaccination_record_ids =
+        patient_to_destroy.vaccination_records.with_discarded.ids
+      patient_to_destroy.vaccination_records.with_discarded.update_all(
         patient_id: patient_to_keep.id
       )
 
@@ -110,9 +122,7 @@ class PatientMerger
       .find_each(&:sync_to_nhs_immunisations_api)
   end
 
-  def self.call(*args, **kwargs)
-    new(*args, **kwargs).call
-  end
+  def self.call(...) = new(...).call
 
   private_class_method :new
 

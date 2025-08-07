@@ -46,13 +46,14 @@ class PatientSession < ApplicationRecord
 
   has_many :gillick_assessments
   has_many :pre_screenings
+  has_many :session_attendances, dependent: :destroy
   has_many :session_statuses
   has_one :registration_status
 
   has_one :location, through: :session
   has_one :subteam, through: :session
   has_one :team, through: :session
-  has_many :session_attendances, dependent: :destroy
+  has_one :organisation, through: :team
 
   has_many :notes, -> { where(session_id: it.session_id) }, through: :patient
 
@@ -70,6 +71,10 @@ class PatientSession < ApplicationRecord
            through: :patient
 
   has_and_belongs_to_many :immunisation_imports
+
+  scope :archived, ->(team:) { merge(Patient.archived(team:)) }
+
+  scope :not_archived, ->(team:) { merge(Patient.not_archived(team:)) }
 
   scope :notification_not_sent,
         ->(session_date) do
@@ -93,7 +98,7 @@ class PatientSession < ApplicationRecord
 
           # Is the patient eligible for any of those programmes by year group?
           location_programme_year_groups =
-            Location::ProgrammeYearGroup
+            LocationProgrammeYearGroup
               .where("programme_id = session_programmes.programme_id")
               .where("location_id = sessions.location_id")
               .where(

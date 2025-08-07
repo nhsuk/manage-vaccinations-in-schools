@@ -4,7 +4,7 @@
 
 <%= h1 @patient.full_name %>
 
-<%= render AppPatientCardComponent.new(@patient) %>
+<%= render AppPatientCardComponent.new(@patient, current_team:) %>
 
 <%= render AppCardComponent.new do |c| %>
   <% c.with_heading { "Vaccination details" } %>

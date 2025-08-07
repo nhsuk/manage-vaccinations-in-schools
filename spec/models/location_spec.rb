@@ -37,9 +37,11 @@ describe Location do
   subject(:location) { build(:location) }
 
   describe "associations" do
+    it { should have_many(:location_programme_year_groups) }
+
     it do
       expect(location).to have_many(:programmes).through(
-        :programme_year_groups
+        :location_programme_year_groups
       ).order(:type)
     end
   end
@@ -60,7 +62,7 @@ describe Location do
 
       it do
         expect(location).to validate_exclusion_of(:ods_code).in_array(
-          [team.ods_code]
+          [team.organisation.ods_code]
         )
       end
 
@@ -76,14 +78,7 @@ describe Location do
       it { should_not validate_presence_of(:gias_establishment_number) }
       it { should_not validate_presence_of(:gias_local_authority_code) }
 
-      it { should_not validate_presence_of(:ods_code) }
-      it { should validate_uniqueness_of(:ods_code).ignoring_case_sensitivity }
-
-      it do
-        expect(location).to validate_inclusion_of(:ods_code).in_array(
-          [team.ods_code]
-        )
-      end
+      it { should validate_absence_of(:ods_code) }
 
       it { should_not validate_presence_of(:urn) }
       it { should validate_uniqueness_of(:urn) }
@@ -216,7 +211,7 @@ describe Location do
 
       it "doesn't create any programme year groups" do
         expect { create_default_programme_year_groups! }.not_to change(
-          location.programme_year_groups,
+          location.location_programme_year_groups,
           :count
         )
       end
@@ -227,13 +222,13 @@ describe Location do
 
       it "creates only suitable year groups" do
         expect { create_default_programme_year_groups! }.to change(
-          location.programme_year_groups,
+          location.location_programme_year_groups,
           :count
         ).by(4)
 
-        expect(location.programme_year_groups.pluck(:year_group).sort).to eq(
-          (0..3).to_a
-        )
+        expect(
+          location.location_programme_year_groups.pluck(:year_group).sort
+        ).to eq((0..3).to_a)
       end
     end
 
@@ -242,13 +237,13 @@ describe Location do
 
       it "creates only suitable year groups" do
         expect { create_default_programme_year_groups! }.to change(
-          location.programme_year_groups,
+          location.location_programme_year_groups,
           :count
         ).by(12)
 
-        expect(location.programme_year_groups.pluck(:year_group).sort).to eq(
-          (0..11).to_a
-        )
+        expect(
+          location.location_programme_year_groups.pluck(:year_group).sort
+        ).to eq((0..11).to_a)
       end
     end
   end

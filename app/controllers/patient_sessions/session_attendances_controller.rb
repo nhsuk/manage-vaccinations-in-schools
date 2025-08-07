@@ -35,7 +35,7 @@ class PatientSessions::SessionAttendancesController < PatientSessions::BaseContr
                     @patient_session.programmes.first
                   )
     else
-      render :edit, status: :unprocessable_entity
+      render :edit, status: :unprocessable_content
     end
   end
 

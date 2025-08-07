@@ -35,6 +35,20 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_01_143843) do
     t.index ["updated_at"], name: "index_active_record_sessions_on_updated_at"
   end
 
+  create_table "archive_reasons", force: :cascade do |t|
+    t.bigint "team_id", null: false
+    t.bigint "patient_id", null: false
+    t.bigint "created_by_user_id"
+    t.integer "type", null: false
+    t.string "other_details", default: "", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_by_user_id"], name: "index_archive_reasons_on_created_by_user_id"
+    t.index ["patient_id"], name: "index_archive_reasons_on_patient_id"
+    t.index ["team_id", "patient_id"], name: "index_archive_reasons_on_team_id_and_patient_id", unique: true
+    t.index ["team_id"], name: "index_archive_reasons_on_team_id"
+  end
+
   create_table "audits", force: :cascade do |t|
     t.integer "auditable_id"
     t.string "auditable_type"
@@ -511,6 +525,13 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_01_143843) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "organisations", force: :cascade do |t|
+    t.string "ods_code", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["ods_code"], name: "index_organisations_on_ods_code", unique: true
+  end
+
   create_table "parent_relationships", force: :cascade do |t|
     t.bigint "parent_id", null: false
     t.bigint "patient_id", null: false
@@ -760,7 +781,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_01_143843) do
     t.datetime "updated_at", null: false
     t.string "email"
     t.string "privacy_policy_url", null: false
-    t.string "ods_code", null: false
     t.uuid "reply_to_id"
     t.string "phone"
     t.integer "days_before_consent_requests", default: 21, null: false
@@ -769,8 +789,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_01_143843) do
     t.string "careplus_venue_code", null: false
     t.string "privacy_notice_url", null: false
     t.string "phone_instructions"
+    t.bigint "organisation_id", null: false
     t.index ["name"], name: "index_teams_on_name", unique: true
-    t.index ["ods_code"], name: "index_teams_on_ods_code", unique: true
+    t.index ["organisation_id"], name: "index_teams_on_organisation_id"
   end
 
   create_table "teams_users", id: false, force: :cascade do |t|
@@ -883,6 +904,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_01_143843) do
 
   add_foreign_key "access_log_entries", "patients"
   add_foreign_key "access_log_entries", "users"
+  add_foreign_key "archive_reasons", "patients"
+  add_foreign_key "archive_reasons", "teams"
+  add_foreign_key "archive_reasons", "users", column: "created_by_user_id"
   add_foreign_key "batches", "teams"
   add_foreign_key "batches", "vaccines"
   add_foreign_key "batches_immunisation_imports", "batches"
@@ -987,6 +1011,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_01_143843) do
   add_foreign_key "subteams", "teams"
   add_foreign_key "team_programmes", "programmes"
   add_foreign_key "team_programmes", "teams"
+  add_foreign_key "teams", "organisations"
   add_foreign_key "triage", "patients"
   add_foreign_key "triage", "programmes"
   add_foreign_key "triage", "teams"

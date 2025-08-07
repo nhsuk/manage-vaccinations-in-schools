@@ -19,7 +19,7 @@ class Imports::IssuesController < ApplicationController
     if @form.save
       redirect_to imports_issues_path, flash: { success: "Record updated" }
     else
-      render :show, status: :unprocessable_entity and return
+      render :show, status: :unprocessable_content and return
     end
   end
 

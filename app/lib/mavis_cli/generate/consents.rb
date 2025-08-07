@@ -46,7 +46,9 @@ module MavisCLI
         session = Session.find(session_id) if session_id
 
         ::Generate::Consents.call(
-          team: Team.find_by(ods_code: team),
+          # TODO: Select the right team based on an identifier.
+          team:
+            Team.joins(:organisation).find_by(organisation: { ods_code: team }),
           programme: Programme.find_by(type: programme_type),
           session:,
           given: given.to_i,

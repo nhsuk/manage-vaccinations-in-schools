@@ -21,7 +21,7 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     elsif !selected_cis2_org_is_registered?
       redirect_to users_team_not_found_path
     else
-      @user = User.find_or_create_from_cis2_oidc(user_cis2_info)
+      @user = User.find_or_create_from_cis2_oidc(user_cis2_info, teams)
 
       # Force is set to true because the `session_token` might have changed
       # even if the same user is logging in.
@@ -86,12 +86,20 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     end
   end
 
-  def user_cis2_info
-    request.env["omniauth.auth"]
-  end
+  def user_cis2_info = request.env["omniauth.auth"]
 
   def raw_cis2_info
     user_cis2_info["extra"]["raw_info"]
+  end
+
+  def organisation
+    @organisation ||=
+      Organisation.find_by(ods_code: selected_cis2_org["org_code"])
+  end
+
+  def teams
+    # TODO: Select the right team based on the user's workgroup.
+    organisation.teams
   end
 
   def set_cis2_session_info

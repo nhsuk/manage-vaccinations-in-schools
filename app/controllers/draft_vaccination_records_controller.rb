@@ -71,7 +71,7 @@ class DraftVaccinationRecordsController < ApplicationController
 
       unless validator.date_params_valid? && time_valid
         @draft_vaccination_record.errors.add(:performed_at, :invalid)
-        render_wizard nil, status: :unprocessable_entity
+        render_wizard nil, status: :unprocessable_content
       end
     end
   end

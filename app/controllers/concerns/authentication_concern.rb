@@ -32,7 +32,9 @@ module AuthenticationConcern
     end
 
     def selected_cis2_org_is_registered?
-      Team.exists?(ods_code: session["cis2_info"]["selected_org"]["code"])
+      Organisation.exists?(
+        ods_code: session["cis2_info"]["selected_org"]["code"]
+      )
     end
 
     def selected_cis2_workgroup_is_valid?

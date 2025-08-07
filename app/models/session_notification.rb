@@ -27,7 +27,7 @@
 class SessionNotification < ApplicationRecord
   include Sendable
 
-  self.inheritance_column = :nil
+  self.inheritance_column = nil
 
   belongs_to :patient
   belongs_to :session
@@ -108,7 +108,7 @@ class SessionNotification < ApplicationRecord
         sent_by: current_user
       }
 
-      template_name = compute_template_name(type, session.team)
+      template_name = compute_template_name(type, session.organisation)
 
       EmailDeliveryJob.perform_later(template_name, **params)
 
@@ -118,9 +118,9 @@ class SessionNotification < ApplicationRecord
     end
   end
 
-  def self.compute_template_name(type, team)
+  def self.compute_template_name(type, organisation)
     template_names = [
-      :"session_#{type}_#{team.ods_code.downcase}",
+      :"session_#{type}_#{organisation.ods_code.downcase}",
       :"session_#{type}"
     ]
 

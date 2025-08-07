@@ -48,7 +48,10 @@ describe "mavis schools remove-programme-year-group" do
 
   def and_existing_programme_year_groups_exist
     (0..11).to_a.each do |year_group|
-      @school.programme_year_groups.create(programme: @programme, year_group:)
+      @school.location_programme_year_groups.create(
+        programme: @programme,
+        year_group:
+      )
     end
   end
 
@@ -71,7 +74,7 @@ describe "mavis schools remove-programme-year-group" do
   def then_the_year_groups_are_removed_from_the_school
     year_groups =
       @school
-        .programme_year_groups
+        .location_programme_year_groups
         .where(programme: @programme)
         .pluck(:year_group)
 

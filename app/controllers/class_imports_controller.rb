@@ -25,7 +25,7 @@ class ClassImportsController < ApplicationController
 
     @class_import.load_data!
     if @class_import.invalid?
-      render :new, status: :unprocessable_entity and return
+      render :new, status: :unprocessable_content and return
     end
 
     @class_import.save!

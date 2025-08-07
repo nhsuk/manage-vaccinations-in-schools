@@ -28,7 +28,8 @@ namespace :subteams do
     end
 
     ActiveRecord::Base.transaction do
-      team = Team.find_by!(ods_code:)
+      # TODO: Select the right team based on an identifier.
+      team = Team.joins(:organisation).find_by!(organisation: { ods_code: })
 
       subteam = team.subteams.create!(name:, email:, phone:)
 

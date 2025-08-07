@@ -48,7 +48,57 @@
 #
 
 describe Patient do
+  describe "associations" do
+    it { should have_many(:archive_reasons) }
+  end
+
   describe "scopes" do
+    describe "#archived" do
+      subject(:scope) { described_class.archived(team:) }
+
+      let(:patient) { create(:patient) }
+      let(:team) { create(:team) }
+
+      context "without an archive reason" do
+        it { should_not include(patient) }
+      end
+
+      context "with an archive reason for the team" do
+        before { create(:archive_reason, :moved_out_of_area, team:, patient:) }
+
+        it { should include(patient) }
+      end
+
+      context "with an archive reason for a different team" do
+        before { create(:archive_reason, :imported_in_error, patient:) }
+
+        it { should_not include(patient) }
+      end
+    end
+
+    describe "#not_archived" do
+      subject(:scope) { described_class.not_archived(team:) }
+
+      let(:patient) { create(:patient) }
+      let(:team) { create(:team) }
+
+      context "without an archive reason" do
+        it { should include(patient) }
+      end
+
+      context "with an archive reason for the team" do
+        before { create(:archive_reason, :moved_out_of_area, team:, patient:) }
+
+        it { should_not include(patient) }
+      end
+
+      context "with an archive reason for a different team" do
+        before { create(:archive_reason, :imported_in_error, patient:) }
+
+        it { should include(patient) }
+      end
+    end
+
     describe "#appear_in_programmes" do
       subject(:scope) do
         described_class.appear_in_programmes(programmes, academic_year:)
@@ -147,6 +197,108 @@ describe Patient do
           let(:programmes) { [hpv_programme] }
 
           it { should_not include(patient) }
+        end
+      end
+    end
+
+    describe "#not_appear_in_programmes" do
+      subject(:scope) do
+        described_class.not_appear_in_programmes(programmes, academic_year:)
+      end
+
+      let(:programmes) { create_list(:programme, 1, :td_ipv) }
+      let(:academic_year) { AcademicYear.current }
+
+      it { should be_empty }
+
+      context "with a patient in no sessions" do
+        let(:patient) { create(:patient) }
+
+        it { should include(patient) }
+      end
+
+      context "in a session with the right year group" do
+        let(:session) { create(:session, programmes:) }
+
+        before { create(:patient, session:, year_group: 9) }
+
+        it { should be_empty }
+      end
+
+      context "in a session but the wrong year group" do
+        let(:session) { create(:session, programmes:) }
+
+        let(:patient) { create(:patient, session:, year_group: 8) }
+
+        it { should include(patient) }
+      end
+
+      context "in a session with the right year group for the programme but not the location" do
+        let(:location) { create(:school, :secondary) }
+        let(:session) { create(:session, location:, programmes:) }
+        let(:patient) { create(:patient, session:, year_group: 9) }
+
+        before do
+          programmes.each do |programme|
+            create(
+              :location_programme_year_group,
+              programme:,
+              location:,
+              year_group: 10
+            )
+          end
+        end
+
+        it { should include(patient) }
+      end
+
+      context "in multiple sessions with the right year group for one programme" do
+        let(:flu_programme) { create(:programme, :flu) }
+        let(:hpv_programme) { create(:programme, :hpv) }
+
+        let(:location) do
+          create(:school, programmes: [flu_programme, hpv_programme])
+        end
+
+        # Year 4 is eligible for flu only.
+        let!(:patient) { create(:patient, year_group: 4) }
+
+        # Year 9 is eligible for flu and HPV only.
+        let(:another_patient) { create(:patient, year_group: 9) }
+
+        let(:flu_session) do
+          create(:session, location:, programmes: [flu_programme])
+        end
+        let(:hpv_session) do
+          create(:session, location:, programmes: [hpv_programme])
+        end
+
+        before do
+          create(:patient_session, patient:, session: flu_session)
+          create(:patient_session, patient:, session: hpv_session)
+
+          create(
+            :patient_session,
+            patient: another_patient,
+            session: flu_session
+          )
+          create(
+            :patient_session,
+            patient: another_patient,
+            session: hpv_session
+          )
+        end
+
+        context "for the right programme" do
+          let(:programmes) { [flu_programme] }
+
+          it { should be_empty }
+        end
+
+        context "for the wrong programme" do
+          let(:programmes) { [hpv_programme] }
+
+          it { should include(patient) }
         end
       end
     end
@@ -416,8 +568,118 @@ describe Patient do
     end
   end
 
+  describe "#archived?" do
+    subject(:archived?) { patient.archived?(team:) }
+
+    let(:patient) { create(:patient) }
+    let(:team) { create(:team) }
+
+    context "without an archive reason" do
+      it { should be(false) }
+    end
+
+    context "with an archive reason for the team" do
+      before { create(:archive_reason, :moved_out_of_area, team:, patient:) }
+
+      it { should be(true) }
+    end
+
+    context "with an archive reason for a different team" do
+      before { create(:archive_reason, :imported_in_error, patient:) }
+
+      it { should be(false) }
+    end
+  end
+
+  describe "#not_archived?" do
+    subject(:not_archived?) { patient.not_archived?(team:) }
+
+    let(:patient) { create(:patient) }
+    let(:team) { create(:team) }
+
+    context "without an archive reason" do
+      it { should be(true) }
+    end
+
+    context "with an archive reason for the team" do
+      before { create(:archive_reason, :moved_out_of_area, team:, patient:) }
+
+      it { should be(false) }
+    end
+
+    context "with an archive reason for a different team" do
+      before { create(:archive_reason, :imported_in_error, patient:) }
+
+      it { should be(true) }
+    end
+  end
+
+  describe "#show_year_group?" do
+    subject { patient.show_year_group?(team:) }
+
+    let(:programmes) { [create(:programme, :flu), create(:programme, :hpv)] }
+    let(:team) { create(:team, programmes:) }
+    let(:school) { create(:school, team:) }
+
+    context "outside the preparation period" do
+      around { |example| travel_to(Date.new(2025, 7, 31)) { example.run } }
+
+      context "for a year 1" do
+        let(:patient) { create(:patient, school:, year_group: 1) }
+
+        it { should be(true) }
+      end
+
+      context "for a year 7" do
+        let(:patient) { create(:patient, school:, year_group: 7) }
+
+        it { should be(true) }
+      end
+
+      context "for a year 11" do
+        let(:patient) { create(:patient, school:, year_group: 11) }
+
+        it { should be(true) }
+      end
+
+      context "for a year 12" do
+        let(:patient) { create(:patient, school:, year_group: 12) }
+
+        it { should be(false) }
+      end
+    end
+
+    context "inside the preparation period" do
+      around { |example| travel_to(Date.new(2025, 8, 1)) { example.run } }
+
+      context "for a year 1" do
+        let(:patient) { create(:patient, school:, year_group: 1) }
+
+        it { should be(true) }
+      end
+
+      context "for a year 7" do
+        let(:patient) { create(:patient, school:, year_group: 7) }
+
+        it { should be(true) }
+      end
+
+      context "for a year 11" do
+        let(:patient) { create(:patient, school:, year_group: 11) }
+
+        it { should be(false) }
+      end
+
+      context "for a year 12" do
+        let(:patient) { create(:patient, school:, year_group: 12) }
+
+        it { should be(false) }
+      end
+    end
+  end
+
   describe "#initials" do
-    subject(:initials) { patient.initials }
+    subject { patient.initials }
 
     let(:patient) { create(:patient, given_name: "John", family_name: "Doe") }
 
@@ -549,6 +811,17 @@ describe Patient do
           expect(session.patients).to include(patient)
           update_from_pds!
           expect(session.patients).not_to include(patient)
+        end
+
+        it "archives the patient" do
+          expect { update_from_pds! }.to change(
+            patient.archive_reasons,
+            :count
+          ).from(0).to(1)
+
+          archive_reason = patient.archive_reasons.first
+          expect(archive_reason).to be_deceased
+          expect(archive_reason.team_id).to eq(session.team_id)
         end
       end
     end

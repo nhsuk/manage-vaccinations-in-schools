@@ -91,7 +91,7 @@ class VaccinateForm
     draft_vaccination_record.patient_id = patient_session.patient_id
     draft_vaccination_record.performed_at = Time.current
     draft_vaccination_record.performed_by_user = current_user
-    draft_vaccination_record.performed_ods_code = team.ods_code
+    draft_vaccination_record.performed_ods_code = organisation.ods_code
     draft_vaccination_record.programme = programme
     draft_vaccination_record.session_id = patient_session.session_id
 
@@ -100,7 +100,7 @@ class VaccinateForm
 
   private
 
-  delegate :team, to: :patient_session
+  delegate :organisation, to: :patient_session
 
   def administered? = vaccine_method != "none"
 

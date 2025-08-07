@@ -48,7 +48,7 @@ FactoryBot.define do
         {
           "selected_org" => {
             "name" => team.name,
-            "code" => team.ods_code
+            "code" => team.organisation.ods_code
           },
           "selected_role" => {
             "name" => selected_role_name,
@@ -84,6 +84,10 @@ FactoryBot.define do
     trait :superuser do
       selected_role_workgroups { %w[schoolagedimmunisations mavissuperusers] }
       fallback_role { :superuser }
+    end
+
+    trait :healthcare_assistant do
+      fallback_role { :healthcare_assistant }
     end
 
     trait :signed_in do

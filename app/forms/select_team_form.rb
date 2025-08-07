@@ -16,7 +16,7 @@ class SelectTeamForm
     request_session["cis2_info"] = {
       "selected_org" => {
         "name" => team.name,
-        "code" => team.ods_code
+        "code" => organisation.ods_code
       },
       "selected_role" => {
         "code" => User::CIS2_NURSE_ROLE,
@@ -29,7 +29,9 @@ class SelectTeamForm
 
   private
 
-  def team = current_user.teams.find(team_id)
+  def team = current_user.teams.includes(:organisation).find(team_id)
+
+  delegate :organisation, to: :team
 
   def team_id_values = current_user.teams.pluck(:id)
 end

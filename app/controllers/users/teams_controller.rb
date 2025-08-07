@@ -23,7 +23,7 @@ class Users::TeamsController < ApplicationController
     if @form.save
       redirect_to dashboard_path
     else
-      render :new, status: :unprocessable_entity
+      render :new, status: :unprocessable_content
     end
   end
 

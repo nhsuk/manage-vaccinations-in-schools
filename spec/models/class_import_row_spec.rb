@@ -131,6 +131,55 @@ describe ClassImportRow do
     end
   end
 
+  describe "#to_school_move" do
+    subject { class_import_row.to_school_move(patient) }
+
+    let(:data) { valid_data }
+
+    let(:patient) { class_import_row.to_patient }
+
+    context "without a date of death" do
+      it { should_not be_nil }
+    end
+
+    context "with a date of death" do
+      before { patient.update!(date_of_death: today) }
+
+      it { should be_nil }
+    end
+
+    context "with an existing patient that was previously archived" do
+      subject(:school_move) do
+        class_import_row.to_school_move(existing_patient)
+      end
+
+      let(:existing_patient) do
+        create(
+          :patient,
+          address_postcode: "SW1A 1AA",
+          family_name: "Smith",
+          gender_code: "male",
+          given_name: "Jimmy",
+          nhs_number: "9990000018",
+          session:
+        )
+      end
+
+      let(:data) { valid_data }
+
+      before do
+        create(
+          :archive_reason,
+          :moved_out_of_area,
+          team:,
+          patient: existing_patient
+        )
+      end
+
+      it { should_not be_nil }
+    end
+  end
+
   describe "#to_parents" do
     subject(:parents) { class_import_row.to_parents }
 

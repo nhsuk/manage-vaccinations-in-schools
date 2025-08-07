@@ -59,7 +59,7 @@ class Sessions::RecordController < ApplicationController
       @todays_batch = Batch.new
       @todays_batch.errors.add(:id, "Select a default batch for this session")
 
-      render :batch, status: :unprocessable_entity
+      render :batch, status: :unprocessable_content
     end
   end
 

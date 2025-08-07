@@ -1,11 +1,20 @@
 # frozen_string_literal: true
 
 class AppChildSummaryComponent < ViewComponent::Base
-  def initialize(child, show_parents: false, change_links: {}, remove_links: {})
+  def initialize(
+    child,
+    current_team: nil,
+    show_parents: false,
+    show_school_and_year_group: true,
+    change_links: {},
+    remove_links: {}
+  )
     super
 
     @child = child
+    @current_team = current_team
     @show_parents = show_parents
+    @show_school_and_year_group = show_school_and_year_group
     @change_links = change_links
     @remove_links = remove_links
   end
@@ -25,6 +34,14 @@ class AppChildSummaryComponent < ViewComponent::Base
           )
         end
       end
+
+      if archive_reason
+        summary_list.with_row do |row|
+          row.with_key { "Archive reason" }
+          row.with_value { format_archive_reason }
+        end
+      end
+
       summary_list.with_row do |row|
         row.with_key { "Full name" }
         row.with_value { format_full_name }
@@ -57,14 +74,16 @@ class AppChildSummaryComponent < ViewComponent::Base
           row.with_value { format_address }
         end
       end
-      summary_list.with_row do |row|
-        row.with_key { "School" }
-        row.with_value { format_school }
-      end
-      if @child.respond_to?(:year_group)
+      if @show_school_and_year_group
         summary_list.with_row do |row|
-          row.with_key { "Year group" }
-          row.with_value { format_year_group }
+          row.with_key { "School" }
+          row.with_value { format_school }
+        end
+        if @child.respond_to?(:year_group)
+          summary_list.with_row do |row|
+            row.with_key { "Year group" }
+            row.with_value { format_year_group }
+          end
         end
       end
       if (gp_practice = @child.try(:gp_practice))
@@ -112,8 +131,25 @@ class AppChildSummaryComponent < ViewComponent::Base
 
   def academic_year = AcademicYear.current
 
+  def archive_reason
+    @archive_reason ||=
+      if @current_team
+        ArchiveReason.find_by(team: @current_team, patient: @child)
+      end
+  end
+
   def format_nhs_number
     highlight_if(helpers.patient_nhs_number(@child), @child.nhs_number_changed?)
+  end
+
+  def format_archive_reason
+    type_string = archive_reason.human_enum_name(:type)
+
+    if archive_reason.other?
+      "#{type_string}: #{archive_reason.other_details}"
+    else
+      type_string
+    end
   end
 
   def format_full_name
