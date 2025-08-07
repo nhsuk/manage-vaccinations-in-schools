@@ -63,6 +63,14 @@ module AuthenticationConcern
       cis2_info.is_support?
     end
 
+    def user_is_support_without_pii_access?
+      cis2_info.is_support_without_pii_access?
+    end
+
+    def user_is_support_with_pii_access?
+      cis2_info.is_support_with_pii_access?
+    end
+
     def path_is_support?
       request.path.start_with?("/inspect")
     end
@@ -113,8 +121,8 @@ module AuthenticationConcern
 
         unless authenticated
           request_http_basic_authentication "Application", <<~MESSAGE
-        Access is currently restricted to authorised users only.
-      MESSAGE
+          Access is currently restricted to authorised users only.
+          MESSAGE
         end
       end
     end
