@@ -32,17 +32,38 @@ class AppPatientProgrammesTableComponent < ViewComponent::Base
   def rows_for_programme(programme)
     if programme.seasonal?
       eligible_year_groups = eligible_year_groups_for(programme:)
+      rows = []
 
-      AcademicYear.all.filter_map do |academic_year|
+      AcademicYear.all.each do |academic_year|
         year_group = patient.year_group(academic_year:)
         next unless year_group.in?(eligible_year_groups)
 
-        [
-          name_for_programme(programme:, academic_year:),
-          status_for_programme,
-          notes_for_programme(programme:, academic_year:)
-        ]
+        if vaccinated_for_academic_year?(programme:, academic_year:)
+          vaccination_records(programme:).each do |vaccination_record|
+            rows << [
+              name_for_programme(
+                programme:,
+                academic_year:,
+                vaccination_record:
+              ),
+              status_for_programme(vaccination_record:),
+              notes_for_programme(
+                programme:,
+                academic_year:,
+                vaccination_record:
+              )
+            ]
+          end
+        else
+          rows << [
+            name_for_programme(programme:, academic_year:),
+            status_for_programme,
+            notes_for_programme(programme:, academic_year:)
+          ]
+        end
       end
+
+      rows
     else
       academic_year = AcademicYear.current
 
@@ -88,8 +109,10 @@ class AppPatientProgrammesTableComponent < ViewComponent::Base
   def status_for_programme(vaccination_record: nil)
     if vaccinated?(vaccination_record)
       govuk_tag(text: "Vaccinated", colour: "green")
+    elsif vaccination_record
+      govuk_tag(text: vaccination_record.outcome.humanize, colour: "grey")
     else
-      "—"
+      "No outcome yet"
     end
   end
 
@@ -111,7 +134,7 @@ class AppPatientProgrammesTableComponent < ViewComponent::Base
         earliest_academic_year.to_academic_year_date_range.begin
 
       if eligibility_date.future?
-        "Eligibility starts #{eligibility_date.to_fs(:long)}"
+        "Selected for the Year (#{eligibility_date.to_fs(:long)} to 2026) HPV cohort}"
       else
         "Eligibility started #{eligibility_date.to_fs(:long)}"
       end
@@ -122,12 +145,12 @@ class AppPatientProgrammesTableComponent < ViewComponent::Base
     vaccination_record && vaccination_record.outcome == "administered"
   end
 
+  def vaccinated_for_academic_year?(programme:, academic_year:)
+    patient.vaccination_statuses.vaccinated.exists?(programme:, academic_year:)
+  end
+
   def vaccination_records(programme:)
-    @vaccination_records ||=
-      patient
-        .vaccination_records
-        .where(outcome: %w[administered already_had])
-        .order(:performed_at)
+    @vaccination_records ||= patient.vaccination_records.order(:performed_at)
 
     @vaccination_records.select { it.programme_id == programme.id }
   end
