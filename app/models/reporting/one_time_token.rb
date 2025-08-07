@@ -39,10 +39,12 @@ class Reporting::OneTimeToken < ApplicationRecord
   end
 
   def self.find_or_generate_for!(user:, cis2_info: {})
-    token = where(user_id: user.id).first
-    token.delete if token&.expired?
+    transaction do
+      token = find_by(user_id: user.id)
+      token.delete if token&.expired?
 
-    token || generate!(user_id: user.id, cis2_info:)
+      token || generate!(user_id: user.id, cis2_info:)
+    end
   end
 
   def expired?

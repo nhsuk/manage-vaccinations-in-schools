@@ -37,7 +37,11 @@ class API::Reporting::OneTimeTokensController < API::Reporting::BaseController
   end
 
   def jwt(token)
-    JWT.encode(jwt_payload(token), Settings.reporting_api.client_app.secret, "HS512")
+    JWT.encode(
+      jwt_payload(token),
+      Settings.reporting_api.client_app.secret,
+      "HS512"
+    )
   end
 
   def ensure_reporting_api_feature_enabled

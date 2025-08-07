@@ -17,8 +17,7 @@ module AuthenticationConcern
 
     def authenticate_user!
       if !user_signed_in?
-        if request.path != start_path &&
-             request.path != new_users_organisations_path
+        if request.path != start_path && request.path != new_users_teams_path
           store_location_for(:user, request.fullpath)
         end
 
@@ -118,7 +117,7 @@ module AuthenticationConcern
       urls += [stored_location_for(scope), dashboard_path]
       urls.compact.find do
         is_valid_redirect?(it) && (it != request.fullpath) &&
-          (it != new_users_organisations_path)
+          (it != new_users_teams_path)
       end
     end
 

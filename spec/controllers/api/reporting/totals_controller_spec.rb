@@ -3,8 +3,8 @@
 require "spec_helper"
 
 RSpec.describe API::Reporting::TotalsController do
-  let(:user) { create(:user) }
-  let(:org) { user.organisations.first }
+  let(:team) { create(:team, :with_one_nurse) }
+  let(:user) { team.users.first }
 
   let(:valid_payload) do
     {
@@ -12,8 +12,8 @@ RSpec.describe API::Reporting::TotalsController do
         user: user.as_json,
         cis2_info: {
           selected_org: {
-            name: org.name,
-            code: org.ods_code
+            name: team.name,
+            code: team.organisation.ods_code
           },
           selected_role: {
             code: "S8000:G8000:R8001",

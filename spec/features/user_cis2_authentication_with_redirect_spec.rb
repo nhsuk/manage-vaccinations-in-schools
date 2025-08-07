@@ -13,10 +13,8 @@ describe "User CIS2 authentication" do
     and_i_am_logged_in
   end
 
-  def given_a_test_team_is_setup_in_mavis_and_cis2
-    @team = create :team
   scenario "being redirected to sign-in from the reporting UI" do
-    given_a_test_organisation_is_setup_in_mavis_and_cis2
+    given_a_test_team_is_setup_in_mavis_and_cis2
     and_the_reporting_api_feature_flag_is_enabled
     when_i_go_to_the_start_page_with_a_redirect_uri_param_that_matches_the_reporting_app
 
@@ -26,7 +24,7 @@ describe "User CIS2 authentication" do
   end
 
   scenario "being redirected after sign-in when the reporting app feature flag is disabled" do
-    given_a_test_organisation_is_setup_in_mavis_and_cis2
+    given_a_test_team_is_setup_in_mavis_and_cis2
     and_the_reporting_api_feature_flag_is_not_enabled
     when_i_go_to_the_start_page_with_a_redirect_uri_param_that_matches_the_reporting_app
 
@@ -35,15 +33,15 @@ describe "User CIS2 authentication" do
   end
 
   scenario "someone has supplied their own external redirect url" do
-    given_a_test_organisation_is_setup_in_mavis_and_cis2
+    given_a_test_team_is_setup_in_mavis_and_cis2
     when_i_go_to_the_start_page_with_a_redirect_uri_param_that_does_not_match_the_reporting_app
 
     when_i_click_the_cis2_login_button
     then_i_see_the_dashboard
   end
 
-  def given_a_test_organisation_is_setup_in_mavis_and_cis2
-    @organisation = create :organisation
+  def given_a_test_team_is_setup_in_mavis_and_cis2
+    @team = create :team
 
     mock_cis2_auth(
       uid: "123",

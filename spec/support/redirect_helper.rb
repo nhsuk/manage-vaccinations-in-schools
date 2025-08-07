@@ -28,7 +28,8 @@ module RedirectHelper
   end
 
   def reporting_app_url(path = "/")
-    root = Settings.reporting_api.client_app.root_url || "http://localhost:5001/"
+    root =
+      Settings.reporting_api.client_app.root_url || "http://localhost:5001/"
     URI.join(root, path).to_s
   end
 end
