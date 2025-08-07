@@ -135,6 +135,8 @@ module CSVImportable
             row_number: _2
           )
         end
+
+      changesets.each { ProcessPatientChangesetsJob.perform_later(it) }
       return
     end
 
