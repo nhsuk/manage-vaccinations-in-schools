@@ -147,7 +147,7 @@ describe "Parental consent" do
   end
 
   def and_the_session_outcome_is_could_not_vaccinate
-    click_on "Session outcomes"
+    within(".app-secondary-navigation") { click_on "Children" }
     choose "Refused vaccine"
     click_on "Update results"
     expect(page).to have_content(@child.full_name)
@@ -157,9 +157,7 @@ describe "Parental consent" do
     click_on "Programmes", match: :first
     click_on "HPV", match: :first
 
-    within ".app-secondary-navigation" do
-      click_on "Children"
-    end
+    within(".app-secondary-navigation") { click_on "Children" }
 
     choose "Could not vaccinate"
     click_on "Update results"

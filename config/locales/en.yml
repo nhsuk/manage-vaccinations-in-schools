@@ -632,12 +632,12 @@ en:
     index:
       title: Sessions
     tabs:
-      overview: Overview
       consent: Consent
-      triage: Triage
-      register: Register
+      overview: Overview
+      patients: Children
       record: Record vaccinations
-      outcome: Session outcomes
+      register: Register
+      triage: Triage
   table:
     no_filtered_results: We couldn’t find any children that matched your filters.
     no_results: No results

@@ -206,6 +206,18 @@ class PatientSession < ApplicationRecord
           )
         end
 
+  scope :has_vaccination_status,
+        ->(status, programme:) do
+          joins(:session).where(
+            Patient::VaccinationStatus
+              .where("patient_id = patient_sessions.patient_id")
+              .where("academic_year = sessions.academic_year")
+              .where(status:, programme:)
+              .arel
+              .exists
+          )
+        end
+
   scope :has_vaccine_method,
         ->(vaccine_method, programme:) do
           joins(:session).where(

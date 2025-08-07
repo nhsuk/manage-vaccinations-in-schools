@@ -203,7 +203,7 @@ describe "Parental consent create patient" do
     end
     click_link "Pilot School"
 
-    click_on "Session outcomes"
+    within(".app-secondary-navigation") { click_on "Children" }
   end
 
   def then_the_patient_should_be_ready_to_vaccinate

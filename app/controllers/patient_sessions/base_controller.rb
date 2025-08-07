@@ -55,7 +55,7 @@ class PatientSessions::BaseController < ApplicationController
     return_to = params[:return_to]
     return nil if return_to.blank?
 
-    known_return_to = %w[consent triage register record outcome]
+    known_return_to = %w[patients consent triage register record]
     return unless return_to.in?(known_return_to)
 
     @breadcrumb_item = {

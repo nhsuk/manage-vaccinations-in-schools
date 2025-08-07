@@ -13,6 +13,12 @@
       )
     
       nav.with_item(
+        href: session_patients_path(@session),
+        text: t("sessions.tabs.patients"),
+        selected: request.path == session_patients_path(@session),
+      )
+    
+      nav.with_item(
         href: session_consent_path(@session),
         text: t("sessions.tabs.consent"),
         selected: request.path == session_consent_path(@session),
@@ -36,11 +42,5 @@
         href: session_record_path(@session),
         text: t("sessions.tabs.record"),
         selected: request.path == session_record_path(@session),
-      )
-    
-      nav.with_item(
-        href: session_outcome_path(@session),
-        text: t("sessions.tabs.outcome"),
-        selected: request.path == session_outcome_path(@session),
       )
     end %>

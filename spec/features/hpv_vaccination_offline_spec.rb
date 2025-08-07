@@ -383,16 +383,15 @@ describe "HPV vaccination" do
   end
 
   def then_i_see_the_uploaded_vaccination_outcomes_reflected_in_the_session
-    click_on "Session outcomes"
-
-    choose "Vaccinated"
+    within(".app-secondary-navigation") { click_on "Children" }
+    choose "Vaccinated", match: :first
     click_on "Update results"
 
     click_on @vaccinated_patient.full_name
 
     expect(page).to have_content("Vaccinated")
 
-    session_url = current_url
+    patient_url = current_url
 
     click_on "1 February 2024"
     expect(page).to have_content("Gardasil 9")
@@ -404,8 +403,8 @@ describe "HPV vaccination" do
     )
     expect(page).to have_content("SiteLeft arm (upper position)")
 
-    visit session_url
-    click_on "Session outcomes"
+    visit patient_url
+    within(".nhsuk-breadcrumb__list") { click_on "Children" }
     choose "Absent from session"
     click_on "Update results"
 
@@ -414,9 +413,9 @@ describe "HPV vaccination" do
     expect(page).to have_content("No outcome yet")
     expect(page).to have_content("Absent from session")
 
-    visit session_url
-    click_on "Session outcomes"
-    choose "Vaccinated"
+    visit patient_url
+    within(".nhsuk-breadcrumb__list") { click_on "Children" }
+    choose "Vaccinated", match: :first
     click_on "Update results"
 
     click_on @restricted_vaccinated_patient.full_name

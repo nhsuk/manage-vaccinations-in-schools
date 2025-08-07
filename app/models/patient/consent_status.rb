@@ -31,13 +31,17 @@ class Patient::ConsentStatus < ApplicationRecord
            -> { not_invalidated.response_provided.includes(:parent, :patient) },
            through: :patient
 
+  has_many :vaccination_records,
+           -> { kept.order(performed_at: :desc) },
+           through: :patient
+
   scope :has_vaccine_method,
         ->(vaccine_method) do
           where("vaccine_methods[1] = ?", vaccine_methods.fetch(vaccine_method))
         end
 
   enum :status,
-       { no_response: 0, given: 1, refused: 2, conflicts: 3 },
+       { no_response: 0, given: 1, refused: 2, conflicts: 3, not_required: 4 },
        default: :no_response,
        validate: true
 
@@ -51,8 +55,10 @@ class Patient::ConsentStatus < ApplicationRecord
         :refused
       elsif status_should_be_conflicts?
         :conflicts
-      else
+      elsif status_should_be_no_response?
         :no_response
+      else
+        :not_required
       end
 
     self.vaccine_methods = (agreed_vaccine_methods if status_should_be_given?)
@@ -62,16 +68,32 @@ class Patient::ConsentStatus < ApplicationRecord
 
   private
 
+  def vaccinated?
+    @vaccinated ||=
+      VaccinatedCriteria.call(
+        programme:,
+        academic_year:,
+        patient:,
+        vaccination_records:
+      )
+  end
+
   def status_should_be_given?
+    return false if vaccinated?
+
     consents_for_status.any? && consents_for_status.all?(&:response_given?) &&
       agreed_vaccine_methods.present?
   end
 
   def status_should_be_refused?
+    return false if vaccinated?
+
     latest_consents.any? && latest_consents.all?(&:response_refused?)
   end
 
   def status_should_be_conflicts?
+    return false if vaccinated?
+
     consents_for_status =
       (self_consents.any? ? self_consents : parental_consents)
 
@@ -83,6 +105,8 @@ class Patient::ConsentStatus < ApplicationRecord
     consents_for_status.any? && consents_for_status.all?(&:response_given?) &&
       agreed_vaccine_methods.blank?
   end
+
+  def status_should_be_no_response? = !vaccinated?
 
   def agreed_vaccine_methods
     @agreed_vaccine_methods ||=

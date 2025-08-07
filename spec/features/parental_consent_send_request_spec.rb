@@ -38,6 +38,8 @@ describe "Parental consent" do
 
     @parent = create(:parent)
     @patient = create(:patient, session: @session, parents: [@parent])
+
+    StatusUpdater.call
   end
 
   def and_i_am_signed_in

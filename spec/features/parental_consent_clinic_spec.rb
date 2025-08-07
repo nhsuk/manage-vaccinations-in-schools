@@ -275,7 +275,7 @@ describe "Parental consent" do
       click_on "Community clinic"
     end
 
-    click_on "Session outcome"
+    within(".app-secondary-navigation") { click_on "Children" }
     click_on @child.full_name
   end
 

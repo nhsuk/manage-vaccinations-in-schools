@@ -108,7 +108,7 @@ describe "HPV vaccination" do
   end
 
   def when_i_go_to_the_patient
-    click_on "Session outcomes"
+    within(".app-secondary-navigation") { click_on "Children" }
     click_on @patient.full_name, match: :first
   end
 

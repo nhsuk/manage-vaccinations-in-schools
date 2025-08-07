@@ -58,20 +58,14 @@ describe "User authorisation" do
     visit "/dashboard"
     click_on "Programmes", match: :first
     click_on "HPV", match: :first
-    within ".app-secondary-navigation" do
-      click_on "Sessions"
-    end
+    within(".app-secondary-navigation") { click_on "Sessions" }
     click_on "Pilot School"
-    click_on "Consent"
+    within(".app-secondary-navigation") { click_on "Children" }
   end
 
   def then_i_should_only_see_my_patients
     expect(page).to have_content(@child.full_name)
     expect(page).not_to have_content(@other_child.full_name)
-  end
-
-  def when_i_go_to_the_consent_page_of_another_team
-    visit "/sessions/#{@other_session.id}/consent"
   end
 
   def then_i_should_see_page_not_found
