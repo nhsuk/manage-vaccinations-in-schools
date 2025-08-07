@@ -37,6 +37,13 @@ class Patient::VaccinationStatus < ApplicationRecord
            -> { kept.order(performed_at: :desc) },
            through: :patient
 
+  has_one :patient_session
+
+  has_one :session_attendance,
+          -> { today },
+          through: :patient,
+          source: :session_attendances
+
   enum :status,
        { none_yet: 0, vaccinated: 1, could_not_vaccinate: 2 },
        default: :none_yet,
@@ -50,6 +57,7 @@ class Patient::VaccinationStatus < ApplicationRecord
 
   def assign_status
     self.status = generator.status
+    self.latest_session_status = session_generator&.status || :none_yet
   end
 
   private
@@ -64,5 +72,20 @@ class Patient::VaccinationStatus < ApplicationRecord
         triages:,
         vaccination_records:
       )
+  end
+
+  def session_generator
+    @session_generator ||=
+      if (session_id = vaccination_records.first&.session_id)
+        StatusGenerator::Session.new(
+          session_id:,
+          academic_year:,
+          session_attendance:,
+          programme_id:,
+          consents:,
+          triages:,
+          vaccination_records:
+        )
+      end
   end
 end
