@@ -2,7 +2,7 @@
 
 describe Generate::CohortImports do
   before do
-    team = create(:team, workgroup: "A9A5A")
+    team = create(:team, ods_code: "A9A5A")
     programme = create(:programme, :hpv)
     location =
       create(:school, :secondary, team:, name: "Test School", urn: "31337")
