@@ -4,55 +4,39 @@ class AppNoticesTableComponent < ViewComponent::Base
   def initialize(
     deceased_patients:,
     invalidated_patients:,
-    restricted_patients:
+    restricted_patients:,
+    has_vaccination_records_dont_notify_parents_patients:
   )
     super
 
     @deceased_patients = deceased_patients
     @invalidated_patients = invalidated_patients
     @restricted_patients = restricted_patients
+    @has_vaccination_records_dont_notify_parents_patients =
+      has_vaccination_records_dont_notify_parents_patients
   end
 
   def render?
     @deceased_patients.present? || @invalidated_patients.present? ||
-      @restricted_patients.present?
+      @restricted_patients.present? ||
+      @has_vaccination_records_dont_notify_parents_patients.present?
   end
 
   private
 
   def notices
-    (deceased_notices + invalidated_notices + restricted_notices)
-      .sort_by { _1[:date] }
-      .reverse
-  end
+    all_patients =
+      (
+        @deceased_patients + @invalidated_patients + @restricted_patients +
+          @has_vaccination_records_dont_notify_parents_patients
+      ).uniq
 
-  def deceased_notices
-    @deceased_patients.map do |patient|
-      {
-        patient:,
-        date_time: patient.date_of_death_recorded_at,
-        message: "Record updated with child’s date of death"
-      }
-    end
-  end
-
-  def invalidated_notices
-    @invalidated_patients.map do |patient|
-      {
-        patient:,
-        date_time: patient.invalidated_at,
-        message: "Record flagged as invalid"
-      }
-    end
-  end
-
-  def restricted_notices
-    @restricted_patients.map do |patient|
-      {
-        patient:,
-        date_time: patient.restricted_at,
-        message: "Record flagged as sensitive"
-      }
-    end
+    notices =
+      all_patients.flat_map do |patient|
+        helpers
+          .patient_important_notices(patient)
+          .map { |notification| notification.merge(patient:) }
+      end
+    notices.sort_by { it[:date_time] }.reverse
   end
 end
