@@ -803,7 +803,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_01_143843) do
     t.index ["user_id", "team_id"], name: "index_teams_users_on_user_id_and_team_id"
   end
 
-  create_table "triage", force: :cascade do |t|
+  create_table "triages", force: :cascade do |t|
     t.integer "status", null: false
     t.text "notes", default: "", null: false
     t.datetime "created_at", null: false
@@ -815,11 +815,11 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_01_143843) do
     t.datetime "invalidated_at"
     t.integer "vaccine_method"
     t.integer "academic_year", null: false
-    t.index ["academic_year"], name: "index_triage_on_academic_year"
-    t.index ["patient_id"], name: "index_triage_on_patient_id"
-    t.index ["performed_by_user_id"], name: "index_triage_on_performed_by_user_id"
-    t.index ["programme_id"], name: "index_triage_on_programme_id"
-    t.index ["team_id"], name: "index_triage_on_team_id"
+    t.index ["academic_year"], name: "index_triages_on_academic_year"
+    t.index ["patient_id"], name: "index_triages_on_patient_id"
+    t.index ["performed_by_user_id"], name: "index_triages_on_performed_by_user_id"
+    t.index ["programme_id"], name: "index_triages_on_programme_id"
+    t.index ["team_id"], name: "index_triages_on_team_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -868,8 +868,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_01_143843) do
     t.bigint "vaccine_id"
     t.boolean "full_dose"
     t.datetime "nhs_immunisations_api_synced_at"
-    t.string "nhs_immunisations_api_id"
     t.string "nhs_immunisations_api_etag"
+    t.string "nhs_immunisations_api_id"
     t.integer "protocol"
     t.datetime "nhs_immunisations_api_sync_pending_at"
     t.boolean "notify_parents"
@@ -1014,10 +1014,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_01_143843) do
   add_foreign_key "team_programmes", "programmes"
   add_foreign_key "team_programmes", "teams"
   add_foreign_key "teams", "organisations"
-  add_foreign_key "triage", "patients"
-  add_foreign_key "triage", "programmes"
-  add_foreign_key "triage", "teams"
-  add_foreign_key "triage", "users", column: "performed_by_user_id"
+  add_foreign_key "triages", "patients"
+  add_foreign_key "triages", "programmes"
+  add_foreign_key "triages", "teams"
+  add_foreign_key "triages", "users", column: "performed_by_user_id"
   add_foreign_key "vaccination_records", "batches"
   add_foreign_key "vaccination_records", "patients"
   add_foreign_key "vaccination_records", "programmes"

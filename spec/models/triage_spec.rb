@@ -2,7 +2,7 @@
 
 # == Schema Information
 #
-# Table name: triage
+# Table name: triages
 #
 #  id                   :bigint           not null, primary key
 #  academic_year        :integer          not null
@@ -19,11 +19,11 @@
 #
 # Indexes
 #
-#  index_triage_on_academic_year         (academic_year)
-#  index_triage_on_patient_id            (patient_id)
-#  index_triage_on_performed_by_user_id  (performed_by_user_id)
-#  index_triage_on_programme_id          (programme_id)
-#  index_triage_on_team_id               (team_id)
+#  index_triages_on_academic_year         (academic_year)
+#  index_triages_on_patient_id            (patient_id)
+#  index_triages_on_performed_by_user_id  (performed_by_user_id)
+#  index_triages_on_programme_id          (programme_id)
+#  index_triages_on_team_id               (team_id)
 #
 # Foreign Keys
 #
