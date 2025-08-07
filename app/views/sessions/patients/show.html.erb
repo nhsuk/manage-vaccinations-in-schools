@@ -21,6 +21,7 @@
   </div>
 
   <div class="app-grid-column-results">
+    <%= render AppSessionNeedsReviewWarningComponent.new(session: @session) %>
     <%= render AppSearchResultsComponent.new(@pagy, label: "children") do %>
       <% @patient_sessions.each do |patient_session| %>
         <%= render AppPatientSessionSearchResultCardComponent.new(
