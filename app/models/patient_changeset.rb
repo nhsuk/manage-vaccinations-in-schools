@@ -27,10 +27,43 @@
 #  fk_rails_...  (school_id => locations.id)
 #
 class PatientChangeset < ApplicationRecord
-  attribute :pending_changes, :jsonb, default: {}
+  attribute :pending_changes,
+            :jsonb,
+            default: {
+              child: {
+              },
+              parent_1: {
+              },
+              parent_2: {
+              },
+              pds: {
+              }
+            }
 
   belongs_to :import, polymorphic: true
   belongs_to :school, class_name: "Location", optional: true
 
   enum :status, { pending: 0, processed: 1 }, validate: true
+
+  def self.from_import_row(row:, import:, row_number:)
+    create!(
+      import:,
+      row_number:,
+      pending_changes: {
+        child: row.import_attributes,
+        parent_1_relationship: row.parent_1_relationship,
+        parent_1: {
+          name: row.parent_1_name,
+          email: row.parent_1_email,
+          phone: row.parent_1_phone
+        },
+        parent_2_relationship: row.parent_2_relationship,
+        parent_2: {
+          name: row.parent_2_name,
+          email: row.parent_2_email,
+          phone: row.parent_2_phone
+        }
+      }
+    )
+  end
 end
