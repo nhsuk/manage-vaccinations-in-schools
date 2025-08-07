@@ -42,34 +42,20 @@ class Patient::VaccinationStatus < ApplicationRecord
        validate: true
 
   def assign_status
-    self.status =
-      if status_should_be_vaccinated?
-        :vaccinated
-      elsif status_should_be_could_not_vaccinate?
-        :could_not_vaccinate
-      else
-        :none_yet
-      end
+    self.status = generator.status
   end
 
   private
 
-  def status_should_be_vaccinated?
-    VaccinatedCriteria.call(
-      programme:,
-      academic_year:,
-      patient:,
-      vaccination_records:
-    )
-  end
-
-  def status_should_be_could_not_vaccinate?
-    if ConsentGrouper.call(consents, programme_id:, academic_year:).any?(
-         &:response_refused?
-       )
-      return true
-    end
-
-    TriageFinder.call(triages, programme_id:, academic_year:)&.do_not_vaccinate?
+  def generator
+    @generator ||=
+      StatusGenerator::Vaccination.new(
+        programme:,
+        academic_year:,
+        patient:,
+        consents:,
+        triages:,
+        vaccination_records:
+      )
   end
 end

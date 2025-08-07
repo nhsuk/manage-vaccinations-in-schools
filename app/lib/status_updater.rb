@@ -35,7 +35,7 @@ class StatusUpdater
 
     Patient::ConsentStatus
       .where(patient: patient_sessions.select(:patient_id))
-      .includes(:consents)
+      .includes(:consents, :patient, :programme, :vaccination_records)
       .find_in_batches(batch_size: 10_000) do |batch|
         batch.each(&:assign_status)
 
@@ -59,10 +59,11 @@ class StatusUpdater
     PatientSession::RegistrationStatus
       .where(patient_session_id: patient_sessions.select(:id))
       .includes(
-        :patient,
         :session_attendance,
         :vaccination_records,
-        session: :programmes
+        patient_session: {
+          session: :programmes
+        }
       )
       .find_in_batches(batch_size: 10_000) do |batch|
         batch.each(&:assign_status)
