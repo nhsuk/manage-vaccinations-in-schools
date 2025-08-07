@@ -21,7 +21,7 @@ class Inspect::Timeline::PatientsController < ApplicationController
   ].freeze
 
   def show
-    @show_pii = get_show_pii
+    set_pii_settings
 
     params.reverse_merge!(event_names: DEFAULT_EVENT_NAMES)
     params[:audit_config] ||= {}
@@ -70,9 +70,11 @@ class Inspect::Timeline::PatientsController < ApplicationController
 
   private
 
-  def get_show_pii
-    return false unless user_is_support_with_pii_access?
-    params[:show_pii] || SHOW_PII_BY_DEFAULT
+  def set_pii_settings
+    @user_is_allowed_to_access_pii = user_is_support_with_pii_access?
+    @show_pii =
+      @user_is_allowed_to_access_pii &&
+        (params[:show_pii] || SHOW_PII_BY_DEFAULT)
   end
 
   def set_patient

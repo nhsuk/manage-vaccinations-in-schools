@@ -1,18 +1,14 @@
-<%= h1 page_title: @patient.initials do %>
-  <%= "Inspect Patient #{@patient.id}" %>
-<% end %>
+<div style="margin-bottom: 10px;">
+  <%= h1 page_title: @patient.initials do %>
+      <%= "Inspect Patient #{@patient.id}" %>
+    <% end %>
 
-<code>
-  <%= "Patient.find(#{@patient.id})" %>
-</code>
+  <code>
+    <%= "Patient.find(#{@patient.id})" %>
+  </code>
+</div>
 
-<% if params[:event_names].include?("audits") && @patient_timeline && !@show_pii %>
-  <%= govuk_inset_text do %>
-    <p class="nhsuk-body">
-      Only audited changes that do not involve PII are included
-    </p>
-  <% end %>
-<% end %>
+<%= link_to "View graph", inspect_path(:patient, @patient.id), class: "nhsuk-button nhsuk-button--secondary" %>
 
 <div class="nhsuk-grid-row nhsuk-u-margin-top-4">
   
@@ -34,6 +30,7 @@
               show_pii: false,
             ),
             show_pii: @show_pii,
+            pii_access_allowed: @user_is_allowed_to_access_pii,
           ) %>
   </div>
 
