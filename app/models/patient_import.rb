@@ -3,6 +3,8 @@
 class PatientImport < ApplicationRecord
   self.abstract_class = true
 
+  has_many :patient_changesets
+
   private
 
   def check_rows_are_unique
