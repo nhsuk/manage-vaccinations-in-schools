@@ -28,7 +28,7 @@ module Inspect
 
       @traversals_config = build_traversals_config
       @graph_params = build_graph_params
-      @show_pii = params[:show_pii]&.first == "1"
+      @show_pii = get_show_pii
 
       @mermaid =
         GraphRecords
@@ -43,6 +43,11 @@ module Inspect
     end
 
     private
+
+    def get_show_pii
+      return false unless user_is_support_with_pii_access?
+      params[:show_pii]&.first == "1"
+    end
 
     def build_traversals_config
       traversals_config = {}

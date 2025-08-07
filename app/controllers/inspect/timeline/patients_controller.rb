@@ -6,7 +6,7 @@ class Inspect::Timeline::PatientsController < ApplicationController
 
   layout "full"
 
-  SHOW_PII = false
+  SHOW_PII_BY_DEFAULT = false
 
   DEFAULT_EVENT_NAMES = %w[
     consents
@@ -21,7 +21,7 @@ class Inspect::Timeline::PatientsController < ApplicationController
   ].freeze
 
   def show
-    @show_pii = params[:show_pii] || SHOW_PII
+    @show_pii = get_show_pii
 
     params.reverse_merge!(event_names: DEFAULT_EVENT_NAMES)
     params[:audit_config] ||= {}
@@ -70,6 +70,11 @@ class Inspect::Timeline::PatientsController < ApplicationController
 
   private
 
+  def get_show_pii
+    return false unless user_is_support_with_pii_access?
+    params[:show_pii] || SHOW_PII_BY_DEFAULT
+  end
+
   def set_patient
     @patient = Patient.find(params[:id])
     timeline = TimelineRecords.new(@patient)
@@ -100,9 +105,9 @@ class Inspect::Timeline::PatientsController < ApplicationController
       end
     else
       raise ArgumentError, <<~MESSAGE
-      Invalid patient comparison option: #{compare_option}.
-      Supported options are: class_import, cohort_import, session, manual_entry
-    MESSAGE
+        Invalid patient comparison option: #{compare_option}.
+        Supported options are: class_import, cohort_import, session, manual_entry
+      MESSAGE
     end
   end
 
