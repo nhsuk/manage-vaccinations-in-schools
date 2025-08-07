@@ -29,8 +29,12 @@ class SMSDeliveryJob < NotifyDeliveryJob
       )
 
     phone_number =
-      personalisation.consent_form&.parent_phone ||
+      if template_name == :consent_unknown_contact_details_warning
         personalisation.parent&.phone
+      else
+        personalisation.consent_form&.parent_phone ||
+          personalisation.parent&.phone
+      end
     return if phone_number.nil?
 
     args = {

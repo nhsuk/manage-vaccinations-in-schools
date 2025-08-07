@@ -19,6 +19,8 @@ GOVUK_NOTIFY_EMAIL_TEMPLATES = {
     "c942ce27-590e-4387-9aa8-5b9b4f2796d1",
   consent_school_subsequent_reminder_hpv:
     "5f70d21d-00b6-41e6-bdc9-e64455972b43",
+  consent_unknown_contact_details_warning:
+    "6d746839-a20e-4d50-8a1d-6f3900ff69b2",
   session_clinic_initial_invitation: "88d21cfc-39f6-44a2-98c3-9588e7214ae4",
   session_clinic_subsequent_invitation: "a86a3b3f-a848-41d8-9a6f-d38174981388",
   session_clinic_initial_invitation_ryg: "fc99ac81-9eeb-4df8-9aa0-04f0eb48e37f",
@@ -43,6 +45,8 @@ GOVUK_NOTIFY_SMS_TEMPLATES = {
   consent_confirmation_refused: "eb34f3ab-0c58-4e56-b6b1-2c179270dfc3",
   consent_school_reminder: "ee3d36b1-4682-4eb0-a74a-7e0f6c9d0598",
   consent_school_request: "c7bd8150-d09e-4607-817d-db75c9a6a966",
+  consent_unknown_contact_details_warning:
+    "1fd4620d-1c96-4af1-b047-ed13a90b0f44",
   session_clinic_initial_invitation: "790c9c72-729a-40d6-b44d-d480e38f0990",
   session_clinic_subsequent_invitation: "ce7a6a1b-465e-4be4-b9e0-47ddb64f3adb",
   session_clinic_initial_invitation_ryg: "8ef5712f-bb7f-4911-8f3b-19df6f8a7179",
