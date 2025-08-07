@@ -109,7 +109,7 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
         academic_year: @academic_year
       )
 
-    status_key =
+    status =
       if status_type == :triage && status_model.vaccine_method.present? &&
            @programme.has_multiple_vaccine_methods?
         "#{status_model.status}_#{status_model.vaccine_method}"
@@ -117,9 +117,15 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
         status_model.status
       end
 
+    latest_session_status =
+      if status_type == :vaccination &&
+           status_model.latest_session_status != status
+        status_model.latest_session_status
+      end
+
     render AppProgrammeStatusTagsComponent.new(
-             { @programme => { status: status_key } },
-             outcome: outcome
+             { @programme => { status:, latest_session_status: } },
+             outcome:
            )
   end
 

@@ -4,11 +4,12 @@
 #
 # Table name: patient_vaccination_statuses
 #
-#  id            :bigint           not null, primary key
-#  academic_year :integer          not null
-#  status        :integer          default("none_yet"), not null
-#  patient_id    :bigint           not null
-#  programme_id  :bigint           not null
+#  id                    :bigint           not null, primary key
+#  academic_year         :integer          not null
+#  latest_session_status :integer          default("none_yet"), not null
+#  status                :integer          default("none_yet"), not null
+#  patient_id            :bigint           not null
+#  programme_id          :bigint           not null
 #
 # Indexes
 #
@@ -38,7 +39,7 @@ describe Patient::VaccinationStatus do
   end
 
   describe "#status" do
-    subject { patient_vaccination_status.assign_status }
+    subject { patient_vaccination_status.tap(&:assign_status).status.to_sym }
 
     before { patient.strict_loading!(false) }
 
@@ -88,6 +89,81 @@ describe Patient::VaccinationStatus do
 
     context "with a discarded vaccination administered" do
       before { create(:vaccination_record, :discarded, patient:, programme:) }
+
+      it { should be(:none_yet) }
+    end
+  end
+
+  describe "#latest_session_status" do
+    subject do
+      patient_vaccination_status
+        .tap(&:assign_status)
+        .latest_session_status
+        .to_sym
+    end
+
+    before do
+      patient.strict_loading!(false)
+      create(:patient_session, patient:, session:)
+    end
+
+    let(:session) { create(:session, programmes: [programme]) }
+
+    context "with no vaccination record" do
+      it { should be(:none_yet) }
+    end
+
+    context "with a vaccination administered" do
+      before { create(:vaccination_record, patient:, session:, programme:) }
+
+      it { should be(:vaccinated) }
+    end
+
+    context "with a vaccination already had" do
+      before do
+        create(
+          :vaccination_record,
+          :not_administered,
+          :already_had,
+          patient:,
+          session:,
+          programme:
+        )
+      end
+
+      it { should be(:already_had) }
+    end
+
+    context "with a vaccination not administered" do
+      before do
+        create(
+          :vaccination_record,
+          :not_administered,
+          patient:,
+          session:,
+          programme:
+        )
+      end
+
+      it { should be(:unwell) }
+    end
+
+    context "with a consent refused" do
+      before { create(:consent, :refused, patient:, programme:) }
+
+      it { should be(:none_yet) }
+    end
+
+    context "with a triage as unsafe to vaccination" do
+      before { create(:triage, :do_not_vaccinate, patient:, programme:) }
+
+      it { should be(:none_yet) }
+    end
+
+    context "with a discarded vaccination administered" do
+      before do
+        create(:vaccination_record, :discarded, patient:, session:, programme:)
+      end
 
       it { should be(:none_yet) }
     end

@@ -35,7 +35,7 @@ class StatusUpdater
 
     Patient::ConsentStatus
       .where(patient: patient_sessions.select(:patient_id))
-      .includes(:consents)
+      .includes(:consents, :patient, :programme, :vaccination_records)
       .find_in_batches(batch_size: 10_000) do |batch|
         batch.each(&:assign_status)
 
@@ -59,10 +59,11 @@ class StatusUpdater
     PatientSession::RegistrationStatus
       .where(patient_session_id: patient_sessions.select(:id))
       .includes(
-        :patient,
         :session_attendance,
         :vaccination_records,
-        session: :programmes
+        patient_session: {
+          session: :programmes
+        }
       )
       .find_in_batches(batch_size: 10_000) do |batch|
         batch.each(&:assign_status)
@@ -138,7 +139,14 @@ class StatusUpdater
 
     Patient::VaccinationStatus
       .where(patient: patient_sessions.select(:patient_id))
-      .includes(:patient, :programme, :consents, :triages, :vaccination_records)
+      .includes(
+        :patient,
+        :programme,
+        :consents,
+        :triages,
+        :vaccination_records,
+        :session_attendance
+      )
       .find_in_batches(batch_size: 10_000) do |batch|
         batch.each(&:assign_status)
 
@@ -146,7 +154,7 @@ class StatusUpdater
           batch.select(&:changed?),
           on_duplicate_key_update: {
             conflict_target: [:id],
-            columns: %i[status]
+            columns: %i[status latest_session_status]
           }
         )
       end

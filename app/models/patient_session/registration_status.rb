@@ -21,7 +21,6 @@ class PatientSession::RegistrationStatus < ApplicationRecord
   belongs_to :patient_session
 
   has_one :patient, through: :patient_session
-  has_one :session, through: :patient_session
 
   has_many :vaccination_records,
            -> { kept.order(performed_at: :desc) },
@@ -38,36 +37,17 @@ class PatientSession::RegistrationStatus < ApplicationRecord
        validate: true
 
   def assign_status
-    self.status =
-      if status_should_be_completed?
-        :completed
-      elsif status_should_be_attending?
-        :attending
-      elsif status_should_be_not_attending?
-        :not_attending
-      else
-        :unknown
-      end
+    self.status = generator.status
   end
 
   private
 
-  delegate :academic_year, to: :session
-
-  def status_should_be_completed?
-    patient_session.programmes.all? do |programme|
-      vaccination_records.any? do
-        it.programme_id == programme.id &&
-          it.session_id == patient_session.session_id
-      end
-    end
-  end
-
-  def status_should_be_attending?
-    session_attendance&.attending
-  end
-
-  def status_should_be_not_attending?
-    session_attendance&.attending == false
+  def generator
+    @generator ||=
+      StatusGenerator::Registration.new(
+        patient_session:,
+        session_attendance:,
+        vaccination_records:
+      )
   end
 end

@@ -4,11 +4,12 @@
 #
 # Table name: patient_vaccination_statuses
 #
-#  id            :bigint           not null, primary key
-#  academic_year :integer          not null
-#  status        :integer          default("none_yet"), not null
-#  patient_id    :bigint           not null
-#  programme_id  :bigint           not null
+#  id                    :bigint           not null, primary key
+#  academic_year         :integer          not null
+#  latest_session_status :integer          default("none_yet"), not null
+#  status                :integer          default("none_yet"), not null
+#  patient_id            :bigint           not null
+#  programme_id          :bigint           not null
 #
 # Indexes
 #
@@ -36,40 +37,55 @@ class Patient::VaccinationStatus < ApplicationRecord
            -> { kept.order(performed_at: :desc) },
            through: :patient
 
+  has_one :patient_session
+
+  has_one :session_attendance,
+          -> { today },
+          through: :patient,
+          source: :session_attendances
+
   enum :status,
        { none_yet: 0, vaccinated: 1, could_not_vaccinate: 2 },
        default: :none_yet,
        validate: true
 
+  enum :latest_session_status,
+       PatientSession::SessionStatus.statuses,
+       default: :none_yet,
+       prefix: true,
+       validate: true
+
   def assign_status
-    self.status =
-      if status_should_be_vaccinated?
-        :vaccinated
-      elsif status_should_be_could_not_vaccinate?
-        :could_not_vaccinate
-      else
-        :none_yet
-      end
+    self.status = generator.status
+    self.latest_session_status = session_generator&.status || :none_yet
   end
 
   private
 
-  def status_should_be_vaccinated?
-    VaccinatedCriteria.call(
-      programme:,
-      academic_year:,
-      patient:,
-      vaccination_records:
-    )
+  def generator
+    @generator ||=
+      StatusGenerator::Vaccination.new(
+        programme:,
+        academic_year:,
+        patient:,
+        consents:,
+        triages:,
+        vaccination_records:
+      )
   end
 
-  def status_should_be_could_not_vaccinate?
-    if ConsentGrouper.call(consents, programme_id:, academic_year:).any?(
-         &:response_refused?
-       )
-      return true
-    end
-
-    TriageFinder.call(triages, programme_id:, academic_year:)&.do_not_vaccinate?
+  def session_generator
+    @session_generator ||=
+      if (session_id = vaccination_records.first&.session_id)
+        StatusGenerator::Session.new(
+          session_id:,
+          academic_year:,
+          session_attendance:,
+          programme_id:,
+          consents:,
+          triages:,
+          vaccination_records:
+        )
+      end
   end
 end

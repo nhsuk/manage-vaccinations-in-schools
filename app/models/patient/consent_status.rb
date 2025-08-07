@@ -48,86 +48,22 @@ class Patient::ConsentStatus < ApplicationRecord
   validates :vaccine_methods, presence: true, if: :given?
 
   def assign_status
-    self.status =
-      if status_should_be_given?
-        :given
-      elsif status_should_be_refused?
-        :refused
-      elsif status_should_be_conflicts?
-        :conflicts
-      elsif status_should_be_no_response?
-        :no_response
-      else
-        :not_required
-      end
-
-    self.vaccine_methods = (agreed_vaccine_methods if status_should_be_given?)
+    self.status = generator.status
+    self.vaccine_methods = generator.vaccine_methods
   end
 
   def vaccine_method_nasal? = vaccine_methods.include?("nasal")
 
   private
 
-  def vaccinated?
-    @vaccinated ||=
-      VaccinatedCriteria.call(
+  def generator
+    @generator ||=
+      StatusGenerator::Consent.new(
         programme:,
         academic_year:,
         patient:,
+        consents:,
         vaccination_records:
       )
-  end
-
-  def status_should_be_given?
-    return false if vaccinated?
-
-    consents_for_status.any? && consents_for_status.all?(&:response_given?) &&
-      agreed_vaccine_methods.present?
-  end
-
-  def status_should_be_refused?
-    return false if vaccinated?
-
-    latest_consents.any? && latest_consents.all?(&:response_refused?)
-  end
-
-  def status_should_be_conflicts?
-    return false if vaccinated?
-
-    consents_for_status =
-      (self_consents.any? ? self_consents : parental_consents)
-
-    if consents_for_status.any?(&:response_refused?) &&
-         consents_for_status.any?(&:response_given?)
-      return true
-    end
-
-    consents_for_status.any? && consents_for_status.all?(&:response_given?) &&
-      agreed_vaccine_methods.blank?
-  end
-
-  def status_should_be_no_response? = !vaccinated?
-
-  def agreed_vaccine_methods
-    @agreed_vaccine_methods ||=
-      consents_for_status.map(&:vaccine_methods).inject(&:intersection)
-  end
-
-  def consents_for_status
-    @consents_for_status ||=
-      self_consents.any? ? self_consents : parental_consents
-  end
-
-  def self_consents
-    @self_consents ||= latest_consents.select(&:via_self_consent?)
-  end
-
-  def parental_consents
-    @parental_consents ||= latest_consents.reject(&:via_self_consent?)
-  end
-
-  def latest_consents
-    @latest_consents ||=
-      ConsentGrouper.call(consents, programme_id:, academic_year:)
   end
 end
