@@ -58,4 +58,37 @@ module ConsentFormMailerConcern
       SMSDeliveryJob.perform_later(:consent_confirmation_refused, **params)
     end
   end
+
+  def send_parental_contact_warning_if_needed(patient, consent_form, user)
+    return if patient.parents.empty? || user.present?
+
+    submitted_email = consent_form.parent_email
+    submitted_phone = consent_form.parent_phone
+
+    match_found =
+      patient.parents.any? do |parent|
+        email_match = parent.email.present? && submitted_email == parent.email
+        phone_match = parent.phone.present? && submitted_phone == parent.phone
+        email_match || phone_match
+      end
+
+    return if match_found
+
+    patient.parents.each do |parent|
+      if parent.email.present?
+        EmailDeliveryJob.perform_later(
+          :parental_consent_warning,
+          parent: parent,
+          patient: patient
+        )
+      end
+
+      next unless parent.phone.present? && parent.phone_receive_updates
+      SMSDeliveryJob.perform_later(
+        :parental_consent_warning,
+        parent: parent,
+        patient: patient
+      )
+    end
+  end
 end

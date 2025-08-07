@@ -436,6 +436,8 @@ class ConsentForm < ApplicationRecord
   end
 
   def match_with_patient!(patient, current_user:)
+    send_parental_contact_warning_if_needed(patient, self, current_user)
+
     ActiveRecord::Base.transaction do
       notify_log_entries.update_all(patient_id: patient.id)
 
