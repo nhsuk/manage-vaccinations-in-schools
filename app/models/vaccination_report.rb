@@ -74,6 +74,6 @@ class VaccinationReport
 
   def request_session_key = "vaccination_report"
 
-  def reset_unused_fields
+  def reset_unused_attributes
   end
 end

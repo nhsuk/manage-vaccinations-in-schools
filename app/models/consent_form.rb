@@ -66,7 +66,7 @@ class ConsentForm < ApplicationRecord
   include HasHealthAnswers
   include WizardStepConcern
 
-  before_save :reset_unused_fields
+  before_save :reset_unused_attributes
 
   scope :unmatched, -> { where(consent_id: nil) }
   scope :recorded, -> { where.not(recorded_at: nil) }
@@ -586,7 +586,7 @@ class ConsentForm < ApplicationRecord
   # Because there are branching paths in the consent form journey, fields
   # sometimes get set with values that then have to be deleted if the user
   # changes their mind and goes down a different path.
-  def reset_unused_fields
+  def reset_unused_attributes
     update_programme_responses
 
     unless use_preferred_name

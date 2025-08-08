@@ -242,7 +242,7 @@ describe DraftVaccinationRecord do
     end
   end
 
-  describe "#reset_unused_fields" do
+  describe "#reset_unused_attributes" do
     subject(:save!) { draft_vaccination_record.save! }
 
     context "when administered" do

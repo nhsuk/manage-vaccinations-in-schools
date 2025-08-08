@@ -42,7 +42,7 @@ module RequestSessionPersistable
   end
 
   def save(context: :update)
-    reset_unused_fields
+    reset_unused_attributes
     return false if invalid?(context)
 
     @request_session[request_session_key] = attributes.each_with_object(

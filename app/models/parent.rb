@@ -21,7 +21,7 @@
 class Parent < ApplicationRecord
   audited
 
-  before_save :reset_unused_fields
+  before_save :reset_unused_attributes
 
   has_many :consents
   has_many :notify_log_entries, dependent: :nullify
@@ -112,7 +112,7 @@ class Parent < ApplicationRecord
 
   private
 
-  def reset_unused_fields
+  def reset_unused_attributes
     self.contact_method_type = nil if phone.blank?
     self.contact_method_other_details = nil unless contact_method_other?
   end

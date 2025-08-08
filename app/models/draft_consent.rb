@@ -459,7 +459,7 @@ class DraftConsent
 
   def request_session_key = "consent"
 
-  def reset_unused_fields
+  def reset_unused_attributes
     update_vaccine_methods
 
     self.notes = "" unless notes_required?

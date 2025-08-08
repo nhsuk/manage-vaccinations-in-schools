@@ -115,7 +115,7 @@ describe DraftConsent do
     end
   end
 
-  describe "#reset_unused_fields" do
+  describe "#reset_unused_attributes" do
     subject(:save!) { draft_consent.save! }
 
     context "when given" do

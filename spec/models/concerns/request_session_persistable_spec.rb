@@ -12,7 +12,7 @@ describe RequestSessionPersistable do
 
       def request_session_key = "key"
 
-      def reset_unused_fields
+      def reset_unused_attributes
       end
     end
   end

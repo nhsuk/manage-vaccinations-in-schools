@@ -70,7 +70,7 @@ class DraftImport
 
   def request_session_key = "import"
 
-  def reset_unused_fields
+  def reset_unused_attributes
     self.academic_year = AcademicYear.pending unless ask_academic_year?
 
     unless is_class_import?

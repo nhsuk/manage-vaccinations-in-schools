@@ -56,6 +56,6 @@ class SchoolMoveExport
 
   def request_session_key = "school_move_export"
 
-  def reset_unused_fields
+  def reset_unused_attributes
   end
 end
