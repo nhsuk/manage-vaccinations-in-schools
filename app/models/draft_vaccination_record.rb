@@ -283,7 +283,7 @@ class DraftVaccinationRecord
 
   def request_session_key = "vaccination_record"
 
-  def reset_unused_fields
+  def reset_unused_attributes
     if administered?
       self.full_dose = true unless can_be_half_dose?
     else

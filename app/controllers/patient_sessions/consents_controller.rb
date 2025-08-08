@@ -9,9 +9,9 @@ class PatientSessions::ConsentsController < PatientSessions::BaseController
   def create
     authorize Consent
 
-    @draft_consent =
-      DraftConsent.new(request_session: session, current_user:).tap(&:reset!)
+    @draft_consent = DraftConsent.new(request_session: session, current_user:)
 
+    @draft_consent.clear_attributes
     @draft_consent.assign_attributes(create_params)
 
     if @draft_consent.save

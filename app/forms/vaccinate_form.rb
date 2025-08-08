@@ -64,7 +64,7 @@ class VaccinateForm
 
     return false unless pre_screening.save
 
-    draft_vaccination_record.reset!
+    draft_vaccination_record.clear_attributes
 
     if administered?
       draft_vaccination_record.outcome = "administered"

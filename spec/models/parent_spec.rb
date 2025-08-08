@@ -290,7 +290,7 @@ describe Parent do
     end
   end
 
-  describe "#reset_unused_fields" do
+  describe "#reset_unused_attributes" do
     it "resets contact method fields when phone number is removed" do
       subject =
         build(:parent, :contact_method_other, phone_receive_updates: false)

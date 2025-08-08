@@ -41,8 +41,14 @@ module RequestSessionPersistable
     end
   end
 
+  def reset_unused_attributes
+    # This can be overridden to provide a before_save callback which can be
+    # used to clear any responses from branching questions where the user has
+    # gone back and edited their answers meaning they're no longer relevant.
+  end
+
   def save(context: :update)
-    reset_unused_fields
+    reset_unused_attributes
     return false if invalid?(context)
 
     @request_session[request_session_key] = attributes.each_with_object(
@@ -82,8 +88,12 @@ module RequestSessionPersistable
     public_send("#{attr}=", value)
   end
 
-  def reset!
+  def clear_attributes
     attribute_names.each { |attribute| self[attribute] = nil }
+  end
+
+  def clear!
+    clear_attributes
     save!(context: :create)
   end
 

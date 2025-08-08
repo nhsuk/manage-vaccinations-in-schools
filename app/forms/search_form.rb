@@ -24,7 +24,4 @@ class SearchForm
   def path_key
     @path_key ||= Digest::MD5.hexdigest(@request_path).first(8)
   end
-
-  def reset_unused_fields
-  end
 end
