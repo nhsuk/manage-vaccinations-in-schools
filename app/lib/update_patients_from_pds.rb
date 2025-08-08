@@ -11,7 +11,9 @@ class UpdatePatientsFromPDS
     return unless enqueue?
 
     GoodJob::Bulk.enqueue do
-      patients.find_each.with_index do |patient, index|
+      jobs_queued = 0
+
+      patients.find_each do |patient|
         # Schedule with a delay to preemptively handle rate limit issues.
         # This shouldn't be necessary, but we're finding that Good Job
         # has occasional race condition issues, and spreading out the jobs
@@ -21,14 +23,26 @@ class UpdatePatientsFromPDS
           PatientNHSNumberLookupJob.set(
             priority:,
             queue:,
-            wait: index * wait_between_jobs
+            wait: jobs_queued * wait_between_jobs
           ).perform_later(patient)
         else
           PatientUpdateFromPDSJob.set(
             priority:,
             queue:,
-            wait: index * wait_between_jobs
+            wait: jobs_queued * wait_between_jobs
           ).perform_later(patient)
+        end
+
+        jobs_queued += 1
+
+        if patient.pending_changes.present?
+          PatientNHSNumberLookupWithPendingChangesJob.set(
+            priority:,
+            queue:,
+            wait: jobs_queued * wait_between_jobs
+          ).perform_later(patient)
+
+          jobs_queued += 1
         end
       end
     end
