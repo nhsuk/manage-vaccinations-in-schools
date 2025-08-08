@@ -88,8 +88,12 @@ module RequestSessionPersistable
     public_send("#{attr}=", value)
   end
 
-  def reset!
+  def clear_attributes
     attribute_names.each { |attribute| self[attribute] = nil }
+  end
+
+  def reset!
+    clear_attributes
     save!(context: :create)
   end
 

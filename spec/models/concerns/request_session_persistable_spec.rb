@@ -121,6 +121,18 @@ describe RequestSessionPersistable do
     end
   end
 
+  describe "#clear_attributes" do
+    subject(:clear_attributes) { model.clear_attributes }
+
+    let(:attributes) { { string: "abc" } }
+
+    it "resets all the attributes and doesn't save to the session" do
+      expect { clear_attributes }.to change(model, :attributes).to(
+        { "datetime" => nil, "string" => nil }
+      ).and(not_change { request_session })
+    end
+  end
+
   describe "#reset!" do
     subject(:reset!) { model.reset! }
 
