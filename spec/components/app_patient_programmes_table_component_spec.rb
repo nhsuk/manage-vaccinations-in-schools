@@ -18,7 +18,7 @@ describe AppPatientProgrammesTableComponent do
     it { should have_content("Vaccination programmes") }
     it { should have_content("Flu (Winter 2025)") }
     it { should_not have_content("Vaccinated") }
-    it { should have_content("Eligibility started 1 September 2025") }
+    it { should have_content("Selected for the Year 2025 to 2026 Flu cohort") }
 
     context "when vaccinated" do
       let(:patient) { create(:patient, :vaccinated, session:) }
@@ -57,7 +57,7 @@ describe AppPatientProgrammesTableComponent do
     it { should have_content("HPV") }
     it { should have_content("Td/IPV") }
     it { should have_content("MenACWY") }
-    it { should have_content("Eligibility started 1 September 2025").once }
+    it { should have_content("Selected for the Year 2025 to 2026 HPV cohort").once }
     it { should have_content("Eligibility starts 1 September 2026").twice }
 
     context "when vaccinated" do

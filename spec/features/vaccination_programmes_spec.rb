@@ -28,6 +28,8 @@ describe "Vaccination programmes table" do
 
     then_the_table_has_a_row_showing_hpv_vaccinated
     and_the_table_has_a_row_showing_second_hpv_vaccinated
+
+    screenshot_and_save_page
   end
 
   scenario "patient has a seasonal vaccine" do
@@ -38,6 +40,8 @@ describe "Vaccination programmes table" do
     and_i_click_on_a_child
 
     then_the_table_has_two_rows_showing_flu_vaccinated
+
+    screenshot_and_save_page
   end
 
   scenario "patient has an outcome other than vaccinated" do
@@ -48,6 +52,8 @@ describe "Vaccination programmes table" do
     and_i_click_on_a_child
 
     then_the_table_displays_the_outcome
+
+    screenshot_and_save_page
   end
 
   def given_my_team_exists
@@ -125,7 +131,7 @@ describe "Vaccination programmes table" do
     ) do |row|
       expect(row).to have_selector(
         "td.nhsuk-table__cell",
-        text: "Eligibility started 1 September 2023"
+        text: "Selected for the Year 2023 to 2024 MenACWY cohort"
       )
     end
   end
@@ -143,7 +149,7 @@ describe "Vaccination programmes table" do
 
     expect(page).to have_selector(
       "table.nhsuk-table tbody tr",
-      text: "Flu (2nd dose, Winter 2024)"
+      text: "Flu (Winter 2024, 2nd dose)"
     ) do |row|
       expect(row).to have_selector(
         "td.nhsuk-table__cell",
@@ -157,6 +163,10 @@ describe "Vaccination programmes table" do
       "table.nhsuk-table tbody tr",
       text: "HPV"
     ) do |row|
+      expect(row).to have_selector(
+        "td.nhsuk-table__cell",
+        text: "Could not vaccinate"
+      )
       expect(row).to have_selector("td.nhsuk-table__cell", text: "Not well")
     end
   end
