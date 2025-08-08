@@ -6,7 +6,7 @@ class SessionAttendancePolicy < ApplicationPolicy
   end
 
   def update?
-    super && !was_seen_by_nurse?
+    super && !already_vaccinated? && !was_seen_by_nurse?
   end
 
   private
@@ -16,7 +16,7 @@ class SessionAttendancePolicy < ApplicationPolicy
   def academic_year = patient_session.session.academic_year
 
   def already_vaccinated?
-    patient_session.programmes.any? do |programme|
+    patient_session.programmes.all? do |programme|
       patient_session
         .patient
         .vaccination_status(programme:, academic_year:)

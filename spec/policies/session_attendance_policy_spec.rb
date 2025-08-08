@@ -5,10 +5,10 @@ describe SessionAttendancePolicy do
 
   let(:user) { create(:nurse) }
 
-  let(:programme) { create(:programme, :hpv) }
-  let(:team) { create(:team, programmes: [programme]) }
-  let(:session) { create(:session, team:, programmes: [programme]) }
-  let(:patient) { create(:patient, session:) }
+  let(:programmes) { [create(:programme, :hpv), create(:programme, :flu)] }
+  let(:team) { create(:team, programmes:) }
+  let(:session) { create(:session, team:, programmes:) }
+  let(:patient) { create(:patient, session:, year_group: 8) }
 
   let(:patient_session) { patient.patient_sessions.includes(:session).first }
 
@@ -19,61 +19,36 @@ describe SessionAttendancePolicy do
       it { should be(true) }
     end
 
-    context "with session attendance and a vaccination record" do
+    context "with session attendance and one vaccination record from a different session" do
       let(:session_attendance) { build(:session_attendance, patient_session:) }
 
       before do
         create(
           :vaccination_record,
           patient:,
-          session:,
-          programme:,
+          programme: programmes.first,
           performed_at: Time.current
         )
 
         StatusUpdater.call(patient:)
       end
 
-      it { should be(false) }
-    end
-
-    context "with session attendance and a vaccination record from a different date" do
-      let(:session_attendance) { build(:session_attendance, patient_session:) }
-
-      before do
-        create(
-          :vaccination_record,
-          patient:,
-          session:,
-          programme:,
-          performed_at: Time.zone.yesterday
-        )
-
-        StatusUpdater.call(patient:)
-      end
-
-      it { should be(false) }
-    end
-  end
-
-  shared_examples "allow if not yet seen by nurse" do
-    context "with a new session attendance" do
-      let(:session_attendance) { build(:session_attendance, patient_session:) }
-
       it { should be(true) }
     end
 
-    context "with session attendance and a vaccination record" do
+    context "with session attendance and both vaccination records" do
       let(:session_attendance) { build(:session_attendance, patient_session:) }
 
       before do
-        create(
-          :vaccination_record,
-          patient:,
-          session:,
-          programme:,
-          performed_at: Time.current
-        )
+        programmes.each do |programme|
+          create(
+            :vaccination_record,
+            patient:,
+            session:,
+            programme:,
+            performed_at: Time.current
+          )
+        end
 
         StatusUpdater.call(patient:)
       end
@@ -81,22 +56,24 @@ describe SessionAttendancePolicy do
       it { should be(false) }
     end
 
-    context "with session attendance and a vaccination record from a different date" do
+    context "with session attendance and both vaccination records from a different date" do
       let(:session_attendance) { build(:session_attendance, patient_session:) }
 
       before do
-        create(
-          :vaccination_record,
-          patient:,
-          session:,
-          programme:,
-          performed_at: Time.zone.yesterday
-        )
+        programmes.each do |programme|
+          create(
+            :vaccination_record,
+            patient:,
+            session:,
+            programme:,
+            performed_at: Time.zone.yesterday
+          )
+        end
 
         StatusUpdater.call(patient:)
       end
 
-      it { should be(true) }
+      it { should be(false) }
     end
   end
 
@@ -115,12 +92,12 @@ describe SessionAttendancePolicy do
   describe "#edit?" do
     subject(:edit?) { policy.edit? }
 
-    include_examples "allow if not yet seen by nurse"
+    include_examples "allow if not yet vaccinated or seen by nurse"
   end
 
   describe "#update?" do
     subject(:update?) { policy.update? }
 
-    include_examples "allow if not yet seen by nurse"
+    include_examples "allow if not yet vaccinated or seen by nurse"
   end
 end
