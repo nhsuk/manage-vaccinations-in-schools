@@ -92,7 +92,7 @@ module RequestSessionPersistable
     attribute_names.each { |attribute| self[attribute] = nil }
   end
 
-  def reset!
+  def clear!
     clear_attributes
     save!(context: :create)
   end

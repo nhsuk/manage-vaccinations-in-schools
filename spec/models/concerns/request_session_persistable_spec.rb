@@ -133,13 +133,13 @@ describe RequestSessionPersistable do
     end
   end
 
-  describe "#reset!" do
-    subject(:reset!) { model.reset! }
+  describe "#clear!" do
+    subject(:clear!) { model.clear! }
 
     let(:attributes) { { string: "abc" } }
 
     it "resets all the attributes and saves to the session" do
-      expect { reset! }.to change(model, :attributes).to(
+      expect { clear! }.to change(model, :attributes).to(
         { "datetime" => nil, "string" => nil }
       ).and change { request_session }.to(
               { "key" => { "datetime" => nil, "string" => nil } }

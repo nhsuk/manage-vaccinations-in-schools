@@ -12,7 +12,7 @@ describe EditableWrapper do
       def save!(context:)
       end
 
-      def reset!
+      def clear!
       end
     end
   end
