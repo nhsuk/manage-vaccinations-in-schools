@@ -150,7 +150,7 @@ class Reports::SystmOneExporter
 
   # TODO: Needs support for community and generic clinics.
   def practice_code(vaccination_record)
-    location = vaccination_record.session.location
+    location = vaccination_record.location
 
     location.school? ? location.urn : location.ods_code
   end
