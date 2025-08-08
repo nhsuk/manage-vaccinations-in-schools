@@ -85,7 +85,12 @@ class Team < ApplicationRecord
     location = locations.generic_clinic.first
 
     sessions
-      .includes(:location, :programmes, :session_dates)
+      .includes(
+        :location,
+        :location_programme_year_groups,
+        :programmes,
+        :session_dates
+      )
       .create_with(programmes:)
       .find_or_create_by!(academic_year:, location:)
   end

@@ -53,7 +53,7 @@ class LocationSessionsFactory
   def patient_ids
     @patient_ids ||=
       if location.generic_clinic?
-        team.patients.pluck(:id)
+        team.patients.where(school: nil).pluck(:id)
       else
         team.patients.where(school: location).pluck(:id)
       end

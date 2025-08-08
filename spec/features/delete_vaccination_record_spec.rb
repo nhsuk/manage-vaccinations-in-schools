@@ -113,7 +113,7 @@ describe "Delete vaccination record" do
   end
 
   def given_an_hpv_programme_is_underway
-    @team = create(:team, :with_one_nurse)
+    @team = create(:team, :with_generic_clinic, :with_one_nurse)
     @programme = create(:programme, :hpv, teams: [@team])
 
     @session =

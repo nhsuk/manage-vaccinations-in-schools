@@ -30,6 +30,18 @@ class PatientsController < ApplicationController
     render layout: "full"
   end
 
+  def invite_to_clinic
+    session =
+      current_team.generic_clinic_session(academic_year: AcademicYear.pending)
+
+    PatientSession.find_or_create_by!(patient: @patient, session:)
+
+    redirect_to patient_path(@patient),
+                flash: {
+                  success: "#{@patient.full_name} invited to the clinic"
+                }
+  end
+
   private
 
   def set_patient

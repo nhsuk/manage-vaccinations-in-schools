@@ -78,6 +78,20 @@ describe "Manage children" do
     and_the_patient_is_no_longer_invalidated
   end
 
+  scenario "Inviting to community clinic" do
+    given_patients_exist
+
+    when_i_click_on_children
+    and_i_click_on_a_child
+    then_i_see_the_child
+    and_i_dont_see_a_community_clinic_session
+
+    when_i_click_on_invite_to_clinic
+    then_i_see_a_success_banner
+    and_i_see_a_community_clinic_session
+    and_i_dont_see_an_invite_to_clinic_session
+  end
+
   scenario "Removing an NHS number" do
     given_patients_exist
     and_sync_vaccination_records_to_nhs_feature_is_enabled
@@ -140,7 +154,13 @@ describe "Manage children" do
 
   def given_my_team_exists
     @programme = create(:programme, :hpv)
-    @team = create(:team, :with_one_nurse, programmes: [@programme])
+    @team =
+      create(
+        :team,
+        :with_generic_clinic,
+        :with_one_nurse,
+        programmes: [@programme]
+      )
   end
 
   def given_patients_exist
@@ -335,6 +355,26 @@ describe "Manage children" do
   def and_i_see_the_cohort
     expect(page).not_to have_content("No cohorts")
     expect(page).not_to have_content("No sessions")
+  end
+
+  def and_i_dont_see_a_community_clinic_session
+    expect(page).not_to have_content("Community clinic")
+  end
+
+  def when_i_click_on_invite_to_clinic
+    click_on "Invite to community clinic"
+  end
+
+  def then_i_see_a_success_banner
+    expect(page).to have_content("invited to the clinic")
+  end
+
+  def and_i_see_a_community_clinic_session
+    expect(page).to have_content("Community clinic")
+  end
+
+  def and_i_dont_see_an_invite_to_clinic_session
+    expect(page).not_to have_button("Invite to community clinic")
   end
 
   def when_i_go_to_the_dashboard

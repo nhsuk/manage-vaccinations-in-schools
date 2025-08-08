@@ -3,6 +3,7 @@
 class Sessions::InviteToClinicController < ApplicationController
   before_action :set_session
   before_action :set_generic_clinic_session
+  before_action :set_patient_sessions_to_invite
   before_action :set_invitations_to_send
 
   skip_after_action :verify_policy_scoped
@@ -13,14 +14,11 @@ class Sessions::InviteToClinicController < ApplicationController
 
   def update
     if @session.school?
-      SendClinicInitialInvitationsJob.perform_later(
-        @generic_clinic_session,
-        school: @session.location,
-        programmes: @session.programmes.to_a
-      )
+      factory.create_patient_sessions!
+
       flash[
         :success
-      ] = "Clinic invitations sent for #{I18n.t("children", count: @invitations_to_send)}"
+      ] = "#{I18n.t("children", count: @invitations_to_send)} invited to the clinic"
     else
       SendClinicSubsequentInvitationsJob.perform_later(@session)
       flash[
@@ -44,36 +42,39 @@ class Sessions::InviteToClinicController < ApplicationController
 
   def set_generic_clinic_session
     @generic_clinic_session =
-      (
-        if @session.clinic?
-          @session
-        else
-          @session.team.generic_clinic_session(
-            academic_year: @session.academic_year
-          )
-        end
-      )
+      if @session.clinic?
+        @session
+      else
+        @session.team.generic_clinic_session(
+          academic_year: @session.academic_year
+        )
+      end
+  end
+
+  def set_patient_sessions_to_invite
+    @patient_sessions_to_invite =
+      if @session.school?
+        factory.patient_sessions_to_create
+      else
+        session_date = @generic_clinic_session.next_date(include_today: true)
+        SendClinicSubsequentInvitationsJob.new.patient_sessions(
+          @session,
+          session_date:
+        )
+      end
   end
 
   def set_invitations_to_send
-    session_date = @generic_clinic_session.next_date(include_today: true)
+    @invitations_to_send = @patient_sessions_to_invite.length
+  end
 
-    @invitations_to_send =
+  def factory
+    @factory ||=
       if @session.school?
-        SendClinicInitialInvitationsJob
-          .new
-          .patient_sessions(
-            @generic_clinic_session,
-            school: @session.location,
-            programmes: @session.programmes.to_a,
-            session_date:
-          )
-          .length
-      else
-        SendClinicSubsequentInvitationsJob
-          .new
-          .patient_sessions(@session, session_date:)
-          .length
+        ClinicPatientSessionsFactory.new(
+          school_session: @session,
+          generic_clinic_session: @generic_clinic_session
+        )
       end
   end
 end
