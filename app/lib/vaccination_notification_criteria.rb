@@ -6,12 +6,20 @@ class VaccinationNotificationCriteria
   end
 
   def call
-    patient
-      .consents
-      .where(programme:)
-      .not_invalidated
-      .not_withdrawn
-      .none? { it.notify_parents_on_vaccination == false }
+    return nil unless recorded_in_service?
+
+    self_consents =
+      patient
+        .consents
+        .via_self_consent
+        .where(programme:, academic_year:)
+        .not_invalidated
+
+    if self_consents.any?
+      return self_consents.max_by(&:submitted_at).notify_parents_on_vaccination
+    end
+
+    true
   end
 
   def self.call(...) = new(...).call
@@ -22,5 +30,9 @@ class VaccinationNotificationCriteria
 
   attr_reader :vaccination_record
 
-  delegate :patient, :programme, to: :vaccination_record
+  delegate :patient,
+           :programme,
+           :recorded_in_service?,
+           :academic_year,
+           to: :vaccination_record
 end

@@ -7,8 +7,9 @@ describe VaccinationNotificationCriteria do
     let(:programme) { build(:programme) }
     let(:patient) { create(:patient) }
     let(:vaccination_record) do
-      build(:vaccination_record, patient:, programme:)
+      build(:vaccination_record, patient:, programme:, session:)
     end
+    let(:session) { create(:session, programmes: [programme]) }
 
     context "when patient has no consents" do
       it { should be_truthy }
@@ -20,6 +21,7 @@ describe VaccinationNotificationCriteria do
         other_programme = create(:programme, type: other_programme_type)
         create(
           :consent,
+          :self_consent,
           patient:,
           programme: other_programme,
           notify_parents_on_vaccination: false
@@ -34,6 +36,7 @@ describe VaccinationNotificationCriteria do
         before do
           create(
             :consent,
+            :self_consent,
             patient:,
             programme:,
             notify_parents_on_vaccination: true
@@ -47,6 +50,7 @@ describe VaccinationNotificationCriteria do
         before do
           create(
             :consent,
+            :self_consent,
             patient:,
             programme:,
             notify_parents_on_vaccination: false
@@ -56,7 +60,7 @@ describe VaccinationNotificationCriteria do
         it { should be_falsy }
       end
 
-      context "with notify_parents_on_vaccination nil" do
+      context "with notify_parents_on_vaccination nil (not a self consent)" do
         before do
           create(
             :consent,
@@ -75,14 +79,18 @@ describe VaccinationNotificationCriteria do
         before do
           create(
             :consent,
+            :self_consent,
             patient:,
             programme:,
+            submitted_at: Date.new(2025, 1, 1),
             notify_parents_on_vaccination: true
           )
           create(
             :consent,
+            :self_consent,
             patient:,
             programme:,
+            submitted_at: Date.new(2025, 1, 2),
             notify_parents_on_vaccination: true
           )
         end
@@ -90,37 +98,68 @@ describe VaccinationNotificationCriteria do
         it { should be_truthy }
       end
 
-      context "when some consents have notify_parents_on_vaccination false" do
+      context "when some consents have notify_parents_on_vaccination false (latest false)" do
         before do
           create(
             :consent,
+            :self_consent,
             patient:,
             programme:,
+            submitted_at: Date.new(2025, 1, 1),
             notify_parents_on_vaccination: true
           )
           create(
             :consent,
+            :self_consent,
             patient:,
             programme:,
+            submitted_at: Date.new(2025, 1, 2),
             notify_parents_on_vaccination: false
           )
         end
 
         it { should be_falsy }
+      end
+
+      context "when some consents have notify_parents_on_vaccination false (latest true)" do
+        before do
+          create(
+            :consent,
+            :self_consent,
+            patient:,
+            programme:,
+            submitted_at: Date.new(2025, 1, 1),
+            notify_parents_on_vaccination: false
+          )
+          create(
+            :consent,
+            :self_consent,
+            patient:,
+            programme:,
+            submitted_at: Date.new(2025, 1, 2),
+            notify_parents_on_vaccination: true
+          )
+        end
+
+        it { should be_truthy }
       end
 
       context "when all consents have notify_parents_on_vaccination false" do
         before do
           create(
             :consent,
+            :self_consent,
             patient:,
             programme:,
+            submitted_at: Date.new(2025, 1, 1),
             notify_parents_on_vaccination: false
           )
           create(
             :consent,
+            :self_consent,
             patient:,
             programme:,
+            submitted_at: Date.new(2025, 1, 2),
             notify_parents_on_vaccination: false
           )
         end
@@ -128,18 +167,21 @@ describe VaccinationNotificationCriteria do
         it { should be_falsy }
       end
 
-      context "when some consents have notify_parents_on_vaccination nil" do
+      context "when some consents have notify_parents_on_vaccination nil (non-self consent)" do
         before do
           create(
             :consent,
+            :self_consent,
             patient:,
             programme:,
+            submitted_at: Date.new(2025, 1, 1),
             notify_parents_on_vaccination: true
           )
           create(
             :consent,
             patient:,
             programme:,
+            submitted_at: Date.new(2025, 1, 2),
             notify_parents_on_vaccination: nil
           )
         end
@@ -152,17 +194,21 @@ describe VaccinationNotificationCriteria do
       before do
         create(
           :consent,
+          :self_consent,
           patient:,
           programme:,
-          notify_parents_on_vaccination: false,
-          invalidated_at: 1.day.ago,
-          notes: "Invalidated consent"
+          submitted_at: Date.new(2025, 1, 1),
+          notify_parents_on_vaccination: true
         )
         create(
           :consent,
+          :self_consent,
           patient:,
           programme:,
-          notify_parents_on_vaccination: true
+          submitted_at: Date.new(2025, 1, 2),
+          notify_parents_on_vaccination: false,
+          invalidated_at: 1.day.ago,
+          notes: "Invalidated consent"
         )
       end
 
@@ -175,23 +221,27 @@ describe VaccinationNotificationCriteria do
       before do
         create(
           :consent,
+          :self_consent,
           patient:,
           programme:,
+          submitted_at: Date.new(2025, 1, 1),
+          notify_parents_on_vaccination: true
+        )
+        create(
+          :consent,
+          :self_consent,
+          patient:,
+          programme:,
+          submitted_at: Date.new(2025, 1, 2),
           notify_parents_on_vaccination: false,
           withdrawn_at: 1.day.ago,
           notes: "Withdrawn consent",
           reason_for_refusal: :personal_choice
         )
-        create(
-          :consent,
-          patient:,
-          programme:,
-          notify_parents_on_vaccination: true
-        )
       end
 
-      it "ignores withdrawn consents" do
-        expect(notify_parents).to be_truthy
+      it "includes withdrawn consents" do
+        expect(notify_parents).to be_falsey
       end
     end
 
@@ -199,52 +249,50 @@ describe VaccinationNotificationCriteria do
       before do
         create(
           :consent,
+          :self_consent,
           patient:,
           programme:,
-          notify_parents_on_vaccination: false,
-          invalidated_at: 1.day.ago,
-          notes: "Invalidated consent"
-        )
-        create(
-          :consent,
-          patient:,
-          programme:,
-          notify_parents_on_vaccination: false,
-          withdrawn_at: 1.day.ago,
-          notes: "Withdrawn consent",
-          reason_for_refusal: :personal_choice
-        )
-        create(
-          :consent,
-          patient:,
-          programme:,
+          submitted_at: Date.new(2025, 1, 1),
           notify_parents_on_vaccination: true
         )
-      end
-
-      it "ignores invalidated and withdrawn consents" do
-        expect(notify_parents).to be_truthy
-      end
-    end
-
-    context "when all valid consents are invalidated or withdrawn" do
-      before do
         create(
           :consent,
+          :self_consent,
           patient:,
           programme:,
+          submitted_at: Date.new(2025, 1, 2),
           notify_parents_on_vaccination: false,
           invalidated_at: 1.day.ago,
           notes: "Invalidated consent"
         )
         create(
           :consent,
+          :self_consent,
           patient:,
           programme:,
+          submitted_at: Date.new(2025, 1, 3),
           notify_parents_on_vaccination: true,
           withdrawn_at: 1.day.ago,
           notes: "Withdrawn consent",
           reason_for_refusal: :personal_choice
+        )
+      end
+
+      it "ignores invalidated but includes withdrawn consents" do
+        expect(notify_parents).to be_truthy
+      end
+    end
+
+    context "when all valid consents are invalidated" do
+      before do
+        create(
+          :consent,
+          :self_consent,
+          patient:,
+          programme:,
+          notify_parents_on_vaccination: false,
+          invalidated_at: 1.day.ago,
+          notes: "Invalidated consent"
         )
       end
 
@@ -258,34 +306,41 @@ describe VaccinationNotificationCriteria do
         # Valid consents
         create(
           :consent,
+          :self_consent,
           patient:,
           programme:,
+          submitted_at: Date.new(2025, 1, 1),
           notify_parents_on_vaccination: true
         )
         create(
           :consent,
+          :self_consent,
           patient:,
           programme:,
+          submitted_at: Date.new(2025, 1, 2),
           notify_parents_on_vaccination: true
         )
 
         # Invalid consents (should be ignored)
         create(
           :consent,
+          :self_consent,
           patient:,
           programme:,
+          submitted_at: Date.new(2025, 1, 3),
           notify_parents_on_vaccination: false,
-          invalidated_at: 1.day.ago,
+          invalidated_at: 2.days.ago,
           notes: "Invalidated consent"
         )
         create(
           :consent,
+          :self_consent,
           patient:,
           programme:,
+          submitted_at: Date.new(2025, 1, 4),
           notify_parents_on_vaccination: false,
-          withdrawn_at: 1.day.ago,
-          notes: "Withdrawn consent",
-          reason_for_refusal: :personal_choice
+          invalidated_at: 1.day.ago,
+          notes: "Invalidated consent 2"
         )
 
         # Consents for other programmes (should be ignored)
@@ -293,8 +348,10 @@ describe VaccinationNotificationCriteria do
         other_programme = create(:programme, type: other_programme_type)
         create(
           :consent,
+          :self_consent,
           patient:,
           programme: other_programme,
+          submitted_at: Date.new(2025, 1, 5),
           notify_parents_on_vaccination: false
         )
       end
@@ -304,39 +361,10 @@ describe VaccinationNotificationCriteria do
       end
     end
 
-    context "patient has only one valid consent with notify_parents_on_vaccination false among many invalid ones" do
-      before do
-        # One valid consent with notify_parents_on_vaccination false
-        create(
-          :consent,
-          patient:,
-          programme:,
-          notify_parents_on_vaccination: false
-        )
+    context "when vaccination record is not recorded in service" do
+      let(:session) { nil }
 
-        # Many invalid consents with notify_parents_on_vaccination true (should be ignored)
-        create(
-          :consent,
-          patient:,
-          programme:,
-          notify_parents_on_vaccination: true,
-          invalidated_at: 1.day.ago,
-          notes: "Invalidated consent"
-        )
-        create(
-          :consent,
-          patient:,
-          programme:,
-          notify_parents_on_vaccination: true,
-          withdrawn_at: 1.day.ago,
-          notes: "Withdrawn consent",
-          reason_for_refusal: :personal_choice
-        )
-      end
-
-      it "returns false based on the single valid consent" do
-        expect(notify_parents).to be_falsy
-      end
+      it { should be_nil }
     end
   end
 end
