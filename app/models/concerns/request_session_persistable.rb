@@ -41,6 +41,12 @@ module RequestSessionPersistable
     end
   end
 
+  def reset_unused_attributes
+    # This can be overridden to provide a before_save callback which can be
+    # used to clear any responses from branching questions where the user has
+    # gone back and edited their answers meaning they're no longer relevant.
+  end
+
   def save(context: :update)
     reset_unused_attributes
     return false if invalid?(context)

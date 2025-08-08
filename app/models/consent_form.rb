@@ -583,9 +583,6 @@ class ConsentForm < ApplicationRecord
     location_is_clinic? ? education_setting_school? : !school_confirmed
   end
 
-  # Because there are branching paths in the consent form journey, fields
-  # sometimes get set with values that then have to be deleted if the user
-  # changes their mind and goes down a different path.
   def reset_unused_attributes
     update_programme_responses
 
