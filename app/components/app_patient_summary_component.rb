@@ -24,7 +24,7 @@ class AppPatientSummaryComponent < ViewComponent::Base
   attr_reader :patient
 
   def rows
-    [date_of_birth_row, address_row]
+    [nhs_number_row, date_of_birth_row, address_row]
   end
 
   def classes
@@ -33,6 +33,25 @@ class AppPatientSummaryComponent < ViewComponent::Base
       app-summary-list--full-width
       nhsuk-u-margin-bottom-2
     ]
+  end
+
+  def nhs_number_row
+    {
+      key: {
+        text: "NHS number"
+      },
+      value: {
+        text:
+          if patient.nhs_number.present?
+            helpers.patient_nhs_number(patient)
+          else
+            helpers.link_to(
+              "Add the child's NHS number",
+              edit_nhs_number_patient_path(patient)
+            )
+          end
+      }
+    }
   end
 
   def date_of_birth_row
