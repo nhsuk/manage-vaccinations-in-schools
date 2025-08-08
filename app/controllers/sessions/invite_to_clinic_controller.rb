@@ -14,10 +14,7 @@ class Sessions::InviteToClinicController < ApplicationController
 
   def update
     if @session.school?
-      PatientSession.import!(
-        @patient_sessions_to_invite,
-        on_duplicate_key_ignore: true
-      )
+      factory.create_patient_sessions!
 
       flash[
         :success
@@ -55,39 +52,29 @@ class Sessions::InviteToClinicController < ApplicationController
   end
 
   def set_patient_sessions_to_invite
-    session_date = @generic_clinic_session.next_date(include_today: true)
-
-    if @session.school?
-      patient_sessions_in_school = @session.patient_sessions.includes(:patient)
-
-      patient_sessions_in_clinic =
-        patient_sessions_in_school.map do |patient_session|
-          PatientSession.includes(:session_notifications).find_or_initialize_by(
-            patient: patient_session.patient,
-            session: @generic_clinic_session
-          )
-        end
-
-      programmes = @session.programmes.to_a
-
-      @patient_sessions_to_invite =
-        patient_sessions_in_clinic.select do |patient_session|
-          SendClinicInitialInvitationsJob.new.should_send_notification?(
-            patient_session:,
-            programmes:,
-            session_date:
-          )
-        end
-    else
-      @patient_sessions_to_invite =
+    @patient_sessions_to_invite =
+      if @session.school?
+        factory.patient_sessions_to_create
+      else
+        session_date = @generic_clinic_session.next_date(include_today: true)
         SendClinicSubsequentInvitationsJob.new.patient_sessions(
           @session,
           session_date:
         )
-    end
+      end
   end
 
   def set_invitations_to_send
     @invitations_to_send = @patient_sessions_to_invite.length
+  end
+
+  def factory
+    @factory ||=
+      if @session.school?
+        ClinicPatientSessionsFactory.new(
+          school_session: @session,
+          generic_clinic_session: @generic_clinic_session
+        )
+      end
   end
 end
