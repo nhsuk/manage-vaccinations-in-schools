@@ -348,13 +348,59 @@ describe ClassImport do
       end
     end
 
-    context "with an existing patient in a different school" do
+    context "with an existing patient in a session for a previous academic year but not the current" do
+      let(:previous_academic_year) { session.academic_year - 1 }
+
+      let(:patient) do
+        create(
+          :patient,
+          nhs_number: "9990000018",
+          school: location,
+          session:
+            create(
+              :session,
+              team:,
+              programmes:,
+              location:,
+              academic_year: previous_academic_year,
+              date: previous_academic_year.to_academic_year_date_range.begin
+            )
+        )
+      end
+
+      it "adds the patient to the upcoming session" do
+        expect(patient.sessions).not_to include(session)
+
+        expect { process! }.to change { patient.reload.sessions.count }.by(1)
+
+        expect(patient.sessions).to include(session)
+      end
+    end
+
+    context "with an existing patient in the same school but not in the team" do
+      let(:patient) do
+        create(
+          :patient,
+          nhs_number: "9990000018",
+          school: location,
+          session: create(:session, programmes:)
+        )
+      end
+
+      it "adds the patient to the session" do
+        expect(patient.sessions).not_to include(session)
+        process!
+        expect(patient.reload.sessions).to include(session)
+      end
+    end
+
+    context "with an existing patient already in the team but in a different school" do
       let(:patient) do
         create(
           :patient,
           nhs_number: "9990000018",
           school: create(:school),
-          session: create(:session, programmes:)
+          session: create(:session, team:, programmes:)
         )
       end
 
