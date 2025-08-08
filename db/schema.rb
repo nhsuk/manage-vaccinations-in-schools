@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_07_070516) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_08_182416) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -256,8 +256,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_07_070516) do
     t.boolean "notify_parents_on_vaccination"
     t.datetime "submitted_at", null: false
     t.integer "vaccine_methods", default: [], null: false, array: true
-    t.boolean "notify_parent_on_refusal"
     t.integer "academic_year", null: false
+    t.boolean "notify_parent_on_refusal"
     t.index ["academic_year"], name: "index_consents_on_academic_year"
     t.index ["parent_id"], name: "index_consents_on_parent_id"
     t.index ["patient_id"], name: "index_consents_on_patient_id"
@@ -850,8 +850,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_07_070516) do
     t.string "family_name", null: false
     t.string "session_token"
     t.integer "fallback_role", default: 0, null: false
+    t.string "reporting_api_session_token"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["provider", "uid"], name: "index_users_on_provider_and_uid", unique: true
+    t.index ["reporting_api_session_token"], name: "index_users_on_reporting_api_session_token", unique: true
   end
 
   create_table "vaccination_records", force: :cascade do |t|
@@ -879,8 +881,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_07_070516) do
     t.bigint "vaccine_id"
     t.boolean "full_dose"
     t.datetime "nhs_immunisations_api_synced_at"
-    t.string "nhs_immunisations_api_id"
     t.string "nhs_immunisations_api_etag"
+    t.string "nhs_immunisations_api_id"
     t.integer "protocol"
     t.datetime "nhs_immunisations_api_sync_pending_at"
     t.boolean "notify_parents"
