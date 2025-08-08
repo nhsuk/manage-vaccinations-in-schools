@@ -345,4 +345,112 @@ describe Consent do
       expect(consents).not_to include(consent_next_year)
     end
   end
+
+  describe "#update_vaccination_records_no_notify" do
+    let(:patient) { create(:patient) }
+    let(:programme) { create(:programme, :hpv) }
+    let(:consent) { create(:consent, patient:, programme:) }
+
+    context "when vaccination records exist for the patient and programme" do
+      let!(:first_vaccination_record) do
+        create(:vaccination_record, patient:, programme:, notify_parents: false)
+      end
+      let!(:second_vaccination_record) do
+        create(:vaccination_record, patient:, programme:, notify_parents: true)
+      end
+      let!(:other_patient_record) do
+        create(
+          :vaccination_record,
+          patient: create(:patient),
+          programme:,
+          notify_parents: false
+        )
+      end
+      let!(:other_programme_record) do
+        create(
+          :vaccination_record,
+          patient:,
+          programme: create(:programme, :flu),
+          notify_parents: false
+        )
+      end
+
+      before do
+        allow(VaccinationNotificationCriteria).to receive(:call).with(
+          vaccination_record: first_vaccination_record
+        ).and_return(true)
+        allow(VaccinationNotificationCriteria).to receive(:call).with(
+          vaccination_record: second_vaccination_record
+        ).and_return(false)
+      end
+
+      it "updates notify_parents for matching vaccination records" do
+        expect { consent.update_vaccination_records_no_notify! }.to change {
+          first_vaccination_record.reload.notify_parents
+        }.from(false).to(true).and change {
+                second_vaccination_record.reload.notify_parents
+              }.from(true).to(false)
+      end
+
+      it "does not update vaccination records for other patients" do
+        expect { consent.update_vaccination_records_no_notify! }.not_to(
+          change { other_patient_record.reload.notify_parents }
+        )
+      end
+
+      it "does not update vaccination records for other programmes" do
+        expect { consent.update_vaccination_records_no_notify! }.not_to(
+          change { other_programme_record.reload.notify_parents }
+        )
+      end
+
+      it "calls VaccinationNotificationCriteria for each matching record" do
+        consent.update_vaccination_records_no_notify!
+
+        expect(VaccinationNotificationCriteria).to have_received(:call).with(
+          vaccination_record: first_vaccination_record
+        )
+        expect(VaccinationNotificationCriteria).to have_received(:call).with(
+          vaccination_record: second_vaccination_record
+        )
+      end
+    end
+
+    context "with multiple vaccination records and mixed results" do
+      let!(:vaccination_records) do
+        create_list(
+          :vaccination_record,
+          3,
+          patient:,
+          programme:,
+          notify_parents: false
+        )
+      end
+
+      before do
+        allow(VaccinationNotificationCriteria).to receive(:call).with(
+          vaccination_record: vaccination_records[0]
+        ).and_return(true)
+        allow(VaccinationNotificationCriteria).to receive(:call).with(
+          vaccination_record: vaccination_records[1]
+        ).and_return(nil)
+        allow(VaccinationNotificationCriteria).to receive(:call).with(
+          vaccination_record: vaccination_records[2]
+        ).and_return(false)
+      end
+
+      it "updates each vaccination record according to the criteria result" do
+        expect { consent.update_vaccination_records_no_notify! }.to change {
+          vaccination_records[0].reload.notify_parents
+        }.from(false).to(true).and change {
+                vaccination_records[1].reload.notify_parents
+              }
+                .from(false)
+                .to(nil)
+                .and(
+                  not_change { vaccination_records[2].reload.notify_parents }
+                )
+      end
+    end
+  end
 end

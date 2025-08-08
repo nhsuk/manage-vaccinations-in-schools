@@ -50,6 +50,23 @@ describe "Invalidate consent" do
     and_i_am_not_able_to_record_a_vaccination
   end
 
+  scenario "Given self consent, and requested parents aren't notified, and vaccinated, then invalidate" do
+    given_i_am_signed_in
+    and_self_consent_has_been_given
+    and_patient_has_been_vaccinated_with_no_parent_notification
+
+    when_i_go_to_the_patient
+    then_i_see_the_self_consent
+
+    when_i_click_on_the_self_consent
+    and_i_click_invalidate_consent
+
+    when_i_fill_in_the_notes
+    and_i_click_invalidate_consent
+    then_i_see_the_consent_has_been_invalidated
+    and_the_vaccination_record_is_updated_to_notify_parents
+  end
+
   def given_i_am_signed_in
     @programme = create(:programme, :hpv)
     team = create(:team, :with_one_nurse, programmes: [@programme])
@@ -120,9 +137,15 @@ describe "Invalidate consent" do
 
   def then_i_see_the_consent_has_been_invalidated
     expect(page).to have_content("Invalid")
-    expect(page).to have_content(
-      "Consent response from #{@parent.full_name} marked as invalid"
-    )
+    if @parent
+      expect(page).to have_content(
+        "Consent response from #{@parent.full_name} marked as invalid"
+      )
+    else
+      expect(page).to have_content(
+        "Consent response from #{@patient.full_name} marked as invalid"
+      )
+    end
   end
 
   def and_i_cant_mark_as_invalid
@@ -136,5 +159,45 @@ describe "Invalidate consent" do
   def and_i_am_not_able_to_record_a_vaccination
     expect(page).to have_content("No response")
     expect(page).not_to have_content("ready for their HPV vaccination?")
+  end
+
+  def and_self_consent_has_been_given
+    @consent =
+      create(
+        :consent,
+        :given,
+        :self_consent,
+        patient: @patient,
+        programme: @programme
+      )
+    create(
+      :patient_consent_status,
+      :given,
+      patient: @patient,
+      programme: @programme
+    )
+  end
+
+  def and_patient_has_been_vaccinated_with_no_parent_notification
+    @vaccination_record =
+      create(
+        :vaccination_record,
+        patient: @patient,
+        programme: @programme,
+        session: @session,
+        notify_parents: false
+      )
+  end
+
+  def then_i_see_the_self_consent
+    expect(page).to have_content("Child (Gillick competent)")
+  end
+
+  def when_i_click_on_the_self_consent
+    click_on "Child (Gillick competent)"
+  end
+
+  def and_the_vaccination_record_is_updated_to_notify_parents
+    expect(@vaccination_record.reload.notify_parents).to be true
   end
 end
