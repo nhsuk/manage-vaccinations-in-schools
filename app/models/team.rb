@@ -33,7 +33,6 @@
 #
 class Team < ApplicationRecord
   include HasProgrammeYearGroups
-  include ODSCodeConcern
 
   audited associated_with: :organisation
   has_associated_audits
