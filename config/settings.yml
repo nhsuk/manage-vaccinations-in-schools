@@ -46,8 +46,9 @@ splunk:
   hec_endpoint: https://firehose.inputs.splunk.aws.digital.nhs.uk/services/collector/event
   hec_token: <%= Rails.application.credentials.splunk&.hec_token %>
 
-
-
 reporting_api:
   client_app:
-    token_ttl_seconds: 600
+    token_ttl_seconds: 300
+    root_url: http://localhost:5000/
+    # secret:
+  

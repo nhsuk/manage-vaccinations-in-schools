@@ -256,8 +256,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_07_070516) do
     t.boolean "notify_parents_on_vaccination"
     t.datetime "submitted_at", null: false
     t.integer "vaccine_methods", default: [], null: false, array: true
-    t.boolean "notify_parent_on_refusal"
     t.integer "academic_year", null: false
+    t.boolean "notify_parent_on_refusal"
     t.index ["academic_year"], name: "index_consents_on_academic_year"
     t.index ["parent_id"], name: "index_consents_on_parent_id"
     t.index ["patient_id"], name: "index_consents_on_patient_id"
@@ -879,8 +879,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_07_070516) do
     t.bigint "vaccine_id"
     t.boolean "full_dose"
     t.datetime "nhs_immunisations_api_synced_at"
-    t.string "nhs_immunisations_api_id"
     t.string "nhs_immunisations_api_etag"
+    t.string "nhs_immunisations_api_id"
     t.integer "protocol"
     t.datetime "nhs_immunisations_api_sync_pending_at"
     t.boolean "notify_parents"

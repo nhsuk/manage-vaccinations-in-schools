@@ -1,0 +1,37 @@
+@startuml
+title "High-level Authentication Flow with CIS2 (OIDC)" 
+|User|
+|CIS2|
+|Mavis|
+|Mavis Reporting|
+|User|
+start
+:click 'Start' button;
+|Mavis|
+:redirect to CIS2;
+|CIS2|
+:respond with login form;
+|User|
+:provide credentials;
+->credentials;
+|CIS2|
+:verify credentials;
+:create user session;
+:generate authorization code;
+->redirect back with authorization code;
+|User|
+:request redirect URI;
+|Mavis|
+:verify authorization code;
+->client_id & authorization code;
+|CIS2|
+:respond with access token;
+|Mavis|
+:use access token to get user info;
+|CIS2|
+->user info;
+|Mavis|
+:store user info in session;
+:store access token against user in DB;
+stop
+@enduml
