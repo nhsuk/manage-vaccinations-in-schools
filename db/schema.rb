@@ -681,6 +681,16 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_07_070516) do
     t.index ["type"], name: "index_programmes_on_type", unique: true
   end
 
+  create_table "reporting_api_one_time_tokens", primary_key: "token", id: :string, force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.jsonb "cis2_info", default: {}, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_at"], name: "index_reporting_api_one_time_tokens_on_created_at"
+    t.index ["token"], name: "index_reporting_api_one_time_tokens_on_token", unique: true
+    t.index ["user_id"], name: "index_reporting_api_one_time_tokens_on_user_id", unique: true
+  end
+
   create_table "school_move_log_entries", force: :cascade do |t|
     t.bigint "patient_id", null: false
     t.bigint "user_id"
@@ -996,6 +1006,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_07_070516) do
   add_foreign_key "pre_screenings", "patient_sessions"
   add_foreign_key "pre_screenings", "programmes"
   add_foreign_key "pre_screenings", "users", column: "performed_by_user_id"
+  add_foreign_key "reporting_api_one_time_tokens", "users"
   add_foreign_key "school_move_log_entries", "locations", column: "school_id"
   add_foreign_key "school_move_log_entries", "patients"
   add_foreign_key "school_move_log_entries", "users"
