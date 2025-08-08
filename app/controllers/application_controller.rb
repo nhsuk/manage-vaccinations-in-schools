@@ -6,7 +6,7 @@ class ApplicationController < ActionController::Base
 
   before_action :store_user_location!
   before_action :authenticate_user!
-  before_action :set_selected_team
+  before_action :ensure_team_is_selected
   before_action :set_user_cis2_info
   before_action :set_disable_cache_headers
   before_action :set_header_path
@@ -35,18 +35,16 @@ class ApplicationController < ActionController::Base
 
   rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
 
+  def current_organisation = current_user&.selected_organisation
+
   def current_team = current_user&.selected_team
 
-  helper_method :current_team
+  helper_method :current_organisation, :current_team
 
   private
 
-  def set_selected_team
-    return if Settings.cis2.enabled
-    return unless current_user
-    return if session["cis2_info"].present?
-
-    redirect_to new_users_teams_path
+  def ensure_team_is_selected
+    redirect_to new_users_teams_path if current_user && cis2_info.team.nil?
   end
 
   def set_header_path

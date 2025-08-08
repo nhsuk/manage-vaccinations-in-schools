@@ -1,27 +1,27 @@
 # frozen_string_literal: true
 
 describe "User CIS2 authentication" do
-  scenario "user has wrong team selected" do
+  scenario "user has wrong organisation selected" do
     given_i_am_setup_in_cis2_but_not_mavis
     when_i_go_to_the_sessions_page
     then_i_am_on_the_start_page
 
     when_i_click_the_cis2_login_button
-    then_i_see_the_team_not_found_error
+    then_i_see_the_organisation_not_found_error
 
     given_my_team_has_been_setup_in_mavis
     when_i_click_the_change_role_button
-    then_i_see_the_sessions_page
+    then_i_see_the_team_selection_page
   end
 
   context "user has no other orgs to select" do
-    scenario "user has wrong team selected" do
+    scenario "user has wrong organisation selected" do
       given_i_am_setup_in_cis2_with_only_one_role
       when_i_go_to_the_start_page
       then_i_should_see_the_cis2_login_button
 
       when_i_click_the_cis2_login_button
-      then_i_see_the_team_not_found_error
+      then_i_see_the_organisation_not_found_error
       and_there_is_no_change_role_button
     end
   end
@@ -58,8 +58,8 @@ describe "User CIS2 authentication" do
     visit sessions_path
   end
 
-  def then_i_see_the_sessions_page
-    expect(page).to have_current_path sessions_path
+  def then_i_see_the_team_selection_page
+    expect(page).to have_current_path(new_users_teams_path)
   end
 
   def given_i_am_setup_in_cis2_with_only_one_role
@@ -73,8 +73,10 @@ describe "User CIS2 authentication" do
     )
   end
 
-  def then_i_see_the_team_not_found_error
-    expect(page).to have_heading "Your team is not using this service yet"
+  def then_i_see_the_organisation_not_found_error
+    expect(page).to have_heading(
+      "Your organisation is not using this service yet"
+    )
   end
 
   def when_i_click_the_change_role_button

@@ -3,9 +3,9 @@
 <h2 class="nhsuk-heading-m">Contact your registration authority</h2>
 
 <p>
-  You need to belong to ‘<em>schoolagedimmunisations</em>’ to use Mavis. If you think you should be in this workgroup, ask your registration authority to add you.
+  You need to belong to ‘<em><%= CIS2Info::WORKGROUP %></em>’ to use Mavis. If you think you should be in this workgroup, ask your registration authority to add you.
 </p>
 
-<% if @cis2_info[:has_other_roles] %>
+<% if @cis2_info.has_other_roles %>
   <%= govuk_button_to "Change role", user_cis2_omniauth_authorize_path, params: { change_role: true } %>
 <% end %>

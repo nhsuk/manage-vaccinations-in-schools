@@ -7,6 +7,8 @@ describe "Parental consent" do
     stub_pds_search_to_return_no_patients
 
     given_an_hpv_programme_is_underway
+    and_i_am_signed_in
+
     when_a_nurse_checks_consent_responses
     then_there_should_be_no_consent_for_my_child
 
@@ -44,8 +46,11 @@ describe "Parental consent" do
     @child = create(:patient, :consent_no_response, session: @session)
   end
 
-  def when_a_nurse_checks_consent_responses
+  def and_i_am_signed_in
     sign_in @team.users.first
+  end
+
+  def when_a_nurse_checks_consent_responses
     visit "/dashboard"
 
     click_on "Programmes", match: :first
@@ -143,7 +148,6 @@ describe "Parental consent" do
   end
 
   def when_the_nurse_checks_the_consent_responses
-    sign_in @team.users.first
     visit "/dashboard"
 
     click_on "Programmes", match: :first

@@ -1,6 +1,6 @@
 <%= h1 "You do not have permission to use this service" %>
 
-<% if @cis2_info[:has_other_roles] %>
+<% if @cis2_info.has_other_roles %>
   <%= govuk_button_to "Change role", user_cis2_omniauth_authorize_path, params: { change_role: true } %>
 <% end %>
 
@@ -12,8 +12,8 @@
 </p>
 
 <%= govuk_inset_text do %>
-  <%= @cis2_info[:selected_org][:name] %><br />
-  (<%= @cis2_info[:selected_org][:code] %>)
+  <%= @cis2_info.organisation_name %><br />
+  (<%= @cis2_info.organisation_code %>)
 <% end %>
 
 <p>
