@@ -134,14 +134,6 @@ class Patient < ApplicationRecord
           )
         end
 
-  scope :with_notice,
-        -> do
-          (
-            deceased + restricted + invalidated +
-              has_vaccination_records_dont_notify_parents
-          ).uniq
-        end
-
   scope :appear_in_programmes,
         ->(programmes, academic_year:) do
           where(
