@@ -124,19 +124,14 @@ class Patient < ApplicationRecord
 
   scope :has_vaccination_records_dont_notify_parents,
         -> do
-          joins(:vaccination_records).where(
-            vaccination_records: {
-              notify_parents: false
-            }
-          ).distinct
-        end
-
-  scope :with_notice,
-        -> do
-          (
-            deceased + restricted + invalidated +
-              has_vaccination_records_dont_notify_parents
-          ).uniq
+          where(
+            VaccinationRecord
+              .kept
+              .where("patient_id = patients.id")
+              .where(notify_parents: false)
+              .arel
+              .exists
+          )
         end
 
   scope :appear_in_programmes,
