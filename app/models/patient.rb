@@ -473,7 +473,12 @@ class Patient < ApplicationRecord
     update!(invalidated_at: Time.current)
   end
 
-  def not_in_team? = patient_sessions.empty?
+  def not_in_team?(team:, academic_year:)
+    patient_sessions
+      .joins(:session)
+      .where(session: { academic_year:, team: })
+      .empty?
+  end
 
   def dup_for_pending_changes
     dup.tap do |new_patient|
