@@ -65,6 +65,9 @@ class PatientSessions::ConsentsController < PatientSessions::BaseController
     if @consent.valid?
       ActiveRecord::Base.transaction do
         @consent.save!
+
+        @consent.update_vaccination_records_no_notify
+
         update_patient_status
       end
 
@@ -84,6 +87,9 @@ class PatientSessions::ConsentsController < PatientSessions::BaseController
     if @consent.valid?
       ActiveRecord::Base.transaction do
         @consent.save!
+
+        @consent.update_vaccination_records_no_notify
+
         update_patient_status
       end
 

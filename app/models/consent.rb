@@ -212,6 +212,14 @@ class Consent < ApplicationRecord
       )
   end
 
+  def update_vaccination_records_no_notify
+    vaccination_records = VaccinationRecord.where(patient: patient, programme: programme)
+
+    vaccination_records.each do |vaccination_record|
+      vaccination_record.update!(notify_parents: VaccinationNotificationCriteria.call(vaccination_record:))
+    end
+  end
+
   class ConsentFormNotRecorded < StandardError
   end
 end
