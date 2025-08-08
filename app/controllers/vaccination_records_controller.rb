@@ -50,7 +50,11 @@ class VaccinationRecordsController < ApplicationController
         :location,
         :performed_by_user,
         :programme,
-        patient: [:gp_practice, :school, { parent_relationships: :parent }],
+        patient: [
+          :gp_practice,
+          :school,
+          { parent_relationships: :parent, vaccination_records: :programme }
+        ],
         session: %i[session_dates],
         vaccine: :programme
       ).find(params[:id])

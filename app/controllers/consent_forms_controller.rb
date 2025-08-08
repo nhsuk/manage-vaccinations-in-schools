@@ -138,7 +138,8 @@ class ConsentFormsController < ApplicationController
     @patient =
       policy_scope(Patient).includes(
         parent_relationships: :parent,
-        pending_sessions: :programmes
+        pending_sessions: :programmes,
+        vaccination_records: :programme
       ).find(params[:patient_id])
   end
 
