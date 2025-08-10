@@ -2,7 +2,7 @@
 
 require_relative "../../app/lib/mavis_cli"
 
-describe "mavis list teams" do
+describe "mavis teams list" do
   it "lists all teams" do
     given_a_couple_organisations_exist
     and_there_are_teams_in_the_organisations
