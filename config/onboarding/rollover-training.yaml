@@ -1,0 +1,40 @@
+organisation:
+  ods_code: RLVTRN
+
+team:
+  workgroup: rollovertraining
+  name: Rollover Training
+  email: rollover@example.com
+  phone: 01234 567890
+  careplus_venue_code: ROLLOVER
+  privacy_notice_url: https://www.example.com/privacy-notice
+  privacy_policy_url: https://www.example.com/privacy-policy
+
+programmes: [flu, hpv, menacwy, td_ipv]
+
+subteams:
+  generic:
+    name: Rollover Training
+    email: rollover@example.com
+    phone: 01234 567890
+
+users:
+  - email: nurse.rollover@example.com
+    password: nurse.rollover@example.com
+    given_name: Nurse
+    family_name: ROLLOVER
+
+schools:
+  generic:
+    - 115529 # primary
+    - 131806 # primary
+    - 145212 # primary
+    - 118853 # primary
+    - 145482 # secondary
+    - 137236 # secondary
+    - 136642 # secondary
+    - 135970 # secondary
+
+clinics:
+  generic:
+    - name: Rollover Training Hospital
