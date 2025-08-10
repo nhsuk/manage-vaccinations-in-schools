@@ -46,20 +46,23 @@ class Generate::CohortImports
   end
 
   def cohort_import_csv_filepath
-    timestamp = Time.current.strftime("%Y%m%d%H%M%S")
-    size =
-      ActiveSupport::NumberHelper.number_to_human(
-        @patient_count,
-        units: {
-          thousand: "k",
-          million: "m"
-        },
-        format: "%n%u"
-      )
-    Rails.root.join(
-      "tmp/cohort-import-" \
-        "#{team.workgroup}-#{programmes.map(&:type).join("-")}-#{size}-#{timestamp}.csv"
-    )
+    @cohort_import_csv_filepath ||=
+      begin
+        timestamp = Time.current.strftime("%Y%m%d%H%M%S")
+        size =
+          ActiveSupport::NumberHelper.number_to_human(
+            @patient_count,
+            units: {
+              thousand: "k",
+              million: "m"
+            },
+            format: "%n%u"
+          )
+        Rails.root.join(
+          "tmp/cohort-import-" \
+            "#{team.workgroup}-#{programmes.map(&:type).join("-")}-#{size}-#{timestamp}.csv"
+        )
+      end
   end
 
   def write_cohort_import_csv
