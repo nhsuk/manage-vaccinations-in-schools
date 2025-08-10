@@ -7,16 +7,15 @@ Faker::Config.locale = "en-GB"
 class Generate::CohortImports
   def initialize(
     team:,
-    programme: nil,
+    programmes: nil,
     urns: nil,
     school_year_groups: nil,
     patient_count: 10,
     progress_bar: nil
   )
     @team = team
-    @programme = programme || team.programmes.sample
-    @urns =
-      urns || @team.locations.select { it.urn.present? }.sample(3).pluck(:urn)
+    @programmes = programmes.presence || team.programmes
+    @urns = urns || @team.schools.pluck(:urn)
     @school_year_groups = school_year_groups
     @patient_count = patient_count
     @progress_bar = progress_bar
@@ -25,9 +24,7 @@ class Generate::CohortImports
 
   def self.call(...) = new(...).call
 
-  def call
-    write_cohort_import_csv
-  end
+  def call = write_cohort_import_csv
 
   def patients
     patient_count.times.lazy.map { build_patient }
@@ -36,11 +33,17 @@ class Generate::CohortImports
   private
 
   attr_reader :team,
-              :programme,
+              :programmes,
               :urns,
               :patient_count,
               :school_year_groups,
               :progress_bar
+
+  def academic_year = AcademicYear.current
+
+  def all_year_groups
+    programmes.flat_map(&:default_year_groups).uniq
+  end
 
   def cohort_import_csv_filepath
     timestamp = Time.current.strftime("%Y%m%d%H%M%S")
@@ -55,7 +58,7 @@ class Generate::CohortImports
       )
     Rails.root.join(
       "tmp/cohort-import-" \
-        "#{team.workgroup}-#{programme.type}-#{size}-#{timestamp}.csv"
+        "#{team.workgroup}-#{programmes.map(&:type).join("-")}-#{size}-#{timestamp}.csv"
     )
   end
 
@@ -120,15 +123,14 @@ class Generate::CohortImports
           else
             team.locations.where(urn: urns).includes(:team, :sessions)
           end
-        locations.select do
-          (it.year_groups & programme.default_year_groups).any?
-        end
+
+        locations.select { (it.year_groups & all_year_groups).any? }
       end
   end
 
   def build_patient
     school = schools_with_year_groups.sample
-    year_group ||= (school.year_groups & programme.default_year_groups).sample
+    year_group ||= (school.year_groups & all_year_groups).sample
     nhs_number = nil
     loop do
       nhs_number = Faker::NationalHealthService.british_number.gsub(" ", "")
@@ -154,15 +156,11 @@ class Generate::CohortImports
       end
   end
 
-  def date_of_birth_for_year(year_group, academic_year: AcademicYear.pending)
-    if year_group < 12
-      rand(
-        year_group.to_birth_academic_year(
-          academic_year:
-        ).to_academic_year_date_range
-      )
-    else
-      raise "Unknown year group: #{year_group}"
-    end
+  def date_of_birth_for_year(year_group)
+    rand(
+      year_group.to_birth_academic_year(
+        academic_year:
+      ).to_academic_year_date_range
+    )
   end
 end

@@ -10,7 +10,7 @@ describe "mavis generate cohort-imports" do
 
   def given_an_organisation_exists
     @programme = create(:programme, :hpv)
-    @team = create(:team, workgroup: "r1y")
+    @team = create(:team, workgroup: "r1y", programmes: [@programme])
   end
 
   def and_there_are_three_sessions_in_the_organisation

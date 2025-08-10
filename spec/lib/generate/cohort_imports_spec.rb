@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
 describe Generate::CohortImports do
-  subject(:cohort_imports) { described_class.new(team:, programme:) }
+  subject(:cohort_imports) do
+    described_class.new(team:, programmes: [programme])
+  end
 
   let(:programme) { create(:programme, :hpv) }
   let(:team) { create(:team, programmes: [programme]) }

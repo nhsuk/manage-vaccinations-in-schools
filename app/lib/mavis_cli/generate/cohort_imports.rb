@@ -12,9 +12,9 @@ module MavisCLI
              default: "A9A5A",
              desc: "Workgroup of team to generate consents for"
 
-      option :programme_type,
+      option :programme_types,
              aliases: ["-p"],
-             default: "hpv",
+             default: [],
              desc:
                "Programme type to generate consents for (hpv, menacwy, td_ipv, etc)"
 
@@ -25,10 +25,13 @@ module MavisCLI
              default: 10,
              desc: "Number of patients to create"
 
-      def call(team_workgroup:, programme_type:, patient_count:)
+      def call(team_workgroup:, programme_types:, patient_count:)
         MavisCLI.load_rails
 
+        team = Team.find_by!(workgroup: team_workgroup)
+        programmes = Programme.where(type: programme_types)
         patient_count = patient_count.to_i
+
         progress_bar = MavisCLI.progress_bar(patient_count)
 
         puts "Generating cohort import for team #{team_workgroup} with" \
@@ -36,8 +39,8 @@ module MavisCLI
 
         result =
           ::Generate::CohortImports.call(
-            team: Team.find_by(workgroup: team_workgroup),
-            programme: Programme.find_by(type: programme_type),
+            team:,
+            programmes:,
             patient_count:,
             progress_bar:
           )
