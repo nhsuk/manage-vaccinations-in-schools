@@ -4,44 +4,17 @@ require "csv"
 
 Faker::Config.locale = "en-GB"
 
-# Use this to generate a cohort import CSV file for performance testing.
-#
-# Usage from the Rails console:
-#
-# Create a cohort import of 1000 children for all the school sessions for the
-# org A9A5A in the local db:
-#
-#     Generate::CohortImports.call(patient_count: 1000)
-#
-# You can also generate a cohort import for sessions not in the local db.
-#
-#     Generate::CohortImports.call(
-#       patient_count: 1000,
-#       urns: ["123456", "987654"],
-#       school_year_groups: {
-#         "123456" => [-2, -1, 0, 1, 2, 3, 4, 5, 6],
-#         "987654" => [9, 10, 11, 12, 13]
-#       }
-#     )
-#
-# You can pull out the year groups with the following:
-#
-#     org = Organisation.find_by(ods_code: "A9A5A")
-#     team = org.teams.find_by(name: "")
-#     team.locations.school.pluck(:urn, :year_groups) .to_h
-#
-
 class Generate::CohortImports
   def initialize(
-    ods_code: "A9A5A",
-    programme: "hpv",
+    team:,
+    programme: nil,
     urns: nil,
     school_year_groups: nil,
     patient_count: 10,
     progress_bar: nil
   )
-    @team = Team.joins(:organisation).find_by(organisation: { ods_code: })
-    @programme = Programme.find_by(type: programme)
+    @team = team
+    @programme = programme || team.programmes.sample
     @urns =
       urns || @team.locations.select { it.urn.present? }.sample(3).pluck(:urn)
     @school_year_groups = school_year_groups
@@ -62,15 +35,12 @@ class Generate::CohortImports
 
   private
 
-  attr_reader :ods_code,
-              :team,
+  attr_reader :team,
               :programme,
               :urns,
               :patient_count,
               :school_year_groups,
               :progress_bar
-
-  delegate :organisation, to: :team
 
   def cohort_import_csv_filepath
     timestamp = Time.current.strftime("%Y%m%d%H%M%S")
@@ -85,7 +55,7 @@ class Generate::CohortImports
       )
     Rails.root.join(
       "tmp/cohort-import-" \
-        "#{organisation.ods_code}-#{programme.type}-#{size}-#{timestamp}.csv"
+        "#{team.workgroup}-#{programme.type}-#{size}-#{timestamp}.csv"
     )
   end
 

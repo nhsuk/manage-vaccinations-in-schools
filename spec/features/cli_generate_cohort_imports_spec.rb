@@ -9,18 +9,12 @@ describe "mavis generate cohort-imports" do
   end
 
   def given_an_organisation_exists
-    @programme = Programme.hpv.first || create(:programme, :hpv)
-    @organisation = create(:organisation, ods_code: "R1Y")
+    @programme = create(:programme, :hpv)
+    @team = create(:team, workgroup: "r1y")
   end
 
   def and_there_are_three_sessions_in_the_organisation
-    @sessions =
-      create_list(
-        :session,
-        3,
-        organisation: @organisation,
-        programmes: [@programme]
-      )
+    @sessions = create_list(:session, 3, team: @team, programmes: [@programme])
   end
 
   def when_i_run_the_generate_cohort_imports_command
@@ -28,7 +22,7 @@ describe "mavis generate cohort-imports" do
       @output =
         capture_output do
           Dry::CLI.new(MavisCLI).call(
-            arguments: %w[generate cohort-imports -o R1Y -p 100]
+            arguments: %w[generate cohort-imports -w r1y -c 100]
           )
         end
       @timestamp = Time.current.strftime("%Y%m%d%H%M%S")
@@ -37,15 +31,15 @@ describe "mavis generate cohort-imports" do
 
   def then_a_cohort_import_csv_file_is_created
     expect(@output).to include(
-      "Generating cohort import for ods code R1Y with 100 patients"
+      "Generating cohort import for team r1y with 100 patients"
     )
     expect(@output).to match(
-      /Cohort import CSV generated:.*cohort-import-R1Y-hpv-100-#{@timestamp}.csv/
+      /Cohort import CSV generated:.*cohort-import-r1y-hpv-100-#{@timestamp}.csv/
     )
 
     expect(
       File.readlines(
-        Rails.root.join("tmp", "cohort-import-R1Y-hpv-100-#{@timestamp}.csv")
+        Rails.root.join("tmp", "cohort-import-r1y-hpv-100-#{@timestamp}.csv")
       ).length
     ).to eq 101
   end
