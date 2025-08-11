@@ -7,12 +7,12 @@ class PatientsController < ApplicationController
   before_action :set_patient, except: :index
   before_action :record_access_log_entry, only: %i[show log]
 
+  layout "full"
+
   def index
     patients = @form.apply(policy_scope(Patient).includes(:school))
 
     @pagy, @patients = pagy(patients)
-
-    render layout: "full"
   end
 
   def show
@@ -27,7 +27,6 @@ class PatientsController < ApplicationController
   end
 
   def edit
-    render layout: "full"
   end
 
   def invite_to_clinic
