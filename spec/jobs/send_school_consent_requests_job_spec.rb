@@ -3,10 +3,9 @@
 describe SendSchoolConsentRequestsJob do
   subject(:perform_now) { described_class.perform_now(session) }
 
+  let(:today) { Date.new(2025, 7, 1) }
   let(:programmes) { [create(:programme)] }
-
   let(:parents) { create_list(:parent, 2) }
-
   let(:patient_with_request_sent) do
     create(:patient, :consent_request_sent, programmes:)
   end
@@ -17,7 +16,6 @@ describe SendSchoolConsentRequestsJob do
   let(:deceased_patient) { create(:patient, :deceased) }
   let(:invalid_patient) { create(:patient, :invalidated) }
   let(:restricted_patient) { create(:patient, :restricted) }
-
   let!(:patients) do
     [
       patient_with_request_sent,
@@ -28,6 +26,8 @@ describe SendSchoolConsentRequestsJob do
       restricted_patient
     ]
   end
+
+  around { |example| travel_to(today) { example.run } }
 
   context "when session is unscheduled" do
     let(:session) { create(:session, :unscheduled, patients:, programmes:) }
