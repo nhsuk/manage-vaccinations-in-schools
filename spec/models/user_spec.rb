@@ -4,28 +4,30 @@
 #
 # Table name: users
 #
-#  id                  :bigint           not null, primary key
-#  current_sign_in_at  :datetime
-#  current_sign_in_ip  :string
-#  email               :string
-#  encrypted_password  :string           default(""), not null
-#  fallback_role       :integer          default("nurse"), not null
-#  family_name         :string           not null
-#  given_name          :string           not null
-#  last_sign_in_at     :datetime
-#  last_sign_in_ip     :string
-#  provider            :string
-#  remember_created_at :datetime
-#  session_token       :string
-#  sign_in_count       :integer          default(0), not null
-#  uid                 :string
-#  created_at          :datetime         not null
-#  updated_at          :datetime         not null
+#  id                          :bigint           not null, primary key
+#  current_sign_in_at          :datetime
+#  current_sign_in_ip          :string
+#  email                       :string
+#  encrypted_password          :string           default(""), not null
+#  fallback_role               :integer          default("nurse"), not null
+#  family_name                 :string           not null
+#  given_name                  :string           not null
+#  last_sign_in_at             :datetime
+#  last_sign_in_ip             :string
+#  provider                    :string
+#  remember_created_at         :datetime
+#  reporting_api_session_token :string
+#  session_token               :string
+#  sign_in_count               :integer          default(0), not null
+#  uid                         :string
+#  created_at                  :datetime         not null
+#  updated_at                  :datetime         not null
 #
 # Indexes
 #
-#  index_users_on_email             (email) UNIQUE
-#  index_users_on_provider_and_uid  (provider,uid) UNIQUE
+#  index_users_on_email                        (email) UNIQUE
+#  index_users_on_provider_and_uid             (provider,uid) UNIQUE
+#  index_users_on_reporting_api_session_token  (reporting_api_session_token) UNIQUE
 #
 
 describe User do
