@@ -166,7 +166,7 @@ module "reporting_service" {
     task_role_arn        = aws_iam_role.ecs_task_role.arn
     log_group_name       = aws_cloudwatch_log_group.ecs_log_group.name
     region               = var.region
-    health_check_command = ["CMD-SHELL", "wget http://localhost:${local.container_ports.reporting}/healthcheck || exit 0"] #TODO: Fix healthcheck and change to exit 1
+    health_check_command = ["CMD-SHELL", "wget --no-cache --spider -S http://localhost:${local.container_ports.reporting}/reporting/healthcheck || exit 1"]
   }
   network_params = {
     subnets = [aws_subnet.private_subnet_a.id, aws_subnet.private_subnet_b.id]

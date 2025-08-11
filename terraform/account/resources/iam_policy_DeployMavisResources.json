@@ -133,7 +133,13 @@
         "secretsmanager:CancelRotateSecret",
         "ssm:DeleteParameter",
         "ssm:DeleteParameters",
-        "ssm:PutParameter"
+        "ssm:PutParameter",
+        "lambda:InvokeFunction",
+        "lambda:DeleteFunction",
+        "lambda:CreateFunction",
+        "lambda:CreateAlias",
+        "lambda:DeleteAlias",
+        "lambda:UpdateAlias"
       ],
       "Resource": ["*"]
     }
