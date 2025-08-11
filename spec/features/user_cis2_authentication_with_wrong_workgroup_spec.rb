@@ -9,13 +9,13 @@ describe "User CIS2 authentication", :cis2 do
     then_i_see_the_wrong_workgroup_error
 
     when_i_click_the_change_role_button_and_select_the_right_role
-    then_i_see_the_team_selection_page
+    then_i_see_the_session_page
   end
 
   def given_i_am_setup_in_mavis_and_cis2_but_with_the_wrong_role
-    @team = create :team, ods_code: "A9A5A"
+    @team = create(:team, ods_code: "A9A5A")
 
-    mock_cis2_auth(selected_roleid: "wrong-workgroup")
+    mock_cis2_auth(workgroups: ["wrong-workgroup"])
   end
 
   def when_i_click_the_cis2_login_button
@@ -23,15 +23,15 @@ describe "User CIS2 authentication", :cis2 do
   end
 
   def then_i_am_on_the_start_page
-    expect(page).to have_current_path start_path
+    expect(page).to have_current_path(start_path)
   end
 
   def when_i_go_to_the_sessions_page
     visit sessions_path
   end
 
-  def then_i_see_the_team_selection_page
-    expect(page).to have_current_path(new_users_teams_path)
+  def then_i_see_the_session_page
+    expect(page).to have_current_path(sessions_path)
   end
 
   def then_i_see_the_wrong_workgroup_error
@@ -43,7 +43,11 @@ describe "User CIS2 authentication", :cis2 do
   def when_i_click_the_change_role_button_and_select_the_right_role
     # With don't actually get to select the right role directly in our test
     # setup so we change the cis2 response to simulate it.
-    mock_cis2_auth(org_code: @team.organisation.ods_code, org_name: @team.name)
+    mock_cis2_auth(
+      org_code: @team.organisation.ods_code,
+      org_name: @team.name,
+      workgroups: [@team.workgroup]
+    )
     click_button("Change role")
   end
 end

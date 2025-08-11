@@ -6,7 +6,6 @@ class CIS2Info
   NURSE_ROLE = "S8000:G8000:R8001"
   ADMIN_ROLE = "S8000:G8001:R8006"
 
-  WORKGROUP = "schoolagedimmunisations"
   SUPERUSER_WORKGROUP = "mavissuperusers"
 
   attribute :organisation_name
@@ -34,7 +33,8 @@ class CIS2Info
       end
   end
 
-  def has_workgroup? = workgroups&.include?(WORKGROUP) || false
+  def has_valid_workgroup? =
+    organisation&.teams&.exists?(workgroup: workgroups) || false
 
   def is_admin? = role_code == ADMIN_ROLE
 
