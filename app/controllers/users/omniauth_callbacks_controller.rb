@@ -5,6 +5,7 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   include CIS2LogoutConcern
 
   skip_before_action :authenticate_user!
+  skip_before_action :ensure_team_is_selected
   skip_after_action :verify_policy_scoped
   skip_before_action :verify_authenticity_token, only: [:cis2_logout]
   skip_before_action :authenticate_basic, only: [:cis2_logout]
@@ -14,14 +15,14 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   def cis2
     set_cis2_session_info
 
-    if !selected_cis2_workgroup_is_valid?
-      redirect_to users_workgroup_not_found_path
-    elsif !selected_cis2_role_is_valid?
+    if !selected_cis2_role_is_valid?
       redirect_to users_role_not_found_path
     elsif !selected_cis2_org_is_registered?
-      redirect_to users_team_not_found_path
+      redirect_to users_organisation_not_found_path
+    elsif !selected_cis2_workgroup_is_valid?
+      redirect_to users_workgroup_not_found_path
     else
-      @user = User.find_or_create_from_cis2_oidc(user_cis2_info, teams)
+      @user = User.find_or_create_from_cis2_oidc(user_cis2_info, valid_teams)
 
       # Force is set to true because the `session_token` might have changed
       # even if the same user is logging in.
@@ -92,29 +93,24 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     user_cis2_info["extra"]["raw_info"]
   end
 
-  def organisation
-    @organisation ||=
-      Organisation.find_by(ods_code: selected_cis2_org["org_code"])
-  end
-
-  def teams
-    # TODO: Select the right team based on the user's workgroup.
-    organisation.teams
+  def valid_teams
+    Team.joins(:organisation).where(
+      workgroup: selected_cis2_nrbac_role["workgroups"],
+      organisation: {
+        ods_code: selected_cis2_org["org_code"]
+      }
+    )
   end
 
   def set_cis2_session_info
-    session["cis2_info"] = {
-      "selected_org" => {
-        "name" => selected_cis2_org["org_name"],
-        "code" => selected_cis2_org["org_code"]
-      },
-      "selected_role" => {
-        "name" => selected_cis2_nrbac_role["role_name"],
-        "code" => selected_cis2_nrbac_role["role_code"],
-        "workgroups" => selected_cis2_nrbac_role["workgroups"]
-      },
-      "has_other_roles" => raw_cis2_info["nhsid_nrbac_roles"].length > 1
-    }
+    cis2_info.update!(
+      organisation_name: selected_cis2_org["org_name"],
+      organisation_code: selected_cis2_org["org_code"],
+      role_name: selected_cis2_nrbac_role["role_name"],
+      role_code: selected_cis2_nrbac_role["role_code"],
+      workgroups: selected_cis2_nrbac_role["workgroups"],
+      has_other_roles: raw_cis2_info["nhsid_nrbac_roles"].length > 1
+    )
   end
 
   def after_omniauth_failure_path_for(_scope)

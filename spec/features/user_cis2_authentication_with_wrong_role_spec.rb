@@ -6,16 +6,16 @@ describe "User CIS2 authentication", :cis2 do
     when_i_go_to_the_sessions_page
     then_i_am_on_the_start_page
     when_i_click_the_cis2_login_button
-    then_i_see_the_team_not_found_error
+    then_i_see_the_wrong_role_error
 
     when_i_click_the_change_role_button_and_select_the_right_role
-    then_i_see_the_sessions_page
+    then_i_see_the_session_page
   end
 
   def given_i_am_setup_in_mavis_and_cis2_but_with_the_wrong_role
     @team = create(:team, ods_code: "AB12")
 
-    mock_cis2_auth(selected_roleid: "wrong-role")
+    mock_cis2_auth(selected_roleid: "wrong-role", workgroups: [@team.workgroup])
   end
 
   def when_i_click_the_cis2_login_button
@@ -30,14 +30,14 @@ describe "User CIS2 authentication", :cis2 do
     visit sessions_path
   end
 
-  def then_i_see_the_sessions_page
-    expect(page).to have_current_path sessions_path
+  def then_i_see_the_session_page
+    expect(page).to have_current_path(sessions_path)
   end
 
-  def then_i_see_the_team_not_found_error
-    expect(
-      page
-    ).to have_heading "You do not have permission to use this service"
+  def then_i_see_the_wrong_role_error
+    expect(page).to have_heading(
+      "You do not have permission to use this service"
+    )
   end
 
   def when_i_click_the_change_role_button_and_select_the_right_role
@@ -46,7 +46,8 @@ describe "User CIS2 authentication", :cis2 do
     mock_cis2_auth(
       org_code: @team.organisation.ods_code,
       org_name: @team.name,
-      role: :nurse
+      role: :nurse,
+      workgroups: [@team.workgroup]
     )
     click_button "Change role"
   end

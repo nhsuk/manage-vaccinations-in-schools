@@ -36,7 +36,7 @@ module CIS2AuthHelper
               "role_code" => "S8000:G8000:R8001",
               "activities" => [],
               "activity_codes" => [],
-              "workgroups" => ["schoolagedimmunisations"],
+              "workgroups" => [],
               "workgroups_codes" => ["15025792819"]
             },
             {
@@ -48,7 +48,7 @@ module CIS2AuthHelper
               "role_code" => "S8000:G8000:R8003",
               "activities" => [],
               "activity_codes" => [],
-              "workgroups" => ["schoolagedimmunisations"],
+              "workgroups" => [],
               "workgroups_codes" => ["15025792819"]
             },
             {
@@ -72,7 +72,7 @@ module CIS2AuthHelper
               "role_code" => "S8000:G8000:R8001",
               "activities" => [],
               "activity_codes" => [],
-              "workgroups" => ["schoolagedimmunisations"],
+              "workgroups" => [],
               "workgroups_codes" => ["15025792819"]
             }
           ],
@@ -93,9 +93,8 @@ module CIS2AuthHelper
     }
   end
 
-  def cis2_sign_in(user, role: :nurse, org_code: nil, superuser: false)
-    workgroups =
-      %w[schoolagedimmunisations] + (superuser ? %w[mavissuperusers] : [])
+  def cis2_sign_in(user, workgroups:, role:, ods_code:, superuser:)
+    workgroups << "mavissuperusers" if superuser
 
     mock_cis2_auth(
       uid: user.uid,
@@ -103,24 +102,26 @@ module CIS2AuthHelper
       family_name: user.family_name,
       email: user.email,
       role:,
-      org_code:,
+      org_code: ods_code,
       sid: user.session_token,
       workgroups:
     )
 
-    if try(:page)&.driver.respond_to?(:get)
-      page.driver.get "/users/auth/cis2/callback"
-    elsif defined?(:get)
-      get "/users/auth/cis2/callback"
-    else
+    if respond_to?(:visit)
       visit "/users/auth/cis2/callback"
+    else
+      get "/users/auth/cis2/callback"
     end
   end
 
   # Define a sign_in that is compatible with Devise's sign_in.
-  def sign_in(user, role: :nurse, org_code: nil, superuser: false)
-    org_code ||= user.teams.first.organisation.ods_code
-    cis2_sign_in(user, role:, org_code:, superuser:)
+  def sign_in(user, organisation: nil, role: :nurse, superuser: false)
+    organisation ||= user.organisations.first
+
+    ods_code = organisation.ods_code
+    workgroups = user.teams.where(organisation:).pluck(:workgroup)
+
+    cis2_sign_in(user, workgroups:, role:, ods_code:, superuser:)
   end
 
   def mock_cis2_auth(
@@ -153,8 +154,8 @@ module CIS2AuthHelper
     end
 
     role_code ||= {
-      nurse: User::CIS2_NURSE_ROLE,
-      admin_staff: User::CIS2_ADMIN_ROLE
+      nurse: CIS2Info::NURSE_ROLE,
+      admin_staff: CIS2Info::ADMIN_ROLE
     }.fetch(role)
 
     nhsid_nrbac_role = raw_info["nhsid_nrbac_roles"][0]

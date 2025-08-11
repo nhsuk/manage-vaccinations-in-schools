@@ -5,6 +5,7 @@ describe "Manage clinic sessions" do
 
   scenario "Adding dates to the session, sending reminders and closing consent" do
     given_my_team_is_running_an_hpv_vaccination_programme
+    and_i_am_signed_in
 
     when_i_go_to_todays_sessions_as_a_nurse
     then_i_see_no_sessions
@@ -59,6 +60,7 @@ describe "Manage clinic sessions" do
 
     when_the_deadline_has_passed
     then_they_can_no_longer_give_consent
+    and_i_am_signed_in
 
     when_i_go_to_todays_sessions_as_a_nurse
     and_i_go_to_completed_sessions
@@ -83,8 +85,11 @@ describe "Manage clinic sessions" do
       create(:patient, year_group: 8, session: @session, parents: [@parent])
   end
 
-  def when_i_go_to_todays_sessions_as_a_nurse
+  def and_i_am_signed_in
     sign_in @team.users.first
+  end
+
+  def when_i_go_to_todays_sessions_as_a_nurse
     visit "/dashboard"
 
     click_link "Sessions", match: :first

@@ -5,6 +5,7 @@ describe "Triage" do
     given_a_programme_with_a_running_session
     and_a_patient_who_needs_triage_exists
     and_a_patient_who_doesnt_need_triage_exists
+    and_i_am_signed_in
 
     when_i_go_to_the_session_triage_tab
     then_i_see_the_patient_who_needs_triage
@@ -33,6 +34,7 @@ describe "Triage" do
   scenario "nurse can triage patients for a flu programme with different consent types" do
     given_a_flu_programme_with_a_running_session
     and_patients_with_different_flu_consent_types_exist
+    and_i_am_signed_in
 
     when_i_go_to_the_session_triage_tab
     then_i_see_both_patients_who_need_triage
@@ -138,9 +140,12 @@ describe "Triage" do
       ).patient
   end
 
-  def when_i_go_to_the_session_triage_tab
+  def and_i_am_signed_in
     @user = @team.users.first
     sign_in @user
+  end
+
+  def when_i_go_to_the_session_triage_tab
     visit session_triage_path(@session)
   end
 

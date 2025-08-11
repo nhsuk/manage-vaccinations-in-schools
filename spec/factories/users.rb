@@ -40,23 +40,18 @@ FactoryBot.define do
             uploaded_by
           ] do
     transient do
-      team { Team.first || create(:team) }
+      team { Team.includes(:organisation).first || create(:team) }
 
-      selected_role_code { User::CIS2_NURSE_ROLE }
-      selected_role_name { "Nurse Access Role" }
-      selected_role_workgroups { %w[schoolagedimmunisations] }
+      role_code { CIS2Info::NURSE_ROLE }
+      role_workgroups { [] }
 
       cis2_info_hash do
         {
-          "selected_org" => {
-            "name" => team.name,
-            "code" => team.organisation.ods_code
-          },
-          "selected_role" => {
-            "name" => selected_role_name,
-            "code" => selected_role_code,
-            "workgroups" => selected_role_workgroups
-          }
+          "organisation_code" => team.organisation.ods_code,
+          "organisation_name" => team.name,
+          "role_code" => role_code,
+          "team_workgroup" => team.workgroup,
+          "workgroups" => (role_workgroups || []) + [team.workgroup]
         }
       end
     end
@@ -73,18 +68,22 @@ FactoryBot.define do
     # password { "power overwhelming!" }
 
     provider { Settings.cis2.enabled ? "cis2" : nil }
-    sequence(:uid) { Settings.cis2.enabled ? _1.to_s : nil }
-    cis2_info { Settings.cis2.enabled ? cis2_info_hash : nil }
+    sequence(:uid) { Settings.cis2.enabled ? it.to_s : nil }
+
+    cis2_info do
+      if Settings.cis2.enabled
+        CIS2Info.new(request_session: { "cis2_info" => cis2_info_hash })
+      end
+    end
 
     trait :admin do
-      selected_role_code { "S8000:G8001:R8006" }
-      selected_role_name { "Medical Secretary Access Role" }
+      role_code { CIS2Info::ADMIN_ROLE }
       sequence(:email) { |n| "admin-#{n}@example.com" }
       fallback_role { :admin }
     end
 
     trait :superuser do
-      selected_role_workgroups { %w[schoolagedimmunisations mavissuperusers] }
+      role_workgroups { [CIS2Info::SUPERUSER_WORKGROUP] }
       fallback_role { :superuser }
     end
 

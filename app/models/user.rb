@@ -32,11 +32,6 @@
 class User < ApplicationRecord
   include FullNameConcern
 
-  CIS2_NURSE_ROLE = "S8000:G8000:R8001"
-  CIS2_ADMIN_ROLE = "S8000:G8001:R8006"
-
-  CIS2_WORKGROUP = "schoolagedimmunisations"
-
   attr_accessor :cis2_info
 
   if Settings.cis2.enabled
@@ -46,6 +41,7 @@ class User < ApplicationRecord
   end
 
   has_and_belongs_to_many :teams
+  has_many :organisations, -> { distinct }, through: :teams
 
   has_many :programmes, through: :teams
 
@@ -104,51 +100,36 @@ class User < ApplicationRecord
     end
   end
 
-  def selected_organisation
-    @selected_organisation ||=
-      if cis2_info.present?
-        Organisation.find_by(ods_code: cis2_info.dig("selected_org", "code"))
-      end
-  end
+  def selected_organisation = cis2_info.organisation
 
-  def selected_team
-    # TODO: Select the right team based on the user's workgroup.
-    @selected_team ||=
-      Team.includes(:location_programme_year_groups, :programmes).find_by(
-        organisation: selected_organisation
-      )
-  end
+  def selected_team = cis2_info.team
 
   def requires_email_and_password?
     provider.blank? || uid.blank?
   end
 
   def is_admin?
-    if Settings.cis2.enabled
-      cis2_info.dig("selected_role", "code")&.ends_with?("R8006")
+    if cis2_enabled?
+      cis2_info.is_admin?
     else
       fallback_role_admin? || fallback_role_superuser?
     end
   end
 
   def is_nurse?
-    return fallback_role_nurse? unless Settings.cis2.enabled
-
-    cis2_info.dig("selected_role", "code")&.ends_with?("R8001")
+    cis2_enabled? ? cis2_info.is_nurse? : fallback_role_nurse?
   end
 
   def is_superuser?
-    return fallback_role_superuser? unless Settings.cis2.enabled
-
-    cis2_info.dig("selected_role", "workgroups")&.include?("mavissuperusers") ||
-      false
+    cis2_enabled? ? cis2_info.is_superuser? : fallback_role_superuser?
   end
 
   def is_healthcare_assistant?
-    # TODO: How do we determine this from CIS2?
-    return false if Settings.cis2.enabled
-
-    fallback_role_healthcare_assistant?
+    if cis2_enabled?
+      cis2_info.is_healthcare_assistant?
+    else
+      fallback_role_healthcare_assistant?
+    end
   end
 
   def role_description
@@ -173,6 +154,8 @@ class User < ApplicationRecord
   end
 
   private
+
+  def cis2_enabled? = Settings.cis2.enabled
 
   def fhir_mapper = @fhir_mapper ||= FHIRMapper::User.new(self)
 end
