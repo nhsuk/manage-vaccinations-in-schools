@@ -10,7 +10,7 @@ ifdef::env-github[]
 // When PRing changes to the diagrams you can change this attributes
 // temporarily to the name of the branch you're working on. But don't forget
 // to change it back to main before merging!!
-:github-branch: spike/MAV-1406-auth-sharing-with-reporting
+:github-branch: main
 
 :github-repo: nhsuk/record-childrens-vaccinations
 
