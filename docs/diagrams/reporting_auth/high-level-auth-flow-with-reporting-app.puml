@@ -1,0 +1,67 @@
+@startuml
+title "High-level Authentication Flow with Reporting Component (OAuth 2.0)" 
+|User|
+|CIS2|
+|Mavis|
+|Mavis Reporting|
+|User|
+start
+:Visit reporting app;
+|Mavis Reporting|
+:redirect to Mavis;
+|Mavis|
+:redirect to CIS2;
+|CIS2|
+:respond with login form;
+|User|
+:provide credentials;
+->credentials;
+|CIS2|
+:verify credentials;
+:create user session;
+:generate authorization code;
+->redirect back with authorization code;
+|User|
+:request redirect URI;
+->authorization code;
+|Mavis|
+:verify authorization code;
+->client_id & authorization code;
+|CIS2|
+:verify authorization code;
+:respond with access token;
+->access token;
+|Mavis|
+:create user session;
+:store access token against user in DB;
+:generate reporting app authorization code for user;
+:redirect back to reporting app with authorization code;
+|User|
+:request redirect_uri;
+->authorization code;
+|Mavis Reporting|
+:verify authorization code;
+->client_id & authorization code;
+|Mavis|
+:verify authorization code;
+:generate JWT with user & role info & reporting_api_session_token;
+:sign JWT with client_secret;
+:store JWT against user in DB;
+:respond with JWT;
+->JWT;
+|Mavis Reporting|
+:decode JWT & verify signature;
+:store user & role info & reporting_api_session_token in session;
+:use JWT to authenticate Mavis API requests;
+->API request, Authorization: "Bearer <JWT>"";
+|Mavis|
+:decode JWT & verify signature;
+:verify reporting_api_session_token is valid for user;
+:use user to restrict queries;
+:return data as JSON;
+|Mavis Reporting|
+:render HTML;
+->respond with HTML, status 200;
+|User|
+stop
+@enduml

@@ -1,0 +1,47 @@
+
+:imagesdir: images
+:source-highlighter: pygments
+
+ifdef::env-github[]
+// If on GitHub, define attributes so we can find our diagram files and render
+// them.
+
+// The branch will be used to find the correct diagrams to render below.
+// When PRing changes to the diagrams you can change this attributes
+// temporarily to the name of the branch you're working on. But don't forget
+// to change it back to main before merging!!
+:github-branch: spike/MAV-1406-auth-sharing-with-reporting
+
+:github-repo: nhsuk/record-childrens-vaccinations
+
+// URL for PlantUML Proxy. Using an attribute mainly because it's just tidier.
+:plantuml-proxy-url: http://www.plantuml.com/plantuml/proxy?cache=no&src=
+
+// Full path prefix we'll use for diagrams below.
+:diagram-path-url: {plantuml-proxy-url}https://raw.githubusercontent.com/{github-repo}/{github-branch}/docs
+endif::[]
+
+
+= Reporting Component Authentication
+
+The main Mavis application uses CIS2 to authenticate users, exchanging authorization codes & obtaining an access token for the user session using OpenID Connect (OIDC) - see the link:https://digital.nhs.uk/services/care-identity-service/applications-and-services/cis2-authentication/guidance-for-developers/openid-connect-overview[CIS2 documentation] for details.
+
+At a high-level, that flow works like this - (implementing link:../adr/00012-auth-pattern-for-commissioner-reporting-app.md[ADR00012]):
+
+ifdef::env-github[]
+image::{diagram-path-url}/diagrams/reporting_auth/high-level-auth-flow-with-mavis-and-CIS2.puml[Mavis/CIS2 authentication flow diagram]
+endif::[]
+
+Extending this process to include the reporting component is done in a very similar way, using link:https://datatracker.ietf.org/doc/html/rfc6749#section-4.1[OAuth 2.0 Authorization Code Grant] (upon which OIDC is based)
+
+ifdef::env-github[]
+image::{diagram-path-url}/diagrams/reporting_auth/high-level-auth-flow-with-reporting-app.puml[Mavis Reporting/Mavis/CIS2 authentication diagram]
+endif::[]
+
+
+The reporting app can then use the JWT to authenticate future API requests to Mavis as follows:
+
+
+ifdef::env-github[]
+image::{diagram-path-url}/diagrams/reporting_auth/user-visits-the-reporting-app.puml[User visiting the reporting app diagram]
+endif::[]
