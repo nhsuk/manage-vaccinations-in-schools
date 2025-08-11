@@ -208,6 +208,10 @@ RSpec.configure do |config|
     SMSDeliveryJob.deliveries.clear
   end
 
+  config.before(:all, type: :feature) do
+    MavisCLI.instance_variable_set(:@progress_bar, nil)
+  end
+
   config.include ActiveJob::TestHelper, type: :feature
   config.include ActiveSupport::Testing::TimeHelpers
   config.include Capybara::RSpecMatchers, type: :component
