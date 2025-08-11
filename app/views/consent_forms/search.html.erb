@@ -43,7 +43,12 @@
   </div>
 
   <div class="nhsuk-grid-column-two-thirds">
-    <%= render AppPatientSearchFormComponent.new(@form, url: search_consent_form_path(@consent_form), heading_level: 2) %>
+    <%= render AppPatientSearchFormComponent.new(
+          @form,
+          url: search_consent_form_path(@consent_form),
+          heading_level: 2,
+          show_aged_out_of_programmes: true,
+        ) %>
 
     <%= render AppSearchResultsComponent.new(@pagy, label: "children") do %>
       <% @patients.each do |patient| %>

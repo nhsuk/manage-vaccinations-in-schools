@@ -1,6 +1,11 @@
 <%= h1 t(".title"), size: "xl" %>
 
-<%= render AppPatientSearchFormComponent.new(@form, url: patients_path, heading_level: 2) %>
+<%= render AppPatientSearchFormComponent.new(
+      @form,
+      url: patients_path,
+      heading_level: 2,
+      show_aged_out_of_programmes: true,
+    ) %>
 
 <% if @patients.any? %>
   <%= render AppPatientTableComponent.new(@patients, current_user:, count: @pagy.count) %>
