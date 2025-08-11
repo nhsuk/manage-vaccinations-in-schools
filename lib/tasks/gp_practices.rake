@@ -13,25 +13,23 @@ namespace :gp_practices do
       csv_entry = zip.glob("*.csv").first
       csv_content = csv_entry.get_input_stream.read
 
-      total_rows = CSV.parse(csv_content).count
+      rows =
+        CSV.parse(csv_content, headers: false, encoding: "ISO-8859-1:UTF-8")
+
       batch_size = 1000
       locations = []
 
       # rubocop:disable Rails/SaveBang
       progress_bar =
         ProgressBar.create(
-          total: total_rows,
+          total: rows.length + 1,
           format: "%a %b\u{15E7}%i %p%% %t",
           progress_mark: " ",
           remainder_mark: "\u{FF65}"
         )
       # rubocop:enable Rails/SaveBang
 
-      CSV.parse(
-        csv_content,
-        headers: false,
-        encoding: "ISO-8859-1:UTF-8"
-      ) do |row|
+      rows.each do |row|
         ods_code = row[0]
         name = row[1]
         address_line_1 = row[3]

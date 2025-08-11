@@ -17,18 +17,17 @@ module MavisCLI
           csv_entry = zip.glob("edubasealldata*.csv").first
           csv_content = csv_entry.get_input_stream.read
 
-          total_rows = CSV.parse(csv_content).count - 1 # Subtract 1 for header
+          rows =
+            CSV.parse(csv_content, headers: true, encoding: "ISO-8859-1:UTF-8")
+
+          row_count = rows.length
           batch_size = 1000
           schools = []
 
-          puts "Starting import of #{total_rows} schools."
-          progress_bar = MavisCLI.progress_bar(total_rows)
+          puts "Starting import of #{row_count} schools."
+          progress_bar = MavisCLI.progress_bar(row_count + 1)
 
-          CSV.parse(
-            csv_content,
-            headers: true,
-            encoding: "ISO-8859-1:UTF-8"
-          ) do |row|
+          rows.each do |row|
             gias_establishment_number = row["EstablishmentNumber"]
             next if gias_establishment_number.blank? # closed school that never opened
 
