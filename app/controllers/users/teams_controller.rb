@@ -9,6 +9,12 @@ class Users::TeamsController < ApplicationController
 
   def new
     @form = SelectTeamForm.new(cis2_info:, current_user:)
+
+    if @form.teams.count == 1
+      @form.team_id = @form.teams.first.id
+
+      redirect_to return_to_path if @form.save
+    end
   end
 
   def create
@@ -20,9 +26,15 @@ class Users::TeamsController < ApplicationController
       )
 
     if @form.save
-      redirect_to session[:user_return_to] || dashboard_path
+      redirect_to return_to_path
     else
       render :new, status: :unprocessable_content
     end
+  end
+
+  private
+
+  def return_to_path
+    session[:user_return_to] || dashboard_path
   end
 end

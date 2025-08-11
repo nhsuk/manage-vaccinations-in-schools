@@ -1,15 +1,18 @@
 # frozen_string_literal: true
 
 describe "Patient sessions activity" do
-  let(:team) { create(:team) }
+  let(:team) { create(:team, :with_one_nurse) }
   let(:session) { create(:session, team:) }
   let(:patient) { create(:patient, session:) }
-  let(:nurse) { create(:nurse, team:) }
+  let(:nurse) { team.users.first }
 
   describe "creating notes" do
     let(:path) { "/sessions/#{session.slug}/patients/#{patient.id}/activity" }
 
-    before { sign_in nurse }
+    before do
+      sign_in nurse
+      2.times { follow_redirect! }
+    end
 
     it "renders the add note form" do
       get path

@@ -7,7 +7,6 @@ describe "User CIS2 authentication", :cis2 do
     then_i_should_see_the_cis2_login_button
 
     when_i_click_the_cis2_login_button
-    and_i_choose_my_team
     and_i_am_logged_in
     and_i_am_added_to_the_team
 
@@ -43,11 +42,6 @@ describe "User CIS2 authentication", :cis2 do
 
   def when_i_click_the_cis2_login_button
     click_button "Care Identity"
-  end
-
-  def and_i_choose_my_team
-    choose @team.name
-    click_button "Continue"
   end
 
   def then_i_see_the_dashboard

@@ -93,10 +93,9 @@ module CIS2AuthHelper
     }
   end
 
-  def cis2_sign_in(user, team:, role:, ods_code:, superuser:)
-    workgroups =
-      %w[schoolagedimmunisations] + [team.workgroup] +
-        (superuser ? %w[mavissuperusers] : [])
+  def cis2_sign_in(user, workgroups:, role:, ods_code:, superuser:)
+    workgroups.insert(0, "schoolagedimmunisations")
+    workgroups << "mavissuperusers" if superuser
 
     mock_cis2_auth(
       uid: user.uid,
@@ -117,18 +116,13 @@ module CIS2AuthHelper
   end
 
   # Define a sign_in that is compatible with Devise's sign_in.
-  def sign_in(user, team: nil, role: :nurse, ods_code: nil, superuser: false)
-    team ||= user.teams.first
-    ods_code ||= team.organisation.ods_code
+  def sign_in(user, organisation: nil, role: :nurse, superuser: false)
+    organisation ||= user.organisations.first
 
-    cis2_sign_in(user, team:, role:, ods_code:, superuser:)
+    ods_code = organisation.ods_code
+    workgroups = user.teams.where(organisation:).pluck(:workgroup)
 
-    if respond_to?(:choose) && respond_to?(:click_on)
-      choose team.name
-      click_on "Continue"
-    else
-      post "/users/teams", params: { select_team_form: { team_id: team.id } }
-    end
+    cis2_sign_in(user, workgroups:, role:, ods_code:, superuser:)
   end
 
   def mock_cis2_auth(
