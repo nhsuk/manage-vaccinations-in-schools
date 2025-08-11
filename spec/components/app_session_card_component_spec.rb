@@ -1,11 +1,9 @@
 # frozen_string_literal: true
 
 describe AppSessionCardComponent do
-  subject(:rendered) { render_inline(component) }
+  subject(:rendered) { travel_to(today) { render_inline(component) } }
 
-  let(:component) do
-    travel_to(today) { described_class.new(session, patient_count: 100) }
-  end
+  let(:component) { described_class.new(session, patient_count: 100) }
 
   let(:today) { Date.new(2025, 7, 1) }
 
