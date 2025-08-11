@@ -26,4 +26,5 @@ maximum_web_replicas      = 4
 max_aurora_capacity_units = 16
 container_insights        = "enhanced"
 
-enable_backup_to_vault = true
+enable_backup_to_vault        = true
+enable_enhanced_db_monitoring = true
