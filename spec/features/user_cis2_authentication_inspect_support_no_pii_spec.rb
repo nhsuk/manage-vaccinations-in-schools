@@ -1,33 +1,33 @@
 # frozen_string_literal: true
 
 describe "Inspect tools", :cis2 do
-  scenario "Support user can view timeline" do
+  scenario "Support user without PII access can view timeline but with PII checkbox disabled" do
     given_a_test_support_organisation_is_setup_in_mavis_and_cis2
     given_an_hpv_programme_is_underway
 
-    when_i_login_as_a_support_user
+    when_i_login_as_a_support_user_without_pii_access
     then_i_see_the_inspect_dashboard
 
     when_i_go_to_the_timeline_url_for_the_patient
-    then_i_see_the_timeline
+    then_i_see_the_timeline_with_pii_checkbox_disabled
   end
 
-  scenario "Support user can view graph" do
+  scenario "Support user without PII access can view graph but with PII checkbox disabled" do
     given_a_test_support_organisation_is_setup_in_mavis_and_cis2
     given_an_hpv_programme_is_underway
 
-    when_i_login_as_a_support_user
+    when_i_login_as_a_support_user_without_pii_access
     then_i_see_the_inspect_dashboard
 
     when_i_go_to_the_graph_url_for_the_patient
-    then_i_see_the_graph
+    then_i_see_the_graph_with_pii_checkbox_disabled
   end
 
-  scenario "Support user can't view confidential pages" do
+  scenario "Support user without PII access can't view confidential pages" do
     given_a_test_support_organisation_is_setup_in_mavis_and_cis2
     given_an_hpv_programme_is_underway
 
-    when_i_login_as_a_support_user
+    when_i_login_as_a_support_user_without_pii_access
 
     and_i_go_to_a_confidential_page
     then_i_see_the_inspect_dashboard
@@ -51,8 +51,7 @@ describe "Inspect tools", :cis2 do
       workgroups: [CIS2Info::SUPPORT_WORKGROUP],
       role_code: CIS2Info::SUPPORT_ROLE,
       activity_codes: [
-        CIS2Info::VIEW_DETAILED_HEALTH_RECORDS_ACTIVITY_CODE,
-        CIS2Info::ACCESS_SENSITIVE_FLAGGED_RECORDS_ACTIVITY_CODE
+        CIS2Info::VIEW_SHARED_NON_PATIENT_IDENTIFIABLE_INFORMATION_ACTIVITY_CODE
       ]
     )
   end
@@ -82,7 +81,7 @@ describe "Inspect tools", :cis2 do
       )
   end
 
-  def when_i_login_as_a_support_user
+  def when_i_login_as_a_support_user_without_pii_access
     visit "/start"
     click_button "Care Identity"
     expect(page).to have_content("TEST, Support")
@@ -101,12 +100,23 @@ describe "Inspect tools", :cis2 do
     visit patients_path
   end
 
-  def then_i_see_the_timeline
+  def then_i_see_the_timeline_with_pii_checkbox_disabled
     expect(page).to have_content("Customise timeline")
+
+    expect(page).to have_field(
+      "Show PII (not allowed for this user)",
+      disabled: true
+    )
   end
 
-  def then_i_see_the_graph
+  def then_i_see_the_graph_with_pii_checkbox_disabled
     expect(page).to have_content("Graph options")
+
+    find("summary", text: "Graph options").click
+    expect(page).to have_field(
+      "Show PII (not allowed for this user)",
+      disabled: true
+    )
   end
 
   def then_i_see_the_inspect_dashboard
