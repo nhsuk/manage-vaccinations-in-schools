@@ -32,6 +32,8 @@ module PDSExperiments
       if pds_patient
         increment_counter(experiment_name, "successful_lookups")
 
+        store_nhs_number(experiment_name, patient, pds_patient)
+
         if patient.nhs_number.present? &&
              patient.nhs_number != pds_patient.nhs_number
           increment_counter(experiment_name, "nhs_number_discrepancies")
@@ -189,6 +191,19 @@ module PDSExperiments
       discrepancies << {
         patient_id: patient.id,
         patient_nhs: patient.nhs_number,
+        pds_nhs: pds_patient.nhs_number
+      }
+
+      Rails.cache.write(discrepancy_key, discrepancies, expires_in: 7.days)
+    end
+
+    def store_nhs_number(experiment_name, patient, pds_patient)
+      discrepancy_key = "pds_experiment:#{experiment_name}:nhs_numbers_returned"
+      discrepancies = Rails.cache.read(discrepancy_key) || []
+
+      discrepancies << {
+        patient_id: patient.id,
+        patient_nhs: patient.nhs_number || "",
         pds_nhs: pds_patient.nhs_number
       }
 

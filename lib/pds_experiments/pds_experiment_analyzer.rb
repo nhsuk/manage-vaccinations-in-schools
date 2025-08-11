@@ -8,6 +8,7 @@ module PDSExperiments
       no_results
       too_many_matches_errors
       other_errors
+      nhs_numbers_returned
       nhs_number_discrepancies
       nhs_number_discrepancy_ids
       nhs_number_discrepancy_patients
@@ -53,6 +54,7 @@ module PDSExperiments
         no_results: counters["no_results"] || 0,
         too_many_matches_errors: counters["too_many_matches_errors"] || 0,
         other_errors: counters["other_errors"] || 0,
+        nhs_numbers_returned: counters["nhs_numbers_returned"] || [],
         nhs_number_discrepancies: counters["nhs_number_discrepancies"] || 0,
         family_name_discrepancies: counters["family_name_discrepancies"] || 0,
         date_of_birth_discrepancies:
