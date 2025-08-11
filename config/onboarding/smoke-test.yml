@@ -1,8 +1,10 @@
+organisation:
+  ods_code: Y90128
+
 team:
   name: XXX SMOKE TEST XXX
   email: england.mavis@nhs.net
   phone: "03003112233"
-  ods_code: Y90128
   careplus_venue_code: SMOKE
   privacy_policy_url: https://example.com/privacy
 

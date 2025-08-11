@@ -46,12 +46,12 @@ clinics:
 
 [config-onboarding]: /config/onboarding
 
-### Rake task
+### Command
 
-Once the file has been written you can use the `onboard` Rake task to set everything up in the service.
+Once the file has been written you can use the `onboard` command to set everything up in the service.
 
 ```sh
-$ bundle exec rails onboard[path/to/configuration.yaml]
+$ bin/mavis teams onboard path/to/configuration.yaml
 ```
 
 If any validation errors are detected in the file they will be output and nothing will be processed, only if the file is completely valid will anything be processed.

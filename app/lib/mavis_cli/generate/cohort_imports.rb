@@ -6,28 +6,41 @@ module MavisCLI
   module Generate
     class CohortImports < Dry::CLI::Command
       desc "Generate cohort imports"
-      option :patients,
+
+      option :team_workgroup,
+             aliases: ["-w"],
+             default: "A9A5A",
+             desc: "Workgroup of team to generate consents for"
+
+      option :programme_types,
+             aliases: ["-p"],
+             default: [],
+             desc:
+               "Programme type to generate consents for (hpv, menacwy, td_ipv, etc)"
+
+      option :patient_count,
+             aliases: ["-c"],
              type: :integer,
              required: true,
              default: 10,
              desc: "Number of patients to create"
-      option :ods_code,
-             type: :string,
-             default: "A9A5A",
-             desc: "ODS code of the organisation to use for the cohort import"
 
-      def call(patients:, ods_code:)
+      def call(team_workgroup:, programme_types:, patient_count:)
         MavisCLI.load_rails
 
-        patient_count = patients.to_i
+        team = Team.find_by!(workgroup: team_workgroup)
+        programmes = Programme.where(type: programme_types)
+        patient_count = patient_count.to_i
+
         progress_bar = MavisCLI.progress_bar(patient_count)
 
-        puts "Generating cohort import for ods code #{ods_code} with" \
+        puts "Generating cohort import for team #{team_workgroup} with" \
                " #{patient_count} patients..."
 
         result =
           ::Generate::CohortImports.call(
-            ods_code:,
+            team:,
+            programmes:,
             patient_count:,
             progress_bar:
           )

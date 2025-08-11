@@ -1,8 +1,11 @@
+organisation:
+  ods_code: RT5
+
 team:
+  workgroup: leicestershiretraining
   name: Leicestershire Partnership Trust School Aged Immunisation Service
   email: lpt.sais@nhs.net
   phone: 0300 3000 007
-  ods_code: RT5
   careplus_venue_code: UNUSED
   privacy_notice_url: https://www.leicspart.nhs.uk/privacy-policy/
   privacy_policy_url: https://www.leicspart.nhs.uk/privacy-policy/

@@ -1,8 +1,11 @@
+organisation:
+  ods_code: RY4
+
 team:
+  workgroup: hertfordshiretraining
   name: Hertfordshire and East Anglia Community School Age Immunisation Service
   email: hct.csaisherts@nhs.net
   phone: 0300 555 5055
-  ods_code: RY4
   careplus_venue_code: UNUSED
   privacy_notice_url: https://www.hct.nhs.uk/privacy
   privacy_policy_url: https://www.hct.nhs.uk/privacy
