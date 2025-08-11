@@ -11,7 +11,7 @@ describe "User CIS2 authentication" do
 
     given_my_team_has_been_setup_in_mavis
     when_i_click_the_change_role_button
-    then_i_see_the_team_selection_page
+    then_i_see_the_sessions_page
   end
 
   context "user has no other orgs to select" do
@@ -31,19 +31,19 @@ describe "User CIS2 authentication" do
   end
 
   def given_i_am_setup_in_cis2_but_not_mavis
-    mock_cis2_auth(org_code: "A9A5A", org_name: "SAIS Team")
+    mock_cis2_auth(
+      org_code: "A9A5A",
+      org_name: "SAIS Team",
+      workgroups: %w[a9a5a]
+    )
   end
 
   def given_my_team_has_been_setup_in_mavis
-    @team = create :team, ods_code: "A9A5A"
+    @team = create(:team, ods_code: "A9A5A", workgroup: "a9a5a")
   end
 
   def when_i_go_to_the_start_page
     visit "/start"
-  end
-
-  def when_i_click_the_cis2_login_button
-    click_button "Care Identity"
   end
 
   def when_i_click_the_cis2_login_button
@@ -58,8 +58,8 @@ describe "User CIS2 authentication" do
     visit sessions_path
   end
 
-  def then_i_see_the_team_selection_page
-    expect(page).to have_current_path(new_users_teams_path)
+  def then_i_see_the_sessions_page
+    expect(page).to have_current_path(sessions_path)
   end
 
   def given_i_am_setup_in_cis2_with_only_one_role
