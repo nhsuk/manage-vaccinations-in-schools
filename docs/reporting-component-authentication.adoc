@@ -12,7 +12,6 @@ ifdef::env-github[]
 // to change it back to main before merging!!
 :github-branch: main
 
-:github-repo: nhsuk/record-childrens-vaccinations
 
 // URL for PlantUML Proxy. Using an attribute mainly because it's just tidier.
 :plantuml-proxy-url: http://www.plantuml.com/plantuml/proxy?cache=no&src=
