@@ -160,8 +160,6 @@ class Patient < ApplicationRecord
           )
         end
 
-  scope :with_pending_changes, -> { where.not(pending_changes: {}) }
-
   scope :search_by_name,
         ->(query) do
           # Trigram matching requires at least 3 characters

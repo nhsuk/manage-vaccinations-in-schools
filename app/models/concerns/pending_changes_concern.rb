@@ -3,7 +3,11 @@
 module PendingChangesConcern
   extend ActiveSupport::Concern
 
-  included { attribute :pending_changes, :jsonb, default: {} }
+  included do
+    attribute :pending_changes, :jsonb, default: {}
+
+    scope :with_pending_changes, -> { where.not(pending_changes: {}) }
+  end
 
   def stage_changes(attributes)
     attributes.each do |attr, new_value|
