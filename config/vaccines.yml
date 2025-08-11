@@ -34,6 +34,17 @@ vaxigrip:
   snomed_product_term: Vaxigrip Trivalent influenza vaccine (split virion,
     inactivated) suspension for injection 0.5ml pre-filled syringes (Sanofi)
 
+viatris:
+  brand: Viatris
+  type: flu
+  method: injection
+  manufacturer: Viatris
+  nivs_name: Viatris
+  dose_volume_ml: 0.5
+  snomed_product_code: 45354911000001100
+  snomed_product_term: Influenza TIV MYL vaccine suspension for injection
+    0.5ml pre-filled syringes (Viatris UK Healthcare Ltd)
+
 # HPV
 
 cervarix:
