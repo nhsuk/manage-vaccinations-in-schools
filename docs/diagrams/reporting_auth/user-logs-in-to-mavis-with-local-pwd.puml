@@ -1,0 +1,33 @@
+@startuml
+title "User logs in to Mavis with email & password" 
+|User|
+|CIS2|
+|Mavis|
+|Mavis Reporting|
+|User|
+start
+:click 'Start' button;
+|Mavis|
+if (CIS2 login enabled?) is (N) then
+    repeat
+        :respond with login form;
+        |User|
+        :provide credentials;
+        |Mavis|
+    repeat while (valid credentials?) is (N) not (Y)
+    :respond with choose role page;
+    |User|
+    :choose role;
+    |Mavis|
+    :store user & role info in session as 'cis2_info';
+    :store reporting_api_session_token in DB;
+    :respond with cookie and redirect;
+    |User|
+    :access redirected URL;
+    stop
+else
+    |Mavis|
+    :(see other process);
+    stop
+end
+@enduml
