@@ -27,7 +27,7 @@ class AppSessionNeedsReviewWarningComponent < ViewComponent::Base
   def warning_href
     {
       children_without_nhs_number:
-        session_consent_path(@session, missing_nhs_number: true)
+        session_patients_path(@session, missing_nhs_number: true)
     }
   end
 

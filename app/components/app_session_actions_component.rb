@@ -40,7 +40,7 @@ class AppSessionActionsComponent < ViewComponent::Base
 
   def no_nhs_number_row
     count = patient_sessions.merge(Patient.without_nhs_number).count
-    href = session_consent_path(session, missing_nhs_number: true)
+    href = session_patients_path(session, missing_nhs_number: true)
 
     generate_row(:children_without_nhs_number, count:, href:)
   end
