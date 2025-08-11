@@ -33,7 +33,7 @@ class AppSessionActionsComponent < ViewComponent::Base
       no_consent_response_row,
       conflicting_consent_row,
       triage_required_row,
-      (register_attendance_row if session.requires_registration?),
+      register_attendance_row,
       ready_for_vaccinator_row
     ].compact
   end
@@ -73,6 +73,8 @@ class AppSessionActionsComponent < ViewComponent::Base
   end
 
   def register_attendance_row
+    return nil unless session.requires_registration? && session.today?
+
     status = "unknown"
     count = patient_sessions.has_registration_status(status).count
     href = session_register_path(session, register_status: status)
