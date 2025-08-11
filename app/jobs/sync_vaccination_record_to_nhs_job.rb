@@ -1,9 +1,12 @@
 # frozen_string_literal: true
 
 class SyncVaccinationRecordToNHSJob < ApplicationJob
-  queue_as :immunisation_api
+  def self.concurrent_jobs_per_second = 2
+  def self.concurrency_key = :immunisations_api
 
-  retry_on Faraday::ServerError, wait: :polynomially_longer
+  include NHSAPIConcurrencyConcern
+
+  queue_as :immunisation_api
 
   def perform(vaccination_record)
     tx_id = SecureRandom.urlsafe_base64(16)

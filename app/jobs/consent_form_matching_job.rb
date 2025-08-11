@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 class ConsentFormMatchingJob < ApplicationJob
+  def self.concurrent_jobs_per_second = 5
+  def self.concurrency_key = :pds
+
   include NHSAPIConcurrencyConcern
 
   queue_as :consents
