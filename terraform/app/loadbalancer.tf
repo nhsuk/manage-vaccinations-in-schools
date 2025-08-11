@@ -66,9 +66,9 @@ resource "aws_lb" "app_lb" {
     prefix  = "lb-access-logs-${var.environment}"
     enabled = true
   }
-  security_groups = [aws_security_group.lb_service_sg.id]
-  subnets         = [aws_subnet.public_subnet_a.id, aws_subnet.public_subnet_b.id]
-  depends_on      = [aws_security_group_rule.lb_ingress_https] #TODO: Delete after migration
+  security_groups            = [aws_security_group.lb_service_sg.id]
+  subnets                    = [aws_subnet.public_subnet_a.id, aws_subnet.public_subnet_b.id]
+  depends_on                 = [aws_security_group_rule.lb_ingress_https] #TODO: Delete after migration
   drop_invalid_header_fields = true
 }
 
@@ -115,7 +115,7 @@ resource "aws_lb_target_group" "reporting_blue" {
   vpc_id      = aws_vpc.application_vpc.id
   target_type = "ip"
   health_check {
-    path                = "/healthcheck"
+    path                = "/reporting/healthcheck"
     protocol            = "HTTP"
     port                = "traffic-port"
     matcher             = "200"
@@ -133,7 +133,7 @@ resource "aws_lb_target_group" "reporting_green" {
   vpc_id      = aws_vpc.application_vpc.id
   target_type = "ip"
   health_check {
-    path                = "/healthcheck"
+    path                = "/reporting/healthcheck"
     protocol            = "HTTP"
     port                = "traffic-port"
     matcher             = "200"
