@@ -20,13 +20,15 @@ def create_gp_practices
 end
 
 def create_team(ods_code:)
-  # TODO: Select the right team based on an identifier.
-  Team.joins(:organisation).find_by(organisation: { ods_code: }) ||
+  workgroup = ods_code.downcase
+
+  Team.find_by(workgroup:) ||
     FactoryBot.create(
       :team,
       :with_generic_clinic,
       ods_code:,
-      programmes: Programme.all
+      programmes: Programme.all,
+      workgroup:
     )
 end
 

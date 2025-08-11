@@ -111,7 +111,7 @@ describe "Archive children" do
 
   def given_an_team_exists
     programmes = [create(:programme, :flu)]
-    @team = create(:team, programmes:)
+    @team = create(:team, :with_generic_clinic, programmes:)
 
     @session = create(:session, team: @team, programmes:)
   end

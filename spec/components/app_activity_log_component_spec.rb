@@ -589,12 +589,36 @@ describe AppActivityLogComponent do
           created_at: Time.zone.parse("#2024-05-30 15:00")
         )
 
-        create(
-          :vaccination_record,
+        patient.vaccination_status(
           programme: hpv_programme,
+          academic_year: 2024
+        ).vaccinated!
+      end
+
+      it "does not render expired PSD card for vaccinated patient" do
+        expect(rendered).not_to have_content("expired")
+      end
+    end
+
+    context "with vaccinated but seasonal programme" do
+      before do
+        create(
+          :consent,
+          :given,
+          programme: flu_programme,
           patient:,
-          session:,
-          performed_at: Time.zone.parse("#2024-05-31 12:00"),
+          parent: mum,
+          academic_year: 2024,
+          submitted_at: Time.zone.parse("#2024-05-30 12:00")
+        )
+
+        create(
+          :triage,
+          :ready_to_vaccinate,
+          programme: flu_programme,
+          patient:,
+          academic_year: 2024,
+          created_at: Time.zone.parse("#2024-05-30 14:30"),
           performed_by: user
         )
 
@@ -606,12 +630,18 @@ describe AppActivityLogComponent do
           academic_year: 2024,
           created_at: Time.zone.parse("#2024-05-30 15:00")
         )
+
+        patient.vaccination_status(
+          programme: flu_programme,
+          academic_year: 2024
+        ).vaccinated!
       end
 
       include_examples "card",
-                       title: "PSD status expired",
+                       title:
+                         "Consent, health information, triage outcome and PSD status expired",
                        date: "31 August 2025 at 11:59pm",
-                       notes: "DOE, Sarah was not vaccinated.",
+                       notes: "DOE, Sarah was vaccinated.",
                        programme: "Flu"
     end
   end

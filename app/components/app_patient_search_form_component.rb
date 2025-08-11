@@ -158,12 +158,14 @@ class AppPatientSearchFormComponent < ViewComponent::Base
                                   link_errors: true,
                                   label: { text: "Children missing an NHS number" } %>
 
-            <%= f.govuk_check_box :aged_out_of_programmes,
-                                  1, 0,
-                                  checked: form.aged_out_of_programmes,
-                                  multiple: false,
-                                  link_errors: true,
-                                  label: { text: "Children aged out of programmes" } %>
+            <% if show_aged_out_of_programmes %> 
+              <%= f.govuk_check_box :aged_out_of_programmes,
+                                    1, 0,
+                                    checked: form.aged_out_of_programmes,
+                                    multiple: false,
+                                    link_errors: true,
+                                    label: { text: "Children aged out of programmes" } %>
+            <% end %>
           <% end %>
 
           <% if show_buttons_in_details? %>
@@ -195,7 +197,8 @@ class AppPatientSearchFormComponent < ViewComponent::Base
     triage_statuses: [],
     vaccine_methods: [],
     year_groups: [],
-    heading_level: 3
+    heading_level: 3,
+    show_aged_out_of_programmes: false
   )
     super
 
@@ -211,6 +214,7 @@ class AppPatientSearchFormComponent < ViewComponent::Base
     @vaccine_methods = vaccine_methods
     @year_groups = year_groups
     @heading_level = heading_level
+    @show_aged_out_of_programmes = show_aged_out_of_programmes
   end
 
   private
@@ -225,7 +229,8 @@ class AppPatientSearchFormComponent < ViewComponent::Base
               :triage_statuses,
               :vaccine_methods,
               :year_groups,
-              :heading_level
+              :heading_level,
+              :show_aged_out_of_programmes
 
   def open_details?
     @form.date_of_birth_year.present? || @form.date_of_birth_month.present? ||

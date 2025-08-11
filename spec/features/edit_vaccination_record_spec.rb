@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
 describe "Edit vaccination record" do
+  before { given_an_hpv_programme_is_underway }
+
   scenario "User edits a new vaccination record" do
     given_i_am_signed_in
-    and_an_hpv_programme_is_underway
     and_an_administered_vaccination_record_exists
     and_enqueue_sync_vaccination_records_to_nhs_feature_is_enabled
 
@@ -47,7 +48,6 @@ describe "Edit vaccination record" do
 
   scenario "User edits a vaccination record that already received confirmation" do
     given_i_am_signed_in
-    and_an_hpv_programme_is_underway
     and_an_administered_vaccination_record_exists
     and_the_vaccination_confirmation_was_already_sent
 
@@ -75,7 +75,6 @@ describe "Edit vaccination record" do
 
   scenario "User edits a vaccination record, not enough to trigger an email" do
     given_i_am_signed_in
-    and_an_hpv_programme_is_underway
     and_an_administered_vaccination_record_exists
     and_the_vaccination_confirmation_was_already_sent
 
@@ -95,7 +94,6 @@ describe "Edit vaccination record" do
 
   scenario "Edit outcome to vaccinated" do
     given_i_am_signed_in
-    and_an_hpv_programme_is_underway
     and_enqueue_sync_vaccination_records_to_nhs_feature_is_enabled
     and_a_not_administered_vaccination_record_exists
     and_the_vaccination_confirmation_was_already_sent
@@ -128,7 +126,6 @@ describe "Edit vaccination record" do
 
   scenario "Edit outcome to not vaccinated" do
     given_i_am_signed_in
-    and_an_hpv_programme_is_underway
     and_enqueue_sync_vaccination_records_to_nhs_feature_is_enabled
     and_an_administered_vaccination_record_exists
     and_the_vaccination_confirmation_was_already_sent
@@ -152,7 +149,6 @@ describe "Edit vaccination record" do
 
   scenario "With an archived batch" do
     given_i_am_signed_in
-    and_an_hpv_programme_is_underway
     and_an_administered_vaccination_record_exists
     and_the_original_batch_has_been_archived
 
@@ -170,7 +166,6 @@ describe "Edit vaccination record" do
 
   scenario "With an expired batch" do
     given_i_am_signed_in
-    and_an_hpv_programme_is_underway
     and_an_administered_vaccination_record_exists
     and_the_original_batch_has_expired
 
@@ -188,7 +183,6 @@ describe "Edit vaccination record" do
 
   scenario "Cannot as an admin" do
     given_i_am_signed_in_as_an_admin
-    and_an_hpv_programme_is_underway
     and_an_administered_vaccination_record_exists
 
     when_i_go_to_the_vaccination_record_for_the_patient
@@ -197,7 +191,6 @@ describe "Edit vaccination record" do
 
   scenario "Navigating back" do
     given_i_am_signed_in
-    and_an_hpv_programme_is_underway
     and_an_administered_vaccination_record_exists
 
     when_i_go_to_the_vaccination_record_for_the_patient
@@ -214,18 +207,17 @@ describe "Edit vaccination record" do
     then_i_should_see_the_vaccination_record
   end
 
-  def given_i_am_signed_in
-    @team = create(:team, :with_one_nurse, ods_code: "R1L")
-    sign_in @team.users.first
-  end
+  def given_an_hpv_programme_is_underway
+    @programme = create(:programme, :hpv)
 
-  def given_i_am_signed_in_as_an_admin
-    @team = create(:team, :with_one_admin, ods_code: "R1L")
-    sign_in @team.users.first, role: :admin_staff
-  end
-
-  def and_an_hpv_programme_is_underway
-    @programme = create(:programme, :hpv, teams: [@team])
+    @team =
+      create(
+        :team,
+        :with_generic_clinic,
+        :with_one_nurse,
+        ods_code: "R1L",
+        programmes: [@programme]
+      )
 
     @vaccine = @programme.vaccines.first
 
@@ -251,11 +243,16 @@ describe "Edit vaccination record" do
         given_name: "John",
         family_name: "Smith",
         team: @team,
-        programmes: [@programme]
+        session: @session
       )
+  end
 
-    @patient_session =
-      create(:patient_session, patient: @patient, session: @session)
+  def given_i_am_signed_in
+    sign_in @team.users.first
+  end
+
+  def given_i_am_signed_in_as_an_admin
+    sign_in @team.users.first, role: :admin_staff
   end
 
   def and_an_administered_vaccination_record_exists

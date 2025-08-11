@@ -4,197 +4,166 @@ require "csv"
 
 Faker::Config.locale = "en-GB"
 
-# Use this to generate a cohort import CSV file for performance testing.
-#
-# Usage from the Rails console:
-#
-# Create a cohort import of 1000 children for all the school sessions for the
-# org A9A5A in the local db:
-#
-#     Generate::CohortImports.call(patient_count: 1000)
-#
-# You can also generate a cohort import for sessions not in the local db.
-#
-#     Generate::CohortImports.call(
-#       patient_count: 1000,
-#       urns: ["123456", "987654"],
-#       school_year_groups: {
-#         "123456" => [-2, -1, 0, 1, 2, 3, 4, 5, 6],
-#         "987654" => [9, 10, 11, 12, 13]
-#       }
-#     )
-#
-# You can pull out the year groups with the following:
-#
-#     org = Organisation.find_by(ods_code: "A9A5A")
-#     team = org.teams.find_by(name: "")
-#     team.locations.school.pluck(:urn, :year_groups) .to_h
-#
-module Generate
-  class CohortImports
-    attr_reader :ods_code,
-                :team,
-                :programme,
-                :urns,
-                :patient_count,
-                :school_year_groups,
-                :progress_bar
+class Generate::CohortImports
+  def initialize(
+    team:,
+    programmes: nil,
+    urns: nil,
+    school_year_groups: nil,
+    patient_count: 10,
+    progress_bar: nil
+  )
+    @team = team
+    @programmes = programmes.presence || team.programmes
+    @urns = urns || @team.schools.pluck(:urn)
+    @school_year_groups = school_year_groups
+    @patient_count = patient_count
+    @progress_bar = progress_bar
+    @nhs_numbers = Set.new
+  end
 
-    def initialize(
-      ods_code: "A9A5A",
-      programme: "hpv",
-      urns: nil,
-      school_year_groups: nil,
-      patient_count: 10,
-      progress_bar: nil
-    )
-      # TODO: Select the right team based on an identifier.
-      @team = Team.joins(:organisation).find_by(organisation: { ods_code: })
-      @programme = Programme.find_by(type: programme)
-      @urns =
-        urns || @team.locations.select { it.urn.present? }.sample(3).pluck(:urn)
-      @school_year_groups = school_year_groups
-      @patient_count = patient_count
-      @progress_bar = progress_bar
-      @nhs_numbers = Set.new
-    end
+  def self.call(...) = new(...).call
 
-    def self.call(...) = new(...).call
+  def call = write_cohort_import_csv
 
-    def call
-      write_cohort_import_csv
-    end
+  def patients
+    patient_count.times.lazy.map { build_patient }
+  end
 
-    def patients
-      patient_count.times.lazy.map { build_patient }
-    end
+  private
 
-    private
+  attr_reader :team,
+              :programmes,
+              :urns,
+              :patient_count,
+              :school_year_groups,
+              :progress_bar
 
-    delegate :organisation, to: :team
+  def academic_year = AcademicYear.current
 
-    def cohort_import_csv_filepath
-      timestamp = Time.current.strftime("%Y%m%d%H%M%S")
-      size =
-        ActiveSupport::NumberHelper.number_to_human(
-          @patient_count,
-          units: {
-            thousand: "k",
-            million: "m"
-          },
-          format: "%n%u"
+  def all_year_groups
+    programmes.flat_map(&:default_year_groups).uniq
+  end
+
+  def cohort_import_csv_filepath
+    @cohort_import_csv_filepath ||=
+      begin
+        timestamp = Time.current.strftime("%Y%m%d%H%M%S")
+        size =
+          ActiveSupport::NumberHelper.number_to_human(
+            @patient_count,
+            units: {
+              thousand: "k",
+              million: "m"
+            },
+            format: "%n%u"
+          )
+        Rails.root.join(
+          "tmp/cohort-import-" \
+            "#{team.workgroup}-#{programmes.map(&:type).join("-")}-#{size}-#{timestamp}.csv"
         )
-      Rails.root.join(
-        "tmp/cohort-import-" \
-          "#{organisation.ods_code}-#{programme.type}-#{size}-#{timestamp}.csv"
-      )
-    end
+      end
+  end
 
-    def write_cohort_import_csv
-      CSV.open(cohort_import_csv_filepath, "w") do |csv|
-        csv << %w[
-          CHILD_ADDRESS_LINE_1
-          CHILD_ADDRESS_LINE_2
-          CHILD_POSTCODE
-          CHILD_TOWN
-          CHILD_PREFERRED_GIVEN_NAME
-          CHILD_DATE_OF_BIRTH
-          CHILD_FIRST_NAME
-          CHILD_LAST_NAME
-          CHILD_NHS_NUMBER
-          PARENT_1_EMAIL
-          PARENT_1_NAME
-          PARENT_1_PHONE
-          PARENT_1_RELATIONSHIP
-          PARENT_2_EMAIL
-          PARENT_2_NAME
-          PARENT_2_PHONE
-          PARENT_2_RELATIONSHIP
-          CHILD_SCHOOL_URN
+  def write_cohort_import_csv
+    CSV.open(cohort_import_csv_filepath, "w") do |csv|
+      csv << %w[
+        CHILD_ADDRESS_LINE_1
+        CHILD_ADDRESS_LINE_2
+        CHILD_POSTCODE
+        CHILD_TOWN
+        CHILD_PREFERRED_GIVEN_NAME
+        CHILD_DATE_OF_BIRTH
+        CHILD_FIRST_NAME
+        CHILD_LAST_NAME
+        CHILD_NHS_NUMBER
+        PARENT_1_EMAIL
+        PARENT_1_NAME
+        PARENT_1_PHONE
+        PARENT_1_RELATIONSHIP
+        PARENT_2_EMAIL
+        PARENT_2_NAME
+        PARENT_2_PHONE
+        PARENT_2_RELATIONSHIP
+        CHILD_SCHOOL_URN
+      ]
+
+      patients.each do |patient|
+        csv << [
+          patient.address_line_1,
+          patient.address_line_2,
+          patient.address_postcode,
+          patient.address_town,
+          patient.preferred_given_name,
+          patient.date_of_birth,
+          patient.given_name,
+          patient.family_name,
+          patient.nhs_number,
+          patient.parents.first&.email,
+          patient.parents.first&.full_name,
+          patient.parents.first&.phone,
+          patient.parent_relationships.first&.type,
+          patient.parents.second&.email,
+          patient.parents.second&.full_name,
+          patient.parents.second&.phone,
+          patient.parent_relationships.second&.type,
+          patient.school.urn
         ]
-
-        patients.each do |patient|
-          csv << [
-            patient.address_line_1,
-            patient.address_line_2,
-            patient.address_postcode,
-            patient.address_town,
-            patient.preferred_given_name,
-            patient.date_of_birth,
-            patient.given_name,
-            patient.family_name,
-            patient.nhs_number,
-            patient.parents.first&.email,
-            patient.parents.first&.full_name,
-            patient.parents.first&.phone,
-            patient.parent_relationships.first&.type,
-            patient.parents.second&.email,
-            patient.parents.second&.full_name,
-            patient.parents.second&.phone,
-            patient.parent_relationships.second&.type,
-            patient.school.urn
-          ]
-          progress_bar&.increment
-        end
+        progress_bar&.increment
       end
-      cohort_import_csv_filepath.to_s
     end
+    cohort_import_csv_filepath.to_s
+  end
 
-    def schools_with_year_groups
-      @schools_with_year_groups ||=
-        begin
-          locations =
-            if school_year_groups.present?
-              urns.map do |urn|
-                Location.new(urn:, year_groups: school_year_groups[urn])
-              end
-            else
-              team.locations.where(urn: urns).includes(:team, :sessions)
+  def schools_with_year_groups
+    @schools_with_year_groups ||=
+      begin
+        locations =
+          if school_year_groups.present?
+            urns.map do |urn|
+              Location.new(urn:, year_groups: school_year_groups[urn])
             end
-          locations.select do
-            (it.year_groups & programme.default_year_groups).any?
+          else
+            team.locations.where(urn: urns).includes(:team, :sessions)
           end
-        end
-    end
 
-    def build_patient
-      school = schools_with_year_groups.sample
-      year_group ||= (school.year_groups & programme.default_year_groups).sample
-      nhs_number = nil
-      loop do
-        nhs_number = Faker::NationalHealthService.british_number.gsub(" ", "")
-        break unless nhs_number.in? @nhs_numbers
+        locations.select { (it.year_groups & all_year_groups).any? }
       end
-      @nhs_numbers << nhs_number
+  end
 
-      FactoryBot
-        .build(
-          :patient,
-          school:,
-          team:,
-          date_of_birth: date_of_birth_for_year(year_group),
-          nhs_number:
-        )
-        .tap do |patient|
-          patient.parents =
-            FactoryBot.build_list(:parent, 2, family_name: patient.family_name)
-          patient.parent_relationships =
-            patient.parents.map do
-              FactoryBot.build(:parent_relationship, parent: it, patient:)
-            end
-        end
+  def build_patient
+    school = schools_with_year_groups.sample
+    year_group ||= (school.year_groups & all_year_groups).sample
+    nhs_number = nil
+    loop do
+      nhs_number = Faker::NationalHealthService.british_number.gsub(" ", "")
+      break unless nhs_number.in? @nhs_numbers
     end
+    @nhs_numbers << nhs_number
 
-    def date_of_birth_for_year(year_group, academic_year: AcademicYear.pending)
-      if year_group < 12
-        rand(
-          year_group.to_birth_academic_year(
-            academic_year:
-          ).to_academic_year_date_range
-        )
-      else
-        raise "Unknown year group: #{year_group}"
+    FactoryBot
+      .build(
+        :patient,
+        school:,
+        team:,
+        date_of_birth: date_of_birth_for_year(year_group),
+        nhs_number:
+      )
+      .tap do |patient|
+        patient.parents =
+          FactoryBot.build_list(:parent, 2, family_name: patient.family_name)
+        patient.parent_relationships =
+          patient.parents.map do
+            FactoryBot.build(:parent_relationship, parent: it, patient:)
+          end
       end
-    end
+  end
+
+  def date_of_birth_for_year(year_group)
+    rand(
+      year_group.to_birth_academic_year(
+        academic_year:
+      ).to_academic_year_date_range
+    )
   end
 end

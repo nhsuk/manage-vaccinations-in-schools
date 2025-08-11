@@ -3,17 +3,8 @@
 require_relative "../../app/lib/mavis_cli"
 
 describe "mavis teams create-sessions" do
-  context "when the organisation doesn't exist" do
-    it "displays an error message" do
-      when_i_run_the_command_expecting_an_error
-      then_an_organisation_not_found_error_message_is_displayed
-    end
-  end
-
   context "when the team doesn't exist" do
     it "displays an error message" do
-      given_the_organisation_exists
-
       when_i_run_the_command_expecting_an_error
       then_a_team_not_found_error_message_is_displayed
     end
@@ -21,9 +12,8 @@ describe "mavis teams create-sessions" do
 
   context "when the team exists" do
     it "runs successfully" do
-      given_the_organisation_exists
-      and_the_team_exists
-      and_the_school_exists
+      given_the_team_exists
+      and_a_school_exists
 
       when_i_run_the_command
       then_the_school_session_is_created
@@ -33,25 +23,15 @@ describe "mavis teams create-sessions" do
   private
 
   def command
-    Dry::CLI.new(MavisCLI).call(arguments: %w[teams create-sessions ABC Team])
+    Dry::CLI.new(MavisCLI).call(arguments: %w[teams create-sessions abc])
   end
 
-  def given_the_organisation_exists
-    @organisation = create(:organisation, ods_code: "ABC")
-  end
-
-  def and_the_team_exists
+  def given_the_team_exists
     @programmes = [create(:programme, :flu), create(:programme, :hpv)]
-    @team =
-      create(
-        :team,
-        organisation: @organisation,
-        name: "Team",
-        programmes: @programmes
-      )
+    @team = create(:team, workgroup: "abc", programmes: @programmes)
   end
 
-  def and_the_school_exists
+  def and_a_school_exists
     @school = create(:school, name: "School", urn: "123456", team: @team)
   end
 

@@ -5,7 +5,7 @@ require_relative "../task_helpers"
 namespace :users do
   desc "Create a new user and add them to a team."
   task :create,
-       %i[email password given_name family_name team_ods_code fallback_role] =>
+       %i[email password given_name family_name workgroup fallback_role] =>
          :environment do |_task, args|
     include TaskHelpers
 
@@ -14,7 +14,7 @@ namespace :users do
       password = prompt_user_for "Enter password:", required: true
       given_name = prompt_user_for "Enter given name:", required: true
       family_name = prompt_user_for "Enter family name:", required: true
-      team_ods_code = prompt_user_for "Enter team ODS code:", required: true
+      workgroup = prompt_user_for "Enter team workgroup:", required: true
       fallback_role =
         prompt_user_for "Enter fallback role (nurse/admin):",
                         default: "nurse",
@@ -26,19 +26,13 @@ namespace :users do
       password = args[:password]
       given_name = args[:given_name]
       family_name = args[:family_name]
-      team_ods_code = args[:team_ods_code]
+      workgroup = args[:workgroup]
       fallback_role = args[:fallback_role] || "nurse"
     else
       raise "Expected 5-6 arguments, got #{args.to_a.size}"
     end
 
-    # TODO: Select the right team based on an identifier.
-    team =
-      Team.joins(:organisation).find_by!(
-        organisation: {
-          ods_code: team_ods_code
-        }
-      )
+    team = Team.find_by(workgroup:)
 
     user =
       User.create!(email:, password:, family_name:, given_name:, fallback_role:)

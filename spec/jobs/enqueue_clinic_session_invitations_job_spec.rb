@@ -16,110 +16,10 @@ describe EnqueueClinicSessionInvitationsJob do
     let(:session) { create(:session, programmes:, date:, location:, team:) }
     let(:patient_session) { create(:patient_session, patient:, session:) }
 
-    it "sends a notification" do
-      expect(SessionNotification).to receive(:create_and_send!).once.with(
-        patient_session:,
-        session_date: date,
-        type: :clinic_initial_invitation
-      )
-      perform_now
-    end
-
-    context "when patient goes to a school" do
-      let(:patient) { create(:patient, parents:, school: create(:school)) }
-
-      it "doesn't send any notifications" do
-        expect(SessionNotification).not_to receive(:create_and_send!)
-        perform_now
-      end
-    end
-
-    context "when already sent for that date" do
-      before do
-        create(
-          :session_notification,
-          :clinic_initial_invitation,
-          session:,
-          patient:
-        )
-      end
-
-      it "doesn't send any notifications" do
-        expect(SessionNotification).not_to receive(:create_and_send!)
-        perform_now
-      end
-
-      context "with a second date a week later" do
-        before { session.session_dates.create!(value: date + 1.week) }
-
-        let(:today) { date + 1.day }
-
-        it "doesn't send any notifications" do
-          expect(SessionNotification).not_to receive(:create_and_send!)
-          perform_now
-        end
-      end
-    end
-
-    context "when already vaccinated" do
-      before do
-        create(
-          :vaccination_record,
-          patient:,
-          session:,
-          programme: programmes.first,
-          location_name: "A clinic."
-        )
-      end
-
-      it "doesn't send any notifications" do
-        expect(SessionNotification).not_to receive(:create_and_send!)
-        perform_now
-      end
-    end
-
-    context "when refused consent has been received" do
-      before do
-        create(
-          :consent,
-          :refused,
-          patient:,
-          programme: programmes.first,
-          parent: parents.first
-        )
-      end
-
-      it "doesn't send any notifications" do
-        expect(SessionNotification).not_to receive(:create_and_send!)
-        perform_now
-      end
-    end
-
-    context "if the patient is deceased" do
-      let(:patient) { create(:patient, :deceased, parents:) }
-
-      it "doesn't send any notifications" do
-        expect(SessionNotification).not_to receive(:create_and_send!)
-        perform_now
-      end
-    end
-
-    context "if the patient is invalid" do
-      let(:patient) { create(:patient, :invalidated, parents:) }
-
-      it "doesn't send any notifications" do
-        expect(SessionNotification).not_to receive(:create_and_send!)
-        perform_now
-      end
-    end
-
-    context "if the patient is restricted" do
-      let(:patient) { create(:patient, :restricted, parents:) }
-
-      it "doesn't send any notifications" do
-        expect(SessionNotification).not_to receive(:create_and_send!)
-        perform_now
-      end
+    it "queues a job for the session" do
+      expect { perform_now }.to have_enqueued_job(
+        SendClinicInitialInvitationsJob
+      ).with(session)
     end
   end
 
@@ -128,13 +28,10 @@ describe EnqueueClinicSessionInvitationsJob do
     let(:session) { create(:session, programmes:, date:, location:, team:) }
     let(:patient_session) { create(:patient_session, patient:, session:) }
 
-    it "sends a notification" do
-      expect(SessionNotification).to receive(:create_and_send!).once.with(
-        patient_session:,
-        session_date: date,
-        type: :clinic_initial_invitation
-      )
-      perform_now
+    it "queues a job for the session" do
+      expect { perform_now }.to have_enqueued_job(
+        SendClinicInitialInvitationsJob
+      ).with(session)
     end
   end
 
@@ -143,9 +40,10 @@ describe EnqueueClinicSessionInvitationsJob do
     let(:session) { create(:session, programmes:, date:, location:, team:) }
     let(:patient_session) { create(:patient_session, patient:, session:) }
 
-    it "doesn't send any notifications" do
-      expect(SessionNotification).not_to receive(:create_and_send!)
-      perform_now
+    it "doesn't queue any jobs" do
+      expect { perform_now }.not_to have_enqueued_job(
+        SendClinicInitialInvitationsJob
+      )
     end
   end
 
@@ -163,9 +61,10 @@ describe EnqueueClinicSessionInvitationsJob do
       )
     end
 
-    it "doesn't send any notifications" do
-      expect(SessionNotification).not_to receive(:create_and_send!)
-      perform_now
+    it "doesn't queue any jobs" do
+      expect { perform_now }.not_to have_enqueued_job(
+        SendClinicInitialInvitationsJob
+      )
     end
   end
 
@@ -181,9 +80,10 @@ describe EnqueueClinicSessionInvitationsJob do
       )
     end
 
-    it "doesn't send any notifications" do
-      expect(SessionNotification).not_to receive(:create_and_send!)
-      perform_now
+    it "doesn't queue any jobs" do
+      expect { perform_now }.not_to have_enqueued_job(
+        SendClinicInitialInvitationsJob
+      )
     end
   end
 end

@@ -551,6 +551,12 @@ describe NHS::ImmunisationsAPI do
 
       it { should be false }
     end
+
+    context "when the patient is invalidated" do
+      before { patient.update(invalidated_at: Time.current) }
+
+      it { should be false }
+    end
   end
 
   describe "next_sync_action" do

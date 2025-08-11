@@ -56,11 +56,11 @@ class AppVaccinationRecordAPISyncStatusComponent < ViewComponent::Base
           !vaccination_record.programme.type.in?(
             NHS::ImmunisationsAPI::PROGRAMME_TYPES
           )
-        if !notify_parents
+        if is_not_a_synced_programme
+          "Records are currently not synced for this programme"
+        elsif notify_parents == false
           "The child gave consent under Gillick competence and does not want their parents to be notified. " \
             "You must let the child’s GP know they were vaccinated."
-        elsif is_not_a_synced_programme
-          "Records are currently not synced for this programme"
         elsif recorded_in_service?
           "Records are not synced if the vaccination was not given"
         elsif vaccination_record.session.nil?

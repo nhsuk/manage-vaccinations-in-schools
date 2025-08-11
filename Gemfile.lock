@@ -367,6 +367,7 @@ GEM
       rubyntlm (~> 0.6, >= 0.6.3)
       webrick (~> 1.7)
       webrobots (~> 0.1.2)
+    memo_wise (1.13.0)
     method_source (1.1.0)
     mime-types (3.6.0)
       logger
@@ -425,6 +426,7 @@ GEM
     orm_adapter (0.5.0)
     ostruct (0.6.2)
     pagy (9.3.5)
+    paint (2.3.0)
     parallel (1.27.0)
     parser (3.3.8.0)
       ast (~> 2.4.1)
@@ -662,6 +664,12 @@ GEM
       prettier_print
       rbs
       syntax_tree (>= 2.0.1)
+    table_tennis (0.0.7)
+      csv (~> 3.3)
+      ffi (~> 1.17)
+      memo_wise (~> 1.11)
+      paint (~> 2.3)
+      unicode-display_width (~> 3.1)
     temple (0.10.0)
     thor (1.4.0)
     thruster (0.1.15-arm64-darwin)
@@ -811,6 +819,7 @@ DEPENDENCIES
   syntax_tree
   syntax_tree-haml
   syntax_tree-rbs
+  table_tennis
   thruster
   turbo-rails
   tzinfo-data

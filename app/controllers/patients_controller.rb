@@ -7,12 +7,12 @@ class PatientsController < ApplicationController
   before_action :set_patient, except: :index
   before_action :record_access_log_entry, only: %i[show log]
 
+  layout "full"
+
   def index
     patients = @form.apply(policy_scope(Patient).includes(:school))
 
     @pagy, @patients = pagy(patients)
-
-    render layout: "full"
   end
 
   def show
@@ -27,7 +27,18 @@ class PatientsController < ApplicationController
   end
 
   def edit
-    render layout: "full"
+  end
+
+  def invite_to_clinic
+    session =
+      current_team.generic_clinic_session(academic_year: AcademicYear.pending)
+
+    PatientSession.find_or_create_by!(patient: @patient, session:)
+
+    redirect_to patient_path(@patient),
+                flash: {
+                  success: "#{@patient.full_name} invited to the clinic"
+                }
   end
 
   private
@@ -39,7 +50,8 @@ class PatientsController < ApplicationController
         :school,
         consents: %i[parent patient],
         parent_relationships: :parent,
-        patient_sessions: %i[location session_attendances]
+        patient_sessions: %i[location session_attendances],
+        vaccination_records: :programme
       ).find(params[:id])
   end
 

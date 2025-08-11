@@ -50,7 +50,11 @@ class VaccinationRecordsController < ApplicationController
         :location,
         :performed_by_user,
         :programme,
-        patient: [:gp_practice, :school, { parent_relationships: :parent }],
+        patient: [
+          :gp_practice,
+          :school,
+          { parent_relationships: :parent, vaccination_records: :programme }
+        ],
         session: %i[session_dates],
         vaccine: :programme
       ).find(params[:id])
@@ -75,8 +79,8 @@ class VaccinationRecordsController < ApplicationController
         href: session_path(@session)
       }
       @breadcrumb_items << {
-        text: t("sessions.tabs.outcome"),
-        href: session_outcome_path(@session)
+        text: t("sessions.tabs.patients"),
+        href: session_patients_path(@session)
       }
       @breadcrumb_items << {
         text: @patient.full_name,

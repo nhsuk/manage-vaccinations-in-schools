@@ -8,8 +8,7 @@ class SchoolMoves::ExportsController < ApplicationController
   skip_after_action :verify_policy_scoped
 
   def create
-    @school_move_export.reset!
-
+    @school_move_export.clear!
     redirect_to school_move_export_path(Wicked::FIRST_STEP)
   end
 

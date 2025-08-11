@@ -131,8 +131,8 @@ en:
               inclusion: Choose whether to update the child’s record with this new information
         select_team_form:
           attributes:
-            organisation_id:
-              inclusion: Choose an organisation
+            team_id:
+              inclusion: Choose a team
         session_programmes_form:
           attributes:
             programme_ids:
@@ -519,6 +519,35 @@ en:
     zero: No children
     one: 1 child
     other: "%{count} children"
+  children_without_nhs_number:
+    title: No NHS number
+    zero: No children without an NHS number
+    one: 1 child without an NHS number
+    other: "%{count} children without an NHS number"
+  children_with_no_consent_response:
+    title: No consent response
+    zero: No children with no response
+    one: 1 child with no response
+    other: "%{count} children with no response"
+  children_with_conflicting_consent_response:
+    title: Conflicting consent
+    zero: No children with conflicting responses
+    one: 1 child with conflicting response
+    other: "%{count} children with conflicting responses"
+  children_requiring_triage:
+    title: Triage needed
+    zero: No children requiring triage
+    one: 1 child requiring triage
+    other: "%{count} children requiring triage"
+  children_to_register:
+    title: Register attendance
+    zero: No children to register
+    one: 1 child to register
+    other: "%{count} children to register"
+  children_for_programme:
+    zero: "No children for %{programme}"
+    one: "1 child for %{programme}"
+    other: "%{count} children for %{programme}"
   consent_forms:
     index:
       title: Unmatched consent responses
@@ -632,12 +661,12 @@ en:
     index:
       title: Sessions
     tabs:
-      overview: Overview
       consent: Consent
-      triage: Triage
-      register: Register
+      overview: Overview
+      patients: Children
       record: Record vaccinations
-      outcome: Session outcomes
+      register: Register
+      triage: Triage
   table:
     no_filtered_results: We couldn’t find any children that matched your filters.
     no_results: No results

@@ -124,19 +124,14 @@ class Patient < ApplicationRecord
 
   scope :has_vaccination_records_dont_notify_parents,
         -> do
-          joins(:vaccination_records).where(
-            vaccination_records: {
-              notify_parents: false
-            }
-          ).distinct
-        end
-
-  scope :with_notice,
-        -> do
-          (
-            deceased + restricted + invalidated +
-              has_vaccination_records_dont_notify_parents
-          ).uniq
+          where(
+            VaccinationRecord
+              .kept
+              .where("patient_id = patients.id")
+              .where(notify_parents: false)
+              .arel
+              .exists
+          )
         end
 
   scope :appear_in_programmes,
@@ -367,6 +362,12 @@ class Patient < ApplicationRecord
     end
   end
 
+  def in_generic_clinic?(team:, academic_year: nil)
+    academic_year ||= AcademicYear.pending
+    session = team.generic_clinic_session(academic_year:)
+    patient_sessions.exists?(session:)
+  end
+
   def consent_status(programme:, academic_year:)
     patient_status(consent_statuses, programme:, academic_year:)
   end
@@ -473,7 +474,12 @@ class Patient < ApplicationRecord
     update!(invalidated_at: Time.current)
   end
 
-  def not_in_team? = patient_sessions.empty?
+  def not_in_team?(team:, academic_year:)
+    patient_sessions
+      .joins(:session)
+      .where(session: { academic_year:, team: })
+      .empty?
+  end
 
   def dup_for_pending_changes
     dup.tap do |new_patient|
@@ -564,8 +570,12 @@ class Patient < ApplicationRecord
 
   def fhir_mapper = @fhir_mapper ||= FHIRMapper::Patient.new(self)
 
+  def should_sync_vaccinations_to_nhs_immunisations_api?
+    nhs_number_previously_changed? || invalidated_at_previously_changed?
+  end
+
   def sync_vaccinations_to_nhs_immunisations_api
-    if nhs_number_previously_changed?
+    if should_sync_vaccinations_to_nhs_immunisations_api?
       vaccination_records.syncable_to_nhs_immunisations_api.find_each(
         &:sync_to_nhs_immunisations_api
       )

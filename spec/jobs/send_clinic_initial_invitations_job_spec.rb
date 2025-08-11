@@ -1,16 +1,14 @@
 # frozen_string_literal: true
 
 describe SendClinicInitialInvitationsJob do
-  subject(:perform_now) do
-    described_class.perform_now(session, school: nil, programmes:)
-  end
+  subject(:perform_now) { described_class.perform_now(session) }
 
+  let(:today) { Date.new(2025, 7, 1) }
   let(:programmes) { [create(:programme, :hpv)] }
   let(:team) { create(:team, programmes:) }
   let(:parents) { create_list(:parent, 2) }
   let(:patient) { create(:patient, parents:, year_group: 9) }
   let(:location) { create(:generic_clinic, team:) }
-
   let(:session) do
     create(
       :session,
@@ -21,6 +19,8 @@ describe SendClinicInitialInvitationsJob do
     )
   end
   let!(:patient_session) { create(:patient_session, patient:, session:) }
+
+  around { |example| travel_to(today) { example.run } }
 
   it "sends a notification" do
     expect(SessionNotification).to receive(:create_and_send!).once.with(

@@ -93,6 +93,9 @@ describe AppPatientSessionSearchResultCardComponent do
     context "when allowed to record attendance" do
       before { stub_authorization(allowed: true) }
 
+      it { should_not have_text("Session outcome") }
+      it { should have_text("Programme outcome") }
+
       it { should have_text("Action required\nRecord vaccination for HPV") }
       it { should have_button("Attending") }
       it { should have_button("Absent") }
@@ -107,6 +110,9 @@ describe AppPatientSessionSearchResultCardComponent do
 
     context "when not allowed to record attendance" do
       before { stub_authorization(allowed: false) }
+
+      it { should_not have_text("Session outcome") }
+      it { should have_text("Programme outcome") }
 
       it { should have_text("Action required\nRecord vaccination for HPV") }
       it { should_not have_button("Attending") }
@@ -143,8 +149,11 @@ describe AppPatientSessionSearchResultCardComponent do
     end
   end
 
-  context "when context is outcome" do
-    let(:context) { :outcome }
+  context "when context is patients" do
+    let(:context) { :patients }
+
+    it { should have_text("Session outcome") }
+    it { should have_text("Programme outcome") }
 
     context "and the programme is flu" do
       let(:programme) { create(:programme, :flu) }

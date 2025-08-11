@@ -113,7 +113,7 @@ describe "Delete vaccination record" do
   end
 
   def given_an_hpv_programme_is_underway
-    @team = create(:team, :with_one_nurse)
+    @team = create(:team, :with_generic_clinic, :with_one_nurse)
     @programme = create(:programme, :hpv, teams: [@team])
 
     @session =
@@ -192,8 +192,8 @@ describe "Delete vaccination record" do
   end
 
   def and_i_go_to_a_patient_that_is_vaccinated_in_the_session
-    visit session_outcome_path(@session)
-    choose "Vaccinated"
+    visit session_patients_path(@session)
+    choose "Vaccinated", match: :first
     click_on "Update results"
     click_on @patient.full_name
   end

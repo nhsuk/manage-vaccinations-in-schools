@@ -66,7 +66,7 @@ class ConsentForm < ApplicationRecord
   include HasHealthAnswers
   include WizardStepConcern
 
-  before_save :reset_unused_fields
+  before_save :reset_unused_attributes
 
   scope :unmatched, -> { where(consent_id: nil) }
   scope :recorded, -> { where.not(recorded_at: nil) }
@@ -369,7 +369,11 @@ class ConsentForm < ApplicationRecord
       (location_is_clinic? && original_session) ||
         (
           school &&
-            school.sessions.includes(:session_dates).find_by(academic_year:)
+            school
+              .sessions
+              .has_programmes(programmes)
+              .includes(:session_dates)
+              .find_by(academic_year:)
         ) || team.generic_clinic_session(academic_year:)
   end
 
@@ -583,10 +587,7 @@ class ConsentForm < ApplicationRecord
     location_is_clinic? ? education_setting_school? : !school_confirmed
   end
 
-  # Because there are branching paths in the consent form journey, fields
-  # sometimes get set with values that then have to be deleted if the user
-  # changes their mind and goes down a different path.
-  def reset_unused_fields
+  def reset_unused_attributes
     update_programme_responses
 
     unless use_preferred_name

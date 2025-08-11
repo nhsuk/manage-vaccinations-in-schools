@@ -10,7 +10,13 @@ describe API::Testing::TeamsController do
     let(:programmes) { [create(:programme, :hpv_all_vaccines)] }
 
     let(:team) do
-      create(:team, :with_generic_clinic, ods_code: "R1L", programmes:)
+      create(
+        :team,
+        :with_generic_clinic,
+        ods_code: "R1L",
+        workgroup: "r1l",
+        programmes:
+      )
     end
 
     let(:cohort_import) do
@@ -39,10 +45,10 @@ describe API::Testing::TeamsController do
         end
       end
 
-      TeamSessionsFactory.call(team, academic_year: AcademicYear.current)
-
       create(:school, urn: "123456", team:, programmes:) # to match cohort_import/valid.csv
       create(:school, urn: "110158", team:, programmes:) # to match valid_hpv.csv
+
+      TeamSessionsFactory.call(team, academic_year: AcademicYear.current)
 
       cohort_import.process!
       immunisation_import.process!
@@ -69,11 +75,11 @@ describe API::Testing::TeamsController do
     end
 
     it "deletes associated data" do
-      expect { delete :destroy, params: { ods_code: "r1l" } }.to(
+      expect { delete :destroy, params: { workgroup: "r1l" } }.to(
         change(Team, :count)
           .by(-1)
           .and(change(Subteam, :count).by(-1))
-          .and(change(Session, :count).by(-1))
+          .and(change(Session, :count).by(-3))
           .and(change(CohortImport, :count).by(-1))
           .and(change(ImmunisationImport, :count).by(-1))
           .and(change(NotifyLogEntry, :count).by(-3))
@@ -87,7 +93,7 @@ describe API::Testing::TeamsController do
 
     context "when keeping itself" do
       subject(:call) do
-        delete :destroy, params: { ods_code: "r1l", keep_itself: "true" }
+        delete :destroy, params: { workgroup: "r1l", keep_itself: "true" }
       end
 
       it "deletes associated data" do

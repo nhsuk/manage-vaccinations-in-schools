@@ -6,10 +6,10 @@ module MavisCLI
   module Generate
     class Consents < Dry::CLI::Command
       desc "Generate consents"
-      option :team,
-             aliases: ["-o"],
+      option :team_workgroup,
+             aliases: ["-w"],
              default: "A9A5A",
-             desc: "ODS code of team to generate consents for"
+             desc: "Workgroup of team to generate consents for"
       option :programme_type,
              aliases: ["-p"],
              default: "hpv",
@@ -33,7 +33,7 @@ module MavisCLI
              desc: "Number of refused consents to create"
 
       def call(
-        team:,
+        team_workgroup:,
         programme_type:,
         given:,
         needing_triage:,
@@ -46,9 +46,7 @@ module MavisCLI
         session = Session.find(session_id) if session_id
 
         ::Generate::Consents.call(
-          # TODO: Select the right team based on an identifier.
-          team:
-            Team.joins(:organisation).find_by(organisation: { ods_code: team }),
+          team: Team.find_by(workgroup: team_workgroup),
           programme: Programme.find_by(type: programme_type),
           session:,
           given: given.to_i,

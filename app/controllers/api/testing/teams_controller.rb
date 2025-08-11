@@ -9,13 +9,7 @@ class API::Testing::TeamsController < API::Testing::BaseController
 
     keep_itself = ActiveModel::Type::Boolean.new.cast(params[:keep_itself])
 
-    # TODO: Select the right team based on an identifier.
-    team =
-      Team.joins(:organisation).find_by!(
-        organisation: {
-          ods_code: params[:ods_code]
-        }
-      )
+    team = Team.find_by!(workgroup: params[:workgroup])
 
     @start_time = Time.zone.now
 
@@ -40,13 +34,16 @@ class API::Testing::TeamsController < API::Testing::BaseController
 
         log_destroy(SessionDate.where(session: sessions))
 
+        log_destroy(AccessLogEntry.where(patient_id: patient_ids))
+        log_destroy(ArchiveReason.where(patient_id: patient_ids))
+        log_destroy(ConsentNotification.where(patient_id: patient_ids))
+        log_destroy(Note.where(patient_id: patient_ids))
+        # In local dev we can end up with NotifyLogEntries without a patient
+        log_destroy(NotifyLogEntry.where(patient_id: nil))
+        log_destroy(NotifyLogEntry.where(patient_id: patient_ids))
         log_destroy(SchoolMove.where(patient_id: patient_ids))
         log_destroy(SchoolMove.where(team:))
         log_destroy(SchoolMoveLogEntry.where(patient_id: patient_ids))
-        log_destroy(AccessLogEntry.where(patient_id: patient_ids))
-        log_destroy(NotifyLogEntry.where(patient_id: patient_ids))
-        # In local dev we can end up with NotifyLogEntries without a patient
-        log_destroy(NotifyLogEntry.where(patient_id: nil))
         log_destroy(VaccinationRecord.where(patient_id: patient_ids))
 
         log_destroy(ConsentForm.where(team:))

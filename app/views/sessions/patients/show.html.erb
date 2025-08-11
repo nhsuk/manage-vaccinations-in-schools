@@ -12,18 +12,20 @@
   <div class="app-grid-column-filters">
     <%= render AppPatientSearchFormComponent.new(
           @form,
-          url: session_outcome_path(@session),
+          url: session_patients_path(@session),
           programmes: @session.programmes,
+          programme_statuses: Patient::VaccinationStatus.statuses.keys,
           session_statuses: @statuses,
           year_groups: @session.year_groups,
         ) %>
   </div>
 
   <div class="app-grid-column-results">
+    <%= render AppSessionNeedsReviewWarningComponent.new(session: @session) %>
     <%= render AppSearchResultsComponent.new(@pagy, label: "children") do %>
       <% @patient_sessions.each do |patient_session| %>
         <%= render AppPatientSessionSearchResultCardComponent.new(
-              patient_session, context: :outcome, programmes: @form.programmes,
+              patient_session, context: :patients, programmes: @form.programmes,
             ) %>
       <% end %>
     <% end %>

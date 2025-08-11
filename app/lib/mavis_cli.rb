@@ -10,7 +10,7 @@ module MavisCLI
   def self.progress_bar(total)
     @progress_bar ||=
       ProgressBar.create(
-        total: total,
+        total:,
         format: "%a %b\u{15E7}%i %p%% %t",
         progress_mark: " ",
         remainder_mark: "\u{FF65}"
@@ -31,5 +31,7 @@ require_relative "mavis_cli/schools/add_to_team"
 require_relative "mavis_cli/schools/remove_programme_year_group"
 require_relative "mavis_cli/teams/add_programme"
 require_relative "mavis_cli/teams/create_sessions"
+require_relative "mavis_cli/teams/list"
+require_relative "mavis_cli/teams/onboard"
 require_relative "mavis_cli/vaccination_records/generate_fhir"
 require_relative "mavis_cli/vaccination_records/sync"

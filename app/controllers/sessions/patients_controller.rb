@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Sessions::OutcomeController < ApplicationController
+class Sessions::PatientsController < ApplicationController
   include PatientSearchFormConcern
 
   before_action :set_session
@@ -14,7 +14,8 @@ class Sessions::OutcomeController < ApplicationController
     scope =
       @session.patient_sessions.includes_programmes.includes(
         :latest_note,
-        :session_statuses
+        :session_statuses,
+        patient: :vaccination_statuses
       )
 
     patient_sessions = @form.apply(scope)

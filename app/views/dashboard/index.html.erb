@@ -1,6 +1,6 @@
 <%= h1 "#{@service_name} (Mavis)", size: "xl" %>
 
-<% if (count = @important_notices) %>
+<% if (count = @notices_count) %>
   <%= render AppWarningCalloutComponent.new(heading: "Important notices") do %>
     <p><%= link_to t(".notices.description", count:), imports_notices_path %></p>
   <% end %>

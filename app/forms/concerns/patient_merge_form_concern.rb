@@ -11,8 +11,14 @@ module PatientMergeFormConcern
   def existing_patient
     @existing_patient ||=
       if nhs_number.present?
-        patient_policy_scope.find_by(nhs_number:) ||
-          Patient.where.missing(:patient_sessions).find_by(nhs_number:)
+        patient_policy_scope.includes(vaccination_records: :programme).find_by(
+          nhs_number:
+        ) ||
+          Patient
+            .where
+            .missing(:patient_sessions)
+            .includes(vaccination_records: :programme)
+            .find_by(nhs_number:)
       end
   end
 

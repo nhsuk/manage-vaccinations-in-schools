@@ -8,18 +8,18 @@ namespace :subteams do
 
     Usage:
       rake subteams:create # Complete the prompts
-      rake subteams:create[ods_code,name,email,phone]
+      rake subteams:create[workgroup,name,email,phone]
   DESC
-  task :create, %i[ods_code name email phone] => :environment do |_task, args|
+  task :create, %i[workgroup name email phone] => :environment do |_task, args|
     include TaskHelpers
 
     if args.to_a.empty? && $stdin.isatty && $stdout.isatty
-      ods_code = prompt_user_for "Enter team ODS code:", required: true
+      workgroup = prompt_user_for "Enter team workgroup:", required: true
       name = prompt_user_for "Enter subteam name:", required: true
       email = prompt_user_for "Enter subteam email:", required: true
       phone = prompt_user_for "Enter subteam phone:", required: true
     elsif args.to_a.size == 4
-      ods_code = args[:ods_code]
+      workgroup = args[:workgroup]
       name = args[:name]
       email = args[:email]
       phone = args[:phone]
@@ -28,8 +28,7 @@ namespace :subteams do
     end
 
     ActiveRecord::Base.transaction do
-      # TODO: Select the right team based on an identifier.
-      team = Team.joins(:organisation).find_by!(organisation: { ods_code: })
+      team = Team.find_by!(workgroup:)
 
       subteam = team.subteams.create!(name:, email:, phone:)
 

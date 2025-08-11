@@ -90,7 +90,7 @@ Rails.application.routes.draw do
     unless Rails.env.production?
       namespace :testing do
         resources :locations, only: :index
-        resources :teams, only: :destroy, param: :ods_code
+        resources :teams, only: :destroy, param: :workgroup
         post "/onboard", to: "onboard#create"
       end
     end
@@ -154,6 +154,7 @@ Rails.application.routes.draw do
 
     member do
       get "log"
+      post "invite-to-clinic"
 
       get "edit/nhs-number",
           controller: "patients/edit",
@@ -192,6 +193,7 @@ Rails.application.routes.draw do
   end
 
   resources :sessions, only: %i[edit index show], param: :slug do
+    resource :patients, only: :show, controller: "sessions/patients"
     resource :consent, only: :show, controller: "sessions/consent"
     resource :triage, only: :show, controller: "sessions/triage"
     resource :register, only: :show, controller: "sessions/register" do
@@ -203,7 +205,6 @@ Rails.application.routes.draw do
           as: :batch
       post "batch/:programme_type/:vaccine_method", action: :update_batch
     end
-    resource :outcome, only: :show, controller: "sessions/outcome"
 
     resource :invite_to_clinic,
              path: "invite-to-clinic",

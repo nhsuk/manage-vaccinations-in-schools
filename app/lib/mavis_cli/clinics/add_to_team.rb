@@ -5,23 +5,17 @@ module MavisCLI
     class AddToTeam < Dry::CLI::Command
       desc "Add an existing clinic to a team"
 
-      argument :team_ods_code, required: true, desc: "The ODS code of the team"
+      argument :workgroup, required: true, desc: "The ODS code of the team"
       argument :subteam, required: true, desc: "The subteam of the team"
-      argument :clinic_ods_codes,
+      argument :ods_codes,
                type: :array,
                required: true,
                desc: "The ODS codes of the clinics"
 
-      def call(team_ods_code:, subteam:, clinic_ods_codes:, **)
+      def call(workgroup:, subteam:, ods_codes:, **)
         MavisCLI.load_rails
 
-        # TODO: Select the right team based on an identifier.
-        team =
-          Team.joins(:organisation).find_by(
-            organisation: {
-              ods_code: team_ods_code
-            }
-          )
+        team = Team.find_by(workgroup:)
 
         if team.nil?
           warn "Could not find team."
@@ -36,7 +30,7 @@ module MavisCLI
         end
 
         ActiveRecord::Base.transaction do
-          clinic_ods_codes.each do |ods_code|
+          ods_codes.each do |ods_code|
             location = Location.clinic.find_by(ods_code:)
 
             if location.nil?

@@ -31,6 +31,8 @@ describe "Verbal consent" do
     @session = create(:session, team:, programmes:)
     @patient = create(:patient, session: @session)
 
+    StatusUpdater.call
+
     sign_in team.users.first
   end
 

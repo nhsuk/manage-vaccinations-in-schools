@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_01_143843) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_08_182416) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -256,8 +256,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_01_143843) do
     t.boolean "notify_parents_on_vaccination"
     t.datetime "submitted_at", null: false
     t.integer "vaccine_methods", default: [], null: false, array: true
-    t.boolean "notify_parent_on_refusal"
     t.integer "academic_year", null: false
+    t.boolean "notify_parent_on_refusal"
     t.index ["academic_year"], name: "index_consents_on_academic_year"
     t.index ["parent_id"], name: "index_consents_on_parent_id"
     t.index ["patient_id"], name: "index_consents_on_patient_id"
@@ -622,6 +622,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_01_143843) do
     t.bigint "programme_id", null: false
     t.integer "status", default: 0, null: false
     t.integer "academic_year", null: false
+    t.integer "latest_session_status", default: 0, null: false
     t.index ["patient_id", "programme_id", "academic_year"], name: "idx_on_patient_id_programme_id_academic_year_fc0b47b743", unique: true
     t.index ["status"], name: "index_patient_vaccination_statuses_on_status"
   end
@@ -678,6 +679,16 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_01_143843) do
     t.datetime "updated_at", null: false
     t.string "type", null: false
     t.index ["type"], name: "index_programmes_on_type", unique: true
+  end
+
+  create_table "reporting_api_one_time_tokens", primary_key: "token", id: :string, force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.jsonb "cis2_info", default: {}, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_at"], name: "index_reporting_api_one_time_tokens_on_created_at"
+    t.index ["token"], name: "index_reporting_api_one_time_tokens_on_token", unique: true
+    t.index ["user_id"], name: "index_reporting_api_one_time_tokens_on_user_id", unique: true
   end
 
   create_table "school_move_log_entries", force: :cascade do |t|
@@ -790,8 +801,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_01_143843) do
     t.string "privacy_notice_url", null: false
     t.string "phone_instructions"
     t.bigint "organisation_id", null: false
+    t.string "workgroup", null: false
     t.index ["name"], name: "index_teams_on_name", unique: true
     t.index ["organisation_id"], name: "index_teams_on_organisation_id"
+    t.index ["workgroup"], name: "index_teams_on_workgroup", unique: true
   end
 
   create_table "teams_users", id: false, force: :cascade do |t|
@@ -801,7 +814,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_01_143843) do
     t.index ["user_id", "team_id"], name: "index_teams_users_on_user_id_and_team_id"
   end
 
-  create_table "triage", force: :cascade do |t|
+  create_table "triages", force: :cascade do |t|
     t.integer "status", null: false
     t.text "notes", default: "", null: false
     t.datetime "created_at", null: false
@@ -813,11 +826,11 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_01_143843) do
     t.datetime "invalidated_at"
     t.integer "vaccine_method"
     t.integer "academic_year", null: false
-    t.index ["academic_year"], name: "index_triage_on_academic_year"
-    t.index ["patient_id"], name: "index_triage_on_patient_id"
-    t.index ["performed_by_user_id"], name: "index_triage_on_performed_by_user_id"
-    t.index ["programme_id"], name: "index_triage_on_programme_id"
-    t.index ["team_id"], name: "index_triage_on_team_id"
+    t.index ["academic_year"], name: "index_triages_on_academic_year"
+    t.index ["patient_id"], name: "index_triages_on_patient_id"
+    t.index ["performed_by_user_id"], name: "index_triages_on_performed_by_user_id"
+    t.index ["programme_id"], name: "index_triages_on_programme_id"
+    t.index ["team_id"], name: "index_triages_on_team_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -837,8 +850,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_01_143843) do
     t.string "family_name", null: false
     t.string "session_token"
     t.integer "fallback_role", default: 0, null: false
+    t.string "reporting_api_session_token"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["provider", "uid"], name: "index_users_on_provider_and_uid", unique: true
+    t.index ["reporting_api_session_token"], name: "index_users_on_reporting_api_session_token", unique: true
   end
 
   create_table "vaccination_records", force: :cascade do |t|
@@ -866,8 +881,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_01_143843) do
     t.bigint "vaccine_id"
     t.boolean "full_dose"
     t.datetime "nhs_immunisations_api_synced_at"
-    t.string "nhs_immunisations_api_id"
     t.string "nhs_immunisations_api_etag"
+    t.string "nhs_immunisations_api_id"
     t.integer "protocol"
     t.datetime "nhs_immunisations_api_sync_pending_at"
     t.boolean "notify_parents"
@@ -993,6 +1008,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_01_143843) do
   add_foreign_key "pre_screenings", "patient_sessions"
   add_foreign_key "pre_screenings", "programmes"
   add_foreign_key "pre_screenings", "users", column: "performed_by_user_id"
+  add_foreign_key "reporting_api_one_time_tokens", "users"
   add_foreign_key "school_move_log_entries", "locations", column: "school_id"
   add_foreign_key "school_move_log_entries", "patients"
   add_foreign_key "school_move_log_entries", "users"
@@ -1012,10 +1028,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_01_143843) do
   add_foreign_key "team_programmes", "programmes"
   add_foreign_key "team_programmes", "teams"
   add_foreign_key "teams", "organisations"
-  add_foreign_key "triage", "patients"
-  add_foreign_key "triage", "programmes"
-  add_foreign_key "triage", "teams"
-  add_foreign_key "triage", "users", column: "performed_by_user_id"
+  add_foreign_key "triages", "patients"
+  add_foreign_key "triages", "programmes"
+  add_foreign_key "triages", "teams"
+  add_foreign_key "triages", "users", column: "performed_by_user_id"
   add_foreign_key "vaccination_records", "batches"
   add_foreign_key "vaccination_records", "patients"
   add_foreign_key "vaccination_records", "programmes"

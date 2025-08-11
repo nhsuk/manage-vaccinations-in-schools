@@ -15,6 +15,23 @@ describe AppVaccinationRecordAPISyncStatusComponent do
     subject(:formatted_status) { rendered_component.to_html }
 
     context "when sync_status is :not_synced" do
+      context "when vaccination has notify_parents nil (and is a historic record)" do
+        before do
+          allow(vaccination_record).to receive_messages(
+            sync_status: :not_synced,
+            notify_parents: nil
+          )
+        end
+
+        let(:session) { nil }
+
+        it do
+          expect(formatted_status).to include(
+            "Records are not synced if the vaccination was not recorded in Mavis"
+          )
+        end
+      end
+
       context "when vaccination was not administered" do
         before do
           allow(vaccination_record).to receive_messages(
@@ -74,6 +91,23 @@ describe AppVaccinationRecordAPISyncStatusComponent do
           expect(formatted_status).to include(
             "The child gave consent under Gillick competence and does not want their parents to be notified. " \
               "You must let the child’s GP know they were vaccinated."
+          )
+        end
+      end
+
+      context "when vaccination has notify_parents false, but the programme is not sent to the API anyway" do
+        before do
+          allow(vaccination_record).to receive_messages(
+            sync_status: :not_synced,
+            notify_parents: false
+          )
+        end
+
+        let(:programme) { create(:programme, type: "menacwy") }
+
+        it do
+          expect(formatted_status).to include(
+            "Records are currently not synced for this programme"
           )
         end
       end

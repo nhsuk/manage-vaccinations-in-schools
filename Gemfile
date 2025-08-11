@@ -61,6 +61,7 @@ gem "rubyzip"
 gem "sentry-rails"
 gem "sentry-ruby"
 gem "splunk-sdk-ruby"
+gem "table_tennis"
 gem "tzinfo-data", platforms: %i[mingw mswin x64_mingw jruby]
 gem "uk_postcode"
 gem "wicked"

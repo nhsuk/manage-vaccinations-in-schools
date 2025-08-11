@@ -94,8 +94,6 @@ class PatientSession < ApplicationRecord
 
   scope :appear_in_programmes,
         ->(programmes) do
-          age_children_start_school = 5
-
           # Is the patient eligible for any of those programmes by year group?
           location_programme_year_groups =
             LocationProgrammeYearGroup
@@ -104,7 +102,7 @@ class PatientSession < ApplicationRecord
               .where(
                 "year_group = sessions.academic_year " \
                   "- patients.birth_academic_year " \
-                  "- #{age_children_start_school}"
+                  "- #{Integer::AGE_CHILDREN_START_SCHOOL}"
               )
 
           # Are any of the programmes administered in the session?
@@ -198,6 +196,18 @@ class PatientSession < ApplicationRecord
         ->(status, programme:) do
           joins(:session).where(
             Patient::TriageStatus
+              .where("patient_id = patient_sessions.patient_id")
+              .where("academic_year = sessions.academic_year")
+              .where(status:, programme:)
+              .arel
+              .exists
+          )
+        end
+
+  scope :has_vaccination_status,
+        ->(status, programme:) do
+          joins(:session).where(
+            Patient::VaccinationStatus
               .where("patient_id = patient_sessions.patient_id")
               .where("academic_year = sessions.academic_year")
               .where(status:, programme:)

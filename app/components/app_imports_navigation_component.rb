@@ -46,8 +46,8 @@ class AppImportsNavigationComponent < ViewComponent::Base
   end
 
   def notices_text
-    count = helpers.policy_scope(Patient).with_notice.count
-
+    count =
+      ImportantNotices.call(patient_scope: helpers.policy_scope(Patient)).length
     safe_join(["Important notices", " ", render(AppCountComponent.new(count))])
   end
 end

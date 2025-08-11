@@ -8,7 +8,7 @@ class ImportsController < ApplicationController
   end
 
   def create
-    DraftImport.new(request_session: session, current_user:).reset!
+    DraftImport.new(request_session: session, current_user:).clear!
     redirect_to draft_import_path(Wicked::FIRST_STEP)
   end
 end

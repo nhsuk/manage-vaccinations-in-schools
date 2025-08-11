@@ -57,7 +57,7 @@ class SessionsController < ApplicationController
   def import
     draft_import = DraftImport.new(request_session: session, current_user:)
 
-    draft_import.reset!
+    draft_import.clear_attributes
     draft_import.update!(location: @session.location, type: "class")
 
     steps = draft_import.wizard_steps

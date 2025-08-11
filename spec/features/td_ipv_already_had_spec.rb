@@ -18,6 +18,7 @@ describe "Td/IPV" do
     when_i_click_record_as_already_vaccinated
     and_i_confirm_the_details
     then_i_see_the_patient_is_already_vaccinated
+    and_the_patient_no_longer_appears_in_consent
     and_the_consent_requests_are_sent
     then_the_parent_doesnt_receive_a_consent_request
   end
@@ -35,6 +36,7 @@ describe "Td/IPV" do
     when_i_click_record_as_already_vaccinated
     and_i_confirm_the_details
     then_i_see_the_patient_is_already_vaccinated
+    and_the_patient_no_longer_appears_in_consent
     and_the_consent_requests_are_sent
     then_the_parent_doesnt_receive_a_consent_request
   end
@@ -52,6 +54,7 @@ describe "Td/IPV" do
     when_i_click_record_as_already_vaccinated
     and_i_confirm_the_details
     then_i_see_the_patient_is_already_vaccinated
+    and_the_patient_no_longer_appears_in_consent
     and_i_click_on_triage
     then_i_see_the_patient_doesnt_need_triage
   end
@@ -199,6 +202,12 @@ describe "Td/IPV" do
   def then_i_see_the_patient_is_already_vaccinated
     expect(page).to have_content("Vaccination outcome recorded for Td/IPV")
     expect(page).to have_content("LocationUnknown")
+  end
+
+  def and_the_patient_no_longer_appears_in_consent
+    within(".nhsuk-breadcrumb__list") { click_on "Children" }
+    within(".app-secondary-navigation") { click_on "Consent" }
+    expect(page).not_to have_content(@patient.full_name)
   end
 
   def and_i_cannot_record_the_patient_as_already_vaccinated

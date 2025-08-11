@@ -29,6 +29,7 @@ class AppSessionActionsComponent < ViewComponent::Base
 
   def rows
     @rows ||= [
+      no_nhs_number_row,
       no_consent_response_row,
       conflicting_consent_row,
       triage_required_row,
@@ -37,76 +38,46 @@ class AppSessionActionsComponent < ViewComponent::Base
     ].compact
   end
 
+  def no_nhs_number_row
+    count = patient_sessions.merge(Patient.without_nhs_number).count
+    href = session_patients_path(session, missing_nhs_number: true)
+
+    generate_row(:children_without_nhs_number, count:, href:)
+  end
+
   def no_consent_response_row
-    consent_row("No consent response", status: "no_response")
+    status = "no_response"
+    count =
+      patient_sessions.has_consent_status(status, programme: programmes).count
+    href = session_consent_path(session, consent_statuses: [status])
+
+    generate_row(:children_with_no_consent_response, count:, href:)
   end
 
   def conflicting_consent_row
-    consent_row("Conflicting consent", status: "conflicts")
-  end
-
-  def consent_row(text, status:)
+    status = "conflicts"
     count =
       patient_sessions.has_consent_status(status, programme: programmes).count
-
-    return nil if count.zero?
-
     href = session_consent_path(session, consent_statuses: [status])
 
-    {
-      key: {
-        text: text
-      },
-      value: {
-        text: I18n.t("children", count:)
-      },
-      actions: [{ text: "Review", visually_hidden_text: text.downcase, href: }]
-    }
+    generate_row(:children_with_conflicting_consent_response, count:, href:)
   end
 
   def triage_required_row
     status = "required"
-
     count =
       patient_sessions.has_triage_status(status, programme: programmes).count
-
-    return nil if count.zero?
-
     href = session_triage_path(session, triage_status: status)
 
-    {
-      key: {
-        text: "Triage needed"
-      },
-      value: {
-        text: I18n.t("children", count:)
-      },
-      actions: [
-        { text: "Review", visually_hidden_text: "triage needed", href: }
-      ]
-    }
+    generate_row(:children_requiring_triage, count:, href:)
   end
 
   def register_attendance_row
     status = "unknown"
-
     count = patient_sessions.has_registration_status(status).count
-
-    return nil if count.zero?
-
     href = session_register_path(session, register_status: status)
 
-    {
-      key: {
-        text: "Register attendance"
-      },
-      value: {
-        text: I18n.t("children", count:)
-      },
-      actions: [
-        { text: "Review", visually_hidden_text: "register attendance", href: }
-      ]
-    }
+    generate_row(:children_to_register, count:, href:)
   end
 
   def ready_for_vaccinator_row
@@ -130,11 +101,31 @@ class AppSessionActionsComponent < ViewComponent::Base
     return nil if counts_by_programme.values.all?(&:zero?)
 
     texts =
-      counts_by_programme.map do |programme, count|
-        "#{I18n.t("children", count:)} for #{programme.name_in_sentence}"
+      if counts_by_programme.values.all?(&:zero?)
+        ["No children"]
+      else
+        counts_by_programme.map do |programme, count|
+          text =
+            I18n.t(
+              :children_for_programme,
+              count:,
+              programme: programme.name_in_sentence
+            )
+          href =
+            session_record_path(
+              session,
+              search_form: {
+                programme_types: [programme.type]
+              }
+            )
+          count.positive? ? helpers.link_to(text, href) : text
+        end
       end
 
-    href = session_record_path(session)
+    actions =
+      unless counts_by_programme.values.all?(&:zero?)
+        [{ text: "Record", href: session_record_path(session) }]
+      end
 
     {
       key: {
@@ -143,9 +134,21 @@ class AppSessionActionsComponent < ViewComponent::Base
       value: {
         text: safe_join(texts, tag.br)
       },
-      actions: [
-        { text: "Review", visually_hidden_text: "ready for vaccinator", href: }
-      ]
+      actions: actions
+    }
+  end
+
+  def generate_row(key, count:, href: nil)
+    return nil if count.zero?
+
+    {
+      key: {
+        text: I18n.t(:title, scope: key)
+      },
+      value: {
+        text:
+          (href ? helpers.link_to(I18n.t(key, count:), href).html_safe : text)
+      }
     }
   end
 end

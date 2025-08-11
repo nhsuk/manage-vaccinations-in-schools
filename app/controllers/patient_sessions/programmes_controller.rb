@@ -17,7 +17,7 @@ class PatientSessions::ProgrammesController < PatientSessions::BaseController
     draft_vaccination_record =
       DraftVaccinationRecord.new(request_session: session, current_user:)
 
-    draft_vaccination_record.reset!
+    draft_vaccination_record.clear_attributes
     draft_vaccination_record.update!(
       first_active_wizard_step: :confirm,
       location_name: @session.clinic? ? "Unknown" : nil,

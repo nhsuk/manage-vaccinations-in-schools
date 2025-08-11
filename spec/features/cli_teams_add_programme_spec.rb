@@ -3,17 +3,8 @@
 require_relative "../../app/lib/mavis_cli"
 
 describe "mavis teams add-programme" do
-  context "when the organisation doesn't exist" do
-    it "displays an error message" do
-      when_i_run_the_command_expecting_an_error
-      then_an_organisation_not_found_error_message_is_displayed
-    end
-  end
-
   context "when the team doesn't exist" do
     it "displays an error message" do
-      given_the_organisation_exists
-
       when_i_run_the_command_expecting_an_error
       then_a_team_not_found_error_message_is_displayed
     end
@@ -21,8 +12,7 @@ describe "mavis teams add-programme" do
 
   context "when the programme doesn't exist" do
     it "displays an error message" do
-      given_the_organisation_exists
-      and_the_team_exists
+      given_the_team_exists
 
       when_i_run_the_command_expecting_an_error
       then_a_programme_not_found_error_message_is_displayed
@@ -31,8 +21,7 @@ describe "mavis teams add-programme" do
 
   context "when the programme exists" do
     it "runs successfully" do
-      given_the_organisation_exists
-      and_the_team_exists
+      given_the_team_exists
       and_the_programme_exists
 
       when_i_run_the_command
@@ -43,15 +32,11 @@ describe "mavis teams add-programme" do
   private
 
   def command
-    Dry::CLI.new(MavisCLI).call(arguments: %w[teams add-programme ABC Team flu])
+    Dry::CLI.new(MavisCLI).call(arguments: %w[teams add-programme abc flu])
   end
 
-  def given_the_organisation_exists
-    @organisation = create(:organisation, ods_code: "ABC")
-  end
-
-  def and_the_team_exists
-    @team = create(:team, organisation: @organisation, name: "Team")
+  def given_the_team_exists
+    @team = create(:team, workgroup: "abc")
     @school = create(:school, :secondary, team: @team)
   end
 
@@ -65,10 +50,6 @@ describe "mavis teams add-programme" do
 
   def when_i_run_the_command_expecting_an_error
     @output = capture_error { command }
-  end
-
-  def then_an_organisation_not_found_error_message_is_displayed
-    expect(@output).to include("Could not find organisation.")
   end
 
   def then_a_team_not_found_error_message_is_displayed

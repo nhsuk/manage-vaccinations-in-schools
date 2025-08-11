@@ -5,7 +5,7 @@ class Programmes::ReportsController < Programmes::BaseController
     vaccination_report =
       VaccinationReport.new(request_session: session, current_user:)
 
-    vaccination_report.reset!
+    vaccination_report.clear_attributes
     vaccination_report.update!(
       programme: @programme,
       academic_year: @academic_year

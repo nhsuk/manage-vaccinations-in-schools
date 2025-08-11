@@ -18,6 +18,8 @@ describe "Verbal consent recorded by admin" do
     @parent = create(:parent)
     @patient = create(:patient, session: @session, parents: [@parent])
 
+    StatusUpdater.call
+
     sign_in team.users.first, role: :admin_staff
   end
 

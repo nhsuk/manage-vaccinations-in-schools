@@ -37,6 +37,8 @@ describe "Verbal consent" do
 
     @parent_relationship =
       create(:parent_relationship, :mother, patient: @patient, parent: @parent)
+
+    StatusUpdater.call
   end
 
   def when_i_get_consent_for_the_patient

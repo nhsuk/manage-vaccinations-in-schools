@@ -76,5 +76,19 @@ describe AppPatientSearchResultCardComponent do
 
       it { should have_text("Triage status\nFluNeeds triage") }
     end
+
+    context "with a session status of unwell" do
+      before do
+        create(
+          :patient_vaccination_status,
+          :none_yet,
+          patient:,
+          programme:,
+          latest_session_status: "unwell"
+        )
+      end
+
+      it { should have_text("Programme outcome\nFluNo outcome yetUnwell") }
+    end
   end
 end

@@ -19,7 +19,7 @@ describe "Manage attendance" do
     when_i_register_a_patient_as_absent
     then_i_see_the_absent_flash
 
-    when_i_go_to_the_session_outcomes
+    when_i_go_to_the_session_patients
     then_i_see_a_patient_is_absent
 
     when_i_go_to_a_patient
@@ -51,7 +51,7 @@ describe "Manage attendance" do
     when_i_go_to_the_session
     then_i_should_not_see_the_register_tab
 
-    when_i_go_to_the_session_outcomes
+    when_i_go_to_the_session_patients
     and_i_go_to_a_patient
     then_i_should_not_see_link_to_update_attendance
   end
@@ -134,8 +134,8 @@ describe "Manage attendance" do
     click_button "Absent", match: :first
   end
 
-  def when_i_go_to_the_session_outcomes
-    click_on "Session outcomes"
+  def when_i_go_to_the_session_patients
+    within(".app-secondary-navigation") { click_on "Children" }
   end
 
   def then_i_see_a_patient_is_absent
@@ -146,7 +146,7 @@ describe "Manage attendance" do
   end
 
   def when_i_go_to_a_patient
-    choose "Any"
+    choose "Any", match: :first
     click_on "Update results"
 
     click_link PatientSession
