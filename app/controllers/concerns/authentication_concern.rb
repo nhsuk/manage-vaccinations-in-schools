@@ -111,7 +111,12 @@ module AuthenticationConcern
       if Flipper.enabled?(:reporting_api)
         urls << reporting_app_redirect_uri_with_auth_code_for(current_user)
       end
-      urls += [stored_location_for(scope), dashboard_path]
+      urls += [
+        stored_location_for(scope),
+        session[:user_return_to],
+        dashboard_path
+      ]
+
       urls.compact.find do
         is_valid_redirect?(it) && (it != request.fullpath) &&
           (it != new_users_teams_path)
