@@ -3,16 +3,31 @@
 # rubocop:disable RSpec/VerifiedDoubles
 describe AuthenticationConcern do
   let(:user) { @user = build(:user) }
+  let(:mock_request) { instance_double(request.class, headers: {}) }
   let(:sample_class) do
     Class
       .new do # rubocop:disable Style/BlockDelimiters
         include AuthenticationConcern
 
+        attr_accessor :request, :session
+
+        def initialize(request: nil, session: {})
+          @request = request
+          @session = session
+        end
+
+        def params
+          {}
+        end
+
+        def render(content = {}, args = {})
+        end
+
         def current_user
           @user
         end
       end # rubocop:disable Style/MethodCalledOnDoEndBlock
-      .new
+      .new(request: mock_request)
   end
 
   describe "set_user_cis2_info" do
@@ -35,6 +50,102 @@ describe AuthenticationConcern do
         sample_class.send(:set_user_cis2_info)
 
         expect(user.cis2_info).to be_nil
+      end
+    end
+  end
+
+  # The commented out code block you provided is a pending RSpec example group for a method called
+  # `#add_auth_code_to`. This method is expected to find or generate a `OneTimeToken` for a given user with
+  # the `cis2_info` from the current session. The example group contains two contexts:
+  describe "#add_auth_code_to" do
+    let(:user) { create(:user) }
+    let(:token) do
+      build(:reporting_api_one_time_token, user: user, token: "mytoken")
+    end
+    let(:url) { "/some/relative/path.json" }
+    let(:session_cis2_info) { { "some_key" => "some value" } }
+
+    before do
+      sample_class.session = { "cis2_info" => session_cis2_info }
+      allow(ReportingAPI::OneTimeToken).to receive(:find_or_generate_for!).with(
+        user: user,
+        cis2_info: session_cis2_info
+      ).and_return(token)
+    end
+
+    it "finds or generates a OneTimeToken for the given user with the cis2_info from the current session" do
+      expect(ReportingAPI::OneTimeToken).to receive(
+        :find_or_generate_for!
+      ).with(user: user, cis2_info: session_cis2_info)
+      sample_class.send(:add_auth_code_to, url, user)
+    end
+
+    context "given a url with no params" do
+      let(:url) { "/some/relative/path.json" }
+
+      it "adds the code param as a query string" do
+        expect(sample_class.send(:add_auth_code_to, url, user)).to eq(
+          "/some/relative/path.json?code=mytoken"
+        )
+      end
+    end
+
+    context "given a url with some params already" do
+      let(:url) { "/some/relative/path.json?q=some%20search" }
+
+      it "adds the code param as a query string" do
+        expect(sample_class.send(:add_auth_code_to, url, user)).to eq(
+          "/some/relative/path.json?code=mytoken&q=some%20search"
+        )
+      end
+    end
+  end
+
+  describe "reporting_app_redirect_uri_with_auth_code_for" do
+    let(:session_cis2_info) { { "some_key" => "some value" } }
+    let(:token) do
+      build(:reporting_api_one_time_token, user: user, token: "mytoken")
+    end
+    let(:result) do
+      sample_class.send(:reporting_app_redirect_uri_with_auth_code_for, user)
+    end
+
+    context "when there is a redirect_uri key in session" do
+      before do
+        allow(ReportingAPI::OneTimeToken).to receive(
+          :find_or_generate_for!
+        ).with(user: user, cis2_info: session_cis2_info).and_return(token)
+        sample_class.session = {
+          "redirect_uri" =>
+            "http://reporting.mavis:5555/path?some_param=some%20value",
+          "cis2_info" => session_cis2_info
+        }
+      end
+
+      context "and the reporting_api feature flag is enabled" do
+        before { Flipper.enable(:reporting_api) }
+
+        it "returns that URL with a code added to it for the given user" do
+          expect(result).to eq(
+            "http://reporting.mavis:5555/path?code=mytoken&some_param=some%20value"
+          )
+        end
+      end
+
+      context "and the reporting_api feature flag is disabled" do
+        before { Flipper.disable(:reporting_api) }
+
+        it "returns nil" do
+          expect(result).to be_nil
+        end
+      end
+    end
+
+    context "when there is no redirect_uri key in session" do
+      before { sample_class.session = { "cis2_info" => session_cis2_info } }
+
+      it "returns nil" do
+        expect(result).to be_nil
       end
     end
   end
