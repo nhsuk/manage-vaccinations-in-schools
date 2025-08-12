@@ -342,8 +342,7 @@ class Patient < ApplicationRecord
     !archive_reasons.exists?(team:)
   end
 
-  def year_group(academic_year: nil)
-    academic_year ||= AcademicYear.current
+  def year_group(academic_year:)
     birth_academic_year.to_year_group(academic_year:)
   end
 

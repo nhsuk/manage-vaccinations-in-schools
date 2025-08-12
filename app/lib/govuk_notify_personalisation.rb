@@ -17,7 +17,8 @@ class GovukNotifyPersonalisation
   )
     @academic_year =
       consent&.academic_year || consent_form&.academic_year ||
-        session&.academic_year || vaccination_record&.academic_year
+        session&.academic_year || vaccination_record&.academic_year ||
+        AcademicYear.pending
     @consent = consent
     @consent_form = consent_form
     @parent = parent || consent&.parent
@@ -99,12 +100,12 @@ class GovukNotifyPersonalisation
 
   def catch_up
     return nil if patient.nil? || administered_year_groups.empty?
-    patient.year_group == administered_year_groups.first ? "no" : "yes"
+    patient_year_group == administered_year_groups.first ? "no" : "yes"
   end
 
   def not_catch_up
     return nil if patient.nil? || administered_year_groups.empty?
-    patient.year_group == administered_year_groups.first ? "yes" : "no"
+    patient_year_group == administered_year_groups.first ? "yes" : "no"
   end
 
   def consent_deadline
@@ -293,7 +294,7 @@ class GovukNotifyPersonalisation
 
   def talk_to_your_child_message
     return nil if patient.nil?
-    return "" if patient.year_group <= 6
+    return "" if patient_year_group <= 6
 
     [
       "## Talk to your child about what they want",
@@ -401,6 +402,10 @@ class GovukNotifyPersonalisation
 
   def administered_year_groups
     session&.year_groups || programmes.flat_map(&:default_year_groups).sort.uniq
+  end
+
+  def patient_year_group
+    @patient_year_group ||= patient.year_group(academic_year:)
   end
 
   def programme_names
