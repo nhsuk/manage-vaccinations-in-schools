@@ -5,6 +5,18 @@ class PatientImport < ApplicationRecord
 
   has_many :patient_changesets
 
+  def count_column(patient, parents, parent_relationships)
+    if patient.new_record? || parents.any?(&:new_record?) ||
+         parent_relationships.any?(&:new_record?)
+      :new_record_count
+    elsif patient.changed? || parents.any?(&:changed?) ||
+          parent_relationships.any?(&:changed?)
+      :changed_record_count
+    else
+      :exact_duplicate_record_count
+    end
+  end
+
   private
 
   def check_rows_are_unique
@@ -56,18 +68,6 @@ class PatientImport < ApplicationRecord
     @relationships_batch.merge(parent_relationships)
 
     count_column_to_increment
-  end
-
-  def count_column(patient, parents, parent_relationships)
-    if patient.new_record? || parents.any?(&:new_record?) ||
-         parent_relationships.any?(&:new_record?)
-      :new_record_count
-    elsif patient.changed? || parents.any?(&:changed?) ||
-          parent_relationships.any?(&:changed?)
-      :changed_record_count
-    else
-      :exact_duplicate_record_count
-    end
   end
 
   def bulk_import(rows: 100)

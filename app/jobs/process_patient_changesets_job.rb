@@ -10,15 +10,16 @@ class ProcessPatientChangesetsJob < ApplicationJob
 
   def perform(patient_changeset)
     pds_patient =
-      if patient_changeset.patient.nhs_number.nil?
+      if patient_changeset.child_attributes["nhs_number"].nil?
         PDS::Patient.search(
-          family_name: patient_changeset.family_name,
-          given_name: patient_changeset.given_name,
-          date_of_birth: patient_changeset.date_of_birth,
-          address_postcode: patient_changeset.address_postcode
+          family_name: patient_changeset.child_attributes["family_name"],
+          given_name: patient_changeset.child_attributes["given_name"],
+          date_of_birth: patient_changeset.child_attributes["date_of_birth"],
+          address_postcode:
+            patient_changeset.child_attributes["address_postcode"]
         )
       else
-        PDS::Patient.find(patient_changeset.nhs_number)
+        PDS::Patient.find(patient_changeset.child_attributes["nhs_number"])
       end
 
     if pds_patient.present?
