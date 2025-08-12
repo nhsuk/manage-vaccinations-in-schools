@@ -81,6 +81,25 @@ describe ImportantNotices do
       end
     end
 
+    context "when patient has multiple vaccination records with the same programme" do
+      let(:first_record) do
+        create(:vaccination_record, patient:, programme:, notify_parents: false)
+      end
+      let(:second_record) do
+        create(:vaccination_record, patient:, programme:, notify_parents: false)
+      end
+
+      before do
+        first_record
+        second_record
+      end
+
+      it "only writes the programme name once in the message" do
+        expect(notices.count).to eq(1)
+        expect(notices.first[:message].scan("HPV").count).to eq(1)
+      end
+    end
+
     context "when patient has multiple vaccination records with the same notify_parents values" do
       let(:other_programme) { create(:programme, :flu) }
 
