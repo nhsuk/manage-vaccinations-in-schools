@@ -35,18 +35,25 @@ module PatientsHelper
   end
 
   def patient_year_group(patient, academic_year:)
-    parts = [
-      format_year_group(patient.year_group(academic_year:)),
-      if patient.registration_academic_year == academic_year &&
-           patient.registration.present?
-        "(#{patient.registration})"
-      end,
-      if academic_year != AcademicYear.current
-        "(#{format_academic_year(academic_year)} academic year)"
-      end
-    ]
+    str = format_year_group(patient.year_group(academic_year:))
 
-    parts.compact.join(" ")
+    include_registration =
+      patient.registration_academic_year == academic_year &&
+        patient.registration.present?
+
+    include_academic_year =
+      academic_year != AcademicYear.current ||
+        AcademicYear.current != AcademicYear.pending
+
+    str = str.dup if include_registration || include_academic_year
+
+    str << ", #{patient.registration}" if include_registration
+
+    if include_academic_year
+      str << " (#{format_academic_year(academic_year)} academic year)"
+    end
+
+    str
   end
 
   def patient_parents(patient)
