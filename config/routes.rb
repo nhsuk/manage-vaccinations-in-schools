@@ -313,6 +313,7 @@ Rails.application.routes.draw do
     get "organisation-not-found", controller: :errors
     get "workgroup-not-found", controller: :errors
     get "role-not-found", controller: :errors
+    get "unauthorized", controller: :errors
 
     resource :teams, only: %i[new create]
   end
@@ -328,6 +329,7 @@ Rails.application.routes.draw do
 
   constraints -> { !Rails.env.production? } do
     namespace :inspect do
+      get "dashboard", to: "dashboard#index"
       get "graph/:object_type/:object_id", to: "graphs#show"
       namespace :timeline do
         resources :patients, only: [:show]

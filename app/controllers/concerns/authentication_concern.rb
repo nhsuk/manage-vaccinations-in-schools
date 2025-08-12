@@ -23,6 +23,12 @@ module AuthenticationConcern
           redirect_to users_organisation_not_found_path
         elsif !selected_cis2_workgroup_is_valid?
           redirect_to users_workgroup_not_found_path
+        elsif user_is_support?
+          unless path_is_support? || request.path == "/users/teams/new"
+            redirect_to inspect_dashboard_path
+          end
+        elsif path_is_support?
+          redirect_to users_unauthorized_path
         end
       end
     end
@@ -40,7 +46,15 @@ module AuthenticationConcern
     end
 
     def selected_cis2_role_is_valid?
-      cis2_info.is_nurse? || cis2_info.is_admin?
+      cis2_info.is_nurse? || cis2_info.is_admin? || cis2_info.is_support?
+    end
+
+    def user_is_support?
+      cis2_info.is_support?
+    end
+
+    def path_is_support?
+      request.path.start_with?("/inspect")
     end
 
     def storable_location?
