@@ -8,7 +8,7 @@ class SessionSearchForm < SearchForm
   attribute :type, :string
 
   def academic_year
-    super || AcademicYear.current
+    super || AcademicYear.pending
   end
 
   def programmes=(values)

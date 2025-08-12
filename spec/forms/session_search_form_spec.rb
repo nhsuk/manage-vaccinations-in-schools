@@ -5,6 +5,8 @@ describe SessionSearchForm do
     described_class.new(request_session:, request_path:, **params)
   end
 
+  around { |example| travel_to(Date.new(2025, 7, 1)) { example.run } }
+
   let(:request_session) { {} }
   let(:request_path) { "/sessions" }
   let(:params) { {} }
