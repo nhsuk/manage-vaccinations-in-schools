@@ -38,16 +38,15 @@ describe "Vaccination programmes table" do
     then_the_table_has_two_rows_showing_flu_vaccinated
   end
 
-  # This scenario is currently failing and will be fixed in a later commit
-  # scenario "patient has an outcome other than vaccinated" do
-  #   given_patients_exist_in_year_eleven
-  #   and_the_patient_has_an_outcome_other_than_vaccinated
-  #
-  #   when_i_click_on_children
-  #   and_i_click_on_a_child
-  #
-  #   then_the_table_displays_the_outcome
-  # end
+  scenario "patient has an outcome other than vaccinated" do
+    given_patients_exist_in_year_eleven
+    and_the_patient_has_an_outcome_other_than_vaccinated
+
+    when_i_click_on_children
+    and_i_click_on_a_child
+
+    then_the_table_displays_the_outcome
+  end
 
   def given_my_team_exists
     @programmes = [
@@ -172,7 +171,10 @@ describe "Vaccination programmes table" do
         "td.nhsuk-table__cell",
         text: "Could not vaccinate"
       )
-      expect(row).to have_selector("td.nhsuk-table__cell", text: "Not well")
+      expect(row).to have_selector(
+        "td.nhsuk-table__cell",
+        text: "USER, Test decided that SMITH, John could not be vaccinated"
+      )
     end
   end
 
@@ -217,11 +219,11 @@ describe "Vaccination programmes table" do
 
   def and_the_patient_has_an_outcome_other_than_vaccinated
     create(
-      :vaccination_record,
-      :not_administered,
+      :triage,
+      :do_not_vaccinate,
       patient: @patient,
       programme: @hpv_programme,
-      session: @session
+      academic_year: AcademicYear.pending
     )
     StatusUpdater.call(patient: @patient)
   end
