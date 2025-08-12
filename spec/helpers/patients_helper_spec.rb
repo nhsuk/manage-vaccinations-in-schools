@@ -120,5 +120,21 @@ describe PatientsHelper do
         it { should eq("Year 10 (2024 to 2025 academic year)") }
       end
     end
+
+    context "during the preparation period" do
+      let(:today) { Date.new(2024, 8, 1) }
+      let(:academic_year) { today.academic_year }
+
+      it { should eq("Year 9 (2023 to 2024 academic year)") }
+
+      context "with a registration" do
+        before do
+          patient.registration = "9AB"
+          patient.registration_academic_year = today.academic_year
+        end
+
+        it { should eq("Year 9, 9AB (2023 to 2024 academic year)") }
+      end
+    end
   end
 end

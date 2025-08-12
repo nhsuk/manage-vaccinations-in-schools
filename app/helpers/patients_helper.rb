@@ -41,11 +41,15 @@ module PatientsHelper
       patient.registration_academic_year == academic_year &&
         patient.registration.present?
 
-    str = str.dup if include_registration
+    include_academic_year =
+      academic_year != AcademicYear.current ||
+        AcademicYear.current != AcademicYear.pending
+
+    str = str.dup if include_registration || include_academic_year
 
     str << ", #{patient.registration}" if include_registration
 
-    if academic_year != AcademicYear.current
+    if include_academic_year
       str << " (#{format_academic_year(academic_year)} academic year)"
     end
 
