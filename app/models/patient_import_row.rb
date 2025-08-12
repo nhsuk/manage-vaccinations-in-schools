@@ -321,7 +321,9 @@ class PatientImportRow
 
   def birth_academic_year_value
     if year_group.present?
+      # rubocop:disable Lint/RedundantSafeNavigation
       year_group.to_i&.to_birth_academic_year(academic_year:)
+      # rubocop:enable Lint/RedundantSafeNavigation
     else
       date_of_birth&.to_date&.academic_year
     end

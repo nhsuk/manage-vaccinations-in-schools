@@ -62,7 +62,7 @@ class GraphRecords
       patient_focused: "fill:#c2e598,stroke:#000,stroke-width:3px",
       parent_focused: "fill:#faa0a0,stroke:#000,stroke-width:3px"
     }.with_indifferent_access
-      .slice(*(@nodes.map { class_text_for_obj(it) }))
+      .slice(*@nodes.map { class_text_for_obj(it) })
       .map { |klass, style| "  classDef #{klass} #{style}" }
   end
 
