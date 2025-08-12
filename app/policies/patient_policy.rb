@@ -27,14 +27,17 @@ class PatientPolicy < ApplicationPolicy
           .arel
           .exists
 
+      vaccination_records_for_patients =
+        VaccinationRecord.where("vaccination_records.patient_id = patients.id")
+
       vaccination_record_exists =
-        VaccinationRecord
-          .where("vaccination_records.patient_id = patients.id")
+        vaccination_records_for_patients
           .where(session: team.sessions)
           .or(
-            VaccinationRecord.where(
-              "vaccination_records.patient_id = patients.id"
-            ).where(performed_ods_code: organisation.ods_code)
+            vaccination_records_for_patients.where(
+              performed_ods_code: organisation.ods_code,
+              session_id: nil
+            )
           )
           .arel
           .exists

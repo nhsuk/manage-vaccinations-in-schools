@@ -32,7 +32,12 @@ class VaccinationRecordPolicy < ApplicationPolicy
         .kept
         .where(patient: team.patients)
         .or(scope.kept.where(session: team.sessions))
-        .or(scope.kept.where(performed_ods_code: organisation.ods_code))
+        .or(
+          scope.kept.where(
+            performed_ods_code: organisation.ods_code,
+            session_id: nil
+          )
+        )
     end
   end
 end

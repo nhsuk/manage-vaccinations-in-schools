@@ -73,15 +73,21 @@ describe VaccinationRecordPolicy do
   end
 
   describe "Scope#resolve" do
-    subject(:resolve) do
+    subject(:scope) do
       VaccinationRecordPolicy::Scope.new(user, VaccinationRecord).resolve
     end
 
     let(:programme) { create(:programme) }
-    let(:team) { create(:team, programmes: [programme]) }
+    let(:organisation) { create(:organisation) }
+
+    let(:team) { create(:team, organisation:, programmes: [programme]) }
+    let(:other_team) { create(:team, organisation:, programmes: [programme]) }
     let(:user) { create(:user, team:) }
 
     let(:session) { create(:session, team:, programmes: [programme]) }
+    let(:other_session) do
+      create(:session, team: other_team, programmes: [programme])
+    end
 
     let(:kept_vaccination_record) do
       create(:vaccination_record, session:, programme:)
@@ -90,9 +96,18 @@ describe VaccinationRecordPolicy do
       create(:vaccination_record, :discarded, session:, programme:)
     end
     let(:non_team_kept_batch) { create(:vaccination_record, programme:) }
+    let(:vaccination_record_same_organisation_different_team) do
+      create(:vaccination_record, session: other_session, programme:)
+    end
 
     it { should include(kept_vaccination_record) }
     it { should_not include(discarded_vaccination_record) }
     it { should_not include(non_team_kept_batch) }
+
+    it do
+      expect(scope).not_to include(
+        vaccination_record_same_organisation_different_team
+      )
+    end
   end
 end

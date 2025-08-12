@@ -5,8 +5,9 @@ describe PatientPolicy do
     subject { PatientPolicy::Scope.new(user, Patient).resolve }
 
     let(:programmes) { [create(:programme)] }
-    let(:team) { create(:team, programmes:) }
-    let(:another_team) { create(:team, programmes:) }
+    let(:organisation) { create(:organisation) }
+    let(:team) { create(:team, organisation:, programmes:) }
+    let(:another_team) { create(:team, organisation:, programmes:) }
     let(:user) { create(:user, team:) }
 
     context "when a patient is archived" do
@@ -97,6 +98,30 @@ describe PatientPolicy do
       it { should contain_exactly(patient_with_move_in_school) }
     end
 
+    context "when the patient in the org but vaccinated by a different team" do
+      let(:patient_with_vaccination_record) { create(:patient) }
+      let(:patient_with_another_vaccination_record) { create(:patient) }
+
+      before do
+        create(
+          :vaccination_record,
+          patient: patient_with_vaccination_record,
+          performed_ods_code: organisation.ods_code,
+          session: create(:session, team:, programmes:),
+          programme: programmes.first
+        )
+        create(
+          :vaccination_record,
+          patient: patient_with_another_vaccination_record,
+          performed_ods_code: organisation.ods_code,
+          session: create(:session, team: another_team, programmes:),
+          programme: programmes.first
+        )
+      end
+
+      it { should contain_exactly(patient_with_vaccination_record) }
+    end
+
     context "when the patient not in the org but was vaccinated by them" do
       let(:patient_with_vaccination_record) { create(:patient) }
       let(:patient_with_another_vaccination_record) { create(:patient) }
@@ -105,7 +130,7 @@ describe PatientPolicy do
         create(
           :vaccination_record,
           patient: patient_with_vaccination_record,
-          performed_ods_code: team.organisation.ods_code,
+          performed_ods_code: organisation.ods_code,
           programme: programmes.first
         )
         create(
