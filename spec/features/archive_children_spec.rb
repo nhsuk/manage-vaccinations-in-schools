@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 describe "Archive children" do
+  around { |example| travel_to(Date.new(2025, 7, 31)) { example.run } }
+
   before do
     given_an_team_exists
     and_i_am_signed_in

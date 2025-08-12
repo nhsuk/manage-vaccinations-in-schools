@@ -129,7 +129,7 @@ class AppChildSummaryComponent < ViewComponent::Base
 
   private
 
-  def academic_year = AcademicYear.current
+  def academic_year = AcademicYear.pending
 
   def archive_reason
     @archive_reason ||=

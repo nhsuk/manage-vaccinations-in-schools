@@ -11,6 +11,8 @@ describe PatientSearchForm do
     )
   end
 
+  around { |example| travel_to(Date.new(2025, 7, 31)) { example.run } }
+
   let(:current_user) { create(:user, teams: [team]) }
   let(:request_session) { {} }
   let(:request_path) { "/patients" }

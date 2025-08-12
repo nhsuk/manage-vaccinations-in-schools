@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 describe "Parental consent manual matching" do
+  around { |example| travel_to(Date.new(2025, 7, 31)) { example.run } }
+
   before { given_the_app_is_setup }
 
   scenario "Consent isn't matched automatically so nurse matches it manually" do

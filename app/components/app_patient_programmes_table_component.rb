@@ -54,7 +54,7 @@ class AppPatientProgrammesTableComponent < ViewComponent::Base
   end
 
   def non_seasonal_programme_rows(programme)
-    academic_year = AcademicYear.current
+    academic_year = AcademicYear.pending
     vaccination_records = vaccination_records_for(programme)
 
     if vaccination_records.any?

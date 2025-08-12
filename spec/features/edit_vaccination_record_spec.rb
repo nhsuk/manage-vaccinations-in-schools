@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 describe "Edit vaccination record" do
+  around { |example| travel_to(Date.new(2025, 7, 31)) { example.run } }
+
   before { given_an_hpv_programme_is_underway }
 
   scenario "User edits a new vaccination record" do
@@ -478,6 +480,7 @@ describe "Edit vaccination record" do
   end
 
   def when_i_click_on_save_changes
+    travel 1.minute
     click_on "Save changes"
   end
 

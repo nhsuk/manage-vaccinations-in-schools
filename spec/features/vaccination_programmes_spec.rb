@@ -69,7 +69,13 @@ describe "Vaccination programmes table" do
     school = create(:school, team: @team)
 
     @session =
-      create(:session, location: school, team: @team, programmes: @programmes)
+      create(
+        :session,
+        location: school,
+        team: @team,
+        programmes: @programmes,
+        date: Date.tomorrow
+      )
 
     @patient =
       create(
