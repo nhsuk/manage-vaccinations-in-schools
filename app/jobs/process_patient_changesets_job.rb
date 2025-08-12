@@ -38,7 +38,11 @@ class ProcessPatientChangesetsJob < ApplicationJob
 
     # TODO: Make this atomic
     if patient_changeset.import.changesets.pending.none?
-      CommitPatientChangesetsJob.perform_later(patient_changeset.import)
+      if patient_changeset.import.slow?
+        CommitPatientChangesetsJob.perform_later(patient_changeset.import)
+      else
+        CommitPatientChangesetsJob.perform_now(patient_changeset.import)
+      end
     end
   rescue NHS::PDS::PatientNotFound
     patient_changeset.update!(nhs_number: nil)

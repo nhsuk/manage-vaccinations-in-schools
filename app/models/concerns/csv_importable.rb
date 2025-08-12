@@ -132,7 +132,13 @@ module CSVImportable
           PatientChangeset.from_import_row(row:, import: self, row_number:)
         end
 
-      changesets.each { ProcessPatientChangesetsJob.perform_later(it) }
+      changesets.each do
+        if slow?
+          ProcessPatientChangesetsJob.perform_later(it)
+        else
+          ProcessPatientChangesetsJob.perform_now(it)
+        end
+      end
       return
     end
 
