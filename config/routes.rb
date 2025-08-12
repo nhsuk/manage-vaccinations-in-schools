@@ -348,6 +348,7 @@ Rails.application.routes.draw do
 
   constraints -> { Rails.env.local? } do
     namespace :inspect do
+      get "dashboard", to: "dashboard#index"
       get "graph/:object_type/:object_id", to: "graphs#show"
       namespace :timeline do
         resources :patients, only: [:show]
