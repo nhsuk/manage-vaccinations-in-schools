@@ -79,7 +79,8 @@ class AppPatientProgrammesTableComponent < ViewComponent::Base
     vaccination_status = {
       status: cached_vaccination_status.status.to_sym,
       latest_session_status:
-        cached_vaccination_status.latest_session_status.to_sym
+        cached_vaccination_status.latest_session_status.to_sym,
+      status_changed_at: cached_vaccination_status.status_changed_at
     }
 
     [
@@ -152,15 +153,20 @@ class AppPatientProgrammesTableComponent < ViewComponent::Base
     end
   end
 
-  def note_for_status(vaccination_status:)
-    vaccination_status[:latest_session_status].to_s.humanize
+  def notes_for_status(vaccination_status:)
+    latest_session_status =
+      vaccination_status[:latest_session_status].to_s.humanize
+    date = vaccination_status[:status_changed_at].to_date.to_fs(:long)
+    "#{latest_session_status} on #{date}"
   end
 
   def could_not_vaccinate_notes(vaccination_status:)
     if vaccination_status[:latest_session_status] == :had_contraindications
-      # The correct triage will be obtained in a later commit
       latest_triage =
-        @patient.triages.includes(:performed_by).order(created_at: :desc).first
+        @patient
+          .triages
+          .includes(:performed_by)
+          .find_by(created_at: vaccination_status[:status_changed_at])
 
       nurse = latest_triage.performed_by
       "#{nurse.full_name} decided that #{patient.full_name} could not be vaccinated"
@@ -192,6 +198,14 @@ class AppPatientProgrammesTableComponent < ViewComponent::Base
     else
       "Selected for the Year #{date_range.begin.year} to #{date_range.end.year} #{programme_type} cohort"
     end
+  end
+
+  def build_row_for_record(programme:, academic_year:, vaccination_record:)
+    [
+      name_for_record(vaccination_record:, programme:, academic_year:),
+      status_for_record(vaccination_record:),
+      notes_for_record(vaccination_record:)
+    ]
   end
 
   def name_for_record(vaccination_record:, programme:, academic_year:)
@@ -230,7 +244,7 @@ class AppPatientProgrammesTableComponent < ViewComponent::Base
 
   def notes_for_administered_record(vaccination_record:)
     if vaccination_record.administered?
-      "Vaccinated #{vaccination_record.performed_at.to_date.to_fs(:long)}"
+      "Vaccinated on #{vaccination_record.performed_at.to_date.to_fs(:long)}"
     else
       raise "Unsupported Outcome: status_for_record should only be used for administered records"
     end
