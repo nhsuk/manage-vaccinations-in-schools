@@ -68,7 +68,7 @@ jobs:
       git-sha: ${{ steps.get-git-sha.outputs.git-sha }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           ref: ${{ inputs.git_ref_to_deploy || github.sha }}
       - name: Get git sha
@@ -91,7 +91,7 @@ jobs:
       id-token: write
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           ref: ${{ github.ref_name }}
       - name: Configure AWS Credentials
@@ -117,7 +117,7 @@ jobs:
       id-token: write
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           ref: ${{ github.ref_name }}
       - name: Configure AWS Credentials

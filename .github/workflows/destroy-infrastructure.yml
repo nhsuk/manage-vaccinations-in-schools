@@ -33,7 +33,7 @@ jobs:
         working-directory: terraform/app
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:

@@ -42,7 +42,7 @@ jobs:
         working-directory: terraform/monitoring/aws
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           ref: ${{ env.git_ref_to_deploy }}
       - name: Configure AWS Credentials
@@ -94,7 +94,7 @@ jobs:
         working-directory: terraform/monitoring/aws
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           ref: ${{ env.git_ref_to_deploy }}
       - name: Configure AWS Credentials
@@ -129,7 +129,7 @@ jobs:
         working-directory: terraform/monitoring
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           ref: ${{ env.git_ref_to_deploy }}
       - name: Configure AWS Credentials
