@@ -43,13 +43,9 @@ class AppPatientProgrammesTableComponent < ViewComponent::Base
       year_group = patient.year_group(academic_year:)
       next unless year_group.in?(eligible_year_groups)
 
-      if vaccinated_for_academic_year?(programme:, academic_year:)
-        vaccination_records_for(programme:).map do |vaccination_record|
-          build_row(programme:, academic_year:, vaccination_record:)
-        end
-      else
-        [build_row(programme:, academic_year:)]
-      end
+      vaccination_records = vaccination_records_for(programme:, academic_year:)
+
+      build_rows(programme:, academic_year:, vaccination_records:)
     end
   end
 
@@ -57,41 +53,55 @@ class AppPatientProgrammesTableComponent < ViewComponent::Base
     academic_year = AcademicYear.pending
     vaccination_records = vaccination_records_for(programme:)
 
-    if vaccination_records.any?
-      vaccination_records.map do |vaccination_record|
-        build_row(programme:, academic_year:, vaccination_record:)
-      end
+    build_rows(programme:, academic_year:, vaccination_records:)
+  end
+
+  def build_rows(programme:, academic_year:, vaccination_records:)
+    if vaccination_records.any?(&:administered?)
+      vaccination_records
+        .select(&:administered?)
+        .map do |vaccination_record|
+          build_row_for_administered_record(
+            programme:,
+            academic_year:,
+            vaccination_record:
+          )
+        end
     else
-      [build_row(programme:, academic_year:)]
+      [build_row_for_programme(programme:, academic_year:)]
     end
   end
 
-  def build_row(programme:, academic_year:, vaccination_record: nil)
+  def build_row_for_programme(programme:, academic_year:)
     [
-      name_for_programme(programme:, academic_year:, vaccination_record:),
-      status_for_programme(programme:, academic_year:, vaccination_record:),
-      notes_for_programme(programme:, academic_year:, vaccination_record:)
+      name_for_programme(programme:, academic_year:),
+      status_for_programme(programme:, academic_year:),
+      notes_for_programme(programme:, academic_year:)
     ]
   end
 
-  def name_for_programme(programme:, academic_year:, vaccination_record: nil)
+  def build_row_for_administered_record(
+    programme:,
+    academic_year:,
+    vaccination_record:
+  )
+    [
+      name_for_record(programme:, academic_year:, vaccination_record:),
+      status_for_record(vaccination_record:),
+      notes_for_record(vaccination_record:)
+    ]
+  end
+
+  def name_for_programme(programme:, academic_year:)
     name_parts = []
 
     name_parts << "Winter #{academic_year}" if programme.seasonal?
-
-    if multi_dose?(vaccination_record:)
-      name_parts << "#{vaccination_record.dose_sequence.ordinalize} dose"
-    end
 
     if name_parts.any?
       "#{programme.name} (#{name_parts.join(", ")})"
     else
       programme.name
     end
-  end
-
-  def multi_dose?(vaccination_record:)
-    vaccination_record&.dose_sequence&.> 1
   end
 
   def status_for_programme(programme:, academic_year:, vaccination_record: nil)
@@ -148,14 +158,55 @@ class AppPatientProgrammesTableComponent < ViewComponent::Base
     end
   end
 
-  def vaccinated_for_academic_year?(programme:, academic_year:)
-    patient.vaccination_statuses.vaccinated.exists?(programme:, academic_year:)
+  def name_for_record(vaccination_record:, programme:, academic_year:)
+    name_parts = []
+
+    name_parts << "Winter #{academic_year}" if programme.seasonal?
+
+    if multi_dose?(vaccination_record:)
+      name_parts << "#{vaccination_record.dose_sequence.ordinalize} dose"
+    end
+
+    if name_parts.any?
+      "#{programme.name} (#{name_parts.join(", ")})"
+    else
+      programme.name
+    end
   end
 
-  def vaccination_records_for(programme:)
+  def multi_dose?(vaccination_record:)
+    vaccination_record&.dose_sequence&.> 1
+  end
+
+  def status_for_record(vaccination_record:)
+    if vaccination_record.administered?
+      govuk_tag(text: "Vaccinated", colour: "green")
+    else
+      raise "Unsupported Outcome: status_for_record should only be used for administered records"
+    end
+  end
+
+  def notes_for_record(vaccination_record:)
+    if vaccination_record.administered?
+      "Vaccinated #{vaccination_record.performed_at.to_date.to_fs(:long)}"
+    else
+      raise "Unsupported Outcome: status_for_record should only be used for administered records"
+    end
+  end
+
+  def vaccination_records_for(programme:, academic_year: nil)
     @vaccination_records ||= patient.vaccination_records.order(:performed_at)
 
-    @vaccination_records.select { |record| record.programme_id == programme.id }
+    filtered_records =
+      @vaccination_records.select do |record|
+        record.programme_id == programme.id
+      end
+
+    if academic_year
+      filtered_records.select { |record| record.academic_year == academic_year }
+    else
+      filtered_records
+    end
   end
 
   def eligible_year_groups_for(programme:)
