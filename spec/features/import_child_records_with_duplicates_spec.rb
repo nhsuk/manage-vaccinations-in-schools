@@ -50,6 +50,51 @@ describe "Child record imports duplicates" do
     then_i_should_see_no_import_issues_with_the_count
   end
 
+  context "when PDS lookup during import is enabled" do
+    scenario "User reviews and selects between duplicate records" do
+      given_i_am_signed_in
+      and_pds_lookup_during_import_is_enabled
+      and_an_hpv_programme_is_underway
+      and_an_existing_patient_record_exists
+
+      when_i_visit_the_import_page
+      and_i_start_adding_children_to_the_cohort
+      and_i_upload_a_file_with_duplicate_records
+      then_i_should_see_the_import_page_with_duplicate_records
+
+      when_i_review_the_first_duplicate_record
+      then_i_should_see_the_first_duplicate_record
+
+      when_i_submit_the_form_without_choosing_anything
+      then_i_should_see_a_validation_error
+
+      when_i_choose_to_keep_the_duplicate_record
+      and_i_confirm_my_selection
+      then_i_should_see_a_success_message
+      and_the_first_duplicate_record_should_be_persisted
+
+      when_i_review_the_second_duplicate_record
+      then_i_should_see_the_second_duplicate_record
+
+      when_i_choose_to_keep_the_previously_uploaded_record
+      and_i_confirm_my_selection
+      then_i_should_see_a_success_message
+      and_the_second_record_should_not_be_updated
+
+      when_i_review_the_third_duplicate_record
+      then_i_should_see_the_third_duplicate_record
+
+      when_i_choose_to_keep_both_records
+      and_i_confirm_my_selection
+      then_i_should_see_a_success_message
+      and_the_third_record_should_be_persisted
+      and_a_new_patient_record_should_be_created
+
+      when_i_go_to_the_import_page
+      then_i_should_see_no_import_issues_with_the_count
+    end
+  end
+
   def given_i_am_signed_in
     @programme = create(:programme, :hpv)
     @team =
@@ -60,6 +105,15 @@ describe "Child record imports duplicates" do
         programmes: [@programme]
       )
     sign_in @team.users.first
+  end
+
+  def and_pds_lookup_during_import_is_enabled
+    return unless ENV["PDS_LOOKUP_DURING_IMPORT"] == "1"
+
+    Flipper.enable(:pds_lookup_during_import)
+
+    stub_pds_search_to_return_a_patient
+    stub_pds_get_nhs_number_to_return_a_patient
   end
 
   def and_an_hpv_programme_is_underway
