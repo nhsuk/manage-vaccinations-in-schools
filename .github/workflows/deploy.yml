@@ -155,3 +155,4 @@ jobs:
       environment: ${{ inputs.environment }}
       server_types: ${{ inputs.server_types }}
       git_sha_to_deploy: ${{ needs.determine-git-sha.outputs.git-sha }}
+      app_version: ${{ inputs.git_ref_to_deploy }}
