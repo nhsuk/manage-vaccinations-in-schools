@@ -11,7 +11,7 @@ jobs:
     name: Check if Rails tests need to run
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
       - name: Determine if rails tests are needed
@@ -61,7 +61,7 @@ jobs:
       DATABASE_URL: postgres://postgres:postgres@localhost:5432/manage_vaccinations_test
       RAILS_ENV: test
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: actions/setup-node@v4
         with:
           node-version-file: .tool-versions
@@ -80,7 +80,7 @@ jobs:
     name: Jest
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: actions/setup-node@v4
         with:
           node-version-file: .tool-versions
@@ -109,7 +109,7 @@ jobs:
       RAILS_ENV: test
       MAVIS__CIS2__ENABLED: false
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
@@ -152,7 +152,7 @@ jobs:
       run:
         working-directory: terraform
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: 1.11.4
