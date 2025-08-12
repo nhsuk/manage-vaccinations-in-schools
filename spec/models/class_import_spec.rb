@@ -281,6 +281,10 @@ describe ClassImport do
         .on_queue(:imports)
     end
 
+    it "enqueues a job to move aged out patients" do
+      expect { process! }.to have_enqueued_job(PatientsAgedOutOfSchoolJob).once
+    end
+
     context "with an existing patient matching the name" do
       let!(:patient) do
         create(

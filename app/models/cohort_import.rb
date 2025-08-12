@@ -44,6 +44,6 @@ class CohortImport < PatientImport
   end
 
   def postprocess_rows!
-    # Nothing to do.
+    PatientsAgedOutOfSchoolJob.perform_later
   end
 end

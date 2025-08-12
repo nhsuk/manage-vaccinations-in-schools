@@ -268,6 +268,10 @@ describe CohortImport do
       ).twice.on_queue(:imports)
     end
 
+    it "enqueues a job to move aged out patients" do
+      expect { process! }.to have_enqueued_job(PatientsAgedOutOfSchoolJob).once
+    end
+
     context "when same NHS number appears multiple times in the file" do
       let(:file) { "duplicate_nhs_numbers.csv" }
 
