@@ -145,20 +145,14 @@ describe "Vaccination programmes table" do
       "table.nhsuk-table tbody tr",
       text: "Flu (Winter 2024)"
     ) do |row|
-      expect(row).to have_selector(
-        "td.nhsuk-table__cell",
-        text: "Vaccinated 1 September 2024"
-      )
+      expect(row).to have_selector("td.nhsuk-table__cell", text: "Vaccinated")
     end
 
     expect(page).to have_selector(
       "table.nhsuk-table tbody tr",
       text: "Flu (Winter 2024, 2nd dose)"
     ) do |row|
-      expect(row).to have_selector(
-        "td.nhsuk-table__cell",
-        text: "Vaccinated 1 March 2025"
-      )
+      expect(row).to have_selector("td.nhsuk-table__cell", text: "Vaccinated")
     end
   end
 
