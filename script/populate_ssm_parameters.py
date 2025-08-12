@@ -33,11 +33,11 @@ def extract_cloud_variables(config: Dict[str, Any], environment: str, server_typ
     return cloud_vars
 
 
-def update_ssm_parameter(parameter_name: str, values: List[str]) -> None:
+def update_ssm_parameter(parameter_name: str, values: List[str], app_version: str) -> None:
     """Update SSM parameter with StringList values."""
     try:
         ssm = boto3.client('ssm')
-
+        values.append(f"app_version={app_version}")
         string_list = ','.join(values)
         
         print(f"Updating SSM parameter: {parameter_name}")
@@ -69,6 +69,7 @@ Examples:
     parser.add_argument('server_type', help='Server type')
     parser.add_argument('-c', '--config-file', default='config/container_variables.yml', 
                        help='Container variables file path (default: config/container_variables.yml)')
+    parser.add_argument('--app-version', default='unknown', help='Application version (default: unknown)')
 
     args = parser.parse_args()
 
@@ -81,7 +82,7 @@ Examples:
     cloud_vars = extract_cloud_variables(config, args.environment, args.server_type)
 
     ssm_parameter_path = f"/{args.environment}/envs/{args.server_type}"
-    update_ssm_parameter(ssm_parameter_path, cloud_vars)
+    update_ssm_parameter(ssm_parameter_path, cloud_vars, args.app_version)
 
     print(f"Cloud variables updated successfully")
 

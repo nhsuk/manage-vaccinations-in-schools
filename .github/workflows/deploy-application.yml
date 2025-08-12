@@ -42,6 +42,10 @@ on:
         description: The git commit SHA to deploy.
         required: true
         type: string
+      app_version:
+        description: The git ref to deploy (branch, tag, or commit SHA).
+        required: false
+        type: string
 
 permissions: {}
 
@@ -53,11 +57,8 @@ env:
     && 'arn:aws:iam::820242920762:role/GithubDeployMavisAndInfrastructure'
     || 'arn:aws:iam::393416225559:role/GithubDeployMavisAndInfrastructure' }}
   aws_account_id: ${{ inputs.environment == 'production' && '820242920762' || '393416225559' }}
-  web_codedeploy_application: mavis-${{ inputs.environment }}
-  web_codedeploy_group: blue-green-group-${{ inputs.environment }}
   cluster_name: mavis-${{ inputs.environment }}
-  good_job_service: mavis-${{ inputs.environment }}-good-job
-  web_service: mavis-${{ inputs.environment }}-web
+  app_version: ${{ inputs.app_version == '' && 'unknown' || inputs.app_version }}
 
 jobs:
   prepare-deployment:
@@ -78,6 +79,13 @@ jobs:
         with:
           role-to-assume: ${{ env.aws-role }}
           aws-region: eu-west-2
+      - name: Setup python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.12.3
+          cache: pip
+      - name: Install Python dependencies
+        run: python3 -m pip install -r script/requirements.txt
       - name: Get image digest
         id: get-image-digest
         run: |
@@ -93,7 +101,7 @@ jobs:
           parsed_env_vars=$(yq -r '.environments.${{ inputs.environment }} | to_entries | .[] | .key + "=" + .value' config/container_variables.yml)
           echo "parsed_env_vars=$parsed_env_vars" >> $GITHUB_OUTPUT
       - name: Populate web task definition
-        if: inputs.server_types == 'web' || inputs.server_types == 'all'
+        if: ${{ inputs.server_types == 'web' || inputs.server_types == 'all' }}
         id: create-web-task-definition
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
@@ -101,10 +109,8 @@ jobs:
           container-name: "application"
           image: "${{ env.aws_account_id }}.dkr.ecr.eu-west-2.amazonaws.com/mavis/webapp@${{ steps.get-image-digest.outputs.digest }}"
           environment-variables: ${{ steps.parse-environment-variables.outputs.parsed_env_vars }}
-          secrets: |  # We can define secrets here too if we want
-            RAILS_MASTER_KEY=/copilot/mavis/secrets/STAGING_RAILS_MASTER_KEY
       - name: Populate good-job task definition
-        if: inputs.server_types == 'good-job' || inputs.server_types == 'all'
+        if: ${{ inputs.server_types == 'good-job' || inputs.server_types == 'all' }}
         id: create-good-job-task-definition
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
@@ -112,14 +118,22 @@ jobs:
           container-name: "application"
           image: "${{ env.aws_account_id }}.dkr.ecr.eu-west-2.amazonaws.com/mavis/webapp@${{ steps.get-image-digest.outputs.digest }}"
           environment-variables: ${{ steps.parse-environment-variables.outputs.parsed_env_vars }}
+      - name: Populate SSM parameters for web service
+        if: ${{ inputs.server_types == 'web' || inputs.server_types == 'all' }}
+        run: |
+          python3 script/populate_ssm_parameters.py ${{ inputs.environment }} web --app-version ${{ env.app_version }}
+      - name: Populate SSM parameters for good-job service
+        if: ${{ inputs.server_types == 'good-job' || inputs.server_types == 'all' }}
+        run: |
+          python3 script/populate_ssm_parameters.py ${{ inputs.environment }} good-job --app-version ${{ env.app_version }}
       - name: Upload artifact for web task definition
-        if: inputs.server_types == 'web' || inputs.server_types == 'all'
+        if: ${{ inputs.server_types == 'web' || inputs.server_types == 'all' }}
         uses: actions/upload-artifact@v4
         with:
           name: ${{ inputs.environment }}-web-task-definition
           path: ${{ steps.create-web-task-definition.outputs.task-definition }}
       - name: Upload artifact for good-job task definition
-        if: inputs.server_types == 'good-job' || inputs.server_types == 'all'
+        if: ${{ inputs.server_types == 'good-job' || inputs.server_types == 'all' }}
         uses: actions/upload-artifact@v4
         with:
           name: ${{ inputs.environment }}-good-job-task-definition
@@ -135,7 +149,7 @@ jobs:
   deploy-web:
     name: Deploy web service
     runs-on: ubuntu-latest
-    if: inputs.server_types == 'web' || inputs.server_types == 'all'
+    if: ${{ inputs.server_types == 'web' || inputs.server_types == 'all' }}
     needs: [ prepare-deployment, approve-deployments ]
     permissions:
       id-token: write
@@ -167,9 +181,9 @@ jobs:
           task-definition: ${{ needs.prepare-deployment.outputs.web-task-definition-path }}
           codedeploy-appspec: appspec.yaml
           cluster: ${{ env.cluster_name }}
-          service: ${{ env.web_service }}
-          codedeploy-application: ${{ env.web_codedeploy_application }}
-          codedeploy-deployment-group: ${{ env.web_codedeploy_group }}
+          service: mavis-${{ inputs.environment }}-web
+          codedeploy-application: mavis-${{ inputs.environment }}
+          codedeploy-deployment-group: blue-green-group-${{ inputs.environment }}
       - name: Wait for deployment to complete
         run: |
           echo "Waiting for CodeDeploy deployment ${{ steps.deploy-web-service.outputs.codedeploy-deployment-id }} to complete..."
@@ -179,7 +193,7 @@ jobs:
   deploy-good-job:
     name: Deploy good-job service
     runs-on: ubuntu-latest
-    if: inputs.server_types == 'good-job' || inputs.server_types == 'all'
+    if: ${{ inputs.server_types == 'good-job' || inputs.server_types == 'all' }}
     needs: [ prepare-deployment, approve-deployments ]
     permissions:
       id-token: write
@@ -199,7 +213,7 @@ jobs:
         with:
           task-definition: ${{ needs.prepare-deployment.outputs.good-job-task-definition-path }}
           cluster: ${{ env.cluster_name }}
-          service: ${{ env.good_job_service }}
+          service: mavis-${{ inputs.environment }}-good-job
           force-new-deployment: true
           wait-for-service-stability: true
 

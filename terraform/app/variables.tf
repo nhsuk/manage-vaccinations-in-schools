@@ -104,19 +104,6 @@ variable "rails_master_key_path" {
   nullable    = false
 }
 
-variable "docker_image" {
-  type        = string
-  default     = "mavis/webapp"
-  description = "The docker image name for the essential container in the task definition"
-  nullable    = false
-}
-
-variable "image_digest" {
-  type        = string
-  description = "The docker image digest for the essential container in the task definition."
-  nullable    = false
-}
-
 locals {
   is_production = var.environment == "production"
   parameter_store_variables = tomap({ #TODO: Remove this once all variables are sourced from application config

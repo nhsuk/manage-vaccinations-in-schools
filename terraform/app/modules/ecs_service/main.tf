@@ -69,6 +69,12 @@ resource "aws_ecs_service" "this" {
   }
 }
 
+resource "terraform_data" "this" {
+  input = [
+    var.server_type, var.task_config, var.container_name
+  ]
+}
+
 resource "aws_ecs_task_definition" "this" {
   family                   = "mavis-${local.server_type_name}-task-definition-${var.environment}"
   requires_compatibilities = ["FARGATE"]
@@ -80,7 +86,7 @@ resource "aws_ecs_task_definition" "this" {
   container_definitions = jsonencode([
     {
       name                   = var.container_name
-      image                  = var.task_config.docker_image
+      image                  = "CHANGE_ME"
       essential              = true
       readonlyRootFileSystem = true
       portMappings = [
@@ -109,7 +115,8 @@ resource "aws_ecs_task_definition" "this" {
     }
   ])
   lifecycle {
-    ignore_changes = all
+    ignore_changes       = all
+    replace_triggered_by = [terraform_data.this]
   }
 }
 
