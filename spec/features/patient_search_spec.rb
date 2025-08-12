@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 describe "Patient search" do
+  around { |example| travel_to(Date.new(2025, 7, 31)) { example.run } }
+
   scenario "Users can search for patients" do
     given_that_i_am_signed_in
     when_i_visit_the_patients_page

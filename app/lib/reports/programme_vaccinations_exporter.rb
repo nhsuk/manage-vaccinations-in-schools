@@ -206,7 +206,7 @@ class Reports::ProgrammeVaccinationsExporter
       patient.family_name,
       patient.date_of_birth.iso8601,
       patient.date_of_death&.iso8601 || "",
-      patient.year_group || "",
+      patient.year_group(academic_year:) || "",
       patient.gender_code.humanize,
       patient.restricted? ? "" : patient.address_line_1,
       patient.restricted? ? "" : patient.address_postcode,

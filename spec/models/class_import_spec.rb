@@ -167,7 +167,7 @@ describe ClassImport do
         address_line_1: "10 Downing Street",
         address_town: "London",
         address_postcode: "SW1A 1AA",
-        year_group: 9
+        birth_academic_year: 2010
       )
 
       expect(Patient.first.parents.count).to eq(1)
@@ -187,7 +187,7 @@ describe ClassImport do
         address_line_1: "10 Downing Street",
         address_town: "London",
         address_postcode: "SW1A 1AA",
-        year_group: 10
+        birth_academic_year: 2009
       )
 
       expect(Patient.second.parents.count).to eq(1)
@@ -209,7 +209,7 @@ describe ClassImport do
         address_line_1: "11 Downing Street",
         address_town: "London",
         address_postcode: "SW1A 1AA",
-        year_group: 10
+        birth_academic_year: 2009
       )
 
       expect(Patient.third.parents.count).to eq(2)
@@ -238,7 +238,7 @@ describe ClassImport do
         address_line_1: nil,
         address_town: nil,
         address_postcode: nil,
-        year_group: 10
+        birth_academic_year: 2009
       )
 
       expect(Patient.fourth.parents).not_to be_empty

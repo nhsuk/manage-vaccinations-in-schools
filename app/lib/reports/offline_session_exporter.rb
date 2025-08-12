@@ -253,7 +253,7 @@ class Reports::OfflineSessionExporter
     row[:person_forename] = patient.given_name
     row[:person_surname] = patient.family_name
     row[:person_dob] = patient.date_of_birth
-    row[:year_group] = patient.year_group
+    row[:year_group] = patient.year_group(academic_year:)
     row[:person_gender_code] = Cell.new(
       patient.gender_code.humanize,
       allowed_values: Patient.gender_codes.keys

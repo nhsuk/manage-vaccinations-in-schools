@@ -29,7 +29,7 @@
   <% card.with_heading { "Sessions" } %>
   <%= render AppPatientSessionTableComponent.new(@patient_sessions) %>
 
-  <% unless @patient.in_generic_clinic?(team: current_team) %>
+  <% unless @in_generic_clinic %>
     <%= govuk_button_to "Invite to community clinic", invite_to_clinic_patient_path(@patient), secondary: true %>
   <% end %>
 <% end %>

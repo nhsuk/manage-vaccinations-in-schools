@@ -214,14 +214,14 @@ describe CohortImportRow do
         registration: "8AB",
         registration_academic_year: AcademicYear.pending,
         school: nil,
-        year_group: 10
+        birth_academic_year: 2009
       )
     end
 
     context "with a specific year group provided" do
       let(:data) { valid_data.merge("CHILD_YEAR_GROUP" => "11") }
 
-      it { should have_attributes(year_group: 11) }
+      it { should have_attributes(birth_academic_year: 2008) }
     end
 
     context "when gender is not provided" do

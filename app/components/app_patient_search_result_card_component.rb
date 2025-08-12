@@ -17,7 +17,7 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
     @patient = patient
     @link_to = link_to
     @programme = programme
-    @academic_year = academic_year || AcademicYear.current
+    @academic_year = academic_year || AcademicYear.pending
     @triage_status = triage_status
 
     @show_parents = show_parents
