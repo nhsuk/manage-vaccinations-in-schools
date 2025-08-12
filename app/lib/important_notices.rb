@@ -71,7 +71,7 @@ class ImportantNotices
       patient.vaccination_records.select { it.notify_parents == false }
     if no_notify_vaccination_records.any?
       vaccinations_sentence =
-        "#{no_notify_vaccination_records.map(&:programme).map(&:name).to_sentence} " \
+        "#{no_notify_vaccination_records.map(&:programme).uniq.map(&:name).to_sentence} " \
           "#{"vaccination".pluralize(no_notify_vaccination_records.length)}"
 
       notices << {
