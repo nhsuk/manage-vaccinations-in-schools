@@ -37,10 +37,13 @@ module PatientsHelper
   def patient_year_group(patient, academic_year:)
     str = format_year_group(patient.year_group(academic_year:))
 
-    if patient.registration_academic_year == academic_year &&
-         patient.registration.present?
-      str << " (#{patient.registration})"
-    end
+    include_registration =
+      patient.registration_academic_year == academic_year &&
+        patient.registration.present?
+
+    str = str.dup if include_registration
+
+    str << ", #{patient.registration}" if include_registration
 
     if academic_year != AcademicYear.current
       str << " (#{format_academic_year(academic_year)} academic year)"

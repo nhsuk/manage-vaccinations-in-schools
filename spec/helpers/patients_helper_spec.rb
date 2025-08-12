@@ -102,7 +102,7 @@ describe PatientsHelper do
           patient.registration_academic_year = today.academic_year
         end
 
-        it { should eq("Year 9 (9AB)") }
+        it { should eq("Year 9, 9AB") }
       end
     end
 
