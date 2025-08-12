@@ -128,12 +128,8 @@ module CSVImportable
 
     if Flipper.enabled? :pds_lookup_during_import
       changesets =
-        rows.each_with_index.map do
-          PatientChangeset.from_import_row(
-            row: _1,
-            import: self,
-            row_number: _2
-          )
+        rows.each_with_index.map do |row, row_number|
+          PatientChangeset.from_import_row(row:, import: self, row_number:)
         end
 
       changesets.each { ProcessPatientChangesetsJob.perform_later(it) }

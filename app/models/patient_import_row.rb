@@ -171,6 +171,11 @@ class PatientImportRow
 
   def import_attributes
     @import_attributes ||= {
+      # NOTE: The `&` protection for `.to_s` below may be superfluous, since
+      #       we'd rather have "" here than `nil` so that the `.compact` below
+      #       doesn't clear out the values, and we have less work later to
+      #       ensure we don't leave values behind when we merge this in with the
+      #       patient.
       address_line_1: address_line_1&.to_s,
       address_line_2: address_line_2&.to_s,
       address_postcode: address_postcode&.to_postcode,
@@ -185,6 +190,24 @@ class PatientImportRow
       preferred_given_name: preferred_first_name&.to_s,
       registration: registration&.to_s,
       registration_academic_year:
+    }.compact
+  end
+
+  def parent_1_import_attributes
+    {
+      full_name: parent_1_name&.to_s,
+      email: parent_1_email_value,
+      phone: parent_1_phone_value,
+      relationship: parent_1_relationship&.to_s
+    }.compact
+  end
+
+  def parent_2_import_attributes
+    {
+      full_name: parent_2_name&.to_s,
+      email: parent_2_email_value,
+      phone: parent_2_phone_value,
+      relationship: parent_2_relationship&.to_s
     }.compact
   end
 
