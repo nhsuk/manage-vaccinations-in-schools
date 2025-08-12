@@ -359,12 +359,6 @@ class Patient < ApplicationRecord
     end
   end
 
-  def in_generic_clinic?(team:, academic_year: nil)
-    academic_year ||= AcademicYear.pending
-    session = team.generic_clinic_session(academic_year:)
-    patient_sessions.exists?(session:)
-  end
-
   def consent_status(programme:, academic_year:)
     patient_status(consent_statuses, programme:, academic_year:)
   end
