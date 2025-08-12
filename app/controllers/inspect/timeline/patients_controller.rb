@@ -2,7 +2,6 @@
 
 class Inspect::Timeline::PatientsController < ApplicationController
   skip_after_action :verify_policy_scoped
-  skip_before_action :authenticate_user!
   before_action :set_patient
 
   layout "full"
