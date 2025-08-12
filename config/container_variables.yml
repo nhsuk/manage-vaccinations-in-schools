@@ -30,7 +30,7 @@ environments:
   sandbox-beta:
     RAILS_ENV: staging
     SENTRY_ENVIRONMENT: sandbox-beta
-    TEST_KEY: test-value
+    TEST: TEST
 
 # Tunable Variables Configuration
 # This section specifies environment-specific variables that will be populated into the SSM parameter store
