@@ -9,7 +9,7 @@ describe "User CIS2 authentication", :cis2 do
     then_i_see_the_wrong_role_error
 
     when_i_click_the_change_role_button_and_select_the_right_role
-    then_i_see_the_sessions_page
+    then_i_see_the_team_selection_page
   end
 
   def given_i_am_setup_in_mavis_and_cis2_but_with_the_wrong_role
@@ -30,8 +30,8 @@ describe "User CIS2 authentication", :cis2 do
     visit sessions_path
   end
 
-  def then_i_see_the_sessions_page
-    expect(page).to have_current_path(sessions_path)
+  def then_i_see_the_team_selection_page
+    expect(page).to have_current_path(new_users_teams_path)
   end
 
   def then_i_see_the_wrong_role_error

@@ -28,7 +28,8 @@ class CIS2Info
 
   def team
     @team ||=
-      if (workgroup = team_workgroup).present?
+      if (workgroup = team_workgroup).present? &&
+           workgroups&.include?(workgroup)
         Team.find_by(organisation:, workgroup:)
       end
   end

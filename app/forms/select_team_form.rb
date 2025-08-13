@@ -31,7 +31,7 @@ class SelectTeamForm
   def teams
     @teams ||=
       if Settings.cis2.enabled
-        cis2_info.organisation.teams
+        cis2_info.organisation.teams.where(workgroup: cis2_info.workgroups)
       else
         current_user.teams.includes(:organisation)
       end
