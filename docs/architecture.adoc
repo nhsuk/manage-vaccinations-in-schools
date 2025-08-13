@@ -202,5 +202,3 @@ concerns on the server.
 * Offline support - Browser-based component
 * FHIR server synchronisation
 * Reporting (in development)
-
-

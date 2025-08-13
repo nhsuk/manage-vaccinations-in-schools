@@ -19,7 +19,7 @@ session.patient_sessions.all?(&:safe_to_destroy?)
 session.patients.update_all(
   cohort_id: nil,
   home_educated: false,
-  school_id: nil
+  school_id: nil,
 )
 
 # removes all patients from the session

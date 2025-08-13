@@ -11,9 +11,10 @@ RSpec.describe API::Reporting::TotalsController do
       data: {
         user: user.as_json,
         cis2_info: {
+          organisation_name: team.name,
           organisation_code: team.organisation.ods_code,
-          workgroups: [team.workgroup],
-          role_code: CIS2Info::NURSE_ROLE
+          role_code: "S8000:G8000:R8001",
+          workgroups: ["schoolagedimmunisations"],
         }
       }
     }

@@ -42,7 +42,4 @@ class API::Reporting::OneTimeTokensController < API::Reporting::BaseController
     )
   end
 
-  def ensure_reporting_api_feature_enabled
-    render status: :forbidden and return unless Flipper.enabled?(:reporting_api)
-  end
 end
