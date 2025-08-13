@@ -68,7 +68,7 @@ class PatientSearchForm < SearchForm
   private
 
   def academic_year =
-    @session&.academic_year || @academic_year || AcademicYear.current
+    @session&.academic_year || @academic_year || AcademicYear.pending
 
   def team = @current_user.selected_team
 

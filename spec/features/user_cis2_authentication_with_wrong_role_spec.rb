@@ -6,7 +6,7 @@ describe "User CIS2 authentication", :cis2 do
     when_i_go_to_the_sessions_page
     then_i_am_on_the_start_page
     when_i_click_the_cis2_login_button
-    then_i_see_the_team_not_found_error
+    then_i_see_the_wrong_role_error
 
     when_i_click_the_change_role_button_and_select_the_right_role
     then_i_see_the_sessions_page
@@ -31,13 +31,13 @@ describe "User CIS2 authentication", :cis2 do
   end
 
   def then_i_see_the_sessions_page
-    expect(page).to have_current_path sessions_path
+    expect(page).to have_current_path(sessions_path)
   end
 
-  def then_i_see_the_team_not_found_error
-    expect(
-      page
-    ).to have_heading "You do not have permission to use this service"
+  def then_i_see_the_wrong_role_error
+    expect(page).to have_heading(
+      "You do not have permission to use this service"
+    )
   end
 
   def when_i_click_the_change_role_button_and_select_the_right_role

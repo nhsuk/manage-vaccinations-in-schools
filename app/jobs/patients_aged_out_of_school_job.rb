@@ -16,7 +16,13 @@ class PatientsAgedOutOfSchoolJob < ApplicationJob
         next if school.year_groups.include?(year_group)
 
         team = school.team
-        SchoolMove.new(patient:, home_educated: false, team:).confirm!
+
+        SchoolMove.new(
+          patient:,
+          home_educated: false,
+          team:,
+          academic_year:
+        ).confirm!
       end
   end
 end

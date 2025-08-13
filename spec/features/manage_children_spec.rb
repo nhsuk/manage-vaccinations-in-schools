@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 describe "Manage children" do
+  around { |example| travel_to(Date.new(2025, 7, 31)) { example.run } }
+
   before { given_my_team_exists }
 
   scenario "Viewing children" do
@@ -316,6 +318,7 @@ describe "Manage children" do
   end
 
   def when_i_enter_a_blank_nhs_number
+    travel 1.minute
     fill_in "What is the child’s NHS number?", with: ""
     click_on "Continue"
   end
@@ -344,6 +347,7 @@ describe "Manage children" do
   end
 
   def when_i_click_on_merge_records
+    travel 1.minute
     click_on "Merge records"
   end
 

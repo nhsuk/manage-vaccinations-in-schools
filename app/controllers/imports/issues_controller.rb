@@ -27,7 +27,7 @@ class Imports::IssuesController < ApplicationController
 
   def set_import_issues
     @vaccination_records =
-      policy_scope(VaccinationRecord).with_pending_changes.distinct.includes(
+      policy_scope(VaccinationRecord).with_pending_changes.includes(
         :batch,
         :location,
         :performed_by_user,
@@ -37,11 +37,12 @@ class Imports::IssuesController < ApplicationController
       )
 
     @patients =
-      policy_scope(Patient)
-        .with_pending_changes
-        .distinct
-        .eager_load(:gp_practice, :school)
-        .preload(:school_moves, :pending_sessions)
+      policy_scope(Patient).with_pending_changes.includes(
+        :gp_practice,
+        :pending_sessions,
+        :school,
+        :school_moves
+      )
 
     @import_issues =
       (@vaccination_records + @patients).uniq do |record|
@@ -51,13 +52,11 @@ class Imports::IssuesController < ApplicationController
 
   def set_record
     @record =
-      (
-        if params[:type] == "vaccination-record"
-          @vaccination_records.find(params[:id])
-        else
-          @patients.find(params[:id])
-        end
-      )
+      if params[:type] == "vaccination-record"
+        @vaccination_records.find(params[:id])
+      else
+        @patients.find(params[:id])
+      end
   end
 
   def set_vaccination_record

@@ -68,6 +68,8 @@ class DraftConsentsController < ApplicationController
 
       @consent.save!
 
+      @consent.update_vaccination_records_no_notify!
+
       StatusUpdater.call(patient: @patient)
     end
 

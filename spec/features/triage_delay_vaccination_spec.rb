@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 describe "Triage" do
+  around { |example| travel_to(Date.new(2025, 7, 1)) { example.run } }
+
   scenario "delay vaccination" do
     given_a_programme_with_a_running_session
     and_i_am_signed_in

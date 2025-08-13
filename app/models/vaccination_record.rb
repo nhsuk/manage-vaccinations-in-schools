@@ -106,13 +106,6 @@ class VaccinationRecord < ApplicationRecord
 
   scope :recorded_in_service, -> { where.not(session_id: nil) }
 
-  scope :with_pending_changes,
-        -> do
-          joins(:patient).where(
-            "patients.pending_changes != '{}' OR vaccination_records.pending_changes != '{}'"
-          )
-        end
-
   enum :protocol, { pgd: 0, psd: 1 }, validate: { allow_nil: true }
 
   enum :delivery_method,

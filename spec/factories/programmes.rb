@@ -50,7 +50,8 @@ FactoryBot.define do
         [
           association(:vaccine, :fluenz, programme: instance),
           association(:vaccine, :cell_based_trivalent, programme: instance),
-          association(:vaccine, :vaxigrip, programme: instance)
+          association(:vaccine, :vaxigrip, programme: instance),
+          association(:vaccine, :viatris, programme: instance)
         ]
       end
     end

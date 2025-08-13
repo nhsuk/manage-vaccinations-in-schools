@@ -31,19 +31,19 @@ describe "User CIS2 authentication", :cis2 do
   end
 
   def then_i_see_the_sessions_page
-    expect(page).to have_current_path sessions_path
+    expect(page).to have_current_path(sessions_path)
   end
 
   def then_i_see_the_wrong_workgroup_error
-    expect(
-      page
-    ).to have_heading "You’re not in the right workgroup to use this service"
+    expect(page).to have_heading(
+      "You’re not in the right workgroup to use this service"
+    )
   end
 
   def when_i_click_the_change_role_button_and_select_the_right_role
     # With don't actually get to select the right role directly in our test
     # setup so we change the cis2 response to simulate it.
     mock_cis2_auth(org_code: @team.organisation.ods_code, org_name: @team.name)
-    click_button "Change role"
+    click_button("Change role")
   end
 end

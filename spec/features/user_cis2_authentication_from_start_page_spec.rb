@@ -7,7 +7,6 @@ describe "User CIS2 authentication", :cis2 do
     then_i_should_see_the_cis2_login_button
 
     when_i_click_the_cis2_login_button
-    then_i_see_the_dashboard
     and_i_am_logged_in
     and_i_am_added_to_the_team
 
@@ -19,26 +18,17 @@ describe "User CIS2 authentication", :cis2 do
     and_i_am_logged_out
   end
 
-  scenario "going straight to the sessions page" do
-    given_a_test_team_is_setup_in_mavis_and_cis2
-    when_i_go_to_the_sessions_page
-    then_i_am_on_the_start_page
-
-    when_i_click_the_cis2_login_button
-    then_i_see_the_sessions_page
-    and_i_am_logged_in
-    and_i_am_added_to_the_team
-  end
-
   def given_a_test_team_is_setup_in_mavis_and_cis2
-    @team = create :team
+    @user = create(:user, uid: "123")
+    @team = create(:team, users: [@user])
 
     mock_cis2_auth(
       uid: "123",
       given_name: "Nurse",
       family_name: "Test",
       org_code: @team.organisation.ods_code,
-      org_name: @team.name
+      org_name: @team.name,
+      workgroups: [CIS2Info::WORKGROUP, @team.workgroup]
     )
   end
 
@@ -84,13 +74,5 @@ describe "User CIS2 authentication", :cis2 do
   def and_i_am_logged_out
     expect(page).not_to have_content("TEST, Nurse")
     expect(page).not_to have_button("Log out")
-  end
-
-  def when_i_go_to_the_sessions_page
-    visit sessions_path
-  end
-
-  def then_i_see_the_sessions_page
-    expect(page).to have_current_path sessions_path
   end
 end

@@ -7,8 +7,10 @@ module NHSAPIConcurrencyConcern
 
   included do
     # NHS API imposes a limit of 5 requests per second
-    good_job_control_concurrency_with perform_throttle: [5, 1.second],
-                                      key: :nhs_api
+    good_job_control_concurrency_with(
+      perform_throttle: [concurrent_jobs_per_second, 1.second],
+      key: concurrency_key
+    )
 
     # Because the NHS API imposes a limit of 5 requests per second, we're almost
     # certain to hit throttling and the default exponential backoff strategy
@@ -16,11 +18,15 @@ module NHSAPIConcurrencyConcern
     # there’s more instances where more than 5 requests are attempted.
     retry_on GoodJob::ActiveJobExtensions::Concurrency::ConcurrencyExceededError,
              attempts: :unlimited,
-             wait: ->(executions) { (executions * 5) + rand(0.5..5) }
+             wait: ->(executions) do
+               (executions * concurrent_jobs_per_second) + rand(0.5..5)
+             end
 
     retry_on Faraday::TooManyRequestsError,
              attempts: :unlimited,
-             wait: ->(executions) { (executions * 5) + rand(0.5..5) }
+             wait: ->(executions) do
+               (executions * concurrent_jobs_per_second) + rand(0.5..5)
+             end
 
     retry_on Faraday::ServerError, wait: :polynomially_longer
   end

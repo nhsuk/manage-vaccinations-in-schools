@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 describe "Td/IPV" do
+  around { |example| travel_to(Date.new(2025, 7, 1)) { example.run } }
+
   scenario "record a patient as already vaccinated outside the school session" do
     given_a_td_ipv_programme_with_a_session(clinic: false)
     and_a_patient_is_in_the_session

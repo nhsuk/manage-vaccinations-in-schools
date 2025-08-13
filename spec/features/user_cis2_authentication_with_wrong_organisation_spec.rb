@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
 describe "User CIS2 authentication" do
-  scenario "user has wrong team selected" do
+  scenario "user has wrong organisation selected" do
     given_i_am_setup_in_cis2_but_not_mavis
     when_i_go_to_the_sessions_page
     then_i_am_on_the_start_page
 
     when_i_click_the_cis2_login_button
-    then_i_see_the_team_not_found_error
+    then_i_see_the_organisation_not_found_error
 
     given_my_team_has_been_setup_in_mavis
     when_i_click_the_change_role_button
@@ -15,13 +15,13 @@ describe "User CIS2 authentication" do
   end
 
   context "user has no other orgs to select" do
-    scenario "user has wrong team selected" do
+    scenario "user has wrong organisation selected" do
       given_i_am_setup_in_cis2_with_only_one_role
       when_i_go_to_the_start_page
       then_i_should_see_the_cis2_login_button
 
       when_i_click_the_cis2_login_button
-      then_i_see_the_team_not_found_error
+      then_i_see_the_organisation_not_found_error
       and_there_is_no_change_role_button
     end
   end
@@ -35,15 +35,11 @@ describe "User CIS2 authentication" do
   end
 
   def given_my_team_has_been_setup_in_mavis
-    @team = create :team, ods_code: "A9A5A"
+    @team = create(:team, ods_code: "A9A5A")
   end
 
   def when_i_go_to_the_start_page
     visit "/start"
-  end
-
-  def when_i_click_the_cis2_login_button
-    click_button "Care Identity"
   end
 
   def when_i_click_the_cis2_login_button
@@ -59,7 +55,7 @@ describe "User CIS2 authentication" do
   end
 
   def then_i_see_the_sessions_page
-    expect(page).to have_current_path sessions_path
+    expect(page).to have_current_path(sessions_path)
   end
 
   def given_i_am_setup_in_cis2_with_only_one_role
@@ -73,8 +69,10 @@ describe "User CIS2 authentication" do
     )
   end
 
-  def then_i_see_the_team_not_found_error
-    expect(page).to have_heading "Your team is not using this service yet"
+  def then_i_see_the_organisation_not_found_error
+    expect(page).to have_heading(
+      "Your organisation is not using this service yet"
+    )
   end
 
   def when_i_click_the_change_role_button

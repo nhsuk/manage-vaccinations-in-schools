@@ -160,8 +160,6 @@ class Patient < ApplicationRecord
           )
         end
 
-  scope :with_pending_changes, -> { where.not(pending_changes: {}) }
-
   scope :search_by_name,
         ->(query) do
           # Trigram matching requires at least 3 characters
@@ -344,8 +342,7 @@ class Patient < ApplicationRecord
     !archive_reasons.exists?(team:)
   end
 
-  def year_group(academic_year: nil)
-    academic_year ||= AcademicYear.current
+  def year_group(academic_year:)
     birth_academic_year.to_year_group(academic_year:)
   end
 
@@ -360,12 +357,6 @@ class Patient < ApplicationRecord
     team.programmes.any? do |programme|
       programme_year_groups[programme].include?(year_group)
     end
-  end
-
-  def in_generic_clinic?(team:, academic_year: nil)
-    academic_year ||= AcademicYear.pending
-    session = team.generic_clinic_session(academic_year:)
-    patient_sessions.exists?(session:)
   end
 
   def consent_status(programme:, academic_year:)

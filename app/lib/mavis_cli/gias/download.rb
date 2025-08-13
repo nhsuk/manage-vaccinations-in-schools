@@ -19,6 +19,7 @@ module MavisCLI
 
         puts "Starting schools data download process..."
         agent = Mechanize.new
+        agent.user_agent_alias = "Mac Safari"
 
         puts "Visiting the downloads page"
         page =

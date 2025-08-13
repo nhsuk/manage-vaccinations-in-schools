@@ -39,8 +39,7 @@ describe GovukNotifyPersonalisation do
       :patient,
       given_name: "John",
       family_name: "Smith",
-      date_of_birth: Date.new(2012, 2, 1),
-      year_group: 8
+      date_of_birth: Date.new(2013, 2, 1)
     )
   end
   let(:location) { create(:school, name: "Hogwarts", subteam:) }
@@ -76,7 +75,7 @@ describe GovukNotifyPersonalisation do
         next_session_dates: "Thursday 1 January",
         next_session_dates_or: "Thursday 1 January",
         not_catch_up: "yes",
-        patient_date_of_birth: "1 February 2012",
+        patient_date_of_birth: "1 February 2013",
         short_patient_name: "John",
         short_patient_name_apos: "John’s",
         subsequent_session_dates_offered_message: "",
@@ -97,7 +96,7 @@ describe GovukNotifyPersonalisation do
   end
 
   context "with a patient in primary school" do
-    let(:patient) { create(:patient, year_group: 6) }
+    let(:patient) { create(:patient, date_of_birth: Date.new(2015, 2, 1)) }
 
     it { should include(talk_to_your_child_message: "") }
   end

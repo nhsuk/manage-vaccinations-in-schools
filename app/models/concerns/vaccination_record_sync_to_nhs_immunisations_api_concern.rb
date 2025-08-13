@@ -5,15 +5,11 @@ module VaccinationRecordSyncToNHSImmunisationsAPIConcern
 
   included do
     scope :syncable_to_nhs_immunisations_api,
-          -> do
-            includes(:patient, :programme).where(
-              notify_parents: true
-            ).recorded_in_service
-          end
+          -> { includes(:patient, :programme).recorded_in_service }
   end
 
   def syncable_to_nhs_immunisations_api?
-    recorded_in_service? && notify_parents
+    recorded_in_service?
   end
 
   def sync_status

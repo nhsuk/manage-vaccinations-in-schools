@@ -45,6 +45,8 @@ describe Reports::OfflineSessionExporter do
       create(:session, location:, team:, programmes: [programme])
     end
 
+    let(:academic_year) { session.academic_year }
+
     context "a school session" do
       subject(:workbook) { RubyXL::Parser.parse_buffer(call) }
 
@@ -159,7 +161,7 @@ describe Reports::OfflineSessionExporter do
                 "VACCINATED" => "",
                 "VACCINE_GIVEN" => "",
                 "UUID" => "",
-                "YEAR_GROUP" => patient.year_group
+                "YEAR_GROUP" => patient.year_group(academic_year:)
               }
             )
             expect(rows.first["PERSON_DOB"].to_date).to eq(
@@ -237,7 +239,7 @@ describe Reports::OfflineSessionExporter do
                 "VACCINATED" => "Y",
                 "VACCINE_GIVEN" => vaccination_record.vaccine.nivs_name,
                 "UUID" => vaccination_record.uuid,
-                "YEAR_GROUP" => patient.year_group
+                "YEAR_GROUP" => patient.year_group(academic_year:)
               }
             )
             expect(rows.first["BATCH_EXPIRY_DATE"].to_date).to eq(batch.expiry)
@@ -327,7 +329,7 @@ describe Reports::OfflineSessionExporter do
                 "VACCINATED" => "Y",
                 "VACCINE_GIVEN" => nil,
                 "UUID" => vaccination_record.uuid,
-                "YEAR_GROUP" => patient.year_group
+                "YEAR_GROUP" => patient.year_group(academic_year:)
               }
             )
             expect(rows.first["BATCH_EXPIRY_DATE"].to_date).to eq(batch.expiry)
@@ -341,9 +343,7 @@ describe Reports::OfflineSessionExporter do
         end
 
         context "with a vaccinated patient outside the school session, but in a clinic" do
-          let(:clinic_session) do
-            team.generic_clinic_session(academic_year: AcademicYear.current)
-          end
+          let(:clinic_session) { team.generic_clinic_session(academic_year:) }
 
           let!(:vaccination_record) do
             create(
@@ -407,7 +407,7 @@ describe Reports::OfflineSessionExporter do
                 "VACCINATED" => "Y",
                 "VACCINE_GIVEN" => vaccination_record.vaccine.nivs_name,
                 "UUID" => vaccination_record.uuid,
-                "YEAR_GROUP" => patient.year_group
+                "YEAR_GROUP" => patient.year_group(academic_year:)
               }
             )
             expect(rows.first["BATCH_EXPIRY_DATE"].to_date).to eq(batch.expiry)
@@ -476,7 +476,7 @@ describe Reports::OfflineSessionExporter do
                 "VACCINATED" => "",
                 "VACCINE_GIVEN" => "",
                 "UUID" => "",
-                "YEAR_GROUP" => patient.year_group
+                "YEAR_GROUP" => patient.year_group(academic_year:)
               }
             )
             expect(rows.first["PERSON_DOB"].to_date).to eq(
@@ -541,7 +541,7 @@ describe Reports::OfflineSessionExporter do
                 "VACCINATED" => "N",
                 "VACCINE_GIVEN" => nil,
                 "UUID" => vaccination_record.uuid,
-                "YEAR_GROUP" => patient.year_group
+                "YEAR_GROUP" => patient.year_group(academic_year:)
               }
             )
             expect(rows.first["DATE_OF_VACCINATION"].to_date).to eq(
@@ -761,7 +761,7 @@ describe Reports::OfflineSessionExporter do
                 "VACCINATED" => "",
                 "VACCINE_GIVEN" => "",
                 "UUID" => "",
-                "YEAR_GROUP" => patient.year_group
+                "YEAR_GROUP" => patient.year_group(academic_year:)
               }
             )
             expect(rows.first["PERSON_DOB"].to_date).to eq(
@@ -845,7 +845,7 @@ describe Reports::OfflineSessionExporter do
                 "VACCINATED" => "Y",
                 "VACCINE_GIVEN" => vaccination_record.vaccine.nivs_name,
                 "UUID" => vaccination_record.uuid,
-                "YEAR_GROUP" => patient.year_group
+                "YEAR_GROUP" => patient.year_group(academic_year:)
               }
             )
             expect(rows.first["BATCH_EXPIRY_DATE"].to_date).to eq(batch.expiry)

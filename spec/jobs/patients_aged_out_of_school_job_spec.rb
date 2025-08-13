@@ -13,6 +13,9 @@ describe PatientsAgedOutOfSchoolJob do
   let(:date_of_birth) { Date.new(2008, 1, 1) }
 
   let!(:patient) { create(:patient, school:, date_of_birth:) }
+  let!(:clinic_session) do
+    team.generic_clinic_session(academic_year: AcademicYear.pending)
+  end
 
   context "on the last day of July" do
     let(:today) { Date.new(2024, 7, 31) }
@@ -27,6 +30,10 @@ describe PatientsAgedOutOfSchoolJob do
 
     it "doesn't move the patient to unknown school" do
       expect { perform }.not_to(change { patient.reload.school })
+    end
+
+    it "doesn't add the patient to the clinic session" do
+      expect { perform }.not_to(change { patient.sessions.count })
     end
   end
 
@@ -48,6 +55,11 @@ describe PatientsAgedOutOfSchoolJob do
 
     it "moves the patient to unknown school" do
       expect { perform }.to change { patient.reload.school }.to(nil)
+    end
+
+    it "adds the patient to the clinic session" do
+      expect { perform }.to change { patient.sessions.count }.by(1)
+      expect(patient.sessions).to include(clinic_session)
     end
   end
 end

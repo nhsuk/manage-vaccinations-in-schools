@@ -145,7 +145,7 @@ describe User do
         end
 
         context "without workgroups" do
-          let(:user) { build(:admin, selected_role_workgroups: nil) }
+          let(:user) { build(:admin, role_workgroups: nil) }
 
           it { should be false }
         end
@@ -163,7 +163,7 @@ describe User do
         end
 
         context "without workgroups" do
-          let(:user) { build(:nurse, selected_role_workgroups: nil) }
+          let(:user) { build(:nurse, role_workgroups: nil) }
 
           it { should be false }
         end
