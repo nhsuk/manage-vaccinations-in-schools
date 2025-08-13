@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class API::Reporting::OneTimeTokensController < API::Reporting::BaseController
-  include TokenAuthenticationConcern
+  include ReportingAPI::TokenAuthenticationConcern
 
   # skip_before_action :authenticate_user!
   before_action :ensure_reporting_api_feature_enabled,
