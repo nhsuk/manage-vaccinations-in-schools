@@ -36,10 +36,9 @@ module TokenAuthenticationConcern
         data = jwt_info.first["data"]
         @current_user =
           User.find_by(
-            id: data.dig("user", "id"),
-            session_token: data.dig("user", "session_token"),
-            reporting_api_session_token:
-              data.dig("user", "reporting_api_session_token")
+            data
+              .fetch("user", {})
+              .slice("id", "session_token", "reporting_api_session_token")
           )
         if @current_user
           session["user"] = data["user"]
