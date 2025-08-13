@@ -24,6 +24,9 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     else
       @user = User.find_or_create_from_cis2_oidc(user_cis2_info, valid_teams)
 
+      # give them a session token for the reporting app also
+      @user.update!(reporting_api_session_token: SecureRandom.hex(32))
+
       # Force is set to true because the `session_token` might have changed
       # even if the same user is logging in.
       sign_in_and_redirect @user, event: :authentication, force: true
@@ -52,7 +55,7 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
 
     if validate_logout_token(logout_token)
       if @sid.blank? || @user.session_token == @sid
-        @user.update!(session_token: nil)
+        @user.update!(session_token: nil, reporting_api_session_token: nil)
       end
 
       render json: {}, status: :ok
