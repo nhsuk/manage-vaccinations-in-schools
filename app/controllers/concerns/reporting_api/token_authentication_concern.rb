@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module TokenAuthenticationConcern
+module ReportingAPI::TokenAuthenticationConcern
   extend ActiveSupport::Concern
 
   included do
@@ -36,9 +36,11 @@ module TokenAuthenticationConcern
         data = jwt_info.first["data"]
         @current_user =
           User.find_by(
-            data
-              .fetch("user", {})
-              .slice("id", "session_token", "reporting_api_session_token")
+            data.fetch("user", {}).slice(
+              "id",
+              "session_token",
+              "reporting_api_session_token"
+            )
           )
         if @current_user
           session["user"] = data["user"]

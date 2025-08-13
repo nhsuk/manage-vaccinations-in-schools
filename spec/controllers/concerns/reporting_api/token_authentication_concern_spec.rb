@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
-describe TokenAuthenticationConcern do
+describe ReportingAPI::TokenAuthenticationConcern do
   let(:user) { @user = build(:user) }
   let(:mock_request) { instance_double(request.class, headers: {}) }
   let(:an_object_which_includes_the_concern) do
     Class
       .new do # rubocop:disable Style/BlockDelimiters
-        include TokenAuthenticationConcern
+        include ReportingAPI::TokenAuthenticationConcern
         attr_accessor :request, :session
 
         def authenticate_user!
@@ -34,11 +34,15 @@ describe TokenAuthenticationConcern do
   describe "#jwt_if_given" do
     context "when there is a jwt param" do
       before do
-        allow(an_object_which_includes_the_concern).to receive(:params).and_return({ jwt: "myjwt" })
+        allow(an_object_which_includes_the_concern).to receive(
+          :params
+        ).and_return({ jwt: "myjwt" })
       end
 
       it "returns the jwt param" do
-        expect(an_object_which_includes_the_concern.send(:jwt_if_given)).to eq("myjwt")
+        expect(an_object_which_includes_the_concern.send(:jwt_if_given)).to eq(
+          "myjwt"
+        )
       end
     end
 
@@ -62,7 +66,9 @@ describe TokenAuthenticationConcern do
 
       context "and there is no Authorization header" do
         it "returns nil" do
-          expect(an_object_which_includes_the_concern.send(:jwt_if_given)).to be_nil
+          expect(
+            an_object_which_includes_the_concern.send(:jwt_if_given)
+          ).to be_nil
         end
       end
     end
@@ -76,24 +82,32 @@ describe TokenAuthenticationConcern do
 
       context "and the client_id param is provided" do
         before do
-          allow(an_object_which_includes_the_concern).to receive(:params).and_return(
-            { client_id: client_id }.with_indifferent_access
-          )
+          allow(an_object_which_includes_the_concern).to receive(
+            :params
+          ).and_return({ client_id: client_id }.with_indifferent_access)
         end
 
         context "and the client_id param contains the reporting app's client_id" do
           let(:client_id) { Settings.reporting_api.client_app.client_id }
 
           it "does not cause a token error" do
-            expect(an_object_which_includes_the_concern).not_to receive(:client_id_error!)
-            an_object_which_includes_the_concern.send(:authenticate_app_by_client_id!)
+            expect(an_object_which_includes_the_concern).not_to receive(
+              :client_id_error!
+            )
+            an_object_which_includes_the_concern.send(
+              :authenticate_app_by_client_id!
+            )
           end
         end
 
         context "and the client_id param does not contain the reporting app client_id" do
           it "causes a token error" do
-            expect(an_object_which_includes_the_concern).to receive(:client_id_error!)
-            an_object_which_includes_the_concern.send(:authenticate_app_by_client_id!)
+            expect(an_object_which_includes_the_concern).to receive(
+              :client_id_error!
+            )
+            an_object_which_includes_the_concern.send(
+              :authenticate_app_by_client_id!
+            )
           end
         end
       end
@@ -169,14 +183,18 @@ describe TokenAuthenticationConcern do
       end
 
       before do
-        allow(an_object_which_includes_the_concern).to receive(:decode_jwt!).with(jwt).and_return(
-          user_info
+        allow(an_object_which_includes_the_concern).to receive(
+          :decode_jwt!
+        ).with(jwt).and_return(user_info)
+        allow(an_object_which_includes_the_concern).to receive(
+          :authenticate_user!
         )
-        allow(an_object_which_includes_the_concern).to receive(:authenticate_user!)
       end
 
       it "decodes the JWT" do
-        expect(an_object_which_includes_the_concern).to receive(:decode_jwt!).with(jwt)
+        expect(an_object_which_includes_the_concern).to receive(
+          :decode_jwt!
+        ).with(jwt)
         an_object_which_includes_the_concern.send(:authenticate_user_by_jwt!)
       end
 
@@ -192,13 +210,15 @@ describe TokenAuthenticationConcern do
 
         it "copies the cis2_info key into session['cis2_info']" do
           an_object_which_includes_the_concern.send(:authenticate_user_by_jwt!)
-          expect(an_object_which_includes_the_concern.session["cis2_info"]).to eq(
-            user_info.first["data"]["cis2_info"]
-          )
+          expect(
+            an_object_which_includes_the_concern.session["cis2_info"]
+          ).to eq(user_info.first["data"]["cis2_info"])
         end
 
         it "calls authenticate_user!" do
-          expect(an_object_which_includes_the_concern).to receive(:authenticate_user!)
+          expect(an_object_which_includes_the_concern).to receive(
+            :authenticate_user!
+          )
           an_object_which_includes_the_concern.send(:authenticate_user_by_jwt!)
         end
       end
@@ -223,7 +243,9 @@ describe TokenAuthenticationConcern do
         end
 
         it "calls client_id_error!" do
-          expect(an_object_which_includes_the_concern).to receive(:client_id_error!)
+          expect(an_object_which_includes_the_concern).to receive(
+            :client_id_error!
+          )
           an_object_which_includes_the_concern.send(:authenticate_user_by_jwt!)
         end
       end
@@ -231,7 +253,9 @@ describe TokenAuthenticationConcern do
 
     context "when a valid jwt is not given" do
       it "causes a client_id_error!" do
-        expect(an_object_which_includes_the_concern).to receive(:client_id_error!)
+        expect(an_object_which_includes_the_concern).to receive(
+          :client_id_error!
+        )
         an_object_which_includes_the_concern.send(:authenticate_user_by_jwt!)
       end
     end
@@ -265,15 +289,17 @@ describe TokenAuthenticationConcern do
         end
 
         it "returns the decoded JWT" do
-          expect(an_object_which_includes_the_concern.send(:decode_jwt!, jwt)).to eq(decoded_jwt)
+          expect(
+            an_object_which_includes_the_concern.send(:decode_jwt!, jwt)
+          ).to eq(decoded_jwt)
         end
       end
 
       context "when decoding does not work" do
         it "raises an exception" do
-          expect { an_object_which_includes_the_concern.send(:decode_jwt!, jwt) }.to raise_error(
-            JWT::DecodeError
-          )
+          expect {
+            an_object_which_includes_the_concern.send(:decode_jwt!, jwt)
+          }.to raise_error(JWT::DecodeError)
         end
       end
     end
