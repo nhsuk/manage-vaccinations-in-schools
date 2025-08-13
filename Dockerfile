@@ -80,7 +80,7 @@ USER 1000:1000
 # Entrypoint prepares the database.
 ENTRYPOINT ["/rails/bin/docker-entrypoint"]
 
-VOLUME ["/rails/tmp", "rails/log", "/tmp", "/var/log", "/var/lib/amazon/ssm"]
+VOLUME ["/rails/db/data", "/rails/tmp", "/rails/log", "/tmp", "/var/log", "/var/lib/amazon/ssm"]
 
 # Start web server by default, this can be overwritten by environment variable
 EXPOSE 4000
