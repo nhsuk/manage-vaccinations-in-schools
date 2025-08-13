@@ -79,5 +79,7 @@ class ClassImport < PatientImport
       end
 
     SchoolMove.import(school_moves, on_duplicate_key_ignore: true)
+
+    PatientsAgedOutOfSchoolJob.perform_later
   end
 end
