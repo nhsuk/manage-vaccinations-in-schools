@@ -181,17 +181,6 @@ class PatientSession < ApplicationRecord
           )
         end
 
-  scope :has_session_status,
-        ->(status, programme:) do
-          where(
-            PatientSession::SessionStatus
-              .where("patient_session_id = patient_sessions.id")
-              .where(status:, programme:)
-              .arel
-              .exists
-          )
-        end
-
   scope :has_triage_status,
         ->(status, programme:) do
           joins(:session).where(
