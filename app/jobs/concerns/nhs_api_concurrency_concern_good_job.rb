@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module NHSAPIConcurrencyConcern
+module NHSAPIConcurrencyConcernGoodJob
   extend ActiveSupport::Concern
 
   include GoodJob::ActiveJobExtensions::Concurrency

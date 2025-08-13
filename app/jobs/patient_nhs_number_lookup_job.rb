@@ -4,7 +4,7 @@ class PatientNHSNumberLookupJob < ApplicationJob
   def self.concurrent_jobs_per_second = 5
   def self.concurrency_key = :pds
 
-  include NHSAPIConcurrencyConcern
+  include NHSAPIConcurrencyConcernGoodJob
 
   queue_as :imports
 
