@@ -1,0 +1,19 @@
+# frozen_string_literal: true
+
+require "sidekiq/throttled"
+
+redis_config = { url: ENV["SIDEKIQ_REDIS_URL"] || ENV["REDIS_URL"] }
+
+if Rails.env.production? || Rails.env.staging?
+  redis_config[:ssl_params] = { verify_mode: OpenSSL::SSL::VERIFY_NONE }
+  redis_config[:timeout] = 10
+end
+
+Sidekiq.configure_server { |config| config.redis = redis_config }
+
+Sidekiq.configure_client { |config| config.redis = redis_config }
+
+Sidekiq::Throttled.configure do |config|
+  config.cooldown_period = 1.0
+  config.cooldown_threshold = 1000
+end
