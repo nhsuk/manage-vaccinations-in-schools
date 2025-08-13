@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+require "sidekiq/web"
+require "sidekiq/throttled/web"
+
 Rails.application.routes.draw do
   # Redirect www subdomain to root in production envs
   unless Rails.env.local?
@@ -37,6 +40,18 @@ Rails.application.routes.draw do
   root to: redirect("/start")
 
   mount GoodJob::Engine => "/good-job"
+
+  Sidekiq::Web.use Rack::Auth::Basic do |username, password|
+    ActiveSupport::SecurityUtils.secure_compare(
+      Rails.application.credentials.support_username,
+      username
+    ) &&
+      ActiveSupport::SecurityUtils.secure_compare(
+        Rails.application.credentials.support_password,
+        password
+      )
+  end
+  mount Sidekiq::Web => "/sidekiq"
 
   get "/start", to: "pages#start"
   get "/dashboard", to: "dashboard#index"
