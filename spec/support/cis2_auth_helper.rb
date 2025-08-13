@@ -36,7 +36,7 @@ module CIS2AuthHelper
               "role_code" => "S8000:G8000:R8001",
               "activities" => [],
               "activity_codes" => [],
-              "workgroups" => [],
+              "workgroups" => ["schoolagedimmunisations"],
               "workgroups_codes" => ["15025792819"]
             },
             {
@@ -48,7 +48,7 @@ module CIS2AuthHelper
               "role_code" => "S8000:G8000:R8003",
               "activities" => [],
               "activity_codes" => [],
-              "workgroups" => [],
+              "workgroups" => ["schoolagedimmunisations"],
               "workgroups_codes" => ["15025792819"]
             },
             {
@@ -72,7 +72,7 @@ module CIS2AuthHelper
               "role_code" => "S8000:G8000:R8001",
               "activities" => [],
               "activity_codes" => [],
-              "workgroups" => [],
+              "workgroups" => ["schoolagedimmunisations"],
               "workgroups_codes" => ["15025792819"]
             }
           ],
@@ -94,6 +94,7 @@ module CIS2AuthHelper
   end
 
   def cis2_sign_in(user, workgroups:, role:, ods_code:, superuser:)
+    workgroups.insert(0, "schoolagedimmunisations")
     workgroups << "mavissuperusers" if superuser
 
     mock_cis2_auth(

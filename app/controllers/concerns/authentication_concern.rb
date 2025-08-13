@@ -17,12 +17,12 @@ module AuthenticationConcern
           redirect_to start_path
         end
       elsif cis2_enabled?
-        if !selected_cis2_role_is_valid?
+        if !selected_cis2_workgroup_is_valid?
+          redirect_to users_workgroup_not_found_path
+        elsif !selected_cis2_role_is_valid?
           redirect_to users_role_not_found_path
         elsif !selected_cis2_org_is_registered?
           redirect_to users_organisation_not_found_path
-        elsif !selected_cis2_workgroup_is_valid?
-          redirect_to users_workgroup_not_found_path
         end
       end
     end
@@ -36,7 +36,7 @@ module AuthenticationConcern
     end
 
     def selected_cis2_workgroup_is_valid?
-      cis2_info.has_valid_workgroup?
+      cis2_info.has_workgroup?
     end
 
     def selected_cis2_role_is_valid?

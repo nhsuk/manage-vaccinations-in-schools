@@ -21,7 +21,7 @@ class SelectTeamForm
       cis2_info.update!(
         organisation_code: team.organisation.ods_code,
         role_code: CIS2Info::NURSE_ROLE,
-        workgroups: [team.workgroup]
+        workgroups: [CIS2Info::WORKGROUP] + [team.workgroup]
       )
     end
 
