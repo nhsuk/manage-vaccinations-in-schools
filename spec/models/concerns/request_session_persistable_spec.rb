@@ -20,8 +20,17 @@ describe RequestSessionPersistable do
   let(:model) { model_class.new(request_session:, **attributes) }
 
   let(:request_session) { {} }
+  let(:attributes) { {} }
 
   describe "#initialize" do
+    context "with unknown attributes in the session" do
+      let(:request_session) { { "unknown" => "value" } }
+
+      it "does not raise an error" do
+        expect { model }.not_to raise_error
+      end
+    end
+
     context "with a datetime attribute" do
       let(:attributes) { { datetime: "2025-05-21 11:48:17 +0100" } }
 

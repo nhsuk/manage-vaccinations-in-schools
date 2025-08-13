@@ -13,7 +13,10 @@ module RequestSessionPersistable
 
     stored_attributes = @request_session[request_session_key] || {}
 
-    super(stored_attributes.merge(attributes))
+    super({})
+
+    assign_attributes(stored_attributes.slice(*attribute_names))
+    assign_attributes(attributes)
 
     clear_changes_information
 
