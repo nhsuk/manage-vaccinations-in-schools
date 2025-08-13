@@ -14,7 +14,7 @@
           @form,
           url: session_patients_path(@session),
           programmes: @session.programmes,
-          vaccination_statuses: Patient::VaccinationStatus.statuses.keys,
+          vaccination_statuses: @statuses,
           year_groups: @session.year_groups,
         ) %>
   </div>

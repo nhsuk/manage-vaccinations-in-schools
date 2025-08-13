@@ -62,11 +62,6 @@ describe StatusUpdater do
       expect { call }.to change(patient.vaccination_statuses, :count).by(1)
       expect(patient.vaccination_statuses.first).to be_none_yet
     end
-
-    it "creates a patient session session vaccination status" do
-      expect { call }.to change(patient_session.session_statuses, :count).by(1)
-      expect(patient_session.session_statuses.first).to be_none_yet
-    end
   end
 
   context "with an HPV session and eligible patient" do
@@ -93,11 +88,6 @@ describe StatusUpdater do
     it "creates a patient vaccination status" do
       expect { call }.to change(patient.vaccination_statuses, :count).by(1)
       expect(patient.vaccination_statuses.first).to be_none_yet
-    end
-
-    it "creates a patient session session vaccination status" do
-      expect { call }.to change(patient_session.session_statuses, :count).by(1)
-      expect(patient_session.session_statuses.first).to be_none_yet
     end
   end
 
@@ -153,12 +143,6 @@ describe StatusUpdater do
       expect { call }.to change(patient.vaccination_statuses, :count).by(2)
       expect(patient.vaccination_statuses.first).to be_none_yet
       expect(patient.vaccination_statuses.second).to be_none_yet
-    end
-
-    it "creates a patient session session status for both programmes" do
-      expect { call }.to change(patient_session.session_statuses, :count).by(2)
-      expect(patient_session.session_statuses.first).to be_none_yet
-      expect(patient_session.session_statuses.second).to be_none_yet
     end
   end
 end

@@ -47,7 +47,6 @@ class PatientSession < ApplicationRecord
   has_many :gillick_assessments
   has_many :pre_screenings
   has_many :session_attendances, dependent: :destroy
-  has_many :session_statuses
   has_one :registration_status
 
   has_one :location, through: :session
