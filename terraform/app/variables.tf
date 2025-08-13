@@ -179,7 +179,6 @@ locals {
   is_production = var.environment == "production"
   parameter_store_variables = tomap({
     MAVIS__PDS__ENQUEUE_BULK_UPDATES                = var.enable_pds_enqueue_bulk_updates ? "true" : "false"
-    MAVIS__PDS__WAIT_BETWEEN_JOBS                   = 0.5
     MAVIS__ACADEMIC_YEAR_TODAY_OVERRIDE             = var.academic_year_today_override
     MAVIS__ACADEMIC_YEAR_NUMBER_OF_PREPARATION_DAYS = var.academic_year_number_of_preparation_days
     GOOD_JOB_MAX_THREADS                            = 5

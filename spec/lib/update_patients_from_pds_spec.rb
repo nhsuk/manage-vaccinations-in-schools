@@ -34,18 +34,4 @@ describe UpdatePatientsFromPDS do
       .exactly(2)
       .times
   end
-
-  it "schedules the jobs with a gap between them" do
-    freeze_time do
-      expect { call }.to have_enqueued_job(PatientUpdateFromPDSJob).at(
-        Time.current
-      ).and have_enqueued_job(PatientUpdateFromPDSJob).at(
-              Time.current + 2.seconds
-            ).and have_enqueued_job(PatientNHSNumberLookupJob).at(
-                    Time.current + 4.seconds
-                  ).and have_enqueued_job(PatientNHSNumberLookupJob).at(
-                          Time.current + 6.seconds
-                        )
-    end
-  end
 end
