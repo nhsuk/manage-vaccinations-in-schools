@@ -31,15 +31,11 @@ describe "User CIS2 authentication" do
   end
 
   def given_i_am_setup_in_cis2_but_not_mavis
-    mock_cis2_auth(
-      org_code: "A9A5A",
-      org_name: "SAIS Team",
-      workgroups: %w[a9a5a]
-    )
+    mock_cis2_auth(org_code: "A9A5A", org_name: "SAIS Team")
   end
 
   def given_my_team_has_been_setup_in_mavis
-    @team = create(:team, ods_code: "A9A5A", workgroup: "a9a5a")
+    @team = create(:team, ods_code: "A9A5A")
   end
 
   def when_i_go_to_the_start_page

@@ -28,7 +28,7 @@ describe "User CIS2 authentication", :cis2 do
       family_name: "Test",
       org_code: @team.organisation.ods_code,
       org_name: @team.name,
-      workgroups: [@team.workgroup]
+      workgroups: [CIS2Info::WORKGROUP, @team.workgroup]
     )
   end
 
