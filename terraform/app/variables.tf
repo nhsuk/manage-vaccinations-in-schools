@@ -100,6 +100,13 @@ variable "vpc_log_retention_days" {
   nullable    = false
 }
 
+variable "reporting_flask_secret_version" {
+  type        = number
+  default     = 1
+  description = "Version of the secret used by the reporting service to sign cookies, increment this value if the secret is changed."
+  nullable    = false
+}
+
 ########## Task definition configuration ##########
 
 variable "rails_env" {

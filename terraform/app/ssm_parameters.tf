@@ -8,11 +8,30 @@ resource "aws_ssm_parameter" "environment_config" {
 
 resource "aws_secretsmanager_secret" "jwt_sign" {
   name                    = "rep-jwt-signing-secret-${var.environment}"
-  description             = "Secret for JSON signing key"
+  description             = "Secret for jwt signing"
   recovery_window_in_days = 7
   tags = {
-    Name = "json-signing-${var.environment}"
+    Name = "jwt-signing-${var.environment}"
   }
+}
+
+resource "aws_secretsmanager_secret" "reporting_flask" {
+  name                    = "reporting-cookie-secret-${var.environment}"
+  description             = "Secret for signing cookies in the reporting service"
+  recovery_window_in_days = 7
+  tags = {
+    Name = "reporting-cookie-secret-${var.environment}"
+  }
+}
+
+ephemeral "aws_secretsmanager_random_password" "reporting_flask" {
+  password_length = 42
+}
+
+resource "aws_secretsmanager_secret_version" "source" {
+  secret_id                = aws_secretsmanager_secret.reporting_flask.id
+  secret_string_wo         = ephemeral.aws_secretsmanager_random_password.reporting_flask.random_password
+  secret_string_wo_version = var.reporting_flask_secret_version
 }
 
 resource "aws_secretsmanager_secret_rotation" "jwt_sign" {

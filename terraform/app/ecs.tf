@@ -165,10 +165,16 @@ module "reporting_service" {
         value = aws_secretsmanager_secret.jwt_sign.name
       }
     ]
-    secrets = [{
-      name      = "CLIENT_SECRET"
-      valueFrom = aws_secretsmanager_secret.jwt_sign.arn
-    }]
+    secrets = [
+      {
+        name      = "CLIENT_SECRET"
+        valueFrom = aws_secretsmanager_secret.jwt_sign.arn
+      },
+      {
+        name      = "SECRET_KEY"
+        valueFrom = aws_secretsmanager_secret.reporting_flask.arn
+      }
+    ]
     cpu                  = 1024
     memory               = 2048
     docker_image         = local.reporting_image
