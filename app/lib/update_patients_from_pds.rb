@@ -1,9 +1,8 @@
 # frozen_string_literal: true
 
 class UpdatePatientsFromPDS
-  def initialize(patients, priority:, queue:)
+  def initialize(patients, queue:)
     @patients = patients
-    @priority = priority
     @queue = queue
   end
 
@@ -19,13 +18,11 @@ class UpdatePatientsFromPDS
 
         if patient.nhs_number.nil?
           PatientNHSNumberLookupJob.set(
-            priority:,
             queue:,
             wait: index * wait_between_jobs
           ).perform_later(patient)
         else
           PatientUpdateFromPDSJob.set(
-            priority:,
             queue:,
             wait: index * wait_between_jobs
           ).perform_later(patient)
@@ -40,7 +37,7 @@ class UpdatePatientsFromPDS
 
   private
 
-  attr_reader :patients, :priority, :queue
+  attr_reader :patients, :queue
 
   def settings
     @settings ||= Settings.pds
