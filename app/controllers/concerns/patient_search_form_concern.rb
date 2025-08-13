@@ -30,7 +30,6 @@ module PatientSearchFormConcern
       :programme_status,
       :q,
       :register_status,
-      :session_status,
       :triage_status,
       :vaccine_method,
       consent_statuses: [],

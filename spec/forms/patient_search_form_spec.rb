@@ -32,7 +32,6 @@ describe PatientSearchForm do
   let(:programme_types) { nil }
   let(:q) { "query" }
   let(:register_status) { nil }
-  let(:session_status) { nil }
   let(:triage_status) { nil }
   let(:vaccine_method) { nil }
   let(:year_groups) { %w[8 9 10 11] }
@@ -50,7 +49,6 @@ describe PatientSearchForm do
       programme_types:,
       q:,
       register_status:,
-      session_status:,
       triage_status:,
       vaccine_method:,
       year_groups:
@@ -77,7 +75,6 @@ describe PatientSearchForm do
       let(:programme_status) { nil }
       let(:q) { nil }
       let(:register_status) { nil }
-      let(:session_status) { nil }
       let(:triage_status) { nil }
       let(:year_groups) { nil }
 
@@ -126,7 +123,6 @@ describe PatientSearchForm do
       let(:programme_status) { nil }
       let(:q) { nil }
       let(:register_status) { nil }
-      let(:session_status) { nil }
       let(:triage_status) { nil }
       let(:year_groups) { nil }
 
@@ -173,7 +169,6 @@ describe PatientSearchForm do
       let(:programme_status) { nil }
       let(:q) { nil }
       let(:register_status) { nil }
-      let(:session_status) { nil }
       let(:triage_status) { nil }
       let(:year_groups) { nil }
 
@@ -230,7 +225,6 @@ describe PatientSearchForm do
       let(:programme_types) { programmes.map(&:type) }
       let(:q) { nil }
       let(:register_status) { nil }
-      let(:session_status) { nil }
       let(:triage_status) { nil }
       let(:year_groups) { nil }
 
@@ -264,7 +258,6 @@ describe PatientSearchForm do
       let(:programme_types) { programmes.map(&:type) }
       let(:q) { nil }
       let(:register_status) { nil }
-      let(:session_status) { nil }
       let(:triage_status) { nil }
       let(:year_groups) { nil }
 
@@ -290,7 +283,6 @@ describe PatientSearchForm do
       let(:programme_status) { nil }
       let(:q) { nil }
       let(:register_status) { nil }
-      let(:session_status) { nil }
       let(:triage_status) { nil }
       let(:year_groups) { nil }
 
@@ -374,7 +366,6 @@ describe PatientSearchForm do
       let(:programme_types) { programmes.map(&:type) }
       let(:q) { nil }
       let(:register_status) { nil }
-      let(:session_status) { nil }
       let(:triage_status) { nil }
       let(:year_groups) { nil }
 
@@ -428,26 +419,6 @@ describe PatientSearchForm do
       end
     end
 
-    context "filtering on session status" do
-      let(:consent_statuses) { nil }
-      let(:date_of_birth_day) { nil }
-      let(:date_of_birth_month) { nil }
-      let(:date_of_birth_year) { nil }
-      let(:missing_nhs_number) { nil }
-      let(:programme_status) { nil }
-      let(:programme_types) { programmes.map(&:type) }
-      let(:q) { nil }
-      let(:register_status) { nil }
-      let(:session_status) { "vaccinated" }
-      let(:triage_status) { nil }
-      let(:year_groups) { nil }
-
-      it "filters on session status" do
-        patient_session = create(:patient_session, :vaccinated, session:)
-        expect(form.apply(scope)).to include(patient_session)
-      end
-    end
-
     context "filtering on register status" do
       let(:consent_statuses) { nil }
       let(:date_of_birth_day) { nil }
@@ -457,7 +428,6 @@ describe PatientSearchForm do
       let(:programme_status) { nil }
       let(:q) { nil }
       let(:register_status) { "attending" }
-      let(:session_status) { nil }
       let(:triage_status) { nil }
       let(:year_groups) { nil }
 
@@ -477,7 +447,6 @@ describe PatientSearchForm do
       let(:programme_types) { programmes.map(&:type) }
       let(:q) { nil }
       let(:register_status) { nil }
-      let(:session_status) { nil }
       let(:triage_status) { "required" }
       let(:year_groups) { nil }
 

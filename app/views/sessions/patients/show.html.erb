@@ -15,7 +15,6 @@
           url: session_patients_path(@session),
           programmes: @session.programmes,
           programme_statuses: Patient::VaccinationStatus.statuses.keys,
-          session_statuses: @statuses,
           year_groups: @session.year_groups,
         ) %>
   </div>

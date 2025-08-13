@@ -20,9 +20,7 @@ describe "Manage attendance" do
     then_i_see_the_absent_flash
 
     when_i_go_to_the_session_patients
-    then_i_see_a_patient_is_absent
-
-    when_i_go_to_a_patient
+    and_i_go_to_a_patient
     then_the_patient_is_not_registered_yet
     and_i_am_not_able_to_vaccinate
 
@@ -138,17 +136,7 @@ describe "Manage attendance" do
     within(".app-secondary-navigation") { click_on "Children" }
   end
 
-  def then_i_see_a_patient_is_absent
-    choose "Absent from session"
-    click_on "Update results"
-
-    expect(page).to have_content("Showing 1 to 1 of 1 children")
-  end
-
-  def when_i_go_to_a_patient
-    choose "Any", match: :first
-    click_on "Update results"
-
+  def and_i_go_to_a_patient
     click_link PatientSession
                  .where
                  .missing(:session_attendances)
@@ -156,8 +144,6 @@ describe "Manage attendance" do
                  .patient
                  .full_name
   end
-
-  alias_method :and_i_go_to_a_patient, :when_i_go_to_a_patient
 
   def then_the_patient_is_not_registered_yet
     expect(page).to have_content("Not registered yet")

@@ -67,18 +67,6 @@ class AppPatientSearchFormComponent < ViewComponent::Base
           <% end %>
         <% end %>
 
-        <% if session_statuses.any? %>
-          <%= f.govuk_radio_buttons_fieldset :session_status, legend: { text: "Session outcome", size: "s" } do %>
-            <%= f.govuk_radio_button :session_status, "", checked: form.session_status.blank?, label: { text: "Any" } %>
-            <% session_statuses.each do |status| %>
-              <%= f.govuk_radio_button :session_status,
-                                       status,
-                                       checked: form.session_status == status,
-                                       label: { text: t(status, scope: %i[status session label]) } %>
-            <% end %>
-          <% end %>
-        <% end %>
-
         <% if programme_statuses.any? %>
           <%= f.govuk_radio_buttons_fieldset :programme_status, legend: { text: "Programme outcome", size: "s" } do %>
             <%= f.govuk_radio_button :programme_status, "", checked: form.programme_status.blank?, label: { text: "Any" } %>
@@ -193,7 +181,6 @@ class AppPatientSearchFormComponent < ViewComponent::Base
     consent_statuses: [],
     programme_statuses: [],
     register_statuses: [],
-    session_statuses: [],
     triage_statuses: [],
     vaccine_methods: [],
     year_groups: [],
@@ -209,7 +196,6 @@ class AppPatientSearchFormComponent < ViewComponent::Base
     @consent_statuses = consent_statuses
     @programme_statuses = programme_statuses
     @register_statuses = register_statuses
-    @session_statuses = session_statuses
     @triage_statuses = triage_statuses
     @vaccine_methods = vaccine_methods
     @year_groups = year_groups
@@ -225,7 +211,6 @@ class AppPatientSearchFormComponent < ViewComponent::Base
               :consent_statuses,
               :programme_statuses,
               :register_statuses,
-              :session_statuses,
               :triage_statuses,
               :vaccine_methods,
               :year_groups,
@@ -241,8 +226,7 @@ class AppPatientSearchFormComponent < ViewComponent::Base
   def show_buttons_in_details?
     !(
       consent_statuses.any? || programme_statuses.any? ||
-        register_statuses.any? || session_statuses.any? ||
-        triage_statuses.any? || year_groups.any?
+        register_statuses.any? || triage_statuses.any? || year_groups.any?
     )
   end
 
