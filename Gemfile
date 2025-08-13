@@ -60,6 +60,8 @@ gem "ruby-progressbar"
 gem "rubyzip"
 gem "sentry-rails"
 gem "sentry-ruby"
+gem "sidekiq"
+gem "sidekiq-throttled"
 gem "splunk-sdk-ruby"
 gem "table_tennis"
 gem "tzinfo-data", platforms: %i[mingw mswin x64_mingw jruby]
