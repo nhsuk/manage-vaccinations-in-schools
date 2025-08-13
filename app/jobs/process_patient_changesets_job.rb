@@ -1,12 +1,9 @@
 # frozen_string_literal: true
 
 class ProcessPatientChangesetsJob < ApplicationJob
-  def self.concurrent_jobs_per_second = 5
-  def self.concurrency_key = :pds
+  include NHSAPIConcurrencyConcernSidekiq
 
-  include NHSAPIConcurrencyConcernGoodJob
-
-  queue_as :pds
+  queue_as :imports
 
   def perform(patient_changeset)
     attrs = patient_changeset.child_attributes

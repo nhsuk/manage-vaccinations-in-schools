@@ -17,3 +17,11 @@ Sidekiq::Throttled.configure do |config|
   config.cooldown_period = 1.0
   config.cooldown_threshold = 1000
 end
+
+Sidekiq::Throttled::Registry.add(
+  :pds,
+  threshold: {
+    limit: 5,
+    period: 1.second
+  }
+)

@@ -1,10 +1,7 @@
 # frozen_string_literal: true
 
 class PatientUpdateFromPDSJob < ApplicationJob
-  def self.concurrent_jobs_per_second = 5
-  def self.concurrency_key = :pds
-
-  include NHSAPIConcurrencyConcernGoodJob
+  include NHSAPIConcurrencyConcernSidekiq
 
   queue_as :pds
 

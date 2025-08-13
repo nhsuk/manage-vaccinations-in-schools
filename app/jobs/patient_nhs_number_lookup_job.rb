@@ -1,12 +1,9 @@
 # frozen_string_literal: true
 
 class PatientNHSNumberLookupJob < ApplicationJob
-  def self.concurrent_jobs_per_second = 5
-  def self.concurrency_key = :pds
+  include NHSAPIConcurrencyConcernSidekiq
 
-  include NHSAPIConcurrencyConcernGoodJob
-
-  queue_as :imports
+  queue_as :pds
 
   def perform(patient)
     return if patient.nhs_number.present? && !patient.invalidated?
