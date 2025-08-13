@@ -52,8 +52,11 @@ describe "Invalidate consent" do
 
   scenario "Given self consent, and requested parents aren't notified, and vaccinated, then invalidate" do
     given_i_am_signed_in
-    and_self_consent_has_been_given
-    and_patient_has_been_vaccinated_with_no_parent_notification
+    and_the_api_feature_flag_is_enabled
+    and_self_consent_has_been_given_with_no_parent_notification
+
+    when_the_patient_has_been_vaccinated_with_no_parent_notification
+    then_the_record_is_not_synced_to_the_imms_api
 
     when_i_go_to_the_patient
     then_i_see_the_self_consent
@@ -64,7 +67,8 @@ describe "Invalidate consent" do
     when_i_fill_in_the_notes
     and_i_click_invalidate_consent
     then_i_see_the_consent_has_been_invalidated
-    and_the_vaccination_record_is_updated_to_notify_parents
+    and_the_vaccination_record_is_updated_to_notify_parents_true
+    and_the_vaccination_record_is_synced_to_the_imms_api
   end
 
   def given_i_am_signed_in
@@ -74,6 +78,11 @@ describe "Invalidate consent" do
     @patient = create(:patient, session: @session)
 
     sign_in team.users.first
+  end
+
+  def and_the_api_feature_flag_is_enabled
+    Flipper.enable(:enqueue_sync_vaccination_records_to_nhs)
+    Flipper.enable(:immunisations_fhir_api_integration)
   end
 
   def and_consent_has_been_given
@@ -161,7 +170,7 @@ describe "Invalidate consent" do
     expect(page).not_to have_content("ready for their HPV vaccination?")
   end
 
-  def and_self_consent_has_been_given
+  def and_self_consent_has_been_given_with_no_parent_notification
     @consent =
       create(
         :consent,
@@ -178,7 +187,7 @@ describe "Invalidate consent" do
     )
   end
 
-  def and_patient_has_been_vaccinated_with_no_parent_notification
+  def when_the_patient_has_been_vaccinated_with_no_parent_notification
     @vaccination_record =
       create(
         :vaccination_record,
@@ -197,7 +206,20 @@ describe "Invalidate consent" do
     click_on "Child (Gillick competent)"
   end
 
-  def and_the_vaccination_record_is_updated_to_notify_parents
+  def and_the_vaccination_record_is_updated_to_notify_parents_true
     expect(@vaccination_record.reload.notify_parents).to be true
+  end
+
+  def then_the_record_is_not_synced_to_the_imms_api
+    @stubbed_post_request =
+      stub_immunisations_api_post(uuid: @vaccination_record.uuid)
+
+    perform_enqueued_jobs(only: SyncVaccinationRecordToNHSJob)
+    expect(@stubbed_post_request).not_to have_been_requested
+  end
+
+  def and_the_vaccination_record_is_synced_to_the_imms_api
+    perform_enqueued_jobs(only: SyncVaccinationRecordToNHSJob)
+    expect(@stubbed_post_request).to have_been_requested
   end
 end
