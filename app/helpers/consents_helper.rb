@@ -34,7 +34,7 @@ module ConsentsHelper
       if consent.withdrawn? || consent.invalidated?
         "grey"
       elsif consent.response_given?
-        "green"
+        "aqua-green"
       elsif consent.response_refused?
         "red"
       else
@@ -50,10 +50,12 @@ module ConsentsHelper
         )
       end
 
+    # We can’t use the colour param as NHS.UK frontend uses different colour
+    # names (aqua-green) than those supported by GOV.UK Frontend (turquoise)
     if consent.invalidated?
       safe_join(
         [
-          govuk_tag(text: tag.s(text), colour:),
+          govuk_tag(text: tag.s(text), classes: "nhsuk-tag--#{colour}"),
           vaccine_method,
           tag.span("Invalid", class: "nhsuk-u-secondary-text-color")
         ].compact
@@ -61,13 +63,18 @@ module ConsentsHelper
     elsif consent.withdrawn?
       safe_join(
         [
-          govuk_tag(text: tag.s(text), colour:),
+          govuk_tag(text: tag.s(text), classes: "nhsuk-tag--#{colour}"),
           vaccine_method,
           tag.span("Withdrawn", class: "nhsuk-u-secondary-text-color")
         ].compact
       )
     else
-      safe_join([govuk_tag(text:, colour:), vaccine_method].compact)
+      safe_join(
+        [
+          govuk_tag(text:, classes: "nhsuk-tag--#{colour}"),
+          vaccine_method
+        ].compact
+      )
     end
   end
 end
