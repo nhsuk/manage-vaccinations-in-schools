@@ -151,13 +151,13 @@ describe Patient::VaccinationStatus do
     context "with a consent refused" do
       before { create(:consent, :refused, patient:, programme:) }
 
-      it { should be(:none_yet) }
+      it { should be(:refused) }
     end
 
     context "with a triage as unsafe to vaccination" do
       before { create(:triage, :do_not_vaccinate, patient:, programme:) }
 
-      it { should be(:none_yet) }
+      it { should be(:had_contraindications) }
     end
 
     context "with a discarded vaccination administered" do

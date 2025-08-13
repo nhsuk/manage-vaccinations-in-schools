@@ -76,16 +76,23 @@ class Patient::VaccinationStatus < ApplicationRecord
 
   def session_generator
     @session_generator ||=
-      if (session_id = vaccination_records.first&.session_id)
-        StatusGenerator::Session.new(
-          session_id:,
-          academic_year:,
-          session_attendance:,
-          programme_id:,
-          consents:,
-          triages:,
-          vaccination_records:
-        )
+      StatusGenerator::Session.new(
+        session_id:,
+        academic_year:,
+        session_attendance:,
+        programme_id:,
+        consents:,
+        triages:,
+        vaccination_records:
+      )
+  end
+
+  def latest_vaccination_record
+    @latest_vaccination_record ||=
+      vaccination_records.find do
+        it.academic_year == academic_year && it.programme_id == programme_id
       end
   end
+
+  delegate :session_id, to: :latest_vaccination_record, allow_nil: true
 end

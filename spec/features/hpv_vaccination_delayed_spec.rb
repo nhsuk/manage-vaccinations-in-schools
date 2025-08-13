@@ -100,7 +100,7 @@ describe "HPV vaccination" do
   end
 
   def then_i_see_the_patient_has_no_outcome_yet
-    expect(page).to have_content("Session outcome\nHPVUnwell")
+    expect(page).to have_content("Outcome\nHPVNo outcome yetUnwell")
   end
 
   def when_vaccination_confirmations_are_sent

@@ -11,7 +11,7 @@ class PatientSearchForm < SearchForm
   attribute :date_of_birth_month, :integer
   attribute :date_of_birth_year, :integer
   attribute :missing_nhs_number, :boolean
-  attribute :programme_status, :string
+  attribute :vaccination_status, :string
   attribute :programme_types, array: true
   attribute :q, :string
   attribute :register_status, :string
@@ -153,7 +153,7 @@ class PatientSearchForm < SearchForm
   end
 
   def filter_vaccination_statuses(scope)
-    if (status = programme_status&.to_sym).present?
+    if (status = vaccination_status&.to_sym).present?
       if @session
         scope.has_vaccination_status(status, programme: programmes)
       else

@@ -28,7 +28,7 @@ describe PatientSearchForm do
   let(:date_of_birth_month) { Date.current.month }
   let(:date_of_birth_year) { Date.current.year }
   let(:missing_nhs_number) { true }
-  let(:programme_status) { nil }
+  let(:vaccination_status) { nil }
   let(:programme_types) { nil }
   let(:q) { "query" }
   let(:register_status) { nil }
@@ -45,7 +45,7 @@ describe PatientSearchForm do
       date_of_birth_month:,
       date_of_birth_year:,
       missing_nhs_number:,
-      programme_status:,
+      vaccination_status:,
       programme_types:,
       q:,
       register_status:,
@@ -72,7 +72,7 @@ describe PatientSearchForm do
       let(:date_of_birth_month) { nil }
       let(:date_of_birth_year) { nil }
       let(:missing_nhs_number) { nil }
-      let(:programme_status) { nil }
+      let(:vaccination_status) { nil }
       let(:q) { nil }
       let(:register_status) { nil }
       let(:triage_status) { nil }
@@ -120,7 +120,7 @@ describe PatientSearchForm do
       let(:date_of_birth_month) { nil }
       let(:date_of_birth_year) { nil }
       let(:missing_nhs_number) { nil }
-      let(:programme_status) { nil }
+      let(:vaccination_status) { nil }
       let(:q) { nil }
       let(:register_status) { nil }
       let(:triage_status) { nil }
@@ -166,7 +166,7 @@ describe PatientSearchForm do
       let(:date_of_birth_month) { nil }
       let(:date_of_birth_year) { nil }
       let(:missing_nhs_number) { nil }
-      let(:programme_status) { nil }
+      let(:vaccination_status) { nil }
       let(:q) { nil }
       let(:register_status) { nil }
       let(:triage_status) { nil }
@@ -221,7 +221,7 @@ describe PatientSearchForm do
       let(:date_of_birth_month) { nil }
       let(:date_of_birth_year) { nil }
       let(:missing_nhs_number) { nil }
-      let(:programme_status) { nil }
+      let(:vaccination_status) { nil }
       let(:programme_types) { programmes.map(&:type) }
       let(:q) { nil }
       let(:register_status) { nil }
@@ -254,7 +254,7 @@ describe PatientSearchForm do
       let(:date_of_birth_month) { nil }
       let(:date_of_birth_year) { nil }
       let(:missing_nhs_number) { nil }
-      let(:programme_status) { "vaccinated" }
+      let(:vaccination_status) { "vaccinated" }
       let(:programme_types) { programmes.map(&:type) }
       let(:q) { nil }
       let(:register_status) { nil }
@@ -280,7 +280,7 @@ describe PatientSearchForm do
       let(:date_of_birth_month) { nil }
       let(:date_of_birth_year) { nil }
       let(:missing_nhs_number) { nil }
-      let(:programme_status) { nil }
+      let(:vaccination_status) { nil }
       let(:q) { nil }
       let(:register_status) { nil }
       let(:triage_status) { nil }
@@ -362,7 +362,7 @@ describe PatientSearchForm do
       let(:date_of_birth_month) { nil }
       let(:date_of_birth_year) { nil }
       let(:missing_nhs_number) { nil }
-      let(:programme_status) { nil }
+      let(:vaccination_status) { nil }
       let(:programme_types) { programmes.map(&:type) }
       let(:q) { nil }
       let(:register_status) { nil }
@@ -398,7 +398,7 @@ describe PatientSearchForm do
       let(:date_of_birth_month) { nil }
       let(:date_of_birth_year) { nil }
       let(:missing_nhs_number) { nil }
-      let(:programme_status) { nil }
+      let(:vaccination_status) { nil }
       let(:programme_types) { programmes.map(&:type) }
       let(:q) { nil }
       let(:register_status) { nil }
@@ -425,7 +425,7 @@ describe PatientSearchForm do
       let(:date_of_birth_month) { nil }
       let(:date_of_birth_year) { nil }
       let(:missing_nhs_number) { nil }
-      let(:programme_status) { nil }
+      let(:vaccination_status) { nil }
       let(:q) { nil }
       let(:register_status) { "attending" }
       let(:triage_status) { nil }
@@ -443,7 +443,7 @@ describe PatientSearchForm do
       let(:date_of_birth_month) { nil }
       let(:date_of_birth_year) { nil }
       let(:missing_nhs_number) { nil }
-      let(:programme_status) { nil }
+      let(:vaccination_status) { nil }
       let(:programme_types) { programmes.map(&:type) }
       let(:q) { nil }
       let(:register_status) { nil }
@@ -464,7 +464,7 @@ describe PatientSearchForm do
       let(:date_of_birth_month) { nil }
       let(:date_of_birth_year) { nil }
       let(:missing_nhs_number) { nil }
-      let(:programme_status) { nil }
+      let(:vaccination_status) { nil }
       let(:programme_types) { programmes.map(&:type) }
       let(:q) { nil }
       let(:register_status) { nil }

@@ -2,10 +2,9 @@ en:
   status:
     label:
       consent: Consent status
-      programme: Programme outcome
       register: Registration status
-      session: Session outcome
       triage: Triage status
+      vaccination: Outcome
     consent:
       label:
         conflicts: Conflicting consent

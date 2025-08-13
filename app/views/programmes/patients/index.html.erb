@@ -21,9 +21,9 @@
     <%= render AppPatientSearchFormComponent.new(
           @form,
           url: programme_patients_path(@programme),
-          programme_statuses: Patient::VaccinationStatus.statuses.keys,
           consent_statuses: %w[no_response given refused conflicts],
           triage_statuses: %w[required delay_vaccination do_not_vaccinate safe_to_vaccinate],
+          vaccination_statuses: Patient::VaccinationStatus.statuses.keys,
           year_groups: @year_groups,
         ) %>
   </div>

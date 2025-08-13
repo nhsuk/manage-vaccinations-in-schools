@@ -69,7 +69,7 @@ class AppSessionDetailsSummaryComponent < ViewComponent::Base
         "#{I18n.t("vaccinations_given", count:)} for #{programme.name_in_sentence}"
       end
 
-    href = session_patients_path(session, programme_status: "vaccinated")
+    href = session_patients_path(session, vaccination_status: "vaccinated")
 
     {
       key: {

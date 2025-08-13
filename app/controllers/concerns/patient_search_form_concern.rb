@@ -27,7 +27,7 @@ module PatientSearchFormConcern
       :date_of_birth_month,
       :date_of_birth_year,
       :missing_nhs_number,
-      :programme_status,
+      :vaccination_status,
       :q,
       :register_status,
       :triage_status,
