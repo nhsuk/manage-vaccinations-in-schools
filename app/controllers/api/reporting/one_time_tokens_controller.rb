@@ -3,9 +3,7 @@
 class API::Reporting::OneTimeTokensController < API::Reporting::BaseController
   include ReportingAPI::TokenAuthenticationConcern
 
-  # skip_before_action :authenticate_user!
-  before_action :ensure_reporting_api_feature_enabled,
-                :authenticate_app_by_client_id!,
+  before_action :authenticate_app_by_client_id!,
                 :verify_grant_type!
 
   def authorize
@@ -44,7 +42,4 @@ class API::Reporting::OneTimeTokensController < API::Reporting::BaseController
     )
   end
 
-  def ensure_reporting_api_feature_enabled
-    render status: :forbidden and return unless Flipper.enabled?(:reporting_api)
-  end
 end
