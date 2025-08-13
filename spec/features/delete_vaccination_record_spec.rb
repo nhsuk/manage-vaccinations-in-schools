@@ -155,9 +155,9 @@ describe "Delete vaccination record" do
       )
 
     create(
-      :patient_session_session_status,
+      :patient_vaccination_status,
       :vaccinated,
-      patient_session: @patient_session,
+      patient: @patient,
       programme: @programme
     )
 

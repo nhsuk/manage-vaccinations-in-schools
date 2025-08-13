@@ -47,7 +47,6 @@ class PatientSession < ApplicationRecord
   has_many :gillick_assessments
   has_many :pre_screenings
   has_many :session_attendances, dependent: :destroy
-  has_many :session_statuses
   has_one :registration_status
 
   has_one :location, through: :session
@@ -181,17 +180,6 @@ class PatientSession < ApplicationRecord
           )
         end
 
-  scope :has_session_status,
-        ->(status, programme:) do
-          where(
-            PatientSession::SessionStatus
-              .where("patient_session_id = patient_sessions.id")
-              .where(status:, programme:)
-              .arel
-              .exists
-          )
-        end
-
   scope :has_triage_status,
         ->(status, programme:) do
           joins(:session).where(
@@ -288,11 +276,6 @@ class PatientSession < ApplicationRecord
 
   def programmes = session.programmes_for(patient:, academic_year:)
 
-  def session_status(programme:)
-    session_statuses.find { it.programme_id == programme.id } ||
-      session_statuses.build(programme:)
-  end
-
   def todays_attendance
     if (session_date = session.session_dates.today.first)
       session_attendances.includes(:session_date).find_or_initialize_by(
@@ -327,15 +310,14 @@ class PatientSession < ApplicationRecord
       return []
     end
 
+    any_programme_exists = vaccination_records.exists?(programme: programmes)
+
     # If this patient hasn't been seen yet by a nurse for any of the programmes,
     # we don't want to show the banner.
-    all_programmes_none_yet =
-      programmes.all? { |programme| session_status(programme:).none_yet? }
-
-    return [] if all_programmes_none_yet
+    return [] unless any_programme_exists
 
     programmes.select do |programme|
-      session_status(programme:).none_yet? &&
+      !vaccination_records.exists?(programme:) &&
         patient.consent_given_and_safe_to_vaccinate?(programme:, academic_year:)
     end
   end

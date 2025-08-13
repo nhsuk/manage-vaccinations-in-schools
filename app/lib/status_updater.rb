@@ -13,7 +13,6 @@ class StatusUpdater
   def call
     update_consent_statuses!
     update_registration_statuses!
-    update_session_statuses!
     update_triage_statuses!
     update_vaccination_statuses!
   end
@@ -69,35 +68,6 @@ class StatusUpdater
         batch.each(&:assign_status)
 
         PatientSession::RegistrationStatus.import!(
-          batch.select(&:changed?),
-          on_duplicate_key_update: {
-            conflict_target: [:id],
-            columns: %i[status]
-          }
-        )
-      end
-  end
-
-  def update_session_statuses!
-    PatientSession::SessionStatus.import!(
-      %i[patient_session_id programme_id],
-      patient_session_statuses_to_import,
-      on_duplicate_key_ignore: true
-    )
-
-    PatientSession::SessionStatus
-      .where(patient_session_id: patient_sessions.select(:id))
-      .includes(
-        :consents,
-        :session,
-        :triages,
-        :vaccination_records,
-        :session_attendance
-      )
-      .find_in_batches(batch_size: 10_000) do |batch|
-        batch.each(&:assign_status)
-
-        PatientSession::SessionStatus.import!(
           batch.select(&:changed?),
           on_duplicate_key_update: {
             conflict_target: [:id],

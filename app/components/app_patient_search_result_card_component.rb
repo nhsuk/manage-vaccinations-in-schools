@@ -118,10 +118,7 @@ class AppPatientSearchResultCardComponent < ViewComponent::Base
       end
 
     latest_session_status =
-      if status_type == :vaccination &&
-           status_model.latest_session_status != status
-        status_model.latest_session_status
-      end
+      (status_model.latest_session_status if status_type == :vaccination)
 
     render AppProgrammeStatusTagsComponent.new(
              { @programme => { status:, latest_session_status: } },

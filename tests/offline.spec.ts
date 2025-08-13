@@ -56,7 +56,7 @@ test.skip("Works offline", async ({ page, context }) => {
 
   await page.getByRole("link", { name: "Record vaccinations" }).click();
   await expect(page.getByTestId("child-status").nth(0)).toContainText(
-    "No outcome yet",
+    "No outcome",
   );
 
   await page.getByTestId("child-link").nth(0).click();

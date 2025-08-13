@@ -31,11 +31,9 @@ describe AppSessionDetailsSummaryComponent do
     before do
       create(:patient_session, session:, year_group: 7)
       create(:patient_session, :consent_refused, session:, year_group: 7)
-      create(:patient_session, :vaccinated, session:, year_group: 7)
     end
 
     it { should have_text("Cohort\nNo children") }
     it { should have_text("Consent refused\nNo children") }
-    it { should have_text("Vaccinated\nNo vaccinations given") }
   end
 end

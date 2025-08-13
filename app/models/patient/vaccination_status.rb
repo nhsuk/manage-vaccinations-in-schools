@@ -50,7 +50,15 @@ class Patient::VaccinationStatus < ApplicationRecord
        validate: true
 
   enum :latest_session_status,
-       PatientSession::SessionStatus.statuses,
+       {
+         none_yet: 0,
+         vaccinated: 1,
+         already_had: 2,
+         had_contraindications: 3,
+         refused: 4,
+         absent_from_session: 5,
+         unwell: 6
+       },
        default: :none_yet,
        prefix: true,
        validate: true
@@ -76,16 +84,23 @@ class Patient::VaccinationStatus < ApplicationRecord
 
   def session_generator
     @session_generator ||=
-      if (session_id = vaccination_records.first&.session_id)
-        StatusGenerator::Session.new(
-          session_id:,
-          academic_year:,
-          session_attendance:,
-          programme_id:,
-          consents:,
-          triages:,
-          vaccination_records:
-        )
+      StatusGenerator::Session.new(
+        session_id:,
+        academic_year:,
+        session_attendance:,
+        programme_id:,
+        consents:,
+        triages:,
+        vaccination_records:
+      )
+  end
+
+  def latest_vaccination_record
+    @latest_vaccination_record ||=
+      vaccination_records.find do
+        it.academic_year == academic_year && it.programme_id == programme_id
       end
   end
+
+  delegate :session_id, to: :latest_vaccination_record, allow_nil: true
 end

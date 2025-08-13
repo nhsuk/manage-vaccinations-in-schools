@@ -20,15 +20,7 @@ describe AppProgrammeSessionTableComponent do
 
     create(:patient_consent_status, :given, programme:, patient:)
 
-    patient_session =
-      patient.patient_sessions.includes(session: :session_dates).first
-
-    create(
-      :patient_session_session_status,
-      :vaccinated,
-      patient_session:,
-      programme:
-    )
+    create(:vaccination_record, patient:, session:, programme:)
   end
 
   it { should have_content("3 sessions") }
@@ -50,6 +42,5 @@ describe AppProgrammeSessionTableComponent do
 
     it { should have_content(/Cohort(\s+)4/) }
     it { should have_content(/No response(\s+)4(\s+)100%/) }
-    it { should have_content(/Vaccinated(\s+)0(\s+)0%/) }
   end
 end

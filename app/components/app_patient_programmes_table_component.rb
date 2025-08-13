@@ -102,7 +102,7 @@ class AppPatientProgrammesTableComponent < ViewComponent::Base
 
     return "—" if future_eligibility?(earliest_academic_year)
 
-    govuk_tag(text: "No outcome yet", colour: "grey")
+    govuk_tag(text: "No outcome", colour: "grey")
   end
 
   def vaccination_status(vaccination_record)

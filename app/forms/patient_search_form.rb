@@ -11,11 +11,10 @@ class PatientSearchForm < SearchForm
   attribute :date_of_birth_month, :integer
   attribute :date_of_birth_year, :integer
   attribute :missing_nhs_number, :boolean
-  attribute :programme_status, :string
+  attribute :vaccination_status, :string
   attribute :programme_types, array: true
   attribute :q, :string
   attribute :register_status, :string
-  attribute :session_status, :string
   attribute :triage_status, :string
   attribute :vaccine_method, :string
   attribute :year_groups, array: true
@@ -57,7 +56,6 @@ class PatientSearchForm < SearchForm
     scope = filter_programmes(scope)
     scope = filter_consent_statuses(scope)
     scope = filter_vaccination_statuses(scope)
-    scope = filter_session_status(scope)
     scope = filter_register_status(scope)
     scope = filter_triage_status(scope)
     scope = filter_vaccine_method(scope)
@@ -155,7 +153,7 @@ class PatientSearchForm < SearchForm
   end
 
   def filter_vaccination_statuses(scope)
-    if (status = programme_status&.to_sym).present?
+    if (status = vaccination_status&.to_sym).present?
       if @session
         scope.has_vaccination_status(status, programme: programmes)
       else
@@ -165,14 +163,6 @@ class PatientSearchForm < SearchForm
           academic_year:
         )
       end
-    else
-      scope
-    end
-  end
-
-  def filter_session_status(scope)
-    if (status = session_status&.to_sym).present?
-      scope.has_session_status(status, programme: programmes)
     else
       scope
     end

@@ -1,41 +1,32 @@
 # frozen_string_literal: true
 
 class AppProgrammeStatusTagsComponent < ViewComponent::Base
-  def initialize(programme_statuses, outcome:)
+  def initialize(status_by_programme, outcome:)
     super
 
-    @programme_statuses = programme_statuses
+    @status_by_programme = status_by_programme
     @outcome = outcome
   end
 
   def call
     safe_join(
-      programme_statuses.map do |programme, hash|
+      status_by_programme.map do |programme, hash|
         status = hash[:status]
         vaccine_methods =
           (hash[:vaccine_methods] if programme.has_multiple_vaccine_methods?)
-        latest_session_status = hash[:latest_session_status]
+        latest_session_status = hash[:latest_session_status] if status !=
+          hash[:latest_session_status]
 
-        programme_status_tag(
-          programme,
-          status,
-          vaccine_methods,
-          latest_session_status
-        )
+        status_tag(programme, status, vaccine_methods, latest_session_status)
       end
     )
   end
 
   private
 
-  attr_reader :programme_statuses, :outcome
+  attr_reader :status_by_programme, :outcome
 
-  def programme_status_tag(
-    programme,
-    status,
-    vaccine_methods,
-    latest_session_status
-  )
+  def status_tag(programme, status, vaccine_methods, latest_session_status)
     programme_tag =
       tag.strong(
         programme.name,

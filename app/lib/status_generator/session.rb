@@ -84,8 +84,10 @@ class StatusGenerator::Session
 
   def vaccination_record
     @vaccination_record ||=
-      vaccination_records.find do
-        it.programme_id == programme_id && it.session_id == session_id
+      if session_id
+        vaccination_records.find do
+          it.programme_id == programme_id && it.session_id == session_id
+        end
       end
   end
 end
