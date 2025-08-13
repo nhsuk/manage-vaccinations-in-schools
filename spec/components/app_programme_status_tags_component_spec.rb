@@ -50,6 +50,6 @@ describe AppProgrammeStatusTagsComponent do
     end
 
     it { should have_content("MenACWYVaccinated") }
-    it { should have_content("Td/IPVNo outcome yetUnwell") }
+    it { should have_content("Td/IPVNo outcomeUnwell") }
   end
 end

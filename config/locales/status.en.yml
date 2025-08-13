@@ -51,7 +51,7 @@ en:
         absent_from_session: Absent from session
         already_had: Already had vaccine
         had_contraindications: Had contraindications
-        none_yet: No outcome yet
+        none_yet: No outcome
         refused: Refused vaccine
         unwell: Unwell
         vaccinated: Vaccinated
@@ -66,7 +66,7 @@ en:
     programme:
       label:
         could_not_vaccinate: Could not vaccinate
-        none_yet: No outcome yet
+        none_yet: No outcome
         vaccinated: Vaccinated
       colour:
         could_not_vaccinate: red

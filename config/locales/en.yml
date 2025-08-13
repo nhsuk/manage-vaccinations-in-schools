@@ -213,7 +213,7 @@ en:
         outcomes:
           could_not_vaccinate: Could not vaccinate
           no_consent: No consent
-          no_outcome: No outcome yet
+          no_outcome: No outcome
           vaccinated: Vaccinated
       programme:
         types:

@@ -405,12 +405,12 @@ describe "HPV vaccination" do
 
     visit patient_url
     within(".nhsuk-breadcrumb__list") { click_on "Children" }
-    choose "No outcome yet"
+    choose "No outcome"
     click_on "Update results"
 
     click_on @unvaccinated_patient.full_name
     expect(page).to have_content(@unvaccinated_patient.full_name)
-    expect(page).to have_content("No outcome yet")
+    expect(page).to have_content("No outcome")
     expect(page).to have_content("Absent from session")
 
     visit patient_url

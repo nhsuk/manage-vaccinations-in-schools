@@ -90,7 +90,7 @@ describe "Triage" do
   def when_i_access_the_vaccinate_later_page
     click_on @school.name, match: :first
     within(".app-secondary-navigation") { click_on "Children" }
-    choose "No outcome yet", match: :first
+    choose "No outcome", match: :first
     click_on "Update results"
   end
 
