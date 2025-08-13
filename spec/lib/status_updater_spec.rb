@@ -26,10 +26,6 @@ describe StatusUpdater do
     it "doesn't create any patient vaccination statuses" do
       expect { call }.not_to change(Patient::VaccinationStatus, :count)
     end
-
-    it "doesn't create any patient session session statuses" do
-      expect { call }.not_to change(PatientSession::SessionStatus, :count)
-    end
   end
 
   context "with an flu session and eligible patient" do
@@ -125,10 +121,6 @@ describe StatusUpdater do
 
     it "doesn't create any patient vaccination statuses" do
       expect { call }.not_to change(Patient::VaccinationStatus, :count)
-    end
-
-    it "doesn't create any patient session session statuses" do
-      expect { call }.not_to change(PatientSession::SessionStatus, :count)
     end
   end
 

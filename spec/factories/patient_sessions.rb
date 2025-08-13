@@ -142,16 +142,6 @@ FactoryBot.define do
                     home_educated:,
                     year_group:
       end
-      session_statuses do
-        session.programmes.map do |programme|
-          association(
-            :patient_session_session_status,
-            :refused,
-            patient_session: instance,
-            programme:
-          )
-        end
-      end
     end
 
     trait :consent_refused_with_notes do
@@ -164,16 +154,6 @@ FactoryBot.define do
                     school:,
                     home_educated:,
                     year_group:
-      end
-      session_statuses do
-        session.programmes.map do |programme|
-          association(
-            :patient_session_session_status,
-            :refused,
-            patient_session: instance,
-            programme:
-          )
-        end
       end
     end
 
@@ -242,16 +222,6 @@ FactoryBot.define do
                     home_educated:,
                     year_group:
       end
-      session_statuses do
-        session.programmes.map do |programme|
-          association(
-            :patient_session_session_status,
-            :had_contraindications,
-            patient_session: instance,
-            programme:
-          )
-        end
-      end
     end
 
     trait :triaged_kept_in_triage do
@@ -307,16 +277,6 @@ FactoryBot.define do
                     home_educated:,
                     year_group:
       end
-      session_statuses do
-        session.programmes.map do |programme|
-          association(
-            :patient_session_session_status,
-            :unwell,
-            patient_session: instance,
-            programme:
-          )
-        end
-      end
 
       after(:create) do |patient_session, evaluator|
         patient_session.session.programmes.each do |programme|
@@ -353,16 +313,6 @@ FactoryBot.define do
                     home_educated:,
                     year_group:
       end
-      session_statuses do
-        session.programmes.map do |programme|
-          association(
-            :patient_session_session_status,
-            :unwell,
-            patient_session: instance,
-            programme:
-          )
-        end
-      end
 
       after(:create) do |patient_session, evaluator|
         patient_session.session.programmes.each do |programme|
@@ -398,16 +348,6 @@ FactoryBot.define do
                     school:,
                     home_educated:,
                     year_group:
-      end
-      session_statuses do
-        session.programmes.map do |programme|
-          association(
-            :patient_session_session_status,
-            :vaccinated,
-            patient_session: instance,
-            programme:
-          )
-        end
       end
 
       after(:create) do |patient_session, evaluator|
