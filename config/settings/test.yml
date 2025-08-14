@@ -21,3 +21,5 @@ splunk:
 reporting_api:
   client_app:
     root_url: http://localhost:5001/
+    secret: "abcdef0123456789abcdef0123456789"
+    client_id: "testing_client_id"
