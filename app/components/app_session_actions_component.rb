@@ -88,7 +88,9 @@ class AppSessionActionsComponent < ViewComponent::Base
     counts_by_programme =
       session.programmes.index_with do |programme|
         patient_sessions
-          .has_registration_status(%w[attending completed])
+          .has_registration_status(
+            PatientSession::RegistrationStatus::STATUSES_FOR_RECORDING_VACCINATION
+          )
           .includes(
             patient: %i[consent_statuses triage_statuses vaccination_statuses]
           )

@@ -36,6 +36,16 @@ class PatientSession::RegistrationStatus < ApplicationRecord
        default: :unknown,
        validate: true
 
+  scope :for_patient_session,
+        ->(patient, session) do
+          joins(:patient_session).where(patient_session: { patient:, session: })
+        end
+
+  STATUSES_FOR_RECORDING_VACCINATION = %w[attending completed].freeze
+
+  scope :allows_recording_vaccinations,
+        -> { where(status: STATUSES_FOR_RECORDING_VACCINATION) }
+
   def assign_status
     self.status = generator.status
   end
