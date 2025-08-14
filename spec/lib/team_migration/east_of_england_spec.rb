@@ -18,6 +18,30 @@ describe TeamMigration::EastOfEngland do
     )
   end
 
+  let!(:existing_school) { create(:school, urn: "109464", team: current_team) }
+
+  let!(:existing_session) do
+    create(
+      :session,
+      location: existing_school,
+      team: current_team,
+      programmes: [hpv_programme]
+    )
+  end
+
+  let!(:existing_batch) do
+    create(:batch, team: current_team, vaccine: hpv_programme.vaccines.first)
+  end
+
+  let!(:existing_vaccination_record) do
+    create(
+      :vaccination_record,
+      session: existing_session,
+      batch: existing_batch,
+      programme: hpv_programme
+    )
+  end
+
   let(:csv_data) { <<-CSV }
 URN,SEN,ICB Shortname
 109464,,BLMK ICB
@@ -39,7 +63,8 @@ URN,SEN,ICB Shortname
 
     allow(CSV).to receive(:foreach).and_return(parsed_csv_data)
 
-    parsed_csv_data.each do |row|
+    # The first school is `existing_school`.
+    parsed_csv_data[1..].each do |row|
       create(
         :school,
         urn: row.fetch("URN"),
@@ -91,6 +116,22 @@ URN,SEN,ICB Shortname
       end
 
     expect { current_team.reload }.to raise_error(ActiveRecord::RecordNotFound)
+  end
+
+  it "reassigns batches, sessions and vaccination records" do
+    expect(existing_school.team).to eq(current_team)
+    expect(existing_session.team).to eq(current_team)
+    expect(existing_batch.team).to eq(current_team)
+    expect(existing_vaccination_record.team).to eq(current_team)
+
+    call
+    new_team =
+      organisation.teams.find_by(workgroup: "bedslutonmiltonkeynessais")
+
+    expect(existing_school.reload.team).to eq(new_team)
+    expect(existing_session.reload.team).to eq(new_team)
+    expect(existing_batch.reload.team).to eq(new_team)
+    expect(existing_vaccination_record.reload.team).to eq(new_team)
   end
 
   context "with patients in community clinic" do

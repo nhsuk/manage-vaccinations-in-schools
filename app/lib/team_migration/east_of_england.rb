@@ -81,6 +81,22 @@ class TeamMigration::EastOfEngland < TeamMigration::Base
 
     programmes = (sen ? [flu_programme, hpv_programme] : [hpv_programme])
     add_school_year_groups(location, programmes, sen:)
+
+    location.sessions.find_each do |session|
+      log("Reassigning session to #{team.workgroup}")
+      session.update!(team:)
+
+      session
+        .vaccination_records
+        .includes(:batch)
+        .find_each do |vaccination_record|
+          batch = vaccination_record.batch
+          if batch.team_id != team.id
+            log("Reassigning batch #{batch.name} to #{team.workgroup}")
+            batch.update!(team:)
+          end
+        end
+    end
   end
 
   def school_rows
