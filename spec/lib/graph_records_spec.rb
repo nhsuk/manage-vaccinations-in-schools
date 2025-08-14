@@ -94,6 +94,9 @@ describe GraphRecords do
     location_details =
       [
         non_breaking_text("name: #{session.location.name}"),
+        non_breaking_text(
+          "address_postcode: #{session.location.address_postcode}"
+        ),
         non_breaking_text("type: #{session.location.type}"),
         non_breaking_text("year_groups: #{session.location.year_groups}")
       ].map { |d| "<br><span style=\"font-size:14px\">#{d}</span>" }.join
@@ -105,7 +108,6 @@ describe GraphRecords do
       "  classDef consent fill:#aaffc3,color:black,stroke:#000",
       "  classDef cohort_import fill:#4363d8,color:white,stroke:#000",
       "  classDef class_import fill:#000075,color:white,stroke:#000",
-      "  classDef patient_session fill:#e6194B,color:white,stroke:#000",
       "  classDef session fill:#fabed4,color:black,stroke:#000",
       "  classDef location fill:#3cb44b,color:white,stroke:#000",
       "  patient-#{patient.id}[\"Patient #{patient.id}<br><span style=\"font-size:10px\"><i>Patient.find(" \
@@ -127,10 +129,6 @@ describe GraphRecords do
       "  class_import-#{class_import.id}[\"Class import #{class_import.id}<br><span style=\"font-size:10px\"><i>" \
         "ClassImport.find(#{class_import.id})</i></span><br><span style=\"font-size:10px\"><i>puts&nbsp;GraphRecords." \
         "new.graph(class_import:&nbsp;#{class_import.id})</i></span>#{class_import_details}\"]:::class_import",
-      "  patient_session-#{patient.patient_sessions.first.id}[\"Patient session #{patient.patient_sessions.first.id}" \
-        "<br><span style=\"font-size:10px\"><i>PatientSession.find(#{patient.patient_sessions.first.id})</i></span>" \
-        "<br><span style=\"font-size:10px\"><i>puts&nbsp;GraphRecords.new.graph(patient_session:&nbsp;" \
-        "#{patient.patient_sessions.first.id})</i></span>\"]:::patient_session",
       "  session-#{session.id}[\"Session #{session.id}<br><span style=\"font-size:10px\"><i>Session.find(" \
         "#{session.id})</i></span><br><span style=\"font-size:10px\"><i>puts&nbsp;GraphRecords.new.graph(session:" \
         "&nbsp;#{session.id})</i></span>#{session_details}\"]:::session",
@@ -138,14 +136,13 @@ describe GraphRecords do
         "Location.find(#{session.location.id})</i></span><br><span style=\"font-size:10px\"><i>puts&nbsp;GraphRecords" \
         ".new.graph(location:&nbsp;#{session.location.id})</i></span>#{location_details}\"]:::location",
       "  patient-#{patient.id} --> parent-#{parent.id}",
+      "  session-#{session.id} --> patient-#{patient.id}",
       "  consent-#{consent.id} --> parent-#{parent.id}",
       "  patient-#{patient.id} --> consent-#{consent.id}",
       "  cohort_import-#{cohort_import.id} --> parent-#{parent.id}",
       "  class_import-#{class_import.id} --> parent-#{parent.id}",
       "  cohort_import-#{cohort_import.id} --> patient-#{patient.id}",
       "  class_import-#{class_import.id} --> patient-#{patient.id}",
-      "  patient_session-#{patient.patient_sessions.first.id} --> patient-#{patient.id}",
-      "  session-#{session.id} --> patient_session-#{patient.patient_sessions.first.id}",
       "  location-#{session.location.id} --> session-#{session.id}",
       "  location-#{session.location.id} --> patient-#{patient.id}"
     )
