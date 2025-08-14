@@ -19,6 +19,11 @@ describe "Import child records" do
 
     when_i_click_on_the_invalidated_patient
     then_i_should_see_invalidated_patient_record
+
+    and_i_go_back_to_the_import_page
+
+    when_i_click_on_the_invalid_nhs_number_patient
+    then_i_should_see_invalid_nhs_number_patient_record
   end
 
   def given_i_am_signed_in
@@ -71,6 +76,21 @@ describe "Import child records" do
         school: nil, # Unknown school, should be silently updated
         session: @session
       )
+    @invalid_nhs_number_patient =
+      create(
+        :patient,
+        given_name: "James",
+        family_name: "Smith",
+        nhs_number: nil, # Second row of valid.csv
+        date_of_birth: Date.new(2010, 1, 2),
+        gender_code: :male,
+        address_line_1: "10 Downing Street",
+        address_line_2: "",
+        address_town: "London",
+        address_postcode: "SW11 1AA",
+        school: @school,
+        session: @session
+      )
   end
 
   def and_pds_lookup_during_import_is_enabled
@@ -84,8 +104,20 @@ describe "Import child records" do
       "birthdate" => "eq#{@invalidated_patient.date_of_birth}",
       "address-postalcode" => @invalidated_patient.address_postcode
     )
+
     stub_pds_get_nhs_number_to_return_an_invalidated_patient(
       @invalidated_patient.nhs_number
+    )
+
+    stub_pds_get_nhs_number_to_return_an_invalid_nhs_number_response(
+      "9990056846"
+    )
+
+    stub_pds_search_to_return_no_patients(
+      "family" => @invalid_nhs_number_patient.family_name,
+      "given" => @invalid_nhs_number_patient.given_name,
+      "birthdate" => "eq#{@invalid_nhs_number_patient.date_of_birth}",
+      "address-postalcode" => @invalid_nhs_number_patient.address_postcode
     )
   end
 
@@ -112,6 +144,11 @@ describe "Import child records" do
     perform_enqueued_jobs
   end
 
+  def and_i_go_back_to_the_import_page
+    click_on "Import"
+    click_on Date.current.to_fs(:long)
+  end
+
   def then_i_should_see_the_import_page
     expect(page).to have_content("Imported on")
     expect(page).to have_content("Imported byUSER, Test")
@@ -125,11 +162,22 @@ describe "Import child records" do
     click_link "SAMSON, Betty"
   end
 
+  def when_i_click_on_the_invalid_nhs_number_patient
+    click_link "SMITH, James"
+  end
+
   def then_i_should_see_invalidated_patient_record
     expect(page).to have_content("Record flagged as invalid")
     expect(page).to have_content("SAMSON, Betty")
     expect(page).to have_content("NHS number999 352 4689")
     expect(page).to have_content("Date of birth1 January 2010 (aged 15)")
+    expect(page).to have_content("SW11 1AA")
+  end
+
+  def then_i_should_see_invalid_nhs_number_patient_record
+    expect(page).to have_content("SMITH, James")
+    expect(page).to have_content("NHS numberNot provided")
+    expect(page).to have_content("Date of birth2 January 2010 (aged 15)")
     expect(page).to have_content("SW11 1AA")
   end
 end
