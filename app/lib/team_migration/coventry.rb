@@ -12,9 +12,13 @@ class TeamMigration::Coventry < TeamMigration::Base
 
       process_row(urn, sen, subteam)
     end
+
+    detach_school(urn: URN_TO_REMOVE)
   end
 
   private
+
+  URN_TO_REMOVE = "131574"
 
   def ods_code = "RYG"
 
