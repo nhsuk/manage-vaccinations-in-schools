@@ -13,6 +13,7 @@
 #  gias_local_authority_code :integer
 #  name                      :text             not null
 #  ods_code                  :string
+#  site                      :string
 #  status                    :integer          default("unknown"), not null
 #  type                      :integer          not null
 #  url                       :text
@@ -24,9 +25,9 @@
 #
 # Indexes
 #
-#  index_locations_on_ods_code    (ods_code) UNIQUE
-#  index_locations_on_subteam_id  (subteam_id)
-#  index_locations_on_urn         (urn) UNIQUE
+#  index_locations_on_ods_code      (ods_code) UNIQUE
+#  index_locations_on_subteam_id    (subteam_id)
+#  index_locations_on_urn_and_site  (urn,site) UNIQUE
 #
 # Foreign Keys
 #
@@ -83,7 +84,9 @@ class Location < ApplicationRecord
 
   validates :name, presence: true
   validates :url, url: true, allow_nil: true
-  validates :urn, uniqueness: true, allow_nil: true
+
+  validates :urn, uniqueness: true, allow_nil: true, if: -> { site.nil? }
+  validates :site, uniqueness: { scope: :urn }, allow_nil: true
 
   with_options if: :community_clinic? do
     validates :ods_code, exclusion: { in: :organisation_ods_code }
@@ -104,6 +107,7 @@ class Location < ApplicationRecord
     validates :urn, presence: true
   end
 
+  normalizes :site, with: -> { it.blank? ? nil : it.strip }
   normalizes :urn, with: -> { it.blank? ? nil : it.strip }
 
   delegate :fhir_reference, to: :fhir_mapper

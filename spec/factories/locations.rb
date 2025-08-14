@@ -13,6 +13,7 @@
 #  gias_local_authority_code :integer
 #  name                      :text             not null
 #  ods_code                  :string
+#  site                      :string
 #  status                    :integer          default("unknown"), not null
 #  type                      :integer          not null
 #  url                       :text
@@ -24,9 +25,9 @@
 #
 # Indexes
 #
-#  index_locations_on_ods_code    (ods_code) UNIQUE
-#  index_locations_on_subteam_id  (subteam_id)
-#  index_locations_on_urn         (urn) UNIQUE
+#  index_locations_on_ods_code      (ods_code) UNIQUE
+#  index_locations_on_subteam_id    (subteam_id)
+#  index_locations_on_urn_and_site  (urn,site) UNIQUE
 #
 # Foreign Keys
 #

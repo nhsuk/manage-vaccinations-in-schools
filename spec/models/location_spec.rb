@@ -13,6 +13,7 @@
 #  gias_local_authority_code :integer
 #  name                      :text             not null
 #  ods_code                  :string
+#  site                      :string
 #  status                    :integer          default("unknown"), not null
 #  type                      :integer          not null
 #  url                       :text
@@ -24,9 +25,9 @@
 #
 # Indexes
 #
-#  index_locations_on_ods_code    (ods_code) UNIQUE
-#  index_locations_on_subteam_id  (subteam_id)
-#  index_locations_on_urn         (urn) UNIQUE
+#  index_locations_on_ods_code      (ods_code) UNIQUE
+#  index_locations_on_subteam_id    (subteam_id)
+#  index_locations_on_urn_and_site  (urn,site) UNIQUE
 #
 # Foreign Keys
 #
@@ -83,6 +84,7 @@ describe Location do
 
       it { should_not validate_presence_of(:urn) }
       it { should validate_uniqueness_of(:urn) }
+      it { should validate_uniqueness_of(:site).scoped_to(:urn) }
     end
 
     context "with a generic clinic" do
@@ -198,6 +200,7 @@ describe Location do
           "is_attached_to_team" => false,
           "name" => location.name,
           "ods_code" => location.ods_code,
+          "site" => location.site,
           "status" => "unknown",
           "type" => "community_clinic",
           "url" => location.url,
