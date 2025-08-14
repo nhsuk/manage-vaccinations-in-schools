@@ -58,6 +58,7 @@ class TeamMigration::EastOfEngland < TeamMigration::Base
           # There are a small number of patients with an unknown school. We're
           # going to send the team a list of these before migrating and remove
           # them from the community clinic for now.
+          log("Removing patient #{patient.id} from community clinics")
           patient_session.destroy!
         else
           session_id = new_sessions.fetch(patient.school.team).id
