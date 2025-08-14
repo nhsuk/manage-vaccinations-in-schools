@@ -166,19 +166,24 @@ class PatientChangeset < ApplicationRecord
   end
 
   def existing_patients
-    if child_attributes["given_name"].blank? ||
-         child_attributes["family_name"].blank? ||
-         child_attributes["date_of_birth"]&.nil?
-      return []
-    end
+    @existing_patients ||=
+      begin
+        deserialize_attribute(child_attributes, "date_of_birth", :date)
 
-    Patient.includes(:patient_sessions).match_existing(
-      nhs_number: child_attributes["nhs_number"],
-      given_name: child_attributes["given_name"],
-      family_name: child_attributes["family_name"],
-      date_of_birth: child_attributes["date_of_birth"],
-      address_postcode: child_attributes["address_postcode"]
-    )
+        if child_attributes["given_name"].blank? ||
+             child_attributes["family_name"].blank? ||
+             child_attributes["date_of_birth"]&.nil?
+          return []
+        end
+
+        Patient.includes(:patient_sessions).match_existing(
+          nhs_number: child_attributes["nhs_number"],
+          given_name: child_attributes["given_name"],
+          family_name: child_attributes["family_name"],
+          date_of_birth: child_attributes["date_of_birth"],
+          address_postcode: child_attributes["address_postcode"]
+        )
+      end
   end
 
   def prepare_patient_changes(existing_patient, pending_changes)
@@ -211,20 +216,31 @@ class PatientChangeset < ApplicationRecord
     valid_values = nil
   )
     if valid_values.nil?
-      in_pending_changes = child_attributes[attribute].present?
-      in_existing_patient = existing_patient[attribute].present?
+      in_pending_changes = child_attributes[attribute.to_s].present?
+      in_existing_patient = existing_patient[attribute.to_s].present?
     else
-      in_pending_changes = child_attributes[attribute].in? valid_values
-      in_existing_patient = existing_patient[attribute].in? valid_values
+      in_pending_changes = child_attributes[attribute.to_s].in? valid_values
+      in_existing_patient = existing_patient[attribute.to_s].in? valid_values
     end
 
     if in_pending_changes && !in_existing_patient
-      existing_patient[attribute] = child_attributes[attribute]
+      existing_patient[attribute] = child_attributes[attribute.to_s]
     end
   end
 
   def stage_registration?
     import_type == "CohortImport"
+  end
+
+  def deserialize_attribute(attributes, key, type)
+    if attributes.key?(key) && attributes[key].is_a?(String)
+      attributes[key] = case type
+      when :date
+        attributes[key].to_date
+      when :datetime
+        Time.iso8601(attributes[key])
+      end
+    end
   end
 
   def handle_address_updates(existing_patient)
