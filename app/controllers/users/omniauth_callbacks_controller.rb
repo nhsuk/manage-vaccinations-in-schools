@@ -29,7 +29,13 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
 
       # Force is set to true because the `session_token` might have changed
       # even if the same user is logging in.
-      sign_in_and_redirect @user, event: :authentication, force: true
+      sign_in @user, event: :authentication, force: true
+      # We have to split sign_in and redirect methods up, so we can supply the
+      # allow_other_host param to the redirect. This is so that we can
+      # redirect to the reporting app which will be running on another host/port
+      # Note that safety checks on the host are now done in the
+      # after_sign_in_path_for method, so this doesn't allow arbitrary URLs
+      redirect_after_choosing_org
     end
   rescue StandardError => e
     unless Rails.env.production?
