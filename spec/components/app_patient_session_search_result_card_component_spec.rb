@@ -139,7 +139,8 @@ describe AppPatientSessionSearchResultCardComponent do
 
       context "and once vaccinated" do
         before do
-          patient.vaccination_status(programme:, academic_year:).vaccinated!
+          create(:vaccination_record, patient:, programme:, session:)
+          patient.vaccination_status(programme:, academic_year:).assign_status
         end
 
         it { should_not have_text("Vaccination method") }
