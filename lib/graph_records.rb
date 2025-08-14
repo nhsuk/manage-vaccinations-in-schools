@@ -190,6 +190,7 @@ class GraphRecords
     vaccine: %i[nivs_name],
     organisation: %i[ods_code],
     team: %i[name workgroup],
+    subteam: %i[name],
     location: %i[name type year_groups],
     cohort_import: %i[
       csv_filename
@@ -248,7 +249,7 @@ class GraphRecords
     ],
     programme: %i[type],
     vaccine: %i[nivs_name],
-    organisation: %i[name ods_code],
+    organisation: %i[ods_code],
     location: %i[name address_postcode type year_groups],
     cohort_import: %i[
       csv_filename
@@ -270,7 +271,8 @@ class GraphRecords
       year_groups
     ],
     session_date: %i[value],
-    team: %i[name],
+    team: %i[name workgroup],
+    subteam: %i[name],
     patient: %i[
       nhs_number
       given_name
