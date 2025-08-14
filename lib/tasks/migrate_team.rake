@@ -6,6 +6,11 @@ namespace :migrate_team do
     TeamMigration::Coventry.call
   end
 
+  desc "Migrate East of England to support flu."
+  task east_of_england: :environment do |_, _args|
+    TeamMigration::EastOfEngland.call
+  end
+
   desc "Migrate Leicestershire to support flu."
   task leicestershire: :environment do |_, _args|
     TeamMigration::Leicestershire.call
