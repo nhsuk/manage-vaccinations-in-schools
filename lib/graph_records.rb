@@ -43,7 +43,6 @@ class GraphRecords
     session_date
     class_import
     cohort_import
-    patient_session
     session_attendance
     gillick_assessment
     patient
@@ -68,14 +67,13 @@ class GraphRecords
         cohort_imports
         class_imports
         vaccination_records
-        patient_sessions
         triages
         school
+        sessions
       ],
       parent: %i[patients consents cohort_imports class_imports],
       consent: %i[consent_form patient parent],
       session: %i[location],
-      patient_session: %i[session session_attendances gillick_assessments],
       vaccination_record: %i[session]
     },
     parent: {
@@ -112,23 +110,12 @@ class GraphRecords
       session: %i[location programmes session_dates]
     },
     session_attendance: {
-      session_attendance: %i[patient_session session_date],
-      patient_session: %i[session gillick_assessments patient],
+      session_attendance: %i[session_date],
       session: %i[location],
       session_date: %i[session]
     },
-    patient_session: {
-      patient_session: %i[
-        session
-        patient
-        session_attendances
-        gillick_assessments
-      ],
-      session: %i[location]
-    },
     gillick_assessment: {
-      gillick_assessment: %i[patient_session performed_by programme],
-      patient_session: %i[session patient],
+      gillick_assessment: %i[performed_by programme],
       session: %i[location]
     },
     triage: {
@@ -190,7 +177,8 @@ class GraphRecords
     vaccine: %i[nivs_name],
     organisation: %i[ods_code],
     team: %i[name workgroup],
-    location: %i[name type year_groups],
+    subteam: %i[name],
+    location: %i[name address_postcode type year_groups],
     cohort_import: %i[
       csv_filename
       processed_at
@@ -218,59 +206,21 @@ class GraphRecords
       invalidated_at
     ],
     parent: %i[],
-    patient_session: %i[],
-    gillick_assessment: %i[created_at],
+    gillick_assessment: %i[
+      knows_vaccination
+      knows_disease
+      knows_consequences
+      knows_delivery
+      knows_side_effects
+      created_at
+    ],
     batch: %i[name expiry archived_at],
     user: %i[fallback_role uid],
     consent_form: %i[response recorded_at archived_at],
     parent_relationship: %i[type]
   }.freeze
 
-  DETAIL_WHITELIST_WITH_PII = {
-    consent: %i[
-      response
-      route
-      created_at
-      updated_at
-      withdrawn_at
-      invalidated_at
-    ],
-    session: %i[slug clinic? academic_year],
-    session_attendance: %i[attending created_at updated_at],
-    triage: %i[status created_at updated_at invalidated_at],
-    vaccination_record: %i[
-      outcome
-      performed_at
-      created_at
-      updated_at
-      discarded_at
-      uuid
-    ],
-    programme: %i[type],
-    vaccine: %i[nivs_name],
-    organisation: %i[name ods_code],
-    location: %i[name address_postcode type year_groups],
-    cohort_import: %i[
-      csv_filename
-      processed_at
-      status
-      rows_count
-      new_record_count
-      exact_duplicate_record_count
-      changed_record_count
-    ],
-    class_import: %i[
-      csv_filename
-      processed_at
-      status
-      rows_count
-      new_record_count
-      exact_duplicate_record_count
-      changed_record_count
-      year_groups
-    ],
-    session_date: %i[value],
-    team: %i[name],
+  EXTRA_DETAIL_WHITELIST_WITH_PII = {
     patient: %i[
       nhs_number
       given_name
@@ -281,37 +231,19 @@ class GraphRecords
       address_town
       address_postcode
       home_educated
-      updated_from_pds_at
-      restricted_at
       date_of_death
-      date_of_death_recorded_at
-      updated_from_pds_at
-      invalidated_at
       pending_changes
     ],
     parent: %i[full_name email phone],
-    patient_session: %i[],
-    gillick_assessment: %i[
-      knows_vaccination
-      knows_disease
-      knows_consequences
-      knows_delivery
-      knows_side_effects
-      created_at
-    ],
-    batch: %i[name expiry archived_at],
     user: %i[given_name family_name email fallback_role uid],
-    consent_form: %i[
-      response
-      recorded_at
-      archived_at
-      given_name
-      family_name
-      address_postcode
-      date_of_birth
-    ],
-    parent_relationship: %i[type other_name]
+    consent_form: %i[given_name family_name address_postcode date_of_birth],
+    parent_relationship: %i[other_name]
   }.freeze
+
+  DETAIL_WHITELIST_WITH_PII =
+    DETAIL_WHITELIST.merge(
+      EXTRA_DETAIL_WHITELIST_WITH_PII
+    ) { |_, base_fields, pii_fields| (base_fields + pii_fields).uniq }
 
   # @param focus_config [Hash] Hash of model names to ids to focus on (make bold)
   # @param node_order [Array] Array of model names in order to render nodes
