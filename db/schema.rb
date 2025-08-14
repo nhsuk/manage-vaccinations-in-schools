@@ -555,6 +555,21 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_14_154032) do
     t.index ["email"], name: "index_parents_on_email"
   end
 
+  create_table "patient_changesets", force: :cascade do |t|
+    t.bigint "patient_id"
+    t.jsonb "pending_changes", default: {}, null: false
+    t.string "import_type", null: false
+    t.bigint "import_id", null: false
+    t.integer "row_number", null: false
+    t.integer "status", default: 0, null: false
+    t.bigint "school_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["import_type", "import_id"], name: "index_patient_changesets_on_import"
+    t.index ["patient_id"], name: "index_patient_changesets_on_patient_id"
+    t.index ["status"], name: "index_patient_changesets_on_status"
+  end
+
   create_table "patient_consent_statuses", force: :cascade do |t|
     t.bigint "patient_id", null: false
     t.bigint "programme_id", null: false
@@ -874,8 +889,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_14_154032) do
     t.bigint "vaccine_id"
     t.boolean "full_dose"
     t.datetime "nhs_immunisations_api_synced_at"
-    t.string "nhs_immunisations_api_etag"
     t.string "nhs_immunisations_api_id"
+    t.string "nhs_immunisations_api_etag"
     t.integer "protocol"
     t.datetime "nhs_immunisations_api_sync_pending_at"
     t.boolean "notify_parents"
@@ -981,6 +996,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_14_154032) do
   add_foreign_key "notify_log_entries", "users", column: "sent_by_user_id"
   add_foreign_key "parent_relationships", "parents"
   add_foreign_key "parent_relationships", "patients"
+  add_foreign_key "patient_changesets", "locations", column: "school_id"
+  add_foreign_key "patient_changesets", "patients"
   add_foreign_key "patient_consent_statuses", "patients", on_delete: :cascade
   add_foreign_key "patient_consent_statuses", "programmes"
   add_foreign_key "patient_session_registration_statuses", "patient_sessions", on_delete: :cascade

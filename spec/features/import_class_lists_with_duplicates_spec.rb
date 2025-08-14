@@ -43,9 +43,59 @@ describe "Class list imports duplicates" do
     and_a_fourth_record_should_exist
   end
 
+  context "when PDS lookup during import is enabled" do
+    scenario "User reviews and selects between duplicate records" do
+      given_i_am_signed_in
+      and_pds_lookup_during_import_is_enabled
+      and_an_hpv_programme_is_underway
+      and_existing_patient_records_exist
+
+      when_i_visit_a_session_page_for_the_hpv_programme
+      and_i_start_adding_children_to_the_session
+      and_i_select_the_year_groups
+      and_i_upload_a_file_with_duplicate_records
+      then_i_should_see_the_import_page_with_duplicate_records
+
+      when_i_review_the_first_duplicate_record
+      then_i_should_see_the_first_duplicate_record
+
+      when_i_submit_the_form_without_choosing_anything
+      then_i_should_see_a_validation_error
+
+      when_i_choose_to_keep_the_duplicate_record
+      and_i_confirm_my_selection
+      then_i_should_see_a_success_message
+      and_the_first_record_should_be_updated
+
+      when_i_review_the_second_duplicate_record
+      then_i_should_see_the_second_duplicate_record
+
+      when_i_choose_to_keep_the_existing_record
+      and_i_confirm_my_selection
+      then_i_should_see_a_success_message
+      and_the_second_record_should_not_be_updated
+
+      when_i_review_the_third_duplicate_record
+      then_i_should_see_the_third_duplicate_record
+
+      when_i_choose_to_keep_both_records
+      and_i_confirm_my_selection
+      then_i_should_see_a_success_message
+      and_the_third_record_should_not_be_updated
+      and_a_fourth_record_should_exist
+    end
+  end
+
   def given_i_am_signed_in
     @team = create(:team, :with_one_nurse)
     sign_in @team.users.first
+  end
+
+  def and_pds_lookup_during_import_is_enabled
+    Flipper.enable(:pds_lookup_during_import)
+
+    stub_pds_search_to_return_a_patient
+    stub_pds_get_nhs_number_to_return_a_patient
   end
 
   def and_an_hpv_programme_is_underway

@@ -12,12 +12,6 @@ class CohortImportRow < PatientImportRow
 
   def school_urn = @data[:child_school_urn]
 
-  private
-
-  def stage_registration?
-    true
-  end
-
   def school_move_source
     :cohort_import
   end
@@ -36,6 +30,12 @@ class CohortImportRow < PatientImportRow
     elsif school_urn&.to_s == SCHOOL_URN_UNKNOWN
       false
     end
+  end
+
+  private
+
+  def stage_registration?
+    true
   end
 
   def validate_address_postcode

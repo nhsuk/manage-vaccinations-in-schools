@@ -24,6 +24,30 @@ describe "Import child records" do
     and_i_should_see_the_patients_for_page_two
   end
 
+  context "when PDS lookup during import is enabled" do
+    scenario "User uploads a large file" do
+      given_the_app_is_setup
+      and_pds_lookup_during_import_is_enabled
+
+      when_i_visit_the_import_page
+      and_i_start_adding_children_to_the_cohort
+      then_i_should_see_the_import_page
+
+      when_i_upload_a_valid_file
+      then_i_should_see_the_imports_page_with_the_processing_flash
+
+      when_i_wait_for_the_background_job_to_complete
+      when_i_go_to_the_import_page
+      then_i_should_see_the_upload
+      and_i_should_see_the_patients
+      and_i_should_see_the_pagination_buttons
+
+      when_i_click_on_next_page
+      then_i_should_see_the_upload
+      and_i_should_see_the_patients_for_page_two
+    end
+  end
+
   def given_the_app_is_setup
     programme = create(:programme, :hpv)
     @team =
@@ -35,6 +59,13 @@ describe "Import child records" do
       )
     create(:school, urn: "141939", team: @team)
     @user = @team.users.first
+  end
+
+  def and_pds_lookup_during_import_is_enabled
+    Flipper.enable(:pds_lookup_during_import)
+
+    stub_pds_search_to_return_a_patient
+    stub_pds_get_nhs_number_to_return_a_patient
   end
 
   def when_i_visit_the_import_page
@@ -87,7 +118,9 @@ describe "Import child records" do
   end
 
   def when_i_wait_for_the_background_job_to_complete
-    perform_enqueued_jobs
+    perform_enqueued_jobs(only: ProcessImportJob)
+    perform_enqueued_jobs(only: ProcessPatientChangesetsJob)
+    perform_enqueued_jobs(only: CommitPatientChangesetsJob)
   end
 
   def when_i_go_to_the_import_page

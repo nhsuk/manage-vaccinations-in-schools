@@ -37,6 +37,43 @@ describe "Import class lists" do
     then_i_should_see_the_children_added_to_the_session
   end
 
+  context "when PDS lookup during import is enabled" do
+    scenario "User uploads a file" do
+      given_an_hpv_programme_is_underway
+      and_pds_lookup_during_import_is_enabled
+
+      when_i_visit_a_session_page_for_the_hpv_programme
+      and_i_start_adding_children_to_the_session
+      and_i_select_the_year_groups
+      then_i_should_see_the_import_page
+
+      when_i_continue_without_uploading_a_file
+      then_i_should_see_an_error
+
+      when_i_upload_a_malformed_csv
+      then_i_should_see_an_error
+
+      when_i_upload_a_file_with_invalid_fields
+      then_i_should_see_the_imports_page_with_the_processing_flash
+
+      when_i_go_to_the_import_page
+      then_i_should_see_the_holding_page
+
+      when_i_wait_for_the_background_job_to_complete
+      and_i_refresh_the_page
+      then_i_should_the_errors_page_with_invalid_fields
+
+      when_i_go_back_to_the_upload_page
+      and_i_select_the_year_groups
+      and_i_upload_a_valid_file
+      then_i_should_see_the_upload
+      and_i_should_see_the_patients
+
+      when_i_go_to_the_session
+      then_i_should_see_the_children_added_to_the_session
+    end
+  end
+
   def given_an_hpv_programme_is_underway
     programmes = [create(:programme, :hpv)]
     @team = create(:team, :with_generic_clinic, :with_one_nurse, programmes:)
@@ -47,6 +84,13 @@ describe "Import class lists" do
 
     @session =
       create(:session, :unscheduled, team: @team, location:, programmes:)
+  end
+
+  def and_pds_lookup_during_import_is_enabled
+    Flipper.enable(:pds_lookup_during_import)
+
+    stub_pds_search_to_return_a_patient
+    stub_pds_get_nhs_number_to_return_a_patient
   end
 
   def when_i_visit_a_session_page_for_the_hpv_programme
