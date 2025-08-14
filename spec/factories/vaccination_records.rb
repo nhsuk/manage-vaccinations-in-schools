@@ -113,6 +113,26 @@ FactoryBot.define do
       full_dose { nil }
     end
 
+    trait :already_had do
+      not_administered
+      outcome { "already_had" }
+    end
+
+    trait :contraindications do
+      not_administered
+      outcome { "contraindications" }
+    end
+
+    trait :refused do
+      not_administered
+      outcome { "refused" }
+    end
+
+    trait :absent_from_session do
+      not_administered
+      outcome { "absent_from_session" }
+    end
+
     trait :performed_by_not_user do
       performed_by { nil }
       performed_by_given_name { Faker::Name.first_name }

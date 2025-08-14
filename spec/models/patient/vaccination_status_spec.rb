@@ -8,6 +8,7 @@
 #  academic_year         :integer          not null
 #  latest_session_status :integer          default("none_yet"), not null
 #  status                :integer          default("none_yet"), not null
+#  status_changed_at     :datetime         not null
 #  patient_id            :bigint           not null
 #  programme_id          :bigint           not null
 #

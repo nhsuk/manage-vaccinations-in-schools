@@ -147,7 +147,7 @@ describe "Vaccination programmes table" do
     ) do |row|
       expect(row).to have_selector(
         "td.nhsuk-table__cell",
-        text: "Vaccinated 1 September 2024"
+        text: "Vaccinated on 1 September 2024"
       )
     end
 
@@ -157,7 +157,7 @@ describe "Vaccination programmes table" do
     ) do |row|
       expect(row).to have_selector(
         "td.nhsuk-table__cell",
-        text: "Vaccinated 1 March 2025"
+        text: "Vaccinated on 1 March 2025"
       )
     end
   end
@@ -171,7 +171,10 @@ describe "Vaccination programmes table" do
         "td.nhsuk-table__cell",
         text: "Could not vaccinate"
       )
-      expect(row).to have_selector("td.nhsuk-table__cell", text: "Not well")
+      expect(row).to have_selector(
+        "td.nhsuk-table__cell",
+        text: "USER, Test decided that SMITH, John could not be vaccinated"
+      )
     end
   end
 
@@ -216,11 +219,11 @@ describe "Vaccination programmes table" do
 
   def and_the_patient_has_an_outcome_other_than_vaccinated
     create(
-      :vaccination_record,
-      :not_administered,
+      :triage,
+      :do_not_vaccinate,
       patient: @patient,
       programme: @hpv_programme,
-      session: @session
+      academic_year: AcademicYear.pending
     )
     StatusUpdater.call(patient: @patient)
   end

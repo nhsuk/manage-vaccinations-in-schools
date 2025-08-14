@@ -8,6 +8,7 @@
 #  academic_year         :integer          not null
 #  latest_session_status :integer          default("none_yet"), not null
 #  status                :integer          default("none_yet"), not null
+#  status_changed_at     :datetime         not null
 #  patient_id            :bigint           not null
 #  programme_id          :bigint           not null
 #
@@ -26,6 +27,7 @@ FactoryBot.define do
     patient
     programme
     academic_year { Date.current.academic_year }
+    status_changed_at { academic_year.to_academic_year_date_range.begin }
 
     traits_for_enum :status
   end

@@ -102,8 +102,8 @@ class StatusUpdater
 
   def update_vaccination_statuses!
     Patient::VaccinationStatus.import!(
-      %i[patient_id programme_id academic_year],
-      patient_statuses_to_import,
+      %i[patient_id programme_id academic_year status_changed_at],
+      vaccination_statuses_to_import,
       on_duplicate_key_ignore: true
     )
 
@@ -124,7 +124,7 @@ class StatusUpdater
           batch.select(&:changed?),
           on_duplicate_key_update: {
             conflict_target: [:id],
-            columns: %i[status latest_session_status]
+            columns: %i[status latest_session_status status_changed_at]
           }
         )
       end
@@ -151,29 +151,38 @@ class StatusUpdater
         end
   end
 
-  def patient_session_statuses_to_import
-    @patient_session_statuses_to_import ||=
-      patient_sessions
-        .joins(:patient, :session)
-        .pluck(
-          :id,
-          :"session.location_id",
-          :"session.academic_year",
-          :"patients.birth_academic_year"
-        )
-        .flat_map do |patient_session_id, location_id, academic_year, birth_academic_year|
-          year_group = birth_academic_year.to_year_group(academic_year:)
+  def vaccination_statuses_to_import
+    status_changed_ats =
+      AcademicYear.all.index_with do |academic_year|
+        academic_year.to_academic_year_date_range.begin
+      end
 
-          programme_ids_per_location_id_and_year_group
-            .fetch(location_id, {})
-            .fetch(year_group, [])
-            .map { [patient_session_id, it] }
-        end
+    patient_statuses_to_import.map do |row|
+      [row[0], row[1], row[2], status_changed_ats.fetch(row[2])]
+    end
+  end
+
+  def patient_session_statuses_to_import
+    patient_sessions
+      .joins(:patient, :session)
+      .pluck(
+        :id,
+        :"session.location_id",
+        :"session.academic_year",
+        :"patients.birth_academic_year"
+      )
+      .flat_map do |patient_session_id, location_id, academic_year, birth_academic_year|
+        year_group = birth_academic_year.to_year_group(academic_year:)
+
+        programme_ids_per_location_id_and_year_group
+          .fetch(location_id, {})
+          .fetch(year_group, [])
+          .map { [patient_session_id, it] }
+      end
   end
 
   def registration_statuses_to_import
-    @registration_statuses_to_import ||=
-      patient_session_statuses_to_import.map { [it.first] }.uniq
+    patient_session_statuses_to_import.map { [it.first] }.uniq
   end
 
   def programme_ids_per_year_group

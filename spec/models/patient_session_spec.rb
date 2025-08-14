@@ -139,10 +139,16 @@ describe PatientSession do
 
           context "when the patient has been vaccinated for flu" do
             before do
-              patient_session
-                .patient
-                .vaccination_status(programme: programmes.first, academic_year:)
-                .vaccinated!
+              create(
+                :vaccination_record,
+                programme: programmes.first,
+                session: patient_session.session,
+                patient: patient_session.patient
+              )
+              StatusUpdater.call(
+                session: patient_session.session,
+                patient: patient_session.patient
+              )
             end
 
             it { should_not include(patient_session) }

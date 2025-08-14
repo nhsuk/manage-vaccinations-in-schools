@@ -8,6 +8,7 @@
 #  academic_year         :integer          not null
 #  latest_session_status :integer          default("none_yet"), not null
 #  status                :integer          default("none_yet"), not null
+#  status_changed_at     :datetime         not null
 #  patient_id            :bigint           not null
 #  programme_id          :bigint           not null
 #
@@ -66,6 +67,9 @@ class Patient::VaccinationStatus < ApplicationRecord
   def assign_status
     self.status = generator.status
     self.latest_session_status = session_generator&.status || :none_yet
+    self.status_changed_at =
+      session_generator&.status_changed_at ||
+        academic_year.to_academic_year_date_range.begin
   end
 
   private

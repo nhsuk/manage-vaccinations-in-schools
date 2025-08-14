@@ -25,63 +25,87 @@ class AppPatientProgrammesTableComponent < ViewComponent::Base
   HEADERS = ["Programme name", "Status", "Notes"].freeze
 
   def rows
-    programmes.flat_map { |programme| rows_for_programme(programme) }
+    programmes.flat_map { |programme| rows_for_programme(programme:) }
   end
 
-  def rows_for_programme(programme)
+  def rows_for_programme(programme:)
     if programme.seasonal?
-      seasonal_programme_rows(programme)
+      seasonal_programme_rows(programme:)
     else
-      non_seasonal_programme_rows(programme)
+      non_seasonal_programme_rows(programme:)
     end
   end
 
-  def seasonal_programme_rows(programme)
+  def seasonal_programme_rows(programme:)
     eligible_year_groups = eligible_year_groups_for(programme:)
 
     AcademicYear.all.flat_map do |academic_year|
       year_group = patient.year_group(academic_year:)
       next unless year_group.in?(eligible_year_groups)
 
-      if vaccinated_for_academic_year?(programme:, academic_year:)
-        vaccination_records_for(programme).map do |vaccination_record|
-          build_row(programme, academic_year, vaccination_record)
-        end
-      else
-        [build_row(programme, academic_year)]
-      end
+      vaccination_records = vaccination_records_for(programme:, academic_year:)
+
+      build_rows(programme:, academic_year:, vaccination_records:)
     end
   end
 
-  def non_seasonal_programme_rows(programme)
+  def non_seasonal_programme_rows(programme:)
     academic_year = AcademicYear.pending
-    vaccination_records = vaccination_records_for(programme)
+    vaccination_records = vaccination_records_for(programme:)
 
-    if vaccination_records.any?
-      vaccination_records.map do |vaccination_record|
-        build_row(programme, academic_year, vaccination_record)
-      end
+    build_rows(programme:, academic_year:, vaccination_records:)
+  end
+
+  def build_rows(programme:, academic_year:, vaccination_records:)
+    if vaccination_records.any?(&:administered?)
+      vaccination_records
+        .select(&:administered?)
+        .map do |vaccination_record|
+          build_row_for_administered_record(
+            programme:,
+            academic_year:,
+            vaccination_record:
+          )
+        end
     else
-      [build_row(programme, academic_year)]
+      [build_row_for_programme(programme:, academic_year:)]
     end
   end
 
-  def build_row(programme, academic_year, vaccination_record = nil)
+  def build_row_for_programme(programme:, academic_year:)
+    cached_vaccination_status =
+      @patient.vaccination_status(programme:, academic_year:)
+
+    vaccination_status = {
+      status: cached_vaccination_status.status.to_sym,
+      latest_session_status:
+        cached_vaccination_status.latest_session_status.to_sym,
+      status_changed_at: cached_vaccination_status.status_changed_at
+    }
+
     [
-      name_for_programme(programme:, academic_year:, vaccination_record:),
-      status_for_programme(programme:, academic_year:, vaccination_record:),
-      notes_for_programme(programme:, academic_year:, vaccination_record:)
+      name_for_programme(programme:, academic_year:),
+      status_for_programme(vaccination_status:, programme:, academic_year:),
+      notes_for_programme(vaccination_status:, programme:, academic_year:)
     ]
   end
 
-  def name_for_programme(programme:, academic_year:, vaccination_record: nil)
+  def build_row_for_administered_record(
+    programme:,
+    academic_year:,
+    vaccination_record:
+  )
+    [
+      name_for_record(programme:, academic_year:, vaccination_record:),
+      status_for_administered_record(vaccination_record:),
+      notes_for_administered_record(vaccination_record:)
+    ]
+  end
+
+  def name_for_programme(programme:, academic_year:)
     name_parts = []
 
     name_parts << "Winter #{academic_year}" if programme.seasonal?
-
-    if multi_dose?(vaccination_record)
-      name_parts << "#{vaccination_record.dose_sequence.ordinalize} dose"
-    end
 
     if name_parts.any?
       "#{programme.name} (#{name_parts.join(", ")})"
@@ -90,48 +114,76 @@ class AppPatientProgrammesTableComponent < ViewComponent::Base
     end
   end
 
-  def multi_dose?(vaccination_record)
-    vaccination_record&.dose_sequence&.> 1
+  def status_for_programme(vaccination_status:, programme:, academic_year:)
+    status = vaccination_status[:status]
+    if status == :none_yet &&
+         eligibility_start_in_future?(programme:, academic_year:)
+      return "-"
+    end
+
+    label = I18n.t(status, scope: "status.programme.label")
+    colour = I18n.t(status, scope: "status.programme.colour")
+    tag.strong(label, class: "nhsuk-tag nhsuk-tag--#{colour}")
   end
 
-  def status_for_programme(programme:, academic_year:, vaccination_record: nil)
-    return vaccination_status(vaccination_record) if vaccination_record
-
+  def eligibility_start_in_future?(programme:, academic_year:)
     earliest_academic_year =
       calculate_earliest_academic_year(programme:, academic_year:)
 
-    return "—" if future_eligibility?(earliest_academic_year)
-
-    govuk_tag(text: "No outcome", colour: "grey")
-  end
-
-  def vaccination_status(vaccination_record)
-    if vaccination_record.administered?
-      govuk_tag(text: "Vaccinated", colour: "green")
-    else
-      govuk_tag(text: "Could not vaccinate", colour: "red")
-    end
-  end
-
-  def future_eligibility?(earliest_academic_year)
     earliest_academic_year&.to_academic_year_date_range&.begin&.future?
   end
 
-  def notes_for_programme(programme:, academic_year:, vaccination_record: nil)
-    return vaccination_notes(vaccination_record) if vaccination_record
-
-    eligibility_notes(programme, academic_year)
-  end
-
-  def vaccination_notes(vaccination_record)
-    if vaccination_record.administered?
-      "Vaccinated #{vaccination_record.performed_at.to_date.to_fs(:long)}"
-    else
-      vaccination_record.outcome.humanize
+  def calculate_earliest_academic_year(programme:, academic_year:)
+    if programme.seasonal?
+      academic_year
+    elsif (earliest_year_group = eligible_year_groups_for(programme:).first)
+      patient.birth_academic_year + earliest_year_group +
+        Integer::AGE_CHILDREN_START_SCHOOL
     end
   end
 
-  def eligibility_notes(programme, academic_year)
+  def notes_for_programme(vaccination_status:, programme:, academic_year:)
+    case vaccination_status[:status]
+    when :vaccinated
+      notes_for_status(vaccination_status:)
+    when :could_not_vaccinate
+      could_not_vaccinate_notes(vaccination_status:)
+    when :none_yet
+      no_outcome_yet_notes(vaccination_status:, programme:, academic_year:)
+    end
+  end
+
+  def notes_for_status(vaccination_status:)
+    latest_session_status =
+      vaccination_status[:latest_session_status].to_s.humanize
+    date = vaccination_status[:status_changed_at].to_date.to_fs(:long)
+    "#{latest_session_status} on #{date}"
+  end
+
+  def could_not_vaccinate_notes(vaccination_status:)
+    if vaccination_status[:latest_session_status] == :had_contraindications
+      latest_triage =
+        @patient
+          .triages
+          .includes(:performed_by)
+          .find_by(created_at: vaccination_status[:status_changed_at])
+
+      nurse = latest_triage.performed_by
+      "#{nurse.full_name} decided that #{patient.full_name} could not be vaccinated"
+    else
+      notes_for_status(vaccination_status:)
+    end
+  end
+
+  def no_outcome_yet_notes(vaccination_status:, programme:, academic_year:)
+    if vaccination_status[:latest_session_status] == :none_yet
+      eligibility_notes(programme:, academic_year:)
+    else
+      notes_for_status(vaccination_status:)
+    end
+  end
+
+  def eligibility_notes(programme:, academic_year:)
     earliest_academic_year =
       calculate_earliest_academic_year(programme:, academic_year:)
 
@@ -148,14 +200,69 @@ class AppPatientProgrammesTableComponent < ViewComponent::Base
     end
   end
 
-  def vaccinated_for_academic_year?(programme:, academic_year:)
-    patient.vaccination_statuses.vaccinated.exists?(programme:, academic_year:)
+  def build_row_for_record(programme:, academic_year:, vaccination_record:)
+    [
+      name_for_record(vaccination_record:, programme:, academic_year:),
+      status_for_record(vaccination_record:),
+      notes_for_record(vaccination_record:)
+    ]
   end
 
-  def vaccination_records_for(programme)
+  def name_for_record(vaccination_record:, programme:, academic_year:)
+    name_parts = []
+
+    name_parts << "Winter #{academic_year}" if programme.seasonal?
+
+    if multi_dose?(vaccination_record:)
+      name_parts << "#{vaccination_record.dose_sequence.ordinalize} dose"
+    end
+
+    if name_parts.any?
+      "#{programme.name} (#{name_parts.join(", ")})"
+    else
+      programme.name
+    end
+  end
+
+  def multi_dose?(vaccination_record:)
+    vaccination_record&.dose_sequence&.> 1
+  end
+
+  def status_for_administered_record(vaccination_record:)
+    if vaccination_record.administered?
+      status_for_programme(
+        vaccination_status: {
+          status: :vaccinated
+        },
+        programme: nil,
+        academic_year: nil
+      )
+    else
+      raise "Unsupported Outcome: status_for_record should only be used for administered records"
+    end
+  end
+
+  def notes_for_administered_record(vaccination_record:)
+    if vaccination_record.administered?
+      "Vaccinated on #{vaccination_record.performed_at.to_date.to_fs(:long)}"
+    else
+      raise "Unsupported Outcome: status_for_record should only be used for administered records"
+    end
+  end
+
+  def vaccination_records_for(programme:, academic_year: nil)
     @vaccination_records ||= patient.vaccination_records.order(:performed_at)
 
-    @vaccination_records.select { |record| record.programme_id == programme.id }
+    filtered_records =
+      @vaccination_records.select do |record|
+        record.programme_id == programme.id
+      end
+
+    if academic_year
+      filtered_records.select { |record| record.academic_year == academic_year }
+    else
+      filtered_records
+    end
   end
 
   def eligible_year_groups_for(programme:)
@@ -165,14 +272,5 @@ class AppPatientProgrammesTableComponent < ViewComponent::Base
       .where(location_id: location_ids)
       .where(programme:)
       .pluck_year_groups
-  end
-
-  def calculate_earliest_academic_year(programme:, academic_year:)
-    if programme.seasonal?
-      academic_year
-    elsif (earliest_year_group = eligible_year_groups_for(programme:).first)
-      patient.birth_academic_year + earliest_year_group +
-        Integer::AGE_CHILDREN_START_SCHOOL
-    end
   end
 end
