@@ -1,9 +1,5 @@
 # frozen_string_literal: true
 
-# Tests:
-# - [ ] Invalidated patient does exist in the database.
-# - [ ] Invalidated patient does not exist in the database.
-
 describe "Import child records" do
   scenario "PDS lookup extravaganza" do
     given_i_am_signed_in
