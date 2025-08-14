@@ -72,7 +72,7 @@ jobs:
               SNAPSHOT_ARN=$(aws rds describe-db-cluster-snapshots \
               --query "DBClusterSnapshots[?DBClusterIdentifier=='mavis-${{ inputs.environment }}'].[DBClusterSnapshotArn, SnapshotCreateTime]" \
               --output text | sort -k2 -r | head -n 1 | cut -f1)
-          
+
               if [ -z "$SNAPSHOT_ARN" ]; then
                   echo "No snapshots found for mavis-${{ inputs.environment }}"
                   exit 1
@@ -125,8 +125,8 @@ jobs:
       - prepare-db-replica
       - prepare-webapp
     if: ${{ !cancelled() &&
-          (needs.prepare-db-replica.result == 'success' || needs.prepare-db-replica.result == 'skipped') &&
-          needs.prepare-webapp.result == 'success' }}
+      (needs.prepare-db-replica.result == 'success' || needs.prepare-db-replica.result == 'skipped') &&
+      needs.prepare-webapp.result == 'success' }}
     env:
       SNAPSHOT_ARN: ${{ needs.prepare-db-replica.outputs.SNAPSHOT_ARN }}
       DB_SECRET_ARN: ${{ needs.prepare-db-replica.outputs.DB_SECRET_ARN || 'arn:aws:secretsmanager:eu-west-2:000000000000:secret:placeholder' }}
@@ -169,7 +169,7 @@ jobs:
             "-var=allowed_egress_cidr_blocks=$CIDR_BLOCKS"
             "-out=${{ runner.temp }}/tfplan"
           )
-          
+
           if [ "${{ env.REPLACE_DB_CLUSTER }}" = "true" ]; then
             PLAN_ARGS+=("-replace" "aws_rds_cluster.cluster")
           fi
