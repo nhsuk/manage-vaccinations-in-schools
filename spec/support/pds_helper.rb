@@ -1,11 +1,13 @@
 # frozen_string_literal: true
 
 module PDSHelper
-  def stub_pds_search_to_return_no_patients
+  def stub_pds_search_to_return_no_patients(**query)
+    query["_history"] ||= "true"
+
     stub_request(
       :get,
       "https://sandbox.api.service.nhs.uk/personal-demographics/FHIR/R4/Patient"
-    ).with(query: hash_including({})).to_return_json(body: { total: 0 })
+    ).with(query: hash_including(query)).to_return_json(body: { total: 0 })
   end
 
   def stub_pds_search_to_return_a_patient
@@ -34,10 +36,12 @@ module PDSHelper
     )
   end
 
-  def stub_pds_get_nhs_number_to_return_an_invalidated_patient
+  def stub_pds_get_nhs_number_to_return_an_invalidated_patient(nhs_number = nil)
+    nhs_number ||= @patient.nhs_number
+
     stub_request(
       :get,
-      "https://sandbox.api.service.nhs.uk/personal-demographics/FHIR/R4/Patient/#{@patient.nhs_number}"
+      "https://sandbox.api.service.nhs.uk/personal-demographics/FHIR/R4/Patient/#{nhs_number}"
     ).to_return(
       body: file_fixture("pds/invalid-patient-response.json"),
       status: 404,
