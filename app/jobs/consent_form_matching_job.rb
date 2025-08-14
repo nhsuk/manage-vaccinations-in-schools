@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class ConsentFormMatchingJob < ApplicationJob
-  include NHSAPIConcurrencyConcernSidekiq
+  include PDSAPIThrottlingConcern
 
   queue_as :consents
 

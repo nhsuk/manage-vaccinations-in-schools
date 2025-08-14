@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class ProcessPatientChangesetsJob < ApplicationJob
-  include NHSAPIConcurrencyConcernSidekiq
+  include PDSAPIThrottlingConcern
 
   queue_as :imports
 

@@ -4,7 +4,7 @@ class SyncVaccinationRecordToNHSJob < ApplicationJob
   def self.concurrent_jobs_per_second = 2
   def self.concurrency_key = :immunisations_api
 
-  include NHSAPIConcurrencyConcernGoodJob
+  include ImmunisationsAPIThrottlingConcern
 
   queue_as :immunisation_api
 
