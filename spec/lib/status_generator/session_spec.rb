@@ -83,4 +83,290 @@ describe StatusGenerator::Session do
       it { should be(:absent_from_session) }
     end
   end
+
+  describe "#status_changed_at" do
+    subject(:status_changed_at) { generator.status_changed_at }
+
+    around { |example| travel_to(Time.zone.now) { example.run } }
+
+    let(:patient) { patient_session.patient }
+    let(:session) { patient_session.session }
+    let(:performed_at) { 1.day.ago.beginning_of_minute }
+    let(:created_at) { 2.days.ago.midday }
+
+    context "with a vaccination administered" do
+      before do
+        create(
+          :vaccination_record,
+          patient: patient,
+          session: session,
+          programme: programme,
+          performed_at: performed_at
+        )
+      end
+
+      it { should eq(performed_at) }
+    end
+
+    context "with a vaccination already had" do
+      before do
+        create(
+          :vaccination_record,
+          :already_had,
+          patient: patient,
+          session: session,
+          programme: programme,
+          performed_at: performed_at
+        )
+      end
+
+      it { should eq(performed_at) }
+    end
+
+    context "with contraindications from vaccination record" do
+      before do
+        create(
+          :vaccination_record,
+          :contraindications,
+          patient: patient,
+          session: session,
+          programme: programme,
+          performed_at: performed_at
+        )
+      end
+
+      it { should eq(performed_at) }
+    end
+
+    context "with contraindications from triage" do
+      before do
+        triage =
+          create(
+            :triage,
+            :do_not_vaccinate,
+            patient: patient,
+            programme: programme
+          )
+        triage.update_column(:created_at, created_at)
+      end
+
+      it { should eq(created_at) }
+    end
+
+    context "with contraindications from both vaccination record and triage" do
+      let(:earlier_date) { 3.days.ago }
+      let(:later_date) { 1.day.ago }
+
+      context "when vaccination record date is earlier" do
+        before do
+          create(
+            :vaccination_record,
+            :contraindications,
+            patient: patient,
+            session: session,
+            programme: programme,
+            performed_at: earlier_date
+          )
+
+          triage =
+            create(
+              :triage,
+              :do_not_vaccinate,
+              patient: patient,
+              programme: programme
+            )
+          triage.update_column(:created_at, later_date)
+        end
+
+        it { should eq(earlier_date) }
+      end
+
+      context "when triage date is earlier" do
+        before do
+          create(
+            :vaccination_record,
+            :contraindications,
+            patient: patient,
+            session: session,
+            programme: programme,
+            performed_at: later_date
+          )
+
+          triage =
+            create(
+              :triage,
+              :do_not_vaccinate,
+              patient: patient,
+              programme: programme
+            )
+          triage.update_column(:created_at, earlier_date)
+        end
+
+        it { should eq(earlier_date) }
+      end
+    end
+
+    context "with refused from vaccination record" do
+      before do
+        create(
+          :vaccination_record,
+          :refused,
+          patient: patient,
+          session: session,
+          programme: programme,
+          performed_at: performed_at
+        )
+      end
+
+      it { should eq(performed_at) }
+    end
+
+    context "with refused from consent" do
+      before do
+        consent =
+          create(:consent, :refused, patient: patient, programme: programme)
+        consent.update_column(:submitted_at, created_at)
+      end
+
+      it { should eq(created_at) }
+    end
+
+    context "with refused from both vaccination record and consent" do
+      let(:earlier_date) { 3.days.ago }
+      let(:later_date) { 1.day.ago }
+
+      context "when vaccination record date is earlier" do
+        before do
+          create(
+            :vaccination_record,
+            :refused,
+            patient: patient,
+            session: session,
+            programme: programme,
+            performed_at: earlier_date
+          )
+
+          consent =
+            create(:consent, :refused, patient: patient, programme: programme)
+          consent.update_column(:submitted_at, later_date)
+        end
+
+        it { should eq(earlier_date) }
+      end
+
+      context "when consent date is earlier" do
+        before do
+          create(
+            :vaccination_record,
+            :refused,
+            patient: patient,
+            session: session,
+            programme: programme,
+            performed_at: later_date
+          )
+
+          consent =
+            create(:consent, :refused, patient: patient, programme: programme)
+          consent.update_column(:submitted_at, earlier_date)
+        end
+
+        it { should eq(earlier_date) }
+      end
+    end
+
+    context "with absent from vaccination record" do
+      before do
+        create(
+          :vaccination_record,
+          :absent_from_session,
+          patient: patient,
+          session: session,
+          programme: programme,
+          performed_at: performed_at
+        )
+      end
+
+      it { should eq(performed_at) }
+    end
+
+    context "with absent from session attendance" do
+      before do
+        attendance =
+          create(:session_attendance, :absent, patient_session: patient_session)
+        attendance.update_column(:created_at, created_at)
+      end
+
+      it { should eq(created_at) }
+    end
+
+    context "with absent from both vaccination record and session attendance" do
+      let(:earlier_date) { 3.days.ago }
+      let(:later_date) { 1.day.ago }
+
+      context "when vaccination record date is earlier" do
+        before do
+          create(
+            :vaccination_record,
+            :absent_from_session,
+            patient: patient,
+            session: session,
+            programme: programme,
+            performed_at: earlier_date
+          )
+
+          attendance =
+            create(
+              :session_attendance,
+              :absent,
+              patient_session: patient_session
+            )
+          attendance.update_column(:created_at, later_date)
+        end
+
+        it { should eq(earlier_date) }
+      end
+
+      context "when session attendance date is earlier" do
+        before do
+          create(
+            :vaccination_record,
+            :absent_from_session,
+            patient: patient,
+            session: session,
+            programme: programme,
+            performed_at: later_date
+          )
+
+          attendance =
+            create(
+              :session_attendance,
+              :absent,
+              patient_session: patient_session
+            )
+          attendance.update_column(:created_at, earlier_date)
+        end
+
+        it { should eq(earlier_date) }
+      end
+    end
+
+    context "with unwell" do
+      before do
+        create(
+          :vaccination_record,
+          :not_administered,
+          patient: patient,
+          session: session,
+          programme: programme,
+          performed_at: performed_at
+        )
+      end
+
+      it { should eq(performed_at) }
+    end
+
+    context "with no status" do
+      it { should be_nil }
+    end
+  end
 end
