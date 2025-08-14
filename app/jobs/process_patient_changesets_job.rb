@@ -9,17 +9,29 @@ class ProcessPatientChangesetsJob < ApplicationJob
   queue_as :pds
 
   def perform(patient_changeset)
+    attrs = patient_changeset.child_attributes
+
     pds_patient =
-      if patient_changeset.child_attributes["nhs_number"].nil?
-        PDS::Patient.search(
-          family_name: patient_changeset.child_attributes["family_name"],
-          given_name: patient_changeset.child_attributes["given_name"],
-          date_of_birth: patient_changeset.child_attributes["date_of_birth"],
-          address_postcode:
-            patient_changeset.child_attributes["address_postcode"]
-        )
+      if attrs["nhs_number"].present?
+        patient_found = find_patient(attrs["nhs_number"])
+
+        if patient_found == :invalid
+          search_for_patient(attrs).then do |newly_found_patient|
+            # If we found a patient, update the changeset with the new NHS
+            # number. If we couldn't determine who this patient should really
+            # be, we won't have an NHS number to replace the invalid one, so
+            # just mark it as invalid.
+            patient_changeset.invalidate! if newly_found_patient.nil?
+            newly_found_patient
+          end
+        elsif patient_found == :not_found
+          patient_changeset.update!(nhs_number: nil)
+          search_for_patient(attrs)
+        else
+          patient_found
+        end
       else
-        PDS::Patient.find(patient_changeset.child_attributes["nhs_number"])
+        search_for_patient(attrs)
       end
 
     if pds_patient.present?
@@ -44,11 +56,26 @@ class ProcessPatientChangesetsJob < ApplicationJob
         CommitPatientChangesetsJob.perform_now(patient_changeset.import)
       end
     end
-  rescue NHS::PDS::PatientNotFound
-    patient_changeset.update!(nhs_number: nil)
-    PatientNHSNumberLookupJob.perform_later(patient_changeset)
+  end
+
+  private
+
+  def find_patient(nhs_number)
+    PDS::Patient.find(nhs_number)
   rescue NHS::PDS::InvalidatedResource, NHS::PDS::InvalidNHSNumber
-    patient_changeset.invalidate!
-    PatientNHSNumberLookupJob.perform_later(patient_changeset)
+    :invalid
+  rescue NHS::PDS::PatientNotFound
+    :not_found
+  end
+
+  def search_for_patient(attrs)
+    PDS::Patient.search(
+      family_name: attrs["family_name"],
+      given_name: attrs["given_name"],
+      date_of_birth: attrs["date_of_birth"],
+      address_postcode: attrs["address_postcode"]
+    )
+  rescue NHS::PDS::PatientNotFound, NHS::PDS::TooManyMatches
+    nil
   end
 end

@@ -77,6 +77,10 @@ class PatientChangeset < ApplicationRecord
 
   def school_move_source = pending_changes["school_move_source"]
 
+  def invalidate!
+    pending_changes["child"]["invalidated_at"] = Time.current
+  end
+
   def patient
     @patient ||=
       if (existing_patient = existing_patients.first)
@@ -169,6 +173,7 @@ class PatientChangeset < ApplicationRecord
     @existing_patients ||=
       begin
         deserialize_attribute(child_attributes, "date_of_birth", :date)
+        deserialize_attribute(child_attributes, "invalidated_at", :datetime)
 
         if child_attributes["given_name"].blank? ||
              child_attributes["family_name"].blank? ||
@@ -208,6 +213,7 @@ class PatientChangeset < ApplicationRecord
       existing_patient,
       %w[male female not_specified]
     )
+    set_child_attribute_if_valid(:invalidated_at, existing_patient)
   end
 
   def set_child_attribute_if_valid(
