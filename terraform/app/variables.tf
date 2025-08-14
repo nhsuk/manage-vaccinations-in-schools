@@ -354,8 +354,15 @@ variable "valkey_engine_version" {
 
 variable "valkey_node_type" {
   type        = string
-  default     = "cache.t2.medium"
-  description = "ElastiCache node type for Valkey (use cache.t3.micro for sandbox, cache.r6g.large+ for production)"
+  default     = "cache.m7g.large"
+  description = "ElastiCache node type for Valkey (use cache.t3.micro for sandbox, cache.m7g.large+ for production)"
+  nullable    = false
+}
+
+variable "valkey_failover_enabled" {
+  type        = bool
+  default     = true
+  description = "Enable automatic failover for Valkey cluster"
   nullable    = false
 }
 
@@ -372,14 +379,14 @@ variable "valkey_snapshot_retention_limit" {
 
 variable "valkey_snapshot_window" {
   type        = string
-  default     = "03:00-05:00"
+  default     = "00:00-02:00"
   description = "Daily snapshot window for Valkey (HH:MM-HH:MM format, UTC)"
   nullable    = false
 }
 
 variable "valkey_maintenance_window" {
   type        = string
-  default     = "sun:05:00-sun:06:00"
+  default     = "sun:02:00-sun:04:00"
   description = "Weekly maintenance window for Valkey (ddd:HH:MM-ddd:HH:MM format, UTC)"
   nullable    = false
 }
@@ -396,6 +403,7 @@ variable "valkey_log_retention_days" {
 }
 
 locals {
-  ecs_initial_lb_target_group = var.active_lb_target_group == "green" ? aws_lb_target_group.green.arn : aws_lb_target_group.blue.arn
-  ecs_sg_ids                  = [module.web_service.security_group_id, module.good_job_service.security_group_id, module.sidekiq_service.security_group_id]
+  ecs_initial_lb_target_group     = var.active_lb_target_group == "green" ? aws_lb_target_group.green.arn : aws_lb_target_group.blue.arn
+  ecs_sg_ids                      = [module.web_service.security_group_id, module.good_job_service.security_group_id, module.sidekiq_service.security_group_id]
+  valkey_cache_availability_zones = var.valkey_failover_enabled ? [aws_subnet.private_subnet_a.availability_zone, aws_subnet.private_subnet_b.availability_zone] : [aws_subnet.private_subnet_a.availability_zone]
 }
