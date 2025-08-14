@@ -59,6 +59,11 @@ class TeamMigration::Base
     attach_school_to_subteam(location, team.subteams.first)
   end
 
+  def detach_school(urn:)
+    log("Detaching #{urn}")
+    Location.school.find_by!(urn:).update!(subteam_id: nil)
+  end
+
   def add_school_year_groups(location, programmes, sen:)
     log(
       "Adding default #{programmes.map(&:name).to_sentence} year groups to #{location.urn}"

@@ -24,6 +24,8 @@ describe TeamMigration::Coventry do
     end
   end
 
+  let!(:school_to_remove) { create(:school, urn: "131574", team:) }
+
   let(:csv_data) { <<-CSV }
 URN,Subteam,SEN
 103639,COV,
@@ -32,7 +34,7 @@ URN,Subteam,SEN
 125794,N WARKS,SEN
 125507,S WARKS,
 145486,S WARKS,SEN
-    CSV
+  CSV
 
   before do
     parsed_csv_data = CSV.parse(csv_data, headers: true)
@@ -62,7 +64,7 @@ URN,Subteam,SEN
   end
 
   it "adds schools to the subteams" do
-    expect { call }.to change(team.schools, :count).by(6)
+    expect { call }.to change(team.schools, :count).by(6 - 1)
 
     subteams.each do |subteam|
       mainstream_school = subteam.schools.order(:created_at).first
@@ -82,5 +84,11 @@ URN,Subteam,SEN
         [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
       )
     end
+  end
+
+  it "removes the closing school" do
+    expect { call }.to change(team.schools, :count).by(6 - 1)
+
+    expect(school_to_remove.reload.subteam).to be_nil
   end
 end
