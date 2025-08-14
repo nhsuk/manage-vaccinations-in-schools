@@ -4,9 +4,6 @@
 
 <% page_title = "Search for a child record to match with #{@consent_form.full_name}" %>
 <%= h1 page_title: do %>
-  <span class="nhsuk-caption-l nhsuk-u-margin-top-2">
-    Consent response from <%= @consent_form.parent_full_name %>
-  </span>
   <%= page_title %>
 <% end %>
 
@@ -31,6 +28,10 @@
             summary_list.with_row do |row|
               row.with_key { "School" }
               row.with_value { patient_school(@consent_form) }
+            end
+            summary_list.with_row do |row|
+              row.with_key { "Parent" }
+              row.with_value { format_parent_with_relationship(@consent_form.parent_relationship, include_phone: false) }
             end
           end %>
 

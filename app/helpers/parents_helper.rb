@@ -11,7 +11,7 @@ module ParentsHelper
     end
   end
 
-  def format_parent_with_relationship(parent_relationship)
+  def format_parent_with_relationship(parent_relationship, include_phone: true)
     parent = parent_relationship.parent
 
     [
@@ -19,7 +19,7 @@ module ParentsHelper
       if (email = parent.email).present?
         tag.span(email, class: "nhsuk-u-secondary-text-color")
       end,
-      if (phone = parent.phone).present?
+      if include_phone && (phone = parent.phone).present?
         tag.span(phone, class: "nhsuk-u-secondary-text-color")
       end
     ].compact.join(tag.br).html_safe
