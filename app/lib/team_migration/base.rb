@@ -71,8 +71,8 @@ class TeamMigration::Base
     location.location_programme_year_groups.destroy_all
     location.create_default_programme_year_groups!(programmes)
 
-    log("Adding additional flu year groups to #{location.urn}")
     if sen && (programme = programmes.find(&:flu?))
+      log("Adding additional flu year groups to #{location.urn}")
       location
         .year_groups
         .select { it >= 12 }
