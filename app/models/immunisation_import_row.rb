@@ -272,7 +272,7 @@ class ImmunisationImportRow
     @school ||=
       if school_urn.present? && school_urn.to_s != SCHOOL_URN_HOME_EDUCATED &&
            school_urn.to_s != SCHOOL_URN_UNKNOWN
-        Location.school.find_by(urn: school_urn.to_s)
+        Location.school.find_by_urn_and_site(school_urn.to_s)
       end
   end
 
@@ -878,7 +878,7 @@ class ImmunisationImportRow
   def validate_school_urn
     return if school_urn.blank?
 
-    unless Location.school.exists?(urn: school_urn.to_s) ||
+    unless Location.school.where_urn_and_site(school_urn.to_s).exists? ||
              school_urn.to_s.in?([SCHOOL_URN_HOME_EDUCATED, SCHOOL_URN_UNKNOWN])
       errors.add(
         school_urn.header,
