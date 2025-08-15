@@ -6,6 +6,9 @@ describe AppPatientProgrammesTableComponent do
   let(:component) { described_class.new(patient, programmes:) }
   let(:team) { create(:team, programmes:) }
   let(:session) { create(:session, team:, programmes:) }
+  let(:nurse) do
+    create(:user, :nurse, given_name: "Jane", family_name: "Smith")
+  end
 
   let(:today) { Date.new(2025, 9, 1) }
 
@@ -23,7 +26,8 @@ describe AppPatientProgrammesTableComponent do
     context "when vaccinated" do
       let(:patient) { create(:patient, :vaccinated, session:) }
 
-      it { should have_content("Vaccinated") }
+      it { should have_css(".nhsuk-tag--green", text: "Vaccinated") }
+      it { should have_content("Vaccinated on #{today.to_fs(:long)}") }
     end
 
     context "when vaccinated last year" do
@@ -40,6 +44,101 @@ describe AppPatientProgrammesTableComponent do
       end
 
       it { should_not have_content("Vaccinated") }
+    end
+
+    context "when consent refused" do
+      let(:patient) { create(:patient, :consent_refused, session:) }
+
+      before { StatusUpdater.call(patient:) }
+
+      it { should have_css(".nhsuk-tag--red", text: "Could not vaccinate") }
+      it { should have_content("Refused on #{today.to_fs(:long)}") }
+    end
+
+    context "when triage outcome was 'Do not vaccinate'" do
+      let(:patient) { create(:patient, :consent_given_triage_needed, session:) }
+
+      before do
+        create(
+          :triage,
+          :do_not_vaccinate,
+          patient:,
+          programme: programmes.first,
+          performed_by: nurse,
+          created_at: today
+        )
+        StatusUpdater.call(patient:)
+      end
+
+      it { should have_css(".nhsuk-tag--red", text: "Could not vaccinate") }
+
+      it do
+        expect(rendered_component).to have_content(
+          "#{nurse.full_name} decided that #{patient.full_name} could not be vaccinated"
+        )
+      end
+    end
+
+    context "when no outcome yet but had contraindications" do
+      let(:patient) { create(:patient, session:) }
+
+      before do
+        create(
+          :vaccination_record,
+          patient:,
+          programme: programmes.first,
+          outcome: :contraindications,
+          performed_at: today,
+          session: session
+        )
+        StatusUpdater.call(patient:)
+      end
+
+      it { should have_css(".nhsuk-tag--white", text: "No outcome") }
+
+      it do
+        expect(rendered_component).to have_content(
+          "Had contraindications on #{today.to_fs(:long)}"
+        )
+      end
+    end
+
+    context "when no outcome yet but was unwell" do
+      let(:patient) { create(:patient, session:) }
+
+      before do
+        create(
+          :vaccination_record,
+          patient:,
+          programme: programmes.first,
+          outcome: :not_well,
+          performed_at: today,
+          session: session
+        )
+        StatusUpdater.call(patient:)
+      end
+
+      it { should have_css(".nhsuk-tag--white", text: "No outcome") }
+      it { should have_content("Unwell on #{today.to_fs(:long)}") }
+    end
+
+    context "when no outcome yet but refused vaccine" do
+      let(:patient) { create(:patient, session:) }
+
+      before do
+        create(
+          :vaccination_record,
+          patient:,
+          programme: programmes.first,
+          outcome: :refused,
+          performed_at: today,
+          session: session
+        )
+        StatusUpdater.call(patient:)
+      end
+
+      it { should have_css(".nhsuk-tag--white", text: "No outcome") }
+      it { should have_content("Refused on #{today.to_fs(:long)}") }
     end
   end
 
@@ -66,10 +165,49 @@ describe AppPatientProgrammesTableComponent do
 
     it { should have_content("Eligibility starts 1 September 2026").twice }
 
-    context "when vaccinated" do
-      let(:patient) { create(:patient, :vaccinated, session:) }
+    context "when vaccinated with multiple doses" do
+      let(:patient) { create(:patient, session:) }
+      let(:first_dose_date) { Time.zone.local(2024, 9, 1) }
+      let(:second_dose_date) { Time.zone.local(2025, 3, 1) }
 
-      it { should have_content("Vaccinated") }
+      before do
+        create(
+          :vaccination_record,
+          patient:,
+          programme: programmes.first,
+          performed_at: first_dose_date,
+          dose_sequence: 1,
+          session: session
+        )
+
+        create(
+          :vaccination_record,
+          patient:,
+          programme: programmes.first,
+          performed_at: second_dose_date,
+          dose_sequence: 2,
+          session: session
+        )
+
+        StatusUpdater.call(patient:)
+      end
+
+      it { should have_css(".nhsuk-tag--green", text: "Vaccinated") }
+
+      it do
+        expect(rendered_component).to have_content(
+          "Vaccinated on #{first_dose_date.to_date.to_fs(:long)}"
+        )
+      end
+
+      it do
+        expect(rendered_component).to have_content(
+          "Vaccinated on #{second_dose_date.to_date.to_fs(:long)}"
+        )
+      end
+
+      it { should have_content("HPV") } # First dose doesn't show dose sequence
+      it { should have_content("HPV (2nd dose)") }
     end
 
     context "when vaccinated last year" do

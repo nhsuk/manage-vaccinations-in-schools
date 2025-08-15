@@ -32,6 +32,9 @@ describe "Import child records" do
     then_i_should_see_the_upload
     and_i_should_see_the_patients
 
+    when_i_click_on_a_patient
+    then_i_should_see_the_patient_details
+
     when_i_visit_the_hpv_programme_page
     then_i_should_see_the_cohorts_for_hpv
 
@@ -58,6 +61,67 @@ describe "Import child records" do
     then_i_should_see_import_issues_with_the_count
   end
 
+  context "when PDS lookup during import is enabled" do
+    scenario "User uploads a file" do
+      given_the_app_is_setup
+      and_pds_lookup_during_import_is_enabled
+
+      when_i_visit_the_import_page
+      and_i_choose_to_import_child_records
+      then_i_should_see_the_import_page
+
+      when_i_continue_without_uploading_a_file
+      then_i_should_see_an_error
+
+      when_i_upload_a_malformed_csv
+      then_i_should_see_an_error
+
+      when_i_upload_a_file_with_invalid_fields
+      then_i_should_see_the_imports_page_with_the_processing_flash
+
+      when_i_go_to_the_import_page
+      then_i_should_see_the_holding_page
+
+      when_i_wait_for_the_background_job_to_complete
+      and_i_refresh_the_page
+      then_i_should_the_errors_page_with_invalid_fields
+
+      when_it_is_a_litte_bit_later
+      and_i_go_back_to_the_upload_page
+      and_i_upload_a_valid_file
+      then_i_should_see_the_upload
+      and_i_should_see_the_patients
+
+      when_i_click_on_a_patient
+      then_i_should_see_the_patient_details
+
+      when_i_visit_the_hpv_programme_page
+      then_i_should_see_the_cohorts_for_hpv
+
+      when_i_click_on_the_cohort_for_hpv
+      then_i_should_see_the_children_for_hpv
+
+      when_i_search_for_a_child
+      then_i_should_see_only_the_child
+
+      when_i_visit_the_doubles_programme_page
+      then_i_should_see_the_cohorts_for_doubles
+
+      when_i_click_on_the_cohort_for_doubles
+      then_i_should_see_the_children_for_doubles
+
+      when_i_visit_the_hpv_programme_page
+      and_i_import_child_records_from_children_tab
+      then_i_should_see_the_import_page
+
+      travel 1.minute # to ensure the created_at is different for the import jobs
+
+      when_i_upload_a_valid_file_with_changes
+      and_i_go_to_the_import_page
+      then_i_should_see_import_issues_with_the_count
+    end
+  end
+
   def given_the_app_is_setup
     programmes = [
       create(:programme, :hpv),
@@ -71,6 +135,13 @@ describe "Import child records" do
     @user = @team.users.first
 
     TeamSessionsFactory.call(@team, academic_year: AcademicYear.current)
+  end
+
+  def and_pds_lookup_during_import_is_enabled
+    Flipper.enable(:pds_lookup_during_import)
+
+    stub_pds_search_to_return_a_patient
+    stub_pds_get_nhs_number_to_return_a_patient
   end
 
   def when_i_visit_the_import_page
@@ -94,7 +165,7 @@ describe "Import child records" do
     click_on "Continue"
   end
 
-  def then_i_should_see_the_patients
+  def and_i_should_see_the_patients
     expect(page).to have_content(
       "Name and NHS numberPostcodeSchoolDate of birth"
     )
@@ -104,23 +175,18 @@ describe "Import child records" do
     expect(page).to have_content("Postcode SW1A 1AA")
   end
 
-  alias_method :and_i_should_see_the_patients, :then_i_should_see_the_patients
+  def when_i_click_on_a_patient
+    click_on "DOE, Mark"
+  end
 
-  def when_i_click_on_upload_records
-    click_on "Upload records"
+  def then_i_should_see_the_patient_details
+    expect(page).to have_content("Child’s details")
+    expect(page).to have_content("DOE, Mark")
   end
 
   def then_i_should_see_the_upload
     expect(page).to have_content("Imported on")
     expect(page).to have_content("Imported byUSER, Test")
-  end
-
-  def when_i_click_on_the_imports_page
-    click_on "Import", match: :first
-  end
-
-  def then_i_should_see_the_import
-    expect(page).to have_content("1 completed import")
   end
 
   def when_i_visit_the_hpv_programme_page
@@ -229,6 +295,10 @@ describe "Import child records" do
 
   def when_i_wait_for_the_background_job_to_complete
     perform_enqueued_jobs
+    # TODO: Temporary hack to ensure process patient changesets jobs are done
+    perform_enqueued_jobs if enqueued_jobs.any?
+    # TODO: Temporary hack to ensure commit patient  changesets jobs are done
+    perform_enqueued_jobs if enqueued_jobs.any?
   end
 
   def then_i_should_see_the_holding_page

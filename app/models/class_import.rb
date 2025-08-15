@@ -42,6 +42,10 @@ class ClassImport < PatientImport
 
   has_and_belongs_to_many :parent_relationships
   has_and_belongs_to_many :parents
+  has_many :changesets,
+           class_name: "PatientChangeset",
+           as: :import,
+           dependent: :destroy
 
   private
 
@@ -79,5 +83,7 @@ class ClassImport < PatientImport
       end
 
     SchoolMove.import(school_moves, on_duplicate_key_ignore: true)
+
+    PatientsAgedOutOfSchoolJob.perform_later
   end
 end

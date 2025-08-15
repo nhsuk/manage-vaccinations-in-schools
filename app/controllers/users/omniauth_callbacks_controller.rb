@@ -15,18 +15,27 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   def cis2
     set_cis2_session_info
 
-    if !selected_cis2_workgroup_is_valid?
-      redirect_to users_workgroup_not_found_path
-    elsif !selected_cis2_role_is_valid?
+    if !selected_cis2_role_is_valid?
       redirect_to users_role_not_found_path
     elsif !selected_cis2_org_is_registered?
       redirect_to users_organisation_not_found_path
+    elsif !selected_cis2_workgroup_is_valid?
+      redirect_to users_workgroup_not_found_path
     else
       @user = User.find_or_create_from_cis2_oidc(user_cis2_info, valid_teams)
 
+      # give them a session token for the reporting app also
+      @user.update!(reporting_api_session_token: SecureRandom.hex(32))
+
       # Force is set to true because the `session_token` might have changed
       # even if the same user is logging in.
-      sign_in_and_redirect @user, event: :authentication, force: true
+      sign_in @user, event: :authentication, force: true
+      # We have to split sign_in and redirect methods up, so we can supply the
+      # allow_other_host param to the redirect. This is so that we can
+      # redirect to the reporting app which will be running on another host/port
+      # Note that safety checks on the host are now done in the
+      # after_sign_in_path_for method, so this doesn't allow arbitrary URLs
+      redirect_after_choosing_org
     end
   rescue StandardError => e
     unless Rails.env.production?
@@ -52,7 +61,7 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
 
     if validate_logout_token(logout_token)
       if @sid.blank? || @user.session_token == @sid
-        @user.update!(session_token: nil)
+        @user.update!(session_token: nil, reporting_api_session_token: nil)
       end
 
       render json: {}, status: :ok
@@ -109,8 +118,7 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
       role_name: selected_cis2_nrbac_role["role_name"],
       role_code: selected_cis2_nrbac_role["role_code"],
       workgroups: selected_cis2_nrbac_role["workgroups"],
-      has_other_roles: raw_cis2_info["nhsid_nrbac_roles"].length > 1,
-      team_workgroup: nil
+      has_other_roles: raw_cis2_info["nhsid_nrbac_roles"].length > 1
     )
   end
 

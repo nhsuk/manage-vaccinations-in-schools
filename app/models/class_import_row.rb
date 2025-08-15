@@ -8,13 +8,7 @@ class ClassImportRow < PatientImportRow
     @school = location
   end
 
-  private
-
   attr_reader :school
-
-  def stage_registration?
-    false
-  end
 
   def school_move_source
     :class_list_import
@@ -22,6 +16,12 @@ class ClassImportRow < PatientImportRow
 
   def home_educated
     nil # false is used when school is unknown
+  end
+
+  private
+
+  def stage_registration?
+    false
   end
 
   def validate_address_postcode

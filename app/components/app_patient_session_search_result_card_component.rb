@@ -147,13 +147,13 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
     when :record
       []
     when :register
-      [register_status_tag, programme_status_tag]
+      [register_status_tag, vaccination_status_tag]
     when :consent
       [consent_status_tag]
     when :triage
       [triage_status_tag]
     else
-      [programme_status_tag, session_status_tag]
+      [vaccination_status_tag]
     end
   end
 
@@ -175,15 +175,16 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
     }
   end
 
-  def programme_status_tag
+  def vaccination_status_tag
     {
-      key: :programme,
+      key: :vaccination,
       value:
         render(
           AppProgrammeStatusTagsComponent.new(
             programmes.index_with do |programme|
               patient.vaccination_status(programme:, academic_year:).slice(
-                :status
+                :status,
+                :latest_session_status
               )
             end,
             outcome: :programme
@@ -199,21 +200,6 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
         render(
           AppRegisterStatusTagComponent.new(
             patient_session.registration_status&.status || "unknown"
-          )
-        )
-    }
-  end
-
-  def session_status_tag
-    {
-      key: :session,
-      value:
-        render(
-          AppProgrammeStatusTagsComponent.new(
-            programmes.index_with do |programme|
-              patient_session.session_status(programme:).slice(:status)
-            end,
-            outcome: :session
           )
         )
     }

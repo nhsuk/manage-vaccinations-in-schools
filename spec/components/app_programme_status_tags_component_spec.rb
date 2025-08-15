@@ -9,10 +9,10 @@ describe AppProgrammeStatusTagsComponent do
 
   context "for consent outcome" do
     let(:component) do
-      described_class.new(programme_statuses, outcome: :consent)
+      described_class.new(status_by_programme, outcome: :consent)
     end
 
-    let(:programme_statuses) do
+    let(:status_by_programme) do
       {
         menacwy_programme => {
           status: :given
@@ -34,10 +34,10 @@ describe AppProgrammeStatusTagsComponent do
 
   context "for programme outcome" do
     let(:component) do
-      described_class.new(programme_statuses, outcome: :programme)
+      described_class.new(status_by_programme, outcome: :programme)
     end
 
-    let(:programme_statuses) do
+    let(:status_by_programme) do
       {
         menacwy_programme => {
           status: :vaccinated
@@ -50,6 +50,6 @@ describe AppProgrammeStatusTagsComponent do
     end
 
     it { should have_content("MenACWYVaccinated") }
-    it { should have_content("Td/IPVNo outcome yetUnwell") }
+    it { should have_content("Td/IPVNo outcomeUnwell") }
   end
 end

@@ -6,6 +6,7 @@ describe "Import child records" do
   scenario "User uploads a file during preparation period" do
     given_today_is_the_start_of_the_2023_24_preparation_period
     and_the_app_is_setup
+
     then_i_should_be_in_the_preparation_period
 
     when_i_visit_the_import_page
@@ -92,12 +93,111 @@ describe "Import child records" do
     then_i_should_see_the_children_for_doubles_in_current_academic_year
   end
 
+  context "when PDS lookup during import is enabled" do
+    scenario "User uploads a file during preparation period" do
+      given_today_is_the_start_of_the_2023_24_preparation_period
+      and_the_app_is_setup
+
+      then_i_should_be_in_the_preparation_period
+
+      when_i_visit_the_import_page
+      and_i_choose_to_import_child_records
+      then_i_should_see_the_import_page
+
+      when_i_upload_a_valid_file
+      then_i_should_see_the_upload
+      and_i_should_see_the_patients
+
+      when_i_visit_the_hpv_programme_page_for_upcoming_year
+      then_i_should_see_the_cohorts_for_hpv
+
+      when_i_click_on_the_cohort_for_hpv
+      then_i_should_see_the_children_for_hpv
+
+      when_i_search_for_a_child
+      then_i_should_see_only_the_child
+
+      when_i_visit_the_doubles_programme_page_for_upcoming_year
+      then_i_should_see_the_cohorts_for_doubles
+
+      when_i_click_on_the_cohort_for_doubles
+      then_i_should_see_the_children_for_doubles_in_upcoming_academic_year
+    end
+
+    scenario "User uploads a file during preparation period (not including current year)" do
+      given_today_is_the_start_of_the_2023_24_preparation_period
+      and_i_can_choose_the_academic_year_on_import
+      and_the_app_is_setup
+      then_i_should_be_in_the_preparation_period
+
+      when_i_visit_the_import_page
+      and_i_choose_to_import_child_records(choose_academic_year: true)
+      then_i_should_see_the_import_page
+
+      when_i_upload_a_valid_file
+      then_i_should_see_the_upload
+      and_i_should_see_the_patients
+
+      when_i_visit_the_hpv_programme_page_for_upcoming_year
+      then_i_should_see_the_cohorts_for_hpv
+
+      when_i_click_on_the_cohort_for_hpv
+      then_i_should_see_the_children_for_hpv
+
+      when_i_search_for_a_child
+      then_i_should_see_only_the_child
+
+      when_i_visit_the_doubles_programme_page_for_upcoming_year
+      then_i_should_see_the_cohorts_for_doubles
+
+      when_i_click_on_the_cohort_for_doubles
+      then_i_should_see_the_children_for_doubles_in_upcoming_academic_year
+    end
+
+    scenario "User uploads a file during preparation period (including current year)" do
+      given_today_is_the_start_of_the_2024_25_preparation_period
+      and_i_can_choose_the_academic_year_on_import
+      and_the_app_is_setup
+      then_i_should_be_in_the_preparation_period
+
+      when_i_visit_the_import_page
+      and_i_choose_to_import_child_records(choose_academic_year: true)
+      then_i_should_see_the_import_page
+
+      when_i_upload_a_valid_file
+      then_i_should_see_the_upload
+      and_i_should_see_the_patients
+
+      when_i_visit_the_hpv_programme_page_for_current_year
+      then_i_should_see_the_cohorts_for_hpv
+
+      when_i_click_on_the_cohort_for_hpv
+      then_i_should_see_the_children_for_hpv
+
+      when_i_search_for_a_child
+      then_i_should_see_only_the_child
+
+      when_i_visit_the_doubles_programme_page_for_current_year
+      then_i_should_see_the_cohorts_for_doubles
+
+      when_i_click_on_the_cohort_for_doubles
+      then_i_should_see_the_children_for_doubles_in_current_academic_year
+    end
+  end
+
   def given_today_is_the_start_of_the_2023_24_preparation_period
     travel_to(Date.new(2022, 8, 1))
   end
 
   def given_today_is_the_start_of_the_2024_25_preparation_period
     travel_to(Date.new(2023, 8, 1))
+  end
+
+  def and_pds_lookup_during_import_is_enabled
+    Flipper.enable(:pds_lookup_during_import)
+
+    stub_pds_search_to_return_a_patient
+    stub_pds_get_nhs_number_to_return_a_patient
   end
 
   def and_i_can_choose_the_academic_year_on_import

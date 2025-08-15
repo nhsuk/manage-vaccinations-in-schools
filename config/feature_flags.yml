@@ -15,3 +15,6 @@ import_choose_academic_year: Add an option to choose the academic year when
 offline_working: Prototype support for using Mavis offline.
 
 testing_api: Basic API useful for automated testing.
+
+pds_lookup_during_import: Perform PDS lookups as part of the patient import
+  processing.

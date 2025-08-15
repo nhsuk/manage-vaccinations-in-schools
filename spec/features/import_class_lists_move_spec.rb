@@ -30,6 +30,36 @@ describe "Import class lists - Moving patients" do
     then_i_should_see_a_notice_flash
   end
 
+  context "when PDS lookup during import is enabled" do
+    scenario "User uploads a file and moves patients to a new session" do
+      given_an_hpv_programme_is_underway
+      and_pds_lookup_during_import_is_enabled
+
+      when_i_visit_a_session_page_for_the_hpv_programme
+      and_i_start_adding_children_to_the_session
+      and_i_select_the_year_groups
+      then_i_should_see_the_import_page
+
+      when_i_upload_a_valid_file
+      then_i_should_see_the_import_complete_page
+
+      when_i_visit_a_different_session_page_for_the_hpv_programme
+      and_i_start_adding_children_to_the_session
+      and_i_select_the_year_groups
+      and_i_upload_a_valid_file
+      then_i_should_see_the_import_complete_page
+
+      when_i_visit_the_school_moves
+      then_i_should_see_the_school_moves
+
+      when_i_confirm_a_move
+      then_i_should_see_a_success_flash
+
+      when_i_ignore_a_move
+      then_i_should_see_a_notice_flash
+    end
+  end
+
   def given_an_hpv_programme_is_underway
     programmes = [create(:programme, :hpv)]
 
@@ -48,6 +78,13 @@ describe "Import class lists - Moving patients" do
       location: other_location,
       programmes:
     )
+  end
+
+  def and_pds_lookup_during_import_is_enabled
+    Flipper.enable(:pds_lookup_during_import)
+
+    stub_pds_search_to_return_a_patient
+    stub_pds_get_nhs_number_to_return_a_patient
   end
 
   def when_i_visit_a_session_page_for_the_hpv_programme

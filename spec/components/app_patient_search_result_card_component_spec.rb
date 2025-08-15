@@ -54,7 +54,7 @@ describe AppPatientSearchResultCardComponent do
     let(:programme) { create(:programme, :flu) }
     let(:academic_year) { Date.current.academic_year }
 
-    it { should have_text("Programme outcome\nFluNo outcome yet") }
+    it { should have_text("Programme outcome\nFluNo outcome") }
     it { should_not have_text("Triage status") }
 
     context "when given a consent status" do
@@ -88,7 +88,7 @@ describe AppPatientSearchResultCardComponent do
         )
       end
 
-      it { should have_text("Programme outcome\nFluNo outcome yetUnwell") }
+      it { should have_text("Programme outcome\nFluNo outcomeUnwell") }
     end
   end
 end

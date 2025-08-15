@@ -67,26 +67,14 @@ class AppPatientSearchFormComponent < ViewComponent::Base
           <% end %>
         <% end %>
 
-        <% if session_statuses.any? %>
-          <%= f.govuk_radio_buttons_fieldset :session_status, legend: { text: "Session outcome", size: "s" } do %>
-            <%= f.govuk_radio_button :session_status, "", checked: form.session_status.blank?, label: { text: "Any" } %>
-            <% session_statuses.each do |status| %>
-              <%= f.govuk_radio_button :session_status,
-                                       status,
-                                       checked: form.session_status == status,
-                                       label: { text: t(status, scope: %i[status session label]) } %>
-            <% end %>
-          <% end %>
-        <% end %>
+        <% if vaccination_statuses.any? %>
+          <%= f.govuk_radio_buttons_fieldset :vaccination_status, legend: { text: "Outcome", size: "s" } do %>
+            <%= f.govuk_radio_button :vaccination_status, "", checked: form.vaccination_status.blank?, label: { text: "Any" } %>
 
-        <% if programme_statuses.any? %>
-          <%= f.govuk_radio_buttons_fieldset :programme_status, legend: { text: "Programme outcome", size: "s" } do %>
-            <%= f.govuk_radio_button :programme_status, "", checked: form.programme_status.blank?, label: { text: "Any" } %>
-
-            <% programme_statuses.each do |status| %>
-              <%= f.govuk_radio_button :programme_status,
+            <% vaccination_statuses.each do |status| %>
+              <%= f.govuk_radio_button :vaccination_status,
                                        status,
-                                       checked: form.programme_status == status,
+                                       checked: form.vaccination_status == status,
                                        label: { text: t(status, scope: %i[status programme label]) } %>
             <% end %>
           <% end %>
@@ -191,10 +179,9 @@ class AppPatientSearchFormComponent < ViewComponent::Base
     url:,
     programmes: [],
     consent_statuses: [],
-    programme_statuses: [],
     register_statuses: [],
-    session_statuses: [],
     triage_statuses: [],
+    vaccination_statuses: [],
     vaccine_methods: [],
     year_groups: [],
     heading_level: 3,
@@ -207,10 +194,9 @@ class AppPatientSearchFormComponent < ViewComponent::Base
 
     @programmes = programmes
     @consent_statuses = consent_statuses
-    @programme_statuses = programme_statuses
     @register_statuses = register_statuses
-    @session_statuses = session_statuses
     @triage_statuses = triage_statuses
+    @vaccination_statuses = vaccination_statuses
     @vaccine_methods = vaccine_methods
     @year_groups = year_groups
     @heading_level = heading_level
@@ -223,10 +209,9 @@ class AppPatientSearchFormComponent < ViewComponent::Base
               :url,
               :programmes,
               :consent_statuses,
-              :programme_statuses,
               :register_statuses,
-              :session_statuses,
               :triage_statuses,
+              :vaccination_statuses,
               :vaccine_methods,
               :year_groups,
               :heading_level,
@@ -240,9 +225,8 @@ class AppPatientSearchFormComponent < ViewComponent::Base
 
   def show_buttons_in_details?
     !(
-      consent_statuses.any? || programme_statuses.any? ||
-        register_statuses.any? || session_statuses.any? ||
-        triage_statuses.any? || year_groups.any?
+      consent_statuses.any? || vaccination_statuses.any? ||
+        register_statuses.any? || triage_statuses.any? || year_groups.any?
     )
   end
 

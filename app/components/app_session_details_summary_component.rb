@@ -61,15 +61,15 @@ class AppSessionDetailsSummaryComponent < ViewComponent::Base
   end
 
   def vaccinated_row
+    counts = session.vaccination_records.administered.group(:programme_id).count
+
     texts =
       session.programmes.map do |programme|
-        count =
-          patient_sessions.has_session_status(:vaccinated, programme:).count
-
+        count = counts.fetch(programme.id, 0)
         "#{I18n.t("vaccinations_given", count:)} for #{programme.name_in_sentence}"
       end
 
-    href = session_patients_path(session, session_status: "vaccinated")
+    href = session_patients_path(session, vaccination_status: "vaccinated")
 
     {
       key: {

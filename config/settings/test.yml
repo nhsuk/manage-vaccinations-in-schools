@@ -17,3 +17,7 @@ nhs_api:
 
 splunk:
   enabled: false
+
+reporting_api:
+  client_app:
+    root_url: http://localhost:5001/

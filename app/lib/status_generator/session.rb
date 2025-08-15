@@ -37,6 +37,22 @@ class StatusGenerator::Session
     end
   end
 
+  def status_changed_at
+    if status_should_be_vaccinated?
+      vaccination_date
+    elsif status_should_be_already_had?
+      already_had_date
+    elsif status_should_be_had_contraindications?
+      contraindications_date
+    elsif status_should_be_refused?
+      refusal_date
+    elsif status_should_be_absent_from_session?
+      absence_date
+    elsif status_should_be_unwell?
+      unwell_date
+    end
+  end
+
   private
 
   attr_reader :session_id,
@@ -51,17 +67,42 @@ class StatusGenerator::Session
     vaccination_record&.administered?
   end
 
+  def vaccination_date
+    vaccination_record.performed_at
+  end
+
   def status_should_be_already_had?
     vaccination_record&.already_had?
+  end
+
+  def already_had_date
+    vaccination_record.performed_at
   end
 
   def status_should_be_had_contraindications?
     vaccination_record&.contraindications? || triage&.do_not_vaccinate?
   end
 
+  def contraindications_date
+    [
+      if vaccination_record&.contraindications?
+        vaccination_record.performed_at
+      end,
+      (triage.created_at if triage&.do_not_vaccinate?)
+    ].compact.min
+  end
   def status_should_be_refused?
     vaccination_record&.refused? ||
       (latest_consents.any? && latest_consents.all?(&:response_refused?))
+  end
+
+  def refusal_date
+    [
+      (vaccination_record.performed_at if vaccination_record&.refused?),
+      if latest_consents.any? && latest_consents.all?(&:response_refused?)
+        latest_consents.map(&:submitted_at).min
+      end
+    ].compact.min
   end
 
   def status_should_be_absent_from_session?
@@ -69,8 +110,21 @@ class StatusGenerator::Session
       session_attendance&.attending == false
   end
 
+  def absence_date
+    [
+      if vaccination_record&.absent_from_session?
+        vaccination_record.performed_at
+      end,
+      (session_attendance.created_at if session_attendance&.attending == false)
+    ].compact.min
+  end
+
   def status_should_be_unwell?
     vaccination_record&.not_well?
+  end
+
+  def unwell_date
+    vaccination_record.performed_at
   end
 
   def latest_consents
@@ -84,8 +138,10 @@ class StatusGenerator::Session
 
   def vaccination_record
     @vaccination_record ||=
-      vaccination_records.find do
-        it.programme_id == programme_id && it.session_id == session_id
+      if session_id
+        vaccination_records.find do
+          it.programme_id == programme_id && it.session_id == session_id
+        end
       end
   end
 end

@@ -196,7 +196,7 @@ describe "Parental consent" do
   def when_they_check_triage
     click_on @session.location.name
     within(".app-secondary-navigation") { click_on "Children" }
-    choose "No outcome yet", match: :first
+    choose "No outcome", match: :first
     click_on "Update results"
   end
 

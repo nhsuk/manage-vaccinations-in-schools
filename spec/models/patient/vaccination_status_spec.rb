@@ -8,6 +8,7 @@
 #  academic_year         :integer          not null
 #  latest_session_status :integer          default("none_yet"), not null
 #  status                :integer          default("none_yet"), not null
+#  status_changed_at     :datetime         not null
 #  patient_id            :bigint           not null
 #  programme_id          :bigint           not null
 #
@@ -151,13 +152,13 @@ describe Patient::VaccinationStatus do
     context "with a consent refused" do
       before { create(:consent, :refused, patient:, programme:) }
 
-      it { should be(:none_yet) }
+      it { should be(:refused) }
     end
 
     context "with a triage as unsafe to vaccination" do
       before { create(:triage, :do_not_vaccinate, patient:, programme:) }
 
-      it { should be(:none_yet) }
+      it { should be(:had_contraindications) }
     end
 
     context "with a discarded vaccination administered" do

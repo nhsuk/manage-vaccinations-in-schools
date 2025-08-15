@@ -43,7 +43,7 @@ FactoryBot.define do
       team { Team.includes(:organisation).first || create(:team) }
 
       role_code { CIS2Info::NURSE_ROLE }
-      role_workgroups { [CIS2Info::WORKGROUP] }
+      role_workgroups { [] }
 
       cis2_info_hash do
         {
@@ -83,7 +83,7 @@ FactoryBot.define do
     end
 
     trait :superuser do
-      role_workgroups { [CIS2Info::WORKGROUP, CIS2Info::SUPERUSER_WORKGROUP] }
+      role_workgroups { [CIS2Info::SUPERUSER_WORKGROUP] }
       fallback_role { :superuser }
     end
 
