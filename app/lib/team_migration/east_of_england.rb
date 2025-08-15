@@ -301,8 +301,11 @@ class TeamMigration::EastOfEngland < TeamMigration::Base
           log(
             "Reassigning consents and triages of #{patient.id} to #{team.workgroup}"
           )
-          patient.consents.update_all(team_id: team.id)
-          patient.triages.update_all(team_id: team.id)
+          patient
+            .consents
+            .where(team: current_team)
+            .update_all(team_id: team.id)
+          patient.triages.where(team: current_team).update_all(team_id: team.id)
         end
 
       session
