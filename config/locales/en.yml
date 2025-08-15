@@ -229,7 +229,7 @@ en:
       triage:
         statuses:
           delay_vaccination: Delay vaccination to a later date
-          do_not_vaccinate: Do not vaccinate in programme
+          do_not_vaccinate: Do not vaccinate
           needs_follow_up: Keep in triage
           ready_to_vaccinate: Safe to vaccinate
           ready_to_vaccinate_injection: Safe to vaccinate with injection
