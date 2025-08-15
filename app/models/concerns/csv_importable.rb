@@ -142,7 +142,7 @@ module CSVImportable
       update_columns(processed_at: Time.zone.now, status: :processed, **counts)
     end
 
-    UpdatePatientsFromPDS.call(patients, priority: 25, queue: :imports)
+    UpdatePatientsFromPDS.call(patients, queue: :imports)
   end
 
   def remove!

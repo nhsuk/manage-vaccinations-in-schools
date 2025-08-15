@@ -16,6 +16,6 @@ class EnqueueUpdatePatientsFromPDSJob < ApplicationJob
         .or(scope.where("updated_from_pds_at < ?", 12.hours.ago))
         .order("updated_from_pds_at ASC NULLS FIRST")
 
-    UpdatePatientsFromPDS.call(patients, priority: 50, queue: :pds)
+    UpdatePatientsFromPDS.call(patients, queue: :pds)
   end
 end
