@@ -68,6 +68,14 @@ class Location < ApplicationRecord
   enum :type,
        { school: 0, generic_clinic: 1, community_clinic: 2, gp_practice: 3 }
 
+  scope :where_urn_and_site,
+        ->(urn_and_site) do
+          where(
+            "CONCAT(locations.urn, locations.site) = ?",
+            urn_and_site&.to_s&.strip
+          )
+        end
+
   scope :search_by_name,
         ->(query) do
           # Trigram matching requires at least 3 characters
@@ -111,6 +119,14 @@ class Location < ApplicationRecord
   normalizes :urn, with: -> { it.blank? ? nil : it.strip }
 
   delegate :fhir_reference, to: :fhir_mapper
+
+  def self.find_by_urn_and_site(urn_and_site)
+    where_urn_and_site(urn_and_site).take
+  end
+
+  def self.find_by_urn_and_site!(urn_and_site)
+    where_urn_and_site(urn_and_site).take!
+  end
 
   def clinic? = generic_clinic? || community_clinic?
 
