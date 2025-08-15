@@ -45,7 +45,7 @@ class AppVaccinationRecordAPISyncStatusComponent < ViewComponent::Base
   def secondary_text(text)
     return unless text
 
-    tag.span(text, class: "nhsuk-u-secondary-text-color")
+    tag.span(text, class: "nhsuk-u-secondary-text-colour")
   end
 
   def additional_information_text
