@@ -39,6 +39,7 @@ nhs_api:
 pds:
   enqueue_bulk_updates: true
   raise_unknown_gp_practice: true
+  rate_limit_per_second: 50
 
 splunk:
   enabled: true

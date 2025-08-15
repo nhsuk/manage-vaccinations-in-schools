@@ -11,6 +11,7 @@ rails_env             = "production"
 rails_master_key_path = "/copilot/mavis/production/secrets/RAILS_MASTER_KEY"
 
 academic_year_number_of_preparation_days = 31
+pds_rate_limit_per_second                = 50
 
 http_hosts = {
   MAVIS__HOST                        = "www.manage-vaccinations-in-schools.nhs.uk"
