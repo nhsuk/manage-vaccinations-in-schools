@@ -34,6 +34,8 @@ class StatusGenerator::Session
       :absent_from_session
     elsif status_should_be_unwell?
       :unwell
+    elsif status_should_be_conflicting_consent?
+      :conflicting_consent
     else
       :none_yet
     end
@@ -52,6 +54,8 @@ class StatusGenerator::Session
       absence_date
     elsif status_should_be_unwell?
       unwell_date
+    elsif status_should_be_conflicting_consent?
+      conflicting_consent_date
     end
   end
 
@@ -127,6 +131,14 @@ class StatusGenerator::Session
 
   def unwell_date
     vaccination_record.performed_at
+  end
+
+  def status_should_be_conflicting_consent?
+    consent_generator.status == :conflicts
+  end
+
+  def conflicting_consent_date
+    consent_generator.status_changed_at
   end
 
   def consent_generator

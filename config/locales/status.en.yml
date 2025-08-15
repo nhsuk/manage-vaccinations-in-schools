@@ -50,6 +50,7 @@ en:
       label:
         absent_from_session: Absent from session
         already_had: Already had vaccine
+        conflicting_consent: Conflicting consent
         had_contraindications: Had contraindications
         none_yet: No outcome
         refused: Refused vaccine
@@ -58,6 +59,7 @@ en:
       colour:
         absent_from_session: dark-orange
         already_had: green
+        conflicting_consent: orange
         had_contraindications: red
         none_yet: white
         refused: red
