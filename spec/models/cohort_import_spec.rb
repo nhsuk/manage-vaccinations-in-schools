@@ -137,7 +137,8 @@ describe CohortImport do
       let(:file) { "valid_iso_8859_1_encoding.csv" }
 
       let(:location) do
-        Location.find_by(urn: "120026") || create(:school, urn: "120026", team:)
+        Location.find_by_urn_and_site("120026") ||
+          create(:school, urn: "120026", team:)
       end
 
       it "is valid" do

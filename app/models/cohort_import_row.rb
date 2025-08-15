@@ -20,7 +20,7 @@ class CohortImportRow < PatientImportRow
     @school ||=
       if (urn = school_urn&.to_s).present? &&
            ![SCHOOL_URN_HOME_EDUCATED, SCHOOL_URN_UNKNOWN].include?(urn)
-        Location.school.find_by!(urn:)
+        Location.school.find_by_urn_and_site!(urn)
       end
   end
 
@@ -53,7 +53,7 @@ class CohortImportRow < PatientImportRow
       errors.add(:base, "<code>CHILD_SCHOOL_URN</code> is missing")
     elsif school_urn.blank?
       errors.add(school_urn.header, "is required but missing")
-    elsif !Location.school.exists?(urn: school_urn.to_s) &&
+    elsif !Location.school.where_urn_and_site(school_urn.to_s).exists? &&
           !school_urn.to_s.in?([SCHOOL_URN_HOME_EDUCATED, SCHOOL_URN_UNKNOWN])
       errors.add(
         school_urn.header,

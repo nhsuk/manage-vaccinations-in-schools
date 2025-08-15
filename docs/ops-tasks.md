@@ -46,7 +46,7 @@ The following console commands will manually add an existing patient to the loca
 
 ```rb
 # Find the location
-loc = Location.find_by(urn: "...")
+loc = Location.find_by_urn_and_site("...")
 
 # The location should only have one session with no patients:
 loc.sessions.first.patients.count

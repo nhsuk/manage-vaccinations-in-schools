@@ -306,7 +306,7 @@ wrap_in_rollbackable_transaction do
   # rubocop:enable Rails/SaveBang
 
   school_data.each do |row|
-    school = Location.find_by!(urn: row["urn"])
+    school = Location.find_by_urn_and_site!(row["urn"])
 
     s, v =
       create_students_and_vaccinations_for(

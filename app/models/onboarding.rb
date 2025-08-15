@@ -206,7 +206,7 @@ class Onboarding
     validates :status, inclusion: %w[open opening]
 
     def location
-      @location ||= Location.school.find_by(urn:)
+      @location ||= Location.school.find_by_urn_and_site(urn)
     end
 
     delegate :status, to: :location, allow_nil: true

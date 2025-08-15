@@ -641,7 +641,7 @@ describe CohortImportRow do
 
       let(:data) { valid_data }
 
-      let(:location) { Location.school.find_by!(urn: "123456") }
+      let(:location) { Location.school.find_by_urn_and_site!("123456") }
       let(:session) do
         create(:session, location:, team:, programmes: [programme])
       end
