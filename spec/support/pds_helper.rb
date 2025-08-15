@@ -10,12 +10,25 @@ module PDSHelper
     ).with(query: hash_including(query)).to_return_json(body: { total: 0 })
   end
 
-  def stub_pds_search_to_return_a_patient
+  def stub_pds_search_to_return_a_patient(nhs_number = "9449306168", **query)
+    query["_history"] ||= "true"
+
+    response_data =
+      JSON.parse(file_fixture("pds/search-patients-response.json").read)
+
+    patient_resource = response_data["entry"][0]["resource"]
+
+    patient_resource["id"] = nhs_number
+    patient_resource["identifier"][0]["value"] = nhs_number
+    response_data["entry"][0][
+      "fullUrl"
+    ] = "https://int.api.service.nhs.uk/personal-demographics/FHIR/R4/Patient/#{nhs_number}"
+
     stub_request(
       :get,
       "https://sandbox.api.service.nhs.uk/personal-demographics/FHIR/R4/Patient"
-    ).with(query: hash_including({})).to_return(
-      body: file_fixture("pds/search-patients-response.json"),
+    ).with(query: hash_including(query)).to_return(
+      body: response_data.to_json,
       headers: {
         "Content-Type" => "application/fhir+json"
       }
