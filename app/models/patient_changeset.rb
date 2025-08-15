@@ -213,7 +213,7 @@ class PatientChangeset < ApplicationRecord
       existing_patient,
       %w[male female not_specified]
     )
-    set_child_attribute_if_valid(:invalidated_at, existing_patient)
+    set_child_attribute_if_valid(:nhs_number, existing_patient)
   end
 
   def set_child_attribute_if_valid(
