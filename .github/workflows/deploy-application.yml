@@ -104,7 +104,7 @@ jobs:
         id: create-web-task-definition
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
-          task-definition-family: "mavis-web-task-definition-${{ inputs.environment }}"
+          task-definition-family: "mavis-web-task-definition-${{ inputs.environment }}-template"
           container-name: "application"
           image: "${{ env.aws_account_id }}.dkr.ecr.eu-west-2.amazonaws.com/mavis/webapp@${{ steps.get-image-digest.outputs.digest }}"
           environment-variables: ${{ steps.parse-environment-variables.outputs.parsed_env_vars }}
@@ -113,7 +113,7 @@ jobs:
         id: create-good-job-task-definition
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
-          task-definition-family: "mavis-good-job-task-definition-${{ inputs.environment }}"
+          task-definition-family: "mavis-good-job-task-definition-${{ inputs.environment }}-template"
           container-name: "application"
           image: "${{ env.aws_account_id }}.dkr.ecr.eu-west-2.amazonaws.com/mavis/webapp@${{ steps.get-image-digest.outputs.digest }}"
           environment-variables: ${{ steps.parse-environment-variables.outputs.parsed_env_vars }}
@@ -151,6 +151,8 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ inputs.server_types == 'web' || inputs.server_types == 'all' }}
     needs: [ prepare-deployment, approve-deployments ]
+    env:
+      task_definition_path: ${{ needs.prepare-deployment.outputs.web-task-definition-path }}
     permissions:
       id-token: write
     steps:
@@ -166,15 +168,20 @@ jobs:
         with:
           path: ${{ runner.temp }}
           name: ${{ inputs.environment }}-web-task-definition
+      - name: Change family of task definition
+        run: |
+          file_path="${{ env.task_definition_path }}"
+          family_name="mavis-web-task-definition-${{ inputs.environment }}"
+          echo "$(jq --arg f "$family_name" '.family = $f' "$file_path")" > "$file_path"
       - name: Register web task definition
         uses: aws-actions/amazon-ecs-deploy-task-definition@v2
         with:
-          task-definition: ${{ needs.prepare-deployment.outputs.web-task-definition-path }}
+          task-definition: ${{ env.task_definition_path }}
       - name: Deploy web service with CodeDeploy
         id: deploy-web-service
         uses: aws-actions/amazon-ecs-deploy-task-definition@v2
         with:
-          task-definition: ${{ needs.prepare-deployment.outputs.web-task-definition-path }}
+          task-definition: ${{ env.task_definition_path }}
           codedeploy-appspec: config/templates/appspec.yaml
           cluster: ${{ env.cluster_name }}
           service: mavis-${{ inputs.environment }}-web
@@ -191,6 +198,8 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ inputs.server_types == 'good-job' || inputs.server_types == 'all' }}
     needs: [ prepare-deployment, approve-deployments ]
+    env:
+      task_definition_path: ${{ needs.prepare-deployment.outputs.good-job-task-definition-path }}
     permissions:
       id-token: write
     steps:
@@ -204,10 +213,15 @@ jobs:
         with:
           name: ${{ inputs.environment }}-good-job-task-definition
           path: ${{ runner.temp }}
+      - name: Change family of task definition
+        run: |
+          file_path="${{ env.task_definition_path }}"
+          family_name="mavis-good-job-task-definition-${{ inputs.environment }}"
+          echo "$(jq --arg f "$family_name" '.family = $f' "$file_path")" > "$file_path"
       - name: Deploy good-job service
         uses: aws-actions/amazon-ecs-deploy-task-definition@v2
         with:
-          task-definition: ${{ needs.prepare-deployment.outputs.good-job-task-definition-path }}
+          task-definition: ${{ env.task_definition_path }}
           cluster: ${{ env.cluster_name }}
           service: mavis-${{ inputs.environment }}-good-job
           force-new-deployment: true
