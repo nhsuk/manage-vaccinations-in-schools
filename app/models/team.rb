@@ -44,7 +44,6 @@ class Team < ApplicationRecord
   has_many :cohort_imports
   has_many :consent_forms
   has_many :consents
-  has_many :immunisation_records
   has_many :locations
   has_many :team_programmes, -> { joins(:programme).order(:"programmes.type") }
   has_many :sessions

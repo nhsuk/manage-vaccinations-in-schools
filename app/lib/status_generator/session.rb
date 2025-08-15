@@ -94,18 +94,17 @@ class StatusGenerator::Session
       (triage.created_at if triage&.do_not_vaccinate?)
     ].compact.min
   end
+
   def status_should_be_refused?
-    vaccination_record&.refused? ||
-      (latest_consents.any? && latest_consents.all?(&:response_refused?))
+    vaccination_record&.refused? || consent_generator.status == :refused
   end
 
   def refusal_date
-    [
-      (vaccination_record.performed_at if vaccination_record&.refused?),
-      if latest_consents.any? && latest_consents.all?(&:response_refused?)
-        latest_consents.map(&:submitted_at).min
-      end
-    ].compact.min
+    if vaccination_record&.refused?
+      vaccination_record.performed_at
+    else
+      consent_generator.status_changed_at
+    end
   end
 
   def status_should_be_absent_from_session?
@@ -130,9 +129,15 @@ class StatusGenerator::Session
     vaccination_record.performed_at
   end
 
-  def latest_consents
-    @latest_consents ||=
-      ConsentGrouper.call(consents, programme_id: programme.id, academic_year:)
+  def consent_generator
+    @consent_generator ||=
+      StatusGenerator::Consent.new(
+        programme:,
+        academic_year:,
+        patient:,
+        consents:,
+        vaccination_records:
+      )
   end
 
   def triage

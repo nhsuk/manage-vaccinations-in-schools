@@ -29,6 +29,10 @@ class StatusGenerator::Consent
     end
   end
 
+  def status_changed_at
+    consents_for_status.map(&:submitted_at).max
+  end
+
   def vaccine_methods
     status_should_be_given? ? agreed_vaccine_methods : []
   end
