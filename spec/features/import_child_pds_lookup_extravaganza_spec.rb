@@ -2,6 +2,8 @@
 
 describe "Import child records" do
   scenario "PDS lookup extravaganza" do
+    skip "Feature is completely disabled temporarily"
+
     given_i_am_signed_in
     and_an_hpv_programme_is_underway
     and_an_existing_patient_record_exists
