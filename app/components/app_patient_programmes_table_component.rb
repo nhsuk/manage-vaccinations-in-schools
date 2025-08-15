@@ -158,8 +158,11 @@ class AppPatientProgrammesTableComponent < ViewComponent::Base
           .includes(:performed_by)
           .find_by(created_at: vaccination_status.status_changed_at)
 
-      nurse = latest_triage.performed_by
-      "#{nurse.full_name} decided that #{patient.full_name} could not be vaccinated"
+      if latest_triage
+        "#{latest_triage.performed_by.full_name} decided that #{patient.full_name} could not be vaccinated"
+      else
+        "#{patient.full_name} could not be vaccinated"
+      end
     else
       notes_for_status(vaccination_status:)
     end
