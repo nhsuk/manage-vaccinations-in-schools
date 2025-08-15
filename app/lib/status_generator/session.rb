@@ -5,7 +5,7 @@ class StatusGenerator::Session
     session_id:,
     academic_year:,
     session_attendance:,
-    programme_id:,
+    programme:,
     consents:,
     triages:,
     vaccination_records:
@@ -13,7 +13,7 @@ class StatusGenerator::Session
     @session_id = session_id
     @academic_year = academic_year
     @session_attendance = session_attendance
-    @programme_id = programme_id
+    @programme = programme
     @consents = consents
     @triages = triages
     @vaccination_records = vaccination_records
@@ -58,7 +58,7 @@ class StatusGenerator::Session
   attr_reader :session_id,
               :academic_year,
               :session_attendance,
-              :programme_id,
+              :programme,
               :consents,
               :triages,
               :vaccination_records
@@ -129,18 +129,19 @@ class StatusGenerator::Session
 
   def latest_consents
     @latest_consents ||=
-      ConsentGrouper.call(consents, programme_id:, academic_year:)
+      ConsentGrouper.call(consents, programme_id: programme.id, academic_year:)
   end
 
   def triage
-    @triage ||= TriageFinder.call(triages, programme_id:, academic_year:)
+    @triage ||=
+      TriageFinder.call(triages, programme_id: programme.id, academic_year:)
   end
 
   def vaccination_record
     @vaccination_record ||=
       if session_id
         vaccination_records.find do
-          it.programme_id == programme_id && it.session_id == session_id
+          it.programme_id == programme.id && it.session_id == session_id
         end
       end
   end
