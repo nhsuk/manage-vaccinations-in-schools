@@ -6,7 +6,8 @@ describe StatusGenerator::Session do
       session_id: patient_session.session_id,
       academic_year: patient_session.academic_year,
       session_attendance: patient_session.session_attendances.last,
-      programme_id: programme.id,
+      programme:,
+      patient:,
       consents: patient.consents,
       triages: patient.triages,
       vaccination_records: patient.vaccination_records
@@ -68,7 +69,7 @@ describe StatusGenerator::Session do
         create(:consent, :given, patient:, programme:, parent:)
       end
 
-      it { should be(:none_yet) }
+      it { should be(:conflicting_consent) }
     end
 
     context "when triaged as do not vaccinate" do
@@ -232,46 +233,29 @@ describe StatusGenerator::Session do
     end
 
     context "with refused from both vaccination record and consent" do
-      let(:earlier_date) { 3.days.ago }
-      let(:later_date) { 1.day.ago }
+      let(:vaccination_record_date) { 1.day.ago }
+      let(:consent_date) { 3.days.ago }
 
-      context "when vaccination record date is earlier" do
-        before do
-          create(
-            :vaccination_record,
-            :refused,
-            patient: patient,
-            session: session,
-            programme: programme,
-            performed_at: earlier_date
-          )
+      before do
+        create(
+          :vaccination_record,
+          :refused,
+          patient: patient,
+          session: session,
+          programme: programme,
+          performed_at: vaccination_record_date
+        )
 
-          consent =
-            create(:consent, :refused, patient: patient, programme: programme)
-          consent.update_column(:submitted_at, later_date)
-        end
-
-        it { should eq(earlier_date) }
+        create(
+          :consent,
+          :refused,
+          patient: patient,
+          programme: programme,
+          submitted_at: consent_date
+        )
       end
 
-      context "when consent date is earlier" do
-        before do
-          create(
-            :vaccination_record,
-            :refused,
-            patient: patient,
-            session: session,
-            programme: programme,
-            performed_at: later_date
-          )
-
-          consent =
-            create(:consent, :refused, patient: patient, programme: programme)
-          consent.update_column(:submitted_at, earlier_date)
-        end
-
-        it { should eq(earlier_date) }
-      end
+      it { should eq(vaccination_record_date) }
     end
 
     context "with absent from vaccination record" do
