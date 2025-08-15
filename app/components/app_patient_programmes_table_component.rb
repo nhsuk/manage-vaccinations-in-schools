@@ -73,15 +73,7 @@ class AppPatientProgrammesTableComponent < ViewComponent::Base
   end
 
   def build_row_for_programme(programme:, academic_year:)
-    cached_vaccination_status =
-      @patient.vaccination_status(programme:, academic_year:)
-
-    vaccination_status = {
-      status: cached_vaccination_status.status.to_sym,
-      latest_session_status:
-        cached_vaccination_status.latest_session_status.to_sym,
-      status_changed_at: cached_vaccination_status.status_changed_at
-    }
+    vaccination_status = patient.vaccination_status(programme:, academic_year:)
 
     [
       name_for_programme(programme:, academic_year:),
@@ -115,14 +107,13 @@ class AppPatientProgrammesTableComponent < ViewComponent::Base
   end
 
   def status_for_programme(vaccination_status:, programme:, academic_year:)
-    status = vaccination_status[:status]
-    if status == :none_yet &&
+    if vaccination_status.none_yet? &&
          eligibility_start_in_future?(programme:, academic_year:)
       return "-"
     end
 
-    label = I18n.t(status, scope: "status.programme.label")
-    colour = I18n.t(status, scope: "status.programme.colour")
+    label = I18n.t(vaccination_status.status, scope: "status.programme.label")
+    colour = I18n.t(vaccination_status.status, scope: "status.programme.colour")
     tag.strong(label, class: "nhsuk-tag nhsuk-tag--#{colour}")
   end
 
@@ -143,30 +134,29 @@ class AppPatientProgrammesTableComponent < ViewComponent::Base
   end
 
   def notes_for_programme(vaccination_status:, programme:, academic_year:)
-    case vaccination_status[:status]
-    when :vaccinated
+    if vaccination_status.vaccinated?
       notes_for_status(vaccination_status:)
-    when :could_not_vaccinate
+    elsif vaccination_status.could_not_vaccinate?
       could_not_vaccinate_notes(vaccination_status:)
-    when :none_yet
+    else
       no_outcome_yet_notes(vaccination_status:, programme:, academic_year:)
     end
   end
 
   def notes_for_status(vaccination_status:)
     latest_session_status =
-      vaccination_status[:latest_session_status].to_s.humanize
-    date = vaccination_status[:status_changed_at].to_date.to_fs(:long)
+      vaccination_status.latest_session_status.to_s.humanize
+    date = vaccination_status.status_changed_at.to_date.to_fs(:long)
     "#{latest_session_status} on #{date}"
   end
 
   def could_not_vaccinate_notes(vaccination_status:)
-    if vaccination_status[:latest_session_status] == :had_contraindications
+    if vaccination_status.latest_session_status_had_contraindications?
       latest_triage =
         @patient
           .triages
           .includes(:performed_by)
-          .find_by(created_at: vaccination_status[:status_changed_at])
+          .find_by(created_at: vaccination_status.status_changed_at)
 
       nurse = latest_triage.performed_by
       "#{nurse.full_name} decided that #{patient.full_name} could not be vaccinated"
@@ -176,7 +166,7 @@ class AppPatientProgrammesTableComponent < ViewComponent::Base
   end
 
   def no_outcome_yet_notes(vaccination_status:, programme:, academic_year:)
-    if vaccination_status[:latest_session_status] == :none_yet
+    if vaccination_status.latest_session_status_none_yet?
       eligibility_notes(programme:, academic_year:)
     else
       notes_for_status(vaccination_status:)
@@ -231,9 +221,8 @@ class AppPatientProgrammesTableComponent < ViewComponent::Base
   def status_for_administered_record(vaccination_record:)
     if vaccination_record.administered?
       status_for_programme(
-        vaccination_status: {
-          status: :vaccinated
-        },
+        vaccination_status:
+          Patient::VaccinationStatus.new(status: "vaccinated"),
         programme: nil,
         academic_year: nil
       )
