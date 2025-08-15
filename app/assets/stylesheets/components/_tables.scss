@@ -1,4 +1,3 @@
-@use "sass:color";
 @use "../vendor/nhsuk-frontend" as *;
 
 .app-table--csv {
@@ -15,7 +14,7 @@
   }
 
   i {
-    color: nhsuk-shade($color_nhsuk-red, 50%);
+    color: nhsuk-shade(nhsuk-colour("red"), 50%);
     font-family: ui-monospace, monospace;
     font-style: normal;
     font-weight: 500;
@@ -24,6 +23,6 @@
 }
 
 .app-table__cell--muted {
-  background-color: $color_nhsuk-grey-5;
-  color: $nhsuk-secondary-text-color;
+  background-color: nhsuk-colour("grey-5");
+  color: $nhsuk-secondary-text-colour;
 }
