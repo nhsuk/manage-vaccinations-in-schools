@@ -25,7 +25,7 @@ class ProcessPatientChangesetsJob < ApplicationJob
             newly_found_patient
           end
         elsif patient_found == :not_found
-          patient_changeset.update!(nhs_number: nil)
+          patient_changeset.child_attributes["nhs_number"] = nil
           search_for_patient(attrs)
         else
           patient_found
