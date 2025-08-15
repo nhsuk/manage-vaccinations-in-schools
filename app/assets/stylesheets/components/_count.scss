@@ -3,11 +3,11 @@
 
 .app-count {
   background-color: color.scale(
-    color.scale($nhsuk-link-color, $lightness: -50%),
+    color.scale($nhsuk-link-colour, $lightness: -50%),
     $alpha: -60%
   );
   border-radius: nhsuk-spacing(3);
-  color: $color_nhsuk-white;
+  color: nhsuk-colour("white");
   display: inline-block;
   min-width: nhsuk-spacing(5);
   padding-left: nhsuk-spacing(2);
@@ -17,6 +17,6 @@
   @include nhsuk-font(16);
 
   :focus & {
-    background-color: color.scale($nhsuk-focus-text-color, $alpha: -40%);
+    background-color: color.scale($nhsuk-focus-text-colour, $alpha: -40%);
   }
 }

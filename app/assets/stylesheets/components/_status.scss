@@ -16,23 +16,23 @@
   }
 
   &--aqua-green {
-    color: $color_nhsuk-aqua-green;
+    color: nhsuk-colour("aqua-green");
   }
 
   &--blue {
-    color: $color_nhsuk-blue;
+    color: nhsuk-colour("blue");
   }
 
   &--dark-orange {
-    color: app.$color_dark-orange;
+    color: app.$dark-orange-colour;
   }
 
   &--green {
-    color: $color_nhsuk-green;
+    color: nhsuk-colour("green");
   }
 
   &--red {
-    color: $color_nhsuk-red;
+    color: nhsuk-colour("red");
   }
 }
 
