@@ -161,6 +161,13 @@ variable "academic_year_number_of_preparation_days" {
   nullable    = false
 }
 
+variable "pds_rate_limit_per_second" {
+  type        = number
+  default     = 5
+  description = "The rate limit when communicating with PDS."
+  nullable    = false
+}
+
 variable "enable_splunk" {
   type        = bool
   default     = true
@@ -178,9 +185,10 @@ variable "app_version" {
 locals {
   is_production = var.environment == "production"
   parameter_store_variables = tomap({
-    MAVIS__PDS__ENQUEUE_BULK_UPDATES                = var.enable_pds_enqueue_bulk_updates ? "true" : "false"
     MAVIS__ACADEMIC_YEAR_TODAY_OVERRIDE             = var.academic_year_today_override
     MAVIS__ACADEMIC_YEAR_NUMBER_OF_PREPARATION_DAYS = var.academic_year_number_of_preparation_days
+    MAVIS__PDS__ENQUEUE_BULK_UPDATES                = var.enable_pds_enqueue_bulk_updates ? "true" : "false"
+    MAVIS__PDS__RATE_LIMIT_PER_SECOND               = var.pds_rate_limit_per_second
     GOOD_JOB_MAX_THREADS                            = 5
     SIDEKIQ_CONCURRENCY                             = 5
   })

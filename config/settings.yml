@@ -39,13 +39,12 @@ nhs_api:
 pds:
   enqueue_bulk_updates: true
   raise_unknown_gp_practice: true
+  rate_limit_per_second: 50
 
 splunk:
   enabled: true
   hec_endpoint: https://firehose.inputs.splunk.aws.digital.nhs.uk/services/collector/event
   hec_token: <%= Rails.application.credentials.splunk&.hec_token %>
-
-
 
 reporting_api:
   client_app:

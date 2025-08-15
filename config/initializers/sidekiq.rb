@@ -21,7 +21,7 @@ end
 Sidekiq::Throttled::Registry.add(
   :pds,
   threshold: {
-    limit: 5,
+    limit: Settings.pds.rate_limit_per_second.to_i,
     period: 1.second
   }
 )
