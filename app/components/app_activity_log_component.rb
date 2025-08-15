@@ -3,7 +3,7 @@
 class AppActivityLogComponent < ViewComponent::Base
   erb_template <<-ERB
     <% events_by_day.each do |day, events| %>
-      <h3 class="nhsuk-heading-xs nhsuk-u-secondary-text-color
+      <h3 class="nhsuk-heading-xs nhsuk-u-secondary-text-colour
                  nhsuk-u-font-weight-normal">
         <%= day.to_fs(:long) %>
       </h3>
