@@ -58,7 +58,8 @@ class Patient::VaccinationStatus < ApplicationRecord
          had_contraindications: 3,
          refused: 4,
          absent_from_session: 5,
-         unwell: 6
+         unwell: 6,
+         conflicting_consent: 7
        },
        default: :none_yet,
        prefix: true,

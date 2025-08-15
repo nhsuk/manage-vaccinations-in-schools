@@ -69,7 +69,7 @@ describe StatusGenerator::Session do
         create(:consent, :given, patient:, programme:, parent:)
       end
 
-      it { should be(:none_yet) }
+      it { should be(:conflicting_consent) }
     end
 
     context "when triaged as do not vaccinate" do
