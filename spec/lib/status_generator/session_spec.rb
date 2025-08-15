@@ -7,6 +7,7 @@ describe StatusGenerator::Session do
       academic_year: patient_session.academic_year,
       session_attendance: patient_session.session_attendances.last,
       programme:,
+      patient:,
       consents: patient.consents,
       triages: patient.triages,
       vaccination_records: patient.vaccination_records

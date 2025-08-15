@@ -6,6 +6,7 @@ class StatusGenerator::Session
     academic_year:,
     session_attendance:,
     programme:,
+    patient:,
     consents:,
     triages:,
     vaccination_records:
@@ -14,6 +15,7 @@ class StatusGenerator::Session
     @academic_year = academic_year
     @session_attendance = session_attendance
     @programme = programme
+    @patient = patient
     @consents = consents
     @triages = triages
     @vaccination_records = vaccination_records
@@ -59,6 +61,7 @@ class StatusGenerator::Session
               :academic_year,
               :session_attendance,
               :programme,
+              :patient,
               :consents,
               :triages,
               :vaccination_records
