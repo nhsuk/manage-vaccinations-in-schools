@@ -93,6 +93,7 @@ class Patient::VaccinationStatus < ApplicationRecord
         academic_year:,
         session_attendance:,
         programme:,
+        patient:,
         consents:,
         triages:,
         vaccination_records:
