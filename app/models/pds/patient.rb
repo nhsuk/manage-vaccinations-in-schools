@@ -16,13 +16,21 @@ class PDS::Patient
       from_pds_fhir_response(response.body)
     end
 
-    def search(family_name:, given_name:, date_of_birth:, address_postcode:)
+    def search(
+      family_name:,
+      given_name:,
+      date_of_birth:,
+      address_postcode:,
+      history: true,
+      fuzzy: false
+    )
       query = {
         "family" => family_name,
         "given" => given_name,
         "birthdate" => "eq#{date_of_birth}",
         "address-postalcode" => address_postcode,
-        "_history" => true # look up previous names and addresses,
+        "_history" => history, # look up previous names and addresses,
+        "_fuzzy-match" => fuzzy
       }.compact_blank
 
       results = NHS::PDS.search_patients(query).body
