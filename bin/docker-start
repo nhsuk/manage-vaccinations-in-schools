@@ -8,7 +8,7 @@ if [ "$SERVER_TYPE" == "web" ]; then
 elif [ "$SERVER_TYPE" == "good-job" ]; then
   echo "Starting good-job server..."
   exec "$BIN_DIR"/good_job start
-elif [ "$SERVER_TYPE" == "none" ]; then
+elif [ "$SERVER_TYPE" == "none" ] || [ "$SERVER_TYPE" == "sidekiq" ]; then #TODO: Implement sidekiq in application
   echo "No server started"
   exec tail -f /dev/null  # Keep container running
 else
