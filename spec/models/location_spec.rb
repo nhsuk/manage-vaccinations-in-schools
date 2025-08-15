@@ -62,6 +62,27 @@ describe Location do
     end
   end
 
+  describe "scopes" do
+    describe "#find_by_urn_and_site" do
+      subject(:scope) { described_class.find_by_urn_and_site(urn_and_site) }
+
+      let(:location_without_site) { create(:school, urn: "123456") }
+      let(:location_with_site) { create(:school, urn: "123456", site: "A") }
+
+      context "with just a URN" do
+        let(:urn_and_site) { "123456" }
+
+        it { should eq(location_without_site) }
+      end
+
+      context "with a URN and a site" do
+        let(:urn_and_site) { "123456A" }
+
+        it { should eq(location_with_site) }
+      end
+    end
+  end
+
   describe "validations" do
     it { should validate_presence_of(:name) }
 
