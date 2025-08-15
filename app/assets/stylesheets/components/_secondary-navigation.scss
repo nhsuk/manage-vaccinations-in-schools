@@ -14,7 +14,7 @@
 }
 
 .app-secondary-navigation--sticky {
-  background-color: $color_nhsuk-grey-5;
+  background-color: nhsuk-colour("grey-5");
   position: sticky;
   top: 0;
   z-index: 99;
@@ -36,20 +36,20 @@
   }
 
   &[aria-current] {
-    box-shadow: inset $nhsuk-border-width 0 $color_nhsuk-blue;
-    color: $nhsuk-text-color;
+    box-shadow: inset $nhsuk-border-width 0 nhsuk-colour("blue");
+    color: $nhsuk-text-colour;
     text-decoration: none;
 
     @include nhsuk-media-query($from: tablet) {
-      box-shadow: inset 0 ($nhsuk-border-width * -1) $color_nhsuk-blue;
+      box-shadow: inset 0 ($nhsuk-border-width * -1) nhsuk-colour("blue");
     }
   }
 
   &:focus {
-    box-shadow: inset $nhsuk-focus-width 0 $nhsuk-focus-text-color;
+    box-shadow: inset $nhsuk-focus-width 0 $nhsuk-focus-text-colour;
 
     @include nhsuk-media-query($from: tablet) {
-      box-shadow: inset 0 ($nhsuk-focus-width * -1) $nhsuk-focus-text-color;
+      box-shadow: inset 0 ($nhsuk-focus-width * -1) $nhsuk-focus-text-colour;
     }
   }
 }
@@ -73,7 +73,7 @@
 .app-secondary-navigation__list {
   // The list uses box-shadow rather than a border to set a 1px grey line at the
   // bottom, so that the current item appears on top of the grey line.
-  box-shadow: inset 0 -1px 0 $nhsuk-border-color;
+  box-shadow: inset 0 -1px 0 $nhsuk-border-colour;
   display: flex;
   flex-flow: column;
   list-style: none;

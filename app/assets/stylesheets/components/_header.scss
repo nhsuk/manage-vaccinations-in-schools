@@ -1,116 +1,12 @@
-@use "sass:color";
 @use "../vendor/nhsuk-frontend" as *;
-
-.app-header__content {
-  display: flex;
-  flex-flow: column wrap;
-  gap: nhsuk-spacing(2);
-
-  @include nhsuk-media-query($until: tablet) {
-    margin-top: nhsuk-spacing(3);
-  }
-}
-
-.app-header {
-  .nhsuk-header__navigation-item {
-    @include nhsuk-media-query($from: tablet) {
-      padding: 0 12px;
-    }
-  }
-
-  .nhsuk-header__drop-down .nhsuk-header__navigation-item {
-    @include nhsuk-media-query($from: tablet) {
-      padding: 0;
-    }
-  }
-}
-
-.app-header__navigation-item--current {
-  .nhsuk-header__navigation-link {
-    border-bottom-color: $nhsuk-border-color;
-  }
-
-  .nhsuk-header__drop-down & {
-    box-shadow: inset $nhsuk-focus-width 0 $nhsuk-link-color;
-
-    .nhsuk-header__navigation-link {
-      border-bottom-color: transparent;
-    }
-  }
-}
 
 .app-header__navigation-item--with-count {
   .app-count {
-    margin-left: 6px;
+    margin-left: nhsuk-spacing(1);
     min-width: nhsuk-spacing(4);
     padding-bottom: 3px;
     padding-top: 5px;
-    text-decoration: none;
 
     @include nhsuk-font(14, $line-height: 1);
-  }
-}
-
-.app-header__account {
-  border-radius: $nhsuk-border-radius;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1px;
-  overflow: hidden;
-}
-
-.app-header__account-item {
-  align-items: start;
-  background-color: color.scale($nhsuk-link-color, $lightness: -20%);
-  color: $color_nhsuk-white;
-  display: inline-flex;
-  flex-grow: 1;
-  gap: nhsuk-spacing(2);
-  padding: nhsuk-spacing(2) nhsuk-spacing(3);
-
-  &:first-child {
-    flex-grow: 999;
-  }
-}
-
-.app-header__account-icon {
-  flex-shrink: 0;
-  position: relative;
-  top: 1px;
-}
-
-.app-header__account-link {
-  color: $color_nhsuk-white;
-  display: block;
-  margin: nhsuk-spacing(-2) nhsuk-spacing(-3);
-  padding: nhsuk-spacing(2) nhsuk-spacing(3);
-
-  &:visited {
-    color: $color_nhsuk-white;
-  }
-
-  &:active,
-  &:focus {
-    background-color: $nhsuk-focus-color;
-    border-bottom: $nhsuk-focus-width solid $nhsuk-focus-text-color;
-    color: $nhsuk-focus-text-color;
-    padding-bottom: nhsuk-spacing(1);
-  }
-}
-
-.app-header__account-button {
-  @extend .app-header__account-link;
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: inherit;
-  line-height: nhsuk-spacing(4);
-  outline: none;
-  text-decoration: underline;
-
-  &:hover,
-  &:focus,
-  &:active {
-    text-decoration: none;
   }
 }

@@ -46,7 +46,7 @@ module ConsentsHelper
            consent.programme.has_multiple_vaccine_methods?
         tag.span(
           Vaccine.human_enum_name(:method, consent.vaccine_methods.first),
-          class: "nhsuk-u-secondary-text-color"
+          class: "nhsuk-u-secondary-text-colour"
         )
       end
 
@@ -57,7 +57,7 @@ module ConsentsHelper
         [
           govuk_tag(text: tag.s(text), classes: "nhsuk-tag--#{colour}"),
           vaccine_method,
-          tag.span("Invalid", class: "nhsuk-u-secondary-text-color")
+          tag.span("Invalid", class: "nhsuk-u-secondary-text-colour")
         ].compact
       )
     elsif consent.withdrawn?
@@ -65,7 +65,7 @@ module ConsentsHelper
         [
           govuk_tag(text: tag.s(text), classes: "nhsuk-tag--#{colour}"),
           vaccine_method,
-          tag.span("Withdrawn", class: "nhsuk-u-secondary-text-color")
+          tag.span("Withdrawn", class: "nhsuk-u-secondary-text-colour")
         ].compact
       )
     else

@@ -1,5 +1,5 @@
 <% content_for :before_main do %>
-  <%= render AppBacklinkComponent.new(patient_path(@patient), name: @patient.full_name) %>
+  <%= govuk_back_link(href: patient_path(@patient)) %>
 <% end %>
 
 <%= h1 "Edit child record" %>

@@ -8,7 +8,7 @@
   position: relative;
 
   .nhsuk-form-group--error & {
-    border: $nhsuk-border-width-form-element-error solid $nhsuk-error-color;
+    border: $nhsuk-border-width-form-element-error solid $nhsuk-error-colour;
   }
 }
 
@@ -16,7 +16,7 @@
   @include nhsuk-focused-input;
 
   .nhsuk-form-group--error & {
-    border-color: $nhsuk-focus-text-color;
+    border-color: $nhsuk-focus-text-colour;
   }
 }
 
@@ -26,7 +26,7 @@
 }
 
 .app-autocomplete__hint {
-  color: $nhsuk-secondary-text-color;
+  color: $nhsuk-secondary-text-colour;
   position: absolute;
 }
 
@@ -41,10 +41,10 @@
 }
 
 .app-autocomplete__menu {
-  background-color: $nhsuk-form-element-background-color;
-  border: $nhsuk-border-width-form-element solid $nhsuk-form-border-color;
+  background-color: $nhsuk-form-element-background-colour;
+  border: $nhsuk-border-width-form-element solid $nhsuk-form-border-colour;
   border-top: 0;
-  color: $nhsuk-text-color;
+  color: $nhsuk-text-colour;
   margin: 0;
   max-height: 342px;
   overflow-x: hidden;
@@ -75,7 +75,7 @@
 }
 
 .app-autocomplete__option {
-  border-bottom: solid $nhsuk-border-color;
+  border-bottom: solid $nhsuk-border-colour;
   border-width: 1px 0;
   cursor: pointer;
   display: block;
@@ -86,13 +86,13 @@
   @include nhsuk-font(19);
 
   .app-autocomplete__option-hint {
-    color: $nhsuk-secondary-text-color;
+    color: $nhsuk-secondary-text-colour;
   }
 }
 
 .app-autocomplete__option--no-results {
-  background-color: $nhsuk-form-element-background-color;
-  color: $nhsuk-secondary-text-color;
+  background-color: $nhsuk-form-element-background-colour;
+  color: $nhsuk-secondary-text-colour;
   cursor: not-allowed;
 }
 
@@ -109,18 +109,18 @@
 }
 
 .app-autocomplete__option--odd {
-  background-color: $color_nhsuk-grey-5;
+  background-color: nhsuk-colour("grey-5");
 }
 
 .app-autocomplete__option--focused,
 .app-autocomplete__option:hover {
-  background-color: $nhsuk-link-color;
-  border-color: $nhsuk-link-color;
-  color: $color_nhsuk-white;
+  background-color: $nhsuk-link-colour;
+  border-color: $nhsuk-link-colour;
+  color: nhsuk-colour("white");
   outline: none;
 
   .app-autocomplete__option-hint {
-    color: $color_nhsuk-grey-5;
+    color: nhsuk-colour("grey-5");
   }
 }
 
