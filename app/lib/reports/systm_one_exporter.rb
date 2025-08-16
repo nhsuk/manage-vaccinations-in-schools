@@ -158,7 +158,9 @@ class Reports::SystmOneExporter
   def practice_code(vaccination_record)
     location = vaccination_record.location
 
-    if location&.school?
+    if location&.systm_one_code.present?
+      location.systm_one_code
+    elsif location&.school?
       location.urn
     elsif location
       location.ods_code
