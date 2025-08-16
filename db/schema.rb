@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_14_154032) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_15_114838) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -456,6 +456,25 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_14_154032) do
     t.index ["immunisation_import_id", "vaccination_record_id"], name: "idx_on_immunisation_import_id_vaccination_record_id_588e859772", unique: true
   end
 
+  create_table "local_authorities", id: false, force: :cascade do |t|
+    t.string "local_authority_code", null: false
+    t.string "gss_code"
+    t.integer "gias_local_authority_code"
+    t.string "official_name"
+    t.string "short_name"
+    t.string "gov_uk_slug"
+    t.string "nation"
+    t.string "region"
+    t.date "end_date"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_at"], name: "index_local_authorities_on_created_at"
+    t.index ["gss_code"], name: "index_local_authorities_on_gss_code", unique: true
+    t.index ["local_authority_code"], name: "index_local_authorities_on_local_authority_code", unique: true
+    t.index ["nation", "short_name"], name: "index_local_authorities_on_nation_and_short_name"
+    t.index ["short_name"], name: "index_local_authorities_on_short_name"
+  end
+
   create_table "location_programme_year_groups", force: :cascade do |t|
     t.bigint "location_id", null: false
     t.bigint "programme_id", null: false
@@ -889,8 +908,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_14_154032) do
     t.bigint "vaccine_id"
     t.boolean "full_dose"
     t.datetime "nhs_immunisations_api_synced_at"
-    t.string "nhs_immunisations_api_id"
     t.string "nhs_immunisations_api_etag"
+    t.string "nhs_immunisations_api_id"
     t.integer "protocol"
     t.datetime "nhs_immunisations_api_sync_pending_at"
     t.boolean "notify_parents"
