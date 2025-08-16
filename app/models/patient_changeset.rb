@@ -53,6 +53,7 @@ class PatientChangeset < ApplicationRecord
       import:,
       row_number:,
       school: row.school,
+      uploaded_nhs_number: row.import_attributes[:nhs_number],
       pending_changes: {
         child: row.import_attributes,
         academic_year: row.academic_year,
