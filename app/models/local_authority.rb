@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: local_authorities
@@ -27,14 +29,14 @@ class LocalAuthority < ApplicationRecord
 
   def self.from_my_society_import_row(data)
     new(
-      local_authority_code: data['local-authority-code'],
-      gss_code: data['gss-code'],
-      gov_uk_slug: data['gov-uk-slug'],
-      official_name: data['official-name'],
-      short_name: data['nice-name'],
-      nation: data['nation'],
-      region: data['region'],
-      end_date: data['end-date'],
+      local_authority_code: data["local-authority-code"],
+      gss_code: data["gss-code"],
+      gov_uk_slug: data["gov-uk-slug"],
+      official_name: data["official-name"],
+      short_name: data["nice-name"],
+      nation: data["nation"],
+      region: data["region"],
+      end_date: data["end-date"]
     )
   end
 end

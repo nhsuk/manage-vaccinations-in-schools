@@ -47,18 +47,21 @@ describe Location do
 
     describe "local_authority" do
       context "when the location has a gias_local_authority_code" do
-        let!(:local_authority) { create(:local_authority, gias_local_authority_code: 111) }
-        let!(:other_local_authority) { create(:local_authority, gias_local_authority_code: 222)}
+        let!(:local_authority) do
+          create(:local_authority, gias_local_authority_code: 111)
+        end
 
         before do
-          location.gias_local_authority_code = local_authority.gias_local_authority_code
+          create(:local_authority, gias_local_authority_code: 222)
+          location.gias_local_authority_code =
+            local_authority.gias_local_authority_code
         end
 
         it "returns the local_authority with that code" do
           expect(location.local_authority).to eq(local_authority)
         end
       end
-    end 
+    end
   end
 
   describe "validations" do

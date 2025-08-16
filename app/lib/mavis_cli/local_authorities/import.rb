@@ -12,12 +12,12 @@ module MavisCLI
 
       def call(input_file:, **)
         MavisCLI.load_rails
-        
+
         input_file_path = File.expand_path(input_file)
-        row_count = `wc -l #{input_file_path}`.to_i
+        row_count = Open3.capture2("wc", "-l", input_file_path).first.to_i
 
         puts "Starting import of #{row_count - 1} local_authorities."
-        
+
         LocalAuthority.transaction do
           puts "Deleting #{LocalAuthority.count} existing local_authorities"
           LocalAuthority.delete_all

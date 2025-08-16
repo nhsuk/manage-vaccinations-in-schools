@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: local_authorities
@@ -45,7 +47,7 @@ describe LocalAuthority, type: :model do
 
     describe "the result" do
       it "is not saved" do
-        expect(result.persisted?).to eq(false)
+        expect(result.persisted?).to be(false)
       end
 
       it "has the expected attributes" do
@@ -59,6 +61,30 @@ describe LocalAuthority, type: :model do
           'region' => "East of England",
           'end_date' => "2009-04-01".to_date,
         })
+      end
+    end
+
+    context "when the given row has some attributes missing" do
+      let(:row) do 
+        {
+          'local-authority-code' => "BED",
+          'gss-code' => "E06000055",
+          'gov-uk-slug' => "bedford",
+        }
+      end
+      
+      it "does not raise an exception" do
+        expect{ result }.not_to raise_error
+      end
+
+       describe "the result" do
+        it "has the expected attributes" do
+          expect(result).to have_attributes({
+            'local_authority_code' => "BED",
+            'gss_code' => "E06000055",
+            'gov_uk_slug' => "bedford",
+          })
+        end
       end
     end
   end
