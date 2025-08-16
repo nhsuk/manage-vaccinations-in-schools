@@ -46,6 +46,7 @@ class ClassImport < PatientImport
            class_name: "PatientChangeset",
            as: :import,
            dependent: :destroy
+  has_many :pds_search_results
 
   def postprocess_rows!
     # Remove patients already in the sessions but not in the class list.

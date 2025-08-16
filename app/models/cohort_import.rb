@@ -40,6 +40,7 @@ class CohortImport < PatientImport
            class_name: "PatientChangeset",
            as: :import,
            dependent: :destroy
+  has_many :pds_search_results
 
   def postprocess_rows!
     PatientsAgedOutOfSchoolJob.perform_later
