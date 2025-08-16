@@ -4,8 +4,8 @@
 #
 # Table name: cohort_imports_patients
 #
-#  cohort_import_id :bigint           not null
-#  patient_id       :bigint           not null
+#  cohort_import_id      :bigint           not null
+#  patient_id            :bigint           not null
 #
 # Indexes
 #
