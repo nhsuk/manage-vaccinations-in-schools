@@ -15,6 +15,7 @@
 #  ods_code                  :string
 #  site                      :string
 #  status                    :integer          default("unknown"), not null
+#  systm_one_code            :string
 #  type                      :integer          not null
 #  url                       :text
 #  urn                       :string
