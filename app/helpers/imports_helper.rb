@@ -28,4 +28,10 @@ module ImportsHelper
       group.to_s.humanize if (pending_changes & keys).any?
     end
   end
+
+  def issue_categories_for(pending_changes)
+    FIELD_GROUPS.filter_map do |(keys, group)|
+      group.to_s.humanize if (pending_changes & keys).any?
+    end
+  end
 end
