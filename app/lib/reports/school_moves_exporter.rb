@@ -93,6 +93,13 @@ class Reports::SchoolMovesExporter
     patient = log_entry.patient
     location = log_entry.school
 
+    systm_one_school_code =
+      if location&.school?
+        location.systm_one_code
+      else
+        patient&.school&.systm_one_code
+      end
+
     [
       patient.nhs_number,
       patient.family_name,
@@ -107,7 +114,7 @@ class Reports::SchoolMovesExporter
       nil,
       nil,
       nil,
-      school_urn(location:, patient:),
+      systm_one_school_code || school_urn(location:, patient:),
       location&.name,
       log_entry.created_at.iso8601,
       nil,
