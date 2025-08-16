@@ -1,8 +1,10 @@
 # frozen_string_literal: true
 
-describe "schools:move_patients" do
-  subject(:invoke) do
-    Rake::Task["schools:move_patients"].invoke(source_urn, target_urn)
+describe "schools move-patients" do
+  subject(:command) do
+    Dry::CLI.new(MavisCLI).call(
+      arguments: ["schools", "move-patients", source_urn, target_urn]
+    )
   end
 
   let(:team) { create(:team) }
@@ -29,10 +31,8 @@ describe "schools:move_patients" do
   let(:source_urn) { source_school.urn.to_s }
   let(:target_urn) { target_school.urn.to_s }
 
-  after { Rake.application["schools:move_patients"].reenable }
-
   it "transfers associated records from source to target school" do
-    expect { invoke }.to change { patient.reload.school }.from(
+    expect { command }.to change { patient.reload.school }.from(
       source_school
     ).to(target_school).and change { consent_form.reload.school }.from(
             source_school
@@ -63,7 +63,7 @@ describe "schools:move_patients" do
     end
 
     it "raises an error and does not transfer records" do
-      expect { invoke }.to raise_error(
+      expect { command }.to raise_error(
         RuntimeError,
         /Some patient sessions at #{source_school.urn} are not safe to destroy/
       )
@@ -80,10 +80,9 @@ describe "schools:move_patients" do
     let(:source_urn) { "999999" }
 
     it "raises an error" do
-      expect { invoke }.to raise_error(
-        RuntimeError,
+      expect { command }.to output(
         /Could not find one or both schools./
-      )
+      ).to_stderr
     end
   end
 
@@ -91,10 +90,9 @@ describe "schools:move_patients" do
     let(:target_urn) { "999999" }
 
     it "raises an error" do
-      expect { invoke }.to raise_error(
-        RuntimeError,
+      expect { command }.to output(
         /Could not find one or both schools./
-      )
+      ).to_stderr
     end
   end
 end
