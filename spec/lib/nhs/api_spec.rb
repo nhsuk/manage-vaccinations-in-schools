@@ -67,7 +67,7 @@ describe NHS::API do
         body: {
           issued_at: Time.zone.now.strftime("%Q"),
           expires_in: 599,
-          access_token: "new_token"
+          access_token: "new-token"
         }
       )
     end
@@ -75,7 +75,7 @@ describe NHS::API do
     it "fetches a new auth token when we don't have one" do
       allow(described_class).to receive(:access_token_expired?).and_return(true)
 
-      expect(described_class.access_token).to eq("new_token")
+      expect(described_class.access_token).to eq("new-token")
     end
 
     it "does not fetch a new token when we already have one" do
