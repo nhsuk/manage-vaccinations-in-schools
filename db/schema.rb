@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_14_154032) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_15_205653) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -670,6 +670,20 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_14_154032) do
     t.index ["school_id"], name: "index_patients_on_school_id"
   end
 
+  create_table "pds_search_results", force: :cascade do |t|
+    t.bigint "patient_id", null: false
+    t.bigint "class_import_id"
+    t.bigint "cohort_import_id"
+    t.integer "step", null: false
+    t.integer "result", null: false
+    t.string "nhs_number"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["class_import_id"], name: "index_pds_search_results_on_class_import_id"
+    t.index ["cohort_import_id"], name: "index_pds_search_results_on_cohort_import_id"
+    t.index ["patient_id"], name: "index_pds_search_results_on_patient_id"
+  end
+
   create_table "pre_screenings", force: :cascade do |t|
     t.bigint "patient_session_id", null: false
     t.bigint "performed_by_user_id", null: false
@@ -1013,6 +1027,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_14_154032) do
   add_foreign_key "patient_vaccination_statuses", "programmes"
   add_foreign_key "patients", "locations", column: "gp_practice_id"
   add_foreign_key "patients", "locations", column: "school_id"
+  add_foreign_key "pds_search_results", "class_imports"
+  add_foreign_key "pds_search_results", "cohort_imports"
+  add_foreign_key "pds_search_results", "patients"
   add_foreign_key "pre_screenings", "patient_sessions"
   add_foreign_key "pre_screenings", "programmes"
   add_foreign_key "pre_screenings", "users", column: "performed_by_user_id"
