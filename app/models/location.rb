@@ -128,6 +128,11 @@ class Location < ApplicationRecord
     where_urn_and_site(urn_and_site).take!
   end
 
+  def urn_and_site
+    return nil if urn.nil? && site.nil?
+    site.nil? ? urn : urn + site
+  end
+
   def clinic? = generic_clinic? || community_clinic?
 
   def dfe_number
