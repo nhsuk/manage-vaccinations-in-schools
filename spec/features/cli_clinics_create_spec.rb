@@ -3,7 +3,7 @@
 require_relative "../../app/lib/mavis_cli"
 
 describe "mavis clinics create" do
-  context "when valid arguments" do
+  context "with valid arguments" do
     it "runs successfully" do
       when_i_run_the_command
       then_the_clinic_is_created

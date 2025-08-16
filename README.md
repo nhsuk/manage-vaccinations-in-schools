@@ -337,7 +337,6 @@ See the [releasing documentation](docs/releasing.md) for more information.
 
 ## Rake tasks
 
-- `subteams:create[ods_code,name,email,phone]`
 - `users:create[email,password,given_name,family_name,team_ods_code]`
 - `vaccines:seed[type]`
 
