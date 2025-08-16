@@ -44,6 +44,21 @@ describe Location do
         :location_programme_year_groups
       ).order(:type)
     end
+
+    describe "local_authority" do
+      context "when the location has a gias_local_authority_code" do
+        let!(:local_authority) { create(:local_authority, gias_code: 111) }
+
+        before do
+          create(:local_authority, gias_code: 222)
+          location.gias_local_authority_code = local_authority.gias_code
+        end
+
+        it "returns the local_authority with that code" do
+          expect(location.local_authority).to eq(local_authority)
+        end
+      end
+    end
   end
 
   describe "validations" do
