@@ -1,22 +1,16 @@
 # Rake Tasks
 
-## GP Practices
+## `feature_flags:seed`
 
-### `gp_practices:smoke`
+Set up the feature flags in the database from the configuration.
 
-Creates a GP practice location suitable for smoke testing in production.
+## `smoke:seed`
 
-## Schools
+Creates a school and a GP practice location suitable for smoke testing in production.
 
-### `schools:smoke`
+## `vaccines:seed[type]`
 
-Creates a school location suitable for smoke testing in production.
-
-## Vaccines
-
-### `vaccines:seed[type]`
-
-- `type` - The type of vaccine, either `flu` or `hpv`. (optional)
+- `type` - The type of vaccine, either `flu`, `hpv`, `menacwy` and `td_ipv`. (optional)
 
 This creates the default set of vaccine records, or if they already exist, updates any existing vaccine records to match the default set.
 
