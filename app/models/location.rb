@@ -15,6 +15,7 @@
 #  ods_code                  :string
 #  site                      :string
 #  status                    :integer          default("unknown"), not null
+#  systm_one_code            :string
 #  type                      :integer          not null
 #  url                       :text
 #  urn                       :string
@@ -140,9 +141,12 @@ class Location < ApplicationRecord
   end
 
   def as_json
-    super.except("created_at", "updated_at", "subteam_id").merge(
-      "is_attached_to_team" => !subteam_id.nil?
-    )
+    super.except(
+      "created_at",
+      "updated_at",
+      "subteam_id",
+      "systm_one_code"
+    ).merge("is_attached_to_team" => !subteam_id.nil?)
   end
 
   def create_default_programme_year_groups!(programmes)
