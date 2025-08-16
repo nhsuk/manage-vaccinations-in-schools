@@ -565,6 +565,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_20_085332) do
     t.bigint "school_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "uploaded_nhs_number"
+    t.string "pds_nhs_number"
+    t.boolean "matched_on_nhs_number"
     t.index ["import_type", "import_id"], name: "index_patient_changesets_on_import"
     t.index ["patient_id"], name: "index_patient_changesets_on_patient_id"
     t.index ["status"], name: "index_patient_changesets_on_status"
