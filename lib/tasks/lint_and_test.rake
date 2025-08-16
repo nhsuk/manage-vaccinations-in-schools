@@ -6,5 +6,5 @@ task lint_and_test: :environment do
   system("bin/lint") or abort("Linting failed!")
 
   puts "\nRunning tests..."
-  system("bin/bundle exec rspec") or abort("Tests failed!")
+  system("bin/rspec") or abort("Tests failed!")
 end
