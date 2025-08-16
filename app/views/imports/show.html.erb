@@ -111,8 +111,8 @@
                 <span class="nhsuk-table-responsive__heading">
                   Issue to review
                 </span>
-                A field in a duplicate record does not match a previously uploaded
-                record
+                <% patient_name = record.respond_to?(:patient) ? record.patient.full_name : record.full_name %>
+                <%= @issues_text&.dig(patient_name) || "A field in a duplicate record does not match a previously uploaded record" %>
               <% end %>
 
               <% row.with_cell do %>
