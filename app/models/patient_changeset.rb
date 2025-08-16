@@ -189,25 +189,33 @@ class PatientChangeset < ApplicationRecord
   end
 
   def existing_patients
-    @existing_patients ||=
-      begin
-        deserialize_attribute(child_attributes, "date_of_birth", :date)
-        deserialize_attribute(child_attributes, "invalidated_at", :datetime)
+    deserialize_attribute(child_attributes, "date_of_birth", :date)
+    deserialize_attribute(child_attributes, "invalidated_at", :datetime)
 
-        if child_attributes["given_name"].blank? ||
-             child_attributes["family_name"].blank? ||
-             child_attributes["date_of_birth"]&.nil?
-          return []
-        end
+    if child_attributes["given_name"].blank? ||
+         child_attributes["family_name"].blank? ||
+         child_attributes["date_of_birth"]&.nil?
+      return []
+    end
 
-        Patient.includes(:patient_sessions).match_existing(
-          nhs_number: child_attributes["nhs_number"],
-          given_name: child_attributes["given_name"],
-          family_name: child_attributes["family_name"],
-          date_of_birth: child_attributes["date_of_birth"],
-          address_postcode: child_attributes["address_postcode"]
-        )
+    matches =
+      Patient.includes(:patient_sessions).match_existing(
+        nhs_number: child_attributes["nhs_number"],
+        given_name: child_attributes["given_name"],
+        family_name: child_attributes["family_name"],
+        date_of_birth: child_attributes["date_of_birth"],
+        address_postcode: child_attributes["address_postcode"]
+      )
+
+    self.matched_on_nhs_number =
+      if matches.count == 1 &&
+           matches.first.nhs_number == child_attributes["nhs_number"]
+        true
+      else
+        false
       end
+
+    matches
   end
 
   def prepare_patient_changes(existing_patient, pending_changes)
