@@ -272,7 +272,8 @@ class ImmunisationImportRow
     @school ||=
       if school_urn.present? && school_urn.to_s != SCHOOL_URN_HOME_EDUCATED &&
            school_urn.to_s != SCHOOL_URN_UNKNOWN
-        Location.school.find_by_urn_and_site(school_urn.to_s)
+        Location.school.find_by_urn_and_site(school_urn.to_s) ||
+          Location.school.find_by(systm_one_code: school_urn.to_s)
       end
   end
 
@@ -878,8 +879,10 @@ class ImmunisationImportRow
   def validate_school_urn
     return if school_urn.blank?
 
-    unless Location.school.where_urn_and_site(school_urn.to_s).exists? ||
-             school_urn.to_s.in?([SCHOOL_URN_HOME_EDUCATED, SCHOOL_URN_UNKNOWN])
+    unless school_urn.to_s.in?(
+             [SCHOOL_URN_HOME_EDUCATED, SCHOOL_URN_UNKNOWN]
+           ) || Location.school.where_urn_and_site(school_urn.to_s).exists? ||
+             Location.school.exists?(systm_one_code: school_urn.to_s)
       errors.add(
         school_urn.header,
         "The school URN is not recognised. If you’ve checked the URN, " \
