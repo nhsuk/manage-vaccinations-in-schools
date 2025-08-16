@@ -49,6 +49,13 @@ class PatientChangeset < ApplicationRecord
 
   enum :status, { pending: 0, processed: 1 }, validate: true
 
+  scope :nhs_number_discrepancies,
+        -> do
+          where.not(uploaded_nhs_number: nil, pds_nhs_number: nil).where(
+            "uploaded_nhs_number != pds_nhs_number"
+          )
+        end
+
   def self.from_import_row(row:, import:, row_number:)
     create!(
       import:,

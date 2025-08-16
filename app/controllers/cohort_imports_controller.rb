@@ -44,6 +44,8 @@ class CohortImportsController < ApplicationController
 
     @duplicates = @cohort_import.patients.with_pending_changes.distinct
 
+    @nhs_discrepancies = @cohort_import.changesets.nhs_number_discrepancies
+
     render template: "imports/show",
            layout: "full",
            locals: {
