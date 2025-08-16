@@ -16,6 +16,7 @@ module MavisCLI
 
       option :site, desc: "Additional site "
       option :status, desc: "Status of the school", default: "open"
+      option :systm_one_code, desc: "SystmOne code of the school"
       option :url, desc: "URL of the school"
 
       option :address_line_1, desc: "First line of address"
@@ -32,14 +33,15 @@ module MavisCLI
         name:,
         gias_establishment_number:,
         gias_local_authority_code:,
-        url: nil,
+        site: nil,
         status: "open",
+        systm_one_code: nil,
+        url: nil,
         address_line_1: nil,
         address_line_2: nil,
         address_town: nil,
         address_postcode: nil,
-        year_groups: [],
-        site: nil
+        year_groups: []
       )
         MavisCLI.load_rails
 
@@ -54,6 +56,7 @@ module MavisCLI
             name:,
             site:,
             status:,
+            systm_one_code:,
             type: "school",
             url:,
             urn:,
