@@ -18,6 +18,7 @@ module MavisCLI
   end
 end
 
+require_relative "mavis_cli/access_log"
 require_relative "mavis_cli/clinics/add_to_team"
 require_relative "mavis_cli/clinics/create"
 require_relative "mavis_cli/generate/cohort_imports"
