@@ -19,6 +19,8 @@ class CommitPatientChangesetsJob < ApplicationJob
 
           import_school_moves(changesets, import)
 
+          import_pds_search_results(changesets, import)
+
           increment_column_counts!(import, counts, changesets)
         end
 
@@ -88,6 +90,34 @@ class CommitPatientChangesetsJob < ApplicationJob
     SchoolMove.import(
       importable_school_moves.to_a,
       on_duplicate_key_ignore: :all
+    )
+  end
+
+  def import_pds_search_results(changesets, import)
+    pds_search_records = []
+
+    changesets.each do |changeset|
+      next if changeset.search_results.blank?
+
+      patient = changeset.patient
+      next unless patient.persisted?
+
+      changeset.search_results.each do |result|
+        pds_search_records << PDSSearchResult.new(
+          patient_id: patient.id,
+          step: PDSSearchResult.steps[result["step"]],
+          result: PDSSearchResult.results[result["result"]],
+          nhs_number: result["nhs_number"],
+          class_import: (import if import.is_a?(ClassImport)),
+          cohort_import: (import if import.is_a?(CohortImport))
+        )
+      end
+    end
+
+    PDSSearchResult.import(
+      pds_search_records,
+      on_duplicate_key_ignore: true,
+      validate: false
     )
   end
 
