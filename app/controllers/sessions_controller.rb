@@ -35,8 +35,8 @@ class SessionsController < ApplicationController
 
       format.xlsx do
         filename =
-          if @session.location.urn.present?
-            "#{@session.location.name} (#{@session.location.urn})"
+          if (urn_and_site = @session.location.urn_and_site).present?
+            "#{@session.location.name} (#{urn_and_site})"
           else
             @session.location.name
           end
