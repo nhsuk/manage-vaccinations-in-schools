@@ -107,7 +107,7 @@ class Reports::SchoolMovesExporter
       nil,
       nil,
       nil,
-      school_urn(location:, patient:),
+      school_urn(location:, patient:, systm_one: true),
       location&.name,
       log_entry.created_at.iso8601,
       nil,

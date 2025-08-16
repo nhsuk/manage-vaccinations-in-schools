@@ -3,13 +3,23 @@
 module Reports::ExportFormatters
   extend ActiveSupport::Concern
 
-  def school_urn(location:, patient:)
+  def school_urn(location:, patient:, systm_one: false)
     if location&.school?
-      location.urn
+      if systm_one && location.systm_one_code.present?
+        location.systm_one_code
+      else
+        location.urn
+      end
     elsif patient.home_educated?
       "999999"
+    elsif (school = patient.school)
+      if systm_one && school.systm_one_code.present?
+        school.systm_one_code
+      else
+        school.urn
+      end
     else
-      patient.school&.urn || "888888"
+      "888888"
     end
   end
 

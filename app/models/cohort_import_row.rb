@@ -20,7 +20,8 @@ class CohortImportRow < PatientImportRow
     @school ||=
       if (urn = school_urn&.to_s).present? &&
            ![SCHOOL_URN_HOME_EDUCATED, SCHOOL_URN_UNKNOWN].include?(urn)
-        Location.school.find_by!(urn:)
+        Location.school.find_by_urn_and_site(urn) ||
+          Location.school.find_by(systm_one_code: urn)
       end
   end
 
@@ -53,8 +54,10 @@ class CohortImportRow < PatientImportRow
       errors.add(:base, "<code>CHILD_SCHOOL_URN</code> is missing")
     elsif school_urn.blank?
       errors.add(school_urn.header, "is required but missing")
-    elsif !Location.school.exists?(urn: school_urn.to_s) &&
-          !school_urn.to_s.in?([SCHOOL_URN_HOME_EDUCATED, SCHOOL_URN_UNKNOWN])
+    elsif !school_urn.to_s.in?(
+          [SCHOOL_URN_HOME_EDUCATED, SCHOOL_URN_UNKNOWN]
+        ) && !Location.school.where_urn_and_site(school_urn.to_s).exists? &&
+          !Location.school.exists?(systm_one_code: school_urn.to_s)
       errors.add(
         school_urn.header,
         "The school URN is not recognised. If you’ve checked the URN, " \

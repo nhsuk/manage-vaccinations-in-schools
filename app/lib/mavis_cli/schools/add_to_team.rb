@@ -44,7 +44,7 @@ module MavisCLI
 
         ActiveRecord::Base.transaction do
           urns.each do |urn|
-            location = Location.school.find_by(urn:)
+            location = Location.school.find_by_urn_and_site(urn)
 
             if location.nil?
               warn "Could not find location: #{urn}"

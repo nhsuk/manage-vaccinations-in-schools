@@ -152,7 +152,8 @@ class Reports::SystmOneExporter
   def practice_code(vaccination_record)
     location = vaccination_record.session.location
 
-    location.school? ? location.urn : location.ods_code
+    location.systm_one_code.presence ||
+      (location.school? ? location.urn : location.ods_code)
   end
 
   def gender_code(code)
