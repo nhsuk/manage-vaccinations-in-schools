@@ -337,6 +337,8 @@ See the [releasing documentation](docs/releasing.md) for more information.
 
 ## Rake tasks
 
+- `feature_flags:seed`
+- `smoke:seed`
 - `vaccines:seed[type]`
 
 See the [Rake tasks documentation](docs/rake-tasks.md) for more information.
