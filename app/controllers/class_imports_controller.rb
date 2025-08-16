@@ -46,6 +46,8 @@ class ClassImportsController < ApplicationController
 
     @duplicates = @class_import.patients.with_pending_changes.distinct
 
+    @nhs_discrepancies = @class_import.changesets.nhs_number_discrepancies
+
     render template: "imports/show",
            layout: "full",
            locals: {

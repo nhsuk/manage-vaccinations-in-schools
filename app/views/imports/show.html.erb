@@ -43,22 +43,22 @@
 
     <% if import.exact_duplicate_record_count.present? %>
       <%= summary_list.with_row do |row| %>
-        <%= row.with_key { "Omitted records" } %>
+        <%= row.with_key { "Duplicates not imported" } %>
         <%= row.with_value {
               import.exact_duplicate_record_count == 1 ?
-                "1 previously imported record was omitted" :
-                "#{import.exact_duplicate_record_count} previously imported records were omitted"
+                "1 record was not imported because it already exists in Mavis" :
+                "#{import.exact_duplicate_record_count} records were not imported because they already exist in Mavis"
             } %>
       <% end %>
     <% end %>
 
     <% if @duplicates.present? %>
       <%= summary_list.with_row do |row| %>
-        <%= row.with_key { "Duplicate records" } %>
+        <%= row.with_key { "Import issues" } %>
         <%= row.with_value {
               @duplicates.count == 1 ?
-                "1 duplicate record needs review" :
-                "#{@duplicates.count} duplicate records need review"
+                "1 record has import issues to resolve before it can be imported into Mavis" :
+                "#{@duplicates.count} records have import issues to resolve before they can be imported into Mavis"
             } %>
       <% end %>
     <% end %>
@@ -76,13 +76,15 @@
 <% end %>
 
 <% if import.processed? %>
+  <% if @nhs_discrepancies.present? %>
+      <%= render AppPatientPDSDiscrepancyTableComponent.new(discrepancies: @nhs_discrepancies, current_user:) %>
+    <% end %>
+
   <% if @duplicates.present? %>
     <div class="nhsuk-table__panel-with-heading-tab">
       <h3 class="nhsuk-table__heading-tab">
         <%= pluralize(@duplicates.count,
-                      "duplicate record") %>
-        <%= @duplicates.count == 1 ?
-              "needs" : "need" %> review
+                      "record") %> with import issues to review
       </h3>
       <%= govuk_table(html_attributes: {
                         class: "nhsuk-table-responsive",
