@@ -8,9 +8,10 @@ class ProcessPatientChangesetsJob < ApplicationJob
   def perform(patient_changeset)
     attrs = patient_changeset.child_attributes
 
-    if attrs["nhs_number"].blank? &&
-         (pds_patient = search_for_patient(attrs)).present?
+    pds_patient = search_for_patient(attrs)
+    if pds_patient.present?
       attrs["nhs_number"] = pds_patient.nhs_number
+      patient_changeset.pds_nhs_number = pds_patient.nhs_number
     end
 
     patient_changeset.processed!
