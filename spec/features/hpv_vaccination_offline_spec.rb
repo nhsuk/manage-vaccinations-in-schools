@@ -464,11 +464,15 @@ describe "HPV vaccination" do
     expect(page).not_to have_content("Invalid")
 
     expect(page).to have_content("4 vaccination records")
-    expect(page).to have_content("2 previously imported records were omitted")
+    expect(page).to have_content(
+      "2 records were not imported because they already exist in Mavis"
+    )
   end
 
   def then_i_see_a_duplicate_record_needs_review
-    expect(page).to have_content("1 duplicate record needs review")
+    expect(page).to have_content(
+      "1 record has import issues to resolve before it can be imported into Mavis"
+    )
   end
 
   def then_i_should_see_a_success_message

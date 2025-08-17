@@ -112,8 +112,36 @@ describe "Child record imports duplicates" do
 
     Flipper.enable(:pds_lookup_during_import)
 
-    stub_pds_search_to_return_a_patient
-    stub_pds_get_nhs_number_to_return_a_patient
+    stub_pds_search_to_return_no_patients(
+      "family" => "Smith",
+      "given" => "Jimmy",
+      "birthdate" => "eq2010-01-02",
+      "address-postalcode" => "SW1A 1AA"
+    )
+
+    stub_pds_search_to_return_a_patient(
+      "9999075320",
+      "family" => "Clarke",
+      "given" => "Jennifer",
+      "birthdate" => "eq2010-01-01",
+      "address-postalcode" => "SW1A 1AA"
+    )
+
+    stub_pds_search_to_return_a_patient(
+      "9999075320",
+      "family" => "Clarke",
+      "given" => "Jennifer",
+      "birthdate" => "eq2010-01-01",
+      "address-postalcode" => "SW1A 1AB"
+    )
+
+    stub_pds_search_to_return_a_patient(
+      "9435764479",
+      "family" => "Doe",
+      "given" => "Mark",
+      "birthdate" => "eq2010-01-03",
+      "address-postalcode" => "SW1A 1AA"
+    )
   end
 
   def and_an_hpv_programme_is_underway
@@ -190,7 +218,9 @@ describe "Child record imports duplicates" do
   end
 
   def then_i_should_see_the_import_page_with_duplicate_records
-    expect(page).to have_content("3 duplicate records need review")
+    expect(page).to have_content(
+      "3 records have import issues to resolve before they can be imported into Mavis"
+    )
   end
 
   def when_i_choose_to_keep_the_duplicate_record
