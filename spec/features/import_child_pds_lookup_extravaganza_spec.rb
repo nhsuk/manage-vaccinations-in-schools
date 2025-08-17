@@ -29,7 +29,7 @@ describe "Import child records" do
     # Case 3: Existing patient with NHS number (Catherine) - should show duplicate review
     when_i_go_back_to_the_import_page
     then_i_see_an_import_review_for_the_second_patient_uploaded_without_nhs_number
-    when_i_click_review
+    when_i_click_review_for("WILLIAMS, Catherine")
     then_i_see_both_records_have_an_nhs_number
     and_i_see_address_differences_for_review
     when_i_use_duplicate_record_during_merge
@@ -335,8 +335,13 @@ describe "Import child records" do
     click_link "1 September 2025 at 12:00pm"
   end
 
-  def when_i_click_review
-    click_link "Review", match: :first
+  def when_i_click_review_for(name)
+    within(
+      :xpath,
+      "//div[h3[contains(text(), 'records with import issues')]]"
+    ) do
+      within(:xpath, ".//tr[contains(., '#{name}')]") { click_link "Review" }
+    end
   end
 
   def and_i_upload_import_file(filename)
