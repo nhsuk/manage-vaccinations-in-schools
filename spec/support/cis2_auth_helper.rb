@@ -155,7 +155,7 @@ module CIS2AuthHelper
 
     role_code ||= {
       nurse: CIS2Info::NURSE_ROLE,
-      admin_staff: CIS2Info::ADMIN_ROLE
+      admin: CIS2Info::ADMIN_ROLE
     }.fetch(role)
 
     nhsid_nrbac_role = raw_info["nhsid_nrbac_roles"][0]

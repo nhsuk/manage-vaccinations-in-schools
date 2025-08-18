@@ -147,7 +147,7 @@ describe "Td/IPV" do
   end
 
   def when_i_go_the_session_as_an_admin
-    sign_in @nurse, role: :admin_staff
+    sign_in @nurse, role: :admin
     visit dashboard_path
     click_on "Sessions", match: :first
     choose "Scheduled"

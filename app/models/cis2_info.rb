@@ -36,19 +36,27 @@ class CIS2Info
   def has_valid_workgroup? =
     organisation&.teams&.exists?(workgroup: workgroups) || false
 
-  def is_admin? = role_code == ADMIN_ROLE
+  def can_view?
+    [ADMIN_ROLE, NURSE_ROLE].include?(role_code)
+  end
 
-  def is_nurse? = role_code == NURSE_ROLE
+  def can_prescribe_pgd?
+    role_code == NURSE_ROLE
+  end
 
-  def is_superuser? = workgroups&.include?(SUPERUSER_WORKGROUP) || false
+  def can_perform_local_admin_tasks?
+    in_superuser_workgroup?
+  end
 
-  # TODO: How do we determine this from CIS2?
-  def is_healthcare_assistant? = false
+  def can_access_sensitive_records?
+    in_superuser_workgroup?
+  end
 
   private
 
   def request_session_key = "cis2_info"
 
-  def reset_unused_fields
+  def in_superuser_workgroup?
+    workgroups&.include?(SUPERUSER_WORKGROUP) || false
   end
 end
