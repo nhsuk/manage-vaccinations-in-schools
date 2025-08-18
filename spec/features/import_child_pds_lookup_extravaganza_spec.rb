@@ -54,6 +54,10 @@ describe "Import child records" do
     then_i_see_patient_with_unknown_relationship_details
     and_oliver_has_unknown_relationship_parent
 
+    # Case 7: Patient that matches existing exactly (Oliver)
+    when_i_go_back_to_the_import_page
+    then_i_see_one_record_is_an_exact_match
+
     then_school_moves_are_created_appropriately
 
     and_all_parent_relationships_are_established
@@ -269,6 +273,14 @@ describe "Import child records" do
       "given" => "Emma",
       "birthdate" => "eq2010-06-01",
       "address-postalcode" => "SW3 3AA"
+    )
+
+    stub_pds_search_to_return_a_patient(
+      "9435714463",
+      "family" => "Williams",
+      "given" => "Lara",
+      "birthdate" => "eq2010-05-15",
+      "address-postalcode" => "B1 1AA"
     )
   end
 
@@ -588,7 +600,7 @@ describe "Import child records" do
 
   def and_import_counts_are_correct
     import = CohortImport.last
-    expect(import.patients.count).to eq(6)
+    expect(import.patients.count).to eq(7)
   end
 
   def when_i_click_on_patient_with_unknown_relationship
@@ -648,5 +660,9 @@ describe "Import child records" do
     expect(SchoolMove.first.patient).to eq(
       Patient.find_by(given_name: "John", family_name: "Smith")
     )
+  end
+
+  def then_i_see_one_record_is_an_exact_match
+    expect(page).to have_content("1 previously imported record was omitted")
   end
 end
