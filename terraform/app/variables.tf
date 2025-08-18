@@ -106,15 +106,15 @@ variable "rails_master_key_path" {
 
 locals {
   is_production = var.environment == "production"
-  parameter_store_variables = tomap({ #TODO: Remove this once all variables are sourced from application config
+  parameter_store_variables = tomap({ #TODO: Remove once all variables are sourced from application config
     MAVIS__ACADEMIC_YEAR_TODAY_OVERRIDE             = ""
     MAVIS__ACADEMIC_YEAR_NUMBER_OF_PREPARATION_DAYS = ""
     MAVIS__PDS__ENQUEUE_BULK_UPDATES                = ""
-    MAVIS__PDS__RATE_LIMIT_PER_SECOND               = ""
+    MAVIS__PDS__RATE_LIMIT_PER_SECOND               = 5
     GOOD_JOB_MAX_THREADS                            = 5
     SIDEKIQ_CONCURRENCY                             = 5
   })
-  parameter_store_arns = [for key, value in aws_ssm_parameter.environment_config : value.arn]
+  parameter_store_arns = [for key, value in aws_ssm_parameter.environment_config : value.arn] #TODO: Remove once all variables are sourced from application config
 
   task_envs = [
     {

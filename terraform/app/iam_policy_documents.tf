@@ -53,7 +53,7 @@ data "aws_iam_policy_document" "ecs_secrets_access" {
     actions = ["ssm:GetParameters"]
     resources = concat(
       ["arn:aws:ssm:${var.region}:${var.account_id}:parameter${var.rails_master_key_path}"],
-      local.parameter_store_arns,
+      local.parameter_store_arns, #TODO: Remove once all variables are sourced from application config
       [for key, value in aws_ssm_parameter.cloud_variables : value.arn]
     )
     effect = "Allow"
