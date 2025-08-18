@@ -66,9 +66,10 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       id-token: write
-    outputs:
-      web-task-definition-path: ${{ steps.create-web-task-definition.outputs.task-definition }}
-      good-job-task-definition-path: ${{ steps.create-good-job-task-definition.outputs.task-definition }}
+    strategy:
+      fail-fast: true
+      matrix:
+        service: [ web, good-job, sidekiq ]
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
@@ -104,45 +105,24 @@ jobs:
             echo "$parsed_env_vars"
             echo 'EOF'
           } >> "$GITHUB_OUTPUT"
-          echo "$parsed_env_vars"
       - name: Populate web task definition
-        if: ${{ inputs.server_types == 'web' || inputs.server_types == 'all' }}
-        id: create-web-task-definition
+        id: create-task-definition
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
-          task-definition-family: "mavis-web-task-definition-${{ inputs.environment }}-template"
+          task-definition-family: "mavis-${{ matrix.service }}-task-definition-${{ inputs.environment }}-template"
           container-name: "application"
           image: "${{ env.aws_account_id }}.dkr.ecr.eu-west-2.amazonaws.com/mavis/webapp@${{ steps.get-image-digest.outputs.digest }}"
           environment-variables: ${{ steps.parse-environment-variables.outputs.parsed_env_vars }}
-      - name: Populate good-job task definition
-        if: ${{ inputs.server_types == 'good-job' || inputs.server_types == 'all' }}
-        id: create-good-job-task-definition
-        uses: aws-actions/amazon-ecs-render-task-definition@v1
-        with:
-          task-definition-family: "mavis-good-job-task-definition-${{ inputs.environment }}-template"
-          container-name: "application"
-          image: "${{ env.aws_account_id }}.dkr.ecr.eu-west-2.amazonaws.com/mavis/webapp@${{ steps.get-image-digest.outputs.digest }}"
-          environment-variables: ${{ steps.parse-environment-variables.outputs.parsed_env_vars }}
-      - name: Populate SSM parameters for web service
-        if: ${{ inputs.server_types == 'web' || inputs.server_types == 'all' }}
+      - name: Rename task definition file
+        run: mv ${{ steps.create-task-definition.outputs.task-definition }} ${{ runner.temp }}/${{ matrix.service }}-task-definition.json
+      - name: Populate SSM parameters for ${{ matrix.service }} service
         run: |
-          python3 script/populate_ssm_parameters.py ${{ inputs.environment }} web --app-version ${{ env.app_version }}
-      - name: Populate SSM parameters for good-job service
-        if: ${{ inputs.server_types == 'good-job' || inputs.server_types == 'all' }}
-        run: |
-          python3 script/populate_ssm_parameters.py ${{ inputs.environment }} good-job --app-version ${{ env.app_version }}
-      - name: Upload artifact for web task definition
-        if: ${{ inputs.server_types == 'web' || inputs.server_types == 'all' }}
+          python3 script/populate_ssm_parameters.py ${{ inputs.environment }} ${{ matrix.service }} --app-version ${{ env.app_version }}
+      - name: Upload artifact for ${{ matrix.service }} task definition
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ inputs.environment }}-web-task-definition
-          path: ${{ steps.create-web-task-definition.outputs.task-definition }}
-      - name: Upload artifact for good-job task definition
-        if: ${{ inputs.server_types == 'good-job' || inputs.server_types == 'all' }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ inputs.environment }}-good-job-task-definition
-          path: ${{ steps.create-good-job-task-definition.outputs.task-definition }}
+          name: ${{ inputs.environment }}-${{ matrix.service }}-task-definition
+          path: ${{ runner.temp }}/${{ matrix.service }}-task-definition.json
 
   approve-deployments:
     name: Wait for approval if required
@@ -157,8 +137,6 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ inputs.server_types == 'web' || inputs.server_types == 'all' }}
     needs: [ prepare-deployment, approve-deployments ]
-    env:
-      task_definition_path: ${{ needs.prepare-deployment.outputs.web-task-definition-path }}
     permissions:
       id-token: write
     steps:
@@ -176,18 +154,18 @@ jobs:
           name: ${{ inputs.environment }}-web-task-definition
       - name: Change family of task definition
         run: |
-          file_path="${{ env.task_definition_path }}"
+          file_path="${{ runner.temp }}/web-task-definition.json"
           family_name="mavis-web-task-definition-${{ inputs.environment }}"
           echo "$(jq --arg f "$family_name" '.family = $f' "$file_path")" > "$file_path"
       - name: Register web task definition
         uses: aws-actions/amazon-ecs-deploy-task-definition@v2
         with:
-          task-definition: ${{ env.task_definition_path }}
+          task-definition: ${{ runner.temp }}/web-task-definition.json
       - name: Deploy web service with CodeDeploy
         id: deploy-web-service
         uses: aws-actions/amazon-ecs-deploy-task-definition@v2
         with:
-          task-definition: ${{ env.task_definition_path }}
+          task-definition: ${{ runner.temp }}
           codedeploy-appspec: config/templates/appspec.yaml
           cluster: ${{ env.cluster_name }}
           service: mavis-${{ inputs.environment }}-web
@@ -204,8 +182,6 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ inputs.server_types == 'good-job' || inputs.server_types == 'all' }}
     needs: [ prepare-deployment, approve-deployments ]
-    env:
-      task_definition_path: ${{ needs.prepare-deployment.outputs.good-job-task-definition-path }}
     permissions:
       id-token: write
     steps:
@@ -217,21 +193,51 @@ jobs:
       - name: Download good-job task definition artifact
         uses: actions/download-artifact@v5
         with:
-          name: ${{ inputs.environment }}-good-job-task-definition
           path: ${{ runner.temp }}
+          name: ${{ inputs.environment }}-good-job-task-definition
       - name: Change family of task definition
         run: |
-          file_path="${{ env.task_definition_path }}"
+          file_path="${{ runner.temp }}/web-task-definition.json"
           family_name="mavis-good-job-task-definition-${{ inputs.environment }}"
           echo "$(jq --arg f "$family_name" '.family = $f' "$file_path")" > "$file_path"
       - name: Deploy good-job service
         uses: aws-actions/amazon-ecs-deploy-task-definition@v2
         with:
-          task-definition: ${{ env.task_definition_path }}
+          task-definition: ${{ runner.temp }}/web-task-definition.json
           cluster: ${{ env.cluster_name }}
           service: mavis-${{ inputs.environment }}-good-job
           force-new-deployment: true
           wait-for-service-stability: true
 
-#  create-sidekiq-deployment:
+  create-sidekiq-deployment:
+    name: Create sidekiq deployment
+    runs-on: ubuntu-latest
+    if: ${{ inputs.server_types == 'sidekiq' || inputs.server_types == 'all' }}
+    needs: [ prepare-deployment, approve-deployments ]
+    permissions:
+      id-token: write
+    steps:
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ env.aws-role }}
+          aws-region: eu-west-2
+      - name: Download sidekiq task definition artifact
+        uses: actions/download-artifact@v4
+        with:
+          path: ${{ runner.temp }}
+          name: ${{ inputs.environment }}-sidekiq-task-definition
+      - name: Change family of task definition
+        run: |
+          file_path="${{ runner.temp }}/sidekiq-task-definition.json"
+          family_name="mavis-sidekiq-task-definition-${{ inputs.environment }}"
+          echo "$(jq --arg f "$family_name" '.family = $f' "$file_path")" > "$file_path"
+      - name: Deploy sidekiq service
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
+        with:
+          task-definition: ${{ runner.temp }}/sidekiq-task-definition.json
+          cluster: ${{ env.cluster_name }}
+          service: mavis-${{ inputs.environment }}-sidekiq
+          force-new-deployment: true
+          wait-for-service-stability: true
    
