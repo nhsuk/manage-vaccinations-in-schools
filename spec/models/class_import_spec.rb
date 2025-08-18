@@ -158,8 +158,9 @@ describe ClassImport do
         .and change(class_import.patients, :count).by(4)
         .and change(class_import.parents, :count).by(5)
 
-      expect(Patient.first).to have_attributes(
-        nhs_number: "9990000018",
+      jennifer = Patient.find_by!(nhs_number: "9990000018")
+
+      expect(jennifer).to have_attributes(
         date_of_birth: Date.new(2010, 1, 1),
         given_name: "Jennifer",
         family_name: "Clarke",
@@ -170,16 +171,16 @@ describe ClassImport do
         birth_academic_year: 2010
       )
 
-      expect(Patient.first.parents.count).to eq(1)
-
-      expect(Patient.first.parents.first).to have_attributes(
+      expect(jennifer.parents.count).to eq(1)
+      expect(jennifer.parents.first).to have_attributes(
         full_name: nil,
         phone: "07412 345678",
         email: "susan@example.com"
       )
 
-      expect(Patient.second).to have_attributes(
-        nhs_number: "9990000026",
+      jimmy = Patient.find_by!(nhs_number: "9990000026")
+
+      expect(jimmy).to have_attributes(
         date_of_birth: Date.new(2010, 1, 2),
         given_name: "Jimmy",
         family_name: "Smith",
@@ -190,18 +191,17 @@ describe ClassImport do
         birth_academic_year: 2009
       )
 
-      expect(Patient.second.parents.count).to eq(1)
-
-      expect(Patient.second.parents.first).to have_attributes(
+      expect(jimmy.parents.count).to eq(1)
+      expect(jimmy.parents.first).to have_attributes(
         full_name: "John Smith",
         phone: "07412 345678",
         email: "john@example.com"
       )
+      expect(jimmy.parent_relationships.first).to be_father
 
-      expect(Patient.second.parent_relationships.first).to be_father
+      mark = Patient.find_by!(nhs_number: "9990000034")
 
-      expect(Patient.third).to have_attributes(
-        nhs_number: "9990000034",
+      expect(mark).to have_attributes(
         date_of_birth: Date.new(2010, 1, 3),
         given_name: "Mark",
         family_name: "Doe",
@@ -212,28 +212,32 @@ describe ClassImport do
         birth_academic_year: 2009
       )
 
-      expect(Patient.third.parents.count).to eq(2)
+      expect(mark.parents.count).to eq(2)
 
-      expect(Patient.third.parents.first).to have_attributes(
+      jane =
+        mark
+          .parents
+          .includes(:parent_relationships)
+          .find_by!(email: "jane@example.com")
+      expect(jane).to have_attributes(
         full_name: "Jane Doe",
-        phone: "07412 345679",
-        email: "jane@example.com"
+        phone: "07412 345679"
       )
+      expect(jane.parent_relationships.first).to be_mother
 
-      expect(Patient.third.parents.second).to have_attributes(
-        full_name: "Richard Doe",
-        phone: nil,
-        email: "richard@example.com"
-      )
+      richard =
+        mark
+          .parents
+          .includes(:parent_relationships)
+          .find_by!(email: "richard@example.com")
+      expect(richard).to have_attributes(full_name: "Richard Doe", phone: nil)
+      expect(richard.parent_relationships.first).to be_father
 
-      expect(Patient.third.parent_relationships.first).to be_mother
-      expect(Patient.third.parent_relationships.second).to be_father
+      gae = Patient.find_by!(given_name: "Gae", family_name: "Thorne-Smith")
 
-      expect(Patient.fourth).to have_attributes(
+      expect(gae).to have_attributes(
         nhs_number: nil,
         date_of_birth: Date.new(2010, 4, 9),
-        given_name: "Gae",
-        family_name: "Thorne-Smith",
         school: location,
         address_line_1: nil,
         address_town: nil,
@@ -241,7 +245,7 @@ describe ClassImport do
         birth_academic_year: 2009
       )
 
-      expect(Patient.fourth.parents).not_to be_empty
+      expect(gae.parents).not_to be_empty
 
       # Second import should not duplicate the patients if they're identical.
 
