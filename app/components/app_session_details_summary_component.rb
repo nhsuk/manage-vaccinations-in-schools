@@ -26,7 +26,14 @@ class AppSessionDetailsSummaryComponent < ViewComponent::Base
 
   def cohort_row
     count = patient_sessions.count
-    href = import_session_path(session)
+
+    actions =
+      if @session.school?
+        href = import_session_path(session)
+        [{ text: "Import class lists", href: }]
+      else
+        []
+      end
 
     {
       key: {
@@ -35,7 +42,7 @@ class AppSessionDetailsSummaryComponent < ViewComponent::Base
       value: {
         text: I18n.t("children", count:)
       },
-      actions: [{ text: "Import class lists", href: }]
+      actions:
     }
   end
 
