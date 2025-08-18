@@ -29,7 +29,7 @@
     <%= render AppCardComponent.new(heading_level: 2, colour: "blue") do |c| %>
       <% c.with_heading { "#{@existing_or_deleted.capitalize} record" } %>
       <% if @type == "child" %>
-        <%= render AppChildSummaryComponent.new(@patient.with_pending_changes) %>
+        <%= render AppChildSummaryComponent.new(@patient) %>
       <% else %>
         <%= render AppVaccinationRecordSummaryComponent.new(
               @vaccination_record, current_user:,
