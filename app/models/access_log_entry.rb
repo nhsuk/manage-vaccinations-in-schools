@@ -4,13 +4,14 @@
 #
 # Table name: access_log_entries
 #
-#  id         :bigint           not null, primary key
-#  action     :integer          not null
-#  controller :integer          not null
-#  created_at :datetime         not null
-#  updated_at :datetime         not null
-#  patient_id :bigint           not null
-#  user_id    :bigint           not null
+#  id              :bigint           not null, primary key
+#  action          :integer          not null
+#  controller      :integer          not null
+#  request_details :jsonb
+#  created_at      :datetime         not null
+#  updated_at      :datetime         not null
+#  patient_id      :bigint           not null
+#  user_id         :bigint           not null
 #
 # Indexes
 #
@@ -26,6 +27,9 @@ class AccessLogEntry < ApplicationRecord
   belongs_to :user
   belongs_to :patient
 
-  enum :controller, { patients: 0, patient_sessions: 1 }, validate: true
-  enum :action, { show: 0, log: 1 }, validate: true
+  enum :controller,
+       { patients: 0, patient_sessions: 1, timeline: 2, graph: 3 },
+       validate: true
+
+  enum :action, { show: 0, log: 1, show_pii: 2 }, validate: true
 end
