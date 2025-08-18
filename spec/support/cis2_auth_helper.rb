@@ -134,7 +134,7 @@ module CIS2AuthHelper
     org_code: nil,
     org_name: "Test SAIS Org",
     user_only_has_one_role: false,
-    workgroups: nil,
+    workgroups: [],
     no_workgroup: false,
     sid: nil,
     selected_roleid: "5555666677778888"

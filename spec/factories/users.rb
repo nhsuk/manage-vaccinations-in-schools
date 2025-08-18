@@ -51,7 +51,7 @@ FactoryBot.define do
           "organisation_name" => team.name,
           "role_code" => role_code,
           "team_workgroup" => team.workgroup,
-          "workgroups" => (role_workgroups || []) + [team.workgroup]
+          "workgroups" => role_workgroups + [team.workgroup]
         }
       end
     end
