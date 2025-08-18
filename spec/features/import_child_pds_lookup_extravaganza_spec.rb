@@ -155,9 +155,11 @@ describe "Import child records" do
       type: "unknown"
     )
 
+    create(:parent, full_name: "David Williams", email: "david.w@email.com")
+
     expect(Patient.count).to eq(3)
     expect(ParentRelationship.count).to eq(1)
-    expect(Parent.count).to eq(1)
+    expect(Parent.count).to eq(2)
   end
 
   def and_pds_lookup_during_import_is_enabled
@@ -330,15 +332,12 @@ describe "Import child records" do
   def and_catherine_parents_are_handled_correctly
     catherine =
       Patient.find_by(given_name: "Catherine", family_name: "Williams")
-    expect(catherine.parents.count).to eq(2)
+    expect(catherine.parents.count).to eq(1)
 
     guardian = catherine.parents.find_by(full_name: "David Williams")
     guardian_relationship =
       catherine.parent_relationships.find_by(parent: guardian)
     expect(guardian_relationship.type).to eq("guardian")
-
-    mother = catherine.parents.find_by(full_name: "Sarah Williams")
-    expect(mother.phone).to be_present
   end
 
   def and_charlie_has_no_parents_as_expected
@@ -392,14 +391,14 @@ describe "Import child records" do
   end
 
   def and_all_parent_relationships_are_established
-    expect(Parent.count).to eq(8)
-    expect(ParentRelationship.count).to eq(8)
+    expect(Parent.count).to eq(7)
+    expect(ParentRelationship.count).to eq(7)
 
     father_relationships = ParentRelationship.where(type: "father")
     expect(father_relationships.count).to eq(3) # John Tweedle, Mike HomeDad, Robert Samson
 
     mother_relationships = ParentRelationship.where(type: "mother")
-    expect(mother_relationships.count).to eq(3) # Mary Tweedle, Linda Samson, Sarah Williams
+    expect(mother_relationships.count).to eq(2) # Mary Tweedle, Linda Samson
 
     guardian_relationships = ParentRelationship.where(type: "guardian")
     expect(guardian_relationships.count).to eq(1) # David Williams

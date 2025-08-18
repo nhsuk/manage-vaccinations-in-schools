@@ -32,7 +32,7 @@ class CommitPatientChangesetsJob < ApplicationJob
 
   def import_patients_and_parents(changesets, import)
     patients = changesets.map(&:patient)
-    parents = changesets.flat_map(&:parents)
+    parents = changesets.flat_map(&:parents).uniq
     relationships =
       changesets
         .flat_map(&:parent_relationships)
