@@ -306,6 +306,8 @@ GEM
       domain_name (~> 0.5)
     i18n (1.14.7)
       concurrent-ruby (~> 1.0)
+    indefinite_article (0.2.5)
+      activesupport
     io-console (0.8.1)
     irb (1.15.2)
       pp (>= 0.6.0)
@@ -790,6 +792,7 @@ DEPENDENCIES
   govuk_design_system_formbuilder
   govuk_markdown
   hotwire-livereload
+  indefinite_article
   its
   jsbundling-rails
   jsonb_accessor
