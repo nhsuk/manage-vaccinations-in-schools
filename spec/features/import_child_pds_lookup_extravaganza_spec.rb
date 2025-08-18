@@ -54,6 +54,10 @@ describe "Import child records" do
     then_i_see_patient_with_unknown_relationship_details
     and_oliver_has_unknown_relationship_parent
 
+    # Case 7: Patient that matches existing exactly (Oliver)
+    when_i_go_back_to_the_import_page
+    then_i_see_one_record_is_an_exact_match
+
     then_school_moves_are_created_appropriately
 
     and_all_parent_relationships_are_established
@@ -157,7 +161,23 @@ describe "Import child records" do
 
     create(:parent, full_name: "David Williams", email: "david.w@email.com")
 
-    expect(Patient.count).to eq(3)
+    @existing_exact_match =
+      create(
+        :patient,
+        given_name: "Lara",
+        family_name: "Williams",
+        nhs_number: "9435714463",
+        date_of_birth: Date.new(2010, 5, 15),
+        gender_code: :female,
+        address_line_1: "",
+        address_line_2: "",
+        address_town: "",
+        address_postcode: "B1 1AA",
+        school: @school,
+        session: @session
+      )
+
+    expect(Patient.count).to eq(4)
     expect(ParentRelationship.count).to eq(1)
     expect(Parent.count).to eq(2)
   end
@@ -195,6 +215,14 @@ describe "Import child records" do
       "given" => "Emma",
       "birthdate" => "eq2010-06-01",
       "address-postalcode" => "SW3 3AA"
+    )
+
+    stub_pds_search_to_return_a_patient(
+      "9435714463",
+      "family" => "Williams",
+      "given" => "Lara",
+      "birthdate" => "eq2010-05-15",
+      "address-postalcode" => "B1 1AA"
     )
   end
 
@@ -274,7 +302,7 @@ describe "Import child records" do
   end
 
   def then_the_existing_patient_has_an_nhs_number_in_mavis
-    expect(Patient.count).to eq(6)
+    expect(Patient.count).to eq(7)
     patient = Patient.where(given_name: "Catherine").first
     expect(patient.nhs_number).to eq("9876543210")
     expect(patient.address_line_1).to eq("456 New Street")
@@ -284,7 +312,7 @@ describe "Import child records" do
 
   def and_i_should_see_correct_patient_counts
     perform_enqueued_jobs
-    expect(Patient.count).to eq(6)
+    expect(Patient.count).to eq(7)
   end
 
   def and_parents_are_created_for_albert
@@ -409,7 +437,7 @@ describe "Import child records" do
 
   def and_import_counts_are_correct
     import = CohortImport.last
-    expect(import.patients.count).to eq(6)
+    expect(import.patients.count).to eq(7)
   end
 
   def when_i_click_on_patient_with_unknown_relationship
@@ -453,5 +481,9 @@ describe "Import child records" do
     relationship = oliver.parent_relationships.first
     expect(relationship.type).to eq("unknown")
     expect(relationship.label).to eq("Unknown")
+  end
+
+  def then_i_see_one_record_is_an_exact_match
+    expect(page).to have_content("1 previously imported record was omitted")
   end
 end
