@@ -100,12 +100,16 @@ class User < ApplicationRecord
     end
   end
 
+  def requires_email_and_password?
+    provider.blank? || uid.blank?
+  end
+
   def selected_organisation = cis2_info.organisation
 
   def selected_team = cis2_info.team
 
-  def requires_email_and_password?
-    provider.blank? || uid.blank?
+  def role_name
+    cis2_info.role_name if cis2_enabled?
   end
 
   def is_admin?
@@ -129,27 +133,6 @@ class User < ApplicationRecord
       cis2_info.is_healthcare_assistant?
     else
       fallback_role_healthcare_assistant?
-    end
-  end
-
-  def role_description
-    role =
-      if is_admin?
-        "Administrator"
-      elsif is_nurse?
-        "Nurse"
-      else
-        "Unknown"
-      end
-
-    if is_healthcare_assistant? && is_superuser?
-      "#{role} (Healthcare assistant and superuser)"
-    elsif is_healthcare_assistant?
-      "#{role} (Healthcare assistant)"
-    elsif is_superuser?
-      "#{role} (Superuser)"
-    else
-      role
     end
   end
 
