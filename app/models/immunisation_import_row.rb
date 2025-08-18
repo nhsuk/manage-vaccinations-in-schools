@@ -124,7 +124,8 @@ class ImmunisationImportRow
       delivery_method: delivery_method_value,
       delivery_site: delivery_site_value,
       notes: notes&.to_s,
-      vaccine_id: vaccine&.id
+      vaccine_id: vaccine&.id,
+      discarded_at: nil
     }
 
     vaccination_record =
