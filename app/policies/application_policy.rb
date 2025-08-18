@@ -9,7 +9,7 @@ class ApplicationPolicy
   attr_reader :user, :record
 
   def index?
-    user.is_nurse? || user.is_admin?
+    true
   end
 
   def new?
@@ -17,11 +17,11 @@ class ApplicationPolicy
   end
 
   def create?
-    user.is_nurse? || user.is_admin?
+    true
   end
 
   def show?
-    user.is_nurse? || user.is_admin?
+    true
   end
 
   def edit?
@@ -29,11 +29,11 @@ class ApplicationPolicy
   end
 
   def update?
-    user.is_nurse? || user.is_admin?
+    true
   end
 
   def destroy?
-    user.is_nurse? || user.is_admin?
+    true
   end
 
   class Scope
