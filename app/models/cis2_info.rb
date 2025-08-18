@@ -52,9 +52,6 @@ class CIS2Info
     in_superuser_workgroup?
   end
 
-  # TODO: How do we determine this from CIS2?
-  def is_healthcare_assistant? = false
-
   private
 
   def request_session_key = "cis2_info"

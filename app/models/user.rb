@@ -145,14 +145,6 @@ class User < ApplicationRecord
     end
   end
 
-  def is_healthcare_assistant?
-    if cis2_enabled?
-      cis2_info.is_healthcare_assistant?
-    else
-      fallback_role_healthcare_assistant?
-    end
-  end
-
   private
 
   def cis2_enabled? = Settings.cis2.enabled
