@@ -88,6 +88,8 @@ class VaccinateForm
       identity_check_confirmed_by_other_relationship
     draft_vaccination_record.identity_check_confirmed_by_patient =
       identity_check_confirmed_by_patient
+    draft_vaccination_record.location_id =
+      session.location_id unless session.generic_clinic?
     draft_vaccination_record.patient_id = patient_session.patient_id
     draft_vaccination_record.performed_at = Time.current
     draft_vaccination_record.performed_by_user = current_user
@@ -100,7 +102,7 @@ class VaccinateForm
 
   private
 
-  delegate :organisation, to: :patient_session
+  delegate :organisation, :session, to: :patient_session
 
   def administered? = vaccine_method != "none"
 
