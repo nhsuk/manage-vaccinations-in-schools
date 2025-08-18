@@ -139,7 +139,12 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
 
     return if vaccine_methods.empty?
 
-    Vaccine.human_enum_name(:method, vaccine_methods.first)
+    tag.span(
+      class: "app-vaccine-method",
+      data: {
+        method: vaccine_methods.first
+      }
+    ) { Vaccine.human_enum_name(:method, vaccine_methods.first) }
   end
 
   def status_tags
