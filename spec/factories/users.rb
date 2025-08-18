@@ -9,7 +9,7 @@
 #  current_sign_in_ip          :string
 #  email                       :string
 #  encrypted_password          :string           default(""), not null
-#  fallback_role               :integer          default("nurse"), not null
+#  fallback_role               :integer
 #  family_name                 :string           not null
 #  given_name                  :string           not null
 #  last_sign_in_at             :datetime
