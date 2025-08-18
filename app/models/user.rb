@@ -129,8 +129,20 @@ class User < ApplicationRecord
     cis2_enabled? ? cis2_info.can_prescribe_pgd? : fallback_role_nurse?
   end
 
-  def is_superuser?
-    cis2_enabled? ? cis2_info.is_superuser? : fallback_role_superuser?
+  def can_perform_local_admin_tasks?
+    if cis2_enabled?
+      cis2_info.can_perform_local_admin_tasks?
+    else
+      fallback_role_superuser?
+    end
+  end
+
+  def can_access_sensitive_records?
+    if cis2_enabled?
+      cis2_info.can_access_sensitive_records?
+    else
+      fallback_role_superuser?
+    end
   end
 
   def is_healthcare_assistant?

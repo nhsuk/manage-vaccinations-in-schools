@@ -44,7 +44,13 @@ class CIS2Info
     role_code == NURSE_ROLE
   end
 
-  def is_superuser? = workgroups&.include?(SUPERUSER_WORKGROUP) || false
+  def can_perform_local_admin_tasks?
+    in_superuser_workgroup?
+  end
+
+  def can_access_sensitive_records?
+    in_superuser_workgroup?
+  end
 
   # TODO: How do we determine this from CIS2?
   def is_healthcare_assistant? = false
@@ -52,4 +58,8 @@ class CIS2Info
   private
 
   def request_session_key = "cis2_info"
+
+  def in_superuser_workgroup?
+    workgroups&.include?(SUPERUSER_WORKGROUP) || false
+  end
 end
