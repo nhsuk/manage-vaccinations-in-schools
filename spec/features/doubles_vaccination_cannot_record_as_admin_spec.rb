@@ -32,7 +32,7 @@ describe "MenACWY and Td/IPV vaccination" do
       session: @session
     )
 
-    sign_in team.users.first, role: :admin_staff
+    sign_in team.users.first, role: :admin
 
     visit "/"
 
