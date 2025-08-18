@@ -48,7 +48,4 @@ class CIS2Info
   private
 
   def request_session_key = "cis2_info"
-
-  def reset_unused_fields
-  end
 end
