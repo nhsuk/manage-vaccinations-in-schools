@@ -49,7 +49,7 @@ module AuthenticationConcern
     end
 
     def selected_cis2_role_is_valid?
-      cis2_info.is_nurse? || cis2_info.is_admin?
+      cis2_info.can_view? || cis2_info.is_nurse?
     end
 
     def storable_location?

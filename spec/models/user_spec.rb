@@ -53,26 +53,26 @@ describe User do
     end
   end
 
-  describe "#is_admin?" do
-    subject(:is_admin?) { user.is_admin? }
+  describe "#can_view?" do
+    subject { user.can_view? }
 
     context "cis2 is enabled", cis2: :enabled do
       context "when the user is an admin" do
         let(:user) { build(:admin) }
 
-        it { should be true }
+        it { should be(true) }
       end
 
       context "when the user is a nurse" do
         let(:user) { build(:nurse) }
 
-        it { should be false }
+        it { should be(true) }
       end
 
       context "when the user is a nurse and superuser" do
         let(:user) { build(:nurse, :superuser) }
 
-        it { should be false }
+        it { should be(true) }
       end
     end
 
@@ -80,19 +80,19 @@ describe User do
       context "when the user is an admin" do
         let(:user) { build(:admin) }
 
-        it { should be true }
+        it { should be(true) }
       end
 
       context "when the user is an admin and superuser" do
         let(:user) { build(:admin, :superuser) }
 
-        it { should be true }
+        it { should be(true) }
       end
 
       context "when the user is a nurse" do
         let(:user) { build(:nurse) }
 
-        it { should be false }
+        it { should be(true) }
       end
     end
   end

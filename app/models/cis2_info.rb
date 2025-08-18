@@ -36,7 +36,9 @@ class CIS2Info
   def has_valid_workgroup? =
     organisation&.teams&.exists?(workgroup: workgroups) || false
 
-  def is_admin? = role_code == ADMIN_ROLE
+  def can_view?
+    [ADMIN_ROLE, NURSE_ROLE].include?(role_code)
+  end
 
   def is_nurse? = role_code == NURSE_ROLE
 
