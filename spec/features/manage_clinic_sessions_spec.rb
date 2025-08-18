@@ -210,6 +210,7 @@ describe "Manage clinic sessions" do
 
   def then_i_see_the_community_clinic
     expect(page).to have_content("Community clinic")
+    expect(page).not_to have_content("Import class list")
   end
 
   def when_the_patient_has_been_invited
