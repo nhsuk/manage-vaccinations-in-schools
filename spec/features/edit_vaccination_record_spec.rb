@@ -254,7 +254,7 @@ describe "Edit vaccination record" do
   end
 
   def given_i_am_signed_in_as_an_admin
-    sign_in @team.users.first, role: :admin_staff
+    sign_in @team.users.first, role: :admin
   end
 
   def and_an_administered_vaccination_record_exists

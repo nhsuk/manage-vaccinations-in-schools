@@ -20,7 +20,7 @@ describe "Verbal consent recorded by admin" do
 
     StatusUpdater.call
 
-    sign_in team.users.first, role: :admin_staff
+    sign_in team.users.first, role: :admin
   end
 
   def when_i_record_that_consent_was_given_but_keep_in_triage
