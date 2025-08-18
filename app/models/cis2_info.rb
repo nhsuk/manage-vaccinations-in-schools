@@ -5,8 +5,15 @@ class CIS2Info
 
   NURSE_ROLE = "S8000:G8000:R8001"
   ADMIN_ROLE = "S8000:G8001:R8006"
+  SUPPORT_ROLE = "S8001:G8005:R8015"
 
   SUPERUSER_WORKGROUP = "mavissuperusers"
+  SUPPORT_WORKGROUP = "mavissupport"
+
+  SUPPORT_ORGANISATION = "X26"
+
+  SUPPORT_ACTIVITIES = %w[D8000:C8000:B1570].freeze
+  SUPPORT_WITH_PII_ACCESS_ACTIVITIES = %w[D0008:C0055:B1611 D8002:C8006:B0360].freeze
 
   attribute :organisation_name
   attribute :organisation_code
@@ -14,6 +21,7 @@ class CIS2Info
   attribute :role_code
   attribute :workgroups, array: true
   attribute :team_workgroup
+  attribute :activity_codes, array: true
   attribute :has_other_roles, :boolean
 
   def present? = attributes.compact_blank.present?
@@ -28,13 +36,12 @@ class CIS2Info
   def team
     @team ||=
       if (workgroup = team_workgroup).present? &&
-           workgroups&.include?(workgroup)
+         workgroups&.include?(workgroup)
         Team.find_by(organisation:, workgroup:)
       end
   end
 
-  def has_valid_workgroup? =
-    organisation&.teams&.exists?(workgroup: workgroups) || false
+  def has_valid_workgroup? = organisation&.teams&.exists?(workgroup: workgroups) || false
 
   def is_admin? = role_code == ADMIN_ROLE
 
@@ -44,6 +51,18 @@ class CIS2Info
 
   # TODO: How do we determine this from CIS2?
   def is_healthcare_assistant? = false
+
+  def is_support?
+    (
+      workgroups&.include?(SUPPORT_WORKGROUP) && role_code == SUPPORT_ROLE &&
+        organisation_code == SUPPORT_ORGANISATION &&
+        (SUPPORT_ACTIVITIES - activity_codes).empty?
+    ) || false
+  end
+
+  def is_support_with_pii_access?
+    is_support? && (SUPPORT_WITH_PII_ACCESS_ACTIVITIES - activity_codes).empty?
+  end
 
   private
 

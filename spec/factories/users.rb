@@ -44,14 +44,17 @@ FactoryBot.define do
 
       role_code { CIS2Info::NURSE_ROLE }
       role_workgroups { [] }
+      organisation_code { team.organisation.ods_code }
+      activity_codes { [] }
 
       cis2_info_hash do
         {
-          "organisation_code" => team.organisation.ods_code,
+          "organisation_code" => organisation_code,
           "organisation_name" => team.name,
           "role_code" => role_code,
           "team_workgroup" => team.workgroup,
-          "workgroups" => (role_workgroups || []) + [team.workgroup]
+          "workgroups" => (role_workgroups || []) + [team.workgroup],
+          "activity_codes" => activity_codes
         }
       end
     end
@@ -91,6 +94,15 @@ FactoryBot.define do
       fallback_role { :healthcare_assistant }
     end
 
+    trait :support do
+      role_code { CIS2Info::SUPPORT_ROLE }
+      sequence(:email) { |n| "support-#{n}@example.com" }
+      role_workgroups { [CIS2Info::SUPPORT_WORKGROUP] }
+      fallback_role { :support }
+      organisation_code { CIS2Info::SUPPORT_ORGANISATION }
+      activity_codes { CIS2Info::SUPPORT_ACTIVITIES }
+    end
+
     trait :signed_in do
       current_sign_in_at { Time.current }
       current_sign_in_ip { "127.0.0.1" }
@@ -98,4 +110,5 @@ FactoryBot.define do
   end
 
   factory :admin, parent: :user, traits: %i[admin]
+  factory :support, parent: :user, traits: %i[support]
 end

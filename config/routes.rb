@@ -313,6 +313,7 @@ Rails.application.routes.draw do
     get "organisation-not-found", controller: :errors
     get "workgroup-not-found", controller: :errors
     get "role-not-found", controller: :errors
+    get "unauthorized", controller: :errors
 
     resource :teams, only: %i[new create]
   end
@@ -326,12 +327,11 @@ Rails.application.routes.draw do
 
   get "/oidc/jwks", to: "jwks#jwks"
 
-  constraints -> { !Rails.env.production? } do
-    namespace :inspect do
-      get "graph/:object_type/:object_id", to: "graphs#show"
-      namespace :timeline do
-        resources :patients, only: [:show]
-      end
+  namespace :inspect do
+    get "dashboard", to: "dashboard#index"
+    get "graph/:object_type/:object_id", to: "graphs#show"
+    namespace :timeline do
+      resources :patients, only: [:show]
     end
   end
 end

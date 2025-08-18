@@ -12,7 +12,8 @@ class AppTimelineFilterComponent < ViewComponent::Base
     cohort_imports:,
     sessions:,
     reset_url:,
-    show_pii:
+    show_pii:,
+    pii_access_allowed:
   )
     super
     @url = url
@@ -26,6 +27,7 @@ class AppTimelineFilterComponent < ViewComponent::Base
     @sessions = sessions
     @reset_url = reset_url
     @show_pii = show_pii
+    @pii_access_allowed = pii_access_allowed
   end
 
   attr_reader :url,
@@ -38,4 +40,5 @@ class AppTimelineFilterComponent < ViewComponent::Base
               :sessions,
               :reset_url,
               :show_pii
+              :pii_access_allowed
 end
