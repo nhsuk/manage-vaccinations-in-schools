@@ -3,24 +3,11 @@ en:
     legend:
       import_duplicate_form:
         apply_changes: Which record do you want to keep?
-
-    hint:
-      import_duplicate_form:
-        apply_changes_options:
-          apply: The duplicate record will replace the existing record.
-          discard: The existing record will be kept and the duplicate record will be discarded.
-          keep_both: The new and existing records will both be kept.
-
     label:
       draft_vaccination_record:
         full_dose_options:
           true: Yes, they got the full dose
           false: No, they got half a dose
-      import_duplicate_form:
-        apply_changes_options:
-          apply: Use duplicate record
-          discard: Keep previously uploaded record
-          keep_both: Keep both records
       triage_form:
         status_and_vaccine_method_options:
           delay_vaccination: No, delay vaccination (and invite to clinic)
