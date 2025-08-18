@@ -72,7 +72,13 @@ class User < ApplicationRecord
         -> { where(last_sign_in_at: 1.week.ago..Time.current) }
 
   enum :fallback_role,
-       { nurse: 0, admin: 1, superuser: 2, healthcare_assistant: 3 },
+       {
+         nurse: 0,
+         admin: 1,
+         superuser: 2,
+         healthcare_assistant: 3,
+         prescriber: 4
+       },
        prefix: true,
        validate: {
          allow_nil: true
