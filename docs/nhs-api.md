@@ -139,10 +139,12 @@ automatically be added to the JWKS generated for `/oidc/jwks`, but the old
 public key can also be added to `JWKSController::EXTRA_JWK` to ensure a smooth
 roll-over.
 
-## Rake tasks
+## Command line tools
 
-NHS API actions can be triggered through Rake tasks for testing.
+NHS API actions can be triggered for testing.
 
-```
-rails nhs:access_token    # Get an access token to test with
+To get an access token to test with:
+
+```shell
+$ bin/mavis nhs-api access-token
 ```

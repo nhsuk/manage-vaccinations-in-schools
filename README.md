@@ -337,10 +337,8 @@ See the [releasing documentation](docs/releasing.md) for more information.
 
 ## Rake tasks
 
-- `access_log:for_patient[id]`
-- `access_log:for_user[id]`
-- `subteams:create[ods_code,name,email,phone]`
-- `users:create[email,password,given_name,family_name,team_ods_code]`
+- `feature_flags:seed`
+- `smoke:seed`
 - `vaccines:seed[type]`
 
 See the [Rake tasks documentation](docs/rake-tasks.md) for more information.
