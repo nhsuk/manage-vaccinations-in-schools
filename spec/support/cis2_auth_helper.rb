@@ -135,7 +135,6 @@ module CIS2AuthHelper
     org_name: "Test SAIS Org",
     user_only_has_one_role: false,
     workgroups: [],
-    no_workgroup: false,
     sid: nil,
     selected_roleid: "5555666677778888"
   )
@@ -160,12 +159,7 @@ module CIS2AuthHelper
 
     nhsid_nrbac_role = raw_info["nhsid_nrbac_roles"][0]
     nhsid_nrbac_role["role_code"] = role_code
-    if no_workgroup
-      nhsid_nrbac_role.delete("workgroups")
-      nhsid_nrbac_role.delete("workgroups_codes")
-    elsif workgroups
-      nhsid_nrbac_role["workgroups"] = workgroups
-    end
+    nhsid_nrbac_role["workgroups"] = workgroups
 
     mock_auth["uid"] = uid
     raw_info["uid"] = uid
