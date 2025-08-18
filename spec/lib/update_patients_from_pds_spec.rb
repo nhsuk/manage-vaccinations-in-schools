@@ -1,11 +1,10 @@
 # frozen_string_literal: true
 
 describe UpdatePatientsFromPDS do
-  subject(:call) { described_class.call(patients, priority:, queue:) }
+  subject(:call) { described_class.call(patients, queue:) }
 
   let(:patients) { Patient.order(:created_at) }
-  let(:priority) { 0 }
-  let(:queue) { :default }
+  let(:queue) { :pds }
 
   after { Settings.reload! }
 
@@ -24,29 +23,15 @@ describe UpdatePatientsFromPDS do
 
   it "queues a job for each patient without an NHS number" do
     expect { call }.to have_enqueued_job(PatientNHSNumberLookupJob)
-      .on_queue(:default)
+      .on_queue(:pds)
       .exactly(2)
       .times
   end
 
   it "queues a job for each patient with an NHS number" do
     expect { call }.to have_enqueued_job(PatientUpdateFromPDSJob)
-      .on_queue(:default)
+      .on_queue(:pds)
       .exactly(2)
       .times
-  end
-
-  it "schedules the jobs with a gap between them" do
-    freeze_time do
-      expect { call }.to have_enqueued_job(PatientUpdateFromPDSJob).at(
-        Time.current
-      ).and have_enqueued_job(PatientUpdateFromPDSJob).at(
-              Time.current + 2.seconds
-            ).and have_enqueued_job(PatientNHSNumberLookupJob).at(
-                    Time.current + 4.seconds
-                  ).and have_enqueued_job(PatientNHSNumberLookupJob).at(
-                          Time.current + 6.seconds
-                        )
-    end
   end
 end

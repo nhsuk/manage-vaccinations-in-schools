@@ -521,6 +521,9 @@ GEM
       erb
       psych (>= 4.0.0)
     redcarpet (3.6.1)
+    redis-client (0.25.2)
+      connection_pool
+    redis-prescription (2.6.0)
     regexp_parser (2.11.2)
     reline (0.6.2)
       io-console (~> 0.5)
@@ -572,14 +575,14 @@ GEM
     rubocop-capybara (2.22.1)
       lint_roller (~> 1.1)
       rubocop (~> 1.72, >= 1.72.1)
-    rubocop-govuk (5.1.19)
+    rubocop-govuk (5.1.20)
       rubocop (= 1.79.2)
       rubocop-ast (= 1.46.0)
       rubocop-capybara (= 2.22.1)
-      rubocop-rails (= 2.32.0)
+      rubocop-rails (= 2.33.3)
       rubocop-rake (= 0.7.1)
       rubocop-rspec (= 3.6.0)
-    rubocop-rails (2.32.0)
+    rubocop-rails (2.33.3)
       activesupport (>= 4.2.0)
       lint_roller (~> 1.1)
       rack (>= 1.1)
@@ -615,6 +618,16 @@ GEM
       concurrent-ruby (~> 1.0, >= 1.0.2)
     shoulda-matchers (6.5.0)
       activesupport (>= 5.2.0)
+    sidekiq (8.0.7)
+      connection_pool (>= 2.5.0)
+      json (>= 2.9.0)
+      logger (>= 1.6.2)
+      rack (>= 3.1.0)
+      redis-client (>= 0.23.2)
+    sidekiq-throttled (2.0.0)
+      concurrent-ruby (>= 1.2.0)
+      redis-prescription (~> 2.2)
+      sidekiq (>= 8.0)
     simplecov (0.22.0)
       docile (~> 1.1)
       simplecov-html (~> 0.11)
@@ -682,7 +695,7 @@ GEM
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
     uk_postcode (2.1.8)
-    unicode-display_width (3.1.4)
+    unicode-display_width (3.1.5)
       unicode-emoji (~> 4.0, >= 4.0.4)
     unicode-emoji (4.0.4)
     uri (1.0.3)
@@ -810,6 +823,8 @@ DEPENDENCIES
   sentry-rails
   sentry-ruby
   shoulda-matchers
+  sidekiq
+  sidekiq-throttled
   simplecov
   solargraph
   solargraph-rails

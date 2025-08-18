@@ -289,5 +289,4 @@ Team.find_each do |team|
 end
 
 Rake::Task["status:update:all"].execute
-Rake::Task["gp_practices:smoke"].execute
-Rake::Task["schools:smoke"].execute
+Rake::Task["smoke:seed"].execute

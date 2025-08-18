@@ -126,6 +126,22 @@ module CSVImportable
     parse_rows! if rows.nil?
     return if invalid?
 
+    if is_a?(PatientImport) && Flipper.enabled?(:pds_lookup_during_import)
+      changesets =
+        rows.each_with_index.map do |row, row_number|
+          PatientChangeset.from_import_row(row:, import: self, row_number:)
+        end
+
+      changesets.each do
+        if slow?
+          ProcessPatientChangesetsJob.perform_later(it)
+        else
+          ProcessPatientChangesetsJob.perform_now(it)
+        end
+      end
+      return
+    end
+
     counts = COUNT_COLUMNS.index_with(0)
 
     ActiveRecord::Base.transaction do
@@ -142,7 +158,7 @@ module CSVImportable
       update_columns(processed_at: Time.zone.now, status: :processed, **counts)
     end
 
-    UpdatePatientsFromPDS.call(patients, priority: 25, queue: :imports)
+    UpdatePatientsFromPDS.call(patients, queue: :imports)
   end
 
   def remove!

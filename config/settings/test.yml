@@ -15,6 +15,9 @@ nhs_api:
   base_url: "https://sandbox.api.service.nhs.uk"
   disable_authentication: true
 
+pds:
+  rate_limit_per_second: 5
+
 splunk:
   enabled: false
 

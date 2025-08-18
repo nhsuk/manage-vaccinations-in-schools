@@ -24,6 +24,7 @@ on:
           - all
           - web
           - good-job
+          - sidekiq
         default: all
   workflow_call:
     inputs:
@@ -82,7 +83,9 @@ jobs:
           "application_group=" + .codedeploy_deployment_group_name.value,
           "cluster_name=" + .ecs_variables.value.cluster_name,
           "good_job_service=" + .ecs_variables.value.good_job.service_name,
-          "good_job_task_definition=" + .ecs_variables.value.good_job.task_definition.arn
+          "good_job_task_definition=" + .ecs_variables.value.good_job.task_definition.arn,
+          "sidekiq_service=" + .ecs_variables.value.sidekiq.service_name,
+          "sidekiq_task_definition=" + .ecs_variables.value.sidekiq.task_definition.arn
           ' > ${{ runner.temp }}/DEPLOYMENT_ENVS
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
@@ -159,6 +162,50 @@ jobs:
             echo "Waiting for deployment to complete..."
             sleep 30
             DEPLOYMENT_STATE="$(aws ecs describe-services --cluster $cluster_name --services $good_job_service \
+            --query "services[0].deployments[?id == \`$deployment_id\`].[rolloutState][0]" --output text)"
+          done
+          if [ "$DEPLOYMENT_STATE" != "COMPLETED" ]; then
+            echo "Deployment failed with state: $DEPLOYMENT_STATE"
+            exit 1
+          fi
+          echo "Deployment successful"
+
+  create-sidekiq-deployment:
+    name: Create sidekiq deployment
+    runs-on: ubuntu-latest
+    needs: prepare-deployment
+    if: inputs.server_types == 'sidekiq' || inputs.server_types == 'all'
+    permissions:
+      id-token: write
+    steps:
+      - name: Download Artifact
+        uses: actions/download-artifact@v5
+        with:
+          name: DEPLOYMENT_ENVS-${{ inputs.environment }}
+          path: ${{ runner.temp }}
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ env.aws-role }}
+          aws-region: eu-west-2
+      - name: Trigger ECS Deployment
+        run: |
+          set -e
+          source ${{ runner.temp }}/DEPLOYMENT_ENVS
+          DEPLOYMENT_ID=$(aws ecs update-service --cluster $cluster_name --service $sidekiq_service \
+          --task-definition $sidekiq_task_definition --force-new-deployment \
+          --query 'service.deployments[?rolloutState==`IN_PROGRESS`].[id][0]' --output text)
+          echo "Deployment started: $DEPLOYMENT_ID"
+          echo "deployment_id=$DEPLOYMENT_ID" >> $GITHUB_ENV
+      - name: Wait for deployment to complete
+        run: |
+          set -e
+          source ${{ runner.temp }}/DEPLOYMENT_ENVS
+          DEPLOYMENT_STATE=IN_PROGRESS
+          while [ "$DEPLOYMENT_STATE" == "IN_PROGRESS" ]; do
+            echo "Waiting for deployment to complete..."
+            sleep 30
+            DEPLOYMENT_STATE="$(aws ecs describe-services --cluster $cluster_name --services $sidekiq_service \
             --query "services[0].deployments[?id == \`$deployment_id\`].[rolloutState][0]" --output text)"
           done
           if [ "$DEPLOYMENT_STATE" != "COMPLETED" ]; then

@@ -1,35 +1,19 @@
 # frozen_string_literal: true
 
 class UpdatePatientsFromPDS
-  def initialize(patients, priority:, queue:)
+  def initialize(patients, queue:)
     @patients = patients
-    @priority = priority
     @queue = queue
   end
 
   def call
     return unless enqueue?
 
-    GoodJob::Bulk.enqueue do
-      patients.find_each.with_index do |patient, index|
-        # Schedule with a delay to preemptively handle rate limit issues.
-        # This shouldn't be necessary, but we're finding that Good Job
-        # has occasional race condition issues, and spreading out the jobs
-        # should reduce the risk of this.
-
-        if patient.nhs_number.nil?
-          PatientNHSNumberLookupJob.set(
-            priority:,
-            queue:,
-            wait: index * wait_between_jobs
-          ).perform_later(patient)
-        else
-          PatientUpdateFromPDSJob.set(
-            priority:,
-            queue:,
-            wait: index * wait_between_jobs
-          ).perform_later(patient)
-        end
+    patients.find_each do |patient|
+      if patient.nhs_number.nil?
+        PatientNHSNumberLookupJob.set(queue:).perform_later(patient)
+      else
+        PatientUpdateFromPDSJob.set(queue:).perform_later(patient)
       end
     end
   end
@@ -40,17 +24,9 @@ class UpdatePatientsFromPDS
 
   private
 
-  attr_reader :patients, :priority, :queue
-
-  def settings
-    @settings ||= Settings.pds
-  end
+  attr_reader :patients, :queue
 
   def enqueue?
-    @enqueue ||= settings.enqueue_bulk_updates
-  end
-
-  def wait_between_jobs
-    @wait_between_jobs ||= settings.wait_between_jobs.to_f
+    @enqueue ||= Settings.pds.enqueue_bulk_updates
   end
 end

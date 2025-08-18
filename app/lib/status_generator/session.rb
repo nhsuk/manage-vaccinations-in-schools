@@ -5,7 +5,8 @@ class StatusGenerator::Session
     session_id:,
     academic_year:,
     session_attendance:,
-    programme_id:,
+    programme:,
+    patient:,
     consents:,
     triages:,
     vaccination_records:
@@ -13,7 +14,8 @@ class StatusGenerator::Session
     @session_id = session_id
     @academic_year = academic_year
     @session_attendance = session_attendance
-    @programme_id = programme_id
+    @programme = programme
+    @patient = patient
     @consents = consents
     @triages = triages
     @vaccination_records = vaccination_records
@@ -32,6 +34,8 @@ class StatusGenerator::Session
       :absent_from_session
     elsif status_should_be_unwell?
       :unwell
+    elsif status_should_be_conflicting_consent?
+      :conflicting_consent
     else
       :none_yet
     end
@@ -50,6 +54,8 @@ class StatusGenerator::Session
       absence_date
     elsif status_should_be_unwell?
       unwell_date
+    elsif status_should_be_conflicting_consent?
+      conflicting_consent_date
     end
   end
 
@@ -58,7 +64,8 @@ class StatusGenerator::Session
   attr_reader :session_id,
               :academic_year,
               :session_attendance,
-              :programme_id,
+              :programme,
+              :patient,
               :consents,
               :triages,
               :vaccination_records
@@ -91,18 +98,17 @@ class StatusGenerator::Session
       (triage.created_at if triage&.do_not_vaccinate?)
     ].compact.min
   end
+
   def status_should_be_refused?
-    vaccination_record&.refused? ||
-      (latest_consents.any? && latest_consents.all?(&:response_refused?))
+    vaccination_record&.refused? || consent_generator.status == :refused
   end
 
   def refusal_date
-    [
-      (vaccination_record.performed_at if vaccination_record&.refused?),
-      if latest_consents.any? && latest_consents.all?(&:response_refused?)
-        latest_consents.map(&:submitted_at).min
-      end
-    ].compact.min
+    if vaccination_record&.refused?
+      vaccination_record.performed_at
+    else
+      consent_generator.status_changed_at
+    end
   end
 
   def status_should_be_absent_from_session?
@@ -127,20 +133,35 @@ class StatusGenerator::Session
     vaccination_record.performed_at
   end
 
-  def latest_consents
-    @latest_consents ||=
-      ConsentGrouper.call(consents, programme_id:, academic_year:)
+  def status_should_be_conflicting_consent?
+    consent_generator.status == :conflicts
+  end
+
+  def conflicting_consent_date
+    consent_generator.status_changed_at
+  end
+
+  def consent_generator
+    @consent_generator ||=
+      StatusGenerator::Consent.new(
+        programme:,
+        academic_year:,
+        patient:,
+        consents:,
+        vaccination_records:
+      )
   end
 
   def triage
-    @triage ||= TriageFinder.call(triages, programme_id:, academic_year:)
+    @triage ||=
+      TriageFinder.call(triages, programme_id: programme.id, academic_year:)
   end
 
   def vaccination_record
     @vaccination_record ||=
       if session_id
         vaccination_records.find do
-          it.programme_id == programme_id && it.session_id == session_id
+          it.programme_id == programme.id && it.session_id == session_id
         end
       end
   end

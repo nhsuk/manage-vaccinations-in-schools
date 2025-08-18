@@ -14,3 +14,4 @@ cis2:
 
 pds:
   raise_unknown_gp_practice: false
+  rate_limit_per_second: 5

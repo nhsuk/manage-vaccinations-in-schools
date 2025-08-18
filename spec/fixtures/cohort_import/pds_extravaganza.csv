@@ -1,3 +1,7 @@
 CHILD_SCHOOL_URN,PARENT_1_NAME,PARENT_1_RELATIONSHIP,PARENT_1_EMAIL,PARENT_1_PHONE,PARENT_2_NAME,PARENT_2_RELATIONSHIP,PARENT_2_EMAIL,PARENT_2_PHONE,CHILD_FIRST_NAME,CHILD_LAST_NAME,CHILD_PREFERRED_GIVEN_NAME,CHILD_DATE_OF_BIRTH,CHILD_YEAR_GROUP,CHILD_ADDRESS_LINE_1,CHILD_ADDRESS_LINE_2,CHILD_TOWN,CHILD_POSTCODE,CHILD_NHS_NUMBER
-123456,,,,,,,,,Albert,Tweedle,,2009-12-29,9,38A Battersaa Rise,,London,SW11 1EH,9999075320
-123456,,,,,,,,,Betty,Samson,Beth,2010-01-01,9,10 Downing Street,,London,SW11 1AA,9993524689
+123456,John Tweedle,Father,john.tweedle@email.com,01234567890,Mary Tweedle,Mother,mary.tweedle@email.com,01234567891,Albert,Tweedle,,2009-12-29,8,38A Battersea Rise,,London,SW11 1EH,9999075320
+123456,Robert Samson,Dad,bob.samson@email.com,01234567892,Linda Samson,Mum,linda.samson@email.com,,Betty,Samson,Beth,2010-01-01,8,123 High Street,,London,SW1A 1AA,
+123456,David Williams,Guardian,david.w@email.com,,Sarah Williams,Mother,david.w@email.com,01234567894,Catherine,Williams,,2009-05-15,8,456 New Street,,London,SW2 2BB,
+123456,,,,,,,,,Charlie,Brown,,2011-03-15,9,42 Wallaby Way,,London,SW2 2BB,
+999999,Mike HomeDad,Father,mike@home.com,01234567895,,,,,Emma,Homeschool,,2010-06-01,8,123 Home Street,,London,SW3 3AA,
+123456,Jane Doe,,,01234567896,,,,,Oliver,Green,,2010-08-15,8,789 Silent Street,,London,SW1W 8JL,9435753868

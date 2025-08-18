@@ -102,14 +102,14 @@ class PatientChangeset < ApplicationRecord
         parent =
           Parent.match_existing(
             patient: existing_patients.first,
-            email: attrs[:email],
-            phone: attrs[:phone],
-            full_name: attrs[:full_name]
+            email: attrs["email"],
+            phone: attrs["phone"],
+            full_name: attrs["full_name"]
           ) || Parent.new
 
-        parent.email = attrs[:email] if attrs[:email]
-        parent.full_name = attrs[:full_name] if attrs[:full_name]
-        parent.phone = attrs[:phone] if attrs[:phone]
+        parent.email = attrs["email"] if attrs["email"]
+        parent.full_name = attrs["full_name"] if attrs["full_name"]
+        parent.phone = attrs["phone"] if attrs["phone"]
         parent.phone_receive_updates = false if parent.phone.blank?
 
         parent
@@ -121,8 +121,7 @@ class PatientChangeset < ApplicationRecord
       [
         parent_1_attributes["relationship"],
         parent_2_attributes["relationship"]
-      ].compact
-        .map { parent_relationship_attributes(it) }
+      ].map { parent_relationship_attributes(it) }
         .zip(parents)
         .map do |relationship, parent|
           ParentRelationship
@@ -213,7 +212,7 @@ class PatientChangeset < ApplicationRecord
       existing_patient,
       %w[male female not_specified]
     )
-    set_child_attribute_if_valid(:invalidated_at, existing_patient)
+    set_child_attribute_if_valid(:nhs_number, existing_patient)
   end
 
   def set_child_attribute_if_valid(
