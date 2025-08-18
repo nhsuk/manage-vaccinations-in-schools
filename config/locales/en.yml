@@ -593,6 +593,24 @@ en:
         other: Why are they refusing to give consent?
         personal_choice: Why are they refusing to give consent?
         will_be_vaccinated_elsewhere: Where will their child get their vaccination?
+  import_duplicate_form:
+    options:
+      label:
+        existing:
+          apply: Use uploaded %{type} record
+          discard: Keep existing %{type} record
+          keep_both: Keep both %{type} records
+        deleted:
+          apply: Use uploaded %{type} record
+          discard: Ignore the uploaded %{type} record
+      hint:
+        existing:
+          apply: The uploaded record will replace the existing record
+          discard: The existing record will be kept and the uploaded record will be discarded
+          keep_both: The existing record will stay in Mavis and the uploaded record will be added
+        deleted:
+          apply: The uploaded record will replace the archived record, which will be reinstated with any changes
+          discard: The deleted record will remain archived and the uploaded record will be discarded
   hosting_environment: This is a %{name} environment. Do not use it to make clinical decisions.
   imports:
     index:
