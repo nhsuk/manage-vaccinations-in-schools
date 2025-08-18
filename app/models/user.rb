@@ -125,8 +125,8 @@ class User < ApplicationRecord
     cis2_enabled? ? cis2_info.can_view? : !fallback_role.nil?
   end
 
-  def is_nurse?
-    cis2_enabled? ? cis2_info.is_nurse? : fallback_role_nurse?
+  def can_prescribe_pgd?
+    cis2_enabled? ? cis2_info.can_prescribe_pgd? : fallback_role_nurse?
   end
 
   def is_superuser?

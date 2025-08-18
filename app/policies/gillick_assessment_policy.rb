@@ -2,7 +2,7 @@
 
 class GillickAssessmentPolicy < ApplicationPolicy
   def create?
-    user.is_nurse?
+    user.can_prescribe_pgd?
   end
 
   def new?
@@ -10,7 +10,7 @@ class GillickAssessmentPolicy < ApplicationPolicy
   end
 
   def edit?
-    user.is_nurse?
+    user.can_prescribe_pgd?
   end
 
   def update?
