@@ -858,7 +858,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_20_085332) do
     t.string "given_name", null: false
     t.string "family_name", null: false
     t.string "session_token"
-    t.integer "fallback_role", default: 0, null: false
+    t.integer "fallback_role"
     t.string "reporting_api_session_token"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["provider", "uid"], name: "index_users_on_provider_and_uid", unique: true

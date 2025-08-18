@@ -9,7 +9,7 @@
 #  current_sign_in_ip          :string
 #  email                       :string
 #  encrypted_password          :string           default(""), not null
-#  fallback_role               :integer          default("nurse"), not null
+#  fallback_role               :integer
 #  family_name                 :string           not null
 #  given_name                  :string           not null
 #  last_sign_in_at             :datetime
@@ -73,7 +73,10 @@ class User < ApplicationRecord
 
   enum :fallback_role,
        { nurse: 0, admin: 1, superuser: 2, healthcare_assistant: 3 },
-       prefix: true
+       prefix: true,
+       validate: {
+         allow_nil: true
+       }
 
   delegate :fhir_practitioner, to: :fhir_mapper
 
