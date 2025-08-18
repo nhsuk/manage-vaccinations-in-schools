@@ -147,6 +147,10 @@ class PatientChangeset < ApplicationRecord
         end
   end
 
+  def assign_patient_id
+    self.patient_id = patient.id if patient.persisted?
+  end
+
   def parent_relationship_attributes(relationship)
     case relationship&.downcase
     when nil, "unknown"
