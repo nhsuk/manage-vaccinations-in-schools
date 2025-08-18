@@ -3,6 +3,8 @@
 require_relative "../../app/lib/mavis_cli"
 
 describe "mavis nhs-api access-token" do
+  before { NHS::API.instance_variable_set(:@auth_info, nil) }
+
   it "runs successfully" do
     given_the_request_is_stubbed
 
