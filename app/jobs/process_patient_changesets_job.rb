@@ -29,6 +29,7 @@ class ProcessPatientChangesetsJob < ApplicationJob
   private
 
   def search_for_patient(attrs)
+    return nil if attrs["address_postcode"].blank?
     PDS::Patient.search(
       family_name: attrs["family_name"],
       given_name: attrs["given_name"],
