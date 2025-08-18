@@ -97,20 +97,20 @@ describe User do
     end
   end
 
-  describe "#is_nurse?" do
-    subject(:is_nurse?) { user.is_nurse? }
+  describe "#can_prescribe_pgd?" do
+    subject { user.can_prescribe_pgd? }
 
     context "cis2 is enabled", cis2: :enabled do
       context "when the user is a nurse" do
         let(:user) { build(:nurse) }
 
-        it { should be true }
+        it { should be(true) }
       end
 
       context "when the user is admin staff" do
         let(:user) { build(:admin) }
 
-        it { should be false }
+        it { should be(false) }
       end
     end
 
@@ -118,13 +118,13 @@ describe User do
       context "when the user is a nurse" do
         let(:user) { build(:nurse) }
 
-        it { should be true }
+        it { should be(true) }
       end
 
       context "when the user is admin staff" do
         let(:user) { build(:admin) }
 
-        it { should be false }
+        it { should be(false) }
       end
     end
   end
