@@ -3,9 +3,7 @@
 class SessionPolicy < ApplicationPolicy
   def import? = show?
 
-  def make_in_progress?
-    user.is_nurse? || user.is_admin?
-  end
+  def make_in_progress? = edit?
 
   class Scope < ApplicationPolicy::Scope
     def resolve
