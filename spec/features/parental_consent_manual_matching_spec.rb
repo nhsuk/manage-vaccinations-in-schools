@@ -110,12 +110,12 @@ describe "Parental consent manual matching" do
   end
 
   def when_i_search_for_the_child
-    fill_in "Search", with: @patient.given_name
+    fill_in "Search", with: @patient.full_name
     click_button "Search"
   end
 
   def when_i_search_for_the_aged_out_child
-    fill_in "Search", with: @patient.given_name
+    fill_in "Search", with: @patient.full_name
     find(".nhsuk-details__summary").click
     check "Children aged out of programmes"
     click_button "Search"
