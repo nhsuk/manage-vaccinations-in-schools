@@ -1,12 +1,11 @@
 # frozen_string_literal: true
 
 class ProgrammePolicy < ApplicationPolicy
-  alias_method :sessions?, :index?
-  alias_method :patients?, :index?
+  def sessions? = index?
 
-  def consent_form?
-    user.is_nurse? || user.is_admin?
-  end
+  def patients = index?
+
+  def consent_form? = show?
 
   class Scope < ApplicationPolicy::Scope
     def resolve
