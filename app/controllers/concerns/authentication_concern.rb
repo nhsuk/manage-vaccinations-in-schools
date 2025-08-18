@@ -49,7 +49,9 @@ module AuthenticationConcern
     end
 
     def selected_cis2_role_is_valid?
-      cis2_info.can_view? || cis2_info.can_prescribe_pgd?
+      cis2_info.can_view? || cis2_info.can_prescribe_pgd? ||
+        cis2_info.can_perform_local_admin_tasks? ||
+        cis2_info.can_access_sensitive_records?
     end
 
     def storable_location?
