@@ -121,12 +121,8 @@ class User < ApplicationRecord
     cis2_info.role_name if cis2_enabled?
   end
 
-  def is_admin?
-    if cis2_enabled?
-      cis2_info.is_admin?
-    else
-      fallback_role_admin? || fallback_role_superuser?
-    end
+  def can_view?
+    cis2_enabled? ? cis2_info.can_view? : !fallback_role.nil?
   end
 
   def is_nurse?
