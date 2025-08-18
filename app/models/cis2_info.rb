@@ -40,7 +40,9 @@ class CIS2Info
     [ADMIN_ROLE, NURSE_ROLE].include?(role_code)
   end
 
-  def is_nurse? = role_code == NURSE_ROLE
+  def can_prescribe_pgd?
+    role_code == NURSE_ROLE
+  end
 
   def is_superuser? = workgroups&.include?(SUPERUSER_WORKGROUP) || false
 
