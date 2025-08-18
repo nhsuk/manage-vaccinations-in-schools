@@ -38,6 +38,7 @@ describe NHS::ImmunisationsAPI do
       patient:,
       programme:,
       location:,
+      location_name: nil,
       vaccine:,
       batch:,
       session:,

@@ -93,6 +93,7 @@ class Reports::ProgrammeVaccinationsExporter
           :batch,
           :location,
           :performed_by_user,
+          :session,
           :vaccine,
           patient: %i[consent_statuses gp_practice school]
         )
