@@ -99,7 +99,12 @@ jobs:
         id: parse-environment-variables
         run: |
           parsed_env_vars=$(yq -r '.environments.${{ inputs.environment }} | to_entries | .[] | .key + "=" + .value' config/container_variables.yml)
-          echo "parsed_env_vars=$parsed_env_vars" >> $GITHUB_OUTPUT
+          {
+            echo 'parsed_env_vars<<EOF'
+            echo "$parsed_env_vars"
+            echo 'EOF'
+          } >> "$GITHUB_OUTPUT"
+          echo "$parsed_env_vars"
       - name: Populate web task definition
         if: ${{ inputs.server_types == 'web' || inputs.server_types == 'all' }}
         id: create-web-task-definition
