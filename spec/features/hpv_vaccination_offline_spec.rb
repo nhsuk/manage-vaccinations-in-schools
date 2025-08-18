@@ -262,7 +262,7 @@ describe "HPV vaccination" do
   end
 
   def when_i_choose_to_keep_the_duplicate_record
-    choose "Use duplicate record"
+    choose "Use uploaded vaccination record"
     click_on "Resolve duplicate"
   end
   alias_method :and_i_choose_to_keep_the_duplicate_record,

@@ -213,7 +213,6 @@ describe "Class list imports duplicates" do
   end
 
   def then_i_should_see_the_first_duplicate_record
-    expect(page).to have_content("This record needs reviewing")
     expect(page).to have_content("Address10 Downing StreetLondonSW1A 1AA")
     expect(page).to have_content("Address10 Downing StreetLondonSW1A 1BB")
   end
@@ -229,15 +228,15 @@ describe "Class list imports duplicates" do
   end
 
   def when_i_choose_to_keep_the_duplicate_record
-    choose "Use duplicate record"
+    choose "Use uploaded child record"
   end
 
   def when_i_choose_to_keep_the_existing_record
-    choose "Keep previously uploaded record"
+    choose "Keep existing child"
   end
 
   def when_i_choose_to_keep_both_records
-    choose "Keep both records"
+    choose "Keep both child records"
   end
 
   def then_i_should_see_a_success_message
@@ -255,7 +254,6 @@ describe "Class list imports duplicates" do
   end
 
   def then_i_should_see_the_second_duplicate_record
-    expect(page).to have_content("This record needs reviewing")
     expect(page).to have_content("Full nameJONES, Sara")
     expect(page).to have_content("Full nameJONES, Sarah")
   end
@@ -271,7 +269,6 @@ describe "Class list imports duplicates" do
   end
 
   def then_i_should_see_the_third_duplicate_record
-    expect(page).to have_content("This record needs reviewing")
     expect(page).to have_content("Full nameBLOCK, Jenny")
   end
 
