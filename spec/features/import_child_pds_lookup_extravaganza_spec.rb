@@ -217,7 +217,13 @@ describe "Import child records" do
     @existing_patient_duplicate_review_on_demographics =
       create(
         :patient,
-        given_name: "Maia",
+        given_name# It looks like the code snippet is incomplete and contains a syntax error. The code
+        # seems to be attempting to assign a value to a variable named
+        # `ent_duplicate_review_on_demographics`, but it is missing the assignment operator
+        # and the value to be assigned. Additionally, the word "crea" does not seem to be a
+        # valid Ruby keyword or variable name. Please provide more context or correct the
+        # code snippet for further assistance.
+        : "Maia",
         family_name: "Smith",
         nhs_number: nil,
         date_of_birth: Date.new(2010, 8, 15), # Different from CSV
