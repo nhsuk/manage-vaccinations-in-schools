@@ -19,7 +19,7 @@ class VaccinationRecordPolicy < ApplicationPolicy
   end
 
   def destroy?
-    user.is_superuser?
+    user.can_perform_local_admin_tasks?
   end
 
   class Scope < ApplicationPolicy::Scope
