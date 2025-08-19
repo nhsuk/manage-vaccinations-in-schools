@@ -300,7 +300,7 @@ describe AppActivityLogComponent do
                      programme: "HPV"
 
     include_examples "card",
-                     title: "Vaccination record deleted",
+                     title: "Vaccination record archived",
                      date: "31 May 2025 at 2:00pm",
                      programme: "HPV"
   end

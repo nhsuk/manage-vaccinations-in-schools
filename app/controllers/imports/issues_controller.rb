@@ -86,7 +86,7 @@ class Imports::IssuesController < ApplicationController
     @existing_or_deleted =
       (
         if @record.is_a?(VaccinationRecord) && @record.discarded_at
-          "deleted"
+          "archived"
         else
           "existing"
         end

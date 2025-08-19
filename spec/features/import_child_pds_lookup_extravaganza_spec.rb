@@ -731,7 +731,7 @@ describe "Import child records" do
 
   def when_i_review_and_accept_duplicate_maia_record
     click_link "Review"
-    choose "Use uploaded record"
+    choose "Use uploaded child record"
     click_on "Resolve duplicate"
   end
 
