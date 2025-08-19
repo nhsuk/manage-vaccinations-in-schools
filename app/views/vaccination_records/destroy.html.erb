@@ -2,19 +2,22 @@
   <%= render AppBacklinkComponent.new(@return_to, name: "patient") %>
 <% end %>
 
-<% page_title = "Are you sure you want to delete this vaccination record?" %>
+<% page_title = "Are you sure you want to archive this vaccination record?" %>
 
 <%= h1 page_title do %>
   <span class="nhsuk-caption-l">
     <%= @patient.full_name %>
   </span>
   <%= page_title %>
+  <span class="nhsuk-caption-l">
+    This vaccination record may be removed from other NHS systems, and the child’s parents will receive a notification that the vaccination did not take place. Mavis will keep a record of this vaccination should it get imported again at a later date.
+  </span>
 <% end %>
 
 <%= form_with url: vaccination_record_path, method: :delete do |f| %>
   <%= f.hidden_field :return_to, value: @return_to %>
   <div class="app-button-group">
-    <%= f.govuk_submit "Yes, delete this vaccination record", warning: true %>
+    <%= f.govuk_submit "Yes, archive this vaccination record", warning: true %>
     <%= govuk_link_to "No, return to patient", @return_to %>
   </div>
 <% end %>

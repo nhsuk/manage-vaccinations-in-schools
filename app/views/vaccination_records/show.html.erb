@@ -18,7 +18,7 @@
     <% end %>
 
     <% if policy(@vaccination_record).destroy? %>
-      <%= govuk_link_to "Delete vaccination record",
+      <%= govuk_link_to "Archive vaccination record",
                         destroy_vaccination_record_path(@vaccination_record) %>
     <% end %>
   </div>
