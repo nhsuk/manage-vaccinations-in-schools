@@ -36,7 +36,8 @@ describe "Child record imports twins" do
   end
 
   def and_pds_lookup_during_import_returns_nhs_numbers
-    stub_pds_search_to_return_no_patients(
+    stub_pds_search_to_return_a_patient(
+      "9990000026",
       "family" => "Smith",
       "given" => "Jimmy",
       "birthdate" => "eq2010-01-02",

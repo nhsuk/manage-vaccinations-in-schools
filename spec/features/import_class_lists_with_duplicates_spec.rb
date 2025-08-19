@@ -94,21 +94,24 @@ describe "Class list imports duplicates" do
   def and_pds_lookup_during_import_is_enabled
     Flipper.enable(:pds_lookup_during_import)
 
-    stub_pds_search_to_return_no_patients(
+    stub_pds_search_to_return_a_patient(
+      "9990000018",
       "family" => "Smith",
       "given" => "Jimmy",
       "birthdate" => "eq2010-01-01",
       "address-postalcode" => "SW1A 1BB"
     )
 
-    stub_pds_search_to_return_no_patients(
+    stub_pds_search_to_return_a_patient(
+      "9990000034",
       "family" => "Salles",
       "given" => "Rebecca",
       "birthdate" => "eq2010-02-03",
       "address-postalcode" => "SW1A 3BB"
     )
 
-    stub_pds_search_to_return_no_patients(
+    stub_pds_search_to_return_a_patient(
+      "9990000026",
       "family" => "Jones",
       "given" => "Sara",
       "birthdate" => "eq2010-02-02",
