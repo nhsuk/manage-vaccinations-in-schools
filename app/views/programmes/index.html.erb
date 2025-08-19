@@ -8,29 +8,15 @@
       <% table.with_head do |head| %>
         <% head.with_row do |row| %>
           <% row.with_cell(text: "Programme") %>
-          <% row.with_cell(text: "Children") %>
-          <% row.with_cell(text: "Vaccinations") %>
         <% end %>
       <% end %>
 
       <% table.with_body do |body| %>
         <% @programmes.each do |programme| %>
-          <% patients = current_team.patients.appear_in_programmes([programme], academic_year:).not_archived(team: current_team) %>
-
           <% body.with_row do |row| %>
             <% row.with_cell do %>
               <span class="nhsuk-table-responsive__heading">Programme</span>
               <%= link_to programme.name, programme_overview_path(programme, academic_year) %>
-            <% end %>
-
-            <% row.with_cell do %>
-              <span class="nhsuk-table-responsive__heading">Children</span>
-              <%= patients.count %>
-            <% end %>
-
-            <% row.with_cell do %>
-              <span class="nhsuk-table-responsive__heading">Vaccinations</span>
-              <%= policy_scope(VaccinationRecord).administered.where(patient: patients, programme:).count %>
             <% end %>
           <% end %>
         <% end %>
