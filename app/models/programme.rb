@@ -141,6 +141,14 @@ class Programme < ApplicationRecord
     SNOMED_TARGET_DISEASE_TERMS.fetch(type)
   end
 
+  SNOMED_TARGET_DISEASE_NAMES = {
+    "flu" => "FLU"
+  }.freeze
+
+  def snomed_target_disease_name
+    SNOMED_TARGET_DISEASE_NAMES.fetch(type)
+  end
+
   private
 
   def fhir_mapper = @fhir_mapper ||= FHIRMapper::Programme.new(self)

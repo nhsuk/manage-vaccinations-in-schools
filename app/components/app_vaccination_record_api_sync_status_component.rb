@@ -54,7 +54,7 @@ class AppVaccinationRecordAPISyncStatusComponent < ViewComponent::Base
       when :not_synced
         is_not_a_synced_programme =
           !vaccination_record.programme.type.in?(
-            NHS::ImmunisationsAPI::PROGRAMME_TYPES
+            NHS::ImmunisationsAPI::CUD_PROGRAMME_TYPES
           )
         if is_not_a_synced_programme
           "Records are currently not synced for this programme"
