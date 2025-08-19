@@ -1,24 +1,24 @@
 # frozen_string_literal: true
 
-describe "Delete vaccination record" do
+describe "Archive vaccination record" do
   around { |example| travel_to(Date.new(2025, 7, 31)) { example.run } }
 
-  scenario "User doesn't delete the record" do
+  scenario "User doesn't archive the record" do
     given_an_hpv_programme_is_underway
     and_an_administered_vaccination_record_exists
 
     when_i_sign_in_as_a_superuser
     and_i_go_to_a_patient_that_is_vaccinated_in_the_session
     and_i_click_on_the_vaccination_record
-    and_i_click_on_delete_vaccination_record
-    then_i_see_the_delete_vaccination_page
+    and_i_click_on_archive_vaccination_record
+    then_i_see_the_archive_vaccination_page
 
-    when_i_dont_delete_the_vaccination_record
+    when_i_dont_archive_the_vaccination_record
     then_i_see_the_patient
     and_they_are_already_vaccinated
   end
 
-  scenario "User deletes a record and checks activity log" do
+  scenario "User archives a record and checks activity log" do
     given_an_hpv_programme_is_underway
     and_enqueue_sync_vaccination_records_to_nhs_feature_is_enabled
     and_an_administered_vaccination_record_exists
@@ -26,10 +26,10 @@ describe "Delete vaccination record" do
     when_i_sign_in_as_a_superuser
     and_i_go_to_a_patient_that_is_vaccinated_in_the_session
     and_i_click_on_the_vaccination_record
-    and_i_click_on_delete_vaccination_record
-    then_i_see_the_delete_vaccination_page
+    and_i_click_on_archive_vaccination_record
+    then_i_see_the_archive_vaccination_page
 
-    when_i_delete_the_vaccination_record
+    when_i_archive_the_vaccination_record
     then_i_see_the_patient
     and_i_see_a_successful_message
     and_the_vaccination_record_is_deleted_from_nhs
@@ -38,20 +38,20 @@ describe "Delete vaccination record" do
     then_i_see_the_patient_can_be_vaccinated
 
     when_i_click_on_the_log
-    then_i_see_the_delete_vaccination
+    then_i_see_the_archive_vaccination
   end
 
-  scenario "User deletes a record before confirmation is sent" do
+  scenario "User archives a record before confirmation is sent" do
     given_an_hpv_programme_is_underway
     and_an_administered_vaccination_record_exists
 
     when_i_sign_in_as_a_superuser
     and_i_go_to_a_patient_that_is_vaccinated_in_the_session
     and_i_click_on_the_vaccination_record
-    and_i_click_on_delete_vaccination_record
-    then_i_see_the_delete_vaccination_page
+    and_i_click_on_archive_vaccination_record
+    then_i_see_the_archive_vaccination_page
 
-    when_i_delete_the_vaccination_record
+    when_i_archive_the_vaccination_record
     then_i_see_the_patient
     and_i_see_a_successful_message
 
@@ -59,11 +59,11 @@ describe "Delete vaccination record" do
     then_i_see_the_patient_can_be_vaccinated
 
     when_i_click_on_the_log
-    then_i_see_the_delete_vaccination
+    then_i_see_the_archive_vaccination
     and_the_parent_doesnt_receives_an_email
   end
 
-  scenario "User deletes a record after confirmation is sent" do
+  scenario "User archives a record after confirmation is sent" do
     given_an_hpv_programme_is_underway
     and_an_administered_vaccination_record_exists
     and_a_confirmation_email_has_been_sent
@@ -71,10 +71,10 @@ describe "Delete vaccination record" do
     when_i_sign_in_as_a_superuser
     and_i_go_to_a_patient_that_is_vaccinated_in_the_session
     and_i_click_on_the_vaccination_record
-    and_i_click_on_delete_vaccination_record
-    then_i_see_the_delete_vaccination_page
+    and_i_click_on_archive_vaccination_record
+    then_i_see_the_archive_vaccination_page
 
-    when_i_delete_the_vaccination_record
+    when_i_archive_the_vaccination_record
     then_i_see_the_patient
     and_i_see_a_successful_message
 
@@ -82,34 +82,34 @@ describe "Delete vaccination record" do
     then_i_see_the_patient_can_be_vaccinated
 
     when_i_click_on_the_log
-    then_i_see_the_delete_vaccination
+    then_i_see_the_archive_vaccination
     and_the_parent_receives_an_email
   end
 
-  scenario "User deletes a record from children page" do
+  scenario "User archives a record from children page" do
     given_an_hpv_programme_is_underway
     and_an_administered_vaccination_record_exists
 
     when_i_sign_in_as_a_superuser
     and_i_go_to_a_patient_that_is_vaccinated_via_all_children
     and_i_click_on_the_vaccination_record
-    and_i_click_on_delete_vaccination_record
-    then_i_see_the_delete_vaccination_page
+    and_i_click_on_archive_vaccination_record
+    then_i_see_the_archive_vaccination_page
 
-    when_i_delete_the_vaccination_record
+    when_i_archive_the_vaccination_record
     then_i_see_the_patient
     and_i_see_a_successful_message
     and_they_have_no_vaccinations
   end
 
-  scenario "User can't delete a record without superuser access" do
+  scenario "User can't archive a record without superuser access" do
     given_an_hpv_programme_is_underway
     and_an_administered_vaccination_record_exists
 
     when_i_sign_in
     and_i_go_to_a_patient_that_is_vaccinated_in_the_session
     and_i_click_on_the_vaccination_record
-    then_i_cant_click_on_delete_vaccination_record
+    then_i_cant_click_on_archive_vaccination_record
   end
 
   def given_an_hpv_programme_is_underway
@@ -207,17 +207,17 @@ describe "Delete vaccination record" do
     click_on @patient.full_name
   end
 
-  def and_i_click_on_delete_vaccination_record
-    click_on "Delete vaccination record"
+  def and_i_click_on_archive_vaccination_record
+    click_on "Archive vaccination record"
   end
 
-  def then_i_see_the_delete_vaccination_page
+  def then_i_see_the_archive_vaccination_page
     expect(page).to have_content(
-      "Are you sure you want to delete this vaccination record?"
+      "Are you sure you want to archive this vaccination record?"
     )
   end
 
-  def when_i_dont_delete_the_vaccination_record
+  def when_i_dont_archive_the_vaccination_record
     click_on "No, return to patient"
   end
 
@@ -229,12 +229,12 @@ describe "Delete vaccination record" do
     expect(page).to have_content("Vaccinated")
   end
 
-  def when_i_delete_the_vaccination_record
-    click_on "Yes, delete this vaccination record"
+  def when_i_archive_the_vaccination_record
+    click_on "Yes, archive this vaccination record"
   end
 
   def and_i_see_a_successful_message
-    expect(page).to have_content("Vaccination record deleted")
+    expect(page).to have_content("Vaccination record archived")
   end
 
   def when_i_click_on_the_session
@@ -254,9 +254,9 @@ describe "Delete vaccination record" do
     click_on "Session activity and notes"
   end
 
-  def then_i_see_the_delete_vaccination
+  def then_i_see_the_archive_vaccination
     expect(page).to have_content("Vaccinated with Gardasil 9")
-    expect(page).to have_content("Vaccination record deleted")
+    expect(page).to have_content("Vaccination record archived")
   end
 
   def and_the_parent_receives_an_email
@@ -267,8 +267,8 @@ describe "Delete vaccination record" do
     expect(email_deliveries).to be_empty
   end
 
-  def then_i_cant_click_on_delete_vaccination_record
-    expect(page).not_to have_content("Delete vaccination record")
+  def then_i_cant_click_on_archive_vaccination_record
+    expect(page).not_to have_content("Archive vaccination record")
   end
 
   def and_the_vaccination_record_is_deleted_from_nhs
