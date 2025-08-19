@@ -13,7 +13,9 @@
 #  gias_local_authority_code :integer
 #  name                      :text             not null
 #  ods_code                  :string
+#  site                      :string
 #  status                    :integer          default("unknown"), not null
+#  systm_one_code            :string
 #  type                      :integer          not null
 #  url                       :text
 #  urn                       :string
@@ -24,9 +26,9 @@
 #
 # Indexes
 #
-#  index_locations_on_ods_code    (ods_code) UNIQUE
-#  index_locations_on_subteam_id  (subteam_id)
-#  index_locations_on_urn         (urn) UNIQUE
+#  index_locations_on_ods_code      (ods_code) UNIQUE
+#  index_locations_on_subteam_id    (subteam_id)
+#  index_locations_on_urn_and_site  (urn,site) UNIQUE
 #
 # Foreign Keys
 #
@@ -67,6 +69,14 @@ class Location < ApplicationRecord
   enum :type,
        { school: 0, generic_clinic: 1, community_clinic: 2, gp_practice: 3 }
 
+  scope :where_urn_and_site,
+        ->(urn_and_site) do
+          where(
+            "CONCAT(locations.urn, locations.site) = ?",
+            urn_and_site&.to_s&.strip
+          )
+        end
+
   scope :search_by_name,
         ->(query) do
           # Trigram matching requires at least 3 characters
@@ -83,7 +93,9 @@ class Location < ApplicationRecord
 
   validates :name, presence: true
   validates :url, url: true, allow_nil: true
-  validates :urn, uniqueness: true, allow_nil: true
+
+  validates :urn, uniqueness: true, allow_nil: true, if: -> { site.nil? }
+  validates :site, uniqueness: { scope: :urn }, allow_nil: true
 
   with_options if: :community_clinic? do
     validates :ods_code, exclusion: { in: :organisation_ods_code }
@@ -104,9 +116,23 @@ class Location < ApplicationRecord
     validates :urn, presence: true
   end
 
+  normalizes :site, with: -> { it.blank? ? nil : it.strip }
   normalizes :urn, with: -> { it.blank? ? nil : it.strip }
 
   delegate :fhir_reference, to: :fhir_mapper
+
+  def self.find_by_urn_and_site(urn_and_site)
+    where_urn_and_site(urn_and_site).take
+  end
+
+  def self.find_by_urn_and_site!(urn_and_site)
+    where_urn_and_site(urn_and_site).take!
+  end
+
+  def urn_and_site
+    return nil if urn.nil? && site.nil?
+    site.nil? ? urn : urn + site
+  end
 
   def clinic? = generic_clinic? || community_clinic?
 
@@ -115,9 +141,12 @@ class Location < ApplicationRecord
   end
 
   def as_json
-    super.except("created_at", "updated_at", "subteam_id").merge(
-      "is_attached_to_team" => !subteam_id.nil?
-    )
+    super.except(
+      "created_at",
+      "updated_at",
+      "subteam_id",
+      "systm_one_code"
+    ).merge("is_attached_to_team" => !subteam_id.nil?)
   end
 
   def create_default_programme_year_groups!(programmes)

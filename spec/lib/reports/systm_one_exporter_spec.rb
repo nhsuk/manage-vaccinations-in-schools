@@ -159,6 +159,12 @@ describe Reports::SystmOneExporter do
 
       it { should eq(location.ods_code) }
     end
+
+    context "location has a SystmOne code" do
+      let(:location) { create(:school, systm_one_code: "A1") }
+
+      it { should eq("A1") }
+    end
   end
 
   describe "Gender field" do
