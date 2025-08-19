@@ -259,5 +259,16 @@ describe PatientMerger do
         expect(patient_to_keep.archived?(team:)).to be(true)
       end
     end
+
+    context "when the patient to destroy has a changeset" do
+      before do
+        create(:patient_changeset, :class_import, patient: patient_to_destroy)
+      end
+
+      it "unassigns the changeset from the patient" do
+        expect { call }.not_to change(PatientChangeset, :count)
+        expect(patient_to_keep.changesets).to be_empty
+      end
+    end
   end
 end
