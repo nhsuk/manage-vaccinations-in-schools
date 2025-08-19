@@ -456,6 +456,26 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_20_085332) do
     t.index ["immunisation_import_id", "vaccination_record_id"], name: "idx_on_immunisation_import_id_vaccination_record_id_588e859772", unique: true
   end
 
+  create_table "local_authorities", id: false, force: :cascade do |t|
+    t.string "mhclg_code", null: false
+    t.string "gss_code"
+    t.integer "gias_code"
+    t.string "official_name", null: false
+    t.string "short_name", null: false
+    t.string "gov_uk_slug"
+    t.string "nation", null: false
+    t.string "region"
+    t.date "end_date"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_at"], name: "index_local_authorities_on_created_at"
+    t.index ["gias_code"], name: "index_local_authorities_on_gias_code", unique: true
+    t.index ["gss_code"], name: "index_local_authorities_on_gss_code", unique: true
+    t.index ["mhclg_code"], name: "index_local_authorities_on_mhclg_code", unique: true
+    t.index ["nation", "short_name"], name: "index_local_authorities_on_nation_and_short_name"
+    t.index ["short_name"], name: "index_local_authorities_on_short_name"
+  end
+
   create_table "location_programme_year_groups", force: :cascade do |t|
     t.bigint "location_id", null: false
     t.bigint "programme_id", null: false
@@ -890,8 +910,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_20_085332) do
     t.bigint "vaccine_id"
     t.boolean "full_dose"
     t.datetime "nhs_immunisations_api_synced_at"
-    t.string "nhs_immunisations_api_id"
     t.string "nhs_immunisations_api_etag"
+    t.string "nhs_immunisations_api_id"
     t.integer "protocol"
     t.datetime "nhs_immunisations_api_sync_pending_at"
     t.boolean "notify_parents"
