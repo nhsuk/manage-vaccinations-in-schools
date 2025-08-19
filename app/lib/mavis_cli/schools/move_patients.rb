@@ -11,8 +11,8 @@ module MavisCLI
       def call(source_urn:, target_urn:)
         MavisCLI.load_rails
 
-        old_loc = Location.school.find_by(urn: source_urn)
-        new_loc = Location.school.find_by(urn: target_urn)
+        old_loc = Location.school.find_by_urn_and_site(source_urn)
+        new_loc = Location.school.find_by_urn_and_site(target_urn)
 
         if old_loc.nil? || new_loc.nil?
           warn "Could not find one or both schools."

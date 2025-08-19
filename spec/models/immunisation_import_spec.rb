@@ -37,7 +37,7 @@ describe ImmunisationImport do
   end
 
   before do
-    create(:school, urn: "110158")
+    create(:school, urn: "110158", systm_one_code: "TT110158")
     create(:school, urn: "120026")
     create(:school, urn: "144012")
   end

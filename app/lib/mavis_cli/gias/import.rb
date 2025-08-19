@@ -34,6 +34,7 @@ module MavisCLI
             schools << Location.new(
               type: :school,
               urn: row["URN"],
+              site: nil,
               gias_local_authority_code: row["LA (code)"],
               gias_establishment_number:,
               name: row["EstablishmentName"],
@@ -62,22 +63,24 @@ module MavisCLI
       end
 
       def import_schools(schools)
-        Location.import! schools,
-                         on_duplicate_key_update: {
-                           conflict_target: [:urn],
-                           columns: %i[
-                             address_line_1
-                             address_line_2
-                             address_postcode
-                             address_town
-                             gias_establishment_number
-                             gias_local_authority_code
-                             name
-                             status
-                             url
-                             year_groups
-                           ]
-                         }
+        Location.import!(
+          schools,
+          on_duplicate_key_update: {
+            conflict_target: %i[urn site],
+            columns: %i[
+              address_line_1
+              address_line_2
+              address_postcode
+              address_town
+              gias_establishment_number
+              gias_local_authority_code
+              name
+              status
+              url
+              year_groups
+            ]
+          }
+        )
       end
       # Some URLs from the GIAS CSV are missing the protocol.
       def process_url(url)

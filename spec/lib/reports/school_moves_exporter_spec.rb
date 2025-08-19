@@ -112,6 +112,19 @@ describe Reports::SchoolMovesExporter do
       end
     end
 
+    context "when moving to a school with a SystmOne code" do
+      before do
+        session = create(:session, team:)
+        school = create(:school, systm_one_code: "ABC")
+        patient = create(:patient, school:, session:)
+        create(:school_move_log_entry, :unknown_school, patient:)
+      end
+
+      it "returns 'ABC' as the URN" do
+        expect(rows.first["NATIONAL_URN_NO"]).to eq("ABC")
+      end
+    end
+
     context "when a patient moves out of a team" do
       let(:team_a) { create(:team) }
       let(:team_b) { create(:team) }

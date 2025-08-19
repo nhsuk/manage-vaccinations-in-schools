@@ -13,7 +13,9 @@
 #  gias_local_authority_code :integer
 #  name                      :text             not null
 #  ods_code                  :string
+#  site                      :string
 #  status                    :integer          default("unknown"), not null
+#  systm_one_code            :string
 #  type                      :integer          not null
 #  url                       :text
 #  urn                       :string
@@ -24,9 +26,9 @@
 #
 # Indexes
 #
-#  index_locations_on_ods_code    (ods_code) UNIQUE
-#  index_locations_on_subteam_id  (subteam_id)
-#  index_locations_on_urn         (urn) UNIQUE
+#  index_locations_on_ods_code      (ods_code) UNIQUE
+#  index_locations_on_subteam_id    (subteam_id)
+#  index_locations_on_urn_and_site  (urn,site) UNIQUE
 #
 # Foreign Keys
 #
@@ -61,6 +63,27 @@ describe Location do
     end
   end
 
+  describe "scopes" do
+    describe "#find_by_urn_and_site" do
+      subject(:scope) { described_class.find_by_urn_and_site(urn_and_site) }
+
+      let(:location_without_site) { create(:school, urn: "123456") }
+      let(:location_with_site) { create(:school, urn: "123456", site: "A") }
+
+      context "with just a URN" do
+        let(:urn_and_site) { "123456" }
+
+        it { should eq(location_without_site) }
+      end
+
+      context "with a URN and a site" do
+        let(:urn_and_site) { "123456A" }
+
+        it { should eq(location_with_site) }
+      end
+    end
+  end
+
   describe "validations" do
     it { should validate_presence_of(:name) }
 
@@ -83,6 +106,7 @@ describe Location do
 
       it { should_not validate_presence_of(:urn) }
       it { should validate_uniqueness_of(:urn) }
+      it { should validate_uniqueness_of(:site).scoped_to(:urn) }
     end
 
     context "with a generic clinic" do
@@ -198,6 +222,7 @@ describe Location do
           "is_attached_to_team" => false,
           "name" => location.name,
           "ods_code" => location.ods_code,
+          "site" => location.site,
           "status" => "unknown",
           "type" => "community_clinic",
           "url" => location.url,
