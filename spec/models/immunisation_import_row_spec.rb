@@ -940,6 +940,14 @@ describe ImmunisationImportRow do
 
       it { should_not be_nil }
       it { should eq(existing_vaccination_record) }
+
+      context "and the record has been previously discarded" do
+        before { existing_vaccination_record.discard! }
+
+        it "stages changes discarded at to nil" do
+          expect(vaccination_record.pending_changes["discarded_at"]).to be_nil
+        end
+      end
     end
 
     describe "#batch" do

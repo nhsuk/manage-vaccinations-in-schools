@@ -237,6 +237,14 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
         end
       end
 
+      if @vaccination_record.respond_to?(:discarded_at) &&
+           @vaccination_record.discarded_at.present?
+        summary_list.with_row do |row|
+          row.with_key { "Archived" }
+          row.with_value { discarded_value }
+        end
+      end
+
       if @vaccination_record.respond_to?(:sync_status) &&
            Flipper.enabled?(:immunisations_fhir_api_integration)
         summary_list.with_row do |row|
@@ -355,6 +363,10 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
 
   def dose_number_value
     highlight_if(dose_number, @vaccination_record.dose_sequence_changed?)
+  end
+
+  def discarded_value
+    @vaccination_record&.discarded_at&.to_fs(:long)
   end
 
   def dose_number

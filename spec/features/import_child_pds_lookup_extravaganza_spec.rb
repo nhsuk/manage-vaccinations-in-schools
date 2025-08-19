@@ -328,7 +328,7 @@ describe "Import child records" do
   end
 
   def when_i_use_duplicate_record_during_merge
-    choose "Use duplicate record"
+    choose "Use uploaded child record"
     click_on "Resolve duplicate"
   end
 
@@ -568,7 +568,7 @@ describe "Import child records" do
 
   def when_i_review_and_accept_duplicate_maia_record
     click_link "Review"
-    choose "Use duplicate record"
+    choose "Use uploaded child record"
     click_on "Resolve duplicate"
   end
 
