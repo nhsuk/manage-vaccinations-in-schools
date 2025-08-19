@@ -30,7 +30,7 @@ class AppSessionSummaryComponent < ViewComponent::Base
   end
 
   def school_urn_row
-    if (text = location.urn).present?
+    if (text = location.urn_and_site).present?
       { key: { text: "School URN" }, value: { text: } }
     end
   end

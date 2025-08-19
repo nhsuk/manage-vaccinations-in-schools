@@ -8,8 +8,10 @@ module Reports::ExportFormatters
       location.urn
     elsif patient.home_educated?
       "999999"
+    elsif (school = patient.school)
+      school.urn
     else
-      patient.school&.urn || "888888"
+      "888888"
     end
   end
 
