@@ -274,7 +274,7 @@ class AppActivityLogComponent < ViewComponent::Base
       discarded =
         if vaccination_record.discarded?
           {
-            title: "Vaccination record deleted",
+            title: "Vaccination record archived",
             at: vaccination_record.discarded_at,
             programmes: programmes_for(vaccination_record)
           }

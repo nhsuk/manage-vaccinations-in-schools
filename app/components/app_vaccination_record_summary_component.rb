@@ -240,7 +240,7 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
       if @vaccination_record.respond_to?(:discarded_at) &&
            @vaccination_record.discarded_at.present?
         summary_list.with_row do |row|
-          row.with_key { "Deleted" }
+          row.with_key { "Archived" }
           row.with_value { discarded_value }
         end
       end
