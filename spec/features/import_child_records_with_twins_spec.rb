@@ -78,7 +78,7 @@ describe "Child record imports twins" do
   end
 
   def then_i_should_see_the_import_page_with_successful_import
-    expect(page).to have_content("1 previously imported record was omitted")
+    expect(page).to have_content("0 previously imported records were omitted")
     expect(Patient.count).to eq(4)
   end
 
