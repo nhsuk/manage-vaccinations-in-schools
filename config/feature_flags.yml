@@ -12,6 +12,9 @@ enqueue_sync_vaccination_records_to_nhs: Send new vaccinations recorded by
 immunisations_fhir_api_integration: Master switch to control communications
   with NHS Immunisations FHIR API.
 
+immunisations_fhir_api_integration_search: Master switch to control whether
+  search requests can be made to the NHS Immunisations FHIR API.
+
 import_choose_academic_year: Add an option to choose the academic year when
   importing patients during the preparation period.
 

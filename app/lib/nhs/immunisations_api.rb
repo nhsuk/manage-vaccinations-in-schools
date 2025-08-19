@@ -193,6 +193,58 @@ module NHS::ImmunisationsAPI
         vaccination_record.patient.not_invalidated?
     end
 
+    def search_immunisations(patient, programmes:, date_from: nil)
+      unless Flipper.enabled?(:immunisations_fhir_api_integration) &&
+             Flipper.enabled?(:immunisations_fhir_api_integration_search)
+        Rails.logger.info(
+          "Not searching for vaccination records in the immunisations API as one of the" \
+            " feature flags is disabled: Patient #{patient.id}"
+        )
+        return
+      end
+
+      if programmes.empty?
+        raise "Cannot search for vaccination records in the immunisations API; no programmes provided."
+      end
+
+      Rails.logger.info(
+        "Searching for vaccination records in immunisations API for patient:" \
+          " #{patient.id}"
+      )
+
+      params = {}
+      params[:patient] = patient.nhs_number
+      params[:vaccineCode] = programmes.map(&:snomed_target_disease_name).join(",")
+      params[:dateFrom] = date_from&.iso8601
+
+      query = []
+      query << "patient.identifier=https%3A%2F%2Ffhir.nhs.uk%2FId%2Fnhs-number%7C#{params[:patient]}"
+      query << "-immunization.target=#{params[:vaccineCode]}"
+      query << "-date.from=#{params[:dateFrom]}" if params[:dateFrom]
+      query_string = query.compact.join("&")
+
+      response =
+        NHS::API.connection.get(
+          "/immunisation-fhir-api/FHIR/R4/Immunization&#{query_string}",
+          "Content-Type" => "application/fhir+json"
+        )
+
+      if response.status == 200
+        handle_search_response(response.body)
+      else
+        raise "Error searching for vaccination records for patient #{patient.id} in" \
+                " Immunisations API: unexpected response status" \
+                " #{response.status}"
+      end
+    rescue Faraday::ClientError => e
+      if (diagnostics = extract_error_diagnostics(e&.response)).present?
+        raise "Error searching for vaccination records for patient #{patient.id} in" \
+                " Immunisations API: #{diagnostics}"
+      else
+        raise
+      end
+    end
+
     private
 
     def next_sync_action(vaccination_record)
@@ -263,6 +315,11 @@ module NHS::ImmunisationsAPI
       if vaccination_record.patient.nhs_number.blank?
         raise "Patient nhs number is missing: #{vaccination_record.id}"
       end
+    end
+
+    def handle_search_response(response_body)
+      File.write("tmp/search_response.json", response_body)
+      puts "Successfully saved"
     end
   end
 end
