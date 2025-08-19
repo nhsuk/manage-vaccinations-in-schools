@@ -118,11 +118,16 @@ class PatientChangeset < ApplicationRecord
   end
 
   def parent_relationships
+    relationships =
+      [parent_1_attributes, parent_2_attributes].filter_map do |attrs|
+        next if attrs.blank?
+        parent_relationship_attributes(
+          attrs["relationship"].presence || "unknown"
+        )
+      end
+
     @parent_relationships ||=
-      [
-        parent_1_attributes["relationship"],
-        parent_2_attributes["relationship"]
-      ].map { parent_relationship_attributes(it) }
+      relationships
         .zip(parents)
         .map do |relationship, parent|
           ParentRelationship

@@ -15,11 +15,11 @@ class CommitPatientChangesetsJob < ApplicationJob
         .changesets
         .includes(:school)
         .find_in_batches(batch_size: 100) do |changesets|
+          increment_column_counts!(import, counts, changesets)
+
           import_patients_and_parents(changesets, import)
 
           import_school_moves(changesets, import)
-
-          increment_column_counts!(import, counts, changesets)
         end
 
       import.postprocess_rows!
