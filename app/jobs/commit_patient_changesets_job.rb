@@ -22,6 +22,8 @@ class CommitPatientChangesetsJob < ApplicationJob
           increment_column_counts!(import, counts, changesets)
         end
 
+      import.postprocess_rows!
+
       import.update_columns(
         processed_at: Time.zone.now,
         status: :processed,
