@@ -4,20 +4,20 @@ module PatientsHelper
   # Replace each space in NHS number with a non-breaking space and
   # zero-width word joiner to prevent telephone format detection
   def patient_nhs_number(patient)
+    format_nhs_number(patient.nhs_number, invalid: patient.try(:invalidated?))
+  end
+
+  def format_nhs_number(nhs_number, invalid: false)
     span =
-      if patient.nhs_number.blank?
+      if nhs_number.blank?
         "Not provided"
       else
         tag.span(class: %w[app-u-monospace nhsuk-u-nowrap]) do
-          patient
-            .nhs_number
-            .to_s
-            .gsub(/(\d{3})(\d{3})(\d{4})/, "\\1 \\2 \\3")
-            .html_safe
+          nhs_number.to_s.gsub(/(\d{3})(\d{3})(\d{4})/, "\\1 \\2 \\3").html_safe
         end
       end
 
-    patient.try(:invalidated?) ? tag.s(span) : span
+    invalid ? tag.s(span) : span
   end
 
   def patient_date_of_birth(patient)

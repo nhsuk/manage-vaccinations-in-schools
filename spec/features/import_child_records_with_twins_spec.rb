@@ -7,8 +7,7 @@ describe "Child record imports twins" do
   after { Flipper.disable(:pds_lookup_during_import) }
 
   scenario "User reviews and selects between duplicate records" do
-    stub_pds_get_nhs_number_to_return_a_patient
-    stub_pds_search_to_return_a_patient
+    and_pds_lookup_during_import_returns_nhs_numbers
 
     given_i_am_signed_in
     and_an_hpv_programme_is_underway
@@ -34,6 +33,31 @@ describe "Child record imports twins" do
     TeamSessionsFactory.call(@team, academic_year: AcademicYear.current)
 
     sign_in @team.users.first
+  end
+
+  def and_pds_lookup_during_import_returns_nhs_numbers
+    stub_pds_search_to_return_no_patients(
+      "family" => "Smith",
+      "given" => "Jimmy",
+      "birthdate" => "eq2010-01-02",
+      "address-postalcode" => "SW1A 1AA"
+    )
+
+    stub_pds_search_to_return_a_patient(
+      "9999075320",
+      "family" => "Clarke",
+      "given" => "Jennifer",
+      "birthdate" => "eq2010-01-01",
+      "address-postalcode" => "SW1A 1AA"
+    )
+
+    stub_pds_search_to_return_a_patient(
+      "9449306168",
+      "family" => "Doe",
+      "given" => "Mark",
+      "birthdate" => "eq2010-01-03",
+      "address-postalcode" => "SW1A 1AA"
+    )
   end
 
   def and_an_hpv_programme_is_underway
@@ -78,7 +102,9 @@ describe "Child record imports twins" do
   end
 
   def then_i_should_see_the_import_page_with_successful_import
-    expect(page).to have_content("0 previously imported records were omitted")
+    expect(page).to have_content(
+      "0 records were not imported because they already exist in Mavis"
+    )
     expect(Patient.count).to eq(4)
   end
 

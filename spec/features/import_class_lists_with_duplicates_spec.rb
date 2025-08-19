@@ -94,8 +94,26 @@ describe "Class list imports duplicates" do
   def and_pds_lookup_during_import_is_enabled
     Flipper.enable(:pds_lookup_during_import)
 
-    stub_pds_search_to_return_a_patient
-    stub_pds_get_nhs_number_to_return_a_patient
+    stub_pds_search_to_return_no_patients(
+      "family" => "Smith",
+      "given" => "Jimmy",
+      "birthdate" => "eq2010-01-01",
+      "address-postalcode" => "SW1A 1BB"
+    )
+
+    stub_pds_search_to_return_no_patients(
+      "family" => "Salles",
+      "given" => "Rebecca",
+      "birthdate" => "eq2010-02-03",
+      "address-postalcode" => "SW1A 3BB"
+    )
+
+    stub_pds_search_to_return_no_patients(
+      "family" => "Jones",
+      "given" => "Sara",
+      "birthdate" => "eq2010-02-02",
+      "address-postalcode" => "SW1A 2BB"
+    )
   end
 
   def and_an_hpv_programme_is_underway
@@ -185,7 +203,9 @@ describe "Class list imports duplicates" do
   end
 
   def then_i_should_see_the_import_page_with_duplicate_records
-    expect(page).to have_content("3 duplicate records need review")
+    expect(page).to have_content(
+      "3 records have import issues to resolve before they can be imported into Mavis"
+    )
   end
 
   def when_i_review_the_first_duplicate_record

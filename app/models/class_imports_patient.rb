@@ -4,8 +4,8 @@
 #
 # Table name: class_imports_patients
 #
-#  class_import_id :bigint           not null
-#  patient_id      :bigint           not null
+#  class_import_id       :bigint           not null
+#  patient_id            :bigint           not null
 #
 # Indexes
 #

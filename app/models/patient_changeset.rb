@@ -4,16 +4,19 @@
 #
 # Table name: patient_changesets
 #
-#  id              :bigint           not null, primary key
-#  import_type     :string           not null
-#  pending_changes :jsonb            not null
-#  row_number      :integer          not null
-#  status          :integer          default("pending"), not null
-#  created_at      :datetime         not null
-#  updated_at      :datetime         not null
-#  import_id       :bigint           not null
-#  patient_id      :bigint
-#  school_id       :bigint
+#  id                    :bigint           not null, primary key
+#  import_type           :string           not null
+#  matched_on_nhs_number :boolean
+#  pds_nhs_number        :string
+#  pending_changes       :jsonb            not null
+#  row_number            :integer          not null
+#  status                :integer          default("pending"), not null
+#  uploaded_nhs_number   :string
+#  created_at            :datetime         not null
+#  updated_at            :datetime         not null
+#  import_id             :bigint           not null
+#  patient_id            :bigint
+#  school_id             :bigint
 #
 # Indexes
 #
@@ -46,11 +49,19 @@ class PatientChangeset < ApplicationRecord
 
   enum :status, { pending: 0, processed: 1 }, validate: true
 
+  scope :nhs_number_discrepancies,
+        -> do
+          where.not(uploaded_nhs_number: nil, pds_nhs_number: nil).where(
+            "uploaded_nhs_number != pds_nhs_number"
+          )
+        end
+
   def self.from_import_row(row:, import:, row_number:)
     create!(
       import:,
       row_number:,
       school: row.school,
+      uploaded_nhs_number: row.import_attributes[:nhs_number],
       pending_changes: {
         child: row.import_attributes,
         academic_year: row.academic_year,
@@ -136,6 +147,10 @@ class PatientChangeset < ApplicationRecord
         end
   end
 
+  def assign_patient_id
+    self.patient_id = patient.id if patient.persisted?
+  end
+
   def parent_relationship_attributes(relationship)
     case relationship&.downcase
     when nil, "unknown"
@@ -175,25 +190,33 @@ class PatientChangeset < ApplicationRecord
   end
 
   def existing_patients
-    @existing_patients ||=
-      begin
-        deserialize_attribute(child_attributes, "date_of_birth", :date)
-        deserialize_attribute(child_attributes, "invalidated_at", :datetime)
+    deserialize_attribute(child_attributes, "date_of_birth", :date)
+    deserialize_attribute(child_attributes, "invalidated_at", :datetime)
 
-        if child_attributes["given_name"].blank? ||
-             child_attributes["family_name"].blank? ||
-             child_attributes["date_of_birth"]&.nil?
-          return []
-        end
+    if child_attributes["given_name"].blank? ||
+         child_attributes["family_name"].blank? ||
+         child_attributes["date_of_birth"]&.nil?
+      return []
+    end
 
-        Patient.includes(:patient_sessions).match_existing(
-          nhs_number: child_attributes["nhs_number"],
-          given_name: child_attributes["given_name"],
-          family_name: child_attributes["family_name"],
-          date_of_birth: child_attributes["date_of_birth"],
-          address_postcode: child_attributes["address_postcode"]
-        )
+    matches =
+      Patient.includes(:patient_sessions).match_existing(
+        nhs_number: child_attributes["nhs_number"],
+        given_name: child_attributes["given_name"],
+        family_name: child_attributes["family_name"],
+        date_of_birth: child_attributes["date_of_birth"],
+        address_postcode: child_attributes["address_postcode"]
+      )
+
+    self.matched_on_nhs_number =
+      if matches.count == 1 &&
+           matches.first.nhs_number == child_attributes["nhs_number"]
+        true
+      else
+        false
       end
+
+    matches
   end
 
   def prepare_patient_changes(existing_patient, _pending_changes)
