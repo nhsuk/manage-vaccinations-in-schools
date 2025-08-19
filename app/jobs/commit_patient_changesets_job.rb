@@ -42,6 +42,9 @@ class CommitPatientChangesetsJob < ApplicationJob
     Patient.import(patients.to_a, on_duplicate_key_update: :all)
     link_records_to_import(import, Patient, patients)
 
+    changesets.each(&:assign_patient_id)
+    PatientChangeset.import(changesets, on_duplicate_key_update: :all)
+
     Parent.import(parents.to_a, on_duplicate_key_update: :all)
     link_records_to_import(import, Parent, parents)
 
