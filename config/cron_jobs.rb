@@ -63,7 +63,7 @@ CRON_JOBS = {
     description: "Remove ActiveRecord sessions older than 30 days"
   },
   update_patients_from_pds: {
-    cron: "every day at 6:00 and 18:00",
+    cron: "every day at 00:00 and 06:00 and 12:00 and 18:00",
     class: "EnqueueUpdatePatientsFromPDSJob",
     description: "Keep patient details up to date with PDS."
   },
