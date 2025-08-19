@@ -44,6 +44,11 @@ class Location < ApplicationRecord
 
   belongs_to :subteam, optional: true
 
+  belongs_to :local_authority,
+             foreign_key: :gias_local_authority_code,
+             primary_key: :gias_code,
+             optional: true
+
   has_many :consent_forms
   has_many :location_programme_year_groups
   has_many :patients, foreign_key: :school_id
