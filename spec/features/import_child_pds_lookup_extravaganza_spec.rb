@@ -60,6 +60,23 @@ describe "Import child records" do
     and_import_counts_are_correct
   end
 
+  scenario "PDS lookup extravaganza with class lists" do
+    given_i_am_signed_in
+    and_an_hpv_programme_is_underway
+    and_an_existing_patient_record_without_registration_exists
+    and_pds_lookup_during_import_is_enabled
+
+    when_i_visit_a_session_page_for_the_hpv_programme
+    and_i_start_adding_children_to_the_session
+    and_i_select_the_year_groups
+
+    when_i_upload_a_valid_file
+    then_i_should_see_the_import_page
+
+    and_i_should_see_no_duplicate_reviews
+    and_the_registration_on_albert_should_be_set
+  end
+
   def given_i_am_signed_in
     @programme = create(:programme, :hpv)
     @team =
@@ -73,7 +90,7 @@ describe "Import child records" do
   end
 
   def and_an_hpv_programme_is_underway
-    @school = create(:school, urn: "123456", team: @team)
+    @school = create(:school, urn: "123456", name: "Waterloo Road", team: @team)
     @clinic = create(:generic_clinic, team: @team)
 
     @session =
@@ -218,6 +235,90 @@ describe "Import child records" do
     click_button "Continue"
     attach_file("cohort_import[csv]", "spec/fixtures/cohort_import/#{filename}")
     click_on "Continue"
+  end
+
+  def when_i_visit_a_session_page_for_the_hpv_programme
+    visit "/dashboard"
+    click_on "Sessions", match: :first
+    click_on "Waterloo Road"
+  end
+
+  def and_i_start_adding_children_to_the_session
+    click_on "Import class lists"
+  end
+
+  def and_i_select_the_year_groups
+    check "Year 8"
+    check "Year 9"
+    check "Year 10"
+    check "Year 11"
+    click_on "Continue"
+  end
+
+  def then_i_should_see_the_import_page
+    expect(page).to have_content("Import class list")
+  end
+
+  def when_i_upload_a_valid_file
+    attach_file(
+      "class_import[csv]",
+      "spec/fixtures/class_import/pds_extravaganza.csv"
+    )
+    click_on "Continue"
+  end
+
+  def when_i_visit_the_import_page
+    visit "/"
+    click_link "Import", match: :first
+  end
+
+  def when_i_go_back_to_the_import_page
+    visit "/imports"
+    click_link "1 September 2025 at 12:00pm"
+  end
+
+  def when_i_click_review_for(name)
+    within(
+      :xpath,
+      "//div[h3[contains(text(), 'records with import issues')]]"
+    ) do
+      within(:xpath, ".//tr[contains(., '#{name}')]") { click_link "Review" }
+    end
+  end
+
+  def and_i_start_adding_children_to_the_session
+    click_on "Import class lists"
+  end
+
+  def and_i_select_the_year_groups
+    check "Year 8"
+    check "Year 9"
+    check "Year 10"
+    check "Year 11"
+    click_on "Continue"
+  end
+
+  def then_i_should_see_the_import_page
+    expect(page).to have_content("Import class list")
+  end
+
+  def and_an_existing_patient_record_without_registration_exists
+    @existing_patient =
+      create(
+        :patient,
+        given_name: "Albert",
+        family_name: "Tweedle",
+        nhs_number: "9999075320",
+        date_of_birth: Date.new(2009, 12, 29),
+        gender_code: :male,
+        address_line_1: "38A Battersea Rise",
+        address_line_2: nil,
+        address_town: "London",
+        address_postcode: "SW11 1EH",
+        school: nil,
+        registration: nil,
+        session: @session
+      )
   end
 
   def and_i_do_not_see_an_import_review_for_the_first_patient_uploaded_without_nhs_number
@@ -453,5 +554,14 @@ describe "Import child records" do
     relationship = oliver.parent_relationships.first
     expect(relationship.type).to eq("unknown")
     expect(relationship.label).to eq("Unknown")
+  end
+
+  def and_i_should_see_no_duplicate_reviews
+    expect(page).not_to have_content("Actions Review")
+  end
+
+  def and_the_registration_on_albert_should_be_set
+    albert = Patient.find_by(given_name: "Albert", family_name: "Tweedle")
+    expect(albert.registration).to eq("Kangaroos")
   end
 end
