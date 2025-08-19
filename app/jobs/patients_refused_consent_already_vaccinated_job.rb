@@ -59,7 +59,8 @@ class PatientsRefusedConsentAlreadyVaccinatedJob < ApplicationJob
       outcome: "already_had",
       patient:,
       performed_at:,
-      programme:
+      programme:,
+      source: "consent_refusal"
     )
 
     StatusUpdater.call(patient:)
