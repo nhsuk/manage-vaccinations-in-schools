@@ -93,26 +93,28 @@ class PatientSession < ApplicationRecord
 
   scope :appear_in_programmes,
         ->(programmes) do
+          # Are any of the programmes administered in the session?
+          programme_in_session =
+            SessionProgramme
+              .where(programme: programmes)
+              .where("session_programmes.session_id = sessions.id")
+              .arel
+              .exists
+
           # Is the patient eligible for any of those programmes by year group?
-          location_programme_year_groups =
+          patient_in_administered_year_groups =
             LocationProgrammeYearGroup
-              .where("programme_id = session_programmes.programme_id")
+              .where(programme: programmes)
               .where("location_id = sessions.location_id")
               .where(
                 "year_group = sessions.academic_year " \
                   "- patients.birth_academic_year " \
                   "- #{Integer::AGE_CHILDREN_START_SCHOOL}"
               )
-
-          # Are any of the programmes administered in the session?
-          where(
-            SessionProgramme
-              .where(programme: programmes)
-              .where("session_programmes.session_id = sessions.id")
-              .where(location_programme_year_groups.arel.exists)
               .arel
               .exists
-          )
+
+          where(programme_in_session).where(patient_in_administered_year_groups)
         end
 
   scope :search_by_name,
