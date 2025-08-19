@@ -24,6 +24,7 @@
 #  performed_by_given_name               :string
 #  performed_ods_code                    :string
 #  protocol                              :integer
+#  source                                :integer          not null
 #  uuid                                  :uuid             not null
 #  created_at                            :datetime         not null
 #  updated_at                            :datetime         not null
@@ -145,6 +146,16 @@ class VaccinationRecord < ApplicationRecord
          already_had: 4,
          absent_from_session: 6
        },
+       validate: true
+
+  enum :source,
+       {
+         service: 0,
+         historical_upload: 1,
+         nhs_immunisations_api: 2,
+         consent_refusal: 3
+       },
+       prefix: true,
        validate: true
 
   encrypts :notes
