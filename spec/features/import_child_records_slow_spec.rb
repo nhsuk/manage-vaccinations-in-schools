@@ -64,8 +64,24 @@ describe "Import child records" do
   def and_pds_lookup_during_import_is_enabled
     Flipper.enable(:pds_lookup_during_import)
 
-    stub_pds_search_to_return_a_patient
-    stub_pds_get_nhs_number_to_return_a_patient
+    csv_path =
+      Rails.root.join("spec/fixtures/cohort_import/valid_1000_rows.csv")
+
+    CSV.foreach(csv_path, headers: true) do |row|
+      nhs_number = row["CHILD_NHS_NUMBER"]
+      family = row["CHILD_LAST_NAME"]
+      given = row["CHILD_FIRST_NAME"]
+      birthdate = row["CHILD_DATE_OF_BIRTH"]
+      postcode = row["CHILD_POSTCODE"]
+
+      stub_pds_search_to_return_a_patient(
+        nhs_number,
+        "family" => family,
+        "given" => given,
+        "birthdate" => "eq#{birthdate}",
+        "address-postalcode" => postcode
+      )
+    end
   end
 
   def when_i_visit_the_import_page
