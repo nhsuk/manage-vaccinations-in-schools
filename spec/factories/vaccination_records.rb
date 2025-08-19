@@ -103,7 +103,7 @@ FactoryBot.define do
     uuid { SecureRandom.uuid }
 
     location { session&.location unless session&.generic_clinic? }
-    location_name { "Unknown" if session.nil? }
+    location_name { "Unknown" if location.nil? }
 
     notify_parents { true }
 
