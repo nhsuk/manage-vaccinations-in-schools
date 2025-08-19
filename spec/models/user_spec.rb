@@ -53,6 +53,28 @@ describe User do
     end
   end
 
+  describe "#role_description" do
+    subject { user.role_description }
+
+    context "when the user is an admin" do
+      let(:user) { build(:admin) }
+
+      it { should eq("Administrator") }
+    end
+
+    context "when the user is a nurse" do
+      let(:user) { build(:nurse) }
+
+      it { should eq("Nurse") }
+    end
+
+    context "when the user is a superuser" do
+      let(:user) { build(:admin, :superuser) }
+
+      it { should eq("Administrator (Superuser)") }
+    end
+  end
+
   describe "#can_view?" do
     subject { user.can_view? }
 
