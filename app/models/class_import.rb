@@ -47,12 +47,6 @@ class ClassImport < PatientImport
            as: :import,
            dependent: :destroy
 
-  private
-
-  def parse_row(data)
-    ClassImportRow.new(data:, team:, academic_year:, location:, year_groups:)
-  end
-
   def postprocess_rows!
     # Remove patients already in the sessions but not in the class list.
 
@@ -85,5 +79,11 @@ class ClassImport < PatientImport
     SchoolMove.import(school_moves, on_duplicate_key_ignore: true)
 
     PatientsAgedOutOfSchoolJob.perform_later
+  end
+
+  private
+
+  def parse_row(data)
+    ClassImportRow.new(data:, team:, academic_year:, location:, year_groups:)
   end
 end
