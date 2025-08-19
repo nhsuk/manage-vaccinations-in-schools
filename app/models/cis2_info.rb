@@ -12,6 +12,7 @@ class CIS2Info
   attribute :organisation_code
   attribute :role_name
   attribute :role_code
+  attribute :activity_codes, array: true
   attribute :workgroups, array: true
   attribute :team_workgroup
   attribute :has_other_roles, :boolean
