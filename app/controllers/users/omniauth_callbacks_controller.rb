@@ -117,7 +117,8 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
       organisation_code: selected_cis2_org["org_code"],
       role_name: selected_cis2_nrbac_role["role_name"],
       role_code: selected_cis2_nrbac_role["role_code"],
-      workgroups: selected_cis2_nrbac_role["workgroups"],
+      activity_codes: selected_cis2_nrbac_role["activity_codes"] || [],
+      workgroups: selected_cis2_nrbac_role["workgroups"] || [],
       has_other_roles: raw_cis2_info["nhsid_nrbac_roles"].length > 1
     )
   end

@@ -44,14 +44,16 @@ FactoryBot.define do
 
       role_code { CIS2Info::NURSE_ROLE }
       role_workgroups { [] }
+      activity_codes { [] }
 
       cis2_info_hash do
         {
           "organisation_code" => team.organisation.ods_code,
           "organisation_name" => team.name,
           "role_code" => role_code,
+          "activity_codes" => activity_codes,
           "team_workgroup" => team.workgroup,
-          "workgroups" => (role_workgroups || []) + [team.workgroup]
+          "workgroups" => role_workgroups + [team.workgroup]
         }
       end
     end

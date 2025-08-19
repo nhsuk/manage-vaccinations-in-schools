@@ -12,6 +12,7 @@ class CIS2Info
   attribute :organisation_code
   attribute :role_name
   attribute :role_code
+  attribute :activity_codes, array: true
   attribute :workgroups, array: true
   attribute :team_workgroup
   attribute :has_other_roles, :boolean
@@ -27,8 +28,7 @@ class CIS2Info
 
   def team
     @team ||=
-      if (workgroup = team_workgroup).present? &&
-           workgroups&.include?(workgroup)
+      if (workgroup = team_workgroup).present? && workgroups.include?(workgroup)
         Team.find_by(organisation:, workgroup:)
       end
   end
@@ -56,7 +56,5 @@ class CIS2Info
 
   def request_session_key = "cis2_info"
 
-  def in_superuser_workgroup?
-    workgroups&.include?(SUPERUSER_WORKGROUP) || false
-  end
+  def in_superuser_workgroup? = workgroups.include?(SUPERUSER_WORKGROUP)
 end
