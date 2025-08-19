@@ -6,6 +6,7 @@ class Imports::IssuesController < ApplicationController
   before_action :set_vaccination_record, only: %i[show update]
   before_action :set_patient, only: %i[show update]
   before_action :set_form, only: %i[show update]
+  before_action :set_type
 
   layout "full"
 
@@ -53,7 +54,7 @@ class Imports::IssuesController < ApplicationController
   def set_record
     @record =
       if params[:type] == "vaccination-record"
-        @vaccination_records.find(params[:id])
+        @vaccination_records.with_discarded.find(params[:id])
       else
         @patients.find(params[:id])
       end
@@ -71,5 +72,24 @@ class Imports::IssuesController < ApplicationController
     apply_changes = params.dig(:import_duplicate_form, :apply_changes)
 
     @form = ImportDuplicateForm.new(object: @record, apply_changes:)
+  end
+
+  def set_type
+    @type =
+      (
+        if @record.is_a?(VaccinationRecord)
+          "vaccination"
+        else
+          "child"
+        end
+      )
+    @existing_or_deleted =
+      (
+        if @record.is_a?(VaccinationRecord) && @record.discarded_at
+          "archived"
+        else
+          "existing"
+        end
+      )
   end
 end

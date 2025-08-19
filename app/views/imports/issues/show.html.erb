@@ -6,28 +6,18 @@
                                         ]) %>
 <% end %>
 
-<% if @vaccination_record %>
-  <% title = "Review duplicate vaccination record" %>
-<% else %>
-  <% title = "Review duplicate child record" %>
-<% end %>
+<% title = "Uploaded #{@type} record duplicates #{@existing_or_deleted.with_indefinite_article} record" %>
 
 <span class="nhsuk-caption-l"><%= @patient.full_name %></span>
 <%= h1 title, page_title: "#{@patient.full_name} – #{title}" %>
 
-<%= render AppWarningCalloutComponent.new(
-      heading: "This record needs reviewing",
-      description: "A field in a duplicate record does not match that in a previously uploaded record.",
-    ) %>
-
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-one-half">
     <%= render AppCardComponent.new(heading_level: 2, colour: "blue") do |c| %>
-      <% c.with_heading { "Duplicate record" } %>
-      <h3 class="nhsuk-heading-s">Duplicate child record</h3>
-      <%= render AppChildSummaryComponent.new(@patient.with_pending_changes) %>
-      <% if @vaccination_record %>
-        <h3 class="nhsuk-heading-s">Duplicate vaccination record</h3>
+      <% c.with_heading { "Uploaded record" } %>
+      <% if @type == "child" %>
+        <%= render AppChildSummaryComponent.new(@patient.with_pending_changes) %>
+      <% else %>
         <%= render AppVaccinationRecordSummaryComponent.new(
               @vaccination_record.with_pending_changes, current_user:,
             ) %>
@@ -37,11 +27,10 @@
 
   <div class="nhsuk-grid-column-one-half">
     <%= render AppCardComponent.new(heading_level: 2, colour: "blue") do |c| %>
-      <% c.with_heading { "Existing record" } %>
-      <h3 class="nhsuk-heading-s">Existing child record</h3>
-      <%= render AppChildSummaryComponent.new(@patient) %>
-      <% if @vaccination_record %>
-        <h3 class="nhsuk-heading-s">Existing vaccination record</h3>
+      <% c.with_heading { "#{@existing_or_deleted.capitalize} record" } %>
+      <% if @type == "child" %>
+        <%= render AppChildSummaryComponent.new(@patient) %>
+      <% else %>
         <%= render AppVaccinationRecordSummaryComponent.new(
               @vaccination_record, current_user:,
             ) %>
@@ -58,7 +47,13 @@
     ) do |f| %>
   <% content_for(:before_content) { f.govuk_error_summary } %>
 
-  <%= f.govuk_collection_radio_buttons :apply_changes, @form.apply_changes_options, :itself, nil %>
+  <%= f.govuk_collection_radio_buttons :apply_changes,
+                                       @form.apply_changes_options,
+                                       :itself,
+                                       ->(option) { I18n.t(option, scope: "import_duplicate_form.options.label.#{@existing_or_deleted}", type: @type) },
+                                       ->(option) { I18n.t(option, scope: "import_duplicate_form.options.hint.#{@existing_or_deleted}") },
+                                       bold_labels: false,
+                                       small: true %>
 
   <%= f.govuk_submit "Resolve duplicate" %>
 <% end %>
