@@ -44,11 +44,15 @@
     <% if import.exact_duplicate_record_count.present? %>
       <%= summary_list.with_row do |row| %>
         <%= row.with_key { "Duplicates not imported" } %>
-        <%= row.with_value {
-              import.exact_duplicate_record_count == 1 ?
-                "1 record was not imported because it already exists in Mavis" :
-                "#{import.exact_duplicate_record_count} records were not imported because they already exist in Mavis"
-            } %>
+        <%= row.with_value do %>
+          <% if import.exact_duplicate_record_count.zero? %>
+            None
+          <% else %>
+            <%= import.exact_duplicate_record_count == 1 ?
+                  "1 record was not imported because it already exists in Mavis" :
+                  "#{import.exact_duplicate_record_count} records were not imported because they already exist in Mavis" %>
+          <% end %>
+        <% end %>
       <% end %>
     <% end %>
 

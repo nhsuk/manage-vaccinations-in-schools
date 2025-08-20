@@ -102,9 +102,8 @@ describe "Child record imports twins" do
   end
 
   def then_i_should_see_the_import_page_with_successful_import
-    expect(page).to have_content(
-      "0 records were not imported because they already exist in Mavis"
-    )
+    expect(page).not_to have_content("already exist in Mavis")
+    expect(page).to have_content("Duplicates not imported None")
     expect(Patient.count).to eq(4)
   end
 
