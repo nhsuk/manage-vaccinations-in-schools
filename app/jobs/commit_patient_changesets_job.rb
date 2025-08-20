@@ -92,9 +92,9 @@ class CommitPatientChangesetsJob < ApplicationJob
       school_move.confirm! if school_move.patient.persisted?
     end
 
-    SchoolMove.import(
+    SchoolMove.import!(
       importable_school_moves.to_a,
-      on_duplicate_key_ignore: :all
+      on_duplicate_key_update: :all
     )
   end
 
