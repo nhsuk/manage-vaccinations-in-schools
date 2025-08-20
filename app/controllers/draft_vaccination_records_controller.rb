@@ -84,7 +84,7 @@ class DraftVaccinationRecordsController < ApplicationController
 
   def handle_outcome
     if !@draft_vaccination_record.administered? &&
-         @draft_vaccination_record.location_name.present?
+         @draft_vaccination_record.location_id.present?
       # If not administered and location is set, we can skip to confirm.
       # Otherwise, we need to get the location information from the user.
       jump_to("confirm")
@@ -163,7 +163,7 @@ class DraftVaccinationRecordsController < ApplicationController
         identity_check_confirmed_by_other_name
         identity_check_confirmed_by_other_relationship
       ],
-      location: %i[location_name],
+      location: %i[location_id],
       notes: %i[notes],
       outcome: %i[outcome]
     }.fetch(current_step)
