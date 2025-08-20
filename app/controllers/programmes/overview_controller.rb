@@ -2,7 +2,7 @@
 
 class Programmes::OverviewController < Programmes::BaseController
   before_action :set_consents
-  before_action :set_patients
+  before_action :set_patient_ids
   before_action :set_patient_count_by_year_group
 
   def show
@@ -13,21 +13,21 @@ class Programmes::OverviewController < Programmes::BaseController
   def set_consents
     @consents =
       policy_scope(Consent).where(
-        patient: patients,
+        patient_id: patient_ids,
         programme: @programme,
         academic_year: @academic_year
       )
   end
 
-  def set_patients
-    @patients = patients
+  def set_patient_ids
+    @patient_ids = patient_ids
   end
 
   def set_patient_count_by_year_group
     year_groups = current_team.programme_year_groups[@programme]
 
     patient_count_by_birth_academic_year =
-      patients.group(:birth_academic_year).count
+      Patient.where(id: patient_ids).group(:birth_academic_year).count
 
     @patient_count_by_year_group =
       year_groups.index_with do |year_group|
