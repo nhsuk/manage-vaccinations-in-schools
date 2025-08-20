@@ -69,7 +69,6 @@ class Session < ApplicationRecord
             SessionProgramme
               .select("COUNT(session_programmes.id)")
               .where("sessions.id = session_programmes.session_id")
-              .joins(:programme)
               .where(programme: programmes),
             programmes.count
           )
