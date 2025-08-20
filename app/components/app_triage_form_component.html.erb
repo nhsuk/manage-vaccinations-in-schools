@@ -3,7 +3,15 @@
 
     <%= f.govuk_radio_buttons_fieldset :status_and_vaccine_method, **fieldset_options do %>
       <% triage_form.safe_to_vaccinate_options.each do |option| %>
-        <%= f.govuk_radio_button :status_and_vaccine_method, option %>
+        <%= f.govuk_radio_button :status_and_vaccine_method, option do %>
+        <% if show_psd_options?(option) %>
+          <%= f.govuk_radio_buttons_fieldset :psd_action,
+                                             legend: { text: "Do you want to add a PSD?", size: "s" } do %>
+            <%= f.govuk_radio_button :add_psd, "true", label: { text: "Yes" } %>
+            <%= f.govuk_radio_button :add_psd, "false", label: { text: "No" } %>
+          <% end %>
+        <% end %>
+      <% end %>
       <% end %>
       <%= f.govuk_radio_divider %>
       <% triage_form.other_options.each do |option| %>

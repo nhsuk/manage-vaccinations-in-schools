@@ -72,6 +72,23 @@ describe "Triage" do
     and_the_vaccine_method_is_recorded_as_nasal
   end
 
+  scenario "adding PSD instruction" do
+    given_delegation_feature_flag_is_enabled
+    and_a_flu_programme_with_a_running_session_with_psd_enabled
+    and_a_patient_with_nasal_consent_who_needs_triage_exists
+    and_i_am_signed_in
+
+    when_i_go_to_the_session_triage_tab
+    then_i_see_the_patient_who_needs_triage
+
+    when_i_go_to_the_patient_that_needs_triage
+    and_i_choose_that_they_are_safe_to_vaccinate_with_nasal
+    and_i_choose_to_add_psd
+    and_i_save_triage
+
+    then_i_should_see_the_patient_tagged_psd_added
+  end
+
   def given_a_programme_with_a_running_session
     programmes = [create(:programme, :hpv)]
     @team = create(:team, :with_one_nurse, programmes:)
@@ -92,6 +109,16 @@ describe "Triage" do
     @session = create(:session, team: @team, programmes:)
   end
 
+  def and_a_flu_programme_with_a_running_session_with_psd_enabled
+    programmes = [create(:programme, :flu)]
+    @team = create(:team, :with_one_nurse, programmes:)
+
+    @batch =
+      create(:batch, team: @team, vaccine: programmes.first.vaccines.first)
+
+    @session = create(:session, :psd_enabled, team: @team, programmes:)
+  end
+
   def and_a_patient_who_needs_triage_exists
     @patient_triage_needed =
       create(
@@ -108,6 +135,17 @@ describe "Triage" do
       patient: @patient_triage_needed,
       programme: @session.programmes.first
     )
+
+    @patient_triage_needed.reload # Make sure both consents are accessible
+  end
+
+  def and_a_patient_with_nasal_consent_who_needs_triage_exists
+    @patient_triage_needed =
+      create(
+        :patient_session,
+        :consent_given_nasal_only_triage_needed,
+        session: @session
+      ).patient
 
     @patient_triage_needed.reload # Make sure both consents are accessible
   end
@@ -140,6 +178,10 @@ describe "Triage" do
       ).patient
   end
 
+  def given_delegation_feature_flag_is_enabled
+    Flipper.enable(:delegation)
+  end
+
   def and_i_am_signed_in
     @user = @team.users.first
     sign_in @user
@@ -147,6 +189,10 @@ describe "Triage" do
 
   def when_i_go_to_the_session_triage_tab
     visit session_triage_path(@session)
+  end
+
+  def when_i_visit_the_register_tab
+    visit session_register_path(@session)
   end
 
   def then_i_see_the_patient_who_needs_triage
@@ -172,6 +218,10 @@ describe "Triage" do
     expect(page).to have_selector :heading, "Is it safe to vaccinate"
   end
 
+  def and_i_save_triage
+    click_button "Save triage"
+  end
+
   def when_i_record_that_they_need_triage
     choose "No, keep in triage"
     click_button "Save triage"
@@ -194,8 +244,16 @@ describe "Triage" do
   end
 
   def and_i_record_that_they_are_safe_to_vaccinate_with_nasal
-    choose "Yes, it’s safe to vaccinate with nasal spray"
+    and_i_choose_that_they_are_safe_to_vaccinate_with_nasal
     click_button "Save triage"
+  end
+
+  def and_i_choose_that_they_are_safe_to_vaccinate_with_nasal
+    choose "Yes, it’s safe to vaccinate with nasal spray"
+  end
+
+  def and_i_choose_to_add_psd
+    choose "Yes"
   end
 
   def when_i_do_not_vaccinate
@@ -323,5 +381,13 @@ describe "Triage" do
   def and_the_vaccine_method_is_recorded_as_nasal
     triage = @patient_nasal_only.triages.last
     expect(triage.vaccine_method).to eq("nasal")
+  end
+
+  def then_i_should_see_the_patient_tagged_psd_added
+    within(".app-action-list") { expect(page).to have_content("PSD added") }
+  end
+
+  def then_i_should_see_the_patient_with_status_psd_added
+    expect(page).to have_content("PSD added")
   end
 end

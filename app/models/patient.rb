@@ -76,6 +76,7 @@ class Patient < ApplicationRecord
   has_many :triages
   has_many :vaccination_records, -> { kept }
   has_many :vaccination_statuses
+  has_many :patient_specific_directions
 
   has_many :gillick_assessments, through: :patient_sessions
   has_many :parents, through: :parent_relationships
