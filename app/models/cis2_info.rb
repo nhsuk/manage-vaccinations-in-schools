@@ -40,7 +40,7 @@ class CIS2Info
     [ADMIN_ROLE, NURSE_ROLE].include?(role_code)
   end
 
-  def can_prescribe_pgd?
+  def can_supply_using_pgd?
     role_code == NURSE_ROLE
   end
 

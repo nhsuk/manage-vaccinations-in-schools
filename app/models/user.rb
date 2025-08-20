@@ -122,7 +122,7 @@ class User < ApplicationRecord
   end
 
   def role_description
-    role = (can_prescribe_pgd? ? "Nurse" : "Administrator")
+    role = (can_supply_using_pgd? ? "Nurse" : "Administrator")
 
     if can_access_sensitive_records? || can_perform_local_admin_tasks?
       "#{role} (Superuser)"
@@ -135,8 +135,8 @@ class User < ApplicationRecord
     cis2_enabled? ? cis2_info.can_view? : !fallback_role.nil?
   end
 
-  def can_prescribe_pgd?
-    cis2_enabled? ? cis2_info.can_prescribe_pgd? : fallback_role_nurse?
+  def can_supply_using_pgd?
+    cis2_enabled? ? cis2_info.can_supply_using_pgd? : fallback_role_nurse?
   end
 
   def can_perform_local_admin_tasks?
