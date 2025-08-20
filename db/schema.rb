@@ -476,6 +476,15 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_20_085332) do
     t.index ["short_name"], name: "index_local_authorities_on_short_name"
   end
 
+  create_table "local_authority_postcodes", id: false, force: :cascade do |t|
+    t.string "gss_code", null: false
+    t.string "value", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["gss_code"], name: "index_local_authority_postcodes_on_gss_code"
+    t.index ["value"], name: "index_local_authority_postcodes_on_value", unique: true
+  end
+
   create_table "location_programme_year_groups", force: :cascade do |t|
     t.bigint "location_id", null: false
     t.bigint "programme_id", null: false

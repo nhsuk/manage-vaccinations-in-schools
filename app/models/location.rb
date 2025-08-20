@@ -51,6 +51,16 @@ class Location < ApplicationRecord
              primary_key: :gias_code,
              optional: true
 
+  belongs_to :local_authority_postcode,
+             foreign_key: :address_postcode,
+             primary_key: :value,
+             class_name: "LocalAuthority::Postcode",
+             optional: true
+
+  has_one :local_authority_from_postcode,
+          through: :local_authority_postcode,
+          source: :local_authority
+
   has_many :consent_forms
   has_many :location_programme_year_groups
   has_many :patients, foreign_key: :school_id

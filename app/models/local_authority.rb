@@ -32,6 +32,11 @@ class LocalAuthority < ApplicationRecord
   validates :gias_code, uniqueness: true, allow_nil: true
   validates :gss_code, uniqueness: true, allow_nil: true
 
+  has_many :postcodes,
+           foreign_key: :gss_code,
+           primary_key: :gss_code,
+           class_name: "LocalAuthority::Postcode"
+
   enum :nation,
        {
          "England" => "england",
@@ -72,5 +77,11 @@ class LocalAuthority < ApplicationRecord
       region: data["region"],
       end_date: data["end-date"]
     )
+  end
+
+  def self.for_postcode(postcode)
+    joins(:postcodes).merge(
+      LocalAuthority::Postcode.where(value: postcode)
+    ).first
   end
 end
