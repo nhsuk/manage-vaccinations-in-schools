@@ -151,6 +151,38 @@ describe User do
     end
   end
 
+  describe "#can_prescribe_psd?" do
+    subject { user.can_prescribe_psd? }
+
+    context "cis2 is enabled", cis2: :enabled do
+      context "when the user is a nurse" do
+        let(:user) { build(:nurse) }
+
+        it { should be(true) }
+      end
+
+      context "when the user is admin staff" do
+        let(:user) { build(:admin) }
+
+        it { should be(false) }
+      end
+    end
+
+    context "cis2 is disabled", cis2: :disabled do
+      context "when the user is a nurse" do
+        let(:user) { build(:nurse) }
+
+        it { should be(true) }
+      end
+
+      context "when the user is admin staff" do
+        let(:user) { build(:admin) }
+
+        it { should be(false) }
+      end
+    end
+  end
+
   describe "#can_perform_local_admin_tasks?" do
     subject { user.can_perform_local_admin_tasks? }
 
