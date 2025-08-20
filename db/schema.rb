@@ -772,8 +772,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_26_135132) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "academic_year", null: false
-    t.index ["patient_id", "home_educated", "team_id"], name: "index_school_moves_on_patient_id_and_home_educated_and_team_id", unique: true
-    t.index ["patient_id", "school_id"], name: "index_school_moves_on_patient_id_and_school_id", unique: true
+    t.index ["patient_id"], name: "index_school_moves_on_patient_id", unique: true
     t.index ["school_id"], name: "index_school_moves_on_school_id"
     t.index ["team_id"], name: "index_school_moves_on_team_id"
   end
