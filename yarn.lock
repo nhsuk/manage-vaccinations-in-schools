@@ -5284,10 +5284,10 @@ object.pick@^1.3.0:
   dependencies:
     isobject "^3.0.1"
 
-officecrypto-tool@^0.0.18:
-  version "0.0.18"
-  resolved "https://registry.yarnpkg.com/officecrypto-tool/-/officecrypto-tool-0.0.18.tgz#f3062d19dbcfeffd4c5cc43b9e5b410ca0d183e6"
-  integrity sha512-pKKLJZcwhZA/f76qQQsA3flywmZbTr++vNGmVSWCpE21jUPFCHiBQ5v/4CgLn3ZrTCejxTr1wpGySBzadcrhyA==
+officecrypto-tool@^0.0.19:
+  version "0.0.19"
+  resolved "https://registry.yarnpkg.com/officecrypto-tool/-/officecrypto-tool-0.0.19.tgz#3a0ea5b2c0d2a35ff5c19b642ee06164bfc47124"
+  integrity sha512-nb/HkY025+qgNo2yYIivmAe/7B0UhejJXIzsWMIKB7fSDB317J1WDQvnpKqL+q+A0DCPzFYvK/iAFfWk+3Ygtw==
   dependencies:
     cfb "^1.2.2"
     crypto-js "^4.2.0"
