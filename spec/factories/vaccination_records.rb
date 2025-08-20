@@ -24,6 +24,7 @@
 #  performed_by_given_name               :string
 #  performed_ods_code                    :string
 #  protocol                              :integer
+#  source                                :integer
 #  uuid                                  :uuid             not null
 #  created_at                            :datetime         not null
 #  updated_at                            :datetime         not null
@@ -101,6 +102,7 @@ FactoryBot.define do
     protocol { "pgd" }
 
     uuid { SecureRandom.uuid }
+    source { session.present? ? "mavis" : "historical_upload" }
 
     location { session&.location unless session&.generic_clinic? }
     location_name { "Unknown" if location.nil? }
