@@ -914,13 +914,13 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_19_132655) do
     t.bigint "vaccine_id"
     t.boolean "full_dose"
     t.datetime "nhs_immunisations_api_synced_at"
-    t.string "nhs_immunisations_api_etag"
     t.string "nhs_immunisations_api_id"
+    t.string "nhs_immunisations_api_etag"
     t.integer "protocol"
     t.datetime "nhs_immunisations_api_sync_pending_at"
     t.boolean "notify_parents"
     t.bigint "location_id"
-    t.integer "source"
+    t.integer "external_source"
     t.index ["batch_id"], name: "index_vaccination_records_on_batch_id"
     t.index ["discarded_at"], name: "index_vaccination_records_on_discarded_at"
     t.index ["location_id"], name: "index_vaccination_records_on_location_id"
@@ -931,6 +931,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_19_132655) do
     t.index ["session_id"], name: "index_vaccination_records_on_session_id"
     t.index ["uuid"], name: "index_vaccination_records_on_uuid", unique: true
     t.index ["vaccine_id"], name: "index_vaccination_records_on_vaccine_id"
+    t.check_constraint "session_id IS NULL AND external_source IS NOT NULL OR session_id IS NOT NULL AND external_source IS NULL", name: "external_source_check"
   end
 
   create_table "vaccines", force: :cascade do |t|

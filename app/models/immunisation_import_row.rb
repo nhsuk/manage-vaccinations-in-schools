@@ -94,8 +94,8 @@ class ImmunisationImportRow
     return unless valid?
 
     outcome = (administered ? "administered" : reason_not_administered_value)
-    source = (offline_recording? ? "mavis" : "historical_upload")
-    
+    external_source = "historical_upload" unless offline_recording?
+
     attributes = {
       dose_sequence: dose_sequence_value,
       full_dose: true,
@@ -108,7 +108,7 @@ class ImmunisationImportRow
       performed_ods_code: performed_ods_code&.to_s,
       programme:,
       protocol: "pgd",
-      session:,
+      session:
     }
 
     if performed_by_user.nil?
@@ -127,7 +127,7 @@ class ImmunisationImportRow
       notes: notes&.to_s,
       vaccine_id: vaccine&.id,
       discarded_at: nil,
-      source:
+      external_source:
     }
 
     vaccination_record =

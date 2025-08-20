@@ -10,6 +10,7 @@
 #  delivery_site                         :integer
 #  discarded_at                          :datetime
 #  dose_sequence                         :integer
+#  external_source                       :integer
 #  full_dose                             :boolean
 #  location_name                         :string
 #  nhs_immunisations_api_etag            :string
@@ -24,7 +25,6 @@
 #  performed_by_given_name               :string
 #  performed_ods_code                    :string
 #  protocol                              :integer
-#  source                                :integer
 #  uuid                                  :uuid             not null
 #  created_at                            :datetime         not null
 #  updated_at                            :datetime         not null

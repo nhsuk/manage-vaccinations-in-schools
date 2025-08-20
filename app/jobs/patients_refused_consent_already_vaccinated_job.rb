@@ -60,7 +60,7 @@ class PatientsRefusedConsentAlreadyVaccinatedJob < ApplicationJob
       patient:,
       performed_at:,
       programme:,
-      source: :mavis,
+      external_source: "historical_upload"
     )
 
     StatusUpdater.call(patient:)
