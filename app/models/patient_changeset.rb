@@ -41,6 +41,7 @@ class PatientChangeset < ApplicationRecord
             }
 
   belongs_to :import, polymorphic: true
+  belongs_to :patient, optional: true
   belongs_to :school, class_name: "Location", optional: true
 
   enum :status, { pending: 0, processed: 1 }, validate: true
@@ -190,13 +191,7 @@ class PatientChangeset < ApplicationRecord
       end
   end
 
-  def prepare_patient_changes(existing_patient, pending_changes)
-    unless stage_registration?
-      existing_patient.registration = pending_changes.delete(:registration)
-      existing_patient.registration_academic_year =
-        pending_changes.delete(:registration_academic_year)
-    end
-
+  def prepare_patient_changes(existing_patient, _pending_changes)
     auto_accept_child_attributes(existing_patient)
     handle_address_updates(existing_patient)
     stage_and_handle_pending_changes(existing_patient)
@@ -213,6 +208,14 @@ class PatientChangeset < ApplicationRecord
       %w[male female not_specified]
     )
     set_child_attribute_if_valid(:nhs_number, existing_patient)
+
+    if auto_accept_registration?
+      set_child_attribute_if_valid(:registration, existing_patient)
+      set_child_attribute_if_valid(
+        :registration_academic_year,
+        existing_patient
+      )
+    end
   end
 
   def set_child_attribute_if_valid(
@@ -224,8 +227,8 @@ class PatientChangeset < ApplicationRecord
       in_pending_changes = child_attributes[attribute.to_s].present?
       in_existing_patient = existing_patient[attribute.to_s].present?
     else
-      in_pending_changes = child_attributes[attribute.to_s].in? valid_values
-      in_existing_patient = existing_patient[attribute.to_s].in? valid_values
+      in_pending_changes = child_attributes[attribute.to_s].in?(valid_values)
+      in_existing_patient = existing_patient[attribute.to_s].in?(valid_values)
     end
 
     if in_pending_changes && !in_existing_patient
@@ -233,8 +236,8 @@ class PatientChangeset < ApplicationRecord
     end
   end
 
-  def stage_registration?
-    import_type == "CohortImport"
+  def auto_accept_registration?
+    import_type == "ClassImport"
   end
 
   def deserialize_attribute(attributes, key, type)

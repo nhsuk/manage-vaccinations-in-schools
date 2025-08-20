@@ -20,13 +20,23 @@ class Programmes::BaseController < ApplicationController
     end
   end
 
-  def patients
-    # We do this instead of using `team.patients` as that has a `distinct` on
-    # it which means we cannot apply ordering or grouping.
-    @patients ||=
-      Patient
-        .where(id: current_team.patient_sessions.select(:patient_id).distinct)
-        .appear_in_programmes([@programme], academic_year: @academic_year)
+  def patient_ids
+    @patient_ids ||=
+      PatientSession
+        .distinct
+        .joins(:patient, :session)
+        .where(session_id: session_ids)
+        .appear_in_programmes([@programme])
         .not_archived(team: current_team)
+        .pluck(:patient_id)
+  end
+
+  def session_ids
+    @session_ids ||=
+      current_team
+        .sessions
+        .where(academic_year: @academic_year)
+        .has_programmes([@programme])
+        .pluck(:id)
   end
 end

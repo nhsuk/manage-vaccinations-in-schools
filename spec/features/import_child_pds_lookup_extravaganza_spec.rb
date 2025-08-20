@@ -60,6 +60,24 @@ describe "Import child records" do
     and_import_counts_are_correct
   end
 
+  scenario "PDS lookup extravaganza with class lists" do
+    given_i_am_signed_in
+    and_an_hpv_programme_is_underway
+    and_an_existing_patient_records_exist_in_school
+    and_pds_lookup_during_import_is_enabled
+
+    when_i_visit_a_session_page_for_the_hpv_programme
+    and_i_start_adding_children_to_the_session
+    and_i_select_the_year_groups
+
+    when_i_upload_a_valid_file
+    then_i_should_see_the_import_page
+
+    and_i_should_see_no_duplicate_reviews
+    and_the_registration_on_albert_should_be_set
+    and_school_move_created_for_patient_not_in_import
+  end
+
   def given_i_am_signed_in
     @programme = create(:programme, :hpv)
     @team =
@@ -73,7 +91,14 @@ describe "Import child records" do
   end
 
   def and_an_hpv_programme_is_underway
-    @school = create(:school, urn: "123456", team: @team)
+    @school =
+      create(
+        :school,
+        urn: "123456",
+        name: "Waterloo Road",
+        year_groups: [7, 8, 9, 10],
+        team: @team
+      )
     @clinic = create(:generic_clinic, team: @team)
 
     @session =
@@ -157,7 +182,56 @@ describe "Import child records" do
 
     create(:parent, full_name: "David Williams", email: "david.w@email.com")
 
-    expect(Patient.count).to eq(3)
+    @existing_exact_match =
+      create(
+        :patient,
+        given_name: "Lara",
+        family_name: "Williams",
+        nhs_number: "9435714463",
+        date_of_birth: Date.new(2010, 5, 15),
+        gender_code: :female,
+        address_line_1: "",
+        address_line_2: "",
+        address_town: "",
+        address_postcode: "B1 1AA",
+        school: @school,
+        session: @session
+      )
+
+    @existing_patient_duplicate_review_on_demographics =
+      create(
+        :patient,
+        given_name: "Maia",
+        family_name: "Smith",
+        nhs_number: nil,
+        date_of_birth: Date.new(2010, 8, 15), # Different from CSV
+        gender_code: :female,
+        address_line_1: "999 Old Street", # Different from CSV
+        address_line_2: "",
+        address_town: "Birmingham", # Different from CSV
+        address_postcode: "W2 3PE",
+        school: nil,
+        session: @session
+      )
+
+    @existing_patient_aged_out =
+      create(
+        :patient,
+        given_name: "Lea",
+        family_name: "Smith",
+        nhs_number: "9435802508",
+        date_of_birth: Date.new(2008, 6, 15),
+        gender_code: :female,
+        address_line_1: "992 Old Street",
+        address_line_2: "",
+        address_town: "Birmingham",
+        address_postcode: "W2 3XE",
+        school: @school,
+        birth_academic_year: 2008,
+        session: @session
+      )
+
+    expect(Patient.count).to eq(6)
     expect(ParentRelationship.count).to eq(1)
     expect(Parent.count).to eq(2)
   end
@@ -220,6 +294,106 @@ describe "Import child records" do
     click_on "Continue"
   end
 
+  def when_i_visit_a_session_page_for_the_hpv_programme
+    visit "/dashboard"
+    click_on "Sessions", match: :first
+    click_on "Waterloo Road"
+  end
+
+  def and_i_start_adding_children_to_the_session
+    click_on "Import class lists"
+  end
+
+  def and_i_select_the_year_groups
+    check "Year 8"
+    check "Year 9"
+    check "Year 10"
+    check "Year 11"
+    click_on "Continue"
+  end
+
+  def then_i_should_see_the_import_page
+    expect(page).to have_content("Import class list")
+  end
+
+  def when_i_upload_a_valid_file
+    attach_file(
+      "class_import[csv]",
+      "spec/fixtures/class_import/pds_extravaganza.csv"
+    )
+    click_on "Continue"
+  end
+
+  def when_i_visit_the_import_page
+    visit "/"
+    click_link "Import", match: :first
+  end
+
+  def when_i_go_back_to_the_import_page
+    visit "/imports"
+    click_link "1 September 2025 at 12:00pm"
+  end
+
+  def when_i_click_review_for(name)
+    within(
+      :xpath,
+      "//div[h3[contains(text(), 'records with import issues')]]"
+    ) do
+      within(:xpath, ".//tr[contains(., '#{name}')]") { click_link "Review" }
+    end
+  end
+
+  def and_i_start_adding_children_to_the_session
+    click_on "Import class lists"
+  end
+
+  def and_i_select_the_year_groups
+    check "Year 8"
+    check "Year 9"
+    check "Year 10"
+    click_on "Continue"
+  end
+
+  def then_i_should_see_the_import_page
+    expect(page).to have_content("Import class list")
+  end
+
+  def and_an_existing_patient_records_exist_in_school
+    @existing_patient =
+      create(
+        :patient,
+        given_name: "Albert",
+        family_name: "Tweedle",
+        nhs_number: "9999075320",
+        date_of_birth: Date.new(2009, 12, 29),
+        gender_code: :male,
+        address_line_1: "38A Battersea Rise",
+        address_line_2: nil,
+        address_town: "London",
+        address_postcode: "SW11 1EH",
+        school: @school,
+        registration: nil,
+        session: @session
+      )
+
+    @existing_patient_moved_out =
+      create(
+        :patient,
+        given_name: "John",
+        family_name: "Smith",
+        nhs_number: "9435783309",
+        date_of_birth: Date.new(2009, 10, 29),
+        gender_code: :male,
+        address_line_1: "39A Battersea Rise",
+        address_line_2: nil,
+        address_town: "London",
+        address_postcode: "SW1 1AA",
+        school: @school,
+        registration: nil,
+        session: @session
+      )
+  end
+
   def and_i_do_not_see_an_import_review_for_the_first_patient_uploaded_without_nhs_number
     expect(page).not_to have_content("Actions Review SAMSON, Betty")
   end
@@ -248,7 +422,7 @@ describe "Import child records" do
 
   def and_i_should_see_one_new_patient_created
     perform_enqueued_jobs
-    expect(Patient.count).to eq(4)
+    expect(Patient.count).to eq(6)
   end
 
   def and_i_see_the_patient_uploaded_with_nhs_number
@@ -274,7 +448,7 @@ describe "Import child records" do
   end
 
   def then_the_existing_patient_has_an_nhs_number_in_mavis
-    expect(Patient.count).to eq(6)
+    expect(Patient.count).to eq(9)
     patient = Patient.where(given_name: "Catherine").first
     expect(patient.nhs_number).to eq("9876543210")
     expect(patient.address_line_1).to eq("456 New Street")
@@ -284,7 +458,7 @@ describe "Import child records" do
 
   def and_i_should_see_correct_patient_counts
     perform_enqueued_jobs
-    expect(Patient.count).to eq(6)
+    expect(Patient.count).to eq(9)
   end
 
   def and_parents_are_created_for_albert
@@ -369,6 +543,7 @@ describe "Import child records" do
 
   def then_school_moves_are_created_appropriately
     perform_enqueued_jobs
+    perform_enqueued_jobs
 
     charlie = Patient.find_by(given_name: "Charlie")
     charlie_move = SchoolMoveLogEntry.find_by(patient: charlie)
@@ -388,6 +563,10 @@ describe "Import child records" do
     catherine_log_entry = SchoolMoveLogEntry.find_by(patient: catherine)
     expect(catherine_log_entry).to be_nil
     expect(catherine.school).to eq(@different_school)
+
+    lea = Patient.find_by(given_name: "Lea", family_name: "Smith")
+    lea_move = SchoolMoveLogEntry.find_by(patient: lea)
+    expect(lea_move.school_id).to be_nil
   end
 
   def and_all_parent_relationships_are_established
@@ -453,5 +632,21 @@ describe "Import child records" do
     relationship = oliver.parent_relationships.first
     expect(relationship.type).to eq("unknown")
     expect(relationship.label).to eq("Unknown")
+  end
+
+  def and_i_should_see_no_duplicate_reviews
+    expect(page).not_to have_content("Actions Review")
+  end
+
+  def and_the_registration_on_albert_should_be_set
+    albert = Patient.find_by(given_name: "Albert", family_name: "Tweedle")
+    expect(albert.registration).to eq("Kangaroos")
+  end
+
+  def and_school_move_created_for_patient_not_in_import
+    expect(SchoolMove.count).to eq(1)
+    expect(SchoolMove.first.patient).to eq(
+      Patient.find_by(given_name: "John", family_name: "Smith")
+    )
   end
 end

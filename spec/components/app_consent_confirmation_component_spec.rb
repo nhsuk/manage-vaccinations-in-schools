@@ -3,6 +3,8 @@
 describe AppConsentConfirmationComponent do
   subject(:rendered) { render_inline(component) }
 
+  around { |example| travel_to(Date.new(2025, 8, 1)) { example.run } }
+
   let(:consent_form) { create(:consent_form) }
   let(:component) { described_class.new(consent_form) }
 

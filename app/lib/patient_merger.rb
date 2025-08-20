@@ -89,6 +89,8 @@ class PatientMerger
 
       PatientSession.where(patient: patient_to_destroy).destroy_all
 
+      patient_to_destroy.changesets.update_all(patient_id: nil)
+
       patient_to_destroy.class_imports.each do |import|
         unless patient_to_keep.class_imports.include?(import)
           patient_to_keep.class_imports << import

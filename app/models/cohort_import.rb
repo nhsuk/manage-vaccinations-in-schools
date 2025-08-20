@@ -41,13 +41,13 @@ class CohortImport < PatientImport
            as: :import,
            dependent: :destroy
 
+  def postprocess_rows!
+    PatientsAgedOutOfSchoolJob.perform_later
+  end
+
   private
 
   def parse_row(data)
     CohortImportRow.new(data:, team:, academic_year:)
-  end
-
-  def postprocess_rows!
-    PatientsAgedOutOfSchoolJob.perform_later
   end
 end
