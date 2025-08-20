@@ -26,4 +26,5 @@ minimum_web_replicas      = 2
 maximum_web_replicas      = 4
 container_insights        = "enhanced"
 
-enable_backup_to_vault = true
+enable_backup_to_vault        = true
+enable_enhanced_db_monitoring = true
