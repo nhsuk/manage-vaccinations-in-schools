@@ -60,6 +60,13 @@ describe PatientNHSNumberLookupJob do
         expect(patient).to receive(:update_from_pds!)
         perform_now
       end
+
+      it "creates a PDSSearchResult" do
+        expect { perform_now }.to change(PDSSearchResult, :count).by(1)
+        expect(PDSSearchResult.last.step).to eq("no_fuzzy_with_history_daily")
+        expect(PDSSearchResult.last.result).to eq("one_match")
+        expect(PDSSearchResult.last.nhs_number).to eq("9449306168")
+      end
     end
 
     context "with a match and the patient already exists" do

@@ -31,12 +31,13 @@ class PDSSearchResult < ApplicationRecord
   enum :step,
        {
          no_fuzzy_with_history: 0,
-         no_fuzzy_without_history: 1,
-         no_fuzzy_with_wildcard_postcode: 2,
-         no_fuzzy_with_wildcard_given_name: 3,
-         no_fuzzy_with_wildcard_family_name: 4,
-         fuzzy_without_history: 5,
-         fuzzy_with_history: 6
+         no_fuzzy_with_history_daily: 1,
+         no_fuzzy_without_history: 2,
+         no_fuzzy_with_wildcard_postcode: 3,
+         no_fuzzy_with_wildcard_given_name: 4,
+         no_fuzzy_with_wildcard_family_name: 5,
+         fuzzy_without_history: 6,
+         fuzzy_with_history: 7
        },
        validate: true
 

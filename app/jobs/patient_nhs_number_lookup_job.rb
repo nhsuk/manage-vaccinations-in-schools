@@ -26,9 +26,22 @@ class PatientNHSNumberLookupJob < ApplicationJob
        )
       PatientMerger.call(to_keep: existing_patient, to_destroy: patient)
       existing_patient.update_from_pds!(pds_patient)
+
+      PDSSearchResult.create!(
+        patient_id: existing_patient.id,
+        step: :no_fuzzy_with_history_daily,
+        result: :one_match,
+        nhs_number: pds_patient.nhs_number
+      )
     else
       patient.nhs_number = pds_patient.nhs_number
       patient.update_from_pds!(pds_patient)
+      PDSSearchResult.create!(
+        patient_id: patient.id,
+        step: :no_fuzzy_with_history_daily,
+        result: :one_match,
+        nhs_number: pds_patient.nhs_number
+      )
     end
   end
 end
