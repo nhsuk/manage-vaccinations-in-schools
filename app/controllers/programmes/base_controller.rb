@@ -22,13 +22,21 @@ class Programmes::BaseController < ApplicationController
 
   def patient_ids
     @patient_ids ||=
-      current_team
-        .patient_sessions
+      PatientSession
         .distinct
-        .joins(:patient)
-        .where(sessions: { academic_year: @academic_year })
+        .joins(:patient, :session)
+        .where(session_id: session_ids)
         .appear_in_programmes([@programme])
         .not_archived(team: current_team)
         .pluck(:patient_id)
+  end
+
+  def session_ids
+    @session_ids ||=
+      current_team
+        .sessions
+        .where(academic_year: @academic_year)
+        .has_programmes([@programme])
+        .pluck(:id)
   end
 end
