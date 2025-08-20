@@ -18,8 +18,9 @@
 #
 # Indexes
 #
-#  index_sessions_on_location_id              (location_id)
-#  index_sessions_on_team_id_and_location_id  (team_id,location_id)
+#  index_sessions_on_location_id                (location_id)
+#  index_sessions_on_team_id_and_academic_year  (team_id,academic_year)
+#  index_sessions_on_team_id_and_location_id    (team_id,location_id)
 #
 # Foreign Keys
 #
@@ -69,7 +70,6 @@ class Session < ApplicationRecord
             SessionProgramme
               .select("COUNT(session_programmes.id)")
               .where("sessions.id = session_programmes.session_id")
-              .joins(:programme)
               .where(programme: programmes),
             programmes.count
           )

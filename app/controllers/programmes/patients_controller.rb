@@ -9,7 +9,7 @@ class Programmes::PatientsController < Programmes::BaseController
     @year_groups = current_team.programme_year_groups[@programme]
 
     scope =
-      patients.includes(
+      Patient.where(id: patient_ids).includes(
         :consent_statuses,
         :triage_statuses,
         :vaccination_statuses,

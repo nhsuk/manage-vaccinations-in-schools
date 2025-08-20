@@ -13,7 +13,7 @@
 
 <%= govuk_button_to "Download vaccination report", programme_reports_path(@programme, @academic_year), secondary: true, class: "nhsuk-u-margin-bottom-5" %>
 
-<%= render AppProgrammeStatsComponent.new(@programme, academic_year: @academic_year, patients: @patients) %>
+<%= render AppProgrammeStatsComponent.new(@programme, academic_year: @academic_year, patient_ids: @patient_ids) %>
 
 <h2 class="nhsuk-heading-m">Cohorts</h2>
 
