@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_14_154032) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_20_085332) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -772,6 +772,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_14_154032) do
     t.date "send_invitations_at"
     t.boolean "requires_registration", default: true, null: false
     t.index ["location_id"], name: "index_sessions_on_location_id"
+    t.index ["team_id", "academic_year"], name: "index_sessions_on_team_id_and_academic_year"
     t.index ["team_id", "location_id"], name: "index_sessions_on_team_id_and_location_id"
   end
 
