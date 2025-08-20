@@ -32,6 +32,7 @@ describe "Import child records" do
     when_i_click_review_for("WILLIAMS, Catherine")
     then_i_see_both_records_have_an_nhs_number
     and_i_see_address_differences_for_review
+    and_i_do_not_see_the_option_to_keep_both
     when_i_use_duplicate_record_during_merge
     then_the_existing_patient_has_an_nhs_number_in_mavis
     and_catherine_parents_are_handled_correctly
@@ -611,6 +612,10 @@ describe "Import child records" do
     expect(page).to have_content("London") # New town from CSV
   end
 
+  def and_i_do_not_see_the_option_to_keep_both
+    expect(page).not_to have_content("Keep both child records")
+  end
+
   def and_catherine_parents_are_handled_correctly
     catherine =
       Patient.find_by(given_name: "Catherine", family_name: "Williams")
@@ -780,6 +785,7 @@ describe "Import child records" do
 
   def when_i_review_and_accept_duplicate_maia_record
     click_link "Review"
+    expect(page).to have_content("Keep both child records")
     choose "Use uploaded child record"
     click_on "Resolve duplicate"
   end

@@ -77,12 +77,13 @@ describe "Class list imports duplicates" do
 
       when_i_review_the_third_duplicate_record
       then_i_should_see_the_third_duplicate_record
+      and_i_should_not_be_able_to_keep_both_records
 
-      when_i_choose_to_keep_both_records
+      when_i_choose_to_keep_the_existing_record
       and_i_confirm_my_selection
       then_i_should_see_a_success_message
       and_the_third_record_should_not_be_updated
-      and_a_fourth_record_should_exist
+      and_a_fourth_record_should_not_exist
     end
   end
 
@@ -242,6 +243,10 @@ describe "Class list imports duplicates" do
     choose "Keep both child records"
   end
 
+  def and_i_should_not_be_able_to_keep_both_records
+    expect(page).not_to have_content("Keep both child records")
+  end
+
   def then_i_should_see_a_success_message
     expect(page).to have_content("Record updated")
   end
@@ -287,5 +292,9 @@ describe "Class list imports duplicates" do
 
     fourth_patient = Patient.find_by(nhs_number: nil)
     expect(fourth_patient.given_name).to eq("Rebecca")
+  end
+
+  def and_a_fourth_record_should_not_exist
+    expect(Patient.count).to eq(3)
   end
 end
