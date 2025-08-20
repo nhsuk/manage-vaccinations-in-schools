@@ -8,10 +8,18 @@ class LocationSessionsFactory
 
   def call
     ActiveRecord::Base.transaction do
-      grouped_programmes
-        .reject { |programmes| already_exists?(programmes:) }
-        .map { |programmes| create_session!(programmes:) }
-        .each { |session| add_patients!(session:) }
+      if location.generic_clinic?
+        add_patients!(
+          session: find_or_create_session!(programmes: location.programmes)
+        )
+      else
+        ProgrammeGrouper
+          .call(location.programmes)
+          .values
+          .reject { |programmes| already_exists?(programmes:) }
+          .map { |programmes| create_session!(programmes:) }
+          .each { |session| add_patients!(session:) }
+      end
     end
   end
 
@@ -33,21 +41,26 @@ class LocationSessionsFactory
     team.sessions.create!(academic_year:, location:, programmes:)
   end
 
+  def find_or_create_session!(programmes:)
+    team
+      .sessions
+      .create_with(programmes:)
+      .find_or_create_by!(academic_year:, location:)
+      .tap do |session|
+        programmes.each do |programme|
+          unless programme.in?(session.programmes)
+            session.programmes << programme
+          end
+        end
+      end
+  end
+
   def add_patients!(session:)
     PatientSession.import!(
       %i[patient_id session_id],
       patient_ids.map { [it, session.id] },
       on_duplicate_key_ignore: true
     )
-  end
-
-  def grouped_programmes
-    @grouped_programmes ||=
-      if location.generic_clinic?
-        [location.programmes.reorder(nil)]
-      else
-        ProgrammeGrouper.call(location.programmes).values
-      end
   end
 
   def patient_ids

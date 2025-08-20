@@ -30,6 +30,24 @@ describe TeamSessionsFactory do
         expect(session.location).to eq(location)
         expect(session.programmes).to eq(programmes)
       end
+
+      context "if a session already exists" do
+        let!(:session) do
+          create(
+            :session,
+            :unscheduled,
+            location:,
+            team:,
+            programmes: [create(:programme, :flu)]
+          )
+        end
+
+        it "adds the programmes to the existing session" do
+          expect { call }.not_to change(team.sessions, :count)
+
+          expect(session.reload.programmes).to include(*programmes)
+        end
+      end
     end
 
     context "with a community clinic" do
