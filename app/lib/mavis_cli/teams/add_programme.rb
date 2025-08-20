@@ -34,12 +34,10 @@ module MavisCLI
         ActiveRecord::Base.transaction do
           TeamProgramme.create!(team:, programme:)
 
-          programmes = team.reload.programmes
-
-          GenericClinicFactory.call(team:)
+          GenericClinicFactory.call(team: team.reload)
 
           team.locations.find_each do |location|
-            location.create_default_programme_year_groups!(programmes)
+            location.create_default_programme_year_groups!([programme])
           end
         end
       end
