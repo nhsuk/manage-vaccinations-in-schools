@@ -100,6 +100,13 @@ FactoryBot.define do
       fallback_role { :healthcare_assistant }
     end
 
+    trait :prescriber do
+      sequence(:email) { |n| "prescriber-#{n}@example.com" }
+      role_code { nil }
+      activity_codes { [CIS2Info::INDEPENDENT_PRESCRIBING_ACTIVITY_CODE] }
+      fallback_role { :prescriber }
+    end
+
     trait :signed_in do
       current_sign_in_at { Time.current }
       current_sign_in_ip { "127.0.0.1" }
@@ -108,5 +115,6 @@ FactoryBot.define do
 
   factory :admin, parent: :user, traits: %i[admin]
   factory :healthcare_assistant, parent: :user, traits: %i[healthcare_assistant]
+  factory :prescriber, parent: :user, traits: %i[prescriber]
   factory :superuser, parent: :user, traits: %i[superuser]
 end

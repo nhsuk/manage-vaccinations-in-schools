@@ -126,6 +126,8 @@ class User < ApplicationRecord
     role =
       if is_healthcare_assistant?
         "Healthcare Assistant"
+      elsif is_prescriber?
+        "Prescriber"
       elsif is_nurse?
         "Nurse"
       else
@@ -149,6 +151,10 @@ class User < ApplicationRecord
     else
       fallback_role_healthcare_assistant?
     end
+  end
+
+  def is_prescriber?
+    cis2_enabled? ? cis2_info.is_prescriber? : fallback_role_prescriber?
   end
 
   def is_superuser?

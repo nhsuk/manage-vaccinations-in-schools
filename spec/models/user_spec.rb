@@ -196,6 +196,50 @@ describe User do
     end
   end
 
+  describe "#is_prescriber?" do
+    subject { user.is_prescriber? }
+
+    context "cis2 is enabled", cis2: :enabled do
+      context "when the user is a nurse" do
+        let(:user) { build(:nurse) }
+
+        it { should be(false) }
+      end
+
+      context "when the user is admin staff" do
+        let(:user) { build(:admin) }
+
+        it { should be(false) }
+      end
+
+      context "when the user is a prescriber" do
+        let(:user) { build(:prescriber) }
+
+        it { should be(true) }
+      end
+    end
+
+    context "cis2 is disabled", cis2: :disabled do
+      context "when the user is a nurse" do
+        let(:user) { build(:nurse) }
+
+        it { should be(false) }
+      end
+
+      context "when the user is admin staff" do
+        let(:user) { build(:admin) }
+
+        it { should be(false) }
+      end
+
+      context "when the user is a prescriber" do
+        let(:user) { build(:prescriber) }
+
+        it { should be(true) }
+      end
+    end
+  end
+
   describe "#is_superuser?" do
     subject { user.is_superuser? }
 
