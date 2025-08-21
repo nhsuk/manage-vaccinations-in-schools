@@ -64,7 +64,7 @@ module ReportingAPI::TokenAuthenticationConcern
         jwt,
         Settings.reporting_api.client_app.secret,
         true,
-        { algorithm: "HS512" }
+        { algorithm: ReportingAPI::OneTimeToken::SIGNING_ALGORITHM }
       )
     end
   end
