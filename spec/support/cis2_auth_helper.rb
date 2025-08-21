@@ -133,8 +133,12 @@ module CIS2AuthHelper
       nurse: []
     }.fetch(role)
 
+    if superuser
+      activity_codes << CIS2Info::ACCESS_SENSITIVE_FLAGGED_RECORDS_ACTIVITY_CODE
+      activity_codes << CIS2Info::LOCAL_SYSTEM_ADMINISTRATION_ACTIVITY_CODE
+    end
+
     workgroups = user.teams.where(organisation:).pluck(:workgroup)
-    workgroups << CIS2Info::SUPERUSER_WORKGROUP if superuser
 
     cis2_sign_in(user, ods_code:, role_code:, activity_codes:, workgroups:)
   end
