@@ -35,7 +35,7 @@ FactoryBot.define do
   factory :team do
     transient do
       sequence(:identifier)
-      ods_code { "U#{identifier}" }
+      ods_code { generate(:ods_code) }
     end
 
     organisation { association(:organisation, ods_code:) }
