@@ -13,7 +13,8 @@ RSpec.describe API::Reporting::TotalsController do
         cis2_info: {
           organisation_code: team.organisation.ods_code,
           workgroups: [team.workgroup],
-          role_code: CIS2Info::NURSE_ROLE
+          role_code: CIS2Info::NURSE_ROLE,
+          activity_codes: [CIS2Info::PGD_SUPPLY_ACTIVITY_CODE]
         }
       }
     }
