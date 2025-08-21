@@ -93,17 +93,15 @@ module CIS2AuthHelper
     }
   end
 
-  def cis2_sign_in(user, workgroups:, role:, ods_code:, superuser:)
-    workgroups << "mavissuperusers" if superuser
-
+  def cis2_sign_in(user, ods_code:, role_code:, workgroups:)
     mock_cis2_auth(
       uid: user.uid,
       given_name: user.given_name,
       family_name: user.family_name,
       email: user.email,
-      role:,
-      org_code: ods_code,
       sid: user.session_token,
+      org_code: ods_code,
+      role_code:,
       workgroups:
     )
 
@@ -119,9 +117,16 @@ module CIS2AuthHelper
     organisation ||= user.organisations.first
 
     ods_code = organisation.ods_code
-    workgroups = user.teams.where(organisation:).pluck(:workgroup)
 
-    cis2_sign_in(user, workgroups:, role:, ods_code:, superuser:)
+    role_code ||= {
+      nurse: CIS2Info::NURSE_ROLE,
+      admin: CIS2Info::ADMIN_ROLE
+    }.fetch(role)
+
+    workgroups = user.teams.where(organisation:).pluck(:workgroup)
+    workgroups << CIS2Info::SUPERUSER_WORKGROUP if superuser
+
+    cis2_sign_in(user, ods_code:, role_code:, workgroups:)
   end
 
   def mock_cis2_auth(
@@ -129,8 +134,7 @@ module CIS2AuthHelper
     given_name: "Nurse",
     family_name: "Test",
     email: nil,
-    role: :nurse,
-    role_code: nil,
+    role_code: CIS2Info::NURSE_ROLE,
     org_code: nil,
     org_name: "Test SAIS Org",
     user_only_has_one_role: false,
@@ -152,11 +156,6 @@ module CIS2AuthHelper
         it["person_roleid"] == selected_roleid
       end
     end
-
-    role_code ||= {
-      nurse: CIS2Info::NURSE_ROLE,
-      admin: CIS2Info::ADMIN_ROLE
-    }.fetch(role)
 
     nhsid_nrbac_role = raw_info["nhsid_nrbac_roles"][0]
     nhsid_nrbac_role["role_code"] = role_code
