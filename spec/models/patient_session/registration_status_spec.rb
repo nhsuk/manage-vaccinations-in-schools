@@ -57,7 +57,7 @@ describe PatientSession::RegistrationStatus do
         create(
           :session_attendance,
           :present,
-          patient_session:,
+          patient:,
           session_date: session.session_dates.find_by(value: Date.current)
         )
       end
@@ -66,7 +66,7 @@ describe PatientSession::RegistrationStatus do
         create(
           :session_attendance,
           :absent,
-          patient_session:,
+          patient:,
           session_date: session.session_dates.find_by(value: Date.yesterday)
         )
       end
@@ -87,7 +87,7 @@ describe PatientSession::RegistrationStatus do
         create(
           :session_attendance,
           :present,
-          patient_session:,
+          patient:,
           session_date: session.session_dates.first
         )
       end
@@ -100,7 +100,7 @@ describe PatientSession::RegistrationStatus do
         create(
           :session_attendance,
           :present,
-          patient_session:,
+          patient:,
           session_date: session.session_dates.second
         )
       end
@@ -113,7 +113,7 @@ describe PatientSession::RegistrationStatus do
         create(
           :session_attendance,
           :absent,
-          patient_session:,
+          patient:,
           session_date: session.session_dates.second
         )
       end

@@ -59,6 +59,7 @@ class StatusUpdater
       .where(patient_session_id: patient_sessions.select(:id))
       .includes(
         :session_attendances,
+        :session_date,
         :vaccination_records,
         patient_session: {
           session: :programmes

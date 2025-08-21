@@ -21,21 +21,24 @@ class PatientSession::RegistrationStatus < ApplicationRecord
   belongs_to :patient_session
 
   has_one :patient, through: :patient_session
+  has_one :session, through: :patient_session
 
   has_many :vaccination_records,
            -> { kept.order(performed_at: :desc) },
            through: :patient
 
-  has_many :session_attendances,
-           -> { includes(:session_date) },
-           through: :patient_session
+  has_one :session_date, -> { today }, through: :session, source: :session_dates
+
+  has_many :session_attendances, through: :patient
 
   enum :status,
        { unknown: 0, attending: 1, not_attending: 2, completed: 3 },
        default: :unknown,
        validate: true
 
-  def session_attendance = session_attendances.find(&:today?)
+  def session_attendance
+    session_attendances.find { it.session_date_id == session_date.id }
+  end
 
   def assign_status
     self.status = generator.status

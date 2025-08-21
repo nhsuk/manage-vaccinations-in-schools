@@ -10,17 +10,19 @@ describe SessionAttendancePolicy do
   let(:session) { create(:session, team:, programmes:) }
   let(:patient) { create(:patient, session:, year_group: 8) }
 
-  let(:patient_session) { patient.patient_sessions.includes(:session).first }
-
   shared_examples "allow if not yet vaccinated or seen by nurse" do
     context "with a new session attendance" do
-      let(:session_attendance) { build(:session_attendance, patient_session:) }
+      let(:session_attendance) do
+        build(:session_attendance, patient:, session:)
+      end
 
       it { should be(true) }
     end
 
     context "with session attendance and one vaccination record from a different session" do
-      let(:session_attendance) { build(:session_attendance, patient_session:) }
+      let(:session_attendance) do
+        build(:session_attendance, patient:, session:)
+      end
 
       before do
         create(
@@ -37,7 +39,9 @@ describe SessionAttendancePolicy do
     end
 
     context "with session attendance and both vaccination records" do
-      let(:session_attendance) { build(:session_attendance, patient_session:) }
+      let(:session_attendance) do
+        build(:session_attendance, patient:, session:)
+      end
 
       before do
         programmes.each do |programme|
@@ -57,7 +61,9 @@ describe SessionAttendancePolicy do
     end
 
     context "with session attendance and both vaccination records from a different date" do
-      let(:session_attendance) { build(:session_attendance, patient_session:) }
+      let(:session_attendance) do
+        build(:session_attendance, patient:, session:)
+      end
 
       around { |example| travel_to(Date.new(2025, 8, 31)) { example.run } }
 
