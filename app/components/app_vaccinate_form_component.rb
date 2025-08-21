@@ -11,8 +11,7 @@ class AppVaccinateFormComponent < ViewComponent::Base
 
   attr_reader :vaccinate_form
 
-  delegate :patient_session, :programme, to: :vaccinate_form
-  delegate :patient, :session, to: :patient_session
+  delegate :patient, :session, :programme, to: :vaccinate_form
   delegate :academic_year, to: :session
 
   def url

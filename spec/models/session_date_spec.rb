@@ -66,6 +66,12 @@ describe SessionDate do
       it { should be(true) }
     end
 
+    context "with a pre-screening" do
+      before { create(:pre_screening, session:) }
+
+      it { should be(true) }
+    end
+
     context "with a session attendance" do
       before do
         create(

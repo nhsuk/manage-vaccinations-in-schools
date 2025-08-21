@@ -57,7 +57,7 @@ describe PatientMerger do
     let(:patient_session) do
       create(:patient_session, session:, patient: patient_to_destroy)
     end
-    let(:pre_screening) { create(:pre_screening, patient_session:) }
+    let(:pre_screening) { create(:pre_screening, patient: patient_to_destroy) }
     let(:school_move) do
       create(:school_move, :to_school, patient: patient_to_destroy)
     end

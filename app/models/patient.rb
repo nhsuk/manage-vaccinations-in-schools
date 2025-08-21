@@ -70,6 +70,7 @@ class Patient < ApplicationRecord
   has_many :parent_relationships, -> { order(:created_at) }
   has_many :patient_sessions
   has_many :pds_search_results
+  has_many :pre_screenings
   has_many :school_move_log_entries
   has_many :school_moves
   has_many :session_notifications
@@ -81,7 +82,6 @@ class Patient < ApplicationRecord
   has_many :gillick_assessments
   has_many :parents, through: :parent_relationships
   has_many :patient_specific_directions
-  has_many :pre_screenings, through: :patient_sessions
   has_many :session_attendances, through: :patient_sessions
   has_many :sessions, through: :patient_sessions
   has_many :teams, -> { distinct }, through: :sessions

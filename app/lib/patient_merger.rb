@@ -40,6 +40,10 @@ class PatientMerger
         patient_id: patient_to_keep.id
       )
 
+      patient_to_destroy.pre_screenings.update_all(
+        patient_id: patient_to_keep.id
+      )
+
       patient_to_destroy.school_moves.find_each do |school_move|
         if patient_to_keep.school_moves.exists?(
              home_educated: school_move.home_educated,
@@ -78,18 +82,12 @@ class PatientMerger
       end
 
       patient_to_destroy.patient_sessions.each do |patient_session|
-        if (
-             existing_patient_session =
-               patient_to_keep.patient_sessions.find_by(
-                 session_id: patient_session.session_id
-               )
+        if patient_to_keep.patient_sessions.exists?(
+             session_id: patient_session.session_id
            )
-          patient_session.pre_screenings.update_all(
-            patient_session_id: existing_patient_session.id
-          )
-        else
-          patient_session.update!(patient: patient_to_keep)
+          next
         end
+        patient_session.update!(patient: patient_to_keep)
       end
 
       PatientSession.where(patient: patient_to_destroy).destroy_all

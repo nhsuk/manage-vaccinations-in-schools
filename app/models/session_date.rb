@@ -22,6 +22,7 @@ class SessionDate < ApplicationRecord
   belongs_to :session
 
   has_many :gillick_assessments, dependent: :restrict_with_error
+  has_many :pre_screenings, dependent: :restrict_with_error
   has_many :session_attendances, dependent: :restrict_with_error
 
   scope :for_session, -> { where("session_id = sessions.id") }
@@ -44,7 +45,7 @@ class SessionDate < ApplicationRecord
   def today_or_future? = today? || future?
 
   def has_been_attended?
-    gillick_assessments.any? || session_attendances.any?
+    gillick_assessments.any? || pre_screenings.any? || session_attendances.any?
   end
 
   private
