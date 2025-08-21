@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "pagy/extras/jsonapi"
+
 class API::Reporting::BaseController < ActionController::API
   # we need to still include the AuthenticationConcern even though
   # we're not using the authenticate_user! callback, because we call it
@@ -8,12 +10,89 @@ class API::Reporting::BaseController < ActionController::API
   include AuthenticationConcern
   include ReportingAPI::TokenAuthenticationConcern
 
+  include Pagy::Backend
+  include Pagy::JsonApiExtra
+
   before_action :ensure_reporting_api_feature_enabled
   before_action :authenticate_user_by_jwt!
 
+  before_action :set_default_filters, :set_filters
+
+  GROUPS = {
+    local_authority: :patient_local_authority_from_postcode_short_name,
+    school: :school_name,
+    year_group: :patient_year_group,
+    gender: :patient_gender_code,
+    programme: :programme_type,
+    team: :team_name,
+    month: :event_timestamp_month
+  }.freeze
+
   private
+
+  def render_paginated_json(records:)
+    pagy, this_page_records = pagy(records, json_api: true)
+
+    render json: { data: this_page_records, links: pagy_jsonapi_links(pagy) }
+  end
+
+  def render_csv(records:, header_mappings:, prefix: "data")
+    filename = csv_filename(prefix:)
+    send_data to_csv(records:, header_mappings:),
+              filename:,
+              disposition: :attachment
+  end
+
+  def csv_filename(prefix: "data")
+    "#{prefix}-#{@filters}-#{Time.current.iso8601.gsub(/[\s:+]/, "")}.csv"
+  end
 
   def ensure_reporting_api_feature_enabled
     render status: :forbidden and return unless Flipper.enabled?(:reporting_api)
+  end
+
+  # Expects a hash of (param name) => (attribute name)
+  # Returns a hash of (attribute name) => (value of param with that name)
+  # suitable for use in a .where(...) clause
+  def filter_clause(_params, _filters)
+    @filters.to_where_clause
+  end
+
+  def group_clause(params)
+    groups = params[:group].to_s.split(",").map { |param| GROUPS[param.to_sym] }
+    groups += %i[event_timestamp_year event_timestamp_month]
+    groups.uniq
+  end
+
+  # convert a relation to a csv file,
+  # given a mapping of header names to attribute names
+  # e.g. { 'Local Authority' => :patient_local_authority_from_postcode_short_name }
+  def to_csv(records:, header_mappings:)
+    lines = []
+    lines << CSV.generate_line(header_mappings.keys)
+
+    records.each do |record|
+      values =
+        header_mappings.values.map do |attribute_name|
+          record[attribute_name]
+        rescue StandardError
+          nil
+        end
+      lines << CSV.generate_line(values)
+    end
+    lines
+  end
+
+  def set_default_filters
+    params[:filters] ||= AcademicYear.current
+  end
+
+  def set_filters
+    @filters = ReportingAPI::EventFilter.new(params:, filters:)
+  end
+
+  def filters
+    raise NoMethodError,
+          "Abstract method - filters must be defined on the subclass"
   end
 end
