@@ -31,14 +31,14 @@
 
       <% if @session.unscheduled? %>
         <% if policy(@session).edit? %>
-          <%= govuk_button_link_to "Schedule sessions", edit_session_path(@session), secondary: true %>
+          <%= govuk_button_link_to "Schedule sessions", session_edit_path(@session), secondary: true %>
         <% end %>
       <% else %>
         <%= render AppSessionActionsComponent.new(@session) %>
 
         <div class="app-button-group">
           <% if policy(@session).edit? %>
-            <%= govuk_button_link_to "Edit session", edit_session_path(@session), secondary: true %>
+            <%= govuk_button_link_to "Edit session", session_edit_path(@session), secondary: true %>
           <% end %>
 
           <%= govuk_link_to "Record offline", session_path(@session, format: :xlsx) %>

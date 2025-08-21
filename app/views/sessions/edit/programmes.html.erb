@@ -1,11 +1,11 @@
 <% content_for :before_main do %>
-  <%= render AppBacklinkComponent.new(edit_session_path(@session), name: "edit session") %>
+  <%= render AppBacklinkComponent.new(session_edit_path(@session), name: "edit session") %>
 <% end %>
 
 <% legend = "Which programmes is this session part of?" %>
 <% content_for :page_title, legend %>
 
-<%= form_with model: @form, url: edit_programmes_session_path(@session), method: :put do |f| %>
+<%= form_with model: @form, url: programmes_session_edit_path(@session), method: :put do |f| %>
   <% content_for(:before_content) { f.govuk_error_summary } %>
 
   <%= f.govuk_collection_check_boxes :programme_ids, policy_scope(Programme), :id, :name,
