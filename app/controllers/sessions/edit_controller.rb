@@ -9,6 +9,7 @@ class Sessions::EditController < ApplicationController
                   update_send_consent_requests_at
                   update_send_invitations_at
                   update_weeks_before_consent_reminders
+                  update_register_attendance
                 ]
   before_action :authorize_session_update,
                 only: %i[
@@ -16,6 +17,7 @@ class Sessions::EditController < ApplicationController
                   update_send_consent_requests_at
                   update_send_invitations_at
                   update_weeks_before_consent_reminders
+                  update_register_attendance
                 ]
 
   def show
@@ -80,6 +82,17 @@ class Sessions::EditController < ApplicationController
     end
   end
 
+  def register_attendance
+  end
+
+  def update_register_attendance
+    if @session.update(register_attendance_params)
+      redirect_to session_edit_path(@session)
+    else
+      render :register_attendance, status: :unprocessable_content
+    end
+  end
+
   private
 
   def set_session
@@ -126,5 +139,9 @@ class Sessions::EditController < ApplicationController
 
   def weeks_before_consent_reminders_params
     params.expect(session: :weeks_before_consent_reminders)
+  end
+
+  def register_attendance_params
+    params.expect(session: :requires_registration)
   end
 end

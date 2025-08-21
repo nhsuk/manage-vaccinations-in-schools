@@ -238,6 +238,9 @@ Rails.application.routes.draw do
       get "weeks-before-consent-reminders"
       put "weeks-before-consent-reminders",
           action: :update_weeks_before_consent_reminders
+
+      get "register-attendance"
+      put "register-attendance", action: :update_register_attendance
     end
 
     resource :invite_to_clinic,

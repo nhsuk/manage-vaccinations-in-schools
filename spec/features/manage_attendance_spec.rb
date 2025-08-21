@@ -47,11 +47,28 @@ describe "Manage attendance" do
     and_the_session_has_patients
 
     when_i_go_to_the_session
-    then_i_should_not_see_the_register_tab
+    then_i_do_not_see_the_register_tab
 
     when_i_go_to_the_session_patients
     and_i_go_to_a_patient
     then_i_should_not_see_link_to_update_attendance
+  end
+
+  scenario "Turning off attendance" do
+    given_my_team_is_running_an_hpv_vaccination_programme
+    and_there_is_a_vaccination_session_today
+    and_the_session_has_patients
+
+    when_i_go_to_the_session
+    and_i_click_on_the_register_tab
+    then_i_see_the_register_tab
+
+    when_i_go_to_the_session
+    and_i_edit_the_session
+    and_i_turn_off_register_attendance
+
+    when_i_go_to_the_session
+    then_i_do_not_see_the_register_tab
   end
 
   def given_my_team_is_running_an_hpv_vaccination_programme
@@ -103,7 +120,7 @@ describe "Manage attendance" do
     click_link "Record vaccinations"
   end
 
-  def then_i_should_not_see_the_register_tab
+  def then_i_do_not_see_the_register_tab
     expect(page).not_to have_content("Register")
   end
 
@@ -203,5 +220,15 @@ describe "Manage attendance" do
 
   def then_i_see_the_attendance_event
     expect(page).to have_content("Attended session")
+  end
+
+  def and_i_edit_the_session
+    click_on "Edit session"
+  end
+
+  def and_i_turn_off_register_attendance
+    click_on "Change register attendance"
+    choose "No"
+    click_on "Continue"
   end
 end
