@@ -1,6 +1,9 @@
 basic_auth: Require users to sign in with basic authentication before they
   can use the service.
 
+delegation: Allow prescribers to create a PSDs for healthcare workers to administer
+  nasal vaccines or supply injected vaccines to healthcare works using the PGD protocol.
+
 dev_tools: Developer tools useful for testing and debugging.
 
 enqueue_sync_vaccination_records_to_nhs: Send new vaccinations recorded by
@@ -14,7 +17,7 @@ import_choose_academic_year: Add an option to choose the academic year when
 
 offline_working: Prototype support for using Mavis offline.
 
-testing_api: Basic API useful for automated testing.
-
 pds_lookup_during_import: Perform PDS lookups as part of the patient import
   processing.
+
+testing_api: Basic API useful for automated testing.
