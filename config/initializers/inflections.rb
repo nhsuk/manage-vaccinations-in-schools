@@ -31,6 +31,7 @@ ActiveSupport::Inflector.inflections(:en) do |inflect|
   inflect.acronym "PDS"
   inflect.acronym "QA"
   inflect.acronym "SMS"
+  inflect.acronym "URN"
 
   inflect.irregular "batch", "batches"
   inflect.irregular "child", "children"

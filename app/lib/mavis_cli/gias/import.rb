@@ -34,7 +34,6 @@ module MavisCLI
             schools << Location.new(
               type: :school,
               urn: row["URN"],
-              site: nil,
               gias_local_authority_code: row["LA (code)"],
               gias_establishment_number:,
               name: row["EstablishmentName"],
@@ -66,7 +65,8 @@ module MavisCLI
         Location.import!(
           schools,
           on_duplicate_key_update: {
-            conflict_target: %i[urn site],
+            conflict_target: %i[urn],
+            index_predicate: "site IS NULL",
             columns: %i[
               address_line_1
               address_line_2
