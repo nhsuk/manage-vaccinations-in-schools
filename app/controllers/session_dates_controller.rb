@@ -34,7 +34,7 @@ class SessionDatesController < ApplicationController
         if any_destroyed?
           session_dates_path(@session)
         else
-          edit_session_path(@session)
+          session_edit_path(@session)
         end
       )
     end
