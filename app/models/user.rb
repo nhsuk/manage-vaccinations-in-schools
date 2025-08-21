@@ -139,6 +139,14 @@ class User < ApplicationRecord
     cis2_enabled? ? cis2_info.can_supply_using_pgd? : fallback_role_nurse?
   end
 
+  def can_administer_without_prescription?
+    if cis2_enabled?
+      cis2_info.can_administer_without_prescription?
+    else
+      fallback_role_healthcare_assistant?
+    end
+  end
+
   def can_perform_local_admin_tasks?
     if cis2_enabled?
       cis2_info.can_perform_local_admin_tasks?

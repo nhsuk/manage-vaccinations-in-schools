@@ -50,6 +50,7 @@ module AuthenticationConcern
 
     def selected_cis2_role_is_valid?
       cis2_info.can_view? || cis2_info.can_supply_using_pgd? ||
+        cis2_info.can_administer_without_prescription? ||
         cis2_info.can_perform_local_admin_tasks? ||
         cis2_info.can_access_sensitive_records?
     end

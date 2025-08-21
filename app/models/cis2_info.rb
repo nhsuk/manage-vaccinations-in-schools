@@ -8,6 +8,8 @@ class CIS2Info
 
   SUPERUSER_WORKGROUP = "mavissuperusers"
 
+  PERSONAL_MEDICATION_ADMINISTRATION_ACTIVITY_CODE = "B0428"
+
   attribute :organisation_name
   attribute :organisation_code
   attribute :role_name
@@ -42,6 +44,10 @@ class CIS2Info
 
   def can_supply_using_pgd?
     role_code == NURSE_ROLE
+  end
+
+  def can_administer_without_prescription?
+    activity_codes.include?(PERSONAL_MEDICATION_ADMINISTRATION_ACTIVITY_CODE)
   end
 
   def can_perform_local_admin_tasks?

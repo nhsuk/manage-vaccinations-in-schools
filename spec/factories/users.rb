@@ -79,17 +79,23 @@ FactoryBot.define do
     end
 
     trait :admin do
-      role_code { CIS2Info::ADMIN_ROLE }
       sequence(:email) { |n| "admin-#{n}@example.com" }
+      role_code { CIS2Info::ADMIN_ROLE }
       fallback_role { :admin }
     end
 
     trait :superuser do
+      sequence(:email) { |n| "superuser-#{n}@example.com" }
       role_workgroups { [CIS2Info::SUPERUSER_WORKGROUP] }
       fallback_role { :superuser }
     end
 
     trait :healthcare_assistant do
+      sequence(:email) { |n| "healthcare-assistant-#{n}@example.com" }
+      role_code { CIS2Info::ADMIN_ROLE }
+      activity_codes do
+        [CIS2Info::PERSONAL_MEDICATION_ADMINISTRATION_ACTIVITY_CODE]
+      end
       fallback_role { :healthcare_assistant }
     end
 
@@ -100,4 +106,6 @@ FactoryBot.define do
   end
 
   factory :admin, parent: :user, traits: %i[admin]
+  factory :healthcare_assistant, parent: :user, traits: %i[healthcare_assistant]
+  factory :superuser, parent: :user, traits: %i[superuser]
 end
