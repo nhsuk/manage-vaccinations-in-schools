@@ -22,7 +22,7 @@ class AppPatientSessionRecordComponent < ViewComponent::Base
       (
         patient_session.registration_status&.attending? ||
           patient_session.registration_status&.completed? ||
-          !patient_session.session.requires_registration?
+          !session.requires_registration?
       )
   end
 
@@ -35,8 +35,14 @@ class AppPatientSessionRecordComponent < ViewComponent::Base
 
   def default_vaccinate_form
     pre_screening_confirmed = patient.pre_screenings.today.exists?(programme:)
+    session_date = session.session_dates.today.first
 
-    VaccinateForm.new(patient_session:, programme:, pre_screening_confirmed:)
+    VaccinateForm.new(
+      patient:,
+      session_date:,
+      programme:,
+      pre_screening_confirmed:
+    )
   end
 
   def heading
