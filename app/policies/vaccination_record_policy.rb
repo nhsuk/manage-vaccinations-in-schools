@@ -2,7 +2,7 @@
 
 class VaccinationRecordPolicy < ApplicationPolicy
   def create?
-    user.can_prescribe_pgd?
+    user.can_supply_using_pgd?
   end
 
   def new?
@@ -10,7 +10,7 @@ class VaccinationRecordPolicy < ApplicationPolicy
   end
 
   def edit?
-    user.can_prescribe_pgd? && record.session_id.present? &&
+    user.can_supply_using_pgd? && record.session_id.present? &&
       record.performed_ods_code == user.selected_organisation.ods_code
   end
 

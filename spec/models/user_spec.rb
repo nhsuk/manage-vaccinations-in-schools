@@ -119,8 +119,8 @@ describe User do
     end
   end
 
-  describe "#can_prescribe_pgd?" do
-    subject { user.can_prescribe_pgd? }
+  describe "#can_supply_using_pgd??" do
+    subject { user.can_supply_using_pgd? }
 
     context "cis2 is enabled", cis2: :enabled do
       context "when the user is a nurse" do
