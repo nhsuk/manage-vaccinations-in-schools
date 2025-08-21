@@ -2,9 +2,10 @@
 
 module SendSchoolConsentNotificationConcern
   extend ActiveSupport::Concern
-  include Sidekiq::Job
 
   included do
+    self.queue_adapter = :sidekiq unless Rails.env.test?
+
     queue_as :notifications
   end
 
