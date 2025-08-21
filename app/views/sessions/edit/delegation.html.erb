@@ -1,0 +1,38 @@
+<% content_for :before_main do %>
+  <%= render AppBacklinkComponent.new(session_edit_path(@session), name: "edit session") %>
+<% end %>
+
+<%= form_with model: @session, url: delegation_session_edit_path(@session), method: :put do |f| %>
+  <% content_for(:before_content) { f.govuk_error_summary } %>
+
+  <span class="nhsuk-caption-l"><%= @session.location.name %></span>
+  <%= h1 "Delegation" %>
+
+  <%= f.govuk_radio_buttons_fieldset :psd_enabled,
+                                     legend: { text: "Can healthcare assistants administer the flu nasal spray vaccine using a patient specific direction (PSD)?" },
+                                     link_errors: true do %>
+    <%= f.govuk_radio_button :psd_enabled,
+                             "false",
+                             label: { text: "No" },
+                             hint: { text: "Healthcare assistants can only administer a nasal spray when supplied by a nurse" } %>
+    <%= f.govuk_radio_button :psd_enabled,
+                             "true",
+                             label: { text: "Yes" },
+                             hint: { text: "Healthcare assistants can administer the nasal spray vaccine to children who are covered by a PSD" } %>
+  <% end %>
+
+  <%= f.govuk_radio_buttons_fieldset :national_protocol_enabled,
+                                     legend: { text: "Can healthcare assistants administer the injected flu vaccine using the national protocol?" },
+                                     link_errors: true do %>
+    <%= f.govuk_radio_button :national_protocol_enabled,
+                             "false",
+                             label: { text: "No" },
+                             hint: { text: "Only nurses can administer the injected flu vaccine" } %>
+    <%= f.govuk_radio_button :national_protocol_enabled,
+                             "true",
+                             label: { text: "Yes" },
+                             hint: { text: "Healthcare assistants can administer an injected flu vaccine when supplied by a nurse" } %>
+  <% end %>
+
+  <%= f.govuk_submit "Continue" %>
+<% end %>

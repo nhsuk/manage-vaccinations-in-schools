@@ -76,6 +76,17 @@ class Sessions::EditController < ApplicationController
     end
   end
 
+  def delegation
+  end
+
+  def update_delegation
+    if @session.update(delegation_params)
+      redirect_to session_edit_path(@session)
+    else
+      render :delegation, status: :unprocessable_content
+    end
+  end
+
   private
 
   def set_session
@@ -118,5 +129,9 @@ class Sessions::EditController < ApplicationController
 
   def register_attendance_params
     params.expect(session: :requires_registration)
+  end
+
+  def delegation_params
+    params.expect(session: %i[psd_enabled national_protocol_enabled])
   end
 end

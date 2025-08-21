@@ -241,6 +241,9 @@ Rails.application.routes.draw do
 
       get "register-attendance"
       put "register-attendance", action: :update_register_attendance
+
+      get "delegation"
+      put "delegation", action: :update_delegation
     end
 
     resource :invite_to_clinic,
