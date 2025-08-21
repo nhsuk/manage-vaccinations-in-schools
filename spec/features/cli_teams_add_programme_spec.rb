@@ -22,10 +22,11 @@ describe "mavis teams add-programme" do
   context "when the programme exists" do
     it "runs successfully" do
       given_the_team_exists
+      and_is_already_set_up_for_hpv
       and_the_programme_exists
 
       when_i_run_the_command
-      then_the_programme_is_added_to_the_team
+      then_only_the_new_programme_is_added_to_the_team
     end
   end
 
@@ -38,6 +39,10 @@ describe "mavis teams add-programme" do
   def given_the_team_exists
     @team = create(:team, workgroup: "abc")
     @school = create(:school, :secondary, team: @team)
+  end
+
+  def and_is_already_set_up_for_hpv
+    @team.programmes << create(:programme, :hpv)
   end
 
   def and_the_programme_exists
@@ -60,7 +65,7 @@ describe "mavis teams add-programme" do
     expect(@output).to include("Could not find programme.")
   end
 
-  def then_the_programme_is_added_to_the_team
+  def then_only_the_new_programme_is_added_to_the_team
     @team.reload
 
     expect(@team.programmes).to include(@programme)
