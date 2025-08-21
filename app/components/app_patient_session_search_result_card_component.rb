@@ -93,8 +93,8 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
   def can_register_attendance?
     session_attendance =
       SessionAttendance.new(
-        patient_session:,
-        session_date: SessionDate.new(value: Date.current)
+        patient:,
+        session_date: SessionDate.new(session:, value: Date.current)
       )
 
     helpers.policy(session_attendance).new?
