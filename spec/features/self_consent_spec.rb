@@ -84,7 +84,8 @@ describe "Self-consent" do
     create(
       :gillick_assessment,
       :competent,
-      patient_session: @patient.patient_sessions.first,
+      patient: @patient,
+      session: @session,
       programme: @programme
     )
   end

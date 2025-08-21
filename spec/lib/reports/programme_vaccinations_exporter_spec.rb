@@ -456,7 +456,8 @@ describe Reports::ProgrammeVaccinationsExporter do
           create(
             :gillick_assessment,
             :competent,
-            patient_session:,
+            patient:,
+            session:,
             performed_by:,
             created_at:
           )

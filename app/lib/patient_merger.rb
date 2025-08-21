@@ -32,6 +32,10 @@ class PatientMerger
         patient_id: patient_to_keep.id
       )
 
+      patient_to_destroy.gillick_assessments.update_all(
+        patient_id: patient_to_keep.id
+      )
+
       patient_to_destroy.school_moves.find_each do |school_move|
         if patient_to_keep.school_moves.exists?(
              home_educated: school_move.home_educated,
@@ -76,9 +80,6 @@ class PatientMerger
                  session_id: patient_session.session_id
                )
            )
-          patient_session.gillick_assessments.update_all(
-            patient_session_id: existing_patient_session.id
-          )
           patient_session.pre_screenings.update_all(
             patient_session_id: existing_patient_session.id
           )

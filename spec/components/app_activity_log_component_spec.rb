@@ -414,13 +414,15 @@ describe AppActivityLogComponent do
   describe "gillick assessments" do
     let(:programmes) { [create(:programme, :td_ipv)] }
     let(:patient_session) { create(:patient_session, patient:, programmes:) }
+    let(:session) { patient_session.session }
 
     before do
       create(
         :gillick_assessment,
         :competent,
         performed_by: user,
-        patient_session:,
+        patient:,
+        session:,
         notes: "First notes",
         created_at: Time.zone.local(2025, 6, 1, 12)
       )
@@ -428,7 +430,8 @@ describe AppActivityLogComponent do
         :gillick_assessment,
         :not_competent,
         performed_by: user,
-        patient_session:,
+        patient:,
+        session:,
         notes: "Second notes",
         created_at: Time.zone.local(2025, 6, 1, 13)
       )

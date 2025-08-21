@@ -52,7 +52,7 @@ class Session < ApplicationRecord
   has_one :organisation, through: :team
   has_one :subteam, through: :location
   has_many :programmes, through: :session_programmes
-  has_many :gillick_assessments, through: :patient_sessions
+  has_many :gillick_assessments, through: :session_dates
   has_many :patients, through: :patient_sessions
   has_many :vaccines, through: :programmes
 

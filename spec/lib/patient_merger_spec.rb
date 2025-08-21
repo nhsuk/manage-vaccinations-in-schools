@@ -43,7 +43,7 @@ describe PatientMerger do
       )
     end
     let(:gillick_assessment) do
-      create(:gillick_assessment, :competent, patient_session:)
+      create(:gillick_assessment, :competent, patient: patient_to_destroy)
     end
     let(:notify_log_entry) do
       create(:notify_log_entry, :email, patient: patient_to_destroy)
