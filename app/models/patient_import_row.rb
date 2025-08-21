@@ -405,6 +405,8 @@ class PatientImportRow
         first_name.header,
         "is greater than #{MAX_FIELD_LENGTH} characters long"
       )
+    elsif !first_name.to_s.match?(PDS::Patient::VALID_NAME_REGEX)
+      errors.add(first_name.header, "includes invalid character(s)")
     end
   end
 
@@ -425,6 +427,8 @@ class PatientImportRow
         last_name.header,
         "is greater than #{MAX_FIELD_LENGTH} characters long"
       )
+    elsif !last_name.to_s.match?(PDS::Patient::VALID_NAME_REGEX)
+      errors.add(last_name.header, "includes invalid character(s)")
     end
   end
 

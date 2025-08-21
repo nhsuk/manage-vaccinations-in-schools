@@ -1,6 +1,18 @@
 # frozen_string_literal: true
 
 class PDS::Patient
+  VALID_NAME_REGEX = Regexp.new(<<~REGEXP, Regexp::EXTENDED).freeze
+    ^[
+      \\w            # ASCII alphanumeric characters
+      \u00C0-\u00D6  # Latin 1 Supplement letters
+      \u00D8-\u00F6  # Latin 1 Supplement letters
+      \u00F8-\u017F  # Latin 1 Supplement & Latin Extended A letters
+      \u0020         # Space
+      \u0027         # Apostrophe
+      \u002E         # Full stop
+    -]+$ # Hyphen has to come at the very end, even for an extended regexp
+  REGEXP
+
   include ActiveModel::Model
 
   attr_accessor :nhs_number,
