@@ -123,6 +123,30 @@ describe CohortImportRow do
         )
       end
     end
+
+    context "when the given name has invalid characters" do
+      let(:data) { valid_data.merge("CHILD_FIRST_NAME" => "J£mmy") }
+
+      it "is invalid" do
+        expect(cohort_import_row).to be_invalid
+        expect(cohort_import_row.errors.size).to eq(1)
+        expect(cohort_import_row.errors["CHILD_FIRST_NAME"]).to contain_exactly(
+          "includes invalid character(s)"
+        )
+      end
+    end
+
+    context "when the family name has invalid characters" do
+      let(:data) { valid_data.merge("CHILD_LAST_NAME" => "ᶚmith") }
+
+      it "is invalid" do
+        expect(cohort_import_row).to be_invalid
+        expect(cohort_import_row.errors.size).to eq(1)
+        expect(cohort_import_row.errors["CHILD_LAST_NAME"]).to contain_exactly(
+          "includes invalid character(s)"
+        )
+      end
+    end
   end
 
   describe "#to_parents" do
