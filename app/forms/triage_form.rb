@@ -7,6 +7,7 @@ class TriageForm
   attr_accessor :patient_session, :programme, :current_user
 
   attribute :status_and_vaccine_method, :string
+  attribute :add_psd, :boolean
   attribute :notes, :string
   attribute :vaccine_methods, array: true, default: []
 
@@ -15,6 +16,13 @@ class TriageForm
               in: :status_and_vaccine_method_options
             }
   validates :notes, length: { maximum: 1000 }
+  validates :add_psd,
+            inclusion: {
+              in: [true, false]
+            },
+            if: -> { add_psd.present? }
+
+  def add_psd? = add_psd
 
   def triage=(triage)
     self.status_and_vaccine_method =

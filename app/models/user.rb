@@ -139,6 +139,10 @@ class User < ApplicationRecord
     cis2_enabled? ? cis2_info.can_supply_using_pgd? : fallback_role_nurse?
   end
 
+  def can_add_psd?
+    cis2_enabled? ? cis2_info.can_add_psd? : fallback_role_nurse?
+  end
+
   def can_perform_local_admin_tasks?
     if cis2_enabled?
       cis2_info.can_perform_local_admin_tasks?

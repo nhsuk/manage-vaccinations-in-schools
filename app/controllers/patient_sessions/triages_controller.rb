@@ -46,6 +46,8 @@ class PatientSessions::TriagesController < PatientSessions::BaseController
         )
         .each { send_triage_confirmation(@patient_session, @programme, it) }
 
+      ensure_psd_exists if @triage_form.add_psd?
+
       redirect_to redirect_path, flash: { success: "Triage outcome updated" }
     else
       render "patient_sessions/programmes/show",
@@ -57,7 +59,7 @@ class PatientSessions::TriagesController < PatientSessions::BaseController
   private
 
   def triage_form_params
-    params.expect(triage_form: %i[status_and_vaccine_method notes])
+    params.expect(triage_form: %i[status_and_vaccine_method notes add_psd])
   end
 
   def redirect_path
@@ -66,6 +68,23 @@ class PatientSessions::TriagesController < PatientSessions::BaseController
       @patient,
       @programme,
       return_to: "triage"
+    )
+  end
+
+  def ensure_psd_exists
+    psd_attributes = {
+      academic_year: @academic_year,
+      patient: @patient,
+      programme: @programme,
+      vaccine: @programme.vaccines.first,
+      vaccine_method: :nasal,
+      delivery_site: :nose
+    }
+
+    return if PatientSpecificDirection.exists?(**psd_attributes)
+
+    PatientSpecificDirection.create!(
+      psd_attributes.merge(created_by: current_user)
     )
   end
 end

@@ -44,6 +44,10 @@ class CIS2Info
     role_code == NURSE_ROLE
   end
 
+  def can_add_psd?
+    role_code == NURSE_ROLE
+  end
+
   def can_perform_local_admin_tasks?
     in_superuser_workgroup?
   end
