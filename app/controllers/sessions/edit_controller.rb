@@ -10,6 +10,7 @@ class Sessions::EditController < ApplicationController
                   update_send_invitations_at
                   update_weeks_before_consent_reminders
                   update_register_attendance
+                  update_delegation
                 ]
   before_action :authorize_session_update,
                 only: %i[
@@ -18,6 +19,7 @@ class Sessions::EditController < ApplicationController
                   update_send_invitations_at
                   update_weeks_before_consent_reminders
                   update_register_attendance
+                  update_delegation
                 ]
 
   def show
@@ -93,6 +95,17 @@ class Sessions::EditController < ApplicationController
     end
   end
 
+  def delegation
+  end
+
+  def update_delegation
+    if @session.update(delegation_params)
+      redirect_to session_edit_path(@session)
+    else
+      render :delegation, status: :unprocessable_content
+    end
+  end
+
   private
 
   def set_session
@@ -143,5 +156,9 @@ class Sessions::EditController < ApplicationController
 
   def register_attendance_params
     params.expect(session: :requires_registration)
+  end
+
+  def delegation_params
+    params.expect(session: %i[psd_enabled national_protocol_enabled])
   end
 end
