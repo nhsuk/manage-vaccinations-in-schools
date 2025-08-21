@@ -21,6 +21,7 @@
 #  fk_rails_...  (user_id => users.id)
 #
 class ReportingAPI::OneTimeToken < ApplicationRecord
+  
   belongs_to :user
 
   validates :user_id, uniqueness: true, presence: true

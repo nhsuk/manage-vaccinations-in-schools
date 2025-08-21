@@ -22,6 +22,8 @@ Layout/LineLength:
   AllowedPatterns: [idx_on]
   Exclude:
     - db/schema.rb
+    - spec/factories/reporting_api/*
+    - app/models/reporting_api/*
 
 Lint/MissingSuper:
   Exclude:
