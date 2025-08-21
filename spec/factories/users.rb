@@ -45,7 +45,7 @@ FactoryBot.define do
 
       role_code { CIS2Info::NURSE_ROLE }
       role_workgroups { [] }
-      activity_codes { [] }
+      activity_codes { [CIS2Info::PGD_SUPPLY_ACTIVITY_CODE] }
 
       cis2_info_hash do
         {
@@ -83,6 +83,7 @@ FactoryBot.define do
     trait :admin do
       sequence(:email) { |n| "admin-#{n}@example.com" }
       role_code { CIS2Info::ADMIN_ROLE }
+      activity_codes { [] }
       fallback_role { :admin }
       show_in_suppliers { false }
     end

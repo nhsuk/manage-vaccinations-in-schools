@@ -46,7 +46,7 @@ describe "User CIS2 authentication", :cis2 do
     mock_cis2_auth(
       org_code: @team.organisation.ods_code,
       org_name: @team.name,
-      role_code: CIS2Info::NURSE_ROLE,
+      activity_codes: [CIS2Info::PGD_SUPPLY_ACTIVITY_CODE],
       workgroups: [@team.workgroup]
     )
     click_button "Change role"
