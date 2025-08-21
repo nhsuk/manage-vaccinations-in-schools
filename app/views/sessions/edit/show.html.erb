@@ -66,6 +66,12 @@
             end
           end
         end
+      
+        summary_list.with_row do |row|
+          row.with_key { "Register attendance" }
+          row.with_value { @session.requires_registration ? "Yes" : "No" }
+          row.with_action(text: "Change", href: register_attendance_session_edit_path(@session), visually_hidden_text: "register attendance")
+        end
       end %>
 <% end %>
 
