@@ -4,6 +4,17 @@ class PatientImportRow
   include ActiveModel::Model
 
   MAX_FIELD_LENGTH = 300
+  VALID_NAME_REGEX = Regexp.new(<<~REGEXP, Regexp::EXTENDED).freeze
+    ^[
+      \\w            # ASCII alphanumeric characters
+      \u00C0-\u00D6  # Latin 1 Supplement letters
+      \u00D8-\u00F6  # Latin 1 Supplement letters
+      \u00F8-\u017F  # Latin 1 Supplement & Latin Extended A letters
+      \u0020         # Space
+      \u0027         # Apostrophe
+      \u002E         # Full stop
+    -]+$ # Hyphen has to come at the very end, even for an extended regexp
+  REGEXP
 
   validate :validate_date_of_birth,
            :validate_existing_patients,
@@ -405,6 +416,8 @@ class PatientImportRow
         first_name.header,
         "is greater than #{MAX_FIELD_LENGTH} characters long"
       )
+    elsif !first_name.to_s.match?(VALID_NAME_REGEX)
+      errors.add(first_name.header, "includes invalid character(s)")
     end
   end
 
@@ -425,6 +438,8 @@ class PatientImportRow
         last_name.header,
         "is greater than #{MAX_FIELD_LENGTH} characters long"
       )
+    elsif !last_name.to_s.match?(VALID_NAME_REGEX)
+      errors.add(last_name.header, "includes invalid character(s)")
     end
   end
 
