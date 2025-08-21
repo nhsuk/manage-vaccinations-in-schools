@@ -7,7 +7,6 @@
 #  id                 :bigint           not null, primary key
 #  academic_year      :integer          not null
 #  delivery_site      :integer          not null
-#  full_dose          :boolean          not null
 #  vaccine_method     :integer          not null
 #  created_at         :datetime         not null
 #  updated_at         :datetime         not null
@@ -38,8 +37,6 @@ class PatientSpecificDirection < ApplicationRecord
   belongs_to :patient
   belongs_to :programme
   belongs_to :vaccine
-
-  validates :full_dose, inclusion: { in: [true, false] }
 
   enum :delivery_site,
        {

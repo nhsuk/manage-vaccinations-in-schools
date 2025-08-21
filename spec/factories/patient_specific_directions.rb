@@ -7,7 +7,6 @@
 #  id                 :bigint           not null, primary key
 #  academic_year      :integer          not null
 #  delivery_site      :integer          not null
-#  full_dose          :boolean          not null
 #  vaccine_method     :integer          not null
 #  created_at         :datetime         not null
 #  updated_at         :datetime         not null
@@ -40,11 +39,6 @@ FactoryBot.define do
 
     delivery_site { "left_arm_upper_position" }
     vaccine_method { "injection" }
-    full_dose { true }
     academic_year { Time.current.to_date.academic_year }
-
-    trait :half_dose do
-      full_dose { false }
-    end
   end
 end
