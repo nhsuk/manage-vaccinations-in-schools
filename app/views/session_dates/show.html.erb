@@ -1,5 +1,5 @@
 <% content_for :before_main do %>
-  <%= govuk_back_link(href: edit_session_path(@session)) %>
+  <%= govuk_back_link(href: session_edit_path(@session)) %>
 <% end %>
 
 <%= h1 "When will sessions be held?" %>
@@ -42,6 +42,6 @@
 
   <div class="nhsuk-button-group">
     <%= f.govuk_submit "Continue" %>
-    <%= govuk_link_to "Back", edit_session_path(@session) %>
+    <%= govuk_link_to "Back", session_edit_path(@session) %>
   </div>
 <% end %>
