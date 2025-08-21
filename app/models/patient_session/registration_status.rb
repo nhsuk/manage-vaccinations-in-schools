@@ -27,8 +27,14 @@ class PatientSession::RegistrationStatus < ApplicationRecord
            through: :patient
 
   has_one :session_attendance,
-          -> { today },
-          through: :patient_session,
+          -> do
+            today.where(
+              session_dates: {
+                session_id: it.patient_session.session_id
+              }
+            )
+          end,
+          through: :patient,
           source: :session_attendances
 
   enum :status,
