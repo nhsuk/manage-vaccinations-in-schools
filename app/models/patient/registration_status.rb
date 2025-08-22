@@ -2,7 +2,7 @@
 
 # == Schema Information
 #
-# Table name: patient_session_registration_statuses
+# Table name: patient_registration_statuses
 #
 #  id                 :bigint           not null, primary key
 #  status             :integer          default("unknown"), not null
@@ -10,14 +10,14 @@
 #
 # Indexes
 #
-#  idx_on_patient_session_id_438fc21144                   (patient_session_id) UNIQUE
-#  index_patient_session_registration_statuses_on_status  (status)
+#  index_patient_registration_statuses_on_patient_session_id  (patient_session_id) UNIQUE
+#  index_patient_registration_statuses_on_status              (status)
 #
 # Foreign Keys
 #
 #  fk_rails_...  (patient_session_id => patient_sessions.id) ON DELETE => cascade
 #
-class PatientSession::RegistrationStatus < ApplicationRecord
+class Patient::RegistrationStatus < ApplicationRecord
   belongs_to :patient_session
 
   has_one :patient, through: :patient_session
