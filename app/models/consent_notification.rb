@@ -50,9 +50,15 @@ class ConsentNotification < ApplicationRecord
 
   scope :reminder, -> { initial_reminder.or(subsequent_reminder) }
 
-  def reminder?
-    initial_reminder? || subsequent_reminder?
-  end
+  def reminder? = initial_reminder? || subsequent_reminder?
+
+  def sent_by_user? = sent_by != nil
+
+  def sent_by_background_job? = sent_by.nil?
+
+  def automated_reminder? = sent_by_background_job? && reminder?
+
+  def manual_reminder? = sent_by_user? && reminder?
 
   def self.create_and_send!(
     patient:,

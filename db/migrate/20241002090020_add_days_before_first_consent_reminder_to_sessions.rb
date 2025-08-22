@@ -4,7 +4,7 @@ class AddDaysBeforeFirstConsentReminderToSessions < ActiveRecord::Migration[7.2]
   def change
     change_table :sessions, bulk: true do |t|
       t.integer :days_before_first_consent_reminder
-      t.remove :send_consent_reminders_at, type: :datetime
+      t.remove :next_reminder_dates, type: :datetime
     end
 
     rename_column :teams,
