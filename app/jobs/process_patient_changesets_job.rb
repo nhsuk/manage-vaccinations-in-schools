@@ -6,8 +6,12 @@ class ProcessPatientChangesetsJob < ApplicationJob
   queue_as :imports
 
   def perform(patient_changeset, step_name = nil)
-    SemanticLogger.tagged(patient_changeset_id: patient_changeset.id) do
-      step_name ||= first_step_name
+    step_name ||= first_step_name
+
+    SemanticLogger.tagged(
+      patient_changeset_id: patient_changeset.id,
+      step: step_name
+    ) do
       step = steps[step_name]
 
       result, pds_patient =
@@ -24,7 +28,7 @@ class ProcessPatientChangesetsJob < ApplicationJob
 
       next_step = step[result]
 
-      if next_step == :give_up
+      if result == :error || next_step.nil? || next_step == :give_up
         finish_processing(patient_changeset)
       elsif next_step == :save_nhs_number_if_unique
         if nhs_number_is_unique_across_searches?(patient_changeset)
@@ -38,8 +42,6 @@ class ProcessPatientChangesetsJob < ApplicationJob
       elsif next_step.in?(steps.keys)
         raise "Recursive step detected: #{next_step}" if next_step == step_name
         enqueue_next_search(patient_changeset, next_step)
-      elsif result == :no_postcode
-        finish_processing(patient_changeset)
       else
         raise "Unknown step: #{next_step}"
       end
