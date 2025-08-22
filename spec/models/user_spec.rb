@@ -119,7 +119,7 @@ describe User do
     end
   end
 
-  describe "#can_supply_using_pgd??" do
+  describe "#can_supply_using_pgd?" do
     subject { user.can_supply_using_pgd? }
 
     context "cis2 is enabled", cis2: :enabled do
@@ -147,6 +147,50 @@ describe User do
         let(:user) { build(:admin) }
 
         it { should be(false) }
+      end
+    end
+  end
+
+  describe "#can_administer_without_prescription?" do
+    subject { user.can_administer_without_prescription? }
+
+    context "cis2 is enabled", cis2: :enabled do
+      context "when the user is a nurse" do
+        let(:user) { build(:nurse) }
+
+        it { should be(false) }
+      end
+
+      context "when the user is admin staff" do
+        let(:user) { build(:admin) }
+
+        it { should be(false) }
+      end
+
+      context "when the user is a healthcare assistant" do
+        let(:user) { build(:healthcare_assistant) }
+
+        it { should be(true) }
+      end
+    end
+
+    context "cis2 is disabled", cis2: :disabled do
+      context "when the user is a nurse" do
+        let(:user) { build(:nurse) }
+
+        it { should be(false) }
+      end
+
+      context "when the user is admin staff" do
+        let(:user) { build(:admin) }
+
+        it { should be(false) }
+      end
+
+      context "when the user is a healthcare assistant" do
+        let(:user) { build(:healthcare_assistant) }
+
+        it { should be(true) }
       end
     end
   end
