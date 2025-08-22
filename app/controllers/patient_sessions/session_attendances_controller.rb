@@ -41,10 +41,6 @@ class PatientSessions::SessionAttendancesController < PatientSessions::BaseContr
 
   private
 
-  def set_session_date
-    @session_date = @session.session_dates.find_by!(value: Date.current)
-  end
-
   def set_session_attendance
     @session_attendance =
       authorize @patient_session

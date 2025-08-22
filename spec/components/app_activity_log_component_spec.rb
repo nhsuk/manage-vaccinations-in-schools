@@ -483,7 +483,8 @@ describe AppActivityLogComponent do
       create(
         :pre_screening,
         performed_by: user,
-        patient_session:,
+        patient:,
+        session: patient_session.session,
         notes: "Some notes",
         created_at: Time.zone.local(2025, 6, 1, 12)
       )

@@ -4,7 +4,13 @@ class VaccinateForm
   include ActiveModel::Model
   include ActiveModel::Attributes
 
-  attr_accessor :patient_session, :programme, :current_user, :todays_batch
+  attr_accessor :patient,
+                :session_date,
+                :programme,
+                :current_user,
+                :todays_batch
+
+  delegate :session, to: :session_date
 
   attribute :identity_check_confirmed_by_other_name, :string
   attribute :identity_check_confirmed_by_other_relationship, :string
@@ -90,19 +96,19 @@ class VaccinateForm
       identity_check_confirmed_by_patient
     draft_vaccination_record.location_id =
       session.location_id unless session.generic_clinic?
-    draft_vaccination_record.patient_id = patient_session.patient_id
+    draft_vaccination_record.patient_id = patient.id
     draft_vaccination_record.performed_at = Time.current
     draft_vaccination_record.performed_by_user = current_user
     draft_vaccination_record.performed_ods_code = organisation.ods_code
     draft_vaccination_record.programme = programme
-    draft_vaccination_record.session_id = patient_session.session_id
+    draft_vaccination_record.session_id = session.id
 
     draft_vaccination_record.save # rubocop:disable Rails/SaveBang
   end
 
   private
 
-  delegate :organisation, :session, to: :patient_session
+  delegate :organisation, to: :session
 
   def administered? = vaccine_method != "none"
 
@@ -131,10 +137,11 @@ class VaccinateForm
 
   def pre_screening
     @pre_screening ||=
-      patient_session.pre_screenings.build(
+      patient.pre_screenings.build(
         notes: pre_screening_notes,
         performed_by: current_user,
-        programme:
+        programme:,
+        session_date:
       )
   end
 end
