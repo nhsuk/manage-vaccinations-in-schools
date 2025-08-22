@@ -51,6 +51,8 @@ class Programme < ApplicationRecord
 
   def seasonal? = flu?
 
+  def suitable_for_delegation? = flu?
+
   DEFAULT_YEAR_GROUPS_BY_TYPE = {
     "flu" => (0..11).to_a,
     "hpv" => (8..11).to_a,

@@ -288,6 +288,10 @@ class Session < ApplicationRecord
     close_consent_at&.today? || close_consent_at&.future? || false
   end
 
+  def suitable_for_delegation?
+    Flipper.enabled?(:delegation) && programmes.any?(&:suitable_for_delegation?)
+  end
+
   private
 
   def set_slug

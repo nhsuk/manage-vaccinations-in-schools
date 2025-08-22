@@ -51,9 +51,6 @@ class SessionsController < ApplicationController
     end
   end
 
-  def edit
-  end
-
   def import
     draft_import = DraftImport.new(request_session: session, current_user:)
 
