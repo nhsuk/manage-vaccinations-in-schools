@@ -10,7 +10,6 @@
 #  delivery_site                         :integer
 #  discarded_at                          :datetime
 #  dose_sequence                         :integer
-#  external_source                       :integer
 #  full_dose                             :boolean
 #  location_name                         :string
 #  nhs_immunisations_api_etag            :string
@@ -25,6 +24,7 @@
 #  performed_by_given_name               :string
 #  performed_ods_code                    :string
 #  protocol                              :integer
+#  source                                :integer          not null
 #  uuid                                  :uuid             not null
 #  created_at                            :datetime         not null
 #  updated_at                            :datetime         not null
@@ -102,7 +102,7 @@ FactoryBot.define do
     protocol { "pgd" }
 
     uuid { SecureRandom.uuid }
-    external_source { "historical_upload" if session.blank? }
+    source { session.present? ? "mavis" : "historical_upload" }
 
     location { session&.location unless session&.generic_clinic? }
     location_name { "Unknown" if location.nil? }

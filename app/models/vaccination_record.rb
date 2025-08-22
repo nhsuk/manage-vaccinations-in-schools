@@ -10,7 +10,6 @@
 #  delivery_site                         :integer
 #  discarded_at                          :datetime
 #  dose_sequence                         :integer
-#  external_source                       :integer
 #  full_dose                             :boolean
 #  location_name                         :string
 #  nhs_immunisations_api_etag            :string
@@ -25,6 +24,7 @@
 #  performed_by_given_name               :string
 #  performed_ods_code                    :string
 #  protocol                              :integer
+#  source                                :integer          not null
 #  uuid                                  :uuid             not null
 #  created_at                            :datetime         not null
 #  updated_at                            :datetime         not null
@@ -140,12 +140,16 @@ class VaccinationRecord < ApplicationRecord
        },
        validate: true
 
-  enum :external_source,
-       { historical_upload: 0, nhs_immunisations_api: 1 },
+  attribute :source, :integer
+  enum :source,
+       {
+         mavis: 0,
+         historical_upload: 1,
+         nhs_immunisations_api: 2,
+         consent_refusal: 3
+       },
        prefix: true,
-       validate: {
-         allow_nil: true
-       }
+       validate: true
 
   encrypts :notes
 

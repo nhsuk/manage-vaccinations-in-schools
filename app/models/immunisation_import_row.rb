@@ -94,7 +94,7 @@ class ImmunisationImportRow
     return unless valid?
 
     outcome = (administered ? "administered" : reason_not_administered_value)
-    external_source = "historical_upload" unless offline_recording?
+    source = (offline_recording? ? "mavis" : "historical_upload")
 
     attributes = {
       dose_sequence: dose_sequence_value,
@@ -127,7 +127,7 @@ class ImmunisationImportRow
       notes: notes&.to_s,
       vaccine_id: vaccine&.id,
       discarded_at: nil,
-      external_source:
+      source:
     }
 
     vaccination_record =
