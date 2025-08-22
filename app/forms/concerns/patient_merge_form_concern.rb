@@ -8,6 +8,10 @@ module PatientMergeFormConcern
 
   included { attribute :nhs_number, :string }
 
+  def nhs_number=(value)
+    super(value.blank? ? nil : value.gsub(/\s/, ""))
+  end
+
   def existing_patient
     @existing_patient ||=
       if nhs_number.present?
