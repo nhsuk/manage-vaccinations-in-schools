@@ -142,6 +142,13 @@ class ProcessPatientChangesetsJob < ApplicationJob
     [:no_matches, nil]
   rescue NHS::PDS::TooManyMatches
     [:too_many_matches, nil]
+  rescue Faraday::ClientError, Faraday::ServerError => e
+    Rails.logger.error(
+      "Error doing PDS search for patient changeset #{patient_changeset.id}: #{e.message}"
+    )
+    Sentry.capture_exception(e)
+
+    [:error, nil]
   end
 
   def enqueue_next_search(patient_changeset, next_step)

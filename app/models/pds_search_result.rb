@@ -42,6 +42,6 @@ class PDSSearchResult < ApplicationRecord
        validate: true
 
   enum :result,
-       { no_matches: 0, one_match: 1, too_many_matches: 2 },
+       { no_matches: 0, one_match: 1, too_many_matches: 2, error: 3 },
        validate: true
 end
