@@ -6,41 +6,43 @@ class ProcessPatientChangesetsJob < ApplicationJob
   queue_as :imports
 
   def perform(patient_changeset, step_name = nil)
-    step_name ||= first_step_name
-    step = steps[step_name]
+    SemanticLogger.tagged(patient_changeset_id: patient_changeset.id) do
+      step_name ||= first_step_name
+      step = steps[step_name]
 
-    result, pds_patient =
-      search_for_patient(patient_changeset.child_attributes, step_name)
-    patient_changeset.search_results << {
-      step: step_name,
-      result: result,
-      nhs_number: pds_patient&.nhs_number
-    }
+      result, pds_patient =
+        search_for_patient(patient_changeset.child_attributes, step_name)
+      patient_changeset.search_results << {
+        step: step_name,
+        result: result,
+        nhs_number: pds_patient&.nhs_number
+      }
 
-    if multiple_nhs_numbers_found?(patient_changeset)
-      finish_processing(patient_changeset)
-    end
-
-    next_step = step[result]
-
-    if next_step == :give_up
-      finish_processing(patient_changeset)
-    elsif next_step == :save_nhs_number_if_unique
-      if nhs_number_is_unique_across_searches?(patient_changeset)
-        unique_nhs_number = get_unique_nhs_number(patient_changeset)
-        if unique_nhs_number
-          patient_changeset.child_attributes["nhs_number"] = unique_nhs_number
-          patient_changeset.pds_nhs_number = unique_nhs_number
-        end
+      if multiple_nhs_numbers_found?(patient_changeset)
+        finish_processing(patient_changeset)
       end
-      finish_processing(patient_changeset)
-    elsif next_step.in?(steps.keys)
-      raise "Recursive step detected: #{next_step}" if next_step == step_name
-      enqueue_next_search(patient_changeset, next_step)
-    elsif result == :no_postcode
-      finish_processing(patient_changeset)
-    else
-      raise "Unknown step: #{next_step}"
+
+      next_step = step[result]
+
+      if next_step == :give_up
+        finish_processing(patient_changeset)
+      elsif next_step == :save_nhs_number_if_unique
+        if nhs_number_is_unique_across_searches?(patient_changeset)
+          unique_nhs_number = get_unique_nhs_number(patient_changeset)
+          if unique_nhs_number
+            patient_changeset.child_attributes["nhs_number"] = unique_nhs_number
+            patient_changeset.pds_nhs_number = unique_nhs_number
+          end
+        end
+        finish_processing(patient_changeset)
+      elsif next_step.in?(steps.keys)
+        raise "Recursive step detected: #{next_step}" if next_step == step_name
+        enqueue_next_search(patient_changeset, next_step)
+      elsif result == :no_postcode
+        finish_processing(patient_changeset)
+      else
+        raise "Unknown step: #{next_step}"
+      end
     end
   end
 
@@ -144,10 +146,9 @@ class ProcessPatientChangesetsJob < ApplicationJob
     [:too_many_matches, nil]
   rescue Faraday::ClientError, Faraday::ServerError => e
     Rails.logger.error(
-      "Error doing PDS search for patient changeset #{patient_changeset.id}: #{e.message}"
+      "Error doing PDS search for patient changeset: #{e.message}"
     )
     Sentry.capture_exception(e)
-
     [:error, nil]
   end
 
