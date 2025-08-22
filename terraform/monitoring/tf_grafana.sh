@@ -62,7 +62,7 @@ if [[ -z "$ACTION" ]]; then
   usage
   exit 1
 fi
-terraform -chdir="./aws" init -backend-config="env/${ENVIRONMENT}-backend.hcl" -reconfigure
+terraform -chdir="./aws" init -backend-config="env/${ENVIRONMENT}-backend.hcl" -upgrade -reconfigure
 GRAFANA_ENDPOINT="https://$(terraform -chdir="./aws" output -raw grafana_endpoint)"
 WORKSPACE_ID=$(terraform -chdir="./aws" output -raw grafana_workspace_id)
 SERVICE_ACCOUNT_ID=$(terraform -chdir="./aws" output -raw service_account_id)
@@ -84,7 +84,7 @@ if [[ -z "$GRAFANA_ENDPOINT" ]] || [[ -z "$SERVICE_ACCOUNT_ID" ]]; then
   exit 1
 fi
 
-terraform -chdir="./grafana" init -backend-config="env/${ENVIRONMENT}-backend.hcl" -reconfigure
+terraform -chdir="./grafana" init -backend-config="env/${ENVIRONMENT}-backend.hcl" -upgrade -reconfigure
 
 case "$ACTION" in
   plan)

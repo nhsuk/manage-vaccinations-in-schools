@@ -196,8 +196,36 @@ describe "Import child records" do
   def and_pds_lookup_during_import_is_enabled
     Flipper.enable(:pds_lookup_during_import)
 
-    stub_pds_search_to_return_a_patient
-    stub_pds_get_nhs_number_to_return_a_patient
+    stub_pds_search_to_return_no_patients(
+      "family" => "Smith",
+      "given" => "Jimmy",
+      "birthdate" => "eq2010-01-02",
+      "address-postalcode" => "SW1A 1AA"
+    )
+
+    stub_pds_search_to_return_a_patient(
+      "9999075320",
+      "family" => "Clarke",
+      "given" => "Jennifer",
+      "birthdate" => "eq2010-01-01",
+      "address-postalcode" => "SW1A 1AA"
+    )
+
+    stub_pds_search_to_return_a_patient(
+      "9999075320",
+      "family" => "Clarke",
+      "given" => "Jennifer",
+      "birthdate" => "eq2010-01-01",
+      "address-postalcode" => "SW1A 1AB"
+    )
+
+    stub_pds_search_to_return_a_patient(
+      "9435764479",
+      "family" => "Doe",
+      "given" => "Mark",
+      "birthdate" => "eq2010-01-03",
+      "address-postalcode" => "SW1A 1AA"
+    )
   end
 
   def and_i_can_choose_the_academic_year_on_import

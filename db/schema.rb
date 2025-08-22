@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_20_085332) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_21_073434) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -456,6 +456,26 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_20_085332) do
     t.index ["immunisation_import_id", "vaccination_record_id"], name: "idx_on_immunisation_import_id_vaccination_record_id_588e859772", unique: true
   end
 
+  create_table "local_authorities", id: false, force: :cascade do |t|
+    t.string "mhclg_code", null: false
+    t.string "gss_code"
+    t.integer "gias_code"
+    t.string "official_name", null: false
+    t.string "short_name", null: false
+    t.string "gov_uk_slug"
+    t.string "nation", null: false
+    t.string "region"
+    t.date "end_date"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_at"], name: "index_local_authorities_on_created_at"
+    t.index ["gias_code"], name: "index_local_authorities_on_gias_code", unique: true
+    t.index ["gss_code"], name: "index_local_authorities_on_gss_code", unique: true
+    t.index ["mhclg_code"], name: "index_local_authorities_on_mhclg_code", unique: true
+    t.index ["nation", "short_name"], name: "index_local_authorities_on_nation_and_short_name"
+    t.index ["short_name"], name: "index_local_authorities_on_short_name"
+  end
+
   create_table "location_programme_year_groups", force: :cascade do |t|
     t.bigint "location_id", null: false
     t.bigint "programme_id", null: false
@@ -482,9 +502,13 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_20_085332) do
     t.integer "gias_local_authority_code"
     t.integer "gias_establishment_number"
     t.integer "status", default: 0, null: false
+    t.string "site"
+    t.string "systm_one_code"
     t.index ["ods_code"], name: "index_locations_on_ods_code", unique: true
     t.index ["subteam_id"], name: "index_locations_on_subteam_id"
-    t.index ["urn"], name: "index_locations_on_urn", unique: true
+    t.index ["systm_one_code"], name: "index_locations_on_systm_one_code", unique: true
+    t.index ["urn", "site"], name: "index_locations_on_urn_and_site", unique: true
+    t.index ["urn"], name: "index_locations_on_urn", unique: true, where: "(site IS NULL)"
   end
 
   create_table "notes", force: :cascade do |t|
@@ -565,6 +589,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_20_085332) do
     t.bigint "school_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "uploaded_nhs_number"
+    t.string "pds_nhs_number"
+    t.boolean "matched_on_nhs_number"
     t.index ["import_type", "import_id"], name: "index_patient_changesets_on_import"
     t.index ["patient_id"], name: "index_patient_changesets_on_patient_id"
     t.index ["status"], name: "index_patient_changesets_on_status"
@@ -771,6 +798,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_20_085332) do
     t.string "slug", null: false
     t.date "send_invitations_at"
     t.boolean "requires_registration", default: true, null: false
+    t.boolean "psd_enabled", default: false, null: false
+    t.boolean "national_protocol_enabled", default: false, null: false
     t.index ["location_id"], name: "index_sessions_on_location_id"
     t.index ["team_id", "academic_year"], name: "index_sessions_on_team_id_and_academic_year"
     t.index ["team_id", "location_id"], name: "index_sessions_on_team_id_and_location_id"
@@ -858,7 +887,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_20_085332) do
     t.string "given_name", null: false
     t.string "family_name", null: false
     t.string "session_token"
-    t.integer "fallback_role", default: 0, null: false
+    t.integer "fallback_role"
     t.string "reporting_api_session_token"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["provider", "uid"], name: "index_users_on_provider_and_uid", unique: true
@@ -890,13 +919,15 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_20_085332) do
     t.bigint "vaccine_id"
     t.boolean "full_dose"
     t.datetime "nhs_immunisations_api_synced_at"
-    t.string "nhs_immunisations_api_id"
     t.string "nhs_immunisations_api_etag"
+    t.string "nhs_immunisations_api_id"
     t.integer "protocol"
     t.datetime "nhs_immunisations_api_sync_pending_at"
     t.boolean "notify_parents"
+    t.bigint "location_id"
     t.index ["batch_id"], name: "index_vaccination_records_on_batch_id"
     t.index ["discarded_at"], name: "index_vaccination_records_on_discarded_at"
+    t.index ["location_id"], name: "index_vaccination_records_on_location_id"
     t.index ["nhs_immunisations_api_id"], name: "index_vaccination_records_on_nhs_immunisations_api_id", unique: true
     t.index ["patient_id"], name: "index_vaccination_records_on_patient_id"
     t.index ["performed_by_user_id"], name: "index_vaccination_records_on_performed_by_user_id"

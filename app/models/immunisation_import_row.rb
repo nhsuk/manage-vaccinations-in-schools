@@ -98,6 +98,7 @@ class ImmunisationImportRow
     attributes = {
       dose_sequence: dose_sequence_value,
       full_dose: true,
+      location:,
       location_name:,
       outcome:,
       patient_id: patient.id,
@@ -123,7 +124,8 @@ class ImmunisationImportRow
       delivery_method: delivery_method_value,
       delivery_site: delivery_site_value,
       notes: notes&.to_s,
-      vaccine_id: vaccine&.id
+      vaccine_id: vaccine&.id,
+      discarded_at: nil
     }
 
     vaccination_record =
@@ -225,8 +227,12 @@ class ImmunisationImportRow
 
   delegate :organisation, to: :team
 
+  def location
+    session&.location unless session&.generic_clinic?
+  end
+
   def location_name
-    return unless session.nil? || session.location.generic_clinic?
+    return unless location.nil?
 
     if is_school_setting? || (is_unknown_setting? && clinic_name.blank?)
       school&.name || school_name&.to_s || "Unknown"
@@ -267,7 +273,8 @@ class ImmunisationImportRow
     @school ||=
       if school_urn.present? && school_urn.to_s != SCHOOL_URN_HOME_EDUCATED &&
            school_urn.to_s != SCHOOL_URN_UNKNOWN
-        Location.school.find_by(urn: school_urn.to_s)
+        Location.school.find_by_urn_and_site(school_urn.to_s) ||
+          Location.school.find_by(systm_one_code: school_urn.to_s)
       end
   end
 
@@ -873,8 +880,10 @@ class ImmunisationImportRow
   def validate_school_urn
     return if school_urn.blank?
 
-    unless Location.school.exists?(urn: school_urn.to_s) ||
-             school_urn.to_s.in?([SCHOOL_URN_HOME_EDUCATED, SCHOOL_URN_UNKNOWN])
+    unless school_urn.to_s.in?(
+             [SCHOOL_URN_HOME_EDUCATED, SCHOOL_URN_UNKNOWN]
+           ) || Location.school.where_urn_and_site(school_urn.to_s).exists? ||
+             Location.school.exists?(systm_one_code: school_urn.to_s)
       errors.add(
         school_urn.header,
         "The school URN is not recognised. If you’ve checked the URN, " \

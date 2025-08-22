@@ -7,6 +7,8 @@
 #  id                            :bigint           not null, primary key
 #  academic_year                 :integer          not null
 #  days_before_consent_reminders :integer
+#  national_protocol_enabled     :boolean          default(FALSE), not null
+#  psd_enabled                   :boolean          default(FALSE), not null
 #  requires_registration         :boolean          default(TRUE), not null
 #  send_consent_requests_at      :date
 #  send_invitations_at           :date
@@ -166,7 +168,7 @@ class Session < ApplicationRecord
 
   before_create :set_slug
 
-  delegate :clinic?, :school?, to: :location
+  delegate :clinic?, :generic_clinic?, :school?, to: :location
 
   def to_param
     slug

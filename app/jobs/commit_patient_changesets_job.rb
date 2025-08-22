@@ -15,11 +15,11 @@ class CommitPatientChangesetsJob < ApplicationJob
         .changesets
         .includes(:school)
         .find_in_batches(batch_size: 100) do |changesets|
+          increment_column_counts!(import, counts, changesets)
+
           import_patients_and_parents(changesets, import)
 
           import_school_moves(changesets, import)
-
-          increment_column_counts!(import, counts, changesets)
         end
 
       import.postprocess_rows!
@@ -43,6 +43,9 @@ class CommitPatientChangesetsJob < ApplicationJob
     deduplicate_patients!(patients, relationships)
     Patient.import(patients.to_a, on_duplicate_key_update: :all)
     link_records_to_import(import, Patient, patients)
+
+    changesets.each(&:assign_patient_id)
+    PatientChangeset.import(changesets, on_duplicate_key_update: :all)
 
     Parent.import(parents.to_a, on_duplicate_key_update: :all)
     link_records_to_import(import, Parent, parents)

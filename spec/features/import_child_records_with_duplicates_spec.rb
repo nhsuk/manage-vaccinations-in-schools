@@ -112,8 +112,36 @@ describe "Child record imports duplicates" do
 
     Flipper.enable(:pds_lookup_during_import)
 
-    stub_pds_search_to_return_a_patient
-    stub_pds_get_nhs_number_to_return_a_patient
+    stub_pds_search_to_return_no_patients(
+      "family" => "Smith",
+      "given" => "Jimmy",
+      "birthdate" => "eq2010-01-02",
+      "address-postalcode" => "SW1A 1AA"
+    )
+
+    stub_pds_search_to_return_a_patient(
+      "9999075320",
+      "family" => "Clarke",
+      "given" => "Jennifer",
+      "birthdate" => "eq2010-01-01",
+      "address-postalcode" => "SW1A 1AA"
+    )
+
+    stub_pds_search_to_return_a_patient(
+      "9999075320",
+      "family" => "Clarke",
+      "given" => "Jennifer",
+      "birthdate" => "eq2010-01-01",
+      "address-postalcode" => "SW1A 1AB"
+    )
+
+    stub_pds_search_to_return_a_patient(
+      "9435764479",
+      "family" => "Doe",
+      "given" => "Mark",
+      "birthdate" => "eq2010-01-03",
+      "address-postalcode" => "SW1A 1AA"
+    )
   end
 
   def and_an_hpv_programme_is_underway
@@ -190,19 +218,21 @@ describe "Child record imports duplicates" do
   end
 
   def then_i_should_see_the_import_page_with_duplicate_records
-    expect(page).to have_content("3 duplicate records need review")
+    expect(page).to have_content(
+      "3 records have import issues to resolve before they can be imported into Mavis"
+    )
   end
 
   def when_i_choose_to_keep_the_duplicate_record
-    choose "Use duplicate record"
+    choose "Use uploaded child record"
   end
 
   def when_i_choose_to_keep_both_records
-    choose "Keep both records"
+    choose "Keep both child records"
   end
 
   def when_i_choose_to_keep_the_previously_uploaded_record
-    choose "Keep previously uploaded record"
+    choose "Keep existing child"
   end
 
   def when_i_submit_the_form_without_choosing_anything
@@ -220,14 +250,12 @@ describe "Child record imports duplicates" do
   end
 
   def then_i_should_see_the_first_duplicate_record
-    expect(page).to have_content("This record needs reviewing")
     expect(page).to have_content("Date of birth1 January 2010 (aged 14)")
     expect(page).to have_content("Address10 Downing StreetLondonSW11 1AA")
     expect(page).to have_content("Address10 Downing StreetLondonSW1A 1AA")
   end
 
   def then_i_should_see_the_second_duplicate_record
-    expect(page).to have_content("This record needs reviewing")
     expect(page).to have_content("Full nameSMITH, James")
     expect(page).to have_content("Full nameSMITH, Jimmy")
     expect(page).to have_content("Address10 Downing StreetLondonSW11 1AA")
@@ -286,7 +314,6 @@ describe "Child record imports duplicates" do
   end
 
   def then_i_should_see_the_third_duplicate_record
-    expect(page).to have_content("This record needs reviewing")
     expect(page).to have_content("Full nameDOE, Mark")
     expect(page).to have_content("Date of birth3 January 2010 (aged 14)")
     expect(page).to have_content("Date of birth3 March 2013 (aged 11)")

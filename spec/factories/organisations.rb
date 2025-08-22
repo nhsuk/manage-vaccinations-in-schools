@@ -14,9 +14,9 @@
 #  index_organisations_on_ods_code  (ods_code) UNIQUE
 #
 FactoryBot.define do
-  factory :organisation do
-    transient { sequence(:identifier) }
+  sequence(:ods_code) { |n| "U#{n}" }
 
-    ods_code { "U#{identifier}" }
+  factory :organisation do
+    ods_code { generate(:ods_code) }
   end
 end

@@ -89,7 +89,14 @@ class Reports::SystmOneExporter
         .administered
         .where(programme:)
         .for_academic_year(academic_year)
-        .includes(:batch, :location, :vaccine, :patient, :performed_by_user)
+        .includes(
+          :batch,
+          :location,
+          :patient,
+          :performed_by_user,
+          :session,
+          :vaccine
+        )
 
     if start_date.present?
       scope =
@@ -148,11 +155,21 @@ class Reports::SystmOneExporter
     ]
   end
 
-  # TODO: Needs support for community and generic clinics.
   def practice_code(vaccination_record)
-    location = vaccination_record.session.location
+    location = vaccination_record.location
 
-    location.school? ? location.urn : location.ods_code
+    if location&.systm_one_code.present?
+      location.systm_one_code
+    elsif location&.school?
+      location.urn
+    elsif location
+      location.ods_code
+    else
+      # TODO: Needs support for generic clinics. The `location_id` is
+      #  `nil` but `location_name` is a human-readable string, so we
+      #  have no choice but to use the location of the session.
+      vaccination_record.session.location.ods_code
+    end
   end
 
   def gender_code(code)

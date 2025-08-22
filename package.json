@@ -23,7 +23,7 @@
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.10.2",
-    "@playwright/test": "^1.54.2",
+    "@playwright/test": "^1.55.0",
     "@prettier/plugin-ruby": "^4.0.4",
     "@types/jest": "^30.0.0",
     "esbuild-jest": "^0.5.0",
@@ -32,8 +32,8 @@
     "jest-environment-jsdom": "^30.0.5",
     "jest-fetch-mock": "^3.0.3",
     "mutationobserver-shim": "^0.3.7",
-    "officecrypto-tool": "^0.0.18",
-    "playwright-core": "^1.54.2",
+    "officecrypto-tool": "^0.0.19",
+    "playwright-core": "^1.55.0",
     "prettier": "^3.6.2"
   },
   "jest": {

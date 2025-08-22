@@ -29,7 +29,7 @@ describe "Import child records" do
     # Case 3: Existing patient with NHS number (Catherine) - should show duplicate review
     when_i_go_back_to_the_import_page
     then_i_see_an_import_review_for_the_second_patient_uploaded_without_nhs_number
-    when_i_click_review
+    when_i_click_review_for("WILLIAMS, Catherine")
     then_i_see_both_records_have_an_nhs_number
     and_i_see_address_differences_for_review
     when_i_use_duplicate_record_during_merge
@@ -53,6 +53,20 @@ describe "Import child records" do
     when_i_click_on_patient_with_unknown_relationship
     then_i_see_patient_with_unknown_relationship_details
     and_oliver_has_unknown_relationship_parent
+
+    # Case 7: Patient that matches existing exactly (Oliver)
+    when_i_go_back_to_the_import_page
+    then_i_see_one_record_is_an_exact_match
+
+    # Case 8: Patient uploaded with incorrect NHS number (Lucy)
+    when_i_go_back_to_the_import_page
+    then_i_see_an_nhs_discrepancy
+    and_lucy_has_the_pds_nhs_number
+
+    # Case 9: Patient uploaded with NHS number, PDS returns nothing (Maia) - patient created with uploaded number
+    and_there_is_an_import_review_for_maia
+    when_i_review_and_accept_duplicate_maia_record
+    then_maia_has_the_uploaded_nhs_number
 
     then_school_moves_are_created_appropriately
 
@@ -240,6 +254,14 @@ describe "Import child records" do
     Flipper.enable(:pds_lookup_during_import)
 
     stub_pds_search_to_return_a_patient(
+      "9999075320",
+      "family" => "Tweedle",
+      "given" => "Albert",
+      "birthdate" => "eq2009-12-29",
+      "address-postalcode" => "SW11 1EH"
+    )
+
+    stub_pds_search_to_return_a_patient(
       "9449306168",
       "family" => "Samson",
       "given" => "Betty",
@@ -270,6 +292,37 @@ describe "Import child records" do
       "birthdate" => "eq2010-06-01",
       "address-postalcode" => "SW3 3AA"
     )
+
+    stub_pds_search_to_return_a_patient(
+      "9435714463",
+      "family" => "Williams",
+      "given" => "Lara",
+      "birthdate" => "eq2010-05-15",
+      "address-postalcode" => "B1 1AA"
+    )
+
+    stub_pds_search_to_return_a_patient(
+      "9435753868",
+      "family" => "Green",
+      "given" => "Oliver",
+      "birthdate" => "eq2010-08-15",
+      "address-postalcode" => "SW1W 8JL"
+    )
+
+    stub_pds_search_to_return_a_patient(
+      "9435792170",
+      "family" => "McCarthy",
+      "given" => "Lucy",
+      "birthdate" => "eq2010-08-16",
+      "address-postalcode" => "SW7 5LE"
+    )
+
+    stub_pds_search_to_return_no_patients(
+      "family" => "Smith",
+      "given" => "Maia",
+      "birthdate" => "eq2010-08-16",
+      "address-postalcode" => "W2 3PE"
+    )
   end
 
   def when_i_visit_the_import_page
@@ -282,8 +335,13 @@ describe "Import child records" do
     click_link "1 September 2025 at 12:00pm"
   end
 
-  def when_i_click_review
-    click_link "Review"
+  def when_i_click_review_for(name)
+    within(
+      :xpath,
+      "//div[h3[contains(text(), 'records with import issues')]]"
+    ) do
+      within(:xpath, ".//tr[contains(., '#{name}')]") { click_link "Review" }
+    end
   end
 
   def and_i_upload_import_file(filename)
@@ -404,6 +462,7 @@ describe "Import child records" do
 
   def then_i_see_an_import_review_for_the_second_patient_uploaded_without_nhs_number
     expect(page).to have_content("Actions Review WILLIAMS, Catherine")
+    expect(page).to have_content("Matched on NHS number.")
   end
 
   def when_i_click_on_new_patient_uploaded_without_an_nhs_number
@@ -411,7 +470,7 @@ describe "Import child records" do
   end
 
   def when_i_use_duplicate_record_during_merge
-    choose "Use duplicate record"
+    choose "Use uploaded child record"
     click_on "Resolve duplicate"
   end
 
@@ -448,7 +507,7 @@ describe "Import child records" do
   end
 
   def then_the_existing_patient_has_an_nhs_number_in_mavis
-    expect(Patient.count).to eq(9)
+    expect(Patient.count).to eq(10)
     patient = Patient.where(given_name: "Catherine").first
     expect(patient.nhs_number).to eq("9876543210")
     expect(patient.address_line_1).to eq("456 New Street")
@@ -458,7 +517,7 @@ describe "Import child records" do
 
   def and_i_should_see_correct_patient_counts
     perform_enqueued_jobs
-    expect(Patient.count).to eq(9)
+    expect(Patient.count).to eq(10)
   end
 
   def and_parents_are_created_for_albert
@@ -588,7 +647,7 @@ describe "Import child records" do
 
   def and_import_counts_are_correct
     import = CohortImport.last
-    expect(import.patients.count).to eq(6)
+    expect(import.patients.count).to eq(9)
   end
 
   def when_i_click_on_patient_with_unknown_relationship
@@ -648,5 +707,36 @@ describe "Import child records" do
     expect(SchoolMove.first.patient).to eq(
       Patient.find_by(given_name: "John", family_name: "Smith")
     )
+  end
+
+  def then_i_see_one_record_is_an_exact_match
+    expect(page).to have_content(
+      "1 record was not imported because it already exists in Mavis"
+    )
+  end
+
+  def then_i_see_an_nhs_discrepancy
+    expect(page).to have_content("1 NHS number was updated")
+  end
+
+  def and_lucy_has_the_pds_nhs_number
+    lucy = Patient.find_by(given_name: "Lucy", family_name: "McCarthy")
+    expect(lucy.nhs_number).to eq("9435792170")
+  end
+
+  def and_there_is_an_import_review_for_maia
+    expect(page).to have_content("Actions Review SMITH, Maia")
+    expect(page).to have_content("Possible match found. Review and confirm.")
+  end
+
+  def when_i_review_and_accept_duplicate_maia_record
+    click_link "Review"
+    choose "Use uploaded child record"
+    click_on "Resolve duplicate"
+  end
+
+  def then_maia_has_the_uploaded_nhs_number
+    maia = Patient.find_by(given_name: "Maia", family_name: "Smith")
+    expect(maia.nhs_number).to eq("9435789102")
   end
 end

@@ -13,7 +13,9 @@
 #  gias_local_authority_code :integer
 #  name                      :text             not null
 #  ods_code                  :string
+#  site                      :string
 #  status                    :integer          default("unknown"), not null
+#  systm_one_code            :string
 #  type                      :integer          not null
 #  url                       :text
 #  urn                       :string
@@ -24,9 +26,11 @@
 #
 # Indexes
 #
-#  index_locations_on_ods_code    (ods_code) UNIQUE
-#  index_locations_on_subteam_id  (subteam_id)
-#  index_locations_on_urn         (urn) UNIQUE
+#  index_locations_on_ods_code        (ods_code) UNIQUE
+#  index_locations_on_subteam_id      (subteam_id)
+#  index_locations_on_systm_one_code  (systm_one_code) UNIQUE
+#  index_locations_on_urn             (urn) UNIQUE WHERE (site IS NULL)
+#  index_locations_on_urn_and_site    (urn,site) UNIQUE
 #
 # Foreign Keys
 #

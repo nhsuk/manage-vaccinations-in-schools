@@ -9,7 +9,7 @@
 #  current_sign_in_ip          :string
 #  email                       :string
 #  encrypted_password          :string           default(""), not null
-#  fallback_role               :integer          default("nurse"), not null
+#  fallback_role               :integer
 #  family_name                 :string           not null
 #  given_name                  :string           not null
 #  last_sign_in_at             :datetime
@@ -72,8 +72,17 @@ class User < ApplicationRecord
         -> { where(last_sign_in_at: 1.week.ago..Time.current) }
 
   enum :fallback_role,
-       { nurse: 0, admin: 1, superuser: 2, healthcare_assistant: 3 },
-       prefix: true
+       {
+         nurse: 0,
+         admin: 1,
+         superuser: 2,
+         healthcare_assistant: 3,
+         prescriber: 4
+       },
+       prefix: true,
+       validate: {
+         allow_nil: true
+       }
 
   delegate :fhir_practitioner, to: :fhir_mapper
 
@@ -100,56 +109,49 @@ class User < ApplicationRecord
     end
   end
 
-  def selected_organisation = cis2_info.organisation
-
-  def selected_team = cis2_info.team
-
   def requires_email_and_password?
     provider.blank? || uid.blank?
   end
 
-  def is_admin?
-    if cis2_enabled?
-      cis2_info.is_admin?
-    else
-      fallback_role_admin? || fallback_role_superuser?
-    end
-  end
+  def selected_organisation = cis2_info.organisation
 
-  def is_nurse?
-    cis2_enabled? ? cis2_info.is_nurse? : fallback_role_nurse?
-  end
+  def selected_team = cis2_info.team
 
-  def is_superuser?
-    cis2_enabled? ? cis2_info.is_superuser? : fallback_role_superuser?
-  end
-
-  def is_healthcare_assistant?
-    if cis2_enabled?
-      cis2_info.is_healthcare_assistant?
-    else
-      fallback_role_healthcare_assistant?
-    end
+  def role_name
+    cis2_info.role_name if cis2_enabled?
   end
 
   def role_description
-    role =
-      if is_admin?
-        "Administrator"
-      elsif is_nurse?
-        "Nurse"
-      else
-        "Unknown"
-      end
+    role = (can_supply_using_pgd? ? "Nurse" : "Administrator")
 
-    if is_healthcare_assistant? && is_superuser?
-      "#{role} (Healthcare assistant and superuser)"
-    elsif is_healthcare_assistant?
-      "#{role} (Healthcare assistant)"
-    elsif is_superuser?
+    if can_access_sensitive_records? || can_perform_local_admin_tasks?
       "#{role} (Superuser)"
     else
       role
+    end
+  end
+
+  def can_view?
+    cis2_enabled? ? cis2_info.can_view? : !fallback_role.nil?
+  end
+
+  def can_supply_using_pgd?
+    cis2_enabled? ? cis2_info.can_supply_using_pgd? : fallback_role_nurse?
+  end
+
+  def can_perform_local_admin_tasks?
+    if cis2_enabled?
+      cis2_info.can_perform_local_admin_tasks?
+    else
+      fallback_role_superuser?
+    end
+  end
+
+  def can_access_sensitive_records?
+    if cis2_enabled?
+      cis2_info.can_access_sensitive_records?
+    else
+      fallback_role_superuser?
     end
   end
 

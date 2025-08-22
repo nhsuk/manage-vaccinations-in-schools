@@ -134,8 +134,8 @@ module CIS2AuthHelper
     org_code: nil,
     org_name: "Test SAIS Org",
     user_only_has_one_role: false,
-    workgroups: nil,
-    no_workgroup: false,
+    activity_codes: [],
+    workgroups: [],
     sid: nil,
     selected_roleid: "5555666677778888"
   )
@@ -155,17 +155,13 @@ module CIS2AuthHelper
 
     role_code ||= {
       nurse: CIS2Info::NURSE_ROLE,
-      admin_staff: CIS2Info::ADMIN_ROLE
+      admin: CIS2Info::ADMIN_ROLE
     }.fetch(role)
 
     nhsid_nrbac_role = raw_info["nhsid_nrbac_roles"][0]
     nhsid_nrbac_role["role_code"] = role_code
-    if no_workgroup
-      nhsid_nrbac_role.delete("workgroups")
-      nhsid_nrbac_role.delete("workgroups_codes")
-    elsif workgroups
-      nhsid_nrbac_role["workgroups"] = workgroups
-    end
+    nhsid_nrbac_role["activity_codes"] = activity_codes
+    nhsid_nrbac_role["workgroups"] = workgroups
 
     mock_auth["uid"] = uid
     raw_info["uid"] = uid

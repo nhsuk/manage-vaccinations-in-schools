@@ -94,8 +94,26 @@ describe "Class list imports duplicates" do
   def and_pds_lookup_during_import_is_enabled
     Flipper.enable(:pds_lookup_during_import)
 
-    stub_pds_search_to_return_a_patient
-    stub_pds_get_nhs_number_to_return_a_patient
+    stub_pds_search_to_return_no_patients(
+      "family" => "Smith",
+      "given" => "Jimmy",
+      "birthdate" => "eq2010-01-01",
+      "address-postalcode" => "SW1A 1BB"
+    )
+
+    stub_pds_search_to_return_no_patients(
+      "family" => "Salles",
+      "given" => "Rebecca",
+      "birthdate" => "eq2010-02-03",
+      "address-postalcode" => "SW1A 3BB"
+    )
+
+    stub_pds_search_to_return_no_patients(
+      "family" => "Jones",
+      "given" => "Sara",
+      "birthdate" => "eq2010-02-02",
+      "address-postalcode" => "SW1A 2BB"
+    )
   end
 
   def and_an_hpv_programme_is_underway
@@ -185,7 +203,9 @@ describe "Class list imports duplicates" do
   end
 
   def then_i_should_see_the_import_page_with_duplicate_records
-    expect(page).to have_content("3 duplicate records need review")
+    expect(page).to have_content(
+      "3 records have import issues to resolve before they can be imported into Mavis"
+    )
   end
 
   def when_i_review_the_first_duplicate_record
@@ -193,7 +213,6 @@ describe "Class list imports duplicates" do
   end
 
   def then_i_should_see_the_first_duplicate_record
-    expect(page).to have_content("This record needs reviewing")
     expect(page).to have_content("Address10 Downing StreetLondonSW1A 1AA")
     expect(page).to have_content("Address10 Downing StreetLondonSW1A 1BB")
   end
@@ -209,15 +228,15 @@ describe "Class list imports duplicates" do
   end
 
   def when_i_choose_to_keep_the_duplicate_record
-    choose "Use duplicate record"
+    choose "Use uploaded child record"
   end
 
   def when_i_choose_to_keep_the_existing_record
-    choose "Keep previously uploaded record"
+    choose "Keep existing child"
   end
 
   def when_i_choose_to_keep_both_records
-    choose "Keep both records"
+    choose "Keep both child records"
   end
 
   def then_i_should_see_a_success_message
@@ -235,7 +254,6 @@ describe "Class list imports duplicates" do
   end
 
   def then_i_should_see_the_second_duplicate_record
-    expect(page).to have_content("This record needs reviewing")
     expect(page).to have_content("Full nameJONES, Sara")
     expect(page).to have_content("Full nameJONES, Sarah")
   end
@@ -251,7 +269,6 @@ describe "Class list imports duplicates" do
   end
 
   def then_i_should_see_the_third_duplicate_record
-    expect(page).to have_content("This record needs reviewing")
     expect(page).to have_content("Full nameBLOCK, Jenny")
   end
 

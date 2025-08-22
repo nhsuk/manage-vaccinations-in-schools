@@ -32,13 +32,9 @@ describe "MenACWY and Td/IPV vaccination" do
       session: @session
     )
 
-    sign_in team.users.first, role: :admin_staff
+    sign_in team.users.first, role: :admin
 
     visit "/"
-
-    expect(page).to have_content(
-      "#{team.users.first.full_name} (Administrator)"
-    )
   end
 
   def when_i_go_to_a_patient_that_is_ready_to_vaccinate

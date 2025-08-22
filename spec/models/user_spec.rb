@@ -9,7 +9,7 @@
 #  current_sign_in_ip          :string
 #  email                       :string
 #  encrypted_password          :string           default(""), not null
-#  fallback_role               :integer          default("nurse"), not null
+#  fallback_role               :integer
 #  family_name                 :string           not null
 #  given_name                  :string           not null
 #  last_sign_in_at             :datetime
@@ -53,26 +53,48 @@ describe User do
     end
   end
 
-  describe "#is_admin?" do
-    subject(:is_admin?) { user.is_admin? }
+  describe "#role_description" do
+    subject { user.role_description }
+
+    context "when the user is an admin" do
+      let(:user) { build(:admin) }
+
+      it { should eq("Administrator") }
+    end
+
+    context "when the user is a nurse" do
+      let(:user) { build(:nurse) }
+
+      it { should eq("Nurse") }
+    end
+
+    context "when the user is a superuser" do
+      let(:user) { build(:admin, :superuser) }
+
+      it { should eq("Administrator (Superuser)") }
+    end
+  end
+
+  describe "#can_view?" do
+    subject { user.can_view? }
 
     context "cis2 is enabled", cis2: :enabled do
       context "when the user is an admin" do
         let(:user) { build(:admin) }
 
-        it { should be true }
+        it { should be(true) }
       end
 
       context "when the user is a nurse" do
         let(:user) { build(:nurse) }
 
-        it { should be false }
+        it { should be(true) }
       end
 
       context "when the user is a nurse and superuser" do
         let(:user) { build(:nurse, :superuser) }
 
-        it { should be false }
+        it { should be(true) }
       end
     end
 
@@ -80,37 +102,37 @@ describe User do
       context "when the user is an admin" do
         let(:user) { build(:admin) }
 
-        it { should be true }
+        it { should be(true) }
       end
 
       context "when the user is an admin and superuser" do
         let(:user) { build(:admin, :superuser) }
 
-        it { should be true }
+        it { should be(true) }
       end
 
       context "when the user is a nurse" do
         let(:user) { build(:nurse) }
 
-        it { should be false }
+        it { should be(true) }
       end
     end
   end
 
-  describe "#is_nurse?" do
-    subject(:is_nurse?) { user.is_nurse? }
+  describe "#can_supply_using_pgd??" do
+    subject { user.can_supply_using_pgd? }
 
     context "cis2 is enabled", cis2: :enabled do
       context "when the user is a nurse" do
         let(:user) { build(:nurse) }
 
-        it { should be true }
+        it { should be(true) }
       end
 
       context "when the user is admin staff" do
         let(:user) { build(:admin) }
 
-        it { should be false }
+        it { should be(false) }
       end
     end
 
@@ -118,54 +140,54 @@ describe User do
       context "when the user is a nurse" do
         let(:user) { build(:nurse) }
 
-        it { should be true }
+        it { should be(true) }
       end
 
       context "when the user is admin staff" do
         let(:user) { build(:admin) }
 
-        it { should be false }
+        it { should be(false) }
       end
     end
   end
 
-  describe "#is_superuser?" do
-    subject(:is_superuser?) { user.is_superuser? }
+  describe "#can_perform_local_admin_tasks?" do
+    subject { user.can_perform_local_admin_tasks? }
 
     context "cis2 is enabled", cis2: :enabled do
       context "when the user is an admin" do
         let(:user) { build(:admin) }
 
-        it { should be false }
+        it { should be(false) }
 
         context "with superuser access" do
           let(:user) { build(:admin, :superuser) }
 
-          it { should be true }
+          it { should be(true) }
         end
 
         context "without workgroups" do
-          let(:user) { build(:admin, role_workgroups: nil) }
+          let(:user) { build(:admin, role_workgroups: []) }
 
-          it { should be false }
+          it { should be(false) }
         end
       end
 
       context "when the user is a nurse" do
         let(:user) { build(:nurse) }
 
-        it { should be false }
+        it { should be(false) }
 
         context "with superuser access" do
           let(:user) { build(:nurse, :superuser) }
 
-          it { should be true }
+          it { should be(true) }
         end
 
         context "without workgroups" do
-          let(:user) { build(:nurse, role_workgroups: nil) }
+          let(:user) { build(:nurse, role_workgroups: []) }
 
-          it { should be false }
+          it { should be(false) }
         end
       end
     end
@@ -174,24 +196,92 @@ describe User do
       context "when the user is an admin" do
         let(:user) { build(:admin) }
 
-        it { should be false }
+        it { should be(false) }
 
         context "with superuser access" do
           let(:user) { build(:admin, :superuser) }
 
-          it { should be true }
+          it { should be(true) }
         end
       end
 
       context "when the user is a nurse" do
         let(:user) { build(:nurse) }
 
-        it { should be false }
+        it { should be(false) }
 
         context "with superuser access" do
           let(:user) { build(:nurse, :superuser) }
 
-          it { should be true }
+          it { should be(true) }
+        end
+      end
+    end
+  end
+
+  describe "#can_access_sensitive_records?" do
+    subject { user.can_access_sensitive_records? }
+
+    context "cis2 is enabled", cis2: :enabled do
+      context "when the user is an admin" do
+        let(:user) { build(:admin) }
+
+        it { should be(false) }
+
+        context "with superuser access" do
+          let(:user) { build(:admin, :superuser) }
+
+          it { should be(true) }
+        end
+
+        context "without workgroups" do
+          let(:user) { build(:admin, role_workgroups: []) }
+
+          it { should be(false) }
+        end
+      end
+
+      context "when the user is a nurse" do
+        let(:user) { build(:nurse) }
+
+        it { should be(false) }
+
+        context "with superuser access" do
+          let(:user) { build(:nurse, :superuser) }
+
+          it { should be(true) }
+        end
+
+        context "without workgroups" do
+          let(:user) { build(:nurse, role_workgroups: []) }
+
+          it { should be(false) }
+        end
+      end
+    end
+
+    context "cis2 is disabled", cis2: :disabled do
+      context "when the user is an admin" do
+        let(:user) { build(:admin) }
+
+        it { should be(false) }
+
+        context "with superuser access" do
+          let(:user) { build(:admin, :superuser) }
+
+          it { should be(true) }
+        end
+      end
+
+      context "when the user is a nurse" do
+        let(:user) { build(:nurse) }
+
+        it { should be(false) }
+
+        context "with superuser access" do
+          let(:user) { build(:nurse, :superuser) }
+
+          it { should be(true) }
         end
       end
     end

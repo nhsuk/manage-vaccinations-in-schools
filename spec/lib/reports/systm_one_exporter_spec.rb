@@ -149,9 +149,21 @@ describe Reports::SystmOneExporter do
     subject { csv_row["Practice code"] }
 
     context "location is a gp clinic" do
-      let(:location) { create(:gp_practice) }
+      let(:location) { create(:gp_practice, team:) }
 
-      it { should eq location.ods_code }
+      it { should eq(location.ods_code) }
+    end
+
+    context "location is a generic clinic" do
+      let(:location) { create(:generic_clinic, team:) }
+
+      it { should eq(location.ods_code) }
+    end
+
+    context "location has a SystmOne code" do
+      let(:location) { create(:school, systm_one_code: "A1") }
+
+      it { should eq("A1") }
     end
   end
 

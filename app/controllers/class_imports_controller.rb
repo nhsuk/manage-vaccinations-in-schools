@@ -46,6 +46,23 @@ class ClassImportsController < ApplicationController
 
     @duplicates = @class_import.patients.with_pending_changes.distinct
 
+    @issues_text =
+      @duplicates.each_with_object({}) do |patient, hash|
+        changeset = @class_import.changesets.find_by(patient_id: patient.id)
+
+        issue_groups =
+          helpers.issue_categories_for(patient.pending_changes.keys)
+
+        hash[patient.full_name] = if changeset&.matched_on_nhs_number
+          "Matched on NHS number. #{issue_groups.to_sentence.capitalize}" +
+            (issue_groups.size == 1 ? " does not match." : " do not match.")
+        else
+          "Possible match found. Review and confirm."
+        end
+      end
+
+    @nhs_discrepancies = @class_import.changesets.nhs_number_discrepancies
+
     render template: "imports/show",
            layout: "full",
            locals: {

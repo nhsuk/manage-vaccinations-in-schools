@@ -8,21 +8,23 @@ module Reports::ExportFormatters
       location.urn
     elsif patient.home_educated?
       "999999"
+    elsif (school = patient.school)
+      school.urn
     else
-      patient.school&.urn || "888888"
+      "888888"
     end
   end
 
   def school_name(location:, patient:)
-    location.school? ? location.name : patient.school&.name || ""
+    location&.school? ? location.name : patient.school&.name || ""
   end
 
   def care_setting(location:)
-    location.school? ? "1" : "2"
+    location&.school? ? "1" : "2"
   end
 
   def clinic_name(location:, vaccination_record:)
-    location.school? ? "" : vaccination_record.location_name
+    location&.school? ? "" : vaccination_record.location_name
   end
 
   def consent_status(patient:, programme:, academic_year:)

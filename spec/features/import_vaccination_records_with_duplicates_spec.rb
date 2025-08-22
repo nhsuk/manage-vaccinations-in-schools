@@ -152,15 +152,17 @@ describe "Immunisation imports duplicates" do
   end
 
   def then_i_should_see_the_import_page_with_duplicate_records
-    expect(page).to have_content("2 duplicate records need review")
+    expect(page).to have_content(
+      "2 records have import issues to resolve before they can be imported into Mavis"
+    )
   end
 
   def when_i_choose_to_keep_the_duplicate_record
-    choose "Use duplicate record"
+    choose "Use uploaded vaccination record"
   end
 
   def when_i_choose_to_keep_the_previously_uploaded_record
-    choose "Keep previously uploaded record"
+    choose "Keep existing vaccination record"
   end
 
   def when_i_submit_the_form_without_choosing_anything
@@ -178,7 +180,6 @@ describe "Immunisation imports duplicates" do
   end
 
   def then_i_should_see_the_first_duplicate_record
-    expect(page).to have_content("This record needs reviewing")
     expect(page).to have_content("Batch ID123013325")
     expect(page).to have_content("Batch IDSomethingElse")
     expect(page).to have_content("MethodIntramuscular")
@@ -188,7 +189,6 @@ describe "Immunisation imports duplicates" do
   end
 
   def then_i_should_see_the_second_duplicate_record
-    expect(page).to have_content("This record needs reviewing")
     expect(page).to have_content("Batch ID123013325")
     expect(page).to have_content("Batch IDCervarixBatch")
     expect(page).to have_content("MethodNasal spray")

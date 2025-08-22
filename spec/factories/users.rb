@@ -9,7 +9,7 @@
 #  current_sign_in_ip          :string
 #  email                       :string
 #  encrypted_password          :string           default(""), not null
-#  fallback_role               :integer          default("nurse"), not null
+#  fallback_role               :integer
 #  family_name                 :string           not null
 #  given_name                  :string           not null
 #  last_sign_in_at             :datetime
@@ -44,14 +44,16 @@ FactoryBot.define do
 
       role_code { CIS2Info::NURSE_ROLE }
       role_workgroups { [] }
+      activity_codes { [] }
 
       cis2_info_hash do
         {
           "organisation_code" => team.organisation.ods_code,
           "organisation_name" => team.name,
           "role_code" => role_code,
+          "activity_codes" => activity_codes,
           "team_workgroup" => team.workgroup,
-          "workgroups" => (role_workgroups || []) + [team.workgroup]
+          "workgroups" => role_workgroups + [team.workgroup]
         }
       end
     end
