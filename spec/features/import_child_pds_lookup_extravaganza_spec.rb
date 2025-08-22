@@ -67,6 +67,7 @@ describe "Import child records" do
     and_there_is_an_import_review_for_maia
     when_i_review_and_accept_duplicate_maia_record
     then_maia_has_the_uploaded_nhs_number
+    and_maia_has_multiple_pds_search_results
 
     then_school_moves_are_created_appropriately
 
@@ -317,11 +318,59 @@ describe "Import child records" do
       "address-postalcode" => "SW7 5LE"
     )
 
+    stub_all_searches_to_return_no_patient(
+      family_name: "Smith",
+      given_name: "Maia",
+      birthdate: "eq2010-08-16",
+      address_postcode: "W2 3PE"
+    )
+  end
+
+  def stub_all_searches_to_return_no_patient(
+    family_name:,
+    given_name:,
+    birthdate:,
+    address_postcode:
+  )
     stub_pds_search_to_return_no_patients(
-      "family" => "Smith",
-      "given" => "Maia",
-      "birthdate" => "eq2010-08-16",
-      "address-postalcode" => "W2 3PE"
+      "family" => family_name,
+      "given" => given_name,
+      "birthdate" => birthdate,
+      "address-postalcode" => address_postcode
+    )
+    stub_pds_search_to_return_no_patients(
+      "family" => "#{family_name[0..2]}*",
+      "given" => given_name,
+      "birthdate" => birthdate,
+      "address-postalcode" => address_postcode
+    )
+    stub_pds_search_to_return_no_patients(
+      "family" => family_name,
+      "given" => "#{given_name[0..2]}*",
+      "birthdate" => birthdate,
+      "address-postalcode" => address_postcode
+    )
+    stub_pds_search_to_return_no_patients(
+      "family" => family_name,
+      "given" => given_name,
+      "birthdate" => birthdate,
+      "address-postalcode" => "#{address_postcode[0..1]}*"
+    )
+    stub_pds_search_to_return_no_patients(
+      "family" => family_name,
+      "given" => given_name,
+      "birthdate" => birthdate,
+      "address-postalcode" => address_postcode,
+      "_fuzzy-match" => "true",
+      "_history" => "false"
+    )
+    stub_pds_search_to_return_no_patients(
+      "family" => family_name,
+      "given" => given_name,
+      "birthdate" => birthdate,
+      "address-postalcode" => address_postcode,
+      "_fuzzy-match" => "true",
+      "_history" => "true"
     )
   end
 
@@ -738,5 +787,20 @@ describe "Import child records" do
   def then_maia_has_the_uploaded_nhs_number
     maia = Patient.find_by(given_name: "Maia", family_name: "Smith")
     expect(maia.nhs_number).to eq("9435789102")
+  end
+
+  def and_maia_has_multiple_pds_search_results
+    maia = Patient.find_by(given_name: "Maia", family_name: "Smith")
+    expect(maia.pds_search_results.count).to eq(6)
+    expect(maia.pds_search_results.pluck(:step)).to eq(
+      %w[
+        no_fuzzy_with_history
+        no_fuzzy_with_wildcard_postcode
+        no_fuzzy_with_wildcard_given_name
+        no_fuzzy_with_wildcard_family_name
+        fuzzy_without_history
+        fuzzy_with_history
+      ]
+    )
   end
 end
