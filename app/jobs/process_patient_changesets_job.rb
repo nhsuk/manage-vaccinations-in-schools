@@ -24,7 +24,7 @@ class ProcessPatientChangesetsJob < ApplicationJob
 
       next_step = step[result]
 
-      if next_step == :give_up
+      if result == :error || next_step.nil? || next_step == :give_up
         finish_processing(patient_changeset)
       elsif next_step == :save_nhs_number_if_unique
         if nhs_number_is_unique_across_searches?(patient_changeset)
@@ -38,8 +38,6 @@ class ProcessPatientChangesetsJob < ApplicationJob
       elsif next_step.in?(steps.keys)
         raise "Recursive step detected: #{next_step}" if next_step == step_name
         enqueue_next_search(patient_changeset, next_step)
-      elsif result == :no_postcode
-        finish_processing(patient_changeset)
       else
         raise "Unknown step: #{next_step}"
       end
