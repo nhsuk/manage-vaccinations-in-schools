@@ -18,6 +18,7 @@
 #  remember_created_at         :datetime
 #  reporting_api_session_token :string
 #  session_token               :string
+#  show_in_suppliers           :boolean          default(FALSE), not null
 #  sign_in_count               :integer          default(0), not null
 #  uid                         :string
 #  created_at                  :datetime         not null
