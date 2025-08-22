@@ -6,8 +6,12 @@ class ProcessPatientChangesetsJob < ApplicationJob
   queue_as :imports
 
   def perform(patient_changeset, step_name = nil)
-    SemanticLogger.tagged(patient_changeset_id: patient_changeset.id) do
-      step_name ||= first_step_name
+    step_name ||= first_step_name
+
+    SemanticLogger.tagged(
+      patient_changeset_id: patient_changeset.id,
+      step: step_name
+    ) do
       step = steps[step_name]
 
       result, pds_patient =
