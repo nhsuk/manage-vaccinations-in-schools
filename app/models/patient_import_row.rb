@@ -4,17 +4,35 @@ class PatientImportRow
   include ActiveModel::Model
 
   MAX_FIELD_LENGTH = 300
+  VALID_NAME_REGEX = Regexp.new(<<~REGEXP, Regexp::EXTENDED).freeze
+    ^[
+      \\w            # ASCII alphanumeric characters
+      \u00C0-\u00D6  # Latin 1 Supplement letters
+      \u00D8-\u00F6  # Latin 1 Supplement letters
+      \u00F8-\u017F  # Latin 1 Supplement & Latin Extended A letters
+      \u0020         # Space
+      \u0027         # Apostrophe
+      \u0060         # Grave accent, will be normalised to apostrophe
+      \u2019         # Preferred Unicode apostrophe, will be normalised to apostrophe
+      \u02BC         # Modifier apostrophe, will be normalised to apostrophe
+      \u002E         # Full stop
+    -]+$ # Hyphen has to come at the very end, even for an extended regexp
+  REGEXP
 
   validate :validate_date_of_birth,
            :validate_existing_patients,
            :validate_first_name,
+           :validate_preferred_first_name,
            :validate_gender_code,
            :validate_last_name,
+           :validate_preferred_last_name,
            :validate_nhs_number,
            :validate_parent_1_email,
+           :validate_parent_1_name,
            :validate_parent_1_phone,
            :validate_parent_1_relationship,
            :validate_parent_2_email,
+           :validate_parent_2_name,
            :validate_parent_2_phone,
            :validate_parent_2_relationship,
            :validate_year_group
@@ -65,14 +83,14 @@ class PatientImportRow
       if parent_1_exists?
         {
           email: parent_1_email_value,
-          full_name: parent_1_name&.to_s,
+          full_name: parent_1_name_value,
           phone: parent_1_phone_value
         }
       end,
       if parent_2_exists?
         {
           email: parent_2_email_value,
-          full_name: parent_2_name&.to_s,
+          full_name: parent_2_name_value,
           phone: parent_2_phone_value
         }
       end
@@ -182,12 +200,14 @@ class PatientImportRow
       address_town: address_town&.to_s,
       birth_academic_year: birth_academic_year_value,
       date_of_birth: date_of_birth.to_date,
-      family_name: last_name.to_s,
+      family_name: ApostropheNormaliser.call(last_name.to_s),
       gender_code: gender_code_value,
-      given_name: first_name.to_s,
+      given_name: ApostropheNormaliser.call(first_name.to_s),
       nhs_number: nhs_number_value,
-      preferred_family_name: preferred_last_name&.to_s,
-      preferred_given_name: preferred_first_name&.to_s,
+      preferred_family_name:
+        ApostropheNormaliser.call(preferred_last_name&.to_s),
+      preferred_given_name:
+        ApostropheNormaliser.call(preferred_first_name&.to_s),
       registration: registration&.to_s,
       registration_academic_year:
     }.compact
@@ -195,7 +215,7 @@ class PatientImportRow
 
   def parent_1_import_attributes
     {
-      full_name: parent_1_name&.to_s,
+      full_name: parent_1_name_value,
       email: parent_1_email_value,
       phone: parent_1_phone_value,
       relationship: parent_1_relationship&.to_s
@@ -204,7 +224,7 @@ class PatientImportRow
 
   def parent_2_import_attributes
     {
-      full_name: parent_2_name&.to_s,
+      full_name: parent_2_name_value,
       email: parent_2_email_value,
       phone: parent_2_phone_value,
       relationship: parent_2_relationship&.to_s
@@ -356,8 +376,16 @@ class PatientImportRow
     gender_code&.to_s&.downcase&.gsub(" ", "_")
   end
 
+  def parent_1_name_value
+    ApostropheNormaliser.call(parent_1_name&.to_s)
+  end
+
   def parent_1_email_value
     parent_1_email&.to_s&.downcase
+  end
+
+  def parent_2_name_value
+    ApostropheNormaliser.call(parent_2_name&.to_s)
   end
 
   def parent_2_email_value
@@ -405,6 +433,8 @@ class PatientImportRow
         first_name.header,
         "is greater than #{MAX_FIELD_LENGTH} characters long"
       )
+    elsif !first_name.to_s.match?(VALID_NAME_REGEX)
+      errors.add(first_name.header, "includes invalid character(s)")
     end
   end
 
@@ -412,6 +442,18 @@ class PatientImportRow
     if gender_code.present? &&
          !Patient.gender_codes.keys.include?(gender_code_value)
       errors.add(gender_code.header, "is not a valid gender code")
+    end
+  end
+
+  def validate_preferred_first_name
+    return if preferred_first_name.blank?
+    if preferred_first_name.to_s.length > MAX_FIELD_LENGTH
+      errors.add(
+        preferred_first_name.header,
+        "is greater than #{MAX_FIELD_LENGTH} characters long"
+      )
+    elsif !preferred_first_name.to_s.match?(VALID_NAME_REGEX)
+      errors.add(preferred_first_name.header, "includes invalid character(s)")
     end
   end
 
@@ -425,6 +467,20 @@ class PatientImportRow
         last_name.header,
         "is greater than #{MAX_FIELD_LENGTH} characters long"
       )
+    elsif !last_name.to_s.match?(VALID_NAME_REGEX)
+      errors.add(last_name.header, "includes invalid character(s)")
+    end
+  end
+
+  def validate_preferred_last_name
+    return if preferred_last_name.blank?
+    if preferred_last_name.to_s.length > MAX_FIELD_LENGTH
+      errors.add(
+        preferred_last_name.header,
+        "is greater than #{MAX_FIELD_LENGTH} characters long"
+      )
+    elsif !preferred_last_name.to_s.match?(VALID_NAME_REGEX)
+      errors.add(preferred_last_name.header, "includes invalid character(s)")
     end
   end
 
@@ -436,6 +492,19 @@ class PatientImportRow
       message: "should be a valid NHS number with 10 characters",
       attributes: [nhs_number.header]
     ).validate_each(self, nhs_number.header, nhs_number_value)
+  end
+
+  def validate_parent_1_name
+    return if parent_1_name.blank?
+
+    if parent_1_name.to_s.length > MAX_FIELD_LENGTH
+      errors.add(
+        parent_1_name.header,
+        "is greater than #{MAX_FIELD_LENGTH} characters long"
+      )
+    elsif !parent_1_name.to_s.match?(VALID_NAME_REGEX)
+      errors.add(parent_1_name.header, "includes invalid character(s)")
+    end
   end
 
   def validate_parent_1_email
@@ -462,6 +531,19 @@ class PatientImportRow
   def validate_parent_1_relationship
     if parent_1_relationship.present? && !parent_1_exists?
       errors.add(parent_1_relationship.header, "must be blank")
+    end
+  end
+
+  def validate_parent_2_name
+    return if parent_2_name.blank?
+
+    if parent_2_name.to_s.length > MAX_FIELD_LENGTH
+      errors.add(
+        parent_2_name.header,
+        "is greater than #{MAX_FIELD_LENGTH} characters long"
+      )
+    elsif !parent_2_name.to_s.match?(VALID_NAME_REGEX)
+      errors.add(parent_2_name.header, "includes invalid character(s)")
     end
   end
 
