@@ -17,10 +17,10 @@ module ParentsHelper
     [
       parent_relationship.label_with_parent,
       if (email = parent.email).present?
-        tag.span(email, class: "nhsuk-u-secondary-text-color")
+        tag.span(email, class: "nhsuk-u-secondary-text-colour")
       end,
       if include_phone && (phone = parent.phone).present?
-        tag.span(phone, class: "nhsuk-u-secondary-text-color")
+        tag.span(phone, class: "nhsuk-u-secondary-text-colour")
       end
     ].compact.join(tag.br).html_safe
   end

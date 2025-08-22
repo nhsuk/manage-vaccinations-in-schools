@@ -20,7 +20,7 @@ describe AppImportStatusComponent do
     let(:pending_import) { true }
 
     it { should have_css(".nhsuk-tag--blue", text: "Processing") }
-    it { should have_css(".nhsuk-u-secondary-text-color", text: "2 minutes") }
+    it { should have_css(".nhsuk-u-secondary-text-colour", text: "2 minutes") }
 
     context "when break_tag is true" do
       let(:break_tag) { true }

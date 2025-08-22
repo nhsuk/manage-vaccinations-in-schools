@@ -2,8 +2,8 @@
 @use "../vendor/nhsuk-frontend" as *;
 
 $_button-shadow-size: $nhsuk-border-width-form-element * 2;
-$_secondary-warning-button-hover-color: color.change(
-  $nhsuk-warning-button-color,
+$_secondary-warning-button-hover-colour: color.change(
+  $nhsuk-warning-button-colour,
   $alpha: 0.1
 );
 
@@ -23,26 +23,26 @@ $_secondary-warning-button-hover-color: color.change(
   &:visited,
   &:active,
   &:hover {
-    color: $nhsuk-warning-button-color;
+    color: $nhsuk-warning-button-colour;
   }
 
   &:hover,
   &:hover:visited {
-    background-color: $_secondary-warning-button-hover-color;
-    color: $nhsuk-warning-button-color;
+    background-color: $_secondary-warning-button-hover-colour;
+    color: $nhsuk-warning-button-colour;
   }
 
   &:active {
-    background-color: $_secondary-warning-button-hover-color;
-    border-color: $nhsuk-warning-button-color;
+    background-color: $_secondary-warning-button-hover-colour;
+    border-color: $nhsuk-warning-button-colour;
   }
 
   &:not(:focus):not(:active)::before {
-    border-color: $nhsuk-warning-button-color;
+    border-color: $nhsuk-warning-button-colour;
   }
 
   &:not(:focus):not(:active)::after {
-    box-shadow: 0 $_button-shadow-size 0 $nhsuk-warning-button-color;
+    box-shadow: 0 $_button-shadow-size 0 $nhsuk-warning-button-colour;
   }
 }
 

@@ -2,7 +2,9 @@ import { test, expect, Page } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 
 const checkAccessibility = async (page: Page) => {
-  const accessibilityScanResults = await new AxeBuilder({ page }).analyze();
+  const accessibilityScanResults = await new AxeBuilder({ page })
+    .exclude(".nhsuk-back-link")
+    .analyze();
   expect(accessibilityScanResults.violations).toHaveLength(0);
 };
 

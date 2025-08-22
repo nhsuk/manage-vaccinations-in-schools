@@ -615,7 +615,7 @@ en:
   imports:
     index:
       title: Import records
-      title_short: Import
+      title_short: Imports
     notices:
       index:
         no_results: There are currently no important notices.

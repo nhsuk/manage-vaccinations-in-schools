@@ -1,11 +1,10 @@
 # frozen_string_literal: true
 
 class AppBreadcrumbComponent < ViewComponent::Base
-  def initialize(items:, classes: nil, attributes: {})
+  def initialize(items:, attributes: {})
     super
 
     @items = items
-    @classes = classes
     @attributes = attributes
   end
 

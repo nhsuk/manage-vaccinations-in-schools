@@ -1,5 +1,5 @@
 <% content_for :before_main do %>
-  <%= render AppBacklinkComponent.new(search_consent_form_path(@consent_form), name: "search for a child record") %>
+  <%= govuk_back_link(href: search_consent_form_path(@consent_form)) %>
 <% end %>
 
 <% page_title = "Link consent response with child record?" %>

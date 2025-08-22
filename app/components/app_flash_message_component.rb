@@ -33,7 +33,7 @@ class AppFlashMessageComponent < ViewComponent::Base
   end
 
   def classes
-    "govuk-notification-banner--#{type}"
+    "nhsuk-notification-banner--#{type}"
   end
 
   def role

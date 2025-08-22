@@ -3,9 +3,9 @@
 
 .nhsuk-tag {
   &--dark-orange {
-    background-color: nhsuk-tint(app.$color_dark-orange, 80%);
-    border-color: nhsuk-shade(app.$color_dark-orange, 50%);
-    color: nhsuk-shade(app.$color_dark-orange, 50%);
+    background-color: nhsuk-tint(app.$dark-orange-colour, 80%);
+    border-color: nhsuk-shade(app.$dark-orange-colour, 50%);
+    color: nhsuk-shade(app.$dark-orange-colour, 50%);
   }
 
   &--transparent {
@@ -15,7 +15,7 @@
   }
 }
 
-.nhsuk-tag + .nhsuk-u-secondary-text-color {
+.nhsuk-tag + .nhsuk-u-secondary-text-colour {
   margin-left: nhsuk-spacing(2);
 
   @include nhsuk-font(16);
