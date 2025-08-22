@@ -29,7 +29,7 @@ class ImportDuplicateForm
 
   def can_keep_both?
     # Vaccination records have lots of relationships that make it difficult to handle
-    object.is_a?(Patient)
+    object.is_a?(Patient) && object.changesets.none?(&:matched_on_nhs_number)
   end
 
   def apply_changes_options
