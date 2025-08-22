@@ -12,6 +12,9 @@ class PatientImportRow
       \u00F8-\u017F  # Latin 1 Supplement & Latin Extended A letters
       \u0020         # Space
       \u0027         # Apostrophe
+      \u0060         # Grave accent, will be normalised to apostrophe
+      \u2019         # Preferred Unicode apostrophe, will be normalised to apostrophe
+      \u02BC         # Modifier apostrophe, will be normalised to apostrophe
       \u002E         # Full stop
     -]+$ # Hyphen has to come at the very end, even for an extended regexp
   REGEXP
@@ -80,14 +83,14 @@ class PatientImportRow
       if parent_1_exists?
         {
           email: parent_1_email_value,
-          full_name: parent_1_name&.to_s,
+          full_name: parent_1_name_value,
           phone: parent_1_phone_value
         }
       end,
       if parent_2_exists?
         {
           email: parent_2_email_value,
-          full_name: parent_2_name&.to_s,
+          full_name: parent_2_name_value,
           phone: parent_2_phone_value
         }
       end
@@ -197,12 +200,14 @@ class PatientImportRow
       address_town: address_town&.to_s,
       birth_academic_year: birth_academic_year_value,
       date_of_birth: date_of_birth.to_date,
-      family_name: last_name.to_s,
+      family_name: ApostropheNormaliser.call(last_name.to_s),
       gender_code: gender_code_value,
-      given_name: first_name.to_s,
+      given_name: ApostropheNormaliser.call(first_name.to_s),
       nhs_number: nhs_number_value,
-      preferred_family_name: preferred_last_name&.to_s,
-      preferred_given_name: preferred_first_name&.to_s,
+      preferred_family_name:
+        ApostropheNormaliser.call(preferred_last_name&.to_s),
+      preferred_given_name:
+        ApostropheNormaliser.call(preferred_first_name&.to_s),
       registration: registration&.to_s,
       registration_academic_year:
     }.compact
@@ -210,7 +215,7 @@ class PatientImportRow
 
   def parent_1_import_attributes
     {
-      full_name: parent_1_name&.to_s,
+      full_name: parent_1_name_value,
       email: parent_1_email_value,
       phone: parent_1_phone_value,
       relationship: parent_1_relationship&.to_s
@@ -219,7 +224,7 @@ class PatientImportRow
 
   def parent_2_import_attributes
     {
-      full_name: parent_2_name&.to_s,
+      full_name: parent_2_name_value,
       email: parent_2_email_value,
       phone: parent_2_phone_value,
       relationship: parent_2_relationship&.to_s
@@ -371,8 +376,16 @@ class PatientImportRow
     gender_code&.to_s&.downcase&.gsub(" ", "_")
   end
 
+  def parent_1_name_value
+    ApostropheNormaliser.call(parent_1_name&.to_s)
+  end
+
   def parent_1_email_value
     parent_1_email&.to_s&.downcase
+  end
+
+  def parent_2_name_value
+    ApostropheNormaliser.call(parent_2_name&.to_s)
   end
 
   def parent_2_email_value

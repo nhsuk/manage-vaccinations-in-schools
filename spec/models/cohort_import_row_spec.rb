@@ -271,6 +271,23 @@ describe CohortImportRow do
 
       it { should eq([existing_parent]) }
     end
+
+    context "with fancy apostrophes" do
+      let(:data) do
+        valid_data
+          .merge(parent_1_data)
+          .merge(parent_2_data)
+          .merge(
+            "PARENT_1_NAME" => "Jane OʼReilly",
+            "PARENT_2_NAME" => "Jacob O`Reilly"
+          )
+      end
+
+      it "converts fancy apostrophes to plain apostrophes" do
+        expect(parents.first.full_name).to eq("Jane O'Reilly")
+        expect(parents.second.full_name).to eq("Jacob O'Reilly")
+      end
+    end
   end
 
   describe "#to_patient" do
@@ -820,6 +837,30 @@ describe CohortImportRow do
         expect(parent_relationships.count).to eq(2)
         expect(parent_relationships.first).to be_father
         expect(parent_relationships.second).to be_mother
+      end
+    end
+  end
+
+  describe "#import_attributes" do
+    context "with fancy apostrophes" do
+      let(:data) do
+        valid_data.merge(
+          {
+            "CHILD_FIRST_NAME" => "Mickʼee",
+            "CHILD_LAST_NAME" => "OʼReilly",
+            "CHILD_PREFERRED_FIRST_NAME" => "Mickʼee",
+            "CHILD_PREFERRED_LAST_NAME" => "OʼReilly"
+          }
+        )
+      end
+
+      it "converts fancy apostrophes to plain apostrophes" do
+        expect(cohort_import_row.import_attributes).to include(
+          given_name: "Mick'ee",
+          family_name: "O'Reilly",
+          preferred_given_name: "Mick'ee",
+          preferred_family_name: "O'Reilly"
+        )
       end
     end
   end
