@@ -107,6 +107,47 @@ describe ProcessPatientChangesetsJob do
     end
   end
 
+  context "when given name is too short for wildcard search" do
+    let(:step) { :no_fuzzy_with_wildcard_given_name }
+
+    before do
+      patient_changeset.child_attributes["given_name"] = "Al"
+      allow(described_class).to receive(:perform_now).and_call_original
+      allow(PDS::Patient).to receive(:search).and_return(nil)
+    end
+
+    it "skips to the next appropriate step" do
+      perform
+
+      expect(described_class).to have_received(:perform_now).with(
+        patient_changeset,
+        :no_fuzzy_with_wildcard_family_name
+      )
+
+      expect(patient_changeset).to be_processed
+      given_name_result =
+        patient_changeset.search_results.find do |result|
+          result["step"] == "no_fuzzy_with_wildcard_given_name"
+        end
+      expect(given_name_result["result"]).to eq("skip_step")
+    end
+  end
+
+  context "when patient has no postcode" do
+    before { patient_changeset.child_attributes["address_postcode"] = "" }
+
+    it "finishes processing without performing search" do
+      expect(PDS::Patient).not_to receive(:search)
+
+      perform
+
+      expect(patient_changeset).to be_processed
+      expect(patient_changeset.search_results.last["result"]).to eq(
+        "no_postcode"
+      )
+    end
+  end
+
   context "when import is slow" do
     before do
       allow(patient_changeset.import).to receive(:slow?).and_return(true)

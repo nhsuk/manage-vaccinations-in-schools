@@ -92,12 +92,14 @@ class ProcessPatientChangesetsJob < ApplicationJob
         no_matches: :no_fuzzy_with_wildcard_family_name,
         one_match: :no_fuzzy_with_wildcard_family_name,
         too_many_matches: :no_fuzzy_with_wildcard_family_name,
+        skip_step: :no_fuzzy_with_wildcard_family_name,
         format_query: ->(query) { query[:given_name][3..] = "*" }
       },
       no_fuzzy_with_wildcard_family_name: {
         no_matches: :fuzzy_without_history,
         one_match: :fuzzy_without_history,
         too_many_matches: :fuzzy_without_history,
+        skip_step: :fuzzy_without_history,
         format_query: ->(query) { query[:family_name][3..] = "*" }
       },
       fuzzy_without_history: {
@@ -123,6 +125,14 @@ class ProcessPatientChangesetsJob < ApplicationJob
 
   def search_for_patient(attrs, step_name)
     return :no_postcode, nil if attrs["address_postcode"].blank?
+
+    case step_name
+    when :no_fuzzy_with_wildcard_given_name
+      return :skip_step, nil if attrs["given_name"].length <= 3
+    when :no_fuzzy_with_wildcard_family_name
+      return :skip_step, nil if attrs["family_name"].length <= 3
+    end
+
     query = {
       family_name: attrs["family_name"].dup,
       given_name: attrs["given_name"].dup,
