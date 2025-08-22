@@ -49,3 +49,5 @@ splunk:
 reporting_api:
   client_app:
     token_ttl_seconds: 600
+    root_url:
+    secret:
