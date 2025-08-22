@@ -49,13 +49,13 @@ class StatusUpdater
   end
 
   def update_registration_statuses!
-    PatientSession::RegistrationStatus.import!(
+    Patient::RegistrationStatus.import!(
       %i[patient_session_id],
       registration_statuses_to_import,
       on_duplicate_key_ignore: true
     )
 
-    PatientSession::RegistrationStatus
+    Patient::RegistrationStatus
       .where(patient_session_id: patient_sessions.select(:id))
       .includes(
         :session_attendances,
@@ -68,7 +68,7 @@ class StatusUpdater
       .find_in_batches(batch_size: 10_000) do |batch|
         batch.each(&:assign_status)
 
-        PatientSession::RegistrationStatus.import!(
+        Patient::RegistrationStatus.import!(
           batch.select(&:changed?),
           on_duplicate_key_update: {
             conflict_target: [:id],

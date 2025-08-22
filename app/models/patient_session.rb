@@ -44,7 +44,7 @@ class PatientSession < ApplicationRecord
   belongs_to :patient
   belongs_to :session
 
-  has_one :registration_status
+  has_one :registration_status, class_name: "Patient::RegistrationStatus"
 
   has_one :location, through: :session
   has_one :subteam, through: :session
@@ -187,7 +187,7 @@ class PatientSession < ApplicationRecord
   scope :has_registration_status,
         ->(status) do
           where(
-            PatientSession::RegistrationStatus
+            Patient::RegistrationStatus
               .where("patient_session_id = patient_sessions.id")
               .where(status:)
               .arel
