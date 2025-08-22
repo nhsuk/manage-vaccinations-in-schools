@@ -13,7 +13,8 @@ class PatientNHSNumberLookupJob < ApplicationJob
         family_name: patient.family_name,
         given_name: patient.given_name,
         date_of_birth: patient.date_of_birth,
-        address_postcode: patient.address_postcode
+        address_postcode: patient.address_postcode,
+        history: true
       )
 
     return if pds_patient.nil?
