@@ -21,8 +21,8 @@ class PDS::Patient
       given_name:,
       date_of_birth:,
       address_postcode:,
-      history: true,
-      fuzzy: false
+      history: nil,
+      fuzzy: nil
     )
       query = {
         "family" => family_name,

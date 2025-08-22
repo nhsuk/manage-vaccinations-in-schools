@@ -44,9 +44,9 @@ module MavisCLI
         address_postcode: nil,
         general_practitioner: nil,
         max_results: 10,
-        fuzzy_match: false,
+        fuzzy_match: nil,
         exact_match: false,
-        history: false
+        history: nil
       )
         MavisCLI.load_rails
 

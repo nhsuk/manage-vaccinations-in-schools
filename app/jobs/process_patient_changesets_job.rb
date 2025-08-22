@@ -117,7 +117,7 @@ class ProcessPatientChangesetsJob < ApplicationJob
         too_many_matches: :save_nhs_number_if_unique,
         format_query: ->(query) do
           query[:fuzzy] = true
-          query[:history] = true
+          query.delete(:history)
         end
       }
     }
