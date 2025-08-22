@@ -37,7 +37,10 @@ class AppActivityLogComponent < ViewComponent::Base
       )
 
     @gillick_assessments =
-      (patient || patient_session).gillick_assessments.includes(:performed_by)
+      (patient || patient_session)
+        .gillick_assessments
+        .includes(:performed_by)
+        .order(:created_at)
 
     @notes =
       (patient || patient_session).notes.includes(

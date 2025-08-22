@@ -419,21 +419,21 @@ describe AppActivityLogComponent do
     before do
       create(
         :gillick_assessment,
-        :competent,
-        performed_by: user,
-        patient:,
-        session:,
-        notes: "First notes",
-        created_at: Time.zone.local(2025, 6, 1, 12)
-      )
-      create(
-        :gillick_assessment,
         :not_competent,
         performed_by: user,
         patient:,
         session:,
         notes: "Second notes",
         created_at: Time.zone.local(2025, 6, 1, 13)
+      )
+      create(
+        :gillick_assessment,
+        :competent,
+        performed_by: user,
+        patient:,
+        session:,
+        notes: "First notes",
+        created_at: Time.zone.local(2025, 6, 1, 12)
       )
     end
 
