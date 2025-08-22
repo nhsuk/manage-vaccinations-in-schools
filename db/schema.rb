@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_21_073434) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_21_102030) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -285,7 +285,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_21_073434) do
   create_table "gillick_assessments", force: :cascade do |t|
     t.text "notes", default: "", null: false
     t.bigint "performed_by_user_id", null: false
-    t.bigint "patient_session_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "knows_vaccination", null: false
@@ -294,9 +293,12 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_21_073434) do
     t.boolean "knows_delivery", null: false
     t.boolean "knows_side_effects", null: false
     t.bigint "programme_id", null: false
-    t.index ["patient_session_id"], name: "index_gillick_assessments_on_patient_session_id"
+    t.bigint "patient_id", null: false
+    t.bigint "session_date_id", null: false
+    t.index ["patient_id"], name: "index_gillick_assessments_on_patient_id"
     t.index ["performed_by_user_id"], name: "index_gillick_assessments_on_performed_by_user_id"
     t.index ["programme_id"], name: "index_gillick_assessments_on_programme_id"
+    t.index ["session_date_id"], name: "index_gillick_assessments_on_session_date_id"
   end
 
   create_table "good_job_batches", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -1008,8 +1010,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_21_073434) do
   add_foreign_key "consents", "programmes"
   add_foreign_key "consents", "teams"
   add_foreign_key "consents", "users", column: "recorded_by_user_id"
-  add_foreign_key "gillick_assessments", "patient_sessions"
+  add_foreign_key "gillick_assessments", "patients"
   add_foreign_key "gillick_assessments", "programmes"
+  add_foreign_key "gillick_assessments", "session_dates"
   add_foreign_key "gillick_assessments", "users", column: "performed_by_user_id"
   add_foreign_key "health_questions", "health_questions", column: "follow_up_question_id"
   add_foreign_key "health_questions", "health_questions", column: "next_question_id"

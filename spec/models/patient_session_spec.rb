@@ -180,7 +180,7 @@ describe PatientSession do
       end
 
       it "is unsafe with gillick assessment" do
-        create(:gillick_assessment, :competent, patient_session:)
+        create(:gillick_assessment, :competent, patient:, session:)
         expect(safe_to_destroy?).to be false
       end
 

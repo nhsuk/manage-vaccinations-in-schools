@@ -167,13 +167,17 @@ class Reports::OfflineSessionExporter
   def gillick_assessments
     @gillick_assessments ||=
       GillickAssessment
-        .select(
-          "DISTINCT ON (patient_session_id, programme_id) gillick_assessments.*"
+        .select("DISTINCT ON (patient_id, programme_id) gillick_assessments.*")
+        .joins(:session)
+        .where(
+          session_dates: {
+            session:
+          },
+          patient_id: patient_sessions.select(:patient_id)
         )
-        .where(patient_session: patient_sessions)
-        .order(:patient_session_id, :programme_id, created_at: :desc)
+        .order(:patient_id, :programme_id, created_at: :desc)
         .includes(:performed_by)
-        .group_by(&:patient_session_id)
+        .group_by(&:patient_id)
         .transform_values do
           it.group_by(&:programme_id).transform_values(&:first)
         end
@@ -244,8 +248,7 @@ class Reports::OfflineSessionExporter
     session = patient_session.session
 
     grouped_consents = consents.dig(patient.id, programme.id) || []
-    gillick_assessment =
-      gillick_assessments.dig(patient_session.id, programme.id)
+    gillick_assessment = gillick_assessments.dig(patient.id, programme.id)
     triage = triages.dig(patient.id, programme.id)
     academic_year = session.academic_year
 

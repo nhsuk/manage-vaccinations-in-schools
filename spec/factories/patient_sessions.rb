@@ -392,8 +392,16 @@ FactoryBot.define do
 
     trait :gillick_competent do
       after(:create) do |patient_session|
+        patient = patient_session.patient
+        session = patient_session.session
         patient_session.session.programmes.each do |programme|
-          create(:gillick_assessment, :competent, patient_session:, programme:)
+          create(
+            :gillick_assessment,
+            :competent,
+            patient:,
+            session:,
+            programme:
+          )
         end
       end
     end

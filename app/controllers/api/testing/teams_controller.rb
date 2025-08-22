@@ -28,7 +28,6 @@ class API::Testing::TeamsController < API::Testing::BaseController
         patient_ids = team.patients.pluck(:id)
 
         patient_sessions = PatientSession.where(session: sessions)
-        log_destroy(GillickAssessment.where(patient_session: patient_sessions))
         log_destroy(PreScreening.where(patient_session: patient_sessions))
         patient_sessions.in_batches { log_destroy(it) }
 
@@ -37,6 +36,7 @@ class API::Testing::TeamsController < API::Testing::BaseController
         log_destroy(AccessLogEntry.where(patient_id: patient_ids))
         log_destroy(ArchiveReason.where(patient_id: patient_ids))
         log_destroy(ConsentNotification.where(patient_id: patient_ids))
+        log_destroy(GillickAssessment.where(patient_id: patient_ids))
         log_destroy(Note.where(patient_id: patient_ids))
         # In local dev we can end up with NotifyLogEntries without a patient
         log_destroy(NotifyLogEntry.where(patient_id: nil))
