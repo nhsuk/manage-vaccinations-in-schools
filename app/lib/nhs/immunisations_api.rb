@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 module NHS::ImmunisationsAPI
-  PROGRAMME_TYPES = %w[flu hpv].freeze
+  CUD_PROGRAMME_TYPES = %w[flu hpv].freeze
+  SEARCH_PROGRAMME_TYPES = %w[flu].freeze
 
   class << self
     def sync_immunisation(vaccination_record)
@@ -187,7 +188,7 @@ module NHS::ImmunisationsAPI
     )
       vaccination_record.kept? && vaccination_record.recorded_in_service? &&
         vaccination_record.administered? &&
-        vaccination_record.programme.type.in?(PROGRAMME_TYPES) &&
+        vaccination_record.programme.type.in?(CUD_PROGRAMME_TYPES) &&
         (ignore_nhs_number || vaccination_record.patient.nhs_number.present?) &&
         vaccination_record.notify_parents &&
         vaccination_record.patient.not_invalidated?
@@ -205,6 +206,8 @@ module NHS::ImmunisationsAPI
 
       if programmes.empty?
         raise "Cannot search for vaccination records in the immunisations API; no programmes provided."
+      elsif !programmes.all? { |programme| programme.type.in?(SEARCH_PROGRAMME_TYPES) }
+        raise "Cannot search for vaccination records in the immunisations API; one or more programmes is not supported."
       end
 
       Rails.logger.info(
@@ -229,14 +232,15 @@ module NHS::ImmunisationsAPI
         )
 
       if response.status == 200
-        # To create fixtures for testing
-        File.write("tmp/search_response.json", response.body)
-        Rails.logger.debug "Successfully saved"
+        # # To create fixtures for testing
+        # File.write("tmp/search_response.json", response.body)
+        # Rails.logger.debug "Successfully saved"
 
         # TODO: check that bundle.link matches params
+        # TODO: check for OperationOutcome
 
-        FHIR.from_contents(response.body)
-        # handle_search_response(body, patient:) # TODO: should this call be here, or should it be called by the job?
+        fhir_bundle = FHIR.from_contents(response.body.to_json)
+        parse_search_response(fhir_bundle)
       else
         raise "Error searching for vaccination records for patient #{patient.id} in" \
                 " Immunisations API: unexpected response status" \
@@ -323,15 +327,26 @@ module NHS::ImmunisationsAPI
       end
     end
 
-    def handle_search_response(response_body, patient)
-      # TODO: add team to `from_fhir_record` call
-      response_body.entry.map do |entry|
-          FHIRMapper::VaccinationRecord.from_fhir_record(
-            entry.resource,
-            patient:
-          )
-        end
-      # records.each(&:save!)
+    def parse_search_response(fhir_bundle)
+      vaccination_records = fhir_bundle.entry.map { |entry|
+        entry.resource if entry.resource.resourceType == "Immunization"
+      }.compact
+
+      patient = fhir_bundle.entry.find { it.resource.resourceType == "Patient" }&.resource
+
+      # return both of these objects
+      [vaccination_records, patient]
     end
+
+    # def _handle_search_results_job
+    #   # TODO: add team to `from_fhir_record` call
+    #   response_body.entry.map do |entry|
+    #     FHIRMapper::VaccinationRecord.from_fhir_record(
+    #       entry.resource,
+    #       patient:
+    #     )
+    #   end
+    #   # records.each(&:save!)
+    # end
   end
 end

@@ -729,10 +729,40 @@ describe NHS::ImmunisationsAPI do
       pending("implementation") || fail
     end
 
+    context "with the wrong programmes" do
+      let(:programmes) { [create(:programme, :hpv)] }
+
+      it "raises an error" do
+        expect { perform_request }.to raise_error(
+          "Cannot search for vaccination records in the immunisations API; one or more programmes is not supported."
+        )
+      end
+    end
+
     include_examples "generic error handling"
     include_examples "unexpected response status", 250, "searching"
 
     include_examples "an immunisations_fhir_api_integration feature flag check"
     include_examples "an immunisations_fhir_api_integration_search feature flag check"
+  end
+
+  describe "parse_search_response" do
+    subject(:parse_search_response) do
+      described_class.send(:parse_search_response, response_body)
+    end
+
+    let(:response_body) do
+      FHIR.from_contents(
+        File.read(
+          Rails.root.join("spec/fixtures/fhir/search_response_2_results.json")
+        )
+      )
+    end
+
+    it "returns the vaccination records" do
+      expect(parse_search_response).to be_an Array
+      expect(parse_search_response.count).to eq(1)
+      expect(parse_search_response.first).to be_a FHIR::Immunization
+    end
   end
 end
