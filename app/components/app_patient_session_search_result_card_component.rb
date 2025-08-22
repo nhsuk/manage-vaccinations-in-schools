@@ -37,7 +37,7 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
               end
             end
 
-            if (note = patient_session.latest_note)
+            if context != :patient_specific_direction && (note = patient_session.latest_note)
               summary_list.with_row do |row|
                 row.with_key { "Notes" }
                 row.with_value { render note_to_log_event(note) }
@@ -57,7 +57,16 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
   def initialize(patient_session, context:, programmes: [])
     super
 
-    unless context.in?(%i[patients consent triage register record])
+    unless context.in?(
+             %i[
+               patients
+               consent
+               triage
+               register
+               record
+               patient_specific_direction
+             ]
+           )
       raise "Unknown context: #{context}"
     end
 
@@ -157,6 +166,8 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
       [consent_status_tag]
     when :triage
       [triage_status_tag]
+    when :patient_specific_direction
+      [patient_specific_direction_status_tag]
     else
       [vaccination_status_tag]
     end
@@ -241,6 +252,19 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
     { status: status }
   end
 
+  def patient_specific_direction_status_tag
+    {
+      key: :patient_specific_direction,
+      value:
+        render(
+          AppStatusTagComponent.new(
+            psd_exists?(programmes.first) ? :added : :not_added,
+            context: :patient_specific_direction
+          )
+        )
+    }
+  end
+
   def note_to_log_event(note)
     truncated_body = note.body.truncate_words(80, omission: "…")
 
@@ -260,5 +284,11 @@ class AppPatientSessionSearchResultCardComponent < ViewComponent::Base
     body = safe_join([truncated_body, continue_reading])
 
     AppLogEventComponent.new(body:, at: note.created_at, by: note.created_by)
+  end
+
+  def psd_exists?(programme)
+    patient.patient_specific_directions.any? do
+      it.programme_id == programme.id && it.academic_year == academic_year
+    end
   end
 end
