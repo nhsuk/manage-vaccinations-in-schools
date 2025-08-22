@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe "User CIS2 authentication" do
+describe "User CIS2 authentication", :cis2 do
   include RedirectHelper
 
   scenario "from redirect" do

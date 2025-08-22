@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_21_102030) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_22_094829) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -914,6 +914,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_21_102030) do
     t.string "session_token"
     t.integer "fallback_role"
     t.string "reporting_api_session_token"
+    t.boolean "show_in_suppliers", default: false, null: false
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["provider", "uid"], name: "index_users_on_provider_and_uid", unique: true
     t.index ["reporting_api_session_token"], name: "index_users_on_reporting_api_session_token", unique: true
