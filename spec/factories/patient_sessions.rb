@@ -43,24 +43,26 @@ FactoryBot.define do
     end
 
     trait :unknown_attendance do
-      registration_status do
-        association(:patient_registration_status, patient_session: instance)
+      after(:create) do |patient_session|
+        create(
+          :patient_registration_status,
+          patient: patient_session.patient,
+          session: patient_session.session
+        )
       end
     end
 
     trait :in_attendance do
-      registration_status do
-        association(
-          :patient_registration_status,
-          :attending,
-          patient_session: instance
-        )
-      end
-
       after(:create) do |patient_session|
         create(
           :session_attendance,
           :present,
+          patient: patient_session.patient,
+          session: patient_session.session
+        )
+        create(
+          :patient_registration_status,
+          :attending,
           patient: patient_session.patient,
           session: patient_session.session
         )

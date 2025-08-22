@@ -4,22 +4,26 @@
 #
 # Table name: patient_registration_statuses
 #
-#  id                 :bigint           not null, primary key
-#  status             :integer          default("unknown"), not null
-#  patient_session_id :bigint           not null
+#  id         :bigint           not null, primary key
+#  status     :integer          default("unknown"), not null
+#  patient_id :bigint           not null
+#  session_id :bigint           not null
 #
 # Indexes
 #
-#  index_patient_registration_statuses_on_patient_session_id  (patient_session_id) UNIQUE
-#  index_patient_registration_statuses_on_status              (status)
+#  idx_on_patient_id_session_id_2ff02d8889            (patient_id,session_id) UNIQUE
+#  index_patient_registration_statuses_on_patient_id  (patient_id)
+#  index_patient_registration_statuses_on_session_id  (session_id)
+#  index_patient_registration_statuses_on_status      (status)
 #
 # Foreign Keys
 #
-#  fk_rails_...  (patient_session_id => patient_sessions.id) ON DELETE => cascade
+#  fk_rails_...  (patient_id => patients.id) ON DELETE => cascade
+#  fk_rails_...  (session_id => sessions.id) ON DELETE => cascade
 #
 describe Patient::RegistrationStatus do
   subject(:patient_registration_status) do
-    build(:patient_registration_status, patient_session:)
+    build(:patient_registration_status, patient:, session:)
   end
 
   let(:programmes) do
@@ -29,7 +33,6 @@ describe Patient::RegistrationStatus do
   let(:session) do
     create(:session, dates: [Date.yesterday, Date.current], programmes:)
   end
-  let(:patient_session) { create(:patient_session, patient:, session:) }
 
   it do
     expect(patient_registration_status).to define_enum_for(:status).with_values(
@@ -38,7 +41,8 @@ describe Patient::RegistrationStatus do
   end
 
   describe "associations" do
-    it { should belong_to(:patient_session) }
+    it { should belong_to(:patient) }
+    it { should belong_to(:session) }
 
     describe "#session_attendance" do
       subject do
@@ -49,7 +53,7 @@ describe Patient::RegistrationStatus do
       end
 
       let(:patient_registration_status) do
-        create(:patient_registration_status, patient_session:)
+        create(:patient_registration_status, patient:, session:)
       end
       let(:today_session_attendance) do
         create(

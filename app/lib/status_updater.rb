@@ -50,20 +50,22 @@ class StatusUpdater
 
   def update_registration_statuses!
     Patient::RegistrationStatus.import!(
-      %i[patient_session_id],
-      registration_statuses_to_import,
+      %i[patient_id session_id],
+      patient_session_statuses_to_import,
       on_duplicate_key_ignore: true
     )
 
     Patient::RegistrationStatus
-      .where(patient_session_id: patient_sessions.select(:id))
+      .where(
+        patient: patient_sessions.select(:patient_id),
+        session: patient_sessions.select(:session_id)
+      )
       .includes(
+        :patient,
         :session_attendances,
         :session_date,
         :vaccination_records,
-        patient_session: {
-          session: :programmes
-        }
+        session: :programmes
       )
       .find_in_batches(batch_size: 10_000) do |batch|
         batch.each(&:assign_status)
@@ -167,23 +169,24 @@ class StatusUpdater
     patient_sessions
       .joins(:patient, :session)
       .pluck(
-        :id,
-        :"session.location_id",
-        :"session.academic_year",
+        :"patients.id",
+        :"sessions.id",
+        :"sessions.location_id",
+        :"sessions.academic_year",
         :"patients.birth_academic_year"
       )
-      .flat_map do |patient_session_id, location_id, academic_year, birth_academic_year|
+      .filter_map do |patient_id, session_id, location_id, academic_year, birth_academic_year|
         year_group = birth_academic_year.to_year_group(academic_year:)
 
-        programme_ids_per_location_id_and_year_group
-          .fetch(location_id, {})
-          .fetch(year_group, [])
-          .map { [patient_session_id, it] }
-      end
-  end
+        if programme_ids_per_location_id_and_year_group
+             .fetch(location_id, {})
+             .fetch(year_group, [])
+             .empty?
+          next
+        end
 
-  def registration_statuses_to_import
-    patient_session_statuses_to_import.map { [it.first] }.uniq
+        [patient_id, session_id]
+      end
   end
 
   def programme_ids_per_year_group
