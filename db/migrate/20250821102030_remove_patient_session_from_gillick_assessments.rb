@@ -7,7 +7,7 @@ class RemovePatientSessionFromGillickAssessments < ActiveRecord::Migration[8.0]
       t.references :session_date, foreign_key: true
     end
 
-    GillickAssessment.find_each.count do |gillick_assessment|
+    GillickAssessment.find_each do |gillick_assessment|
       patient_session =
         PatientSession.find(gillick_assessment.patient_session_id)
       patient_id = patient_session.patient_id
@@ -16,7 +16,7 @@ class RemovePatientSessionFromGillickAssessments < ActiveRecord::Migration[8.0]
         SessionDate.find_by!(
           session_id:,
           value: gillick_assessment.created_at.to_date
-        )
+        ).id
       gillick_assessment.update_columns(patient_id:, session_date_id:)
     end
 
