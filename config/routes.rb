@@ -215,6 +215,12 @@ Rails.application.routes.draw do
     resource :patients, only: :show, controller: "sessions/patients"
     resource :consent, only: :show, controller: "sessions/consent"
     resource :triage, only: :show, controller: "sessions/triage"
+    resource :patient_specific_directions,
+             only: :show,
+             controller: "sessions/patient_specific_directions"
+    resource :bulk_patient_specific_directions,
+             only: %i[create show],
+             controller: "sessions/bulk_patient_specific_directions"
     resource :register, only: :show, controller: "sessions/register" do
       post ":patient_id/:status", as: :create, action: :create
     end
