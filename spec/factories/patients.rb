@@ -137,11 +137,7 @@ FactoryBot.define do
             patient:,
             session: evaluator.session
           )
-          create(
-            :patient_session_registration_status,
-            :attending,
-            patient_session:
-          )
+          create(:patient_registration_status, :attending, patient_session:)
         end
       end
     end
