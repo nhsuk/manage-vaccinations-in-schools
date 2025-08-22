@@ -51,6 +51,8 @@ class AppPatientSessionRecordComponent < ViewComponent::Base
         "vaccination"
       end
 
-    "Record #{programme.name_in_sentence} #{vaccination}"
+    tag.span(class: "app-vaccine-method", data: { method: vaccine_method }) do
+      "Record #{programme.name_in_sentence} #{vaccination}"
+    end
   end
 end
