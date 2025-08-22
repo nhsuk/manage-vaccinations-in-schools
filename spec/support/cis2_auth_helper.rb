@@ -93,7 +93,7 @@ module CIS2AuthHelper
     }
   end
 
-  def cis2_sign_in(user, ods_code:, role_code:, workgroups:)
+  def cis2_sign_in(user, ods_code:, role_code:, activity_codes:, workgroups:)
     mock_cis2_auth(
       uid: user.uid,
       given_name: user.given_name,
@@ -102,6 +102,7 @@ module CIS2AuthHelper
       sid: user.session_token,
       org_code: ods_code,
       role_code:,
+      activity_codes:,
       workgroups:
     )
 
@@ -123,10 +124,15 @@ module CIS2AuthHelper
       admin: CIS2Info::ADMIN_ROLE
     }.fetch(role)
 
-    workgroups = user.teams.where(organisation:).pluck(:workgroup)
-    workgroups << CIS2Info::SUPERUSER_WORKGROUP if superuser
+    activity_codes = []
+    if superuser
+      activity_codes << CIS2Info::ACCESS_SENSITIVE_FLAGGED_RECORDS_ACTIVITY_CODE
+      activity_codes << CIS2Info::LOCAL_SYSTEM_ADMINISTRATION_ACTIVITY_CODE
+    end
 
-    cis2_sign_in(user, ods_code:, role_code:, workgroups:)
+    workgroups = user.teams.where(organisation:).pluck(:workgroup)
+
+    cis2_sign_in(user, ods_code:, role_code:, activity_codes:, workgroups:)
   end
 
   def mock_cis2_auth(

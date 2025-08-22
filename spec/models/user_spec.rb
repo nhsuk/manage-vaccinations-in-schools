@@ -210,12 +210,6 @@ describe User do
 
           it { should be(true) }
         end
-
-        context "without workgroups" do
-          let(:user) { build(:admin, role_workgroups: []) }
-
-          it { should be(false) }
-        end
       end
 
       context "when the user is a nurse" do
@@ -227,12 +221,6 @@ describe User do
           let(:user) { build(:nurse, :superuser) }
 
           it { should be(true) }
-        end
-
-        context "without workgroups" do
-          let(:user) { build(:nurse, role_workgroups: []) }
-
-          it { should be(false) }
         end
       end
     end
