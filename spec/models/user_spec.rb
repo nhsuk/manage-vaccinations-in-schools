@@ -75,30 +75,10 @@ describe User do
     end
   end
 
-  describe "#can_view?" do
-    subject { user.can_view? }
+  describe "#is_admin?" do
+    subject { user.is_admin? }
 
     context "cis2 is enabled", cis2: :enabled do
-      context "when the user is an admin" do
-        let(:user) { build(:admin) }
-
-        it { should be(true) }
-      end
-
-      context "when the user is a nurse" do
-        let(:user) { build(:nurse) }
-
-        it { should be(true) }
-      end
-
-      context "when the user is a nurse and superuser" do
-        let(:user) { build(:nurse, :superuser) }
-
-        it { should be(true) }
-      end
-    end
-
-    context "cis2 is disabled", cis2: :disabled do
       context "when the user is an admin" do
         let(:user) { build(:admin) }
 
@@ -114,13 +94,33 @@ describe User do
       context "when the user is a nurse" do
         let(:user) { build(:nurse) }
 
+        it { should be(false) }
+      end
+    end
+
+    context "cis2 is disabled", cis2: :disabled do
+      context "when the user is an admin" do
+        let(:user) { build(:admin) }
+
         it { should be(true) }
+      end
+
+      context "when the user is an admin and superuser" do
+        let(:user) { build(:admin, :superuser) }
+
+        it { should be(false) }
+      end
+
+      context "when the user is a nurse" do
+        let(:user) { build(:nurse) }
+
+        it { should be(false) }
       end
     end
   end
 
-  describe "#can_supply_using_pgd?" do
-    subject { user.can_supply_using_pgd? }
+  describe "#is_nurse?" do
+    subject { user.is_nurse? }
 
     context "cis2 is enabled", cis2: :enabled do
       context "when the user is a nurse" do
@@ -151,8 +151,8 @@ describe User do
     end
   end
 
-  describe "#can_administer_without_prescription?" do
-    subject { user.can_administer_without_prescription? }
+  describe "#is_healthcare_assistant?" do
+    subject { user.is_healthcare_assistant? }
 
     context "cis2 is enabled", cis2: :enabled do
       context "when the user is a nurse" do
@@ -195,76 +195,8 @@ describe User do
     end
   end
 
-  describe "#can_perform_local_admin_tasks?" do
-    subject { user.can_perform_local_admin_tasks? }
-
-    context "cis2 is enabled", cis2: :enabled do
-      context "when the user is an admin" do
-        let(:user) { build(:admin) }
-
-        it { should be(false) }
-
-        context "with superuser access" do
-          let(:user) { build(:admin, :superuser) }
-
-          it { should be(true) }
-        end
-
-        context "without workgroups" do
-          let(:user) { build(:admin, role_workgroups: []) }
-
-          it { should be(false) }
-        end
-      end
-
-      context "when the user is a nurse" do
-        let(:user) { build(:nurse) }
-
-        it { should be(false) }
-
-        context "with superuser access" do
-          let(:user) { build(:nurse, :superuser) }
-
-          it { should be(true) }
-        end
-
-        context "without workgroups" do
-          let(:user) { build(:nurse, role_workgroups: []) }
-
-          it { should be(false) }
-        end
-      end
-    end
-
-    context "cis2 is disabled", cis2: :disabled do
-      context "when the user is an admin" do
-        let(:user) { build(:admin) }
-
-        it { should be(false) }
-
-        context "with superuser access" do
-          let(:user) { build(:admin, :superuser) }
-
-          it { should be(true) }
-        end
-      end
-
-      context "when the user is a nurse" do
-        let(:user) { build(:nurse) }
-
-        it { should be(false) }
-
-        context "with superuser access" do
-          let(:user) { build(:nurse, :superuser) }
-
-          it { should be(true) }
-        end
-      end
-    end
-  end
-
-  describe "#can_access_sensitive_records?" do
-    subject { user.can_access_sensitive_records? }
+  describe "#is_superuser?" do
+    subject { user.is_superuser? }
 
     context "cis2 is enabled", cis2: :enabled do
       context "when the user is an admin" do

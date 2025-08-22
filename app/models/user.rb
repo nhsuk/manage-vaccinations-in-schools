@@ -122,45 +122,36 @@ class User < ApplicationRecord
   end
 
   def role_description
-    role = (can_supply_using_pgd? ? "Nurse" : "Administrator")
+    role =
+      if is_healthcare_assistant?
+        "Healthcare Assistant"
+      elsif is_nurse?
+        "Nurse"
+      else
+        "Administrator"
+      end
 
-    if can_access_sensitive_records? || can_perform_local_admin_tasks?
-      "#{role} (Superuser)"
-    else
-      role
-    end
+    is_superuser? ? "#{role} (Superuser)" : role
   end
 
-  def can_view?
-    cis2_enabled? ? cis2_info.can_view? : !fallback_role.nil?
+  def is_admin?
+    cis2_enabled? ? cis2_info.is_admin? : fallback_role_admin?
   end
 
-  def can_supply_using_pgd?
-    cis2_enabled? ? cis2_info.can_supply_using_pgd? : fallback_role_nurse?
+  def is_nurse?
+    cis2_enabled? ? cis2_info.is_nurse? : fallback_role_nurse?
   end
 
-  def can_administer_without_prescription?
+  def is_healthcare_assistant?
     if cis2_enabled?
-      cis2_info.can_administer_without_prescription?
+      cis2_info.is_healthcare_assistant?
     else
       fallback_role_healthcare_assistant?
     end
   end
 
-  def can_perform_local_admin_tasks?
-    if cis2_enabled?
-      cis2_info.can_perform_local_admin_tasks?
-    else
-      fallback_role_superuser?
-    end
-  end
-
-  def can_access_sensitive_records?
-    if cis2_enabled?
-      cis2_info.can_access_sensitive_records?
-    else
-      fallback_role_superuser?
-    end
+  def is_superuser?
+    cis2_enabled? ? cis2_info.is_superuser? : fallback_role_superuser?
   end
 
   private
