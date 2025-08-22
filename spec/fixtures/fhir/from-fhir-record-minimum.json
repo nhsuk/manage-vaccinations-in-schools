@@ -1,0 +1,182 @@
+{
+  "resourceType": "Immunization",
+  "id": "11112222-3333-4444-5555-666677779999",
+  "contained": [],
+  "extension": [
+    {
+      "url": "https://fhir.hl7.org.uk/StructureDefinition/Extension-UKCore-VaccinationProcedure",
+      "valueCodeableConcept": {
+        "coding": [
+          {
+            "extension": [
+              {
+                "url": "https://fhir.hl7.org.uk/StructureDefinition/Extension-UKCore-CodingSCTDescDisplay",
+                "valueString": "Test Value string 8956 Flu vaccination"
+              },
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/coding-sctdescid",
+                "valueId": "5306706018"
+              }
+            ],
+            "system": "http://snomed.info/sct",
+            "code": "884861000000100",
+            "display": "Seasonal influenza vaccination 222 (procedure)"
+          }
+        ]
+      }
+    }
+  ],
+  "identifier": [
+    {
+      "system": "https://supplierABC/identifiers/vacc",
+      "value": "aaaabbbb-0000-1111-3333-ffff77773333"
+    }
+  ],
+  "status": "completed",
+  "vaccineCode": {
+    "coding": [
+      {
+        "extension": [
+          {
+            "url": "https://fhir.hl7.org.uk/StructureDefinition/Extension-UKCore-CodingSCTDescDisplay",
+            "valueString": "Test Value string vaccineCode 34"
+          },
+          {
+            "url": "http://hl7.org/fhir/StructureDefinition/coding-sctdescid",
+            "valueId": "5306706018"
+          }
+        ],
+        "system": "http://snomed.info/sct",
+        "code": "43207411000001105",
+        "display": "Cell-based trivalent influenza vaccine (surface antigen, inactivated) suspension for injection 0.5ml pre-filled syringes (Seqirus UK Ltd)"
+      }
+    ]
+  },
+  "patient": {
+    "reference": "#Pat1"
+  },
+  "occurrenceDateTime": "2025-04-06T23:59:50.2+01:00",
+  "recorded": "2025-03-12T13:28:17.12+00:00",
+  "primarySource": true,
+  "manufacturer": {
+    "display": "AstraZeneca Ltd"
+  },
+  "location": {
+    "identifier": {
+      "value": "X99999",
+      "system": "https://fhir.nhs.uk/Id/ods-organization-code"
+    }
+  },
+  "lotNumber": "4120Z001",
+  "expirationDate": "2026-07-02",
+  "site": {
+    "coding": [
+      {
+        "extension": [
+          {
+            "url": "https://fhir.hl7.org.uk/StructureDefinition/Extension-UKCore-CodingSCTDescDisplay",
+            "valueString": "Test Value string site 222"
+          },
+          {
+            "url": "http://hl7.org/fhir/StructureDefinition/coding-sctdescid",
+            "valueId": "5306706018"
+          }
+        ],
+        "system": "http://snomed.info/sct",
+        "code": "368208006",
+        "display": "Left upper arm structure"
+      }
+    ]
+  },
+  "route": {
+    "coding": [
+      {
+        "extension": [
+          {
+            "url": "https://fhir.hl7.org.uk/StructureDefinition/Extension-UKCore-CodingSCTDescDisplay",
+            "valueString": "Test Value string route 222"
+          },
+          {
+            "url": "http://hl7.org/fhir/StructureDefinition/coding-sctdescid",
+            "valueId": "5306706018"
+          }
+        ],
+        "system": "http://snomed.info/sct",
+        "code": "78421000",
+        "display": "Intramuscular"
+      }
+    ]
+  },
+  "doseQuantity": {
+    "value": 0.5,
+    "unit": "milliliter",
+    "system": "http://unitsofmeasure.org",
+    "code": "ml"
+  },
+  "performer": [
+    {
+      "actor": {
+        "type": "Organization",
+        "display": "Acme Healthcare",
+        "identifier": {
+          "value": "B0C4P",
+          "system": "https://fhir.nhs.uk/Id/ods-organization-code",
+          "use": "usual",
+          "type": {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                "version": "Test version performer",
+                "code": "123456",
+                "display": "Test display performer",
+                "userSelected": true
+              }
+            ],
+            "text": "test string performer"
+          },
+          "period": {
+            "start": "2000-01-01",
+            "end": "2025-01-01"
+          }
+        }
+      }
+    }
+  ],
+  "reasonCode": [
+    {
+      "coding": [
+        {
+          "code": "123684005",
+          "system": "http://snomed.info/test",
+          "display": "Disease outbreak (event)"
+        },
+        {
+          "code": "453684005",
+          "system": "http://snomed.info/sct",
+          "display": "Disease outbreak (event)"
+        },
+        {
+          "code": "443684005",
+          "system": "http://snomed.info/sct",
+          "display": "Disease outbreak (event)"
+        }
+      ]
+    }
+  ],
+  "protocolApplied": [
+    {
+      "targetDisease": [
+        {
+          "coding": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "6142004",
+              "display": "Influenza caused by Influenza virus (disorder)"
+            }
+          ]
+        }
+      ],
+      "doseNumberPositiveInt": 1
+    }
+  ]
+}
